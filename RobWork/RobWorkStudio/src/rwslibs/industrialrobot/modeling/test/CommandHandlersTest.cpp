@@ -628,3 +628,58 @@ TEST(MdlCommandPrepare, HardAssertBlocksWithPreciseDiagnostic)
     // 无修订力（plan 零消费面——project 不消费拒绝态计划）。
     EXPECT_TRUE(plan.objectWrites.empty());
 }
+
+/**
+ * @brief F-799 回归钉（缺陷修复批A FIX-T1——audit/round2-20261010 一轮
+ *        条目 #23）：「合法有界 Revolute＋未确认范围 Continuous」混合候选
+ *        必走 RejectedHardAssert 值轨。
+ *
+ * 缺陷形态：断言阻塞项（assertJointLimitIntervals 对未确认范围 Continuous
+ * 产 blockers）后不返回而继续进入行程校验段（候选含有界 Revolute——
+ * hasTravelRelevantJoints 为真使行程校验必达），历史实现对缺范围
+ * Continuous 抛 std::logic_error 逃逸穿命令处理器。F-746①（audit-r2d1
+ * 批）行程面转值面（EvaluationFailed）＋断言面无值态统一阻断后，逃逸
+ * 路径已消除——本用例把混合候选场景钉为常绿回归（红阶段如实登记：缺陷
+ * 已不在，直接绿）。Revolute 限位须合法（decode 层对非法区间 fail-fast，
+ * 非法限位构不成到达断言域的载荷）。
+ */
+TEST(MdlCommandPrepare, MixedBadBoundsRevoluteAndUnconfirmedContinuous_RejectsOnValueTrack)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "MDL-12"},
+                  std::vector<std::string>{});
+
+    HandlerFixture f;
+    const project::RevisionView baseline = makeBaselineView(core::RevisionId::generate());
+    f.query.view = baseline;
+
+    // 混合候选：Revolute 合法限位 ±1 rad（行程面成立——行程校验段必达）
+    // ＋ Continuous 工作范围未确认（断言④后半阻断——kMdlAssertRangeNotFinite）。
+    // 连杆数随关节数满足 I-MDL-1（n 关节 n+1 连杆）。
+    RobotDesign design;
+    design.joints.push_back(makeRevoluteJoint(makeOid(), "J1", -1.0, 1.0));
+    design.joints.push_back(makeContinuousJoint(makeOid(), "Jspin", false));
+    design.links.push_back(makeLink(makeOid(), "base"));
+    design.links.push_back(makeLink(makeOid(), "link1"));
+    design.links.push_back(makeLink(makeOid(), "link2"));
+    CommandPayload payload;
+    payload.objects.push_back(newSlot(std::string(kRobotDesignObjectType), design));
+
+    ApplyRobotDesignHandler handler(f.services);
+    project::HandlerContext ctx(f.query, &f.compile, nullptr);
+    project::CommandPlan plan;
+    std::vector<core::DiagnosticRecord> diags;
+    const auto outcome = handler.prepare(
+        ctx, makeEnvelope(baseline, std::string(kCmdApplyRobotDesign), payload),
+        baseline, plan, diags);
+
+    // 值轨拒绝（唯一合法出口——不抛异常即本断言可执行的隐含前提）；
+    // 拒绝不得是载荷结构域（RejectedInvalidInput）——候选可解码、属断言域。
+    ASSERT_EQ(outcome, project::PrepareOutcome::RejectedHardAssert);
+    EXPECT_TRUE(plan.objectWrites.empty());
+    // 范围断言诊断传导（ERR-01 逐项定位——未确认范围 Continuous 被精确定位）。
+    bool rangeFound = false;
+    for (const auto& d : diags) {
+        if (d.code == std::string(kMdlAssertRangeNotFinite)) { rangeFound = true; }
+    }
+    EXPECT_TRUE(rangeFound) << "缺少 MDL-ASSERT-RANGE-NOT-FINITE 范围诊断";
+}

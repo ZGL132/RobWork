@@ -203,6 +203,40 @@ void RequirementsPluginAssembly::bindRegionPreviewSink(
         });
 }
 
+void RequirementsPluginAssembly::pushSampleResults(
+    const std::vector<SampleResultView>& rows)
+{
+    // FIX-T2（F-495 样本级定位）——中性面→面板行卡的边界翻译（四字段
+    // 同名直投：样本号/状态/位置/原因；翻译已在 ui 装配层单点完成，
+    // 本面零第二翻译〔NFR-MNT-04〕——View/Row 双型是 R-2 边界形态，
+    // 逐字段搬运是边界的机械代价）。
+    if (m_impl == nullptr) {
+        return;
+    }
+    std::vector<RequirementsPanelWidget::SampleResultRow> panelRows;
+    panelRows.reserve(rows.size());
+    for (const SampleResultView& r : rows) {
+        RequirementsPanelWidget::SampleResultRow row;
+        row.sampleIndex = r.sampleIndex;
+        row.stateText = r.stateText;
+        row.positionText = r.positionText;
+        row.reason = r.reason;
+        panelRows.push_back(std::move(row));
+    }
+    m_impl->pushSampleResults(panelRows);
+}
+
+void RequirementsPluginAssembly::bindSampleHighlightRequest(
+    std::function<void(std::uint64_t)> handler)
+{
+    // FIX-T2——面板清单行点击→宿主装配层的高亮请求出口转发（模块暂存/
+    // 转发双形态——bindRegionPreviewSink 同款时序语义）。
+    if (m_impl == nullptr) {
+        return;
+    }
+    m_impl->bindSampleHighlightRequest(std::move(handler));
+}
+
 void RequirementsPluginAssembly::refreshFromSession()
 {
     if (m_impl != nullptr) {

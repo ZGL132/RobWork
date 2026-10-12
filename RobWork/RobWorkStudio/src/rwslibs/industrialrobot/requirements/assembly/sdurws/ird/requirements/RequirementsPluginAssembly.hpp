@@ -33,6 +33,7 @@
 #define IRD_REQUIREMENTS_ASSEMBLY_REQUIREMENTSPLUGINASSEMBLY_HPP
 
 #include <array>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
@@ -257,6 +258,31 @@ struct RequirementsPluginAssembly {
      */
     void bindRegionPreviewSink(
         std::function<void(const std::optional<RegionPreviewView>&)> sink);
+
+    /// 采样结果清单行（FIX-T2——F-495 样本级定位的中性公共面：域样本号
+    /// ＋状态中文词表＋位置摘要＋原因直投；R-2——kinematics 账面类型不
+    /// 出插件边界，翻译在 ui 装配层单点）。
+    struct SampleResultView {
+        std::uint64_t sampleIndex = 0;  ///< 域样本号（高亮寻址键——P-FIX-4 对齐语义）
+        std::string stateText;          ///< 状态中文词表（呈现直投）
+        std::string positionText;       ///< 位置摘要（世界系 m）
+        std::string reason;             ///< 未通过/未运行原因（缺省空）
+    };
+
+    /**
+     * @brief 推送采样结果清单（FIX-T2——装配层在区域选中/评估到账时投
+     *        选中区域样本行全集；转发模块 pushSampleResults——面板缺位
+     *        即时丢弃〔attach 后下轮区域投影自然补投〕）。
+     */
+    void pushSampleResults(const std::vector<SampleResultView>& rows);
+
+    /**
+     * @brief 绑定样本高亮请求出口（FIX-T2——面板清单行点击→宿主装配层
+     *        置三维高亮键；转发模块 bindSampleHighlightRequest——暂存/
+     *        转发双形态同 bindRegionPreviewSink）。
+     */
+    void bindSampleHighlightRequest(
+        std::function<void(std::uint64_t)> handler);
 
     /**
      * @brief 会话刷新（宿主 bindReadiness 后的呈现收口——面板以会话最新

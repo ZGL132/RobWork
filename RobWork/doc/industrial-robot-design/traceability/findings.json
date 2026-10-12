@@ -4603,10 +4603,11 @@
       "id": "F-460",
       "source": "UI-T39 审核返工轮（2026-10-02——生产装配注册需求域命令处理器后首次真实 committed，requirements-tour step9 二连应用探针暴露）",
       "severity": "blocking",
-      "status": "open",
+      "status": "fixed",
+      "fixedBy": "audit-r2c 批 2fe3da66f（RequirementsUiModule::noteAppliedRevision 第二半——rewireWorksetRootRefsAfterApply 以会话闭包缝现取 HEAD objectRefs 回填工作集根引用表四集合槽；独立验收 pass a17df640a；合入 c028c550d）",
       "registeredAt": "2026-10-02",
       "title": "需求域二连 draft.apply 必拒：首次应用回执只回填根对象身份（noteAppliedRevision），编辑器工作集根引用表的四集合挂载态仍停留在首应用前（refs 空）→第二次组装的集合槽按 allocateNew 组装，与存储端已挂载集合身份失配（prepare 挂载失配拒绝面，invalid-payload 且零诊断）——生产路径此前处理器未注册（F-461 前身）提交恒拒，缺口从未被踩到。",
-      "owner": "requirements 域会话接线（UI-T40 序列候选：自身回执后以新 HEAD 闭包重导线＋未应用编辑保序重演——§4.6 三态语义与 RequirementsRefreshCoordinator 既有重演机制接线；同时补 prepare 域内拒绝的逐项诊断回填〔本次 invalid-payload 零诊断可观测性缺陷〕）",
+      "owner": "requirements 域会话接线（UI-T40 序列候选：自身回执后以新 HEAD 闭包重导线＋未应用编辑保序重演——§4.6 三态语义与 RequirementsRefreshCoordinator 既有重演机制接线；同时补 prepare 域内拒绝的逐项诊断回填〔本次 invalid-payload 零诊断可观测性缺陷〕）【2026-10-12 缺陷修复批A 核实翻牌（FIX-T1）】audit-r2c 批已修复且独立验收 pass 在基线（实现 2fe3da66f＝noteAppliedRevision 第二半 rewireWorksetRootRefsAfterApply——以宿主绑定会话闭包缝现取 HEAD objectRefs 回填工作集根引用表四集合槽，实际修复方案与原登记 UI-T40 序列候选不同型、消账同一缺陷；验收 a17df640a verdict=pass，含宿主 studio 实录二连应用探针命中 committed 分支；合入 c028c550d），而本条账面漏翻仍 open。本批复现测试实证绿：PluginPanel.AppliedReceiptRewiresWorksetRefs_SecondApplyExplicit_F460／AppliedReceiptConsistentClosureSkipsRewire_F460／AppliedReceiptWithoutClosureSeamSkipsRewire_F460 三用例（requirements_test，worktree 集成树实跑）——账面与代码事实同步，翻 fixed。",
       "resolution": "UI-T39 冒烟 step9 以诚实双态断言承载（committed＝继续撤销点击验证；未 committed＝记录已知缺口），生产通路其余段（处理器注册→首应用真实提交→修订事件→面板刷新→首应用不可逆的诚实禁用）已随本批打通并留痕。编号顺延自 F-459。"
     },
     {
@@ -5008,7 +5009,7 @@
       "status": "open",
       "registeredAt": "2026-10-04",
       "title": "需求三维区域采样结果状态着色未闭环（宿主审核 P1）：当前仅有包围盒＋采样格线骨架，缺采样点通过/失败/未采样三态、达标颜色区分、覆盖率颜色映射、校验项点击定位采样点、颜色图例；颜色必须由统一 UI 词表提供（建议语义：绿=通过/红=未通过/灰=未采样/黄=警告/蓝框=当前选中），禁止三维后端各自硬编码",
-      "owner": "两批链落位：上游批 UI-T64（kinematics 覆盖评估执行通道产品装配——2026-10-05 落位 ready 待独立验收，ui-t64@2972b5d7）＋消费卡 UI-T65（三态着色/覆盖率框色映射/统一供色图例——2026-10-06 落位 ready 待独立验收，ui-t65 堆叠 ui-t64）；数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/图例 全通〔校验项点击定位＝L-R1 jumpTarget 区域级现成机制，样本级定位随诊断素材粒度留后续〕；两批独立验收 pass 后本条闭合；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（三维采样四态着色）——所有者宿主复验通过后翻 fixed。"
+      "owner": "两批链落位：上游批 UI-T64（kinematics 覆盖评估执行通道产品装配——2026-10-05 落位 ready 待独立验收，ui-t64@2972b5d7）＋消费卡 UI-T65（三态着色/覆盖率框色映射/统一供色图例——2026-10-06 落位 ready 待独立验收，ui-t65 堆叠 ui-t64）；数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/图例 全通〔校验项点击定位＝L-R1 jumpTarget 区域级现成机制，样本级定位随诊断素材粒度留后续〕；两批独立验收 pass 后本条闭合；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（三维采样四态着色）——所有者宿主复验通过后翻 fixed。【2026-10-12 缺陷修复批A 核实登记（FIX-T1）】两批均已独立验收 pass 并合入基线（UI-T64 acc/ui-t64/1 pass 合入 6804b3da5 链；UI-T65 attempt 2 pass 合入 6804b3da5——见 DTB §2.11 WP-10-T64/T65 行落位登记），四态着色数据链代码与测试面在基线实证在位：本批复跑 ui_test 三具名用例 MapSampleStateToCell_TableDriven_UI_T65／View3DTintFromCoverage_TableDriven_UI_T65／RegionTint_FollowsPositionAxisNotMixed_UI_T65 全绿（worktree 集成树实跑）。status 维持 open——宿主 GUI 实拍复验动作归所有者（本批为自动化会话不代行复验），复验通过后翻 fixed。【2026-10-12 采样点着色功能批交付登记（FIX-T2——六项诉求收官）】「校验项点击定位采样点」的样本级半区已交付：区域页「采样结果」清单（执行器账面投影行卡——样本号/状态中文词表/世界系坐标摘要/未通过原因，零 Readiness 语义改动〔「诊断素材粒度」缺口的呈现侧绕行兑现〕）点击→三维单点高亮（放大点芯＋三轴蓝描边环——「蓝框=当前选中」建议语义落地，复用 kRegionTintDefaultGl 零新增色值）；契约面 View3DSampleGrid 表尾追加 sampleIndices（域样本号对齐表——P-FIX-4 区域切片下标偏移防线）＋highlightedSampleIndex（缺省值零破坏旧渲染）；诚实降级三态（无对齐键/键未命中/无评估）具名用例钉住。至此本条六项诉求（三态着色/达标颜色/覆盖率映射/样本级定位/颜色图例/统一供色）全部有交付载体，status 维持 open 待宿主 GUI 复验（复验动作归所有者）——复验通过后翻 fixed。"
     },
     {
       "id": "F-496",
@@ -5454,7 +5455,9 @@
       "id": "F-550",
       "source": "F-496 十步人工验收 runbook 所有者执行实录（2026-10-08——step6 三维视图无对象可拾取；备用路径六轴重置后同样无模型对象）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "UI-T76 三处根因修复（①World→WORLD 帧名映射＋②会话预览锚 ird-session-preview＋③区域 World 恒等直投）＋UI-T77 发布后模型骨架呈现＋RT-T15 连杆图元与 UI-T78 ray-cast 拾取（B 行收口合入 6dd85ec3 及 wp10-t05 合入）；2026-10-12 所有者宿主实机复验通过——草稿期工位标记/区域框可见，应用后骨架（轴阵/链线/标签）、关节跟随、图元与拾取均正常。①草稿三维预览通道候选与真实网格保真度仍为独立裁决项，不随本翻牌关闭",
       "registeredAt": "2026-10-08",
       "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）；【2026-10-08 修复落地（UI-T76——②工位标记/区域框会话预览链排查）】三处根因修复：①宿主世界帧名映射 World→WORLD（RobWork 根帧实名＝StateStructure FixedFrame「WORLD」，WorkCell::findFrame 仅对全大写特判返回根帧——混合大小写查找恒落空＝标记全数跳过/区域框「参考系不可解析」的直接原因）；②渲染后端增会话预览锚（宿主无发布 WorkCell 时装仅含根帧的场景层锚 WC「ird-session-preview」——studio 模型层零触碰不扰发布链 INV-B4 单入口；场景挂接 API 无 WC 即抛异常＝框架硬约束，「无锚不画」此前使草稿期三维恒空白）；③区域 World 引用系恒等直投（角点/格线本即世界系坐标，不经宿主帧解析）。修复后增工位/区域的三维标记/框/格在首应用前即可见；待所有者宿主复验后翻转 fixed。模型几何渲染与 ray-cast 拾取仍归 WP-10-T05（未实施——本修复不覆盖）",
       "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）；【2026-10-08 修复落地（UI-T77——三维预览专项：发布后模型骨架呈现）】挂接点＝HostWorkCellPresentationObject::apply（发布链宿主单入口 setWorkCell 之后的呈现半区）：编译产物 WC 装入宿主后，按帧树/SerialDevice 挂「ird-model-skeleton-」组——①全帧小轴阵（0.12 m，WORLD 根帧除外）②每台 SerialDevice 基座→关节→末端连杆链线（DeviceChainRender 挂基座、按 info._state 实时 worldT 取位姿——关节运动链形即时跟随）③设备基座/末端 Qt 纹理化标签（F-556 承载件复用）。**边界如实登记＝本交付是骨架示意（帧结构/运动链可视化，使发布后模型三维可见），真实网格几何渲染（visual/collision mesh）仍归 WP-10-T05 资源链**——建模域 GeometryRef 只存引用＋resourceManifest 本体（io 字节读取已就位、mesh 解析加载器/GeometryRef.localTransform 编译域透传/S6 挂接/L5 装配四段缺口），且当前模板模型 resourceManifest 为空（mesh 数据面不存在——骨架呈现与资源链互不依赖）。生命周期＝drawable 挂发布 WC 场景节点，setWorkCell 换 WC 随旧节点树整体收口（零残留零清理名单）；onSceneCleared 既有收口不受影响。待所有者宿主复验（应用草稿后三维应出现模型骨架——轴/链线/标签，关节示教时链形跟随）后翻转 fixed；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（首应用前三维骨架）——所有者宿主复验通过后翻 fixed。"
@@ -5474,10 +5477,12 @@
       "id": "F-552",
       "source": "F-496 十步人工验收所有者执行实录（2026-10-08——项目已打开＋已应用修订态下点击 File→新建项目，程序直接退出；悬停置灰项无提示与退出先后发生在同一实例）",
       "severity": "blocking",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "openViaSessionController 双态防线（宿主装配批：有会话→beginSwitch 切换编排〔确认对话框/决议四态〕、无会话→原打开协议，全部调用方统一受保护）；2026-10-12 所有者宿主实机复验通过——已打开＋已应用修订态点击 File→新建项目呈现切换确认对话框，确认切换无退出",
       "registeredAt": "2026-10-08",
       "title": "新建项目触发程序退出（crash）——项目已打开＋已应用修订＋草稿编辑态下点击 File→工业机器人项目→新建项目，进程直接终止（无错误对话框）。版本口径：所有者实例 exe 构建于 2f74ef03 基线（含 UI-T73/T74 主链修复；未含并行批次 WP-22-T05/T06 的关闭/切换统一确认编排——定位时须区分既有缺陷/新增装配析构顺序〔UI-T73/T74 新增成员 m_systemDefaultPolicyProvider/m_draftAwareNameContext/注入的 attachCompilePort 在项目切换 teardown 的存活期〕/WP-22-T06 已修面）。另同实例置灰「应用草稿」悬停无提示文字（禁用原因呈现面缺口——ERR-01 禁用必带原因口径）",
-      "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）；【2026-10-08 修复落地——dev log 定性钉扎】宿主实例 dev log（ird-ui-plugin-logs）捕获违约原文：ui/session: openProject 仅可在 NoProject 态调用（当前态非无项目——已打开会话的切换走 beginSwitch，§5.4 S2）＝新建项目流程无会话状态守卫直调 openProject（INV-SES-2 违约）。修复＝openViaSessionController 入口统一收口双态防线（有会话→beginSwitch 切换编排〔确认对话框/决议四态/Draining——与 openRecentProject 同款已证防线〕；无会话→原打开协议）——全部调用方一并受保护。修复待所有者复验（新建项目于已打开项目态→应呈现切换确认对话框而非退出）后翻转；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（新建项目不闪退）——所有者宿主复验通过后翻 fixed。【2026-10-12 平台服务域补全批核查（批内任务 4）】修复在位实证（pipeline4/redesign-main）：orchestrateNewProject 已走 openViaSessionController 统一收口（UiPlugin.cpp——hasOpenSession→beginSwitch 切换编排〔确认对话框/决议四态/Draining〕、无会话→原打开协议；F-552 防线注释在案；打开项目/巡检通道调用方一并受保护），控制器机制面已有用例钉住（SessionControllerModelTest.SwitchBindsBAndHoldsAUntilDrained／SwitchCandidateRejectedKeepsA）。**宿主级回归钉住缺口移交路线 A**：已打开会话态触发新建项目→呈现切换确认而非进程退出的 GUI 断言用例（落点 ui/contract_test——本批边界红线禁碰 ui 单元文件，登记移交不实施）。project 侧零缺陷：INV-SES-2 fail-fast 拒绝＝§5.1 契约行为（调用方错误 fail-fast 语义正确）。静默退出观测缺口已随本批 WP-24-T02 崩溃捕获链闭合（同型 INV-SES-2 逃逸此后留脱敏诊断文件而非无对话框退出——捕获装配于应用入口最先安装）。本批不改判状态——维持 open 待所有者宿主复验（既有治理批注记口径不变）。"
+      "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）；【2026-10-08 修复落地——dev log 定性钉扎】宿主实例 dev log（ird-ui-plugin-logs）捕获违约原文：ui/session: openProject 仅可在 NoProject 态调用（当前态非无项目——已打开会话的切换走 beginSwitch，§5.4 S2）＝新建项目流程无会话状态守卫直调 openProject（INV-SES-2 违约）。修复＝openViaSessionController 入口统一收口双态防线（有会话→beginSwitch 切换编排〔确认对话框/决议四态/Draining——与 openRecentProject 同款已证防线〕；无会话→原打开协议）——全部调用方一并受保护。修复待所有者复验（新建项目于已打开项目态→应呈现切换确认对话框而非退出）后翻转；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（新建项目不闪退）——所有者宿主复验通过后翻 fixed。【2026-10-12 平台服务域补全批核查（批内任务 4）】修复在位实证（pipeline4/redesign-main）：orchestrateNewProject 已走 openViaSessionController 统一收口（UiPlugin.cpp——hasOpenSession→beginSwitch 切换编排〔确认对话框/决议四态/Draining〕、无会话→原打开协议；F-552 防线注释在案；打开项目/巡检通道调用方一并受保护），控制器机制面已有用例钉住（SessionControllerModelTest.SwitchBindsBAndHoldsAUntilDrained／SwitchCandidateRejectedKeepsA）。**宿主级回归钉住缺口移交路线 A**：已打开会话态触发新建项目→呈现切换确认而非进程退出的 GUI 断言用例（落点 ui/contract_test——本批边界红线禁碰 ui 单元文件，登记移交不实施）。project 侧零缺陷：INV-SES-2 fail-fast 拒绝＝§5.1 契约行为（调用方错误 fail-fast 语义正确）。静默退出观测缺口已随本批 WP-24-T02 崩溃捕获链闭合（同型 INV-SES-2 逃逸此后留脱敏诊断文件而非无对话框退出——捕获装配于应用入口最先安装）。本批不改判状态——维持 open 待所有者宿主复验（既有治理批注记口径不变）。〔并入注记 2026-10-12：所有者宿主复验已通过（redesign-main 1ba72a89 翻 fixed）——前句『维持 open』条款由该翻牌取代，本批核查证据（修复在位实证/路线 A 回归钉住缺口）继续有效。〕"
     },
     {
       "id": "F-553",
@@ -7128,11 +7133,12 @@
       "id": "F-728",
       "source": "acc/wp-16-t16/1 验收记录 §10 建议级 S-2（origin/acc/wp-16-t16/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t16-20261011.md，记录提交 4e426de379f5201d18cec319d9d0727ae4959829，验收日期 2026-10-11，verdict=pass）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "WP-16-T16 验收 S-2（遗留观察）：gate-all.ps1 在 ui 单元 sdurws_ird_ui_test 的 ctest 执行处挂住逾 1 小时（实施提交如实登记未跑完、以 ird_gates 零命中为口径；T15 批同现象同口径）——非本任务引入的环境遗留现象，记录建议治理批定位该 ctest 挂住并闭环",
       "owner": "治理/门禁所有者",
-      "resolution": "治理批 2026-10-12 勘误：本条此前按 fixed 登记属误标——gate-all 第 4 步 fresh 冒烟树补跑（traceability/builds/gate-all-step4-makeup/，提交 1c586a1d）只覆盖配置＋构建两步（留痕 README 自述不含任何 ctest），而 gate-all.ps1:175-184 的第 4 步完整实现含逐目标 ctest，ui ctest 挂住的定位与闭环并未发生，fixed 与留痕直接矛盾。勘误口径：gate-all 第 4 步 fresh 冒烟树能力已由治理批 2026-10-12 补跑消账（traceability/builds/gate-all-step4-makeup/）；第 3 步/逐目标 ctest 的 ui 挂住定位与闭环仍 open，待专项。"
+      "resolution": "治理批 2026-10-12 勘误：本条此前按 fixed 登记属误标——gate-all 第 4 步 fresh 冒烟树补跑（traceability/builds/gate-all-step4-makeup/，提交 1c586a1d）只覆盖配置＋构建两步（留痕 README 自述不含任何 ctest），而 gate-all.ps1:175-184 的第 4 步完整实现含逐目标 ctest，ui ctest 挂住的定位与闭环并未发生，fixed 与留痕直接矛盾。勘误口径：gate-all 第 4 步 fresh 冒烟树能力已由治理批 2026-10-12 补跑消账（traceability/builds/gate-all-step4-makeup/）；第 3 步/逐目标 ctest 的 ui 挂住定位与闭环仍 open，待专项。【2026-10-12 治理批（pipeline5/redesign-main）专项修复】挂起类闭环＝gate-all 第 3/4 步逐目标 ctest 统一收口 Invoke-GateTest：①ctest -V --timeout（新参 -CTestTimeoutSec，默认 600 s）——挂住进程有界终止、不再无限期阻塞门禁；②ctest -V 全量输出落盘运行日志目录（%TEMP%/ird-gate-logs-<PID>-<时点>/，失败保留、成功自清理——F-628 同族口径）；③超时（输出含 ***Timeout）后自动直跑对照：exe 路径自 CTestTestfile Release 分支 add_test 行解析（Find-TestExePath），-DirectTimeoutSec（默认 300 s）有界等待、挂住即强杀；对照 exit 0 → FAIL＋\"测试本体绿、ctest 上下文缺陷\"归因（不静默放行——ctest 为 CI/验收规范执行通道）；对照亦挂住 → 强杀＋FAIL＋DLL/环境归因；对照 0xC0000135 族且 python313.dll 不可达 → F-715 SKIP＋归因口径不变；其余非零 → FAIL＋双退出码。分支序要点：***Timeout 判定先于退出码 8 的 F-715 SKIP——实测超时击杀的 ctest 退出码同为 8（见下证据），顺序错置会把超时误判为 DLL 缺失 SKIP。根因定位（沿 F-789 证据链 audit/tkt12-investigation/）：挂起＝加载期 DLL 缺失（python313.dll→zlib.dll 依赖未入 PATH）在交互会话呈模态等待，TK-T12 的 PATH 前置注入已消除常见成因，本修复对残余挂起类给出有界失败＋归因＋全量日志的确定性出口。验证：gate-all.ps1 pwsh 解析器零语法错误；ctest 新旗标实测（既有集成树、零编译）——core_test -V --timeout 600 正常通过（EXIT=0，0.52 s）；ui_test --timeout 1 有界击杀（EXIT=8、墙钟 1 s、日志含 ***Timeout——超时机制与检测标记双重实证）；Find-TestExePath 对 ui 目录两测试均解析出正确 Release exe 路径。如实注明：Invoke-GateTest 的端到端组装留痕待下次全量 gate-all 产品构建时产出（本治理批零产品构建，构建面未执行）。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-729",
@@ -7790,19 +7796,21 @@
       "id": "F-799",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #23（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedBy": "F-746①（audit-r2d1 批 0e7cb3111——行程面转值面＋断言面无值态统一阻断）顺带修复＋缺陷修复批A FIX-T1 补混合场景回归钉",
       "registeredAt": "2026-10-12",
       "title": "modeling `CommandHandlers.cpp:1179/1215/1229` 断言阻塞项检查晚于行程校验：assertJointLimitIntervals 产 blockers 后不返回，evaluateTravelLimits 对缺已确认工作范围的 Continuous 抛 std::logic_error 逃逸——「有界 Revolute＋未确认范围 Continuous」候选应走 RejectedHardAssert 值轨",
-      "resolution": "处置建议：含未确认范围 Continuous 的候选先按 blockers 走 RejectedHardAssert 值轨，行程校验不得先于 blockers 检查抛未捕获 logic_error；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：含未确认范围 Continuous 的候选先按 blockers 走 RejectedHardAssert 值轨，行程校验不得先于 blockers 检查抛未捕获 logic_error；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）。【2026-10-12 缺陷修复批A 核实翻牌（FIX-T1）】立卡所据的 logic_error 逃逸路径已由 F-746①（audit-r2d1 批，早于本条立卡的 2026-10-12 复核轮）顺带消除：evaluateTravelLimits 对缺范围 Continuous 转值面 EvaluationFailed（不抛），assertJointLimitIntervals 对无值态统一产 blocker——「合法有界 Revolute＋未确认范围 Continuous」候选经行程校验段达 EvaluationFailed→RejectedHardAssert 值轨（evalDiags＋blockers＋warnings 全量传导），值轨出口唯一。本批补混合场景回归钉 MdlCommandPrepare.MixedBadBoundsRevoluteAndUnconfirmedContinuous_RejectsOnValueTrack（红阶段如实登记：缺陷已不在，用例直接绿——修复前置落位非本批代码改动），连同断言域既有用例回归全绿（modeling_test 375/375）——翻 fixed。Revolute 限位非法载荷在 decode 层 fail-fast（构不成到达断言域的载荷），故回归钉取合法限位 Revolute 保证行程校验段必达。"
     },
     {
       "id": "F-800",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #24（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedBy": "缺陷修复批A FIX-T1（StructureEdit.cpp 六轴重置 defaultTcp 同拍 reset）",
       "registeredAt": "2026-10-12",
       "title": "modeling `StructureEdit.cpp:313-315` 六轴重置清 toolRefs/sceneRefs/poseSetRef 但不清 defaultTcp（RobotDesign.hpp:537 optional<TcpRef>，:622 I-MDL-9「defaultTcp∈toolRefs」）——重置后悬挂引用可入库，与自身注释「不静默保留悬挂引用」直接矛盾",
-      "resolution": "处置建议：defaultTcp 一并 reset（或按 I-MDL-9 同步挂新链校验拒绝）；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：defaultTcp 一并 reset（或按 I-MDL-9 同步挂新链校验拒绝）；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）。【2026-10-12 缺陷修复批A 修复落地（FIX-T1）】取处置建议第一出路：六轴重置链引用面清空同拍 defaultTcp.reset()（与 poseSetRef 同语义——默认 TCP 是链的派生选择，工具重挂后须用户重设；注释与 recordChange 摘要同步扩列「默认 TCP」）。复现测试先行：StructureEditTest.ResetToSixAxis_ClearsDefaultTcp_WithChainRefs 修复前真实红（defaultTcp 残留断言失败）、修复后绿；modeling_test 375/375 全绿零回归——翻 fixed。"
     },
     {
       "id": "F-801",
@@ -8074,7 +8082,7 @@
       "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "DTB 文档版本双行并存与多重 v0.62 语义：头部同时存在 v0.63（TK-T12 批）与 v0.61（legacy state.json 批）两个『文档版本』行，且不同批次链文各自引用语义不同的 v0.62（O-09 批/WP-10-T05 批）——版本链冲突",
-      "resolution": "合入收尾批收敛为单行链：并行行删除，O-09 批登记并入 v0.64 头行（v0.64→v0.63→v0.62〔WP-10-T05 立项〕→v0.61〔legacy〕链序唯一递减、语义无歧义）；后续批次登记一律改写头行单链、不新增并行行。",
+      "resolution": "合入收尾批收敛为单行链：并行行删除，O-09 批登记并入 v0.64 头行（v0.64→v0.63→v0.62〔WP-10-T05 立项〕→v0.61〔legacy〕链序唯一递减、语义无歧义）；后续批次登记一律改写头行单链、不新增并行行。〔并入注记 2026-10-12：FIX-T2 批并入后其 v0.65/v0.64A/v0.63/v0.61 四行按原文保留（并行行形态存续，但版本号经 v0.66 顺延重登后已无歧义）；并行行形态的终局单链收敛归后续治理批。〕",
       "fixedAt": "2026-10-12"
     },
     {

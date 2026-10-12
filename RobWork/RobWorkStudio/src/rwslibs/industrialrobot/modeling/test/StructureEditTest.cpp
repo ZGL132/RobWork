@@ -226,4 +226,26 @@ TEST(StructureEditTest, ResetToSixAxis_RebuildsChain_PreservesNonChainFace)
     EXPECT_TRUE(ws.design.sceneRefs.empty());
 }
 
+/// F-800 复现（缺陷修复批A FIX-T1——audit/round2-20261010 一轮条目 #24）：
+/// 六轴重置前 defaultTcp 已设（指向工具 T 的某 tcp 键）→重置清空 toolRefs
+/// 时 defaultTcp 若不同拍清除，即残留"指向已不在引用表中的工具"的悬挂
+/// 引用（I-MDL-9 defaultTcp∈toolRefs 被静默破坏，且悬挂候选可随 prepare
+/// 入库）——期望与 toolRefs/sceneRefs/poseSetRef 同进退同拍清除。
+TEST(StructureEditTest, ResetToSixAxis_ClearsDefaultTcp_WithChainRefs)
+{
+    ModelingWorkingSet ws = makeSeedWorkset();
+    // defaultTcp 指向工具 T（工具本体在部件视图保留，此处只造引用面事实
+    // ——I-MDL-9 的不变量对象是根对象内的引用表一致性）。
+    const core::ObjectId toolOid = core::ObjectId::generate();
+    ws.design.toolRefs.push_back(toolOid);
+    ws.design.defaultTcp = TcpRef{toolOid, std::string("tcp-1")};
+
+    const std::optional<StructureEditError> err = resetToSixAxis(ws);
+    ASSERT_FALSE(err.has_value());
+    ASSERT_EQ(ws.design.joints.size(), 6u);
+    EXPECT_TRUE(ws.design.toolRefs.empty());
+    // F-800 修复面：defaultTcp 随链引用清空——悬挂引用不可入库。
+    EXPECT_FALSE(ws.design.defaultTcp.has_value());
+}
+
 }  // namespace sdurws::ird::modeling::test

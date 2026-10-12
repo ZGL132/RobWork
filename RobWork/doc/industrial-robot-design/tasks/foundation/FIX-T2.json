@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "FIX-T2",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "采样点着色功能批——F-495 收官（样本级点击定位：面板采样结果清单→三维单点高亮）",
+  "status": "done",
+  "dependsOn": [],
+  "requirements": [
+    "F-495 六项诉求的最后一项兑现（全库唯一 open blocking 收官批）：采样点三态着色/达标颜色/覆盖率映射/颜色图例/统一供色五项已由 UI-T64/T65 交付，本批兑现「校验项点击定位采样点」的样本级半区——面板采样结果清单点击→三维单点高亮（建议语义「蓝框=当前选中」）",
+    "UX-02（工程用语——样本清单行呈现状态中文词表＋坐标摘要，零内部名泄漏）",
+    "ERR-01（不伪造——无评估结果时清单诚实空态「尚未执行覆盖评估」，高亮功能如实不可用；未通过样本行携带原因文本直投）"
+  ],
+  "designRefs": [
+    "traceability/findings.json#F-495",
+    "units/ui.md#13",
+    "units/requirements.md#4.6",
+    "development-task-breakdown.md#2.11",
+    "development-task-breakdown.md#2.15",
+    "traceability/builds/fix-t1/README.md"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**（View3DPreviewContract 契约追加＋HostView3DPreviewBackend 渲染高亮＋UiPlugin 缝与合并段＋ui_test/ui_gui 用例）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**（面板样本结果清单＋高亮请求缝＋requirements_gui 用例）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**（原则上零改动——执行器账面 KinChannelSampleRecord 数据面已全；如实施中发现账面缺字段，按 kinematics.md 增量修订后最小追加）",
+    "RobWork/doc/industrial-robot-design/units/ui.md（契约面追加登记＋§13 本批行）",
+    "RobWork/doc/industrial-robot-design/units/requirements.md（面板面增量登记）",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md（如 kinematics 零改动则仅变更记录行登记零触碰事实）",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/FIX-T2.json",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（路线 B 辖域）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**（路线 B 辖域）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**（路线 B 辖域）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（路线 B 辖域）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**、trajectory/**、drivetrain/**、reporting/**、modeling/**、policy/**、evidence/**、core/**（非本批面）",
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改；三维高亮走 ird 预览通道自定义 Render，零框架改动）",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md（零需求语义变更）",
+    "scripts/ci、governance-log（路线 C）"
+  ],
+  "outputs": [
+    "契约追加（View3DPreviewContract.hpp View3DSampleGrid 表尾——UI-T65 追加纪律同款，缺省值零破坏旧渲染）：①std::vector<std::uint64_t> sampleIndices（逐点域样本号对齐表，与 samples 等长——空＝无对齐键，高亮诚实降级）；②std::optional<std::uint64_t> highlightedSampleIndex（当前高亮样本的域样本号；nullopt＝无高亮）；operator== 同步扩展",
+    "渲染高亮（HostView3DPreviewBackend）：SampleGridRender 消费高亮键——解析纯函数 resolveHighlightedPosition（sampleIndices×samples×键→世界系坐标，抽 ui_test 可编译面：命中/未命中/空对齐表/无键四路径）＋高亮点放大点尺寸＋蓝描边环（复用 palette::kRegionTintDefaultGl——F-495 建议语义「蓝框=当前选中」，零新增色值）",
+    "投影链（UiPlugin）：合并段 sampleIndices 透传（coverage->samples 逐点 sampleIndex）；新缝双向——bindSampleResultsSink（UiPlugin→面板：选中区域的样本结果行投递，KinChannelSampleRecord→requirements 投影行卡的翻译在 ui 装配层单点〔R-1/R-2 纪律——requirements 零 kinematics 头〕）＋setHighlightedSample（面板→UiPlugin：高亮键持有与对账门同拍清位——区域切换/快照失效清 nullopt；高亮变化整组重投 applyPreview〔Render 构造冻结——零渲染私有态旁路〕）",
+    "面板入口（requirements 区域页）：「采样结果」清单组——行＝样本号＋状态中文词表＋坐标摘要（m）＋未通过原因直投；点击行→高亮请求出口；无评估结果诚实空态；会话不可写只读呈现（清单为结果投影——只读天然形态）；RequirementsPanelWidget 增 SampleResultRow 投影结构与 setSampleResultsSink/bindSampleHighlightRequest 双缝（StationMarkerProjection 先例同款形态）",
+    "文档同步：ui.md 契约面追加登记＋§13 本批行；requirements.md 面板面增量；kinematics.md 变更记录行（零改动事实）；F-495 append 进展注（六项诉求全闭环——待宿主复验翻牌，本批不代翻）；DTB 版本行＋对应单元任务行",
+    "测试：ui_test（resolveHighlightedPosition 四路径＋View3DSampleGrid 等值含新字段）＋ui_gui（网关替身 highlightedSampleIndex/sampleIndices 透传断言——UI-T65 替身用例扩展）＋requirements_gui（样本清单行点击→高亮请求出口断言＋空数据诚实空态断言）；六套件回归全绿＋ird_gates 零新增＋validate 双 PASS；留痕 traceability/builds/fix-t2/"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test sdurws_ird_requirements_test sdurws_ird_ui_gui_test sdurws_ird_requirements_gui_test sdurws_ird_modeling_test sdurws_ird_modeling_gui_test",
+    "ctest 或六套件 exe 直跑全绿（worktree 树以 exe 直跑为准——S-2 基线既成口径）",
+    "cmake --build build --config Release --target ird_gates（零新增）",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/FIX-T2.json"
+  ],
+  "acceptance": [
+    "功能闭环面：面板采样结果清单行点击→三维对应采样点高亮（蓝描边放大）——ui_test 纯函数四路径＋ui_gui 透传断言＋requirements_gui 点击出口断言三段具名用例钉住；高亮键跨区域过滤保持对齐（P-FIX-4）",
+    "诚实降级面：无对齐键/无评估结果/快照失效三态下高亮功能不可用且呈现诚实（空态文案/零虚构）——具名用例钉住",
+    "契约面纪律：View3DSampleGrid 追加字段缺省值语义零破坏（既有 View3D 预览用例零回归——UI-T65 ①同款验收面）；R-1/R-2 红线（requirements 零 kinematics 私有头/零 kinematics include——ird_gates 契约面零新增）",
+    "F-495 账面：进展注 append（六项诉求全闭环），status 维持 open 待宿主复验——本批不代翻",
+    "回归门槛：六套件全绿（XML＋ird-test-report 双 report 留痕）＋ird_gates 零新增＋validate 双 PASS；批外单元零 diff（project/io/diagnostics/runtime/modeling/policy/evidence/core/selection/trajectory/drivetrain/reporting）"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-FIX-4",
+    "P-FIX-5"
+  ],
+  "branch": "fix-t2",
+  "note": "采样点着色功能批（F-495 收官追加批——2026-10-12 立项，路线 A；用户指令：F-495 是全库最后一条 open blocking〔origin/redesign-main @ bb0bc4ef 机器核实 1 条〕）。背景核实：F-495 六项诉求中五项已由 UI-T64（执行通道）＋UI-T65（三态着色/覆盖率映射/统一供色/图例）交付且验收 pass 合入；唯一剩余＝「校验项点击定位采样点」的样本级半区（UI-T65 诚实边界明文「样本级定位随诊断素材粒度扩展留后续」——域 Readiness 诊断不产样本级条目，校验页无样本行可点）。本批以呈现侧结果清单绕行兑现：区域页「采样结果」清单（数据源＝执行器账面投影而非域诊断——零 Readiness 语义改动）＋点击→三维单点高亮，F-495 六项全闭环后宿主复验关账。knownPitfalls 复现/陷阱展开：P-FIX-4＝样本索引对齐陷阱——合并段按区域过滤后 View3DSampleGrid.samples 数组下标≠域 sampleIndex（多区域结果切片偏移），高亮键必须用域 sampleIndex＋逐点对齐表 sampleIndices（复现：两区域评估后切第二区域，按下标高亮必错位——designRefs 含 fix-t1 留痕的同源教训）；P-FIX-5＝渲染高亮的整组替换语义——SampleGridRender 构造冻结（UI-T52 既有形态），高亮变化必须经 applyPreview 整组重投，禁止渲染私有态旁路（复现：只改渲染成员不动契约面→高亮不生效或半新半旧）。branch 字段按 CCP §3 句法登记名义分支 fix-t2；实际实施在流水线分支 pipeline3/redesign-main（worktree build/pipeline-wt3——fix-t1 同款），合入 origin/redesign-main 由验收 pass 后执行。interUnit=true 判定＝ui（契约/渲染/装配）＋requirements（面板/缝）双单元代码面＋kinematics 消费面（预期零改动）。F-495 账面处置＝进展注 append、不代翻（宿主 GUI 复验动作归所有者——fix-t1 同款纪律）。DTB 对应行＝WP-10-T80（≙本批 ui 面）＋WP-14-T13（≙requirements 面板面）。status=ready 待独立评审放行。【验收 pass 后合入段置 done。】【合入收尾 2026-10-12】实施提交 f678682b（立卡）＋91cda264（实施批）；独立验收 attempt 1 verdict=pass（acc/fix-t2/1 @b0392871——协议 4.1~4.11 全过零阻断：diff 面 38 文件全允许面／六套件亲跑 375-214-273-42-49-81 与在库 XML 机器比对全 MATCH／变异两处命中复绿／ird_gates 零命中／validate 双 PASS／F-495 纯追加维持 open）；验收记录按 SHA 先并（Merge acc/fix-t2/1）；建议级留档＝QT offscreen 环境面（后续会话 ui_gui 用默认 windows 平台）＋变异②指令预设形态为等价变换未红（兜底变异命中，非实施缺陷）。——ready→done。"
+}

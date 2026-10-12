@@ -430,6 +430,13 @@ private:
     std::vector<ui::View3DFrameMarker> m_reqMarkers;
     std::optional<ui::View3DBoxOutline> m_reqBox;
     std::optional<ui::View3DSampleGrid> m_reqGrid;
+    /// 当前采样高亮键（FIX-T2——F-495 样本级定位：面板清单行点击的域
+    /// 样本号；合并投递时置入 View3DSampleGrid.highlightedSampleIndex，
+    /// 渲染层解析未命中＝诚实不亮。区域切换/会话拆除清位〔对账同拍〕）。
+    std::optional<std::uint64_t> m_reqHighlightedSample;
+    /// 高亮对账的区域锚（FIX-T2——区域切换清位对比键：新区域投影到达
+    /// 且锚不同＝上一区域的高亮请求失效，同拍清键防跨区域串亮）。
+    core::ObjectId m_reqHighlightedRegionAnchor;
     /// 三维事件过滤根（生产＝RWStudioView3D——过滤器挂其本体与全部
     /// 后代 QWidget，isAncestorOf 判定事件归属；未取到＝上游拾取不挂
     /// ——诚实降级面）。

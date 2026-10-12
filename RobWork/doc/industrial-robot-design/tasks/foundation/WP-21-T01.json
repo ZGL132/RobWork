@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-21-T01",
+  "unit": "delivery",
+  "masterWp": "WP-H",
+  "title": "冻结 P-04 扰动/鲁棒性协议（与需求所有者协同）",
+  "status": "planned",
+  "dependsOn": [],
+  "requirements": [
+    "P-04",
+    "OPT-09"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#24",
+    "units/optimization.md#15",
+    "development-task-breakdown.md#2.22"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "requirements-freeze",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-21-T01.json"
+  ],
+  "branch": "wp21-t01",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-28",
+    "P-OPT-7"
+  ],
+  "acceptance": [
+    "P-04 冻结产物（三模式采样规则/判定阈值/适用边界）并入 REQUIREMENTS 附录 C 修订并留痕；未冻结不得启用联合优化（v1.13 决议——DTB §4 O-28 已登记延期至本任务）；本文不私设协议数值（DTB 行禁止项）；误淘汰审计 95% 置信上界计算方法随本批一并裁决（units/optimization.md §16.3 P-OPT-7 点名 WP-21-T01）"
+  ],
+  "note": "DTB §2.22 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"无未满足前置（OPT-D 启用前必须完成——硬前置）\"——O-28（P-04 已正式延期至 OPT-D 启用前）与本卡 knownPitfalls 挂靠；P-OPT-7（误淘汰审计置信上界计算式）按 optimization 卡 §16.3 裁决者列随本批裁决。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+}

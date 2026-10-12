@@ -23,11 +23,15 @@
 #include "HostView3DPreviewBackend.hpp"
 
 #include "QtTextBillboard.hpp"  // Qt 纹理化文本 billboard（F-556——标签替代承载，同单元共享件）
+#include "SampleHighlight.hpp"  // 高亮键解析纯函数（FIX-T2——F-495 样本级定位）
 
 #include <sdurws/ird/ui/UiTheme.hpp>  // 采样状态色词表（UI-T65——F-495 统一供色单点）
 
 #include <QColor>          // 标签字色现取（词表 hex → Qt 值——纹理缓存键）
 #include <QOpenGLContext>  // 当前 GL 上下文（文本层现取——QtTextBillboard 消费面）
+
+#include <cmath>      // 高亮描边环圆周参数化（std::cos/std::sin——FIX-T2）
+#include <optional>   // 高亮位置解析返回形态（SampleHighlight.hpp 同面）
 
 #include <rw/graphics/DrawableNode.hpp>
 #include <rw/graphics/Render.hpp>
@@ -228,7 +232,13 @@ class SampleGridRender final : public Render
         : m_samples(grid.samples),
           m_states(grid.cellStates),
           m_gridLines(grid.gridLines)
-    {}
+    {
+        // 高亮位置构造期解析一次（FIX-T2——纯函数 SampleHighlight.hpp：
+        // 命中/未命中/空对齐表/无键四路径，未命中＝nullopt 诚实不亮）。
+        // Render 构造冻结纪律（UI-T52）：投影更新＝整组重建 drawable，
+        // 高亮随契约面走零私有态旁路（P-FIX-5）。
+        m_highlighted = resolveHighlightedPosition(grid);
+    }
 
     void draw(const DrawableNode::RenderInfo& info,
               DrawableNode::DrawType type, double alpha) const override
@@ -260,12 +270,55 @@ class SampleGridRender final : public Render
         }
         glEnd();
         glPointSize(1.0f);
+        // 高亮样本叠加层（FIX-T2——"蓝框=当前选中"：放大点＋蓝描边环，
+        // 蓝色＝区域框缺省档词表同源（F-495 建议语义零新增色值）；
+        // nullopt＝无高亮零产出——诚实空态不画占位）。
+        if (m_highlighted.has_value()) {
+            const Vector3D<double>& h = *m_highlighted;
+            // 放大点芯（约 3 倍点径——与 5px 常规点在视觉上明确分层）。
+            glPointSize(14.0f);
+            glColor4fv(ui::palette::kRegionTintDefaultGl);
+            glBegin(GL_POINTS);
+            glVertex3d(h[0], h[1], h[2]);
+            glEnd();
+            glPointSize(1.0f);
+            // 蓝描边环（选中框语义的采样点形态——三轴小环近似"框"：
+            // 世界系半径 0.06 m 与采样格间距同量级，工位级视距可辨）。
+            glColor4f(ui::palette::kRegionTintDefaultGl[0],
+                      ui::palette::kRegionTintDefaultGl[1],
+                      ui::palette::kRegionTintDefaultGl[2],
+                      static_cast<float>(alpha));
+            glLineWidth(2.0f);
+            constexpr double kHighlightRingRadius = 0.06;  // m——环半径
+            for (int axis = 0; axis < 3; ++axis) {
+                glBegin(GL_LINE_LOOP);
+                for (int step = 0; step < 24; ++step) {
+                    // 圆周参数化（24 段近似圆——固定管线无 GLU 依赖；
+                    // 三正交平面各一环＝三轴环近似球框）。
+                    const double theta = 2.0 * 3.14159265358979323846
+                                       * static_cast<double>(step) / 24.0;
+                    const double c = std::cos(theta) * kHighlightRingRadius;
+                    const double s = std::sin(theta) * kHighlightRingRadius;
+                    Vector3D<double> p = h;
+                    switch (axis) {
+                    case 0: p[1] += c; p[2] += s; break;  // XY 平面环
+                    case 1: p[0] += c; p[2] += s; break;  // XZ 平面环
+                    default: p[0] += c; p[1] += s; break;  // YZ 平面环
+                    }
+                    glVertex3d(p[0], p[1], p[2]);
+                }
+                glEnd();
+            }
+            glLineWidth(1.0f);
+        }
     }
 
   private:
     std::vector<Vector3D<double>> m_samples;  ///< 采样点（世界系——构造冻结）
     std::vector<View3DCellState> m_states;    ///< 着色态（空＝中性——诚实空态）
     std::vector<std::pair<Vector3D<double>, Vector3D<double>>> m_gridLines;  ///< 格线段（UI-T52——构造冻结）
+    /// 高亮样本位置（FIX-T2——构造期解析；nullopt＝无高亮/未命中诚实不亮）。
+    std::optional<Vector3D<double>> m_highlighted;
 };
 
 }  // namespace

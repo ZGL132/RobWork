@@ -361,7 +361,8 @@ add_executable(sdurws_ird_ui_test
     test/SelectionServiceTest.cpp   # UI-T21——选择服务：写入口/L2/L3 四分支/INV-B4/订阅
     test/IndustrialProjectTreeModelTest.cpp   # UI-T21——树模型：五分组封闭/注册协议/重建四拒绝/定位
     test/PropertyInspectorModelTest.cpp       # UI-T22——检查器模型：注册纪律/L1 刷新/D5D6 分野/激活编排
-    test/CrashCaptureTest.cpp)      # WP-24-T02——崩溃捕获发射核心模型面（六段组装/降级/防重入；零 Qt）
+    test/CrashCaptureTest.cpp      # WP-24-T02——崩溃捕获发射核心模型面（六段组装/降级/防重入；零 Qt）
+    test/SampleHighlightTest.cpp)   # FIX-T2——F-495 样本级定位：高亮键解析四路径/契约等值含新字段/诚实降级
 
 # WP-24-T02 增列：被测 TU 同源编入（发射核心 emitCrashReportTo 与产品同一
 # 翻译单元——HostCompilePort 同款"同源码编入测试目标"先例形态；设施零 Qt，

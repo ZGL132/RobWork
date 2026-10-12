@@ -23,6 +23,22 @@
 #   调用方（CI/本地提交前自查）须按此预算预留时长，勿按"静态扫描"预期
 #   设超时；只要静态门禁时请直接用第 2 步的 ird_gates 目标单跑。
 #
+# ★ ctest 挂起防线（F-728/F-789 专项，2026-10-12 治理批）：历史上 ui 单元
+#   sdurws_ird_ui_test 在 ctest 上下文曾整进程挂住（加载期 DLL 缺失对话框
+#   等待交互，CPU≈16ms 冻结逾 1 小时——F-728 实测记录），第 3/4 步的逐目标
+#   ctest 一旦遇挂住即无限期阻塞整条门禁。现每目标 ctest 执行统一收口到
+#   Invoke-GateTest：①ctest -V --timeout <CTestTimeoutSec>（默认 600 s）——
+#   挂住被有界终止、超时即失败；②全量输出（-V）落盘到运行日志目录
+#   （$env:TEMP/ird-gate-logs-<PID>-<时点>/，失败保留现场、成功自清理——
+#   F-628 同族纪律）；③超时后自动做"同 exe 直跑对照"（ctest 退出包装层、
+#   直接执行 add_test 登记的可执行文件——F-789 调查实证直跑可区分"测试
+#   本体缺陷"与"ctest 上下文缺陷"）：直跑通过＝登记 FAIL＋ctest 上下文归因
+#   （不静默放行——ctest 是 CI/验收的规范执行通道，其缺陷须闭环）；直跑
+#   亦挂住＝强杀后 FAIL＋DLL/环境归因；直跑 0xC0000135 族且 python 前置
+#   不可达＝维持 F-715 SKIP＋归因口径不判 FAIL。ctest 本身无并行参数
+#   （逐目标串行、单次单测试），挂起风险面只剩"单测试进程不退出"一类，
+#   由 ①的有界超时兜底。
+#
 # 用法（仓库根或任意子目录）：
 #   pwsh -File RobWork/scripts/industrialrobot/gate-all.ps1
 #   可选参数：
@@ -51,6 +67,11 @@
 #                         buildsystems/vcpkg.cmake），从根上消除对 junction
 #                         的依赖。主仓或已建 junction 的树不传参时缺省行为
 #                         与历史版本完全一致。
+#     -CTestTimeoutSec <秒> 逐目标 ctest 超时（F-728 防线，默认 600——健康目标
+#                         实测秒级完成〔ui_test 约 2.7 s〕，600 s 已是数量级
+#                         余量；CI 侧按带宽收紧时调小即可）
+#     -DirectTimeoutSec <秒> ctest 超时后"直跑对照"的进程等待上限（默认 300）；
+#                         对照挂住即强杀（对加载期对话框挂起不再无限等待）
 #
 # 退出码：0＝全部门禁与测试通过；非 0＝存在失败项（逐项输出定位）。
 # =====================================================================
@@ -62,7 +83,13 @@ param(
     # vcpkg toolchain 显式供给（F-628）：空串＝未传参，回落仓库根推定路径（见下方赋值处）
     [string]$Toolchain = "",
     # python 运行库目录显式供给（F-715/TK-T12）：空串＝未传参，走探测序列（见下方赋值处）
-    [string]$PythonDir = ""
+    [string]$PythonDir = "",
+    # 逐目标 ctest 超时秒数（F-728 防线）：挂住的目标在该时限内被 ctest 有界终止，
+    # 不再无限期阻塞整条门禁；默认 600 s（健康目标秒级完成，余量一个数量级以上）
+    [int]$CTestTimeoutSec = 600,
+    # ctest 超时后"直跑对照"的进程等待上限秒数（F-728 对照面）：对照挂住即强杀，
+    # 对加载期对话框挂起同样不再无限等待
+    [int]$DirectTimeoutSec = 300
 )
 $ErrorActionPreference = 'Continue'   # 门禁脚本要收集全部失败再汇总，不在第一个错误中断
 
@@ -81,6 +108,14 @@ if (-not (Test-Path "$RepoRoot/RobWork/scripts/industrialrobot")) {
 }
 if (-not $BuildDir) { $BuildDir = "$RepoRoot/build" }
 $IndustrialSrc = "$RepoRoot/RobWork/RobWorkStudio/src/rwslibs/industrialrobot"
+
+# ---- 运行日志目录（F-728 防线②：ctest -V 全量输出落盘） ----
+# 目录名带 PID＋时点（F-628 同族唯一化口径——多会话并行互不覆盖/互不删除）；
+# 成功后随冒烟树一并自清理，失败保留现场供排查（汇总段处理）。零仓库污染：
+# 日志只落 TEMP，不写仓库树。
+$script:LogDir = Join-Path $env:TEMP ('ird-gate-logs-{0}-{1}' -f $PID, (Get-Date -Format 'yyyyMMdd-HHmmss'))
+New-Item -ItemType Directory -Force $script:LogDir | Out-Null
+Write-Host "  [运行日志] $script:LogDir（ctest -V 全量输出落盘——F-728 防线；失败保留、成功自清理）" -ForegroundColor DarkCyan
 # vcpkg toolchain 供给（F-628）：有参用参（worktree 场景直引主仓 vcpkg 绝对
 # 路径，消除 junction 依赖）；无参回落既有推定路径 <仓库根>/vcpkg/...（主仓或
 # 已建 junction 的树，缺省行为不变）。赋值必须在仓库根自检**之后**——回落路径
@@ -193,6 +228,86 @@ function Find-TestTargets([string]$Root) {
     return $map
 }
 
+# ---- 直跑对照的可执行文件路径解析（F-728 防线③数据源） ----
+# add_test 行携带 CMake 生成期已解析的绝对 exe 路径（含多配置分支），按
+# CTEST_CONFIGURATION_TYPE 的 Release 分支取值——直跑与 ctest -C Release
+# 严格同物，保证对照结论可比。解析不到（罕见：文件损坏/目标无产物）返回
+# $null，由调用方给出可行动的 FAIL 文案而不是猜测路径。
+function Find-TestExePath([string]$RegDir, [string]$TestName) {
+    $file = Join-Path $RegDir 'CTestTestfile.cmake'
+    if (-not (Test-Path $file)) { return $null }
+    # Release 配置分支识别：CMake 生成的行形如
+    #   ... MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$" ...
+    $relPat = '\(\[Rr\]\[Ee\]\[Ll\]\[Ee\]\[Aa\]\[Ss\]\[Ee\]\)'
+    $addPat = 'add_test\(' + [regex]::Escape($TestName) + '\s+"([^"]+)"'
+    $config = ''
+    foreach ($ln in (Get-Content $file)) {
+        if ($ln -match 'CTEST_CONFIGURATION_TYPE MATCHES') {
+            $config = if ($ln -match $relPat) { 'Release' } else { 'Other' }
+            continue
+        }
+        if ($config -eq 'Release' -and $ln -match $addPat) { return $Matches[1] }
+    }
+    return $null
+}
+
+# ---- 逐目标测试执行统一收口（F-728 防线本体，第 3/4 步共用） ----
+# 流程：ctest -V --timeout <CTestTimeoutSec>（全量输出 Tee 落盘、屏显尾 4 行）
+#   ① exit 0 → PASS（原有口径不变）；
+#   ② 输出含 ***Timeout（挂住被有界终止）→ 直跑对照分诊：
+#       - exe 解析不到 → FAIL＋指路日志（不猜路径、不静默）；
+#       - 对照挂住（超过 -DirectTimeoutSec）→ 强杀＋FAIL（DLL/环境缺陷类）；
+#       - 对照 exit 0 → FAIL＋"测试本体绿、ctest 上下文缺陷"归因（F-728 口径——
+#         不静默放行：ctest 是 CI/验收的规范执行通道，其缺陷须登记闭环）；
+#       - 对照 0xC0000135 族且 python 前置不可达 → SKIP＋归因（F-715 口径不变）；
+#       - 对照其他非零 → FAIL＋双方退出码。
+#   ③ 非 0 且非超时：维持原有分支——0xC0000135 族（ctest 包装实测退出码 8）且
+#      python 不可达 → SKIP＋归因；其余 FAIL（退出码透传）。
+function Invoke-GateTest([string]$StepLabel, [string]$TestName, [string]$RegDir) {
+    $ctestLog = Join-Path $script:LogDir ("{0}-{1}-ctest.log" -f $StepLabel, $TestName)
+    & ctest --test-dir $RegDir -C Release -R "^$TestName`$" -V --timeout $CTestTimeoutSec 2>&1 |
+        Tee-Object -FilePath $ctestLog | Select-Object -Last 4 | Write-Host
+    if ($LASTEXITCODE -eq 0) { Ok "$StepLabel $TestName"; return }
+
+    $ctestOut = (Get-Content $ctestLog -Raw -ErrorAction SilentlyContinue)
+    if ($ctestOut -match '\*\*\*Timeout') {
+        # 挂住分支：ctest 已按超时杀掉测试进程，做直跑对照分诊
+        $exe = Find-TestExePath $RegDir $TestName
+        if (-not $exe -or -not (Test-Path $exe)) {
+            Fail "$StepLabel $TestName" "ctest 超时（挂住已终止），直跑对照不可达：CTestTestfile 未解析到 exe（$RegDir）——日志 $script:LogDir"
+            return
+        }
+        $outLog = Join-Path $script:LogDir ("{0}-{1}-direct.log" -f $StepLabel, $TestName)
+        $errLog = Join-Path $script:LogDir ("{0}-{1}-direct.err.log" -f $StepLabel, $TestName)
+        Write-Host "  [F-728 对照] ctest 超时——同 exe 直跑对照：$exe" -ForegroundColor Yellow
+        $p = Start-Process -FilePath $exe -WorkingDirectory $RegDir -NoNewWindow -PassThru `
+                -RedirectStandardOutput $outLog -RedirectStandardError $errLog
+        if (-not $p.WaitForExit($DirectTimeoutSec * 1000)) {
+            # 对照也挂住：强杀（加载期对话框挂起不再无限等待）
+            try { $p.Kill(); $p.WaitForExit(5000) | Out-Null } catch { }
+            Fail "$StepLabel $TestName" "ctest 超时（挂住已终止）且 exe 直跑对照亦挂住（已强杀）——DLL/环境缺陷类，日志 $script:LogDir"
+        }
+        elseif ($p.ExitCode -eq 0) {
+            Fail "$StepLabel $TestName" "ctest 超时（挂住已终止）但 exe 直跑对照通过（exit 0）——测试本体绿、ctest 上下文缺陷（F-728 口径），日志 $script:LogDir"
+        }
+        elseif (-not $script:PythonDll -and ($p.ExitCode -eq -1073741515 -or $p.ExitCode -eq 3221225781)) {
+            Skip "$StepLabel $TestName" "ctest 超时后直跑对照＝0xC0000135 族加载失败且 python313.dll 不可达（F-715 归因——补 -PythonDir/SDURWS_IRD_PYTHON_DIR 后重跑）"
+        }
+        else {
+            Fail "$StepLabel $TestName" "ctest 超时（挂住已终止）且直跑对照失败（退出码 $($p.ExitCode)）——日志 $script:LogDir"
+        }
+        return
+    }
+
+    if (-not $script:PythonDll -and ($LASTEXITCODE -eq -1073741515 -or $LASTEXITCODE -eq 8)) {
+        # 0xC0000135（有符号 -1073741515）＝加载期 DLL 缺失；ctest 包装同型失败
+        # 实测退出码 8（acc-audit-r2d-1 两轮留痕）——python 前置不可达时按
+        # F-715 口径 SKIP＋归因，不判 FAIL（验收/CI 不误伤）
+        Skip "$StepLabel $TestName" "python313.dll 不可达，目标无法在本环境执行（F-715 归因——补 -PythonDir/SDURWS_IRD_PYTHON_DIR 后重跑）"
+    }
+    else { Fail "$StepLabel $TestName" "ctest 失败（退出码 $LASTEXITCODE）——日志 $script:LogDir" }
+}
+
 # ---- 第 3 步：集成模式——逐测试目标构建＋执行 ----
 $intTests = Find-TestTargets "$BuildDir/RobWorkStudio/src/rwslibs/industrialrobot"
 if ($intTests.Count -eq 0) {
@@ -202,15 +317,8 @@ if ($intTests.Count -eq 0) {
     foreach ($name in ($intTests.Keys | Sort-Object)) {
         & cmake --build $BuildDir --config Release --target $name 2>&1 | Select-Object -Last 2 | Write-Host
         if ($LASTEXITCODE -ne 0) { Fail "集成构建 $name" "目标构建失败"; continue }
-        & ctest --test-dir $intTests[$name] -C Release -R "^$name`$" --output-on-failure 2>&1 | Select-Object -Last 4 | Write-Host
-        if ($LASTEXITCODE -eq 0) { Ok "集成测试 $name" }
-        elseif (-not $script:PythonDll -and ($LASTEXITCODE -eq -1073741515 -or $LASTEXITCODE -eq 8)) {
-            # 0xC0000135（有符号 -1073741515）＝加载期 DLL 缺失；ctest 包装同型失败
-            # 实测退出码 8（acc-audit-r2d-1 两轮留痕）——python 前置不可达时按
-            # F-715 口径 SKIP＋归因，不判 FAIL（验收/CI 不误伤）
-            Skip "集成测试 $name" "python313.dll 不可达，目标无法在本环境执行（F-715 归因——补 -PythonDir/SDURWS_IRD_PYTHON_DIR 后重跑）"
-        }
-        else { Fail "集成测试 $name" "ctest 失败（退出码 $LASTEXITCODE）" }
+        # 测试执行统一收口（F-728 防线：ctest -V＋超时＋超时后直跑对照——函数内注释）
+        Invoke-GateTest -StepLabel "集成测试" -TestName $name -RegDir $intTests[$name]
     }
 }
 
@@ -244,12 +352,8 @@ if ($LASTEXITCODE -ne 0) {
         foreach ($name in ($smokeTests.Keys | Sort-Object)) {
             & cmake --build $SmokeDir --config Release --target $name 2>&1 | Select-Object -Last 2 | Write-Host
             if ($LASTEXITCODE -ne 0) { Fail "冒烟构建 $name" "目标构建失败"; continue }
-            & ctest --test-dir $smokeTests[$name] -C Release -R "^$name`$" --output-on-failure 2>&1 | Select-Object -Last 4 | Write-Host
-            if ($LASTEXITCODE -eq 0) { Ok "冒烟测试 $name" }
-            elseif (-not $script:PythonDll -and ($LASTEXITCODE -eq -1073741515 -or $LASTEXITCODE -eq 8)) {
-                Skip "冒烟测试 $name" "python313.dll 不可达，目标无法在本环境执行（F-715 归因——补 -PythonDir/SDURWS_IRD_PYTHON_DIR 后重跑）"
-            }
-            else { Fail "冒烟测试 $name" "ctest 失败（退出码 $LASTEXITCODE）" }
+            # 测试执行统一收口（F-728 防线：ctest -V＋超时＋超时后直跑对照——函数内注释）
+            Invoke-GateTest -StepLabel "冒烟测试" -TestName $name -RegDir $smokeTests[$name]
         }
     }
     # 全绿才清理临时目录；失败保留现场（排查冒烟配置差异）
@@ -261,6 +365,10 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "`n================ gate-all 汇总 ================" -ForegroundColor Cyan
 $script:Results | ForEach-Object { Write-Host $_ }
 Write-Host "================================================"
+# 运行日志处置（F-728 防线②）：失败保留现场（含 ctest -V 与直跑对照全量输出）
+# 供排查/验收引用；成功自清理（与冒烟树同纪律，不在 TEMP 留垃圾）
+if ($script:Failed -gt 0) { Write-Host "运行日志保留: $script:LogDir" -ForegroundColor Yellow }
+else { Remove-Item -Recurse -Force $script:LogDir -ErrorAction SilentlyContinue }
 $total = $script:Results.Count; $pass = $total - $script:Failed
 Write-Host "结果: $pass/$total 通过"
 if ($script:Failed -gt 0) { Write-Host "存在失败项——本地一键门槛未过，禁止提交（契约 acceptance 1）" -ForegroundColor Red; exit 1 }

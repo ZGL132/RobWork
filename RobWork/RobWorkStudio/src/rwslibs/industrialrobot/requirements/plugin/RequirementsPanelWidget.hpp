@@ -30,6 +30,7 @@
 #define IRD_REQUIREMENTS_PLUGIN_REQUIREMENTSPANELWIDGET_HPP
 
 #include <array>
+#include <cstdint>
 #include <functional>
 #include <optional>
 
@@ -95,6 +96,22 @@ public:
     using RegionPreviewSink =
         std::function<void(const std::optional<RegionPreviewGeometry>&)>;
 
+    /// 采样结果清单行（FIX-T2——F-495 样本级定位的面板入口行卡；数据源
+    /// ＝执行器评估账面的区域切片投影，经装配层翻译（R-2 单点）——非域
+    /// 诊断，零 Readiness 语义）。
+    struct SampleResultRow {
+        std::uint64_t sampleIndex = 0;  ///< 域样本号（SampleRecord::sampleIndex 直投——高亮寻址键）
+        std::string stateText;  ///< 状态中文词表（"达标"/"不可达"/"数据不足"/"未运行"/"不适用"）
+        std::string positionText;  ///< 位置摘要（世界系坐标 m，三位小数——呈现面）
+        std::string reason;  ///< 未通过/未运行原因直投（ERR-01——缺省空＝无附加原因）
+    };
+    /// 采样结果清单出口（FIX-T2——装配层注入：区域选中/评估到账时投
+    /// 选中区域的样本行全集；空数组＝诚实空态「尚未执行覆盖评估」）。
+    using SampleResultsSink = std::function<void(const std::vector<SampleResultRow>&)>;
+    /// 样本高亮请求出口（FIX-T2——面板清单行点击→装配层：置三维高亮键；
+    /// 装配层置键后面板重投最近区域几何触发三维整组刷新〔P-FIX-5〕）。
+    using SampleHighlightRequestFn = std::function<void(std::uint64_t)>;
+
     /**
      * @brief 构造需求域面板（UI 线程——§3.4）。
      *
@@ -128,6 +145,20 @@ public:
 
     /** @brief 注入区域三维预览出口（装配期；不注入＝预览仅文本摘要）。 */
     void setRegionPreviewSink(RegionPreviewSink sink);
+
+    /** @brief 注入采样结果清单出口（FIX-T2——装配层在区域选中/评估到账
+     *         时投选中区域样本行全集；不注入＝清单恒空态）。 */
+    void setSampleResultsSink(SampleResultsSink sink);
+
+    /** @brief 绑定样本高亮请求出口（FIX-T2——清单行点击时回调装配层；
+     *         不绑定＝点击无动作零虚构）。 */
+    void bindSampleHighlightRequest(SampleHighlightRequestFn fn);
+
+    /** @brief 采样结果清单重投影（FIX-T2——装配层投递的行卡全量替换；
+     *         空数组＝诚实空态行；内容与现显相同则跳过〔防点击重投引发
+     *         的清单自刷丢选中〕。public＝模块 pushSampleResults 的直达
+     *         呈现入口——refreshPanel 同款面板级出口）。 */
+    void applySampleResults(const std::vector<SampleResultRow>& rows);
 
     /// 工位标记投影值（UI-T33 收口——非禁用工位的挂帧标记；enabled 过滤
     /// 在面板——投影值集合即呈现集合）。refFrame 原值直投（宿主帧名解析
@@ -468,6 +499,14 @@ private:
     QTreeWidget* m_validationLayers = nullptr;  ///< R0~R9 分层结果行
     QTreeWidget* m_validationItems = nullptr;   ///< 逐项行（可点击——L-R1 反向定位跳转）
     QLabel* m_validationNotes = nullptr;        ///< 预览/正式语义说明（REQ-06 固定文案）
+    // ---- FIX-T2（F-495 样本级定位）：区域页采样结果清单＋双缝 ----
+    QTreeWidget* m_sampleResultList = nullptr;  ///< 区域页「采样结果」清单（行＝样本/状态/位置；
+                                                ///< 点击→高亮请求出口；空数据＝诚实空态行）
+    SampleResultsSink m_sampleResultsSink;      ///< 采样结果清单出口（装配层注入；空＝清单恒空态）
+    SampleHighlightRequestFn m_sampleHighlightRequest;  ///< 高亮请求出口（装配层绑定；
+                                                ///< 空＝点击无动作零虚构）
+    std::optional<RegionPreviewGeometry> m_lastRegionGeometry;  ///< 最近区域几何
+                                                ///< （高亮请求后的三维重投输入——零渲染私有态旁路）
     // ---- UI-T34 E 批次：逐项过滤（级别/层/稳定码）＋报告缓存 ----
     QComboBox* m_validationLevelFilter = nullptr;  ///< 级别过滤（4 值封闭词表）
     QComboBox* m_validationLayerFilter = nullptr;  ///< 层过滤（全部＋R0~R9）

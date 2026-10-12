@@ -367,6 +367,10 @@ void RequirementsUiModule::attachPanel(RequirementsPanelWidget* panel)
     if (m_panel != nullptr && m_pendingRegionSink) {
         m_panel->setRegionPreviewSink(m_pendingRegionSink);
     }
+    if (m_panel != nullptr && m_pendingSampleHighlightRequest) {
+        // FIX-T2——高亮请求出口的创建后应用（同暂存双形态）。
+        m_panel->bindSampleHighlightRequest(m_pendingSampleHighlightRequest);
+    }
     // 可写性缓存回放（只读初始化修复——工厂构造初值经 initialWritable()
     // 已对齐，此处幂等再拉齐一次：即便面板以其他路径构造/构造与挂接之间
     // 又有 setWritable 到达，attachPanel 完成后面板必等于模块缓存态）。
@@ -783,6 +787,30 @@ void RequirementsUiModule::bindRegionPreviewSink(
     m_pendingRegionSink = std::move(sink);
     if (m_panel != nullptr) {
         m_panel->setRegionPreviewSink(m_pendingRegionSink);
+    }
+}
+
+void RequirementsUiModule::pushSampleResults(
+    const std::vector<RequirementsPanelWidget::SampleResultRow>& rows)
+{
+    // FIX-T2（F-495 样本级定位）——清单是即时呈现面：面板缺位＝直接
+    // 丢弃（不暂存——attach 后下一轮区域投影自然补投最新数据，堆积旧
+    // 行卡反而制造跨区域串数据风险）。
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->applySampleResults(rows);
+    }
+}
+
+void RequirementsUiModule::bindSampleHighlightRequest(
+    RequirementsPanelWidget::SampleHighlightRequestFn fn)
+{
+    // FIX-T2——同 bindRegionPreviewSink 的暂存/转发双形态（面板缺位时
+    // 暂存句柄，attachPanel 后绑定）。
+    m_guard.assertOnUiThread();
+    m_pendingSampleHighlightRequest = std::move(fn);
+    if (m_panel != nullptr) {
+        m_panel->bindSampleHighlightRequest(m_pendingSampleHighlightRequest);
     }
 }
 

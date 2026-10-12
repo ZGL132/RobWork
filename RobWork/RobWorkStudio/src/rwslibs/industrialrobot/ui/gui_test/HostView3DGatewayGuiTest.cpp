@@ -416,6 +416,10 @@ TEST(HostView3DGateway, PreviewOutlet_DegradedApplyAndClear_UI_T33)
     // 逐点状态经网关原样达渲染层；渲染分色在词表映射面）。
     grid.cellStates = {ui::View3DCellState::Good, ui::View3DCellState::NotSampled};
     grid.samples.push_back(rw::math::Vector3D<double>(0.7, 0, 0));
+    // FIX-T2——样本级定位透传断言载体（F-495 收官：对齐表＋高亮键经
+    // 网关原样达渲染层；渲染解析在 SampleHighlight 纯函数面〔ui_test〕）。
+    grid.sampleIndices = {7, 9};
+    grid.highlightedSampleIndex = std::uint64_t{9};
     update.boxOutline->tint = ui::View3DTint::Good;
     update.sampleGrid = grid;  // UI-T52——格线/采样点整组透传断言载体
     ASSERT_TRUE(gateway->applyPreview(update));
@@ -433,6 +437,16 @@ TEST(HostView3DGateway, PreviewOutlet_DegradedApplyAndClear_UI_T33)
     EXPECT_EQ(fx.lastDrawn->sampleGrid->cellStates[1],
               ui::View3DCellState::NotSampled)
         << "NotSampled 灰态透传失真（UI-T65 四态词表）";
+    // FIX-T2——新字段透传断言（对齐表逐键＋高亮键原样；缺省格的旧投影
+    // 方零破坏由 ui_test 缺省等值用例承载）。
+    ASSERT_EQ(fx.lastDrawn->sampleGrid->sampleIndices.size(), std::size_t{2})
+        << "对齐表透传失真（P-FIX-4 寻址键面断裂）";
+    EXPECT_EQ(fx.lastDrawn->sampleGrid->sampleIndices[0], std::uint64_t{7});
+    EXPECT_EQ(fx.lastDrawn->sampleGrid->sampleIndices[1], std::uint64_t{9});
+    ASSERT_TRUE(fx.lastDrawn->sampleGrid->highlightedSampleIndex.has_value());
+    EXPECT_EQ(*fx.lastDrawn->sampleGrid->highlightedSampleIndex,
+              std::uint64_t{9})
+        << "高亮键透传失真（样本级定位面断裂）";
     ASSERT_TRUE(fx.lastDrawn->boxOutline.has_value());
     ASSERT_TRUE(fx.lastDrawn->boxOutline->tint.has_value());
     EXPECT_EQ(*fx.lastDrawn->boxOutline->tint, ui::View3DTint::Good)
