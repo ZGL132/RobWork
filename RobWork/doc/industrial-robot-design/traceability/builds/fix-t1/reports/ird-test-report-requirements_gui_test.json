@@ -43,7 +43,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 182
+      "durationMs": 169
     },
     {
       "testId": "RequirementsSessionGuiTest.LocateSinkProductionWiring_ValidationRowClickFocusesTree_UI_T71",
@@ -77,7 +77,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 14
+      "durationMs": 16
     },
     {
       "testId": "RequirementsSessionGuiTest.DraftHintAndTreeTitle_DualTreeRoleLabels_F499",
@@ -111,7 +111,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 4
+      "durationMs": 7
     },
     {
       "testId": "RequirementsSessionGuiTest.PostEditComposition_HostActionThenRefresh_UI_T29",
@@ -145,7 +145,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 5
+      "durationMs": 7
     },
     {
       "testId": "RequirementsSessionGuiTest.GateTruthSource_BlockingDoubleState_UI_T29",
@@ -213,7 +213,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 39
+      "durationMs": 35
     },
     {
       "testId": "RequirementsSessionGuiTest.LifecycleDuplicate_CopyFieldsAndSelect_UI_T30",
@@ -247,7 +247,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 31
+      "durationMs": 27
     },
     {
       "testId": "RequirementsSessionGuiTest.LifecycleRemoveAnchorFallbackAndUndo_UI_T30",
@@ -281,7 +281,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 15
+      "durationMs": 14
     },
     {
       "testId": "RequirementsSessionGuiTest.LifecycleButtons_DisabledWithoutSession_UI_T30",
@@ -349,7 +349,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 22
+      "durationMs": 20
     },
     {
       "testId": "RequirementsSessionGuiTest.ConditionCycleTime_SetFromUnset_UI_T31",
@@ -383,7 +383,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 12
+      "durationMs": 11
     },
     {
       "testId": "RequirementsSessionGuiTest.FieldEditing_ReadOnlyGate_UI_T31",
@@ -451,7 +451,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 29
+      "durationMs": 27
     },
     {
       "testId": "RequirementsSessionGuiTest.CommandFlows_TemplateMirrorArray_UI_T32",
@@ -519,7 +519,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 29
+      "durationMs": 21
     },
     {
       "testId": "RequirementsSessionGuiTest.CommandFlows_ExportCopy_UI_T32",
@@ -553,7 +553,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 23
+      "durationMs": 30
     },
     {
       "testId": "RequirementsSessionGuiTest.CommandFlows_ImportCsvPartial_UI_T32",
@@ -587,7 +587,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 8
+      "durationMs": 9
     },
     {
       "testId": "RequirementsSessionGuiTest.CommandFlows_JsonAndDegrades_UI_T32",
@@ -621,7 +621,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 6
+      "durationMs": 7
     },
     {
       "testId": "RequirementsSessionGuiTest.ValidationFilters_HeaderAndRevisionNote_UI_T34",
@@ -655,7 +655,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 8
+      "durationMs": 6
     },
     {
       "testId": "RequirementsSessionGuiTest.FacadeSessionBaseRevisionRoundtrip_UI_T35",
@@ -689,7 +689,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 5
+      "durationMs": 6
     },
     {
       "testId": "RequirementsSessionGuiTest.RegionConditionRows_BusinessColumns_UI_T36",
@@ -757,7 +757,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 16
+      "durationMs": 15
     },
     {
       "testId": "RequirementsSessionGuiTest.LifecycleButton_NoVerticalClipping_UI_T36",
@@ -791,7 +791,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 260
+      "durationMs": 253
     },
     {
       "testId": "RequirementsSessionGuiTest.StationCards_ModernControls_UI_T37",
@@ -825,7 +825,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 115
+      "durationMs": 62
     },
     {
       "testId": "RequirementsSessionGuiTest.RegionCompositeAndLiveCount_UI_T37",
@@ -859,7 +859,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 26
+      "durationMs": 17
     },
     {
       "testId": "RequirementsSessionGuiTest.NonQuantityRowsReadOnly_UI_T37",
@@ -893,7 +893,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 17
+      "durationMs": 19
     },
     {
       "testId": "RequirementsSessionGuiTest.ConditionTagAndWizard_UI_T37",
@@ -927,7 +927,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 13
+      "durationMs": 10
     },
     {
       "testId": "RequirementsSessionGuiTest.ConditionSingleTableDetailCard_UI_T37R4",
@@ -961,7 +961,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 8
+      "durationMs": 5
     },
     {
       "testId": "RequirementsSessionGuiTest.EmptyStateFoldImportBreadcrumb_UI_T37R5",
@@ -995,7 +995,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 152
+      "durationMs": 151
     },
     {
       "testId": "RequirementsSessionGuiTest.ImportDropdownAndUndoTrim_UI_T37R5",
@@ -1029,7 +1029,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 19
+      "durationMs": 9
     },
     {
       "testId": "RequirementsSessionGuiTest.ValidationBoardAndSemanticLayers_UI_T37",
@@ -1063,7 +1063,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 7
+      "durationMs": 5
     },
     {
       "testId": "RequirementsSessionGuiTest.RegionSelectionLinkage_UI_T37R",
@@ -1097,7 +1097,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 46
+      "durationMs": 48
     },
     {
       "testId": "RequirementsSessionGuiTest.ProjectUndoCommandIdAndGate_UI_T39",
@@ -1199,7 +1199,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 22
+      "durationMs": 19
     },
     {
       "testId": "RequirementsSessionGuiTest.WritableSwitchRefreshesAll_UI_T39",
@@ -1233,7 +1233,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 42
+      "durationMs": 35
     },
     {
       "testId": "RequirementsSessionGuiTest.ReadOnlyStagedBeforePanelCreate_L_R12",
@@ -1267,7 +1267,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 27
+      "durationMs": 29
     },
     {
       "testId": "RequirementsSessionGuiTest.CollapseSurvivesFieldRefresh_UI_T39",
@@ -1335,7 +1335,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 13
+      "durationMs": 10
     },
     {
       "testId": "RequirementRevisionSync.SelfAppliedEventSkips_UI_T35",
@@ -1507,7 +1507,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 14
+      "durationMs": 13
     },
     {
       "testId": "RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52",
@@ -1577,7 +1577,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 7
+      "durationMs": 6
     },
     {
       "testId": "RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77",

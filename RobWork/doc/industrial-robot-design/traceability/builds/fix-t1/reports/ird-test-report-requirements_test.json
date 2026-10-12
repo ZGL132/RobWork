@@ -669,7 +669,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 9
+      "durationMs": 13
     },
     {
       "testId": "ReqBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP14T02_ACC4",
@@ -704,7 +704,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 7
+      "durationMs": 11
     },
     {
       "testId": "ReqBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP14T02_ACC4",
@@ -739,7 +739,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 6
+      "durationMs": 8
     },
     {
       "testId": "ReqBuildRedLine.ProductFaceFilesNonEmpty_WP14T02_ACC1",
@@ -773,7 +773,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 9
+      "durationMs": 6
     },
     {
       "testId": "ReqInvariants.IREQ1_SortAndCanonicalOrder_WP14T03_ACC1",
@@ -2614,7 +2614,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 5
+      "durationMs": 8
     },
     {
       "testId": "ReqImport.ExportCopy_AtomicFailure_OldFileIntact_ProjectUntouched_V10",
@@ -2650,7 +2650,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "testId": "ReqImport.ExportCopy_OverwriteAtomic_DraftMarker_V10",
@@ -2686,7 +2686,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "testId": "ReqImport.ExportCopy_CsvDraftRejected_FailVisible",
@@ -6076,7 +6076,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 8
+      "durationMs": 19
     },
     {
       "testId": "PluginPanel.ReadOnlyModeGate_ACC4",
@@ -7068,7 +7068,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "testId": "TransportGoldenTest.V03OrientationResolutionAndIllegalLocalized_ACC1",
@@ -7106,7 +7106,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "testId": "TransportGoldenTest.V04DuplicateAndDanglingBlocked_ReqSideJointRegistered_ACC1",
@@ -7221,7 +7221,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "testId": "TransportGoldenTest.V08V09CsvFacesPartialSuccessAndUnits_ACC1",
@@ -7298,7 +7298,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "testId": "TransportGoldenTest.V15V16V19SliceFacesJointRegistered_ACC1",
@@ -7378,7 +7378,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "testId": "TransportGoldenTest.V20V21PreviewZeroMutationJointRegistered_ACC1",
@@ -7418,7 +7418,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "testId": "PartialPoseGoldenTest.V03MasksStatesAndRuleLiterals_ACC1",
@@ -7536,7 +7536,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "testId": "PayloadEventsGoldenTest.V04FourStatesEventsAndAppliesTo_ACC1",

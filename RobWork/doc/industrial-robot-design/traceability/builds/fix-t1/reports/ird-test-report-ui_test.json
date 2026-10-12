@@ -43,7 +43,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "testId": "UiBuild.PlacementStaticRegistration_UI_BUILD",
@@ -145,7 +145,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 22
+      "durationMs": 21
     },
     {
       "testId": "UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD",
@@ -179,7 +179,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 26
+      "durationMs": 24
     },
     {
       "testId": "UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD",
@@ -4885,7 +4885,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "testId": "TaskPresentationModelTest.ProgressMonotonicDropRegressionAndIdempotent_UI_TSK_5",
@@ -5311,7 +5311,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 1502
+      "durationMs": 1504
     },
     {
       "testId": "CommandInteractionBridgeTest.FactoryFailFastAndPrincipalCached_P_UI_4",
@@ -5381,7 +5381,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "testId": "CommandInteractionBridgeTest.RejectedFlowYieldsNoCredentials_UI_CMD_4",
@@ -5417,7 +5417,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 3
+      "durationMs": 1
     },
     {
       "testId": "CommandInteractionBridgeTest.EmptyFindingsShortCircuitWithoutDialog",
@@ -8909,7 +8909,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 35
+      "durationMs": 12
     },
     {
       "testId": "KinEvaluationChannel.MapSampleStateToCell_TableDriven_UI_T65",
@@ -9050,7 +9050,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 1
+      "durationMs": 15
     },
     {
       "testId": "View3DPreviewMarkerPosition.FrameMarkerPositionAppendOnly_UI_T77",

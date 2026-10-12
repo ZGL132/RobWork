@@ -37,14 +37,14 @@
 
 [----------] 4 tests from MdlBuildRedLine
 [ RUN      ] MdlBuildRedLine.ProductFaceHasZeroQtIncludes_WP13T02_ACC1
-[       OK ] MdlBuildRedLine.ProductFaceHasZeroQtIncludes_WP13T02_ACC1 (22 ms)
+[       OK ] MdlBuildRedLine.ProductFaceHasZeroQtIncludes_WP13T02_ACC1 (19 ms)
 [ RUN      ] MdlBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP13T02_ACC2
 [       OK ] MdlBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP13T02_ACC2 (16 ms)
 [ RUN      ] MdlBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP13T02_ACC2
 [       OK ] MdlBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP13T02_ACC2 (14 ms)
 [ RUN      ] MdlBuildRedLine.ProductFaceFilesNonEmpty_WP13T02_ACC1
 [       OK ] MdlBuildRedLine.ProductFaceFilesNonEmpty_WP13T02_ACC1 (11 ms)
-[----------] 4 tests from MdlBuildRedLine (65 ms total)
+[----------] 4 tests from MdlBuildRedLine (62 ms total)
 
 [----------] 16 tests from MdlRobotDesign
 [ RUN      ] MdlRobotDesign.ValidExplicitDesignPassesAllInvariants_WP13T03_ACC3
@@ -492,18 +492,18 @@
 [ RUN      ] MdlPackage.ExportPackageShape_WP13T13_ACC1
 [       OK ] MdlPackage.ExportPackageShape_WP13T13_ACC1 (27 ms)
 [ RUN      ] MdlPackage.ExportDeterministicBytes_WP13T13_ACC1_ACC2
-[       OK ] MdlPackage.ExportDeterministicBytes_WP13T13_ACC1_ACC2 (36 ms)
+[       OK ] MdlPackage.ExportDeterministicBytes_WP13T13_ACC1_ACC2 (21 ms)
 [ RUN      ] MdlPackage.ExportFailurePreservesPrevious_WP13T13_ACC2
-[       OK ] MdlPackage.ExportFailurePreservesPrevious_WP13T13_ACC2 (26 ms)
+[       OK ] MdlPackage.ExportFailurePreservesPrevious_WP13T13_ACC2 (34 ms)
 [ RUN      ] MdlPackage.ImportRejectsForeignArtifact_WP13T13_ACC3
-[       OK ] MdlPackage.ImportRejectsForeignArtifact_WP13T13_ACC3 (11 ms)
+[       OK ] MdlPackage.ImportRejectsForeignArtifact_WP13T13_ACC3 (1 ms)
 [ RUN      ] MdlPackage.RoundtripItemwiseChecklist_WP13T13_ACC4
-[       OK ] MdlPackage.RoundtripItemwiseChecklist_WP13T13_ACC4 (30 ms)
+[       OK ] MdlPackage.RoundtripItemwiseChecklist_WP13T13_ACC4 (15 ms)
 [ RUN      ] MdlPackage.TamperedPackageRejected_WP13T13_ACC3_ACC4
-[       OK ] MdlPackage.TamperedPackageRejected_WP13T13_ACC3_ACC4 (41 ms)
+[       OK ] MdlPackage.TamperedPackageRejected_WP13T13_ACC3_ACC4 (59 ms)
 [ RUN      ] MdlPackage.PackageChecklistText_Deterministic_UI_T61
 [       OK ] MdlPackage.PackageChecklistText_Deterministic_UI_T61 (0 ms)
-[----------] 7 tests from MdlPackage (174 ms total)
+[----------] 7 tests from MdlPackage (161 ms total)
 
 [----------] 8 tests from MdlModelDiff
 [ RUN      ] MdlModelDiff.PlacementEntityAndEmptyDiff_WP13T14_ACC1_ACC3
@@ -538,19 +538,19 @@
 [ RUN      ] ModelingCommandFlows.EstimateProperties_ZeroLengthSegment_Refused_UI_T41C
 [       OK ] ModelingCommandFlows.EstimateProperties_ZeroLengthSegment_Refused_UI_T41C (0 ms)
 [ RUN      ] ModelingCommandFlows.ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D
-[       OK ] ModelingCommandFlows.ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D (22 ms)
+[       OK ] ModelingCommandFlows.ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D (5 ms)
 [ RUN      ] ModelingCommandFlows.ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D
 [       OK ] ModelingCommandFlows.ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D (0 ms)
 [ RUN      ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1
-[       OK ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1 (5 ms)
+[       OK ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1 (4 ms)
 [ RUN      ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466
 [       OK ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466 (0 ms)
 [ RUN      ] ModelingCommandFlows.ImportUrdf_WithMeshAndMissingResource_ProducesDraft_WP13_T21
-[       OK ] ModelingCommandFlows.ImportUrdf_WithMeshAndMissingResource_ProducesDraft_WP13_T21 (15 ms)
+[       OK ] ModelingCommandFlows.ImportUrdf_WithMeshAndMissingResource_ProducesDraft_WP13_T21 (3 ms)
 [ RUN      ] ModelingCommandFlows.ImportUrdf_PlainNoMesh_ProducesDraft_WP13_T21
-[       OK ] ModelingCommandFlows.ImportUrdf_PlainNoMesh_ProducesDraft_WP13_T21 (17 ms)
+[       OK ] ModelingCommandFlows.ImportUrdf_PlainNoMesh_ProducesDraft_WP13_T21 (1 ms)
 [ RUN      ] ModelingCommandFlows.ImportUrdf_ConfirmRejected_KeepsSessionDraft_WP13_T21
-[       OK ] ModelingCommandFlows.ImportUrdf_ConfirmRejected_KeepsSessionDraft_WP13_T21 (3 ms)
+[       OK ] ModelingCommandFlows.ImportUrdf_ConfirmRejected_KeepsSessionDraft_WP13_T21 (2 ms)
 [ RUN      ] ModelingCommandFlows.ExportWorkCellXml_HappyPath_UI_T56
 [       OK ] ModelingCommandFlows.ExportWorkCellXml_HappyPath_UI_T56 (0 ms)
 [ RUN      ] ModelingCommandFlows.ExportWorkCellXml_SnapshotMissingAndNotWired_UI_T56
@@ -561,7 +561,7 @@
 [       OK ] ModelingCommandFlows.NewFromTemplateCustomChain_UI_T63 (0 ms)
 [ RUN      ] ModelingCommandFlows.NewFromTemplateGeneric6RKept_UI_T63
 [       OK ] ModelingCommandFlows.NewFromTemplateGeneric6RKept_UI_T63 (0 ms)
-[----------] 18 tests from ModelingCommandFlows (66 ms total)
+[----------] 18 tests from ModelingCommandFlows (19 ms total)
 
 [----------] 30 tests from PluginPanel
 [ RUN      ] PluginPanel.Tree_ObjectIdAnchorAndEngineeringLabels_WP13T15_ACC2
@@ -699,7 +699,7 @@
 [       OK ] MdlGoldenImport.GoldenXacroMacroMapping_AT31_WP13T16_ACC3 (0 ms)
 [ RUN      ] MdlGoldenImport.GoldenXacroCyclePassthrough_V09_WP13T16_ACC3
 [       OK ] MdlGoldenImport.GoldenXacroCyclePassthrough_V09_WP13T16_ACC3 (0 ms)
-[----------] 5 tests from MdlGoldenImport (2 ms total)
+[----------] 5 tests from MdlGoldenImport (3 ms total)
 
 [----------] 5 tests from MdlReadiness
 [ RUN      ] MdlReadiness.LegalWorkingSetAllLayersPassAndPureFunction
@@ -806,7 +806,7 @@
 [       OK ] MdlDhEquivalence.AuthoritySwitchDomainGateRefusesPendingEdits_WP13T09_ACC5 (0 ms)
 [ RUN      ] MdlDhEquivalence.AuthoritySwitchRefusedWhenVerificationFails_WP13T09_ACC5
 [       OK ] MdlDhEquivalence.AuthoritySwitchRefusedWhenVerificationFails_WP13T09_ACC5 (1 ms)
-[----------] 6 tests from MdlDhEquivalence (4 ms total)
+[----------] 6 tests from MdlDhEquivalence (3 ms total)
 
 [----------] 5 tests from MdlDhCommand
 [ RUN      ] MdlDhCommand.AuthoritySwitchPreparesInsideCommandPrepare_WP13T09_ACC5
@@ -860,22 +860,22 @@
 
 [----------] 2 tests from MdlPackageWorkCell
 [ RUN      ] MdlPackageWorkCell.WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5
-[       OK ] MdlPackageWorkCell.WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5 (22 ms)
+[       OK ] MdlPackageWorkCell.WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5 (17 ms)
 [ RUN      ] MdlPackageWorkCell.PreviewExportsFourKinds_UI_T59
 [       OK ] MdlPackageWorkCell.PreviewExportsFourKinds_UI_T59 (0 ms)
-[----------] 2 tests from MdlPackageWorkCell (23 ms total)
+[----------] 2 tests from MdlPackageWorkCell (18 ms total)
 
 [----------] 4 tests from MdlGoldenDhEquivalence
 [ RUN      ] MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3
 [       OK ] MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3 (0 ms)
 [ RUN      ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3
-[       OK ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3 (9 ms)
+[       OK ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3 (10 ms)
 [ RUN      ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3
 [       OK ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3 (10 ms)
 [ RUN      ] MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3
 [       OK ] MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3 (0 ms)
-[----------] 4 tests from MdlGoldenDhEquivalence (21 ms total)
+[----------] 4 tests from MdlGoldenDhEquivalence (22 ms total)
 
 [----------] Global test environment tear-down
-[==========] 375 tests from 42 test suites ran. (385 ms total)
+[==========] 375 tests from 42 test suites ran. (316 ms total)
 [  PASSED  ] 375 tests.

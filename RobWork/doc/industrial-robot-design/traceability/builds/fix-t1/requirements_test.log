@@ -47,14 +47,14 @@
 
 [----------] 4 tests from ReqBuildRedLine
 [ RUN      ] ReqBuildRedLine.ProductFaceHasZeroQtIncludes_WP14T02_ACC1
-[       OK ] ReqBuildRedLine.ProductFaceHasZeroQtIncludes_WP14T02_ACC1 (12 ms)
+[       OK ] ReqBuildRedLine.ProductFaceHasZeroQtIncludes_WP14T02_ACC1 (13 ms)
 [ RUN      ] ReqBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP14T02_ACC4
-[       OK ] ReqBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP14T02_ACC4 (10 ms)
+[       OK ] ReqBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP14T02_ACC4 (11 ms)
 [ RUN      ] ReqBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP14T02_ACC4
 [       OK ] ReqBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP14T02_ACC4 (8 ms)
 [ RUN      ] ReqBuildRedLine.ProductFaceFilesNonEmpty_WP14T02_ACC1
-[       OK ] ReqBuildRedLine.ProductFaceFilesNonEmpty_WP14T02_ACC1 (5 ms)
-[----------] 4 tests from ReqBuildRedLine (36 ms total)
+[       OK ] ReqBuildRedLine.ProductFaceFilesNonEmpty_WP14T02_ACC1 (6 ms)
+[----------] 4 tests from ReqBuildRedLine (40 ms total)
 
 [----------] 12 tests from ReqInvariants
 [ RUN      ] ReqInvariants.IREQ1_SortAndCanonicalOrder_WP14T03_ACC1
@@ -173,11 +173,11 @@
 [ RUN      ] ReqImport.CsvFrameDangling_WarningAndRetained_V09
 [       OK ] ReqImport.CsvFrameDangling_WarningAndRetained_V09 (0 ms)
 [ RUN      ] ReqImport.JsonRoundtrip_ExportCopy_FieldByFieldEqual_V10_AT24
-[       OK ] ReqImport.JsonRoundtrip_ExportCopy_FieldByFieldEqual_V10_AT24 (11 ms)
+[       OK ] ReqImport.JsonRoundtrip_ExportCopy_FieldByFieldEqual_V10_AT24 (8 ms)
 [ RUN      ] ReqImport.ExportCopy_AtomicFailure_OldFileIntact_ProjectUntouched_V10
-[       OK ] ReqImport.ExportCopy_AtomicFailure_OldFileIntact_ProjectUntouched_V10 (6 ms)
+[       OK ] ReqImport.ExportCopy_AtomicFailure_OldFileIntact_ProjectUntouched_V10 (0 ms)
 [ RUN      ] ReqImport.ExportCopy_OverwriteAtomic_DraftMarker_V10
-[       OK ] ReqImport.ExportCopy_OverwriteAtomic_DraftMarker_V10 (10 ms)
+[       OK ] ReqImport.ExportCopy_OverwriteAtomic_DraftMarker_V10 (2 ms)
 [ RUN      ] ReqImport.ExportCopy_CsvDraftRejected_FailVisible
 [       OK ] ReqImport.ExportCopy_CsvDraftRejected_FailVisible (0 ms)
 [ RUN      ] ReqImport.JsonImport_ProvenanceDigestAndRecordNumber_I_REQ8_V10
@@ -194,7 +194,7 @@
 [       OK ] ReqImport.CsvSourceDigest_ContentAddressed_Acc4_I_REQ8 (0 ms)
 [ RUN      ] ReqImport.PreconditionViolations_FailFast
 [       OK ] ReqImport.PreconditionViolations_FailFast (0 ms)
-[----------] 22 tests from ReqImport (29 ms total)
+[----------] 22 tests from ReqImport (13 ms total)
 
 [----------] 22 tests from ReqReadiness
 [ RUN      ] ReqReadiness.HealthySetPassesAllLayers_ACC1
@@ -383,7 +383,7 @@
 [ RUN      ] PluginPanel.ImportWizardFlowFiveStepsToDraft_ACC4
 [       OK ] PluginPanel.ImportWizardFlowFiveStepsToDraft_ACC4 (0 ms)
 [ RUN      ] PluginPanel.ExportCopyPromptSuccessAndFailureKeepsOldFile_ACC4
-[       OK ] PluginPanel.ExportCopyPromptSuccessAndFailureKeepsOldFile_ACC4 (11 ms)
+[       OK ] PluginPanel.ExportCopyPromptSuccessAndFailureKeepsOldFile_ACC4 (19 ms)
 [ RUN      ] PluginPanel.ReadOnlyModeGate_ACC4
 [       OK ] PluginPanel.ReadOnlyModeGate_ACC4 (0 ms)
 [ RUN      ] PluginPanel.DraftSourceRoundtrip_ACC4
@@ -394,7 +394,7 @@
 [       OK ] PluginPanel.AppliedReceiptConsistentClosureSkipsRewire_F460 (0 ms)
 [ RUN      ] PluginPanel.AppliedReceiptWithoutClosureSeamSkipsRewire_F460
 [       OK ] PluginPanel.AppliedReceiptWithoutClosureSeamSkipsRewire_F460 (0 ms)
-[----------] 23 tests from PluginPanel (14 ms total)
+[----------] 23 tests from PluginPanel (23 ms total)
 
 [----------] 18 tests from HostMigration
 [ RUN      ] HostMigration.TreeSupply_RootAndEntriesIntoSharedTree_ACC1
@@ -437,54 +437,54 @@
 
 [----------] 1 test from ReqGoldenTolerance
 [ RUN      ] ReqGoldenTolerance.ProfileAnchoredAndNotRelaxed_WP14T09_ACC2
-[       OK ] ReqGoldenTolerance.ProfileAnchoredAndNotRelaxed_WP14T09_ACC2 (12 ms)
-[----------] 1 test from ReqGoldenTolerance (12 ms total)
+[       OK ] ReqGoldenTolerance.ProfileAnchoredAndNotRelaxed_WP14T09_ACC2 (0 ms)
+[----------] 1 test from ReqGoldenTolerance (0 ms total)
 
 [----------] 12 tests from TransportGoldenTest
 [ RUN      ] TransportGoldenTest.DatasetLoadsAndExpectedFacesReadable_WP14T09_ACC2
-[       OK ] TransportGoldenTest.DatasetLoadsAndExpectedFacesReadable_WP14T09_ACC2 (32 ms)
+[       OK ] TransportGoldenTest.DatasetLoadsAndExpectedFacesReadable_WP14T09_ACC2 (1 ms)
 [ RUN      ] TransportGoldenTest.V01EditGuardAndSingleApplyEnvelope_ACC1
 [       OK ] TransportGoldenTest.V01EditGuardAndSingleApplyEnvelope_ACC1 (1 ms)
 [ RUN      ] TransportGoldenTest.V02DegenerateRefusedAndZeroPlanLegal_ACC1
 [       OK ] TransportGoldenTest.V02DegenerateRefusedAndZeroPlanLegal_ACC1 (1 ms)
 [ RUN      ] TransportGoldenTest.V03OrientationResolutionAndIllegalLocalized_ACC1
-[       OK ] TransportGoldenTest.V03OrientationResolutionAndIllegalLocalized_ACC1 (0 ms)
+[       OK ] TransportGoldenTest.V03OrientationResolutionAndIllegalLocalized_ACC1 (1 ms)
 [ RUN      ] TransportGoldenTest.V04DuplicateAndDanglingBlocked_ReqSideJointRegistered_ACC1
 [       OK ] TransportGoldenTest.V04DuplicateAndDanglingBlocked_ReqSideJointRegistered_ACC1 (0 ms)
 [ RUN      ] TransportGoldenTest.V05RequiredCasesFrozenSchema_ACC1
-[       OK ] TransportGoldenTest.V05RequiredCasesFrozenSchema_ACC1 (0 ms)
+[       OK ] TransportGoldenTest.V05RequiredCasesFrozenSchema_ACC1 (1 ms)
 [ RUN      ] TransportGoldenTest.V06MirrorGoldenReflectionAndProvenance_ACC1
-[       OK ] TransportGoldenTest.V06MirrorGoldenReflectionAndProvenance_ACC1 (1 ms)
+[       OK ] TransportGoldenTest.V06MirrorGoldenReflectionAndProvenance_ACC1 (0 ms)
 [ RUN      ] TransportGoldenTest.V08V09CsvFacesPartialSuccessAndUnits_ACC1
 [       OK ] TransportGoldenTest.V08V09CsvFacesPartialSuccessAndUnits_ACC1 (0 ms)
 [ RUN      ] TransportGoldenTest.V10JsonRoundtripAndCopyExport_ACC1
-[       OK ] TransportGoldenTest.V10JsonRoundtripAndCopyExport_ACC1 (9 ms)
+[       OK ] TransportGoldenTest.V10JsonRoundtripAndCopyExport_ACC1 (3 ms)
 [ RUN      ] TransportGoldenTest.V15V16V19SliceFacesJointRegistered_ACC1
 [       OK ] TransportGoldenTest.V15V16V19SliceFacesJointRegistered_ACC1 (1 ms)
 [ RUN      ] TransportGoldenTest.V17V18UnitAndIdentityFaces_ACC1
-[       OK ] TransportGoldenTest.V17V18UnitAndIdentityFaces_ACC1 (0 ms)
+[       OK ] TransportGoldenTest.V17V18UnitAndIdentityFaces_ACC1 (1 ms)
 [ RUN      ] TransportGoldenTest.V20V21PreviewZeroMutationJointRegistered_ACC1
-[       OK ] TransportGoldenTest.V20V21PreviewZeroMutationJointRegistered_ACC1 (0 ms)
-[----------] 12 tests from TransportGoldenTest (51 ms total)
+[       OK ] TransportGoldenTest.V20V21PreviewZeroMutationJointRegistered_ACC1 (1 ms)
+[----------] 12 tests from TransportGoldenTest (15 ms total)
 
 [----------] 2 tests from PartialPoseGoldenTest
 [ RUN      ] PartialPoseGoldenTest.V03MasksStatesAndRuleLiterals_ACC1
-[       OK ] PartialPoseGoldenTest.V03MasksStatesAndRuleLiterals_ACC1 (47 ms)
+[       OK ] PartialPoseGoldenTest.V03MasksStatesAndRuleLiterals_ACC1 (1 ms)
 [ RUN      ] PartialPoseGoldenTest.NegativeSamplesFirstErrorCode_ACC5
 [       OK ] PartialPoseGoldenTest.NegativeSamplesFirstErrorCode_ACC5 (1 ms)
-[----------] 2 tests from PartialPoseGoldenTest (48 ms total)
+[----------] 2 tests from PartialPoseGoldenTest (2 ms total)
 
 [----------] 1 test from RegionSamplingGoldenTest
 [ RUN      ] RegionSamplingGoldenTest.V02NormalizationSynonymAndZeroSample_ACC1
-[       OK ] RegionSamplingGoldenTest.V02NormalizationSynonymAndZeroSample_ACC1 (39 ms)
-[----------] 1 test from RegionSamplingGoldenTest (39 ms total)
+[       OK ] RegionSamplingGoldenTest.V02NormalizationSynonymAndZeroSample_ACC1 (1 ms)
+[----------] 1 test from RegionSamplingGoldenTest (1 ms total)
 
 [----------] 2 tests from PayloadEventsGoldenTest
 [ RUN      ] PayloadEventsGoldenTest.V04FourStatesEventsAndAppliesTo_ACC1
-[       OK ] PayloadEventsGoldenTest.V04FourStatesEventsAndAppliesTo_ACC1 (34 ms)
+[       OK ] PayloadEventsGoldenTest.V04FourStatesEventsAndAppliesTo_ACC1 (1 ms)
 [ RUN      ] PayloadEventsGoldenTest.NegativeCasesAndR4Blocking_ACC5
 [       OK ] PayloadEventsGoldenTest.NegativeCasesAndR4Blocking_ACC5 (0 ms)
-[----------] 2 tests from PayloadEventsGoldenTest (35 ms total)
+[----------] 2 tests from PayloadEventsGoldenTest (2 ms total)
 
 [----------] 1 test from EmptySetFaces
 [ RUN      ] EmptySetFaces.V11EmptySetLegalAndR5WarningProjection_ACC1
@@ -507,7 +507,7 @@ V-22 GUI 流程仅登记（envUnavailable 如实登记）
 [----------] 1 test from GuiRegistration (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 214 tests from 25 test suites ran. (274 ms total)
+[==========] 214 tests from 25 test suites ran. (103 ms total)
 [  PASSED  ] 213 tests.
 [  SKIPPED ] 1 test, listed below:
 [  SKIPPED ] GuiRegistration.V22RegisteredNotExecuted_ACC1

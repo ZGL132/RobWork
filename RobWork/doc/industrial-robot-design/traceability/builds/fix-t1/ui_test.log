@@ -6,14 +6,14 @@
 [ RUN      ] UiBuild.PlacementStaticRegistration_UI_BUILD
 [       OK ] UiBuild.PlacementStaticRegistration_UI_BUILD (0 ms)
 [ RUN      ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD
-[       OK ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD (8 ms)
+[       OK ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD (0 ms)
 [ RUN      ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD
 [       OK ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD (21 ms)
 [ RUN      ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD
-[       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (25 ms)
+[       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (24 ms)
 [ RUN      ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD
-[       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (17 ms)
-[----------] 6 tests from UiBuild (85 ms total)
+[       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (19 ms)
+[----------] 6 tests from UiBuild (69 ms total)
 
 [----------] 4 tests from ShellModel
 [ RUN      ] ShellModel.UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1
@@ -326,7 +326,7 @@
 [ RUN      ] DiagPresentationModelTest.RedactedPathForwardsService_NFR_SEC_07
 [       OK ] DiagPresentationModelTest.RedactedPathForwardsService_NFR_SEC_07 (0 ms)
 [ RUN      ] DiagPresentationModelTest.SubscribeMarshalToUiThreadAndUnsubscribe_M_1
-[       OK ] DiagPresentationModelTest.SubscribeMarshalToUiThreadAndUnsubscribe_M_1 (2 ms)
+[       OK ] DiagPresentationModelTest.SubscribeMarshalToUiThreadAndUnsubscribe_M_1 (3 ms)
 [----------] 13 tests from DiagPresentationModelTest (4 ms total)
 
 [----------] 12 tests from TaskPresentationModelTest
@@ -353,14 +353,14 @@
 [ RUN      ] TaskPresentationModelTest.QueuePositionWordingOnlyWithoutNumbers_UI_EXEC_1
 [       OK ] TaskPresentationModelTest.QueuePositionWordingOnlyWithoutNumbers_UI_EXEC_1 (0 ms)
 [ RUN      ] TaskPresentationModelTest.UiThreadHeartbeatUnderSlowPeerQuery_UI_PERF_1
-[       OK ] TaskPresentationModelTest.UiThreadHeartbeatUnderSlowPeerQuery_UI_PERF_1 (1503 ms)
-[----------] 12 tests from TaskPresentationModelTest (1503 ms total)
+[       OK ] TaskPresentationModelTest.UiThreadHeartbeatUnderSlowPeerQuery_UI_PERF_1 (1504 ms)
+[----------] 12 tests from TaskPresentationModelTest (1505 ms total)
 
 [----------] 9 tests from CommandInteractionBridgeTest
 [ RUN      ] CommandInteractionBridgeTest.FactoryFailFastAndPrincipalCached_P_UI_4
-[       OK ] CommandInteractionBridgeTest.FactoryFailFastAndPrincipalCached_P_UI_4 (0 ms)
+[       OK ] CommandInteractionBridgeTest.FactoryFailFastAndPrincipalCached_P_UI_4 (1 ms)
 [ RUN      ] CommandInteractionBridgeTest.ConfirmedFlowProducesCredentials_UI_CMD_5
-[       OK ] CommandInteractionBridgeTest.ConfirmedFlowProducesCredentials_UI_CMD_5 (1 ms)
+[       OK ] CommandInteractionBridgeTest.ConfirmedFlowProducesCredentials_UI_CMD_5 (2 ms)
 [ RUN      ] CommandInteractionBridgeTest.RejectedFlowYieldsNoCredentials_UI_CMD_4
 [       OK ] CommandInteractionBridgeTest.RejectedFlowYieldsNoCredentials_UI_CMD_4 (1 ms)
 [ RUN      ] CommandInteractionBridgeTest.EmptyFindingsShortCircuitWithoutDialog
@@ -368,7 +368,7 @@
 [ RUN      ] CommandInteractionBridgeTest.DismantleWakesBlockedCommand_UI_CMD_7
 [       OK ] CommandInteractionBridgeTest.DismantleWakesBlockedCommand_UI_CMD_7 (0 ms)
 [ RUN      ] CommandInteractionBridgeTest.NoAutoTimeoutWhileWaiting_P_DIAG_6
-[       OK ] CommandInteractionBridgeTest.NoAutoTimeoutWhileWaiting_P_DIAG_6 (2 ms)
+[       OK ] CommandInteractionBridgeTest.NoAutoTimeoutWhileWaiting_P_DIAG_6 (0 ms)
 [ RUN      ] CommandInteractionBridgeTest.RevisionCommitAnnotatesStaleInput_UI_CMD_6
 [       OK ] CommandInteractionBridgeTest.RevisionCommitAnnotatesStaleInput_UI_CMD_6 (1 ms)
 [ RUN      ] CommandInteractionBridgeTest.EnrichmentFillsRecordFieldsAndDevFold_UI_CMD_5
@@ -596,7 +596,7 @@
 [ RUN      ] KinEvaluationChannel.Submit_RejectsEmptyPlanSlice_UI_T64
 [       OK ] KinEvaluationChannel.Submit_RejectsEmptyPlanSlice_UI_T64 (0 ms)
 [ RUN      ] KinEvaluationChannel.Submit_RunsAndRecordsCoverage_UI_T64
-[       OK ] KinEvaluationChannel.Submit_RunsAndRecordsCoverage_UI_T64 (16 ms)
+[       OK ] KinEvaluationChannel.Submit_RunsAndRecordsCoverage_UI_T64 (12 ms)
 [ RUN      ] KinEvaluationChannel.MapSampleStateToCell_TableDriven_UI_T65
 [       OK ] KinEvaluationChannel.MapSampleStateToCell_TableDriven_UI_T65 (0 ms)
 [ RUN      ] KinEvaluationChannel.View3DTintFromCoverage_TableDriven_UI_T65
@@ -604,8 +604,8 @@
 [ RUN      ] KinEvaluationChannel.RegionTint_FollowsPositionAxisNotMixed_UI_T65
 [       OK ] KinEvaluationChannel.RegionTint_FollowsPositionAxisNotMixed_UI_T65 (0 ms)
 [ RUN      ] KinEvaluationChannel.Rebind_ClearsAccountAndDropsLateResult_UI_T64
-[       OK ] KinEvaluationChannel.Rebind_ClearsAccountAndDropsLateResult_UI_T64 (0 ms)
-[----------] 8 tests from KinEvaluationChannel (16 ms total)
+[       OK ] KinEvaluationChannel.Rebind_ClearsAccountAndDropsLateResult_UI_T64 (15 ms)
+[----------] 8 tests from KinEvaluationChannel (28 ms total)
 
 [----------] 1 test from View3DPreviewMarkerPosition
 [ RUN      ] View3DPreviewMarkerPosition.FrameMarkerPositionAppendOnly_UI_T77
@@ -613,5 +613,5 @@
 [----------] 1 test from View3DPreviewMarkerPosition (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 267 tests from 26 test suites ran. (1635 ms total)
+[==========] 267 tests from 26 test suites ran. (1631 ms total)
 [  PASSED  ] 267 tests.

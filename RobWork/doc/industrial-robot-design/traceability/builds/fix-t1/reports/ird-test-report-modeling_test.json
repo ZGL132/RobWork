@@ -493,7 +493,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 21
+      "durationMs": 19
     },
     {
       "testId": "MdlBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP13T02_ACC2",
@@ -597,7 +597,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 10
+      "durationMs": 11
     },
     {
       "testId": "MdlRobotDesign.ValidExplicitDesignPassesAllInvariants_WP13T03_ACC3",
@@ -6328,7 +6328,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 7
+      "durationMs": 8
     },
     {
       "testId": "MdlDhConvert.ExplicitToDhExactNonUniqueCoincidentAxes_WP13T09_ACC2",
@@ -7597,7 +7597,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 22
+      "durationMs": 27
     },
     {
       "testId": "MdlPackage.ExportDeterministicBytes_WP13T13_ACC1_ACC2",
@@ -7632,7 +7632,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 38
+      "durationMs": 21
     },
     {
       "testId": "MdlPackage.ExportFailurePreservesPrevious_WP13T13_ACC2",
@@ -7667,7 +7667,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 21
+      "durationMs": 34
     },
     {
       "testId": "MdlPackage.ImportRejectsForeignArtifact_WP13T13_ACC3",
@@ -7740,7 +7740,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 22
+      "durationMs": 15
     },
     {
       "testId": "MdlPackage.TamperedPackageRejected_WP13T13_ACC3_ACC4",
@@ -7774,7 +7774,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 44
+      "durationMs": 59
     },
     {
       "testId": "MdlPackage.PackageChecklistText_Deterministic_UI_T61",
@@ -8338,7 +8338,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 6
+      "durationMs": 5
     },
     {
       "testId": "ModelingCommandFlows.ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D",
@@ -8406,7 +8406,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "testId": "ModelingCommandFlows.AssembledSetMatchesCatalog_F466",
@@ -8477,7 +8477,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "testId": "ModelingCommandFlows.ImportUrdf_PlainNoMesh_ProducesDraft_WP13_T21",
@@ -13038,7 +13038,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 7
+      "durationMs": 17
     },
     {
       "testId": "MdlPackageWorkCell.PreviewExportsFourKinds_UI_T59",
@@ -13155,7 +13155,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 9
+      "durationMs": 10
     },
     {
       "testId": "MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3",
