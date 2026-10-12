@@ -944,14 +944,16 @@ TEST_F(RunRegistryAdmissionTest, FinalEnvelopeContentConflictRejected_EX_REG_8)
     EXPECT_EQ(admission.archivePhase(id.run), ArchivePhase::Archived);
 }
 
-TEST_F(RunRegistryAdmissionTest, ResultBatchAdmissionAndConflict_EX_REG_8)
+TEST_F(RunRegistryAdmissionTest, ResultBatchAdmissionAndMultiBatch_F809)
 {
-    // 批次路径（§9.3 批次级重投递行）：首见落盘（无 finalize——批次只
-    // 增不发布"完整"）；同内容重投递幂等跳过；不同内容冲突拒绝＋文件
-    // 不被覆盖。
+    // 批次路径（§9.3 批次级重投递行＋F-809 语义修正）：首见落盘（无
+    // finalize——批次只增不发布"完整"）；同内容重投递幂等跳过；不同
+    // 内容＝下一批次顺延接纳（分批流式回传——修复前被 ContentConflict
+    // 误拒），落盘名带批次序互不覆盖。
     const core::TaskIdentity id = makeIdentity();
     (void)registerStandardRun(id);
     ResultAdmission admission = makeAdmission();
+    const fs::path runDir = m_dir / "results" / id.run.toCanonical();
 
     ArrivalEnvelope batch = makeArrival(id, ResultKind::ResultBatch);
     batch.payloadCanon = {0x11, 0x22, 0x33};
@@ -959,11 +961,11 @@ TEST_F(RunRegistryAdmissionTest, ResultBatchAdmissionAndConflict_EX_REG_8)
     EXPECT_EQ(first.decision.verdict, AdmissionDecision::Verdict::Admitted);
     EXPECT_EQ(first.archivePhaseAfter, ArchivePhase::Archiving) << "批次就位、未 finalize";
 
-    const fs::path batchFile = m_dir / "results" / id.run.toCanonical() / "result-batch.bin";
-    EXPECT_TRUE(fs::exists(batchFile));
-    EXPECT_FALSE(fs::exists(m_dir / "results" / id.run.toCanonical() / "manifest.json"))
+    const fs::path batch1File = runDir / "result-batch-1.bin";
+    EXPECT_TRUE(fs::exists(batch1File));
+    EXPECT_FALSE(fs::exists(runDir / "manifest.json"))
         << "批次不发布 manifest（D-13：无 manifest 即不完整）";
-    const std::string bytesBefore = readAll(batchFile);
+    const std::string bytes1 = readAll(batch1File);
 
     // 同内容重投递 → DuplicateIgnored（零端口调用）。
     ArrivalEnvelope same = makeArrival(id, ResultKind::ResultBatch);
@@ -971,13 +973,20 @@ TEST_F(RunRegistryAdmissionTest, ResultBatchAdmissionAndConflict_EX_REG_8)
     EXPECT_EQ(admission.admitResult(std::move(same)).decision.verdict,
               AdmissionDecision::Verdict::DuplicateIgnored);
 
-    // 不同内容重投递 → ContentConflict＋文件逐字节不变。
-    ArrivalEnvelope different = makeArrival(id, ResultKind::ResultBatch);
-    different.payloadCanon = {0x44, 0x55, 0x66};
-    const AdmissionOutcome out = admission.admitResult(std::move(different));
-    EXPECT_EQ(out.decision.verdict, AdmissionDecision::Verdict::Rejected);
-    EXPECT_EQ(out.decision.reason, AdmissionDecision::RejectReason::ContentConflict);
-    EXPECT_EQ(readAll(batchFile), bytesBefore) << "不覆盖";
+    // F-809 核心：不同内容＝同 run 第二个合法批次（分批流式回传）→
+    // 顺延接纳落 result-batch-2.bin，批次 1 字节不被覆盖。
+    ArrivalEnvelope second = makeArrival(id, ResultKind::ResultBatch);
+    second.payloadCanon = {0x44, 0x55, 0x66};
+    const AdmissionOutcome out = admission.admitResult(std::move(second));
+    EXPECT_EQ(out.decision.verdict, AdmissionDecision::Verdict::Admitted);
+    const fs::path batch2File = runDir / "result-batch-2.bin";
+    EXPECT_TRUE(fs::exists(batch2File));
+    EXPECT_EQ(readAll(batch1File), bytes1) << "批次 1 不被覆盖";
+    // 批次 1 重投递仍幂等（按批次列表判重——与新增批次互不干扰）。
+    ArrivalEnvelope sameAgain = makeArrival(id, ResultKind::ResultBatch);
+    sameAgain.payloadCanon = {0x11, 0x22, 0x33};
+    EXPECT_EQ(admission.admitResult(std::move(sameAgain)).decision.verdict,
+              AdmissionDecision::Verdict::DuplicateIgnored);
 }
 
 // =====================================================================

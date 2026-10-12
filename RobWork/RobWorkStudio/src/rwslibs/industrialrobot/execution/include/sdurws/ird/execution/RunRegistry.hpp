@@ -691,8 +691,10 @@ private:
     /// 已接纳 FinalEnvelope 的载荷指纹（run→SHA-256 十六进制——重投递
     /// 幂等判据，§9.3"归档 manifest 摘要一致"的执行侧镜像）。
     std::unordered_map<core::RunId, std::string> m_admittedFinalDigest;
-    /// 已接纳批次的载荷指纹（run→最近批次 SHA-256——批次级重投递判据）。
-    std::unordered_map<core::RunId, std::string> m_batchDigest;
+    /// 已接纳批次的载荷指纹（run→按到达序的批次指纹列表——批次级重投递
+    /// 判据＋批次序承载；F-809：原「run→最近批次」单值键使同 run 第二个
+    /// 合法批次必被 ContentConflict 误拒，分批流式回传断裂）。
+    std::unordered_map<core::RunId, std::vector<std::string>> m_batchDigest;
     std::uint64_t m_rejectedArrivals = 0;           ///< 丢弃计数（§9.3 观测面）
     /// "总线未装配"开发留痕的一次性标记（避免每次接纳重复告警）。
     bool m_eventBusAbsenceReported = false;
