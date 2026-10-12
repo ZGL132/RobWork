@@ -7738,10 +7738,11 @@
       "id": "F-794",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #1（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "core `Events.cpp:115-120` DomainEvent::operator== 遗漏 emittedAtUtc 比较（比较式仅 id/kind/payload 三元），同函数注释自称「emittedAtUtc 参与相等」——与 Events.hpp:104/131 四元组契约及本函数注释双重矛盾",
-      "resolution": "处置建议：补 emittedAtUtc 比较使实现与 Events.hpp:104/131 四元组契约一致，或一并更正失实注释；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：补 emittedAtUtc 比较使实现与 Events.hpp:104/131 四元组契约一致，或一并更正失实注释；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 a7daaf94），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-795",
@@ -7756,19 +7757,21 @@
       "id": "F-796",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #6（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "workflow `Lifecycle.cpp:299` commit 第 3 段 submitInitialization 裸调无异常防护（对照第 2 段 :260 有完整 catch，「不留半成品」收尾 :314-328 仅 committed==false 值轨路径执行）——L5 装配层抛异常即骨架目录残留磁盘＋异常穿透编排器",
-      "resolution": "处置建议：第 3 段补与第 2 段同款异常防护，异常路径亦执行「不留半成品」收尾，消除同函数两段防御不一致；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：第 3 段补与第 2 段同款异常防护，异常路径亦执行「不留半成品」收尾，消除同函数两段防御不一致；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 c65c73ac），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-797",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #7（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "workflow `Advice.cpp:157-165` R2 对空 domains all_of 恒真：域未装配（Unavailable）且快照无域条目、无活动任务、无归档结果的阶段被产出「发起计算」建议",
-      "resolution": "处置建议：R2 建议产出加「非空 domains」前置；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：R2 建议产出加「非空 domains」前置；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 5a8f600d），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-798",
@@ -7828,19 +7831,21 @@
       "id": "F-804",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #34（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "project `CommandServiceImpl.cpp:237` S1 仅查 m_host.closed() 漏拦 Draining（writable()＝OS 排他锁持有，两项均过）：在途票据先取（:183 acquireInFlight 在 S1 之前）＋S3 prepare/确认交互照常跑完——破坏排空悬置不变量",
-      "resolution": "处置建议：S1 增 Draining 态前置拒绝；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：S1 增 Draining 态前置拒绝；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 7c5b04fa），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-805",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #35（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "project `ArchiveServiceImpl.cpp:886/1055-1084` finalize/abandon 终局仲裁未兑现：finalize 持 m_host.m_writerMutex 而 abandon 全程不取 writer 锁（仅 m_sessionsMutex），置 ended＋锁外释放票据（:1077 endSession→:468 ticket.reset）后 finalize 仍继续发布 manifest——「先到者定终局」仅注释性承诺，失败/取消运行可变完整运行，极端时序下宿主析构与 finalize 并发构成 use-after-destruction 窗口",
-      "resolution": "处置建议：abandon 同取 writer 锁（或在 finalize 发布前复核 session 在册）；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：abandon 同取 writer 锁（或在 finalize 发布前复核 session 在册）；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 641040be），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-806",
@@ -7855,37 +7860,41 @@
       "id": "F-807",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #44（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "evidence `Currentness.cpp:419-431` 两处身份级兜底 reason 的 dependencyKey 误填 result.evaluationKey——违反 Currentness.hpp:343-344 契约「契约版本变化与身份级兜底为空串——无具体涉事条目」，按依赖键对账的调用方把兜底原因误归因到不存在的依赖条目",
-      "resolution": "处置建议：身份级兜底 dependencyKey 按契约置空串（无具体涉事条目），消除对账误归因；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：身份级兜底 dependencyKey 按契约置空串（无具体涉事条目），消除对账误归因；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 fa51a91a），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-808",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #45（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "policy `CollisionEvaluator.cpp:617-621` 矩阵未列组合（Tool×Tool/Tool×Payload/Payload×Payload，:153/:154/:161）classifyDomainPair 返回 nullopt 直接 continue，先于 :643-648 mandatoryExpanded 查表——mandatoryPairs 静默消失、必检对无痕丢弃且零输出资格不可观测，与 Group 支保守拒绝（:487-490）原则不一致，击穿「过滤不得隐藏必检」结构承诺",
-      "resolution": "处置建议：矩阵未列组合不得静默 continue，与 Group 支一致走保守拒绝，恢复必检对可观测性与过滤可追溯性；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：矩阵未列组合不得静默 continue，与 Group 支一致走保守拒绝，恢复必检对可观测性与过滤可追溯性；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 a04664ef），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-809",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #49（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "execution `Admission.cpp:493-523` 批次指纹表 m_batchDigest.emplace(run, fingerprint) 永不更新＋批次固定落盘名 \"result-batch.bin\"（:516）——同 run 第二个合法批次（分批流式回传）指纹必异，被 Rejected(ContentConflict) 误拒",
-      "resolution": "处置建议：指纹表按 run 存批次列表（或 run+序号复合键）＋落盘名带批次序；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：指纹表按 run 存批次列表（或 run+序号复合键）＋落盘名带批次序；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 8563be27），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-810",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #52（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "execution `win32/ChannelPair.cpp:35-38/160` 命令流服务端 PIPE_ACCESS_OUTBOUND 无 FILE_FLAG_OVERLAPPED（对照数据端 :52 有），:160 ::WriteFile(m_cmdServer, …, nullptr, &ov) 对同步句柄做 OVERLAPPED 写——按 MSDN 表现为每次命令写 ERROR_INVALID_PARAMETER 或退化无限阻塞，命令面完全失效/有界等待承诺失效二者皆致命",
-      "resolution": "处置建议：命令端补 FILE_FLAG_OVERLAPPED（对齐数据端既有做法），消除同步句柄 OVERLAPPED 写双致命面；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：命令端补 FILE_FLAG_OVERLAPPED（对齐数据端既有做法），消除同步句柄 OVERLAPPED 写双致命面；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 1326138e），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-811",
@@ -7945,46 +7954,51 @@
       "id": "F-817",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #60（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "ui `UiSessionController.cpp:441/693` pollDrain 防线 4 执行半区直调 executeForceSequence() 无接线守卫，:693 裸调 m_deps.forceAbandonAll()（守卫仅存在 resolveForceCloseDialog :512-516，:691 注释自称两入口已完成校验与实现不符）——契约允许不接线时 T_force2 自动放弃路径（用户不在场）撞空 std::function 抛 bad_function_call，UI 线程未捕获即 terminate",
-      "resolution": "处置建议：pollDrain 路径补同款接线守卫，或两入口共用带守卫包装；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：pollDrain 路径补同款接线守卫，或两入口共用带守卫包装；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 d0df2551），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-818",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #61（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "ui `UiSessionController.cpp:697-712/374` finishCurrentClose 清 m_closeSubscription/m_session/计数但不清 m_dialogPending——对话框挂起期间 onStoreClosed 终结会话（:577）后，迟到 resolveCloseDialog 过 :247 挂起检查，:374 m_session.store->requestClose() 对空绑定解引用，UI 线程崩溃",
-      "resolution": "处置建议：finishCurrentClose 清 m_dialogPending，或 resolveCloseDialog 前置 hasOpenSession 校验；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：finishCurrentClose 清 m_dialogPending，或 resolveCloseDialog 前置 hasOpenSession 校验；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 f1408563），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-819",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #62（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "ui `DraftController.cpp:471-474` discardDraft 落盘任务 postToDiskThread([&]{ promise.set_value(store->discard(handle)); }) 无 try/catch（对照同文件 save 路径经 runSaveBlocking :349 封口）——端口实现抛异常即落盘线程任务逃逸（terminate）或 future 永不置值（关闭对话框假死）",
-      "resolution": "处置建议：落盘任务体内 try/catch 转值轨（同 save 路径口径）；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：落盘任务体内 try/catch 转值轨（同 save 路径口径）；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 efbebd89），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-820",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #63（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "ui `PropertyInspector.cpp:284-312` 裸指针 entry=&declared（指入 m_view.complexEntries）跨可重入 provider.activateComplexPage（:302，宿装页嵌套事件循环内选中刷新替换 m_view → complexEntries 重分配）调用，:304/:312 跨调用解引用 entry->hosted——UAF",
-      "resolution": "处置建议：Provider 调用前把 entry->hosted 快照为局部值，调用后只用快照；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：Provider 调用前把 entry->hosted 快照为局部值，调用后只用快照；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 c1024021），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-821",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #65（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "ui `CommandPalette.cpp:283-311` eventFilter 转发表仅 Key_Down/Up/Return/Enter/Escape 无 Key_Tab，Key_Tab 处理仅在 :260-278 面板级 keyPressEvent 而焦点恒在 m_filter（:74-78 installEventFilter 转发）、面板从不获焦——按 Tab 焦点逸出面板（搜索失效、Esc 收口失效），Tab 补全类别主键盘流不可达",
-      "resolution": "处置建议：eventFilter 增 Key_Tab 分支转调 completeCategory；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：eventFilter 增 Key_Tab 分支转调 completeCategory；已由批 E1 修复（分支 audit-r2e1-fixes，修复提交 8e9c2d23），E1 批 gate-all 85/85 全绿（audit/acc-audit-r2e1-1/）",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-822",
