@@ -332,6 +332,8 @@ add_executable(sdurws_ird_optimization_test
     test/ConstraintTest.cpp
     test/ObjectiveTest.cpp
     test/ParetoTest.cpp
+    test/ReproBenchmarkTest.cpp   # WP-23-T09：确定性复现基准（B-08 抽样
+                                  #   ——seeded-lhs 复跑等价候选集＋稳定排序）
     test/EvaluatorPortsTest.cpp
     test/RunTest.cpp
     test/ApplierTest.cpp

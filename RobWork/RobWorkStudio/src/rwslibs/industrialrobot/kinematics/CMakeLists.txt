@@ -383,6 +383,7 @@ add_executable(sdurws_ird_kinematics_test
     test/FkTest.cpp
     test/IkTest.cpp
     test/TaskPointsBatchTest.cpp
+    test/ReproBenchmarkTest.cpp   # WP-23-T09：确定性复现基准（B-08 抽样——批量 1/8 线程等价）
     test/RegionCoverageTest.cpp
     test/CommandsTest.cpp
     test/SolutionSetViewTest.cpp

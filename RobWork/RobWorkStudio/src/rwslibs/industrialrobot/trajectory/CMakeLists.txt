@@ -427,6 +427,9 @@ if(TARGET sdurw_kinematics)
         test/PtpSequenceTest.cpp)    # WP-16-T04：TRJ-01（PTP 插值/构型选择/
                                      #   限位守卫/序列展开——V-01/02/03 面）
     target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/ReproBenchmarkTest.cpp) # WP-23-T09：确定性复现基准（B-08 抽样
+                                     #   ——PTP 段链复跑等价集合＋稳定排序）
+    target_sources(sdurws_ird_trajectory_test PRIVATE
         test/CartesianLineContinuityTest.cpp)
     target_sources(sdurws_ird_trajectory_test PRIVATE
         test/PlannerAvoidanceTest.cpp)  # WP-16-T06：TRJ-03（真实规划器基准/
