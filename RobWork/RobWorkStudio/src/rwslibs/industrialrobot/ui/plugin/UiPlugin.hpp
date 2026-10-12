@@ -203,8 +203,11 @@ private:
     /// 命令状态观察回调（本插件零判定——§7.6）。
     void registerHostMenus();
     /// 菜单命令动作工厂（宿主菜单半区——动作父对象＝本插件，触发统一转发
-    /// 内容装配面提交路径）。
-    QAction* addCommandAction(QMenu* target, const char* title, const char* commandId);
+    /// 内容装配面提交路径）。baseToolTip＝基础悬停文案（F-553——装配拍
+    /// 快照进登记条目，refreshHostMenuActions 禁用原因刷新的还原值源；
+    /// 缺省空＝无基础说明的命令动作）。
+    QAction* addCommandAction(QMenu* target, const char* title, const char* commandId,
+                              const QString& baseToolTip = QString());
     /// 视图菜单辅助 Dock 开关工厂（UI-T24 P1——域自持面板默认不呈现的呼出
     /// 通道；勾选态随辅助可见性记忆刷新，Dock 关闭钮同步记忆）。
     void addAuxDockToggle(QMenu* target, const char* title, const char* auxKey,
@@ -339,7 +342,11 @@ private:
     //      控制器与内容装配面先于端口适配器消亡）----
     app::DiagnosticsStack m_diag;                                 ///< 诊断栈（与 harness 同装配序列）
     std::shared_ptr<app::UnloadedPolicySource> m_policySource;    ///< 策略未装载占位（C-10）
-    std::shared_ptr<app::NullUiNameResolver> m_nameResolver;      ///< 名称解析占位（C-11）
+    /// 名称解析端口（C-11）：装配起点＝NullUiNameResolver 桩（恒 nullopt）；
+    /// F-551 起需求域可用时升级为需求域解析前端（RequirementsNameResolver
+    /// ——工作集语义名，闭包外对象 nullopt 与桩同语义面）。接口类型承载
+    /// ——升级只换指向不换消费面（三个消费点同持此 shared_ptr）。
+    std::shared_ptr<ui::IUiNameResolver> m_nameResolver;
     std::shared_ptr<app::HarnessAboutSource> m_aboutSource;       ///< 关于框数据占位（§11.4）
     std::shared_ptr<app::ProjectDiagnosticsBridge> m_bridge;      ///< project 诊断桥（P-PR-6）
     /// §5 会话状态机（打开编排的推进面）——延迟构造：依赖的适配器在
@@ -439,7 +446,20 @@ private:
     std::shared_ptr<app::StorePortAdapter> m_lastStoreAdapter; ///< 最近打开的存储适配器（T03b-2——apply 网关命令端口来源）
     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）
     QMenu* m_recentMenu = nullptr;                            ///< "最近项目"子菜单（aboutToShow 重建）
-    std::vector<std::pair<QAction*, std::string>> m_hostMenuCommandIds; ///< 框架菜单动作→命令 id（使能同步）
+    /// 框架菜单命令动作登记条目（F-553——禁用原因 tooltip 的承载结构）。
+    ///
+    /// 为什么记录 baseToolTip：refreshHostMenuActions 每拍按可用性快照
+    /// 重写动作 tooltip——禁用时写原因文案（ERR-01「禁用必带原因」），
+    /// 可用时必须还原基础悬停说明（如 F-501 为应用/撤销/重做写的长说
+    /// 明）。基础文案的权威值在 registerHostMenus 装配时刻，本条目在装
+    /// 配拍快照一次（此后 refresh 只读），避免"上次刷新写入了原因文案"
+    /// 被误当基础文案还原的回读污染。
+    struct HostMenuCommandAction {
+        QAction* action = nullptr;      ///< 菜单动作（Qt 父子树托管——非 owning）
+        std::string commandId;          ///< 路由命令 id（submitCommand 转发面）
+        QString baseToolTip;            ///< 基础悬停文案（装配拍快照——还原值源）
+    };
+    std::vector<HostMenuCommandAction> m_hostMenuCommandIds; ///< 框架菜单动作→命令 id（使能＋tooltip 同步）
     std::vector<std::pair<WorkbenchRegion, QAction*>> m_hostRegionToggles; ///< 框架菜单区域开关（勾选态回写）
     std::vector<std::pair<std::string, QAction*>> m_hostAuxToggles; ///< 视图菜单辅助 Dock 开关→记忆键（UI-T24——勾选态回写）
     QTimer* m_centralGuardTimer = nullptr;  ///< 中央区保护合并抖动定时器（UI-T24 P2——惰性创建）

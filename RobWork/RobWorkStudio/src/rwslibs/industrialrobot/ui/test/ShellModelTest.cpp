@@ -3,7 +3,9 @@
  * @brief  UI-T03 模型层用例（QCoreApplication 级——§12.1 第一层分工）：
  *         ①ui 稳定诊断码描述符表 × StableCodeRegistry 注册/查询契约
  *         （acceptance 1 的 UI-LAYOUT-RESTORE-FAILED 码值面＋acceptance 4
- *         的码表登记面）；②PM-11 状态栏格式唯一权威的格式矩阵（acceptance 2）。
+ *         的码表登记面）；②PM-11 状态栏格式唯一权威的格式矩阵（acceptance 2）；
+ *         ③禁用原因 tooltip 决策矩阵＋原因键词表完备性（F-553——ERR-01
+ *         「禁用必带原因」呈现半区，UiText::disableReasonToolTip 唯一书写点）。
  *
  * 设计依据：
  *   - 任务契约 tasks/foundation/UI-T03.json acceptance 1（布局记忆损坏回退
@@ -31,6 +33,7 @@
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>
 #include <sdurws/ird/ui/UiProjections.hpp>
+#include <sdurws/ird/ui/UiText.hpp>  // disableReasonToolTip（F-553——禁用原因 tooltip 决策）
 
 #include <algorithm>
 #include <string>
@@ -157,6 +160,70 @@ TEST(ShellModel, StatusBarFormat_PM11_Matrix_UI_T03_ACC2)
     both.drafts.present = true;
     both.drafts.sessionDirty = true;
     EXPECT_EQ(ui::formatProjectStatusText(both), std::string(u8"演示项目*（只读）"));
+}
+
+// =====================================================================
+// 用例组三：禁用原因 tooltip 决策（F-553——ERR-01「禁用必带原因」呈现
+// 半区的唯一书写点；消费面＝宿主菜单动作 refreshHostMenuActions）
+// =====================================================================
+
+/**
+ * F-553 回归（决策表矩阵）：可用性快照刷新点对动作 tooltip 的三态分岔——
+ *   - 禁用＋原因键→统一原因解析文案（此前宿主菜单循环丢弃 reasonKey＝
+ *     置灰动作悬停无禁用原因，即 finding 登记的呈现缺口）；
+ *   - 可用→还原基础悬停说明（F-501 三条长文案不因禁用刷新丢失）；
+ *   - 禁用＋空键→保持基础说明（F-557 同面守卫——空键不进 resolveText，
+ *     解析器对未知键 fail-fast，空键守卫是诚实降级面）。
+ */
+TEST(ShellModel, DisableReasonToolTip_DecisionMatrix_F553)
+{
+    IRD_TEST_INFO("UX-02", {"F-553"});
+
+    // ①禁用＋就绪阻断键→统一原因解析（与 resolveText 同值——同源一词表，
+    //   状态行/命令面板/菜单 tooltip 三呈现面同文案）。
+    const std::string base = u8"预检并应用当前草稿——通过门禁后生成新项目修订。";
+    const std::string tooltip =
+        ui::disableReasonToolTip(false, "reason.readiness-blocking", base);
+    EXPECT_EQ(tooltip, ui::resolveText("reason.readiness-blocking"));
+    EXPECT_EQ(tooltip, std::string(u8"存在未就绪阻断项——先处理校验页阻断"));
+
+    // ②可用→还原基础悬停说明（可用态不残留上一次禁用原因）。
+    EXPECT_EQ(ui::disableReasonToolTip(true, "reason.readiness-blocking", base), base);
+    // 可用且键为空→同样还原（可用态与原因键无涉）。
+    EXPECT_EQ(ui::disableReasonToolTip(true, "", base), base);
+
+    // ③禁用＋空键→F-557 同面守卫（空键不进 resolveText——保持基础文案
+    //   诚实降级，不渲染空白 tooltip、不因解析 fail-fast 中断刷新循环）。
+    EXPECT_EQ(ui::disableReasonToolTip(false, "", base), base);
+    // 无基础文案的命令动作（缺省空）→空 tooltip（与顶栏按钮先例等价）。
+    EXPECT_EQ(ui::disableReasonToolTip(false, "", ""), std::string());
+}
+
+/**
+ * F-553 回归（词表完备性）：可用性链全部已知禁用原因键必须在 UiText
+ * 登记——refreshHostMenuActions 每拍对禁用动作现调 resolveText（未登记
+ * 键 fail-fast 即菜单刷新中断），装配层新增原因键而漏登记文案＝宿主菜
+ * 单刷新即崩的潜伏缺陷。本用例钉住当前注册表全部缺省/注入原因键。
+ */
+TEST(ShellModel, DisableReasonToolTip_AllRegistryReasonKeysRegistered_F553)
+{
+    IRD_TEST_INFO("UX-02", {"F-553", "F-557"});
+
+    // 注册表缺省使能规则（CommandRegistry defaultEnablement）＋宿主注入
+    // 门控（applyDraftDisablement/undoRedoDisablement）＋注册期撤牌谓词
+    // 的全部原因键——逐一应可解析且非空（能进 tooltip 呈现面）。
+    const char* const reasonKeys[] = {
+        "reason.no-project",               // 缺省规则：无活动项目（PM-10）
+        "reason.readonly",                 // 缺省规则：项目只读（§7.6）
+        "reason.readiness-blocking",       // draft.apply：就绪阻断（F-553 主键）
+        "reason.no-undo-revision",         // project.undo：无可撤销修订
+        "reason.no-redo-revision",         // project.redo：无可重做修订
+        "cmd.flow-not-assembled.reason",   // 注册期撤牌：域流程未装配（UI-T27）
+    };
+    for (const char* key : reasonKeys) {
+        const std::string text = ui::disableReasonToolTip(false, key, std::string());
+        EXPECT_FALSE(text.empty()) << "原因键缺文案：" << key;
+    }
 }
 
 }  // namespace

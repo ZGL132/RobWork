@@ -55,3 +55,46 @@
 - gate-all **85/85**（`-QtPrefix D:/software/Qt/6.11.1/msvc2022_64`，日志 logs/gate-post-merge-85of85.log）；
 - findings.json F-555/F-556 按所有者预裁决（「状态翻转随 ui-t77 合流批次办理」）翻 fixed（fixedAt=2026-10-10）；
 - 验收记录：traceability/acceptance/UI-T77-20261010.md（acc/ui-t77/1@3b5ffa97，verdict=pass——独立子会话对抗式验收）。
+
+## 第二批：F-551/F-553 呈现缺陷修复批（2026-10-12，基点 redesign-main@38af404e）
+
+范围：findings F-551（需求域 apply 对象树显示名为空）/ F-553（命令置灰禁用原因无 tooltip），
+均在分支 `ui-t77` 上实施（本节与其上两节三维预览批次同分支异批——两批提交以 commit 为界）。
+
+### F-551——需求域对象显示名（呈现层最小改法，owner 出路 2「树模型名称解析覆盖需求域对象」）
+
+| 层 | 文件 | 内容 |
+| --- | --- | --- |
+| requirements 域 | `requirements/plugin/HostMigrationProviders.hpp/.cpp` | 新增 `RequirementsNameResolver`（`ui::IUiNameResolver` 实现）：工作集现取语义名（根→`RequirementSet.name`；点/区域/工况→条目 `name`；计划→「计划 i」沿用 PanelTreeModel 既有口径）；闭包外/空名/无会话→nullopt（UX-02 占位兜底不破坏） |
+| requirements 模块 | `requirements/plugin/RequirementsUiModule.hpp/.cpp` | 新增 `sharedNameResolverFrontend()`（惰性构造＋缓存；deps 与三接入面同源绑定） |
+| requirements 门面 | `requirements/plugin/RequirementsPluginAssembly.cpp`、`requirements/assembly/.../RequirementsPluginAssembly.hpp` | 转发出口（宿主消费面；失败隔离缺席＝空指针） |
+| ui 宿主 | `ui/plugin/UiPlugin.hpp/.cpp` | `m_nameResolver` 成员类型改接口（`shared_ptr<ui::IUiNameResolver>`）；`assembleSharedSurfaces` 需求域可用时升级端口（三个消费面同持 shared_ptr 一处升级全覆盖；桩语义＝前端未命中 nullopt，runtime 真值链将来装配点已注释登记） |
+| 测试 | `requirements/test/HostMigrationTest.cpp` | 2 用例：`NameResolver_ClosureObjectsAnswerWorkingSetNames_F551`（五对象语义名）、`NameResolver_ForeignOrSessionlessAnswersNothing_F551`（闭包外/无效身份/无会话→nullopt） |
+
+### F-553——禁用原因 tooltip 传递链（断点＝refreshHostMenuActions 丢弃 reasonKey）
+
+| 层 | 文件 | 内容 |
+| --- | --- | --- |
+| ui 文案 | `ui/include/sdurws/ird/ui/UiText.hpp`、`ui/src/UiText.cpp` | 新增 `disableReasonToolTip(enabled, reasonKey, baseToolTip)`：禁用→统一原因解析；可用→还原基础文案；空键→F-557 同面守卫（单一书写点，防消费点分岔漂移） |
+| ui 宿主 | `ui/plugin/UiPlugin.hpp/.cpp` | 菜单动作登记结构体化（`HostMenuCommandAction`——装配拍快照 baseToolTip）；`addCommandAction` 增基础文案参（F-501 三条长说明迁移）；`refreshHostMenuActions` 补 `setToolTip(disableReasonToolTip(...))`——与顶栏按钮先例（WorkbenchContent refreshCommandStates）同口径 |
+| 测试 | `ui/test/ShellModelTest.cpp` | 2 用例：`DisableReasonToolTip_DecisionMatrix_F553`（决策矩阵）、`DisableReasonToolTip_AllRegistryReasonKeysRegistered_F553`（六原因键词表完备性——防菜单刷新遇未登记键 fail-fast） |
+
+### 验证（How）
+
+- 集成模式全量构建：`RWS_BUILD_INDUSTRIALROBOT:BOOL=ON`（构建前 grep 确认）→
+  `cmake --build build --config Release` 退出码 0、错误扫描零命中（logs/f551-f553-integration-build.md）。
+- 测试执行（gtest XML＋控制台输出在本目录 logs/，前缀 `f551-f553-`）：
+  - `sdurws_ird_ui_test`：260/260 通过（基线 258＋本批 2）；
+  - `sdurws_ird_ui_contract_test`：35/35 通过；
+  - `sdurws_ird_ui_gui_test`：78/78 通过；
+  - `sdurws_ird_requirements_test`：213 通过＋1 SKIPPED（GuiRegistration.V22RegisteredNotExecuted_ACC1——§10.2 登记不执行，既有设计；含本批 2 用例）。
+- 门禁：`cmake --build build --config Release --target ird_gates` →
+  R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 全部检查通过零命中（logs/f551-f553-ird-gates.log）。
+
+### 边界与诚实声明
+
+- F-551 修复为呈现层（名称解析覆盖），apply 载荷/对象名称语义零触碰；两处名称口径来源
+  已在代码注释登记（根＝对象本体 `RequirementSet.name`；计划＝PanelTreeModel「计划 i」既有口径）。
+  若所有者对需求集根/计划的树显示名词形另有裁决，属后续单元卡增量修订，不阻塞本呈现修复。
+- F-553 的宿主端到端复验（置灰「应用草稿」悬停应显示「存在未就绪阻断项——先处理校验页阻断」等
+  原因文案）待所有者换装新 exe 复验后由所有者翻 findings 状态（本实施会话不自行翻转）。

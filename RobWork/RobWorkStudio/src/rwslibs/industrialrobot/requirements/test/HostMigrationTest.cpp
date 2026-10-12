@@ -967,3 +967,81 @@ TEST(HostMigration, IncrementalFace_ExistingPanelProjectionUnchanged_ACC3)
     EXPECT_TRUE(hasPointsGroup);  // 四分组结构照旧
     EXPECT_TRUE(hasPointEntry);   // 条目行照旧
 }
+
+// =====================================================================
+// F-551——名称解析前端（RequirementsNameResolver：需求对象显示名入树）
+// =====================================================================
+
+/// F-551 回归：需求闭包内对象（根/任务点/区域/工况/计划）经名称解析前端
+/// 应答工作集语义名——工业项目树的「需求对象」分组不再呈现「（未命名
+/// 对象）」（UX-02 占位只留给解析失败形态；apply 后树上可读＝finding
+/// 修复目标）。
+TEST(HostMigration, NameResolver_ClosureObjectsAnswerWorkingSetNames_F551)
+{
+    IRD_TEST_INFO("REQ-01/UX-02", {"F-551"});
+    // 四集合各一条目（名称进断言）＋一计划（无语义名——标签口径断言）。
+    // 集合对象经局部变量组装（聚合首成员是 schemaVersion——花括号直填
+    // 条目会被当成版本号初始化，MSVC C2660/C2664）。
+    PointSet points;
+    points.entries.push_back(makePoint("抓取点A"));
+    RegionSet regions;
+    regions.entries.push_back(makeRegion("作业区1"));
+    ConditionSet conditions;
+    conditions.entries.push_back(makeCondition("标准工况"));
+    PlanSet plans;
+    plans.entries.push_back(makePlan(core::ObjectId::generate()));
+    SessionFixture f = SessionFixture::load(points, regions, conditions, plans);
+    RequirementsNameResolver resolver(
+        makeDeps(&f.editor,
+                 [&f]() { return std::optional<core::ObjectId>(f.rootOid); },
+                 nullptr, nullptr, nullptr));
+
+    const RequirementWorkingSet& ws = f.editor.workingSet();
+    // 根→RequirementSet.name（对象本体语义名——进报告的名字，应用后树上形态）。
+    const auto rootName = resolver.resolveObjectId(f.rootOid);
+    ASSERT_TRUE(rootName.has_value());
+    EXPECT_EQ(*rootName, "基线需求集");
+    // 任务点/区域/工况→条目 name（I-REQ-3 集合内唯一——单条目直取 front）。
+    const auto pointName = resolver.resolveObjectId(ws.points.entries.front().objectId);
+    ASSERT_TRUE(pointName.has_value());
+    EXPECT_EQ(*pointName, "抓取点A");
+    const auto regionName = resolver.resolveObjectId(ws.regions.entries.front().objectId);
+    ASSERT_TRUE(regionName.has_value());
+    EXPECT_EQ(*regionName, "作业区1");
+    const auto conditionName =
+        resolver.resolveObjectId(ws.conditions.entries.front().objectId);
+    ASSERT_TRUE(conditionName.has_value());
+    EXPECT_EQ(*conditionName, "标准工况");
+    // 采样计划→「计划 1」（SamplingPlan 无 name 字段〔§5.2〕——沿用域面板
+    // PanelTreeModel 既有口径「计划 i」（i 为工作集序 1 起），两处呈现同源）。
+    const auto planName = resolver.resolveObjectId(ws.plans.entries.front().objectId);
+    ASSERT_TRUE(planName.has_value());
+    EXPECT_EQ(*planName, "计划 1");
+}
+
+/// F-551 反例：闭包外对象/无效身份/无会话→nullopt（协议二态——呈现层
+/// 显示 UX-02 占位文案，不虚构名称；与 NullUiNameResolver 的"未命中"
+/// 同语义面，共享树口径不破）。
+TEST(HostMigration, NameResolver_ForeignOrSessionlessAnswersNothing_F551)
+{
+    IRD_TEST_INFO("REQ-01/UX-02", {"F-551"});
+    SessionFixture f = SessionFixture::load(
+        PointSet{}, RegionSet{}, ConditionSet{}, PlanSet{});
+    RequirementsNameResolver resolver(
+        makeDeps(&f.editor,
+                 [&f]() { return std::optional<core::ObjectId>(f.rootOid); },
+                 nullptr, nullptr, nullptr));
+
+    // 闭包外身份（不在根/四集合内）→nullopt（呈现层回退占位形态）。
+    EXPECT_FALSE(resolver.resolveObjectId(core::ObjectId::generate()).has_value());
+    // 全零保留值（无效身份——不是任何真实对象）→nullopt（不崩不虚构）。
+    EXPECT_FALSE(resolver.resolveObjectId(core::ObjectId{}).has_value());
+
+    // 无会话（编辑器缺位）→nullopt（装配间隙的合法空态——打开编排的
+    // 会话建立前树供给空集，解析前端同步无应答）。
+    IRequirementEditor* noEditor = nullptr;
+    RequirementsNameResolver sessionless(
+        makeDeps(noEditor, []() -> std::optional<core::ObjectId> { return std::nullopt; },
+                 nullptr, nullptr, nullptr));
+    EXPECT_FALSE(sessionless.resolveObjectId(f.rootOid).has_value());
+}

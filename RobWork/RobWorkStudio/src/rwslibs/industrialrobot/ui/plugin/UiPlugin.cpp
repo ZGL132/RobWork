@@ -1622,17 +1622,17 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
         // F-501（宿主审核 P2）应用语义明确化：菜单文案与两域面板既有指引
         // （『应用草稿』）统一——"应用修改"易与项目级修改混淆；悬停说明
         // 分层交代预检门禁/修订生成/两级撤销的差别（语义零变化，纯文案）。
-        QAction* applyDraft = addCommandAction(projectMenu, "应用草稿", "draft.apply");
-        applyDraft->setToolTip(QStringLiteral(
+        // F-553：三条命令的基础悬停说明改经 addCommandAction 装配拍快照
+        // （refreshHostMenuActions 的禁用原因刷新以之为还原值源——禁用
+        // 态呈现原因文案、可用态还原本说明，见该函数注释）。
+        addCommandAction(projectMenu, "应用草稿", "draft.apply", QStringLiteral(
             "预检并应用当前草稿——通过门禁后生成新项目修订。"
             "历史只增不改：旧修订不变，项目级撤销＝以新修订对冲；"
             "未应用的草稿编辑请在各域面板内草稿撤销/直接改写。"));
-        QAction* undoAction = addCommandAction(projectMenu, "撤销", "project.undo");
-        undoAction->setToolTip(QStringLiteral(
+        addCommandAction(projectMenu, "撤销", "project.undo", QStringLiteral(
             "项目级撤销——对冲最近一次已应用的修订（产生一条新修订，历史只增不改）；"
             "未应用的草稿编辑不在此列。"));
-        QAction* redoAction = addCommandAction(projectMenu, "重做", "project.redo");
-        redoAction->setToolTip(QStringLiteral(
+        addCommandAction(projectMenu, "重做", "project.redo", QStringLiteral(
             "项目级重做——对冲最近一次项目级撤销（产生一条新修订，历史只增不改）。"));
         addCommandAction(projectMenu, "项目另存为", "project.saveAs");
         addCommandAction(projectMenu, "关闭项目", "workbench.closeProject");
@@ -1737,18 +1737,27 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
 
 QAction* IrdWorkbenchHostPlugin::addCommandAction(QMenu* target,
                                                   const char* title,
-                                                  const char* commandId)
+                                                  const char* commandId,
+                                                  const QString& baseToolTip)
 {
     // 菜单只路由命令板（§4.2 路由红线——触发统一转发内容装配面提交路径）；
     // 使能态随命令可用性快照刷新（refreshHostMenuActions——本插件零判定）。
     QAction* action = target->addAction(QString::fromUtf8(title));
     action->setParent(this);  // 动作父对象＝本插件（Qt 树托管——随宿主收尾）
+    action->setToolTip(baseToolTip);  // 基础悬停说明（F-501 三条长文案——装配拍施加）
     QObject::connect(action, &QAction::triggered, this, [this, commandId] {
         if (m_content) {
             m_content->submitCommand(commandId);
         }
     });
-    m_hostMenuCommandIds.emplace_back(action, commandId);
+    // F-553：装配拍快照基础 tooltip 进登记条目（refreshHostMenuActions
+    // 的可用态还原值源——回读 action->toolTip() 会被上一次刷新写入的
+    // 原因文案污染，故显式携带）。
+    HostMenuCommandAction entry;
+    entry.action = action;
+    entry.commandId = commandId;
+    entry.baseToolTip = baseToolTip;
+    m_hostMenuCommandIds.push_back(std::move(entry));
     return action;
 }
 
@@ -1828,9 +1837,17 @@ void IrdWorkbenchHostPlugin::refreshHostMenuActions()
     }
     // 框架菜单动作使能态＝内容装配层（命令注册表）求值结果（§7.6"三处
     // 一致禁用"——本插件零判定，只消费快照）。
-    for (auto& [action, commandId] : m_hostMenuCommandIds) {
-        const ShellCommandAvailability a = m_content->commandAvailability(commandId);
-        action->setEnabled(a.enabled);
+    for (auto& entry : m_hostMenuCommandIds) {
+        const ShellCommandAvailability a = m_content->commandAvailability(entry.commandId);
+        entry.action->setEnabled(a.enabled);
+        // F-553：禁用原因→tooltip 传递补齐（ERR-01「禁用必带原因」——
+        // 此前本循环只消费 enabled，reasonKey 丢弃＝置灰动作悬停无禁用
+        // 原因）。决策统一走 ui::disableReasonToolTip（UiText 单一书写
+        // 点：禁用→原因文案；可用→还原装配拍基础说明；空键→F-557 同面
+        // 守卫不进解析）。与 WorkbenchContent 顶栏按钮先例（refreshCommand
+        // States）同口径——菜单/按钮/命令面板三呈现面同源一词表。
+        entry.action->setToolTip(QString::fromStdString(ui::disableReasonToolTip(
+            a.enabled, a.reasonKey, entry.baseToolTip.toStdString())));
     }
     // 五区开关勾选态＝当前有效可见性（不回环：只 setChecked 不触发）。
     for (auto& [region, action] : m_hostRegionToggles) {
@@ -3556,6 +3573,19 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
         const auto handles = m_domains->requirements->sharedSurfaceProviders();
         registerDomainSurfaces("requirements", true, handles.treeNodes,
                                handles.propertyPages);
+        // F-551：名称解析端口升级为需求域前端（呈现层最小改法——owner
+        // 出路 2「树模型名称解析覆盖需求域对象」）。此前生产装配恒为
+        // C-11 桩（NullUiNameResolver 恒 nullopt），而需求域对象不进
+        // runtime NameMap（NameScope 词表只有运行时结构对象）——树上
+        // 恒呈「（未命名对象）」。前端解析工作集语义名（根/点/区域/工况/
+        // 计划），闭包外对象应答 nullopt＝与桩同语义面（UX-02 占位兜底
+        // 不破坏）；当前无下游解析器可链（桩恒 nullopt），将来 runtime
+        // 名称端口真值装配接续时在宿主装配点链接回落链。升级须在③面板
+        // deps 绑定与④内容装配（contentDeps.wiring.nameResolver）之前
+        // ——三消费面同持本 shared_ptr，一处升级全覆盖。
+        if (auto frontend = m_domains->requirements->sharedNameResolverFrontend()) {
+            m_nameResolver = std::move(frontend);
+        }
     } else {
         registerDomainSurfaces("requirements", false, nullptr, nullptr);
     }

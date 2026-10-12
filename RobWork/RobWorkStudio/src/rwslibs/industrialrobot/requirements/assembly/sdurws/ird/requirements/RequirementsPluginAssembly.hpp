@@ -52,6 +52,7 @@ namespace ird {
 namespace ui {
 class IUiTreeNodesProvider;       // 前置声明（迁移三接入面句柄成员——完整类型
 class IUiPropertyPagesProvider;   //  在 ui 公共头；本头仅以 shared_ptr 携带）
+class IUiNameResolver;            // 前置声明（F-551 名称解析前端返回面——同上）
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
@@ -301,6 +302,22 @@ struct RequirementsPluginAssembly {
      *         面板指针，先于面板调用＝编辑出口缺位的诚实降级形态）
      */
     RequirementsSharedSurfaceHandles sharedSurfaceProviders();
+
+    /**
+     * @brief 需求域名称解析前端（F-551——需求对象显示名入工业项目树的
+     *        增量接入面；转发模块同名词柄，语义见 HostMigrationProviders.hpp
+     *        的 RequirementsNameResolver 注）。
+     *
+     * 宿主装配纪律：把返回值装配进 ui 共享名称端口（IUiNameResolver——
+     * C-11 端口的消费面），共享树/检查器的需求域对象行即可显示工作集
+     * 语义名（UX-02 占位语义不破坏——闭包外对象应答 nullopt，呈现层
+     * 占位兜底）。零面板依赖：与 sharedSurfaceProviders 的时序约束不
+     * 同源，装配序安全。
+     *
+     * @return 解析前端（shared_ptr 稳定地址；装配失败隔离〔impl 缺席〕
+     *         ＝空指针，宿主判空跳过——失败隔离惯例，不虚构解析能力）
+     */
+    std::shared_ptr<ui::IUiNameResolver> sharedNameResolverFrontend();
 
     /**
      * @brief 订阅选择服务（下行"树选→面板高亮"的启用——转发模块

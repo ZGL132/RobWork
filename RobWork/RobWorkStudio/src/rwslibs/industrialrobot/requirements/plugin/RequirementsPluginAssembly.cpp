@@ -250,6 +250,14 @@ RequirementsSharedSurfaceHandles RequirementsPluginAssembly::sharedSurfaceProvid
     return out;
 }
 
+std::shared_ptr<ui::IUiNameResolver> RequirementsPluginAssembly::sharedNameResolverFrontend()
+{
+    // 转发模块名称解析前端（F-551——宿主装配进 ui 共享名称端口的增量
+    // 接入面；impl 缺席＝装配失败隔离形态，诚实空指针由宿主判空跳过）。
+    return m_impl != nullptr ? m_impl->sharedNameResolverFrontend()
+                             : std::shared_ptr<ui::IUiNameResolver>{};
+}
+
 void RequirementsPluginAssembly::attachSelectionService(ui::SelectionService& service)
 {
     if (m_impl != nullptr) {

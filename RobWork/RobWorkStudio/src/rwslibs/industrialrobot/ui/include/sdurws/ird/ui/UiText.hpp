@@ -103,6 +103,40 @@ std::string resolveText(const TextKey& key);
  */
 std::string resolveText(const TextKey& key, const std::vector<std::string>& args);
 
+/**
+ * @brief 禁用原因 tooltip 文案决策（ERR-01「禁用必带原因」的呈现半区——
+ *        F-553 修复面；宿主菜单动作等可用性消费方共用）。
+ *
+ * 为什么是函数而不是消费点内联：可用性快照刷新点（宿主菜单动作等）持有
+ * 基础悬停文案与禁用原因键，「禁用→原因、可用→还原」的分岔与 F-557
+ * 同面守卫（空键不进 resolveText——空键＝处理器拒绝的非可用性禁用，无
+ * 原因键可解析）在此单一书写点，防止各消费点漂移出第二套分岔语义
+ * （NFR-MNT-03 同源纪律）。
+ *
+ * 决策表：
+ *   - enabled=true→返回 baseToolTip（还原基础悬停说明——可用态不应残留
+ *     上一次禁用原因）；
+ *   - enabled=false 且 reasonKey 非空→返回 resolveText(reasonKey)（统一
+ *     原因解析——ERR-01「禁用必带原因」；未登记键按 resolveText 契约
+ *     fail-fast，调用方须保证键在 UiText 词表内）；
+ *   - enabled=false 且 reasonKey 为空→返回 baseToolTip（F-557 同面守卫
+ *     ——空键不进解析，保持基础文案诚实降级，不渲染空白）。
+ *
+ * @param enabled     [in] 可用性快照的使能位
+ * @param reasonKey   [in] 禁用原因文案键（enabled=false 时按注册表契约
+ *                    非空；空键＝诚实降级面，见上）
+ * @param baseToolTip [in] 消费方的基础悬停文案（UTF-8；无基础文案传空串
+ *                    ——可用态还原为空＝无 tooltip，与命令条按钮先例等价）
+ * @return tooltip 文案（UTF-8）
+ *
+ * @throws std::invalid_argument reasonKey 非空但未登记（同 resolveText
+ *         契约——调用方拼写错误/漏登记＝调用方契约违约，fail-fast）
+ *
+ * @note UI 线程调用（可用性刷新点——§3.4 M-1 消费面）。
+ */
+std::string disableReasonToolTip(bool enabled, const std::string& reasonKey,
+                                 const std::string& baseToolTip);
+
 // =====================================================================
 // 数值＋单位显示（§6.6——core 唯一换算入口）
 // =====================================================================

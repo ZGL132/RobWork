@@ -355,6 +355,22 @@ public:
     SharedSurfaceHandles sharedSurfaceProviders();
 
     /**
+     * @brief 需求域名称解析前端（F-551——宿主装配进 ui 共享名称端口的
+     *        增量接入面；类语义见 HostMigrationProviders.hpp 的
+     *        RequirementsNameResolver 注）。
+     *
+     * 惰性构造＋缓存（shared_ptr 稳定地址——重复调用返回同一实例）；
+     * deps 的 editor/rootObjectId 现取入口与三接入面同源绑定（本模块
+     * 权威指针/会话态——零第二份绑定面）。零面板依赖：先于/晚于
+     * attachPanel 调用均可（名称解析不触碰面板指针——与
+     * sharedSurfaceProviders 的时序约束不同源，无面板缺位降级面）。
+     *
+     * @return 解析前端（ui::IUiNameResolver 端口值——宿主装配层包装/
+     *         直装进共享端口；闭包外对象应答 nullopt，呈现层占位兜底）
+     */
+    std::shared_ptr<ui::IUiNameResolver> sharedNameResolverFrontend();
+
+    /**
      * @brief 订阅选择服务（SelectionAdapter 接线——下行"树选→面板高亮"
      *        的启用；服务存活期须覆盖订阅期且晚于本模块析构，适配器
      *        RAII 句柄语义见 HostMigrationProviders.hpp 类注）。
@@ -412,6 +428,7 @@ private:
     std::shared_ptr<ui::IUiTreeNodesProvider> m_treeProvider;        ///< 树接入面缓存
     std::shared_ptr<ui::IUiPropertyPagesProvider> m_pageProvider;    ///< 页面接入面缓存
     std::unique_ptr<RequirementsSelectionAdapter> m_adapter;         ///< 选择适配器缓存
+    std::shared_ptr<ui::IUiNameResolver> m_nameResolver;             ///< 名称解析前端缓存（F-551——惰性构造同款）
 };
 
 // =====================================================================
