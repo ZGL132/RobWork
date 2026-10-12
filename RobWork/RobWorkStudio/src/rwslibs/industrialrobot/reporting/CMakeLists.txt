@@ -139,6 +139,21 @@ find_package(GTest CONFIG REQUIRED)
 #   - test/FakeArchiveWriter.hpp——IArchiveWriter 最小确定性替身（真实临时
 #     文件承载生命周期——可注入 open/addEntry/finish 三类故障；具名替身
 #     收口归 RPT-T11）。
+# RPT-T16 增列（§11 RPT-T16 行产物：往返复算（阶段 C）——roundtripCheck＋
+#   不一致标记）：
+#   - include/sdurws/ird/reporting/Roundtrip.hpp——§7.7 契约（复算请求/
+#     IRoundtripRecomputeSource 注入源——复算执行归 execution/各域，零
+#     execution 编译边〔§3.3 注入形态〕＋逐字段 mismatch/条目/总结果值类型
+#     ＋IReportRoundtripChecker/ReportRoundtripChecker）；
+#   - src/Roundtrip.cpp——roundtripCheck 编排（resolver 复用 Export.hpp
+#     IReportResolver 注入缝——不新建第二套解析；比对面＝ResultRefSnapshot
+#     中"由 envelope 决定"的字段族，全等值比对无容差；复算不可达＝保守
+#     不判可用＋Warning 注记〔§7.7 未覆盖口径的落位增量，§14.4 v0.20〕）；
+#   - test/RoundtripTest.cpp——RP-ROUND-1 双路（一致/不一致）＋复算不可达
+#     ＋Usage 轨＋历史零修改＋多结果定位（acceptance 1~2）；
+#   - contract_test/RoundtripCrossUnitContractTest.cpp——注入契约跨单元
+#     契约面（复算请求值类型消费 core 权威＋公共头零 execution/io/runtime
+#     include 扫描——P-RPT-1/P-RPT-2 同款常驻自证）。
 add_library(sdurws_ird_reporting STATIC
     src/Reporting.cpp
     src/Errors.cpp
@@ -152,7 +167,8 @@ add_library(sdurws_ird_reporting STATIC
     src/Consistency.cpp
     src/Archive.cpp
     src/Export.cpp
-    src/Bundle.cpp)
+    src/Bundle.cpp
+    src/Roundtrip.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——reporting 公共头将
@@ -257,6 +273,9 @@ enable_testing()
 #     词表全 14 项（同文件批内修订——不新增源文件）；
 #   - test/LevelCEndToEndTest.cpp——C 级端到端集成测试（AT-32 逐章追溯＋
 #     RP-REVW-1/2＋RP-COV-1＋EVI-02 基准不一致拒绝＋P-RPT-5 保守回归钉）。
+# RPT-T16 增列（§11 RPT-T16 行产物：往返复算（阶段 C））：
+#   - test/RoundtripTest.cpp——RP-ROUND-1 双路＋复算不可达＋Usage 轨＋
+#     历史零修改（acceptance 1~2；场景设施复用 ReportingScenario.hpp）。
 add_executable(sdurws_ird_reporting_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -273,6 +292,7 @@ add_executable(sdurws_ird_reporting_test
     test/BundleTest.cpp
     test/ModelSummaryTest.cpp
     test/TaskStatusSourceTest.cpp
+    test/RoundtripTest.cpp
     test/ReportingContractSuiteTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
@@ -335,6 +355,9 @@ add_custom_command(TARGET sdurws_ird_reporting_test POST_BUILD
 # ——P-RPT-2 裁决前不变；schema 类型恒等——P-RPT-9 基线 core.md v0.1 Draft；
 # 公共头零 runtime/execution/io include 与命名空间限定名字符串扫描——SA-10
 # 表外边红线的具名常驻自证；词表与 core::toToken 一致性——词表单源）。
+# RPT-T16 增列：contract_test/RoundtripCrossUnitContractTest.cpp＝复算注入
+# 契约的跨单元契约面（复算请求值类型消费 core 权威类型恒等；try 轨形态；
+# 公共头零 execution/io/runtime include 扫描——P-RPT-1/P-RPT-2 同款）。
 add_executable(sdurws_ird_reporting_contract_test
     contract_test/TestMainReport.cpp
     contract_test/LinkageContractTest.cpp
@@ -346,7 +369,8 @@ add_executable(sdurws_ird_reporting_contract_test
     contract_test/ConsistencyCrossUnitContractTest.cpp
     contract_test/ArchiveCrossUnitContractTest.cpp
     contract_test/BundleCrossUnitContractTest.cpp
-    contract_test/ModelSummaryTaskStatusCrossUnitContractTest.cpp)
+    contract_test/ModelSummaryTaskStatusCrossUnitContractTest.cpp
+    contract_test/RoundtripCrossUnitContractTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_contract_test PROPERTIES
