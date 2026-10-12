@@ -8001,6 +8001,42 @@
       "registeredAt": "2026-10-12",
       "title": "RT-T15/UI-T78 两卡（2026-10-12 立卡）designRefs 含散文式引用（空格后缀），validate-task.ps1 -TaskFile 实测不过（designRef file not found）——立卡即登记的先例瑕疵",
       "resolution": "处置建议（验收记录原文）：两卡放行评审时随手续修正 designRefs 为纯「路径#锚点」形态（验收会话不代改他卡）；TK-T12 立卡（同日）已按纯路径#锚点形态自校。"
+    },
+    {
+      "id": "F-824",
+      "source": "traceability/acceptance/rpt-t14-20261012.md#S-1（在案于 origin/acc/rpt-t14/1 分支 governance 提交 260fc348；2026-10-12 收官治理批转登）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "RPT-T14 单元卡 §14.4 v0.17 第④项 gate-all 全树门禁计数笔误：写「gate-all.ps1 全树门禁 44/44 通过」——44 无法由 gate-all.ps1 当前计数口径（缓存确认 1＋ird_gates 1＋集成发现 1＋集成目标 N＋冒烟配置 1＋冒烟发现 1＋冒烟目标 N，集成树 40 个注册测试目标）产生，应为 85/85（commit 正文 85/85 经验收自洽为真——集成 43＋冒烟 42；两处结论方向一致均为全过，非粉饰）",
+      "resolution": "验收记录已推送不追改，本条为台账登记（口径以本条为准）；单元卡该数字如后续批次触碰 reporting 单元卡可顺手更正"
+    },
+    {
+      "id": "F-825",
+      "source": "traceability/acceptance/rpt-t15-20261012.md#S-1（在案于 origin/acc/rpt-t15/1 分支 governance 提交 97a320dd；2026-10-12 收官治理批转登）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "RPT-T15 单元卡/commit 的 LevelCEndToEndTest 新增用例计数失实：单元卡 §14.4 v0.18 行⑦与 commit（wp12-t15 头 adbb3a40＝主线合入 65ed3fc3）正文均写「新增 8 用例」，实测该文件含 11 个 TEST 且全为新增（集成总数 225＝RPT-T14 基线 214＋11；总数 225/225 与全绿结论登记真实可复现——非验证粉饰）",
+      "resolution": "单元卡已随本批勘误更正（units/reporting.md §14.4 v0.18 行 8→11，勘误行 v0.20 登记，收官治理批）；commit 已推送不追溯改写"
+    },
+    {
+      "id": "F-826",
+      "source": "traceability/acceptance/rpt-t16-20261012.md#G-1（在案于 origin/acc/rpt-t16/1 分支 governance 提交 f847bcf4；2026-10-12 收官治理批转登）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "RPT-T16 三处代码注释引用「单元卡 §14.4 v0.20 登记」实为 v0.19 版本号错位：reporting Roundtrip.hpp:43、Roundtrip.cpp:19、reporting/CMakeLists.txt:151（单元卡全文档无 v0.20 行、文档头版本行亦为 v0.19；登记内容本身在 §14.4 v0.19 行真实在案——比对面/不可达三态两项裁定，不构成注释缺失必填项）",
+      "resolution": "留待 reporting 后续批次顺手更正（v0.20 引用改为 v0.19），不改已推送历史"
+    },
+    {
+      "id": "F-827",
+      "source": "traceability/acceptance/rpt-t16-20261012.md#G-2（在案于 origin/acc/rpt-t16/1 分支 governance 提交 f847bcf4；2026-10-12 收官治理批转登）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "RPT-T16 §7.7 资格核对消费挂接未随本批落地：§7.7「标记于伴随提示与后续构建的资格核对」——伴随提示（RPT-ROUNDTRIP-MISMATCH 诊断）与机器可核对标记位 usableForFormalConclusions 已交付，但「后续构建的资格核对」对该标记位的消费挂接未落（构建器侧零改动）；§7.7 全语义闭合尚欠该步（acceptance 字面语义「不一致→不可用于正式结论」已由标记位＋断言满足）",
+      "resolution": "消费侧归构建器侧后续任务，建议在该任务契约显名收口（单元卡 §14.4 v0.19 行④与 Roundtrip.hpp 头注释落位增量③已如实登记「消费挂接归构建器侧任务」）"
     }
   ]
 }
