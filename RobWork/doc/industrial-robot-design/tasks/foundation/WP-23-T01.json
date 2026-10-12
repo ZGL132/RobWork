@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "编写性能基准清单与测量协议登记",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": [
     "NFR-PERF-01",
@@ -49,5 +49,5 @@
   "acceptance": [
     "新建 doc/industrial-robot-design/performance-baseline.md（基准清单＋黄金项目定义＋协议）：基准清单覆盖全部 PERF 条目；PM-16 协议（冷/热分组、≥15+15 样本、P95 线性插值）落位；不以 3 次中位数替代 P95（DTB 行禁止项）"
   ],
-  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"可在阶段 A 产出、阶段 C 启用\"。P-TK-5（大体绩黄金数据存储/CI 策略——首个大数据集出现时裁决）与 O-22（同源）为黄金项目定义的已登记裁决挂靠；testkit.md §10.1 performance-baseline 类预留为启用面。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。编译放行（2026-10-13，WP-23-T01 实施段）：status planned→ready＋补齐 ready 必备字段（forbiddenFiles 补登——四份主文档与产品源码禁改，DTB 禁改为本任务偏差登记的契约面钉住；allowedFiles/outputs/acceptance/branch 既有字段复核齐备）。放行依据＝所有者 2026-10-13『开始执行』指令＋实现分支 wp23-t01；仍待独立评审放行与验收段对抗式验收（AGENTS §6.4 三段式）。产物 performance-baseline.md v0.1：基准清单 B-01~B-08（NFR-PERF-01~06＋PM-16 全覆盖＋NFR-COR-02 确定性基准）、黄金项目定义（PM-16 口径 1,000 对象/100 修订，来源引 REQUIREMENTS §17 原文）、测量协议（冷/热分组、每组有效样本 ≥15+15 合计 ≥30、P95 线性插值、冷启动软指标单独报告不作门禁、并行吞吐不含首次编译与导入、归约容差引附录 D 第 8 项）、T02~T09 达标判据挂点（照抄 DTB 各行语义）。偏差登记：本分支不改 development-task-breakdown.md——DTB 版本行登记延后至验收合入批统一处理（避免与主线并行批次撞号），由合入批补登。"
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"可在阶段 A 产出、阶段 C 启用\"。P-TK-5（大体绩黄金数据存储/CI 策略——首个大数据集出现时裁决）与 O-22（同源）为黄金项目定义的已登记裁决挂靠；testkit.md §10.1 performance-baseline 类预留为启用面。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。编译放行（2026-10-13，WP-23-T01 实施段）：status planned→ready＋补齐 ready 必备字段（forbiddenFiles 补登——四份主文档与产品源码禁改，DTB 禁改为本任务偏差登记的契约面钉住；allowedFiles/outputs/acceptance/branch 既有字段复核齐备）。放行依据＝所有者 2026-10-13『开始执行』指令＋实现分支 wp23-t01；仍待独立评审放行与验收段对抗式验收（AGENTS §6.4 三段式）。产物 performance-baseline.md v0.1：基准清单 B-01~B-08（NFR-PERF-01~06＋PM-16 全覆盖＋NFR-COR-02 确定性基准）、黄金项目定义（PM-16 口径 1,000 对象/100 修订，来源引 REQUIREMENTS §17 原文）、测量协议（冷/热分组、每组有效样本 ≥15+15 合计 ≥30、P95 线性插值、冷启动软指标单独报告不作门禁、并行吞吐不含首次编译与导入、归约容差引附录 D 第 8 项）、T02~T09 达标判据挂点（照抄 DTB 各行语义）。偏差登记：本分支不改 development-task-breakdown.md——DTB 版本行登记延后至验收合入批统一处理（避免与主线并行批次撞号），由合入批补登。合入收尾 2026-10-13（合入收尾员，授权依据＝所有者 2026-10-13「推进 M5 正式收口」指令）：实现提交 07ab4e68（origin/wp23-t01 单提交，diff 纯 2 文档零代码——performance-baseline.md v0.1 新增 209 行＋本契约 planned→ready 编译放行）；attempt 1 独立对抗验收 pass（traceability/acceptance/WP-23-T01-20261013.md——4.1~4.11 零阻断：协议数值 14 项逐条溯源 REQUIREMENTS 原文零私设、P95 插值 n=15/16/21/30 四点复算自洽、validate-task/validate-docs 验收工作树亲跑 PASS、失败注入真实失败能力亲证〔forbiddenFiles 置空数组→FAIL〕；建议级 S-1/S-2/S-3＋观察项 O-1~O-4 均不阻塞合入，转登义务写入记录 §4）——ready→done。合并 merge 18842bc0（--no-ff 并入 redesign-main）。S-2（DTB 版本行登记）由合入收尾批兑现（DTB v0.68）；S-1（validate-task.ps1 ready 必备字段对字段完全缺失逃逸）与 S-3（testkit §4.2.1 阶段标注转述差）转登 findings.json 义务留待治理批，本验收记录 §4 为转登输入。"
 }
