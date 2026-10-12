@@ -7254,10 +7254,11 @@
       "id": "F-741",
       "source": "audit/round2-20261010（R2-A5 批；主审★）；2026-10-12 治理批转登（草案预编号 F-642→F-741，映射 traceability/gov-r2-id-remap.md）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "units/runtime.md §10.11 把 RT-ROBWORK-ERROR 列入 level=Warning，与内置表 severity=Error⇒level=Error 机械映射（DiagCodes.cpp:313）矛盾——按卡面理解会与 builder 拒绝行为冲突（契约文档即代码）",
-      "resolution": "fix-plan §四 D-2（批 D 契约兑现与小修）——修复方向：随 units 小步修订删/改该括注。"
+      "resolution": "由修复批 audit-r2d「policy/Ik 不抛契约兑现＋runtime 码面文档更正」（fix-plan §四 D-2）修复并合入主线：分支提交 a9749e98（§10.11 级别标定更正——合入时卡头 v0.21 撞号顺延 v0.22），验收 pass（traceability/acceptance/audit-r2d-20261012.md），合入提交 23bfb69b（2026-10-12）。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-742",
@@ -7305,7 +7306,7 @@
       "status": "open",
       "registeredAt": "2026-10-10",
       "title": "『decode 不抛』五处接口二轮核实：已修 2（requirements/Codec F-586、diagnostics/Factory F-602——后者缺非空 params 精确形态回归钉）；仍 open 3：①modeling/Readiness 契约已修订但根因未修（伪造字节 Continuous＋workingRange=Invalid 可解码成功→L11→evaluateTravelLimits 抛 logic_error，CommandHandlers.cpp:298-302）；②policy/PolicyPort 未动（PolicyInput.cpp:801 缺锚串、:416-430 ScopeTarget 值面缺失，resolvePolicy 复检在端口 try/catch 外抛 PolicyError）；③kinematics/Ik 迭代发散 std::logic_error（Ik.cpp:498/539/577）不在 hpp 豁免面仍外抛。附带 TxEngine 提交点后回调零提交维持 open",
-      "resolution": "fix-plan §四 D-1（批 D——三接口各出方案合并为方案包交所有者裁决后实施，不许可代码先行）——修复方向：按各接口裁走异常转值面或如实修订 hpp 契约（含豁免面边界）。"
+      "resolution": "fix-plan §四 D-1（批 D——三接口各出方案合并为方案包交所有者裁决后实施，不许可代码先行）——②policy 与 ③Ik 已由批 D 修复并合入主线（分支 c1366334/f60942a7，合入提交 23bfb69b，2026-10-12；验收 pass traceability/acceptance/audit-r2d-20261012.md——不抛契约兑现，谓词单源/不扩词表两必核项验收者亲核）；①modeling/Readiness 根因未修维持 open（伪造字节 Continuous＋workingRange=Invalid 路径仍在，随 fix-plan 后续批次）；附带 TxEngine 提交点后回调零提交维持 open。"
     },
     {
       "id": "F-747",
@@ -7982,6 +7983,24 @@
       "registeredAt": "2026-10-12",
       "title": "ui `CommandPalette.cpp:283-311` eventFilter 转发表仅 Key_Down/Up/Return/Enter/Escape 无 Key_Tab，Key_Tab 处理仅在 :260-278 面板级 keyPressEvent 而焦点恒在 m_filter（:74-78 installEventFilter 转发）、面板从不获焦——按 Tab 焦点逸出面板（搜索失效、Esc 收口失效），Tab 补全类别主键盘流不可达",
       "resolution": "处置建议：eventFilter 增 Key_Tab 分支转调 completeCategory；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+    },
+    {
+      "id": "F-822",
+      "source": "traceability/acceptance/audit-r2d-20261012.md §六 O1（批 D 验收 pass，2026-10-12）——合入段治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "全新集成构建树全树构建在 RobWorkSim bt_plugin/RWSimulatorPlugin 两框架插件确定性失败（vcpkg Eigen Parallelizer.h C2589/C2059＋rw Math.hpp 语法错——windows.h 宏冲突族；主仓构建树同目标 Release 产物在位＝早期编译遗留掩盖；industrialrobot 80 目标错误行零条——与批 D 无涉、与任何 fresh 全树复验都会相撞）",
+      "resolution": "处置建议（验收记录原文）：框架 SA-02 红线下评估——登记 patches（NOMINMAX 注入类）或把「集成零错误」口径显式限定为 ird 目标面＋冒烟树（现 gate 口径），二者择一登记 DTB §5.1。"
+    },
+    {
+      "id": "F-823",
+      "source": "traceability/acceptance/audit-r2d-20261012.md §六 O2（批 D 验收 pass，2026-10-12）——合入段治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "RT-T15/UI-T78 两卡（2026-10-12 立卡）designRefs 含散文式引用（空格后缀），validate-task.ps1 -TaskFile 实测不过（designRef file not found）——立卡即登记的先例瑕疵",
+      "resolution": "处置建议（验收记录原文）：两卡放行评审时随手续修正 designRefs 为纯「路径#锚点」形态（验收会话不代改他卡）；TK-T12 立卡（同日）已按纯路径#锚点形态自校。"
     }
   ]
 }
