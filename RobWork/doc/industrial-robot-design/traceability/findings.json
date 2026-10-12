@@ -1,4 +1,4 @@
-{
+﻿{
   "schemaVersion": "ird-findings/1",
   "note": "验收与治理发现跟踪登记册（PIPE v1.3 §7 / ACC v1.2 §5）：验收建议级问题必须逐条转登于此，只写进验收记录'留档'不构成闭环；每份验收记录的 4.8 核对未关闭条目。状态 open/fixed；severity 暂分 blocking/suggestion。",
   "findings": [
@@ -7303,10 +7303,11 @@
       "id": "F-746",
       "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-647→F-746，映射 traceability/gov-r2-id-remap.md）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "『decode 不抛』五处接口二轮核实：已修 2（requirements/Codec F-586、diagnostics/Factory F-602——后者缺非空 params 精确形态回归钉）；仍 open 3：①modeling/Readiness 契约已修订但根因未修（伪造字节 Continuous＋workingRange=Invalid 可解码成功→L11→evaluateTravelLimits 抛 logic_error，CommandHandlers.cpp:298-302）；②policy/PolicyPort 未动（PolicyInput.cpp:801 缺锚串、:416-430 ScopeTarget 值面缺失，resolvePolicy 复检在端口 try/catch 外抛 PolicyError）；③kinematics/Ik 迭代发散 std::logic_error（Ik.cpp:498/539/577）不在 hpp 豁免面仍外抛。附带 TxEngine 提交点后回调零提交维持 open",
-      "resolution": "fix-plan §四 D-1（批 D——三接口各出方案合并为方案包交所有者裁决后实施，不许可代码先行）——②policy 与 ③Ik 已由批 D 修复并合入主线（分支 c1366334/f60942a7，合入提交 23bfb69b，2026-10-12；验收 pass traceability/acceptance/audit-r2d-20261012.md——不抛契约兑现，谓词单源/不扩词表两必核项验收者亲核）；①modeling/Readiness 根因未修维持 open（伪造字节 Continuous＋workingRange=Invalid 路径仍在，随 fix-plan 后续批次）；附带 TxEngine 提交点后回调零提交维持 open。"
+      "resolution": "fix-plan §四 D-1 三接口全部修复并随批合入主线：②policy 与 ③Ik 随批 D（分支 c1366334/f60942a7，合入提交 23bfb69b）；①modeling/Readiness 由分支 audit-r2d1-fixes 修复（提交 0e7cb311——断言面无值态统一阻断＋行程面按 hpp 契约原文转 EvaluationFailed 值面，两调用方既有处置承接；回归钉 ReadinessTest×2），验收＝modeling 373/373＋contract 17/17＋ird_gates 零命中＋变异翻红 1/1（audit/acc-audit-r2d1-1/）。附带观察项 TxEngine 提交点后回调零提交为另一独立面，留待后续登记非本条闭合范围。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-747",
