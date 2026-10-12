@@ -154,11 +154,15 @@ StageAdvice PureNextStepAdvisor::adviseFor(ui::StageId stage,
     // R2 发起计算。触发＝输入齐备（任一域缺项则由 R1 覆盖）＋无活动任务
     // ＋结果缺失（"结果缺失"事实＝无归档结果——调用方自事件记忆取数，
     // AdviceInputs.hasArchivedResult；本单元不重算结果存在性——I-WF-2）。
-    const bool inputsComplete = std::all_of(snapshot.domains.begin(),
-                                            snapshot.domains.end(),
-                                            [](const ui::DomainReadinessItem& item) {
-                                                return item.inputComplete;
-                                            });
+    // F-797：非空前置——域未装配（快照域条目空集，Unavailable 面）时
+    // all_of 恒真会产出「发起计算」建议；无任何已装配域＝无可评估输入，
+    // R2 静默（装配引导归 R1/门控 Unavailable 提示）。
+    const bool inputsComplete = !snapshot.domains.empty()
+        && std::all_of(snapshot.domains.begin(),
+                       snapshot.domains.end(),
+                       [](const ui::DomainReadinessItem& item) {
+                           return item.inputComplete;
+                       });
     const bool noMissingItems = decision.missingItemKeys.empty();
     if (inputsComplete && noMissingItems && !hasActiveTask
         && !inputs.hasArchivedResult) {

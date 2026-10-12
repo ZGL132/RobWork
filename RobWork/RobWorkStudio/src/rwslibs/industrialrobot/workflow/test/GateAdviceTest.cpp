@@ -728,6 +728,26 @@ TEST(WfAdvice, RunEvaluationWhenReadyWithoutResult_WP22T03_ACC2)
     EXPECT_TRUE(noAdvice.steps.empty());
 }
 
+/** F-797 回归钉：域未装配（Unavailable——快照域条目空集）不产出「发起计算」
+ *  建议——输入齐备判定加非空前置（修复前 all_of 空集恒真，R2 误触发）。 */
+TEST(WfAdvice, EmptyDomainsSuppressRunEvaluation_F797)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-01"},
+                  std::vector<std::string>{});
+
+    const workflow::PureStageGateService gate;
+    const workflow::PureNextStepAdvisor advisor;
+
+    GateInputs inputs = makeReadyBoard(94);
+    inputs.snapshots[2].domains.clear();   // 域未装配（Unavailable——F-797 场景）
+    const StageGatingState state = gate.evaluate(inputs);
+    const workflow::StageAdvice advice = advisor.adviseFor(
+        StageId::Kinematics, state, inputs.snapshots[2], {});
+    for (const auto& step : advice.steps) {
+        EXPECT_NE(step.actionKey, workflow::kActionRunEvaluation);
+    }
+}
+
 /**
  * R6 前进下一阶段：当前 Completed 且下一 NotStarted → advance-stage
  * （targetStage＝下一阶段）；Reporting（末阶段）不触发。
