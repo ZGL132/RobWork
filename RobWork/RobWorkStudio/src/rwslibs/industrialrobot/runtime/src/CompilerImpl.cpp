@@ -695,9 +695,12 @@ CompileOutcome CanonicalModelCompiler::compile(const CompileRequest& request)
             return cancelledOutcome();
         }
         // ---- S6：WorkCell 编译（BaseMount 唯一写入＋S9 防御自检内置——RT-T07；
-        // 异常经 §8.4 转译以 RuntimeError 抛出→catch 统一转译）。
+        // 异常经 §8.4 转译以 RuntimeError 抛出→catch 统一转译）。RT-T15 起
+        // 第二实参＝mesh 资源通道接线预留：provider（request.resources）经
+        // 此透传至 S6——本批诚实跳过不消费（真实 mesh 渲染待所有者裁决，
+        // RT-T15 卡面登记），句柄仅占未来实现依赖位。
         tx.advance(CompileStage::WorkCellCompiled);
-        tx.m_wcOutcome = compileWorkCell(model);
+        tx.m_wcOutcome = compileWorkCell(model, request.resources);
 
         // ---- 段边界取消轮询（S7 前）----
         if (cancelRequested(request.cancel)) {

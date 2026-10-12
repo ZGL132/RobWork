@@ -19,8 +19,7 @@
     "units/runtime.md#12",
     "units/runtime.md#15.4",
     "development-task-breakdown.md#2.7",
-    "traceability/findings.json#F-550",
-    "industrialrobot/runtime/src/WorkCellCompiler.cpp（几何挂接欠账注释——『几何资源（visual/collision）的 WC 挂接随资源消费任务落位』，§15.4 v0.8⑦ 同源）"
+    "traceability/findings.json#F-550"
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
@@ -59,9 +58,8 @@
   ],
   "interUnit": true,
   "knownPitfalls": [
-    "F-550",
     "P-RT-3"
   ],
   "branch": "rt-t15",
-  "note": "units/runtime.md §15.4 v0.8⑦＋WorkCellCompiler.cpp 几何挂接欠账注释的立卡消账（2026-10-12 立项——先卡后码；F-550 owner『阶段 B 三维交互批次』runtime 侧）。最小形态＝编译器内建基本图元（圆柱连杆／盒包围，零外部资源依赖）；真实 mesh＝保真度升级，留待所有者裁决（卡面明确登记此裁决项；裁决前 mesh 通道只保留 §8.6 接口位——IRuntimeResourceProvider 契约面随 RT-T09 已落位，本批零契约面改动）。knownPitfalls：F-550＝本卡消账对象（三维视图无模型渲染/拾取——其『发布后模型骨架呈现』半区已由 UI-T77 交付，真实网格渲染与本卡图元形态互补）；P-RT-3＝L1 RobWork 依赖边界（图元构造消费基线几何类，依赖集不扩——新增边随 P-RT-3 口径登记）。interUnit=true 判定＝编译产物几何为 UI-T78 渲染/拾取的直接消费源。dependsOn=RT-T11：挂接点在十段链 S6 段内，随 compile() 整体事务交付。DTB 对应行＝WP-06-T15（≙RT-T15，沿 WP-06-T14 惯例）。status=ready 待独立评审放行。"
+  "note": "units/runtime.md §15.4 v0.8⑦＋WorkCellCompiler.cpp 几何挂接欠账注释的立卡消账（2026-10-12 立项——先卡后码；F-550 owner『阶段 B 三维交互批次』runtime 侧）。最小形态＝编译器内建基本图元（圆柱连杆／盒包围，零外部资源依赖）；真实 mesh＝保真度升级，留待所有者裁决（卡面明确登记此裁决项；裁决前 mesh 通道只保留 §8.6 接口位——IRuntimeResourceProvider 契约面随 RT-T09 已落位，本批零契约面改动）。knownPitfalls：F-550＝本卡消账对象（三维视图无模型渲染/拾取——其『发布后模型骨架呈现』半区已由 UI-T77 交付，真实网格渲染与本卡图元形态互补）；P-RT-3＝L1 RobWork 依赖边界（图元构造消费基线几何类，依赖集不扩——新增边随 P-RT-3 口径登记）。interUnit=true 判定＝编译产物几何为 UI-T78 渲染/拾取的直接消费源。dependsOn=RT-T11：挂接点在十段链 S6 段内，随 compile() 整体事务交付。DTB 对应行＝WP-06-T15（≙RT-T15，沿 WP-06-T14 惯例）。status=ready 待独立评审放行。【实施段同步 2026-10-12（rt-t15 分支）】①原 designRefs 第 8 条『industrialrobot/runtime/src/WorkCellCompiler.cpp（几何挂接欠账注释…）』为散文注记形态——CCP §3 designRefs 引用完整性（文件必须存在且锚点规则）机器校验不过（validate-task 实测 throw designRef file not found）；该注记的实质指向（§15.4 v0.8⑦ 欠账登记）已由第 5 条 units/runtime.md#15.4 承载，且欠账注释本体已随本卡实现移除（替换为 RT-T15 几何挂接实现与 mesh 接线预留）——按既存校验规则收编为合法形态，指针语义不丢失（见本注）。②原 knownPitfalls 含 'F-550'——CCP §3 句法要求 O-nn/CR-nn/P-XX-nn（findings 系 id 不属 pitfalls 轴——F-550 的指向已由 designRefs『traceability/findings.json#F-550』与本注承载，机器校验规则收编，事实指针不丢失）。③实现落位登记见 units/runtime.md §15.4 v0.22；派生规则已随落位冻结。④保真度升级（真实 mesh）仍待所有者裁决——status 维持 ready 待独立评审放行，置 done 归合入收尾段。"
 }

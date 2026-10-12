@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T15",
+  "masterWp": "WP-06-T15",
+  "branch": "rt-t15",
+  "date": "2026-10-12",
+  "attempt": 1,
+  "reworkNote": "首次实施（lastFailureRecord=null），无返工；实施期内一次用例夹具修正（rich 基底加第三关节后 drivetrain.ratioPerJoint 长度不变量）与一次断言精度修正（基线 Cylinder 以 float 承载尺寸——位级断言改 1e-6 m 容差），均为提交前测试自检迭代，非验收返工",
+  "taskNature": "实现任务：S6 基本图元几何挂接（src/WorkCellCompiler.hpp/.cpp 增量——连杆圆柱/标记盒＋mesh 资源通道接线预留）＋src/CompilerImpl.cpp 接线（request.resources 透传 S6）＋RT-GEO 族 6 例（gated 块）＋CMake gated 增列；公共契约面零修改",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows）；测试夹具＝CanonicalModelFixture minimal/rich 扩展（三跨度夹具）＋真实 rw/rwsim 框架库（仅集成）；替身仅 CountingResourceProvider（§8.6 注入接口——RT-STUB-0 口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式零错误；WorkCellCompiler.cpp 增量与 Snapshot.cpp 同因仅集成编列——冒烟 gating 实测新代码不进冒烟编译单元）",
+      "notes": "集成＝仓库根 build/ 存量增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON）；冒烟＝全新独立目录 build_smoke_t15-rt/（vcpkg toolchain＋Qt prefix 绝对路径，未复用历史树）"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 277 例（276 过＋1 既有设计跳过）＋冒烟 179/179",
+      "notes": "新增 RT-GEO 族 6 例全过（WorkCellGeometryTest.*）；gating 实测＝冒烟编列 gtest_list_tests 零命中 WorkCellGeometry（与 RT-T07/T08/T12 同因）；ctest -L \"^ird$\"（runtime 目录）1/1 通过"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "RT-GEO 族（本任务新增——acceptance 具名自证）",
+      "designRef": "tasks/foundation/RT-T15.json acceptance 1～3；units/runtime.md §12 RT-T15 行、§15.4 v0.22",
+      "cases": [
+        { "name": "WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1", "status": "passed", "modes": ["integration"], "trace": "图元挂接面存在性：连杆圆柱×3（基座/连杆1/连杆2）＋标记盒×3（法兰/TCP/场景）各绑定其映射帧＋载体对象数＝图元数＝6＋BaseMount/关节帧零越界（acceptance 1）" },
+        { "name": "WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1", "status": "passed", "modes": ["integration"], "trace": "几何位姿随帧：载体 base＝帧树同一对象（指针等值）＋帧内位姿随 State 恒定（无第二位姿通道）＋法兰 worldTframe 随 q 变化（worldTframe 同源随 FK/State——acceptance 1）" },
+        { "name": "WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2", "status": "passed", "modes": ["integration"], "trace": "单位正确性：圆柱高＝跨度（‖T_parent_joint 平移‖）＋半径＝clamp(0.15×L,5mm,80mm) 三分支（无钳制/上限/下限）＋盒全边长 20 mm＋朝向/中点位级对照；基线 Cylinder 以 float 承载尺寸——断言以 1×10⁻⁶ m 容差复核（测试常量注释登记）" },
+        { "name": "WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3", "status": "passed", "modes": ["integration"], "trace": "派生确定性（NFR-COR-01）：两次独立编译图元集合（名/绑定帧/类型/尺寸/帧内位姿）位级相等" },
+        { "name": "WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4", "status": "passed", "modes": ["integration"], "trace": "诚实跳过面（acceptance 2）：manifest 空/provider 缺位→编译成功零虚构零错误＋provider 在位→S6 对 IRuntimeResourceProvider 零调用（计数替身——mesh 通道只预留接口位不实现资源加载）" },
+        { "name": "WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5", "status": "passed", "modes": ["integration"], "trace": "零回归＋身份面：runtimeNames 逐字节一致＋WC 帧数零新增＋关节限位逐字一致＋模型 RT-Codec 编码编译前后逐字节不变（显示代理不入身份域——acceptance 3/RT-ID 回归钉）" }
+      ],
+      "regressionNote": "RT-ID／RT-CACHE／RT-NM 族回归＝既有用例全量回归通过（本任务零改动模型/编码/键/映射代码路径；RT_GEO_5 以编码逐字节不变显式钉住显示代理不入身份域）——集成全套件 276/277（1 既有设计跳过＝ContractSuite.ChildProcessWorker_RT_ID_1，worker 占位既有口径）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "零命中（head 与 base〔8e494e59〕引擎直跑归一化直方图逐项一致——ird-gates-hist-{base,head}.txt；命中码 7 行均为引擎自测预期检出行，非真实违例）",
+    "validate-docs": "PASS（20 units, 12 trace entries, 315 task files）",
+    "validate-task": "PASS（RT-T15——实施段卡面同步：designRefs 散文条目与 knownPitfalls findings 系 id 两处机器校验不合规收编，见卡面 note 实施段同步登记）"
+  },
+  "evidence": {
+    "gtestXml": "gtest-runtime.xml（集成全套件）",
+    "integrationBuildLog": "integration-build.log（零错误）",
+    "integrationTestLog": "integration-runtime-test.log（276 过＋1 设计跳过）",
+    "smokeBuildLog": "smoke-build.log（零错误——全独立树 build_smoke_t15-rt）",
+    "smokeTestLog": "smoke-runtime-test.log（179/179）",
+    "gatesLogs": "ird-gates-head.log / ird-gates-base.log / ird-gates-hist-base.txt / ird-gates-hist-head.txt"
+  }
+}

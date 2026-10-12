@@ -2,29 +2,38 @@
  * @file   WorkCellCompiler.cpp
  * @brief  S6 WorkCell 编译器实现——CanonicalModel → rw::models::WorkCell
  *         的确定性变换（Frame 树/SerialDevice/Joint/限位/BaseMount 唯一
- *         写入）＋WorkCellConstView 实现＋RobWork 异常转译。
+ *         写入＋基本图元几何挂接〔RT-T15——呈现代理〕）＋WorkCellConstView
+ *         实现＋RobWork 异常转译。
  *
  * 设计依据：
  *   - units/runtime.md §5.2 S6 行、§5.3（失败回滚——RAII 瞬态对象）、§6.3
  *     （BaseMount 唯一写入点）、§7.2（写入 WC 的名字与映射逐一相等）、
- *     §8.1（P-RT-3 已登记 L1 依赖：rw kinematics/models）、§8.2（所有权与
- *     只读包装——可变句柄仅本文件可达）、§8.3（WorkCellConstView）、§8.4
- *     （异常→稳定诊断转译——不吞异常）
- *   - 需求 ARC-03、MDL-06（原子性：任一失败不发布半成品）、MDL-14、
- *     NFR-COR-01/02（确定性可复现）、NFR-REL-05（用户诊断不含调用栈）
- *   - 任务契约 tasks/foundation/RT-T07.json（acceptance 1～3）
+ *     §8.1（P-RT-3 已登记 L1 依赖：rw kinematics/models——图元几何类经
+ *     sdurw_models 的 PUBLIC 依赖 sdurw_geometry 传递可达，链接清单不扩）、
+ *     §8.2（所有权与只读包装——可变句柄仅本文件可达）、§8.3
+ *     （WorkCellConstView）、§8.4（异常→稳定诊断转译——不吞异常）、
+ *     §8.6（IRuntimeResourceProvider——mesh 通道接线预留，契约面零修改）、
+ *     §4.3.6（显示代理不入身份域——图元是呈现代理非模型内容）
+ *   - 需求 ARC-03（编译产物 WC 是三维呈现与拾取的唯一几何来源）、
+ *     ARC-04（显示代理几何不入模型身份）、MDL-06（原子性：任一失败不发布
+ *     半成品）、MDL-14、NFR-COR-01/02（确定性可复现）、NFR-REL-05（用户
+ *     诊断不含调用栈）
+ *   - 任务契约 tasks/foundation/RT-T07.json（acceptance 1～3）、
+ *     tasks/foundation/RT-T15.json（图元挂接面/诚实跳过面/身份面）
  *
  * ★ 编译模式说明：本文件调用大量基线库非模板符号（WorkCell/StateStructure/
- * SerialDevice/RevoluteJoint 的构造与查询——实现于 sdurw_kinematics/
- * sdurw_models 的 .cpp），**只在集成模式编译**（CMakeLists 按 TARGET
- * sdurw_kinematics 条件增列；冒烟模式无框架库可链，本文件不进构建——
- * §5.1 冒烟口径"仅验证目标注册与 include 路径"，理由已在 CMake 增列块与
- * units/runtime.md §15.4 登记）。
+ * SerialDevice/RevoluteJoint 的构造与查询＋RT-T15 起的 Cylinder/Box/
+ * RigidObject 构造——实现于 sdurw_kinematics/sdurw_models/sdurw_geometry
+ * 的 .cpp），**只在集成模式编译**（CMakeLists 按 TARGET sdurw_kinematics
+ * 条件增列；冒烟模式无框架库可链，本文件不进构建——§5.1 冒烟口径"仅验证
+ * 目标注册与 include 路径"，理由已在 CMake 增列块与 units/runtime.md §15.4
+ * 登记）。
  *
  * 线程安全：compileWorkCell 无共享可变状态（每次调用全新对象树——§5.5
  * 可重入）；WorkCellConstView 发布后只读；translateRobWorkError 纯函数。
  * 单位纪律：全部长度单位 m、角度单位 rad、时间 s、质量 kg（SI 真值——
- * §4.4；CanonicalModel 已保证，本文件不做换算，只做结构映射）。
+ * §4.4；CanonicalModel 已保证，本文件不做换算，只做结构映射；图元尺寸
+ * 同为 m——由模型平移量推导，见派生常量注释）。
  * 坐标系读法：T_ab＝"b 系相对 a 系"（core §4.6）——与基线 Frame 语义一致
  * （Frame::getTransform 返回相对父系的位姿）。
  */
@@ -38,11 +47,16 @@
 #include <sdurws/ird/runtime/Errors.hpp>              // token/registryCode/RuntimeError
 #include <sdurws/ird/runtime/NameMap.hpp>             // buildRuntimeNameMap（名称唯一源）
 
+#include <rw/geometry/Box.hpp>            // 基本图元：盒（法兰/TCP/场景标记——RT-T15）
+#include <rw/geometry/Cylinder.hpp>       // 基本图元：圆柱（连杆近似——RT-T15）
+#include <rw/geometry/Geometry.hpp>       // 几何载体（图元数据＋帧内位姿＋挂接帧）
 #include <rw/core/Exception.hpp>          // rw::core::Exception（§8.4 转译行 1）
 #include <rw/kinematics/FixedFrame.hpp>   // 基座/连杆/TCP/场景帧
 #include <rw/models/Joint.hpp>            // bounds/限速/限加速度显式设值
+#include <rw/models/Object.hpp>           // WC 几何载体基类（WorkCellScene 消费面）
 #include <rw/models/PrismaticJoint.hpp>   // 移动关节
 #include <rw/models/RevoluteJoint.hpp>    // 旋转/连续关节（连续＝无限位旋转）
+#include <rw/models/RigidObject.hpp>      // 每帧几何载体对象（Object 具体类）
 #include <rw/models/SerialDevice.hpp>     // 设备构造（基座→法兰链）
 #include <rw/models/WorkCell.hpp>         // 编译产物
 
@@ -69,6 +83,137 @@ constexpr double kPoleCosTolerance = 1e-12;
 /// 只影响展示长度，不影响失败判定；完整原文属开发诊断面，走日志不走
 /// 诊断记录）。
 constexpr std::size_t kCauseSummaryLimit = 512;
+
+// ---------------------------------------------------------------------
+// RT-T15 基本图元几何派生（呈现代理面——全部常量与函数为模型值的确定性
+// 纯函数：同模型同图元（NFR-COR-01），无环境/时钟/资源依赖）。
+//
+// 近似误差声明（实施卡评审冻结的派生规则）：真实连杆是异形铸件/钣金件，
+// 圆柱只是"连杆两端点（连杆系原点→子关节系原点）之间的体积代理"——它
+// 保证三维视图有形可看、拾取有物可中（ARC-03 呈现唯一来源），**不是**
+// 碰撞检测或质量惯量的真值（MDL-05 物性权威值在 CanonicalModel；碰撞
+// 几何引用在 visual/collision 资源通道——待所有者裁决的保真度升级）。
+// ---------------------------------------------------------------------
+
+/// 跨度退化阈值（单位 m）：连杆系原点到子关节系原点的平移长度低于该值时
+/// 视为零长连杆——不挂圆柱（零体积图元无呈现意义且部分后端网格退化），
+/// 该连杆仅以帧存在（诚实缺省，非错误）。取 1×10⁻⁹ m＝亚微米级，远低于
+/// 任何工程有意义的连杆长度（附录 D 第 4 项容差同尺度）。
+constexpr double kLinkSpanEpsilon = 1e-9;
+
+/// 连杆圆柱半径与跨度之比（无量纲）：半径＝0.15×跨度（直径≈30% 长度），
+/// 对应典型工业臂连杆"细长杆件"的目视比例。仅影响观感不影响任何工程
+/// 判定（呈现代理——ARC-04：显示代理不入模型身份/缓存键）。
+constexpr double kLinkRadiusToLength = 0.15;
+
+/// 圆柱半径下限（单位 m）：短连杆按比例算得的半径过细而不可见时兜底。
+/// 取 5×10⁻³ m（5 mm）——桌面尺度机械臂最细连杆的可辨识下限。
+constexpr double kLinkRadiusMin = 0.005;
+
+/// 圆柱半径上限（单位 m）：特长"连杆"（如大行程移动关节的行程段）按比例
+/// 算得的半径过粗而失真时钳制。取 8×10⁻² m（80 mm）——典型中型工业臂
+/// 大臂截面尺度。
+constexpr double kLinkRadiusMax = 0.08;
+
+/// 标记盒全边长（单位 m）：法兰/TCP/场景对象帧的"轴标记级"图元尺寸。
+/// Box 构造参数为盒的全边长（基线 Box.cpp 网格顶点取 ±dx/2 实测）。取
+/// 2×10⁻² m（20 mm）——不遮蔽连杆、拾取可命中的标记尺度。
+constexpr double kMarkerBoxSide = 0.02;
+
+/// 连杆圆柱几何名后缀：帧名＋本后缀＝基线 drawable 名（仅呈现层标签——
+/// 不入映射、不入身份；'@' 为基线命名保留字外的分隔符，避免与映射全名
+/// 可能含的 '.'/'/' 序列混淆——§7.2 名字纪律不适用于呈现层标签，但仍取
+/// 不易碰撞的形态）。
+constexpr const char* kLinkCylinderSuffix = "@ird-link-cylinder";
+
+/// 标记盒几何名后缀（语义同上——法兰/TCP/场景对象帧）。
+constexpr const char* kMarkerBoxSuffix = "@ird-marker-box";
+
+/**
+ * @brief 由连杆跨度推导连杆圆柱半径（确定性纯函数——同跨度同半径）。
+ *
+ * 派生规则（实施卡评审冻结）：r ＝ clamp(0.15×L, 5 mm, 80 mm)——比例项
+ * 保持"粗细随连杆长短"的目视直觉，钳制项防止极端长短连杆的尺度失真。
+ *
+ * @param spanLength [in] 连杆跨度（连杆系原点→子关节系原点平移长度），
+ *                    单位 m；须 ＞ kLinkSpanEpsilon（调用方保证）
+ * @return 圆柱半径，单位 m
+ */
+double linkCylinderRadius(double spanLength)
+{
+    // 比例项→钳制（std::min/max 逐级钳制顺序固定——确定性表达式形态）。
+    const double proportional = kLinkRadiusToLength * spanLength;  // m
+    return std::min(kLinkRadiusMax, std::max(kLinkRadiusMin, proportional));
+}
+
+/**
+ * @brief 把单个基本图元以 RigidObject 载体挂接到目标帧（RT-T15 几何挂接的
+ *        唯一落位通道——载体形态/命名/帧绑定在此单点决定）。
+ *
+ * 载体选型（实现层选型——随落位登记）：基线 WorkCellScene::updateSceneGraph
+ * 只遍历 WC 的 Object 集合并把 geometry.getFrame()＝被访问帧 的图元挂到该
+ * 帧的场景节点（WorkCell.cpp 实测：addDevice 不入 _objects，故设备自身的
+ * 几何不在该遍历面）——因此每帧一个 RigidObject（base＝目标帧）是让图元
+ * 随帧渲染/随 State FK 运动的最小正确形态；RigidObject 构造不注册任何
+ * StateData（质量/惯量为普通成员——实测其 .hpp/.cpp），WC 状态布局与
+ * 默认状态零变化（S6 既有产物零变化——RT-GEO 回归钉住）。
+ *
+ * @param workCell         [in,out] 编译中的 WC（唯一写入窗——编译器 src 内）
+ * @param frame            [in] 目标帧（已入 WC 帧树；图元绑定并随其变换）
+ * @param primitive        [in] 图元数据（Cylinder/Box；调用方按跨度派生）
+ * @param placementInFrame [in] 图元在目标帧系内的安放位姿（m/rad；标记盒
+ *                          取恒等——盒心即帧原点）
+ * @param geometryName     [in] 基线 drawable 名（帧名＋固定后缀——呈现层
+ *                          标签，确定性；不入映射不入身份）
+ */
+void attachPrimitive(rw::models::WorkCell& workCell,
+                     const rw::core::Ptr<rw::kinematics::FixedFrame>& frame,
+                     const rw::geometry::GeometryData::Ptr& primitive,
+                     const rw::math::Transform3D<double>& placementInFrame,
+                     const std::string& geometryName)
+{
+    // 几何载体：图元数据＋帧内位姿＋挂接帧三要素齐备后才进 WC（§8.2 显式
+    // 设值纪律——不依赖 Geometry 构造默认位姿/空帧）。
+    const rw::geometry::Geometry::Ptr geometry = rw::core::ownedPtr(
+        new rw::geometry::Geometry(primitive, geometryName, 1.0));  // scale＝1（m 真值直用）
+    geometry->setTransform(placementInFrame);
+    geometry->setFrame(frame);
+
+    // 载体对象：base＝目标帧（Object::getName 即帧名——呈现层按帧寻址）；
+    // add() 只把对象登记进 WC 的 Object 清单（registerIn 对无状态对象为
+    // 空操作——StateStructure/默认状态零变化），不改帧树。
+    const rw::core::Ptr<rw::models::RigidObject> carrier =
+        rw::core::ownedPtr(new rw::models::RigidObject(frame, geometry));
+    workCell.add(carrier.template cast<rw::models::Object>());
+}
+
+/**
+ * @brief mesh 资源通道接线预留位（RT-T15——**有意的诚实跳过空实现**）。
+ *
+ * 为什么是空实现（卡面 RT-T15 明确登记，不私裁）：真实 visual/collision
+ * mesh 渲染＝保真度升级项，涉及三段缺口——①io 侧 mesh 解析加载器、
+ * ②GeometryRef.localTransform 编译域透传、④IRuntimeResourceProvider 资源
+ * 字节消费（findings F-550 登记）——**待所有者裁决**后随 io 阶段 B 落位。
+ * 本批只把 provider 句柄经编译链接线到 S6（compileWorkCell 第二参数——
+ * 未来实现的依赖位），不消费资源字节、不虚构几何、不产错误级诊断、不
+ * 阻塞编译（§8.6 诚实跳过语义；RT-GEO 诚实跳过面用例断言 provider 零调用）。
+ *
+ * 未来形态（登记供裁决参考，非本批实现）：对 CanonicalLink.visual/collision、
+ * CanonicalTool.geometry、CanonicalSceneObject.geometry 逐引用经 provider
+ * 取已验证字节→io 解析为基线 TriMesh→以 Geometry 载体挂接（localTransform
+ * 透传为帧内位姿）——图元是否降级为网格缺失时的 fallback 亦属裁决范围。
+ *
+ * @param model            [in] 规范模型（resourceManifest/引用清单来源）
+ * @param resourceProvider [in] 资源提供者（可空＝缺位；本批恒不消费）
+ */
+void attachResourceMeshGeometry(const CanonicalModel& model,
+                                const IRuntimeResourceProvider* resourceProvider)
+{
+    // 有意不消费（见上注）：参数保留＝接口位本体；显式 void 化防未用告警，
+    // 也表明"未使用"是设计事实而非遗漏。
+    (void)model;
+    (void)resourceProvider;
+}
 
 /**
  * @brief 构造把局部 Z 轴 (0,0,1) 旋转到权威关节轴 axis 的对齐旋转矩阵
@@ -117,6 +262,34 @@ rw::math::Rotation3D<double> axisAlignmentRotation(const rw::math::Vector3D<doub
     const double sinAngle = rotAxis.norm2();                // ＝sinθ（axis 单位向量）
     const double angle = std::atan2(sinAngle, cosAngle);    // 单位 rad
     return rotationFromCustomEaa(rotAxis * (angle / sinAngle));
+}
+
+/**
+ * @brief 计算把"局部 +Z 轴向单位圆柱"安放为"原点→span 线段圆柱"的帧内
+ *        位姿（确定性纯函数；置于 axisAlignmentRotation 之后——复用其数学）。
+ *
+ * 数学：圆柱图元在自身系内以原点为中心、沿 Z 轴总高 height 对称分布
+ * （基线 Cylinder 语义）。要使其恰好覆盖连杆系原点 O 到子关节系原点
+ * J（span＝O→J 平移，连杆系内表示，单位 m）之间的线段：
+ *   - 朝向：R·ez＝span/‖span‖（复用 axisAlignmentRotation——与关节轴
+ *     对齐同一数学，不重复实现）；
+ *   - 位置：线段中点 span/2。
+ * 结果位姿在**连杆系**内表示（帧内位姿——呈现后端随帧 FK 复合到世界系，
+ * 几何位姿与 worldTframe 同源随动，RT-GEO 断言面）。
+ *
+ * @param span [in] 连杆跨度平移（连杆系内，单位 m；‖span‖＞kLinkSpanEpsilon
+ *             ——零跨度调用方先过滤，不做除零防御）
+ * @return 圆柱在连杆系内的安放位姿（正交旋转＋平移）
+ */
+rw::math::Transform3D<double> spanPlacement(const rw::math::Vector3D<double>& span)
+{
+    const double length = span.norm2();                       // 跨度，m
+    const rw::math::Vector3D<double> direction =
+        span * (1.0 / length);                                // 单位方向（无量纲）
+    // 显式取 Rotation3D 形参（Transform3D(Vector3D, Rotation3D) 重载——
+    // Rotation3DVector 接口重载并存，显式类型消除重载歧义）。
+    const rw::math::Rotation3D<double> align = axisAlignmentRotation(direction);
+    return rw::math::Transform3D<double>(span * 0.5, align);  // 线段中点，m
 }
 
 /**
@@ -188,7 +361,8 @@ std::string scopedFullName(const RuntimeNameMap& map, const core::ObjectId& id, 
 // compileWorkCell——S6 唯一入口（签名契约见私有头 WorkCellCompiler.hpp）。
 // =====================================================================
 
-WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model)
+WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
+                                       const IRuntimeResourceProvider* resourceProvider)
 {
     // ---------------------------------------------------------------
     // 异常边界（§8.4）：编译体全程在 try 内——RobWork 基线异常、内存不足、
@@ -250,6 +424,24 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model)
             rw::core::ownedPtr(new rw::kinematics::FixedFrame(
                 baseFrameName, detail::identityTransform3D()));
         workCell->addFrame(previousFrame, baseMount);
+
+        // ---- RT-T15 几何挂接收集器（此处只收集不挂接——图元统一在第 9 步
+        // 落位，保证"帧树→Device→几何"的构建叙事与失败原子性：收集阶段
+        // 不引入新的失败面，挂接阶段的 RobWork 异常经异常边界统一转译）。
+        // 连杆圆柱待挂件：〈帧，跨度平移（连杆系内，m）〉——跨度＝该连杆的
+        // 子关节 T_parent_joint 平移（DH a/d 在显式表示下的对应量：modeling
+        // 侧已把 DH 权威转为显式表示——§4.2 JointDescription 注释，故逐段
+        // 平移即逐段 a/d 的笛卡尔合成）。
+        std::vector<std::pair<rw::core::Ptr<rw::kinematics::FixedFrame>,
+                              rw::math::Vector3D<double>>>
+            linkCylinders;
+        // 标记盒待挂件：法兰/TCP/场景对象帧（轴标记级图元——盒心即帧原点）。
+        std::vector<rw::core::Ptr<rw::kinematics::FixedFrame>> markerFrames;
+
+        // 基座连杆（links[0]）的子关节＝joints[0]（构造不变量：links＝
+        // joints+1 且 joints≥1——builder 保证，此处直取 at 安全）。
+        linkCylinders.emplace_back(
+            previousFrame, chain.joints.front().origin.P());
 
         // 设备链（SerialDevice 构造输入——基座到法兰的连通 Frame 序列；
         // 裸指针视图，所有权仍在 StateStructure）。
@@ -354,20 +546,31 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model)
             workCell->addFrame(linkFrame, jointFrame);
             serialChain.push_back(linkFrame.get());
             previousFrame = linkFrame;  // 下一级关节的父＝本连杆帧
+
+            // RT-T15 收集：末连杆＝法兰（无子关节——跨度的权威来源不存在，
+            // 不虚构长度）走标记盒；其余连杆的子关节＝joints[i+1]（i+1＜
+            // joints.size() 由非末判定保证），跨度取其 T_parent_joint 平移。
+            if (isLastLink) {
+                markerFrames.push_back(linkFrame);
+            } else {
+                linkCylinders.emplace_back(
+                    linkFrame, chain.joints.at(i + 1).origin.P());
+            }
         }
 
         // ===== 第 6 步：工具 TCP 帧（§4.3.4/MDL-13——挂法兰，tcpOffset 为
         // 法兰系内权威偏置 T_flange_tcp；多工具各自成帧，默认 TCP 的选择
         // 是 kinematics 侧消费语义〔KIN-14〕，编译层不排序不裁剪）。
-        // 几何资源（visual/collision mesh）的 WC 挂接随资源消费任务落位
-        // （IRuntimeResourceProvider 阶段 B 接入——§8.6；§12 RT-T07 交付
-        // 范围为 Frame 树/Device/Joint/限位，几何挂接已登记 §15.4）。
+        // 几何挂接（RT-T15）：mesh 资源通道＝接线预留诚实跳过（§8.6——
+        // 真实 visual/collision mesh 待所有者裁决的保真度升级，§15.4）；
+        // 本批为 TCP 帧挂轴标记级小盒（第 9 步统一落位）。
         for (const CanonicalTool& tool : model.tools()) {
             const std::string tcpName =
                 scopedFullName(nameMap, tool.objectId, NameScope::Tcp);
             rw::core::Ptr<rw::kinematics::FixedFrame> tcpFrame =
                 rw::core::ownedPtr(new rw::kinematics::FixedFrame(tcpName, tool.tcpOffset));
             workCell->addFrame(tcpFrame, previousFrame);  // previousFrame＝法兰帧
+            markerFrames.push_back(tcpFrame);
         }
 
         // ===== 第 7 步：场景对象帧（§4.3.4/MDL-15——挂 WORLD 根，世界系
@@ -380,6 +583,7 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model)
                 rw::core::ownedPtr(
                     new rw::kinematics::FixedFrame(sceneName, sceneObject.worldPose));
             workCell->addFrame(sceneFrame, rw::core::Ptr<rw::kinematics::Frame>(worldFrame));
+            markerFrames.push_back(sceneFrame);
         }
 
         // ===== 第 8 步：SerialDevice 构造与登记（§5.2 S6 输出"Device 名"
@@ -392,7 +596,45 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model)
             new rw::models::SerialDevice(serialChain, deviceName.fullName, defaultState));
         workCell->addDevice(device.template cast<rw::models::Device>());
 
-        // ===== 第 9 步：S9 防御性自检（§12 RT-T07 测试列"RT-BW-4〔S9 部分〕
+        // ===== 第 9 步：基本图元几何挂接（RT-T15——S6 增量的呈现代理面）。
+        // 落位次序＝收集序（链序→法兰→TCP→场景），派生全为模型值的确定性
+        // 纯函数——同模型同图元（NFR-COR-01）；图元与载体对象不触碰帧树/
+        // Device/Joint/限位（registerIn 无状态数据——默认状态零变化），
+        // 也不入 CanonicalModel 身份域与任何缓存键（§4.3.6 显示代理纪律，
+        // ARC-04；RT-ID/RT-CACHE 族回归钉住）。
+        for (const auto& [frame, span] : linkCylinders) {
+            // 零跨度连杆（子关节与连杆系原点重合——如纯交汇型关节布置）：
+            // 诚实缺省不挂圆柱（零体积图元无呈现意义且部分后端网格退化），
+            // 非错误——该连杆仅以帧存在（§5.6"能力缺失≠非法"同精神）。
+            if (span.norm2() <= kLinkSpanEpsilon) {
+                continue;
+            }
+            // 圆柱：高＝跨度（覆盖连杆系原点→子关节系原点线段，m），半径
+            // ＝确定性派生（linkCylinderRadius 注释——比例＋钳制），帧内
+            // 位姿＝沿线段的朝向＋中点（spanPlacement 注释）。基线 Cylinder
+            // 构造参数为 float（存储形态——呈现图元精度面），显式收窄。
+            const double spanLength = span.norm2();  // 跨度，m
+            const rw::geometry::GeometryData::Ptr primitive = rw::core::ownedPtr(
+                new rw::geometry::Cylinder(
+                    static_cast<float>(linkCylinderRadius(spanLength)),  // 半径，m
+                    static_cast<float>(spanLength)));                    // 高＝跨度，m
+            attachPrimitive(*workCell, frame, primitive,
+                            spanPlacement(span),
+                            frame->getName() + kLinkCylinderSuffix);
+        }
+        for (const rw::core::Ptr<rw::kinematics::FixedFrame>& frame : markerFrames) {
+            // 标记盒：全边长恒定（kMarkerBoxSide——轴标记级），盒心即帧原点
+            // （帧内位姿恒等）——法兰/TCP/场景帧有形可拾即可，不演绎尺寸。
+            attachPrimitive(*workCell, frame, rw::core::ownedPtr(new rw::geometry::Box(
+                                kMarkerBoxSide, kMarkerBoxSide, kMarkerBoxSide)),
+                            detail::identityTransform3D(),
+                            frame->getName() + kMarkerBoxSuffix);
+        }
+        // mesh 资源通道：接线预留（provider 句柄已随编译链接线至 S6——
+        // 本批诚实跳过不消费；真实 mesh 渲染待所有者裁决，见函数注释）。
+        attachResourceMeshGeometry(model, resourceProvider);
+
+        // ===== 第 10 步：S9 防御性自检（§12 RT-T07 测试列"RT-BW-4〔S9 部分〕
         // "的编译器侧落点）：BaseMount 读回值 vs 权威 T_world_base 逐元素
         // 比较（附录 D 第 4 项容差 1×10⁻⁹），含 ≈T·T 二次叠加形态探测
         // （AT-37 反例——实现缺陷类失败，不得放行，§6.6）。
@@ -409,9 +651,11 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model)
             throw RuntimeError(RuntimeErrorCode::BaseWorldInconsistent, std::move(detail));
         }
 
-        // ===== 第 10 步：产物装配（名字收集口径：编译器写入的帧名＋设备
+        // ===== 第 11 步：产物装配（名字收集口径：编译器写入的帧名＋设备
         // 名——S8 交叉校验 actualNames 输入；不含基线 WORLD 根帧，其是树
-        // 锚点而非编译产物，§7.2 保留字口径）。写入序＝确定性序。
+        // 锚点而非编译产物，§7.2 保留字口径；RT-T15 起亦不含图元载体对象
+        // ——载体非帧、名字非映射名，S8 交叉校验的帧名面零变化）。写入序
+        // ＝确定性序。
         WorkCellCompileOutcome outcome;
         outcome.workCell = workCell;
         outcome.deviceName = deviceName.fullName;
