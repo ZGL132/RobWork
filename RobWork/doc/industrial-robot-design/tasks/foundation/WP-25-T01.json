@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-25-T01",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "试点范围与前置数据签署",
+  "status": "planned",
+  "dependsOn": [
+    "WP-00-T01"
+  ],
+  "requirements": [
+    "PILOT-01"
+  ],
+  "designRefs": [
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "pilot-signoff",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-25-T01.json"
+  ],
+  "branch": "wp25-t01",
+  "interUnit": false,
+  "acceptance": [
+    "签署件（只读、版本化、锁定对照口径）；清单逐项由业务数据负责人与产品负责人签署（PILOT-01）"
+  ],
+  "note": "DTB §2.25 行逐一对应（阶段 E）。前置 WP-00-T01（治理机制）契约在案（tasks/ 根）。governance-log 需求追溯行已登记 PILOT-01 的待决依赖集中追踪位。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+}

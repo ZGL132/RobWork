@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-25-T04",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "试点缺陷门禁",
+  "status": "planned",
+  "dependsOn": [
+    "WP-25-T02",
+    "WP-25-T03"
+  ],
+  "requirements": [
+    "DEL-02"
+  ],
+  "designRefs": [
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "defect-gate",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-25-T04.json"
+  ],
+  "branch": "wp25-t04",
+  "interUnit": false,
+  "acceptance": [
+    "缺陷门禁执行与登记：开放 Blocker=0；遗留 Critical 均有负责人/影响说明/计划日期；不得降阈值或隐藏诊断关闭缺陷（DEL-02）"
+  ],
+  "note": "DTB §2.25 行逐一对应（阶段 E 收口）。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+}
