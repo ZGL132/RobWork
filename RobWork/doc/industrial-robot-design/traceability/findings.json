@@ -4603,10 +4603,11 @@
       "id": "F-460",
       "source": "UI-T39 审核返工轮（2026-10-02——生产装配注册需求域命令处理器后首次真实 committed，requirements-tour step9 二连应用探针暴露）",
       "severity": "blocking",
-      "status": "open",
+      "status": "fixed",
+      "fixedBy": "audit-r2c 批 2fe3da66f（RequirementsUiModule::noteAppliedRevision 第二半——rewireWorksetRootRefsAfterApply 以会话闭包缝现取 HEAD objectRefs 回填工作集根引用表四集合槽；独立验收 pass a17df640a；合入 c028c550d）",
       "registeredAt": "2026-10-02",
       "title": "需求域二连 draft.apply 必拒：首次应用回执只回填根对象身份（noteAppliedRevision），编辑器工作集根引用表的四集合挂载态仍停留在首应用前（refs 空）→第二次组装的集合槽按 allocateNew 组装，与存储端已挂载集合身份失配（prepare 挂载失配拒绝面，invalid-payload 且零诊断）——生产路径此前处理器未注册（F-461 前身）提交恒拒，缺口从未被踩到。",
-      "owner": "requirements 域会话接线（UI-T40 序列候选：自身回执后以新 HEAD 闭包重导线＋未应用编辑保序重演——§4.6 三态语义与 RequirementsRefreshCoordinator 既有重演机制接线；同时补 prepare 域内拒绝的逐项诊断回填〔本次 invalid-payload 零诊断可观测性缺陷〕）",
+      "owner": "requirements 域会话接线（UI-T40 序列候选：自身回执后以新 HEAD 闭包重导线＋未应用编辑保序重演——§4.6 三态语义与 RequirementsRefreshCoordinator 既有重演机制接线；同时补 prepare 域内拒绝的逐项诊断回填〔本次 invalid-payload 零诊断可观测性缺陷〕）【2026-10-12 缺陷修复批A 核实翻牌（FIX-T1）】audit-r2c 批已修复且独立验收 pass 在基线（实现 2fe3da66f＝noteAppliedRevision 第二半 rewireWorksetRootRefsAfterApply——以宿主绑定会话闭包缝现取 HEAD objectRefs 回填工作集根引用表四集合槽，实际修复方案与原登记 UI-T40 序列候选不同型、消账同一缺陷；验收 a17df640a verdict=pass，含宿主 studio 实录二连应用探针命中 committed 分支；合入 c028c550d），而本条账面漏翻仍 open。本批复现测试实证绿：PluginPanel.AppliedReceiptRewiresWorksetRefs_SecondApplyExplicit_F460／AppliedReceiptConsistentClosureSkipsRewire_F460／AppliedReceiptWithoutClosureSeamSkipsRewire_F460 三用例（requirements_test，worktree 集成树实跑）——账面与代码事实同步，翻 fixed。",
       "resolution": "UI-T39 冒烟 step9 以诚实双态断言承载（committed＝继续撤销点击验证；未 committed＝记录已知缺口），生产通路其余段（处理器注册→首应用真实提交→修订事件→面板刷新→首应用不可逆的诚实禁用）已随本批打通并留痕。编号顺延自 F-459。"
     },
     {
@@ -5008,7 +5009,7 @@
       "status": "open",
       "registeredAt": "2026-10-04",
       "title": "需求三维区域采样结果状态着色未闭环（宿主审核 P1）：当前仅有包围盒＋采样格线骨架，缺采样点通过/失败/未采样三态、达标颜色区分、覆盖率颜色映射、校验项点击定位采样点、颜色图例；颜色必须由统一 UI 词表提供（建议语义：绿=通过/红=未通过/灰=未采样/黄=警告/蓝框=当前选中），禁止三维后端各自硬编码",
-      "owner": "两批链落位：上游批 UI-T64（kinematics 覆盖评估执行通道产品装配——2026-10-05 落位 ready 待独立验收，ui-t64@2972b5d7）＋消费卡 UI-T65（三态着色/覆盖率框色映射/统一供色图例——2026-10-06 落位 ready 待独立验收，ui-t65 堆叠 ui-t64）；数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/图例 全通〔校验项点击定位＝L-R1 jumpTarget 区域级现成机制，样本级定位随诊断素材粒度留后续〕；两批独立验收 pass 后本条闭合；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（三维采样四态着色）——所有者宿主复验通过后翻 fixed。"
+      "owner": "两批链落位：上游批 UI-T64（kinematics 覆盖评估执行通道产品装配——2026-10-05 落位 ready 待独立验收，ui-t64@2972b5d7）＋消费卡 UI-T65（三态着色/覆盖率框色映射/统一供色图例——2026-10-06 落位 ready 待独立验收，ui-t65 堆叠 ui-t64）；数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/图例 全通〔校验项点击定位＝L-R1 jumpTarget 区域级现成机制，样本级定位随诊断素材粒度留后续〕；两批独立验收 pass 后本条闭合；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（三维采样四态着色）——所有者宿主复验通过后翻 fixed。【2026-10-12 缺陷修复批A 核实登记（FIX-T1）】两批均已独立验收 pass 并合入基线（UI-T64 acc/ui-t64/1 pass 合入 6804b3da5 链；UI-T65 attempt 2 pass 合入 6804b3da5——见 DTB §2.11 WP-10-T64/T65 行落位登记），四态着色数据链代码与测试面在基线实证在位：本批复跑 ui_test 三具名用例 MapSampleStateToCell_TableDriven_UI_T65／View3DTintFromCoverage_TableDriven_UI_T65／RegionTint_FollowsPositionAxisNotMixed_UI_T65 全绿（worktree 集成树实跑）。status 维持 open——宿主 GUI 实拍复验动作归所有者（本批为自动化会话不代行复验），复验通过后翻 fixed。"
     },
     {
       "id": "F-496",
@@ -7790,19 +7791,21 @@
       "id": "F-799",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #23（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedBy": "F-746①（audit-r2d1 批 0e7cb3111——行程面转值面＋断言面无值态统一阻断）顺带修复＋缺陷修复批A FIX-T1 补混合场景回归钉",
       "registeredAt": "2026-10-12",
       "title": "modeling `CommandHandlers.cpp:1179/1215/1229` 断言阻塞项检查晚于行程校验：assertJointLimitIntervals 产 blockers 后不返回，evaluateTravelLimits 对缺已确认工作范围的 Continuous 抛 std::logic_error 逃逸——「有界 Revolute＋未确认范围 Continuous」候选应走 RejectedHardAssert 值轨",
-      "resolution": "处置建议：含未确认范围 Continuous 的候选先按 blockers 走 RejectedHardAssert 值轨，行程校验不得先于 blockers 检查抛未捕获 logic_error；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：含未确认范围 Continuous 的候选先按 blockers 走 RejectedHardAssert 值轨，行程校验不得先于 blockers 检查抛未捕获 logic_error；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）。【2026-10-12 缺陷修复批A 核实翻牌（FIX-T1）】立卡所据的 logic_error 逃逸路径已由 F-746①（audit-r2d1 批，早于本条立卡的 2026-10-12 复核轮）顺带消除：evaluateTravelLimits 对缺范围 Continuous 转值面 EvaluationFailed（不抛），assertJointLimitIntervals 对无值态统一产 blocker——「合法有界 Revolute＋未确认范围 Continuous」候选经行程校验段达 EvaluationFailed→RejectedHardAssert 值轨（evalDiags＋blockers＋warnings 全量传导），值轨出口唯一。本批补混合场景回归钉 MdlCommandPrepare.MixedBadBoundsRevoluteAndUnconfirmedContinuous_RejectsOnValueTrack（红阶段如实登记：缺陷已不在，用例直接绿——修复前置落位非本批代码改动），连同断言域既有用例回归全绿（modeling_test 375/375）——翻 fixed。Revolute 限位非法载荷在 decode 层 fail-fast（构不成到达断言域的载荷），故回归钉取合法限位 Revolute 保证行程校验段必达。"
     },
     {
       "id": "F-800",
       "source": "audit/round2-20261010/recheck-34-legacy.md §三 一轮条目 #24（P1 存量复核立卡，2026-10-12 治理批）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedBy": "缺陷修复批A FIX-T1（StructureEdit.cpp 六轴重置 defaultTcp 同拍 reset）",
       "registeredAt": "2026-10-12",
       "title": "modeling `StructureEdit.cpp:313-315` 六轴重置清 toolRefs/sceneRefs/poseSetRef 但不清 defaultTcp（RobotDesign.hpp:537 optional<TcpRef>，:622 I-MDL-9「defaultTcp∈toolRefs」）——重置后悬挂引用可入库，与自身注释「不静默保留悬挂引用」直接矛盾",
-      "resolution": "处置建议：defaultTcp 一并 reset（或按 I-MDL-9 同步挂新链校验拒绝）；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "处置建议：defaultTcp 一并 reset（或按 I-MDL-9 同步挂新链校验拒绝）；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）。【2026-10-12 缺陷修复批A 修复落地（FIX-T1）】取处置建议第一出路：六轴重置链引用面清空同拍 defaultTcp.reset()（与 poseSetRef 同语义——默认 TCP 是链的派生选择，工具重挂后须用户重设；注释与 recordChange 摘要同步扩列「默认 TCP」）。复现测试先行：StructureEditTest.ResetToSixAxis_ClearsDefaultTcp_WithChainRefs 修复前真实红（defaultTcp 残留断言失败）、修复后绿；modeling_test 375/375 全绿零回归——翻 fixed。"
     },
     {
       "id": "F-801",

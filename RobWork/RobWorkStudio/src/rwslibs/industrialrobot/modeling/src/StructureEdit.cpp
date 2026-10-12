@@ -307,12 +307,18 @@ std::optional<StructureEditError> resetToSixAxis(ModelingWorkingSet& ws)
     const std::size_t oldJoints = ws.design.joints.size();
     ws.design.joints = std::move(rebuilt.joints);
     ws.design.links = std::move(rebuilt.links);
-    // 链引用面随链重建清空（旧链的工具/场景/位姿/传动引用与重建后六轴
-    // 无语义对应——引用对象本体（toolObjects 等）保留在部件视图，重挂
+    // 链引用面随链重建清空（旧链的工具/场景/位姿/默认 TCP 引用与重建后
+    // 六轴无语义对应——引用对象本体（toolObjects 等）保留在部件视图，重挂
     // 归用户经既有编辑流；根引用表清空＝诚实形态，不静默保留悬挂引用）。
     ws.design.toolRefs.clear();
     ws.design.sceneRefs.clear();
     ws.design.poseSetRef.reset();
+    // defaultTcp 同拍清除（F-800——缺陷修复批A FIX-T1）：默认 TCP 是
+    // "工具 ObjectId＋该工具 tcpList 键"的引用（I-MDL-9 defaultTcp∈toolRefs），
+    // toolRefs 清空后残留即指向不在引用表中的工具＝悬挂引用可随草稿入库，
+    // 与上方"不静默保留悬挂引用"的承诺直接矛盾。默认 TCP 本是链的派生
+    // 选择（工具重挂后须用户重设），清空＝诚实形态（与 poseSetRef 同语义）。
+    ws.design.defaultTcp.reset();
     // drivetrainRef 保留（MDL-16 传动设计挂在根对象、与链长无必然绑定——
     // 摩擦/力矩行数由 prepare 断言按新链长校验，失配走域拒绝面呈现）。
 
@@ -320,7 +326,7 @@ std::optional<StructureEditError> resetToSixAxis(ModelingWorkingSet& ws)
     recordChange(ws,
                  "joints[0..]",
                  "六轴重置：整链重建为 T-MDL-1 模板参数（原链 " + std::to_string(oldJoints)
-                     + " 轴→6 轴——有损操作；工具/场景引用已清空待重挂，"
+                     + " 轴→6 轴——有损操作；工具/场景/默认 TCP 引用已清空待重挂，"
                        "传动设计保留）；运动学及下游结果需重算（MDL-09）");
     return std::nullopt;
 }
