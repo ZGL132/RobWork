@@ -7,6 +7,8 @@
 | `industrial-robot-windows.gitlab-ci.yml` | GitLab 门禁契约定义（Runner 接入前豁免实际执行） | `RobWork/gitlab-ci/industrial-robot-windows.yml` |
 | `industrial-robot-windows.github-workflow.yml` | GitHub Actions 执行通道（步骤顺序/job 划分/缓存白名单/脚本行与 GitLab 侧逐字符一致） | `.github/workflows/industrial-robot-windows.yml` |
 
+> **2026-10-12 治理批扩面（G-1 消账，pipeline5/redesign-main）**：两文件测试 job（模型测试／GUI 规则通道预检）的 run-tests 正则由 `^sdurws_ird_core_test$`（阶段 A 唯一已建测试目标的历史口径）**同步**扩为 `^sdurws_ird_.*_test$`——覆盖全部单元 `sdurws_ird_<unit>_test` 与 `_contract_test` 注册目标，与本地 gate-all.ps1"全部 _test/_contract_test 一键执行"面拉齐；双文件逐字符一致纪律保持。扩面依据＝units/execution.md §15.4 v0.12（EX-T10 ④）、units/runtime.md §15.4 v0.15（RT-T13 ④）、units/evidence.md EV-T12 三处同缺口登记（消账标注已随批回写三卡）。
+
 ## 已固化结论（缓存回退键与模板供给——契约 acceptance 4 的对齐内容）
 
 1. **双 ini 模板供给**：CI 配置期缺失的两个 gitignored 模板（`RobWorkStudio.ini.template.static`／`ini.shared.in`）由基建步内嵌同文生成（与主树模板逐字节一致，eb777e2 验证）——同时消解 findings **F-007** 的"全新树配置卡死"半边（ini 模板项；toolchain/Qt 前缀项由 workflow 的 `CMAKE_PREFIX_PATH` env＋vcpkg 安装步承载）。

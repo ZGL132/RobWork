@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-23-T01",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "编写性能基准清单与测量协议登记",
+  "status": "planned",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-PERF-01",
+    "NFR-PERF-02",
+    "NFR-PERF-03",
+    "NFR-PERF-04",
+    "NFR-PERF-05",
+    "NFR-PERF-06",
+    "PM-16",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#19.3",
+    "units/testkit.md#10.1",
+    "development-task-breakdown.md#2.24"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/performance-baseline.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "design-doc",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T01.json"
+  ],
+  "branch": "wp23-t01",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-TK-5",
+    "O-22"
+  ],
+  "acceptance": [
+    "新建 doc/industrial-robot-design/performance-baseline.md（基准清单＋黄金项目定义＋协议）：基准清单覆盖全部 PERF 条目；PM-16 协议（冷/热分组、≥15+15 样本、P95 线性插值）落位；不以 3 次中位数替代 P95（DTB 行禁止项）"
+  ],
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"可在阶段 A 产出、阶段 C 启用\"。P-TK-5（大体绩黄金数据存储/CI 策略——首个大数据集出现时裁决）与 O-22（同源）为黄金项目定义的已登记裁决挂靠；testkit.md §10.1 performance-baseline 类预留为启用面。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+}

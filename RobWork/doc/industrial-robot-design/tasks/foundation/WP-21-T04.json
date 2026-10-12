@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-21-T04",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "实现联合硬约束与并行/检查点规模化",
+  "status": "planned",
+  "dependsOn": [
+    "WP-21-T03",
+    "EX-T06",
+    "EX-T08"
+  ],
+  "requirements": [
+    "OPT-03",
+    "OPT-06",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "units/optimization.md#15",
+    "development-task-breakdown.md#2.22"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_optimization_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-21-T04.json"
+  ],
+  "branch": "wp21-t04",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-OPT-9"
+  ],
+  "acceptance": [
+    "轨迹/动力/器件联合硬约束＋完整并行评估与检查点恢复；并行与检查点恢复统计不重复（AT-35）；八项指标全量可算用例通过"
+  ],
+  "note": "DTB §2.22 行逐一对应。DTB 前置\"WP-08-T07/T09\"≙EX-T06（worker 监督/通道——并行评估执行面）、EX-T08（检查点/缓存协调器）——≙ 映射按 execution.md §15.4 落位登记；\"WP-16/WP-17 评估器（③端口）\"为③端口消费协作（R-1 零编译依赖），不构成契约依赖——其批次契约（WP-16-T06/WP-17-T02 系）已落位。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+}

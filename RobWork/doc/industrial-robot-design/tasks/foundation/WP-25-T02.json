@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-25-T02",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "算法与实测对照",
+  "status": "planned",
+  "dependsOn": [
+    "WP-25-T01"
+  ],
+  "requirements": [
+    "PILOT-02"
+  ],
+  "designRefs": [
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "pilot-report",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-25-T02.json"
+  ],
+  "branch": "wp25-t02",
+  "interUnit": false,
+  "acceptance": [
+    "对照报告（按已签署容差逐指标对比；趋势/相关性证据边界）；不得宣称超出数据支持的选型结论（DTB 行禁止项——PILOT-02）"
+  ],
+  "note": "DTB §2.25 行逐一对应；前置\"M5/M6（域结果可用）\"为里程碑门禁非契约依赖。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+}

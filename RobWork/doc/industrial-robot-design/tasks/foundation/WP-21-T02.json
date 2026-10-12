@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-21-T02",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "扩展 optimization 任务卡（OPT-D 部分）",
+  "status": "planned",
+  "dependsOn": [
+    "WP-21-T01"
+  ],
+  "requirements": [
+    "OPT-05",
+    "OPT-06",
+    "OPT-09",
+    "OPT-10",
+    "AT-35"
+  ],
+  "designRefs": [
+    "units/optimization.md#15",
+    "ARCHITECTURE.md#10.2",
+    "development-task-breakdown.md#2.22"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "design-doc"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-21-T02.json"
+  ],
+  "branch": "wp21-t02",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-OPT-9"
+  ],
+  "acceptance": [
+    "units/optimization.md 增量修订（OPT-D 节）含：分层联合策略、并行/检查点规模化、鲁棒性三模式、暂停/继续边界、误淘汰审计口径；不新增架构机制（PA-7——ARCH §10.2 R2 无新机制核对）"
+  ],
+  "note": "DTB §2.22 行逐一对应。DTB 前置\"WP-20-T01\"（编写 optimization 单元卡）全库无契约——该前置的事实面（units/optimization.md 已存在并迭代至 v0.x）已成立，如实登记不挂空依赖；P-OPT-9（OPT-D 联合评估键/upstream.* 依赖链登记）按 optimization 卡 §16.3\"随 WP-21-T02 冻结\"挂靠。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+}

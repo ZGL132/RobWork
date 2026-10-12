@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-23-T08",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "优化运行基准达标（R2/D）",
+  "status": "planned",
+  "dependsOn": [
+    "WP-23-T01",
+    "WP-21-T04"
+  ],
+  "requirements": [
+    "NFR-PERF-06"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#19.3",
+    "development-task-breakdown.md#2.24"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "benchmark",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T08.json"
+  ],
+  "branch": "wp23-t08",
+  "interUnit": false,
+  "acceptance": [
+    "10,000 Quick＋100 Verified 8 小时内结束＋检查点恢复；基准时限内完成；运行期间满足 PERF-01；同版本检查点恢复用例通过（NFR-PERF-06）"
+  ],
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。interUnit=false 待 CCP 复核。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+}
