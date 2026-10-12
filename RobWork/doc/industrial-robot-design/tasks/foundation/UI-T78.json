@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "三维模型几何渲染＋ray-cast 拾取对接（WP-10-T05 阶段 B 三维交互批次 ui 侧——F-550 剩余面收口）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T15"
   ],
@@ -61,5 +61,5 @@
     "O-31"
   ],
   "branch": "wp10-t05",
-  "note": "WP-10-T05 阶段 B 三维交互批次 ui 侧卡（2026-10-12 立项——先卡后码；F-550 owner『阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道）』承接；F-496 十步的拾取/TCP-视觉半区以本批为前置）。编号口径：立项输入称 UI 系已用到 UI-T76，卡面实测（findings.json 30 处＋分支 ui-t76 提交 1a9b5523、ui-t77 merge aa9f7aa3 均已合入 redesign-main）显示 UI-T77 已占用——按『取下一个可用号』原则取 UI-T78（T78 全仓 md/json/分支实测未占用）。dependsOn=RT-T15：渲染几何源（runtime 编译图元挂接）；dependsOn=UI-T77：呈现挂接点（HostWorkCellPresentationObject 发布链单入口呈现半区）与骨架组共存面。interUnit=true 判定＝消费 runtime 编译产物（RT-T15）且拾取反解消费 SA-05 端口。status=ready 待独立评审放行。　【实施段同步 2026-10-12（wp10-t05 分支——机器校验语法收编，非语义裁决，status 仍 ready；RT-T15 卡同款先例）】①dependsOn 收编：UI-T77 系已合入 redesign-main 的授权批次（merge aa9f7aa3）无 canonical 契约文件，dependsOn 机器校验悬空——依赖事实（呈现挂接点）由本 note 与 outputs/designRefs 原文承载，零语义变化；②knownPitfalls 收编：findings 系 id（F-550）按 O-nn/CR-nn/P-XX-nn 句法规则收编，F-550 指向由 designRefs traceability/findings.json#F-550 承载，O-31＝本卡呈现/拾取消费面的端口注入纪律钉扎；③branch 收编：本批按 wp10-t05（WP-10-T05 阶段 B 三维交互批次任务分支）实施，与卡面原拟 ui-t78 的差异如实登记。　【designRefs 收编 2026-10-12 续】源码树散文条目两条（industrialrobot/ui/include/sdurws/ird/ui/View3DContract.hpp——九项交互清单＋KIN-06 语义钉住常量；industrialrobot/ui/plugin/HostView3DGateway.hpp——pickFrame 上行拾取缝/Ctrl+双击→pickFrame→SA-05 反解→域分发）移出机器校验域——两代码锚点由本 note 原文承载（RT-T15 卡同款先例，零语义变化）。"
+  "note": "WP-10-T05 阶段 B 三维交互批次 ui 侧卡（2026-10-12 立项——先卡后码；F-550 owner『阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道）』承接；F-496 十步的拾取/TCP-视觉半区以本批为前置）。编号口径：立项输入称 UI 系已用到 UI-T76，卡面实测（findings.json 30 处＋分支 ui-t76 提交 1a9b5523、ui-t77 merge aa9f7aa3 均已合入 redesign-main）显示 UI-T77 已占用——按『取下一个可用号』原则取 UI-T78（T78 全仓 md/json/分支实测未占用）。dependsOn=RT-T15：渲染几何源（runtime 编译图元挂接）；dependsOn=UI-T77：呈现挂接点（HostWorkCellPresentationObject 发布链单入口呈现半区）与骨架组共存面。interUnit=true 判定＝消费 runtime 编译产物（RT-T15）且拾取反解消费 SA-05 端口。status=ready 待独立评审放行。　【实施段同步 2026-10-12（wp10-t05 分支——机器校验语法收编，非语义裁决，status 仍 ready；RT-T15 卡同款先例）】①dependsOn 收编：UI-T77 系已合入 redesign-main 的授权批次（merge aa9f7aa3）无 canonical 契约文件，dependsOn 机器校验悬空——依赖事实（呈现挂接点）由本 note 与 outputs/designRefs 原文承载，零语义变化；②knownPitfalls 收编：findings 系 id（F-550）按 O-nn/CR-nn/P-XX-nn 句法规则收编，F-550 指向由 designRefs traceability/findings.json#F-550 承载，O-31＝本卡呈现/拾取消费面的端口注入纪律钉扎；③branch 收编：本批按 wp10-t05（WP-10-T05 阶段 B 三维交互批次任务分支）实施，与卡面原拟 ui-t78 的差异如实登记。　【designRefs 收编 2026-10-12 续】源码树散文条目两条（industrialrobot/ui/include/sdurws/ird/ui/View3DContract.hpp——九项交互清单＋KIN-06 语义钉住常量；industrialrobot/ui/plugin/HostView3DGateway.hpp——pickFrame 上行拾取缝/Ctrl+双击→pickFrame→SA-05 反解→域分发）移出机器校验域——两代码锚点由本 note 原文承载（RT-T15 卡同款先例，零语义变化）。【合入收尾 2026-10-12（B 行收口批）】实现合入 843c97c7（合入提交『Merge origin/wp10-t05（0b859275）：并入 UI-T78 三维模型几何渲染＋ray-cast 拾取对接』；收口批拟记 caa146f9 经 git 实测校正——caa146f9 系其后并入批 E1 收口 17 提交的合并提交，非 wp10-t05 合入拍）；验收记录 traceability/acceptance/ui-t78-20261012.md——载体 ls/git 实测＝acc/ui-t78/1 分支（添加提交 5944ec8f8，本地与远程 origin/acc/ui-t78/1 均在分支），尚未合入 redesign-main 主线工作区。——ready→done。"
 }

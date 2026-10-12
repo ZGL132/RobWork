@@ -5463,10 +5463,12 @@
       "id": "F-551",
       "source": "F-496 十步人工验收所有者执行实录（2026-10-08——step8 应用草稿成功后工业项目树「需求对象」分组呈现两个「（未命名对象）」条目；截图存所有者执行留证）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-08",
       "title": "需求域 apply-requirement-set 提交的对象在工业项目树显示名为空（UX-02「（未命名对象）」诚实替代呈现）——需求集根/集合对象的显示名在应用链路未流转到呈现（草稿树根标「需求工程」为面板侧呈现值，对象本体 name 字段为空或呈现解析未覆盖需求域对象）；主链行为本身正确：应用成功＋修订生成＋项目树呈现已应用版本",
-      "owner": "需求域/UI 呈现批次（对象显示名流转——apply 载荷补名称或树模型名称解析覆盖需求域对象；与 UX-02「未命名替代哈希」口径兼容，目标是让应用后的树可读）"
+      "owner": "需求域/UI 呈现批次（对象显示名流转——apply 载荷补名称或树模型名称解析覆盖需求域对象；与 UX-02「未命名替代哈希」口径兼容，目标是让应用后的树可读）；【2026-10-12 治理批翻牌（B 行收口批）】修复已随 ui-t77 合入 redesign-main（合入提交 6007a39c『合入 ui-t77（验收 pass）——F-551/F-553』；验收 pass 记录 acc/UI-T77/1 b0b9a5f75）：修复本体 355ff338（需求域对象工业项目树显示名落地——名称解析端口覆盖需求域呈现层）＋其回归测试（HostMigrationTest.cpp 扩充 78 行）——本条翻 fixed。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "ui-t77 合入及其回归测试（修复本体 355ff338，合入拍 6007a39c；收口批拟记 8193c06e 经 git 实测校正——8193c06e 为同批 F-553 修复本体）"
     },
     {
       "id": "F-552",
@@ -5481,10 +5483,12 @@
       "id": "F-553",
       "source": "F-496 十步人工验收所有者执行实录（2026-10-08——应用草稿置灰期间悬停菜单项无任何提示文字）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-08",
       "title": "命令置灰的禁用原因呈现面缺口——draft.apply 因就绪阻断禁用时应携带原因键文案（applyDraftDisablement→reason.readiness-blocking→统一原因解析），所有者实测悬停无提示文字；ERR-01/可用性「禁用必带原因」体验口径下菜单动作的 disableReason→tooltip 传递链存在缺口（或该次禁用源于无原因键的其它门控——随 F-552 定位一并厘清）",
-      "owner": "ui 呈现批次（disableReason→tooltip 传递链排查＋补齐；与 F-552 定位联动厘清禁用来源）"
+      "owner": "ui 呈现批次（disableReason→tooltip 传递链排查＋补齐；与 F-552 定位联动厘清禁用来源）；【2026-10-12 治理批翻牌（B 行收口批）】修复已随 ui-t77 合入 redesign-main（合入提交 6007a39c『合入 ui-t77（验收 pass）——F-551/F-553』；验收 pass 记录 acc/UI-T77/1 b0b9a5f75）：修复本体 8193c06e（菜单动作 disableReason 传递链补齐为 tooltip——UiText 词表＋UiPlugin 注入）＋其回归测试（ShellModelTest.cpp 扩充 69 行）——本条翻 fixed。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "ui-t77 合入 8193c06e 及其回归测试（合入拍 6007a39c）"
     },
     {
       "id": "F-554",
