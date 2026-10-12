@@ -469,7 +469,20 @@ public:
         std::promise<DraftDiscardOutcome> promise;
         std::future<DraftDiscardOutcome> future = promise.get_future();
         m_deps.postToDiskThread([&promise, store, handle]() {
-            promise.set_value(store->discard(handle));
+            // F-819：任务体 try/catch 转值轨（同 runSaveBlocking 封门口径——
+            // 原裸调端口实现抛异常即落盘线程任务逃逸〔terminate〕或 future
+            // 永不置值〔关闭对话框假死〕）。值轨＝ok=false＋"exception"
+            // 归因 token＋原文 detail（调用方既有 !ok 分支就地反馈）。
+            try {
+                promise.set_value(store->discard(handle));
+            } catch (const std::exception& e) {
+                promise.set_value(DraftDiscardOutcome{
+                    false, std::string{"exception"}, std::string{e.what()}});
+            } catch (...) {
+                promise.set_value(DraftDiscardOutcome{
+                    false, std::string{"exception"},
+                    std::string{"非标准异常（discard 端口实现）"}});
+            }
         });
         const DraftDiscardOutcome outcome = future.get();
         if (!outcome.ok) {
