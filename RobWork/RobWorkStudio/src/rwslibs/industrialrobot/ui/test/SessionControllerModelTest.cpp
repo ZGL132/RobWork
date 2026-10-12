@@ -1007,6 +1007,39 @@ TEST_F(SessionControllerModelTest, ForceConfirmWithoutWiringFailsFast)
     EXPECT_TRUE(harness().lastTasks()->forceCalls.empty());
 }
 
+/**
+ * @brief F-817 回归钉：pollDrain 防线 4 放弃路径（T_force2 到点且强杀序列
+ *        未执行——用户不在场）在 forceAbandonAll 未接线时装配违约 fail-fast
+ *        （std::logic_error——守卫收敛进 executeForceSequence 后两入口同
+ *        保护）；修复前该路径直调空 std::function 抛 bad_function_call
+ *        （UI 线程未捕获即 terminate，不可归因）。
+ */
+TEST_F(SessionControllerModelTest, PollDrainForceGiveUpUnwiredFailsFast_F817)
+{
+    IRD_TEST_INFO("INV-SES-4", {}, std::nullopt);
+    // 无 abandonAll 接线的独立环境（同 ForceConfirmWithoutWiringFailsFast
+    // 形态——显式声明缺失）。
+    auto localFactory = std::make_unique<StubStoreFactoryPort>();
+    harness().factoryPort = localFactory.get();
+    UiSessionControllerDeps deps = harness().makeDeps();
+    deps.forceAbandonAll = nullptr;
+    harness().controller = std::make_unique<UiSessionController>(std::move(deps));
+
+    const TaskRowProjection task = makeTaskRow("");
+    harness().armSuccessfulOpen("缺接线排空项目", true, {task});
+    ASSERT_TRUE(controller().openProject("D:/prj/nowire-drain", UiOpenMode::Writable).ok);
+    harness().lastStore()->inFlightOnClose = 1;
+    (void)controller().beginClose(UiCloseIntent::CloseProject);
+    (void)controller().resolveCloseDialog(confirmedWait());
+    // 用户不在场：T_force（120 s）到点仅呈现确认待（不 resolve）。
+    harness().clock.advance(std::chrono::milliseconds{120 * 1000});
+    ASSERT_EQ(controller().pollDrain().status, ui::DrainPollReport::Status::ForceConfirmDue);
+    // T_force2（300 s）到点：防线 4 放弃路径触发强杀序列——无接线＝装配
+    // 违约 fail-fast（修复前此处 bad_function_call 逃逸）。
+    harness().clock.advance(std::chrono::milliseconds{180 * 1000});
+    EXPECT_THROW(controller().pollDrain(), std::logic_error);
+}
+
 // =====================================================================
 // acceptance 1：迟到写提示（UI-SES-7/UI-LCY-1——§5.3 行 4/§5.7）
 // =====================================================================

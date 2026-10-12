@@ -507,14 +507,9 @@ void UiSessionController::resolveForceCloseDialog(bool confirmed)
     }
     // 确认 → 强制终止序列＋L5 abandonAll 兜底（§5.6 防线 3"执行
     // requestForceTerminate……＋L5 关闭控制器 abandonAll(ForceTerminated)
-    // 兜底"原文）。接线缺失＝装配违约 fail-fast（半执行的强杀——只终止
-    // 任务不释放 L5 侧资源——比显性失败更危险，禁吞错）。
-    if (!m_deps.forceAbandonAll) {
-        throw std::logic_error(
-            "ui/session: 确认强制结束但 forceAbandonAll 未接线（装配违约——"
-            "L5 关闭控制器 abandonAll(ForceTerminated) 兜底是防线 3 的组成"
-            "半区，§5.6/§11.5）");
-    }
+    // 兜底"原文）。接线缺失＝装配违约 fail-fast——守卫收敛于
+    // executeForceSequence 函数头（F-817：单一事实点，pollDrain 防线 4
+    // 直调路径同受保护；本入口不再重复前置校验）。
     executeForceSequence();
 }
 
@@ -675,6 +670,18 @@ void UiSessionController::presentContextLocked()
 
 void UiSessionController::executeForceSequence()
 {
+    // F-817：接线守卫收敛至本函数单一事实点——原仅 resolveForceCloseDialog
+    // 入口先校验、pollDrain 防线 4 放弃路径（T_force2 到点且用户不在场）
+    // 直调本函数无守卫，:691 注释自称"两入口已完成校验"与实现不符——空
+    // std::function 调用抛 bad_function_call，UI 线程未捕获即 terminate。
+    // 守卫内联后两入口同受保护：装配违约 fail-fast（std::logic_error 可
+    // 归因——同 resolveForceCloseDialog 既有文案），不半执行强杀。
+    if (!m_deps.forceAbandonAll) {
+        throw std::logic_error(
+            "ui/session: 确认强制结束但 forceAbandonAll 未接线（装配违约——"
+            "L5 关闭控制器 abandonAll(ForceTerminated) 兜底是防线 3 的组成"
+            "半区，§5.6/§11.5）");
+    }
     // 强制终止序列（§5.6 防线 3/§9.4：任务记 Failed＋EX-FORCE-TERMINATED，
     // 最近检查点保留可续——后果由 execution 承担，ui 只发请求；重查非终态
     // 集，已自然终态的任务不发强杀）。
