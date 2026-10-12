@@ -249,6 +249,16 @@ CloseDialogResolution UiSessionController::resolveCloseDialog(const CloseDecisio
             "ui/session: resolveCloseDialog 无挂起的对话框请求（begin* 未调用"
             "或已决议——调用次序违约）");
     }
+    // F-818：会话缺席前置校验（纵深防御半区）——对话框挂起期间会话可能
+    // 已被 onStoreClosed 终结（finishCurrentClose 走完），迟到决议若继续
+    // 走 :374 m_session.store->requestClose() 即对空绑定解引用（UI 线程
+    // 崩溃）。fail-fast 可归因，不崩。
+    if (m_session.store == nullptr) {
+        m_dialogPending = false;
+        throw std::logic_error(
+            "ui/session: resolveCloseDialog 会话已终结（关闭完成回收——迟到"
+            "决议不可作用于已关闭上下文，F-818）");
+    }
     CloseDialogResolution out;
 
     // ---- [取消] 分支：回到原状态（§5.4 S1"[取消]→回到原状态（中止）"
@@ -709,6 +719,10 @@ void UiSessionController::finishCurrentClose()
     // 底；Closed 停驻不可观测，审计轨迹经 m_closeCompletedCount 计数）。
     m_closeSubscription.reset();   // 先退订（句柄析构即退订——防重复回调）
     m_session = SessionBinding{};  // 释放存储上下文引用（§5.1"回调后释放"）
+    // F-818：对话框挂起位一并回收——挂起期间 onStoreClosed 终结会话后，
+    // 迟到 resolveCloseDialog 过 :247 挂起检查即对空绑定解引用（主修半区
+    // ＝resolveCloseDialog 会话缺席前置校验；此处清位＝终态一致性半区）。
+    m_dialogPending = false;
     ++m_closeCompletedCount;
     ++m_epoch;                     // §6.2"关闭完成"——当前会话关闭的递增点
     const bool exitRequested = (m_drainIntent == UiCloseIntent::ExitApplication);

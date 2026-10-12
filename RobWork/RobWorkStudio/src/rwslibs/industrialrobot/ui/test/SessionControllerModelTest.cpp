@@ -1114,3 +1114,26 @@ TEST(SessionControllerConstructionTest, MissingFactoryPortFailsFast)
 }
 
 }  // namespace
+
+/**
+ * @brief F-818 回归钉：对话框挂起期间会话终结（onStoreClosed→
+ *        finishCurrentClose）→ 迟到 resolveCloseDialog 装配违约 fail-fast
+ *        （std::logic_error——修复前过 :247 挂起检查后对空绑定解引用，
+ *        UI 线程崩溃）。
+ */
+TEST_F(SessionControllerModelTest, LateResolveAfterStoreClosedFailsFast_F818)
+{
+    IRD_TEST_INFO("INV-SES-4", {}, std::nullopt);
+    buildController();
+    const TaskRowProjection task = makeTaskRow("archiving");
+    harness().armSuccessfulOpen("挂起中关闭项目", true, {task});
+    ASSERT_TRUE(controller().openProject("D:/prj/f818", UiOpenMode::Writable).ok);
+    harness().lastStore()->inFlightOnClose = 1;
+    (void)controller().beginClose(UiCloseIntent::CloseProject);
+    (void)controller().resolveCloseDialog(confirmedWait());   // 进入 Draining（挂起位在）
+    // 会话终结（排空外异常路径——store 直接 Closed 回调）。
+    harness().lastStore()->fireClosed();
+    EXPECT_EQ(controller().state(), UiSessionState::NoProject);
+    // 迟到决议：不再解引用空绑定——装配违约可归因抛出。
+    EXPECT_THROW(controller().resolveCloseDialog(confirmedWait()), std::logic_error);
+}
