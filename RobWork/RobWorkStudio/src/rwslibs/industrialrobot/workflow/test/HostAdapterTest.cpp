@@ -318,6 +318,39 @@ int HostAdapter::s_case = 0;
 
 }  // namespace
 
+/**
+ * @brief F-796 回归钉：第 3 段 submitInitialization 抛异常不穿透编排器——
+ *        转值轨走「不留半成品」第 4 段收尾（骨架目录清理＋失败三字段，
+ *        cause 透传异常 what()；修复前裸调异常逃逸＋目录残留）。
+ */
+TEST_F(HostAdapter, DomainInitThrowConvertsToFailureNoResidue_F796)
+{
+    struct ThrowingInit final : IDomainInitSubmitter
+    {
+        DomainInitResult submitInitialization(project::ProjectStore&,
+                                              const DomainInitRequest&) override
+        {
+            throw std::runtime_error("boom-l5-assembly");
+        }
+    };
+    ThrowingInit init;
+    NewProjectInputs inputs;
+    inputs.displayName = "f796";
+    inputs.directory = workDir / "f796.rwdesign";
+    inputs.source = InitialSourceKind::Template;   // needsDomainInit＝true
+    inputs.templateLocalName = "tmpl";             // 全量校验（首错 local-name-empty）
+
+    NewProjectOutcome outcome;
+    EXPECT_NO_THROW(outcome = NewProjectWizardFlow::commit(inputs, &init));
+    EXPECT_FALSE(outcome.created);
+    ASSERT_TRUE(outcome.failure.has_value());
+    EXPECT_NE(outcome.failure->cause.find("boom-l5-assembly"),
+              std::string::npos);
+    std::error_code ec;
+    EXPECT_FALSE(fs::exists(inputs.directory, ec))
+        << "第 4 段收尾应删除骨架目录（不留半成品）";
+}
+
 // =====================================================================
 // 装配核查（F-536 同族——端口/必填缝缺失即 fail-fast 且点名）
 // =====================================================================
