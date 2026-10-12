@@ -30,6 +30,7 @@
 
 #include <gtest/gtest.h>
 
+#include <atomic>
 #include <cmath>
 #include <functional>
 #include <limits>
@@ -193,6 +194,82 @@ TEST(KinIk, ConvergesOnReachableTarget_WP15T04_ACC2)
     EXPECT_TRUE(out.collisionNotEvaluated);
     // 解的碰撞状态未评价（evaluated=false——不解读为无碰撞）。
     EXPECT_FALSE(s.collisionStatus.evaluated);
+}
+
+// =====================================================================
+// F-746③——求解设施失败值面（FK 复算中途失败→facilityFailure 形态，
+// 不抛；audit F-647③ 原三处 std::logic_error 的转值面回归钉）
+// =====================================================================
+
+/**
+ * @brief 中途失效视图替身（F-746③ 故障注入载体——"注入视图面在求解
+ *        期间失效"的设施事实模拟）。
+ *
+ * 前 4 次 model() 返回完整二连杆模型（solve 的 FK 前置读取：请求校验/
+ * TCP 解析/解析界限计算两读），第 5 次起（＝迭代内 FK 首评）返回三连杆
+ * 降级模型——FK 的自由度核对（device DOF=3 ≠ q.size()=2）失败
+ * （IllegalQDimension），即"入口校验覆盖不到、FK 复算才发现"的中途失效
+ * 面。调用计数漂移时替身切换点错位——FK 拿到同侧模型则无设施失败、
+ * 用例红（布局漂移显式失败，钉子不空转）。
+ */
+class MidSolveDegradedView final : public kin::IKinRuntimeView {
+public:
+    MidSolveDegradedView(rt::CanonicalModel good, rt::CanonicalModel degraded)
+        : m_good(std::move(good)), m_degraded(std::move(degraded))
+    {
+    }
+
+    const rt::CanonicalModel& model() const override
+    {
+        // 前 4 次读取＝FK 前置面（好模型）；第 5 次起＝FK 复算面（降级）。
+        const std::size_t call = m_calls.fetch_add(1) + 1;
+        return call <= 4U ? m_good : m_degraded;
+    }
+
+    rw::math::Transform3D<double> worldToBase() const override
+    {
+        return m_good.world().T_world_base;   // 基座—世界只读自好模型（§4.2）
+    }
+
+private:
+    rt::CanonicalModel m_good;       ///< 完整模型（二连杆——DOF 2）
+    rt::CanonicalModel m_degraded;   ///< 降级模型（三连杆——DOF 3）
+    mutable std::atomic<std::size_t> m_calls{0};   ///< model() 调用计数（const 面内）
+};
+
+TEST(KinIk, FkFacilityFailureYieldsValueFormNotThrow_F746_3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{});
+
+    // 载体：好模型＝二连杆（DOF 2），降级模型＝三连杆（DOF 3）——目标取
+    // 可达算例位姿（保证不触发结局 5 的解析界限分支——本钉只验证设施
+    // 失败面）；初值 1 个（失败发生在首个初值的 FK 首评）。
+    MidSolveDegradedView view(twoLinkModel(), threeLinkModel());
+    TestView goodView(twoLinkModel());
+    const Mat4 golden = referenceFk(twoLinkModel(), {0.3, -0.5}).tcp;
+    IkRequest req = makeRequest(goodView, transformOf(golden), {{0.1, 0.1}});
+    req.modelView = &view;   // 求解期模型读取走替身的计数切换
+
+    // 本钉核心断言：solve 不抛（修复前三处 std::logic_error 的回归面）。
+    const IkOutcome out = IkSolver().solve(req);
+
+    // 失败形态齐备：facilityFailure 非空、阶段＝初值起点 FK 首评、细节
+    // 携带底层 FK 错误原文（不吞错——NFR-COR-03）。
+    ASSERT_TRUE(out.facilityFailure.has_value());
+    EXPECT_FALSE(out.cancelled);
+    EXPECT_EQ(out.facilityFailure->stage,
+              kin::IkFacilityFailureStage::InitialFkEvaluation);
+    EXPECT_FALSE(out.facilityFailure->detail.empty());
+    // 非终局读法：解集空、无证明素材（不虚构结局/不可行结论——D-KIN-7）。
+    EXPECT_TRUE(out.solutionSet.solutions.empty());
+    EXPECT_FALSE(out.proofMaterial.has_value());
+    // 部分搜索统计如实交付：初值计数 1、无已落账迭代（首初值即失败）。
+    ASSERT_TRUE(out.solutionSet.searchRecord.has_value());
+    EXPECT_EQ(out.solutionSet.searchRecord->initialGuessesTried, 1U);
+    EXPECT_TRUE(out.solutionSet.searchRecord->iterationsPerInit.empty());
+    EXPECT_EQ(out.solutionSet.searchRecord->searchBudgetUsed, 0U);
+    // 绑定面照常（§5.6 双重绑定——素材可溯源）。
+    EXPECT_EQ(out.solutionSet.targetRef.pointOid, req.targetRef.pointOid);
 }
 
 // =====================================================================

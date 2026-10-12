@@ -32,6 +32,7 @@
 #include <sdurws/ird/policy/PolicySet.hpp>
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <limits>
@@ -131,6 +132,25 @@ RawPolicyInput minimalRawInput()
     in.collision.enabled = false;   // enabled=false 时安全间距可缺省（§4.3）
     in.numericContractAnchor = "appendixD@v1.16";
     return in;
+}
+
+/// 回填帧长字段（帧内 [12..15] u32 大端——kPayloadLenOffset，布局唯一依据
+/// PolicyInput.cpp）：delta 为载荷字节增量（截断为负）。F-746② 伪造帧
+/// 变异的收尾步——截去字段文本后帧长声明须与实际剩余精确一致，否则
+/// decode 在长度前缀核对处先行拒绝（几何码），会混淆被检契约的归因。
+void adjustFrameDeclaredLength(std::vector<std::uint8_t>& bytes, std::int32_t delta)
+{
+    const std::uint32_t len
+        = (static_cast<std::uint32_t>(bytes[12]) << 24)
+          | (static_cast<std::uint32_t>(bytes[13]) << 16)
+          | (static_cast<std::uint32_t>(bytes[14]) << 8)
+          | static_cast<std::uint32_t>(bytes[15]);
+    const std::uint32_t fixed
+        = static_cast<std::uint32_t>(static_cast<std::int64_t>(len) + delta);
+    bytes[12] = static_cast<std::uint8_t>(fixed >> 24);
+    bytes[13] = static_cast<std::uint8_t>(fixed >> 16);
+    bytes[14] = static_cast<std::uint8_t>(fixed >> 8);
+    bytes[15] = static_cast<std::uint8_t>(fixed);
 }
 
 /**
@@ -895,6 +915,87 @@ TEST(PolicyCodecErrors, DecodeRejectsNonFiniteBitPatternAndEmptyReason)
         FAIL() << "空 reason 规则应被拒绝";
     } catch (const PolicyError& e) {
         EXPECT_EQ(e.code(), PolicyErrorCode::EncodingInvalid);
+    }
+}
+
+/** F-746② 解码面钉：numericContractAnchor 为空的伪造帧——修复前该帧可
+ *  解码成功（非法实例穿透字节层，由解析管线契约复检以 PolicyError 逃逸
+ *  端口），修复后 decode 出口以实例校验码（PolicyObjectInvalid）前置拒绝。
+ *  变异方式：锚长度前缀 15→0 并截去锚文本、帧长回填——除"锚空"外帧结构
+ *  完全合法（隔离被检契约，几何类错误不混淆归因）。 */
+TEST(PolicyCodecErrors, DecodeRejectsEmptyNumericContractAnchor_F746_2)
+{
+    std::vector<std::uint8_t> bytes = PolicyCodec::encode(minimalRawInput());
+    // 布局锚（minimal 样例载荷字段序——见上方注释块）：锚长度前缀
+    // [36..39]＝u32 15、锚文本 [40..54]＝"appendixD@v1.16"（首字节 'a'）。
+    ASSERT_EQ(bytes[36], 0x00);
+    ASSERT_EQ(bytes[37], 0x00);
+    ASSERT_EQ(bytes[38], 0x00);
+    ASSERT_EQ(bytes[39], 0x0F);
+    ASSERT_EQ(bytes[40], 'a');
+    constexpr std::uint32_t kAnchorLen = 15;
+    // ① 锚长度前缀清零（[36..39]）。
+    bytes[36] = 0x00;
+    bytes[37] = 0x00;
+    bytes[38] = 0x00;
+    bytes[39] = 0x00;
+    // ② 截去锚文本（15 字节）——空锚＝"读了长度前缀却无文本"。
+    bytes.erase(bytes.begin() + 40, bytes.begin() + 40 + static_cast<std::ptrdiff_t>(kAnchorLen));
+    // ③ 帧长声明回填（少了 kAnchorLen 字节——保持帧几何合法）。
+    adjustFrameDeclaredLength(bytes, -static_cast<std::int32_t>(kAnchorLen));
+
+    try {
+        (void)PolicyCodec::decode(bytes);
+        FAIL() << "锚串为空的伪造帧应被解码面拒绝（F-746②）";
+    } catch (const PolicyError& e) {
+        // 实例校验码（PolicyObjectInvalid）而非几何码（EncodingInvalid）
+        // ——锚空是"解码产物为非法实例"，与帧几何损坏分码归因。
+        EXPECT_EQ(e.code(), PolicyErrorCode::PolicyObjectInvalid);
+        // 消息定位到被检字段（诊断可归因——ERR-01）。
+        EXPECT_NE(std::string{e.what()}.find("numericContractAnchor"), std::string::npos);
+    }
+}
+
+/** F-746② 解码面钉：ScopeTarget kind↔载荷不一致的伪造帧（kind=Role 而
+ *  角色 token 为空）——kind 字节本身合法（枚举核对通过），修复前解码
+ *  产物为结构非法实例穿透 decode；修复后 readScopeTarget 经 detail 谓词
+ *  复检在字节层拒绝（谓词与 encode/发布门共用——单一事实源）。 */
+TEST(PolicyCodecErrors, DecodeRejectsMalformedScopeTarget_F746_2)
+{
+    RawPolicyInput withRule = minimalRawInput();
+    PairRule rule;
+    rule.first = ScopeTarget::makeRole("AAA");
+    rule.second = ScopeTarget::makeRole("BBB");
+    rule.level = PolicyRuleLevel::Must;
+    rule.reason = "xy";
+    withRule.collision.mandatoryPairs = {rule};
+    std::vector<std::uint8_t> bytes = PolicyCodec::encode(withRule);
+    // 布局锚（minimal 字段序＋一条规则）：首端 kind [66]＝Role(枚举 1)、
+    // token 长度前缀 [67..70]＝u32 3、"AAA" [71..73]。
+    ASSERT_EQ(bytes[66], 0x01);
+    ASSERT_EQ(bytes[67], 0x00);
+    ASSERT_EQ(bytes[68], 0x00);
+    ASSERT_EQ(bytes[69], 0x00);
+    ASSERT_EQ(bytes[70], 0x03);
+    ASSERT_EQ(bytes[71], 'A');
+    constexpr std::uint32_t kTokenLen = 3;
+    // ① token 长度前缀清零——kind=Role 而载荷 token 为空（结构非法）。
+    bytes[67] = 0x00;
+    bytes[68] = 0x00;
+    bytes[69] = 0x00;
+    bytes[70] = 0x00;
+    // ② 截去 "AAA" 三字节＋③帧长回填（同前钉——帧几何保持合法）。
+    bytes.erase(bytes.begin() + 71, bytes.begin() + 71 + static_cast<std::ptrdiff_t>(kTokenLen));
+    adjustFrameDeclaredLength(bytes, -static_cast<std::int32_t>(kTokenLen));
+
+    try {
+        (void)PolicyCodec::decode(bytes);
+        FAIL() << "kind=Role 而 token 为空的伪造帧应被解码面拒绝（F-746②）";
+    } catch (const PolicyError& e) {
+        // detail 谓词的码面（PolicyObjectInvalid）——kind↔字段一致性违约
+        // 与锚空同族（解码产物非法实例）。
+        EXPECT_EQ(e.code(), PolicyErrorCode::PolicyObjectInvalid);
+        EXPECT_NE(std::string{e.what()}.find("ScopeTarget"), std::string::npos);
     }
 }
 

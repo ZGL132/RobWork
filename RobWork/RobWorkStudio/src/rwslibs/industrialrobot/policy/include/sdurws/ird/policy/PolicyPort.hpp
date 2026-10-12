@@ -317,11 +317,16 @@ public:
  *      FUTURE/-UNKNOWN、POLICY-ENCODING-INVALID；§9.1 错误行
  *      "POLICY-SCHEMA-*／存储侧诊断转发"的字节层落点：未来/未知代的策略
  *      对象在端口层同样"空 policy＋POLICY-SCHEMA-*＋升级指引"，不抛、
- *      不前向猜测解析）；
+ *      不前向猜测解析）。F-746② 起 decode 另含解码产物实例校验面
+ *      （policyObject 全零/锚串为空/ScopeTarget 结构——PolicyObjectInvalid），
+ *      同在本项捕获转译（伪造字节在字节层出口即转值面）；
  *   5. 策略内容非法（解码成功、解析管线产出 Error 级诊断）→ 空 policy＋
  *      管线全量诊断原样转发（不短路——POL-T04 管线契约的端口延续）；
- *   6. 其余实现内部异常（如内存耗尽）→ 不捕获，按 §9.1"实现内部异常→
- *      PolicyError"语义向上传播（不吞错——NFR-COR-03）。
+ *      管线入口契约复检若抛 PolicyError（对端口路径理论不可达——第 4 项
+ *      的 decode 校验面前置拒绝；纵深防御）→ 同形捕获转译为空 policy＋
+ *      同码面诊断，绝不以异常逃逸端口（UX-08：一个坏对象不崩整轮查询）；
+ *   6. 其余实现内部异常（如内存耗尽——非 PolicyError）→ 不捕获，按
+ *      §9.1"实现内部异常→PolicyError"语义向上传播（不吞错——NFR-COR-03）。
  *
  * 线程安全：全部方法并发只读安全（memo 表经 std::mutex 保护——mutable，
  * 逻辑 const；依赖对象的并发只读安全性由其自身契约保证——Contexts.hpp/

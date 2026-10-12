@@ -41,6 +41,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -298,11 +299,56 @@ struct IkRequest {
 // =====================================================================
 
 /**
+ * @brief 求解设施失败阶段三值词表（F-746③ 表尾追加——audit F-647③ 转值面
+ *        裁决方案 A2 的载体之一；登记随卡 §14.6 v0.16）。
+ *
+ * 语义：FK 复算在求解中途失败的位置（三处产出点——§5.3 时序的 2a 初评/
+ * 2d 迭代再评/3a 残差复验）。求解请求在入口已全量验证（维度/有限性/TCP
+ * 解析），FK 复算仍失败＝注入视图面在求解期间失效（模型内容漂移等设施
+ * 事实）——**不是调用方契约违约**（不走 §5.5 fail-fast 轨），也**不虚构
+ * 结局**（五类结局均有搜索判定语义，D-KIN-7 词表不扩）。
+ */
+enum class IkFacilityFailureStage : std::uint8_t {
+    /// 初值起点的 FK 首评失败（迭代前——该初值连起点位姿都不可评）。
+    InitialFkEvaluation,
+    /// 阻尼最小二乘更新后的迭代内 FK 再评失败（该初值的迭代链中断）。
+    IterationFkEvaluation,
+    /// 硬过滤①残差复验的 FK 复算失败（收敛候选不可复验）。
+    ResidualRecheck,
+};
+
+/**
+ * @brief 求解设施失败形态（F-746③ 表尾追加——与 cancelled=true 同族的
+ *        **非终局形态**：设施失败不是结局）。
+ *
+ * 为什么不是新增 IkOutcomeKind 枚举值：§5.4 五类结局是**搜索判定**词表
+ * （D-KIN-7——枚举故意不含任何任务级不可行值），设施失败不描述搜索结果，
+ * 塞进结局词表会破坏"结局"语义的单一性；取消已有"非终局返回"先例
+ * （§9.2 @取消 行），设施失败与之同构——求解因设施面事实无法给出任何
+ * 终局判定，调用方不得解读 outcomeKind，也不得据其输出不可行结论。
+ *
+ * detail 为底层 FK 错误原文（KinematicsError.detail 转载）＋定位上下文
+ * ——内部诊断链素材，不得未经 diagnostics 脱敏直接呈现（Fk.hpp 错误面
+ * 同款敏感性约束）。值语义纯结构；线程安全。
+ */
+struct IkFacilityFailure {
+    /// 失败阶段（三值——三处 FK 复算产出点，定位可归因）。
+    IkFacilityFailureStage stage = IkFacilityFailureStage::InitialFkEvaluation;
+    /// 底层错误细节（KinematicsError.detail＋初值下标上下文；内部诊断链
+    /// 文本——同 statusDetail 的脱敏纪律）。
+    std::string detail;
+};
+
+/**
  * @brief 多初值 IK 求解结果（§9.2 solve() 唯一返回值）。
  *
- * 解读规则（§5.4 铁律＋§9.2 契约）：
+ * 解读规则（§5.4 铁律＋§9.2 契约——**按序判读**）：
  *   - cancelled=true：取消不是结局——outcomeKind/solutionSet 无终局
  *     语义（调用方不得解读；proofMaterial 必空）；
+ *   - facilityFailure 非空（F-746③ 追加）：求解设施失败不是结局——同
+ *     取消轨读法，outcomeKind 无终局语义、**不得输出任何任务级结论**
+ *     （不可行也不行——设施事实不是工程判定，D-KIN-7 不破）；失败阶段
+ *     与底层细节见 IkFacilityFailure；
  *   - outcomeKind=SolutionsFound/PartialCollision：solutionSet.solutions
  *     非空且已按 §6.3 稳定排序；
  *   - outcomeKind=MultiInitNoConvergence/AllCandidatesFiltered：
@@ -319,7 +365,7 @@ struct IkRequest {
 struct IkOutcome {
     /// 取消标记（true＝取消返回——无终局字段，§9.2）。
     bool cancelled = false;
-    /// 五类结局（§5.4；cancelled=true 时无语义）。
+    /// 五类结局（§5.4；cancelled=true 或 facilityFailure 非空时无语义）。
     IkOutcomeKind outcomeKind = IkOutcomeKind::SolutionsFound;
     /// 解集（排序解＋过滤记录＋搜索未果记录＋统计＋双重绑定）。
     IkSolutionSet solutionSet;
@@ -336,6 +382,10 @@ struct IkOutcome {
     std::optional<AnalyticBoundMaterial> proofMaterial;
     /// 求解器算法契约版本（kIkSolverContractVersion——§8.4）。
     std::uint32_t solverContractVersion = kIkSolverContractVersion;
+    /// 求解设施失败形态（F-746③ 表尾追加——非终局形态，与 cancelled 同族；
+    /// nullopt＝正常返回。追加成员带默认值——T07 追加纪律同款：既有聚合
+    /// 初始化调用点保持合法，二进制契约按表尾追加不重排）。
+    std::optional<IkFacilityFailure> facilityFailure;
 };
 
 // =====================================================================
@@ -353,6 +403,10 @@ struct IkOutcome {
  *     素材（不裁定）。
  *   - @取消 返回 IkOutcome{cancelled=true}（无终局字段）——取消不是
  *     结局。
+ *   - @设施失败 FK 复算中途失败（注入视图面在求解期间失效——请求入口
+ *     已全量验证，非调用方违约）→返回 facilityFailure 非空的 IkOutcome
+ *     （F-746③——非终局形态，与取消轨同读法：无终局结局、无不可行结
+ *     论；不做部分解猜测，已完成的迭代统计随部分搜索记录如实交付）。
  *   - @确定性 同 request（含 seed/referenceQ）→同输出（同线程数逐位、
  *     异线程数等价——本实现单线程，逐位）。
  *   - 合法＝④端口会话句柄（或显式未启用）；非法＝自建碰撞实现（编译
@@ -369,6 +423,14 @@ struct IkOutcome {
  *   - referenceQ／初值集维度或有限性违例、initialValues 空集、
  *     iterationLimit=0、去重阈值非有限或 ≤0、intervals 维度/有序性
  *     违例（请求组装错误——同轨拒绝，不钳制不置零，NFR-COR-03）。
+ *
+ * 不抛承诺的完整口径（F-746③ 兑现——audit 实测三处 FK 复算失败原走
+ * std::logic_error，与"@return 不抛"承诺矛盾）：solve() 在调用方契约违约
+ * （上行 fail-fast 轨）抛 std::invalid_argument；FK 复算类设施失败一律值
+ * 面（facilityFailure 形态）。解析界限计算失败（第 1 步防御分支——已验
+ * 证请求上理论不可达的内部不变量防线）维持 fail-fast 原状，不在 F-746③
+ * 三处转值面范围内（audit 裁决口径仅 FK 复算三处；如需同轨转值面另行
+ * 呈批）。
  */
 class IIkSolver {
 public:
@@ -379,8 +441,9 @@ public:
      *
      * @param request [in] 求解请求（值语义读入；调用方持有——本函数不
      *                     修改、不存储引用）
-     * @return 求解结果（解读规则见 IkOutcome 注；不抛——除非调用方
-     *         契约违约，见类注 fail-fast 轨）
+     * @return 求解结果（解读规则见 IkOutcome 注——先 cancelled、再
+     *         facilityFailure、最后才允许解读 outcomeKind；不抛——除非
+     *         调用方契约违约，见类注 fail-fast 轨）
      *
      * 纯函数；线程安全（无共享可变状态）；长运算——周期查询取消探针
      * （kIkCancellationProbeInterval 迭代一次＋每个初值起止各一次）。

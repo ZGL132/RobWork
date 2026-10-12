@@ -25,8 +25,12 @@
  * 错误语义（调用方视角）：
  *   - encode/encodeSemanticProjection/contentIdentity 失败＝调用方契约
  *     违约（fail-fast，抛 PolicyError）——不存在"编码出非法字节"的路径；
- *   - decode 失败＝字节损坏（抛 PolicyError(EncodingInvalid)）或版本代
- *     违约（SchemaVersionFuture/Unknown）——不存在静默截断/跳过。
+ *   - decode 失败＝字节损坏（帧几何/截断——抛
+ *     PolicyError(EncodingInvalid)）、版本代违约（SchemaVersionFuture/
+ *     Unknown）或解码产物实例非法（policyObject 全零/锚串为空/ScopeTarget
+ *     kind↔字段不一致——抛 PolicyError(PolicyObjectInvalid)，F-746② 补齐
+ *     后两门；端口在 try/catch 内转译为值面，不逃逸）——不存在静默截断/
+ *     跳过。
  *
  * 线程安全：全部函数无共享可变状态（ContentDigester 为栈上局部实例，
  * 每线程各持——core §4.2 原文）；可重入（NFR-COR-02）。
@@ -412,7 +416,14 @@ void writeScopeTarget(ByteWriter& w, const ScopeTarget& t)
     }
 }
 
-/// 解码 ScopeTarget（kind↔载荷由字节决定——kind 非法在枚举核对处拒绝）。
+/// 解码 ScopeTarget（kind↔载荷由字节决定——kind 非法在枚举核对处拒绝；
+/// 解码后按 detail 谓词复检 kind↔字段一致性（F-746② 补校验）：kind 字节
+/// 合法不等于实例合法——伪造字节可产出"kind=Object 而对象身份全零"等
+/// 结构非法实例，解析管线契约复检会拒之，但 fail-fast 分层要求在字节层
+/// 出口即拒（同函数族 readPairRule 的 reason 非空复检同款纪律；谓词单源
+/// ——PolicySet.hpp detail，与 encode/发布门共用同一实现，NFR-MNT-03）。
+/// 谓词抛 PolicyError(PolicyObjectInvalid)，在端口的 decode try/catch 内
+/// 转译为值面（不逃逸端口——UX-08）。
 ScopeTarget readScopeTarget(ByteReader& r)
 {
     ScopeTarget t;
@@ -428,6 +439,9 @@ ScopeTarget readScopeTarget(ByteReader& r)
         t.groupName = r.text();
         break;
     }
+    // 解码产物实例完整性复检（F-746②——见函数头注释；where 标注解码面，
+    // 与 encode 侧 requirePairRulesWellFormed 的 "PolicyCodec::encode" 对称）。
+    detail::requireScopeTargetWellFormed(t, "PolicyCodec::decode");
     return t;
 }
 
@@ -799,6 +813,22 @@ RawPolicyInput PolicyCodec::decode(const std::vector<std::uint8_t>& encoding)
         out.compatibilityNotes = r.text();
     }
     out.numericContractAnchor = r.text();
+    // 锚串实例完整性复检（F-746② 补校验——audit 实测 decode 原缺此门）：
+    // numericContractAnchor 为 §4.2 必填列（参与语义闭包身份），encode 侧
+    // ③已拒绝空锚——字节面若仍出现空锚（伪造/截断改写），解码产物是
+    // "解析管线契约复检必然拒绝"的非法实例。在此前置拒绝有两个收益：
+    // ①fail-fast 分层——损坏字节在字节层出口即拒，不放进深层管线；
+    // ②"decode 不抛"端口契约的可满足性——本抛出发生在端口第五步的
+    // try/catch 内（PolicyPort.cpp），转译为空 policy＋诊断的值面，而修复
+    // 前空锚字节会穿透 decode、在管线复检处以 PolicyError 逃逸端口
+    // （违背 UX-08"一个坏对象不崩整轮查询"）。
+    // 码面口径：与上方 policyObject 保留值复检同族（解码产物实例无效，
+    // 而非帧几何损坏——那走 EncodingInvalid）。
+    if (out.numericContractAnchor.empty()) {
+        throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+                          "解码产物 numericContractAnchor 为空（§4.2 必填列——"
+                          "无效实例，F-746② 解码面校验）");
+    }
 
     // 碰撞规则原始输入。
     out.collision.enabled = r.u8() != 0;

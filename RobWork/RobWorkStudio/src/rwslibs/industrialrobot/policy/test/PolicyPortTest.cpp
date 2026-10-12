@@ -38,6 +38,9 @@
 #include <sdurws/ird/policy/PolicyPort.hpp>
 #include <sdurws/ird/policy/PolicySet.hpp>
 
+#include <algorithm>
+#include <array>
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <memory>
@@ -287,6 +290,60 @@ const std::string kCodeObjectMissing = "POLICY-OBJECT-MISSING";
 const std::string kCodeVersionFuture = "POLICY-SCHEMA-VERSION-FUTURE";
 const std::string kCodeEncodingInvalid = "POLICY-ENCODING-INVALID";
 const std::string kCodeNonPositive = "POLICY-THRESHOLD-NON-POSITIVE";
+/// 解码产物实例校验码（F-746② 新增捕获面——PolicyObjectInvalid 的注册码
+/// 串；与 Errors.cpp/Diagnostics.hpp 同源串面）。
+const std::string kCodeObjectInvalid = "POLICY-POLICY-OBJECT-INVALID";
+
+/// 回填帧长字段（帧内 [12..15] u32 大端——PolicyInput.cpp kPayloadLenOffset）：
+/// delta 为载荷字节增量（截断为负）。F-746② 伪造帧变异的收尾步——截去
+/// 字段文本后帧长声明须与实际剩余精确一致，否则 decode 在长度前缀核对处
+/// 先行拒绝（几何码），混淆被检契约的归因。
+void adjustFrameDeclaredLength(std::vector<std::uint8_t>& bytes, std::int32_t delta)
+{
+    const std::uint32_t len
+        = (static_cast<std::uint32_t>(bytes[12]) << 24)
+          | (static_cast<std::uint32_t>(bytes[13]) << 16)
+          | (static_cast<std::uint32_t>(bytes[14]) << 8)
+          | static_cast<std::uint32_t>(bytes[15]);
+    const std::uint32_t fixed
+        = static_cast<std::uint32_t>(static_cast<std::int64_t>(len) + delta);
+    bytes[12] = static_cast<std::uint8_t>(fixed >> 24);
+    bytes[13] = static_cast<std::uint8_t>(fixed >> 16);
+    bytes[14] = static_cast<std::uint8_t>(fixed >> 8);
+    bytes[15] = static_cast<std::uint8_t>(fixed);
+}
+
+/// 伪造"锚串为空"的对象字节（F-746② 变异载体——encode 产物改写，不引入
+/// 第二编码路径）：baseInput 的载荷字段序为帧头 16B＋policyObject 16B＋
+/// origin.kind 1B＋三个 presence 1B×3（基线 origin 无 sourceObject/note、
+/// 无 compatibilityNotes）＋锚 u32 长度前缀＋锚文本——锚长度前缀清零并
+/// 截去锚文本、帧长回填。返回是否完成变异（布局漂移时 false——调用方
+/// ASSERT 拦截，防止钉子空转变绿）。
+bool forgeEmptyAnchor(std::vector<std::uint8_t>& bytes)
+{
+    constexpr std::size_t kAnchorLenOffset = 16 + 16 + 1 + 3;   // 帧内 36
+    if (bytes.size() < kAnchorLenOffset + 4) {
+        return false;
+    }
+    const std::uint32_t anchorLen
+        = (static_cast<std::uint32_t>(bytes[kAnchorLenOffset]) << 24)
+          | (static_cast<std::uint32_t>(bytes[kAnchorLenOffset + 1]) << 16)
+          | (static_cast<std::uint32_t>(bytes[kAnchorLenOffset + 2]) << 8)
+          | static_cast<std::uint32_t>(bytes[kAnchorLenOffset + 3]);
+    if (anchorLen == 0
+        || bytes.size() < kAnchorLenOffset + 4 + anchorLen) {
+        return false;
+    }
+    bytes[kAnchorLenOffset] = 0x00;
+    bytes[kAnchorLenOffset + 1] = 0x00;
+    bytes[kAnchorLenOffset + 2] = 0x00;
+    bytes[kAnchorLenOffset + 3] = 0x00;
+    bytes.erase(bytes.begin() + static_cast<std::ptrdiff_t>(kAnchorLenOffset + 4),
+                bytes.begin()
+                    + static_cast<std::ptrdiff_t>(kAnchorLenOffset + 4 + anchorLen));
+    adjustFrameDeclaredLength(bytes, -static_cast<std::int32_t>(anchorLen));
+    return true;
+}
 
 }  // namespace
 
@@ -450,6 +507,64 @@ TEST(PolicyPort, CorruptBytesForwardedAsDiagnosticNoThrow_PortContract)
     EXPECT_EQ(res.diagnostics[0].code, kCodeEncodingInvalid);
     // 原文保留（NFR-COR-03 不吞错——what() 全文进 cause）。
     EXPECT_NE(res.diagnostics[0].cause.find("policy/encoding-invalid"), std::string::npos);
+}
+
+/** F-746② 值面钉：伪造"锚串为空"的对象字节——修复前该帧可解码成功、
+ *  管线入口契约复检以 PolicyError 逃逸端口（违背 UX-08"一个坏对象不崩
+ *  整轮查询"）；修复后 decode 前置拒绝（PolicyObjectInvalid），端口第五步
+ *  捕获转译为空 policy＋诊断，不抛（本钉核心断言＝resolvePolicy 不抛）。 */
+TEST(PolicyPort, ForgedEmptyAnchorBytesYieldValueFaceNoThrow_F746_2)
+{
+    StandardAssembly asm_;
+    std::vector<std::uint8_t> forged = PolicyCodec::encode(baseInput());
+    ASSERT_TRUE(forgeEmptyAnchor(forged)) << "布局漂移：锚长度前缀变异未生效";
+    const PolicyResolutionRequest req{taggedObjectId(0x10), taggedContentVersion(0xA7)};
+    asm_.bytes.store[{req.policyObject, *req.expectedVersion}] = forged;
+
+    const PolicyResolution res = asm_.provider->resolvePolicy(req);   // 不抛
+    EXPECT_FALSE(res.policy.has_value());
+    ASSERT_FALSE(res.diagnostics.empty());
+    // 解码面实例校验码转发（错误矩阵第 4 项——F-746② 扩展的捕获面）。
+    EXPECT_EQ(res.diagnostics[0].code, kCodeObjectInvalid);
+    // 原文保留（NFR-COR-03——what() 全文进 cause，定位到锚串校验）。
+    EXPECT_NE(res.diagnostics[0].cause.find("numericContractAnchor"), std::string::npos);
+
+    // 失败结果入 memo（头文件类注释"成功与失败都缓存"）——重复解析逐字段
+    // 相等（POL-ID-1 对失败情形的延伸，与存储缺失键同轨）。
+    const PolicyResolution again = asm_.provider->resolvePolicy(req);
+    EXPECT_EQ(again, res);
+}
+
+/** F-746② 值面钉：伪造"ScopeTarget kind=Object 而对象身份全零"的对象
+ *  字节——kind 字节本身合法（枚举核对不拒），修复前解码产物为结构非法
+ *  实例穿透 decode、由管线复检以 PolicyError 逃逸端口；修复后
+ *  readScopeTarget 经 detail 谓词在字节层拒绝，端口转译为空 policy＋诊断，
+ *  不抛。 */
+TEST(PolicyPort, ForgedMalformedScopeTargetBytesYieldValueFaceNoThrow_F746_2)
+{
+    StandardAssembly asm_;
+    // 被检规则端＝excludedPairs 首端 toolObj（tag 0x03）：帧内唯一形如
+    // {0x03, 0x00×15} 的 16B 身份块（mandatory 对端 tag 0x01/0x02、
+    // origin.kind=UserEdited＝0x02、level=Should＝0x01——均不构成该序列，
+    // 全零化其首字节即成保留值身份）。布局漂移时找不到模式——ASSERT 拦截，
+    // 防止钉子空转变绿。
+    std::vector<std::uint8_t> forged = PolicyCodec::encode(baseInput());
+    const std::array<std::uint8_t, 16> kToolIdPattern
+        = {0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+           0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    const auto it = std::search(forged.begin(), forged.end(),
+                                kToolIdPattern.begin(), kToolIdPattern.end());
+    ASSERT_NE(it, forged.end()) << "布局漂移：toolObj 身份块模式未命中";
+    *it = 0x00;   // kind=Object 保留值身份——requireScopeTargetWellFormed 拒绝
+    const PolicyResolutionRequest req{taggedObjectId(0x10), taggedContentVersion(0xA8)};
+    asm_.bytes.store[{req.policyObject, *req.expectedVersion}] = forged;
+
+    const PolicyResolution res = asm_.provider->resolvePolicy(req);   // 不抛
+    EXPECT_FALSE(res.policy.has_value());
+    ASSERT_FALSE(res.diagnostics.empty());
+    EXPECT_EQ(res.diagnostics[0].code, kCodeObjectInvalid);
+    // 消息定位到被检结构（detail 谓词 where 标注解码面）。
+    EXPECT_NE(res.diagnostics[0].cause.find("ScopeTarget"), std::string::npos);
 }
 
 /** §9.1 错误类型行"POLICY-SCHEMA-* 转发"：字节层未来版本（帧内
