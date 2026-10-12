@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T17",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "实现外部资源固化服务与重关联命令注册（阶段 B）",
+  "status": "ready",
+  "dependsOn": ["PRJ-T10", "IO-T06"],
+  "requirements": ["CON-03", "PM-09", "NFR-REL-04", "AT-21"],
+  "designRefs": [
+    "units/project.md#5.7",
+    "units/project.md#13.1",
+    "units/io.md#8.4",
+    "ARCHITECTURE.md#6.6",
+    "development-task-breakdown.md#2.5"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T17.json",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_project",
+    "cmake --build build --config Release --target sdurws_ird_project_test",
+    "cmake --build build --config Release --target sdurws_ird_project_contract_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 tasks/foundation/PRJ-T17.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp04-t17",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-1", "P-PR-6"],
+  "acceptance": [
+    "固化服务实体按 §5.7 流程落位：外部源安全读取经 project 定义的消费窄接口注入（L5 装配注入 io 实现——2026-10-12 O-09 裁决后口径，零 io 编译依赖：零 io 公共头 include、零 io 库链接）→复制前后哈希比对（变化＝Changed 比较型诊断，NFR-REL-04）→canonical 字节经对象库随命令提交发布（CON-03）→ExternalResourceRecord.state=materialized 引用保护；缺失/读取失败/预算超限诊断透传并中止固化（不伪造数值）",
+    "重关联命令处理器注册落位：重关联为显式命令提交、产生新修订（AT-21/PM-09）；未固化阻断正式结论（EVI-01 证据不足口径）用例通过",
+    "ResourceRefs.hpp 公共头按 §3.1 预留落位（ExternalResourceRecord、SolidifyRequest/Result——§5.7 冻结签名零偏差）；零 Qt；ird_gates 零新增命中；双模式构建（集成＋独立冒烟）零错误；单元卡增量修订（§12 PRJ-T17 行＋§13.1 状态＋§15.4 v+1 落位登记）；测试真实执行留痕（gtest XML＋ird-test-report 至 traceability/builds/wp04-t17/），未执行不得标注通过"
+  ],
+  "note": "平台服务域补全批立卡（2026-10-12，所有者批次授权编排）：DTB §2.5 WP-04-T17 行（≙PRJ-T17）＋project.md §5.7/§13.1 预留——依赖边按 O-09 裁决后口径（注入式协作，ARCH §3.5 协作边说明补登〔v0.14〕，零编译边）；前置 PRJ-T10（命令服务）/IO-T06（io 包导入导出与固化中转，≙WP-11-T05/T07）均已 done。branch 字段按 ≙ 规范名登记 wp04-t17（validate-task 机械校验形态）；实际落位分支＝pipeline4/redesign-main（平台服务域补全批统一实施分支——所有者批次授权同 PIPE §6 委托先例，≙ 映射实测为准）。"
+}

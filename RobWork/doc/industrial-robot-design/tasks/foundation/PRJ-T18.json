@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "PRJ-T18",
+  "unit": "project",
+  "masterWp": "WP-C",
+  "title": "实现另存为与项目包实体（阶段 B）",
+  "status": "ready",
+  "dependsOn": ["PRJ-T14", "IO-T05"],
+  "requirements": ["PM-05", "NFR-SEC-01", "NFR-SEC-02", "AT-13", "AT-20"],
+  "designRefs": [
+    "units/project.md#5.8",
+    "units/project.md#8.8",
+    "units/project.md#8.9",
+    "units/project.md#8.10",
+    "units/project.md#13.1",
+    "units/io.md#7",
+    "development-task-breakdown.md#2.5"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T18.json",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_project",
+    "cmake --build build --config Release --target sdurws_ird_project_test",
+    "cmake --build build --config Release --target sdurws_ird_project_contract_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 tasks/foundation/PRJ-T18.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp04-t18",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-1", "P-PR-6"],
+  "acceptance": [
+    "另存为（§8.8）：目标目录经 .staging 同卷临时位完整复制→闭包校验→换新 projectId（core 分配；对象/修订/分支 ID 全部原样保留）→改写点仅三处（project.json.projectId、HEAD.projectId、drafts 逐文件 projectId）→按 PM-02 打开协议进入；results 已归档 RunManifest 的 taskIdentity 保持原五元组不改写；取消/失败清理临时位不留半成品",
+    "选择性复制（§8.9）：复制前扫描被勾选 reports 的工件引用（runId 清单），引用 run 不在勾选集→该报告不复制＋诊断列出；drafts 独立可复制（重写 projectId）；对象库与修订历史无条件全量复制",
+    "包导出/导入（§8.10）：导出＝开始时快照一致数据视图（HEAD 闭包＋所选树清单——D-17，后台写入并存仍一致）＋后台进度可取消（取消即清理临时输出）；ZIP 编解码经 project 定义的消费窄接口注入（io 实现经 L5 装配适配——2026-10-12 O-09 裁决后口径，零 io 编译依赖）；导入＝解包到临时目录全量校验（预算/路径穿越防护/逐字节哈希还原，NFR-SEC-01/02）→打开协议校验→整体 rename 发布；失败或取消不留目标目录、清理临时区（PM-05）",
+    "PRJ-TX-11 阻塞跳过（GTEST_SKIP）转为真实用例并执行通过（实体已落位）；PackageService.hpp 公共头按 §3.1 预留落位（SaveAsOptions/PackageExportOptions/PackageImportResult、ISaveAsService/IPackageService——§5.8 冻结签名零偏差）；ird_gates 零新增命中；双模式构建（集成＋独立冒烟）零错误；单元卡增量修订（§12 PRJ-T18 行＋§13.1 状态＋§15.4 v+1 落位登记）；测试真实执行留痕（gtest XML＋ird-test-report 至 traceability/builds/wp04-t18/），未执行不得标注通过"
+  ],
+  "note": "平台服务域补全批立卡（2026-10-12，所有者批次授权编排）：DTB §2.5 WP-04-T18 行（≙PRJ-T18）＋project.md §5.8/§8.8~§8.10/§13.1 预留——依赖边按 O-09 裁决后口径（注入式协作，ARCH §3.5 协作边说明补登〔v0.14〕，零编译边）；前置 PRJ-T14（归档端口）/IO-T05（io 资源导入服务，≙WP-11-T06）均已 done；io 侧包编解码契约（io.md §7 IPackageExporter/Importer）已冻结且声明『注入/直连双形态兼容——接口不因裁决结果变化』。依赖方 WP-22-T07（已 done）note『WP-04-T18 契约未生成』于本任务 done 后消账（合入收尾批）。branch 字段按 ≙ 规范名登记 wp04-t18（validate-task 机械校验形态）；实际落位分支＝pipeline4/redesign-main（平台服务域补全批统一实施分支——所有者批次授权同 PIPE §6 委托先例，≙ 映射实测为准）。"
+}
