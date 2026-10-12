@@ -160,3 +160,7 @@ build-smoke-*/
 # build_smoke_tNN / build_smoke_wpNN-tNN 命名变体，未被上述任一规则覆盖，
 # 28 个目录以未跟踪形态残留（PIPE §3.1 构建产物豁免期待其被 .gitignore 覆盖）。
 build_smoke_*/
+
+# 验收/冒烟临时构建树（平台服务域补全批 a1cbc55b 误入库后清理——防复发登记）
+build-acc-*/
+build-smoke-*/
