@@ -499,3 +499,100 @@ TEST(RequirementsView3DFlow, RegionPreviewSink_EmptySetDeliversNullopt_UI_T77)
         << "区域空集合应投递 nullopt（三维框/格层清除语义——缺投递＝宿主"
            "缓存残值被后续标记投递重挂）";
 }
+
+// =====================================================================
+// FIX-T2——F-495 样本级定位：采样结果清单（面板入口）双面
+// =====================================================================
+
+/// 空态诚实面：无评估结果时清单呈现「尚未执行覆盖评估」占位行且不可点
+/// （ERR-01 不伪造——零虚构清单行；pushSampleResults 空数组驱动）。
+TEST(RequirementsView3DFlow, SampleResultList_EmptyStateHonest_FIX_T2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-03"},
+                  std::vector<std::string>{});
+
+    // ①门面装配＋面板工厂产面板（factory 产物即面板本体或其宿主——
+    // 两查形态：本体 cast 直取，否则子树找）。
+    RequirementsPluginAssembly assembly = createRequirementsPluginAssembly();
+    ASSERT_FALSE(assembly.descriptor.panels.empty()) << "面板工厂未登记";
+    std::unique_ptr<QWidget> panelHolder(assembly.descriptor.panels.front().factory());
+    ASSERT_NE(panelHolder, nullptr) << "面板工厂未产面板";
+    RequirementsPanelWidget* panel =
+        qobject_cast<RequirementsPanelWidget*>(panelHolder.get());
+    if (panel == nullptr) {
+        panel = panelHolder->findChild<RequirementsPanelWidget*>();
+    }
+    ASSERT_NE(panel, nullptr) << "面板实例未取得（本体与子树两查皆空）";
+
+    // ②空数组投递（无评估结果的区域投影——UiPlugin 对账失效分支同款）。
+    assembly.pushSampleResults({});
+
+    // ③断言：清单恰一占位行且文案诚实、不可点击（无 UserRole 键）。
+    auto* list = panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_region_samples"));
+    ASSERT_NE(list, nullptr) << "采样结果清单控件未构建";
+    ASSERT_EQ(list->topLevelItemCount(), 1);
+    QTreeWidgetItem* empty = list->topLevelItem(0);
+    EXPECT_EQ(empty->text(0), QStringLiteral("尚未执行覆盖评估"));
+    EXPECT_FALSE(empty->flags() & Qt::ItemIsSelectable)
+        << "空态行应不可选中（点击无动作的诚实形态——零虚构定位）";
+}
+
+/// 点击出口面：清单行点击→bindSampleHighlightRequest 收口收到对应域样
+/// 本号（P-FIX-4——键取自隐藏 UserRole 列而非数组下标）；最近区域几何
+/// 缺位时零三维重投（bindRegionPreviewSink 收口不误触发）。
+TEST(RequirementsView3DFlow, SampleResultList_ClickEmitsHighlightRequest_FIX_T2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-03"},
+                  std::vector<std::string>{});
+
+    // ①门面装配＋面板＋两行清单（域样本号 7/9——非 0/1 下标，钉住对齐
+    // 语义：点击第二行收 9 而非 1）。
+    RequirementsPluginAssembly assembly = createRequirementsPluginAssembly();
+    ASSERT_FALSE(assembly.descriptor.panels.empty());
+    std::unique_ptr<QWidget> panelHolder(assembly.descriptor.panels.front().factory());
+    ASSERT_NE(panelHolder, nullptr);
+    RequirementsPanelWidget* panel =
+        qobject_cast<RequirementsPanelWidget*>(panelHolder.get());
+    if (panel == nullptr) {
+        panel = panelHolder->findChild<RequirementsPanelWidget*>();
+    }
+    ASSERT_NE(panel, nullptr);
+
+    std::vector<RequirementsPluginAssembly::SampleResultView> rows;
+    for (const std::uint64_t idx : {std::uint64_t{7}, std::uint64_t{9}}) {
+        RequirementsPluginAssembly::SampleResultView row;
+        row.sampleIndex = idx;
+        row.stateText = idx == 7 ? "达标" : "不可达";
+        row.positionText = "(0.100, 0.000, 0.000)";
+        row.reason = idx == 9 ? "解析界限确定性证明不可达" : "";
+        rows.push_back(row);
+    }
+    assembly.pushSampleResults(rows);
+
+    // ②收口绑定＋点击第二行（itemClicked 直发——QTest 点击的信号等价面）。
+    std::optional<std::uint64_t> requested;
+    assembly.bindSampleHighlightRequest(
+        [&](std::uint64_t idx) { requested = idx; });
+    std::size_t previewDeliveries = 0;
+    assembly.bindRegionPreviewSink(
+        [&](const std::optional<RequirementsPluginAssembly::RegionPreviewView>&) {
+            ++previewDeliveries;  // 最近几何缺位＝点击不应触发三维重投
+        });
+    auto* list = panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_region_samples"));
+    ASSERT_NE(list, nullptr);
+    ASSERT_EQ(list->topLevelItemCount(), 2)
+        << "清单行数与投递不符（pushSampleResults→面板链路断）";
+    EXPECT_EQ(list->topLevelItem(1)->text(1), QStringLiteral("不可达"))
+        << "状态词表列直投失真";
+    // 信号直发（itemClicked 是成员函数——emit 宏在本 TU 未引入，直调等价同步送达）。
+    list->itemClicked(list->topLevelItem(1), 0);
+
+    // ③断言：高亮键＝域样本号 9（对齐键语义——非数组下标 1）。
+    ASSERT_TRUE(requested.has_value()) << "点击未产出高亮请求";
+    EXPECT_EQ(*requested, std::uint64_t{9})
+        << "高亮键应取域样本号（UserRole 隐藏列）而非数组下标（P-FIX-4）";
+    EXPECT_EQ(previewDeliveries, std::size_t{0})
+        << "最近区域几何缺位时点击不应触发三维重投（诚实降级）";
+}

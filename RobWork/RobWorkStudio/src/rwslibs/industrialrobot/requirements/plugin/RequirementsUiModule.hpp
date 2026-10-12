@@ -181,6 +181,23 @@ public:
      */
     void bindRegionPreviewSink(RequirementsPanelWidget::RegionPreviewSink sink);
 
+    /**
+     * @brief 推送采样结果清单（FIX-T2——F-495 样本级定位：装配层在区域
+     *        选中/评估到账时投选中区域样本行全集；面板未创建＝暂存丢弃
+     *        〔清单是即时呈现面，attach 后下一轮区域投影自然补投——不
+     *        堆积旧数据〕；面板缺位＝空操作）。
+     */
+    void pushSampleResults(
+        const std::vector<RequirementsPanelWidget::SampleResultRow>& rows);
+
+    /**
+     * @brief 绑定样本高亮请求出口（FIX-T2——面板清单行点击→装配层；
+     *        面板缺位＝暂存，attachPanel 后随 bindRegionPreviewSink 同款
+     *        时序转发）。
+     */
+    void bindSampleHighlightRequest(
+        RequirementsPanelWidget::SampleHighlightRequestFn fn);
+
     /// 最近一次本域三维拾取（观测面——拾取命令输入；nullopt＝未拾取）。
     std::optional<core::ObjectId> lastView3DPick() const
     {
@@ -399,6 +416,8 @@ private:
     CommandAvailabilityFn m_pendingAvailability;  ///< 面板创建前暂存的可用性查询
     RequirementsPanelWidget::StationMarkersSink m_pendingMarkersSink;  ///< 面板创建前暂存的工位标记出口（UI-T33）
     RequirementsPanelWidget::RegionPreviewSink m_pendingRegionSink;    ///< 面板创建前暂存的区域预览出口（UI-T33）
+    /// 面板创建前暂存的高亮请求出口（FIX-T2——同暂存双形态）。
+    RequirementsPanelWidget::SampleHighlightRequestFn m_pendingSampleHighlightRequest;
     PostEditAction m_hostPostEdit;  ///< 宿主编辑后动作（UI-T29——重估＋bindReadiness；组合子承载）
     /// 三维视图缝（UI-T33——bindView3DSeams 注入；未绑定＝命令流降级原文）。
     RequirementsView3DSeams m_view3dSeams;

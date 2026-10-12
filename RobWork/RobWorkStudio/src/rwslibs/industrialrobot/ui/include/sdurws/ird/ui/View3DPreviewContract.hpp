@@ -28,6 +28,7 @@
 #define SDURWS_IRD_UI_VIEW3DPREVIEWCONTRACT_HPP
 
 #include <array>
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
@@ -148,11 +149,23 @@ struct View3DSampleGrid {
     /// RegionPreviewGeometry.gridLines 经世界系变换直投；空＝无格）。
     std::vector<std::pair<rw::math::Vector3D<double>, rw::math::Vector3D<double>>>
         gridLines;
+    /// 逐点域样本号对齐表（FIX-T2 追加——F-495 样本级定位：每点对应的
+    /// 域侧 SampleRecord::sampleIndex；与 samples 等长，空＝无对齐键）。
+    /// 对齐键是必需面而非直接用数组下标：投影合并段按区域过滤多计划
+    /// 结果后，数组下标与域样本号错位（P-FIX-4——两区域结果切片第二
+    /// 区域时下标偏移），高亮请求以域样本号跨缝寻址才不漂移。
+    std::vector<std::uint64_t> sampleIndices;
+    /// 当前高亮样本的域样本号（FIX-T2 追加；nullopt＝无高亮）。
+    /// 语义＝"蓝框当前选中"（F-495 建议语义——面板采样结果清单行点击
+    /// 的三维回应）；渲染层放大该点＋蓝描边，解析经
+    /// sampleIndices 对齐（无对齐键/键未命中＝诚实不亮，零虚构）。
+    std::optional<std::uint64_t> highlightedSampleIndex;
 
     bool operator==(const View3DSampleGrid& o) const
     {
         return samples == o.samples && cellStates == o.cellStates
-            && gridLines == o.gridLines;
+            && gridLines == o.gridLines && sampleIndices == o.sampleIndices
+            && highlightedSampleIndex == o.highlightedSampleIndex;
     }
     bool operator!=(const View3DSampleGrid& o) const { return !(*this == o); }
 };

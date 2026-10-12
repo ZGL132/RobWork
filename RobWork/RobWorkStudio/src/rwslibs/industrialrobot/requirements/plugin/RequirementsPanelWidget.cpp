@@ -302,6 +302,76 @@ void RequirementsPanelWidget::setRegionPreviewSink(RegionPreviewSink sink)
     m_regionPreview = std::move(sink);
 }
 
+void RequirementsPanelWidget::setSampleResultsSink(SampleResultsSink sink)
+{
+    // FIX-T2——采样结果清单出口（装配层注入；不注入＝清单恒空态零虚构）。
+    m_sampleResultsSink = std::move(sink);
+}
+
+void RequirementsPanelWidget::bindSampleHighlightRequest(
+    SampleHighlightRequestFn fn)
+{
+    // FIX-T2——高亮请求出口（清单行点击→装配层置三维高亮键；不绑定＝
+    // 点击无动作）。
+    m_sampleHighlightRequest = std::move(fn);
+}
+
+void RequirementsPanelWidget::applySampleResults(
+    const std::vector<SampleResultRow>& rows)
+{
+    if (m_sampleResultList == nullptr) {
+        return;  // 页面未构建（构造序防御）——零动作
+    }
+    // 幂等短路（点击重投 m_regionPreview 会触发 UiPlugin 闭包重跑并回投
+    // 同一清单——无差别重建会丢用户选中行；等值判断分类：空态→空态与
+    // 数据→同数据都跳过，其余全量替换）。
+    const int count = m_sampleResultList->topLevelItemCount();
+    const bool currentIsEmptyState =
+        count == 1
+        && m_sampleResultList->topLevelItem(0)->text(0)
+               == QStringLiteral("尚未执行覆盖评估");
+    if (rows.empty()) {
+        if (currentIsEmptyState) {
+            return;  // 已是占位行空态——零重绘（0 行不算空态：占位行是
+                     // 空态的可见面，须落盘呈现「尚未执行」文案）
+        }
+    } else if (count == static_cast<int>(rows.size()) && !currentIsEmptyState) {
+        bool same = true;
+        for (std::size_t i = 0; same && i < rows.size(); ++i) {
+            const QTreeWidgetItem* it = m_sampleResultList->topLevelItem(int(i));
+            same = it->text(0).toStdString() == std::to_string(rows[i].sampleIndex)
+                && it->text(1).toStdString() == rows[i].stateText
+                && it->text(2).toStdString() == rows[i].positionText;
+        }
+        if (same) {
+            return;
+        }
+    }
+    // 全量替换（blockSignals——重建期屏蔽 itemClicked 误触发）。
+    m_sampleResultList->blockSignals(true);
+    m_sampleResultList->clear();
+    if (rows.empty()) {
+        // 诚实空态（ERR-01——无评估结果不虚构清单；不可点击＝无 UserRole 键）。
+        auto* empty = new QTreeWidgetItem();
+        empty->setText(0, QStringLiteral("尚未执行覆盖评估"));
+        empty->setFlags(Qt::ItemIsEnabled);  // 不可选中不可点——诚实形态
+        m_sampleResultList->addTopLevelItem(empty);
+    } else {
+        for (const SampleResultRow& r : rows) {
+            auto* item = new QTreeWidgetItem();  // 无参构造＋显式 add——
+            item->setText(0, QString::fromStdString(std::to_string(r.sampleIndex)));
+            item->setText(1, QString::fromStdString(r.stateText));
+            item->setText(2, QString::fromStdString(r.positionText));
+            if (!r.reason.empty()) {
+                item->setToolTip(1, QString::fromStdString(r.reason));  // 原因悬停（ERR-01）
+            }
+            item->setData(0, Qt::UserRole, qulonglong(r.sampleIndex));  // 寻址键（隐藏）
+            m_sampleResultList->addTopLevelItem(item);
+        }
+    }
+    m_sampleResultList->blockSignals(false);
+}
+
 void RequirementsPanelWidget::setStationMarkersSink(StationMarkersSink sink)
 {
     m_stationMarkersSink = std::move(sink);
@@ -719,6 +789,39 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
                                  QString::fromUtf8(ui::palette::kRegionTintDefaultHex)));
         lay->addWidget(legend);
     }
+    // 采样结果清单（FIX-T2——F-495 样本级定位的面板入口：选中区域的
+    // 样本行（样本号/状态/位置摘要）点击→高亮请求出口；数据源＝执行器
+    // 评估账面的区域切片投影（装配层翻译），非域诊断——零 Readiness 语义；
+    // 空数据＝诚实空态行「尚未执行覆盖评估」（ERR-01 不伪造）。
+    // 列布局：0=样本号（显示）＋1=状态＋2=位置摘要；末隐藏列＝域样本号
+    // （寻址键——数组下标≠域样本号 P-FIX-4，点击取键不取下标）。
+    m_sampleResultList = makeTable(page, QStringList()
+                                            << QStringLiteral("样本")
+                                            << QStringLiteral("状态")
+                                            << QStringLiteral("位置 (m)"));
+    m_sampleResultList->setObjectName(
+        QStringLiteral("ird_req_region_samples"));  // 验证定位锚
+    connect(m_sampleResultList, &QTreeWidget::itemClicked, this,
+            [this](QTreeWidgetItem* item, int) {
+                if (m_sampleHighlightRequest == nullptr || item == nullptr) {
+                    return;  // 未绑定＝点击无动作（不虚构可达性——ERR-01）
+                }
+                bool parsed = false;
+                const std::uint64_t key =
+                    item->data(0, Qt::UserRole).toULongLong(&parsed);
+                if (!parsed) {
+                    return;  // 空态行/无键行＝不可定位（诚实形态）
+                }
+                m_sampleHighlightRequest(key);  // ①装配层置高亮键
+                // ②三维重投（最近区域几何原值——触发 UiPlugin 合并闭包
+                // 重跑，把新键置入 View3DSampleGrid 整组刷新〔P-FIX-5：
+                // Render 构造冻结，零渲染私有态旁路〕；无最近几何＝区域
+                // 尚未预览过，高亮键仅登记、下次预览自然生效）。
+                if (m_lastRegionGeometry.has_value() && m_regionPreview) {
+                    m_regionPreview(m_lastRegionGeometry);
+                }
+            });
+    lay->addWidget(m_sampleResultList);
     pages->addTab(page, "区域");
 }
 
@@ -2771,6 +2874,9 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
                                               ? *selected : ws.regions.entries.front();
         const RegionPreviewGeometry geo = regionPreviewGeometry(previewRegion, m_regionService);
         m_regionPreviewLabel->setText(QString::fromStdString(geo.summaryText));
+        // FIX-T2——最近区域几何登记（高亮请求后的三维重投输入；区域切换
+        // 即覆盖＝高亮键经 UiPlugin 对账清位，面板侧零键状态）。
+        m_lastRegionGeometry = geo;
         if (m_regionPreview) {
             m_regionPreview(geo);  // View3D 出口注入时投递（装配层接线）
         }
@@ -2779,6 +2885,7 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         // UI-T77（F-560）：区域集合为空＝空态投递（nullopt）——三维框/格
         // 层随「无区域」清除。只清面板标签不投递的话，宿主侧缓存残值会被
         // 后续任一标记投递合并重挂（删除唯一区域后框/格/着色永残留）。
+        m_lastRegionGeometry.reset();  // FIX-T2——无区域＝无重投输入（清）
         if (m_regionPreview) {
             m_regionPreview(std::nullopt);
         }

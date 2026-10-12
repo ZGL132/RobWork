@@ -121,6 +121,7 @@
 #include <sdurws/ird/ui/RuntimePublishBridge.hpp>  // RuntimePublishBridge/观察者（UI-T46——呈现刷新事务装配）
 
 #include <filesystem>
+#include <cstdio>                        // 采样清单行位置摘要格式化（std::snprintf——FIX-T2）
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -217,6 +218,27 @@ private:
 /// Dev 日志通道 token（diagnostics.md §7.2 LogChannel ≤48 字符；对齐
 /// "diag/<单元>" 命名族——Dev 级事实的唯一出线通道 §6.2）。
 constexpr const char* kPluginDevChannel = "diag/ui";
+
+/// 采样评估状态中文词表（FIX-T2——F-495 样本级定位的清单行状态列；
+/// R-2 翻译单点：kinematics 账面枚举→requirements 面板投影行的唯一
+/// 翻译处，与 UI-T65 着色词表语义同源〔mapSampleStateToCell 的呈现
+/// 文字面〕——判定零参与，只做词表翻译）。
+std::string sampleStateText(kinematics::KinChannelSampleState state)
+{
+    switch (state) {
+    case kinematics::KinChannelSampleState::Reached:
+        return "达标";
+    case kinematics::KinChannelSampleState::Unreachable:
+        return "不可达";
+    case kinematics::KinChannelSampleState::DataInsufficient:
+        return "数据不足";
+    case kinematics::KinChannelSampleState::NotRun:
+        return "未运行";
+    case kinematics::KinChannelSampleState::NotApplicable:
+        return "不适用";
+    }
+    return "未运行";  // 枚举穷尽后防御面（不逃逸 switch——词表外值诚实回落）
+}
 
 /// 控制台报告（宿主进程的控制台可用时可见；留痕主通道仍是 Dev 日志）。
 void reportLine(const std::string& text)
@@ -3868,6 +3890,13 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                 update.sampleGrid = m_reqGrid;
                 m_view3dGateway->applyPreview(update);
             });
+        // FIX-T2——样本高亮请求出口（面板清单行点击→置域样本号键；三维
+        // 刷新由面板重投最近区域几何触发本闭包重跑〔键先置、投递后到〕，
+        // 装配层零重投状态机——P-FIX-5 整组替换语义承载在既有闭包内）。
+        m_domains->requirements->bindSampleHighlightRequest(
+            [this](std::uint64_t sampleIndex) {
+                m_reqHighlightedSample = sampleIndex;
+            });
         m_domains->requirements->bindRegionPreviewSink(
             [this, resolveFrameName, studio](
                 const std::optional<requirements::RequirementsPluginAssembly::
@@ -3878,6 +3907,10 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                 if (!geoOpt.has_value()) {
                     m_reqBox.reset();
                     m_reqGrid.reset();
+                    // FIX-T2——空态同拍：高亮键清位＋面板清单清空（诚实
+                    // 空态与三维格层同进退——F-559 同族防串数据）。
+                    m_reqHighlightedSample.reset();
+                    m_domains->requirements->pushSampleResults({});
                     ui::View3DPreviewUpdate clearUpdate;
                     clearUpdate.frameMarkers = m_reqMarkers;
                     clearUpdate.boxOutline = m_reqBox;    // nullopt＝清框层
@@ -3948,6 +3981,19 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                         m_kinEvaluation != nullptr
                             ? m_kinEvaluation->latestCoverageResult()
                             : std::nullopt;
+                    // FIX-T2——区域锚清位对账：投影到达新区域＝上一区域
+                    // 的高亮请求失效（跨区域串亮防线——P-FIX-4 同源纪
+                    // 律；同区域重投〔点击重投〕锚相等不清位）。
+                    if (!(m_reqHighlightedRegionAnchor == geo.regionObjectId)) {
+                        m_reqHighlightedSample.reset();
+                        m_reqHighlightedRegionAnchor = geo.regionObjectId;
+                    }
+                    // FIX-T2——面板清单行卡（采样结果清单：执行器账面→
+                    // 面板投影行的翻译单点〔R-2〕；状态词表见
+                    // sampleStateText，判定零参与）。
+                    std::vector<requirements::RequirementsPluginAssembly::
+                                    SampleResultView>
+                        sampleRows;
                     if (coverage.has_value() && coverage->ok
                         && m_kinEvaluation != nullptr
                         && coverage->snapshotId == m_kinEvaluation->snapshotId()
@@ -3961,6 +4007,7 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                         // 位置/位姿样本都上屏；计数已抽至纯函数）。
                         grid.samples.reserve(coverage->samples.size());
                         grid.cellStates.reserve(coverage->samples.size());
+                        grid.sampleIndices.reserve(coverage->samples.size());
                         for (const auto& record : coverage->samples) {
                             if (!(record.regionObjectId == geo.regionObjectId)) {
                                 continue;  // 他区域样本——预览是单选区域面
@@ -3968,6 +4015,24 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                             grid.samples.push_back(worldTbase * record.position);
                             grid.cellStates.push_back(
                                 mapSampleStateToCell(record.state));
+                            // 域样本号对齐表（FIX-T2——渲染高亮的寻址键；
+                            // 数组下标≠域样本号——P-FIX-4 切片偏移）。
+                            grid.sampleIndices.push_back(record.sampleIndex);
+                            // 清单行卡同源组装（世界系坐标三位小数摘要；
+                            // 未通过/未运行原因直投——ERR-01）。
+                            requirements::RequirementsPluginAssembly::
+                                SampleResultView row;
+                            row.sampleIndex = record.sampleIndex;
+                            row.stateText = sampleStateText(record.state);
+                            const rw::math::Vector3D<double> wp =
+                                worldTbase * record.position;
+                            char buf[96];
+                            std::snprintf(buf, sizeof(buf),
+                                          "(%.3f, %.3f, %.3f)", wp[0], wp[1],
+                                          wp[2]);
+                            row.positionText = buf;
+                            row.reason = record.reason;
+                            sampleRows.push_back(std::move(row));
                         }
                         // 框色＝该区域**位置口径**计数比×目标下限（契约
                         // acceptance 3；计数＋分档一体在纯函数
@@ -3978,7 +4043,15 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                         outline.tint = view3DRegionTintFromSamples(
                             coverage->samples, geo.regionObjectId,
                             geo.minPositionCoverage);
+                        // FIX-T2——高亮键随格层置入（渲染层经对齐表解析，
+                        // 键未命中＝诚实不亮——零虚构）。
+                        grid.highlightedSampleIndex = m_reqHighlightedSample;
+                    } else {
+                        // 对账失效/无评估＝清单同步清空（面板诚实空态——
+                        // 与三维格层的中性空态同拍）。
+                        m_reqHighlightedSample.reset();
                     }
+                    m_domains->requirements->pushSampleResults(sampleRows);
                     box = outline;
                     m_reqGrid = grid;
                 } else if (m_diag.pipeline) {
@@ -3989,6 +4062,10 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                     // 失败可见面，如「格 未定」＝盒退化/采样间距非法）随
                     // Dev 追注——此前全链透传到投影方后被静默丢弃。
                     m_reqGrid.reset();
+                    // FIX-T2——失败分支同拍：高亮键清位＋面板清单清空
+                    // （参考系不可解析＝无样本可列，诚实空态）。
+                    m_reqHighlightedSample.reset();
+                    m_domains->requirements->pushSampleResults({});
                     m_diag.pipeline->logDev(
                         kPluginDevChannel,
                         "view3d preview: 区域参考系不可解析——框/格层清除（"
@@ -4381,6 +4458,14 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
     m_reqMarkers.clear();
     m_reqBox.reset();
     m_reqGrid.reset();
+    // FIX-T2——第十类收口同拍：高亮键与区域锚清零＋面板清单清空（高亮
+    // 键是跨项目会话态——残键在新项目同域样本号上会串亮；清单残行同理
+    // 串数据。F-559 第九类收口同族纪律）。
+    m_reqHighlightedSample.reset();
+    m_reqHighlightedRegionAnchor = core::ObjectId{};
+    if (m_domains && m_domains->requirements) {
+        m_domains->requirements->pushSampleResults({});
+    }
     if (m_view3dGateway) {
         m_view3dGateway->removePreview();
     }
