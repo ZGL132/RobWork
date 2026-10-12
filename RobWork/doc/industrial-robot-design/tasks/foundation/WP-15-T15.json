@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T15",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现近似外包络估算（R2/D）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T14"
+  ],
+  "requirements": [
+    "KIN-10",
+    "AT-26"
+  ],
+  "designRefs": [
+    "units/kinematics.md#7.3",
+    "units/kinematics.md#11",
+    "units/kinematics.md#13",
+    "development-task-breakdown.md#2.16"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-*",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/tolerance/kin-*",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "feature",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t15",
+  "interUnit": false,
+  "knownPitfalls": [
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "按配置方向数（默认 180——KIN-10 原文）射线边界计算 Rmax，可取消用例通过（取消经 WP-15-T14 采样执行管线传递——EX-T03 语义，零新跨单元接线）",
+    "结果明确标注\"近似、非精确\"用例通过（AT-26；§7.3——包络/插值类结果不能替代样本全覆盖、不作 Must 区域判定依据）",
+    "方向集与确定性口径复用 §7.2 黄金设施（斐波那契螺旋方向集黄金锁定；同种子重跑结果一致）",
+    "全部用例通过并留痕：gtest XML＋ird-test-report.json＋构建日志；未执行用例如实登记原因"
+  ],
+  "note": "立卡登记（2026-10-13，治理批——所有者『立即立卡并启动』指令；自 kinematics 卡 §11 T15 行＋DTB §2.16 WP-15-T15 行编译，WP-15-T13 同族 schema）。dependsOn＝DTB 行前置原文 WP-15-T14（本批随批立卡 ready、未 done）——依赖诚实登记：本卡 status=ready 系所有者『立即立卡并启动』指令字面放行；实际开工以 WP-15-T14 done 为前置，队列消费侧应按 §11 内部顺序串行派发（T14→T15/T16；参考所有者 WP-23-T09 排程指令同款『依赖满足前维持』口径）。interUnit=false＝射线边界计算纯域内实现，执行/取消经 T14 采样执行管线传递、零新跨单元接线——如实现期需直挂 execution 增量消费面，按 DTB §5.4 增量修订登记。三卡（T14~T16）共用测量与单元回归口径：gtest 两模式＋DTB §5.2 DoD。实现分支 wp15-t15。"
+}

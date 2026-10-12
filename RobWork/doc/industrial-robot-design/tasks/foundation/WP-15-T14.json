@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T14",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现工作空间采样与可视化（R2/D）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T06",
+    "EX-T03",
+    "EX-T05",
+    "EX-T08",
+    "UI-T05"
+  ],
+  "requirements": [
+    "KIN-09",
+    "AT-25"
+  ],
+  "designRefs": [
+    "units/kinematics.md#7.3",
+    "units/kinematics.md#11",
+    "units/kinematics.md#13",
+    "development-task-breakdown.md#2.16"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-*",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/tolerance/kin-*",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "feature",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t14",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "采样计划确定性：随机均匀/关节网格两通道同种子重跑样本集一致（复用 §7.2 采样黄金设施——splitmix64 派生/网格体心/斐波那契螺旋方向集黄金锁定）；样本数/种子/网格步数经 AnalysisConfiguration 配置（KIN-13 语义——seed=0 非法不静默替换，I-KIN-4）",
+    "采样可取消有进度：协作取消经 execution 取消协议（EX-T03 语义）如实 NotRun/partial、进度经事件分发（EX-T05 语义）；取消/失败不产完整结果（§10.2 V-11/22 同口径）",
+    "点云按状态/可操作度/条件数/最小余量/位置误差/姿态误差/碰撞等着色，XY/XZ/YZ 投影、散点/包络渲染、标签/图例与 PNG 导出用例通过（渲染数据本单元产、呈现归 ui View3D——§3.3 Render.hpp 纪律；AT-25）",
+    "可视化点回写仅改会话姿态（KIN-06——KinSessionPose 唯一写点、零修订、不入身份）用例通过",
+    "R2 边界：探索式采样结果不进入 Must 区域判定或必验覆盖（§7.3——§7.2 冻结样本集是唯一正式口径）；碰撞证据按统一工程策略配置经工程策略入口修改（UX-08/ARC-05），不另存第二布尔值（V13-01）",
+    "全部用例通过并留痕：gtest XML＋ird-test-report.json＋构建日志；未执行用例如实登记原因"
+  ],
+  "note": "立卡登记（2026-10-13，治理批——所有者『立即立卡并启动』指令；自 kinematics 卡 §11 T14 行＋DTB §2.16 WP-15-T14 行编译，WP-15-T13 同族 schema）。dependsOn 换算：DTB 行前置『WP-15-T06、WP-08、WP-10-T05、阶段 D 启用』→WP-15-T06（采样设施 IWorkspaceSampler/SampleSet/方向集黄金——§7.2 复用面）＋WP-08 泛指逐号对应≙EX-T03（协作取消——『可取消』直接消费面）/EX-T05（事件与进度分发——『有进度』直接消费面）/EX-T08（检查点与缓存存储治理——§12 R2 承接行『execution 检查点』）＋WP-10-T05≙UI-T05（三维视图交互——渲染数据消费端）；『阶段 D 启用』为阶段门禁非契约依赖、不入 dependsOn（§11 行同口径），实际开工时点随阶段 D 排程由所有者/流水线掌握。五项依赖全 done（2026-10-13 实测）。status=ready 放行依据＝所有者 2026-10-13『立即立卡并启动』指令。interUnit=true＝运行期消费 execution 取消/进度/检查点三设施＋渲染数据交付 ui 消费（View3D/共享检查器经 UI-T21/T22 注册协议）。三卡（T14~T16）共用测量与单元回归口径：gtest 两模式（test＋contract_test 目标）＋DTB §5.2 DoD（双模式构建零错误/ird_gates 零命中/验收用例通过并留痕/文档同步零偏差）。实现分支 wp15-t14。R2 边界纪律：探索式采样结果不进 Must 区域判定/必验覆盖（§7.3），R1『不留实现桩』的预留边界自本卡起由本任务兑现。"
+}
