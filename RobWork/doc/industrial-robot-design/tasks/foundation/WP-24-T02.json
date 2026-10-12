@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-24-T02",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "实现应用启动与异常诊断（PM-17/AT-11）",
+  "status": "ready",
+  "dependsOn": ["DIAG-T08", "WP-24-T03"],
+  "requirements": ["PM-17", "AT-11", "NFR-SEC-07"],
+  "designRefs": [
+    "units/diagnostics.md#7.6",
+    "units/diagnostics.md#12.1",
+    "ARCHITECTURE.md#4.1",
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/diagnostics.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-24-T02.json",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/RobWorkStudio/src/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_studio",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 tasks/foundation/WP-24-T02.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp24-t02",
+  "interUnit": true,
+  "knownPitfalls": ["P-DIAG-1", "P-PR-6"],
+  "acceptance": [
+    "OS 级崩溃捕获完整链路落位（diagnostics.md §7.6 分工——本任务承接捕获与应用壳装配）：sdurws_ird_studio 应用入口最先安装捕获（Windows 结构化异常/ CRT 终止路径），捕获点组装 CrashReportInput 并经既有 CrashReportWriter 写用户目录脱敏诊断文件（不入 .rwdesign——D-10）；写出失败降级 stderr 放弃（不递归诊断、不阻塞）；捕获路径防重入；诊断文件写出且脱敏（AT-11 观测点，NFR-SEC-07——凭据零命中、路径按配置）",
+    "启动流程 PM-17 面收口：静态插件装配（既有）＋设置加载＋闪屏（可禁用）＋命令行参数支持——以 StudioMain 现状盘点为基线做增量，已有项不重复实现；产品命令行参数面最小闭环并留痕（与无参形态兼容）",
+    "真实失败能力用例：子进程故意崩溃→父进程断言诊断文件落盘且脱敏（AT-11 具名观测点）；捕获装配逻辑单测（输入组装六段、降级路径）；ird_gates 零新增命中；集成模式构建零错误（sdurws_ird_studio＋受影响测试目标）；diagnostics.md §12.1 协作行状态消账＋ui.md 装配面增量登记；测试真实执行留痕（gtest XML＋ird-test-report 至 traceability/builds/wp24-t02/），未执行不得标注通过"
+  ],
+  "note": "平台服务域补全批立卡（2026-10-12，所有者批次授权编排）：DTB §2.25 WP-24-T02 行＋diagnostics.md §12.1『崩溃诊断文件与 OS 级崩溃捕获的完整链路（WP-24-T02 协作）→§7.6』；Writer 设施已随 DIAG-T08（≙WP-09-T05）落位（本任务沿用不重写——CrashReport.hpp 头注分工口径）；dependsOn 按可解析契约登记 DIAG-T08（≙WP-09-T05，done）＋WP-24-T03（done）。branch 字段按 ≙ 规范名登记 wp24-t02（validate-task 机械校验形态）；实际落位分支＝pipeline4/redesign-main（平台服务域补全批统一实施分支——所有者批次授权同 PIPE §6 委托先例，≙ 映射实测为准）。落位面＝industrialrobot 装配面（ui/studio 应用壳）；禁改框架源码（SA-02——确需 patches 先登记 PATCHES.md）。"
+}
