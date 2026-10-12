@@ -30,7 +30,7 @@
     "cmake --build build --config Release --target sdurws_ird_project",
     "cmake --build build --config Release --target sdurws_ird_project_test",
     "cmake --build build --config Release --target sdurws_ird_project_contract_test",
-    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 tasks/foundation/PRJ-T17.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T17.json",
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
   "branch": "wp04-t17",
@@ -41,5 +41,5 @@
     "重关联命令处理器注册落位：重关联为显式命令提交、产生新修订（AT-21/PM-09）；未固化阻断正式结论（EVI-01 证据不足口径）用例通过",
     "ResourceRefs.hpp 公共头按 §3.1 预留落位（ExternalResourceRecord、SolidifyRequest/Result——§5.7 冻结签名零偏差）；零 Qt；ird_gates 零新增命中；双模式构建（集成＋独立冒烟）零错误；单元卡增量修订（§12 PRJ-T17 行＋§13.1 状态＋§15.4 v+1 落位登记）；测试真实执行留痕（gtest XML＋ird-test-report 至 traceability/builds/wp04-t17/），未执行不得标注通过"
   ],
-  "note": "平台服务域补全批立卡（2026-10-12，所有者批次授权编排）：DTB §2.5 WP-04-T17 行（≙PRJ-T17）＋project.md §5.7/§13.1 预留——依赖边按 O-09 裁决后口径（注入式协作，ARCH §3.5 协作边说明补登〔v0.14〕，零编译边）；前置 PRJ-T10（命令服务）/IO-T06（io 包导入导出与固化中转，≙WP-11-T05/T07）均已 done。branch 字段按 ≙ 规范名登记 wp04-t17（validate-task 机械校验形态）；实际落位分支＝pipeline4/redesign-main（平台服务域补全批统一实施分支——所有者批次授权同 PIPE §6 委托先例，≙ 映射实测为准）。"
+  "note": "平台服务域补全批立卡（2026-10-12，所有者批次授权编排）：DTB §2.5 WP-04-T17 行（≙PRJ-T17）＋project.md §5.7/§13.1 预留——依赖边按 O-09 裁决后口径（注入式协作，ARCH §3.5 协作边说明补登〔v0.14〕，零编译边）；前置 PRJ-T10（命令服务）/IO-T06（io 包导入导出与固化中转，≙WP-11-T05/T07）均已 done。branch 字段按 ≙ 规范名登记 wp04-t17（validate-task 机械校验形态）；实际落位分支＝pipeline4/redesign-main（平台服务域补全批统一实施分支——所有者批次授权同 PIPE §6 委托先例，≙ 映射实测为准）。〔实施登记 2026-10-12——实施者会话，双模式全绿后回填：acceptance 1～3 全部兑现——固化服务实体按 §5.7 落位（公共头 ResourceRefs.hpp：ExternalResourceRecord＋SolidifyRequest/Result 冻结签名零偏差〔ContentHash256 以 core::Digest256 别名锚定——core v0.1 无该类型名，DTB §5.4 登记〕＋IExternalResourceSource 消费窄接口〔probe/readForSolidify，io.md §9.8 同语义〕＋SolidifyService 工厂＋externalResourceGateData 判据数据面〔EVI-01 数据半区，N-9〕）；实现 src/SolidifyServiceImpl.{hpp,cpp}（固化/重关联命令族经 HandlerRegistry 注册——无点 token solidify-external-resource/relink-external-resource 服从冻结语法；实现口径五项登记于单元卡 §15.4 v0.24：读取在命令外/发布在命令内、pending 槽交接、对象 token=ExternalResource、payload v1 行式 canonical、域内拒绝零用户诊断码）；零 io 编译依赖自证（公共头/fake 零 io 头——LinkageContractTest 扫描钉住）；重关联＝显式命令提交产生新修订（AT-21，磁盘 command.json 地面事实）；未固化阻断判据以数据面交付（EVI-01 判定归 evidence，N-9）。验证：双模式零错误；单元 267/268（＋1 既有登记 skip 维持）＋契约 32/32 两模式一致零回归；ird_gates 实跑零命中；validate-task/validate-docs PASS。留痕 traceability/builds/wp04-t17/。偏差/附注三项：①ContentHash256 别名锚定（上文）；②任务指令冒烟配置 CMAKE_CXX_FLAGS 覆盖默认值缺失 /EHsc（C4530——RAII 异常期不析构致服务互斥 EDEADLK），同语义补 -EHsc 重配复验全绿；③verify 数组 validate-task 条目的契约路径由 DTB 相对形态（tasks/foundation/PRJ-T17.json——verify-task 执行器按仓库根解析下 Test-Path 失败）订正为仓库根相对形态（-TaskFile RobWork/doc/...，WP-16-T02/WP-19-T12 等既有卡同款），机械可执行性修正不改校验语义。"
 }

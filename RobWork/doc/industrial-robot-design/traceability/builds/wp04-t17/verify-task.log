@@ -1,0 +1,54 @@
+verify-task: RepoRoot=D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4
+validate-task: PASS (1 tasks)
+> cmake --build build --config Release --target sdurws_ird_project
+é€‚ç”¨äº .NET Framework MSBuild ç‰ˆæœ¬ 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+> cmake --build build --config Release --target sdurws_ird_project_test
+é€‚ç”¨äº .NET Framework MSBuild ç‰ˆæœ¬ 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_project_test
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+> cmake --build build --config Release --target sdurws_ird_project_contract_test
+é€‚ç”¨äº .NET Framework MSBuild ç‰ˆæœ¬ 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_project_contract_test
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+> pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T17.json
+validate-task: PASS (1 tasks)
+> pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
+validate-docs: PASS (20 units, 12 trace entries, 318 task files)
+verify-task: PASS PRJ-T17£¨»úÆ÷¿ÉÖ´ĞĞ 5 ÌõÈ«²¿Í¨¹ı£»É¢ÎÄÈË¹¤ºË¶Ô 0 Ìõ£©

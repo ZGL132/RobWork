@@ -153,6 +153,19 @@ find_package(GTest CONFIG REQUIRED)
 # makeArchiveConflict 装配点〔PRJ-ARCHIVE-CONFLICT〕。调用线程单侧
 # 冻结——任意线程进入、writer 互斥内部串行〔P-PR-4 处置〕；事件经
 # core IDomainEventBus v0.1 基线〔P-PR-1 处置〕）。
+# PRJ-T17 增列：src/SolidifyServiceImpl.cpp（§5.7 固化服务实体＋重
+# 关联命令注册落位——阶段 B 平台服务域补全批：§5.7 流程编排〔实现
+# 口径①读取在命令外/发布在命令内：失败/变化中止＝零修订〕＋消费窄
+# 接口 IExternalResourceSource〔公共头 ResourceRefs.hpp——O-09 注入式
+# 协作的 project 侧契约面，零 io 头/零 io 链接边〕＋固化/重关联命令
+# 处理器经 HandlerRegistry 装配注册〔§6.5——公共装配通道
+# handlerRegistry()〕＋payload v1 行式 canonical 编码〔域所有，§6.4；
+# hex 化自由文本保证 ASCII round-trip〕＋ExternalResourceRecord/Solidify
+# Request/SolidifyResult 冻结签名落位〔§5.7——ContentHash256 以
+# core::Digest256 别名锚定，DTB §5.4 登记〕＋EVI-01 判据数据面
+# externalResourceGateData〔数据非判定——N-9〕；SolidifyServiceImpl.hpp
+# 为 src/ 私有实现头——R-2；对象类型 token＝"ExternalResource"〔域
+# 登记，实现口径③〕）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -166,6 +179,7 @@ add_library(sdurws_ird_project STATIC
     src/DraftServiceImpl.cpp
     src/UndoRedoServiceImpl.cpp
     src/ArchiveServiceImpl.cpp
+    src/SolidifyServiceImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -317,6 +331,16 @@ endif()
 # ird-test-report.json 与 gtest XML 并存〔testkit §7.2/§7.3；acceptance 2
 # 的 IRD_TEST_INFO/IRD_EXPECT_* 接入面〕；链接面同步 GTest::gtest_main
 # →GTest::gtest——gtest_main 固定入口无监听器安装点）。
+# PRJ-T17 增列一：SolidifyStubs.hpp（测试支撑——IExternalResourceSource
+# fake〔V17/V24/V26 语义注入：复制期间源变化/预算超限/缺失；零 io 头
+# 消费的注入缝自证〕＋SolidifyFixture 共享夹具〔服务/源先于存储上下文
+# 析构的装配纪律〕）。
+# PRJ-T17 增列二：SolidifyServiceTest（acceptance 1/3 单元面＝成功固化
+# 〔副本入对象库＋恰一新修订＋引用保护＋事件 FIFO〕/替换版本〔同 oid
+# 新 cv——§4.6 只增〕/复制期间源变化中止〔V17——零修订零对象〕/缺失
+# 中止〔V26〕/预算超限中止〔V06/V16 语义〕/探测三态透传/判据数据面
+# 〔EVI-01 数据半区——N-9〕/草稿形态投影 round-trip＋token 词表/
+# 注册协议〔token 冻结语法＋重复注册 fail-fast〕/调用方错误 fail-fast）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -335,6 +359,7 @@ add_executable(sdurws_ird_project_test
     test/UndoRedoServiceTest.cpp
     test/ArchiveServiceTest.cpp
     test/Tx11Tx13SuiteTest.cpp
+    test/SolidifyServiceTest.cpp
     test/StubHandlers.cpp
     test/TestMainReport.cpp)
 
@@ -425,6 +450,13 @@ add_custom_command(TARGET sdurws_ird_project_test POST_BUILD
 # 接缝停靠，testkit.md D-10 形态〕。testkit §10.1 触发登记的兑现：
 # TestProcessRunner/EventWatch/FaultInterceptor/TempDir 按 T-1 允许形态
 # 仅入本测试目标——产品目标零 testkit 边不变）。
+# PRJ-T17 增列：SolidifyContractTest（acceptance 1/2 契约面——§3.3
+# "命令契约属跨单元契约测试面"：重关联＝显式命令提交产生新修订
+# 〔AT-21/PM-09——磁盘 command.json 的 commandType/摘要/branchHistory
+# 只增地面事实〕＋命令历史 payload v1 可追溯〔§4.4.4/D-10〕＋只读打开
+# 拒绝固化写〔PM-07/§6.1 S1——LockHeldByOther＋PRJ-LOCK-HELD＋零磁盘
+# 写入〕；fake 源零 io 头消费＝O-09 注入缝自证，LinkageContractTest
+# 的零 io 链接边扫描持续钉住构建图半区）。
 add_executable(sdurws_ird_project_contract_test
     test/LinkageContractTest.cpp
     test/LockContractTest.cpp
@@ -433,6 +465,7 @@ add_executable(sdurws_ird_project_contract_test
     test/ProcessCrashContractTest.cpp
     test/ProcessLockContractTest.cpp
     test/Tx2DiagnosticRecordContractTest.cpp
+    test/SolidifyContractTest.cpp
     test/Tx15Child.cpp
     test/StubHandlers.cpp)
 

@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.23（2026-10-12，O-09 裁决落地登记——纯文档消账，零代码变更：维持注入式协作形态，ARCHITECTURE §3.5 补登 io↔project/io↔runtime 两条协作边说明〔非编译边〕；§2.1/§10.4/§15.3 P-PR-5 行消账标注，详见 §15.4 v0.23。前一版 v0.22（2026-10-10，P-PR-9 裁决销案登记〔RUL-TOK 所有者授权批〕——§15.3 P-PR-9 翻转已裁决销案〔按 O-35 无点形态裁决，§4.4.4 冻结语法零改动〕＋§6.5 内置命令族示例订正为无点 token 形态〔O-35 project 卡增量义务消费〕＋CommandServiceImpl.hpp P-PR-9 注释对齐〔纯注释零行为〕，详见 §15.4 v0.22。前一版 v0.21：UI-T74 装配通道增量登记；v0.20：UI-T39 消费侧增量登记；v0.19：O-41 所有者裁决落地）|
+| 文档版本 | v0.24（2026-10-12，PRJ-T17（≙WP-04-T17）外部资源固化服务与重关联命令注册落位登记——阶段 B 平台服务域补全批：公共头 ResourceRefs.hpp 落位〔ExternalResourceRecord/SolidifyRequest/Result 冻结签名＋IExternalResourceSource 消费窄接口＋SolidifyService 工厂＋externalResourceGateData 判据数据面〕＋src/SolidifyServiceImpl.{hpp,cpp} 固化/重关联命令族〔经 HandlerRegistry 注册，O-09 注入式协作零 io 编译依赖〕＋§12 PRJ-T17 行/§13.1 状态/§3.1 行/§11 增补组登记，详见 §15.4 v0.24。前一版 v0.23（2026-10-12，O-09 裁决落地登记——纯文档消账，零代码变更：维持注入式协作形态，ARCHITECTURE §3.5 补登 io↔project/io↔runtime 两条协作边说明〔非编译边〕；§2.1/§10.4/§15.3 P-PR-5 行消账标注，详见 §15.4 v0.23。前一版 v0.22（2026-10-10，P-PR-9 裁决销案登记〔RUL-TOK 所有者授权批〕——§15.3 P-PR-9 翻转已裁决销案〔按 O-35 无点形态裁决，§4.4.4 冻结语法零改动〕＋§6.5 内置命令族示例订正为无点 token 形态〔O-35 project 卡增量义务消费〕＋CommandServiceImpl.hpp P-PR-9 注释对齐〔纯注释零行为〕，详见 §15.4 v0.22。前一版 v0.21：UI-T74 装配通道增量登记；v0.20：UI-T39 消费侧增量登记；v0.19：O-41 所有者裁决落地））|
 | 日期 | 2026-09-09 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-PROJECT |
@@ -159,7 +159,7 @@
 | `UndoRedo.hpp` | UndoRedoService、UndoRedoStatus、InverseRecord | §5.5、§6.9 |
 | `DraftService.hpp` | DraftDocument、DraftService、DraftProjection、SaveResult/DiscardResult | §5.4、§8 |
 | `ArchivePort.hpp` | ArchiveRequest/ArchiveBatch/RunManifest/ArchiveStatus、IResultArchivePort、ArchiveSessionRef | §5.6、§10.1 |
-| `ResourceRefs.hpp` | ExternalResourceRecord、SolidifyRequest/Result | §5.7 |
+| `ResourceRefs.hpp` | ExternalResourceRecord（统一形态——§4.4.5 草稿字段子集＋state 两态词表＋固化结果字段）、SolidifyRequest/Result（§5.7 冻结签名零偏差——ContentHash256 以 core::Digest256 别名锚定）、IExternalResourceSource 消费窄接口（O-09 注入面）、SolidifyService 契约与 createSolidifyService 工厂、externalResourceGateData 判据数据面（EVI-01 数据半区，N-9） | §5.7 |
 | `PackageService.hpp` | SaveAsOptions/PackageExportOptions/PackageImportResult、ISaveAsService/IPackageService（阶段 B 落地，接口先冻结） | §5.8、§8.8～§8.10 |
 | `Upgrade.hpp` | SchemaUpgrader 注册与调用（阶段 B+） | §8.11 |
 | `PersistenceFormat.hpp` | 磁盘格式读取类型：ProjectStaticIdentity、HeadRecord、RevisionManifest、ProjectMetadataRecord、CommandRecord（升级器/工具消费的稳定契约） | §4.2/§4.3/§4.4 |
@@ -1240,6 +1240,7 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 | PRJ-TX-12 元数据不变量 | RevisionIndexTest 闭包双通道（CreateBranch 修订可达）／谱系成环注入／分支表回退注入（发布边界 branch-metadata-regression 拒绝） | 已执行通过 |
 | PRJ-TX-13 只读全入口 | Tx11Tx13SuiteTest.TraversesEveryWriteEntry_AllRejectedWithStableDiag（错误码集合＝设计清单＋零磁盘副作用＋读轨对照） | 已执行通过 |
 | PRJ-TX-14 构建红线 | BuildRedLineTest（零 Qt/无私有头出 include/CMake 无业务单元边）＋LinkageContractTest（产品目标零 testkit 边——双侧钉住；测试目标消费面白名单登记） | 已执行通过（ird_gates 命中集合与 wp04-t15 基线逐项一致，新增命中均有契约明文依据并转登 F-173/WP-01-T03） |
+| WP-04-T17 固化服务增补组（§5.7 落位——2026-10-12 PRJ-T17；非 PRJ-TX 设计组，用例体随任务卡 acceptance 落地，V17/V26/V06-V16 语义经 fake 源承载） | SolidifyServiceTest（成功固化入对象库＋恰一修订＋引用保护＋事件 FIFO／替换版本同 oid 新 cv／V17 复制期变化中止零修订零对象／V26 缺失中止／预算超限中止／探测三态透传／EVI-01 判据数据两半区〔N-9 数据非判定〕／草稿投影 round-trip＋token 词表／注册协议〔token 冻结语法＋重复注册 fail-fast〕／调用方错误 fail-fast 四路）＋SolidifyContractTest（AT-21 重关联显式命令新修订——磁盘 command.json 地面事实＋payload v1 历史追溯／PM-07 只读拒绝写〔LockHeldByOther＋PRJ-LOCK-HELD〕＋O-09 注入缝零 io 头自证） | 已执行通过（两模式一致：单元 267/268＋1 既有登记 skip 维持、契约 32/32 零回归；留痕 traceability/builds/wp04-t17/） |
 
 ### 11.3 Windows GUI 测试规则承接
 
@@ -1269,6 +1270,7 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 | PRJ-T14 归档端口 | §5.6、§10.1 | `ArchiveServiceImpl.*`（begin/batch/finalize/abandon、幂等/冲突、引用持有） | PRJ-T08 | 同名文件 | PRJ-TX-8（进程内模拟）、F9 | manifest 发布/幂等/冲突/上下文存活时序过 |
 | PRJ-T15 契约测试与崩溃注入落地 | §11 全表、testkit §6.4/§6.5 | PRJ-TX-1～14 用例体（含 TestProcessRunner 接入的 F8/PRJ-TX-7/8） | PRJ-T02～T14、TK-T09（及 TestProcessRunner 按 testkit §10.1 节奏） | `project/test/*`、`project/contract_test/*` | §11 表逐项 | 全部设计用例执行通过并留痕（**未执行不得标注通过**） |
 | PRJ-T16 文档与门禁同步 | 全文 | README 核对；§11/§15.3 状态更新；门禁建议（含 P-PR-5/P-PR-6 裁决申请）提交 | T01～T15 | 本文、`project/include/.../README.md` | 评审 | 本文与实现零偏差登记；待裁决项最新状态 |
+| PRJ-T17 外部资源固化服务与重关联命令注册（阶段 B，2026-10-12 平台服务域补全批） | §5.7、§3.1 `ResourceRefs.hpp` 行、§10.4；io.md §8.3/§8.4/§9.8（只读语义参考——零 io 编译依赖）、ARCH §6.6/§3.5（O-09 注入式协作）；任务契约 tasks/foundation/PRJ-T17.json | `ResourceRefs.hpp`（ExternalResourceRecord＋SolidifyRequest/Result 冻结签名＋IExternalResourceSource 消费窄接口＋SolidifyService 契约与工厂＋externalResourceGateData 判据数据面）＋`src/SolidifyServiceImpl.{hpp,cpp}`（固化/重关联命令族处理器——经 HandlerRegistry 注册）＋`project/CMakeLists.txt` 增量＋测试（SolidifyServiceTest 10＋SolidifyContractTest 3＋SolidifyStubs fake 源） | PRJ-T10（命令服务/装配通道）、IO-T06（io 侧语义参考）；零 io 头/零 io 链接边（fake 承载，真实 io 实现随 L5 装配注入） | 同左 | 单测＋契约面用例（成功固化入对象库/替换版本/V17 复制期变化中止/V26 缺失/预算超限中止/EVI-01 判据数据面/AT-21 重关联显式命令新修订/PM-07 只读拒绝写） | 双模式零错误；两模式一致全绿（v0.24 登记时单元 267/268〔1 既有登记 skip 维持〕＋契约 32/32 零回归）；ird_gates 零命中 |
 
 ---
 
@@ -1278,7 +1280,7 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 
 | 能力 | 阶段 | 任务锚点 |
 | --- | --- | --- |
-| 固化服务实体（io 协作）与重关联命令注册 | B（PM-01/09、CON-03） | §5.7；PRJ 系列新增任务届时登记 |
+| 固化服务实体（io 协作）与重关联命令注册 | B（PM-01/09、CON-03）——**已随 PRJ-T17 落位〔2026-10-12，平台服务域补全批〕**：SolidifyService 实体＋固化/重关联命令族经 HandlerRegistry 注册；io 实现注入面（IExternalResourceSource）就绪（O-09 裁决形态——零 io 编译依赖），真实 io 装配随 L5 应用壳 | §5.7；PRJ-T17（证据 traceability/builds/wp04-t17/） |
 | 另存为/包导入导出实体（io 编解码依赖，P-PR-5 裁决后） | B（PM-05） | §5.8/§8.8～§8.10 |
 | schema 升级器首个实例（随已发布格式演进） | 按需（NFR-DEP-04） | §8.11 |
 | PM-04-S1 落盘周期可调（消费方传参即可，无 project 侧新开发）／PM-08-S1 只读报告／PM-11-S1～S3／PM-12-S1 | R2 | §4.1/§5.2 字段已预留 |
@@ -1414,6 +1416,7 @@ evidence：经②查询端口读修订/对象组装快照；失效计算消费 D
 | v0.21 | 2026-10-07 | UI-T74 装配通道增量登记（≙WP-10-T74；分支 ui-t74）：`CommandService.hpp` §5.3.6 `ProjectCommandService` 接口增 `attachCompilePort(IModelCompilePort*)` 虚方法（默认空实现——接口面向后兼容，唯一产品实现 CommandServiceImpl 覆写转发既有 setCompilePort 装配通道；OpenStoreRequest 无端口字段〔§5.1 冻结〕下「装配后注入」机制面的公共承载——提交前装配、运行期替换属装配纪律违约）；首个生产消费面＝宿主 attachPresentationSession 建模 apply 双编译端口注入（F-546 链路收口——此前行程校验层恒先行拒绝，本缺口从未到达）。纯接口增量零行为变化；需求语义零变更 |
 | v0.22 | 2026-10-10 | P-PR-9 裁决销案登记（RUL-TOK 所有者授权批——纯文档与注释对齐，零行为变更）：**§15.3 P-PR-9 状态翻转为已裁决销案**——按 O-35 裁决处置（DTB §4 2026-09-22"采用无点形态＝服从现行冻结语法"）：commandType 冻结语法 `^[a-z0-9-]{3,64}` 零改动（无点 kebab 为终态词形，方案①扩语法不采纳）；**§6.5 内置命令族示例订正**——`project.create-branch`（含点）订正为无点 token 形态 `create-branch` 等（O-35 登记的 project 卡增量义务消费）；`src/CommandServiceImpl.hpp` 文件头 P-PR-9 阻断登记注释同步对齐（纯注释零行为——机制面与测试处理器不受影响）。**词形边界登记**：本裁决只约束 project 命令 token 面（commandType）；ui 命令 id 面为点分词形（ui.md §7.1/§7.2 既冻句法）——双词形并存各自服从既有冻结（selection 回填命令为同批先例：project token 无点冻结＋ui 命令 id 点分）。内置元数据命令族处理器实体仍随其增量任务落位（PRJ-T10 登记的分界面保持——裁决销案不等于实体落位）。验证：sdurws_ird_project 测试目标回归全绿（gtest XML 留痕 traceability/gtest-reports/rul-tok/）；ird_gates 零命中 |
 | v0.23 | 2026-10-12 | O-09 裁决落地登记（架构所有者 2026-10-12 裁决——P-PR-5/P-IO-1/O-09 同案，申请 traceability/wp04-t16-adjudication-requests.md；纯文档消账，零代码变更）：维持注入式协作形态（申请方案②），ARCHITECTURE §3.5 补登 io↔project/io↔runtime 两条协作边说明（非编译边，R-1/R-2 门禁白名单零变化）；§2.1 io 行/§10.4 依赖说明/§15.3 P-PR-5 行按裁决口径消账标注；阶段 B（WP-04-T17/T18）依赖口径确定为注入式，编译形态阻塞解除。设计语义零变更 |
+| v0.24 | 2026-10-12 | PRJ-T17（≙WP-04-T17）外部资源固化服务与重关联命令注册落位登记（阶段 B 平台服务域补全批——§5.7 服务实体＋§3.1 ResourceRefs.hpp 行兑现；O-09 裁决后口径：零 io 编译依赖——零 io 头/零 io 链接边）。**公共头 `ResourceRefs.hpp` 增量落位**：ExternalResourceRecord（统一形态——§4.4.5 草稿字段子集＋state 两态词表 recorded/materialized〔toToken/fromToken，DraftOrigin 先例〕＋固化结果三字段 resourceObject/materializedVersion——随命令 payload 持久化于修订命令留痕，不进草稿文件〔§4.4.5 冻结面不动〕；toDraftExternalRef/externalResourceFromDraft 投影互转）；SolidifyRequest/SolidifyResult（§5.7 冻结签名零偏差——**ContentHash256 以 core::Digest256 别名锚定**：core v0.1 无该类型名、256 位摘要值类型唯一〔P-PR-1 消费基线，CON-01/CR-02 不破〕，DTB §5.4 登记）；IExternalResourceSource 消费窄接口（probe/readForSolidify——io.md §9.8 IResourceSnapshotter 同语义的 project 侧契约面，ARCH §3.5 注入式协作边）；SolidifyService 抽象＋createSolidifyService 工厂（构造期经 ProjectStore::handlerRegistry() 注册命令族——UI-T39 公共装配通道，§5.3.5 重复注册边界拒绝）；externalResourceGateData 判据数据面（EVI-01 数据半区——state∧引用可达合取，判定归 evidence，N-9 数据非判定）。命令 token＝solidify-external-resource/relink-external-resource（无点 kebab，§4.4.4 冻结语法，O-35 口径）。**实现 `src/SolidifyServiceImpl.{hpp,cpp}`**（私有头——R-2）：固化/重关联命令族处理器共用实现——prepare 四步〔载荷 v1 严格解析→状态复核（仅受理 recorded）→pending 绑定取副本字节（refId＋副本 cv——摘要命中即字节命中）→ObjectWrite 装配（objectTypeToken="ExternalResource"，target 由服务解析后恒有效；不声明逆命令——对象库只增 PA-2）〕；服务编排＝**读取在命令外/发布在命令内**（实现口径①——读取失败/变化即中止返回，命令未提交零修订，不借用 §6.3 拒绝词表表达 io 环境事实；变化检出→sourceChangedDuringCopy＝复制后快照哈希，§5.7"透传并中止（不伪造数值）"）。**实现口径登记五项（DTB §5.4，详见实现头/.cpp 文件头）**：①读取/发布两段分解（§5.7"随命令提交发布"＋io.md §8.4 步 7 时序原文）；②pending 槽交接（opMutex→pendingMutex 锁序、处理器重入面只取后者；绑定校验为防御面）；③对象类型 token="ExternalResource"（域登记，随修订清单持久化）；④payload v1 行式 canonical（magic＋定序键值；自由文本 hex 化保 ASCII round-trip；copy 字段＝服务经 codec::contentVersionOf 实算——CR-02 唯一哈希入口）；⑤域内拒绝零用户级诊断码（§4.6 收编清单无对应码——CR-08 不私造；机器可读面＝status.rejection，开发观察面＝S3 既有 dev 留痕）；io 产出诊断原样透传。**零 io 依赖自证**：公共头与 fake 零 io 头消费（注释不以路径字面量书写——LinkageContractTest NoIoCompileTimeConsumption 扫描持续钉住）；测试 fake（test/SolidifyStubs.hpp）承载 V17/V26/V06-V16 语义（IO-RES-MISSING/IO-RES-CHANGED/IO-SEC-BUDGET-EXCEEDED 为 io 生产者域码——测试域直书 io.md §8.3/§9.8 收编 token，project 只透传不解释）。测试＝SolidifyServiceTest 10＋SolidifyContractTest 3（acceptance 逐条：成功固化入对象库＋恰一修订＋引用保护＋事件 FIFO／替换版本同 oid 新 cv／V17 复制期变化中止零修订零对象／V26 缺失／预算超限／探测三态／EVI-01 判据两半区／草稿投影 round-trip／注册协议与 token 冻结语法／fail-fast 四路／AT-21 重关联显式命令新修订（磁盘 command.json commandType/摘要/branchHistory 只增地面事实）＋payload v1 可追溯／PM-07 只读拒绝写〔error=LockHeldByOther＋sink PRJ-LOCK-HELD〕），两模式一致：单元 267/268（＋1 既有登记 skip——PRJ-TX-11 维持不计通过）＋契约 32/32 零回归；ird_gates 实跑**零命中**（引擎自测 11 例全部按预期——本 worktree 现行门禁面较 wp11-t07 时代基线已收敛）；validate-task/validate-docs PASS。**实施口径附注（如实登记）**：任务指令给定的独立冒烟配置 CMAKE_CXX_FLAGS 覆盖默认值后缺失 /EHsc（C4530——异常传播期 RAII 不析构，服务级互斥被首次异常永久持有→后续调用 EDEADLK "resource deadlock would occur"），已按同语义补 -EHsc 重配复验全绿；集成模式 CMake 默认面不受影响。本文档头 v0.23→v0.24。证据：traceability/builds/wp04-t17/ |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 
