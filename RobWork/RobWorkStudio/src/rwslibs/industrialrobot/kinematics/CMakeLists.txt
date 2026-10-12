@@ -107,7 +107,11 @@ add_library(sdurws_ird_kinematics STATIC
     src/Bounds.cpp
     src/Ik.cpp
     src/SolutionSet.cpp
-    src/Sampling.cpp)
+    src/Sampling.cpp
+    src/Workspace.cpp)  # T14 增列：工作空间探索式采样与点云渲染数据
+                        # （KIN-09/R2/AT-25——§7.3 预留边界兑现；两模式
+                        # 编译——纯 std＋core/evidence 头，零框架库符号、
+                        # 零 Qt 零绘图设施）
 
 # ---- T07 增列（仅集成模式）：src/Collision.cpp 消费 policy 公共头的
 # 完整类型面（CollisionEvaluationSession 评估调用点）——冒烟模式无框架
@@ -390,6 +394,8 @@ add_executable(sdurws_ird_kinematics_test
     test/RecomputeTest.cpp
     test/AnalysisConfigTest.cpp
     test/RenderTest.cpp
+    test/WorkspaceTest.cpp    # T14：工作空间探索式采样用例（AT-25——确定性/
+                              # 取消进度检查点/点云着色投影图例导出/回写/R2 边界）
     test/PluginPanelTest.cpp   # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
     test/HostMigrationTest.cpp)  # T18：宿主迁移三接入面用例（O-44 v1 诚实边界——模型层）
 
