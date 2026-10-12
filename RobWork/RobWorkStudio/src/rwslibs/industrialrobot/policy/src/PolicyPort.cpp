@@ -219,19 +219,47 @@ PolicyResolution PolicyProvider::resolvePolicy(const PolicyResolutionRequest& re
     // -----------------------------------------------------------------
     // 第六步：七段解析管线（错误矩阵第 5 项：内容非法→管线全量诊断转发）。
     // 解析为纯函数（POL-T04 契约）：输入非法走诊断轨全量收集不短路——
-    // 端口只做转发，不复制任何校验逻辑（单点纪律）；调用方契约违约类异常
-    // 在此不可达（解码产物的 policyObject 来自字节、numericContractAnchor/
-    // 规则结构由 decode 精确耗尽契约保证——若仍触发即实现缺陷，按第 6 项
-    // 语义传播）。
+    // 端口只做转发，不复制任何校验逻辑（单点纪律）。
+    // 管线入口的契约复检（全零 policyObject/空锚/规则结构）可能抛
+    // PolicyError——F-746② 起 decode 已在字节层前置拒绝全部三类伪造面
+    // （PolicyInput.cpp 解码产物实例校验），本复检对端口路径理论不可达；
+    // 仍按 try/catch 包裹是**纵深防御**：任何未来 decode 校验缺口下，
+    // 损坏字节的失败都止步于"空 policy＋同码面诊断"的值面（与第五步
+    // decode 转译同口径），绝不以异常逃逸端口——UX-08"一个坏对象不崩
+    // 整轮查询"（修复前复检异常在此直通调用方，正是 audit F-746② 的
+    // 逃逸路径）。非 PolicyError 的实现内部异常（如内存耗尽）不在捕获
+    // 面，按错误矩阵第 6 项语义向上传播（不吞错——NFR-COR-03）。
     // sourceVersion 填充：POL-T04 登记的 PA-1 落点——"该字段由④端口
     // Provider 在记忆化键 (policyObject, ContentVersion) 处填充"；端口结果
     // 本体（§9.1 冻结两字段）不携带版本，版本信息经诊断文案定位。
     // -----------------------------------------------------------------
     // 注意：本成员与七段管线自由函数同名（§9.1 与 §5.1 的设计命名），成员名
     // 遮蔽命名空间作用域名字——必须全限定调用解析管线唯一入口（POL-T04 单点）。
-    PolicyParseResult parsed = ::sdurws::ird::policy::resolvePolicy(input,
-                                                                    *m_validationContext);
-    parsed.sourceVersion = key.second;
+    // 以 optional 承载＋emplace 就地构造：PolicyParseResult 的拷贝赋值被
+    // 编译期删除（发布对象 EngineeringPolicySet 全成员 const 的级联——
+    // PolicyParsing.cpp 发布点同款登记），try 块内的赋值式接收不可编译。
+    std::optional<PolicyParseResult> parsed;
+    try {
+        parsed.emplace(::sdurws::ird::policy::resolvePolicy(input, *m_validationContext));
+    }
+    catch (const PolicyError& e) {
+        // 管线复检异常→值面（转译口径与第五步 decode 捕获一致：错误全文
+        // what() 进 cause，不吞错——NFR-COR-03；失败结果同样入 memo 表
+        // ——键下结果恒定，头文件类注释"成功与失败都缓存"）。
+        PolicyResolution resolution{
+            std::nullopt,
+            {makePortDiag(
+                std::string_view{registryCode(e.code())}, key.first,
+                std::string{kPortContext},
+                "策略解析管线契约复检失败，错误原文转发：" + std::string{e.what()}
+                    + "（object=" + key.first.toCanonical()
+                    + ", version=" + key.second.toCanonical() + "）",
+                std::string{kPortAction})}};
+        std::lock_guard<std::mutex> lock(m_cacheMutex);
+        m_cache.emplace(key, resolution);
+        return resolution;
+    }
+    parsed->sourceVersion = key.second;
 
     // -----------------------------------------------------------------
     // 第七步：组装端口结果并入表（错误矩阵第 1/5 项的成功与失败出口）。
@@ -239,10 +267,10 @@ PolicyResolution PolicyProvider::resolvePolicy(const PolicyResolutionRequest& re
     // 就地构造承载（POL-T04 v0.3 ③登记的消费约束）。
     // -----------------------------------------------------------------
     PolicyResolution resolution;
-    if (parsed.policy.has_value()) {
-        resolution.policy.emplace(std::move(*parsed.policy));
+    if (parsed->policy.has_value()) {
+        resolution.policy.emplace(std::move(*parsed->policy));
     }
-    resolution.diagnostics = std::move(parsed.diagnostics);
+    resolution.diagnostics = std::move(parsed->diagnostics);
 
     // 并发未命中：两线程可能同时重算（解析纯函数——结果逐字段一致），
     // 入表先入为准，双方返回值一致（§9.1 线程行"缓存内部同步"的实现口径）。
