@@ -7128,11 +7128,12 @@
       "id": "F-728",
       "source": "acc/wp-16-t16/1 验收记录 §10 建议级 S-2（origin/acc/wp-16-t16/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t16-20261011.md，记录提交 4e426de379f5201d18cec319d9d0727ae4959829，验收日期 2026-10-11，verdict=pass）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "WP-16-T16 验收 S-2（遗留观察）：gate-all.ps1 在 ui 单元 sdurws_ird_ui_test 的 ctest 执行处挂住逾 1 小时（实施提交如实登记未跑完、以 ird_gates 零命中为口径；T15 批同现象同口径）——非本任务引入的环境遗留现象，记录建议治理批定位该 ctest 挂住并闭环",
       "owner": "治理/门禁所有者",
-      "resolution": "治理批 2026-10-12 勘误：本条此前按 fixed 登记属误标——gate-all 第 4 步 fresh 冒烟树补跑（traceability/builds/gate-all-step4-makeup/，提交 1c586a1d）只覆盖配置＋构建两步（留痕 README 自述不含任何 ctest），而 gate-all.ps1:175-184 的第 4 步完整实现含逐目标 ctest，ui ctest 挂住的定位与闭环并未发生，fixed 与留痕直接矛盾。勘误口径：gate-all 第 4 步 fresh 冒烟树能力已由治理批 2026-10-12 补跑消账（traceability/builds/gate-all-step4-makeup/）；第 3 步/逐目标 ctest 的 ui 挂住定位与闭环仍 open，待专项。"
+      "resolution": "治理批 2026-10-12 勘误：本条此前按 fixed 登记属误标——gate-all 第 4 步 fresh 冒烟树补跑（traceability/builds/gate-all-step4-makeup/，提交 1c586a1d）只覆盖配置＋构建两步（留痕 README 自述不含任何 ctest），而 gate-all.ps1:175-184 的第 4 步完整实现含逐目标 ctest，ui ctest 挂住的定位与闭环并未发生，fixed 与留痕直接矛盾。勘误口径：gate-all 第 4 步 fresh 冒烟树能力已由治理批 2026-10-12 补跑消账（traceability/builds/gate-all-step4-makeup/）；第 3 步/逐目标 ctest 的 ui 挂住定位与闭环仍 open，待专项。【2026-10-12 治理批（pipeline5/redesign-main）专项修复】挂起类闭环＝gate-all 第 3/4 步逐目标 ctest 统一收口 Invoke-GateTest：①ctest -V --timeout（新参 -CTestTimeoutSec，默认 600 s）——挂住进程有界终止、不再无限期阻塞门禁；②ctest -V 全量输出落盘运行日志目录（%TEMP%/ird-gate-logs-<PID>-<时点>/，失败保留、成功自清理——F-628 同族口径）；③超时（输出含 ***Timeout）后自动直跑对照：exe 路径自 CTestTestfile Release 分支 add_test 行解析（Find-TestExePath），-DirectTimeoutSec（默认 300 s）有界等待、挂住即强杀；对照 exit 0 → FAIL＋\"测试本体绿、ctest 上下文缺陷\"归因（不静默放行——ctest 为 CI/验收规范执行通道）；对照亦挂住 → 强杀＋FAIL＋DLL/环境归因；对照 0xC0000135 族且 python313.dll 不可达 → F-715 SKIP＋归因口径不变；其余非零 → FAIL＋双退出码。分支序要点：***Timeout 判定先于退出码 8 的 F-715 SKIP——实测超时击杀的 ctest 退出码同为 8（见下证据），顺序错置会把超时误判为 DLL 缺失 SKIP。根因定位（沿 F-789 证据链 audit/tkt12-investigation/）：挂起＝加载期 DLL 缺失（python313.dll→zlib.dll 依赖未入 PATH）在交互会话呈模态等待，TK-T12 的 PATH 前置注入已消除常见成因，本修复对残余挂起类给出有界失败＋归因＋全量日志的确定性出口。验证：gate-all.ps1 pwsh 解析器零语法错误；ctest 新旗标实测（既有集成树、零编译）——core_test -V --timeout 600 正常通过（EXIT=0，0.52 s）；ui_test --timeout 1 有界击杀（EXIT=8、墙钟 1 s、日志含 ***Timeout——超时机制与检测标记双重实证）；Find-TestExePath 对 ui 目录两测试均解析出正确 Release exe 路径。如实注明：Invoke-GateTest 的端到端组装留痕待下次全量 gate-all 产品构建时产出（本治理批零产品构建，构建面未执行）。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-729",
