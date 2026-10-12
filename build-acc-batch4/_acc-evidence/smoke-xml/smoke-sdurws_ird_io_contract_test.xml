@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="9" failures="2" disabled="0" errors="0" time="0.562" timestamp="2026-10-13T00:59:48.724" name="AllTests">
+  <testsuite name="IoPackContractTest" tests="9" failures="2" disabled="0" skipped="0" errors="0" time="0.561" timestamp="2026-10-13T00:59:48.725">
+    <testcase name="ExportConcurrentWriteRereadsStableVersion" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="538" status="run" result="completed" time="0.053" timestamp="2026-10-13T00:59:48.725" classname="IoPackContractTest" />
+    <testcase name="ExportConcurrentWritePersistentFailureLeavesNoTarget" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="590" status="run" result="completed" time="0.002" timestamp="2026-10-13T00:59:48.778" classname="IoPackContractTest" />
+    <testcase name="DiskFullReportsRequiredAvailableAndCleansUp" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="627" status="run" result="completed" time="0.023" timestamp="2026-10-13T00:59:48.781" classname="IoPackContractTest" />
+    <testcase name="CleanupFailedListsResiduesAndRetrySucceeds" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="672" status="run" result="completed" time="0.036" timestamp="2026-10-13T00:59:48.805" classname="IoPackContractTest" />
+    <testcase name="ExportCommitFailureLeavesNoTargetFile" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="735" status="run" result="completed" time="0.029" timestamp="2026-10-13T00:59:48.841" classname="IoPackContractTest" />
+    <testcase name="ExportFailurePreservesPreviousCompletePack" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="762" status="run" result="completed" time="0.045" timestamp="2026-10-13T00:59:48.871" classname="IoPackContractTest" />
+    <testcase name="BackgroundImportKeepsUiThreadResponsive" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="799" status="run" result="completed" time="0.26" timestamp="2026-10-13T00:59:48.917" classname="IoPackContractTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp:220&#x0A;Expected equality of these values:&#x0A;  zip_close(za)&#x0A;    Which is: -1&#x0A;  0&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp:220
+Expected equality of these values:
+  zip_close(za)
+    Which is: -1
+  0
+]]></failure>
+    </testcase>
+    <testcase name="CommittedVsStagedOnlySnapshotEntriesPacked" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="865" status="run" result="completed" time="0.03" timestamp="2026-10-13T00:59:49.178" classname="IoPackContractTest" />
+    <testcase name="FailureScenariosNeverCreateTargetDirectory" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp" line="939" status="run" result="completed" time="0.078" timestamp="2026-10-13T00:59:49.208" classname="IoPackContractTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp:209&#x0A;Expected: (za) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp:209
+Expected: (za) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp:1109&#x0A;Expected equality of these values:&#x0A;  verified.error.code&#x0A;    Which is: 2-byte object &lt;2D-00&gt;&#x0A;  IoErrorCode::PackDiskFull&#x0A;    Which is: 2-byte object &lt;36-00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp:1109
+Expected equality of these values:
+  verified.error.code
+    Which is: 2-byte object <2D-00>
+  IoErrorCode::PackDiskFull
+    Which is: 2-byte object <36-00>
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

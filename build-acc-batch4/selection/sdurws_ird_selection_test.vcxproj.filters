@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\TestMainReport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\DiagCodesTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BuildRedLineTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\CatalogImportTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\CapabilityCurveTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\CatalogLockTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningMotorTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\ScreeningGearboxTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\CombinationBuilderTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\CombinationCheckTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\CombinationCheckCodecTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\CombinationCheckEvaluatorTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\FeasibleSetTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\PreferenceFilterTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\CatalogDiffTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\AxisOutOfScopeTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\SelPluginPanelTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\SelGoldenDatasetTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\LinearDriveCatalogTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\LinearDriveScreeningTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{89C41E71-3C78-368F-A466-12189F6D1E59}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

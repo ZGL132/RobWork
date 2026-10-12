@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1E67A99C-E5BF-3A29-B0B7-1D2FBEFBE1C3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>sdurws_ird_project_contract_test_report</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\CMakeFiles\530607645ac642554958400c67bbcb91\sdurws_ird_project_contract_test_report.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ird: run sdurws_ird_project_contract_test and write gtest XML report</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -E make_directory D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/gtest_reports
+if %errorlevel% neq 0 goto :cmEnd
+Debug\sdurws_ird_project_contract_test.exe --gtest_output=xml:D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/gtest_reports/sdurws_ird_project_contract_test.xml
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\Debug\sdurws_ird_project_contract_test.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\sdurws_ird_project_contract_test_report</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ird: run sdurws_ird_project_contract_test and write gtest XML report</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -E make_directory D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/gtest_reports
+if %errorlevel% neq 0 goto :cmEnd
+Release\sdurws_ird_project_contract_test.exe --gtest_output=xml:D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/gtest_reports/sdurws_ird_project_contract_test.xml
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\Release\sdurws_ird_project_contract_test.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\sdurws_ird_project_contract_test_report</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">ird: run sdurws_ird_project_contract_test and write gtest XML report</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -E make_directory D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/gtest_reports
+if %errorlevel% neq 0 goto :cmEnd
+MinSizeRel\sdurws_ird_project_contract_test.exe --gtest_output=xml:D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/gtest_reports/sdurws_ird_project_contract_test.xml
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\MinSizeRel\sdurws_ird_project_contract_test.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\sdurws_ird_project_contract_test_report</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">ird: run sdurws_ird_project_contract_test and write gtest XML report</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -E make_directory D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/gtest_reports
+if %errorlevel% neq 0 goto :cmEnd
+RelWithDebInfo\sdurws_ird_project_contract_test.exe --gtest_output=xml:D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/gtest_reports/sdurws_ird_project_contract_test.xml
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\RelWithDebInfo\sdurws_ird_project_contract_test.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\sdurws_ird_project_contract_test_report</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -SD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -BD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4 --check-stamp-file D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfig.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfigVersion.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-debug.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-release.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets.cmake;D:\software\CMake\share\cmake-4.3\Modules\CMakeFindDependencyMacro.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -SD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -BD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4 --check-stamp-file D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfig.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfigVersion.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-debug.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-release.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets.cmake;D:\software\CMake\share\cmake-4.3\Modules\CMakeFindDependencyMacro.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -SD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -BD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4 --check-stamp-file D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfig.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfigVersion.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-debug.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-release.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets.cmake;D:\software\CMake\share\cmake-4.3\Modules\CMakeFindDependencyMacro.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -SD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -BD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4 --check-stamp-file D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/project/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfig.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfigVersion.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-debug.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-release.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets.cmake;D:\software\CMake\share\cmake-4.3\Modules\CMakeFindDependencyMacro.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\CMakeFiles\sdurws_ird_project_contract_test_report">
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\ZERO_CHECK.vcxproj">
+      <Project>{93D5BE40-6A5B-301B-B310-833CEE5C9AE6}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\project\sdurws_ird_project_contract_test.vcxproj">
+      <Project>{F0DD43F9-93C3-30EF-BD84-460E51E1602D}</Project>
+      <Name>sdurws_ird_project_contract_test</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

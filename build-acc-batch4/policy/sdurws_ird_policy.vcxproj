@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5D0E9F7C-1F31-323C-B056-CF5CFD44F644}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <VcpkgEnabled>false</VcpkgEnabled>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>sdurws_ird_policy</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="do_not_import_user.props" Condition="exists('do_not_import_user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\policy\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">sdurws_ird_policy.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">sdurws_ird_policy</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\policy\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">sdurws_ird_policy.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">sdurws_ird_policy</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\policy\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">sdurws_ird_policy.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">sdurws_ird_policy</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\policy\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">sdurws_ird_policy.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">sdurws_ird_policy</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /utf-8</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NOMINMAX;WIN32_LEAN_AND_MEAN;WIN32;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;NOMINMAX;WIN32_LEAN_AND_MEAN;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /utf-8</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NOMINMAX;WIN32_LEAN_AND_MEAN;WIN32;NDEBUG;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;NOMINMAX;WIN32_LEAN_AND_MEAN;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /utf-8</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NOMINMAX;WIN32_LEAN_AND_MEAN;WIN32;NDEBUG;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;NOMINMAX;WIN32_LEAN_AND_MEAN;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /utf-8</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NOMINMAX;WIN32_LEAN_AND_MEAN;WIN32;NDEBUG;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;NOMINMAX;WIN32_LEAN_AND_MEAN;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\include;D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -SD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -BD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4 --check-stamp-file D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/policy/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfig.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfigVersion.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-debug.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-release.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets.cmake;D:\software\CMake\share\cmake-4.3\Modules\CMakeFindDependencyMacro.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\policy\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -SD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -BD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4 --check-stamp-file D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/policy/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfig.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfigVersion.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-debug.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-release.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets.cmake;D:\software\CMake\share\cmake-4.3\Modules\CMakeFindDependencyMacro.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\policy\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -SD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -BD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4 --check-stamp-file D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/policy/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfig.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfigVersion.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-debug.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-release.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets.cmake;D:\software\CMake\share\cmake-4.3\Modules\CMakeFindDependencyMacro.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\policy\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+D:\software\CMake\bin\cmake.exe -SD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -BD:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4 --check-stamp-file D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/policy/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfig.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestConfigVersion.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-debug.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets-release.cmake;D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\share\gtest\GTestTargets.cmake;D:\software\CMake\share\cmake-4.3\Modules\CMakeFindDependencyMacro.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\policy\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\src\Policy.cpp" />
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\src\Errors.cpp" />
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\src\Diagnostics.cpp" />
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\src\PolicyInput.cpp" />
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\src\PolicyParsing.cpp" />
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\src\PolicyPort.cpp" />
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\src\SystemDefaultPolicy.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\ZERO_CHECK.vcxproj">
+      <Project>{93D5BE40-6A5B-301B-B310-833CEE5C9AE6}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\core\sdurws_ird_core.vcxproj">
+      <Project>{B9E62551-107C-3CB7-B6BE-8363D281F225}</Project>
+      <Name>sdurws_ird_core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

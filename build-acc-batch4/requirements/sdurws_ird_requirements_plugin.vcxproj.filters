@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\requirements\sdurws_ird_requirements_plugin_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\PanelTreeModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\PanelStationModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\PanelRegionModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\PanelConditionModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\PanelValidationModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\PanelCommandCatalog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\PanelEditFlow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\ImportWizardFlow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\RequirementsCommandFlows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\HostMigrationProviders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\RequirementsPanelWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\RequirementsUiModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\RequirementsPluginAssembly.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\requirements\sdurws_ird_requirements_plugin_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\requirements\sdurws_ird_requirements_plugin_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\requirements\sdurws_ird_requirements_plugin_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\RequirementsPanelWidget.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2B5B758C-D8D4-3456-B568-1421C72B27A7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{89C41E71-3C78-368F-A466-12189F6D1E59}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

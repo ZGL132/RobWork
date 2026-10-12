@@ -1,0 +1,8 @@
+  [ird_gates] 閼奉亝绁 pass_clean閿涙艾鍏遍崙鈧婢剁懓鍙块柅姘崇箖閿涘牊妫ょ拠顖涘Г閿?[ird_gates] 閼奉亝绁 pass_r4comment閿涙艾鍏遍崙鈧婢剁懓鍙块柅姘崇箖閿涘牊妫ょ拠顖涘Г閿?[ird_gates] 閼奉亝绁 pass_r4cliff閿涙艾鍏遍崙鈧婢剁懓鍙块柅姘崇箖閿涘牊妫ょ拠顖涘Г閿?[ird_gates] 閼奉亝绁 fail_r4cliff閿涙碍瀵滄０鍕婀″Λ鈧閸?IRD-GATE-R4
+  [ird_gates] 閼奉亝绁 fail_r1閿涙碍瀵滄０鍕婀″Λ鈧閸?IRD-GATE-R1
+  [ird_gates] 閼奉亝绁 fail_t1閿涙碍瀵滄０鍕婀″Λ鈧閸?IRD-GATE-T1
+  [ird_gates] 閼奉亝绁 fail_r5閿涙碍瀵滄０鍕婀″Λ鈧閸?IRD-GATE-R5
+  [ird_gates] 閼奉亝绁 fail_sub閿涙碍瀵滄０鍕婀″Λ鈧閸?IRD-GATE-SUB
+  [ird_gates] 閼奉亝绁 fail_r3閿涙碍瀵滄０鍕婀″Λ鈧閸?IRD-GATE-R3
+  [ird_gates] 閼奉亝绁 fail_r4閿涙碍瀵滄０鍕婀″Λ鈧閸?IRD-GATE-R4
+  [ird_gates] 閼奉亝绁 fail_t2閿涙碍瀵滄０鍕婀″Λ鈧閸?IRD-GATE-T2

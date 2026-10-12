@@ -1,0 +1,8 @@
+# CMake generation dependency list for this directory.
+D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestConfig.cmake
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestConfigVersion.cmake
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-debug.cmake
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake
+D:/software/CMake/share/cmake-4.3/Modules/CMakeFindDependencyMacro.cmake

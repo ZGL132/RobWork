@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="77" failures="26" disabled="0" errors="0" time="2.38" timestamp="2026-10-13T01:01:04.816" name="AllTests">
+  <testsuite name="WfBuildGraph" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.01" timestamp="2026-10-13T01:01:04.816">
+    <testcase name="UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\BuildGraphContractTest.cpp" line="155" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:04.816" classname="WfBuildGraph" />
+    <testcase name="EightRegisteredEdgesPresent_WP22T02_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\BuildGraphContractTest.cpp" line="198" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:04.817" classname="WfBuildGraph" />
+    <testcase name="NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\BuildGraphContractTest.cpp" line="222" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:04.817" classname="WfBuildGraph" />
+    <testcase name="NoTestkitEdgeOnProductTarget_WP22T02_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\BuildGraphContractTest.cpp" line="251" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:04.819" classname="WfBuildGraph" />
+    <testcase name="IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\BuildGraphContractTest.cpp" line="289" status="run" result="completed" time="0.006" timestamp="2026-10-13T01:01:04.820" classname="WfBuildGraph" />
+  </testsuite>
+  <testsuite name="WfPluginRegistration" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-13T01:01:04.827">
+    <testcase name="AssemblyRegistersOkOnWhitelist_WP22T02_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp" line="69" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:04.827" classname="WfPluginRegistration" />
+    <testcase name="DescriptorMatchesMinimalForm_WP22T02_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp" line="112" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:04.827" classname="WfPluginRegistration" />
+    <testcase name="WhitelistAndDuplicateRejected_WP22T02_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp" line="151" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:04.827" classname="WfPluginRegistration" />
+  </testsuite>
+  <testsuite name="WfGateContract" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.014" timestamp="2026-10-13T01:01:04.827">
+    <testcase name="GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateContractTest.cpp" line="182" status="run" result="completed" time="0.006" timestamp="2026-10-13T01:01:04.827" classname="WfGateContract" />
+    <testcase name="WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateContractTest.cpp" line="258" status="run" result="completed" time="0.003" timestamp="2026-10-13T01:01:04.833" classname="WfGateContract" />
+    <testcase name="ProjectionOwnershipStaysWithUi_WP22T03_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateContractTest.cpp" line="299" status="run" result="completed" time="0.004" timestamp="2026-10-13T01:01:04.837" classname="WfGateContract" />
+    <testcase name="InvalidationHintIsPureValueData_WP22T03_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateContractTest.cpp" line="333" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:04.841" classname="WfGateContract" />
+  </testsuite>
+  <testsuite name="NewProjectWizardContract" tests="8" failures="6" disabled="0" skipped="0" errors="0" time="0.195" timestamp="2026-10-13T01:01:04.842">
+    <testcase name="WF_VER_201_TemplateMainlineCreatesBaselineRevision" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp" line="259" status="run" result="completed" time="0.054" timestamp="2026-10-13T01:01:04.842" classname="NewProjectWizardContract">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp:271&#x0A;Value of: outcome.created&#x0A;  Actual: false&#x0A;Expected: true&#x0A;模板主线创建失败&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp:271
+Value of: outcome.created
+  Actual: false
+Expected: true
+模板主线创建失败
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_201_UrdfSourceRegistersReadOnlyBaseline" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp" line="306" status="run" result="completed" time="0.026" timestamp="2026-10-13T01:01:04.897" classname="NewProjectWizardContract">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp:314&#x0A;Value of: outcome.created&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp:314
+Value of: outcome.created
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_201_BlankMainlineStopsAtR0" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp" line="330" status="run" result="completed" time="0.017" timestamp="2026-10-13T01:01:04.923" classname="NewProjectWizardContract">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp:345&#x0A;Value of: outcome.created&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp:345
+Value of: outcome.created
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_202_CancelBeforeConfirmLeavesNothing" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp" line="366" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:04.941" classname="NewProjectWizardContract" />
+    <testcase name="WF_VER_203_DomainInitFailureCleansAndKeepsInputs" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp" line="397" status="run" result="completed" time="0.09" timestamp="2026-10-13T01:01:04.941" classname="NewProjectWizardContract">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp:416&#x0A;Expected: (outcome.failure-&gt;cause.find(&quot;注入&quot;)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615&#x0A;失败原因应承载提交端口的原因半区（吞错即假绿）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp:416
+Expected: (outcome.failure->cause.find("注入")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+失败原因应承载提交端口的原因半区（吞错即假绿）
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_203_CreateNewFailurePresentsAndRetries" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp" line="447" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:05.031" classname="NewProjectWizardContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;workflow/caller-contract: commit: 输入未过全量校验（首错 wizard.new-project.error.directory-exists-nonempty）——步骤放行判定失效&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "workflow/caller-contract: commit: 输入未过全量校验（首错 wizard.new-project.error.directory-exists-nonempty）——步骤放行判定失效" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_204_ExternalHandlingBothWaysForwarded" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp" line="499" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:05.032" classname="NewProjectWizardContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;workflow/caller-contract: commit: 输入未过全量校验（首错 wizard.new-project.error.directory-exists-nonempty）——步骤放行判定失效&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "workflow/caller-contract: commit: 输入未过全量校验（首错 wizard.new-project.error.directory-exists-nonempty）——步骤放行判定失效" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_Port_ModelingNotDirectlyLinked" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\NewProjectWizardContractTest.cpp" line="561" status="run" result="completed" time="0.004" timestamp="2026-10-13T01:01:05.032" classname="NewProjectWizardContract" />
+  </testsuite>
+  <testsuite name="OpenWizardContract" tests="3" failures="1" disabled="0" skipped="0" errors="0" time="0.083" timestamp="2026-10-13T01:01:05.043">
+    <testcase name="WF_VER_205_FiveStepProtocolAllThreeSources" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\OpenWizardContractTest.cpp" line="134" status="run" result="completed" time="0.033" timestamp="2026-10-13T01:01:05.043" classname="OpenWizardContract" />
+    <testcase name="WF_VER_206_CorruptProjectFailsWithConcreteFileAndCurrentUntouched" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\OpenWizardContractTest.cpp" line="187" status="run" result="completed" time="0.048" timestamp="2026-10-13T01:01:05.077" classname="OpenWizardContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/open: HEAD 引用闭包完整性校验失败（定位细节见恢复诊断） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_open_contract_test\case2\corrupt.rwdesign&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/open: HEAD 引用闭包完整性校验失败（定位细节见恢复诊断） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_open_contract_test\case2\corrupt.rwdesign" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_206_NotAProjectPresentsContextAndGuidance" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\OpenWizardContractTest.cpp" line="275" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:05.125" classname="OpenWizardContract" />
+  </testsuite>
+  <testsuite name="CloseFlowContract" tests="7" failures="6" disabled="0" skipped="0" errors="0" time="0.163" timestamp="2026-10-13T01:01:05.127">
+    <testcase name="WF_VER_209_DialogDataPlaneAndCancelAbortsOverRealDrafts" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp" line="306" status="run" result="completed" time="0.013" timestamp="2026-10-13T01:01:05.127" classname="CloseFlowContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 就位失败 entry=objects osError=2&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 就位失败 entry=objects osError=2" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_210_WaitOptionDrainsArchiveThenContextClosed" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp" line="388" status="run" result="completed" time="0.048" timestamp="2026-10-13T01:01:05.140" classname="CloseFlowContract" />
+    <testcase name="WF_VER_211_CooperativeCancelReachesDrainedClose" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp" line="462" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:05.189" classname="CloseFlowContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 目标目录非空 path=C:\Users\zgl18\AppData\Local\Temp\ird_wf_close_contract_test\case3\a.rwdesign&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 目标目录非空 path=C:\Users\zgl18\AppData\Local\Temp\ird_wf_close_contract_test\case3\a.rwdesign" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_212_SchemeSwitchCancelPathZeroWrite" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp" line="503" status="run" result="completed" time="0.018" timestamp="2026-10-13T01:01:05.189" classname="CloseFlowContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/open: project.json 缺失（非项目目录） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_close_contract_test\case4\p.rwdesign&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/open: project.json 缺失（非项目目录） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_close_contract_test\case4\p.rwdesign" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="WF_VER_212_SchemeSwitchProceedPathZeroWrite" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp" line="552" status="run" result="completed" time="0.018" timestamp="2026-10-13T01:01:05.208" classname="CloseFlowContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/open: project.json 缺失（非项目目录） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_close_contract_test\case5\p.rwdesign&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/open: project.json 缺失（非项目目录） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_close_contract_test\case5\p.rwdesign" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="SwitchCandidateSuccessClosesCurrentAndHandsOver" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp" line="600" status="run" result="completed" time="0.02" timestamp="2026-10-13T01:01:05.226" classname="CloseFlowContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 就位失败 entry=objects osError=183&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 就位失败 entry=objects osError=183" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="SwitchCandidateCorruptFailsAndCurrentUntouched" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp" line="643" status="run" result="completed" time="0.044" timestamp="2026-10-13T01:01:05.247" classname="CloseFlowContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 就位失败 entry=HEAD osError=5&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 就位失败 entry=HEAD osError=5" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="SaveAsPackageContract" tests="6" failures="3" disabled="0" skipped="0" errors="0" time="0.094" timestamp="2026-10-13T01:01:05.293">
+    <testcase name="SaveAs_EntersNewProject_ViaOpenProtocol_P05_AT20" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp" line="804" status="run" result="completed" time="0.003" timestamp="2026-10-13T01:01:05.293" classname="SaveAsPackageContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/object-store: mkdir path=C:\Users\zgl18\AppData\Local\Temp\ird_wf_saveas_contract_test\case1\source-design.new-23656-15\objects ec=3&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/object-store: mkdir path=C:\Users\zgl18\AppData\Local\Temp\ird_wf_saveas_contract_test\case1\source-design.new-23656-15\objects ec=3" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="SaveAs_Cancelled_TargetLeftClean_AT20" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp" line="858" status="run" result="completed" time="0.02" timestamp="2026-10-13T01:01:05.297" classname="SaveAsPackageContract" />
+    <testcase name="Export_RealZipArtifact_SourceUntouched_P05" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp" line="891" status="run" result="completed" time="0.043" timestamp="2026-10-13T01:01:05.317" classname="SaveAsPackageContract" />
+    <testcase name="Export_Cancelled_TargetUntouched_P05" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp" line="925" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:05.361" classname="SaveAsPackageContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 目标目录非空 path=C:\Users\zgl18\AppData\Local\Temp\ird_wf_saveas_contract_test\case4\source-design&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 目标目录非空 path=C:\Users\zgl18\AppData\Local\Temp\ird_wf_saveas_contract_test\case4\source-design" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="Import_PathTraversalRejected_NoTarget_P05" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp" line="958" status="run" result="completed" time="0.007" timestamp="2026-10-13T01:01:05.362" classname="SaveAsPackageContract" />
+    <testcase name="Import_ExportedPackRoundTrip_VerifiedPublished_P05" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp" line="1001" status="run" result="completed" time="0.017" timestamp="2026-10-13T01:01:05.370" classname="SaveAsPackageContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 就位失败 entry=objects osError=183&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 就位失败 entry=objects osError=183" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReconnectReadOnlyContract" tests="7" failures="6" disabled="0" skipped="0" errors="0" time="0.123" timestamp="2026-10-13T01:01:05.396">
+    <testcase name="LegacySchemaVersion_Rejected_GuidanceDiag_FileUntouched_P06_AT20" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp" line="356" status="run" result="completed" time="0.022" timestamp="2026-10-13T01:01:05.396" classname="ReconnectReadOnlyContract">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp:395&#x0A;Expected equality of these values:&#x0A;  snapshotTree(dir)&#x0A;    Which is: { (&quot;revisions\\rev-fd6f7dcb5492c885eb739766edb56e94\\manifest.json&quot;, 677) }&#x0A;  before&#x0A;    Which is: { (&quot;HEAD&quot;, 298), (&quot;objects\\obj-b95b2fedf6ccc2127a990f18e35e79b8\\20e864e9bf937485f258787f0d1d017ed6ec090ffadcf3ac77699de630a2736a&quot;, 456), (&quot;project.json&quot;, 189), (&quot;revisions\\rev-fd6f7dcb5492c885eb739766edb56e94\\command.json&quot;, 148), (&quot;revisions\\rev-fd6f7dcb5492c885eb739766edb56e94\\manifest.json&quot;, 677) }&#x0A;旧格式拒绝后项目目录不得有任何文件变化（PM-06/AT-20）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp:395
+Expected equality of these values:
+  snapshotTree(dir)
+    Which is: { ("revisions\\rev-fd6f7dcb5492c885eb739766edb56e94\\manifest.json", 677) }
+  before
+    Which is: { ("HEAD", 298), ("objects\\obj-b95b2fedf6ccc2127a990f18e35e79b8\\20e864e9bf937485f258787f0d1d017ed6ec090ffadcf3ac77699de630a2736a", 456), ("project.json", 189), ("revisions\\rev-fd6f7dcb5492c885eb739766edb56e94\\command.json", 148), ("revisions\\rev-fd6f7dcb5492c885eb739766edb56e94\\manifest.json", 677) }
+旧格式拒绝后项目目录不得有任何文件变化（PM-06/AT-20）
+]]></failure>
+    </testcase>
+    <testcase name="FutureSchemaVersion_Rejected_ThreeKeysGuidance_P06" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp" line="402" status="run" result="completed" time="0.019" timestamp="2026-10-13T01:01:05.418" classname="ReconnectReadOnlyContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/open: project.json 缺失（非项目目录） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_reconnect_contract_test\case2\future-design&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/open: project.json 缺失（非项目目录） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_reconnect_contract_test\case2\future-design" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="LegacyRwprojFile_RoutedUnknown_ZeroSideEffect_P06" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp" line="439" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:05.438" classname="ReconnectReadOnlyContract" />
+    <testcase name="SecondWriterDegradesReadOnly_PidNotice_SubmitRejected_P07" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp" line="479" status="run" result="completed" time="0.022" timestamp="2026-10-13T01:01:05.439" classname="ReconnectReadOnlyContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/open: HEAD 引用闭包完整性校验失败（定位细节见恢复诊断） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_reconnect_contract_test\case4\readonly-design&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/open: HEAD 引用闭包完整性校验失败（定位细节见恢复诊断） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_reconnect_contract_test\case4\readonly-design" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="LockRelease_RestoresWritable_P07" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp" line="567" status="run" result="completed" time="0.019" timestamp="2026-10-13T01:01:05.461" classname="ReconnectReadOnlyContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 就位失败 entry=objects osError=183&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 就位失败 entry=objects osError=183" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="Relink_ExplicitCommit_ProducesNewRevision_P09_AT21" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp" line="611" status="run" result="completed" time="0.021" timestamp="2026-10-13T01:01:05.481" classname="ReconnectReadOnlyContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/open: HEAD 引用闭包完整性校验失败（定位细节见恢复诊断） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_reconnect_contract_test\case6\relink-design&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/open: HEAD 引用闭包完整性校验失败（定位细节见恢复诊断） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_reconnect_contract_test\case6\relink-design" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="RelinkFailedOrNotNeeded_NoProjectMutation_P09" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ReconnectReadOnlyContractTest.cpp" line="669" status="run" result="completed" time="0.017" timestamp="2026-10-13T01:01:05.502" classname="ReconnectReadOnlyContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 就位失败 entry=objects osError=183&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 就位失败 entry=objects osError=183" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="StatusBannerContract" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="0.068" timestamp="2026-10-13T01:01:05.522">
+    <testcase name="ThreeScenarios_RealRecovery_CatalogFolded_BannerData_P15_AT21" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\StatusBannerContractTest.cpp" line="437" status="run" result="completed" time="0.018" timestamp="2026-10-13T01:01:05.523" classname="StatusBannerContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/createNew: 就位失败 entry=objects osError=183&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/createNew: 就位失败 entry=objects osError=183" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="TitleSources_FromRealStore_QueryFace_P11" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\StatusBannerContractTest.cpp" line="583" status="run" result="completed" time="0.02" timestamp="2026-10-13T01:01:05.541" classname="StatusBannerContract" />
+    <testcase name="ReadOnlyDegraded_TitleSuffix_DiscardGate_P11_P15" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\StatusBannerContractTest.cpp" line="656" status="run" result="completed" time="0.029" timestamp="2026-10-13T01:01:05.561" classname="StatusBannerContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;project/open: HEAD 引用闭包完整性校验失败（定位细节见恢复诊断） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_status_banner_contract_test\case3\readonly-p11.rwdesign&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "project/open: HEAD 引用闭包完整性校验失败（定位细节见恢复诊断） path=\\?\C:\Users\zgl18\AppData\Local\Temp\ird_wf_status_banner_contract_test\case3\readonly-p11.rwdesign" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="WfSettingsContract" tests="5" failures="2" disabled="0" skipped="0" errors="0" time="0.02" timestamp="2026-10-13T01:01:05.591">
+    <testcase name="CanonicalBytesMatchIoCanonicalize" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SettingsContractTest.cpp" line="174" status="run" result="completed" time="0.002" timestamp="2026-10-13T01:01:05.591" classname="WfSettingsContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;workflow/caller-contract: store: 设置写出失败（IO-RES-ACCESS-DENIED (json write: atomic replace failed: �ܾ����ʡ�)）——先前文件保持原状（io 原子写出语义）&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "workflow/caller-contract: store: 设置写出失败（IO-RES-ACCESS-DENIED (json write: atomic replace failed: �ܾ����ʡ�)）——先前文件保持原状（io 原子写出语义）" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="RoundTripViaIoSyntaxReader" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SettingsContractTest.cpp" line="206" status="run" result="completed" time="0.002" timestamp="2026-10-13T01:01:05.593" classname="WfSettingsContract">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;workflow/caller-contract: store: 设置写出失败（IO-RES-ACCESS-DENIED (json write: atomic replace failed: ��һ����������ʹ�ô��ļ��������޷����ʡ�)）——先前文件保持原状（io 原子写出语义）&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "workflow/caller-contract: store: 设置写出失败（IO-RES-ACCESS-DENIED (json write: atomic replace failed: ��һ����������ʹ�ô��ļ��������޷����ʡ�)）——先前文件保持原状（io 原子写出语义）" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="WriteFailurePreservesPreviousFileAtomically" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SettingsContractTest.cpp" line="268" status="run" result="completed" time="0.008" timestamp="2026-10-13T01:01:05.595" classname="WfSettingsContract" />
+    <testcase name="StoreLeavesNoResidueInDirectory" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SettingsContractTest.cpp" line="323" status="run" result="completed" time="0.002" timestamp="2026-10-13T01:01:05.604" classname="WfSettingsContract" />
+    <testcase name="LoadDiagnosticsCarryWorkflowChannel" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\SettingsContractTest.cpp" line="345" status="run" result="completed" time="0.004" timestamp="2026-10-13T01:01:05.607" classname="WfSettingsContract" />
+  </testsuite>
+  <testsuite name="ComparisonContract" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.205" timestamp="2026-10-13T01:01:05.612">
+    <testcase name="Compare_RealSchemeBranches_WF_VER_224" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ComparisonContractTest.cpp" line="320" status="run" result="completed" time="0.054" timestamp="2026-10-13T01:01:05.612" classname="ComparisonContract" />
+    <testcase name="HighlightDiffersOnValueDelta_WF_VER_224" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ComparisonContractTest.cpp" line="398" status="run" result="completed" time="0.037" timestamp="2026-10-13T01:01:05.666" classname="ComparisonContract" />
+    <testcase name="RejectsInconsistentBaseline_WF_VER_225" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ComparisonContractTest.cpp" line="433" status="run" result="completed" time="0.04" timestamp="2026-10-13T01:01:05.704" classname="ComparisonContract" />
+    <testcase name="UnknownBranchFailsFast_PresentTense" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ComparisonContractTest.cpp" line="475" status="run" result="completed" time="0.016" timestamp="2026-10-13T01:01:05.744" classname="ComparisonContract" />
+    <testcase name="Popt8WarningPassThroughAndDegradedChannel" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\ComparisonContractTest.cpp" line="494" status="run" result="completed" time="0.056" timestamp="2026-10-13T01:01:05.760" classname="ComparisonContract" />
+  </testsuite>
+  <testsuite name="CommandsContract" tests="8" failures="0" disabled="0" skipped="0" errors="0" time="0.221" timestamp="2026-10-13T01:01:05.817">
+    <testcase name="Registration_AllFourteen_Ok_PaletteListsAll_UX13_F5" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CommandsContractTest.cpp" line="392" status="run" result="completed" time="0.017" timestamp="2026-10-13T01:01:05.817" classname="CommandsContract" />
+    <testcase name="PaletteFuzzySearch_ReachesEveryCommand_UX13_F5" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CommandsContractTest.cpp" line="416" status="run" result="completed" time="0.018" timestamp="2026-10-13T01:01:05.834" classname="CommandsContract" />
+    <testcase name="DuplicateRegistration_RejectedAtBoundary_NotOverwritten" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CommandsContractTest.cpp" line="463" status="run" result="completed" time="0.021" timestamp="2026-10-13T01:01:05.853" classname="CommandsContract" />
+    <testcase name="ResetHomeZero_ZeroRevisionEndToEnd_KIN06" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CommandsContractTest.cpp" line="496" status="run" result="completed" time="0.02" timestamp="2026-10-13T01:01:05.875" classname="CommandsContract" />
+    <testcase name="UndoRedo_ProducesNewRevisions_HistoryAppendOnly_P18_AT29" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CommandsContractTest.cpp" line="537" status="run" result="completed" time="0.085" timestamp="2026-10-13T01:01:05.895" classname="CommandsContract" />
+    <testcase name="UndoRedo_EmptyHistory_StableNotice_NoCrash_P18" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CommandsContractTest.cpp" line="580" status="run" result="completed" time="0.022" timestamp="2026-10-13T01:01:05.981" classname="CommandsContract" />
+    <testcase name="Contributor_InterfaceDispatch_FourteenCommands_BindableAll_SA16" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CommandsContractTest.cpp" line="612" status="run" result="completed" time="0.015" timestamp="2026-10-13T01:01:06.004" classname="CommandsContract" />
+    <testcase name="Descriptors_FrozenRows_GoldenFieldsPerUiTable" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CommandsContractTest.cpp" line="640" status="run" result="completed" time="0.018" timestamp="2026-10-13T01:01:06.020" classname="CommandsContract" />
+  </testsuite>
+  <testsuite name="WfGateAdviceFixture" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.006" timestamp="2026-10-13T01:01:06.039">
+    <testcase name="ManifestRegistered_WP22T13_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp" line="363" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:06.039" classname="WfGateAdviceFixture" />
+    <testcase name="GateReplay_MatchesGolden_WP22T13_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp" line="428" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:06.041" classname="WfGateAdviceFixture" />
+    <testcase name="AdviceReplay_MatchesGolden_WP22T13_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp" line="487" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:06.042" classname="WfGateAdviceFixture" />
+    <testcase name="InvalidationMapping_MatchesGolden_WP22T13_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp" line="562" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:06.043" classname="WfGateAdviceFixture" />
+    <testcase name="DeterministicReplay_DoubleRunIdentical_WP22T13_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp" line="656" status="run" result="completed" time="0.001" timestamp="2026-10-13T01:01:06.045" classname="WfGateAdviceFixture" />
+    <testcase name="ToleranceProfileZeroToleranceChannel_WP22T13_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp" line="714" status="run" result="completed" time="0." timestamp="2026-10-13T01:01:06.046" classname="WfGateAdviceFixture" />
+  </testsuite>
+  <testsuite name="InFlightArchiveContract" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.042" timestamp="2026-10-13T01:01:06.047">
+    <testcase name="WF_VER_210_EndToEndInFlightArchiveWaitedBeforeClose" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\InFlightArchiveContractTest.cpp" line="526" status="run" result="completed" time="0.018" timestamp="2026-10-13T01:01:06.047" classname="InFlightArchiveContract" />
+    <testcase name="WF_VER_211_EndToEndCooperativeCancelReachesClosed" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\InFlightArchiveContractTest.cpp" line="613" status="run" result="completed" time="0.024" timestamp="2026-10-13T01:01:06.065" classname="InFlightArchiveContract" />
+  </testsuite>
+  <testsuite name="LifeCycleMainlineContract" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.311" timestamp="2026-10-13T01:01:06.089">
+    <testcase name="WF_VER_227_FullMainlineNewEditApplyUndoRedoPackageSaveAs" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\LifeCycleMainlineContractTest.cpp" line="699" status="run" result="completed" time="0.31" timestamp="2026-10-13T01:01:06.089" classname="LifeCycleMainlineContract" />
+  </testsuite>
+  <testsuite name="HostAssemblyContract" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.773" timestamp="2026-10-13T01:01:06.418">
+    <testcase name="AssembledControllerClosesRealStoreThroughInterface" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\HostAssemblyContractTest.cpp" line="207" status="run" result="completed" time="0.022" timestamp="2026-10-13T01:01:06.418" classname="HostAssemblyContract" />
+    <testcase name="BackfillTranslateSubmitsAuthoritativeWriteViaCommandPort" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\HostAssemblyContractTest.cpp" line="388" status="run" result="completed" time="0.073" timestamp="2026-10-13T01:01:06.440" classname="HostAssemblyContract" />
+    <testcase name="CloseSupervisorForcesAbandonBoundedAndStoreCloses" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\HostAssemblyContractTest.cpp" line="573" status="run" result="completed" time="0.639" timestamp="2026-10-13T01:01:06.514" classname="HostAssemblyContract" />
+    <testcase name="StoreRecoveryFactAdapterFoldsRealCatalog" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\HostAssemblyContractTest.cpp" line="729" status="run" result="completed" time="0.037" timestamp="2026-10-13T01:01:07.154" classname="HostAssemblyContract" />
+  </testsuite>
+</testsuites>

@@ -8066,6 +8066,56 @@
       "registeredAt": "2026-10-12",
       "title": "框架 RobWorkStudioSetup 的 RWS_ENABLE_PYTHON/RWS_USE_PYTHON3 判定环境依赖（find_package(PythonLibs 3) 随操作员 PATH/注册表有无 python 运行库而成功或失败）：命中时 sdurws 静态库接口面携带 PYTHON_LIBRARIES 下游——消费测试可执行文件（实测 sdurws_ird_ui_test，r2work 树）自身导入 python313.dll（conda 发行形态又同目录相依 zlib.dll），无 PATH 供给即全上下文 0xC0000135（ctest 上下文＝挂起或退出码 8——S5/F-789 根因面）；未命中时 exe 无 python 依赖全绿——同批源码因 configure 环境差异分岔出两种加载面（主线并行构建实测无该导入），测试可执行文件加载面不可复现",
       "resolution": "处置建议：框架 SA-02 红线下评估——登记 patch 使 RWS_ENABLE_PYTHON 缺省显式化（如 industrialrobot 构建口径固定 -DRWS_ENABLE_PYTHON=OFF：DTB §5.1 fresh 树配置行登记）或框架侧声明/部署 python 运行库依赖；TK-T12 已在门禁层收口（-PythonDir 注入＋不可达 SKIP 归因），框架根因面的处置归所有者 patch 批裁决"
+    },
+    {
+      "id": "F-829",
+      "source": "平台服务域补全批独立对抗验收（2026-10-12，traceability/acceptance/platform-batch4-20261012.md 观察项 1）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-12",
+      "title": "DTB 文档版本双行并存与多重 v0.62 语义：头部同时存在 v0.63（TK-T12 批）与 v0.61（legacy state.json 批）两个『文档版本』行，且不同批次链文各自引用语义不同的 v0.62（O-09 批/WP-10-T05 批）——版本链冲突",
+      "resolution": "合入收尾批收敛为单行链：并行行删除，O-09 批登记并入 v0.64 头行（v0.64→v0.63→v0.62〔WP-10-T05 立项〕→v0.61〔legacy〕链序唯一递减、语义无歧义）；后续批次登记一律改写头行单链、不新增并行行。",
+      "fixedAt": "2026-10-12"
+    },
+    {
+      "id": "F-830",
+      "source": "平台服务域补全批独立对抗验收（2026-10-12，platform-batch4-20261012.md 观察项 2）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-12",
+      "title": "ARCHITECTURE.md 文档头版本行仍 v0.13，而变更记录已有 v0.14 行（O-09 裁决落地）——头部未随批链式 bump（同批其余五文档均已 bump）",
+      "resolution": "合入收尾批补头部链式 bump：v0.14（O-09 裁决落地——§3.5 两条协作边说明）→v0.13→v0.11 链式注记。",
+      "fixedAt": "2026-10-12"
+    },
+    {
+      "id": "F-831",
+      "source": "平台服务域补全批独立对抗验收（2026-10-12，platform-batch4-20261012.md 观察项 3）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-24-T02.json verify 数组 validate-task 条目为 DTB 相对路径位置参数形态（tasks/foundation/WP-24-T02.json），verify-task 执行器按仓库根解析 Test-Path 失败——机械不可执行（同批 PRJ-T17/T18 均已订正，本卡漏订正漏登记）",
+      "resolution": "合入收尾批订正为仓库根相对 -TaskFile 形态（PRJ-T17/T18/WP-16-T02/WP-19-T12 既有卡同款）；校验语义零变化，复跑 PASS。",
+      "fixedAt": "2026-10-12"
+    },
+    {
+      "id": "F-832",
+      "source": "平台服务域补全批独立对抗验收（2026-10-12，platform-batch4-20261012.md 观察项 4）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-24-T02.json forbiddenFiles 笔误条目『RobWork/RobWork/RobWorkStudio/src/**』（双前缀——路径永不命中，禁改框架守护失效一格）",
+      "resolution": "合入收尾批删除该笔误条目：禁改框架源码红线由 AGENTS SA-02 全局纪律＋验收框架 diff 核查（a82f58bc..HEAD 范围外路径零命中）承载；以宽路径入 forbiddenFiles 反而会误禁本契约 allowedFiles 的 industrialrobot 装配面。",
+      "fixedAt": "2026-10-12"
+    },
+    {
+      "id": "F-833",
+      "source": "平台服务域补全批独立对抗验收（2026-10-12，platform-batch4-20261012.md 观察项 5——同机并行双套全量测试批实测）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "industrialrobot 测试套件同机并行执行不隔离：libzip/原子替换类用例（io 系临时目录与 project publishNew 原子面）在并行全量批下出现文件竞争假失败（验收首轮 7 套次实测；隔离串行复跑 7/7 全绿）——测试自身零缺陷，串行口径（PIPE 既定）无影响",
+      "owner": "门禁/流水线所有者：登记并行执行禁用口径注记（PIPE 侧或 CI 文档一行），或在 io/project 测试临时目录加进程唯一后缀；不阻塞任何在途任务",
+      "resolution": "登记观察；验收记录已按隔离串行复跑口径留证"
     }
   ]
 }

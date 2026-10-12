@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\CMakeFiles\4825921c0dc1abe13b5511b7af0350fa\sdurws_ird_ui_gui_test_report.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-acc-batch4\ui\CMakeFiles\sdurws_ird_ui_gui_test_report" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{941441BB-C86A-398C-BCC8-F232FC8A75A0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

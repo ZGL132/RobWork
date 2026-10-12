@@ -1,0 +1,36 @@
+# CMake generated Testfile for 
+# Source directory: D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory
+# Build directory: D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+if(CTEST_CONFIGURATION_TYPE MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+  add_test(sdurws_ird_trajectory_test "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory/Debug/sdurws_ird_trajectory_test.exe")
+  set_tests_properties(sdurws_ird_trajectory_test PROPERTIES  LABELS "ird" _BACKTRACE_TRIPLES "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;530;add_test;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;543;ird_add_gtest;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+  add_test(sdurws_ird_trajectory_test "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory/Release/sdurws_ird_trajectory_test.exe")
+  set_tests_properties(sdurws_ird_trajectory_test PROPERTIES  LABELS "ird" _BACKTRACE_TRIPLES "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;530;add_test;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;543;ird_add_gtest;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+  add_test(sdurws_ird_trajectory_test "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory/MinSizeRel/sdurws_ird_trajectory_test.exe")
+  set_tests_properties(sdurws_ird_trajectory_test PROPERTIES  LABELS "ird" _BACKTRACE_TRIPLES "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;530;add_test;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;543;ird_add_gtest;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+  add_test(sdurws_ird_trajectory_test "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory/RelWithDebInfo/sdurws_ird_trajectory_test.exe")
+  set_tests_properties(sdurws_ird_trajectory_test PROPERTIES  LABELS "ird" _BACKTRACE_TRIPLES "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;530;add_test;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;543;ird_add_gtest;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;0;")
+else()
+  add_test(sdurws_ird_trajectory_test NOT_AVAILABLE)
+endif()
+if(CTEST_CONFIGURATION_TYPE MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+  add_test(sdurws_ird_trajectory_contract_test "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory/Debug/sdurws_ird_trajectory_contract_test.exe")
+  set_tests_properties(sdurws_ird_trajectory_contract_test PROPERTIES  LABELS "ird" _BACKTRACE_TRIPLES "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;530;add_test;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;689;ird_add_gtest;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+  add_test(sdurws_ird_trajectory_contract_test "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory/Release/sdurws_ird_trajectory_contract_test.exe")
+  set_tests_properties(sdurws_ird_trajectory_contract_test PROPERTIES  LABELS "ird" _BACKTRACE_TRIPLES "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;530;add_test;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;689;ird_add_gtest;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+  add_test(sdurws_ird_trajectory_contract_test "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory/MinSizeRel/sdurws_ird_trajectory_contract_test.exe")
+  set_tests_properties(sdurws_ird_trajectory_contract_test PROPERTIES  LABELS "ird" _BACKTRACE_TRIPLES "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;530;add_test;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;689;ird_add_gtest;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;0;")
+elseif(CTEST_CONFIGURATION_TYPE MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+  add_test(sdurws_ird_trajectory_contract_test "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/build-acc-batch4/trajectory/RelWithDebInfo/sdurws_ird_trajectory_contract_test.exe")
+  set_tests_properties(sdurws_ird_trajectory_contract_test PROPERTIES  LABELS "ird" _BACKTRACE_TRIPLES "D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;530;add_test;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;689;ird_add_gtest;D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt4/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt;0;")
+else()
+  add_test(sdurws_ird_trajectory_contract_test NOT_AVAILABLE)
+endif()
