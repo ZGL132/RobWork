@@ -50,7 +50,14 @@
 | 模式 | 命令面 | 结论 |
 | --- | --- | --- |
 | 集成模式 | `cmake --build build --config Release --target sdurws_ird_ui_plugin sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_ui_gui_test`（缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 构建前 grep 确认） | 零错误 |
-| 独立冒烟 | 全树 `C:/Users/zgl18/AppData/Local/Temp/build_smoke_t78-ui`（cmake -S industrialrobot＋vcpkg toolchain 绝对路径＋Qt prefix D:/software/Qt/6.11.1/msvc2022_64；全新目录） | 见 smoke-build.log |
+| 独立冒烟 | 全树 `C:/Users/zgl18/AppData/Local/Temp/build_smoke_t78-ui`（cmake -S industrialrobot＋vcpkg toolchain 绝对路径＋Qt prefix D:/software/Qt/6.11.1/msvc2022_64；全新目录；**自独立 worktree C:/Users/zgl18/AppData/Local/Temp/t05_wt 配置构建——与主工作树隔离**） | **exit 0 全树零错误**（smoke-build.log／smoke-configure.log） |
+
+**首轮冒烟作废说明（如实登记）**：首轮冒烟在主工作树直接构建，构建期间并行会话切换主工作树分支（wp10-t05→redesign-main 快进 8e494e59→7c645c09，reflog 实录）——构建跨树态（reporting 单测在 RPT-T16 合入前后源集混构）产生 LNK2019 假象，该轮日志作废未留痕；复跑＝提交 8b49e277 后于独立 worktree 全新配置构建，与主工作树任何后续动作隔离。
+
+**冒烟测试执行**（gated 用例按编列纪律不进冒烟——UI-T78 五用例全在 if(TARGET sdurws) 门控块，冒烟 gtest 编列实测零命中，与 RT-T15 RT-GEO 同款纪律）：
+- sdurws_ird_ui_test：**241/241 通过**（smoke-ui-test-console.log——集成 261 减 gated 块 20＝241）
+- sdurws_ird_ui_contract_test：**22/22 通过**（smoke-ui-contract-console.log——六域 gated 块不进冒烟）
+- sdurws_ird_ui_gui_test：**70/70 通过**（smoke-ui-gui-console.log——网关 gated 块 10 例不进冒烟）
 
 ## ird_gates 结论（base..head 归一化比对）
 
