@@ -32,5 +32,5 @@
   "acceptance": [
     "同输入＋版本＋配置＋线程＋种子等价集合与稳定排序验证集；各域抽样复现用例通过（不要求浮点逐字节相同——NFR-COR-02/附录 D 第 8 项）"
   ],
-  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。DTB 前置\"WP-02-T06/T08\"≙TK-T06（两阶段集合匹配断言）/TK-T08（TempDir/DeterministicEnv 确定性上下文）——≙ 映射按 testkit.md §13 落位登记。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。DTB 前置\"WP-02-T06/T08\"≙TK-T06（两阶段集合匹配断言）/TK-T08（TempDir/DeterministicEnv 确定性上下文）——≙ 映射按 testkit.md §13 落位登记。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【2026-10-13 所有者排程指令】WP-23-T01 验收 pass 后本卡取得测量串行队列第一优先位（先于 WP-23-T02~T05 与 WP-23-T06~T08 启动）；依赖（WP-23-T01 done）满足前维持 planned——依赖诚实"
 }
