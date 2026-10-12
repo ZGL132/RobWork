@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "TK-T12",
+  "unit": "testkit",
+  "masterWp": "WP-B",
+  "title": "ui_test ctest 上下文挂起根因排查与修复＋gate-all 冒烟目录默认值唯一化（F-789 专项——测试基建，零产品行为变更）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": [
+    "DTB §5.1/§4.2（双模式构建与验证留痕约定——gate-all 85 项全绿是本地一键门禁的唯一口径，S5 长期挂起使该口径降级为 84/85 并迫使测试回退直跑通道，验证留痕真实性承载面受损）",
+    "AGENTS §4.2（测试必须真实执行并留痕——挂起项终止后记失败属基建性失真，须归因消除而非长期豁免）"
+  ],
+  "designRefs": [
+    "traceability/findings.json#F-789",
+    "traceability/findings.json#F-628",
+    "traceability/acceptance/audit-r2a-20261011.md#五",
+    "units/testkit.md#3.5",
+    "units/testkit.md#6.7",
+    "units/testkit.md#10.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt（ctest 注册属性面——TIMEOUT/ENVIRONMENT/平台参数；如根因涉及其他单元测试目标的同类注册面，先呈批扩面再改）",
+    "RobWork/scripts/industrialrobot/gate-all.ps1",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/TK-T12.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/*/src/** 与 */include/**（各业务单元产品源码——本卡为测试基建专项，零产品行为变更；如排查结论推翻『基建问题』定性、指向产品缺陷，停止实施并呈批所有者另行立项）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**、reporting/**、kinematics/**、policy/**（并行会话在途/批 D 在验——避让）",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md（零需求语义变更）"
+  ],
+  "outputs": [
+    "根因诊断报告：ui_test 在 ctest 执行上下文启动即挂起（进程 CPU≈16ms 后冻结）的机理定位——对『ctest 管道输出阻塞』『QTest 平台初始化交互』两个工作假设给出实证排除或确认（最小复现探针＋日志/句柄证据），落 traceability/builds/wp02-t12/",
+    "挂起消除修复：按排查结论在 ctest 注册面（测试属性 TIMEOUT/ENVIRONMENT——如 QT_QPA_PLATFORM=offscreen、QT_LOGGING_TO_CONSOLE 等环境适配）或 testkit_qt 设施侧落地最小修复；修复后同 exe 直跑与 ctest 两通道结果一致（用例集零增减、双通道全绿）",
+    "gate-all 冒烟目录默认值唯一化：$env:TEMP/ird-gate-smoke 改含 PID/时间戳后缀（F-628 同族对策——多会话并行互删免疫），原目录名不再被脚本复用/清除",
+    "回归钉与门禁闭合证据：ctest 上下文 ui_test 连续 3 次完整执行留痕＋gate-all 85/85 全绿留痕（S5 闭合）——F-789 翻转 fixed 的证据面"
+  ],
+  "verify": [
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"（连续 3 次不挂起、结果与直跑一致）",
+    "pwsh -File RobWork/scripts/industrialrobot/gate-all.ps1 -SmokeDir <唯一目录> -QtPrefix <Qt msvc 目录>（85/85）",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "acceptance": [
+    "挂起消除：ui_test 在 ctest 执行上下文连续 3 次完整执行（原 3/3 挂起复现口径同法复测），无进程冻结、无人工终止；直跑通道结果与 ctest 通道逐用例一致",
+    "门禁闭合：gate-all 85/85 全绿（S5 失败项消除——含唯一冒烟目录新默认值下的全新配置构建与执行）；F-789 具备翻转 fixed 的完整证据面",
+    "并行免疫：两个以上并发 gate-all 实例各自使用唯一冒烟目录，互不删除/互不污染（默认值唯一化生效；-SmokeDir 显式传参行为不变）",
+    "零产品行为变更：diff 面仅测试基建（testkit 设施/ctest 注册属性/门禁脚本/文档）；业务单元产品源码零触碰（ird_gates R-1~R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中互证）",
+    "双模式构建零错误；全量套件真实执行留痕（gtest XML）；中文注释随代码更新（脚本与设施改动含中文注释块说明）"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-TK-3"
+  ],
+  "branch": "wp02-t12",
+  "note": "F-789（S5 建议级转登）专项立项——先卡后码；所有者 2026-10-12 授权立项（审计二轮治理执行会话收尾盘点待办第 3 项）。F-789 登记原文：ui_test 在 ctest 执行上下文启动即挂起（进程 CPU≈16ms 后冻结）、同 exe 直跑三树全绿——挂起与产品逻辑无关、属测试基建/执行环境问题（疑 ctest 管道输出或 QTest 平台初始化交互）；伴生面对象＝gate-all.ps1 文件头注第 4 步冒烟目录默认值 $env:TEMP/ird-gate-smoke 全局共享（多会话并行互删——批 A 验收次跑 49/85 实证）。挂起事实链：批 A 验收 3/3 确定性复现（audit-r2a-20261011.md §五 S5——终止后 gate-all 方可续行），同 exe 直跑集成/冒烟/实施三树全绿；批 D 验收（acc/audit-r2d/1 记录）两轮 gate-all 复现集成面 ui_test 失败（ctest 退出码 8），且 run2 新增同类实例——冒烟 testkit_test ctest 上下文失败（退出码 8）而直跑 101 用例全绿：现象族自 ui_test 扩及 testkit_test（同门类：ctest 上下文红、直跑绿、跨树随机分布），进一步支撑测试基建定性；验收者简式 ctest 探针（ctest -L「ird」标签）同树通过——失败特定于 gate-all 的 ctest 调用上下文，排查看点含其环境/参数面。现象族扩展按 forbiddenFiles 纪律处置（涉他单元测试注册面先呈批扩面）；复现留痕 audit/acc-audit-r2d-1/。本卡以实证收敛上述假设；如排查结论指向产品缺陷，按 forbiddenFiles 纪律停止实施并呈批扩面。冒烟目录唯一化为 F-789 登记的伴生对策（F-628 同族）。编号口径：TK 系已用到 TK-T11，按「取下一可用号」取 TK-T12（P-TK-3 口径——本文编号不重排，DTB 侧以 WP-02-T12 映射行增量登记）。knownPitfalls 登记口径＝已登记义陷阱注册表（O/CR/P 系）；本卡消账对象 F-789 与伴生面 F-628/F-790 属 findings 台账编号、经 designRefs 引用追踪，不入该注册表。interUnit=true 判定＝涉 testkit 设施＋ui 测试目标 ctest 注册面＋gate-all 门禁脚本三方。status=ready 待独立评审放行。"
+}

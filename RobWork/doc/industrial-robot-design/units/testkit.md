@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.9（TK-T10 落位登记；v0.4~v0.8＝TK-T03/T04/T06/T07/T08 落位登记；v0.3＝TK-T01 实施偏差登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案） |
+| 文档版本 | v1.2（2026-10-12，TK-T12 立项登记——§13；v1.1＝2026-09-19 `sdurws_ird_testkit_qt` 启用落位登记；v1.0＝2026-09-11 TK-T11 触发式补登；v0.9（TK-T10 落位登记；v0.4~v0.8＝TK-T03/T04/T06/T07/T08 落位登记；v0.3＝TK-T01 实施偏差登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案）） |
 | 日期 | 2026-09-11 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-TESTKIT |
@@ -806,8 +806,9 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | TK-T09 故障注入原语 | §6.4 | `Fault.hpp/.cpp`；`ProcessRunner.hpp`（仅头文件设计冻结，不实现） | TK-T01 | 同名文件 | TK-FAULT | occurrence 触发/命中记录用例通过；无产品目标链接 testkit（TK-BUILD 复验） |
 | TK-T10 报告、示例与门禁同步 | §7、§3.6、core.md §8 | `Report.hpp/.cpp`（数据类型＋写出）；`gtest/RecordListener.hpp` 适配头；**core 接入示例**（附录 A.1 作为 `sdurws_ird_core_test` 的样板用例建议，随 core CORE-T01~T05 落地）；安装排除扫描脚本建议（交 WP-01/WP-24）；README 更新 | TK-T03~T09 | 同名文件、`testkit/include/.../README.md`、本文 | TK-RPT、TK-BUILD | 六类 outcome 聚合正确；示例数据集随 CI 跑通；门禁建议登记给 WP-01 |
 | TK-T11 进程测试支撑实现（触发式补登，2026-09-11） | §6.5、§10.1 | `ProcessRunner.cpp`（Job Object 进程树终止/事件等待实现——`ProcessRunner.hpp` 头已于 TK-T09 冻结，实现签名零偏差） | TK-T09；触发已成立＝PRJ-T15/WP-08-T10 契约测试需要进程级崩溃/恢复场景（AT-11/13 载体，位于 project/execution 波次） | 同名文件 | TK-FAULT 扩展 | 进程正常退出/崩溃/强杀/超时终止四态 outcome 用例＋EventWatch 有界等待（命中/超时）用例通过；Windows API 限定实现文件内（§1.4）；无产品目标链接 testkit（T-1 复验） |
+| TK-T12 ui_test ctest 上下文挂起排查与 gate-all 冒烟目录唯一化（F-789 专项立项，2026-10-12） | findings.json F-789/F-628；acceptance/audit-r2a-20261011.md §五 S5；§3.5/§6.7/§10.2 | 根因诊断报告＋ctest 注册面修复（测试属性/环境/平台参数或 testkit_qt 设施增量——以排查结论为准）＋`gate-all.ps1` 冒烟目录默认值唯一化（PID/时间戳——F-628 同族） | 无前置（测试基建专项）；触发已成立＝F-789 批 A 验收 3/3 确定性复现转登＋批 B/C/D gate-all 历次 84/85 唯一失败项 | testkit/**、ui 测试目标 CMakeLists（ctest 注册面）、scripts/industrialrobot/gate-all.ps1、本文 | TK-BUILD/Gate 扩展 | ui_test ctest 上下文连续 3 次完整执行不挂起且与直跑一致；gate-all 85/85（唯一 SmokeDir）；产品源码零行为变更；F-789 翻转 fixed 证据面齐备 |
 
-每任务完成条件均含"测试通过并留痕"；任何未执行测试不得标注通过。阶段 A **不含**：TestProcessRunner 实现、`_qt` 目标、任何业务域数据集与契约套件（§10 登记）。**2026-09-11 增量修订**：TK-T11 经消费者触发补登（上表），实现移出"阶段 A 不含"清单——触发与补登依据见 §10.1 与 DTB §4.2 O-33 消账记录。**2026-09-19 增量修订**：`_qt` 目标经消费者触发启用落位（UI-T02 建立 ui 测试目标——§10.1 触发已成立），`sdurws_ird_testkit_qt` 目标载体随 WP-10-T02 建立（§3.5 隔离纪律不变：本体永不链接它、只被 GUI/模型测试目标链接），设施本体随首消费者 UI-T13/T14 落地。
+每任务完成条件均含"测试通过并留痕"；任何未执行测试不得标注通过。阶段 A **不含**：TestProcessRunner 实现、`_qt` 目标、任何业务域数据集与契约套件（§10 登记）。**2026-09-11 增量修订**：TK-T11 经消费者触发补登（上表），实现移出"阶段 A 不含"清单——触发与补登依据见 §10.1 与 DTB §4.2 O-33 消账记录。**2026-09-19 增量修订**：`_qt` 目标经消费者触发启用落位（UI-T02 建立 ui 测试目标——§10.1 触发已成立），`sdurws_ird_testkit_qt` 目标载体随 WP-10-T02 建立（§3.5 隔离纪律不变：本体永不链接它、只被 GUI/模型测试目标链接），设施本体随首消费者 UI-T13/T14 落地。**2026-10-12 增量修订**：TK-T12 经 F-789 专项触发补登（上表）——测试基建专项，不属阶段 A 范围界定面（阶段 A「不含」清单零变化）。
 
 ---
 
@@ -924,6 +925,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | v0.9 | 2026-09-11 | TK-T10（≙WP-02-T10）落位登记：①§7.2 Report.hpp/.cpp（TestRecord 字段表逐键/六类 Outcome token/ReportSummary.decisive＝§7.5 不可判定判据/聚合 Report.writeFile/TempDir 保留现场 artifacts 登记）按原文契约实现，接口零偏差；②§7.3 gtest/RecordListener.hpp（header-only）：installTestRecordListener(argc, argv)——解析 --ird_report=<path>（缺省＝工作目录 ird-test-report.json）、OnTestEnd 夹具预置 outcome 优先于 gtest 计算值（§7.2 分类不因跳过计为 skipped）、OnTestProgramEnd 聚合写盘（写盘失败 stderr 告警不掩盖测试结果）；③增量接缝（实现细节级）：TestRecordStore 栈式嵌套（单元测试 endAndTake 闭环与 listener endRecord 入册互不污染——NestedSessionIsolatesFromListener 钉住）；④TK-T08 预留接缝落地：GoldenFixture ⑥（bindFixtureContext）⑦（listener OnTestEnd 定稿）接线，②③失败按 §7.2 正式分类（envUnavailable/datasetInvalid＋GTEST_SKIP 保持"不进入测试体"）；⑤IRD_TEST_INFO 宏（AssertMacros.hpp，IRD_CHECK_REPORT_ 同步旁路 comparisons 进记录）；⑥core 接入示例（附录 A.1）以 testkit 侧 CoreIntegrationExampleTest.cpp 运行通过（core/test/** 不在契约 allowedFiles——core 侧正式接入按 A.1 样板复制，随 CORE-T04/T05 交付面登记）；⑦安装排除扫描脚本建议稿交付 tools/install-scan/ird-install-scan.ps1（§3.6 三项排除＋机器可判读退出码；门禁实施归 WP-01/WP-24）；⑧测试 main 自持切换：TestMain.cpp 替换 gtest_main（DTB §5.5"或 RecordListener 适配"形态），链接 GTest::gtest |
 | v1.0 | 2026-09-11 | TK-T11 触发式补登（消费者 PRJ-T15/WP-08-T10 位于 project/execution 波次，AT-11/13 载体；预防性补登于该波次之前——所有者采纳）：①§9 任务表补登 TK-T11 行（`ProcessRunner.cpp` Job Object/事件等待实现；头文件已于 TK-T09 冻结、实现签名零偏差）；②§10.1 启用表更新为"触发已成立、TK-T11 已补登放行"；③§9"阶段 A 不含"清单同步移出 TestProcessRunner 实现；④DTB §2.2 WP-02-T11 恢复 ≙TK-T11 映射、O-33 消账、≙ 计数 73→74（六卡 74 任务）；⑤契约 tasks/foundation/TK-T11.json 编译放行（ready，入队位于 project 波次 DOC-T10 之前） |
 | v1.1 | 2026-09-19 | `sdurws_ird_testkit_qt` 启用落位登记（WP-10-T02≙UI-T02，任务契约 tasks/foundation/UI-T02.json acceptance 4）：①§10.1 启用表更新为"触发已成立（2026-09-19，UI-T02 建立 ui 三测试目标）——已随 WP-10-T02 启用落位"；②§9"阶段 A 不含"清单同步注记；③落位形态＝INTERFACE 目标载体（Qt6::Core 链接接口＋公共头根传播；设施本体随首消费者 UI-T13/T14 落地后升级 STATIC——目标名不变；INTERFACE 而非 STATIC 的原因：启用期无消费者设施源码，且任务契约 allowedFiles 仅含 testkit/CMakeLists.txt、不含 testkit/src/**——无翻译单元可落，锚点翻译单元不可建于本单元目录树）＋§3.5 隔离纪律钉住（本体永不链接——配置期守卫拦截；只被 GUI/模型测试目标链接——首消费者＝sdurws_ird_ui_gui_test；零 ird 单元边——设施目标非依赖节点）；④设施头/实现（事件循环驱动、控件探针——§6.7/§10.2）随首消费者 UI-T13/T14 落地，不预建占位实现（NFR-MNT-04；首消费者理由登记于 ui.md §13 UI-T13 行——§3.5 必要性登记规则兑现） |
+| v1.2 | 2026-10-12 | TK-T12 立项登记（F-789 专项——所有者 2026-10-12 授权，先卡后码零产品源码改动）：①§9 任务表补登 TK-T12 行（ui_test ctest 上下文挂起根因排查与修复＋gate-all 冒烟目录默认值唯一化；触发已成立＝F-789 批 A 验收 3/3 确定性复现转登＋批 B/C/D gate-all 历次 84/85 唯一失败项）；②§10 阶段 A 注记行同步（TK-T12 不属阶段 A 范围界定面）；③DTB §2.3 新增 WP-02-T12 行（≙TK-T12）；④契约 tasks/foundation/TK-T12.json 立卡（ready 待独立评审放行）。本版为纯登记——设施本体随 TK-T12 实施落位 |
 
 ---
 
