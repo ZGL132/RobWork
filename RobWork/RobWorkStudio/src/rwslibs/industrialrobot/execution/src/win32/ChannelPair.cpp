@@ -32,9 +32,13 @@ std::unique_ptr<ChannelPair> ChannelPair::create(const std::wstring& baseName)
 
     // ---- 第 1 步：命令流服务端（主进程写端；OUTBOUND 单向、字节模式、
     // 不可继承——服务端从不离开主进程）。 ----
+    // F-810：FILE_FLAG_OVERLAPPED 补齐（对齐数据端 :52 先例）——写命令
+    // 走 OVERLAPPED WriteFile（:160 有界等待语义的前提），同步句柄上做
+    // OVERLAPPED 写按 MSDN 为 ERROR_INVALID_PARAMETER 或退化无限阻塞，
+    // 二者皆致命（命令面失效/有界等待承诺失效）。
     pair->m_cmdServer = ::CreateNamedPipeW(
         pipeName(baseName, L"-cmd").c_str(),
-        PIPE_ACCESS_OUTBOUND,                       // 主进程只写
+        PIPE_ACCESS_OUTBOUND | FILE_FLAG_OVERLAPPED, // 主进程只写＋重叠 I/O
         PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,  // 字节模式（§6.5）
         1,                                          // 单实例——管道随 worker 一对一
         64 * 1024, 64 * 1024,                       // 收发缓冲（本地管道，取常用值）

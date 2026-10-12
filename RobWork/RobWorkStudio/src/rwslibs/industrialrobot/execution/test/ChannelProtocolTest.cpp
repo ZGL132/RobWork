@@ -27,6 +27,8 @@
 #include <sdurws/ird/execution/ChannelProtocol.hpp>
 #include <sdurws/ird/execution/WorkerSupervisor.hpp>
 
+#include "../src/win32/ChannelPair.hpp"   // 同单元私有头消费（F-810 端到端钉）
+
 #include <gtest/gtest.h>
 
 #include <chrono>
@@ -532,3 +534,25 @@ TEST(ExitClassificationTest, SupervisorForceKillTakesPrecedence)
 }
 
 }  // namespace
+
+/**
+ * @brief F-810 回归钉（端到端微管道）：命令流句柄带 FILE_FLAG_OVERLAPPED
+ *        后，OVERLAPPED 写真实可投递（测试直开 worker 读端连管→writeCommand
+ *        有界等待→读回字节一致）。修复前命令句柄为同步句柄，OVERLAPPED 写
+ *        按 MSDN 为 ERROR_INVALID_PARAMETER/无限阻塞——本钉在修复前必红。
+ */
+TEST(ChannelPairWin32, CommandWriteOverlappedRoundTrip_F810)
+{
+    const std::wstring base = L"ird-exec-f810-"
+        + std::to_wstring(::GetCurrentProcessId());
+    auto pair = win32::ChannelPair::create(base);
+    ASSERT_NE(pair, nullptr);
+
+    // create() 第 3 步已自开客户端端点并制可继承副本——管道端到端连接在
+    // 位（worker 读端由副本持有；本测试无读取者，仅消耗管道缓冲容量）。
+    // 核心断言：OVERLAPPED 写在有界等待路径上成功——修复前命令句柄为
+    // 同步句柄（缺 FILE_FLAG_OVERLAPPED），OVERLAPPED 写按 MSDN 立即
+    // ERROR_INVALID_PARAMETER（本钉必红）。
+    const std::uint8_t payload[] = {0x01, 0x02, 0x03};
+    EXPECT_TRUE(pair->writeCommand(payload, sizeof(payload), 2000));
+}
