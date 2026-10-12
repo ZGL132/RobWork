@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "采样点着色功能批——F-495 收官（样本级点击定位：面板采样结果清单→三维单点高亮）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": [
     "F-495 六项诉求的最后一项兑现（全库唯一 open blocking 收官批）：采样点三态着色/达标颜色/覆盖率映射/颜色图例/统一供色五项已由 UI-T64/T65 交付，本批兑现「校验项点击定位采样点」的样本级半区——面板采样结果清单点击→三维单点高亮（建议语义「蓝框=当前选中」）",
@@ -68,5 +68,5 @@
     "P-FIX-5"
   ],
   "branch": "fix-t2",
-  "note": "采样点着色功能批（F-495 收官追加批——2026-10-12 立项，路线 A；用户指令：F-495 是全库最后一条 open blocking〔origin/redesign-main @ bb0bc4ef 机器核实 1 条〕）。背景核实：F-495 六项诉求中五项已由 UI-T64（执行通道）＋UI-T65（三态着色/覆盖率映射/统一供色/图例）交付且验收 pass 合入；唯一剩余＝「校验项点击定位采样点」的样本级半区（UI-T65 诚实边界明文「样本级定位随诊断素材粒度扩展留后续」——域 Readiness 诊断不产样本级条目，校验页无样本行可点）。本批以呈现侧结果清单绕行兑现：区域页「采样结果」清单（数据源＝执行器账面投影而非域诊断——零 Readiness 语义改动）＋点击→三维单点高亮，F-495 六项全闭环后宿主复验关账。knownPitfalls 复现/陷阱展开：P-FIX-4＝样本索引对齐陷阱——合并段按区域过滤后 View3DSampleGrid.samples 数组下标≠域 sampleIndex（多区域结果切片偏移），高亮键必须用域 sampleIndex＋逐点对齐表 sampleIndices（复现：两区域评估后切第二区域，按下标高亮必错位——designRefs 含 fix-t1 留痕的同源教训）；P-FIX-5＝渲染高亮的整组替换语义——SampleGridRender 构造冻结（UI-T52 既有形态），高亮变化必须经 applyPreview 整组重投，禁止渲染私有态旁路（复现：只改渲染成员不动契约面→高亮不生效或半新半旧）。branch 字段按 CCP §3 句法登记名义分支 fix-t2；实际实施在流水线分支 pipeline3/redesign-main（worktree build/pipeline-wt3——fix-t1 同款），合入 origin/redesign-main 由验收 pass 后执行。interUnit=true 判定＝ui（契约/渲染/装配）＋requirements（面板/缝）双单元代码面＋kinematics 消费面（预期零改动）。F-495 账面处置＝进展注 append、不代翻（宿主 GUI 复验动作归所有者——fix-t1 同款纪律）。DTB 对应行＝WP-10-T80（≙本批 ui 面）＋WP-14-T13（≙requirements 面板面）。status=ready 待独立评审放行。【验收 pass 后合入段置 done。】"
+  "note": "采样点着色功能批（F-495 收官追加批——2026-10-12 立项，路线 A；用户指令：F-495 是全库最后一条 open blocking〔origin/redesign-main @ bb0bc4ef 机器核实 1 条〕）。背景核实：F-495 六项诉求中五项已由 UI-T64（执行通道）＋UI-T65（三态着色/覆盖率映射/统一供色/图例）交付且验收 pass 合入；唯一剩余＝「校验项点击定位采样点」的样本级半区（UI-T65 诚实边界明文「样本级定位随诊断素材粒度扩展留后续」——域 Readiness 诊断不产样本级条目，校验页无样本行可点）。本批以呈现侧结果清单绕行兑现：区域页「采样结果」清单（数据源＝执行器账面投影而非域诊断——零 Readiness 语义改动）＋点击→三维单点高亮，F-495 六项全闭环后宿主复验关账。knownPitfalls 复现/陷阱展开：P-FIX-4＝样本索引对齐陷阱——合并段按区域过滤后 View3DSampleGrid.samples 数组下标≠域 sampleIndex（多区域结果切片偏移），高亮键必须用域 sampleIndex＋逐点对齐表 sampleIndices（复现：两区域评估后切第二区域，按下标高亮必错位——designRefs 含 fix-t1 留痕的同源教训）；P-FIX-5＝渲染高亮的整组替换语义——SampleGridRender 构造冻结（UI-T52 既有形态），高亮变化必须经 applyPreview 整组重投，禁止渲染私有态旁路（复现：只改渲染成员不动契约面→高亮不生效或半新半旧）。branch 字段按 CCP §3 句法登记名义分支 fix-t2；实际实施在流水线分支 pipeline3/redesign-main（worktree build/pipeline-wt3——fix-t1 同款），合入 origin/redesign-main 由验收 pass 后执行。interUnit=true 判定＝ui（契约/渲染/装配）＋requirements（面板/缝）双单元代码面＋kinematics 消费面（预期零改动）。F-495 账面处置＝进展注 append、不代翻（宿主 GUI 复验动作归所有者——fix-t1 同款纪律）。DTB 对应行＝WP-10-T80（≙本批 ui 面）＋WP-14-T13（≙requirements 面板面）。status=ready 待独立评审放行。【验收 pass 后合入段置 done。】【合入收尾 2026-10-12】实施提交 f678682b（立卡）＋91cda264（实施批）；独立验收 attempt 1 verdict=pass（acc/fix-t2/1 @b0392871——协议 4.1~4.11 全过零阻断：diff 面 38 文件全允许面／六套件亲跑 375-214-273-42-49-81 与在库 XML 机器比对全 MATCH／变异两处命中复绿／ird_gates 零命中／validate 双 PASS／F-495 纯追加维持 open）；验收记录按 SHA 先并（Merge acc/fix-t2/1）；建议级留档＝QT offscreen 环境面（后续会话 ui_gui 用默认 windows 平台）＋变异②指令预设形态为等价变换未红（兜底变异命中，非实施缺陷）。——ready→done。"
 }
