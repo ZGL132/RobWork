@@ -614,6 +614,23 @@ CollisionEvaluationSession::CollisionEvaluationSession(
             const std::optional<CollisionDomain> domain =
                 detail::classifyDomainPair(entryA.role, entryB.role);
             if (!domain.has_value()) {
+                // F-808：矩阵未列组合不再无条件静默 continue——若该对象对
+                // ∈mandatoryExpanded（必检对），静默丢弃即「过滤隐藏必检」
+                // （§7.2"结构上不存在可隐藏必检的合法策略"承诺击穿：必检对
+                // 无痕丢弃且零输出资格不可观测）。按 Group 支同款保守拒绝
+                // （PolicyError PolicyObjectInvalid——策略自相矛盾＝调用方
+                // 契约违约面）；非必检对维持原口径（矩阵未列＝不入作用域，
+                // §7.1）。
+                const PairKey droppedKey
+                    = detail::canonicalPair(entryA.objectId, entryB.objectId);
+                if (mandatoryExpanded.find(droppedKey)
+                    != mandatoryExpanded.end()) {
+                    throw PolicyError(
+                        PolicyErrorCode::PolicyObjectInvalid,
+                        "policy/collision: mandatoryPairs 含矩阵未列组合（角色"
+                        "对不入任何评估域——必检对被作用域定义隐藏，保守拒绝"
+                        " F-808）");
+                }
                 continue;
             }
             // 域门控（§7.1 不适用条件"域禁用"——该域全部对不适用，必检对

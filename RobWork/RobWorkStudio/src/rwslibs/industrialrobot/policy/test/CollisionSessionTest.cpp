@@ -1107,3 +1107,39 @@ TEST(CollisionSessionTokens, RoleTokenRoundTripExact)
     EXPECT_EQ(trySceneObjectRole("RobotLink "), std::nullopt);
     EXPECT_EQ(trySceneObjectRole(""), std::nullopt);
 }
+
+/**
+ * @brief F-808 回归钉：mandatoryPairs 命中矩阵未列组合（Tool×Payload——
+ *        :153/:154/:161 未列）→ 会话构建保守拒绝（PolicyError
+ *        PolicyObjectInvalid），不再静默丢弃必检对（修复前 continue 跳过
+ *        必检查表——必检对无痕丢弃，「过滤不得隐藏必检」承诺击穿）。
+ */
+TEST(CollisionSessionGuards, MandatoryOnUnlistedMatrixComboRejected_F808)
+{
+    const SceneIds ids;
+    const TestValidationContext ctx = makeContext(ids);
+    const TestNameContext names = makeNames(ids);
+    CollisionScene scene;
+    auto workcell = std::make_shared<rw::models::WorkCell>("PolicySessionTestWC");
+    workcell->addDevice(rw::core::Ptr<rw::models::Device>(new FakeDevice("Robot")));
+    addObjectFrames(workcell, ids);
+    scene.workcell = workcell;
+    scene.primaryDevice = ids.device;
+    scene.objects = {
+        {ids.link1, "Link1", SceneObjectRole::RobotLink, true},
+        {ids.tool, "Tool", SceneObjectRole::Tool, true},
+        {ids.payload, "Payload", SceneObjectRole::Payload, true},
+    };
+    scene.sceneContentIdentity = taggedContentIdentity(0xC1);
+
+    RawPolicyInput in = baseInput(ids);
+    in.collision.enabledDomains = {CollisionDomain::Self, CollisionDomain::Environment,
+                                   CollisionDomain::Tool, CollisionDomain::Scene};
+    in.collision.mandatoryPairs = {
+        PairRule::make(ScopeTarget::makeObject(ids.tool),
+                       ScopeTarget::makeObject(ids.payload),
+                       PolicyRuleLevel::Must, "刀具负载工艺必检——矩阵未列组合")};
+    const EngineeringPolicySet policy = publishPolicy(in, ctx);
+
+    EXPECT_THROW((void)buildSession(policy, scene, names), PolicyError);
+}
