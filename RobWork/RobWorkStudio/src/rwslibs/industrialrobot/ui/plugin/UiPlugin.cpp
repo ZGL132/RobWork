@@ -3556,6 +3556,19 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
         const auto handles = m_domains->requirements->sharedSurfaceProviders();
         registerDomainSurfaces("requirements", true, handles.treeNodes,
                                handles.propertyPages);
+        // F-551：名称解析端口升级为需求域前端（呈现层最小改法——owner
+        // 出路 2「树模型名称解析覆盖需求域对象」）。此前生产装配恒为
+        // C-11 桩（NullUiNameResolver 恒 nullopt），而需求域对象不进
+        // runtime NameMap（NameScope 词表只有运行时结构对象）——树上
+        // 恒呈「（未命名对象）」。前端解析工作集语义名（根/点/区域/工况/
+        // 计划），闭包外对象应答 nullopt＝与桩同语义面（UX-02 占位兜底
+        // 不破坏）；当前无下游解析器可链（桩恒 nullopt），将来 runtime
+        // 名称端口真值装配接续时在宿主装配点链接回落链。升级须在③面板
+        // deps 绑定与④内容装配（contentDeps.wiring.nameResolver）之前
+        // ——三消费面同持本 shared_ptr，一处升级全覆盖。
+        if (auto frontend = m_domains->requirements->sharedNameResolverFrontend()) {
+            m_nameResolver = std::move(frontend);
+        }
     } else {
         registerDomainSurfaces("requirements", false, nullptr, nullptr);
     }

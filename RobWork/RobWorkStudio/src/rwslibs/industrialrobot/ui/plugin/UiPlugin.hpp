@@ -339,7 +339,11 @@ private:
     //      控制器与内容装配面先于端口适配器消亡）----
     app::DiagnosticsStack m_diag;                                 ///< 诊断栈（与 harness 同装配序列）
     std::shared_ptr<app::UnloadedPolicySource> m_policySource;    ///< 策略未装载占位（C-10）
-    std::shared_ptr<app::NullUiNameResolver> m_nameResolver;      ///< 名称解析占位（C-11）
+    /// 名称解析端口（C-11）：装配起点＝NullUiNameResolver 桩（恒 nullopt）；
+    /// F-551 起需求域可用时升级为需求域解析前端（RequirementsNameResolver
+    /// ——工作集语义名，闭包外对象 nullopt 与桩同语义面）。接口类型承载
+    /// ——升级只换指向不换消费面（三个消费点同持此 shared_ptr）。
+    std::shared_ptr<ui::IUiNameResolver> m_nameResolver;
     std::shared_ptr<app::HarnessAboutSource> m_aboutSource;       ///< 关于框数据占位（§11.4）
     std::shared_ptr<app::ProjectDiagnosticsBridge> m_bridge;      ///< project 诊断桥（P-PR-6）
     /// §5 会话状态机（打开编排的推进面）——延迟构造：依赖的适配器在

@@ -1,10 +1,11 @@
 /**
  * @file   HostMigrationProviders.hpp
- * @brief  需求域宿主迁移三接入面（方案 B.1／SA-18 D11）——TreeNodesProvider
+ * @brief  需求域宿主迁移接入面（方案 B.1／SA-18 D11）——TreeNodesProvider
  *         （需求对象入工业项目树）＋PropertyPagesProvider（常用字段入共享
  *         检查器；区域定义/CSV·JSON 导入向导等复杂编辑收口域面板——D6
  *         分野）＋SelectionAdapter（选择联动：树选→域面板高亮；本域三维
- *         拾取→选择服务上报）。
+ *         拾取→选择服务上报）＋NameResolver（需求对象显示名解析入共享树
+ *         ——F-551 修复面，WP-14-T10 三接入面之后的增量接入面）。
  *
  * 设计依据：
  *   - 任务契约 tasks/foundation/WP-14-T10.json acceptance 1~4（三接入面
@@ -82,6 +83,7 @@
 #include <sdurws/ird/ui/IndustrialProjectTree.hpp>  // ui::IUiTreeNodesProvider/ProjectTreeNode（树协议）
 #include <sdurws/ird/ui/PropertyInspector.hpp>      // ui::IUiPropertyPagesProvider 及页面值（页协议）
 #include <sdurws/ird/ui/SelectionService.hpp>       // ui::IUiSelectionObserver/SelectionService（选择协议）
+#include <sdurws/ird/ui/UiPorts.hpp>                // ui::IUiNameResolver（显示名解析端口——F-551 呈现半区）
 
 class QWidget;  // 前置声明：activateComplexPage 宿装父控件（头文件不拖入 Widgets）
 
@@ -409,6 +411,75 @@ private:
     RequirementsSharedSurfaceDeps m_deps;       ///< 装配依赖（非 owning——见结构注）
     ui::SelectionService* m_service = nullptr;  ///< 已订阅服务（attach/detach 管理）
     std::unique_ptr<core::IEventSubscription> m_subscription;  ///< RAII 订阅句柄
+};
+
+// =====================================================================
+// NameResolver——需求对象显示名解析入共享树（F-551——呈现半区第四接入面）
+// =====================================================================
+
+/**
+ * @brief 需求域名称解析前端（ui::IUiNameResolver 实现——F-551 修复面）。
+ *
+ * 背景（F-551 登记原文）：需求域 apply-requirement-set 提交的对象在工业
+ * 项目树显示名为空（UX-02「（未命名对象）」诚实替代呈现）。根因＝生产
+ * 装配的名称解析端口是 C-11 桩（ui/app PortAdapters 的 NullUiNameResolver
+ * ——恒 nullopt），而需求域对象不进 runtime NameMap（NameScope 词表只有
+ * robot/joint/link 等**运行时结构**对象——units/runtime.md §7.1），解析
+ * 永远失败。owner 给出的两条出路（apply 载荷补名称／树模型名称解析覆盖
+ * 需求域对象）中，本类取**后者**：apply 载荷已经携带对象 canonical 字节
+ * （名称是对象自身的 name 字段，CommandHandlers.hpp §载荷模型），补名称
+ * 无处着力；呈现层让解析端口覆盖需求域对象是与 UX-02 兼容的最小改法。
+ *
+ * 解析语义（"现取现拼"同三接入面——零第二套命名缓存）：
+ *   - 编辑器工作集是唯一名称来源（PA-1：工作集权威在编辑器——本类零
+ *     副本，每次解析现调 resolveRequirementTarget 归属判定）；
+ *   - 命中根→RequirementSet.name（对象本体语义名——修订进报告的名字，
+ *     应用后树上的可读形态）；命中任务点/区域/工况→条目 name（I-REQ-3
+ *     集合内唯一）；命中采样计划→"计划 i"（**沿用域面板 PanelTreeModel
+ *     既有口径**——SamplingPlan 无 name 字段〔§5.2：计划＝regionRef＋
+ *     采样参数〕，i 为工作集序 1 起；两处呈现同源语义，不私裁新词）；
+ *   - 名称为空→nullopt（防御面：校验链拒绝空名〔§8.1 R0〕，合法工作
+ *     集不含空名；此处诚实回落占位形态，不虚构名称——UX-02 红线）；
+ *   - 无会话/闭包外对象→nullopt（协议二态——呈现层显示占位文案，与
+ *     NullUiNameResolver 的"未命中"同语义面）。
+ *
+ * 装配边界（为什么名称解析留在需求域）：ui 共享树只认 IUiNameResolver
+ * 端口（R-1——ui 对业务域零编译依赖），需求对象的名称语义（哪个字段、
+ * 计划如何合成）是域知识——域知识在域内投影为协议值，与本文件三接入面
+ * 同一装配纪律。宿主（UiPlugin 装配层）经 RequirementsUiModule::
+ * sharedNameResolverFrontend() 取本类实例装配进共享端口；生产装配当前
+ * 无下游解析器（NullUiNameResolver 恒 nullopt——前端未命中即等价回
+ * 落），将来 runtime 名称端口真值装配接续时在宿主装配点链接回落链。
+ *
+ * 线程约束：仅 UI 线程（编辑器工作集是会话对象——与三接入面同口径，
+ * §3.4）。非线程安全。
+ */
+class RequirementsNameResolver final : public ui::IUiNameResolver {
+public:
+    /**
+     * @brief 构造名称解析前端。
+     *
+     * @param deps [in] 装配依赖（editor/rootObjectId 必填——空 function
+     *             属装配缺陷，与三接入面同款构造期拒绝）
+     *
+     * @throws std::invalid_argument deps.editor 或 deps.rootObjectId 为空
+     */
+    explicit RequirementsNameResolver(RequirementsSharedSurfaceDeps deps);
+
+    /**
+     * @brief 解析对象身份为需求域显示名（ui::IUiNameResolver 端口实现）。
+     *
+     * @param id [in] 对象身份（core::ObjectId）
+     * @return 显示名（UTF-8；语义见类注）；无会话/闭包外/空名→nullopt
+     *         （呈现层回退占位文案——UX-02，不虚构名称）
+     *
+     * @note 呈现路径快速返回（线性扫描——工作集条目量级百~千，与树重建
+     *       同预算；NFR-PERF-01 交互预算内）。
+     */
+    std::optional<std::string> resolveObjectId(core::ObjectId id) const override;
+
+private:
+    RequirementsSharedSurfaceDeps m_deps;  ///< 装配依赖（非 owning——见结构注）
 };
 
 }  // namespace requirements

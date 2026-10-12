@@ -688,6 +688,28 @@ RequirementsUiModule::SharedSurfaceHandles RequirementsUiModule::sharedSurfacePr
     return handles;
 }
 
+std::shared_ptr<ui::IUiNameResolver> RequirementsUiModule::sharedNameResolverFrontend()
+{
+    m_guard.assertOnUiThread();  // §3.4——解析前端持有编辑器现取闭包（UI 线程面）
+
+    // 惰性构造＋缓存（shared_ptr 稳定地址——宿主装配层持强引用，本模块
+    // 缓存同序）。deps 与三接入面同一绑定语义：编辑器现取入口指向
+    // attachEditor 注入的权威指针（PA-1 零缓存），根身份指向会话态——
+    // 每次解析现取工作集，零副本零第二真值（F-551 语义见
+    // RequirementsNameResolver 类注）。
+    if (!m_nameResolver) {
+        RequirementsSharedSurfaceDeps deps;
+        deps.editor = [this]() -> IRequirementEditor* {
+            return m_editor;  // 会话权威编辑器（工作集唯一载体——§3.4）
+        };
+        deps.rootObjectId = [this]() -> std::optional<core::ObjectId> {
+            return m_session.rootObjectId;  // 会话态权威根身份（修订闭包锚）
+        };
+        m_nameResolver = std::make_shared<RequirementsNameResolver>(std::move(deps));
+    }
+    return m_nameResolver;
+}
+
 void RequirementsUiModule::attachSelectionService(ui::SelectionService& service)
 {
     m_guard.assertOnUiThread();  // §3.4——订阅是 UI 线程交互面

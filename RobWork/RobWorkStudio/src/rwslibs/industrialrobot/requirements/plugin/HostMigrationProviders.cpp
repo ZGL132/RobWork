@@ -524,6 +524,65 @@ bool RequirementsSelectionAdapter::reportView3DPick(const core::ObjectId& oid)
     return true;
 }
 
+// =====================================================================
+// RequirementsNameResolver（F-551——呈现半区；语义见头注类注）
+// =====================================================================
+
+RequirementsNameResolver::RequirementsNameResolver(RequirementsSharedSurfaceDeps deps)
+    : m_deps(std::move(deps))
+{
+    // 装配缺陷 fail-fast：无编辑器/根身份现取入口的解析器是"永远解析
+    // 失败"的死面——构造期拒绝优于运行期静默（三接入面同款口径）。
+    if (!m_deps.editor || !m_deps.rootObjectId) {
+        throw std::invalid_argument(
+            "RequirementsNameResolver: deps.editor/deps.rootObjectId 必填"
+            "（空现取入口＝装配缺陷）");
+    }
+}
+
+std::optional<std::string> RequirementsNameResolver::resolveObjectId(
+    core::ObjectId id) const
+{
+    // 无会话＝解析不了任何需求对象（协议二态——nullopt，呈现层显示
+    // UX-02 占位文案；不虚构名称、不回落伪造根名）。
+    const IRequirementEditor* editor = m_deps.editor();
+    if (editor == nullptr) { return std::nullopt; }
+
+    // 归属判定与三接入面共用同一函数（零第二套闭包扫描语义）；命中
+    // 后按对象种类取显示名——全部为工作集现取值（零缓存）。
+    const RequirementWorkingSet& ws = editor->workingSet();
+    const auto target = resolveRequirementTarget(ws, m_deps.rootObjectId(), id);
+    if (!target.has_value()) {
+        return std::nullopt;  // 闭包外对象（他域对象/运行时结构对象）——非本域应答
+    }
+
+    std::string name;
+    switch (target->kind) {
+    case ResolvedTarget::Kind::Root:
+        name = ws.root.name;  // 需求集语义名（对象本体字段——进报告的名字）
+        break;
+    case ResolvedTarget::Kind::Point:
+        name = ws.points.entries.at(target->index).name;      // 条目语义名（I-REQ-3 唯一）
+        break;
+    case ResolvedTarget::Kind::Region:
+        name = ws.regions.entries.at(target->index).name;     // 同上（区域）
+        break;
+    case ResolvedTarget::Kind::Condition:
+        name = ws.conditions.entries.at(target->index).name;  // 同上（工况）
+        break;
+    case ResolvedTarget::Kind::Plan:
+        // 采样计划无语义名（SamplingPlan 无 name 字段——§5.2 字段表）。
+        // 标签沿用域面板 PanelTreeModel 既有口径「计划 i」（i 为工作集
+        // 序 1 起）——共享树与域面板两处呈现同源同词，不私裁新命名。
+        name = "计划 " + std::to_string(target->index + 1);
+        break;
+    }
+    // 空名→nullopt（防御面：校验链拒绝空名〔§8.1 R0〕，合法工作集不
+    // 应出现；若出现＝数据缺陷的诚实呈现——回落占位形态而非渲染空白行）。
+    if (name.empty()) { return std::nullopt; }
+    return name;
+}
+
 }  // namespace requirements
 }  // namespace ird
 }  // namespace sdurws
