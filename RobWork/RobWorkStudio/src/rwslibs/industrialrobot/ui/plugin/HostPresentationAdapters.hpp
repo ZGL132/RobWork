@@ -39,7 +39,9 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
+#include <rw/graphics/DrawableNode.hpp>  // DrawableNode::Physical（呈现分组常量——UI-T78）
 #include <rws/RobWorkStudio.hpp>  // rws::RobWorkStudio（宿主单入口——setWorkCell）
 
 #include <sdurws/ird/core/Identity.hpp>              // ObjectId（反解值面）
@@ -47,6 +49,15 @@
 #include <sdurws/ird/runtime/Snapshot.hpp>           // RuntimeSnapshot（source 供数面）
 #include <sdurws/ird/ui/RuntimePublishBridge.hpp>    // IUiPresentationSource/PresentationViewProjection/事件事实
 #include <sdurws/ird/ui/SelectionService.hpp>        // IUiRuntimeNameMapPort（真值端口契约）
+
+namespace rw {
+namespace graphics {
+class WorkCellScene;  // 呈现分组校准落位面（UI-T78——实现于 cpp；此仅声明）
+}  // namespace graphics
+namespace models {
+class WorkCell;  // 发布模型 WC（规划半区入参——框架类型前置复述）
+}  // namespace models
+}  // namespace rw
 
 #include "HostView3DGateway.hpp"  // HostPresentationObject（网关约定型——本文件产品适配其接口）
 
@@ -168,6 +179,75 @@ private:
     rws::RobWorkStudio* m_studio;                  ///< 宿主注入面（非 owning）
     runtime::HostPresentationViewHandle m_view;    ///< 呈现视图（共享——存活锚）
 };
+
+// =====================================================================
+// 发布模型几何呈现分组校准（UI-T78——渲染面的分组绑定半区）
+// =====================================================================
+
+/**
+ * @brief 发布模型 drawable 的呈现渲染分组值（UI-T78 呈现分组校准的唯一
+ *        书写点——测试钉扎锚）。
+ *
+ * 为什么是 Physical（"场景中的物理对象"组）：RT-T15 编译图元经框架
+ * updateSceneGraph 入场景时，drawable 分组继承 Geometry 构造缺省
+ * （CollisionObject 组——rw/geometry/Geometry.cpp 构造函数实测），而产品
+ * 主相机缺省绘制掩码只含 Virtual/Physical/DrawableObject 三组
+ * （ShowCollisionModels 属性缺省 false——rwsettings.xml 既有值 0）——
+ * 不校准则发布模型几何在缺省掩码下整体不可见（F-550 渲染剩余面的真实
+ * 机理）。图元的呈现角色是"模型物理几何的体积代理"（RT-T15 卡面——
+ * 非碰撞/质量真值，ARC-04 显示代理不入身份域），故校准为 Physical 组：
+ * 缺省可见，且仍完全受框架"Render groups..."渲染分组显隐菜单管辖
+ * （UX-11 第 6 项对本批 drawable 生效的机制绑定）。
+ *
+ * 单一组值（而非保留原 Collision 位叠加）：分组承载呈现角色语义——
+ * 叠加双组会让"Physical 关＋Collision 开"的组合下模型仍可见，分组
+ * 语义含混；单一 Physical 组＝模型几何归"物理对象"一组管辖，与骨架
+ * 辅助层（Virtual 组——UI-T77 轴/链线/标签）正交分层。
+ */
+inline constexpr int kPublishedModelRenderGroup =
+    static_cast<int>(rw::graphics::DrawableNode::Physical);
+
+/**
+ * @brief 收集发布 WC 的模型 drawable 名清单（UI-T78 呈现分组校准的规划
+ *        半区——纯函数，headless 可测）。
+ *
+ * 遍历契约＝框架 WorkCellScene::updateSceneGraph 同款（WC 对象集合×对象
+ * 几何清单，drawable 名＝geometry 名——WorkCellScene.cpp 实测的框架落景
+ * 规则）：呈现层按该规则收集，零名字模式猜测（不耦合 RT-T15 的
+ * "@ird-link-cylinder" 后缀等私有命名——消费对象几何这一公共产物面）。
+ *
+ * 确定性（NFR-COR-01）：同模型编译产物对象集合逐字节同序（RT-GEO_3
+ * 既有钉扎），故本清单同序同集——重编译前后清单相等即"发布模型 drawable
+ * 集合稳定"的呈现侧对账面。
+ *
+ * @param workcell [in] 已发布快照 WC（只读借用——出口契约零结构写）
+ * @return drawable 名清单（框架 updateSceneGraph 将按同名落景；空 WC＝
+ *         空清单——诚实空面非错误）
+ */
+std::vector<std::string>
+    collectPublishedModelDrawableNames(const rw::models::WorkCell& workcell);
+
+/**
+ * @brief 发布模型 drawable 渲染分组校准（呈现半区落位——UI-T78 渲染面）。
+ *
+ * 只做一件事：对发布 WC 的每个模型 drawable，把场景侧 drawable 的渲染
+ * 分组写为 kPublishedModelRenderGroup（Physical）。场景侧校准（而非编译
+ * 产物侧改写）的边界理由：drawable 是框架为宿主场景创建的呈现工件，
+ * 分组是纯显示属性——写在场景侧＝呈现层自有职责面，编译产物 WC/快照
+ * 内容零触碰（B1-SPEC"呈现侧不改写快照内容"纪律；ARC-04）。
+ *
+ * 调用时机＝HostWorkCellPresentationObject::apply 的挂接半区
+ * （setWorkCell 之后、骨架呈现之前）：updateSceneGraph 已按缺省分组建好
+ * drawable，此处按呈现角色校准；换 WC 时 drawable 随旧场景节点树整体
+ * 销毁（框架 setWorkcell 重建语义），新 WC 重新挂接即重新校准——校准
+ * 随发布生命周期同寿，零残留零清理名单。
+ *
+ * @param scene     [in,out] 宿主场景（setWorkCell 后的已建场景；可预演
+ *                  于未挂接场景——findDrawable 未命中即诚实跳过）
+ * @param workcell  [in] 已发布快照 WC（只读借用——规划半区供数）
+ */
+void calibratePublishedModelRenderGroups(rw::graphics::WorkCellScene& scene,
+                                         const rw::models::WorkCell& workcell);
 
 // =====================================================================
 // HostPresentationSource——呈现构造端口（IUiPresentationSource → RT-T14

@@ -36,6 +36,7 @@
 #include <sdurws/ird/core/Identity.hpp>               // ObjectId/RevisionId::generate
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 #include <sdurws/ird/ui/SelectionService.hpp>         // SelectionService/观察者/来源词表
+#include <sdurws/ird/ui/View3DContract.hpp>          // view3DSessionPoseContract（KIN-06 四布尔钉住——UI-T78）
 #include "plugin/HostView3DGateway.hpp"               // 被测网关（同单元 PRIVATE 面——插件目标同源）
 #include <sdurws/ird/ui/View3DPreviewContract.hpp>    // 会话预览协议值（UI-T33——预览半区替身面）
 
@@ -478,4 +479,96 @@ TEST(HostView3DGateway, PreviewOutlet_DrawFailureKeepsOld_UI_T33)
     ASSERT_FALSE(gateway->currentPreview().frameMarkers.empty());
     EXPECT_EQ(gateway->currentPreview().frameMarkers.front().label, "首组")
         << "失败后观测值被覆盖（保留旧呈现失守）";
+}
+
+// =====================================================================
+// 发布模型拾取面（UI-T78——WP-10-T05 阶段 B：RT-T15 图元 drawable 入
+// 场景后发布模型帧/Drawable 纳入既有 pickFrame 缝的命中面对接验证）
+// =====================================================================
+
+/**
+ * 发布模型帧拾取可达（UX-11 第 9 项＋AT-23——acceptance 2 具名用例）：
+ * pickFrame 缝命中发布模型图元挂接帧（模拟 ray-cast 命中 RT-T15 图元
+ * drawable 后框架 WorkCellScene::getFrame 的回映射产物——运行时映射
+ * 全名形态），经 SA-05 反解→两域分发→View3DPick 来源选中全链有产出。
+ * 链路机制零重写（UI-T45 缝原样——本用例钉住"发布模型帧在链路各拍的
+ * 可达性"，F-550 step6 收口的自证面）。
+ */
+TEST(HostView3DGateway, UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-11", "AT-23"},
+                  std::vector<std::string>{});
+
+    GatewayHarness fx;
+    // 发布模型帧＝RT-T15 图元挂接帧（运行时映射全名形态——§7 名称映射
+    // 的消歧全名；真实链路中该帧由编译产物 WC 帧树持有、图元 drawable
+    // 挂其场景节点，pickFrame→getFrame 回映射即返回本帧）。
+    auto flange = rw::core::ownedPtr(new rw::kinematics::FixedFrame(
+        "CalibRobot.link2.Flange", rw::math::Transform3D<>{}));
+    rw::kinematics::Frame* flangeRaw = flange.get();
+    fx.tree.addFrame(flange);
+    fx.pickedFrame = flangeRaw;
+    const core::ObjectId oid = anyObjectId();
+    fx.nameMap.forward["CalibRobot.link2.Flange"] = oid;
+    auto gateway = fx.make();
+
+    // 拾取可达＝链路五拍全通（UI-T45 缝对发布模型帧零特判——本断言
+    // 失败即发布模型被某拍排除，F-550 step6 的回归钉扎）。
+    EXPECT_TRUE(gateway->handleViewDoubleClick(QPoint(64, 48)))
+        << "发布模型帧拾取应可达（pickFrame 命中→反解→分发→选中）";
+    EXPECT_EQ(fx.dispatchModelingCalls, 1) << "建模域未收到发布模型拾取分发";
+    EXPECT_EQ(fx.dispatchRequirementsCalls, 1) << "需求域未收到发布模型拾取分发";
+    ASSERT_TRUE(fx.observer.last.has_value()) << "发布模型拾取未产生选中";
+    ASSERT_EQ(fx.observer.last->selectedObjectIds.size(), std::size_t{1});
+    EXPECT_EQ(fx.observer.last->selectedObjectIds.front(), oid)
+        << "选中业务身份与发布模型帧反解结果不符";
+    EXPECT_EQ(fx.observer.last->source, SelectionSource::View3DPick)
+        << "发布模型拾取的选中来源失实（AT-23 拾取载体词表）";
+}
+
+/**
+ * 拾取写回＝会话姿态（KIN-06 四布尔钉住——acceptance 2 写回语义半区）：
+ * 发布模型拾取的写回面仅"选中汇聚（会话级 UI 状态）＋域分发"两出口，
+ * 契约常量逐位断言钉死（sessionStateOnly=true / 其余三位 false）——拾取
+ * 链路零修订写入口、零结果失效触发面（结构性保证：HostView3DGateway
+ * 全链只经 SelectionService 与域分发函数缝，无修订/失效端口可触）。
+ */
+TEST(HostView3DGateway, UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-06", "AT-23"},
+                  std::vector<std::string>{});
+
+    // 契约常量逐位（View3DContract.hpp 语义钉住——四布尔任一漂移即此
+    // 断言失败，review 对照本用例即可判定 KIN-06 违约）。
+    const View3DSessionPoseContract contract = view3DSessionPoseContract();
+    EXPECT_TRUE(contract.sessionStateOnly) << "回写效果应为会话级 UI 状态";
+    EXPECT_FALSE(contract.writesDesignModel) << "回写不得修改设计模型";
+    EXPECT_FALSE(contract.producesRevision) << "回写不得产生修订（PA-2）";
+    EXPECT_FALSE(contract.invalidatesResults) << "回写不得触发结果失效（CON-02）";
+
+    // 链路面：发布模型帧拾取全通后，观测到的全部副作用＝选中广播
+    // （会话级）＋两域分发（域内自治面）——分发替身只收 ObjectId（函数
+    // 缝签名即无修订参数位），观察者只收 SelectionChange（无修订/失效
+    // 事件形态）＝写回停留会话姿态的链路自证。
+    GatewayHarness fx;
+    auto link = rw::core::ownedPtr(new rw::kinematics::FixedFrame(
+        "CalibRobot.base.BaseFrame", rw::math::Transform3D<>{}));
+    fx.tree.addFrame(link);
+    fx.pickedFrame = link.get();
+    const core::ObjectId oid = anyObjectId();
+    fx.nameMap.forward["CalibRobot.base.BaseFrame"] = oid;
+    auto gateway = fx.make();
+
+    ASSERT_TRUE(gateway->handleViewDoubleClick(QPoint(10, 10)));
+    ASSERT_TRUE(fx.observer.last.has_value());
+    EXPECT_EQ(fx.observer.last->source, SelectionSource::View3DPick);
+    EXPECT_EQ(fx.observer.last->selectedObjectIds.size(), std::size_t{1});
+    EXPECT_EQ(fx.dispatchModelingCalls, 1);
+    EXPECT_EQ(fx.dispatchRequirementsCalls, 1);
+    // 重复拾取同一对象＝再次会话级选中（幂等写回——无累积性持久效应
+    // 的会话语义；两次广播形态一致即无隐藏的第一次生效路径）。
+    ASSERT_TRUE(gateway->handleViewDoubleClick(QPoint(10, 10)));
+    ASSERT_TRUE(fx.observer.last.has_value());
+    EXPECT_EQ(fx.observer.last->source, SelectionSource::View3DPick)
+        << "重复拾取的选中来源漂移（会话写回语义失守）";
 }

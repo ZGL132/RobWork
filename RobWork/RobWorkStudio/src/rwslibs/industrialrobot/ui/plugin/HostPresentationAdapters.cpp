@@ -2,16 +2,23 @@
  * @file   HostPresentationAdapters.cpp
  * @brief  宿主呈现装配适配器族实现（契约头 HostPresentationAdapters.hpp）。
  *
- * 本文件两块职责：
+ * 本文件三块职责：
  *   1. 三件适配器＝既有契约的机械转发/包裹（UI-T46——零判定）；
  *   2. 发布模型骨架三维呈现（UI-T77——F-550 修复增量）：挂接对象
  *      apply() 在宿主单入口 setWorkCell 之后，把编译产物 WC 的帧树/
  *      SerialDevice 以「坐标轴阵＋连杆链线＋关键帧标签」呈现进宿主三
- *      维——发布后模型在三维可见（此前三维仅网格地面＝F-550 实录）。
+ *      维——发布后模型在三维可见（此前三维仅网格＝F-550 实录）。
  *      边界：本呈现是**骨架示意**（帧结构/运动链可视化），真实网格
- *      几何渲染（visual/collision mesh 资源链）仍归 WP-10-T05 阶段 B
- *      （模板模型 resourceManifest 为空——mesh 数据链与骨架呈现互不
- *      依赖，边界登记 findings F-550）。
+ *      几何渲染（visual/collision mesh 资源链）仍待所有者裁决的保真度
+ *      升级项（模板模型 resourceManifest 为空——mesh 数据链与骨架呈现
+ *      互不依赖，边界登记 findings F-550）。
+ *   3. 发布模型几何呈现分组校准（UI-T78——WP-10-T05 阶段 B 渲染面）：
+ *      RT-T15 编译图元（连杆圆柱/标记盒 RigidObject）经框架
+ *      updateSceneGraph 入场景后，把其 drawable 渲染分组校准为 Physical
+ *      ——图元在产品主相机缺省绘制掩码（Virtual/Physical/DrawableObject）
+ *      下可见，且受框架渲染分组显隐菜单管辖（UX-11 第 6 项）。生命周期
+ *      随发布 WC 场景节点树整体收口（换 WC 即框架整体重建——零残留），
+ *      与骨架组（Virtual 组）正交分层共存不冲突。
  */
 
 #include "HostPresentationAdapters.hpp"
@@ -20,12 +27,14 @@
 
 #include <sdurws/ird/ui/UiTheme.hpp>  // 标签/坐标轴色词表（UI-T77 单一供色点）
 
+#include <rw/geometry/Geometry.hpp>             // Geometry（drawable 名契约——updateSceneGraph 同名落景）
 #include <rw/graphics/DrawableNode.hpp>
 #include <rw/graphics/Render.hpp>
 #include <rw/graphics/WorkCellScene.hpp>
 #include <rw/kinematics/Frame.hpp>
 #include <rw/kinematics/Kinematics.hpp>
 #include <rw/models/Device.hpp>
+#include <rw/models/Object.hpp>                 // Object::getGeometry（发布模型图元清单——校准规划遍历）
 #include <rw/models/WorkCell.hpp>
 #include <rwlibs/opengl/rwgl.hpp>  // GL 聚合头（HostView3DPreviewBackend 同款先例）
 
@@ -206,6 +215,48 @@ void applyPublishedModelSkeleton(rw::graphics::WorkCellScene& scene,
 }  // namespace
 
 // =====================================================================
+// 发布模型几何呈现分组校准（UI-T78——WP-10-T05 阶段 B 渲染面）
+// =====================================================================
+
+std::vector<std::string> collectPublishedModelDrawableNames(
+    const rw::models::WorkCell& workcell)
+{
+    // 遍历契约＝框架 WorkCellScene::updateSceneGraph 同款（WC 对象集合×
+    // 对象几何清单）——drawable 名即 geometry 名（框架落景规则），呈现层
+    // 零名字模式猜测。State 取 WC 默认状态（getGeometry 的入参形态——
+    // RigidObject 图元清单与状态无关，取值仅为满足框架签名）。
+    std::vector<std::string> names;
+    const rw::kinematics::State state = workcell.getDefaultState();
+    for (const rw::core::Ptr<rw::models::Object>& object : workcell.getObjects()) {
+        if (object.isNull()) {
+            continue;  // 空对象条目（WC 装配防御——跳过不崩）
+        }
+        for (const rw::geometry::Geometry::Ptr& geometry : object->getGeometry(state)) {
+            if (geometry.isNull()) {
+                continue;  // 空几何条目（同上——防御不虚构）
+            }
+            names.push_back(geometry->getName());
+        }
+    }
+    return names;
+}
+
+void calibratePublishedModelRenderGroups(rw::graphics::WorkCellScene& scene,
+                                         const rw::models::WorkCell& workcell)
+{
+    // 逐名定位场景 drawable 并校准分组（契约头 kPublishedModelRenderGroup
+    // 注释——Physical 组的呈现角色语义与缺省掩码机理）。未命中即诚实跳过
+    // （场景未建该 drawable——挂接前的预演调用形态，不虚构不报错）。
+    for (const std::string& name : collectPublishedModelDrawableNames(workcell)) {
+        const rw::graphics::DrawableNode::Ptr drawable = scene.findDrawable(name);
+        if (drawable == nullptr) {
+            continue;
+        }
+        drawable->setMask(static_cast<unsigned int>(kPublishedModelRenderGroup));
+    }
+}
+
+// =====================================================================
 // HostRuntimeNameMapPort
 // =====================================================================
 
@@ -272,15 +323,30 @@ bool HostWorkCellPresentationObject::apply() const
         return false;  // 快照无 WC（结构性不可达——hasWorkCell 恒 true）防御面
     }
     m_studio->setWorkCell(workcell);
+    // ---- 发布模型几何呈现分组校准（UI-T78——WP-10-T05 阶段 B 渲染面）：
+    // setWorkCell 触发框架 updateSceneGraph 后，RT-T15 编译图元 drawable
+    // 已按 Geometry 缺省分组（CollisionObject）落景——产品主相机缺省绘制
+    // 掩码不含该组（ShowCollisionModels=false 既有值），不校准则发布模型
+    // 几何整体不可见。此处把模型 drawable 校准为 Physical 组（缺省可见＋
+    // 渲染分组显隐菜单管辖——契约头 kPublishedModelRenderGroup 注释）。
+    // 校准在骨架呈现之前：先模型几何、后骨架辅助层——挂接叙事的层次序。
+    // 场景缺位（headless 装配降级）＝与骨架同款诚实降级（WC 已装入、
+    // 呈现缺位——不虚构）。
     // ---- 发布模型骨架三维呈现（UI-T77——F-550）：宿主单入口装入后把
     // 帧树/设备链呈现进三维（此前三维仅网格＝发布后模型不可见）。挂在
     // 发布 WC 的场景节点上——setWorkCell 换 WC 时随旧节点树整体收口
     // （见 applyPublishedModelSkeleton 类注生命周期），本对象 remove()
     // 的空动作语义不受影响。
+    // 两半区生命周期同款纪律：drawable 全挂发布 WC 的场景节点（模型图元
+    // 由框架 updateSceneGraph 建、骨架由 addFrameAxis/addRender 建），
+    // setWorkcell 换 WC（新实例＝对象身份不同）即旧节点树整体销毁重建
+    // ——发布/重编译/项目切换三拍零残留、零清理名单（UI-T78 渲染面
+    // 具名用例在 ui_test 钉扎：重编译产物 WC 新实例＋清单确定性）。
     rw::graphics::WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
     if (!scene.isNull()) {
+        calibratePublishedModelRenderGroups(*scene, *workcell);
         applyPublishedModelSkeleton(*scene, *workcell);
-    }  // 场景缺位（headless 装配降级）＝WC 已装入、骨架缺呈现——诚实降级
+    }  // 场景缺位（headless 装配降级）＝WC 已装入、呈现缺位——诚实降级
     return true;
 }
 

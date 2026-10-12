@@ -1,0 +1,7 @@
+      1 IRD-GATE-R1
+      1 IRD-GATE-R3
+      2 IRD-GATE-R4
+      1 IRD-GATE-R5
+      1 IRD-GATE-SUB
+      1 IRD-GATE-T1
+      1 IRD-GATE-T2

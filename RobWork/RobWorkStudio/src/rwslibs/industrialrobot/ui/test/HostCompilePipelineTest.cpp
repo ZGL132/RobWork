@@ -41,6 +41,17 @@
 #include <sdurws/ird/project/QueryPort.hpp>       // project::IProjectQueryPort（替身契约形状）
 #include <sdurws/ird/runtime/HostPresentationView.hpp>  // createHostPresentationView（真实呈现视图）
 #include <sdurws/ird/runtime/Snapshot.hpp>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
+
+// UI-T78 渲染面用例的框架消费面（被测 TU 同源编入门控块的框架链接面——
+// 图元类型甄别/分组常量/WC 对象遍历；与 HostPresentationAdapters.cpp
+// 的框架依赖同源，链接面既有）。
+#include <rw/geometry/Geometry.hpp>          // Geometry（名/帧绑定读取）
+#include <rw/geometry/GeometryData.hpp>      // GeometryType（图元类型甄别值）
+#include <rw/graphics/DrawableNode.hpp>      // DrawableNode::Physical（分组绑定断言）
+#include <rw/math/Transform3D.hpp>           // 关节原点位姿构造（m/rad——单位显式）
+#include <rw/models/Object.hpp>              // Object::getGeometry（图元清单独立遍历——完整类型）
+#include <rw/models/WorkCell.hpp>            // WorkCell::getObjects（呈现消费遍历）
 
 #include "plugin/HostCompilePort.hpp"            // 被测：编译端口/名称上下文（同源编入）
 #include "plugin/HostPresentationAdapters.hpp"   // 被测：映射真值端口/呈现源/挂接对象
@@ -442,6 +453,201 @@ TEST(HostRuntimeNameContextTest, ForwardsPortBindingState)
 
     // 空指针＝装配违约 fail-fast。
     EXPECT_THROW((void)(HostRuntimeNameContext(nullptr)), std::invalid_argument);
+}
+
+// =====================================================================
+// UI-T78——发布模型几何呈现分组校准（WP-10-T05 阶段 B 渲染面：
+// RT-T15 图元消费覆盖／重编译确定性＋零残留机制／分组绑定）
+// =====================================================================
+
+/// 双关节本地设计编码（渲染面用例供数——关节原点带平移使连杆跨度非零，
+/// RT-T15 零跨度诚实缺省纪律下才有圆柱图元产生；夹具 1 关节零跨度模型
+/// 只产法兰标记盒，两族图元各至少其一由本设计覆盖）。
+std::vector<std::uint8_t> encodeTwoJointDesignBytes()
+{
+    modeling::RobotDesign design;
+    design.displayName = "CalibRobot";
+
+    // 两个旋转关节：原点沿 X 各平移 0.3/0.25 m（单位 m——跨度真值）。
+    // 关节轴 Z（rad 制限位 0..1——与夹具同构的最小合法申报面）。
+    const double kJointOffsets[2] = {0.3, 0.25};
+    for (int j = 0; j < 2; ++j) {
+        modeling::JointEntry joint;
+        joint.objectId = core::ObjectId::generate();
+        joint.localName = "J" + std::to_string(j + 1);
+        joint.type = modeling::JointType::Revolute;
+        joint.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            rw::math::Vector3D<double>(0.0, 0.0, 1.0),
+            core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        joint.origin = core::SourcedValue<modeling::JointPose>::provided(
+            modeling::JointPose{rw::math::Transform3D<>(
+                rw::math::Vector3D<double>(kJointOffsets[j], 0.0, 0.0),
+                rw::math::Rotation3D<>::identity())},
+            core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        joint.bounds = core::SourcedValue<modeling::JointLimits>::provided(
+            modeling::JointLimits{0.0, 1.0},  // rad——单位显式（§2.5 纪律）
+            core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        design.joints.push_back(std::move(joint));
+    }
+    // 连杆＝关节数+1（I-MDL-1 计数关系）：base/link1（各挂圆柱——子关节
+    // 平移非零）＋link2（末连杆＝法兰——标记盒）。
+    const char* kLinkNames[3] = {"base", "link1", "link2"};
+    for (const char* name : kLinkNames) {
+        modeling::LinkEntry link;
+        link.objectId = core::ObjectId::generate();
+        link.localName = name;
+        design.links.push_back(std::move(link));
+    }
+
+    modeling::RobotDesignCodec codec;
+    auto encoded = codec.encode(modeling::ObjectVariant{std::move(design)},
+                                modeling::kCurrentFormatVersion);
+    EXPECT_TRUE(encoded.ok()) << "本地设计编码失败：" << encoded.error().detail;
+    return encoded.ok() ? std::move(encoded.get()) : std::vector<std::uint8_t>{};
+}
+
+/// 渲染面用例的编译供给（本地设计→真实十段链发布→RT-T14 工厂唯一入口
+/// 构造呈现视图——与产品呈现半区同路径取已发布 WC；返回视图持快照存活期，
+/// 调用方持句柄即持 WC）。
+runtime::HostPresentationViewHandle compileLocalDesignView(
+    const std::vector<std::uint8_t>& designBytes)
+{
+    // 独立存储替身（夹具 m_query 是成员——本用例自建保持用例自包含）。
+    auto query = std::make_shared<MemoryQueryPort>();
+    query->view.id = core::RevisionId::generate();
+    query->view.branch = core::BranchId::generate();
+    query->view.seq = 1;
+    const core::ObjectId rootId = core::ObjectId::generate();
+    query->addObject(rootId, std::string(modeling::kRobotDesignObjectType),
+                     {0x01, 0x02});
+
+    std::vector<project::ObjectWrite> writes;
+    project::ObjectWrite write;
+    write.objectId = core::ObjectId{rootId};
+    write.objectTypeToken = std::string(modeling::kRobotDesignObjectType);
+    write.payloadCanonical = designBytes;
+    writes.push_back(std::move(write));
+
+    HostModelCompilePort port(HostModelCompilePort::Deps{
+        query.get(), core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType), nullptr});
+    const project::CompileRequest request{*query, writes, query->view.id};
+    const project::CompileResult result = port.compileWorkCellAndDwc(request);
+    if (!result.ok) {
+        for (const auto& diag : result.diagnostics) {
+            std::cerr << "  [diag] " << diag.code << ": " << diag.cause << "\n";
+        }
+    }
+    EXPECT_TRUE(result.ok) << "本地设计编译应发布（渲染面供数前置）";
+    // RT-T14 工厂唯一入口（D10——零第二构造路径；归属修订＝编译基线）。
+    return runtime::createHostPresentationView(port.lastPublishedSnapshot(),
+                                               query->view.id);
+}
+
+/// 渲染面·覆盖：真实编译产物（RT-T15 图元挂接后）的校准清单恰好覆盖全部
+/// 发布模型 drawable（对象几何逐一在册＋帧绑定），且两族图元（圆柱/盒）
+/// 各至少其一在册——UI-T78 渲染面消费 RT-T15 产物的具名自证
+/// （acceptance 1 渲染面；ird_gates 无关——纯呈现消费面）。
+TEST_F(HostCompilePipelineTest,
+       PublishedModelGeometry_CalibrationPlanCoversCompiledPrimitives_UI_T78)
+{
+    IRD_TEST_INFO("UX-11", {"AT-23"}, std::nullopt);
+
+    // 真实编译＋RT-T14 工厂路径取 WC（与产品呈现半区同源——快照存活期
+    // 随视图句柄）。
+    const auto view = compileLocalDesignView(encodeTwoJointDesignBytes());
+    ASSERT_NE(view, nullptr);
+    const rw::models::WorkCell::Ptr workcell = view->hostPresentationWorkCell();
+    ASSERT_FALSE(workcell.isNull()) << "呈现视图应携带已发布 WC（渲染面供数）";
+
+    // 独立遍历（与被测规划器同规则——框架 updateSceneGraph 契约；此处
+    // 重走一遍作为对照基准，两清单应逐元素相等）。
+    std::vector<std::string> expectedNames;
+    std::size_t cylinders = 0;  // 圆柱图元计数（RT-T15 连杆族——在册性断言）
+    std::size_t boxes = 0;      // 标记盒图元计数（RT-T15 法兰/TCP/场景族）
+    for (const auto& object : workcell->getObjects()) {
+        ASSERT_FALSE(object.isNull());
+        for (const auto& geometry : object->getGeometry(workcell->getDefaultState())) {
+            ASSERT_FALSE(geometry.isNull());
+            // RT-T15 载体纪律：图元必绑帧（随帧位姿/拾取回映射的前提）。
+            EXPECT_TRUE(geometry->getFrame() != nullptr)
+                << "图元 " << geometry->getName() << " 未绑定帧（载体形态违约）";
+            expectedNames.push_back(geometry->getName());
+            const auto type = geometry->getGeometryData()->getType();
+            if (type == rw::geometry::GeometryData::CylinderPrim) { ++cylinders; }
+            if (type == rw::geometry::GeometryData::BoxPrim) { ++boxes; }
+        }
+    }
+
+    // 被测规划半区：清单恰好覆盖（无遗漏无多出——分组校准的作用面即
+    // 发布模型 drawable 全集）。
+    const std::vector<std::string> plan = collectPublishedModelDrawableNames(*workcell);
+    ASSERT_EQ(plan.size(), expectedNames.size())
+        << "校准清单与发布模型 drawable 全集不等（覆盖面失真）";
+    for (std::size_t i = 0; i < expectedNames.size(); ++i) {
+        EXPECT_EQ(plan[i], expectedNames[i])
+            << "第 " << i << " 项 drawable 名失真（框架落景同名契约）";
+    }
+    // 两族图元各至少其一（本设计：2 圆柱——base/link1 非零跨度；1 盒——
+    // 法兰标记盒）：渲染面消费 RT-T15 图元的产物面自证。
+    EXPECT_GE(cylinders, std::size_t{1}) << "连杆圆柱图元未入册（RT-T15 消费缺口）";
+    EXPECT_GE(boxes, std::size_t{1}) << "标记盒图元未入册（RT-T15 消费缺口）";
+}
+
+/// 渲染面·确定性＋零残留机制：同模型两次编译——校准清单逐元素相等
+/// （NFR-COR-01 同模型同图元的呈现侧对账面）且产物 WC 为新实例（框架
+/// setWorkcell 按对象身份识别换 WC→场景节点树整体重建＝发布/重编译/
+/// 项目切换三拍零残留的机制依据；具名用例，acceptance 1 生命周期半区）。
+TEST_F(HostCompilePipelineTest,
+       PublishedModelGeometry_CalibrationDeterministicAcrossRecompile_UI_T78)
+{
+    IRD_TEST_INFO("UX-11", {}, std::nullopt);
+
+    const auto designBytes = encodeTwoJointDesignBytes();
+    const auto firstView = compileLocalDesignView(designBytes);
+    ASSERT_NE(firstView, nullptr);
+    const rw::models::WorkCell::Ptr firstWc = firstView->hostPresentationWorkCell();
+    ASSERT_FALSE(firstWc.isNull());
+    const std::vector<std::string> firstPlan = collectPublishedModelDrawableNames(*firstWc);
+    ASSERT_FALSE(firstPlan.empty()) << "首编译产物应携带图元（渲染面供数）";
+
+    // 重编译＝同模型再次发布（产品重编译拍的链路面——新快照新 WC）。
+    const auto secondView = compileLocalDesignView(designBytes);
+    ASSERT_NE(secondView, nullptr);
+    const rw::models::WorkCell::Ptr secondWc = secondView->hostPresentationWorkCell();
+    ASSERT_FALSE(secondWc.isNull());
+    const std::vector<std::string> secondPlan = collectPublishedModelDrawableNames(*secondWc);
+
+    // 确定性：两次编译产物图元清单逐元素相等（同模型同图元——呈现分组
+    // 校准的输入稳定面，NFR-COR-01）。
+    ASSERT_EQ(firstPlan.size(), secondPlan.size());
+    for (std::size_t i = 0; i < firstPlan.size(); ++i) {
+        EXPECT_EQ(firstPlan[i], secondPlan[i])
+            << "重编译后第 " << i << " 项 drawable 名漂移（确定性违约）";
+    }
+    // 零残留机制：重编译产物 WC 是新实例（指针不同——两快照同时存活，
+    // 地址比较有效）。框架 RobWorkStudio::setWorkcell 的 identity 检查据
+    // 此走"关旧开新"路径，WorkCellScene::setWorkCell 整树重建（旧 drawable
+    // 全部随旧节点树销毁＝发布/重编译/项目切换三拍零残留）。
+    EXPECT_NE(firstWc.get(), secondWc.get())
+        << "重编译产物应为新 WC 实例（换 WC 整树重建的机制前提）";
+}
+
+/// 渲染面·分组绑定：呈现分组常量钉扎为 DrawableNode::Physical——发布
+/// 模型 drawable 归"物理对象"渲染组管辖（UX-11 第 6 项渲染分组显隐对
+/// 本批 drawable 生效的机制绑定；产品主相机缺省掩码含 Physical 组＝
+/// 缺省可见，具名用例，acceptance 3 清单边界半区）。
+TEST_F(HostCompilePipelineTest,
+       PublishedModelGeometry_CalibrationGroupBindingIsPhysical_UI_T78)
+{
+    IRD_TEST_INFO("UX-11", {}, std::nullopt);
+
+    // 单一书写点钉扎：分组常量＝Physical（"场景中的物理对象"组）。改值
+    // 必须同步契约头 kPublishedModelRenderGroup 注释的机理登记（缺省
+    // 掩码面/与骨架 Virtual 组的分层关系）——本断言即防"顺手改组"。
+    EXPECT_EQ(kPublishedModelRenderGroup,
+              static_cast<int>(rw::graphics::DrawableNode::Physical))
+        << "发布模型呈现分组漂移——渲染分组显隐管辖面随之漂移，须修订登记";
 }
 
 }  // namespace
