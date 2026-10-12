@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "repro-reduction",
+  "version": "1.0.0",
+  "basis": "appendixD#8 (并行归约相对容差——NFR-COR-02，C4 通用比较公式逐元素判定) : 确定性复现基准 B-08（performance-baseline.md §2/§4.6）的对照容差档案——同输入/软件版本/配置/随机种子下复跑腿与跨线程数腿的等价集合数值对照。相对分量＝附录 D 第 8 项固定值 1×10⁻¹²（source=appendixD-fixed，allowedMax 同值——只准更严不准放宽）；fieldPath 为逐量纲扁平键（repro.angle/length/torque/value——消费方 traits 按被测字段量纲取键，档案键无逐元素索引语义，与 kin-fk 等黄金档案的星号模板形态不同：B-08 对照不绑定任何数据集字段布局）；绝对分量取 0（附录 D 该项未固定 ε_abs——被测量为运动学/动力学直接量而非导出量，复跑与分片归均在确定性实现下位级一致，取严不取宽）。本档案只承载 B-08 对照语义，不作任何黄金值对照的容差来源（后者归各域自有档案）",
+  "entries": [
+    {
+      "fieldPath": "repro.angle",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-12, "absolute": 0.0 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-12, "absolute": 0.0 }
+    },
+    {
+      "fieldPath": "repro.length",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 1e-12, "absolute": 0.0 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-12, "absolute": 0.0 }
+    },
+    {
+      "fieldPath": "repro.torque",
+      "quantityKind": "torque",
+      "unit": "N*m",
+      "tolerance": { "relative": 1e-12, "absolute": 0.0 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-12, "absolute": 0.0 }
+    },
+    {
+      "fieldPath": "repro.value",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-12, "absolute": 0.0 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-12, "absolute": 0.0 }
+    }
+  ]
+}
