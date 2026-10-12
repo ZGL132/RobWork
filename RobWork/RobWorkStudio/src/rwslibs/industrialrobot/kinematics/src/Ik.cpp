@@ -1,7 +1,8 @@
 /**
  * @file   Ik.cpp
  * @brief  多初值 IK 求解实现（KIN-02）——请求校验、初值策略生成、阻尼
- *         最小二乘迭代、解析界限检查与五类结局组装（§5.3 时序）。
+ *         最小二乘迭代、解析界限检查与五类结局组装（§5.3 时序）；FK 复算
+ *         失败走求解设施失败值面（F-746③——非终局形态，不抛）。
  *
  * 设计依据（契约面见 Ik.hpp 文件头）：units/kinematics.md §5.3/§5.4/
  * §6.1/§6.3/§9.2/§3.4；治理登记 O-40（Eigen PRIVATE 仅实现文件——本
@@ -47,6 +48,25 @@ namespace {
 [[noreturn]] void failCaller(const std::string& what)
 {
     throw std::invalid_argument(what);
+}
+
+/// 组装"求解设施失败"值面返回（F-746③——三处 FK 复算失败共用的单一形态
+/// 组装点；语义口径见 Ik.hpp IkFacilityFailure 注：与 cancelled 同族的
+/// 非终局形态——设施失败不是结局，不虚构任何搜索结局，D-KIN-7 词表不扩）。
+IkOutcome makeFacilityFailure(IkFacilityFailureStage stage, const IkRequest& request,
+                              const IkSearchRecord& partialSearch, std::string detail)
+{
+    IkOutcome out;
+    // cancelled=false、outcomeKind 保持默认——两者都无终局语义（调用方
+    // 解读序：先 cancelled、再 facilityFailure、最后才允许解读 outcomeKind
+    // ——IkOutcome 注）。
+    out.solutionSet.targetRef = request.targetRef;
+    out.solutionSet.requestIdentity = request.requestIdentity;
+    // 部分搜索统计如实交付（素材不吞错——NFR-COR-03）：iterationsPerInit
+    // 仅含已完成初值的落账，进行中初值不补记（其迭代次数未计入）。
+    out.solutionSet.searchRecord = partialSearch;
+    out.facilityFailure = IkFacilityFailure{stage, std::move(detail)};
+    return out;
 }
 
 /// 数值全有限校验（逐分量；返回首个违例下标，全有限返回 nullopt）。
@@ -493,11 +513,18 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
         std::vector<double> q = request.initialValues[k];
         Expected<PoseMetrics> m = fkService.evaluate(*request.modelView, tcp, q);
         if (!m.ok()) {
-            // 输入已全量验证（q 有限/维度符、TCP 已解析）——FK 失败即
-            // 内部不变量破坏（KIN-SOLVER-INTERNAL 轨——fail-fast 不静默）。
-            throw std::logic_error(
-                "IkSolver：迭代内 FK 复算失败（求解器内部错误——"
-                "KIN-SOLVER-INTERNAL 语义锚，§5.5 fail-fast 轨）");
+            // FK 首评失败＝求解设施失败（F-746③ 转值面——audit F-647③ 原为
+            // std::logic_error，与"solve 不抛——除非调用方契约违约"承诺矛盾）：
+            // 请求在第 0 步已全量验证（q 有限/维度符、TCP 已解析），此处
+            // 失败＝注入视图面在求解期间失效（模型内容漂移等设施事实）——
+            // 不是调用方契约违约（不进 §5.5 fail-fast 轨），也不能虚构结局
+            // （五类结局均有搜索判定语义）。按"设施失败不是结局"返回
+            // facilityFailure 形态，整个求解停止（后续初值同面不可信——
+            // 不做部分解猜测）。
+            return makeFacilityFailure(
+                IkFacilityFailureStage::InitialFkEvaluation, request, search,
+                "initialValues[" + std::to_string(k) + "] FK 复算失败："
+                    + m.error().detail);
         }
 
         double posResidual = 0.0;
@@ -536,9 +563,15 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             ++iterations;
             m = fkService.evaluate(*request.modelView, tcp, q);
             if (!m.ok()) {
-                throw std::logic_error(
-                    "IkSolver：迭代内 FK 复算失败（求解器内部错误——"
-                    "KIN-SOLVER-INTERNAL 语义锚，§5.5 fail-fast 轨）");
+                // FK 再评失败＝求解设施失败（F-746③ 转值面——口径同初评
+                // 分支：视图面设施事实，非调用方违约、不虚构结局）。该初值
+                // 的迭代链中断，整个求解按设施失败返回（其迭代次数未落账
+                // ——部分搜索统计口径见 makeFacilityFailure）。
+                return makeFacilityFailure(
+                    IkFacilityFailureStage::IterationFkEvaluation, request, search,
+                    "initialValues[" + std::to_string(k) + "] 迭代内 FK 复算失败"
+                        "（第 " + std::to_string(iterations) + " 次迭代后）："
+                        + m.error().detail);
             }
         }
 
@@ -574,9 +607,13 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             Expected<PoseMetrics> recheck =
                 fkService.evaluate(*request.modelView, tcp, s.q);
             if (!recheck.ok()) {
-                throw std::logic_error(
-                    "IkSolver：残差复验 FK 复算失败（求解器内部错误——"
-                    "KIN-SOLVER-INTERNAL 语义锚，§5.5 fail-fast 轨）");
+                // 残差复验 FK 失败＝求解设施失败（F-746③ 转值面——口径同
+                // 上两分支；收敛候选不可复验，整个求解按设施失败返回。本
+                // 初值的迭代次数已在 2e 落账，随部分搜索统计如实交付）。
+                return makeFacilityFailure(
+                    IkFacilityFailureStage::ResidualRecheck, request, search,
+                    "initialValues[" + std::to_string(k) + "] 残差复验 FK 复算失败："
+                        + recheck.error().detail);
             }
             // 复验残差（比较型量——覆写当次残差变量，供记录承载）。
             poseError(request.targetInBase, recheck.get().tcpInBase,

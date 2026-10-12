@@ -75,6 +75,15 @@ KinSolveFlowResult runSinglePointSolve(const KinPanelServices& services,
         return result;
     }
 
+    // ---- 求解设施失败：非结局（F-746③ 值面——与取消轨同读法）——如实
+    // 呈现，不入会话态（无终局结局可解读；outcomeKind/solutionSet 均无
+    // 语义，不得当"解 0 个"呈现——无伪完成）。
+    if (outcome.facilityFailure.has_value()) {
+        result.statusText = "求解设施失败（非结局——求解中途 FK 复算失败，"
+                            "详见评估诊断；请核对模型视图后重试）";
+        return result;
+    }
+
     // ---- 内联预算判定（NFR-PERF-01/§9.8：>1 s 转后台；预算可注入——
     //      测试确定性触发，产品缺省恒 kInlineBudgetMs）。
     if (elapsed > inlineBudget) {

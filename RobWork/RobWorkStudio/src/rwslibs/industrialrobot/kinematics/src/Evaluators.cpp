@@ -427,6 +427,21 @@ core::DiagnosticRecord makeKinDiag(std::string_view code,
                                         context, cause, recommendedAction);
 }
 
+/// 设施失败阶段的固定中文文案（诊断 cause 用——确定性同阶段同文案，
+/// NFR-COR-02；F-746③ 消费面）。
+std::string_view facilityFailureStageText(IkFacilityFailureStage stage)
+{
+    switch (stage) {
+    case IkFacilityFailureStage::InitialFkEvaluation:
+        return "初值起点 FK 复算失败";
+    case IkFacilityFailureStage::IterationFkEvaluation:
+        return "迭代内 FK 复算失败";
+    case IkFacilityFailureStage::ResidualRecheck:
+        return "残差复验 FK 复算失败";
+    }
+    return "未知阶段";   // 词表外值——防御分支（枚举三值全覆盖后不可达）
+}
+
 /// 比较型诊断数值侧（SourcedValue 有值态——来源派生只读，methodTag 登记）。
 core::ComparativeValue comparativeValue(double v, const char* unitSymbol)
 {
@@ -618,6 +633,23 @@ evidence::EvaluationOutput TaskPointIkEvaluator::evaluate(
     // ---- 取消轨：零素材输出（取消不是结局——§9.2；无 payload/证明/
     // 搜索记录/诊断）。----
     if (outcome.cancelled) {
+        return out;
+    }
+
+    // ---- 求解设施失败轨（F-746③ 值面——非终局形态，与取消轨同读法）：
+    // FK 复算中途失败（视图面设施事实，非调用方违约）→无 payload/证明/
+    // 搜索记录，产 KIN-SOLVER-INTERNAL 诊断（既有注册码——本路径唯一语义
+    // 锚，Error 级；不吞错——NFR-COR-03）。证据层按无产出素材处置，绝不
+    // 据此输出任务级结论（D-KIN-7 不破）。----
+    if (outcome.facilityFailure.has_value()) {
+        out.diagnostics.push_back(makeKinDiag(
+            kKinSolverInternal, m_query.pointOid,
+            "kin.task-point-ik 任务点 IK 求解",
+            std::string("求解设施失败（")
+                + std::string(facilityFailureStageText(outcome.facilityFailure->stage))
+                + "——非终局形态，无任务级结论）：" + outcome.facilityFailure->detail,
+            "核对模型视图与求解设施可用性后按同一冻结输入复评（新 sliceId、"
+            "同 inputBaseline——D-04）"));
         return out;
     }
 
@@ -942,6 +974,11 @@ struct WorkState {
     std::optional<AnalyticBoundMaterial> proofMaterial;
     std::vector<BatchDemandCheck> demandChecks;
     bool collisionNotEvaluated = false;
+    /// 求解设施失败标记（F-746③——status=NotRun＋reason 已填的已派发项；
+    /// 完整性计数据此区分"未派发 NotRun"（reason 由收尾循环补写）与
+    /// "已派发而求解未完成"——两类都计入 notRunItemCount，但只有前者
+    /// 被补写通用原因文案）。
+    bool facilityFailed = false;
 };
 
 /// 工作项全序比较键（§8.4——(pointOid, conditionId) 字典序；ObjectId
@@ -1265,6 +1302,22 @@ void solveItem(WorkState& item, const BatchQuery& query, const IIkSolver& solver
     const IkOutcome outcome = solver.solve(ikRequest);
     if (outcome.cancelled) {
         return;  // 取消不是结局——槽保持 NotRun（无终局字段可解读）
+    }
+    if (outcome.facilityFailure.has_value()) {
+        // 求解设施失败值面（F-746③——非终局形态）：该项已派发但求解未
+        // 完成→NotRun（reason 携带失败阶段与底层细节——ERR-01 终态必有因；
+        // facilityFailed 标记供收尾计数区分"未派发"）。solveAt 的 NotRun
+        // 检查据此中止批内/批间后续派发（视图面中途失效——后续项同面
+        // 不可信，按 V-22"失败中止"族同形处置）；证据行＝Missing（漏验
+        // 素材），完整批诊断 KIN-RESULT-INCOMPLETE 由组装器按 NotRun 计数
+        // 产出。无终局结局、无任务级结论（D-KIN-7 不破）。
+        item.facilityFailed = true;
+        item.status = BatchItemStatus::NotRun;
+        item.reason = std::string("求解设施失败（")
+            + std::string(facilityFailureStageText(outcome.facilityFailure->stage))
+            + "——该项求解未完成，非任务级结论；中止后续派发）："
+            + outcome.facilityFailure->detail;
+        return;
     }
 
     // 碰撞未评价标记（WP-15-T07 口径——两臂合并：会话不在场（策略未
@@ -1705,10 +1758,22 @@ BatchComputation runBatchComputation(const IKinRuntimeView& view,
     // ---- 取消/中断收尾：未求解可解项如实 NotRun（§7.1"取消→未完成批
     // 如实标记 NotRun"；以"槽仍处于 NotRun 初值且无原因文本"判定未派发
     // ——批内部分完成时已解项的终态如实保留，不回写 NotRun）。----
+    // F-746③：求解设施失败项（facilityFailed——status=NotRun 且 reason
+    // 已由 solveItem 填写）同入 NotRun 计数（"NotRun 数"口径＝未产出求解
+    // 结果的可解项），但**不**被下方"未派发"文案覆写（其失败原因更具体
+    // ——ERR-01 保留原始归因）；计数守恒公式同步扣减（两类未完成项都
+    // 不计入已处理数）。不变式 3（incomplete ⇔ NotRun>0）因此对"设施
+    // 失败发生在最后一项"的边界同样成立——否则该边界会触发
+    // Evidence.cpp 的完整性自检 logic_error（转值面不得引入新崩溃路径）。
     const bool incomplete = batchCancelled.load(std::memory_order_relaxed);
     std::uint64_t notRunCount = 0;
+    std::uint64_t facilityFailedCount = 0;
     for (const std::size_t slot : solvable) {
         WorkState& item = workItems[slot];
+        if (item.facilityFailed) {
+            ++facilityFailedCount;
+            continue;   // reason 已填——不覆写、不入"未派发"计数
+        }
         if (item.status == BatchItemStatus::NotRun && item.reason.empty()) {
             item.reason =
                 "未运行：协作取消/失败中止后未派发（NotRun 如实标记——"
@@ -1717,10 +1782,12 @@ BatchComputation runBatchComputation(const IKinRuntimeView& view,
             ++notRunCount;
         }
     }
-    // 计数守恒（Σ批项数＝预终结项＋已求解项；NotRun＝未派发项——
-    // acceptance 2 自检公式的三个元）。
+    const std::uint64_t notRunTotal = notRunCount + facilityFailedCount;
+    // 计数守恒（Σ批项数＝预终结项＋已求解项；NotRun＝未派发＋设施失败
+    // ——acceptance 2 自检公式的三个元）。
     const std::uint64_t processedCount =
-        preTerminalCount + (static_cast<std::uint64_t>(solvable.size()) - notRunCount);
+        preTerminalCount
+        + (static_cast<std::uint64_t>(solvable.size()) - notRunTotal);
 
     // ---- 步骤 6：完成矩阵素材＋完整性自检＋组装器交付。----
     BatchComputation computation;
@@ -1776,7 +1843,7 @@ BatchComputation runBatchComputation(const IKinRuntimeView& view,
     }
     computation.totalWorkItems = static_cast<std::uint64_t>(computation.items.size());
     computation.processedItemCount = processedCount;
-    computation.notRunItemCount = notRunCount;
+    computation.notRunItemCount = notRunTotal;
     computation.incomplete = incomplete;
 
     // 组装前自检（acceptance 2——工作项总数＝Σ批项数＋NotRun 数；此处
@@ -2461,6 +2528,22 @@ RegionCoverageComputation runRegionCoverageComputation(
         if (outcome.cancelled) {
             // 取消不是结局（§9.2）——槽保持 NotRun 初值，中止批内后续派发。
             batchCancelled.store(true, std::memory_order_relaxed);
+            return;
+        }
+        if (outcome.facilityFailure.has_value()) {
+            // 求解设施失败值面（F-746③——非终局形态）：样本求解未完成→
+            // DataInsufficient（证据缺失族——保留分母不计分子，绝不输出
+            // 不可行，C5/C8 与 V-14 降级轨同口径；与上方碰撞评价缺失样本
+            // 同一落点）；reason 携带失败阶段与底层细节。批内剩余样本照常
+            // 派发（样本级设施失败按样本处置——与碰撞设施异常的"不中断"
+            // 口径一致；降级面由 computeCoverage 的 downgraded 判定承载
+            // ——DataInsufficient>0 即整体降级，Sampling.cpp）。
+            result.state = SampleState::DataInsufficient;
+            result.reason = std::string("求解设施失败（")
+                + std::string(facilityFailureStageText(outcome.facilityFailure->stage))
+                + "——该样本证据缺失，非任务级结论）："
+                + outcome.facilityFailure->detail;
+            out.results.results[slot] = std::move(result);
             return;
         }
 
