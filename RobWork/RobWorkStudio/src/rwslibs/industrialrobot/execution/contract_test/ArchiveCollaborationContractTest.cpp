@@ -498,7 +498,7 @@ TEST_F(ArchiveCollaborationContractTest, BatchContentConflictViaProjectPort_EX_R
     }
 
     const fs::path batchFile =
-        m_storeA->canonicalPath() / "results" / id.run.toCanonical() / "result-batch.bin";
+        m_storeA->canonicalPath() / "results" / id.run.toCanonical() / "result-batch-1.bin";
     ASSERT_TRUE(fs::exists(batchFile));
     const std::string bytesBefore = readAll(batchFile);
     ASSERT_FALSE(bytesBefore.empty());
