@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "B 级真实章节接入（阶段 B：各域提供方注册联调）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": [
     "RPT-01-B",
@@ -31,7 +31,7 @@
   "branch": "wp12-t14",
   "interUnit": true,
   "knownPitfalls": ["P-RPT-1", "P-RPT-2", "P-RPT-3"],
-  "note": "阶段启动登记（2026-10-12，所有者指令「planned 4 个阶段启动」）：阶段 B 启动条件（各域提供方就绪——B 章节注册联调依赖 modeling/requirements/kinematics/optimization 等域领域实现）已满足——契约账面六域全部 done（全库对账批 99dfeb2f）；本卡 planned→ready 并补齐 branch/interUnit/knownPitfalls（RPT 家族惯例）；P-UI-9 预览接口形状已由 reporting.md §9.8/§12 单点冻结承接，不拦截。",
+  "note": "阶段启动登记（2026-10-12，所有者指令「planned 4 个阶段启动」）：阶段 B 启动条件（各域提供方就绪——B 章节注册联调依赖 modeling/requirements/kinematics/optimization 等域领域实现）已满足——契约账面六域全部 done（全库对账批 99dfeb2f）；本卡 planned→ready 并补齐 branch/interUnit/knownPitfalls（RPT 家族惯例）；P-UI-9 预览接口形状已由 reporting.md §9.8/§12 单点冻结承接，不拦截。合入收尾（2026-10-12，收官治理批）：实现合入 2e15e458，验收记录在 origin/acc/rpt-t14/1 分支 :: traceability/acceptance/rpt-t14-20261012.md（governance 提交 260fc348，verdict pass）——ready→done。",
   "acceptance": [
     "AT-32（B 部分）＋RP-SCOPE-1（真实数据）：B 级端到端用例过",
     "与 modeling/requirements/kinematics/optimization 的注册联调（各域提供方就绪后启动）"
