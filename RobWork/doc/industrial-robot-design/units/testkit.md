@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.2（2026-10-12，TK-T12 立项登记——§13；v1.1＝2026-09-19 `sdurws_ird_testkit_qt` 启用落位登记；v1.0＝2026-09-11 TK-T11 触发式补登；v0.9（TK-T10 落位登记；v0.4~v0.8＝TK-T03/T04/T06/T07/T08 落位登记；v0.3＝TK-T01 实施偏差登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案）） |
+| 文档版本 | v1.3（2026-10-12，TK-T12 实现落位登记——§13；v1.2＝2026-10-12 TK-T12 立项登记；v1.1＝2026-09-19 `sdurws_ird_testkit_qt` 启用落位登记；v1.0＝2026-09-11 TK-T11 触发式补登；v0.9（TK-T10 落位登记；v0.4~v0.8＝TK-T03/T04/T06/T07/T08 落位登记；v0.3＝TK-T01 实施偏差登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案）） |
 | 日期 | 2026-09-11 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-TESTKIT |
@@ -926,6 +926,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | v1.0 | 2026-09-11 | TK-T11 触发式补登（消费者 PRJ-T15/WP-08-T10 位于 project/execution 波次，AT-11/13 载体；预防性补登于该波次之前——所有者采纳）：①§9 任务表补登 TK-T11 行（`ProcessRunner.cpp` Job Object/事件等待实现；头文件已于 TK-T09 冻结、实现签名零偏差）；②§10.1 启用表更新为"触发已成立、TK-T11 已补登放行"；③§9"阶段 A 不含"清单同步移出 TestProcessRunner 实现；④DTB §2.2 WP-02-T11 恢复 ≙TK-T11 映射、O-33 消账、≙ 计数 73→74（六卡 74 任务）；⑤契约 tasks/foundation/TK-T11.json 编译放行（ready，入队位于 project 波次 DOC-T10 之前） |
 | v1.1 | 2026-09-19 | `sdurws_ird_testkit_qt` 启用落位登记（WP-10-T02≙UI-T02，任务契约 tasks/foundation/UI-T02.json acceptance 4）：①§10.1 启用表更新为"触发已成立（2026-09-19，UI-T02 建立 ui 三测试目标）——已随 WP-10-T02 启用落位"；②§9"阶段 A 不含"清单同步注记；③落位形态＝INTERFACE 目标载体（Qt6::Core 链接接口＋公共头根传播；设施本体随首消费者 UI-T13/T14 落地后升级 STATIC——目标名不变；INTERFACE 而非 STATIC 的原因：启用期无消费者设施源码，且任务契约 allowedFiles 仅含 testkit/CMakeLists.txt、不含 testkit/src/**——无翻译单元可落，锚点翻译单元不可建于本单元目录树）＋§3.5 隔离纪律钉住（本体永不链接——配置期守卫拦截；只被 GUI/模型测试目标链接——首消费者＝sdurws_ird_ui_gui_test；零 ird 单元边——设施目标非依赖节点）；④设施头/实现（事件循环驱动、控件探针——§6.7/§10.2）随首消费者 UI-T13/T14 落地，不预建占位实现（NFR-MNT-04；首消费者理由登记于 ui.md §13 UI-T13 行——§3.5 必要性登记规则兑现） |
 | v1.2 | 2026-10-12 | TK-T12 立项登记（F-789 专项——所有者 2026-10-12 授权，先卡后码零产品源码改动）：①§9 任务表补登 TK-T12 行（ui_test ctest 上下文挂起根因排查与修复＋gate-all 冒烟目录默认值唯一化；触发已成立＝F-789 批 A 验收 3/3 确定性复现转登＋批 B/C/D gate-all 历次 84/85 唯一失败项）；②§10 阶段 A 注记行同步（TK-T12 不属阶段 A 范围界定面）；③DTB §2.3 新增 WP-02-T12 行（≙TK-T12）；④契约 tasks/foundation/TK-T12.json 立卡（ready 待独立评审放行）。本版为纯登记——设施本体随 TK-T12 实施落位 |
+| v1.3 | 2026-10-12 | TK-T12 实现落位登记（F-789 闭合——实施者＝所有者授权独立会话；契约 status ready→done）：①**根因实证**（audit/tkt12-investigation/——差异矩阵 9 格＋dumpbin 递归闭包 35 模块＋相依链三证）：ui_test 经框架 sdurws 静态库接口面导入 python313.dll（conda 发行形态同目录相依 zlib.dll），运行期前置未内化时 ctest 上下文＝加载器对话框挂起（r2a 所录）或退出码 8（acc-audit-r2d-1 两轮所录）——非产品缺陷、非 QTest 交互（立项疑点排除）；②**gate-all.ps1 三改动**（提交 14b08399）：第 0.5 步 python 运行库前置五级探测/注入（-PythonDir 参数/SDURWS_IRD_PYTHON_DIR/既有 PATH/conda-python 命令反推安装根/常见 conda 安装位）＋0xC0000135 族不可达记 SKIP＋归因不判 FAIL（F-715 同文处置——验收/CI 不误伤）＋冒烟目录默认 ird-gate-smoke-<PID>-<时点> 唯一化（F-628 同族）；③**验证**＝ui_test ctest 三连 EXIT=0＋直跑 258/258 对照（python-free 配置 RWS_ENABLE_PYTHON=OFF 对齐主线构建形态——零 PATH 供给）＋gate-all 85/85 EXIT=0（记录以来首次全项全绿——verify2-* 五件留痕 audit/tkt12-investigation/）；④F-789 翻牌 fixed；框架根因面（RWS_USE_PYTHON3 环境依赖判定致同批源码分岔两种加载面）登记 F-828 归所有者 patch 批。DTB §2.3 WP-02-T12 行随批注落位 |
 
 ---
 
