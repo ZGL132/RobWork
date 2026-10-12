@@ -490,36 +490,35 @@ AdmissionOutcome ResultAdmission::admitResultBatch(ArrivalEnvelope&& arrival,
     //      跳过；不一致→冲突拒绝"的接纳侧映像——同 FinalEnvelope 的
     //      零端口调用口径；project writeBatch 的幂等/冲突机制仍是第二道
     //      防线，contract 测试在端口粒度另验）----
+    // F-809：指纹表按 run 存批次列表（到达序＝批次序）——原实现单值
+    // emplace(run, fp) 永不更新＋固定落盘名，同 run 第二个合法批次（分批
+    // 流式回传）指纹必异而被 ContentConflict 误拒。语义：任一既有批次
+    // 摘要一致＝该批重投递（幂等跳过）；全新摘要＝下一批次（顺延落盘名
+    // 带序号归档）。D-14 内容冲突语义收敛至 project writeBatch 第二道
+    // 防线（端口粒度）与同序重写窗口——批次身份由到达序承载。
     const std::string fingerprint = sha256Hex(arrival.payloadCanon);
-    const auto known = m_batchDigest.find(run);
-    if (known != m_batchDigest.end()) {
-        outcome.taskStateAfter = record.currentState;
-        outcome.archivePhaseAfter = record.archivePhase;
-        if (known->second == fingerprint) {
+    std::vector<std::string>& batchDigests = m_batchDigest[run];
+    for (const std::string& seen : batchDigests) {
+        if (seen == fingerprint) {
+            outcome.taskStateAfter = record.currentState;
+            outcome.archivePhaseAfter = record.archivePhase;
             outcome.decision.verdict = AdmissionDecision::Verdict::DuplicateIgnored;
             return outcome;
         }
-        outcome.decision.verdict = AdmissionDecision::Verdict::Rejected;
-        outcome.decision.reason = AdmissionDecision::RejectReason::ContentConflict;
-        outcome.decision.diagnostics.push_back(admissionDiag(
-            "PRJ-ARCHIVE-CONFLICT",
-            "重投递批次内容与已落盘批次不一致（D-14）——既有文件不被覆盖",
-            "核对回传通道批次序与内容一致性；既有批次保持原样"));
-        m_diagnostics.reportDev("PRJ-ARCHIVE-CONFLICT",
-                                "execution/admission: 批次重投递内容冲突（run=" + run.toCanonical()
-                                    + "）——既有文件不被覆盖");
-        ++m_rejectedArrivals;
-        return outcome;
     }
 
     // ---- 首见批次：归档事务（批次只增、不 finalize——"完整"标志只由
-    //      FinalEnvelope 的 finalize 发布，D-13）----
+    //      FinalEnvelope 的 finalize 发布，D-13）；批次序＝既有指纹数＋1
+    //      （到达序），落盘名带批次序（F-809——多批次互不覆盖）。----
+    const std::size_t batchOrdinal = batchDigests.size() + 1;
+    const std::string batchFile
+        = "result-batch-" + std::to_string(batchOrdinal) + ".bin";
     const ArchiveResult archive = runArchiveTransaction(record, arrival.identity,
                                                         arrival.payloadCanon,
-                                                        "result-batch.bin", /*doFinalize=*/false,
+                                                        batchFile, /*doFinalize=*/false,
                                                         outcome);
     if (archive == ArchiveResult::BatchWritten) {
-        m_batchDigest.emplace(run, fingerprint);
+        batchDigests.push_back(fingerprint);
         outcome.decision.verdict = AdmissionDecision::Verdict::Admitted;
     } else if (archive == ArchiveResult::Conflict) {
         outcome.decision.verdict = AdmissionDecision::Verdict::Rejected;

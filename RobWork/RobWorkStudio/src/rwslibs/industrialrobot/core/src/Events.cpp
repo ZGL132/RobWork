@@ -116,7 +116,8 @@ bool DomainEvent::operator==(const DomainEvent& o) const
 {
     // emittedAtUtc 参与相等（同一事件对象的语义比较）——时钟精度内等同即可，
     // 测试以构造同值或同 id 为主。
-    return id == o.id && kind == o.kind && payload == o.payload;
+    return id == o.id && emittedAtUtc == o.emittedAtUtc && kind == o.kind
+           && payload == o.payload;
 }
 
 // ---- 参考总线（UT-EVT 语义钉子：FIFO/幂等退订/退订后不投递） ----

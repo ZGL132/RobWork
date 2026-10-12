@@ -249,6 +249,16 @@ CloseDialogResolution UiSessionController::resolveCloseDialog(const CloseDecisio
             "ui/session: resolveCloseDialog 无挂起的对话框请求（begin* 未调用"
             "或已决议——调用次序违约）");
     }
+    // F-818：会话缺席前置校验（纵深防御半区）——对话框挂起期间会话可能
+    // 已被 onStoreClosed 终结（finishCurrentClose 走完），迟到决议若继续
+    // 走 :374 m_session.store->requestClose() 即对空绑定解引用（UI 线程
+    // 崩溃）。fail-fast 可归因，不崩。
+    if (m_session.store == nullptr) {
+        m_dialogPending = false;
+        throw std::logic_error(
+            "ui/session: resolveCloseDialog 会话已终结（关闭完成回收——迟到"
+            "决议不可作用于已关闭上下文，F-818）");
+    }
     CloseDialogResolution out;
 
     // ---- [取消] 分支：回到原状态（§5.4 S1"[取消]→回到原状态（中止）"
@@ -507,14 +517,9 @@ void UiSessionController::resolveForceCloseDialog(bool confirmed)
     }
     // 确认 → 强制终止序列＋L5 abandonAll 兜底（§5.6 防线 3"执行
     // requestForceTerminate……＋L5 关闭控制器 abandonAll(ForceTerminated)
-    // 兜底"原文）。接线缺失＝装配违约 fail-fast（半执行的强杀——只终止
-    // 任务不释放 L5 侧资源——比显性失败更危险，禁吞错）。
-    if (!m_deps.forceAbandonAll) {
-        throw std::logic_error(
-            "ui/session: 确认强制结束但 forceAbandonAll 未接线（装配违约——"
-            "L5 关闭控制器 abandonAll(ForceTerminated) 兜底是防线 3 的组成"
-            "半区，§5.6/§11.5）");
-    }
+    // 兜底"原文）。接线缺失＝装配违约 fail-fast——守卫收敛于
+    // executeForceSequence 函数头（F-817：单一事实点，pollDrain 防线 4
+    // 直调路径同受保护；本入口不再重复前置校验）。
     executeForceSequence();
 }
 
@@ -675,6 +680,18 @@ void UiSessionController::presentContextLocked()
 
 void UiSessionController::executeForceSequence()
 {
+    // F-817：接线守卫收敛至本函数单一事实点——原仅 resolveForceCloseDialog
+    // 入口先校验、pollDrain 防线 4 放弃路径（T_force2 到点且用户不在场）
+    // 直调本函数无守卫，:691 注释自称"两入口已完成校验"与实现不符——空
+    // std::function 调用抛 bad_function_call，UI 线程未捕获即 terminate。
+    // 守卫内联后两入口同受保护：装配违约 fail-fast（std::logic_error 可
+    // 归因——同 resolveForceCloseDialog 既有文案），不半执行强杀。
+    if (!m_deps.forceAbandonAll) {
+        throw std::logic_error(
+            "ui/session: 确认强制结束但 forceAbandonAll 未接线（装配违约——"
+            "L5 关闭控制器 abandonAll(ForceTerminated) 兜底是防线 3 的组成"
+            "半区，§5.6/§11.5）");
+    }
     // 强制终止序列（§5.6 防线 3/§9.4：任务记 Failed＋EX-FORCE-TERMINATED，
     // 最近检查点保留可续——后果由 execution 承担，ui 只发请求；重查非终态
     // 集，已自然终态的任务不发强杀）。
@@ -702,6 +719,10 @@ void UiSessionController::finishCurrentClose()
     // 底；Closed 停驻不可观测，审计轨迹经 m_closeCompletedCount 计数）。
     m_closeSubscription.reset();   // 先退订（句柄析构即退订——防重复回调）
     m_session = SessionBinding{};  // 释放存储上下文引用（§5.1"回调后释放"）
+    // F-818：对话框挂起位一并回收——挂起期间 onStoreClosed 终结会话后，
+    // 迟到 resolveCloseDialog 过 :247 挂起检查即对空绑定解引用（主修半区
+    // ＝resolveCloseDialog 会话缺席前置校验；此处清位＝终态一致性半区）。
+    m_dialogPending = false;
     ++m_closeCompletedCount;
     ++m_epoch;                     // §6.2"关闭完成"——当前会话关闭的递增点
     const bool exitRequested = (m_drainIntent == UiCloseIntent::ExitApplication);

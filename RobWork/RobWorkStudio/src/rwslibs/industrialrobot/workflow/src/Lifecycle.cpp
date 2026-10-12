@@ -295,8 +295,20 @@ NewProjectOutcome NewProjectWizardFlow::commit(const NewProjectInputs& inputs,
     request.externalHandling = inputs.externalHandling;
     request.baselineReadOnly = inputs.source == InitialSourceKind::UrdfXacro;
 
-    const DomainInitResult result =
-        domainInitSubmitter->submitInitialization(*opened.store, request);
+    // F-796：第 3 段原为裸调（与第 2 段防御不一致）——L5 装配层抛异常即
+    // 骨架目录残留磁盘＋异常穿透编排器。按第 2 段同款口径转值轨：环境错误
+    // 不穿透编排器，cause 透传 what()，落入第 4 段「不留半成品」收尾
+    // （目录清理＋失败三字段呈现——与 committed=false 值轨路径同一出口）。
+    DomainInitResult result;
+    bool submitThrew = false;
+    std::string submitCause;
+    try {
+        result = domainInitSubmitter->submitInitialization(*opened.store, request);
+    } catch (const std::exception& e) {
+        submitThrew = true;
+        submitCause = e.what();
+        result = DomainInitResult{};   // committed=false——与值轨未提交同路收尾
+    }
 
     if (result.committed) {
         // ---- 第 5 段：成功（领域基线修订已落——created 随诊断透传）----
@@ -331,7 +343,8 @@ NewProjectOutcome NewProjectWizardFlow::commit(const NewProjectInputs& inputs,
     failure.context = pathSummaryText(inputs.directory);
     // 原因/建议：提交端口的 UX-03 半区优先；空则自透传诊断首条兜底；
     // 仍空给通用重试指引（三字段永不缺位——UX-03 呈现承诺）。
-    failure.cause = result.causeText;
+    // F-796：异常转值轨时 cause＝异常 what() 原文（优先于端口空文案）。
+    failure.cause = submitThrew ? submitCause : result.causeText;
     if (failure.cause.empty() && !result.diagnostics.empty()) {
         failure.cause = result.diagnostics.front().cause;
     }

@@ -304,6 +304,13 @@ bool CommandPalettePanel::eventFilter(QObject* watched, QEvent* event)
         case Qt::Key_Escape:
             closePalette();
             return true;
+        case Qt::Key_Tab:
+            // F-821：Tab 补全类别转发——焦点恒在过滤框（installEventFilter
+            // 转发形态），面板从不获焦＝面板级 keyPressEvent 的 Tab 分支
+            // 不可达；无此分支按 Tab 焦点逸出面板（搜索失效、Esc 收口失效，
+            // Tab 补全类别主键盘流不可达——§7.4 全表键盘可达承诺缺口）。
+            completeCategory();
+            return true;
         default:
             break;
         }

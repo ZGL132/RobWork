@@ -885,6 +885,22 @@ ArchiveStatus ArchiveServiceImpl::finalize(ArchiveSessionRef session,
     // finalize/abandon/批次写在互斥外排队，终局以本段为准）。
     const std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
 
+    // F-805：终局仲裁复核（锁内——abandon 已同取本锁，两终局路径自此
+    // 串行化）：会话若已被 abandon 终结（登记摘除），finalize 失去发布
+    // 资格——诚实走 not-ok 值轨，不再为已终结会话发布 manifest（「先到
+    // 者定终局」自注释承诺变锁内事实；修复前本复核缺席，abandon 先至时
+    // 本函数仍继续发布＝已弃运程变完整运程）。
+    {
+        std::lock_guard<std::mutex> guard(m_sessionsMutex);
+        if (m_sessions.find(state.get()) == m_sessions.end()) {
+            return ArchiveStatus{
+                false,
+                StoreError{StoreErrorCode::WriteRejected,
+                           "project/archive: 会话已终结（abandon 先至定终局"
+                           "——finalize 失去发布资格，F-805）"}};
+        }
+    }
+
     // 第 2 步：同 run 已有 manifest 的 D-14 摘要比对（§10.1"重投递幂等
     // 与内容冲突"行）。比对先于磁盘核验（顺序语义）：manifest 在＝该
     // 运行已完整（D-13），重投递只与"已发布事实"比对——摘要一致＝幂等、
@@ -1080,7 +1096,16 @@ void ArchiveServiceImpl::abandon(ArchiveSessionRef session,
     reportDev("project/archive",
               std::string{"abandon run="} + state->task.run.toCanonical()
                   + " reason=" + toToken(reason));
-    endSession(state, false);
+    // F-805：终局同取 writer 互斥（§9.8 兑现——原实现全程不取，置 ended
+    // ＋锁外释放票据可与 finalize 的锁内发布段交错：弃运程变完整运程、
+    // 极端时序下宿主析构并发构成 use-after-destruction 窗口）。取锁后与
+    // finalize 的锁内会话在册复核（其侧 F-805 增量）构成终局互斥：先至
+    // 者定终局。锁序与 finalize 尾形一致（writer→sessions→票据锁内释放
+    // ——finalize :1047 同形），零新死锁类。
+    {
+        std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
+        endSession(state, false);
+    }
 }
 
 }  // namespace sdurws::ird::project

@@ -286,4 +286,30 @@ TEST(CommandContractTx3, BothOk_ExactlyOneRevision)
     EXPECT_EQ(view.commandSummary, "test dual compile");
 }
 
+
+/**
+ * @brief F-804 回归钉：Draining（requestClose 后在途票据未清）下提交在 S1
+ *        前置拒绝——Rejected/NotWritable＋ContextClosed（ProjectStore.hpp:198
+ *        契约原文；修复前仅查 closed() 漏拦 Draining，命令照常执行破坏排空
+ *        悬置不变量）。
+ */
+TEST(PrjCommand, DrainingRejectsAtS1_F804)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    const core::BranchId mainBranch = fx.primaryBranch();
+
+    // 排空悬置前提：在途票据在手 → requestClose 进入 Draining（返回在途数 1）。
+    auto ticket = fx.impl().acquireInFlight();
+    ASSERT_EQ(fx.impl().requestClose(), 1U);
+
+    const CommandResult result =
+        fx.commands().submit(fx.appendEnvelope("drain-cmd", mainBranch));
+    EXPECT_FALSE(result.committed());
+    EXPECT_EQ(result.status.kind, CommandStatus::Kind::Rejected);
+    EXPECT_EQ(result.status.rejection, CommandStatus::Rejection::NotWritable);
+    ASSERT_TRUE(result.error.has_value());
+    EXPECT_EQ(result.error->code(), StoreErrorCode::ContextClosed);
+}
+
 }  // namespace sdurws::ird::project::stub

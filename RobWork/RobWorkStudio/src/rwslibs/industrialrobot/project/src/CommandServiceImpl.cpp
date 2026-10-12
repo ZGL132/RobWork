@@ -234,16 +234,26 @@ bool CommandServiceImpl::runFormChecks(const CommandEnvelope& envelope,
     //      ContextClosed 异常绕过"边界拒绝"的形态。诊断码＝
     //      PRJ-WRITE-AUTHORITY-LOST（executeCommit 门卫同表——diagrec
     //      共享工厂，P-PR-6 链路）。
-    if (m_host.closed()) {
+    // F-804：Draining（requestClose 后排空悬置期）同入 S1 前置拒绝——
+    // ProjectStore.hpp:198 契约原文「Draining/Closed 后提交同样在 S1 拒绝」；
+    // 原实现仅查 closed() 漏拦 Draining（writable()＝OS 排他锁两项均过），
+    // 在途票据先取＋S3 照常跑完，破坏排空悬置不变量。
+    const bool contextGone = m_host.closed()
+        || m_host.m_state == StoreLifecycleState::Draining;
+    if (contextGone) {
+        const bool draining =
+            m_host.m_state == StoreLifecycleState::Draining;
         if (m_sink != nullptr) {
             m_sink->report(diagrec::makeWriteAuthorityLost(
-                "project/command: S1 写拒绝（上下文已关闭） branch="
-                + envelope.branch.toCanonical()));
+                std::string("project/command: S1 写拒绝（上下文")
+                + (draining ? " Draining 排空期" : "已关闭")
+                + "） branch=" + envelope.branch.toCanonical()));
         }
         result.status.kind = CommandStatus::Kind::Rejected;
         result.status.rejection = CommandStatus::Rejection::NotWritable;
         result.error = StoreError(StoreErrorCode::ContextClosed,
-                                  "project/command: context closed（S1）");
+                                  draining ? "project/command: context draining（S1）"
+                                           : "project/command: context closed（S1）");
         return false;
     }
 

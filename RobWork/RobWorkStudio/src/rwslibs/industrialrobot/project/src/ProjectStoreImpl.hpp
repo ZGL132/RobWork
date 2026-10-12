@@ -340,6 +340,10 @@ private:
     // 访问；查询/命令端口经公共访问器消费，零写通道暴露）。
     friend class UndoRedoServiceImpl;
 
+    // 命令服务实现消费宿主生命周期状态位（S1 门卫的 Draining 前置拒绝——
+    // F-804/ProjectStore.hpp:198 契约兑现；同款窄 friend 访问，PRJ-T12 族）。
+    friend class CommandServiceImpl;
+
     friend class ProjectStoreFactory;
 
     /// 工厂内部打开协议主体（ProjectStoreImpl.cpp 内与公开 open/createNew

@@ -26,6 +26,8 @@
 
 #include <gtest/gtest.h>
 
+#include <functional>
+
 #include <QWidget>  // 替身激活体 new QWidget(parent) 的完整类型——运行期
                     // 不在 QCoreApplication 级构造（产视图用例在 GUI 套件）
 
@@ -120,6 +122,7 @@ public:
     // 自持页是否违约回传视图。
     bool hostedReturnsWidget = true;
     bool externalMisbehaves = false;
+    std::function<void()> onActivate;                  // F-820：激活期重入钩子
     // 激活调用台账（编排面断言锚）。
     int activationCalls = 0;
     std::string lastActivatedKey;
@@ -709,3 +712,39 @@ TEST_F(PropertyInspectorModelTest, HostedActivationNullWidgetRejectedAsProviderB
 }
 
 }  // namespace
+
+/**
+ * @brief F-820 回归钉：provider 激活期重入（钩子内选中刷新→m_view.complex-
+ *        Entries 重分配）后，编排面用 entry->hosted 快照做核对——决策面
+ *        行为与修复前一致（hosted＋回传 widget→ok），关键点＝快照后指针
+ *        生命期不跨可重入边界（修复前为 UAF 解引用面）。
+ */
+TEST_F(PropertyInspectorModelTest, ActivateComplexPageReentrantRefreshNoUaf_F820)
+{
+    const ObjectId obj = makeId();
+    auto provider = std::make_shared<StubPagesProvider>("modeling");
+    ComplexPageEntry entry;
+    entry.pageKey = "dh-parameters";
+    entry.title = "DH 参数";
+    entry.hosted = false;   // 模型套件（QCoreApplication 级）——自持页形态免 QWidget
+    provider->pages[obj.toCanonical()] = pageWithFields(1);
+    provider->entries[obj.toCanonical()] = {entry};
+    provider->hostedReturnsWidget = false;  // 自持页不回传视图（GUI 套件归 GUI）
+    PropertyInspectorModel* model = m_model.get();
+    provider->onActivate = [model]() {
+        // 重入半区：选中刷新替换 m_view（complexEntries 重分配）——
+        // 模型直驱形态（同夹具 select 帮手：onSelectionChanged 一步）。
+        SelectionChange change;
+        change.selectedObjectIds = {makeId()};
+        change.source = SelectionSource::ProjectTree;
+        model->onSelectionChanged(change);
+    };
+    m_model->addProvider(provider);
+    select({obj});
+
+    ComplexPageActivationReport report =
+        m_model->activateComplexPage(obj, "dh-parameters", nullptr);
+    EXPECT_TRUE(report.ok);
+    EXPECT_EQ(report.hostedWidget, nullptr);
+    EXPECT_EQ(provider->activationCalls, 1);
+}

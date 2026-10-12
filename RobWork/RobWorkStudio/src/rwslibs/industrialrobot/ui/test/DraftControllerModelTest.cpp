@@ -181,6 +181,7 @@ class StubStorePort final : public ui::IUiDraftStorePort {
 public:
     bool saveOk = true;                                ///< false＝注入落盘失败
     std::string failToken = "media-read-only";         ///< 注入失败的稳定 token
+    bool throwOnDiscard = false;                       ///< F-819：注入 discard 抛异常
     std::vector<DraftDocumentProjection> saved;        ///< save 载荷记录
     std::vector<std::string> discardCalls;             ///< discard 记录
     std::map<std::string, DraftLoadOutcome> loadOutcomes;///< tryLoad 可编程结局
@@ -212,6 +213,9 @@ public:
         EXPECT_TRUE(ManualDiskExecutor::inDiskThread())
             << "ui/draft: discard 调用必须在落盘执行器任务内（§8.4）";
         discardCalls.push_back(moduleId);
+        if (throwOnDiscard) {
+            throw std::runtime_error("f819-port-exception");
+        }
         return DraftDiscardOutcome{true, {}, {}};
     }
 };
@@ -949,3 +953,20 @@ TEST_F(DraftControllerModelTest, SessionLifecycleAndDirtyProducerWiring)
 }
 
 }  // namespace
+
+/**
+ * @brief F-819 回归钉：discardDraft 落盘任务体抛异常转值轨（同 runSaveBlocking
+ *        封门口径）——ok=false＋"exception" 归因 token＋原文 detail；修复前
+ *        异常自落盘执行器任务逃逸（terminate）或 future 永不置值（假死）。
+ */
+TEST_F(DraftControllerModelTest, DiscardDraftExceptionConvertsToValueTrack_F819)
+{
+    DraftHarness& harness = h();
+    harness.bindWritable();
+    harness.attachDirty("kinematics", "payload-v1");
+    harness.store->throwOnDiscard = true;
+    const DraftDiscardOutcome outcome = harness.ctl().discardDraft("kinematics");
+    EXPECT_FALSE(outcome.ok);
+    EXPECT_EQ(outcome.errorToken, "exception");
+    EXPECT_NE(outcome.detail.find("f819-port-exception"), std::string::npos);
+}

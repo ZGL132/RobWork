@@ -39,6 +39,9 @@
 
 #include <gtest/gtest.h>
 
+#include <atomic>
+#include <future>
+
 #include <windows.h>
 
 #include <cstdint>
@@ -878,4 +881,57 @@ TEST_F(ArchiveServiceTest, Draining_RejectsNewBeginButServesExistingSession)
     // abandon 收尾：排空归零→关闭完成（无永久等待——A-4）。
     archive.abandon(session, ArchiveEndReason::Canceled);
     EXPECT_TRUE(store.closed());
+}
+
+/**
+ * @brief F-805 回归钉：finalize/abandon 终局互斥（先至者定终局）——并发
+ *        双终局后盘面二元确定：manifest 在（finalize 胜，ok）⊕manifest
+ *        缺席（abandon 胜，not-ok），会话计数归零。修复前 abandon 不取
+ *        writer 锁、finalize 锁内无在册复核，弃运程可变完整运程。
+ */
+TEST_F(ArchiveServiceTest, AbandonFinalizeEndgameExclusive_F805)
+{
+    OpenStoreResult opened = createNew();
+    ASSERT_NE(opened.store, nullptr);
+    ProjectStore& store = *opened.store;
+    IResultArchivePort& archive = store.archive();
+
+    for (int iter = 0; iter < 10; ++iter) {
+        const TaskIdentity task = makeTask(store.projectId());
+        const ArchiveRequest request = makeRequest(task, dir());
+        const std::vector<ArchiveItem> batch{
+            makeItem("part-1.json", "{\"a\":1}")};
+        ArchiveSessionRef session = archive.begin(request);
+        ASSERT_TRUE(static_cast<bool>(session));
+        const ArchiveStatus written
+            = archive.writeBatch(session, ArchiveBatch{batch});
+        ASSERT_TRUE(written.ok);
+
+        auto finalizeResult = std::async(std::launch::async, [&] {
+            return archive.finalize(session, makeManifest(task, batch));
+        });
+        std::async(std::launch::async, [&] {
+            archive.abandon(session, ArchiveEndReason::Canceled);
+        }).wait();
+        // abandon 先至终局时 finalize 头部按句柄失效契约抛 invalid_argument
+        // ——捕获归入「abandon 胜」分支（盘面 manifest 缺席）。
+        ArchiveStatus fin;
+        bool finalizeThrew = false;
+        try {
+            fin = finalizeResult.get();
+        } catch (const std::invalid_argument&) {
+            finalizeThrew = true;
+        }
+
+        // 终局二元确定（⊕）：盘面 manifest 与 finalize 终态一致。
+        const bool manifestPresent
+            = fs::exists(request.runDir / "manifest.json");
+        if (finalizeThrew) {
+            EXPECT_FALSE(manifestPresent);
+        } else {
+            EXPECT_EQ(manifestPresent, fin.ok);
+        }
+        // 会话收敛（终局唯一——登记摘除面）。
+        EXPECT_EQ(archiveActiveSessions(&store), 0u);
+    }
 }

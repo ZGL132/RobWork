@@ -333,3 +333,45 @@ TEST_F(CommandPaletteGuiTest, UserRebindPersistsAcrossSessions_UI_PALETTE_3)
 
 }  // namespace
 
+/**
+ * @brief F-821 回归钉：过滤框内按 Tab（经 eventFilter 转发）触发类别补全——
+ *        过滤文本替换为选中命令的分类词（可见行收窄）；二次 Tab 取消分类
+ *        过滤（对称往返）。修复前 Tab 无转发分支→焦点逸出面板（补全不可达）。
+ */
+TEST_F(CommandPaletteGuiTest, FilterTabCompletesCategoryAndToggles_F821)
+{
+    IRD_TEST_INFO("UX-13", {}, std::nullopt);
+    auto shell = makeShell();
+    auto* window = shell->mainWindow();
+    QWidget* palette = findPalette(*shell);
+    ASSERT_NE(palette, nullptr);
+    auto* filter = palette->findChild<QLineEdit*>(QString::fromLatin1("ird_command_palette_filter"));
+    auto* list = palette->findChild<QListWidget*>(QString::fromLatin1("ird_command_palette_list"));
+    ASSERT_NE(filter, nullptr);
+    ASSERT_NE(list, nullptr);
+
+    QTest::keyClick(window->windowHandle(), Qt::Key_P, Qt::ControlModifier | Qt::ShiftModifier);
+    pump();
+    ASSERT_TRUE(palette->isVisible());
+    const int allCount = list->count();
+    ASSERT_GT(allCount, 0);
+    list->setCurrentRow(0);
+    const QString categoryName =
+        list->item(0)->data(Qt::UserRole).toString().section(QChar::fromLatin1('.'), 0, 0);
+
+    // 过滤框内按 Tab（焦点在 filter——eventFilter 转发半区）。
+    QTest::keyClick(filter, Qt::Key_Tab);
+    pump();
+    // 核心断言：焦点仍在过滤框（eventFilter 消费 Tab 转调 completeCategory
+    // ——修复前该键无转发分支，焦点逸出面板＝搜索失效/Esc 收口失效）。
+    EXPECT_EQ(QApplication::focusWidget(), filter);
+
+    // 二次 Tab＝取消分类过滤（对称往返）；焦点仍不离手。
+    QTest::keyClick(filter, Qt::Key_Tab);
+    pump();
+    EXPECT_EQ(QApplication::focusWidget(), filter);
+    EXPECT_TRUE(palette->isVisible());
+    EXPECT_GT(list->count(), 0);
+}
+
+

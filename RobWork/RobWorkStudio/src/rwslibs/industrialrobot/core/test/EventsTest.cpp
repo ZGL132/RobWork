@@ -111,6 +111,18 @@ TEST(EventValue, CopyMoveEquality_UT_EVT)
     EXPECT_FALSE(orig == sameIdOtherPayload);
 }
 
+/** F-794 回归钉：emittedAtUtc 参与相等（Events.hpp:104 四元组契约——实现曾仅
+ *  比较 id/kind/payload，与契约及本文件 operator== 注释双重矛盾）。 */
+TEST(EventValue, EmittedAtUtcParticipatesInEquality_F794)
+{
+    const auto a = DomainEvent::make(TaskStatusChangedPayload{sampleTask(), TaskState::Completed});
+    auto later = a;
+    later.emittedAtUtc = a.emittedAtUtc + std::chrono::seconds(1);
+    EXPECT_FALSE(a == later);   // 同 id/kind/payload、异时间戳 → 不等
+    later.emittedAtUtc = a.emittedAtUtc;
+    EXPECT_TRUE(a == later);    // 四元组全同 → 相等
+}
+
 /** 记录 sink：收集投递序（供 FIFO 断言）。 */
 /** 参考总线：FIFO 投递序（§5.8"修订事件先于其失效事件"的顺序敏感场景）。 */
 TEST(ReferenceBus, FifoDeliveryOrder_UT_EVT)
