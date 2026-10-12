@@ -160,12 +160,15 @@ std::vector<std::string> domainSectionsInScope(ReportLevel level)
 std::vector<std::string> sectionsInScope(ReportLevel level)
 {
     // B 级＝词表行 1~8 全量（RPT-01-B 完整章节集：框架 4＋域 4，§5.2 范围图
-    // 外框）；C 级＝行 1~12（B 全部＋C 专属域四项——C 专属框架两项
-    // review-signoff/variant-diff 的内建投影随 RPT-T15 落位，落位前不入
-    // 组装范围——不预建空章节〔TRJ-08 同精神〕，见头函数注的阶段语义行）。
+    // 外框）；C 级＝行 1~14 全量（RPT-01-C＝"B 全部＋追加 6 个 C 章节"，
+    // §5.2 范围图外框逐字——RPT-T15 起行 13/14 两个 C 专属框架章节
+    // review-signoff/variant-diff 的内建投影已随本任务落位
+    // 〔FrameworkSections 分派表〕，头函数注"落位前不入组装范围"的阶段
+    // 语义行随之兑现为全量组装——不预建空章节纪律保持：投影不存在时不入
+    // 范围，投影落位即入范围）。
     // 实现＝按 kAllSectionIds 词表序线性取前缀（词表序即 §5.1 行号序——
     // 报告 sections 按 order 严格递增的组装序权威，NFR-COR-02）。
-    const std::size_t count = (level == ReportLevel::B) ? 8 : 12;
+    const std::size_t count = (level == ReportLevel::B) ? 8 : 14;
     std::vector<std::string> out;
     out.reserve(count);
     for (std::size_t i = 0; i < count; ++i) {

@@ -245,26 +245,30 @@ std::vector<std::string> domainSectionsInScope(ReportLevel level);
 
 /**
  * @brief 报告级别应有的全量章节集（§5.2 范围图的全侧投影——框架＋域；
- *        RPT-T14 增补，B 级真实章节接入的组装序权威）。
+ *        RPT-T14 增补、RPT-T15 扩至 C 级全量，章节组装序权威）。
  *
  * @param level [in] 报告级别
  * @return B 级→词表 1~8 号八项（RPT-01-B 的完整章节集：框架 4 项＋域 4 项，
- *         按 §5.1 行号序）；C 级→词表 1~12 号十二项（B 全部＋C 专属域四项
- *         ——§5.2"C＝B 全部＋追加"；C 专属框架两项〔review-signoff/
- *         variant-diff，行 13/14〕的**内建投影随 RPT-T15 落位**，落位前
- *         不入组装范围——不预建无投影的空章节〔TRJ-08 同精神〕，本函数
- *         返回集随之在 RPT-T15 扩至全 14 项）
+ *         按 §5.1 行号序）；C 级→词表 1~14 号十四项（RPT-01-C＝"B 全部＋
+ *         追加 6 个 C 章节"，§5.2 范围图逐字——行 9~12 的 C 专属域四项走
+ *         注册表，行 13/14 的 C 专属框架两项〔review-signoff/variant-diff〕
+ *         内建投影已随 RPT-T15 落位，入组装范围——不预建无投影的空章节
+ *         〔TRJ-08 同精神〕：投影落位即入范围）
  *
- * 用途：构建器（RPT-T05/RPT-T14）据此组装章节循环——框架章节走内建投影
- * （不注册、不可覆盖，§5.1 词表规则），域章节走注册表查找（未注册＝
- * unregisteredSectionMissingItem 缺项）。返回序＝词表行号序（确定性，
+ * 用途：构建器（RPT-T05/RPT-T14/RPT-T15）据此组装章节循环——框架章节走
+ * 内建投影（不注册、不可覆盖，§5.1 词表规则），域章节走注册表查找（未注册
+ * ＝unregisteredSectionMissingItem 缺项）。返回序＝词表行号序（确定性，
  * NFR-COR-02——报告 sections 按 order 严格递增）。
  *
- * 阶段语义（RPT-T14 落位登记，DTB §5.4）：阶段 B 交付的软件中 C 专属域
- * 提供方（trajectory/dynamics/drivetrain/selection）与 C 专属框架投影均
- * 未落位——C 级请求组装出的 C 章节全部缺正式结果，构建器据此以
- * ScopeInsufficient 拒绝（§5.4/P-RPT-5 保守处置）。这是"阶段 B 不允许
- * 生成 C 级报告"的**结构性**承载（提供方/投影不存在，非运行期开关）。
+ * 阶段语义（RPT-T14 登记初版、RPT-T15 兑现，DTB §5.4）：阶段 B 交付的
+ * 软件中 C 专属域提供方（trajectory/dynamics/drivetrain/selection）与
+ * C 专属框架投影均未落位——C 级请求组装出的 C 章节全部缺正式结果，构建器
+ * 据此以 ScopeInsufficient 拒绝（§5.4/P-RPT-5 保守处置），这是"阶段 B 不
+ * 允许生成 C 级报告"的结构性承载。RPT-T15 落位 C 专属框架两项内建投影后
+ * C 级组装范围扩至全量；C 域章节提供方仍归各域单元装配期注册（未注册域
+ * 章节照旧缺项表达），C 级范围保守判定的"实质内容"对象仍为 C 域章节
+ * （C 框架章节为元数据块、不承载 §5.3"正式结果"语义——构建器范围判定
+ * 投影的排除口径见 Builder.cpp，登记 §14.4 v0.18）。
  */
 std::vector<std::string> sectionsInScope(ReportLevel level);
 

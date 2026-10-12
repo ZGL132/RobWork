@@ -32,7 +32,7 @@
  *   ③资格与当前性不自算（§6.2/§6.3）——构建器只**冻结** evidence 的纯检查
  *   结果与当前性投影，每份报告构建时重查、不缓存跨报告复用。
  *
- * IReportResultSource 的落位增量（DTB §5.4 登记，单元卡 §14.4 v0.8）：
+ * IReportResultSource 的落位增量（DTB §5.4 登记，单元卡 §14.4 v0.8/v0.18）：
  *   §9.1 原文给出 tryEnvelope/currentnessOf 两方法签名（"签名为实现建议"
  *   ——§9 章首口径）；§7.2 步③要求构建器在 Resolving 阶段同时取得
  *   evidence 资格纯检查结果，而 evidence 的 checkFormalPassEligibility/
@@ -44,6 +44,13 @@
  *   results/<run-id>/ 归档工件含复现要素）。两增量均为 §7.2 步③的注入
  *   承载，契约语义零变更；envelope 解码本身仍归 evidence/execution 适配
  *   （R-3/§12.2 交接催办），本单元不自建解码器、不私建编译边。
+ *
+ *   v0.18 增量（RPT-T15——RP-COV-1 收口）：增补 tryCoverageMatrix——
+ *   evidence 汇总层的 CaseCoverageMatrix（§6.6，EVI-02 的证据形态）随运行
+ *   归档，envelope 本身不携带（Envelope.hpp 实测无该字段）；§4.2
+ *   coverageSummary 的数据源（"消费 evidence 覆盖矩阵的呈现投影"——§4.2
+ *   字段表行）经本注入投影取得，reporting 只消费不重算覆盖判定（§2.1
+ *   C-2——覆盖完备性的判定权威在 evidence 汇总门禁②级）。
  *
  * 线程契约（§9.1 维度表）：
  *   - IReviewReportBuilder::build 并发安全（无共享可变状态；每次调用独立
@@ -77,6 +84,7 @@
 
 #include <sdurws/ird/evidence/Currentness.hpp>  // evidence::CurrentnessResult（EV-T08 交付面）
 #include <sdurws/ird/evidence/Envelope.hpp>     // evidence::ResultEnvelope（只读值——P-RPT-9 基线）
+#include <sdurws/ird/evidence/Evidence.hpp>     // evidence::CaseCoverageMatrix（§6.6——tryCoverageMatrix 返回值，v0.18）
 #include <sdurws/ird/evidence/Snapshot.hpp>     // evidence::ReproductionBlock（§4.2 复现要素）
 #include <sdurws/ird/evidence/Verdict.hpp>      // evidence::EligibilityCheck（§7.2 步③纯检查结果）
 
@@ -426,7 +434,10 @@ struct ReportEligibilityChecks {
  *     注册表投影等重事实面，reporting 无此注入面且禁止自算，§6.2）；
  *   - tryReproduction（落位增量，§14.4 v0.8 登记）：读取归档复现要素
  *     （§4.2 reproduction 必填字段的数据源——§7.6 命名 results/<run-id>/
- *     归档工件含复现要素；解码归适配器）。
+ *     归档工件含复现要素；解码归适配器）；
+ *   - tryCoverageMatrix（落位增量，§14.4 v0.18 登记）：读取归档覆盖矩阵
+ *     （evidence 汇总层产物——§6.6 CaseCoverageMatrix；§4.2 coverageSummary
+ *     的数据源，RP-COV-1 收口面）。
  *
  * 生命周期：L5 装配持有实现实例，构建器仅借用（构造引用须在 build()
  * 调用期间存活）。线程契约：并发只读安全（§9.1 维度表——build 并发安全
@@ -494,6 +505,28 @@ public:
      * 线程安全：并发只读安全。
      */
     virtual std::optional<evidence::ReproductionBlock> tryReproduction(core::RunId runId) const = 0;
+
+    /**
+     * @brief 取归档必验工况覆盖矩阵（§4.2 coverageSummary 数据源——落位
+     *        增量，§14.4 v0.18 登记；RP-COV-1/EVI-02 的报告侧呈现投影源）。
+     *
+     * 数据源＝evidence 汇总层随运行归档的 CaseCoverageMatrix（§6.6——
+     * EVI-02 的证据形态；envelope 本身不携带〔Envelope.hpp 实测〕，解码归
+     * 适配器）。reporting 只消费矩阵做**呈现投影聚合**（§4.2 五态计数＋
+     * 必验总数），不重算覆盖完备性判定（§2.1 C-2——判定权威在 evidence
+     * 汇总门禁②级）；多结果的矩阵归并规则（同基准对账/逐工况保守取态）
+     * 归构建器（Builder.cpp 聚合函数，§14.4 v0.18 登记）。
+     *
+     * @param runId [in] 运行身份（已由构建器按 listRuns finalize 口径核对）
+     * @return 覆盖矩阵值拷贝（evidence::CaseCoverageMatrix）；归档工件不可
+     *         解析/不含覆盖矩阵＝nullopt（构建器据此以 SourceMissing 拒绝
+     *         ——报告级覆盖呈现缺数据源即失真，EVI-02"不得漏验"的呈现面
+     *         宁可拒绝不可伪造）
+     *
+     * 线程安全：并发只读安全；对同 runId 幂等（一致读取视图——§7.1）。
+     */
+    virtual std::optional<evidence::CaseCoverageMatrix> tryCoverageMatrix(
+        core::RunId runId) const = 0;
 };
 
 // =====================================================================
@@ -555,15 +588,22 @@ public:
  *     （input-summary 章节与报告级 externalResourceSummary 的数据源——
  *     P-RPT-2 注入形态；空指针＝未装配，缺项/空集表达不伪造）。
  *
- * 框架章节边界（RPT-T14 落位更新，§14.4 v0.17）：B 级四个框架章节
- * （project-scheme/input-summary/diagnostics/external-validation-boundary）
- * 的内建投影已随 RPT-T14 落位（FrameworkSections.hpp——数据源＝锚定修订
- * 元数据/IModelSummaryProvider〔构造可选注入——nullptr＝input-summary
- * 缺项表达，不伪造〕/报告级诊断并集/复现块），由本实现直接驱动（不注册、
- * 不可覆盖——§5.1 词表规则/D-13）；C 专属框架两项（review-signoff/
- * variant-diff）的内建投影随 RPT-T15 落位，落位前不入组装范围（不预建
- * 空章节）。本实现组装＝级别范围内全量章节（sectionsInScope——框架走
- * 内建投影、域走注册表查找＋未注册缺项表达）。
+ * 框架章节边界（RPT-T15 落位更新，§14.4 v0.18）：框架章节六项
+ * （B 级四项 project-scheme/input-summary/diagnostics/external-validation-
+ * boundary 随 RPT-T14；C 专属两项 review-signoff/variant-diff 随 RPT-T15
+ * ——数据源＝锚定修订元数据/IModelSummaryProvider〔构造可选注入——
+ * nullptr＝input-summary 缺项表达，不伪造〕/报告级诊断并集/复现块/本次
+ * 评审元数据），由本实现直接驱动（不注册、不可覆盖——§5.1 词表规则/
+ * D-13）。本实现组装＝级别范围内全量章节（sectionsInScope——框架走内建
+ * 投影、域走注册表查找＋未注册缺项表达；C 级范围＝词表全 14 项）。
+ *
+ * C 级范围保守判定的对象（RPT-T15 登记口径，§14.4 v0.18）：§5.4 行 2
+ * "全部 C 章节缺正式结果"的判定对象为承载评估结果的 **C 域章节**（§5.3
+ * NoFormalResult＝"该域无任何可引用的已完成结果"——域语义）；C 专属框架
+ * 两章节为元数据块（不来自评估运行，review-signoff 随构建成功恒有内容）
+ * 不参与"实质内容"判定——否则恒 Populated 的元数据块会架空 P-RPT-5 保守
+ * 拒绝（C 域全缺时"C 级"虚级仍被拦截）。选择路计数（§4.6 行 4）同口径
+ * 排除。
  *
  * 线程契约：build 并发安全——全部注入引用只读消费、无共享可变状态；
  * 每次调用构造独立 ReportBuildSession（§9.1"每次调用独立会话"）。

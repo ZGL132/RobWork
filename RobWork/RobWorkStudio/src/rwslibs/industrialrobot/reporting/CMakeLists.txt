@@ -250,6 +250,13 @@ enable_testing()
 #   - test/LevelBEndToEndTest.cpp——B 级端到端集成测试（AT-32 B 部分＋
 #     RP-SCOPE-1 真实数据：真实 envelope/ModelSummary/锚定元数据的完整链路，
 #     四域提供方注册联调的章节装配与逐章追溯，C 级结构性拒绝）。
+# RPT-T15 增列（§11 RPT-T15 行产物：C 级扩展与变体——阶段 C）：
+#   - FrameworkSections 增 C 专属框架两投影（review-signoff/variant-diff，
+#     §5.1 行 13/14）；Builder 增覆盖矩阵注入投影与报告级聚合（RP-COV-1）
+#     ＋变体基准一致性拒绝（EVI-02）；Sections sectionsInScope(C) 扩至
+#     词表全 14 项（同文件批内修订——不新增源文件）；
+#   - test/LevelCEndToEndTest.cpp——C 级端到端集成测试（AT-32 逐章追溯＋
+#     RP-REVW-1/2＋RP-COV-1＋EVI-02 基准不一致拒绝＋P-RPT-5 保守回归钉）。
 add_executable(sdurws_ird_reporting_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -259,6 +266,7 @@ add_executable(sdurws_ird_reporting_test
     test/SectionProviderTest.cpp
     test/BuilderTest.cpp
     test/LevelBEndToEndTest.cpp
+    test/LevelCEndToEndTest.cpp
     test/RenderTest.cpp
     test/ConsistencyTest.cpp
     test/ArchiveExportTest.cpp

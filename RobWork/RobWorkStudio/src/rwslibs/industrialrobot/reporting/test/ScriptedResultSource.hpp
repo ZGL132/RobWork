@@ -51,11 +51,14 @@
 #include <utility>
 #include <vector>
 
+#include <gtest/gtest.h>  // FAIL()——脚本违约 fail-fast 断言面（仅测试目标编译）
+
 #include <sdurws/ird/core/DiagData.hpp>
 #include <sdurws/ird/core/Digest.hpp>
 #include <sdurws/ird/core/Evaluation.hpp>
 #include <sdurws/ird/core/Identity.hpp>
 #include <sdurws/ird/evidence/Envelope.hpp>
+#include <sdurws/ird/evidence/Evidence.hpp>
 #include <sdurws/ird/evidence/Snapshot.hpp>
 #include <sdurws/ird/evidence/Verdict.hpp>
 #include <sdurws/ird/reporting/Builder.hpp>
@@ -323,6 +326,83 @@ scriptedCurrentness(std::optional<evidence::CurrentnessStatus> status,
     return r;
 }
 
+// ---------------------------------------------------------------------
+// 覆盖矩阵脚本值（RPT-T15——§6.6 CaseCoverageMatrix 的合法结构形态；
+// 替身边界声明同源：矩阵为 evidence 汇总层的**呈现投影源**，脚本值只验证
+// reporting 的注入消费与报告级聚合契约，不构成覆盖判定语义的正确性证明
+// ——覆盖完备性判定权威在 evidence 汇总门禁②级，§2.1 C-2）
+// ---------------------------------------------------------------------
+
+/// 缺省覆盖矩阵的必验工况集身份（全部缺省矩阵同 id＝同基准对账通过——
+/// 多结果缺省场景的一致性前提；显式脚本可覆写）。
+inline core::ContentIdentity scriptedRequiredCaseSetId()
+{
+    return scriptedCid(0x80);
+}
+
+/**
+ * @brief 结构合法的覆盖矩阵脚本值（§6.6 CaseCoverageMatrix——caseId 唯一、
+ *        NotApplicable 必填原因；"漏验/全覆盖"两路脚本的构造面，RP-COV-1）。
+ *
+ * @param caseIds    [in] 工况身份序（矩阵条目序＝调用方提供序——矩阵内
+ *                   caseId 唯一由调用方保证，重复即脚本错误 fail-fast）
+ * @param statuses   [in] 逐工况执行状态（与 caseIds 等长对齐）
+ * @param requiredSet [in] 必验工况集身份（缺省＝scriptedRequiredCaseSetId()
+ *                   ——多结果同基准对账通过面；基准不一致用例显式覆写）
+ * @return 覆盖矩阵（结构合法性自检——重复 caseId 即脚本违约 FAIL）
+ */
+inline evidence::CaseCoverageMatrix
+scriptedCoverageMatrix(const std::vector<core::ObjectId>& caseIds,
+                       const std::vector<evidence::CaseExecutionStatus>& statuses,
+                       core::ContentIdentity requiredSet = scriptedRequiredCaseSetId())
+{
+    // 非返回 void 的辅助函数禁用 FAIL()（携带 return 语义）——脚本违约
+    // 以 ADD_FAILURE() 记账＋防御返回空矩阵（用例必因该记账失败，防御值
+    // 仅为可编译性服务）。
+    if (caseIds.size() != statuses.size()) {
+        ADD_FAILURE() << "scriptedCoverageMatrix: caseIds 与 statuses 长度不一致（脚本违约）";
+        return evidence::CaseCoverageMatrix{};
+    }
+    evidence::CaseCoverageMatrix matrix;
+    matrix.requiredCaseSetId = std::move(requiredSet);
+    for (std::size_t i = 0; i < caseIds.size(); ++i) {
+        evidence::CaseCoverageEntry entry;
+        entry.caseId = caseIds[i];
+        entry.status = statuses[i];
+        if (entry.status == evidence::CaseExecutionStatus::NotApplicable) {
+            // NotApplicable 必填原因（§6.6 约束行——presence 纪律的结构
+            // 合法性面；文案为脚本铺位值，RP-COV-1 断言不依赖其内容）。
+            entry.notApplicableReason = "该工况对本域评估显式不适用（脚本铺位）";
+        }
+        // 重复 caseId 即矩阵非法（§6.6"caseId 重复→矩阵非法"）——脚本
+        // 违约记账（不产出非法矩阵样本，替身边界声明①同源；该条目跳过
+        // ——用例必因 ADD_FAILURE 失败，跳过仅为不扩散非法样本）。
+        bool duplicated = false;
+        for (const evidence::CaseCoverageEntry& existing : matrix.entries) {
+            if (existing.caseId == entry.caseId) {
+                ADD_FAILURE() << "scriptedCoverageMatrix: 重复 caseId（§6.6 矩阵非法）";
+                duplicated = true;
+                break;
+            }
+        }
+        if (duplicated) {
+            continue;
+        }
+        matrix.entries.push_back(std::move(entry));
+    }
+    return matrix;
+}
+
+/// 缺省全覆盖矩阵（按包络 caseScope 全 Executed——"全部已覆盖"的最常用
+/// 形态；单点变异纪律：漏验/不适用脚本由用例显式覆写）。
+inline evidence::CaseCoverageMatrix defaultCoverageMatrixFor(
+    const evidence::ResultEnvelope& envelope)
+{
+    std::vector<evidence::CaseExecutionStatus> allExecuted(
+        envelope.caseScope.caseIds.size(), evidence::CaseExecutionStatus::Executed);
+    return scriptedCoverageMatrix(envelope.caseScope.caseIds, allExecuted);
+}
+
 // =====================================================================
 // 具名替身本体
 // =====================================================================
@@ -355,6 +435,11 @@ public:
     /// 复现块缺项开关（RP-MDL-2 的"复现要素缺失"注入面——reproduction
     /// 必填，缺项＝SourceMissing，§4.2）。
     bool reproductionAvailable = true;
+    /// 覆盖矩阵脚本（RPT-T15——缺条目＝按包络 caseScope 全 Executed 缺省
+    /// 〔defaultCoverageMatrixFor〕；"未执行/不适用"等 RP-COV-1 变异由
+    /// withCoverageMatrix 显式登记；显式登记 nullopt＝矩阵缺失面
+    /// 〔SourceMissing 注入〕）。
+    std::map<std::string, std::optional<evidence::CaseCoverageMatrix>> coverageMatrices;
 
     // ---- 观测面（const 接口内记账故为 mutable——测试桩观测面） ----
 
@@ -362,6 +447,7 @@ public:
     mutable std::map<std::string, int> currentnessCalls;   ///< currentnessOf 计数
     mutable std::map<std::string, int> eligibilityCalls;   ///< eligibilityOf 计数
     mutable std::map<std::string, int> reproductionCalls;  ///< tryReproduction 计数
+    mutable std::map<std::string, int> coverageCalls;      ///< tryCoverageMatrix 计数（RPT-T15）
 
     /// 登记 envelope 脚本（链式装配辅助——等同 envelopes.emplace）。
     ScriptedResultSource& withEnvelope(const core::RunId& run,
@@ -384,6 +470,15 @@ public:
                                           ReportEligibilityChecks checks)
     {
         eligibility.emplace(run.toCanonical(), std::move(checks));
+        return *this;
+    }
+
+    /// 登记覆盖矩阵脚本（RPT-T15——std::nullopt 即"矩阵缺失"注入面，
+    /// RP-COV-1 数据源缺位拒绝路径的触发器）。
+    ScriptedResultSource& withCoverageMatrix(
+        const core::RunId& run, std::optional<evidence::CaseCoverageMatrix> matrix)
+    {
+        coverageMatrices.emplace(run.toCanonical(), std::move(matrix));
         return *this;
     }
 
@@ -434,6 +529,26 @@ public:
         const auto it = reproductions.find(run.toCanonical());
         return it != reproductions.end() ? std::optional{it->second}
                                          : std::optional{scriptedReproduction()};
+    }
+
+    std::optional<evidence::CaseCoverageMatrix> tryCoverageMatrix(
+        core::RunId run) const override
+    {
+        ++coverageCalls[run.toCanonical()];
+        const auto it = coverageMatrices.find(run.toCanonical());
+        if (it != coverageMatrices.end()) {
+            return it->second;   // 显式脚本（含 nullopt＝矩阵缺失注入面）
+        }
+        // 缺省＝全覆盖矩阵——按该运行的包络 caseScope 全 Executed（单点
+        // 变异纪律：B 级既有场景零改写持续覆盖通过面；漏验/不适用变异由
+        // withCoverageMatrix 显式登记——RP-COV-1）。包络不在脚本表＝本
+        // 方法不会被构建器在 tryEnvelope 成功之前调用（步③顺序），防御
+        // 面直接给 nullopt（不伪造矩阵）。
+        const auto envelopeIt = envelopes.find(run.toCanonical());
+        if (envelopeIt == envelopes.end()) {
+            return std::nullopt;
+        }
+        return defaultCoverageMatrixFor(envelopeIt->second);
     }
 };
 

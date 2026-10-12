@@ -24,6 +24,7 @@
 
 #include <sdurws/ird/reporting/ModelSummary.hpp>  // ResourceStateKind toToken（资源状态词面）
 
+#include <chrono>
 #include <string>
 #include <utility>
 
@@ -127,9 +128,9 @@ BuiltinFrameworkSections::BuiltinFrameworkSections(
 SectionContent BuiltinFrameworkSections::project(std::string_view sectionId,
                                                  const FrameworkSectionInput& input) const
 {
-    // 分派表＝B 级框架词表四项（§5.1 行 1/2/7/8）。C 专属框架两项
-    // （review-signoff/variant-diff）的内建投影归 RPT-T15——传入即调用方
-    // 违约（阶段边界在分派面显性化，不静默产出空章节）。
+    // 分派表＝框架词表六项（§5.1 行 1/2/7/8 B 级四项＋行 13/14 C 专属两项
+    // ——RPT-T15 落位；六项同受"不注册、不可覆盖"内建纪律约束，§5.1 词表
+    // 规则）。分派表外 token（域章节/词表外）＝调用方契约违约 fail-fast。
     if (sectionId == kSectionProjectScheme) {
         return projectProjectScheme(input);
     }
@@ -142,11 +143,17 @@ SectionContent BuiltinFrameworkSections::project(std::string_view sectionId,
     if (sectionId == kSectionExternalValidationBoundary) {
         return projectExternalValidationBoundary(input);
     }
-    // 非框架 token（域章节/C 专属框架/词表外）＝调用方契约违约 fail-fast
+    if (sectionId == kSectionReviewSignoff) {
+        return projectReviewSignoff(input);
+    }
+    if (sectionId == kSectionVariantDiff) {
+        return projectVariantDiff(input);
+    }
+    // 非框架 token（域章节/词表外）＝调用方契约违约 fail-fast
     //（AGENTS.md 错误语义：调用方错误走异常，不走诊断收集）。
     throw ReportError(ReportErrorCode::Usage,
                       "BuiltinFrameworkSections: '" + std::string(sectionId)
-                          + "' 不是 B 级框架章节 token（§5.1 行 1/2/7/8——内建投影分派表外）");
+                          + "' 不是框架章节 token（§5.1 行 1/2/7/8/13/14——内建投影分派表外）");
 }
 
 std::vector<ExternalResourceStateEntry> BuiltinFrameworkSections::externalResourceEntries(
@@ -500,6 +507,243 @@ SectionContent BuiltinFrameworkSections::projectExternalValidationBoundary(
                 content.entries.push_back(std::move(entry));
             }
         }
+    }
+
+    content.status = SectionStatus::Populated;
+    return content;
+}
+
+// =====================================================================
+// §5.1 行 13——review-signoff（评审/签署元数据；RPT-T15）
+// =====================================================================
+
+// 时间点的确定性呈现（UTC 时刻→自 Epoch 的毫秒计——呈现层最小确定形态；
+// 无 locale/时区依赖：同元数据同文本，NFR-COR-02。正式日期排版归渲染层
+// ——本投影只承载可复现的确定性事实文本）。
+std::string timePointMs(std::chrono::system_clock::time_point at)
+{
+    const std::int64_t ms =
+        std::chrono::duration_cast<std::chrono::milliseconds>(at.time_since_epoch())
+            .count();
+    return std::to_string(ms) + " ms-epoch-utc";
+}
+
+SectionContent BuiltinFrameworkSections::projectReviewSignoff(
+    const FrameworkSectionInput& input) const
+{
+    SectionContent content = baseContent();
+
+    // 数据源＝本次评审元数据（§4.2 review 必填——构建器组装循环前已组装；
+    // 空指针＝构建器编排违约 fail-fast：元数据是报告必填字段，静默当空集
+    // ＝伪造"无评审元数据"的章节，违反 ERR-01）。
+    if (input.review == nullptr) {
+        throw ReportError(ReportErrorCode::Usage,
+                          "BuiltinFrameworkSections: review-signoff 投影输入缺 review"
+                          "（构建器编排违约——评审元数据为报告必填字段，§4.2）");
+    }
+    const ReviewMetadata& review = *input.review;
+
+    // renderHint＝MetadataBlock（§9.2 renderHint——"元数据块"版式；构建器
+    // 冻结 ReviewReportSection::renderHint，渲染层按版式呈现）。
+    content.renderHint = RenderHint::MetadataBlock;
+
+    // 条目 1"basis"：依据修订与依据快照（§4.5 basisRevision/basisSnapshot
+    // ——"报告数据源身份的复核字段"；快照缺席＝"—"如实呈现，不伪造）。
+    {
+        SectionEntryView entry;
+        entry.entryKey = "basis";
+        entry.fields.push_back(textField("basis-revision", review.basisRevision.toCanonical()));
+        entry.fields.push_back(textField(
+            "basis-snapshot",
+            review.basisSnapshot.has_value() ? review.basisSnapshot->toCanonical() : "-"));
+        content.entries.push_back(std::move(entry));
+    }
+
+    // 条目 2"reviewer"：评审人与评审时间（§4.5"C 级条件"字段——缺席＝
+    // "—"（尚未评审的如实形态，不因缺席缺项：元数据块在、字段可空））。
+    {
+        SectionEntryView entry;
+        entry.entryKey = "reviewer";
+        entry.fields.push_back(
+            textField("reviewer", review.reviewer.value_or("-")));
+        entry.fields.push_back(textField(
+            "reviewed-at",
+            review.reviewedAtUtc.has_value() ? timePointMs(*review.reviewedAtUtc) : "-"));
+        content.entries.push_back(std::move(entry));
+    }
+
+    // 条目 3"comments"：评审意见计数（无量纲——逐条意见的正文不入框架
+    // 条目字段：意见是受控自由文本，本投影只呈现规模，逐条呈现归渲染层
+    // 对 changeLog/comments 的元数据版式；author/atUtc 结构化呈现于逐条
+    // 条目 comment-N）。
+    for (std::size_t i = 0; i < review.comments.size(); ++i) {
+        const ReviewComment& comment = review.comments[i];
+        SectionEntryView entry;
+        entry.entryKey = "comment-" + std::to_string(i + 1);
+        entry.fields.push_back(textField("author", comment.author));
+        entry.fields.push_back(textField("at", timePointMs(comment.atUtc)));
+        entry.fields.push_back(textField(
+            "section", comment.sectionId.has_value() ? *comment.sectionId : "-"));
+        content.entries.push_back(std::move(entry));
+    }
+
+    // 条目"sign-off"：签署状态（§4.5 SignOffState——Unsigned/Signed 二态
+    // 如实呈现；**签署仅记录事实**（不赋予不撤销工程资格，§4.5/D-12），
+    // Unsigned 是合法呈现形态而非缺项——章节恒 Populated，"C 级必含签署
+    // 块"指结构必在，签署状态如实记录）。Signed 态附签署人/时刻/声明摘要
+    // 短形（12 hex——digestShortOrDash 同口径）。
+    {
+        SectionEntryView entry;
+        entry.entryKey = "sign-off";
+        if (review.signOff.state == SignOffState::State::Signed) {
+            entry.fields.push_back(textField("sign-off-state", "signed"));
+            entry.fields.push_back(textField("signer", review.signOff.signer));
+            entry.fields.push_back(textField("signed-at", timePointMs(review.signOff.signedAtUtc)));
+            entry.fields.push_back(
+                textField("statement-digest", digestShortOrDash(review.signOff.statementDigest)));
+        } else {
+            entry.fields.push_back(textField("sign-off-state", "unsigned"));
+        }
+        content.entries.push_back(std::move(entry));
+    }
+
+    // 条目"change-log-N"：评审演化链摘要（§4.5 changeLog——supersedes 链
+    // 逐条 {reportId, reportVersion, atUtc, actor, reason}；空链＝无历史
+    // 版本，不产出条目——非缺项，v1 报告的正常形态）。
+    for (std::size_t i = 0; i < review.changeLog.size(); ++i) {
+        const ReportVersionEntry& change = review.changeLog[i];
+        SectionEntryView entry;
+        entry.entryKey = "change-log-" + std::to_string(i + 1);
+        entry.fields.push_back(textField("report-id", change.reportId.toCanonical()));
+        entry.fields.push_back(countField("report-version", change.reportVersion));
+        entry.fields.push_back(textField("at", timePointMs(change.atUtc)));
+        entry.fields.push_back(textField("actor", change.actor));
+        entry.fields.push_back(textField("reason", change.reason));
+        content.entries.push_back(std::move(entry));
+    }
+
+    // 恒 Populated：元数据块随报告构建成功即在（§4.2 review 必填——构建
+    // 失败不产生报告，能走到投影的会话必已有元数据）；意见为空集时上述
+    // comment-N 条目自然缺席，不构成空章节。
+    content.status = SectionStatus::Populated;
+    return content;
+}
+
+// =====================================================================
+// §5.1 行 14——variant-diff（改型差异和取舍理由；RPT-T15/RPT-04）
+// =====================================================================
+
+// 基准差异维度的稳定呈现词（evidence BaselineDifferenceDimension 枚举的
+// 呈现映射——与枚举注释语义一一对应的最小 kebab 词面；evidence 无公共
+// token 面（实测），本映射为呈现层承载（UX-02 允许域——词面域），不新增
+// 状态词表语义（§6.1——这是 §4.5 检查结果字段的逐值投影，非第二判定）。
+// 穷举 switch：枚举扩值未登记时编译告警暴露遗漏。
+std::string dimensionWord(evidence::BaselineDifferenceDimension dimension)
+{
+    switch (dimension) {
+    case evidence::BaselineDifferenceDimension::Project:
+        return "project";
+    case evidence::BaselineDifferenceDimension::Branch:
+        return "branch";
+    case evidence::BaselineDifferenceDimension::InputBaseline:
+        return "input-baseline";
+    case evidence::BaselineDifferenceDimension::RequiredCaseSet:
+        return "required-case-set";
+    case evidence::BaselineDifferenceDimension::SampleSets:
+        return "sample-sets";
+    }
+    return "unknown";   // 不可达兜底（编译告警面之上的防御返回）
+}
+
+SectionContent BuiltinFrameworkSections::projectVariantDiff(
+    const FrameworkSectionInput& input) const
+{
+    SectionContent content = baseContent();
+
+    // 数据源＝本次评审元数据（同 review-signoff——空指针＝编排违约）。
+    if (input.review == nullptr) {
+        throw ReportError(ReportErrorCode::Usage,
+                          "BuiltinFrameworkSections: variant-diff 投影输入缺 review"
+                          "（构建器编排违约——评审元数据为报告必填字段，§4.2）");
+    }
+
+    // 改型差异缺席＝本报告非变体比较报告——缺正式差异内容（§5.3
+    // NoFormalResult"缺正式结果"语义承载：variantDiff 是 §4.5"C 级条件"
+    // 可选块，其内容只能由评审演化种子显式提供〔RPT-04 方案/设计变体报告
+    // ——EVI-02 一致基准〕）。默认不选＋缺项显示（§16 验收要点），不伪造
+    // 差异内容、不降格为 NotApplicable（缺席不是"条件不满足"，是"内容未
+    // 提供"——两态各有其位，§5.3 区分规则）。
+    if (!input.review->variantDiff.has_value()) {
+        content.renderHint = RenderHint::DiffTable;
+        content.status = SectionStatus::NoFormalResult;
+        content.missingItems.push_back(missingItem(
+            "variant-diff",
+            "本报告未携带改型差异（variantDiff）——变体比较内容须经评审演化"
+            "种子（reviewSeed）提供（RPT-04/EVI-02 一致基准）"));
+        return content;
+    }
+    const VariantDiffBlock& diff = *input.review->variantDiff;
+
+    // renderHint＝DiffTable（§9.2——"差异表"版式；RPT-04 章节的设计版式）。
+    content.renderHint = RenderHint::DiffTable;
+
+    // 条目 1"revisions"：基线/候选修订对（§4.5 variantDiff 前两列——
+    // 变体比较的两个方案修订；一致基准校验凭据见 baseline-check 条目）。
+    {
+        SectionEntryView entry;
+        entry.entryKey = "revisions";
+        entry.fields.push_back(
+            textField("baseline-revision", diff.baselineRevision.toCanonical()));
+        entry.fields.push_back(
+            textField("candidate-revision", diff.candidateRevision.toCanonical()));
+        content.entries.push_back(std::move(entry));
+    }
+
+    // 条目 2"model-diff"：模型差异实体引用（§4.5 modelDiffRef——modeling
+    // MDL-08 数据实体的**引用非副本**：只呈现 ObjectId 规范文本，不解包
+    // 实体内容——差异实体归 modeling，reporting 不越权〔PA-1〕）。
+    {
+        SectionEntryView entry;
+        entry.entryKey = "model-diff";
+        entry.fields.push_back(textField("model-diff-ref", diff.modelDiffRef.toCanonical()));
+        content.entries.push_back(std::move(entry));
+    }
+
+    // 条目 3"baseline-check"：基准一致性检查结果（§4.5 baselineCheckResult
+    // ——evidence checkComparisonBaselinesConsistent 纯检查值的**呈现投影**
+    // ：consistent 位＋差异维度逐项词面；构建期已对 consistent==false 拒绝
+    // 〔EVI-02——Builder 变体基准闸〕，故投影期在场即一致——本条目如实
+    // 呈现检查事实，不重判〔reporting 消费不重算，§4.5〕）。
+    {
+        SectionEntryView entry;
+        entry.entryKey = "baseline-check";
+        entry.fields.push_back(textField("consistent", boolWord(diff.baselineCheckResult.consistent)));
+        // 差异维度逐项（保序拼接——evidence"差异维度逐项输出"按枚举声明序
+        // 交付，投影不重排；一致时清单为空→"—"）。
+        std::string dimensions;
+        for (const evidence::BaselineDifferenceDimension dimension :
+             diff.baselineCheckResult.differingDimensions) {
+            if (!dimensions.empty()) {
+                dimensions += "; ";
+            }
+            dimensions += dimensionWord(dimension);
+        }
+        entry.fields.push_back(
+            textField("differing-dimensions", dimensions.empty() ? "-" : dimensions));
+        content.entries.push_back(std::move(entry));
+    }
+
+    // 条目"trade-off-N"：取舍理由逐条（§4.5 tradeOffs——{topic, rationale,
+    // sectionId?}——RPT-04"取舍理由"呈现义务的章节内承载；保序呈现）。
+    for (std::size_t i = 0; i < diff.tradeOffs.size(); ++i) {
+        const TradeOff& trade = diff.tradeOffs[i];
+        SectionEntryView entry;
+        entry.entryKey = "trade-off-" + std::to_string(i + 1);
+        entry.fields.push_back(textField("topic", trade.topic));
+        entry.fields.push_back(textField("rationale", trade.rationale));
+        entry.fields.push_back(
+            textField("section", trade.sectionId.has_value() ? *trade.sectionId : "-"));
+        content.entries.push_back(std::move(entry));
     }
 
     content.status = SectionStatus::Populated;

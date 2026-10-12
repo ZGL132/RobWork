@@ -817,11 +817,12 @@ TEST(ReviewReportBuilderTest, CLevelWithPopulatedCSection_Builds_RPT05_ACC1)
     const ReportBuildOutcome outcome = builder.build(request);
     ASSERT_NE(outcome.report, nullptr);
     EXPECT_EQ(outcome.report->level(), ReportLevel::C);
-    // C 级组装范围＝12 章节（§5.2——B 全部八项＋C 追加域四项；C 专属框架
-    // 两项的内建投影随 RPT-T15 落位，落位前不入组装范围——不预建空章节）。
+    // C 级组装范围＝14 章节（§5.2——"B 全部＋追加 6 个 C 章节"；RPT-T15
+    // 起 C 专属框架两项 review-signoff/variant-diff 的内建投影已落位入
+    // 组装范围——不预建空章节纪律保持：投影落位即入范围，§14.4 v0.18）。
     EXPECT_EQ(outcome.report->sections().size(),
               sectionsInScope(ReportLevel::C).size());
-    EXPECT_EQ(sectionsInScope(ReportLevel::C).size(), std::size_t{12});
+    EXPECT_EQ(sectionsInScope(ReportLevel::C).size(), std::size_t{14});
 }
 
 TEST(ReviewReportBuilderTest, CLevelUserDeselectAllCSections_RejectedScopeInsufficient_RPT05_ACC1)

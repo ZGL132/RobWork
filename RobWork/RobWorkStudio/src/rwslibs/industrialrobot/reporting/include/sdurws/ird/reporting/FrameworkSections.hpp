@@ -1,8 +1,9 @@
 /**
  * @file   FrameworkSections.hpp
- * @brief  B 级框架章节内建投影器——project-scheme/input-summary/diagnostics/
- *         external-validation-boundary 四章节的 reporting 内建实现（RPT-T14
- *         产物，§5.1 词表行 1/2/7/8 的"框架（reporting 内建）"承载）。
+ * @brief  框架章节内建投影器——B 级四章节（project-scheme/input-summary/
+ *         diagnostics/external-validation-boundary，RPT-T14）＋C 专属两章节
+ *         （review-signoff/variant-diff，RPT-T15）的 reporting 内建实现
+ *         （§5.1 词表行 1/2/7/8/13/14 的"框架（reporting 内建）"承载）。
  *
  * 设计依据：
  *   - units/reporting.md §5.1 章节词表行 1/2/7/8（"内容所有者＝框架
@@ -104,6 +105,12 @@ struct FrameworkSectionInput {
     /// 复现块（构建器步③已解析的必填事实——external-validation-boundary
     /// 章节条目；借用指针，调用期有效）。
     const evidence::ReproductionBlock* reproduction = nullptr;
+    /// 评审/签署元数据（RPT-T15 增设——review-signoff/variant-diff 两章节
+    /// 的数据源，§4.5：构建器在章节组装前已按请求组装的本次元数据〔种子
+    /// 演化路径＝种子初值，全新报告路径＝默认形态〕；借用指针，调用期
+    /// 有效，不取得所有权；空指针＝构建器编排违约——两章节投影按契约
+    /// fail-fast，不静默当空元数据）。
+    const ReviewMetadata* review = nullptr;
 };
 
 // =====================================================================
@@ -111,7 +118,7 @@ struct FrameworkSectionInput {
 // =====================================================================
 
 /**
- * @brief B 级框架章节内建投影器（D-13——框架章节由 reporting 内建实现，
+ * @brief 框架章节内建投影器（D-13——框架章节由 reporting 内建实现，
  *        不注册、不可覆盖；由构建器直接驱动）。
  *
  * 覆盖面（§5.1 词表行号＝投影方法分派依据）：
@@ -129,7 +136,23 @@ struct FrameworkSectionInput {
  *     ＋ModelSummary.resources 固化状态（Recorded/Solidified——CON-03；
  *     Recorded 态的 external-validation-incomplete 报告级限定语由渲染器
  *     对报告级 externalResourceSummary 的既有承接激活——§6.4 行 3/v0.9
- *     登记"数据面随框架章节数源任务收口"的兑现面）。
+ *     登记"数据面随框架章节数源任务收口"的兑现面）；
+ *   - 行 13 review-signoff（评审/签署元数据，RPT-T15）：数据源＝
+ *     FrameworkSectionInput.review（§4.5 ReviewMetadata——构建成功即有
+ *     本次元数据：依据修订/快照、评审人与评审时间〔C 级条件字段，缺席＝
+ *     "—"如实呈现〕、逐条意见、签署状态〔Unsigned/Signed——签署仅记录
+ *     事实，D-12 未签署可导出〕、演化链摘要；元数据块恒 Populated——
+ *     §4.2"C 级必含签署块"的承载，签署状态如实呈现、不因 Unsigned 缺项）；
+ *   - 行 14 variant-diff（改型差异和取舍理由，RPT-T15）：数据源＝
+ *     input.review->variantDiff（§4.5/RPT-04——基线与候选修订/模型差异
+ *     实体引用/基准一致性检查结果/逐条取舍理由）。在场→Populated
+ *     （DiffTable 版式——差异表）；缺席→NoFormalResult＋缺项（本报告未
+ *     携带改型差异——非变体比较报告的正常形态，默认不选＋缺项显示，
+ *     §16 验收要点；不伪造差异内容）。
+ *
+ *   两 C 章节与 B 级框架章节同一内建纪律（不注册、不可覆盖——构建器
+ *   直接驱动）；其条目同为**元数据条目**（数据源为评审元数据/报告事实，
+ *   不来自评估运行——无结果/证据绑定语义）。
  *
  * 数据源缺位的诚实表达（ERR-01 不伪造）：
  *   - IModelSummaryProvider 未注入（nullptr——L5 装配缺席）：input-summary
@@ -138,7 +161,10 @@ struct FrameworkSectionInput {
  *   - trySummary 返回 nullopt（修订不在权威闭包——调用方违约已被构建器
  *     步①拦截，防御面）：同上缺项表达；
  *   - metadataAt 返回 nullopt：project-scheme＝NoFormalResult＋缺项"项目
- *     元数据不可解析"。
+ *     元数据不可解析"；
+ *   - input.review 为空指针：review-signoff/variant-diff＝构建器编排违约
+ *     fail-fast（元数据为报告必填字段——§4.2 review 行，空＝编排缺陷，
+ *     不静默当空元数据投影）。
  *
  * 生命周期/所有权：构造借用两个注入引用（调用方保证 project() 调用期
  * 存活——构建器成员借用同源）；本类不持有任何可变状态。
@@ -163,11 +189,12 @@ public:
     BuiltinFrameworkSections& operator=(const BuiltinFrameworkSections&) = delete;
 
     /**
-     * @brief 投影指定 B 级框架章节（§5.1 行 1/2/7/8 之一）。
+     * @brief 投影指定框架章节（§5.1 行 1/2/7/8/13/14 之一）。
      *
      * @param sectionId [in] 章节 token（必须为框架章节词表成员——域章节/
-     *                   C 专属框架章节〔RPT-T15 面〕传入即调用方契约违约）
-     * @param input     [in] 会话内冻结事实（调用方持有——本函数只读消费）
+     *                   词表外 token 传入即调用方契约违约）
+     * @param input     [in] 会话内冻结事实（调用方持有——本函数只读消费；
+     *                   review 字段为行 13/14 投影必填——空指针即编排违约）
      * @return 章节内容（SectionContent——构建器经 firstSectionContentViolation
      *         结构自检后冻结；数据源缺位时为缺项表达的 NoFormalResult）
      *
@@ -209,6 +236,15 @@ private:
     /// §5.1 行 8——外部验证边界（数据源＝复现块＋资源固化状态）。
     SectionContent projectExternalValidationBoundary(
         const FrameworkSectionInput& input) const;
+
+    /// §5.1 行 13——评审/签署元数据（数据源＝input.review——RPT-T15；
+    /// 元数据块恒 Populated，签署状态如实呈现不因 Unsigned 缺项）。
+    SectionContent projectReviewSignoff(const FrameworkSectionInput& input) const;
+
+    /// §5.1 行 14——改型差异和取舍理由（数据源＝input.review->variantDiff
+    /// ——RPT-T15/RPT-04；在场 Populated〔DiffTable〕，缺席 NoFormalResult
+    /// ＋缺项——非变体报告的正常形态，不伪造差异内容）。
+    SectionContent projectVariantDiff(const FrameworkSectionInput& input) const;
 
     /// project 查询端口（借用——C-4 登记边只读消费）。
     const project::IProjectQueryPort* m_queryPort;
