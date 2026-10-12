@@ -17,7 +17,7 @@
 #   第 1~2 步 集成树缓存确认＋ird_gates（含引擎自测子进程）——约 1 分钟内；
 #   第 3 步   集成模式【逐个】构建并执行全部 _test/_contract_test/_gui_test
 #             注册目标（约 40+ 目标，MSVC 增量编译＋gtest 全量执行）；
-#   第 4 步   冒烟模式【全新独立配置】（$env:TEMP/ird-gate-smoke，每次删除
+#   第 4 步   冒烟模式【全新独立配置】（$env:TEMP/ird-gate-smoke-<PID>-<时点>
 #             重建——含 vcpkg toolchain＋Qt 前缀解析、全部测试目标冒烟构建
 #             与执行）——本步占总时长的大头。
 #   调用方（CI/本地提交前自查）须按此预算预留时长，勿按"静态扫描"预期
@@ -27,8 +27,16 @@
 #   pwsh -File RobWork/scripts/industrialrobot/gate-all.ps1
 #   可选参数：
 #     -BuildDir <路径>    集成模式构建树（默认 <仓库根>/build）
-#     -SmokeDir <路径>    冒烟模式临时构建目录（默认 $env:TEMP/ird-gate-smoke；
-#                         成功后删除，失败保留现场供排查）
+#     -SmokeDir <路径>    冒烟模式临时构建目录（默认 $env:TEMP/ird-gate-smoke-
+#                         <PID>-<时间戳> 唯一化——F-628 同族对策/TK-T12：多会话
+#                         并行互删免疫；成功后删除，失败保留现场供排查）
+#     -PythonDir <路径>   python313.dll 所在目录（运行期前置——F-715/TK-T12：
+#                         测试可执行文件经框架 sdurws 静态库接口面链入 python
+#                         运行库〔python313.dll→zlib.dll 同目录相依〕，未随
+#                         TARGET_RUNTIME_DLLS 部署，必须由 PATH 供给。缺省探测
+#                         顺序＝-PythonDir 参数 > 环境变量 SDURWS_IRD_PYTHON_DIR
+#                         > 既有 PATH > 常见 conda 安装位；不可达时受影响目标
+#                         记 SKIP＋归因而不判 FAIL——门禁不误伤，CI 可判读）
 #     -QtPrefix <路径>    仅当集成树需要重新配置时使用（默认取环境变量
 #                         CMAKE_PREFIX_PATH；全新树配置口径见 findings F-007：
 #                         需 vcpkg toolchain＋Qt 前缀＋双 ini 模板，模板供给
@@ -52,7 +60,9 @@ param(
     [string]$SmokeDir = "",
     [string]$QtPrefix = "",
     # vcpkg toolchain 显式供给（F-628）：空串＝未传参，回落仓库根推定路径（见下方赋值处）
-    [string]$Toolchain = ""
+    [string]$Toolchain = "",
+    # python 运行库目录显式供给（F-715/TK-T12）：空串＝未传参，走探测序列（见下方赋值处）
+    [string]$PythonDir = ""
 )
 $ErrorActionPreference = 'Continue'   # 门禁脚本要收集全部失败再汇总，不在第一个错误中断
 
@@ -96,9 +106,51 @@ function Fail([string]$Name, [string]$Detail) {
     $script:Results.Add("FAIL  $Name : $Detail"); $script:Failed++
     Write-Host "  -> FAIL : $Detail" -ForegroundColor Red
 }
+function Skip([string]$Name, [string]$Detail) {
+    # SKIP 与 FAIL 分流（F-715/TK-T12）：环境前置不可达属"本环境无法执行"，
+    # 不是被测面缺陷——记 SKIP 行（汇总可见、退出码不计失败），杜绝验收与
+    # CI 场景的系统性误报；调用方按提示补前置后重跑即可转 PASS。
+    $script:Results.Add("SKIP  $Name : $Detail")
+    Write-Host "  -> SKIP : $Detail" -ForegroundColor Yellow
+}
 
 # ---- 第 0 步：环境自检（守卫 7 口径） ----
 if (-not (Test-Path $Toolchain)) { Fail "环境自检" "vcpkg toolchain 不存在: $Toolchain" }
+
+# ---- 第 0.5 步：python 运行库前置探测/注入（F-715/TK-T12） ----
+# 测试可执行文件（今 sdurws_ird_ui_test——经框架 sdurws 静态库接口面）链入
+# python313.dll，而 python313.dll 自身又同目录相依 zlib.dll（conda 发行形态）
+# ——非 CMake 感知目标、不随 TARGET_RUNTIME_DLLS 部署，只能由 PATH 供给。
+# 探测顺序：-PythonDir 参数 > 环境变量 SDURWS_IRD_PYTHON_DIR > 既有 PATH >
+# 常见 conda/Python 安装位；命中即前置注入 $env:PATH（本进程及 ctest 子进程
+# 生效）；全程不可达则置 $script:PythonDll 为空——后续测试步遇 0xC0000135
+# 族失败按 SKIP＋归因处置（不判 FAIL）。
+$script:PythonDll = $null
+$pythonCandidates = @()
+if ($PythonDir) { $pythonCandidates += $PythonDir }
+if ($env:SDURWS_IRD_PYTHON_DIR) { $pythonCandidates += $env:SDURWS_IRD_PYTHON_DIR }
+$pythonCandidates += @($env:PATH -split ';' | Where-Object { $_ })
+# conda/python 命令定位反推安装根（机器无关探测——conda.bat 在 <根>/condabin，
+# python.exe 与 python313.dll 同目录；WindowsApps 空壳 stub 无 DLL 自然落空）
+$condaCmd = Get-Command conda -ErrorAction SilentlyContinue
+if ($condaCmd -and $condaCmd.Source) { $pythonCandidates += (Split-Path -Parent (Split-Path -Parent $condaCmd.Source)) }
+$pyCmd = Get-Command python -ErrorAction SilentlyContinue
+if ($pyCmd -and $pyCmd.Source) { $pythonCandidates += (Split-Path -Parent $pyCmd.Source) }
+$pythonCandidates += @(
+    (Join-Path $env:USERPROFILE 'miniconda3'),
+    (Join-Path $env:USERPROFILE 'anaconda3'),
+    (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python313'),
+    'C:\Python313'
+)
+foreach ($c in $pythonCandidates) {
+    if ($c -and (Test-Path (Join-Path $c 'python313.dll'))) { $script:PythonDll = $c; break }
+}
+if ($script:PythonDll) {
+    if ($env:PATH -notlike "*$script:PythonDll*") { $env:PATH = "$script:PythonDll;$env:PATH" }
+    Write-Host "  [python 前置] python313.dll 已可达: $script:PythonDll（已注入 PATH——F-715/TK-T12）" -ForegroundColor DarkCyan
+} else {
+    Write-Host "  [python 前置] python313.dll 全程不可达——受影响目标（导入 python 运行库者）将以 SKIP＋归因记录（F-715）；补 -PythonDir <目录> 或设 SDURWS_IRD_PYTHON_DIR 后重跑可转 PASS" -ForegroundColor DarkCyan
+}
 
 # ---- 第 1 步：集成构建树确认/配置 ----
 $cacheFile = "$BuildDir/CMakeCache.txt"
@@ -151,7 +203,14 @@ if ($intTests.Count -eq 0) {
         & cmake --build $BuildDir --config Release --target $name 2>&1 | Select-Object -Last 2 | Write-Host
         if ($LASTEXITCODE -ne 0) { Fail "集成构建 $name" "目标构建失败"; continue }
         & ctest --test-dir $intTests[$name] -C Release -R "^$name`$" --output-on-failure 2>&1 | Select-Object -Last 4 | Write-Host
-        if ($LASTEXITCODE -eq 0) { Ok "集成测试 $name" } else { Fail "集成测试 $name" "ctest 失败（退出码 $LASTEXITCODE）" }
+        if ($LASTEXITCODE -eq 0) { Ok "集成测试 $name" }
+        elseif (-not $script:PythonDll -and ($LASTEXITCODE -eq -1073741515 -or $LASTEXITCODE -eq 8)) {
+            # 0xC0000135（有符号 -1073741515）＝加载期 DLL 缺失；ctest 包装同型失败
+            # 实测退出码 8（acc-audit-r2d-1 两轮留痕）——python 前置不可达时按
+            # F-715 口径 SKIP＋归因，不判 FAIL（验收/CI 不误伤）
+            Skip "集成测试 $name" "python313.dll 不可达，目标无法在本环境执行（F-715 归因——补 -PythonDir/SDURWS_IRD_PYTHON_DIR 后重跑）"
+        }
+        else { Fail "集成测试 $name" "ctest 失败（退出码 $LASTEXITCODE）" }
     }
 }
 
@@ -160,7 +219,12 @@ if ($intTests.Count -eq 0) {
 # 独立配置面——冒烟树仅带 vcpkg toolchain 必因 Qt6 缺失而配置失败。故此处
 # 将 -QtPrefix 参数（或环境变量 CMAKE_PREFIX_PATH）透传给冒烟配置；两者皆空
 # 时给出可行动的失败文案（操作员补 -QtPrefix <Qt msvc 目录>）。
-if (-not $SmokeDir) { $SmokeDir = Join-Path $env:TEMP 'ird-gate-smoke' }
+if (-not $SmokeDir) {
+    # 冒烟目录默认值唯一化（F-628 同族对策/TK-T12——F-715 登记的伴生面）：
+    # PID＋时间戳后缀，多会话并行 gate-all 各用各树、互不删除/互不污染；
+    # 成功后本会话仍自清理，失败保留现场（目录名含时点，不会互相覆盖）
+    $SmokeDir = Join-Path $env:TEMP ('ird-gate-smoke-{0}-{1}' -f $PID, (Get-Date -Format 'yyyyMMdd-HHmmss'))
+}
 if (Test-Path $SmokeDir) { Remove-Item -Recurse -Force $SmokeDir -ErrorAction SilentlyContinue }
 $smokeQtArgs = @()
 if (-not $QtPrefix -and $env:CMAKE_PREFIX_PATH) { $QtPrefix = $env:CMAKE_PREFIX_PATH }
@@ -181,7 +245,11 @@ if ($LASTEXITCODE -ne 0) {
             & cmake --build $SmokeDir --config Release --target $name 2>&1 | Select-Object -Last 2 | Write-Host
             if ($LASTEXITCODE -ne 0) { Fail "冒烟构建 $name" "目标构建失败"; continue }
             & ctest --test-dir $smokeTests[$name] -C Release -R "^$name`$" --output-on-failure 2>&1 | Select-Object -Last 4 | Write-Host
-            if ($LASTEXITCODE -eq 0) { Ok "冒烟测试 $name" } else { Fail "冒烟测试 $name" "ctest 失败（退出码 $LASTEXITCODE）" }
+            if ($LASTEXITCODE -eq 0) { Ok "冒烟测试 $name" }
+            elseif (-not $script:PythonDll -and ($LASTEXITCODE -eq -1073741515 -or $LASTEXITCODE -eq 8)) {
+                Skip "冒烟测试 $name" "python313.dll 不可达，目标无法在本环境执行（F-715 归因——补 -PythonDir/SDURWS_IRD_PYTHON_DIR 后重跑）"
+            }
+            else { Fail "冒烟测试 $name" "ctest 失败（退出码 $LASTEXITCODE）" }
         }
     }
     # 全绿才清理临时目录；失败保留现场（排查冒烟配置差异）

@@ -237,15 +237,21 @@ void AssertionSuite::assertJointLimitIntervals(const RobotDesign& design,
             // 范围→通过（豁免限位与行程断言——continuous 无 bounds）。
             const auto range = joint.workingRange.tryValue();
             if (!range.has_value()) {
-                if (joint.workingRange.state() == core::FieldState::NotProvided) {
-                    blockers.push_back(makeRecord(
-                        kMdlAssertRangeNotFinite, joint.objectId, joint.localName,
-                        "范围断言④（continuous）joints[" + std::to_string(i)
-                            + "].workingRange",
-                        "工程工作范围未确认（未提供）——多圈关节须先确认有限工作范围（MDL-12）",
-                        "确认并填写工程工作范围（rad，qmin'＜qmax'）"));
-                }
-                // NotApplicable/Invalid 态由构造/解码边界拒绝——不到达本层。
+                // 无值两态都阻断（F-746①——原注「NotApplicable/Invalid 态由
+                // 构造/解码边界拒绝、不到达本层」的前提被 audit 实测证伪：伪
+                // 造字节可解码出 Invalid 态并静默穿透本断言，下游
+                // evaluateTravelLimits 以 logic_error 崩——「decode 不抛」族
+                // 契约在 modeling 侧的同一漏洞面）。NotProvided＝草稿未确认
+                // （既有文案）；其余无值态（Invalid 等）＝深层非法实例——
+                // 同码阻断＋纵深防御，不静默、不虚构通过。
+                blockers.push_back(makeRecord(
+                    kMdlAssertRangeNotFinite, joint.objectId, joint.localName,
+                    "范围断言④（continuous）joints[" + std::to_string(i)
+                        + "].workingRange",
+                    joint.workingRange.state() == core::FieldState::NotProvided
+                        ? "工程工作范围未确认（未提供）——多圈关节须先确认有限工作范围（MDL-12）"
+                        : "工程工作范围处非法无值态（伪造/深层实例缺陷——MDL-12/F-746①）",
+                    "确认并填写工程工作范围（rad，qmin'＜qmax'）"));
             } else {
                 const bool finiteEnds = std::isfinite(range->first)
                                      && std::isfinite(range->second);
@@ -292,13 +298,22 @@ AssertionSuite::TravelEvaluation AssertionSuite::evaluateTravelLimits(
             // 缺失 bounds＝"未声明限位的有限关节"——评估器按全不适用口径。
             query.joints.push_back(std::move(spec));
         } else if (joint.type == JointType::Continuous) {
-            // continuous：行程豁免，但须带已确认工程范围（装配契约——缺失
-            // 到达此处的唯一可能＝调用方未先跑 assertJointLimitIntervals，
-            // 按类注 @pre 属实现缺陷，fail-fast 不伪造事实）。
+            // continuous：行程豁免，但须带已确认工程范围（装配契约）。缺范围
+            // 到达此处的路径＝@pre 短路被穿透（F-746①——audit 实测伪造字节
+            // 解码出 Invalid 态可静默通过断言面既有守卫；草稿态 NotProvided
+            // 则由调用方短路优先级保证）。按本函数契约原文「违 pre 的输入经
+            // EvaluationFailed 表达，不伪造事实」转值面——原 std::logic_error
+            // 与契约自相矛盾（MDL-06 断言分域：未终态化＝不放行，不是崩；
+            // EvaluationFailed→两调用方既有处置＝prepare RejectedHardAssert
+            // ／就绪 L11 Blocking，evalDiags 随行不吞错）。
             const auto range = joint.workingRange.tryValue();
             if (!range.has_value()) {
-                throw std::logic_error(
-                    "mdl: continuous 关节缺已确认工作范围即进入行程校验（@pre 违约）");
+                evalDiagnostics.push_back(makeRecord(
+                    kMdlAssertRangeNotFinite, joint.objectId, joint.localName,
+                    "行程校验装配（continuous）.workingRange",
+                    "工程工作范围无值——行程校验未终态化（MDL-12/F-746①）",
+                    "确认并填写工程工作范围（rad，qmin'＜qmax'）"));
+                return TravelEvaluation::EvaluationFailed;
             }
             policy::JointLimitSpec spec;
             spec.jointObject = joint.objectId;

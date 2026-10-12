@@ -7303,10 +7303,11 @@
       "id": "F-746",
       "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-647→F-746，映射 traceability/gov-r2-id-remap.md）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "『decode 不抛』五处接口二轮核实：已修 2（requirements/Codec F-586、diagnostics/Factory F-602——后者缺非空 params 精确形态回归钉）；仍 open 3：①modeling/Readiness 契约已修订但根因未修（伪造字节 Continuous＋workingRange=Invalid 可解码成功→L11→evaluateTravelLimits 抛 logic_error，CommandHandlers.cpp:298-302）；②policy/PolicyPort 未动（PolicyInput.cpp:801 缺锚串、:416-430 ScopeTarget 值面缺失，resolvePolicy 复检在端口 try/catch 外抛 PolicyError）；③kinematics/Ik 迭代发散 std::logic_error（Ik.cpp:498/539/577）不在 hpp 豁免面仍外抛。附带 TxEngine 提交点后回调零提交维持 open",
-      "resolution": "fix-plan §四 D-1（批 D——三接口各出方案合并为方案包交所有者裁决后实施，不许可代码先行）——②policy 与 ③Ik 已由批 D 修复并合入主线（分支 c1366334/f60942a7，合入提交 23bfb69b，2026-10-12；验收 pass traceability/acceptance/audit-r2d-20261012.md——不抛契约兑现，谓词单源/不扩词表两必核项验收者亲核）；①modeling/Readiness 根因未修维持 open（伪造字节 Continuous＋workingRange=Invalid 路径仍在，随 fix-plan 后续批次）；附带 TxEngine 提交点后回调零提交维持 open。"
+      "resolution": "fix-plan §四 D-1 三接口全部修复并随批合入主线：②policy 与 ③Ik 随批 D（分支 c1366334/f60942a7，合入提交 23bfb69b）；①modeling/Readiness 由分支 audit-r2d1-fixes 修复（提交 0e7cb311——断言面无值态统一阻断＋行程面按 hpp 契约原文转 EvaluationFailed 值面，两调用方既有处置承接；回归钉 ReadinessTest×2），验收＝modeling 373/373＋contract 17/17＋ird_gates 零命中＋变异翻红 1/1（audit/acc-audit-r2d1-1/）。附带观察项 TxEngine 提交点后回调零提交为另一独立面，留待后续登记非本条闭合范围。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-747",
@@ -7691,10 +7692,11 @@
       "id": "F-789",
       "source": "traceability/acceptance/audit-r2a-20261011.md §五 建议级 S5（批 A 验收 pass，2026-10-11）——2026-10-12 治理批转登",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-11",
       "title": "`sdurws_ird_ui_test` 在 **ctest 执行上下文**启动即挂起（进程 CPU≈16ms 后冻结；验收会话内 3/3 确定性复现、终止后 gate-all 方可续行），同 exe **直跑**三树全绿（集成 257 用例、冒烟 240 用例、实施方双次）——挂起与产品逻辑无关、属测试基建/执行环境问题（疑 ctest 管道输出或 QTest 平台初始化交互）；另 gate-all 默认冒烟目录 `%TEMP%/ird-gate-smoke` 为全局共享路径，多会话并行时互相删树（本验收次跑 49/85 实证）",
-      "resolution": "处置建议（验收记录原文）：排查 ui_test ctest 挂起根因；gate-all 冒烟目录默认值改含 PID/时间戳唯一化（F-628 同族对策）"
+      "resolution": "由 TK-T12 专项修复并合入主线（分支 wp02-t12，gate-all 改动提交 14b08399）：根因＝ui_test 经框架 sdurws 静态库接口面导入 python313.dll（conda 发行形态同目录相依 zlib.dll），运行期前置未内化时 ctest 上下文＝加载器对话框挂起或退出码 8（证据链 audit/tkt12-investigation/——9 格差异矩阵＋dumpbin 递归闭包 35 模块＋python313→zlib 相依实证）；修复＝gate-all 第 0.5 步 python 前置五级探测/注入（-PythonDir/SDURWS_IRD_PYTHON_DIR/PATH/conda 反推/常见安装位）＋0xC0000135 族不可达时记 SKIP＋归因不判 FAIL（F-715 同文处置）＋冒烟目录默认值 <PID>-<时点> 唯一化（F-628 同族）。验证＝ctest 三连 EXIT=0＋直跑 258/258 对照＋gate-all 85/85 EXIT=0（记录以来首次全项全绿——audit/tkt12-investigation/verify2-*）。框架侧 stray python 链接根因面（RWS_USE_PYTHON3 环境依赖判定）另登 F-828。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-790",
@@ -8037,6 +8039,15 @@
       "registeredAt": "2026-10-12",
       "title": "RPT-T16 §7.7 资格核对消费挂接未随本批落地：§7.7「标记于伴随提示与后续构建的资格核对」——伴随提示（RPT-ROUNDTRIP-MISMATCH 诊断）与机器可核对标记位 usableForFormalConclusions 已交付，但「后续构建的资格核对」对该标记位的消费挂接未落（构建器侧零改动）；§7.7 全语义闭合尚欠该步（acceptance 字面语义「不一致→不可用于正式结论」已由标记位＋断言满足）",
       "resolution": "消费侧归构建器侧后续任务，建议在该任务契约显名收口（单元卡 §14.4 v0.19 行④与 Roundtrip.hpp 头注释落位增量③已如实登记「消费挂接归构建器侧任务」）"
+    },
+    {
+      "id": "F-828",
+      "source": "TK-T12 实施勘察（2026-10-12，audit/tkt12-investigation/——F-715 根因面深挖）——TK-T12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "框架 RobWorkStudioSetup 的 RWS_ENABLE_PYTHON/RWS_USE_PYTHON3 判定环境依赖（find_package(PythonLibs 3) 随操作员 PATH/注册表有无 python 运行库而成功或失败）：命中时 sdurws 静态库接口面携带 PYTHON_LIBRARIES 下游——消费测试可执行文件（实测 sdurws_ird_ui_test，r2work 树）自身导入 python313.dll（conda 发行形态又同目录相依 zlib.dll），无 PATH 供给即全上下文 0xC0000135（ctest 上下文＝挂起或退出码 8——S5/F-789 根因面）；未命中时 exe 无 python 依赖全绿——同批源码因 configure 环境差异分岔出两种加载面（主线并行构建实测无该导入），测试可执行文件加载面不可复现",
+      "resolution": "处置建议：框架 SA-02 红线下评估——登记 patch 使 RWS_ENABLE_PYTHON 缺省显式化（如 industrialrobot 构建口径固定 -DRWS_ENABLE_PYTHON=OFF：DTB §5.1 fresh 树配置行登记）或框架侧声明/部署 python 运行库依赖；TK-T12 已在门禁层收口（-PythonDir 注入＋不可达 SKIP 归因），框架根因面的处置归所有者 patch 批裁决"
     }
   ]
 }

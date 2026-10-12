@@ -344,6 +344,35 @@ TEST(MdlReadinessAssertionDomains, MissingPhysicsWithConfirmedContinuousApplicab
     EXPECT_TRUE(report.confirmables.empty());  // continuous 行程豁免
 }
 
+/**
+ * @brief F-746① 回归钉（断言面）：continuous 关节 workingRange 处 Invalid
+ *        态（伪造字节可解码出的深层非法实例——audit 实测路径）→ 断言④
+ *        Blocking 精确定位到该关节，不再静默穿透（修复前本态落入「由构造/
+ *        解码边界拒绝、不到达本层」的过时前提，直达 L11 行程面以
+ *        logic_error 崩）。
+ */
+TEST(MdlReadinessAssertionDomains, ContinuousInvalidRangeStateBlocks_F746_1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "MDL-12"}, std::vector<std::string>{});
+
+    ReadinessFixture f;
+    RobotDesign design = makeSingleJointDesign(-kPi, kPi);
+    design.joints[0].type = JointType::Continuous;
+    design.joints[0].bounds = core::SourcedValue<JointLimits>::notApplicable();
+    design.joints[0].workingRange =
+        core::SourcedValue<JointLimits>::invalid("forged");
+    const core::ObjectId jointOid = design.joints[0].objectId;
+    f.bindNames(design);
+
+    const ModelingWorkingSet ws{design, {}, makeOid(), {}, {}, {}, {}};
+    const ModelReadinessReport report = f.checker.check(ws, CheckContext{});
+
+    ASSERT_FALSE(report.blockers.empty());
+    EXPECT_EQ(report.blockers[0].code, std::string(kMdlAssertRangeNotFinite));
+    EXPECT_EQ(report.blockers[0].subject->toCanonical(), jointOid.toCanonical());
+    EXPECT_NE(report.blockers[0].cause.find("非法无值态"), std::string::npos);
+}
+
 // =====================================================================
 // ACC3 行程上限确认（V-16，MDL-06④/M-10、SA-15）
 // =====================================================================
@@ -387,6 +416,42 @@ TEST(MdlReadinessTravelLimit, MultiTurnJointProducesConfirmableFinding)
     EXPECT_EQ(finding.record.subject->toCanonical(), jointOid.toCanonical());
     EXPECT_EQ(finding.state, core::ConfirmationState::Pending);
     EXPECT_NE(finding.record.cause.find("policyContentId=cid-"), std::string::npos);
+}
+
+/**
+ * @brief F-746① 回归钉（行程面直调）：continuous 关节 workingRange 无值
+ *        （Invalid 态）→ evaluateTravelLimits 按其契约原文「违 pre 的输入经
+ *        EvaluationFailed 表达，不伪造事实」返回 EvaluationFailed＋无值诊断
+ *        一条（既有注册码 MDL-ASSERT-RANGE-NOT-FINITE——零新增码），**不抛**
+ *        （修复前此处 std::logic_error 与契约自相矛盾——audit F-746① 实测
+ *        伪造字节路径崩溃点；两调用方既有处置＝prepare RejectedHardAssert
+ *        ／就绪 L11 Blocking，随 evalDiags 阻断不放行）。
+ */
+TEST(MdlReadinessTravelLimit, ContinuousNoRangeYieldsEvaluationFailedNotThrow_F746_1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "MDL-12"}, std::vector<std::string>{"AT-01"});
+
+    ReadinessFixture f;
+    const policy::EngineeringPolicySet policy = makePolicy(4.0 * kPi);
+    RobotDesign design = makeSingleJointDesign(-kPi, kPi);
+    design.joints[0].type = JointType::Continuous;
+    design.joints[0].bounds = core::SourcedValue<JointLimits>::notApplicable();
+    design.joints[0].workingRange =
+        core::SourcedValue<JointLimits>::invalid("forged");
+    f.bindNames(design);
+
+    std::vector<core::ConfirmableFinding> confirmables;
+    std::vector<core::DiagnosticRecord> evalDiags;
+    const AssertionSuite::TravelEvaluation travel =
+        f.suite.evaluateTravelLimits(design, policy, confirmables, evalDiags);
+
+    EXPECT_EQ(travel, AssertionSuite::TravelEvaluation::EvaluationFailed);
+    ASSERT_EQ(evalDiags.size(), std::size_t{1});
+    EXPECT_EQ(evalDiags[0].code, std::string(kMdlAssertRangeNotFinite));
+    ASSERT_TRUE(evalDiags[0].subject.has_value());
+    EXPECT_EQ(evalDiags[0].subject->toCanonical(),
+              design.joints[0].objectId.toCanonical());
+    EXPECT_TRUE(confirmables.empty());
 }
 
 /**
