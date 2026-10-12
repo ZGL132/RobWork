@@ -816,6 +816,10 @@ TEST(EvidenceCurrentness, IdentityOnlyFormDegradesConservatively_I_8)
     EXPECT_EQ(out.reasons[0].kind, InvalidationKind::SliceContentChanged);
     // detail 注明降级原因与补救路径（提供切片可执行条目级判定）。
     EXPECT_NE(out.reasons[0].detail.find("身份摘要形态"), std::string::npos);
+    // F-807 回归钉：身份级兜底的 dependencyKey 为空串（Currentness.hpp
+    // :343-344「契约版本变化与身份级兜底为空串——无具体涉事条目」——修复
+    // 前误填 evaluationKey，按依赖键对账的调用方误归因到不存在的条目）。
+    EXPECT_EQ(out.reasons[0].dependencyKey, std::string{});
 }
 
 // =====================================================================

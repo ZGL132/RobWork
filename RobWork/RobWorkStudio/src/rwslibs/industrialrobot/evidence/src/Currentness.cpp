@@ -417,14 +417,21 @@ CurrentnessResult computeCurrentness(const ResultRef& result,
         // 条目集不等但 diff 无输出，属内部不变量破坏）。显式暴露而非
         // 静默空清单（NFR-COR-03——Superseded 必须有原因支撑）。
         if (out.reasons.empty()) {
+            // F-807：身份级兜底的 dependencyKey 按契约置空串（Currentness.hpp
+            // :343-344「契约版本变化与身份级兜底为空串——无具体涉事条目」）；
+            // 原误填 evaluationKey 使按依赖键对账的调用方把兜底原因误归因到
+            // 不存在的依赖条目。切片非条目字段（评估面/快照锚）与条目状态
+            // 不一致，须核查切片冻结链路。
             out.reasons.push_back(
-                {result.evaluationKey, InvalidationKind::SliceContentChanged,
+                {std::string{}, InvalidationKind::SliceContentChanged,
                  "切片内容身份不等但条目级比对无差异——切片非条目字段"
                  "（评估面/快照锚）与条目状态不一致，须核查切片冻结链路"});
         }
     } else {
+        // F-807：身份摘要形态降级＝身份级兜底（无具体涉事条目）——
+        // dependencyKey 置空串（契约 :343-344，同上）。
         out.reasons.push_back(
-            {result.evaluationKey, InvalidationKind::SliceContentChanged,
+            {std::string{}, InvalidationKind::SliceContentChanged,
              "结果切片条目不可得（身份摘要形态）——切片全值身份不等（含"
              "快照锚定差异，保守判过期）：旧 " + result.sliceId.toCanonical()
                  + " → 新 " + targetSlice.sliceId.toCanonical()
