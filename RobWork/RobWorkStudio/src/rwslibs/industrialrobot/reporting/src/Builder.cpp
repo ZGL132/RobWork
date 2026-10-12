@@ -22,15 +22,32 @@
  *     §7.1"一致读取视图"行）；②结果集：listRuns(revision) 恰一次（构建
  *     时刻快照——§7.1"生成期间项目后台写入"行"构建前枚举的 finalize 运行
  *     集"；此后 HEAD 前进/迟到结果〔AT-10〕不影响已锚定视图、不入本报告，
- *     acceptance 4）；③逐结果：envelope→资格→当前性（三个注入源调用，
- *     取消检查点每结果一个）；④模型摘要：经构造注入的 IModelSummaryProvider
- *     （RPT-T14 起消费——input-summary 章节/外部资源状态数据源，P-RPT-2
- *     注入形态；空＝缺项表达不伪造）；⑤快照一致性；⑥章节组装〔RPT-T14
- *     起级别范围全量：框架章节走 BuiltinFrameworkSections 内建投影、域章节
- *     走注册表查找＋未注册缺项表达〕＋逐条目绑定校验〔框架条目为元数据
- *     条目，无绑定语义——§9.2"结论条目必填"的分化面〕；⑦冻结：
+ *     acceptance 4）；③逐结果：envelope→资格→当前性→覆盖矩阵（四个注入
+ *     源调用，取消检查点每结果一个；覆盖矩阵经 tryCoverageMatrix 注入投影
+ *     ——RPT-T15 增量，§14.4 v0.18）；④模型摘要：经构造注入的
+ *     IModelSummaryProvider（RPT-T14 起消费——input-summary 章节/外部资源
+ *     状态数据源，P-RPT-2 注入形态；空＝缺项表达不伪造）；⑤快照一致性；
+ *     ⑥章节组装〔级别范围全量：框架章节走 BuiltinFrameworkSections 内建
+ *     投影——RPT-T15 起 C 专属两项 review-signoff/variant-diff 已落位分派
+ *     表，域章节走注册表查找＋未注册缺项表达〕＋逐条目绑定校验〔框架条目
+ *     为元数据条目，无绑定语义——§9.2"结论条目必填"的分化面〕；⑦冻结：
  *     ReviewReport::make（字段校验→ReportCodec 身份计算→不可变对象——
  *     冻结时刻＝build() 返回）。
+ *
+ * RPT-T15 增量（C 级扩展与变体报告——阶段 C，§14.4 v0.18）：
+ *   a. 变体基准一致性拒绝（EVI-02/RPT-04）：reviewSeed 携带的 variantDiff
+ *      其 baselineCheckResult.consistent==false 时构建拒绝（报告变体章节
+ *      只能引用一致的需求与工况基准——evidence 纯检查结果消费不重算）；
+ *   b. 覆盖矩阵聚合（RP-COV-1 收口）：逐结果 tryCoverageMatrix→报告级
+ *      五态计数聚合（§4.2 coverageSummary——v0.8 零计数占位的兑现面；
+ *      归并规则见 aggregateCoverage 函数注，§14.4 v0.18 登记）；
+ *   c. C 专属框架章节（review-signoff/variant-diff）内建投影接入组装循环
+ *      （§5.1 行 13/14）；C 级范围保守判定（§5.4/P-RPT-5）的对象保持为
+ *      C 域章节——C 框架章节为元数据块（恒有内容），若计入"实质内容"判定
+ *      会架空保守拒绝（C 域全缺时虚级 C 报告被放行），故构建器喂给
+ *      checkSectionScope 的状态投影与选择路计数均排除两 C 框架章节
+ *      （T14 前 sectionsInScope(C) 不含两章节，本口径即既有已验收行为的
+ *      保持——不推翻已验收结构）。
  *
  * 错误语义（AGENTS.md 错误二分在本单元的落点）：
  *   - 调用方契约违约（请求字段非法/演化种子不一致/对终态会话推进）→
@@ -317,6 +334,100 @@ std::vector<EvidenceRefEntry> collectEvidenceRefs(
 }
 
 // =====================================================================
+// 覆盖矩阵呈现投影聚合（§4.2 coverageSummary 数据源——RPT-T15/RP-COV-1
+// 收口，§14.4 v0.18 登记；v0.8 起 coverageSummary 以零计数占位、"报告级
+// 聚合语义未冻结——随 RP-COV-1 落地刷新"的范围登记行，本函数即其兑现）
+// =====================================================================
+
+/// 单条覆盖条目的保守序位（多结果归并的取态权重——值越小越保守）。
+///
+/// 归并语义（EVI-02"漏验任一启用必验工况时报告呈现整体缺项、不得输出
+/// 正式通过"——§6.5 呈现口径的聚合侧）：同一工况出现在多个结果的矩阵
+/// 时（多结果同基准对账），报告级呈现取**最不利**状态——任一结果的
+/// NotExecuted（漏验）不被另一结果的 Executed 掩盖；Failed/Invalid 同为
+/// "未覆盖"面（须重跑/无效），列于 Executed 之前；NotApplicable 不计
+/// 缺失（§5.3/§6.6——显式不适用），列于 Executed 之后（已执行是覆盖的
+/// 唯一凭据态，其保守序位最低）。判定权威仍在 evidence（§2.1 C-2）——
+/// 本序仅服务报告级呈现聚合，不构成第二套覆盖判定。
+constexpr unsigned coverageMergeRank(evidence::CaseExecutionStatus status) noexcept
+{
+    switch (status) {
+    case evidence::CaseExecutionStatus::NotExecuted:    return 0;  ///< 漏验——最不利
+    case evidence::CaseExecutionStatus::Failed:         return 1;  ///< 执行失败——须重跑
+    case evidence::CaseExecutionStatus::Invalid:        return 2;  ///< 执行无效
+    case evidence::CaseExecutionStatus::NotApplicable:  return 3;  ///< 不适用——不计缺失
+    case evidence::CaseExecutionStatus::Executed:       return 4;  ///< 已执行——覆盖凭据
+    }
+    return 5;   // 不可达兜底（穷举 switch 之上的防御返回）
+}
+
+/// 多结果覆盖矩阵的报告级聚合（§4.2 coverageSummary："Executed/NotExecuted/
+/// Invalid/NotApplicable/Failed 计数＋必验总数"——evidence 覆盖矩阵的呈现
+/// 投影，消费不重算判定）。
+///
+/// 归并规则（§14.4 v0.18 登记的设计口径，保守方向——P-RPT-5 同精神）：
+///   ①基准对账：全部矩阵的 requiredCaseSetId 必须**互等**（§6.6"本矩阵
+///     对账的必验工况集身份"——报告绑定的多结果引用了不同必验工况集＝
+///     报告级覆盖计数对哪个集都对不上账，呈现面失真宁可拒绝〔SourceAmbiguous
+///     ——与 §7.2 步⑤"报告级快照与逐结果不一致"同族的来源歧义〕）；
+///   ②逐工况保守取态：同一 caseId 的多条目按 coverageMergeRank 取最不利
+///     （漏验不因另一结果的覆盖被掩盖——EVI-02 呈现口径的聚合侧表达）；
+///   ③必验总数＝并集 caseId 数（同基准矩阵的条目集应同集；防御面取并集
+///     ——多出的条目照常计数，不静默丢弃任何工况事实）。
+///
+/// @param matrices [in] 逐结果覆盖矩阵（序＝结果集规范序——确定性输入；
+///              调用方保证非空——构建器对每结果恰取一矩阵后才调用）
+/// @param mismatch [out] 基准对账失败时置 true（调用方据此以 SourceAmbiguous
+///              拒绝——本函数不抛，保持纯聚合）
+/// @return 报告级覆盖摘要（五态计数＋必验总数；mismatch 时值无意义）
+CaseCoverageSummary aggregateCoverage(const std::vector<evidence::CaseCoverageMatrix>& matrices,
+                                      bool& mismatch)
+{
+    mismatch = false;
+    CaseCoverageSummary summary;
+
+    // ①基准对账（首矩阵为基准——输入已按结果集规范序，同输入同结论，
+    // NFR-COR-02）。
+    for (const evidence::CaseCoverageMatrix& matrix : matrices) {
+        if (!(matrix.requiredCaseSetId == matrices.front().requiredCaseSetId)) {
+            mismatch = true;
+            return summary;   // 对账失败——调用方拒绝，计数无意义
+        }
+    }
+
+    // ②逐工况保守归并（caseId→最不利状态；首次出现序遍历——确定性；
+    // std::map 键序仅用于汇总稳定性，不改变逐工况事实）。
+    std::map<std::string, evidence::CaseExecutionStatus> mergedByCase;
+    for (const evidence::CaseCoverageMatrix& matrix : matrices) {
+        for (const evidence::CaseCoverageEntry& entry : matrix.entries) {
+            const std::string key = entry.caseId.toCanonical();
+            const auto it = mergedByCase.find(key);
+            if (it == mergedByCase.end()) {
+                mergedByCase.emplace(key, entry.status);
+                continue;
+            }
+            // 已见工况——取保守序更小（更不利）者；同态幂等。
+            if (coverageMergeRank(entry.status) < coverageMergeRank(it->second)) {
+                it->second = entry.status;
+            }
+        }
+    }
+
+    // ③五态计数（必验总数＝并集 caseId 数——见函数注③）。
+    summary.totalRequired = mergedByCase.size();
+    for (const auto& [caseKey, status] : mergedByCase) {
+        switch (status) {
+        case evidence::CaseExecutionStatus::Executed:       ++summary.executed;       break;
+        case evidence::CaseExecutionStatus::NotExecuted:    ++summary.notExecuted;    break;
+        case evidence::CaseExecutionStatus::Invalid:        ++summary.invalid;        break;
+        case evidence::CaseExecutionStatus::NotApplicable:  ++summary.notApplicable;  break;
+        case evidence::CaseExecutionStatus::Failed:         ++summary.failed;         break;
+        }
+    }
+    return summary;
+}
+
+// =====================================================================
 // 三形态结果组装（ReportBuildOutcome 成功/失败/取消——§9.1 三字段冻结形状）
 // =====================================================================
 
@@ -541,6 +652,38 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
                               "build: reviewSeed.metadata.basisRevision 与请求修订不一致"
                               "（§4.5 复核字段）");
         }
+        // RPT-T15（EVI-02/RPT-04，acceptance 2）：变体报告只能引用一致的
+        // 需求与工况基准——"基准不一致即拒绝"。baselineCheckResult 是
+        // evidence checkComparisonBaselinesConsistent 纯检查的结果值
+        // （§4.5 variantDiff 行——reporting 消费不重算，PA-1）；种子携带
+        // 的改型差异块若带不一致基准（consistent==false），差异表会把
+        // 不同基准的方案并排比较——报告数据非法，构建边界拒绝（不静默
+        // 呈现、不降格为限定语）。差异维度逐项入诊断与错误 detail
+        // （NFR-COR-03 不静默＋可定位）。
+        if (request.reviewSeed.has_value()
+            && request.reviewSeed->metadata.variantDiff.has_value()
+            && !request.reviewSeed->metadata.variantDiff->baselineCheckResult.consistent) {
+            std::string dimensions;
+            for (const evidence::BaselineDifferenceDimension dimension :
+                 request.reviewSeed->metadata.variantDiff->baselineCheckResult
+                     .differingDimensions) {
+                if (!dimensions.empty()) {
+                    dimensions += ", ";
+                }
+                dimensions += std::to_string(static_cast<unsigned>(dimension));
+            }
+            collectedDiags.push_back(buildDiagnostic(
+                diagcodes::kConsistencyMismatch,
+                "变体差异块基准不一致（EVI-02/RPT-04——报告变体章节只能引用一致的"
+                "需求与工况基准）：差异维度 [" + dimensions + "]",
+                "以同一需求与工况基准（同一 inputBaselineId/必验工况集/样本集）"
+                "重评基线与候选后，经 checkComparisonBaselinesConsistent 复核一致"
+                "再组建评审演化种子"));
+            throw ReportError(
+                ReportErrorCode::Usage,
+                "build: reviewSeed.metadata.variantDiff 基准一致性检查不通过（EVI-02——"
+                "基准不一致即拒绝；差异维度 [" + dimensions + "]）");
+        }
 
         session.advanceTo(ReportBuildStage::Resolving);
         emitProgress(progress, 0, request.resultRuns.size(), "resolving");
@@ -604,6 +747,10 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
         std::vector<ResolvedResult> resolved;
         resolved.reserve(request.resultRuns.size());
         std::optional<evidence::ReproductionBlock> reproduction;  ///< 复现块（首个可解析者——§4.2）
+        // 逐结果覆盖矩阵（§4.2 coverageSummary 数据源——RPT-T15 注入增量；
+        // 报告级聚合见步③循环后 aggregateCoverage）。
+        std::vector<evidence::CaseCoverageMatrix> coverageMatrices;
+        coverageMatrices.reserve(request.resultRuns.size());
 
         for (std::size_t i = 0; i < request.resultRuns.size(); ++i) {
             // 取消检查点（结果解析粒度——§7.1 取消行/acceptance 5）。
@@ -724,6 +871,25 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
                 reproduction = m_resultSource->tryReproduction(run);
             }
 
+            // 覆盖矩阵（RPT-T15/RP-COV-1——§4.2 coverageSummary 数据源的
+            // 注入投影；nullopt＝归档不含可解析矩阵——报告级覆盖呈现缺
+            // 数据源即失真，EVI-02"不得漏验"的呈现面宁可拒绝不可伪造，
+            // SourceMissing＋诊断，NFR-COR-03）。
+            std::optional<evidence::CaseCoverageMatrix> coverage =
+                m_resultSource->tryCoverageMatrix(run);
+            if (!coverage.has_value()) {
+                collectedDiags.push_back(buildDiagnostic(
+                    diagcodes::kSourceMissing,
+                    "必验工况覆盖矩阵不可解析（results/<run-id>/ 归档工件不含覆盖矩阵"
+                    "——evidence 汇总层产物）：run=" + run.toCanonical(),
+                    "核对 evidence 汇总归档工件完整性（evidence/execution 适配面）后重试"));
+                session.fail(ReportErrorCode::SourceMissing,
+                             "build: 覆盖矩阵不可解析（§4.2 coverageSummary 数据源）——run="
+                                 + run.toCanonical());
+                return assembleFailureOutcome(session, std::move(collectedDiags));
+            }
+            coverageMatrices.push_back(std::move(*coverage));
+
             resolved.push_back(std::move(item));
             emitProgress(progress, i + 1, request.resultRuns.size(), "resolving");
         }
@@ -737,6 +903,28 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
                 "核对归档工件完整性（evidence/execution 适配面）后重试"));
             session.fail(ReportErrorCode::SourceMissing,
                          "build: 复现要素不可解析（§4.2 reproduction 必填）");
+            return assembleFailureOutcome(session, std::move(collectedDiags));
+        }
+
+        // 报告级覆盖摘要聚合（RPT-T15/RP-COV-1——§4.2 coverageSummary 兑现；
+        // 归并规则见 aggregateCoverage 函数注）。基准对账失败＝报告绑定的
+        // 多结果引用了不同必验工况集（requiredCaseSetId 互异）——覆盖计数
+        // 对哪个集都对不上账，呈现面失真宁可拒绝（SourceAmbiguous——与步⑤
+        // "报告级快照与逐结果不一致"同族的来源歧义；EVI-02 一致基准语义的
+        // 报告级对账面）。
+        bool coverageBaselineMismatch = false;
+        CaseCoverageSummary coverageSummary =
+            aggregateCoverage(coverageMatrices, coverageBaselineMismatch);
+        if (coverageBaselineMismatch) {
+            collectedDiags.push_back(buildDiagnostic(
+                diagcodes::kConsistencyMismatch,
+                "多结果覆盖矩阵基准对账失败（requiredCaseSetId 互异——报告绑定了"
+                "不同必验工况集的结果，覆盖计数无法对账）",
+                "以同一必验工况集（同一快照 caseSet）的结果集组建报告，或拆分为"
+                "各自的报告"));
+            session.fail(ReportErrorCode::SourceAmbiguous,
+                         "build: 覆盖矩阵基准对账失败（requiredCaseSetId 互异——"
+                         "来源歧义，§6.6/EVI-02）");
             return assembleFailureOutcome(session, std::move(collectedDiags));
         }
 
@@ -822,6 +1010,24 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
         std::vector<SectionStatusEntry> scopeStates;  // C 级范围判定的状态投影（checkSectionScope 输入）
         const UnitPreference& units = request.units.value_or(UnitPreference{});
 
+        // 本次评审元数据（RPT-T15——review-signoff/variant-diff 两框架章节
+        // 的数据源，§4.5；在章节组装前组装一次，章节投影与步⑦冻结共用同
+        // 一值——两处消费零漂移，NFR-COR-02）：
+        //   - 演化路径（reviewSeed 在场）＝种子初值（元数据入 contentIdentity
+        //     ——§4.4，签署/意见/改型差异是评审演化内容）；
+        //   - 全新报告＝默认形态（依据修订/快照＝请求三元组、未签署——
+        //     签署仅记录事实，D-12）。
+        // 变体基准一致性已在请求面校验（EVI-02 拒绝）——此处元数据的
+        // variantDiff 只可能携带一致基准。
+        ReviewMetadata sessionReview;
+        if (request.reviewSeed.has_value()) {
+            sessionReview = request.reviewSeed->metadata;
+        } else {
+            sessionReview.basisRevision = request.revision;
+            sessionReview.basisSnapshot = request.snapshotId;
+            sessionReview.signOff = SignOffState::unsignedState();
+        }
+
         for (const std::string& sectionId : sectionsInScopeList) {
             // 取消检查点（章节解析粒度——§7.1 取消行/acceptance 5）。
             if (cancel != nullptr && cancel->isCancelled()) {
@@ -847,6 +1053,9 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
                 frameworkInput.revisionSummary = view->commandSummary;
                 frameworkInput.diagRefs = &diagMerger.snapshot();
                 frameworkInput.reproduction = &(*reproduction);
+                // 评审元数据（RPT-T15——review-signoff/variant-diff 数据源；
+                // 会话级元数据在章节循环前已组装，此处借用其地址）。
+                frameworkInput.review = &sessionReview;
 
                 SectionContent content = m_framework.project(sectionId, frameworkInput);
 
@@ -890,7 +1099,18 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
                 }
 
                 sections.push_back(std::move(section));
-                scopeStates.push_back(SectionStatusEntry{sectionId, content.status});
+                // C 级范围保守判定的状态投影只收**域语义**章节（§5.3
+                // NoFormalResult＝"该域无任何可引用的已完成结果"；RPT-T15
+                // 口径——C 专属框架两章节 review-signoff/variant-diff 为
+                // 元数据块〔review-signoff 随构建成功恒 Populated〕，不承载
+                // "正式结果"事实，若计入会让恒有内容的元数据块架空 P-RPT-5
+                // 保守拒绝——C 域全缺时虚级 C 报告被放行；T14 前的
+                // sectionsInScope(C) 不含两章节，本口径即既有已验收判定
+                // 行为的保持，§14.4 v0.18 登记）。
+                if (sectionId != kSectionReviewSignoff
+                    && sectionId != kSectionVariantDiff) {
+                    scopeStates.push_back(SectionStatusEntry{sectionId, content.status});
+                }
                 emitProgress(progress, static_cast<std::uint64_t>(sections.size()),
                              sectionTotal, "building");
                 continue;
@@ -1170,11 +1390,18 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
         std::size_t selectedCSections = 0;
         if (request.level == ReportLevel::C) {
             for (const ReviewReportSection& section : sections) {
+                // 选择路计数同内容路口径：排除 C 专属框架两章节（元数据块
+                // 恒选中——计入则"零 C 章节选中"永不可达，§4.6 行 4 选择路
+                // 被架空；RPT-T15 口径，§14.4 v0.18 登记）。
+                if (section.sectionId == kSectionReviewSignoff
+                    || section.sectionId == kSectionVariantDiff) {
+                    continue;
+                }
                 const std::optional<ReportLevel> sectionLevel =
                     trySectionMinimumLevel(section.sectionId);
                 if (sectionLevel.has_value() && *sectionLevel == ReportLevel::C
                     && section.selected) {
-                    ++selectedCSections;   // C 专属章节（词表级别＝C）且被选中
+                    ++selectedCSections;   // C 专属域章节（词表级别＝C）且被选中
                 }
             }
         }
@@ -1247,11 +1474,13 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
         fields.evidenceRefs = collectEvidenceRefs(sections, envelopeIndex);  // 证据引用并集（§4.2）
         fields.diagRefs = diagMerger.take();                                 // 诊断引用并集（§4.2）
         fields.currentnessSummary = std::move(currentnessSummary);
-        // coverageSummary：报告级聚合语义（多结果覆盖矩阵归并规则）未冻结
-        // ——RP-COV-1（EVI-02）收口；本任务不消费覆盖矩阵、不私设归并规则
-        //（自行裁决归 RP-COV-1/所有者），字段以零计数承载并随 RP-COV-1
-        // 落地刷新（§14.4 v0.8 范围登记）。
-        fields.coverageSummary = CaseCoverageSummary{};
+        // coverageSummary：报告级覆盖摘要（RPT-T15/RP-COV-1 收口——§14.4
+        // v0.8"零计数占位、随 RP-COV-1 落地刷新"范围登记行的兑现）：逐结果
+        // 覆盖矩阵（步③注入投影取得）经 aggregateCoverage 报告级聚合
+        // （同基准对账＋逐工况保守取态——EVI-02 呈现口径的聚合侧；五态计数
+        // ＋必验总数，消费不重算判定——§2.1 C-2）。渲染层据计数的覆盖完备性
+        // 结论与断言⑤（漏验⇒无 formalPass 声明）由本摘要驱动。
+        fields.coverageSummary = std::move(coverageSummary);
         // externalResourceSummary：数据源＝runtime 摘要资源清单（ModelSummary
         // ——RPT-T12 schema；RPT-T14 起经框架投影器消费——锚定修订的资源
         // 固化状态投影，Recorded 态条目即 §6.4 行 3"外部验证未完成"限定语
@@ -1266,19 +1495,17 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
             // 演化链新版本（§4.5）：supersedes＝旧 ReportId、版本＝旧+1、
             // 元数据取种子初值（basisRevision 一致性已在前置校验；元数据
             // 入 contentIdentity——§4.4，dataIdentity 不变＝同数据基准的
-            // 评审演化）。
+            // 评审演化）。元数据值＝章节组装前的 sessionReview 同源拷贝
+            // （review-signoff/variant-diff 投影与冻结共用同一值——零漂移）。
             fields.supersedes = request.reviewSeed->priorReportId;
             fields.reportVersion = request.reviewSeed->priorReportVersion + 1;
-            fields.review = request.reviewSeed->metadata;
+            fields.review = sessionReview;
         } else {
             fields.reportVersion = 1;
             // 全新报告元数据（§4.5 默认形态）：依据修订/快照＝请求三元组；
             // 未签署（签署仅记录事实——D-12：未签署报告可导出，签署非门禁）。
-            ReviewMetadata review;
-            review.basisRevision = request.revision;
-            review.basisSnapshot = request.snapshotId;
-            review.signOff = SignOffState::unsignedState();
-            fields.review = std::move(review);
+            // 值＝章节组装前组装的 sessionReview（同源——框架投影与冻结一致）。
+            fields.review = std::move(sessionReview);
         }
         fields.unitPreference = units;
         // 生成信息（不入任何身份——§4.4 排除列/D-04；同内容重建身份一致

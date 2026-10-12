@@ -445,10 +445,11 @@ TEST_F(ReportingContractSuite, RP_SCOPE_1_BLevelSectionCompleteness)
 }
 
 /**
- * §10.1 RP-SCOPE-2：C 级章节完整性——B＋C 提供方就绪：组装范围十二章节
- * （B 全部八项＋C 追加域四项——C 专属框架两项的内建投影随 RPT-T15 落位，
- * 落位前不入组装范围——不预建空章节）＋评审签署块（ReviewMetadata 字段
- * ——报告对象 review() 面）。
+ * §10.1 RP-SCOPE-2：C 级章节完整性——B＋C 提供方就绪：组装范围十四章节
+ * （B 全部八项＋C 追加六项——RPT-T15 起 C 专属框架两项 review-signoff/
+ * variant-diff 的内建投影已落位入组装范围，"落位前不入组装范围"的阶段
+ * 语义行兑现为全量；不预建空章节纪律保持——投影落位即入范围）＋评审签署
+ * 块（ReviewMetadata 字段——报告对象 review() 面）。
  */
 TEST_F(ReportingContractSuite, RP_SCOPE_2_CLevelSectionCompleteness)
 {
@@ -472,10 +473,10 @@ TEST_F(ReportingContractSuite, RP_SCOPE_2_CLevelSectionCompleteness)
     const ReviewReport report = buildOk(scene, ReportLevel::C);
     EXPECT_EQ(report.level(), ReportLevel::C);
 
-    // 组装范围＝12 章节（§5.2 全侧投影——词表行 1~12 序；域八项 Populated
-    // 全选，框架四项按内建投影如实形态）。
+    // 组装范围＝14 章节（§5.2 全侧投影——词表行 1~14 序；域八项 Populated
+    // 全选，框架六项按内建投影如实形态——RPT-T15 扩量）。
     const std::vector<std::string> cScope = sectionsInScope(ReportLevel::C);
-    ASSERT_EQ(cScope.size(), std::size_t{12});
+    ASSERT_EQ(cScope.size(), std::size_t{14});
     ASSERT_EQ(kDomainSectionIds.size(), std::size_t{8});
     ASSERT_EQ(report.sections().size(), cScope.size());
     for (std::size_t i = 0; i < report.sections().size(); ++i) {
@@ -488,7 +489,9 @@ TEST_F(ReportingContractSuite, RP_SCOPE_2_CLevelSectionCompleteness)
             // 框架章节（本场景未注入模型摘要、有取消诊断源——如实形态）：
             // project-scheme Populated；input-summary NoFormalResult（提供方
             // 未注入——缺项表达）；diagnostics/external-validation-boundary
-            // 由数据源决定（不逐帧断言——RP_SCOPE_1 已覆盖内容面）。
+            // 由数据源决定；review-signoff Populated（RPT-T15——元数据块恒
+            // 在）；variant-diff NoFormalResult（RPT-T15——无 variantDiff 缺
+            // 正式差异内容，默认不选）。选择语义统一按 §5 默认规则断言。
             EXPECT_EQ(section.selected, defaultSelectionForStatus(section.status));
         }
     }
@@ -934,8 +937,10 @@ TEST_F(ReportingContractSuite, RP_CUR_3_Unevaluable_NotDefaultCurrent)
 /**
  * §10.1 RP-COV-1：多工况覆盖显示——①包络合并条目"包络合并（呈现方式）"
  * 标注（跨多工况条目）；②漏验一个启用必验工况→整体缺项呈现（不得正式
- * 通过）；③全覆盖→覆盖摘要呈现。报告级 coverageSummary 聚合语义未冻结
- * （§14.4 v0.12 置零值）——聚合计数随其冻结任务收口（文件头登记）。
+ * 通过）；③全覆盖→覆盖摘要呈现。报告级 coverageSummary 聚合已随 RPT-T15
+ * 收口（§14.4 v0.18——逐结果 tryCoverageMatrix 注入投影→aggregateCoverage
+ * 报告级聚合；替身缺省矩阵＝按包络 caseScope 全 Executed——本用例断言
+ * 相应从 v0.12 的零值占位分支更新为真实聚合计数分支）。
  */
 TEST_F(ReportingContractSuite, RP_COV_1_CaseCoverageDisplay)
 {
@@ -945,7 +950,9 @@ TEST_F(ReportingContractSuite, RP_COV_1_CaseCoverageDisplay)
     const core::ObjectId caseB = caseAt(0x22);
     const core::RunId run = runAt(0x14);
 
-    // ①全覆盖（包络覆盖双工况）：条目跨双工况＝包络合并标注（§6.5/DYN-07）。
+    // ①全覆盖（包络覆盖双工况）：条目跨双工况＝包络合并标注（§6.5/DYN-07）；
+    // 覆盖矩阵缺省＝按包络 caseScope 全 Executed→报告级计数 total=2/executed=2
+    // →覆盖完备性结论"全部启用必验工况已覆盖"（§6.5 呈现口径）。
     {
         BuildScene scene;
         RunSpec spec{run};
@@ -956,22 +963,24 @@ TEST_F(ReportingContractSuite, RP_COV_1_CaseCoverageDisplay)
         content.entryCaseScope = {caseA, caseB};
         scene.addKinContent(content);
         const ReviewReport report = buildOk(scene, ReportLevel::B);
+        EXPECT_EQ(report.coverageSummary().totalRequired, std::uint64_t{2}) << "必验总数";
+        EXPECT_EQ(report.coverageSummary().executed, std::uint64_t{2}) << "全部已执行";
         const std::string html = renderText(report, ReportRenderFormat::Html);
         EXPECT_NE(html.find("包络合并（呈现方式）"), std::string::npos)
             << "包络合并标注（跨多工况条目）";
-        // 报告级覆盖摘要（stage A：聚合语义未冻结——builder 置零值，渲染
-        // 面＝P-EV-7 如实表达"无启用必验工况"；"全部已覆盖"分支随聚合
-        // 语义冻结任务收口，§14.4 v0.12——本用例如实断言零值分支）。
         EXPECT_NE(html.find("覆盖完备性"), std::string::npos) << "覆盖摘要在正文";
-        EXPECT_NE(html.find("无启用必验工况"), std::string::npos)
-            << "零值聚合的如实呈现（不伪造'已覆盖'空真表述——P-EV-7）";
+        EXPECT_NE(html.find("全部启用必验工况已覆盖"), std::string::npos)
+            << "覆盖完备性结论（§6.5——聚合收口后的全覆盖分支，v0.18）";
         // 全覆盖＋资格成立的正例面："正式通过"声明在此合法呈现（§8.2①
         // 断言①通过）——"漏验不得正式通过"的反例面由②承载。
         EXPECT_NE(countOutsideQualifierSpans(html, "正式通过"), std::size_t{0})
             << "全覆盖正例的正式通过声明（资格成立）";
     }
     // ②漏验一个启用必验工况：漏验工况以 caseId 规范文本进缺失清单（§6.4.1
-    // MissingItem.itemId 漏验口径）——整体缺项呈现，无正式通过字样。
+    // MissingItem.itemId 漏验口径）——整体缺项呈现，无正式通过字样；覆盖
+    // 矩阵缺省按 caseScope={caseA} 全 Executed→计数 total=1/executed=1（该
+    // 工况已执行——漏验呈现由缺失清单承载，资格不成立由 evidence 门禁
+    // 脚本面保证）。
     {
         BuildScene scene;
         RunSpec spec{run};
