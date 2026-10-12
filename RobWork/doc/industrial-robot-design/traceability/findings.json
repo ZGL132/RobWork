@@ -7849,7 +7849,7 @@
       "status": "open",
       "registeredAt": "2026-10-12",
       "title": "runtime `Codec.cpp:1267-1289` parseNameMap 映射级复核仅相邻比对（prev.fullName==curr.fullName），(objectId,scope) 唯一性完全未检（同 objectId 异 localName 条目不相邻）——错误解析不报错＋恢复路径 emplace 静默保留首条",
-      "resolution": "处置建议：补 (objectId,scope) 去重与 fullName 全局唯一哈希复核；修复排批见 audit/round2-20261010/fix-plan-e.md（批 E1 冷区先行/E2 热区随 R2 功能线收尾）"
+      "resolution": "E1 批执行会话复核发现不可施行，挂查询交审计侧复核（2026-10-12；status 维持 open 不静默改判）：①「(objectId,scope) 去重」与合法别名数据冲突——rich 夹具合法映射即含同 objectId 同 scope 多条目（同对象多名的消歧语义），强制去重使 EncodeParseRoundtrip 合法往返翻红（实测留痕 audit/acc-audit-r2e1-1/）；②「fullName 全局唯一哈希」被既有不变量覆盖——fullName 为 (scopeToken, localName) 派生量且条目级形态检查在场（「fullName 与 scope/localName 分解不一致」拒绝实测），重名条目在存储字典序下必相邻、由既有相邻比对拒绝——非相邻重名无法通过形态检查到达映射级复核。处置建议原文两检查面均不成立，是否仍需映射级哈希复核交审计侧重裁定；E1 本条不实施（零代码改动）"
     },
     {
       "id": "F-807",
