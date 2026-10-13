@@ -108,10 +108,13 @@ add_library(sdurws_ird_kinematics STATIC
     src/Ik.cpp
     src/SolutionSet.cpp
     src/Sampling.cpp
-    src/Workspace.cpp)  # T14 增列：工作空间探索式采样与点云渲染数据
+    src/Workspace.cpp   # T14 增列：工作空间探索式采样与点云渲染数据
                         # （KIN-09/R2/AT-25——§7.3 预留边界兑现；两模式
                         # 编译——纯 std＋core/evidence 头，零框架库符号、
                         # 零 Qt 零绘图设施）
+    src/PoseReach.cpp)  # T16 增列：独立位姿可达性分析（KIN-11——目标生成/
+                        #   方向覆盖计算/执行核/载荷编码/评估器形态；
+                        #   WP-15-T16——PoseReach.hpp/.cpp 公共头对）
 
 # ---- T07 增列（仅集成模式）：src/Collision.cpp 消费 policy 公共头的
 # 完整类型面（CollisionEvaluationSession 评估调用点）——冒烟模式无框架
@@ -410,6 +413,8 @@ add_executable(sdurws_ird_kinematics_test
                               # 取消进度检查点/点云着色投影图例导出/回写/R2 边界）
     test/EnvelopeTest.cpp     # T15：近似外包络用例（KIN-10/AT-26——契约
                               # acceptance 1~4 逐条具名自证）
+    test/PoseReachTest.cpp    # T16：独立位姿可达性用例组（KIN-11/AT-26——
+                              #   计划预览/方向覆盖/协作取消/黄金设施复用）
     test/PluginPanelTest.cpp   # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
     test/HostMigrationTest.cpp)  # T18：宿主迁移三接入面用例（O-44 v1 诚实边界——模型层）
 

@@ -1,0 +1,18 @@
+== WP-15-T16 独立冒烟模式构建日志（2026-10-13，工作树 build/wp15-t16-wt）==
+
+$ cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp15-t16 -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64
+-- Configuring done (2.2s)
+-- Generating done (5.8s)
+-- Build files have been written to: D:/10_Source_Repos/21_robot/RobWork/build/wp15-t16-wt/build-smoke-wp15-t16
+
+$ cmake --build build-smoke-wp15-t16 --config Release --target sdurws_ird_kinematics
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t16-wt\build-smoke-wp15-t16\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t16-wt\build-smoke-wp15-t16\kinematics\Release\sdurws_ird_kinematics.lib
+
+$ cmake --build build-smoke-wp15-t16 --config Release --target sdurws_ird_kinematics_test
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t16-wt\build-smoke-wp15-t16\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t16-wt\build-smoke-wp15-t16\kinematics\Release\sdurws_ird_kinematics_test.exe
+
+$ cmake --build build-smoke-wp15-t16 --config Release --target sdurws_ird_kinematics_contract_test
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t16-wt\build-smoke-wp15-t16\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_kinematics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t16-wt\build-smoke-wp15-t16\kinematics\Release\sdurws_ird_kinematics_contract_test.exe
