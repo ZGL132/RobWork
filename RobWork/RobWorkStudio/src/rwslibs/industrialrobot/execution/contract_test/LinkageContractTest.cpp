@@ -135,11 +135,12 @@ bool hasIncludeOfUnit(const std::string& unitPath)
  * 测试目标，见 NoTestkitEdge 用例的收窄断言）。
  *
  * 扫描单元 CMakeLists.txt 文本中出现的全部 sdurws_ird_* 目标引用，与白名单
- * 比对：产品目标链接 core/evidence/project（三条登记边）＋本单元自身四目标
- * （产品/测试/契约测试/worker——同一单元内部引用不构成跨单元边，R-1 判定
- * 范围）＋sdurws_ird_testkit（EX-T09 登记：RecordListener/TempDir/
+ * 比对：产品目标链接 core/evidence/project（三条登记边）＋本单元自身五目标
+ * （产品/测试/契约测试/worker/性能基准——同一单元内部引用不构成跨单元边，
+ * R-1 判定范围；perf 目标＝WP-23-T03 增列的 B-02 取消时序基准测量载体）
+ * ＋sdurws_ird_testkit（EX-T09 登记：RecordListener/TempDir/
  * FaultInterceptor/TestProcessRunner 等测试设施消费——T-1 允许形态＝仅
- * `_test`/`_contract_test` 目标可链 testkit，产品目标仍禁止）。出现任何
+ * `_test`/`_contract_test`/`_perf_test` 目标可链 testkit，产品目标仍禁止）。出现任何
  * 其他产品单元目标（modeling/requirements/kinematics/trajectory/dynamics/
  * selection/optimization 等业务域，或 runtime/policy/diagnostics）即构建图
  * 越界（R-1：业务域互链禁止；SA-10：表外边＝构建失败）。
@@ -154,9 +155,11 @@ TEST(ExecutionLinkage, UnitEdgesRegisteredOnly_DT_BUILD_R1_T1)
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
     // 白名单：core/evidence/project（三条允许的产品单元边）＋ execution
-    // 本单元四目标（产品/测试/契约测试/worker——单元内部引用不构成跨单元
-    // 边）＋ sdurws_ird_testkit（EX-T09 报告设施接入——T-1 允许形态，仅
-    // 测试目标；NoTestkitEdge 用例钉住产品目标零 testkit）。
+    // 本单元五目标（产品/测试/契约测试/worker/性能基准——单元内部引用不
+    // 构成跨单元边；perf 目标＝WP-23-T03 增列，B-02 取消时序基准测量载体
+    // ——performance-baseline §2 B-02／NFR-PERF-02）＋ sdurws_ird_testkit
+    // （EX-T09 报告设施接入——T-1 允许形态，仅测试目标；NoTestkitEdge
+    // 用例钉住产品目标零 testkit）。
     const std::set<std::string> allowed = {
         "sdurws_ird_core",
         "sdurws_ird_evidence",
@@ -164,6 +167,7 @@ TEST(ExecutionLinkage, UnitEdgesRegisteredOnly_DT_BUILD_R1_T1)
         "sdurws_ird_execution",
         "sdurws_ird_execution_test",
         "sdurws_ird_execution_contract_test",
+        "sdurws_ird_execution_perf_test",
         "sdurws_ird_execution_worker",
         "sdurws_ird_testkit"};
     for (const auto& ref : refs) {
@@ -200,10 +204,13 @@ TEST(ExecutionLinkage, NoTestkitEdge_DT_BUILD_T1)
         if (line.find("sdurws_ird_testkit") == std::string::npos) { continue; }
         ++testkitLines;
         // T-1 允许形态的唯一落点：测试目标的链接语句（目标名与 testkit
-        // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析）。
+        // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析；
+        // `_perf_test`＝WP-23-T03 增列的基准目标——testkit 报告面消费，
+        // 同属测试目标允许集）。
         const bool onTestTargetLine
             = (line.find("sdurws_ird_execution_test") != std::string::npos
-               || line.find("sdurws_ird_execution_contract_test") != std::string::npos)
+               || line.find("sdurws_ird_execution_contract_test") != std::string::npos
+               || line.find("sdurws_ird_execution_perf_test") != std::string::npos)
               && line.find("target_link_libraries") != std::string::npos;
         EXPECT_TRUE(onTestTargetLine)
             << "testkit 引用必须落在测试目标链接语句行（T-1：产品目标零 "

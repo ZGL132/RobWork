@@ -1,0 +1,40 @@
+{
+  "datasetId": "ird-perf-b02-cancel",
+  "version": "1",
+  "kind": "performance-baseline",
+  "title": "B-02 取消时序基准驱动参数与测量口径（WP-23-T03 冻结）",
+  "baselineRef": "performance-baseline.md#2-B-02",
+  "requirementRef": "REQUIREMENTS.md#19.3-NFR-PERF-02",
+  "consumer": "sdurws_ird_execution_perf_test（execution/perf_test/CancelTimingBenchmarkTest.cpp）",
+  "generator": {
+    "identity": "cancelTimingRig",
+    "driver": "真实 TaskController（缺省 steady_clock——真实墙钟）＋真实 WorkerSupervisor＋真实独立 worker 进程（sdurws_ird_execution_worker 阶段 A 脚本替身评估器）；驱动线程 poll 周期 10 ms；装配同步锚点＝DispatchAccepted 事件（worker 身份核对受理——status 相位 Running 在派发请求发出即置位，早于受理，不作锚点；取消请求的 earliest 前提自此成立）",
+    "normalSettleScript": "stage-a-script:v1 / batches 5000000（流式批次——测量窗内持续 Running，协作取消在批次边界收敛；与 b01 后台负载同源脚本形态）",
+    "timeoutKillScript": "stage-a-script:v1 / checkpoint 1 / heartbeat-off / hang（先写 1 个检查点→静默挂起永不收敛——驱动 10 s 协作窗耗尽→强杀路径；checkpoint 1 提供第三腿的最近检查点）",
+    "evaluatorKey": "stage-a-double",
+    "manifestDigestInput": "stage-a-double|1|7",
+    "checkpointArchive": "归档端口＝测试面真实写盘替身（DiskArchivePort——批次字节与 manifest.json 真实落盘；project 存储白名单校验语义不在测量面）；检查点经 CheckpointCoordinator 正式发布后受强杀留存核对"
+  },
+  "measurementProtocol": {
+    "statisticClass": "时序阈值类判定（performance-baseline §2 统计口径区分——非 P95 类，禁以分位数表述达标）",
+    "verdictStatistic": "有效样本最大值（全样本须达标）；P95/最小值一并报告仅作分布参考",
+    "samplePlan": "正常收敛腿：1 次预热（剔除）＋15 有效样本；超时强杀腿：3 次有效场景（阈值类无统计预处理——不剔除任何样本）",
+    "sampleSizeNote": "协议 §4.2 的『每组有效样本 ≥15』下限系 P95 分组特有；本基准按同数自律取 15（正常腿），超时腿每次 ~11 s 真实墙钟取 3 场景",
+    "timestampConvention": "时点＝驱动线程内事件到达时刻（steady_clock）——状态机事件在 poll 内同步发布，观测滞后 ≤1 个 poll 周期（10 ms，保守方向：实测值 ≥ 真实转移时刻）",
+    "thresholds": { "cancelAcceptMs": 2000, "cooperativeSettleMs": 10000 },
+    "thresholdSource": "REQUIREMENTS NFR-PERF-02 原文（零私改；TaskController::kCancelAcceptWindow/kCancelCooperativeWindow 同源双钉）",
+    "legs": [
+      "条款 1：取消请求 → 进入 Canceling ＋ 停止派发（IDispatchGate 回调观测）≤2 s",
+      "条款 2：进入 Canceling → 协作收敛 Canceled（CancelAck 帧＋退出码 20）≤10 s",
+      "条款 3（行为判定，非毫秒阈值）：10 s 窗耗尽 → 强杀序列（EX-FORCE-TERMINATED＋ForceTerminated）→ worker 进程 OS 级死亡（PID 探测）→ 检查点留存（磁盘重读字节一致＋复合摘要＝发布摘要）"
+    ]
+  },
+  "equivalenceNotes": [
+    "worker 评估器＝阶段 A 脚本替身（execution.md §3.4 登记形态）——证明的是取消协议对真实进程/真实通道的时序，不是业务评估算法时序；业务评估器的批次边界协作形态（协作点轮询 ICancelSignal——§7.1 信号传递链）与脚本替身同构",
+    "归档端口＝测试面真实写盘替身——检查点产物面真实在盘，project 白名单校验归 project 契约测试面（EX-T04/PRJ-T14 覆盖）",
+    "与功能用例分工：CancelProtocolTest（ManualClock 虚拟时钟）证协议正确性；本基准证真实墙钟时序达标——两者互补不互替"
+  ],
+  "upgradeRule": "testkit.md §4.2.1——升级＝新建数据集或新 major 版本，不得原地改写；参数变更须换版本并留 history",
+  "frozenAt": "2026-10-13",
+  "frozenBy": "WP-23-T03（分支 wp23-t03）"
+}

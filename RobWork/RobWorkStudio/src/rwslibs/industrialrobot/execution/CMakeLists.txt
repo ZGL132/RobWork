@@ -380,6 +380,61 @@ add_custom_command(TARGET sdurws_ird_execution_contract_test POST_BUILD
             $<TARGET_FILE_DIR:sdurws_ird_execution_contract_test>
     COMMAND_EXPAND_LISTS)
 
+# ---- 性能基准测试目标 sdurws_ird_execution_perf_test（WP-23-T03 增列）----
+# performance-baseline §2 B-02／NFR-PERF-02 取消时序基准的测量载体（DTB
+# §2.24 行）：真实独立 worker 进程上的 2 s/10 s 协议时序测量——取消请求
+# 2 s 内进入 Canceling 并停止派发新批次；普通批次 10 s 内收敛；超时后终止
+# 独立工作进程并保留最近检查点。用例面
+# （perf_test/CancelTimingBenchmarkTest.cpp）：
+# 正常收敛腿（1 预热＋15 有效样本——真实 TaskController steady_clock＋
+# 真实 WorkerSupervisor＋真实 worker 进程，驱动线程 10 ms poll；阈值类
+# 判定统计量＝有效样本最大值）＋超时强杀腿（3 场景——永不收敛脚本驱动
+# 10 s 协作窗耗尽→进程树终止→OS 级进程死亡核对＋检查点强杀后留存核对）。
+# datasetId ird-perf-b02-cancel@1——manifest 冻结于 testdata/performance/。
+# 与功能用例（CancelProtocolTest——ManualClock 虚拟时钟证"协议对"）互补
+# 不互替：本目标证"协议快"（时序数字必须真实产生——任何虚拟时钟不构成
+# 时序证据）。单列目标（不并入 _test/_contract_test）的理由＝基准用例的
+# 墙钟量级（~1.5 min）与真进程量级远超功能套件，混入会拖垮常规套件节奏
+# ——ui_perf_test（WP-23-T02）同款分工先例。
+# 链接面：sdurws_ird_execution（被测产品目标）＋sdurws_ird_testkit（
+# PerfBenchmark 报告面＋RecordListener——T-1 允许形态＝仅测试目标）＋
+# GTest::gtest（main 自持）。零 Qt（D-01——基准入口不构造 QCoreApplication，
+# 与 ui perf 目标的唯一形态差异）。IRD_EXECUTION_PERF_WORKER_EXE 注入
+# worker 可执行路径（契约测试 IRD_EXECUTION_WORKER_EXE 同款机制——真进程
+# 启动目标；独立宏名避免与契约目标的注入语义混淆）。
+add_executable(sdurws_ird_execution_perf_test
+    perf_test/TestMainPerf.cpp
+    perf_test/CancelTimingBenchmarkTest.cpp)
+
+# worker 可执行构建依赖（真进程启动目标——$<TARGET_FILE> 取值前提：perf
+# 目标构建即带出 sdurws_ird_execution_worker，缺则基准启动必失败）。
+add_dependencies(sdurws_ird_execution_perf_test sdurws_ird_execution_worker)
+
+target_compile_features(sdurws_ird_execution_perf_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_execution_perf_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_execution_perf_test PRIVATE /utf-8)
+endif()
+
+# T-1 允许形态：testkit 只落在测试目标链接语句（LinkageContractTest::
+# NoTestkitEdge 的允许集随本目标扩登——WP-23-T03 登记）。单行链接语句与
+# 既有 _test/_contract_test 同款形态（NoTestkitEdge 用例的同行显式约束）。
+target_link_libraries(sdurws_ird_execution_perf_test PRIVATE sdurws_ird_execution sdurws_ird_testkit GTest::gtest)
+
+target_compile_definitions(sdurws_ird_execution_perf_test PRIVATE
+    IRD_EXECUTION_PERF_WORKER_EXE="$<TARGET_FILE:sdurws_ird_execution_worker>")
+
+# vcpkg gtest 为动态库：拷贝运行期 DLL（execution_test 同款先例——留痕与
+# 验收都要直接执行该可执行文件）。
+add_custom_command(TARGET sdurws_ird_execution_perf_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_execution_perf_test>
+            $<TARGET_FILE_DIR:sdurws_ird_execution_perf_test>
+    COMMAND_EXPAND_LISTS)
+
 # ---- ird_add_gtest：add_test＋XML 报告目标（DTB §5.5，宏各单元自持）----
 # 框架原宏见 RobWork/RobWork/gtest/CMakeLists.txt：add_test ＋ <target>_
 # report（运行测试并落 gtest XML）。本宏按 DTB §5.5 在本单元 CMake 内
@@ -405,6 +460,7 @@ endmacro()
 
 ird_add_gtest(sdurws_ird_execution_test)
 ird_add_gtest(sdurws_ird_execution_contract_test)
+ird_add_gtest(sdurws_ird_execution_perf_test)   # WP-23-T03——B-02 取消时序基准
 
 # ---- 依赖红线守卫（配置期断言——EX-BLD-1 的 CMake 依赖图半区）----
 # execution 的 industrialrobot 单元依赖仅限 core/evidence/project 三条
