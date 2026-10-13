@@ -585,6 +585,57 @@ if(TARGET sdurws)
         sdurws_ird_optimization_plugin)
 endif()
 
+# ---- 交互响应基准测试目标 sdurws_ird_ui_perf_test（WP-23-T02 增列）----
+# performance-baseline §2 B-01／NFR-PERF-01 交互响应基准的测量载体
+# （§12.1 第一层同型：QCoreApplication 级无界面基准——testkit.md §6.7
+# 模型测试豁免行）。用例面（perf_test/InteractionResponseBenchmarkTest.cpp）：
+# 黄金规模标准数据（1,000 对象/100 修订——datasetId ird-perf-b01-interaction@1，
+# manifest 冻结于 testdata/performance/）下导航/选择/筛选/编辑/视图切换
+# 五类交互 × 空闲态/后台态两态负载分组采样（每组 1 预热＋≥15 有效样本），
+# P95 ≤200 ms 达标判定（testkit PerfBenchmark 夹具——线性插值分位数，
+# 禁 3 次中位数替代）＋无 >2 s 无响应窗口＋>1 s 转后台用例。
+# 链接面：sdurws_ird_ui（被测产品目标）＋sdurws_ird_execution（O-31 测试面
+# 直链先例＝ui_contract_test/UI-T14——后台态经 WorkerSupervisor 驱动真实
+# 独立 worker 进程的流式评估批次；产品库本体零对端链接，LinkageContractTest
+# 目标清单同步扩登）；sdurws_ird_testkit（PerfBenchmark＋RecordListener——
+# T-1 允许形态）；GTest::gtest（main 自持）。IRD_UI_PERF_WORKER_EXE 注入
+# worker 可执行路径（execution 契约测试 IRD_EXECUTION_WORKER_EXE 同款机制
+# ——真进程启动目标）。
+add_executable(sdurws_ird_ui_perf_test
+    perf_test/TestMainPerf.cpp
+    perf_test/InteractionResponseBenchmarkTest.cpp)
+
+# worker 可执行构建依赖（真进程启动目标——$<TARGET_FILE> 取值前提：perf
+# 目标构建即带出 sdurws_ird_execution_worker，缺则后台态启动必失败）。
+add_dependencies(sdurws_ird_ui_perf_test sdurws_ird_execution_worker)
+
+target_compile_features(sdurws_ird_ui_perf_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_ui_perf_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_ui_perf_test PRIVATE /utf-8)
+endif()
+
+target_link_libraries(sdurws_ird_ui_perf_test PRIVATE
+    sdurws_ird_ui
+    sdurws_ird_execution
+    sdurws_ird_testkit
+    GTest::gtest)
+
+target_compile_definitions(sdurws_ird_ui_perf_test PRIVATE
+    IRD_UI_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/.."
+    IRD_UI_PERF_WORKER_EXE="$<TARGET_FILE:sdurws_ird_execution_worker>")
+
+# vcpkg gtest 与 Qt6 均为动态库：拷贝运行期 DLL（ui_test 同款先例——
+# 留痕与验收都要直接执行该可执行文件）。
+add_custom_command(TARGET sdurws_ird_ui_perf_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_ui_perf_test>
+            $<TARGET_FILE_DIR:sdurws_ird_ui_perf_test>
+    COMMAND_EXPAND_LISTS)
+
 # ---- GUI 测试目标 sdurws_ird_ui_gui_test（§12.1 第三层，单列）----
 # Widgets/GUI 契约测试的注册载体。ctest LABELS ird_gui 串行（不与模型/Meta
 # 测试合并命令——ui.md §12.2 执行纪律；testkit.md §6.7 单实例启动行）。
@@ -674,9 +725,12 @@ add_custom_command(TARGET sdurws_ird_ui_gui_test POST_BUILD
  # ——CMake 对未注册测试名直接报错（首次配置实测，调整次序）。
 ird_add_gtest(sdurws_ird_ui_test)
 ird_add_gtest(sdurws_ird_ui_contract_test)
+ird_add_gtest(sdurws_ird_ui_perf_test)   # WP-23-T02——交互响应基准（ird 标签并行调度）
 ird_add_gtest(sdurws_ird_ui_gui_test)
 
 set_tests_properties(sdurws_ird_ui_test sdurws_ird_ui_contract_test
+    PROPERTIES LABELS "ird")
+set_tests_properties(sdurws_ird_ui_perf_test
     PROPERTIES LABELS "ird")
 set_tests_properties(sdurws_ird_ui_gui_test
     PROPERTIES LABELS "ird_gui")

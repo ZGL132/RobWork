@@ -111,6 +111,7 @@ add_executable(sdurws_ird_testkit_test
     test/SetCheckTest.cpp
     test/FixtureTest.cpp
     test/ReproBenchmarkTest.cpp   # WP-23-T09：复现夹具元测试（三腿/违例检出/报告）
+    test/PerfBenchmarkTest.cpp   # WP-23-T02：PERF 侧计时夹具元测试（P95 插值/预热剔除/无效留痕/报告）
     test/ReportTest.cpp
     test/ProcessRunnerTest.cpp   # TK-T11：四态 outcome＋EventWatch 双路径用例
     test/CoreIntegrationExampleTest.cpp

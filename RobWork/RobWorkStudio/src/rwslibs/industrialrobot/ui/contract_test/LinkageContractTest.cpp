@@ -118,8 +118,9 @@ TEST(UiLinkage, ArchEdgesCoreDiagnosticsOnly_UI_CTR)
 }
 
 /**
- * T-1 测试侧允许形态契约（testkit.md §2.4）：testkit 目标只出现在三个
- * 测试目标的链接声明中，产品库 sdurws_ird_ui 的链接块零 testkit。
+ * T-1 测试侧允许形态契约（testkit.md §2.4）：testkit 目标只出现在四个
+ * 测试目标（test/contract_test/perf_test/gui_test——WP-23-T02 增列
+ * perf_test）的链接声明中，产品库 sdurws_ird_ui 的链接块零 testkit。
  *
  * 说明：测试目标直链 testkit 触发的 ird_gates SUB 命中属 F-221 同型既有
  * 登记（全仓 12 个测试目标同形态——T-1 允许形态、机器面回填待 WP-01-T03，
@@ -136,9 +137,12 @@ TEST(UiLinkage, TestkitOnlyLinkedByTestTargets_UI_CTR)
     ASSERT_FALSE(productLink.empty());
     EXPECT_EQ(productLink.find("sdurws_ird_testkit"), std::string::npos)
         << "产品库 sdurws_ird_ui 链接 testkit（T-1 违例——testkit.md §2.4）";
-    // 三个测试目标链接块：testkit 必须在位（报告设施 RecordListener 的
+    // 四个测试目标链接块：testkit 必须在位（报告设施 RecordListener 的
     // 消费面——T-1 允许形态；缺链则 ird-test-report.json 无产出通道）。
+    // WP-23-T02 增列 sdurws_ird_ui_perf_test（交互响应基准目标——同款
+    // T-1 形态；其 execution 测试面直链见 TestTargetDirectLinksRegistered）。
     for (const auto& target : {"sdurws_ird_ui_test", "sdurws_ird_ui_contract_test",
+                               "sdurws_ird_ui_perf_test",
                                "sdurws_ird_ui_gui_test"}) {
         const std::string link = extractLinkBlock(cmake, target);
         ASSERT_FALSE(link.empty()) << "未找到 " << target << " 的链接声明块";
@@ -184,4 +188,34 @@ TEST(UiLinkage, ThreeTestTargetsAndLabels_UI_CTR)
     // REQUIRED) 失败即停——REQUIRED 调用在位核对。
     EXPECT_NE(cmake.find("find_package(GTest CONFIG REQUIRED)"), std::string::npos)
         << "缺 DTB §5.5 gtest REQUIRED 接入";
+}
+
+/**
+ * WP-23-T02 增列钉（perf_test 目标与 execution 测试面直链登记）：交互响应
+ * 基准目标按本表增列落位——execution 直链属 O-31 测试面特权（先例＝
+ * sdurws_ird_ui_contract_test 的 project/execution/diagnostics 直链，
+ * UI-T14 落地登记；登记册 traceability/wp23-t02-gate-registrations.md），
+ * 产品库 sdurws_ird_ui 链接块零对端单元（常驻红线——上方用例的
+ * kForbidden 扫描面继续兜底）。
+ */
+TEST(UiLinkage, PerfTestTargetAndExecutionDirectLinkRegistered_WP23T02_B01)
+{
+    IRD_TEST_INFO("NFR-MNT-01", {"B-01"}, std::nullopt);
+    const std::string cmake = readFile(unitRoot() / "ui" / "CMakeLists.txt");
+    // 目标声明在位（不预建空目标——本任务即首个消费者落位）。
+    EXPECT_NE(cmake.find("add_executable(sdurws_ird_ui_perf_test"),
+                        std::string::npos)
+        << "缺 sdurws_ird_ui_perf_test 注册（WP-23-T02）";
+    // 直链面：基准目标链接 execution（后台态真实 worker 进程驱动）＋
+    // testkit（PerfBenchmark 夹具＋RecordListener——T-1 形态）。
+    const std::string perfLink = extractLinkBlock(cmake, "sdurws_ird_ui_perf_test");
+    ASSERT_FALSE(perfLink.empty()) << "未找到 sdurws_ird_ui_perf_test 链接声明块";
+    EXPECT_NE(perfLink.find("sdurws_ird_execution"), std::string::npos)
+        << "perf_test 未直链 sdurws_ird_execution（后台态负载注入面缺失）";
+    EXPECT_NE(perfLink.find("sdurws_ird_testkit"), std::string::npos)
+        << "perf_test 未链接 testkit（PerfBenchmark 夹具缺失）";
+    // worker 可执行路径注入在位（真进程启动目标——execution 契约测试同款
+    // 机制，IRD_UI_PERF_WORKER_EXE 宏的消费点在基准用例 TU）。
+    EXPECT_NE(cmake.find("IRD_UI_PERF_WORKER_EXE"), std::string::npos)
+        << "缺 IRD_UI_PERF_WORKER_EXE 注入（后台 worker 启动目标缺失）";
 }

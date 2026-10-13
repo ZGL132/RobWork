@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "交互响应基准达标（阶段 C）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-23-T01"
   ],
@@ -13,22 +13,39 @@
   ],
   "designRefs": [
     "REQUIREMENTS.md#19.3",
+    "performance-baseline.md#4.3",
+    "performance-baseline.md#5.1",
+    "units/testkit.md#4.2.1",
+    "units/testkit.md#10.1",
     "development-task-breakdown.md#2.24"
   ],
   "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/performance/**",
+    "RobWork/doc/industrial-robot-design/performance-baseline.md",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
   ],
   "outputs": [
     "benchmark",
     "traceability-update"
   ],
   "verify": [
-    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T02.json"
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T02.json",
+    "cmake --build <冒烟构建目录> --config Release --target sdurws_ird_testkit_test sdurws_ird_ui_perf_test",
+    "ctest --test-dir <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot -C Release -R \"sdurws_ird_(testkit|ui_perf)_test\" --output-on-failure"
   ],
   "branch": "wp23-t02",
   "interUnit": false,
   "acceptance": [
     "导航/选择/筛选/编辑/视图切换 P95 ≤200 ms；无 >2 s 无响应；>1 s 转后台用例通过（NFR-PERF-01，M5 门禁——DTB §6 里程碑表）"
   ],
-  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。跨单元基准执行（ui/各域）——测量不新增跨单元编译边，interUnit=false 待 CCP 复核；前置\"M5 各域\"为里程碑门禁非契约依赖。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。跨单元基准执行（ui/各域）——测量不新增跨单元编译边，interUnit=false 待 CCP 复核；前置\"M5 各域\"为里程碑门禁非契约依赖。编译放行（2026-10-13，WP-23-T02 实施段）：status planned→ready＋补齐 ready 必备字段——designRefs 锚点精化（REQUIREMENTS §19.3 NFR-PERF-01 行/performance-baseline §4.3 交互响应测量口径与 §5.1 本卡挂点/testkit.md §4.2.1 performance-baseline 数据集类别＋§10.1 性能基准夹具预留行/DTB §2.24 本卡行）；allowedFiles 按达标口径实现面如实扩登（testkit PERF 侧计时统计夹具＋ui 交互响应基准测量目标〔perf_test〕＋testkit/ui 两单元构建脚本与 LinkageContractTest 目标清单增量＋testdata/performance 数据集 manifest＋两份基准/夹具文档＋traceability 留痕——测量用例只落 ui 单元测试目标，产品面消费 ui 本体＋sdurws_ird_testkit〔T-1 允许形态〕；后台态负载注入经测试面直链 sdurws_ird_execution 驱动真实独立 worker 进程〔O-31 测试面直链先例＝ui_contract_test/UI-T14、wp10-t64 登记册同型〕——零新增跨单元产品编译边）；forbiddenFiles 补登四份主文档禁改（协议数值零私改——performance-baseline.md 仅 B-01 复现命令位回填与 §4.3/§5.1 挂点登记，达标数值照抄需求原文）。放行依据＝所有者 2026-10-13「推进 M5 正式收口」指令＋实现分支 wp23-t02；仍待验收段对抗式验收（AGENTS §6.4 三段式）。实施段收尾（2026-10-13，实施者）：分支 wp23-t02 四提交 c9a85b80..75032fe0——①契约编译放行（本提交首版 c9a85b80）；②testkit PerfBenchmark 夹具＋元测试四例（2576fc91）；③ui 交互响应基准测量目标 sdurws_ird_ui_perf_test（黄金规模 ird-perf-b01-interaction@1 数据集 manifest＋两态五操作采样＋真实 worker 进程后台负载＋>1 s 转后台用例）（a63c4b20）；④B-01 复现命令位回填＋performance-baseline v0.3/testkit v1.6 登记＋首测报告 traceability/benchmarks/wp23-t02-interaction-baseline.md＋预期命中集登记册 traceability/wp23-t02-gate-registrations.md（75032fe0）。首测＝冒烟模式三用例全绿：两态 10 组 P95 全部 ≤200 ms（实测 idle 全组 ≤0.155 ms、background 全组 ≤0.097 ms——余量 ≥3 个数量级）、150 有效样本零无效、无 >2 s 无响应窗（max 0.159 ms）、>1 s 转后台用例成立（独立 worker 进程运行 ≥1.2 s 窗、UI 交互窗≪2 s、Marshal 落地 41,587 次）；无头模型层等价口径与边界（Widget 重绘口径外/筛选规则镜像/视图切换＝显示制式切换承载）如实申报于报告 §4——视图切换映射登记为验收开放语义点。ird_gates 未直跑（实施段不操作集成构建树——预期命中集登记册 traceability/wp23-t02-gate-registrations.md，双态直跑核定随合入批/治理面补做）；集成构建由合入批执行（首测报告 §7 挂点）。testkit 套件首轮 ctest 一次既有用例超时抖动（ProcessRunner 超时类，与本基准无关）已隔离复跑全绿——双留痕如实登记于报告 §7.2。证据＝build/wp23-t02-wt/_m5-evidence/（perf-reports JSON 3 件〔gitCommit=a63c4b20 锚〕＋gtest XML 3 件〔110/110＋26/26＋3/3〕＋构建/ctest/直跑日志＋硬件电源环境实录）。**发出验收请求**：任务 WP-23-T02／分支 wp23-t02／commit 范围 c9a85b80..75032fe0／证据位置如上；status 保持 ready 待验收段对抗式验收（pass/fail 判定权归验收者）。"
 }
