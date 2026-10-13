@@ -1,6 +1,6 @@
 {
   "datasetId": "ird-perf-b02-cancel",
-  "version": "1",
+  "version": "2",
   "kind": "performance-baseline",
   "title": "B-02 取消时序基准驱动参数与测量口径（WP-23-T03 冻结）",
   "baselineRef": "performance-baseline.md#2-B-02",
@@ -9,7 +9,7 @@
   "generator": {
     "identity": "cancelTimingRig",
     "driver": "真实 TaskController（缺省 steady_clock——真实墙钟）＋真实 WorkerSupervisor＋真实独立 worker 进程（sdurws_ird_execution_worker 阶段 A 脚本替身评估器）；驱动线程 poll 周期 10 ms；装配同步锚点＝DispatchAccepted 事件（worker 身份核对受理——status 相位 Running 在派发请求发出即置位，早于受理，不作锚点；取消请求的 earliest 前提自此成立）",
-    "normalSettleScript": "stage-a-script:v1 / batches 5000000（流式批次——测量窗内持续 Running，协作取消在批次边界收敛；与 b01 后台负载同源脚本形态）",
+    "normalSettleScript": "stage-a-script:v1 / batches 500000（流式批次——测量窗内持续 Running：样本周期 ≈0.3 s 对批次流 ≈2.5~16 s 余量 ≥8×；协作取消在批次边界收敛）",
     "timeoutKillScript": "stage-a-script:v1 / checkpoint 1 / heartbeat-off / hang（先写 1 个检查点→静默挂起永不收敛——驱动 10 s 协作窗耗尽→强杀路径；checkpoint 1 提供第三腿的最近检查点）",
     "evaluatorKey": "stage-a-double",
     "manifestDigestInput": "stage-a-double|1|7",
@@ -35,6 +35,18 @@
     "与功能用例分工：CancelProtocolTest（ManualClock 虚拟时钟）证协议正确性；本基准证真实墙钟时序达标——两者互补不互替"
   ],
   "upgradeRule": "testkit.md §4.2.1——升级＝新建数据集或新 major 版本，不得原地改写；参数变更须换版本并留 history",
+  "history": [
+    {
+      "version": "1",
+      "date": "2026-10-13",
+      "note": "初版（commit 3644d8dc）：normalSettleScript batches 5000000。该版在首次测量前即发现缺陷（批次洪流把 WorkerExited 事件积压到退出观测窗之外——协议面 CancelAck/Canceled 真实发生，仅进程退出证据面被推迟），未产出任何达标测量，随 v2 换版作废"
+    },
+    {
+      "version": "2",
+      "date": "2026-10-13",
+      "note": "WP-23-T03 实施段首测版：normalSettleScript 批次量 5000000→500000（退出事件积压修正——余量 ≥8×，不触碰任何协议阈值）；其余参数与 v1 逐字一致"
+    }
+  ],
   "frozenAt": "2026-10-13",
   "frozenBy": "WP-23-T03（分支 wp23-t03）"
 }
