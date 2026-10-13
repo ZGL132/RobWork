@@ -32,6 +32,7 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <unordered_map>
 #include <utility>
 
 #include "CanonicalCodec.hpp"  // detail::putU32/putU64/putF64（定宽小端原语——私有头）
@@ -522,21 +523,30 @@ std::vector<std::uint8_t> encodeRegionCoveragePayloadCanonical(
     putCoverageTotals(out, computation.coverage.orientation);
 
     // 逐样本状态表（覆盖证据核心面——样本几何不入载荷，见头文件注）。
+    //
+    // 对齐索引（WP-23-T04 基准驱动的复杂度优化——输出字节逐位不变）：
+    // 先按 sampleIndex 建一次哈希索引再逐结果 O(1) 对齐，总体 O(N)；此前的
+    // 逐结果线性回查为 O(N²)（每条结果从头扫描 samples 直至命中——100,000
+    // 规模实测单次编码 ~9 s，NFR-PERF-03 量级不可行，B-03 首测探针数据登记
+    // 于 traceability/benchmarks/wp23-t04-largedata-baseline.md §5）。双射
+    // 纪律不变：索引只建一次、查不到仍 fail-fast，命中值与线性回查逐位等价
+    // （同一样本指针——双射下键唯一）。
+    std::unordered_map<std::uint64_t, const SampleRecord*> sampleByIdIndex;
+    sampleByIdIndex.reserve(computation.samples.samples.size());
+    for (const SampleRecord& s : computation.samples.samples) {
+        sampleByIdIndex.emplace(s.sampleIndex, &s);
+    }
     detail::putU32(out, static_cast<std::uint32_t>(computation.results.results.size()));
     for (const SampleResultRecord& r : computation.results.results) {
-        const SampleRecord* sample = nullptr;
-        // 对齐回查（状态表按 sampleIndex 携带归属——samples 双射保证命中）。
-        for (const SampleRecord& s : computation.samples.samples) {
-            if (s.sampleIndex == r.sampleIndex) {
-                sample = &s;
-                break;
-            }
-        }
-        if (sample == nullptr) {
+        // 对齐回查（状态表按 sampleIndex 携带归属——samples 双射保证命中；
+        // 查不到＝双射破坏，fail-fast 不静默——与原线性回查同语义）。
+        const auto it = sampleByIdIndex.find(r.sampleIndex);
+        if (it == sampleByIdIndex.end()) {
             throw std::logic_error(
                 "kin.region-coverage：载荷编码对齐失败（结果 sampleIndex 无"
                 "对应样本——双射破坏，fail-fast）");
         }
+        const SampleRecord* sample = it->second;
         detail::putU64(out, r.sampleIndex);
         putId128(out, sample->regionObjectId);
         out.push_back(static_cast<std::uint8_t>(sample->kind));
