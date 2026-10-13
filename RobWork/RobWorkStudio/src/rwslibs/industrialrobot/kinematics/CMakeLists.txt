@@ -174,6 +174,17 @@ target_sources(sdurws_ird_kinematics PRIVATE
 target_sources(sdurws_ird_kinematics PRIVATE
     src/Render.cpp)
 
+# T15 增列（tasks/foundation/WP-15-T15.json，§3.3 布局表 Envelope.hpp 行
+# T15；两模式编译——纯 std＋core/rw 头内值面，零框架库符号、零 Qt、零
+# 业务域互链——KIN-10 射线边界纯域内实现，执行/取消经 WP-15-T14 采样
+# 执行管线桥接〔契约 note 字面——探针回调缝，零跨单元接线〕）：
+#   src/Envelope.cpp   近似外包络估算（KIN-10——默认 180 方向斐波那契
+#                      螺旋〔§7.2 黄金设施复用〕逐方向射线边界二分搜索
+#                      ＋内锚点指数探测；协作取消探针；"近似、非精确"
+#                      类型化标注〔AT-26〕）
+target_sources(sdurws_ird_kinematics PRIVATE
+    src/Envelope.cpp)
+
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
 # inline constexpr 变量等），消费者编译 kinematics 头也必须至少 C++17。
@@ -397,6 +408,8 @@ add_executable(sdurws_ird_kinematics_test
     test/RenderTest.cpp
     test/WorkspaceTest.cpp    # T14：工作空间探索式采样用例（AT-25——确定性/
                               # 取消进度检查点/点云着色投影图例导出/回写/R2 边界）
+    test/EnvelopeTest.cpp     # T15：近似外包络用例（KIN-10/AT-26——契约
+                              # acceptance 1~4 逐条具名自证）
     test/PluginPanelTest.cpp   # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
     test/HostMigrationTest.cpp)  # T18：宿主迁移三接入面用例（O-44 v1 诚实边界——模型层）
 

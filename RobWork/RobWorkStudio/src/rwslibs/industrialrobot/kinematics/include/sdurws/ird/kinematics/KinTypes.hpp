@@ -334,6 +334,17 @@ struct IkRequestIdentity {
     /// 排序参考构型（rad／m；D-KIN-4——显式评估输入，默认值的落点在
     /// 请求装配层，本单元不读任何会话状态）。
     std::vector<double> referenceQ;
+
+    /// 精确等值（WP-15-T15 表尾追加——EnvelopeResult 等值面与包络确定性
+    /// 断言的消费面；全字段逐成员比较，浮点按位型——身份面比较禁用
+    /// 数值容差。纯追加成员函数，不重排既有成员，无二进制布局影响）。
+    bool operator==(const IkRequestIdentity& o) const
+    {
+        return snapshotId == o.snapshotId && sliceId == o.sliceId
+            && configDigest == o.configDigest && mode == o.mode
+            && seed == o.seed && referenceQ == o.referenceQ;
+    }
+    bool operator!=(const IkRequestIdentity& o) const { return !(*this == o); }
 };
 
 /**
