@@ -48,6 +48,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -226,6 +227,10 @@ InteractionGroupReport runInteractionGroup(const InteractionGroupSpec& spec,
     // ---- 采样腿（循环到有效样本达标——无效样本不计入分母但逐例留痕）----
     std::vector<double> validMs;  // 统计输入（valid∧!excluded 的时长序列）
     validMs.reserve(spec.minValidSamples);
+    // 无效样本安全界（夹具自保——操作闭包持续抛出即夹具缺陷，无限补采
+    // 会让测量进程失控；超界以显性错误收场，原因留痕于 stderr 与异常，
+    // 不静默判过——协议 §4.2 无效留痕纪律的执行器半区）。
+    const std::size_t kInvalidCeiling = spec.minValidSamples * 10;
     while (r.validCount < spec.minValidSamples) {
         InteractionSample s;
         const auto t0 = std::chrono::steady_clock::now();
@@ -234,9 +239,16 @@ InteractionGroupReport runInteractionGroup(const InteractionGroupSpec& spec,
         } catch (const std::exception& e) {
             // 无效样本：测量区间不完整（操作中途失败）——原因留痕后继续
             // （协议 §4.2"不计入分母，并留痕登记失效原因"；消费方测试
-            // 断言 invalidCount==0 收口，夹具不静默吞错）。
+            // 断言 invalidCount==0 收口，夹具不静默吞错）。stderr 逐例
+            // 打点——测量进程内的失败在控制台即时可见（不只在报告里）。
             s.valid = false;
             s.invalidReason = e.what();
+            std::fprintf(stderr,
+                         "[testkit-perf] invalid sample (op=%s state=%s "
+                         "nth=%zu): %s\n",
+                         spec.opId.c_str(), spec.stateId.c_str(),
+                         r.invalidCount + 1, e.what());
+            std::fflush(stderr);
         }
         const auto t1 = std::chrono::steady_clock::now();
         s.durationMs = std::chrono::duration<double, std::milli>(t1 - t0).count();
@@ -245,6 +257,14 @@ InteractionGroupReport runInteractionGroup(const InteractionGroupSpec& spec,
             validMs.push_back(s.durationMs);
         } else {
             ++r.invalidCount;
+            if (r.invalidCount > kInvalidCeiling) {
+                // 夹具缺陷显性失败（操作闭包持续抛出——补采无意义）。
+                throw std::runtime_error(
+                    "runInteractionGroup: 无效样本超过安全界（op="
+                    + spec.opId + " state=" + spec.stateId
+                    + " invalid=" + std::to_string(r.invalidCount)
+                    + "——操作闭包持续失败，最后原因：" + s.invalidReason + "）");
+            }
         }
         r.samples.push_back(s);
     }

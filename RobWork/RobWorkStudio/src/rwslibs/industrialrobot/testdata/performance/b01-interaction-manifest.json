@@ -1,0 +1,49 @@
+{
+  "datasetId": "ird-perf-b01-interaction",
+  "version": "1",
+  "kind": "performance-baseline",
+  "title": "B-01 交互响应基准标准规模数据集与后台负载注入形态（WP-23-T02 冻结）",
+  "baselineRef": "performance-baseline.md#2-B-01",
+  "requirementRef": "REQUIREMENTS.md#19.3-NFR-PERF-01",
+  "consumer": "sdurws_ird_ui_perf_test（ui/perf_test/InteractionResponseBenchmarkTest.cpp）",
+  "generator": {
+    "identity": "goldenScaleUiProjection",
+    "objectCount": 1000,
+    "revisionCount": 100,
+    "objectNamePattern": "obj-<四位零填充序号>",
+    "treeGroups": {
+      "ProjectStructure": 10,
+      "ModelingObjects": 420,
+      "RequirementObjects": 380,
+      "AnalysisConfigurations": 90,
+      "ResultsEvidenceReports": 100
+    },
+    "treeDepth": 0,
+    "formFieldCount": 24,
+    "formFieldComposition": "16 长度（SI m／显示 mm）＋8 角度（SI rad／显示 deg）",
+    "filterNeedle": "obj-007",
+    "selectionBatchSize": 50
+  },
+  "backgroundLoad": {
+    "workerExecutable": "sdurws_ird_execution_worker（阶段 A 内置脚本替身评估器——execution.md §3.4 口径）",
+    "script": "stage-a-script:v1 / batches 5000000（流式 ResultBatch 帧；协作取消收尾）",
+    "evaluatorKey": "stage-a-double",
+    "manifestDigestInput": "stage-a-double|1|7",
+    "mainProcessPump": "独立泵线程 poll 事件流（调度线程纪律），批次事件每 16 帧经排队 Marshal 投递 UI 线程消费（M-1 测试面形态）"
+  },
+  "measurementProtocol": {
+    "samplePlan": "每操作 × 每负载态：1 次预热（剔除）＋≥15 有效样本（performance-baseline §4.2）",
+    "p95": "线性插值分位数（§4.2 公式——testkit PerfBenchmark 唯一实现点）",
+    "thresholds": { "p95ResponseMs": 200, "unresponsiveWindowMs": 2000, "backgroundHandoffMs": 1000 },
+    "thresholdSource": "REQUIREMENTS NFR-PERF-01 原文（零私改）",
+    "states": ["idle（无后台评估）", "background（独立 worker 进程流式评估批次运行中）"]
+  },
+  "equivalenceNotes": [
+    "无头模型层等价口径：五操作驱动产品模型本体（StageNavigationModel/SelectionService/ProjectTreeModel/ParamEditModel），Widget 重绘在口径外",
+    "筛选＝IndustrialProjectTree applyFilter 规则的模型侧等价施加（名称端口解析＋大小写不敏感子串匹配＋分组可见性计数）",
+    "视图切换＝显示单位制式批量切换（ParamEditModel setDisplayUnitForKind——KIN-12 仅投影）；命令面板 view.displayMode 的模型半区归 workflow，不在本测量面"
+  ],
+  "upgradeRule": "testkit.md §4.2.1——升级＝新建数据集或新 major 版本，不得原地改写；参数变更须换版本并留 history",
+  "frozenAt": "2026-10-13",
+  "frozenBy": "WP-23-T02（分支 wp23-t02）"
+}
