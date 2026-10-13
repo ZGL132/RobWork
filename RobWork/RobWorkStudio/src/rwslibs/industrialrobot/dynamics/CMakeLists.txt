@@ -337,6 +337,9 @@ add_executable(sdurws_ird_dynamics_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
+    test/ReproBenchmarkTest.cpp      # WP-23-T09：确定性复现基准（B-08 抽样
+                                     #   ——逆动力学复跑等价集合＋稳定排序；
+                                     #   仅 rw 模板头实例化，两模式皆可编译）
     test/RneaTest.cpp                # WP-17-T03：RNEA 评估器用例组（DynRnea——
                                      #   二连杆解析算例/静态重力矩含倒挂 AT-37/
                                      #   分项恒等式与 M·q̈ 科氏解析对照/摩擦

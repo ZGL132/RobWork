@@ -318,6 +318,8 @@ add_executable(sdurws_ird_selection_test
     test/CatalogImportTest.cpp
     test/CapabilityCurveTest.cpp
     test/CatalogLockTest.cpp
+    test/ReproBenchmarkTest.cpp      # WP-23-T09：确定性复现基准（B-08 抽样
+                                     #   ——电机硬筛选复跑等价集合＋稳定排序）
     test/ScreeningMotorTest.cpp
     test/ScreeningGearboxTest.cpp
     test/CombinationBuilderTest.cpp

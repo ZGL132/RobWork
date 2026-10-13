@@ -33,7 +33,7 @@
 | B-05 | 内存与节流规模化 | NFR-PERF-04（D/R2） | 大任务使用分批、流式结果、缓存和检查点；主进程与全部工作进程合计峰值内存默认不超过物理内存 70%；接近上限先节流再给资源不足诊断 | WP-23-T06 | 待回填（T06 落位时登记于本行） |
 | B-06 | 并行吞吐 | NFR-PERF-05（D/R2） | 固定候选评估基准上，8 个工作线程相对单线程**中位吞吐**提升 ≥4 倍；**不含首次编译与导入** | WP-23-T07 | 待回填（T07 落位时登记于本行） |
 | B-07 | 优化运行时限 | NFR-PERF-06（D/R2） | 10,000 Quick＋100 Verified 候选标准优化基准 8 小时内结束；运行期间满足 NFR-PERF-01；可从同版本兼容检查点恢复 | WP-23-T08 | 待回填（T08 落位时登记于本行） |
-| B-08 | 确定性复现 | NFR-COR-02（B~E/R1） | 同一输入、软件版本、配置、线程数和随机种子产生**等价候选集合与稳定排序**；并行归约数值满足附录 D 第 8 项容差（1×10⁻¹²，通用比较公式逐元素判定）；**不要求浮点文件逐字节相同** | WP-23-T09 | 待回填（T09 落位时登记于本行） |
+| B-08 | 确定性复现 | NFR-COR-02（B~E/R1） | 同一输入、软件版本、配置、线程数和随机种子产生**等价候选集合与稳定排序**；并行归约数值满足附录 D 第 8 项容差（1×10⁻¹²，通用比较公式逐元素判定）；**不要求浮点文件逐字节相同** | WP-23-T09 | 已回填（2026-10-13，T09）：集成模式复现命令＝`cmake -S RobWork -B build -G "Visual Studio 17 2022" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON` → `cmake --build build --config Release --target sdurws_ird_testkit_test sdurws_ird_kinematics_test sdurws_ird_trajectory_test sdurws_ird_dynamics_test sdurws_ird_selection_test sdurws_ird_optimization_test` → 设 `IRD_REPRO_REPORT_DIR=<证据目录>` 后 `ctest --test-dir build -C Release -R "sdurws_ird_(testkit\|kinematics\|trajectory\|dynamics\|selection\|optimization)_test" --output-on-failure`——五域 ReproBenchmark 用例全绿＋逐例报告 JSON（`<证据目录>/<caseId>.json`：集合等价＋稳定排序＋1e-12 归约容差三面）即 B-08 达标。夹具细则＝testkit.md §6.3/§10.1；首测报告与证据清单＝traceability/benchmarks/wp23-t09-repro-baseline.md（trajectory 用例随 sdurw_kinematics gating 仅集成模式编译执行——smoke 冒烟变体以四例运行，登记于报告） |
 
 **清单覆盖自查**（对照 DTB §2.24 T01 验收标准"基准清单覆盖全部 PERF 条目"）：NFR-PERF-01→B-01、NFR-PERF-02→B-02、NFR-PERF-03→B-03、NFR-PERF-04→B-05、NFR-PERF-05→B-06、NFR-PERF-06→B-07、PM-16→B-04——七条全覆盖；B-08 为 NFR-COR-02 的确定性复现基准（非 PERF 条目，不占覆盖计数）。
 
@@ -189,6 +189,7 @@
 - **输入**：performance-baseline.md（本文档）；附录 D 第 8 项。
 - **需求追溯**：NFR-COR-02。
 - **达标判据**：各域抽样复现用例通过（不要求浮点逐字节相同）。
+- **挂点动作（2026-10-13，T09 实施段兑现）**：B-08 复现命令位已回填（§2 行）；复现夹具细则按 §10.1 预留路径登记于 testkit.md §6.3/§10.1（`ReproBenchmark.hpp` 三腿执行——计时仅作原始样本留痕）；对照容差档案＝`testdata/tolerance/repro-reduction`（附录 D 第 8 项固定值承载）；抽样面＝kinematics（批量 1vs8 线程）/trajectory（PTP 段链复跑）/dynamics（逆动力学复跑）/selection（电机硬筛选复跑）/optimization（seeded-lhs 复跑）五域各一例；首测报告＝traceability/benchmarks/wp23-t09-repro-baseline.md。
 
 ---
 
@@ -207,3 +208,4 @@
 | 版本 | 日期 | 内容 |
 | --- | --- | --- |
 | v0.1 | 2026-10-13 | WP-23-T01 初版：基准清单（B-01~B-08，覆盖 NFR-PERF-01~06＋PM-16＋NFR-COR-02）、黄金项目定义（PM-16 口径：1,000 对象/100 修订）、测量协议（冷/热分组、每组有效样本 ≥15＋≥15、P95 线性插值、冷启动软指标单独报告不作门禁、并行吞吐不含首次编译与导入、归约容差引附录 D 第 8 项）、T02~T09 达标判据挂点。分支 wp23-t01（DTB 版本行登记延后至验收合入批统一处理） |
+| v0.2 | 2026-10-13 | WP-23-T09 执行登记：§2 B-08 复现命令位回填（集成模式三步命令——构建六测试目标＋IRD_REPRO_REPORT_DIR＋ctest 六套件；报告 JSON 三面判定＝集合等价＋稳定排序＋1e-12 归约容差）；§5.8 挂点动作行补登（夹具细则＝testkit.md §6.3/§10.1 ReproBenchmark.hpp；容差档案＝testdata/tolerance/repro-reduction；五域抽样面与首测报告位 traceability/benchmarks/wp23-t09-repro-baseline.md）。本版零协议数值变更——达标口径与统计口径原文照旧（B-08 为集合等价与容差判定类，P95 协议不适用） |
