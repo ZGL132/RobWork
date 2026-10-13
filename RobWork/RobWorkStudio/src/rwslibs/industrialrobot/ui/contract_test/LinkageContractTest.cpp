@@ -219,3 +219,50 @@ TEST(UiLinkage, PerfTestTargetAndExecutionDirectLinkRegistered_WP23T02_B01)
     EXPECT_NE(cmake.find("IRD_UI_PERF_WORKER_EXE"), std::string::npos)
         << "缺 IRD_UI_PERF_WORKER_EXE 注入（后台 worker 启动目标缺失）";
 }
+
+/**
+ * WP-23-T04 增列钉（大规模数据基准目标与五域测试面直链登记）：B-03 测量
+ * 目标按本表增列落位——requirements/kinematics/optimization/project/io 五
+ * 域直链属 O-31 测试面特权（先例＝sdurws_ird_ui_contract_test 的 project/
+ * execution/diagnostics 直链〔UI-T14〕与 sdurws_ird_ui_perf_test 的
+ * execution 直链〔WP-23-T02〕；登记册 traceability/wp23-t04-gate-
+ * registrations.md），产品库 sdurws_ird_ui 链接块零触碰（上方用例的
+ * kForbidden 扫描面继续兜底）；本目标零 Qt 链接（三类数据的加载/保存/分页
+ * 全在模型/存储层承载——无 Qt 消费面）。
+ */
+TEST(UiLinkage, LargeDataPerfTestTargetAndDomainDirectLinksRegistered_WP23T04_B03)
+{
+    IRD_TEST_INFO("NFR-MNT-01", {"B-03"}, std::nullopt);
+    const std::string cmake = readFile(unitRoot() / "ui" / "CMakeLists.txt");
+    // 目标声明在位（不预建空目标——本任务即首个消费者落位）。
+    EXPECT_NE(cmake.find("add_executable(sdurws_ird_ui_largedata_perf_test"),
+                        std::string::npos)
+        << "缺 sdurws_ird_ui_largedata_perf_test 注册（WP-23-T04）";
+    // 直链面：基准目标链接五域库（三类数据的加载/保存/分页载体）＋testkit
+    // （PerfBenchmark 夹具＋RecordListener——T-1 允许形态）。
+    const std::string link =
+        extractLinkBlock(cmake, "sdurws_ird_ui_largedata_perf_test");
+    ASSERT_FALSE(link.empty())
+        << "未找到 sdurws_ird_ui_largedata_perf_test 链接声明块";
+    EXPECT_NE(link.find("sdurws_ird_requirements"), std::string::npos)
+        << "largedata_perf_test 未直链 sdurws_ird_requirements（任务点"
+           " canonical 编解码面缺失）";
+    EXPECT_NE(link.find("sdurws_ird_kinematics"), std::string::npos)
+        << "largedata_perf_test 未直链 sdurws_ird_kinematics（区域覆盖"
+           " canonical 载荷面缺失）";
+    EXPECT_NE(link.find("sdurws_ird_optimization"), std::string::npos)
+        << "largedata_perf_test 未直链 sdurws_ird_optimization（候选摘要"
+           " 导出面缺失）";
+    EXPECT_NE(link.find("sdurws_ird_project"), std::string::npos)
+        << "largedata_perf_test 未直链 sdurws_ird_project（归档/查询端口"
+           "缺失）";
+    EXPECT_NE(link.find("sdurws_ird_io"), std::string::npos)
+        << "largedata_perf_test 未直链 sdurws_ird_io（CSV/原子文件设施"
+           "缺失）";
+    EXPECT_NE(link.find("sdurws_ird_testkit"), std::string::npos)
+        << "largedata_perf_test 未链接 testkit（PerfBenchmark 夹具缺失）";
+    // ctest 登记（ird 标签并行调度——§12.1 表；ird_add_gtest 宏）。
+    EXPECT_NE(cmake.find("ird_add_gtest(sdurws_ird_ui_largedata_perf_test)"),
+              std::string::npos)
+        << "缺 largedata_perf_test 的 ird_add_gtest ctest 注册";
+}

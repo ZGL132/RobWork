@@ -1,0 +1,51 @@
+{
+  "datasetId": "ird-perf-b03-largedata",
+  "version": "1",
+  "kind": "performance-baseline",
+  "title": "B-03 大规模数据加载/保存/分页基准数据集与生成器参数（WP-23-T04 冻结）",
+  "baselineRef": "performance-baseline.md#2-B-03",
+  "requirementRef": "REQUIREMENTS.md#19.3-NFR-PERF-03",
+  "consumer": "sdurws_ird_ui_largedata_perf_test（ui/perf_test/LargeDataBenchmarkTest.cpp）",
+  "generator": {
+    "identity": "largedataThreeKind",
+    "taskPoint": {
+      "count": 5000,
+      "namePattern": "pt-<序号>（集合内唯一语义名）",
+      "contentRule": "位置/容差/作业段随序号确定性派生（全部 SI：位置 m、容差 m、距离 m）；工艺标签 11 值词表轮转；约 1% 停用点（enabled=false——表内真实形态）；条目按 ObjectId 规范文本字典序存放（I-REQ-1）",
+      "persistenceFace": "RequirementCodec canonical 编码（req-point-set 对象字节——项目对象库持久化编码面）＋io 原子文件写出（§9.10 暂存＋原子替换）"
+    },
+    "sampleResult": {
+      "count": 100000,
+      "planComposition": "单计划 Grid 100×100×1＝10,000 位置样本＋姿态 9 方向×1 roll＝90,000 位姿样本；两分母合计 100,000 恰为需求规模",
+      "box": { "centerM": [0.4, 0.0, 0.3], "sizeM": [0.8, 0.8, 0.05] },
+      "seed": 20260913,
+      "statePattern": "sampleIndex 17 倍数→Unreachable（解析界限原因文本）；19 倍数（非 17 倍数）→DataInsufficient（KIN-05 缺检测器原因文本）；其余→Reached——五值词表三类覆盖",
+      "generator": "generateSampleSet＋computeCoverage 产品确定性生成器真跑（D-KIN-6），非预录数据",
+      "persistenceFace": "encodeRegionCoveragePayloadCanonical（逐样本状态表 IRDCV01 冻结布局）＋project::IResultArchivePort begin→writeBatch→finalize（results/<run-id>/ 落盘＋manifest 原子发布——O-12 唯一存储入口）"
+    },
+    "candidateSummary": {
+      "count": 10000,
+      "composition": "Quick 筛选批 9,000（screeningOnly=true）在前＋Verified 正式批 1,000 在后（编排序＝编排产出序）；首候选为基线（空补丁）",
+      "contentRule": "补丁单绑定标量逐候选取异（100.0＋0.5i——candidateIdOf 身份互异）；指标三实值＋五 StageB 缺口（'—'）；状态 Feasible；每候选一条 satisfied 约束事实",
+      "persistenceFace": "OptimizationExportProvider 六工件数据面组装（工件 2 候选 CSV 21 列字段契约 v1）＋io ICsvWriter canonical 写出（opt-candidates.csv）"
+    },
+    "pageSize": 100,
+    "pageSizeRationale": "单页物化明细行数（'不整体装入界面'结构不变量的窗口上界）——工业明细表单页行数的常规形态；翻页次数＝5,000/100=50 页、100,000/100=1,000 页、10,000/100=100 页"
+  },
+  "measurementProtocol": {
+    "samplePlan": "每腿三组（保存/加载/分页）各 1 次预热（剔除）＋≥15 有效样本（performance-baseline §4.2 采样纪律——与 P95 类基准同面留痕）",
+    "judgmentClass": "规模/功能类判定（performance-baseline §2 统计口径区分行——B-03 不涉及分位数统计）：需求 NFR-PERF-03 无数值时延阈值，达标判定面＝三类数据操作全部成功＋规模恰为 5,000/100,000/10,000（往返计数与等值/完整性核对钉住）＋'不一次性把全部明细装入界面'结构不变量（单页物化 ≤ 页大小＋全量翻页累计＝N＋页数恰为 ⌈N/页大小⌉）＋零无效样本；计时样本全量落报告留痕、不参与达标判定",
+    "noNumericalThreshold": "本基准零私设数值阈值（协议纪律）——verdicts 恒空集",
+    "thresholdSource": "REQUIREMENTS NFR-PERF-03 原文（规模数值照抄；无数值阈值如实登记）",
+    "loadEquivalence": "采样载荷加载面＝query() listRuns/runDir 产品编址读回＋字节完整性核对（size＋SHA-256，core::ContentDigester）＋冻结布局 IRDCV01 独立最小解析（conformance 面——kinematics 公共面只有编码无解码，第二实现仅存在于测试目标、不入产品库）；独立解析的分区计数与产品 computeCoverage 计数交叉核对互证"
+  },
+  "equivalenceNotes": [
+    "无头模型/存储层等价口径：三类数据的'分页浏览'以消费侧分页窗口投影承载（每页物化至多 100 行明细），Widget 重绘与面板组件在口径外（WP-23-T02 先例同款边界申报——ui.md'结果分批到达'行：明细面板分页加载，不一次性装全量）",
+    "任务点保存面＝RequirementCodec canonical 编码＋io 原子文件写出（对象库持久化编码面）；项目命令管线（draft/apply 修订提交）不在本测量面——B-04（PM-16 项目打开）另测项目级装载",
+    "候选摘要保存面止于六工件数据面组装＋工件 2 候选 CSV 写出；工件 6 候选包的产品写出适配器随 P-OPT-2 裁决落位（optimization.md Export.hpp 落位范围口径——R1 交付面为测试替身），本基准不测量替身 I/O",
+    "分页驱动于运行结果聚合/解码条目集/解析状态行的模型层载体——与真实面板消费的是同源数据面"
+  ],
+  "upgradeRule": "testkit.md §4.2.1——升级＝新建数据集或新 major 版本，不得原地改写；参数变更须换版本并留 history",
+  "frozenAt": "2026-10-13",
+  "frozenBy": "WP-23-T04（分支 wp23-t04）"
+}

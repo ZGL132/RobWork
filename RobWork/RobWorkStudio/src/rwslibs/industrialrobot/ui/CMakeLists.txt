@@ -636,6 +636,59 @@ add_custom_command(TARGET sdurws_ird_ui_perf_test POST_BUILD
             $<TARGET_FILE_DIR:sdurws_ird_ui_perf_test>
     COMMAND_EXPAND_LISTS)
 
+# ---- 大规模数据基准测试目标 sdurws_ird_ui_largedata_perf_test（WP-23-T04 增列）----
+# performance-baseline §2 B-03／NFR-PERF-03 大规模数据加载/保存/分页基准的
+# 测量载体（§12.1 第一层同型：无 Qt 的纯 gtest 基准——三类数据的加载/保存/
+# 分页全部在模型/存储层承载，Widget 与事件循环均在口径外）。
+# 用例面（perf_test/LargeDataBenchmarkTest.cpp）三腿：
+#   腿 A 任务点 5,000——requirements RequirementCodec canonical 编解码
+#     （req-point-set 对象字节）＋io 原子文件写出的保存/加载＋分页窗口投影；
+#   腿 B 采样结果 100,000——kinematics 区域覆盖 canonical 载荷（逐样本状态
+#     表 IRDCV01）＋project::IResultArchivePort 归档（begin→writeBatch→
+#     finalize，O-12 唯一存储入口）的保存＋query() listRuns/runDir 产品编址
+#     读回的加载＋分页窗口投影（样本集/覆盖率经产品生成器真跑——D-KIN-6）；
+#   腿 C 候选摘要 10,000——optimization 六工件数据面组装（工件 2 候选 CSV）
+#     ＋io ICsvWriter canonical 写出的保存＋io ICsvReader 单遍流式回读的
+#     加载＋运行结果聚合上的分页窗口投影。
+# 判定口径：B-03 为规模/功能类判定（performance-baseline §2 统计口径区分行
+# ——需求无数值时延阈值），达标面＝三类数据操作全部成功＋规模恰为需求原文
+# ＋"不整体装入界面"结构不变量（单页物化 ≤ 页大小＋全量翻页累计＝N）；计时
+# 样本（每组 1 预热＋≥15 有效）经 testkit PerfBenchmark 夹具留痕不作判定。
+# 链接面（O-31 测试面直链——先例＝ui_contract_test 的 project/execution/
+# diagnostics 直链〔UI-T14〕与本文件 sdurws_ird_ui_perf_test 的 execution
+# 直链〔WP-23-T02〕；登记册 traceability/wp23-t04-gate-registrations.md）：
+# 五域库全为公共头消费＋测试面直链，产品库 sdurws_ird_ui 本体零触碰
+# （LinkageContractTest 增列钉同步）。零 Qt 链接（本目标无 Qt 消费面）。
+add_executable(sdurws_ird_ui_largedata_perf_test
+    perf_test/TestMainLargeDataPerf.cpp
+    perf_test/LargeDataBenchmarkTest.cpp)
+
+target_compile_features(sdurws_ird_ui_largedata_perf_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_ui_largedata_perf_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_ui_largedata_perf_test PRIVATE /utf-8)
+endif()
+
+target_link_libraries(sdurws_ird_ui_largedata_perf_test PRIVATE
+    sdurws_ird_requirements
+    sdurws_ird_kinematics
+    sdurws_ird_optimization
+    sdurws_ird_project
+    sdurws_ird_io
+    sdurws_ird_testkit
+    GTest::gtest)
+
+# vcpkg gtest 为动态库：拷贝运行期 DLL（ui_perf_test 同款先例——留痕与
+# 验收都要直接执行该可执行文件）。
+add_custom_command(TARGET sdurws_ird_ui_largedata_perf_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_ui_largedata_perf_test>
+            $<TARGET_FILE_DIR:sdurws_ird_ui_largedata_perf_test>
+    COMMAND_EXPAND_LISTS)
+
 # ---- GUI 测试目标 sdurws_ird_ui_gui_test（§12.1 第三层，单列）----
 # Widgets/GUI 契约测试的注册载体。ctest LABELS ird_gui 串行（不与模型/Meta
 # 测试合并命令——ui.md §12.2 执行纪律；testkit.md §6.7 单实例启动行）。
@@ -726,11 +779,14 @@ add_custom_command(TARGET sdurws_ird_ui_gui_test POST_BUILD
 ird_add_gtest(sdurws_ird_ui_test)
 ird_add_gtest(sdurws_ird_ui_contract_test)
 ird_add_gtest(sdurws_ird_ui_perf_test)   # WP-23-T02——交互响应基准（ird 标签并行调度）
+ird_add_gtest(sdurws_ird_ui_largedata_perf_test)   # WP-23-T04——大规模数据基准（ird 标签并行调度）
 ird_add_gtest(sdurws_ird_ui_gui_test)
 
 set_tests_properties(sdurws_ird_ui_test sdurws_ird_ui_contract_test
     PROPERTIES LABELS "ird")
 set_tests_properties(sdurws_ird_ui_perf_test
+    PROPERTIES LABELS "ird")
+set_tests_properties(sdurws_ird_ui_largedata_perf_test
     PROPERTIES LABELS "ird")
 set_tests_properties(sdurws_ird_ui_gui_test
     PROPERTIES LABELS "ird_gui")
