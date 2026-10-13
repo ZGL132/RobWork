@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.5（2026-10-13，WP-23-T09 消费者提案落位登记——§10.1"性能基准夹具"行确定性复现夹具落位注＋§3.1 模块表增补 `ReproBenchmark.hpp`（12 公共头）＋§6.3 复现基准夹具细则（三腿执行/判定委托 SetCheck/repro-reduction 档案承载附录 D 第 8 项/报告拖挂）；§13 v1.5 行；v1.4＝2026-10-12 治理批台账滞后修正；v1.3＝2026-10-12 TK-T12 实现落位登记；v1.2＝2026-10-12 TK-T12 立项登记；v1.1＝2026-09-19 `sdurws_ird_testkit_qt` 启用落位登记；v1.0＝2026-09-11 TK-T11 触发式补登；v0.9（TK-T10 落位登记；v0.4~v0.8＝TK-T03/T04/T06/T07/T08 落位登记；v0.3＝TK-T01 实施偏差登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案）） |
+| 文档版本 | v1.6（2026-10-13，WP-23-T02 消费者提案落位登记——§10.1"性能基准夹具"行计时统计夹具落位注＋§3.1 模块表增补 `PerfBenchmark.hpp`（13 公共头）＋§6.3 计时统计基准夹具细则（P95 线性插值唯一实现点/分组采样执行器/报告拖挂/阈值消费方传入零私设）；§13 v1.6 行；v1.5＝2026-10-13 WP-23-T09 确定性复现夹具落位登记；v1.4＝2026-10-12 治理批台账滞后修正；v1.3＝2026-10-12 TK-T12 实现落位登记；v1.2＝2026-10-12 TK-T12 立项登记；v1.1＝2026-09-19 `sdurws_ird_testkit_qt` 启用落位登记；v1.0＝2026-09-11 TK-T11 触发式补登；v0.9（TK-T10 落位登记；v0.4~v0.8＝TK-T03/T04/T06/T07/T08 落位登记；v0.3＝TK-T01 实施偏差登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案）） |
 | 日期 | 2026-09-11 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-TESTKIT |
@@ -122,7 +122,7 @@ testkit 的产品语义只有一条：**让各业务单元能独立编写可追�
 
 ### 3.1 组成（公共头模块）
 
-testkit 由 12 个公共头模块＋gtest 适配层（2 个头）＋编译实现组成（实现文件随 §9 任务落地，头为契约权威；ReproBenchmark.hpp 随 WP-23-T09 增补——header-only 零新增实现 TU）：
+testkit 由 13 个公共头模块＋gtest 适配层（2 个头）＋编译实现组成（实现文件随 §9 任务落地，头为契约权威；ReproBenchmark.hpp 随 WP-23-T09 增补、PerfBenchmark.hpp 随 WP-23-T02 增补——均 header-only 零新增实现 TU）：
 
 | 头（`testkit/include/sdurws/ird/testkit/`） | 内容 | 详见 |
 | --- | --- | --- |
@@ -134,6 +134,7 @@ testkit 由 12 个公共头模块＋gtest 适配层（2 个头）＋编译实现
 | `ContractCheck.hpp` | 通用契约断言：诊断记录、比较型三要素、任务身份、身份唯一性、数据完整性 | §5.5 |
 | `Fixture.hpp` | TempDir、ReproRecord、DeterministicEnv、GoldenFixture 夹具基座 | §6.1、§6.2、§6.3 |
 | `ReproBenchmark.hpp` | 确定性复现基准夹具（WP-23-T09 增补）：runReproCase 三腿执行（reference/rerun/threads）＋ReproCaseReport 测量与判定＋报告 JSON 写出 | §6.3（消费者提案落位细则） |
+| `PerfBenchmark.hpp` | 性能基准计时统计夹具（WP-23-T02 增补）：percentileLinearInterpolated 线性插值分位数（协议公式唯一实现点）＋runInteractionGroup 分组采样执行器（预热剔除/无效留痕/原始样本序列）＋PerfSessionReport 报告 JSON 写出 | §6.3（消费者提案落位细则） |
 | `Fault.hpp` | FaultPlan/FaultTrigger/FaultLog、FaultInterceptor 适配模板（进程内故障注入原语） | §6.4 |
 | `ProcessRunner.hpp` | TestProcessRunner/EventWatch（跨进程测试支撑；**设计冻结、实现按需**） | §6.5 |
 | `Report.hpp` | TestOutcome/ComparisonRecord/TestRecord、报告写出（ComparisonRecord 复用 `Check.hpp` 的 CompareDetail） | §7.2、§7.3 |
@@ -664,6 +665,36 @@ std::optional<std::filesystem::path> reproReportDirFromEnv(envName); // IRD_REPR
 - **报告拖挂**：`writeReproReportJson` 写失败返回 false 不抛、不改判定；执行方经环境变量 `IRD_REPRO_REPORT_DIR` 开启落盘（协议 performance-baseline §4.8 留痕面——报告含确定性上下文/逐腿原始样本/判定结论）。
 - **分层红线不变**：header-only、库本体零 gtest（D-06）、零业务规则（身份键/数值字段投影经 `SetMatchTraits` 域侧特化注入——§5.4.5）、零 Qt、零 core 之外依赖（T-2）。
 
+**计时统计基准夹具（`PerfBenchmark.hpp`——§10.1"性能基准夹具"行的 WP-23 消费者提案落位，2026-10-13 WP-23-T02）**：
+
+```cpp
+struct InteractionGroupSpec {           // 分组采样规格（默认值＝协议下限）
+    std::string opId; std::string stateId;
+    std::size_t warmupRuns = 1;         // 预热剔除（协议 §4.2）
+    std::size_t minValidSamples = 15;   // 每组有效样本 ≥15（协议 §4.2）
+};
+struct InteractionGroupReport {         // 全量执行序列＋统计面
+    std::vector<InteractionSample> samples; // 原始样本序列（预热/无效原位留痕）
+    std::size_t validCount; std::size_t invalidCount;
+    double p95Ms; double maxValidMs; double minValidMs;
+};
+double percentileLinearInterpolated(samples, q); // 线性插值分位数（协议 §4.2 公式唯一实现点）
+template <class OpFn> InteractionGroupReport
+runInteractionGroup(const InteractionGroupSpec&, OpFn&& op); // op()＝一次端到端交互
+struct PerfSessionReport { … };  // 会话报告（标识/版本/数据集/环境登记＋逐组＋阈值判定留痕）
+std::string perfReportToJson(const PerfSessionReport&);  // 单行 JSON（ird-perf-report/1）
+bool writePerfReportJson(dir, report);                   // <dir>/<caseId>.json（拖挂不阻断）
+std::optional<std::filesystem::path> perfReportDirFromEnv(envName); // IRD_PERF_REPORT_DIR
+```
+
+夹具细则（执行语义与数值纪律——本细则只登记方法，零新增达标数值；阈值由消费方测试以需求原文为唯一来源显式传入）：
+- **P95 线性插值分位数**：`percentileLinearInterpolated`＝performance-baseline §4.2 公式的唯一实现点（h＝(n−1)×q，x⌊h⌋＋(h−⌊h⌋)×(x⌊h⌋+1−x⌊h⌋)；内部升序副本——调用方无需预排序）；约定串 `p95ConventionToken()` 随报告恒输出（"同一报告内不混用分位数约定"的登记面）；**禁 3 次中位数替代**（F-03——本夹具不提供中位数口径）。
+- **分组采样执行器**：预热腿（`warmupRuns` 次——样本标 excluded 留痕不计入统计）→ 采样腿（循环至 `minValidSamples` 有效；操作闭包抛出＝无效样本——不计入分母、原因逐例留痕并 stderr 打点）；无效安全界＝10×minValidSamples（超界显性抛错——操作闭包持续失败属夹具缺陷，防无限补采失控）；统计面（P95/max/min）只由 valid∧!excluded 样本构成。
+- **报告拖挂**：同 ReproBenchmark 纪律——写失败返回 false 不抛不改判定；`IRD_PERF_REPORT_DIR` 开启落盘（协议 §4.8：原始样本序列全量、分位数约定、环境与版本登记字段位——环境事实由消费方填充，本夹具不探测硬件）。
+- **阈值判定留痕**：`PerfThresholdVerdict` 只承载消费方传入的 thresholdMs＋出处登记＋实测 P95＋pass 结论——本夹具零私设达标数值（200 ms 等阈值属需求语义，消费方以 REQUIREMENTS 原文传入）。
+- **B-06 边界**：中位吞吐口径与分位半区**互不替代**（协议 §4.5）；吞吐对照细则仍随 NFR-PERF-05 执行任务〔WP-23-T07〕届时提出（本头不预建）。
+- **分层红线不变**：header-only、库本体零 gtest（D-06）、零 Qt、零业务域知识（五类交互操作的具体驱动形态归消费方测试目标）。
+
 ### 6.4 故障注入（进程内原语）
 
 **接缝原则（依赖方向安全）**：生产代码**不包含** testkit 头、不加 `#ifdef TEST`；故障接缝＝生产代码本就要求的窄接口（ARCH §7.2 端口、io 写入口、execution 派发/通道接口）。fake 实现编译进**测试目标**，实现这些消费者自有接口：
@@ -850,7 +881,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | --- | --- | --- |
 | TestProcessRunner 实现（Job Object/事件等待） | ~~project/execution 契约测试需要进程级崩溃/恢复场景时~~ **触发已成立（2026-09-11）**：消费者 PRJ-T15/WP-08-T10 位于 project/execution 波次，预防性补登于该波次之前 | §6.5 设计已冻结；**TK-T11 已补登（§9）并编译放行** |
 | `sdurws_ird_testkit_qt`（Qt 测试辅助） | ~~ui/workflow 出现 QCoreApplication/GUI 测试目标时~~ **触发已成立（2026-09-19）**：UI-T02 建立 ui 三测试目标（sdurws_ird_ui_test QCoreApplication 级模型测试＋sdurws_ird_ui_contract_test＋sdurws_ird_ui_gui_test GUI 目标）——**已随 WP-10-T02 启用落位**（INTERFACE 目标载体＋Qt6::Core 链接接口；设施头/实现随首消费者 UI-T13/T14 落地后升级 STATIC——目标名不变，不预建占位） | §3.5、§6.7 |
-| 性能基准夹具（计时统计、吞吐对照口径） | NFR-PERF-01~06 所属阶段（C/D） | performance-baseline 数据集类别已预留（§4.2.1）；**确定性复现夹具已随 WP-23-T09 落位**（2026-10-13，`ReproBenchmark.hpp`——§6.3 消费者提案落位：三腿复跑测量＋SetCheck 等价/稳定序判定＋归约容差经 repro-reduction 档案承载；计时仅作原始样本留痕不作阈值判定）。计时统计/吞吐对照的 PERF 侧夹具细则仍随 NFR-PERF-01/05 执行任务〔WP-23-T02/T07〕届时提出 |
+| 性能基准夹具（计时统计、吞吐对照口径） | NFR-PERF-01~06 所属阶段（C/D） | performance-baseline 数据集类别已预留（§4.2.1）；**确定性复现夹具已随 WP-23-T09 落位**（2026-10-13，`ReproBenchmark.hpp`——§6.3 消费者提案落位：三腿复跑测量＋SetCheck 等价/稳定序判定＋归约容差经 repro-reduction 档案承载；计时仅作原始样本留痕不作阈值判定）。**计时统计夹具已随 WP-23-T02 落位**（2026-10-13，`PerfBenchmark.hpp`——§6.3 消费者提案落位：P95 线性插值分位数〔协议 §4.2 公式唯一实现点〕＋runInteractionGroup 分组采样〔预热剔除/无效留痕/原始样本序列〕＋PerfSessionReport 报告拖挂〔IRD_PERF_REPORT_DIR〕；阈值由消费方按需求原文传入——首消费＝ui `sdurws_ird_ui_perf_test` 交互响应基准 B-01）。中位吞吐对照口径仍随 NFR-PERF-05 执行任务〔WP-23-T07〕届时提出 |
 | 各业务域黄金数据集与契约套件 | 阶段 B~E 各域 | §10.2；数据集责任归域＋WP-02 |
 
 ### 10.2 单元交接清单（各域须提供/将消费的 testkit 能力）
@@ -959,6 +990,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | v1.3 | 2026-10-12 | TK-T12 实现落位登记（F-789 闭合——实施者＝所有者授权独立会话；契约 status ready→done）：①**根因实证**（audit/tkt12-investigation/——差异矩阵 9 格＋dumpbin 递归闭包 35 模块＋相依链三证）：ui_test 经框架 sdurws 静态库接口面导入 python313.dll（conda 发行形态同目录相依 zlib.dll），运行期前置未内化时 ctest 上下文＝加载器对话框挂起（r2a 所录）或退出码 8（acc-audit-r2d-1 两轮所录）——非产品缺陷、非 QTest 交互（立项疑点排除）；②**gate-all.ps1 三改动**（提交 14b08399）：第 0.5 步 python 运行库前置五级探测/注入（-PythonDir 参数/SDURWS_IRD_PYTHON_DIR/既有 PATH/conda-python 命令反推安装根/常见 conda 安装位）＋0xC0000135 族不可达记 SKIP＋归因不判 FAIL（F-715 同文处置——验收/CI 不误伤）＋冒烟目录默认 ird-gate-smoke-<PID>-<时点> 唯一化（F-628 同族）；③**验证**＝ui_test ctest 三连 EXIT=0＋直跑 258/258 对照（python-free 配置 RWS_ENABLE_PYTHON=OFF 对齐主线构建形态——零 PATH 供给）＋gate-all 85/85 EXIT=0（记录以来首次全项全绿——verify2-* 五件留痕 audit/tkt12-investigation/）；④F-789 翻牌 fixed；框架根因面（RWS_USE_PYTHON3 环境依赖判定致同批源码分岔两种加载面）登记 F-828 归所有者 patch 批。DTB §2.3 WP-02-T12 行随批注落位 |
 | v1.4 | 2026-10-12 | 治理批台账滞后修正（纯文档零代码，pipeline5/redesign-main；2026-10-12 全面盘点报告第五节账实不符族来源）：§12.3 P-TK-4 行补注已消账——对端 governance-log P-TK-4/O-21 与 DTB O-21 行早已 closed（2026-09-10 WP-01-T01：ARCH §3.5 补登 testkit→core＋门禁白名单收录＋dependency-graph.json 补行），本行原文"架构下次修订…补登；本文先行自律"的滞留状态与事实不符，随批补注翻转（卡侧"待增量修订同步翻转"义务兑现）；裁决归属零变更、契约语义零变更 |
 | v1.5 | 2026-10-13 | WP-23-T09 消费者提案落位登记（§10.1"性能基准夹具"行的触发兑现——消费者即 WP-23-T09）：①§3.1 模块表增补 `ReproBenchmark.hpp`（header-only 第 12 公共头——零新增实现 TU、库本体零 gtest、T-2 依赖面不变）；②§6.3 增"复现基准夹具"细则（runReproCase 三腿顺序执行〔reference/rerun/threads〕＋计时仅作原始样本留痕不作阈值判定＋判定全委托 §5.4 SetCheck＋偏差观测测量面＋报告拖挂不阻断＋`IRD_REPRO_REPORT_DIR` 落盘开关）；③数值唯一来源＝`testdata/tolerance/repro-reduction` 档案（附录 D 第 8 项固定值——随 WP-23-T09 落位于 testdata，档案登记义务归基准面非本卡任务表）；④PERF 侧计时统计/吞吐对照夹具细则仍随 WP-23-T02/T07 届时提出（本版不预建）。实现载体：testkit/include/sdurws/ird/testkit/ReproBenchmark.hpp＋test/ReproBenchmarkTest.cpp（元测试：三腿通过/数值扰动集合违例检出/顺序置换稳定序违例检出/报告回读）——分支 wp23-t09 |
+| v1.6 | 2026-10-13 | WP-23-T02 消费者提案落位登记（§10.1"性能基准夹具"行的计时统计半区触发兑现——消费者即 WP-23-T02）：①§3.1 模块表增补 `PerfBenchmark.hpp`（header-only 第 13 公共头——零新增实现 TU、库本体零 gtest、零 Qt）；②§6.3 增"计时统计基准夹具"细则（percentileLinearInterpolated 线性插值分位数＝performance-baseline §4.2 公式唯一实现点＋约定串随报告恒输出＋runInteractionGroup 分组采样执行器〔预热剔除/无效样本逐例留痕＋stderr 打点＋无效安全界 10×minValid 显性抛错〕＋PerfSessionReport 报告拖挂〔IRD_PERF_REPORT_DIR〕＋阈值由消费方按需求原文传入零私设）；③B-06 中位吞吐口径仍随 WP-23-T07 届时提出（与分位半区互不替代——本版不预建）。实现载体：testkit/include/sdurws/ird/testkit/PerfBenchmark.hpp＋test/PerfBenchmarkTest.cpp（元测试四例：P95 已知向量手算核对 n=15/20/2/1＋乱序等价＋违约 fail-fast／预热剔除与无效留痕／报告 JSON 往返／文件落盘回读）——分支 wp23-t02 |
 
 ---
 

@@ -26,7 +26,7 @@
 
 | 编号 | 基准场景 | 需求 ID（阶段/发布） | 达标口径（照抄需求原文语义） | 承接任务 | 复现命令位 |
 | --- | --- | --- | --- | --- | --- |
-| B-01 | 交互响应 | NFR-PERF-01（C/R1） | 标准规模数据和本清单定义的后台负载下，导航、选择、筛选、编辑和视图切换 P95 响应 ≤200 ms；不出现超过 2 s 的无响应窗口；超过 1 s 的工作转后台。测量口径按 PM-16 协议注记：P95 分位数采样（原"三次运行取中位数"口径为继承缺陷，已作废——F-03） | WP-23-T02 | 待回填（T02 落位时登记于本行） |
+| B-01 | 交互响应 | NFR-PERF-01（C/R1） | 标准规模数据和本清单定义的后台负载下，导航、选择、筛选、编辑和视图切换 P95 响应 ≤200 ms；不出现超过 2 s 的无响应窗口；超过 1 s 的工作转后台。测量口径按 PM-16 协议注记：P95 分位数采样（原"三次运行取中位数"口径为继承缺陷，已作废——F-03） | WP-23-T02 | 已回填（2026-10-13，T02）：冒烟模式复现命令＝`cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <冒烟目录> -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=<Qt msvc 目录>` → `cmake --build <冒烟目录> --config Release --target sdurws_ird_ui_perf_test` → 设 `IRD_PERF_REPORT_DIR=<证据目录>`（可再设 `IRD_PERF_GIT_COMMIT=<SHA>` 入报告）后 `ctest --test-dir <冒烟目录>/ui -C Release -R "^sdurws_ird_ui_perf_test$" --output-on-failure`——三用例全绿（空闲态五操作 P95 ≤200 ms／后台态同口径＋独立 worker 进程证据／>1 s 转后台用例）＋逐例报告 JSON（`<证据目录>/b01-*.json`：p95Convention＝线性插值、原始样本序列、阈值判定留痕）即 B-01 达标。标准规模数据＝黄金项目锚定的 ui 侧投影数据集（datasetId ird-perf-b01-interaction@1——manifest＝`testdata/performance/b01-interaction-manifest.json`）；后台负载注入形态＝独立 worker 进程流式评估批次（manifest backgroundLoad 节冻结）；测量夹具＝testkit.md §6.3/§10.1 PerfBenchmark.hpp；无头模型层等价口径与边界登记＝用例文件头＋首测报告 traceability/benchmarks/wp23-t02-interaction-baseline.md（集成模式复测挂点登记于报告 §4——集成构建由合入批执行） |
 | B-02 | 取消时序 | NFR-PERF-02（C/R1） | 取消请求在 2 s 内进入 Canceling 并停止派发新批次；普通批次 10 s 内结束；超时后允许终止独立工作进程并保留最近检查点 | WP-23-T03 | 待回填（T03 落位时登记于本行） |
 | B-03 | 大规模数据加载/保存/分页 | NFR-PERF-03（C/R1） | 成功加载、保存和分页浏览 5,000 个任务点、100,000 个采样结果和 10,000 个候选摘要；不一次性把全部明细装入界面 | WP-23-T04 | 待回填（T04 落位时登记于本行） |
 | B-04 | 项目打开（冷/热启动） | PM-16（C/R1） | 黄金项目（1,000 对象/100 修订）**热启动**打开 P95 ≤ 3 s（验收门禁仅限热启动组——V13 §4 收窄）；冷启动组单独报告、超限登记原因与改进项（不阻断验收）；冷启动软指标 P95 ≤ 8 s 为参考目标（M-14，v1.8，不作门禁） | WP-23-T05 | 待回填（T05 落位时登记于本行） |
@@ -137,6 +137,7 @@
 - **需求追溯**：NFR-PERF-01。
 - **达标判据**（DTB §2.24 行原文语义）：导航/选择/筛选/编辑/视图切换 P95 ≤200 ms；无 >2 s 无响应；>1 s 转后台用例通过。
 - **挂点动作**：回填 B-01 复现命令位；登记 §4.3 后台负载注入形态与标准规模数据集 manifest。
+- **挂点动作（2026-10-13，T02 实施段兑现）**：B-01 复现命令位已回填（§2 行）；§4.3 后台负载注入形态已登记并冻结进数据集 manifest（datasetId ird-perf-b01-interaction@1——`testdata/performance/b01-interaction-manifest.json`：标准规模 ui 侧投影数据集生成器参数〔1,000 对象/100 修订语境/五分组分布/表单 24 字段/筛选词/选中批量〕＋backgroundLoad 节〔独立 worker 进程流式评估批次——`sdurws_ird_execution_worker` 阶段 A 内置脚本替身评估器、`stage-a-script:v1/batches 5,000,000`、主进程泵线程＋1/16 抽样排队 Marshal〕）；测量夹具细则登记于 testkit.md §6.3/§10.1（`PerfBenchmark.hpp`——P95 线性插值＋分组采样执行器＋报告拖挂）；首测报告与证据清单＝traceability/benchmarks/wp23-t02-interaction-baseline.md（无头模型层等价口径与边界如实申报于报告 §4）。
 
 ### 5.2 WP-23-T03 取消时序达标（阶段 C）
 
@@ -199,7 +200,7 @@
 | --- | --- | --- |
 | 大体绩黄金数据存储与 CI 获取策略（git 内 vs LFS vs 制品）——P-TK-5/O-22 | 未决（在册） | 构建负责人＋WP-02，首个大数据集出现时裁决（DTB §4 O-22 行） |
 | 冷启动软指标是否转门禁 | 待基线数据积累后评估 | 需求所有者（转门禁属需求变更，走变更流程——M-14 登记） |
-| §4.3 后台负载注入形态、黄金项目生成器明细参数 | 待执行任务落位登记 | WP-23-T02/T05（登记后冻结进数据集 manifest） |
+| §4.3 后台负载注入形态、黄金项目生成器明细参数 | T02 半区已落位（2026-10-13——后台负载注入形态＋标准规模 ui 侧数据集 manifest 已冻结，ird-perf-b01-interaction@1）；黄金项目生成器明细参数仍待 WP-23-T05（登记后冻结进数据集 manifest） | WP-23-T05 |
 
 ---
 
@@ -209,3 +210,4 @@
 | --- | --- | --- |
 | v0.1 | 2026-10-13 | WP-23-T01 初版：基准清单（B-01~B-08，覆盖 NFR-PERF-01~06＋PM-16＋NFR-COR-02）、黄金项目定义（PM-16 口径：1,000 对象/100 修订）、测量协议（冷/热分组、每组有效样本 ≥15＋≥15、P95 线性插值、冷启动软指标单独报告不作门禁、并行吞吐不含首次编译与导入、归约容差引附录 D 第 8 项）、T02~T09 达标判据挂点。分支 wp23-t01（DTB 版本行登记延后至验收合入批统一处理） |
 | v0.2 | 2026-10-13 | WP-23-T09 执行登记：§2 B-08 复现命令位回填（集成模式三步命令——构建六测试目标＋IRD_REPRO_REPORT_DIR＋ctest 六套件；报告 JSON 三面判定＝集合等价＋稳定排序＋1e-12 归约容差）；§5.8 挂点动作行补登（夹具细则＝testkit.md §6.3/§10.1 ReproBenchmark.hpp；容差档案＝testdata/tolerance/repro-reduction；五域抽样面与首测报告位 traceability/benchmarks/wp23-t09-repro-baseline.md）。本版零协议数值变更——达标口径与统计口径原文照旧（B-08 为集合等价与容差判定类，P95 协议不适用） |
+| v0.3 | 2026-10-13 | WP-23-T02 执行登记：§2 B-01 复现命令位回填（冒烟模式三步命令——构建 sdurws_ird_ui_perf_test＋IRD_PERF_REPORT_DIR＋ctest ui 叶子目录；三用例判定＝空闲态五操作 P95 ≤200 ms／后台态同口径＋独立 worker 进程证据／>1 s 转后台用例；逐例报告 JSON 含 p95Convention 线性插值登记与原始样本序列）；§5.1 挂点动作行补登（§4.3 后台负载注入形态＋标准规模 ui 侧数据集 manifest＝testdata/performance/b01-interaction-manifest.json〔ird-perf-b01-interaction@1〕；测量夹具＝testkit.md §6.3/§10.1 PerfBenchmark.hpp；首测报告＝traceability/benchmarks/wp23-t02-interaction-baseline.md）；§6 裁决表后台负载半区翻已落位（黄金项目生成器明细参数仍待 T05）。本版零协议数值变更——达标口径（200 ms/2 s/1 s）与统计口径（P95 线性插值、每组有效 ≥15、禁 3 次中位数）原文照旧 |
