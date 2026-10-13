@@ -1,0 +1,57 @@
+{
+  "datasetId": "ird-perf-b04-golden-project",
+  "version": "1",
+  "kind": "performance-baseline",
+  "title": "B-04 黄金项目（1,000 对象/100 修订）打开基准数据集与生成器参数（WP-23-T05 冻结）",
+  "baselineRef": "performance-baseline.md#2-B-04",
+  "goldenProjectDefRef": "performance-baseline.md#3",
+  "requirementRef": "REQUIREMENTS.md#17-PM-16",
+  "consumer": "sdurws_ird_project_perf_test（project/perf_test/GoldenProjectBenchmarkTest.cpp）",
+  "coldStartWorker": "sdurws_ird_project_openbench_worker（project/perf_test/OpenBenchWorkerMain.cpp——每冷启动样本一个全新进程，PM-16 原文'冷启动重置＝采样前重启进程'的产品承载）",
+  "generator": {
+    "identity": "goldenProjectCommandPipeline",
+    "objectCount": 1000,
+    "objectCountSource": "REQUIREMENTS PM-16 原文（1,000 对象——零增减）",
+    "revisionCount": 100,
+    "revisionCountSource": "REQUIREMENTS PM-16 原文（100 修订——零增减）",
+    "revisionCountingNote": "计数口径＝生成器产出的数据修订数（golden-append-batch 命令修订 r1..r100）；项目内另有 ProjectStoreFactory::createNew 初始骨架修订 r0（机制面——PM-01 存储侧组装固定产出，非生成器参数），项目修订总数 101（branchHistory 全量计数）如实登记",
+    "objectsPerRevision": 10,
+    "scaleIdentity": "100 数据修订×每修订 10 对象＝1,000 数据对象（PM-16 两数值零偏移的恒等式——生成器侧构造保证、夹具断言钉住）",
+    "objectTypeToken": "GoldenData",
+    "objectPayloadBytes": 2048,
+    "objectPayloadRule": "行式确定性文本：'obj:<全局序号>:'＋填充字符（'A'+序号%26）至恒定行长 2,048 字节——同序号同内容可复现；负载量级＝工业对象 JSON 载荷的典型形态（1,000×2 KiB≈2 MiB 对象库，打开完整性校验的真实遍历量）",
+    "commandType": "golden-append-batch（v1——§4.4.4 冻结语法无点 token；基准域自有处理器经 handlerRegistry() 公共装配通道注册，UI-T39）",
+    "pipeline": "ProjectStoreFactory::createNew（PM-01 存储侧——r0＋M0）→注册基准处理器→100 次命令提交（七步提交协议——.staging 暂存/验证/只增发布/HEAD 原子切换）→requestClose 排空释放写锁；真实产品持久化布局，非预录数据"
+  },
+  "measurementProtocol": {
+    "samplePlan": "冷/热两组各 1 次预热（剔除）＋≥15 有效样本，两组合计 30 ≥ 30（performance-baseline §4.2——每组有效 ≥15＋合计 ≥30 需求原文下限）；无效样本不计入分母并逐例留痕（安全界 10×minValid——补采失控显性失败）",
+    "hotGroup": {
+      "mode": "Writable（完整打开协议——锁获取＋恢复扫描＋HEAD 闭包完整性校验＋孤儿草稿扫描）",
+      "state": "进程已运行、黄金项目磁盘数据已就绪（组级预打开一次暖热缓存与代码路径，不入样本序列）",
+      "measurementWindow": "ProjectStoreFactory::open 调用＋HEAD 首读（'自操作发起至项目数据可读'的模型层等价）；打开后规模/健康核对与关闭排空全部在区间外（目标内采样执行器——T03 CancelTimingRig 先例）",
+      "thresholdMs": 3000.0,
+      "thresholdSource": "REQUIREMENTS PM-16 原文（热启动打开 P95 ≤ 3 s——V13 §4：验收门禁仅限热启动组）",
+      "verdict": "门禁——P95 超限即用例失败"
+    },
+    "coldGroup": {
+      "mode": "Writable（与热启动组同一打开路径——sdurws_ird_project_openbench_worker 子进程内执行）",
+      "state": "每样本全新子进程（CREATE_SUSPENDED→Job Object→Resume——进程启动＋DLL 加载＋符号绑定全部重置＝PM-16'冷启动重置'）",
+      "measurementWindow": "与热启动组同窗口（open 调用＋HEAD 首读——子进程内计时，经 ird-openbench/1 报告文件回传父进程）",
+      "thresholdMs": 8000.0,
+      "thresholdSource": "REQUIREMENTS PM-16 冷启动软指标（M-14，v1.8——P95 ≤ 8 s 参考目标，不作门禁；超限登记原因与改进项）",
+      "verdict": "单独报告不作门禁——断言面＝样本纪律（15 有效＋零无效）＋子进程打开后核对（退出码承载）；P95 超限只登记不失败（DTB WP-23-T05 行禁止项'冷启动不作门禁'的结构承载）"
+    },
+    "p95Convention": "线性插值分位数（performance-baseline §4.2 公式——testkit percentileLinearInterpolated 唯一实现点；禁 3 次中位数替代——F-03）",
+    "sampleValidity": "热启动＝open 无异常且区间外核对全过（writable＋HEAD 完整性＋零恢复诊断＋修订历史装载完整〔101＝100 数据修订＋1 骨架 r0〕＋关闭排空完成）；冷启动＝子进程退出码 0＋ird-openbench/1 报告可解析且修订历史计数核对通过；运行不完整/超时/崩溃＝无效留痕",
+    "implObservation": "实现口径观测（如实登记，不作规模判据）：当前产品实现修订清单 objectRefs＝元数据＋本修订计划对象（TxEngine 装配口径），HEAD 视图引用数＝11（10 数据＋1 元数据）；对象库磁盘地面事实＝1,000 数据对象 oid＋101 元数据 oid（每修订元数据为新 oid）；打开的完整性校验面＝闭包全部修订清单引用并集（约 1,111 对象 SHA-256——真实打开成本）；与 §4.4.2'全量状态闭包'设计语义的关系归 product 侧澄清，本基准不私裁"
+  },
+  "equivalenceNotes": [
+    "无头模型/存储层等价口径：'项目打开'＝ProjectStoreFactory::open 完整协议（②③⑤＋Writable 锁与恢复扫描）＋HEAD 首读；UI 会话激活/项目树呈现/模型编译面在口径外（PM-16 测量项目加载时长——PM-16 与 NFR-PERF-01 为不同测试，需求原文括注）",
+    "冷启动无头边界：全新子进程承载进程启动＋DLL 加载＋RobWork/ird 符号绑定；RobWorkStudio 插件加载与 Qt 资源解压面在口径外（插件宿主未启动）——软指标读数低于真实 Studio 冷启动，登记为口径边界而非达标依据（协议 §4.4：冷启动受进程启动、插件加载与框架初始化支配）",
+    "黄金项目与 B-01 ui 侧投影数据集、B-03 大规模数据是三个不同基准的三套数据集，不得混用（performance-baseline §3.3——本数据集为 project 级存储真项目，经产品命令管线落盘）",
+    "同一轮基准全部样本同机同配置采集（协议 §4.1——硬件/OS/电源/后台基线登记于首测报告 §2）；跨软件版本样本不入同一统计（gitCommit 报告字段锚定）"
+  ],
+  "upgradeRule": "testkit.md §4.2.1——升级＝新建数据集或新 major 版本，不得原地改写；参数变更须换版本并留 history",
+  "frozenAt": "2026-10-13",
+  "frozenBy": "WP-23-T05（分支 wp23-t05）"
+}
