@@ -42,5 +42,5 @@
   "acceptance": [
     "Paused 态消费（暂停确认边界/继续不重复统计/暂停中取消保检查点——ARCH §4.3 A5）；暂停确认边界明确、继续不重复统计、不改变输入快照、能力不支持时状态反馈用例通过（OPT-06 D 部分/AT-35 V12-06）"
   ],
-  "note": "DTB §2.22 行逐一对应（单元 optimization＋execution）。DTB 前置\"WP-08-T03/T04\"≙EX-T02（状态机/取消）、EX-T03（调度器/控制器）——≙ 映射按 execution.md §15.4；Paused 态消费 core TaskState 词表——P-D-1（四词表置 core 跨卡确认，同源 O-24）挂靠。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.22 行逐一对应（单元 optimization＋execution）。DTB 前置\"WP-08-T03/T04\"≙EX-T02（状态机/取消）、EX-T03（调度器/控制器）——≙ 映射按 execution.md §15.4；Paused 态消费 core TaskState 词表——P-D-1（四词表置 core 跨卡确认，同源 O-24）挂靠。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）；本卡 status 维持 planned——待前置链闭合与独立评审放行（依赖诚实）。。"
 }

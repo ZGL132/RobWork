@@ -36,5 +36,5 @@
   "acceptance": [
     "扰动协议三模式（有界公差/概率鲁棒性/敏感度抽查）按 WP-21-T01 冻结协议执行用例通过（OPT-09 转必需证据）"
   ],
-  "note": "DTB §2.22 行逐一对应。消费 P-04 冻结值（WP-21-T01 产物），单域（optimization）实现——interUnit=false，跨单元面随契约编译按 CCP §3 复核。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.22 行逐一对应。消费 P-04 冻结值（WP-21-T01 产物），单域（optimization）实现——interUnit=false，跨单元面随契约编译按 CCP §3 复核。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 部分冻结（采样规则/适用边界已冻结）；判定阈值（通过线/降级线）所有者裁定维持待定——待补充确认，未补充确认前 OPT-09 判定子项未冻结，本卡不得启用——依赖诚实，维持 planned（REQUIREMENTS 附录 C P-04 行如实登记）。。"
 }

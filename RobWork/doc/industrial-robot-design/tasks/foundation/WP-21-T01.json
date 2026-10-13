@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-H",
   "title": "冻结 P-04 扰动/鲁棒性协议（与需求所有者协同）",
-  "status": "planned",
+  "status": "done",
   "dependsOn": [],
   "requirements": [
     "P-04",
@@ -37,5 +37,5 @@
   "acceptance": [
     "P-04 冻结产物（三模式采样规则/判定阈值/适用边界）并入 REQUIREMENTS 附录 C 修订并留痕；未冻结不得启用联合优化（v1.13 决议——DTB §4 O-28 已登记延期至本任务）；本文不私设协议数值（DTB 行禁止项）；误淘汰审计 95% 置信上界计算方法随本批一并裁决（units/optimization.md §16.3 P-OPT-7 点名 WP-21-T01）"
   ],
-  "note": "DTB §2.22 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"无未满足前置（OPT-D 启用前必须完成——硬前置）\"——O-28（P-04 已正式延期至 OPT-D 启用前）与本卡 knownPitfalls 挂靠；P-OPT-7（误淘汰审计置信上界计算式）按 optimization 卡 §16.3 裁决者列随本批裁决。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.22 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"无未满足前置（OPT-D 启用前必须完成——硬前置）\"——O-28（P-04 已正式延期至 OPT-D 启用前）与本卡 knownPitfalls 挂靠；P-OPT-7（误淘汰审计置信上界计算式）按 optimization 卡 §16.3 裁决者列随本批裁决。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13 执行登记（合入收尾员，授权＝所有者 2026-10-13『P-04 已确认——表①②③＋表④结构规则/适用边界冻结；判定阈值维持待定』裁决）】P-04 冻结即本卡执行（FREEZE-P06/WP-16-T02 先例同型——冻结批即契约执行）：REQUIREMENTS v1.20 附录 C P-04 行转『已冻结（判定阈值两槽位除外）』注＋《P-04 冻结数值表》（DTB §2.28 草案①②③原样零修改＋④结构规则/适用边界原样；通过线/降级线两槽位登记『待所有者补充确认——未指定前按未冻结处理』）＋v1.20 修订记录；DTB §2.28 草案行已确认注＋FREEZE-P04 批次行＋版本行 v0.71；§4.3 O-28 转『部分冻结——判定阈值待补充确认』；units/optimization.md :16/:133 同步注。status planned→done。判定阈值两槽位维持待定——未补充确认前 OPT-09 判定子项未冻结、WP-21-T05 不得启用；P-OPT-7（误淘汰审计 95% 置信上界计算方法）不在本批授权范围、维持未裁决（optimization 卡 §16.3 裁决者列所有者），随判定阈值补充确认一并提请。。"
 }
