@@ -116,14 +116,18 @@ TEST(ProjectLinkage, UnitEdgeOnlyCore_DT_BUILD_R1_R2)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：core（唯一允许的产品单元边）＋ project 本单元三目标（产品/
-    // 测试/契约测试——单元内部引用不构成跨单元边）＋ testkit（PRJ-T15
-    // 登记的仅测试目标消费面——T-1 允许形态）。
+    // 白名单：core（唯一允许的产品单元边）＋ project 本单元五目标（产品/
+    // 测试/契约测试/性能基准测试/冷启动采样子进程——单元内部引用不构成
+    // 跨单元边）＋ testkit（PRJ-T15 登记的仅测试目标消费面——T-1 允许
+    // 形态；perf_test 的消费登记见下方 NoTestkitEdge 消费面断言——
+    // WP-23-T05 增量）。
     const std::set<std::string> allowed = {
         "sdurws_ird_core",
         "sdurws_ird_project",
         "sdurws_ird_project_test",
         "sdurws_ird_project_contract_test",
+        "sdurws_ird_project_perf_test",
+        "sdurws_ird_project_openbench_worker",
         "sdurws_ird_testkit"};
     for (const auto& ref : refs) {
         EXPECT_NE(allowed.find(ref), allowed.end())
@@ -203,6 +207,16 @@ TEST(ProjectLinkage, NoTestkitEdge_DT_BUILD_T1)
     EXPECT_NE(contractBlock.find("sdurws_ird_testkit"), std::string::npos)
         << "契约测试目标未登记 testkit 消费（PRJ-T15 acceptance 2——"
            "FaultInterceptor/TestProcessRunner/EventWatch 接入面缺失）";
+    // ③ 消费面增量（WP-23-T05）：性能基准测试目标显式登记 testkit 消费
+    //（PerfBenchmark 报告拖挂/percentileLinearInterpolated/ProcessRunner/
+    // TempDir 接入面——B-04 黄金项目打开基准；同款"放行了就必须真消费"
+    // 漂移防线）。openbench_worker 为测量设施 exe（不链 testkit——子进程
+    // 报告手写序列化），不在消费面断言之列。
+    const std::string perfBlock
+        = linkBlockOf(cmake, "sdurws_ird_project_perf_test");
+    EXPECT_NE(perfBlock.find("sdurws_ird_testkit"), std::string::npos)
+        << "性能基准测试目标未登记 testkit 消费（WP-23-T05——"
+           "PerfBenchmark/ProcessRunner/TempDir 接入面缺失）";
 }
 
 /**

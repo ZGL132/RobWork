@@ -547,6 +547,86 @@ add_custom_command(TARGET sdurws_ird_project_contract_test POST_BUILD
             $<TARGET_FILE_DIR:sdurws_ird_project_contract_test>
     COMMAND_EXPAND_LISTS)
 
+# ---- 冷启动采样子进程 sdurws_ird_project_openbench_worker（WP-23-T05 增列）----
+# performance-baseline §2 B-04／PM-16"冷启动重置＝采样前重启进程"的产品
+# 承载（DTB §2.24 行）：黄金项目打开基准的冷启动组每样本经 testkit
+# TestProcessRunner 启动一个全新本进程（进程启动＋DLL 加载＋符号绑定全部
+# 重置——与已运行进程的热启动组形成协议要求的冷/热分组），子进程内执行
+# 一次完整打开（Writable——与热启动组同一打开路径）并把 open＋HEAD 首读
+# 耗时写入 ird-openbench/1 单行 JSON 报告文件后正常退出（退出码 0＝样本
+# 有效前提；2 参数/3 打开异常/4 核对失败/5 报告写失败——父进程按退出码
+# 判样本有效性并留痕）。
+# 构建形态先例＝sdurws_ird_execution_worker（测试设施 exe 直链产品库）；
+# 零 testkit 链接（子进程报告为固定字段手写序列化——不引入 testkit 依赖）；
+# 控制台子系统（stderr 留失败定位打点——与 execution worker 的 WIN32 无
+# 控制台形态不同：本进程的观测面是报告文件，stderr 仅供直跑诊断）。
+add_executable(sdurws_ird_project_openbench_worker
+    perf_test/OpenBenchWorkerMain.cpp)
+target_compile_features(sdurws_ird_project_openbench_worker PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_project_openbench_worker PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_project_openbench_worker PRIVATE /utf-8)
+endif()
+# 链接面：产品库（PUBLIC 传染 core——打开协议面）；产品目标 sdurws_ird_project
+# 本体零变更（T-1 红线不涉及——本目标为测试设施 exe，非产品分发面）。
+target_link_libraries(sdurws_ird_project_openbench_worker PRIVATE
+    sdurws_ird_project)
+
+# ---- 性能基准测试目标 sdurws_ird_project_perf_test（WP-23-T05 增列）----
+# performance-baseline §2 B-04／PM-16 黄金项目（1,000 对象/100 修订）打开
+# 基准的测量载体（DTB §2.24 行）：热启动门禁组（进程已运行＋磁盘数据就绪
+# 状态下反复 ProjectStoreFactory::open——测量区间＝open＋HEAD 首读；1 预热
+# ＋15 有效样本；P95 线性插值 ≤3 s 判门禁——阈值照抄 REQUIREMENTS PM-16
+# 原文）＋冷启动软指标组（每样本全新 openbench_worker 子进程——1 预热＋
+# 15 有效；P95 对照 8 s 软指标只登记不判定——DTB 行禁止项"冷启动不作门禁"
+# 的结构承载）。datasetId ird-perf-b04-golden-project@1——manifest 冻结于
+# testdata/performance/。单列目标（不并入 _test/_contract_test）的理由＝
+# 基准用例的墙钟量级（黄金项目生成×2＋30 采样＋16 个子进程）远超功能套
+# 件节奏——execution/ui perf_test（WP-23-T03/T04）同款分工先例。
+# 链接面：sdurws_ird_project（被测产品目标）＋sdurws_ird_testkit（
+# PerfBenchmark/ProcessRunner/TempDir/RecordListener——T-1 允许形态＝仅
+# 测试目标）＋GTest::gtest（main 自持）。零 Qt（D-01——project 单元红线
+# 含 Core 亦禁，基准入口无 Qt 面）。
+add_executable(sdurws_ird_project_perf_test
+    perf_test/TestMainPerf.cpp
+    perf_test/GoldenProjectBenchmarkTest.cpp)
+
+# worker 可执行构建依赖（真进程启动目标——$<TARGET_FILE> 取值前提：perf
+# 目标构建即带出 openbench_worker，缺则冷启动采样必失败）。
+add_dependencies(sdurws_ird_project_perf_test sdurws_ird_project_openbench_worker)
+
+target_compile_features(sdurws_ird_project_perf_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_project_perf_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_project_perf_test PRIVATE /utf-8)
+endif()
+
+# T-1 允许形态：testkit 只落在测试目标链接语句（LinkageContractTest::
+# NoTestkitEdge 的允许集与消费面断言随本目标扩登——WP-23-T05 登记）。
+target_link_libraries(sdurws_ird_project_perf_test PRIVATE
+    sdurws_ird_project
+    sdurws_ird_testkit
+    GTest::gtest)
+
+# 冷启动子进程路径注入（execution perf_test 的 IRD_EXECUTION_PERF_WORKER_EXE
+# 同款机制——真进程启动目标）。
+target_compile_definitions(sdurws_ird_project_perf_test PRIVATE
+    IRD_PROJECT_OPENBENCH_WORKER_EXE="$<TARGET_FILE:sdurws_ird_project_openbench_worker>")
+
+# vcpkg gtest 为动态库：拷贝运行期 DLL（project_test 同款先例——留痕与
+# 验收都要直接执行该可执行文件）。
+add_custom_command(TARGET sdurws_ird_project_perf_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_project_perf_test>
+            $<TARGET_FILE_DIR:sdurws_ird_project_perf_test>
+    COMMAND_EXPAND_LISTS)
+
 # ---- ird_add_gtest：add_test＋XML 报告目标（DTB §5.5，宏各单元自持）----
 # 框架原宏见 RobWork/RobWork/gtest/CMakeLists.txt：add_test ＋ <target>_report
 # （运行测试并落 gtest XML）。本宏按 DTB §5.5 在本单元 CMake 内定义（定义
@@ -572,6 +652,7 @@ endmacro()
 
 ird_add_gtest(sdurws_ird_project_test)
 ird_add_gtest(sdurws_ird_project_contract_test)
+ird_add_gtest(sdurws_ird_project_perf_test)   # WP-23-T05——B-04 黄金项目打开基准
 
 # ---- 依赖红线守卫（配置期断言，PRJ-TX-14 的 CMake 依赖图半区）----
 # project 唯一 industrialrobot 单元依赖＝core（ARCH §3.5 唯一登记编译链接
