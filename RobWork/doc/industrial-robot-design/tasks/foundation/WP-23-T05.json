@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "项目打开热启动达标（阶段 C）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-23-T01"
   ],
@@ -12,23 +12,40 @@
     "PM-16"
   ],
   "designRefs": [
-    "REQUIREMENTS.md#19.3",
+    "REQUIREMENTS.md#17",
+    "performance-baseline.md#3",
+    "performance-baseline.md#2",
+    "performance-baseline.md#5.4",
+    "units/testkit.md#4.2.1",
+    "units/testkit.md#10.1",
     "development-task-breakdown.md#2.24"
   ],
   "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/performance/**",
+    "RobWork/doc/industrial-robot-design/performance-baseline.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/testkit.md"
   ],
   "outputs": [
     "benchmark",
     "traceability-update"
   ],
   "verify": [
-    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T05.json"
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T05.json",
+    "cmake --build <冒烟构建目录> --config Release --target sdurws_ird_project_test sdurws_ird_project_contract_test sdurws_ird_project_perf_test sdurws_ird_project_openbench_worker",
+    "ctest --test-dir <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot -C Release -R \"sdurws_ird_project_(test|contract_test|perf_test)$\" --output-on-failure"
   ],
   "branch": "wp23-t05",
   "interUnit": false,
   "acceptance": [
     "黄金项目（1,000 对象/100 修订）热启动 P95 ≤3 s（≥15 有效样本）；冷启动软指标 P95 ≤8 s 单独报告超限登记；冷启动不作门禁（DTB 行禁止项）"
   ],
-  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。DTB 前置\"WP-04-T08\"（project 打开协议）契约批次在 project 卡系（PRJ-Txx）——按 project 卡对应落位任务为协作依赖。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。DTB 前置\"WP-04-T08\"（project 打开协议）契约批次在 project 卡系（PRJ-Txx）——对应 PRJ-T08 已 done（2026-09-11），前置满足；dependsOn 仅登记在册契约 WP-23-T01（done），协作语义由本 note 承载（WP-19-T12 先例——不伪造依赖）。编译放行（2026-10-13，WP-23-T05 实施段）：status planned→ready＋补齐 ready 必备字段——designRefs 锚点精化（REQUIREMENTS §17 PM-16 行原文／performance-baseline §3 黄金项目定义＋§2 B-04 行＋§5.4 本卡挂点／testkit.md §4.2.1 performance-baseline 数据集类别＋§10.1 性能基准夹具预留行／DTB §2.24 本卡行）；allowedFiles 按达标口径实现面如实扩登（project 单元：黄金项目基准测量目标〔perf_test〕＋冷启动采样子进程 exe〔openbench_worker——每冷启动样本重启进程＝PM-16 原文\"冷启动重置\"的产品承载，testkit TestProcessRunner 启动〕＋该单元构建脚本与 LinkageContractTest 白名单增列钉＋testdata/performance 数据集 manifest＋performance-baseline.md 仅 B-04 复现命令位回填与 §5.4 挂点登记＋traceability 留痕。core 单元只经公共头消费零源码改动故不入 allowedFiles；测量目标与 worker 直链 project/core 属测试面目标——T-1 允许形态仅测试目标链 testkit，产品目标零变动）；forbiddenFiles 补登五份文档禁改（协议数值零私改——热启动 3 s／冷启动软指标 8 s／1,000 对象/100 修订／每组有效样本 ≥15／P95 线性插值全部照抄 REQUIREMENTS PM-16 与 performance-baseline 原文；冷启动不作门禁＝DTB 行禁止项的结构承载——冷启动用例断言面不含 P95 阈值判定，软指标实测值如实登记超限亦不 fail；testkit.md 本卡零变更——PerfBenchmark 计时统计夹具与 ProcessRunner 进程夹具直接复用〔T02/T03 先例——零新增 testkit 头〕）。放行依据＝所有者 2026-10-13「推进 M5 正式收口」指令＋实现分支 wp23-t05；前置 WP-23-T01（done）满足。测量设计要点（manifest 冻结面）：黄金项目生成器＝真实产品命令管线（createNew→handlerRegistry 公共装配通道注册基准处理器→100 个数据修订×每修订 10 个数据对象＝1,000 数据对象，PM-16 两数值零偏移；createNew 初始骨架修订 r0 为机制面非生成器参数——修订计数口径如实登记 manifest）；热启动组＝进程已运行、黄金项目磁盘数据已就绪状态下反复 open（ProjectStoreFactory 完整打开协议②③⑤——Writable＋恢复扫描＋HEAD 闭包完整性校验），测量区间＝open 调用＋HEAD 首读（自操作发起至项目数据可读的模型层等价——close/收尾在区间外，采样执行器照 T03 目标内 CancelTimingRig 先例，P95 经 testkit percentileLinearInterpolated 唯一实现点）；冷启动组＝每样本全新子进程（DLL/符号绑定级进程重启——RobWorkStudio 插件加载与 Qt 资源解压面在无头口径外，如实申报），子进程执行同一 open 并上报耗时，软指标判定仅登记不阻断。"
 }
