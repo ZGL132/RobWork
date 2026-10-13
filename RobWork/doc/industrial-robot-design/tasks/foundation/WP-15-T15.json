@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现近似外包络估算（R2/D）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T14"
   ],
@@ -50,5 +50,5 @@
     "方向集与确定性口径复用 §7.2 黄金设施（斐波那契螺旋方向集黄金锁定；同种子重跑结果一致）",
     "全部用例通过并留痕：gtest XML＋ird-test-report.json＋构建日志；未执行用例如实登记原因"
   ],
-  "note": "立卡登记（2026-10-13，治理批——所有者『立即立卡并启动』指令；自 kinematics 卡 §11 T15 行＋DTB §2.16 WP-15-T15 行编译，WP-15-T13 同族 schema）。dependsOn＝DTB 行前置原文 WP-15-T14（本批随批立卡 ready、未 done）——依赖诚实登记：本卡 status=ready 系所有者『立即立卡并启动』指令字面放行；实际开工以 WP-15-T14 done 为前置，队列消费侧应按 §11 内部顺序串行派发（T14→T15/T16；参考所有者 WP-23-T09 排程指令同款『依赖满足前维持』口径）。interUnit=false＝射线边界计算纯域内实现，执行/取消经 T14 采样执行管线传递、零新跨单元接线——如实现期需直挂 execution 增量消费面，按 DTB §5.4 增量修订登记。三卡（T14~T16）共用测量与单元回归口径：gtest 两模式＋DTB §5.2 DoD。实现分支 wp15-t15。"
+  "note": "立卡登记（2026-10-13，治理批——所有者『立即立卡并启动』指令；自 kinematics 卡 §11 T15 行＋DTB §2.16 WP-15-T15 行编译，WP-15-T13 同族 schema）。dependsOn＝DTB 行前置原文 WP-15-T14（本批随批立卡 ready、未 done）——依赖诚实登记：本卡 status=ready 系所有者『立即立卡并启动』指令字面放行；实际开工以 WP-15-T14 done 为前置，队列消费侧应按 §11 内部顺序串行派发（T14→T15/T16；参考所有者 WP-23-T09 排程指令同款『依赖满足前维持』口径）。interUnit=false＝射线边界计算纯域内实现，执行/取消经 T14 采样执行管线传递、零新跨单元接线——如实现期需直挂 execution 增量消费面，按 DTB §5.4 增量修订登记。三卡（T14~T16）共用测量与单元回归口径：gtest 两模式＋DTB §5.2 DoD。实现分支 wp15-t15。【合入收尾 2026-10-13（合入收尾员，授权依据＝所有者 2026-10-13「实现 M6 阶段收口」指令——attempt 1 对抗式独立验收 PASS 后合入）】冻结 SHA 413d93920972c7f992fdf95884645b2f98765c2b 零漂移（git ls-remote 合入前复检实证）；attempt 1 验收 PASS——4.1~4.11 全过零阻断，实施者三处 WIP 验收者亲跑补证闭合（C 盘 fresh 集成树四目标零编译错误＋ird_gates R-1~SA02 十一项零命中＋ui_test 既有错误经 ui 源零触碰实证归 ui 批次）；变异 M1b/M2/M3 翻红证测试非恒真（M1 单层短路未翻红＝取消通道三层纵深鲁棒性证据留档）；建议级 G-1~G-4 随记录转登不阻塞（G-1 与 F-834 同型合并处置），誊登主树 findings.json 义务随治理批执行——本批 findings.json 零触碰（F-495 未动）。合并 merge 0d775e63（--no-ff 并入 redesign-main，合并基 a8adb266）；O-2 预期三处冲突语义化解决（内容零丢失）：CMakeLists 测试源两批增列并集＋卡版本行两批 v0.20 撞号按 v0.66 先例顺延重登（T15 批→v0.21，T14 批 v0.20 保留，行序唯一递减）＋§11 T14/T15 两行取双方已完成版并集；§14.6 两批落位行归位相邻并存（T15 行重编 v0.21）。合入批复测（主集成树亲跑，RWS_BUILD_INDUSTRIALROBOT=ON）：sdurws_ird_kinematics/_test/_contract_test 三目标构建零错误（BUILD_EXIT=0）＋ctest -L \"^ird$\" 2/2 Passed（test 11.68 s＋contract 0.09 s，CTEST_EXIT=0）。status ready→done；验收记录落 traceability/acceptance/WP-15-T15-20261013.md（含合入收尾 §15）。。"
 }
