@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现 MDL-12-S1 混合链启用（R2；前置 SEL-09-S1）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-19-T12"
   ],
@@ -21,6 +21,16 @@
     "RobWork/doc/industrial-robot-design/units/modeling.md",
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**"
   ],
   "outputs": [
     "implementation",
@@ -40,5 +50,5 @@
   "acceptance": [
     "六/七轴含 prismatic 正式计算/报告放开（MDL-12-S1）；混合链端到端（建模→…→报告）验收；4/5 轴反例仍被阻止（DTB 行禁止项——4/5 轴不因本子项放开）；§2.1 支持矩阵同步更新；AT-36 端到端口径"
   ],
-  "note": "DTB §2.9 行逐一对应。前置 WP-19-T12（直线传动选型层——已 done，selection.md §19.5 v1.5 落位登记：选型层已落位执行、产品链正式计算仍阻断＝MDL-12-S1 不随动仍 R2，本契约即该承接位）；\"WP-15/16/17/19 对应扩展\"为跨域协作依赖（混合链端到端各域扩展），非单一契约前置。P-KIN-2（RuntimeSnapshot 注入——O-37 已裁决宿主注入形态）与 P-SEL-1（dt.mapping 组合集载荷对齐提议契约）为端到端消费面的已登记语义。modeling 卡 §1.1\"R2 条目（MDL-18/21、MDL-12-S1）只设计边界不实现\"的边界由本任务解除。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.9 行逐一对应。前置 WP-19-T12（直线传动选型层——已 done，selection.md §19.5 v1.5 落位登记：选型层已落位执行、产品链正式计算仍阻断＝MDL-12-S1 不随动仍 R2，本契约即该承接位）；\"WP-15/16/17/19 对应扩展\"为跨域协作依赖（混合链端到端各域扩展），非单一契约前置。P-KIN-2（RuntimeSnapshot 注入——O-37 已裁决宿主注入形态）与 P-SEL-1（dt.mapping 组合集载荷对齐提议契约）为端到端消费面的已登记语义。modeling 卡 §1.1\"R2 条目（MDL-18/21、MDL-12-S1）只设计边界不实现\"的边界由本任务解除。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【GOV-MDL12-UNFROZEN 批 2026-10-13】R2 解冻——status planned→ready（放行依据＝所有者 2026-10-13『MDL-12-S1 解冻并纳入 M6 收口』指令）；前置 WP-19-T12 已 done 满足；补齐 ready 必备字段 forbiddenFiles（主文档禁改面〔REQUIREMENTS.md 例外在册——§2.1 支持矩阵同步为本卡既定交付〕＋跨域单元源码禁改——混合链各域扩展归 WP-15/16/17/19 对应契约）；本翻牌与 REQUIREMENTS MDL-12-S1 行/modeling 卡/DTB §2.14 行解冻注同批（GOV-MDL12-UNFROZEN）。branch=wp13-t19。。"
 }
