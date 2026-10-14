@@ -662,14 +662,15 @@ bool executeModelingCommand(const std::string& commandId,
                     .arg(session.draft.changes.size()));
             if (!proceed) { return false; }
         }
-        // 模板选择（UI-T63——此前硬编码 generic-6r 重种子；R1 合规创建面
-        // ＝generic-6r 种子 或 custom-chain 六轴全旋转逐轴声明。4/5 轴与
-        // 含 prismatic 链仍受 creationEntryGuard 红线约束〔AT-20/§6.4〕，
-        // 本命令不新增放行）。
+        // 模板选择（UI-T63——此前硬编码 generic-6r 重种子；创建面
+        // ＝generic-6r 种子 或 custom-chain 六轴全旋转逐轴声明。MDL-12-S1
+        // （WP-13-T19）后：4/5 轴仍受 creationEntryGuard 阻断〔AT-20/§6.4〕；
+        // 六/七轴含 prismatic 已随启用位放开（守卫按 kHybridChainStage
+        // 判定）——本向导声明面仍全旋转，混合链经导入通道进入）。
         const auto picked = host.chooseItem(
             QStringLiteral("从模板新建"),
-            QStringLiteral("选择模板（R1 合规创建面——4/5 轴与含 prismatic 链"
-                           "受创建入口守卫约束）"),
+            QStringLiteral("选择模板（4/5 轴受创建入口守卫阻断；混合链经"
+                           "导入通道——MDL-12-S1）"),
             QStringList{QStringLiteral("六轴通用串联（generic-6r——T-MDL-1 种子）"),
                         QStringLiteral("自定义链（custom-chain——六轴逐轴声明，"
                                        "全旋转，Origin 位置＋RPY 从零定义）")});

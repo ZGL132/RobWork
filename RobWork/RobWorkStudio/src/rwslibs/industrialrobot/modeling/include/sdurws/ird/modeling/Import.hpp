@@ -394,19 +394,55 @@ struct ImportBranchItem {
 };
 
 /**
+ * @brief 混合链（六/七轴含 prismatic）启用阶段位——MDL-12-S1 判定入参
+ *        （单元卡 §12.2 预留"判定函数参数化启用位（enablement token）"
+ *        的落位形态；WP-13-T19）。
+ *
+ * 两值语义（表尾追加纪律——既有 ChainCapabilityKind 词表不动）：
+ *   - R1Locked＝历史阶段值：含 prismatic 链一律范围外（v0.49 前的唯一
+ *     行为；该值不删除——测试钉扎与语义回退面保留，历史口径可复验）；
+ *   - R2Enabled＝MDL-12-S1 启用：六/七轴含 prismatic 链放开正式计算/
+ *     报告。启用前提 SEL-09-S1 已 done（WP-19-T12——selection.md §19.5
+ *     v1.5 直线传动选型层落位）；4/5 轴不因本子项放开（REQUIREMENTS
+ *     MDL-12-S1 原文"仍走需求变更"——DTB §2.14 行禁止项）。
+ *
+ * 启用依据＝需求所有者 2026-10-13『MDL-12-S1 解冻并纳入 M6 收口』指令
+ * （REQUIREMENTS v1.21 解冻登记；承载契约 tasks/foundation/WP-13-T19）。
+ */
+enum class HybridChainStage {
+    R1Locked,    ///< R1：prismatic 不参与放开（历史阶段值——测试与回退面）
+    R2Enabled,   ///< R2（MDL-12-S1）：六/七轴含 prismatic 放开（4/5 轴仍范围外）
+};
+
+/**
+ * @brief 产品当前混合链阶段——单点常量（判定启用位的唯一决定点）。
+ *
+ * 为什么是常量而不是运行时装配参数：同单元 couplingStage（Parts.hpp，
+ * 默认 R1Locked）是"阶段 D 启动裁决待下"的运行时装配位；混合链启用
+ * 本身就是本卡交付（所有者已裁决），不存在"待装配决定"的中间态——
+ * 若做成默认关的运行时参数而无装配方置位，"放开"即成空文。单点常量
+ * 保证"启用位在哪里决定"有唯一答案（检索 kHybridChainStage 可见全部
+ * 判定入口）；如需回退只改此一处并走需求变更。判定函数第二参**不设
+ * 默认值**——每个调用点显式传参，杜绝"漏传静默回 R1"的半启用状态。
+ */
+inline constexpr HybridChainStage kHybridChainStage = HybridChainStage::R2Enabled;
+
+/**
  * @brief 主链能力结论类别（§6.4 维度二能力矩阵的结论面——判定实现为
  *        导入映射的纯函数部分，同一判定被模板创建入口复用（卡 §6.4））。
  *
  * 词表两值（表尾追加纪律）：FullTemplateRange＝六/七轴全旋转（含经确认
- * 工程工作范围的 continuous，类型保留）——模板/识别/编辑/正式计算全通；
- * BeyondTemplateRange＝4/5 轴或目标链含 prismatic（及不在六/七轴表述内
- * 的其它轴数）——导入识别与草稿兼容编辑通过，模板创建与正式计算/报告
- * 阻断（诊断"超出首版产品模板范围"；R1；MDL-12-S1 启用后仅六/七轴含
- * prismatic 放开）。mimic/planar/floating 不产生能力结论（阻断型失败
- * ——UnsupportedJointType 无草稿／mimic 阻断提交）。
+ * 工程工作范围的 continuous，类型保留），MDL-12-S1（R2Enabled）启用后
+ * 兼指六/七轴含 prismatic 的混合链——模板/识别/编辑/正式计算/报告全通；
+ * BeyondTemplateRange＝4/5 轴（含或不含 prismatic）及不在六/七轴表述内
+ * 的其它轴数——导入识别与草稿兼容编辑通过，模板创建与正式计算/报告
+ * 阻断（诊断"超出首版产品模板范围"；MDL-12-S1 已启用而 4/5 轴不因本
+ * 子项放开——REQUIREMENTS"仍走需求变更"）。mimic/planar/floating 不
+ * 产生能力结论（阻断型失败——UnsupportedJointType 无草稿／mimic 阻断
+ * 提交）。
  */
 enum class ChainCapabilityKind {
-    FullTemplateRange,     ///< 六/七轴全旋转——全能力
+    FullTemplateRange,     ///< 六/七轴全旋转（R2 兼指六/七轴含 prismatic 混合链）——全能力
     BeyondTemplateRange,   ///< 超出首版产品模板范围——草稿兼容编辑，模板/正式计算阻断
 };
 
@@ -414,8 +450,7 @@ enum class ChainCapabilityKind {
  * @brief 主链能力结论（所选主链的维度二判定结果——报告承载；"不静默
  *        降级关节类型"的类型保留面：prismatic 保持 Prismatic，本结论
  *        只界定能力边界不改写任何关节类型——V12-01）。
- */
-struct ChainCapability {
+ */struct ChainCapability {
     ChainCapabilityKind kind = ChainCapabilityKind::BeyondTemplateRange;  ///< 结论类别
     std::uint32_t movableAxes = 0;  ///< 主链可动关节数（revolute+continuous+prismatic；fixed 不计）
     bool containsPrismatic = false;  ///< 主链含 prismatic（单位 m 限位）
@@ -436,23 +471,31 @@ struct ChainCapability {
  *        mapUrdf 第九步内联逻辑提取，Import 与 Template 共用同一实现，
  *        不存在第二份判定）。
  *
- * 判定口径（与提取前 mapUrdf 第九步逐字一致——ImportTest 既有断言钉住）：
- * 可动关节数（revolute+continuous+prismatic；fixed 不计）∈{6,7} 且不含
- * prismatic→FullTemplateRange；其余（4/5 轴、含 prismatic、或不在六/七
- * 轴表述内的其它轴数——1~3 轴无模板语义同归范围外）→BeyondTemplateRange
- * （草稿兼容编辑通过，模板创建与正式计算/报告阻断；类型保留不降级
- * ——V12-01）。mimic/planar/floating 不进入本判定（阻断型失败在导入
+ * 判定口径（与提取前 mapUrdf 第九步逐字一致——ImportTest 既有断言钉住；
+ * MDL-12-S1 启用面为本卡增量）：
+ * 可动关节数（revolute+continuous+prismatic；fixed 不计）∈{6,7} 且满足
+ * 以下之一→FullTemplateRange：①不含 prismatic；②链含 prismatic 且
+ * stage==R2Enabled（MDL-12-S1 混合链放开——正式计算/报告放开，类型保留
+ * 不降级——V12-01）。其余（4/5 轴——含或不含 prismatic、1~3 轴无模板
+ * 语义同归范围外）→BeyondTemplateRange（草稿兼容编辑通过，模板创建与
+ * 正式计算/报告阻断）。**4/5 轴在任何 stage 都不放开**（REQUIREMENTS
+ * MDL-12-S1"4/5 轴不因本子项放开，仍走需求变更"——DTB §2.14 行禁止项）。
+ * stage==R1Locked 保持历史口径（prismatic 一票范围外——v0.49 前唯一行为，
+ * 测试钉扎保留）。mimic/planar/floating 不进入本判定（阻断型失败在导入
  * 映射更早的步骤处理——它们根本产生不了合法 JointType 序列）。
  *
  * @param chainTypes [in] 所选主链的逐轴类型序列（链序——下标即链序）；
  *                    空序列＝无可动链（movableAxes=0→BeyondTemplateRange，
  *                    reason 携带轴数表述）
+ * @param stage      [in] 混合链启用阶段位（无默认值——调用点显式传
+ *                    kHybridChainStage 单点常量或测试值，杜绝漏传半启用）
  * @return 能力结论（kind/movableAxes/containsPrismatic/reason 四字段全量；
  *         reason 为卡 §6.4 行语义的依据串，呈现归文案层）
  *
- * 纯函数；线程安全；确定性（NFR-COR-02：同序列同结论同 reason）。
+ * 纯函数；线程安全；确定性（NFR-COR-02：同序列＋同 stage→同结论同 reason）。
  */
-ChainCapability judgeChainCapability(const std::vector<JointType>& chainTypes);
+ChainCapability judgeChainCapability(const std::vector<JointType>& chainTypes,
+                                     HybridChainStage stage);
 
 /**
  * @brief 导入报告（§9.4.3 @post 全集——四清单＋待确认＋关节状态＋资源

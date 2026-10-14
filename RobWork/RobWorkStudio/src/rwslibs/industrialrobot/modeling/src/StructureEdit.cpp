@@ -298,7 +298,8 @@ std::optional<StructureEditError> resetToSixAxis(ModelingWorkingSet& ws)
     for (const JointEntry& j : rebuilt.joints) {
         chainTypes.push_back(j.type);
     }
-    if (judgeChainCapability(chainTypes).kind != ChainCapabilityKind::FullTemplateRange) {
+    if (judgeChainCapability(chainTypes, kHybridChainStage).kind
+        != ChainCapabilityKind::FullTemplateRange) {
         throw std::logic_error("modeling/structure/reset-6r: 六轴重建未通过"
                                "维度二判定（T-MDL-1 表与 §6.4 判定失一致——"
                                "实现缺陷）");

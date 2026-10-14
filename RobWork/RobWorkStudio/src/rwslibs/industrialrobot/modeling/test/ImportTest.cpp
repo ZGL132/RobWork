@@ -11,8 +11,11 @@
  *                零与非有限轴仅报告不提交）
  *           ACC4 链型判定两维度（§6.4/AT-17）：分支报告＋显式选链＋辅助
  *                分支候选不构成拒绝／mimic·planar·floating 阻断不转
- *                FixedFrame／4·5 轴与含 prismatic 主链能力结论＋诊断＋
- *                类型保留（V12-01）／continuous 工程工作范围待确认
+ *                FixedFrame／4·5 轴（与任何非六/七轴链）范围外结论＋诊断
+ *                ＋类型保留（V12-01）／continuous 工程工作范围待确认
+ *                〔WP-13-T19 增量：六/七轴含 prismatic 混合链随 MDL-12-S1
+ *                放行——FullTemplateRange＋无 TEMPLATE-RANGE 诊断；4/5 轴
+ *                反例仍阻断〕
  *           ACC5 确定性（同字节同选项同输出；诊断按源文件行序稳定排序
  *                ——NFR-COR-02）＋非法值原串保留（SourcedValue::invalid）
  *
@@ -1299,14 +1302,15 @@ TEST(MdlImport, FiveAxes_BeyondRange_DraftEditable_WP13T05_ACC4)
 }
 
 /**
- * 含 prismatic 主链（acceptance 4——"含 prismatic 主链→阻断＋诊断；不得
- * 静默降级关节类型（类型保留 V12-01）"）：6 关节五转一移→Beyond（原因
- * 含 prismatic）＋prismatic 类型原样入草稿。
+ * 六轴含 prismatic 混合链（MDL-12-S1——WP-13-T19 启用面）：五转一移
+ * （6 可动轴）→FullTemplateRange（正式计算/报告放开）＋无 TEMPLATE-RANGE
+ * 诊断＋prismatic 类型原样入草稿（类型保留 V12-01——本用例自 WP-13-T05
+ * ACC4 的 R1 阻断口径随 MDL-12-S1 语义演进重钉，翻转面有据）。
  */
-TEST(MdlImport, PrismaticInChain_BeyondRange_TypePreserved_WP13T05_ACC4)
+TEST(MdlImport, PrismaticInChain_HybridFullRange_WP13T19_AT36)
 {
-    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},
-                  std::vector<std::string>{"AT-17"});
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12-S1"},
+                  std::vector<std::string>{"AT-36", "AT-17"});
 
     const ModelImportMapper mapper;
     // 六关节链：j1..j5 revolute＋j6 prismatic（限位单位 m）——在五转链
@@ -1332,10 +1336,127 @@ TEST(MdlImport, PrismaticInChain_BeyondRange_TypePreserved_WP13T05_ACC4)
     EXPECT_DOUBLE_EQ(outcome.draft->joints[5].bounds.value().second, 0.5)
         << "prismatic 限位单位 m";
     EXPECT_EQ(outcome.report.chainCapability.kind,
-              sdurws::ird::modeling::ChainCapabilityKind::BeyondTemplateRange);
+              sdurws::ird::modeling::ChainCapabilityKind::FullTemplateRange)
+        << "MDL-12-S1：六轴含 prismatic 放开（正式计算/报告）";
+    EXPECT_EQ(outcome.report.chainCapability.movableAxes, 6U);
+    EXPECT_TRUE(outcome.report.chainCapability.containsPrismatic);
+    EXPECT_NE(outcome.report.chainCapability.reason.find("prismatic"), std::string::npos);
+    EXPECT_FALSE(hasDiag(diags, kMdlImportTemplateRange))
+        << "放开链不再产 TEMPLATE-RANGE 诊断";
+    EXPECT_TRUE(outcome.report.submittable);
+}
+
+/**
+ * 七轴含 prismatic 混合链（MDL-12-S1——"仅限六/七轴"的七轴半边）：六转
+ * 一移（7 可动轴）→FullTemplateRange＋无 TEMPLATE-RANGE 诊断。
+ */
+TEST(MdlImport, SevenAxesWithPrismatic_HybridFullRange_WP13T19_AT36)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12-S1"},
+                  std::vector<std::string>{"AT-36"});
+
+    const ModelImportMapper mapper;
+    const std::string base = makeRevoluteChainUrdf(6);
+    const std::size_t tail = base.rfind("</robot>");
+    ASSERT_NE(tail, std::string::npos);
+    const std::string urdf =
+        base.substr(0, tail)
+        + "  <link name=\"l7\"/>\n"
+          "  <joint name=\"j7\" type=\"prismatic\">\n"
+          "    <parent link=\"l6\"/>\n    <child link=\"l7\"/>\n"
+          "    <axis xyz=\"0 0 1\"/>\n"
+          "    <limit lower=\"-0.2\" upper=\"0.2\"/>\n"
+          "  </joint>\n</robot>\n";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+    ASSERT_EQ(outcome.draft->joints.size(), 7U);
+    EXPECT_EQ(outcome.report.chainCapability.kind,
+              sdurws::ird::modeling::ChainCapabilityKind::FullTemplateRange);
+    EXPECT_EQ(outcome.report.chainCapability.movableAxes, 7U);
+    EXPECT_TRUE(outcome.report.chainCapability.containsPrismatic);
+    EXPECT_FALSE(hasDiag(diags, kMdlImportTemplateRange));
+}
+
+/**
+ * 4 轴含 prismatic 反例（MDL-12-S1 禁止项——"4/5 轴不因本子项放开"，
+ * DTB §2.14 行）：三转一移（4 可动轴）→仍 BeyondTemplateRange＋
+ * TEMPLATE-RANGE 诊断＋reason 携带 prismatic 与不放开语义＋类型保留。
+ */
+TEST(MdlImport, FourAxesWithPrismatic_StillBlocked_WP13T19_AT36)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12-S1"},
+                  std::vector<std::string>{"AT-36", "AT-17"});
+
+    const ModelImportMapper mapper;
+    const std::string base = makeRevoluteChainUrdf(3);
+    const std::size_t tail = base.rfind("</robot>");
+    ASSERT_NE(tail, std::string::npos);
+    const std::string urdf =
+        base.substr(0, tail)
+        + "  <link name=\"l4\"/>\n"
+          "  <joint name=\"j4\" type=\"prismatic\">\n"
+          "    <parent link=\"l3\"/>\n    <child link=\"l4\"/>\n"
+          "    <axis xyz=\"0 0 1\"/>\n"
+          "    <limit lower=\"0\" upper=\"0.4\"/>\n"
+          "  </joint>\n</robot>\n";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value()) << "范围外链仍产草稿（兼容编辑）";
+    EXPECT_EQ(outcome.draft->joints[3].type,
+              sdurws::ird::modeling::JointType::Prismatic) << "类型保留 V12-01";
+    EXPECT_EQ(outcome.report.chainCapability.kind,
+              sdurws::ird::modeling::ChainCapabilityKind::BeyondTemplateRange)
+        << "4 轴不因 MDL-12-S1 放开（仅六/七轴）";
+    EXPECT_EQ(outcome.report.chainCapability.movableAxes, 4U);
     EXPECT_TRUE(outcome.report.chainCapability.containsPrismatic);
     EXPECT_NE(outcome.report.chainCapability.reason.find("prismatic"), std::string::npos);
     EXPECT_TRUE(hasDiag(diags, kMdlImportTemplateRange));
+    EXPECT_TRUE(outcome.report.submittable) << "草稿兼容编辑——不置不可提交";
+}
+
+/**
+ * 判定函数参数化钉（§12.2 预留 enablement token 的落位形态）：同一条
+ * 六轴含 prismatic 链在 R1Locked 下仍范围外（v0.49 前历史口径——阶段值
+ * 保留可复验），R2Enabled 下放开；4/5 轴在两个 stage 下同判范围外
+ * （禁止项不随参数化翻转）。
+ */
+TEST(MdlImport, HybridChainStage_Parameterization_R1KeepsBlocked_R2Unlocks_WP13T19)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12-S1"},
+                  std::vector<std::string>{"AT-36"});
+
+    using sdurws::ird::modeling::ChainCapabilityKind;
+    using sdurws::ird::modeling::HybridChainStage;
+    using sdurws::ird::modeling::judgeChainCapability;
+    // 六轴含 prismatic（5R＋1P）。
+    std::vector<sdurws::ird::modeling::JointType> hybrid(
+        5, sdurws::ird::modeling::JointType::Revolute);
+    hybrid.push_back(sdurws::ird::modeling::JointType::Prismatic);
+    const auto r1 = judgeChainCapability(hybrid, HybridChainStage::R1Locked);
+    EXPECT_EQ(r1.kind, ChainCapabilityKind::BeyondTemplateRange)
+        << "R1Locked：prismatic 一票范围外（历史口径）";
+    EXPECT_NE(r1.reason.find("R1"), std::string::npos) << "reason 如实区分 R1 成因";
+    const auto r2 = judgeChainCapability(hybrid, HybridChainStage::R2Enabled);
+    EXPECT_EQ(r2.kind, ChainCapabilityKind::FullTemplateRange)
+        << "R2Enabled：MDL-12-S1 放开";
+    EXPECT_EQ(r2.movableAxes, r1.movableAxes) << "轴数事实与 stage 无关";
+    EXPECT_TRUE(r2.containsPrismatic);
+    // 4/5 轴反例在两个 stage 下同判（禁止项）。
+    const std::vector<sdurws::ird::modeling::JointType> fiveAxis(
+        5, sdurws::ird::modeling::JointType::Revolute);
+    EXPECT_EQ(judgeChainCapability(fiveAxis, HybridChainStage::R1Locked).kind,
+              ChainCapabilityKind::BeyondTemplateRange);
+    EXPECT_EQ(judgeChainCapability(fiveAxis, HybridChainStage::R2Enabled).kind,
+              ChainCapabilityKind::BeyondTemplateRange)
+        << "4/5 轴不因 R2Enabled 放开（REQUIREMENTS MDL-12-S1）";
+    // 全旋转六轴在两个 stage 下同判全能力（stage 只作用于含 prismatic 族）。
+    const std::vector<sdurws::ird::modeling::JointType> sixRevolute(
+        6, sdurws::ird::modeling::JointType::Revolute);
+    EXPECT_EQ(judgeChainCapability(sixRevolute, HybridChainStage::R1Locked).kind,
+              ChainCapabilityKind::FullTemplateRange);
+    EXPECT_EQ(judgeChainCapability(sixRevolute, HybridChainStage::R2Enabled).kind,
+              ChainCapabilityKind::FullTemplateRange);
 }
 
 /**

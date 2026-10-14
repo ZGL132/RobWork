@@ -1638,7 +1638,8 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
     std::vector<JointType> chainTypes;
     chainTypes.reserve(draft.joints.size());
     for (const JointEntry& j : draft.joints) { chainTypes.push_back(j.type); }
-    outcome.report.chainCapability = judgeChainCapability(chainTypes);
+    outcome.report.chainCapability =
+        judgeChainCapability(chainTypes, kHybridChainStage);
     if (outcome.report.chainCapability.kind == ChainCapabilityKind::BeyondTemplateRange) {
         pushWcDiag(diagEntries, diagSeq++, kMdlImportTemplateRange, core::ObjectId{},
                    "",
@@ -1647,7 +1648,8 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
                        + (outcome.report.chainCapability.containsPrismatic ? "yes"
                                                                            : "no"),
                    "草稿兼容编辑可用；模板创建与正式计算/报告阻断"
-                       "（MDL-IMPORT-TEMPLATE-RANGE）",
+                       "（MDL-12-S1 已启用——仅六/七轴含 prismatic 放开，4/5 轴"
+                       "仍范围外；MDL-IMPORT-TEMPLATE-RANGE）",
                    selected->span);
     }
 

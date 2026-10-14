@@ -58,9 +58,11 @@ namespace sdurws::ird::modeling {
 /**
  * @brief custom-chain 单轴声明值（UI-T63——从零创建面的表单行载体；纯值）。
  *
- * R1 合规创建面＝六轴全旋转：类型不入本载体（种子恒 Revolute——prismatic/
- * continuous/fixed 的创建声明受 creationEntryGuard 需求分期红线约束，归
- * 所有者裁决通道）。单位：轴线无量纲、零位/限位随关节类型（rad）——
+ * R1 合规创建面＝六轴全旋转：类型不入本载体（种子恒 Revolute）。混合链
+ * 语义门已随 MDL-12-S1（WP-13-T19）放开——六/七轴含 prismatic 声明链
+ * 经 creationEntryGuard 放行；本向导声明面仍全旋转（prismatic 声明 UI
+ * 扩展随 UI 域任务），4/5 轴仍受守卫阻断（REQUIREMENTS"仍走需求变更"）。
+ * 单位：轴线无量纲、零位/限位随关节类型（rad）——
  * Origin 平移 m／姿态 rad（ZYX）。
  */
 struct CustomChainJointSpec {
@@ -125,9 +127,10 @@ struct ModelingDialogHost {
      * @brief custom-chain 六轴声明表单（UI-T63——从零创建面；nullopt＝取消）。
      *
      * 生产＝Qt 模态表单（六行×[类型锁 Revolute｜轴线 xyz｜零位｜限位下/上限｜
-     * Origin xyz/r/p/y]——R1 合规创建面＝六轴全旋转，4/5 轴与含 prismatic
-     * 链的创建确认仍受 creationEntryGuard 红线约束〔需求分期口径，本批不
-     * 触〕）；替身＝测试缝预置应答。seedDefaults＝表单预填种子（T-MDL-1
+     * Origin xyz/r/p/y]——本向导声明面＝六轴全旋转；4/5 轴仍受
+     * creationEntryGuard 阻断，六/七轴含 prismatic 已随 MDL-12-S1
+     * （WP-13-T19）放开而本表单不产该声明——UI 扩展随 UI 域任务）；
+     * 替身＝测试缝预置应答。seedDefaults＝表单预填种子（T-MDL-1
      * J1 行——sixAxisTemplateDefaults().front() 单一权威）。
      */
     virtual std::optional<std::vector<CustomChainJointSpec>> declareCustomChain(

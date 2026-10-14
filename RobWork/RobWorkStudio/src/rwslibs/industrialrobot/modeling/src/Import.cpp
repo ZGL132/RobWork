@@ -537,18 +537,22 @@ void collectDisableCollisions(const pugi::xml_node& node,
 // =====================================================================
 // 维度二链型能力判定——单一纯函数实现（§6.4；WP-13-T07 从 mapUrdf 第九步
 // 内联逻辑提取：导入报告与模板创建入口共用同一判定，卡 §6.4 尾段原文
-// "同一判定被模板创建入口复用（§2.1 创建列）"的落地面。判定口径与提取前
-// 逐字一致——reason 串被 ImportTest 既有断言（"4/5"/"prismatic"子串）
-// 钉住，本函数只做搬移不改语义）。
+// "同一判定被模板创建入口复用（§2.1 创建列）"的落地面。WP-13-T19 起带
+// 混合链启用位 stage（§12.2 预留 enablement token 的落位形态）——产品
+// 调用点一律传 kHybridChainStage 单点常量（Import.hpp）。
 // =====================================================================
 
-ChainCapability judgeChainCapability(const std::vector<JointType>& chainTypes)
+ChainCapability judgeChainCapability(const std::vector<JointType>& chainTypes,
+                                     HybridChainStage stage)
 {
     // 判定口径（§6.4 能力矩阵）：可动关节数（revolute+continuous+prismatic；
-    // fixed 不计——fixed 连接不构成可动轴）∈{6,7} 且不含 prismatic→全能力；
-    // 其余（4/5 轴、含 prismatic、1~3 轴等其它表述）→超出首版产品模板范围
-    // （类型保留不降级——V12-01；R1；MDL-12-S1 启用后仅六/七轴含 prismatic
-    // 放开）。
+    // fixed 不计——fixed 连接不构成可动轴）∈{6,7}，且不含 prismatic，或
+    // 含 prismatic 但 stage==R2Enabled（MDL-12-S1 混合链放开——前提
+    // SEL-09-S1 已 done，WP-19-T12 选型层落位）→全能力；其余（4/5 轴、
+    // 1~3 轴等其它表述）→超出首版产品模板范围（类型保留不降级——
+    // V12-01）。4/5 轴在任何 stage 都不放开（REQUIREMENTS MDL-12-S1
+    // "4/5 轴不因本子项放开，仍走需求变更"——DTB §2.14 行禁止项）；
+    // R1Locked 保持 v0.49 前历史口径（prismatic 一票范围外——测试钉扎）。
     std::uint32_t movableAxes = 0;
     bool prismaticPresent = false;
     for (const JointType type : chainTypes) {
@@ -559,22 +563,45 @@ ChainCapability judgeChainCapability(const std::vector<JointType>& chainTypes)
         }
         if (type == JointType::Prismatic) { prismaticPresent = true; }
     }
-    const bool fullRange = (movableAxes == 6 || movableAxes == 7) && !prismaticPresent;
+    // MDL-12-S1 启用位只作用于"六/七轴＋prismatic"这一族：轴数不在六/七
+    // 轴的链（含 4/5 轴反例）不因 stage 翻转——需求原文的放开边界。
+    const bool hybridUnlocked = (stage == HybridChainStage::R2Enabled);
+    const bool fullRange = (movableAxes == 6 || movableAxes == 7)
+                           && (!prismaticPresent || hybridUnlocked);
 
     ChainCapability capability;
     capability.movableAxes = movableAxes;
     capability.containsPrismatic = prismaticPresent;
     if (fullRange) {
         capability.kind = ChainCapabilityKind::FullTemplateRange;
-        capability.reason =
-            "六/七轴全旋转（含经确认工程工作范围的 continuous，类型保留）"
-            "——模板/识别/编辑/正式计算全通（§6.4 能力矩阵第一行）";
+        if (prismaticPresent) {
+            // R2 新增分支：六/七轴含 prismatic 混合链（MDL-12-S1 启用后
+            // 正式计算/报告放开；R1Locked 下到不了这里——fullRange 已排除）。
+            capability.reason =
+                "六/七轴含 prismatic 混合链（MDL-12-S1 已启用——正式计算/"
+                "报告放开；类型保留——V12-01；§6.4 能力矩阵 R2 口径）";
+        } else {
+            capability.reason =
+                "六/七轴全旋转（含经确认工程工作范围的 continuous，类型保留）"
+                "——模板/识别/编辑/正式计算全通（§6.4 能力矩阵第一行）";
+        }
     } else {
         capability.kind = ChainCapabilityKind::BeyondTemplateRange;
         if (prismaticPresent) {
-            capability.reason =
-                "目标链含 prismatic——超出首版产品模板范围（R1；"
-                "MDL-12-S1 启用后仅六/七轴含 prismatic 放开）";
+            // R2 后此分支只在"轴数不在六/七轴且含 prismatic"可达（六/七轴
+            // 含 prismatic 已被 fullRange 吸收；R1Locked 下六/七轴含
+            // prismatic 也落此分支——reason 如实区分两种成因）。
+            if (stage == HybridChainStage::R1Locked
+                && (movableAxes == 6 || movableAxes == 7)) {
+                capability.reason =
+                    "目标链含 prismatic——R1 阶段口径范围外（MDL-12-S1 "
+                    "R2Enabled 启用后六/七轴含 prismatic 放开）";
+            } else {
+                capability.reason =
+                    "目标链含 prismatic 且可动轴数 " + std::to_string(movableAxes)
+                    + " 不在六/七轴——MDL-12-S1 仅放开六/七轴含 prismatic 链"
+                      "（4/5 轴不因本子项放开，仍走需求变更）";
+            }
         } else if (movableAxes == 4 || movableAxes == 5) {
             capability.reason =
                 "4/5 轴——超出首版产品模板范围（仅导入识别与草稿兼容编辑）";
@@ -2308,7 +2335,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
     // 第九步：维度二链型能力判定（§6.4 能力矩阵——所选主链）＋阻断面汇总
     // ＋出口（诊断稳定排序）。判定本体已提取为公共纯函数
     // judgeChainCapability（§6.4 尾段"同一判定被模板创建入口复用"——
-    // WP-13-T07 提取，Import/Template 单一实现；口径与提取前逐字一致）。
+    // WP-13-T07 提取，Import/Template 单一实现；WP-13-T19 起显式传
+    // kHybridChainStage——MDL-12-S1 混合链启用位，Import.hpp 单点）。
     // mimic/planar/floating 不产生能力结论（阻断型失败在前——见
     // outcome.error）。
     // -----------------------------------------------------------------
@@ -2318,10 +2346,12 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
         for (const JointEntry& joint : draft.joints) {
             chainTypes.push_back(joint.type);
         }
-        report.chainCapability = judgeChainCapability(chainTypes);
+        report.chainCapability = judgeChainCapability(chainTypes, kHybridChainStage);
         if (report.chainCapability.kind == ChainCapabilityKind::BeyondTemplateRange) {
             // TEMPLATE-RANGE info 诊断（能力边界结论——InfeasibilityProof
-            // 族；reportability 保证范围外链的导入留痕可追溯）。
+            // 族；reportability 保证范围外链的导入留痕可追溯）。R2 后该
+            // 诊断只在轴数不在六/七轴的链产生（六/七轴含 prismatic 已随
+            // MDL-12-S1 放开——不再产诊断）。
             pushImportDiag(diagEntries, diagSeq++, kMdlImportTemplateRange,
                            draft.joints.empty()
                                ? core::ObjectId{}
@@ -2332,8 +2362,9 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                                + std::to_string(report.chainCapability.movableAxes)
                                + " prismatic-present="
                                + (report.chainCapability.containsPrismatic ? "true" : "false"),
-                           "草稿兼容编辑可用；模板创建与正式计算/报告将被阻断"
-                           "（类型保留，不静默降级——V12-01）",
+                           "草稿兼容编辑可用；模板创建与正式计算/报告阻断"
+                           "（MDL-12-S1 已启用——仅六/七轴含 prismatic 放开，"
+                           "4/5 轴仍范围外；类型保留，不静默降级——V12-01）",
                            scan.robotSpan);
         }
     }
