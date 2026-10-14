@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现联合硬约束与并行/检查点规模化",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-21-T03",
     "EX-T06",
@@ -24,6 +24,12 @@
     "RobWork/doc/industrial-robot-design/units/optimization.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
   ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+  ],
   "outputs": [
     "implementation",
     "unit-tests",
@@ -41,5 +47,5 @@
   "acceptance": [
     "轨迹/动力/器件联合硬约束＋完整并行评估与检查点恢复；并行与检查点恢复统计不重复（AT-35）；八项指标全量可算用例通过"
   ],
-  "note": "DTB §2.22 行逐一对应。DTB 前置\"WP-08-T07/T09\"≙EX-T06（worker 监督/通道——并行评估执行面）、EX-T08（检查点/缓存协调器）——≙ 映射按 execution.md §15.4 落位登记；\"WP-16/WP-17 评估器（③端口）\"为③端口消费协作（R-1 零编译依赖），不构成契约依赖——其批次契约（WP-16-T06/WP-17-T02 系）已落位。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）；本卡 status 维持 planned——待前置链闭合与独立评审放行（依赖诚实）。。"
+  "note": "DTB §2.22 行逐一对应。DTB 前置\"WP-08-T07/T09\"≙EX-T06（worker 监督/通道——并行评估执行面）、EX-T08（检查点/缓存协调器）——≙ 映射按 execution.md §15.4 落位登记；\"WP-16/WP-17 评估器（③端口）\"为③端口消费协作（R-1 零编译依赖），不构成契约依赖——其批次契约（WP-16-T06/WP-17-T02 系）已落位。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）；本卡 status 维持 planned——待前置链闭合与独立评审放行（依赖诚实）。。【ready 放行 2026-10-14】status planned→ready。放行依据＝所有者 2026-10-13「实现 M6 阶段收口」指令（本工作流批次放行）。前置链闭合核实：WP-21-T03 done（96eb27b3 合入，c42c405a 收尾批在主树 afd57b0f）、EX-T06 done（worker 监督/通道）、EX-T08 done（检查点/缓存协调器）——三契约均 done。判定阈值裁决如实登记：P-04 判定阈值两槽位（通过线/降级线）所有者裁定维持待定，未补充确认前 OPT-09 判定子项未冻结（WP-21-T05 不得启用）——本卡为联合硬约束执行件＋并行/检查点规模化面（OPT-03/06 D 部分），不产出任何鲁棒性判定结论、零阈值数值私设；P-04 冻结采样面值（0.01 默认/0.04 放宽上界——附录 C 表①）与本卡交付面无涉。补齐 ready 必备字段：forbiddenFiles（主文档四份——本卡改动面限 optimization/**＋units/optimization.md＋traceability/**）；designRefs 锚点复核在案（units/optimization.md#15＝§15 需求—设计—验证追踪矩阵；development-task-breakdown.md#2.22＝WP-21 任务卡表）；interUnit=true 复核在案（跨单元消费协作语义——③端口评估器组合＋execution 并行/检查点消费，R-1 零编译依赖；knownPitfalls P-OPT-9 已随 WP-21-T03 消账，保留登记指向其落位注）。branch=wp21-t04。"
 }
