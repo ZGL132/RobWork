@@ -163,10 +163,33 @@ public:
         }
     }
 
+    /**
+     * @brief 读取 u32 长度前缀字符串（string＝u32 字节长＋UTF-8 字节——
+     *        Codec.hpp 编码协议）。
+     *
+     * 边界语义：空串（len==0）合法且可在流的任意位置出现——编码端
+     * （putString）可产出空串，解码端必须对称回读（NFR-COR-02 同值对象
+     * 往返等值——encode/decode 闭合的前提）。
+     *
+     * @return 读出的字符串（流中字节的原样承载——本层不做 UTF-8 语义校验）
+     *
+     * @throws std::invalid_argument 流内剩余字节不足（require——调用方契约
+     *         违约 fail-fast）
+     */
     std::string getString()
     {
         const std::uint32_t len = getU32();
         require(len);
+        // F-795 守卫（流末空串形式 UB 消除）：require(n) 只核对 m_pos+n>
+        // size，对 len==0 恒过——而当 pos==size（流恰在串头耗尽）时，下方
+        // &m_bytes[m_pos] 是对 vector 的越界取址（operator[] 前置条件要求
+        // 下标 < size()，没有"仅取址不取值"豁免）：MSVC Debug 构建容器断
+        // 言崩、release 构建为形式 UB。空串不需要任何字节——直接返回空
+        // 串、不触碰 operator[]（回归用例
+        // DtMappingGolden.GetStringStreamEndEmptyGuard_F_795 钉扎）。
+        if (len == 0) {
+            return std::string();
+        }
         std::string s(reinterpret_cast<const char*>(&m_bytes[m_pos]), len);
         m_pos += len;
         return s;

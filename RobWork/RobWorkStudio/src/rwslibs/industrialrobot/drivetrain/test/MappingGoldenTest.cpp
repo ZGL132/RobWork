@@ -1199,6 +1199,75 @@ TEST(DtMappingGolden, CodecRoundtrip_WP18T03_ACC2)
 }
 
 // =====================================================================
+// F-795 回归：getString 流末空串（len==0）形式 UB 守卫
+// =====================================================================
+
+/**
+ * F-795（audit/round2-20261010/recheck-34-legacy.md §三 条目 #5——P1 存量
+ * 复核立卡）：ByteReader::getString（drivetrain/src/DriveTrainCodec.cpp）
+ * 先 require(len) 再以 &m_bytes[m_pos] 构造返回串——require 只查
+ * m_pos+n>size，对 len==0 恒过（任何 pos 都放行）；当流恰在串头耗尽
+ * （pos==size）时 &m_bytes[size()] 构成 vector 越界取址：MSVC Debug 构建
+ * 触发容器断言崩溃（_ITERATOR_DEBUG_LEVEL≥1 的 _STL_VERIFY 面），Release
+ * 构建为形式 UB（标准要求 operator[] 下标 < size()，没有"仅取址不取值"
+ * 的豁免）。
+ *
+ * 触发面＝编码端自产流（审计复核口径——无需伪造字节）：JointSeriesView
+ * 样本 segmentId 为空串时，encodeJointSeries 产出的流以 u32(0) 收尾，解
+ * 码同一条流即命中流末空串读。修复口径（fix-plan-e.md F-795「require 拒
+ * 绝或边界安全取址」择后者）：len==0 直接返回空串、不触碰 operator[]——
+ * 既消除越界取址，又保住"编码端可产空串、解码端必可回读"的往返闭合
+ * （若择 require 拒绝，编码端自产流将不可解码——破坏 NFR-COR-02 同值对
+ * 象往返等值语义，与上方 CodecRoundtrip 口径冲突）。
+ *
+ * 本用例双面钉扎：①流末空串（缺陷面——修复前必红）；②流中段空串
+ * （pos<size 合法面——防"过度修复"把空串一律拒绝）。
+ *
+ * 红/绿判据运行环境（诚实登记）：越界取址在 MSVC Debug 构建下必崩、在
+ * Release 下无可观察行为差异——本用例的"修复前必红"证据以 Debug 配置
+ * 运行为准（冒烟树为多配置 VS 生成器：cmake --build _smoke --config
+ * Debug；红绿日志见 build/e2-dt-f795-wt/_e2-evidence/）。Debug 构建的
+ * CRT 断言通道由本单元测试入口 TestMainReport.cpp 统一重定向到 stderr
+ * （不弹窗挂起——含本用例修复前的容器断言与该 exe 退出期的既有堆断言
+ * 噪声两类的无头化，详见该文件头 F-795 段）。
+ */
+TEST(DtMappingGolden, GetStringStreamEndEmptyGuard_F_795)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-COR-02", "CON-04"},
+                  std::vector<std::string>{});
+
+    // ---- ①流末空串（F-795 缺陷面）：两样本 segmentId 均为空串——解码时
+    // 首样本空串在流中段（pos<size，合法域）、末样本空串恰在流末
+    // （pos==size，缺陷点）。修复前：末样本 getString 走 &m_bytes[size()]
+    // 越界取址——MSVC Debug 断言崩（本用例红）；修复后：len==0 守卫直取
+    // 空串，回读等值（NFR-COR-02 往返闭合）。
+    dt::JointSeriesView streamEndEmpty
+        = sineSeries(1, 0.1, 6.283185307179586, {0.0, 0.5}, 2.0, "");
+    const auto endBytes = dt::encodeJointSeries(streamEndEmpty); // 编码端自产流
+    ASSERT_GE(endBytes.size(), 4U);
+    // 流末 4 字节＝空串长度 u32(0)（小端）——"流末空串形式"的字节级钉扎
+    // （证明触发形态确实由编码端产出、非伪造字节流）。
+    EXPECT_EQ(endBytes[endBytes.size() - 4], std::uint8_t{0});
+    EXPECT_EQ(endBytes[endBytes.size() - 3], std::uint8_t{0});
+    EXPECT_EQ(endBytes[endBytes.size() - 2], std::uint8_t{0});
+    EXPECT_EQ(endBytes[endBytes.size() - 1], std::uint8_t{0});
+    const dt::JointSeriesView endBack = dt::decodeJointSeries(endBytes);
+    EXPECT_EQ(endBack, streamEndEmpty);
+
+    // ---- ②流中段空串（防过度修复面）：首样本空串、末样本非空——空串读
+    // 发生在 pos<size（operator[] 合法域）。无论是否修复，本组断言都必须
+    // 通过：守卫只消除越界取址，不得误拒合法空串（误拒即编码端自产流不
+    // 可解码——NFR-COR-02 往返闭合的破坏面）。
+    dt::JointSeriesView midStreamEmpty
+        = sineSeries(1, 0.1, 6.283185307179586, {0.0, 0.5}, 2.0, "seg-tail");
+    ASSERT_FALSE(midStreamEmpty.samples.empty());
+    midStreamEmpty.samples.front().segmentId.clear(); // 仅首样本清空（非流末）
+    const auto midBytes = dt::encodeJointSeries(midStreamEmpty);
+    const dt::JointSeriesView midBack = dt::decodeJointSeries(midBytes);
+    EXPECT_EQ(midBack, midStreamEmpty);
+}
+
+// =====================================================================
 // Facts DTO 提取（§13.6——只含事实；D-DT-10 命名边界）
 // =====================================================================
 
