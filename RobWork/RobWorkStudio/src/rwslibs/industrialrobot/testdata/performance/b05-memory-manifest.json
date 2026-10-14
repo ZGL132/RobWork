@@ -1,0 +1,56 @@
+{
+  "datasetId": "ird-perf-b05-memory",
+  "version": "1",
+  "kind": "performance-baseline",
+  "title": "B-05 内存与节流规模化基准驱动参数与测量口径（WP-23-T06 冻结）",
+  "baselineRef": "performance-baseline.md#2-B-05",
+  "requirementRef": "REQUIREMENTS.md#19.3-NFR-PERF-04",
+  "consumer": "sdurws_ird_execution_perf_test（execution/perf_test/MemoryThrottleBenchmarkTest.cpp）",
+  "generator": {
+    "identity": "memoryThrottleRig",
+    "driver": "真实 WorkerSupervisor＋真实独立 worker 进程（sdurws_ird_execution_worker 阶段 A 脚本替身评估器）＋生产采样链（ResourceController＋SupervisorMemorySampler——EX-T07 落位件：MemProbe 三探针〔系统/主进程工作集〕＋监督器作业内存合计）；驱动线程 poll 周期 10 ms、采样间隔 10 ms（ResourceController Config::sampleInterval——实现参数）；装配同步锚点＝DispatchAccepted 事件（WP-23-T03 同款）",
+    "largeTaskScript": "stage-a-script:v1 / checkpoint 1 / batches 100000 / checkpoint 2 / final（大任务管线三机制：检查点×2 经 CheckpointCoordinator 真实落盘、ResultBatch 10 万条流式回传、FinalOutput 正常终结；退出码 0）",
+    "evaluatorKey": "stage-a-double",
+    "manifestDigestInput": "stage-a-double|1|7",
+    "checkpointArchive": "归档端口＝测试面真实写盘替身（DiskArchivePort——批次字节与 manifest.json 真实落盘；project 存储白名单校验语义不在测量面）；检查点经 CheckpointCoordinator 正式发布"
+  },
+  "measurementProtocol": {
+    "statisticClass": "内存阈值类判定（performance-baseline §2 统计口径区分——非 P95 类，禁以分位数表述达标）",
+    "verdictStatistic": "有效样本最大值（全样本须达标）：逐样本合计峰值占比 ≤0.70；P95/最小值一并报告仅作分布参考",
+    "samplePlan": "大任务腿：1 次预热（剔除）＋15 有效样本；逐样本 fresh worker 进程（独立 Job Scope——作业峰值不跨样本累积）",
+    "sampleSizeNote": "协议 §4.2 的『每组有效样本 ≥15』下限系 P95 分组特有；本基准按同数自律取 15（WP-23-T02/T03 先例）",
+    "aggregateConvention": "合计口径（performance-baseline §4.7）＝主进程工作集（GetProcessMemoryInfo 当前值——峰值取采样序列最大）＋全部 worker 作业内存（QueryInformationJobObject PeakJobMemoryUsed——单调不回落，天然覆盖工作进程峰值与主进程并存时刻）；合计占比＝(主＋worker)/物理内存总量",
+    "samplingCoverage": "10 ms 采样间隔；每有效样本采样点数 ≥5（覆盖度下限——低于即峰值读数不可信记无效）",
+    "thresholds": { "maxMemoryRatio": 0.70, "throttleRatio": 0.65 },
+    "thresholdSource": "REQUIREMENTS NFR-PERF-04 原文（主进程与全部工作进程合计峰值内存默认不超过物理内存 70%——零私改）；65% 节流阈值＝units/execution.md §15.1 D-05 实现参数（非需求阈值）；判定与 ResourceBudget 消费默认值同源双钉（用例内 EXPECT_DOUBLE_EQ）",
+    "throttleOrderingLeg": {
+      "purpose": "『接近上限先节流再给资源不足诊断』时序语义判定（performance-baseline §4.7 明文归 WP-23-T06 用例承载）——判定统计量＝决策序列迹，非时延测量",
+      "sampler": "脚本占比采样器（units/execution.md §11 登记的 IMemorySampler 注入面——EX-RES-2 功能面同源接缝）；分母＝MemProbe querySystemMemory 真实探针（SupervisorMemorySampler 空池半区），字节定标 below=floor／at-above=ceil（整数定标防浮点边界翻转）",
+      "climbProfile": "0.60→0.649→0.650→0.699→0.700→0.710→0.690→0.640→0.705（物理内存占比，步进语义见 thresholds）",
+      "invariants": [
+        "①先节流后诊断：首次 Throttled（0.650 步）严格先于首次诊断（0.700 步）——§6.1『仍超限→诊断』的「仍」字时序不变量",
+        "②三段 ≥ 语义边界逐格钉扎：0.649 Normal／0.650 Throttled／0.699 Throttled／0.700 Exhausted",
+        "③节流带内零诊断＋持续 Exhausted 零重复——诊断只在进入 Exhausted 的边沿恰一次",
+        "④恢复语义：回落 Normal 撤销停派发；复耗尽（0.705）＝新一轮边沿（第二次诊断）",
+        "⑤诊断经 §3.3 注入 sink 外报恰一次每回合；比较型三要素（实际占比/上限 0.70/单位 \"1\"）字段完整",
+        "⑥阈值双钉：ResourceBudget 消费默认值 maxMemoryRatio==0.70／throttleRatio==0.65（判定与生产默认同源）"
+      ],
+      "sampleInterval": "ResourceController Config::sampleInterval=0（逐拍采样——Config 文档明载的测试对照面；本腿判定统计量为决策序列非时延）"
+    }
+  },
+  "equivalenceNotes": [
+    "worker 评估器＝阶段 A 脚本替身（execution.md §3.4 登记形态）——证明的是『合计计量口径覆盖主进程＋全部工作进程并存时刻』＋『分批/流式/检查点机制在大任务管线真实发生』，不是业务评估算法的内存画像；业务评估器的大内存场景归集成模式扩展测量挂点（首测报告 §7——集成构建由合入批执行）",
+    "NFR-PERF-04 原文的『缓存』机制面＝execution 缓存协调器（EX-T08 EX-CCH-1/2 用例）承载，随同套件 ctest 全绿佐证——DTB §2.24 本卡验收行明文为『大任务分批/流式/检查点＋先节流后诊断』，与腿一场景面一致",
+    "与功能用例分工：ResourceGovernanceTest EX-RES-2（脚本采样 fake＋ManualClock）证三段治理正确性；本基准腿一证真实内存峰值达标、腿二证先节流后诊断时序语义（真实 steady_clock 决策对象＋真实 DiagnosticRecord 构造）——两者互补不互替"
+  ],
+  "upgradeRule": "testkit.md §4.2.1——升级＝新建数据集或新 major 版本，不得原地改写；参数变更须换版本并留 history",
+  "history": [
+    {
+      "version": "1",
+      "date": "2026-10-14",
+      "note": "初版（WP-23-T06 实施段，分支 wp23-t06）：大任务腿脚本 checkpoint×2＋batches 100000＋final；采样间隔 10 ms；样本计划 1+15；阈值 0.70（NFR-PERF-04）/0.65（D-05）；节流时序腿攀升剖面九步"
+    }
+  ],
+  "frozenAt": "2026-10-14",
+  "frozenBy": "WP-23-T06（分支 wp23-t06）"
+}
