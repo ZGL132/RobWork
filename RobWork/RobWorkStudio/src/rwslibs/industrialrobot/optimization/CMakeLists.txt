@@ -120,7 +120,11 @@ add_library(sdurws_ird_optimization STATIC
     src/Run.cpp
     src/Applier.cpp
     src/Preflight.cpp
-    src/Export.cpp)
+    src/Export.cpp
+    # WP-21-T03 增列——分层联合策略（卡 §8.5 落位 TU：联合门面登记值
+    # 构造器/upstream.* 依赖链门面切片/内层六层执行序编排/StageD 组合
+    # 空间采样——JointStrategy.hpp 布局表对应行）：
+    src/JointStrategy.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -358,7 +362,13 @@ add_executable(sdurws_ird_optimization_test
     # 〔不可行不入可行集/审计计数/指标档案容差〕＋Pareto 集合等价经
     # SetMatchTraits 域侧特化＋显式容差支配翻转＋采用守卫两步语义与基线
     # 字节不变——acceptance 1/3，OPT-VER-122/130/132/143~145 黄金面）：
-    test/OptGoldenDatasetTest.cpp)
+    test/OptGoldenDatasetTest.cpp
+    # WP-21-T03 增列——分层联合策略套件（内层 Quick→Verified→器件匹配
+    # 反馈闭环〔§6.3 六层执行序/层间失败与搜索未果语义独立/D-13 模式
+    # 不升降级/逐域逐约束联合判定〕＋opt-joint-full 登记值逐字钉扎与
+    # upstream.* 门面切片身份传播〔OPT-VER-253〕＋StageD 组合空间采样
+    # 确定性——acceptance 1，OPT-VER-202/203~208/253 黄金面）：
+    test/JointStrategyTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
