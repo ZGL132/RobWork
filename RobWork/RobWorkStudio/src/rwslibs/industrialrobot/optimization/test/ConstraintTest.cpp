@@ -33,6 +33,7 @@
 #include <sdurws/ird/evidence/Snapshot.hpp>
 #include <sdurws/ird/evidence/Verdict.hpp>
 #include <sdurws/ird/optimization/DiagCodes.hpp>
+#include <sdurws/ird/optimization/JointStrategy.hpp>
 #include <sdurws/ird/optimization/Types.hpp>
 #include <sdurws/ird/optimization/Variable.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
@@ -494,22 +495,155 @@ TEST(OptConstraint, StageBPlanFollowsPipelineOrder_WP20T04_ACC1)
 // 阶段锁（acceptance 2——OPT-STAGE-LOCKED 不静默降级不呈现为候选淘汰）
 // =====================================================================
 
-TEST(OptConstraint, StageDConstraintRequestThrowsStageLocked_WP20T04_ACC2)
+TEST(OptConstraint, StageDConstraintPlanRegisteredFollowsJointPipeline_WP21T04_ACC1)
 {
-    IRD_TEST_INFO(std::vector<std::string>{"OPT-03"}, std::vector<std::string>{});
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-03", "OPT-06"},
+                  std::vector<std::string>{"AT-35"});
 
+    // 【WP-21-T04 落位】StageD 联合约束清单已登记（§6.3 R2 全序）——本
+    // 用例取代 WP-20-T04 时点的 StageDConstraintRequestThrowsStageLocked
+    // （彼时断言"清单未登记即拒"，其前置随 T04 联合清单落位而解除；阶段
+    // 锁语义的现行承载＝StaticHardConstraintPipeline StageD 拒绝〔下方
+    // PipelineStageDRequestThrowsStageLocked 用例，不变〕＋StageB 引用
+    // 联合族拒绝〔上方用例，不变〕）。
+    //
     // 接口路径（基类引用消费虚函数——WP-20-T03 B-1 教训钉扎）。
     const OptimizationConstraintProvider provider;
     const IOptimizationConstraintProvider& iface = provider;
-    // StageD 联合约束清单未随本任务登记（WP-21-T02 前置）——请求即抛。
+    const auto plan = iface.constraintsFor(OptimizationStage::StageD);
+    // §6.3 全序十八项＝R1 十项（§6.2 全序原样复用）＋联合段八项。
+    ASSERT_EQ(plan.size(), 18U);
+    // R1 段（§6.2 序——第一步"R1 静态约束（§6.2 全序）"）。
+    EXPECT_EQ(plan[0].constraintId, ConstraintId::InputPrecondition);
+    EXPECT_EQ(plan[6].constraintId, ConstraintId::JointLimit);
+    EXPECT_EQ(plan[9].constraintId, ConstraintId::StaticCollision);
+    // 联合段（§6.3 执行序——轨迹 Quick→Verified→动力学 Quick→Verified
+    // →dt 映射→sel 器件匹配→多工况覆盖→联合汇总）。
+    EXPECT_EQ(plan[10].constraintId, ConstraintId::TrajectoryQuick);
+    EXPECT_EQ(plan[11].constraintId, ConstraintId::TrajectoryVerified);
+    EXPECT_EQ(plan[12].constraintId, ConstraintId::DynamicsQuick);
+    EXPECT_EQ(plan[13].constraintId, ConstraintId::DynamicsVerified);
+    EXPECT_EQ(plan[14].constraintId, ConstraintId::DrivetrainMapping);
+    EXPECT_EQ(plan[15].constraintId, ConstraintId::DeviceMatching);
+    EXPECT_EQ(plan[16].constraintId, ConstraintId::MustCaseCoverage);
+    EXPECT_EQ(plan[17].constraintId, ConstraintId::JointSummary);
+    // 依据键：trj/dyn/dt/sel 四层填内层评估键（kInner* 登记值）；汇总两步
+    // 填依据标识 evidence.aggregate-verdict（非评估键）。
+    EXPECT_EQ(plan[10].evaluationKey, std::string(optimization::kInnerTrjPlanKey));
+    EXPECT_EQ(plan[11].evaluationKey, std::string(optimization::kInnerTrjPlanKey));
+    EXPECT_EQ(plan[12].evaluationKey, std::string(optimization::kInnerDynRneaKey));
+    EXPECT_EQ(plan[13].evaluationKey, std::string(optimization::kInnerDynRneaKey));
+    EXPECT_EQ(plan[14].evaluationKey, std::string(optimization::kInnerDtMappingKey));
+    EXPECT_EQ(plan[15].evaluationKey, std::string(optimization::kInnerSelCombinationKey));
+    EXPECT_EQ(plan[16].evaluationKey, "evidence.aggregate-verdict");
+    EXPECT_EQ(plan[17].evaluationKey, "evidence.aggregate-verdict");
+    // 稳定 token 词形（"opt.constraint.<slug>"——约束事实/淘汰原因书写面；
+    // 联合段 slug 冻结核对）。
+    EXPECT_EQ(std::string(optimization::toToken(ConstraintId::TrajectoryQuick)),
+              "opt.constraint.trajectory-quick");
+    EXPECT_EQ(std::string(optimization::toToken(ConstraintId::TrajectoryVerified)),
+              "opt.constraint.trajectory-verified");
+    EXPECT_EQ(std::string(optimization::toToken(ConstraintId::DynamicsQuick)),
+              "opt.constraint.dynamics-quick");
+    EXPECT_EQ(std::string(optimization::toToken(ConstraintId::DynamicsVerified)),
+              "opt.constraint.dynamics-verified");
+    EXPECT_EQ(std::string(optimization::toToken(ConstraintId::DrivetrainMapping)),
+              "opt.constraint.drivetrain-mapping");
+    EXPECT_EQ(std::string(optimization::toToken(ConstraintId::DeviceMatching)),
+              "opt.constraint.device-matching");
+    EXPECT_EQ(std::string(optimization::toToken(ConstraintId::MustCaseCoverage)),
+              "opt.constraint.must-case-coverage");
+    EXPECT_EQ(std::string(optimization::toToken(ConstraintId::JointSummary)),
+              "opt.constraint.joint-summary");
+    // 枚举表尾追加稳定性：联合段八值全部大于 R1 末值 StaticCollision
+    // （值一经交付不得改动/插入——表尾追加的历史留痕断言）。
+    for (std::size_t i = 10; i < 18; ++i) {
+        EXPECT_GT(static_cast<int>(plan[i].constraintId),
+                  static_cast<int>(ConstraintId::StaticCollision))
+            << "联合段枚举值必须表尾追加（下标 " << i << "）";
+    }
+    // 纯函数确定性：同调用恒同值（NFR-COR-02）。
+    const auto again = iface.constraintsFor(OptimizationStage::StageD);
+    ASSERT_EQ(again.size(), plan.size());
+    for (std::size_t i = 0; i < plan.size(); ++i) {
+        EXPECT_TRUE(again[i] == plan[i]) << "清单漂移（下标 " << i << "）";
+    }
+}
+
+TEST(OptConstraint, StageDJointFamilyResolutionExpandsExecutables_WP21T04_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-03"}, std::vector<std::string>{});
+
+    // StageD 激活集解析：联合家族 token 展开为其可执行项（§6.3 序），
+    // 汇总两步恒在；R1 token 按 §6.3 序过滤 R1 段。
+    const OptimizationConstraintProvider provider;
+    const IOptimizationConstraintProvider& iface = provider;
+    // ① 轨迹族 → TrajectoryQuick＋TrajectoryVerified 两执行项＋汇总两步。
+    {
+        const auto resolved = iface.resolveConstraintPlan(
+            OptimizationStage::StageD,
+            {std::string(optimization::toToken(
+                optimization::JointConstraintFamily::Trajectory))});
+        ASSERT_EQ(resolved.size(), 4U);
+        EXPECT_EQ(resolved[0].constraintId, ConstraintId::TrajectoryQuick);
+        EXPECT_EQ(resolved[1].constraintId, ConstraintId::TrajectoryVerified);
+        EXPECT_EQ(resolved[2].constraintId, ConstraintId::MustCaseCoverage);
+        EXPECT_EQ(resolved[3].constraintId, ConstraintId::JointSummary);
+    }
+    // ② 四族全引用 → 联合段八项（六执行项＋汇总两步恒在；R1 段仅按 R1
+    // token 过滤——未引用即不入清单；输出恒按 §6.3 序——输入顺序无关）。
+    {
+        const auto resolved = iface.resolveConstraintPlan(
+            OptimizationStage::StageD,
+            {std::string(optimization::toToken(optimization::JointConstraintFamily::DeviceJoint)),
+             std::string(optimization::toToken(optimization::JointConstraintFamily::Trajectory)),
+             std::string(optimization::toToken(optimization::JointConstraintFamily::Dynamics)),
+             std::string(optimization::toToken(
+                 optimization::JointConstraintFamily::DrivetrainPerformance))});
+        ASSERT_EQ(resolved.size(), 8U);
+        EXPECT_EQ(resolved[0].constraintId, ConstraintId::TrajectoryQuick);
+        EXPECT_EQ(resolved[1].constraintId, ConstraintId::TrajectoryVerified);
+        EXPECT_EQ(resolved[2].constraintId, ConstraintId::DynamicsQuick);
+        EXPECT_EQ(resolved[3].constraintId, ConstraintId::DynamicsVerified);
+        EXPECT_EQ(resolved[4].constraintId, ConstraintId::DrivetrainMapping);
+        EXPECT_EQ(resolved[5].constraintId, ConstraintId::DeviceMatching);
+        EXPECT_EQ(resolved[6].constraintId, ConstraintId::MustCaseCoverage);
+        EXPECT_EQ(resolved[7].constraintId, ConstraintId::JointSummary);
+        // 对照：空激活集＝缺省全启用（§6.3 全序十八项——R1 段全含）。
+        const auto full = iface.resolveConstraintPlan(OptimizationStage::StageD, {});
+        EXPECT_EQ(full.size(), 18U);
+    }
+    // ③ R1 token 与联合族混合：R1 段过滤＋联合段按族展开。
+    {
+        const auto resolved = iface.resolveConstraintPlan(
+            OptimizationStage::StageD,
+            {std::string(optimization::toToken(ConstraintId::JointLimit)),
+             std::string(optimization::toToken(optimization::JointConstraintFamily::DeviceJoint))});
+        ASSERT_EQ(resolved.size(), 4U);  // JointLimit＋DeviceMatching＋汇总两步
+        EXPECT_EQ(resolved[0].constraintId, ConstraintId::JointLimit);
+        EXPECT_EQ(resolved[1].constraintId, ConstraintId::DeviceMatching);
+        EXPECT_EQ(resolved[2].constraintId, ConstraintId::MustCaseCoverage);
+        EXPECT_EQ(resolved[3].constraintId, ConstraintId::JointSummary);
+    }
+}
+
+TEST(OptConstraint, StageDUnknownTokenStillInputInvalid_WP21T04_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-03"}, std::vector<std::string>{});
+
+    // StageD 未知 token 仍 OPT-INPUT-INVALID（②类语义分立——与 StageB
+    // 同一码面；联合清单登记不解锁任意书写）。
+    const OptimizationConstraintProvider provider;
+    const IOptimizationConstraintProvider& iface = provider;
     bool threw = false;
     try {
-        (void)iface.constraintsFor(OptimizationStage::StageD);
+        (void)iface.resolveConstraintPlan(OptimizationStage::StageD,
+                                          {"opt.constraint.not-a-word"});
     } catch (const OptimizationError& e) {
         threw = true;
-        EXPECT_EQ(e.stableCode(), std::string(optimization::kOptStageLocked));
+        EXPECT_EQ(e.stableCode(), std::string(optimization::kOptInputInvalid));
     }
-    EXPECT_TRUE(threw) << "StageD 约束请求必须 OPT-STAGE-LOCKED（§5.7/§6.5）";
+    EXPECT_TRUE(threw) << "StageD 未知约束 token 必须 OPT-INPUT-INVALID";
 }
 
 TEST(OptConstraint, StageBRequestingJointFamiliesThrowsStageLocked_WP20T04_ACC2)
