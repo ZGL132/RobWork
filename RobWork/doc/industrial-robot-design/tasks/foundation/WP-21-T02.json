@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "扩展 optimization 任务卡（OPT-D 部分）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-21-T01"
   ],
@@ -46,5 +46,5 @@
   "acceptance": [
     "units/optimization.md 增量修订（OPT-D 节）含：分层联合策略、并行/检查点规模化、鲁棒性三模式、暂停/继续边界、误淘汰审计口径；不新增架构机制（PA-7——ARCH §10.2 R2 无新机制核对）"
   ],
-  "note": "DTB §2.22 行逐一对应。DTB 前置\"WP-20-T01\"（编写 optimization 单元卡）全库无契约——该前置的事实面（units/optimization.md 已存在并迭代至 v0.x）已成立，如实登记不挂空依赖；P-OPT-9（OPT-D 联合评估键/upstream.* 依赖链登记）按 optimization 卡 §16.3\"随 WP-21-T02 冻结\"挂靠。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】前置 WP-21-T01 done（P-04 部分冻结落位）满足——status planned→ready；补齐 ready 必备字段 forbiddenFiles（主文档四份＋产品源码禁改——本卡为设计卡批，改动面限 units/optimization.md＋traceability）。本卡 dependsOn 仅 WP-21-T01（已 done）。branch=wp21-t02。。"
+  "note": "DTB §2.22 行逐一对应。DTB 前置\"WP-20-T01\"（编写 optimization 单元卡）全库无契约——该前置的事实面（units/optimization.md 已存在并迭代至 v0.x）已成立，如实登记不挂空依赖；P-OPT-9（OPT-D 联合评估键/upstream.* 依赖链登记）按 optimization 卡 §16.3\"随 WP-21-T02 冻结\"挂靠。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】前置 WP-21-T01 done（P-04 部分冻结落位）满足——status planned→ready；补齐 ready 必备字段 forbiddenFiles（主文档四份＋产品源码禁改——本卡为设计卡批，改动面限 units/optimization.md＋traceability）。本卡 dependsOn 仅 WP-21-T01（已 done）。branch=wp21-t02。【合入收尾 2026-10-13（合入收尾员，授权依据＝所有者 2026-10-13「实现 M6 阶段收口」指令——attempt 1 对抗式独立验收 PASS 后合入）】实现＝6e097f7224daef868e6aa21cc20cefcbfed5f6b1（origin/wp21-t02 单提交，基 1ff38c38＝主树头，恰 1 文件 units/optimization.md +63/−30）；attempt 1 独立对抗验收 PASS（记录 build/m6-acc/WP-21-T02-attempt1.md → 落库 traceability/acceptance/WP-21-T02-20261013.md）——4.1~4.11 全过零阻断：契约 verify 双 PASS、冒烟构建唯一错误为基线既有 ui_test C1083（91cda264 引入与本批无关，与申报一致）、optimization ctest 2/2（模型 173=172P+1S＋契约 49/49 亲跑）、ird_gates 恰 18 命中全为 WP-23 perf 面已登记项零新增、P-04 冻结值引用逐字零漂移且判定阈值两槽位零私设、变异 M1b/M2 翻红证验证器非恒真；建议级 G-1（§9.2:1104 引用范围差一号 OPT-VER-227）/G-2（§8.6:1056 部分冻结态转写供所有者复核）随记录转登不阻塞——誊登主树 findings.json 义务随治理批执行，本批 findings.json 零触碰（F-495 未动）。合并＝merge b38509bf（--no-ff 并入 redesign-main，零冲突）；合入批复测（主集成树亲跑，RWS_BUILD_INDUSTRIALROBOT=ON）：sdurws_ird_optimization_test/_contract_test 两目标构建零错误（BUILD_EXIT=0）＋ctest optimization 2/2 Passed（ird 标签 1.84 s，CTEST_EXIT=0）。status ready→done；本卡不动 DTB 版本行（收口声明批统一登记）。。"
 }
