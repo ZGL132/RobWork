@@ -409,30 +409,33 @@ public:
 // =====================================================================
 
 /**
- * @brief 创建入口链型能力守卫（acceptance 4"4/5 轴与含 prismatic 链创建
- *        入口阻止＋提示"——§6.4 能力矩阵"模板创建"列的实现）。
+ * @brief 创建入口链型能力守卫（§6.4 能力矩阵"模板创建"列的实现面；
+ *        MDL-12-S1（WP-13-T19）R2 口径——六/七轴含 prismatic 声明链
+ *        放行，4/5 轴仍阻止）。
  *
  * 调用时机（PM-01 创建流程）：向导在**创建确认**时以用户已声明/编辑完成
  * 的完整关节类型序列调用本函数——FullTemplateRange→放行（进入草稿落盘/
  * apply-robot-design）；BeyondTemplateRange→创建入口阻止（阻止动作由
  * 调用方执行：不放行、不落盘）并得到提示诊断（TEMPLATE-RANGE info，已
  * 追加入 diags）。custom-chain 的**种子**工作集不受本守卫约束（链未完成
- * ——逐轴添加期间轴数天然不在六/七轴范围；§5.1 custom-chain 为 R1 可用
+ * ——逐轴添加期间轴数天然不在六/七轴范围；§5.1 custom-chain 为可用
  * ——守卫只作用于"以该链进入正式创建"的时点）。
  *
  * 判定复用（§6.4 尾段原文）：结论唯一来自 Import.hpp 的
- * judgeChainCapability（单一实现——不存在第二份判定）；提示诊断复用
- * §9.5 T05 行 MDL-IMPORT-TEMPLATE-RANGE（同码同语义"超出首版产品模板
- * 范围"——不私定第二码）。
+ * judgeChainCapability（单一实现——不存在第二份判定），显式传
+ * kHybridChainStage 单点常量（MDL-12-S1 启用位——六/七轴含 prismatic
+ * 混合链放开的唯一决定点）；提示诊断复用 §9.5 T05 行
+ * MDL-IMPORT-TEMPLATE-RANGE（同码同语义"超出首版产品模板范围"——不私定
+ * 第二码）。
  *
  * @param declaredChain [in] 用户声明的完整关节类型序列（链序）
  * @param diags         [out] 诊断记录输出（追加不清空）。阻断时追加一条
  *                      MDL-IMPORT-TEMPLATE-RANGE（创建入口尚无对象——
  *                      subject 为空 optional，context 以"template-entry"
  *                      定位；放行时不追加）。
- * @return nullopt＝放行（六/七轴全旋转）；非空＝维度二结论（调用方据此
- *         阻止创建入口；kind/ movableAxes/containsPrismatic/reason 供
- *         向导提示呈现）
+ * @return nullopt＝放行（六/七轴全旋转，或 MDL-12-S1 放开的六/七轴含
+ *         prismatic 混合链）；非空＝维度二结论（调用方据此阻止创建入口；
+ *         kind/movableAxes/containsPrismatic/reason 供向导提示呈现）
  *
  * 纯函数；线程安全；确定性。
  */

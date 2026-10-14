@@ -551,7 +551,7 @@ TemplateOutcome RobotDesignTemplateFactory::createDraft(
         for (const JointEntry& joint : design.joints) {
             chainTypes.push_back(joint.type);
         }
-        if (judgeChainCapability(chainTypes).kind
+        if (judgeChainCapability(chainTypes, kHybridChainStage).kind
             != ChainCapabilityKind::FullTemplateRange) {
             throw std::logic_error("modeling/template/invariant: 六轴模板建链"
                                    "未通过维度二判定（T-MDL-1 表与 §6.4 判定"
@@ -574,8 +574,11 @@ std::optional<ChainCapability> creationEntryGuard(
     std::vector<core::DiagnosticRecord>& diags)
 {
     // 判定复用（§6.4 尾段）：结论唯一来自 judgeChainCapability——与导入
-    // 报告同一实现，不存在第二份判定。
-    const ChainCapability capability = judgeChainCapability(declaredChain);
+    // 报告同一实现，不存在第二份判定；MDL-12-S1（WP-13-T19）起显式传
+    // kHybridChainStage——六/七轴含 prismatic 声明链经此放行（创建入口
+    // 阻断只对轴数不在六/七轴的链生效）。
+    const ChainCapability capability =
+        judgeChainCapability(declaredChain, kHybridChainStage);
     if (capability.kind == ChainCapabilityKind::FullTemplateRange) {
         return std::nullopt;  // 放行——不产诊断（无阻断事实）
     }
@@ -588,8 +591,9 @@ std::optional<ChainCapability> creationEntryGuard(
         "movable-axes=" + std::to_string(capability.movableAxes)
             + " prismatic-present="
             + (capability.containsPrismatic ? "true" : "false"),
-        "创建入口阻止：4/5 轴或含 prismatic 链超出首版产品模板范围——仅"
-        "导入识别与草稿兼容编辑可用（类型保留，不静默降级——V12-01）"));
+        "创建入口阻止：可动轴数不在六/七轴模板范围（MDL-12-S1 已启用——"
+            "仅六/七轴含 prismatic 放开；4/5 轴不因本子项放开，仍走需求"
+            "变更；类型保留，不静默降级——V12-01）"));
     return capability;
 }
 

@@ -52,6 +52,7 @@ using sdurws::ird::modeling::ChainCapabilityKind;
 using sdurws::ird::modeling::GeometryKind;
 using sdurws::ird::modeling::GeometryRef;
 using sdurws::ird::modeling::GeneratedGeometry;
+using sdurws::ird::modeling::HybridChainStage;
 using sdurws::ird::modeling::JointBatchEditItem;
 using sdurws::ird::modeling::JointEditErrorCode;
 using sdurws::ird::modeling::JointEditField;
@@ -77,6 +78,7 @@ using sdurws::ird::modeling::applyJointFieldEdit;
 using sdurws::ird::modeling::applyJointFieldEditBatch;
 using sdurws::ird::modeling::judgeChainCapability;
 using sdurws::ird::modeling::jointEditErrorCodeToken;
+using sdurws::ird::modeling::kHybridChainStage;
 using sdurws::ird::modeling::kMdlImportTemplateRange;
 using sdurws::ird::modeling::kMdlTemplateDisabled;
 using sdurws::ird::modeling::kTemplateIdCustomChain;
@@ -763,11 +765,13 @@ TEST(MdlTemplate, CreateEditChain_OriginEditField_UI_T53)
 }
 
 /**
- * 创建入口链型守卫（acceptance 4——"4/5 轴与含 prismatic 链创建入口阻止＋
- * 提示（§6.4 维度二判定复用、§2.1 创建列 ❌）"）：5 轴链/含 prismatic 链
- * →阻止（BeyondTemplateRange）＋TEMPLATE-RANGE 提示诊断（T05 行码复用
- * ——同码同语义）；六/七轴全旋转→放行无诊断。custom-chain 种子（1 轴）
- * 不受守卫约束——守卫只作用于创建确认时的完整声明链。
+ * 创建入口链型守卫（§6.4 能力矩阵"模板创建"列；MDL-12-S1（WP-13-T19）
+ * R2 口径）：4/5 轴（含或不含 prismatic）→阻止（BeyondTemplateRange）＋
+ * TEMPLATE-RANGE 提示诊断（T05 行码复用——同码同语义）；六/七轴全旋转与
+ * 六/七轴含 prismatic 混合链→放行无诊断。custom-chain 种子（1 轴）不受
+ * 守卫约束——守卫只作用于创建确认时的完整声明链。本用例自 WP-13-T07
+ * ACC4 的 R1 阻断口径随 MDL-12-S1 语义演进重钉（七轴含 prismatic 翻转面
+ * 有据——REQUIREMENTS"仅对六/七轴含 prismatic 链放开"）。
  */
 TEST(MdlTemplate, CreationEntryGuard_BeyondRangeBlocked_WP13T07_ACC4)
 {
@@ -778,7 +782,7 @@ TEST(MdlTemplate, CreationEntryGuard_BeyondRangeBlocked_WP13T07_ACC4)
     std::vector<sdurws::ird::core::DiagnosticRecord> diags;
     const std::vector<JointType> fiveAxis(5, JointType::Revolute);
     const auto blocked5 = creationEntryGuard(fiveAxis, diags);
-    ASSERT_TRUE(blocked5.has_value()) << "4/5 轴创建入口阻止（§2.1 创建列 ❌）";
+    ASSERT_TRUE(blocked5.has_value()) << "4/5 轴创建入口阻止（§2.1 创建列）";
     EXPECT_EQ(blocked5->kind, ChainCapabilityKind::BeyondTemplateRange);
     EXPECT_EQ(blocked5->movableAxes, 5U);
     EXPECT_NE(blocked5->reason.find("4/5"), std::string::npos);
@@ -786,16 +790,18 @@ TEST(MdlTemplate, CreationEntryGuard_BeyondRangeBlocked_WP13T07_ACC4)
     EXPECT_EQ(diags[0].code, std::string(kMdlImportTemplateRange))
         << "提示诊断复用 §9.5 T05 行码（同码同语义——不私定第二码）";
 
-    // 含 prismatic 链（6×Revolute＋1×Prismatic）：阻止（prismatic 维度）。
-    std::vector<sdurws::ird::core::DiagnosticRecord> diagsPrismatic;
-    std::vector<JointType> withPrismatic(6, JointType::Revolute);
-    withPrismatic.push_back(JointType::Prismatic);
-    const auto blockedP = creationEntryGuard(withPrismatic, diagsPrismatic);
-    ASSERT_TRUE(blockedP.has_value());
-    EXPECT_TRUE(blockedP->containsPrismatic);
-    EXPECT_EQ(blockedP->movableAxes, 7U);
-    EXPECT_NE(blockedP->reason.find("prismatic"), std::string::npos);
-    EXPECT_TRUE(hasDiag(diagsPrismatic, kMdlImportTemplateRange));
+    // 含 prismatic 的 4 轴链（3×Revolute＋1×Prismatic）——阻止：MDL-12-S1
+    // 仅放开六/七轴含 prismatic，4/5 轴不因本子项放开（DTB §2.14 禁止项）。
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags4P;
+    std::vector<JointType> fourWithPrismatic(3, JointType::Revolute);
+    fourWithPrismatic.push_back(JointType::Prismatic);
+    const auto blocked4P = creationEntryGuard(fourWithPrismatic, diags4P);
+    ASSERT_TRUE(blocked4P.has_value());
+    EXPECT_EQ(blocked4P->kind, ChainCapabilityKind::BeyondTemplateRange);
+    EXPECT_EQ(blocked4P->movableAxes, 4U);
+    EXPECT_TRUE(blocked4P->containsPrismatic);
+    EXPECT_NE(blocked4P->reason.find("prismatic"), std::string::npos);
+    EXPECT_TRUE(hasDiag(diags4P, kMdlImportTemplateRange));
 
     // 6×Revolute——放行（nullopt、无诊断）。
     std::vector<sdurws::ird::core::DiagnosticRecord> diagsOk;
@@ -813,10 +819,48 @@ TEST(MdlTemplate, CreationEntryGuard_BeyondRangeBlocked_WP13T07_ACC4)
     EXPECT_TRUE(diagsOk.empty());
 
     // 判定复用证据：与 Import 报告同源——judgeChainCapability（§6.4 单一
-    // 实现）对同序列给出同结论（5 轴链逐字段相等）。
+    // 实现）对同序列给出同结论（5 轴链逐字段相等；同传 kHybridChainStage
+    // ——判定入口显式可见启用位）。
     const ChainCapability viaJudge =
-        sdurws::ird::modeling::judgeChainCapability(fiveAxis);
+        judgeChainCapability(fiveAxis, kHybridChainStage);
     EXPECT_EQ(viaJudge, *blocked5) << "守卫结论＝导入判定（§6.4 尾段单一实现）";
+}
+
+/**
+ * 创建入口守卫的混合链放行面（MDL-12-S1——WP-13-T19；AT-36 建模侧）：
+ * 六轴含 prismatic（5×Revolute＋1×Prismatic）与七轴含 prismatic 声明链
+ * →放行（nullopt、无 TEMPLATE-RANGE 诊断）——§2.1"模板创建"列随启用位
+ * 放开；六轴全旋转行为不变（同批回归锚）。
+ */
+TEST(MdlTemplate, CreationEntryGuard_HybridSixSevenPrismaticAllowed_WP13T19_AT36)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12-S1"},
+                  std::vector<std::string>{"AT-36", "AT-20"});
+
+    // 六轴含 prismatic（5R＋1P）——放行。
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags6;
+    std::vector<JointType> hybrid6(5, JointType::Revolute);
+    hybrid6.push_back(JointType::Prismatic);
+    const auto allowed6 = creationEntryGuard(hybrid6, diags6);
+    EXPECT_FALSE(allowed6.has_value())
+        << "MDL-12-S1：六轴含 prismatic 创建入口放行";
+    EXPECT_TRUE(diags6.empty()) << "放行路径无阻断诊断";
+
+    // 七轴含 prismatic（6R＋1P）——放行（"仅限六/七轴"的七轴半边）。
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags7;
+    std::vector<JointType> hybrid7(6, JointType::Revolute);
+    hybrid7.push_back(JointType::Prismatic);
+    const auto allowed7 = creationEntryGuard(hybrid7, diags7);
+    EXPECT_FALSE(allowed7.has_value()) << "七轴含 prismatic 同放行";
+    EXPECT_TRUE(diags7.empty());
+
+    // 判定同源复核：守卫放行结论与 judgeChainCapability（kHybridChainStage）
+    // 一致——FullTemplateRange＋containsPrismatic（类型保留不降级 V12-01）。
+    const ChainCapability viaJudge = judgeChainCapability(hybrid6, kHybridChainStage);
+    ASSERT_TRUE(viaJudge.kind == ChainCapabilityKind::FullTemplateRange);
+    EXPECT_TRUE(viaJudge.containsPrismatic);
+    EXPECT_NE(viaJudge.reason.find("MDL-12-S1"), std::string::npos)
+        << "reason 携带启用依据语义";
 }
 
 // =====================================================================

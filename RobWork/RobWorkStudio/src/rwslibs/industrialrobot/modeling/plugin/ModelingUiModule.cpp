@@ -410,11 +410,12 @@ bool ModelingUiModule::reseedCustomChain(const CustomChainDeclaration& decls,
                                          std::string& summary)
 {
     m_guard.assertOnUiThread();
-    // 声明面校验（恰六项——R1 合规创建面；其他轴数拒绝不虚放——4/5 轴与
-    // 含 prismatic 链的创建确认仍受 creationEntryGuard 红线〔AT-20/§6.4〕，
-    // 本面不新增放行）。
+    // 声明面校验（恰六项——本向导声明面范围；其他轴数拒绝不虚放——4/5 轴
+    // 仍受 creationEntryGuard 阻断〔AT-20/§6.4〕；六/七轴含 prismatic 已随
+    // MDL-12-S1（WP-13-T19）放开，但本向导声明面仍全旋转——prismatic 声明
+    // UI 扩展随 UI 域任务，混合链经导入通道进入）。
     if (decls.joints.size() != 6) {
-        summary = "custom-chain 声明须恰六轴（R1 合规创建面）——实得 "
+        summary = "custom-chain 声明须恰六轴（向导声明面范围）——实得 "
                 + std::to_string(decls.joints.size()) + " 轴";
         return false;
     }
@@ -483,7 +484,8 @@ bool ModelingUiModule::reseedCustomChain(const CustomChainDeclaration& decls,
     m_session.appliedPreview.reset();
     pushAppliedPreviewToPanel();
     recomputeReadiness();
-    summary = "已按声明创建 custom-chain 六轴草稿（全旋转——R1 合规创建面；"
+    summary = "已按声明创建 custom-chain 六轴草稿（全旋转——向导声明面；"
+              "混合链经导入通道——MDL-12-S1；"
               "声明编辑 " + std::to_string(m_session.draft.changes.size())
             + " 项待应用）";
     return true;
