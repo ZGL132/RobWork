@@ -1,0 +1,51 @@
+{
+  "datasetId": "ird-perf-b06-parallel-throughput",
+  "version": "1",
+  "kind": "performance-baseline",
+  "title": "B-06 并行吞吐基准固定候选集与测量口径（WP-23-T07 冻结）",
+  "baselineRef": "performance-baseline.md#2-B-06",
+  "requirementRef": "REQUIREMENTS.md#19.3-NFR-PERF-05",
+  "consumer": "sdurws_ird_optimization_perf_test（optimization/perf_test/ParallelThroughputBenchmarkTest.cpp）",
+  "generator": {
+    "identity": "fixedCandidateJointRunRig",
+    "driver": "JointRunOrchestrator 两级批量编排（WP-21-T04 交付——§8.5 外层两级批量编排＋§9.2 并行分片/按批序稳定合并；optimization.md §9.2 规模化口径锚的被测对象）；真实 evidence::EvaluatorRegistry＋opt Profile 注册；真实 steady_clock 墙钟计时（区间＝run() 全程）",
+    "candidateSet": "seeded-lhs 策略（generateStageDJointCandidates 单点——基线恒批首＋CandidateId 去重）×单连续绑定 mdl.drivetrain.ratio[1]（无量纲，域 [0.8,1.2]，默认 1.0，授权未锁定）×seed 7×maxCandidates 128×maxVerifiedCandidates 4——去重后候选数恒 132（Quick 128＋Verified 4）；批容量＝产品常数 kBatchCapacity=4（Quick 32 批＋Verified 1 批——8 线程 Quick 相满员并行，Verified 相 1 批串行尾部与生产形态一致）；两组腿同基线根身份（CandidateId 公式输入一致）⇒ 候选集合恒等",
+    "workload": "内层四域评估器（trj-sequence-plan/dyn-rnea-analysis/dt-mapping/sel-combination-check 登记键）＝确定性浮点迭代链测试替身：每派发执行 400000 次串行 FP 乘加依赖链（x=x·(1+2⁻²⁰)+1e-9——不可向量化/不可折叠，结果 IEEE-754 位模式沉入进程级原子汇防消除）；单候选六层派发——单次全量运行恒 792 次派发；指标投影＝P-OPT-2 测试面替身（补丁标量值→D-only 五项的确定性线性映射，逐候选互异）",
+    "threadLegs": { "serial": 1, "parallel": 8 },
+    "excludedFromTiming": "首次编译与导入（NFR-PERF-05 原文排除项）——计时区间＝JointRunOrchestrator::run() 全程，候选集构造/快照组装/注册表装配/编排器构造在区间外；每组首跑预热剔除承担组内冷路径（注册表首查/分配器/代码路径首触）"
+  },
+  "measurementProtocol": {
+    "statisticClass": "中位吞吐类判定（performance-baseline §2 统计口径区分行——中位数与 P95 互不替代，禁以 P95/最大值表述达标）",
+    "verdictStatistic": "吞吐比＝8 线程组有效样本吞吐中位数 ÷ 单线程组有效样本吞吐中位数 ≥4.0；单样本吞吐＝(quickEvaluated＋verifiedEvaluated)/墙钟秒（candidates/s）",
+    "medianConvention": "升序排序后奇数样本取中位元素、偶数样本取两中位均值（本基准每组 15 有效样本恒走奇数路径）",
+    "samplePlan": "每组：1 次预热（剔除）＋15 有效样本；无效样本（run 未完整结束或评估计数漂移）不计入分母、留痕原因、invalidCount==0 收口",
+    "sampleSizeNote": "协议 §4.2『每组有效样本 ≥15』下限照抄（T02/T03/T05/T06 同数自律）",
+    "thresholds": { "medianThroughputRatio": 4.0 },
+    "thresholdSource": "REQUIREMENTS NFR-PERF-05 原文（固定候选评估基准上，8 个工作线程相对单线程中位吞吐提升 ≥4 倍〔不含首次编译与导入〕——零私改）",
+    "reductionTolerance": {
+      "relativeTolerance": 1e-12,
+      "absoluteTolerance": 0.0,
+      "absDeclaredBy": "黄金算例逐例声明（performance-baseline §4.6/C7）——本卡测量面声明 0.0：JointRunOrchestrator 零浮点重排结构（按批序稳定合并，JointRun.hpp 文件头②）下要求实测逐位相等，任何非零差即违约的最严口径；若未来实现引入容差内重排，须按实况修订声明并留痕，不得静默",
+      "formula": "|a−b| ≤ 1e-12·|ref|＋0.0 逐元素（附录 D 第 8 项通用比较公式 C4；零参考元素退化为精确相等）",
+      "equivalenceFaces": "候选序（生成序＝合并序）＋逐候选状态＋八项指标逐元素＋Pareto 序与可行集规模＋审计计数＋工作汇增量（确定性链位模式累加）六层全对账，参照＝单线程组首个有效样本结论面",
+      "toleranceSource": "REQUIREMENTS 附录 D 第 8 项（P-01 冻结产物——1×10⁻¹² 照抄零私改）；载体 AT-09~11"
+    },
+    "measurementDiscipline": "串行测量（performance-baseline §4/optimization.md §9.2 锚）——gtest 单进程单线程驱动（run 内部并行除外），禁止与其他测量负载并发跑分；样本全量留痕（预热/无效不删除，只标记与登记原因）；禁止伪造样本"
+  },
+  "equivalenceNotes": [
+    "内层评估器＝确定性浮点迭代链替身——证明的是『编排并行分片/稳定合并的吞吐规模化与归约等价』，不是业务评估器（trj/dyn/sel 真实现）的算法吞吐画像；业务评估器端到端吞吐归集成模式扩展测量挂点（首测报告登记——集成构建由合入批执行）",
+    "与功能用例分工：JointRunTest OPT-VER-220/221/222（threadCount=1 vs 4 小候选集）证并行分片/稳定合并/归约容差的『正确性』；本基准以 128 候选真实串行测量补『规模化达标』证据（吞吐数字必须真实产生）——两者互补不互替",
+    "threadCount 入 config.opt canonical（KIN-13 同型『改线程数＝新身份＝重算』）——两腿 sliceId 不同不影响结论面等价判定（NFR-COR-02『与线程数无关』即需求语义）",
+    "与 B-08（NFR-COR-02 确定性复现基准）的关系：B-08 以各域 ReproBenchmark 抽样复跑证『等价候选集合与稳定排序』（五域各一例）；本基准在其上叠加吞吐判定并以归约容差判定承载 DTB §2.24 本卡禁止项栏——B-06 判定不替代 B-08，B-08 已回填（2026-10-13，T09）"
+  ],
+  "upgradeRule": "testkit.md §4.2.1——升级＝新建数据集或新 major 版本，不得原地改写；参数变更须换版本并留 history",
+  "history": [
+    {
+      "version": "1",
+      "date": "2026-10-14",
+      "note": "初版（WP-23-T07 实施段，分支 wp23-t07）：固定候选集 seeded-lhs/seed 7/128+4/批容量 4；工作量替身 400000 迭代/派发；两腿 1+15 样本；吞吐比阈值 4.0（NFR-PERF-05 原文）；归约容差 1e-12（附录 D 第 8 项）＋ε_abs=0 黄金算例声明"
+    }
+  ],
+  "frozenAt": "2026-10-14",
+  "frozenBy": "WP-23-T07（分支 wp23-t07）"
+}

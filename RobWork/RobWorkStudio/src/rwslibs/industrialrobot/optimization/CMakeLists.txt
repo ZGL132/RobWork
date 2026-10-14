@@ -549,12 +549,69 @@ add_custom_command(TARGET sdurws_ird_optimization_contract_test POST_BUILD
 
 ird_add_gtest(sdurws_ird_optimization_contract_test)
 
+# ---- 性能基准测试目标 sdurws_ird_optimization_perf_test（WP-23-T07 增列）----
+# performance-baseline §2 B-06／NFR-PERF-05 并行吞吐基准的测量载体（DTB
+# §2.24 行——横切 execution/各域）：固定候选集 StageD 联合评估上测量
+# "8 工作线程相对单线程中位吞吐 ≥4 倍（不含首次编译与导入）"，并钉住吞吐
+# 运行中的并行归约正确性（NFR-COR-02——附录 D 第 8 项容差 1×10⁻¹² 逐元素
+# ＋等价候选集合与稳定排序）。用例面
+# （perf_test/ParallelThroughputBenchmarkTest.cpp）：
+# 被测对象＝JointRunOrchestrator（WP-21-T04 交付——§8.5/§9.2 并行分片与
+# 按批序稳定合并；optimization.md §9.2 规模化口径锚"达标归 WP-23 对应基准
+# 任务"的本卡承接位）；固定候选集＝seeded-lhs/seed 7/128+4/单连续绑定
+# （datasetId ird-perf-b06-parallel-throughput@1——manifest 冻结于
+# testdata/performance/）；两腿（threadCount=1 vs 8）各 1 预热＋15 有效
+# 样本，计时区间＝run() 全程（候选集构造/装配在区间外——排除项口径）；
+# 判定统计量＝两组吞吐中位数之比（B-06 中位吞吐类——与 P95 互不替代，
+# §2 统计口径区分行）；并行归约等价六层对账（候选序/状态/指标逐元素/
+# Pareto 序/审计计数/工作汇增量）。
+# 与功能用例（JointRunTest OPT-VER-220~222）互补不互替：功能用例证小候选
+# 集"协议对"的正确性；本目标证 128 候选真实串行测量的"规模化达标"（吞吐
+# 数字必须真实产生）。单列目标（不并入 _test/_contract_test）的理由＝基准
+# 用例的墙钟量级（~20 s）远超功能套件节奏，混入会拖垮常规套件——ui_perf
+# _test（WP-23-T02）/execution_perf_test（WP-23-T03）同款分工先例。
+# 链接面：sdurws_ird_optimization（被测产品目标——同单元）＋
+# sdurws_ird_testkit（PerfBenchmark 报告拖挂面——T-1 允许形态＝仅测试目标
+# ，LinkageContractTest::NoTestkitEdge 的允许集随本目标扩登——WP-23-T03
+# 批登记先例同款）＋GTest::gtest（main 自持）。零 Qt（D-01——L2 计算内核
+# 基准入口不构造 QCoreApplication，与 execution perf 目标同形；单行链接
+# 语句＝T-1 扫描的登记形态约束）。ird_gates 预期恰增＝零（同单元产品边＋
+# testkit 硬编码允许形态——登记册 traceability/wp23-t07-gate-registrations
+# .md）。
+add_executable(sdurws_ird_optimization_perf_test
+    perf_test/TestMainPerf.cpp
+    perf_test/ParallelThroughputBenchmarkTest.cpp)
+
+target_compile_features(sdurws_ird_optimization_perf_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_optimization_perf_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+# 基准源文件同为 UTF-8＋中文注释（同 _test 目标口径）。
+if(MSVC)
+    target_compile_options(sdurws_ird_optimization_perf_test PRIVATE /utf-8)
+endif()
+
+# T-1 允许形态：testkit 只落在测试目标链接语句（单行链接语句与既有
+# _test/_contract_test 同款形态——NoTestkitEdge 用例的同行显式约束）。
+target_link_libraries(sdurws_ird_optimization_perf_test PRIVATE sdurws_ird_optimization sdurws_ird_testkit GTest::gtest)
+
+# 运行期 DLL 拷贝（vcpkg gtest 动态库——留痕与验收都要直接执行该可执行
+# 文件；execution perf 目标同款先例。零 Qt 依赖故无 Qt 传染面）。
+add_custom_command(TARGET sdurws_ird_optimization_perf_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_optimization_perf_test>
+            $<TARGET_FILE_DIR:sdurws_ird_optimization_perf_test>
+    COMMAND_EXPAND_LISTS)
+
+ird_add_gtest(sdurws_ird_optimization_perf_test)   # WP-23-T07——B-06 并行吞吐基准
+
 # ---- ctest LABELS "ird"（modeling/ui/requirements/kinematics/selection/
 #      dynamics/trajectory 落位同款）----
-# 验收过滤口径：ctest -L "^ird$"——两测试（模型层、进程内、确定性）同
-# 标签；_gui_test 形态本单元无（GUI 手动验证通道随 WP-20-T10——卡
-# §13.3，本批次无 GUI 载体用例）。
-set_tests_properties(sdurws_ird_optimization_test sdurws_ird_optimization_contract_test
+# 验收过滤口径：ctest -L "^ird$"——三测试（模型层、进程内、确定性＋性能
+# 基准）同标签；_gui_test 形态本单元无（GUI 手动验证通道随 WP-20-T10——
+# 卡 §13.3，本批次无 GUI 载体用例）。
+set_tests_properties(sdurws_ird_optimization_test sdurws_ird_optimization_contract_test sdurws_ird_optimization_perf_test
     PROPERTIES LABELS "ird")
 
 # ---- 依赖红线守卫（配置期断言——卡 §3.2，trajectory/dynamics/selection/
