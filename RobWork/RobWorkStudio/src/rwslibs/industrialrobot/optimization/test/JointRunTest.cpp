@@ -24,7 +24,11 @@
  *
  * 测试形态（模型测试＝直调计算库，NFR-MNT-01）：内层评估器以脚本化替身
  * 注册进**真 evidence::EvaluatorRegistry**（JointStrategyTest 同款形态，
- * 并发安全加固——并行用例多线程派发）；指标投影以无状态替身注入（P-OPT-2
+ * 并发安全加固——并行用例多线程派发；共享观测面〔派发日志/请求序日志〕
+ * 全部"数据与锁捆绑于同一对象"，写入方与快照方共用同一把互斥锁——
+ * WP-21-T04 attempt 1 验收 B-1 返工：四个域脚本各持自有脚本锁并发写
+ * 同一日志 vector 曾构成数据竞争〔非确定性 SIGSEGV〕，此处不可回退）；
+ * 指标投影以无状态替身注入（P-OPT-2
  * 裁决前接缝）；检查点集成用例以**真 execution::CheckpointCoordinator**
  * ＋写真实临时文件的归档端口替身（CheckpointCacheTest FakeArchiveDisk
  * 同款形态——EX-CKP 观测面）承载宿主（派发编排）角色：本域只产中间状态
@@ -301,18 +305,33 @@ struct DispatchObservation {
     core::EvaluationMode mode;
 };
 
-/// 内层脚本状态（并发安全：互斥保护违例脚本读取与派发日志写）。
+/// 派发日志槽（fixture 单例）——观测 vector 与其互斥锁**结构性捆绑**。
+///
+/// 并发契约（WP-21-T04 attempt 1 验收 B-1 返工点）：threadCount=4 时
+/// 不同 worker 经**不同**域脚本并发派发，若只依赖各脚本自有的
+/// InnerScript::mutex，则四把不同的锁保护同一非线程安全 vector＝零真实
+/// 互斥，并发 push_back 造成堆损坏（曾致并行用例非确定性 SIGSEGV）。
+/// 修复后所有写入方（各域 evaluate）与快照方（JointFixture::logSnapshot）
+/// 串行化于本槽内唯一一把锁；锁序固定为 InnerScript::mutex（外）→
+/// 本锁（叶）——本锁持有期间绝不反向获取脚本锁，无死锁环。
+struct DispatchLogSink {
+    mutable std::mutex mutex;                  ///< 写入/快照唯一互斥（叶锁）
+    std::vector<DispatchObservation> entries;  ///< 派发序观测记录（非线程安全，靠本槽锁）
+};
+
+/// 内层脚本状态（并发安全：脚本锁只保护脚本字段读取；派发日志写归槽锁）。
 struct InnerScript {
-    mutable std::mutex mutex;                        ///< 并行派发互斥
+    mutable std::mutex mutex;                        ///< 同域并发派发互斥（脚本字段读取面）
     evidence::DomainVerdictInputs mustScript;        ///< Must 违例脚本（非空即随产出返回）
     std::optional<evidence::SearchExhaustedRecord>
         searchScript;                                ///< 搜索未果脚本（有值即返回）
     bool failScript = false;                         ///< 失败脚本（true 即抛 EvidenceError）
-    std::vector<DispatchObservation>* log = nullptr; ///< 派发日志（fixture 持有）
+    DispatchLogSink* log = nullptr;                  ///< 派发日志槽（fixture 持有；写入持槽内共享锁）
     std::string evaluationKey;                       ///< 本域评估键
 };
 
-/// 脚本化内层评估器（记录派发〔互斥〕；按共享脚本返回违例/搜索未果/抛错）。
+/// 脚本化内层评估器（记录派发〔脚本锁＋日志槽锁——B-1 返工双锁序〕；
+/// 按共享脚本返回违例/搜索未果/抛错）。
 class ScriptedInnerEvaluator final : public evidence::IEngineeringEvaluator {
 public:
     ScriptedInnerEvaluator(evidence::EvaluatorDescriptor descriptor,
@@ -327,9 +346,16 @@ public:
     evidence::EvaluationOutput evaluate(const evidence::EvaluationRequest& request,
                                         evidence::IEvaluationContext&) override
     {
+        // 本锁保护脚本字段读取（同域并发派发串行化）。
         std::lock_guard<std::mutex> lock(m_script.mutex);
         if (m_script.log != nullptr) {
-            m_script.log->push_back({m_descriptor.key, request.mode});
+            // 派发日志写入必须持槽内共享锁：日志槽是全 fixture 单例，本脚本
+            // 的脚本锁只互斥"同域"派发；threadCount=4 下跨域并发（四域各持
+            // 不同脚本锁）只能靠槽锁串行化——attempt 1 B-1 数据竞争根因即
+            // "写同一 vector 却只锁各自脚本锁"，此处锁面不可回退为脚本锁。
+            // 锁序：脚本锁（外）→ 槽锁（叶），槽锁内不取脚本锁，无死锁环。
+            std::lock_guard<std::mutex> logLock(m_script.log->mutex);
+            m_script.log->entries.push_back({m_descriptor.key, request.mode});
         }
         if (m_script.failScript) {
             // 脚本化注入：环境轨失败（EvidenceError——I-C2 错误轨）。
@@ -411,8 +437,7 @@ public:
 struct JointFixture {
     evidence::EvidenceProfileRegistry profiles;
     evidence::EvaluatorRegistry evaluators{profiles};
-    mutable std::mutex logMutex;               ///< 派发日志互斥（const 快照加锁）
-    std::vector<DispatchObservation> dispatchLog;
+    DispatchLogSink dispatchLog;               ///< 派发日志槽（锁与 vector 捆绑——B-1 返工单锁化）
     ScriptedLayerSlices layerSlices;
     NopEvaluationContext ctx;
     core::ContentIdentity optProfileIdentity;  ///< 注册权威值（构造期回填）
@@ -465,11 +490,11 @@ struct JointFixture {
         throw std::logic_error("fixture: 未注册评估器键 " + std::string(key));
     }
 
-    /// 派发日志快照（互斥拷贝——断言面）。
+    /// 派发日志快照（与写入方共用槽内唯一锁拷贝——断言面）。
     std::vector<DispatchObservation> logSnapshot() const
     {
-        std::lock_guard<std::mutex> lock(logMutex);
-        return dispatchLog;
+        std::lock_guard<std::mutex> lock(dispatchLog.mutex);
+        return dispatchLog.entries;
     }
 
     /// 联合编排依赖面。
