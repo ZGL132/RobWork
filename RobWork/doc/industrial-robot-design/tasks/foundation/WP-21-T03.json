@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现分层联合策略",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-21-T02",
     "WP-20-T04",
@@ -15,13 +15,17 @@
     "OPT-03"
   ],
   "designRefs": [
-    "units/optimization.md#15",
+    "units/optimization.md#8.5",
     "development-task-breakdown.md#2.22"
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
     "RobWork/doc/industrial-robot-design/units/optimization.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": [
     "implementation",
@@ -41,5 +45,5 @@
   "acceptance": [
     "结构/传动外层探索＋轨迹动力学校核与器件匹配内层反馈；内层 Quick→Verified→器件匹配反馈闭环用例通过（OPT-05/OPT-03 联合硬约束）"
   ],
-  "note": "DTB §2.22 行逐一对应。DTB 前置\"WP-18（器件匹配内层）\"挂其已立契约 WP-18-T03（DriveTrainMappingEvaluator 唯一实现——器件匹配内层本体）；WP-20-T04（静态硬约束执行——JointConstraintFamily 引用词表承载联合族）已立契约在案。O-37（RuntimeSnapshot 进入评估器注入点——已裁决宿主注入形态）为联合评估消费 runtime 视图的已登记语义；P-OPT-9（联合评估键/upstream.* 依赖链——随 WP-21-T02 冻结）为直接前置陷阱。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）；本卡 status 维持 planned——待前置链闭合与独立评审放行（依赖诚实）。。"
+  "note": "DTB §2.22 行逐一对应。DTB 前置\"WP-18（器件匹配内层）\"挂其已立契约 WP-18-T03（DriveTrainMappingEvaluator 唯一实现——器件匹配内层本体）；WP-20-T04（静态硬约束执行——JointConstraintFamily 引用词表承载联合族）已立契约在案。O-37（RuntimeSnapshot 进入评估器注入点——已裁决宿主注入形态）为联合评估消费 runtime 视图的已登记语义；P-OPT-9（联合评估键/upstream.* 依赖链——随 WP-21-T02 冻结）为直接前置陷阱。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）。【planned→ready 2026-10-14】放行依据＝所有者 2026-10-13「实现 M6 阶段收口」指令（前置链闭合：WP-21-T02 done〔§6.7/§8.5 登记值冻结〕、WP-20-T04 done、WP-18-T03 done）；designRefs 锚点精化＝§8.5（分层联合策略落章节）；interUnit 复核维持 true（联合门面跨域消费 trj/dyn/dt/sel 四层——③端口）；forbiddenFiles 补齐（REQUIREMENTS/ARCHITECTURE 零触碰——语义零修订）；P-04 判定阈值两槽位维持待定——本卡不产出鲁棒性判定结论（§8.6/§13.2 OPT-VER-201/243 口径：Preflight #11 阻塞面归 WP-21-T05，本卡不私设阈值数值、涉及判定阈值的验证一律登记待补充确认）。status=ready：可领取实施。"
 }
