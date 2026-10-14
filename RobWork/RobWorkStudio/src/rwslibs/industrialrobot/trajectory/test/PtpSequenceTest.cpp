@@ -620,6 +620,106 @@ TEST(TrjSequence, ExpandCartesianStationPlansLineEntries_WP16T04_ACC1)
     EXPECT_EQ(plan.segments[3].spaceType, SegmentSpaceType::CartesianLine);
 }
 
+/** 游标失效的纯关节站（F-798 回归——TRJ-01 有序作业序列＋TRJ-06 失败
+ *  可定位）：前置笛卡尔站使构型游标失效后，后续纯关节站仍须产出**结构
+ *  齐全**的段链——Transfer 占位（几何待 T05，不伪造端点）＋Work（任务点
+ *  ＋驻留）＋retract（若启用）一个不丢；且游标保持失效（后续纯关节站同
+ *  形展开，不得以过期游标规划几何）。
+ *
+ * 缺陷溯源：findings.json F-798——Sequence.cpp 游标失效分支曾产 Transfer
+ * 占位后 continue，该站 Work/retract 均不产出，failures 为空仍 Ok，任务
+ * 点静默跳出最终轨迹（与 §7.6"失败给具体段落与原因"语义相悖）；修复
+ * 口径＝对齐笛卡尔站 else 支"占位后站链完整"形态（fix-plan-e.md 批 E2）。
+ */
+TEST(TrjSequence, ExpandCursorInvalidStationKeepsWorkAndRetract_F_798)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-01", "TRJ-06"}, std::vector<std::string>{});
+    const ObjectId oidA = ObjectId::generate();
+    const ObjectId oidB = ObjectId::generate();
+    const ObjectId oidC = ObjectId::generate();
+    const ObjectId oidD = ObjectId::generate();
+
+    // 序列 A（纯关节，游标有效可规划）→B（笛卡尔：approach/retract 启用，
+    // 展开后游标失效——失效源）→C（纯关节：F-798 缺陷触发站）→D（纯关节：
+    // 断言游标在 C 之后仍失效——不以 A 站过期终点构型规划 D 的几何）。
+    SequenceStationInput stB = station("B", oidB, {cand({0.5, 0.5}, 0U, 0.5)}, "A");
+    stB.point.approach.enabled = true;
+    stB.point.approach.axis = SequenceSegmentAxis::ToolZ;
+    stB.point.approach.distanceM = 0.1;                                // m
+    stB.point.retract.enabled = true;
+    stB.point.retract.axis = SequenceSegmentAxis::ReferenceZ;
+    stB.point.retract.distanceM = 0.08;                                // m
+    stB.dwellDurationS = 1.5;                                          // s（驻留投影）
+
+    SequenceStationInput stC = station("C", oidC, {cand({1.0, 1.0}, 1U, 0.5)}, "B");
+    stC.point.retract.enabled = true;
+    stC.point.retract.axis = SequenceSegmentAxis::ToolZ;
+    stC.point.retract.distanceM = 0.05;                                // m
+    stC.dwellDurationS = 0.8;                                          // s
+
+    std::vector<SequenceStationInput> stations = {
+        station("A", oidA, {cand({0.2, 0.2}, 0U, 0.5)}),
+        std::move(stB),
+        std::move(stC),
+        station("D", oidD, {cand({1.5, 1.5}, 2U, 0.5)}, "C"),
+    };
+    const SequencePlan plan = expandSequence(makeSequenceRequest(std::move(stations)));
+    ASSERT_TRUE(plan.failures.empty()) << (plan.failures.empty() ? "" : plan.failures[0].cause);
+
+    // 拓扑序 A→B→C→D；修复后期望段链（11 条，序号 0 基连续；Work 条目
+    // 每站恒产——§5.2"作业段＝任务点本身"）：
+    //   A: Transfer(0 已规划——首站游标有效)→Work(1 无驻留)
+    //   B: Transfer(2 待填)→Approach(3)→Work(4 驻留 1.5s)→Retract(5)
+    //   C: Transfer(6 待填)→Work(7 驻留 0.8s)→Retract(8)  ← F-798 缺陷面
+    //   D: Transfer(9 待填)→Work(10 无驻留)               ← 游标保持失效面
+    ASSERT_EQ(plan.segments.size(), 11U);
+    for (std::size_t i = 0; i < plan.segments.size(); ++i) {
+        ASSERT_EQ(plan.segments[i].segmentIndex, static_cast<std::uint32_t>(i))
+            << "段序号 0 基连续违约（§6.3 定位键）——第 " << i << " 条";
+    }
+
+    // A 站：纯关节＋游标有效——Transfer 几何已规划（既有行为不回归）。
+    EXPECT_EQ(plan.segments[0].role, SequenceSegmentRole::TransferPtp);
+    ASSERT_TRUE(plan.segments[0].ptpGeometry.has_value());
+    EXPECT_EQ(plan.segments[0].sourceTaskPoint, oidA);
+    EXPECT_EQ(plan.segments[1].role, SequenceSegmentRole::Work);
+    EXPECT_EQ(plan.segments[1].sourceTaskPoint, oidA);
+    EXPECT_FALSE(plan.segments[1].dwellDurationS.has_value());         // A 无驻留
+
+    // B 站（笛卡尔，失效源）：占位→approach→work→retract（既有行为基线）。
+    EXPECT_EQ(plan.segments[2].role, SequenceSegmentRole::TransferPtp);
+    EXPECT_FALSE(plan.segments[2].ptpGeometry.has_value());            // 待 T05
+    EXPECT_EQ(plan.segments[2].sourceTaskPoint, oidB);
+    EXPECT_EQ(plan.segments[3].role, SequenceSegmentRole::Approach);
+    EXPECT_EQ(plan.segments[4].role, SequenceSegmentRole::Work);
+    ASSERT_TRUE(plan.segments[4].dwellDurationS.has_value());
+    EXPECT_TRUE(closeWithin(*plan.segments[4].dwellDurationS, 1.5, goldenTolerance()));
+    EXPECT_EQ(plan.segments[5].role, SequenceSegmentRole::Retract);
+
+    // C 站（F-798 核心断言）：占位后 Work（任务点＋驻留）与 retract 齐全。
+    EXPECT_EQ(plan.segments[6].role, SequenceSegmentRole::TransferPtp);
+    EXPECT_FALSE(plan.segments[6].ptpGeometry.has_value());            // 不伪造端点
+    EXPECT_EQ(plan.segments[6].sourceTaskPoint, oidC);
+    EXPECT_EQ(plan.segments[7].role, SequenceSegmentRole::Work);       // 任务点保全
+    EXPECT_EQ(plan.segments[7].sourceTaskPoint, oidC);
+    ASSERT_TRUE(plan.segments[7].dwellDurationS.has_value());          // 驻留保全
+    EXPECT_TRUE(closeWithin(*plan.segments[7].dwellDurationS, 0.8, goldenTolerance()));
+    EXPECT_EQ(plan.segments[8].role, SequenceSegmentRole::Retract);    // retract 保全
+    EXPECT_EQ(plan.segments[8].sourceTaskPoint, oidC);
+    ASSERT_TRUE(plan.segments[8].lineSpec.has_value());
+    EXPECT_TRUE(plan.segments[8].lineSpec->enabled);
+    EXPECT_EQ(plan.segments[8].lineSpec->axis, SequenceSegmentAxis::ToolZ);
+    EXPECT_TRUE(closeWithin(plan.segments[8].lineSpec->distanceM, 0.05, goldenTolerance()));
+
+    // D 站：游标须仍失效——Transfer 占位（若几何被规划＝用了过期游标）。
+    EXPECT_EQ(plan.segments[9].role, SequenceSegmentRole::TransferPtp);
+    EXPECT_FALSE(plan.segments[9].ptpGeometry.has_value());
+    EXPECT_EQ(plan.segments[9].sourceTaskPoint, oidD);
+    EXPECT_EQ(plan.segments[10].role, SequenceSegmentRole::Work);
+    EXPECT_EQ(plan.segments[10].sourceTaskPoint, oidD);
+    EXPECT_FALSE(plan.segments[10].dwellDurationS.has_value());        // D 无驻留
+}
+
 /** 取消：站边界取消观测命中→canceled==true＋零失败素材（UX-03）。 */
 TEST(TrjSequence, ExpandCancelYieldsZeroMaterial_WP16T04_ACC1)
 {
