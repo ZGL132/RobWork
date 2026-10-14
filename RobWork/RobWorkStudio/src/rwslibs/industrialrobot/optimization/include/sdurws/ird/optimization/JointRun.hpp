@@ -1,10 +1,12 @@
 /**
  * @file   JointRun.hpp
  * @brief  StageD 联合运行编排面（OPT-03/06 D 部分——§8.5 外层两级批量编排
- *         ＋§9.2 完整并行评估与检查点恢复）：八项指标全量计算（D-only 五项
- *         经层证据投影接缝）、确定性候选分批、并行评估与稳定合并、批边界
- *         检查点中间状态（域自编 codec，magic IRDOPTC1 检查点域）与续跑
- *         统计不重复（AT-35）。任务 WP-21-T04。
+ *         ＋§9.2 完整并行评估与检查点恢复＋§9.2 Paused 态消费〔WP-21-T07〕）：
+ *         八项指标全量计算（D-only 五项经层证据投影接缝）、确定性候选分批、
+ *         并行评估与稳定合并、批边界检查点中间状态（域自编 codec，magic
+ *         IRDOPTC1 检查点域）与续跑统计不重复（AT-35）、批边界暂停/继续
+ *         （暂停确认边界＝批边界检查点；继续经 resumeFrom 不重复统计——
+ *         V12-06）。任务 WP-21-T04；暂停/继续增量任务 WP-21-T07。
  *
  * 设计依据：
  *   - units/optimization.md §6.3（R2 联合管线——内层六层执行序＋联合硬
@@ -51,12 +53,25 @@
  *   ICheckpointCoordinator**——本域只产中间状态字节、消费恢复规格，
  *   N8）。**不落**（后续批次，如实登记）：鲁棒性三模式复核（WP-21-T05
  *   ——判定阈值两槽位待所有者补充确认，本批零判定结论零阈值数值）、
- *   暂停/继续 Paused 态消费（WP-21-T07——本编排产出批边界检查点状态即
- *   其确认边界素材）、误淘汰审计（WP-21-T08）、门面评估键缓存消费的
+ *   误淘汰审计（WP-21-T08）、门面评估键缓存消费的
  *   完整命中链（结构性依赖：门面 sliceId 由四条 upstream.* 内层切片身份
  *   构成〔§8.5〕，六层完成前不存在——缓存查找先于评估在联合门面键上
  *   结构不可能；命中面留待装配批次随 CON-04 写入双门槛链落位，本编排
  *   审计计数位保留、如实为零查找不伪造命中）。
+ *
+ * ★ WP-21-T07 增量落位（2026-10-14——Paused 态消费，§9.2/AT-35/V12-06）：
+ *   上列 T04"不落"清单中的「暂停/继续 Paused 态消费」由本批兑现——
+ *   ①IPauseSignal 暂停查询接缝（deps 注入，nullptr＝暂停面未装配、编排
+ *   永不暂停——R1 面零影响）；②批边界暂停消费（批间查询同取消位次，
+ *   取消优先：取消与暂停同时请求时取消胜出——§7.4 协作取消强于暂停）；
+ *   ③暂停确认边界＝暂停生效批边界产出的检查点状态（checkpointStates
+ *   末份——宿主写出并确认后任务态 Paused 归 execution T10，本编排产出
+ *   RunPhase::Paused）；④继续＝resumeFrom 重入（既有 T04 恢复机制零改
+ *   ——继续不重复统计 AT-35 由审计基点＋批索引跳过承载）；⑤不改变输入
+ *   快照（I-OPT-4：恢复绑定原 request——snapshot/slice/config 不入检查
+ *   点、不入恢复面）。任务侧 requestPause/requestResume 编排（能力门控/
+ *   暂停中取消）落 execution TaskController——同批交付（WP-21-T07 单元
+ *   ＝optimization＋execution）。
  *
  * 背景说明（第一读者须知——三件事）：
  *   ① **编排与执行分离**（N8/N13 同源）：候选批的进程间派发、worker 生
@@ -87,9 +102,9 @@
  *   在并行路径下必须并发只读安全（EvaluatorRegistry/EvidenceProfile
  *   Registry 查询共享锁已保证；IJointLayerSliceProvider 与
  *   IJointMetricProjector 的实现方负责并发安全——生产适配器为无状态纯
- *   投影，测试替身需自持互斥）。IEvaluationContext 在并行路径下被多
- *   worker 并发查询 cancellationRequested——实现方须并发安全（生产＝
- *   execution 提供的原子取消旗标）。
+ *   投影，测试替身需自持互斥）。IEvaluationContext 与 IPauseSignal 在并行
+ *   路径下被多 worker 并发查询 cancellationRequested/pauseRequested——
+ *   实现方须并发安全（生产＝execution 提供的原子取消/暂停旗标）。
  * 确定性：同（request, deps 行为）⇒ 同结论面（候选集/状态/幸存集/Pareto
  *   排序/审计计数——与 threadCount 无关；检查点状态序列同批界同值——
  *   NFR-COR-02）。
@@ -418,12 +433,15 @@ struct JointRunRequest {
  * 值语义；线程安全：纯值。
  */
 struct JointRunResult {
-    RunPhase runPhase = RunPhase::Draft;  ///< 终态运行状态（Completed/Canceled——
-                                           ///  Failed/Interrupted 以异常传播/
-                                           ///  宿主处置，本编排不产出）
-    bool runCompleted = false;            ///< 正常完成（取消时 false——已回传批
-                                           ///  保留，TASK-01；检查点恢复≠成功：
-                                           ///  恢复后仍走完整接纳汇总，§9.2）
+    RunPhase runPhase = RunPhase::Draft;  ///< 终态运行状态（Completed/Canceled/
+                                           ///  Paused〔WP-21-T07——批边界检查点
+                                           ///  挂起〕；Failed/Interrupted 以异常
+                                           ///  传播/宿主处置，本编排不产出）
+    bool runCompleted = false;            ///< 正常完成（取消/暂停时 false——已回传
+                                           ///  批保留，TASK-01；检查点恢复≠成功：
+                                           ///  恢复后仍走完整接纳汇总，§9.2；
+                                           ///  Paused 时续跑凭据＝checkpointStates
+                                           ///  末份——暂停确认边界，V12-06）
     bool searchEmpty = false;             ///< 搜索空标记（可行集空——OPT-SEARCH-
                                            ///  EMPTY warning，非任务不可行）
     std::string searchEmptyToken;         ///< 搜索空稳定 token（非搜索空为空串）
@@ -443,17 +461,46 @@ struct JointRunResult {
 };
 
 /**
+ * @brief 暂停信号查询接口（§9.2 Paused 态消费的编排侧接缝——WP-21-T07）。
+ *
+ * 为什么是本域接口而不是复用 evidence::IEvaluationContext：取消查询归
+ * evidence 评估调用约定（§9.1 既有面，跨单元冻结），而暂停是 execution
+ * 任务控制语义（§7.2 requestPause→批边界确认）在优化编排侧的消费点——
+ * 经依赖注入进入本编排（同 IJointMetricProjector/IParetoFrontBuilder 接
+ * 缝纪律），不改动 evidence 冻结接口（跨单元零触碰）。
+ *
+ * 语义契约：pauseRequested() 一经置位**不得回退**（同 execution
+ * ICancelSignal 纪律——复位语义未定义，自造复位会造成批边界漏判）；查询
+ * 须无阻塞（批边界高频调用）；生产实现＝execution 侧暂停意图旗标（任务
+ * Running＋requestPause 受理后置位——TaskController 编排），测试以脚本化
+ * 替身注入。
+ *
+ * 取消与暂停同时请求：**取消优先**（§7.4 协作取消的终态语义强于挂起——
+ * 编排在批边界先查取消、后查暂停；两者皆真按取消处置，暂停意图随取消
+ * 终态一并消解）。
+ */
+class IPauseSignal {
+public:
+    virtual ~IPauseSignal() = default;
+
+    /// 当前是否已请求暂停（查询须无阻塞；置位后不回退——类注释）。
+    virtual bool pauseRequested() const = 0;
+};
+
+/**
  * @brief 编排依赖注入面（构造注入——L5 装配形态；全部非 owning 指针，
  *        调用方保证 run() 期间存活）。
  *
  * 装配校验（构造期）：checkerDeps/projector/paretoBuilder 必须非空（缺失
- * 即构造抛 std::invalid_argument——装配违约 fail-fast）。
+ * 即构造抛 std::invalid_argument——装配违约 fail-fast）；pauseSignal 可空
+ * ＝暂停面未装配（合法——编排永不暂停，R1 装配形态零影响）。
  *
  * 并发契约（并行路径——threadCount>1）：checkerDeps 所指四注册表/投影面
  * 必须并发只读安全（evidence 两注册表查询共享锁已保证；layerSlices 生产
  * 适配器为无状态纯投影——测试替身自持互斥）；ctx.cancellationRequested
- * 被多 worker 并发查询，实现须并发安全。违反并发契约的数据竞争属调用方
- * 装配违约（本编排以"每 worker 独立 checker 实例＋deps 只读"约束自身侧）。
+ * 与 pauseSignal->pauseRequested() 被多 worker 并发查询，实现须并发安全。
+ * 违反并发契约的数据竞争属调用方装配违约（本编排以"每 worker 独立
+ * checker 实例＋deps 只读"约束自身侧）。
  */
 struct JointRunOrchestratorDeps {
     const JointLayeredCheckDeps* checkerDeps = nullptr; ///< 内层闭环依赖面
@@ -464,6 +511,9 @@ struct JointRunOrchestratorDeps {
                                              ///  （P-OPT-2 替身面）
     const IParetoFrontBuilder* paretoBuilder = nullptr; ///< Pareto 稳定序单点
                                              ///  （Quick 筛选与 Verified 前沿同源）
+    const IPauseSignal* pauseSignal = nullptr; ///< 暂停信号查询缝（WP-21-T07；
+                                             ///  nullptr＝暂停面未装配——编排
+                                             ///  永不暂停，行为与既有批次一致）
 };
 
 /**
@@ -491,7 +541,13 @@ struct JointRunOrchestratorDeps {
  *        检查点基点初始化（继续不重复统计）；
  *      - 逐批：批边界查询 ctx.cancellationRequested()（true ⇒ 停止派发，
  *        runPhase=Canceled＋已回传批保留〔TASK-01〕——**产出当前检查点
- *        状态**供宿主写出，续跑自此继续）；批内候选并行/串行推进（每
+ *        状态**供宿主写出，续跑自此继续）；批边界其次查询暂停信号
+ *        （pauseSignal 非空且 pauseRequested() ⇒ 同批界停止派发，
+ *        runPhase=Paused＋该批界检查点状态即**暂停确认凭据**〔§9.2 暂停
+ *        确认边界＝批边界检查点——宿主写出并确认后任务态转 Paused 归
+ *        execution T10；取消优先于暂停——两者同时请求按取消处置，
+ *        §7.4〕；单批运行无批间边界 ⇒ 暂停不生效、运行照常完成）；
+ *        批内候选并行/串行推进（每
  *        候选＝联合闭环 check＋八项指标＋激活目标完整性映射＋会话底账
  *        登记）；批完成 ⇒ 产出检查点状态（checkpointStates 追加）；
  *   4. Quick 保守筛选（§8.4 规则原样：Quick-Feasible 且激活目标槽位完整

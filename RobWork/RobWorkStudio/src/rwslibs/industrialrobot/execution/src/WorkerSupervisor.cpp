@@ -135,6 +135,7 @@ struct WorkerSupervisor::WorkerRecord {
     bool forceKillIssued = false;      ///< 已强杀（恰一次——§10.3 terminateForce）
     bool exitProcessed = false;        ///< 退出已分类（恰一次）
     bool cancelSettledFlag = false;    ///< 收到 CancelAck（IWorkerHandle::cancelSettled）
+    bool pauseAckFlag = false;         ///< 收到 PauseAck（IWorkerHandle::pauseSettled——WP-21-T07 暂停确认观测）
     bool pendingDestroy = false;       ///< 记录待整体销毁（回收路径出清）
     std::optional<Clock::time_point> lastHeartbeat;   ///< 最近心跳（注入时钟域）
     std::optional<Clock::time_point> lastActivity;    ///< 最近任意帧（"管道无数据"半区）
@@ -177,6 +178,12 @@ public:
     void requestCooperativeCancel() override { m_owner->requestCooperativeCancel(m_worker); }
 
     bool cancelSettled() const override { return m_owner->workerCancelSettled(m_worker); }
+
+    /// 通道 PauseRequest（§7.2——WP-21-T07；恰发一次防线归调用方编排层）。
+    void requestPause() override { m_owner->requestPause(m_worker); }
+
+    /// 暂停确认观测（§7.2 暂停确认边界＝检查点写出并确认——PauseAck）。
+    bool pauseSettled() const override { return m_owner->workerPauseSettled(m_worker); }
 
     void terminateForce(TerminationCause cause) override
     {
@@ -463,6 +470,29 @@ void WorkerSupervisor::requestCooperativeCancel(WorkerId worker)
     (void)sendFrame(record, frame);  // 写失败＝通道断——协作取消退化为强杀路径（上层协议窗超时兜底）
 }
 
+void WorkerSupervisor::requestPause(WorkerId worker)
+{
+    // 通道 PauseRequest（§7.2——WP-21-T07）：worker 宿主在下一检查点边界
+    // 写出检查点并应答 PauseAck；恰发一次防线归 TaskController 编排层
+    // （本方法只做通道转发，幂等性不在此把关）。阶段 A 载荷为空
+    // （ChannelProtocol.hpp PauseRequest 注）。
+    const auto it = m_workers.find(worker.value);
+    if (it == m_workers.end()) {
+        // 未知 worker＝调用方登记面违约（§10.8——fail-fast）。
+        throw ExecutionError(ExecutionErrorCode::InvalidState,
+                             "execution/worker-pause: unknown worker id");
+    }
+    WorkerRecord& record = *it->second;
+    if (record.exitProcessed) {
+        return;  // 已退出——幂等 no-op（暂停对已终结 worker 无物可操作）
+    }
+    ChannelFrame frame;
+    frame.type = ChannelMsgType::PauseRequest;
+    frame.seq = record.outSeq++;
+    frame.identity = record.identity;
+    (void)sendFrame(record, frame);  // 写失败＝通道断——暂停意图滞留（保持 Running，§7.4"状态保持 Running"）
+}
+
 void WorkerSupervisor::terminateForce(WorkerId worker, TerminationCause /*cause*/)
 {
     const auto it = m_workers.find(worker.value);
@@ -618,6 +648,14 @@ bool WorkerSupervisor::workerCancelSettled(WorkerId worker) const
 {
     const auto it = m_workers.find(worker.value);
     return it != m_workers.end() && it->second->cancelSettledFlag;
+}
+
+bool WorkerSupervisor::workerPauseSettled(WorkerId worker) const
+{
+    // 暂停确认观测（§7.2——WP-21-T07）：worker 已应答 PauseAck（检查点
+    // 写出并确认）；置位不回退（同 cancelSettledFlag 纪律）。
+    const auto it = m_workers.find(worker.value);
+    return it != m_workers.end() && it->second->pauseAckFlag;
 }
 
 bool WorkerSupervisor::workerAlive(WorkerId worker) const
@@ -942,6 +980,7 @@ void WorkerSupervisor::handleFrame(WorkerRecord& record, ChannelFrame&& frame)
                          ExitClassification::Crashed});
         break;
     case ChannelMsgType::PauseAck:
+        record.pauseAckFlag = true;  // 暂停确认观测（IWorkerHandle::pauseSettled——WP-21-T07）
         emit(WorkerEvent{WorkerEvent::Kind::PauseAck, record.id, record.identity,
                          std::nullopt, 0, 0, {}, "", "", false, 0,
                          ExitClassification::Crashed});

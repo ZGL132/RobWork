@@ -100,9 +100,10 @@ std::string_view toToken(MetricId m) noexcept
 
 std::string_view toToken(RunPhase p) noexcept
 {
-    // 运行状态稳定 token（卡 §4.3/§4.4 九值；kebab 词形）。枚举值序＝卡面
-    // 登记契约（Draft→…→Interrupted），与 token 一一对应；token 进运行
-    // 记录/导出/审计书写面——改名即消费面漂移，冻结（WP-20-T06 表尾追加）。
+    // 运行状态稳定 token（卡 §4.3/§4.4 值表；kebab 词形）。枚举值序＝卡面
+    // 登记契约（Draft→…→Interrupted，WP-21-T07 表尾追加 Paused），与
+    // token 一一对应；token 进运行记录/导出/审计书写面——改名即消费面
+    // 漂移，冻结（WP-20-T06 表尾追加；WP-21-T07 续表尾追加 "paused"）。
     switch (p) {
     case RunPhase::Draft:
         return "draft";
@@ -122,6 +123,8 @@ std::string_view toToken(RunPhase p) noexcept
         return "failed";
     case RunPhase::Interrupted:
         return "interrupted";
+    case RunPhase::Paused:
+        return "paused";
     }
     // 不可达分支（同本文件既有 token 函数口径——防御式空串，不吞错）。
     return {};
