@@ -573,14 +573,21 @@ ird_add_gtest(sdurws_ird_optimization_contract_test)
 # 链接面：sdurws_ird_optimization（被测产品目标——同单元）＋
 # sdurws_ird_testkit（PerfBenchmark 报告拖挂面——T-1 允许形态＝仅测试目标
 # ，LinkageContractTest::NoTestkitEdge 的允许集随本目标扩登——WP-23-T03
-# 批登记先例同款）＋GTest::gtest（main 自持）。零 Qt（D-01——L2 计算内核
-# 基准入口不构造 QCoreApplication，与 execution perf 目标同形；单行链接
-# 语句＝T-1 扫描的登记形态约束）。ird_gates 预期恰增＝零（同单元产品边＋
-# testkit 硬编码允许形态——登记册 traceability/wp23-t07-gate-registrations
-# .md）。
+# 批登记先例同款）＋GTest::gtest（main 自持）。WP-23-T08 增列链接
+# sdurws_ird_ui：B-07 优化运行时限基准（本目标第二 TU
+# perf_test/OptRunTimeBenchmarkTest.cpp——performance-baseline §2 B-07 行
+# ／NFR-PERF-06 的测量载体）的运行期间 NFR-PERF-01 抽查面＝五类交互的
+# 无头模型层驱动（WP-23-T02 B-01 同款驱动形态）——ASM-PLUG 第十登记边
+# optimization→ui 的测试面消费（产品库链接块零变化；ui 库经其 PUBLIC
+# 接口传递 Qt6 运行期依赖，QCoreApplication 由该 TU 用例体内自持构造/
+# 析构——本目标 main 入口保持非 Qt 形态不变，B-06 用例零影响）。
+# ird_gates 预期命中集：T07 批基线 21 项＋本批恰增 1 条测试面引用
+# （perf_test→ui——登记册 traceability/wp23-t08-gate-registrations.md，
+# 双态直跑核定随合入批补做）。
 add_executable(sdurws_ird_optimization_perf_test
     perf_test/TestMainPerf.cpp
-    perf_test/ParallelThroughputBenchmarkTest.cpp)
+    perf_test/ParallelThroughputBenchmarkTest.cpp
+    perf_test/OptRunTimeBenchmarkTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_perf_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_perf_test PROPERTIES
@@ -594,10 +601,13 @@ endif()
 
 # T-1 允许形态：testkit 只落在测试目标链接语句（单行链接语句与既有
 # _test/_contract_test 同款形态——NoTestkitEdge 用例的同行显式约束）。
-target_link_libraries(sdurws_ird_optimization_perf_test PRIVATE sdurws_ird_optimization sdurws_ird_testkit GTest::gtest)
+# sdurws_ird_ui 为 WP-23-T08 增列（B-07 运行期交互抽查的 ui 模型层驱动——
+# 登记边 optimization→ui 的测试面消费；产品目标链接块零变化）。
+target_link_libraries(sdurws_ird_optimization_perf_test PRIVATE sdurws_ird_optimization sdurws_ird_testkit sdurws_ird_ui GTest::gtest)
 
-# 运行期 DLL 拷贝（vcpkg gtest 动态库——留痕与验收都要直接执行该可执行
-# 文件；execution perf 目标同款先例。零 Qt 依赖故无 Qt 传染面）。
+# 运行期 DLL 拷贝（vcpkg gtest 动态库＋ui 库传递的 Qt6 运行期 DLL——
+# $<TARGET_RUNTIME_DLLS> 覆盖全部链接面导入目标；留痕与验收都要直接执行
+# 该可执行文件；execution perf 目标同款先例）。
 add_custom_command(TARGET sdurws_ird_optimization_perf_test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_RUNTIME_DLLS:sdurws_ird_optimization_perf_test>
