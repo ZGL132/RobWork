@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现搜索策略接口扩展",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-21-T02"
   ],
@@ -40,5 +40,5 @@
   "acceptance": [
     "搜索策略接口扩展评审通过（OPT-10；首版不要求一次引入全部算法）；不预建空算法占位（DTB 行禁止项——NFR-MNT-04）"
   ],
-  "note": "DTB §2.22 行逐一对应；单域实现——interUnit=false。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）。【ready 放行 2026-10-14】status planned→ready。放行依据＝所有者 2026-10-13「实现 M6 阶段收口」指令（本工作流批次放行）；前置 WP-21-T02 已 done（OPT-D 登记批合入，c42c405a 收尾批在主树）——前置链闭合。判定阈值裁决如实登记：两槽位维持待定，未补充确认前 OPT-09 判定子项未冻结；本卡为搜索策略接口面（OPT-10 生成侧），不涉判定阈值——baseline-perturb 扰动比例默认值引用附录 C 表①冻结值（0.01 默认／4×=0.04 放宽上界封顶——冻结采样面值，非判定阈值槽位，引用合法）。补齐 ready 必备字段：forbiddenFiles（主文档四份——本卡改动面限 optimization/**＋units/optimization.md＋traceability/**）；designRefs 锚点复核在案（units/optimization.md#15＝§15 需求—设计—验证追踪矩阵；development-task-breakdown.md#2.22＝WP-21 任务卡表）。branch=wp21-t06。"
+  "note": "DTB §2.22 行逐一对应；单域实现——interUnit=false。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）。【ready 放行 2026-10-14】status planned→ready。放行依据＝所有者 2026-10-13「实现 M6 阶段收口」指令（本工作流批次放行）；前置 WP-21-T02 已 done（OPT-D 登记批合入，c42c405a 收尾批在主树）——前置链闭合。判定阈值裁决如实登记：两槽位维持待定，未补充确认前 OPT-09 判定子项未冻结；本卡为搜索策略接口面（OPT-10 生成侧），不涉判定阈值——baseline-perturb 扰动比例默认值引用附录 C 表①冻结值（0.01 默认／4×=0.04 放宽上界封顶——冻结采样面值，非判定阈值槽位，引用合法）。补齐 ready 必备字段：forbiddenFiles（主文档四份——本卡改动面限 optimization/**＋units/optimization.md＋traceability/**）；designRefs 锚点复核在案（units/optimization.md#15＝§15 需求—设计—验证追踪矩阵；development-task-breakdown.md#2.22＝WP-21 任务卡表）。branch=wp21-t06。【合入收尾 2026-10-13（合入收尾员，授权依据＝所有者 2026-10-13「实现 M6 阶段收口」指令——attempt 1 对抗式独立验收 PASS 后合入）】实现＝6e185fe343efa6f2037cc86b7af2c1c628c0e30e（origin/wp21-t06 双提交〔06c15d20 契约 ready 翻牌＋本实现〕，基 c42c405a＝主树头，恰 12 文件 +1978/−25）；attempt 1 独立对抗验收 PASS（记录 build/m6-acc/WP-21-T06-attempt1.md → 落库 traceability/acceptance/WP-21-T06-20261013.md）——4.1~4.11 全过零阻断：12 文件全在 allowedFiles、forbiddenFiles/patches/findings.json 零触碰、冒烟全树唯一错误＝基线既有 ui_test C1083（91cda264 与本批无关）且 optimization 四目标零错误、ctest 2/2＋模型 188=187P+1S+0F＋契约 52/52 全部亲跑亲证、ird_gates 恰 18 命中全为 WP-23 perf 面已登记项零新增、变异 M1（Δ 计算篡改）/M2（分派吞错）/M3（契约锚点）三处翻红证测试与验证器非恒真且还原回绿、P-04 判定阈值零私设（0.01/0.04 为附录 C 表①冻结采样面值逐字保真）；建议级 0 项、观察项 O-1/O-2 留档；本批 findings.json 零触碰（F-495 未动）。合并＝merge 46595d48（--no-ff 并入 redesign-main，零冲突，合并基 c42c405a）；合入批复测（主集成树亲跑，RWS_BUILD_INDUSTRIALROBOT=ON）：四目标 sdurws_ird_optimization/_plugin/_test/_contract_test 构建零错误（BUILD_EXIT=0）＋ctest optimization 2/2 Passed（ird 标签 1.59 s，CTEST_EXIT=0）。status ready→done；本卡不动 DTB 版本行（收口声明批统一登记）。。"
 }
