@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "内存与节流规模化达标（R2/D）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-23-T01",
     "EX-T07",
@@ -15,18 +15,33 @@
   ],
   "designRefs": [
     "REQUIREMENTS.md#19.3",
-    "ARCHITECTURE.md#4.3",
+    "performance-baseline.md#2",
+    "performance-baseline.md#4.7",
+    "performance-baseline.md#5.5",
+    "units/execution.md#6.1",
     "development-task-breakdown.md#2.24"
   ],
   "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/performance/**",
+    "RobWork/doc/industrial-robot-design/performance-baseline.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/testkit.md"
   ],
   "outputs": [
     "benchmark",
     "traceability-update"
   ],
   "verify": [
-    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T06.json"
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T06.json",
+    "cmake --build <冒烟构建目录> --config Release --target sdurws_ird_execution_test sdurws_ird_execution_contract_test sdurws_ird_execution_perf_test",
+    "ctest --test-dir <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot -C Release -R \"sdurws_ird_execution_(test|contract_test|perf_test)\" --output-on-failure"
   ],
   "branch": "wp23-t06",
   "interUnit": true,
@@ -36,5 +51,5 @@
   "acceptance": [
     "主进程+全部工作进程峰值 ≤70% 物理内存；大任务分批/流式/检查点＋先节流后诊断用例与基准通过（NFR-PERF-04）"
   ],
-  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。DTB 前置\"WP-08-T08\"≙EX-T07（资源治理三段——execution.md §15.4 v0.9 越界声明明文\"规模化验收归 WP-23-T06，本任务零提前实现\"——本契约即该承接位）；P-EX-2（三段治理语义锚定 ARCH Draft 待评审——评审变更按影响面增量同步）挂靠。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。DTB 前置\"WP-08-T08\"≙EX-T07（资源治理三段——execution.md §15.4 v0.9 越界声明明文\"规模化验收归 WP-23-T06，本任务零提前实现\"——本契约即该承接位）；P-EX-2（三段治理语义锚定 ARCH Draft 待评审——评审变更按影响面增量同步）挂靠。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。编译放行（2026-10-14，WP-23-T06 实施段）：status planned→ready＋补齐 ready 必备字段——designRefs 锚点精化（REQUIREMENTS §19.3 NFR-PERF-04 行原文／performance-baseline §2 B-05 行＋§4.7 内存与时限测量口径＋§5.5 本卡挂点／units/execution.md §6.1 内存预算行〔被测对象——ResourceController 三段治理与主进程＋全部工作进程汇总口径，EX-T07 语义本体；其 §15.4 v0.9 越界声明即本卡承接依据〕/DTB §2.24 本卡行）；allowedFiles 按达标口径实现面如实扩登（execution 单元：内存与节流基准测量用例增列于既有 perf_test 目标 sdurws_ird_execution_perf_test〔WP-23-T03 先例——零新增构建目标，LinkageContractTest 白名单面零变更〕＋testdata/performance 数据集 manifest＋performance-baseline.md 仅 B-05 复现命令位回填与 §5.5 挂点登记＋traceability 留痕；测量用例消费 sdurws_ird_execution 本体＋sdurws_ird_testkit〔T-1 允许形态〕，零新增跨单元产品编译边）；forbiddenFiles 补登五份文档禁改（协议数值零私改——70% 物理内存上限照抄 REQUIREMENTS NFR-PERF-04 原文、65% 节流阈值为 execution.md §15.1 D-05 实现参数照抄登记值；testkit.md 本卡零变更——PerfBenchmark 报告拖挂面直接复用〔T02/T03/T04/T05 先例——零新增 testkit 头〕，B-05 为内存阈值类判定非 P95，分位数半区不适用）。放行依据＝所有者 2026-10-13「实现 M6 阶段收口」指令＋实现分支 wp23-t06；前置 WP-23-T01（done——协议与基准清单）／EX-T07（done——ResourceController/IMemorySampler/SupervisorMemorySampler/MemProbe 三探针在位）／WP-21-T04（done——联合编排批量化与检查点规模化）均满足。判定阈值裁决登记（REQUIREMENTS 附录 C《P-04 冻结数值表》2026-10-13 部分冻结现状）：表①②③采样规则＋表④结构规则/适用边界已冻结，判定阈值（通过线/降级线）两槽位所有者裁定维持待定、未补充确认前按未冻结处理——本卡达标面为内存峰值阈值（70%）与节流时序语义（65% 先节流→70% 诊断），数值全部源自 NFR-PERF-04 原文与 D-05 实现参数，与 P-04 判定阈值零交集、零私设数值、零鲁棒性判定结论；optimization.md §9.2 规模化口径锚（:1124）登记的\"NFR-PERF-04……WP-23-T06，performance-baseline B-05，复现命令位待回填\"即本卡执行面。"
 }
