@@ -126,10 +126,12 @@ inline constexpr std::string_view kKinRegionCoverageKey = "kin-region-coverage";
 /**
  * @brief R1 静态硬约束词表（§6.2 管线执行项——枚举序即执行序）。
  *
- * 词表边界（防扩大）：仅含 OPT-B 静态子集十项；轨迹/动力学/drivetrain
- * 性能/器件联合约束（§6.1 表第 8~11 行，阶段 D）**不落枚举值**——不预建
- * 占位（NFR-MNT-04；WP-21-T02 增量修订时表尾追加）。用户硬约束/软目标
- * （§6.1 表第 12/13 行）无需求承载，永不落表。
+ * 词表边界（防扩大）：R1 段仅含 OPT-B 静态子集十项；用户硬约束/软目标
+ * （§6.1 表第 12/13 行）无需求承载，永不落表。轨迹/动力学/drivetrain
+ * 性能/器件联合约束（§6.1 表第 8~11 行，阶段 D）的可执行项**已随
+ * WP-21-T04 表尾追加**（下方 TrajectoryQuick 起八值——§6.3 联合段执行
+ * 序；追加前不预建占位的 NFR-MNT-04 纪律在本枚举历史中成立：WP-20-T04
+ * 交付时点联合项不在表，落位时点按 §6.3 顺序表尾追加并留痕）。
  */
 enum class ConstraintId {
     InputPrecondition,       ///< 输入前置（快照/版本/身份一致——§6.1 #1；管线内为
@@ -146,6 +148,32 @@ enum class ConstraintId {
     MustRegionCoverage,      ///< Must 区域覆盖（§6.1 #6——kin.region-coverage，KIN-04）
     StaticCollision,         ///< 静态碰撞（§6.1 #7——policy 唯一实现 SampleSet；C8 构型级
                              ///  过滤记录不上升任务不可行）
+
+    // ---- WP-21-T04 表尾追加（§6.3 R2 联合管线执行项——枚举值序＝§6.3
+    // 联合段执行序：轨迹 Quick→轨迹 Verified→动力学 Quick→动力学
+    // Verified→drivetrain 映射→selection 器件匹配→多工况覆盖→联合硬约束
+    // 汇总；值一经交付不得改动/插入，NFR-COR-02。鲁棒性/灵敏度复核
+    // （§6.3 末步）**不进本词表**——非硬约束面，判定阈值两槽位待所有者
+    // 补充确认（附录 C 表④），归 WP-21-T05）----
+    TrajectoryQuick,         ///< 轨迹 Quick（§6.1 #8/§6.3——trj-sequence-plan
+                             ///  筛选语义 Quick 预算；依据键 kInnerTrjPlanKey）
+    TrajectoryVerified,      ///< 轨迹 Verified（§6.1 #8/§6.3——完整预算；TRJ-04
+                             ///  复检协议（P-06 冻结值）证据随层产出）
+    DynamicsQuick,           ///< 动力学 Quick（§6.1 #9/§6.3——dyn-rnea-analysis
+                             ///  forwardCheck=Skip 筛选语义）
+    DynamicsVerified,        ///< 动力学 Verified（§6.1 #9/§6.3——forwardCheck=
+                             ///  Standard；峰值窗/RMS/多工况包络）
+    DrivetrainMapping,       ///< drivetrain 工作点映射（§6.1 #10/§6.3——dt.mapping
+                             ///  电机侧工作点/反射惯量/惯量比/效率，只出数值；
+                             ///  映射公式唯一归 drivetrain——N5）
+    DeviceMatching,          ///< 器件能力约束（§6.1 #11/§6.3——sel.combination-check
+                             ///  硬筛选/组合兼容/成本质量裕量事实；阈值判定归
+                             ///  selection——thresholdSource 字段保留来源）
+    MustCaseCoverage,        ///< 多工况覆盖（§6.3 第 7 步——必验工况全覆盖检查
+                             ///  EVI-02；覆盖矩阵跨批汇总，漏验不出正式通过）
+    JointSummary,            ///< 联合硬约束汇总（§6.3 第 8 步——各域 Must 违例
+                             ///  ⇒ 候选 Infeasible，逐域逐约束记录互不覆盖；
+                             ///  判定唯一归 evidence aggregateVerdict——PA-1）
 };
 
 /**
@@ -158,13 +186,16 @@ std::string_view toToken(ConstraintId id) noexcept;
 
 /**
  * @brief R2 联合约束家族（§6.1 表第 8~11 行的**引用词表**——只承载
- *        "研究定义引用了哪个联合约束族"这一事实，不是可执行约束）。
+ *        "研究定义引用了哪个联合约束族"这一事实；家族是引用粒度，
+ *        可执行粒度见 ConstraintId 联合段——WP-21-T04 表尾追加）。
  *
- * 为什么独立成枚举而不落 ConstraintId：阶段 B 引用联合约束的处理是
+ * 为什么独立成枚举而不直接落 ConstraintId：阶段 B 引用联合约束的处理是
  * **启动拒绝**（OPT-STAGE-LOCKED，§5.7/§6.5——不静默降级），被引用项
- * 根本不会进入执行清单；为其落可执行枚举值即预建占位（NFR-MNT-04）。
- * WP-21-T02 冻结联合管线时，各家族对应的可执行约束随其卡面表尾追加
- * ConstraintId 枚举值，本枚举保持引用词表不变。
+ * 根本不会进入执行清单；为其落可执行枚举值即预建占位（NFR-MNT-04——
+ * WP-20-T04 交付时点的边界，历史留痕）。WP-21-T04 落位时各家族对应的
+ * 可执行约束已按 §6.3 顺序表尾追加（一个家族可展开多个执行项——轨迹/
+ * 动力学族各含 Quick/Verified 两级），本枚举保持**引用词表**不变：
+ * 研究定义激活集书写家族 token，StageD 解析时展开为执行项（§6.3 序）。
  */
 enum class JointConstraintFamily {
     Trajectory,            ///< 轨迹约束族（trj-sequence-plan——阶段 D）
@@ -220,6 +251,29 @@ struct ConstraintSpec {
  */
 std::vector<ConstraintSpec> stageBConstraintPlan();
 
+/**
+ * @brief R2 联合约束执行清单（§6.3 全序——纯函数，同调用恒同值；
+ *        WP-21-T04 落位——联合硬约束执行件的词表登记面）。
+ *
+ * 清单内容（顺序即 §6.3 执行序，十八项）：§6.2 R1 全序十项（第一步"R1
+ * 静态约束（§6.2 全序）"原样复用 stageBConstraintPlan()）随后联合段八项：
+ * TrajectoryQuick(kInnerTrjPlanKey) → TrajectoryVerified(同键) →
+ * DynamicsQuick(kInnerDynRneaKey) → DynamicsVerified(同键) →
+ * DrivetrainMapping(kInnerDtMappingKey) → DeviceMatching(
+ * kInnerSelCombinationKey) → MustCaseCoverage(evidence.aggregate-verdict)
+ * → JointSummary(evidence.aggregate-verdict)。
+ *
+ * 边界登记（防扩大）：§6.3 末步"鲁棒性/灵敏度复核"**不进本清单**——非
+ * 硬约束面（OPT-09），其判定阈值两槽位待所有者补充确认（附录 C 表④
+ * "未指定前按未冻结处理"），三模式归 WP-21-T05；八项指标计算/Pareto
+ * （§6.3 第 9/10 步）同为 §7 计算面非约束，亦不进清单。
+ *
+ * @return §6.3 顺序的十八项清单（每次调用返回新值——确定性 NFR-COR-02）
+ *
+ * 纯函数；线程安全（可重入）。
+ */
+std::vector<ConstraintSpec> stageDConstraintPlan();
+
 // =====================================================================
 // 约束编排服务（§12.2 签名——OPT-03 的编排描述面；执行归管线）
 // =====================================================================
@@ -241,15 +295,15 @@ public:
      * @brief 返回阶段对应的约束执行清单（§6.1/§6.2/§6.3 顺序）。
      *
      * StageB → stageBConstraintPlan()（§6.2 R1 全序）；
-     * StageD → 抛 OPT-STAGE-LOCKED——联合约束清单随 WP-21-T02 增量修订
-     * 登记（P-04 冻结＋联合评估器落位为前置，卡 §13.2 表头），本任务不
-     * 预建（DOPT-4 同口径：OPT-D 联合评估器不预登记）。
+     * StageD → stageDConstraintPlan()（§6.3 R2 联合全序——WP-21-T04 落位：
+     * P-04 表①②③采样规则＋表④结构规则已冻结（2026-10-13，REQUIREMENTS
+     * 附录 C），联合硬约束清单的登记条件成立；判定阈值两槽位待补充确认的
+     * 门禁**不在清单面**——它阻塞的是鲁棒性判定结论（WP-21-T05）与正式
+     * OPT-D 启用（Preflight #11，WP-20-T08 面），联合硬约束执行件本身
+     * 按冻结采样面登记落位）。
      *
      * @param stage [in] 优化阶段
      * @return 该阶段的约束执行清单（§6.2/§6.3 顺序；每次调用返回新值）
-     *
-     * @throws OptimizationError(kOptStageLocked) 阶段约束体系未启用/未登记
-     *         （StageD——P-04 未冻结且联合清单未随 WP-21-T02 登记）
      *
      * 线程安全：只读纯函数面（可并发）。
      */
@@ -269,11 +323,17 @@ public:
      *     AT-09 同型的语义混同）；
      *   ③ 其余（R1 词表内 token 的任意子集，含空表＝缺省全启用）→ 返回
      *     对应 R1 约束按 §6.2 顺序排列的子清单。
+     * StageD 语境（WP-21-T04 落位）：①不适用（联合约束本就是 StageD 面）；
+     * 联合家族 token 展开为其可执行项（轨迹/动力学族各含 Quick/Verified
+     * 两执行项，drivetrain/器件族各一项——§6.3 序），R1 token 按 §6.3 序
+     * 过滤 R1 段；多工况覆盖＋联合硬约束汇总两执行项**恒在**（§6.3 第
+     * 7/8 步是联合判定面固定汇总步，不可裁剪——裁掉即无联合结论）；
+     * ②未知 token 仍拒。
      *
      * @param stage            [in] 优化阶段
      * @param requestedTokens  [in] 研究定义引用的约束 token 集（R1 词表
-     *                         ＋联合家族词表；顺序无关——输出恒按 §6.2 序）
-     * @return 解析后的执行清单（§6.2 顺序）
+     *                         ＋联合家族词表；顺序无关——输出恒按 §6.2/§6.3 序）
+     * @return 解析后的执行清单（§6.2/§6.3 顺序）
      *
      * @throws OptimizationError(kOptStageLocked) StageB 引用联合约束族
      * @throws OptimizationError(kOptInputInvalid) 未知约束 token

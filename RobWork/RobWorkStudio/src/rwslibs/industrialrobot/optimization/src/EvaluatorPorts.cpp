@@ -195,18 +195,33 @@ void validateConfiguration(const OptimizationConfiguration& config)
                                 "OPT-INPUT-INVALID: config.seed 为 0（I-OPT-2：种子合法域 ≥1，"
                                 "0 非法且不做静默替换——NFR-COR-03）");
     }
-    // ③④ 并行声明：R1 恒 1（§15.0"并行与检查点不作为 B 期验收承诺"）。
-    //    接受 >1 而按串行执行＝静默降级（配置语义与行为不符），故显式
-    //    拒绝并指向 OPT-D 落位（WP-21）。
-    if (config.parallel.threadCount != 1U) {
+    // ③④ 并行声明：StageB 恒 1（§15.0"并行与检查点不作为 B 期验收承诺"）
+    //    ——接受 >1 而按串行执行＝静默降级（配置语义与行为不符），显式
+    //    拒绝；StageD ≥1 允许 >1（WP-21-T04 落位——§9.2 并行规模化：线程
+    //    数来自 config.opt 入身份〔KIN-13 同型"改线程数＝新身份＝重算"〕，
+    //    在途批上限由 execution 派发治理消费〔D-10〕）。
+    if (config.parallel.threadCount < 1U) {
+        throw OptimizationError(kOptInputInvalid,
+                                "OPT-INPUT-INVALID: config.parallel.threadCount="
+                                    + std::to_string(config.parallel.threadCount)
+                                    + "（合法域 ≥1——0 线程无并行语义）");
+    }
+    if (config.stage == OptimizationStage::StageB && config.parallel.threadCount != 1U) {
         throw OptimizationError(kOptInputInvalid,
                                 "OPT-INPUT-INVALID: config.parallel.threadCount="
                                     + std::to_string(config.parallel.threadCount)
                                     + "（阶段 B 编排恒串行——并行与检查点不作 B 期承诺"
-                                      "〔REQUIREMENTS §15.0〕；非 1 值属 OPT-D/R2 预支语义，"
-                                      "随 WP-21 落位，不静默降级）");
+                                      "〔REQUIREMENTS §15.0〕；StageD 并行归 §9.2/"
+                                      "WP-21-T04，不静默降级）");
     }
-    if (config.parallel.maxInFlightBatches != 1U) {
+    if (config.parallel.maxInFlightBatches < 1U) {
+        throw OptimizationError(kOptInputInvalid,
+                                "OPT-INPUT-INVALID: config.parallel.maxInFlightBatches="
+                                    + std::to_string(config.parallel.maxInFlightBatches)
+                                    + "（合法域 ≥1）");
+    }
+    if (config.stage == OptimizationStage::StageB
+        && config.parallel.maxInFlightBatches != 1U) {
         throw OptimizationError(kOptInputInvalid,
                                 "OPT-INPUT-INVALID: config.parallel.maxInFlightBatches="
                                     + std::to_string(config.parallel.maxInFlightBatches)

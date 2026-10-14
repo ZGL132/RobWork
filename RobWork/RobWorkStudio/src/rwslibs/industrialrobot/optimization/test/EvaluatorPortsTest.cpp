@@ -545,8 +545,11 @@ TEST(OptEvaluatorPorts, ParallelBeyondStageBPromiseRejected_WP20T06_ACC3)
 {
     IRD_TEST_INFO(std::vector<std::string>{"OPT-06"}, std::vector<std::string>{});
 
-    // §15.0：并行与检查点不作 B 期承诺——threadCount>1 显式拒绝（不静默
-    // 降级为串行）；maxGenerations>1 同理（R1 固定单批）。
+    // §15.0：并行与检查点不作 B 期承诺——StageB threadCount>1 显式拒绝
+    // （不静默降级为串行）；maxGenerations>1 同理（R1 固定单批）。
+    // 【WP-21-T04 语义演进】StageD 并行解锁（§9.2——threadCount≥1 合法，
+    // 线程数入 config.opt canonical 入身份）——本用例钉 StageB 拒绝面＋
+    // StageD 解锁面两侧（消息指向 StageD/WP-21-T04 落位，承诺边界可定位）。
     OptimizationConfiguration c = makeConfig();
     c.parallel.threadCount = 2;
     bool thrown = false;
@@ -555,10 +558,28 @@ TEST(OptEvaluatorPorts, ParallelBeyondStageBPromiseRejected_WP20T06_ACC3)
     } catch (const optimization::OptimizationError& e) {
         thrown = true;
         EXPECT_EQ(e.stableCode(), std::string(optimization::kOptInputInvalid));
-        EXPECT_NE(std::string(e.what()).find("OPT-D"), std::string::npos)
-            << "消息必须指向 OPT-D/R2 落位（承诺边界可定位）";
+        EXPECT_NE(std::string(e.what()).find("StageD"), std::string::npos)
+            << "消息必须指向 StageD/WP-21-T04 落位（承诺边界可定位）";
     }
     ASSERT_TRUE(thrown);
+    // StageD 对照组：threadCount=4／maxInFlightBatches=2 合法（并行解锁
+    // ——validateConfiguration 同一单点放行；并行行为面由 JointRun 并行
+    // 用例消费钉扎）。
+    {
+        OptimizationConfiguration d = makeConfig();
+        d.stage = optimization::OptimizationStage::StageD;
+        d.objectives
+            = optimization::defaultObjectives(optimization::OptimizationStage::StageD);
+        d.parallel.threadCount = 4;
+        d.parallel.maxInFlightBatches = 2;
+        bool threw = false;
+        try {
+            optimization::validateConfiguration(d);
+        } catch (const optimization::OptimizationError&) {
+            threw = true;
+        }
+        EXPECT_FALSE(threw) << "StageD 并行声明必须放行（WP-21-T04——§9.2）";
+    }
 
     c = makeConfig();
     c.budget.maxGenerations = 2;

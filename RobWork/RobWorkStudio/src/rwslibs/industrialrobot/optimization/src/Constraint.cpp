@@ -34,6 +34,10 @@
 #include <sdurws/ird/evidence/Errors.hpp>     // evidence::EvidenceError——③端口异常轨捕获
 #include <sdurws/ird/evidence/Verdict.hpp>    // aggregateVerdict/checkFormalPassEligibility
 #include <sdurws/ird/optimization/DiagCodes.hpp>  // OPT-* 码值常量（唯一书写点）
+#include <sdurws/ird/optimization/JointStrategy.hpp>  // kInner* 四内层评估键常量
+                                                      // （WP-21-T03 登记值——联合段
+                                                      // 依据键的唯一书写点；本头已
+                                                      // include Constraint.hpp 无环）
 
 namespace sdurws::ird::optimization {
 
@@ -91,6 +95,23 @@ std::string_view toToken(ConstraintId id) noexcept
         return "opt.constraint.must-region-coverage";
     case ConstraintId::StaticCollision:
         return "opt.constraint.static-collision";
+    // ---- WP-21-T04 表尾追加（§6.3 联合段——slug 与枚举一一对应，冻结）----
+    case ConstraintId::TrajectoryQuick:
+        return "opt.constraint.trajectory-quick";
+    case ConstraintId::TrajectoryVerified:
+        return "opt.constraint.trajectory-verified";
+    case ConstraintId::DynamicsQuick:
+        return "opt.constraint.dynamics-quick";
+    case ConstraintId::DynamicsVerified:
+        return "opt.constraint.dynamics-verified";
+    case ConstraintId::DrivetrainMapping:
+        return "opt.constraint.drivetrain-mapping";
+    case ConstraintId::DeviceMatching:
+        return "opt.constraint.device-matching";
+    case ConstraintId::MustCaseCoverage:
+        return "opt.constraint.must-case-coverage";
+    case ConstraintId::JointSummary:
+        return "opt.constraint.joint-summary";
     }
     // 不可达分支（词表封闭——Types.cpp 同款防御式空串，不吞错）。
     return {};
@@ -154,21 +175,48 @@ std::vector<ConstraintSpec> stageBConstraintPlan()
 }
 
 // =====================================================================
+// R2 联合约束执行清单（§6.3 全序——WP-21-T04 落位）
+// =====================================================================
+
+std::vector<ConstraintSpec> stageDConstraintPlan()
+{
+    // §6.3 第一步"R1 静态约束（§6.2 全序）"——R1 清单原样复用（同一清单
+    // 书写点，防两处口径漂移）。
+    auto plan = stageBConstraintPlan();
+    // 联合段八项（§6.3 执行序——轨迹/动力学各自 Quick→Verified 两级固定
+    // 序；dt/sel 单级；末两步为汇总固定步）。依据键：trj/dyn/dt/sel 四层
+    // 填内层评估键（kInner* 登记值——§8.3 第 7 步"依据评估键"）；多工况
+    // 覆盖与联合汇总为编排汇总步（判定唯一归 evidence aggregateVerdict——
+    // PA-1），填依据标识 "evidence.aggregate-verdict"（非评估键——不进
+    // ③端口注册表，同 "policy.collision-session" 依据标识先例）。
+    const auto joint = {
+        ConstraintSpec{ConstraintId::TrajectoryQuick, std::string(kInnerTrjPlanKey)},
+        ConstraintSpec{ConstraintId::TrajectoryVerified, std::string(kInnerTrjPlanKey)},
+        ConstraintSpec{ConstraintId::DynamicsQuick, std::string(kInnerDynRneaKey)},
+        ConstraintSpec{ConstraintId::DynamicsVerified, std::string(kInnerDynRneaKey)},
+        ConstraintSpec{ConstraintId::DrivetrainMapping, std::string(kInnerDtMappingKey)},
+        ConstraintSpec{ConstraintId::DeviceMatching, std::string(kInnerSelCombinationKey)},
+        ConstraintSpec{ConstraintId::MustCaseCoverage, std::string("evidence.aggregate-verdict")},
+        ConstraintSpec{ConstraintId::JointSummary, std::string("evidence.aggregate-verdict")},
+    };
+    plan.insert(plan.end(), joint.begin(), joint.end());
+    return plan;
+}
+
+// =====================================================================
 // 约束编排服务（阶段锁解析——OPT-STAGE-LOCKED 的执行点）
 // =====================================================================
 
 std::vector<ConstraintSpec>
 OptimizationConstraintProvider::constraintsFor(OptimizationStage stage) const
 {
-    // 阶段锁（卡 §5.7/§6.5）：StageD 联合约束清单随 WP-21-T02 增量修订
-    // 登记（P-04 冻结＋联合评估器落位为前置，卡 §13.2 表头）——本任务
-    // 不预建清单（DOPT-4 同口径），请求即运行启动阻塞拒绝。
+    // StageD → §6.3 R2 联合全序（WP-21-T04 落位：P-04 表①②③＋表④结构
+    // 规则已冻结（2026-10-13），联合硬约束清单登记条件成立；判定阈值两
+    // 槽位待补充确认的门禁不在清单面——它阻塞鲁棒性判定结论（WP-21-T05）
+    // 与正式 OPT-D 启用（Preflight #11，WP-20-T08 面），本清单按冻结采样
+    // 面登记落位）。
     if (stage == OptimizationStage::StageD) {
-        throw OptimizationError(
-            kOptStageLocked,
-            "阶段 stage-d 的联合约束清单尚未登记（P-04 冻结＋WP-21-T02 "
-            "联合管线落位为前置）——运行启动阻塞（§6.5：不静默降级，"
-            "不呈现为候选淘汰）");
+        return stageDConstraintPlan();
     }
     // StageB → §6.2 R1 全序内置清单（纯函数）。
     return stageBConstraintPlan();
@@ -198,8 +246,90 @@ OptimizationConstraintProvider::resolveConstraintPlan(
         }
     }
 
-    // 第二步：R1 词表内子集解析（未知 token → OPT-INPUT-INVALID——与
-    // "登记了但阶段不支持"语义分立，防 AT-09 同型语义混同）。
+    // ---- StageD 语境（WP-21-T04 落位）：家族 token 展开为可执行项 ----
+    // 解析序（确定性）：按 §6.3 全序逐项过滤——R1 段按自身 token 命中，
+    // 联合段按"自身 token 命中 ∨ 所属家族 token 命中"，多工况覆盖与联合
+    // 汇总两执行项恒在（§6.3 第 7/8 步是联合判定面固定汇总步——裁掉即
+    // 无联合结论，不可裁剪）；末尾对 requested 未命中项做词表覆盖核对
+    // （未知 token → OPT-INPUT-INVALID，与 StageB 同一码面）。
+    if (stage == OptimizationStage::StageD) {
+        const auto full = stageDConstraintPlan();
+        if (requestedTokens.empty()) {
+            // 空激活集＝缺省全启用（§6.3 全序——与 StageB 同一口径）。
+            return full;
+        }
+        // 家族归属辅助：联合段执行项 → 所属家族 token（R1 段与汇总步无
+        // 家族——返回空串表示"不按家族匹配"）。
+        auto familyTokenOf = [](ConstraintId id) -> std::string_view {
+            switch (id) {
+            case ConstraintId::TrajectoryQuick:
+            case ConstraintId::TrajectoryVerified:
+                return toToken(JointConstraintFamily::Trajectory);
+            case ConstraintId::DynamicsQuick:
+            case ConstraintId::DynamicsVerified:
+                return toToken(JointConstraintFamily::Dynamics);
+            case ConstraintId::DrivetrainMapping:
+                return toToken(JointConstraintFamily::DrivetrainPerformance);
+            case ConstraintId::DeviceMatching:
+                return toToken(JointConstraintFamily::DeviceJoint);
+            default:
+                return {};  // R1 十项＋两个汇总固定步——无家族归属
+            }
+        };
+        // 汇总固定步判定（恒在——§6.3 第 7/8 步）。
+        auto isFixedSummary = [](ConstraintId id) {
+            return id == ConstraintId::MustCaseCoverage
+                   || id == ConstraintId::JointSummary;
+        };
+        std::vector<ConstraintSpec> resolved;
+        resolved.reserve(full.size());
+        for (const auto& spec : full) {
+            if (isFixedSummary(spec.constraintId)) {
+                resolved.push_back(spec);  // 汇总步恒在
+                continue;
+            }
+            const auto ownToken = toToken(spec.constraintId);
+            bool hit = false;
+            for (const auto& requested : requestedTokens) {
+                if (requested == ownToken
+                    || (!familyTokenOf(spec.constraintId).empty()
+                        && requested == familyTokenOf(spec.constraintId))) {
+                    hit = true;
+                    break;  // 集合语义：同一约束只出现一次（保持 §6.3 序）
+                }
+            }
+            if (hit) {
+                resolved.push_back(spec);
+            }
+        }
+        // 词表覆盖核对：未命中项要么未知（OPT-INPUT-INVALID）——联合家族
+        // token 与 R1 token 在 StageD 已全部可命中，未命中即书写错误。
+        for (const auto& requested : requestedTokens) {
+            bool known = false;
+            for (const auto& spec : resolved) {
+                if (requested == toToken(spec.constraintId)) {
+                    known = true;
+                    break;
+                }
+                if (!familyTokenOf(spec.constraintId).empty()
+                    && requested == familyTokenOf(spec.constraintId)) {
+                    known = true;  // 家族 token——已被展开命中
+                    break;
+                }
+            }
+            if (!known) {
+                throw OptimizationError(
+                    kOptInputInvalid,
+                    "未知约束 token：\"" + requested
+                        + "\"（R1/联合家族词表均未登记——研究定义书写错误，"
+                          "ERR-01 调用方可修复）");
+            }
+        }
+        return resolved;
+    }
+
+    // ---- StageB 语境：R1 词表内子集解析（未知 token → OPT-INPUT-INVALID
+    // ——与"登记了但阶段不支持"语义分立，防 AT-09 同型语义混同）。
     const auto full = stageBConstraintPlan();
     if (requestedTokens.empty()) {
         // 空激活集＝缺省全启用（研究定义未显式声明约束时的保守全序）。
@@ -217,8 +347,9 @@ OptimizationConstraintProvider::resolveConstraintPlan(
         }
     }
     // 词表覆盖核对：requested 中未命中 R1 词表的 token——要么联合家族
-    // （StageD 语境放行语用检查由 WP-21 承接，本实现 StageD 亦拒——
-    // 联合清单未登记），要么未知（书写错误）。
+    // （清单已随 WP-21-T04 登记，但 StageB 引用联合约束仍属阶段违约——
+    // OPT-STAGE-LOCKED，§5.7"StageB 激活 R2 约束"行），要么未知（书写
+    // 错误——OPT-INPUT-INVALID）。
     for (const auto& requested : requestedTokens) {
         bool known = false;
         for (const auto& spec : resolved) {
@@ -230,8 +361,9 @@ OptimizationConstraintProvider::resolveConstraintPlan(
         if (known) {
             continue;
         }
-        // 未命中：区分"联合家族 token"（StageD 语境下语义合法但清单未登记
-        // ——仍 OPT-STAGE-LOCKED）与"未知 token"（OPT-INPUT-INVALID）。
+        // 未命中：区分"联合家族 token"（词表合法但 StageB 不可激活——
+        // OPT-STAGE-LOCKED，与第一步同码面同语义）与"未知 token"
+        // （OPT-INPUT-INVALID）。
         bool isFamily = false;
         for (const auto family :
              {JointConstraintFamily::Trajectory, JointConstraintFamily::Dynamics,
@@ -243,14 +375,11 @@ OptimizationConstraintProvider::resolveConstraintPlan(
             }
         }
         if (isFamily) {
-            // StageD 引用联合家族：约束词表本身合法，但联合执行清单未随
-            // 本任务登记（WP-21-T02）——同一阶段锁码面（§5.7 StageD 行
-            // 的前置未就绪形态）。
             throw OptimizationError(
                 kOptStageLocked,
-                "联合约束族 " + requested
-                    + " 的执行清单尚未登记（WP-21-T02 增量修订前置）——"
-                      "运行启动阻塞（§6.5）");
+                "阶段 stage-b 引用联合约束族 " + requested
+                    + "（轨迹/动力学/drivetrain 性能/器件联合归 OPT-D，"
+                      "OPT-03 §15.0 分期）——运行启动阻塞（§6.5）");
         }
         throw OptimizationError(
             kOptInputInvalid,
