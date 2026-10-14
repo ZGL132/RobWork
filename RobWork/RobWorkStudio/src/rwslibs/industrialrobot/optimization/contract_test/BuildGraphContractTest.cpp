@@ -167,11 +167,12 @@ constexpr const char* kExtraPlatformUnits[] = {
 
 /**
  * 构建图封闭性：optimization 的 CMake 目标引用集合仅含九条登记边＋本单元
- * 四目标（产品/插件/两测试——T02 契约 acceptance 1 明文同批创建；单元
- * 内部引用不构成跨单元边）＋testkit（报告设施——T-1 允许形态，仅测试
- * 目标）。出现任何其他目标引用（业务域单元＝R-1 面；表外平台单元＝SUB
- * 面；_worker＝卡 §3.2 表"worker 目标：不建"明文——如需走架构变更
- * 通道）即构建图越界（acceptance 2"二分结构扫描"的单元内复核面）。
+ * 五目标（产品/插件/两测试/性能基准——T02 契约 acceptance 1 明文同批创建
+ * ＋WP-23-T07 增列 perf 目标；单元内部引用不构成跨单元边）＋testkit（报
+ * 告设施——T-1 允许形态，仅测试目标）。出现任何其他目标引用（业务域单元
+ * ＝R-1 面；表外平台单元＝SUB 面；_worker＝卡 §3.2 表"worker 目标：不建"
+ * 明文——如需走架构变更通道）即构建图越界（acceptance 2"二分结构扫描"
+ * 的单元内复核面）。
  */
 TEST(OptBuildGraph, UnitEdgesNineRegisteredAndClosed_WP20T02_ACC1)
 {
@@ -181,14 +182,16 @@ TEST(OptBuildGraph, UnitEdgesNineRegisteredAndClosed_WP20T02_ACC1)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：九条登记边＋本单元四目标（产品/插件/测试/契约测试——T02
-    // 契约 acceptance 1 明文同批创建）＋sdurws_ird_testkit（报告设施
-    // ——T-1 允许形态＝仅测试目标可链，产品目标由 NoTestkitEdge 用例
-    // 钉住）。
+    // 白名单：九条登记边＋本单元五目标（产品/插件/测试/契约测试——T02
+    // 契约 acceptance 1 明文同批创建＋WP-23-T07 增列性能基准目标——B-06
+    // 并行吞吐测量载体，链接面＝本单元产品库＋testkit＋gtest，零新增跨
+    // 单元边）＋sdurws_ird_testkit（报告设施——T-1 允许形态＝仅测试目标
+    // 可链，产品目标由 NoTestkitEdge 用例钉住）。
     std::set<std::string> allowed = {"sdurws_ird_optimization",
                                      "sdurws_ird_optimization_plugin",
                                      "sdurws_ird_optimization_test",
                                      "sdurws_ird_optimization_contract_test",
+                                     "sdurws_ird_optimization_perf_test",
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(std::string("sdurws_ird_") + u);
@@ -300,8 +303,8 @@ TEST(OptBuildGraph, NoBusinessUnitOrExtraPlatformEdge_WP20T02_ACC2)
  * testkit 仅落在测试目标链接语句（T-1 具名自证——trajectory/dynamics/
  * selection/workflow 同款收窄重述）：testkit 不随产品分发（testkit.md
  * §2.4 T-1）——产品目标 sdurws_ird_optimization（及插件目标）的链接面
- * 出现 testkit 即违约；测试目标（_test/_contract_test）的报告设施消费
- * 是允许形态。
+ * 出现 testkit 即违约；测试目标（_test/_contract_test/_perf_test——
+ * WP-23-T07 增列性能基准目标同属测试形态）的报告设施消费是允许形态。
  */
 TEST(OptBuildGraph, NoTestkitEdgeOnProductTarget_WP20T02_ACC1)
 {
@@ -320,10 +323,13 @@ TEST(OptBuildGraph, NoTestkitEdgeOnProductTarget_WP20T02_ACC1)
         if (line.find("sdurws_ird_testkit") == std::string::npos) { continue; }
         ++testkitLines;
         // T-1 允许形态的唯一落点：测试目标的链接语句（目标名与 testkit
-        // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析）。
+        // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析；
+        // 允许集＝三测试目标，perf 目标随 WP-23-T07 增列——execution
+        // perf 目标 WP-23-T03 批同款登记先例）。
         const bool onTestTargetLine
             = (line.find("sdurws_ird_optimization_test") != std::string::npos
-               || line.find("sdurws_ird_optimization_contract_test") != std::string::npos)
+               || line.find("sdurws_ird_optimization_contract_test") != std::string::npos
+               || line.find("sdurws_ird_optimization_perf_test") != std::string::npos)
               && line.find("target_link_libraries") != std::string::npos;
         EXPECT_TRUE(onTestTargetLine)
             << "testkit 引用必须落在测试目标链接语句行（T-1：产品目标零 "
