@@ -129,7 +129,13 @@ add_library(sdurws_ird_optimization STATIC
     # WP-21-T03 增列——分层联合策略（卡 §8.5 落位 TU：联合门面登记值
     # 构造器/upstream.* 依赖链门面切片/内层六层执行序编排/StageD 组合
     # 空间采样——JointStrategy.hpp 布局表对应行）：
-    src/JointStrategy.cpp)
+    src/JointStrategy.cpp
+    # WP-21-T04 增列——联合运行编排面（卡 §7.1 行 4~8/§8.5 外层两级批量
+    # 编排/§9.2 并行与检查点规模化落位 TU：八项指标全量计算＋检查点域
+    # 中间状态 codec〔IRDOPTC1 检查点域——DOPT-10〕＋联合两级批量编排
+    # 〔并行分片/稳定合并/恢复不重复统计 AT-35〕——JointRun.hpp 布局表
+    # 对应行）：
+    src/JointRun.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -378,7 +384,15 @@ add_executable(sdurws_ird_optimization_test
     # 不升降级/逐域逐约束联合判定〕＋opt-joint-full 登记值逐字钉扎与
     # upstream.* 门面切片身份传播〔OPT-VER-253〕＋StageD 组合空间采样
     # 确定性——acceptance 1，OPT-VER-202/203~208/253 黄金面）：
-    test/JointStrategyTest.cpp)
+    test/JointStrategyTest.cpp
+    # WP-21-T04 增列——联合运行编排套件（联合硬约束逐域记录〔OPT-VER-209〕
+    # ＋八项指标全量可算〔OPT-VER-210~214——五项 D-only 值/缺失"—"/非有限
+    # 不转 0/StageB 恒 StageNotComputable〕＋并行分片与稳定合并〔OPT-VER-
+    # 220/221——threadCount 1 vs 4 等价集合＋稳定排序＋归约 1e-12 逐元素〕
+    # ＋检查点 codec 与恢复统计不重复〔OPT-VER-223~227——round-trip/损坏
+    # 拒绝/版本不兼容不迁移/恢复续跑/AT-35 审计不重复——真 execution
+    # CheckpointCoordinator 集成〕——acceptance 1~3 黄金面）：
+    test/JointRunTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES

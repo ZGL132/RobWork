@@ -183,23 +183,26 @@ struct OptimizationBudget {
 };
 
 /**
- * @brief 并行配置声明（卡 §4.3——R1 threadCount 固定 1，仅入身份不做并行
- *        承诺；R2 由 execution 编排）。
+ * @brief 并行配置声明（卡 §4.3——StageB threadCount 固定 1，仅入身份不做
+ *        并行承诺；StageD ≥1 允许 >1——WP-21-T04 落位，§9.2 并行规模化，
+ *        进程间派发治理归 execution）。
  *
- * 为什么 R1 拒绝非 1 值：§15.0 明文"并行与检查点不作为 B 期验收承诺（归
- * OPT-D）"——若接受 threadCount>1 而按串行执行即**静默降级**（配置语义与
- * 实际行为不符，NFR-COR-03 同源纪律），故 validateConfiguration 显式拒绝
- * （OPT-INPUT-INVALID，消息指向 OPT-D 落位）。字段本身保留：值进 canonical
- * （KIN-13 同型——线程数是身份要素），OPT-D 启用并行时格式位已就位。
+ * 为什么 StageB 拒绝非 1 值：§15.0 明文"并行与检查点不作为 B 期验收承诺
+ * （归 OPT-D）"——若接受 threadCount>1 而按串行执行即**静默降级**（配置
+ * 语义与实际行为不符，NFR-COR-03 同源纪律），故 validateConfiguration 对
+ * StageB 显式拒绝（OPT-INPUT-INVALID）。StageD 解锁（WP-21-T04）：≥1 合法
+ * （联合两级编排按 threadCount 并行分片——JointRun.hpp）；值进 canonical
+ * （KIN-13 同型——线程数是身份要素，"改线程数＝新身份＝重算"）。
  *
  * 值语义；线程安全：纯值。
  */
 struct ParallelConfiguration {
-    std::uint32_t threadCount = 1;        ///< ≥1；R1 恒 1（进 config.opt
-                                          ///  canonical——KIN-13 同型"改线程
-                                          ///  数＝新身份＝重算"）
-    std::uint32_t maxInFlightBatches = 1; ///< 在途批上限（R1 恒 1；R2 由
-                                          ///  execution 派发治理——D-10 合并）
+    std::uint32_t threadCount = 1;        ///< ≥1；StageB 恒 1／StageD 允许 >1
+                                          ///  （进 config.opt canonical——KIN-13
+                                          ///  同型"改线程数＝新身份＝重算"；
+                                          ///  §9.2 并行分片——WP-21-T04）
+    std::uint32_t maxInFlightBatches = 1; ///< 在途批上限（StageB 恒 1；StageD
+                                          ///  ≥1——派发治理归 execution——D-10）
 };
 
 /**
@@ -240,9 +243,11 @@ struct OptimizationConfiguration {
  * 校验规则（检查序固定——确定性首错；全部不静默修正——NFR-COR-03）：
  *   ① schemaVersion ≥1（0＝非法版本）；
  *   ② seed ≥1（I-OPT-2：0 非法——**不做静默替换**；消息明示合法域）；
- *   ③ parallel.threadCount ==1（R1：并行不作 B 期承诺——§15.0；非 1 显式
- *      拒绝不静默降级，落位指向 WP-21/OPT-D）；
- *   ④ parallel.maxInFlightBatches ==1（R1 恒 1——同③口径）；
+ *   ③ parallel.threadCount ≥1（StageB 恒 1：并行不作 B 期承诺——§15.0，
+ *      非 1 显式拒绝不静默降级；StageD ≥1 允许 >1——WP-21-T04 落位，
+ *      §9.2 并行规模化，线程数入 canonical〔KIN-13 同型〕）；
+ *   ④ parallel.maxInFlightBatches ≥1（StageB 恒 1——同③口径；StageD ≥1
+ *      允许 >1——在途批派发治理归 execution〔D-10〕）；
  *   ⑤ budget.maxCandidates ≥1（至少基线候选——§8.2 基线恒生成）；
  *   ⑥ budget.maxVerifiedCandidates ≥1 且 ≤maxCandidates（幸存集上界不得
  *      超过总预算——§8.4 V1）；
