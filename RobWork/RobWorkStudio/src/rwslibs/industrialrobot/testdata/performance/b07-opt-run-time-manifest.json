@@ -1,0 +1,55 @@
+{
+  "datasetId": "ird-perf-b07-opt-run-time",
+  "version": "1",
+  "kind": "performance-baseline",
+  "title": "B-07 优化运行时限基准标准运行与测量口径（WP-23-T08 冻结）",
+  "baselineRef": "performance-baseline.md#2-B-07",
+  "requirementRef": "REQUIREMENTS.md#19.3-NFR-PERF-06",
+  "consumer": "sdurws_ird_optimization_perf_test（optimization/perf_test/OptRunTimeBenchmarkTest.cpp）",
+  "generator": {
+    "identity": "standardOptRunRig",
+    "driver": "JointRunOrchestrator 两级批量编排（WP-21-T04 交付——§8.5 外层两级批量编排＋§9.2 并行分片/检查点域中间状态/恢复消费；optimization.md §9.2 规模化口径锚的被测对象）；真实 evidence::EvaluatorRegistry＋opt Profile 注册；真实 steady_clock 墙钟计时（区间＝run() 全程端到端）",
+    "standardRun": "seeded-lhs 策略（generateStageDJointCandidates 单点——基线恒批首＋CandidateId 去重）×单连续绑定 mdl.drivetrain.ratio[1]（无量纲，域 [0.8,1.2]，默认 1.0，授权未锁定）×seed 7×maxCandidates 10000×maxVerifiedCandidates 100——NFR-PERF-06 原文规模『10,000 Quick＋100 Verified』照抄零私改；去重后候选数恒 10,100；批容量＝产品常数 kBatchCapacity=4（Quick 2,500 批＋Verified 25 批）；threadCount=8（R2 生产形态——§9.2/§9.4 并行分片入 config.opt 身份；需求未规定标准基准线程数，本值为本卡登记并冻结的生成器参数）",
+    "workload": "内层四域评估器（trj-sequence-plan/dyn-rnea-analysis/dt-mapping/sel-combination-check 登记键）＝确定性浮点迭代链测试替身：每派发执行 400000 次串行 FP 乘加依赖链（与 B-06 数据集冻结工作量同源——不可向量化/不可折叠，结果 IEEE-754 位模式沉入进程级原子汇防消除）；单候选六层派发——单次全量运行恒 60,600 次派发；指标投影＝P-OPT-2 测试面替身（补丁标量值→D-only 五项的确定性线性映射，逐候选互异）",
+    "duringRunInteraction": {
+      "role": "运行期间满足 NFR-PERF-01 的抽查面（performance-baseline §4.3 口径——五类操作端到端响应/无 >2 s 无响应窗口/>1 s 工作转后台）",
+      "datasetNote": "ui 侧投影数据集＝b01-interaction@1 同参复刻（1,000 对象/100 修订语境/五分组分布 10/420/380/90/100/表单 24 字段/筛选词 obj-007/选中批量 50）——同参复刻非同库混用：本基准数据集自持全量参数冻结；后台负载与 B-01 后台态的形态差异如实申报：B-01 后台＝独立 worker 进程评估批次，本基准后台＝优化运行本体（进程内 8 worker 线程）——此即 NFR-PERF-06『运行期间』的负载语义",
+      "samplingForm": "常驻独立采样线程＝『UI 线程测试形态』（ui 模型层驱动器在采样线程内构造——QObject 亲缘性）；驱动线程在 run() 前后置位/复位运行窗旗标，仅开始与结束都落在运行窗内的样本计入统计（运行期间语义的门控承载，窗外样本丢弃并计数留痕）；采样节奏＝每轮五操作后静默 50 ms（轮间静默在计时区外——真实用户交互间隙形态；单运行窗每操作有效样本 ~200 量级，单窗独立满足 §4.2 每组 ≥15）；逐操作 1 次预热剔除（§4.2）",
+      "thresholds": { "p95Ms": 200, "unresponsiveWindowMs": 2000 },
+      "thresholdSource": "REQUIREMENTS NFR-PERF-01 原文（零私改）"
+    },
+    "recovery": {
+      "role": "可从同版本兼容检查点恢复（NFR-PERF-06 原文——用例行为判定）",
+      "interrupt": "协作取消在 Quick 相约半程截停——CancelAfterNContext 查询计数 31000（取消查询＝每候选六层起点各一次＋每批领取一次〔i>0〕；Quick 相层查询总量≈60,000；多 worker 在途批使实际截停点有 ±8 候选级漂移——断言面不依赖精确半程）",
+      "checkpointPath": "域中间状态 encodeJointCheckpointState（magic IRDOPTC1，codec v1——DOPT-10）→ 真 execution::CheckpointCoordinator writeCheckpoint（写真实磁盘三文件——宿主角色归档端口替身，N8 磁盘编址/manifest/摘要全归 execution）",
+      "restorePath": "真 restore（requestContractVersion＝kOptJointFullContractVersion=1 同版本）→ Restored → 磁盘 joint-state.bin 装载 → decodeJointCheckpointState round-trip → resumeFrom 新 AttemptId（+1）续跑至 Completed",
+      "verdictFaces": "AT-35 审计不重复（终态审计＝参照全量运行审计；resumedBatchesSkipped>0）＋结论面等价（候选序/逐候选状态/八项指标 1×10⁻¹²·|ref|＋ε_abs=0 逐元素/Pareto 序/可行集规模——NFR-COR-02/附录 D 第 8 项）＋工作汇对账（续跑腿增量＝参照腿全量增量——I-J3 跳过批记录确定性重推进：账面不双计而计算真实发生）"
+    }
+  },
+  "measurementProtocol": {
+    "statisticClass": "时序/规模阈值类判定（performance-baseline §2 统计口径区分行——B-07 不涉及分位数统计；运行期交互抽查的 P95 判定属 NFR-PERF-01 自身口径，两套口径各归其位不互相换轨）",
+    "verdictStatistic": "时限＝有效样本运行墙钟最大值 ≤28,800,000 ms（8 小时——NFR-PERF-06 原文零私改；performance-baseline §4.7 端到端墙钟；判定统计量＝有效样本最大值——T03/T06 阈值类先例同口径）；运行期交互＝逐操作 P95（线性插值）≤200 ms＋单样本 <2,000 ms；恢复＝行为判定（无数值阈值）",
+    "samplePlan": "时限腿：1 次预热（剔除）＋15 有效样本；无效样本（run 未完整结束或评估计数漂移）不计入分母、留痕原因、invalidCount==0 收口；交互抽查：五操作运行窗内有效样本各 ≥15、零无效（逐操作 1 次预热剔除）；恢复腿：单次行为判定用例（参照全量＋中断截停＋续跑三腿对账）",
+    "sampleSizeNote": "协议 §4.2『每组有效样本 ≥15』下限照抄（T02/T03/T05/T06/T07 同数自律）",
+    "thresholds": { "runWallClockLimitMs": 28800000, "interactionP95Ms": 200, "unresponsiveWindowMs": 2000 },
+    "thresholdSource": "REQUIREMENTS NFR-PERF-06 原文（10,000 Quick＋100 Verified 候选标准优化基准 8 小时内结束；运行期间满足 NFR-PERF-01，并可从同版本兼容检查点恢复——零私改）＋NFR-PERF-01 原文（P95 ≤200 ms／无 >2 s 无响应窗口——零私改）＋performance-baseline §4.7（8 小时＝端到端墙钟时限；检查点恢复限定同版本兼容）",
+    "measurementDiscipline": "串行测量（performance-baseline §4/optimization.md §9.2 锚）——gtest 单进程串行驱动（run 内部 8 worker 并行＋常驻交互采样线程除外，采样线程是测量面本体非并发测量负载），禁止与其他测量负载并发跑分；样本全量留痕（预热/无效不删除，只标记与登记原因）；禁止伪造样本"
+  },
+  "equivalenceNotes": [
+    "内层评估器＝确定性浮点迭代链替身——证明的是『编排器在 10,000＋100 候选规模下两级批量推进＋并行分片＋检查点产出/恢复的端到端墙钟规模化』，不是业务评估器（trj/dyn/sel 真实现）算力成本下的 8 小时时限画像；业务评估器端到端时限归集成模式扩展测量挂点（首测报告登记——集成构建由合入批执行）",
+    "与功能用例分工：JointRunTest OPT-VER-223~227（小候选集）证检查点恢复『协议对』的正确性（含不兼容/损坏拒绝面）；本基准以 10,100 候选真实运行补『规模化达标』证据（时限数字与恢复用例必须真实产生）——两者互补不互替",
+    "与 B-06（NFR-PERF-05 并行吞吐）的关系：B-06 证固定候选集并行吞吐比（T07 已回填）；B-07 证标准规模运行时限＋运行期交互响应＋同版本检查点恢复——互补不互替；工作量替身同参（400000 迭代/派发）使两基准的单候选成本同源可比",
+    "与 B-01（NFR-PERF-01 交互响应）的关系：B-01 证两态后台负载下的五操作 P95（T02 已回填，后台＝独立 worker 进程）；B-07 在优化运行本体运行窗内同口径抽查——运行期抽查不替代 B-01，B-01 已回填",
+    "判定阈值声明：本基准达标数值（28,800,000 ms/200 ms/2,000 ms/10,000/100）全部源自 REQUIREMENTS NFR-PERF-06/NFR-PERF-01 原文——与 P-04 判定阈值两槽位（通过线/降级线，所有者裁定维持待定）零交集零私设零鲁棒性判定结论（WP-21-T05 判定半区不随本基准启用）"
+  ],
+  "upgradeRule": "testkit.md §4.2.1——升级＝新建数据集或新 major 版本，不得原地改写；参数变更须换版本并留 history",
+  "history": [
+    {
+      "version": "1",
+      "date": "2026-10-15",
+      "note": "初版（WP-23-T08 实施段，分支 wp23-t08）：标准运行 seeded-lhs/seed 7/10000+100/threadCount 8/批容量 4；工作量替身 400000 迭代/派发（B-06 同源）；运行期交互抽查＝b01-interaction@1 同参复刻＋运行窗旗标门控；时限阈值 28,800,000 ms（NFR-PERF-06 原文）；交互阈值 200/2,000 ms（NFR-PERF-01 原文）；恢复中断时机＝查询计数 31,000"
+    }
+  ],
+  "frozenAt": "2026-10-15",
+  "frozenBy": "WP-23-T08（分支 wp23-t08）"
+}
