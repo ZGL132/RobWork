@@ -361,8 +361,16 @@ add_executable(sdurws_ird_ui_test
     test/SelectionServiceTest.cpp   # UI-T21——选择服务：写入口/L2/L3 四分支/INV-B4/订阅
     test/IndustrialProjectTreeModelTest.cpp   # UI-T21——树模型：五分组封闭/注册协议/重建四拒绝/定位
     test/PropertyInspectorModelTest.cpp       # UI-T22——检查器模型：注册纪律/L1 刷新/D5D6 分野/激活编排
-    test/CrashCaptureTest.cpp      # WP-24-T02——崩溃捕获发射核心模型面（六段组装/降级/防重入；零 Qt）
-    test/SampleHighlightTest.cpp)   # FIX-T2——F-495 样本级定位：高亮键解析四路径/契约等值含新字段/诚实降级
+    test/CrashCaptureTest.cpp)     # WP-24-T02——崩溃捕获发射核心模型面（六段组装/降级/防重入；零 Qt）
+    # FIX-T2 的 SampleHighlightTest.cpp 自基础源列表移入下方 if(TARGET sdurws)
+    # 守卫块（基线冒烟 C1083 修正）：该 TU 经 View3DPreviewContract.hpp 与
+    # plugin/SampleHighlight.hpp include rw/math 头，而冒烟树按设计"无任何
+    # 框架依赖"（本目录 CMake 冒烟分支注），全树无 rw include 路径——误列
+    # 基础源即 C1083（View3DPreviewContract.hpp:36 找不到
+    # rw/math/Transform3D.hpp）。集成树因守卫块链 sdurws/sdurw_math 传递
+    # rw 路径而两态差异被掩盖（91cda264 验证仅在集成树执行）。处置沿用
+    # UI-T77 先例（View3DPreviewMarkerPositionTest.cpp 同款守卫＋同款注释）：
+    # rw 头依赖面的测试 TU 归守卫块，冒烟树不编。
 
 # WP-24-T02 增列：被测 TU 同源编入（发射核心 emitCrashReportTo 与产品同一
 # 翻译单元——HostCompilePort 同款"同源码编入测试目标"先例形态；设施零 Qt，
@@ -407,6 +415,7 @@ if(TARGET sdurws)
         test/HostCompilePipelineTest.cpp
         test/KinEvaluationChannelTest.cpp  # UI-T64——覆盖评估执行器（受理/切片/账面/迟到判定）
         test/View3DPreviewMarkerPositionTest.cpp  # UI-T77——预览协议 position 追加纪律（F-555；rw 头依赖面——冒烟树无框架目标不编）
+        test/SampleHighlightTest.cpp  # FIX-T2——F-495 样本级定位：高亮键解析四路径/契约等值含新字段/诚实降级（rw 头依赖面同上——自基础源列表移入本守卫，修基线冒烟 C1083）
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostCompilePort.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostPresentationAdapters.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/QtTextBillboard.cpp  # UI-T77——被测 TU 的同源依赖（F-556 承载件）
