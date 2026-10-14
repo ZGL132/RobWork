@@ -219,7 +219,9 @@ std::string_view toToken(MetricId m) noexcept;
 // 消费 QuickScreening/VerifiedReview/Completed/Canceled 四值，Draft/
 // Preflight 归 WP-20-T08 Preflight 面、RobustnessReview 归 WP-21（R2）、
 // Failed/Interrupted 词表保留（环境级失败＝异常传播由调用方处置；进程
-// 中断归 R2 检查点面——本编排不产出）。后续任务只消费不扩表。
+// 中断归 R2 检查点面——本编排不产出）。【WP-21-T07 表尾追加】Paused 第
+// 十值（R2 用户暂停——§9.2 批边界检查点挂起；值序冻结：既有九值不得
+// 改动/插入，token 书写面同步扩"paused"——单元卡 §4.4/§16.5 落位登记）。
 // =====================================================================
 
 /**
@@ -238,7 +240,15 @@ std::string_view toToken(MetricId m) noexcept;
  *   - Canceled：用户取消（TASK-01 协作取消——批边界粒度，本任务产出）；
  *   - Failed：评估器/环境错误（R1 编排以异常传播承载，不产出该值——
  *     候选级失败走结构化记录，§7.5 区分表）；
- *   - Interrupted：进程中断（R2 可检查点恢复——本编排不产出）。
+ *   - Interrupted：进程中断（R2 可检查点恢复——本编排不产出）；
+ *   - Paused：用户暂停（R2——WP-21-T07。暂停确认边界＝批边界检查点
+ *     〔§9.2/AT-35/V12-06〕：编排侧在暂停请求生效后的第一个批边界产出
+ *     检查点状态即挂起，checkpointStates 末份＝续跑凭据；恢复＝新
+ *     Attempt 重入 run(resumeFrom)，原 snapshotId/sliceId/config 不变
+ *     ——I-OPT-4。与 execution 九态 TaskState::Paused 同源同界：任务态
+ *     归 execution 状态机（T10 检查点写出确认），本值是其优化域编排
+ *     产物态——消费面按"非 Completed 不具正式资格"统一拒绝〔导出/
+ *     应用既有守卫零改动即覆盖本值〕）。
  */
 enum class RunPhase {
     Draft,             ///< 组装运行描述（研究定义编辑中）
@@ -250,12 +260,14 @@ enum class RunPhase {
     Canceled,          ///< 用户取消（协作取消——批边界）
     Failed,            ///< 环境级失败（本编排以异常传播承载——不产出）
     Interrupted,       ///< 进程中断（R2 检查点恢复——本编排不产出）
+    Paused,            ///< 用户暂停（R2 批边界检查点挂起——WP-21-T07 表尾追加）
 };
 
 /**
  * @brief 运行状态稳定 token（"draft"/"preflight"/"quick-screening"/
  *        "verified-review"/"robustness-review"/"completed"/"canceled"/
- *        "failed"/"interrupted"）——运行记录/导出/审计的确定性书写。
+ *        "failed"/"interrupted"/"paused"）——运行记录/导出/审计的确定性
+ *        书写。
  * @param p [in] 运行状态枚举值
  * @return 稳定 token 视图（编译期字面量，生命周期静态）
  */

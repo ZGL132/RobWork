@@ -155,6 +155,29 @@ private:
     mutable std::atomic<std::uint32_t> m_queries{0}; ///< 已发生查询数
 };
 
+/// 第 N 次查询后置暂停的信号替身（批间用户暂停——§9.2/WP-21-T07；并发
+/// 安全：原子计数。接口契约"置位后不回退"由单调计数天然满足）。
+class PauseAfterBoundariesSignal final : public optimization::IPauseSignal {
+public:
+    explicit PauseAfterBoundariesSignal(std::uint32_t afterQueries)
+        : m_after(afterQueries)
+    {
+    }
+    bool pauseRequested() const override
+    {
+        return m_queries.fetch_add(1) >= m_after;  // 第 m_after+1 次起 true
+    }
+    /// 已发生查询数（断言面——批边界查询确实发生）。
+    std::uint32_t queries() const noexcept
+    {
+        return m_queries.load(std::memory_order_acquire);
+    }
+
+private:
+    std::uint32_t m_after;                    ///< 放行查询数（之后即暂停）
+    mutable std::atomic<std::uint32_t> m_queries{0}; ///< 已发生查询数
+};
+
 /// 非零内容身份（测试构造——避免保留值）。
 core::ContentIdentity makeContentIdentity(unsigned char seed)
 {
@@ -1301,4 +1324,319 @@ TEST(OptJointRun, BaselineCandidateAlwaysVerifiedSeat_WP21T04_ACC1)
         }
     }
     EXPECT_TRUE(baselineVerified) << "基线 Quick-Feasible 恒占一席（OPT-11）";
+}
+
+// =====================================================================
+// Paused 态消费（WP-21-T07——OPT-VER-227~231/AT-35/V12-06）：批边界暂停
+// 确认（暂停确认边界＝批边界检查点）、继续不重复统计（resumeFrom 审计
+// 基点）、不改变输入快照（sliceId 身份不变式）、暂停中取消保检查点
+// （取消后检查点仍可续跑且统计链一致）。
+// =====================================================================
+
+TEST(OptJointRun, PauseAtBatchBoundaryEmitsCheckpointState_WP21T07_OPTVER229)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-06", "AT-35"},
+                  std::vector<std::string>{"AT-35"});
+
+    // 场景（OPT-VER-229 暂停半边——§9.2/AT-35/V12-06）：批 0 完成后的批
+    // 间边界置暂停 → 编排截停于该批界 → runPhase=Paused＋runCompleted=
+    // false；**暂停确认边界＝截停批界的检查点状态**（checkpointStates
+    // 末份：completedBatchIndices=[0]——宿主写出并确认后任务态转 Paused
+    // 归 execution T10）。批 0 内 4 候选完整保留（已回传批保留——TASK-01
+    // 同型）；单批界查询即截停（不派发批 1/2）。
+    JointFixture fx;
+    JointLayeredCheckDeps deps;
+    deps = fx.checkerDeps();
+    static optimization::ParetoFrontBuilder pareto;
+    JointRunOrchestratorDeps d;
+    d.checkerDeps = &deps;
+    StubProjector projector{makeFullFacts()}; d.projector = &projector;
+    d.paretoBuilder = &pareto;
+    PauseAfterBoundariesSignal pauseSignal(/*afterQueries=*/0);  // 首个批界（i=1）即暂停
+    d.pauseSignal = &pauseSignal;
+    JointRunOrchestrator orch(OptimizationStage::StageD, d);
+
+    // 9 候选×批容量 4 → Quick 3 批（4/4/1）；threadCount=1 串行路径——
+    // 批界查询次数确定（每批间恰一次），暂停生效批界确定。
+    auto req = fx.readyRequest(makeStageDConfig(/*threadCount=*/1, /*seed=*/7, /*maxCandidates=*/9));
+    const optimization::JointRunResult paused = orch.run(req, fx.ctx);
+
+    EXPECT_FALSE(paused.runCompleted) << "暂停腿必须被截停";
+    EXPECT_EQ(paused.runPhase, RunPhase::Paused) << "暂停产出 Paused 相（表尾追加值）";
+    EXPECT_EQ(optimization::toToken(RunPhase::Paused), "paused")
+        << "稳定 token 书写面同步（运行记录/导出/审计确定性）";
+    ASSERT_GT(pauseSignal.queries(), 0U) << "批边界暂停查询必须发生（i>0 界）";
+    // 批 0 完整保留＋其后批未派发（停止派发语义）。
+    ASSERT_EQ(paused.quickRecords.size(), 4U)
+        << "批 0（4 候选）完整保留——已回传批保留（TASK-01 同型）";
+    // 暂停确认边界凭据：检查点状态序列末份＝截停批界快照。
+    ASSERT_FALSE(paused.checkpointStates.empty())
+        << "暂停必须产出当前检查点状态（暂停确认边界＝批边界检查点，V12-06）";
+    const JointCheckpointState& confirm = paused.checkpointStates.back();
+    EXPECT_EQ(confirm.phase, core::EvaluationMode::Quick);
+    ASSERT_EQ(confirm.completedBatchIndices.size(), 1U);
+    EXPECT_EQ(confirm.completedBatchIndices[0], 0U) << "截停批界＝批 0 完成边界";
+    EXPECT_EQ(confirm.completedUnits, 1U) << "completedUnits＝候选批计数（续跑统计基点）";
+    EXPECT_GT(paused.audit.checkpointStatesEmitted, 0U);
+    EXPECT_EQ(paused.audit.base.quickEvaluated, 4U) << "只记批 0 增量（不冒记未派发批）";
+}
+
+TEST(OptJointRun, ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER227_228_230)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-06", "AT-35"},
+                  std::vector<std::string>{"AT-35"});
+
+    // 场景（OPT-VER-227/228/230 续跑半边——AT-35/I-OPT-4）：同一 fixture
+    //（同快照——sliceId 可跨腿比较）三腿对账：①全量参照；②批 0 界暂停
+    // →检查点经**真协调器**落盘→装载解码；③resumeFrom 续跑至完成。
+    // 断言四条：统计不重复（审计对账＝全量——OPT-VER-227）、恢复跳批记
+    // 账（resumedBatchesSkipped）、身份不变（逐候选 facadeSliceId 与全量
+    // 一致——I-OPT-4"恢复不改输入"：snapshot/slice/config 不变——
+    // OPT-VER-228）、结论面等价（Pareto 序一致——NFR-COR-02）。
+    JointFixture fx;
+    JointLayeredCheckDeps deps;
+    deps = fx.checkerDeps();
+    static optimization::ParetoFrontBuilder pareto;
+    const auto facts = makeFullFacts();
+    const auto cfg = makeStageDConfig(/*threadCount=*/1, /*seed=*/7, /*maxCandidates=*/9);
+
+    // ---- 腿①：全量参照（无暂停信号——R1 装配形态永不暂停的回归面）。
+    JointRunOrchestratorDeps dFull;
+    dFull.checkerDeps = &deps;
+    StubProjector projectorFull{facts}; dFull.projector = &projectorFull;
+    dFull.paretoBuilder = &pareto;
+    JointRunOrchestrator orchFull(OptimizationStage::StageD, dFull);
+    auto reqFull = fx.readyRequest(cfg);
+    const optimization::JointRunResult full = orchFull.run(reqFull, fx.ctx);
+    ASSERT_TRUE(full.runCompleted);
+
+    // ---- 腿②：批 0 界暂停（同 fixture——快照/覆盖/注册表共享，sliceId
+    // 跨腿可比；基线身份钉住 reqFull——同候选集合＝同一研究的两次尝试，
+    // CandidateId 公式输入一致，T04 恢复用例同款纪律）。
+    JointRunOrchestratorDeps dPause;
+    dPause.checkerDeps = &deps;
+    StubProjector projectorPause{facts}; dPause.projector = &projectorPause;
+    dPause.paretoBuilder = &pareto;
+    PauseAfterBoundariesSignal pauseSignal(/*afterQueries=*/0);
+    dPause.pauseSignal = &pauseSignal;
+    JointRunOrchestrator orchPause(OptimizationStage::StageD, dPause);
+    auto reqPause = fx.readyRequest(cfg);
+    reqPause.baselineRoot = reqFull.baselineRoot;  // 同候选集合（两次尝试）
+    reqPause.baselineCv = reqFull.baselineCv;
+    reqPause.task.run = core::RunId::generate();  // 新运行身份（暂停腿）
+    const optimization::JointRunResult paused = orchPause.run(reqPause, fx.ctx);
+    ASSERT_EQ(paused.runPhase, RunPhase::Paused);
+    ASSERT_FALSE(paused.checkpointStates.empty());
+
+    // 宿主写出（真协调器——Published）→装载→域解码（round-trip 完整）。
+    JointCheckpointEnv env;
+    const auto snapshotId = makeContentIdentity(0x41);
+    const auto sliceId = makeContentIdentity(0x42);
+    const execution::CheckpointId ckptId
+        = env.writeState(paused.checkpointStates.back(), env.task, snapshotId, sliceId, 1);
+    execution::CheckpointRestoreRequest restoreReq;
+    restoreReq.checkpointId = ckptId;
+    restoreReq.requestSliceId = sliceId;
+    restoreReq.requestContractVersion = optimization::kOptJointFullContractVersion;
+    const execution::CheckpointRestoreResult restored = env.coordinator->restore(restoreReq);
+    ASSERT_EQ(restored.outcome, execution::CheckpointRestoreResult::Outcome::Restored);
+    EXPECT_EQ(restored.record.completedUnits, paused.checkpointStates.back().completedUnits);
+    // 检查点中间状态字节装载→域解码（同 T04 恢复腿形态——真磁盘读回）。
+    std::vector<std::uint8_t> stateBytes;
+    for (const auto& dirEntry : fs::recursive_directory_iterator(
+             env.caseDir / "checkpoints" / env.task.run.toCanonical())) {
+        if (dirEntry.is_regular_file()
+            && dirEntry.path().filename() == "joint-state.bin") {
+            std::ifstream in(dirEntry.path(), std::ios::binary);
+            stateBytes.assign(std::istreambuf_iterator<char>(in),
+                              std::istreambuf_iterator<char>());
+        }
+    }
+    ASSERT_FALSE(stateBytes.empty());
+    const JointCheckpointState resumeState = optimization::decodeJointCheckpointState(stateBytes);
+    EXPECT_EQ(resumeState.completedBatchIndices,
+              paused.checkpointStates.back().completedBatchIndices);
+
+    // ---- 腿③：resumeFrom 续跑（恢复语义——AttemptId+1；审计自基点累计）。
+    JointRunOrchestratorDeps dResume;
+    dResume.checkerDeps = &deps;
+    StubProjector projectorResume{facts}; dResume.projector = &projectorResume;
+    dResume.paretoBuilder = &pareto;
+    JointRunOrchestrator orchResume(OptimizationStage::StageD, dResume);
+    auto reqResume = fx.readyRequest(cfg);
+    reqResume.baselineRoot = reqFull.baselineRoot;  // 同候选集合（第三次尝试）
+    reqResume.baselineCv = reqFull.baselineCv;
+    reqResume.task = env.task;
+    reqResume.task.attempt = core::AttemptId{2U};  // AttemptId+1（恢复语义 §9.2）
+    reqResume.resumeFrom = resumeState;
+    const optimization::JointRunResult resumed = orchResume.run(reqResume, fx.ctx);
+    ASSERT_TRUE(resumed.runCompleted);
+
+    // AT-35（OPT-VER-227）：暂停→继续统计不重复——审计对账＝全量运行。
+    EXPECT_EQ(resumed.audit.base.candidatesGenerated,
+              full.audit.base.candidatesGenerated);
+    EXPECT_EQ(resumed.audit.base.quickEvaluated, full.audit.base.quickEvaluated)
+        << "Quick 评估数必须不双计（检查点基点已含批 0 账目——OPT-VER-227）";
+    EXPECT_EQ(resumed.audit.base.quickScreenedOut, full.audit.base.quickScreenedOut);
+    EXPECT_EQ(resumed.audit.base.verifiedEvaluated, full.audit.base.verifiedEvaluated);
+    EXPECT_GT(resumed.audit.resumedBatchesSkipped, 0U)
+        << "暂停前已完成批必须按基点记账（不重复累计）";
+    EXPECT_EQ(resumed.audit.base.cacheFullHits, full.audit.base.cacheFullHits);
+
+    // OPT-VER-228（I-OPT-4 恢复不改输入）：逐候选 facadeSliceId 与全量一致
+    // ——恢复仍绑定原 slice 身份（同 fixture 同快照 ⇒ 同层切片身份；config
+    // 由同一对象拷贝构造，CandidateId 公式输入不变）。身份漂移即恢复换了
+    // 输入——直接违反"不改变输入快照"。
+    ASSERT_EQ(resumed.quickRecords.size(), full.quickRecords.size());
+    for (std::size_t i = 0; i < full.quickRecords.size(); ++i) {
+        EXPECT_TRUE(resumed.quickRecords[i].base.candidateId
+                    == full.quickRecords[i].base.candidateId)
+            << "候选序一致（生成序确定性）";
+        EXPECT_TRUE(resumed.quickRecords[i].facadeSliceId == full.quickRecords[i].facadeSliceId)
+            << "门面切片身份必须逐候选一致（sliceId 不变式——OPT-VER-228）";
+    }
+    // 结论面等价（NFR-COR-02——恢复不改变结论）：Pareto 序一致。
+    ASSERT_EQ(resumed.pareto.entries.size(), full.pareto.entries.size());
+    for (std::size_t i = 0; i < full.pareto.entries.size(); ++i) {
+        EXPECT_TRUE(resumed.pareto.entries[i].candidateId == full.pareto.entries[i].candidateId);
+    }
+}
+
+TEST(OptJointRun, CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"AT-35"},
+                  std::vector<std::string>{"AT-35"});
+
+    // 场景（OPT-VER-231 暂停中取消——优化域半边；执行侧 T12 见
+    // CancelProtocolTest）：暂停批 0 界 → 检查点 P 落盘 → 续跑腿在批 1 界
+    // 协作取消（取消终态产出当前检查点状态 C——TASK-01 同型）→ **取消不
+    // 作废暂停检查点**（协调器零废弃——indexedCount 不变；P 仍可 restore）
+    // → 自取消状态 C 再续跑至完成 → 全链统计＝全量运行（暂停→继续→取消
+    // →再继续的统计链一致——AT-35/V12-06"暂停中取消保检查点（可续跑）"）。
+    JointFixture fx;
+    JointLayeredCheckDeps deps;
+    deps = fx.checkerDeps();
+    static optimization::ParetoFrontBuilder pareto;
+    const auto facts = makeFullFacts();
+    const auto cfg = makeStageDConfig(/*threadCount=*/1, /*seed=*/7, /*maxCandidates=*/9);
+
+    // 全量参照。
+    JointRunOrchestratorDeps dFull;
+    dFull.checkerDeps = &deps;
+    StubProjector projectorFull{facts}; dFull.projector = &projectorFull;
+    dFull.paretoBuilder = &pareto;
+    JointRunOrchestrator orchFull(OptimizationStage::StageD, dFull);
+    auto reqFull = fx.readyRequest(cfg);
+    const optimization::JointRunResult full = orchFull.run(reqFull, fx.ctx);
+    ASSERT_TRUE(full.runCompleted);
+
+    // 腿 1：暂停（批 0 界）→ 检查点 P 经真协调器落盘（基线身份钉住
+    // reqFull——同候选集合，T04 恢复用例同款纪律）。
+    JointRunOrchestratorDeps dPause;
+    dPause.checkerDeps = &deps;
+    StubProjector projectorPause{facts}; dPause.projector = &projectorPause;
+    dPause.paretoBuilder = &pareto;
+    PauseAfterBoundariesSignal pauseSignal(/*afterQueries=*/0);
+    dPause.pauseSignal = &pauseSignal;
+    JointRunOrchestrator orchPause(OptimizationStage::StageD, dPause);
+    auto reqPause = fx.readyRequest(cfg);
+    reqPause.baselineRoot = reqFull.baselineRoot;
+    reqPause.baselineCv = reqFull.baselineCv;
+    reqPause.task.run = core::RunId::generate();
+    const optimization::JointRunResult paused = orchPause.run(reqPause, fx.ctx);
+    ASSERT_EQ(paused.runPhase, RunPhase::Paused);
+    ASSERT_FALSE(paused.checkpointStates.empty());
+
+    JointCheckpointEnv env;
+    const auto snapshotId = makeContentIdentity(0x43);
+    const auto sliceId = makeContentIdentity(0x44);
+    const execution::CheckpointId pauseCkptId
+        = env.writeState(paused.checkpointStates.back(), env.task, snapshotId, sliceId, 1);
+    ASSERT_EQ(env.coordinator->indexedCount(), 1U);
+
+    // 腿 2：续跑（AttemptId+1）＋批 1 界协作取消（批 0 重推进 24 次层查询
+    // 放行后，第 25 次＝批 1 派发的批间查询即取消——批 0 不重记账）。
+    execution::CheckpointRestoreRequest restoreReq;
+    restoreReq.checkpointId = pauseCkptId;
+    restoreReq.requestSliceId = sliceId;
+    restoreReq.requestContractVersion = optimization::kOptJointFullContractVersion;
+    const execution::CheckpointRestoreResult restored = env.coordinator->restore(restoreReq);
+    ASSERT_EQ(restored.outcome, execution::CheckpointRestoreResult::Outcome::Restored);
+    std::vector<std::uint8_t> pauseBytes;
+    for (const auto& dirEntry : fs::recursive_directory_iterator(
+             env.caseDir / "checkpoints" / env.task.run.toCanonical())) {
+        if (dirEntry.is_regular_file()
+            && dirEntry.path().filename() == "joint-state.bin") {
+            std::ifstream in(dirEntry.path(), std::ios::binary);
+            pauseBytes.assign(std::istreambuf_iterator<char>(in),
+                              std::istreambuf_iterator<char>());
+        }
+    }
+    ASSERT_FALSE(pauseBytes.empty());
+    const JointCheckpointState pauseState = optimization::decodeJointCheckpointState(pauseBytes);
+
+    JointRunOrchestratorDeps dCancel;
+    dCancel.checkerDeps = &deps;
+    StubProjector projectorCancel{facts}; dCancel.projector = &projectorCancel;
+    dCancel.paretoBuilder = &pareto;
+    JointRunOrchestrator orchCancel(OptimizationStage::StageD, dCancel);
+    auto reqCancel = fx.readyRequest(cfg);
+    reqCancel.baselineRoot = reqFull.baselineRoot;
+    reqCancel.baselineCv = reqFull.baselineCv;
+    reqCancel.task = env.task;
+    reqCancel.task.attempt = core::AttemptId{2U};
+    reqCancel.resumeFrom = pauseState;
+    // 取消时机（同 T04 取消腿口径）：批 0 六层×4 候选＝24 次层查询全部放
+    // 行；第 25 次批间查询即取消。批 0 已在检查点基点（不重记账），取消
+    // 状态 C 的完成集/审计与暂停状态 P 同基（增量只来自批 1 之后的空集）。
+    CancelAfterBatchesContext cancelCtx(/*afterQueries=*/24);
+    const optimization::JointRunResult canceled = orchCancel.run(reqCancel, cancelCtx);
+    ASSERT_FALSE(canceled.runCompleted);
+    EXPECT_EQ(canceled.runPhase, RunPhase::Canceled);
+    ASSERT_FALSE(canceled.checkpointStates.empty())
+        << "取消必须产出当前检查点状态（TASK-01 部分 批保留）";
+
+    // 暂停检查点未被取消作废（保检查点——协调器零废弃；restore 仍通过）。
+    EXPECT_EQ(env.coordinator->indexedCount(), 1U)
+        << "取消路径必须零废弃动作（检查点保留——ARCH §4.3 A5/T12）";
+    const execution::CheckpointRestoreResult recheck = env.coordinator->restore(restoreReq);
+    EXPECT_EQ(recheck.outcome, execution::CheckpointRestoreResult::Outcome::Restored)
+        << "暂停检查点在取消后仍可恢复（可续跑——V12-06）";
+
+    // 腿 3：自取消状态 C 再续跑（AttemptId 再 +1）至完成——统计链一致。
+    // （取消状态以编排产出内存值为续跑输入——宿主写盘/装载协议已由腿 1
+    // 与 T04 检查点用例覆盖，此处不重复；C 的完成集/审计与暂停基点同源：
+    // 批 0 重推进不记账〔I-J3〕，故 C.completedBatchIndices==P 的一致性
+    // 直接断言如下。）
+    const JointCheckpointState cancelState = canceled.checkpointStates.back();
+    EXPECT_EQ(cancelState.completedBatchIndices, pauseState.completedBatchIndices)
+        << "取消状态完成集与暂停基点同源（批 0 重推进不重复记账）";
+    EXPECT_EQ(cancelState.completedUnits, pauseState.completedUnits);
+
+    JointRunOrchestratorDeps dFinal;
+    dFinal.checkerDeps = &deps;
+    StubProjector projectorFinal{facts}; dFinal.projector = &projectorFinal;
+    dFinal.paretoBuilder = &pareto;
+    JointRunOrchestrator orchFinal(OptimizationStage::StageD, dFinal);
+    auto reqFinal = fx.readyRequest(cfg);
+    reqFinal.baselineRoot = reqFull.baselineRoot;
+    reqFinal.baselineCv = reqFull.baselineCv;
+    reqFinal.task = env.task;
+    reqFinal.task.attempt = core::AttemptId{3U};
+    reqFinal.resumeFrom = cancelState;
+    const optimization::JointRunResult finalRun = orchFinal.run(reqFinal, fx.ctx);
+    ASSERT_TRUE(finalRun.runCompleted);
+
+    // 全链统计对账（AT-35）：暂停→继续→取消→再继续的最终审计＝全量运行。
+    EXPECT_EQ(finalRun.audit.base.candidatesGenerated,
+              full.audit.base.candidatesGenerated);
+    EXPECT_EQ(finalRun.audit.base.quickEvaluated, full.audit.base.quickEvaluated)
+        << "暂停/取消链上的 Quick 评估数必须不双计";
+    EXPECT_EQ(finalRun.audit.base.quickScreenedOut, full.audit.base.quickScreenedOut);
+    EXPECT_EQ(finalRun.audit.base.verifiedEvaluated, full.audit.base.verifiedEvaluated);
+    EXPECT_GT(finalRun.audit.resumedBatchesSkipped, 0U);
+    ASSERT_EQ(finalRun.pareto.entries.size(), full.pareto.entries.size());
+    for (std::size_t i = 0; i < full.pareto.entries.size(); ++i) {
+        EXPECT_TRUE(finalRun.pareto.entries[i].candidateId == full.pareto.entries[i].candidateId);
+    }
 }

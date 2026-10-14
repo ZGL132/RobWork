@@ -32,6 +32,7 @@
 #include <sdurws/ird/execution/Scheduler.hpp>
 #include <sdurws/ird/execution/StateMachine.hpp>
 #include <sdurws/ird/execution/TaskTypes.hpp>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
 #include <chrono>
 #include <filesystem>
@@ -146,6 +147,26 @@ public:
         return m_clock.now() - *m_cancelRequestedAt >= *m_settleAfter;
     }
 
+    /// 通道 PauseRequest（§7.2——WP-21-T07；宿主置暂停标志＋计时起点）。
+    void requestPause() override
+    {
+        ++m_pauseRequests;
+        m_pauseFlag = true;                  // 宿主置标志（§7.2 信号链）
+        m_pauseRequestedAt = m_clock.now();  // 检查点边界写出计时起点
+    }
+
+    /// 暂停确认观测（§7.2 暂停确认边界＝检查点写出并确认）：协议次序钉
+    /// 子同取消——未发 PauseRequest 永不确认（替身拒绝伪造"未请求先确认"
+    /// 形态）；确认＝已置位＋脚本时刻到达。默认 nullopt＝永不确认（既有
+    /// 取消用例零影响）；暂停用例经 setPauseSettleAfter 脚本化。
+    bool pauseSettled() const override
+    {
+        if (!m_pauseFlag || !m_pauseSettleAfter.has_value()) {
+            return false;
+        }
+        return m_clock.now() - *m_pauseRequestedAt >= *m_pauseSettleAfter;
+    }
+
     void terminateForce(TerminationCause cause) override
     {
         ++m_terminateCalls;
@@ -163,6 +184,12 @@ public:
     int terminateCalls() const noexcept { return m_terminateCalls; }  ///< 强杀次数（恰一次）
     bool handleClosed() const noexcept { return m_handleClosed; }     ///< 句柄关闭（EX-WKR-4 观测点）
     TerminationCause lastCause() const { return *m_lastCause; }       ///< 强杀 cause
+    int pauseRequests() const noexcept { return m_pauseRequests; }    ///< PauseRequest 次数（WP-21-T07——恰一次）
+    /// 暂停确认脚本（WP-21-T07——自 PauseRequest 置位起经此时长后确认）。
+    void setPauseSettleAfter(std::chrono::milliseconds after) noexcept
+    {
+        m_pauseSettleAfter = after;
+    }
 
 private:
     ManualClock& m_clock;                        ///< 虚拟时钟（注入）
@@ -175,6 +202,10 @@ private:
     std::optional<TerminationCause> m_lastCause; ///< 最近强杀 cause
     bool m_alive = true;                         ///< 存活语义
     bool m_handleClosed = false;                 ///< 句柄关闭语义
+    bool m_pauseFlag = false;                    ///< 宿主暂停标志（置位不回退——WP-21-T07）
+    int m_pauseRequests = 0;                     ///< PauseRequest 计数（恰一次）
+    std::optional<ManualClock::TimePoint> m_pauseRequestedAt;   ///< 暂停请求置位时刻
+    std::optional<std::chrono::milliseconds> m_pauseSettleAfter; ///< 暂停确认脚本（默认永不确认）
 };
 
 /// 派发闸门替身（IDispatchGate 实现——"停止派发批次"的观测面，EX-SM-3）。
@@ -1032,6 +1063,325 @@ TEST(TerminalRetentionTest, ReleaseResourcesGuardsRetentionWindow_S102_D07)
 
     // 未知任务的释放＝违约（fail-fast）。
     expectInvalidState([&] { controller.releaseResources(id); });
+}
+
+// =====================================================================
+// 暂停/继续/暂停中取消（WP-21-T07——OPT-VER-229~232/AT-35/V12-06；
+// units/execution.md §7.2/§7.3/§10.2 ＋ ARCH §4.3 A5）
+// =====================================================================
+
+/// 可编程继续兼容判定替身（IResumeGate——§7.3 判定结论注入；观测调用数）。
+class FakeResumeGate : public IResumeGate {
+public:
+    ResumeJudgment judgment{};  ///< 预置判定结论（测试脚本面）
+    int calls = 0;              ///< judgeResume 调用数（恰一次观测）
+
+    ResumeJudgment judgeResume(TaskId) override
+    {
+        ++calls;
+        return judgment;
+    }
+};
+
+/// 暂停受理→异步确认→Paused（OPT-VER-229/230——§7.2 暂停确认边界＝检
+/// 查点写出并确认）：受理 ack 时仍 Running（§10.2 注"异步——状态经事件
+/// 观察"）；PauseRequest 恰发一次；确认后 T10→Paused 且 worker 解绑
+/// （§7.2"worker 退出回收"的编排侧表达——解绑的可观测面＝其后取消一拍
+/// 直达收敛，无协作窗等待）。
+TEST(PauseResumeProtocol, PauseAsyncConfirmThenPaused_WP21T07_OPTVER229_230)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-06", "AT-35"},
+                  std::vector<std::string>{"AT-35"});
+    ManualClock clock;
+    RecordingSink sink;
+    TaskController controller(TaskController::Config{}, bindClock(clock));
+
+    TaskCapability cap;
+    cap.supportsPause = true;
+    auto machine = makeRunning(cap, sink);
+    const TaskId id = machine->record().taskId;
+    controller.attachTask(std::move(machine));
+    FakeWorkerHandle worker(clock, std::nullopt);
+    controller.bindWorker(id, &worker);
+    worker.setPauseSettleAfter(std::chrono::milliseconds{5});  // 检查点写出确认耗时脚本
+    sink.clear();
+
+    // 受理：accepted=true 但仍 Running（异步确认——§10.2 注"返回时可能
+    // 仍 Running；状态经事件观察"）。
+    const StatusAck ack = controller.requestPause(id);
+    EXPECT_TRUE(ack.accepted);
+    EXPECT_EQ(ack.currentState, TaskState::Running) << "受理≠已暂停（异步确认）";
+    EXPECT_FALSE(ack.feedback.has_value()) << "正常受理无反馈";
+    EXPECT_EQ(controller.tryState(id), TaskState::Running);
+
+    // 第一拍：命令段置意图＋发 PauseRequest；确认未到（t=0<5ms）→保持
+    // Running；重复 poll 不重发（恰一次防线）。
+    controller.poll();
+    EXPECT_EQ(worker.pauseRequests(), 1) << "PauseRequest 恰发一次（§7.2）";
+    EXPECT_EQ(controller.tryState(id), TaskState::Running);
+    controller.poll();
+    EXPECT_EQ(worker.pauseRequests(), 1) << "未确认前不重发（恰一次防线）";
+
+    // 第二拍（虚拟推进过检查点写出确认耗时）：pauseSettled→T10→Paused。
+    clock.advance(std::chrono::milliseconds{5});
+    controller.poll();
+    EXPECT_EQ(controller.tryState(id), TaskState::Paused) << "暂停确认边界后方 T10（AT-35）";
+    ASSERT_FALSE(sink.states().empty());
+    EXPECT_EQ(sink.states().back(), TaskState::Paused) << "TaskStatusChanged(Paused) 事件观察";
+
+    // worker 已解绑（§7.2 worker 退出回收的编排侧表达）：其后取消一拍直
+    // 达收敛（无协作窗——Paused 无在途批次，ARCH §4.3 取消路径细则）。
+    const CancelAck cancelAck = controller.requestCancel(id);
+    EXPECT_TRUE(cancelAck.accepted);
+    controller.poll();
+    EXPECT_EQ(controller.tryState(id), TaskState::Canceled)
+        << "暂停态取消直达收敛（T12→T4——解绑可观测面）";
+}
+
+/// 暂停中取消保留检查点（OPT-VER-231——T12 RetainLatest）：Paused 任务
+/// 取消直达 Canceled（termination=Canceled），状态机 T12 行声明保留最近
+/// 检查点、编排零磁盘动作（检查点在盘承载续跑状态——§7.4 检查点时机
+/// 行；磁盘写出协议归 EX-T08，本断言面＝取消编排零废弃零删除调用）；
+/// 正常取消零错误诊断（UX-03）。
+TEST(PauseResumeProtocol, CancelWhilePausedRetainsCheckpoint_WP21T07_OPTVER231)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"AT-35"},
+                  std::vector<std::string>{"AT-35"});
+    ManualClock clock;
+    RecordingSink sink;
+    TaskController controller(TaskController::Config{}, bindClock(clock));
+
+    auto machine = makePaused(TaskCapability{}, sink);   // T10 已确认形态（worker 已回收）
+    const TaskId id = machine->record().taskId;
+    controller.attachTask(std::move(machine));
+    sink.clear();
+
+    // T12 行声明保留最近检查点（状态机转移表——清理列语义的声明面；
+    // 编排层据此零废弃动作）。TransitionSpec 为命名空间级类型（§5.3 表
+    // 行数据化——StateMachine.hpp 顶层声明）。
+    const TransitionSpec* t12 = nullptr;
+    for (const auto& row : TaskStateMachine::runtimeTable()) {
+        if (row.row == 12) {
+            t12 = &row;
+        }
+    }
+    ASSERT_NE(t12, nullptr);
+    EXPECT_EQ(t12->checkpointPolicy, CheckpointRetentionPolicy::RetainLatestCheckpoint)
+        << "T12 暂停中取消必须声明保留最近检查点（ARCH §4.3 A5）";
+
+    const CancelAck ack = controller.requestCancel(id);
+    EXPECT_TRUE(ack.accepted);
+    EXPECT_FALSE(ack.feedback.has_value()) << "正常取消零反馈（UX-03）";
+    controller.poll();
+    EXPECT_EQ(controller.tryState(id), TaskState::Canceled) << "T12→T4 一拍直达";
+
+    // 终态与事件序核对：termination=Canceled；事件序 Canceling→Canceled
+    // 两转移都在（EX-SM-1 同款观测点）。
+    controller.forEachTask([&](TaskId tid, TaskStateMachine& m) {
+        if (tid != id) {
+            return;
+        }
+        ASSERT_TRUE(m.record().termination.has_value());
+        EXPECT_EQ(m.record().termination.value(), TerminationCause::Canceled);
+        EXPECT_TRUE(m.record().diagnostics.empty())
+            << "正常取消零诊断（UX-03——非错误路径）";
+    });
+    ASSERT_GE(sink.states().size(), 2U);
+    EXPECT_EQ(sink.states()[sink.states().size() - 2], TaskState::Canceling);
+    EXPECT_EQ(sink.states().back(), TaskState::Canceled);
+}
+
+/// 能力不支持暂停时显式状态反馈（OPT-VER-232——EX-CAPABILITY-UNSUPPORTED
+/// 不静默）：supportsPause=false 的 Running 任务收到暂停请求→accepted=
+/// false＋反馈码 EX-CAPABILITY-UNSUPPORTED，状态保持 Running、零事件
+/// （§7.2 前置/ARCH §4.3"不静默忽略"）；受理层同步拒绝先于状态机 T10
+/// 守卫（两层同码一致）。
+TEST(PauseResumeProtocol, CapabilityUnsupportedExplicitFeedback_WP21T07_OPTVER232)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-06"},
+                  std::vector<std::string>{"AT-35"});
+    ManualClock clock;
+    RecordingSink sink;
+    TaskController controller(TaskController::Config{}, bindClock(clock));
+
+    // 缺省能力位＝supportsPause false（R1 任务缺省不支持——§5.5）。
+    auto machine = makeRunning(TaskCapability{}, sink);
+    const TaskId id = machine->record().taskId;
+    controller.attachTask(std::move(machine));
+    FakeWorkerHandle worker(clock, std::nullopt);
+    controller.bindWorker(id, &worker);
+    sink.clear();
+
+    const StatusAck ack = controller.requestPause(id);
+    EXPECT_FALSE(ack.accepted) << "能力拒绝必须 accepted=false";
+    EXPECT_EQ(ack.currentState, TaskState::Running) << "状态不变（§7.2 前置拒绝）";
+    ASSERT_TRUE(ack.feedback.has_value()) << "必须显式反馈（不静默）";
+    EXPECT_EQ(ack.feedback->code, "EX-CAPABILITY-UNSUPPORTED")
+        << "反馈码＝EX-CAPABILITY-UNSUPPORTED（EX-SM-7 同码——§7.2）";
+
+    // 拒绝不产生转移与事件：poll 后仍 Running、零新事件。
+    controller.poll();
+    EXPECT_EQ(controller.tryState(id), TaskState::Running);
+    EXPECT_TRUE(sink.states().empty()) << "能力拒绝零转移零事件";
+    EXPECT_EQ(worker.pauseRequests(), 0) << "未向 worker 发暂停请求";
+}
+
+/// 继续：兼容判定通过→T11→Running 且 AttemptId+1、五元组绑定不变
+/// （OPT-VER-229/230 继续半边＋"不改变输入快照"执行侧承载——I-OPT-4：
+/// 恢复绑定原 snapshotId/sliceId/config，本编排零输入面写路径；五元组
+/// 的 project/branch/revision/run 不变＋attempt+1 即其编排侧观测面）。
+TEST(PauseResumeProtocol, ResumePassIncrementsAttemptKeepsIdentity_WP21T07_OPTVER230)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-06", "AT-35"},
+                  std::vector<std::string>{"AT-35"});
+    ManualClock clock;
+    RecordingSink sink;
+    TaskController controller(TaskController::Config{}, bindClock(clock));
+    FakeResumeGate gate;
+    gate.judgment.compatible = true;
+    controller.setResumeGate(&gate);
+
+    auto machine = makePaused(TaskCapability{}, sink);
+    const TaskId id = machine->record().taskId;
+    const auto identityBefore = machine->currentIdentity();
+    const auto attemptBefore = machine->record().attempt;
+    controller.attachTask(std::move(machine));
+    sink.clear();
+
+    const StatusAck ack = controller.requestResume(id);
+    EXPECT_TRUE(ack.accepted);
+    EXPECT_EQ(ack.currentState, TaskState::Paused) << "受理时仍 Paused（判定在 poll 域）";
+    controller.poll();
+    EXPECT_EQ(gate.calls, 1) << "兼容判定恰一次（T11 前置）";
+    EXPECT_EQ(controller.tryState(id), TaskState::Running) << "T11→Running";
+    ASSERT_FALSE(sink.states().empty());
+    EXPECT_EQ(sink.states().back(), TaskState::Running);
+
+    controller.forEachTask([&](TaskId tid, TaskStateMachine& m) {
+        if (tid != id) {
+            return;
+        }
+        // 新 AttemptId（同 RunId）＋输入绑定不变（不改变输入快照——I-OPT-4
+        // 的编排侧观测面）。
+        EXPECT_EQ(m.record().attempt.value, attemptBefore.value + 1)
+            << "AttemptId+1（恢复语义 §7.3）";
+        EXPECT_TRUE(m.currentIdentity().project == identityBefore.project);
+        EXPECT_TRUE(m.currentIdentity().branch == identityBefore.branch);
+        EXPECT_TRUE(m.currentIdentity().revision == identityBefore.revision)
+            << "project/branch/revision 绑定不变（恢复不改输入）";
+        EXPECT_TRUE(m.currentIdentity().run == identityBefore.run);
+    });
+}
+
+/// 继续：兼容判定不通过→保持 Paused＋EX-CHECKPOINT-INCOMPATIBLE 诊断
+/// （§7.3"不兼容→拒绝继续＋诊断"——原因 token 原样透传；用户可取消或
+/// 等待配置回退）；判定面未装配→受理层 fail-closed 拒绝（EX-T05 校验面
+/// 纪律同源）；非 Paused 态的继续请求→EX-INVALID-STATE 结构化反馈。
+TEST(PauseResumeProtocol, ResumeRejectStaysPausedWithDiagnostic_WP21T07)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"AT-35"},
+                  std::vector<std::string>{"AT-35"});
+    ManualClock clock;
+    RecordingSink sink;
+    TaskController controller(TaskController::Config{}, bindClock(clock));
+
+    // ---- 分层面 1：判定面未装配——受理层 fail-closed 拒绝（不静默）。
+    auto machine1 = makePaused(TaskCapability{}, sink);
+    const TaskId id1 = machine1->record().taskId;
+    controller.attachTask(std::move(machine1));
+    {
+        const StatusAck ack = controller.requestResume(id1);
+        EXPECT_FALSE(ack.accepted);
+        EXPECT_EQ(ack.currentState, TaskState::Paused);
+        ASSERT_TRUE(ack.feedback.has_value());
+        EXPECT_EQ(ack.feedback->code, "EX-INVALID-STATE")
+            << "装配缺失＝调用前置不满足（fail-closed——不静默放行续跑）";
+        EXPECT_EQ(controller.tryState(id1), TaskState::Paused);
+    }
+
+    // ---- 分层面 2：判定面在但不兼容——保持 Paused＋EX-CHECKPOINT-
+    // INCOMPATIBLE 诊断（reasons 透传 cause）。
+    FakeResumeGate gate;
+    gate.judgment.compatible = false;
+    gate.judgment.reasons = {"contract-version-mismatch"};
+    controller.setResumeGate(&gate);
+    {
+        const StatusAck ack = controller.requestResume(id1);
+        EXPECT_TRUE(ack.accepted) << "受理（判定在 poll 域执行）";
+        controller.poll();
+        EXPECT_EQ(controller.tryState(id1), TaskState::Paused)
+            << "不兼容→保持 Paused（§7.3）";
+        EXPECT_EQ(gate.calls, 1);
+        bool found = false;
+        controller.forEachTask([&](TaskId tid, TaskStateMachine& m) {
+            if (tid != id1) {
+                return;
+            }
+            for (const auto& d : m.record().diagnostics) {
+                if (d.code == "EX-CHECKPOINT-INCOMPATIBLE") {
+                    found = true;
+                    EXPECT_NE(std::string(d.cause).find("contract-version-mismatch"),
+                              std::string::npos)
+                        << "原因 token 原样透传（词表归 evidence）";
+                }
+            }
+        });
+        EXPECT_TRUE(found) << "必须落 EX-CHECKPOINT-INCOMPATIBLE 诊断";
+    }
+
+    // ---- 分层面 3：非 Paused 态的继续请求——EX-INVALID-STATE 结构化反
+    // 馈（把 id1 转 Canceling 形态后请求继续）。
+    ASSERT_EQ(controller.requestCancel(id1).accepted, true);
+    controller.poll();   // Paused 无在途批次——一拍直达 Canceled
+    ASSERT_EQ(controller.tryState(id1), TaskState::Canceled);
+    {
+        const StatusAck ack = controller.requestResume(id1);
+        EXPECT_FALSE(ack.accepted);
+        ASSERT_TRUE(ack.feedback.has_value());
+        EXPECT_EQ(ack.feedback->code, "EX-INVALID-STATE") << "终态任务无继续语义";
+    }
+}
+
+/// 取消优先于暂停（§7.4 取消终态语义强于挂起）：暂停意图挂起（未确认）
+/// 期间取消请求→意图消解、正常取消协议完成；其后 worker 暂停确认到位
+/// 也不得触发 T10（源态守卫+意图清除双防线——无异常、终态不变）。
+TEST(PauseResumeProtocol, CancelWinsOverPendingPause_WP21T07)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"AT-35"},
+                  std::vector<std::string>{"AT-35"});
+    ManualClock clock;
+    RecordingSink sink;
+    TaskController controller(TaskController::Config{}, bindClock(clock));
+
+    TaskCapability cap;
+    cap.supportsPause = true;
+    auto machine = makeRunning(cap, sink);
+    const TaskId id = machine->record().taskId;
+    controller.attachTask(std::move(machine));
+    // 收敛脚本 0ms：取消胜出路径走有 worker 的协作窗（暂停未确认、worker
+    // 仍绑定）——窗口内批次即刻收敛，一拍完成 Canceling→Canceled。
+    FakeWorkerHandle worker(clock, std::chrono::milliseconds{0});
+    controller.bindWorker(id, &worker);
+    worker.setPauseSettleAfter(std::chrono::milliseconds{5});
+    sink.clear();
+
+    // 暂停受理＋一拍（意图置位、PauseRequest 已发、未确认）。
+    ASSERT_TRUE(controller.requestPause(id).accepted);
+    controller.poll();
+    EXPECT_EQ(controller.tryState(id), TaskState::Running);
+
+    // 取消（撤销暂停意图——取消优先）＋一拍收敛。
+    ASSERT_TRUE(controller.requestCancel(id).accepted);
+    controller.poll();
+    EXPECT_EQ(controller.tryState(id), TaskState::Canceled)
+        << "取消优先于挂起中的暂停（§7.4）";
+
+    // 暂停确认后到也不得触发 T10：推进过确认点再 poll——终态保持、零异常。
+    clock.advance(std::chrono::milliseconds{5});
+    controller.poll();
+    controller.poll();
+    EXPECT_EQ(controller.tryState(id), TaskState::Canceled) << "终态无出边（意图已消解）";
+    EXPECT_EQ(sink.states().back(), TaskState::Canceled);
 }
 
 }  // namespace

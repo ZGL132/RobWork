@@ -23,6 +23,14 @@
  *   I-J5 缓存消费位如实为零查找（门面 sliceId 六层完成前不存在——查找
  *        先于评估在联合键上结构不可能；命中面留待装配批次，审计缓存四
  *        计数恒 0 不伪造命中——JointRun.hpp 文件头不落项登记）。
+ *
+ * WP-21-T07 增量（Paused 态消费——§9.2/AT-35/V12-06）：批相推进引擎增
+ *   暂停查询位（worker 循环批间先取消后暂停——取消优先 §7.4）；截停终
+ *   态区分取消/暂停两结局（PhaseOutcome）；暂停确认边界＝截停批界产出
+ *   的检查点状态（checkpointStates 末份——宿主写出确认后任务态 Paused
+ *   归 execution T10）；runPhase=RunPhase::Paused（表尾追加值）。继续＝
+ *   resumeFrom 重入——恢复机制（I-J3 审计基点＋批索引跳过）零改动承载
+ *   "继续不重复统计"（AT-35）。
  */
 
 #include <sdurws/ird/optimization/JointRun.hpp>
@@ -524,20 +532,22 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
     // ---- 批相推进引擎（Quick/Verified 两相同型——单份循环体参数化）。
     // 语义（I-J2/I-J3）：worker 线程只产记录；编排线程按批序合并并记账
     // （重建批不计账）；每新完成批产出检查点状态（批边界——暂停确认边
-    // 界素材，V12-06）；取消时产出当前状态并返回 false。
+    // 界素材，V12-06）；取消/暂停时产出当前状态并返回对应结局。
     //   jointMode    [in] 本相联合请求模式（Quick=筛选/Verified=正式面）
     //   phaseBatches [in] 本相批划分（局部批索引；全局索引＝基址＋局部）
     //   phaseBaseIdx [in] 本相全局批索引基址（Quick=0；Verified=quickBatchCount）
     //   sink         [out] 本相记录汇（quickRecords/verifiedRecords）
     //   totalUnits   [in] 本相检查点 totalUnits 语义（I-J4——Quick 相传 Q、
     //                     Verified 相传 Q+V）
-    //   返回 false＝取消（runPhase/runCompleted 由调用方置终态后返回）。
+    //   返回值＝相结局（Continued 推进下一阶段；Canceled 取消终态；Paused
+    //   挂起——暂停确认边界＝截停批界的检查点状态，WP-21-T07）。
+    enum class PhaseOutcome { Continued, Canceled, Paused };
     auto sweepPhase = [&](core::EvaluationMode jointMode,
                           const std::vector<std::vector<std::uint32_t>>& phaseBatches,
                           std::uint32_t phaseBaseIdx, std::vector<JointRunRecord>& sink,
-                          std::uint64_t totalUnits) -> bool {
+                          std::uint64_t totalUnits) -> PhaseOutcome {
         if (phaseBatches.empty()) {
-            return true;
+            return PhaseOutcome::Continued;
         }
         const std::size_t workers
             = std::min<std::size_t>(std::max(1U, request.config.parallel.threadCount),
@@ -545,15 +555,19 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
         std::vector<std::vector<JointRunRecord>> perBatch(phaseBatches.size());
         std::atomic<std::size_t> nextBatch{0};
         std::atomic<bool> cancelFlag{false};
+        std::atomic<bool> pauseFlag{false};
 
-        // worker 主循环：原子领批→（批间）取消查询→批内候选串行推进（每
-        // worker 持各自 JointLayeredChecker——卡 §6.7 SingleThread 口径；
-        // 派发游标原子——批间不重叠，合并序与派发序解耦）。
+        // worker 主循环：原子领批→（批间）取消查询〔优先〕→暂停查询→批内
+        // 候选串行推进（每 worker 持各自 JointLayeredChecker——卡 §6.7
+        // SingleThread 口径；派发游标原子——批间不重叠，合并序与派发序解
+        // 耦）。暂停查询接缝（WP-21-T07）：m_deps.pauseSignal 为空＝暂停面
+        // 未装配——零查询零开销，行为与既有批次逐位一致（R1 装配形态）。
         auto workerFn = [&]() {
             JointLayeredChecker checker(m_stage, *m_deps.checkerDeps);
             while (true) {
-                if (cancelFlag.load(std::memory_order_acquire)) {
-                    return;  // 已观测取消——不再领新批（在途批不受影响）
+                if (cancelFlag.load(std::memory_order_acquire)
+                    || pauseFlag.load(std::memory_order_acquire)) {
+                    return;  // 已观测取消/暂停——不再领新批（在途批不受影响）
                 }
                 const std::size_t i = nextBatch.fetch_add(1);
                 if (i >= phaseBatches.size()) {
@@ -561,8 +575,18 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
                 }
                 if (i > 0 && ctx.cancellationRequested()) {
                     // 批间协作取消（TASK-01——停止派发，已回传批保留；
-                    // 在途批完成后照常合并，不失败在途任务）。
+                    // 在途批完成后照常合并，不失败在途任务）。取消查询
+                    // 先于暂停：两请求并存时取消优先（§7.4 取消终态语义
+                    // 强于挂起——暂停意图随取消一并消解，WP-21-T07）。
                     cancelFlag.store(true, std::memory_order_release);
+                    return;
+                }
+                if (i > 0 && m_deps.pauseSignal != nullptr
+                    && m_deps.pauseSignal->pauseRequested()) {
+                    // 批间用户暂停（§9.2/AT-35/V12-06——停止派发，在途批
+                    // 完成后照常合并；截停批界的检查点状态即暂停确认凭据，
+                    // 宿主写出并确认后任务态转 Paused 归 execution T10）。
+                    pauseFlag.store(true, std::memory_order_release);
                     return;
                 }
                 auto& batchSink = perBatch[i];
@@ -588,10 +612,10 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
         }
 
         // 合并（编排线程——批序即确定性序）＋记账＋检查点状态产出。
-        bool canceled = false;
+        bool stopped = false;      // 截停标记（取消或暂停——其后批全为空）
         for (std::size_t i = 0; i < phaseBatches.size(); ++i) {
             if (perBatch[i].empty()) {
-                canceled = true;  // 取消后未派发批——其后批全为空
+                stopped = true;  // 截停后未派发批——其后批全为空
                 continue;
             }
             const std::uint32_t globalIdx = phaseBaseIdx + static_cast<std::uint32_t>(i);
@@ -634,9 +658,11 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
                 audit.resumedBatchesSkipped += 1;  // 恢复基点已记账批（I-J3）
             }
         }
-        if (canceled) {
-            // 取消终态：产出当前检查点状态（宿主可写检查点——TASK-01 部分
-            // 批保留＋§9.2 暂停中取消保检查点素材）。
+        if (stopped) {
+            // 截停终态（取消或暂停）：产出当前检查点状态（宿主可写检查点
+            // ——TASK-01 部分批保留；暂停语义〔WP-21-T07〕下本状态即暂停
+            // 确认凭据：宿主写出并确认后任务态转 Paused〔execution T10〕，
+            // 续跑自此检查点继续；取消语义保持原 TASK-01 行为）。
             JointCheckpointState st;
             st.phase = jointMode;
             st.completedBatchIndices = completedBatches;
@@ -645,17 +671,26 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
             st.audit = audit.base;
             states.push_back(std::move(st));
             audit.checkpointStatesEmitted += 1;
-            return false;
+            // 结局判定：取消旗标优先（两请求并存的语义裁决点——§7.4）；
+            // 暂停旗标仅在无取消时成立。
+            if (cancelFlag.load(std::memory_order_acquire)) {
+                return PhaseOutcome::Canceled;
+            }
+            return PhaseOutcome::Paused;
         }
-        return true;
+        return PhaseOutcome::Continued;
     };
 
     // ---- 第 3 步：Quick 批相（jointMode=Quick——screening-only 效力面）。
     {
         const std::uint64_t totalUnits = quickBatchCount;  // I-J4：不预估 Verified 批数
-        if (!sweepPhase(core::EvaluationMode::Quick, quickBatches, 0, result.quickRecords,
-                        totalUnits)) {
-            result.runPhase = RunPhase::Canceled;
+        const PhaseOutcome outcome = sweepPhase(core::EvaluationMode::Quick, quickBatches, 0,
+                                                result.quickRecords, totalUnits);
+        if (outcome != PhaseOutcome::Continued) {
+            // 取消/暂停截停（§9.2——已回传批保留，检查点末份＝续跑凭据；
+            // Paused 时续跑凭据即暂停确认边界——WP-21-T07/V12-06）。
+            result.runPhase = outcome == PhaseOutcome::Canceled ? RunPhase::Canceled
+                                                                : RunPhase::Paused;
             result.runCompleted = false;
             return result;
         }
@@ -756,9 +791,12 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
 
         const std::uint64_t totalUnits
             = static_cast<std::uint64_t>(quickBatchCount) + verifiedBatchCount;  // I-J4
-        if (!sweepPhase(core::EvaluationMode::Verified, localBatches, quickBatchCount,
-                        result.verifiedRecords, totalUnits)) {
-            result.runPhase = RunPhase::Canceled;
+        const PhaseOutcome outcome
+            = sweepPhase(core::EvaluationMode::Verified, localBatches, quickBatchCount,
+                         result.verifiedRecords, totalUnits);
+        if (outcome != PhaseOutcome::Continued) {
+            result.runPhase = outcome == PhaseOutcome::Canceled ? RunPhase::Canceled
+                                                                : RunPhase::Paused;
             result.runCompleted = false;
             return result;
         }

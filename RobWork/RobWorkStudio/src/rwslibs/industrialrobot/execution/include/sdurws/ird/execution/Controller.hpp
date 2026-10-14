@@ -1,25 +1,36 @@
 /**
  * @file   Controller.hpp
- * @brief  任务取消与终止协议编排（EX-T03）——取消命令通道、协作窗
- *         （2 s 入 Canceling＋10 s 收敛，NFR-PERF-02/ARCH §4.4）、强制
- *         终止编排（进程树终止——KILL_ON_JOB_CLOSE）、运行超时监视
- *         （EX-WKR-5）、可注入时钟（ManualClock 载体，testkit §6.5/§6.6）。
+ * @brief  任务控制协议编排（EX-T03 取消/终止＋WP-21-T07 暂停/继续/暂停中
+ *         取消）——取消命令通道、协作窗（2 s 入 Canceling＋10 s 收敛，
+ *         NFR-PERF-02/ARCH §4.4）、强制终止编排（进程树终止——
+ *         KILL_ON_JOB_CLOSE）、运行超时监视（EX-WKR-5）、暂停命令通道与
+ *         检查点确认（§7.2——暂停确认边界＝检查点写出并确认，T10）、继续
+ *         （§7.3——兼容判定通过→新 AttemptId→Running，T11）、暂停中取消
+ *         （T12 直达 Canceled＋保留检查点——ARCH §4.3 A5）、可注入时钟
+ *         （ManualClock 载体，testkit §6.5/§6.6）。
  *
  * 设计依据：
  *   - units/execution.md §3.1（Controller.hpp 组成行：ITaskController、
  *     CancelAck/StatusAck、ICancelSignal）、§7.1（协作式取消逐步协议）、
- *     §7.4（四类行为对照——取消/强杀的诊断与检查点语义）、§10.2
- *     （ITaskController 契约与 CancelAck/StatusAck 形态）、§10.3
+ *     §7.2（暂停——能力门控＋暂停确认边界＝检查点写出并确认〔AT-35〕）、
+ *     §7.3（继续——兼容判定→AttemptId+1→Running）、§7.4（四类行为对照
+ *     ——取消/暂停/继续/强杀的诊断与检查点语义）、§10.2（ITaskController
+ *     契约：requestCancel/requestPause/requestResume/requestForceTerminate/
+ *     progress/releaseResources 形态）、§10.3
  *     （requestCooperativeCancel/terminateForce 的 worker 操作语义——
- *     本头 IWorkerHandle 接缝的语义锚点）、§11（EX-SM-1/3/4、EX-WKR-4/5
- *     用例与 ManualClock 设施）
- *   - ARCHITECTURE.md §4.4（取消与终止协议四条——上游需求值 2 s/10 s 的
- *     唯一锚点；P-EX-2 处置：v0.11 Draft 待评审，A9+ 变更按影响面增量
- *     同步，影响面集中本卡 §7）
+ *     本头 IWorkerHandle 接缝的语义锚点）、§5.3（T10/T11/T12 转移行）、
+ *     §11（EX-SM-1/3/4/6/7、EX-WKR-4/5、OPT-VER-229~232 的执行侧承载）
+ *   - ARCHITECTURE.md §4.3（A5 任务生命周期——Queued/Preparing/Running/
+ *     Paused 四态取消出口＋暂停中取消保留检查点）、§4.4（取消与终止协议
+ *     四条——上游需求值 2 s/10 s 的唯一锚点；P-EX-2 处置：v0.11 Draft
+ *     待评审，A9+ 变更按影响面增量同步，影响面集中本卡 §7）
  *   - 需求 NFR-PERF-02（2 s/10 s 协议时序——上游需求值不改动）、UX-03
- *     （正常用户取消不属于错误——取消路径零错误诊断）、TASK-01
+ *     （正常用户取消不属于错误——取消路径零错误诊断）、TASK-01、
+ *     OPT-06 D 部分/AT-35（V12-06 暂停/继续/暂停中取消四条边界——
+ *     WP-21-T07）
  *   - 任务契约 tasks/foundation/EX-T03.json acceptance 1/2/4（≙WP-08-T04；
- *     acceptance 3 的 DrainPolicy 排空编排见 Scheduler.hpp——同任务交付）
+ *     acceptance 3 的 DrainPolicy 排空编排见 Scheduler.hpp——同任务交付）＋
+ *     tasks/foundation/WP-21-T07.json acceptance（Paused 态消费）
  *
  * 背景说明（本头在阶段 A 的落位边界）：
  *   - 协议时序采用**显式驱动模型**：调度线程周期调用 TaskController::poll()
@@ -29,21 +40,25 @@
  *     "2 s 内生效"由 poll 的命令优先序保证（取消命令在每次 poll 的第一段
  *     处理——§7.1 步 1"取消命令插队于派发之前"），poll 周期上限是调度器
  *     （EX-T05）的配置职责。
- *   - ITaskController 完整接口（§10.2 含 requestPause/requestResume）随
- *     EX-T05 与调度器组合落位：暂停确认＝检查点写出并确认（§7.2），依赖
- *     EX-T06 通道与 EX-T08 检查点协调器；本任务卡行产物是"取消与终止
- *     协议"（EX-T03 行），故本头落位 CancelAck/StatusAck 值类型＋
- *     ICancelSignal 最小接口＋TaskController 取消/终止编排——归置偏差
- *     随单元卡 §15.4 变更记录登记（TaskTypes.hpp ArchivePhase 先例）。
+ *   - §10.2 ITaskController 完整接口的 requestPause/requestResume 落位：
+ *     EX-T03 行产物为"取消与终止协议"（EX-T05 落位时未含——如实登记的
+ *     头内归置注），本两方法随 WP-21-T07（Paused 态消费——optimization＋
+ *     execution 单元）补齐：暂停确认＝检查点写出并确认（§7.2，检查点写
+ *     出/装载协议归 EX-T08 ICheckpointCoordinator，本编排只消费"已确认"
+ *     观测——IWorkerHandle::pauseSettled 接缝）；继续＝兼容判定通过后
+ *     T11（判定归 evidence/检查点协调器，本编排经 IResumeGate 接缝消费
+ *     结论——判定面缺失 fail-closed，EX-T05 校验面纪律同源）。
  *
  * 线程约束（§10.8 接口共性约束"提交/控制任意线程进入、内部转调度串行"
  * 在本类的阶段 A 形态）：
- *   - 控制命令 requestCancel/requestForceTerminate：**任意线程**可调——
- *     经命令通道（互斥锁保护）入队，受理判定基于命令入队时刻的状态速览；
- *     命令的实际协议动作由调度线程在 poll() 中执行（串行域）。
- *   - poll()/attachTask()/bindWorker()/setDispatchGate()/releaseResources()/
- *     forEachTask()/progress()：**仅调度线程**（状态机唯一写者纪律——
- *     §4.2/§5.3；对外只读投影的跨线程快照发布机制归 EX-T05 TaskSnapshot）。
+ *   - 控制命令 requestCancel/requestForceTerminate/requestPause/
+ *     requestResume：**任意线程**可调——经命令通道（互斥锁保护）入队，
+ *     受理判定基于命令入队时刻的状态速览；命令的实际协议动作由调度线程
+ *     在 poll() 中执行（串行域）。
+ *   - poll()/attachTask()/bindWorker()/setDispatchGate()/setResumeGate()/
+ *     releaseResources()/forEachTask()/progress()：**仅调度线程**（状态机
+ *     唯一写者纪律——§4.2/§5.3；对外只读投影的跨线程快照发布机制归
+ *     EX-T05 TaskSnapshot）。
  */
 
 #ifndef SDURWS_IRD_EXECUTION_CONTROLLER_HPP
@@ -154,6 +169,28 @@ public:
     virtual bool cancelSettled() const = 0;
 
     /**
+     * @brief 发送通道 PauseRequest（§7.2 暂停信号传递——WP-21-T07）。
+     *
+     * 语义（§7.2）：worker 在下一检查点边界（checkpointGranularity=Batch
+     * 即批次边界）写出检查点并应答 PauseAck；本方法恰发一次（编排层以
+     * "已发"防线保证——同 requestCooperativeCancel 的每窗恰一次纪律），
+     * 对同一暂停意图重复调用无意义。
+     */
+    virtual void requestPause() = 0;
+
+    /**
+     * @brief 暂停确认观测：worker 已应答 PauseAck（携 CheckpointId——检查
+     *        点已写出并被宿主确认）。
+     *
+     * 语义（§7.2 暂停确认边界＝检查点写出并确认——AT-35"暂停确认边界明
+     * 确"）：true ⇒ 编排层方可驱动 T10（Running→Paused）；false ⇒ 保持
+     * Running＋暂停意图（§7.4"暂停请求超时→诊断，状态保持 Running"的
+     * 心跳失联判定归 EX-T06——本编排不做暂停强杀路径）。磁盘写出/校验
+     * 协议归 EX-T08 ICheckpointCoordinator，本观测端只消费"已确认"结论。
+     */
+    virtual bool pauseSettled() const = 0;
+
+    /**
      * @brief 强制终止 worker 进程树（§10.3 terminateForce 原文语义）。
      *
      * 实现契约（EX-T06 JobScope 兑现，编排层据此注释锚定）：worker 进程
@@ -193,6 +230,51 @@ public:
 };
 
 // =====================================================================
+// IResumeGate——继续兼容判定接缝（§7.3 步 1 的编排面——WP-21-T07）
+// =====================================================================
+
+/**
+ * @brief 恢复（继续）请求的检查点兼容判定结论（§7.3 判定面的编排侧承载）。
+ *
+ * 值语义；reasons 为判定拒绝原因 token 清单（判定词表归 evidence
+ * judgeCheckpointCompatibility 六值 miss 原因——本单元零复制零改写，
+ * 原样透传进诊断 cause 链）。
+ */
+struct ResumeJudgment {
+    bool compatible = false;              ///< 兼容判定是否通过（§7.3 前置）
+    std::vector<std::string> reasons;     ///< 拒绝原因 token（compatible=false 时非空）
+};
+
+/**
+ * @brief 继续请求的兼容判定注入面（调度器/L5 侧实现）。
+ *
+ * 背景（§7.3）：requestResume→检查点兼容判定（evidence
+ * judgeCheckpointCompatibility：evaluatorKey/sliceId/契约版本/检查点格式/
+ * 完整性——判定归 evidence，调度归 execution）→通过→AttemptId+1→新
+ * worker 以 ResumeFromCheckpoint 派发→Running；不通过→拒绝继续＋诊断
+ * （EX-CHECKPOINT-INCOMPATIBLE），任务保持 Paused。判定动作的宿主
+ * （检查点协调器/evidence 注册面装配）在 L5——本接缝把"判定结论"供给
+ * 编排层，编排层只负责在正确时机消费（T11 前置）与把拒绝落诊断。
+ *
+ * fail-closed 纪律（EX-T05 校验面同源）：判定面未装配（setResumeGate
+ * nullptr）时恢复请求一律拒绝＋显式反馈，不静默放行。
+ *
+ * 线程约束：judgeResume 只在调度线程 poll() 内被调用（§10.8 同源）。
+ */
+class IResumeGate {
+public:
+    virtual ~IResumeGate() = default;
+
+    /**
+     * @brief 对处于 Paused 的任务做继续兼容判定。
+     *
+     * @param task [in] 目标任务（调用方保证当前处于 Paused——编排层前置）
+     * @return 判定结论（值语义）
+     */
+    virtual ResumeJudgment judgeResume(TaskId task) = 0;
+};
+
+// =====================================================================
 // TaskController——取消与终止协议编排（本头核心交付）
 // =====================================================================
 
@@ -227,12 +309,30 @@ public:
  *      矩阵内合法两步——强杀必经 T13 的 ForceTerminated 写入点）；
  *      对无 worker 任务（Queued/Preparing/Paused——无进程树可终止）
  *      ＝出队/直达取消（T3/T6/T12＋T4→Canceled；§7.4"强杀归任务操作"
- *      在矩阵内的等效表达：无进程之强杀即取消）。
+ *      在矩阵内的等效表达：无进程之强杀即取消）；
+ *   7. **暂停**（requestPause，§7.2——WP-21-T07）：前置 state==Running ∧
+ *      supportsPause，否则同步结构化反馈（EX-CAPABILITY-UNSUPPORTED/
+ *      InvalidState——不静默，§7.2/EX-SM-7）；受理＝置暂停意图（异步——
+ *      返回时仍 Running，状态经事件观察 §10.2 注）；poll 对 Running＋
+ *      暂停意图的任务恰发一次 PauseRequest，worker pauseSettled()（检查
+ *      点写出并确认——暂停确认边界 AT-35）为真时 T10 PauseConfirmed→
+ *      Paused，随后解除 worker 绑定（§7.2"worker 退出回收"的编排侧表达
+ *      ——进程生命周期归监督器）。取消请求清空暂停意图（§7.4 取消优先
+ *      于暂停）；暂停无强杀路径（§7.4"暂停请求超时→诊断，状态保持
+ *      Running"——心跳失联判定归 EX-T06）；
+ *   8. **继续**（requestResume，§7.3——WP-21-T07）：前置 state==Paused，
+ *      否则同步结构化反馈（InvalidState）；受理后 poll 执行兼容判定
+ *      （IResumeGate——判定归 evidence/检查点协调器，本编排消费结论；
+ *      判定面缺失 fail-closed 拒绝）→通过＝T11 ResumeConfirmed→Running
+ *      （AttemptId+1——恢复语义）；不通过＝保持 Paused＋
+ *      EX-CHECKPOINT-INCOMPATIBLE 诊断（§7.3——用户可取消或等待配置回
+ *      退）。**不改变输入快照**（恢复仍绑定原 snapshotId/sliceId/config
+ *      ——I-OPT-4/AT-35；本编排零输入面写路径即其结构性承载）。
  *
  * 错误语义（§10.8 两分法）：
  *   - 未知 TaskId 的控制请求＝调用方契约违约→ExecutionError(InvalidState)
  *     fail-fast（任务存在性是调用方的前置知识——EX-T05 调度器登记面）；
- *   - 终态任务的取消/强杀＝可预期条件→结构化 Ack（accepted=false＋
+ *   - 终态任务的取消/强杀/暂停＝可预期条件→结构化 Ack（accepted=false＋
  *     反馈 / 幂等 no-op），不抛。
  *
  * 线程约束：见文件头注释（命令任意线程；poll/登记/查询仅调度线程）。
@@ -299,6 +399,10 @@ public:
     /// 登记派发闸门（非所有权；可为 nullptr＝无消费者——裸装配场景）。
     void setDispatchGate(IDispatchGate* gate) noexcept;
 
+    /// 登记继续兼容判定面（非所有权；nullptr＝未装配——requestResume
+    /// 按 fail-closed 拒绝，EX-T05 校验面纪律同源）。
+    void setResumeGate(IResumeGate* gate) noexcept;
+
     // ---- 控制命令（任意线程——命令通道；实际动作由 poll 执行） ----
 
     /**
@@ -317,6 +421,37 @@ public:
      * 直达；终态任务＝幂等 no-op，accepted=true 不重复动作）。
      */
     StatusAck requestForceTerminate(TaskId task);
+
+    /**
+     * @brief 请求暂停任务（§10.2 requestPause；任意线程——WP-21-T07）。
+     *
+     * 前置（同步判定——速览）：任务存在；state==Running ∧
+     * capability.supportsPause；否则结构化反馈不抛：终态任务 accepted=
+     * false＋EX-INVALID-STATE；非 Running accepted=false＋EX-INVALID-
+     * STATE；能力不支持 accepted=false＋**EX-CAPABILITY-UNSUPPORTED**
+     * 且状态不变（§7.2/EX-SM-7/ARCH §4.3——不静默忽略）。
+     *
+     * 受理（accepted=true）＝暂停意图置位的受理，**非已暂停**——暂停确
+     * 认边界＝检查点写出并确认（§7.2/AT-35），确认后状态经事件观察
+     * （TaskStatusChanged(Paused)，T10）。重复请求（意图已在）＝幂等 ack。
+     */
+    StatusAck requestPause(TaskId task);
+
+    /**
+     * @brief 请求继续（恢复）任务（§10.2 requestResume；任意线程——
+     *        WP-21-T07）。
+     *
+     * 前置（同步判定——速览）：任务存在；state==Paused；否则结构化反
+     * 馈不抛（终态/非 Paused ＝ accepted=false＋EX-INVALID-STATE）。恢复
+     * 判定面未装配＝fail-closed 拒绝（accepted=false＋EX-INVALID-STATE
+     * 反馈——不静默放行，EX-T05 校验面纪律同源）。
+     *
+     * 受理后 poll 执行兼容判定（IResumeGate）：通过＝T11（AttemptId+1
+     * ——新尝试；恢复语义 §7.3）；不通过＝保持 Paused＋
+     * EX-CHECKPOINT-INCOMPATIBLE 诊断。**不改变输入快照**（§7.3/I-OPT-4
+     * ——本编排零输入面写路径）。
+     */
+    StatusAck requestResume(TaskId task);
 
     // ---- 查询（仅调度线程——状态机唯一写者域） ----
 
@@ -343,15 +478,21 @@ public:
     /**
      * @brief 推进协议一个节拍（幂等；可重入）。
      *
-     * 处理序（§7.1 的编排展开）：
+     * 处理序（§7.1/§7.2/§7.3 的编排展开）：
      *   a. 命令段：清空命令通道，逐条执行受理动作（取消→进入 Canceling
-     *      ＋停派发回调＋协作信号；强杀→强杀序列）——取消命令优先于
-     *      其他一切推进（"插队于派发之前"）；
+     *      ＋停派发回调＋协作信号；强杀→强杀序列；暂停→意图置位；继续
+     *      →兼容判定消费）——取消命令优先于其他一切推进（"插队于派发
+     *      之前"）；
      *   b. 协作窗段：Canceling 任务先查收敛（settled→T4），再查超时
      *      （窗耗尽→强杀序列→T13）——收敛优先于超时，窗边界上"恰好
      *      收敛"按收敛处理；
-     *   c. 运行超时段：Running 且声明时限的任务超时→强杀序列（EX-WKR-5）；
-     *   d. 时点维护：按转移后状态刷新 Canceling/Running/终态时点与状态
+     *   c. 暂停确认段（§7.2——WP-21-T07）：Running＋暂停意图的任务先补
+     *      发 PauseRequest（有 worker 且未发——换绑自愈），再查确认
+     *      （pauseSettled→T10→Paused＋解除 worker 绑定）；未确认保持
+     *      Running＋意图（暂停无强杀路径——§7.4），并继续落入运行超时
+     *      判定（暂停意图不豁免 evaluationTimeout）；
+     *   d. 运行超时段：Running 且声明时限的任务超时→强杀序列（EX-WKR-5）；
+     *   e. 时点维护：按转移后状态刷新 Canceling/Running/终态时点与状态
      *      速览（供任意线程的受理判定）。
      * 时钟取自注入 ClockFn——测试以 ManualClock::advance 虚拟推进后调
      * 用本方法断言时序（不 sleep，testkit §6.5）。
@@ -382,13 +523,30 @@ private:
         std::optional<std::chrono::steady_clock::time_point> terminalAt;       ///< 观测到终态的时刻（保留窗起点）
         bool cooperativeCancelSent = false;          ///< 本协作窗已发 CancelRequest（恰一次防线）
         bool forceKillIssued = false;                ///< 已执行 terminateForce（恰一次防线——重复强杀 no-op）
+        bool pauseIntent = false;                    ///< 暂停意图（requestPause 受理置位；T10 确认或取消路径清除——WP-21-T07）
+        bool pauseRequestSent = false;               ///< 已向当前 worker 发 PauseRequest（恰一次防线；换绑重置）
+    };
+
+    /// 控制命令种类（入队时刻随行——poll 命令段分派依据）。
+    enum class CommandKind {
+        Cancel,         ///< requestCancel（T3/T6/T12/Running 取消）
+        ForceTerminate, ///< requestForceTerminate（强杀序列/无 worker 直达）
+        Pause,          ///< requestPause（暂停意图置位——§7.2）
+        Resume,         ///< requestResume（兼容判定→T11/拒绝诊断——§7.3）
     };
 
     /// 命令通道条目（入队时刻随行——2 s 生效窗的度量依据）。
     struct ControlCommand {
         TaskId task;
         std::chrono::steady_clock::time_point requestedAt;
-        bool force = false;   ///< false＝requestCancel；true＝requestForceTerminate
+        CommandKind kind = CommandKind::Cancel;
+    };
+
+    /// 状态速览条目（任意线程受理判定读——状态＋暂停能力位；暂停的前置
+    /// 判定需要能力位，而 TaskRecord 仅调度线程可见，故随速览一并发布）。
+    struct StateSpeedView {
+        core::TaskState state = core::TaskState::Queued;  ///< 最近已知状态（至多滞后一个 poll）
+        bool supportsPause = false;                       ///< 任务能力声明的暂停位（受理期不可变——§5.5）
     };
 
     /// 时钟读取（注入空→steadyClock）。
@@ -400,6 +558,12 @@ private:
                        std::chrono::steady_clock::time_point nowTp);
     void executeForceTerminate(ManagedTask& entry, const ControlCommand& cmd,
                                std::chrono::steady_clock::time_point nowTp);
+    /// 暂停意图置位（poll 命令段——§7.2；PauseRequest 的实际发送在 poll
+    /// 暂停确认段〔Running＋意图＋有 worker＋未发〕——换绑新 worker 自愈）。
+    void executePause(ManagedTask& entry);
+    /// 继续兼容判定消费（poll 命令段——§7.3；通过＝T11，拒绝＝保持
+    /// Paused＋EX-CHECKPOINT-INCOMPATIBLE 诊断）。
+    void executeResume(ManagedTask& entry);
 
     /// 强杀序列（收敛超时/运行超时/直接强杀共用——类注释第 4/5/6 条）：
     /// terminateForce 恰一次→（运行超时时先写 EX-WORKER-HUNG 判定诊断）→
@@ -411,7 +575,8 @@ private:
     /// 无 worker 任务的取消收敛（T3/T6/T12 后同拍 T4——"无在途批次直达"）。
     void settleWithoutWorker(ManagedTask& entry);
 
-    /// 进入 Canceling 的公共序（状态转移＋停派发回调＋协作信号＋时点）。
+    /// 进入 Canceling 的公共序（状态转移＋停派发回调＋协作信号＋时点；
+    /// 同时清空暂停意图/已发标记——§7.4 取消优先于暂停）。
     void enterCanceling(ManagedTask& entry, std::chrono::steady_clock::time_point now);
 
     /// 刷新速览与时点（poll 尾段；终态时点只打一次）。
@@ -426,11 +591,12 @@ private:
     std::vector<ControlCommand> m_commands;  ///< 待处理控制命令（FIFO——同级到达序生效，§10.8）
     /// 状态速览（任意线程受理判定读；poll 尾段在锁内刷新——与真实状态
     /// 至多滞后一个 poll，竞态影响见 requestCancel 注）。
-    std::unordered_map<TaskId, core::TaskState> m_stateView;
+    std::unordered_map<TaskId, StateSpeedView> m_stateView;
 
     /// 受管任务表（调度线程私有——唯一写者域，不加锁）。
     std::unordered_map<TaskId, ManagedTask> m_tasks;
     IDispatchGate* m_dispatchGate = nullptr;  ///< 派发闸门（非所有权；可空）
+    IResumeGate* m_resumeGate = nullptr;      ///< 继续兼容判定面（非所有权；可空＝fail-closed）
 };
 
 }  // namespace sdurws::ird::execution

@@ -372,6 +372,14 @@ public:
     WorkerStatus status(WorkerId worker) const override;
     std::vector<WorkerStatus> list() const override;
 
+    // ---- 暂停协议（§7.2——WP-21-T07 增量；HandleAdapter::requestPause/
+    // ---- pauseSettled 的转发目标；非 IWorkerSupervisor 接口面——§10.3
+    // ---- 注册面零改动，增量登记随 WP-21-T07 落位批）----
+
+    /// 发送通道 PauseRequest（§7.2——worker 在下一检查点边界写出检查点并
+    /// 应答 PauseAck；恰发一次防线归 TaskController 编排层）。仅调度线程。
+    void requestPause(WorkerId worker);
+
     // ---- 协议驱动与终结（仅调度线程） ----
 
     /**
@@ -456,6 +464,7 @@ private:
     // ---- HandleAdapter 转发目标（调度线程域——记录表只读查询） ----
     bool workerCancelSettled(WorkerId worker) const;
     bool workerAlive(WorkerId worker) const;
+    bool workerPauseSettled(WorkerId worker) const;  ///< PauseAck 观测（WP-21-T07——§7.2 暂停确认）
 
     // ---- 内部记录（调度线程域——读线程只经收件箱与状态互斥交互；
     // WorkerRecord 及其收件箱条目的完整定义在实现文件——含 Win32 句柄
