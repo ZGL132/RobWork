@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "优化运行基准达标（R2/D）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-23-T01",
     "WP-21-T04"
@@ -14,22 +14,43 @@
   ],
   "designRefs": [
     "REQUIREMENTS.md#19.3",
+    "performance-baseline.md#2",
+    "performance-baseline.md#4.3",
+    "performance-baseline.md#4.7",
+    "performance-baseline.md#5.7",
+    "units/optimization.md#9.2",
     "development-task-breakdown.md#2.24"
   ],
   "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/performance/**",
+    "RobWork/doc/industrial-robot-design/performance-baseline.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/units/optimization.md"
   ],
   "outputs": [
     "benchmark",
     "traceability-update"
   ],
   "verify": [
-    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T08.json"
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T08.json",
+    "cmake --build <冒烟构建目录> --config Release --target sdurws_ird_optimization_perf_test",
+    "ctest --test-dir <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot -C Release -R \"sdurws_ird_optimization_(test|contract_test|perf_test)\" --output-on-failure"
   ],
   "branch": "wp23-t08",
-  "interUnit": false,
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-OPT-2"
+  ],
   "acceptance": [
     "10,000 Quick＋100 Verified 8 小时内结束＋检查点恢复；基准时限内完成；运行期间满足 PERF-01；同版本检查点恢复用例通过（NFR-PERF-06）"
   ],
-  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。interUnit=false 待 CCP 复核。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。编译放行（2026-10-15，WP-23-T08 实施段）：status planned→ready＋补齐 ready 必备字段——designRefs 锚点精化（REQUIREMENTS §19.3 NFR-PERF-06/NFR-PERF-01 行原文／performance-baseline §2 B-07 行〔达标口径照抄需求原文：10,000 Quick＋100 Verified 8 小时内结束；运行期间满足 NFR-PERF-01；可从同版本兼容检查点恢复——『B-07 复现命令位待回填』行即本卡执行面〕＋§4.3 交互响应测量口径〔运行期间交互响应按 §4.3 口径抽查的『口径』出处〕＋§4.7 内存与时限测量〔8 小时＝端到端墙钟时限；检查点恢复限定同版本兼容〕＋§5.7 本卡挂点／units/optimization.md §9.2 规模化口径锚〔被测对象＝WP-21-T04 交付的 JointRunOrchestrator 两级批量编排——并行分片/检查点域中间状态 IRDOPTC1/resumeFrom 续跑统计基点；其『B-07 待回填』行即本卡执行面〕/DTB §2.24 本卡行）；allowedFiles 按达标口径实现面如实扩登（optimization 单元：基准测量增列于既有目标 sdurws_ird_optimization_perf_test——WP-23-T07 新建的测量目标增列 TU，T06『零新增构建目标』先例同型＋testdata/performance 数据集 manifest＋performance-baseline.md 仅 B-07 复现命令位回填与 §5.7 挂点登记＋traceability 留痕；测量目标链接面＝sdurws_ird_optimization〔同单元〕＋sdurws_ird_testkit＋sdurws_ird_ui〔运行期间 NFR-PERF-01 抽查的五类交互无头模型层驱动——ASM-PLUG 第十登记边 optimization→ui 的测试面消费，T02 ui_perf_test 模型层等价口径同源〕＋GTest——T-1 允许形态，产品库链接块零变化，ird_gates 预期命中集登记册 traceability/wp23-t08-gate-registrations.md 随实施批落库）；forbiddenFiles 补登六份文档禁改（协议数值零私改——8 小时/10,000 Quick＋100 Verified 照抄 REQUIREMENTS NFR-PERF-06 原文、P95 ≤200 ms/无 >2 s 无响应窗口照抄 NFR-PERF-01 原文；testkit.md 本卡零变更——PerfBenchmark 报告拖挂面直接复用〔T02/T03/T05/T06/T07 先例——零新增 testkit 头〕，B-07 为时序/规模阈值类判定非 P95 类非中位吞吐类，§2 统计口径区分行明文〔运行期交互响应抽查的 P95 判定属 NFR-PERF-01 自身口径、非 B-07 达标统计量的换轨〕；units/optimization.md 本卡零触碰——§9.2 锚行『B-07 待回填』的翻面随治理批，T06 对 B-05/T07 对 B-06 锚行同款先例）；interUnit=false→true（DTB 行原文单元＝横切〔optimization〕——T06/T07 同款复核结论，knownPitfalls 挂靠 P-OPT-2：联合指标投影缝裁决前由测试面替身供给〔JointRunTest/ParallelThroughputBenchmarkTest 同款接缝纪律〕）。放行依据＝所有者 2026-10-13「实现 M6 阶段收口」指令＋2026-10-14 续跑段；前置 WP-23-T01（done——基准清单与测量协议）/WP-21-T04（done——JointRunOrchestrator 并行评估＋检查点域中间状态与恢复消费）均满足。判定阈值裁决登记（REQUIREMENTS 附录 C《P-04 冻结数值表》2026-10-13 部分冻结现状）：判定阈值（通过线/降级线）两槽位所有者裁定维持待定、未补充确认前按未冻结处理——本卡达标面为运行时限（8 小时内结束）、运行期间交互响应（NFR-PERF-01 原文三值）与同版本检查点恢复用例（NFR-PERF-06 原文），阈值/口径数值全部源自需求原文与 performance-baseline §4 协议，与 P-04 判定阈值零交集、零私设数值、零鲁棒性判定结论（WP-21-T05 判定半区不随本卡启用——鲁棒性复核不进本基准测量面）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
 }
