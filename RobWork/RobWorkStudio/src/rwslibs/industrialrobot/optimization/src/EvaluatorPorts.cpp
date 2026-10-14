@@ -24,6 +24,10 @@
 #include <sdurws/ird/evidence/Dependency.hpp>    // evidence::DependencyEntry/Kind/
                                                   //  Configuration/Environment 载荷——切片条目
 #include <sdurws/ird/optimization/DiagCodes.hpp> // OPT-* 码值常量（唯一书写点）
+#include <sdurws/ird/optimization/Generator.hpp> // builtInStrategyIds（检查⑨接受集
+                                                  //  单点）＋generateWithBuiltInStrategy
+                                                  //  ＋GenerationContext——run() 生成步
+                                                  //  骤按策略分派（WP-21-T06）
 #include <sdurws/ird/optimization/Types.hpp>     // toToken(RunPhase) 等
 
 #include <algorithm>
@@ -243,13 +247,29 @@ void validateConfiguration(const OptimizationConfiguration& config)
                                 "OPT-INPUT-INVALID: budget.maxWallClockS 为 0（合法域 ≥1 秒；"
                                 "R1 编排不强制执行墙钟——如实登记）");
     }
-    // ⑨ 策略 token：只接受已实现词表（kStrategySeededLhs——未登记 token
-    //    拒绝；扩展点随 WP-21-T06 表尾追加）。
-    if (config.strategyId != std::string(kStrategySeededLhs)) {
-        throw OptimizationError(kOptInputInvalid,
-                                "OPT-INPUT-INVALID: strategyId=\"" + config.strategyId
-                                    + "\" 未登记（已实现策略词表：opt.strategy.seeded-lhs——"
-                                      "搜索策略接口扩展随 WP-21-T06/OPT-10）");
+    // ⑨ 策略 token：只接受已实现词表（builtInStrategyIds 聚合单点——当前
+    //    seeded-lhs／baseline-perturb；与 generateWithBuiltInStrategy 分派
+    //    同源，"校验接受的必可分派"；未登记 token 拒绝；新策略随 OPT-10
+    //    扩展点实现批次同步增登词表——单元卡增量修订留痕）。
+    {
+        const auto& vocab = builtInStrategyIds();
+        const bool registered = std::find(vocab.begin(), vocab.end(),
+                                          config.strategyId)
+                                != vocab.end();
+        if (!registered) {
+            std::string vocabText;
+            for (const auto& v : vocab) {
+                if (!vocabText.empty()) {
+                    vocabText += "／";
+                }
+                vocabText += std::string(v);
+            }
+            throw OptimizationError(
+                kOptInputInvalid,
+                "OPT-INPUT-INVALID: strategyId=\"" + config.strategyId
+                    + "\" 未登记（已实现策略词表：" + vocabText
+                    + "——搜索策略接口扩展点 OPT-10，注册新实现随单元卡增量修订）");
+        }
     }
     // ⑩ 目标集：非空＋无重复＋容差合法（与 makeObjectiveSet 同面——目标集
     //    是 Quick 筛选与 Pareto 的支配基础，空集无比较基础）。
@@ -709,8 +729,40 @@ TwoStageRunResult TwoStageEvaluationOrchestrator::run(const TwoStageRunRequest& 
 
     // ---- 第 2 步：Quick 批（mode=Quick——screening-only 效力面，EVI-01
     //      表 1：Quick 不得产生等价于 Verified 的正式证据）。
+    //      候选生成按 config.strategyId 分派（WP-21-T06——OPT-10 扩展点）：
+    //      deps.generator 注入优先（装配态自定义实现；strategyId 错配＝装配
+    //      违约 fail-fast——防"注入 A 策略跑 B 策略"的静默错配），否则经
+    //      内置词表分派单点（与检查⑨同源——校验接受的必可分派）。种子
+    //      LHS 路径逐字节委托既有生成函数（既有黄金行为零漂移）。
     result.runPhase = RunPhase::QuickScreening;
-    const std::vector<CandidatePatch> patches = generateSeededLhsCandidates(request.config);
+    GenerationContext genCtx;
+    genCtx.config = request.config;
+    genCtx.generationIndex = 0;  // R1 单批（maxGenerations==1 已校验——多代
+                                 //  推进编排归 §8.5/WP-21-T03，不静默降级）
+    // focusHints 留空：§8.5 反馈生产面（模式③敏感度排序）随 WP-21-T05
+    // 落位——R1 无反馈来源，不伪造聚焦提示。
+    genCtx.cancellationRequested = ctx.cancellationRequested();
+    GenerationBatch genBatch;
+    if (m_deps.generator != nullptr) {
+        if (m_deps.generator->strategyId() != request.config.strategyId) {
+            throw std::invalid_argument(
+                "optimization/orchestrator: 注入生成器 strategyId=\""
+                + m_deps.generator->strategyId() + "\" 与 config.strategyId=\""
+                + request.config.strategyId
+                + "\" 不一致（装配错配——策略即身份要素，§4.5；fail-fast）");
+        }
+        genBatch = m_deps.generator->generateNextBatch(genCtx);
+    } else {
+        genBatch = generateWithBuiltInStrategy(request.config.strategyId, genCtx);
+    }
+    if (genBatch.cancelled) {
+        // 生成层取消（§12.2 批间取消语义）：空批回传——运行取消、无候选
+        // 产出（TASK-01 协作取消，正常路径非错误）。
+        result.runPhase = RunPhase::Canceled;
+        result.runCompleted = false;
+        return result;
+    }
+    const std::vector<CandidatePatch>& patches = genBatch.candidates;
     result.audit.candidatesGenerated = static_cast<std::uint32_t>(patches.size());
 
     for (const auto& patch : patches) {

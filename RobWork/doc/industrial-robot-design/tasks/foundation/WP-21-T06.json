@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现搜索策略接口扩展",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-21-T02"
   ],
@@ -20,6 +20,12 @@
     "RobWork/doc/industrial-robot-design/units/optimization.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
   ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+  ],
   "outputs": [
     "implementation",
     "unit-tests",
@@ -34,5 +40,5 @@
   "acceptance": [
     "搜索策略接口扩展评审通过（OPT-10；首版不要求一次引入全部算法）；不预建空算法占位（DTB 行禁止项——NFR-MNT-04）"
   ],
-  "note": "DTB §2.22 行逐一对应；单域实现——interUnit=false。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）；本卡 status 维持 planned——待前置链闭合与独立评审放行（依赖诚实）。。"
+  "note": "DTB §2.22 行逐一对应；单域实现——interUnit=false。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。【FREEZE-P04 批 2026-10-13】P-04 已部分冻结（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》——表①②③采样规则＋表④结构规则/适用边界冻结生效；判定阈值两槽位〔通过线/降级线〕所有者裁定维持待定）。【ready 放行 2026-10-14】status planned→ready。放行依据＝所有者 2026-10-13「实现 M6 阶段收口」指令（本工作流批次放行）；前置 WP-21-T02 已 done（OPT-D 登记批合入，c42c405a 收尾批在主树）——前置链闭合。判定阈值裁决如实登记：两槽位维持待定，未补充确认前 OPT-09 判定子项未冻结；本卡为搜索策略接口面（OPT-10 生成侧），不涉判定阈值——baseline-perturb 扰动比例默认值引用附录 C 表①冻结值（0.01 默认／4×=0.04 放宽上界封顶——冻结采样面值，非判定阈值槽位，引用合法）。补齐 ready 必备字段：forbiddenFiles（主文档四份——本卡改动面限 optimization/**＋units/optimization.md＋traceability/**）；designRefs 锚点复核在案（units/optimization.md#15＝§15 需求—设计—验证追踪矩阵；development-task-breakdown.md#2.22＝WP-21 任务卡表）。branch=wp21-t06。"
 }

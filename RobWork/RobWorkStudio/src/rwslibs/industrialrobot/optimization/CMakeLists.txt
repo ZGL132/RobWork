@@ -116,6 +116,11 @@ add_library(sdurws_ird_optimization STATIC
     src/Constraint.cpp
     src/Objective.cpp
     src/Pareto.cpp
+    # WP-21-T06 增列——搜索策略扩展点接口 ICandidateGenerator＋内置策略
+    # （seeded-lhs 适配器＋baseline-perturb 邻域扰动）＋内置词表聚合与
+    # 分派单点（builtInStrategyIds/generateWithBuiltInStrategy——
+    # validateConfiguration 检查⑨与编排器 run() 同源消费；OPT-10）：
+    src/Generator.cpp
     src/EvaluatorPorts.cpp
     src/Run.cpp
     src/Applier.cpp
@@ -335,6 +340,11 @@ add_executable(sdurws_ird_optimization_test
     test/ReproBenchmarkTest.cpp   # WP-23-T09：确定性复现基准（B-08 抽样
                                   #   ——seeded-lhs 复跑等价候选集＋稳定排序）
     test/EvaluatorPortsTest.cpp
+    # WP-21-T06 增列——搜索策略扩展点套件（OptGenerators——词表钉扎/
+    # seeded-lhs 适配零漂移/取消与代序边界/baseline-perturb OFAT ±Δ 邻域
+    # 枚举逐面：基线恒首/单因子/步长与比例承载/锁定排除/界与正性跳过/
+    # 预算与耗尽/确定性双跑与比例敏感/参数冻结档位校验——OPT-10）：
+    test/GeneratorTest.cpp
     test/RunTest.cpp
     test/ApplierTest.cpp
     # WP-20-T08 增列——预检 20 检查项逐项定位/allowances 五元组/RunSpec
@@ -461,6 +471,10 @@ add_executable(sdurws_ird_optimization_contract_test
     contract_test/ConstraintContractTest.cpp
     contract_test/ObjectiveParetoContractTest.cpp
     contract_test/EvaluatorPortsContractTest.cpp
+    # WP-21-T06 增列——搜索策略扩展点契约（OptGeneratorContract——词表
+    # 零空占位逐 token 可解析直证〔NFR-MNT-04 机器面〕＋策略切换经
+    # config.opt 引用生效且进身份〔§4.5〕＋注入生成器错配 fail-fast）：
+    contract_test/GeneratorContractTest.cpp
     contract_test/ApplierContractTest.cpp
     # WP-20-T08 增列——真装配链阻塞可定位（OPT-VER-112/135 契约半区）＋
     # P-OPT-6 持久化通道边界源码扫描（acceptance 1/3）：
