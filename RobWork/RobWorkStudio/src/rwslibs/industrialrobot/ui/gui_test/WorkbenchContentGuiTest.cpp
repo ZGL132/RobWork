@@ -38,10 +38,12 @@
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>
 #include <sdurws/ird/ui/UiPorts.hpp>
 #include <sdurws/ird/ui/UiProjections.hpp>
+#include <sdurws/ird/ui/UiText.hpp>
 #include <sdurws/ird/ui/WorkbenchContent.hpp>
 
 #include <algorithm>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -1151,6 +1153,104 @@ TEST_F(WorkbenchContentGuiTest, DomainCommandAssembledFalse_RegisteredDisabledWi
     // 有界拆卸收口（本用例未触发布局/设置写入——shutdown 返回 false＝
     // 写队列为空的合法语义，不断言真值；幂等）。
     content->shutdown();
+}
+
+/**
+ * F-557 回归（命令拒绝反馈的空禁用键守卫——行为半区）：统一提交路径
+ * （§7.7）的拒绝反馈面对「已登记＋拒绝＋无禁用键」的合法空态不得以
+ * resolveText("") 的 fail-fast 崩出代偿（缺陷实录：关闭项目被处理器拒绝
+ * 后空键解析抛 invalid_argument，穿透 Qt 事件循环直达顶层 catch＝红叉
+ * 对话框＋进程退出）。两分支断言：
+ *   ①空键轨＝诚实通用文案「命令未执行」（不抛、不空白、不虚构原因）；
+ *   ②非空键轨＝注册表原因键照常解析呈现（守卫不得吞掉正常禁用反馈——
+ *     §7.4"禁用＋说明"的发现性保留面）。
+ * 形态半区（两处守卫在位——submitCommand 拒绝分支＋refreshCommandStates
+ * 按钮 tooltip）由 test/DefectPinningTest.cpp 具名扫描用例承载，两层互证。
+ */
+TEST_F(WorkbenchContentGuiTest,
+       HandlerRejectionEmptyDisableKey_HonestFeedbackNoCrash_F557)
+{
+    IRD_TEST_INFO("UX-02", {"F-557"}, std::nullopt);
+
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    deps.extraCommandOwners.push_back("modeling");
+
+    // ①被测轨：Session 作用域命令（缺省规则恒可用——可用性快照 enabled
+    //   且无禁用键），处理器以异常拒绝：注册表按 §10.3 捕获不穿透并返回
+    //   accepted=false（处理器异常＝"处理器拒绝"的可达等价形态——拒绝发
+    //   生时可用性键为空，正是 F-557 缺陷分支的唯一触发前提）。
+    WorkbenchContentDeps::DomainCommandEntry rejecting;
+    rejecting.descriptor.id = "modeling.raise-rejection";
+    rejecting.descriptor.ownerUnit = "modeling";
+    rejecting.descriptor.titleKey = "cmd.modeling.raise-rejection.title";
+    rejecting.descriptor.scope = ui::CommandScope::Session;
+    rejecting.descriptor.readOnlyAllowed = true;
+    rejecting.handler = [](const std::vector<ui::CommandParameter>&)
+        -> ui::CommandOutcome {
+        // 以异常拒绝（注册表 §10.3 捕获——显式返回类型标注：纯 throw 的
+        // lambda 推导 void，与 handler 的 CommandOutcome 签名不匹配）。
+        throw std::runtime_error("处理器拒绝（F-557 用例注入）");
+    };
+    deps.domainCommandEntries.push_back(std::move(rejecting));
+
+    // ②对照轨：Project 作用域命令——无项目态被缺省规则禁用且原因键非空
+    //   （reason.no-project）：守卫的非空键分支应照常解析呈现。
+    WorkbenchContentDeps::DomainCommandEntry gated;
+    gated.descriptor.id = "modeling.gated-by-no-project";
+    gated.descriptor.ownerUnit = "modeling";
+    gated.descriptor.titleKey = "cmd.modeling.gated-by-no-project.title";
+    gated.descriptor.scope = ui::CommandScope::Project;
+    gated.descriptor.readOnlyAllowed = true;
+    gated.handler = [](const std::vector<ui::CommandParameter>&) {
+        ui::CommandOutcome out;
+        out.accepted = true;
+        return out;
+    };
+    deps.domainCommandEntries.push_back(std::move(gated));
+
+    auto content = ui::createWorkbenchContent(std::move(deps));
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    // 前置核对（用例针对性自证）：两命令都已登记；被测轨当前可用且禁用
+    // 键为空（空键拒绝轨的前提），对照轨当前禁用且键非空（非空键轨前提）
+    // ——任一前提不成立即本用例失去对 F-557 两分支的针对性。
+    const auto rejectingGate =
+        content->commandRegistry().availability("modeling.raise-rejection");
+    ASSERT_TRUE(rejectingGate.registered);
+    ASSERT_TRUE(rejectingGate.enabled) << "前置失真：Session 作用域命令应恒可用";
+    ASSERT_TRUE(rejectingGate.disableReasonKey.empty());
+    const auto gatedGate =
+        content->commandRegistry().availability("modeling.gated-by-no-project");
+    ASSERT_TRUE(gatedGate.registered);
+    ASSERT_FALSE(gatedGate.enabled) << "前置失真：无项目态 Project 命令应被禁用";
+    ASSERT_FALSE(gatedGate.disableReasonKey.empty());
+
+    // 瞬态消息观测（UI-T18 双观测钩子——showStatusFeedback 唯一出线）。
+    QString transientMessage;
+    content->setStatusMessageObserver(
+        [&transientMessage](const QString& message, int) { transientMessage = message; });
+
+    // ③空键轨：submitCommand 走统一提交路径→处理器异常被注册表捕获→
+    //   拒绝反馈以空键到达守卫——缺陷形态在此抛 invalid_argument 穿透
+    //   （进程级崩出），修复形态出诚实通用文案。不抛是第一断言（崩溃面），
+    //   文案是第二断言（语义面）。
+    EXPECT_NO_THROW(content->submitCommand("modeling.raise-rejection"))
+        << "空禁用键拒绝反馈崩出（F-557 缺陷形态——resolveText(\"\") fail-fast "
+           "穿透事件循环）";
+    EXPECT_EQ(transientMessage, QString::fromUtf8("命令未执行"))
+        << "空键拒绝未出诚实通用文案（守卫空态出线缺失）";
+
+    // ④非空键轨：无项目态拒绝——原因键照常解析（与 ui::resolveText 同值
+    //   断言——同源一词表，§7.4 三呈现面同文案），证明守卫只拦空键、不吞
+    //   正常禁用反馈。
+    transientMessage.clear();
+    EXPECT_NO_THROW(content->submitCommand("modeling.gated-by-no-project"));
+    EXPECT_EQ(transientMessage,
+              QString::fromStdString(ui::resolveText("reason.no-project")))
+        << "非空键拒绝反馈失真（守卫误吞正常禁用原因——§7.4 发现性违约）";
+
+    EXPECT_TRUE(content->shutdown());
 }
 
 }  // namespace
