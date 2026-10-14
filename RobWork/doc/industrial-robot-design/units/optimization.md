@@ -3,10 +3,10 @@
 | 字段 | 值 |
 | --- | --- |
 | 单元 | optimization（**L4 业务域单元**——ARCHITECTURE §3.1/§3.3：计算库＋Qt Widgets 插件二分结构；设计变量/候选补丁、约束编排、候选生成、评估器组合、Pareto 非支配、Quick/Verified、缓存与种子、预检、候选应用与一站式导出） |
-| 文档版本 | v0.11（2026-10-09，WP-20-T11 契约测试与优化黄金数据集落位登记——opt-\* 三数据集按 DatasetManifest 登记＋SetMatchTraits 域侧特化＋canonical 值形态通道选择规则实现口径增量——变更记录见 §16.5；v0.10＝2026-10-09 WP-20-T10 返工修正登记——冒烟留痕以本批代码实测重制＋测试计数勘正〔acc/wp-20-t10/1 B-1〕＋G-1 注释修正，设计语义零变化；v0.9＝2026-10-09 WP-20-T10 插件界面落位登记＋P-OPT-10 承接登记；v0.8＝2026-10-09 WP-20-T09 优化证据一站式导出落位登记＋实现口径增量＋前批验收登记义务〔G-1/G-ACC-T08-1〕修正交付；v0.7＝2026-10-08 WP-20-T07 OptimizationRunResult 与采用守卫落位登记；v0.6＝2026-10-08 WP-20-T06 Quick/Verified 两级、缓存与种子落位登记；v0.5＝2026-10-08 WP-20-T05 Pareto 非支配与八项指标分层落位登记；v0.4＝2026-10-08 WP-20-T04 静态硬约束执行落位登记；v0.3＝2026-10-07 WP-20-T03 变量与候选补丁模型落位登记；v0.2＝2026-10-07 WP-20-T02 构建落位登记；v0.1＝2026-10-06 首版草案，WP-20-T01 交付物） |
+| 文档版本 | v0.13（2026-10-14，WP-21-T02 OPT-D 增量修订登记——联合评估键 `opt-joint-full`＋`upstream.*` 依赖链登记〔P-OPT-9 消账〕＋鲁棒性三模式引用 P-04 冻结值〔判定阈值两槽位标注"待补充确认"〕＋并行/检查点规模化锚＋暂停/继续边界＋误淘汰审计口径落章——变更记录见 §16.5；v0.12＝2026-10-10 ASM-PLUG 收口登记〔该批 §16.5 已录、头表未随刷——本批随 v0.13 一并勘正补登〕；v0.11＝2026-10-09 WP-20-T11 契约测试与优化黄金数据集落位登记——opt-\* 三数据集按 DatasetManifest 登记＋SetMatchTraits 域侧特化＋canonical 值形态通道选择规则实现口径增量；v0.10＝2026-10-09 WP-20-T10 返工修正登记——冒烟留痕以本批代码实测重制＋测试计数勘正〔acc/wp-20-t10/1 B-1〕＋G-1 注释修正，设计语义零变化；v0.9＝2026-10-09 WP-20-T10 插件界面落位登记＋P-OPT-10 承接登记；v0.8＝2026-10-09 WP-20-T09 优化证据一站式导出落位登记＋实现口径增量＋前批验收登记义务〔G-1/G-ACC-T08-1〕修正交付；v0.7＝2026-10-08 WP-20-T07 OptimizationRunResult 与采用守卫落位登记；v0.6＝2026-10-08 WP-20-T06 Quick/Verified 两级、缓存与种子落位登记；v0.5＝2026-10-08 WP-20-T05 Pareto 非支配与八项指标分层落位登记；v0.4＝2026-10-08 WP-20-T04 静态硬约束执行落位登记；v0.3＝2026-10-07 WP-20-T03 变量与候选补丁模型落位登记；v0.2＝2026-10-07 WP-20-T02 构建落位登记；v0.1＝2026-10-06 首版草案，WP-20-T01 交付物） |
 | 文档状态 | **`Draft`**（未冻结；本文只做详细设计，不自行宣布任何验收通过；本文自审不等于实现测试通过） |
 | 主 WP | WP-H（WP-12、WP-20、WP-21——DTB §0.1 主 WP 映射；单元任务主责 WP-20/WP-21） |
-| 上游 | `REQUIREMENTS.md` v1.16（`Accepted`，唯一需求权威）、`ARCHITECTURE.md` v0.13（`Draft`）、`development-task-breakdown.md` v0.53（`Draft`） |
+| 上游 | `REQUIREMENTS.md` v1.21（`Accepted`，唯一需求权威；v1.20 P-04 部分冻结——附录 C《P-04 冻结数值表》，判定阈值两槽位待补充确认）、`ARCHITECTURE.md` v0.14（`Draft`）、`development-task-breakdown.md` v0.72（`Draft`） |
 | 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/`——**WP-20-T02 已落位**：计算库 STATIC（PUBLIC 链 core/evidence/runtime/policy/execution/project/io/reporting/diagnostics 九条 §3.2 依赖白名单边）＋`sdurws_ird_optimization_plugin` 最小可注册实现＋`sdurws_ird_optimization_test`/`_contract_test` 随落位登记；OPT-\* 15 码登记表随批（§6.6——阶段锁码落位 `OPT-STAGE-LOCKED`，P-OPT-1）。**WP-20-T03 已落位**：变量与候选补丁模型（§5——`Types.hpp`/`Variable.hpp`/`CandidatePatch.hpp` 三公共头＋`src/` 三实现 TU＋两测试目标增用例；实现口径增量见 §1.3 T03 注/§5.2 注）。**WP-20-T04 已落位**：静态硬约束执行（§6 管线/阶段锁——`Constraint.hpp`＋`src/Constraint.cpp`＋Types.hpp 候选状态词表表尾追加＋两测试目标增用例；实现口径增量见 §1.3 T04 注）。**WP-20-T05 已落位**：Pareto 非支配与八项指标分层（§7——`Objective.hpp`/`Pareto.hpp`＋`src/` 两实现 TU＋Types.hpp MetricId 词表表尾追加＋两测试目标增用例；实现口径增量见 §1.3 T05 注）。**WP-20-T06 已落位**：Quick/Verified 两级、缓存与种子（§4.3/§8.2/§8.4——`EvaluatorPorts.hpp`＋`src/EvaluatorPorts.cpp`＋Types.hpp RunPhase 词表表尾追加＋两测试目标增用例；实现口径增量见 §1.3 T06 注）。**WP-20-T07 已落位**：OptimizationRunResult 与采用守卫（§4.2/§10——`Run.hpp`/`Applier.hpp`＋`src/` 两实现 TU＋两测试目标增用例；实现口径增量见 §1.3 T07 注）。**WP-20-T08 已落位**：预检 Preflight 与基线评估（§6.4/§8.2——`Preflight.hpp`＋`src/Preflight.cpp`＋两测试目标增用例；实现口径增量见 §1.3 T08 注）。**WP-20-T09 已落位**：优化证据一站式导出（§11.4——`Export.hpp`＋`src/Export.cpp`＋两测试目标增用例＋前批登记义务 G-1/G-ACC-T08-1 修正；实现口径增量见 §1.3 T09 注）。**WP-20-T10 已落位**：插件界面四页（变量表/约束页/运行控制〔取消/进度漏斗〕/候选表与对比——`plugin/` 六文件＋assembly 门面扩展，见 §1.3 T10 注）。**WP-20-T11 已落位**：契约测试与优化黄金数据集（§13.0/§13.1——`testdata/golden/opt-*` 三数据集按 DatasetManifest 登记＋`testdata/tolerance/opt-golden` 容差档案＋`test/OptGoldenDatasetTest.cpp` 三套件＋`contract_test/OptGoldenDatasetContractTest.cpp` 登记契约＋两测试目标增列，见 §1.3 T11 注）。插件界面已随 WP-20-T10 落位（见 §3.1/§1.3） |
 | 实现口径 | 从头构建（REQUIREMENTS v1.9 确立）：不继承、不恢复 `old/` 历史实现；旧结构优化器（structureoptimizer）仅作功能范围对照（需求附录 A.5），其"六维加权评分""混合寻优"等被裁决排除项**不恢复**（需求附录 B） |
 | 任务编号 | 本卡决策 `DOPT-x`；待裁决项 `P-OPT-x`；验证用例 `OPT-VER-x`；诊断码前缀 `OPT-`（diagnostics.md §4.5 业务域命名空间清单已登记 `OPT`，码值注册归 diagnostics StableCodeRegistry——见 §6.6） |
@@ -39,14 +39,15 @@
 
 ## 1. 文档信息、输入版本与当前代码状态
 
-### 1.1 输入文件实测台账（2026-10-06 磁盘实况）
+### 1.1 输入文件实测台账（2026-10-06 磁盘实况；2026-10-14 WP-21-T02 增量核对——REQUIREMENTS/DTB/performance-baseline 三行刷新或新增，其余行保持原核对时点）
 
 | 输入 | 磁盘版本/状态 | 读取日期 | 与本单元的关系 |
 | --- | --- | --- | --- |
-| `REQUIREMENTS.md` | v1.16（2026-09-09 签署，`Accepted`；签署后变更 C1～C8 已留痕） | 2026-10-06 | **唯一需求权威**：§15.0 优化范围分期表（OPT-B/OPT-D 权威范围）、OPT-01～12、§8.1 表 1～4（评估模式/证据汇总/合法组合/各域 RequiredEvidenceProfile——表 4 优化行）、CON-01～06、EVI-01/02、TASK-01～03、ERR-01、PM-12、NFR-COR/PERF/REL 家族、AT-09/10/11/12/30/34/35、附录 C（P-04 已登记延期、P-06）、附录 D（P-01 冻结容差表） |
+| `REQUIREMENTS.md` | v1.21（2026-10-13，`Accepted`；v1.20 P-04 部分冻结——附录 C《P-04 冻结数值表》表①②③＋表④结构规则/适用边界冻结、判定阈值两槽位〔通过线/降级线〕维持待定；v1.21 MDL-12-S1 R2 解冻登记；签署后变更 C1～C8 已留痕） | 2026-10-14 | **唯一需求权威**：§15.0 优化范围分期表（OPT-B/OPT-D 权威范围）、OPT-01～12、§8.1 表 1～4（评估模式/证据汇总/合法组合/各域 RequiredEvidenceProfile——表 4 优化行）、CON-01～06、EVI-01/02、TASK-01～03、ERR-01、PM-12、NFR-COR/PERF/REL 家族、AT-09/10/11/12/30/34/35、附录 C（《P-04 冻结数值表》——本卡 §8.6 引用面＋《P-06 冻结数值表》＋P-01 延期/冻结登记行）、附录 D（P-01 冻结容差表） |
 | `ARCHITECTURE.md` | v0.13（2026-09-27，`Draft`） | 2026-10-06 | §2.3 分层与 Qt 约束、§3.1 单元总表（optimization 行）、§3.2 四条构建红线、§3.3 业务域二分、§3.5 单元依赖表、§4 进程/线程/任务生命周期/迟到结果、§6.1 `.rwdesign` 存储、§7.1 命令与可确认诊断流、§7.2 六类端口、§7.3 确定性编译链、§7.6 快照/切片/包络/当前性管线、§7.10 评估器组合与优化域（本单元架构锚）、S3 走查（静态优化运行与候选采用）、§10.2（R2 不新增架构机制）、SA 决策登记册 |
 | `DETAILED-DESIGN.md` | 索引（2026-09-22 状态行；optimization＝"待产出"，主 WP-H） | 2026-10-06 | 单元分类与"单元详设最低结构"要求；本卡产出后索引行刷新归治理任务，本卡不代改 |
-| `development-task-breakdown.md` | v0.53（`Draft`） | 2026-10-06 | §2.21 WP-20-T01～T11（OPT-B 全量任务卡）、§2.22 WP-21-T01～T08（OPT-D 任务卡）、§2.24 WP-23-T06～T09（横切基准）、§3 需求追踪矩阵 OPT/PM/NFR 行、§4.3 O-28（P-04 延期登记）、§5 执行约定（双模式构建/DoD/红线/三段式） |
+| `development-task-breakdown.md` | v0.72（2026-10-13，`Draft`；v0.71 FREEZE-P04 批——§4.3 O-28 转"部分冻结——判定阈值待补充确认"） | 2026-10-14 | §2.21 WP-20-T01～T11（OPT-B 全量任务卡）、§2.22 WP-21-T01～T08（OPT-D 任务卡——本卡行 T02）、§2.24 WP-23-T06～T09（横切基准）、§2.28 治理批次登记（《P-04 建议值草案》——FREEZE-P04 冻结来源）、§3 需求追踪矩阵 OPT/PM/NFR 行、§4.3 O-28（P-04 部分冻结登记）、§5 执行约定（双模式构建/DoD/红线/三段式） |
+| `performance-baseline.md` | v0.6（2026-10-13，WP-23-T01 初版＋T09/T02/T03/T04/T05 执行登记） | 2026-10-14 | 基准清单 B-01～B-08、黄金项目定义、测量协议（P95 线性插值/样本纪律/禁 3 次中位数替代）——本卡 §9.2 规模化口径锚（B-05/B-06/B-07 复现命令位**待回填**——WP-23-T06/T07/T08 落位时回填，本卡不代填）与 §14.3 横切交接输入 |
 | `acceptance-protocol.md` | v1.7（2026-10-05） | 2026-10-06 | 三段式验收流程、验收者独立性、证据落位 `traceability/acceptance/` |
 | `traceability/unit-status.json` | optimization：`status=planned`、`designCompletion=not-written`、`implementationStatus=not-verified`、`masterWps=["WP-H"]`（schema `ird-unit-status/1`） | 2026-10-06 | 落位状态记录（本卡产出后其刷新归治理任务，本卡不代改——与姊妹卡同口径） |
 | `units/core.md` | v0.11（2026-09-11，`Draft-Structured`/contract-review） | 2026-10-06 | TaskIdentity 五元组、Id128 强类型、EvaluationMode/TaskOutcome/EngineeringStatus/TaskState 词表、SourcedValue/ValueProvenance、UnitToken/Quantity 换算唯一实现、closeWithin/附录 D 比较公式、ContentIdentity/ContentDigester、DiagCode 句法与 DiagnosticRecord |
@@ -448,6 +449,8 @@ stateDiagram-v2
     Interrupted --> [*]: 恢复＝新 AttemptId（不换 OptimizationRunId）
 ```
 
+> **部分冻结态注（WP-21-T02 增量登记，2026-10-14）**：上图 `VerifiedReview --> RobustnessReview` 迁移条件中的"P-04 已冻结"＝**判定阈值两槽位（通过线/降级线）已补充确认**（REQUIREMENTS 附录 C《P-04 冻结数值表》表④原文："未指定前按未冻结处理"）——2026-10-13 部分冻结（表①②③采样规则＋表④结构规则/适用边界冻结）**不满足**本迁移条件；判定阈值补充确认前 RobustnessReview 相位不得进入、判定结论不得产出（正式 OPT-D 运行启用仍被 Preflight #11 阻塞，O-28 约束对判定子项原样有效——采样面按冻结值落位与判定面阻塞并行不悖，见 §8.6）。
+
 **冻结与身份不变式（I-OPT-1～6）**：
 
 - **I-OPT-1 输入冻结**：运行进入 Preflight 前完成快照组装并冻结；运行期间不得混用多个修订，不得混用不同需求、工况、策略或评估器版本。修改研究定义＝新 OptimizationRunSpec（旧运行归档保留）。
@@ -630,7 +633,7 @@ CandidateId candidateIdOf(core::ObjectId baselineRoot, core::ContentVersion base
 | StageB 激活 R2 约束/目标（联合约束、节拍、成本、质量、正机械功、驱动裕量） | 运行启动拒绝（Preflight 阻塞） | `OPT-STAGE-LOCKED` |
 | StageB 请求暂停/继续或检查点 | 能力检查拒绝（§9.4） | `OPT-STAGE-LOCKED`（＋EX-CAPABILITY-UNSUPPORTED 语义对齐） |
 | StageB 激活 `drivetrain.ratio` | **放行**（V12-02：编译进候选；不评估驱动性能） | — |
-| StageD 启动正式联合优化且 P-04 未冻结 | Preflight 阻塞 | `OPT-ROBUSTNESS-PROTOCOL-MISSING` |
+| StageD 启动正式联合优化且 P-04 判定阈值未补充确认（未冻结槽位——附录 C 表④"未指定前按未冻结处理"） | Preflight 阻塞 | `OPT-ROBUSTNESS-PROTOCOL-MISSING` |
 | StageD 使用未注册轨迹/动力学/drivetrain/selection 评估器 | Preflight 阻塞 | `OPT-EVALUATOR-MISSING` |
 | 不支持移动关节/直线传动/耦合链而研究包含相关绑定 | 绑定校验拒绝 | `OPT-COMBO-OUT-OF-SCOPE` |
 
@@ -701,7 +704,7 @@ R1 静态约束（§6.2 全序）
  → 联合硬约束汇总（各域 Must 违例 ⇒ 候选 Infeasible；逐域逐约束记录）
  → 八项指标计算（§7.2 全量）
  → Pareto（§7.4）
- → 鲁棒性/灵敏度复核（OPT-09；P-04 冻结协议三模式）
+ → 鲁棒性/灵敏度复核（OPT-09；P-04 已部分冻结——采样/边界按《P-04 冻结数值表》①②③；判定阈值两槽位待补充确认，未补充确认前本步判定结论不得产出〔Preflight #11 阻塞〕）
 ```
 
 **R2 语义保证（逐条）**：
@@ -713,6 +716,8 @@ R1 静态约束（§6.2 全序）
 - 物性缺失（DYN-06 降级）、数据不足、评估器未注册、版本不兼容、取消、worker 崩溃——六种情形**语义独立**（§7.5 区分表），不得互相冒充。
 - 不可行候选不进入可行集；数据不足候选不能伪装成可行候选；失败候选不能被当作被 Pareto 支配（§7.5）。
 - `EngineeringStatus`、`TaskOutcome` 和 `Currentness` 保持正交（CON-02；§7.5 正交表）。
+
+**PA-7 无新机制核对（WP-21-T02 增量登记）**：本管线全部由既有机制承载——③端口评估器组合（ARCHITECTURE §7.10）＋execution 并行/检查点规模化（ARCHITECTURE §10.2 R2 行原文："OPT-D 联合优化＝§7.10 评估器组合＋execution 并行/检查点规模化"；任务暂停/继续＝§4.3 既有 Paused 态＋能力声明机制）——本卡 OPT-D 增量修订**不新增架构机制、不新增状态/证据等级词表**（任务卡禁止项；本文 §8.5/§8.6/§9.2 各增量登记处同此核对）。
 
 ### 6.4 Preflight（OPT-11）
 
@@ -730,7 +735,7 @@ Preflight 是运行启动前的结构化检查面（`IOptimizationPreflightServi
 | 8 | 缺少 policy（快照 policyRef 为空/不可解析） | 阻塞 | CON-06 |
 | 9 | 缺少 RequiredEvidenceProfile（"opt" 域未注册/版本不可解析） | 阻塞 | EVI-01 表 4 |
 | 10 | 阶段能力冲突（§5.7 阶段锁全表） | 阻塞 | OPT-03/§15.0 |
-| 11 | P-04 未冻结而请求 OPT-D 正式联合优化/鲁棒性复核 | 阻塞 | 附录 C（O-28）、OPT-09 |
+| 11 | P-04 判定阈值未补充确认（未冻结槽位——附录 C《P-04 冻结数值表》表④）而请求 OPT-D 正式联合优化启用/鲁棒性判定结论 | 阻塞 | 附录 C 表④（判定阈值两槽位待补充确认——O-28）、OPT-09 |
 | 12 | 目录版本缺失（R2 离散变量引用的目录/版本未锁定） | 阻塞 | SEL-08 |
 | 13 | 输入身份不一致（spec.revision 与组装快照 revision 不符等） | 阻塞 | §4.4 I-OPT-1 |
 | 14 | 不支持的变量（阶段锁/未绑定基线字段/Mesh 基线截面） | 阻塞（绑定在激活集中）或警告（绑定存在但未激活） | §5.3/§5.7 |
@@ -786,9 +791,9 @@ optimization 域在 evidence 注册表注册的评估器（L5 装配期，主/wo
 | 评估键 | 契约 | 阶段 | descriptor 要点 |
 | --- | --- | --- | --- |
 | `opt-static-screen` | contractVersion 1；payload kindToken `opt.static-screen.v1`（canonical magic `IRDOPTS1`） | OPT-B | inputs：`model.robot-design`(Object,Required)、`tcp`(Object,Required)、`req.points`/`req.regions`/`req.conditions`/`req.sampling-plans`(各 Required)、`policy.resolved`(Policy,Required)、`namemap`(Required)、`config.opt`(Configuration,Required)、`collision-models`(Object,Conditional——policy 启用碰撞时，V13-01)；supportedModes={Quick,Verified}；stateless=true；threadSafety=SingleThread（R1：单候选批单线程调用；线程并行由编排/多 worker 掌控） |
-| OPT-D 联合评估器 | **本卡不登记评估键**（不预建空占位）——WP-21-T02 增量修订时随实现登记（键名/契约/payload 届时冻结） | OPT-D | §8.5 分层联合策略经③端口组合 trj/dyn/dt/sel 评估器，联合门面评估器与 `upstream.*` 依赖链随 WP-21 登记 |
+| `opt-joint-full` | contractVersion 1；payload kindToken `opt.joint-full.v1`（canonical magic `IRDOPTJ1`） | OPT-D（**WP-21-T02 登记值，2026-10-14——P-OPT-9 消账**；实现落位随 WP-21-T03/T04） | inputs：`config.opt`(Configuration,Required——stage-d canonical，§4.3)、`policy.resolved`(Policy,Required)、`namemap`(Required)、目录锁定版本引用对象(Object,Required——SEL-08/Preflight #12)、**`upstream.*` 依赖链四条(UpstreamResult,Required——§8.5)**：`upstream.trj-sequence-plan`／`upstream.dyn-rnea-analysis`／`upstream.dt.mapping`／`upstream.sel.combination-check`；supportedModes={Quick,Verified}（D-13 双向不升降级，与 `opt-static-screen` 缓存互斥同型）；stateless=true；threadSafety=SingleThread（同 R1 口径——线程并行由 execution worker 编排掌控）。**登记边界（如实登记）**：本行为本卡设计登记值（评估键名/契约版本/payload kindToken/magic 一次冻结）；evidence 侧注册表收编与 descriptor 注册期校验随 WP-21-T03/T04 落位并同步 evidence.md §13 交接行（evidence.md 不在本批 allowedFiles 内——交接义务登记，§14.4） |
 
-评估器实现义务（`IEngineeringEvaluator` 契约承接）：同（请求切片，环境）→等价输出；纯计算——不派发任务、不写项目、不产生修订、不自我注册；长评估周期性查询 `cancellationRequested()`；抛 `EvidenceError` 或返回诊断。**内部消费链**（评估器实现内经注册表 `find()` 调用）：`kin.task-points-batch`（Must 可达/限位裕量/碰撞证据）、`kin.region-coverage`（区域覆盖）、policy `IJointLimitEvaluator`（值域）——依赖键闭包在 descriptor.inputs 声明，注册期校验。
+评估器实现义务（`IEngineeringEvaluator` 契约承接）：同（请求切片，环境）→等价输出；纯计算——不派发任务、不写项目、不产生修订、不自我注册；长评估周期性查询 `cancellationRequested()`；抛 `EvidenceError` 或返回诊断。**内部消费链**（评估器实现内经注册表 `find()` 调用）：`kin.task-points-batch`（Must 可达/限位裕量/碰撞证据）、`kin.region-coverage`（区域覆盖）、policy `IJointLimitEvaluator`（值域）——依赖键闭包在 descriptor.inputs 声明，注册期校验。**`opt-joint-full` 消费链（WP-21-T02 登记）**：域内静态层直接复用 `opt-static-screen` 同域逻辑（同域零间接——不伪造上游身份），跨域四层经③端口 `find()` 消费 `trj-sequence-plan`/`dyn-rnea-analysis`/`dt.mapping`/`sel.combination-check`，并以 `upstream.*` 四条 UpstreamResult 依赖把各层切片身份绑入门面 sliceId（§8.5——上游身份变更即失效传播，CON-04）。
 
 ### 6.8 评估器注册、能力声明与依赖关系图
 
@@ -798,6 +803,7 @@ flowchart TB
     PRO["Profile 注册表<br/>profileId='opt' v1（先注册）"]
     subgraph OPTDOM["optimization 域评估器"]
         OSS["opt-static-screen<br/>(Quick/Verified, stateless, SingleThread)"]
+        OJF["opt-joint-full<br/>(联合门面, StageD——WP-21-T02 登记)"]
     end
     subgraph KIN["kinematics 域（R1 消费）"]
         KB["kin.task-points-batch"]
@@ -811,9 +817,10 @@ flowchart TB
     end
     POL["policy：IJointLimitEvaluator /<br/>CollisionEvaluator（SampleSet）"]
     PRO --> OSS
+    PRO --> OJF
     OSS -->|"descriptor.inputs 依赖声明<br/>注册期闭包校验"| REG
     OSS -->|"③端口 find()"| KB & KR & POL
-    OSS -.->|"WP-21 登记"| TRJ & DYN & DT & SEL
+    OJF -->|"③端口 find()＋upstream.* 四条<br/>（WP-21-T02 登记值——§8.5）"| TRJ & DYN & DT & SEL
 ```
 
 ---
@@ -1031,11 +1038,23 @@ flowchart TB
 - 内层每层 Quick→Verified 两级；联合硬约束汇总按 §6.3 语义；器件匹配失败（组合不可行）逐项淘汰原因来自 selection `RejectionReason`（thresholdSource 字段保留阈值来源——P-POL-3 待裁决时输出"未判定"维度，不整体阻断）。
 - 鲁棒性反馈仅作用于**搜索聚焦**（生成器提示），不改变已产出候选的历史结果（PA-2）。
 
-### 8.6 灵敏度/鲁棒性复核与误淘汰审计（OPT-D；接口就绪、协议待 P-04）
+**WP-21-T02 增量修订登记（2026-10-14——分层联合策略实现口径落章；不新增架构机制，PA-7）**：
 
-- **三模式接口**：`IRobustnessReviewer`（§12）承载有界公差验证、概率鲁棒性、敏感度抽查三模式的**调用面**；采样规则、判定阈值、适用边界全部待 P-04 冻结（WP-21-T01）——本文**不私设协议数值**（DTB WP-21-T01 禁止项；O-28）。
-- 启用前置：P-04 冻结（需求附录 C 修订留痕）→ WP-21-T02 增量修订本卡引用冻结值；未冻结时 Preflight 阻塞＋`OPT-ROBUSTNESS-PROTOCOL-MISSING`。
-- **误淘汰审计**（§15.0 OPT-D 行数字承接）：Quick 淘汰候选按 5% 抽样（且 ≥200 样本）以 Verified 复核，统计误淘汰率（≤1%）与 95% 置信上界（≤3%）；审计计数（Quick 淘汰数/Verified 复核数/缓存命中数/灵敏度样本数/鲁棒性样本数/误淘汰审计样本数/误淘汰率/95% 置信上界）入审计 CSV 与 Profile 证据（`opt.mode-audit-counts`）。置信上界计算方法（正态近似/Wilson 等）未由需求冻结——登记 P-OPT-7，安全设计＝正态近似并在数据集内声明；抽样确定性（种子派生）保证审计可重放。
+- **联合门面评估器与 `opt-joint-full` 评估键（P-OPT-9 消账——§6.7 登记行同源）**：StageD 联合评估以唯一评估键 **`opt-joint-full`** 登记（contractVersion 1、payload kindToken `opt.joint-full.v1`、canonical magic `IRDOPTJ1`）。门面是联合管线的**聚合登记面**，不是第二实现：静态约束与内层 Quick→Verified、器件匹配的执行语义仍各归唯一评估器（§6.2/§6.3/§8.3），门面经③端口组合逐层输出做联合汇总，判定唯一归 evidence `aggregateVerdict`（N8/NFR-MNT-04——零公式复制、零第二套兼容逻辑）；外层生成的候选补丁经同一门面评估键入缓存身份（判定归 evidence judgeCacheHit，§8.4 三步边界不变）。
+- **`upstream.*` 依赖链（UpstreamResult 类，evidence §4.2.1 语法同源）**：门面 descriptor.inputs 声明四条 Required 上游依赖——`upstream.trj-sequence-plan`／`upstream.dyn-rnea-analysis`／`upstream.dt.mapping`／`upstream.sel.combination-check`，评估时解析为各层评估的 `UpstreamResultRef{upstreamKey, upstreamSliceId, upstreamRunId?}`。**上游切片身份任一变更 ⇒ 门面 sliceId 变更 ⇒ evidence 判 Incompatible 重算（CON-04），当前性传播消费（evidence §8.1）**——依赖链命名取 `upstream.<评估键>` 形态（dynamics.md §9.1.1 `upstream.trajectory` 先例同型），token 词表归本域门面 descriptor 声明、跨域唯一性由注册表校验（evidence §4.2.1 既定协议，非新机制）。
+- **内层反馈闭环与边界**：轨迹/动力学层各自 Quick→Verified 两级（mode 双向不隐式升降级，D-13）；器件匹配逐项淘汰原因来自 selection `RejectionReason`（实际值/阈值/thresholdSource——P-POL-3 未裁决维度输出"未判定"不整体阻断，§8.5 既有口径不变）；鲁棒性/灵敏度反馈仅按 §8.6 模式③排序作用于外层生成器提示（搜索聚焦），已产出候选的历史结果一律不改写（PA-2）；反馈驱动的剪枝/聚焦属于 §8.2 既登记 `ICandidateGenerator` 扩展点（WP-21-T06 落位）的消费语义，不新增接口族。
+- **PA-7 核对锚**：本策略全部由既有机制承载——ARCHITECTURE §10.2 R2 行原文"OPT-D 联合优化＝§7.10 评估器组合＋execution 并行/检查点规模化"；本落章零新增架构机制、零新增状态/证据等级词表（本批设计登记值：评估键名/契约/payload/magic/依赖链 token——属 §6.7 ③端口注册面的域词表登记，非架构机制）。
+
+### 8.6 灵敏度/鲁棒性复核与误淘汰审计（OPT-D；WP-21-T02 增量修订——引用 P-04 冻结值，判定阈值待补充确认）
+
+- **三模式接口**：`IRobustnessReviewer`（§12.2 Robustness.hpp）承载有界公差验证、概率鲁棒性、敏感度抽查三模式的**调用面**。三模式的采样规则与适用边界**已随 P-04 部分冻结（2026-10-13，FREEZE-P04 批；REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》表①②③＋表④结构规则/适用边界）——本节引用冻结值原样零修改，不私设协议数值**（DTB WP-21-T01/T02 禁止项）；**判定阈值两槽位（通过线/降级线）维持待定——按附录 C 表④原文"未指定前按未冻结处理"，未补充确认前 OPT-09 判定子项未冻结，任何任务（含 WP-21-T05）不得产出通过/降级判定结论**（判定请求经 §12.2 接口得 `nullopt`＋`OPT-ROBUSTNESS-PROTOCOL-MISSING`；Preflight #11 阻塞启用）。
+- **模式①有界公差验证（冻结值＝附录 C 表①）**：扰动集＝授权（未锁定）变量；每变量扰动幅度默认 **±1%×该变量行程**（归一化 0.01——旋转轴按关节行程、移动轴按移动行程、连续结构量按参数允许区间），工程策略可放宽上界 **±4%（4×默认封顶）**；采样＝**确定性非随机**：每授权变量正/负两方向各 1 点＋基线点复用候选本体（每候选 2n＋1 次评估，n＝授权变量数）。
+- **模式②概率鲁棒性（冻结值＝附录 C 表②）**：各授权连续/量化变量独立零均值正态扰动，σ＝模式①默认幅度；扰动样本须落在授权变量物理界内（界外样本不静默截断进补丁——§5.5 I-OPT-9 拒绝语义；界外具体处置属惯例推定**待所有者确认**——附录 C 表②原注，本文不代设）；样本数＝**每候选 200**（种子派生、确定性可重放——NFR-COR-02）；口径＝报告 mean/σ/n＋**95% 分位（退化方向）**作判定输入；分位估计的区间估计方法不在冻结范围（安全设计＝正态近似并在数据集内声明——P-OPT-7 同型纪律）。
+- **模式③敏感度抽查（冻结值＝附录 C 表③）**：参数集＝全部授权（未锁定）连续/量化变量逐参数抽查；**枚举与离散器件变量不进敏感度抽查**（无连续邻域语义——器件组合影响由模式①②在相应变量域覆盖）；扰动方向数＝每变量 **±Δ 两方向**（Δ＝模式①默认幅度）＋基线复用；敏感度度量＝|指标变化|/Δ（归一化斜率），逐参数出敏感度排序供搜索聚焦反馈（§8.5 反馈面——仅作用生成器提示，不改历史结果，PA-2）。
+- **判定结构规则（冻结规则＝附录 C 表④；阈值数值待补充确认）**：三模式各自独立出结论——模式①＝±Δ 两向指标退化是否在冻结容差内；模式②＝200 样本 95% 分位退化是否在冻结容差内（**两处"冻结容差"即通过线/降级线槽位——待所有者补充确认，未确认前判定面不启用、任何数值不得代设**）；模式③＝输出敏感度排序（报告面，不作通过/不通过判定）。**三模式全部通过**方为"鲁棒性复核通过"（组合方向属惯例推定**待所有者确认**——附录 C 表④原注；OPT-09 原文仅并列三模式语义）；任一模式不通过→候选**保留并标注降级结论**（不静默淘汰——RPT-05 限定语纪律）；样本/数据不足→按 DataInsufficient 整体降级。
+- **适用边界（冻结规则＝附录 C 表④）**：适用＝OPT-D 正式运行中**进入最终比较的候选**（Verified 幸存/Pareto 集）；不适用＝阶段 B/R1、P-04 未冻结槽位对应面（当前＝判定阈值）、锁定变量、DataInsufficient/评估失败候选；模式①③扰动集同样限于授权集（OPT-02 改型默认锁定，§5.4）。
+- **启用前置与部分冻结语义（WP-21-T02 登记）**：表①②③＋表④结构规则冻结 ⇒ 三模式确定性采样面**可按冻结值落位**（样本/审计计数如实入账）；**判定阈值补充确认前：§4.4 `VerifiedReview→RobustnessReview` 迁移条件不满足，正式 OPT-D 联合优化启用仍被 Preflight #11 阻塞（O-28"未冻结不得启用"约束对判定子项原样有效），已按冻结规则采集的样本只作登记不参与判定**；判定阈值经所有者补充确认后（需求变更留痕）判定面按本节结构规则启用，本卡随批增量修订同步引用。
+- **误淘汰审计口径（§15.0 OPT-D 行数字承接——需求冻结数字，本卡不私设）**：Quick 淘汰候选按 5% 抽样（且 ≥200 样本）以 Verified 复核，统计误淘汰率（≤1%）与 95% 置信上界（≤3%）；审计计数（Quick 淘汰数/Verified 复核数/缓存命中数/去重数/灵敏度样本数/鲁棒性样本数/误淘汰审计样本数/误淘汰率/95% 置信上界）入审计 CSV（§11.4 工件 4）与 Profile 证据（`opt.mode-audit-counts`）；**置信上界计算方法（正态近似/Wilson 等）未由需求冻结——P-OPT-7 维持待裁决（WP-21-T01 冻结批未含计算式，如实登记），安全设计＝正态近似并在数据集内声明**；抽样确定性（种子派生）保证审计可重放；**误淘汰审计样本与三模式样本分账**（各自独立抽样计数，不混账、不以复用样本凑数——审计计数清单逐项独立）。
 
 ---
 
@@ -1077,6 +1096,12 @@ stateDiagram-v2
 - **恢复语义**：恢复后新 AttemptId（同 RunId）；不兼容检查点必须拒绝（`EX-CHECKPOINT-INCOMPATIBLE`＋reasons；旧版本检查点不迁移——P-EX-9 口径：宁可重算不可错续）；**检查点恢复不等于优化成功**——恢复后仍走完整接纳与汇总；取消、失败、中断不得发布完整 Pareto 集（RunPhase 不进入 Completed）。
 - **worker 崩溃**：崩溃只导致当前任务 Failed（`EX-WORKER-CRASHED`；检查点保留）；主界面不退出、项目不损坏（NFR-REL-02）；不自动重试（D-09）——用户重跑＝新任务（可 resumeFrom）。
 - **资源节流**：主进程＋全部 worker 峰值 ≤物理内存 70%，接近上限（65% 实现参数）先节流（暂停派发/降并行）再报 `EX-RESOURCE-INSUFFICIENT`（NFR-PERF-04；execution ResourceController 承接——optimization 消费其结果，不自有内存治理）。
+
+**WP-21-T02 增量修订登记（2026-10-14——规模化口径锚与任务面登记；执行机制消费边界不变）**：
+
+- **R2 任务提交评估键**：Quick 筛选与 Verified 复核任务以 **`opt-joint-full`** 为 evaluationKey 提交（§6.7 登记行）；任务形态/五元组/RunRegistry 九步接纳与 R1 链完全同源（§9.1/§9.3——零新任务机制）；`resumeFrom` 仅 R2，指向同版本 `IRDOPTC1` 检查点（DOPT-10）。
+- **规模化口径锚（达标归 WP-23 对应基准任务，本卡不执行测量）**：NFR-PERF-04（主进程＋全部 worker 峰值 ≤70%、65% 先节流——WP-23-T06，performance-baseline B-05，复现命令位**待回填**）、NFR-PERF-05（8 线程 ≥4× 中位吞吐、不含首次编译与导入、并行归约满足附录 D 第 8 项相对 1×10⁻¹² 逐元素——WP-23-T07，B-06**待回填**）、NFR-PERF-06（10,000 Quick＋100 Verified ≤8 h＋同版本检查点恢复——WP-23-T08，B-07**待回填**）。**测量纪律（照抄 performance-baseline §4 协议）**：基准测量必须真实执行且**串行**（按基准队列逐卡测量，禁止与其他测量负载并发跑分）；禁止伪造样本；禁止以 3 次中位数替代 P95 类口径；本节仅登记口径锚——**规模化达标不是本卡验收承诺**。
+- **暂停/继续边界锚（AT-35/V12-06）**：本节上述四条边界（暂停确认边界/继续不重复统计/不改输入快照/能力不支持诚实反馈）即 AT-35 验收语义的卡面承载，用例 OPT-VER-228~232 逐条对应；R1 侧范围排除声明见 §9.1（AT-09 行）。
 
 ### 9.3 结果合并与迟到/重复防护（承接 TASK-02/03、NFR-REL-03）
 
@@ -1236,7 +1261,7 @@ flowchart LR
 | `IOptimizationRunController` | 同上（Run.hpp） | 本卡新增（运行意图与结果适配；不拥有 worker 调度） | OPT-06；execution 承载任务 |
 | `IOptimizationCandidateApplier` | 同上（Applier.hpp） | 本卡新增（O13 命令组装） | OPT-08；project §10.7 组合口径 |
 | `IOptimizationExportProvider` | 同上（Export.hpp） | 本卡新增（O12 导出事实） | OPT-12；io/reporting 承载写出 |
-| `IRobustnessReviewer`（新增，第 11 接口） | 同上 | 本卡新增（OPT-09 调用面；协议待 P-04） | OPT-09——新增原因：三模式复核需独立于运行控制的可注入面；尚未由上游具体化（P-04 未冻结），仅接口与未就绪诊断 |
+| `IRobustnessReviewer`（新增，第 11 接口） | 同上 | 本卡新增（OPT-09 调用面；**采样规则/适用边界已随 P-04 2026-10-13 部分冻结——判定阈值两槽位待补充确认，确认前判定请求一律拒绝**） | OPT-09——新增原因：三模式复核需独立于运行控制的可注入面（§12.2 Robustness.hpp；冻结值引用面见 §8.6） |
 
 **新增接口共性约束**：计算库零 Qt；不暴露 UI 类型；不直接暴露 project 内部存储类型；不复制 FK/IK/轨迹/动力学/drivetrain/selection/碰撞公式；不新增未经上游批准的状态、证据等级或工程阈值；`std::future`/Qt 类型不作跨单元稳定契约（异步经回调/轮询句柄）；取消与暂停与 execution 状态机对齐（`ICancellation*` 语义与 `IEvaluationContext::cancellationRequested` 同型）。
 
@@ -1373,12 +1398,16 @@ public:
 };
 
 // —— Robustness.hpp（R2）——
-/// 鲁棒性/灵敏度复核调用面（OPT-09；采样/阈值待 P-04 冻结——启用前一律拒绝）。
+/// 鲁棒性/灵敏度复核调用面（OPT-09）。P-04 采样规则/适用边界已部分冻结
+/// （REQUIREMENTS 附录 C《P-04 冻结数值表》表①②③＋表④结构规则——§8.6 引用面）；
+/// 判定阈值两槽位（通过线/降级线）待所有者补充确认——按附录 C 表④原文
+/// "未指定前按未冻结处理"，补充确认前判定请求一律拒绝（WP-21-T05 不得启用判定半区）。
 class IRobustnessReviewer {
 public:
     virtual ~IRobustnessReviewer() = default;
-    /// @brief 按冻结协议对候选执行三模式复核；P-04 未冻结 ⇒ nullopt＋诊断
-    ///        （OPT-ROBUSTNESS-PROTOCOL-MISSING），不产结果。
+    /// @brief 按冻结协议对候选执行三模式复核；判定阈值未补充确认 ⇒ nullopt＋诊断
+    ///        （OPT-ROBUSTNESS-PROTOCOL-MISSING），不产结果（采样/审计计数可按冻结
+    ///        规则登记——§8.6 部分冻结语义）。
     virtual std::optional<RobustnessReviewResult> review(
         const RobustnessReviewRequest& request,
         evidence::IEvaluationContext& ctx) = 0;
@@ -1486,7 +1515,7 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 
 | 用例 | 场景 | 依据 | 前置 | 操作 | 预期结果与失败语义 | 观测点 | 可行集 | 正式导出 | 类型 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| OPT-VER-201 | P-04 未冻结阻止联合优化 | OPT-09/O-28 | P-04 未冻结 | 启动 OPT-D 正式运行 | Preflight 阻塞＋`OPT-ROBUSTNESS-PROTOCOL-MISSING` | Preflight #11 | ❌ | ❌ | 模型 |
+| OPT-VER-201 | P-04 判定阈值未补充确认阻塞正式联合优化/判定 | OPT-09/O-28 | P-04 部分冻结态（判定阈值两槽位未补充确认——附录 C 表④） | 启动 OPT-D 正式运行/请求判定结论 | Preflight #11 阻塞＋`OPT-ROBUSTNESS-PROTOCOL-MISSING`；采样面可按冻结值登记、判定结论不得产出 | Preflight #11 | ❌ | ❌ | 模型 |
 | OPT-VER-202 | 结构/传动外层候选生成 | OPT-05 | StageD 研究 | 外层生成 | 连续＋离散组合候选批（组合空间经 selection 契约） | 生成批 | — | — | 模型 |
 | OPT-VER-203/204 | 轨迹 Quick/Verified | OPT-03/05 | trj 评估器注册 | 内层轨迹评估 | Quick screening-only；Verified 完整（TRJ-04 复检证据） | trj 证据 | ❌/✅ | ❌/✅ | 契约 |
 | OPT-VER-205/206 | 动力学 Quick/Verified | OPT-03/05 | dyn 评估器注册 | 内层动力学评估 | Quick forwardCheck=Skip；Verified 峰值窗/RMS/包络 | dyn 证据 | 同上 | 同上 | 契约 |
@@ -1516,8 +1545,8 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 | OPT-VER-237 | 资源不足诊断 | NFR-PERF-04 | 持续超限 | 运行 | 资源不足诊断＋新任务排队 | 诊断 | — | — | 进程 |
 | OPT-VER-238 | R2 并行吞吐 | NFR-PERF-05 | 固定候选评估基准 | 8 线程 vs 单线程 | 中位吞吐 ≥4×（不含首次编译/导入） | 吞吐报告 | — | — | 进程（WP-23-T07） |
 | OPT-VER-239 | 10,000 Quick＋100 Verified 基准 | NFR-PERF-06 | 基准环境 | 标准基准 | ≤8 h 完成；期间 NFR-PERF-01；同版本检查点恢复 | 基准报告 | — | — | 进程（WP-23-T08） |
-| OPT-VER-240/241/242 | 有界公差/概率鲁棒性/灵敏度抽查 | OPT-09 | **P-04 冻结后** | 三模式复核 | 按冻结协议执行；样本/阈值/边界来自 P-04（本卡不私设） | 复核记录 | — | — | 模型 |
-| OPT-VER-243 | P-04 协议边界 | OPT-09 | 协议外请求 | review() | nullopt＋`OPT-ROBUSTNESS-PROTOCOL-MISSING` | 诊断 | ❌ | ❌ | 模型 |
+| OPT-VER-240/241/242 | 有界公差/概率鲁棒性/灵敏度抽查 | OPT-09 | P-04 采样规则已冻结（2026-10-13）；**判定阈值待补充确认** | 三模式复核 | 采样/样本/边界按《P-04 冻结数值表》①②③原样（2n＋1 评估/每候选 200 样本/±Δ 两方向）；判定结论（通过/降级）**待阈值补充确认后方可产出——此前只登记不判定** | 复核记录＋审计计数 | — | — | 模型 |
+| OPT-VER-243 | P-04 协议边界 | OPT-09 | P-04 未确认槽位面/协议外请求 | review() | nullopt＋`OPT-ROBUSTNESS-PROTOCOL-MISSING` | 诊断 | ❌ | ❌ | 模型 |
 | OPT-VER-244 | ≥200 误淘汰审计样本 | §15.0 | Quick 大批量 | 抽样复核 | 样本数 ≥200（5% 抽率） | 审计 CSV | — | — | 模型 |
 | OPT-VER-245/246 | 误淘汰率 ≤1%／95% 置信上界 ≤3% | §15.0/AT-35 | 审计完成 | 统计 | 达标；审计计数与重放一致 | 审计 | — | — | 模型 |
 | OPT-VER-247 | 评估失败不判确定性不可行 | §8.6 | 注入评估器故障 | StageD 候选 | EvaluationFailed 独立语义 | 候选状态 | ❌ | ❌ | 模型 |
@@ -1526,6 +1555,7 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 | OPT-VER-250 | 旧结果保留 | CON-02/PA-2 | 多代运行 | 归档检查 | 历史运行与候选结果不修改不删除 | results/ | — | — | 契约 |
 | OPT-VER-251 | 一站式导出（D） | OPT-12 | StageD 完成 | buildExportBundle | 六工件＋R2 审计列齐备 | 工件 | — | ✅ | 模型 |
 | OPT-VER-252 | 审计计数与重放一致 | OPT-12/AT-34 | 重放（同种子） | 对账 | 审计 CSV 与重放统计一致 | 对账记录 | — | — | 模型 |
+| OPT-VER-253 | 联合评估键与 `upstream.*` 依赖链身份传播 | OPT-05/P-OPT-9（§6.7/§8.5——WP-21-T02 登记值） | StageD 联合评估器按登记值注册（`opt-joint-full`/1/`opt.joint-full.v1`/`IRDOPTJ1`） | 变更上游 trj/dyn/dt/sel 任一层切片身份后重提联合评估 | 门面 sliceId 随 `upstream.*` 四条 UpstreamResult 引用相应变更 ⇒ evidence 判 Incompatible 重算（CON-04）；当前性传播消费；键名/契约/payload/magic 与登记值逐字一致 | sliceId/miss reasons | — | — | 契约 |
 
 ### 13.3 需求验收观测点承接（AT 对齐）
 
@@ -1537,7 +1567,7 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 | AT-12 | 基线保护与差异呈现 | 设为当前方案三件套；基线字节不变；Model Diff 呈现（UX-13 面） | OPT-VER-143~148 |
 | AT-30 | 选型回填对优化结果失效 | 回填→Superseded→复核前不沿用通过结论 | §10.5＋OPT-VER-249 |
 | AT-34 | 优化运行控制与一站式导出 | 取消协作＋进度漏斗；六工件；审计与重放一致；契约过期阻断 | OPT-VER-139~142/251/252 |
-| AT-35 | OPT-D 联合优化 | 联合约束/八项全量/并行检查点/暂停继续四边界/鲁棒性三模式/误淘汰审计达标 | OPT-VER-201~246 |
+| AT-35 | OPT-D 联合优化 | 联合约束/八项全量/并行检查点/暂停继续四边界/鲁棒性三模式/误淘汰审计达标 | OPT-VER-201~246/253 |
 | NFR-COR-02/03/04 | 确定性/不静默转 0/追溯 | §8.4 确定性承诺；§7.2 缺失语义；§11.1 证据追溯 | OPT-VER-124/126/130/131 |
 | NFR-PERF-04/05/06 | 节流/吞吐/基准 | §9.2 承接（WP-23-T06/T07/T08 达标） | OPT-VER-236~239 |
 | NFR-REL-02/03 | worker 隔离/已中断 | §9.2/§10.6 | OPT-VER-233~235 |
@@ -1574,7 +1604,7 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 | 任务卡 | 标题 | 本卡设计章节 | 落位/前置 | 验收锚 |
 | --- | --- | --- | --- | --- |
 | WP-21-T01 | 冻结 P-04 扰动/鲁棒性协议（与需求所有者协同） | §8.6（引用面） | **硬前置**：输出 P-04 冻结产物并入 REQUIREMENTS 附录 C 修订 | 冻结留痕；未冻结不得启用联合优化；本文不私设协议数值 |
-| WP-21-T02 | 扩展 optimization 任务卡（OPT-D 部分） | 本卡增量修订（v0.x：登记联合评估键/契约/P-04 冻结值） | 前置 WP-20-T01＋WP-21-T01；不新增架构机制（PA-7） | OPT-05/06/09/10 全量、AT-35 |
+| WP-21-T02 | 扩展 optimization 任务卡（OPT-D 部分） | 本卡增量修订（v0.x：登记联合评估键/契约/P-04 冻结值）——**已落位（2026-10-14，v0.13：§6.7/§6.8/§8.5 联合评估键＋`upstream.*` 依赖链登记〔P-OPT-9 消账〕；§8.6 三模式引用冻结值＋判定阈值"待补充确认"标注＋误淘汰审计口径；§9.2 规模化锚＋提交键；§13.2 用例 201/240~243 更新＋253 新增）** | 前置 WP-20-T01＋WP-21-T01；不新增架构机制（PA-7） | OPT-05/06/09/10 全量、AT-35 |
 | WP-21-T03 | 实现分层联合策略 | §8.5 | 前置 WP-21-T02/WP-20-T04/WP-18 | 内层 Quick→Verified→器件匹配反馈闭环用例 |
 | WP-21-T04 | 实现联合硬约束与并行/检查点规模化 | §6.3/§9.2 | 前置 WP-21-T03/WP-08-T07/T09/WP-16/WP-17 评估器 | 并行与检查点恢复统计不重复（AT-35）；八项指标全量可算 |
 | WP-21-T05 | 实现灵敏度与鲁棒性复核 | §8.6 | 输入 P-04 冻结值 | 三模式按冻结协议执行（OPT-09 转必需证据） |
@@ -1620,7 +1650,7 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 | OPT-02 | §5（变量/锁定/阶段绑定） | 103~108 | AT-09 | WP-20-T03 |
 | OPT-03 | §6.1~§6.3 | 109~119/201/209 | AT-09/AT-35 | WP-20-T04（D 全量 WP-21-T04） |
 | OPT-04 | §7.4/§7.5 | 120/122/131/132 | AT-09 | WP-20-T05 |
-| OPT-05 | §8.5 | 202~209 | AT-35 | WP-21-T03 |
+| OPT-05 | §8.5 | 202~209/253 | AT-35 | WP-21-T03 |
 | OPT-06 | §8.3/§8.4/§9 | 127~131/137~140/220~232 | AT-34/AT-35 | WP-20-T06（D：WP-21-T04/T07） |
 | OPT-07 | §7.1~§7.3 | 124~126/210~214 | AT-09/AT-35 | WP-20-T05 |
 | OPT-08 | §10 | 143~148 | AT-12 | WP-20-T07 |
@@ -1647,7 +1677,7 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 | NFR-PERF-04/05/06 | §9.2 | 236~239 | WP-21-T04＋WP-23-T06/T07/T08 |
 | NFR-REL-02/03 | §9.2/§10.6 | 233~235 | WP-21-T04（平台承载 WP-08） |
 | PM-12 | §10.2 | 145 | WP-20-T07（分支机制 WP-04） |
-| P-04（前置） | §5.7/§8.6/§6.4 | 201/243 | WP-21-T01（冻结承载） |
+| P-04（前置） | §5.7/§8.6/§6.4 | 201/240~243 | WP-21-T01（冻结承载）＋WP-21-T02（引用落章） |
 | 附录 D 容差 | §7.4/§8.4 | 132/222 | WP-20-T05＋WP-23-T07 |
 
 ### 15.3 任务卡—设计章节—实现目标交接表（汇总）
@@ -1677,7 +1707,7 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 | DOPT-1 | 不新造快照/缓存兼容/接纳判定——输入快照、缓存键、命中判定、检查点兼容、迟到接纳全部复用 evidence/execution/project 既有契约 | N8/N9 非所有权；evidence §13/execution §13 交接行；避免第二套兼容逻辑（NFR-MNT-04） |
 | DOPT-2 | `OptimizationRunId` 为域内运行身份（`opt-run-<32hex>`），不进入 core TaskIdentity；运行下挂多个 execution 任务并登记映射 | execution 的 RunId 是 per-task 的（Quick/Verified 两段任务）；core Id128 tag 集不扩展（core 冻结面） |
 | DOPT-3 | 候选身份＝内容寻址 `cnd-<64hex>`（基线＋补丁），跨运行稳定、天然去重；不含显示单位/UI 状态 | §4.2/§5.5；"相同补丁不得生成多个不同候选身份"（提示基线六） |
-| DOPT-4 | 优化域评估器 R1 仅登记 `opt-static-screen`（OPT-B 静态子集聚合评估器）；OPT-D 联合评估键**不预登记**，随 WP-21-T02 增量修订登记 | 不预建空占位（DTB WP-21-T06 禁止项）；Profile 先行注册（evidence §13） |
+| DOPT-4 | 优化域评估器 R1 仅登记 `opt-static-screen`（OPT-B 静态子集聚合评估器）；OPT-D 联合评估键**已随 WP-21-T02 增量修订登记（2026-10-14）**——`opt-joint-full`＋contractVersion 1＋`opt.joint-full.v1`＋`IRDOPTJ1`＋`upstream.*` 四条依赖链（§6.7/§8.5，P-OPT-9 消账） | 不预建空占位（DTB WP-21-T06 禁止项——本批登记值为设计冻结，实现落位随 WP-21-T03/T04）；Profile 先行注册（evidence §13） |
 | DOPT-5 | 支配比较默认零容差（浮点全序），容差支配经 config.opt 显式配置（进 sliceId） | 不发明阈值（N12）；kinematics §6.3 全序先例；AT-09 容差支配用例以显式配置执行（P-OPT-5 登记默认值待裁决） |
 | DOPT-6 | optimization R1 不注册新命令 token：候选应用＝`project.create-branch`＋`modeling.apply-robot-design` 组合（project.md §10.7 口径） | 规避 P-PR-9 命令语法争议；optimization 不写 RobotDesign 对象（N1）；多变量复合候选单命令原子提交 |
 | DOPT-7 | 阶段锁码落位为 `OPT-STAGE-LOCKED`（前缀归一），与需求文本 `IRD-OPT-STAGE-LOCKED` 的对应关系登记留痕 | diagnostics §4.5"首段＝单元短前缀"硬约定；对应关系不改需求语义（P-OPT-1） |
@@ -1710,9 +1740,9 @@ auto start = runController->startRun(spec);        // Quick→Verified 两任务
 | P-OPT-4 | 连杆截面变量的权威落点：modeling §5.3 SegmentSpec 为估算段元输入而非持久化 schema 字段 | 截面变量需可编译进候选并触发物性重估算；modeling 卡无持久化截面字段 | R1 变量 #1 可用性 | 尺寸连续变量绑定 Primitive 几何＋估算链（同 P-OPT-2 通道）；截面类型枚举切换 R1 不启用 | modeling 详设所有者＋需求所有者（如需 schema 变更走 modeling 卡增量） | 尺寸变量按 P-OPT-2 通道；类型枚举锁定 | 本卡 §5.3 增量；modeling 卡 |
 | P-OPT-5 | 尺寸包络口径（外形包围盒 vs KIN-10 工作空间包络）、器件成本货币口径、最小驱动裕量比值定义、Pareto 支配容差默认值 | 需求 §15.0 仅命名指标，未冻结数值口径/统计窗口；附录 D 未含支配容差默认 | §7.1 指标可算性；§7.4 容差支配默认 | 保留接口与字段；"—"或暂定口径展示并在留痕标注；支配默认零容差 | 需求所有者（数值口径）＋本卡所有者（暂定实现口径复核） | 不写入未经批准的阈值；不冻结口径 | REQUIREMENTS 需求变更（如属需求语义）；本卡 §7 增量 |
 | P-OPT-6 | 优化研究配置（OptimizationRunSpec/config.opt）的持久化通道 | KIN-13 分析配置"独立持久化（PM-14）"同型需求未点名优化配置；ui/PM 侧通道未定义 | 研究定义跨会话恢复 | R1 会话态＋研究结果 JSON 副本承载研究定义（§11.4 工件 1）；不入 .rwdesign | ui 详设所有者＋PM 侧（PM-14 范围澄清） | 会话态＋导出副本 | 本卡 §4.3 增量；ui 卡 |
-| P-OPT-7 | 误淘汰审计 95% 置信上界计算方法（正态近似/Wilson 等） | §15.0 冻结了目标值（≤1%/≤3%/≥200/5%）未冻结计算式 | 审计统计实现 | 正态近似＋数据集内声明；抽样种子派生可重放 | WP-21-T01（P-04 冻结批次一并裁决） | 正态近似＋声明 | 本卡 §8.6 增量；WP-21-T08 用例 |
+| P-OPT-7 | 误淘汰审计 95% 置信上界计算方法（正态近似/Wilson 等） | §15.0 冻结了目标值（≤1%/≤3%/≥200/5%）未冻结计算式；**WP-21-T01 冻结批（2026-10-13）未含计算式——附录 C《P-04 冻结数值表》表②原注"分位估计的区间估计方法不在本草案冻结"，该批对此项未裁决（如实登记）** | 审计统计实现 | 正态近似＋数据集内声明；抽样种子派生可重放 | ~~WP-21-T01（P-04 冻结批次一并裁决）~~→**需求所有者＋本卡所有者**（T01 批已交付未裁决——恢复常规裁决路径） | 正态近似＋声明 | 本卡 §8.6 增量；WP-21-T08 用例 |
 | P-OPT-8 | Model Diff 传动比差异覆盖：modeling diff 范围声明为根对象，ratioPerJoint 随 `robot-drivetrain` 对象是否入 diff 表 | MDL-08 分组含"传动比差异"预期 vs modeling §9.4.9 范围决策（部件对象不入本表） | §10.4 差异预览完整性 | 按现状根对象 diff；传动比差异条目缺失时给警告（不虚构差异） | modeling 详设所有者 | 根对象 diff＋警告 | 本卡 §10.4 增量；modeling 卡 |
-| P-OPT-9 | OPT-D 联合评估键/`upstream.*` 依赖链登记（评估键名、契约版本、payload kindToken） | WP-21-T02 前未冻结；本卡不预登记（DOPT-4） | R2 ③端口注册面 | 预留章节占位（§6.7），随 WP-21-T02 冻结 | 本卡所有者＋evidence 所有者 | R1 不涉及 | 本卡 v0.x 增量修订 |
+| P-OPT-9 | OPT-D 联合评估键/`upstream.*` 依赖链登记（评估键名、契约版本、payload kindToken） | **已消账（2026-10-14，WP-21-T02 增量修订）**：登记 `opt-joint-full`／contractVersion 1／`opt.joint-full.v1`／`IRDOPTJ1`＋`upstream.trj-sequence-plan`／`upstream.dyn-rnea-analysis`／`upstream.dt.mapping`／`upstream.sel.combination-check` 四条（§6.7 登记行＋§8.5 落章；命名取 `upstream.<评估键>` 形态——dynamics.md §9.1.1 `upstream.trajectory` 先例同型；DOPT-4 同步） | R2 ③端口注册面（实现落位随 WP-21-T03/T04） | ~~预留章节占位（§6.7），随 WP-21-T02 冻结~~→**登记值已冻结（§6.7 表行——键名/契约/payload/magic 一次冻结，值一经交付不得改动）** | 本卡所有者＋evidence 所有者（**evidence 侧注册表收编与 descriptor 注册期校验随 T03/T04 落位并同步 evidence.md §13 交接行——evidence.md 不在本批 allowedFiles 内，如实登记为交接义务**） | R1 不涉及 | ~~本卡 v0.x 增量修订~~→已交付（本卡 v0.13） |
 | P-OPT-10 | **ui 编译边缺口**：WP-20-T10 插件界面"经 IPluginUiRegistrar 白名单挂位 StageId::Optimization"需要 optimization→ui 编译边，本单元依赖白名单（§3.2 九条登记边）与 ird_gates 机器面（IRD_ALLOWED_UNIT_EDGES）均无该边，且白名单文件不在任务 allowedFiles 内不可增登 | ui.md §11.1 白名单第 7 token／§6.4 StageId::Optimization 挂位与卡面 §3.2 依赖白名单九边的冲突（WP-17-T09 P-DYN-8 同案——编排侧既有 B 方案裁决先例） | 插件装配面与宿主注册端口的对接形态 | **已收口（2026-10-10，ASM-PLUG 宿主装配批次——真实注册端口翻译落位）**：optimization→ui 编译边按治理程序增登（ird_gates_whitelist.cmake＋dependency-graph.json 双面留痕）；自持描述符经 assembly 门面 `translatePluginUiDescriptor`/`registerWithHostRegistrar` 翻译为真实 ui::IPluginUiRegistrar 注册（§11.2 模块半区 OptUiModule 落位；"字段同构无 ui 侧编译期校验"警告解除——真实编译边由编译器校验；翻译产物 commands 恒空＝命令面缺席的诚实登记）；宿主校验序实测 Ok＋装配报告计数（OptPluginRegistration 三用例——XML 留痕 traceability/gtest-reports/asm-plug/）；ui 卡 §13/§14 双向登记仍归 ui 详设所有者 | ui 详设所有者＋本卡所有者（双向增量登记） | ~~自持同构描述符＋测试侧词表对账先行~~ → **真实编译边＋翻译注册已落位** | ~~本卡 §3.2 白名单增登~~（已随 ASM-PLUG 增登完成）；ird_gates 白名单已增登；ui 卡 §13/§14 双向登记仍归 ui 详设所有者；宿主装配批次翻译消费已落位 |
 
 ### 16.4 上游待裁决项联动（引用，不在本卡裁决）
@@ -1735,6 +1765,7 @@ P-PR-9（命令 token 语法——本卡经 DOPT-6 规避）；P-POL-3/P-DT-2（
 | v0.10 | 2026-10-09 | WP-20-T10 返工修正登记（acc/wp-20-t10/1 判 fail——阻断 B-1 冒烟留痕失实）：头表"文档版本"行刷新＋§1.3 T10 注/§17.2 T10 注测试计数与留痕句勘正（冒烟声明由"同计数全绿（159+1skip／40）"改为返工轮实测口径并载明首跑失实事实——冒烟 XML 实为 T08 批次文件改名复制件〔tests=130/34〕、ird-test-report-smoke.json 为 total=31 旧契约面；留痕构成由"六件"勘正为"八件"——ird-test-report.json 模型/契约分件各模式各两份，每件为 exe `--ird_report` 直写的 listener 原生产物；原 ird-test-report-integration.json 仅契约半区随返工拆分修正）＋§17.2 追加 T10 返工执行注＋traceability/gtest-reports/wp-20-t10/ 八件实测产物替换／新增＋traceability/builds/wp-20-t10/ 增 rework-verification.log、smoke-build.log 与 ird_gates.log 返工轮重跑更新＋建议级 G-1 随批修正（`plugin/OptimizationPanelWidget.cpp` metricText 注释"six 位"→"6 位"——唯一代码触点，注释级零行为变化）；**设计语义零变化**（实现代码首跑已通过验收复现，本轮零逻辑改动——测试实测计数不变：模型 160＝159 PASSED＋1 SKIPPED／契约 40＝40 PASSED，集成＝冒烟同计数） |
 | v0.11 | 2026-10-09 | WP-20-T11 契约测试与优化黄金数据集落位登记：头表"构建落位/文档版本"行刷新＋§1.3 追加 T11 落位登记注（**零产品源码变更**——`testdata/golden/opt-*` 三数据集按 DatasetManifest 登记＋`testdata/tolerance/opt-golden` 容差档案＋`test/OptGoldenDatasetTest.cpp` 三夹具四用例＋`contract_test/OptGoldenDatasetContractTest.cpp` 六用例＋两测试目标增列——OPT-VER-122/124/128/130/132/143~145 黄金面与 acceptance 三条落地；实现口径增量六条〔canonical 值形态通道按内容选择——枚举 0 项走 'S' 通道 f64 0.0，黄金对照过程发现并钉住/投影缝查表键＝补丁身份/③端口真注册表装配/TestPaths 唯一数据根/限位探针替身 must 级发现/SetMatchTraits 域侧特化落位测试 TU〕＋黄金生成链逐字节可复现交付实测＋红实验两则证非恒真——均为 §5.5/§13.0 语义显式化，DTB §5.4 登记面）＋§17.2 追加 T11 执行状态注；§13.0/§13.1 设计语义零变化（黄金数据集约定/DatasetManifest/SetMatchTraits 域侧特化/容差档案/AT-09/AT-12 观测点均按卡面字面落地） |
 | v0.12 | 2026-10-10 | ASM-PLUG 收口登记（宿主装配批次——P-OPT-10 消账）：§16.3 P-OPT-10 状态更新为**已收口（真实注册端口翻译落位）**（optimization→ui 编译边按治理程序增登〔ird_gates_whitelist.cmake IRD_ALLOWED_UNIT_EDGES＋IRD_EXTRA_EDGE_REFS＋dependency-graph.json 刷新至 68 边——双面留痕〕；assembly 门面新增 translatePluginUiDescriptor/registerWithHostRegistrar 真实注册翻译面——§10.9 装配期一次、白名单/重复/描述符校验全走宿主注册端口实现、无 registrar 即 fail-fast；§11.2 模块半区 plugin/OptUiModule 落位——readonlyProjections 经 L-O1 透传流翻译为 ui 冻结形状五字段〔本域行扩展呈现位不经 §6.5 汇聚——ui 冻结形状无承载，SA-12 零新增词表，面板半区继续承载〕、buildDraftCommand 恒 nullopt＝候选应用两步组合经宿主编排〔卡 §10.2〕的域无草稿语义实现、onShellReady 持壳引用；"字段同构无 ui 侧编译期校验"警告解除——真实编译边由编译器校验；翻译产物 commands 恒空＝R1 域命令词表未随卡面登记的诚实缺席〔capabilities.registersCommands 恒 false，不预建占位〕；OptUiModule.cpp project 公共头包含行具名豁免〔§11.2 冻结接口完整类型——optimization→project 本为 §3.2 九登记边之一〕）；§14.1 T10 行落位标注刷新；§17.2 执行状态刷新（_test 164 用例＝163 PASSED＋1 SKIPPED＋0 FAILED〔本批零源码改动——基线原值零回归〕、_contract_test 49/49〔既有 46＋OptPluginRegistration 3——替身捕获字段同构／真实注册端口八 token Ok＋报告计数〔命令面空集〕／空端口 fail-fast〕；集成 11 目标＋冒烟全树构建零错误＋ird_gates 零命中〔含新边 GRAPH 一致性核对〕；GUI 实机点验未启动如实登记）；gtest XML 留痕 traceability/gtest-reports/asm-plug/、执行留痕 traceability/builds/asm-plug/execution-log.md；设计语义零变化（§3.2/§9.1 设计面与翻译实现一致——差异为收口形态登记非语义变更，DTB §5.4） |
+| v0.13 | 2026-10-14 | WP-21-T02 OPT-D 增量修订（设计登记批，零产品源码改动）：①**联合评估键登记（P-OPT-9 消账，DOPT-4 同步）**——§6.7 占位行转登记行（`opt-joint-full`／contractVersion 1／payload kindToken `opt.joint-full.v1`／canonical magic `IRDOPTJ1`；descriptor inputs 含 `upstream.*` 四条 UpstreamResult 依赖）＋§6.8 图增门面节点＋§8.5 落章（门面＝聚合登记面非第二实现；`upstream.<评估键>` 命名循 dynamics.md §9.1.1 先例；上游切片身份变更⇒门面 sliceId 变更⇒Incompatible 重算）＋§6.7 消费链注＋§9.2 提交键＋§13.2 新增 OPT-VER-253（依赖链身份传播）＋§15.1/§13.3 锚更新；evidence 侧收编登记为 T03/T04 交接义务（evidence.md 不在本批 allowedFiles——如实登记）；②**鲁棒性三模式引用 P-04 冻结值**——§8.6 整节重写：表①②③采样规则与表④结构规则/适用边界原样引用（REQUIREMENTS v1.20 附录 C《P-04 冻结数值表》）、**判定阈值两槽位（通过线/降级线）逐处标注"待所有者补充确认——未指定前按未冻结处理"**（不私设任何阈值数值）、部分冻结语义落章（采样面可按冻结值落位/判定面阻塞/§4.4 迁移条件注/Preflight #11 语义刷新/§5.7 行同步）＋误淘汰审计口径补全（审计计数清单＋样本分账＋P-OPT-7 未裁决事实登记）；③**并行/检查点规模化与暂停/继续**——§9.2 增量登记（NFR-PERF-04/05/06→WP-23-T06/T07/T08 锚、B-05/B-06/B-07 复现命令位待回填如实标注、测量纪律〔串行测量/禁伪造样本/禁 3 次中位数替代 P95〕、暂停继续四边界 AT-35 锚）＋§6.3 管线尾行/PA-7 无新机制核对落章（ARCH §10.2 引用）；④输入台账与头表刷新（REQUIREMENTS v1.16→v1.21／ARCHITECTURE v0.13→v0.14／DTB v0.53→v0.72／performance-baseline.md v0.6 新增行；v0.12 头表未随刷勘正补登）；⑤§12.1/§12.2 IRobustnessReviewer 注释同步部分冻结语义。本批为 WP-21-T02 任务卡（DTB §2.22 行）交付物：分层联合策略、并行/检查点规模化、鲁棒性三模式（判定阈值待补充确认）、暂停/继续边界、误淘汰审计口径五项卡面完备；不新增架构机制（PA-7——§6.3 核对落章）；未实现产品源码；集成构建由合入收尾员执行（本批仅工作树冒烟验证，§17.2 执行状态注） |
 
 ---
 
@@ -1805,6 +1836,8 @@ P-PR-9（命令 token 语法——本卡经 DOPT-6 规避）；P-POL-3/P-DT-2（
 
 > **ASM-PLUG 收口批执行状态注（2026-10-10，按真实结果登记——P-OPT-10 消账）**：真实 IPluginUiRegistrar 注册翻译已落位执行——模型测试 **164 例（163 PASSED＋1 SKIPPED envUnavailable 如实登记＋0 FAILED；本批零源码改动——分支基线原值保持，零回归）**、契约测试 **49/49 通过**（既有 46 零回归＋**OptPluginRegistration 3**——TranslatedDescriptorMatchesSelfHeldFace〔替身捕获翻译描述符五面字段同构＋StageId 词表对位＋命令面空集钉扎〕／ActivationPassesRealRegistrarPort〔真实 createPluginUiRegistrar 八 token 词表 Ok＋装配报告恰一条 ok=true、面板计数 1/命令计数 0；经 ui 接口消费 readonlyProjections/buildDraftCommand 钉扎 §11.2 交付面〕／ActivationWithoutRegistrarFailsFast〔空端口 std::invalid_argument fail-fast〕）；双模式构建零错误（集成模式三单元 11 目标 Release＋独立冒烟全树构建退出 0）＋ird_gates 零命中（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02——本批新边 GRAPH 一致性核对通过）。留痕：`traceability/gtest-reports/asm-plug/`（六 gtest XML）＋`traceability/builds/asm-plug/execution-log.md`。GUI 实机点验未启动（无人值守门禁不做 GUI 运行验证——OptPanelGui envUnavailable SKIP 如实保持非通过）；ui 卡 §13/§14 双向登记仍归 ui 详设所有者。
 
+> **WP-21-T02 执行状态注（2026-10-14，按真实结果登记）**：本批为**纯设计文档增量修订**（§16.5 v0.13 五项登记）——**未实现产品源码、未新增/修改任何测试用例代码**；OPT-VER-201~253 全矩阵仍为设计用例（R2 实现随 WP-21-T03~T08 落位执行）。已执行验证（本工作树 build/wp21-t02-wt 实测）：①契约验证脚本 `validate-docs.ps1`／`validate-task.ps1`（WP-21-T02.json）双 PASS；②独立冒烟模式构建零错误＋optimization 两测试目标 ctest 全绿（基线回归——本批零源码改动）；③ird_gates 门禁零命中。留痕：`build/wp21-t02-wt/_m6-evidence/`（构建日志＋ctest 输出＋两脚本输出）。**集成模式构建未由本批执行（如实登记——按三段式由合入收尾员在合入批执行）**；判定阈值两槽位（通过线/降级线）仍待所有者补充确认——涉判定阈值的验证一律"待补充确认"（§8.6），本批未私设任何阈值数值。
+
 ### 17.3 交付报告（最终报告）
 
 - **产出文件**：`RobWork/doc/industrial-robot-design/units/optimization.md`（v0.1，Draft，2026-10-06，首版草案，WP-20-T01 交付物；17 章、8 图、20+ 表、48＋35 验证用例、15 码、9 待裁决项）。
@@ -1819,4 +1852,4 @@ P-PR-9（命令 token 语法——本卡经 DOPT-6 规避）；P-POL-3/P-DT-2（
 - **实际代码缺口**：全部产品代码（计算库/插件/测试/契约测试）、OPT-\* 码注册、golden/opt-\* 数据集、`optimization-candidates` 报告章节提供方、插件面板——全部待 WP-20-T02 起逐卡落位。
 - **自审结果**：§17.1 全项通过；3 处初稿问题已在自审中修复（见 §17.1 末段）。
 
-**本文档结束（optimization 单元详细设计 v0.11，状态 `Draft`；v0.11 为 WP-20-T11 落位登记——契约测试与优化黄金数据集（§13.0/§13.1）已落地并执行通过（golden/opt-* 三数据集按 DatasetManifest 登记＋OPT-VER-122/124/128/130/132/143~145 黄金面），变量/补丁/约束/Pareto/指标/两级编排/缓存/种子/运行结果聚合/采用守卫/预检/导出/插件界面/黄金数据集面已落位，WP-20 全卡（T01~T11）落位完毕；剩余用例归 WP-21（OPT-D）与 WP-23 横切基准；自审≠实现测试≠正式验收）**
+**本文档结束（optimization 单元详细设计 v0.13，状态 `Draft`；v0.13 为 WP-21-T02 OPT-D 增量修订登记——联合评估键 `opt-joint-full`＋`upstream.*` 依赖链登记〔P-OPT-9 消账〕＋鲁棒性三模式引用 P-04 冻结值〔判定阈值两槽位待补充确认〕＋规模化锚/暂停继续边界/误淘汰审计口径落章，设计登记批零产品源码；v0.12＝ASM-PLUG 收口登记〔头表未随刷，随 v0.13 勘正补登〕；v0.11 为 WP-20-T11 落位登记——契约测试与优化黄金数据集已落地并执行通过，WP-20 全卡（T01~T11）落位完毕；OPT-D 实现与用例执行归 WP-21（T03~T08），规模化基准归 WP-23；判定阈值补充确认前判定面阻塞（§8.6）；自审≠实现测试≠正式验收）**
