@@ -402,9 +402,21 @@ add_custom_command(TARGET sdurws_ird_execution_contract_test POST_BUILD
 # 与 ui perf 目标的唯一形态差异）。IRD_EXECUTION_PERF_WORKER_EXE 注入
 # worker 可执行路径（契约测试 IRD_EXECUTION_WORKER_EXE 同款机制——真进程
 # 启动目标；独立宏名避免与契约目标的注入语义混淆）。
+# WP-23-T06 增列（2026-10-14）：perf_test/MemoryThrottleBenchmarkTest.cpp
+# ——performance-baseline §2 B-05／NFR-PERF-04 内存与节流规模化基准（EX-T07
+# §15.4 v0.9 越界声明"规模化验收归 WP-23-T06"的承接位）：腿一＝真实 worker
+# 进程大任务管线（检查点×2＋10 万条批次流＋FinalOutput）上的"主进程＋全部
+# 工作进程"合计峰值内存测量（生产采样链 SupervisorMemorySampler＋
+# ResourceController 全程 10 ms 采样；判定统计量＝有效样本最大值 ≤70% 物理
+# 内存——NFR-PERF-04 原文）；腿二＝脚本占比采样器（分母真实探针）驱动
+# 攀升剖面的"先节流（65%，D-05）后诊断（70% 边沿恰一次每回合）"时序语义
+# 决策迹。datasetId ird-perf-b05-memory@1——manifest 冻结于
+# testdata/performance/。零新增构建目标（增列于本目标源清单——T03 先例），
+# 零新增链接边（消费面与本目标既有链接语句一致）。
 add_executable(sdurws_ird_execution_perf_test
     perf_test/TestMainPerf.cpp
-    perf_test/CancelTimingBenchmarkTest.cpp)
+    perf_test/CancelTimingBenchmarkTest.cpp
+    perf_test/MemoryThrottleBenchmarkTest.cpp)
 
 # worker 可执行构建依赖（真进程启动目标——$<TARGET_FILE> 取值前提：perf
 # 目标构建即带出 sdurws_ird_execution_worker，缺则基准启动必失败）。
@@ -460,7 +472,7 @@ endmacro()
 
 ird_add_gtest(sdurws_ird_execution_test)
 ird_add_gtest(sdurws_ird_execution_contract_test)
-ird_add_gtest(sdurws_ird_execution_perf_test)   # WP-23-T03——B-02 取消时序基准
+ird_add_gtest(sdurws_ird_execution_perf_test)   # WP-23-T03——B-02 取消时序基准；WP-23-T06——B-05 内存与节流基准
 
 # ---- 依赖红线守卫（配置期断言——EX-BLD-1 的 CMake 依赖图半区）----
 # execution 的 industrialrobot 单元依赖仅限 core/evidence/project 三条
