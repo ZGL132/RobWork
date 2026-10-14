@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "并行吞吐达标（R2/D）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-23-T01",
     "WP-21-T04"
@@ -15,22 +15,43 @@
   ],
   "designRefs": [
     "REQUIREMENTS.md#19.3",
+    "performance-baseline.md#2",
+    "performance-baseline.md#4.5",
+    "performance-baseline.md#4.6",
+    "performance-baseline.md#5.6",
+    "units/optimization.md#9.2",
     "development-task-breakdown.md#2.24"
   ],
   "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/performance/**",
+    "RobWork/doc/industrial-robot-design/performance-baseline.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/units/optimization.md"
   ],
   "outputs": [
     "benchmark",
     "traceability-update"
   ],
   "verify": [
-    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T07.json"
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T07.json",
+    "cmake --build <冒烟构建目录> --config Release --target sdurws_ird_optimization_test sdurws_ird_optimization_contract_test sdurws_ird_optimization_perf_test",
+    "ctest --test-dir <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot -C Release -R \"sdurws_ird_optimization_(test|contract_test|perf_test)\" --output-on-failure"
   ],
   "branch": "wp23-t07",
-  "interUnit": false,
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-OPT-2"
+  ],
   "acceptance": [
     "固定候选评估基准 8 线程 ≥4× 中位吞吐；吞吐比测量通过（不含首次编译与导入）；并行归约满足附录 D 第 8 项容差（NFR-PERF-05/NFR-COR-02）"
   ],
-  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。interUnit=false 待 CCP 复核。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。编译放行（2026-10-14，WP-23-T07 实施段）：status planned→ready＋补齐 ready 必备字段——designRefs 锚点精化（REQUIREMENTS §19.3 NFR-PERF-05/NFR-COR-02 行原文／performance-baseline §2 B-06 行＋§4.5 并行吞吐口径＋§4.6 并行归约与确定性容差＋§5.6 本卡挂点／units/optimization.md §9.2 规模化口径锚〔被测对象＝WP-21-T04 交付的 JointRunOrchestrator 两级批量编排——config.parallel.threadCount 并行分片＋按批序稳定合并；其『B-06 待回填』行即本卡执行面〕/DTB §2.24 本卡行）；allowedFiles 按达标口径实现面如实扩登（optimization 单元：并行吞吐基准测量目标 sdurws_ird_optimization_perf_test 新建〔ui/project/execution 各自单元 perf 目标先例——T02/T03/T05/T06〕＋testdata/performance 数据集 manifest＋performance-baseline.md 仅 B-06 复现命令位回填与 §5.6 挂点登记＋traceability 留痕；测量目标链接面＝sdurws_ird_optimization〔同单元〕＋sdurws_ird_testkit＋GTest——T-1 允许形态，零新增跨单元产品编译边，ird_gates 预期恰增＝零〔登记册 traceability/wp23-t07-gate-registrations.md 随实施批落库〕）；forbiddenFiles 补登六份文档禁改（协议数值零私改——≥4× 中位吞吐照抄 REQUIREMENTS NFR-PERF-05 原文、归约容差 1×10⁻¹² 照抄附录 D 第 8 项 P-01 冻结值；testkit.md 本卡零变更——PerfBenchmark 报告拖挂面直接复用〔T02/T03/T05/T06 先例——零新增 testkit 头〕，B-06 为中位吞吐类判定非 P95，§2 统计口径区分行明文中位数与 P95 互不替代，分位数半区不适用；units/optimization.md 本卡零触碰——§9.2 锚行『B-06 待回填』的翻面随治理批，T06 对 B-05 锚行同款先例）；interUnit=false→true（DTB 行原文单元＝横切〔execution/各域〕——T06 同款复核结论）。放行依据＝所有者 2026-10-13「实现 M6 阶段收口」指令＋2026-10-14 续跑段；前置 WP-23-T01（done——基准清单与测量协议）/WP-21-T04（done——JointRunOrchestrator 并行评估与检查点规模化）均满足。判定阈值裁决登记（REQUIREMENTS 附录 C《P-04 冻结数值表》2026-10-13 部分冻结现状）：判定阈值（通过线/降级线）两槽位所有者裁定维持待定、未补充确认前按未冻结处理——本卡达标面为吞吐比（≥4×，NFR-PERF-05 原文）与并行归约容差（1×10⁻¹²，附录 D 第 8 项 P-01 冻结值，通用比较公式逐元素；ε_abs 由黄金算例逐例声明——本卡测量面声明值随 manifest 与报告登记），数值全部源自需求原文与冻结容差表，与 P-04 判定阈值零交集、零私设数值、零鲁棒性判定结论；P-OPT-2（联合指标投影缝——裁决前由调用方/测试供给）挂靠 knownPitfalls：基准以测试面投影替身注入（JointRunTest 同款接缝纪律）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
 }
