@@ -26,6 +26,7 @@
  */
 
 #include <sdurws/ird/optimization/EvaluatorPorts.hpp>
+#include <sdurws/ird/optimization/Generator.hpp>
 
 #include <sdurws/ird/core/Digest.hpp>
 #include <sdurws/ird/core/Evaluation.hpp>
@@ -44,6 +45,7 @@
 #include <cstdint>
 #include <optional>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -659,6 +661,78 @@ TEST(OptEvaluatorPorts, CanonicalConfigDeterministicAndFieldSensitive_WP20T06_AC
         m.objectives.entries.front().tolerance.absolute = 1e-9;  // 支配容差
         expectSensitive(m, "tolerance");
     }
+}
+
+// =====================================================================
+// 搜索策略分派（§8.2/§12.2——WP-21-T06：词表扩展后 config.strategyId
+// 真实驱动生成路径；注入生成器错配 fail-fast）
+// =====================================================================
+
+TEST(OptEvaluatorPorts, StrategyDispatchRunsConfiguredStrategy_WP21T06_ACC)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-10"}, std::vector<std::string>{"AT-35"});
+
+    // 词表扩展后 baseline-perturb 配置可真实运行（不接受而按旧策略执行＝
+    // 静默错配，NFR-COR-03）：run() 的候选批必须逐字节等于直接调用该策略
+    // 生成器的产出——分派按 config.strategyId 生效的直证面。
+    OrchestratorFixture f;
+    OptimizationConfiguration cfg = makeConfig();
+    cfg.strategyId = std::string(optimization::kStrategyBaselinePerturb);
+    optimization::validateConfiguration(cfg);  // 词表接受（WP-21-T06 扩展）
+    const auto request = readyRequest(f, cfg);
+
+    TwoStageEvaluationOrchestrator orch(OptimizationStage::StageB, f.deps());
+    const TwoStageRunResult result = orch.run(request, f.ctx);
+
+    // 直接生成本策略批（同 config——零随机自由度，批形态确定）。
+    optimization::GenerationContext genCtx;
+    genCtx.config = cfg;
+    const auto direct
+        = optimization::BaselinePerturbGenerator{}.generateNextBatch(genCtx);
+
+    // 编排候选批＝策略批（基线＋单因子 ±Δ 邻域——非 seeded-lhs 形态）。
+    ASSERT_EQ(result.audit.candidatesGenerated, direct.candidates.size());
+    ASSERT_EQ(result.quickRecords.size(), direct.candidates.size());
+    for (std::size_t i = 0; i < direct.candidates.size(); ++i) {
+        EXPECT_EQ(optimization::canonicalize(result.quickRecords[i].patch),
+                  optimization::canonicalize(direct.candidates[i]))
+            << "编排分派批与策略直调批漂移（候选下标 " << i << "）";
+    }
+    // 批首基线（空补丁），单因子候选恰一项——baseline-perturb 形态而非
+    // seeded-lhs 的全维 LHS 采样（形态差异即分派生效的反证面）。
+    EXPECT_TRUE(result.quickRecords[0].patch.items.empty());
+    EXPECT_EQ(result.quickRecords[0].isBaseline, true);
+    for (std::size_t i = 1; i < result.quickRecords.size(); ++i) {
+        EXPECT_EQ(result.quickRecords[i].patch.items.size(), 1U);
+    }
+}
+
+TEST(OptEvaluatorPorts, InjectedGeneratorStrategyMismatchFailsFast_WP21T06_ACC)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-10", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    // 注入生成器与 config.strategyId 错配＝装配违约 fail-fast（防"注入 A
+    // 策略跑 B 策略"的静默错配——策略即身份要素 §4.5）。
+    OrchestratorFixture f;
+    OptimizationConfiguration cfg = makeConfig();
+    cfg.strategyId = std::string(optimization::kStrategyBaselinePerturb);
+    optimization::validateConfiguration(cfg);
+    const auto request = readyRequest(f, cfg);
+
+    optimization::SeededLhsGenerator wrongStrategy;  // 注入 A、配置 B——错配
+    auto deps = f.deps();
+    deps.generator = &wrongStrategy;
+    TwoStageEvaluationOrchestrator orch(OptimizationStage::StageB, deps);
+    EXPECT_THROW(orch.run(request, f.ctx), std::invalid_argument);
+
+    // 一致注入（同策略）：正常运行（注入路径生效）。
+    optimization::BaselinePerturbGenerator matching;
+    deps.generator = &matching;
+    TwoStageEvaluationOrchestrator ok(OptimizationStage::StageB, deps);
+    const auto request2 = readyRequest(f, cfg);
+    const TwoStageRunResult result = ok.run(request2, f.ctx);
+    EXPECT_EQ(result.audit.candidatesGenerated, 3U);  // 基线＋双邻域（§8.2）
 }
 
 // =====================================================================

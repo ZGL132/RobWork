@@ -40,13 +40,15 @@
  *   策略 seeded-lhs 的 R1 面）；③Quick/Verified 两级批量编排（§8.4）＋
  *   会话缓存消费（编排排查找请求/消费命中结果/统计命中计数——存储治理
  *   归 execution IExecutionCacheCoordinator，本编排零存储零判定复制）。
- *   **不落**：ICandidateGenerator 扩展点接口（§12.2——OPT-10 属 D/R2，
- *   接口扩展随 WP-21-T06）；IOptimizationRunController（§9.1/§12.2——
+ *   **不落**：IOptimizationRunController（§9.1/§12.2——
  *   任务提交经 execution 的运行控制面随 WP-20-T07 Run.hpp）；Optimization-
  *   RunSpec（§4.3 尾部——Preflight 消费随 WP-20-T08；本批零消费者不预建，
  *   NFR-MNT-04）；OptimizationConfiguration 在卡面 §4.3 Draft 中标注落位
  *   Types.hpp，因 Objective.hpp/Variable.hpp 反向依赖 Types.hpp（include
  *   环）改落本头——偏差随单元卡增量修订登记（DTB §5.4）。
+ *   〔WP-21-T06 更新〕ICandidateGenerator 扩展点接口已随搜索策略接口扩展
+ *   落位 Generator.hpp（本头仅前置声明注入位）——上方"不落"登记相应失效，
+ *   T06 落位面见该头文件头注。
  *   接缝口径：候选→投影事实（限位查询/包络几何/连杆质量/工位裕量）经
  *   ICandidateProjector 注入（P-OPT-2 裁决前由调用方/测试供给，与 T04
  *   探针接缝/T05 StaticMetricFacts 投影同款形态）；生产适配器随 P-OPT-2
@@ -120,6 +122,11 @@
 
 namespace sdurws::ird::optimization {
 
+/// 搜索策略扩展点接口（OPT-10——Generator.hpp 定义；本头仅以前置声明持有
+/// 注入指针，完整定义经 Generator.hpp——include 方向 Generator→EvaluatorPorts，
+/// 反向 include 即成环）。
+class ICandidateGenerator;
+
 // =====================================================================
 // 搜索策略词表与契约版本（卡 §8.2/§6.7）
 // =====================================================================
@@ -130,11 +137,12 @@ namespace sdurws::ird::optimization {
  *        config.opt canonical（策略 token 变化 ⇒ sliceId 变 ⇒ 缓存失效，
  *        §4.5 表）。
  *
- * 词表边界（防扩大）：本批只登记**已实现**的策略（NFR-MNT-04 不预建占位
+ * 词表边界（防扩大）：词表只登记**已实现**的策略（NFR-MNT-04 不预建占位
  * ——空算法占位被 §8.2 明文禁止）。§8.2 表第二行 "opt.strategy.baseline-
- * perturb"（改型邻域扰动）登记于卡面但实现随 WP-21-T06 搜索策略接口扩展
- * （OPT-10 属 D/R2）——届时随其任务表尾追加本词表并扩展 validateConfiguration
- * 接受集（单元卡增量修订留痕）。
+ * perturb"（改型邻域扰动）已随 WP-21-T06 搜索策略接口扩展落位实现——
+ * token 常量与词表聚合面（builtInStrategyIds）/扩展点接口
+ * （ICandidateGenerator）见 Generator.hpp；validateConfiguration 检查⑨
+ * 的接受集＝该聚合单点（两 token 同源，杜绝词表漂移）。
  */
 inline constexpr std::string_view kStrategySeededLhs = "opt.strategy.seeded-lhs";
 
@@ -240,8 +248,9 @@ struct OptimizationConfiguration {
  *      超过总预算——§8.4 V1）；
  *   ⑦ budget.maxGenerations ==1（R1 固定单批——多代归 R2）；
  *   ⑧ budget.maxWallClockS ≥1（0＝无意义配置；R1 不强制执行——见类型注）；
- *   ⑨ strategyId ∈ 已实现策略词表（当前仅 kStrategySeededLhs——未登记
- *      token 拒绝；扩展点随 WP-21-T06）；
+ *   ⑨ strategyId ∈ 已实现策略词表（builtInStrategyIds 聚合单点——当前
+ *      seeded-lhs／baseline-perturb 两 token；未登记 token 拒绝；扩展点
+ *      随 OPT-10 注册新 ICandidateGenerator 实现时同步增登）；
  *   ⑩ objectives 非空、MetricId 无重复、容差两分量非负且有限（同
  *      makeObjectiveSet 校验面——目标集是筛选与 Pareto 的支配基础，空集
  *      无比较基础）。
@@ -574,6 +583,20 @@ struct TwoStageOrchestratorDeps {
                                              ///  （可空＝无缓存会话；命中判定唯一经
                                              ///  evidence judgeCacheHit——由协调器消费，
                                              ///  本编排零判定复制，§8.4/N8）
+    ICandidateGenerator* generator = nullptr; ///< 搜索策略生成器（OPT-10
+                                             ///  扩展点——WP-21-T06；可空＝按
+                                             ///  config.strategyId 经内置词表分派
+                                             ///  generateWithBuiltInStrategy）。
+                                             ///  非空时其 strategyId() 必须与
+                                             ///  config.strategyId 一致（run() 入口
+                                             ///  校验——错配＝装配违约 fail-fast，
+                                             ///  防"注入 A 策略跑 B 策略"静默错配）。
+                                             ///  **非 const 指针**：generateNextBatch
+                                             ///  为非 const 成员（§12.2——生成纯函数式
+                                             ///  推进但允许实现持推进状态，与
+                                             ///  pipeline/projector 的 const 只读面
+                                             ///  不同型）；指针在 run() 期间存活（调用
+                                             ///  方持有，本编排不接管所有权——§12.3）。
 };
 
 /**
@@ -582,8 +605,11 @@ struct TwoStageOrchestratorDeps {
  * run() 执行序（固定——确定性）：
  *   1. 请求校验（validateConfiguration＋目标集非空＋身份面非保留值——
  *      调用方契约违约 fail-fast）；
- *   2. **Quick 批**（mode=Quick）：generateSeededLhsCandidates 生成候选批
- *      （基线恒在）→ 逐候选：冻结切片（config.opt canonical＋补丁身份进
+ *   2. **Quick 批**（mode=Quick）：候选生成按 config.strategyId 分派
+ *      （WP-21-T06——deps.generator 注入优先〔strategyId 错配 fail-fast〕，
+ *      空则 generateWithBuiltInStrategy 内置分派；seeded-lhs 路径委托
+ *      generateSeededLhsCandidates 单点零漂移）（基线恒在）→ 逐候选：冻结
+ *      切片（config.opt canonical＋补丁身份进
  *      条目 ⇒ sliceId 含全部缓存键要素）→ 投影 → 缓存查找（FullHit 且
  *      会话有同键记录＝短路径回放不重算；否则经 T04 管线评估＋T05 指标
  *      计算）→ 记录（screeningOnly=true）→ 会话底账登记。每候选前查询
