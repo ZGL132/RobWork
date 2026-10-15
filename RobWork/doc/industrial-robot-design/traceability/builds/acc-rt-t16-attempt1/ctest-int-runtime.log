@@ -1,0 +1,29 @@
+UpdateCTestConfiguration  from :C:/acc-20261015-rtt16/build-int/RobWorkStudio/src/rwslibs/industrialrobot/runtime/DartConfiguration.tcl
+Test project C:/acc-20261015-rtt16/build-int/RobWorkStudio/src/rwslibs/industrialrobot/runtime
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: sdurws_ird_runtime_test
+
+1: Test command: C:\acc-20261015-rtt16\build-int\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+1: Working Directory: C:/acc-20261015-rtt16/build-int/RobWorkStudio/src/rwslibs/industrialrobot/runtime
+1: Test timeout computed to be: 600
+1/1 Test #1: sdurws_ird_runtime_test ..........Exit code 0xc0000135***Exception: 289.53 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+ird    = 289.53 sec*proc (1 test)
+
+Total Test time (real) = 289.55 sec
+
+The following tests FAILED:
+	  1 - sdurws_ird_runtime_test (Exit code 0xc0000135)    ird
+Errors while running CTest
+Output from these tests are in: C:/acc-20261015-rtt16/build-int/RobWorkStudio/src/rwslibs/industrialrobot/runtime/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+CTEST_EXIT=8
