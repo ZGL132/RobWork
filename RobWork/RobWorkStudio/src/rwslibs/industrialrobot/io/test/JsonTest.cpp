@@ -473,6 +473,39 @@ TEST_F(IoJsonTest, NumberOverflowRejectedUnderflowAccepted)
 }
 
 /**
+ * F-803 回归钉（audit/round2-20261010/recheck-34-legacy.md §三 #30）：
+ * 实数溢出判定边界差一——Json.cpp parseNumber 溢出分流用
+ * `magnitude > 308`，量级恰为 308 且 from_chars 报 result_out_of_range 的
+ * token（如 2e308、1.8e308——均超 DBL_MAX≈1.79769e308）必为溢出，却落
+ * 入下溢分支被静默置 0.0（数据损坏面）。可表示的 1e308/1.79e308 经
+ * from_chars 成功解析、不会进入该分支，故界值改为 >=308 无误伤面。
+ *
+ * 追溯：units/io.md §5.9.1 数值行（溢出拒绝/下溢接受为 0——IEEE754 最
+ * 近值语义）、§11.2 IO-V08；需求 NFR-SEC-02。
+ */
+TEST_F(IoJsonTest, OverflowAtMagnitude308Boundary_RejectedNotSilentZero_F_803)
+{
+    // 追溯登记（ird-test-report.json 需求/AT 字段，testkit.md §7.3）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
+    auto reader = makeStructuredDataReader(nullptr);
+    JsonReadOptions opt;
+    // 量级恰 308 的真溢出：必须 IO-FORMAT-JSON-NUMBER 拒绝（缺陷形态下
+    // 静默置 0.0 以 ok 收场——本断言即必红点）。
+    const IoResult<JsonDocument> r1 = reader->parseBytes("{\"x\":2e308}", opt, nullptr, nullptr);
+    ASSERT_FALSE(r1) << "2e308 超 DBL_MAX 必须拒绝（不得静默置 0.0）";
+    EXPECT_EQ(r1.error.code, IoErrorCode::FormatJsonNumber) << r1.error.detail;
+    // 负号变体：量级估算跳过符号位，同样必须拒绝。
+    const IoResult<JsonDocument> r2 = reader->parseBytes("{\"x\":-2e308}", opt, nullptr, nullptr);
+    ASSERT_FALSE(r2) << "-2e308 超 DBL_MAX 必须拒绝";
+    EXPECT_EQ(r2.error.code, IoErrorCode::FormatJsonNumber) << r2.error.detail;
+    // 界内大数不受界值收紧误伤：1.79e308 < DBL_MAX，可表示，必须正常解析。
+    const IoResult<JsonDocument> r3 = reader->parseBytes("{\"x\":1.79e308}", opt, nullptr, nullptr);
+    ASSERT_TRUE(r3) << "1.79e308 在 double 范围内不得误拒：" << r3.error.detail;
+    EXPECT_DOUBLE_EQ(r3.value.root.findMember("x")->realValue, 1.79e308);
+}
+
+/**
  * 深嵌套触发 IO-SEC-BUDGET-JSON-DEPTH（§5.9.1 嵌套深度行——比较型三
  * 要素 actual/limit/unit=levels；默认限额 64 层——§4.5.1 表）。
  */

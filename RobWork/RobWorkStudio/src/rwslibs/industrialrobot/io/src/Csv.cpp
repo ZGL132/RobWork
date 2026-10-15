@@ -260,8 +260,16 @@ public:
     int next()
     {
         // 回退槽优先（peek 过的字节必须原序回到消费流——peek/next 一致性）。
-        if (m_peeked) {
+        // 例外（F-801）：seed 前入槽且被保留的编码非法信号（-2——非法序列
+        // 已被 DFA 消耗不留痕，只能占槽）在原文流序中位于捕获前缀之后——
+        // 种子区尚有存量时种子优先出队，种子耗尽后槽内 -2 再补出，保证
+        // 错误在行界处触达致命拒绝。真实字节/流尽信号已在 seed() 归位或
+        // 清除（见 seed 注），不会走到本例外；seed 之后入槽的字节流序本
+        // 在已出队部分之后，槽优先即原序。
+        const bool seedAhead = m_slotBeforeSeed && m_seedPos < m_seed.size();
+        if (m_peeked && !seedAhead) {
             m_peeked = false;
+            m_slotBeforeSeed = false;
             return m_peekVal;
         }
         // 种子区（标识行判定未命中时回灌的捕获前缀）次之——保证"探测消
@@ -288,6 +296,27 @@ public:
     /// 标识行判定未命中时回灌捕获前缀（仅 prologue 调用一次）。
     void seed(std::string bytes)
     {
+        // F-801：seed 回灌前若回退槽持有"seed 之前"peek 取入的字节（无标
+        // 识文件首行孤立 CR 触发的前瞻），按值分流处置——该字节的流序位
+        // 置恰在捕获前缀（即将成为种子的字节组）之后：
+        //   - 0~255 真实字节：直接接在种子末尾原序回灌（它在取入时已计入
+        //     produced，种子重放不重复计数）；槽清空。单字节槽若保留该字
+        //     节并与种子分序出队，后续 peek 前瞻会与种子出队消费错位——
+        //     接入种子使其归位是唯一无错位点形态。
+        //   - -1 流尽：槽清空即可——种子耗尽后底层流再读仍得 -1，信号自然
+        //     重现（若占槽先出会抢在种子之前，行 1 整行丢失）。
+        //   - -2 编码非法：非法序列已被 DFA 消耗且不留痕，信号只存在于槽
+        //     内——槽保持占用并登记 m_slotBeforeSeed 次序（种子先出尽、
+        //     槽内 -2 后补出），保证错误不丢失且在行界处触达致命拒绝。
+        if (m_peeked) {
+            if (m_peekVal >= 0) {
+                bytes.push_back(static_cast<char>(m_peekVal));
+                m_peeked = false;
+            } else if (m_peekVal == -1) {
+                m_peeked = false;
+            }
+        }
+        m_slotBeforeSeed = m_peeked && m_peekVal == -2;
         m_seed = std::move(bytes);
         m_seedPos = 0;
     }
@@ -504,6 +533,10 @@ private:
     std::size_t m_seedPos = 0;
     bool m_peeked = false;                               // 回退槽占用标志
     int m_peekVal = -1;
+    // F-801：槽内编码非法信号（-2）是否取自 seed 回灌之前——true 时该信
+    // 号流序位于种子之后，next() 须"种子先出尽、槽内 -2 后补出"（真实字
+    // 节/流尽信号已在 seed() 归位种子或清槽，不经过本标记）。
+    bool m_slotBeforeSeed = false;
     std::uint64_t m_rawConsumed = 0;                     // 原始字节记账（预算对账）
 };
 
@@ -592,6 +625,15 @@ public:
                 continue;
             }
             terminatedByEol = (fe == FieldEnd::Eol);
+            // F-802：编码错误（-2）恒不得判"干净结束"——行首 -2 未消耗任何
+            // 字节（m_rowBytes==0），若无此守卫会在此被误判为流尽返回
+            // false，交付主循环于编码致命检查（读出侧 encodingError()）之前
+            // break——坏文件以 ok 收场并静默丢行，违反"编码错误恒致命稳定
+            // 拒绝"（§5.2/IO-D09）。此处按"有行"返回 true，把判定移交读出
+            // 侧编码致命路径——与行中部 -2（m_rowBytes>0）既有致命路径对齐。
+            if (m_encodingError) {
+                return true;
+            }
             // 流尽且本行既无字段内容也无任何字节消耗＝干净结束（空文件
             // 或行尾后的 EOF——不产出幽灵空行）。
             if (fe == FieldEnd::Eof && out.size() == 1 && out.back().empty() && m_rowBytes == 0) {

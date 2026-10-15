@@ -740,6 +740,122 @@ TEST_F(IoCsvTest, NonUtf8WithoutBomStableReject)
 }
 
 // =====================================================================
+// 缺陷回归钉（E2-IO 修复批——findings F-801/F-802）
+// =====================================================================
+
+/**
+ * F-801 回归钉（audit/round2-20261010/recheck-34-legacy.md §三 #28）：
+ * 无标识文件首物理行以孤立 CR 收尾时，prologue 捕获循环对 CR 做 LF 前瞻
+ * （Csv.cpp runPrologue 捕获段 src.peek()），该 peek 字节进入 DecodedStream
+ * 回退槽；标识判定 NotMarked 后捕获前缀整组回灌种子（src.seed）——此时
+ * next() 的出队序是「回退槽优先、种子区次之」，行 2 首字节先于行 1 种子
+ * 出队，字节序错乱（IO-V03「无标识零改写」被破坏——静默数据损坏面）。
+ *
+ * 本用例钉两个观测面：
+ *   ① 行 2 有后续内容：期望行界与字段逐字节还原（缺陷形态下行 1 变
+ *      "1a"、行 2 变 "",2——首字节跨行漂移）；
+ *   ② 孤立 CR 即文件尾（peek 读到 EOF 入槽）：缺陷形态下 EOF 先于种子
+ *      出队，行 1 整行丢失、嗅探零采样以 DIALECT 错误拒绝合法文件。
+ *
+ * 追溯：units/io.md §11.2 IO-V03（无标识零改写）、§5.1 判定行（种子回
+ * 灌须与原文件逐字节一致）；需求 NFR-SEC-03、AT-02（正确行保留）。
+ */
+TEST_F(IoCsvTest, UnmarkedLoneCrLineEnd_ReplaysSeedAheadOfPeekSlot_F_801)
+{
+    // 追溯登记（ird-test-report.json 需求/AT 字段，testkit.md §7.3）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-03"},
+                  std::vector<std::string>{"AT-02"});
+    auto reader = makeCsvReader();
+
+    // ① 孤立 CR 后行 2 有内容：首行 "a,b"、行 2 "1,2"，LF 收尾。
+    const fs::path loneCr = m_dir / "lone_cr_first_line.csv";
+    writeFileBytes(loneCr, "a,b\r1,2\n");
+    std::vector<std::vector<std::string>> got;
+    const IoResult<RawTable> r = reader->read(
+        loneCr, CsvReadOptions{},
+        [&](std::uint64_t, sdurws::ird::io::CsvRowView&& v) {
+            std::vector<std::string> row;
+            for (std::size_t i = 0; i < v.fieldCount(); ++i) {
+                row.emplace_back(v.field(i));
+            }
+            got.push_back(std::move(row));
+            return true;
+        },
+        nullptr, nullptr);
+    ASSERT_TRUE(r) << "孤立 CR 收尾的合法无标识文件不得拒绝：" << r.error.detail;
+    EXPECT_FALSE(r.value.report.marked) << "无标识文件不得判为带标识";
+    ASSERT_EQ(got.size(), 2u) << "应还原 2 行（缺陷形态下 EOF/字节错乱改变行数）";
+    // 逐字节还原断言：缺陷形态下行 1 首字段被行 2 首字节污染为 "1a"。
+    EXPECT_EQ(got[0][0], "a") << "行 1 字段被回退槽字节前插（F-801 字节序错乱）";
+    EXPECT_EQ(got[0][1], "b");
+    EXPECT_EQ(got[1][0], "1") << "行 2 首字节被种子抢先出队挪用";
+    EXPECT_EQ(got[1][1], "2");
+
+    // ② 孤立 CR 即 EOF：行 1 必须完整交付（缺陷形态下 peek 到的 EOF 先于
+    // 种子出队——行 1 整行静默丢失，嗅探零采样误报 DIALECT）。
+    const fs::path loneCrEof = m_dir / "lone_cr_at_eof.csv";
+    writeFileBytes(loneCrEof, "a,b\r");
+    std::vector<std::vector<std::string>> gotEof;
+    const IoResult<RawTable> r2 = reader->read(
+        loneCrEof, CsvReadOptions{},
+        [&](std::uint64_t, sdurws::ird::io::CsvRowView&& v) {
+            std::vector<std::string> row;
+            for (std::size_t i = 0; i < v.fieldCount(); ++i) {
+                row.emplace_back(v.field(i));
+            }
+            gotEof.push_back(std::move(row));
+            return true;
+        },
+        nullptr, nullptr);
+    ASSERT_TRUE(r2) << "孤立 CR 收尾且即 EOF 的文件不得拒绝：" << r2.error.detail;
+    ASSERT_EQ(gotEof.size(), 1u) << "行 1 不得因 EOF 抢先出队而静默丢失";
+    EXPECT_EQ(gotEof[0][0], "a");
+    EXPECT_EQ(gotEof[0][1], "b");
+}
+
+/**
+ * F-802 回归钉（audit/round2-20261010/recheck-34-legacy.md §三 #29）：
+ * 带标识文件（免嗅探遍）交付遍中，某行首字节即非法 UTF-8（0xFF）——
+ * RowScanner::parseField 首字节 -2 置 encodingError 后按流尽返回，而
+ * get() 对 -2 不计行字节（m_rowBytes==0），nextRow 误判「干净结束」返回
+ * false：交付主循环 break 于编码致命检查（scanner.encodingError()）之前，
+ * 检查不可达——坏文件以 ok 收场并静默丢行，违反「编码错误恒致命稳定拒
+ * 绝」（IO-D09/§5.2 编码行②）。行中部 -2 因 m_rowBytes>0 走致命路径（既有
+ * 用例 NonUtf8WithoutBomStableReject 已钉）；本用例钉行首/行界形态。
+ *
+ * 追溯：units/io.md §5.2 编码行（无 BOM 非法 → IO-FORMAT-CSV-ENCODING
+ * 稳定拒绝）、§11.2 IO-V04；需求 NFR-SEC-03、AT-02。
+ */
+TEST_F(IoCsvTest, MarkedFileInvalidUtf8AtRowStart_FatalNotCleanEnd_F_802)
+{
+    // 追溯登记（ird-test-report.json 需求/AT 字段，testkit.md §7.3）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-03"},
+                  std::vector<std::string>{"AT-02"});
+    auto reader = makeCsvReader();
+    // 带标识文件：免嗅探遍，编码致命检查只能由交付遍承担——行首 0xFF 在
+    // 缺陷形态下被「干净结束」吞掉（ok 收场＋丢行），修复后必须稳定拒绝。
+    const fs::path bad = m_dir / "row_start_invalid_utf8.csv";
+    writeFileBytes(bad,
+                   "#rwcsv1 delimiter=, quote=\" eol=CRLF encoding=utf-8\r\n"
+                   "a,b\r\n"
+                   "\xFFzz\r\n");               // 行首 0xFF＝非法 UTF-8 首字节
+    std::vector<std::vector<std::string>> got;
+    const IoResult<RawTable> r = reader->read(
+        bad, CsvReadOptions{},
+        [&](std::uint64_t, sdurws::ird::io::CsvRowView&& v) {
+            std::vector<std::string> row;
+            for (std::size_t i = 0; i < v.fieldCount(); ++i) {
+                row.emplace_back(v.field(i));
+            }
+            got.push_back(std::move(row));
+            return true;
+        },
+        nullptr, nullptr);
+    ASSERT_FALSE(r) << "行首非法 UTF-8 必须致命拒绝（不得以 ok 收场静默丢行）";
+    EXPECT_EQ(r.error.code, IoErrorCode::FormatCsvEncoding) << r.error.detail;
+}
+
+// =====================================================================
 // IO-V05：IoCsv/ColumnAnomalies——重复列名/缺列/多列/空行（默认策略
 // 拒绝且定位；显式策略按声明处置并记录；RowError 内容与顺序可断言）
 // =====================================================================
