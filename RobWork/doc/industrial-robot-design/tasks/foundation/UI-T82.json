@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T82",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "统一域面板标签停靠与全屏缩放防重叠",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T81"
+  ],
+  "requirements": [
+    "UX-09",
+    "PM-14"
+  ],
+  "designRefs": [
+    "units/ui.md#4.4",
+    "units/ui.md#4.5",
+    "REQUIREMENTS.md#18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DockWorkspace_p.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/WorkbenchContentGuiTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T82.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t82/**",
+    "RobWork/docs/superpowers/plans/2026-10-15-dock-workspace-resize.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/WorkbenchContent.hpp"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json"
+  ],
+  "outputs": [
+    "统一标签停靠和滚动视口，标签切换不误存关闭",
+    "恢复默认布局重建拓扑，菜单呼出选中对应标签",
+    "双模式构建与真实宿主缩放巡检截图及测试留痕"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_studio sdurws_ird_ui_plugin sdurws_ird_ui_gui_test sdurws_ird_ui_test",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/UI-T82.json"
+  ],
+  "acceptance": [
+    "六域同开形成一个标签组，不再将六个最小高度纵向累加；项目树和中央区保留可用空间",
+    "缩小/最大化/全屏/100-200% DPI 下内容受视口裁剪且可以滚动访问，不绘制到其他 Dock",
+    "切换标签保留用户打开记忆，关闭仅关闭目标，菜单重开选中目标标签",
+    "恢复默认布局重建统一拓扑；不改计算内核、输入数据或项目修订"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "O-31"
+  ],
+  "branch": "wp10-t82",
+  "note": "所有者截图报告且已明确选择统一停靠布局。实施自测后交全新上下文独立验收，实施者不自行合入。"
+}

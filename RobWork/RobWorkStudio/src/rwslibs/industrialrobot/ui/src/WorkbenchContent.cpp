@@ -103,8 +103,8 @@ bool WorkbenchContentImpl::build()
     if (m_deps.hostWidget == nullptr) {
         return false;
     }
-    // 几何/位形钩子必须成组：顶层形态提供全量四钩子，嵌入式形态全缺省——
-    // 半有半无＝装配描述自相矛盾（调用方错误），拒绝而不是猜测意图。
+    // 几何/位形读写钩子仍必须成组。UI-T82 允许嵌入宿主只提供工厂拓扑
+    // 复位钩子：它只重排本插件 Dock，不取得框架主窗口的几何持久化所有权。
     const bool hasWindowHooks = static_cast<bool>(m_deps.saveWindowGeometry)
                                 && static_cast<bool>(m_deps.saveWindowState)
                                 && static_cast<bool>(m_deps.restoreWindowState)
@@ -113,8 +113,11 @@ bool WorkbenchContentImpl::build()
                                   && !m_deps.saveWindowState
                                   && !m_deps.restoreWindowState
                                   && !m_deps.restoreFactoryWindowState;
-    if (!hasWindowHooks && !hasNoWindowHooks) {
-        return false;
+    const bool embeddedFactoryOnly = m_deps.hostKind == WorkbenchHostKind::EmbeddedDock
+        && !m_deps.saveWindowGeometry && !m_deps.saveWindowState
+        && !m_deps.restoreWindowState && m_deps.restoreFactoryWindowState;
+    if (!hasWindowHooks && !hasNoWindowHooks && !embeddedFactoryOnly) {
+        return false; // 其余半组钩子仍是调用方装配违约，不放宽任意不完整配置。
     }
 
     // 内容构建序（每步产物是下一步的输入；与原 WorkbenchShellImpl 的
@@ -430,7 +433,7 @@ void WorkbenchContentImpl::resetLayout()
     // 出厂位形恢复（§4.4/§4.5）按宿主形态分派：
     //   顶层＝几何＋停靠位形经出厂钩子回放（restoreState 会把浮动窗口重新
     //   停靠＝"清除该会话的浮动窗口记忆"原文），随后按当前尺寸重判折叠；
-    //   嵌入式＝无窗口半区，只恢复三区可见性出厂值。
+    //   嵌入式＝不接管宿主几何持久化，可回调复位插件停靠拓扑，再恢复可见性。
     // UI-T38：底部区出厂值＝构造时同一形态分派（§10.1 v1.45 注⑮——顶层
     // 可见、插件形态隐藏），"恢复默认布局"回到的是出厂缺省而不是恒可见。
     if (m_deps.restoreFactoryWindowState) {

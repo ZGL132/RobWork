@@ -1,0 +1,111 @@
+{
+  "task": "UI-T82",
+  "base": "3e702e8faaca447cc17c34bec638bc4c56a6edcf",
+  "branch": "wp10-t82",
+  "implementationVerificationOnly": true,
+  "tests": {
+    "smoke-dpi-final/gui": {
+      "total": 74,
+      "passed": 74,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "integration-delivery/gui": {
+      "total": 84,
+      "passed": 84,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "smoke-verified/gui": {
+      "total": 74,
+      "passed": 74,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "smoke-verified/model": {
+      "total": 255,
+      "passed": 255,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "integration-verified/gui": {
+      "total": 84,
+      "passed": 84,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "integration-verified/model": {
+      "total": 281,
+      "passed": 281,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  },
+  "studio": {
+    "integration-clean-100": {
+      "passed": 94,
+      "failed": 0,
+      "exitCode": 0,
+      "geometry": [
+        "step-0 host=1280x720 min=546x554 dpr=1.000000",
+        "step-1 host=1920x1129 min=546x554 dpr=1.000000",
+        "step-2 host=1920x1200 min=546x554 dpr=1.000000",
+        "step-3 host=1000x680 min=546x554 dpr=1.000000"
+      ]
+    },
+    "integration-clean-150": {
+      "passed": 94,
+      "failed": 0,
+      "exitCode": 0,
+      "geometry": [
+        "step-0 host=1280x720 min=546x556 dpr=1.500000",
+        "step-1 host=1280x753 min=546x556 dpr=1.500000",
+        "step-2 host=1280x800 min=546x556 dpr=1.500000",
+        "step-3 host=1000x680 min=546x556 dpr=1.500000"
+      ]
+    },
+    "integration-clean-200": {
+      "passed": 94,
+      "failed": 0,
+      "exitCode": 0,
+      "geometry": [
+        "step-0 host=1280x595 min=546x556 dpr=2.000000",
+        "step-1 host=960x565 min=546x556 dpr=2.000000",
+        "step-2 host=960x600 min=546x556 dpr=2.000000",
+        "step-3 host=1000x595 min=546x556 dpr=2.000000"
+      ]
+    }
+  },
+  "sourceSha256": {
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/WorkbenchContentGuiTest.cpp": "40fb92eb905997120f9e25cbb2be9950719e3808ac8fed63178f0e8fe2fceb9d",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/WorkbenchContent.hpp": "0ea7e553605a73d9ed1a305c713d28b96947106d868441c03d86e668d8143309",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp": "01cc15721d677492fb264aa22df64c15439c7ec36c423e22f075451ac8842945",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp": "b65fd953d96b84604b3fb780edfd8939e9cb143883cab21a85e476c05de9ab73",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp": "50f97d52d91a1a23416b30ab4263d24a33afd0f9b2675311187a65a36f8ba093",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DockWorkspace_p.hpp": "63946693ae5fe950854138d7df24de8ab448018dc23ad11c91c64a7218346754"
+  }
+}

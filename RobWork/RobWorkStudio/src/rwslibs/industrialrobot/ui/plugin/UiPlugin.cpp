@@ -24,6 +24,7 @@
  */
 
 #include "UiPlugin.hpp"
+#include "../src/DockWorkspace_p.hpp"
 
 #include <QAction>
 #include <QApplication>
@@ -49,6 +50,8 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QStatusBar>
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QString>
 #include <QComboBox>  // 需求遍历通道（检查器下拉）
 #include <QTableWidget>  // 建模遍历通道（编辑页参数表——UI-T67 modeling-tour）
@@ -885,6 +888,22 @@ void IrdWorkbenchHostPlugin::initialize()
     // 插件装载被框架呈现为失败对话框、五区不出现；壳路径由
     // WorkbenchShell 注入自身窗口故未暴露。修复见同日提交。
     contentDeps.hostWidget = this;
+    // UI-T82/UX-09：复位重建同一有界拓扑；仅管理本插件 Dock，宿主框架
+    // 自有 Dock 不重排，后续内容装配面按工厂值关闭辅助域并保持导航可见。
+    contentDeps.restoreFactoryWindowState = [this] {
+        if (auto* host = qobject_cast<QMainWindow*>(parentWidget())) {
+            detail::arrangeDomainWorkspace(*host, *this,
+                {m_modelingDock, m_requirementsDock, m_kinematicsDock,
+                 m_dynamicsDock, m_selectionDock, m_optimizationDock},
+                {m_propsDock, m_kinematicsAdvancedDock});
+            // 底部任务也可能被用户浮动/移位，复位后须回到底部，不能仅隐藏。
+            if (m_tasksDock != nullptr) {
+                host->addDockWidget(Qt::BottomDockWidgetArea, m_tasksDock);
+                m_tasksDock->setFloating(false);
+            }
+        }
+    };
+
     // 会话入口覆写（§11.5）：宿主插件的打开/新建/保存/关闭编排注入——
     // 首页/菜单/顶栏/面板/快捷键五处壳入口同走真实协议（UI-T17 扩至四命令）。
     contentDeps.openProjectHandler =
@@ -1352,18 +1371,18 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
         rightLayout->addWidget(m_readinessCard);
         rightLayout->addWidget(m_content->rightWidget(), /*stretch=*/2);
         rightLayout->addStretch(0);
-        m_propsDock->setWidget(rightColumn);
+        detail::installDockViewport(*m_propsDock, rightColumn, 280);
     }
     m_tasksDock = new QDockWidget(QString::fromUtf8("IRD 任务和状态"), this);
     m_tasksDock->setObjectName("ird_tasks_dock");
-    m_tasksDock->setWidget(m_content->bottomWidget());
+    detail::installDockViewport(*m_tasksDock, m_content->bottomWidget(), 240, 160);
     // 建模 Dock（Left 停靠区——WP-24-T03 首版装配挂位；中央区 StageId
     // 挂位〔CentralAreaHost〕未落位，宿主侧 Dock 承载为登记过的首版形态，
     // 收口时迁移）。面板工厂经域装配 bundle 现调（模块内部完成会话接线）。
     if (m_domains) {
         m_modelingDock = new QDockWidget(QString::fromUtf8(kModelingDockTitle), this);
         m_modelingDock->setObjectName("ird_modeling_dock");
-        m_modelingDock->setWidget(modelingPanelWidget(*m_domains));
+        detail::installDockViewport(*m_modelingDock, modelingPanelWidget(*m_domains));
         // 需求/运动学 Dock（UI-T23 三域挂位——Left 区同列；失败隔离缺席
         // 的域工厂返回 nullptr＝跳过挂位，占位呈现由共享树承担，§11.3）。
         // 运动学高级面板（求解配置）挂 Right 区（UX-04 高级面板位——
@@ -1373,7 +1392,7 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
             m_requirementsDock = new QDockWidget(
                 QString::fromUtf8(kRequirementsDockTitle), this);
             m_requirementsDock->setObjectName("ird_requirements_dock");
-            m_requirementsDock->setWidget(requirementsPanel);
+            detail::installDockViewport(*m_requirementsDock, requirementsPanel);
             // 首呼默认尺寸（UI-T39——审核布局返工：需求编辑区在默认布局中
             // 过矮，卡片只见顶部须频繁滚动。初始尺寸 520×680＝审核建议区间
             // （宽 420~480／高 560~680）的宽容形态——Qt 布局在左列空间不足
@@ -1387,14 +1406,14 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
             m_kinematicsDock = new QDockWidget(
                 QString::fromUtf8(kKinematicsDockTitle), this);
             m_kinematicsDock->setObjectName("ird_kinematics_dock");
-            m_kinematicsDock->setWidget(kinematicsPanel);
+            detail::installDockViewport(*m_kinematicsDock, kinematicsPanel);
         }
         QWidget* kinematicsAdvanced = kinematicsAdvancedPanelWidget(*m_domains);
         if (kinematicsAdvanced != nullptr) {
             m_kinematicsAdvancedDock = new QDockWidget(
                 QString::fromUtf8(kKinematicsAdvancedDockTitle), this);
             m_kinematicsAdvancedDock->setObjectName("ird_kinematics_advanced_dock");
-            m_kinematicsAdvancedDock->setWidget(kinematicsAdvanced);
+            detail::installDockViewport(*m_kinematicsAdvancedDock, kinematicsAdvanced, 280);
         }
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
         // 三新域面板挂位（ASM-PANEL 收口批 2026-10-10——六域面板全部可见；
@@ -1513,7 +1532,7 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
                     *spec.dockSlot = new QDockWidget(
                         QString::fromUtf8(spec.dockTitle), this);
                     (*spec.dockSlot)->setObjectName(spec.objectName);
-                    (*spec.dockSlot)->setWidget(extraPanel);
+                    detail::installDockViewport(**spec.dockSlot, extraPanel);
                     // 辅助可见性登记（UI-T24 P1 同口径：工厂默认不呈现——
                     // 净室默认布局收敛；呈现落定在装载呈现自证拍的
                     // addDockWidget＋setVisible 对齐，见
@@ -1592,6 +1611,31 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
                                           /*factoryVisible=*/false);
     } else {
         disableAuxToggleTail(kAuxKeyKinematicsAdvancedDock);
+    }
+
+    // UI-T82/PM-14：setupMenu 先于 initialize，菜单创建时所有域 Dock 均
+    // 为空。显隐观察必须在本拍（域已创建）绑定，否则标题栏关闭从未写记忆。
+    for (const auto& [key, action] : m_hostAuxToggles) {
+        QDockWidget* dock = auxiliaryDock(key);
+        if (dock == nullptr) { continue; } // 域缺席，菜单已置灰，不绑定无效目标。
+        QObject::connect(dock, &QDockWidget::visibilityChanged, this,
+            [this, key, dock](bool /*visible*/) {
+                auto* host = qobject_cast<QMainWindow*>(parentWidget());
+                if (m_content == nullptr || host == nullptr || !host->isVisible()) { return; }
+                // 守卫必须观察宿主：浮动 Dock 关闭后 window()==自身且已隐藏，
+                // 若检查它会漏掉真正的关闭，导致菜单勾选和打开记忆停在旧值。
+                // Qt 在标签被遮挡时也发 false；显式 hidden 位才代表用户关闭，
+                // 最小化/退出的父窗口隐去则由上方守卫排除，避免污染用户意愿。
+                m_content->setAuxVisible(key, detail::dockRequestedOpen(*dock));
+                // 工厂初始隐藏的组可能直到首次呼出才创建 Qt 标签栏，不能只在
+                // 装载拍设置标题策略；显示/切换后的下一拍幂等补施，不移动焦点。
+                if (!dock->isHidden()) {
+                    const QString title = dock->windowTitle();
+                    QTimer::singleShot(0, host, [host, title] {
+                        detail::configureWorkspaceTabs(*host, title);
+                    });
+                }
+            });
     }
 
     // 命令状态观察：内容装配层每次刷新使能态后同步框架菜单动作（§7.6
@@ -1733,9 +1777,8 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
     // ---- 域自持面板开关（UI-T24 P1——默认不呈现的勾选呼出通道）----
     // 三域面板＋运动学高级面板各一勾选项：触发＝辅助可见性记忆翻转（内容
     // 装配面持久化——跨会话记忆优先）；勾选态随 refreshHostMenuActions 回写
-    // （与三区开关同机制，不回环）。Dock 关闭钮关闭同样落记忆（addAuxDock
-    // Toggle 内接线 visibilityChanged——顶层窗口不可见期间的可见性抖动不
-    // 记忆：启动/最小化不是用户意愿）。
+    // （与三区开关同机制，不回环）。Dock 关闭钮关闭同样落记忆（buildDockBody
+    // 在 Dock 已创建后接线 visibilityChanged；父窗口隐去不等于用户关闭）。
     viewMenu->addSeparator();
     addAuxDockToggle(viewMenu, "IRD 建模面板", kAuxKeyModelingDock, m_modelingDock);
     addAuxDockToggle(viewMenu, "IRD 需求面板", kAuxKeyRequirementsDock, m_requirementsDock);
@@ -1744,8 +1787,7 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
                      m_kinematicsAdvancedDock);
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
     // 三新域面板开关（ASM-PANEL 收口批——六域面板全部可见的用户呼出半区；
-    // Dock 缺席〔失败隔离〕时 addAuxDockToggle 内部跳过——与上方四项
-    // 同机制，勾选项不呈现）。
+    // Dock 缺席〔失败隔离〕时装配拍将菜单项置灰，与上方四项同机制）。
     addAuxDockToggle(viewMenu, "IRD 动力学面板", kAuxKeyDynamicsDock, m_dynamicsDock);
     addAuxDockToggle(viewMenu, "IRD 选型面板", kAuxKeySelectionDock, m_selectionDock);
     addAuxDockToggle(viewMenu, "IRD 优化面板", kAuxKeyOptimizationDock, m_optimizationDock);
@@ -1792,8 +1834,25 @@ QAction* IrdWorkbenchHostPlugin::addCommandAction(QMenu* target,
     return action;
 }
 
+QDockWidget* IrdWorkbenchHostPlugin::auxiliaryDock(const std::string& key) const noexcept
+{
+    // 枚举只做装配引用查找，不解析域对象名称；缺席域保持空指针失败隔离语义。
+    const std::pair<const char*, QDockWidget*> docks[] = {
+        {kAuxKeyModelingDock, m_modelingDock},
+        {kAuxKeyRequirementsDock, m_requirementsDock},
+        {kAuxKeyKinematicsDock, m_kinematicsDock},
+        {kAuxKeyKinematicsAdvancedDock, m_kinematicsAdvancedDock},
+        {kAuxKeyDynamicsDock, m_dynamicsDock},
+        {kAuxKeySelectionDock, m_selectionDock},
+        {kAuxKeyOptimizationDock, m_optimizationDock}};
+    for (const auto& [known, dock] : docks) {
+        if (key == known) { return dock; }
+    }
+    return nullptr;
+}
+
 void IrdWorkbenchHostPlugin::addAuxDockToggle(QMenu* target, const char* title,
-                                              const char* auxKey, QDockWidget* dock)
+                                              const char* auxKey, QDockWidget* /*dock*/)
 {
     // 勾选开关（UI-T24 P1）：触发＝辅助可见性记忆翻转（内容装配面施加并
     // 持久化——PM-14）；菜单构建早于 initialize 装配（框架 setupMenu 时序
@@ -1810,27 +1869,12 @@ void IrdWorkbenchHostPlugin::addAuxDockToggle(QMenu* target, const char* title,
     // out_of_range fail-fast），登记面契约本体不弱化，忍耐在消费方。
     QObject::connect(action, &QAction::triggered, this, [this, key, action] {
         if (m_content && action->isEnabled()) {
-            m_content->setAuxVisible(key, !m_content->auxVisible(key));
+            const bool opening = !m_content->auxVisible(key);
+            m_content->setAuxVisible(key, opening);
+            // 菜单呼出不止取消隐藏，还须选中对应页签，否则用户看不到目标。
+            if (QDockWidget* current = auxiliaryDock(key); opening && current != nullptr) { current->raise(); }
         }
     });
-    // Dock 被用户以标题栏关闭钮/宿主开关关闭时同步记忆与勾选态（用户意愿
-    // 的另一入口——只经菜单翻转会让"X 关闭"在下次启动复活）。守卫：顶层
-    // 窗口不可见期间的可见性抖动（启动过程/最小化/退出拆卸）不记忆——
-    // 那不是用户意愿，误记会把最小化态持久化成"用户隐藏"。
-    if (dock != nullptr) {
-        QDockWidget* watched = dock;
-        QObject::connect(dock, &QDockWidget::visibilityChanged, this,
-                         [this, key, watched](bool visible) {
-                             if (m_content == nullptr) {
-                                 return;  // 未装配/已收口——不记忆
-                             }
-                             if (watched->window() == nullptr
-                                 || !watched->window()->isVisible()) {
-                                 return;  // 顶层窗口不在屏——非用户意愿抖动
-                             }
-                             m_content->setAuxVisible(key, visible);
-                         });
-    }
     m_hostAuxToggles.emplace_back(key, action);
 }
 
@@ -2015,6 +2059,11 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
                 m_content->auxVisible(kAuxKeyOptimizationDock));
         }
 #endif
+        // UI-T82：六域统一页签化，一份工作区高度替代六份最小高度的累加。
+        detail::arrangeDomainWorkspace(*hostWindow, *this,
+            {m_modelingDock, m_requirementsDock, m_kinematicsDock,
+             m_dynamicsDock, m_selectionDock, m_optimizationDock},
+                {m_propsDock, m_kinematicsAdvancedDock});
         m_propsDock->show();
         m_tasksDock->show();
         // 区域旗标重施（UI-T18——PM-14 跨会话记忆不被装载重显夺回）：三区
@@ -4770,15 +4819,16 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
     //             ＋截图后退出。
     // 驱动脚本负责双场景的 CWD 与辅助键夹具（见留痕 README）。
     const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
+    const bool dockResize = (smoke == QLatin1String("dock-resize"));
     const bool firstRun = (smoke == QLatin1String("layout"));
     const bool secondRun = (smoke == QLatin1String("layout2"));
-    if (!firstRun && !secondRun) {
+    if (!firstRun && !secondRun && !dockResize) {
         return;
     }
 
     // 度量/断言拍：1200 ms——晚于装载呈现自证（0 拍重申）与两拍宽度收束
     // （0/100 ms），取"宿主装载语义全部落定后"的稳定布局态。
-    QTimer::singleShot(1200, this, [this, firstRun] {
+    QTimer::singleShot(1200, this, [this, firstRun, dockResize] {
         std::cout << "[ird-ui-smoke-layout] started mode="
                   << (firstRun ? "first" : "second") << std::endl;
         std::vector<std::string> lines;  // UTF-8 报告行（几何走查＋断言结论）
@@ -4822,6 +4872,149 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
         QWidget* central = hostWindow->centralWidget();
         lines.push_back("host-window cur=" + std::to_string(hostWindow->width())
                         + "x" + std::to_string(hostWindow->height()));
+
+        // UI-T82/UX-09/PM-14：真实六域宿主巡检，先钉住旧纵排布局的失败能力。
+        // 环境变量显式启用才运行；只在独立工作目录执行，不创建/修改研发项目。
+        if (dockResize) {
+            const std::vector<std::pair<const char*, QDockWidget*>> domains{
+                {kAuxKeyModelingDock, m_modelingDock},
+                {kAuxKeyRequirementsDock, m_requirementsDock},
+                {kAuxKeyKinematicsDock, m_kinematicsDock},
+                {kAuxKeyDynamicsDock, m_dynamicsDock},
+                {kAuxKeySelectionDock, m_selectionDock},
+                {kAuxKeyOptimizationDock, m_optimizationDock}};
+            // 经内容装配端口呼出，和菜单使用同一可见性权威；断言预期不借用布局实现。
+            for (const auto& [key, dock] : domains) {
+                check(dock != nullptr, std::string("domain-present:") + key);
+                if (qEnvironmentVariableIsSet("IRD_UI_SMOKE_CLEAN_SETTINGS")) {
+                    check(dock != nullptr && !m_content->auxVisible(key),
+                          std::string("factory-starts-hidden:") + key);
+                }
+                if (dock != nullptr) { m_content->setAuxVisible(key, true); }
+            }
+            const bool allPresent = std::all_of(domains.begin(), domains.end(),
+                [](const auto& item) { return item.second != nullptr; });
+            if (allPresent) { // 缺席域先报告失败，不让巡检自身空指针崩溃掩盖装配原因。
+                m_content->setRegionVisible(WorkbenchRegion::Bottom, true);
+                if (m_kinematicsAdvancedDock != nullptr) {
+                    m_content->setAuxVisible(kAuxKeyKinematicsAdvancedDock, true);
+                }
+                hostWindow->showNormal();
+                hostWindow->resize(1600, 900);
+                settleEvents(350);
+                if (m_modelingDock != nullptr) {
+                    const auto peers = hostWindow->tabifiedDockWidgets(m_modelingDock);
+                    for (const auto& [key, dock] : domains) {
+                        check(dock == m_modelingDock || peers.contains(dock),
+                              std::string("one-domain-tab-group:") + key);
+                    }
+                }
+                // 切换标签是遮挡，不是关闭；每个域均须保留打开记忆和可访问滚动视口。
+                for (const auto& [key, dock] : domains) {
+                    if (dock == nullptr) { continue; }
+                    dock->raise();
+                    settleEvents(90);
+                    for (const auto& [otherKey, otherDock] : domains) {
+                        check(otherDock != nullptr && !otherDock->isHidden()
+                                  && m_content->auxVisible(otherKey),
+                              std::string("tab-switch-keeps-open:") + otherKey);
+                    }
+                    bool readableTabs = false;
+                    for (QTabBar* tabs : hostWindow->findChildren<QTabBar*>(QString(), Qt::FindDirectChildrenOnly)) {
+                        for (int i = 0; i < tabs->count(); ++i) {
+                            if (tabs->tabText(i) == dock->windowTitle()) {
+                                readableTabs = tabs->elideMode() == Qt::ElideNone
+                                    && tabs->usesScrollButtons();
+                            }
+                        }
+                    }
+                    check(readableTabs, std::string("readable-module-tabs:") + key);
+                    auto* scroll = qobject_cast<QScrollArea*>(dock->widget());
+                    check(scroll != nullptr && scroll->widgetResizable(),
+                          std::string("scroll-viewport:") + key);
+                }
+                // 四种窗口几何均要求独立导航、活动域和三维画布在窗内，不能互相盖住。
+                for (int step = 0; step < 4; ++step) {
+                    if (step == 0) { hostWindow->showNormal(); hostWindow->resize(1280, 720); }
+                    if (step == 1) { hostWindow->showMaximized(); }
+                    if (step == 2) { hostWindow->showFullScreen(); }
+                    if (step == 3) { hostWindow->showNormal(); hostWindow->resize(1000, 680); }
+                    settleEvents(300);
+                    lines.push_back("step-" + std::to_string(step)
+                        + " host=" + std::to_string(hostWindow->width()) + "x"
+                        + std::to_string(hostWindow->height()) + " min="
+                        + std::to_string(hostWindow->minimumSizeHint().width()) + "x"
+                        + std::to_string(hostWindow->minimumSizeHint().height())
+                        + " dpr=" + std::to_string(hostWindow->devicePixelRatioF()));
+                    check(hostWindow->height() >= hostWindow->minimumSizeHint().height(),
+                          "window-fits-minimum-layout-step-" + std::to_string(step));
+                    check(central != nullptr && central->width() > 0 && central->height() > 0,
+                          "central-nonzero-step-" + std::to_string(step));
+                    check(!geometry().intersects(m_optimizationDock->geometry()),
+                          "tree-domain-disjoint-step-" + std::to_string(step));
+                    check(hostWindow->rect().contains(geometry())
+                              && hostWindow->rect().contains(m_optimizationDock->geometry()),
+                          "docks-contained-step-" + std::to_string(step));
+                    snapPng(hostWindow, ("dock-resize-" + std::to_string(step) + ".png").c_str());
+                }
+                // 真关闭只影响目标域，重开仍属于同一组，控件/草稿对象不重新构造。
+                QWidget* originalPanel = m_requirementsDock->widget();
+                m_requirementsDock->close();
+                settleEvents(100);
+                check(!m_content->auxVisible(kAuxKeyRequirementsDock), "close-updates-memory");
+                check(m_content->auxVisible(kAuxKeyModelingDock), "close-keeps-other-open");
+                // 走真实视图菜单动作，而不是直接 show；覆盖 setupMenu 早于装配的时序。
+                for (const auto& [key, action] : m_hostAuxToggles) {
+                    if (key == kAuxKeyRequirementsDock) { action->trigger(); }
+                }
+                settleEvents(100);
+                check(m_content->auxVisible(kAuxKeyRequirementsDock)
+                          && m_requirementsDock->isVisible(), "menu-reopen-selects-domain");
+                check(m_requirementsDock->widget() == originalPanel, "reopen-preserves-widget");
+                check(hostWindow->tabifiedDockWidgets(m_modelingDock).contains(m_requirementsDock),
+                      "reopen-preserves-tab-group");
+                // 浮动面板关闭后其 window() 就是不可见的自身，仍须写回用户意愿。
+                m_requirementsDock->setFloating(true);
+                settleEvents(100);
+                m_requirementsDock->close();
+                settleEvents(100);
+                check(!m_content->auxVisible(kAuxKeyRequirementsDock), "floating-close-updates-memory");
+                for (const auto& [key, action] : m_hostAuxToggles) {
+                    if (key == kAuxKeyRequirementsDock) { action->trigger(); }
+                }
+                settleEvents(100);
+                check(m_requirementsDock->isVisible(), "floating-menu-reopens-once");
+                // 用户复位必须把曾拆组/浮动的域及任务重新安放，不重建业务控件。
+                if (m_tasksDock != nullptr) { m_tasksDock->setFloating(true); }
+                m_content->submitCommand("view.resetLayout");
+                settleEvents(150);
+                check(!m_requirementsDock->isFloating(), "reset-clears-floating");
+                check(m_tasksDock != nullptr && !m_tasksDock->isFloating()
+                          && hostWindow->dockWidgetArea(m_tasksDock) == Qt::BottomDockWidgetArea,
+                      "reset-restores-bottom-task-dock");
+                for (const auto& [key, dock] : domains) { m_content->setAuxVisible(key, true); }
+                settleEvents(100);
+                check(hostWindow->tabifiedDockWidgets(m_modelingDock).size() == 5,
+                      "reset-restores-six-domain-group");
+                check(m_requirementsDock->widget() == originalPanel, "reset-preserves-widget");
+                if (m_propsDock != nullptr && m_kinematicsAdvancedDock != nullptr) {
+                    // 复位默认关闭高级辅助区；先呼出再检查可访问的右侧页签归组。
+                    m_content->setAuxVisible(kAuxKeyKinematicsAdvancedDock, true);
+                    settleEvents(100);
+                    check(hostWindow->tabifiedDockWidgets(m_propsDock).contains(m_kinematicsAdvancedDock),
+                          "inspectors-share-right-column");
+                }
+            }
+            QFile report(outDir + QLatin1String("/dock-resize-report.txt"));
+            if (report.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+                for (const auto& line : lines) { report.write(QByteArray::fromStdString(line) + '\n'); }
+            } else { failures.push_back("report-write-failed"); }
+            std::cout << "[ird-ui-smoke-layout] "
+                      << (failures.empty() ? "DOCK_RESIZE_PASS" : "DOCK_RESIZE_FAIL")
+                      << " failures=" << failures.size() << std::endl;
+            QCoreApplication::exit(failures.empty() ? 0 : 1);
+            return;
+        }
 
         if (firstRun) {
             // ---- 首启场景：P1 默认收敛＋P2 中央保护＋P3 按钮语义化 --------

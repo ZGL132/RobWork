@@ -5,6 +5,7 @@
 | 项目 | 内容 |
 | --- | --- |
 | 文档代号 | UNIT-UI |
+| 文档版本 | v1.102（2026-10-15，UI-T82 统一停靠与缩放防重叠实施登记）：§4.4/4.5 增嵌入宿主的六域标签组、滚动视口和显隐解释；§10.1 增 factory-reset-only 注入例外；§13 登记后继任务。契约 ready，等待独立验收，不代表已合入。前一版本保留如下。 |
 | 文档版本 | v1.101（2026-10-15，UI-T81 立项落位登记〔返工批——attempt 1 FAIL 记录 traceability/acceptance/UI-T79-20261015.md 两条阻断的处置；编号自 UI-T79 顺延（T79/T80 已被 DTB §2.11 行 391/392 占用，v0.62 取下一可用号先例），DTB v0.77 同批登记〕：§4.2 FormEditCommon.hpp 行追加 refreshParamTablePanel 显式刷新公共入口——setBaseline 只更新编辑会话状态不触发 Qt 重绘，建模域在首次选中/对象切换/批量回填后必须显式调用（PanelContext 经面板 property 保管、与面板同寿命——生命周期约束随接口注释冻结）；测试锚＝modeling gui_test UI-T81 两用例（首次回填真实值＋同对象暂存保护含确认明细防屏幕假保留）。前一版本 v1.100 保留如下。）|
 | 文档版本 | v1.100（2026-10-12，WP-24-T02 实现落位登记——应用启动与异常诊断（PM-17/AT-11）studio 壳装配面〔契约 tasks/foundation/WP-24-T02.json；分支 pipeline4/redesign-main〕：①**崩溃捕获设施落位**＝studio/CrashCapture.{hpp,cpp} 新 TU（零 Qt——捕获路径纪律的结构性保证）：OS 级捕获〔Windows SEH 过滤器＋CRT 终止族 SIGABRT/invalid-parameter/purecall/terminate——SIGSEGV 族不登记的实测口径与看门狗自我了断登记于 diagnostics.md §14.4 v0.15〕＋防重入一次性闸门＋CrashReportInput 六段组装→既有 CrashReportWriter 写用户目录；StudioMain 入口最先安装＋UiPlugin::initialize 经 setCrashSnapshotSource 接线 dev 日志尾（快照源三段如实留空〔任务/finding/项目登记权威在 project/execution 会话态〕）；diagnostics 单元源码零改动（Writer 设施沿用不重写——分工冻结兑现）；②**PM-17 启动序四项盘点与增量**＝静态插件装配既有（不重复实现）＋命令行参数 --no-splash/--ird-crash-test（防误触四道闸）＋设置加载 QSettings startup/splash-enabled（最小集）＋闪屏最小实现（QSplashScreen 程序绘制可禁用）——每项取舍契约 note 登记；③测试＝ui_test 272/272（＋CrashCaptureTest 5：六段组装/空段诚实/防重入/写失败降级/快照源失败隔离）＋ui_contract_test 38/38（＋StudioCrashContractTest 3 进程级：真 SEH 崩溃→文件落盘脱敏/CRT abort 同款/hang→看门狗 841 ms 自我了断）＋真机 sdurws_ird_studio --ird-crash-test av 实证（用户目录 crash 文件、exceptionType=seh-access-violation）＋ui_plugin 零错误；冒烟 ui_test 252＋contract 25 全绿；ird_gates 零新增命中；validate-task/docs PASS；留痕 traceability/builds/wp24-t02/；详见 §16.7 v1.98。前一版本 v1.97：UI-T78 实现落位登记；v1.96：WP-10-T05 阶段 B 三维交互批次立项登记；v1.95：FIX-PANEL 返工轮补登；v1.94：FIX-PANEL 三域面板启动崩溃修复落位登记；v1.93：ASM-PANEL 三新域面板挂位收口登记）|
 | 文档版本 | v1.99（2026-10-12，FIX-T2 采样点着色功能批实施落位——F-495 收官批：View3DSampleGrid 契约追加 sampleIndices/highlightedSampleIndex＋SampleGridRender 高亮渲染＋UiPlugin 投影链双缝＋teardown 第十类收口＋三面测试；§13 新增 UI-T80 行＋§16.7 v1.99 行；F-495 六项诉求全闭环待宿主复验翻牌，详见 §16.7 v1.99）。前一版本 v1.98（2026-10-12 治理批台账滞后修正——完整描述见下行）|
@@ -347,11 +348,15 @@ ui/include/sdurws/ird/ui/          命名空间 sdurws::ird::ui
 - 各区最小内容尺寸：左栏 240 px、右栏 280 px、底栏 160 px、中央区剩余空间；浮动窗口不小于 320×240。
 - **最小可用布局**定义：顶栏（单行紧凑）＋中央区＋状态行（8 px 内响应）三要素恒在；其余区可隐藏。恢复默认布局命令把五区恢复出厂位形并清除该会话的浮动窗口记忆。
 
+**UI-T82 嵌入宿主增量（UX-09）**：工业项目树位于左侧上部，建模/需求/运动学/动力学/选型/优化六域位于同一左侧标签组；右侧属性诊断与运动学高级配置共用标签组，任务保留底部停靠。装载和恢复默认布局时统一拓扑、将浮动域重新入位；普通 resize/最大化/全屏不重排页签。域面板、右侧检查区和底部内容置于 widgetResizable 滚动视口，超出区域的原始表单以滚动访问，不能将最小高度累加传播到宿主。业务视口高度下限 120 逻辑像素（原始表单最小尺寸不变、底栏仍 160），为 200% 缩放的屏幕客户区保留标签栏预算；窄栏使用滚动完整标题而非全部省略。保留原控件与未提交草稿；首选尺寸均为 Qt 逻辑像素，不修改计算数据或框架源码。原有顶层窗口的自动折叠规则不变（嵌入形态不承担宿主全窗折叠）。
+
 ### 4.5 布局状态归属与恢复
 
 - **布局状态是会话/用户级状态，不是项目持久化数据**：窗口几何、停靠位形、页签顺序、工具栏可见性、命令面板历史，写入用户级设置（QSettings 或用户目录，PM-14），**绝不写入 `.rwdesign`**；用户自定义布局不随项目携带（切换项目保留同一用户布局）。
 - 恢复失败（设置损坏/版本不识别）：回退出厂默认布局＋`UI-LAYOUT-RESTORE-FAILED`（Dev 诊断），**不得阻塞启动**；损坏的用户设置段整段丢弃。
 - 会话显示开关（渲染分组、线框/透明、碰撞高亮显示、单位显示）同属用户级/会话级，与计算策略开关严格分组异名（UX-08；policy.md POL-ID-3 数据层保证——显示设置不存在于策略字段）。
+
+**UI-T82 显隐语义（PM-14）**：Qt 标签被遮挡也会发出 visibilityChanged(false)，因此域辅助记忆取显式 hidden 位，父窗口未显示/退出时的显隐事件不回写。显隐监听在 Dock 创建后绑定；视图菜单触发时按稳定辅助键查询当前 Dock，打开同时 raise 选中对应标签。显式关闭仅改变该域的用户打开意愿。布局迁移只管理本插件所拥有的 Dock，不改 RobWorkStudio 自有布局持久化。
 
 ### 4.6 用户级设置项（ui 拥有，PM-14）
 
@@ -1089,6 +1094,9 @@ FindingRecord 投影字段（diagnostics.md §5.2）→ 对话呈现映射：fin
 
 ## 10. 公共接口详细设计
 
+**UI-T82 装配钩子增量**：WorkbenchContentDeps 的窗口几何/状态四钩子仍须全有或全无，唯 EmbeddedDock 可仅提供 restoreFactoryWindowState，复位本插件停靠拓扑；不取得宿主几何保存/恢复权威。其余半组注入仍由 build() 拒绝，公共字段/ABI 不变。
+
+
 > O-31 裁决注（2026-09-19）：本节及 §4～§9、§11 行文中出现的对端类型（§3.2 清单）自 v0.4 起一律经 §3.3 UiPorts/UiProjections 承载（ui 自有最小端口接口＋值投影，L5 装配适配）；对应接口签名随首个消费该面的 UI 任务实现冻结并做单元卡增量修订登记（CCP §5 载体），需求语义零变化。**v0.5 首消费冻结登记（WP-10-T03）**：①`UiPorts.hpp` 落位 C-10/C-11 两端口——`ui::IPolicySummarySource::summary()→PolicySummaryProjection`（计数形态：available/collisionDomainEnabled/thresholdCount/filterPairCount/explicitNotApplicableCount；逐字段细化随 UI-T07 首消费登记）、`ui::IUiNameResolver::resolveObjectId(core::ObjectId)→std::optional<std::string>`（runtime.md §7.3 localName 语义的 ui 侧投影，失败→nullopt——呈现占位，R-4 不变）；②`UiProjections.hpp` 落位 `ProjectMetadataProjection`（projectId/projectDisplayName/writable——ProjectMetadataView 语义锚点）、`DraftPresenceProjection`（present/sessionDirty，`*`＝present∨sessionDirty——§4.2 状态栏行原文）、`ProjectContextProjection`（元数据＋草稿位复合快照，nullopt＝无项目首页态）、`RecentProjectEntry`、`PolicySummaryProjection` 及 **PM-11 格式唯一权威纯函数** `formatProjectStatusText`（`<显示名>[*][（只读）]`；无项目→"未打开项目"）；③`WorkbenchShell` 实现随本任务落位（五区 Dock/布局记忆含损坏回退/无项目首页/状态栏/壳层命令门控），落位细节见 §10.1 增注。
 
 本章九个接口全部位于 `sdurws::ird::ui`（§3.3 头文件）。通用约定：所有接口为抽象类（纯虚），实现类由 ui 库提供并经 `IWorkbenchShell` 装配门面获取；除非单独注明，**方法只允许在 UI 线程调用**（违规＝未定义行为＋DT 断言）；返回值一律值语义/只读引用，接口不交出内部可变状态。
@@ -1613,6 +1621,7 @@ public:
 | UI-T03 | 工作台壳与五区布局（WorkbenchShell、五区 Dock、布局记忆与恢复、最小可用布局、无项目首页、状态栏格式） | UI-T02 | UI-WB-1/2/3、UI-SES-1 | WP-10-T03 |
 | UI-T04 | 七态公共状态呈现（StatusWordProjection＋九态短标签；映射表 §6.3） | UI-T03、WP-05-T08、WP-08-T06 | UI-STG-3；不新增状态词；证据不足不得显示通过 | WP-10-T04 |
 | UI-T05 | 三维视图交互（RWStudioView3D 集成、视图/拾取/截图/分组显隐）——**阶段 A 仅中央区占位与视图契约登记，交互实现归阶段 B** | UI-T03 | UX-11 清单登记；KIN-06 会话姿态语义钉住（AT-04） | WP-10-T05（阶段 B 交付） |
+| UI-T82 | 全屏缩放防重叠：左侧项目树＋六域标签组、右侧属性/高级配置标签组，长表单滚动边界；菜单晚绑定 Dock＋显式 hidden 记忆；恢复默认布局重新入位且保留控件。任务契约 tasks/foundation/UI-T82.json；证据 traceability/builds/ui-t82/；实施分支 wp10-t82，ready 待独立验收 | UI-T81（done） | UX-09、PM-14；仅 ui 自有装配，无框架/计算域修改 | WP-10-T82 |
 | UI-T78 | 三维模型几何渲染＋ray-cast 拾取对接（WP-10-T05 阶段 B 三维交互批次 ui 侧——**实现落位 2026-10-12（分支 wp10-t05；前置 RT-T15 图元几何挂接随 rt-t15 并入；验证留痕 traceability/builds/wp10-t05/），status=ready 待独立评审放行（合入收尾段置 done）**；契约 tasks/foundation/UI-T78.json；F-550 剩余面收口。落位要点：渲染面＝呈现分组校准（图元 drawable 经框架 updateSceneGraph 入场景后由 calibratePublishedModelRenderGroups 校准 Physical 组——Geometry 构造缺省 CollisionObject 组而产品主相机缺省绘制掩码 ShowCollisionModels=false，不校准缺省不可见＝F-550 渲染剩余面真实机理；校准在场景侧＝呈现工件显示属性，编译产物 WC/快照零触碰）；拾取面＝既有 pickFrame 缝零重写、发布模型命中面自然纳管；渲染生命周期/确定性 ui_test 具名用例＋拾取可达/KIN-06 写回 gui 用例；九项清单逐项核对登记（框架 API 锚点见留痕 README——宿主原生八项在位不重实现，碰撞高亮业务数据面归域侧诚实边界））：①发布模型几何渲染＝HostWorkCellPresentationObject 呈现半区（UI-T77 发布链宿主单入口挂接点）消费已发布快照 WorkCell 帧树＋RT-T15 编译图元几何，drawable 经发布/重编译/项目切换既有编排入场景（INV-B4 单入口不旁路），生命周期随发布 WC 场景节点整体收口（UI-T77 骨架组同款纪律，与骨架组共存不冲突）；②ray-cast 拾取对接＝发布模型帧/Drawable 纳入既有 HostView3DGateway.pickFrame 缝（Ctrl+双击→pickFrame→SA-05 反解→域分发＋View3DPick 选中——缝机制零重写，只补发布模型命中面），写回语义受 view3DSessionPoseContract 钉住（KIN-06 四布尔）；③九项清单交付边界＝宿主原生提供项（标准/相机视图、缩放、透视正交、线框透明、渲染分组显隐、PNG 截图）随 RWStudioView3D 集成既有在位逐项核对验收、不重实现（SA-02——框架级缺能力走 patches 流程），本批网关交付项＝①②两面；碰撞高亮与组掩码渲染承载在位、业务数据面归域侧消费任务（诚实边界登记） | RT-T15、UI-T77 | F-550 渲染＋拾取两剩余面收口（发布后呈现模型几何＋Ctrl+双击拾取可达）；KIN-06 四布尔钉住用例；渲染分组显隐对本批 drawable 生效；UI-T33/52/65/76/77 三维预览链与骨架呈现零回归；**mesh 保真度升级（真实 visual/collision 网格渲染——解析加载器/localTransform 透传/资源字节消费）待所有者裁决，不在本批验收** | WP-10-T05（阶段 B 批次） |
 | UI-T80 | 采样点着色功能批——F-495 样本级定位收官（**2026-10-12 实施落位**；契约 tasks/foundation/FIX-T2.json，分支 pipeline3/redesign-main；F-495 六项诉求收官批——五项已由 UI-T64/T65 交付，本批兑现「校验项点击定位采样点」样本级半区）：①契约追加＝View3DSampleGrid 表尾追加 sampleIndices（域样本号对齐表——P-FIX-4 区域切片下标偏移防线：合并段按区域过滤后数组下标≠域样本号）＋highlightedSampleIndex（当前高亮键，nullopt＝无高亮；缺省值零破坏旧渲染——operator== 同步扩展）；②渲染高亮＝SampleGridRender 构造期经 resolveHighlightedPosition 纯函数（新私有头 plugin/SampleHighlight.hpp——命中/未命中/空对齐表/无键四路径，抽 ui_test 可编译面）解析高亮点，放大点芯＋三轴蓝描边环（复用 kRegionTintDefaultGl——F-495「蓝框=当前选中」建议语义零新增色值；Render 构造冻结纪律——整组重投零私有态旁路 P-FIX-5）；③投影链＝UiPlugin 合并段 sampleIndices 透传＋高亮键置入＋区域锚清位对账（跨区域串亮防线）＋双缝（bindSampleHighlightRequest 点击置键＋pushSampleResults 清单投递——KinChannelSampleRecord→SampleResultView 翻译单点〔R-2〕，状态中文词表 sampleStateText）；④teardown 第十类收口＝高亮键/区域锚清零＋清单清空（F-559 同族）；⑤测试＝ui_test SampleHighlight 六用例＋ui_gui 网关替身新字段透传断言＋requirements_gui 清单空态/点击出口两用例；详见 FIX-T2 卡与 requirements.md §9.8 采样结果清单行 | UI-T64、UI-T65、UI-T77 | F-495 样本级定位（全库唯一 open blocking 收官）；ui_test/ui_gui/requirements_gui 全绿＋六套件回归＋ird_gates 零新增；诚实降级三态钉住；既有 View3D 预览用例零回归 | UI-T52、UI-T65 | FIX-T2（F-495 收官批） |
 | UI-T06 | CommandRegistry＋GlobalShortcutRegistry＋命令面板 | UI-T03 | UI-CMD-1/2、UI-HKY-1/2/3；模糊搜索与键盘导航；未绑定命令面板可达 | WP-10-T06 |

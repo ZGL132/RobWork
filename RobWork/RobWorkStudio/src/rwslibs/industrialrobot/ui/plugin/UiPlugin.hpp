@@ -258,6 +258,14 @@ private:
                               const QString& baseToolTip = QString());
     /// 视图菜单辅助 Dock 开关工厂（UI-T24 P1——域自持面板默认不呈现的呼出
     /// 通道；勾选态随辅助可见性记忆刷新，Dock 关闭钮同步记忆）。
+    /**
+     * @brief 按辅助键现取宿主 Dock；菜单构造早于面板，不能捕获当时的空指针。
+     * @param key [in] domain.* 辅助键，UI-T24 登记词表；不持有传入引用。
+     * @return 本插件持有的非 owning 指针；未知键/域缺席返回 nullptr。
+     * @throws 无。仅 UI 线程，生命周期由宿主 Qt 对象树管理。
+     */
+    QDockWidget* auxiliaryDock(const std::string& key) const noexcept;
+
     void addAuxDockToggle(QMenu* target, const char* title, const char* auxKey,
                           QDockWidget* dock);
     /// 中央区最小可见宽度保障装配（UI-T24 P2——事件观察挂宿主主窗口与

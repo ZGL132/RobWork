@@ -127,7 +127,9 @@ struct WorkbenchContentDeps {
     /// 宿主控件（快捷键/面板/对话框宿主；必填——空＝build() 拒绝）。
     QWidget* hostWidget = nullptr;
 
-    // ---- 顶层窗口宿主的几何/位形承载钩子（成组提供或成组缺省）----
+    // ---- 窗口几何/位形承载钩子（成组提供或成组缺省）----
+    // UI-T82 例外：EmbeddedDock 可仅提供 restoreFactoryWindowState，
+    // 用于重建插件自身 Dock 拓扑；不保存/恢复宿主几何，不接管框架布局记忆。
 
     /// 序列化当前窗口几何（QMainWindow::saveGeometry——UI 线程值快照）。
     std::function<QByteArray()> saveWindowGeometry;
@@ -136,7 +138,8 @@ struct WorkbenchContentDeps {
     /// 恢复窗口几何＋位形（返回 false＝字节在但宿主判不可恢复——§4.5 损坏
     /// 路径的判别输入；两段都成功才返回 true）。
     std::function<bool(const QByteArray& geometry, const QByteArray& state)> restoreWindowState;
-    /// 恢复出厂几何＋位形（§4.4"恢复出厂位形"——宿主层构建期快照的回放）。
+    /// 恢复出厂几何＋位形（顶层宿主回放构建期快照；EmbeddedDock 可仅
+    /// 提供此钩子重建插件自身停靠拓扑，UI 线程，无窗口持久化副作用——UI-T82）。
     std::function<void()> restoreFactoryWindowState;
 
     // ---- 会话入口处理器覆写（§11.5；nullopt＝§7.1 阶段 A 占位——harness 形态）----
@@ -248,7 +251,7 @@ public:
      *
      * 校验（返回值轨 fail-fast，不抛——§10.1 错误类型同口径）：wiring 必填
      * 指针非空（diagSink/redaction/policySource/nameResolver——eventBus/
-     * devLog 允许为空但须显式声明）；hostWidget 非空；几何/位形钩子成组。
+     * devLog 允许为空但须显式声明）；hostWidget 非空；几何/位形钩子成组（EmbeddedDock 可仅有工厂复位钩子）。
      *
      * @return true＝构建成功；false＝校验被拒（调用方错误）或已 build 过
      */
