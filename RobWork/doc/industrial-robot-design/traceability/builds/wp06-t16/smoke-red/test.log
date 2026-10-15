@@ -1,0 +1,1022 @@
+UpdateCTestConfiguration  from :C:/Users/zgl18/.codex/worktrees/rt-t16-inertia/RobWork/build-smoke/runtime/DartConfiguration.tcl
+Test project C:/Users/zgl18/.codex/worktrees/rt-t16-inertia/RobWork/build-smoke/runtime
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: sdurws_ird_runtime_test
+
+1: Test command: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build-smoke\runtime\Release\sdurws_ird_runtime_test.exe
+1: Working Directory: C:/Users/zgl18/.codex/worktrees/rt-t16-inertia/RobWork/build-smoke/runtime
+1: Test timeout computed to be: 600
+1: Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+1: Note: Google Test filter = *F784*:*F784.*:*F784*:*F784_AT01*
+1: [==========] Running 8 tests from 2 test suites.
+1: [----------] Global test environment set-up.
+1: [----------] 7 tests from InertiaValidationF784
+1: [ RUN      ] InertiaValidationF784.SmallScaleAsymmetryRejected_MDL06_AT01
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: [  FAILED  ] InertiaValidationF784.SmallScaleAsymmetryRejected_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.LargeScaleRelativeNoiseAccepted_MDL06_AT01
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: false
+1:   accepted
+1:     Which is: true
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: false
+1:   accepted
+1:     Which is: true
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: [  FAILED  ] InertiaValidationF784.LargeScaleRelativeNoiseAccepted_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.RelativeThresholdSidesAcrossScales_MDL06_AT01
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999995e-07
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999995e-07
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999995e-07
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999995e-07
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999995e-07
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999995e-07
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999995e-07
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999995e-07
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: false
+1:   accepted
+1:     Which is: true
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 1
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 1
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: false
+1:   accepted
+1:     Which is: true
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 1
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 1
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: false
+1:   accepted
+1:     Which is: true
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 1000000
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 1000000
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: false
+1:   accepted
+1:     Which is: true
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 1000000
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 1000000
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: false
+1:   accepted
+1:     Which is: true
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: false
+1:   accepted
+1:     Which is: true
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(932): 9.9999999999999997e+199
+1: 
+1: [  FAILED  ] InertiaValidationF784.RelativeThresholdSidesAcrossScales_MDL06_AT01 (1 ms)
+1: [ RUN      ] InertiaValidationF784.SymmetrizationDeterminesSpd_MDL06_AT01
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelFixture.hpp(327): error: Failed
+1: RT-T16 惯量硬反例：未抛出（期望稳定码 runtime/input-invalid）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: 
+1: [  FAILED  ] InertiaValidationF784.SymmetrizationDeterminesSpd_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.ExtremeScalesKeepSpdDecision_MDL06_AT01
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1e-300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999998e-201
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 9.9999999999999997e+199
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(902): error: Expected: (void)f.build() doesn't throw an exception.
+1:   Actual: it throws sdurws::ird::runtime::RuntimeError with description "runtime/input-invalid: tools[0].inertia：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3".
+1: S5 不得误拒绝合法惯量
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 links[1].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: links[1].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 连杆惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(900): error: Expected equality of these values:
+1:   report.ok()
+1:     Which is: true
+1:   accepted
+1:     Which is: false
+1: S3 必须符合附录 D #6/#7 独立预期
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(211): error: Value of: report.ok()
+1:   Actual: true
+1: Expected: false
+1: 期望被拒绝（含 tools[0].inertia 的阻断问题）
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(213): error: Expected: (issue) != (nullptr), actual: NULL vs (nullptr)
+1: 缺少字段路径的问题: tools[0].inertia；实际 issues 数=0
+1: Google Test trace:
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(886): 工具惯量，kg·m²
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp(962): 1.0000000000000001e+300
+1: 
+1: [  FAILED  ] InertiaValidationF784.ExtremeScalesKeepSpdDecision_MDL06_AT01 (2 ms)
+1: [ RUN      ] InertiaValidationF784.StrictPositiveBoundaryWithoutMargin_MDL06_AT01
+1: [       OK ] InertiaValidationF784.StrictPositiveBoundaryWithoutMargin_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.ZeroSkewAndNonFiniteRejected_NFRCOR03_AT01
+1: [       OK ] InertiaValidationF784.ZeroSkewAndNonFiniteRejected_NFRCOR03_AT01 (1 ms)
+1: [----------] 7 tests from InertiaValidationF784 (7 ms total)
+1: 
+1: [----------] 1 test from CanonicalModelBuilderTest
+1: [ RUN      ] CanonicalModelBuilderTest.InertiaOriginalBitsPreserved_F784_AT01
+1: unknown file: error: C++ exception with description "runtime/input-invalid: chain.links[1].inertia：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05" thrown in the test body.
+1: 
+1: [  FAILED  ] CanonicalModelBuilderTest.InertiaOriginalBitsPreserved_F784_AT01 (0 ms)
+1: [----------] 1 test from CanonicalModelBuilderTest (0 ms total)
+1: 
+1: [----------] Global test environment tear-down
+1: [==========] 8 tests from 2 test suites ran. (7 ms total)
+1: [  PASSED  ] 2 tests.
+1: [  FAILED  ] 6 tests, listed below:
+1: [  FAILED  ] InertiaValidationF784.SmallScaleAsymmetryRejected_MDL06_AT01
+1: [  FAILED  ] InertiaValidationF784.LargeScaleRelativeNoiseAccepted_MDL06_AT01
+1: [  FAILED  ] InertiaValidationF784.RelativeThresholdSidesAcrossScales_MDL06_AT01
+1: [  FAILED  ] InertiaValidationF784.SymmetrizationDeterminesSpd_MDL06_AT01
+1: [  FAILED  ] InertiaValidationF784.ExtremeScalesKeepSpdDecision_MDL06_AT01
+1: [  FAILED  ] CanonicalModelBuilderTest.InertiaOriginalBitsPreserved_F784_AT01
+1: 
+1:  6 FAILED TESTS
+1/1 Test #1: sdurws_ird_runtime_test ..........***Failed    0.17 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+ird    =   0.17 sec*proc (1 test)
+
+Total Test time (real) =   0.17 sec
+
+The following tests FAILED:
+	  1 - sdurws_ird_runtime_test (Failed)                  ird
+Errors while running CTest
+Output from these tests are in: C:/Users/zgl18/.codex/worktrees/rt-t16-inertia/RobWork/build-smoke/runtime/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.

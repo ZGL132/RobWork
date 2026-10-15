@@ -1,0 +1,64 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\libs\Release\pqp.lib
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\libs\Release\yaobi.lib
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  Auto build dll exports
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  CanonicalModel.cpp
+  DescriptionValidator.cpp
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_runtime_test
+  DescriptionValidatorTest.cpp
+  sdurws_ird_runtime_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe

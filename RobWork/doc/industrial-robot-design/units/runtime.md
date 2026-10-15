@@ -412,7 +412,7 @@ public:
 | --- | --- | --- | --- | --- | --- | --- |
 | `objectId` / `localName` | core::ObjectId / std::string | 是 | — | **入** | 链内唯一 | 同关节口径 |
 | `visual / collision` | optional ResourceRef | 否 | nullopt | **入**（资源以**内容摘要**入身份，路径不入——§8.6） | ResourceRef ∈ CanonicalModel.resourceManifest | 合法：已固化资源摘要；非法：引用清单外的资源 |
-| `mass / centerOfMass / inertia` | SourcedValue 三元组 | 否 | 全 NotProvided | **入**（含状态） | 惯量基准＝质心、参考姿态＝连杆系（M-2）；物性断言（m＞0/SPD/三角不等式）判定归 modeling 处理器（MDL-06），编译器复核已提供值的合法性（非法→`InputInvalid`，阻止编译——与断言一致的就地拦截） | 合法：NotProvided（capability 降级）；合法：provided 且 SPD；非法：provided 且 m≤0 或张量非对称（对称性容差附录 D 第 6 项）非正定 |
+| `mass / centerOfMass / inertia` | SourcedValue 三元组 | 否 | 全 NotProvided | **入**（含状态） | 惯量基准＝质心、参考姿态＝连杆系（M-2）；物性断言（m＞0/SPD/三角不等式）判定归 modeling 处理器（MDL-06），编译器复核已提供值的合法性（非法→`InputInvalid`，阻止编译——与断言一致的就地拦截） | 合法：NotProvided（capability 降级）；合法：provided 且对称化后严格 SPD；非法：provided 且 m≤0、含非有限值、相对不对称超附录 D 第 6 项 1×10⁻¹²，或对称化后非正定（附录 D 第 7 项） |
 
 #### 4.3.4 工具、场景与传动块
 
@@ -1395,9 +1395,9 @@ public:
 
 ---
 
-### 12.1 工程打磨后继 RT-T16（2026-10-15）
+### 12.1 工程打磨 RT-T16（2026-10-15）
 
-对应 DTB WP-06-T16，canonical 契约 `tasks/foundation/RT-T16.json`，status=ready，尚未实施。F-784 在当前 runtime 实库双尺度复现；范围为 S3 DescriptionValidator 与 S5 CanonicalModelBuilder 的惯量相对对称性（附录 D #6）及对称化后严格 SPD（#7）。小尺度明显相对不对称必须拒绝，大尺度相对容差内不得误拒；用缩放/零/非有限和边界反例验证，不改公共模型布局、输入物理值或身份算法。
+对应 DTB WP-06-T16，canonical 契约 `tasks/foundation/RT-T16.json`，实施分支已完成自测，待独立验收。F-784 已由 S3 DescriptionValidator 与 S5 CanonicalModelBuilder 共同修复：惯量相对不对称采用 `max|Iij−Iji| / ‖(I+Iᵀ)/2‖F ≤ 1×10⁻¹²`，零范数按既有绝对差退化；SPD 在实际对称化临时矩阵上以严格正主元判定，不设数值余量，不回写输入或身份字节。回归覆盖小/大尺度、阈值两侧、对称化近退化、上下尺度、次正规数、零/纯反对称、NaN/±Inf、两入口一致性和编码身份保持。
 
 ## 13. 后续阶段承接与接口交接清单
 

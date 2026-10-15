@@ -21,6 +21,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdint>
+#include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -29,6 +30,7 @@
 #include <vector>
 
 #include <sdurws/ird/runtime/Codec.hpp>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
 namespace fs = std::filesystem;
 using namespace sdurws::ird::runtime;
@@ -248,6 +250,36 @@ TEST(CanonicalModelBuilderTest, RejectsIllegalProvidedValues)
         provided(rw::math::InertiaMatrix<double>(-0.01, 0, 0, 0, 0.02, 0, 0, 0, 0.03),
                  userProv());
     expectBuildThrows(nonSpd.toBuilder(), RuntimeErrorCode::InputInvalid, "非正定惯量");
+}
+
+/** RT-T16/CON-05：对称化仅用于校验，不回写输入值或内容身份字节。 */
+TEST(CanonicalModelBuilderTest, InertiaOriginalBitsPreserved_F784_AT01)
+{
+    IRD_TEST_INFO("MDL-06", {"AT-01"}, std::nullopt);
+    Fixture f = richFixture();
+    const auto original = rw::math::InertiaMatrix<double>(
+        1e6, 5e-7, -0.0, 0.0, 1e6, 0.0, -0.0, 0.0, 1e6); // kg·m²，质心处连杆系。
+    f.chain.links[1].inertia = core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+        original, userProv());
+    const auto model = f.build();
+    const auto stored = model.chain().links[1].inertia.tryValue();
+    ASSERT_TRUE(stored.has_value());
+    EXPECT_EQ((*stored)(0, 1), 5e-7) << "接受近对称输入，不把平均值写回";
+    EXPECT_EQ((*stored)(1, 0), 0.0);
+    EXPECT_TRUE(std::signbit((*stored)(0, 2))) << "保留负零位模式（CON-05）";
+    const auto bytes = rtcodec::encode(model);
+    const auto parsed = rtcodec::parse(bytes);
+    ASSERT_TRUE(parsed.ok());
+    EXPECT_EQ(rtcodec::encode(parsed.get()), bytes) << "近对称张量编码精确往返";
+    EXPECT_EQ(parsed.get().contentIdentity(), model.contentIdentity());
+    EXPECT_EQ(f.build().contentIdentity(), model.contentIdentity()) << "同输入可复现";
+
+    Fixture transposed = f;
+    transposed.chain.links[1].inertia = core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+        rw::math::InertiaMatrix<double>(1e6, 0.0, -0.0, 5e-7, 1e6, 0.0, -0.0, 0.0, 1e6),
+        userProv());
+    EXPECT_NE(transposed.build().contentIdentity(), model.contentIdentity())
+        << "相同对称部分不等于相同输入字节，不可合并身份";
 }
 
 /** 全模型 ObjectId 唯一性（CM-0 值层面）→ StructureInvalid；引用∈objectRefs
