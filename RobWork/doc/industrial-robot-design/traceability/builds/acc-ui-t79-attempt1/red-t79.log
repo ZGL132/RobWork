@@ -1,0 +1,70 @@
+Note: Google Test filter = *UI_T79*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.FirstSelectionShowsImportedValuesWithoutCancel_UI_T79
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1854): error: Value of: ok
+  Actual: false
+Expected: true
+首次回填不得显示未设：axis-y
+
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1855): error: Expected equality of these values:
+  number
+    Which is: 0
+  field.second
+    Which is: 1
+axis-y
+
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1854): error: Value of: ok
+  Actual: false
+Expected: true
+首次回填不得显示未设：origin-x
+
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1855): error: Expected equality of these values:
+  number
+    Which is: 0
+  field.second
+    Which is: 0.12
+origin-x
+
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1854): error: Value of: ok
+  Actual: false
+Expected: true
+首次回填不得显示未设：origin-y
+
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1855): error: Expected equality of these values:
+  number
+    Which is: 0
+  field.second
+    Which is: -0.029999999999999999
+origin-y
+
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1854): error: Value of: ok
+  Actual: false
+Expected: true
+首次回填不得显示未设：origin-z
+
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1855): error: Expected equality of these values:
+  number
+    Which is: 0
+  field.second
+    Which is: 0.40000000000000002
+origin-z
+
+[  FAILED  ] ModelingPanelGuiTest.FirstSelectionShowsImportedValuesWithoutCancel_UI_T79 (39 ms)
+[ RUN      ] ModelingPanelGuiTest.SameObjectRefreshKeepsPendingValue_UI_T79
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1873): error: Value of: host->findChild<QWidget*>((QString(QtPrivate::qMakeStringPrivate(u"" "ird_param_confirm_region"))))->isHidden()
+  Actual: true
+Expected: false
+
+[  FAILED  ] ModelingPanelGuiTest.SameObjectRefreshKeepsPendingValue_UI_T79 (24 ms)
+[----------] 2 tests from ModelingPanelGuiTest (63 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (64 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ModelingPanelGuiTest.FirstSelectionShowsImportedValuesWithoutCancel_UI_T79
+[  FAILED  ] ModelingPanelGuiTest.SameObjectRefreshKeepsPendingValue_UI_T79
+
+ 2 FAILED TESTS

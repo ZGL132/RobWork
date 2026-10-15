@@ -1,0 +1,17 @@
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(940): error: Expected: (structureTree->currentItem()) != (nullptr), actual: NULL vs (nullptr)
+定位链落点缺失（生产 sink 未接线——F-539 静默丢弃形态）
+
+[  FAILED  ] ModelingPanelGuiTest.LocateSinkProductionWiring_ReadinessRowClickFocusesTree_UI_T71 (34 ms)
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(964): error: Expected: (*it) != (nullptr), actual: NULL vs (nullptr)
+首关节树行未投影
+
+[  FAILED  ] ModelingPanelGuiTest.StructureButtons_InsertAndRemove_DraftOnly_UI_T47 (28 ms)
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1006): error: Expected: (*it) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] ModelingPanelGuiTest.StructureButtons_RemoveSelected_DraftOnly_UI_T47 (29 ms)
+C:\acc-20261015-uit79\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1053): error: Expected: (*it) != (nullptr), actual: NULL vs (nullptr)
+连杆树行未投影
+
+[  FAILED  ] ModelingPanelGuiTest.GeometryActionButtons_LoadAndDetach_UI_T48 (27 ms)
+[==========] 39 tests from 1 test suite ran. (1487 ms total)
+[  PASSED  ] 35 tests.

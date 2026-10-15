@@ -1,0 +1,6 @@
+IRD-GATE-SUB: 琛ㄥ渚濊禆杈
+IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_execution_perf_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺
+IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_optimization_perf_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺
+IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_project_perf_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺
+IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_ui_largedata_perf_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺
+IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_ui_perf_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺
