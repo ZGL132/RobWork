@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T81",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "建模交互打磨：基线回填、暂存保护、布局与状态指引（返工批）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T78"
+  ],
+  "requirements": [
+    "MDL-07",
+    "UX-05",
+    "UX-07",
+    "UX-09",
+    "KIN-12"
+  ],
+  "designRefs": [
+    "units/modeling.md#9.7",
+    "units/ui.md#4.2",
+    "REQUIREMENTS.md#18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/FormEditCommon.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/FormEditCommon.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/ParamTablePanelGuiTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/FormEditModelTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T81.json",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/docs/superpowers/plans/2026-10-15-modeling-interaction-polish.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/",
+    "RobWork/RobWorkSim/",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md"
+  ],
+  "outputs": [
+    "参数表回填显式刷新并保护同一对象的暂存输入",
+    "建模结构树与属性区可拖动分隔，操作区维持既有状态语义",
+    "双模式与 Windows GUI 回归留痕、手动验收说明"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_gui_test sdurws_ird_ui_gui_test sdurws_ird_ui_test",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1"
+  ],
+  "acceptance": [
+    "首次选择及对象切换后显示真实基线，不依赖取消恢复",
+    "同对象刷新保留未确认值，切换目标后显示对应权威值",
+    "单位切换不产生设计修改，左右分隔器可调整编辑空间",
+    "状态提示不把草稿保存声明为已编译/三维成功；D-MDL-10 草稿不编译",
+    "受影响两模式构建与回归真实运行，失败/SKIP 如实记录；既有结构树定位/插删/定位链用例（UI-T47/T48/T71）双模式全绿"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-31"
+  ],
+  "branch": "wp10-t81",
+  "note": "返工批（attempt 1 FAIL 处置，验收记录 traceability/acceptance/UI-T79-20261015.md@acc/UI-T79/1）。阻断②处置：编号顺延 UI-T79→UI-T81（DTB v0.62 先例——实测占用即取下一可用号；T79 已被 DTB §2.11 行 391〔≙FIX-T1 ui 核实面〕占用、T80 已被 FIX-T2 占用），DTB v0.77 §2.11 登记 WP-10-T81 行，units/ui.md v1.99＋units/modeling.md v0.50 同批增量，实施计划 §4 末项补手动验收说明后勾选。阻断①处置：QSplitter 改版使结构树降一级父层，四个既有用例的无名 findChild<QTreeWidget*>()（原'首树＝结构树'假设）转中右栏就绪表——根因经探针实证（findChildren 序 readiness 在前），修复＝七处查找点改按既有 objectName=ird_modeling_struct_tree 具名查找（意图不变、去序脆弱性），非产品缺陷；实施者 attempt 1 环境未暴露的成因推断为增量构建未重编测试二进制（确定性机理下环境差异不可能）。用户侧会话授权返工；先红后绿；正式验收由全新上下文负责（本返工会话不自验），本会话不合入。"
+}

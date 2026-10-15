@@ -269,6 +269,11 @@ QWidget* createParamTablePanel(ParamEditModel& model, IFormEditOutlet* outlet,
     // 共享上下文（lambda 全体经 shared_ptr 捕获——面板销毁即释放）。
     auto ctx = std::make_shared<PanelContext>(PanelContext{
         model, outlet, options, false, {}, {}, nullptr, nullptr, nullptr, nullptr});
+    // setBaseline 不属于 Qt 对象，无法自行发出刷新信号；保存上下文地址供
+    // 建模域在批量回填后显式调用 refreshParamTablePanel。上下文由面板内
+    // lambda 的 shared_ptr 捕获并与面板同寿命，调用点始终位于面板存活期。
+    panel->setProperty("ird_param_context",
+                      QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(ctx.get())));
 
     // ---- 筛选行：筛选输入＋显示单位切换（两个都是非编辑态操作——
     // 不产生脏标记、不触发确认：UX-07 后半句）。
@@ -568,6 +573,22 @@ QWidget* createParamTablePanel(ParamEditModel& model, IFormEditOutlet* outlet,
     }
 
     return panel;
+}
+
+void refreshParamTablePanel(QWidget* panel)
+{
+    if (panel == nullptr) {
+        return;
+    }
+    const QVariant value = panel->property("ird_param_context");
+    if (!value.isValid()) {
+        return;
+    }
+    auto* context = reinterpret_cast<PanelContext*>(value.value<quintptr>());
+    if (context == nullptr || context->table == nullptr) {
+        return;
+    }
+    refreshTable(*context);
 }
 
 }  // namespace ui

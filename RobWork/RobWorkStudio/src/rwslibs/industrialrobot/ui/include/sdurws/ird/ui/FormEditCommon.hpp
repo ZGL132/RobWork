@@ -656,6 +656,15 @@ QWidget* createParamTablePanel(ParamEditModel& model,
                                const ParamTablePanelOptions& options = {},
                                QWidget* parent = nullptr);
 
+/**
+ * @brief 在编辑模型基线改变后立即重绘参数表（UI-T79）。
+ *
+ * setBaseline 只更新编辑会话状态，不会自动触发 Qt 控件重绘；建模面板在
+ * 首次选中对象或切换目标后必须调用本函数，避免值列暂时显示“未设”。
+ * @param panel [in] createParamTablePanel 返回的参数表根控件；不接管所有权
+ */
+void refreshParamTablePanel(QWidget* panel);
+
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
