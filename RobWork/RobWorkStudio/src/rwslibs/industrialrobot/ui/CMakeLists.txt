@@ -362,7 +362,7 @@ add_executable(sdurws_ird_ui_test
     test/IndustrialProjectTreeModelTest.cpp   # UI-T21——树模型：五分组封闭/注册协议/重建四拒绝/定位
     test/PropertyInspectorModelTest.cpp       # UI-T22——检查器模型：注册纪律/L1 刷新/D5D6 分野/激活编排
     test/CrashCaptureTest.cpp     # WP-24-T02——崩溃捕获发射核心模型面（六段组装/降级/防重入；零 Qt）
-    test/DefectPinningTest.cpp)  # E2 审计批——F-554/F-557/F-558 缺陷钉扎（宿主装配面接线形态源码扫描；零框架依赖——两模式可跑）
+    test/DefectPinningTest.cpp)  # E2 审计批——F-554/F-557/F-558/F-714 缺陷钉扎（宿主装配面接线形态＋框架补丁面源码扫描；零框架依赖——两模式可跑）
     # FIX-T2 的 SampleHighlightTest.cpp 自基础源列表移入下方 if(TARGET sdurws)
     # 守卫块（基线冒烟 C1083 修正）：该 TU 经 View3DPreviewContract.hpp 与
     # plugin/SampleHighlight.hpp include rw/math 头，而冒烟树按设计"无任何
