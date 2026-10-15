@@ -26,7 +26,9 @@
 #include <cmath>
 #include <cstring>
 #include <optional>
+#include <set>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include <sdurws/ird/core/Errors.hpp>  // CoreError（诊断记录工厂校验失败转译）
@@ -1264,8 +1266,32 @@ Expected<RuntimeNameMap, RuntimeError> parseNameMap(const std::vector<std::uint8
                 RuntimeErrorCode::InputInvalid,
                 "codec/parseNameMap：尾随字节（偏移 " + std::to_string(r.offset()) + "）"});
         }
-        // ---- ④映射级不变量：条目序＝存储字典序、fullName 全局唯一、
-        // (objectId, scope) 唯一——任一违约＝非本单元产物（防伪造/乱序）。----
+        // ---- ④映射级不变量复核（findings F-806 修复）：任一违约＝非本单元
+        // 产物（防伪造/乱序）。复核两项真不变量：
+        //   1) 条目序＝(scope, localName, ObjectId) 存储字典序（严格序——
+        //      同键三元组即完全重复，排序复核已就地拒绝）；
+        //   2) fullName 全局唯一（§7.3 不变量「映射内 fullName 两两精确不等」
+        //      ——WC 单一命名空间，§7.4 双射的名称前提）。
+        // 全名唯一性按「已见全名集」做全局判定，不依赖排序相邻比对——为什么：
+        // 存储序键不含 scopeToken（解析侧为线上自由文本），不同枚举作用域的
+        // 条目可携带同名 token 文本，非相邻的全名重复可构造；修复前的相邻
+        // 等值比对只覆盖排序相邻对，漏检后恢复路径 fromValidatedEntries 的
+        // 全名索引 emplace 静默保留首条，resolveRuntimeName 对被遮蔽条目
+        // 静默错解析（findings F-806 的缺陷链，回归用例
+        // ParseRejectsNonAdjacentDuplicateFullName_F_806_RT_NM_1 钉扎）。
+        // 显式不查 (objectId, scope) 唯一性：同对象多条目（同一几何资源被
+        // 多处引用→多条 Geometry 条目）是 §15.4 登记的合法形态，身份索引取
+        // 存储序首条（确定性）——强制去重会拒绝合法映射（E1 批 rich 夹具
+        // 往返实测翻红，findings F-806 resolution ①；本修复按条目描述缺陷面
+        // 落在全名全局唯一复核，(objectId, scope) 维持合法多名语义）。
+        // 确定性：复核按存储序进行，首个重复条目即拒，错误信息含条目下标
+        // （无环境依赖——NFR-COR-02）。
+        // 已见全名集（string_view 视图借 entries 字符串存储——集只活到本函数
+        // 返回，无悬垂；排序性同时支撑确定性的首重复判定）。
+        std::set<std::string_view> seenFullNames;
+        if (!entries.empty()) {
+            seenFullNames.insert(entries.front().fullName);
+        }
         for (std::size_t i = 1; i < entries.size(); ++i) {
             const RuntimeNameMap::Entry& prev = entries[i - 1];
             const RuntimeNameMap::Entry& curr = entries[i];
@@ -1281,11 +1307,14 @@ Expected<RuntimeNameMap, RuntimeError> parseNameMap(const std::vector<std::uint8
                     "codec/parseNameMap：条目 " + std::to_string(i)
                         + " 违反存储字典序（(scope, localName, ObjectId)——§7.2/§7.6）"});
             }
-            if (prev.fullName == curr.fullName) {
+            // 全名唯一（全局集复核——insert 失败＝该全名已在更早条目出现过，
+            // 无论相邻与否；替代修复前仅覆盖相邻对的等值比对，F-806）。
+            if (!seenFullNames.insert(curr.fullName).second) {
                 return Expected<RuntimeNameMap, RuntimeError>::err(RuntimeError{
                     RuntimeErrorCode::InputInvalid,
-                    "codec/parseNameMap：全名重复 \"" + prev.fullName + "\"（名称唯一性"
-                    "不变量——WC 单一命名空间）"});
+                    "codec/parseNameMap：全名重复 \"" + curr.fullName + "\"（条目 "
+                        + std::to_string(i) + "；名称唯一性不变量——WC 单一命名空间，"
+                        "全局复核 F-806）"});
             }
         }
         // ---- ⑤内容身份重算（编码不含摘要字段——身份＝SHA-256 over 编码

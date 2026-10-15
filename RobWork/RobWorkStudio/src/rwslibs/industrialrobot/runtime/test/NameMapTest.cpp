@@ -441,6 +441,73 @@ TEST(NameMapRoundtripTest, ParseRejectsMalformedInput_RT_NM_1)
     }
 }
 
+/**
+ * F-806 回归（修复前必红——缺陷钉扎；findings.json F-806，2026-10-12 立卡）：
+ * IRDNAME 解析侧映射级 fullName 唯一性复核若只做「排序相邻比对」，非相邻的
+ * 全名重复必漏检。成因：存储字典序键＝(scope, localName, ObjectId)，不含
+ * scopeToken（解析侧为线上自由文本），不同枚举作用域的条目可携带同名 token
+ * 文本——本用例构造 Joint 作用域 "Dev.m"→Joint 作用域 "Dev.z"（间隔条目）→
+ * LinkFrame 作用域 "Dev.m"：排序合法、逐条全名形态合法，"Dev.m" 重复且两条
+ * 目不相邻。缺陷形态下解析不报错，恢复路径 fromValidatedEntries 的全名索引
+ * emplace 静默保留首条——被遮蔽条目经 resolveRuntimeName 静默错解析（§7.4
+ * 双射断言「无重复名称」被击穿，RT-NM-1 结构防御面失守）。
+ * 期望（修复后语义）：parseNameMap 以 InputInvalid 拒绝（映射级名称唯一性
+ * 不变量——§7.3「映射内 fullName 两两精确不等」；非本单元产物即拒）。
+ * 追溯：需求 ARC-04（唯一双向解析器）/MDL-14（完整映射无重复）；AT-18
+ * （§7.4 双向往返的名称唯一前提）。
+ */
+TEST(NameMapRoundtripTest, ParseRejectsNonAdjacentDuplicateFullName_F_806_RT_NM_1)
+{
+    using Entry = RuntimeNameMap::Entry;
+
+    // 三条目确定性身份（idFrom 种子派生——同组内既有形态；本用例排序键由
+    // (scope, localName) 决定，id 仅作同键裁决、不参与比较——排序假设与
+    // id 字节序无关，确定性成立）。
+    const core::ObjectId idA = idFrom<core::ObjectId>("f806-a");
+    const core::ObjectId idB = idFrom<core::ObjectId>("f806-b");
+    const core::ObjectId idC = idFrom<core::ObjectId>("f806-c");
+
+    // 条目工厂（测试内直构；fullName 拼装仅发生在测试内——产品路径的名称
+    // 拼装单点 R-4 不受影响；fullName 与 scopeToken/localName 逐字节自洽，
+    // 以通过解析侧条目级形态复核）。
+    auto makeEntry = [](const core::ObjectId& id, NameScope scope, const char* token,
+                        const char* local) {
+        Entry e;
+        e.objectId = id;
+        e.scope = scope;
+        e.scopeToken = token;
+        e.localName = local;
+        e.fullName = std::string{token} + "." + local;  // 测试内拼装（非产品路径）
+        e.authoritativeLocalName = local;
+        return e;
+    };
+
+    // 存储序（严格递增——排序复核可过）：Joint"m" < Joint"z" < LinkFrame"m"
+    //（scope 枚举序优先，同 scope 按 localName 字节序）。
+    std::vector<Entry> forged;
+    forged.push_back(makeEntry(idA, NameScope::Joint, "Dev", "m"));      // 全名 "Dev.m"（首现）
+    forged.push_back(makeEntry(idB, NameScope::Joint, "Dev", "z"));      // 间隔条目（相邻比对的盲区）
+    forged.push_back(makeEntry(idC, NameScope::LinkFrame, "Dev", "m"));  // 全名 "Dev.m"（重复——与首条非相邻）
+
+    // 经恢复路径成形为映射（其前置宣称由 parse 保证——F-806 缺陷面正是该
+    // 保证不实：相邻比对查不出非相邻重复），再编码为 IRDNAME 载荷（编码面
+    // 只序列化条目，不复核映射级不变量——伪造生产者可达此形态）。
+    const RuntimeNameMap forgedMap = RuntimeNameMap::fromValidatedEntries(
+        std::move(forged), core::ContentIdentity{}, sdurws::ird::runtime::kNameMapRuleVersion);
+    const std::vector<std::uint8_t> bytes = rtcodec::encodeNameMap(forgedMap);
+
+    // 期望：映射级复核拒绝非相邻全名重复（InputInvalid——非本单元产物）。
+    const auto parsed = rtcodec::parseNameMap(bytes);
+    ASSERT_FALSE(parsed.ok())
+        << "F-806：非相邻全名重复（\"Dev.m\" 两条目，中间隔 Joint\"Dev.z\"）"
+           "必须被映射级唯一性复核拒绝——漏检即恢复路径 emplace 静默保留首条"
+           "（resolveRuntimeName 静默错解析）";
+    EXPECT_EQ(parsed.error().code(), RuntimeErrorCode::InputInvalid)
+        << "映射级不变量违约＝数据错误（InputInvalid——查询轨拒绝而非外抛）";
+    EXPECT_NE(std::string{parsed.error().what()}.find("全名重复"), std::string::npos)
+        << "detail 回显重复全名（就地定位——NFR-COR-03 不吞错）";
+}
+
 /** 空映射不可编码（占位值不进序列化通道——NFR-COR-03 不吞错）。 */
 TEST(NameMapRoundtripTest, EmptyMapEncodeRejected)
 {
