@@ -363,10 +363,14 @@ public:
     /**
      * @brief 由已验证条目重建映射（rtcodec::parseNameMap 专用恢复路径）。
      *
-     * 前置（调用方保证——parse 已校验）：entries 已按 (scope, localName,
-     * ObjectId) 序、fullName 全局唯一、(objectId, scope) 唯一、Device 条目
-     * fullName==localName、其余 fullName==scopeToken+"."+localName。
-     * @param entries [in] 已排序去重的条目集（移动入）
+     * 前置（调用方保证——parse 已校验；findings F-806 如实化）：entries 已按
+     * (scope, localName, ObjectId) 序、fullName 全局唯一（解析侧按"已见全名集"
+     * 全局复核——非相邻重复同样拒绝，见 Codec.cpp 映射级不变量段）、Device
+     * 条目 fullName==localName、其余 fullName==scopeToken+"."+localName。
+     * (objectId, scope) 不要求唯一：同对象多条目（同一几何资源被多处引用→
+     * 多条 Geometry 条目）是 §15.4 登记的合法形态——本函数的全名索引因此
+     * 不会碰撞（emplace 保留首条仅对身份索引有语义，§15.4 取存储序首条）。
+     * @param entries [in] 已排序、全名唯一的条目集（移动入）
      * @param identity [in] 该条目集的 IRDNAME 内容身份（parse 侧重算值）
      * @param ruleVersion [in] 编码头携带的生成规则版本（透传恢复）
      * @return 重建完成的只读映射
