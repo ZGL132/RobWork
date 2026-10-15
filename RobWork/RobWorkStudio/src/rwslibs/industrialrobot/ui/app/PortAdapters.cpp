@@ -205,13 +205,21 @@ SerialTaskExecutor::~SerialTaskExecutor()
     delete m_impl;
 }
 
-void SerialTaskExecutor::post(std::function<void()> task)
+bool SerialTaskExecutor::post(std::function<void()> task)
 {
     {
         std::lock_guard<std::mutex> lock(m_impl->mutex);
+        if (!m_impl->running) {
+            // 停止后不接纳（R3 审计 C3 修复，2026-10-15）：原实现无条件
+            // 入队——停止后任务永不执行，同步等待方的 promise 永不置值
+            // （future.get() 无界挂起＝退出序列 UI 假死）。受理位返回调
+            // 用方（对照 m_settingsWriter.enqueue 的受理留痕同款口径）。
+            return false;
+        }
         m_impl->queue.push_back(std::move(task));
     }
     m_impl->cv.notify_one();
+    return true;
 }
 
 void SerialTaskExecutor::stop()

@@ -45,6 +45,8 @@
 #include <sdurws/ird/io/IoDiagnostics.hpp>   // io::errorCodeToken——IO-* 护栏码面唯一来源（禁字符串拼码）
 #include <sdurws/ird/modeling/DiagCodes.hpp> // MDL-IMPORT-XACRO-UNRESOLVED 码值常量（唯一书写点）
 
+#include "RelKeyNormalizer.hpp"  // reldetail::normalizeIncludeKey——折叠键单点实现（R3-A12 抽取）
+
 #include <pugixml.hpp>  // O-40：Xacro DOM 解析（复用 WP-13-T05 已登记依赖——vcpkg 经典模式，
                         // modeling PRIVATE）。有界性由 io BudgetGuard 前置保证：进入本单元的
                         // 字节已经 io 预算入账（SingleFileBytes/TotalBytes），DOM 规模与输入
@@ -203,56 +205,10 @@ std::string escapeXmlAttribute(std::string_view text)
 }
 
 // =====================================================================
-// relPath 折叠键规范化（include filename→依赖树相对键——io relPath 约定：
-// 正斜杠、词法折叠小写；"./"/"../"按词法消解，空段折叠）
+// relPath 折叠键规范化——实现抽取至单元私有共享头 RelKeyNormalizer.hpp
+// （R3 审计 A12：Import 的 mesh 引用键需同一解析——NFR-MNT-04 单点书
+// 写；本文件经 reldetail::normalizeIncludeKey 使用，语义零变化）
 // =====================================================================
-
-/**
- * @brief include filename 相对所在文件目录解析为依赖树折叠键。
- *
- * @param filenameRaw  [in] filename 属性替换后的字面值
- * @param includingKey [in] 所在文件的依赖树相对键（目录取其父路径）
- * @return 折叠键（正斜杠＋小写；不判存在性——存在性由调用方在树节点集/
- *         字节表中查证）
- *
- * 纯函数；确定性（词法操作——不触文件系统，SA-14）。
- */
-std::string normalizeIncludeKey(const std::string& filenameRaw,
-                                const std::string& includingKey)
-{
-    // 基目录：所在文件相对键的父路径（无斜杠＝入口在根——基为空）。
-    std::string base;
-    const auto slash = includingKey.rfind('/');
-    if (slash != std::string::npos) { base = includingKey.substr(0, slash + 1); }
-
-    // 拼接后词法消解（"."跳过、".."弹层；反斜杠统一为正斜杠；折叠小写
-    // ——与 io 树节点折叠键同一形态，查重键一致）。
-    std::vector<std::string> segments;
-    std::string joined = base + filenameRaw;
-    for (char& ch : joined) {
-        if (ch == '\\') { ch = '/'; }
-        ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
-    }
-    std::size_t i = 0;
-    while (i < joined.size()) {
-        if (joined[i] == '/') { ++i; continue; }             // 空段（根/双斜杠）——跳过
-        const std::size_t start = i;
-        while (i < joined.size() && joined[i] != '/') { ++i; }
-        const std::string seg = joined.substr(start, i - start);
-        if (seg == ".") { continue; }                        // 当前目录——无效果
-        if (seg == "..") {
-            if (!segments.empty()) { segments.pop_back(); }  // 上一级——弹一层
-            continue;
-        }
-        segments.push_back(seg);
-    }
-    std::string out;
-    for (const std::string& seg : segments) {
-        if (!out.empty()) { out += '/'; }
-        out += seg;
-    }
-    return out;
-}
 
 // =====================================================================
 // ${} 标识符判别（受控子集：${} 内只允许纯标识符引用）
@@ -651,7 +607,7 @@ bool emitElement(Engine& engine, std::size_t fileIdx, const pugi::xml_node& node
                                 &raw)) {
                 return false;
             }
-            const std::string key = normalizeIncludeKey(raw, engine.files[fileIdx].relKey);
+            const std::string key = reldetail::normalizeIncludeKey(raw, engine.files[fileIdx].relKey);
             const auto fileIt = engine.fileByKey.find(key);
             if (fileIt == engine.fileByKey.end()) {
                 // 走查期防御面（预扫描已在边级兜底——此处带元素行列定位）。

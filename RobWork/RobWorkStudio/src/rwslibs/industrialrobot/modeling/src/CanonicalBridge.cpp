@@ -435,10 +435,25 @@ runtime::Expected<runtime::JointDescription, ModelingError>
         //    显式直写与 DH 展开（§7.4 q_model=0 位姿——zeroOffset 不入几何）
         //    两来源同规折叠一次，不按来源特判；原展开侧预烘 zeroOffset 的
         //    双重折叠已随 F-590 移除。
+        //    折叠轴规格化（R3 审计 A14 修复，2026-10-15）：axisAngleRotation
+        //    的 Rodrigues 公式要求单位轴，而 jd.axis 直取建模原值（:416——
+        //    编辑入口"不静默归一化"，I-MDL-6 只保证可归一化；runtime 侧规
+        //    格化在 S5 编译期，晚于本折叠）——模长≠1 且 zeroOffset≠0 时折
+        //    叠出非正交旋转，FK 静默错。折叠前以与 runtime 编译器同一语义
+        //    规格化（确定除法；有限/非零由上游 I-MDL-6 与本处 normSq 校验
+        //    双保险），jd.axis 本身仍透传原值（规格化权威归 runtime——单点
+        //    纪律不变）。
         const rw::math::Transform3D<double> originModel =
             static_cast<rw::math::Transform3D<double>>(*origin);
+        double foldNormSq = 0.0;
+        for (int k = 0; k < 3; ++k) {
+            foldNormSq += jd.axis(k) * jd.axis(k);
+        }
+        const double foldNorm = std::sqrt(foldNormSq);
+        const rw::math::Vector3D<double> foldAxis(
+            jd.axis(0) / foldNorm, jd.axis(1) / foldNorm, jd.axis(2) / foldNorm);
         const rw::math::Rotation3D<double> folded =
-            rotMul(originModel.R(), axisAngleRotation(jd.axis, src.zeroOffset));
+            rotMul(originModel.R(), axisAngleRotation(foldAxis, src.zeroOffset));
         jd.origin = rw::math::Transform3D<double>(originModel.P(), folded);
     } else {
         return runtime::Expected<runtime::JointDescription, ModelingError>::err(

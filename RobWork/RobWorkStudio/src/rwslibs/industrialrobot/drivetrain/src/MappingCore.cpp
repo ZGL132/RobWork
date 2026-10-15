@@ -946,6 +946,26 @@ std::vector<ConsistencyFinding> DriveTrainMappingCore::checkVirtualWork(
     }
     const std::size_t w = windowIdx.size();
 
+    // 模型维度防御（R3 审计 A11 修复，2026-10-15）：本接口不走闸门
+    // validate（独立对照点/替换缝——直构或解码模型可直接到达），原实现
+    // 对"window 引用未命中轴表/ratios 短于轴数"的维度失配模型无任何核
+    // 对：windowIdealMotorTorque 以 C.rows 为界索引 tauJointW（w<C.rows
+    // 时越界读）、model.ratios[k] 无长度核对（k≥ratios.size() 越界读）。
+    // 迭代 2 对抗复审补充（R3 复审新发现 1）：C 还必须是**方阵**——
+    // windowIdealMotorTorque 按 rows×rows 双重循环经 operator() 线性索引
+    // （rows≠cols 时最大下标≥data.size()，越界读；解码端只核
+    // count==rows*cols 不核方阵性，方阵检查在 validate 闸门内而本接口
+    // 恰不走闸门）。守卫镜像 validate 的方阵判据，与上方 actual 维度核
+    // 对同一处置口径：违约返回空清单，由调用方维度断言发现——检查器
+    // 不抛、不越界。
+    if (model.ratios.size() < m) {
+        return findings;
+    }
+    if (w > 0 && model.window.has_value()
+        && (w != model.window->C.rows || model.window->C.rows != model.window->C.cols)) {
+        return findings;
+    }
+
     for (std::size_t i = 0; i < n; ++i) {
         // 期望值（理想虚功对偶）：窗口轴按 C_wᵀ·τ_w（§7.1——交叉耦合逐
         // 元素保留）；自由轴 c_j·τ_j（§8.1 对角形）。同一表达式路径下
@@ -1127,6 +1147,24 @@ ReflectedInertiaResult DriveTrainMappingCore::evaluate(
             }
         }
     }
+    // 自由轴转子条目齐备性（R3 审计 A10 修复，2026-10-15）：完整矩阵的
+    // 自由轴对角块 J_rotor/c² 同样以转子条目在场为前提——原实现只核对
+    // 窗口覆盖（windowRotorComplete），自由轴对角分支直接索引 model.rotor[r]，
+    // "窗口齐备但某自由轴转子缺失"（下标配对缺失是工厂显式允许的合法
+    // 形态）即 vector 越界读 UB。守卫扩展到自由轴：任一自由轴转子缺失
+    // 时完整矩阵整体不产出（缺失降级——与窗口转子缺失同轨不伪造；缺
+    // 失面仍由主管线 DT-ROTOR-MISSING 缺清单承载）。
+    bool freeRotorComplete = true;
+    for (std::size_t r = 0; r < n; ++r) {
+        bool inWindow = false;
+        for (const std::size_t idx : windowIdx) {
+            if (idx == r) { inWindow = true; break; }
+        }
+        if (!inWindow && r >= model.rotor.size()) {
+            freeRotorComplete = false;
+            break;
+        }
+    }
 
     // ---- R2 前置：窗口逆矩阵 C⁻¹（校验通过⟹可逆良态——§7.3 使用前提；
     // Gauss-Jordan 部分主元，确定性——文件头注）。
@@ -1198,8 +1236,9 @@ ReflectedInertiaResult DriveTrainMappingCore::evaluate(
 
     // ---- R2 完整关节轴系反射惯量矩阵（§9.3——不默认对角化：交叉惯量项
     // 保留在完整矩阵中随结果归档；块对角形态：自由轴对角 J/c²＋窗口块
-    // C⁻¹ᵀ·diag(J_rotor)·C⁻¹。窗口转子条目任一缺失时不产出——见上）。
-    if (w > 0 && windowRotorComplete) {
+    // C⁻¹ᵀ·diag(J_rotor)·C⁻¹。窗口或自由轴转子条目任一缺失时不产出——见上，
+    // R3 审计 A10：自由轴缺失原实现会越界索引 model.rotor[r]）。
+    if (w > 0 && windowRotorComplete && freeRotorComplete) {
         RowMatrix jref;
         jref.rows = n;
         jref.cols = n;

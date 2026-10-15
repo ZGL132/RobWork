@@ -178,6 +178,44 @@ private:
     double m_v2[2];  ///< 后段逐轴速度（rad/s）
 };
 
+/**
+ * @brief 全域二次曲线替身（R3 审计 A1 回归载体——qdd 恒非零且两侧同式，
+ *        C² 连续的解析面）。
+ *
+ * q(t)＝0.5·a·t²＋v0·t（1DOF，m）⇒ qd(t)＝a·t＋v0、qdd≡a（m/s²）。
+ * 边界两侧取同一解析式 ⇒ qd⁺＝qd⁻（速度连续真值）——正确的一阶回推
+ * qd(t∓δ)±qdd·δ 精确还原边界速度（残差 0），错误的回推符号则注入
+ * |4·δ·qdd| 的虚假差（δ=1e-3、qdd=1 时 4×10⁻³ m/s，远超判定容差
+ * 1e-9·‖qd‖+1e-9）——本替身使两种符号实现可分辨（既有黄金算例 qdd≡0
+ * 两符号同值，是符号缺陷逃过测试的原因）。
+ */
+class QuadraticCurve final : public trj::ITimeCurve {
+public:
+    QuadraticCurve(double totalS, double accel, double v0)
+        : m_totalS(totalS), m_accel(accel), m_v0(v0)
+    {
+    }
+
+    trj::TimedSample sampleAt(double t) const override
+    {
+        if (!(t >= 0.0 && t <= m_totalS)) {
+            throw trj::TrajectoryError("trajectory/test/curve-range",
+                                       "二次替身越界求值");
+        }
+        trj::TimedSample sample;
+        sample.t = t;
+        sample.q = rw::math::Q(1, 0.5 * m_accel * t * t + m_v0 * t);  // m
+        sample.qd = rw::math::Q(1, m_accel * t + m_v0);               // m/s
+        sample.qdd = rw::math::Q(1, m_accel);                          // m/s²
+        return sample;
+    }
+
+private:
+    double m_totalS;  ///< 总时长（s）
+    double m_accel;   ///< 恒定加速度（m/s²——两侧同值＝C² 连续）
+    double m_v0;      ///< 初速（m/s）
+};
+
 // =====================================================================
 // 真实管线黄金算例构造（timeParameterize 产物——T08 既有管线零改动的
  // 消费面证明）
@@ -356,6 +394,41 @@ TEST(TrjContinuousProcess, VelocityDiscontinuityDetected_TRJ08S3_ACC1)
     ASSERT_EQ(result.boundaryObservations.size(), 1U);
     EXPECT_FALSE(result.boundaryObservations.front().speedContinuousOk);
     EXPECT_DOUBLE_EQ(result.boundaryObservations.front().speedDelta, 0.2);
+}
+
+/**
+ * R3 审计 A1 回归：边界速度一阶泰勒回推符号（qdd≠0 面——既有黄金算例
+ * qdd≡0 两符号同值致缺陷逃过测试）。全域二次曲线（qd⁺＝qd⁻、qdd≡1
+ * m/s²，C² 连续真值）：正确回推 qd(t∓δ)±qdd·δ 精确还原边界速度 ⇒
+ * Ok 零素材；原实现回推符号写反时实测差＝|4·δ·qdd|＝4×10⁻³ m/s
+ * （δ=1e-3 s）≫ 容差 1e-9·1.1＋1e-9 ⇒ 误报 Violated（修复前本用例红，
+ * 修复后绿——红绿闭环由返工批验收实证）。
+ */
+TEST(TrjContinuousProcess, BoundaryTaylorSignA1_C2ContinuousOk)
+{
+    IRD_TEST_INFO("TRJ-08-S3", {}, std::nullopt);
+
+    // 边界时刻 1.0 s 处边界速度＝1×1.0＋0.1＝1.1 m/s（两侧同式——连续）。
+    auto curve = std::make_shared<QuadraticCurve>(2.0, 1.0, 0.1);
+    trj::ProcessBoundaryCheckResult result = trj::checkProcessBoundaries(
+        goldenRequest(curve, 2.0,
+                      boundary(0, 1.0, trj::BoundarySwitchKind::Continuous,
+                               2.0)));
+
+    // Ok 态：速度连续（回推残差≈0，远小于容差）＋切换语义达标。
+    ASSERT_EQ(result.status, trj::ProcessBoundaryStatus::Ok);
+    EXPECT_TRUE(result.violationRecords.empty());
+    ASSERT_EQ(result.boundaryObservations.size(), 1U);
+    const trj::ProcessBoundaryObservation& obs =
+        result.boundaryObservations.front();
+    // 解析对照：两侧回推估计精确还原边界速度 1.1 m/s（浮点和差残差
+    // ≤数 ulp，量级断言）。
+    EXPECT_NEAR(obs.speedBefore, 1.1, 1e-12);
+    EXPECT_NEAR(obs.speedAfter, 1.1, 1e-12);
+    EXPECT_NEAR(obs.speedDelta, 0.0, 1e-12);
+    EXPECT_TRUE(obs.speedContinuousOk);
+    EXPECT_TRUE(obs.switchSemanticsOk);
+    EXPECT_TRUE(obs.satisfied);
 }
 
 // =====================================================================

@@ -1099,6 +1099,11 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
         }
 
         // ---- ③builder 全量不变量复核（防篡改字节绕过构造约束）----
+        // setAxesPreNormalized(true)（R3 审计 A3 修复，2026-10-15）：编码
+        // 侧 builder 已把轴规格化为单位向量——重建路径再规格化对已单位化
+        // 轴不是逐位不动点（约三成概率 1 ulp 漂移），重建身份≠携带身份，
+        // parse(encode(x))==x 与 worker 物化通道对一般轴向模型确定性失败。
+        // 声明"轴已规范"跳过除法；有限性/非零校验与身份重算核对不变。
         CanonicalModel model = CanonicalModelBuilder()
                                    .setHeader(h)
                                    .setWorld(world)
@@ -1109,6 +1114,7 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
                                    .setDrivetrain(drivetrain)
                                    .setResourceManifest(std::move(manifest))
                                    .setDiagnostics(std::move(diags))
+                                   .setAxesPreNormalized(true)
                                    .build();
 
         // ---- ④身份/能力复核（篡改与半传输的确定性检测——D-13 前置）----

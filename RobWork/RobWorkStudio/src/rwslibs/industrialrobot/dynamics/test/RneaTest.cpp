@@ -209,6 +209,61 @@ TEST(DynRnea, StaticGravityTwoLinkAnalytic)
 }
 
 // =====================================================================
+// 用例 1c：非零零位偏置快照的权威角口径（R3 审计 A8 回归钉——返工批 O-9）
+// =====================================================================
+
+/**
+ * R3 审计 A8 回归钉（audit-r3-fixes-1 返工批 O-9——2026-10-15 修复
+ * 41bdbd4a 的"全链权威角"口径钉扎）。既有夹具恒 zeroOffset=0（两口径
+ * 位级同值、无判别力），本用例经 mutableChain 注入非零零位偏置（构建器
+ * 下游注入先例——见 mutableChain 注"跨版本快照/反序列化物化"的下游防
+ * 线；非零偏置正是该存在形态的合法快照事实），断言变换链按权威角 q_auth
+ * 直用：q_auth=(0,0) 的静态构型与零偏置模型 q=(0,0) 是同一位形——重力
+ * 矩与用例 1 的解析解逐位一致（zeroOffset 不参与本域任何计算——units/
+ * dynamics.md §5.3；与 kinematics 权威 FK、runtime RT-T07 三方一致）。
+ * 原缺陷形态（q_rw＝q_auth−zeroOffset）把几何评估在 q_rw=(−0.7,−0.7)
+ * 位形上——重力臂缩短（cos 0.7≈0.765≠1），两关节重力矩显著偏离解析解
+ * （变异还原即红；判别裕度 ≈30%，远超 1e-9 对照容差）。
+ */
+TEST(DynRnea, NonZeroZeroOffsetSnapshotUsesAuthoritativeAngle_R3_A8)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-01"},
+                  std::vector<std::string>{"AT-37", "R3-A8"});
+
+    CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    // 快照注入（构建器下游——mutableChain 既有先例）：两旋转关节零位偏
+    // 置 0.7 rad（任意非平凡值；有限——快照防御面的有限性校验照常通过，
+    // 不触发 NonFiniteInput 通道）。
+    const double kZeroOffset = 0.7;  // rad（零位偏置——快照透传事实）
+    RobotChain& chain = mutableChain(model);
+    chain.joints.at(0).zeroOffset = kZeroOffset;
+    chain.joints.at(1).zeroOffset = kZeroOffset;
+
+    const ObjectId condition = idFrom<ObjectId>("cond-static-offset");
+    InverseDynRequest req = makeRequest(model, condition,
+                                        {sampleAt(0.0, {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0})});
+    FakeContext ctx;
+    const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+
+    ASSERT_EQ(out.samples.size(), 2u);  // 逐时刻逐关节行（§4.6 排序纪律）
+    // 权威角口径钉：q_auth=(0,0) 位形的静态重力矩与零偏置解析解一致
+    // （期望式与用例 1 共享推导——非零偏置不得改变位形判读）。
+    const double expectedTau1 = -kG * (kM1 * kC1 + kM2 * (kL1 + kC2));  // N·m
+    const double expectedTau2 = -kG * kM2 * kC2;                        // N·m
+    expectNearRel(out.samples[0].tauGravity, expectedTau1,
+                  "关节 1 静态重力矩（非零偏置快照——权威角直用）");
+    expectNearRel(out.samples[1].tauGravity, expectedTau2,
+                  "关节 2 静态重力矩（非零偏置快照——权威角直用）");
+    // 输出样本行回记 q_auth 同值（样本 q 字段＝权威角 SI 真值——DynTypes
+    // 契约；zeroOffset 的剥离既不发生在变换链也不发生在输出侧）。
+    EXPECT_DOUBLE_EQ(out.samples[0].q, 0.0);
+    EXPECT_DOUBLE_EQ(out.samples[1].q, 0.0);
+    // 数值状态健康（无偏置注入引发的降级/非有限标记）。
+    EXPECT_EQ(out.samples[0].numericState, SampleNumericState::Ok);
+    EXPECT_EQ(out.samples[1].numericState, SampleNumericState::Ok);
+}
+
+// =====================================================================
 // 用例 1b：移动关节滑移臂（F-580 回归——audit/unit-code-review-20261009）
 // =====================================================================
 

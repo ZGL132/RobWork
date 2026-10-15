@@ -120,8 +120,29 @@ bool CommandPalettePanel::isOpen() const
     return isVisible();
 }
 
+void CommandPalettePanel::detachRegistries()
+{
+    // R3 审计 C7 拆卸面（2026-10-15）：先收起（隐藏后不再接收键盘/滚轮
+    // 事件——面板交互入口只剩程序化调用），再置空两个非拥有数据源指针；
+    // 此后 repopulate/executeCurrent/completeCategory 对空源安全返回。
+    // 调用时序契约＝内容层 shutdown 在 reset 注册表/快捷键表之前调用本
+    // 方法（见 WorkbenchContentImpl::shutdown ②段）。
+    closePalette();
+    m_commands = nullptr;
+    m_shortcuts = nullptr;
+}
+
+void CommandPalettePanel::setRejectedFeedback(
+    std::function<void(const CommandId&)> feedback)
+{
+    m_rejectedFeedback = std::move(feedback);
+}
+
 void CommandPalettePanel::repopulate()
 {
+    if (m_commands == nullptr) {
+        return;  // 数据源已注销（detachRegistries——拆卸期安全返回，R3-C7）
+    }
     m_list->clear();
 
     const std::string fuzzy = m_filter->text().toStdString();
@@ -198,15 +219,24 @@ void CommandPalettePanel::repopulate()
 
 void CommandPalettePanel::executeCurrent()
 {
+    if (m_commands == nullptr) {
+        return;  // 数据源已注销（detachRegistries——拆卸期安全返回，R3-C7）
+    }
     QListWidgetItem* item = m_list->currentItem();
     if (item == nullptr || item->flags() == Qt::NoItemFlags) {
         return;  // 空表/分组条——无命令可执行（防御，不虚构选择）
     }
     const CommandId id = item->data(Qt::UserRole).toString().toStdString();
     // 统一提交路径（§10.4 副作用行——面板与菜单/快捷键共用，无旁路）；
-    // 拒绝（不可执行/只读）由注册表出 UI-CMD-NOT-EXECUTABLE 诊断，面板收起
-    // 后由壳状态栏/诊断目录呈现（三条通道不混用——§7.7 结果回 UI 口径）。
-    (void)m_commands->submit(id);
+    // 拒绝（不可执行/只读）由注册表出 UI-CMD-NOT-EXECUTABLE 诊断。拒绝的
+    // 即时可见反馈（R3 审计 C4 修复，2026-10-15）：原实现丢弃结局——面板
+    // 是禁用灰行仍可 Enter 的唯一入口，被拒后界面零反应（注释声称"壳状
+    // 态栏呈现"但该路径无代码触达）。钩子＝装配层注入的与菜单/顶栏同源
+    // 状态行反馈；未注入＝历史行为。
+    const CommandOutcome outcome = m_commands->submit(id);
+    if (!outcome.accepted && m_rejectedFeedback) {
+        m_rejectedFeedback(id);
+    }
     closePalette();
 }
 
@@ -214,18 +244,22 @@ void CommandPalettePanel::completeCategory()
 {
     if (m_categoryFilter.has_value()) {
         m_categoryFilter.reset();  // 二次 Tab＝取消分类过滤（对称往返）
-    } else {
-        QListWidgetItem* item = m_list->currentItem();
-        if (item == nullptr || item->flags() == Qt::NoItemFlags) {
-            return;  // 无选中命令——无类别可补全
-        }
-        // 以选中命令的分类收窄（§7.4"Tab 补全类别"）——按 id 查回投影行。
-        const CommandId id = item->data(Qt::UserRole).toString().toStdString();
-        for (const CommandView& view : m_commands->query({})) {
-            if (view.id == id) {
-                m_categoryFilter = view.category;
-                break;
-            }
+        repopulate();
+        return;
+    }
+    if (m_commands == nullptr) {
+        return;  // 数据源已注销（detachRegistries——拆卸期安全返回，R3-C7）
+    }
+    QListWidgetItem* item = m_list->currentItem();
+    if (item == nullptr || item->flags() == Qt::NoItemFlags) {
+        return;  // 无选中命令——无类别可补全
+    }
+    // 以选中命令的分类收窄（§7.4"Tab 补全类别"）——按 id 查回投影行。
+    const CommandId id = item->data(Qt::UserRole).toString().toStdString();
+    for (const CommandView& view : m_commands->query({})) {
+        if (view.id == id) {
+            m_categoryFilter = view.category;
+            break;
         }
     }
     repopulate();

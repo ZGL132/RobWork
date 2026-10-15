@@ -164,9 +164,16 @@ public:
     {
         // Qt 父子纪律：deleteLater 由事件循环收尾（不在快捷键自身回调栈内
         // 立即 delete——防回调中拆除自身）。
+        // R3 审计 C7 修复（2026-10-15）：deleteLater 的物理删除延迟到事件
+        // 循环，而注册表（本对象）通常在 shutdown 中被立即 reset——拆卸窗
+        // 口内（deleteLater 已入队、尚未执行）事件循环仍在派发键事件，
+        // activated lambda 捕获的注册表 this 已释放 ⇒ 解引用悬垂。先整体
+        // 断开该快捷键的全部连接（activated 回调随之失效），再 deleteLater
+        // 收尾物理删除——拆卸序"先断连接、后销毁"与对象寿命对齐。
         for (auto& [command, shortcut] : m_shortcutByCommand) {
             (void)command;
             if (shortcut != nullptr) {
+                QObject::disconnect(shortcut, nullptr, nullptr, nullptr);
                 shortcut->deleteLater();
             }
         }
@@ -355,7 +362,15 @@ private:
         const CommandId command = binding.command;
         QObject::connect(shortcut, &QShortcut::activated, m_shortcutParent, [this, command] {
             if (m_deps.commands != nullptr) {
-                (void)m_deps.commands->submit(command);
+                const CommandOutcome outcome = m_deps.commands->submit(command);
+                // 拒绝反馈（R3 审计 C4 修复，2026-10-15）：快捷键是唯一能
+                // 绕过禁用态直达 submit 的入口（顶栏按钮被禁用态挡住），
+                // 原实现丢弃结局——被拒命令零用户可见反馈（诊断目录出线
+                // 但"诊断"页签为占位不可见）。钩子＝装配层注入的与菜单/
+                // 顶栏同源状态行反馈；未注入＝历史行为（可空缺省）。
+                if (!outcome.accepted && m_deps.onRejectedSubmit) {
+                    m_deps.onRejectedSubmit(command);
+                }
             }
         });
         m_shortcutByCommand.emplace(command, shortcut);

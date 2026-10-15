@@ -454,10 +454,15 @@ struct DraftSessionBinding {
  */
 struct DraftControllerDeps {
     /// 串行落盘执行器（必填——同一时刻至多一个 save 在途由单线程串行
-    /// 保证；§8.4 落盘线程纪律的宿主）。
-    std::function<void(std::function<void()>)> postToDiskThread;
-    /// UI 线程回投（必填——autosave 完成回执的 Marshal 通道）。
-    std::function<void(std::function<void()>)> postToUiThread;
+    /// 保证；§8.4 落盘线程纪律的宿主）。返回受理位（R3 审计 C3 修复，
+    /// 2026-10-15）：false＝执行器已停止、任务**未入队也不会执行**——调
+    /// 用方按失败值轨就地收口（原 void 签名下拒收任务被静默丢弃，同步
+    /// 入口的 future.get() 无界挂起＝退出序列 UI 假死）。UI 线程调用。
+    std::function<bool(std::function<void()>)> postToDiskThread;
+    /// UI 线程回投（必填——autosave 完成回执的 Marshal 通道）。返回受理
+    /// 位（同上——回执被丢弃时调度线程侧不得再触碰控制器状态；接收侧
+    /// 拒收处置见 dispatchAutosaveSave 注）。执行线程调用。
+    std::function<bool(std::function<void()>)> postToUiThread;
     /// anyDirty 翻转回调（允许为空——L5 接到会话控制器的生产者接线）。
     std::function<void(bool)> onSessionDirtyChanged;
     /// 用户级诊断 sink（UI-DRAFT-AUTOSAVE-FAILED 目录通道；允许为空）。

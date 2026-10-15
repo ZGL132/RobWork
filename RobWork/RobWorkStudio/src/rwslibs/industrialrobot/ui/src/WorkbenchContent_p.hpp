@@ -100,6 +100,9 @@ public:
     ICommandRegistry& commandRegistry() override;  ///< UI-T19 增量（权威实例引用——§10.1 v1.17）
     ShellCommandAvailability commandAvailability(const std::string& commandId) const override;
     void submitCommand(const std::string& commandId) override;
+    /// 拒绝反馈单点（R3 审计 C4）：submitCommand 的拒绝半区——快捷键/面板
+    /// 旁路提交入口经注入钩子共用同一状态行反馈。
+    void reportCommandRejection(const std::string& commandId);
     void showStagePanel(ui::StageId stage) override;  ///< WP-24-T03b 增量（§4.1 CentralAreaHost 换激活面板）
     std::vector<RecentProjectEntry> recentProjects() const override;
     void noteRecentProject(const std::string& canonicalPath) override;

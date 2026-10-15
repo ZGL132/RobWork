@@ -579,11 +579,76 @@ TEST(MdlDhConvert, ExplicitToDhExactOnDhDerivedChain_WP13T09_ACC2)
 }
 
 /**
- * ACC2/ACC3 ExactNonUnique 样例（重合轴退化族）：a=0 且 α=0 的相邻关节
- * →绕同一轴线的旋转不可分辨→解族存在→ExactNonUnique；自由参数按字典
- * 序规则定中性值 0（freeCoordinates 记录字典序坐标）；解集报告非空；
- * 重复调用逐字段相等（NFR-COR-02 禁止随机挑选）。
+ * R3 审计 P0-1 回归（findings F-356 处置面）：负偏距链的 Exact 解必须
+ * 事实回收（d 输出＝真值 −0.20 m）。历史缺陷：输出面 canonicalForm 依
+ * 据"恒等式 T(θ,d,a,α)=T(θ+π,−d,−a,α+π)"对 d<0 的解做分支翻转——该恒
+ * 等式不成立（平移 z 分量 −d≠d、旋转 Rz(θ+π)Rx(α+π)≠Rz(θ)Rx(α)），翻
+ * 转后的输出参数不再重现目标链（门④ FK 对照必超差）；既有测试/黄金数
+ * 据全为 d≥0 链故未暴露。修复＝删除翻转（仅保留 wrapPi 角度规范化）；
+ * 本用例以负 d 中间关节链钉住"参数级回收含符号"（修复前 d[0] 被翻成
+ * +0.20 ⇒ NEAR 断言红；修复后事实值 −0.20 ⇒ 绿）。
  */
+TEST(MdlDhConvert, ExplicitToDhNegativeDRecoversFactualValue_P0_1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-10"},
+                  std::vector<std::string>{"AT-16"});
+
+    // 三轴一般链（α 两两不同、a 非零——无重合/平行退化；J1 携带负偏距
+    // ——中段关节 d 由局部平移唯一确定（E 帧目标集下参数化单射），求解
+    // 器须收敛到事实负值；J3 末关节 a≠0 保证 θ3 可辨识（Exact 而非
+    // ExactNonUnique）。
+    DhChain chain;
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J1",
+                                       0.3, -0.20, 0.10, kPi / 3, 0.0));
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J2",
+                                       0.5, 0.25, 0.15, -kPi / 4, 0.0));
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J3",
+                                       0.2, 0.10, 0.08, kPi / 6, 0.0));
+
+    std::vector<core::DiagnosticRecord> expandDiags;
+    const std::vector<JointEntry> joints = expandedExplicitJoints(chain, expandDiags);
+    ASSERT_EQ(joints.size(), 3U);
+
+    const DhExplicitConverter converter;
+    std::vector<core::DiagnosticRecord> diags;
+    const DhConversionResult result = converter.explicitToDh(joints, diags);
+
+    // 判定：Exact/ExactNonUnique 皆可（一般链满秩应 Exact；若求解器落
+    // 在 F-356 登记的 E 帧保几何离散等价支上，雅可比秩亏面可能判
+    // ExactNonUnique——两态都是合法工程结论）；收敛。
+    ASSERT_TRUE(result.determination == DhDetermination::Exact
+                || result.determination == DhDetermination::ExactNonUnique)
+        << "判定=" << dhDeterminationToken(result.determination);
+    EXPECT_EQ(result.convergence, DhConvergenceState::Converged);
+    // d₁ 回收（本回归的核心断言）：J1 目标原点的 z 分量＝d1（标准 DH
+    // 单步 p_z＝d——分支不变量，任何合法 E 解都必取 −0.20 m）。修复前
+    // 输出面分支翻转把 d[0] 改写为 +0.20 ⇒ 本断言红；修复后事实值绿。
+    // θ/a/α（J1）与 J2 全参数不做逐值断言——它们在 E 帧目标集下存在
+    // F-356 登记的保几何离散等价支 (θ±π, d, −a, ∓α)（单步）/链级补偿
+    // 形态，解落在哪一支是合法求解自由度（黄金数据集 V-11 同口径——
+    // 参数面不作黄金期望，只验几何回收面）。
+    ASSERT_EQ(result.parameters.size(), 3U);
+    EXPECT_NEAR(result.parameters[0].d, -0.20, 1e-9) << "d1 须事实回收（含符号）";
+    EXPECT_LT(result.parameters[0].d, 0.0) << "d1 须保持事实负值（不做分支翻转）";
+    // 几何回收面（分支无关的最终裁断）：逐关节判定偏差全项在附录 D 第 5
+    // 项容差内——无论解落在哪支，目标 E 帧都必须逐项重现。
+    ASSERT_EQ(result.deviations.size(), 3U);
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_LE(result.deviations[i].axisAngleDeviation, 1e-9) << "轴角 关节 " << i;
+        EXPECT_LE(result.deviations[i].originPositionDeviation, 1e-9) << "原点 关节 " << i;
+    }
+    EXPECT_TRUE(diags.empty());
+    // 确定性：同输入重复调用逐字段相等（NFR-COR-02）。
+    std::vector<core::DiagnosticRecord> diagsRepeat;
+    const DhConversionResult repeat = converter.explicitToDh(joints, diagsRepeat);
+    ASSERT_EQ(repeat.parameters.size(), 3U);
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_EQ(repeat.parameters[i].thetaOffset, result.parameters[i].thetaOffset);
+        EXPECT_EQ(repeat.parameters[i].d, result.parameters[i].d);
+        EXPECT_EQ(repeat.parameters[i].a, result.parameters[i].a);
+        EXPECT_EQ(repeat.parameters[i].alpha, result.parameters[i].alpha);
+    }
+}
 TEST(MdlDhConvert, ExplicitToDhExactNonUniqueCoincidentAxes_WP13T09_ACC2)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-10", "NFR-COR-02"},

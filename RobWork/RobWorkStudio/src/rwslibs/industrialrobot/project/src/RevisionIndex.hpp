@@ -229,6 +229,31 @@ public:
      */
     void registerMetadata(const ObjectRefPair& ref, const ProjectMetadataRecord& record);
 
+    /**
+     * @brief 事务回滚：摘除一次失败提交注册的幻影修订/元数据（R3 审计
+     *        B6 修复，2026-10-15）。
+     *
+     * 背景：TxEngine 提交序（PRJ-T06）要求"先注册新修订/元数据进会话索
+     * 引、后落盘发布"（validateMetadataPublish 以新修订已注册为前提）；
+     * 注册之后、HEAD 切换（唯一提交点）之前的环境失败（暂存写/publish/
+     * head-switch）原本会把本次注册留在索引——幻影修订可被 tryRevision/
+     * metadataAt 查到（闭包外不可见契约 PRJ-TX-9 被破坏），assembleView
+     * 读从未发布的 command.json 抛假 StoreCorrupt。本方法摘除恰好这两个
+     * 入口。
+     *
+     * 前置（调用方契约——TxEngine 提交全程持 writer 锁，单写者）：
+     *   ① 修订身份为本事务新铸造（此前从未注册——无任何既有闭包/子修订
+     *     指向它，摘除不影响任何读者）；② 元数据引用键在 validate 前 未
+     *   注册（validate 契约）且未被第二个事务复用（单写者保证）；③ 调用
+     *   点＝HEAD 切换成功**之前**（切换后提交事实成立，摘除即损坏——
+     *   D-18 不回滚语义）。
+     *
+     * @param revisionId  [in] 本事务注册的修订身份
+     * @param metadataRef [in] 本事务注册的元数据引用键
+     */
+    void rollbackCommitRegistration(const RevisionId& revisionId,
+                                    const ObjectRefPair& metadataRef);
+
     // ---- 查询（读路径，并发安全；§4.7 模型层纪律） ----
 
     /**

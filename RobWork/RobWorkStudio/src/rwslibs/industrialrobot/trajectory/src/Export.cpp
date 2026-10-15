@@ -28,6 +28,7 @@
 
 #include <sdurws/ird/io/IoDiagnostics.hpp>  // io::errorCodeToken（IoErrorCode→§9.12 稳定 token 唯一映射点）
 
+#include <algorithm>
 #include <cmath>
 #include <utility>
 
@@ -158,11 +159,20 @@ TrajectoryExportOutcome exportStandardTrajectory(const TrajectoryExportRequest& 
             }
             sum += request.segmentDurationsS[i];
         }
-        if (sum != tp.totalDurationS) {
+        // 自洽判定（R3 审计 A2 修复，2026-10-15——与 Playback 构造查表
+        // 同批同口径）：原位级 != 会拒绝生产面 TimeParam 的合法产物（含
+        // 内部结点的运动段按 L1 比例分摊结点时刻，Σ段时长与 totalDurationS
+        // 位级不等的概率约三成）。改相对容差：容限＝1e-9·max(1, 总时长)，
+        // 远小于真实"不同源"错装的段时长量级偏差，仅拦截真混装。
+        const double sumDiff = std::abs(sum - tp.totalDurationS);
+        const double sumTol = 1e-9 * std::max(1.0, std::abs(tp.totalDurationS));
+        if (!(sumDiff <= sumTol)) {
             throw domainError("mapping-sum",
                               "Σ段时长=" + std::to_string(sum) + " ≠ totalDurationS="
                                   + std::to_string(tp.totalDurationS)
-                                  + "——段归投影与 payload 不同源（§12.4 自洽）");
+                                  + "（|差|=" + std::to_string(sumDiff)
+                                  + " 超容差 " + std::to_string(sumTol)
+                                  + "）——段归投影与 payload 不同源（§12.4 自洽）");
         }
     }
     // 身份块完整性（复现要素 NFR-COR-04——五文本字段非空；planningSeed

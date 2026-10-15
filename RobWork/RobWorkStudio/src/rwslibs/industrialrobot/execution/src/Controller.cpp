@@ -793,6 +793,20 @@ void TaskController::releaseResources(TaskId task)
         m_stateView.erase(task);
     }
     m_tasks.erase(it);   // 状态机实例随之析构——内存态回收；磁盘归档不动
+    // 释放通知（R3 审计 B4 修复，2026-10-15）：实例已析构——调用方侧
+    // （调度器）经此摘除其非所有权簿记（ScheduledTask.machine 裸指针/
+    // 节流时间戳/等待队列条目），消除"Controller 侧已回收、调度器侧永
+    // 久残留"的悬垂解引用（UAF）与无界增长。契约见 setReleaseListener
+    // 注（回调不得触碰状态机、不得再入本类、调用方不持调度器主锁）。
+    if (m_releaseListener) {
+        m_releaseListener(task);
+    }
+}
+
+void TaskController::setReleaseListener(std::function<void(TaskId)> listener) noexcept
+{
+    // 装配面（仅调度线程——与 setDispatchGate 同域同纪律；noexcept 存取）。
+    m_releaseListener = std::move(listener);
 }
 
 }  // namespace sdurws::ird::execution

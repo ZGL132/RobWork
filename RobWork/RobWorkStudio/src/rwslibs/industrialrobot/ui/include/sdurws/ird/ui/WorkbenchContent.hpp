@@ -168,6 +168,14 @@ struct WorkbenchContentDeps {
     /// 被撤销命令的原始载荷，产生新修订；未注入＝占位）。
     std::optional<ICommandRegistry::CommandHandler> redoProjectHandler;
 
+    /// 最近项目直开钩子（R3 审计 C1 修复，2026-10-15——首页"最近项目"
+    /// 可用项点击的打开编排）：入参＝条目登记的规范路径（RecentProjectsModel
+    /// canonicalPath 原文）。与宿主菜单最近项同一编排出口（UiPlugin
+    /// openRecentProject——带防线的重开流程），保证两条最近项目入口行为
+    /// 一致；nullopt/缺省＝harness 形态回落无参 project.open 占位流（保持
+    /// 既有开发验证通道行为）。UI 线程调用。
+    std::function<void(const std::string& canonicalPath)> openRecentProject;
+
     // ---- 域装配面（WP-24-T03b 收口——§7.2 域命令入册＋§4.1 中央区挂位）----
 
     /// 命令 owner 白名单扩展（§7.2 第 1 步"ui 内部设施名＋各白名单插件 id"

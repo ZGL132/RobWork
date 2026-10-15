@@ -402,6 +402,30 @@ public:
             rows.push_back(std::move(row));
         }
         m_active = std::move(rows);
+        // 后台副本清退（R3 审计 C6 修复，2026-10-15）：**同一项目**重开时，
+        // 仍在运行的任务经 tasksByProject 重新进入 m_active——其在降级拍
+        // （demoteCurrentToBackground）遗留的后台只读副本须移除，否则
+        // ① rejectIfBackground 以陈旧副本拦截对该任务的暂停/取消/强停
+        // （误报"后台只读"）；② activeTasks 与 backgroundTasks 同身份双
+        // 行（数据与显示不一致）。清退条件＝身份的项目字段等于当前项目
+        // （任务回到**其所属项目**的呈现域才退出后台集）——切到**另一个**
+        // 项目时旧行保持在后台（P-UI-7 原文语义，既有用例钉住；真实端口
+        // 按 tasksByProject 分域，跨项目任务不会进入当前清单）。
+        if (!m_background.empty() && m_currentProject.has_value()) {
+            for (const auto& active : m_active) {
+                if (!(active.snap.identity.project == *m_currentProject)) {
+                    continue;  // 他项目身份（不应出现——防御性跳过不清退）
+                }
+                for (std::size_t i = 0; i < m_background.size();) {
+                    if (m_background[i].snap.identity == active.snap.identity) {
+                        m_background.erase(m_background.begin()
+                                           + static_cast<std::ptrdiff_t>(i));
+                    } else {
+                        ++i;
+                    }
+                }
+            }
+        }
         reorderActive();
         notifyRowsChanged();
     }

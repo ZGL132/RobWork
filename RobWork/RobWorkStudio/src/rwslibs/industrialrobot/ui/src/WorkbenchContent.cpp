@@ -962,10 +962,22 @@ QWidget* WorkbenchContentImpl::buildHomePage()
     // F-609：判别条件修复——UserRole 存的是 available（refreshRecentList
     // 写入"点击判别的可用位"），可用项点击应触发打开。原实现取反（!toBool）
     // 使可用项点击无反应、失效项点击反而触发打开（条件写反）。
+    // R3 审计 C1 修复（2026-10-15）：原实现只提交无参 project.open——生产
+    // 宿主的处理器忽略参数走目录选择对话框，被点项目的路径（tooltip 承载）
+    // 被丢弃：点击"最近项目"弹出的却是选目录框（与菜单最近项行为分裂——
+    // 菜单路径 openRecentProject(path) 直接重开）。现优先走宿主注入的
+    // openRecentProject 直开钩子（与菜单同源编排）；未注入（harness 形态）
+    // 保持无参 project.open 占位流不变。
     QObject::connect(m_homeRecentList, &QListWidget::itemClicked, m_homeRecentList,
             [this](QListWidgetItem* item) {
                 if (item->data(Qt::UserRole).toBool()) {
-                    submitCommand("project.open");  // 可用项：打开该项目的入口
+                    if (m_deps.openRecentProject) {
+                        // 路径取条目 tooltip（与"移除"操作同一键承载——值拷贝，
+                        // 不捕获 item 裸指针）。
+                        m_deps.openRecentProject(item->toolTip().toStdString());
+                    } else {
+                        submitCommand("project.open");  // harness 占位打开流
+                    }
                 }
             });
     // 右键菜单：重新选择／移除（对失效项与可用项均可移除——PM-10 原文）。
@@ -1278,6 +1290,11 @@ void WorkbenchContentImpl::assembleCommandSystem()
     shortcutDeps.devLog = m_deps.wiring.devLog;
     shortcutDeps.onUserBindingsChanged =
         [this](const std::vector<HotkeyBinding>&) { persistShortcutsAsync(); };
+    // 提交被拒反馈钩子（R3 审计 C4，2026-10-15）：快捷键触发的 submit 被
+    // 拒时出与菜单/顶栏同源的状态行反馈（快捷键是唯一绕过禁用态直达
+    // submit 的入口——原实现被拒零反馈）。
+    shortcutDeps.onRejectedSubmit =
+        [this](const CommandId& command) { reportCommandRejection(command); };
     m_shortcuts = createGlobalShortcutRegistry(std::move(shortcutDeps));
     for (const ShellCommandRow& row : kMinimalCommandRows) {
         if (row.defaultShortcut != nullptr) {
@@ -1300,6 +1317,10 @@ void WorkbenchContentImpl::applyShortcutAndPaletteState()
     m_shortcuts->attach(m_deps.hostWidget);
     // ③命令面板（§7.4——面板是注册表的只读投影；父子归宿主控件 Qt 树）。
     m_palette = createCommandPalette(m_commands.get(), m_shortcuts.get(), m_deps.hostWidget);
+    // 提交被拒反馈钩子（R3 审计 C4，2026-10-15）：面板灰行 Enter 的被拒结
+    // 局出与菜单/顶栏同源的状态行反馈（原实现丢弃结局——界面零反应）。
+    m_palette->setRejectedFeedback(
+        [this](const CommandId& command) { reportCommandRejection(command); });
     // ④面板近期使用回放（§7.4 置顶分组的持久化半区——未注册 id 丢弃）。
     m_commands->restoreRecentUsed(m_pendingPaletteRecent);
     m_pendingPaletteRecent.clear();
@@ -1580,6 +1601,14 @@ void WorkbenchContentImpl::submitCommand(const std::string& commandId)
     if (outcome.accepted) {
         return;  // 处理器自行反馈（会话命令的状态行说明/面板打开等）
     }
+    reportCommandRejection(commandId);
+}
+
+/// 拒绝反馈单点（R3 审计 C4 修复，2026-10-15）：submitCommand 的拒绝半区
+/// 抽出——快捷键/面板两条旁路提交入口（唯一能绕过按钮禁用态直达 submit
+/// 的入口）经注入钩子共用同一状态行反馈（§7.4"禁用＋说明"的呈现面唯一）。
+void WorkbenchContentImpl::reportCommandRejection(const std::string& commandId)
+{
     // 拒绝反馈（§7.4"禁用＋说明"）：未注册与不可执行分别呈现——诊断条目
     // （工厂注入时）已由注册表出线，此处是即时可见性补偿。
     // （WP-24-T03B 注：处理器级"域流程未装配"的诚实反馈由处理器自身经
@@ -1733,6 +1762,14 @@ bool WorkbenchContentImpl::shutdown()
 
     // ②设施停用（§10.1 后置语义的内容半区：宿主层销毁窗口发生在本调用
     //   返回之后——Widget 指针随窗口树消亡，此处全部置空防悬垂）。
+    // R3 审计 C7 拆卸面（2026-10-15）：面板 Widget 随宿主树存活至宿主销
+    // 毁，而下方 m_commands/m_shortcuts 立即 reset——先注销面板的两个非拥
+    // 有数据源指针（收起＋置空，其后任何面板交互对空源安全返回），再复位
+    // 注册表/快捷键表，消除"注册表已释放、面板尚在"窗口内的悬垂解引用
+    // （与 m_shortcuts->detach 的先断连接纪律同族）。
+    if (m_palette != nullptr) {
+        m_palette->detachRegistries();
+    }
     m_shortcuts->detach();  // QShortcut 唯一创建点的对称拆卸（物理键随窗口树销毁——此处清表）
     m_palette = nullptr;    // 面板为宿主控件树子——随宿主销毁（指针置空防悬垂）
     m_commands.reset();     // 注册表/快捷键表在拆卸后停用（处理器只经本层触发）

@@ -131,6 +131,17 @@ void RevisionIndex::registerMetadata(const ObjectRefPair& ref, const ProjectMeta
     m_metadata.emplace(ref, record);
 }
 
+void RevisionIndex::rollbackCommitRegistration(const RevisionId& revisionId,
+                                               const ObjectRefPair& metadataRef)
+{
+    // 事务回滚摘除（R3 审计 B6——前置契约见 hpp 声明：单写者持锁、身份
+    // 本事务新铸造、仅限 HEAD 切换前调用）。两个 map 各摘除恰一个条目：
+    // erase 按键，不存在时静默（防御——调用序异常下不放大失败）。
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_revisions.erase(revisionId);
+    m_metadata.erase(metadataRef);
+}
+
 // =====================================================================
 // 查询：tryRevision / tryMetadata / branchTip
 // =====================================================================

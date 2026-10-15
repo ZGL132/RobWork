@@ -1639,6 +1639,14 @@ std::vector<CombinationCheckOutcome> checkCombinations(
                 }
                 // 组装该组合口径的单条 facts（关节侧来自 bundle、电机侧以
                 // 映射批为权威——AxisFactsBundle 注的 P-SEL-1 消费面边界）。
+                // 电机侧显式清空（R3 审计 A16 修复，2026-10-15）：bundle
+                // 条目可能携带（与组合 c 无关的）motor* 旧值——契约明文
+                // "组合校核路径以 MappingBatchFacts.axes 为权威，本包条目
+                // 的 motor* 字段被忽略"；原实现先整表拷贝再仅在 mfact 在
+                // 场时覆盖——mfact 缺失时 bundle 的无关电机侧值直接进入
+                // T04 筛选且不产"映射事实缺失"缺口（可行集污染＋绕过数
+                // 据不足降级）。显式 reset 保证电机侧六量＋峰值时长/时刻/
+                // 段身份只能来自映射批权威源。
                 AxisWorkpointFacts facts;
                 if (joint != nullptr) {
                     facts = *joint;
@@ -1648,6 +1656,15 @@ std::vector<CombinationCheckOutcome> checkCombinations(
                 }
                 facts.jointId = axis.jointId;   // 轴身份以组合轴表为权威。
                 facts.caseId = caseId;          // 工况以格为权威。
+                facts.motorTorqueRms.reset();
+                facts.motorTorquePeak.reset();
+                facts.motorSpeedPeak.reset();
+                facts.motorSpeedRms.reset();
+                facts.motorPowerPeak.reset();
+                facts.motorPowerRms.reset();
+                facts.peakDuration.reset();
+                facts.atTime = 0.0;        // 定位元数据随电机侧一并归零（默认值——非映射权威源不承载）
+                facts.segmentId.clear();
                 if (mfact != nullptr) {
                     facts.motorTorqueRms = mfact->motorTorqueRms;
                     facts.motorTorquePeak = mfact->motorTorquePeak;

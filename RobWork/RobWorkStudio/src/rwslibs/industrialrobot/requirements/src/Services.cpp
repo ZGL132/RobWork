@@ -303,8 +303,13 @@ Expected<NormalizedSampling> WorkRegionService::normalizeSampling(
         const double sp = raw.spacing[static_cast<std::size_t>(i)];
         const double quotients = std::floor(sizes[i] / sp);
         // 商上界钳制（boxSize/spacing 的商理论上可超 uint32——黄金数据集
-        // 外的病态输入；钳到 uint32 上限并如实承载，不静默放大）。
-        const double clamped = std::min(quotients, static_cast<double>(0xFFFFFFFFu));
+        // 外的病态输入）。钳制上界取 uint32 最大值−1（R3 审计 ㊵ 修复，
+        // 2026-10-15）：counts＝钳制值＋1，若钳到 0xFFFFFFFF 再 +1 会按
+        // 模 2³² 回绕为 0——"天文级样本数"被静默改写成"零样本计划"
+        // （counts=0 是 V-02 合法存储，评估侧只会得到 DataInsufficient，
+        // 与注释"如实承载"相反）。钳到 0xFFFFFFFE 使饱和值 +1＝0xFFFFFFFF
+        // 恰为 uint32 上限，不回绕、不静默放大。
+        const double clamped = std::min(quotients, static_cast<double>(0xFFFFFFFEu));
         norm.counts[static_cast<std::size_t>(i)] =
             static_cast<std::uint32_t>(clamped) + 1u;
     }

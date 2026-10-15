@@ -38,6 +38,8 @@
 #include <algorithm>
 #include <atomic>
 #include <cmath>
+#include <exception>
+#include <mutex>
 #include <stdexcept>
 #include <thread>
 #include <utility>
@@ -518,6 +520,18 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
         return std::binary_search(completedBatches.begin(), completedBatches.end(),
                                   batchIdx);
     };
+    // Quick 筛选账目是否已在恢复基点内（R3 审计 A6 修复，2026-10-15）：
+    // 第 4 步（ScreenedOut 计数）在 Quick 批相**完整跑完后**执行一次——
+    // 检查点只在批边界产出 ⇒ Quick 相自身的检查点（phase==Quick）都在第
+    // 4 步之前，其审计不含筛选账目；而 Verified 相的检查点必然在 Quick
+    // 完整结算之后，其审计基点已含 quickScreenedOut。故判别式＝恢复基点
+    // 相是否为 Verified：是 ⇒ 本次运行第 4 步对全部候选跳过累加（基点已
+    // 计——重推导如实改状态但不重复计数，AT-35）；否（Quick 相恢复/全新
+    // 运行）⇒ 照常计数（中途取消的 Quick 检查点里筛选账目尚不存在——
+    // 恢复后全部非幸存者都须计一次，既有 AT-35 用例口径）。
+    const bool quickScreenedInBase
+        = request.resumeFrom.has_value()
+          && request.resumeFrom->phase == core::EvaluationMode::Verified;
 
     JointRunAuditCounts& audit = result.audit;
     if (request.resumeFrom.has_value()) {
@@ -562,38 +576,63 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
         // SingleThread 口径；派发游标原子——批间不重叠，合并序与派发序解
         // 耦）。暂停查询接缝（WP-21-T07）：m_deps.pauseSignal 为空＝暂停面
         // 未装配——零查询零开销，行为与既有批次逐位一致（R1 装配形态）。
+        //
+        // 异常面（R3 审计 A5 修复，2026-10-15）：evaluateCandidate→
+        // JointLayeredChecker::check 按契约可抛（OPT-EVALUATOR-MISSING/
+        // OPT-STAGE-LOCKED 等 fail-fast 面，hpp:607-611 承诺经 run() 抛出）。
+        // 原实现 workerFn 无任何防护——并行路径（threadCount>1 且批数>1）
+        // 下异常逸出线程函数即 std::terminate（进程崩溃而非可诊断异常），
+        // hpp 承诺只在串行路径成立。现 worker 体内捕获首个异常（互斥保护
+        // ——只留第一份，确定性重抛），join 后在编排线程统一重抛：契约面
+        // 与串行路径归一，线程清理（join）先于异常传播。
+        std::mutex workerErrorMutex;
+        std::exception_ptr workerError;  // 首 worker 异常（join 后重抛）
         auto workerFn = [&]() {
-            JointLayeredChecker checker(m_stage, *m_deps.checkerDeps);
-            while (true) {
-                if (cancelFlag.load(std::memory_order_acquire)
-                    || pauseFlag.load(std::memory_order_acquire)) {
-                    return;  // 已观测取消/暂停——不再领新批（在途批不受影响）
+            try {
+                JointLayeredChecker checker(m_stage, *m_deps.checkerDeps);
+                while (true) {
+                    if (cancelFlag.load(std::memory_order_acquire)
+                        || pauseFlag.load(std::memory_order_acquire)) {
+                        return;  // 已观测取消/暂停——不再领新批（在途批不受影响）
+                    }
+                    const std::size_t i = nextBatch.fetch_add(1);
+                    if (i >= phaseBatches.size()) {
+                        return;  // 批已领尽
+                    }
+                    if (i > 0 && ctx.cancellationRequested()) {
+                        // 批间协作取消（TASK-01——停止派发，已回传批保留；
+                        // 在途批完成后照常合并，不失败在途任务）。取消查询
+                        // 先于暂停：两请求并存时取消优先（§7.4 取消终态语义
+                        // 强于挂起——暂停意图随取消一并消解，WP-21-T07）。
+                        cancelFlag.store(true, std::memory_order_release);
+                        return;
+                    }
+                    if (i > 0 && m_deps.pauseSignal != nullptr
+                        && m_deps.pauseSignal->pauseRequested()) {
+                        // 批间用户暂停（§9.2/AT-35/V12-06——停止派发，在途批
+                        // 完成后照常合并；截停批界的检查点状态即暂停确认凭据，
+                        // 宿主写出并确认后任务态转 Paused 归 execution T10）。
+                        pauseFlag.store(true, std::memory_order_release);
+                        return;
+                    }
+                    auto& batchSink = perBatch[i];
+                    batchSink.reserve(phaseBatches[i].size());
+                    for (const std::uint32_t candIdx : phaseBatches[i]) {
+                        batchSink.push_back(
+                            evaluateCandidate(request, jointMode, *deduped[candIdx], checker, ctx));
+                    }
                 }
-                const std::size_t i = nextBatch.fetch_add(1);
-                if (i >= phaseBatches.size()) {
-                    return;  // 批已领尽
-                }
-                if (i > 0 && ctx.cancellationRequested()) {
-                    // 批间协作取消（TASK-01——停止派发，已回传批保留；
-                    // 在途批完成后照常合并，不失败在途任务）。取消查询
-                    // 先于暂停：两请求并存时取消优先（§7.4 取消终态语义
-                    // 强于挂起——暂停意图随取消一并消解，WP-21-T07）。
-                    cancelFlag.store(true, std::memory_order_release);
-                    return;
-                }
-                if (i > 0 && m_deps.pauseSignal != nullptr
-                    && m_deps.pauseSignal->pauseRequested()) {
-                    // 批间用户暂停（§9.2/AT-35/V12-06——停止派发，在途批
-                    // 完成后照常合并；截停批界的检查点状态即暂停确认凭据，
-                    // 宿主写出并确认后任务态转 Paused 归 execution T10）。
-                    pauseFlag.store(true, std::memory_order_release);
-                    return;
-                }
-                auto& batchSink = perBatch[i];
-                batchSink.reserve(phaseBatches[i].size());
-                for (const std::uint32_t candIdx : phaseBatches[i]) {
-                    batchSink.push_back(
-                        evaluateCandidate(request, jointMode, *deduped[candIdx], checker, ctx));
+            } catch (...) {
+                // 首错保留（互斥保护；多 worker 各抛不同异常时保留哪个
+                // 取决于线程时序——**非确定性**择取，R3 迭代 2 复审勘误：
+                // 原注释"确定性重抛面"失实。机制本身无碍：join 后统一
+                // 重抛、串行路径同 workerFn——错误类别面一致，仅具体异常
+                // 实例可能随时序不同）。其余 worker 照常收尾（取消旗标
+                // 未置——靠批领尽自然退出，与"异常不失败在途批"的合并
+                // 口径一致）。
+                const std::lock_guard<std::mutex> guard(workerErrorMutex);
+                if (!workerError) {
+                    workerError = std::current_exception();
                 }
             }
         };
@@ -609,6 +648,11 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
             for (auto& t : pool) {
                 t.join();
             }
+        }
+        // worker 异常统一重抛（join 已完成——线程资源先清理、异常后传播；
+        // 契约面＝hpp:607-611 的 OptimizationError 系列，与串行路径一致）。
+        if (workerError) {
+            std::rethrow_exception(workerError);
         }
 
         // 合并（编排线程——批序即确定性序）＋记账＋检查点状态产出。
@@ -745,7 +789,13 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
                 rec.base.status = CandidateStatus::ScreenedOut;
                 rec.base.evaluation.status = CandidateStatus::ScreenedOut;  // 双字段一致
                 rec.base.extraRejections.push_back(makeQuickScreenRejection(m_stage));
-                audit.base.quickScreenedOut += 1;
+                // 计数守卫（R3 审计 A6，判别式见 quickScreenedInBase）：
+                // 恢复基点已含完整筛选账目（Verified 相检查点）时不再重复
+                // 累加——重推导如实改状态（AT-35"继续不重复统计"）；Quick
+                // 相恢复/全新运行照常计数。
+                if (!quickScreenedInBase) {
+                    audit.base.quickScreenedOut += 1;
+                }
             }
         }
     }

@@ -259,8 +259,14 @@ TEST(HostControllerModel, AggregatesControllerFamiliesByIdentity_B1_UI_T19)
     // 草稿控制器真实例（DraftControllerModelTest 的 makeDeps 最小同款——
     // 落盘任务直接在调用线程执行，本套件不驱动真实落盘时序）。
     ui::DraftControllerDeps draftDeps;
-    draftDeps.postToDiskThread = [](std::function<void()> task) { task(); };
-    draftDeps.postToUiThread = [](std::function<void()> task) { task(); };
+    draftDeps.postToDiskThread = [](std::function<void()> task) -> bool {
+        task();
+        return true;
+    };
+    draftDeps.postToUiThread = [](std::function<void()> task) -> bool {
+        task();
+        return true;
+    };
     draftDeps.onSessionDirtyChanged = [](bool) {};
     draftDeps.diagSink = diag.catalog;
     draftDeps.diagFactory = diag.factory;

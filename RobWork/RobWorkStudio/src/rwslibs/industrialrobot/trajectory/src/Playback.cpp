@@ -110,7 +110,7 @@ TrajectoryPlaybackTable::TrajectoryPlaybackTable(
     m_totalDurationS = timeParam.totalDurationS;
 
     // 段归投影（可选）：累积边界 m_segmentCum[j]＝前 j 段时长之和；
-    // Σ==totalDurationS 位级自洽校验（§12.4"逐段对齐"——投影与 payload
+    // Σ 与 totalDurationS 的自洽校验（§12.4"逐段对齐"——投影与 payload
     // 不同源即拒绝混装，防段归错位被静默接受）。
     if (!segmentDurationsS.empty()) {
         m_segmentCum.assign(segmentDurationsS.size() + 1, 0.0);
@@ -123,11 +123,23 @@ TrajectoryPlaybackTable::TrajectoryPlaybackTable(
             }
             m_segmentCum[i + 1] = m_segmentCum[i] + segmentDurationsS[i];
         }
-        if (m_segmentCum.back() != m_totalDurationS) {
+        // 自洽判定（R3 审计 A2 修复，2026-10-15）：原实现按位级 != 拒绝，
+        // 但生产面 TimeParam 对含内部结点（≥3 结点）的运动段按 L1 比例
+        // 分摊结点时刻、总时长取结点累加——Σ fl(D·f_k) 与 D 位级不等的
+        // 概率约三成，合法产物被诬"payload 不同源"fail-fast（回放动画
+        // 无法构建、带段映射导出被拒）。改用相对容差判定： mismatch 容限
+        // =1e-9·max(1, totalDurationS)（无量纲相对口径，远小于任何真实
+        // "不同源"错装的段时长偏差——不同源错装至少差一个段时长量级），
+        // 仅拦截真正的不同源混装。
+        const double sumDiff = std::abs(m_segmentCum.back() - m_totalDurationS);
+        const double sumTol = 1e-9 * std::max(1.0, std::abs(m_totalDurationS));
+        if (!(sumDiff <= sumTol)) {
             throw domainError("payload-segment-sum",
                               "Σ段时长=" + std::to_string(m_segmentCum.back())
                                   + " ≠ totalDurationS=" + std::to_string(m_totalDurationS)
-                                  + "——段归投影与 payload 不同源（§12.4 自洽）");
+                                  + "（|差|=" + std::to_string(sumDiff)
+                                  + " 超容差 " + std::to_string(sumTol)
+                                  + "）——段归投影与 payload 不同源（§12.4 自洽）");
         }
     }
 }

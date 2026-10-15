@@ -116,6 +116,11 @@ struct GlobalShortcutRegistryDeps {
     /// User 绑定集变化回调（rebind/解绑成功后调用——PM-14 持久化的装配侧
     /// 落盘钩子；可空＝不持久化，须显式声明）。
     std::function<void(const std::vector<HotkeyBinding>&)> onUserBindingsChanged;
+    /// 提交被拒的用户可见反馈钩子（R3 审计 C4 修复，2026-10-15）：快捷键
+    /// 触发的 submit 被拒（未注册/不可执行/只读——accepted=false）时调用，
+    /// 入参＝命令 id。装配层注入与菜单/顶栏同源的状态行反馈出口；可空＝
+    /// 无即时反馈（仅注册表诊断目录出线——历史行为）。UI 线程调用。
+    std::function<void(const CommandId&)> onRejectedSubmit;
 };
 
 /**

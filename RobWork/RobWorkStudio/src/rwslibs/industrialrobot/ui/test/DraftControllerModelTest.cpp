@@ -125,7 +125,24 @@ public:
         task();
     }
 
+    /// 受理位形态（R3-C3 签名对齐——测试替身默认恒受理；拒绝面的生产面
+    /// 语义由 PortAdaptersExecutorContractTest 直测钉扎，本替身的拒收开
+    /// 关只服务消费侧收口语义用例——false＝不投递不执行，与生产执行器
+    /// 拒收窗口同款）。
+    bool postAccepted(std::function<void()> task)
+    {
+        if (!m_acceptPost) {
+            return false;  // 注入拒收（R3-C3 假死语义钉——任务未入队）
+        }
+        post(std::move(task));
+        return true;
+    }
+
     void setDeferred(const bool deferred) { m_deferred = deferred; }
+
+    /// 拒收注入开关（R3-C3 消费侧收口用例——模拟 aboutToQuit 停执行器
+    /// 后再达的写请求；默认 true＝恒受理，既有用例零感知）。
+    void setAcceptPost(const bool accept) { m_acceptPost = accept; }
 
     bool runOne()
     {
@@ -151,6 +168,7 @@ public:
 
 private:
     bool m_deferred = false;
+    bool m_acceptPost = true;  ///< 受理开关（默认 true＝恒受理——既有用例零感知）
     struct ScopedTag {
         bool m_prev;
         ScopedTag()
@@ -299,10 +317,13 @@ struct DraftHarness {
     DraftControllerDeps makeDeps()
     {
         DraftControllerDeps deps;
-        deps.postToDiskThread = [this](std::function<void()> task) {
-            disk.post(std::move(task));
+        deps.postToDiskThread = [this](std::function<void()> task) -> bool {
+            return disk.postAccepted(std::move(task));  // 受理位形态（R3-C3；替身恒受理）
         };
-        deps.postToUiThread = [](std::function<void()> task) { task(); };
+        deps.postToUiThread = [](std::function<void()> task) -> bool {
+            task();
+            return true;
+        };
         deps.onSessionDirtyChanged = [this](bool dirty) { dirtyEvents.push_back(dirty); };
         deps.diagSink = catalog;
         deps.diagFactory = factory;
@@ -969,4 +990,50 @@ TEST_F(DraftControllerModelTest, DiscardDraftExceptionConvertsToValueTrack_F819)
     EXPECT_FALSE(outcome.ok);
     EXPECT_EQ(outcome.errorToken, "exception");
     EXPECT_NE(outcome.detail.find("f819-port-exception"), std::string::npos);
+}
+
+/**
+ * @brief R3 审计 C3 假死语义钉（消费侧收口——audit-r3-fixes-1 返工批
+ *        O-12）：落盘执行器拒收（postToDiskThread 返回 false——aboutToQuit
+ *        停执行器后再达写请求的时序）时，saveAll/discardDraft 按失败值轨
+ *        就地返回，不投递、不等待。
+ *
+ * 可观测语义（原缺陷形态＝本用例永久阻塞——"任务被丢弃"变体的 future
+ * .get() 无界挂起，F-819 只修了"任务抛异常"变体）：
+ *   - saveAll 结局 failedCount=1＋首错 token="executor-stopped"；
+ *   - discardDraft 结局 ok=false＋token="executor-stopped"；
+ *   - 落盘端口零触达（任务未入队——拒收不是"投了再丢"）；
+ *   - 失败保留脏标记（§8.2 失败行——下一可用窗口重试的入口保留）。
+ * 生产执行器自身的拒收窗口（停止后 post 必 false 且任务永不执行）由
+ * PortAdaptersExecutorContractTest 直测钉扎——本用例只钉消费侧收口。
+ */
+TEST_F(DraftControllerModelTest,
+       SaveAndDiscardReturnExecutorStoppedWhenPostRejected_R3_C3)
+{
+    IRD_TEST_INFO("PM-03", {}, std::nullopt);
+    DraftHarness& harness = h();
+    harness.bindWritable();
+    harness.attachDirty("kinematics", "payload-v1");
+    // 注入拒收窗口（R3-C3：模拟退出收口后再达的写请求——生产面语义同款
+    // ：false＝任务未入队也永不执行）。
+    harness.disk.setAcceptPost(false);
+
+    // 同步保存入口：拒收按失败值轨就地收口（不 future.get()——原缺陷在
+    // 此无界挂起；本用例能行进至断言即"假死已修复"的运行面证明）。
+    const SaveOutcome outcome = harness.ctl().saveAll(SaveTrigger::CloseDialog);
+    EXPECT_EQ(outcome.savedCount, std::size_t{0});
+    EXPECT_EQ(outcome.failedCount, std::size_t{1});
+    ASSERT_TRUE(outcome.firstError.has_value());
+    EXPECT_EQ(outcome.firstError->moduleId, "kinematics");
+    EXPECT_EQ(outcome.firstError->errorToken, "executor-stopped");
+    // 任务未投递：落盘端口零触达（store->saved 空——拒收≠投了再丢）。
+    EXPECT_TRUE(harness.store->saved.empty());
+    // 失败保留脏标记（§8.2 失败行——重试入口保留）。
+    EXPECT_TRUE(harness.ctl().summary().anyDirty);
+
+    // 同步放弃入口：同轨收口（横幅[放弃]的就地反馈语义）。
+    const DraftDiscardOutcome discarded = harness.ctl().discardDraft("kinematics");
+    EXPECT_FALSE(discarded.ok);
+    EXPECT_EQ(discarded.errorToken, "executor-stopped");
+    EXPECT_TRUE(harness.store->discardCalls.empty());
 }

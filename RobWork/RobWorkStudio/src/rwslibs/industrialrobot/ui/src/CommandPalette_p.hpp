@@ -34,6 +34,7 @@
 #include <QWidget>
 
 #include <memory>
+#include <functional>
 #include <optional>
 
 #include <sdurws/ird/ui/ICommandRegistry.hpp>
@@ -84,6 +85,21 @@ public:
     /// @brief 面板当前是否可见（壳/测试观测面）。
     bool isOpen() const;
 
+    /// @brief 注销数据源（R3 审计 C7 拆卸面，2026-10-15）：收起面板并置空
+    ///        命令注册表/快捷键表指针——内容层 shutdown 在 reset 两注册表
+    ///        **之前**调用。背景：面板 Widget 随宿主控件树存活至宿主销毁，
+    ///        而两注册表是独立 reset 的非拥有裸指针——"注册表已释放、面板
+    ///        尚在"的拆卸窗口内任何面板交互（repopulate/executeCurrent）都
+    ///        是悬垂解引用；注销后各入口对空源安全返回。
+    void detachRegistries();
+
+    /// @brief 注入提交被拒的用户可见反馈钩子（R3 审计 C4 修复，2026-10-15）：
+    ///        Enter/双击执行被拒（未注册/不可执行/只读——accepted=false）
+    ///        时调用，入参＝命令 id。装配层注入与菜单/顶栏同源的状态行反
+    ///        馈出口；未注入＝历史行为（提交结果丢弃——面板收起后仅注册
+    ///        表诊断目录出线，即时可见性为零）。UI 线程调用。
+    void setRejectedFeedback(std::function<void(const CommandId&)> feedback);
+
 protected:
     /// @brief 键盘导航主路径（面板级：Esc 关闭/Enter 执行/Tab 补全类别）。
     void keyPressEvent(QKeyEvent* event) override;
@@ -108,12 +124,13 @@ private:
     /// @brief 行的显示文本组装（标题＋分组＋键位＋禁用原因——"禁用＋说明"）。
     static QString rowText(const CommandView& view, const QString& keyText);
 
-    ICommandRegistry* m_commands;                 ///< 命令注册表（非拥有）
+    ICommandRegistry* m_commands;                 ///< 命令注册表（非拥有；shutdown 注销后空）
     IGlobalShortcutRegistry* m_shortcuts;         ///< 快捷键表（非拥有；可空）
     QLineEdit* m_filter = nullptr;                ///< 过滤输入框（窗口树子）
     QListWidget* m_list = nullptr;                ///< 结果列表（窗口树子）
     QLabel* m_hint = nullptr;                     ///< 底部提示行（上限/分类过滤态）
     std::optional<CommandCategory> m_categoryFilter; ///< Tab 补全的分类过滤态
+    std::function<void(const CommandId&)> m_rejectedFeedback; ///< 提交被拒反馈钩子（可空——R3-C4）
 };
 
 /**

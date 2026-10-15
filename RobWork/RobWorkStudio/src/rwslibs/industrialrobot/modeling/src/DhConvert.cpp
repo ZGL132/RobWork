@@ -130,16 +130,15 @@ constexpr double kPivotRelativeTolerance = 1e-8;
 /// 尺度唯一来自附录 D，不私设第二尺度）。
 constexpr double kSolutionDeduplicationTolerance = 1e-9;
 
-/// 规范分支判据的偏距容差（数值程序常数——吸收求解的浮点噪声，m；
-/// 声明于常数区、供 canonicalForm 使用）。
+/// 种子支偏好的偏距容差（数值程序常数——吸收求解的浮点噪声，m）。
+/// 历史注记（R3 审计 P0-1 修复）：原供 canonicalForm 的"规范分支翻转"
+/// 判据使用，翻转已删除（该分支恒等式不成立——见 canonicalForm 函数注）；
+/// 现仅 analyticSeed 末关节 σ 支枚举的"优先非负 d 读数"启发式仍在使用。
 constexpr double kBranchToleranceM = 1e-12;
 
 // =====================================================================
 // 基础数学辅助（逐元素构造——零框架外联符号，冒烟两模式语义一致）
 // =====================================================================
-
-/// π（实现内独立抄写——测试期望不引实现常量，反向亦然）。
-constexpr double kPi = 3.14159265358979323846;
 
 /// 单位阵旋转（逐元素——不用 Rotation3D::identity() 外联符号）。
 rw::math::Rotation3D<double> identityRotation()
@@ -891,31 +890,26 @@ std::vector<double> wrapped(const std::vector<double>& x)
 }
 
 /**
- * @brief 判定解的规范分支（输出面——确定性等价类代表选取）。
+ * @brief 解参数的输出面规范化（确定性代表选取——仅角度 wrap）。
  *
- * 依据（标准 DH 恒等关系）：T(θ,d,a,α) = T(θ+π, −d, −a, α+π)——同一
- * 几何存在两支参数化解。本函数选取"偏距非负"支（d<0 或 d=0 且 a<0 时
- * 翻转；θ/α 随恒等式平移 π 后 wrap）——确定性（同输入同代表，NFR-COR-
- * 02）、几何无损（恒等式精确成立）；roundtrip 与等价验证均以本代表为
- * 比对形态（分支约定登记单元卡 §15 v0.10，黄金数据集 WP-13-T16 同规）。
+ * 历史（R3 审计 P0-1 修复，2026-10-15）：本函数曾依据"T(θ,d,a,α) =
+ * T(θ+π,−d,−a,α+π)"的所谓标准 DH 恒等式对 d<0（或 d≈0 且 a<0）的解做
+ * 分支翻转。该恒等式**不成立**——在 Rz(θ)Tz(d)Tx(a)Rx(α) 参数化下，
+ * 翻转式的平移 z 分量为 −d≠d（d≠0 时必错），旋转部分 Rz(θ+π)Rx(α+π)
+ * =Ry(π)·Rz(θ)Rx(α) 也不等于 Rz(θ)Rx(α)；标准 DH 单步参数化对固定
+ * 相邻帧是单射（θ、α 由旋转唯一确定，d、a 由平移唯一确定），不存在
+ * 同几何第二支。翻转因此会破坏链几何（Exact 输出参数不再重现目标链、
+ * prepareAuthoritySwitch 门④ FK 对照必超差），已整体删除。
+ *
+ * 现行为：仅对 θ/α 做 wrap 到 (−π,π] 的角度规范化——确定性（同输入同
+ * 代表，NFR-COR-02），且对解几何零改动；roundtrip 与等价验证均以本规
+ * 范化形态为比对形态。d/a 允许取任意有限值（含负值——它们是求解结果
+ * 的事实值，不做事后改写）。单元卡 §15 的"规范分支"约定随本修复作废，
+ * 以本注释为准（黄金数据集 WP-13-T16 全部样本 d≥0，不受影响）。
  */
 std::vector<double> canonicalForm(const std::vector<double>& x)
 {
-    std::vector<double> out = wrapped(x);
-    for (std::size_t k = 0; k + 3 < out.size(); k += 4) {
-        const double d = out[k + 1];
-        const double a = out[k + 2];
-        // 分支判据容差（数值程序常数）：d 的浮点噪声（如 ±1e-17）不得
-        // 阻断"d≈0 且 a<0"的翻转判定。
-        if (d < -kBranchToleranceM
-            || (std::abs(d) <= kBranchToleranceM && a < 0.0)) {
-            out[k] = wrapPi(out[k] + kPi);
-            out[k + 1] = -d;
-            out[k + 2] = -a;
-            out[k + 3] = wrapPi(out[k + 3] + kPi);
-        }
-    }
-    return out;
+    return wrapped(x);
 }
 
 /**
@@ -969,7 +963,8 @@ SolverFrameTargets targetsFromExplicit(const std::vector<JointEntry>& joints)
  *             t_j = (a_{j-1}, −d_j·sinα_{j-1}, d_j·cosα_{j-1})
  *     （S_{j-1} 静段携带 (a_{j-1},α_{j-1})，核心只沿 z 平移 d_j）：
  *     直接读出 a_{j-1}＝t_x、α_{j-1}＝atan2(−t_y, t_z)、d_j＝hypot(t_y,t_z)
- *     （d≥0 与规范分支一致——canonicalForm）；
+ *     （种子偏好非负 d 读数——历史注记：canonicalForm 已不做 d 符号改写，
+ *     R3 审计 P0-1 删除翻转；此处的非负读数仅为初值习惯，无规范分支语义）；
  *   局部旋转 L_j = R_{j-1}ᵀ·R_j = Rx(α_{j-1})·Rz(θ_j)（中间步）：
  *     θ_j 由**第 0 行**读出（Rx 不改 Rz 的行 0：L(0,:)＝(cosθ, −sinθ, 0)）
  *     ——θ＝atan2(−L(0,1), L(0,0))，精确无分支、与 α 无关；
@@ -983,17 +978,20 @@ SolverFrameTargets targetsFromExplicit(const std::vector<JointEntry>& joints)
  *     L_j＝Rx(A)·Rz(θ)·Rx(B)（A＝α_{j-1}, B＝α_j）：行 0＝Rz(θ)Rx(B) 的
  *     行 0（Rx 不改行 0）＝(cosθ, −sinθ·cosB, sinθ·sinB)——|sinθ|＝
  *     hypot(L(0,1),L(0,2)) 与 |cosθ|＝|L(0,0)| 与 A、B 无关；sinθ 的符号
- *     是二义自由度（与 B 联动，等价于 DH 恒等式 T(θ,d,a,α)＝
- *     T(θ+π,−d,−a,α+π)）——对 σ∈{+1,−1} 两支各做全参数提取：
+ *     在 |L(0,0)|≈0（真实 c_θ≈0）处不可由行 0 辨识——对 σ∈{+1,−1} 两支
+ *     各做全参数提取（**启发式初值枚举**——历史注记：原注释称两支"等价
+ *     于 DH 恒等式 T(θ,d,a,α)＝T(θ+π,−d,−a,α+π)"，该恒等式不成立〔R3
+ *     审计 P0-1／findings F-356 独立数值验证〕，σ 枚举不构成几何等价类
+ *     语义，仅为 c_θ≈0 时的初值符号猜测）：
  *     θ＝atan2(σ·|sinθ|, |L(0,0)|)（|L(0,0)|≤1e-6 时取 |L(0,0)|——真实
  *     c_θ≈0 处防 L00 噪声符号翻转象限）；A 由第 0 列＝sinθ·(cosA,sinA)
  *     带符号读出；B 由 M＝Rx(−A)·L＝Rz(θ)Rx(B) 读出
  *     （B＝atan2(−M(1,2), M(2,2))）；平移侧 [t_y;t_z]＝Rot(A)·[a·sinθ; d]、
  *     t_x＝a_{j-1}＋a·cosθ：d＝−sinA·t_y＋cosA·t_z、a＝u/sinθ（u＝
  *     cosA·t_y＋sinA·t_z；|sinθ| 过小时退化为种子启发值 0——仅种子面，
- *     LM 相位 2 精化）、a_{j-1}＝t_x−a·cosθ。按**规范分支判据**（d≥0；
- *     d≈0 时 a≥0——与 canonicalForm 镜像）取支：σ 翻转恰使 (A,θ)→
- *     (A+π,θ+π)（|sinθ|,|cosθ| 不变）从而 d→−d，两支恰一支规范。
+ *     LM 相位 2 精化）、a_{j-1}＝t_x−a·cosθ。支间取舍＝**优先取读出
+ *     d≥0 的支**（初值习惯，非规范分支语义——canonicalForm 已不翻转，
+ *     两支读出值都只是 LM 起点，交由相位 2 精化到事实解）。
  *   对非一致（近似）目标：读出值仍为确定性合理起点（LM 相位 2 精化）。
  *
  * @param targets [in] 显式侧累积链目标（含全旋转）
@@ -1043,15 +1041,16 @@ std::vector<double> analyticSeed(const SolverFrameTargets& targets)
                                    localFrame(1, col) * kSign);
             aPrev = localT[0];
             // d_j＝‖(t_y,t_z)‖（与 α 无关——t 的 yz 分量恰为 d 的旋转坐标；
-            // d≥0 与规范分支一致，canonicalForm 同向）。
+            // hypot 恒非负——种子读数习惯，canonicalForm 不再改写 d 符号）。
             d = rw::math::Vector3D<double>(localT[1], localT[2], 0.0).norm2();
         } else {
             // ---- 末关节：t/L 混入链尾静段——联合闭式（见函数注推导）----
             // 行 0 与 A、B 无关：|sinθ|＝hypot(L(0,1),L(0,2))、|cosθ|＝
-            // |L(0,0)|。sinθ 的符号是与链尾静段联动的规范自由度（σ 两支＝
-            // DH 恒等式 T(θ,d,a,α)＝T(θ+π,−d,−a,α+π) 的两支，d 翻号）——
-            // 对 σ∈{+1,−1} 全参数提取后按规范分支判据（d≥0；d≈0 时 a≥0）
-            // 取支。j=0（单关节链）无头部静段：A 恒 0，单支。
+            // |L(0,0)|。sinθ 的符号在 |L(0,0)|≈0 处不可辨识——对 σ∈{+1,−1}
+            // 两支各做全参数提取后**优先取读出 d≥0 的支**（初值习惯——
+            // 历史注记：原注释引用的"DH 恒等式 T(θ+π,−d,−a,α+π)"不成立，
+            // R3 审计 P0-1 删除输出面翻转后此处仅为启发式初值枚举）。
+            // j=0（单关节链）无头部静段：A 恒 0，单支。
             const double absSin = std::hypot(localFrame(0, 1), localFrame(0, 2));
             const double absCos = std::abs(localFrame(0, 0));
             // c_θ≈0（真实 θ≈±π/2）时 L00 的符号是纯噪声——取 |L00| 防象限
@@ -1088,8 +1087,10 @@ std::vector<double> analyticSeed(const SolverFrameTargets& targets)
                                   + std::sin(candA) * localT[2];
                 const double vv = localT[0] - aPrev;
                 const double aa = (std::abs(sinTh) > 1e-8) ? uu / sinTh : 0.0;
-                // 规范分支判据（镜像 canonicalForm：d<−tol 翻转；d≈0 时
-                // a<0 翻转）——首支即规范（或两支等价）即取。
+                // 支间偏好判据（初值习惯——非规范分支语义）：优先取读出
+                // d≥0 的 σ 支作为初值；首支不满足且已到第二支（branch==1）
+                // 则无条件取用——两支读出值都只是 LM 起点，相位 2 精化到
+                // 事实解（canonicalForm 已不翻转，d 符号不再被改写）。
                 const bool canonical = (dd >= -kBranchToleranceM)
                                        && !(std::abs(dd) <= kBranchToleranceM
                                             && aa < 0.0);

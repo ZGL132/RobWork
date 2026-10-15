@@ -42,6 +42,7 @@
 #include <sdurws/ird/modeling/WorkCellReverseImport.hpp>  // extractWorkCellDevice——mapWorkCellXml 委托（WP-13-T17 R2 通道）
 
 #include "InertiaMath.hpp"  // 单元私有头（R-2）——I-MDL-5 SPD/三角不等式单一实现（§6.3 错误项判定）
+#include "RelKeyNormalizer.hpp"  // 单元私有头（R-2）——reldetail::normalizeIncludeKey 折叠键单点（R3-A12 mesh 键解析）
 #include "RpyMath.hpp"      // 单元私有头（R-2）——RPY 正解唯一实现（UI-T53 提升共享）
 
 #include <pugixml.hpp>  // O-40：URDF DOM 解析（vcpkg 经典模式 1.16/x64-windows，modeling PRIVATE）。
@@ -2012,13 +2013,17 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
             report.unsupported.push_back(std::move(item));
             return;
         }
-        // 相对引用→依赖树节点（io relPath 约定：正斜杠＋折叠小写）。
-        std::string relKey;
-        relKey.reserve(att.geometry.meshFilename.size());
-        for (const char ch : att.geometry.meshFilename) {
-            relKey.push_back(ch == '\\' ? '/' : static_cast<char>(std::tolower(
-                static_cast<unsigned char>(ch))));
-        }
+        // 相对引用→依赖树节点（R3 审计 A12 修复，2026-10-15）：mesh 文件
+        // 名按 URDF 所在目录解析＋词法段消解（reldetail::normalizeIncludeKey
+        // 单点——与 Xacro include 键同一实现；io 依赖边抽取同款连接语义
+        // "所在文件目录/引用原文"）。原实现用裸文件名折叠查树：入口 URDF
+        // 不在根首层（rootRel 含目录段，如 urdf/robot.urdf 引用
+        // meshes/a.stl）或引用含 ./、../ 词法段的合法嵌套布局被误判"不在
+        // 依赖树"→SourceInconsistent 硬失败无草稿。逃逸管辖根的键（折叠
+        // 后 ../ 开头）不在树中——落既有 treeMismatch 面如实拒绝（io 侧
+        // 读取期已以 SecPathEscape 拒绝逃逸引用，此形态仅在伪造树中）。
+        const std::string relKey = reldetail::normalizeIncludeKey(
+            att.geometry.meshFilename, source.dependencyTree.rootRel);
         const io::ResourceNode* node = nullptr;
         for (const io::ResourceNode& n : source.dependencyTree.nodes) {
             if (n.relPath == relKey) {

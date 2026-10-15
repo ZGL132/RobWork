@@ -230,8 +230,13 @@ std::optional<SolidifyPayload> tryParseSolidifyPayload(std::string_view text)
     SolidifyPayload payload;
 
     // 第 2 行 ref=：hex 解码后非空（记录 id 必填——ExternalResourceRecord 注释）。
+    // R3 审计 B5 修复（2026-10-15）：tryFromHexText 对奇数长度/非 hex 文本
+    // 返回 nullopt，原条件 `!decoded->empty()` 对空 optional 解引用是 UB
+    // （MSVC 下读未构造 string）——本应按载荷违约拒绝的路径变成未定义行
+    // 为。补 has_value() 前置：解码失败与解码为空同走拒绝（载荷形态违约）。
     if (const auto v = valueOf(lines[1], "ref")) {
-        if (const auto decoded = tryFromHexText(*v); !decoded->empty()) {
+        if (const auto decoded = tryFromHexText(*v);
+            decoded.has_value() && !decoded->empty()) {
             payload.record.externalRefId = std::move(*decoded);
         } else {
             return std::nullopt;
@@ -239,9 +244,11 @@ std::optional<SolidifyPayload> tryParseSolidifyPayload(std::string_view text)
     } else {
         return std::nullopt;
     }
-    // 第 3 行 path=：hex 解码后非空（登记路径必填——§4.4.5 同约束）。
+    // 第 3 行 path=：hex 解码后非空（登记路径必填——§4.4.5 同约束；
+    // has_value() 前置同上——R3 审计 B5）。
     if (const auto v = valueOf(lines[2], "path")) {
-        if (const auto decoded = tryFromHexText(*v); !decoded->empty()) {
+        if (const auto decoded = tryFromHexText(*v);
+            decoded.has_value() && !decoded->empty()) {
             payload.record.absolutePath = std::move(*decoded);
         } else {
             return std::nullopt;
@@ -278,9 +285,11 @@ std::optional<SolidifyPayload> tryParseSolidifyPayload(std::string_view text)
     } else {
         return std::nullopt;
     }
-    // 第 7 行 recorded=：hex 解码后非空（登记时刻必填——§4.4.5）。
+    // 第 7 行 recorded=：hex 解码后非空（登记时刻必填——§4.4.5；
+    // has_value() 前置同 ref=/path= ——R3 审计 B5）。
     if (const auto v = valueOf(lines[6], "recorded")) {
-        if (const auto decoded = tryFromHexText(*v); !decoded->empty()) {
+        if (const auto decoded = tryFromHexText(*v);
+            decoded.has_value() && !decoded->empty()) {
             payload.record.recordedAtUtc = std::move(*decoded);
         } else {
             return std::nullopt;

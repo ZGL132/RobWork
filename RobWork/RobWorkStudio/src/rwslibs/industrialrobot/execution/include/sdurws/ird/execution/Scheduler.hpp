@@ -909,6 +909,14 @@ private:
     /// 前置：主锁已持有。
     std::size_t inFlightFormalFor(core::ProjectId project) const;
 
+    /// 释放联动簿记清除（R3 审计 B4 修复，2026-10-15）：Controller::
+    /// releaseResources 经 setReleaseListener 回调——摘除本侧对已析构状
+    /// 态机的全部非所有权簿记（ScheduledTask 条目/节流时间戳/等待队列条
+    /// 目）。契约：回调时状态机实例已销毁（仅清簿记不触碰）；调用方不持
+    /// 本锁（releaseResources 仅调度线程且不在 tick 锁内——本方法可安全
+    /// 取主锁）。
+    void purgeReleasedTask(TaskId task);
+
     /// 等待队列线性移除（stopDispatch 的两队列共用体；未命中＝no-op）。
     /// 前置：主锁已持有（stopDispatch 同域回调——不重复取锁）。
     static void removeFromQueue(std::deque<TaskId>& queue, TaskId task);

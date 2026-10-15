@@ -107,6 +107,15 @@ TaskScheduler::TaskScheduler(TaskController& controller, DrainCoordinator& drain
     // 装配期单线程约定与 setEventBus 同口径（L5 装配序，无并发窗）；
     // 析构摘闸见 ~TaskScheduler。
     m_controller.setDispatchGate(this);
+    // 释放通知接线（R3 审计 B4 修复，2026-10-15）：Controller::
+    // releaseResources 摘除状态机实例后回调 purgeReleasedTask——本侧
+    // ScheduledTask.machine 是指向 Controller 表内实例的非所有权裸指针，
+    // 原实现零清除路径：释放后任何 tryTask/tasksByProject/tick 段 a 解引
+    // 用悬垂 machine（UAF），且本侧记录随会话无界累积（tick 段 a 的"任
+    // 务已释放……陈旧帧丢弃"守卫检查的是本侧 m_tasks——条目永不在，守
+    // 卫对已释放任务形同虚设）。摘闸见 ~TaskScheduler。
+    m_controller.setReleaseListener(
+        [this](TaskId task) { purgeReleasedTask(task); });
 }
 
 TaskScheduler::~TaskScheduler()
@@ -115,6 +124,10 @@ TaskScheduler::~TaskScheduler()
     // 长于调度器的装配形态），不摘闸则关闭期取消经悬垂闸指针调用
     // stopDispatch（UB）。setDispatchGate 为 noexcept 存取，无异常面。
     m_controller.setDispatchGate(nullptr);
+    // 释放通知同步注销（R3 审计 B4）：监听 lambda 捕获 this——Controller
+    // 存活期长于本对象，不注销则析构后的 releaseResources 经悬垂回调进
+    // 入已销毁调度器（UB；与摘闸同一存活期论证）。
+    m_controller.setReleaseListener(nullptr);
 }
 
 void TaskScheduler::setEventBus(core::IDomainEventBus* bus) noexcept
@@ -676,6 +689,30 @@ void TaskScheduler::stopDispatch(TaskId task)
     // 投影仍可查）。任务不在等待队列（已出队/终态）＝无害 no-op。
     removeFromQueue(m_interactive, task);
     removeFromQueue(m_background, task);
+}
+
+void TaskScheduler::purgeReleasedTask(TaskId task)
+{
+    // 释放联动簿记清除（R3 审计 B4 修复，2026-10-15；契约见 hpp 声明）：
+    // Controller::releaseResources 已析构状态机实例——本侧全部非所有权
+    // 引用同步摘除。与 stopDispatch 的"簿记保留"差异：取消只出等待队列
+    // （终态投影仍可查——状态机还活着），释放是实例销毁（簿记必须清除，
+    // 悬垂即 UB）。取主锁：调用方（releaseResources 的发起方）不持本锁
+    // （仅调度线程外部 API——tick 锁内从不调用 release）。节流时间戳与
+    // 待应用进度帧一并清除（后者由 tick 段 a 的 find 守卫兜底——条目已
+    // 摘后该守卫恢复真实效力）。
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_tasks.erase(task);
+    m_lastProgressAt.erase(task);
+    removeFromQueue(m_interactive, task);
+    removeFromQueue(m_background, task);
+    for (auto it = m_pendingProgress.begin(); it != m_pendingProgress.end();) {
+        if (it->first == task) {
+            it = m_pendingProgress.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }
 
 void TaskScheduler::onTaskStatusChanged(const core::TaskStatusChangedPayload& payload)

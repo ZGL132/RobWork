@@ -28,9 +28,11 @@
  *     座系投影（调用方自快照 gravityBase() 取——本域零二次旋转，D-DYN-3；
  *     接口参数面只存在 g_base 向量、不存在 R_world_base——二次旋转在结构
  *     上不可表达，AT-37/RT-BW-4 同类缺陷的接口级拦截）；
- *   - 关节角：输入轨迹为权威角 q_auth（§4.5），关节实际旋转角＝
- *     q_rw = q_auth − zeroOffset（runtime 口径 q_authoritative = q_zeroOffset
- *     ＋ q_rw 的反解——变换链用 q_rw，输出样本行回记 q_auth）；
+ *   - 关节角：输入轨迹与全链变换均为**权威角** q_auth（§4.5；R3 审计
+ *     A8 修复口径——units/dynamics.md §5.3"全链使用权威角，与 rwsim 引
+ *     擎/状态交互的换算在适配层单点执行"；与 kinematics 权威 FK/runtime
+ *     RT-T07 三方一致。zeroOffset 不参与本域任何计算——字段仅为快照透
+ *     迁事实，见 RneaJoint 注。输出样本行回记 q_auth 同值）；
  *   - 体号约定：力学体 j＝规范连杆 links[j]（j=1..n，随关节 j-1 运动；
  *     links[0] 为基座连杆，固连基座、其物性不产生任何关节力矩故不入递推
  *     ——链约定"下标 i 的连杆是关节 i 的父体"，units/runtime.md §4.3.3）；
@@ -218,7 +220,7 @@ struct RneaJoint {
     Mat3 originR{};      ///< origin 旋转部分：父连杆系→关节系（关节角 0 位），无量纲
     Vec3 originP{};      ///< origin 平移部分：父连杆系下表示，单位 m
     Vec3 axis{};         ///< 关节轴，关节系下**单位向量**（无量纲；编译链已规格化）
-    double zeroOffset = 0.0; ///< 零位偏置，单位 rad（移动关节 m）；q_rw = q_auth − zeroOffset
+    double zeroOffset = 0.0; ///< 零位偏置，单位 rad（移动关节 m）——快照透传事实，**不参与本域计算**（全链权威角口径，R3 审计 A8 修复；有限性校验保留为快照防御面）
     core::ObjectId objectId; ///< 关节稳定对象 ID（样本行/诊断定位——ARC-04）
     std::string localName;   ///< 关节权威局部名（诊断 localName 字段——MDL-14）
     RneaBody body;       ///< 随本关节运动的体（links[i+1]；末关节已含工具/负载合成）
@@ -728,14 +730,15 @@ struct SampleGeometry {
 /**
  * @brief 正向运动链递推（权威角→基座系几何；§5.2 外向递推的几何段）。
  *
- * 逐步（关节 i，权威角 q_auth[i]，实际角 q_rw = q_auth − zeroOffset）：
+ * 逐步（关节 i，权威角 q_auth[i] 直用——全链权威角口径，R3 审计 A8）：
  *   1. 关节系姿态 Rj ＝ R_link[i]·originR[i]（origin 为父连杆系→关节系）；
  *   2. 关节轴 z[i] ＝ Rj·axis[i]（关节系→基座系）；
  *   3. 关节 i 原点 ＝ 连杆 i 原点 ＋ R_link[i]·originP[i]（origin 平移固
  *      连于父连杆）；
- *   4. 体姿态/原点：旋转/连续关节体＝关节系经 R_axis(q_rw)（绕关节轴转
- *      q_rw）——体原点＝关节 i 原点；移动关节体姿态＝关节系（无旋转）、
- *      体原点＝关节 i 原点＋q_rw·z[i]（沿轴滑移量 q_rw，单位 m）；
+ *   4. 体姿态/原点：旋转/连续关节体＝关节系经 R_axis(q_auth)（绕关节轴
+ *      转权威角）——体原点＝关节 i 原点；移动关节体姿态＝关节系（无旋
+ *      转）、体原点＝关节 i 原点＋q_auth·z[i]（沿轴滑移量 q_auth，单位
+ *      m）；
  *   5. 质心偏移 rc[i] ＝ R_body[i]·com[i+1]（体连杆系质心→基座系）。
  *
  * 数值防御：q_auth 非有限由调用方逐关节预检（NonFiniteInput 通道）——
@@ -760,7 +763,18 @@ SampleGeometry computeGeometry(const RneaChain& chain, const std::vector<double>
         const Mat3 RJoint = mul(RLinkPrev, j.originR);
         const Vec3 z = mul(RJoint, j.axis);
         const Vec3 pj = PLinkPrev + mul(RLinkPrev, j.originP);
-        const double d = qAuth[i] - j.zeroOffset;  // q_rw（rad 或 m——权威角换算）
+        // 关节角＝权威角直用（R3 审计 A8 修复，2026-10-15）：本域全链使
+        // 用权威角 q_auth（units/dynamics.md §5.3"全链使用权威角；与
+        // rwsim 引擎/状态交互的换算在适配层单点执行"）——与 kinematics
+        // 权威 FK（Fk.cpp"q 为权威值，不再叠加 zeroOffset"）和 runtime
+        // RT-T07 共轭等价证明三方一致。原实现做 q_rw＝q_auth−zeroOffset
+        // 的换算后再进变换链——zeroOffset≠0 的快照下整条子链姿态/位置
+        // 恒差（旋转关节 R_axis(−zeroOffset)、移动关节沿轴 zeroOffset），
+        // 全部力矩/功率错误。当前 S5 规范模型恒产 zeroOffset=0（runtime
+        // §4.2 无零位承载登记）故产品链未触发；跨版本快照/未来扩展即触
+        // 发。RneaJoint.zeroOffset 字段保留为透传事实（不参与计算——见
+        // 字段注），有限性校验照常（快照防御面）。
+        const double d = qAuth[i];  // 权威角直用（rad 或 m——随关节类型）
         g.jointOrigin[i] = pj;
         g.zAxis[i] = z;
 

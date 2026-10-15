@@ -884,6 +884,89 @@ TEST(KinWorkspace, CollisionViaPolicySessionNotBoolean_WP15T14_ACC5)
     // 行为断言＋文档登记承载。）
 }
 
+namespace {
+
+/// 最小碰撞会话替身（仅承载"会话在场"——Workspace 把会话指针透传给
+/// 求解器；ScriptedSolver 按指针在场性置 collisionNotEvaluated，不调用
+/// evaluate，故本替身评估体不可达。接口形状漂移由 override 编译期钉住）。
+class PresentCollisionSession final : public kin::IKinCollisionSession {
+public:
+    kin::IkCollisionVerdict evaluate(const std::vector<double>& q) const override
+    {
+        (void)q;
+        return kin::IkCollisionVerdict{};  // 不可达面（见类注）
+    }
+};
+
+}  // namespace
+
+/**
+ * R3 审计 A7 回归钉（audit-r3-fixes-1 返工批 O-4——2026-10-15 修复
+ * bf531476 的"评价凭据分派"新支钉扎）：碰撞会话在场时，
+ * buildWorkspacePointCloud 的碰撞三态按"评价凭据"分派——
+ *   - 携带已评价解（bestSolution 在场——会话在场时求解有解必经碰撞检
+ *     查的凭据）→ 0（已检查无碰撞）；
+ *   - 无凭据样本（搜索未果结局 2——无解、且因会话在场而不携带
+ *     collisionNotEvaluated 标记）→ 2（保守未评价）。
+ * 原缺陷形态把无凭据样本落兜底 else 误标 0（"collision-free"写入导出
+ * CSV）——违反 Workspace.hpp 与映射自身注释的"绝不把未知呈现为无碰撞"
+ * 契约（KIN-05 保守读法）。既有两处 collisionClass 断言均走"无会话→
+ * collisionNotEvaluated→2"支，本用例补会话在场下的两新支直钉。
+ */
+TEST(KinWorkspace, PointCloudCollisionDispatchByEvaluationCredential_R3_A7)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "KIN-05"},
+                  std::vector<std::string>{"AT-25", "R3-A7"});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    // 按位置 z 分流：z>0.6 → 搜索未果（MultiInitNoConvergence——零候选
+    // 无解轨）；其余可达（SolutionsFound——有解轨）。会话在场替身使逐
+    // 样本 collisionNotEvaluated 保持 false（ScriptedSolver 按会话指针
+    // 在场性置位——真实求解器行为同款模拟，KIN-05 语义来源）。
+    ScriptedSolver solver(&dataInsufficientByZ);
+    PresentCollisionSession session;
+
+    RecordingContext ctx;
+    WorkspaceSamplingQuery q = makeQuery(&solver);
+    q.collisionSession = &session;         // 统一策略注入面（V13-01——零布尔）
+    q.position.gridCounts = {5U, 1U, 3U};  // z 格心 {1/6, 1/2, 5/6}——两轨均非空
+    const kin::WorkspaceSampleRun run = kin::runWorkspaceSampling(view, q, ctx);
+    ASSERT_FALSE(run.results.empty());
+
+    // 样本面自证：两轨都被真实触达（新支 0 与钉扎面 2 均非空集——防空
+    // 断言恒绿的形态）。
+    std::uint64_t withSolution = 0;
+    std::uint64_t noCredential = 0;
+    for (const kin::WorkspaceSampleResult& r : run.results) {
+        ASSERT_FALSE(r.collisionNotEvaluated)
+            << "会话在场样本不得携带未评价标记（KIN-05 语义来源前提）";
+        if (r.bestSolution.has_value()) {
+            ++withSolution;
+            EXPECT_EQ(r.state, SampleState::Reached);
+        } else {
+            ++noCredential;
+            EXPECT_EQ(r.state, SampleState::DataInsufficient);  // 结局 2→2/3 映射
+        }
+    }
+    EXPECT_GT(withSolution, std::uint64_t{0});
+    EXPECT_GT(noCredential, std::uint64_t{0});
+
+    // 三态分派钉：有解→0（已评价凭据）；无凭据→2（保守未评价——原缺陷
+    // 形态此处为 0，变异还原即红）。
+    const WorkspacePointCloudRenderData cloud = kin::buildWorkspacePointCloud(run);
+    ASSERT_EQ(cloud.points.size(), run.results.size());
+    for (std::size_t i = 0; i < cloud.points.size(); ++i) {
+        if (run.results[i].bestSolution.has_value()) {
+            EXPECT_EQ(cloud.points[i].collisionClass, std::uint8_t{0})
+                << "样本 " << i << "（有解＝已评价凭据——0 才表示已检查无碰撞）";
+        } else {
+            EXPECT_EQ(cloud.points[i].collisionClass, std::uint8_t{2})
+                << "样本 " << i << "（无凭据——保守未评价，KIN-05）";
+        }
+    }
+}
+
 TEST(KinWorkspace, RerunAfterCancelSameSampleSet_WP15T14_ACC2)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "NFR-REL-03"},

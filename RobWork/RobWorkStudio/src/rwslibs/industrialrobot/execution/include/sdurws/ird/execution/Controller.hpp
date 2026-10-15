@@ -510,6 +510,26 @@ public:
      */
     void releaseResources(TaskId task);
 
+    /**
+     * @brief 登记释放通知（R3 审计 B4 修复，2026-10-15——簿记联动接缝）。
+     *
+     * releaseResources 成功摘除任务（状态机实例已析构）后回调，入参＝已
+     * 释放 taskId。背景：TaskScheduler 侧持有指向 Controller 表内状态机
+     * 的非所有权裸指针（ScheduledTask.machine/节流时间戳/等待队列）——
+     * 原实现 releaseResources 只清 Controller 侧，调度器簿记零清除：释
+     * 放后任何 tryTask/tasksByProject/tick 段 a 解引用悬垂 machine（UAF）
+     * ，且调度器侧记录随会话无界累积。回调约束：① 触发时状态机实例**已
+     * 销毁**——回调体不得触碰任何状态机引用，仅限调用方侧簿记清除；②
+     * 不得在回调内再入本类（releaseResources 的单写者域注释同款）；③
+     * 调用方不得持有会与本回调互斥的锁（releaseResources 仅调度线程、
+     * 不持调度器主锁——purge 侧可安全取自己的锁）。装配期一次（同
+     * setDispatchGate 纪律）；nullptr＝注销（拆卸面——监听者存活期短于
+     * 本类时必须）。
+     *
+     * @param listener [in] 释放通知（可空＝无通知，既有行为）
+     */
+    void setReleaseListener(std::function<void(TaskId)> listener) noexcept;
+
     /// 生产默认时钟（ClockFn 缺省值的实际实现——steady 时钟，单调）。
     static std::chrono::steady_clock::time_point steadyClock() noexcept;
 
@@ -597,6 +617,8 @@ private:
     std::unordered_map<TaskId, ManagedTask> m_tasks;
     IDispatchGate* m_dispatchGate = nullptr;  ///< 派发闸门（非所有权；可空）
     IResumeGate* m_resumeGate = nullptr;      ///< 继续兼容判定面（非所有权；可空＝fail-closed）
+    /// 释放通知（R3 审计 B4——调度器簿记联动接缝；可空＝无通知）。
+    std::function<void(TaskId)> m_releaseListener;
 };
 
 }  // namespace sdurws::ird::execution
