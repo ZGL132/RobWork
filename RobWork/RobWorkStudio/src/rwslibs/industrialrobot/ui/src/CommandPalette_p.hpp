@@ -84,6 +84,14 @@ public:
     /// @brief 面板当前是否可见（壳/测试观测面）。
     bool isOpen() const;
 
+    /// @brief 注销数据源（R3 审计 C7 拆卸面，2026-10-15）：收起面板并置空
+    ///        命令注册表/快捷键表指针——内容层 shutdown 在 reset 两注册表
+    ///        **之前**调用。背景：面板 Widget 随宿主控件树存活至宿主销毁，
+    ///        而两注册表是独立 reset 的非拥有裸指针——"注册表已释放、面板
+    ///        尚在"的拆卸窗口内任何面板交互（repopulate/executeCurrent）都
+    ///        是悬垂解引用；注销后各入口对空源安全返回。
+    void detachRegistries();
+
 protected:
     /// @brief 键盘导航主路径（面板级：Esc 关闭/Enter 执行/Tab 补全类别）。
     void keyPressEvent(QKeyEvent* event) override;
@@ -108,7 +116,7 @@ private:
     /// @brief 行的显示文本组装（标题＋分组＋键位＋禁用原因——"禁用＋说明"）。
     static QString rowText(const CommandView& view, const QString& keyText);
 
-    ICommandRegistry* m_commands;                 ///< 命令注册表（非拥有）
+    ICommandRegistry* m_commands;                 ///< 命令注册表（非拥有；shutdown 注销后空）
     IGlobalShortcutRegistry* m_shortcuts;         ///< 快捷键表（非拥有；可空）
     QLineEdit* m_filter = nullptr;                ///< 过滤输入框（窗口树子）
     QListWidget* m_list = nullptr;                ///< 结果列表（窗口树子）

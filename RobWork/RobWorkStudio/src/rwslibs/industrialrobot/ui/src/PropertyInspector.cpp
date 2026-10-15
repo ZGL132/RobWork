@@ -21,6 +21,7 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPointer>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -447,6 +448,21 @@ public:
         // 全量重渲染：字段区/入口区/宿装区先清空（对象切换不残留上一
         // 对象的任何呈现——INV-B3 零留存的呈现面纪律），再按模型当前
         // 状态分态装配。
+        // R3 审计 C5 修复（2026-10-15）：旧参数表模型的析构不早于旧面板
+        // 的物理销毁——把所有权移交给旧面板的 destroyed 钩子（见成员注）。
+        // 实现细节（对抗自查修正两点）：① m_paramTable 用 QPointer——旧
+        // 面板若已被上一轮的 DeferredDelete 回收（事件循环已跑），裸指针
+        // 即悬垂，QPointer 自动置空走常规 reset 路径；② 钩子不挂接收者
+        // 上下文——本面板析构时 ~QObject 先断开自身作为接收者的连接、后
+        // 删除子树，挂 m_root 为接收者会使 keeper 在 shutdown 序中不执行
+        // （模型泄漏）；无上下文连接在 sender 的 destroyed 发射点（连接尚
+        // 活）可靠执行，lambda 只持模型裸指针无 Qt 对象捕获。
+        if (m_paramTable != nullptr && m_paramModel != nullptr) {
+            ParamEditModel* orphan = m_paramModel.release();
+            QObject::connect(m_paramTable, &QObject::destroyed,
+                             [orphan]() { delete orphan; });
+        }
+        m_paramTable.clear();
         clearWidgets(*m_fieldsLayout);
         clearWidgets(*m_entriesLayout);
         clearWidgets(*m_pageLayout);
@@ -512,6 +528,7 @@ public:
                 *m_paramModel, view.editOutlet, ParamTablePanelOptions{},
                 m_fieldsHost);
             m_fieldsLayout->addWidget(table);
+            m_paramTable = table;  // 换装延寿钩子锚点（R3 审计 C5）
             // 动态加入"已可见父链"的子控件须显式 show（同入口按钮纪律）。
             table->show();
         } else {
@@ -633,9 +650,21 @@ private:
     QVBoxLayout* m_fieldsLayout;
     QVBoxLayout* m_entriesLayout;
     QVBoxLayout* m_pageLayout;
+    /// 当前参数表面板控件（m_fieldsLayout 内唯一控件——R3 审计 C5 修复的
+    /// 旧面板延寿钩子锚点；refresh 重建时更新。QPointer：旧面板可能已被
+    /// 上一轮的 DeferredDelete 回收——裸指针在跨 refresh 存活期内悬垂，
+    /// QPointer 于其销毁时自动置空，走常规 m_paramModel.reset() 路径）。
+    QPointer<QWidget> m_paramTable;
     /// 当前字段的编辑会话模型（与内嵌参数表面板同寿命——对象切换整体
-    /// 换装；unique_ptr 保证面板控件先于模型析构【clearWidgets 先于
-    /// reset 执行】——createParamTablePanel 持引用的存活期纪律）。
+    /// 换装。寿命纪律（R3 审计 C5 修复，2026-10-15）：原注释宣称"unique_ptr
+    /// 保证面板控件先于模型析构【clearWidgets 先于 reset 执行】"——不成立：
+    /// clearWidgets 用 deleteLater（物理删除延迟到事件循环），reset 立即析
+    /// 构模型；已提交编辑的 0ms 单发回执（ParamTablePanel 以面板为上下文的
+    /// QTimer::singleShot 持 ctx->model 裸引用）若在同一事件循环拍内先于
+    /// DeferredDelete 排队触发，即解引用已销毁模型（UAF）。现模型所有权在
+    /// 换装时移交给旧面板的 destroyed 钩子——旧模型随旧面板真销毁（Deferred
+    /// Delete 执行点）才析构：在途回执或在面板销毁时被一并取消、或仍持有
+    /// 存活模型写孤儿对象（随后整体丢弃），两序皆安全）。
     std::unique_ptr<ParamEditModel> m_paramModel;
 };
 

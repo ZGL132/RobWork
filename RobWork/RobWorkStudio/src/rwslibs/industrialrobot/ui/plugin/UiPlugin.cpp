@@ -926,6 +926,14 @@ void IrdWorkbenchHostPlugin::initialize()
         [this](const std::vector<CommandParameter>& params) {
             return orchestrateApplyDraft(params);
         };
+    // 最近项目直开钩子（R3 审计 C1，2026-10-15）：首页"最近项目"可用项
+    // 点击与菜单最近项（:1904 同款）走同一 openRecentProject 编排——原缺陷
+    // 是点击只提交无参 project.open、处理器弹出目录选择框，被点项目路径
+    // 被丢弃（两入口行为分裂）。
+    contentDeps.openRecentProject =
+        [this](const std::string& canonicalPath) {
+            openRecentProject(canonicalPath);
+        };
     // 项目级撤销/重做编排注入（UI-T39——审核 P1：需求面板"撤销上次应用"
     // 转发的 project.undo 此前无处理器〔占位说明〕且面板命令 id 拼写错误
     // ——本缝与面板侧修正共同构成真实撤销链路：UndoRedoService 逆命令

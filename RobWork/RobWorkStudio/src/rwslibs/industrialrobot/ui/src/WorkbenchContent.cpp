@@ -962,10 +962,22 @@ QWidget* WorkbenchContentImpl::buildHomePage()
     // F-609：判别条件修复——UserRole 存的是 available（refreshRecentList
     // 写入"点击判别的可用位"），可用项点击应触发打开。原实现取反（!toBool）
     // 使可用项点击无反应、失效项点击反而触发打开（条件写反）。
+    // R3 审计 C1 修复（2026-10-15）：原实现只提交无参 project.open——生产
+    // 宿主的处理器忽略参数走目录选择对话框，被点项目的路径（tooltip 承载）
+    // 被丢弃：点击"最近项目"弹出的却是选目录框（与菜单最近项行为分裂——
+    // 菜单路径 openRecentProject(path) 直接重开）。现优先走宿主注入的
+    // openRecentProject 直开钩子（与菜单同源编排）；未注入（harness 形态）
+    // 保持无参 project.open 占位流不变。
     QObject::connect(m_homeRecentList, &QListWidget::itemClicked, m_homeRecentList,
             [this](QListWidgetItem* item) {
                 if (item->data(Qt::UserRole).toBool()) {
-                    submitCommand("project.open");  // 可用项：打开该项目的入口
+                    if (m_deps.openRecentProject) {
+                        // 路径取条目 tooltip（与"移除"操作同一键承载——值拷贝，
+                        // 不捕获 item 裸指针）。
+                        m_deps.openRecentProject(item->toolTip().toStdString());
+                    } else {
+                        submitCommand("project.open");  // harness 占位打开流
+                    }
                 }
             });
     // 右键菜单：重新选择／移除（对失效项与可用项均可移除——PM-10 原文）。
@@ -1733,6 +1745,14 @@ bool WorkbenchContentImpl::shutdown()
 
     // ②设施停用（§10.1 后置语义的内容半区：宿主层销毁窗口发生在本调用
     //   返回之后——Widget 指针随窗口树消亡，此处全部置空防悬垂）。
+    // R3 审计 C7 拆卸面（2026-10-15）：面板 Widget 随宿主树存活至宿主销
+    // 毁，而下方 m_commands/m_shortcuts 立即 reset——先注销面板的两个非拥
+    // 有数据源指针（收起＋置空，其后任何面板交互对空源安全返回），再复位
+    // 注册表/快捷键表，消除"注册表已释放、面板尚在"窗口内的悬垂解引用
+    // （与 m_shortcuts->detach 的先断连接纪律同族）。
+    if (m_palette != nullptr) {
+        m_palette->detachRegistries();
+    }
     m_shortcuts->detach();  // QShortcut 唯一创建点的对称拆卸（物理键随窗口树销毁——此处清表）
     m_palette = nullptr;    // 面板为宿主控件树子——随宿主销毁（指针置空防悬垂）
     m_commands.reset();     // 注册表/快捷键表在拆卸后停用（处理器只经本层触发）

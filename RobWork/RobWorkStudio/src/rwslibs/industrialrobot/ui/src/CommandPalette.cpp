@@ -120,8 +120,23 @@ bool CommandPalettePanel::isOpen() const
     return isVisible();
 }
 
+void CommandPalettePanel::detachRegistries()
+{
+    // R3 审计 C7 拆卸面（2026-10-15）：先收起（隐藏后不再接收键盘/滚轮
+    // 事件——面板交互入口只剩程序化调用），再置空两个非拥有数据源指针；
+    // 此后 repopulate/executeCurrent/completeCategory 对空源安全返回。
+    // 调用时序契约＝内容层 shutdown 在 reset 注册表/快捷键表之前调用本
+    // 方法（见 WorkbenchContentImpl::shutdown ②段）。
+    closePalette();
+    m_commands = nullptr;
+    m_shortcuts = nullptr;
+}
+
 void CommandPalettePanel::repopulate()
 {
+    if (m_commands == nullptr) {
+        return;  // 数据源已注销（detachRegistries——拆卸期安全返回，R3-C7）
+    }
     m_list->clear();
 
     const std::string fuzzy = m_filter->text().toStdString();
@@ -198,6 +213,9 @@ void CommandPalettePanel::repopulate()
 
 void CommandPalettePanel::executeCurrent()
 {
+    if (m_commands == nullptr) {
+        return;  // 数据源已注销（detachRegistries——拆卸期安全返回，R3-C7）
+    }
     QListWidgetItem* item = m_list->currentItem();
     if (item == nullptr || item->flags() == Qt::NoItemFlags) {
         return;  // 空表/分组条——无命令可执行（防御，不虚构选择）
@@ -214,18 +232,22 @@ void CommandPalettePanel::completeCategory()
 {
     if (m_categoryFilter.has_value()) {
         m_categoryFilter.reset();  // 二次 Tab＝取消分类过滤（对称往返）
-    } else {
-        QListWidgetItem* item = m_list->currentItem();
-        if (item == nullptr || item->flags() == Qt::NoItemFlags) {
-            return;  // 无选中命令——无类别可补全
-        }
-        // 以选中命令的分类收窄（§7.4"Tab 补全类别"）——按 id 查回投影行。
-        const CommandId id = item->data(Qt::UserRole).toString().toStdString();
-        for (const CommandView& view : m_commands->query({})) {
-            if (view.id == id) {
-                m_categoryFilter = view.category;
-                break;
-            }
+        repopulate();
+        return;
+    }
+    if (m_commands == nullptr) {
+        return;  // 数据源已注销（detachRegistries——拆卸期安全返回，R3-C7）
+    }
+    QListWidgetItem* item = m_list->currentItem();
+    if (item == nullptr || item->flags() == Qt::NoItemFlags) {
+        return;  // 无选中命令——无类别可补全
+    }
+    // 以选中命令的分类收窄（§7.4"Tab 补全类别"）——按 id 查回投影行。
+    const CommandId id = item->data(Qt::UserRole).toString().toStdString();
+    for (const CommandView& view : m_commands->query({})) {
+        if (view.id == id) {
+            m_categoryFilter = view.category;
+            break;
         }
     }
     repopulate();

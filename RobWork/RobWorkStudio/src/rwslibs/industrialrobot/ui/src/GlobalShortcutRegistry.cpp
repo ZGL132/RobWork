@@ -164,9 +164,16 @@ public:
     {
         // Qt 父子纪律：deleteLater 由事件循环收尾（不在快捷键自身回调栈内
         // 立即 delete——防回调中拆除自身）。
+        // R3 审计 C7 修复（2026-10-15）：deleteLater 的物理删除延迟到事件
+        // 循环，而注册表（本对象）通常在 shutdown 中被立即 reset——拆卸窗
+        // 口内（deleteLater 已入队、尚未执行）事件循环仍在派发键事件，
+        // activated lambda 捕获的注册表 this 已释放 ⇒ 解引用悬垂。先整体
+        // 断开该快捷键的全部连接（activated 回调随之失效），再 deleteLater
+        // 收尾物理删除——拆卸序"先断连接、后销毁"与对象寿命对齐。
         for (auto& [command, shortcut] : m_shortcutByCommand) {
             (void)command;
             if (shortcut != nullptr) {
+                QObject::disconnect(shortcut, nullptr, nullptr, nullptr);
                 shortcut->deleteLater();
             }
         }
