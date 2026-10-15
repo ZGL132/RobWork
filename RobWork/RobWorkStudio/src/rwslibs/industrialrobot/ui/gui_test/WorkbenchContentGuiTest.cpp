@@ -30,6 +30,11 @@
 #include <QTabWidget>
 #include <QTemporaryDir>
 #include <QWidget>
+#include <QTest>
+#include <QScrollBar>
+#include <QLineEdit>
+#include <QVBoxLayout>
+#include "../src/DockWorkspace_p.hpp"
 
 #include <sdurws/ird/diagnostics/Catalog.hpp>
 #include <sdurws/ird/diagnostics/Redaction.hpp>
@@ -1251,6 +1256,81 @@ TEST_F(WorkbenchContentGuiTest,
         << "非空键拒绝反馈失真（守卫误吞正常禁用原因——§7.4 发现性违约）";
 
     EXPECT_TRUE(content->shutdown());
+}
+
+/** UX-09/UI-T82：嵌入宿主的复位钩子只重排自身 Dock，不冒领主窗口状态持久化。 */
+TEST_F(WorkbenchContentGuiTest, EmbeddedFactoryResetHookOnly_UI_T82)
+{
+    IRD_TEST_INFO("UX-09", {}, std::nullopt);
+    auto deps = makeEmbeddedDeps();
+    int resets = 0;
+    deps.restoreFactoryWindowState = [&resets] { ++resets; };
+    auto content = ui::createWorkbenchContent(std::move(deps));
+    ASSERT_TRUE(content->build()) << "嵌入形态应允许仅注入工厂拓扑复位钩子";
+    content->activate();
+    content->submitCommand("view.resetLayout");
+    EXPECT_EQ(resets, 1) << "菜单/命令面板统一提交都必须重建工厂拓扑";
+    EXPECT_TRUE(content->shutdown());
+}
+
+/** UX-09/PM-14/UI-T82：真实 Qt 标签遮挡不能变成用户关闭；长表单应留在滚动边界。 */
+TEST(DockWorkspaceGuiTest, LongFormsTabsAndReopenKeepState_UI_T82)
+{
+    IRD_TEST_INFO("UX-09", {}, std::nullopt);
+    QMainWindow host;
+    host.setCentralWidget(new QWidget(&host));
+    auto* tree = new QDockWidget(QStringLiteral("项目树"), &host);
+    tree->setWidget(new QWidget(tree));
+    QVector<QDockWidget*> domains;
+    for (int i = 0; i < 6; ++i) {
+        auto* dock = new QDockWidget(QString::number(i), &host);
+        dock->setObjectName(QStringLiteral("domain_") + QString::number(i));
+        auto* form = new QWidget;
+        form->setMinimumSize(420, 900); // 逻辑像素：模拟真实需求长表单的尺寸约束。
+        auto* layout = new QVBoxLayout(form);
+        layout->addWidget(new QLineEdit(QStringLiteral("未提交的工程参数"), form));
+        ui::detail::installDockViewport(*dock, form);
+        domains.push_back(dock);
+    }
+    ui::detail::arrangeDomainWorkspace(host, *tree, domains);
+    host.resize(1000, 680);
+    host.show();
+    QTest::qWait(100);
+    bool sawCovered = false;
+    // 观察者须先于局部捕获和宿主析构：QMainWindow 析构子 Dock 时仍可能发
+    // 显隐信号；以 host 作接收者会在 domains 容器已销毁后访问悬空栈引用。
+    QObject observer;
+    QDockWidget* observedDock = domains[0]; // Qt 父子树持有，观察者先析构断线。
+    QObject::connect(observedDock, &QDockWidget::visibilityChanged, &observer,
+        [observedDock, &sawCovered](bool visible) {
+            if (!visible && !observedDock->isHidden()) { sawCovered = true; }
+        });
+    for (QDockWidget* dock : domains) {
+        dock->show(); dock->raise();
+        QTest::qWait(25);
+        for (QDockWidget* peer : domains) {
+            EXPECT_TRUE(ui::detail::dockRequestedOpen(*peer)) << "标签遮挡仍是用户打开";
+        }
+    }
+    EXPECT_TRUE(sawCovered) << "必须真实观察到标签遮挡信号，防用例空跑";
+    EXPECT_EQ(host.tabifiedDockWidgets(domains.front()).size(), 5);
+    const auto tabs = host.findChildren<QTabBar*>(QString(), Qt::FindDirectChildrenOnly);
+    ASSERT_FALSE(tabs.isEmpty()) << "必须存在真实 Qt 停靠标签栏";
+    for (QTabBar* bar : tabs) {
+        EXPECT_EQ(bar->elideMode(), Qt::ElideNone) << "窄栏仍须显示可辨认的完整模块标题";
+        EXPECT_TRUE(bar->usesScrollButtons()) << "超宽标签用滚动访问";
+    }
+    EXPECT_LE(host.minimumSizeHint().height(), 680) << "六份 900px 最小高度不应向整窗传播";
+    auto* scroll = qobject_cast<QScrollArea*>(domains.back()->widget());
+    ASSERT_NE(scroll, nullptr);
+    EXPECT_GT(scroll->verticalScrollBar()->maximum(), 0) << "长表单必须可滚动到末端";
+    QWidget* original = scroll->widget();
+    domains.back()->close();
+    EXPECT_FALSE(ui::detail::dockRequestedOpen(*domains.back()));
+    domains.back()->show(); domains.back()->raise();
+    EXPECT_EQ(scroll->widget(), original) << "关闭重开不可重新构造或清空草稿";
+    EXPECT_EQ(original->findChild<QLineEdit*>()->text(), QStringLiteral("未提交的工程参数"));
+    EXPECT_EQ(host.tabifiedDockWidgets(domains.front()).size(), 5);
 }
 
 }  // namespace

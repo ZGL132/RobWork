@@ -1,0 +1,2 @@
+1 1792053532961 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：C:\\Users\\zgl18\\.codex\\worktrees\\rt-t16-inertia\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\builds\\ui-t82\\integration-clean-200\\ird-ui-plugin-logs）
+2 1792053533784 D DEBUG diag/ui msg=[sampled-tail] [central-guard] 保留量未达成：中央 296 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）
