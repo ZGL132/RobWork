@@ -1,0 +1,215 @@
+[
+  {
+    "target": "sdurws_ird_core_test",
+    "integrationCount": 65,
+    "smokeCount": 63,
+    "integrationOnlyCompileItems": [
+      "core/sdurws_ird_core_test_autogen/mocs_compilation_Debug.cpp",
+      "core/sdurws_ird_core_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "core/sdurws_ird_core_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "core/sdurws_ird_core_test_autogen/mocs_compilation_Release.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_kinematics_test",
+    "integrationCount": 230,
+    "smokeCount": 224,
+    "integrationOnlyCompileItems": [
+      "kinematics/sdurws_ird_kinematics_test_autogen/mocs_compilation_Debug.cpp",
+      "kinematics/sdurws_ird_kinematics_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "kinematics/sdurws_ird_kinematics_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "kinematics/sdurws_ird_kinematics_test_autogen/mocs_compilation_Release.cpp",
+      "kinematics/test/CollisionPortTest.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_modeling_contract_test",
+    "integrationCount": 17,
+    "smokeCount": 8,
+    "integrationOnlyCompileItems": [
+      "modeling/contract_test/CommandPipelineContractTest.cpp",
+      "modeling/contract_test/CompileBridgeContractTest.cpp",
+      "modeling/contract_test/GoldenPeerContractTest.cpp",
+      "modeling/sdurws_ird_modeling_contract_test_autogen/mocs_compilation_Debug.cpp",
+      "modeling/sdurws_ird_modeling_contract_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "modeling/sdurws_ird_modeling_contract_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "modeling/sdurws_ird_modeling_contract_test_autogen/mocs_compilation_Release.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_modeling_gui_test",
+    "integrationCount": 42,
+    "smokeCount": 37,
+    "integrationOnlyCompileItems": [
+      "modeling/gui_test/ModelingUiModuleHostWiringGuiTest.cpp",
+      "modeling/sdurws_ird_modeling_gui_test_autogen/mocs_compilation_Debug.cpp",
+      "modeling/sdurws_ird_modeling_gui_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "modeling/sdurws_ird_modeling_gui_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "modeling/sdurws_ird_modeling_gui_test_autogen/mocs_compilation_Release.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_modeling_test",
+    "integrationCount": 379,
+    "smokeCount": 311,
+    "integrationOnlyCompileItems": [
+      "modeling/sdurws_ird_modeling_test_autogen/mocs_compilation_Debug.cpp",
+      "modeling/sdurws_ird_modeling_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "modeling/sdurws_ird_modeling_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "modeling/sdurws_ird_modeling_test_autogen/mocs_compilation_Release.cpp",
+      "modeling/test/CommandHandlersTest.cpp",
+      "modeling/test/DhConvertEquivalenceTest.cpp",
+      "modeling/test/GoldenDhEquivalenceTest.cpp",
+      "modeling/test/HostMigrationModuleTest.cpp",
+      "modeling/test/PackageWorkCellTest.cpp",
+      "modeling/test/PartObjectCommandTest.cpp",
+      "modeling/test/PluginModuleT03BTest.cpp",
+      "modeling/test/ReadinessTest.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_policy_contract_test",
+    "integrationCount": 23,
+    "smokeCount": 8,
+    "integrationOnlyCompileItems": [
+      "policy/sdurws_ird_policy_contract_test_autogen/mocs_compilation_Debug.cpp",
+      "policy/sdurws_ird_policy_contract_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "policy/sdurws_ird_policy_contract_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "policy/sdurws_ird_policy_contract_test_autogen/mocs_compilation_Release.cpp",
+      "policy/test/CollisionAnalyticDatasetTest.cpp",
+      "policy/test/PolicyContractDoublesTest.cpp",
+      "policy/test/PolicyProofMaterialContractTest.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_policy_test",
+    "integrationCount": 211,
+    "smokeCount": 141,
+    "integrationOnlyCompileItems": [
+      "policy/sdurws_ird_policy_test_autogen/mocs_compilation_Debug.cpp",
+      "policy/sdurws_ird_policy_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "policy/sdurws_ird_policy_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "policy/sdurws_ird_policy_test_autogen/mocs_compilation_Release.cpp",
+      "policy/test/CollisionEvaluationTest.cpp",
+      "policy/test/CollisionSessionTest.cpp",
+      "policy/test/CompatibilityTest.cpp",
+      "policy/test/JointLimitsTest.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_runtime_test",
+    "integrationCount": 277,
+    "smokeCount": 179,
+    "integrationOnlyCompileItems": [
+      "runtime/sdurws_ird_runtime_test_autogen/mocs_compilation_Debug.cpp",
+      "runtime/sdurws_ird_runtime_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "runtime/sdurws_ird_runtime_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "runtime/sdurws_ird_runtime_test_autogen/mocs_compilation_Release.cpp",
+      "runtime/test/CacheKeyTest.cpp",
+      "runtime/test/CompilerTest.cpp",
+      "runtime/test/ContractSuiteTest.cpp",
+      "runtime/test/DynamicWorkCellCompilerTest.cpp",
+      "runtime/test/HostPresentationViewTest.cpp",
+      "runtime/test/SnapshotTest.cpp",
+      "runtime/test/WorkCellCompilerTest.cpp",
+      "runtime/test/WorkCellGeometryTest.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_trajectory_contract_test",
+    "integrationCount": 69,
+    "smokeCount": 51,
+    "integrationOnlyCompileItems": [
+      "trajectory/contract_test/ContinuousProcessContractTest.cpp",
+      "trajectory/contract_test/KinematicsPortContractTest.cpp",
+      "trajectory/contract_test/ProcessSpeedContractTest.cpp",
+      "trajectory/sdurws_ird_trajectory_contract_test_autogen/mocs_compilation_Debug.cpp",
+      "trajectory/sdurws_ird_trajectory_contract_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "trajectory/sdurws_ird_trajectory_contract_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "trajectory/sdurws_ird_trajectory_contract_test_autogen/mocs_compilation_Release.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_trajectory_test",
+    "integrationCount": 180,
+    "smokeCount": 34,
+    "integrationOnlyCompileItems": [
+      "trajectory/sdurws_ird_trajectory_test_autogen/mocs_compilation_Debug.cpp",
+      "trajectory/sdurws_ird_trajectory_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "trajectory/sdurws_ird_trajectory_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "trajectory/sdurws_ird_trajectory_test_autogen/mocs_compilation_Release.cpp",
+      "trajectory/test/CartesianLineContinuityTest.cpp",
+      "trajectory/test/ContinuousProcessTest.cpp",
+      "trajectory/test/FailureLocateTest.cpp",
+      "trajectory/test/PlannerAvoidanceTest.cpp",
+      "trajectory/test/PlaybackExportTest.cpp",
+      "trajectory/test/ProcessSpeedTest.cpp",
+      "trajectory/test/PtpSequenceTest.cpp",
+      "trajectory/test/RecheckTest.cpp",
+      "trajectory/test/ReproBenchmarkTest.cpp",
+      "trajectory/test/SmoothTest.cpp",
+      "trajectory/test/TimeParamTest.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_ui_contract_test",
+    "integrationCount": 40,
+    "smokeCount": 27,
+    "integrationOnlyCompileItems": [
+      "ui/contract_test/HostIntegrationContractTest.cpp",
+      "ui/contract_test/PresentationBridgeContractTest.cpp",
+      "ui/plugin/DomainAssembly.cpp",
+      "ui/plugin/DomainModuleRunner.cpp",
+      "ui/plugin/ExtraDomainAssembly.cpp",
+      "ui/sdurws_ird_ui_contract_test_autogen/mocs_compilation_Debug.cpp",
+      "ui/sdurws_ird_ui_contract_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "ui/sdurws_ird_ui_contract_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "ui/sdurws_ird_ui_contract_test_autogen/mocs_compilation_Release.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_ui_gui_test",
+    "integrationCount": 81,
+    "smokeCount": 72,
+    "integrationOnlyCompileItems": [
+      "ui/gui_test/HostView3DGatewayGuiTest.cpp",
+      "ui/plugin/HostView3DGateway.cpp",
+      "ui/sdurws_ird_ui_gui_test_autogen/mocs_compilation_Debug.cpp",
+      "ui/sdurws_ird_ui_gui_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "ui/sdurws_ird_ui_gui_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "ui/sdurws_ird_ui_gui_test_autogen/mocs_compilation_Release.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  },
+  {
+    "target": "sdurws_ird_ui_test",
+    "integrationCount": 278,
+    "smokeCount": 255,
+    "integrationOnlyCompileItems": [
+      "ui/plugin/HostCompilePort.cpp",
+      "ui/plugin/HostPresentationAdapters.cpp",
+      "ui/plugin/KinEvaluationChannel.cpp",
+      "ui/plugin/QtTextBillboard.cpp",
+      "ui/sdurws_ird_ui_test_autogen/mocs_compilation_Debug.cpp",
+      "ui/sdurws_ird_ui_test_autogen/mocs_compilation_MinSizeRel.cpp",
+      "ui/sdurws_ird_ui_test_autogen/mocs_compilation_RelWithDebInfo.cpp",
+      "ui/sdurws_ird_ui_test_autogen/mocs_compilation_Release.cpp",
+      "ui/test/HostCompilePipelineTest.cpp",
+      "ui/test/KinEvaluationChannelTest.cpp",
+      "ui/test/SampleHighlightTest.cpp",
+      "ui/test/View3DPreviewMarkerPositionTest.cpp"
+    ],
+    "smokeOnlyCompileItems": []
+  }
+]

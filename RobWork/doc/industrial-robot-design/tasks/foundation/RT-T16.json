@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "status": "ready",
+  "interUnit": false,
+  "knownPitfalls": [],
+  "taskId": "RT-T16",
+  "unit": "runtime",
+  "masterWp": "WP-D",
+  "title": "对齐惯量相对对称性与对称化 SPD 校验（F-784）",
+  "dependsOn": [
+    "RT-T03",
+    "RT-T04"
+  ],
+  "requirements": [
+    "MDL-06",
+    "NFR-COR-03",
+    "AT-01"
+  ],
+  "designRefs": [
+    "units/runtime.md#4.3.3",
+    "units/runtime.md#12",
+    "REQUIREMENTS.md#25"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/RT-T16.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp06-t16/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/RobWork/src/**"
+  ],
+  "outputs": [
+    "S3/S5 同口径相对对称性校验与对称化后严格 SPD",
+    "尺度/边界/非有限回归用例",
+    "双模式构建和 XML/JSON/日志证据"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/runtime -C Release -R ^sdurws_ird_runtime_test$ -V --timeout 600",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/RT-T16.json"
+  ],
+  "branch": "wp06-t16",
+  "acceptance": [
+    "复现小尺度 diag=1e-6、I01=5e-13/I10=0 应拒绝却放行；大尺度 diag=1e6、I01=5e-7/I10=0 应在相对容差内却拒绝",
+    "对称性按 REQUIREMENTS 附录 D 第 6 项与既有 dynamics 相对范数口径；SPD 对称化后最小特征值严格 >0，不放宽阈值",
+    "S3 校验器与 S5 builder 双入口同结论；零范数/NaN/Inf/严格 SPD/上下尺度不溢出或静默修正",
+    "不改输入物理值、内容身份或公共布局；合法模型既有 FK/编码/编译回归通过"
+  ],
+  "note": "2026-10-15 QP-02 诊断探针链接主树当前 Release runtime.lib 实证两个相反误判。复现记录 qp-02-model-truth.md；已有 F-784 不新建重复 finding。仅登记 ready 后继，不在 WP-01-T05 会话改数值源码；实施前独立复核任务范围与工作分支。"
+}

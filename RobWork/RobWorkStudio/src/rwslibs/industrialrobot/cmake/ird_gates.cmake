@@ -158,7 +158,9 @@ function(ird_classify_target name out_unit out_face)
     elseif(name MATCHES "^sdurws_ird_([a-z]+)_(plugin|worker|app)$")
         set(_unit "${CMAKE_MATCH_1}")
         set(_face "${CMAKE_MATCH_2}")
-    elseif(name MATCHES "^sdurws_ird_([a-z]+)_(test|contract_test|gui_test)$")
+    # WP-01-T05：性能测试同样遵守 testkit §2.4 的测试目标规则。只扩展
+    # 明确登记的两种后缀；不使用 .*_test，避免任意工具名得到测试豁免。
+    elseif(name MATCHES "^sdurws_ird_([a-z]+)_(test|contract_test|gui_test|perf_test|largedata_perf_test)$")
         set(_unit "${CMAKE_MATCH_1}")
         set(_face "test")
     endif()
@@ -934,9 +936,68 @@ add_library(sdurws_ird_testkit INTERFACE)
 target_link_libraries(sdurws_ird_testkit INTERFACE sdurws_ird_core sdurws_ird_evidence)
 ")
 
+    # WP-01-T05：性能目标形态回归。夹具只声明目标图，测试真实扫描器；
+    # 不能只断言分类函数返回值，否则误放跨域边或误给 worker 测试豁免不可见。
+    set(_dir "${IRD_SELFTEST_DIR}/pass_perf_targets")
+    file(MAKE_DIRECTORY "${_dir}")
+    file(WRITE "${_dir}/CMakeLists.txt"
+"add_library(sdurws_ird_execution INTERFACE)
+add_library(sdurws_ird_testkit INTERFACE)
+add_executable(sdurws_ird_execution_perf_test main.cpp)
+target_link_libraries(sdurws_ird_execution_perf_test PRIVATE sdurws_ird_execution sdurws_ird_testkit)
+add_library(sdurws_ird_ui INTERFACE)
+add_executable(sdurws_ird_ui_largedata_perf_test main.cpp)
+target_link_libraries(sdurws_ird_ui_largedata_perf_test PRIVATE sdurws_ird_ui sdurws_ird_testkit)
+")
+    set(_dir "${IRD_SELFTEST_DIR}/pass_perf_registered_edge")
+    file(MAKE_DIRECTORY "${_dir}")
+    file(WRITE "${_dir}/CMakeLists.txt"
+"add_library(sdurws_ird_execution INTERFACE)
+add_executable(sdurws_ird_ui_perf_test main.cpp)
+target_link_libraries(sdurws_ird_ui_perf_test PRIVATE sdurws_ird_execution)
+")
+    set(_dir "${IRD_SELFTEST_DIR}/pass_openbench_worker")
+    file(MAKE_DIRECTORY "${_dir}")
+    file(WRITE "${_dir}/CMakeLists.txt"
+"add_library(sdurws_ird_project INTERFACE)
+add_executable(sdurws_ird_project_openbench_worker main.cpp)
+target_link_libraries(sdurws_ird_project_openbench_worker PRIVATE sdurws_ird_project)
+")
+    # 未登记的性能测试跨域边必须仍然失败；测试身份不等于跨域任意直链许可。
+    set(_dir "${IRD_SELFTEST_DIR}/fail_perf_unregistered")
+    file(MAKE_DIRECTORY "${_dir}")
+    file(WRITE "${_dir}/CMakeLists.txt"
+"add_library(sdurws_ird_modeling INTERFACE)
+add_executable(sdurws_ird_execution_perf_test main.cpp)
+target_link_libraries(sdurws_ird_execution_perf_test PRIVATE sdurws_ird_modeling)
+")
+    # 精确工具边只准 worker 链 project；它不是测试，不得因此链 testkit。
+    set(_dir "${IRD_SELFTEST_DIR}/fail_openbench_testkit")
+    file(MAKE_DIRECTORY "${_dir}")
+    file(WRITE "${_dir}/CMakeLists.txt"
+"add_library(sdurws_ird_project INTERFACE)
+add_library(sdurws_ird_testkit INTERFACE)
+add_executable(sdurws_ird_project_openbench_worker main.cpp)
+target_link_libraries(sdurws_ird_project_openbench_worker PRIVATE sdurws_ird_project sdurws_ird_testkit)
+")
+    # 近似词形不能套用测试身份，防止将宽松 .*_test 规则变成绕过通道。
+    set(_dir "${IRD_SELFTEST_DIR}/fail_perf_lookalike")
+    file(MAKE_DIRECTORY "${_dir}")
+    file(WRITE "${_dir}/CMakeLists.txt"
+"add_library(sdurws_ird_testkit INTERFACE)
+add_executable(sdurws_ird_execution_perf_test_extra main.cpp)
+target_link_libraries(sdurws_ird_execution_perf_test_extra PRIVATE sdurws_ird_testkit)
+")
+
     # 逐例运行子门禁并断言
     set(_selftest_cases
         "pass_clean|0|"
+        "pass_perf_targets|0|"
+        "pass_perf_registered_edge|0|"
+        "pass_openbench_worker|0|"
+        "fail_perf_unregistered|1|IRD-GATE-SUB"
+        "fail_openbench_testkit|1|IRD-GATE-T1"
+        "fail_perf_lookalike|1|IRD-GATE-T1"
         "pass_r4comment|0|"
         "pass_r4cliff|0|"
         "fail_r4cliff|1|IRD-GATE-R4"

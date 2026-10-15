@@ -1,0 +1,3533 @@
+{
+  "scope": "既有套件本轮 XML 中按相关词检索的索引；非穷尽覆盖证明，未展开 mock/真实链差异，不臆测需求 ID",
+  "cases": [
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "BuildRedLine.NoCrossUnitInclude_R1_R2_T1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "163",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "ValueSemantics.CopyIndependenceAndHashConsistency_UT_VAL",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ConventionValueSemanticsTest.cpp",
+      "sourceLine": "54",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "UnitsConvert.KnownConversions_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "36",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "UnitsConvert.DimensionMismatch_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "56",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "UnitsConvert.NonFiniteAndOverflow_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "73",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "UnitsFind.UnknownSymbol_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "91",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "UnitsRegistry.R1TableComplete_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "103",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "129",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "CompareFormula.C4Basic_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "29",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "41",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "CompareFormula.NonFiniteInputsFalse_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "53",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "AllCloseWithin.ElementWiseNotSummed_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "64",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "AllCloseWithin.LengthMismatchThrows_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "77",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "ToleranceMake.Validation_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "92",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "108",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "AllCloseWithinQ.QOverloadSemantics_UT_UNIT",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "139",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "core",
+      "target": "sdurws_ird_core_test",
+      "case": "EventValue.EmittedAtUtcParticipatesInEquality_F794",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EventsTest.cpp",
+      "sourceLine": "116",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_contract_test",
+      "case": "MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\contract_test\\BuildGraphContractTest.cpp",
+      "sourceLine": "158",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_contract_test",
+      "case": "MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\contract_test\\BuildGraphContractTest.cpp",
+      "sourceLine": "239",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_contract_test",
+      "case": "MdlCommandPipelineContract.V19NotReadyDoesNotCompileAndPlanEmptied",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\contract_test\\CommandPipelineContractTest.cpp",
+      "sourceLine": "96",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_contract_test",
+      "case": "MdlCommandPipelineContract.V20CompileFailureInjectsAndDiagnosticsCoexist",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\contract_test\\CommandPipelineContractTest.cpp",
+      "sourceLine": "149",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_contract_test",
+      "case": "MdlCompileBridgeContract.ReaderOutputFeedsCanonicalBuilder_WP13T12_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\contract_test\\CompileBridgeContractTest.cpp",
+      "sourceLine": "210",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_contract_test",
+      "case": "MdlCompileBridgeContract.ReaderFailureNeverReachesS5_WP13T12_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\contract_test\\CompileBridgeContractTest.cpp",
+      "sourceLine": "247",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_gui_test",
+      "case": "ModelingPanelGuiTest.PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\gui_test\\ModelingPanelGuiTest.cpp",
+      "sourceLine": "218",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_gui_test",
+      "case": "ModelingPanelGuiTest.UnitSeparation_EditorTextPurelyNumeric_UX05_UI_T27",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\gui_test\\ModelingPanelGuiTest.cpp",
+      "sourceLine": "247",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_gui_test",
+      "case": "ModelingPanelGuiTest.JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T53",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\gui_test\\ModelingPanelGuiTest.cpp",
+      "sourceLine": "419",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_gui_test",
+      "case": "ModelingPanelGuiTest.TcpListEdit_AddAndOffsetChain_UI_T57",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\gui_test\\ModelingPanelGuiTest.cpp",
+      "sourceLine": "1358",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_gui_test",
+      "case": "ModelingPanelGuiTest.TcpListEdit_RemoveGuards_UI_T57",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\gui_test\\ModelingPanelGuiTest.cpp",
+      "sourceLine": "1424",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_gui_test",
+      "case": "ModelingPanelGuiTest.TcpPane_ReadOnlyDisables_UI_T57",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\gui_test\\ModelingPanelGuiTest.cpp",
+      "sourceLine": "1463",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_gui_test",
+      "case": "ModelingPanelGuiTest.TcpDisplayNameEdit_Chain_UI_T58",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\gui_test\\ModelingPanelGuiTest.cpp",
+      "sourceLine": "1516",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_gui_test",
+      "case": "ModelingPanelGuiTest.TcpDisplayNameEdit_SetWritableDynamicWindow_F517",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\gui_test\\ModelingPanelGuiTest.cpp",
+      "sourceLine": "1809",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlRobotDesign.IMdl3_ProvidedValuesFinite_WP13T03_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\RobotDesignTest.cpp",
+      "sourceLine": "245",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\RobotDesignTest.cpp",
+      "sourceLine": "299",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlRobotDesign.IMdl10_ResourceStateMachine_WP13T03_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\RobotDesignTest.cpp",
+      "sourceLine": "405",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlRobotDesign.V14_DhAuthorityAxisEditRejectedBytesUnchanged_WP13T03_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\RobotDesignTest.cpp",
+      "sourceLine": "502",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlParts.ToolTcpListIntegrity_IMdl13_WP13T10_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PartsTest.cpp",
+      "sourceLine": "249",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlParts.TcpListEdits_AddRemoveOffsetDefault_UI_T57",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PartsTest.cpp",
+      "sourceLine": "465",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlParts.TcpDisplayNameEdit_PresentationOnlyField_UI_T58",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PartsTest.cpp",
+      "sourceLine": "566",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCodec.DMdl5_ExplicitDhDerivedCacheNotEncoded_WP13T03_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CodecTest.cpp",
+      "sourceLine": "393",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCodec.DMdl5_DhDerivedAxisOriginCacheNotEncoded_WP13T03_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CodecTest.cpp",
+      "sourceLine": "404",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCodec.DhModeRoundtripDerivedStateDefinition_WP13T03_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CodecTest.cpp",
+      "sourceLine": "463",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCodec.DrivetrainCouplingDecodeRejectsNonFinite_WP13T18_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CodecTest.cpp",
+      "sourceLine": "660",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "233",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "255",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "268",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "296",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "318",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "341",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "365",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "446",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "476",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "533",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "572",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "599",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "621",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "645",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PropertyEstimationTest.cpp",
+      "sourceLine": "674",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlImport.MissingInertial_NotProvidedInDefaults_WP13T05_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ImportTest.cpp",
+      "sourceLine": "610",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlImport.NonFiniteOriginXyzNan_Rejected_F633",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ImportTest.cpp",
+      "sourceLine": "775",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlImport.NonFiniteOriginRpyInf_Rejected_F633",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ImportTest.cpp",
+      "sourceLine": "821",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlImport.PhysicalIllegality_ReportErrorItems_WP13T05_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ImportTest.cpp",
+      "sourceLine": "863",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlImport.NonFiniteAxis_ReportOnly_WP13T05_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ImportTest.cpp",
+      "sourceLine": "1033",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlImport.InertialRpy_RotatesInertiaToLinkFrame_WP13T05_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ImportTest.cpp",
+      "sourceLine": "1731",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlWorkCellImport.Extract_GeometryResourceRecorded_WP13T17_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ImportTest.cpp",
+      "sourceLine": "1949",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlXacroExpand.BasicPropertyMacroSubstitution_WP13T06_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\XacroExpandTest.cpp",
+      "sourceLine": "330",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "StructureEditTest.ResetToSixAxis_ClearsDefaultTcp_WithChainRefs",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\StructureEditTest.cpp",
+      "sourceLine": "234",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "GeometryLinkEditTest.EditGeometryLocalTransform_WritesAndRejectsUnset",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\GeometryLinkEditTest.cpp",
+      "sourceLine": "167",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlTemplate.CopyVisualToCollision_SameResourceRef_WP13T07_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\TemplateTest.cpp",
+      "sourceLine": "981",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlBasePlacementEdit.AtomicPersistenceViaApplyRobotDesign_WP13T11_ACC1_V13",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\BasePlacementEditTest.cpp",
+      "sourceLine": "377",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlBasePlacementEdit.SingleFieldCompileIntoRWorldBase_WP13T11_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\BasePlacementEditTest.cpp",
+      "sourceLine": "788",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.DhToExplicitAccumulatesCardFormula_WP13T09_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "300",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.DhToExplicitZeroAlignment_WP13T09_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "357",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.DhToExplicitRejectsEmptyAndMixedBase_WP13T09_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "411",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.ExplicitToDhNotExpressibleTerminal_WP13T09_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "453",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.ExplicitToDhExactOnDhDerivedChain_WP13T09_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "515",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.ExplicitToDhExactNonUniqueCoincidentAxes_WP13T09_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "587",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.ExplicitToDhExactNonUniqueParallelAxes_WP13T09_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "637",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.ExplicitToDhApproximateNotAuthority_WP13T09_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "695",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.ExplicitToDhAnalysisFailedNotSemantic_WP13T09_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "749",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.F631SingleJointGeneralQFkMatchesCascade",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "846",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.F631TwoJointGeneralQFkMatchesCascade",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "886",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.F631ZeroADriftFreeAgainstPreFixGolden",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "928",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhConvert.F631FlangeOrbitDeviation2aSinHalfQ",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertTest.cpp",
+      "sourceLine": "979",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCanonicalBridge.JointsDhAuthorityExpandsToExplicit_WP13T12_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CanonicalBridgeTest.cpp",
+      "sourceLine": "443",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCanonicalBridge.DhDerivedMatchesExplicitAuthoredAtAuthoritativeZero_F590",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CanonicalBridgeTest.cpp",
+      "sourceLine": "542",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCanonicalBridge.DhDerivedWorldAxesMatchDhConvention_F591",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CanonicalBridgeTest.cpp",
+      "sourceLine": "675",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCanonicalBridge.ToolsMappingDefaultTcpFirstAndTcpCompose_WP13T12_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CanonicalBridgeTest.cpp",
+      "sourceLine": "870",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCanonicalBridge.ResourceRefsBothStatesMapping_WP13T12_ACC1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CanonicalBridgeTest.cpp",
+      "sourceLine": "1068",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCanonicalBridge.UnitIllegalInvalidStateField_WP13T12_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CanonicalBridgeTest.cpp",
+      "sourceLine": "1406",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCanonicalBridge.DhExpandFailedLocalized_WP13T12_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CanonicalBridgeTest.cpp",
+      "sourceLine": "1430",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlModelDiff.RefSetChainIndexAndResourceSemantics_WP13T14_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ModelDiffTest.cpp",
+      "sourceLine": "574",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "ModelingCommandFlows.ImportUrdf_WithMeshAndMissingResource_ProducesDraft_WP13_T21",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ModelingCommandFlowsTest.cpp",
+      "sourceLine": "516",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "PluginPanel.Properties_JointRelevantFieldsAndDHGrey_WP13T15_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PluginPanelTest.cpp",
+      "sourceLine": "194",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "PluginPanel.L1_ReverseLocateScrollAndHighlight_WP13T15_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PluginPanelTest.cpp",
+      "sourceLine": "513",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "PluginPanel.JointDhProjectionRows_ReadOnlyWithDerivedBadge_UI_T41C",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PluginPanelTest.cpp",
+      "sourceLine": "1196",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "HostMigrationPropertyPages.JointCommonFieldsWithEditableOutlet",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\HostMigrationTest.cpp",
+      "sourceLine": "310",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "HostMigrationPropertyPages.LinkReadOnlyMassWithPropertiesEntry",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\HostMigrationTest.cpp",
+      "sourceLine": "349",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "HostMigrationPropertyPages.NonDomainObjectGetsNoAnswer",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\HostMigrationTest.cpp",
+      "sourceLine": "373",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "HostMigrationPropertyPages.OutletTranslatesEditsToDomainFlow",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\HostMigrationTest.cpp",
+      "sourceLine": "389",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "HostMigrationPropertyPages.ComplexPageActivationThreeBranches",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\HostMigrationTest.cpp",
+      "sourceLine": "444",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "HostMigrationPropertyPages.ExtensionPages_FourObjectFactSupplied_UI_T50",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\HostMigrationTest.cpp",
+      "sourceLine": "703",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "HostMigrationPropertyPages.ExtensionPages_ObjectPropertiesEntryAndActivation_UI_T50",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\HostMigrationTest.cpp",
+      "sourceLine": "758",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "HostMigrationPropertyPages.ExtensionPages_EmptyCollectionsGraceful_UI_T50",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\HostMigrationTest.cpp",
+      "sourceLine": "794",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlGoldenDatasets.ToleranceProfileMdlDhFixedNotRelaxed_WP13T16_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\GoldenDatasetTest.cpp",
+      "sourceLine": "83",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlGoldenDatasets.MdlDhEquivalenceLoadsAndPassesManifest_WP13T16_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\GoldenDatasetTest.cpp",
+      "sourceLine": "183",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlGoldenImport.GoldenUrdfInertiaDataQualityGate_WP13T16_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\GoldenImportTest.cpp",
+      "sourceLine": "608",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlReadinessAssertionDomains.MassNonpositiveBlocksPrecisely",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ReadinessTest.cpp",
+      "sourceLine": "229",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlReadinessAssertionDomains.InertiaNotSpdBlocks",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\ReadinessTest.cpp",
+      "sourceLine": "266",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCommandHandlers.CommandTokenTableDotFreeAndDualCompileTable",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CommandHandlersTest.cpp",
+      "sourceLine": "100",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCommandHandlers.PayloadCodecRoundtripAndDamage",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CommandHandlersTest.cpp",
+      "sourceLine": "136",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCommandHandlers.RegistryRegistrationAndDuplicateRejection",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CommandHandlersTest.cpp",
+      "sourceLine": "176",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlCommandPrepare.NamedPosesSkipsDualCompileAndBackfillsRef",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\CommandHandlersTest.cpp",
+      "sourceLine": "451",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhEquivalence.VerifyEquivalentAcceptsSameChain_WP13T09_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "335",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhEquivalence.VerifyEquivalentRejectsDeviatedChain_WP13T09_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "366",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhEquivalence.RoundtripDoubleConsistency_WP13T09_ACC4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "400",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhEquivalence.AuthoritySwitchDomainGatePreparesCandidate_WP13T09_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "447",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhEquivalence.AuthoritySwitchDomainGateRefusesPendingEdits_WP13T09_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "488",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhEquivalence.AuthoritySwitchRefusedWhenVerificationFails_WP13T09_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "515",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhCommand.AuthoritySwitchPreparesInsideCommandPrepare_WP13T09_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "570",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhCommand.AuthoritySwitchRejectsNotExpressibleWithTerminalDiag_WP13T09_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "634",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhCommand.AuthoritySwitchRejectsMixedEdits_WP13T09_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "683",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhCommand.NonSwitchPayloadUnaffectedByGate_WP13T09_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "734",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlDhCommand.AuthoritySwitchWithoutServicesFailsFast_WP13T09_ACC5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\DhConvertEquivalenceTest.cpp",
+      "sourceLine": "779",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPartObjectCommands.ToolAddPlansWithRootRefAndDualCompile",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PartObjectCommandTest.cpp",
+      "sourceLine": "250",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPartObjectCommands.DefaultTcpReferenceValidationGatesToolApply",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PartObjectCommandTest.cpp",
+      "sourceLine": "389",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPartObjectCommands.V04RemoveDefaultTcpReferencedToolRejected",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PartObjectCommandTest.cpp",
+      "sourceLine": "504",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPartObjectCommands.NamedPosesMergePreservesReservedKeysAndSkipsCompile",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PartObjectCommandTest.cpp",
+      "sourceLine": "820",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlPartObjectCommands.DrivetrainCoupling_R2ValidPlansDualCompileAndInverse_WP13T18_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\PartObjectCommandTest.cpp",
+      "sourceLine": "1156",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\GoldenDhEquivalenceTest.cpp",
+      "sourceLine": "440",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\GoldenDhEquivalenceTest.cpp",
+      "sourceLine": "541",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\GoldenDhEquivalenceTest.cpp",
+      "sourceLine": "623",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "modeling",
+      "target": "sdurws_ird_modeling_test",
+      "case": "MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\modeling\\test\\GoldenDhEquivalenceTest.cpp",
+      "sourceLine": "700",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "94",
+      "requirementIdsExplicitInName": [
+        "RT_BUILD_R1_R2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "SourcesObjectBytes.ScriptedHitAndMiss_RT_SRC_S2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\SourcesTest.cpp",
+      "sourceLine": "195",
+      "requirementIdsExplicitInName": [
+        "RT_SRC_S2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CouplingValidation.NonFiniteEntryBlocked",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "374",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "ProvidedIllegal.NegativeMassLocated_RT_CPX_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "405",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_3"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "ProvidedIllegal.ZeroMassAndToolMassBlocked",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "423",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "ProvidedIllegal.InertiaAsymmetricAndNonSpdBlocked",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "470",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "IllegalTransform.ReflectedJointOriginBlocked_RT_BW_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "500",
+      "requirementIdsExplicitInName": [
+        "RT_BW_6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "IllegalTransform.NonOrthogonalJointOriginBlocked_RT_BW_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "517",
+      "requirementIdsExplicitInName": [
+        "RT_BW_6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "IllegalTransform.NaNTranslationBlocked_RT_BW_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "533",
+      "requirementIdsExplicitInName": [
+        "RT_BW_6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "IllegalTransform.ScenePoseNonFiniteBlocked_RT_BW_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "545",
+      "requirementIdsExplicitInName": [
+        "RT_BW_6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "IllegalTransform.ToolTcpOffsetReflectionBlocked_RT_BW_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "555",
+      "requirementIdsExplicitInName": [
+        "RT_BW_6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "StructureHard.ZeroAxisAndNonFiniteAxisRejected",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "638",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "StructureHard.NonFiniteBasePositionRejected",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "736",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "UnitValidation.NonFiniteBoundsRejected_ACC3_NFR_COR_03",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "770",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "UnitValidation.NonFiniteVelocityRejected_ACC3_NFR_COR_03",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "785",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "UnitValidation.DegreeMagnitudeBoundWarnsButDoesNotBlock_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "795",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "UnitValidation.MillimeterMagnitudePrismaticWarns_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "814",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "UnitValidation.FixedJointProvidedBoundsStillValidated",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DescriptionValidatorTest.cpp",
+      "sourceLine": "836",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CanonicalModelBuilderTest.RejectsInvalidHeaderFields",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CanonicalModelTest.cpp",
+      "sourceLine": "102",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CanonicalModelBuilderTest.RejectsResourceReferenceViolations",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CanonicalModelTest.cpp",
+      "sourceLine": "300",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CanonicalModelBuilderTest.RejectsDefaultTcpViolations",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CanonicalModelTest.cpp",
+      "sourceLine": "319",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CanonicalModelBuilderTest.DefaultTcpSurvivesToolSorting_F584",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CanonicalModelTest.cpp",
+      "sourceLine": "347",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CanonicalModelIndexTest.ObjectAndResourceIndicesResolve",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CanonicalModelTest.cpp",
+      "sourceLine": "478",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapBuildTest.BuildsAllScopesFromRichFixture_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "176",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapBuildTest.DeviceEntryHasNoPrefix_R4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "219",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapBuildTest.DeterministicRebuildByteEqual_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "233",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapBuildTest.BodyScopeGatedByDynamicCapability_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "256",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapBuildTest.IdentityEntriesPerObjectResolve_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "269",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapRoundtripTest.ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "300",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapRoundtripTest.ReverseChainNameToObjectToName_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "320",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapRoundtripTest.BijectionCounts_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "347",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapRoundtripTest.EncodeParseRoundtrip_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "378",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapRoundtripTest.ParseRejectsMalformedInput_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "401",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapRoundtripTest.EmptyMapEncodeRejected",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "445",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapResolveErrorTest.ResolveMissesEchoAndNeverThrow_RT_NM_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "463",
+      "requirementIdsExplicitInName": [
+        "RT_NM_3"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapDisambiguationTest.DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "520",
+      "requirementIdsExplicitInName": [
+        "RT_NM_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapDisambiguationTest.IllegalCharVariantsCollideAfterLegalization_RT_NM_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "558",
+      "requirementIdsExplicitInName": [
+        "RT_NM_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapDisambiguationTest.LegalizationRulesLeadingDigitAndChars_RT_NM_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "589",
+      "requirementIdsExplicitInName": [
+        "RT_NM_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapDisambiguationTest.ReservedWorldDisambiguated_RT_NM_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "605",
+      "requirementIdsExplicitInName": [
+        "RT_NM_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapDisambiguationTest.SuffixProbeSkipsTakenNames_RT_NM_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "625",
+      "requirementIdsExplicitInName": [
+        "RT_NM_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapCrossProjectTest.SameDisplayNamesAcrossProjects_RT_NM_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "672",
+      "requirementIdsExplicitInName": [
+        "RT_NM_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapRenameTest.RenameRebuildNoOldResidue_RT_NM_5",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "716",
+      "requirementIdsExplicitInName": [
+        "RT_NM_5"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapCrossCheckTest.CrossCheckPassesOnMapSubset_RT_NM_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "745",
+      "requirementIdsExplicitInName": [
+        "RT_NM_6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapCrossCheckTest.DoublePrefixRejected_RT_NM_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "758",
+      "requirementIdsExplicitInName": [
+        "RT_NM_6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapIdentityTest.NameAndIdentityTypesNotInterconvertible_RT_NM_7",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "788",
+      "requirementIdsExplicitInName": [
+        "RT_NM_7"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapIdentityTest.StaleConcatenationMisses_RT_NM_7_R4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "817",
+      "requirementIdsExplicitInName": [
+        "RT_NM_7_R4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapIdentityTest.ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "838",
+      "requirementIdsExplicitInName": [
+        "RT_NM_7_CON_06"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\NameMapTest.cpp",
+      "sourceLine": "910",
+      "requirementIdsExplicitInName": [
+        "RT_R4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "PresetRotationTest.WallBaseZPointsWorldHorizontal_P_RT_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\BaseWorldTransformTest.cpp",
+      "sourceLine": "205",
+      "requirementIdsExplicitInName": [
+        "RT_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "PresetRotationTest.FixedPresetElementsExactlySignedUnit_RT_BW_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\BaseWorldTransformTest.cpp",
+      "sourceLine": "217",
+      "requirementIdsExplicitInName": [
+        "RT_BW_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CustomEaaTest.NonFiniteEaaThrowsInputInvalid",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\BaseWorldTransformTest.cpp",
+      "sourceLine": "290",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "ResolveTest.NonFinitePositionRejected",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\BaseWorldTransformTest.cpp",
+      "sourceLine": "428",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "ValidateTest.WellFormedTransformPasses",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\BaseWorldTransformTest.cpp",
+      "sourceLine": "442",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "ValidateTest.NonFiniteComponentsRejected_RT_BW_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\BaseWorldTransformTest.cpp",
+      "sourceLine": "481",
+      "requirementIdsExplicitInName": [
+        "RT_BW_6"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "InverseAndPointTest.NumericExamplePointTransform_RT_BW_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\BaseWorldTransformTest.cpp",
+      "sourceLine": "595",
+      "requirementIdsExplicitInName": [
+        "RT_BW_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "236",
+      "requirementIdsExplicitInName": [
+        "RT_AD_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.JointBoundsOffsetMapping_RT_AD_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "275",
+      "requirementIdsExplicitInName": [
+        "RT_AD_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.ContinuousJointExplicitInfiniteBounds_RT_AD_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "295",
+      "requirementIdsExplicitInName": [
+        "RT_AD_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.FixedJointIsFrameNotJoint_RT_T07",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "318",
+      "requirementIdsExplicitInName": [
+        "RT_T07"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.FkEquivalence_RT_EQ_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "350",
+      "requirementIdsExplicitInName": [
+        "RT_EQ_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "434",
+      "requirementIdsExplicitInName": [
+        "RT_EQ"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.BaseMountReadback_RT_BW_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "471",
+      "requirementIdsExplicitInName": [
+        "RT_BW_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "497",
+      "requirementIdsExplicitInName": [
+        "RT_BW_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "514",
+      "requirementIdsExplicitInName": [
+        "RT_BW_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.TranslateRealRobWorkException_RT_AD_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "570",
+      "requirementIdsExplicitInName": [
+        "RT_AD_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.TranslateBadAlloc_RT_AD_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "603",
+      "requirementIdsExplicitInName": [
+        "RT_AD_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.TranslateUnknownStdException_RT_AD_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "616",
+      "requirementIdsExplicitInName": [
+        "RT_AD_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.FrameNamesMatchNameMap_RT_T07",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "691",
+      "requirementIdsExplicitInName": [
+        "RT_T07"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellCompilerTest.RichFixtureCompilesWithToolAndScene_RT_T07",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellCompilerTest.cpp",
+      "sourceLine": "718",
+      "requirementIdsExplicitInName": [
+        "RT_T07"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellGeometryTest.cpp",
+      "sourceLine": "245",
+      "requirementIdsExplicitInName": [
+        "RT_GEO_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\WorkCellGeometryTest.cpp",
+      "sourceLine": "314",
+      "requirementIdsExplicitInName": [
+        "RT_GEO_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "139",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "179",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "218",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "249",
+      "requirementIdsExplicitInName": [
+        "RT_T08"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "316",
+      "requirementIdsExplicitInName": [
+        "RT_T08"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "360",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "401",
+      "requirementIdsExplicitInName": [
+        "RT_T08"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "443",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "474",
+      "requirementIdsExplicitInName": [
+        "RT_T08"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\DynamicWorkCellCompilerTest.cpp",
+      "sourceLine": "504",
+      "requirementIdsExplicitInName": [
+        "RT_AD_3"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "SnapshotTest.WorkCellCompileIdentityFormula_RT_T09",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\SnapshotTest.cpp",
+      "sourceLine": "350",
+      "requirementIdsExplicitInName": [
+        "RT_T09"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "SnapshotTest.BadAllocBecomesResourceBudget_RT_CPX_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\SnapshotTest.cpp",
+      "sourceLine": "747",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CacheKeyTest.cpp",
+      "sourceLine": "392",
+      "requirementIdsExplicitInName": [
+        "RT_CACHE_3"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.CompilesTenStageChainAndPublishes_RT_T11_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "444",
+      "requirementIdsExplicitInName": [
+        "RT_T11_ACC3"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.RepeatCompileIsDeterministic_SameSnapshotIdentity",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "479",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.FactoryWithProductCompilerPublishes_ViaSegmentEntrance",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "501",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "526",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.DefaultTcpStaysDescriptionFirstAfterToolSort_F584",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "559",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.ReaderFailureFailsWithLocationThenRetrySucceeds",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "631",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.ObjectOutsideClosureRejected_RT_CONT_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "660",
+      "requirementIdsExplicitInName": [
+        "RT_CONT_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.ObjectBytesDigestMismatchRejected_CM0ByteFace",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "682",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.MassProvidedNegativeFailsLocated_RT_CPX_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "704",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_3"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.MassNotProvidedPublishesDegraded_RT_CPX_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "730",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.JointObjectIdOutsideRefsAllowedAtS5_O36",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "759",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.CancelAtStageBoundaryReturnsCancelledThenRetry_RT_CPX_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "787",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.BadAllocTranslatedToResourceBudget_RT_CPX_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "818",
+      "requirementIdsExplicitInName": [
+        "RT_CPX_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.NoTokenCompilesToPublish_NoInternalTimeout_D11_ACC2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "840",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.CancelPollsEveryStageBoundary_D11PollDensity",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "859",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.ResourceMissingFailsLocated_RT_RES_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "885",
+      "requirementIdsExplicitInName": [
+        "RT_RES_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.ResourceDigestMismatchAtS4Fails_RT_RES_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "917",
+      "requirementIdsExplicitInName": [
+        "RT_RES_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.ResourceBudgetFails_RT_RES_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "948",
+      "requirementIdsExplicitInName": [
+        "RT_RES_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.ResourceSwappedMidCompileFailsBeforePublish_RT_RES_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "981",
+      "requirementIdsExplicitInName": [
+        "RT_RES_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.SolidifiedResourceSkipsRecheck_RT_RES_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "1014",
+      "requirementIdsExplicitInName": [
+        "RT_RES_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.RecordedResourceWarnsNotBlocked",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "1044",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "1076",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.CompileLeavesObjectStoreUnchanged_RT_CONT_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "1125",
+      "requirementIdsExplicitInName": [
+        "RT_CONT_2"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.UnknownRevisionFailsFast_UnknownObject",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "1161",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.MissingProjectContextRejected",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "1181",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "CompilerTest.TransactionRollbackIsIdempotentAndPublishIsTerminal",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\CompilerTest.cpp",
+      "sourceLine": "1203",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "ContractSuite.DefaultBaseCompilesToIdentityTransform_RT_BW_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\ContractSuiteTest.cpp",
+      "sourceLine": "493",
+      "requirementIdsExplicitInName": [
+        "RT_BW_3"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "ContractSuite.GoldenNameMapRoundtripDataset_RT_NM_1",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\ContractSuiteTest.cpp",
+      "sourceLine": "1058",
+      "requirementIdsExplicitInName": [
+        "RT_NM_1"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "HostPresentationViewTest.ResolutionAndTransformReuseSameSource_RT_PRES_4",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\HostPresentationViewTest.cpp",
+      "sourceLine": "174",
+      "requirementIdsExplicitInName": [
+        "RT_PRES_4"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "target": "sdurws_ird_runtime_test",
+      "case": "GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\GoldenDataLintTest.cpp",
+      "sourceLine": "92",
+      "requirementIdsExplicitInName": [
+        "RT_T12_ACC3"
+      ]
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_contract_test",
+      "case": "PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyCodecFixtureContractTest.cpp",
+      "sourceLine": "569",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_contract_test",
+      "case": "PolicyContractDoubles.At27DisplayUnitSwitchKeepsIdentityAndOutput",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyContractDoublesTest.cpp",
+      "sourceLine": "866",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_contract_test",
+      "case": "PolCollisionAnalytic.At37InvertedMountConsumesCompiledStateWithoutSecondRotation",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionAnalyticDatasetTest.cpp",
+      "sourceLine": "462",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyBuild.NoCrossUnitInclude_POL_BUILD_R1_R2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "97",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyThresholdField.NonFiniteRejectedForAllDomains_POL_PARSE_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "376",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyJointThresholds.NoInertiaRatioField_O11_P_POL_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "506",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyCodecId.DisplayUnitNotInIdentity_POL_ID_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "400",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyCodecFloat.CanonicalF64RejectsNonFiniteAtEncodeEntry",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "529",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyCodecFloat.ParseCanonicalF64RejectsNonFiniteBitPatterns",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "551",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyCodecErrors.EncodeRejectsNonFiniteThresholds",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "666",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyCodecErrors.DecodeRejectsNonFiniteBitPatternAndEmptyReason",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "873",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyCodecErrors.RoundTripPreservesUtf8AndUnitTokens",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "1004",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyParseThresholds.NonFiniteSafetyClearanceRejectedKeepsRaw_POL_PARSE_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "297",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyParseThresholds.InfiniteTravelLimitRejected",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "316",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyParseUnits.ForceUnitForLengthRejectedForwardsCoreError_POL_PARSE_3",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "444",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyParseUnits.UnregisteredUnitTokenRejected",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "460",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyParseUnits.MillimeterNormalizedToSi_UnitsNotInIdentity",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "474",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyParseUnits.DegreeTravelLimitNormalizedToRadian",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "491",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyParseUnits.EmptyUnitTokenMeansFieldSiUnit",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "508",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "PolicyDiagnosticsMake.RejectsComparisonWithInvalidUnit_UX_03",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "293",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "MakeComparativeHelpers.FiniteValueProvidesWithProvenance_DYN_06",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "379",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "MakeComparativeHelpers.NonFiniteValueInvalidatesWithRawText_NFR_COR_03",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "395",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "MakeComparativeHelpers.NotApplicableSideKeepsUnit_P_POL_2",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "417",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "policy",
+      "target": "sdurws_ird_policy_test",
+      "case": "JointLimits.NonFinitePositionFailsEvaluationWithoutFabrication",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "651",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoSecHeaderRedLines.IoHeadersFreeOfQtAndCrossUnitIncludes",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\SafePathTest.cpp",
+      "sourceLine": "486",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoCsvTest.WriterRejectsNulNonFiniteAndBadDialectWithoutTouchingTarget",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\CsvTest.cpp",
+      "sourceLine": "1315",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoJsonTest.OutOfRangeIntegerPassthroughWithStringAndHint",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\JsonTest.cpp",
+      "sourceLine": "557",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoJsonTest.WriterFileTargetAtomicReplaceAndRoundtrip",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\JsonTest.cpp",
+      "sourceLine": "754",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoJsonTest.VersionSetMembershipAndHoleAsFuture",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\JsonTest.cpp",
+      "sourceLine": "816",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoResTest.OpenReadHandleReturnsBytesAndEof",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\ResourceIoTest.cpp",
+      "sourceLine": "605",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoResTest.ProjectResourceRefRoleSnapshotWorksWithBase",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\ResourceIoTest.cpp",
+      "sourceLine": "676",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoSolidifyTest.AdapterResourceBytesLifecycleFiveRulingsPinned",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\ResourceSolidifyTest.cpp",
+      "sourceLine": "780",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoPackTest.TamperedPayloadHashMismatchLocatedPerEntry",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\PackageTest.cpp",
+      "sourceLine": "706",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoAtomicTest.PreparePolicyAndCommitReplace",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\PackageTest.cpp",
+      "sourceLine": "953",
+      "requirementIdsExplicitInName": []
+    },
+    {
+      "unit": "io",
+      "target": "sdurws_ird_io_test",
+      "case": "IoAtomicTest.AbortLeavesTargetUntouched",
+      "status": "run",
+      "result": "completed",
+      "skipped": false,
+      "failure": false,
+      "sourceFile": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\io\\test\\PackageTest.cpp",
+      "sourceLine": "981",
+      "requirementIdsExplicitInName": []
+    }
+  ]
+}

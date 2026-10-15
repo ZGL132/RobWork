@@ -441,6 +441,9 @@ set(IRD_THIRDPARTY_ALLOWED_TARGETS
 #     登记边；demo 工具非产品交付路径）"）。
 # ---------------------------------------------------------------------
 set(IRD_TOOL_TARGET_EDGES
+    # WP-01-T05 回填 WP-23-T05 打开基准的独立测量进程边；精确到目标，
+    # worker 不归类为测试，T-1 的 testkit 禁链检查仍然生效。
+    "sdurws_ird_project_openbench_worker->sdurws_ird_project"
     "sdurws_ird_testdata_lint->sdurws_ird_testkit"
     "sdurws_ird_demo6r->sdurws_ird_modeling"
     "sdurws_ird_demo6r->sdurws_ird_project")
@@ -495,6 +498,15 @@ set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint")
 # 不变——本表仅属测试目标）。
 # ---------------------------------------------------------------------
 set(IRD_TEST_TARGET_EDGES
+    # WP-01-T05 回填既有性能契约的逐目标测试边。只准登记的消费端，
+    # 不向产品库开放业务域互链；出处分别为 wp23-t02/t04/t08-gate-registrations.md。
+    "sdurws_ird_ui_perf_test->sdurws_ird_execution"
+    "sdurws_ird_ui_largedata_perf_test->sdurws_ird_requirements"
+    "sdurws_ird_ui_largedata_perf_test->sdurws_ird_kinematics"
+    "sdurws_ird_ui_largedata_perf_test->sdurws_ird_optimization"
+    "sdurws_ird_ui_largedata_perf_test->sdurws_ird_project"
+    "sdurws_ird_ui_largedata_perf_test->sdurws_ird_io"
+    "sdurws_ird_optimization_perf_test->sdurws_ird_ui"
     "sdurws_ird_ui_contract_test->sdurws_ird_project"
     "sdurws_ird_ui_contract_test->sdurws_ird_execution"
     "sdurws_ird_ui_contract_test->sdurws_ird_diagnostics"

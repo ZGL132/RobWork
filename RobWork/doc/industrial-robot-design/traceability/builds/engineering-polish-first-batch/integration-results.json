@@ -1,0 +1,407 @@
+[
+  {
+    "name": "sdurws_ird_core_test",
+    "exit": 0,
+    "seconds": 0.5389701,
+    "status": "PASS",
+    "xml": true,
+    "json": false,
+    "log": "integration-sdurws_ird_core_test.log"
+  },
+  {
+    "name": "sdurws_ird_diagnostics_contract_test",
+    "exit": 0,
+    "seconds": 0.2674806,
+    "status": "PASS",
+    "xml": true,
+    "json": false,
+    "log": "integration-sdurws_ird_diagnostics_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_diagnostics_test",
+    "exit": 0,
+    "seconds": 1.1014201,
+    "status": "PASS",
+    "xml": true,
+    "json": false,
+    "log": "integration-sdurws_ird_diagnostics_test.log"
+  },
+  {
+    "name": "sdurws_ird_drivetrain_contract_test",
+    "exit": 0,
+    "seconds": 0.103244,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_drivetrain_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_drivetrain_test",
+    "exit": 0,
+    "seconds": 0.1330458,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_drivetrain_test.log"
+  },
+  {
+    "name": "sdurws_ird_dynamics_contract_test",
+    "exit": 0,
+    "seconds": 0.1581866,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_dynamics_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_dynamics_test",
+    "exit": 0,
+    "seconds": 0.2631905,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_dynamics_test.log"
+  },
+  {
+    "name": "sdurws_ird_evidence_contract_test",
+    "exit": 0,
+    "seconds": 0.1205946,
+    "status": "PASS",
+    "xml": true,
+    "json": false,
+    "log": "integration-sdurws_ird_evidence_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_evidence_test",
+    "exit": 0,
+    "seconds": 0.1124074,
+    "status": "PASS",
+    "xml": true,
+    "json": false,
+    "log": "integration-sdurws_ird_evidence_test.log"
+  },
+  {
+    "name": "sdurws_ird_execution_contract_test",
+    "exit": 0,
+    "seconds": 2.9009994,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_execution_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_execution_perf_test",
+    "exit": 0,
+    "seconds": 44.0530241,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_execution_perf_test.log"
+  },
+  {
+    "name": "sdurws_ird_execution_test",
+    "exit": 0,
+    "seconds": 1.6597554,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_execution_test.log"
+  },
+  {
+    "name": "sdurws_ird_io_contract_test",
+    "exit": 0,
+    "seconds": 0.789037,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_io_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_io_test",
+    "exit": 0,
+    "seconds": 2.0662176,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_io_test.log"
+  },
+  {
+    "name": "sdurws_ird_kinematics_contract_test",
+    "exit": 0,
+    "seconds": 0.1321577,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_kinematics_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_kinematics_test",
+    "exit": 0,
+    "seconds": 12.4094717,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_kinematics_test.log"
+  },
+  {
+    "name": "sdurws_ird_modeling_contract_test",
+    "exit": 0,
+    "seconds": 0.2315802,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_modeling_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_modeling_gui_test",
+    "exit": 0,
+    "seconds": 1.1621601,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_modeling_gui_test.log"
+  },
+  {
+    "name": "sdurws_ird_modeling_test",
+    "exit": 0,
+    "seconds": 0.5094507,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_modeling_test.log"
+  },
+  {
+    "name": "sdurws_ird_optimization_contract_test",
+    "exit": 0,
+    "seconds": 1.1794796,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_optimization_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_optimization_perf_test",
+    "exit": 8,
+    "seconds": 120.078796,
+    "status": "FAIL",
+    "xml": false,
+    "json": false,
+    "log": "integration-sdurws_ird_optimization_perf_test.log"
+  },
+  {
+    "name": "sdurws_ird_optimization_test",
+    "exit": 0,
+    "seconds": 0.2137983,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_optimization_test.log"
+  },
+  {
+    "name": "sdurws_ird_policy_contract_test",
+    "exit": 0,
+    "seconds": 0.1902589,
+    "status": "PASS",
+    "xml": true,
+    "json": false,
+    "log": "integration-sdurws_ird_policy_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_policy_test",
+    "exit": 0,
+    "seconds": 0.1071891,
+    "status": "PASS",
+    "xml": true,
+    "json": false,
+    "log": "integration-sdurws_ird_policy_test.log"
+  },
+  {
+    "name": "sdurws_ird_project_contract_test",
+    "exit": 0,
+    "seconds": 7.0138382,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_project_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_project_perf_test",
+    "exit": 0,
+    "seconds": 20.6962895,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_project_perf_test.log"
+  },
+  {
+    "name": "sdurws_ird_project_test",
+    "exit": 0,
+    "seconds": 11.3348505,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_project_test.log"
+  },
+  {
+    "name": "sdurws_ird_reporting_contract_test",
+    "exit": 0,
+    "seconds": 0.1505134,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_reporting_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_reporting_test",
+    "exit": 0,
+    "seconds": 0.7468497,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_reporting_test.log"
+  },
+  {
+    "name": "sdurws_ird_requirements_contract_test",
+    "exit": 0,
+    "seconds": 0.125708,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_requirements_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_requirements_gui_test",
+    "exit": 0,
+    "seconds": 3.3963445,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_requirements_gui_test.log"
+  },
+  {
+    "name": "sdurws_ird_requirements_test",
+    "exit": 0,
+    "seconds": 0.3462047,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_requirements_test.log"
+  },
+  {
+    "name": "sdurws_ird_runtime_test",
+    "exit": 0,
+    "seconds": 0.5520636,
+    "status": "PASS",
+    "xml": true,
+    "json": false,
+    "log": "integration-sdurws_ird_runtime_test.log"
+  },
+  {
+    "name": "sdurws_ird_selection_contract_test",
+    "exit": 0,
+    "seconds": 0.2874361,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_selection_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_selection_test",
+    "exit": 0,
+    "seconds": 0.3110446,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_selection_test.log"
+  },
+  {
+    "name": "sdurws_ird_testkit_test",
+    "exit": 0,
+    "seconds": 9.9040724,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_testkit_test.log"
+  },
+  {
+    "name": "sdurws_ird_trajectory_contract_test",
+    "exit": 0,
+    "seconds": 0.3663562,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_trajectory_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_trajectory_test",
+    "exit": 0,
+    "seconds": 0.5959684,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_trajectory_test.log"
+  },
+  {
+    "name": "sdurws_ird_ui_contract_test",
+    "exit": 0,
+    "seconds": 1.1217127,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_ui_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_ui_gui_test",
+    "exit": 0,
+    "seconds": 6.444774,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_ui_gui_test.log"
+  },
+  {
+    "name": "sdurws_ird_ui_largedata_perf_test",
+    "exit": 0,
+    "seconds": 12.8871903,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_ui_largedata_perf_test.log"
+  },
+  {
+    "name": "sdurws_ird_ui_perf_test",
+    "exit": 0,
+    "seconds": 1.7630804,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_ui_perf_test.log"
+  },
+  {
+    "name": "sdurws_ird_ui_test",
+    "exit": 0,
+    "seconds": 1.8938373,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_ui_test.log"
+  },
+  {
+    "name": "sdurws_ird_workflow_contract_test",
+    "exit": 0,
+    "seconds": 3.952764,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_workflow_contract_test.log"
+  },
+  {
+    "name": "sdurws_ird_workflow_test",
+    "exit": 0,
+    "seconds": 0.8798284,
+    "status": "PASS",
+    "xml": true,
+    "json": true,
+    "log": "integration-sdurws_ird_workflow_test.log"
+  }
+]
