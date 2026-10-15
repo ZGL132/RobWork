@@ -1290,6 +1290,11 @@ void WorkbenchContentImpl::assembleCommandSystem()
     shortcutDeps.devLog = m_deps.wiring.devLog;
     shortcutDeps.onUserBindingsChanged =
         [this](const std::vector<HotkeyBinding>&) { persistShortcutsAsync(); };
+    // 提交被拒反馈钩子（R3 审计 C4，2026-10-15）：快捷键触发的 submit 被
+    // 拒时出与菜单/顶栏同源的状态行反馈（快捷键是唯一绕过禁用态直达
+    // submit 的入口——原实现被拒零反馈）。
+    shortcutDeps.onRejectedSubmit =
+        [this](const CommandId& command) { reportCommandRejection(command); };
     m_shortcuts = createGlobalShortcutRegistry(std::move(shortcutDeps));
     for (const ShellCommandRow& row : kMinimalCommandRows) {
         if (row.defaultShortcut != nullptr) {
@@ -1312,6 +1317,10 @@ void WorkbenchContentImpl::applyShortcutAndPaletteState()
     m_shortcuts->attach(m_deps.hostWidget);
     // ③命令面板（§7.4——面板是注册表的只读投影；父子归宿主控件 Qt 树）。
     m_palette = createCommandPalette(m_commands.get(), m_shortcuts.get(), m_deps.hostWidget);
+    // 提交被拒反馈钩子（R3 审计 C4，2026-10-15）：面板灰行 Enter 的被拒结
+    // 局出与菜单/顶栏同源的状态行反馈（原实现丢弃结局——界面零反应）。
+    m_palette->setRejectedFeedback(
+        [this](const CommandId& command) { reportCommandRejection(command); });
     // ④面板近期使用回放（§7.4 置顶分组的持久化半区——未注册 id 丢弃）。
     m_commands->restoreRecentUsed(m_pendingPaletteRecent);
     m_pendingPaletteRecent.clear();
@@ -1592,6 +1601,14 @@ void WorkbenchContentImpl::submitCommand(const std::string& commandId)
     if (outcome.accepted) {
         return;  // 处理器自行反馈（会话命令的状态行说明/面板打开等）
     }
+    reportCommandRejection(commandId);
+}
+
+/// 拒绝反馈单点（R3 审计 C4 修复，2026-10-15）：submitCommand 的拒绝半区
+/// 抽出——快捷键/面板两条旁路提交入口（唯一能绕过按钮禁用态直达 submit
+/// 的入口）经注入钩子共用同一状态行反馈（§7.4"禁用＋说明"的呈现面唯一）。
+void WorkbenchContentImpl::reportCommandRejection(const std::string& commandId)
+{
     // 拒绝反馈（§7.4"禁用＋说明"）：未注册与不可执行分别呈现——诊断条目
     // （工厂注入时）已由注册表出线，此处是即时可见性补偿。
     // （WP-24-T03B 注：处理器级"域流程未装配"的诚实反馈由处理器自身经

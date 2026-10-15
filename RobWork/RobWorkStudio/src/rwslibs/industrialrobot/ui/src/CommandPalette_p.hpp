@@ -34,6 +34,7 @@
 #include <QWidget>
 
 #include <memory>
+#include <functional>
 #include <optional>
 
 #include <sdurws/ird/ui/ICommandRegistry.hpp>
@@ -92,6 +93,13 @@ public:
     ///        是悬垂解引用；注销后各入口对空源安全返回。
     void detachRegistries();
 
+    /// @brief 注入提交被拒的用户可见反馈钩子（R3 审计 C4 修复，2026-10-15）：
+    ///        Enter/双击执行被拒（未注册/不可执行/只读——accepted=false）
+    ///        时调用，入参＝命令 id。装配层注入与菜单/顶栏同源的状态行反
+    ///        馈出口；未注入＝历史行为（提交结果丢弃——面板收起后仅注册
+    ///        表诊断目录出线，即时可见性为零）。UI 线程调用。
+    void setRejectedFeedback(std::function<void(const CommandId&)> feedback);
+
 protected:
     /// @brief 键盘导航主路径（面板级：Esc 关闭/Enter 执行/Tab 补全类别）。
     void keyPressEvent(QKeyEvent* event) override;
@@ -122,6 +130,7 @@ private:
     QListWidget* m_list = nullptr;                ///< 结果列表（窗口树子）
     QLabel* m_hint = nullptr;                     ///< 底部提示行（上限/分类过滤态）
     std::optional<CommandCategory> m_categoryFilter; ///< Tab 补全的分类过滤态
+    std::function<void(const CommandId&)> m_rejectedFeedback; ///< 提交被拒反馈钩子（可空——R3-C4）
 };
 
 /**

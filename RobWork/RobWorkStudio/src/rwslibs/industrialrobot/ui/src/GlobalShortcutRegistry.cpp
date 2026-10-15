@@ -362,7 +362,15 @@ private:
         const CommandId command = binding.command;
         QObject::connect(shortcut, &QShortcut::activated, m_shortcutParent, [this, command] {
             if (m_deps.commands != nullptr) {
-                (void)m_deps.commands->submit(command);
+                const CommandOutcome outcome = m_deps.commands->submit(command);
+                // 拒绝反馈（R3 审计 C4 修复，2026-10-15）：快捷键是唯一能
+                // 绕过禁用态直达 submit 的入口（顶栏按钮被禁用态挡住），
+                // 原实现丢弃结局——被拒命令零用户可见反馈（诊断目录出线
+                // 但"诊断"页签为占位不可见）。钩子＝装配层注入的与菜单/
+                // 顶栏同源状态行反馈；未注入＝历史行为（可空缺省）。
+                if (!outcome.accepted && m_deps.onRejectedSubmit) {
+                    m_deps.onRejectedSubmit(command);
+                }
             }
         });
         m_shortcutByCommand.emplace(command, shortcut);

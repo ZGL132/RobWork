@@ -520,6 +520,18 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
         return std::binary_search(completedBatches.begin(), completedBatches.end(),
                                   batchIdx);
     };
+    // Quick 筛选账目是否已在恢复基点内（R3 审计 A6 修复，2026-10-15）：
+    // 第 4 步（ScreenedOut 计数）在 Quick 批相**完整跑完后**执行一次——
+    // 检查点只在批边界产出 ⇒ Quick 相自身的检查点（phase==Quick）都在第
+    // 4 步之前，其审计不含筛选账目；而 Verified 相的检查点必然在 Quick
+    // 完整结算之后，其审计基点已含 quickScreenedOut。故判别式＝恢复基点
+    // 相是否为 Verified：是 ⇒ 本次运行第 4 步对全部候选跳过累加（基点已
+    // 计——重推导如实改状态但不重复计数，AT-35）；否（Quick 相恢复/全新
+    // 运行）⇒ 照常计数（中途取消的 Quick 检查点里筛选账目尚不存在——
+    // 恢复后全部非幸存者都须计一次，既有 AT-35 用例口径）。
+    const bool quickScreenedInBase
+        = request.resumeFrom.has_value()
+          && request.resumeFrom->phase == core::EvaluationMode::Verified;
 
     JointRunAuditCounts& audit = result.audit;
     if (request.resumeFrom.has_value()) {
@@ -611,9 +623,13 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
                     }
                 }
             } catch (...) {
-                // 首错保留（并发多错时先到先留——确定性重抛面）；其余
-                // worker 照常收尾（取消旗标未置——靠批领尽自然退出，与
-                // "异常不失败在途批"的合并口径一致）。
+                // 首错保留（互斥保护；多 worker 各抛不同异常时保留哪个
+                // 取决于线程时序——**非确定性**择取，R3 迭代 2 复审勘误：
+                // 原注释"确定性重抛面"失实。机制本身无碍：join 后统一
+                // 重抛、串行路径同 workerFn——错误类别面一致，仅具体异常
+                // 实例可能随时序不同）。其余 worker 照常收尾（取消旗标
+                // 未置——靠批领尽自然退出，与"异常不失败在途批"的合并
+                // 口径一致）。
                 const std::lock_guard<std::mutex> guard(workerErrorMutex);
                 if (!workerError) {
                     workerError = std::current_exception();
@@ -773,7 +789,13 @@ JointRunResult JointRunOrchestrator::run(const JointRunRequest& request,
                 rec.base.status = CandidateStatus::ScreenedOut;
                 rec.base.evaluation.status = CandidateStatus::ScreenedOut;  // 双字段一致
                 rec.base.extraRejections.push_back(makeQuickScreenRejection(m_stage));
-                audit.base.quickScreenedOut += 1;
+                // 计数守卫（R3 审计 A6，判别式见 quickScreenedInBase）：
+                // 恢复基点已含完整筛选账目（Verified 相检查点）时不再重复
+                // 累加——重推导如实改状态（AT-35"继续不重复统计"）；Quick
+                // 相恢复/全新运行照常计数。
+                if (!quickScreenedInBase) {
+                    audit.base.quickScreenedOut += 1;
+                }
             }
         }
     }

@@ -385,9 +385,15 @@ struct AdmissionDecision {
  *
  * 两轴投影的正交观测（§5.6——EX-ORT-1 的 API 面）：
  *   - taskStateAfter：接纳编排后的任务状态投影（T8 Completed／T9 Failed
- *     ——ConstructionFailed；其余拒绝不改变任务状态，投影＝登记镜像）；
+ *     ——ConstructionFailed；其余拒绝不改变任务状态，投影＝登记镜像；
+ *     Rejected∧无登记记录〔UnknownRun——跨项目迟到结果，AT-10〕时无镜
+ *     像可投影，取 Queued 保守值——R3 审计 B1 修复登记，2026-10-15：原
+ *     实现解引用空 optional 是 UB。九态词表无 NotApplicable，Queued 是
+ *     "未登记 run 的最保守投影"——语义张力〔execution.md:400"Queued＝
+ *     已受理入队"〕经本注钉住为已裁决例外）；
  *   - archivePhaseAfter：归档阶段投影（Completed＋ArchiveFailed 是合法
- *     组合——EX-ARC-5"任务完成≠归档完成"）。
+ *     组合——EX-ARC-5"任务完成≠归档完成"；无登记记录时取 NotApplicable
+ *     ——与 ResultAdmission::archivePhase 只读投影的缺记录口径一致）。
  *
  * 值语义；线程约束：仅调度线程。
  */

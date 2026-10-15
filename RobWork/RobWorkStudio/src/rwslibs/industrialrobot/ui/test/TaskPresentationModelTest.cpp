@@ -433,6 +433,37 @@ TEST(TaskPresentationModelTest, BackgroundTasksReadOnlyAfterClose_P_UI_7)
     EXPECT_EQ(h.model->backgroundTasks().size(), 1u);   // 后台保留
 }
 
+/**
+ * R3 审计 C6 回归：**同一项目**重开时后台只读副本清退。历史缺陷：降级
+ * 拍遗留的后台副本无任何清理路径——重开同项目后该任务经 tasksByProject
+ * 重新进入当前清单，但后台旧副本仍以"后台只读"拦截暂停/取消（误拒），
+ * 且 activeTasks/backgroundTasks 同身份双行。修复＝refresh 时把"身份项
+ * 目＝当前项目"的活跃行对应的后台副本移除；切到他项目不清退（P-UI-7
+ * 原文语义——上一用例 BackgroundTasksReadOnlyAfterClose_P_UI_7 钉住）。
+ */
+TEST(TaskPresentationModelTest, SameProjectReopenPurgesBackgroundCopy_R3_C6)
+{
+    IRD_TEST_INFO("TASK-03", {"PM-03"}, std::nullopt);
+    TaskHarness h;
+    const auto snap = h.makeSnapshot(core::TaskState::Running, 1, h.progressOf(80));
+    h.port->rows = {snap};
+    h.model->refresh();
+
+    // 关闭项目：任务降级后台只读。
+    h.model->demoteCurrentToBackground();
+    ASSERT_EQ(h.model->backgroundTasks().size(), 1u);
+
+    // 重新打开**同一项目**（C6 触发序）：任务回到当前清单——后台副本须
+    // 清退，控制请求不再被"后台只读"误拒（转发到端口）。
+    h.model->attachProject(h.project);
+    h.model->refresh();
+    ASSERT_EQ(h.model->activeTasks().size(), 1u);
+    EXPECT_EQ(h.model->backgroundTasks().size(), 0u) << "后台副本须清退（同项目重开）";
+    const auto ack = h.model->requestCancel(snap.identity);
+    EXPECT_FALSE(ack.backgroundRejected) << "活跃任务不得再被后台只读误拒";
+    EXPECT_EQ(h.port->cancelCalls, 1u) << "取消请求已转发（不再被自限拦截）";
+}
+
 // =====================================================================
 // UI-TSK-2/3/4：崩溃重跑／归档子标／当前性徽标
 // =====================================================================

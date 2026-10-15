@@ -355,14 +355,23 @@ CloseDialogResolution UiSessionController::resolveCloseDialog(const CloseDecisio
         hold.store = m_session.store;
         hold.tasks = m_session.tasks;
         hold.subscription = std::move(m_closeSubscription);
-        (void)hold.store->requestClose();
+        // R3 审计 C2 修复（2026-10-15）：**先迁出会话＋先入持有点，再发关
+        // 闭信号**。原序（先 requestClose 后清 m_session）下，A 的关闭回调
+        // 可能与本调用同步到达（零在途即关的只读/空任务项目最典型——本文
+        // 件关闭流注释明示该时序存在）：回调时 m_session 仍指向 A 且状态
+        // Open*，onStoreClosed 命中"当前会话匹配"→ finishCurrentClose 误终
+        // 结（切换 epoch 双递增、中途注入空上下文投影、并经残留 m_drain
+        // Intent 置 m_exitPending）。防护与关闭流同型（关闭流先置 Close
+        // Confirmed 使回调落入"无匹配忽略"）：切换流以"会话已迁出＋持有
+        // 点已登记"达成——同步回调匹配持有点正常释放，异步回调亦然。
+        m_session = SessionBinding{};
         m_holds.push_back(std::move(hold));
+        (void)m_holds.back().store->requestClose();
         // UI 会话立即绑定 B（不等 A 排空——§5.4 S2"UI 会话立即绑定 B"
         // 原文）；bindSession 内完成 B 的状态/订阅/上下文投影与
         // "切换绑定新项目"的 epoch 递增（§6.2）。INV-SES-2 的结构性
         // 保证：B 进入 Open* 的唯一路径前置＝A 已移出 m_session（转入
         // 持有点）——任一时刻至多一个 Open* 绑定。
-        m_session = SessionBinding{};
         m_dialogPending = false;
         m_pendingSwitch = false;
         m_pendingCandidatePath.clear();
@@ -727,6 +736,12 @@ void UiSessionController::finishCurrentClose()
     ++m_epoch;                     // §6.2"关闭完成"——当前会话关闭的递增点
     const bool exitRequested = (m_drainIntent == UiCloseIntent::ExitApplication);
     resetToNoProject();
+    // 意图消费即复位（R3 审计 C2 关联加固，2026-10-15）：m_drainIntent 是
+    // 唯一无复位写点的 Draining 字段（cancelDrainWait/resetToNoProject/
+    // bindSession 均不触碰）——不消费即复位会让上一会话的退出意图跨会
+    // 话残留，被后续无关流程误读（正是切换流误置 m_exitPending 的使能条
+    // 件）。退出位判定在上、复位在下——ExitApplication 语义不受影响。
+    m_drainIntent = UiCloseIntent::CloseProject;
     if (exitRequested) {
         // 退出就绪位（§9.5"应用退出时由 L5/workflow 调 scheduler.shutdown(
         // DrainPolicy)＋drained()"——调度器排空调用权在 L5，ui 只置位；

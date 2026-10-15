@@ -132,6 +132,12 @@ void CommandPalettePanel::detachRegistries()
     m_shortcuts = nullptr;
 }
 
+void CommandPalettePanel::setRejectedFeedback(
+    std::function<void(const CommandId&)> feedback)
+{
+    m_rejectedFeedback = std::move(feedback);
+}
+
 void CommandPalettePanel::repopulate()
 {
     if (m_commands == nullptr) {
@@ -222,9 +228,15 @@ void CommandPalettePanel::executeCurrent()
     }
     const CommandId id = item->data(Qt::UserRole).toString().toStdString();
     // 统一提交路径（§10.4 副作用行——面板与菜单/快捷键共用，无旁路）；
-    // 拒绝（不可执行/只读）由注册表出 UI-CMD-NOT-EXECUTABLE 诊断，面板收起
-    // 后由壳状态栏/诊断目录呈现（三条通道不混用——§7.7 结果回 UI 口径）。
-    (void)m_commands->submit(id);
+    // 拒绝（不可执行/只读）由注册表出 UI-CMD-NOT-EXECUTABLE 诊断。拒绝的
+    // 即时可见反馈（R3 审计 C4 修复，2026-10-15）：原实现丢弃结局——面板
+    // 是禁用灰行仍可 Enter 的唯一入口，被拒后界面零反应（注释声称"壳状
+    // 态栏呈现"但该路径无代码触达）。钩子＝装配层注入的与菜单/顶栏同源
+    // 状态行反馈；未注入＝历史行为。
+    const CommandOutcome outcome = m_commands->submit(id);
+    if (!outcome.accepted && m_rejectedFeedback) {
+        m_rejectedFeedback(id);
+    }
     closePalette();
 }
 
