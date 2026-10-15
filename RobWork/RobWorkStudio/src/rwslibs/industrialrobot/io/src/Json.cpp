@@ -879,8 +879,14 @@ private:
         if (r.ec == std::errc::result_out_of_range) {
             // 方向分流：溢出拒绝、下溢接受为 0。量级估算＝小数点前有效
             // 位数-1 ＋ 指数值（钳位扫描，精度足以分辨 1e308 边界两侧）。
+            // 界值取 >=308（F-803）：magnitude==308 且 from_chars 报
+            // result_out_of_range 的 token 必为溢出——可表示值（1e308、
+            // 1.79e308 等 ≤ DBL_MAX）经 from_chars 即成功、不会进入本分
+            // 支；用 >308 会把 2e308 这类真溢出错派入下溢分支静默置 0.0
+            // （数据损坏面）。负指数下溢量级在 -309 以下方向，不受界值
+            // 收紧影响。
             const std::int64_t magnitude = estimateMagnitude(token);
-            if (magnitude > 308) {
+            if (magnitude >= 308) {
                 out.error = jsonError(IoErrorCode::FormatJsonNumber, path, begin, end,
                                       "json parse: number overflow (out of IEEE754 double range)");
                 return out;
