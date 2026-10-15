@@ -336,6 +336,14 @@ SequencePlan expandSequence(const SequenceRequest& request)
             // （approach/retract 后的游标未解析）——构型选择（§7.5 延续性
             // 规则需起点参照）与 PTP 几何均无法在本批给出：产结构完整、
             // 几何待填的 Transfer 条目（不伪造端点；候选集已核非空）。
+            // F-798 修复：本分支不再 continue 跳过站链余段——占位后继续
+            // 产出该站 Work（任务点＋驻留）与 retract 条目，对齐下方笛卡尔
+            // 站 else 支"占位后站链完整"形态。缺陷形态（修复前）：产占位
+            // 后直接 continue，该站任务点/驻留/撤离静默跳出最终轨迹且
+            // failures 为空仍 Ok——既不符 TRJ-01"由任务点组成的有序作业
+            // 序列"（每启用站段链完整），也绕开 §7.6"失败给具体段落与
+            // 原因"（TRJ-06——无素材的静默丢失）。游标保持失效（构型未
+            // 解析），不进下方几何规划支；后续站同形展开直至 T05 补填。
             PlannedSegment seg;
             seg.segmentIndex = nextSegmentIndex++;
             seg.role = SequenceSegmentRole::TransferPtp;
@@ -345,10 +353,7 @@ SequencePlan expandSequence(const SequenceRequest& request)
             seg.ptpGeometry = std::nullopt;     // 待 T05 笛卡尔链补填
             plan.segments.push_back(std::move(seg));
             firstTransfer = false;
-            continue;                            // 游标保持失效（构型未解析）
-        }
-
-        if (!pt.approach.enabled) {
+        } else if (!pt.approach.enabled) {
             // ---- 纯关节站（游标有效）：站间 PTP 段几何可直接规划
             //（§7 全语义——构型选择三键＋限位守卫＋插值端点）。
             PtpRequest ptp;
