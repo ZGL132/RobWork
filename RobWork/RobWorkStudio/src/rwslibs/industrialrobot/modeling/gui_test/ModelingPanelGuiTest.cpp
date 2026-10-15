@@ -1830,3 +1830,45 @@ TEST_F(ModelingPanelGuiTest, TcpDisplayNameEdit_SetWritableDynamicWindow_F517)
     ASSERT_NE(nameApply, nullptr);
     EXPECT_FALSE(nameApply->isEnabled()) << "动态窗口降级后显示名应用钮未禁用（setWritable 半区）";
 }
+
+/**
+ * @brief UI-T79 / MDL-07：首次选择必须立即呈现回填值，不能依赖取消按钮重绘。
+ * 使用非零且各轴不同的输入（m、无量纲），排除全零模板掩盖未设/串行缺陷。
+ */
+TEST_F(ModelingPanelGuiTest, FirstSelectionShowsImportedValuesWithoutCancel_UI_T79)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+    // 复用真实编辑原语建立可辨别的原点；本例核查显示链而非重算机器人学。
+    JointEditValue value = JointOriginEditValue{0.12, -0.03, 0.4, 0, 0, 0};
+    const auto err = applyJointFieldEdit(m_ws, 1, JointEditField::Origin, value);
+    ASSERT_FALSE(err.has_value());
+    m_panel->focusObject(m_ws.design.joints[1].objectId);
+    auto* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    for (const auto& field : std::vector<std::pair<const char*, double>>{
+             {"axis-y", m_ws.design.joints[1].axis.value()[1]}, {"origin-x", 0.12}, {"origin-y", -0.03}, {"origin-z", 0.4}}) {
+        const int row = jointEditRowOf(*table, field.first);
+        ASSERT_GE(row, 0);
+        bool ok = false;
+        const double number = table->item(row, 1)->text().toDouble(&ok);
+        EXPECT_TRUE(ok) << "首次回填不得显示未设：" << field.first;
+        EXPECT_DOUBLE_EQ(number, field.second) << field.first;
+    }
+}
+
+/** @brief UI-T79 / UX-05：同对象刷新不能丢弃尚未确认的数值输入（m）。 */
+TEST_F(ModelingPanelGuiTest, SameObjectRefreshKeepsPendingValue_UI_T79)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    auto* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    table->item(jointEditRowOf(*table, "origin-x"), 1)->setText(QStringLiteral("0.123"));
+    QApplication::processEvents();
+    m_panel->refreshPanel(m_ws, ModelReadinessReport{});
+    EXPECT_EQ(table->item(jointEditRowOf(*table, "origin-x"), 1)->text(), QStringLiteral("0.123"));
+    // 点确认必须仍有变更明细，防止仅屏幕保留旧文字、模型暂存已被清空。
+    auto* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_confirm_region"))->isHidden());
+}
