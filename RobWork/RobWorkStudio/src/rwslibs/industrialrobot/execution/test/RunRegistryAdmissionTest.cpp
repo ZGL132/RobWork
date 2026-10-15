@@ -699,6 +699,11 @@ TEST_F(RunRegistryAdmissionTest, UnknownRunRejectedWithNoArchiveWrite_EX_REG_1)
     EXPECT_EQ(out.decision.diagnostics.front().code, "EX-REGISTRY-UNKNOWN-RUN");
     EXPECT_TRUE(m_sink->hasReportCode("EX-REGISTRY-UNKNOWN-RUN"));
     EXPECT_EQ(admission.rejectedArrivalCount(), 1u);
+    // 两轴投影（R3 审计 B1 回归钉，2026-10-15）：无登记记录＝无镜像可投
+    // 影——任务状态取 Queued、归档阶段取 NotApplicable（原实现解引用空
+    // optional 是 UB，读未初始化枚举；本断言在缺陷形态下不可稳定通过）。
+    EXPECT_EQ(out.taskStateAfter, core::TaskState::Queued);
+    EXPECT_EQ(out.archivePhaseAfter, ArchivePhase::NotApplicable);
     // 零归档写入：到达在步 1 即被丢弃，归档端口未被触碰（AT-10 反例的
     // "绝不写入"观测面——文件级双项目断言在 contract_test）。
     EXPECT_EQ(m_injector->beginCalls, 0);

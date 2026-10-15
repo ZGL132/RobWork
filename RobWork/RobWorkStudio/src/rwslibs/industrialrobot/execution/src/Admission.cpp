@@ -184,8 +184,21 @@ AdmissionOutcome ResultAdmission::admitResult(ArrivalEnvelope&& arrival)
         ++m_rejectedArrivals;
         AdmissionOutcome outcome;
         outcome.decision = std::move(decision);
-        outcome.taskStateAfter = record->currentState;
-        outcome.archivePhaseAfter = record->archivePhase;
+        // 两轴投影（R3 审计 B1 修复，2026-10-15）：原实现无条件解引用
+        // record->——但 Rejected(UnknownRun)（跨项目迟到结果，AT-10 设计
+        // 关注的常态到达）时 record 必为 nullopt，解引用空 optional 是 UB
+        // （MSVC 下读未初始化枚举，下游按垃圾状态投影）。无登记记录＝
+        // "无镜像可投影"：任务状态取 Queued（未登记 run 的最保守投影
+        // ——尚未排队；RunRegistration 不存在，不存在"保持"语义）、归档
+        // 阶段取 NotApplicable（与 archivePhase() 只读投影 :135 的缺记
+        // 录口径一致）。其余拒绝（有登记记录）仍取登记镜像不变。
+        if (record.has_value()) {
+            outcome.taskStateAfter = record->currentState;
+            outcome.archivePhaseAfter = record->archivePhase;
+        } else {
+            outcome.taskStateAfter = core::TaskState::Queued;
+            outcome.archivePhaseAfter = ArchivePhase::NotApplicable;
+        }
         return outcome;
     }
 
