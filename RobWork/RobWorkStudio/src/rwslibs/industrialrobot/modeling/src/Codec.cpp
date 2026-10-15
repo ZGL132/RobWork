@@ -213,6 +213,8 @@ public:
 
     std::size_t offset() const { return pos_; }
     bool atEnd() const { return pos_ == n_; }
+    /// 剩余未读字节数（R3 审计 A13——集合计数的预算前置校验基准）。
+    std::size_t remaining() const { return n_ - pos_; }
 
     bool u8(std::uint8_t* out)
     {
@@ -648,12 +650,35 @@ void putObjectIdSet(Sink& s, const std::vector<core::ObjectId>& refs)
     }
 }
 
+/// 集合计数的预算前置校验（R3 审计 A13 修复，2026-10-15）：decode 的
+/// reserve/resize 原先在逐条截断检查之前按外部 u32 计数直接预分配——伪
+/// 造/损坏计数（如 0xFFFFFFFF）触发巨量预分配 std::bad_alloc，逃逸
+/// Codec.hpp"decode 走查询轨 Expected 值面（不抛）"契约（canonical
+/// bridge/Package 导入链均裸调 decode）。按"计数 × 单元素最小编码字节
+/// ≤ 剩余字节数"前置拒绝——minBytes 为该集合单条目的保守真下界（各集
+/// 合的实参由调用方按字段形态给出，见各调用点注）。超限＝Malformed
+/// Payload（与逐条截断同错误轨）。
+bool saneCount(const Reader& r, std::uint32_t count,
+               std::size_t minBytesPerEntry, std::string* err,
+               const char* what)
+{
+    const std::size_t remaining = r.remaining();
+    if (static_cast<std::size_t>(count) * minBytesPerEntry > remaining) {
+        *err = std::string(what) + "计数超字节预算（count="
+               + std::to_string(count) + " × " + std::to_string(minBytesPerEntry)
+               + "B > 剩余 " + std::to_string(remaining) + "B——载荷损坏面）";
+        return false;
+    }
+    return true;
+}
+
 /// ObjectId 集合的读回＋canonical 校验（严格升序＋无重复）。
 bool getObjectIdSet(Reader& r, std::vector<core::ObjectId>* out,
                     std::string* err)
 {
     std::uint32_t count = 0;
     if (!r.u32(&count)) { *err = "集合计数截断"; return false; }
+    if (!saneCount(r, count, 5, err, "refs")) { return false; }  // 单条≥u32 长度前缀＋1 字符
     std::vector<core::ObjectId> refs;
     refs.reserve(count);
     std::string prev;
@@ -791,6 +816,7 @@ bool getRobotDesign(Reader& r, RobotDesign* out, std::string* err)
 
     std::uint32_t jointCount = 0;
     if (!r.u32(&jointCount)) { *err = "joints 计数截断"; return false; }
+    if (!saneCount(r, jointCount, 16, err, "joints")) { return false; }  // 单条≥objectId＋名称＋类型＋两 SourcedValue
     d.joints.reserve(jointCount);
     for (std::uint32_t i = 0; i < jointCount; ++i) {
         JointEntry j;
@@ -835,6 +861,7 @@ bool getRobotDesign(Reader& r, RobotDesign* out, std::string* err)
 
     std::uint32_t linkCount = 0;
     if (!r.u32(&linkCount)) { *err = "links 计数截断"; return false; }
+    if (!saneCount(r, linkCount, 11, err, "links")) { return false; }  // 单条≥objectId＋名称＋体数据
     d.links.reserve(linkCount);
     for (std::uint32_t i = 0; i < linkCount; ++i) {
         LinkEntry l;
@@ -879,6 +906,7 @@ bool getRobotDesign(Reader& r, RobotDesign* out, std::string* err)
     }
     std::uint32_t resCount = 0;
     if (!r.u32(&resCount)) { *err = "resourceManifest 计数截断"; return false; }
+    if (!saneCount(r, resCount, 32, err, "resourceManifest")) { return false; }  // 单条≥resourceId＋state＋版本＋摘要
     d.resourceManifest.reserve(resCount);
     std::string prevKey;
     for (std::uint32_t i = 0; i < resCount; ++i) {
@@ -962,6 +990,7 @@ bool getToolDefinition(Reader& r, ToolDefinition* out, std::string* err)
     if (!getTransform3D(r, &t.mountInterface)) { *err = "mountInterface 截断/非有限"; return false; }
     std::uint32_t tcpCount = 0;
     if (!r.u32(&tcpCount)) { *err = "tcpList 计数截断"; return false; }
+    if (!saneCount(r, tcpCount, 32, err, "tcpList")) { return false; }  // 单条≥key＋displayName＋变换
     t.tcpList.reserve(tcpCount);
     std::string prevKey;
     for (std::uint32_t i = 0; i < tcpCount; ++i) {
@@ -1066,6 +1095,7 @@ bool getPoseSet(Reader& r, PoseSet* out, std::string* err)
     if (!getObjectId(r, &p.objectId)) { *err = "objectId 截断"; return false; }
     std::uint32_t count = 0;
     if (!r.u32(&count)) { *err = "entries 计数截断"; return false; }
+    if (!saneCount(r, count, 5, err, "poseSet entries")) { return false; }  // 单条≥key 长度前缀＋1 字符
     p.entries.reserve(count);
     std::string prevKey;
     for (std::uint32_t i = 0; i < count; ++i) {
@@ -1079,6 +1109,7 @@ bool getPoseSet(Reader& r, PoseSet* out, std::string* err)
         prevKey = e.key;
         std::uint32_t qCount = 0;
         if (!r.u32(&qCount)) { *err = "jointConfiguration 计数截断"; return false; }
+        if (!saneCount(r, qCount, 8, err, "jointConfiguration")) { return false; }  // 单元素＝f64 定宽
         e.jointConfiguration.resize(qCount);
         for (double& q : e.jointConfiguration) {
             if (!r.f64(&q)) { *err = "jointConfiguration 截断"; return false; }
@@ -1140,6 +1171,7 @@ bool getDrivetrainDesign(Reader& r, DrivetrainDesign* out, std::string* err)
     if (!getObjectId(r, &dt.objectId)) { *err = "objectId 截断"; return false; }
     std::uint32_t ratioCount = 0;
     if (!r.u32(&ratioCount)) { *err = "ratioPerJoint 计数截断"; return false; }
+    if (!saneCount(r, ratioCount, 1, err, "ratioPerJoint")) { return false; }  // 单元素≥presence 字节
     dt.ratioPerJoint.resize(ratioCount);
     for (auto& ratio : dt.ratioPerJoint) {
         if (!getSourcedValue(r, &ratio, err)) { return false; }
@@ -1151,6 +1183,7 @@ bool getDrivetrainDesign(Reader& r, DrivetrainDesign* out, std::string* err)
         if (!r.u32(&c.rows) || !r.u32(&c.cols)) { *err = "coupling 维度截断"; return false; }
         std::uint32_t elemCount = 0;
         if (!r.u32(&elemCount)) { *err = "coupling 计数截断"; return false; }
+        if (!saneCount(r, elemCount, 8, err, "coupling")) { return false; }  // 单元素＝f64 定宽
         c.c.resize(elemCount);
         for (double& v : c.c) {
             if (!r.f64(&v)) { *err = "coupling 元素截断"; return false; }
@@ -1166,6 +1199,7 @@ bool getDrivetrainDesign(Reader& r, DrivetrainDesign* out, std::string* err)
     }
     std::uint32_t frictionCount = 0;
     if (!r.u32(&frictionCount)) { *err = "frictionPerJoint 计数截断"; return false; }
+    if (!saneCount(r, frictionCount, 3, err, "frictionPerJoint")) { return false; }  // 单元素＝三 presence 下界
     dt.frictionPerJoint.resize(frictionCount);
     for (FrictionEntry& f : dt.frictionPerJoint) {
         if (!getSourcedValue(r, &f.viscous, err)) { return false; }
@@ -1174,6 +1208,7 @@ bool getDrivetrainDesign(Reader& r, DrivetrainDesign* out, std::string* err)
     }
     std::uint32_t torqueCount = 0;
     if (!r.u32(&torqueCount)) { *err = "torqueLimitsPerJoint 计数截断"; return false; }
+    if (!saneCount(r, torqueCount, 2, err, "torqueLimitsPerJoint")) { return false; }  // 单元素＝两 presence 下界
     dt.torqueLimitsPerJoint.resize(torqueCount);
     for (TorqueLimitEntry& t : dt.torqueLimitsPerJoint) {
         if (!getSourcedValue(r, &t.rated, err)) { return false; }
