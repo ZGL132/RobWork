@@ -211,15 +211,25 @@ struct DraftContractHarness {
     std::unique_ptr<IDraftController> controller;
     std::vector<StubSource> sources;
 
+    // postToDiskThread 形参随 R3-C3 契约改签（IDraftController.hpp
+    // DraftControllerDeps 注）：返回受理位 bool——true＝已入队、false＝
+    // 执行器已停止任务未受理。契约测试装配恒受理（队列执行器不拒收），
+    // 拒收面语义由生产执行器 SerialTaskExecutor 承载并经 PortAdapters
+    // 直测钉扎（ui_test 假受理位用例，R3-A16/C3）。
     DraftContractHarness(std::shared_ptr<ui::IUiDraftStorePort> storePort,
-                         std::function<void(std::function<void()>)> postToDiskThread)
+                         std::function<bool(std::function<void()>)> postToDiskThread)
         : store(std::move(storePort))
     {
         ui::DraftControllerDeps deps;
         deps.postToDiskThread = std::move(postToDiskThread);
         // UI 回投内联（QCoreApplication 级模型测试无事件循环——回执同步
-        // 消费；Marshal 纪律的"队列化"形态由生产执行器承载）。
-        deps.postToUiThread = [](std::function<void()> task) { task(); };
+        // 消费；Marshal 纪律的"队列化"形态由生产执行器承载）。受理位恒
+        // true＝同步内联即已消费（R3-C3：false 只允许表达"回执被丢弃"，
+        // 内联形态不存在丢弃窗口）。
+        deps.postToUiThread = [](std::function<void()> task) -> bool {
+            task();
+            return true;
+        };
         deps.nowUtcIso = []() { return std::string("2026-09-21T12:00:00Z"); };
         deps.steadyClock = []() {
             return std::chrono::steady_clock::now();
@@ -275,8 +285,12 @@ TEST(DraftContractTest, StorePortRoundTripAnchorsDraftServiceSemantics)
     WorkerThreadExecutor executor;
     auto store = std::make_shared<MemoryStorePort>();
     store->uiThreadId = std::this_thread::get_id();
-    DraftContractHarness harness(store, [&executor](std::function<void()> task) {
+    DraftContractHarness harness(store, [&executor](std::function<void()> task) -> bool {
+        // 受理位语义（R3-C3）：契约执行器运行期恒受理（post 即入队），
+        // 返回 true 与两处模型测试替身同款；false 仅在执行器停止后出现，
+        // 生产面拒收路径由 SerialTaskExecutor 直测钉扎。
         executor.post(std::move(task));
+        return true;
     });
     harness.bindWritable();
     StubSource& source = harness.attachDirty("kinematics", "payload-a");
@@ -315,8 +329,12 @@ TEST(DraftContractTest, StaleDetailPassesThroughProjectedInterfaces)
     IRD_TEST_INFO("RV-10", {"AT-29"}, std::nullopt);
     WorkerThreadExecutor executor;
     auto store = std::make_shared<MemoryStorePort>();
-    DraftContractHarness harness(store, [&executor](std::function<void()> task) {
+    DraftContractHarness harness(store, [&executor](std::function<void()> task) -> bool {
+        // 受理位语义（R3-C3）：契约执行器运行期恒受理（post 即入队），
+        // 返回 true 与两处模型测试替身同款；false 仅在执行器停止后出现，
+        // 生产面拒收路径由 SerialTaskExecutor 直测钉扎。
         executor.post(std::move(task));
+        return true;
     });
     harness.bindWritable();
     StubSource& source = harness.attachDirty("kinematics", "draft-edit");
@@ -357,8 +375,12 @@ TEST(DraftContractTest, CloseDialogSaveCompletesSynchronouslyOnDiskThread)
     WorkerThreadExecutor executor;
     auto store = std::make_shared<MemoryStorePort>();
     store->uiThreadId = std::this_thread::get_id();
-    DraftContractHarness harness(store, [&executor](std::function<void()> task) {
+    DraftContractHarness harness(store, [&executor](std::function<void()> task) -> bool {
+        // 受理位语义（R3-C3）：契约执行器运行期恒受理（post 即入队），
+        // 返回 true 与两处模型测试替身同款；false 仅在执行器停止后出现，
+        // 生产面拒收路径由 SerialTaskExecutor 直测钉扎。
         executor.post(std::move(task));
+        return true;
     });
     harness.bindWritable();
     (void)harness.attachDirty("trajectory", "close-save");

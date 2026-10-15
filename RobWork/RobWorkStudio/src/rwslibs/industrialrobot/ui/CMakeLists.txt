@@ -482,6 +482,7 @@ add_executable(sdurws_ird_ui_contract_test
     contract_test/InteractionTaskContractTest.cpp
     contract_test/PeerBridgeContractTest.cpp
     contract_test/Section12RegistryTest.cpp
+    contract_test/PortAdaptersExecutorContractTest.cpp  # R3-A16/C3 返工批 O-12——SerialTaskExecutor 受理位契约面（app/PortAdapters.cpp 同源编入见下方增列块）
     contract_test/StudioCrashContractTest.cpp  # WP-24-T02——进程级崩溃契约（AT-11：子崩→文件落盘脱敏）
     contract_test/StudioCrashChild.cpp)        # WP-24-T02——子进程模式实现（main 拦截分派——Tx15Child 同款）
 
@@ -489,6 +490,22 @@ add_executable(sdurws_ird_ui_contract_test
 # 子进程装捕获走产品真实路径；零 Qt，两模式可跑）。绝对锚定同 ui_test 段。
 target_sources(sdurws_ird_ui_contract_test PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/studio/CrashCapture.cpp)
+
+# ---- R3-A16/C3 返工批增列（O-12——2026-10-16，B-1 契约同步随批）----
+# PortAdaptersExecutorContractTest.cpp＝SerialTaskExecutor 受理位契约面
+# 直测（R3 审计 C3"停止后投递被拒收且任务永不执行"的生产面语义钉——
+# DraftContractTest 装配替身恒受理，拒绝面的唯一生产承载即 SerialTask
+# Executor）。被测 TU app/PortAdapters.cpp 同源编入（CrashCapture/
+# DomainAssembly 同款先例形态——测试消费与产品同一翻译单元，防"替身
+# 绿、生产面漂移"）：该 TU 零 Qt（std 线程原语＋ird 公共头），两模式
+# 可跑；project/diagnostics 符号经本目标既有测试面直链（UI-T14 登记面）
+# 解析——无新增链接边。ui 目录根 include 授权为私有头 "app/PortAdapters.
+# hpp" include 所需（if(TARGET sdurws) 块的同款授权在本块无条件补齐
+# ——冒烟树同权，两模式一致）。
+target_sources(sdurws_ird_ui_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/app/PortAdapters.cpp)
+target_include_directories(sdurws_ird_ui_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_features(sdurws_ird_ui_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_contract_test PROPERTIES
