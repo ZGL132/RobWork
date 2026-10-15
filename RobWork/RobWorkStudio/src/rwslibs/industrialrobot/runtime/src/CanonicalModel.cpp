@@ -27,6 +27,7 @@
 #include <cmath>
 #include <cstring>  // std::memcpy（位模式比较——bitEqual）
 #include <cstdint>
+#include <limits>
 #include <string>
 #include <utility>  // std::move
 #include <vector>
@@ -34,6 +35,105 @@
 #include <sdurws/ird/runtime/Codec.hpp>  // rtcodec::computeContentIdentity（身份计算）
 
 namespace sdurws::ird::runtime {
+
+// RT-T16：两入口共用一份数值判断，避免 S3 放行而 S5 拒绝。仅在本单元
+// 两个 .cpp 间声明/定义，不进入公共头或模型布局；无共享状态，可重入。
+namespace inertia_validation_detail {
+
+/**
+ * @brief 计算惯量最大不对称分量相对对称部分 Frobenius 范数的比值。
+ * @param m [in] 有限 3×3 惯量，质心处、连杆/工具坐标系，单位 kg·m²；只读借用。
+ * @return 无量纲相对偏差；零范数时按 dynamics 既有口径返回绝对偏差（kg·m²）；
+ *         不可表示的大偏差饱和为有限 double 最大值，仅用于拒绝，不修正输入。
+ * @throws 无。非有限值由调用入口先拒绝；纯数值函数不保留输入引用。
+ */
+double relativeAsymmetry(const rw::math::InertiaMatrix<double>& m) noexcept
+{
+    // 第一步：共同除以最大绝对分量后再取范数，避免 I² 上溢/下溢。公因子
+    // 在比值中消去，不把接近零的惯量当成零，也不引入额外绝对容差。
+    double scale = 0.0;
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) { scale = std::max(scale, std::fabs(m(i, j))); }
+    }
+    if (scale == 0.0) { return 0.0; } // 零张量的对称性成立，随后严格 SPD 会拒绝。
+    double symNorm = 0.0;
+    double worst = 0.0;
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            const double a = m(i, j) / scale;
+            const double b = m(j, i) / scale;
+            symNorm = std::hypot(symNorm, 0.5 * a + 0.5 * b);
+            worst = std::max(worst, std::fabs(a - b));
+        }
+    }
+    // 第二步：分母只取物理对称部分，不能让反对称误差放大自己的容许上限。
+    // 纯反对称时退回绝对差（dynamics 已有零参考规则），之后仍须通过 SPD。
+    const double deviation = symNorm > 0.0 ? worst / symNorm : worst * scale;
+    return std::min(deviation, std::numeric_limits<double>::max());
+}
+
+/**
+ * @brief 在实际对称化的临时矩阵上产生严格 SPD 见证值，正数当且仅当通过。
+ * @param m [in] 有限惯量，质心处、连杆/工具坐标系，单位 kg·m²；不接管所有权。
+ * @return 无量纲消元主元的最小值；非正对角或数值不可表示的非 SPD 输入给
+ *         0/-1 拒绝见证。不是原始张量的最小特征值，不能当物理惯量显示。
+ * @throws 无。无共享状态，固定轴次序，可重入、确定性（NFR-COR-02）。
+ *
+ * 对称矩阵的正定性等价于全部 LDLᵀ 主元严格为正（即所有特征值＞0）。
+ * 附录 D #7 不允许给主元加 epsilon 或截断负值；这里没有正数余量。
+ */
+double symmetrizedSpdWitness(const rw::math::InertiaMatrix<double>& m) noexcept
+{
+    // 第一步：SPD 必须有严格正对角。用二进制幂对每轴做合同变换 D⁻¹ S D⁻¹，
+    // S=(I+Iᵀ)/2；正定惯性不变。按轴平衡而非全矩阵除以最大值，避免
+    // diag(denorm_min,1,1e300) 的小正轴被全局缩放吞成零。
+    int power[3]{};
+    for (int i = 0; i < 3; ++i) {
+        if (!(m(i, i) > 0.0)) { return m(i, i) == 0.0 ? 0.0 : -1.0; }
+        int exponent = 0;
+        std::frexp(m(i, i), &exponent);
+        // floor(exponent/2)，显式处理 C++ 负整数除法向零截断。
+        power[i] = exponent >= 0 ? exponent / 2 : (exponent - 1) / 2;
+    }
+    double s[3][3]{};
+    for (int i = 0; i < 3; ++i) {
+        for (int j = i; j < 3; ++j) {
+            const double a = m(i, j);
+            const double b = m(j, i);
+            // 同号用差值平均防 a+b 溢出，异号先各减半防 b-a 溢出；
+            // 对角不变，最小正次正规数不会因先除以 2 而消失。
+            const double average = std::signbit(a) == std::signbit(b)
+                ? a + 0.5 * (b - a) : 0.5 * a + 0.5 * b;
+            s[i][j] = s[j][i] = std::scalbn(average, -power[i] - power[j]);
+            if (!std::isfinite(s[i][j])) {
+                // 平衡后对角在 [0.5,2)，交叉项若溢出，必违背 SPD 的
+                // |Sij|²<Sii*Sjj 必要条件；拒绝而不夹紧成合法矩阵。
+                return -1.0;
+            }
+            // 平衡后的对角均小于 2，|交叉项|>2 必不满足 Cauchy 必要界；
+            // 在后续求平方前拒绝，确保极大有限非法输入也不会产生 NaN 主元。
+            if (std::fabs(s[i][j]) > 2.0) { return -1.0; }
+        }
+    }
+
+    // 第二步：固定顺序 LDLᵀ。二阶主子式用两次 FMA 补偿乘积舍入，
+    // 防对称化后恰为零的主子式被加减舍入成小正数而误放行。
+    const double square = s[0][1] * s[0][1];
+    const double determinant2 = std::fma(s[0][0], s[1][1], -square)
+        - std::fma(s[0][1], s[0][1], -square);
+    const double pivot2 = determinant2 / s[0][0];
+    if (!(pivot2 > 0.0)) { return pivot2; } // 零=半正定，负=不定，均须拒绝。
+
+    // 第三步：继续消去第一、第二轴；仅两两主子式为正不能保证三阶 SPD。
+    const double schur22 = std::fma(-s[0][2] / s[0][0], s[0][2], s[2][2]);
+    const double schur12 = std::fma(-s[0][1] / s[0][0], s[0][2], s[1][2]);
+    const double pivot3 = std::fma(-schur12 / pivot2, schur12, schur22);
+    // 极病态非法矩阵的除法可能溢出；非有限见证一律拒绝，诊断值保持有限。
+    if (!std::isfinite(pivot3)) { return -1.0; }
+    return std::min({s[0][0], pivot2, pivot3});
+}
+
+}  // namespace inertia_validation_detail
 
 namespace {
 
@@ -45,8 +145,8 @@ namespace {
 /// 校验器 DescriptionValidator 的 kOrthoTolerance 同源同值）。
 constexpr double kOrthoTolerance = 1e-12;
 
-/// 惯量张量对称性容差：|I_ij−I_ji| ≤ 1×10⁻¹²（§4.3.3"对称性容差附录 D
-/// 第 6 项"；与 S3 校验器 kSymmetryTolerance 同源同值）。
+/// 惯量相对对称性：max|Iij−Iji|/‖(I+Iᵀ)/2‖F ≤ 1e-12，附录 D #6；
+/// 零范数回退既有绝对差规则。无量纲阈值，与 S3 同源同值（RT-T16）。
 constexpr double kSymmetryTolerance = 1e-12;
 
 // =====================================================================
@@ -267,11 +367,10 @@ void requireProvidedNonNegative(const core::SourcedValue<double>& v, const std::
 }
 
 /**
- * @brief 惯量张量复核（Provided 态）：有限→对称（1×10⁻¹²）→正定（SPD）。
+ * @brief 惯量复核：有限→相对对称（1e-12）→实际对称化后严格 SPD（RT-T16）。
  *
- * 正定判据用 Sylvester 准则（对称矩阵正定 ⟺ 各阶顺序主子式＞0）——与 S3
- * 校验器的对称 Jacobi 最小特征值＞0 判据数学等价（§4.3.3 物理惯量远离奇异
- * 边界，两判据在合法域内结论一致）；选用主子式因其 O(1) 确定性、无迭代。
+ * 与 S3 共用内部数值函数；合同缩放和对称化仅作用于校验临时量，不写回
+ * SourcedValue，不改变 Codec 或内容身份。错误仍为调用方 InputInvalid。
  *
  * @param m    [in] 惯量张量（质心系，单位 kg·m²）
  * @param what [in] 字段定位前缀
@@ -287,21 +386,13 @@ void requireValidInertia(const rw::math::InertiaMatrix<double>& m, const std::st
             }
         }
     }
-    // ②对称性（附录 D 第 6 项容差 1×10⁻¹²）。
-    for (int i = 0; i < 3; ++i) {
-        for (int j = i + 1; j < 3; ++j) {
-            if (std::fabs(m(i, j) - m(j, i)) > kSymmetryTolerance) {
-                throw inputInvalid(what + "：惯量张量非对称（|I_ij−I_ji| > 1×10⁻¹²）——MDL-05");
-            }
-        }
+    // ②相对对称性（附录 D #6）；微型与大型连杆采用同一无量纲阈值。
+    if (inertia_validation_detail::relativeAsymmetry(m) > kSymmetryTolerance) {
+        throw inputInvalid(what + "：惯量张量相对不对称偏差超 1e-12——MDL-06/附录 D #6");
     }
-    // ③正定（Sylvester 顺序主子式全＞0；半正定＝质量分布退化，非法）。
-    const double d1 = m(0, 0);
-    const double d2 = m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0);
-    const double d3 = determinant3x3(rw::math::Rotation3D<double>(
-        m(0, 0), m(0, 1), m(0, 2), m(1, 0), m(1, 1), m(1, 2), m(2, 0), m(2, 1), m(2, 2)));
-    if (!(d1 > 0.0 && d2 > 0.0 && d3 > 0.0)) {
-        throw inputInvalid(what + "：惯量张量非正定（SPD 复核失败）——MDL-05/§4.3.3");
+    // ③对称化后的严格 SPD（附录 D #7）；不使用正数余量或未对称原矩阵。
+    if (!(inertia_validation_detail::symmetrizedSpdWitness(m) > 0.0)) {
+        throw inputInvalid(what + "：惯量张量对称化后非正定——MDL-06/附录 D #7");
     }
 }
 

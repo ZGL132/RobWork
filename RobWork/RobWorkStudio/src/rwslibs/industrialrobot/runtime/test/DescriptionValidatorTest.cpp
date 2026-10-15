@@ -26,12 +26,15 @@
  */
 
 #include "../src/DescriptionValidator.hpp"
+#include "CanonicalModelFixture.hpp"  // RT-T16：同一输入核对 S3/S5，不替身数值判断。
 
 #include <sdurws/ird/runtime/Description.hpp>
 #include <sdurws/ird/runtime/Errors.hpp>
 #include <sdurws/ird/runtime/Resource.hpp>
 
 #include <gtest/gtest.h>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+#include <sdurws/ird/testkit/gtest/RecordListener.hpp>
 
 #include <cmath>
 #include <cstdint>
@@ -47,6 +50,27 @@ namespace core = sdurws::ird::core;
 /// 双精度非有限常量（NFR-COR-03 反例注入用——NaN 与 ±Inf 两族都测）。
 const double kNaN = std::numeric_limits<double>::quiet_NaN();
 const double kInf = std::numeric_limits<double>::infinity();
+
+/**
+ * @brief RT-T16 两模式原生报告环境；仅由 gtest 主线程使用，无产品共享状态。
+ * runtime 使用 gtest_main，故在首个用例前安装记录器；静态监听器生命期覆盖
+ * 整个测试进程，gtest listeners 只借用其地址。报告由原生 TestRecord 产生，不从 XML 伪造。
+ */
+class InertiaReportEnvironment final : public ::testing::Environment {
+public:
+    /** @brief 安装一个记录器，报告写入 ctest 工作目录；写盘失败由记录器告警。 */
+    void SetUp() override
+    {
+        // testkit 契约规定监听器由调用方持有；静态对象覆盖整个测试进程，
+        // 单测试可执行文件中该环境只注册一次，因此不会重复追加监听器。
+        static sdurws::ird::testkit::TestRecordListener listener("ird-test-report.json");
+        ::testing::UnitTest::GetInstance()->listeners().Append(&listener);
+    }
+};
+
+// 本翻译单元在两模式都注册；所有权交给 gtest，无须新增测试 main 或改 CMake。
+[[maybe_unused]] const auto* const kInertiaReportEnvironment =
+    ::testing::AddGlobalTestEnvironment(new InertiaReportEnvironment);
 
 // =====================================================================
 // 夹具工具。
@@ -477,7 +501,7 @@ TEST(ProvidedIllegal, InertiaAsymmetricAndNonSpdBlocked)
     const ValidationReport reportA = validateRobotDesignDescription(a);
     expectBlocked(reportA, "links[1].inertia", RuntimeErrorCode::InputInvalid);
     EXPECT_EQ(findIssue(reportA, "links[1].inertia")->comparison->quantity,
-              "inertia-asymmetry-max");
+              "inertia-relative-asymmetry");
 
     // 非正定：diag(−0.01, 0.02, 0.03) 最小特征值 −0.01 ≤ 0（对称的，先过对称关）。
     RobotDesignDescription s = makeValidDescription();
@@ -487,7 +511,7 @@ TEST(ProvidedIllegal, InertiaAsymmetricAndNonSpdBlocked)
     const ValidationReport reportS = validateRobotDesignDescription(s);
     expectBlocked(reportS, "links[1].inertia", RuntimeErrorCode::InputInvalid);
     EXPECT_EQ(findIssue(reportS, "links[1].inertia")->comparison->quantity,
-              "inertia-min-eigenvalue");
+              "inertia-spd-witness");
 }
 
 // =====================================================================
@@ -847,6 +871,144 @@ TEST(UnitValidation, FixedJointProvidedBoundsStillValidated)
     none.joints[0].lower = core::SourcedValue<double>::notProvided();
     none.joints[0].upper = core::SourcedValue<double>::notProvided();
     EXPECT_TRUE(validateRobotDesignDescription(none).ok());
+}
+
+/**
+ * @brief RT-T16/AT-01：将同一惯量送入 S3/S5 的连杆、工具入口。
+ * @param inertia [in] 质心处、连杆系/工具系表示的张量，单位 kg·m²；仅复制。
+ * @param accepted [in] 附录 D #6/#7 独立预期；false=应以 InputInvalid 拒绝。
+ * @return 无；漏诊断、错误码变化或结论不符均由 gtest 断言记录，不吞异常。
+ *
+ * 夹具仅提供其余合法字段，两入口不互相充当预期，避免共同错误被一致性
+ * 比较掩盖。每次调用拥有独立夹具，仅在测试主线程使用。
+ */
+void expectInertiaDecision(const rw::math::InertiaMatrix<double>& inertia, bool accepted)
+{
+    for (bool tool : {false, true}) {
+        SCOPED_TRACE(tool ? "工具惯量，kg·m²" : "连杆惯量，kg·m²");
+        auto d = makeValidDescription();
+        auto f = sdurws::ird::runtime::testfixture::richFixture();
+        const auto provided = core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            inertia, userProv());
+        const std::string path = tool ? "tools[0].inertia" : "links[1].inertia";
+        if (tool) {
+            d.tools[0].inertia = provided;
+            f.tools[0].inertia = provided;
+        } else {
+            d.links[1].inertia = provided;
+            f.chain.links[1].inertia = provided;
+        }
+        const auto report = validateRobotDesignDescription(d);
+        EXPECT_EQ(report.ok(), accepted) << "S3 必须符合附录 D #6/#7 独立预期";
+        if (accepted) {
+            EXPECT_NO_THROW((void)f.build()) << "S5 不得误拒绝合法惯量";
+        } else {
+            expectBlocked(report, path, RuntimeErrorCode::InputInvalid);
+            sdurws::ird::runtime::testfixture::expectBuildThrows(
+                f.toBuilder(), RuntimeErrorCode::InputInvalid, "RT-T16 惯量硬反例");
+        }
+    }
+}
+
+/** F-784：微型连杆上的绝对小误差仍可能是不可接受的相对不对称。 */
+TEST(InertiaValidationF784, SmallScaleAsymmetryRejected_MDL06_AT01)
+{
+    IRD_TEST_INFO("MDL-06", {"AT-01"}, std::nullopt);
+    expectInertiaDecision(rw::math::InertiaMatrix<double>(
+        1e-6, 5e-13, 0, 0, 1e-6, 0, 0, 0, 1e-6), false);
+}
+
+/** F-784：大连杆容差内的相对误差应放行，不能沿用绝对 1e-12 kg·m²。 */
+TEST(InertiaValidationF784, LargeScaleRelativeNoiseAccepted_MDL06_AT01)
+{
+    IRD_TEST_INFO("MDL-06", {"AT-01"}, std::nullopt);
+    expectInertiaDecision(rw::math::InertiaMatrix<double>(
+        1e6, 5e-7, 0, 0, 1e6, 0, 0, 0, 1e6), true);
+}
+
+/** 相对边界两侧：对角基准范数约 √3，不得放宽固定 1e-12。 */
+TEST(InertiaValidationF784, RelativeThresholdSidesAcrossScales_MDL06_AT01)
+{
+    IRD_TEST_INFO("MDL-06", {"AT-01"}, std::nullopt);
+    for (double scale : {1e-200, 1e-6, 1.0, 1e6, 1e200}) {
+        SCOPED_TRACE(scale);
+        for (double relative : {1.7e-12, 1.8e-12}) {
+            expectInertiaDecision(rw::math::InertiaMatrix<double>(
+                scale, relative * scale, 0, 0, scale, 0, 0, 0, scale),
+                relative < 1.75e-12);
+        }
+    }
+}
+
+/** 近对称并非完全对称：平均后负/零特征值应拒绝，转置也同结论。 */
+TEST(InertiaValidationF784, SymmetrizationDeterminesSpd_MDL06_AT01)
+{
+    IRD_TEST_INFO("MDL-06", {"AT-01"}, std::nullopt);
+    for (double upper : {2e-14, 4e-14}) {
+        // 原始下三角为 0，原行列式为正；平均后左上块分别半正定/不定。
+        expectInertiaDecision(rw::math::InertiaMatrix<double>(
+            1e-14, upper, 0, 0, 1e-14, 0, 0, 0, 1), false);
+        expectInertiaDecision(rw::math::InertiaMatrix<double>(
+            1e-14, 0, 0, upper, 1e-14, 0, 0, 0, 1), false);
+    }
+    // 上/下三角分开看会误拒；平均后交叉项为 0.5e-14，严格 SPD。
+    expectInertiaDecision(rw::math::InertiaMatrix<double>(
+        1e-14, 2e-14, 0, -1e-14, 1e-14, 0, 0, 0, 1), true);
+}
+
+/** 整体尺度不能改变正定性，交叉项不得被绝对收敛阈值吞掉。 */
+TEST(InertiaValidationF784, ExtremeScalesKeepSpdDecision_MDL06_AT01)
+{
+    IRD_TEST_INFO("MDL-06", {"AT-01"}, std::nullopt);
+    for (double scale : {1e-300, 1e-200, 1.0, 1e200, 1e300}) {
+        SCOPED_TRACE(scale);
+        for (double cross : {0.5, 1.0, 1.5}) {
+            expectInertiaDecision(rw::math::InertiaMatrix<double>(
+                scale, cross * scale, 0, cross * scale, scale, 0, 0, 0, scale),
+                cross < 1.0);
+        }
+    }
+    // 每个 2×2 主子式为正，三阶却为负；不能只查两两 Cauchy 界。
+    expectInertiaDecision(rw::math::InertiaMatrix<double>(
+        1, -0.75, -0.75, -0.75, 1, -0.75, -0.75, -0.75, 1), false);
+}
+
+/** #7 不设正数余量，跨轴尺度差异不得把正对角分量缩放为零。 */
+TEST(InertiaValidationF784, StrictPositiveBoundaryWithoutMargin_MDL06_AT01)
+{
+    IRD_TEST_INFO("MDL-06", {"AT-01"}, std::nullopt);
+    const double tiny = std::numeric_limits<double>::denorm_min();
+    for (double z : {tiny, 0.0, -tiny}) {
+        expectInertiaDecision(rw::math::InertiaMatrix<double>(
+            1, 0, 0, 0, 1, 0, 0, 0, z), z > 0.0);
+    }
+    expectInertiaDecision(rw::math::InertiaMatrix<double>(
+        tiny, 0, 0, 0, 1, 0, 0, 0, 1e300), true);
+    for (double cross : {std::nextafter(1.0, 0.0), 1.0, std::nextafter(1.0, 2.0)}) {
+        expectInertiaDecision(rw::math::InertiaMatrix<double>(
+            1, cross, 0, cross, 1, 0, 0, 0, 1), cross < 1.0);
+    }
+}
+
+/** 零、纯反对称、NaN/±Inf 不可静默修补；非有限逐位置注入（NFR-COR-03）。 */
+TEST(InertiaValidationF784, ZeroSkewAndNonFiniteRejected_NFRCOR03_AT01)
+{
+    IRD_TEST_INFO("NFR-COR-03", {"AT-01"}, std::nullopt);
+    expectInertiaDecision(rw::math::InertiaMatrix<double>(
+        0, 0, 0, 0, 0, 0, 0, 0, 0), false);
+    for (double skew : {1e-300, 1.0, 1e300}) {
+        expectInertiaDecision(rw::math::InertiaMatrix<double>(
+            0, skew, 0, -skew, 0, 0, 0, 0, 0), false);
+    }
+    for (double bad : {kNaN, kInf, -kInf}) {
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                auto m = rw::math::InertiaMatrix<double>(1, 0, 0, 0, 1, 0, 0, 0, 1);
+                m(row, col) = bad;
+                expectInertiaDecision(m, false);
+            }
+        }
+    }
 }
 
 }  // namespace

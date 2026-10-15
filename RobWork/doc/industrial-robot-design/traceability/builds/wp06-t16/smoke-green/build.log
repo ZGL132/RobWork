@@ -1,0 +1,10 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  CanonicalModel.cpp
+  DescriptionValidator.cpp
+  正在生成代码...
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build-smoke\runtime\Release\sdurws_ird_runtime.lib
+  DescriptionValidatorTest.cpp
+  sdurws_ird_runtime_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build-smoke\runtime\Release\sdurws_ird_runtime_test.exe

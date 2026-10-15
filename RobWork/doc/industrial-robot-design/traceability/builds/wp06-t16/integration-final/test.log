@@ -1,0 +1,780 @@
+UpdateCTestConfiguration  from :C:/Users/zgl18/.codex/worktrees/rt-t16-inertia/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/runtime/DartConfiguration.tcl
+Test project C:/Users/zgl18/.codex/worktrees/rt-t16-inertia/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/runtime
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: sdurws_ird_runtime_test
+
+1: Test command: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+1: Working Directory: C:/Users/zgl18/.codex/worktrees/rt-t16-inertia/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/runtime
+1: Test timeout computed to be: 600
+1: Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+1: [==========] Running 285 tests from 58 test suites.
+1: [----------] Global test environment set-up.
+1: [----------] 4 tests from RuntimeBuild
+1: [ RUN      ] RuntimeBuild.SourceTreeReachable_RT_BUILD
+1: [       OK ] RuntimeBuild.SourceTreeReachable_RT_BUILD (1 ms)
+1: [ RUN      ] RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01
+1: [       OK ] RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01 (307 ms)
+1: [ RUN      ] RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2
+1: [       OK ] RuntimeBuild.NoCrossUnitInclude_RT_BUILD_R1_R2 (10 ms)
+1: [ RUN      ] RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3
+1: [       OK ] RuntimeBuild.BaselineLibsPinned_RT_BUILD_P_RT_3 (0 ms)
+1: [----------] 4 tests from RuntimeBuild (319 ms total)
+1: 
+1: [----------] 1 test from RuntimeErrorsFullTable
+1: [ RUN      ] RuntimeErrorsFullTable.AllCodesPerToken_RT_ERR_NFR_COR_03
+1: [       OK ] RuntimeErrorsFullTable.AllCodesPerToken_RT_ERR_NFR_COR_03 (0 ms)
+1: [----------] 1 test from RuntimeErrorsFullTable (0 ms total)
+1: 
+1: [----------] 1 test from RuntimeErrorsThrow
+1: [ RUN      ] RuntimeErrorsThrow.MessagePrefixAndCodeAccessor_RT_ERR
+1: [       OK ] RuntimeErrorsThrow.MessagePrefixAndCodeAccessor_RT_ERR (0 ms)
+1: [----------] 1 test from RuntimeErrorsThrow (0 ms total)
+1: 
+1: [----------] 1 test from RuntimeErrorsPayload
+1: [ RUN      ] RuntimeErrorsPayload.ResolveAndNameErrorCarryEcho_RT_ERR
+1: [       OK ] RuntimeErrorsPayload.ResolveAndNameErrorCarryEcho_RT_ERR (0 ms)
+1: [----------] 1 test from RuntimeErrorsPayload (0 ms total)
+1: 
+1: [----------] 1 test from SourcesContract
+1: [ RUN      ] SourcesContract.InterfacesAreAbstract_RT_SRC
+1: [       OK ] SourcesContract.InterfacesAreAbstract_RT_SRC (0 ms)
+1: [----------] 1 test from SourcesContract (0 ms total)
+1: 
+1: [----------] 1 test from SourcesObjectBytes
+1: [ RUN      ] SourcesObjectBytes.ScriptedHitAndMiss_RT_SRC_S2
+1: [       OK ] SourcesObjectBytes.ScriptedHitAndMiss_RT_SRC_S2 (0 ms)
+1: [----------] 1 test from SourcesObjectBytes (0 ms total)
+1: 
+1: [----------] 1 test from SourcesRevision
+1: [ RUN      ] SourcesRevision.SummaryRoundtripAndUnknownRevision_RT_SRC_S1
+1: [       OK ] SourcesRevision.SummaryRoundtripAndUnknownRevision_RT_SRC_S1 (0 ms)
+1: [----------] 1 test from SourcesRevision (0 ms total)
+1: 
+1: [----------] 1 test from SourcesAttribution
+1: [ RUN      ] SourcesAttribution.InjectionPointsMapToCodes_RT_SRC_ACCEPT2
+1: [       OK ] SourcesAttribution.InjectionPointsMapToCodes_RT_SRC_ACCEPT2 (0 ms)
+1: [----------] 1 test from SourcesAttribution (0 ms total)
+1: 
+1: [----------] 1 test from SourcesCancel
+1: [ RUN      ] SourcesCancel.ToggleIsFinal_RT_SRC_TASK01
+1: [       OK ] SourcesCancel.ToggleIsFinal_RT_SRC_TASK01 (0 ms)
+1: [----------] 1 test from SourcesCancel (0 ms total)
+1: 
+1: [----------] 1 test from SourcesLifetime
+1: [ RUN      ] SourcesLifetime.DeleteThroughBasePointer_RT_SRC
+1: [       OK ] SourcesLifetime.DeleteThroughBasePointer_RT_SRC (0 ms)
+1: [----------] 1 test from SourcesLifetime (0 ms total)
+1: 
+1: [----------] 7 tests from ExpectedSemantics
+1: [ RUN      ] ExpectedSemantics.OkStateCarriesValue_ACC3
+1: [       OK ] ExpectedSemantics.OkStateCarriesValue_ACC3 (0 ms)
+1: [ RUN      ] ExpectedSemantics.ErrStateCarriesError_ACC3
+1: [       OK ] ExpectedSemantics.ErrStateCarriesError_ACC3 (0 ms)
+1: [ RUN      ] ExpectedSemantics.GetOnErrorFailsFast_ACC3_NFR_COR_03
+1: [       OK ] ExpectedSemantics.GetOnErrorFailsFast_ACC3_NFR_COR_03 (0 ms)
+1: [ RUN      ] ExpectedSemantics.ErrorOnOkFailsFast_ACC3
+1: [       OK ] ExpectedSemantics.ErrorOnOkFailsFast_ACC3 (0 ms)
+1: [ RUN      ] ExpectedSemantics.StatesAreMutuallyExclusive_ACC3
+1: [       OK ] ExpectedSemantics.StatesAreMutuallyExclusive_ACC3 (0 ms)
+1: [ RUN      ] ExpectedSemantics.CopyAndMovePreserveState_ACC3
+1: [       OK ] ExpectedSemantics.CopyAndMovePreserveState_ACC3 (0 ms)
+1: [ RUN      ] ExpectedSemantics.SupportsMoveOnlyTypes_ACC3
+1: [       OK ] ExpectedSemantics.SupportsMoveOnlyTypes_ACC3 (0 ms)
+1: [----------] 7 tests from ExpectedSemantics (0 ms total)
+1: 
+1: [----------] 1 test from ExpectedQueryPath
+1: [ RUN      ] ExpectedQueryPath.ResolveMirrorNoThrowWithEcho_ACC3
+1: [       OK ] ExpectedQueryPath.ResolveMirrorNoThrowWithEcho_ACC3 (0 ms)
+1: [----------] 1 test from ExpectedQueryPath (0 ms total)
+1: 
+1: [----------] 6 tests from DescriptionType
+1: [ RUN      ] DescriptionType.DefaultsMatchContract
+1: [       OK ] DescriptionType.DefaultsMatchContract (0 ms)
+1: [ RUN      ] DescriptionType.ValueSemanticsDeepCopyAndMove
+1: [       OK ] DescriptionType.ValueSemanticsDeepCopyAndMove (0 ms)
+1: [ RUN      ] DescriptionType.SourcedValueCarriesMissingNotZero
+1: [       OK ] DescriptionType.SourcedValueCarriesMissingNotZero (0 ms)
+1: [ RUN      ] DescriptionType.CouplingMatrixRowMajorAccess
+1: [       OK ] DescriptionType.CouplingMatrixRowMajorAccess (0 ms)
+1: [ RUN      ] DescriptionType.ReaderAbstractAndPureFunction
+1: [       OK ] DescriptionType.ReaderAbstractAndPureFunction (0 ms)
+1: [ RUN      ] DescriptionType.EnumSurfaceAnchored
+1: [       OK ] DescriptionType.EnumSurfaceAnchored (0 ms)
+1: [----------] 6 tests from DescriptionType (0 ms total)
+1: 
+1: [----------] 3 tests from DescriptionValidator
+1: [ RUN      ] DescriptionValidator.CleanFixturePassesWithNoIssues
+1: [       OK ] DescriptionValidator.CleanFixturePassesWithNoIssues (0 ms)
+1: [ RUN      ] DescriptionValidator.MissingCapabilitiesDoNotBlock
+1: [       OK ] DescriptionValidator.MissingCapabilitiesDoNotBlock (0 ms)
+1: [ RUN      ] DescriptionValidator.DeterministicReport
+1: [       OK ] DescriptionValidator.DeterministicReport (0 ms)
+1: [----------] 3 tests from DescriptionValidator (0 ms total)
+1: 
+1: [----------] 11 tests from CouplingValidation
+1: [ RUN      ] CouplingValidation.WellConditionedCPasses_RT_CPL_1
+1: [       OK ] CouplingValidation.WellConditionedCPasses_RT_CPL_1 (0 ms)
+1: [ RUN      ] CouplingValidation.SingularCBlocked_RT_CPL_1
+1: [       OK ] CouplingValidation.SingularCBlocked_RT_CPL_1 (0 ms)
+1: [ RUN      ] CouplingValidation.NearSingularDetApproxZeroBlocked_RT_CPL_1
+1: [       OK ] CouplingValidation.NearSingularDetApproxZeroBlocked_RT_CPL_1 (0 ms)
+1: [ RUN      ] CouplingValidation.ConditionNumber1e10Blocked_RT_CPL_1
+1: [       OK ] CouplingValidation.ConditionNumber1e10Blocked_RT_CPL_1 (0 ms)
+1: [ RUN      ] CouplingValidation.NonSquareCBlocked
+1: [       OK ] CouplingValidation.NonSquareCBlocked (0 ms)
+1: [ RUN      ] CouplingValidation.DimensionCountMismatchBlocked
+1: [       OK ] CouplingValidation.DimensionCountMismatchBlocked (0 ms)
+1: [ RUN      ] CouplingValidation.RangeOutOfBoundsStructureInvalid
+1: [       OK ] CouplingValidation.RangeOutOfBoundsStructureInvalid (0 ms)
+1: [ RUN      ] CouplingValidation.ZeroCountStructureInvalid
+1: [       OK ] CouplingValidation.ZeroCountStructureInvalid (0 ms)
+1: [ RUN      ] CouplingValidation.DataSizeMismatchBlocked
+1: [       OK ] CouplingValidation.DataSizeMismatchBlocked (0 ms)
+1: [ RUN      ] CouplingValidation.NonFiniteEntryBlocked
+1: [       OK ] CouplingValidation.NonFiniteEntryBlocked (0 ms)
+1: [ RUN      ] CouplingValidation.DeclaredConditionNumberNotTrusted
+1: [       OK ] CouplingValidation.DeclaredConditionNumberNotTrusted (0 ms)
+1: [----------] 11 tests from CouplingValidation (0 ms total)
+1: 
+1: [----------] 5 tests from ProvidedIllegal
+1: [ RUN      ] ProvidedIllegal.NegativeMassLocated_RT_CPX_3
+1: [       OK ] ProvidedIllegal.NegativeMassLocated_RT_CPX_3 (0 ms)
+1: [ RUN      ] ProvidedIllegal.ZeroMassAndToolMassBlocked
+1: [       OK ] ProvidedIllegal.ZeroMassAndToolMassBlocked (0 ms)
+1: [ RUN      ] ProvidedIllegal.NegativeVelocityAndAccelerationBlocked
+1: [       OK ] ProvidedIllegal.NegativeVelocityAndAccelerationBlocked (0 ms)
+1: [ RUN      ] ProvidedIllegal.NonPositiveRatioAndFrictionBlocked
+1: [       OK ] ProvidedIllegal.NonPositiveRatioAndFrictionBlocked (0 ms)
+1: [ RUN      ] ProvidedIllegal.InertiaAsymmetricAndNonSpdBlocked
+1: [       OK ] ProvidedIllegal.InertiaAsymmetricAndNonSpdBlocked (0 ms)
+1: [----------] 5 tests from ProvidedIllegal (0 ms total)
+1: 
+1: [----------] 5 tests from IllegalTransform
+1: [ RUN      ] IllegalTransform.ReflectedJointOriginBlocked_RT_BW_6
+1: [       OK ] IllegalTransform.ReflectedJointOriginBlocked_RT_BW_6 (0 ms)
+1: [ RUN      ] IllegalTransform.NonOrthogonalJointOriginBlocked_RT_BW_6
+1: [       OK ] IllegalTransform.NonOrthogonalJointOriginBlocked_RT_BW_6 (0 ms)
+1: [ RUN      ] IllegalTransform.NaNTranslationBlocked_RT_BW_6
+1: [       OK ] IllegalTransform.NaNTranslationBlocked_RT_BW_6 (0 ms)
+1: [ RUN      ] IllegalTransform.ScenePoseNonFiniteBlocked_RT_BW_6
+1: [       OK ] IllegalTransform.ScenePoseNonFiniteBlocked_RT_BW_6 (0 ms)
+1: [ RUN      ] IllegalTransform.ToolTcpOffsetReflectionBlocked_RT_BW_6
+1: [       OK ] IllegalTransform.ToolTcpOffsetReflectionBlocked_RT_BW_6 (0 ms)
+1: [----------] 5 tests from IllegalTransform (0 ms total)
+1: 
+1: [----------] 17 tests from StructureHard
+1: [ RUN      ] StructureHard.EmptyJointsRejected
+1: [       OK ] StructureHard.EmptyJointsRejected (0 ms)
+1: [ RUN      ] StructureHard.LinkCountMismatchRejected
+1: [       OK ] StructureHard.LinkCountMismatchRejected (0 ms)
+1: [ RUN      ] StructureHard.FrictionLengthMismatchRejected
+1: [       OK ] StructureHard.FrictionLengthMismatchRejected (0 ms)
+1: [ RUN      ] StructureHard.RatioLengthMismatchRejected
+1: [       OK ] StructureHard.RatioLengthMismatchRejected (0 ms)
+1: [ RUN      ] StructureHard.ZeroContractVersionRejected
+1: [       OK ] StructureHard.ZeroContractVersionRejected (0 ms)
+1: [ RUN      ] StructureHard.IllegalRobotLocalNameRejected
+1: [       OK ] StructureHard.IllegalRobotLocalNameRejected (0 ms)
+1: [ RUN      ] StructureHard.EmptyJointLocalNameRejected
+1: [       OK ] StructureHard.EmptyJointLocalNameRejected (0 ms)
+1: [ RUN      ] StructureHard.ZeroAxisAndNonFiniteAxisRejected
+1: [       OK ] StructureHard.ZeroAxisAndNonFiniteAxisRejected (0 ms)
+1: [ RUN      ] StructureHard.MissingLowerBoundRejected
+1: [       OK ] StructureHard.MissingLowerBoundRejected (0 ms)
+1: [ RUN      ] StructureHard.MissingUpperBoundRejected
+1: [       OK ] StructureHard.MissingUpperBoundRejected (0 ms)
+1: [ RUN      ] StructureHard.LowerAboveUpperRejected
+1: [       OK ] StructureHard.LowerAboveUpperRejected (0 ms)
+1: [ RUN      ] StructureHard.ContinuousWithBoundsRejected
+1: [       OK ] StructureHard.ContinuousWithBoundsRejected (0 ms)
+1: [ RUN      ] StructureHard.WorkingRangeOnRevoluteRejected
+1: [       OK ] StructureHard.WorkingRangeOnRevoluteRejected (0 ms)
+1: [ RUN      ] StructureHard.InvalidWorkingRangeRejected
+1: [       OK ] StructureHard.InvalidWorkingRangeRejected (0 ms)
+1: [ RUN      ] StructureHard.CustomWithoutEaaRejected
+1: [       OK ] StructureHard.CustomWithoutEaaRejected (0 ms)
+1: [ RUN      ] StructureHard.NonFiniteBasePositionRejected
+1: [       OK ] StructureHard.NonFiniteBasePositionRejected (0 ms)
+1: [ RUN      ] StructureHard.EmptyLinkToolSceneNamesRejected
+1: [       OK ] StructureHard.EmptyLinkToolSceneNamesRejected (0 ms)
+1: [----------] 17 tests from StructureHard (0 ms total)
+1: 
+1: [----------] 5 tests from UnitValidation
+1: [ RUN      ] UnitValidation.NonFiniteBoundsRejected_ACC3_NFR_COR_03
+1: [       OK ] UnitValidation.NonFiniteBoundsRejected_ACC3_NFR_COR_03 (0 ms)
+1: [ RUN      ] UnitValidation.NonFiniteVelocityRejected_ACC3_NFR_COR_03
+1: [       OK ] UnitValidation.NonFiniteVelocityRejected_ACC3_NFR_COR_03 (0 ms)
+1: [ RUN      ] UnitValidation.DegreeMagnitudeBoundWarnsButDoesNotBlock_ACC3
+1: [       OK ] UnitValidation.DegreeMagnitudeBoundWarnsButDoesNotBlock_ACC3 (0 ms)
+1: [ RUN      ] UnitValidation.MillimeterMagnitudePrismaticWarns_ACC3
+1: [       OK ] UnitValidation.MillimeterMagnitudePrismaticWarns_ACC3 (0 ms)
+1: [ RUN      ] UnitValidation.FixedJointProvidedBoundsStillValidated
+1: [       OK ] UnitValidation.FixedJointProvidedBoundsStillValidated (0 ms)
+1: [----------] 5 tests from UnitValidation (0 ms total)
+1: 
+1: [----------] 7 tests from InertiaValidationF784
+1: [ RUN      ] InertiaValidationF784.SmallScaleAsymmetryRejected_MDL06_AT01
+1: [       OK ] InertiaValidationF784.SmallScaleAsymmetryRejected_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.LargeScaleRelativeNoiseAccepted_MDL06_AT01
+1: [       OK ] InertiaValidationF784.LargeScaleRelativeNoiseAccepted_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.RelativeThresholdSidesAcrossScales_MDL06_AT01
+1: [       OK ] InertiaValidationF784.RelativeThresholdSidesAcrossScales_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.SymmetrizationDeterminesSpd_MDL06_AT01
+1: [       OK ] InertiaValidationF784.SymmetrizationDeterminesSpd_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.ExtremeScalesKeepSpdDecision_MDL06_AT01
+1: [       OK ] InertiaValidationF784.ExtremeScalesKeepSpdDecision_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.StrictPositiveBoundaryWithoutMargin_MDL06_AT01
+1: [       OK ] InertiaValidationF784.StrictPositiveBoundaryWithoutMargin_MDL06_AT01 (0 ms)
+1: [ RUN      ] InertiaValidationF784.ZeroSkewAndNonFiniteRejected_NFRCOR03_AT01
+1: [       OK ] InertiaValidationF784.ZeroSkewAndNonFiniteRejected_NFRCOR03_AT01 (1 ms)
+1: [----------] 7 tests from InertiaValidationF784 (3 ms total)
+1: 
+1: [----------] 17 tests from CanonicalModelBuilderTest
+1: [ RUN      ] CanonicalModelBuilderTest.BuildsMinimalFixtureAndDerivesCapability
+1: [       OK ] CanonicalModelBuilderTest.BuildsMinimalFixtureAndDerivesCapability (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RichFixtureHasAllCapabilityBits
+1: [       OK ] CanonicalModelBuilderTest.RichFixtureHasAllCapabilityBits (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsEmptyAndDuplicateObjectRefs
+1: [       OK ] CanonicalModelBuilderTest.RejectsEmptyAndDuplicateObjectRefs (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsInvalidHeaderFields
+1: [       OK ] CanonicalModelBuilderTest.RejectsInvalidHeaderFields (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsIllegalTWorldBase
+1: [       OK ] CanonicalModelBuilderTest.RejectsIllegalTWorldBase (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsIllegalGravity
+1: [       OK ] CanonicalModelBuilderTest.RejectsIllegalGravity (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsCustomPresetWithIdentityRotation
+1: [       OK ] CanonicalModelBuilderTest.RejectsCustomPresetWithIdentityRotation (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsBadChainAndNormalizesAxis
+1: [       OK ] CanonicalModelBuilderTest.RejectsBadChainAndNormalizesAxis (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsIllegalBounds
+1: [       OK ] CanonicalModelBuilderTest.RejectsIllegalBounds (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsIllegalProvidedValues
+1: [       OK ] CanonicalModelBuilderTest.RejectsIllegalProvidedValues (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.InertiaOriginalBitsPreserved_F784_AT01
+1: [       OK ] CanonicalModelBuilderTest.InertiaOriginalBitsPreserved_F784_AT01 (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsDuplicateIds_AllowsForeignJointIds_O36
+1: [       OK ] CanonicalModelBuilderTest.RejectsDuplicateIds_AllowsForeignJointIds_O36 (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsIllegalLocalNames
+1: [       OK ] CanonicalModelBuilderTest.RejectsIllegalLocalNames (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsResourceReferenceViolations
+1: [       OK ] CanonicalModelBuilderTest.RejectsResourceReferenceViolations (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsDefaultTcpViolations
+1: [       OK ] CanonicalModelBuilderTest.RejectsDefaultTcpViolations (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.DefaultTcpSurvivesToolSorting_F584
+1: [       OK ] CanonicalModelBuilderTest.DefaultTcpSurvivesToolSorting_F584 (0 ms)
+1: [ RUN      ] CanonicalModelBuilderTest.RejectsErrorLevelDiagnostics
+1: [       OK ] CanonicalModelBuilderTest.RejectsErrorLevelDiagnostics (0 ms)
+1: [----------] 17 tests from CanonicalModelBuilderTest (1 ms total)
+1: 
+1: [----------] 1 test from CanonicalModelCapabilityTest
+1: [ RUN      ] CanonicalModelCapabilityTest.BitsFollowContentDerivation
+1: [       OK ] CanonicalModelCapabilityTest.BitsFollowContentDerivation (0 ms)
+1: [----------] 1 test from CanonicalModelCapabilityTest (0 ms total)
+1: 
+1: [----------] 1 test from CanonicalModelIndexTest
+1: [ RUN      ] CanonicalModelIndexTest.ObjectAndResourceIndicesResolve
+1: [       OK ] CanonicalModelIndexTest.ObjectAndResourceIndicesResolve (0 ms)
+1: [----------] 1 test from CanonicalModelIndexTest (0 ms total)
+1: 
+1: [----------] 1 test from CanonicalModelEqualityTest
+1: [ RUN      ] CanonicalModelEqualityTest.BitPatternEqualityNotTolerance
+1: [       OK ] CanonicalModelEqualityTest.BitPatternEqualityNotTolerance (0 ms)
+1: [----------] 1 test from CanonicalModelEqualityTest (0 ms total)
+1: 
+1: [----------] 3 tests from CanonicalModelTransientTest
+1: [ RUN      ] CanonicalModelTransientTest.NoPersistenceMemberSurface
+1: [       OK ] CanonicalModelTransientTest.NoPersistenceMemberSurface (0 ms)
+1: [ RUN      ] CanonicalModelTransientTest.CodecApiIsInMemoryOnly
+1: [       OK ] CanonicalModelTransientTest.CodecApiIsInMemoryOnly (0 ms)
+1: [ RUN      ] CanonicalModelTransientTest.SourceScanNoPersistenceIncludes
+1: [       OK ] CanonicalModelTransientTest.SourceScanNoPersistenceIncludes (3 ms)
+1: [----------] 3 tests from CanonicalModelTransientTest (3 ms total)
+1: 
+1: [----------] 5 tests from CodecRoundtripTest
+1: [ RUN      ] CodecRoundtripTest.MinimalModelRoundtripsExactly
+1: [       OK ] CodecRoundtripTest.MinimalModelRoundtripsExactly (0 ms)
+1: [ RUN      ] CodecRoundtripTest.RichModelPreservesIdentityExcludedFields
+1: [       OK ] CodecRoundtripTest.RichModelPreservesIdentityExcludedFields (0 ms)
+1: [ RUN      ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618
+1: [       OK ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618 (0 ms)
+1: [ RUN      ] CodecRoundtripTest.OldMinorVersionBytesRejected_F626
+1: [       OK ] CodecRoundtripTest.OldMinorVersionBytesRejected_F626 (0 ms)
+1: [ RUN      ] CodecRoundtripTest.SparseOptionalsRoundtripAsAbsent
+1: [       OK ] CodecRoundtripTest.SparseOptionalsRoundtripAsAbsent (0 ms)
+1: [----------] 5 tests from CodecRoundtripTest (0 ms total)
+1: 
+1: [----------] 2 tests from CodecNegativeTest
+1: [ RUN      ] CodecNegativeTest.RejectsMalformedEncodings
+1: [       OK ] CodecNegativeTest.RejectsMalformedEncodings (0 ms)
+1: [ RUN      ] CodecNegativeTest.DetectsContentIdentityMismatch
+1: [       OK ] CodecNegativeTest.DetectsContentIdentityMismatch (0 ms)
+1: [----------] 2 tests from CodecNegativeTest (0 ms total)
+1: 
+1: [----------] 1 test from RT_ID_1_RepeatBuildStability
+1: [ RUN      ] RT_ID_1_RepeatBuildStability.SameFixtureYieldsByteIdenticalEncodingAndIdentity
+1: [       OK ] RT_ID_1_RepeatBuildStability.SameFixtureYieldsByteIdenticalEncodingAndIdentity (0 ms)
+1: [----------] 1 test from RT_ID_1_RepeatBuildStability (0 ms total)
+1: 
+1: [----------] 1 test from RT_ID_2_NoFloatToleranceEquivalence
+1: [ RUN      ] RT_ID_2_NoFloatToleranceEquivalence.TinyDeltaChangesIdentityWhileToleranceSaysEqual
+1: [       OK ] RT_ID_2_NoFloatToleranceEquivalence.TinyDeltaChangesIdentityWhileToleranceSaysEqual (0 ms)
+1: [----------] 1 test from RT_ID_2_NoFloatToleranceEquivalence (0 ms total)
+1: 
+1: [----------] 4 tests from RT_ID_3_DisplayFieldExclusion
+1: [ RUN      ] RT_ID_3_DisplayFieldExclusion.RevisionSeqDoesNotAffectIdentity
+1: [       OK ] RT_ID_3_DisplayFieldExclusion.RevisionSeqDoesNotAffectIdentity (0 ms)
+1: [ RUN      ] RT_ID_3_DisplayFieldExclusion.InstallPresetMarkerDoesNotAffectIdentity
+1: [       OK ] RT_ID_3_DisplayFieldExclusion.InstallPresetMarkerDoesNotAffectIdentity (0 ms)
+1: [ RUN      ] RT_ID_3_DisplayFieldExclusion.DiagnosticsDoNotAffectIdentity
+1: [       OK ] RT_ID_3_DisplayFieldExclusion.DiagnosticsDoNotAffectIdentity (0 ms)
+1: [ RUN      ] RT_ID_3_DisplayFieldExclusion.IdentityDomainEncodingIsStrictSubset
+1: [       OK ] RT_ID_3_DisplayFieldExclusion.IdentityDomainEncodingIsStrictSubset (0 ms)
+1: [----------] 4 tests from RT_ID_3_DisplayFieldExclusion (0 ms total)
+1: 
+1: [----------] 5 tests from NameMapBuildTest
+1: [ RUN      ] NameMapBuildTest.BuildsAllScopesFromRichFixture_RT_NM_1
+1: [       OK ] NameMapBuildTest.BuildsAllScopesFromRichFixture_RT_NM_1 (0 ms)
+1: [ RUN      ] NameMapBuildTest.DeviceEntryHasNoPrefix_R4
+1: [       OK ] NameMapBuildTest.DeviceEntryHasNoPrefix_R4 (0 ms)
+1: [ RUN      ] NameMapBuildTest.DeterministicRebuildByteEqual_RT_NM_1
+1: [       OK ] NameMapBuildTest.DeterministicRebuildByteEqual_RT_NM_1 (0 ms)
+1: [ RUN      ] NameMapBuildTest.BodyScopeGatedByDynamicCapability_RT_NM_1
+1: [       OK ] NameMapBuildTest.BodyScopeGatedByDynamicCapability_RT_NM_1 (0 ms)
+1: [ RUN      ] NameMapBuildTest.IdentityEntriesPerObjectResolve_RT_NM_1
+1: [       OK ] NameMapBuildTest.IdentityEntriesPerObjectResolve_RT_NM_1 (0 ms)
+1: [----------] 5 tests from NameMapBuildTest (0 ms total)
+1: 
+1: [----------] 6 tests from NameMapRoundtripTest
+1: [ RUN      ] NameMapRoundtripTest.ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1
+1: [       OK ] NameMapRoundtripTest.ForwardChainObjectToNameToObject_FullCoverage_RT_NM_1 (0 ms)
+1: [ RUN      ] NameMapRoundtripTest.ReverseChainNameToObjectToName_RT_NM_1
+1: [       OK ] NameMapRoundtripTest.ReverseChainNameToObjectToName_RT_NM_1 (0 ms)
+1: [ RUN      ] NameMapRoundtripTest.BijectionCounts_RT_NM_1
+1: [       OK ] NameMapRoundtripTest.BijectionCounts_RT_NM_1 (0 ms)
+1: [ RUN      ] NameMapRoundtripTest.EncodeParseRoundtrip_RT_NM_1
+1: [       OK ] NameMapRoundtripTest.EncodeParseRoundtrip_RT_NM_1 (0 ms)
+1: [ RUN      ] NameMapRoundtripTest.ParseRejectsMalformedInput_RT_NM_1
+1: [       OK ] NameMapRoundtripTest.ParseRejectsMalformedInput_RT_NM_1 (0 ms)
+1: [ RUN      ] NameMapRoundtripTest.EmptyMapEncodeRejected
+1: [       OK ] NameMapRoundtripTest.EmptyMapEncodeRejected (0 ms)
+1: [----------] 6 tests from NameMapRoundtripTest (0 ms total)
+1: 
+1: [----------] 1 test from NameMapResolveErrorTest
+1: [ RUN      ] NameMapResolveErrorTest.ResolveMissesEchoAndNeverThrow_RT_NM_3
+1: [       OK ] NameMapResolveErrorTest.ResolveMissesEchoAndNeverThrow_RT_NM_3 (0 ms)
+1: [----------] 1 test from NameMapResolveErrorTest (0 ms total)
+1: 
+1: [----------] 5 tests from NameMapDisambiguationTest
+1: [ RUN      ] NameMapDisambiguationTest.DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2
+1: [       OK ] NameMapDisambiguationTest.DuplicateLocalNamesDisambiguatedByObjectIdOrder_RT_NM_2 (0 ms)
+1: [ RUN      ] NameMapDisambiguationTest.IllegalCharVariantsCollideAfterLegalization_RT_NM_2
+1: [       OK ] NameMapDisambiguationTest.IllegalCharVariantsCollideAfterLegalization_RT_NM_2 (0 ms)
+1: [ RUN      ] NameMapDisambiguationTest.LegalizationRulesLeadingDigitAndChars_RT_NM_2
+1: [       OK ] NameMapDisambiguationTest.LegalizationRulesLeadingDigitAndChars_RT_NM_2 (0 ms)
+1: [ RUN      ] NameMapDisambiguationTest.ReservedWorldDisambiguated_RT_NM_2
+1: [       OK ] NameMapDisambiguationTest.ReservedWorldDisambiguated_RT_NM_2 (0 ms)
+1: [ RUN      ] NameMapDisambiguationTest.SuffixProbeSkipsTakenNames_RT_NM_2
+1: [       OK ] NameMapDisambiguationTest.SuffixProbeSkipsTakenNames_RT_NM_2 (0 ms)
+1: [----------] 5 tests from NameMapDisambiguationTest (0 ms total)
+1: 
+1: [----------] 1 test from NameMapCrossProjectTest
+1: [ RUN      ] NameMapCrossProjectTest.SameDisplayNamesAcrossProjects_RT_NM_4
+1: [       OK ] NameMapCrossProjectTest.SameDisplayNamesAcrossProjects_RT_NM_4 (0 ms)
+1: [----------] 1 test from NameMapCrossProjectTest (0 ms total)
+1: 
+1: [----------] 1 test from NameMapRenameTest
+1: [ RUN      ] NameMapRenameTest.RenameRebuildNoOldResidue_RT_NM_5
+1: [       OK ] NameMapRenameTest.RenameRebuildNoOldResidue_RT_NM_5 (0 ms)
+1: [----------] 1 test from NameMapRenameTest (0 ms total)
+1: 
+1: [----------] 2 tests from NameMapCrossCheckTest
+1: [ RUN      ] NameMapCrossCheckTest.CrossCheckPassesOnMapSubset_RT_NM_6
+1: [       OK ] NameMapCrossCheckTest.CrossCheckPassesOnMapSubset_RT_NM_6 (0 ms)
+1: [ RUN      ] NameMapCrossCheckTest.DoublePrefixRejected_RT_NM_6
+1: [       OK ] NameMapCrossCheckTest.DoublePrefixRejected_RT_NM_6 (0 ms)
+1: [----------] 2 tests from NameMapCrossCheckTest (0 ms total)
+1: 
+1: [----------] 3 tests from NameMapIdentityTest
+1: [ RUN      ] NameMapIdentityTest.NameAndIdentityTypesNotInterconvertible_RT_NM_7
+1: [       OK ] NameMapIdentityTest.NameAndIdentityTypesNotInterconvertible_RT_NM_7 (0 ms)
+1: [ RUN      ] NameMapIdentityTest.StaleConcatenationMisses_RT_NM_7_R4
+1: [       OK ] NameMapIdentityTest.StaleConcatenationMisses_RT_NM_7_R4 (0 ms)
+1: [ RUN      ] NameMapIdentityTest.ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06
+1: [       OK ] NameMapIdentityTest.ResolverPortBindsMapAndExposesIdentity_RT_NM_7_CON_06 (0 ms)
+1: [----------] 3 tests from NameMapIdentityTest (0 ms total)
+1: 
+1: [----------] 1 test from NameMapR4SourceScan
+1: [ RUN      ] NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4
+1: [       OK ] NameMapR4SourceScan.PrefixJoinConfinedToNameMapModule_RT_R4 (12 ms)
+1: [----------] 1 test from NameMapR4SourceScan (12 ms total)
+1: 
+1: [----------] 7 tests from PresetRotationTest
+1: [ RUN      ] PresetRotationTest.GroundIsExactlyIdentity_RT_BW_2
+1: [       OK ] PresetRotationTest.GroundIsExactlyIdentity_RT_BW_2 (0 ms)
+1: [ RUN      ] PresetRotationTest.InvertedIsFrozenRxPi_RT_BW_2_P_RT_4
+1: [       OK ] PresetRotationTest.InvertedIsFrozenRxPi_RT_BW_2_P_RT_4 (0 ms)
+1: [ RUN      ] PresetRotationTest.WallIsFrozenRyPiHalf_RT_BW_2_P_RT_4
+1: [       OK ] PresetRotationTest.WallIsFrozenRyPiHalf_RT_BW_2_P_RT_4 (0 ms)
+1: [ RUN      ] PresetRotationTest.InvertedBaseZPointsWorldDown_P_RT_4
+1: [       OK ] PresetRotationTest.InvertedBaseZPointsWorldDown_P_RT_4 (0 ms)
+1: [ RUN      ] PresetRotationTest.WallBaseZPointsWorldHorizontal_P_RT_4
+1: [       OK ] PresetRotationTest.WallBaseZPointsWorldHorizontal_P_RT_4 (0 ms)
+1: [ RUN      ] PresetRotationTest.FixedPresetElementsExactlySignedUnit_RT_BW_2
+1: [       OK ] PresetRotationTest.FixedPresetElementsExactlySignedUnit_RT_BW_2 (0 ms)
+1: [ RUN      ] PresetRotationTest.CustomPresetHasNoFixedMatrix_Throws
+1: [       OK ] PresetRotationTest.CustomPresetHasNoFixedMatrix_Throws (0 ms)
+1: [----------] 7 tests from PresetRotationTest (0 ms total)
+1: 
+1: [----------] 5 tests from CustomEaaTest
+1: [ RUN      ] CustomEaaTest.ZeroEaaYieldsIdentity
+1: [       OK ] CustomEaaTest.ZeroEaaYieldsIdentity (0 ms)
+1: [ RUN      ] CustomEaaTest.QuarterTurnAboutZMatchesAnalytic
+1: [       OK ] CustomEaaTest.QuarterTurnAboutZMatchesAnalytic (0 ms)
+1: [ RUN      ] CustomEaaTest.HalfTurnAboutXMatchesFrozenMatrix_P_RT_4
+1: [       OK ] CustomEaaTest.HalfTurnAboutXMatchesFrozenMatrix_P_RT_4 (0 ms)
+1: [ RUN      ] CustomEaaTest.NonFiniteEaaThrowsInputInvalid
+1: [       OK ] CustomEaaTest.NonFiniteEaaThrowsInputInvalid (0 ms)
+1: [ RUN      ] CustomEaaTest.DeterministicBitwiseRepeat
+1: [       OK ] CustomEaaTest.DeterministicBitwiseRepeat (0 ms)
+1: [----------] 5 tests from CustomEaaTest (0 ms total)
+1: 
+1: [----------] 7 tests from ResolveTest
+1: [ RUN      ] ResolveTest.DefaultBaseResolvesGroundIdentity_RT_BW_3
+1: [       OK ] ResolveTest.DefaultBaseResolvesGroundIdentity_RT_BW_3 (0 ms)
+1: [ RUN      ] ResolveTest.GroundCarriesBasePosition
+1: [       OK ] ResolveTest.GroundCarriesBasePosition (0 ms)
+1: [ RUN      ] ResolveTest.InvertedResolvesFrozenMatrix
+1: [       OK ] ResolveTest.InvertedResolvesFrozenMatrix (0 ms)
+1: [ RUN      ] ResolveTest.WallResolvesFrozenMatrix
+1: [       OK ] ResolveTest.WallResolvesFrozenMatrix (0 ms)
+1: [ RUN      ] ResolveTest.CustomWithoutEaaRejected
+1: [       OK ] ResolveTest.CustomWithoutEaaRejected (0 ms)
+1: [ RUN      ] ResolveTest.CustomResolvesViaRodrigues
+1: [       OK ] ResolveTest.CustomResolvesViaRodrigues (0 ms)
+1: [ RUN      ] ResolveTest.NonFinitePositionRejected
+1: [       OK ] ResolveTest.NonFinitePositionRejected (0 ms)
+1: [----------] 7 tests from ResolveTest (0 ms total)
+1: 
+1: [----------] 5 tests from ValidateTest
+1: [ RUN      ] ValidateTest.WellFormedTransformPasses
+1: [       OK ] ValidateTest.WellFormedTransformPasses (0 ms)
+1: [ RUN      ] ValidateTest.ReflectionMatrixRejected_RT_BW_6
+1: [       OK ] ValidateTest.ReflectionMatrixRejected_RT_BW_6 (0 ms)
+1: [ RUN      ] ValidateTest.NonOrthogonalMatrixRejected_RT_BW_6
+1: [       OK ] ValidateTest.NonOrthogonalMatrixRejected_RT_BW_6 (0 ms)
+1: [ RUN      ] ValidateTest.NonFiniteComponentsRejected_RT_BW_6
+1: [       OK ] ValidateTest.NonFiniteComponentsRejected_RT_BW_6 (0 ms)
+1: [ RUN      ] ValidateTest.NearOrthogonalWithinTolerancePasses
+1: [       OK ] ValidateTest.NearOrthogonalWithinTolerancePasses (0 ms)
+1: [----------] 5 tests from ValidateTest (0 ms total)
+1: 
+1: [----------] 6 tests from PresetConsistencyTest
+1: [ RUN      ] PresetConsistencyTest.InvertedWithFrozenMatrixPasses
+1: [       OK ] PresetConsistencyTest.InvertedWithFrozenMatrixPasses (0 ms)
+1: [ RUN      ] PresetConsistencyTest.InvertedWithIdentityRejected
+1: [       OK ] PresetConsistencyTest.InvertedWithIdentityRejected (0 ms)
+1: [ RUN      ] PresetConsistencyTest.WallWithWrongPresetMatrixRejected
+1: [       OK ] PresetConsistencyTest.WallWithWrongPresetMatrixRejected (0 ms)
+1: [ RUN      ] PresetConsistencyTest.CustomWithIdentityRejected
+1: [       OK ] PresetConsistencyTest.CustomWithIdentityRejected (0 ms)
+1: [ RUN      ] PresetConsistencyTest.CustomWithRotatedMatrixPasses
+1: [       OK ] PresetConsistencyTest.CustomWithRotatedMatrixPasses (0 ms)
+1: [ RUN      ] PresetConsistencyTest.GroundAcceptsIdentityAndArbitraryRotation
+1: [       OK ] PresetConsistencyTest.GroundAcceptsIdentityAndArbitraryRotation (0 ms)
+1: [----------] 6 tests from PresetConsistencyTest (0 ms total)
+1: 
+1: [----------] 6 tests from InverseAndPointTest
+1: [ RUN      ] InverseAndPointTest.NumericExamplePointTransform_RT_BW_1
+1: [       OK ] InverseAndPointTest.NumericExamplePointTransform_RT_BW_1 (0 ms)
+1: [ RUN      ] InverseAndPointTest.NumericExampleInverseRoundtrip_RT_BW_1
+1: [       OK ] InverseAndPointTest.NumericExampleInverseRoundtrip_RT_BW_1 (0 ms)
+1: [ RUN      ] InverseAndPointTest.NumericExampleGravityProjection_RT_BW_1
+1: [       OK ] InverseAndPointTest.NumericExampleGravityProjection_RT_BW_1 (0 ms)
+1: [ RUN      ] InverseAndPointTest.InverseRoundtripAllFourPresets_RT_BW_2
+1: [       OK ] InverseAndPointTest.InverseRoundtripAllFourPresets_RT_BW_2 (0 ms)
+1: [ RUN      ] InverseAndPointTest.InverseOfInvertedMatchesFrozenMatrix
+1: [       OK ] InverseAndPointTest.InverseOfInvertedMatchesFrozenMatrix (0 ms)
+1: [ RUN      ] InverseAndPointTest.InverseRejectsNonOrthogonalInput
+1: [       OK ] InverseAndPointTest.InverseRejectsNonOrthogonalInput (0 ms)
+1: [----------] 6 tests from InverseAndPointTest (0 ms total)
+1: 
+1: [----------] 2 tests from ComposeTest
+1: [ RUN      ] ComposeTest.AssociativityTwoGroupings_RT_BW_1
+1: [       OK ] ComposeTest.AssociativityTwoGroupings_RT_BW_1 (0 ms)
+1: [ RUN      ] ComposeTest.ComposedTranslationMatchesManualFormula
+1: [       OK ] ComposeTest.ComposedTranslationMatchesManualFormula (0 ms)
+1: [----------] 2 tests from ComposeTest (0 ms total)
+1: 
+1: [----------] 4 tests from BaseMountConsistencyTest
+1: [ RUN      ] BaseMountConsistencyTest.ExactMatchConsistent
+1: [       OK ] BaseMountConsistencyTest.ExactMatchConsistent (0 ms)
+1: [ RUN      ] BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4
+1: [       OK ] BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4 (0 ms)
+1: [ RUN      ] BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied
+1: [       OK ] BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied (0 ms)
+1: [ RUN      ] BaseMountConsistencyTest.WithinToleranceDeviationPasses
+1: [       OK ] BaseMountConsistencyTest.WithinToleranceDeviationPasses (0 ms)
+1: [----------] 4 tests from BaseMountConsistencyTest (0 ms total)
+1: 
+1: [----------] 14 tests from WorkCellCompilerTest
+1: [ RUN      ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2
+1: [       OK ] WorkCellCompilerTest.JointFieldsExplicit_RT_AD_2 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.JointBoundsOffsetMapping_RT_AD_2
+1: [       OK ] WorkCellCompilerTest.JointBoundsOffsetMapping_RT_AD_2 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.ContinuousJointExplicitInfiniteBounds_RT_AD_2
+1: [       OK ] WorkCellCompilerTest.ContinuousJointExplicitInfiniteBounds_RT_AD_2 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.FixedJointIsFrameNotJoint_RT_T07
+1: [       OK ] WorkCellCompilerTest.FixedJointIsFrameNotJoint_RT_T07 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1
+1: [       OK ] WorkCellCompilerTest.FkEquivalence_RT_EQ_1 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ
+1: [       OK ] WorkCellCompilerTest.RepeatCompileStructuralEquality_RT_EQ (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.BaseMountReadback_RT_BW_4
+1: [       OK ] WorkCellCompilerTest.BaseMountReadback_RT_BW_4 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4
+1: [       OK ] WorkCellCompilerTest.DoubleAppliedDetected_RT_BW_4 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4
+1: [       OK ] WorkCellCompilerTest.SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.TranslateRealRobWorkException_RT_AD_1
+1: [       OK ] WorkCellCompilerTest.TranslateRealRobWorkException_RT_AD_1 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.TranslateBadAlloc_RT_AD_1
+1: [       OK ] WorkCellCompilerTest.TranslateBadAlloc_RT_AD_1 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.TranslateUnknownStdException_RT_AD_1
+1: [       OK ] WorkCellCompilerTest.TranslateUnknownStdException_RT_AD_1 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.FrameNamesMatchNameMap_RT_T07
+1: [       OK ] WorkCellCompilerTest.FrameNamesMatchNameMap_RT_T07 (0 ms)
+1: [ RUN      ] WorkCellCompilerTest.RichFixtureCompilesWithToolAndScene_RT_T07
+1: [       OK ] WorkCellCompilerTest.RichFixtureCompilesWithToolAndScene_RT_T07 (0 ms)
+1: [----------] 14 tests from WorkCellCompilerTest (1 ms total)
+1: 
+1: [----------] 2 tests from WorkCellConstViewTest
+1: [ RUN      ] WorkCellConstViewTest.ViewQueries_RT_T07
+1: [       OK ] WorkCellConstViewTest.ViewQueries_RT_T07 (0 ms)
+1: [ RUN      ] WorkCellConstViewTest.NullHandleRejected_RT_T07
+1: [       OK ] WorkCellConstViewTest.NullHandleRejected_RT_T07 (0 ms)
+1: [----------] 2 tests from WorkCellConstViewTest (0 ms total)
+1: 
+1: [----------] 6 tests from WorkCellGeometryTest
+1: [ RUN      ] WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1
+1: [       OK ] WorkCellGeometryTest.PrimitivesAttachedPerMappedFrame_RT_GEO_1 (0 ms)
+1: [ RUN      ] WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1
+1: [       OK ] WorkCellGeometryTest.GeometryPoseFollowsFrameThroughFk_RT_GEO_1 (0 ms)
+1: [ RUN      ] WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2
+1: [       OK ] WorkCellGeometryTest.DerivedDimensionsAreSiTruth_RT_GEO_2 (0 ms)
+1: [ RUN      ] WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3
+1: [       OK ] WorkCellGeometryTest.SameModelSamePrimitives_RT_GEO_3 (0 ms)
+1: [ RUN      ] WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4
+1: [       OK ] WorkCellGeometryTest.HonestSkipWithoutProviderOrManifest_RT_GEO_4 (0 ms)
+1: [ RUN      ] WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5
+1: [       OK ] WorkCellGeometryTest.S6ProductSurfacesUnchangedByGeometry_RT_GEO_5 (0 ms)
+1: [----------] 6 tests from WorkCellGeometryTest (1 ms total)
+1: 
+1: [----------] 10 tests from DynamicWorkCellCompilerTest
+1: [ RUN      ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2
+1: [       OK ] DynamicWorkCellCompilerTest.AllLinksNoPhysicsSkipsDwc_RT_CPX_2 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2
+1: [       OK ] DynamicWorkCellCompilerTest.PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6
+1: [       OK ] DynamicWorkCellCompilerTest.ProvidedIllegalIsNotCapabilityMissing_S5_6 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08
+1: [       OK ] DynamicWorkCellCompilerTest.CompiledPathBodiesAndExplicitValues_RT_T08 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08
+1: [       OK ] DynamicWorkCellCompilerTest.DeviceConsistencyJointsCrossCheck_RT_T08 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2
+1: [       OK ] DynamicWorkCellCompilerTest.FrictionCarriedViaMaterialDataMap_R2 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08
+1: [       OK ] DynamicWorkCellCompilerTest.ToolAndFrictionMissingStillCompiles_RT_T08 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1
+1: [       OK ] DynamicWorkCellCompilerTest.DwcConstructionFailureIsAtomic_RT_CPX_1 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08
+1: [       OK ] DynamicWorkCellCompilerTest.NullWorkCellRejected_RT_T08 (0 ms)
+1: [ RUN      ] DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3
+1: [       OK ] DynamicWorkCellCompilerTest.DestructionOrderDwcBeforeWorkCell_RT_AD_3 (0 ms)
+1: [----------] 10 tests from DynamicWorkCellCompilerTest (1 ms total)
+1: 
+1: [----------] 1 test from DynamicWorkCellConstView
+1: [ RUN      ] DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08
+1: [       OK ] DynamicWorkCellConstView.ViewQueriesAndNullRejection_RT_T08 (0 ms)
+1: [----------] 1 test from DynamicWorkCellConstView (0 ms total)
+1: 
+1: [----------] 14 tests from SnapshotTest
+1: [ RUN      ] SnapshotTest.CreatePublishesSnapshotFields_RT_T09
+1: [       OK ] SnapshotTest.CreatePublishesSnapshotFields_RT_T09 (0 ms)
+1: [ RUN      ] SnapshotTest.SnapshotIdentityDeterministicAndObservabilityExcluded_RT_ID_1
+1: [       OK ] SnapshotTest.SnapshotIdentityDeterministicAndObservabilityExcluded_RT_ID_1 (0 ms)
+1: [ RUN      ] SnapshotTest.WorkCellCompileIdentityFormula_RT_T09
+1: [       OK ] SnapshotTest.WorkCellCompileIdentityFormula_RT_T09 (0 ms)
+1: [ RUN      ] SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1
+1: [       OK ] SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1 (3 ms)
+1: [ RUN      ] SnapshotTest.WorkerMaterializeRoundtrip_RT_SNAP_2
+1: [       OK ] SnapshotTest.WorkerMaterializeRoundtrip_RT_SNAP_2 (0 ms)
+1: [ RUN      ] SnapshotTest.WorkerIdentityMismatchRejected_D_13
+1: [       OK ] SnapshotTest.WorkerIdentityMismatchRejected_D_13 (0 ms)
+1: [ RUN      ] SnapshotTest.MaterializeCodecRoundtripAndValidation_RT_9_5
+1: [       OK ] SnapshotTest.MaterializeCodecRoundtripAndValidation_RT_9_5 (0 ms)
+1: [ RUN      ] SnapshotTest.StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3
+1: [       OK ] SnapshotTest.StaleSnapshotSurvivesProjectSwitch_RT_SNAP_3 (0 ms)
+1: [ RUN      ] SnapshotTest.ReferenceReleaseLifecycle_RT_SNAP_4
+1: [       OK ] SnapshotTest.ReferenceReleaseLifecycle_RT_SNAP_4 (0 ms)
+1: [ RUN      ] SnapshotTest.CancelAtStageBoundary_RT_CPX_4
+1: [       OK ] SnapshotTest.CancelAtStageBoundary_RT_CPX_4 (0 ms)
+1: [ RUN      ] SnapshotTest.BadAllocBecomesResourceBudget_RT_CPX_4
+1: [       OK ] SnapshotTest.BadAllocBecomesResourceBudget_RT_CPX_4 (0 ms)
+1: [ RUN      ] SnapshotTest.CreateFailureDiagnosticsAndContractViolation_RT_T09
+1: [       OK ] SnapshotTest.CreateFailureDiagnosticsAndContractViolation_RT_T09 (0 ms)
+1: [ RUN      ] SnapshotTest.DwcStateBothCauses_RT_T09
+1: [       OK ] SnapshotTest.DwcStateBothCauses_RT_T09 (0 ms)
+1: [ RUN      ] SnapshotTest.Cr05ValueSupplyEnvironmentEntries_CR_05
+1: [       OK ] SnapshotTest.Cr05ValueSupplyEnvironmentEntries_CR_05 (0 ms)
+1: [----------] 14 tests from SnapshotTest (6 ms total)
+1: 
+1: [----------] 7 tests from CacheKeyTest
+1: [ RUN      ] CacheKeyTest.BuildsTwoLayerKeysDeterministic_RT_CACHE_1
+1: [       OK ] CacheKeyTest.BuildsTwoLayerKeysDeterministic_RT_CACHE_1 (0 ms)
+1: [ RUN      ] CacheKeyTest.ComponentPerturbationPreciseReasons_RT_CACHE_1
+1: [       OK ] CacheKeyTest.ComponentPerturbationPreciseReasons_RT_CACHE_1 (0 ms)
+1: [ RUN      ] CacheKeyTest.FingerprintSetPinsPureContentKey_RT_CACHE_1
+1: [       OK ] CacheKeyTest.FingerprintSetPinsPureContentKey_RT_CACHE_1 (0 ms)
+1: [ RUN      ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2
+1: [       OK ] CacheKeyTest.WorkCellOnlyReuseNotFullReuse_RT_CACHE_2 (0 ms)
+1: [ RUN      ] CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3
+1: [       OK ] CacheKeyTest.OldCompilerContractRejected_RT_CACHE_3 (0 ms)
+1: [ RUN      ] CacheKeyTest.HeadAdvanceDoesNotInvalidate_RT_CACHE_4
+1: [       OK ] CacheKeyTest.HeadAdvanceDoesNotInvalidate_RT_CACHE_4 (0 ms)
+1: [ RUN      ] CacheKeyTest.UnfinalizedKeyNeverHits_RT_CACHE_1
+1: [       OK ] CacheKeyTest.UnfinalizedKeyNeverHits_RT_CACHE_1 (0 ms)
+1: [----------] 7 tests from CacheKeyTest (0 ms total)
+1: 
+1: [----------] 26 tests from CompilerTest
+1: [ RUN      ] CompilerTest.CompilesTenStageChainAndPublishes_RT_T11_ACC3
+1: [       OK ] CompilerTest.CompilesTenStageChainAndPublishes_RT_T11_ACC3 (0 ms)
+1: [ RUN      ] CompilerTest.RepeatCompileIsDeterministic_SameSnapshotIdentity
+1: [       OK ] CompilerTest.RepeatCompileIsDeterministic_SameSnapshotIdentity (0 ms)
+1: [ RUN      ] CompilerTest.FactoryWithProductCompilerPublishes_ViaSegmentEntrance
+1: [       OK ] CompilerTest.FactoryWithProductCompilerPublishes_ViaSegmentEntrance (0 ms)
+1: [ RUN      ] CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly
+1: [       OK ] CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly (0 ms)
+1: [ RUN      ] CompilerTest.DefaultTcpStaysDescriptionFirstAfterToolSort_F584
+1: [       OK ] CompilerTest.DefaultTcpStaysDescriptionFirstAfterToolSort_F584 (0 ms)
+1: [ RUN      ] CompilerTest.ReaderFailureFailsWithLocationThenRetrySucceeds
+1: [       OK ] CompilerTest.ReaderFailureFailsWithLocationThenRetrySucceeds (0 ms)
+1: [ RUN      ] CompilerTest.ObjectOutsideClosureRejected_RT_CONT_1
+1: [       OK ] CompilerTest.ObjectOutsideClosureRejected_RT_CONT_1 (0 ms)
+1: [ RUN      ] CompilerTest.ObjectBytesDigestMismatchRejected_CM0ByteFace
+1: [       OK ] CompilerTest.ObjectBytesDigestMismatchRejected_CM0ByteFace (0 ms)
+1: [ RUN      ] CompilerTest.MassProvidedNegativeFailsLocated_RT_CPX_3
+1: [       OK ] CompilerTest.MassProvidedNegativeFailsLocated_RT_CPX_3 (0 ms)
+1: [ RUN      ] CompilerTest.MassNotProvidedPublishesDegraded_RT_CPX_2
+1: [       OK ] CompilerTest.MassNotProvidedPublishesDegraded_RT_CPX_2 (0 ms)
+1: [ RUN      ] CompilerTest.JointObjectIdOutsideRefsAllowedAtS5_O36
+1: [       OK ] CompilerTest.JointObjectIdOutsideRefsAllowedAtS5_O36 (0 ms)
+1: [ RUN      ] CompilerTest.CancelAtStageBoundaryReturnsCancelledThenRetry_RT_CPX_4
+1: [       OK ] CompilerTest.CancelAtStageBoundaryReturnsCancelledThenRetry_RT_CPX_4 (0 ms)
+1: [ RUN      ] CompilerTest.BadAllocTranslatedToResourceBudget_RT_CPX_4
+1: [       OK ] CompilerTest.BadAllocTranslatedToResourceBudget_RT_CPX_4 (0 ms)
+1: [ RUN      ] CompilerTest.NoTokenCompilesToPublish_NoInternalTimeout_D11_ACC2
+1: [       OK ] CompilerTest.NoTokenCompilesToPublish_NoInternalTimeout_D11_ACC2 (0 ms)
+1: [ RUN      ] CompilerTest.CancelPollsEveryStageBoundary_D11PollDensity
+1: [       OK ] CompilerTest.CancelPollsEveryStageBoundary_D11PollDensity (0 ms)
+1: [ RUN      ] CompilerTest.ResourceMissingFailsLocated_RT_RES_1
+1: [       OK ] CompilerTest.ResourceMissingFailsLocated_RT_RES_1 (0 ms)
+1: [ RUN      ] CompilerTest.ResourceDigestMismatchAtS4Fails_RT_RES_1
+1: [       OK ] CompilerTest.ResourceDigestMismatchAtS4Fails_RT_RES_1 (0 ms)
+1: [ RUN      ] CompilerTest.ResourceBudgetFails_RT_RES_1
+1: [       OK ] CompilerTest.ResourceBudgetFails_RT_RES_1 (0 ms)
+1: [ RUN      ] CompilerTest.ResourceSwappedMidCompileFailsBeforePublish_RT_RES_2
+1: [       OK ] CompilerTest.ResourceSwappedMidCompileFailsBeforePublish_RT_RES_2 (0 ms)
+1: [ RUN      ] CompilerTest.SolidifiedResourceSkipsRecheck_RT_RES_2
+1: [       OK ] CompilerTest.SolidifiedResourceSkipsRecheck_RT_RES_2 (0 ms)
+1: [ RUN      ] CompilerTest.RecordedResourceWarnsNotBlocked
+1: [       OK ] CompilerTest.RecordedResourceWarnsNotBlocked (0 ms)
+1: [ RUN      ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593
+1: [       OK ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593 (0 ms)
+1: [ RUN      ] CompilerTest.CompileLeavesObjectStoreUnchanged_RT_CONT_2
+1: [       OK ] CompilerTest.CompileLeavesObjectStoreUnchanged_RT_CONT_2 (0 ms)
+1: [ RUN      ] CompilerTest.UnknownRevisionFailsFast_UnknownObject
+1: [       OK ] CompilerTest.UnknownRevisionFailsFast_UnknownObject (0 ms)
+1: [ RUN      ] CompilerTest.MissingProjectContextRejected
+1: [       OK ] CompilerTest.MissingProjectContextRejected (0 ms)
+1: [ RUN      ] CompilerTest.TransactionRollbackIsIdempotentAndPublishIsTerminal
+1: [       OK ] CompilerTest.TransactionRollbackIsIdempotentAndPublishIsTerminal (0 ms)
+1: [----------] 26 tests from CompilerTest (2 ms total)
+1: 
+1: [----------] 13 tests from ContractSuite
+1: [ RUN      ] ContractSuite.ChildProcessWorker_RT_ID_1
+1: C:\Users\zgl18\.codex\worktrees\rt-t16-inertia\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(281): Skipped
+1: 非子进程模式（父用例 CrossProcessIdentityStable 派生时才执行）
+1: 
+1: [  SKIPPED ] ContractSuite.ChildProcessWorker_RT_ID_1 (0 ms)
+1: [ RUN      ] ContractSuite.CrossProcessIdentityStable_RT_ID_1
+1: [       OK ] ContractSuite.CrossProcessIdentityStable_RT_ID_1 (115 ms)
+1: [ RUN      ] ContractSuite.TinyFloatDeltaSplitsIdentityAndCache_RT_ID_2
+1: [       OK ] ContractSuite.TinyFloatDeltaSplitsIdentityAndCache_RT_ID_2 (0 ms)
+1: [ RUN      ] ContractSuite.DisplayFieldsNeverEnterRuntimeIdentity_RT_ID_3
+1: [       OK ] ContractSuite.DisplayFieldsNeverEnterRuntimeIdentity_RT_ID_3 (0 ms)
+1: [ RUN      ] ContractSuite.NumericExampleThroughSnapshotView_RT_BW_1
+1: [       OK ] ContractSuite.NumericExampleThroughSnapshotView_RT_BW_1 (15 ms)
+1: [ RUN      ] ContractSuite.DefaultBaseCompilesToIdentityTransform_RT_BW_3
+1: [       OK ] ContractSuite.DefaultBaseCompilesToIdentityTransform_RT_BW_3 (0 ms)
+1: [ RUN      ] ContractSuite.ConsumerDoubleApplicationIntercepted_RT_BW_4
+1: [       OK ] ContractSuite.ConsumerDoubleApplicationIntercepted_RT_BW_4 (0 ms)
+1: [ RUN      ] ContractSuite.FourConsumersConsistentOnInvertedModel_RT_BW_5
+1: [       OK ] ContractSuite.FourConsumersConsistentOnInvertedModel_RT_BW_5 (0 ms)
+1: [ RUN      ] ContractSuite.MixedMissingInputsDeriveCorrectCapabilities_RT_CAP_1
+1: [       OK ] ContractSuite.MixedMissingInputsDeriveCorrectCapabilities_RT_CAP_1 (0 ms)
+1: [ RUN      ] ContractSuite.MissingCapabilityNeverEscalates_RT_CAP_2
+1: [       OK ] ContractSuite.MissingCapabilityNeverEscalates_RT_CAP_2 (1 ms)
+1: [ RUN      ] ContractSuite.SourcePathHintIsNotIdentity_RT_RES_3
+1: [       OK ] ContractSuite.SourcePathHintIsNotIdentity_RT_RES_3 (0 ms)
+1: [ RUN      ] ContractSuite.GoldenFkEquationDataset_RT_EQ_1
+1: [       OK ] ContractSuite.GoldenFkEquationDataset_RT_EQ_1 (80 ms)
+1: [ RUN      ] ContractSuite.GoldenNameMapRoundtripDataset_RT_NM_1
+1: [       OK ] ContractSuite.GoldenNameMapRoundtripDataset_RT_NM_1 (74 ms)
+1: [----------] 13 tests from ContractSuite (289 ms total)
+1: 
+1: [----------] 5 tests from HostPresentationViewTest
+1: [ RUN      ] HostPresentationViewTest.IdentityBindingsVerifiable_RT_PRES_1
+1: [       OK ] HostPresentationViewTest.IdentityBindingsVerifiable_RT_PRES_1 (0 ms)
+1: [ RUN      ] HostPresentationViewTest.ViewLifecycleDoesNotTouchSnapshotIdentity_RT_PRES_2
+1: [       OK ] HostPresentationViewTest.ViewLifecycleDoesNotTouchSnapshotIdentity_RT_PRES_2 (0 ms)
+1: [ RUN      ] HostPresentationViewTest.PresentationStateMutationIsolatedFromSnapshot_RT_PRES_3
+1: [       OK ] HostPresentationViewTest.PresentationStateMutationIsolatedFromSnapshot_RT_PRES_3 (0 ms)
+1: [ RUN      ] HostPresentationViewTest.ResolutionAndTransformReuseSameSource_RT_PRES_4
+1: [       OK ] HostPresentationViewTest.ResolutionAndTransformReuseSameSource_RT_PRES_4 (0 ms)
+1: [ RUN      ] HostPresentationViewTest.FactoryFailsFastOnInvalidInput_RT_PRES_5
+1: [       OK ] HostPresentationViewTest.FactoryFailsFastOnInvalidInput_RT_PRES_5 (0 ms)
+1: [----------] 5 tests from HostPresentationViewTest (0 ms total)
+1: 
+1: [----------] 4 tests from GoldenDataLint
+1: [ RUN      ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3
+1: [       OK ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+1: [ RUN      ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3
+1: [       OK ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+1: [ RUN      ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3
+1: [       OK ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3 (0 ms)
+1: [ RUN      ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3
+1: [       OK ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3 (13 ms)
+1: [----------] 4 tests from GoldenDataLint (14 ms total)
+1: 
+1: [----------] Global test environment tear-down
+1: [==========] 285 tests from 58 test suites ran. (666 ms total)
+1: [  PASSED  ] 284 tests.
+1: [  SKIPPED ] 1 test, listed below:
+1: [  SKIPPED ] ContractSuite.ChildProcessWorker_RT_ID_1
+1/1 Test #1: sdurws_ird_runtime_test ..........   Passed    0.83 sec
+
+The following tests passed:
+	sdurws_ird_runtime_test
+
+100% tests passed, 0 tests failed out of 1
+
+Label Time Summary:
+ird    =   0.83 sec*proc (1 test)
+
+Total Test time (real) =   0.85 sec

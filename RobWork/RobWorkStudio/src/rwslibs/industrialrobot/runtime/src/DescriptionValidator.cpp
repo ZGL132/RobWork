@@ -1,7 +1,7 @@
 /**
  * @file   DescriptionValidator.cpp
  * @brief  Description 结构与单位校验器实现（S3 段）——逐项硬校验＋量级
- *         抽样警告＋耦合矩阵奇异/病态判定（对称 Jacobi 条件数）。
+ *         抽样警告＋耦合矩阵奇异/病态判定（单侧 Jacobi 奇异值）。
  *
  * 设计依据：
  *   - units/runtime.md §5.2 S3 行、§4.2/§4.4/§4.3.3/§4.3.4/§6.6（各检查
@@ -13,7 +13,7 @@
  *     RT-CPX-3/RT-CPL-1/RT-BW-6 校验器部分）
  *
  * 确定性来源（NFR-COR-02）：检查次序固定（下标升序）；全部阈值为编译期
- * 常量（出处随常量注释）；条件数经对称 Jacobi 迭代——固定扫描次序＋固定
+ * 常量（出处随常量注释）；条件数经单侧 Jacobi 迭代——固定扫描次序＋固定
  * 收敛阈值＋固定最大轮数，同一输入在同一二进制内浮点运算序列逐位一致。
  */
 
@@ -27,6 +27,25 @@
 
 namespace sdurws::ird::runtime {
 
+// RT-T16 私有实现交接：定义位于 CanonicalModel.cpp，两入口共用同一数值权威。
+// 不进入公共头；仅只读借用矩阵，不持有引用，无共享状态、可重入。
+namespace inertia_validation_detail {
+/**
+ * @brief 取最大不对称分量/对称部分 Frobenius 范数；零范数退回绝对差。
+ * @param m [in] 有限惯量，质心处、连杆/工具系，kg·m²；所有权属于调用方。
+ * @return 相对偏差（无量纲）；零范数回退值单位 kg·m²，供相同阈值比较。
+ * @throws 无。饱和保护及具体缩放步骤见同名单元内部定义（RT-T16）。
+ */
+double relativeAsymmetry(const rw::math::InertiaMatrix<double>& m) noexcept;
+/**
+ * @brief 返回实际对称化后严格 SPD 的无量纲见证；>0 放行，≤0 拒绝。
+ * @param m [in] 有限惯量，质心处、连杆/工具系，kg·m²；不写回输入。
+ * @return 平衡后 LDLᵀ 最小主元或非正拒绝标记，不是物理最小特征值。
+ * @throws 无。固定轴次序，不使用数值余量（REQUIREMENTS 附录 D #7）。
+ */
+double symmetrizedSpdWitness(const rw::math::InertiaMatrix<double>& m) noexcept;
+}  // namespace inertia_validation_detail
+
 namespace {
 
 // =====================================================================
@@ -37,8 +56,8 @@ namespace {
 /// 第 6 项对称性容差同尺度）。
 constexpr double kOrthoTolerance = 1e-12;
 
-/// 惯量张量对称性容差：|I_ij−I_ji| ≤ 1×10⁻¹²（§4.3.3"对称性容差附录 D
-/// 第 6 项"同尺度——与正交性容差同一量级）。
+/// 惯量对称性固定相对阈值 1e-12（附录 D #6），最大差/对称部分 Frobenius
+/// 范数；零范数回退既有绝对差规则。与 S5 同值，不作为正交性绝对容差。
 constexpr double kSymmetryTolerance = 1e-12;
 
 /// 耦合矩阵"数值奇异"判定分界：σmin ≤ σmax×1×10⁻¹²（⇔ 条件数 ≥1×10¹²）
@@ -76,10 +95,6 @@ constexpr char kBoundsMagnitudeWarnCode[] = "RT-BOUNDS-MAGNITUDE";
 /// 对称 Jacobi 最大扫描轮数：收敛上界保护（正规小矩阵 6～10 轮内收敛；
 /// 60 轮对 64 阶以内矩阵远超充分——固定轮数保证确定性终止）。
 constexpr int kJacobiMaxSweeps = 60;
-
-/// 对称 Jacobi 收敛阈：非对角元素平方和 ≤ 1e-30×max(1, 对角平方和)——
-/// 达到即认为对角化完成（相对判据，免受矩阵整体缩放影响）。
-constexpr double kJacobiConvergence = 1e-30;
 
 /// 单侧 Jacobi（Hestenes）正交收敛阈：两列内积 |γ| ≤ 1e-16×√(αβ) 视为
 /// 已正交（机器精度层；再转只引入噪音——奇异值相对精度因此 ~eps，
@@ -240,87 +255,6 @@ void checkTransform(ValidationReport& report, const rw::math::Transform3D<double
                            "RT-BW-6 反例字段；实测行列式见比较值",
                            det, 0.0, "rotation-determinant");
     }
-}
-
-/**
- * @brief 对称 Jacobi 特征值（小对称矩阵——惯量正定性复核用）。
- *
- * 算法（数值教科书经典循环 Jacobi）：反复用平面旋转把非对角元素平方和
- * 压向零，收敛后对角元即特征值。确定性保障（NFR-COR-02）：扫描次序
- * 固定（行主序上三角枚举）＋收敛阈/最大轮数固定（文件头常量）——同一
- * 输入在同一二进制内产生逐位一致的结果。工程规模：惯量恒 3 阶，轮数
- * 上界充分（kJacobiMaxSweeps）。
- *
- * ★ 为何不用于耦合矩阵条件数：两侧算法（经 CᵀC）把动态范围平方化——
- *   κ=1e10 的矩阵其 CᵀC 条件数达 1e20，小特征值完全沉入舍入噪声，
- *   奇异（κ≥1e12）与病态（κ>1e8）将无法可靠分档甚至漏阻（详见
- *   singularValuesOneSidedJacobi 的注释）。惯量复核不涉小奇异值分辨
- *   （SPD 判定只有"最小特征值是否＞0"一档，物理惯量远离奇异），仍用本算法。
- *
- * @param a [in] 行主序 n×n 对称矩阵（调用方持有存储；本函数只读）
- * @param n [in]     阶数（≥1）
- * @return 特征值升序向量（长度 n；不抛）
- */
-std::vector<double> symmetricEigenvalues(const std::vector<double>& a, std::size_t n)
-{
-    // 工作副本（迭代就地修改）；n=0 防御性返回空（调用方保证 ≥1）。
-    std::vector<double> m(a);
-    if (n == 0) { return m; }
-
-    // 对角平方和的缩放基准（相对收敛判据用——免受矩阵整体缩放影响）。
-    double diagScale = 0.0;
-    for (std::size_t i = 0; i < n; ++i) {
-        diagScale += m[i * n + i] * m[i * n + i];
-    }
-    const double tol = kJacobiConvergence * std::max(1.0, diagScale);
-
-    for (int sweep = 0; sweep < kJacobiMaxSweeps; ++sweep) {
-        // 收敛判定：非对角元素平方和足够小即停止（特征值已稳定在对角元）。
-        double off = 0.0;
-        for (std::size_t p = 0; p < n; ++p) {
-            for (std::size_t q = p + 1; q < n; ++q) {
-                off += m[p * n + q] * m[p * n + q];
-            }
-        }
-        if (off <= tol) { break; }
-
-        // 一轮扫描：对每个上三角非对角位置构造零化旋转（固定次序——确定性）。
-        for (std::size_t p = 0; p + 1 < n; ++p) {
-            for (std::size_t q = p + 1; q < n; ++q) {
-                const double apq = m[p * n + q];
-                if (apq == 0.0) { continue; } // 已零化——跳过（不扰动收敛）
-
-                // 经典 Jacobi 旋转角：t=c²（tan）的最小解——数值稳定分支
-                // （大 theta 时避免平方溢出的是 theta 倒数形式）。
-                const double theta = (m[q * n + q] - m[p * n + p]) / (2.0 * apq);
-                const double sign = theta >= 0.0 ? 1.0 : -1.0;
-                const double tTan = sign / (std::fabs(theta) + std::sqrt(theta * theta + 1.0));
-                const double c = 1.0 / std::sqrt(tTan * tTan + 1.0);
-                const double s = tTan * c;
-
-                // 行列同步更新 p、q 两行两列（对称矩阵只需改 2×2 交叉块与
-                // 对角元——标准原地公式）。
-                for (std::size_t k = 0; k < n; ++k) {
-                    const double mkp = m[k * n + p];
-                    const double mkq = m[k * n + q];
-                    m[k * n + p] = c * mkp - s * mkq;
-                    m[k * n + q] = s * mkp + c * mkq;
-                }
-                for (std::size_t k = 0; k < n; ++k) {
-                    const double mpk = m[p * n + k];
-                    const double mqk = m[q * n + k];
-                    m[p * n + k] = c * mpk - s * mqk;
-                    m[q * n + k] = s * mpk + c * mqk;
-                }
-            }
-        }
-    }
-
-    // 对角元即特征值；升序排序（比较用 min/max 的取法确定）。
-    std::vector<double> eig(n);
-    for (std::size_t i = 0; i < n; ++i) { eig[i] = m[i * n + i]; }
-    std::sort(eig.begin(), eig.end());
-    return eig;
 }
 
 /**
@@ -487,36 +421,24 @@ void checkInertia(ValidationReport& report, const rw::math::InertiaMatrix<double
         return;
     }
 
-    // 第②步：对称性（最大不对称分量）。惯量张量物理上必对称；不对称
-    // 说明输入侧填装错误（如把惯性积塞错位置）。
-    double asym = 0.0;
-    for (int i = 0; i < 3; ++i) {
-        for (int j = i + 1; j < 3; ++j) {
-            asym = std::max(asym, std::fabs(m(i, j) - m(j, i)));
-        }
-    }
+    // 第②步：相对对称性，与 S5 共用实现；小/大惯量按相同无量纲阈值校验。
+    const double asym = inertia_validation_detail::relativeAsymmetry(m);
     if (asym > kSymmetryTolerance) {
         addComparisonError(report, RuntimeErrorCode::InputInvalid, base,
-                           base + "：惯量张量非对称（|I−Iᵀ| 超容差）——§4.3.3 非法"
-                           "实例；实测最大不对称见比较值",
-                           asym, kSymmetryTolerance, "inertia-asymmetry-max");
-        return; // 非对称时 SPD 判读无意义（Jacobi 要求对称输入）——先修对称
+                           base + "：惯量张量相对不对称偏差超容差（附录 D #6）；"
+                           "比较值为最大差/对称部分 Frobenius 范数（零范数退回绝对差 kg·m²）",
+                           asym, kSymmetryTolerance, "inertia-relative-asymmetry");
+        return; // 先修输入不对称，不能把任意原矩阵平均后放行。
     }
 
-    // 第③步：正定性——对称化（已对称，取值即用）后最小特征值 > 0。
-    std::vector<double> a(9, 0.0);
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            a[i * 3 + j] = m(i, j);
-        }
-    }
-    const std::vector<double> eig = symmetricEigenvalues(a, 3);
-    const double minEig = eig.front();
-    if (minEig <= 0.0) {
+    // 第③步：实际对称化后按合同平衡 LDLᵀ 主元严格判正（附录 D #7）。
+    // 最小主元与最小特征值同号，避免原绝对 Jacobi 停止阈漏掉小尺度负特征值。
+    const double witness = inertia_validation_detail::symmetrizedSpdWitness(m);
+    if (!(witness > 0.0)) {
         addComparisonError(report, RuntimeErrorCode::InputInvalid, base,
-                           base + "：惯量张量非正定（SPD 失败）——§4.3.3 非法实例"
-                           "（m≤0/非对称/非正定→InputInvalid）；实测最小特征值见比较值",
-                           minEig, 0.0, "inertia-min-eigenvalue");
+                           base + "：惯量张量对称化后非正定（附录 D #7）；比较值为"
+                           "平衡后无量纲 LDLᵀ 主元或非正拒绝标记，须严格 >0；不是物理特征值",
+                           witness, 0.0, "inertia-spd-witness");
     }
 }
 
