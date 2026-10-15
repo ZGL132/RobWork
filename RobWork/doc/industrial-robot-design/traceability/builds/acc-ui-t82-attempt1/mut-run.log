@@ -1,0 +1,35 @@
+Note: Google Test filter = *UI_T82*
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkbenchContentGuiTest
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82
+[       OK ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82 (26 ms)
+[----------] 1 test from WorkbenchContentGuiTest (26 ms total)
+
+[----------] 1 test from DockWorkspaceGuiTest
+[ RUN      ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82
+C:\acc-uit82\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp(1315): error: Value of: sawCovered
+  Actual: false
+Expected: true
+必须真实观察到标签遮挡信号，防用例空跑
+
+C:\acc-uit82\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp(1316): error: Expected equality of these values:
+  host.tabifiedDockWidgets(domains.front()).size()
+    Which is: 0
+  5
+
+C:\acc-uit82\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp(1318): error: Value of: tabs.isEmpty()
+  Actual: true
+Expected: false
+必须存在真实 Qt 停靠标签栏
+
+[  FAILED  ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82 (520 ms)
+[----------] 1 test from DockWorkspaceGuiTest (520 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (547 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82
+
+ 1 FAILED TEST

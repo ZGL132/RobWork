@@ -1,0 +1,16 @@
+Note: Google Test filter = *UI_T82*
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkbenchContentGuiTest
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82
+[       OK ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82 (33 ms)
+[----------] 1 test from WorkbenchContentGuiTest (34 ms total)
+
+[----------] 1 test from DockWorkspaceGuiTest
+[ RUN      ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82
+[       OK ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82 (536 ms)
+[----------] 1 test from DockWorkspaceGuiTest (536 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (570 ms total)
+[  PASSED  ] 2 tests.

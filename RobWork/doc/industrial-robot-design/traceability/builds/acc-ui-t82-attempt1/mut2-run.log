@@ -1,0 +1,25 @@
+Note: Google Test filter = *UI_T82*
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkbenchContentGuiTest
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82
+C:\acc-uit82\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp(1269): error: Value of: content->build()
+  Actual: false
+Expected: true
+嵌入形态应允许仅注入工厂拓扑复位钩子
+
+[  FAILED  ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82 (1 ms)
+[----------] 1 test from WorkbenchContentGuiTest (1 ms total)
+
+[----------] 1 test from DockWorkspaceGuiTest
+[ RUN      ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82
+[       OK ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82 (553 ms)
+[----------] 1 test from DockWorkspaceGuiTest (553 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (554 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82
+
+ 1 FAILED TEST

@@ -1,0 +1,147 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/acc-uit82/wt-a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> C:\acc-uit82\build-smoke\core\Release\sdurws_ird_core.lib
+  Building Custom Rule C:/acc-uit82/wt-a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Diagnostics.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  ParamSchema.cpp
+  Catalog.cpp
+  Factory.cpp
+  Confirmable.cpp
+  Aggregation.cpp
+  Logging.cpp
+  Redaction.cpp
+  CrashReport.cpp
+  正在生成代码...
+  sdurws_ird_diagnostics.vcxproj -> C:\acc-uit82\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  Building Custom Rule C:/acc-uit82/wt-a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> C:\acc-uit82\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule C:/acc-uit82/wt-a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  Ui.cpp
+  WorkbenchShell.cpp
+  WorkbenchContent.cpp
+  ShellSupport.cpp
+  StatusProjection.cpp
+  View3DPlaceholder.cpp
+  CommandRegistry.cpp
+  GlobalShortcutRegistry.cpp
+  CommandPalette.cpp
+  PolicySummaryCard.cpp
+  DomainReadinessSummaryCard.cpp
+  FormEditCommon.cpp
+  ParamTablePanel.cpp
+  UiText.cpp
+  StageNavigationModel.cpp
+  AboutDialog.cpp
+  UiSessionController.cpp
+  DraftController.cpp
+  DiagnosticPresentation.cpp
+  CommandInteractionBridge.cpp
+  正在生成代码...
+  正在编译...
+  TaskPresentation.cpp
+  PluginUiRegistrar.cpp
+  HostController.cpp
+  RuntimePublishBridge.cpp
+  SelectionService.cpp
+  IndustrialProjectTree.cpp
+  PropertyInspector.cpp
+  FlowLayout.cpp
+  UiTheme.cpp
+  正在生成代码...
+  sdurws_ird_ui.vcxproj -> C:\acc-uit82\build-smoke\ui\Release\sdurws_ird_ui.lib
+  Building Custom Rule C:/acc-uit82/wt-a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  BuildPlacementTest.cpp
+  WorkbenchShellGuiTest.cpp
+  WorkbenchContentGuiTest.cpp
+  CommandPaletteGuiTest.cpp
+C:\acc-uit82\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(174,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\acc-uit82\build-smoke\ui\sdurws_ird_ui_gui_test.vcxproj]
+  PolicySummaryCardGuiTest.cpp
+  ParamTablePanelGuiTest.cpp
+  AboutDialogGuiTest.cpp
+  IndustrialProjectTreeGuiTest.cpp
+  PropertyInspectorGuiTest.cpp
+  DomainReadinessSummaryCardGuiTest.cpp
+  HostIntegrationGuiTest.cpp
+  正在生成代码...
+  sdurws_ird_ui_gui_test.vcxproj -> C:\acc-uit82\build-smoke\ui\Release\sdurws_ird_ui_gui_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\acc-uit82\build-smoke\ui\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\acc-uit82\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\acc-uit82\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> C:\acc-uit82\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> C:\acc-uit82\build-smoke\ui\Release\sdurws_ird_ui.lib
+  Building Custom Rule C:/acc-uit82/wt-a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  ShellModelTest.cpp
+  StatusWordModelTest.cpp
+  View3DContractTest.cpp
+  CommandRegistryModelTest.cpp
+  ShortcutRegistryModelTest.cpp
+  PolicySummaryCardTest.cpp
+  FormEditModelTest.cpp
+  StageNavigationModelTest.cpp
+  AboutDialogModelTest.cpp
+  SessionControllerModelTest.cpp
+  DraftControllerModelTest.cpp
+  DiagPresentationModelTest.cpp
+  TaskPresentationModelTest.cpp
+  CommandInteractionBridgeTest.cpp
+  HostControllerModelTest.cpp
+  RuntimePublishBridgeTest.cpp
+  SelectionServiceTest.cpp
+  IndustrialProjectTreeModelTest.cpp
+  正在生成代码...
+  正在编译...
+  PropertyInspectorModelTest.cpp
+  CrashCaptureTest.cpp
+  DefectPinningTest.cpp
+  CrashCapture.cpp
+  正在生成代码...
+  sdurws_ird_ui_test.vcxproj -> C:\acc-uit82\build-smoke\ui\Release\sdurws_ird_ui_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
+  [ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_targets锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_registered_edge锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_openbench_worker锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_perf_unregistered锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_openbench_testkit锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_perf_lookalike锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4cliff锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r4cliff锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細C:/acc-uit82/wt-a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+  Building Custom Rule C:/acc-uit82/wt-a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+BUILD_EXIT=0
