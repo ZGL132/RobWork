@@ -1090,10 +1090,22 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
                     }
                 }
 
-                // 章节诊断入并（框架投影不产诊断——空集空转；保留对称面）。
+                // 章节诊断冻结＋入并（F-816 修复——§4.3.4 diagnostics 行
+                // "章节诊断（可空集）"：提供方以 status＋diagnostics 表达
+                // 缺项〔§9.2 错误行〕，该事实必须随章节视图冻结进
+                // section.diagnostics——既进章节内容〔渲染层 HTML/JSON 章节
+                // 诊断表的数据源〕也进章节身份〔仅诊断不同的投影身份必不
+                // 同〕；§4.2 diagRefs 并集照旧承载报告级汇总，两地面同源
+                // 不互斥。reportable 过滤在 makeDiagRef——§4.3.3
+                // "reportable=false 的码不进报告"；框架投影当前不产诊断
+                // ——空集空转，写点与域章节路径保持对称）。
                 for (const core::DiagnosticRecord& record : content.diagnostics) {
                     DiagRefEntry ref;
                     if (makeDiagRef(m_codeRegistry, record, sectionId, std::nullopt, ref)) {
+                        // 章节面逐条计数＝1（每次写点＝一次发生；报告级
+                        // 同键聚合计数归 diagMerger——§4.3.3 occurrences）。
+                        ref.occurrences = 1;
+                        section.diagnostics.push_back(ref);
                         diagMerger.add(std::move(ref));
                     }
                 }
@@ -1364,11 +1376,20 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
                 section.eligibilityNote = std::move(note);
             }
 
-            // 章节诊断入并（§4.2 diagRefs 并集；reportable 过滤在 makeDiagRef
-            // ——§4.3.3"reportable=false 的码不进报告"）。
+            // 章节诊断冻结＋入并（F-816 修复——§4.3.4 diagnostics 行
+            // "章节诊断（可空集）"：提供方以 status＋diagnostics 表达缺项
+            // 〔§9.2 错误行〕，该事实必须随章节视图冻结进 section.diagnostics
+            // ——既进章节内容〔渲染层 HTML/JSON 章节诊断表的数据源〕也进
+            // 章节身份〔仅诊断不同的投影身份必不同〕；§4.2 diagRefs 并集
+            // 照旧承载报告级汇总，两地面同源不互斥。reportable 过滤在
+            // makeDiagRef——§4.3.3"reportable=false 的码不进报告"）。
             for (const core::DiagnosticRecord& record : content.diagnostics) {
                 DiagRefEntry ref;
                 if (makeDiagRef(m_codeRegistry, record, sectionId, std::nullopt, ref)) {
+                    // 章节面逐条计数＝1（每次写点＝一次发生；报告级同键
+                    // 聚合计数归 diagMerger——§4.3.3 occurrences）。
+                    ref.occurrences = 1;
+                    section.diagnostics.push_back(ref);
                     diagMerger.add(std::move(ref));
                 }
             }
