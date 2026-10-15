@@ -1,0 +1,47 @@
+{
+  "sha": "01223053a130c7b437c6a32f439bdd1c58ba8d54",
+  "branch": "redesign-main",
+  "utc": "2026-10-15T00:57:22.6099703Z",
+  "status": [
+    "?? .zcode/",
+    "?? .zcodeignore",
+    "?? RobWork/docs/superpowers/2026-10-15-isaacsim-motion-generation-analysis.md",
+    "?? RobWork/docs/superpowers/2026-10-15-isaacsim-overlap-benchmark-report.md",
+    "?? RobWork/docs/superpowers/plans/2026-10-14-engineering-quality-polish-plan.md",
+    "?? audit/",
+    "?? nul",
+    "?? t1/",
+    "?? t2/"
+  ],
+  "vs": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\",
+  "targetArch": "x64",
+  "qtPlatform": "windows",
+  "qtPrefix": "D:/software/Qt/6.11.1/msvc2022_64",
+  "pythonDll": "D:\\software\\Miniconda3\\python313.dll",
+  "zlibDll": "D:\\software\\Miniconda3\\zlib.dll",
+  "cmake": "cmake version 4.3.1",
+  "cpu": [
+    {
+      "Name": "13th Gen Intel(R) Core(TM) i9-13950HX",
+      "NumberOfCores": 24,
+      "NumberOfLogicalProcessors": 32
+    }
+  ],
+  "os": {
+    "Caption": "Microsoft Windows 11 专业版",
+    "Version": "10.0.26200",
+    "TotalVisibleMemorySize": 66634028
+  },
+  "occupied": [
+    {
+      "ProcessName": "ctest",
+      "Id": 20460
+    }
+  ],
+  "inheritedQt": [
+    {
+      "Name": "QT_QPA_PLATFORM",
+      "Value": "windows"
+    }
+  ]
+}

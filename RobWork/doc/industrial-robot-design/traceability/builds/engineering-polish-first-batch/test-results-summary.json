@@ -1,0 +1,1607 @@
+{
+  "integration": [
+    {
+      "name": "sdurws_ird_core_test",
+      "exit": 0,
+      "seconds": 0.5389701,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "integration-sdurws_ird_core_test.log",
+      "counts": {
+        "tests": 65,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_diagnostics_contract_test",
+      "exit": 0,
+      "seconds": 0.2674806,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "integration-sdurws_ird_diagnostics_contract_test.log",
+      "counts": {
+        "tests": 26,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_diagnostics_test",
+      "exit": 0,
+      "seconds": 1.1014201,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "integration-sdurws_ird_diagnostics_test.log",
+      "counts": {
+        "tests": 117,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_drivetrain_contract_test",
+      "exit": 0,
+      "seconds": 0.103244,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_drivetrain_contract_test.log",
+      "counts": {
+        "tests": 15,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_drivetrain_test",
+      "exit": 0,
+      "seconds": 0.1330458,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_drivetrain_test.log",
+      "counts": {
+        "tests": 38,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_dynamics_contract_test",
+      "exit": 0,
+      "seconds": 0.1581866,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_dynamics_contract_test.log",
+      "counts": {
+        "tests": 30,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_dynamics_test",
+      "exit": 0,
+      "seconds": 0.2631905,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_dynamics_test.log",
+      "counts": {
+        "tests": 112,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\dynamics\\test\\DynPluginPanelTest.cpp:708\nenvUnavailable：无人值守门禁不做 GUI 运行验证——曲线视图/工作流页的呈现与交互由 sdurws_ird_dynamics_app harness 手动点验承载（units/dynamics.md §11.5 流程），本次未启动，留痕见 traceability/builds/wp17-t09/ 登记\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_evidence_contract_test",
+      "exit": 0,
+      "seconds": 0.1205946,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "integration-sdurws_ird_evidence_contract_test.log",
+      "counts": {
+        "tests": 14,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_evidence_test",
+      "exit": 0,
+      "seconds": 0.1124074,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "integration-sdurws_ird_evidence_test.log",
+      "counts": {
+        "tests": 205,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_execution_contract_test",
+      "exit": 0,
+      "seconds": 2.9009994,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_execution_contract_test.log",
+      "counts": {
+        "tests": 38,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_execution_perf_test",
+      "exit": 0,
+      "seconds": 44.0530241,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_execution_perf_test.log",
+      "counts": {
+        "tests": 4,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_execution_test",
+      "exit": 0,
+      "seconds": 1.6597554,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_execution_test.log",
+      "counts": {
+        "tests": 157,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_io_contract_test",
+      "exit": 0,
+      "seconds": 0.789037,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_io_contract_test.log",
+      "counts": {
+        "tests": 9,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_io_test",
+      "exit": 0,
+      "seconds": 2.0662176,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_io_test.log",
+      "counts": {
+        "tests": 127,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_kinematics_contract_test",
+      "exit": 0,
+      "seconds": 0.1321577,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_kinematics_contract_test.log",
+      "counts": {
+        "tests": 57,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_kinematics_test",
+      "exit": 0,
+      "seconds": 12.4094717,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_kinematics_test.log",
+      "counts": {
+        "tests": 230,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\kinematics\\test\\PluginPanelTest.cpp:658\nGUI 呈现仅登记（envUnavailable 如实登记——不标注通过）\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_modeling_contract_test",
+      "exit": 0,
+      "seconds": 0.2315802,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_modeling_contract_test.log",
+      "counts": {
+        "tests": 17,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_modeling_gui_test",
+      "exit": 0,
+      "seconds": 1.1621601,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_modeling_gui_test.log",
+      "counts": {
+        "tests": 42,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_modeling_test",
+      "exit": 0,
+      "seconds": 0.5094507,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_modeling_test.log",
+      "counts": {
+        "tests": 379,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_optimization_contract_test",
+      "exit": 0,
+      "seconds": 1.1794796,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_optimization_contract_test.log",
+      "counts": {
+        "tests": 52,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_optimization_perf_test",
+      "exit": 8,
+      "seconds": 120.078796,
+      "status": "FAIL",
+      "xml": false,
+      "json": false,
+      "log": "integration-sdurws_ird_optimization_perf_test.log",
+      "counts": {
+        "tests": 0,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_optimization_test",
+      "exit": 0,
+      "seconds": 0.2137983,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_optimization_test.log",
+      "counts": {
+        "tests": 215,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\optimization\\test\\OptPluginPanelTest.cpp:1534\nenvUnavailable：无人值守门禁不做 GUI 运行验证——四页主面板（变量表/约束页/运行控制/候选表与对比）的呈现与交互由宿主装配批次的开发 harness 手动点验承载（units/optimization.md §13.3 GUI 约束），本次未启动，如实登记不标注通过\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_policy_contract_test",
+      "exit": 0,
+      "seconds": 0.1902589,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "integration-sdurws_ird_policy_contract_test.log",
+      "counts": {
+        "tests": 23,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_policy_test",
+      "exit": 0,
+      "seconds": 0.1071891,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "integration-sdurws_ird_policy_test.log",
+      "counts": {
+        "tests": 211,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_project_contract_test",
+      "exit": 0,
+      "seconds": 7.0138382,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_project_contract_test.log",
+      "counts": {
+        "tests": 32,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_project_perf_test",
+      "exit": 0,
+      "seconds": 20.6962895,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_project_perf_test.log",
+      "counts": {
+        "tests": 2,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_project_test",
+      "exit": 0,
+      "seconds": 11.3348505,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_project_test.log",
+      "counts": {
+        "tests": 277,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_reporting_contract_test",
+      "exit": 0,
+      "seconds": 0.1505134,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_reporting_contract_test.log",
+      "counts": {
+        "tests": 65,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_reporting_test",
+      "exit": 0,
+      "seconds": 0.7468497,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_reporting_test.log",
+      "counts": {
+        "tests": 233,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_requirements_contract_test",
+      "exit": 0,
+      "seconds": 0.125708,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_requirements_contract_test.log",
+      "counts": {
+        "tests": 16,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_requirements_gui_test",
+      "exit": 0,
+      "seconds": 3.3963445,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_requirements_gui_test.log",
+      "counts": {
+        "tests": 49,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_requirements_test",
+      "exit": 0,
+      "seconds": 0.3462047,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_requirements_test.log",
+      "counts": {
+        "tests": 214,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "GuiRegistration.V22RegisteredNotExecuted_ACC1",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\requirements\\test\\GoldenDatasetsContractTest.cpp:2018\nV-22 GUI 流程仅登记（envUnavailable 如实登记）\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_runtime_test",
+      "exit": 0,
+      "seconds": 0.5520636,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "integration-sdurws_ird_runtime_test.log",
+      "counts": {
+        "tests": 277,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "ContractSuite.ChildProcessWorker_RT_ID_1",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\ContractSuiteTest.cpp:281\n非子进程模式（父用例 CrossProcessIdentityStable 派生时才执行）\n"
+        }
+      ],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_selection_contract_test",
+      "exit": 0,
+      "seconds": 0.2874361,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_selection_contract_test.log",
+      "counts": {
+        "tests": 64,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_selection_test",
+      "exit": 0,
+      "seconds": 0.3110446,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_selection_test.log",
+      "counts": {
+        "tests": 285,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "SelPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\selection\\test\\SelPluginPanelTest.cpp:621\nenvUnavailable：无人值守门禁不做 GUI 运行验证——工作流页/目录管理页/候选表页的呈现与交互由 sdurws_ird_selection_app harness 手动点验承载（units/selection.md §15.3 流程），本次未启动，留痕见 traceability/builds/wp19-t10/ 登记\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_testkit_test",
+      "exit": 0,
+      "seconds": 9.9040724,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_testkit_test.log",
+      "counts": {
+        "tests": 110,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_trajectory_contract_test",
+      "exit": 0,
+      "seconds": 0.3663562,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_trajectory_contract_test.log",
+      "counts": {
+        "tests": 69,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_trajectory_test",
+      "exit": 0,
+      "seconds": 0.5959684,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_trajectory_test.log",
+      "counts": {
+        "tests": 180,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_contract_test",
+      "exit": 0,
+      "seconds": 1.1217127,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_ui_contract_test.log",
+      "counts": {
+        "tests": 40,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_gui_test",
+      "exit": 0,
+      "seconds": 6.444774,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_ui_gui_test.log",
+      "counts": {
+        "tests": 81,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_largedata_perf_test",
+      "exit": 0,
+      "seconds": 12.8871903,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_ui_largedata_perf_test.log",
+      "counts": {
+        "tests": 3,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_perf_test",
+      "exit": 0,
+      "seconds": 1.7630804,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_ui_perf_test.log",
+      "counts": {
+        "tests": 3,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_test",
+      "exit": 0,
+      "seconds": 1.8938373,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_ui_test.log",
+      "counts": {
+        "tests": 278,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_workflow_contract_test",
+      "exit": 0,
+      "seconds": 3.952764,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_workflow_contract_test.log",
+      "counts": {
+        "tests": 77,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_workflow_test",
+      "exit": 0,
+      "seconds": 0.8798284,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "integration-sdurws_ird_workflow_test.log",
+      "counts": {
+        "tests": 196,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    }
+  ],
+  "integration-perf-retry": [
+    {
+      "timeoutSeconds": 600,
+      "seconds": 213.7889284,
+      "exit": 0,
+      "name": "sdurws_ird_optimization_perf_test",
+      "counts": {
+        "tests": 3,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    }
+  ],
+  "smoke": [
+    {
+      "name": "sdurws_ird_core_test",
+      "exit": 0,
+      "seconds": 0.6884865,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "smoke-sdurws_ird_core_test.log",
+      "counts": {
+        "tests": 63,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_diagnostics_contract_test",
+      "exit": 0,
+      "seconds": 0.3487215,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "smoke-sdurws_ird_diagnostics_contract_test.log",
+      "counts": {
+        "tests": 26,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_diagnostics_test",
+      "exit": 0,
+      "seconds": 1.1408126,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "smoke-sdurws_ird_diagnostics_test.log",
+      "counts": {
+        "tests": 117,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_drivetrain_contract_test",
+      "exit": 0,
+      "seconds": 0.540512,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_drivetrain_contract_test.log",
+      "counts": {
+        "tests": 15,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_drivetrain_test",
+      "exit": 0,
+      "seconds": 0.4914213,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_drivetrain_test.log",
+      "counts": {
+        "tests": 38,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_dynamics_contract_test",
+      "exit": 0,
+      "seconds": 0.3136656,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_dynamics_contract_test.log",
+      "counts": {
+        "tests": 30,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_dynamics_test",
+      "exit": 0,
+      "seconds": 0.4030685,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_dynamics_test.log",
+      "counts": {
+        "tests": 112,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\dynamics\\test\\DynPluginPanelTest.cpp:708\nenvUnavailable：无人值守门禁不做 GUI 运行验证——曲线视图/工作流页的呈现与交互由 sdurws_ird_dynamics_app harness 手动点验承载（units/dynamics.md §11.5 流程），本次未启动，留痕见 traceability/builds/wp17-t09/ 登记\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_evidence_contract_test",
+      "exit": 0,
+      "seconds": 0.2518979,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "smoke-sdurws_ird_evidence_contract_test.log",
+      "counts": {
+        "tests": 14,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_evidence_test",
+      "exit": 0,
+      "seconds": 0.4418104,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "smoke-sdurws_ird_evidence_test.log",
+      "counts": {
+        "tests": 205,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_execution_contract_test",
+      "exit": 0,
+      "seconds": 3.3265595,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_execution_contract_test.log",
+      "counts": {
+        "tests": 38,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_execution_perf_test",
+      "exit": 0,
+      "seconds": 40.0336121,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_execution_perf_test.log",
+      "counts": {
+        "tests": 4,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_execution_test",
+      "exit": 0,
+      "seconds": 2.9960688,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_execution_test.log",
+      "counts": {
+        "tests": 157,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_io_contract_test",
+      "exit": 0,
+      "seconds": 1.1454759,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_io_contract_test.log",
+      "counts": {
+        "tests": 9,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_io_test",
+      "exit": 0,
+      "seconds": 2.5554005,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_io_test.log",
+      "counts": {
+        "tests": 127,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_kinematics_contract_test",
+      "exit": 0,
+      "seconds": 0.3177446,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_kinematics_contract_test.log",
+      "counts": {
+        "tests": 57,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_kinematics_test",
+      "exit": 0,
+      "seconds": 20.1087807,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_kinematics_test.log",
+      "counts": {
+        "tests": 224,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\kinematics\\test\\PluginPanelTest.cpp:658\nGUI 呈现仅登记（envUnavailable 如实登记——不标注通过）\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_modeling_contract_test",
+      "exit": 0,
+      "seconds": 0.4181696,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_modeling_contract_test.log",
+      "counts": {
+        "tests": 8,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_modeling_gui_test",
+      "exit": 0,
+      "seconds": 2.0109932,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_modeling_gui_test.log",
+      "counts": {
+        "tests": 37,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_modeling_test",
+      "exit": 0,
+      "seconds": 0.6579197,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_modeling_test.log",
+      "counts": {
+        "tests": 311,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_optimization_contract_test",
+      "exit": 0,
+      "seconds": 1.8693354,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_optimization_contract_test.log",
+      "counts": {
+        "tests": 52,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_optimization_perf_test",
+      "exit": 0,
+      "seconds": 273.2475646,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_optimization_perf_test.log",
+      "counts": {
+        "tests": 3,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_optimization_test",
+      "exit": 0,
+      "seconds": 0.450525,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_optimization_test.log",
+      "counts": {
+        "tests": 215,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\optimization\\test\\OptPluginPanelTest.cpp:1534\nenvUnavailable：无人值守门禁不做 GUI 运行验证——四页主面板（变量表/约束页/运行控制/候选表与对比）的呈现与交互由宿主装配批次的开发 harness 手动点验承载（units/optimization.md §13.3 GUI 约束），本次未启动，如实登记不标注通过\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_policy_contract_test",
+      "exit": 0,
+      "seconds": 0.2547961,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "smoke-sdurws_ird_policy_contract_test.log",
+      "counts": {
+        "tests": 8,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_policy_test",
+      "exit": 0,
+      "seconds": 0.3290587,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "smoke-sdurws_ird_policy_test.log",
+      "counts": {
+        "tests": 141,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_project_contract_test",
+      "exit": 0,
+      "seconds": 8.8832909,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_project_contract_test.log",
+      "counts": {
+        "tests": 32,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_project_perf_test",
+      "exit": 0,
+      "seconds": 38.5886296,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_project_perf_test.log",
+      "counts": {
+        "tests": 2,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_project_test",
+      "exit": 0,
+      "seconds": 21.8485908,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_project_test.log",
+      "counts": {
+        "tests": 277,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_reporting_contract_test",
+      "exit": 0,
+      "seconds": 0.3118707,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_reporting_contract_test.log",
+      "counts": {
+        "tests": 65,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_reporting_test",
+      "exit": 0,
+      "seconds": 0.8338169,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_reporting_test.log",
+      "counts": {
+        "tests": 233,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_requirements_contract_test",
+      "exit": 0,
+      "seconds": 0.3197556,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_requirements_contract_test.log",
+      "counts": {
+        "tests": 16,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_requirements_gui_test",
+      "exit": 0,
+      "seconds": 3.1757336,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_requirements_gui_test.log",
+      "counts": {
+        "tests": 49,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_requirements_test",
+      "exit": 0,
+      "seconds": 0.5172858,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_requirements_test.log",
+      "counts": {
+        "tests": 214,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "GuiRegistration.V22RegisteredNotExecuted_ACC1",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\requirements\\test\\GoldenDatasetsContractTest.cpp:2018\nV-22 GUI 流程仅登记（envUnavailable 如实登记）\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_runtime_test",
+      "exit": 0,
+      "seconds": 0.3878357,
+      "status": "PASS",
+      "xml": true,
+      "json": false,
+      "log": "smoke-sdurws_ird_runtime_test.log",
+      "counts": {
+        "tests": 179,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": false
+    },
+    {
+      "name": "sdurws_ird_selection_contract_test",
+      "exit": 0,
+      "seconds": 0.338852,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_selection_contract_test.log",
+      "counts": {
+        "tests": 64,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_selection_test",
+      "exit": 0,
+      "seconds": 0.354687,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_selection_test.log",
+      "counts": {
+        "tests": 285,
+        "failed": 0,
+        "skipped": 1,
+        "disabled": 0
+      },
+      "skippedCases": [
+        {
+          "case": "SelPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable",
+          "reason": "D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\selection\\test\\SelPluginPanelTest.cpp:621\nenvUnavailable：无人值守门禁不做 GUI 运行验证——工作流页/目录管理页/候选表页的呈现与交互由 sdurws_ird_selection_app harness 手动点验承载（units/selection.md §15.3 流程），本次未启动，留痕见 traceability/builds/wp19-t10/ 登记\n"
+        }
+      ],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_testkit_test",
+      "exit": 0,
+      "seconds": 10.2714416,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_testkit_test.log",
+      "counts": {
+        "tests": 110,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_trajectory_contract_test",
+      "exit": 0,
+      "seconds": 0.5051554,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_trajectory_contract_test.log",
+      "counts": {
+        "tests": 51,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_trajectory_test",
+      "exit": 0,
+      "seconds": 0.2947278,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_trajectory_test.log",
+      "counts": {
+        "tests": 34,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_contract_test",
+      "exit": 0,
+      "seconds": 1.2109771,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_ui_contract_test.log",
+      "counts": {
+        "tests": 27,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_gui_test",
+      "exit": 0,
+      "seconds": 6.5014545,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_ui_gui_test.log",
+      "counts": {
+        "tests": 72,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_largedata_perf_test",
+      "exit": 0,
+      "seconds": 19.3271804,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_ui_largedata_perf_test.log",
+      "counts": {
+        "tests": 3,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_perf_test",
+      "exit": 0,
+      "seconds": 1.9035993,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_ui_perf_test.log",
+      "counts": {
+        "tests": 3,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_ui_test",
+      "exit": 0,
+      "seconds": 1.9482292,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_ui_test.log",
+      "counts": {
+        "tests": 255,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_workflow_contract_test",
+      "exit": 0,
+      "seconds": 6.2360849,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_workflow_contract_test.log",
+      "counts": {
+        "tests": 77,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    },
+    {
+      "name": "sdurws_ird_workflow_test",
+      "exit": 0,
+      "seconds": 1.5963582,
+      "status": "PASS",
+      "xml": true,
+      "json": true,
+      "log": "smoke-sdurws_ird_workflow_test.log",
+      "counts": {
+        "tests": 196,
+        "failed": 0,
+        "skipped": 0,
+        "disabled": 0
+      },
+      "skippedCases": [],
+      "nativeJson": true
+    }
+  ]
+}

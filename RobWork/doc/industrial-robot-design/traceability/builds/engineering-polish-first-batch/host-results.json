@@ -1,0 +1,20 @@
+[
+  {
+    "mode": "auto",
+    "exit": 1,
+    "timeout": false,
+    "seconds": 3.0122567
+  },
+  {
+    "mode": "modeling-tour",
+    "exit": 0,
+    "timeout": false,
+    "seconds": 8.3842836
+  },
+  {
+    "mode": "requirements-tour",
+    "exit": 0,
+    "timeout": false,
+    "seconds": 11.1600975
+  }
+]

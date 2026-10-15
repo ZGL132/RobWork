@@ -1395,6 +1395,10 @@ public:
 
 ---
 
+### 12.1 工程打磨后继 RT-T16（2026-10-15）
+
+对应 DTB WP-06-T16，canonical 契约 `tasks/foundation/RT-T16.json`，status=ready，尚未实施。F-784 在当前 runtime 实库双尺度复现；范围为 S3 DescriptionValidator 与 S5 CanonicalModelBuilder 的惯量相对对称性（附录 D #6）及对称化后严格 SPD（#7）。小尺度明显相对不对称必须拒绝，大尺度相对容差内不得误拒；用缩放/零/非有限和边界反例验证，不改公共模型布局、输入物理值或身份算法。
+
 ## 13. 后续阶段承接与接口交接清单
 
 ### 13.1 runtime 在后续阶段的交付（本文已设计、随阶段落地）

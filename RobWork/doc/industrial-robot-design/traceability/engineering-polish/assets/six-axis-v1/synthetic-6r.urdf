@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!-- 合成解析案例；effort=100 N*m 仅导入字段测试值，禁止当作真实驱动能力。 -->
+<robot name="qp_reference_synthetic_6r">
+  <link name="l0">
+    <inertial>
+      <origin xyz="0.125 0.01 0" rpy="0 0 0" />
+      <mass value="10" />
+      <inertia ixx="0.07083333333333332" iyy="0.07083333333333332" izz="0.10416666666666667" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0.125 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.25 0.25 0.15" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.125 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.25 0.25 0.15" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="l1">
+    <inertial>
+      <origin xyz="0.075 0.01 0" rpy="0 0 0" />
+      <mass value="5" />
+      <inertia ixx="0.07604166666666667" iyy="0.07604166666666667" izz="0.01875" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0.075 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.15 0.15 0.4" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.075 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.15 0.15 0.4" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="l2">
+    <inertial>
+      <origin xyz="0.25 0.01 0" rpy="0 0 0" />
+      <mass value="8" />
+      <inertia ixx="0.0192" iyy="0.17626666666666668" izz="0.17626666666666668" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0.25 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.5 0.12 0.12" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.25 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.5 0.12 0.12" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="l3">
+    <inertial>
+      <origin xyz="0.25 0.01 0" rpy="0 0 0" />
+      <mass value="6" />
+      <inertia ixx="0.010000000000000002" iyy="0.13" izz="0.13" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0.25 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.5 0.1 0.1" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.25 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.5 0.1 0.1" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="l4">
+    <inertial>
+      <origin xyz="0.15 0.01 0" rpy="0 0 0" />
+      <mass value="3" />
+      <inertia ixx="0.0032" iyy="0.0241" izz="0.0241" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0.15 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.3 0.08 0.08" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.15 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.3 0.08 0.08" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="l5">
+    <inertial>
+      <origin xyz="0.1 0.01 0" rpy="0 0 0" />
+      <mass value="2" />
+      <inertia ixx="0.0016333333333333336" iyy="0.007483333333333335" izz="0.007483333333333335" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0.1 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.2 0.07 0.07" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.1 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.2 0.07 0.07" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="l6">
+    <inertial>
+      <origin xyz="0.05 0.01 0" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.0006" iyy="0.0011333333333333334" izz="0.0011333333333333334" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0.05 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.06 0.06" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.05 0.01 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.06 0.06" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="tool">
+    <inertial>
+      <origin xyz="0.03 0.01 0.04" rpy="0 0 0" />
+      <mass value="1" />
+      <inertia ixx="0.0017333333333333333" iyy="0.0020333333333333336" izz="0.0013666666666666669" ixy="0" ixz="0" iyz="0" />
+    </inertial>
+    <visual>
+      <origin xyz="0.03 0.01 0.04" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.08 0.12" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.03 0.01 0.04" rpy="0 0 0" />
+      <geometry>
+        <box size="0.1 0.08 0.12" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="j1" type="revolute">
+    <parent link="l0" />
+    <child link="l1" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.14" upper="3.14" velocity="1" effort="100" />
+  </joint>
+  <joint name="j2" type="revolute">
+    <parent link="l1" />
+    <child link="l2" />
+    <origin xyz="0 0 0.4" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.5" upper="1.5" velocity="1" effort="100" />
+  </joint>
+  <joint name="j3" type="revolute">
+    <parent link="l2" />
+    <child link="l3" />
+    <origin xyz="0.5 0 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.5" upper="1.5" velocity="1" effort="100" />
+  </joint>
+  <joint name="j4" type="revolute">
+    <parent link="l3" />
+    <child link="l4" />
+    <origin xyz="0.5 0 0" rpy="0 0 0" />
+    <axis xyz="1 0 0" />
+    <limit lower="-3.14" upper="3.14" velocity="1" effort="100" />
+  </joint>
+  <joint name="j5" type="revolute">
+    <parent link="l4" />
+    <child link="l5" />
+    <origin xyz="0.3 0 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.5" upper="1.5" velocity="1" effort="100" />
+  </joint>
+  <joint name="j6" type="revolute">
+    <parent link="l5" />
+    <child link="l6" />
+    <origin xyz="0.2 0 0" rpy="0 0 0" />
+    <axis xyz="1 0 0" />
+    <limit lower="-3.14" upper="3.14" velocity="1" effort="100" />
+  </joint>
+  <joint name="tcp_fixed" type="fixed">
+    <parent link="l6" />
+    <child link="tool" />
+    <origin xyz=".15 0 .1" rpy="0 0 1.5707963267948966" />
+  </joint>
+</robot>

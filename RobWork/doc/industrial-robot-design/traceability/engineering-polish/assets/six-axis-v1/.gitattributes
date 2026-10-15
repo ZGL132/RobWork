@@ -1,0 +1,2 @@
+# 版本化输入摘要以原始字节为准；保留 CRLF，允许 CR 位于行尾。
+* -text whitespace=cr-at-eol
