@@ -889,6 +889,16 @@ TwoStageRunResult TwoStageEvaluationOrchestrator::run(const TwoStageRunRequest& 
     //      按 patches 生成序推进（确定性——同候选集合同评估序）。
     result.runPhase = RunPhase::VerifiedReview;
     std::size_t verifiedCursor = 0;  // 已派发幸存者游标（取消时部分批保留）
+    // 已复核的唯一候选身份表（R3 审计 A4 修复，2026-10-15）：生成器允许
+    // 产出同身份重复补丁（枚举维度同下标/量化维度坍缩同格/无采样维度全
+    // 同基线身份——hpp 头注自认），而 survivorIds 是去重后的唯一幸存者
+    // 集；原游标按"补丁出现次数"自增、终止条件却对唯一集比较——重复补
+    // 丁先出现时会提前耗尽席位，排在其后的不同幸存者被静默漏复核（运
+    // 行 Completed 但结果缺失、不进 Pareto、不出正式资格）。游标改按
+    // "已复核的唯一 candidateId 数"推进：同身份重复补丁直接跳过（同 id
+    // ⇒同 slice⇒同评估结论，重复评估只会命中会话底账回放）。
+    std::vector<CandidateId> reviewedIds;
+    reviewedIds.reserve(survivorIds.size());
     for (const auto& patch : patches) {
         if (verifiedCursor >= survivorIds.size()) {
             break;  // 幸存集已全复核
@@ -912,7 +922,16 @@ TwoStageRunResult TwoStageEvaluationOrchestrator::run(const TwoStageRunRequest& 
             continue;  // 非幸存者不进复核批（Quick 淘汰终局——不自动升级，
                        //  §8.4"不自动升级"行）
         }
+        const bool alreadyReviewed
+            = std::any_of(reviewedIds.begin(), reviewedIds.end(),
+                          [&](const CandidateId& id) {
+                              return id == candidateId;
+                          });
+        if (alreadyReviewed) {
+            continue;  // 同身份重复补丁——不重复占席位不重复评估（R3-A4）
+        }
         ++verifiedCursor;
+        reviewedIds.push_back(candidateId);
         const CandidateProjection projection
             = m_deps.projector->project(patch, request.config.variables);
         TwoStageRunRecord record = evaluateCandidate(
