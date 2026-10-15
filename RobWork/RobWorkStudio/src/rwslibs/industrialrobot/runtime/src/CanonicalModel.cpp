@@ -635,8 +635,17 @@ CanonicalModel CanonicalModelBuilder::build() const
         if (!(normSq > 0.0)) {
             throw inputInvalid(what + ".axis：零向量非法（MDL-11——任意有限非零轴）");
         }
-        const double norm = std::sqrt(normSq);
-        for (int k = 0; k < 3; ++k) { j.axis(k) = j.axis(k) / norm; }
+        // 轴向规格化的路径分派（R3 审计 A3 修复，2026-10-15）：对**已单
+        // 位化**的轴再做 y/sqrt(Σyᵢ²) 不是逐位不动点（IEEE 双精度下约三
+        // 成概率逐位漂移）——构造路径（S5，来自 Description 的任意轴）必
+        // 须规格化；parse 重建路径经 setAxesPreNormalized(true) 声明输入
+        // 已规范（编码侧 builder 产物），跳过除法以保 parse(encode(x))==x
+        // 的位级往返（身份复核仍按实际字节重算——防御不变）。有限性/非
+        // 零校验两路径同等执行。
+        if (!m_axesPreNormalized) {
+            const double norm = std::sqrt(normSq);
+            for (int k = 0; k < 3; ++k) { j.axis(k) = j.axis(k) / norm; }
+        }
         // 关节原点变换（T_parent_joint）。
         requireValidTransform(j.origin, what + ".origin");
         // 零位偏置有限（单位 rad 或 m——随 type）。

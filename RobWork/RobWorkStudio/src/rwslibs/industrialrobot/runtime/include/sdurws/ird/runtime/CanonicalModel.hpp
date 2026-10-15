@@ -664,6 +664,30 @@ public:
     }
 
     /**
+     * @brief 声明关节轴向已是单位向量（R3 审计 A3 修复，2026-10-15）。
+     *
+     * 背景：build() 的轴向"就地单位化"（§4.3.3 axis 行明文的构造步骤）
+     * 对**已单位化**的轴不是逐位不动点——IEEE 双精度下 y/sqrt(Σyᵢ²) 对
+     * ‖y‖=1 的 y 有约三成概率产生逐位漂移（约 1 ulp）。构造路径（S5 编
+     * 译，来自 Description 的任意有限非零轴）必须规格化；但编码→解码往
+     * 返路径（Codec::parse 重建）的输入轴来自已规格化模型的编码字节——
+     * 再规格化会产生逐位漂移，使重建身份≠编码携带身份，parse(encode(x))
+     * ==x 被破坏（worker 物化通道对一般轴向模型确定性失败）。本旗标供
+     * parse 路径声明"轴已规范"：build 仍做有限性/非零校验（防御不变）
+     * ，仅跳过除法。
+     *
+     * 契约：置 true 的调用方必须保证输入轴已是单位向量（当前唯一调用方
+     * ＝Codec::parse——编码侧 builder 已规格化）；违约不影响身份安全性
+     * （身份按实际字节重算核对）但产出的模型轴非单位（下游 FK 语义由调
+     * 用方负责）。默认 false＝构造路径原语义。
+     */
+    CanonicalModelBuilder& setAxesPreNormalized(bool preNormalized)
+    {
+        m_axesPreNormalized = preNormalized;
+        return *this;
+    }
+
+    /**
      * @brief 校验＋规范化＋派生＋索引＋身份计算，产出不可变模型。
      *
      * @return 构造完成的 CanonicalModel（contentIdentity 非零；值语义独立）
@@ -688,6 +712,7 @@ private:
     CanonicalDrivetrain m_drivetrain;
     std::vector<ResourceRef> m_resourceManifest;
     std::vector<core::DiagnosticRecord> m_diagnostics;
+    bool m_axesPreNormalized = false;  ///< 轴已规范声明（parse 重建路径——R3-A3）
 };
 
 }  // namespace sdurws::ird::runtime

@@ -27,6 +27,7 @@
 
 #include <gtest/gtest.h>
 
+#include <cmath>
 #include <cstdint>
 #include <cstring>  // std::memcmp（F-618 级别字节定位）
 #include <string>
@@ -55,6 +56,70 @@ TEST(CodecRoundtripTest, MinimalModelRoundtripsExactly)
     ASSERT_TRUE(parsed.ok()) << "解码失败：" << parsed.error().what();
     EXPECT_EQ(parsed.get(), m) << "parse(encode(x))==x（全字段——§4.3.6 字节相同）";
     EXPECT_EQ(parsed.get().contentIdentity(), m.contentIdentity());
+    EXPECT_EQ(rtcodec::encode(parsed.get()), bytes) << "往返后再编码＝逐字节稳定";
+}
+
+/**
+ * R3 审计 A3 回归：非坐标轴模型的 parse(encode(x))==x。历史缺陷：builder
+ * 对**已单位化**的轴再规格化不是逐位不动点（IEEE 双精度 y/sqrt(Σyᵢ²) 约
+ * 三成概率 1 ulp 漂移）——parse 重建路径再规格化使重建身份≠编码携带身
+ * 份，一般轴向模型（6 轴约 91% 概率）确定性失败；既有夹具全用坐标轴
+ * （除以 normSq=1.0 精确无舍入）故系统性盲区。修复＝parse 重建路径声明
+ * setAxesPreNormalized(true) 跳过再规格化（编码侧已规范；身份复核仍按
+ * 实际字节重算）。
+ *
+ * 轴选择（确定性）：在整数轴候选中寻找"再规格化逐位漂移"的一般轴（与
+ * 旧 builder 同式算术）——单个随机轴漂移概率约 1/3，9×9×9 候选全不漂的
+ * 概率 ≈1e-76（实际必命中）；漂移判定使本用例在缺陷形态下必然红（身份
+ * 失配）而非概率性空转。
+ */
+TEST(CodecRoundtripTest, NonCoordinateAxisRoundtripsExactly_R3_A3)
+{
+    // 寻找漂移轴（与旧 builder 同式：x/sqrt(Σxᵢ²)，IEEE 双精度逐位比较）。
+    rw::math::Vector3D<double> chosen(0.0, 0.0, 0.0);
+    bool found = false;
+    for (int a = 1; a <= 9 && !found; ++a) {
+        for (int b = 1; b <= 9 && !found; ++b) {
+            for (int c = 1; c <= 9 && !found; ++c) {
+                const double ax = double(a);
+                const double ay = double(b);
+                const double az = double(c);
+                const double n = std::sqrt(ax * ax + ay * ay + az * az);
+                const double vx = ax / n;
+                const double vy = ay / n;
+                const double vz = az / n;
+                const double n2 = std::sqrt(vx * vx + vy * vy + vz * vz);
+                const double wx = vx / n2;
+                const double wy = vy / n2;
+                const double wz = vz / n2;
+                if (wx != vx || wy != vy || wz != vz) {
+                    chosen = rw::math::Vector3D<double>(ax, ay, az);
+                    found = true;
+                }
+            }
+        }
+    }
+    ASSERT_TRUE(found) << "未找到再规格化漂移轴（概率 ≈1e-76 的病态情形——"
+                          "请复核本测试的算术）";
+
+    auto f = minimalFixture();
+    f.chain.joints.at(0).axis = chosen;
+    const CanonicalModel m = f.build();
+    // 构造面不变量仍成立：轴已规格化（build 的构造路径语义不受影响）。
+    const double normSq = m.chain().joints.at(0).axis(0) * m.chain().joints.at(0).axis(0)
+                          + m.chain().joints.at(0).axis(1) * m.chain().joints.at(0).axis(1)
+                          + m.chain().joints.at(0).axis(2) * m.chain().joints.at(0).axis(2);
+    EXPECT_NEAR(normSq, 1.0, 1e-12) << "构造路径轴向规格化语义保持";
+
+    const std::vector<std::uint8_t> bytes = rtcodec::encode(m);
+    const auto parsed = rtcodec::parse(bytes);
+    ASSERT_TRUE(parsed.ok()) << "漂移轴模型解码失败（R3-A3 修复前此处因再规"
+                                "格化逐位漂移报\"内容身份不符\"）："
+                             << parsed.error().what();
+    EXPECT_EQ(parsed.get(), m) << "parse(encode(x))==x（非坐标轴全字段）";
+    EXPECT_EQ(parsed.get().chain().joints.at(0).axis(0),
+              m.chain().joints.at(0).axis(0))
+        << "轴分量逐位保真（无再规格化漂移）";
     EXPECT_EQ(rtcodec::encode(parsed.get()), bytes) << "往返后再编码＝逐字节稳定";
 }
 
