@@ -1,7 +1,8 @@
 /**
  * @file   DefectPinningTest.cpp
- * @brief  E2 审计批缺陷钉扎用例组（F-554/F-557/F-558/F-714）——宿主装配
- *         面接线形态与框架补丁面的常驻自证。
+ * @brief  E2 审计批缺陷钉扎用例组（F-554/F-557/F-558/F-714＋E2-UI-B 批
+ *         F-559/F-560/F-561）——宿主装配面接线形态、框架补丁面与三维投
+ *         影层清除簇的常驻自证。
  *
  * 设计依据：
  *   - findings.json F-554（宿主就绪门控五处计算点以空 CheckContext 调域
@@ -27,6 +28,26 @@
  *     处错误）；修复＝SA-02 补丁 0002：该 TU 序言区定义 NOMINMAX 宏
  *     守卫——windows.h 随之不再定义 min/max，rw/math 与 Eigen 两族
  *     污染点同时免疫）；
+ *   - findings.json F-559（宿主三维投影三层缓存 m_reqMarkers/m_reqBox/
+ *     m_reqGrid 不在任何项目关闭拍清理——ird 项目关闭经
+ *     UiSessionController Draining→teardownSharedSurfacesForClose，不经
+ *     宿主框架 WorkCell 关闭拍→onSceneCleared→removePreview 不触发，
+ *     A 项目缓存残值被 B 项目首个标记合并投递重挂＝跨项目串呈现；修复
+ *     ＝UI-T77 teardown 第九类收口：三缓存清零＋网关整组摘除，先清后
+ *     摘——摘除失败时缓存已归零，新项目首投递不携带残值）；
+ *   - findings.json F-560（删除最后一个区域后三维框/格层永不清除——面
+ *     板 renderRegionPage 空集合分支只清标签文本不投递，宿主缓存残值被
+ *     后续标记合并投递重挂；修复＝UI-T77：RegionPreviewSink 签名改
+ *     optional（nullopt＝空态投递），面板空集合投 nullopt，宿主空态分
+ *     支两缓存清零后合并投递（boxOutline/sampleGrid 均 nullopt＝两层同
+ *     拍清除）——面板生产侧已有 gui 行为用例
+ *     RegionPreviewSink_EmptySetDeliversNullopt_UI_T77 钉扎，本批钉宿主
+ *     消费侧形态）；
+ *   - findings.json F-561（区域参考系不可解析分支只清框层不清格层——
+ *     refResolved=false 时 m_reqGrid 保持上一区域旧值合并投递，「半新半
+ *     旧」在原子替换语义自家分支内复活，且 logDev 文本自称「框层清除」
+ *     与实际行为不符；修复＝UI-T77：失败分支同拍 m_reqGrid.reset()，
+ *     logDev 文本更正「框/格层清除」——文本与行为一致）；
  *   - units/ui.md §12.3 静态扫描口径；同构先例：ui/test/BuildRedLineTest.cpp
  *     （运行期源码扫描，IRD_UI_UNIT_ROOT 注入、注释剥离、正向控制——
  *     EX-T01 P-EX-1"常驻自证"形态）。
@@ -48,6 +69,17 @@
  * 判定口径：注释剥离后扫描（判定对象是代码行为——注释散文中的缺陷形态
  * 字样属文档性提及，如 UiPlugin.cpp 缝构造处的 F-558 修复说明注释；与
  * ird_gates/BuildRedLineTest 同口径，避免双口径漂移）。
+ *
+ * E2-UI-B 批（F-559/F-560/F-561）为何同为形态扫描：三缺陷的修复本体都
+ * 落在 IrdWorkbenchHostPlugin 的 Qt 装配面（teardownSharedSurfacesForClose
+ * 与 bindRegionPreviewSink 闭包——构造依赖 RobWorkStudio 宿主注入链，
+ * 无法无头实例化完整装配序；findings 条目登记的修复均落在 UI-T77 提交
+ * 7d7ade8e，经亲读确认缺陷已消除，故本批按修复纪律④零产品源码改动，
+ * 只补 F-id 命名的常驻钉扎）。三层缓存与两分支的清除行为没有域侧替身
+ * 可驱动（闭包体捕获网关与诊断管道，均为宿主装配产物）——宿主侧清除
+ * 收口的"接线正确性"在本仓库的既定钉扎手法即运行期源码扫描。扫描以
+ * 函数体/分支切片定位（锚点均唯一），断言"清除动作在正确的分支内、按
+ * 正确的次序、以与日志文本一致的含义发生"。
  */
 
 #include <gtest/gtest.h>
@@ -126,6 +158,57 @@ std::size_t countOccurrences(const std::string& text, const std::string& needle)
         ++count;
     }
     return count;
+}
+
+/// 提取函数体（E2-UI-B 批辅助）：在注释已剥离的文本上定位唯一的函数定
+/// 义标记，自首个 '{' 起做花括号深度计数，返回含首尾花括号的完整函数体。
+/// 用途＝把"某清除动作必须在某个具体函数内发生"的断言从全文件级收窄到
+/// 函数级——这些缓存操作在文件其他位置有合法同形出现（如标记 sink 每次投
+/// 递前的 m_reqMarkers.clear()），全文件计数会既漏报又误报。注意：若函数
+/// 体内字符串字面量出现不平衡花括号会截断提取窗——截断只会让断言失败
+/// （响亮红），不会制造假绿。找不到标记/花括号失配返回空串（调用方
+/// ASSERT 拦截——扫描面失真不留假阳性通道）。
+std::string functionBody(const std::string& stripped, const std::string& defMarker)
+{
+    const std::size_t defPos = stripped.find(defMarker);
+    if (defPos == std::string::npos) {
+        return {};
+    }
+    const std::size_t bodyStart = stripped.find('{', defPos);
+    if (bodyStart == std::string::npos) {
+        return {};
+    }
+    int depth = 0;
+    for (std::size_t i = bodyStart; i < stripped.size(); ++i) {
+        if (stripped[i] == '{') {
+            ++depth;
+        } else if (stripped[i] == '}') {
+            --depth;
+            if (depth == 0) {
+                return stripped.substr(bodyStart, i - bodyStart + 1);
+            }
+        }
+    }
+    return {};
+}
+
+/// 分支切片（E2-UI-B 批辅助）：取 [beginMarker 首次出现, endMarker 首次
+/// 出现) 的文本窗——两个锚点都要求唯一（调用方以 countOccurrences 前置
+/// 断言锚点唯一性，防锚漂移到别处把窗撑大）；任一锚点缺失返回空串。
+/// 用途＝"失败分支/空态分支内必须有某清除动作"的窗口级断言（窗口窄于
+/// 全文件、无需完整括号配对）。
+std::string sliceBetween(const std::string& stripped, const std::string& beginMarker,
+                         const std::string& endMarker)
+{
+    const std::size_t beginPos = stripped.find(beginMarker);
+    if (beginPos == std::string::npos) {
+        return {};
+    }
+    const std::size_t endPos = stripped.find(endMarker, beginPos + beginMarker.size());
+    if (endPos == std::string::npos) {
+        return {};
+    }
+    return stripped.substr(beginPos, endPos - beginPos);
 }
 
 }  // namespace
@@ -342,4 +425,183 @@ TEST(DefectPinning, SimulatorPluginTU_NomimaxGuardBeforeFirstInclude_F714)
     EXPECT_NE(patchBody.find("NOMINMAX"), std::string::npos)
         << "0002 补丁不含 NOMINMAX 防护（登记与补丁本体漂移——防护手段"
            "与 findings owner 处方不符）";
+}
+
+// =====================================================================
+// E2-UI-B 批——三维投影层清除簇钉扎（F-559/F-560/F-561）
+// =====================================================================
+
+/**
+ * F-559 钉扎（项目关闭拍的三维预览缓存收口形态）：teardownSharedSurfaces
+ * ForClose 函数体（注释剥离后、按函数体切片断言——三层缓存在文件其他位
+ * 置有合法同形操作，全文件计数会误报）内必须：
+ * ①m_reqMarkers.clear() ＋ m_reqBox.reset() ＋ m_reqGrid.reset() 三缓存清
+ *   零各至少一处（缺陷形态＝八类收口无第九类——三缓存残值跨项目存活，
+ *   被 B 项目首个标记合并投递以 update.boxOutline=m_reqBox 原子替换语义
+ *   重挂＝A 项目的框/格/标记呈现在 B 项目复活）；
+ * ②m_view3dGateway->removePreview() 网关整组摘除在位（宿主框架 WorkCell
+ *   关闭拍的 onSceneCleared→removePreview 对 ird 项目关闭不触发——必须
+ *   在 teardown 内显式补拍）；
+ * ③次序约束：三缓存清零先于 removePreview（修复语义本身——即使摘除失
+ *   败〔场景不可得〕，缓存已归零，新项目首投递携带空区域/空格层，不会
+ *   重挂残值；次序颠倒＝摘除失败路径重新暴露串数据窗口）。
+ *
+ * 变异自证：还原缺陷形态（删除三缓存清零行）→ 本用例红（三计数断言失
+ * 败）→ 恢复 → 绿（_e2-evidence/mut-A-F559-*.log）。
+ *
+ * 需求锚：无直接需求条目（宿主项目关闭拍的会话呈现面缓存生命周期——
+ * UI-T23 契约 acceptance 4 关闭清理的第九类扩展，UI-T77 落地；同族纪律
+ * ＝F-550②「不残留旧呈现」），需求集如实留空，findings 追溯 F-559。
+ */
+TEST(DefectPinning, HostProjectCloseTeardown_PreviewCachesClearedBeforeRemovePreview_F559)
+{
+    // 无直接需求条目（构建/装配面缺陷同 F-714 口径）——findings 追溯登记。
+    IRD_TEST_INFO(std::vector<std::string>{}, std::vector<std::string>{"F-559"},
+                  std::nullopt);
+
+    const std::string stripped = stripComments(readFile(
+        unitRoot() / "ui" / "plugin" / "UiPlugin.cpp"));
+    ASSERT_FALSE(stripped.empty()) << "UiPlugin.cpp 读取失败（扫描面失真）";
+
+    // 函数体切片（定义标记唯一——前置断言锚点在位；标记漂移＝空体断言
+    // 失败，不留"扫错地方"的假绿通道）。
+    const std::string teardownDef =
+        "void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()";
+    ASSERT_EQ(countOccurrences(stripped, teardownDef), std::size_t{1})
+        << "teardownSharedSurfacesForClose 定义标记漂移（扫描锚失真）";
+    const std::string body = functionBody(stripped, teardownDef);
+    ASSERT_FALSE(body.empty()) << "teardown 函数体提取失败（花括号配对漂移）";
+
+    // ①三缓存清零各至少一处（下限断言——合法新增清理点不误红，任一缓
+    //   存被移出关闭拍即跌破）。
+    EXPECT_GE(countOccurrences(body, "m_reqMarkers.clear()"), std::size_t{1})
+        << "标记缓存未在项目关闭拍清零（F-559 缺陷形态回归——A 项目标记残值"
+           "跨项目存活）";
+    EXPECT_GE(countOccurrences(body, "m_reqBox.reset()"), std::size_t{1})
+        << "框层缓存未在项目关闭拍清零（F-559 缺陷形态回归——A 项目区域框"
+           "残值被 B 项目标记投递重挂）";
+    EXPECT_GE(countOccurrences(body, "m_reqGrid.reset()"), std::size_t{1})
+        << "格层缓存未在项目关闭拍清零（F-559 缺陷形态回归——A 项目采样格"
+           "＋着色残值跨项目存活）";
+
+    // ②网关整组摘除在位（ird 项目关闭不经过宿主框架关闭拍——必须在
+    //   teardown 内显式补 removePreview）。
+    const std::size_t removePreviewPos = body.find("m_view3dGateway->removePreview()");
+    EXPECT_NE(removePreviewPos, std::string::npos)
+        << "网关 removePreview 未在项目关闭拍补拍（F-559 缺陷形态回归——"
+           "旧呈现整组残留在网关侧）";
+
+    // ③次序约束：三缓存清零先于摘除（最后一次清零＝m_reqGrid——摘除失
+    //   败路径下缓存已归零的修复语义；用格层清零位置作次序锚）。
+    ASSERT_NE(removePreviewPos, std::string::npos)
+        << "（次序断言前置——摘除不在位时次序无从谈起，①②已报红）";
+    const std::size_t gridResetPos = body.find("m_reqGrid.reset()");
+    ASSERT_NE(gridResetPos, std::string::npos)
+        << "（次序断言前置——格层清零不在位时次序无从谈起，①已报红）";
+    EXPECT_LT(gridResetPos, removePreviewPos)
+        << "缓存清零晚于网关摘除（F-559 修复次序语义回归——摘除失败路径下"
+           "缓存未归零，串数据窗口重开）";
+}
+
+/**
+ * F-560 钉扎（区域集合空态的宿主消费侧形态）：bindRegionPreviewSink 闭包
+ * 的空态分支（`if (!geoOpt.has_value())` 唯一锚到首个 return 的切片）内
+ * 必须：
+ * ①m_reqBox.reset() ＋ m_reqGrid.reset() 两缓存清零（缺陷形态＝空态只到
+ *   面板标签、宿主缓存原值保留——后续标记合并投递以缓存值重挂，删除唯
+ *   一区域后三维框/格/着色永残留直到关项目）；
+ * ②applyPreview 合并投递在切片内（清除以「空＝清除该层」契约承载——
+ *   boxOutline/sampleGrid 均 nullopt 投递；只清缓存不投递则网关侧旧呈现
+ *   残留，同族缺陷面）。
+ *
+ * 面板生产侧（空集合→m_regionPreview(std::nullopt) 投递）已有 gui 行为
+ * 用例 RegionPreviewSink_EmptySetDeliversNullopt_UI_T77 钉扎（面板可无头
+ * 实例化）；本用例钉宿主消费侧（Qt 装配面，行为不可达）——两层互证。
+ *
+ * 变异自证：还原缺陷形态（删除空态分支两清零行）→ 本用例红 → 恢复 →
+ * 绿（_e2-evidence/mut-B-F560-*.log）。
+ *
+ * 需求锚：REQ-03（Box 工作区域定义——区域预览的呈现语义随区域集合真值；
+ * 与既有 gui 用例同锚）。
+ */
+TEST(DefectPinning, HostRegionPreviewEmptySet_ClearsCachesAndDeliversNulloptLayers_F560)
+{
+    IRD_TEST_INFO("REQ-03", {"F-560"}, std::nullopt);
+
+    const std::string stripped = stripComments(readFile(
+        unitRoot() / "ui" / "plugin" / "UiPlugin.cpp"));
+    ASSERT_FALSE(stripped.empty()) << "UiPlugin.cpp 读取失败（扫描面失真）";
+
+    // 切片锚点唯一性前置（锚漂移＝窗口失真——先红在锚上，不在断言上）。
+    ASSERT_EQ(countOccurrences(stripped, "bindRegionPreviewSink("), std::size_t{1})
+        << "bindRegionPreviewSink 接线点漂移（扫描锚失真——区域预览 sink 应"
+           "唯一绑定产品点）";
+    ASSERT_EQ(countOccurrences(stripped, "if (!geoOpt.has_value())"), std::size_t{1})
+        << "空态分支标记漂移（扫描锚失真）";
+    const std::string branch =
+        sliceBetween(stripped, "if (!geoOpt.has_value())", "return;");
+    ASSERT_FALSE(branch.empty()) << "空态分支切片提取失败（return 终点漂移）";
+
+    // ①两缓存清零在空态分支内（下限断言——空态两层同进退，缺一即红）。
+    EXPECT_GE(countOccurrences(branch, "m_reqBox.reset()"), std::size_t{1})
+        << "空态分支未清框层缓存（F-560 缺陷形态回归——删除唯一区域后框残值"
+           "被后续标记投递重挂）";
+    EXPECT_GE(countOccurrences(branch, "m_reqGrid.reset()"), std::size_t{1})
+        << "空态分支未清格层缓存（F-560 缺陷形态回归——采样格＋着色残值同"
+           "面重挂）";
+
+    // ②清除以合并投递承载（「空＝清除该层」契约的宿主侧兑现——nullopt
+    //   boxOutline/sampleGrid 抵达网关才真正清屏）。
+    EXPECT_GE(countOccurrences(branch, "applyPreview"), std::size_t{1})
+        << "空态分支缺合并投递（只清缓存不投递＝网关侧旧呈现残留——F-560"
+           "同族缺陷面）";
+}
+
+/**
+ * F-561 钉扎（参考系不可解析分支的格层对称清除＋日志诚实形态）：两半—
+ * ①行为半区：失败分支切片（成功支尾部 `m_reqGrid = grid;` 唯一锚 → 日
+ *   志文本锚「区域参考系不可解析」）内必须有 m_reqGrid.reset()——缺陷形
+ *   态＝该分支只清框层（box 保持 nullopt 随 m_reqBox=box 合并投递）而
+ *   m_reqGrid 保持上一区域旧值，「半新半旧」在原子替换语义自家分支内
+ *   复活（格层骨架线＋着色采样点跨区域/跨参考系漂浮）；
+ * ②文本半区：logDev 文本含「框/格层清除」恰一处（全文件计数——该文本
+ *   是失败分支可观测行为的自述，自述与行为一致是本条 findings 的显式
+ *   验收面；缺陷态文本自称「框层清除」掩盖格层残留）。
+ *
+ * 变异自证：C1 还原缺陷形态（删除失败分支 m_reqGrid.reset()）→ 行为半
+ * 区红；C2 文本回退「框层清除」→ 文本半区红；各自恢复 → 绿
+ * （_e2-evidence/mut-C1-F561-*.log／mut-C2-F561-*.log）。
+ *
+ * 需求锚：REQ-03（Box 工作区域定义——区域预览几何随参考系真值解析；
+ * 参考系不可解析＝诚实空态，不呈现半新半旧）。
+ */
+TEST(DefectPinning, HostRegionRefUnresolved_GridClearedSameTickAsBox_F561)
+{
+    IRD_TEST_INFO("REQ-03", {"F-561"}, std::nullopt);
+
+    const std::string stripped = stripComments(readFile(
+        unitRoot() / "ui" / "plugin" / "UiPlugin.cpp"));
+    ASSERT_FALSE(stripped.empty()) << "UiPlugin.cpp 读取失败（扫描面失真）";
+
+    // 切片锚点唯一性前置。成功支尾部锚 `m_reqGrid = grid;` 全文件恰一；
+    // 日志文本锚在字符串字面量内（stripComments 保留字面量）全文件恰一。
+    ASSERT_EQ(countOccurrences(stripped, "m_reqGrid = grid;"), std::size_t{1})
+        << "成功支格层赋值锚漂移（扫描锚失真）";
+    ASSERT_EQ(countOccurrences(stripped, "区域参考系不可解析"), std::size_t{1})
+        << "失败分支日志锚漂移（扫描锚失真）";
+
+    // ①行为半区：失败分支切片内格层清零在位（窗口＝成功支尾部到日志
+    //   文本——恰好覆盖 else if 失败支的清除段；格层清零缺位即红）。
+    const std::string failureBranch =
+        sliceBetween(stripped, "m_reqGrid = grid;", "区域参考系不可解析");
+    ASSERT_FALSE(failureBranch.empty()) << "失败分支切片提取失败（锚点漂移）";
+    EXPECT_GE(countOccurrences(failureBranch, "m_reqGrid.reset()"), std::size_t{1})
+        << "参考系不可解析分支未同拍清格层（F-561 缺陷形态回归——m_reqGrid"
+           "保持上一区域旧值合并投递，格层骨架＋着色点跨区域/跨参考系漂浮）";
+
+    // ②文本半区：日志自述「框/格层清除」恰一处（文本与实际行为一致——
+    //   缺陷态自称「框层清除」掩盖格层残留；全文件计数防别处同文案稀释）。
+    EXPECT_EQ(countOccurrences(stripped, "框/格层清除"), std::size_t{1})
+        << "失败分支日志文本与实际行为不一致（F-561 文本半区回归——自述应"
+           "为「框/格层清除」两层同拍；回退「框层清除」＝文本掩盖格层残留）";
 }
