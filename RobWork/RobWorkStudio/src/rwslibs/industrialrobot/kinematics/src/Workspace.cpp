@@ -708,14 +708,27 @@ buildWorkspacePointCloud(const WorkspaceSampleRun& run)
         // （绝不把未评价呈现为无碰撞）→ 有碰撞（解级碰撞状态或样本级
         // 碰撞过滤事实）→ 无碰撞（仅当碰撞检查在场时 0 才表示"已检查
         // 无碰撞"）。
+        // R3 审计 A7 修复（2026-10-15）：原实现的兜底 else 分支把"无
+        // collisionNotEvaluated 标记的一切样本"都归入无碰撞（0）——但
+        // 该标记只在会话缺席/证据缺失时由求解器置位；NotRun（取消后未
+        // 派发，槽保持预置初值）、设施失败轨 DataInsufficient、搜索未果
+        // （结局 2/3）与解析界限（结局 5）等"无任何构型经过碰撞检查"
+        // 的样本同样没有该标记，全部落进 else 被误标 collision-free 并
+        // 写入导出 CSV——直接违反本映射自身注释与 Workspace.hpp 的
+        // "绝不把未知呈现为无碰撞"契约。改为按"评价凭据"分派：仅当样
+        // 本携带已评价解（bestSolution 在场——会话在场时解必经碰撞检
+        // 查）才允许 0；无凭据样本（无解/未运行/设施失败）一律保守归
+        // 未评价（2）。
         if (r.collisionNotEvaluated) {
             p.collisionClass = 2U;
         } else if (r.collisionFiltered
                    || (r.bestSolution.has_value()
                        && r.bestSolution->collisionStatus.inCollision)) {
             p.collisionClass = 1U;
+        } else if (r.bestSolution.has_value()) {
+            p.collisionClass = 0U;  // 有解＝已评价凭据——0 才表示已检查无碰撞
         } else {
-            p.collisionClass = 0U;
+            p.collisionClass = 2U;  // 无凭据（未运行/无解/设施失败）——保守未评价
         }
 
         // 解级标量六元（bestSolution 直投——零二次换算；无解样本占位 0
