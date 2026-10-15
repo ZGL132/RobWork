@@ -1393,6 +1393,35 @@ bool resolvePartSlot(project::HandlerContext& ctx,
 {
     auto decoded = decodeSlotObject(slot);
     if (!decoded.has_value()) { return false; }
+    // 槽 token 与解码值类型一致性（R3 审计 A15 修复，2026-10-15）：解码
+    // 按字节内嵌 token 路由（Codec.cpp decode 的 variant 判别面），外层
+    // 槽 token 此前不参与类型核对——伪造/错装载荷（槽 token=X、字节为自
+    // 洽的 Y 类型对象）可完整通过下方身份一致性核对，四个部件处理器的
+    // std::get<T> 强取即抛 bad_variant_access（逃逸 prepare"不抛业务异
+    // 常"契约）；Restore 路径同根因则把 (oid, token=X, Y 字节) 写入计划
+    // 毒化存储（下次 rebuildBaseline 解码失败）。校验＝variant 实际类型
+    // 必须与槽 token 声明一致（部件槽词表四值——根对象槽不经本函数，
+    // decodeAndPlan 的根槽另有三重检查）。失配按既有约定转 invalid-
+    // payload（false 返回）。
+    const bool tokenMatchesType = std::visit(
+        [&slot](const auto& typed) {
+            using T = std::decay_t<decltype(typed)>;
+            if constexpr (std::is_same_v<T, RobotDesign>) {
+                return false;  // 部件槽不收根对象（根槽另有路径）
+            } else if constexpr (std::is_same_v<T, ToolDefinition>) {
+                return slot.objectTypeToken == std::string(kToolDefinitionObjectType);
+            } else if constexpr (std::is_same_v<T, SceneObject>) {
+                return slot.objectTypeToken == std::string(kSceneObjectObjectType);
+            } else if constexpr (std::is_same_v<T, PoseSet>) {
+                return slot.objectTypeToken == std::string(kNamedPoseSetObjectType);
+            } else {
+                static_assert(std::is_same_v<T, DrivetrainDesign>,
+                              "ObjectVariant 备择扩面时本核对须同步");
+                return slot.objectTypeToken == std::string(kRobotDrivetrainObjectType);
+            }
+        },
+        *decoded);
+    if (!tokenMatchesType) { return false; }
     // 槽身份与对象内身份一致性（值模型自述身份＝槽身份——防错位装配）。
     const core::ObjectId* inner = std::visit(
         [](const auto& typed) -> const core::ObjectId* {
