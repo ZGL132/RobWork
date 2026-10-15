@@ -264,13 +264,19 @@ void estimateSideLimit(double t, double sign, double delta,
 {
     // 内点采样（样条解析值——qd 一阶导、qdd 二阶导，rad/s、rad/s²）。
     const TimedSample sample = request.timeCurve->sampleAt(t);
-    // 一阶回推：qd_est = qd ∓ qdd·δ（sign=+1 左极限加、−1 右极限减）。
-    // 残差＝二阶项 O(jerk·δ²)（rad/s）——neighborDeltaS 的声明义务使残
-    // 差远小于判定容差（黄金算例声明——测试头注）。
+    // 一阶回推（R3 审计 A1 修复，2026-10-15）：qd_est = qd + sign·qdd·δ
+    // ——sign=+1 左极限加（qd⁻＝qd(t−δ)+qdd(t−δ)·δ）、−1 右极限减
+    // （qd⁺＝qd(t+δ)−qdd(t+δ)·δ），与上方参数注及文件头注"测量口径"
+    // 段的泰勒展开式逐字一致。原实现写成了 `-= sign·qdd·δ`（符号整体
+    // 相反），对完美 C² 连续的边界注入一阶虚假差 2δ(qdd⁺+qdd⁻)——远超
+    // 判定容差、高频误报速度连续违约；原黄金算例 qdd≡0 两符号同值故
+    // 未拦截（回归用例见 ContinuousProcessTest BoundaryTaylorSign_A1）。
+    // 修复后残差＝二阶项 O(jerk·δ²)（rad/s）——neighborDeltaS 的声明
+    // 义务使残差远小于判定容差（黄金算例声明——测试头注）。
     limitQd = sample.qd;
     for (std::size_t i = 0; i < static_cast<std::size_t>(sample.qdd.size());
          ++i) {
-        limitQd[i] -= sign * sample.qdd[i] * delta;
+        limitQd[i] += sign * sample.qdd[i] * delta;
     }
     speedOut = infinityNorm(limitQd);
 }
