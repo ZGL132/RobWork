@@ -17,6 +17,20 @@
  * license. For more information goto your RobWork directory and read license.txt.
  ************************************************************************/
 
+// ── F-714 修复（SA-02 补丁 0002，登记于 industrialrobot/patches/PATCHES.md）──
+// 本 TU 的 include 链经 OpenGL（glMultMatrixf/GLfloat 消费面）与宿主头在
+// rw/math 与 Eigen 头之前引入 <windows.h>：MSVC 的 min/max 函数式宏会把
+// rw/math/Math.hpp 内未括号化的 std::min/std::max 调用与同名函数声明展开
+// 成非法 token 序列（warning C4003 → error C2589/C2059），fresh 树全量
+// 构建在本插件处中断（acc/ui-t77/1 §14.1 实测 71 处错误）。
+// 在首个 #include 之前定义 NOMINMAX，windows.h 处理时即不再定义 min/max
+// 宏——rw/math 与 Eigen 两族污染点同时免疫（Eigen 属 vcpkg 第三方不可
+// 改，TU 级宏防护是覆盖该 TU 全部错误的最小修法；位置必须在首个 include
+// 之前：windows.h 一经处理宏即生效，其后补定义无效）。
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
 #include "RWSimulatorPlugin.hpp"
 
 #include <RobWorkStudio.hpp>
