@@ -840,6 +840,9 @@ DiagRefEntry readDiagRefEntry(Reader& r)
 /// CurrentnessSnapshot 编码（canonical 名序：computedAtUtc, evaluatedAgainst,
 /// reasons, status, unevaluableNote——§6.3；evidence::CurrentnessStatus 两
 /// 持久态＋nullopt 计算形态按 presence 承载）。
+/// 注意：computedAtUtc 仅入**编码**（记录性字段随往返/持久化留痕——§6.3
+/// 快照属性），**不入身份**——digestFull 在身份投影面按 §4.4 排除列/D-04
+/// 将其裁剪（F-815：构建墙钟不得进入 contentIdentity）。
 void writeCurrentnessSnapshot(Writer& w, const CurrentnessSnapshot& c)
 {
     writeTime(w, c.computedAtUtc);
@@ -1365,7 +1368,25 @@ core::ContentIdentity ReportCodec::digestFull(const ReportFullFields& full)
 {
     // contentIdentity＝Full canonical 字节的 SHA-256（§4.4——幂等导出与
     // 冲突判定的唯一依据，§4.1）。
-    return digestBytes(encodeFull(full));
+    //
+    // F-815 修复——§4.4 排除列裁剪（D-04"生成时间不入内容身份"）：章节级
+    // 当前性快照的 computedAtUtc 是构建墙钟（Builder 步③ system_clock::now
+    // 的记录性冻结，§6.3 快照属性），属"生成时刻事实"。缺陷态下它经
+    // writeCurrentnessSnapshot 进入 canonical 字节——同一数据集两次构建的
+    // 身份必不同，破坏「同内容重建身份一致」幂等判定基础（NFR-COR-02
+    // 确定性承诺的报告面）。修复取"身份按排除列裁剪"形态：裁剪**仅在
+    // 身份投影面**（下方值拷贝），编码/解码与渲染仍携带原值——记录性
+    // 字段照常随报告冻结留痕，与 Bundle totalDigest 排除 generatedAtUtc
+    // 同源纪律（D-04/units/reporting.md §4.4 排除列）。
+    ReportFullFields identityInput = full;
+    for (ReviewReportSection& section : identityInput.sections) {
+        if (section.currentness.has_value()) {
+            // 裁剪为 epoch 零值：占位值本身无语义，只保证同一数据集两次
+            // 构建裁剪后字节序列逐字节一致（差分消除——确定性恢复）。
+            section.currentness->computedAtUtc = std::chrono::system_clock::time_point{};
+        }
+    }
+    return digestBytes(encodeFull(identityInput));
 }
 
 }  // namespace sdurws::ird::reporting

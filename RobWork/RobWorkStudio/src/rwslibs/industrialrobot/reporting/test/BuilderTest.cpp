@@ -56,6 +56,7 @@
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <utility>
 #include <vector>
 
@@ -1135,6 +1136,126 @@ TEST(ReviewReportBuilderTest, SupersededCurrentness_CarriesReasonsAndSectionMark
     ASSERT_TRUE(kin.currentness.has_value());
     ASSERT_TRUE(kin.currentness->status.has_value());
     EXPECT_EQ(*kin.currentness->status, evidence::CurrentnessStatus::Superseded);
+}
+
+TEST(ReviewReportBuilderTest, SectionCurrentnessWallClock_NotInContentIdentity_F_815_D04)
+{
+    // F-815 回归钉（findings F-815；units/reporting.md §4.4 排除列/D-04
+    // ——「生成时间/生成者不入内容身份」；§7.1 内容幂等行）：章节引用
+    // Superseded 结果时，构建器冻结的章节级当前性快照携带 computedAtUtc
+    // （Builder 步③ system_clock::now 墙钟写点）。缺陷态下该墙钟经
+    // ReportCodec-Full canonical 编码（首字段）进入 contentIdentity——
+    // 同一数据集两次构建身份必不同，破坏「同内容重建身份一致」幂等判定
+    // 基础。本用例两次构建间显式等待，保证墙钟必前进：缺陷态差异确定性
+    // 出现（红），修复后按 §4.4 排除列裁剪身份必一致（绿）。
+    const core::RunId run = runId(kHex32D);
+
+    // Superseded 脚本（失效原因逐条原样——两次构建共用同一脚本值）。
+    evidence::InvalidationReason reason;
+    reason.dependencyKey = "robot-design";
+    reason.kind = evidence::InvalidationKind::ObjectContentChanged;
+    reason.detail = "TCP 对象内容变化（旧→新）";
+    const evidence::CurrentnessResult supersededScript =
+        currentnessScript(evidence::CurrentnessStatus::Superseded, {reason});
+
+    StandardScene sceneA = StandardScene::withRun(run);
+    sceneA.resultSource.currentness[run.toCanonical()] = supersededScript;
+    sceneA.addKinProvider(populatedKinContent(run));
+    ReviewReportBuilder builderA(sceneA.queryPort, sceneA.resultSource, sceneA.registry);
+    const ReportBuildOutcome first = builderA.build(standardRequest(run));
+    ASSERT_NE(first.report, nullptr);
+
+    // 墙钟必前进（Windows system_clock 分辨率远细于本等待——缺陷态的
+    // computedAtUtc 差异因此是确定性事实，非概率性抖动）。
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    StandardScene sceneB = StandardScene::withRun(run);
+    sceneB.resultSource.currentness[run.toCanonical()] = supersededScript;
+    sceneB.addKinProvider(populatedKinContent(run));
+    ReviewReportBuilder builderB(sceneB.queryPort, sceneB.resultSource, sceneB.registry);
+    const ReportBuildOutcome second = builderB.build(standardRequest(run));
+    ASSERT_NE(second.report, nullptr);
+
+    // 被测注入面确认：两次构建都引用 Superseded 结果——章节级当前性在场
+    // （下标 4＝词表行 5 kinematics-collision，与既有用例同口径）。
+    const ReviewReportSection& kinA = first.report->sections()[4];
+    const ReviewReportSection& kinB = second.report->sections()[4];
+    ASSERT_TRUE(kinA.currentness.has_value());
+    ASSERT_TRUE(kinB.currentness.has_value());
+    // 修复后本断言仍须成立：裁剪只在身份投影面——记录性字段本身照常随
+    // 报告冻结（§6.3 快照属性），两次构建的墙钟值确实不同（以 epoch 计数
+    // 比较时间点——time_point 相等即 epoch 相等，语义等价且宏兼容）。
+    EXPECT_NE(kinA.currentness->computedAtUtc.time_since_epoch().count(),
+              kinB.currentness->computedAtUtc.time_since_epoch().count())
+        << "前置确认：两次构建的 computedAtUtc 墙钟值确实不同（注入面成立）";
+    // D-04 核心断言：同数据集重建 contentIdentity 必一致——墙钟不入身份。
+    EXPECT_TRUE(first.report->contentIdentity() == second.report->contentIdentity())
+        << "F-815：computedAtUtc 墙钟不得进入 contentIdentity（§4.4 排除列/D-04）";
+}
+
+TEST(ReviewReportBuilderTest, SectionDiagnostics_FrozenIntoSectionAndIdentity_F_816_S434)
+{
+    // F-816 回归钉（findings F-816；units/reporting.md §4.3.4 diagnostics
+    // 行——「章节诊断（可空集）」随章节视图冻结；§9.2 错误行——提供方以
+    // status＋diagnostics 表达缺项，不抛业务结论）：缺陷态下章节冻结映射
+    // 漏 diagnostics 写点——content.diagnostics 仅并入报告级 diagMerger，
+    // section.diagnostics 恒空：①章节内容失真（HTML/JSON 章节诊断表永不
+    // 出现）；②仅诊断不同的投影得相同章节身份。本用例两断言分别钉住两
+    // 个失效面。
+    const core::RunId run = runId(kHex32D);
+
+    // 提供方脚本底座：NotApplicable 章节（语义自然成对——
+    // RPT-SECTION-NOT-APPLICABLE「不适用章节显式标记」；脚本码值仅要求
+    // 已收编可报告，默认码表未装配时保守放行——Builder lookupCodeMeta）。
+    // 两份脚本**仅 diagnostics 不同**（断言②的差分归因前提——其余字段
+    // 全同，身份差异才能唯一归因于章节诊断）。
+    SectionContent notApplicableBase;
+    notApplicableBase.status = SectionStatus::NotApplicable;
+    notApplicableBase.notApplicableReason = "该域在本级别无适用评估（脚本形态）";
+
+    SectionContent notApplicableWithDiag = notApplicableBase;
+    notApplicableWithDiag.diagnostics = {core::DiagnosticRecord::make(
+        std::string{diagcodes::kSectionNotApplicable}, std::nullopt, std::nullopt,
+        std::nullopt, "kinematics-collision", "章节投影声明本域不适用（脚本诊断）",
+        "核对级别与域适用性后重评")};
+
+    StandardScene sceneA = StandardScene::withRun(run);
+    sceneA.addKinProvider(notApplicableWithDiag);
+    ReviewReportBuilder builderA(sceneA.queryPort, sceneA.resultSource, sceneA.registry);
+    const ReportBuildOutcome outcomeA = builderA.build(standardRequest(run));
+    ASSERT_NE(outcomeA.report, nullptr);
+    const ReviewReportSection& kinA = outcomeA.report->sections()[4];   // 词表行 5
+
+    // 断言①（章节内容面）：提供方诊断必须随章节视图冻结——非空＋码面
+    // ＋来源章节＝本章节＋逐条计数 1（缺陷态恒空——红）。
+    ASSERT_EQ(kinA.status, SectionStatus::NotApplicable);
+    EXPECT_FALSE(kinA.diagnostics.empty())
+        << "F-816：content.diagnostics 必须写入 section.diagnostics（§4.3.4 冻结面）";
+    ASSERT_EQ(kinA.diagnostics.size(), 1u);
+    EXPECT_EQ(kinA.diagnostics[0].code, std::string(diagcodes::kSectionNotApplicable));
+    EXPECT_EQ(kinA.diagnostics[0].sourceSection, std::string(kSectionKinematicsCollision));
+    EXPECT_EQ(kinA.diagnostics[0].occurrences, 1u);
+    // 报告级 diagRefs 并集不受影响（§4.2 汇总面照旧——防过修对照）。
+    bool inReportLevel = false;
+    for (const DiagRefEntry& diag : outcomeA.report->diagRefs()) {
+        if (diag.code == std::string(diagcodes::kSectionNotApplicable)) {
+            inReportLevel = true;
+        }
+    }
+    EXPECT_TRUE(inReportLevel);
+
+    // 断言②（章节身份面）：同数据集、提供方脚本仅 diagnostics 不同——
+    // contentIdentity 必不同（诊断进章节内容即进 Full canonical 字节；
+    // 缺陷态两份身份相同——红）。
+    StandardScene sceneB = StandardScene::withRun(run);
+    sceneB.addKinProvider(notApplicableBase);   // 与脚本 A 仅差 diagnostics
+    ReviewReportBuilder builderB(sceneB.queryPort, sceneB.resultSource, sceneB.registry);
+    const ReportBuildOutcome outcomeB = builderB.build(standardRequest(run));
+    ASSERT_NE(outcomeB.report, nullptr);
+    const ReviewReportSection& kinB = outcomeB.report->sections()[4];
+    ASSERT_TRUE(kinB.diagnostics.empty());   // 对照组：无诊断脚本（缺陷态同为空）
+    EXPECT_FALSE(outcomeA.report->contentIdentity() == outcomeB.report->contentIdentity())
+        << "F-816：章节诊断必须进入 contentIdentity（仅诊断不同的投影身份必不同）";
 }
 
 // =====================================================================
