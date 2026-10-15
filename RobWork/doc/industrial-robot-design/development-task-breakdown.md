@@ -2,6 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.74（2026-10-15，工程打磨管理拆包登记）：新增 §0.4 管理入口，引用 QP-00～QP-13 共 14 个管理分包/56 个工作项；沿用 WP-A～WP-I 和 WP-00～25，QP 标签不进入 canonical taskId/状态/执行队列；入口现况以 redesign-main@7ce545e3215cab7c711f5bb50148ff49aa3f8639 只读核查留痕。零产品源码、零需求/AT/里程碑语义变更、零既有任务/findings 状态翻转；产品修复复现后仍先在 §2 对应 WP 登记后继任务与契约。前一版本 v0.73 保留如下。 |
 | 文档版本 | v0.73（2026-10-14~15 治理批 M6（阶段 D）收口声明落库——**受限口径（非全绿）**：①新增 traceability/closeout/phase-d-closeout-declaration-20261014.md——M6 判据（本文件 §1.3 M6 行）逐项亲手复核＝WP-23 R2 面 4/4（T09 M5 队列＋T06/T07/T08 续跑段，验收记录 verdict 亲读 PASS）＋R2 子项五族 11/11 done（KIN-09~11＝WP-15-T14/15/16、MDL-18/21＝WP-13-T17/T18＋WP-18-T05、TRJ-08-S1~S3＝WP-16-T14/15/16、SEL-09-S1＝WP-19-T12、MDL-12-S1＝WP-13-T19，契约逐卡 grep）＋AT-25/26/33/36/38 达成、AT-35 部分（执行/暂停面已绿——T04/T07；鲁棒性判定与误淘汰审计契约用例后置）；**受限口径＝WP-21-T05/T08 受 P-04 判定阈值（通过线/降级线）"待所有者补充确认"前置（所有者 2026-10-13 裁定；REQUIREMENTS 附录 C《P-04 冻结数值表》引言/表④两槽位）维持 planned——不构成字面全绿**，声明完整登记因果链（草案两槽位无据可注→所有者裁定维持待定→T05 前置缺失→T08 dependsOn 连带）与补充确认后解锁路径（表④两槽位填值走需求变更留痕→T05 放行→T08 连带→WP-21 全绿），不预设不代设任何阈值数值；②两日批次（2026-10-13 前段＋2026-10-14 续跑段）13 卡治理/实现合入 SHA 清单实测在册（gov-m6-prep 149bd856＋FREEZE-P04 190771e0＋GOV-MDL12-UNFROZEN 0b5cb58f＋WP-15-T14 5aa93c90＋WP-15-T15 0d775e63＋WP-15-T16 a4374715＋WP-21-T02 b38509bf＋WP-21-T06 46595d48＋WP-21-T03 9649e5fd＋WP-21-T04 5503e7af＋WP-13-T19 bab241ea＋WP-21-T07 41b89ba9＋WP-23-T06 fc78fb57＋WP-23-T07 c31ae7ce＋WP-23-T08 eb9b4cf6；WP-21-T04/WP-13-T19 首 merge 15dc28e5/5cf808ee 遭运行中宿主 GUI 锁 DLL 回退未推送〔实测非 redesign-main 祖先〕、续跑批重试一次成功——回退重试经过如实登记）；③遗留面如实（F-495/F-833 维持 open 零触碰＋两日 15 份验收记录建议级转登义务未清〔registeredAt=2026-10-13/14 实测零条目；转登草稿在并行分支 gov-m6-parallel-debts 未落主树〕＋老批次六卡验收记录不在 acceptance/ 标准路径的登记形态如实登记）；④零产品源码、零契约状态翻转、findings.json 零触碰；验证＝validate-docs PASS）。前一版本 v0.72（2026-10-13 治理批 GOV-MDL12-UNFROZEN——完整描述见下行）|
 | 文档版本 | v0.72（2026-10-13 治理批 GOV-MDL12-UNFROZEN：MDL-12-S1 R2 解冻——照 GOV-UNFROZEN 先例，所有者 2026-10-13『MDL-12-S1 解冻并纳入 M6 收口』指令：①REQUIREMENTS v1.21——MDL-12-S1 行加"R2 解冻（2026-10-13，所有者指令）"行内注〔承载契约 WP-13-T19 已 ready；需求 ID/优先级/AT-36 验收标准不变；4/5 轴不因本子项放开〕＋v1.21 修订记录行＋版本/状态行同步；②units/modeling.md §1.4 非目标 R2 行＋§2.1 支持矩阵行同步解冻注；③本节 §2.14 WP-13-T19 行加解冻注＋§2.28 本批批次行；④契约 WP-13-T19 planned→ready（放行依据＝所有者解冻指令；补齐 ready 必备字段 forbiddenFiles；branch=wp13-t19；前置 WP-19-T12 已 done）；验证＝validate-docs PASS＋validate-task PASS（WP-13-T19））。前一版本 v0.71（2026-10-13 治理批 FREEZE-P04——完整描述见下行）|
 | 文档版本 | v0.71（2026-10-13 治理批 FREEZE-P04：P-04 部分冻结落位——照 FREEZE-P06 先例第二段，所有者 2026-10-13 确认《P-04 建议值草案》：①REQUIREMENTS v1.20——附录 C P-04 行转"已冻结（判定阈值两槽位除外）"注＋新增《P-04 冻结数值表》（本节 §2.28 草案表①②③建议值与表④结构规则/适用边界原样并入零修改；通过线/降级线两槽位登记"待所有者补充确认——未指定前按未冻结处理"）＋v1.20 修订记录行＋版本/状态行同步；②本节 §2.28 草案行加"已确认（2026-10-13 所有者指令；判定阈值两槽位除外——维持待定）"注＋FREEZE-P04 批次行；③§4.3 O-28 状态行转"部分冻结（2026-10-13）——判定阈值待补充确认"；④units/optimization.md :16 阶段口径/:133 OPT-09 行同步"已冻结（判定阈值除外）"注；⑤契约治理——WP-21-T01 planned→done（冻结批即其执行，note 记所有者确认依据；P-OPT-7 不在本批授权范围如实登记维持未裁决）、WP-21-T02 planned→ready（前置 T01 done 满足；补齐 ready 必备字段 forbiddenFiles；branch=wp21-t02）、T03/T04/T06/T07 note 更新（P-04 已冻结）维持 planned、T05/T08 note 登记"受判定阈值待补充确认前置——依赖诚实，维持 planned"；验证＝validate-docs PASS＋validate-task PASS（八契约））。前一版本 v0.70（2026-10-13 治理批 KIN 立卡＋GOV-P04-DRAFT 草案评审修订——完整描述见下行）|
@@ -82,6 +83,14 @@
 建议实施顺序：CORE-T01 → TK-T01（联同 WP-01-T01 门禁）→ core/testkit 基座 → evidence/runtime/policy/diagnostics → project → execution/io/ui → reporting 基础设施。五个既有 T01 的 ready 仅允许构建落位；服务单元先补任务契约及接口评审，再逐任务放行。workflow 详设仍缺失，不阻塞 M0，但必须在阶段 A 生命周期收口前补齐。
 
 准入证据、局部阻塞和未执行项见 [同步与准入记录](traceability/phase-one-readiness.md)。§4 历史待办以该记录的当前事实补充为准；需求、依赖边与发布验收不在本次变更。
+
+### 0.4 工程打磨工作包管理入口（2026-10-15）
+
+所有者要求将六轴改型与选型工程打磨计划拆包，便于后续管理推进。管理计划见[工程打磨工作包与推进台账](../../docs/superpowers/plans/2026-10-15-engineering-polish-work-packages.md)，入口只读核查见[记录](traceability/engineering-polish/2026-10-15-entry-audit.md)。
+
+QP-00～QP-13 是既有主 WP 的管理分包标签，分别覆盖基线、六轴案例、输入/编译、需求/运动学、轨迹/碰撞、动力/传动、选型、OPT-B、OPT-D、项目/结果资格、交互、报告、性能/部署、试用/交付；共 56 个工作项定位键。**不新增主 WP，不建立第二份 canonical 状态账，不自动将任何项翻为 ready/done**。产品修复仍按 §2 对应 WP 后继号、单元卡及 tasks/foundation 契约先登记后实施，真实依赖与准入以契约及证据为准。
+
+当前 WP-20 已登记完成能力以复核/缺口修复推进；WP-21-T05/T08 的 P-04 判定前置维持原口径，已启用 OPT-D 子集可继续核验。工作包不能替代阶段 A～E 收口，也不能绕过未完成项。分包的所有者/角色、输入、依赖、56 项步骤、交付/退出标准、状态口径和首批队列由管理计划承载；规范实施证据仍回流 traceability、findings 与 canonical 契约。
 
 ## 1. 单元依赖 DAG 与里程碑划分（实施任务视图）
 
