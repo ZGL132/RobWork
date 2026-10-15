@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "建模交互打磨：基线回填、暂存保护、布局与状态指引（返工批）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T78"
   ],
