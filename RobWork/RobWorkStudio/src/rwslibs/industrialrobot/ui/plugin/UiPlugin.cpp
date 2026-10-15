@@ -2553,16 +2553,22 @@ void IrdWorkbenchHostPlugin::assembleDraftChain()
 
     ui::DraftControllerDeps deps;
     // 磁盘段投递（§8.2 数据流"转投 ui 后台落盘线程"）——串行执行器承接。
-    deps.postToDiskThread = [this](std::function<void()> task) {
-        m_diskExecutor->post(std::move(task));
+    // 受理位透传（R3 审计 C3）：执行器停止后的投递被拒——控制器按失败值
+    // 轨就地收口（退出序列再达的保存/放弃不再挂死 UI）。
+    deps.postToDiskThread = [this](std::function<void()> task) -> bool {
+        return m_diskExecutor->post(std::move(task));
     };
     // 完成回执 Marshal 回 UI 线程（§3.4 M-1）：以 Dock 体为上下文对象——
-    // 其销毁后排队的回执自动作废（Qt 上下文语义），不悬挂。
-    deps.postToUiThread = [this](std::function<void()> task) {
+    // 其销毁后排队的回执自动作废（Qt 上下文语义），不悬挂。受理位＝Dock
+    // 体在场（R3-C3 签名对齐；回执被拒时调度线程侧不触碰控制器状态——
+    // 计数收口随上下文销毁语义一并作废）。
+    deps.postToUiThread = [this](std::function<void()> task) -> bool {
         if (m_dockBody.data() != nullptr) {
             QMetaObject::invokeMethod(m_dockBody.data(), std::move(task),
                                       Qt::QueuedConnection);
+            return true;
         }
+        return false;
     };
     // anyDirty 翻转→会话脏生产者接线（§10.5/UI-T12——标题 `*` 判定位的
     // 会话半区数据源；UI-T11 登记的"生产者接线随 UI-T12 落地"承诺）。

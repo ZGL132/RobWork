@@ -162,7 +162,11 @@ public:
     /// @brief 投递一个任务（串行执行——同一时刻至多一个任务在途的保证面）。
     /// @param task [in] 可调用体（须不抛——落盘任务按对端返回值轨收敛；
     ///             违约＝fail-fast terminate，禁吞错）。
-    void post(std::function<void()> task);
+    /// @return 受理位（R3 审计 C3 修复，2026-10-15）：true＝已入队；false＝
+    ///         执行器已停止、任务未入队也永不执行——调用方必须按失败值轨
+    ///         就地收口（原 void 签名下停止后投递被静默丢弃，同步等待方
+    ///         的 future.get() 无界挂起＝UI 假死）。
+    bool post(std::function<void()> task);
 
     /// @brief 有界停止：不再接纳新任务的语义由调用方保证（装配层在退出路径
     ///        调用）；已入队任务执行完后收线程（幂等）。

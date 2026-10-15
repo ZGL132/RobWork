@@ -468,7 +468,11 @@ public:
         std::shared_ptr<IUiDraftStorePort> store = m_binding->store;
         std::promise<DraftDiscardOutcome> promise;
         std::future<DraftDiscardOutcome> future = promise.get_future();
-        m_deps.postToDiskThread([&promise, store, handle]() {
+        // 受理判定（R3 审计 C3 修复，2026-10-15）：执行器已停（aboutToQuit
+        // 收口后到达的放弃——退出序列中宿主再走关闭确认的典型时序）时任
+        // 务永不执行、promise 永不置值，future.get() 无界挂起＝UI 假死。
+        // 拒收按失败值轨就地收口（不投递）。
+        const bool accepted = m_deps.postToDiskThread([&promise, store, handle]() {
             // F-819：任务体 try/catch 转值轨（同 runSaveBlocking 封门口径——
             // 原裸调端口实现抛异常即落盘线程任务逃逸〔terminate〕或 future
             // 永不置值〔关闭对话框假死〕）。值轨＝ok=false＋"exception"
@@ -484,6 +488,15 @@ public:
                     std::string{"非标准异常（discard 端口实现）"}});
             }
         });
+        if (!accepted) {
+            DraftDiscardOutcome outcome{
+                false, std::string{"executor-stopped"},
+                std::string{"落盘执行器已停止（退出收口后到达——任务未受理）"}};
+            emitDevLine("discard rejected: module=" + handle
+                        + " token=" + outcome.errorToken);
+            fireDirtyObserver();
+            return outcome;
+        }
         const DraftDiscardOutcome outcome = future.get();
         if (!outcome.ok) {
             emitDevLine("discard failed: module=" + handle
@@ -793,13 +806,23 @@ private:
         std::shared_ptr<IUiDraftStorePort> store = m_binding->store;
         std::promise<DraftSaveOutcome> promise;
         std::future<DraftSaveOutcome> future = promise.get_future();
-        m_deps.postToDiskThread([&promise, store, document = std::move(document)]() mutable {
-            try {
-                promise.set_value(store->save(document));
-            } catch (...) {
-                promise.set_exception(std::current_exception());
-            }
-        });
+        // 受理判定（R3 审计 C3 修复，2026-10-15）：执行器已停（aboutToQuit
+        // 收口后再达的保存——退出序列中宿主再走关闭确认的典型时序）时任
+        // 务永不执行，future.get() 无界挂起＝UI 假死。拒收按失败值轨就地
+        // 收口（不投递、不等待）。
+        const bool accepted = m_deps.postToDiskThread(
+            [&promise, store, document = std::move(document)]() mutable {
+                try {
+                    promise.set_value(store->save(document));
+                } catch (...) {
+                    promise.set_exception(std::current_exception());
+                }
+            });
+        if (!accepted) {
+            return DraftSaveOutcome{
+                false, std::string{"executor-stopped"},
+                std::string{"落盘执行器已停止（退出收口后到达——任务未受理）"}};
+        }
         return future.get();
     }
 
@@ -814,7 +837,10 @@ private:
     {
         ++m_autosavesInFlight;
         std::shared_ptr<IUiDraftStorePort> store = m_binding->store;
-        m_deps.postToDiskThread(
+        // 受理判定（R3 审计 C3 修复，2026-10-15）：执行器已停（退出收口
+        // 后的定时触发）时任务未入队、回执永不来——就地回收在途计数（本
+        // 方法在 UI 线程，计数本域收口无竞争），不楔死后续 tickAutosave。
+        const bool accepted = m_deps.postToDiskThread(
             [this, handle, document = std::move(document), serial, store, savedAtUtc]() mutable {
                 try {
                     const DraftSaveOutcome save = store->save(document);
@@ -830,6 +856,10 @@ private:
                     });
                 }
             });
+        if (!accepted) {
+            --m_autosavesInFlight;
+            emitDevLine("autosave dispatch rejected (executor stopped): module=" + handle);
+        }
     }
 
     /**

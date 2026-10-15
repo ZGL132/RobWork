@@ -125,6 +125,14 @@ public:
         task();
     }
 
+    /// 受理位形态（R3-C3 签名对齐——测试替身恒受理；拒绝面由生产执行器
+    /// PortAdapters 承载，本替身不模拟）。
+    bool postAccepted(std::function<void()> task)
+    {
+        post(std::move(task));
+        return true;
+    }
+
     void setDeferred(const bool deferred) { m_deferred = deferred; }
 
     bool runOne()
@@ -299,10 +307,13 @@ struct DraftHarness {
     DraftControllerDeps makeDeps()
     {
         DraftControllerDeps deps;
-        deps.postToDiskThread = [this](std::function<void()> task) {
-            disk.post(std::move(task));
+        deps.postToDiskThread = [this](std::function<void()> task) -> bool {
+            return disk.postAccepted(std::move(task));  // 受理位形态（R3-C3；替身恒受理）
         };
-        deps.postToUiThread = [](std::function<void()> task) { task(); };
+        deps.postToUiThread = [](std::function<void()> task) -> bool {
+            task();
+            return true;
+        };
         deps.onSessionDirtyChanged = [this](bool dirty) { dirtyEvents.push_back(dirty); };
         deps.diagSink = catalog;
         deps.diagFactory = factory;
