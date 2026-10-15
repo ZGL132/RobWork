@@ -1,0 +1,24 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\acc-uit82\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\acc-uit82\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> C:\acc-uit82\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  HostController.cpp
+  PolicySummaryCard.cpp
+  ShellSupport.cpp
+  View3DPlaceholder.cpp
+  WorkbenchContent.cpp
+  WorkbenchShell.cpp
+  正在生成代码...
+  sdurws_ird_ui.vcxproj -> C:\acc-uit82\build-smoke\ui\Release\sdurws_ird_ui.lib
+  WorkbenchContentGuiTest.cpp
+  sdurws_ird_ui_gui_test.vcxproj -> C:\acc-uit82\build-smoke\ui\Release\sdurws_ird_ui_gui_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\acc-uit82\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\acc-uit82\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> C:\acc-uit82\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> C:\acc-uit82\build-smoke\ui\Release\sdurws_ird_ui.lib
+  HostControllerModelTest.cpp
+  sdurws_ird_ui_test.vcxproj -> C:\acc-uit82\build-smoke\ui\Release\sdurws_ird_ui_test.exe
+BUILD_EXIT=0

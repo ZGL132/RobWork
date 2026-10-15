@@ -1,0 +1,37 @@
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (操作成功完成。)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (操作成功完成。)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (操作成功完成。)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+C:\acc-uit82\wt-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp(349): Skipped
+clipboard blocked by external owner (F-620)鈥斺�旂郴缁熷壀璐存澘鍐欒寰�杩斿け璐ワ紙鐜闈㈣烦杩囷紝闈炰唬鐮佺己闄凤級
+
+QWindowsWindow::setGeometry: Unable to set geometry 200x104+640+336 (frame: 216x143+632+305) on QWidgetWindow/"ird_property_inspectorWindow" on "\\.\DISPLAY1". Resulting geometry: 200x119+640+336 (frame: 216x158+632+305) margins: 8, 31, 8, 8 minimum size: 97x104 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=113, y=143)))
+[==========] 84 tests from 13 test suites ran. (6612 ms total)
+[  PASSED  ] 83 tests.
+[  SKIPPED ] 1 test.
