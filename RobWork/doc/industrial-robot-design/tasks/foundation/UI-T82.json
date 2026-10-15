@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "统一域面板标签停靠与全屏缩放防重叠",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T81"
   ],
