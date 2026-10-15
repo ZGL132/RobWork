@@ -108,6 +108,50 @@ TEST(ReqSampling, GridBySpacingNormalizationDeterministic_WP14T03_ACC3)
 }
 
 /**
+ * 饱和钳制不回绕（R3 审计第㊵条回归钉——audit-r3-fixes-1 返工批 O-1，
+ * 2026-10-15 修复 f9f74e84）：商 floor(size/spacing) 理论上可超 uint32
+ * （黄金数据集外的病态输入），规范化按上界钳制"如实承载、不静默放大"。
+ * 原缺陷形态：钳制上界取 0xFFFFFFFF，counts＝钳制值＋1 按模 2³² 回绕为
+ * 0——"天文级样本数"被静默改写成"零样本计划"（counts=0 是 V-02 合法
+ * 存储，评估侧只会得到 DataInsufficient），与钳制注释语义相反的数据损
+ * 坏。修复后上界取 0xFFFFFFFE：饱和值＋1＝0xFFFFFFFF 恰为 uint32 上限。
+ */
+TEST(ReqSampling, SaturationClampDoesNotWrapCountsToZero_R3_35)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-03", "V-02"},
+                  std::vector<std::string>{"R3-35"});
+
+    const WorkRegionService service;
+    std::vector<core::DiagnosticRecord> diags;
+
+    // ①病态面：商远超 uint32（1e10 ≫ 2³²，spacing 1.0 m 使商为精确整
+    // 数——无浮点表示歧义）。钳制生效：counts＝0xFFFFFFFF（饱和承载）。
+    // 原缺陷形态此处回绕为 0（零样本计划——用例翻红点）。
+    SamplingPlanSpec huge = makeSpacingSpec();
+    huge.positionSampling.spacing = {1.0, 1.0, 1.0};
+    const rw::math::Vector3D<double> hugeBox(1.0e10, 1.0e10, 1.0e10);  // m
+    auto n1 = service.normalizeSampling(huge.positionSampling, hugeBox, diags);
+    ASSERT_TRUE(n1.ok()) << n1.error().detail;
+    EXPECT_EQ(n1.get().normalized.counts[0], 0xFFFFFFFFU);
+    EXPECT_EQ(n1.get().normalized.counts[1], 0xFFFFFFFFU);
+    EXPECT_EQ(n1.get().normalized.counts[2], 0xFFFFFFFFU);
+    EXPECT_TRUE(n1.get().changed);
+
+    // ②钳制边界紧邻值：商恰为 0xFFFFFFFE（double 精确可表）——不经钳
+    // 制，＋1 后恰落在 uint32 上限（边界值本身合法，钳制上界不得把它
+    // 误压；确定性锚——同输入跨进程必同 counts，D-REQ-2）。
+    SamplingPlanSpec edge = makeSpacingSpec();
+    edge.positionSampling.spacing = {1.0, 1.0, 1.0};
+    const rw::math::Vector3D<double> edgeBox(4294967294.0, 4294967294.0,
+                                             4294967294.0);  // m（＝2³²−2）
+    auto n2 = service.normalizeSampling(edge.positionSampling, edgeBox, diags);
+    ASSERT_TRUE(n2.ok()) << n2.error().detail;
+    EXPECT_EQ(n2.get().normalized.counts[0], 0xFFFFFFFFU);
+    EXPECT_EQ(n2.get().normalized.counts[1], 0xFFFFFFFFU);
+    EXPECT_EQ(n2.get().normalized.counts[2], 0xFFFFFFFFU);
+}
+
+/**
  * 同义计划同身份（D-REQ-2 的字节面）：同（区域,采样参数）经 buildPlan
  * 产出的计划条目 canonical 摘要一致；同义 spacing 规范化到同 counts 的
  * 两计划 digest 全等（planContentIdentity 的 canonical 输入确定性）。
