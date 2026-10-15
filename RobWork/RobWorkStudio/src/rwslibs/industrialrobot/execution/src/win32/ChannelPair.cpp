@@ -175,8 +175,21 @@ bool ChannelPair::writeCommand(const std::uint8_t* data, std::size_t size, DWORD
         // 同样成立）。
         const DWORD wait = ::WaitForSingleObject(ov.hEvent, timeoutMs);
         if (wait != WAIT_OBJECT_0) {
-            if (wait == WAIT_TIMEOUT) {
+            if (wait == WAIT_TIMEOUT || wait == WAIT_FAILED) {
+                // R3 审计 B3 修复（2026-10-15）：CancelIoEx 只"标记取消"
+                // ——被取消的 IRP **异步**完成时内核仍会写入 OVERLAPPED 的
+                // Internal/InternalHigh 并置位事件句柄。原实现取消后立即
+                // 关闭事件并返回——ov 是栈对象，函数返回即消亡：内核完成
+                // 已取消的 IRP 时写已释放的栈内存/已关闭（可能已被复用）
+                // 的句柄值＝栈损坏。文档要求取消后必须等操作真正完成才能
+                // 释放资源——GetOverlappedResult(bWait=TRUE) 阻塞到取消落
+                // 地（返回 FALSE/ERROR_OPERATION_ABORTED，结果字节忽略——
+                // 被取消的写入不会向管道交付部分字节）。WAIT_FAILED（等待
+                // 系统调用本身失败）时 IRP 可能仍在途——同路径取消＋收口，
+                // 不留任何"事件已关闭而 IRP 在途"的窗口。
                 ::CancelIoEx(m_cmdServer, &ov);
+                DWORD aborted = 0;
+                (void)::GetOverlappedResult(m_cmdServer, &ov, &aborted, TRUE);
             }
             m_lastError = (wait == WAIT_TIMEOUT) ? WAIT_TIMEOUT : ::GetLastError();
             ::CloseHandle(ov.hEvent);
@@ -206,10 +219,21 @@ bool ChannelPair::beginRead()
                                static_cast<DWORD>(m_readBuffer.size()), nullptr,
                                &m_readOverlapped);
     if (ok) {
-        // 同步完成（极小概率——管道里已有数据）：按完成处理。
+        // 同步完成（数据已就位——OVERLAPPED 文档语义：调用时操作立即完成
+        // 则**不置位事件**）。R3 审计 B2 修复（2026-10-15）：原实现只把字
+        // 节数存入 m_readAvailable 后返回，事件不置位、m_readPending 保持
+        // false——读循环（WorkerSupervisor readerLoop）只依赖 waitFor 的
+        // 事件等待取数（takeReadBytes 仅 DataReady 分支调用），已读字节
+        // 滞留、且不再有挂起读＝**通道永久失聪**：worker 多帧连发时同步
+        // 完成发生（处理窗内写入），健康 worker 被误判心跳失联强杀。修
+        // 复＝手动置位完成事件，让同步完成复用与异步完成完全相同的收割
+        // 路径（waitFor → takeReadBytes → repostRead 复位重投）；0 字节
+        // 同步完成同样进入收割分支按 EOF/Broken 语义处置（与异步路径一
+        // 致）。
         DWORD got = 0;
         if (::GetOverlappedResult(m_dataServer, &m_readOverlapped, &got, FALSE)) {
             m_readAvailable = got;
+            ::SetEvent(m_readOverlapped.hEvent);
             return true;
         }
     } else {
