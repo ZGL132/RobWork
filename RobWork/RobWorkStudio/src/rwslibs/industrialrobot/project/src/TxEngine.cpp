@@ -457,6 +457,27 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
     // （validate 契约要求 candidateRef 此前未注册，故注册必须在校验之后）。
     m_index->registerMetadata(candidateRef, candidate);
 
+    // 幻影注册守卫（R3 审计 B6 修复，2026-10-15）：武装于注册后、解除于
+    // 唯一提交点（replaceExisting 成功）——其间的环境失败（暂存写/publish/
+    // head-switch）原本把本次注册留在会话索引：幻影修订可被 tryRevision/
+    // metadataAt 查到（PRJ-TX-9"闭包外不可见"被破坏）、assembleView 读从
+    // 未发布的 command.json 抛假 StoreCorrupt。析构时若仍武装即摘除本次
+    // 注册（单写者持锁、修订身份新铸造——摘除不影响任何既有闭包/读者）。
+    // 提交点之后的失败（自校验/事件/清理）不解除武装前的守卫已经失效——
+    // D-18"提交事实不回滚"语义保持。
+    struct PhantomRegistrationGuard {
+        revindex::RevisionIndex* index;
+        const RevisionId& revId;
+        const ObjectRefPair& ref;
+        bool armed = true;
+        ~PhantomRegistrationGuard()
+        {
+            if (armed) {
+                index->rollbackCommitRegistration(revId, ref);
+            }
+        }
+    } phantomGuard{m_index, newRevId, candidateRef};
+
     // =================================================================
     // 第 1 步（磁盘半边）：建 .staging/<tx-id>/（§7.1 第 1 步"建 .staging/
     // <tx-id>/"）。失败→环境码；残留形态＝无或仅空目录（启动清理兜底，
@@ -672,6 +693,9 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
         if (!rep.ok) {
             throw osToStoreError(rep.osError, "head-switch", headPath.string());
         }
+        // 唯一提交点已过——解除幻影守卫（本修订已是提交事实：此后自校验/
+        // 事件/清理失败均走 D-18 不回滚语义，索引注册必须保留）。
+        phantomGuard.armed = false;
         // 自校验（§7.1 第 5 步"切换后重读 HEAD 自校验 manifestDigest"）：
         // 重读+重解与内存事实逐字段比对。失败＝提交点内容异常的极端态
         // （读失败/内容不符）——D-18 不回滚：抛 StoreCorrupt 硬错误，恢复

@@ -951,12 +951,18 @@ std::vector<ConsistencyFinding> DriveTrainMappingCore::checkVirtualWork(
     // 对"window 引用未命中轴表/ratios 短于轴数"的维度失配模型无任何核
     // 对：windowIdealMotorTorque 以 C.rows 为界索引 tauJointW（w<C.rows
     // 时越界读）、model.ratios[k] 无长度核对（k≥ratios.size() 越界读）。
-    // 与上方 actual 维度核对同一处置口径：违约返回空清单，由调用方维度
-    // 断言发现——检查器不抛、不越界。
+    // 迭代 2 对抗复审补充（R3 复审新发现 1）：C 还必须是**方阵**——
+    // windowIdealMotorTorque 按 rows×rows 双重循环经 operator() 线性索引
+    // （rows≠cols 时最大下标≥data.size()，越界读；解码端只核
+    // count==rows*cols 不核方阵性，方阵检查在 validate 闸门内而本接口
+    // 恰不走闸门）。守卫镜像 validate 的方阵判据，与上方 actual 维度核
+    // 对同一处置口径：违约返回空清单，由调用方维度断言发现——检查器
+    // 不抛、不越界。
     if (model.ratios.size() < m) {
         return findings;
     }
-    if (w > 0 && model.window.has_value() && w != model.window->C.rows) {
+    if (w > 0 && model.window.has_value()
+        && (w != model.window->C.rows || model.window->C.rows != model.window->C.cols)) {
         return findings;
     }
 
