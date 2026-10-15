@@ -1307,9 +1307,17 @@ void sortReasons(std::vector<RejectionReason>& reasons)
                      });
 }
 
-/// 单格判定聚合（该格全部轴级筛选记录 → 格 verdict 与定位面；覆盖全部
-/// 轴——任一轴失败即格失败，卡 §9.4 矩阵语义）。
+/// 单格判定聚合（该格全部轴级筛选记录＋组合记录的工况级数据缺口 → 格
+/// verdict 与定位面；覆盖全部轴——任一轴失败即格失败，卡 §9.4 矩阵语义）。
+///
+/// @param records   [in] 该格的轴级筛选记录（cellAxisRecords——筛选器产出）
+/// @param comboGaps [in] 组合级记录的全部数据缺口（rec.gaps——跨工况累积，
+///              本函数只消费 caseId 与当前格对位的条目，所有权不转移）
+/// @param caseId    [in] 当前格的工况 ID（comboGaps 的过滤键——工况级属性）
+/// @param cell      [out] 格判定产出（verdict/note/定位字段）
 void aggregateCaseCell(const std::vector<FeasibilityRecord>& records,
+                       const std::vector<DataGap>& comboGaps,
+                       const CaseId& caseId,
                        CaseCoverageEntry& cell)
 {
     // 原因优先：任一记录存在淘汰原因 → 格 Fail（定位＝首条原因的工作点
@@ -1331,6 +1339,24 @@ void aggregateCaseCell(const std::vector<FeasibilityRecord>& records,
         if (!axisRec.gaps.empty()) {
             cell.verdict = VerdictKind::DataInsufficient;
             cell.note = "data-gap";
+            return;
+        }
+    }
+    // 缺口次之（续，F-812）：组合级记录 rec.gaps 的三类数据缺口参与格
+    // 判定——workpoint-missing/candidate-missing 两类的轴不产生任何筛选
+    // 记录（缺事实/缺候选即 continue），efficiency 不是硬筛选维度（记录
+    // 可全绿而缺口躺在组合记录里）；只消费传入轴记录会漏掉它们，格误标
+    // Feasible/"pass"（卡 §9.4：任一工况存在数据缺口 → DataInsufficient）。
+    // 按 caseId 过滤：rec 跨工况累积而缺口是工况级属性（F-811 同款教训
+    // ——不过滤会跨工况污染）；inertia-ratio/axis-out-of-scope/mass 等
+    // 其余缺口各有既有回落面或组合级语义，不在此扩入（条目边界）。
+    for (const DataGap& gap : comboGaps) {
+        if (gap.caseId == caseId
+            && (gap.dimension == "workpoint-missing"
+                || gap.dimension == "candidate-missing"
+                || gap.dimension == "efficiency")) {
+            cell.verdict = VerdictKind::DataInsufficient;
+            cell.note = gap.dimension;   // 格 note 携带缺口维度（呈现定位面）
             return;
         }
     }
@@ -1711,10 +1737,15 @@ std::vector<CombinationCheckOutcome> checkCombinations(
 
             // 效率降级维度（§9.3 行 7）：映射事实 efficiencyApplied=false
             // 的轴 → 数据缺口（不以 η＝1 静默替代——卡 §10.1）。
+            // 匹配键＝组合×轴×工况三键（F-811）：效率降级与 mfact 查表
+            // 同为 (combinationId, jointId, caseId) 对位——漏 caseId 过滤
+            // 会让任一工况的降级事实污染其余全部工况的格（缺口是工况级
+            // 属性，与 :1615 关节侧、:1624 电机侧查表条件对齐）。
             for (const AxisDeviceAssignment& axis : combo.axes) {
                 for (const MappingAxisFact& f : input.mappingBatch.axes) {
                     if (f.combinationId == combo.combinationId
-                        && f.jointId == axis.jointId && !f.efficiencyApplied) {
+                        && f.jointId == axis.jointId && f.caseId == caseId
+                        && !f.efficiencyApplied) {
                         DataGap gap;
                         gap.dimension = "efficiency";
                         gap.detail = "映射侧效率缺失/降级（该轴功率与能量素材不可判）";
@@ -1727,8 +1758,9 @@ std::vector<CombinationCheckOutcome> checkCombinations(
             }
 
             // 格聚合（原因优先→缺口次之→通过；覆盖全部轴记录——任一轴
-            // 失败即格失败，定位＝首条原因的工作点，卡 §9.4）。
-            aggregateCaseCell(cellAxisRecords, cell);
+            // 失败即格失败；组合记录的工况级缺口随格判定（F-812），
+            // 卡 §9.4）。
+            aggregateCaseCell(cellAxisRecords, rec.gaps, caseId, cell);
             // WP-19-T08（SEL-09）：组合含移动关节轴时该格不得判 Pass
             // （不静默套用旋转传动——格聚合对该轴无记录可依，全移动链
             // 时 cellAxisRecords 为空会误判 Feasible，此处兜底）。已有

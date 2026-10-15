@@ -502,6 +502,168 @@ TEST(SelCombinationCheck, EfficiencyDegradedYieldsGap)
 }
 
 // ---------------------------------------------------------------------
+// F-811 回归：效率降级匹配按工况过滤（跨工况污染面）
+// ---------------------------------------------------------------------
+
+/// 效率降级（efficiencyApplied=false）是"组合×轴×工况"三键属性——仅
+/// 对应工况产生 efficiency 缺口，其余工况不得被污染（与同函数 mfact
+/// 查表条件对齐——F-811 复制漏改形态的回归钉）。
+TEST(SelCombinationCheck, EfficiencyGapFilteredByCase_F_811_SEL_05)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-05"}, std::vector<std::string>{"AT-08"});
+    const GoldenCombos golden = makeGoldenCombos();
+    CatalogPackageSnapshot snapshot = goldenSnapshot();
+    CombinationCheckCoreInput in = makeCoreInput(snapshot, golden);
+    // 追加 case-B：J1/J2 关节侧事实＋K1 全轴映射事实（黄金口径值——
+    // K2/K3 不供给 case-B，其覆盖缺口属另一维度，不在本用例断言面）。
+    in.axisFacts.push_back(makeJointFacts(golden.axes.j1, "case-B", true));
+    in.axisFacts.push_back(makeJointFacts(golden.axes.j2, "case-B", false));
+    for (const AxisDeviceAssignment& axis : golden.combos[0].axes) {
+        const bool heavy = axis.jointId == golden.axes.j1;
+        const bool isG20 = axis.gearboxModelId == "G-20";
+        const double c = isG20 ? 0.02 : 0.1;  // c＝1/n（黄金解析值——同支撑头口径）
+        in.mappingBatch.axes.push_back(makeMappingFact(
+            golden.combos[0].id, axis.jointId, "case-B", c, heavy,
+            isG20 ? 75.0 : 3.0, isG20 ? 25.0 : 1.0));
+    }
+    // 仅 K1/J1 在 case-B 效率降级；case-A 的效率事实保持可用。
+    for (MappingAxisFact& f : in.mappingBatch.axes) {
+        if (f.combinationId == golden.combos[0].id
+            && f.jointId == golden.axes.j1 && f.caseId == "case-B") {
+            f.efficiencyApplied = false;
+        }
+    }
+    const std::vector<CombinationCheckOutcome> outcomes = checkCombinations(in, nullptr);
+    const CombinationCheckOutcome& k1 = at(outcomes, 0);
+    // 红线断言：case-B 的降级产生缺口；case-A 不得因 case-B 的降级被
+    // 误标（缺陷态下匹配无 caseId 过滤——case-A 格循环命中 case-B 事实，
+    // 产生 caseId＝"case-A" 的 efficiency 缺口即污染）。
+    bool effGapOnCaseB = false;
+    bool effGapOnCaseA = false;
+    for (const DataGap& g : k1.record.gaps) {
+        if (g.dimension != "efficiency") {
+            continue;
+        }
+        if (g.caseId == "case-B") { effGapOnCaseB = true; }
+        if (g.caseId == "case-A") { effGapOnCaseA = true; }
+    }
+    EXPECT_TRUE(effGapOnCaseB) << "case-B 效率降级未产生缺口（降级路径未触发——用例自证失效）";
+    EXPECT_FALSE(effGapOnCaseA) << "case-A 被 case-B 的效率降级误标缺口（F-811 跨工况污染）";
+}
+
+// ---------------------------------------------------------------------
+// F-812 回归：组合记录三类数据缺口参与格判定（§9.4 矩阵语义）
+// ---------------------------------------------------------------------
+
+/// workpoint-missing 缺口回落格判定：该组合轴在该工况无任何事实 →
+/// 格 DataInsufficient，不得因其余轴记录全绿误标 Feasible/"pass"
+/// （F-812——rec.gaps 缺口不进格判定的回归钉；EVI-02 必验工况逐格）。
+TEST(SelCombinationCheck, CaseCellDataInsufficientOnWorkpointGap_F_812_SEL_05)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-05"}, std::vector<std::string>{"EVI-02"});
+    const GoldenCombos golden = makeGoldenCombos();
+    CatalogPackageSnapshot snapshot = goldenSnapshot();
+    CombinationCheckCoreInput in = makeCoreInput(snapshot, golden);
+    // K1/J2 在 case-A 关节侧与映射侧事实全部缺席（工作点覆盖缺口——
+    // 不伪造零负载）；J1 保持黄金全绿。
+    for (auto it = in.axisFacts.begin(); it != in.axisFacts.end();) {
+        if (it->jointId == golden.axes.j2) {
+            it = in.axisFacts.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    for (auto it = in.mappingBatch.axes.begin(); it != in.mappingBatch.axes.end();) {
+        if (it->combinationId == golden.combos[0].id
+            && it->jointId == golden.axes.j2) {
+            it = in.mappingBatch.axes.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    const std::vector<CombinationCheckOutcome> outcomes = checkCombinations(in, nullptr);
+    const CombinationCheckOutcome& k1 = at(outcomes, 0);
+    // 用例自证：记录确实携带该工况的 workpoint-missing 缺口。
+    bool gapPresent = false;
+    for (const DataGap& g : k1.record.gaps) {
+        if (g.dimension == "workpoint-missing" && g.caseId == "case-A") {
+            gapPresent = true;
+        }
+    }
+    EXPECT_TRUE(gapPresent) << "workpoint-missing 缺口未产生（缺口路径未触发——用例自证失效）";
+    // 红线断言：格判定反映缺口（缺陷态＝J1 全绿记录聚合出 Feasible/"pass"）。
+    ASSERT_EQ(k1.coverage.size(), std::size_t{1});
+    EXPECT_EQ(k1.coverage[0].verdict, VerdictKind::DataInsufficient)
+        << "存在 workpoint-missing 缺口的格被误标（F-812）";
+    EXPECT_NE(k1.coverage[0].note.find("workpoint-missing"), std::string::npos)
+        << "格 note 未携带缺口维度定位（note=" << k1.coverage[0].note << "）";
+}
+
+/// candidate-missing 缺口回落格判定：组合候选在快照内缺失（无法按目录
+/// 能力筛选）→ 格 DataInsufficient，不得误标 Feasible（F-812 同修复点
+/// ——三类缺口逐一钉扎）。
+TEST(SelCombinationCheck, CaseCellDataInsufficientOnCandidateGap_F_812_SEL_05)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-05"}, std::vector<std::string>{"EVI-02"});
+    const GoldenCombos golden = makeGoldenCombos();
+    CatalogPackageSnapshot snapshot = goldenSnapshot();
+    CombinationCheckCoreInput in = makeCoreInput(snapshot, golden);
+    // K1/J2 的电机候选指派替换为快照外型号（组装错配面——缺口语义）。
+    for (MappingCombinationFact& cf : in.mappingBatch.combinations) {
+        if (cf.combinationId != golden.combos[0].id) {
+            continue;
+        }
+        for (AxisDeviceAssignment& a : cf.axes) {
+            if (a.jointId == golden.axes.j2) {
+                a.motorModelId = "M-X";   // 快照外型号（goldenSnapshot 无此电机）
+            }
+        }
+    }
+    const std::vector<CombinationCheckOutcome> outcomes = checkCombinations(in, nullptr);
+    const CombinationCheckOutcome& k1 = at(outcomes, 0);
+    // 用例自证：记录确实携带 candidate-missing 缺口。
+    bool gapPresent = false;
+    for (const DataGap& g : k1.record.gaps) {
+        if (g.dimension == "candidate-missing" && g.caseId == "case-A"
+            && g.axisId == golden.axes.j2) {
+            gapPresent = true;
+        }
+    }
+    EXPECT_TRUE(gapPresent) << "candidate-missing 缺口未产生（缺口路径未触发——用例自证失效）";
+    // 红线断言：格判定反映缺口（缺陷态＝J1 全绿记录聚合出 Feasible）。
+    ASSERT_EQ(k1.coverage.size(), std::size_t{1});
+    EXPECT_EQ(k1.coverage[0].verdict, VerdictKind::DataInsufficient)
+        << "存在 candidate-missing 缺口的格被误标（F-812）";
+    EXPECT_NE(k1.coverage[0].note.find("candidate-missing"), std::string::npos)
+        << "格 note 未携带缺口维度定位（note=" << k1.coverage[0].note << "）";
+}
+
+/// efficiency 缺口回落格判定：映射侧效率降级 → 格 DataInsufficient，
+/// 不得误标 Feasible/"pass"（F-812——"记录全绿却躺缺口"形态的钉）。
+TEST(SelCombinationCheck, CaseCellDataInsufficientOnEfficiencyGap_F_812_SEL_05)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-05"}, std::vector<std::string>{"EVI-02"});
+    const GoldenCombos golden = makeGoldenCombos();
+    CatalogPackageSnapshot snapshot = goldenSnapshot();
+    CombinationCheckCoreInput in = makeCoreInput(snapshot, golden);
+    // K1/J1 效率降级（映射侧 η 缺失——轴级筛选记录仍全绿：效率不是
+    // 硬筛选维度，缺口只入 rec.gaps——正是格误标的形态）。
+    for (MappingAxisFact& f : in.mappingBatch.axes) {
+        if (f.combinationId == golden.combos[0].id && f.jointId == golden.axes.j1) {
+            f.efficiencyApplied = false;
+        }
+    }
+    const std::vector<CombinationCheckOutcome> outcomes = checkCombinations(in, nullptr);
+    const CombinationCheckOutcome& k1 = at(outcomes, 0);
+    // 红线断言：case-A 格随 efficiency 缺口降级（缺陷态＝Feasible/"pass"）。
+    ASSERT_EQ(k1.coverage.size(), std::size_t{1});
+    EXPECT_EQ(k1.coverage[0].verdict, VerdictKind::DataInsufficient)
+        << "存在 efficiency 缺口的格被误标（F-812）";
+    EXPECT_NE(k1.coverage[0].note.find("efficiency"), std::string::npos)
+        << "格 note 未携带缺口维度定位（note=" << k1.coverage[0].note << "）";
+}
+
+// ---------------------------------------------------------------------
 // 调用方契约拒绝（fail-fast）与确定性（NFR-COR-02/03）
 // ---------------------------------------------------------------------
 

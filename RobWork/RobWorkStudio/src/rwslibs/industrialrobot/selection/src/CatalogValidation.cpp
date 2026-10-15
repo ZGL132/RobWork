@@ -503,6 +503,38 @@ bool checkTableSchema(const ParsedFileTable& t, const FieldDictionary& dict,
     return ok;
 }
 
+/// 契约列全在表头核对（F-813：schema 门与行级键面一致性）。
+///
+/// 背景：行级校验以契约列名查询列位映射（buildColumnIndex 产物），而
+/// checkTableSchema 只逐位比对表头 vs 字典——字段字典漏/改契约列时，
+/// 表头与字典可以一致地同缺该列，唯一门放行后行级硬查将抛未文档化的
+/// std::out_of_range（既非报告返回也非 schema 级异常）。本核对在 schema
+/// 级先核"契约列 ⊆ 表头"，缺失逐列报 SCHEMA-MISMATCH，调用方据返回值
+/// 跳过行级——缺列走报告轨（卡 §5.3"schema 级抛出＋行级报告"两分法）。
+///
+/// @param t        [in] 待核对的解析表（只读）
+/// @param contract [in] 该表的列契约（motorColumns/gearboxColumns/…）
+/// @param rep      [out] 校验报告（缺失契约列逐列追加 issue）
+/// @return true＝契约列全部在表头；false＝存在缺失（已逐列定位）
+bool contractColumnsInHeader(const ParsedFileTable& t,
+                             const std::vector<ColumnContract>& contract,
+                             CatalogValidationReport& rep)
+{
+    bool ok = true;
+    const auto colIdx = buildColumnIndex(t);
+    for (const ColumnContract& cc : contract) {
+        if (colIdx.find(cc.column) == colIdx.end()) {
+            rep.issues.push_back(makeIssue(
+                std::string{kSelCatalogSchemaMismatch}, t.fileName, 0, cc.column,
+                "契约列 \"" + std::string(cc.column)
+                    + "\" 未在表头出现（字段字典漏/改契约列——schema 门与行级"
+                      "键面一致性核对，行级校验跳过）"));
+            ok = false;
+        }
+    }
+    return ok;
+}
+
 // =====================================================================
 // 行级校验——电机/减速器主表
 // =====================================================================
@@ -530,6 +562,19 @@ void validateMotorRows(const ParsedFileTable& t,
                        CatalogValidationReport& rep)
 {
     const auto colIdx = buildColumnIndex(t);
+    // 行级入口契约列核对（F-813 行级防御层）：schema 门已核"契约列 ⊆
+    // 表头"——此处双保险，防未来调用方绕过 schema 门直入行级；缺列报
+    // SCHEMA-MISMATCH 并整表跳过（列契约破坏时逐行校验无定位价值——
+    // 与 checkTableSchema 失配表的跳过纪律一致），不抛未文档化异常。
+    for (const ColumnContract& cc : motorColumns()) {
+        if (colIdx.find(cc.column) == colIdx.end()) {
+            rep.issues.push_back(makeIssue(
+                std::string{kSelCatalogSchemaMismatch}, t.fileName, 0, cc.column,
+                "契约列 \"" + std::string(cc.column)
+                    + "\" 未在表头出现（行级入口防御核对——行级校验跳过）"));
+            return;
+        }
+    }
     std::map<std::string, std::uint64_t> seenRow;   // modelId → 首现行号（查重）
     std::map<std::string, std::string> seenSig;     // modelId → 首现行签名（重复行判别）
 
@@ -669,7 +714,21 @@ bool validateNumberCell(const ParsedFileTable& t, std::size_t rowIdx, std::uint6
                         const std::string& modelId, std::vector<MissingField>* missingOut,
                         double& out, CatalogValidationReport& rep)
 {
-    const std::string_view v = trimView(cellAt(t, rowIdx, colIdx.at(cc.column)));
+    // 列位防御查询（F-813：行级改 find＋显式缺列报告——契约列未在表头
+    // 时报 SCHEMA-MISMATCH 并按"未取得数值"返回，不抛未文档化
+    // std::out_of_range；正常路径由 schema 门与行级入口核对双保险保证
+    // 命中，本分支为绕门直调的兜底面）。
+    const auto colIt = colIdx.find(cc.column);
+    if (colIt == colIdx.end()) {
+        CatalogIssue iss = makeIssue(
+            std::string{kSelCatalogSchemaMismatch}, t.fileName, rowNo, cc.column,
+            "契约列 \"" + std::string(cc.column)
+                + "\" 未在表头出现（行级防御核对——该列不参与校验）");
+        iss.modelId = modelId;
+        rep.issues.push_back(std::move(iss));
+        return false;
+    }
+    const std::string_view v = trimView(cellAt(t, rowIdx, colIt->second));
     if (v.empty()) {
         if (cc.required) {
             rep.issues.push_back(makeIssue(std::string{kSelCatalogFieldMissing}, t.fileName,
@@ -703,6 +762,17 @@ void validateGearboxRows(const ParsedFileTable& t,
                          CatalogValidationReport& rep)
 {
     const auto colIdx = buildColumnIndex(t);
+    // 行级入口契约列核对（F-813 行级防御层——与电机表同构，语义见
+    // validateMotorRows 同名注释）。
+    for (const ColumnContract& cc : gearboxColumns()) {
+        if (colIdx.find(cc.column) == colIdx.end()) {
+            rep.issues.push_back(makeIssue(
+                std::string{kSelCatalogSchemaMismatch}, t.fileName, 0, cc.column,
+                "契约列 \"" + std::string(cc.column)
+                    + "\" 未在表头出现（行级入口防御核对——行级校验跳过）"));
+            return;
+        }
+    }
     std::map<std::string, std::uint64_t> seenRow;
     std::map<std::string, std::string> seenSig;
 
@@ -1495,17 +1565,27 @@ CatalogValidationReport CatalogImporter::validate(const ParsedCatalogInput& pars
     };
 
     // 第二段：逐表 schema 列比对（mismatch 表跳过行级——列位不可靠，
-    // 避免级联噪音；报告保留定位）。
+    // 避免级联噪音；报告保留定位）。F-813：主表再核"契约列 ⊆ 表头"
+    // （contractColumnsInHeader——字典漏/改契约列时表头与字典可一致地
+    // 同缺该列，行级以契约列名查列位将落空；两核对都执行、报告双端
+    // 定位，任一失配即跳过该表行级）。
     std::map<std::string, std::string> motorIds;    // modelId → 行签名
     std::map<std::string, std::string> gearboxIds;
     std::map<std::string, std::string> linearIds;   // v2 直线器件 modelId → 行签名
-    const bool motorsOk = checkTableSchema(*motors, dictFor(kCatalogFileMotors), rep);
-    const bool gearboxesOk = checkTableSchema(*gearboxes, dictFor(kCatalogFileGearboxes), rep);
+    bool motorsOk = contractColumnsInHeader(*motors, motorColumns(), rep);
+    motorsOk = checkTableSchema(*motors, dictFor(kCatalogFileMotors), rep) && motorsOk;
+    bool gearboxesOk = contractColumnsInHeader(*gearboxes, gearboxColumns(), rep);
+    gearboxesOk = checkTableSchema(*gearboxes, dictFor(kCatalogFileGearboxes), rep)
+               && gearboxesOk;
     const bool curvesOk = checkTableSchema(*curves, dictFor(kCatalogFileCurves), rep);
     const bool compatOk = checkTableSchema(*compat, dictFor(kCatalogFileCompatibility), rep);
     // v2 第六表列比对（v1 时 linear 为 nullptr——短路，零额外行为）。
-    const bool linearOk = linear != nullptr
-        && checkTableSchema(*linear, dictFor(kCatalogFileLinearDrives), rep);
+    bool linearOk = false;
+    if (linear != nullptr) {
+        linearOk = contractColumnsInHeader(*linear, linearDriveColumns(), rep);
+        linearOk = checkTableSchema(*linear, dictFor(kCatalogFileLinearDrives), rep)
+                && linearOk;
+    }
 
     // 第三段：行级校验（ID 集先行——曲线/兼容表的引用校验依赖主表 ID 集；
     // 主表各自独立，顺序＝文件清单序，确定性）。

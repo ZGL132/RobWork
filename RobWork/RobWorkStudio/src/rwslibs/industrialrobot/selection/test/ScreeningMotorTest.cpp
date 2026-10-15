@@ -1130,3 +1130,69 @@ TEST(SelScreeningMotor, MinEfficiencyOutOfRangeFailsFast)
     EXPECT_THROW((void)selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr),
                  std::invalid_argument);
 }
+
+// =====================================================================
+// F-814 回归：硬筛选阈值按幅值比较（四象限负工作点）
+// =====================================================================
+
+/** 负连续转矩工作点：按幅值对能力判定（FeasibleSet MarginFact 幅值口径
+ *  ——四象限负工作点的量值同按幅值对能力），负值不得因符号静默通过
+ *  （F-814）；呈现面如实保留负值（幅值语义只改判定不改呈现）。 */
+TEST(SelScreeningMotor, NegativeTorqueWorkpointRejectedByMagnitude_F_814_SEL_03)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-03", "SEL-06"},
+                  std::vector<std::string>{"AT-08"});
+
+    Fixture fx = makeFixture();
+    fx.facts.motorTorqueRms = -50.0;  // N·m（负工作点——反向驱动象限；幅值 50 超额定 4.0）
+    HardConstraintSelector selector;
+    const std::vector<FeasibilityRecord> recs
+        = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
+    ASSERT_EQ(recs.size(), 1U);
+    expectRecordShape(recs[0], VerdictKind::Rejected,
+                      {ReasonToken::TorqueContinuousInsufficient}, 0U, "M-GOLD");
+    const std::optional<RejectionReason> r
+        = findReason(recs[0], ReasonToken::TorqueContinuousInsufficient);
+    ASSERT_TRUE(r.has_value());
+    EXPECT_DOUBLE_EQ(r->actual, -50.0);   // 呈现面如实保留负值（判定的幅值化不篡改事实）
+    EXPECT_DOUBLE_EQ(r->required, 4.0);   // 能力侧照旧（目录值为正——幅值口径）
+    EXPECT_EQ(r->unit, "N*m");
+}
+
+/** 负峰值功率工作点：同一幅值口径（P_peak 子项——exceedsLimit 唯一口径
+ *  的第二维度钉，F-814）。 */
+TEST(SelScreeningMotor, NegativePowerWorkpointRejectedByMagnitude_F_814_SEL_03)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-03", "SEL-06"},
+                  std::vector<std::string>{"AT-08"});
+
+    Fixture fx = makeFixture();
+    fx.facts.motorPowerPeak = -2000.0;  // W（幅值 2000 超额定 1500——P_rms 黄金值仍在限内）
+    HardConstraintSelector selector;
+    const std::vector<FeasibilityRecord> recs
+        = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
+    ASSERT_EQ(recs.size(), 1U);
+    expectRecordShape(recs[0], VerdictKind::Rejected,
+                      {ReasonToken::PowerInsufficient}, 0U, "M-GOLD");
+    const std::optional<RejectionReason> r = findReason(recs[0], ReasonToken::PowerInsufficient);
+    ASSERT_TRUE(r.has_value());
+    EXPECT_DOUBLE_EQ(r->actual, -2000.0);
+    EXPECT_DOUBLE_EQ(r->required, 1500.0);
+    EXPECT_EQ(r->unit, "W");
+}
+
+/** 负工作点幅值在限内：正常通过（防过修钉——幅值口径≠"负值一律淘汰"；
+ *  |−3|＝3 ≤ 额定 4.0，与正向 3.0 判定同态，F-814）。 */
+TEST(SelScreeningMotor, NegativeWorkpointWithinLimitPasses_F_814_SEL_03)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-03"},
+                  std::vector<std::string>{"AT-08"});
+
+    Fixture fx = makeFixture();
+    fx.facts.motorTorqueRms = -3.0;  // N·m（幅值 3 ≤ 额定 4.0——限内）
+    HardConstraintSelector selector;
+    const std::vector<FeasibilityRecord> recs
+        = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
+    ASSERT_EQ(recs.size(), 1U);
+    expectRecordShape(recs[0], VerdictKind::Feasible, {}, 0U, "M-GOLD");
+}
