@@ -24,6 +24,7 @@
 #include <QLabel>
 #include <QLineEdit>                              // TCP 显示名行编辑（UI-T58）
 #include <QScrollBar>
+#include <QSplitter>
 #include <QStackedWidget>
 #include <QTabWidget>
 #include <QTime>
@@ -295,10 +296,22 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     // 区位总布局：左右分栏（树｜属性）＋下部叠放（工具/就绪/预览——
     // 页签承载三区，对应 UX-09 五区布局的建模域投影）。
     auto* mainLayout = new QHBoxLayout(this);
-    auto* left = new QVBoxLayout();
-    auto* right = new QVBoxLayout();
-    mainLayout->addLayout(left, 5);
-    mainLayout->addLayout(right, 4);
+    // 左右栏使用可拖动分隔器：结构树需要保持可读宽度，右侧参数表在窄窗
+    // 中则应优先获得空间。分隔位置属于会话呈现设置，不改变模型数据。
+    auto* splitter = new QSplitter(Qt::Horizontal, this);
+    splitter->setObjectName(QStringLiteral("ird_modeling_main_splitter"));
+    auto* leftHost = new QWidget(splitter);
+    auto* rightHost = new QWidget(splitter);
+    auto* left = new QVBoxLayout(leftHost);
+    auto* right = new QVBoxLayout(rightHost);
+    left->setContentsMargins(0, 0, 4, 0);
+    right->setContentsMargins(4, 0, 0, 0);
+    splitter->addWidget(leftHost);
+    splitter->addWidget(rightHost);
+    splitter->setStretchFactor(0, 5);
+    splitter->setStretchFactor(1, 4);
+    splitter->setSizes({520, 420});
+    mainLayout->addWidget(splitter, 1);
     buildStructureTreePane(left);   // 区①建模结构树（左栏）
     buildPropertyPane(right);       // 区②属性编辑区（右栏）
 
@@ -1576,7 +1589,15 @@ void ModelingPanelWidget::refreshJointEditPane()
         m_jointEditTypeBox->setEnabled(m_writable);
     }
     m_jointEditTarget = jointIndex;
-    pushJointEditBaselines(joint);
+    // 同一对象已有暂存输入时，刷新不能用外部基线覆盖用户正在编辑的值；
+    // 没有暂存时才接收最新权威值。首次建页则必须回填后立即重绘参数表，
+    // 否则表格会停留在构造期的“未设”，直到用户点击取消恢复才偶然刷新。
+    const bool keepPending = m_jointEditModel != nullptr
+                             && !m_jointEditModel->pendingChanges().empty();
+    if (!sameTarget || !keepPending) {
+        pushJointEditBaselines(joint);
+        ui::refreshParamTablePanel(m_jointEditPanel);
+    }
 }
 
 void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
@@ -2029,6 +2050,7 @@ void ModelingPanelWidget::refreshToolMountPane()
     m_toolEditModel->setBaseline(kToolMountRollKey, rpy[0]);
     m_toolEditModel->setBaseline(kToolMountPitchKey, rpy[1]);
     m_toolEditModel->setBaseline(kToolMountYawKey, rpy[2]);
+    ui::refreshParamTablePanel(m_toolEditPanel);
     m_toolEditPanel->setEnabled(m_writable);  // L-7 页级门控
 }
 
@@ -2060,6 +2082,7 @@ void ModelingPanelWidget::refreshScenePosePane()
     m_sceneEditModel->setBaseline(kSceneWorldRollKey, rpy[0]);
     m_sceneEditModel->setBaseline(kSceneWorldPitchKey, rpy[1]);
     m_sceneEditModel->setBaseline(kSceneWorldYawKey, rpy[2]);
+    ui::refreshParamTablePanel(m_sceneEditPanel);
     m_sceneEditPanel->setEnabled(m_writable);
 }
 
@@ -2291,6 +2314,7 @@ void ModelingPanelWidget::refreshTcpPane()
     m_tcpOffsetModel->setBaseline(kTcpOffsetRollKey, rpy[0]);
     m_tcpOffsetModel->setBaseline(kTcpOffsetPitchKey, rpy[1]);
     m_tcpOffsetModel->setBaseline(kTcpOffsetYawKey, rpy[2]);
+    ui::refreshParamTablePanel(m_tcpOffsetPanel);
 }
 
 void ModelingPanelWidget::onTcpComboChanged(int index)
@@ -2656,6 +2680,7 @@ void ModelingPanelWidget::refreshPoseSetPane()
             m_poseSetConfigModel->setBaseline(key, std::nullopt);
         }
     }
+    ui::refreshParamTablePanel(m_poseSetConfigPanel);
 }
 
 void ModelingPanelWidget::onPoseSetComboChanged(int index)
@@ -2905,6 +2930,7 @@ void ModelingPanelWidget::refreshDrivetrainPane()
             m_drivetrainModel->setBaseline("dt-torque-peak-" + std::to_string(i), std::nullopt);
         }
     }
+    ui::refreshParamTablePanel(m_drivetrainPanel);
 }
 
 void ModelingPanelWidget::applyDrivetrainEdits(const ui::ParamEditSet& editSet)

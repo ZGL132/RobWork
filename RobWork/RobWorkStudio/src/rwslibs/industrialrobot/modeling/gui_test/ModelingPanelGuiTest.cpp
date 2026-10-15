@@ -933,9 +933,9 @@ TEST_F(ModelingPanelGuiTest,
     Q_EMIT readinessItems->itemClicked(row, 0);
     QApplication::processEvents();
 
-    // 落点断言：结构树当前行＝锚定关节行（首 QTreeWidget＝区①结构树；
+    // 落点断言：结构树当前行＝锚定关节行（按 objectName 具名取区①结构树——UI-T81：分隔器改版后树降一级父层，无名首树查找会误中就绪表；
     // kAnchorColumn=1——UI-T47 gui 定位复用列）。
-    QTreeWidget* structureTree = m_panel->findChild<QTreeWidget*>();
+    QTreeWidget* structureTree = m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_modeling_struct_tree"));
     ASSERT_NE(structureTree, nullptr) << "结构树缺失（区①构建缺陷）";
     ASSERT_NE(structureTree->currentItem(), nullptr)
         << "定位链落点缺失（生产 sink 未接线——F-539 静默丢弃形态）";
@@ -958,11 +958,11 @@ TEST_F(ModelingPanelGuiTest, StructureButtons_InsertAndRemove_DraftOnly_UI_T47)
     //   插入：工作集 7 关节（六轴+1）＋8 连杆（I-MDL-1）。
     const core::ObjectId j1 = m_ws.design.joints.front().objectId;
     const QString j1Anchor = QString::fromStdString(j1.toCanonical());
-    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>());
+    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_modeling_struct_tree")));
     while (*it != nullptr
            && (*it)->text(1) != j1Anchor) { ++it; }
     ASSERT_NE(*it, nullptr) << "首关节树行未投影";
-    m_panel->findChild<QTreeWidget*>()->setCurrentItem(*it);
+    m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_modeling_struct_tree"))->setCurrentItem(*it);
 
     const std::size_t jointsBefore = m_ws.design.joints.size();
     addBtn->click();
@@ -1000,11 +1000,11 @@ TEST_F(ModelingPanelGuiTest, StructureButtons_RemoveSelected_DraftOnly_UI_T47)
     // 选中首关节→删除：6→5 关节（草稿级——无修订产生）。
     const core::ObjectId j1 = m_ws.design.joints.front().objectId;
     const QString j1Anchor = QString::fromStdString(j1.toCanonical());
-    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>());
+    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_modeling_struct_tree")));
     while (*it != nullptr
            && (*it)->text(1) != j1Anchor) { ++it; }
     ASSERT_NE(*it, nullptr);
-    m_panel->findChild<QTreeWidget*>()->setCurrentItem(*it);
+    m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_modeling_struct_tree"))->setCurrentItem(*it);
 
     QPushButton* removeBtn = m_panel->findChild<QPushButton*>(
         QStringLiteral("ird_modeling_struct_remove"));
@@ -1048,10 +1048,10 @@ TEST_F(ModelingPanelGuiTest, GeometryActionButtons_LoadAndDetach_UI_T48)
     // ②连杆选中后属性区出现几何操作钮（挂接/摘除——承载面存在性）。
     const core::ObjectId l1 = m_ws.design.links[1].objectId;
     const QString l1Anchor = QString::fromStdString(l1.toCanonical());
-    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>());
+    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_modeling_struct_tree")));
     while (*it != nullptr && (*it)->text(1) != l1Anchor) { ++it; }
     ASSERT_NE(*it, nullptr) << "连杆树行未投影";
-    m_panel->findChild<QTreeWidget*>()->setCurrentItem(*it);
+    m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_modeling_struct_tree"))->setCurrentItem(*it);
 
     QPushButton* detach = m_panel->findChild<QPushButton*>(
         QStringLiteral("ird_modeling_geo_detach_visual"));
@@ -1829,4 +1829,46 @@ TEST_F(ModelingPanelGuiTest, TcpDisplayNameEdit_SetWritableDynamicWindow_F517)
     QPushButton* nameApply = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_displayname_apply"));
     ASSERT_NE(nameApply, nullptr);
     EXPECT_FALSE(nameApply->isEnabled()) << "动态窗口降级后显示名应用钮未禁用（setWritable 半区）";
+}
+
+/**
+ * @brief UI-T79 / MDL-07：首次选择必须立即呈现回填值，不能依赖取消按钮重绘。
+ * 使用非零且各轴不同的输入（m、无量纲），排除全零模板掩盖未设/串行缺陷。
+ */
+TEST_F(ModelingPanelGuiTest, FirstSelectionShowsImportedValuesWithoutCancel_UI_T79)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+    // 复用真实编辑原语建立可辨别的原点；本例核查显示链而非重算机器人学。
+    JointEditValue value = JointOriginEditValue{0.12, -0.03, 0.4, 0, 0, 0};
+    const auto err = applyJointFieldEdit(m_ws, 1, JointEditField::Origin, value);
+    ASSERT_FALSE(err.has_value());
+    m_panel->focusObject(m_ws.design.joints[1].objectId);
+    auto* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    for (const auto& field : std::vector<std::pair<const char*, double>>{
+             {"axis-y", m_ws.design.joints[1].axis.value()[1]}, {"origin-x", 0.12}, {"origin-y", -0.03}, {"origin-z", 0.4}}) {
+        const int row = jointEditRowOf(*table, field.first);
+        ASSERT_GE(row, 0);
+        bool ok = false;
+        const double number = table->item(row, 1)->text().toDouble(&ok);
+        EXPECT_TRUE(ok) << "首次回填不得显示未设：" << field.first;
+        EXPECT_DOUBLE_EQ(number, field.second) << field.first;
+    }
+}
+
+/** @brief UI-T79 / UX-05：同对象刷新不能丢弃尚未确认的数值输入（m）。 */
+TEST_F(ModelingPanelGuiTest, SameObjectRefreshKeepsPendingValue_UI_T79)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    auto* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    table->item(jointEditRowOf(*table, "origin-x"), 1)->setText(QStringLiteral("0.123"));
+    QApplication::processEvents();
+    m_panel->refreshPanel(m_ws, ModelReadinessReport{});
+    EXPECT_EQ(table->item(jointEditRowOf(*table, "origin-x"), 1)->text(), QStringLiteral("0.123"));
+    // 点确认必须仍有变更明细，防止仅屏幕保留旧文字、模型暂存已被清空。
+    auto* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_confirm_region"))->isHidden());
 }

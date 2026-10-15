@@ -1,0 +1,16 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\rework-uit81\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\rework-uit81\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_io.vcxproj -> C:\rework-uit81\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> C:\rework-uit81\build-smoke\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_project.vcxproj -> C:\rework-uit81\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_runtime.vcxproj -> C:\rework-uit81\build-smoke\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_modeling.vcxproj -> C:\rework-uit81\build-smoke\modeling\Release\sdurws_ird_modeling.lib
+  sdurws_ird_ui.vcxproj -> C:\rework-uit81\build-smoke\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> C:\rework-uit81\build-smoke\modeling\Release\sdurws_ird_modeling_plugin.lib
+  sdurws_ird_testkit.vcxproj -> C:\rework-uit81\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  ModelingPanelGuiTest.cpp
+  sdurws_ird_modeling_gui_test.vcxproj -> C:\rework-uit81\build-smoke\modeling\Release\sdurws_ird_modeling_gui_test.exe
+BUILD_EXIT=0
