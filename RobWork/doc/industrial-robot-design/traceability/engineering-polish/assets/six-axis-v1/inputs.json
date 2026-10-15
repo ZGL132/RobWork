@@ -1,0 +1,432 @@
+{
+  "schema": "engineering-six-axis-inputs/1",
+  "qualification": "synthetic-analytic; 非厂商/实测机型",
+  "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-fk-analytic/1.0.0/inputs/fk-cases.json",
+    "fields": "six-axis joints/tcpOffset 原样复制",
+    "license": "仓内既有测试数据，沿用仓库许可；未引入外部模型"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad",
+    "mass": "kg",
+    "inertia": "kg*m^2",
+    "time": "s"
+  },
+  "frames": {
+    "jointOrigin": "父连杆系下的局部平移，原点朝向为恒等",
+    "axis": "关节局部系下单位轴",
+    "tcp": "法兰到 TCP",
+    "inertia": "质心参考点、主轴与所属连杆局部系平行",
+    "gravity": "世界系 [0,0,-9.80665] m/s^2"
+  },
+  "model": {
+    "id": "six-axis",
+    "note": "六轴臂——雅可比与奇异值经独立参考实现对照（附录 D 第 9 项）",
+    "joints": [
+      {
+        "type": "revolute",
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "lower": -3.14,
+        "upper": 3.14
+      },
+      {
+        "type": "revolute",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "origin": [
+          0,
+          0,
+          0.4
+        ],
+        "lower": -1.5,
+        "upper": 1.5
+      },
+      {
+        "type": "revolute",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "origin": [
+          0.5,
+          0,
+          0
+        ],
+        "lower": -1.5,
+        "upper": 1.5
+      },
+      {
+        "type": "revolute",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "origin": [
+          0.5,
+          0,
+          0
+        ],
+        "lower": -3.14,
+        "upper": 3.14
+      },
+      {
+        "type": "revolute",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "origin": [
+          0.3,
+          0,
+          0
+        ],
+        "lower": -1.5,
+        "upper": 1.5
+      },
+      {
+        "type": "revolute",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "origin": [
+          0.2,
+          0,
+          0
+        ],
+        "lower": -3.14,
+        "upper": 3.14
+      }
+    ],
+    "tcpOffset": {
+      "xyz": [
+        0.15,
+        0,
+        0.1
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "angle": 1.5707963267948966
+    }
+  },
+  "mounts": [
+    {
+      "id": "ground",
+      "translationM": [
+        0.2,
+        -0.1,
+        0.05
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "angleRad": 0
+    },
+    {
+      "id": "wall",
+      "translationM": [
+        0.2,
+        -0.1,
+        0.05
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "angleRad": 1.5707963267948966
+    },
+    {
+      "id": "ceiling",
+      "translationM": [
+        0.2,
+        -0.1,
+        0.05
+      ],
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "angleRad": 3.141592653589793
+    }
+  ],
+  "poses": [
+    {
+      "id": "home",
+      "qRad": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "general",
+      "qRad": [
+        0.3,
+        -0.4,
+        0.5,
+        -0.6,
+        0.7,
+        -0.8
+      ]
+    },
+    {
+      "id": "near-zero",
+      "qRad": [
+        1e-09,
+        -1e-09,
+        1e-09,
+        -1e-09,
+        1e-09,
+        -1e-09
+      ]
+    }
+  ],
+  "physicalParts": [
+    {
+      "id": "l0",
+      "massKg": 10,
+      "boxDimensionsM": [
+        0.25,
+        0.25,
+        0.15
+      ],
+      "comInLinkM": [
+        0.125,
+        0.01,
+        0
+      ],
+      "source": "合成解析长方体；仅验证软件，非厂商数据",
+      "state": "synthetic"
+    },
+    {
+      "id": "l1",
+      "massKg": 5,
+      "boxDimensionsM": [
+        0.15,
+        0.15,
+        0.4
+      ],
+      "comInLinkM": [
+        0.075,
+        0.01,
+        0
+      ],
+      "source": "合成解析长方体；仅验证软件，非厂商数据",
+      "state": "synthetic"
+    },
+    {
+      "id": "l2",
+      "massKg": 8,
+      "boxDimensionsM": [
+        0.5,
+        0.12,
+        0.12
+      ],
+      "comInLinkM": [
+        0.25,
+        0.01,
+        0
+      ],
+      "source": "合成解析长方体；仅验证软件，非厂商数据",
+      "state": "synthetic"
+    },
+    {
+      "id": "l3",
+      "massKg": 6,
+      "boxDimensionsM": [
+        0.5,
+        0.1,
+        0.1
+      ],
+      "comInLinkM": [
+        0.25,
+        0.01,
+        0
+      ],
+      "source": "合成解析长方体；仅验证软件，非厂商数据",
+      "state": "synthetic"
+    },
+    {
+      "id": "l4",
+      "massKg": 3,
+      "boxDimensionsM": [
+        0.3,
+        0.08,
+        0.08
+      ],
+      "comInLinkM": [
+        0.15,
+        0.01,
+        0
+      ],
+      "source": "合成解析长方体；仅验证软件，非厂商数据",
+      "state": "synthetic"
+    },
+    {
+      "id": "l5",
+      "massKg": 2,
+      "boxDimensionsM": [
+        0.2,
+        0.07,
+        0.07
+      ],
+      "comInLinkM": [
+        0.1,
+        0.01,
+        0
+      ],
+      "source": "合成解析长方体；仅验证软件，非厂商数据",
+      "state": "synthetic"
+    },
+    {
+      "id": "l6",
+      "massKg": 1,
+      "boxDimensionsM": [
+        0.1,
+        0.06,
+        0.06
+      ],
+      "comInLinkM": [
+        0.05,
+        0.01,
+        0
+      ],
+      "source": "合成解析长方体；仅验证软件，非厂商数据",
+      "state": "synthetic"
+    },
+    {
+      "id": "tool",
+      "massKg": 1,
+      "boxDimensionsM": [
+        0.1,
+        0.08,
+        0.12
+      ],
+      "comInLinkM": [
+        0.03,
+        0.01,
+        0.04
+      ],
+      "source": "合成工具，主轴与工具局部系平行",
+      "state": "synthetic"
+    }
+  ],
+  "payloadVariants": [
+    {
+      "id": "empty",
+      "massKg": 0,
+      "meaning": "无工件；不将零质量写成 Provided 连杆物性"
+    },
+    {
+      "id": "loaded",
+      "massKg": 2,
+      "comInTcpM": [
+        0.05,
+        0,
+        0.1
+      ],
+      "boxDimensionsM": [
+        0.1,
+        0.1,
+        0.2
+      ],
+      "source": "合成解析工件，输入来源必须显式显示"
+    }
+  ],
+  "limits": {
+    "velocityRadPerSec": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "accelerationRadPerSec2": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "source": "合成测试限制，非样本默认性能承诺"
+  },
+  "taskDraft": {
+    "stations": "三个一般构型的独立 FK 目标；由 reference-results 中逐项列出",
+    "cycle": "尚未冻结工艺节拍，不授予动力学或选型正式资格"
+  },
+  "catalog": {
+    "status": "missing-real-catalog",
+    "reference": "sel-catalog-golden 只用于算法测试，不作为真实器件推荐"
+  },
+  "scenarios": [
+    {
+      "id": "S1",
+      "purpose": "基线重建，三安装姿态的 FK 对照",
+      "status": "draft-not-product-verified"
+    },
+    {
+      "id": "S2",
+      "purpose": "l2 长度增加 0.05 m，需求工作范围复算",
+      "status": "draft-not-product-verified"
+    },
+    {
+      "id": "S3",
+      "purpose": "空载和 2 kg 合成负载比较",
+      "status": "draft-not-product-verified"
+    },
+    {
+      "id": "S4",
+      "purpose": "节拍缩短，必须重新约束验证",
+      "status": "draft-not-product-verified"
+    },
+    {
+      "id": "S5",
+      "purpose": "器件替换：待真实目录",
+      "status": "draft-not-product-verified"
+    },
+    {
+      "id": "S6",
+      "purpose": "基线和两候选：待真实优化服务接线",
+      "status": "draft-not-product-verified"
+    },
+    {
+      "id": "S7",
+      "purpose": "缺失物性、缺资源和非法惯量应阻断正式资格",
+      "status": "draft-not-product-verified"
+    },
+    {
+      "id": "S8",
+      "purpose": "取消、切换、保存和重开，历史身份不变",
+      "status": "draft-not-product-verified"
+    }
+  ]
+}

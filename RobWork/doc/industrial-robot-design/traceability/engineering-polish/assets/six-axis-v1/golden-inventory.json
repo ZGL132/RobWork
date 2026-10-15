@@ -1,0 +1,401 @@
+[
+  {
+    "datasetId": "dt-mapping-golden",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "R1 对角映射逐样本量（θ/θ̇/θ̈/τ_ideal/τ_m/P 列）、工作点统计（峰值/RMS/负载率/四象限/能量分项）、反射惯量与惯量比、虚功对偶矩阵语义参考（§6.2/§8.1/§9/§10 冻结公式的封闭代数直算）",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_dt_mapping_golden.mjs——标量公式按单元卡冻结口径直写、梯形积分/象限判定同口径复刻）推导，与产品实现（drivetrain/src/MappingCore.cpp）零共享代码——独立性由公式来源层面保证（两侧各自对照单元卡原文）"
+    },
+    "generator": {
+      "script": "generate/make_dt_mapping_golden.mjs",
+      "invocation": "node generate/make_dt_mapping_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "dyn-two-link-analytic",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "逐样本五分项广义力（拉格朗日封闭式 M(q)·q̈ / 科氏-离心 h 项 / G(q)=∂V/∂q）/机械功率/能量积分状态、逐关节六 token 峰值（值/发生时间/所在段/位等值持续时间窗）、时间加权 RMS（梯形含驻留）、E⁺/E⁻/E_net/meanPower/幅值功率峰、三工况包络合并参考（§7.4/T07 登记口径）",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_dyn_two_link_golden.mjs——平面二连杆拉格朗日解析力学封闭式标量直算）推导，与产品实现（dynamics/src/InverseDynamics.cpp 的 RNEA 递归牛顿—欧拉＋src/Envelope.cpp 统计面）零共享代码——独立性由推导路线层面保证（拉格朗日 vs 牛顿—欧拉两条路线各自对照单元卡冻结口径；另有 inputs 内手算锚点〔静力矩平衡 r×F 第三路〕双路防同错）"
+    },
+    "generator": {
+      "script": "generate/make_dyn_two_link_golden.mjs",
+      "invocation": "node generate/make_dyn_two_link_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "ev-slice-fixture",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_ev_slice_fixture.mjs",
+      "invocation": "node generate/make_ev_slice_fixture.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "kin-coverage",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_kin_coverage_golden.mjs",
+      "invocation": "node generate/make_kin_coverage_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "kin-fk-analytic",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "FK 位姿/雅可比/奇异值期望值（planar-2r 闭式直算；six-axis 独立 4×4 程序推导）",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（4×4 齐次坐标直算＋几何雅可比定义直算＋Gram 矩阵 Jacobi 特征值）推导，与产品实现（kinematics/src/Fk.cpp，Eigen JacobiSVD 路径）零共享代码——独立性由数学定义层面保证"
+    },
+    "generator": {
+      "script": "generate/make_kin_fk_golden.mjs",
+      "invocation": "node generate/make_kin_fk_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "kin-ik-dedup",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_kin_ik_dedup_golden.mjs",
+      "invocation": "node generate/make_kin_ik_dedup_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "kin-search-outcomes",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_kin_search_outcomes_golden.mjs",
+      "invocation": "node generate/make_kin_search_outcomes_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "mdl-dh-equivalence",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "DH 链→显式表示的逐级累乘闭式展开（origin/axis 逐关节解析值）与规范链的闭式逆（roundtrip 参数）",
+      "independentOfProductionImpl": true,
+      "description": "闭式推导与实现见 generate/make_dh_equivalence.mjs（Rz/Rx、矩阵乘、累乘全部为脚本内独立实现——零产品代码依赖）。期望值与 C++ 生产实现的核对容差唯一来自档案 mdl-dh（附录 D 第 4/5 项，固定类）；退化族（exact-non-unique）的期望解为 §7.5 字典序定值规则的合同结论，随脚本注登记。脚本零依赖产品代码，与测试内独立参考、生产实现三方互证（rt-fk-equation 同款口径）。"
+    },
+    "generator": {
+      "script": "generate/make_dh_equivalence.mjs",
+      "invocation": "node generate/make_dh_equivalence.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "mdl-not-expressible",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_not_expressible.mjs",
+      "invocation": "node generate/make_not_expressible.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "mdl-template-6r",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_template_golden.mjs",
+      "invocation": "node generate/make_template_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "mdl-urdf-import",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_import_expectations.mjs",
+      "invocation": "node generate/make_import_expectations.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "opt-adopt-golden",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "§4.2/§5.5 SHA-256 身份链＋迷你规范格式物化字节与摘要＋§10.2/§10.3 两步命令语义封闭声明＋§10.4 闭式差异",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_opt_adopt_golden.mjs——身份链经 node crypto、设计表字节经 Buffer 逐字节编码；与产品 Applier.cpp/CandidatePatch.cpp/Run.cpp 零共享代码）推导"
+    },
+    "generator": {
+      "script": "generate/make_opt_adopt_golden.mjs",
+      "invocation": "node generate/make_opt_adopt_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "opt-lhs-golden",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "independent-program",
+      "scope": "§8.2 冻结采样算法全量复算（splitmix64 产出序/Fisher-Yates 层置换/层内均匀点/量化域收缩与 round-half-even 对齐/枚举下标钳制）＋§5.5 补丁 canonical 编码与 SHA-256 身份",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_opt_lhs_golden.mjs——BigInt 精确 64 位无符号环绕运算复刻 splitmix64 黄金常数语义，Buffer 逐字节复刻补丁 canonical 编码；与产品 EvaluatorPorts.cpp/CandidatePatch.cpp 零共享代码）推导"
+    },
+    "generator": {
+      "script": "generate/make_opt_lhs_golden.mjs",
+      "invocation": "node generate/make_opt_lhs_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "opt-pareto-golden",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "independent-program",
+      "scope": "§7.4 支配定义两式（含 core::closeWithin C4 公式逐元素展开）＋NSGA 逐层非支配分层＋稳定排序三键＋§7.5/§7.4 候选状态封闭推导＋§7.1 三项静态指标封闭换算＋§4.2 身份链",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_opt_pareto_golden.mjs——支配判定/分层/排序/指标换算直写冻结公式，SHA-256 身份链经 node crypto；与产品 Pareto.cpp/Objective.cpp/Run.cpp 零共享代码）推导"
+    },
+    "generator": {
+      "script": "generate/make_opt_pareto_golden.mjs",
+      "invocation": "node generate/make_opt_pareto_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "pol-collision-analytic",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "hand-built",
+      "scope": "轴向对齐立方体对的已知相交/分离手算构造（含倒挂安装的世界系消费判别例）",
+      "independentOfProductionImpl": true,
+      "description": "期望＝手算闭式公式的直接编码（面间隙＝轴向中心距−边长；中心距小于边长＝投影重叠→二值碰撞）——推导逐例登记于 inputs/scene-cases.json 的 derivation 字段；生成脚本为推导的机器承载（含推导自检断言），不引用任何产品碰撞代码"
+    },
+    "generator": {
+      "script": "generate/make_pol_collision_analytic.mjs",
+      "invocation": "node generate/make_pol_collision_analytic.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "pol-policy-codec-fixture",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_pol_policy_fixture.mjs",
+      "invocation": "node generate/make_pol_policy_fixture.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "req-partial-pose",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_partial_pose_golden.mjs",
+      "invocation": "node generate/make_partial_pose_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "req-payload-events",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_payload_events_golden.mjs",
+      "invocation": "node generate/make_payload_events_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "req-region-sampling",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_region_sampling_golden.mjs",
+      "invocation": "node generate/make_region_sampling_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "req-transport-task",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_transport_task_golden.mjs",
+      "invocation": "node generate/make_transport_task_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "rt-fk-equation",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "平面 3R（轴全 +Z、origin 旋转恒等、零位偏置 0）正运动学闭式解",
+      "independentOfProductionImpl": true,
+      "description": "闭式解推导与实现见 generate/make_fk_equation.mjs（O_1=t_1；O_i=O_{i-1}+Rz(q_1+…+q_{i-1})·t_i；绕 Z 旋转不动 Z 轴故 world 轴恒 (0,0,1)）。脚本零依赖产品代码——与测试内手写 FK、RobWork Device FK 三方互证（附录 D 第 4/5 项容差经档案 rt）。"
+    },
+    "generator": {
+      "script": "generate/make_fk_equation.mjs",
+      "invocation": "node generate/make_fk_equation.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "rt-namemap-roundtrip",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": null,
+    "generator": {
+      "script": "generate/make_namemap.mjs",
+      "invocation": "node generate/make_namemap.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "sel-backfill-golden",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "§12.4 五步合成逐分量（平行轴迁移 I^O＝I＋m·(|c|²E₃−c·cᵀ)／质量加权质心／向合成质心回迁）与组装拒绝分类（壳体惯量齐备性/安装关系核对/多轴整体原子）",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_backfill_golden.mjs——五步标量直算，与产品 Backfill.cpp synthesizeAxisBodyProperties 零共享代码）推导；inputs 内另附手算锚点（质心 z 分量分数算术 4.585/24 与合成质量 24 kg）"
+    },
+    "generator": {
+      "script": "generate/make_sel_backfill_golden.mjs",
+      "invocation": "node generate/make_sel_backfill_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "sel-catalog-golden",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "正例装配面（条目字段映射/missing 清单/装配序——§4.1/§5.1 冻结语义的封闭推导）与误例校验报告（§5.3 八码族＋§6.3 四码族的逐条文字规则推导——行号＝firstDataRowNo(3)＋数据行序）",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_catalog_golden.mjs）按单元卡文字规则直写推导，与产品实现（selection/src/CatalogValidation.cpp＋CatalogTypes.cpp）零共享代码——独立性由规则来源层面保证（两侧各自对照单元卡原文）"
+    },
+    "generator": {
+      "script": "generate/make_sel_catalog_golden.mjs",
+      "invocation": "node generate/make_sel_catalog_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "sel-combo-golden",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "组合级判定复算（§9.3 清单——组合兼容/轴级能力维度/格聚合/质量核算/verdict 汇总）与映射事实解析换算（c＝1/n——drivetrain 卡 §5.3 归一化传动比口径）",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_combo_golden.mjs——组合级规则按 §9 直写＋映射事实按 c＝1/n 封闭代数直算，与产品 CombinationCheck.cpp（零映射公式）及 drivetrain 映射核心均零共享代码）推导"
+    },
+    "generator": {
+      "script": "generate/make_sel_combo_golden.mjs",
+      "invocation": "node generate/make_sel_combo_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "sel-linear-golden",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "正例装配面（条目字段映射/missing 清单/装配序——§4.1/§5.1/§17.2 冻结语义）、误例校验报告（§5.3 八码族＋§6.3 四码族逐条文字规则——行号＝firstDataRowNo(3)＋数据行序）与筛选黄金（§17.2 维度集＋附录 D C7 容差＋§10.4 排序——插值锚点：bs-force 0.65 m/s→10500 N、lm-force 0.65 m/s→10550 N、lm-force 0.9 m/s→9800 N，区间外 0.9 m/s 对 bs-force 上界 0.8＝EXTRAPOLATION-DENIED 数据缺口）",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_linear_golden.mjs）按单元卡文字规则直写推导，与产品实现（selection/src/CatalogValidation.cpp/Screening.cpp/CatalogTypes.cpp）零共享代码——独立性由规则来源层面保证（两侧各自对照单元卡原文）"
+    },
+    "generator": {
+      "script": "generate/make_sel_linear_golden.mjs",
+      "invocation": "node generate/make_sel_linear_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "sel-screening-golden",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "逐维度判定复算（§7.1/§8.1 全维度——阈值比较/曲线插值/温度降额档位/外载荷力臂核算/SF 复判/verdict 汇总/稳定排序）与手算锚点（曲线插值 @130→1040 W、力臂核算 500×0.05/0.10→250 N、SF 边界 240×1.25→300 rad/s）",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_screening_golden.mjs——按单元卡 §7/§8 冻结语义逐维直写，与产品 Screening.cpp 零共享代码）推导；inputs 内另附解析锚点（第三路——防参考实现与产品实现两路同错，消费测试独立断言）"
+    },
+    "generator": {
+      "script": "generate/make_sel_screening_golden.mjs",
+      "invocation": "node generate/make_sel_screening_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "trj-at06-recheck-golden",
+    "version": "1.0.0",
+    "kind": "analytic-case",
+    "referenceSource": {
+      "method": "closed-form",
+      "scope": "P-06 双上界细分计划账目（层数/子段数/检查子段数/实际步长）、障碍盒扫掠角投影（atan 闭式）、线性插值与 C-space 带交叠（代数）、平面 2R 闭式 FK、平滑鼓包内部极值（acos 闭式）、零裕度与近零探针锚点",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_trj_at06_golden.mjs——units/trajectory.md §11.1/§11.5/§15.6 复检协议与 REQUIREMENTS 附录 C P-06 冻结数值表闭式直算）推导，与产品实现（trajectory/src/Recheck.cpp 等集成链路）零共享代码——独立性由公式来源层面保证（两侧各自对照单元卡与需求原文）；整数计数与浮点解析量分列（计数精确断言、解析量经容差档案 trj-at06@1.0.0 对照）"
+    },
+    "generator": {
+      "script": "generate/make_trj_at06_golden.mjs",
+      "invocation": "node make_trj_at06_golden.mjs",
+      "committed": true
+    }
+  },
+  {
+    "datasetId": "wf-gate-advice-fixture",
+    "version": "1.0.0",
+    "kind": "contract-fixture",
+    "referenceSource": {
+      "method": "hand-built",
+      "scope": "七阶段门控五规则序贯判定（§4.4）、事件窗口重放（§5.2）、建议八规则优先级装配（§6.3）、级联失效映射（§4.3 D-WF-2）与文案键形（§6.3/ui §3.5）——按单元卡冻结语义直写",
+      "independentOfProductionImpl": true,
+      "description": "期望值由本仓库内 node 独立参考实现（generate/make_wf_gate_advice_fixture.mjs——按单元卡 §4.2/§4.3/§4.4/§5.2/§6.2/§6.3 冻结语义逐条直写，与产品 Gate.cpp/Advice.cpp/Types.cpp 零共享代码）推导；双实现互证：任一侧漂移即消费测试（GateAdviceFixtureContractTest）显性失败"
+    },
+    "generator": {
+      "script": "generate/make_wf_gate_advice_fixture.mjs",
+      "invocation": "node generate/make_wf_gate_advice_fixture.mjs",
+      "committed": true
+    }
+  }
+]

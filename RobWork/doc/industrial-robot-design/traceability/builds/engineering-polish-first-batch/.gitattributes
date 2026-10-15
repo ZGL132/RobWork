@@ -1,0 +1,2 @@
+# 原始证据与哈希按字节保存；CRLF 是证据换行，不将 CR 当尾空白。
+* -text whitespace=cr-at-eol

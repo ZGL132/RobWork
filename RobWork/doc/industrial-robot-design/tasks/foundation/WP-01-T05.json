@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-task/1",
+  "status": "ready",
+  "interUnit": false,
+  "knownPitfalls": [],
+  "taskId": "WP-01-T05",
+  "unit": "build",
+  "masterWp": "WP-B",
+  "title": "修复性能测试和测量工作进程的门禁分类并形成首批打磨证据",
+  "dependsOn": [
+    "WP-01-T01"
+  ],
+  "requirements": [
+    "ARC-02",
+    "NFR-MNT-01",
+    "NFR-MNT-05",
+    "NFR-SEC-04"
+  ],
+  "designRefs": [
+    "development-task-breakdown.md#2.2",
+    "units/testkit.md#2.4",
+    "traceability/wp23-t02-gate-registrations.md",
+    "traceability/wp23-t03-gate-registrations.md",
+    "traceability/wp23-t06-gate-registrations.md",
+    "traceability/wp23-t07-gate-registrations.md",
+    "traceability/wp23-t08-gate-registrations.md",
+    "traceability/wp23-t04-gate-registrations.md",
+    "tasks/foundation/WP-23-T05.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-01-T05.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/RT-T16.json",
+    "RobWork/doc/industrial-robot-design/traceability/engineering-polish/**",
+    "RobWork/doc/industrial-robot-design/traceability/builds/engineering-polish-first-batch/**",
+    "RobWork/docs/superpowers/plans/2026-10-15-engineering-polish-work-packages.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/src/**",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json"
+  ],
+  "outputs": [
+    "门禁目标分类与精确测量边登记",
+    "正反自测（性能目标合法边、未登记跨单元边、非测试工作进程禁链 testkit、L2 零 Qt）",
+    "QP-00/01/02 现况证据与未审范围",
+    "RT-T16 后继卡，零数值产品源码修改"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-01-T05.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp01-t05",
+  "acceptance": [
+    "基线 01223053 门禁真实 22 命中；修复后集成与独立冒烟 ird_gates 零命中；不删除违规检查、不使用通用跨域豁免",
+    "只识别已定义 perf_test/largedata_perf_test 词形；openbench_worker 按精确目标级工具边登记，不当成测试享受 testkit 豁免",
+    "新增正反自测在旧分类必红、修复后通过；跨单元未登记边/产品链 testkit/L2 链 Qt 仍必红",
+    "首批双模式测试的真实 PASS/FAIL/SKIP、XML/原生 JSON 缺口和宿主走查结果均留痕；不宣布 QP-01/02 全包收口",
+    "独立验收与所有者合入由后续会话完成，status 不自行改 done"
+  ],
+  "note": "用户 2026-10-15 指示完成首批工作包。QP-00 当前复现触发；WP-01-T04 远程 CI 任务号已占用，取后继 T05。编码前建立本契约与 DTB/单元卡登记。此会话唯一产品实施契约；RT-T16 仅登记，不在本会话实施。"
+}
