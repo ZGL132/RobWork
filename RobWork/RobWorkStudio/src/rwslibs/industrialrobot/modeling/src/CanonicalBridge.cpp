@@ -449,7 +449,23 @@ runtime::Expected<runtime::JointDescription, ModelingError>
         for (int k = 0; k < 3; ++k) {
             foldNormSq += jd.axis(k) * jd.axis(k);
         }
+        // 轴向量是 Rodrigues 折叠的数学前提：模长必须有限且严格大于零。
+        // 直接构造 RobotDesign 的调用方可能绕过编辑/解码门；若这里继续除以
+        // 零或非有限值，NaN 会进入 runtime 的 origin，随后 FK/碰撞计算会以
+        // “成功编译”形式污染工程。故在唯一折叠入口 fail-fast，并把问题归为
+        // UnitIllegal（调用方输入质量错误），不静默归一化或伪造 +Z 轴。
+        if (!std::isfinite(foldNormSq) || !(foldNormSq > 0.0)) {
+            return runtime::Expected<runtime::JointDescription, ModelingError>::err(
+                unitIllegal(field + ".axis",
+                            "zeroOffset 折叠要求 axis 为有限且非零向量；"
+                            "拒绝在 Rodrigues 公式中产生 NaN/Inf"));
+        }
         const double foldNorm = std::sqrt(foldNormSq);
+        if (!std::isfinite(foldNorm) || !(foldNorm > 0.0)) {
+            return runtime::Expected<runtime::JointDescription, ModelingError>::err(
+                unitIllegal(field + ".axis",
+                            "axis 模长无法得到有限正数；拒绝零位折叠"));
+        }
         const rw::math::Vector3D<double> foldAxis(
             jd.axis(0) / foldNorm, jd.axis(1) / foldNorm, jd.axis(2) / foldNorm);
         const rw::math::Rotation3D<double> folded =
