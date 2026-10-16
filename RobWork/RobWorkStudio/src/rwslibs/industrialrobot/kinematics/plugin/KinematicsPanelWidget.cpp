@@ -216,13 +216,18 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
     m_statTable = makeTable({tr("统计"), tr("值")}, pane);
     layout->addWidget(m_statTable);
 
-    // 命令行（导出/复位/设默认——全部经编排函数，零内联逻辑）。
+    // 命令行（导出/复位/设默认/复算——全部经编排函数，零内联逻辑）。
     auto* buttons = new QHBoxLayout();
     m_exportJsonButton = new QPushButton(tr("导出 JSON"), pane);
     m_exportCsvButton = new QPushButton(tr("导出 CSV"), pane);
     m_resetHomeButton = new QPushButton(tr("复位 Home"), pane);
     m_setTcpButton = new QPushButton(tr("设默认 TCP"), pane);
     m_setDeviceButton = new QPushButton(tr("设默认设备"), pane);
+    // ★ KIN-P4：复算按钮（审查 §4——"原任务定义与当前快照重绑定"的
+    // 产品入口；会话级零修订——AT-04）。
+    m_recomputeButton = new QPushButton(tr("复算（当前快照）"), pane);
+    m_recomputeButton->setToolTip(
+        tr("按原任务定义（seed/参考构型自原结果身份携带）在当前快照重跑求解"));
     connect(m_exportJsonButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onExportJsonClicked);
     connect(m_exportCsvButton, &QPushButton::clicked, this,
@@ -233,8 +238,10 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
             &KinematicsPanelWidget::onSetDefaultTcpClicked);
     connect(m_setDeviceButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onSetDefaultDeviceClicked);
+    connect(m_recomputeButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onRecomputeClicked);
     for (QPushButton* b : {m_exportJsonButton, m_exportCsvButton, m_resetHomeButton,
-                           m_setTcpButton, m_setDeviceButton}) {
+                           m_setTcpButton, m_setDeviceButton, m_recomputeButton}) {
         buttons->addWidget(b);
     }
     layout->addLayout(buttons);
@@ -317,6 +324,12 @@ void KinematicsPanelWidget::refreshAll()
                              && m_session.lastSessionSolutionSetView != nullptr;
     m_exportJsonButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
     m_exportCsvButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
+    // 复算按钮（KIN-P4）：可用＝原解集在场（原任务定义来源）＋模型视图
+    // 与求解器在场（复算执行面）。复算为会话级零修订流（AT-04）——只读
+    // 会话不禁用（与 solve-ik 同 readOnlyAllowed 语义）。
+    m_recomputeButton->setEnabled(
+        m_session.lastSessionSolutionSet != nullptr
+        && m_services.ikSolver != nullptr && m_services.modelView != nullptr);
     m_solveButton->setEnabled(commandEnabled("kinematics.solve-ik",
                                              m_services.ikSolver != nullptr
                                              && m_services.modelView != nullptr));
@@ -375,8 +388,21 @@ void KinematicsPanelWidget::refreshPosePane()
         return;
     }
     const std::vector<double>& q = m_services.sessionPose->jointConfiguration();
-    const TcpRef tcp;  // canonical TCP（空 tcpKey——快照内解析）
-    const auto metrics = m_services.fkEvaluator->evaluate(*m_services.modelView, tcp, q);
+    // ★ KIN-P4/审查 §4：位姿页刷新的 TCP 经三入口统一解析单点
+    // （resolveSessionTcp——KIN-14 默认 TCP 权威）。修复前此处构造空
+    // TcpRef（canonical TCP 语义）——但 FK 不会仅凭空 tcpKey 自动找到
+    // toolObject，无工具快照下评估恒 KIN-NO-TCP 失败、有工具快照下依赖
+    // 隐式约定。解析失败＝位姿表空＋状态行显式提示（建模侧配置指引），
+    // 不虚构指标行。
+    const KinTcpResolution tcp = resolveSessionTcp(m_services);
+    if (!tcp.ok) {
+        renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
+        m_jointTable->setRowCount(0);
+        showStatusText(QString::fromStdString(tcp.statusText));
+        return;
+    }
+    const auto metrics =
+        m_services.fkEvaluator->evaluate(*m_services.modelView, tcp.tcp, q);
     if (!metrics.ok()) {
         // 失败如实呈现（KinematicsError 的稳定码 token＋detail——非模态
         // 状态行；token 转发表唯一出口 Errors.hpp）。
@@ -571,7 +597,10 @@ void KinematicsPanelWidget::onSolveClicked()
     const KinSolveFlowResult r =
         runSinglePointSolve(m_services, m_session, target, assembly.request);
     showStatusText(QString::fromStdString(r.statusText));
-    refreshResultsPane();
+    // 全面板刷新（★ KIN-P4——refreshAll 而非仅结果页：解集入会话态后
+    // 导出/复算按钮的门控随即点亮——修复前按钮态停留在求解前的"无结果
+    // 禁用"，用户求解成功仍不能导出，闭环断链）。现取重投影零缓存。
+    refreshAll();
 }
 
 void KinematicsPanelWidget::onBatchClicked()
@@ -603,9 +632,19 @@ void KinematicsPanelWidget::onResetHomeClicked()
 
 void KinematicsPanelWidget::onSetDefaultTcpClicked()
 {
-    // L-K9 转接（canonical TCP——快照内解析）。
+    // L-K9 转接。★ KIN-P4/审查 §4：设默认 TCP 的目标身份经三入口统一
+    // 解析单点（resolveSessionTcp——KIN-14 默认工具权威）取得合法工具
+    // 身份；解析失败＝显式提示并停在原地，绝不提交空 TcpRef（修复前恒
+    // 传 TcpRef{}——modeling 侧 defaultTcp 断言对空 toolObject 的悬空
+    // 引用必拒，用户只见抽象诊断码不见原因）。
+    const KinTcpResolution tcp = resolveSessionTcp(m_services);
+    if (!tcp.ok) {
+        showStatusText(QString::fromStdString(
+            "设默认 TCP 不可用：" + tcp.statusText));
+        return;
+    }
     showStatusText(QString::fromStdString(
-        submitSetDefaultTcp(m_services, m_session, TcpRef{})));
+        submitSetDefaultTcp(m_services, m_session, tcp.tcp)));
 }
 
 void KinematicsPanelWidget::onSetDefaultDeviceClicked()
@@ -629,6 +668,38 @@ void KinematicsPanelWidget::onExportCsvClicked()
 {
     showStatusText(QString::fromStdString(
         exportSessionResults(m_services, m_session, "kin-results.csv", true)));
+}
+
+void KinematicsPanelWidget::onRecomputeClicked()
+{
+    // KIN-P4 转接（复算编排——目标位姿取面板当前编辑值；原任务定义的
+    // seed/referenceQ 自原结果身份显式携带，快照重绑定为当前会话锚）。
+    // 目标字段解析失败/非有限＝调用方输入错误，就地反馈不向求解器传递
+    // （与 onSolveClicked 同门控语义——复算同属提交求解的入口）。
+    bool okX = false, okY = false, okZ = false;
+    double x = m_targetX->text().toDouble(&okX);
+    double y = m_targetY->text().toDouble(&okY);
+    double z = m_targetZ->text().toDouble(&okZ);
+    if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
+        || !std::isfinite(z)) {
+        showStatusText(tr("复算目标位姿非法（数值解析失败或非有限）——原值保留"));
+        return;
+    }
+    // 显示制式→SI 逆换算（与求解入口同一换算单点——A07 同则）。
+    x = resolveKinDisplayToSi(x, m_session.displayUnits);
+    y = resolveKinDisplayToSi(y, m_session.displayUnits);
+    z = resolveKinDisplayToSi(z, m_session.displayUnits);
+    // 位姿构造用 9 参旋转（与求解入口同形——冒烟链接面）。
+    const rw::math::Transform3D<double> target(
+        rw::math::Vector3D<double>(x, y, z),
+        rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
+                                     0.0, 1.0, 0.0,
+                                     0.0, 0.0, 1.0));
+    const KinRecomputeFlowResult r =
+        recomputeSessionFromIdentity(m_services, m_session, target);
+    showStatusText(QString::fromStdString(r.statusText));
+    // 全面板刷新（同求解入口——新解集入会话态后门控/解表同步）。
+    refreshAll();
 }
 
 void KinematicsPanelWidget::onSolutionSelectionChanged()

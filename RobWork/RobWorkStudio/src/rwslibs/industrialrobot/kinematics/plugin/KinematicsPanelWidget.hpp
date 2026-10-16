@@ -138,6 +138,7 @@ private Q_SLOTS:
     void onSetDefaultDeviceClicked(); // L-K9 设默认设备
     void onExportJsonClicked();       // L-K10 导出 JSON 副本
     void onExportCsvClicked();        // L-K10 导出 CSV 副本
+    void onRecomputeClicked();        // KIN-P4 复算（原任务定义×当前快照重绑定）
     void onSolutionSelectionChanged();// L-K1 解表选中→检查器联动
     void onSolutionDoubleClicked(int row, int column); // L-K4 双击→会话姿态回写
 
@@ -193,6 +194,7 @@ private:
     QPushButton* m_resetHomeButton = nullptr;  ///< 复位 Home（L-K4）
     QPushButton* m_setTcpButton = nullptr;     ///< 设默认 TCP（L-K9）
     QPushButton* m_setDeviceButton = nullptr;  ///< 设默认设备（L-K9）
+    QPushButton* m_recomputeButton = nullptr;  ///< 复算（KIN-P4——原任务定义×当前快照）
 
     // ---- 容器与状态 ----
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器

@@ -44,6 +44,7 @@
 #include <atomic>
 #include <cstdint>
 #include <future>
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -56,7 +57,8 @@
 #include <sdurws/ird/core/Identity.hpp>          // ContentIdentity/ObjectId
 #include <sdurws/ird/evidence/Evaluator.hpp>     // evidence::EvaluationRequest/IEvaluationContext
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（求解配置基线）
-#include <sdurws/ird/kinematics/Evidence.hpp>    // BatchCondition（批量投影型）
+#include <sdurws/ird/kinematics/Evidence.hpp>    // BatchQuery/BatchComputation（★ KIN-P4 批量通道值面）
+#include <sdurws/ird/kinematics/Ik.hpp>          // IkRequest（★ KIN-P4 单点求解请求值）
 #include <sdurws/ird/kinematics/KinematicsPanelChannels.hpp>  // 通道值面（公共契约）
 #include <sdurws/ird/kinematics/Sampling.hpp>    // SamplingPlan/RegionSamplingBudget（域投影型）
 #include <sdurws/ird/runtime/Snapshot.hpp>       // runtime::RuntimeSnapshot（快照持有）
@@ -327,6 +329,14 @@ public:
         /// noteAssemblyBackgroundResult 的消费闭包；空＝note 丢弃仅
         /// 账面更新）。
         kinematics::KinChannelResultRouteFn resultRoute;
+        /// ★ KIN-P4：后台会话求解的结构化结果投递槽（UI 线程——宿主
+        /// 闭包核对锚后经门面 applySessionSolveOutcome 写会话态；空＝
+        /// 结果仅留执行器账面不入会话态——降级如实，不虚构回写）。
+        std::function<void(const kinematics::KinChannelSolveResult&)>
+            sessionSolveRoute;
+        /// ★ KIN-P4：单点求解器注入面（非 owning——空＝内置 IkSolver
+        /// 生产实例；测试注入可控替身以驱动取消/超时等确定性场景）。
+        const kinematics::IIkSolver* sessionSolver = nullptr;
     };
 
     /**
@@ -400,13 +410,20 @@ public:
      * @brief 后台提交受理（面板 backgroundSubmit 缝的实现——UI 线程）。
      *
      * 受理校验链（短路，拒绝 reason 如实——ERR-01 不虚构受理）：
-     *   ①kind 分流：SessionSolve/TaskPointsBatch 拒绝（本批范围＝
-     *     区域覆盖通道——两通道的执行缝未装配，reason 写明）；
+     *   ①kind 分流：三类全部产品执行（★ KIN-P4 起SessionSolve/
+     *     TaskPointsBatch 真实分发——审查报告 §4 第二条的修复面）：
+     *     - SessionSolve：请求须携带 solveTargetInBase（缺＝拒绝"单点
+     *       求解请求缺目标位姿"）→完整 IkRequest 装配（TCP 默认工具
+     *       解析/intervals/零位参考构型/配置初值——与面板内联装配同
+     *       语义）→后台真实求解→结构化解集账面＋sessionSolveRoute；
+     *     - TaskPointsBatch：需求工作集任务点切片（参考系解析/容差
+     *       直投）→runBatchComputation 后台执行→逐点结果账面；
+     *     - RegionCoverage：UI-T64 既有通道不变；
      *   ②快照绑定缺位（无已应用模型）拒绝；
      *   ③请求 snapshotId 与当前绑定不一致拒绝（面板会话态与执行器
      *     换绑间的竞态窗口——拒绝而非错评）；
-     *   ④切片失败拒绝（工作集无计划/计划悬空/参考系不可解析/旋转
-     *     参考系等——reason 带首个违例）。
+     *   ④切片/装配失败拒绝（工作集无任务点/计划、TCP 缺失、参考系
+     *     不可解析等——reason 带首个违例）。
      *
      * @param request [in] 提交请求（面板流构造）
      * @return 受理回执（accepted＋taskRef 或拒绝 reason）
@@ -429,6 +446,41 @@ public:
     }
 
     /**
+     * @brief 最近一次后台会话求解的结构化结果（★ KIN-P4——SessionSolve
+     *        通道账面出口）。
+     *
+     * 账面纪律同覆盖结果（snapshotId+epoch 锚定、迟到不入账）；消费方
+     * （宿主 sessionSolveRoute 闭包）核对锚一致后经门面
+     * applySessionSolveOutcome 写入 kinematics 会话态。cancelled=true
+     * 的结果同样入账（取消非结局——solutionSet 必空，如实呈现）。
+     */
+    std::optional<kinematics::KinChannelSolveResult> latestSolveResult() const
+    {
+        return m_latestSolve;
+    }
+
+    /**
+     * @brief 最近一次批量验证的逐任务点结果（★ KIN-P4——TaskPointsBatch
+     *        通道账面出口；宿主 taskPoints 投影闭包按 pointOid 合入
+     *        结果列）。
+     *
+     * @return 逐点结果映射（pointOid→outcome；快照换绑即清空——与
+     *         覆盖账面同拍）。为空＝尚无批量结果或已随换绑清账。
+     */
+    std::map<core::ObjectId, kinematics::KinChannelTaskPointOutcome>
+    latestBatchOutcomes() const
+    {
+        return m_latestBatch;
+    }
+
+    /// 最近一次批量验证的结果绑定锚（消费方核对键——语义同覆盖账面；
+    /// nullopt＝尚无批量结果）。
+    std::optional<core::ContentIdentity> latestBatchSnapshotId() const
+    {
+        return m_latestBatchSnapshotId;
+    }
+
+    /**
      * @brief 任务状态投影（面板 taskRows 缝的消费面——在途＋最近完成
      *        行；空向量＝无任务）。
      */
@@ -440,6 +492,22 @@ private:
     struct CoverageSlice {
         kinematics::RegionCoverageQuery query;   ///< 评估查询（域投影型）
         evidence::EvaluationRequest request;     ///< 评估请求（绑定面——Preview 语义）
+        std::string errorText;                   ///< 非空＝切片失败（受理拒绝依据）
+    };
+
+    /// ★ KIN-P4：单点求解切片产物（完整 IkRequest＋绑定面——后台任务
+    /// 按值捕获；快照锚随任务闭包冻结）。
+    struct SolveSlice {
+        kinematics::IkRequest request;           ///< 完整求解请求（TCP/初值/区间/配置齐备）
+        core::ContentIdentity configDigest;      ///< 配置摘要（结果身份面）
+        std::string errorText;                   ///< 非空＝装配失败（受理拒绝依据）
+    };
+
+    /// ★ KIN-P4：批量验证切片产物（BatchQuery＋绑定面——后台任务按值
+    /// 捕获；工作项投影自需求工作集任务点）。
+    struct BatchSlice {
+        kinematics::BatchQuery query;            ///< 批量评估查询（点集/工况/配置投影）
+        evidence::EvaluationRequest request;     ///< 评估请求（绑定面——Verified 语义）
         std::string errorText;                   ///< 非空＝切片失败（受理拒绝依据）
     };
 
@@ -455,6 +523,62 @@ private:
     bool projectPlan(const requirements::SamplingPlan& plan,
                      const requirements::WorkRegion& region,
                      kinematics::SamplingPlan& out, std::string& errorText) const;
+
+    /// ★ KIN-P4：参考系解析单点（RequirementReference → 基座系位姿——
+    /// World 缺省恒等/ModelFrame 经 resolveFrame；旋转的盒可表示性判定
+    /// （符号置换阵）与错误文案与 projectPlan 同源——两切片共用，零第
+    /// 二份参考系代数）。失败返回 false 且 errorText 带原因。
+    bool projectRefFrameToBase(const requirements::RequirementReference& refFrame,
+                               rw::math::Transform3D<double>& baseTref,
+                               std::string& errorText) const;
+
+    /// ★ KIN-P4：模型默认 TCP 解析（KIN-14 权威——快照 tools/
+    /// defaultTcpIndex → TcpRef；失败 errorText 带原因。与 kinematics
+    /// 面板侧 resolveSessionTcp 同语义——ui 执行器不可消费插件私有头
+    /// （R-2），此处按同一 KIN-14 规则独立落位，注释互链）。
+    bool resolveDefaultTcp(kinematics::TcpRef& out, std::string& errorText) const;
+
+    /// ★ KIN-P4：切片需求工作集任务点 → 批量评估值包（BatchQuery——
+    /// 逐点参考系解析/容差直投/要求值直投；工况投影同 sliceCoverage；
+    /// referenceQ＝链零位）。编辑器缺位/无任务点/逐点解析失败→
+    /// errorText 带首个违例。
+    BatchSlice sliceBatch() const;
+
+    /// ★ KIN-P4：单点求解请求装配（目标位姿 → 完整 IkRequest——TCP
+    /// 默认工具解析/intervals/零位参考构型/配置初值物化；语义与面板
+    /// 内联装配同源，errorText 带首个违例）。
+    SolveSlice assembleSolveSlice(
+        const rw::math::Transform3D<double>& targetInBase) const;
+
+    /// ★ KIN-P4：覆盖任务后台派发（std::async 闭包组装的唯一书写点
+    /// ——UI-T64 既有段的重排落位，行为逐字不变）。
+    void launchCoverageTask(const std::string& taskRef, std::uint64_t epoch,
+                            const core::ContentIdentity& snapshotIdAtSubmit,
+                            const core::ContentIdentity& configDigestAtSubmit,
+                            kinematics::RegionCoverageQuery query,
+                            evidence::EvaluationRequest request,
+                            const std::shared_ptr<std::atomic_bool>& cancelFlag);
+
+    /// ★ KIN-P4：单点求解任务后台派发（真实求解器执行——取消探针接
+    /// 任务级标志；完成回投 onSolveFinished）。
+    void launchSolveTask(const std::string& taskRef, std::uint64_t epoch,
+                         const core::ContentIdentity& snapshotIdAtSubmit,
+                         const core::ContentIdentity& configDigestAtSubmit,
+                         kinematics::IkRequest request,
+                         const std::shared_ptr<std::atomic_bool>& cancelFlag);
+
+    /// ★ KIN-P4：批量验证任务后台派发（runBatchComputation 纯计算面
+    /// 执行——批间取消查询接任务级标志；完成回投 recordBatchOutcomes）。
+    void launchBatchTask(const std::string& taskRef, std::uint64_t epoch,
+                         const core::ContentIdentity& snapshotIdAtSubmit,
+                         kinematics::BatchQuery query,
+                         evidence::EvaluationRequest request,
+                         const std::shared_ptr<std::atomic_bool>& cancelFlag);
+
+    /// ★ KIN-P4：任务点逐点结果合账（批量计算完成回投后调用——按
+    /// pointOid 聚合逐工况记录为单点结果投影：状态词/摘要/完成矩阵）。
+    void recordBatchOutcomes(const kinematics::BatchComputation& computation,
+                             const core::ContentIdentity& snapshotIdAtSubmit);
 
     /// 任务账目（在途/完成行的最小账面——taskRows 投影源）。
     struct TaskEntry {
@@ -475,6 +599,28 @@ private:
                             kinematics::KinChannelCoverageResult result,
                             bool interrupted);
 
+    /// ★ KIN-P4：后台单点求解完成处理（同上账面纪律——结构化结果入账
+    /// ＋sessionSolveRoute 投递＋note；迟到按提交锚丢弃）。
+    void onSolveFinished(const std::string& taskRef,
+                         const core::ContentIdentity& snapshotIdAtSubmit,
+                         const core::ContentIdentity& configDigestAtSubmit,
+                         std::uint64_t epoch,
+                         kinematics::KinChannelSolveResult result,
+                         bool interrupted);
+
+    /// ★ KIN-P4：批量验证任务终态收口（任务账目＋批量锚＋note 投递——
+    /// 逐点结果已由 recordBatchOutcomes 入账）。
+    void finishBatchTask(const std::string& taskRef,
+                         const core::ContentIdentity& snapshotIdAtSubmit,
+                         std::uint64_t epoch,
+                         const kinematics::BatchComputation& computation);
+
+    /// ★ KIN-P4：批量验证执行失败的终态收口（账目终态＋note 如实——
+    /// 零逐点入账；note kind＝TaskPointsBatch）。
+    void onBatchFailed(const std::string& taskRef,
+                       const core::ContentIdentity& snapshotIdAtSubmit,
+                       std::uint64_t epoch, const std::string& errorText);
+
     /// 受理后解绑的中止处理（会话换绑/拆除竞态的诚实收口——账目终态
     /// ＋note 投递，零结果入账：中止无产物可消费）。
     void onViewDetached(const std::string& taskRef, std::uint64_t epoch,
@@ -489,11 +635,22 @@ private:
     std::uint32_t m_seq = 0;    ///< 任务序号（受理递增——taskRef 组成）
 
     std::optional<kinematics::KinChannelCoverageResult> m_latestCoverage;  ///< 最近覆盖结果账面
+    /// ★ KIN-P4：最近后台求解结果账面（锚定纪律同覆盖账面）。
+    std::optional<kinematics::KinChannelSolveResult> m_latestSolve;
+    /// ★ KIN-P4：最近批量验证逐点结果账面（pointOid→outcome；换绑清空）。
+    std::map<core::ObjectId, kinematics::KinChannelTaskPointOutcome> m_latestBatch;
+    /// ★ KIN-P4：批量账面的结果绑定锚（与 m_latestBatch 同拍写/清）。
+    std::optional<core::ContentIdentity> m_latestBatchSnapshotId;
     std::vector<TaskEntry> m_tasks;  ///< 任务账目（在途＋最近完成——投影序＝登记序）
     /// 在途任务 future（std::async 的 future 析构即阻塞等待——必须持有
     /// 至任务终态，否则 submit 会同步等完整个评估；完成回投后由
     /// onCoverageFinished 惰性清理已就绪项）。仅 UI 线程访问。
     std::vector<std::future<void>> m_inflight;
+    /// ★ KIN-P4：在途任务的协作取消标志（shared_ptr 随任务闭包存活——
+    /// 换绑/解绑时置位；真实取消路径：SessionSolve 求解探针与批量批间
+    /// 查询消费，早停返回的取消态按非结局如实呈现）。仅 UI 线程写
+    /// （attachView/中止面），后台线程只读（探针消费——atomic 保证）。
+    std::vector<std::shared_ptr<std::atomic_bool>> m_cancelFlags;
 };
 
 }  // namespace ui

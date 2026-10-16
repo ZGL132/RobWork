@@ -51,7 +51,10 @@
 #include <rw/math/Vector3D.hpp>
 
 #include <sdurws/ird/core/Identity.hpp>       // core::ObjectId/ContentIdentity（身份值面）
+#include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（★ KIN-P4 配置保存缝的值面）
+#include <sdurws/ird/kinematics/Commands.hpp>    // IKinematicsCommandHandler/KinSessionPose（设默认门面/会话姿态——KIN-P4 装配缝公共类型）
 #include <sdurws/ird/kinematics/Evaluators.hpp>  // IKinRuntimeView/IIkSolver/IFkEvaluator（缝的公共类型——门面直传）
+#include <sdurws/ird/kinematics/SolutionSet.hpp>  // IkSolutionSet（KIN-P4 会话解集回写通道值——后台求解完成的结构化产物）
 
 namespace sdurws {
 namespace ird {
@@ -81,6 +84,15 @@ enum class KinChannelBackgroundKind : std::uint8_t {
  * 载荷刻意最小（P-KIN-7：切片细节——采样计划/任务点集/求解配置的
  * 具体值——由装配层执行器从 requirements 工作集与求解配置现取组装，
  * 面板零切片解析，R-1）：面板只表达"哪类评估、绑哪个快照与配置"。
+ *
+ * ★ KIN-P4 表尾追加 solveTargetInBase：SessionSolve 后台通道的**目标
+ * 位姿载荷**。此前最小载荷不含目标——后台通道无法还原"求解什么"，
+ * 这是 SessionSolve 通道只能拒绝的根因之一（审查报告 §4 第二条）。
+ * 追加纪律：缺省 nullopt（既有构造点零改动合法）；仅 SessionSolve 消费
+ * （nullopt＝请求缺目标——受理拒绝，如实 reason；另两类 kind 忽略）。
+ * 坐标系/单位：基座系 {B} 的 TCP 目标位姿（T_base_tcp；位置 m、旋转
+ * 无量纲——§5.3 字段 1 口径，与面板内联路径的 IkRequest.targetInBase
+ * 同义同值）。
  */
 struct KinChannelBackgroundRequest {
     /// 请求类别（三值词表——见枚举注）。
@@ -94,6 +106,9 @@ struct KinChannelBackgroundRequest {
     /// 提交时会话纪元（迟到判定锚——完成回执按此比对，迟到结果不进
     /// 当前会话视图）。
     std::uint64_t epoch = 0;
+    /// 单点求解目标位姿（KIN-P4 表尾追加——仅 SessionSolve 消费；语义
+    /// 见结构注）。
+    std::optional<rw::math::Transform3D<double>> solveTargetInBase;
 };
 
 /**
@@ -335,6 +350,69 @@ struct KinChannelCoverageResult {
 };
 
 // =====================================================================
+// KIN-P4 结构化结果投影（后台 SessionSolve/TaskPointsBatch 通道的账面
+// 出口值——结构化回路的另两支；RegionCoverage 的 KinChannelCoverageResult
+// 为 UI-T64 既有第三支，三者账面纪律一致：按 snapshotId+epoch 锚定，
+// 消费方核对锚一致才可投影）
+// =====================================================================
+
+/**
+ * @brief 一次后台会话求解的结构化结果（SessionSolve 通道账面出口）。
+ *
+ * 与内联路径（runSinglePointSolve 直接写会话态）的分工：后台完成后解集
+ * **不直接**进会话态——装配层执行器只入自己的账面，宿主消费闭包核对
+ * 锚（snapshotId 与当前会话绑定一致、纪元非迟到）后经门面
+ * applySessionSolveOutcome 写入模块会话态（唯一写点纪律不因通道分叉）。
+ *
+ * 诚实边界：取消（cancelled=true）不是结局——solutionSet 必空，消费方
+ * 不得解读 outcome（§5.4/§9.2 同则）；ok=false 时 errorText 如实（装配
+ * 校验拒绝等——ERR-01 不虚构求解失败原因）。
+ */
+struct KinChannelSolveResult {
+    /// 结果绑定快照内容身份（与请求.snapshotId 同值——消费核对键）。
+    core::ContentIdentity snapshotId;
+    /// 提交时纪元（迟到判定面）。
+    std::uint64_t epoch = 0;
+    /// 求解配置摘要（与请求.configDigest 同值——配置对齐核对键）。
+    core::ContentIdentity configDigest;
+    /// 执行成败（false＝装配校验/求解设施面失败——errorText 如实）。
+    bool ok = false;
+    /// 失败原因（ok=false 时非空；ERR-01）。
+    std::string errorText;
+    /// 取消标记（true＝协作取消早停——非结局，solutionSet 必空；ok 同
+    /// 为 false——取消不冒充成功也不冒充失败结局）。
+    bool cancelled = false;
+    /// 会话级解集原值（ok=true 时非空——与内联路径写入会话态的值同构：
+    /// 请求身份/统计/稳定序全部在域值内，宿主零再加工直投会话态）。
+    std::shared_ptr<const IkSolutionSet> solutionSet;
+    /// 摘要文本（如"解 4 个（后台 812 ms）"——状态行呈现面）。
+    std::string summaryText;
+};
+
+/**
+ * @brief 单任务点的批量验证结果投影（TaskPointsBatch 通道逐点账面——
+ *        任务点表结果列的投影源）。
+ *
+ * 状态词口径（与插件私有 KinTaskPointRow.outcomeState 同约定）：取
+ * core::TaskOutcome 冻结 token（"completed"/"failed"——Render.hpp
+ * projectBatchItemOutcome 的映射产物；NotApplicable/NotRun 两态不经该
+ * 映射，本通道以 "not-applicable"/"not-run" 小写词如实标注——不伪造为
+ * 失败也不伪造为完成，ERR-01）。文本已含数值摘要（如"解 4 个/残差
+ * 0.2 mm"或如实原因——呈现面直投）。
+ */
+struct KinChannelTaskPointOutcome {
+    /// 任务点对象身份（对齐键——宿主 taskPoints 投影按它合入结果列）。
+    core::ObjectId pointOid;
+    /// 状态词（completed/failed/not-applicable/not-run——见结构注）。
+    std::string outcomeState;
+    /// 结果摘要文本（数值已含其中——呈现直投）。
+    std::string outcomeText;
+    /// 必验覆盖完成标记（true＝该点全部必验工况有计算终态——完成矩阵
+    /// 列；false＝存在必验工况未到终态）。
+    bool requiredCoverageDone = false;
+};
+
+// =====================================================================
 // 通道聚合与缝别名（装配层一次注入——门面翻译进插件私有 KinPanelServices）
 // =====================================================================
 
@@ -353,6 +431,24 @@ using KinChannelBackgroundSubmitFn =
 using KinChannelResultRouteFn =
     std::function<void(const KinChannelBackgroundResultNote&)>;
 
+// ---- KIN-P4 增列缝（与插件私有 KinPanelServices 对应缝同构——翻译
+//      单点在 KinematicsPluginAssembly.cpp；空缝＝对应能力降级，语义与
+//      私有缝逐字一致）------------------------------------------------
+
+/// 导出写出缝（L-K10——写出经 io AtomicFile 归装配层适配；参数＝目标
+/// 路径规范文本＋编码完成的内容文本；false＝写出失败）。仅 UI 线程。
+using KinChannelExportWriterFn =
+    std::function<bool(const std::string& targetPath, const std::string& content)>;
+
+/// 用户级配置保存缝（PM-14 通道投影——载体归 ui 侧；false＝保存被拒）。
+/// 仅 UI 线程。
+using KinChannelConfigPersistFn =
+    std::function<bool(const AnalysisConfiguration&)>;
+
+/// 具名 Home 姿态来源缝（KIN-P3/审查 A09——复位 Home 唯一目标来源；
+/// nullopt＝模型/会话未定义 Home）。纯查询幂等；仅 UI 线程。
+using KinChannelHomePoseFn = std::function<std::optional<std::vector<double>>()>;
+
 /**
  * @brief 覆盖评估执行通道装配值面（UI-T64——installAssemblyChannels
  *        的一次性注入聚合）。
@@ -362,10 +458,14 @@ using KinChannelResultRouteFn =
  * 能力降级（按钮禁用/空态如实呈现，不虚构可用性）——与面板私有
  * KinPanelServices 的空缝语义逐字一致（翻译后行为不变）。
  *
- * 本批范围声明：仅 modelView/taskPoints/taskRows/backgroundSubmit/
- * resultRoute 五缝构成覆盖评估执行通道；commandHandler/sessionPose/
- * exportWriter/configPersist/ikSolver/fkEvaluator 不在本通道（维持
- * 降级语义——契约诚实边界）。
+ * ★ KIN-P4 范围更新（审查报告 §4 第一条"降级服务逐项接通"）：本聚合在
+ * UI-T64 五缝（modelView/taskPoints/taskRows/backgroundSubmit/resultRoute）
+ * 之外增列产品缝七项——commandHandler（设默认命令门面）、sessionPose
+ * （会话姿态写点）、exportWriter（导出写出）、configPersist（配置保存）、
+ * ikSolver/fkEvaluator（真实求解器/评估器）、homePose（具名 Home 来源）
+ * 与两条 KIN-P4 结构化回投槽（sessionSolveResult/taskPointOutcomes 注入
+ * 面见下）。至此面板全部服务缝均具备产品装配入口——"降级语义"仅剩
+ * 宿主装配缺位的诚实形态（如无项目态），不再是通道未定义。
  */
 struct KinematicsAssemblyChannels {
     /// 模型只读视图（评估的模型输入——KinRuntimeSnapshotView 薄壳的
@@ -379,6 +479,32 @@ struct KinematicsAssemblyChannels {
     KinChannelBackgroundSubmitFn backgroundSubmit;
     /// 完成通知回投槽（执行器任务终态投递——回 UI 线程义务在实现方）。
     KinChannelResultRouteFn resultRoute;
+
+    // ---- KIN-P4 增列（真实求解/会话姿态/命令门面/导出/配置/Home）----
+
+    /// 单点求解器（L-K2 内联执行面——产品注入 IkSolver；空＝求解禁用）。
+    const IIkSolver* ikSolver = nullptr;
+    /// 位姿指标评估器（位姿指标面板数据源——产品注入 FkEvaluator；
+    /// 空＝位姿页呈空态）。
+    const IFkEvaluator* fkEvaluator = nullptr;
+    /// 会话姿态写点（L-K4/L-K5——宿主持有的 KinSessionPose 唯一写点；
+    /// 空＝会话姿态区禁用、宿主关节桥降级）。
+    KinSessionPose* sessionPose = nullptr;
+    /// 设默认命令门面（L-K9——IKinematicsCommandHandler；空＝设默认
+    /// 命令禁用）。
+    IKinematicsCommandHandler* commandHandler = nullptr;
+    /// 导出写出缝（L-K10——空＝导出按钮禁用）。
+    KinChannelExportWriterFn exportWriter;
+    /// 用户级配置保存缝（L-K7——空＝保存禁用，编辑与提示不受影响）。
+    KinChannelConfigPersistFn configPersist;
+    /// 具名 Home 姿态来源（L-K4 复位 Home 唯一目标来源——空＝复位
+    /// Home 按钮禁用）。
+    KinChannelHomePoseFn homePose;
+
+    // KIN-P4 落位说明：后台 SessionSolve 的**结构化**结果回投不走本聚合
+    // ——执行器（ui 侧）经自己的 Deps 槽投递（宿主构造闭包：锚核对后调
+    // 门面 applySessionSolveOutcome 写会话态）。本聚合只承载面板私有缝
+    // 的装配投影（单一所有权路径——结构化槽挂两处即两份账面，违 PA）。
 };
 
 }  // namespace kinematics

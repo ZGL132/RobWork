@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#include <rw/math/Transform3D.hpp>              // 后台请求目标位姿值（KIN-P4 表尾追加）
+
 #include <sdurws/ird/core/Digest.hpp>       // core::ContentIdentity（绑定身份）
 #include <sdurws/ird/core/Identity.hpp>     // core::ObjectId（点/关节锚）
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（求解配置值）
@@ -191,6 +193,13 @@ enum class KinBackgroundKind : std::uint8_t {
  * 层——面板只表达"哪类评估、绑哪个快照与配置"）：批量点集/覆盖计划等
  * 切片细节由装配层从 requirements 切片与计划构造（面板零切片解析——R-1）。
  * epoch＝提交时会话纪元（完成回执比对用——迟到结果不进当前会话）。
+ *
+ * ★ KIN-P4 表尾追加 solveTargetInBase（与通道值面 KinChannelBackground-
+ * Request.solveTargetInBase 同构同拍——翻译单点逐字段透传）：SessionSolve
+ * 后台通道的目标位姿载荷。修复前最小载荷不含目标——后台执行器无法还原
+ * "求解什么"，SessionSolve 通道只能整体拒绝（审查报告 §4 第二条的根因
+ * 半区；另一半在执行器）。缺省 nullopt＝请求缺目标（执行器如实拒绝）；
+ * 仅 SessionSolve 消费，另两类 kind 忽略。基座系 {B} TCP 目标（m——§5.3）。
  */
 struct KinBackgroundRequest {
     /// 请求类别（三值词表——见枚举注）。
@@ -202,6 +211,8 @@ struct KinBackgroundRequest {
     core::ContentIdentity configDigest;
     /// 提交时会话纪元（迟到判定锚——面板模块现值，见 KinModuleSessionState）。
     std::uint64_t epoch = 0;
+    /// 单点求解目标位姿（KIN-P4 表尾追加——仅 SessionSolve 消费）。
+    std::optional<rw::math::Transform3D<double>> solveTargetInBase;
 };
 
 /**

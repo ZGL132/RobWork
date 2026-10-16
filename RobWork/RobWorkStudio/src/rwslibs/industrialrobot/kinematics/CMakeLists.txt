@@ -416,6 +416,7 @@ add_executable(sdurws_ird_kinematics_test
     test/PoseReachTest.cpp    # T16：独立位姿可达性用例组（KIN-11/AT-26——
                               #   计划预览/方向覆盖/协作取消/黄金设施复用）
     test/PluginPanelTest.cpp   # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
+    test/KinP4FlowsTest.cpp    # ★ KIN-P4：TCP 解析单点三态/转后台携带目标/复算闭环（审查 §4 的编排半区自证——真实求解器）
     test/HostMigrationTest.cpp)  # T18：宿主迁移三接入面用例（O-44 v1 诚实边界——模型层）
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
@@ -517,7 +518,8 @@ add_executable(sdurws_ird_kinematics_gui_test
 # 增列：真实 widget 才能复现"关节表逐轴单位"与"复位 Home 拒绝语义"缺陷
 # 形态；QCoreApplication 级 sdurws_ird_kinematics_test 不构造 QWidget）。
 target_sources(sdurws_ird_kinematics_gui_test PRIVATE
-    gui_test/KinematicsPanelSessionGuiTest.cpp)
+    gui_test/KinematicsPanelSessionGuiTest.cpp
+    gui_test/KinHostLoopGuiTest.cpp)  # ★ KIN-P4——六轴改型闭环＋呈现转真实执行（审查 §5 KIN-P4 验收主径）
 target_compile_features(sdurws_ird_kinematics_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_gui_test PROPERTIES
     CXX_STANDARD 17

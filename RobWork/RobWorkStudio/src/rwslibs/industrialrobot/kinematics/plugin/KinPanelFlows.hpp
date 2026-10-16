@@ -32,6 +32,7 @@
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration/变更提示（L-K7）
 #include <sdurws/ird/kinematics/Commands.hpp>        // TcpRef/CommandSubmission（L-K9）
 #include <sdurws/ird/kinematics/Ik.hpp>              // IkRequest/IkOutcome（L-K2）
+#include <sdurws/ird/kinematics/Recompute.hpp>       // KinRecomputeRequest（KIN-P4 复算流）
 #include <sdurws/ird/kinematics/Render.hpp>          // RenderPointWriteback/选中联动（L-K4/L-K1）
 #include <sdurws/ird/kinematics/SolutionSet.hpp>     // IKinematicSolutionSet/SolutionRef
 #include "KinPanelTypes.hpp"                          // 会话态/服务缝/后台值（同目录私有头）
@@ -46,6 +47,43 @@ inline constexpr std::chrono::milliseconds kInlineBudgetMs{1000};
 // =====================================================================
 // L-K2 单点求解（面板 Solve→IIkSolver 内联 <1 s 或转后台→解表→检查器）
 // =====================================================================
+
+/**
+ * @brief 会话默认 TCP 解析结果（KIN-P4/审查 §4——三入口统一的解析值）。
+ *
+ * ok==false 时 tcp 无语义：statusText 承载稳定诊断码（KIN-NO-TCP）与
+ * 用户可读原因——调用方显式呈现并停在该入口，绝不以空 TcpRef 继续走
+ * 后续流（位姿页刷新、求解、设默认 TCP 三个入口共用本解析，空身份的
+ * 后果随入口各异：FK 拒评/求解器 fail-fast/设默认写悬空引用）。
+ */
+struct KinTcpResolution {
+    /// 解析是否成功（false＝tcp 无语义——statusText 直显）。
+    bool ok = false;
+    /// 解析产物（ok==true 时非空——TcpRef{默认工具对象身份, 工具局部名}；
+    /// 名字经快照对象索引可解析，请求自描述）。
+    TcpRef tcp;
+    /// 失败原因（ok==false 非空——KIN-NO-TCP＋建模侧配置指引）。
+    std::string statusText;
+};
+
+/**
+ * @brief 会话默认 TCP 的名称解析单点（KIN-P4——审查 §4"缺省 TCP 的解析
+ *        必须贯穿刷新、求解、设默认三个入口"的唯一实现）。
+ *
+ * 解析规则（KIN-14 默认 TCP 权威）：模型快照 tools 非空且
+ * defaultTcpIndex 有值且指向有效项 → TcpRef{tool.objectId, tool.localName}
+ * （与 assembleSessionSolveRequest 步骤 1 同一语义——本函数抽出后该处
+ * 改调本函数，消除第二份解析）。任一前提不成立＝解析失败：
+ *   - 模型视图未装配（空缝——能力降级如实呈现）；
+ *   - 快照无工具（tools 空）/默认索引缺失（KIN-NO-TCP"未配置"）；
+ *   - 默认索引越界（builder 不变量违约——防御面，同轨拒绝）。
+ *
+ * @param services [in] 服务缝（modelView 读取——空视图＝解析失败）
+ * @return 解析结果（ok/tcp/statusText——语义见 KinTcpResolution）
+ *
+ * 纯编排（零评估调用）；UI 线程；确定性（同模型同输出——NFR-COR-02）。
+ */
+KinTcpResolution resolveSessionTcp(const KinPanelServices& services);
 
 /**
  * @brief 单点求解流的结果值（编排的产出——解表/检查器的输入）。
@@ -365,6 +403,65 @@ std::string submitSetDefaultDevice(const KinPanelServices& services,
 // =====================================================================
 
 /**
+ * @brief 复算流的结果值（编排的产出——新旧解集对比的状态行素材）。
+ */
+struct KinRecomputeFlowResult {
+    /// 复算是否完成（false＝前置缺失/装配失败——新解集无语义）。
+    bool ok = false;
+    /// 状态行文本（复算绑定说明＋新旧解数对比/失败原因——非模态）。
+    std::string statusText;
+    /// 复算请求值（ok==true 时有值——buildKinRecomputeRequest 产出；
+    /// "按原 slice 重新提交"的构造面证据，随状态行语义留痕）。
+    std::optional<KinRecomputeRequest> recompute;
+};
+
+/**
+ * @brief 会话结果复算流（KIN-P4/审查 §4——"原任务定义与当前快照重绑定"
+ *        的编排落点；结果页"复算"按钮的域半区）。
+ *
+ * 语义（§7.4 三要件的会话级兑现）：
+ *   - **按原 slice 重新提交**——原任务定义中可从结果身份恢复的字段
+ *     （seed/referenceQ/mode）经域设施 buildKinRecomputeRequest 从原解集
+ *     requestIdentity 显式携带（不复用会话残留——D-KIN-4）；快照绑定
+ *     换为当前会话 snapshotId（重绑定——CON-05 内容寻址：工程未变则
+ *     同快照，改型后新快照）；
+ *   - **目标位姿取当前编辑值**——单点会话求解的目标不在结果身份内
+ *     （身份字段封闭：snapshotId/sliceId/configDigest/mode/seed/
+ *     referenceQ），目标位姿的现值载体就是面板目标编辑面（用户可见可
+ *     改——改型评估的工程语义即"同一目标在新模型下重新求解"）；
+ *   - **请求重装配**——TCP 经 resolveSessionTcp（三入口统一解析）、
+ *     intervals 取当前快照、容差/迭代/去重/初值策略与数量取当前
+ *     savedConfig、seed 取原身份（同键同种子）、referenceQ 取原身份；
+ *     结果身份（requestIdentity）整体重填：snapshotId/configDigest＝
+ *     当前会话值（重绑定可见面）、seed/referenceQ＝原身份值（同键）。
+ *
+ * 执行序（拒绝态全部零求解零写会话）：
+ *   1. 前置校验（原解集在场/模型视图与求解器在场/当前快照已绑定——
+ *      缺一即拒绝，如实原因）；
+ *   2. buildKinRecomputeRequest（域设施——原身份提取＋当前快照绑定；
+ *      空快照被域设施拒绝——invalid_argument 显式拦截转状态行）；
+ *   3. TCP 解析（resolveSessionTcp——失败即拒绝，绝不空 TcpRef 求解）；
+ *   4. 内联求解（IIkSolver::solve——复算规模与单点求解同量级，内联
+ *      预算语义同 L-K2；取消/设施失败如实呈现不入会话态）；
+ *   5. 新解集入会话态（唯一写点——覆盖 lastSessionSolutionSet/View；
+ *      原解集的对比素材在状态行：新旧解数）。
+ *
+ * @param services     [in] 服务缝（modelView/ikSolver——复算执行面）
+ * @param session      [in,out] 会话态（原解集读取；成功时写新解集——
+ *                     唯一写点与 runSinglePointSolve 同纪律）
+ * @param targetInBase [in] 复算目标位姿（基座系 {B}——面板当前编辑值）
+ * @return 编排结果（ok/statusText/recompute——语义见结构注）
+ *
+ * 纯编排（求解经域求解器，零本地算术）；UI 线程；零修订（会话级复算
+ * ——AT-04：显式应用才经命令端口）。
+ */
+KinRecomputeFlowResult recomputeSessionFromIdentity(
+    const KinPanelServices& services, KinModuleSessionState& session,
+    const rw::math::Transform3D<double>& targetInBase);
+
+/**
+ * @brief 结果导出流（L-K10 唯一编排点——会话解集→域设施打包编码→
+ *        io 写出缝；AT-04 零修订结构保证：无任何命令提交通道）。
  * @brief 结果导出流（L-K10 唯一编排点——会话解集→域设施打包编码→
  *        io 写出缝；AT-04 零修订结构保证：无任何命令提交通道）。
  *

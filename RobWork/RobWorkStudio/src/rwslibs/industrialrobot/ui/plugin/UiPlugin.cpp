@@ -52,6 +52,8 @@
 #include <QStatusBar>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QSettings>       // ★ KIN-P4——求解配置持久化载体（用户级 Ini）
+#include <QStandardPaths>  // ★ KIN-P4——导出目录缺省解析（AppDataLocation）
 #include <QString>
 #include <QComboBox>  // 需求遍历通道（检查器下拉）
 #include <QTableWidget>  // 建模遍历通道（编辑页参数表——UI-T67 modeling-tour）
@@ -97,6 +99,7 @@
 
 #include "DomainModuleRunner.hpp"                // runDomainApply（UI-T23 acceptance 2——draft.apply 多模块遍历）
 #include "KinEvaluationChannel.hpp"              // kinematics 覆盖评估执行器（UI-T64——F-490① 上游批装配半区）
+#include "KinHostServicesAssembly.hpp"           // ★ KIN-P4——面板服务缝宿主装配（网关/补丁/写出/持久化/Home）
 #include "HostView3DGateway.hpp"                 // 宿主三维网关（UI-T45——上行拾取/呈现出口/TCP 源）
 #include "HostView3DPreviewBackend.hpp"          // 会话预览渲染后端（UI-T33——场景原语绑定）
 #include "HostCompilePort.hpp"                   // 宿主编译端口（UI-T46——十段链适配＋快照缓存＋分段探针）
@@ -116,9 +119,11 @@
 
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>  // modeling::isAssembledModelingCommand（UI-T42——F-466 路由判定出线）
 #include <sdurws/ird/modeling/CommandHandlers.hpp>  // registerModelingCommandHandlers/HandlerServices（UI-T46——F-461 modeling 半区装配）
+#include <sdurws/ird/modeling/Codec.hpp>           // ★ KIN-P4——RobotDesignCodec/kCurrentFormatVersion（Home 位姿集解码）
 #include <sdurws/ird/modeling/DhConvert.hpp>     // DhExplicitConverter（UI-T46——HandlerServices 转换器注入）
-#include <sdurws/ird/modeling/ObjectTypes.hpp>   // modeling::kRobotDesignObjectType（UI-T46——编译根 token 单一权威）
+#include <sdurws/ird/modeling/ObjectTypes.hpp>   // modeling::kRobotDesignObjectType（UI-T46——编译根 token 单一权威；★ KIN-P4 kNamedPoseSetObjectType）
 #include <sdurws/ird/modeling/Package.hpp>       // exportWorkCellXml/WorkCellExportTarget（UI-T56——WC/DWC XML 外供导出接源）
+#include <sdurws/ird/modeling/Parts.hpp>         // ★ KIN-P4——PoseSet/PoseSetEntry/kHomeConfigurationPoseKey（Home 来源闭包）
 #include <sdurws/ird/policy/JointLimits.hpp>     // makeJointLimitEvaluator（UI-T46——HandlerServices 评估器装配）
 #include <sdurws/ird/policy/Contexts.hpp>        // policy::IPolicyNameContext（UI-T46——行程评估名称上下文适配基类）
 #include <sdurws/ird/ui/RuntimePublishBridge.hpp>  // RuntimePublishBridge/观察者（UI-T46——呈现刷新事务装配）
@@ -660,6 +665,16 @@ void IrdWorkbenchHostPlugin::initialize()
             // 会话接线同点同线程。
             if (kept != nullptr) {
                 attachPresentationSession(kept->projectStore().projectId());
+            }
+            // ★ KIN-P4：kinematics 设默认命令门面装配（审查 §4"命令门面"
+            // 接通的项目打开拍——网关/门面随存储上下文存活，关闭拍 reset）。
+            // 提交闭包＝真①端口递交（HostCommandInteraction 确认桥随宿主
+            // 既有 apply 编排同形态——Confirmable 集弹确认）。装配失败
+            // fail-fast（网关构造契约）——打开协议上抛即打开失败（与
+            // 处理器注册同点同语义）。
+            if (kept != nullptr && m_domains != nullptr
+                && m_domains->kinematics.has_value()) {
+                installKinematicsCommandHandler(kept->projectStore());
             }
         });
     m_storeFactory = storeBundle;
@@ -2848,32 +2863,141 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
         }
     };
 
-    // ---- 执行器构造（deps：工作集切片源/回投上下文/投递槽——route 按
-    // 值拷入，channels 侧再持同一槽；std::function 拷贝即共享目标）。参考
-    // 系解析缝本批不接（空缝＝非 World 参考系恒拒如实——区域 refFrame 的
-    // R1 实际形态恒 World 缺省；ModelFrame 解析随帧名映射任务接续）。
-    m_kinEvaluation = std::make_unique<KinEvaluationExecutor>(
-        KinEvaluationExecutor::Deps{&m_requirementsEditor, nullptr, this, route});
-
-    // ---- 求解配置合法基线（I-KIN-4 seed≥1——装配纪律；执行器与会话态
-    // 同源同值，configPersist 缝留空＝保存禁用降级，编辑与提示流不受影响）。
+    // ---- ★ KIN-P4：配置持久化载体与恢复（保存/恢复闭环——PM-14 用户
+    // 级通道接通；org/app 与宿主既有用户级设置同源）。恢复失败/首次
+    // 使用＝缺省基线（I-KIN-4 seed≥1）＋Dev 留痕，不静默钳制半损坏
+    // 配置（NFR-COR-03——restoreKinConfig 对任何损坏返回 nullopt）。
+    m_kinConfigSettings = std::make_unique<QSettings>(
+        QSettings::IniFormat, QSettings::UserScope,
+        QStringLiteral("RobWork"), QStringLiteral("IRD-Studio"));
     kinematics::AnalysisConfiguration baseline;
     baseline.seed = 1;
     baseline.regionBudget.seed = 1;
+    if (std::optional<kinematics::AnalysisConfiguration> restored =
+            restoreKinConfig(m_kinConfigSettings.get());
+        restored.has_value()) {
+        baseline = *restored;
+        if (m_diag.pipeline != nullptr) {
+            m_diag.pipeline->logDev(
+                kPluginDevChannel,
+                "kinematics：用户级求解配置已恢复（QSettings——canonical "
+                "v1 编解码）");
+        }
+    } else if (m_diag.pipeline != nullptr) {
+        m_diag.pipeline->logDev(
+            kPluginDevChannel,
+            "kinematics：无用户级求解配置（缺省基线 seed=1——首次使用或"
+            "既往配置损坏）");
+    }
+
+    // ---- 执行器构造（deps：工作集切片源/回投上下文/投递槽——route 按
+    // 值拷入，channels 侧再持同一槽；std::function 拷贝即共享目标）。★
+    // KIN-P4：sessionSolveRoute＝后台求解结构化回投（锚核对→门面
+    // applySessionSolveOutcome 写会话态→面板刷新）；sessionSolver 缺省
+    // ＝执行器内置生产求解器。参考系解析缝维持空（空缝＝非 World 参考
+    // 系恒拒如实——区域/任务点 refFrame 的 R1 实际形态恒 World 缺省；
+    // ModelFrame 解析随帧名映射任务接续）。
+    auto sessionSolveRoute =
+        [this](const kinematics::KinChannelSolveResult& result) {
+            // 锚核对（账面纪律——消费方义务）：结果快照锚与当前会话绑定
+            // 不一致＝跨快照误投影，拒绝写会话态（执行器已拦迟到，此为
+            // 消费面二次核对——PA 权威纪律）。
+            if (m_domains == nullptr || !m_domains->kinematics.has_value()
+                || m_kinEvaluation == nullptr) {
+                return;
+            }
+            if (!(result.snapshotId == m_kinEvaluation->snapshotId())) {
+                return;  // 迟到/跨快照——零会话写入（如实丢弃）
+            }
+            // 结构化解集写会话态（唯一写点语义——门面方法内完成原值＋
+            // 排序视图双面构造与面板刷新）。
+            m_domains->kinematics->applySessionSolveOutcome(
+                result.solutionSet);
+        };
+    m_kinEvaluation = std::make_unique<KinEvaluationExecutor>(
+        KinEvaluationExecutor::Deps{&m_requirementsEditor, nullptr, this, route,
+                                    std::move(sessionSolveRoute), nullptr});
+
+    // ---- 求解配置合法基线注入（恢复值或缺省——I-KIN-4 seed≥1；执行器
+    // 与会话态同源同值）。
     m_kinEvaluation->setConfiguration(baseline);
     m_kinConfigBaseline = baseline;
-    // 会话事实整体写（私有会话态零解引用——门面 bindSessionFacts；
+
+    // ---- 会话事实整体写（私有会话态零解引用——门面 bindSessionFacts；
     // 未绑定态 snapshotId 全零，writable 初始可写——无项目态受理已由
     // 快照缺位拒绝，真实值随项目打开拍重放）。
     kin.bindSessionFacts(core::ContentIdentity{}, m_kinEvaluation->epoch(),
                          m_kinSessionWritable, baseline);
 
+    // ---- ★ KIN-P4：导出目录解析闭包（环境变量优先——无头取证/测试
+    // 注入面；缺省＝用户应用数据目录下的 kinematics-exports。目录由
+    // 写出缝代建——io AtomicFile 契约的装配层补偿）。
+    auto exportDir = []() -> std::filesystem::path {
+        const QByteArray envDir = qgetenv("IRD_KIN_EXPORT_DIR");
+        if (!envDir.isEmpty()) {
+            return std::filesystem::path(envDir.toStdString());
+        }
+        return std::filesystem::path(
+                   QStandardPaths::writableLocation(
+                       QStandardPaths::AppDataLocation)
+                       .toStdString())
+               / "kinematics-exports";
+    };
+
+    // ---- ★ KIN-P4：具名 Home 来源闭包（named-pose-set 保留键
+    // homeConfiguration——MDL-17 保留键纪律；项目闭包现取＋modeling
+    // 编解码权威，零缓存。无项目态/闭包无位姿集＝nullopt——面板给
+    // "未定义 Home"明确提示，绝不以当前姿态充当，审查 A09 语义）。
+    auto homeEntries = [this]() -> std::optional<std::vector<std::vector<double>>> {
+        const auto adapter = m_lastStoreAdapter;
+        if (adapter == nullptr) {
+            return std::nullopt;
+        }
+        try {
+            project::IProjectQueryPort& query = adapter->projectStore().query();
+            const project::RevisionView head = query.head();
+            for (const project::ObjectRef& ref : head.objectRefs) {
+                if (ref.objectTypeToken
+                    != std::string(modeling::kNamedPoseSetObjectType)) {
+                    continue;
+                }
+                const std::optional<std::vector<std::uint8_t>> bytes =
+                    query.tryObject(ref.objectId, ref.contentVersion);
+                if (!bytes.has_value()) {
+                    continue;  // 闭包外/装载失败——继续扫其余条目
+                }
+                const modeling::RobotDesignCodec codec;
+                const auto decoded =
+                    codec.decode(*bytes, modeling::kCurrentFormatVersion);
+                if (!decoded.ok()
+                    || !std::holds_alternative<modeling::PoseSet>(
+                        decoded.get())) {
+                    continue;  // 解码失败/非位姿集——如实跳过
+                }
+                const modeling::PoseSet& poseSet =
+                    std::get<modeling::PoseSet>(decoded.get());
+                for (const modeling::PoseSetEntry& entry : poseSet.entries) {
+                    if (entry.key
+                        == std::string(modeling::kHomeConfigurationPoseKey)) {
+                        return std::vector<std::vector<double>>{
+                            entry.jointConfiguration};
+                    }
+                }
+                return std::nullopt;  // 位姿集在而无保留键——未定义 Home
+            }
+        } catch (const std::exception&) {
+            return std::nullopt;  // 端口数据侧异常——Home 来源不可用（如实）
+        }
+        return std::nullopt;  // 闭包无位姿集对象
+    };
+
     // ---- 通道注入（公共通道值面——R-2：装配层零私有头；值面→私有缝
-    // 翻译在门面实现 TU 单点执行）。
+    // 翻译在门面实现 TU 单点执行）。★ KIN-P4：七缝全部注入——产品降级
+    // 面收窄到"无项目态/无工具快照"的诚实形态（通道未定义的降级已消）。
     kinematics::KinematicsAssemblyChannels channels;
     channels.modelView = m_kinEvaluation->sessionView();
-    // 任务点投影（工作集现取零缓存——面板每次刷新现调；仅呈现字段，
-    // 结果状态词列随批量通道任务接续）。
+    // 任务点投影（工作集现取零缓存——面板每次刷新现调；结果状态列随
+    // ★ KIN-P4 批量账面合入——锚核对后逐点结果直投，未计算＝未计算）。
     channels.taskPoints = [this]() {
         std::vector<kinematics::KinChannelTaskPointRow> rows;
         if (m_kinEvaluation == nullptr) {
@@ -2881,12 +3005,28 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
         }
         const requirements::RequirementWorkingSet& ws =
             m_requirementsEditor.workingSet();
+        // 批量账面（锚核对——快照不一致＝跨快照误投影，零合入）。
+        const auto batchId = m_kinEvaluation->latestBatchSnapshotId();
+        std::map<core::ObjectId, kinematics::KinChannelTaskPointOutcome>
+            outcomes;
+        if (batchId.has_value()
+            && (*batchId == m_kinEvaluation->snapshotId())) {
+            outcomes = m_kinEvaluation->latestBatchOutcomes();
+        }
         rows.reserve(ws.points.entries.size());
         for (const requirements::TaskPoint& point : ws.points.entries) {
             kinematics::KinChannelTaskPointRow row;
             row.pointOid = point.objectId;
             row.label = point.name;
             row.enabled = point.enabled;
+            // 逐点结果合入（批量账面在册时——未计算点保持 nullopt）。
+            const auto found = outcomes.find(point.objectId);
+            if (found != outcomes.end()) {
+                row.outcomeState = found->second.outcomeState;
+                row.outcomeText = found->second.outcomeText;
+                row.requiredCoverageDone =
+                    found->second.requiredCoverageDone;
+            }
             rows.push_back(std::move(row));
         }
         return rows;
@@ -2904,7 +3044,56 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
                        : kinematics::KinChannelBackgroundAck{};
         };
     channels.resultRoute = std::move(route);
+    // ---- ★ KIN-P4 七缝（真实求解器/评估器/会话姿态/命令门面/导出/
+    // 配置保存/具名 Home——命令门面在项目打开拍装配（installKinematics-
+    // CommandHandler），此处仅注入现值——无项目态为空＝按钮禁用诚实）。
+    channels.ikSolver = &m_kinIkSolver;
+    channels.fkEvaluator = &m_kinFkEvaluator;
+    channels.sessionPose = &m_kinSessionPose;
+    channels.commandHandler = m_kinCommandHandler.get();
+    channels.exportWriter = makeKinExportWriter(std::move(exportDir));
+    channels.configPersist =
+        makeKinConfigPersist(m_kinConfigSettings.get());
+    channels.homePose =
+        makeKinHomePoseProvider(KinPoseSetLoader{std::move(homeEntries)});
     kin.installAssemblyChannels(channels);
+}
+
+void IrdWorkbenchHostPlugin::installKinematicsCommandHandler(
+    project::ProjectStore& store)
+{
+    // ---- 网关装配（②取数＋①递交——查询端口随存储上下文存活；提交闭
+    // 包＝宿主交互桥形态，与 apply 编排同款：Confirmable 集弹确认对话框，
+    // 会话守卫谓词同源）。装配失败 fail-fast（网关构造契约——缺依赖到
+    // 达即编程错误）。
+    m_kinCommandGateway = std::make_unique<KinProjectCommandGateway>(
+        &store.query(),
+        [this, &store](project::CommandEnvelope envelope)
+            -> project::CommandResult {
+            HostCommandInteraction interaction(
+                m_dockBody.data(),
+                [this] { return m_controller && m_controller->hasOpenSession(); });
+            return store.commands().submit(std::move(envelope), &interaction);
+        });
+    // ---- 门面装配（网关＋根对象补丁缝——补丁缝为自由函数指针形态，
+    // modeling 编解码权威保持，kinematics 门面零第二套编解码器）。
+    m_kinCommandHandler = std::make_unique<kinematics::KinematicsCommandHandler>(
+        m_kinCommandGateway.get(), patchRootDesignDefaultTcp);
+    // ---- 补缝注入（通道值面已在 wire 拍装配——本拍仅刷新命令门面缝：
+    // 仅含 commandHandler 的聚合经 mergeAssemblyChannels 补注——非空才
+    // 覆盖，其余缝零触碰；随后面板门控 refreshAll 点亮设默认按钮）。
+    if (m_domains != nullptr && m_domains->kinematics.has_value()) {
+        kinematics::KinematicsAssemblyChannels patch;
+        patch.commandHandler = m_kinCommandHandler.get();
+        m_domains->kinematics->installAssemblyChannels(std::move(patch));
+        m_domains->kinematics->refreshFromSession();
+        if (m_diag.pipeline != nullptr) {
+            m_diag.pipeline->logDev(
+                kPluginDevChannel,
+                "kinematics：设默认命令门面已装配（项目打开拍——网关/补丁缝"
+                "/确认交互桥）");
+        }
+    }
 }
 
 void IrdWorkbenchHostPlugin::syncKinematicsSessionFacts()
@@ -4474,6 +4663,16 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
         m_diag.pipeline->logDev(kPluginDevChannel,
                                 "project close teardown: begin (9 object classes)");
     }
+
+    // ⑩★ KIN-P4：kinematics 设默认命令门面拆除（项目关闭拍——先经门面
+    // 清缝（命令缝唯一显式清除面——mergeAssemblyChannels 的"非空才覆盖"
+    // 语义无法表达清空；清空后按钮门控禁用＝无项目态诚实降级），再 reset
+    // 持有对象——零悬垂指针）。
+    if (m_domains != nullptr && m_domains->kinematics.has_value()) {
+        m_domains->kinematics->clearCommandHandler();
+    }
+    m_kinCommandHandler.reset();
+    m_kinCommandGateway.reset();
 
     // ⑧运行中订阅：检查器模型的 SelectionService 订阅（RAII 句柄释放）
     //    ——先断 L1 消费链，后续清源不再触发检查器刷新。上下文栏转发

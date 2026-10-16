@@ -816,19 +816,24 @@ TEST(PluginPanelLinks, LK12_TaskStatusProjectionAndStaleDrop_ACC1)
     EXPECT_EQ(dropped.find("陈旧覆盖结果"), std::string::npos);   // 摘要不进呈现
 }
 
-/// GUI 呈现（四面板 widget 渲染/交互点击）：仅登记不执行——GUI 环境的
-/// 手动验证归 sdurws_ird_kinematics_app harness 留痕（DTB §5.1 v0.20/
-/// DoD 第 5 条）；无界面测试目标不启动 GUI（modeling V-22 先例同款）。
+/// GUI 呈现（四面板 widget 渲染/交互点击）：本目标（无界面）仅保留登记
+/// ——★ KIN-P4 起真实执行面在 sdurws_ird_kinematics_gui_test 的
+/// KinHostLoop.PanelPresentation_RealExecution_KIN_P4（真实 QApplication
+/// ＋真实控件事件：四页签/按钮门控/状态行点验）与
+/// KinHostLoop.SixAxisVariantClosedLoop_KIN_P4（六轴改型全流程闭环）。
+/// 手动验证通道归 sdurws_ird_kinematics_app harness 留痕（DTB §5.1/
+/// DoD 第 5 条）；无界面测试目标不启动 GUI 的结构性事实不变（modeling
+/// V-22 先例同款）——skip 是环境事实的如实登记，不是验证替代。
 TEST(PluginPanelLinks, KinGuiPresentationRegisteredNotExecuted_ACC1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"UX-04", "UX-05"},
                   std::vector<std::string>{});
     sdurws::ird::testkit::report::setOutcome(
         sdurws::ird::testkit::report::Outcome::EnvUnavailable,
-        "四面板 GUI 呈现与交互点验仅登记不执行（DTB §5.1 v0.20——GUI 手动"
-        "验证通道归 sdurws_ird_kinematics_app harness 规程留痕；无界面测试"
-        "目标不含 GUI 平台插件，testkit §6.7）");
-    GTEST_SKIP() << "GUI 呈现仅登记（envUnavailable 如实登记——不标注通过）";
+        "GUI 呈现与交互在本无界面目标仅登记（KIN-P4 起真实执行面已迁移至"
+        " kinematics_gui_test 的 KinHostLoop 套件——环境事实如实登记，"
+        "testkit §6.7）");
+    GTEST_SKIP() << "GUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）";
 }
 
 // =====================================================================
