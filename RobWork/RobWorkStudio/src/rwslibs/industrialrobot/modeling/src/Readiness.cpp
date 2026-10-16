@@ -227,8 +227,9 @@ ModelReadinessReport ModelReadinessChecker::check(const ModelingWorkingSet& ws,
         // L9 传动可用（I-MDL-11/12——WP-13-T18 起阶段位参数化＋coded 化）。
         // 速度/加速度限值目前没有进入 modeling 的 DrivetrainDesign/runtime
         // schema。这里显式登记 NotProvided 预告，防止模板向导的参考值被误
-        // 认为已经参与轨迹或动力学计算；它不阻断建模草稿保存，但会使就绪
-        // 条上显示可定位的字段、单位和补录动作（REQ-06/NFR-COR-03）。
+        // 认为已经参与轨迹或动力学计算；它不阻断建模草稿保存，也不参与
+        // 三态聚合（呈现级——见文末状态汇总处口径），只在就绪条上显示可
+        // 定位的字段、单位和补录动作（REQ-06/NFR-COR-03）。
         const std::optional<core::ObjectId> drivetrainSubject =
             ws.drivetrainObject.has_value()
                 ? std::optional<core::ObjectId>(ws.drivetrainObject->objectId)
@@ -390,13 +391,23 @@ ModelReadinessReport ModelReadinessChecker::check(const ModelingWorkingSet& ws,
     report.notes = std::move(notes);
 
     // ---- 状态汇总（§8.2 就绪状态图）----
+    // 呈现级 notes 的聚合口径（WP-13-T23 v0.53，所有者裁决 B）：NotProvided
+    // 缺项预告是"呈现级直投就绪条"的事实面——schema 无承载位置是系统级
+    // 状态，不是工程师在建模内可消除的输入缺陷，因此不参与三态聚合。
+    // 若参与聚合，则 L9 无条件登记的 NotProvided 会使 Ready 永不可达、
+    // 建模域汇聚 verdict 恒为 NotApplicable，三态失去区分度。
+    // Informational 上下文提示（只读/应用预检注记等）保持既有口径——计入
+    // ReadyWithNotes（v0.52 之前即如此，本批不改其语义）。
     const bool hasBlocking = !report.blockers.empty()
                           || std::any_of(report.notes.begin(), report.notes.end(),
                                          [](const ReadinessNote& n) { return n.blocking; });
+    const bool hasContextNotes = std::any_of(
+        report.notes.begin(), report.notes.end(),
+        [](const ReadinessNote& n) { return n.kind != ReadinessNoteKind::NotProvided; });
     if (hasBlocking) {
         report.status = ReadinessStatus::NotReady;
     } else if (!report.warnings.empty() || !report.confirmables.empty()
-               || !report.notes.empty()) {
+               || hasContextNotes) {
         report.status = ReadinessStatus::ReadyWithNotes;
     } else {
         report.status = ReadinessStatus::Ready;

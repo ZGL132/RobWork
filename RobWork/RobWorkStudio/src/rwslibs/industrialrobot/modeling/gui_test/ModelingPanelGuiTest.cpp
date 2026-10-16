@@ -211,12 +211,12 @@ protected:
 };
 
 /**
- * @brief 就绪条把 NotProvided 的中文状态和字段三要素呈现给工程师（UI-T82）。
+ * @brief 就绪条把 NotProvided 的中文状态和字段三要素呈现给工程师（WP-13-T23）。
  *
  * 本用例验证 UI 只渲染 ReadinessNote 提供的事实：状态标签、字段路径、
  * 单位和修复建议均可观察；它不在 Qt 层重新推导任何计算结论。
  */
-TEST_F(ModelingPanelGuiTest, ReadinessBar_NotProvidedStatusAndActionVisible_UI_T82)
+TEST_F(ModelingPanelGuiTest, ReadinessBar_NotProvidedStatusAndActionVisible_WP13T23)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "UX-03"},
                   std::vector<std::string>{});

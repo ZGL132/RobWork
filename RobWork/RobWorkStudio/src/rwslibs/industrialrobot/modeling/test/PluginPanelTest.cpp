@@ -457,7 +457,7 @@ TEST(PluginPanel, ReadinessBar_LayersCountsAndJumpTargets_WP13T15_ACC2)
  * @brief NotProvided 就绪提示保留对象、字段、单位和修复建议（可靠设计的
  *        最小呈现契约——UI 可据此定位而无需猜测计算语义）。
  */
-TEST(PluginPanel, ReadinessBar_NotProvidedCarriesFieldUnitAndAction)
+TEST(PluginPanel, ReadinessBar_NotProvidedCarriesFieldUnitAndAction_WP13T23)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "MDL-16"},
                   std::vector<std::string>{});

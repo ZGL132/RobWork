@@ -128,6 +128,90 @@ TEST(MdlReadiness, LegalWorkingSetAllLayersPassAndPureFunction)
     EXPECT_NE(schemaGap->recommendedAction.find("传动或策略模块"), std::string::npos);
 }
 
+namespace {
+
+/// 全干净工作集（WP-13-T23 Ready 可达性用例专用）：物性全提供（L5 无
+/// Warning 预告）、传动已配置（不触发 L9 缺省注记）、行程恰 4π＝默认
+/// 阈值（无 Confirmable）、无资源/工具/writable 上下文注记——唯一 note
+/// 就是 L9 无条件登记的 NotProvided schema 缺项预告。
+ModelingWorkingSet makeFullyProvidedWorkset()
+{
+    RobotDesign design = makeSingleJointDesign(-2.0 * kPi, 2.0 * kPi);
+    for (LinkEntry& link : design.links) {
+        // 合法物性（I-MDL-5）：质量>0；主矩 0.02/0.03/0.04 满足三角不等式。
+        link.body.mass =
+            core::SourcedValue<double>::provided(2.5, userProvenance());  // kg
+        link.body.inertia = core::SourcedValue<InertiaTensor>::provided(
+            InertiaTensor{0.02, 0.03, 0.04, 0.0, 0.0, 0.0},
+            userProvenance());  // kg·m²，连杆质心系
+    }
+    DrivetrainDesign dt;
+    dt.objectId = makeOid();
+    ModelingWorkingSet ws;
+    ws.design = std::move(design);
+    ws.drivetrainObject = std::move(dt);
+    return ws;
+}
+
+}  // namespace
+
+/**
+ * @brief NotProvided 缺项预告不参与三态聚合——Ready 保持可达（WP-13-T23
+ *        v0.53 所有者裁决 B）。
+ *
+ * 验证：v0.52 曾使任何干净模型的就绪状态被 L9 无条件 note 降级为
+ * ReadyWithNotes（建模域汇聚 verdict 恒 NotApplicable）。本用例钉住修复
+ * 后契约：全干净工作集的唯一 note 是 NotProvided 时，状态必须仍是 Ready。
+ */
+TEST(MdlReadiness, NotProvidedOnlyNoteKeepsReadyReachable_WP13T23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06"}, std::vector<std::string>{});
+
+    ReadinessFixture f;
+    const policy::EngineeringPolicySet policy = makePolicy(4.0 * kPi);
+    ModelingWorkingSet ws = makeFullyProvidedWorkset();
+    f.bindNames(ws.design);
+
+    const CheckContext ctx{&policy, true, std::nullopt};
+    const ModelReadinessReport report = f.checker.check(ws, ctx);
+
+    // 前置：报告确实只剩 L9 NotProvided 一条呈现级预告（无任何
+    // Warning/Blocking/Confirmable——否则状态由其他事实承载，用例失效）。
+    ASSERT_EQ(report.notes.size(), std::size_t{1});
+    EXPECT_EQ(report.notes.front().kind, ReadinessNoteKind::NotProvided);
+    EXPECT_TRUE(report.blockers.empty());
+    EXPECT_TRUE(report.warnings.empty());
+    EXPECT_TRUE(report.confirmables.empty());
+    // 裁决 B 的核心断言：NotProvided 是呈现级直投事实，不降级三态。
+    EXPECT_EQ(readinessStatusToken(report.status), "Ready");
+}
+
+/**
+ * @brief Informational 上下文提示仍计入 ReadyWithNotes（既有口径不被
+ *        NotProvided 豁免误伤）。
+ *
+ * 验证：writable=false 触发 L11 只读注记（Informational）——上下文事实
+ * 工程师应从状态上看到；该语义自 v0.52 之前即存在，本用例防止聚合豁免
+ * 被扩大到全部 notes。
+ */
+TEST(MdlReadiness, InformationalNoteStillAggregatesReadyWithNotes_WP13T23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06"}, std::vector<std::string>{});
+
+    ReadinessFixture f;
+    const policy::EngineeringPolicySet policy = makePolicy(4.0 * kPi);
+    ModelingWorkingSet ws = makeFullyProvidedWorkset();
+    f.bindNames(ws.design);
+
+    // writable=false → L11 "writable" Informational 注记（只读模式提示）。
+    const CheckContext ctx{&policy, false, std::nullopt};
+    const ModelReadinessReport report = f.checker.check(ws, ctx);
+
+    // notes＝L9 NotProvided＋L11 writable Informational 两条；后者参与聚合。
+    ASSERT_EQ(report.notes.size(), std::size_t{2});
+    EXPECT_EQ(readinessStatusToken(report.status), "ReadyWithNotes");
+}
+
 /**
  * @brief 短路优先级（§8.2"顺序即短路优先级——高层依赖低层通过"）。
  *
