@@ -18,12 +18,40 @@
 
 ## 与现状的差异说明（激活前置，非本模板缺陷）
 
-| # | 差异 | 激活处置 |
-| --- | --- | --- |
-| 1 | 两文件的**落位目标路径在框架树/仓库根**（`RobWork/gitlab-ci/`、`.github/workflows/`），超出本契约 allowedFiles——SA-02：框架侧文件先登记 `industrialrobot/patches/PATCHES.md` 再改动 | 所有者扩契约＋补丁登记后，将本目录两文件复制至原路径（内容零改动） |
-| 2 | 模板引用的入口脚本为 `RobWork\scripts\industrial-robot\{configure,build,run-tests,check-boundaries,package}.ps1`（连字符命名，eb777e2 世界），现行治理脚本目录为 `scripts/industrialrobot/`（无连字符）且入口脚本未建 | 激活时由所有者裁决：或按模板口径补建入口脚本（推荐薄封装 `gate-all.ps1`），或统一改路径——二选一，登记于补丁说明 |
-| 3 | 集成默认分支保护（main 仅接受六步全绿合并）依赖仓库设置，非文件可承载 | 仓库设置项，激活后操作员配置 |
+| # | 差异 | 激活处置 | 状态 |
+| --- | --- | --- | --- |
+| 1 | 两文件的**落位目标路径在框架树/仓库根**（`RobWork/gitlab-ci/`、`.github/workflows/`），超出本契约 allowedFiles——SA-02：框架侧文件先登记 `industrialrobot/patches/PATCHES.md` 再改动 | 所有者扩契约＋补丁登记后，将本目录两文件复制至原路径（内容零改动） | **GitHub 通道已于 2026-10-16 闭环**：`.github/workflows/industrial-robot-windows.yml` 落位（内容＝修订后模板逐字节复制，`cmp` 一致）；仓库根元数据不属框架源码，授权与登记见 PATCHES.md「仓库根元数据落位」段。GitLab 侧维持模板态（Runner 未接入，豁免执行） |
+| 2 | 模板引用的入口脚本为 `RobWork\scripts\industrial-robot\{configure,build,run-tests,check-boundaries,package}.ps1`（连字符命名，eb777e2 世界），现行治理脚本目录为 `scripts/industrialrobot/`（无连字符）且入口脚本未建 | 激活时由所有者裁决：或按模板口径补建入口脚本（推荐薄封装 `gate-all.ps1`），或统一改路径——二选一，登记于补丁说明 | **2026-10-16 裁决并落地**：按模板口径补建入口脚本——落位 eb777e2 参考实现（探索分支已验证）并做今日树适配，而非薄封装 gate-all（后者为不可拆分单体脚本，与六步分阶段契约语义不匹配）。适配明细见下节 |
+| 3 | 集成默认分支保护（main 仅接受六步全绿合并）依赖仓库设置，非文件可承载 | 仓库设置项，激活后操作员配置 | **待操作员在 GitHub 仓库设置中配置**（分支保护规则：redesign-main 要求本 workflow 六 job 全绿） |
 
-## 本地强制门槛（CI 建成前）
+## 2026-10-16 激活（gov-ci-activation，所有者裁决"按建议激活"）
 
-`pwsh -File RobWork/scripts/industrialrobot/gate-all.ps1`（ird_gates＋双模式构建＋全部 `_test`/`_contract_test` 目标一键执行；零 Python）。CI 常驻激活前，该脚本为每次提交的强制门槛（契约 acceptance 1）。
+CI 常驻门禁正式激活。两份模板与部署文件的同批修订（逐字符一致纪律保持）：
+
+1. **触发器收窄**（仅 GitHub 执行通道）：`on: push` 无过滤＋`pull_request: main` →
+   `push: redesign-main`＋`pull_request: redesign-main`＋`workflow_dispatch`。理由＝main 已冻结（AGENTS §6.2）、
+   无过滤 push 会对全部任务分支的每次推送触发多小时运行。GitLab 侧 `rules:` 保持"任意分支＋MR"未动（豁免执行态，触发面待 Runner 接入时随接入契约裁决）。
+2. **依赖供给补 gtest**（双文件镜像，脚本行一致）：今日树各单元 CMake 含
+   `find_package(GTest CONFIG REQUIRED)`（DTB §5.5，自 WP-02-T01 起）；2026-08-31 验证运行时点 core_test 尚非
+   gtest 测试、RWS_BUILD_INDUSTRIALROBOT 补丁（0001，2026-09-09）未落地，故当时缺 gtest 也能通过，今日不能。
+3. **入口脚本落位** `RobWork/scripts/industrial-robot/`（6 文件，eb777e2 参考实现＋今日树适配，0003 号补丁登记）：
+   - `common.ps1`：与 eb777e2 逐字节一致（VS x64 环境发现/原生日志执行/Qt 冲突检测）。
+   - `configure.ps1`：固定选项增 `-DRWS_BUILD_INDUSTRIALROBOT=ON`（0001 号补丁 option，不传则子树不进构建图）、
+     去死选项 `IRD_BUILD_BUSINESS_PLUGINS`（全树零消费者）。
+   - `build.ps1`：构建面由硬编码 core 双目标扩为全量测试面（叶子 CTestTestfile 发现，与 gate-all 第 3 步同源）。
+   - `run-tests.ps1`：执行由构建根单次 ctest 改为叶子发现＋逐目标 ctest（`--timeout 600`，F-728 防线；
+     今日树 enable_testing 位于单元作用域，根 ctest 看不到叶子测试）；增依赖 DLL PATH 供给（vcpkg 动态 triplet）；
+     移植 gate-all F-715 SKIP 口径（python313.dll 不可达时 ui 系目标记 SKIP 不判 FAIL——本地全量面实测
+     `sdurws_ird_ui_test` 即此签名，退出码 8）。GUI 规则面逐字保留。
+   - `check-boundaries.ps1`：由 eb777e2 静态正则扫描器整体替换为 **ird_gates 执行器**——静态扫描器 R3 白名单
+     停留在 `_test` 单段命名，对今日 `_contract_test/_gui_test/_perf_test` 必然误报"未登记 target"；ird_gates 是
+     实际维护的边界权威（gate-all 第 2 步同款调用）。
+   - `package.ps1`：收集面由 core 单库扩为全单元 `sdurws_ird_*`（.lib/.dll）＋各单元 include/ 公共头；
+     manifest 黑名单与"不执行全树 cmake --install"红线逐字保留。
+
+首跑基线：2026-08-31 成功运行（run 33370296151）六 job 共 5m51s，但当时仅 1 个测试目标且无框架补丁；
+今日面（46 测试目标＋20 单元＋框架补丁全量）首跑预计显著更长（fresh 无缓存时依赖供给约 1h 量级），首跑数据登记后作为后续调优基线。
+
+## 本地强制门槛
+
+`pwsh -File RobWork/scripts/industrialrobot/gate-all.ps1`（ird_gates＋双模式构建＋全部 `_test`/`_contract_test` 目标一键执行；零 Python）。CI 已于 2026-10-16 激活，但**本地强制门槛身份不变**（AGENTS §4.2 验证留痕义务不因 CI 存在而免除；CI 与本地门禁互为独立第二双）。

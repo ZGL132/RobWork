@@ -14,7 +14,18 @@
 # CMAKE_PREFIX_PATH 双声明（WP-01 计划 §5.5）：本地＝操作员会话导出，CI＝本 variables 声明；
 # 入口脚本对前缀只记录不修改。缓存白名单仅 .cache/industrial-robot/{dependencies,packages}/，
 # 不缓存正式测试结果、结果数据库或项目快照；失败工件 when: always。
-# 集成默认分支保护：main 仅接受本门禁（六步全绿）的合并（仓库分支保护设置）。
+# 集成默认分支保护：redesign-main 仅接受本门禁（六步全绿）的合并（仓库分支保护设置）。
+#
+# ★ 2026-10-16 激活修订（gov-ci-activation，所有者裁决"按建议激活"；与 GitHub 执行
+#   通道的脚本行逐字符一致纪律保持），本文件两处变更：
+#   1) 依赖供给清单补 gtest——理由与 GitHub 通道相同（今日树 find_package(GTest
+#      CONFIG REQUIRED)，自 WP-02-T01 起；2026-08-31 验证运行尚无此需求）。rules
+#      触发面保持既有"任意分支＋MR"口径未动：GitLab Windows Runner 尚未接入、
+#      本文件处于豁免执行状态（WP-01 计划 §9），触发面收窄待 Runner 接入时随
+#      接入契约一并裁决。
+#   2) 六个入口脚本正式落位 RobWork/scripts/industrial-robot/（eb777e2 参考实现＋
+#      今日树适配）——适配明细见 ci/README.md「2026-10-16 激活」节与
+#      patches/PATCHES.md 0003 号。
 
 stages:
   - industrial-robot-gate
@@ -41,7 +52,7 @@ variables:
     - 'Write-Output "checkout: $CI_COMMIT_SHA ($CI_COMMIT_REF_NAME)"'
     - 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
     - >-
-      if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
     - |
       New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
       @'

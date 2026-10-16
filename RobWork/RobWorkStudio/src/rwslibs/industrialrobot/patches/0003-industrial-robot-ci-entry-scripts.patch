@@ -1,0 +1,991 @@
+diff --git a/RobWork/scripts/industrial-robot/build.ps1 b/RobWork/scripts/industrial-robot/build.ps1
+new file mode 100644
+index 00000000..4d9c458d
+--- /dev/null
++++ b/RobWork/scripts/industrial-robot/build.ps1
+@@ -0,0 +1,145 @@
++﻿# 工业机械臂重构·统一构建入口（WP-01-T03）
++# 职责：按 WP-01 计划 §5.3 数据流执行"配置（-NoConfigure 可跳过）→ 构建目标"。
++#       目标集合为本任务卡模型测试链路（configure→build→run-tests '^sdurws_ird_core_test$'）
++#       所需的 sdurws_ird_core 与 sdurws_ird_core_test——WP-01-T02 交付并经独立验证可构建；
++#       GUI 等其余模块目标链路属后续任务卡，不在本入口构建。构建输出与退出码写入
++#       <LogDirectory>\build.log 并透传；失败保留日志，不自动删除既有构建目录。
++# 允许依赖：common.ps1、cmake.exe、VS x64 工具链；禁止：网络、自动修复源码或环境变量。
++# 公共所有者：WP-01；契约：work-packages/WP-01 §5；architecture/testing-contract.md §5。
++# Task ID：WP-01-T03；运行环境：Windows PowerShell 5.1+（无 PS7 专属语法）、VS x64。
++#
++# ★ 2026-10-16 CI 激活适配（gov-ci-activation，所有者裁决"按建议激活"）：构建面由
++#   eb777e2 参考实现硬编码的 {sdurws_ird_core, sdurws_ird_core_test} 双目标（WP-01-T02
++#   时代"唯一已建测试"口径）扩为【全量测试面】——按叶子 CTestTestfile 发现当前树的
++#   全部 sdurws_ird_* 注册测试目标（46 个，含 _contract_test/_gui_test/_perf_test）逐个
++#   构建。适配动因＝2026-10-12 治理批 G-1 消账：run-tests 正则已扩 '^sdurws_ird_.*_test$'
++#   （与 gate-all.ps1 全量测试面对齐），build 面若仍停在 core 双目标，则 45 个测试
++#   可执行文件不存在，run-tests 全线失败。发现算法与 gate-all.ps1 第 3 步同源
++#   （enable_testing 位于单元作用域、add_test 注册于叶子目录，根 ctest 看不到叶子
++#   测试——见 gate-all.ps1「测试目标发现」注释）。登记：ci/README.md「2026-10-16 激活」
++#   节＋patches/PATCHES.md 0003 号。
++param(
++    [ValidateSet('Debug', 'Release')]
++    [string]$Configuration = 'Debug',
++    [string]$BuildDirectory = '',
++    [string]$SourceDirectory = '',
++    [string]$Generator = 'Visual Studio 17 2022',
++    [string]$Platform = 'x64',
++    [switch]$NoConfigure,
++    [string]$LogDirectory = ''
++)
++
++$ErrorActionPreference = 'Stop'
++
++. (Join-Path $PSScriptRoot 'common.ps1')
++
++$repoRoot = Get-IndustrialRobotRepoRoot -ScriptRoot $PSScriptRoot
++$repoOuter = Split-Path -Parent $repoRoot
++
++$sourceDir = Resolve-IndustrialRobotSourceDirectory -Path $SourceDirectory -Default $repoRoot -Label '-SourceDirectory'
++if ($null -eq $sourceDir) { exit 1 }
++$buildDir = New-IndustrialRobotOutputDirectory -Path $BuildDirectory -Default (Join-Path $repoOuter 'out\build\industrial-robot') -Label '-BuildDirectory'
++if ($null -eq $buildDir) { exit 1 }
++if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
++    $logDir = New-IndustrialRobotLogDir -RepoRoot $repoRoot -TimeStamp (Get-IndustrialRobotTimeStamp)
++}
++else {
++    $logDir = New-IndustrialRobotOutputDirectory -Path $LogDirectory -Default '' -Label '-LogDirectory'
++}
++if ($null -eq $logDir -or $logDir -eq '') { exit 1 }
++$logFile = Join-Path $logDir 'build.log'
++
++$prefixRecord = '<未设置>'
++if ($null -ne $env:CMAKE_PREFIX_PATH -and $env:CMAKE_PREFIX_PATH -ne '') { $prefixRecord = $env:CMAKE_PREFIX_PATH }
++Write-IndustrialRobotLog -LogFile $logFile -Line ('==== build.ps1（WP-01-T03） ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + ' ====')
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[参数] Configuration=' + $Configuration + ' NoConfigure=' + $NoConfigure.IsPresent)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] SourceDirectory=' + $sourceDir)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] BuildDirectory=' + $buildDir)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] LogDirectory=' + $logDir)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[目标] sdurws_ird_* 全量测试面（叶子 CTestTestfile 发现，2026-10-16 激活适配——见文件头说明）')
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] CMAKE_PREFIX_PATH=' + $prefixRecord + '（继承自操作员环境，脚本不修改）')
++
++Write-IndustrialRobotLog -LogFile $logFile -Line '---- VS x64 环境发现 ----'
++$vs = Initialize-IndustrialRobotVsEnvironment -LogFile $logFile
++if (-not $vs.Success) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] ' + $vs.Diagnostic)
++    [Console]::Error.WriteLine($vs.Diagnostic)
++    [Console]::Error.WriteLine('[结果] build 失败，退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] 发现方式=' + $vs.Via)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] MSVC=' + $vs.MsvcLine + '；Windows SDK=' + $vs.SdkVersion)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] ' + $vs.CMakeLine + '；' + $vs.CTestLine)
++
++$cmake = (Get-Command -Name 'cmake.exe' -ErrorAction SilentlyContinue).Source
++
++# ---- 配置步骤：默认执行以保证入口可独立运行；-NoConfigure 跳过（WP-01 计划 §5.1）----
++if (-not $NoConfigure) {
++    $cmakeArgs = @(
++        '-S', $sourceDir,
++        '-B', $buildDir,
++        '-G', $Generator,
++        '-A', $Platform,
++        '-DWITH_RWS=ON',
++        '-DWITH_RWSIM=ON',
++        '-DBUILD_TESTING=ON',
++        '-DIRD_BUILD_BUSINESS_PLUGINS=OFF'
++    )
++    Write-IndustrialRobotLog -LogFile $logFile -Line '---- 配置步骤（WP-01 计划 §4.2 固定命令）----'
++    $cfg = Invoke-IndustrialRobotNative -FilePath $cmake -ArgumentList $cmakeArgs -LogFile $logFile -Label 'cmake 配置'
++    if ($cfg.ExitCode -ne 0) {
++        Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] 配置失败，透传退出码=' + $cfg.ExitCode + '；日志保留: ' + $logFile)
++        [Console]::Error.WriteLine('[结果] build 失败于配置步骤，退出码 ' + $cfg.ExitCode + '；日志保留: ' + $logFile)
++        exit $cfg.ExitCode
++    }
++}
++else {
++    Write-IndustrialRobotLog -LogFile $logFile -Line '[参数] -NoConfigure：跳过配置步骤，直接构建（消费既有构建目录工件）。'
++}
++
++# ---- 测试目标发现：递归解析 industrialrobot 构建子树的 CTestTestfile ----
++# 算法与 gate-all.ps1 第 3 步同源：add_test 由各单元 ird_add_gtest 注册于单元构建
++# 目录（叶子），enable_testing 位于单元作用域、父目录 CTest 链不传递，因此以文件
++# 扫描发现全部注册名——add_test NAME 与目标名一致，构建目标名＝测试名。
++function Find-IndustrialRobotTestTargets([string]$Root) {
++    $map = @{}
++    if (-not (Test-Path -LiteralPath $Root)) { return $map }
++    Get-ChildItem -Path $Root -Recurse -Filter 'CTestTestfile.cmake' -ErrorAction SilentlyContinue | ForEach-Object {
++        $dir = $_.DirectoryName
++        (Get-Content $_.FullName) | ForEach-Object {
++            if ($_ -match 'add_test\s*\(\s*([A-Za-z0-9_\-]+)\s') {
++                $map[$Matches[1]] = $dir   # 名→注册目录（构建与后续 run-tests 的 ctest 目录一致）
++            }
++        }
++    }
++    return $map
++}
++
++# ---- 构建步骤：全量测试面逐目标构建，逐目标透传失败 ----
++# 逐目标（而非整图一次 cmake --build）的理由与 gate-all 第 3 步一致：失败归因到
++# 具体目标；共享依赖（框架库）在各目标间增量复用，总代价与整图构建同阶。
++$irdBuildRoot = Join-Path $buildDir 'RobWorkStudio\src\rwslibs\industrialrobot'
++$testTargets = Find-IndustrialRobotTestTargets -Root $irdBuildRoot
++if ($testTargets.Count -eq 0) {
++    $diag = '[失败] industrialrobot 构建子树未发现任何注册测试目标（' + $irdBuildRoot + '）' + `
++            '——最常见原因：配置未带 -DRWS_BUILD_INDUSTRIALROBOT=ON（框架补丁 0001 option），子树整体未进构建图。'
++    Write-IndustrialRobotLog -LogFile $logFile -Line $diag
++    [Console]::Error.WriteLine($diag)
++    [Console]::Error.WriteLine('[结果] build 失败：测试面为空，退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[发现] 测试目标 ' + $testTargets.Count + ' 个: ' + (($testTargets.Keys | Sort-Object) -join ', '))
++foreach ($name in ($testTargets.Keys | Sort-Object)) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('---- 构建目标 ' + $name + ' ----')
++    $run = Invoke-IndustrialRobotNative -FilePath $cmake `
++        -ArgumentList @('--build', $buildDir, '--config', $Configuration, '--target', $name) `
++        -LogFile $logFile -Label ('cmake --build --target ' + $name)
++    if ($run.ExitCode -ne 0) {
++        Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] 构建失败，透传退出码=' + $run.ExitCode + '；日志保留: ' + $logFile)
++        [Console]::Error.WriteLine('[结果] build 失败于目标 ' + $name + '，退出码 ' + $run.ExitCode + '；日志保留: ' + $logFile)
++        exit $run.ExitCode
++    }
++}
++
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] 退出码=0；日志: ' + $logFile)
++exit 0
+diff --git a/RobWork/scripts/industrial-robot/check-boundaries.ps1 b/RobWork/scripts/industrial-robot/check-boundaries.ps1
+new file mode 100644
+index 00000000..e66ad2a8
+--- /dev/null
++++ b/RobWork/scripts/industrial-robot/check-boundaries.ps1
+@@ -0,0 +1,97 @@
++﻿# 工业机械臂重构·构建边界门禁入口（WP-01-T01 ird_gates 执行器）
++# 职责：在已配置的 CMake 构建目录上构建并执行 ird_gates 门禁目标——依赖红线
++#       （R-1/R-2/R-3）、补丁登记一致性（SA-02）等边界规则的唯一权威实现
++#       （cmake/ird_gates.cmake＋ird_gates_whitelist.cmake，随 WP-01-T01 交付并
++#       随任务卡持续演进），违规即非零退出并输出"规则＋目标＋修复动作"诊断；
++#       不做任何自动修复。
++# 允许依赖：common.ps1、cmake.exe、VS x64 工具链、构建目录中已配置的 ird_gates
++#           目标；禁止：网络、源码修改、构建目录删除。
++# 契约引用：work-packages/WP-01 §7（边界规则）；architecture/testing-contract.md §5；
++#           gate-all.ps1 第 2 步（本地门禁对 ird_gates 的同款调用口径）。
++# Task ID：WP-01-T01（ird_gates）＋ gov-ci-activation（本执行器，2026-10-16）；
++#          运行环境：Windows PowerShell 5.1+（无 PS7 专属语法）、VS x64。
++#
++# ★ 2026-10-16 CI 激活适配（gov-ci-activation，所有者裁决"按建议激活"）：本入口由
++#   eb777e2 参考实现的【静态正则扫描器】整体替换为【ird_gates 构建期门禁运行器】。
++#   替换动因（两条均为今日树的实证缺陷，非风格偏好）：
++#   1) 静态扫描器的 R3 白名单正则停留在 WP-01 时代目标命名（sdurws_ird_<unit>(_test)?），
++#      对今日合法命名（sdurws_ird_<unit>_contract_test／_gui_test／_perf_test，下划线
++#      多段）必然误报"未登记 target"——静态扫描器在今日树上把 46 个测试目标中的
++#      非 _test 后缀者全部误杀，boundaries job 恒红；
++#   2) ird_gates 是项目实际维护的边界权威（gate-all.ps1 第 2 步、AGENTS §6.3 每次提交
++#      自查均调用它；其白名单已覆盖 GTest::、contract_test 命名等今日形态），CI 应与
++#      本地门禁同源而非并行维护第二套规则。
++#   前置：-BuildDirectory 必须已是 configure.ps1 配置过的构建目录（本 job 消费上游
++#   工件）；ird_gates 目标由 industrialrobot/CMakeLists 注册。
++#   登记依据：ci/README.md「2026-10-16 激活」节＋patches/PATCHES.md 0003 号。
++param(
++    [ValidateSet('Debug', 'Release')]
++    [string]$Configuration = 'Release',
++    [string]$BuildDirectory = '',
++    [string]$SourceDirectory = '',
++    [string]$Generator = 'Visual Studio 17 2022',
++    [string]$Platform = 'x64',
++    [string]$LogDirectory = ''
++)
++
++$ErrorActionPreference = 'Stop'
++
++. (Join-Path $PSScriptRoot 'common.ps1')
++
++$repoRoot = Get-IndustrialRobotRepoRoot -ScriptRoot $PSScriptRoot
++
++# ---- 日志目录先行：任何失败路径都必须保留 boundaries.log ----
++if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
++    $logDir = New-IndustrialRobotLogDir -RepoRoot $repoRoot -TimeStamp (Get-IndustrialRobotTimeStamp)
++}
++else {
++    $logDir = New-IndustrialRobotOutputDirectory -Path $LogDirectory -Default '' -Label '-LogDirectory'
++}
++if ($null -eq $logDir -or $logDir -eq '') { exit 1 }
++$logFile = Join-Path $logDir 'boundaries.log'
++
++Write-IndustrialRobotLog -LogFile $logFile -Line ('==== check-boundaries.ps1（ird_gates 执行器，2026-10-16 激活适配） ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + ' ====')
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[参数] Configuration=' + $Configuration)
++
++# ---- 输入工件校验：构建目录必须已配置（本入口消费上游 build 工件）----
++$buildDir = Resolve-IndustrialRobotSourceDirectory -Path $BuildDirectory -Default (Join-Path (Split-Path -Parent $repoRoot) 'out\build\industrial-robot') -Label '-BuildDirectory'
++if ($null -eq $buildDir) { exit 1 }
++if (-not (Test-Path -LiteralPath (Join-Path $buildDir 'CMakeCache.txt'))) {
++    [Console]::Error.WriteLine(('[入口参数] -BuildDirectory 不是已配置的构建目录（缺 CMakeCache.txt）: ' + $buildDir))
++    [Console]::Error.WriteLine('[结果] check-boundaries 失败，退出码 1；日志保留: ' + $logFile)
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] -BuildDirectory 不是已配置的构建目录（缺 CMakeCache.txt）: ' + $buildDir)
++    exit 1
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] BuildDirectory=' + $buildDir)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] LogDirectory=' + $logDir)
++
++# ---- VS x64 环境发现与版本记录（与 configure/build/run-tests 同一口径）----
++Write-IndustrialRobotLog -LogFile $logFile -Line '---- VS x64 环境发现 ----'
++$vs = Initialize-IndustrialRobotVsEnvironment -LogFile $logFile
++if (-not $vs.Success) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] ' + $vs.Diagnostic)
++    [Console]::Error.WriteLine($vs.Diagnostic)
++    [Console]::Error.WriteLine('[结果] check-boundaries 失败，退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] 发现方式=' + $vs.Via)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] MSVC=' + $vs.MsvcLine + '；Windows SDK=' + $vs.SdkVersion)
++
++$cmake = (Get-Command -Name 'cmake.exe' -ErrorAction SilentlyContinue).Source
++
++# ---- ird_gates 门禁目标构建与执行 ----
++# gate-all.ps1 第 2 步同款调用：ird_gates 为脚本驱动的自定义目标（cmake -P 门禁
++# 脚本＋白名单），构建该目标即执行全部门禁检查；违规时目标构建失败（非零退出），
++# 诊断行经 Invoke-IndustrialRobotNative 全量落盘并回显。
++Write-IndustrialRobotLog -LogFile $logFile -Line '---- ird_gates（依赖红线/补丁门禁）----'
++$run = Invoke-IndustrialRobotNative -FilePath $cmake `
++    -ArgumentList @('--build', $buildDir, '--config', $Configuration, '--target', 'ird_gates') `
++    -LogFile $logFile -Label 'cmake --build --target ird_gates'
++if ($run.ExitCode -ne 0) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] ird_gates 门禁未过，透传退出码=' + $run.ExitCode + '；日志保留: ' + $logFile)
++    [Console]::Error.WriteLine('[结果] check-boundaries 失败（ird_gates 退出码 ' + $run.ExitCode + '）；日志保留: ' + $logFile)
++    exit $run.ExitCode
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line '[结果] ird_gates 全绿；日志: ' + $logFile
++Write-Output 'Boundary gate (ird_gates) passed.'
++exit 0
+diff --git a/RobWork/scripts/industrial-robot/common.ps1 b/RobWork/scripts/industrial-robot/common.ps1
+new file mode 100644
+index 00000000..33fdb9db
+--- /dev/null
++++ b/RobWork/scripts/industrial-robot/common.ps1
+@@ -0,0 +1,209 @@
++﻿# Shared helpers for industrial-robot PowerShell scripts (WP-01-T01).
++# Scope limited to path resolution and logging per the task card; build/package
++# data flow helpers arrive with WP-01-T02/T03.
++
++function Get-IndustrialRobotRepoRoot {
++    # Scripts live at <repo>\RobWork\scripts\industrial-robot; the repository root
++    # is two levels up so that every script resolves paths identically.
++    param([string]$ScriptRoot)
++    return (Resolve-Path -LiteralPath (Join-Path $ScriptRoot '..\..')).Path
++}
++
++function New-IndustrialRobotLogDir {
++    # Create out/logs/industrial-robot/<timestamp>/ and return its full path.
++    # 运行日志与 out/test-evidence 同级，位于外层仓库根（内层 RobWork/out 被 .gitignore 忽略，
++    # 证据必须可提交供独立验证复查）。
++    param([string]$RepoRoot, [string]$TimeStamp)
++    $evidenceRoot = Split-Path -Parent $RepoRoot
++    $dir = Join-Path $evidenceRoot ("out\logs\industrial-robot\" + $TimeStamp)
++    New-Item -ItemType Directory -Path $dir -Force | Out-Null
++    return $dir
++}
++
++function Write-IndustrialRobotLog {
++    param([string]$LogFile, [string]$Line)
++    Add-Content -LiteralPath $LogFile -Value $Line -Encoding UTF8
++}
++
++# ---------------------------------------------------------------------------
++# WP-01-T03 追加：参数解析、VS x64 环境、原生日志执行与 Qt 环境冲突检测。
++# 以下函数为本任务卡新增；上方 WP-01-T01 既有函数及其签名保持不变。
++# 契约：work-packages/WP-01 §5/§6；architecture/testing-contract.md §5。
++# ---------------------------------------------------------------------------
++
++function Get-IndustrialRobotTimeStamp {
++    # 统一日志目录时间戳（yyyyMMdd-HHmmss），与既有证据目录命名一致。
++    return (Get-Date -Format 'yyyyMMdd-HHmmss')
++}
++
++function Resolve-IndustrialRobotSourceDirectory {
++    # 输入型目录解析：必须真实存在（WP-01 计划 §5.1 "参数路径先 Resolve-Path"）。
++    # 不存在时不抛异常：输出路径诊断到 stderr 并返回 $null，由入口统一转非零退出码。
++    param([string]$Path, [string]$Default, [string]$Label)
++    $target = $Path
++    if ([string]::IsNullOrWhiteSpace($target)) { $target = $Default }
++    try {
++        return (Resolve-Path -LiteralPath $target -ErrorAction Stop).Path
++    }
++    catch {
++        [Console]::Error.WriteLine(('[入口参数] ' + $Label + ' 目录不存在或不可读: ' + $target))
++        return $null
++    }
++}
++
++function New-IndustrialRobotOutputDirectory {
++    # 输出型目录解析与创建（WP-01 计划 §5.1 "输出父目录由脚本创建"）。
++    # 创建失败时输出诊断并返回 $null；不删除任何既有目录。
++    param([string]$Path, [string]$Default, [string]$Label)
++    $target = $Path
++    if ([string]::IsNullOrWhiteSpace($target)) { $target = $Default }
++    try {
++        $created = New-Item -ItemType Directory -Path $target -Force -ErrorAction Stop
++        return $created.FullName
++    }
++    catch {
++        [Console]::Error.WriteLine(('[入口参数] ' + $Label + ' 目录无法创建: ' + $target + '（' + $_.Exception.Message + '）'))
++        return $null
++    }
++}
++
++function Find-IndustrialRobotVsWhere {
++    # WP-01 计划 §5.2：按顺序查找 vswhere.exe——先 PATH，后默认安装器位置；找不到返回 ''。
++    $command = Get-Command -Name 'vswhere.exe' -ErrorAction SilentlyContinue
++    if ($null -ne $command) { return $command.Source }
++    $candidate = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
++    if (Test-Path -LiteralPath $candidate) { return $candidate }
++    return ''
++}
++
++function Invoke-IndustrialRobotNative {
++    # 统一原生命令执行：stdout+stderr 逐行写入日志并回显控制台，返回退出码与输出行。
++    # PS 5.1 在 $ErrorActionPreference='Stop' 下 2>&1 会把原生命令 stderr 行升级为终止错误，
++    # 因此仅在捕获期间临时切换为 Continue，出口恢复原值。
++    param([string]$FilePath, [string[]]$ArgumentList, [string]$LogFile, [string]$Label)
++    $previous = $ErrorActionPreference
++    $ErrorActionPreference = 'Continue'
++    $lines = New-Object System.Collections.Generic.List[string]
++    $code = -1
++    try {
++        $raw = & $FilePath @ArgumentList 2>&1
++        $code = $LASTEXITCODE
++        foreach ($item in @($raw)) { $lines.Add(('' + $item)) }
++    }
++    finally {
++        $ErrorActionPreference = $previous
++    }
++    if ($Label -ne '') {
++        Write-IndustrialRobotLog -LogFile $LogFile -Line ('[命令] ' + $Label + ' → ' + $FilePath + ' ' + ($ArgumentList -join ' '))
++    }
++    foreach ($line in $lines) {
++        if ($LogFile -ne '') { Write-IndustrialRobotLog -LogFile $LogFile -Line $line }
++    }
++    foreach ($line in $lines) { [Console]::Out.WriteLine($line) }
++    return New-Object PSObject -Property @{ ExitCode = $code; Lines = $lines }
++}
++
++function Initialize-IndustrialRobotVsEnvironment {
++    # WP-01 计划 §5.2 VS x64 环境初始化：
++    #   1) 检查 cl.exe、cmake.exe、ctest.exe；
++    #   2) 缺少 MSVC 环境时 vswhere → VsDevCmd.bat -arch=x64 -host_arch=x64，
++    #      在本进程导入导出的 PATH/INCLUDE/LIB/VSINSTALLDIR 等变量；
++    #   3) 记录 MSVC、Windows SDK、CMake、CTest 版本（写入 -LogFile）；
++    #   4) 找不到 VS x64 立即失败（Success=$false），不回退 x86/MinGW。
++    param([string]$LogFile)
++    $result = New-Object PSObject -Property @{
++        Success = $false; Via = ''; MsvcLine = ''; SdkVersion = ''
++        CMakeLine = ''; CTestLine = ''; Diagnostic = ''
++    }
++    $cl = Get-Command -Name 'cl.exe' -ErrorAction SilentlyContinue
++    $cmake = Get-Command -Name 'cmake.exe' -ErrorAction SilentlyContinue
++    $ctest = Get-Command -Name 'ctest.exe' -ErrorAction SilentlyContinue
++    if ($null -eq $cl) {
++        $vswhere = Find-IndustrialRobotVsWhere
++        if ($vswhere -eq '') {
++            $result.Diagnostic = 'VS x64 环境发现失败：PATH 与默认安装器位置均未找到 vswhere.exe；不回退 x86/MinGW。'
++            return $result
++        }
++        $query = Invoke-IndustrialRobotNative -FilePath $vswhere `
++            -ArgumentList @('-latest', '-products', '*', '-requires', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64', '-property', 'installationPath') `
++            -LogFile $LogFile -Label 'vswhere 查询 x64 实例'
++        $installation = $null
++        foreach ($line in $query.Lines) {
++            $trimmed = $line.Trim()
++            if ($trimmed -ne '' -and (Test-Path -LiteralPath $trimmed)) { $installation = $trimmed; break }
++        }
++        if ($null -eq $installation) {
++            $result.Diagnostic = 'VS x64 环境发现失败：vswhere 未发现含 x64 工具集的 Visual Studio 实例；不回退 x86/MinGW。'
++            return $result
++        }
++        $vsDevCmd = Join-Path $installation 'Common7\Tools\VsDevCmd.bat'
++        if (-not (Test-Path -LiteralPath $vsDevCmd)) {
++            $result.Diagnostic = 'VS x64 环境发现失败：缺少 VsDevCmd.bat: ' + $vsDevCmd + '；不回退 x86/MinGW。'
++            return $result
++        }
++        $imported = Invoke-IndustrialRobotNative -FilePath $env:ComSpec `
++            -ArgumentList @('/s', '/c', ('"' + $vsDevCmd + '" -arch=x64 -host_arch=x64 && set')) `
++            -LogFile $LogFile -Label 'VsDevCmd -arch=x64 -host_arch=x64 环境导入'
++        if ($imported.ExitCode -ne 0) {
++            $result.Diagnostic = 'VS x64 环境导入失败：VsDevCmd.bat 退出码 ' + $imported.ExitCode + '；不回退 x86/MinGW。'
++            return $result
++        }
++        foreach ($line in $imported.Lines) {
++            if ($line -match '^([A-Za-z_][A-Za-z0-9_]*)=(.*)$') {
++                if ($Matches[1] -ieq 'Path') { $env:Path = $Matches[2] }
++                else { Set-Item -Path ('env:' + $Matches[1]) -Value $Matches[2] -ErrorAction SilentlyContinue }
++            }
++        }
++        $result.Via = 'VsDevCmd(' + $installation + ')'
++        $cl = Get-Command -Name 'cl.exe' -ErrorAction SilentlyContinue
++        $cmake = Get-Command -Name 'cmake.exe' -ErrorAction SilentlyContinue
++        $ctest = Get-Command -Name 'ctest.exe' -ErrorAction SilentlyContinue
++    }
++    else {
++        $result.Via = '继承环境（cl.exe 已在 PATH）'
++    }
++    if ($null -eq $cl) {
++        $result.Diagnostic = 'VS x64 环境发现失败：环境导入后 cl.exe 仍不可用；不回退 x86/MinGW。'
++        return $result
++    }
++    if ($null -eq $cmake -or $null -eq $ctest) {
++        $result.Diagnostic = 'VS x64 环境发现失败：cmake.exe/ctest.exe 不可用。'
++        return $result
++    }
++    $clProbe = Invoke-IndustrialRobotNative -FilePath $cl.Source -ArgumentList @() -LogFile $LogFile -Label 'MSVC 版本探测'
++    # cl 横幅首行即版本行；中英文输出均无固定 "Version" 字样，取首条非空行以语言无关方式记录。
++    foreach ($line in $clProbe.Lines) {
++        if ($line.Trim() -ne '') { $result.MsvcLine = $line.Trim(); break }
++    }
++    if ($result.MsvcLine -eq '') { $result.MsvcLine = 'cl.exe 版本输出未识别' }
++    $result.SdkVersion = ''
++    if ($null -ne $env:LIB) {
++        foreach ($dir in ($env:LIB -split ';')) {
++            if ($dir -match '\\Windows Kits\\10\\Lib\\([^\\]+)\\') { $result.SdkVersion = $Matches[1]; break }
++        }
++    }
++    if ($result.SdkVersion -eq '') { $result.SdkVersion = '未从 LIB 环境识别到 Windows Kits\10\Lib 版本条目' }
++    $cmakeProbe = Invoke-IndustrialRobotNative -FilePath $cmake.Source -ArgumentList @('--version') -LogFile $LogFile -Label 'CMake 版本'
++    if ($cmakeProbe.Lines.Count -gt 0) { $result.CMakeLine = $cmakeProbe.Lines[0] }
++    $ctestProbe = Invoke-IndustrialRobotNative -FilePath $ctest.Source -ArgumentList @('--version') -LogFile $LogFile -Label 'CTest 版本'
++    if ($ctestProbe.Lines.Count -gt 0) { $result.CTestLine = $ctestProbe.Lines[0] }
++    $result.Success = $true
++    return $result
++}
++
++function Get-IndustrialRobotQtEnvironmentConflicts {
++    # GUI 规则前置检查（testing-contract §5、WP-01 计划 §6）：
++    #   - QT_QPA_PLATFORM 必须未设置或等于 windows；
++    #   - 其余任何继承的 QT_*/QML_* 变量一律视为冲突，由调用方"先报告并停止"。
++    # 返回冲突清单（NAME=value 字符串数组）；调用方以 @() 包裹接收。
++    $conflicts = @()
++    foreach ($entry in (Get-ChildItem -Path 'env:' | Where-Object { $_.Name -match '^(QT|QML)_' })) {
++        if ($entry.Name -ieq 'QT_QPA_PLATFORM') {
++            if ($entry.Value -ine 'windows') { $conflicts += ('QT_QPA_PLATFORM=' + $entry.Value) }
++        }
++        else {
++            $conflicts += ($entry.Name + '=' + $entry.Value)
++        }
++    }
++    return $conflicts
++}
+diff --git a/RobWork/scripts/industrial-robot/configure.ps1 b/RobWork/scripts/industrial-robot/configure.ps1
+new file mode 100644
+index 00000000..6cd235c6
+--- /dev/null
++++ b/RobWork/scripts/industrial-robot/configure.ps1
+@@ -0,0 +1,98 @@
++﻿# 工业机械臂重构·统一配置入口（WP-01-T03）
++# 职责：按 WP-01 计划 §4.2 固定命令执行 CMake 配置——从仓库根解析绝对 -S/-B（不依赖当前
++#       工作目录），经 VS x64 环境发现（common.ps1 §5.2 实现）后调用 cmake，配置输出、
++#       关键选项与环境版本记录写入 <LogDirectory>\configure.log，退出码透传。
++# 允许依赖：common.ps1、cmake.exe、VS x64 工具链；禁止：网络、自动删除既有构建目录、
++#       自动修复源码或用户环境变量（CMAKE_PREFIX_PATH 等仅记录不设置）。
++# 公共所有者：WP-01；契约：work-packages/WP-01 §4.2/§5.1～§5.3；architecture/testing-contract.md §5。
++# Task ID：WP-01-T03；运行环境：Windows PowerShell 5.1+（无 PS7 专属语法）、VS x64。
++#
++# ★ 2026-10-16 CI 激活适配（gov-ci-activation，所有者裁决"按建议激活"）：本文件以
++#   eb777e2（codex/wp-01-t04-gitlab-gate-r2）参考实现为基线，做两处选项级适配以匹配
++#   今日构建树，其余逐字保留：
++#   1) 固定选项新增 -DRWS_BUILD_INDUSTRIALROBOT=ON——该 option 由框架补丁
++#      0001-rwslibs-entry-option.patch（2026-09-09）引入，OFF 时 industrialrobot 子树
++#      整体不进构建（8 月验证运行早于该补丁，故当时无需传递）；今日 CI 不传则
++#      46 个测试目标一个都不存在，run-tests 必然"零匹配"失败。
++#   2) 固定选项移除 -DIRD_BUILD_BUSINESS_PLUGINS=OFF——全树 CMake 已无任何消费者
++#      （grep 证实零引用，WP-01 时代遗留死选项）；保留只会误导读者以为该开关仍有效。
++#   适配依据与登记：ci/README.md「2026-10-16 激活」节＋patches/PATCHES.md 0003 号。
++param(
++    [ValidateSet('Debug', 'Release')]
++    [string]$Configuration = 'Debug',
++    [string]$BuildDirectory = '',
++    [string]$SourceDirectory = '',
++    [string]$Generator = 'Visual Studio 17 2022',
++    [string]$Platform = 'x64',
++    [switch]$NoConfigure,
++    [string]$LogDirectory = ''
++)
++
++$ErrorActionPreference = 'Stop'
++
++. (Join-Path $PSScriptRoot 'common.ps1')
++
++$repoRoot = Get-IndustrialRobotRepoRoot -ScriptRoot $PSScriptRoot   # 内层 RobWork：CMake -S 源根
++$repoOuter = Split-Path -Parent $repoRoot                            # 外层仓库根：out\ 构建与证据根
++
++# ---- 公共参数解析：输入路径 Resolve-Path 校验在前，任何输出目录创建在此之前不得发生 ----
++$sourceDir = Resolve-IndustrialRobotSourceDirectory -Path $SourceDirectory -Default $repoRoot -Label '-SourceDirectory'
++if ($null -eq $sourceDir) { exit 1 }
++$buildDir = New-IndustrialRobotOutputDirectory -Path $BuildDirectory -Default (Join-Path $repoOuter 'out\build\industrial-robot') -Label '-BuildDirectory'
++if ($null -eq $buildDir) { exit 1 }
++if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
++    $logDir = New-IndustrialRobotLogDir -RepoRoot $repoRoot -TimeStamp (Get-IndustrialRobotTimeStamp)
++}
++else {
++    $logDir = New-IndustrialRobotOutputDirectory -Path $LogDirectory -Default '' -Label '-LogDirectory'
++}
++if ($null -eq $logDir -or $logDir -eq '') { exit 1 }
++$logFile = Join-Path $logDir 'configure.log'
++
++# ---- 日志头：命令行、参数、路径、固定选项与环境记录（WP-01 计划 §4.2/§5.2）----
++$prefixRecord = '<未设置>'
++if ($null -ne $env:CMAKE_PREFIX_PATH -and $env:CMAKE_PREFIX_PATH -ne '') { $prefixRecord = $env:CMAKE_PREFIX_PATH }
++Write-IndustrialRobotLog -LogFile $logFile -Line ('==== configure.ps1（WP-01-T03） ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + ' ====')
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[参数] Configuration=' + $Configuration + ' Generator="' + $Generator + '" Platform=' + $Platform + ' NoConfigure=' + $NoConfigure.IsPresent)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] SourceDirectory=' + $sourceDir)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] BuildDirectory=' + $buildDir)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] LogDirectory=' + $logDir)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[选项] -DWITH_RWS=ON -DWITH_RWSIM=ON -DBUILD_TESTING=ON -DRWS_BUILD_INDUSTRIALROBOT=ON（WP-01 计划 §4.2 固定选项＋2026-10-16 激活适配，见文件头说明）')
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] CMAKE_PREFIX_PATH=' + $prefixRecord + '（继承自操作员环境，脚本不修改）')
++if ($NoConfigure) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line '[参数] -NoConfigure：本入口仅执行配置，开关按公共参数契约接受并记录，行为不变。'
++}
++
++# ---- VS x64 环境发现与版本记录（WP-01 计划 §5.2；找不到即失败，不回退 x86/MinGW）----
++Write-IndustrialRobotLog -LogFile $logFile -Line '---- VS x64 环境发现 ----'
++$vs = Initialize-IndustrialRobotVsEnvironment -LogFile $logFile
++if (-not $vs.Success) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] ' + $vs.Diagnostic)
++    [Console]::Error.WriteLine($vs.Diagnostic)
++    [Console]::Error.WriteLine('[结果] configure 失败，退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] 发现方式=' + $vs.Via)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] MSVC=' + $vs.MsvcLine)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] Windows SDK=' + $vs.SdkVersion)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] ' + $vs.CMakeLine)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] ' + $vs.CTestLine)
++
++# ---- §4.2 固定配置命令（生成器/架构来自参数缺省，选项集冻结）----
++$cmake = (Get-Command -Name 'cmake.exe' -ErrorAction SilentlyContinue).Source
++$cmakeArgs = @(
++    '-S', $sourceDir,
++    '-B', $buildDir,
++    '-G', $Generator,
++    '-A', $Platform,
++    '-DWITH_RWS=ON',
++    '-DWITH_RWSIM=ON',
++    '-DBUILD_TESTING=ON',
++    # 产品子树构建开关（框架补丁 0001 引入的 option，默认 OFF）——不传则 industrialrobot
++    # 整体不进构建图，CI 测试面为空（2026-10-16 激活适配，缘由见文件头说明）
++    '-DRWS_BUILD_INDUSTRIALROBOT=ON'
++)
++Write-IndustrialRobotLog -LogFile $logFile -Line '---- CMake 配置输出 ----'
++$run = Invoke-IndustrialRobotNative -FilePath $cmake -ArgumentList $cmakeArgs -LogFile $logFile -Label 'cmake 配置'
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] 退出码=' + $run.ExitCode + '；日志: ' + $logFile)
++exit $run.ExitCode
+diff --git a/RobWork/scripts/industrial-robot/package.ps1 b/RobWork/scripts/industrial-robot/package.ps1
+new file mode 100644
+index 00000000..76f26cff
+--- /dev/null
++++ b/RobWork/scripts/industrial-robot/package.ps1
+@@ -0,0 +1,165 @@
++﻿# 工业机械臂重构·安装打包入口（WP-01-T04 返工，2026-08-31 所有者裁决口径）
++# 职责：消费已配置的 CMake 构建目录，按已构建目标集收集出包——仅收集 sdurws_ird_core
++#       链接库产物与 core 模块 include/ 白名单公共头（阶段 A 允许头集为空、目录缺失视为
++#       空集，不因空头集失败），生成安装 manifest 与压缩包；不执行全树 cmake --install
++#       （industrialrobot/ 无 install(TARGETS)，全树安装必然触碰未构建的 RobWork 工件）。
++# 允许依赖：common.ps1、Get-ChildItem/Copy-Item/Compress-Archive 等内置组件；禁止网络、
++#           源码修改、构建目录删除与全树安装。
++# 契约引用：work-packages/WP-01 §5/§9；architecture/testing-contract.md §4；
++#           agent-tasks/WP-01-T04-gitlab-gate.md"所有者裁决"第 2 条；Task ID：WP-01-T04。
++# 错误路径：任一前置缺失或黑名单命中即非零退出，保留日志与半成品安装树，不做自动修复。
++# 公共所有者：WP-01（修改须经 WP-01 任务卡授权）；参数签名 Configuration/BuildDirectory/
++#             LogDirectory 与 WP-01 计划 §5.1 冻结一致。
++#
++# ★ 2026-10-16 CI 激活适配（gov-ci-activation，所有者裁决"按建议激活"）：收集面由
++#   eb777e2 参考实现的单库口径（sdurws_ird_core.lib＋core include 白名单）扩为
++#   【全单元口径】——收集全部 sdurws_ird_* 链接产物（.lib 静态库/导入库＋.dll 动态
++#   库，限 $Configuration 配置目录）与全部单元 include/ 公共头。适配动因＝build 面
++#   已扩至全量测试面（build.ps1 2026-10-16 适配），20 单元产品库均为已构建目标集
++#   成员，单库出包与测试面失配。manifest 黑名单（testdata/_test/_p.hpp/pdb/绝对路径）
++#   与"不执行全树 cmake --install"红线逐字保留。登记：ci/README.md「2026-10-16 激活」
++#   节＋patches/PATCHES.md 0003 号。
++
++[CmdletBinding()]
++param(
++    [ValidateSet('Debug', 'Release')]
++    [string]$Configuration = 'Debug',
++    [string]$BuildDirectory = '',
++    [string]$LogDirectory = ''
++)
++
++Set-StrictMode -Version 2.0
++$ErrorActionPreference = 'Stop'
++
++. (Join-Path $PSScriptRoot 'common.ps1')
++
++$repoRoot = Get-IndustrialRobotRepoRoot -ScriptRoot $PSScriptRoot
++$repoOuter = Split-Path -Parent $repoRoot
++
++if ([string]::IsNullOrWhiteSpace($BuildDirectory)) {
++    $BuildDirectory = Join-Path $repoOuter 'out\build\industrial-robot'
++}
++$buildPath = Resolve-IndustrialRobotSourceDirectory -Path $BuildDirectory -Default '' -Label '-BuildDirectory'
++if ($null -eq $buildPath) { exit 1 }
++$cachePath = Join-Path $buildPath 'CMakeCache.txt'
++if (-not (Test-Path -LiteralPath $cachePath -PathType Leaf)) {
++    [Console]::Error.WriteLine('[打包前置] 构建目录缺少 CMakeCache.txt，拒绝打包: ' + $buildPath)
++    exit 1
++}
++
++if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
++    $logPath = New-IndustrialRobotLogDir -RepoRoot $repoRoot -TimeStamp (Get-IndustrialRobotTimeStamp)
++}
++else {
++    $logPath = New-IndustrialRobotOutputDirectory -Path $LogDirectory -Default '' -Label '-LogDirectory'
++}
++if ($null -eq $logPath -or $logPath -eq '') { exit 1 }
++$logFile = Join-Path $logPath 'package.log'
++$stagingPath = Join-Path $logPath 'install'
++$archivePath = Join-Path $logPath ('industrial-robot-' + $Configuration + '.zip')
++$manifestPath = Join-Path $stagingPath 'install-manifest.json'
++
++Write-IndustrialRobotLog -LogFile $logFile -Line ('==== package.ps1（WP-01-T04 已构建目标集收集） ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + ' ====')
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[参数] Configuration=' + $Configuration)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] BuildDirectory=' + $buildPath)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] LogDirectory=' + $logPath)
++Write-IndustrialRobotLog -LogFile $logFile -Line '[收集边界] 收集全单元 sdurws_ird_* 链接产物＋各单元 include/ 公共头，不执行全树 cmake --install（2026-08-31 所有者裁决红线保留；收集面 2026-10-16 激活适配，见文件头说明）。'
++
++# ---- 收集 1/2：全单元 sdurws_ird_* 链接产物（父目录名必须等于目标配置，保证确定性）----
++# .lib 覆盖静态库与 DLL 导入库，.dll 覆盖动态库/插件产物；_test 可执行文件不在收集
++# 模式内（exe 后缀本就不匹配），manifest 黑名单另作第二道复核。
++# 收集用 @() 累加而非 @(a,b) 管道展开——后者在单边为空、另一边仅 1 项时会把结果
++# 解包成标量，StrictMode 2.0 下标量无 .Count 属性（PropertyNotFoundStrict）。
++$artifactCandidates = @()
++$artifactCandidates += @(Get-ChildItem -LiteralPath $buildPath -Recurse -Filter 'sdurws_ird_*.lib' -File |
++    Where-Object { $_.Directory.Name -eq $Configuration })
++$artifactCandidates += @(Get-ChildItem -LiteralPath $buildPath -Recurse -Filter 'sdurws_ird_*.dll' -File |
++    Where-Object { $_.Directory.Name -eq $Configuration })
++if ($artifactCandidates.Count -eq 0) {
++    [Console]::Error.WriteLine('[打包前置] 构建目录中未找到 ' + $Configuration + ' 配置的任何 sdurws_ird_* 产物；请先执行 build.ps1 -Configuration ' + $Configuration + '。')
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] 未找到 ' + $Configuration + ' 配置的 sdurws_ird_* 产物，拒绝出包。')
++    exit 1
++}
++$libDir = Join-Path $stagingPath 'lib'
++New-Item -ItemType Directory -Path $libDir -Force | Out-Null
++foreach ($candidate in $artifactCandidates) {
++    Copy-Item -LiteralPath $candidate.FullName -Destination (Join-Path $libDir $candidate.Name) -Force
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[收集] 产物: ' + $candidate.FullName + ' -> lib/' + $candidate.Name)
++}
++
++# ---- 收集 2/2：全单元 include/ 公共头（目录缺失视为空集，不因空头集失败）----
++# 单元公共头布局＝<industrialrobot>\<unit>\include\sdurws\ird\<unit>\...；glob 限定
++# 一级单元目录下的 include，避免误收叶子目录外的杂散头。
++# 注意 $repoRoot 已是内层 RobWork（common.ps1 Get-IndustrialRobotRepoRoot 契约），
++# 再拼一层 'RobWork\' 会得到不存在的双 RobWork 路径——eb777e2 参考实现的潜在笔误
++# 当年因 core/include 缺席被 Test-Path 空集分支掩盖，本适配改为真实枚举后必须修正。
++$irdSrcRoot = Join-Path $repoRoot 'RobWorkStudio\src\rwslibs\industrialrobot'
++$includeRoots = @(Get-ChildItem -LiteralPath $irdSrcRoot -Directory |
++    ForEach-Object { Join-Path $_.FullName 'include' } |
++    Where-Object { Test-Path -LiteralPath $_ -PathType Container })
++$headerCount = 0
++foreach ($includeRoot in $includeRoots) {
++    $headerFiles = @(Get-ChildItem -LiteralPath $includeRoot -Recurse -File |
++        Where-Object { $_.Extension -in '.h', '.hpp' })
++    foreach ($header in $headerFiles) {
++        $relativeFromInclude = $header.FullName.Substring($includeRoot.Length).TrimStart('\', '/') -replace '\\', '/'
++        $destPath = Join-Path $stagingPath ('include\' + ($relativeFromInclude -replace '/', '\'))
++        $destParent = Split-Path -Parent $destPath
++        if (-not (Test-Path -LiteralPath $destParent -PathType Container)) {
++            New-Item -ItemType Directory -Path $destParent -Force | Out-Null
++        }
++        Copy-Item -LiteralPath $header.FullName -Destination $destPath -Force
++        $headerCount++
++    }
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[边界] 全单元公共头集数量=' + $headerCount + '（单元 include/ 目录缺失视为空集，不因空头集失败）。')
++
++# ---- manifest：相对路径＋SHA-256，逐文件与生成后双重黑名单复检 ----
++$forbiddenPath = '(?i)(^|/)(testdata|testing|tests?)(/|$)|(^|/)[^/]*_test(?:\.[^/]*)?$|(^|/)[^/]*_p\.(?:h|hpp)$|\.(?:pdb|ilk)$'
++$files = @(Get-ChildItem -LiteralPath $stagingPath -Recurse -File | Where-Object { $_.FullName -ne $manifestPath })
++$entries = New-Object System.Collections.Generic.List[object]
++foreach ($file in $files) {
++    $relative = $file.FullName.Substring($stagingPath.Length).TrimStart('\', '/') -replace '\\', '/'
++    if ($relative -match $forbiddenPath) {
++        $diagnostic = '[安装边界] 禁止内容出现在安装树：' + $relative + '；移除测试数据、测试产物或私有头后重试。'
++        [Console]::Error.WriteLine($diagnostic)
++        Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] ' + $diagnostic)
++        exit 1
++    }
++    if ($relative -match '^[A-Za-z]:[\\/]' -or $relative.StartsWith('/')) {
++        $diagnostic = '[安装边界] 安装清单包含绝对路径：' + $relative
++        [Console]::Error.WriteLine($diagnostic)
++        Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] ' + $diagnostic)
++        exit 1
++    }
++    $hash = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
++    $entries.Add([ordered]@{ path = $relative; bytes = $file.Length; sha256 = $hash })
++}
++
++$revision = ''
++try {
++    $revision = (& git -C $repoOuter rev-parse HEAD 2>$null | Select-Object -First 1).Trim()
++}
++catch { $revision = '' }
++$manifest = [ordered]@{
++    schemaVersion = 1
++    taskId = 'gov-ci-activation'   # 出包溯源批次（2026-10-16 CI 激活适配；schema 与字段名不变）
++    configuration = $Configuration
++    gitRevision = $revision
++    generatedAt = (Get-Date).ToUniversalTime().ToString('o')
++    files = @($entries | Sort-Object -Property path)
++}
++$json = $manifest | ConvertTo-Json -Depth 6
++if ($json -match '(?i)[A-Za-z]:[\\/]' -or $json -match '(?i)(?:testdata|\btests?\b|_p\.hpp)') {
++    [Console]::Error.WriteLine('[安装边界] manifest 生成后包含禁止路径或内容名，拒绝出包。')
++    Write-IndustrialRobotLog -LogFile $logFile -Line '[失败] manifest 生成后包含禁止路径或内容名。'
++    exit 1
++}
++$json | Set-Content -LiteralPath $manifestPath -Encoding UTF8
++
++if (Test-Path -LiteralPath $archivePath) { Remove-Item -LiteralPath $archivePath -Force }
++Compress-Archive -Path (Join-Path $stagingPath '*') -DestinationPath $archivePath -Force
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] 文件数=' + $entries.Count + '（含公共头 ' + $headerCount + '）；manifest=' + $manifestPath)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] archive=' + $archivePath + '；退出码=0')
++Write-Output ('Package completed: ' + $archivePath)
++exit 0
+diff --git a/RobWork/scripts/industrial-robot/run-tests.ps1 b/RobWork/scripts/industrial-robot/run-tests.ps1
+new file mode 100644
+index 00000000..9277883c
+--- /dev/null
++++ b/RobWork/scripts/industrial-robot/run-tests.ps1
+@@ -0,0 +1,241 @@
++﻿# 工业机械臂重构·统一测试入口（WP-01-T03）
++# 职责：CTest 调用（默认 -j1 单进程）、-Regex 精确筛选（先以 ctest -N 预检，零匹配即
++#       非零并报告）、GUI 规则（testing-contract §5、WP-01 计划 §6）：检测到继承
++#       QT_*/QML_* 冲突变量先报告并停止；通过后为测试子进程强制 QT_QPA_PLATFORM=windows。
++#       输出与退出码写入 <LogDirectory>\test.log 并透传；失败保留日志，不删除构建目录。
++# 允许依赖：common.ps1、ctest.exe、VS x64 工具链；禁止：虚拟平台设置、多 GUI 进程并行、
++#       自动修复源码或用户环境变量（强制 windows 平台为 testing-contract §5 冻结规则）。
++# 公共所有者：WP-01；契约：work-packages/WP-01 §6；architecture/testing-contract.md §5。
++# Task ID：WP-01-T03；运行环境：Windows PowerShell 5.1+（无 PS7 专属语法）、VS x64。
++#
++# ★ 2026-10-16 CI 激活适配（gov-ci-activation，所有者裁决"按建议激活"）：以 eb777e2
++#   参考实现为基线做三处适配，GUI 规则面逐字保留：
++#   1) 测试执行由"构建根单次 ctest -R"改为"叶子 CTestTestfile 发现＋逐目标 ctest"——
++#      今日树 enable_testing 位于单元作用域、add_test 注册于叶子目录，构建根的 ctest
++#      看不到叶子测试（8 月参考运行时 core_test 注册于根作用域故可见；与
++#      gate-all.ps1「测试目标发现」同源结论）。零发现/零匹配语义保持"不猜测、
++#      不降级"：发现 0 个或任一目标失败都非零退出。
++#   2) 新增 -CTestTimeoutSec（默认 600 s）逐目标 ctest --timeout——F-728 防线对齐
++#      gate-all：单测试挂住被有界终止，不再无限期阻塞整个 CI job（hosted runner
++#      单 job 上限 6 小时，挂住即烧满）。
++#   3) 新增依赖 DLL 运行时供给：CI 依赖经 vcpkg x64-windows（动态 triplet）装入
++#      CMAKE_PREFIX_PATH 指向的树，测试可执行文件运行期需要 <前缀>\bin 下的
++#      Qt6/boost/zlib 等 DLL；CI 无 vcpkg toolchain 的 applocal 部署，故把各前缀
++#      bin 目录前置注入 PATH（仅当目录真实存在）。本地操作员环境已有等效供给时
++#      此注入为幂等空操作。
++#   4) 移植 gate-all.ps1 的 F-715 SKIP 口径：sdurws_ird_ui_test 经框架 sdurws 静态库
++#      接口面链入 python313.dll（→zlib.dll 同目录相依），该 DLL 不随构建部署、只能
++#      由 PATH 供给；环境不可达时加载失败（0xC0000135 族，ctest 包装实测退出码 8）。
++#      按 F-715 既有裁决，"环境前置不可达"不是被测面缺陷——记 SKIP＋归因，不计失败，
++#      杜绝验收与 CI 场景的系统性误报（gate-all.ps1 Invoke-GateTest 同款判定）。
++#      补 -PythonDir <目录> 或设 SDURWS_IRD_PYTHON_DIR 即可转真实执行。
++#   登记依据：ci/README.md「2026-10-16 激活」节＋patches/PATCHES.md 0003 号。
++param(
++    [ValidateSet('Debug', 'Release')]
++    [string]$Configuration = 'Debug',
++    [string]$BuildDirectory = '',
++    [string]$SourceDirectory = '',
++    [string]$Generator = 'Visual Studio 17 2022',
++    [string]$Platform = 'x64',
++    [switch]$NoConfigure,
++    [string]$LogDirectory = '',
++    [Parameter(Mandatory = $true)]
++    [string]$Regex,
++    # 逐目标 ctest --timeout 秒数（F-728 防线，2026-10-16 激活适配②——见文件头说明）；
++    # 默认 600 s 与 gate-all.ps1 同值：健康目标实测秒级完成，余量一个数量级以上
++    [int]$CTestTimeoutSec = 600,
++    # python313.dll 所在目录显式供给（F-715 口径，与 gate-all.ps1 -PythonDir 同名同义）；
++    # 空串＝未传参，走探测序列（见下方探测块）
++    [string]$PythonDir = ''
++)
++
++$ErrorActionPreference = 'Stop'
++
++. (Join-Path $PSScriptRoot 'common.ps1')
++
++$repoRoot = Get-IndustrialRobotRepoRoot -ScriptRoot $PSScriptRoot
++$repoOuter = Split-Path -Parent $repoRoot
++
++# ---- 日志目录先行：任何失败路径都必须保留 test.log ----
++if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
++    $logDir = New-IndustrialRobotLogDir -RepoRoot $repoRoot -TimeStamp (Get-IndustrialRobotTimeStamp)
++}
++else {
++    $logDir = New-IndustrialRobotOutputDirectory -Path $LogDirectory -Default '' -Label '-LogDirectory'
++}
++if ($null -eq $logDir -or $logDir -eq '') { exit 1 }
++$logFile = Join-Path $logDir 'test.log'
++
++Write-IndustrialRobotLog -LogFile $logFile -Line ('==== run-tests.ps1（WP-01-T03） ' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + ' ====')
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[参数] Configuration=' + $Configuration + ' Regex=' + $Regex + ' NoConfigure=' + $NoConfigure.IsPresent)
++if ($NoConfigure) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line '[参数] -NoConfigure：本入口只消费上一步构建工件，开关按公共参数契约接受，行为不变。'
++}
++
++# ---- GUI 规则：冲突变量先报告并停止（优先于一切输入校验与 ctest 调用）----
++$conflicts = @(Get-IndustrialRobotQtEnvironmentConflicts)
++if ($conflicts.Count -gt 0) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line '[失败] 检测到继承的 QT_*/QML_* 冲突环境变量（testing-contract §5），先报告并停止：'
++    foreach ($conflict in $conflicts) {
++        Write-IndustrialRobotLog -LogFile $logFile -Line ('  冲突变量: ' + $conflict)
++        [Console]::Error.WriteLine('[GUI 规则] 冲突变量: ' + $conflict)
++    }
++    Write-IndustrialRobotLog -LogFile $logFile -Line '[修复动作] 清理上述继承变量后重跑；Windows 测试平台固定为 windows，禁止虚拟平台与多 GUI 进程。'
++    [Console]::Error.WriteLine('[GUI 规则] 检测到继承 QT_*/QML_* 冲突变量，已先报告并停止；清理后重跑。')
++    [Console]::Error.WriteLine('[结果] run-tests 失败，退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++if ($env:QT_QPA_PLATFORM -ine 'windows') {
++    $env:QT_QPA_PLATFORM = 'windows'
++    Write-IndustrialRobotLog -LogFile $logFile -Line '[GUI 规则] 已为测试子进程强制 QT_QPA_PLATFORM=windows（testing-contract §5）。'
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line '[GUI 规则] 单进程串行：ctest -j 1；一次只运行一个测试可执行文件。'
++
++# ---- 依赖 DLL 运行时供给（2026-10-16 激活适配③——缘由见文件头说明）----
++# 只前置注入真实存在的 <前缀>\bin；已含于 PATH 的前缀跳过（幂等）。
++if ($env:CMAKE_PREFIX_PATH) {
++    foreach ($prefix in ($env:CMAKE_PREFIX_PATH -split ';')) {
++        if ([string]::IsNullOrWhiteSpace($prefix)) { continue }
++        $bin = Join-Path $prefix.TrimEnd('\', '/') 'bin'
++        if ((Test-Path -LiteralPath $bin) -and ($env:PATH -notlike ('*' + $bin + '*'))) {
++            $env:PATH = $bin + ';' + $env:PATH
++            Write-IndustrialRobotLog -LogFile $logFile -Line ('[DLL 供给] 已前置注入 PATH: ' + $bin)
++        }
++    }
++}
++
++# ---- python 运行库前置探测（2026-10-16 激活适配④，F-715 口径——缘由见文件头说明）----
++# 探测顺序与 gate-all.ps1 第 0.5 步一致：-PythonDir 参数 > 环境变量 SDURWS_IRD_PYTHON_DIR
++# > 既有 PATH > conda/python 命令定位反推 > 常见安装位；命中即注入 PATH。全程不可达
++# 时不失败——后续测试步遇 0xC0000135 族失败按 SKIP＋归因处置（见执行循环）。
++$script:PythonDll = $null
++$pythonCandidates = @()
++if ($PythonDir) { $pythonCandidates += $PythonDir }
++if ($env:SDURWS_IRD_PYTHON_DIR) { $pythonCandidates += $env:SDURWS_IRD_PYTHON_DIR }
++$pythonCandidates += @($env:PATH -split ';' | Where-Object { $_ })
++$condaCmd = Get-Command conda -ErrorAction SilentlyContinue
++if ($condaCmd -and $condaCmd.Source) { $pythonCandidates += (Split-Path -Parent (Split-Path -Parent $condaCmd.Source)) }
++$pyCmd = Get-Command python -ErrorAction SilentlyContinue
++if ($pyCmd -and $pyCmd.Source) { $pythonCandidates += (Split-Path -Parent $pyCmd.Source) }
++$pythonCandidates += @(
++    (Join-Path $env:USERPROFILE 'miniconda3'),
++    (Join-Path $env:USERPROFILE 'anaconda3'),
++    (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python313'),
++    'C:\Python313'
++)
++foreach ($candidate in $pythonCandidates) {
++    if ($candidate -and (Test-Path (Join-Path $candidate 'python313.dll'))) { $script:PythonDll = $candidate; break }
++}
++if ($script:PythonDll) {
++    if ($env:PATH -notlike "*$script:PythonDll*") { $env:PATH = "$script:PythonDll;$env:PATH" }
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[python 前置] python313.dll 已可达: ' + $script:PythonDll + '（已注入 PATH——F-715/TK-T12）')
++} else {
++    Write-IndustrialRobotLog -LogFile $logFile -Line '[python 前置] python313.dll 不可达——链入 python 运行库的目标（今 sdurws_ird_ui_test）将以 SKIP＋归因记录（F-715 口径），不计失败'
++}
++
++# ---- 输入工件校验：构建目录必须已配置（每一步只消费上一步成功工件）----
++$sourceDir = Resolve-IndustrialRobotSourceDirectory -Path $SourceDirectory -Default $repoRoot -Label '-SourceDirectory'
++if ($null -eq $sourceDir) { exit 1 }
++$buildDir = Resolve-IndustrialRobotSourceDirectory -Path $BuildDirectory -Default (Join-Path $repoOuter 'out\build\industrial-robot') -Label '-BuildDirectory'
++if ($null -eq $buildDir) { exit 1 }
++if (-not (Test-Path -LiteralPath (Join-Path $buildDir 'CMakeCache.txt'))) {
++    [Console]::Error.WriteLine(('[入口参数] -BuildDirectory 不是已配置的构建目录（缺 CMakeCache.txt）: ' + $buildDir))
++    [Console]::Error.WriteLine('[结果] run-tests 失败，退出码 1；日志保留: ' + $logFile)
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] -BuildDirectory 不是已配置的构建目录（缺 CMakeCache.txt）: ' + $buildDir)
++    exit 1
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] BuildDirectory=' + $buildDir)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[路径] LogDirectory=' + $logDir)
++
++# ---- VS x64 环境发现与版本记录（WP-01 计划 §5.2，与 configure/build 同一口径）----
++Write-IndustrialRobotLog -LogFile $logFile -Line '---- VS x64 环境发现 ----'
++$vs = Initialize-IndustrialRobotVsEnvironment -LogFile $logFile
++if (-not $vs.Success) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[失败] ' + $vs.Diagnostic)
++    [Console]::Error.WriteLine($vs.Diagnostic)
++    [Console]::Error.WriteLine('[结果] run-tests 失败，退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] 发现方式=' + $vs.Via)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] MSVC=' + $vs.MsvcLine + '；Windows SDK=' + $vs.SdkVersion)
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[环境] ' + $vs.CMakeLine + '；' + $vs.CTestLine)
++
++$ctest = (Get-Command -Name 'ctest.exe' -ErrorAction SilentlyContinue).Source
++
++# ---- 测试目标发现（2026-10-16 激活适配①）：叶子 CTestTestfile 扫描＋Regex 筛选 ----
++# 算法与 gate-all.ps1 第 3 步同源（缘由见文件头说明①）。发现后按 -Regex 精确筛选，
++# 零命中保持参考实现"不猜测、不降级"语义：非零退出并报告。
++function Find-IndustrialRobotTestTargets([string]$Root) {
++    $map = @{}
++    if (-not (Test-Path -LiteralPath $Root)) { return $map }
++    Get-ChildItem -Path $Root -Recurse -Filter 'CTestTestfile.cmake' -ErrorAction SilentlyContinue | ForEach-Object {
++        $dir = $_.DirectoryName
++        (Get-Content $_.FullName) | ForEach-Object {
++            if ($_ -match 'add_test\s*\(\s*([A-Za-z0-9_\-]+)\s') {
++                $map[$Matches[1]] = $dir   # 名→注册目录（ctest --test-dir 指向该叶子目录）
++            }
++        }
++    }
++    return $map
++}
++
++Write-IndustrialRobotLog -LogFile $logFile -Line '---- 测试目标发现（叶子 CTestTestfile 扫描）----'
++$irdBuildRoot = Join-Path $buildDir 'RobWorkStudio\src\rwslibs\industrialrobot'
++$allTargets = Find-IndustrialRobotTestTargets -Root $irdBuildRoot
++if ($allTargets.Count -eq 0) {
++    $diagnostic = '[失败] industrialrobot 构建子树未发现任何注册测试目标（' + $irdBuildRoot + '）' + `
++                  '——最常见原因：配置未带 -DRWS_BUILD_INDUSTRIALROBOT=ON，子树未进构建图。不猜测，停止。'
++    Write-IndustrialRobotLog -LogFile $logFile -Line $diagnostic
++    [Console]::Error.WriteLine($diagnostic)
++    [Console]::Error.WriteLine('[结果] run-tests 失败，退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++$selected = @($allTargets.Keys | Where-Object { $_ -match $Regex } | Sort-Object)
++if ($selected.Count -eq 0) {
++    $diagnostic = '[失败] Regex 零匹配：-R "' + $Regex + '" 未命中任何已发现测试（共发现 ' + $allTargets.Count + ' 项）。'
++    Write-IndustrialRobotLog -LogFile $logFile -Line $diagnostic
++    [Console]::Error.WriteLine($diagnostic)
++    [Console]::Error.WriteLine('[结果] run-tests 失败，退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[预检] 发现 ' + $allTargets.Count + ' 个注册测试，Regex 命中 ' + $selected.Count + ' 个: ' + ($selected -join ', '))
++
++# ---- CTest 执行：逐目标、单进程（-j1）、有界超时，任一失败聚合后非零退出 ----
++# 每目标一次 ctest（--test-dir 指向注册叶子目录，-R 锚定全名），失败不中断后续
++# 目标——收集全部失败再汇总（与 gate-all"收集全部失败再汇总"口径一致），便于
++# CI 单轮拿到完整失败清单而不是逐轮试错。
++Write-IndustrialRobotLog -LogFile $logFile -Line '---- CTest 执行（逐目标）----'
++$failed = New-Object System.Collections.Generic.List[string]
++$skipped = New-Object System.Collections.Generic.List[string]
++foreach ($name in $selected) {
++    $run = Invoke-IndustrialRobotNative -FilePath $ctest `
++        -ArgumentList @('--test-dir', $allTargets[$name], '-C', $Configuration,
++                        '-R', ('^' + $name + '$'), '-j', '1',
++                        '--timeout', [string]$CTestTimeoutSec, '--output-on-failure') `
++        -LogFile $logFile -Label ('ctest -R ^' + $name + '$（超时 ' + $CTestTimeoutSec + ' s）')
++    if ($run.ExitCode -eq 0) { continue }
++
++    # F-715 SKIP 分流（2026-10-16 激活适配④）：0xC0000135 族（ctest 包装实测退出码 8，
++    # 直接加载失败＝有符号 -1073741515）且 python313.dll 探测不可达——环境前置缺失，
++    # 不是被测面缺陷，记 SKIP＋归因不计失败（gate-all.ps1 Invoke-GateTest 同款判定）
++    if (-not $script:PythonDll -and ($run.ExitCode -eq 8 -or $run.ExitCode -eq -1073741515)) {
++        $skipped.Add($name)
++        Write-IndustrialRobotLog -LogFile $logFile -Line ('[SKIP] ' + $name + '（python313.dll 不可达，加载失败 0xC0000135 族——F-715 归因，不计失败）')
++        continue
++    }
++    $failed.Add($name)
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[FAIL] ' + $name + '（退出码 ' + $run.ExitCode + '）')
++}
++if ($skipped.Count -gt 0) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] SKIP ' + $skipped.Count + ' 个: ' + ($skipped -join ', ') + '（F-715；补 -PythonDir/SDURWS_IRD_PYTHON_DIR 后重跑可转真实执行）')
++}
++if ($failed.Count -gt 0) {
++    Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] 失败 ' + $failed.Count + '/' + $selected.Count + ': ' + ($failed -join ', '))
++    [Console]::Error.WriteLine('[结果] run-tests 失败 ' + $failed.Count + '/' + $selected.Count + ' 个目标: ' + ($failed -join ', '))
++    [Console]::Error.WriteLine('[结果] run-tests 退出码 1；日志保留: ' + $logFile)
++    exit 1
++}
++$passSummary = '全部 ' + ($selected.Count - $skipped.Count) + ' 个目标通过'
++if ($skipped.Count -gt 0) { $passSummary += '（另 SKIP ' + $skipped.Count + ' 个，F-715 归因）' }
++Write-IndustrialRobotLog -LogFile $logFile -Line ('[结果] ' + $passSummary + '；日志: ' + $logFile)
++exit 0

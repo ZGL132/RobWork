@@ -1,0 +1,657 @@
+# 工业机械臂重构·Windows x64 CI 门禁执行通道（WP-01-T04，2026-08-31 所有者裁决双文件口径）
+# 与 RobWork/gitlab-ci/industrial-robot-windows.yml（门禁契约定义）的步骤顺序、job 划分、
+# 缓存白名单与脚本行逐字符一致；本文件在 GitHub Actions windows 执行机上产出真实运行记录。
+# 步骤固定：checkout → VS x64 → configure → build → 模型测试 → GUI 规则通道预检 →
+#           check-boundaries → package → 上传日志/CTest XML/边界报告/安装 manifest。
+# 模型与 GUI 分离 job；GUI job 显式声明 QT_QPA_PLATFORM=windows（本机 GL 平台）执行。
+# 测试面（2026-10-12 治理批扩面，G-1 消账）：两测试 job 的 run-tests 正则由阶段 A 的
+# '^sdurws_ird_core_test$'（WP-01-T02 交付时点唯一已建测试目标的历史口径）扩为
+# '^sdurws_ird_.*_test$'——覆盖全部单元 sdurws_ird_<unit>_test 与 sdurws_ird_<unit>_contract_test
+# 注册目标，与本地 gate-all.ps1"全部 _test/_contract_test 一键执行"面拉齐。扩面依据：
+# units/execution.md §15.4 v0.12（EX-T10 ④）、units/runtime.md §15.4 v0.15（RT-T13 ④）、
+# units/evidence.md EV-T12 三处同缺口登记（均请求 CI 执行面扩至全部单元）。
+# CMAKE_PREFIX_PATH 双声明（WP-01 计划 §5.5）：本地＝操作员会话导出，CI＝本顶层 env 声明；
+# 入口脚本对前缀只记录不修改。CI 依赖供给（Qt/Boost/zlib 前缀）用仓库自带的 vendored vcpkg
+# 构建到 .cache/industrial-robot/dependencies/vcpkg/installed/x64-windows（与 env 声明一致）。
+# 缓存白名单仅 .cache/industrial-robot/{dependencies,packages}/，不缓存正式测试结果、
+# 结果数据库或项目快照；失败工件 if: always()（等价 yml 的 when: always）。
+# 集成默认分支保护：redesign-main 仅接受本门禁（六步全绿）的合并（仓库分支保护设置）。
+#
+# ★ 2026-10-16 激活修订（gov-ci-activation，所有者裁决"按建议激活"；与 GitLab 契约
+#   文件的步骤顺序/job 划分/缓存白名单/脚本行逐字符一致纪律保持），本文件三处变更：
+#   1) 触发器由「push 无过滤＋PR→main」收窄为「push→redesign-main＋PR→redesign-main
+#      ＋workflow_dispatch 手动触发」——main 已冻结（AGENTS §6.2），开发主线为
+#      redesign-main；无过滤 push 会对全部任务分支的每次推送触发多小时运行。
+#   2) 依赖供给清单补 gtest——今日树各单元 CMake 含 find_package(GTest CONFIG
+#      REQUIRED)（DTB §5.5，自 WP-02-T01 起）；2026-08-31 验证运行时点 core_test
+#      尚非 gtest 测试且 RWS_BUILD_INDUSTRIALROBOT 补丁（0001，2026-09-09）未落地，
+#      故当时无需 gtest 也能通过。gtest 随同一 vendored vcpkg 安装到缓存白名单树，
+#      经顶层 env CMAKE_PREFIX_PATH 进入 find_package 搜索路径。
+#   3) 六个入口脚本正式落位 RobWork/scripts/industrial-robot/（eb777e2 参考实现＋
+#      今日树适配：RWS_BUILD_INDUSTRIALROBOT=ON、全量测试面构建、叶子测试发现、
+#      ird_gates 边界执行器、全单元出包）——适配明细见 ci/README.md「2026-10-16
+#      激活」节与 patches/PATCHES.md 0003 号。
+
+name: industrial-robot-windows-gate
+
+on:
+  push:
+    branches:
+      - redesign-main
+  pull_request:
+    branches:
+      - redesign-main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CMAKE_PREFIX_PATH: ${{ github.workspace }}/.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows
+
+jobs:
+  ird-industrial-robot-configure:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
+      - name: checkout
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
+      - name: VS x64
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
+      - name: configure
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\configure.ps1 -Configuration Release
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-configure
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+      - name: 缓存保存（白名单 .cache/industrial-robot/dependencies；无论门禁成败都保存）
+        if: always() && steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+
+  ird-industrial-robot-build:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-configure
+    steps:
+      - uses: actions/checkout@v4
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-configure
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
+      - name: checkout
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
+      - name: VS x64
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
+      - name: build
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\build.ps1 -Configuration Release -NoConfigure
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-build
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+      - name: 缓存保存（白名单 .cache/industrial-robot/dependencies；无论门禁成败都保存）
+        if: always() && steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+
+  ird-industrial-robot-model-tests:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-build
+    steps:
+      - uses: actions/checkout@v4
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-build
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
+      - name: checkout
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
+      - name: VS x64
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
+      # 测试面扩全部单元（2026-10-12 治理批，G-1 消账——依据 execution.md v0.12④／
+      # runtime.md v0.15④／evidence.md EV-T12 同缺口登记）：'^sdurws_ird_.*_test$' 覆盖
+      # 全部单元 _test 与 _contract_test 注册目标，与 gate-all.ps1 全量测试面对齐。
+      - name: 模型测试
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_.*_test$' -NoConfigure
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-model-tests
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+      - name: 缓存保存（白名单 .cache/industrial-robot/dependencies；无论门禁成败都保存）
+        if: always() && steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+
+  ird-industrial-robot-gui-precheck:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-model-tests
+    env:
+      QT_QPA_PLATFORM: windows
+    steps:
+      - uses: actions/checkout@v4
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-model-tests
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
+      - name: checkout
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
+      - name: VS x64
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
+      # GUI job 同批扩面（2026-10-12 治理批，G-1 消账）：正则与模型测试 job 一致——
+      # 阶段 A"唯一已构建测试"的冻结前提已消失，QT_QPA_PLATFORM=windows 保持显式声明。
+      - name: GUI 规则通道预检
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\run-tests.ps1 -Configuration Release -Regex '^sdurws_ird_.*_test$' -NoConfigure
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-gui-precheck
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+      - name: 缓存保存（白名单 .cache/industrial-robot/dependencies；无论门禁成败都保存）
+        if: always() && steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+
+  ird-industrial-robot-boundaries:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-gui-precheck
+    steps:
+      - uses: actions/checkout@v4
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-gui-precheck
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
+      - name: checkout
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
+      - name: VS x64
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
+      - name: check-boundaries
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-boundaries
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+      - name: 缓存保存（白名单 .cache/industrial-robot/dependencies；无论门禁成败都保存）
+        if: always() && steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+
+  ird-industrial-robot-package:
+    runs-on: windows-2022
+    needs:
+      - ird-industrial-robot-boundaries
+    steps:
+      - uses: actions/checkout@v4
+      - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
+        uses: actions/download-artifact@v4
+        with:
+          name: ird-gate-boundaries
+          path: ${{ github.workspace }}/out
+      - name: 缓存还原（白名单 .cache/industrial-robot/dependencies）
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
+          restore-keys: |
+            industrial-robot-dependencies-${{ runner.os }}-
+      - name: checkout
+        run: 'Write-Output "checkout: ${{ github.sha }} (${{ github.ref_name }})"'
+      - name: VS x64
+        run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
+      - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        run: >-
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
+        run: |
+          New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
+          @'
+          [Plugins]
+
+          UserPlugin\DockArea=2
+          UserPlugin\Filename=library_filename_without_extension
+          UserPlugin\Path=unix_style_path_to_library
+          UserPlugin\Visible=true
+
+          [Settings]
+          Workcell\Path=path/to/workcell.xml
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static" -Encoding Ascii
+          @'
+          [Plugins]
+
+          @Luapl_DOCKAREA@
+          @Luapl_FILENAME@
+          @Luapl_PATH@
+          @Luapl_VISIBLE@
+
+          @Sensors_DOCKAREA@
+          @Sensors_FILENAME@
+          @Sensors_PATH@
+          @Sensors_VISIBLE@
+
+          @Jog_DOCKAREA@
+          @Jog_FILENAME@
+          @Jog_PATH@
+          @Jog_VISIBLE@
+
+          @Log_DOCKAREA@
+          @Log_FILENAME@
+          @Log_PATH@
+          @Log_VISIBLE@
+
+          @Planning_DOCKAREA@
+          @Planning_FILENAME@
+          @Planning_PATH@
+          @Planning_VISIBLE@
+
+          @PlayBack_DOCKAREA@
+          @PlayBack_FILENAME@
+          @PlayBack_PATH@
+          @PlayBack_VISIBLE@
+
+          @PropertyView_DOCKAREA@
+          @PropertyView_FILENAME@
+          @PropertyView_PATH@
+          @PropertyView_VISIBLE@
+
+          @TreeView_DOCKAREA@
+          @TreeView_FILENAME@
+          @TreeView_PATH@
+          @TreeView_VISIBLE@
+          '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
+      - name: package
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\package.ps1 -Configuration Release
+      - name: 上传日志/CTest XML/边界报告/安装 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ird-gate-package
+          path: |
+            out/build/industrial-robot/
+            out/logs/industrial-robot/
+          if-no-files-found: warn
+      - name: 缓存保存（白名单 .cache/industrial-robot/dependencies；无论门禁成败都保存）
+        if: always() && steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/industrial-robot/dependencies
+          key: industrial-robot-dependencies-${{ runner.os }}-${{ hashFiles('.github/workflows/industrial-robot-windows.yml') }}
