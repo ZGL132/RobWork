@@ -79,11 +79,12 @@ jobs:
       - name: VS x64
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        # 供给无条件执行（说明放标量外的 YAML 注释——run: >- 折叠标量内写 # 行会被
+        # 折叠成脚本注释、整条命令被吞，run 38950026889 实证）：restore-keys 前缀
+        # 回退可命中任意旧依赖树，"探测单文件"守卫会被旧树或其传递依赖满足而短路
+        # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
+        # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          # 依赖供给无条件执行（不再守卫短路）：vcpkg 对已装端口秒级校验跳过、
-          # 仅补装缺口——对"restore-keys 前缀回退命中任意旧树"的所有场景自愈。
-          # 守卫方案三轮实证不可靠（run 38947428868/38948093498/38949126339：单个
-          # 文件探针或被旧树满足、或被传递依赖满足，详见 ci/README 激活节）。
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
@@ -184,11 +185,12 @@ jobs:
       - name: VS x64
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        # 供给无条件执行（说明放标量外的 YAML 注释——run: >- 折叠标量内写 # 行会被
+        # 折叠成脚本注释、整条命令被吞，run 38950026889 实证）：restore-keys 前缀
+        # 回退可命中任意旧依赖树，"探测单文件"守卫会被旧树或其传递依赖满足而短路
+        # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
+        # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          # 依赖供给无条件执行（不再守卫短路）：vcpkg 对已装端口秒级校验跳过、
-          # 仅补装缺口——对"restore-keys 前缀回退命中任意旧树"的所有场景自愈。
-          # 守卫方案三轮实证不可靠（run 38947428868/38948093498/38949126339：单个
-          # 文件探针或被旧树满足、或被传递依赖满足，详见 ci/README 激活节）。
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
@@ -289,11 +291,12 @@ jobs:
       - name: VS x64
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        # 供给无条件执行（说明放标量外的 YAML 注释——run: >- 折叠标量内写 # 行会被
+        # 折叠成脚本注释、整条命令被吞，run 38950026889 实证）：restore-keys 前缀
+        # 回退可命中任意旧依赖树，"探测单文件"守卫会被旧树或其传递依赖满足而短路
+        # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
+        # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          # 依赖供给无条件执行（不再守卫短路）：vcpkg 对已装端口秒级校验跳过、
-          # 仅补装缺口——对"restore-keys 前缀回退命中任意旧树"的所有场景自愈。
-          # 守卫方案三轮实证不可靠（run 38947428868/38948093498/38949126339：单个
-          # 文件探针或被旧树满足、或被传递依赖满足，详见 ci/README 激活节）。
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
@@ -399,11 +402,12 @@ jobs:
       - name: VS x64
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        # 供给无条件执行（说明放标量外的 YAML 注释——run: >- 折叠标量内写 # 行会被
+        # 折叠成脚本注释、整条命令被吞，run 38950026889 实证）：restore-keys 前缀
+        # 回退可命中任意旧依赖树，"探测单文件"守卫会被旧树或其传递依赖满足而短路
+        # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
+        # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          # 依赖供给无条件执行（不再守卫短路）：vcpkg 对已装端口秒级校验跳过、
-          # 仅补装缺口——对"restore-keys 前缀回退命中任意旧树"的所有场景自愈。
-          # 守卫方案三轮实证不可靠（run 38947428868/38948093498/38949126339：单个
-          # 文件探针或被旧树满足、或被传递依赖满足，详见 ci/README 激活节）。
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
@@ -506,11 +510,12 @@ jobs:
       - name: VS x64
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        # 供给无条件执行（说明放标量外的 YAML 注释——run: >- 折叠标量内写 # 行会被
+        # 折叠成脚本注释、整条命令被吞，run 38950026889 实证）：restore-keys 前缀
+        # 回退可命中任意旧依赖树，"探测单文件"守卫会被旧树或其传递依赖满足而短路
+        # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
+        # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          # 依赖供给无条件执行（不再守卫短路）：vcpkg 对已装端口秒级校验跳过、
-          # 仅补装缺口——对"restore-keys 前缀回退命中任意旧树"的所有场景自愈。
-          # 守卫方案三轮实证不可靠（run 38947428868/38948093498/38949126339：单个
-          # 文件探针或被旧树满足、或被传递依赖满足，详见 ci/README 激活节）。
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
@@ -611,11 +616,12 @@ jobs:
       - name: VS x64
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
+        # 供给无条件执行（说明放标量外的 YAML 注释——run: >- 折叠标量内写 # 行会被
+        # 折叠成脚本注释、整条命令被吞，run 38950026889 实证）：restore-keys 前缀
+        # 回退可命中任意旧依赖树，"探测单文件"守卫会被旧树或其传递依赖满足而短路
+        # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
+        # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          # 依赖供给无条件执行（不再守卫短路）：vcpkg 对已装端口秒级校验跳过、
-          # 仅补装缺口——对"restore-keys 前缀回退命中任意旧树"的所有场景自愈。
-          # 守卫方案三轮实证不可靠（run 38947428868/38948093498/38949126339：单个
-          # 文件探针或被旧树满足、或被传递依赖满足，详见 ci/README 激活节）。
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
