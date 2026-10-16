@@ -585,7 +585,10 @@ bool runExportPackage(ModuleSessionState& session, ModelingDialogHost& host,
                        "  · 工具 %5／场景 %6／位姿集 %7／传动 %8\n\n"
                        "写出采用 io 原子替换——失败保留先前文件。是否继续？")
             .arg(path, fileExists ? QStringLiteral("（将替换现有文件）")
-                                  : QStringLiteral())
+                                  // 空后缀必须使用明确的 QString 对象；
+                                  // QStringLiteral 是带参数的宏，不能以空参数调用，
+                                  // 否则 MSVC 会产生 C4003 并在严格告警策略下阻断构建。
+                                  : QString())
             .arg(draft.design.joints.size())
             .arg(draft.design.links.size())
             .arg(draft.toolObjects.size())
@@ -682,7 +685,9 @@ bool executeModelingCommand(const std::string& commandId,
                 return false;
             }
             deps.reseedTemplate();
-            summary = "已从模板重建草稿（generic-6r）——未应用编辑已清空";
+            summary = "已从模板重建草稿（generic-6r）——未应用编辑已清空；"
+                      "注意：模板预填的最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）"
+                      "当前不进入建模计算内核，请在传动或策略模块补录";
             return true;
         }
         // custom-chain：六轴逐轴声明（UI-T63——从零创建；类型锁 Revolute，
@@ -712,6 +717,10 @@ bool executeModelingCommand(const std::string& commandId,
         CustomChainDeclaration declaration;
         declaration.joints = *declared;
         const bool reseeded = deps.reseedCustomChain(declaration, summary);
+        if (reseeded) {
+            summary += "；注意：模板预填的最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）"
+                       "当前不进入建模计算内核，请在传动或策略模块补录";
+        }
         return reseeded;  // true＝草稿已按声明重建（summary 带回执）；
                           // false＝声明非法/域拒绝（summary 带原因）
     }

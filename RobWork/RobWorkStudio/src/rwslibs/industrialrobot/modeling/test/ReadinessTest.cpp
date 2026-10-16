@@ -109,6 +109,23 @@ TEST(MdlReadiness, LegalWorkingSetAllLayersPassAndPureFunction)
     for (const auto& w : first.warnings) {
         EXPECT_EQ(w.code, std::string(kMdlReadinessPhysicsMissing));
     }
+
+    // 模板速度/加速度字段的 schema 边界必须显式可见：NotProvided 不阻断
+    // 建模草稿，但报告携带字段路径、单位和补录动作，防止后续轨迹/动力学
+    // 调用方把模板参考值误当成已生效输入。
+    const ReadinessNote* schemaGap = nullptr;
+    for (const ReadinessNote& note : first.notes) {
+        if (note.kind == ReadinessNoteKind::NotProvided) {
+            schemaGap = &note;
+            break;
+        }
+    }
+    ASSERT_NE(schemaGap, nullptr);
+    EXPECT_EQ(schemaGap->subjectPath, "drivetrain.velocityAcceleration");
+    EXPECT_EQ(schemaGap->fieldPath,
+              "joints[*].maxVelocity / joints[*].maxAcceleration");
+    EXPECT_EQ(schemaGap->unitText, "rad·s⁻¹ / rad·s⁻²");
+    EXPECT_NE(schemaGap->recommendedAction.find("传动或策略模块"), std::string::npos);
 }
 
 /**

@@ -108,12 +108,21 @@ ModelReadinessReport ModelReadinessChecker::check(const ModelingWorkingSet& ws,
 
     // 呈现级结论登记器（构造层保证域/缺项预告/L11 呈现级——无登记码面）。
     auto addNote = [&notes](ReadinessLayer layer, std::string path, std::string summary,
-                            bool blocking) {
+                            bool blocking,
+                            ReadinessNoteKind kind = ReadinessNoteKind::Informational,
+                            std::optional<core::ObjectId> subject = std::nullopt,
+                            std::string fieldPath = {}, std::string unitText = {},
+                            std::string recommendedAction = {}) {
         ReadinessNote note;
         note.layer = layer;
         note.subjectPath = std::move(path);
         note.summary = std::move(summary);
         note.blocking = blocking;
+        note.kind = kind;
+        note.subject = std::move(subject);
+        note.fieldPath = std::move(fieldPath);
+        note.unitText = std::move(unitText);
+        note.recommendedAction = std::move(recommendedAction);
         notes.push_back(std::move(note));
     };
 
@@ -216,6 +225,21 @@ ModelReadinessReport ModelReadinessChecker::check(const ModelingWorkingSet& ws,
     };
     auto runL9 = [&] {
         // L9 传动可用（I-MDL-11/12——WP-13-T18 起阶段位参数化＋coded 化）。
+        // 速度/加速度限值目前没有进入 modeling 的 DrivetrainDesign/runtime
+        // schema。这里显式登记 NotProvided 预告，防止模板向导的参考值被误
+        // 认为已经参与轨迹或动力学计算；它不阻断建模草稿保存，但会使就绪
+        // 条上显示可定位的字段、单位和补录动作（REQ-06/NFR-COR-03）。
+        const std::optional<core::ObjectId> drivetrainSubject =
+            ws.drivetrainObject.has_value()
+                ? std::optional<core::ObjectId>(ws.drivetrainObject->objectId)
+                : std::nullopt;
+        addNote(ReadinessLayer::L9Drivetrain, "drivetrain.velocityAcceleration",
+                "关节最大速度/最大加速度尚未进入当前建模 schema；模板预填值仅供参考，"
+                "不会进入运行时计算",
+                false, ReadinessNoteKind::NotProvided, drivetrainSubject,
+                "joints[*].maxVelocity / joints[*].maxAcceleration",
+                "rad·s⁻¹ / rad·s⁻²",
+                "请在传动或策略模块补录后，再运行轨迹与动力学计算");
         if (ws.drivetrainObject.has_value()) {
             // 值面不变量（checkInvariants——I-MDL-11 自洽/I-MDL-12 R1 锁；
             // 阶段位＝ctx.couplingStage——默认 R1Locked，"不提前放开 R1

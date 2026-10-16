@@ -224,10 +224,15 @@ struct ReadinessItemRow {
     std::string severity;    ///< 组别（"blocking"/"warning"/"confirmable"/"note"——组词表固定）
     std::string summary;     ///< 人读一行（报告原文——呈现层不加工业务文案）
     std::optional<core::ObjectId> jumpTarget;  ///< 跳转目标（树节点锚；无定位＝nullopt）
+    std::string fieldPath;   ///< 字段路径（未提供提示可定位到具体输入字段）
+    std::string unitText;    ///< 字段单位（与提示原文同源，避免 UI 猜单位）
+    std::string recommendedAction; ///< 修复建议（报告原文；UI 不自行编写计算结论）
 
     bool operator==(const ReadinessItemRow& o) const
     {
-        return severity == o.severity && summary == o.summary && jumpTarget == o.jumpTarget;
+        return severity == o.severity && summary == o.summary && jumpTarget == o.jumpTarget
+            && fieldPath == o.fieldPath && unitText == o.unitText
+            && recommendedAction == o.recommendedAction;
     }
     bool operator!=(const ReadinessItemRow& o) const { return !(*this == o); }
 };
@@ -248,19 +253,20 @@ struct LayerResultRow {
 };
 
 /**
- * @brief 就绪条的三组计数行（"Blocking/Warning/Confirmable 计数"的承载；
- *        note 组计数随附——呈现级结论在条上同显）。
+ * @brief 就绪条的分组计数行（Blocking/Warning/Confirmable/NotProvided/提示；
+ *        NotProvided 是呈现级提示的子集，单独计数防止 schema 缺项被普通提示淹没）。
  */
 struct ReadinessGroupCounts {
     std::size_t blockers = 0;      ///< 阻断计数
     std::size_t warnings = 0;      ///< 警告计数
     std::size_t confirmables = 0;  ///< 待确认计数
     std::size_t notes = 0;         ///< 呈现级结论计数
+    std::size_t notProvided = 0;   ///< 未提供计数（notes 的子集——schema/输入缺项预告）
 
     bool operator==(const ReadinessGroupCounts& o) const noexcept
     {
         return blockers == o.blockers && warnings == o.warnings && confirmables == o.confirmables
-            && notes == o.notes;
+            && notes == o.notes && notProvided == o.notProvided;
     }
     bool operator!=(const ReadinessGroupCounts& o) const noexcept { return !(*this == o); }
 };

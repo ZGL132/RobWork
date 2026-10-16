@@ -56,6 +56,17 @@ constexpr int kAnchorColumn = 1;  // 锚列（树第 2 列——UI-T47 gui 定�
 /// 树标签列（呈现列——localName＋工程用语标签，UX-02）。
 constexpr int kLabelColumn = 0;
 
+/// 将模型层稳定状态词转换为工程师可直接理解的中文标签；状态词本身仍
+/// 保留在 PanelModel 中，避免 UI 文案反向参与就绪判定。
+QString readinessSeverityLabel(const std::string& severity)
+{
+    if (severity == "not-provided") { return QStringLiteral("未提供"); }
+    if (severity == "blocking") { return QStringLiteral("阻断"); }
+    if (severity == "warning") { return QStringLiteral("警告"); }
+    if (severity == "confirmable") { return QStringLiteral("待确认"); }
+    return QStringLiteral("提示");
+}
+
 // （rowText 值/单位拼接辅助已随 UI-T27 P0-2 移除——编辑器文本＝纯值，
 //  单位并入行标签；两处原调用点分别改纯值回显/标签拼接。）
 
@@ -1006,18 +1017,38 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
 
     // ---- 区④就绪条：三组计数＋逐项行（报告直投——零判定）----
     const ReadinessBarProjection bar = projectReadinessBar(report);
-    m_readinessCounts->setText(QStringLiteral("阻断 %1 ｜ 警告 %2 ｜ 待确认 %3 ｜ 提示 %4")
+    m_readinessCounts->setText(QStringLiteral("阻断 %1 ｜ 警告 %2 ｜ 待确认 %3 ｜ 未提供 %4 ｜ 提示总计 %5")
                                    .arg(bar.counts.blockers)
                                    .arg(bar.counts.warnings)
                                    .arg(bar.counts.confirmables)
+                                   .arg(bar.counts.notProvided)
                                    .arg(bar.counts.notes));
     m_readinessItems->clear();
     for (const ReadinessItemRow& row : bar.items) {
         auto* item = new QTreeWidgetItem(m_readinessItems);
         item->setText(kLabelColumn,
                       QStringLiteral("[%1] %2")
-                          .arg(QString::fromStdString(row.severity),
+                          .arg(readinessSeverityLabel(row.severity),
                                QString::fromStdString(row.summary)));
+        // 工程师需要看到“字段/单位/动作”三要素时无需展开内部诊断对象；
+        // tooltip 只拼接 PanelModel 已提供的事实，不在 Qt 层猜测单位或重写
+        // 修复建议。空字段仍保留主体摘要，兼容一般 Warning/Blocking 行。
+        QStringList detail;
+        if (!row.fieldPath.empty()) {
+            detail.push_back(QStringLiteral("字段：")
+                             + QString::fromStdString(row.fieldPath));
+        }
+        if (!row.unitText.empty()) {
+            detail.push_back(QStringLiteral("单位：")
+                             + QString::fromStdString(row.unitText));
+        }
+        if (!row.recommendedAction.empty()) {
+            detail.push_back(QStringLiteral("修复：")
+                             + QString::fromStdString(row.recommendedAction));
+        }
+        if (!detail.isEmpty()) {
+            item->setToolTip(kLabelColumn, detail.join(QStringLiteral("\n")));
+        }
         item->setText(kAnchorColumn, row.jumpTarget.has_value()
                                          ? QString::fromStdString(row.jumpTarget->toCanonical())
                                          : QString());  // 无主体＝不可点击定位

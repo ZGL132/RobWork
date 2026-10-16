@@ -114,6 +114,18 @@ enum class ReadinessStatus {
 };
 
 /**
+ * @brief 呈现级提示的事实状态（仅适用于没有稳定诊断码的 ReadinessNote）。
+ *
+ * NotProvided 专门表示字段尚未进入当前计算输入；Informational 表示只读、
+ * 应用预检等上下文提示。Warning/Blocking/Confirmable 仍由报告的三组结果
+ * 承载，不能在本枚举中复制一份判定，避免 UI 自行改变计算结论。
+ */
+enum class ReadinessNoteKind {
+    Informational,  ///< 上下文提示，不代表缺少计算字段
+    NotProvided,    ///< 字段未提供或当前 schema 无承载位置（非阻断预告）
+};
+
+/**
  * @brief 取状态稳定 token（"NotReady"/"ReadyWithNotes"/"Ready"——状态图
  *        节点名原文）。纯函数；确定性。
  */
@@ -138,11 +150,18 @@ struct ReadinessNote {
     std::string subjectPath;  ///< 定位路径（值模型内路径，如 "joints[2].axis"——UTF-8）
     std::string summary;      ///< 人读中文一句话（定位＋原因＋建议；固定模板产出）
     bool blocking = false;    ///< true＝参与 NotReady 判定（呈现级阻断——如 L2 非有限值防御面）
+    ReadinessNoteKind kind = ReadinessNoteKind::Informational; ///< 提示事实状态（NotProvided/上下文）
+    std::optional<core::ObjectId> subject; ///< 可选对象锚；有值时 UI 可反向定位结构树
+    std::string fieldPath; ///< 字段路径（例如 joints[*].maxVelocity；无字段时为空）
+    std::string unitText; ///< 字段单位（例如 rad·s⁻¹；无量纲提示时为空）
+    std::string recommendedAction; ///< 工程师可执行的修复/补录动作
 
     bool operator==(const ReadinessNote& o) const noexcept
     {
         return layer == o.layer && subjectPath == o.subjectPath
-            && summary == o.summary && blocking == o.blocking;
+            && summary == o.summary && blocking == o.blocking && kind == o.kind
+            && subject == o.subject && fieldPath == o.fieldPath
+            && unitText == o.unitText && recommendedAction == o.recommendedAction;
     }
     bool operator!=(const ReadinessNote& o) const noexcept { return !(*this == o); }
 };
