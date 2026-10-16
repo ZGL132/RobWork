@@ -16,10 +16,13 @@
 #include <sdurws/ird/modeling/RobotDesign.hpp>
 #include <sdurws/ird/modeling/Template.hpp>  // ModelingWorkingSet（部件位姿编辑流写入目标——UI-T55）
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+#include "../src/CouplingMath.hpp"  // 数值核独立对照（仅测试消费私有实现）
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cstdint>
+#include <cmath>
 #include <cstdio>
 #include <limits>
 #include <string>
@@ -762,6 +765,7 @@ using sdurws::ird::modeling::AuthorityMode;
 using sdurws::ird::modeling::applyDrivetrainCouplingEdit;
 using sdurws::ird::modeling::checkCouplingMatrix;
 using sdurws::ird::modeling::couplingEditErrorCodeToken;
+using sdurws::ird::modeling::couplingmath::couplingSingularValues;
 
 namespace {
 
@@ -782,6 +786,58 @@ CouplingDesign makeWristCoupling()
 }
 
 }  // namespace
+
+/**
+ * @brief Jacobi 奇异值核与独立 2×2 解析式、3×3/6×6 对角参考的交叉验证。
+ *
+ * 参考式只在测试中实现：2×2 通过 AᵀA 的二次特征值公式计算，3×3/6×6
+ * 采用已知对角矩阵的奇异值定义；被测 Jacobi 扫描不参与期望值生成。
+ * 同时覆盖极小/极大有限量级，防止平方下溢/上溢把可逆矩阵误判为奇异。
+ */
+TEST(MdlParts, CouplingSingularValues_IndependentReference_WP13T23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "NFR-COR-02"},
+                  std::vector<std::string>{"I-MDL-11"});
+
+    const auto reference2x2 = [](double a, double b, double c, double d) {
+        const double u = a * a + c * c;
+        const double v = b * b + d * d;
+        const double w = a * b + c * d;
+        const double disc = std::sqrt((u - v) * (u - v) + 4.0 * w * w);
+        return std::array<double, 2>{std::sqrt((u + v + disc) / 2.0),
+                                     std::sqrt((u + v - disc) / 2.0)};
+    };
+
+    const auto ref = reference2x2(1.0, 2.0, 3.0, 4.0);
+    const auto actual2 = couplingSingularValues({1.0, 2.0, 3.0, 4.0}, 2);
+    ASSERT_EQ(actual2.size(), 2U);
+    EXPECT_NEAR(actual2[0], ref[0], 1e-14);
+    EXPECT_NEAR(actual2[1], ref[1], 1e-14);
+
+    const auto actual3 = couplingSingularValues({1.0, 0.0, 0.0,
+                                                 0.0, 3.0, 0.0,
+                                                 0.0, 0.0, 2.0}, 3);
+    ASSERT_EQ(actual3.size(), 3U);
+    EXPECT_DOUBLE_EQ(actual3[0], 3.0);
+    EXPECT_DOUBLE_EQ(actual3[1], 2.0);
+    EXPECT_DOUBLE_EQ(actual3[2], 1.0);
+
+    const auto actual6 = couplingSingularValues({
+        1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 2.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 3.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 4.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 5.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0, 6.0}, 6);
+    ASSERT_EQ(actual6.size(), 6U);
+    EXPECT_EQ(actual6, (std::vector<double>{6.0, 5.0, 4.0, 3.0, 2.0, 1.0}));
+
+    const auto tiny = couplingSingularValues({1e-200, 0.0, 0.0, 3e-200}, 2);
+    ASSERT_EQ(tiny.size(), 2U);
+    EXPECT_TRUE(std::isfinite(tiny[0]));
+    EXPECT_TRUE(std::isfinite(tiny[1]));
+    EXPECT_NEAR(tiny[0] / tiny[1], 3.0, 1e-12);
+}
 
 /**
  * checkCouplingMatrix 全档位（WP-13-T18 acceptance 1——I-MDL-11 重算复核；

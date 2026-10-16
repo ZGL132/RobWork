@@ -114,7 +114,21 @@ inline std::vector<double> couplingSingularValues(const std::vector<double>& c,
     if (n == 0 || c.size() != n * n) {
         return {};  // 维度不符＝调用方契约违约——空序列防御（不猜测不伪造）
     }
+    // 先按最大元素缩放工作副本。Jacobi 统计量会平方矩阵元素；不缩放时
+    // 1e-200 级合法耦合系数会平方下溢为 0，1e200 级有限系数会平方上溢为
+    // Inf。奇异值整体乘回 scale 不改变条件数和奇异/病态判定。
+    double scale = 0.0;
+    for (const double value : c) {
+        scale = std::max(scale, std::fabs(value));
+    }
+    if (!(scale > 0.0)) {
+        return std::vector<double>(n, 0.0);  // 零矩阵：所有奇异值均为 0
+    }
+    if (!std::isfinite(scale)) {
+        return std::vector<double>(n, std::numeric_limits<double>::infinity());
+    }
     std::vector<double> a = c;  // 工作副本（原矩阵不被修改——值语义）
+    for (double& value : a) { value /= scale; }
     for (int sweep = 0; sweep < kCouplingJacobiMaxSweeps; ++sweep) {
         bool rotated = false;  // 本轮是否发生过旋转（零旋转＝收敛信号）
         for (std::size_t p = 0; p + 1 < n; ++p) {
@@ -166,7 +180,7 @@ inline std::vector<double> couplingSingularValues(const std::vector<double>& c,
         for (std::size_t i = 0; i < n; ++i) {
             norm2 += a[i * n + q] * a[i * n + q];
         }
-        singularValues[q] = std::sqrt(norm2);
+        singularValues[q] = scale * std::sqrt(norm2);
     }
     std::sort(singularValues.begin(), singularValues.end(),
               std::greater<double>());
