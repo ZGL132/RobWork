@@ -2558,7 +2558,7 @@
       "registeredAt": "2026-09-20",
       "title": "契约 verify 第 3 条 ctest 命令在任何树上空转：ctest --test-dir build -C Release -R \"^sdurws_ird_reporting\" 恒 exit 0＋『No tests were found!!!』——框架顶层至 RobWorkStudio/src 各级 CTestTestfile.cmake 全部缺失（框架未在顶层调用 enable_testing，worktree 全新树与主树逐级 ls 双实证），ctest 自 build/ 根无法递归发现任何测试；RPT-T11 契约 note 援引的『UI-T14 ctest 先例』（UI-T14 契约 verify 同款 --test-dir build 口径）将同族踩中。测试实质执行真实成立（修正路径 --test-dir 指到 reporting 叶子目录 2/2 通过＋直接执行双 exe 196＋58 双模式全绿），故为建议级口径缺陷非执行造假",
       "owner": "构建约定所有者（DTB §5.1 辖域）",
-      "resolution": "二选一：①框架接线修复（RobWork 顶层或 RobWorkStudio 级按 BUILD_TESTING 调 enable_testing 使 CTestTestfile 链贯通——涉框架 CMake 按 SA-02 先登记 patch）；②契约 verify 口径修订（--test-dir 指向单元叶子构建目录，或改直接执行/target 口径）并同步 UI-T14 契约同款命令；PIPE 附录 C 实施者模板提示 verify 命令须以『发现并执行非零个测试』为准验收"
+      "resolution": "二选一：①框架接线修复（RobWork 顶层或 RobWorkStudio 级按 BUILD_TESTING 调 enable_testing 使 CTestTestfile 链贯通——涉框架 CMake 按 SA-02 先登记 patch）；②契约 verify 口径修订（--test-dir 指向单元叶子构建目录，或改直接执行/target 口径）并同步 UI-T14 契约同款命令；PIPE 附录 C 实施者模板提示 verify 命令须以『发现并执行非零个测试』为准验收〔并入注记 2026-10-16 转登批：asm-studio-20261010.md §3 S-2（ctest 注册树列表为 0 的既有缺陷）复现确认同一根因，2026-10-10——随 findings 转登批并入来源引用，不另立号。〕"
     },
     {
       "id": "F-252",
@@ -8166,6 +8166,539 @@
       "title": "industrialrobot 测试套件同机并行执行不隔离：libzip/原子替换类用例（io 系临时目录与 project publishNew 原子面）在并行全量批下出现文件竞争假失败（验收首轮 7 套次实测；隔离串行复跑 7/7 全绿）——测试自身零缺陷，串行口径（PIPE 既定）无影响",
       "owner": "门禁/流水线所有者：登记并行执行禁用口径注记（PIPE 侧或 CI 文档一行），或在 io/project 测试临时目录加进程唯一后缀；不阻塞任何在途任务",
       "resolution": "登记观察；验收记录已按隔离串行复跑口径留证"
+    },
+    {
+      "id": "F-834",
+      "source": "traceability/acceptance/WP-15-T14-20261013.md §9/§13（acc/WP-15-T14/1，验收日期 2026-10-13，verdict=pass；记录提交 5f3ad834）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-15-T14 验收建议级：units/kinematics.md 卡头\"日期\"行停留 2026-10-12（v0.16），版本行已 v0.20（2026-10-13）——v0.17~v0.20 四跳未落日期行，与 F-122/F-133/F-134/F-140 家族（版本半边落地、日期半边连续跳）同型，kinematics 卡新例；纯文档内部不一致，validate-docs 不校验该维度",
+      "owner": "kinematics 卡所有者（后续触及该卡的批次顺手补齐）＋validate-docs 家族校验维度诉求沿 open"
+    },
+    {
+      "id": "F-835",
+      "source": "traceability/acceptance/wp-16-t07-20261011.md §14 第 1 条（记录内预占编号 F-717——该号已被 wp-16-t11 批占用，落账重编为 F-835；验收日期 2026-10-11，verdict=pass；记录提交 8a6ce828）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-16-T07 验收建议级：units/trajectory.md §17.1 测试文件名登记失准——登记写 test/SmoothRecheckTest.cpp（20 用例），实际落位为 test/SmoothTest.cpp（10）＋test/RecheckTest.cpp（10）两文件（SmoothRecheckTest 是 gtest 套件名非文件名）；用例数 20 正确、追溯链不断；契约测试文件头注 RecheckContractTest.cpp:7 同句亦然；建议下批改两文件实名",
+      "owner": "trajectory 单元卡所有者（随下次卡增量修订更正）"
+    },
+    {
+      "id": "F-836",
+      "source": "traceability/acceptance/wp-16-t07-20261011.md §14 第 2 条（记录内预占编号 F-718——已被占用，落账重编为 F-836；验收日期 2026-10-11，verdict=pass；记录提交 8a6ce828）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-16-T07 验收建议级：平滑失败素材 reasonToken 借用 TRJ-LIMIT-EXCEEDED（Smooth.cpp:654）——该码卡面语义为\"速度/加速度/限位超标\"，平滑几何保持偏差超容差非限位超标；TRJ-* 12 码词表无平滑专用码、卡面亦未规定；实现复用现码＋cause 文案自描述＋比较型三要素齐备；建议后续需求变更时增补 TRJ-SMOOTH-TOLERANCE 类专用码或在 §14.4 行 5 语义注中扩展登记",
+      "owner": "trajectory 需求/卡面所有者（随下次需求变更或卡面修订裁定）"
+    },
+    {
+      "id": "F-837",
+      "source": "traceability/acceptance/wp-16-t07-20261011.md §14 第 3 条（记录内预占编号 F-719——已被占用，落账重编为 F-837；验收日期 2026-10-11，verdict=pass；记录提交 8a6ce828）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-16-T07 验收建议级：预算耗尽比较型素材单位硬编码 rad（Recheck.cpp:447,459-464）——actual.unit 恒取 rad、expected 恒取 maxJointStepRevolute；当最严不满足轴为移动轴（m）或细分由笛卡尔界驱动时 comparison 的单位/对照对象与实测失配（分字段账目本身正确、cause 文案双值并列含单位；测试仅锁定关节驱动场景）；建议按逐层最严轴的 axisKind 取单位 token、expected 按驱动界取对应步长字段",
+      "owner": "trajectory 实现侧（随下一 trajectory 契约顺手修复）"
+    },
+    {
+      "id": "F-838",
+      "source": "traceability/acceptance/wp-18-t05-20261011.md 问题清单第 1 条（验收日期 2026-10-11，verdict=pass；记录提交 3fea94f2）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-18-T05 验收建议级：条件数阈值 1×10⁸ 三处同值靠人工纪律同步——P-RT-7/P-DT-2 阈值现存三处定义（runtime DescriptionValidator.cpp:55 私有、modeling CouplingMath.hpp:62、drivetrain MappingCore.hpp:136 公共头），编译边不可达故无法单源 include，单元卡已登记\"裁决变更时三处同步\"纪律；O-11 裁决落地时应收敛为单一来源（policy 条目或共享公共头），消除人工同步风险",
+      "owner": "需求所有者（O-11 裁决）＋drivetrain/policy 侧"
+    },
+    {
+      "id": "F-839",
+      "source": "traceability/acceptance/wp-18-t05-20261011.md 问题清单第 2 条（验收日期 2026-10-11，verdict=pass；记录提交 3fea94f2）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-18-T05 验收建议级：R2 负矩阵元通道缺显式正命题用例——P-DT-5 登记负传动比经 R2 矩阵通道表达；现有 R2 黄金用例矩阵元全为正，负元仅由\"§7.2 检查表无正性项\"隐式可达；建议后续任务补一条含负元素耦合窗口的黄金用例（符号逐轴保留＋虚功恒等），把该通道钉进回归面",
+      "owner": "drivetrain 后续契约"
+    },
+    {
+      "id": "F-840",
+      "source": "traceability/acceptance/wp-18-t05-20261011.md 问题清单第 3 条（验收日期 2026-10-11，verdict=pass；记录提交 3fea94f2）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-18-T05 验收建议级：主仓库 traceability/builds/ui-t74/smoke-tour/ 下冒烟导览三件在途残留（与本任务链无关的工作树残留，建议流水线收尾环节统一处置）——登记时已消账：治理批 2026-10-12 提交 dcdb9958 将三件补录入库（本工作树 ls 亲验九件在位），与 F-718 resolution 同一事实",
+      "owner": "已消账（流水线编排者责任面已兑现）",
+      "resolution": "本条按转登批口径以 open 登记（翻牌统一归翻牌批核证执行）；消账事实：治理批 2026-10-12 [governance] ui-t74 冒烟留痕补录提交 dcdb9958 将三件补录入库（2026-10-16 落账批亲验：git show dcdb9958 三件在案＋traceability/builds/ui-t74/smoke-tour/ 九件在位），F-717/F-718 先例同型（登记即销案）。"
+    },
+    {
+      "id": "F-841",
+      "source": "traceability/acceptance/wp-19-t12-20261011.md 建议级第 1 条（记录内预占编号 F-717——该号已被 wp-16-t11 批占用，落账重编为 F-841；验收日期 2026-10-11，verdict=pass；记录提交 325eca33）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-19-T12 验收建议级：SelLinearDriveContract 用例数登记文案\"5 用例\"与实际 TEST 数 6 不一致——execution-log.md §3、单元卡 §1.2/§19.5/§21、commit 正文均写 5；实际 contract_test/LinearDriveContractTest.cpp 含 6 个 TEST（T12TokenVocabularyAndDiagCodes 与 LinearDriveKindVocabularyClosed 为两个独立 TEST），XML 实数 64＝基线 58＋6（留痕 XML 准确，仅文字叙述少计 1）；处置：登记文案随下次单元卡/留痕修订更正为 6",
+      "owner": "selection 单元卡/留痕所有者（随下次修订更正数字）"
+    },
+    {
+      "id": "F-842",
+      "source": "traceability/acceptance/wp-19-t12-20261011.md 建议级第 2 条（记录内预占编号 F-718——已被占用，落账重编为 F-842；验收日期 2026-10-11，verdict=pass；记录提交 325eca33）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-19-T12 验收建议级：_test 运行数登记\"282 运行＝281 通过＋1 SKIP\"与 gtest 实际输出/留痕 XML（tests=283＝282 passed＋1 skipped）差 1——execution-log §1/§3 与单元卡 §21 两处；单元卡 §21 同行\"T11 既有 277＋新增 6\"（＝283）自洽面反证 282/281 为笔误；验收者复现 283/282/1 与 XML 一致；处置：随下次留痕修订更正数字",
+      "owner": "selection 留痕所有者（随下次修订更正数字）"
+    },
+    {
+      "id": "F-843",
+      "source": "traceability/acceptance/asm-panel-20261010.md §9 S-1（验收日期 2026-10-10，verdict=pass；记录提交 c9fc453a）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "asm-panel 验收建议级：execution-log §4 表与 commit 信息的 skip 口径\"dynamics/selection/optimization_test 各 3\"与 gtest XML 权威数据（各 1、三域合计 3）不符——用例总数/失败数全部一致（tests=105/277/164，failures=0），测试结论不受影响，属留痕数字口径不精确",
+      "owner": "asm-panel 留痕所有者（随下次留痕修订更正口径）"
+    },
+    {
+      "id": "F-844",
+      "source": "traceability/acceptance/asm-panel-20261010.md §9 S-2（验收日期 2026-10-10，verdict=pass；记录提交 c9fc453a）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "asm-panel 验收建议级：双变异 M1/M2 做红仅 execution-log §5 文字描述，logs/ 无原始失败输出文件（asm-panel-final-run.log 仅为恢复后权威轮绿色输出）；验收者受只读约束未独立做红；建议后续批次做红时将失败输出原样落 logs/",
+      "owner": "验收留痕流程所有者（后续做红批补原始输出落盘口径）"
+    },
+    {
+      "id": "F-845",
+      "source": "traceability/acceptance/asm-studio-20261010.md §3 S-1（验收日期 2026-10-10，verdict=pass；记录提交 48fb1c0c）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "asm-studio 验收建议级：任务依据将 ird_gates 白名单 :251-255 称为\"目标级表\"，该行域实为 IRD_EXTRA_EDGE_REFS_EDGES（出处登记表）；真正的目标级表 IRD_TARGET_LEVEL_EDGES（:544 起）studio 行不适用该形态（studio 非单元节点，与既有 studio 五行一致且 ird_gates 零命中实证无检出）——不构成偏差；建议后续批次引用行号/表名时对齐白名单实际表名，避免误读为\"studio 应登 IRD_TARGET_LEVEL_EDGES 而未登\"",
+      "owner": "studio 装配批文档所有者（后续引用时对齐表名）"
+    },
+    {
+      "id": "F-846",
+      "source": "traceability/acceptance/rul-tok-20261010.md §十一 S-1（验收日期 2026-10-10，verdict=pass；记录提交 127e0b49）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "rul-tok 验收建议级：P-SEL-3/P-PR-9 销案后源码注释失实残留共 8 处——project/include/sdurws/ird/project/CommandService.hpp:93、project/src/ProjectStoreImpl.cpp:115、project/src/TxEngine.hpp:176、ui/plugin/ExtraDomainAssembly.cpp:82、ui/plugin/ExtraDomainAssembly.hpp:43/76/82/100 仍描述\"待裁决/裁决前口径/预期登记未 Ok\"等销案前状态，与裁决后实际行为不符（零行为影响、ird_gates/测试全绿；ui/plugin 四处系任务范围有意豁免）；按 AGENTS §2.5\"过期注释比没有注释更糟\"，建议随内置元数据命令族落位增量任务/下一 ui 宿主批次一并对齐",
+      "owner": "project/ui 宿主批次所有者（随对应增量任务对齐注释）"
+    },
+    {
+      "id": "F-847",
+      "source": "traceability/acceptance/rul-tok-20261010.md §十一 S-2（验收日期 2026-10-10，verdict=pass；记录提交 127e0b49）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "rul-tok 验收建议级（备忘类，零行动义务）：SelCatalogPanelWidget.cpp 回填按钮标题键由编译期字面改为运行期拼接（\"cmd.\"＋kSelBackfillUiCommandId＋\".title\"）——行为等价（两键均无 UiText 注册、同键名回退），与键族派生单一书写点纪律一致；提示后续装配 selection 文案键（cmd.selection.apply-device-backfill.title）时以该派生式为准，勿再引入第三书写点",
+      "owner": "selection 文案装配批次（消费时遵守派生式口径；无独立行动义务）",
+      "resolution": "登记观察（记录原文\"零行动义务，留档即可\"）"
+    },
+    {
+      "id": "F-848",
+      "source": "traceability/acceptance/gov-find-20261010.md §11 S-1（验收日期 2026-10-10，verdict=pass；记录提交 11f3c783）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "gov-find 验收建议级：F-630~F-713 索引条目 status 一律 fixed、severity 一律 suggestion——对其中 15 条 verdict=fail 的轮次，status=fixed 的字面语义（\"该发现已修复\"）与实际（fail 轮次遗留建议级问题未必已修复）存在张力；resolution 已自洽声明\"本条为轮次索引指针\"，但仅按 status 列筛选的读者可能低估未决建议级存量；建议（不强制）后续治理批考虑为索引条目引入 index（或 pointer）状态值",
+      "owner": "findings 台账 schema 所有者（状态词表扩展裁决）"
+    },
+    {
+      "id": "F-849",
+      "source": "traceability/acceptance/gov-find-20261010.md §11 S-2（验收日期 2026-10-10，verdict=pass；记录提交 11f3c783）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "gov-find 验收建议级：execution-log.md\"治理/ui 会话已现存条目（F-558～F-628 等）\"的\"等\"字把 F-603～F-608 归入其中，而该六号经全引用搜索实为从未登记的历史缺口（非任何现存会话条目占用）；跳号决策本身正确，仅归因表述不精确",
+      "owner": "execution-log 所有者（随下次修订更正归因表述）"
+    },
+    {
+      "id": "F-850",
+      "source": "traceability/acceptance/WP-21-T02-20261013.md 第三节 G-1（acc/wp21-t02/1，验收日期 2026-10-13，verdict=PASS；记录提交 c42c405a；WP-21-T03 验收 §G-1 为其补登载体——T02 记录宣称转登实未落账，T03 记录亲验并转述在案）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T02 验收建议级 G-1：units/optimization.md 暂停/继续边界锚（:1104 一带）\"用例 OPT-VER-228~232 逐条对应\"引用范围差一号——四边界之一\"继续不重复统计\"的专用用例实为 OPT-VER-227（\"恢复后不重复统计\"），不在所引区间内（228~232 覆盖其余三边界＋暂停中取消）；语义面齐备，仅引用范围差一号；建议随下一增量修订改为\"OPT-VER-227~232\"（T03 批亲验 :1111 现状仍为 228~232，勘正未顺手执行）",
+      "owner": "optimization 单元卡所有者（随 T04/T05 或下一增量修订勘正）"
+    },
+    {
+      "id": "F-851",
+      "source": "traceability/acceptance/WP-21-T02-20261013.md 第三节 G-2（acc/wp21-t02/1，验收日期 2026-10-13，verdict=PASS；记录提交 c42c405a；WP-21-T03 验收 §G-1 为其补登载体）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T02 验收建议级 G-2：units/optimization.md 适用边界条（:1056 一带）将附录 C 表④原文\"不适用：……P-04 未冻结期……\"转写为\"P-04 未冻结槽位对应面（当前＝判定阈值）\"——系部分冻结态下的必要语义适配（\"未冻结期\"作为整期已不存在），冻结规则值零改动、语义收窄为零（当前未冻结面恰为判定阈值槽位）；如实指出供需求所有者复核该转写口径（如需逐字化可随需求变更注）",
+      "owner": "需求所有者（转写口径复核）"
+    },
+    {
+      "id": "F-852",
+      "source": "traceability/acceptance/WP-21-T03-20261013.md 第三节 G-2（acc/wp21-t03/1，验收日期 2026-10-13，verdict=PASS；记录提交 afd57b0f）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T03 验收建议级 G-2：实施者证据目录缺 ird-test-report*.json 聚合登记件（WP-21-T02 先例有 ird-test-report-opt-{model,contract}-smoke.json 两件，含逐用例 requirementIds/atIds 表）——gtest XML 本身在位且数字经验收者亲跑双证，缺的是聚合登记形态；建议实施者补生成或由收尾批落库时从 XML 聚合补齐",
+      "owner": "WP-21-T03 实施者/收尾批（补聚合登记件或登记豁免）"
+    },
+    {
+      "id": "F-853",
+      "source": "traceability/acceptance/WP-21-T03-20261013.md 第三节 G-3（acc/wp21-t03/1，验收日期 2026-10-13，verdict=PASS；记录提交 afd57b0f）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T03 验收建议级 G-3：单元卡 §13.2 表 OPT-VER-248/253 验证层级列标注\"契约\"，而落位登记注与实际落位均为模型测试目标（JointStrategyTest.cpp 十用例）；OPT-VER-203~208 亦为\"契约\"层级标注、实际以模型面编排断言承载（trj/dyn 各层语义验证仍归各域评估器自身测试——本批只钉编排面）；属卡面层级标注与落位目标的措辞差，非覆盖缺失；建议随 T04/T05 批增量修订统一口径",
+      "owner": "optimization 单元卡所有者（随 T04/T05 增量修订统一层级标注口径）"
+    },
+    {
+      "id": "F-854",
+      "source": "traceability/acceptance/WP-21-T03-20261013.md 第三节 G-4（acc/wp21-t03/1，验收日期 2026-10-13，verdict=PASS；记录提交 afd57b0f）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T03 验收建议级 G-4（提醒性登记，防漏）：契约 verify[0] 为集成口径命令（cmake --build build…），本批以冒烟树同目标等价执行（exit=0）；集成口径复测务必随合入批执行——T03 合入批（9649e5fd）信息已声明\"集成复测（optimization 受影响套件）随本合入批执行\"，落账核证该复测留痕在位后可翻 fixed",
+      "owner": "WP-21-T03 合入收尾员（核证集成复测留痕后翻牌）"
+    },
+    {
+      "id": "F-855",
+      "source": "traceability/acceptance/WP-23-T01-20261013.md §4 S-1（验收日期 2026-10-13，verdict=pass；记录提交 25abce74）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T01 验收建议级 S-1：scripts/industrialrobot/validate-task.ps1:75-76 ready 必备字段空判使用 @($t.$k).Count -eq 0，字段完全缺失时 @($null).Count==1 逃逸检查（失败注入实验亲证）；同脚本 :113 knownPitfalls 检查已做滤空修正（Where-Object null -ne）而 :76 未做——同文件内防御不一致；修法：:76 前置滤空后判空，或改 PSObject.Properties 存在性判断；本任务产物不受影响（字段实际在档）",
+      "owner": "治理脚本所有者（WP-01 侧，随脚本维护批修复）"
+    },
+    {
+      "id": "F-856",
+      "source": "traceability/acceptance/WP-23-T01-20261013.md §4 S-2（验收日期 2026-10-13，verdict=pass；记录提交 25abce74）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T01 验收建议级 S-2：performance-baseline.md v0.1 的 DTB 版本行登记延后至验收合入批（契约 note/提交 Why 段/文档 §7 三处已钉）——合入批必须实际补登 DTB 版本行，遗漏即文档链失实；落账核证 DTB 版本行已在位后可翻 fixed",
+      "owner": "WP-23-T01 合入收尾员（核证补登后翻牌）"
+    },
+    {
+      "id": "F-857",
+      "source": "traceability/acceptance/WP-23-T01-20261013.md §4 S-3（验收日期 2026-10-13，verdict=pass；记录提交 25abce74）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T01 验收建议级 S-3：performance-baseline.md:17 将 testkit.md §4.2.1 performance-baseline 类的\"（NFR-PERF 系列，阶段 D）\"转写为\"（NFR-PERF 系列，阶段 C/D）\"——转写与 DTB §2.24 组头（\"C 起 R1、D 起 R2\"）及 REQUIREMENTS 阶段绑定一致、无数值语义变更，但与 testkit 原文字面有差，属上游两文档既有张力的弥合转述；建议 testkit 卡所有者复核该类别表的阶段标注口径",
+      "owner": "testkit 详设所有者（阶段标注口径复核）"
+    },
+    {
+      "id": "F-858",
+      "source": "traceability/acceptance/WP-23-T02-20261013.md §3 S1（验收日期 2026-10-13，verdict=pass；记录提交 a76fd7b8）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T02 验收建议级 S1（F-012 家族同型再现）：五提交标题均为名词/单元名开头（\"testkit 新增…\"\"交互响应基准测量目标落位：…\"\"B-01 复现命令位回填…\"），非 AGENTS §6.3 动词开头；正文四段齐备、验证与留痕一致，纯风格瑕疵不阻断（先例口径一致）",
+      "owner": "提交者（F-012 家族模板补救落地前口径持续漂移——随家族批量处置）"
+    },
+    {
+      "id": "F-859",
+      "source": "traceability/acceptance/WP-23-T02-20261013.md §3 S2（验收日期 2026-10-13，verdict=pass；记录提交 a76fd7b8）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T02 验收建议级 S2：\"视图切换\"操作以显示单位制式批量切换（KIN-12）承载、命令面板 view.displayMode 模型半区（workflow 域）不在测量面——实施者已登记为开放语义点（首测报告 §7.3/manifest equivalenceNotes）；验收复核认为登记如实、达标数值不受该路径量级影响（命令分发量级远低于预算）；语义裁决权归所有者，若改判需补 workflow 侧测量（跨单元测试面直链扩登）",
+      "owner": "所有者（B-01 语义边界裁决；改判则补 workflow 侧测量）"
+    },
+    {
+      "id": "F-860",
+      "source": "traceability/acceptance/WP-23-T02-20261013.md §3 S3（验收日期 2026-10-13，verdict=pass；记录提交 a76fd7b8）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T02 验收建议级 S3：无头模型层等价口径（任务口径允许、复核通过）——五操作驱动产品模型本体（StageNavigationModel/SelectionService/ProjectTreeModel/ParamEditModel），Widget 重绘与输入分派在口径外——200 ms 预算的规模敏感部分确在模型层；等价性边界四处如实登记（用例文件头/manifest/首测报告 §4/报告 notes）；集成模式复测挂点（首测报告 §7.1）随合入批兑现",
+      "owner": "WP-23-T02 合入收尾员（核证集成复测后翻牌）"
+    },
+    {
+      "id": "F-861",
+      "source": "traceability/acceptance/WP-23-T02-20261013.md §3 S4（验收日期 2026-10-13，verdict=pass；记录提交 a76fd7b8）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T02 验收建议级 S4：标准规模数据的\"100 修订\"维度以语境条数登记承载（kGoldenRevisionCount），未物化为 100 条修订记录——测试注释与首测报告均如实声明\"不虚构权重\"；黄金项目文件数据集（含修订明细）归 WP-23-T05（performance-baseline §6 分工在册）；另 ASSERT_GE(kGoldenRevisionCount, 100) 为编译期常量恒真断言（登记性质），建议改 static_assert 或注释说明（纯风格）",
+      "owner": "testkit 基准测试所有者（随 WP-23-T05 数据集落位一并处理）"
+    },
+    {
+      "id": "F-862",
+      "source": "traceability/acceptance/WP-23-T02-20261013.md §3 S5（验收日期 2026-10-13，verdict=pass；记录提交 a76fd7b8）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T02 验收建议级 S5：ird_gates 引擎双态未直跑（实施段与验收段同受限——冒烟树无全量目标面、F-009 worktree 限制）；预期恰增命中集登记册在案（perf_test→execution/testkit 测试面直链＋worker 目标依赖，产品库链接块零变化），LinkageContractTest 机械钉已过；直跑核定随合入批/治理面补做（与申报一致，如实登记）",
+      "owner": "WP-23-T02 合入收尾员/治理面（ird_gates 直跑核定后翻牌）"
+    },
+    {
+      "id": "F-863",
+      "source": "traceability/acceptance/WP-23-T02-20261013.md §3 S6（验收日期 2026-10-13，verdict=pass；记录提交 a76fd7b8）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T02 验收建议级 S6：testkit 既有用例 ProcessRunnerOutcome.TimeoutReportsTerminatedByTimeoutAndKillsTree（ProcessRunnerTest.cpp:170，TK-T11 交付面）存在 1 ms 墙钟边界抖动——验收首直跑实测 duration 499 < timeout 500 翻红一次，隔离复跑即绿、ctest 全量与复跑 110/110 全绿（与实施者首轮抖动申报同源互证）；建议治理面为该超时边界断言加容差或登记 flaky（与 F-629 同族面）",
+      "owner": "testkit 所有者（超时边界容差或 flaky 登记）"
+    },
+    {
+      "id": "F-864",
+      "source": "traceability/acceptance/WP-23-T03-20261013.md §3 S1（验收日期 2026-10-13，verdict=PASS；记录提交 24ee6aad）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T03 验收建议级 S1：数据集版本引用过期（v1→v2 换版未同步的 3 处字面）——execution/CMakeLists.txt:393 注释、CancelTimingBenchmarkTest.cpp:26 文件头、CancelTimingBenchmarkTest.cpp:889 运行时 notes 字符串（随报告 JSON 落盘，与同报告 datasetVersion:\"2\" 字段自相矛盾）；权威字段均正确，纯注释/注记漂移（AGENTS §2.1\"注释随代码更新\"）；处置：合入批或紧随治理批一并改为 @2（889 行字符串属产物面宜优先）",
+      "owner": "execution 基准所有者（随治理批顺手勘正）"
+    },
+    {
+      "id": "F-865",
+      "source": "traceability/acceptance/WP-23-T03-20261013.md §3 S2（验收日期 2026-10-13，verdict=PASS；记录提交 24ee6aad）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T03 验收建议级 S2（F-012 家族同型再现）：4/4 提交标题名词短语开头（\"契约编译放行…\"\"B-02 取消时序基准测量目标落位…\"等）；正文四段齐备、无粉饰，随家族口径登记",
+      "owner": "提交者（F-012 家族批量处置）"
+    },
+    {
+      "id": "F-866",
+      "source": "traceability/acceptance/WP-23-T03-20261013.md §3 S3（验收日期 2026-10-13，verdict=PASS；记录提交 24ee6aad）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T03 验收建议级 S3（观察两条，低危留档）：①正常腿预热剔除样本在 settle 组承载的是 d1 值（代码复用同一 sample 对象），因剔除不参与统计，纯语义洁癖；②超时腿 evidenceNote 累计串逐场景整体重打印（stderr 日志噪声；JSON 内仅一份完整串）——均不影响判定面，随 S1 批次顺手处理或留档",
+      "owner": "execution 基准所有者（随 F-864 批次顺手处理或维持留档）"
+    },
+    {
+      "id": "F-867",
+      "source": "traceability/acceptance/WP-23-T04-20261013.md §建议级 S-1（验收日期 2026-10-13，verdict=PASS；记录提交 020cb14a）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T04 验收建议级 S-1（预优化证据链缺口）：b03-preopt-direct-run.log（13:32）记录的是一次失败的探针草稿（腿 B/C 因夹具身份长度 66/65 解析异常 0 ms 即断），而 perf-reports-preopt/b03-sampleresults.json（13:38，P95 9,011.87 ms）来自其后另一次成功探针运行——该测量运行自身的直跑日志未保留；报告 §8 将该日志笼统登记为\"预优化探针直跑留痕\"易误读为测量运行本身；且 preopt 两 JSON 的 gitCommit 锚口径不一（preopt-c0d3 类自造标记 vs 空）；数据真实性不受影响（JSON 原始样本完整自洽＋验收者 O(N²) 独立复现 8,591.85 ms 同量级）；处置：归集时补注或换留真实测量运行日志",
+      "owner": "WP-23-T04 归集批（补注或换留真实日志）"
+    },
+    {
+      "id": "F-868",
+      "source": "traceability/acceptance/WP-23-T04-20261013.md §建议级 S-2（验收日期 2026-10-13，verdict=PASS；记录提交 020cb14a）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T04 验收建议级 S-2（F-012 家族同型再现）：4 条提交标题中 3 条名词短语开头（\"契约编译放行…\"\"区域覆盖载荷编码对齐回查…\"\"B-03 首测达标落库…\"），不合 ACC §4.9 动词开头字面（历次均判建议级）",
+      "owner": "提交者（F-012 家族批量处置）"
+    },
+    {
+      "id": "F-869",
+      "source": "traceability/acceptance/WP-23-T04-20261013.md §建议级 S-3（验收日期 2026-10-13，verdict=PASS；记录提交 020cb14a）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T04 验收建议级 S-3（契约 verify ③ 路径口径）：本卡 verify 第 3 条 ctest 路径写作 <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot（集成树布局）；冒烟树 ctest 注册在单元叶子目录（kinematics/、ui/），字面路径不存在；验收以同 -R 集合分叶目录亲跑全绿等价覆盖；处置：随治理批将该路径改为叶子目录口径（T02/T03 卡先例）",
+      "owner": "契约/治理批（verify 路径改叶子目录口径）"
+    },
+    {
+      "id": "F-870",
+      "source": "traceability/acceptance/WP-23-T04-20261013.md §建议级 S-4（验收日期 2026-10-13，verdict=PASS；记录提交 020cb14a）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T04 验收建议级 S-4（ird-test-report.json 归集缺口）：实施者未拷入 _m5-evidence，但其冒烟树在位亲查（smoke/ui/ird-test-report.json：total 3 passed 3，LargeDataBenchmark 三用例 requirementIds=[\"NFR-PERF-03\"]/atIds=[\"B-03\"] 追溯字段在位）——留痕真实，仅归集缺口；验收者亲跑已独立产出同面留痕",
+      "owner": "实施证据归集流程（后续卡验收前置清单补该件）"
+    },
+    {
+      "id": "F-871",
+      "source": "traceability/acceptance/WP-23-T05-20261013.md §建议级 S-1（验收日期 2026-10-13，verdict=PASS；记录提交 9366e470）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T05 验收建议级 S-1（测试强度）：黄金项目规模恒等式\"每修订 10 对象＝1,000 数据对象\"缺用例级独立断言——生成器构造（buildBatchPayload）与处理器断言（GoldenAppendHandler::prepare）共享 kObjectsPerRevision 常量，变异 10→12 全绿不翻红；磁盘 oidDirs 打点仅 fprintf 不 assert；建议对 oidDirs（1,101）或对象库实际对象计数加独立断言钉（与常量解耦的字面量或 manifest 读回核对），防生成器常量漂移静默突破 PM-16 规模（证据：4.5 变异 B 实测记录）",
+      "owner": "project 基准测试所有者（补独立断言钉）"
+    },
+    {
+      "id": "F-872",
+      "source": "traceability/acceptance/WP-23-T05-20261013.md §建议级 S-2（验收日期 2026-10-13，verdict=PASS；记录提交 9366e470）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T05 验收建议级 S-2（留痕归集，T04 S-4 同型）：ird-test-report.json 未拷入实施证据目录 _m5-evidence/（验收者在其冒烟树亲查在位：total 2 passed 2 failed 0；requirementIds=[\"PM-16\"]/atIds=[\"B-04\"] 追溯字段在位）——留痕真实仅归集缺口",
+      "owner": "实施证据归集流程（后续卡验收前置清单补该件）"
+    },
+    {
+      "id": "F-873",
+      "source": "traceability/acceptance/WP-23-T05-20261013.md §建议级 S-3（验收日期 2026-10-13，verdict=PASS；记录提交 9366e470）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T05 验收建议级 S-3（可移植性）：OpenBenchWorkerMain.cpp:138 与 GoldenProjectBenchmarkTest.cpp 使用 std::filesystem 未显式 #include <filesystem>（经 StoreTypes.hpp/Fixture.hpp 传递引入；MSVC 2022 编译零错误，标准库头传递依赖非契约保证）",
+      "owner": "project 目标所有者（随下次触及补显式 include）"
+    },
+    {
+      "id": "F-874",
+      "source": "traceability/acceptance/WP-23-T05-20261013.md §建议级 S-4（验收日期 2026-10-13，verdict=PASS；记录提交 9366e470）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T05 验收建议级 S-4（warning）：GoldenProjectBenchmarkTest.cpp:638 预打开块丢弃 requestClose() 的 [[nodiscard]] 返回值触发 C4834（返回值 pending 数为有意丢弃——建议 (void) 修饰消警，与本文件 :577 关闭排空面的处理风格对齐）",
+      "owner": "project 基准测试所有者（(void) 修饰消警）"
+    },
+    {
+      "id": "F-875",
+      "source": "traceability/acceptance/WP-21-T04-20261014.md §三 建议级 G-1／§6.4 义务移交（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 f1b14332）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T04 验收建议级 G-1（义务移交）：实施者侧无稳定登记的聚合 ird-test-report*.json 登记件——gtest XML 在位且数字双证，T03 批同形缺口在案（F-852）；本轮新事实：该聚合报告由测试进程自动生成于单元源目录（IRD_TEST_INFO 机制），后续批次登记成本极低，建议实施侧顺手落位",
+      "owner": "实施证据归集流程（与 F-852/F-870/F-872 同族面，后续卡验收前置清单补该件）"
+    },
+    {
+      "id": "F-876",
+      "source": "traceability/acceptance/WP-13-T19-20261014.md §三 发现清单 G-1（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 f60f66c9）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-13-T19 验收建议级 G-1：modeling Import.hpp:453 『 */struct ChainCapability { 』——本批 diff 把 Doxygen 注释结束行与 struct 声明并为一行（基线分行，diff 亲验为本批引入）；合法 C++、零语义影响，属格式回归，建议随下次触碰该文件的批次顺手修复",
+      "owner": "modeling 实施侧（随下次触碰该文件的批次顺手修复）"
+    },
+    {
+      "id": "F-877",
+      "source": "traceability/acceptance/WP-13-T19-20261014.md §三 发现清单 G-2（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 f60f66c9）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-13-T19 验收建议级 G-2：gtest XML/构建日志未随分支入库 traceability/（T06/T17/T18 先例均入库）——本工作流红线口径的留痕位＝build/<名>-wt/_m6-evidence/（任务指令明文，合规），落库动作归合入收尾批与本记录同批执行",
+      "owner": "合入收尾员（落库动作）",
+      "resolution": "收尾批已闭合（记录 §五收尾段亲证）：实施侧三份 gtest XML 落库 traceability/gtest-reports/wp13-t19/（modeling_test 311／modeling_gui_test 37〔内含 1 SKIP 既有环境机制〕／modeling_contract_test 8，落库前逐份亲验计数与 4.2 实测一致），构建日志以 build/wp13-t19-wt/_m6-evidence/ 路径引用在案——翻牌归后续翻牌批核证执行。"
+    },
+    {
+      "id": "F-878",
+      "source": "traceability/acceptance/WP-21-T07-20261014.md §发现问题清单 G-1（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 15a0f7ab）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T07 验收建议级 G-1：units/execution.md §15.4 未补登 execution 侧落位——契约 allowedFiles 不含 execution 单元卡（实现批不可越界补登），随治理批补登；execution.md 契约语义零改动（§10.2/§7.2/§7.3 原文即落位语义权威，optimization 卡 §9.2 已同源登记；实施者已如实登记待办债务，验收复核确认登记位置正确）",
+      "owner": "治理批（execution.md §15.4 落位补登）"
+    },
+    {
+      "id": "F-879",
+      "source": "traceability/acceptance/WP-21-T07-20261014.md §发现问题清单 G-2（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 15a0f7ab）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T07 验收建议级 G-2：be6fe622 提交信息称『PauseResumeProtocol 五用例』，实测 6 用例（CancelWinsOverPendingPause_WP21T07 未计入）——少计非虚报，实现面只多不少，不构成粉饰",
+      "owner": "提交者（已推送提交不追溯改写，留档备查）"
+    },
+    {
+      "id": "F-880",
+      "source": "traceability/acceptance/WP-21-T07-20261014.md §发现问题清单 G-3（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 15a0f7ab）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-21-T07 验收建议级 G-3：gate-all.ps1 工作树 0/5 环境性失败以分项等价命令替代——实施者已如实登记，验收以同口径分项亲跑覆盖（构建＋四目标＋ctest×2＋ird_gates＋validate×2），覆盖面不弱于一键门禁",
+      "owner": "治理面（gate-all.ps1 工作树适配，随脚本维护批）"
+    },
+    {
+      "id": "F-881",
+      "source": "traceability/acceptance/WP-23-T06-20261014.md §发现问题清单 G-1（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 6e424a32）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T06 验收建议级 G-1（证据强度观察）：腿一被测评估器＝阶段 A 脚本替身（稳态 ~1.3 MB/worker），合计峰值占比 ~0.019% 对 70% 上限的达标证据是『测量机制真实、内存画像薄弱』——机制面（三探针＋JobMemory 合计＋10 ms 采样＋并存时刻覆盖）已真实验证，业务评估器大内存场景与多 worker 并发画像归集成模式扩展测量挂点（首测报告 §4.1/§4.5/§7 已如实申报）",
+      "owner": "后续治理面（集成复测时兑现 §7 扩展测量挂点）",
+      "resolution": "合入收尾批已兑现集成复测挂点（记录 B 节 ctest perf 全绿）；扩展测量挂点如实留待后续治理面——翻牌归后续翻牌批核证执行。"
+    },
+    {
+      "id": "F-882",
+      "source": "traceability/acceptance/WP-23-T06-20261014.md §发现问题清单 G-2（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 6e424a32）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T06 验收建议级 G-2（协议面挂点）：ird_gates 双态直跑核定与集成模式构建随合入批执行（登记册 traceability/wp23-t06-gate-registrations.md 预期恰增＝零）；如实测命中集≠预期，按 DTB §4.5 登记册责任方（WP-01-T03 治理面）处置",
+      "owner": "合入收尾员（直跑核定）／WP-01-T03 治理面（登记册回填）",
+      "resolution": "合入收尾批已闭合（记录 B 节亲跑）：ird_gates 恰 18 项命中与 wp21-t07 基线集同构、与登记册比对恰增＝零，门禁自测三 pass 八 fail 全部按预期检出；登记册（DTB §4.5）回填归 WP-01-T03 治理面——翻牌归后续翻牌批核证执行。"
+    },
+    {
+      "id": "F-883",
+      "source": "traceability/acceptance/WP-23-T06-20261014.md §发现问题清单 G-3（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 6e424a32）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T06 验收建议级 G-3（留痕一致性）：11e0cc69 提交信息正文的『gitCommit=59b3abdb 锚／max 0.000187』系修正前历史态（已被 409fce3e 批以 11e0cc69 锚复跑覆盖，报告 §6.2 如实登记）——提交历史不可改写（PA-2），无需处置，登记供回溯者免混淆",
+      "owner": "无独立行动义务（留档观察）",
+      "resolution": "登记观察（记录原文：PA-2 不可改写，维持不处置）。"
+    },
+    {
+      "id": "F-884",
+      "source": "traceability/acceptance/WP-23-T07-20261014.md §3 问题清单 G-1（随本记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 71c44923，2026-10-15 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T07 验收建议级 G-1：首测报告 §5.1／performance-baseline v0.8 行／契约 note 的手工复算示范数字文本级不精确——『132/0.4578498s＝288.268、132/0.0819154s＝1611.427』实为 288.3042／1611.4186（132/0.4578498 精确值 288.30415…，申报系除法笔误）；判定统计量 5.5893 与 JSON verdict 逐位自洽，达标结论零影响且偏差方向保守（288.27<288.30）",
+      "owner": "治理面（文本数字随治理批勘误——verdict 由测试运行时全精度计算，非测量缺陷）"
+    },
+    {
+      "id": "F-885",
+      "source": "traceability/acceptance/WP-23-T07-20261014.md §3 问题清单 G-2（随本记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 71c44923，2026-10-15 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T07 验收建议级 G-2：ird_gates 未直跑（实施段与验收段均不操作集成构建树）——登记册 traceability/wp23-t07-gate-registrations.md 预期恰增两条测试面引用",
+      "owner": "合入收尾员（双态直跑核定）",
+      "resolution": "合入收尾批已闭合（记录 C 节）：双态直跑核定恰增与登记册逐条对账零表外；登记册（DTB §4.5）回填归 WP-01-T03 治理面——翻牌归后续翻牌批核证执行。"
+    },
+    {
+      "id": "F-886",
+      "source": "traceability/acceptance/WP-23-T07-20261014.md §3 问题清单 G-3（随本记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 71c44923，2026-10-15 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T07 验收建议级 G-3：集成模式构建＋同口径复测未执行（首测报告 §7 挂点如实登记）——归合入批执行",
+      "owner": "合入收尾员（集成构建＋复测）",
+      "resolution": "合入收尾批已执行（记录 B 节亲跑）——翻牌归后续翻牌批核证执行。"
+    },
+    {
+      "id": "F-887",
+      "source": "traceability/acceptance/WP-23-T07-20261014.md §3 问题清单 G-4（随本记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 71c44923，2026-10-15 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T07 验收建议级 G-4：units/optimization.md §9.2 锚行『B-06 待回填』未翻面（forbiddenFiles 零触碰纪律——T06 对 B-05 锚行同款先例），随治理批翻面",
+      "owner": "治理批（§9.2 B-06 锚行翻面）"
+    },
+    {
+      "id": "F-888",
+      "source": "traceability/acceptance/WP-23-T07-20261014.md §3 问题清单 G-5（随本记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 71c44923，2026-10-15 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T07 验收建议级 G-5（观察项，零行动义务）：M2 产品级对称变异（批序反转合并）对两腿互比型等价判定不可见——同实现前提的天然盲区非缺陷；稳定合并序的产品级变异核查归功能用例面（JointRunTest 固定期望序承载），后续测试者设计变异时选用单腿生效注入",
+      "owner": "治理面（留档）；后续变异设计者（选用单腿生效注入）",
+      "resolution": "登记观察（记录原文『留档』）。"
+    },
+    {
+      "id": "F-889",
+      "source": "traceability/acceptance/WP-23-T08-20261014.md §3 建议级 G-1（随验收记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 a8bd86e3，2026-10-15 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T08 验收建议级 G-1：ird_gates 双态直跑核定未在本验收执行（登记册预期面已静态核对成立：whitelist optimization→ui 产品边在册 :164/:253，CMake diff 恰增一条 sdurws_ird_optimization_perf_test→sdurws_ird_ui 测试面引用——预期 21→22）；直跑核定随合入批/治理面补做（T03/T06/T07 先例口径）",
+      "owner": "合入收尾员（直跑核定）／WP-01-T03 治理面（登记册回填）",
+      "resolution": "合入收尾批已闭合（记录 C 节亲跑）：直跑核定恰增 1 条与登记册逐字一致零表外；登记册（DTB §4.5）回填归 WP-01-T03 治理面——翻牌归后续翻牌批核证执行。"
+    },
+    {
+      "id": "F-890",
+      "source": "traceability/acceptance/WP-23-T08-20261014.md §3 建议级 G-2（随验收记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 a8bd86e3，2026-10-15 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T08 验收建议级 G-2：集成模式构建＋同口径复测未在本验收执行——归合入收尾员（首测报告 §7 挂点如实登记，AGENTS §6.4 三段式；本验收已 grep 确认集成树缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 在位）",
+      "owner": "合入收尾员（集成构建＋复测）",
+      "resolution": "合入收尾批已执行（记录 B 节亲跑：perf 腿 178.51 s 串行独跑全绿）——翻牌归后续翻牌批核证执行。"
+    },
+    {
+      "id": "F-891",
+      "source": "traceability/acceptance/WP-23-T08-20261014.md §3 建议级 G-3（随验收记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 a8bd86e3，2026-10-15 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "WP-23-T08 验收建议级 G-3：units/optimization.md §9.2 锚行『B-07 待回填』翻面随治理批（forbiddenFiles 纪律——T06 对 B-05/T07 对 B-06 同款先例）；业务评估器真实现端到端时限画像归集成模式扩展测量挂点（替身边界已在用例文件头/manifest/首测报告三处如实申报）",
+      "owner": "治理批（B-07 锚行翻面）＋后续治理面（扩展测量挂点）"
     }
   ]
 }
