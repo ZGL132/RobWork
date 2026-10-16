@@ -1,8 +1,9 @@
 /**
  * @file   DefectPinningTest.cpp
  * @brief  E2 审计批缺陷钉扎用例组（F-554/F-557/F-558/F-714＋E2-UI-B 批
- *         F-559/F-560/F-561）——宿主装配面接线形态、框架补丁面与三维投
- *         影层清除簇的常驻自证。
+ *         F-559/F-560/F-561＋E2-UI-C 批 F-562/F-563）——宿主装配面接线
+ *         形态、框架补丁面、三维投影层清除簇、区域框棱表角序契约与编译
+ *         端口摘要字母表守卫的常驻自证。
  *
  * 设计依据：
  *   - findings.json F-554（宿主就绪门控五处计算点以空 CheckContext 调域
@@ -86,9 +87,12 @@
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -604,4 +608,154 @@ TEST(DefectPinning, HostRegionRefUnresolved_GridClearedSameTickAsBox_F561)
     EXPECT_EQ(countOccurrences(stripped, "框/格层清除"), std::size_t{1})
         << "失败分支日志文本与实际行为不一致（F-561 文本半区回归——自述应"
            "为「框/格层清除」两层同拍；回退「框层清除」＝文本掩盖格层残留）";
+}
+
+// =====================================================================
+// E2-UI-C 批——区域框棱表角序契约钉扎（F-562）＋编译端口摘要解析
+// 字母表守卫钉扎（F-563）
+// =====================================================================
+
+/**
+ * F-562 钉扎（区域框 12 棱表与八角点二进制角序的契约对齐）：HostView3D-
+ * PreviewBackend 产品码（注释剥离后）RegionOutlineRender 的 kEdges 棱表
+ * 必须恰为生产者角序契约下的 12 条真棱。契约原文＝PanelRegionModel
+ * 「corners 恒 8 点，索引 i 的 bit0→+sx、bit1→+sy、bit2→+sz」（units/
+ * requirements 单元卡 §9.8 几何载体——View3DBoxOutline「零重排直投」同
+ * 款角序）；该角序下真棱＝恰一位（汉明距离 1）翻转的角点对：
+ *   x 向 {0,1}{2,3}{4,5}{6,7}、y 向 {0,2}{1,3}{4,6}{5,7}、
+ *   z 向立柱 {0,4}{1,5}{2,6}{3,7}。
+ * 缺陷形态＝旧循环序边表（底/顶面按 0→1→2→3 循环连边）：{1,2} 类面对
+ * 角线（两位翻转）混入即破坏恰等性、y 向四真棱缺失同样跌破——两条路
+ * 都红，集合恰等断言一次钉住两面。
+ *
+ * 为何是源码形态扫描而非行为用例：kEdges 是 .cpp 内 static const 表（内
+ * 部链接——测试面无法链接寻址），draw() 需 OpenGL 上下文（无头测试面
+ * 不可达）；「棱表与生产者角序对齐」是纯静态契约——扫描解析棱表并做
+ * 集合恰等断言即钉住语义本体（本文件 E2-UI-B 批三钉同手法；同构先例
+ * BuildRedLineTest 运行期源码扫描）。
+ *
+ * 变异自证：还原缺陷形态（kEdges 换回旧循环序边表）→ 本用例红（恰等
+ * 断言失败）→ 恢复 → 绿（_e2-evidence/mut-A-F562-*.log 留痕）。
+ *
+ * 需求锚：REQ-03（Box 工作区域定义——区域三维预览须忠实呈现区域盒；
+ * 非方盒线框＝预览几何失真）；findings 追溯 F-562。
+ */
+TEST(DefectPinning, RegionOutlineEdges_BinaryCornerOrderTwelveTrueEdges_F562)
+{
+    IRD_TEST_INFO("REQ-03", {"F-562"}, std::nullopt);
+
+    const std::string stripped = stripComments(readFile(
+        unitRoot() / "ui" / "plugin" / "HostView3DPreviewBackend.cpp"));
+    ASSERT_FALSE(stripped.empty())
+        << "HostView3DPreviewBackend.cpp 读取失败（扫描面失真）";
+
+    // 棱表声明锚唯一性前置（锚漂移＝提取窗失真——先红在锚上，不在断言
+    // 上；绘制循环处的 kEdges 裸名不带维度下标，不与本锚撞）。
+    ASSERT_EQ(countOccurrences(stripped, "kEdges[12][2]"), std::size_t{1})
+        << "kEdges 棱表声明漂移（扫描锚失真——区域框 12 棱表应恰一处）";
+
+    // 提取表体：functionBody 自声明标记后的首个 '{'（＝初始化列表外层
+    // 开括号）起做花括号深度计数——4 个内层 {a, b} 对被正确跨越，返回
+    // 含外层首尾花括号的完整初始化体。
+    const std::string table = functionBody(stripped, "kEdges[12][2]");
+    ASSERT_FALSE(table.empty()) << "棱表体提取失败（花括号配对漂移）";
+
+    // 逐字符收集表体内整数（stripComments 已剥注释——表体只余 {a, b}
+    // 对序列；顶点索引恒 0..7 单字符，逐字符收集即完整值；索引域两位数
+    // 的前提是八角点超过 10 个，几何上不可能）。恰 24 个＝12 对×2。
+    std::vector<int> tokens;
+    tokens.reserve(24);
+    for (const char c : table) {
+        if (c >= '0' && c <= '9') {
+            tokens.push_back(c - '0');
+        }
+    }
+    ASSERT_EQ(tokens.size(), std::size_t{24})
+        << "棱表整数个数异常（12 对×2＝24——表体形态漂移，恰等断言失真）";
+
+    // 无序对归一 (min,max) 后升序排列，与二进制序 12 真棱期望集做恰等
+    // 比较——多一条面对角线、缺一条真棱、任何一条棱两端点错位都打破
+    // 相等（EXPECT_EQ 失败时 gtest 打印两个序列的逐元素差异，回归者无
+    // 需翻源码即可定位错棱）。期望集同样按无序对升序归一——比较的是
+    // 棱的集合而非书写次序（边表行内按底面/顶面/立柱分组是注释可读性
+    // 布局，不应进入契约）。
+    std::vector<std::pair<int, int>> actualEdges;
+    actualEdges.reserve(12);
+    for (std::size_t i = 0; i + 1 < tokens.size(); i += 2) {
+        actualEdges.emplace_back(std::min(tokens[i], tokens[i + 1]),
+                                 std::max(tokens[i], tokens[i + 1]));
+    }
+    std::sort(actualEdges.begin(), actualEdges.end());
+    std::vector<std::pair<int, int>> binaryOrderEdges = {
+        {0, 1}, {2, 3}, {4, 5}, {6, 7},  // x 向真棱（bit0 翻转对）
+        {0, 2}, {1, 3}, {4, 6}, {5, 7},  // y 向真棱（bit1 翻转对）
+        {0, 4}, {1, 5}, {2, 6}, {3, 7},  // z 向立柱（bit2 翻转对）
+    };
+    std::sort(binaryOrderEdges.begin(), binaryOrderEdges.end());
+    EXPECT_EQ(actualEdges, binaryOrderEdges)
+        << "区域框棱表偏离二进制角序 12 真棱（F-562 缺陷形态回归——循环序"
+           "边表把面对角线当棱画〔上下两面蝴蝶结交叉〕且 y 向四棱缺失，线"
+           "框非方盒；契约＝PanelRegionModel 索引 i 的 bit0→+sx、bit1→"
+           "+sy、bit2→+sz，actual/expected 逐对对照定位错棱）";
+}
+
+/**
+ * F-563 钉扎（引用图摘要 64 位十六进制的字母表守卫形态）：HostCompile-
+ * Port 产品码（注释剥离后）toSummary 的 digest256 装配段必须三件套同在：
+ * ①长度守卫 `hex.size() == 64`（第一道——错误长度直接走违约路径）；
+ * ②小写十六进制字母表校验循环（第二道——缺陷形态＝只防长度不防字母
+ *   表：64 字符含 'g' 以上字符时逐字符 std::stoi(...,16) 抛
+ *   std::invalid_argument，draft.apply 处理器链无 try/catch→异常穿透
+ *   Qt 事件循环＝红叉对话框＋进程退出〔F-557 家族崩出面〕）；
+ * ③违约分支 `digest.fill(0)` 显式置零（「全零摘要如实投递」的承载——
+ *   Digest256＝std::array 默认初始化值不确定，缺失该行＝违约路径投递
+ *   不确定值，S2 摘要复核的稳定拒绝失去前提）。
+ *
+ * 为何是源码形态扫描而非行为用例：行为半区已有 UI-T77 随修复交付的
+ * CompilePort_CorruptedDigestDoesNotCrash（HostCompilePipelineTest.cpp
+ * ——被测 TU 同源编入＋框架链接面，集成树专属门控 if(TARGET sdurws)，
+ * 冒烟树不编不可达）；本用例钉字母表守卫与显式置零的形态在位，与行为
+ * 用例两层互证（F-557 钉扎同构——形态在位由本用例钉、语义正确由行为
+ * 用例钉），且冒烟/集成两模式可跑。
+ *
+ * 变异自证：还原缺陷形态（摘除字母表校验循环）→ 本用例红（②形态标记
+ * 失踪）→ 恢复 → 绿（_e2-evidence/mut-B-F563-*.log 留痕；行为用例的
+ * 必红能力＝集成树面，由验收/收尾批在该模式亲证——登记如实例外）。
+ *
+ * 需求锚：CON-05（内容寻址——digest256 是证据链关联键的载体，透传不
+ * 重算的前提是输入良构；违约＝诚实全零投递交给 S2 复核拒绝，不崩出也
+ * 不伪造）；findings 追溯 F-563。
+ */
+TEST(DefectPinning, CompilePortDigest_LowercaseHexAlphabetGuarded_F563)
+{
+    IRD_TEST_INFO("CON-05", {"F-563"}, std::nullopt);
+
+    const std::string stripped = stripComments(readFile(
+        unitRoot() / "ui" / "plugin" / "HostCompilePort.cpp"));
+    ASSERT_FALSE(stripped.empty())
+        << "HostCompilePort.cpp 读取失败（扫描面失真）";
+
+    // 装配段切片（toSummary 内 ObjectRefEntry 装配循环——digest256 字样
+    // 在文件内多处合法出现〔注释/字段声明〕，按守卫标记切片收窄）。
+    const std::string guardDef = "hexWellFormed = hex.size() == 64";
+    ASSERT_EQ(countOccurrences(stripped, guardDef), std::size_t{1})
+        << "digest256 长度守卫标记漂移（扫描锚失真——装配段应恰一处）";
+
+    // ①长度守卫在位（第一道守卫——其本身是 UI-T77 修复的保留部分，
+    //   摘除＝守卫链退化回 F-563 之前的更早形态）。
+    EXPECT_NE(stripped.find(guardDef), std::string::npos)
+        << "digest256 长度守卫缺失（F-563 守卫链第一道退化）";
+
+    // ②字母表校验形态在位：小写十六进制谓词（数字段＋a-f 段——'g' 以
+    //   上字符/大写即违约，std::stoi 只在良构分支触达＝异常不可能逃逸）。
+    EXPECT_NE(stripped.find("(c >= 'a' && c <= 'f')"), std::string::npos)
+        << "digest256 字母表校验缺失（F-563 缺陷形态回归——64 字符含非"
+           "hex 字符时逐字符 std::stoi 抛 invalid_argument 穿透事件循环"
+           "＝红叉对话框＋进程退出）";
+
+    // ③违约路径显式置零在位（全零摘要如实投递的承载——std::array 默
+    //   认初始化值不确定，缺显式 fill(0)＝违约路径投递不确定值）。
+    EXPECT_NE(stripped.find("e.digest.fill(0)"), std::string::npos)
+        << "违约路径显式置零缺失（F-563 修复半区退化——全零摘要如实投递"
+           "口径失去承载，S2 摘要复核的稳定拒绝失去前提）";
 }
