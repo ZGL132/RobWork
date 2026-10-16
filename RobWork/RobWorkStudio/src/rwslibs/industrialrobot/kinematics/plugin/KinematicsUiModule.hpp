@@ -96,9 +96,14 @@ public:
      *
      * 与 setServices 的整体替换语义刻意不同：仅覆盖传入聚合中**非空**
      * 的缝（modelView 非空指针/function 缝非空判定），未触缝保持原值
-     * ——装配通道只声明覆盖评估执行通道五缝，不得清掉装配层既有的
-     * bindCommandSubmit 等其它注入（kinematics 的命令出口经门面独立
-     * 绑定路径，服务缝里的 commandSubmit 等若已注入须保留）。
+     * ——装配通道不得清掉装配层既有的 bindCommandSubmit 等其它注入
+     * （kinematics 的命令出口经门面独立绑定路径，服务缝里的
+     * commandSubmit 等若已注入须保留）。
+     *
+     * ★ KIN-P4 增列（审查报告 §4 第一条——降级服务逐项接通）：合并面
+     * 扩至通道值面新增的七缝（ikSolver/fkEvaluator/sessionPose/
+     * commandHandler/exportWriter/configPersist/homePose）。逐缝"非空才
+     * 覆盖"纪律与既有四缝一致——通道缺省缝＝保持降级，不虚构注入。
      *
      * @param partial [in] 部分服务缝（仅非空成员生效）
      */
@@ -116,12 +121,42 @@ public:
         if (partial.backgroundSubmit) {
             m_services.backgroundSubmit = partial.backgroundSubmit;
         }
+        // ---- KIN-P4 增列七缝（翻译单点的合并半区——与通道值面逐一同名）。
+        if (partial.ikSolver != nullptr) {
+            m_services.ikSolver = partial.ikSolver;
+        }
+        if (partial.fkEvaluator != nullptr) {
+            m_services.fkEvaluator = partial.fkEvaluator;
+        }
+        if (partial.sessionPose != nullptr) {
+            m_services.sessionPose = partial.sessionPose;
+        }
+        if (partial.commandHandler != nullptr) {
+            m_services.commandHandler = partial.commandHandler;
+        }
+        if (partial.exportWriter) {
+            m_services.exportWriter = partial.exportWriter;
+        }
+        if (partial.configPersist) {
+            m_services.configPersist = partial.configPersist;
+        }
+        if (partial.homePose) {
+            m_services.homePose = partial.homePose;
+        }
     }
 
     /// 服务缝只读访问（UI-T64 测试面——PluginPanelTest 经门面
     /// installAssemblyChannels 注入后回读翻译结果的断言入口；产品代码
     /// 零消费——缝的权威消费面仍是面板工厂与流函数）。
     const KinPanelServices& services() const { return m_services; }
+
+    /**
+     * @brief 清空命令门面缝（★ KIN-P4——项目拆除拍：mergeAssemblyChannels
+     *        的"非空才覆盖"语义无法表达清空；本方法是命令缝的唯一显式
+     *        清除面。清空后按钮门控在下一拍 refreshAll 禁用——无项目态
+     *        ＝设默认命令不可达的诚实降级，零悬垂指针）。
+     */
+    void clearAssemblyCommandHandler() { m_services.commandHandler = nullptr; }
 
     // ---- ui.md §11.2 三方法 ------------------------------------------------
 

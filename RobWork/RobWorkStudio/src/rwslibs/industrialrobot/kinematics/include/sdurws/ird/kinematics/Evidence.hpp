@@ -78,7 +78,11 @@ inline constexpr char kTaskPointsBatchEvaluationKey[] = "kin-task-points-batch";
 
 /// 批量评估器输入/输出契约版本（§8.4"求解器版本入 descriptor.
 /// contractVersion 与 payload"；进 sliceId——CON-04；一经交付不回退）。
-inline constexpr std::uint32_t kTaskPointsBatchContractVersion = 1U;
+/// ★ v2（KIN-P5/审查 A06）：逐任务点初值的 SeededRandom 序列随 64 位
+///   完整种子混合（kIkSolverContractVersion 2→3 同批）整体改变——同
+///   (任务点集, 种子) 在 v1/v2 两代下的解集可不同，版本不升级会让两代
+///   评估产出假借同一 slice 身份比较。
+inline constexpr std::uint32_t kTaskPointsBatchContractVersion = 2U;
 
 /// 域载荷登记 token（evidence §7.1 域词表——卡面点形保留；v1 随
 /// canonical 布局 codec 版本演进）。

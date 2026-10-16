@@ -28,9 +28,13 @@
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯
 
+#include <algorithm>
 #include <chrono>
+#include <cmath>
+#include <limits>
 #include <memory>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <utility>
@@ -224,7 +228,9 @@ TEST(PluginPanelLinks, LK1_SolutionSelectionInspectorLink_ACC1)
     KinematicSolutionSet view(h.solver.scripted.solutionSet);
 
     // 解行集：sorted() 序两解、rank 即视图序（零自排——消费域设施）。
-    const auto rows = solutionRowsFor(view, false, std::nullopt);
+    // 逐轴类型表（KIN-P3/A05——二连杆全转动链，dofJointTypes 提取）。
+    const auto rows = solutionRowsFor(view, false, dofJointTypes(h.view.model()),
+                                      std::nullopt);
     ASSERT_EQ(rows.size(), 2U);
     EXPECT_EQ(rows[0].signature, "sig-b");  // 裕量大者四键序在前
     EXPECT_EQ(rows[1].signature, "sig-a");
@@ -297,6 +303,134 @@ TEST(PluginPanelLinks, LK2_InlineBudgetExceededDefersToBackground_ACC1)
     EXPECT_EQ(submitted, 1);
     EXPECT_TRUE(seenKind == KinBackgroundKind::SessionSolve);  // 会话级转后台
     EXPECT_NE(result.statusText.find("超预算"), std::string::npos);  // 状态反馈
+}
+
+/// KIN-P2（审查 A08）——会话求解请求装配：从模型/会话/配置装配完整
+/// 合法请求（修复前真实按钮以默认构造 IkRequest 提交——TCP 空/初值空/
+/// referenceQ 与 intervals 维度 0，真实 IkSolver 校验必 fail-fast）。
+/// 本用例钉装配面逐字段来源：TCP＝KIN-14 默认工具解析、初值＝配置×
+/// 区间×referenceQ 经域设施物化、referenceQ＝会话姿态、intervals＝模型
+/// 评价区间、容差/迭代/去重＝配置直传。
+TEST(PluginPanelLinks, LK2_AssembleSessionSolveRequestComplete_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-13", "KIN-14"},
+                  std::vector<std::string>{});
+    Harness h;
+
+    // 配置面：SeededRandom×3（"初值与数量来自求解配置"的断言载体——
+    // seed=7 会话基线，I-KIN-4 合法域）。
+    h.session.savedConfig.initialStrategy = InitialValueStrategy::SeededRandom;
+    h.session.savedConfig.initialValuesCount = 3U;
+    h.session.savedConfig.iterationLimit = 128U;
+    h.session.savedConfig.positionResidualTolerance = 5e-7;        // m
+    h.session.savedConfig.orientationResidualTolerance = 2e-6;     // rad
+    h.session.savedConfig.ikDedupThresholdPerAxis = 4e-6;          // rad|m 逐轴
+
+    // 会话姿态在场面：referenceQ 必须取会话姿态（非零可判别值）。
+    h.sessionPose.setJointConfiguration({0.1, -0.2});
+
+    const auto a = assembleSessionSolveRequest(h.services, h.session);
+    ASSERT_TRUE(a.ok) << a.statusText;
+
+    // TCP：KIN-14 默认工具解析（objectId 命中快照 Tool 类别＋tcpKey＝
+    // 工具局部名——名称可解析的显式自描述形态，A08 字段①）。
+    const runtime::CanonicalTool& tool = h.model.tools().front();
+    EXPECT_EQ(a.request.tcp.toolObject, tool.objectId);
+    EXPECT_EQ(a.request.tcp.tcpKey, tool.localName);
+    const auto loc = h.model.findObject(a.request.tcp.toolObject);
+    ASSERT_TRUE(loc.has_value());
+    EXPECT_EQ(loc->kind, runtime::CanonicalModel::ObjectKind::Tool);
+
+    // 初值：数量来自配置、值＝makeInitialValues 同参产出（域设施唯一
+    // 实现点——装配零本地重写的结构钉）。
+    ASSERT_EQ(a.request.initialValues.size(), 3U);
+    const auto expected = makeInitialValues(
+        InitialValueStrategy::SeededRandom, 3U, 7U,
+        evaluationIntervals(h.view), {0.1, -0.2});
+    EXPECT_EQ(a.request.initialValues, expected);
+
+    // referenceQ＝会话姿态；intervals＝模型评价区间（evaluationIntervals
+    // 同源——逐轴三字段相等，A08 字段③④；JointInterval 无聚合等值——
+    // 测试面逐字段比较）。
+    EXPECT_EQ(a.request.referenceQ, (std::vector<double>{0.1, -0.2}));
+    {
+        const auto expectItv = evaluationIntervals(h.view);
+        ASSERT_EQ(a.request.intervals.size(), expectItv.size());
+        for (std::size_t i = 0; i < expectItv.size(); ++i) {
+            EXPECT_EQ(a.request.intervals[i].bounded, expectItv[i].bounded);
+            EXPECT_DOUBLE_EQ(a.request.intervals[i].lower, expectItv[i].lower);
+            EXPECT_DOUBLE_EQ(a.request.intervals[i].upper, expectItv[i].upper);
+        }
+    }
+
+    // 配置字段直传（容差/迭代上限/去重阈值——A08 字段⑤）。
+    EXPECT_DOUBLE_EQ(a.request.positionTolerance, 5e-7);
+    EXPECT_DOUBLE_EQ(a.request.orientationTolerance, 2e-6);
+    EXPECT_EQ(a.request.iterationLimit, 128U);
+    EXPECT_DOUBLE_EQ(a.request.dedupThresholdPerAxis, 4e-6);
+}
+
+/// 装配失败/回退面（显式拒绝语义——绝不提交残缺请求，NFR-COR-03）：
+/// 无工具→KIN-NO-TCP；非法配置→KIN-CONFIG-ILLEGAL；会话姿态维度违约
+/// →显式拒绝；视图空→拒绝；会话未设置→referenceQ 零位回退。
+TEST(PluginPanelLinks, LK2_AssembleSessionSolveRequestFailures_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    // a) 无工具模型（tools 空＋defaultTcpIndex 空）→ 装配失败＋稳定
+    //    诊断码 KIN-NO-TCP（A08"解析失败显式报错"义务）。
+    {
+        const auto bare = makeModel(
+            std::vector<rt::CanonicalJoint>{
+                revolute("b0", rw::math::Vector3D<double>(0, 0, 1),
+                         trans(0, 0, 0), -1.0, 1.0)},
+            trans(0.3, 0, 0), trans(0, 0, 0), false);
+        TestView view(bare);
+        KinPanelServices s;
+        s.modelView = &view;
+        KinModuleSessionState st;
+        st.savedConfig.seed = 1;
+        st.savedConfig.regionBudget.seed = 1;
+        const auto a = assembleSessionSolveRequest(s, st);
+        EXPECT_FALSE(a.ok);
+        EXPECT_NE(a.statusText.find("KIN-NO-TCP"), std::string::npos);
+    }
+    // b) 非法配置（未初始化会话的默认构造 seed=0——I-KIN-4 非法）→
+    //    KIN-CONFIG-ILLEGAL（非法配置绝不流入 makeInitialValues——
+    //    其 seed=0 行为契约即"输出无定义"）。
+    {
+        Harness h;
+        h.session.savedConfig.seed = 0;  // 会话纪律违约面（构造置 7 后回置）
+        const auto a = assembleSessionSolveRequest(h.services, h.session);
+        EXPECT_FALSE(a.ok);
+        EXPECT_NE(a.statusText.find("KIN-CONFIG-ILLEGAL"), std::string::npos);
+    }
+    // c) 会话姿态维度违约（1 维 ≠ 2 dof）→ 显式拒绝（装配层注入事实
+    //    错误不可钳制——NFR-COR-03）。
+    {
+        Harness h;
+        h.sessionPose.setJointConfiguration({0.1});
+        const auto a = assembleSessionSolveRequest(h.services, h.session);
+        EXPECT_FALSE(a.ok);
+        EXPECT_NE(a.statusText.find("维度"), std::string::npos);
+    }
+    // d) 模型视图缝空 → 拒绝（装配无输入真值面）。
+    {
+        KinPanelServices s;
+        KinModuleSessionState st;
+        st.savedConfig.seed = 1;
+        st.savedConfig.regionBudget.seed = 1;
+        EXPECT_FALSE(assembleSessionSolveRequest(s, st).ok);
+    }
+    // e) 会话姿态未设置 → referenceQ 零位回退（dof 维全零——确定性
+    //    无信息注入回退；面板此态下关节表为空）。
+    {
+        Harness h;
+        const auto a = assembleSessionSolveRequest(h.services, h.session);
+        ASSERT_TRUE(a.ok);
+        EXPECT_EQ(a.request.referenceQ, (std::vector<double>{0.0, 0.0}));
+    }
 }
 
 /// L-K3 批量验证提交-进度-取消：受理→任务投影行现取；完成回执呈现。
@@ -413,18 +547,23 @@ TEST(PluginPanelLinks, LK5_TcpBackfillFromSession_ACC1)
     IRD_TEST_INFO(std::vector<std::string>{"UX-04", "KIN-12"},
                   std::vector<std::string>{});
     Harness h;
+    // 逐轴类型表（KIN-P3/A05——二连杆全转动链；回填文本逐轴按天然量纲
+    // 投影，转动轴走角度量纲）。
+    const std::vector<runtime::JointType> allRev(
+        2, runtime::JointType::Revolute);
     // 未设置：回退编辑器缺省值（不读值——KinSessionPose 契约）。
-    EXPECT_FALSE(tcpBackfillText(&h.sessionPose, h.session, {0.1, 0.2}).has_value());
+    EXPECT_FALSE(
+        tcpBackfillText(&h.sessionPose, h.session, {0.1, 0.2}, allRev).has_value());
 
     h.sessionPose.setJointConfiguration({0.5, -0.25});
     // SI 直显（无投影）。
-    const auto si = tcpBackfillText(&h.sessionPose, h.session, {0.5, -0.25});
+    const auto si = tcpBackfillText(&h.sessionPose, h.session, {0.5, -0.25}, allRev);
     ASSERT_TRUE(si.has_value());
     EXPECT_NE(si->find("0.5"), std::string::npos);
     // deg 制式：0.5 rad → 28.6x°（显示投影——回填文本随制式变化）。
     h.session.displayUnits = tryFindKinDisplayUnits("mm", "deg");
     ASSERT_TRUE(h.session.displayUnits.has_value());
-    const auto deg = tcpBackfillText(&h.sessionPose, h.session, {0.5, -0.25});
+    const auto deg = tcpBackfillText(&h.sessionPose, h.session, {0.5, -0.25}, allRev);
     ASSERT_TRUE(deg.has_value());
     EXPECT_NE(deg->find("28.6"), std::string::npos);
 }
@@ -493,6 +632,40 @@ TEST(PluginPanelLinks, LK8_UnitSwitchReprojectionNoRecompute_ACC1)
     // 零重算/零修订：切换后求解器零调用、命令出口零提交。
     EXPECT_EQ(h.solver.callCount.load(), 0);
     EXPECT_EQ(h.commandSubmitCount, 0);
+}
+
+/// KIN-P1（审查条目 A07 换算半区回归）：显示制式→SI 逆换算（提交面
+/// resolveKinDisplayToSi）——m/cm/mm 三制式输入"同一物理目标 0.1 m"
+/// 的正确显示值（0.1/10/100）逆换算回一致 SI；A07 反例数值（mm 显示值
+/// 0.1 → 1e-4 m，非 0.1、更非修复前的 100）；与读侧 projectLength 互逆。
+TEST(PluginPanelLinks, DisplayToSi_ConsistentSiAcrossUnitSystems_KIN_P1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-12"},
+                  std::vector<std::string>{"AT-27"});
+    // 三制式一致性：同一物理目标 0.1 m 的各制式正确显示值 → 一致 SI。
+    const auto mUnits = tryFindKinDisplayUnits("m", "rad");
+    const auto cmUnits = tryFindKinDisplayUnits("cm", "deg");
+    const auto mmUnits = tryFindKinDisplayUnits("mm", "deg");
+    ASSERT_TRUE(mUnits.has_value());
+    ASSERT_TRUE(cmUnits.has_value());
+    ASSERT_TRUE(mmUnits.has_value());
+    EXPECT_DOUBLE_EQ(resolveKinDisplayToSi(0.1, mUnits), 0.1);   // m：因子 1
+    EXPECT_NEAR(resolveKinDisplayToSi(10.0, cmUnits), 0.1, 1e-15);   // 10 cm
+    EXPECT_NEAR(resolveKinDisplayToSi(100.0, mmUnits), 0.1, 1e-15);  // 100 mm
+    // A07 反例数值钉扎：mm 显示值 0.1（＝0.1 mm）→ 1e-4 m。
+    // （修复前缺陷：被 projectLength 正向放大为 100 m。）
+    EXPECT_NEAR(resolveKinDisplayToSi(0.1, mmUnits), 1e-4, 1e-18);
+    // nullopt＝SI 直显制式恒等（未选制式时输入即 SI）。
+    EXPECT_DOUBLE_EQ(resolveKinDisplayToSi(0.1, std::nullopt), 0.1);
+    // 与读侧投影互逆：0.1 m 经"逆换算→正向投影"往返回 0.1（mm 制式——
+    // 乘除各一次，误差 ≤ 2 ulp；不承诺位精确——AnalysisConfig 呈现层
+    // 容差口径）。
+    EXPECT_NEAR(mmUnits->projectLength(resolveKinDisplayToSi(0.1, mmUnits)),
+                0.1, 1e-15);
+    // 因子语义钉扎（core Units §4.4：value_si＝value×factor）。
+    EXPECT_DOUBLE_EQ(mmUnits->lengthUnit().siFactor(), 0.001);
+    EXPECT_DOUBLE_EQ(cmUnits->lengthUnit().siFactor(), 0.01);
+    EXPECT_DOUBLE_EQ(mUnits->lengthUnit().siFactor(), 1.0);
 }
 
 /// L-K9 设默认 TCP/设备：经门面→①端口投影（新修订回执→依赖重算提示；
@@ -643,19 +816,24 @@ TEST(PluginPanelLinks, LK12_TaskStatusProjectionAndStaleDrop_ACC1)
     EXPECT_EQ(dropped.find("陈旧覆盖结果"), std::string::npos);   // 摘要不进呈现
 }
 
-/// GUI 呈现（四面板 widget 渲染/交互点击）：仅登记不执行——GUI 环境的
-/// 手动验证归 sdurws_ird_kinematics_app harness 留痕（DTB §5.1 v0.20/
-/// DoD 第 5 条）；无界面测试目标不启动 GUI（modeling V-22 先例同款）。
+/// GUI 呈现（四面板 widget 渲染/交互点击）：本目标（无界面）仅保留登记
+/// ——★ KIN-P4 起真实执行面在 sdurws_ird_kinematics_gui_test 的
+/// KinHostLoop.PanelPresentation_RealExecution_KIN_P4（真实 QApplication
+/// ＋真实控件事件：四页签/按钮门控/状态行点验）与
+/// KinHostLoop.SixAxisVariantClosedLoop_KIN_P4（六轴改型全流程闭环）。
+/// 手动验证通道归 sdurws_ird_kinematics_app harness 留痕（DTB §5.1/
+/// DoD 第 5 条）；无界面测试目标不启动 GUI 的结构性事实不变（modeling
+/// V-22 先例同款）——skip 是环境事实的如实登记，不是验证替代。
 TEST(PluginPanelLinks, KinGuiPresentationRegisteredNotExecuted_ACC1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"UX-04", "UX-05"},
                   std::vector<std::string>{});
     sdurws::ird::testkit::report::setOutcome(
         sdurws::ird::testkit::report::Outcome::EnvUnavailable,
-        "四面板 GUI 呈现与交互点验仅登记不执行（DTB §5.1 v0.20——GUI 手动"
-        "验证通道归 sdurws_ird_kinematics_app harness 规程留痕；无界面测试"
-        "目标不含 GUI 平台插件，testkit §6.7）");
-    GTEST_SKIP() << "GUI 呈现仅登记（envUnavailable 如实登记——不标注通过）";
+        "GUI 呈现与交互在本无界面目标仅登记（KIN-P4 起真实执行面已迁移至"
+        " kinematics_gui_test 的 KinHostLoop 套件——环境事实如实登记，"
+        "testkit §6.7）");
+    GTEST_SKIP() << "GUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）";
 }
 
 // =====================================================================
@@ -946,6 +1124,310 @@ TEST(KinAssemblyChannels, InstallChannelsAndNoteRoute_UI_T64)
     note.interrupted = true;
     const std::string interrupted = bundle.noteAssemblyBackgroundResult(note);
     EXPECT_NE(interrupted.find("已中断"), std::string::npos);
+}
+
+// =====================================================================
+// KIN-P3 回归（审查条目 A03 合法无穷显示／A05 混合链逐轴单位／A09 具名
+// Home 来源）——零 Qt 半区；widget 半区在 gui_test
+// （KinematicsPanelSessionGuiTest）。修复前红证见构建留痕
+// traceability/builds/kin-p3/（红→绿两段执行记录）。
+// =====================================================================
+
+/// A03 回归①：奇异链 FK 产出条件数 +∞（合法无穷），指标行构建不抛异常
+/// 且语义正确（"奇异/∞"，SI 真值 +∞ 原样保留不截断）。修复前
+/// poseMetricRows 对 +∞ 抛 invalid_argument——奇异状态完全无法显示。
+TEST(PluginPanelLinks, KinNonFiniteDisplay_SingularConditionNumberRow_KIN_P3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01"}, std::vector<std::string>{});
+    // 六轴同轴退化链（审查 A02 载体几何——q=0 时雅可比六列全同，σmin=0
+    // →条件数 +∞：Fk.hpp 契约"奇异→+∞，以 isFinite 标记承载，不静默截断"）。
+    TestView view(coaxialChainModel());
+    FkEvaluator fk;
+    TcpRef tcp;
+    tcp.toolObject = view.model().tools().front().objectId;  // canonical TCP（空键）
+    const auto metrics = fk.evaluate(view, tcp, std::vector<double>(6, 0.0));
+    ASSERT_TRUE(metrics.ok());
+    EXPECT_FALSE(metrics.get().conditionNumberIsFinite);  // 奇异前提成立
+    // 合法 +∞ 不抛（修复前此处抛 invalid_argument——审查 A03 反例）。
+    std::vector<KinNamedValueRow> rows;
+    EXPECT_NO_THROW({ rows = poseMetricRows(metrics.get(), std::nullopt); });
+    // 条件数行语义正确：语义词"奇异/∞"、SI 真值 +∞ 原样（显示层不截断）。
+    const auto cond = std::find_if(rows.begin(), rows.end(),
+                                   [](const KinNamedValueRow& r) {
+                                       return r.key == "cond";
+                                   });
+    ASSERT_NE(cond, rows.end());
+    EXPECT_STREQ(cond->displayText.c_str(), "奇异/∞");
+    EXPECT_TRUE(std::isinf(cond->siValue) && cond->siValue > 0.0);
+    // 近奇异（非奇异有限大条件数）照常数值显示——三分类不误伤有限值。
+    PoseMetrics nearSingular;
+    nearSingular.conditionNumber = 12345.678;
+    const auto nearRows = poseMetricRows(nearSingular, std::nullopt);
+    EXPECT_NE(nearRows[6].displayText.find("12345.7"), std::string::npos)
+        << nearRows[6].displayText;  // 6 位有效数字 general
+}
+
+/// A03 回归②：关节裕量无界 +∞（连续关节无工作范围——合法无界）呈现
+/// "无界"；NaN/−∞（非法）仍 fail-fast 拒绝（三分类的拒绝半区不松动）。
+TEST(PluginPanelLinks, KinNonFiniteDisplay_UnboundedMarginAndIllegalNaN_KIN_P3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01"}, std::vector<std::string>{});
+    // 直接构造指标值（行构建面是纯搬运——+∞ 合法性由域设施契约背书：
+    // KinTypes.hpp"连续无工作范围关节＝+∞；全无界＝+∞"）。
+    PoseMetrics metrics;
+    metrics.conditionNumber = 1.5;
+    metrics.minimumJointMargin = std::numeric_limits<double>::infinity();
+    metrics.jointMargins = {0.5, std::numeric_limits<double>::infinity()};
+    std::vector<KinNamedValueRow> rows;
+    EXPECT_NO_THROW({ rows = poseMetricRows(metrics, std::nullopt); });
+    // 最小裕量行/无界关节行呈现"无界"；有界关节行照常数值显示。
+    for (const auto& r : rows) {
+        if (r.key == "min-margin" || r.key == "margin-j2") {
+            EXPECT_STREQ(r.displayText.c_str(), "无界") << r.key;
+        }
+        if (r.key == "margin-j1") {
+            EXPECT_STREQ(r.displayText.c_str(), "0.5") << r.key;
+        }
+    }
+    // 非法 NaN：上游计算违约——fail-fast 不渲染（拒绝面保留）。
+    PoseMetrics nanMetrics;
+    nanMetrics.conditionNumber = std::numeric_limits<double>::quiet_NaN();
+    EXPECT_THROW(poseMetricRows(nanMetrics, std::nullopt), std::invalid_argument);
+    // 非法 −∞：这些量的值域不含负无穷——同违约轨。
+    PoseMetrics negInfMetrics;
+    negInfMetrics.conditionNumber = -std::numeric_limits<double>::infinity();
+    EXPECT_THROW(poseMetricRows(negInfMetrics, std::nullopt), std::invalid_argument);
+}
+
+/// A03 回归③：解表/检查器行的合法 +∞ 指标（条件数/裕量）——语义词
+/// 呈现且零异常；reprojectMetricRows 对含 +∞ 行的整表重建幂等。
+TEST(PluginPanelLinks, KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01"}, std::vector<std::string>{});
+    // 脚本化解集：解 A 全有限、解 B 条件数/裕量合法 +∞（奇异但可行——
+    // 现实工程形态：六轴腕奇异点附近的解仍可交付）。
+    IkSolutionSet set;
+    KinematicSolution a;
+    a.q = {0.1, 0.2};
+    a.minimumJointMargin = 0.1;
+    a.conditionNumber = 2.0;
+    a.positionResidual = 1e-7;
+    a.signature = "sig-finite";
+    KinematicSolution b;
+    b.q = {0.3, -0.4};
+    b.minimumJointMargin = std::numeric_limits<double>::infinity();  // 全无界
+    b.conditionNumber = std::numeric_limits<double>::infinity();     // 奇异
+    b.positionResidual = 2e-7;
+    b.signature = "sig-infinite";
+    set.solutions = {a, b};
+    set.statistics.rawCount = 2;
+    set.statistics.convergedCount = 2;
+    set.statistics.dedupedCount = 2;
+    KinematicSolutionSet view(set);
+
+    // 解表行：+∞ 行语义词呈现，有限行照常（混合表零异常零截断）。行序
+    // ＝sorted() 四键稳定序（权威在解集视图——断言按签名定位不依赖序）。
+    std::vector<KinSolutionRow> rows;
+    EXPECT_NO_THROW({
+        rows = solutionRowsFor(
+            view, false,
+            {runtime::JointType::Revolute, runtime::JointType::Revolute},
+            std::nullopt);
+    });
+    ASSERT_EQ(rows.size(), 2U);
+    const KinSolutionRow* finite = nullptr;
+    const KinSolutionRow* infinite = nullptr;
+    for (const auto& r : rows) {
+        (r.signature == "sig-finite" ? finite : infinite) = &r;
+    }
+    ASSERT_NE(finite, nullptr);
+    ASSERT_NE(infinite, nullptr);
+    EXPECT_STREQ(finite->conditionNumberText.c_str(), "2");
+    EXPECT_STREQ(finite->minJointMarginText.c_str(), "0.1");
+    EXPECT_STREQ(infinite->conditionNumberText.c_str(), "奇异/∞");
+    EXPECT_STREQ(infinite->minJointMarginText.c_str(), "无界");
+    // 检查器行：同则（insp-cond"奇异/∞"、insp-margin"无界"）——选中
+    // 指称取 +∞ 解在视图稳定序中的 rank。
+    std::vector<KinNamedValueRow> inspector;
+    EXPECT_NO_THROW({
+        inspector = solutionInspectorRows(view,
+                                          SolutionRef{infinite->rank},
+                                          std::nullopt);
+    });
+    for (const auto& r : inspector) {
+        if (r.key == "insp-cond") {
+            EXPECT_STREQ(r.displayText.c_str(), "奇异/∞");
+        }
+        if (r.key == "insp-margin") {
+            EXPECT_STREQ(r.displayText.c_str(), "无界");
+        }
+    }
+    // 整表重投影对 +∞ 行幂等（+∞ 呈现与制式无关）、对有限行重换算；
+    // SI 真值逐行不动（V-17）。行数＝TCP 位置 3＋姿态对角 3＋cond/
+    // manip/min-margin 3（奇异值/裕量向量空——最小构造）＝9。
+    const auto reprojected = reprojectMetricRows(
+        poseMetricRows([] {
+            PoseMetrics m;
+            m.conditionNumber = std::numeric_limits<double>::infinity();
+            m.manipulability = 0.25;
+            return m;
+        }(), std::nullopt),
+        tryFindKinDisplayUnits("mm", "deg"));
+    ASSERT_EQ(reprojected.size(), 9U);
+    bool sawCond = false;
+    for (const auto& r : reprojected) {
+        if (r.key == "cond") {
+            sawCond = true;
+            EXPECT_STREQ(r.displayText.c_str(), "奇异/∞");
+            EXPECT_TRUE(std::isinf(r.siValue));
+        }
+    }
+    EXPECT_TRUE(sawCond);
+}
+
+/// A05 回归①：混合链（转动＋移动）解列逐轴投影——移动轴 0.1 m 在
+/// mm/deg 制式下显示 100、转动轴 0.1 rad 显示 5.72958（审查 A05 反例
+/// 数值钉扎：修复前全轴按角度＝"5.72958, 5.72958"）。维度失配/Fixed
+/// 类型/非有限分量三装配错误轨 fail-fast。
+TEST(PluginPanelLinks, MixedChainProjection_PerAxisUnitSelection_KIN_P3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-12"}, std::vector<std::string>{"AT-27"});
+    const auto mmDeg = tryFindKinDisplayUnits("mm", "deg");
+    ASSERT_TRUE(mmDeg.has_value());
+    // 转动＋移动混合链（revPrismModel 的 dof 类型表——dofJointTypes 口径）。
+    const std::vector<runtime::JointType> mixed = {runtime::JointType::Revolute,
+                                                   runtime::JointType::Prismatic};
+    // mm/deg 制式：q=(0.1 rad, 0.1 m) → "5.72958, 100"（逐轴各走其量纲）；
+    // 残差列随长度制式投影（0 m→0 mm）。
+    const auto proj = reprojectSolutionColumns({0.1, 0.1}, mixed, 0.0, mmDeg);
+    EXPECT_EQ(proj.first, "5.72958, 100");
+    EXPECT_EQ(proj.second, "0 mm");
+    // SI 直显制式：恒等投影（真值原样）。
+    const auto si = reprojectSolutionColumns({0.1, 0.1}, mixed, 0.0, std::nullopt);
+    EXPECT_EQ(si.first, "0.1, 0.1");
+    // 全转动链（六轴——回归面：单量纲链行为不因逐轴化而变化）。
+    const std::vector<runtime::JointType> allRev(6, runtime::JointType::Revolute);
+    const auto rev = reprojectSolutionColumns(std::vector<double>(6, 0.1), allRev,
+                                              0.0, mmDeg);
+    EXPECT_EQ(rev.first,
+              "5.72958, 5.72958, 5.72958, 5.72958, 5.72958, 5.72958");
+    // 装配错误轨①：维度失配——fail-fast（绝不回退全轴角度猜的旧语义）。
+    EXPECT_THROW(reprojectSolutionColumns({0.1, 0.1}, {runtime::JointType::Revolute},
+                                          0.0, mmDeg),
+                 std::invalid_argument);
+    // 装配错误轨②：Fixed 不消耗 q——出现在类型表即装配错误。
+    EXPECT_THROW(reprojectSolutionColumns({0.1}, {runtime::JointType::Fixed}, 0.0,
+                                          mmDeg),
+                 std::invalid_argument);
+    // 上游违约轨：关节分量非有限——fail-fast 不渲染。
+    EXPECT_THROW(reprojectSolutionColumns(
+                     {std::numeric_limits<double>::quiet_NaN(), 0.1}, mixed, 0.0,
+                     mmDeg),
+                 std::invalid_argument);
+}
+
+/// A05 回归②：逐轴类型提取与"数值＋单位"关节文本——dofJointTypes 按
+/// 链序滤除 Fixed；formatJointAxisText 逐轴量纲选单位（移动 mm、转动
+/// deg、连续 deg）；tcpBackfillText 混合链回填逐轴投影。
+TEST(PluginPanelLinks, MixedChainProjection_JointAxisTextAndDofExtraction_KIN_P3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-12"}, std::vector<std::string>{});
+    // 类型提取：混合链＝{Revolute, Prismatic}；六轴＝6×Revolute；全固定
+    // 链＝空表（Fixed 全滤——dof=0 边界）。
+    TestView mixedView(revPrismModel());
+    EXPECT_EQ(dofJointTypes(mixedView.model()),
+              (std::vector<runtime::JointType>{runtime::JointType::Revolute,
+                                               runtime::JointType::Prismatic}));
+    TestView sixView(sixAxisModel());
+    EXPECT_EQ(dofJointTypes(sixView.model()),
+              std::vector<runtime::JointType>(6, runtime::JointType::Revolute));
+    TestView fixedView(allFixedModel());
+    EXPECT_TRUE(dofJointTypes(fixedView.model()).empty());
+    // "数值＋单位"文本：移动轴 0.1 m→"100 mm"；转动轴 0.1 rad→
+    // "5.72958 deg"；连续轴按角度量纲（同转动）；SI 直显用 SI token。
+    const auto mmDeg = tryFindKinDisplayUnits("mm", "deg");
+    ASSERT_TRUE(mmDeg.has_value());
+    EXPECT_EQ(formatJointAxisText(0.1, runtime::JointType::Prismatic, mmDeg),
+              "100 mm");
+    EXPECT_EQ(formatJointAxisText(0.1, runtime::JointType::Revolute, mmDeg),
+              "5.72958 deg");
+    EXPECT_EQ(formatJointAxisText(1.0, runtime::JointType::Continuous, mmDeg),
+              "57.2958 deg");
+    EXPECT_EQ(formatJointAxisText(0.1, runtime::JointType::Prismatic, std::nullopt),
+              "0.1 m");
+    EXPECT_EQ(formatJointAxisText(0.1, runtime::JointType::Revolute, std::nullopt),
+              "0.1 rad");
+    // 回填文本（L-K5）：混合链会话姿态逐轴投影（修复前全轴角度——同 A05
+    // 缺陷面）：mm/deg 制式下 "5.72958 deg, 100 mm"。
+    Harness h;
+    h.sessionPose.setJointConfiguration({0.1, 0.1});
+    h.session.displayUnits = mmDeg;
+    const auto backfill = tcpBackfillText(
+        &h.sessionPose, h.session, {0.1, 0.1},
+        {runtime::JointType::Revolute, runtime::JointType::Prismatic});
+    ASSERT_TRUE(backfill.has_value());
+    EXPECT_EQ(*backfill, "5.72958 deg, 100 mm");
+    // 维度失配＝装配错误 fail-fast。
+    EXPECT_THROW(tcpBackfillText(&h.sessionPose, h.session, {0.1},
+                                 {runtime::JointType::Revolute}),
+                 std::invalid_argument);
+}
+
+/// A09 回归（零 Qt 编排半区）：复位 Home 具名来源四拒绝态＋成功态——
+/// 来源缺失/未定义/维度不符显式拒绝零写回，成功路径零修订（命令出口
+/// 计数为零——KIN-06/AT-04 结构面复核）。
+TEST(PluginPanelLinks, ResetHome_NamedSourceFlowGatesAndWrites_KIN_P3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-06"}, std::vector<std::string>{"AT-04"});
+    Harness h;
+    h.sessionPose.setJointConfiguration({0.4, 0.4});  // 当前姿态非零
+
+    // 拒绝态①：会话姿态缝未装配——无写点可落。
+    {
+        KinPanelServices noPose = h.services;
+        noPose.sessionPose = nullptr;
+        EXPECT_NE(resetSessionHomeFromNamedSource(noPose).find("不可用"),
+                  std::string::npos);
+    }
+    // 拒绝态②：具名来源缝未装配——显式拒绝（绝不以当前姿态充当 Home）。
+    {
+        KinPanelServices noHome = h.services;
+        noHome.homePose = nullptr;
+        const std::string text = resetSessionHomeFromNamedSource(noHome);
+        EXPECT_NE(text.find("不可用"), std::string::npos) << text;
+        EXPECT_NE(text.find("未装配"), std::string::npos) << text;
+    }
+    // 拒绝态③：来源在场但模型/会话未定义 Home（nullopt）——明确提示
+    // 零写回（当前姿态保持 0.4——修复前此处被原样写回并谎报成功）。
+    {
+        KinPanelServices absent = h.services;
+        absent.homePose = [] { return std::optional<std::vector<double>>{}; };
+        const std::string text = resetSessionHomeFromNamedSource(absent);
+        EXPECT_NE(text.find("未定义"), std::string::npos) << text;
+        EXPECT_NE(text.find("未写回"), std::string::npos) << text;
+    }
+    // 拒绝态④：来源值维度与设备自由度不符——显式反馈零写回（不钳制
+    // 不截断——截断写回伪造复位语义）。
+    {
+        KinPanelServices mismatch = h.services;
+        mismatch.homePose = [] {
+            return std::optional<std::vector<double>>(std::vector<double>{1.0});
+        };
+        const std::string text = resetSessionHomeFromNamedSource(mismatch);
+        EXPECT_NE(text.find("维度"), std::string::npos) << text;
+        EXPECT_NE(text.find("未写回"), std::string::npos) << text;
+    }
+    EXPECT_EQ(h.sessionPose.jointConfiguration(), (std::vector<double>{0.4, 0.4}));
+
+    // 成功态：具名 Home 在场——覆写会话姿态；零修订（命令提交出口计数
+    // 为零——结构上本流无提交通道，计数复核）。
+    h.services.homePose = [] {
+        return std::optional<std::vector<double>>(std::vector<double>{1.0, -2.0});
+    };
+    const std::string ok = resetSessionHomeFromNamedSource(h.services);
+    EXPECT_NE(ok.find("已复位 Home"), std::string::npos) << ok;
+    EXPECT_EQ(h.sessionPose.jointConfiguration(), (std::vector<double>{1.0, -2.0}));
+    EXPECT_EQ(h.commandSubmitCount, 0);
 }
 
 }  // namespace

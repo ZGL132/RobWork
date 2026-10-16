@@ -415,12 +415,14 @@ if(TARGET sdurws)
     target_sources(sdurws_ird_ui_test PRIVATE
         test/HostCompilePipelineTest.cpp
         test/KinEvaluationChannelTest.cpp  # UI-T64——覆盖评估执行器（受理/切片/账面/迟到判定）
+        test/KinHostServicesAssemblyTest.cpp  # ★ KIN-P4——宿主服务装配（网关转译/导出写出/配置持久化——同源直编 TU 的具名自证面；project/io 符号面集成树专属）
         test/View3DPreviewMarkerPositionTest.cpp  # UI-T77——预览协议 position 追加纪律（F-555；rw 头依赖面——冒烟树无框架目标不编）
         test/SampleHighlightTest.cpp  # FIX-T2——F-495 样本级定位：高亮键解析四路径/契约等值含新字段/诚实降级（rw 头依赖面同上——自基础源列表移入本守卫，修基线冒烟 C1083）
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostCompilePort.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostPresentationAdapters.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/QtTextBillboard.cpp  # UI-T77——被测 TU 的同源依赖（F-556 承载件）
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinEvaluationChannel.cpp)  # UI-T64——被测 TU 同源编入（HostCompilePort 先例形态）
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinEvaluationChannel.cpp  # UI-T64——被测 TU 同源编入（HostCompilePort 先例形态）
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinHostServicesAssembly.cpp)  # ★ KIN-P4——宿主服务装配 TU 同源编入（网关/写出/持久化用例的被测面）
     target_include_directories(sdurws_ird_ui_test PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         # UI-T64——kinematics 测试夹具复用（KinFkFixture header-only：
@@ -441,6 +443,8 @@ if(TARGET sdurws)
         sdurws_ird_modeling_plugin
         sdurws_ird_kinematics_plugin
         sdurws_ird_requirements
+        sdurws_ird_project    # ★ KIN-P4——宿主命令网关用例（IProjectQueryPort/CommandResult 值面——ird_gates IRD_TEST_TARGET_EDGES 随本包增登）
+        sdurws_ird_io         # ★ KIN-P4——导出写出缝用例（AtomicFile 真实写出——同上登记面）
         sdurws
         sdurw_math)
 endif()
@@ -910,6 +914,7 @@ if(TARGET sdurws)
         plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（映射真值/挂接对象/构造源）
         plugin/QtTextBillboard.cpp  # UI-T77——Qt 纹理化文本 billboard（F-556 承载件——呈现适配器骨架标签依赖）
         plugin/KinEvaluationChannel.cpp  # UI-T64——kinematics 覆盖评估执行通道（F-490① 上游批装配半区）
+        plugin/KinHostServicesAssembly.cpp  # ★ KIN-P4——面板服务缝宿主装配（网关/补丁/写出/持久化/Home——审查 §4 降级服务接通面）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 
@@ -1035,6 +1040,7 @@ if(TARGET sdurws)
         plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（与插件目标同源）
         plugin/QtTextBillboard.cpp  # UI-T77——Qt 纹理化文本 billboard（F-556 承载件，与插件目标同源）
         plugin/KinEvaluationChannel.cpp  # UI-T64——kinematics 覆盖评估执行通道（与插件目标同源）
+        plugin/KinHostServicesAssembly.cpp  # ★ KIN-P4——面板服务缝宿主装配（与插件目标同源）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 

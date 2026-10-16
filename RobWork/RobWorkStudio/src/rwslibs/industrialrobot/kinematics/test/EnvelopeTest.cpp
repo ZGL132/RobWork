@@ -247,29 +247,37 @@ TEST(KinEnvelope, Acc1_RayBoundaryDefault180SphericalShell_WP15T15)
            "序差异以 1e-12 容差断言）";
 
     // 逐方向：完成态与预算纪律；Rmax 断言分两层——
-    //   a) 全方向恒 ≤ 解析上界 1.8 m（hi 侧自解析已证不可达点起始——
-    //      下估计纪律）；
+    //   a) 全方向恒 ≤ 解析上界 1.8 m（下估计纪律；NoSampleFound 态
+    //      rMax 占位 0 同样满足）；
     //   b) 外包络主口径（max over rays）≥ 1.799 m——球壳真值 1.8 m 的
     //      1e-3 m 邻域（预算内 DLS 收敛精度，tol=1e-4 m）；
     //   c) 计数口径：≥160/180 方向 rMax ≥ 1.799 m——近极轴方向（斐波
     //      那芙螺旋 j≈0/179 处 dz→±1）在 Z 型基座下雅可比趋退化，DLS
     //      预算（4 初值×64 迭代）内可能不收敛→该方向按"搜索未果"记
-    //      rMax=0——这正是 KIN-10"近似、非精确"的语义体现（近似根源 2：
-    //      搜索未果不作不可行证明，只作下估计），用例如实按计数口径
-    //      断言而非全方向强断言。
+    //      NoSampleFound 低置信态（KIN-P5/审查 A04 起"未找到"不再并入
+    //      Computed 输出 rMax=0——本用例按两终态词表逐方向判读），这正是
+    //      KIN-10"近似、非精确"的语义体现（近似根源 2：搜索未果不作
+    //      不可行证明），用例如实按计数口径断言而非全方向强断言。
     const std::vector<rw::math::Vector3D<double>> goldenDirections =
         kin::generateDirections(kin::kEnvelopeDirectionCountDefault);
     std::uint32_t convergedRays = 0;
     double maxRmax = 0.0;
     for (std::uint32_t j = 0; j < env.rays.size(); ++j) {
         const EnvelopeRayRecord& ray = env.rays[j];
-        ASSERT_EQ(ray.state, EnvelopeRayState::Computed) << "方向 " << j;
+        ASSERT_TRUE(ray.state == EnvelopeRayState::Computed
+                    || ray.state == EnvelopeRayState::NoSampleFound)
+            << "方向 " << j << "：正常返回只有两终态";
         EXPECT_EQ(ray.directionIndex, j) << "方向序＝生成序（黄金锁定）";
         EXPECT_TRUE(ray.direction == goldenDirections[j])
             << "方向集复用 §7.2 黄金设施（方向 " << j << "）";
         EXPECT_LE(ray.rMax, 1.8) << "方向 " << j << "：下估计不超上界";
         EXPECT_GT(ray.probeCount, 0U) << "方向 " << j << "：预算素材非空";
-        EXPECT_TRUE(ray.reason.empty()) << "Computed 态 reason 为空";
+        if (ray.state == EnvelopeRayState::Computed) {
+            EXPECT_TRUE(ray.reason.empty()) << "Computed 态 reason 为空";
+        } else {
+            EXPECT_FALSE(ray.reason.empty())
+                << "方向 " << j << "：NoSampleFound 必填原因";
+        }
         if (ray.rMax >= 1.799) {
             ++convergedRays;
         }
@@ -356,6 +364,65 @@ TEST(KinEnvelope, Acc1_CancellableAtEntry_WP15T15)
 // ACC1——取消经求解器内部探针返回（IkOutcome.cancelled 上调传播）
 // =====================================================================
 
+/**
+ * @brief 脚本边界替身（KIN-P5 重构后取消/设施失败中断轨的载体——半径
+ *        边界脚本保证方向需多次探测〔站点内扫＋二分〕，中断能落在方向
+ *        进行中而非首个探针）。
+ *
+ * 行为：‖p‖ ≤ boundary 可达（SolutionsFound——presence 不变式自补），
+ * 否则 MultiInitNoConvergence；cancelAfterN/facilityAfterN 分别在第 N
+ * 次（1 起）调用起注入取消/设施失败（0＝不注入）。
+ */
+class BoundaryScriptSolver final : public kin::IIkSolver {
+public:
+    BoundaryScriptSolver(double boundary, std::uint32_t cancelAfterN,
+                         std::uint32_t facilityAfterN)
+        : m_boundary(boundary),
+          m_cancelAfterN(cancelAfterN),
+          m_facilityAfterN(facilityAfterN)
+    {
+    }
+
+    kin::IkOutcome solve(const kin::IkRequest& request) const override
+    {
+        const std::uint64_t call = m_calls + 1;
+        ++m_calls;
+
+        kin::IkOutcome out;
+        // 注入序：取消/设施失败优先（非终局形态——与真实求解器的
+        // cancelled/facilityFailure 上调同构）。
+        if (m_cancelAfterN != 0U && call >= m_cancelAfterN) {
+            out.cancelled = true;
+            return out;
+        }
+        if (m_facilityAfterN != 0U && call >= m_facilityAfterN) {
+            out.facilityFailure = kin::IkFacilityFailure{
+                kin::IkFacilityFailureStage::ResidualRecheck,
+                "替身注入的设施失败（ResidualRecheck——素材转载断言源）"};
+            return out;
+        }
+        if (request.targetInBase.P().norm2() <= m_boundary) {
+            out.outcomeKind = kin::IkOutcomeKind::SolutionsFound;
+            kin::KinematicSolution s;
+            s.q = {0.0, 0.0, 0.0};
+            out.solutionSet.solutions.push_back(s);
+        } else {
+            out.outcomeKind = kin::IkOutcomeKind::MultiInitNoConvergence;
+            kin::IkSearchRecord record;
+            out.solutionSet.searchRecord = record;
+        }
+        return out;
+    }
+
+    std::uint64_t calls() const { return m_calls; }
+
+private:
+    double m_boundary;                 ///< 可达半径边界（m，基座系 {B}）
+    std::uint32_t m_cancelAfterN;      ///< 第 N 次调用起取消（0＝不注入）
+    std::uint32_t m_facilityAfterN;    ///< 第 N 次调用起设施失败（0＝不注入）
+    mutable std::uint64_t m_calls = 0; ///< solve 调用计数
+};
+
 TEST(KinEnvelope, Acc1_CancelPropagatedFromSolver_WP15T15)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-10"},
@@ -364,9 +431,10 @@ TEST(KinEnvelope, Acc1_CancelPropagatedFromSolver_WP15T15)
     const rt::CanonicalModel model = sphericalShellModel();
     TestView view(model);
 
-    // 替身：首次求解可达（锚点成立），其后求解返回 cancelled=true——
-    // 包络层须按取消轨处置（非结局、停止全部、NotRun 标记）。
-    CountingSolver solver(CountingSolver::Script::ReachThenCancel);
+    // 替身：半径边界 1.5 m（首方向需多站内扫＋多轮二分——中断落在方向
+    // 进行中的二分阶段），第 4 次求解起返回 cancelled=true——包络层须按
+    // 取消轨处置（非结局、停止全部、中断方向 NotRun 标记）。
+    BoundaryScriptSolver solver(1.5, 4U, 0U);
     EnvelopeQuery query = makeQuery(&solver, 4U);
     const kin::Expected<EnvelopeResult> result =
         kin::computeApproximateEnvelope(view, shellTcp(), query);
@@ -376,7 +444,8 @@ TEST(KinEnvelope, Acc1_CancelPropagatedFromSolver_WP15T15)
     EXPECT_TRUE(env.cancelled);
     EXPECT_FALSE(env.facilityFailure.has_value());
     EXPECT_EQ(env.rays[0].state, EnvelopeRayState::NotRun)
-        << "中断方向本身标记 NotRun（二分中断轨）";
+        << "中断方向本身标记 NotRun（二分中断轨——KIN-P5 起首方向经站点"
+           "内扫＋二分多探针，中断落在其进行中）";
     EXPECT_FALSE(env.rays[0].reason.empty());
     for (std::size_t j = 1; j < env.rays.size(); ++j) {
         EXPECT_EQ(env.rays[j].state, EnvelopeRayState::NotRun) << "方向 " << j;
@@ -484,13 +553,16 @@ TEST(KinEnvelope, ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15)
 
     // 脚本边界替身：‖p‖ ≤ 1.5 m 可达、否则搜索未果（MultiInitNo-
     // Convergence——近似根源 2 的"当不可达侧使用"轨）。锚点 t=0.9 命中
-    // 可达；二分边界收敛于 1.5 m。记录逐请求半径与姿态容差（接线断言面
-    // ——RegionCoverageTest ScriptedSolver 同款先例）。
+    // 可达；二分边界收敛于 1.5 m。记录逐请求半径与任务空间模式（接线
+    // 断言面——RegionCoverageTest ScriptedSolver 同款先例；KIN-P2/A02
+    // 起存在性口径判别＝taskSpace，旧"姿态容差 π"判别随该机制移除）。
     class RadiusBoundarySolver final : public kin::IIkSolver {
     public:
         struct RecordedRequest {
             double probedRadius = 0.0;          ///< ‖p‖（m，基座系 {B}）
-            double orientationTolerance = 0.0;  ///< rad（存在性口径判别）
+            double orientationTolerance = 0.0;  ///< rad（合法域载体——不参与判定）
+            kin::IkTaskSpace taskSpace =
+                kin::IkTaskSpace::FullPose;     ///< 任务维度（存在性口径判别）
         };
 
         mutable std::vector<RecordedRequest> requests;
@@ -501,6 +573,7 @@ TEST(KinEnvelope, ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15)
             RecordedRequest rec;
             rec.probedRadius = p.norm2();  // rw norm2＝欧氏 2-范数（m）
             rec.orientationTolerance = request.orientationTolerance;
+            rec.taskSpace = request.taskSpace;
             requests.push_back(rec);
 
             kin::IkOutcome out;
@@ -533,12 +606,16 @@ TEST(KinEnvelope, ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15)
         EXPECT_GE(ray.rMax, 1.5 - 1e-3) << "方向 " << ray.directionIndex;
     }
 
-    // 存在性口径接线：全部探针＝位置存在性 IK（姿态无约束落值 π——
-    // kEnvelopePoseFreeTolerance 同值）。
+    // 存在性口径接线（KIN-P2/A02 迁移后）：全部探针＝位置存在性 IK
+    // （taskSpace=PositionOnly——姿态项不进目标函数）；姿态容差为请求
+    // 合法域载体（IkRequest 默认合法值，不参与本任务收敛判定——断言
+    // >0 有限即可，恒 π 的旧钉随 kEnvelopePoseFreeTolerance 移除废除）。
     ASSERT_GT(radiusSolver.requests.size(), 0U);
     for (const auto& rec : radiusSolver.requests) {
-        EXPECT_DOUBLE_EQ(rec.orientationTolerance,
-                         kin::kEnvelopePoseFreeTolerance);
+        EXPECT_EQ(rec.taskSpace, kin::IkTaskSpace::PositionOnly)
+            << "包络位置探针必须以仅位置任务维度提交（A02 迁移钉）";
+        EXPECT_GT(rec.orientationTolerance, 0.0);
+        EXPECT_TRUE(std::isfinite(rec.orientationTolerance));
     }
     // 探测点全部在解析上界内（hi 侧解析免探测——预算不越过 Rup；
     // 1e-9 m 裕量吸收单位向量模长的 1±ε 浮点噪声）。
@@ -557,6 +634,87 @@ TEST(KinEnvelope, ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15)
 }
 
 // =====================================================================
+// KIN-P2（审查 A02 验收驳回补迁移）——包络位置探针的任务维度行为钉
+// =====================================================================
+
+/**
+ * @brief 包络探针必须以 PositionOnly 任务维度发起位置存在性判定（行为
+ *        级迁移钉——非仅字段透传）。
+ *
+ * 替身模拟"位置实心可达、姿态自由度不足"的链（审查 A02 形态）：仅当
+ * 请求以 taskSpace=PositionOnly（位置存在性）提交时按 ‖p‖≤1.5 判可达；
+ * FullPose 请求（姿态恒等目标）一律搜索未果——即姿态项牵制位置解的
+ * 缺陷形态。包络必须以 PositionOnly 探针使 rMax 收敛到脚本边界 1.5 m；
+ * 若实现回退旧"π 容差/FullPose"机制（迁移回退），全部探针搜索未果、
+ * 锚点耗尽 → rMax=0——本用例红。修复前（2c163349 主提交漏迁移包络
+ * 通道）即此红形态；这是探针级可观测差异的锚点——真实几何端到端的
+ * rMax 差异在退化链上会被审查 A04 的锚点未命中机制（位置可达集为
+ * 环/壳时内锚点全灭）掩盖，故以脚本边界承载行为差异（与 RadiusBoundary
+ * 替身同族口径）。
+ */
+TEST(KinEnvelope, PositionProbeUsesTaskSpaceSemantics_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-10", "KIN-02", "KIN-04"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = sphericalShellModel();
+    TestView view(model);
+
+    // 姿态受限链替身：PositionOnly（位置存在性）→ ‖p‖≤1.5 可达；
+    // FullPose → 一律搜索未果（姿态自由度不足的 A02 缺陷形态模拟）。
+    // 记录 taskSpace 供迁移面断言。
+    class PositionOnlyBoundarySolver final : public kin::IIkSolver {
+    public:
+        mutable int positionOnlyCalls = 0;   ///< PositionOnly 请求计数
+        mutable int fullPoseCalls = 0;       ///< FullPose 请求计数（期望 0）
+
+        kin::IkOutcome solve(const kin::IkRequest& request) const override
+        {
+            const rw::math::Vector3D<double> p = request.targetInBase.P();
+            kin::IkOutcome out;
+            if (request.taskSpace == kin::IkTaskSpace::PositionOnly) {
+                ++positionOnlyCalls;
+                if (p.norm2() <= 1.5) {
+                    out.outcomeKind = kin::IkOutcomeKind::SolutionsFound;
+                    kin::KinematicSolution s;
+                    s.q = {0.0, 0.0, 0.0};
+                    out.solutionSet.solutions.push_back(s);
+                    return out;
+                }
+            } else {
+                ++fullPoseCalls;  // 迁移回退即非零——行为钉的失败面
+            }
+            out.outcomeKind = kin::IkOutcomeKind::MultiInitNoConvergence;
+            kin::IkSearchRecord record;
+            out.solutionSet.searchRecord = record;
+            return out;
+        }
+    };
+    PositionOnlyBoundarySolver solver;
+
+    EnvelopeQuery query = makeQuery(&solver, 4U);
+    const kin::Expected<EnvelopeResult> result =
+        kin::computeApproximateEnvelope(view, shellTcp(), query);
+    ASSERT_TRUE(result.ok());
+    const EnvelopeResult& env = result.get();
+
+    // 行为差异面：rMax 收敛于位置存在性边界 1.5 m（迁移回退→rMax=0）。
+    ASSERT_EQ(env.rays.size(), 4U);
+    for (const EnvelopeRayRecord& ray : env.rays) {
+        ASSERT_EQ(ray.state, EnvelopeRayState::Computed) << "方向 "
+                                                         << ray.directionIndex;
+        EXPECT_LE(ray.rMax, 1.5) << "方向 " << ray.directionIndex;
+        EXPECT_GE(ray.rMax, 1.5 - 1e-3)
+            << "方向 " << ray.directionIndex
+            << "（rMax=0＝位置存在性探针被姿态项牵制的迁移回退形态）";
+    }
+    // 迁移面：全部探针 PositionOnly、零 FullPose 泄漏。
+    EXPECT_GT(solver.positionOnlyCalls, 0);
+    EXPECT_EQ(solver.fullPoseCalls, 0)
+        << "包络探针不得以完整位姿任务发起位置存在性判定（A02）";
+}
+
+// =====================================================================
 // 设施失败——非终局轨（素材转载＋停止全部＋NotRun 标记）
 // =====================================================================
 
@@ -568,9 +726,10 @@ TEST(KinEnvelope, FacilityFailureNonTerminalStopsAll_WP15T15)
     const rt::CanonicalModel model = sphericalShellModel();
     TestView view(model);
 
-    // 替身：首次求解可达（锚点成立），其后设施失败——包络层须按
-    // 非终局轨处置（无结局、无工程结论、素材转载、剩余方向 NotRun）。
-    CountingSolver solver(CountingSolver::Script::ReachThenFacility);
+    // 替身：半径边界 1.5 m（首方向需多站内扫＋多轮二分），第 4 次求解
+    // 起设施失败——包络层须按非终局轨处置（无结局、无工程结论、素材
+    // 转载、剩余方向 NotRun）。
+    BoundaryScriptSolver solver(1.5, 0U, 4U);
     EnvelopeQuery query = makeQuery(&solver, 4U);
     const kin::Expected<EnvelopeResult> result =
         kin::computeApproximateEnvelope(view, shellTcp(), query);
@@ -595,17 +754,19 @@ TEST(KinEnvelope, FacilityFailureNonTerminalStopsAll_WP15T15)
 }
 
 // =====================================================================
-// 近似空结论——平面臂全方向 rMax=0（锚点耗尽→Computed 零值）
+// KIN-P5（审查 A04）——未找到可达样本＝NoSampleFound 低置信态
+// （旧"近似空结论"Computed＋rMax=0 的确定结论形态废除）
 // =====================================================================
 
-TEST(KinEnvelope, PlanarArmAllRaysApproximateEmpty_WP15T15)
+TEST(KinEnvelope, NoSampleFoundLowConfidenceState_KIN_P5)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-10"},
                   std::vector<std::string>{"AT-26"});
 
     // 平面二连杆（KinFkFixture 黄金算例 A——工作空间在 z=0 平面）；
     // 斐波那契螺旋方向集（N=偶数）无精确赤道方向——全部方向 dz≠0，
-    // 锚点探测耗尽→全部方向近似空结论（rMax=0、Computed）。
+    // 脚本求解器恒搜索未果（模拟数值搜索全灭——审查 A04 的"未找到"
+    // 形态）→ 全部方向 NoSampleFound 低置信态。
     const rt::CanonicalModel model = twoLinkModel();
     TestView view(model);
 
@@ -620,13 +781,197 @@ TEST(KinEnvelope, PlanarArmAllRaysApproximateEmpty_WP15T15)
 
     ASSERT_EQ(env.rays.size(), 8U);
     for (const EnvelopeRayRecord& ray : env.rays) {
-        EXPECT_EQ(ray.state, EnvelopeRayState::Computed)
-            << "方向 " << ray.directionIndex << "：近似空结论是 Computed 态";
-        EXPECT_DOUBLE_EQ(ray.rMax, 0.0);
-        EXPECT_TRUE(ray.reason.empty());
+        // 诚实性断言（审查 A04 验收锚）：站点全灭＝NoSampleFound——
+        // 绝不回退为 Computed＋rMax=0 的确定结论（迁移回退即本用例红）。
+        EXPECT_EQ(ray.state, EnvelopeRayState::NoSampleFound)
+            << "方向 " << ray.directionIndex
+            << "：未找到可达样本必须是 NoSampleFound 低置信态";
+        EXPECT_DOUBLE_EQ(ray.rMax, 0.0) << "rMax 占位（本态无语义）";
+        EXPECT_FALSE(ray.reason.empty())
+            << "NoSampleFound 必填原因（低置信语义随文案显式携带）";
+        EXPECT_NE(ray.reason.find("未找到可达样本"), std::string::npos)
+            << "方向 " << ray.directionIndex << "：原因须明示'未找到'而非"
+                                               "确定性不可达";
+        EXPECT_NE(ray.reason.find("不构成"), std::string::npos)
+            << "原因须显式声明不构成确定性不可达结论（C5/C8 措辞纪律）";
+        // 预算素材：全部站点已探测（非零消耗）。
+        EXPECT_GT(ray.probeCount, 0U) << "方向 " << ray.directionIndex;
     }
     EXPECT_FALSE(env.cancelled);
     EXPECT_FALSE(env.facilityFailure.has_value());
+}
+
+// =====================================================================
+// KIN-P5（审查 A04 反例 1）——退化链上界点先行试探：圆形工作空间
+// +X 最外可达 1 m 必须命中（修复前 Rmax=0 的漏估形态钉死）
+// =====================================================================
+
+TEST(KinEnvelope, DegenerateChainUpperBoundProbeFirst_KIN_P5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-10", "KIN-02"},
+                  std::vector<std::string>{});
+
+    // 审查 A04 反例几何：六轴同轴退化链（coaxialChainModel——TCP 距轴
+    // 1 m，解析工作空间＝xy 平面半径 1 m 的圆；+X 最外可达点 (1,0,0)
+    // 由零位构型 q=0 精确到达）。旧算法两处叠加漏估：①上界点 (Rup=
+    // 1 m) 被当作"已证不可达"免探测（错误表述——三角形不等式取等时
+    // 上界点恰可达）；②内锚点 t=0.5 处初值 q=0 的雅可比秩 1（切向），
+    // 径向目标一阶不可达→锚点全灭→rMax=0。新算法上界站先行试探，
+    // 零位即精确命中→rMax=Rup 直接成立。
+    const rt::CanonicalModel model = coaxialChainModel();
+    TestView view(model);
+
+    kin::TcpRef tcp;
+    tcp.toolObject = model.tools().front().objectId;
+
+    EnvelopeQuery query;  // 审查探针同款预算（ReferenceQ 单初值——
+    query.referenceQ = std::vector<double>(6, 0.0);  // rad（6 自由度）
+    query.initialStrategy = kin::InitialValueStrategy::ReferenceQ;
+    query.initialValuesCount = 1U;
+    query.iterationLimit = 64U;
+    query.positionTolerance = 1e-6;      // m
+    query.dedupThresholdPerAxis = 1e-6;  // rad
+    query.directionCount = 1U;           // 单方向＝+X（generateDirections(1) 黄金退化）
+    query.seed = 1U;
+    query.solver = nullptr;  // 真实内置求解器（数值路径）
+
+    const kin::Expected<EnvelopeResult> result =
+        kin::computeApproximateEnvelope(view, tcp, query);
+    ASSERT_TRUE(result.ok());
+    const EnvelopeResult& env = result.get();
+    ASSERT_EQ(env.rays.size(), 1U);
+
+    EXPECT_NEAR(env.reachUpperBound, 1.0, 1e-12) << "解析上界＝TCP 偏置 1 m";
+    EXPECT_EQ(env.rays[0].state, EnvelopeRayState::Computed)
+        << "上界站命中——Computed 态（修复前：锚点全灭→rMax=0）";
+    EXPECT_NEAR(env.rays[0].rMax, 1.0, 1e-4)
+        << "审查 A04 反例：圆形工作空间 +X 最外可达 1 m 必须被估算命中";
+    EXPECT_GT(env.rays[0].probeCount, 0U);
+    EXPECT_TRUE(env.rays[0].reason.empty());
+}
+
+// =====================================================================
+// KIN-P5（审查 A04 反例 2）——窄环带（不含上界点）站点扫描命中：
+// 折叠二连杆可达带 [0.40, 0.474] m、Rup=1.1 m，修复前锚点（0.55/0.275/
+// …）全灭输出 Rmax=0
+// =====================================================================
+
+TEST(KinEnvelope, NarrowBandAwayFromUpperBoundFound_KIN_P5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-10"},
+                  std::vector<std::string>{});
+
+    // 本文件自持窄带几何：平面二连杆、j2 折叠限位 [π−0.5, π+0.5]（rad）
+    // ——可达集 |p| ∈ [0.4, 0.4736]（解析：|p|²＝0.75²＋0.35²＋2·0.75·
+    // 0.35·cos q2，cos q2 ∈ [−1, −cos 0.5=−0.87758]）；解析上界 Rup＝
+    // 0.75＋0.35＝1.1 m（三角形不等式——**不在**可达带内）。旧几何
+    // 锚点序列 t=0.55, 0.275, … 全部落在带外→rMax=0（A04 漏估）；新
+    // 等差站点分辨率 1.1/32≈0.0344 m＜带宽 0.0736 m→j=13 站（0.4469）
+    // 命中，二分收敛于带外缘 0.4736。
+    constexpr double kL1 = 0.75;  // m
+    constexpr double kL2 = 0.35;  // m
+    constexpr double kFold = 0.5;  // rad（j2 折叠半宽——带外缘决定量）
+    std::vector<rt::CanonicalJoint> joints;
+    joints.push_back(revolute("b1", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0), -2.97, 2.97));
+    joints.push_back(revolute("b2", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(kL1, 0, 0), 3.14159265358979323846 - kFold,
+                              3.14159265358979323846 + kFold));
+    const rt::CanonicalModel model = makeModel(joints, trans(kL2, 0, 0));
+    TestView view(model);
+
+    kin::TcpRef tcp;
+    tcp.toolObject = model.tools().front().objectId;
+
+    EnvelopeQuery query;
+    query.referenceQ = {0.0, 3.14159265358979323846};  // rad（折叠构型参考）
+    query.initialStrategy = kin::InitialValueStrategy::SeededRandom;
+    query.initialValuesCount = 24U;  // 多初值降局部极小（黄金覆盖同款预算）
+    query.iterationLimit = 400U;
+    query.positionTolerance = 1e-4;      // m（估算预算——文件头注说明）
+    query.dedupThresholdPerAxis = 1e-6;  // rad
+    query.directionCount = 1U;           // 单方向＝+X
+    query.seed = 20261016U;
+    query.solver = nullptr;
+
+    const kin::Expected<EnvelopeResult> result =
+        kin::computeApproximateEnvelope(view, tcp, query);
+    ASSERT_TRUE(result.ok());
+    const EnvelopeResult& env = result.get();
+    ASSERT_EQ(env.rays.size(), 1U);
+
+    const double kBandOuter =
+        std::sqrt(kL1 * kL1 + kL2 * kL2
+                  + 2.0 * kL1 * kL2 * (-std::cos(kFold)));  // m（0.4736）
+    EXPECT_NEAR(env.reachUpperBound, 1.1, 1e-12) << "解析上界＝L1＋L2";
+    EXPECT_EQ(env.rays[0].state, EnvelopeRayState::Computed)
+        << "窄带被站点扫描命中——Computed 态（修复前：锚点全灭→rMax=0）";
+    EXPECT_GE(env.rays[0].rMax, kBandOuter - 0.003)
+        << "下估计须逼窄带外缘（下界）；实际 " << env.rays[0].rMax;
+    EXPECT_LE(env.rays[0].rMax, kBandOuter + 1e-3)
+        << "下估计不越带外缘（可达性凭据纪律——不允许超出脚本可达带）";
+}
+
+// =====================================================================
+// KIN-P5（审查 A06）——包络探针初值种子的完整 64 位敏感：seed=1 与
+// seed=2³²＋1 的同序号探针初值必须不同（修复前 probeSeedFor 在模 2⁶⁴
+// 下两 seed 状态相同→初值序列相同）
+// =====================================================================
+
+TEST(KinEnvelope, ProbeSeedFull64BitSensitivity_A06_KIN_P5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-10", "KIN-13", "NFR-COR-01"},
+                  std::vector<std::string>{});
+
+    // 初值记录替身：捕获每请求的初值矩阵（探针种子敏感性的直接观测面
+    // ——包络把 makeInitialValues 的产物原样透传 IK 请求）。
+    class InitRecordingSolver final : public kin::IIkSolver {
+    public:
+        mutable std::vector<std::vector<std::vector<double>>> seen;
+        kin::IkOutcome solve(const kin::IkRequest& request) const override
+        {
+            seen.push_back(request.initialValues);
+            kin::IkOutcome out;
+            out.outcomeKind = kin::IkOutcomeKind::SolutionsFound;
+            kin::KinematicSolution s;
+            s.q = {0.0, 0.0, 0.0, 0.0, 0.0};
+            out.solutionSet.solutions.push_back(s);
+            return out;
+        }
+    };
+
+    const rt::CanonicalModel model = sphericalShellModel();
+    TestView view(model);
+
+    // 同一查询面只差 seed 高 32 位（1 与 1＋2³²——审查 A06 反例对）：
+    // 各跑单方向包络，首个探针（上界站）的初值矩阵必须不同。
+    InitRecordingSolver solverLow;
+    EnvelopeQuery queryLow = makeQuery(&solverLow, 1U, 1U);
+    const kin::Expected<EnvelopeResult> runLow =
+        kin::computeApproximateEnvelope(view, shellTcp(), queryLow);
+    ASSERT_TRUE(runLow.ok());
+    ASSERT_GT(solverLow.seen.size(), 0U);
+
+    InitRecordingSolver solverHigh;
+    EnvelopeQuery queryHigh = makeQuery(&solverHigh, 1U, 1U + (1ULL << 32));
+    const kin::Expected<EnvelopeResult> runHigh =
+        kin::computeApproximateEnvelope(view, shellTcp(), queryHigh);
+    ASSERT_TRUE(runHigh.ok());
+    ASSERT_GT(solverHigh.seen.size(), 0U);
+
+    ASSERT_EQ(solverLow.seen[0].size(), solverHigh.seen[0].size());
+    EXPECT_NE(solverLow.seen[0], solverHigh.seen[0])
+        << "审查 A06：seed 高 32 位必须参与探针初值派生（修复前两 seed "
+           "同序号探针初值相同——多样性来源被静默丢弃）";
+
+    // 同种子重跑逐位一致（确定性不因混合派生破坏——NFR-COR-01）。
+    InitRecordingSolver solverLow2;
+    EnvelopeQuery queryLow2 = makeQuery(&solverLow2, 1U, 1U);
+    const kin::Expected<EnvelopeResult> runLow2 =
+        kin::computeApproximateEnvelope(view, shellTcp(), queryLow2);
+    ASSERT_TRUE(runLow2.ok());
+    EXPECT_EQ(solverLow.seen[0], solverLow2.seen[0])
+        << "同 seed 同序号探针初值逐位一致（可复现）";
 }
 
 // =====================================================================

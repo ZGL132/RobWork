@@ -2,7 +2,11 @@
  * @file   Ik.cpp
  * @brief  多初值 IK 求解实现（KIN-02）——请求校验、初值策略生成、阻尼
  *         最小二乘迭代、解析界限检查与五类结局组装（§5.3 时序）；FK 复算
- *         失败走求解设施失败值面（F-746③——非终局形态，不抛）。
+ *         复算失败走求解设施失败值面（F-746③——非终局形态，不抛）。
+ *         ★ KIN-P2（审查 A02）：迭代与收敛判据任务维度感知——IkTaskSpace
+ *         PositionOnly（仅位置任务）只优化 3 维位置误差及 Jacobian 位置
+ *         子块（姿态不进目标函数），FullPose（完整位姿）保持 v1 行为
+ *         逐位不变；求解器契约版本随行为集扩展升 v2（CON-04）。
  *
  * 设计依据（契约面见 Ik.hpp 文件头）：units/kinematics.md §5.3/§5.4/
  * §6.1/§6.3/§9.2/§3.4；治理登记 O-40（Eigen PRIVATE 仅实现文件——本
@@ -172,36 +176,48 @@ Eigen::Matrix<double, 6, 1> poseError(const rw::math::Transform3D<double>& targe
     return e;
 }
 
-/// 阻尼最小二乘步长 Δq＝Jᵀ(JJᵀ＋λ²I₆)⁻¹e（λ＝kIkDampingLambda——设计
+/// 阻尼最小二乘步长 Δq＝Jₜᵀ(JₜJₜᵀ＋λ²I_m)⁻¹eₜ（λ＝kIkDampingLambda——设计
 /// 默认，黄金锁定 T13；行优先雅可比显式映射拷贝——Eigen 默认列主序，
 /// 存储序耦合禁用，Fk.cpp 同款取舍）。
+/// ★ m＝任务维度（KIN-P2/A02 表尾追加 taskDim 参数）：完整位姿任务
+///   m=6（Jₜ＝完整 6×dof Jacobian）；仅位置任务 m=3（Jₜ＝Jacobain 的前
+///   3 行位置子块——姿态行不进目标函数，A02 根因修复的核心：旧实现
+///   6 维误差＋完整 J 迭代时姿态项把位置可达解牵制出局）。正规方程
+///   对应为 m×m 对称正定阵。
 Eigen::VectorXd dampedLeastSquaresStep(const std::vector<double>& jacobianRowMajor,
                                        std::size_t dof,
-                                       const Eigen::Matrix<double, 6, 1>& e)
+                                       std::size_t taskDim,
+                                       const Eigen::VectorXd& e)
 {
-    Eigen::MatrixXd J(6, static_cast<Eigen::Index>(dof));
-    for (std::size_t r = 0; r < 6; ++r) {
+    Eigen::MatrixXd J(static_cast<Eigen::Index>(taskDim),
+                      static_cast<Eigen::Index>(dof));
+    for (std::size_t r = 0; r < taskDim; ++r) {
         for (std::size_t c = 0; c < dof; ++c) {
             J(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c)) =
                 jacobianRowMajor[r * dof + c];
         }
     }
-    // 正规方程矩阵 A＝JJᵀ＋λ²I₆（6×6 对称正定——λ>0 保证可逆；LLT
+    // 正规方程矩阵 A＝JₜJₜᵀ＋λ²I_m（m×m 对称正定——λ>0 保证可逆；LLT
     // 单线程固定算法——确定性）。
-    Eigen::Matrix<double, 6, 6> A = J * J.transpose();
+    Eigen::MatrixXd A = J * J.transpose();
     const double lambda2 = kIkDampingLambda * kIkDampingLambda;
-    for (int i = 0; i < 6; ++i) {
+    for (Eigen::Index i = 0; i < static_cast<Eigen::Index>(taskDim); ++i) {
         A(i, i) += lambda2;
     }
-    const Eigen::Matrix<double, 6, 1> x = A.llt().solve(e);
+    const Eigen::VectorXd x = A.llt().solve(e);
     return J.transpose() * x;
 }
 
 /// 收敛判据（§5.3"每个收敛候选 q̂（残差 ≤ 两容差，逐项）"——逐项比较，
-/// 不做合模长）。
-bool converged(double posResidual, double oriResidual,
-               double posTol, double oriTol)
+/// 不做合模长）。★ 任务维度感知（KIN-P2/A02）：仅位置任务的收敛判据
+/// 只查位置残差（姿态残差是信息性记录、不参与判定——IkTaskSpace 注）；
+/// 完整位姿任务保持 v1 双残差逐项语义逐位不变。
+bool convergedForTask(IkTaskSpace taskSpace, double posResidual,
+                      double oriResidual, double posTol, double oriTol)
 {
+    if (taskSpace == IkTaskSpace::PositionOnly) {
+        return posResidual <= posTol;
+    }
     return posResidual <= posTol && oriResidual <= oriTol;
 }
 
@@ -272,6 +288,34 @@ std::uint64_t splitmix64(std::uint64_t& state)
     return z ^ (z >> 31);
 }
 
+/// (seed, 序号) 二元组的完整 64 位流种子派生（KIN-P5/审查 A06 修复——
+/// 唯一混合点：SeededRandom 初值流的每初值状态由此产出）。
+///
+/// 为什么不用旧式 "seed·2³²＋k"：uint64 乘法按模 2⁶⁴ 回卷，seed 的
+/// 高 32 位与 k 写进同一加法域——seed=1 与 seed=2³²＋1 的第 k 项状态
+/// 完全相同（1·2³²＋k ≡ (2³²＋1)·2³²＋k mod 2⁶⁴），整个初值序列对
+/// seed 高 32 位不敏感（审查 A06 反例：不同 64 位种子生成相同序列，
+/// 多样性来源被静默丢弃）。
+///
+/// 派生规则（确定性——同 (seed, index) 同输出；跨平台位级一致）：
+///   a ＝ splitmix64(seed)——seed 全 64 位 avalanche（高位翻转雪崩到
+///       全字宽，任何 1 位 seed 差异扩散为约半数位差异）；
+///   b ＝ splitmix64(index ⊕ 黄金常量)——序号独立 avalanche（⊕常量
+///       把 index=0 拉离 a 的恒等点，防 a⊕0=a 的平凡回归）；
+///   输出 ＝ splitmix64(a ⊕ b)——再 avalanche 消除异或的线性结构。
+/// 三步后 (seed, index) 任一输入位的改变都以约 1/2 概率翻转输出的任
+/// 一位——两个不同 64 位 seed 生成不同序列（除非发生 SHA 级碰撞，对
+/// splitmix64 双射 avalanche 实际不可构造）。
+std::uint64_t streamSeedFor(std::uint64_t seed, std::uint64_t index)
+{
+    std::uint64_t s = seed;
+    const std::uint64_t a = splitmix64(s);
+    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;
+    const std::uint64_t b = splitmix64(t);
+    std::uint64_t u = a ^ b;
+    return splitmix64(u);
+}
+
 /// u64 → [0,1) 均匀归一化（53 位有效——双精度无偏下界）。
 double unitFromU64(std::uint64_t v)
 {
@@ -311,11 +355,13 @@ std::vector<std::vector<double>> makeInitialValues(InitialValueStrategy strategy
         break;
     }
     case InitialValueStrategy::SeededRandom: {
-        // seed 派生确定性序列：第 k 个初值逐轴 u_k,i∈[0,1)（splitmix64
-        // 按初值序→轴序派生——同 seed 同矩阵；混入 k 防逐轴重复序列）。
+        // seed 派生确定性序列：第 k 个初值状态＝(seed, k) 完整 64 位混合
+        // （streamSeedFor——KIN-P5/审查 A06：旧"seed·2³²＋k"在模 2⁶⁴
+        // 算术下丢弃 seed 高 32 位，不同高位种子假借同序列；混合派生后
+        // 逐轴 u_k,i∈[0,1)（splitmix64 按轴序连续派生——同 seed 同矩阵）。
         out.reserve(count);
         for (std::uint32_t k = 0; k < count; ++k) {
-            std::uint64_t state = seed * 0x100000000ull + k;  // 混入初值序
+            std::uint64_t state = streamSeedFor(seed, k);  // 初值序入混合
             std::vector<double> q;
             q.reserve(intervals.size());
             for (const auto& itv : intervals) {
@@ -392,6 +438,25 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
         failCaller("IkRequest.orientationTolerance：姿态容差非法（须有限且>0，"
                    "单位 rad）——KIN-TARGET-ILLEGAL 语义锚（§5.5）");
     }
+
+    // 任务空间模式值域校验（KIN-P2/A02 表尾追加字段的词表面——uint8
+    // 位型强转可造出词表外值，NFR-COR-03 拒绝不静默归约）。注意两容差
+    // 的合法域校验不随任务模式放宽：orientationTolerance 在
+    // PositionOnly 任务下不参与收敛判定，但仍须是合法容差值（请求合法
+    // 域恒全量校验——身份面/记录面一致性不因消费路径裁剪）。
+    if (request.taskSpace != IkTaskSpace::FullPose
+        && request.taskSpace != IkTaskSpace::PositionOnly) {
+        failCaller("IkRequest.taskSpace：任务空间模式词表外值（static_cast<"
+                   "std::uint8_t>="
+                   + std::to_string(static_cast<unsigned>(request.taskSpace))
+                   + "）——调用方错误 fail-fast（NFR-COR-03）");
+    }
+    // 任务维度（A02 修复核心——目标函数与 Jacobian 子块的维数来源）：
+    // 仅位置任务取 3（只位置误差进目标函数）；完整位姿任务取 6（v1
+    // 行为逐位保持）。
+    const std::size_t taskDim = request.taskSpace == IkTaskSpace::PositionOnly
+                                    ? 3U
+                                    : 6U;
 
     // TCP 解析（KIN-NO-TCP 两分/FrameUnresolved——fail-fast 轨）。
     resolveTcpOrThrow(*request.modelView, request.tcp);
@@ -532,12 +597,16 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
         std::uint32_t iterations = 0;
         bool isConverged = false;
         while (true) {
-            // 2b. 收敛判据（残差 ≤ 两容差逐项——§5.3）。
+            // 2b. 收敛判据（残差 ≤ 容差逐项——§5.3；任务维度感知：
+            // PositionOnly 只查位置残差——A02；FullPose 双残差逐项不变）。
+            // e 恒按 6 维产出（姿态残差仍如实计算供记录——PositionOnly
+            // 下仅前 taskDim 维进目标函数）。
             const Eigen::Matrix<double, 6, 1> e =
                 poseError(request.targetInBase, m.get().tcpInBase,
                           posResidual, oriResidual);
-            if (converged(posResidual, oriResidual, request.positionTolerance,
-                          request.orientationTolerance)) {
+            if (convergedForTask(request.taskSpace, posResidual, oriResidual,
+                                 request.positionTolerance,
+                                 request.orientationTolerance)) {
                 isConverged = true;
                 break;
             }
@@ -554,9 +623,10 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
                 cancelledOut.solutionSet.requestIdentity = request.requestIdentity;
                 return cancelledOut;
             }
-            // 2d. 阻尼最小二乘更新（Δq＝Jᵀ(JJᵀ＋λ²I)⁻¹e——定序固定）。
+            // 2d. 阻尼最小二乘更新（Δq＝Jₜᵀ(JₜJₜᵀ＋λ²I)⁻¹eₜ——定序固定；
+            // taskDim 决定 e 的有效维与 Jacobian 子块行数——A02）。
             const Eigen::VectorXd dq = dampedLeastSquaresStep(
-                m.get().jacobian, dof, e);
+                m.get().jacobian, dof, taskDim, e.head(taskDim));
             for (std::size_t i = 0; i < dof; ++i) {
                 q[i] += dq(static_cast<Eigen::Index>(i));
             }
@@ -618,8 +688,12 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             // 复验残差（比较型量——覆写当次残差变量，供记录承载）。
             poseError(request.targetInBase, recheck.get().tcpInBase,
                       posResidual, oriResidual);
-            if (!converged(posResidual, oriResidual, request.positionTolerance,
-                           request.orientationTolerance)) {
+            // 复验收敛判据与迭代内同任务维度（A02——PositionOnly 只查
+            // 位置残差；两判据必须同源，防"迭代放行、复验拦截"的判据
+            // 漂移——残差复验的本意是独立 FK 复算，不是换一套判据）。
+            if (!convergedForTask(request.taskSpace, posResidual, oriResidual,
+                                  request.positionTolerance,
+                                  request.orientationTolerance)) {
                 filteredRecords.push_back(
                     makeFilteredRecord(s, SolutionFilterReason::ResidualRecheck,
                                        posResidual, oriResidual));

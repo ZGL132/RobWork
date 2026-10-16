@@ -29,7 +29,7 @@ namespace kinematics {
 // =====================================================================
 
 /**
- * @brief 通道请求 → 插件私有请求（逐字段——载荷最小面五字段全拷贝）。
+ * @brief 通道请求 → 插件私有请求（逐字段——载荷最小面字段全拷贝）。
  */
 KinBackgroundRequest toPrivateRequest(const KinChannelBackgroundRequest& request)
 {
@@ -51,6 +51,9 @@ KinBackgroundRequest toPrivateRequest(const KinChannelBackgroundRequest& request
     out.snapshotId = request.snapshotId;
     out.configDigest = request.configDigest;
     out.epoch = request.epoch;
+    // ★ KIN-P4 表尾追加字段同拍透传（SessionSolve 目标载荷——翻译单点
+    // 纪律：任何一侧字段漂移都在本编译点暴露，不允许静默丢字段）。
+    out.solveTargetInBase = request.solveTargetInBase;
     return out;
 }
 
@@ -159,14 +162,25 @@ void KinematicsPluginAssembly::installAssemblyChannels(
                  // 返回与既有 bind* 同纪律：不虚构注入成功）
     }
     // ---- 通道值面 → 私有服务缝翻译（UI-T64——F-490① 上游批装配半区）。
-    // 仅翻译本批五缝（modelView/taskPoints/taskRows/backgroundSubmit 及
-    // 完成通知入口）；其余缝（commandHandler/sessionPose/exportWriter/
-    // configPersist/ikSolver/fkEvaluator）不触——维持降级语义（契约诚实
-    // 边界：本批范围声明）。注意：不能整体替换模块内 KinPanelServices
-    // （会清掉既有 bindCommandSubmit 等已注入缝）——经模块的逐缝合并
-    // 面（mergeAssemblyChannels）写入。
+    // UI-T64 首批五缝（modelView/taskPoints/taskRows/backgroundSubmit 及
+    // 完成通知入口）＋★ KIN-P4 增列七缝（ikSolver/fkEvaluator/sessionPose/
+    // commandHandler/exportWriter/configPersist/homePose——审查报告 §4
+    // 第一条"降级服务逐项接通"的装配面；指针/函数缝逐字段直传，函数缝
+    // 签名与私有类型同构故翻译＝值搬运）。注意：不能整体替换模块内
+    // KinPanelServices（会清掉既有 bindCommandSubmit 等已注入缝）——经
+    // 模块的逐缝合并面（mergeAssemblyChannels）写入。
     KinPanelServices merged;
     merged.modelView = channels.modelView;
+    // ---- KIN-P4 指针缝直传（非 owning——存活期契约在通道值面类注）。
+    merged.ikSolver = channels.ikSolver;
+    merged.fkEvaluator = channels.fkEvaluator;
+    merged.sessionPose = channels.sessionPose;
+    merged.commandHandler = channels.commandHandler;
+    // ---- KIN-P4 函数缝直传（同构签名——翻译零包装；空 function 保持
+    //      降级语义与私有缝逐字一致）。
+    merged.exportWriter = channels.exportWriter;
+    merged.configPersist = channels.configPersist;
+    merged.homePose = channels.homePose;
     if (channels.taskPoints) {
         // 通道行→私有行翻译闭包（每次刷新现调——零缓存纪律随缝传递）。
         merged.taskPoints = [fn = channels.taskPoints]() {
@@ -192,6 +206,8 @@ void KinematicsPluginAssembly::installAssemblyChannels(
                                       const KinBackgroundRequest& request) {
             // 私有请求→通道请求：与 toPrivateRequest 互逆的逐字段拷贝
             // （面板侧只产私有值——翻译在这里就地做，不引入第二跳）。
+            // ★ KIN-P4：solveTargetInBase 表尾追加字段同拍透传（可选值
+            // ——SessionSolve 后台通道的目标载荷）。
             KinChannelBackgroundRequest channelRequest;
             switch (request.kind) {
                 case KinBackgroundKind::SessionSolve:
@@ -207,6 +223,7 @@ void KinematicsPluginAssembly::installAssemblyChannels(
             channelRequest.snapshotId = request.snapshotId;
             channelRequest.configDigest = request.configDigest;
             channelRequest.epoch = request.epoch;
+            channelRequest.solveTargetInBase = request.solveTargetInBase;
             return toPrivateAck(fn(channelRequest));
         };
     }
@@ -239,6 +256,37 @@ void KinematicsPluginAssembly::bindSessionFacts(core::ContentIdentity snapshotId
     session.epoch = epoch;
     session.writable = writable;
     session.savedConfig = config;
+}
+
+void KinematicsPluginAssembly::applySessionSolveOutcome(
+    std::shared_ptr<const IkSolutionSet> set)
+{
+    if (m_impl == nullptr || set == nullptr) {
+        return;  // 模块缺位/空解集＝调用方装配违约——防御面静默忽略
+                 // （公共头方法注的诚实降级；不虚构写入成功）
+    }
+    // ---- 会话解集唯一写点（与 KinPanelFlows::runSinglePointSolve 尾段
+    // 逐字同构——KIN-P4 后台通道完成的结构化回写面：原值＋排序视图双面
+    // 同批构造，双面同源零二次求解）。锚核对义务在调用方（公共头方法注
+    // ——执行器账面纪律的迟到/跨快照判定权威），本方法不重复判定。
+    KinModuleSessionState& session = m_impl->session();
+    session.lastSessionSolutionSet = std::move(set);
+    session.lastSessionSolutionSetView =
+        std::make_shared<const KinematicSolutionSet>(*session.lastSessionSolutionSet);
+    // 面板现取重投影（结果页/位姿页刷新——事件驱动出口，零缓存）。
+    m_impl->refreshFromSession();
+}
+
+void KinematicsPluginAssembly::clearCommandHandler()
+{
+    if (m_impl == nullptr) {
+        return;  // 模块缺位＝装配缺陷——静默返回与既有 bind* 同纪律
+    }
+    // 命令缝唯一显式清除面（★ KIN-P4 项目拆除拍——mergeAssemblyChannels
+    // 的"非空才覆盖"语义无法表达清空；清空后面板按钮门控在下一拍
+    // refreshAll 禁用——无项目态＝设默认命令不可达的诚实降级）。
+    m_impl->clearAssemblyCommandHandler();
+    m_impl->refreshFromSession();
 }
 
 void KinematicsPluginAssembly::bindTextResolver(

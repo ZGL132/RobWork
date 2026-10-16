@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <utility>
 
+#include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // validateAnalysisConfiguration（装配前置校验——域设施）
+#include <sdurws/ird/kinematics/DiagCodes.hpp>       // kKinNoTcp/kKinConfigIllegal（稳定诊断码——禁字符串拼码）
 #include <sdurws/ird/kinematics/Export.hpp>  // 导出打包/编码（KIN-08 值行——域设施）
 #include "KinPanelCommandCatalog.hpp"        // kinCommandEnabledInSession（L-K11 id 门控）
 #include "KinPanelModel.hpp"                 // configChangeHintRows（L-K7 提示行化）
@@ -40,6 +42,145 @@ constexpr const char* kKeySeed = "seed";
 constexpr double kMaxUint53 = 9007199254740992.0;
 
 }  // namespace
+
+KinTcpResolution resolveSessionTcp(const KinPanelServices& services)
+{
+    KinTcpResolution out;
+
+    // ---- 前提 0：模型视图缝（解析的输入真值面——空视图无从解析）。
+    if (services.modelView == nullptr) {
+        out.statusText = "TCP 未解析：模型视图未装配";
+        return out;
+    }
+    const runtime::CanonicalModel& model = services.modelView->model();
+
+    // ---- 前提 1：KIN-14 默认 TCP 权威（defaultTcpIndex——tools 非空时
+    // 必有值且指向 tools 内项）。三前提任一不成立＝解析失败（稳定诊断码
+    // KIN-NO-TCP＋建模侧配置指引——显式呈现，绝不以空 TcpRef 继续走流）。
+    // 尾分支是防御面：builder 不变量已保证 defaultTcpIndex 指向有效项，
+    // 越界＝装配层拿到未过 builder 的模型（内部违约如实拒绝）。
+    const std::vector<runtime::CanonicalTool>& tools = model.tools();
+    const std::optional<std::uint32_t>& defaultIdx = model.defaultTcpIndex();
+    if (tools.empty() || !defaultIdx.has_value()
+        || *defaultIdx >= tools.size()) {
+        out.statusText = std::string("TCP 未解析：快照无默认工具（")
+                         + std::string(kKinNoTcp)
+                         + "；请先在建模侧配置工具与默认 TCP";
+        return out;
+    }
+    // ---- 解析产物：TcpRef{默认工具对象身份, 工具局部名}。tcpKey 显式填
+    // 局部名（canonical TCP 以其所属工具命名——解析规则见 KinTypes.hpp
+    // TcpRef 注；空串语义等价但显式名让请求自描述、不依赖"空＝canonical"
+    // 的隐式约定）。名称可解析性由快照对象索引保证（tcpKey 命中工具内
+    // canonical TCP 身份——KIN-14/I-MDL-9 闭包校验链）。
+    const runtime::CanonicalTool& tool = tools.at(*defaultIdx);
+    out.tcp.toolObject = tool.objectId;
+    out.tcp.tcpKey = tool.localName;
+    out.ok = true;
+    return out;
+}
+
+KinSolveRequestAssembly assembleSessionSolveRequest(
+    const KinPanelServices& services, const KinModuleSessionState& session)
+{
+    KinSolveRequestAssembly out;
+
+    // ---- 步骤 1：TCP 身份解析（A08 字段①——"合法 TCP 身份"义务）。
+    // ★ KIN-P4：解析收拢到 resolveSessionTcp 单点（审查 §4——缺省 TCP
+    // 的解析必须贯穿刷新、求解、设默认三个入口；本函数与位姿页刷新/
+    // 设默认按钮共用同一实现，消除第二份解析逻辑）。
+    const KinTcpResolution tcp = resolveSessionTcp(services);
+    if (!tcp.ok) {
+        out.statusText = "求解不可用：" + tcp.statusText;
+        return out;
+    }
+    out.request.tcp = tcp.tcp;
+
+    // ---- 步骤 2：求解配置前置校验（A08 字段④⑤的来源合法性——
+    // savedConfig 会话纪律要求恒合法，但装配是边界：未初始化会话的
+    // 默认构造配置 seed=0 非法（I-KIN-4），流入 makeInitialValues 属
+    // "输出无定义"契约面。此处显式校验并以 KIN-CONFIG-ILLEGAL 拒绝，
+    // NFR-COR-03 不钳制不静默）。
+    try {
+        validateAnalysisConfiguration(session.savedConfig);
+    } catch (const std::invalid_argument& e) {
+        out.statusText = std::string("求解不可用：求解配置非法（")
+                         + std::string(kKinConfigIllegal) + "）：" + e.what();
+        return out;
+    }
+    const AnalysisConfiguration& config = session.savedConfig;
+
+    // ---- 步骤 3：逐轴评价区间（A08 字段④——模型关节限位，无界轴
+    // 如实表达）。经域设施 evaluationIntervals 唯一实现点提取（三态：
+    // bounds→workingRange→bounded=false）——与求解器限位过滤同源，
+    // 零第二套真值。
+    const std::vector<JointInterval> intervals = evaluationIntervals(*services.modelView);
+
+    // 设备自由度（Fixed 不消耗 q——与求解器/FK 同一口径的链序计数）。
+    std::size_t dof = 0;
+    for (const runtime::CanonicalJoint& j :
+         services.modelView->model().chain().joints) {
+        if (j.type != runtime::JointType::Fixed) {
+            ++dof;
+        }
+    }
+
+    // ---- 步骤 4：参考构型（A08 字段③——当前会话姿态）。
+    // 会话已设置且维度符→直接采用；维度违约→显式失败（会话姿态由装配
+    // 层注入，尺寸错是装配事实不是可钳制的输入——NFR-COR-03）；未装配
+    // /未设置→模型零位回退（面板此态下关节表为空，零位是唯一无信息
+    // 注入的确定性回退——求解身份不含会话（D-KIN-4），回退值同为显式
+    // 输入面，不构成对会话的隐式读取）。
+    if (services.sessionPose != nullptr && services.sessionPose->isSet()) {
+        const std::vector<double>& poseQ = services.sessionPose->jointConfiguration();
+        if (poseQ.size() != dof) {
+            out.statusText = "求解不可用：会话关节姿态维度 "
+                             + std::to_string(poseQ.size()) + " != 设备自由度 "
+                             + std::to_string(dof) + "（装配层注入违约——拒绝）";
+            return out;
+        }
+        out.request.referenceQ = poseQ;
+    } else {
+        out.request.referenceQ.assign(dof, 0.0);
+    }
+
+    // ---- 步骤 5：初值集物化（A08 字段②——初值与数量来自求解配置）。
+    // 经域设施 makeInitialValues 唯一实现点（策略三值×配置 seed——§3.4
+    // 随机性唯一来源），零本地重写。
+    out.request.initialValues = makeInitialValues(
+        config.initialStrategy, config.initialValuesCount, config.seed,
+        intervals, out.request.referenceQ);
+
+    // ---- 步骤 6：配置字段直传（容差/迭代上限/去重阈值——求解参数面
+    // 与批量通道同源配置，KIN-13）。
+    out.request.positionTolerance = config.positionResidualTolerance;      // m
+    out.request.orientationTolerance = config.orientationResidualTolerance; // rad（不是度）
+    out.request.iterationLimit = config.iterationLimit;
+    out.request.dedupThresholdPerAxis = config.ikDedupThresholdPerAxis;    // rad|m 逐轴
+
+    // ---- 步骤 7：intervals 交付（步骤 3 提取、维度已按 dof 校齐——
+    // 请求校验面要求与 modelView 同快照，此处即同一次提取）。
+    out.request.intervals = intervals;
+
+    // ---- 步骤 8：结果身份装配（★ KIN-P4——§5.6 绑定五元组载体补全：
+    // 修复前内联求解的解集身份为缺省值（snapshotId/configDigest 全零、
+    // seed=0、referenceQ 空）——导出文件头的快照锚随之全零、复算的
+    // "原任务定义携带"无从取数。身份字段语义（D-KIN-4）：全部来自显式
+    // 输入——snapshotId＝会话绑定锚（装配层注入）、configDigest＝当前
+    // 配置摘要（域设施）、seed/referenceQ＝本请求的显式值；mode 保持
+    // 域缺省（会话级求解零归档，模式语义随导出头如实承载）。
+    out.request.requestIdentity.snapshotId = session.snapshotId;
+    out.request.requestIdentity.configDigest =
+        analysisConfigurationDigest(config);
+    out.request.requestIdentity.seed = config.seed;
+    out.request.requestIdentity.referenceQ = out.request.referenceQ;
+
+    // 碰撞会话/取消探针/对象绑定：不装配——碰撞缝归正式宿主
+    // （KIN-P4；缺会话＝求解器标记 collisionNotEvaluated 证据缺失，如实
+    // 语义）；单点会话求解零对象绑定（D-KIN-4：身份只含显式输入）。
+    out.ok = true;
+    return out;
+}
 
 KinSolveFlowResult runSinglePointSolve(const KinPanelServices& services,
                                        KinModuleSessionState& session,
@@ -89,12 +230,16 @@ KinSolveFlowResult runSinglePointSolve(const KinPanelServices& services,
     if (elapsed > inlineBudget) {
         if (services.backgroundSubmit) {
             // 自动转后台（会话级——不写 results；真实 execution 通道在
-            // 装配层适配）。纪元随请求携带（迟到判定锚）。
+            // 装配层适配）。纪元随请求携带（迟到判定锚）。★ KIN-P4：
+            // solveTargetInBase 随载荷携带（表尾追加字段）——后台执行器
+            // 据此还原"求解什么"（修复前载荷不含目标，SessionSolve 通道
+            // 只能整体拒绝——审查 §4 第二条的根因半区）。
             KinBackgroundRequest bg;
             bg.kind = KinBackgroundKind::SessionSolve;
             bg.snapshotId = session.snapshotId;
             bg.configDigest = analysisConfigurationDigest(session.savedConfig);
             bg.epoch = session.epoch;
+            bg.solveTargetInBase = targetInBase;
             const KinBackgroundAck ack = services.backgroundSubmit(bg);
             result.deferredToBackground = ack.accepted;
             result.statusText = ack.accepted
@@ -207,27 +352,81 @@ std::string resetSessionHome(KinSessionPose* sessionPose,
     return "已复位 Home（零修订——仅会话态）";
 }
 
-std::optional<std::string> tcpBackfillText(const KinSessionPose* sessionPose,
-                                           const KinModuleSessionState& session,
-                                           const std::vector<double>& jointsSi)
+std::string resetSessionHomeFromNamedSource(const KinPanelServices& services)
+{
+    // ---- 拒绝态①：会话姿态缝未装配（无写点可落——如实说明）。
+    if (services.sessionPose == nullptr) {
+        return "复位 Home 不可用：会话姿态未装配";
+    }
+    // ---- 拒绝态②：具名 Home 来源缝未装配（KIN-P3/审查 A09——来源未
+    // 装配＝按钮应已禁用；此处为直达槽路径的防御面，显式拒绝不写回）。
+    if (!services.homePose) {
+        return "复位 Home 不可用：具名 Home 来源未装配"
+               "（需装配层从命名位姿集保留键 homeConfiguration 注入）";
+    }
+    // ---- 拒绝态③：来源在场但模型/会话未定义 Home（nullopt）——绝不
+    // 静默把当前姿态充当 Home（审查 A09 根因即"无目标来源的原样写回"
+    // 假成功），给用户明确提示。
+    const std::optional<std::vector<double>> home = services.homePose();
+    if (!home.has_value()) {
+        return "复位 Home 不可用：模型/会话未定义具名 Home 姿态"
+               "（命名位姿集保留键 homeConfiguration 缺失——请先在建模侧"
+               "定义 Home）——未写回";
+    }
+    // ---- 拒绝态④：来源值维度与设备自由度不符（装配层解析违约/模型
+    // 变更未同步）——显式反馈不钳制不截断（截断写回会伪造复位语义，
+    // NFR-COR-03）。dof 口径与求解器/FK 一致（Fixed 不消耗 q）。
+    std::size_t dof = 0;
+    if (services.modelView != nullptr) {
+        for (const runtime::CanonicalJoint& j :
+             services.modelView->model().chain().joints) {
+            if (j.type != runtime::JointType::Fixed) {
+                ++dof;
+            }
+        }
+    }
+    if (services.modelView == nullptr || home->size() != dof) {
+        return "复位 Home 不可用：Home 维度 " + std::to_string(home->size())
+               + " != 设备自由度 " + std::to_string(dof)
+               + "（来源解析违约或模型已变更）——未写回";
+    }
+    // ---- 通过：唯一写点覆写会话姿态（零修订——KIN-06/AT-04）。
+    return resetSessionHome(services.sessionPose, *home);
+}
+
+std::optional<std::string> tcpBackfillText(
+    const KinSessionPose* sessionPose, const KinModuleSessionState& session,
+    const std::vector<double>& jointsSi,
+    const std::vector<runtime::JointType>& dofJointTypes)
 {
     // 未设置（isSet()==false）或缝空——ui 回退编辑器缺省值，不得读值
     // （KinSessionPose.hpp 契约）。
     if (sessionPose == nullptr || !sessionPose->isSet()) {
         return std::nullopt;
     }
+    // 维度契约：逐轴类型表与关节向量同维同链序（KIN-P3/审查 A05——失配
+    // ＝调用方装配错误，fail-fast 而非猜量纲）。
+    if (jointsSi.size() != dofJointTypes.size()) {
+        throw std::invalid_argument(
+            "tcpBackfillText: 关节向量维度 " + std::to_string(jointsSi.size())
+            + " != 逐轴类型表维度 " + std::to_string(dofJointTypes.size()));
+    }
     // 会话姿态→显示制式文本（仅呈现默认值——求解身份不含会话，D-KIN-4）。
+    // 逐轴按天然量纲投影（移动轴长度/转动轴角度——审查 A05 同缺陷面的
+    // 修复：修复前回填文本对全轴按角度投影，混合链移动轴显示失实）。
     std::string text;
     const std::vector<double>& q = sessionPose->jointConfiguration();
+    if (q.size() != dofJointTypes.size()) {
+        throw std::invalid_argument(
+            "tcpBackfillText: 会话姿态维度 " + std::to_string(q.size())
+            + " != 逐轴类型表维度 " + std::to_string(dofJointTypes.size()));
+    }
     for (std::size_t i = 0; i < q.size(); ++i) {
-        // 关节角主导量纲——按角度制式投影（rad→deg；nullopt＝SI 直显）。
-        const double shown = session.displayUnits.has_value()
-                                 ? session.displayUnits->projectAngle(q[i])
-                                 : q[i];
         if (i != 0) {
             text += ", ";
         }
-        text += std::to_string(shown);
+        text += formatJointAxisText(q[i], dofJointTypes[i],
+                                    session.displayUnits);
     }
     return text;
 }
@@ -364,6 +563,127 @@ std::string submitSetDefaultDevice(const KinPanelServices& services,
         text += d.code + " ";
     }
     return text;
+}
+
+KinRecomputeFlowResult recomputeSessionFromIdentity(
+    const KinPanelServices& services, KinModuleSessionState& session,
+    const rw::math::Transform3D<double>& targetInBase)
+{
+    KinRecomputeFlowResult result;
+
+    // ---- 拒绝态 1：原任务定义不在场（会话尚无求解产物——"复算"无
+    // 原点；如实拒绝，绝不以空身份构造复算请求）。
+    if (!session.lastSessionSolutionSet) {
+        result.statusText = "复算不可用：会话尚无求解产物（先完成一次求解"
+                            "——复算按原任务定义重绑定当前快照）";
+        return result;
+    }
+    // ---- 拒绝态 2：缝缺位（模型视图/求解器——复算执行面）。
+    if (services.modelView == nullptr || services.ikSolver == nullptr) {
+        result.statusText = "复算不可用：模型视图或求解器未装配";
+        return result;
+    }
+    // ---- 拒绝态 3：当前快照未绑定（重绑定的目标锚缺失——空身份被域
+    // 设施拒绝，此处前置拦截给可读原因）。
+    if (session.snapshotId == core::ContentIdentity{}) {
+        result.statusText = "复算不可用：当前会话未绑定快照（先应用建模"
+                            "草稿生成发布快照）";
+        return result;
+    }
+
+    // ---- 步骤 1：复算请求构造（域设施 buildKinRecomputeRequest——
+    // §7.4 三要件：sliceId/mode/seed/referenceQ 逐字段取自原结果身份，
+    // snapshotId＝当前会话绑定〔重绑定〕）。原任务定义中可恢复的字段
+    // 全部从身份显式携带（D-KIN-4——不复用会话残留）。域设施对空评估
+    // 键/空快照 fail-fast——本函数前置已拦空快照，此处异常属域校验链
+    // 兜底（如实拦截转状态行，不让异常穿越 Qt 槽）。
+    try {
+        result.recompute = buildKinRecomputeRequest(
+            session.lastSessionSolutionSet->requestIdentity,
+            kTaskPointIkEvaluationKey, session.snapshotId);
+    } catch (const std::invalid_argument& e) {
+        result.statusText =
+            std::string("复算不可用：复算请求构造被拒——") + e.what();
+        return result;
+    }
+    const KinRecomputeRequest& recompute = *result.recompute;
+
+    // ---- 步骤 2：TCP 解析（三入口统一单点——KIN-P4；失败即拒绝，
+    // 绝不以空 TcpRef 提交求解器）。
+    const KinTcpResolution tcp = resolveSessionTcp(services);
+    if (!tcp.ok) {
+        result.statusText = "复算不可用：" + tcp.statusText;
+        return result;
+    }
+
+    // ---- 步骤 3：请求重装配（同键同种子、当前快照与当前配置——
+    // 差异语义：seed/referenceQ 从原身份显式携带〔同键复算〕，容差/
+    // 迭代/初值策略与数量取当前 savedConfig〔配置演化的当前性判定归
+    // evidence 对账——CON-02，本流如实按当前配置执行〕；intervals 取
+    // 当前快照——改型后的新限位即复算的输入面）。
+    const AnalysisConfiguration& config = session.savedConfig;
+    try {
+        validateAnalysisConfiguration(config);
+    } catch (const std::invalid_argument& e) {
+        result.statusText = std::string("复算不可用：求解配置非法（")
+                            + std::string(kKinConfigIllegal) + "）：" + e.what();
+        return result;
+    }
+    const std::vector<JointInterval> intervals =
+        evaluationIntervals(*services.modelView);
+    const std::vector<std::vector<double>> initialValues = makeInitialValues(
+        config.initialStrategy, config.initialValuesCount, recompute.seed,
+        intervals, recompute.referenceQ);
+
+    IkRequest req;
+    req.targetInBase = targetInBase;            // 基座系 {B}（§5.3——面板当前编辑值）
+    req.tcp = tcp.tcp;                          // 三入口统一的合法工具身份
+    req.positionTolerance = config.positionResidualTolerance;        // m
+    req.orientationTolerance = config.orientationResidualTolerance;  // rad（不是度）
+    req.modelView = services.modelView;         // 当前快照视图（重绑定）
+    req.initialValues = initialValues;
+    req.iterationLimit = config.iterationLimit;
+    req.intervals = intervals;
+    req.dedupThresholdPerAxis = config.ikDedupThresholdPerAxis;      // rad|m 逐轴
+    req.referenceQ = recompute.referenceQ;      // 原身份显式携带（D-KIN-4）
+    // ---- 结果身份重填（重绑定可见面）：snapshotId/configDigest＝当前
+    // 会话值（新解集导出头随之锚定当前快照），seed/referenceQ＝原身份值
+    // （同键复算的携带证据）。mode 沿原身份（同键同模式——EVI-01）。
+    req.requestIdentity.snapshotId = session.snapshotId;
+    req.requestIdentity.configDigest =
+        analysisConfigurationDigest(config);
+    req.requestIdentity.mode = recompute.mode;
+    req.requestIdentity.seed = recompute.seed;
+    req.requestIdentity.referenceQ = recompute.referenceQ;
+
+    // ---- 步骤 4：内联求解（复算规模与单点求解同量级——内联执行语义
+    // 同 L-K2；取消/设施失败如实呈现，零会话写入）。
+    const IkOutcome outcome = services.ikSolver->solve(req);
+    if (outcome.cancelled) {
+        result.statusText = "复算已取消（非结局）";
+        return result;
+    }
+    if (outcome.facilityFailure.has_value()) {
+        result.statusText = "复算设施失败（非结局——求解中途 FK 复算失败，"
+                            "请核对模型视图后重试）";
+        return result;
+    }
+
+    // ---- 步骤 5：新解集入会话态（唯一写点——与 runSinglePointSolve 同
+    // 纪律；原解集被覆盖，新旧解数对比在状态行如实给出）。
+    const std::size_t originalCount =
+        session.lastSessionSolutionSet->solutions.size();
+    session.lastSessionSolutionSet =
+        std::make_shared<const IkSolutionSet>(std::move(outcome.solutionSet));
+    session.lastSessionSolutionSetView =
+        std::make_shared<const KinematicSolutionSet>(*session.lastSessionSolutionSet);
+    result.ok = true;
+    result.statusText =
+        "已按原任务定义复算（快照重绑定为当前发布快照）——原解 "
+        + std::to_string(originalCount) + " 个 → 新解 "
+        + std::to_string(session.lastSessionSolutionSet->solutions.size())
+        + " 个";
+    return result;
 }
 
 std::string exportSessionResults(const KinPanelServices& services,

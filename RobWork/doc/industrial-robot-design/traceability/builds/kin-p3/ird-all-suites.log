@@ -1,0 +1,307 @@
+==== sdurws_ird_core_test.exe ====
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] 65 tests from 40 test suites ran. (224 ms total)
+[  PASSED  ] 65 tests.
+==== sdurws_ird_diagnostics_contract_test.exe ====
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] 26 tests from 6 test suites ran. (59 ms total)
+[  PASSED  ] 26 tests.
+==== sdurws_ird_diagnostics_test.exe ====
+[ird-diagnostics] [crash-report-write-failed] code=DIAG-LOG-WRITE-FAILED dir=[USER]\AppData\Local\Temp\ird-redtest-5
+[ird-diagnostics] [crash-report-write-failed] code=DIAG-LOG-WRITE-FAILED dir=[USER]\AppData\Local\Temp\ird-redtest-5
+[ird-diagnostics] [crash-report-write-failed] code=DIAG-LOG-WRITE-FAILED dir=[USER]\AppData\Local\Temp\ird-redtest-6
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] 117 tests from 22 test suites ran. (637 ms total)
+[  PASSED  ] 117 tests.
+==== sdurws_ird_drivetrain_contract_test.exe ====
+[==========] 15 tests from 3 test suites ran. (59 ms total)
+[  PASSED  ] 15 tests.
+==== sdurws_ird_drivetrain_test.exe ====
+[==========] 38 tests from 5 test suites ran. (26 ms total)
+[  PASSED  ] 38 tests.
+==== sdurws_ird_dynamics_contract_test.exe ====
+[==========] 30 tests from 10 test suites ran. (68 ms total)
+[  PASSED  ] 30 tests.
+==== sdurws_ird_dynamics_test.exe ====
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\DynPluginPanelTest.cpp(708): Skipped
+envUnavailable：无人值守门禁不做 GUI 运行验证——曲线视图/工作流页的呈现与交互由 sdurws_ird_dynamics_app harness 手动点验承载（units/dynamics.md §11.5 流程），本次未启动，留痕见 traceability/builds/wp17-t09/ 登记
+
+[==========] 113 tests from 24 test suites ran. (130 ms total)
+[  PASSED  ] 112 tests.
+[  SKIPPED ] 1 test.
+==== sdurws_ird_evidence_contract_test.exe ====
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] 14 tests from 3 test suites ran. (41 ms total)
+[  PASSED  ] 14 tests.
+==== sdurws_ird_evidence_test.exe ====
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] 205 tests from 59 test suites ran. (56 ms total)
+[  PASSED  ] 205 tests.
+==== sdurws_ird_execution_contract_test.exe ====
+[==========] 38 tests from 8 test suites ran. (2948 ms total)
+[  PASSED  ] 38 tests.
+==== sdurws_ird_execution_perf_test.exe ====
+[perf-b02] 预热腿实测 d1=12.290500 ms, d2b=15.187600 ms（剔除）
+[perf-b02] 场景#1: d1=14.164800ms, 强杀完成=10008.139300ms（自入 Canceling 起，含 10 s 窗，超出窗部分 8.139300ms）, workerPid=18924, 检查点留存=已核对
+[perf-b02] 场景#1: d1=14.164800ms, 强杀完成=10008.139300ms（自入 Canceling 起，含 10 s 窗，超出窗部分 8.139300ms）, workerPid=18924, 检查点留存=已核对
+场景#2: d1=13.885400ms, 强杀完成=10001.842600ms（自入 Canceling 起，含 10 s 窗，超出窗部分 1.842600ms）, workerPid=68120, 检查点留存=已核对
+[perf-b02] 场景#1: d1=14.164800ms, 强杀完成=10008.139300ms（自入 Canceling 起，含 10 s 窗，超出窗部分 8.139300ms）, workerPid=18924, 检查点留存=已核对
+场景#2: d1=13.885400ms, 强杀完成=10001.842600ms（自入 Canceling 起，含 10 s 窗，超出窗部分 1.842600ms）, workerPid=68120, 检查点留存=已核对
+场景#3: d1=24.561000ms, 强杀完成=10005.848100ms（自入 Canceling 起，含 10 s 窗，超出窗部分 5.848100ms）, workerPid=65264, 检查点留存=已核对
+[perf-b05] 预热腿实测 peakRatio=0.000175（剔除）
+[perf-b05] sample#1: main=10.1MB worker=1.3MB agg=11.4MB total=63.5GB ratio=0.000175 readings=8 level=0
+[perf-b05] sample#2: main=10.2MB worker=1.3MB agg=11.5MB total=63.5GB ratio=0.000177 readings=8 level=0
+[perf-b05] sample#3: main=10.6MB worker=1.3MB agg=11.9MB total=63.5GB ratio=0.000184 readings=7 level=0
+[perf-b05] sample#4: main=10.7MB worker=1.3MB agg=12.0MB total=63.5GB ratio=0.000184 readings=7 level=0
+[perf-b05] sample#5: main=10.7MB worker=1.3MB agg=12.0MB total=63.5GB ratio=0.000184 readings=7 level=0
+[perf-b05] sample#6: main=11.0MB worker=1.3MB agg=12.3MB total=63.5GB ratio=0.000189 readings=10 level=0
+[perf-b05] sample#7: main=10.9MB worker=1.3MB agg=12.2MB total=63.5GB ratio=0.000187 readings=7 level=0
+[perf-b05] sample#8: main=11.2MB worker=1.3MB agg=12.5MB total=63.5GB ratio=0.000192 readings=8 level=0
+[perf-b05] sample#9: main=11.5MB worker=1.3MB agg=12.8MB total=63.5GB ratio=0.000197 readings=7 level=0
+[perf-b05] sample#10: main=11.9MB worker=1.3MB agg=13.2MB total=63.5GB ratio=0.000203 readings=7 level=0
+[perf-b05] sample#11: main=12.1MB worker=1.3MB agg=13.4MB total=63.5GB ratio=0.000206 readings=8 level=0
+[perf-b05] sample#12: main=11.9MB worker=1.3MB agg=13.2MB total=63.5GB ratio=0.000202 readings=7 level=0
+[perf-b05] sample#13: main=11.9MB worker=1.3MB agg=13.2MB total=63.5GB ratio=0.000203 readings=8 level=0
+[perf-b05] sample#14: main=11.9MB worker=1.3MB agg=13.2MB total=63.5GB ratio=0.000203 readings=7 level=0
+[perf-b05] sample#15: main=11.7MB worker=1.3MB agg=13.0MB total=63.5GB ratio=0.000200 readings=6 level=0
+[==========] 4 tests from 3 test suites ran. (48033 ms total)
+[  PASSED  ] 4 tests.
+==== sdurws_ird_execution_test.exe ====
+[==========] 157 tests from 38 test suites ran. (1262 ms total)
+[  PASSED  ] 157 tests.
+==== sdurws_ird_io_contract_test.exe ====
+[==========] 9 tests from 1 test suite ran. (750 ms total)
+[  PASSED  ] 9 tests.
+==== sdurws_ird_io_test.exe ====
+Ϊ C:\Users\zgl18\AppData\Local\Temp\ird_wp11_t03_safepath\SymlinkJunctionEscapeRejectedWithIoSecSymlink_61824\proj\objects\junc <<===>> C:\Users\zgl18\AppData\Local\Temp\ird_wp11_t03_safepath\SymlinkJunctionEscapeRejectedWithIoSecSymlink_61824\proj\outside ����������
+[==========] 130 tests from 13 test suites ran. (2511 ms total)
+[  PASSED  ] 130 tests.
+==== sdurws_ird_kinematics_contract_test.exe ====
+[==========] 57 tests from 8 test suites ran. (45 ms total)
+[  PASSED  ] 57 tests.
+==== sdurws_ird_kinematics_gui_test.exe ====
+[==========] 12 tests from 2 test suites ran. (43 ms total)
+[  PASSED  ] 12 tests.
+==== sdurws_ird_kinematics_test.exe ====
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(831): Skipped
+GUI 呈现仅登记（envUnavailable 如实登记——不标注通过）
+
+[==========] 245 tests from 30 test suites ran. (19906 ms total)
+[  PASSED  ] 244 tests.
+[  SKIPPED ] 1 test.
+==== sdurws_ird_modeling_contract_test.exe ====
+[==========] 17 tests from 5 test suites ran. (88 ms total)
+[  PASSED  ] 17 tests.
+==== sdurws_ird_modeling_gui_test.exe ====
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (�����ɹ���ɡ�)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (�����ɹ���ɡ�)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (�����ɹ���ɡ�)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1582): Skipped
+clipboard blocked by external owner (F-620)——系统剪贴板写读往返失败（环境面跳过，非代码缺陷）
+
+[==========] 44 tests from 2 test suites ran. (2698 ms total)
+[  PASSED  ] 43 tests.
+[  SKIPPED ] 1 test.
+==== sdurws_ird_modeling_test.exe ====
+[==========] 380 tests from 42 test suites ran. (563 ms total)
+[  PASSED  ] 380 tests.
+==== sdurws_ird_optimization_contract_test.exe ====
+[==========] 52 tests from 12 test suites ran. (1313 ms total)
+[  PASSED  ] 52 tests.
+==== sdurws_ird_optimization_perf_test.exe ====
+[perf-b06] 固定候选集：candidates=128 verified=4 seed=7 workIter=400000
+[perf-b06] 单线程：n=15 中位吞吐=225.08 candidates/s
+[perf-b06] 8 线程：n=15 中位吞吐=1442.56 candidates/s
+[perf-b06] 中位吞吐比=6.409（阈值 ≥4.0——NFR-PERF-05）
+[perf-b06] 归约等价：records=1980 metrics=15840 maxRelDiff=0.000e+00 bitwise=true
+[perf-b07] 标准运行：quick=10000 verified=100 seed=7 threadCount=8 workIter=400000
+[perf-b07] 时限腿：n=15 最大有效墙钟=11899.5 ms（时限 28800000 ms＝8 小时） P95=11858.2 ms
+[perf-b07] 运行期交互抽查（state=during-run）：
+[perf-b07]   nav        n=3141 P95=  0.024 ms max=  0.521 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07]   select     n=3141 P95=  0.017 ms max=  0.415 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07]   filter     n=3141 P95=  0.442 ms max=  2.438 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07]   edit       n=3141 P95=  0.037 ms max=  0.838 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07]   viewswitch n=3141 P95=  0.015 ms max=  0.171 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07] 交互样本合计=15705 窗外丢弃=70 选择广播=3156 编辑移交=3156
+[perf-b07] 启动段：参照全量运行 Completed——quick=10000 verified=100 批=2525/2525 检查点产出=2525 工作汇增量=5457410620696191368
+[perf-b07] 中断腿：查询计数 31000 后 Canceled——检查点 phase=Quick completedUnits=1242/2500 完成批=1242 审计基点 quick=4968
+[perf-b07] 检查点段：真协调器 Published（seq=1，磁盘三文件，magic=IRDOPTC1 codecVersion=1）
+[perf-b07] 恢复段：Restored（同版本 contractVersion=1）→ 续跑 AttemptId=2 Completed——resumedBatchesSkipped=1242 审计＝参照全量 （AT-35）结论面 records=10100 metrics=80800 maxRelDiff=0.000e+00 bitwise=true 工作汇增量=5457410620696191368＝参照
+[==========] 3 tests from 2 test suites ran. (225718 ms total)
+[  PASSED  ] 3 tests.
+==== sdurws_ird_optimization_test.exe ====
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\optimization\test\OptPluginPanelTest.cpp(1534): Skipped
+envUnavailable：无人值守门禁不做 GUI 运行验证——四页主面板（变量表/约束页/运行控制/候选表与对比）的呈现与交互由宿主装配批次的开发 harness 手动点验承载（units/optimization.md §13.3 GUI 约束），本次未启动，如实登记不标注通过
+
+[==========] 215 tests from 30 test suites ran. (118 ms total)
+[  PASSED  ] 214 tests.
+[  SKIPPED ] 1 test.
+==== sdurws_ird_policy_contract_test.exe ====
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] 23 tests from 5 test suites ran. (119 ms total)
+[  PASSED  ] 23 tests.
+==== sdurws_ird_policy_test.exe ====
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] 211 tests from 39 test suites ran. (30 ms total)
+[  PASSED  ] 211 tests.
+==== sdurws_ird_project_contract_test.exe ====
+[==========] 32 tests from 11 test suites ran. (8131 ms total)
+[  PASSED  ] 32 tests.
+==== sdurws_ird_project_perf_test.exe ====
+[b04-golden] disk-facts headRefs=11 history=101 oidDirs=1101
+[b04-hot] sample (excluded=1 valid=1): 304.528 ms
+[b04-hot] sample (excluded=0 valid=1): 300.666 ms
+[b04-hot] sample (excluded=0 valid=1): 319.499 ms
+[b04-hot] sample (excluded=0 valid=1): 319.236 ms
+[b04-hot] sample (excluded=0 valid=1): 332.128 ms
+[b04-hot] sample (excluded=0 valid=1): 332.629 ms
+[b04-hot] sample (excluded=0 valid=1): 313.515 ms
+[b04-hot] sample (excluded=0 valid=1): 304.827 ms
+[b04-hot] sample (excluded=0 valid=1): 331.618 ms
+[b04-hot] sample (excluded=0 valid=1): 291.509 ms
+[b04-hot] sample (excluded=0 valid=1): 305.807 ms
+[b04-hot] sample (excluded=0 valid=1): 302.310 ms
+[b04-hot] sample (excluded=0 valid=1): 314.229 ms
+[b04-hot] sample (excluded=0 valid=1): 321.149 ms
+[b04-hot] sample (excluded=0 valid=1): 299.483 ms
+[b04-hot] sample (excluded=0 valid=1): 305.462 ms
+[b04-golden] disk-facts headRefs=11 history=101 oidDirs=1101
+[==========] 2 tests from 1 test suite ran. (33396 ms total)
+[  PASSED  ] 2 tests.
+==== sdurws_ird_project_test.exe ====
+[==========] 277 tests from 47 test suites ran. (15942 ms total)
+[  PASSED  ] 277 tests.
+==== sdurws_ird_reporting_contract_test.exe ====
+[==========] 65 tests from 24 test suites ran. (59 ms total)
+[  PASSED  ] 65 tests.
+==== sdurws_ird_reporting_test.exe ====
+[==========] 235 tests from 37 test suites ran. (530 ms total)
+[  PASSED  ] 235 tests.
+==== sdurws_ird_requirements_contract_test.exe ====
+[==========] 16 tests from 7 test suites ran. (66 ms total)
+[  PASSED  ] 16 tests.
+==== sdurws_ird_requirements_gui_test.exe ====
+[==========] 49 tests from 3 test suites ran. (1434 ms total)
+[  PASSED  ] 49 tests.
+==== sdurws_ird_requirements_test.exe ====
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp(2018): Skipped
+V-22 GUI 流程仅登记（envUnavailable 如实登记）
+
+[==========] 215 tests from 25 test suites ran. (272 ms total)
+[  PASSED  ] 214 tests.
+[  SKIPPED ] 1 test.
+==== sdurws_ird_runtime_test.exe ====
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(281): Skipped
+非子进程模式（父用例 CrossProcessIdentityStable 派生时才执行）
+
+[==========] 287 tests from 58 test suites ran. (289 ms total)
+[  PASSED  ] 286 tests.
+[  SKIPPED ] 1 test.
+==== sdurws_ird_selection_contract_test.exe ====
+[==========] 64 tests from 11 test suites ran. (207 ms total)
+[  PASSED  ] 64 tests.
+==== sdurws_ird_selection_test.exe ====
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\SelPluginPanelTest.cpp(621): Skipped
+envUnavailable：无人值守门禁不做 GUI 运行验证——工作流页/目录管理页/候选表页的呈现与交互由 sdurws_ird_selection_app harness 手动点验承载（units/selection.md §15.3 流程），本次未启动，留痕见 traceability/builds/wp19-t10/ 登记
+
+[==========] 293 tests from 32 test suites ran. (97 ms total)
+[  PASSED  ] 292 tests.
+[  SKIPPED ] 1 test.
+==== sdurws_ird_testkit_test.exe ====
+ird-tempdir-kept: C:\Users\zgl18\AppData\Local\Temp\ird-test/26488-keep-b4af4e5077fb1d14
+ird-tempdir-remove-failed: C:\Users\zgl18\AppData\Local\Temp\ird-test/26488-locked-b585c30dd60b0f23: ��һ����������ʹ�ô��ļ��������޷����ʡ�
+[testkit-perf] invalid sample (op=meta-op state=meta-state nth=1): meta: injected failure
+[testkit-perf] invalid sample (op=meta-op state=meta-state nth=2): meta: injected failure
+[==========] 110 tests from 55 test suites ran. (10018 ms total)
+[  PASSED  ] 110 tests.
+==== sdurws_ird_trajectory_contract_test.exe ====
+[==========] 69 tests from 13 test suites ran. (238 ms total)
+[  PASSED  ] 69 tests.
+==== sdurws_ird_trajectory_test.exe ====
+[==========] 182 tests from 29 test suites ran. (452 ms total)
+[  PASSED  ] 182 tests.
+==== sdurws_ird_ui_contract_test.exe ====
+[==========] 42 tests from 10 test suites ran. (1046 ms total)
+[  PASSED  ] 42 tests.
+==== sdurws_ird_ui_gui_test.exe ====
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (�����ɹ���ɡ�)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (�����ɹ���ɡ�)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (�����ɹ���ɡ�)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp(349): Skipped
+clipboard blocked by external owner (F-620)——系统剪贴板写读往返失败（环境面跳过，非代码缺陷）
+
+QWindowsWindow::setGeometry: Unable to set geometry 200x104+640+336 (frame: 216x143+632+305) on QWidgetWindow/"ird_property_inspectorWindow" on "\\.\DISPLAY1". Resulting geometry: 200x119+640+336 (frame: 216x158+632+305) margins: 8, 31, 8, 8 minimum size: 97x104 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=113, y=143)))
+[==========] 84 tests from 13 test suites ran. (8847 ms total)
+[  PASSED  ] 83 tests.
+[  SKIPPED ] 1 test.
+==== sdurws_ird_ui_largedata_perf_test.exe ====
+[==========] 3 tests from 1 test suite ran. (15562 ms total)
+[  PASSED  ] 3 tests.
+==== sdurws_ird_ui_perf_test.exe ====
+[==========] 3 tests from 1 test suite ran. (1588 ms total)
+[  PASSED  ] 3 tests.
+==== sdurws_ird_ui_test.exe ====
+[ird-diagnostics] [crash-report-write-failed] code=DIAG-LOG-WRITE-FAILED dir=[USER]\AppData\Local\Temp\ird-t24-crashcap-blocker-18660-4\occupied
+[==========] 294 tests from 29 test suites ran. (1851 ms total)
+[  PASSED  ] 294 tests.
+==== sdurws_ird_workflow_contract_test.exe ====
+[==========] 77 tests from 16 test suites ran. (3684 ms total)
+[  PASSED  ] 77 tests.
+==== sdurws_ird_workflow_test.exe ====
+[==========] 196 tests from 16 test suites ran. (915 ms total)
+[  PASSED  ] 196 tests.

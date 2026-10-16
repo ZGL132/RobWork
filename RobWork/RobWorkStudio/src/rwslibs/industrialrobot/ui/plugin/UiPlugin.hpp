@@ -67,6 +67,10 @@
 #include <rws/RobWorkStudioPlugin.hpp>   // 框架插件基类（QDockWidget 派生＋宿主注入面）
 
 #include <sdurws/ird/core/Events.hpp>             // core::ReferenceEventBus/IDomainEventBus（WP-24-T03b——修订事件总线）
+#include <sdurws/ird/kinematics/Commands.hpp>     // kinematics::KinSessionPose/KinematicsCommandHandler（★ KIN-P4——
+                                                  // 会话姿态写点/设默认门面：值成员需完整类型）
+#include <sdurws/ird/kinematics/Fk.hpp>           // kinematics::FkEvaluator（★ KIN-P4——位姿指标评估器值成员）
+#include <sdurws/ird/kinematics/Ik.hpp>           // kinematics::IkSolver（★ KIN-P4——单点求解器值成员）
 #include <sdurws/ird/project/ProjectStore.hpp>    // project::OpenStoreResult（创建协议产物）
 #include <sdurws/ird/ui/IDraftController.hpp>     // ui::IDraftController（§8 草稿控制器——UI-T17 装配）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>      // ui::ShellWiring（注入包）
@@ -125,9 +129,12 @@ class HostCompileProbe;            // 编译分段探针（UI-T46——等价验
 class HostRuntimeNameContext;      // 行程评估名称上下文（UI-T46——真值端口现取）
 class HostDraftAwareNameContext;   // 草稿名感知装饰上下文（UI-T74/F-546 出路①）
 class KinEvaluationExecutor;       // kinematics 覆盖评估执行器（UI-T64——完整类型在本目录 .cpp）
+class KinProjectCommandGateway;    // ★ KIN-P4——设默认命令网关（完整类型在 KinHostServicesAssembly.hpp）
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
+
+class QSettings;                   // 用户级设置载体（★ KIN-P4——配置持久化，完整类型在 Qt 头；全局域）
 
 namespace sdurws {
 namespace ird {
@@ -293,6 +300,11 @@ private:
     /// 器构造＋KinematicsAssemblyChannels 注入＋会话事实同步（savedConfig
     /// 合法基线）。装配拍一次；快照换绑随发布拍 attachSnapshot。
     void wireKinematicsEvaluationChannel();
+    /// ★ KIN-P4：kinematics 设默认命令门面装配（项目打开成功拍——存储
+    /// 上下文上的命令端口提交闭包＋根对象补丁缝构造网关/门面；随后经
+    /// 通道注入面补缝，设默认 TCP/设备按钮点亮）。网关/门面随项目关闭
+    /// 拆除（teardownProjectState——无项目态＝按钮禁用诚实降级）。
+    void installKinematicsCommandHandler(project::ProjectStore& store);
     /// kinematics 会话事实同步（UI-T64——快照发布消费点调用）：执行器
     /// attachSnapshot（纪元推进/账面清空）＋模块会话态三写（snapshotId/
     /// epoch/writable 同源事实——面板绑定面与执行器受理面的一致性键）。
@@ -553,6 +565,24 @@ private:
     /// kinematics 求解配置合法基线（UI-T64——wire 拍注入值；I-KIN-4
     /// seed≥1，bindSessionFacts 整体写会话态时消费）。
     kinematics::AnalysisConfiguration m_kinConfigBaseline{};
+    // ---- kinematics 面板服务缝的宿主产品物（★ KIN-P4——审查 §4"降级
+    // 服务逐项接通"的宿主持有面；全部非 owning 指针的指向对象即下列
+    // 成员——存活期覆盖面板使用期）。
+    /// 单点求解器（无状态可共享——静态产品实例的成员落位）。
+    kinematics::IkSolver m_kinIkSolver;
+    /// 位姿指标评估器（无状态可共享）。
+    kinematics::FkEvaluator m_kinFkEvaluator;
+    /// 会话姿态写点（宿主持有——D8/D9 宿主关节桥与面板 L-K4/L-K5 共用
+    /// 唯一写点；仅 UI 线程）。
+    kinematics::KinSessionPose m_kinSessionPose;
+    /// ①/②端口投影网关（构造于项目打开拍——查询端口随存储上下文存活；
+    /// 拆除随项目关闭。空＝无项目态——设默认命令按钮禁用）。
+    std::unique_ptr<KinProjectCommandGateway> m_kinCommandGateway;
+    /// 设默认命令门面（网关＋补丁缝构造——项目打开拍重建；空＝同上）。
+    std::unique_ptr<kinematics::KinematicsCommandHandler> m_kinCommandHandler;
+    /// kinematics 求解配置的 QSettings 载体（wire 拍构造——org/app 与
+    /// 宿主既有用户级设置同源；存活期覆盖面板使用期）。
+    std::unique_ptr<QSettings> m_kinConfigSettings;
     /// 域事件总线（WP-24-T03b 收口——修订提交事件面：store 打开请求挂接
     /// ＋宿主订阅转达域模块；进程内恰一次投递，core::ReferenceEventBus）
     std::shared_ptr<core::ReferenceEventBus> m_eventBus;

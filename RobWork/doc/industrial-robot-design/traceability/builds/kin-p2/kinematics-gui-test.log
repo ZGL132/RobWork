@@ -1,0 +1,22 @@
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from KinematicsPanelInput
+[ RUN      ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1
+[       OK ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1 (20 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_ConsistentSiAcrossUnitSystems_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_ConsistentSiAcrossUnitSystems_KIN_P1 (4 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_mmInput01IsTenthMillimetre_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_mmInput01IsTenthMillimetre_KIN_P1 (1 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteInput_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteInput_KIN_P1 (1 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_CarriesCompleteAssembledRequest_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_CarriesCompleteAssembledRequest_KIN_P2 (1 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_CompletesRealSolveThroughAssembler_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_CompletesRealSolveThroughAssembler_KIN_P2 (2 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2 (2 ms)
+[----------] 7 tests from KinematicsPanelInput (34 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (34 ms total)
+[  PASSED  ] 7 tests.

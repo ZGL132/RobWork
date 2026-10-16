@@ -416,6 +416,7 @@ add_executable(sdurws_ird_kinematics_test
     test/PoseReachTest.cpp    # T16：独立位姿可达性用例组（KIN-11/AT-26——
                               #   计划预览/方向覆盖/协作取消/黄金设施复用）
     test/PluginPanelTest.cpp   # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
+    test/KinP4FlowsTest.cpp    # ★ KIN-P4：TCP 解析单点三态/转后台携带目标/复算闭环（审查 §4 的编排半区自证——真实求解器）
     test/HostMigrationTest.cpp)  # T18：宿主迁移三接入面用例（O-44 v1 诚实边界——模型层）
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
@@ -499,6 +500,67 @@ macro(ird_add_gtest target)
 endmacro()
 
 ird_add_gtest(sdurws_ird_kinematics_test)
+
+# ---- GUI 测试目标 sdurws_ird_kinematics_gui_test（KIN-P1——审查条目
+#      A07 的产品回归载体；§12.1 第三层单列形态）----
+# 真实 QWidget 事件探针的自动化承载（QApplication 形态——QCoreApplication
+# 级的 sdurws_ird_kinematics_test 不构造 QWidget，无法复现"目标输入标签
+# 随制式＋提交逆换算回 SI"的 widget 行为缺陷形态）。执行纪律按 testkit
+# §6.7（QT_QPA_PLATFORM=windows、绝对路径单实例——运行方承载）。
+# 链接面＝同单元被测目标（计算库＋插件——门禁 2a 形态①"同单元产品目标"
+# 许可集，零跨单元边）＋testkit（报告设施——T-1 允许形态）＋GTest::gtest
+# ＋Qt 三件套（Widgets 级 QApplication 前提；R-3 仅查 product/worker 形态，
+# 测试目标 Qt 链接合法——ui_gui_test 先例同款）。
+add_executable(sdurws_ird_kinematics_gui_test
+    gui_test/TestMainReport.cpp            # QApplication 形态 main（ui_gui_test 先例）
+    gui_test/KinematicsPanelInputGuiTest.cpp)  # KIN-P1 A07——目标输入单位制回归
+# KIN-P3（审查 A05/A09）——指标显示与会话操作的 widget 行为回归（同目标
+# 增列：真实 widget 才能复现"关节表逐轴单位"与"复位 Home 拒绝语义"缺陷
+# 形态；QCoreApplication 级 sdurws_ird_kinematics_test 不构造 QWidget）。
+target_sources(sdurws_ird_kinematics_gui_test PRIVATE
+    gui_test/KinematicsPanelSessionGuiTest.cpp
+    gui_test/KinHostLoopGuiTest.cpp)  # ★ KIN-P4——六轴改型闭环＋呈现转真实执行（审查 §5 KIN-P4 验收主径）
+target_compile_features(sdurws_ird_kinematics_gui_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_kinematics_gui_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_kinematics_gui_test PRIVATE /utf-8)
+endif()
+# 链接面＝同单元被测目标（计算库＋插件——门禁 2a 形态①"同单元产品目标"
+# 许可集，零跨单元边）＋testkit（报告设施——T-1 允许形态）＋GTest::gtest
+# ＋Qt 三件套（Widgets 级 QApplication 前提；R-3 仅查 product/worker 形态，
+# 测试目标 Qt 链接合法——ui_gui_test 先例同款）。单行链接语句＝契约测试
+# T-1 扫描的登记形态约束（testkit 与测试目标名同行可见——kinematics_test
+# 同款）。
+target_link_libraries(sdurws_ird_kinematics_gui_test PRIVATE sdurws_ird_kinematics sdurws_ird_kinematics_plugin sdurws_ird_testkit GTest::gtest Qt6::Core Qt6::Gui Qt6::Widgets)
+# 插件私有头（plugin/KinematicsPanelWidget.hpp）＋测试夹具（test/KinFkFixture.hpp）
+# 解析——同单元 PRIVATE 面（kinematics_test 同款，R-2 不跨单元）。
+target_include_directories(sdurws_ird_kinematics_gui_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test)
+# 运行期 DLL 就位（kinematics_test 同款——Qt/gtest 共享库拷到 exe 旁，
+# 绝对路径启动免 PATH 依赖；留痕与验收都要直接执行该可执行文件）。
+add_custom_command(TARGET sdurws_ird_kinematics_gui_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_kinematics_gui_test>
+            $<TARGET_FILE_DIR:sdurws_ird_kinematics_gui_test>
+    COMMAND_EXPAND_LISTS)
+# F-456 同款 qt.conf：Qt 平台插件（qwindows）解析——TARGET_RUNTIME_DLLS
+# 拷贝的 Qt DLL 是"可重定位前缀"形态，独立冒烟树无 studio 部署步时插件
+# 目录落空（集成树靠 studio 同目录部署顺带工作）；显式 qt.conf 把前缀钉
+# 回真实 Qt 安装（前缀机器相关、不入库——构建期生成物，ui_gui_test 同款
+# 机制）。
+set(_ird_kin_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_kin_qt_prefix "${_ird_kin_qt_prefix}/../../.." ABSOLUTE)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/kincinguitest-qt.conf"
+     "[Paths]\nPrefix=${_ird_kin_qt_prefix}\n")
+add_custom_command(TARGET sdurws_ird_kinematics_gui_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/kincinguitest-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_kinematics_gui_test>/qt.conf")
+ird_add_gtest(sdurws_ird_kinematics_gui_test)
 
 # ---- 契约测试目标 sdurws_ird_kinematics_contract_test（随 WP-15-T02
 #      登记——卡 §3.1/§3.3）----

@@ -2137,10 +2137,13 @@ bool collisionRequiredForPlan(const RegionCoverageQuery& query,
     return false;
 }
 
-/// 位置样本评估的"姿态无约束"残差容差落值（rad——角度型残差量程 [0,π]，
-/// π 容差接受任意姿态＝存在性口径；收敛判据逐项比较，故收敛⇔位置残差
-/// 入容差——黄金锁定随 T13，登记随卡 §14.6 v0.6）。
-constexpr double kPoseFreeTolerance = 3.14159265358979323846;
+// ★ KIN-P2（审查 A02）：旧"位置样本评估的姿态无约束残差容差落值 π"
+// （kPoseFreeTolerance，黄金锁定随 T13、登记随卡 §14.6 v0.6）随任务
+// 维度语义移除——位置存在性样本现以 IkRequest.taskSpace=PositionOnly
+// 表达姿态自由（3 维任务子空间：姿态项不进目标函数，收敛判据只查位
+// 置残差）；π 容差方案下姿态仍参与 6 维迭代，位置可达解会被姿态项牵
+// 制出局（A02 根因）。Workspace.cpp kWorkspacePoseFreeTolerance 同批
+// 移除。
 
 }  // namespace
 
@@ -2488,14 +2491,19 @@ RegionCoverageComputation runRegionCoverageComputation(
             return;
         }
 
-        // 逐样本 IK 请求（位置样本＝位置存在性 IK：姿态无约束落值 π——
-        // 收敛判据逐项比较故收敛⇔位置入容差；位姿样本＝完整位姿 IK）。
+        // 逐样本 IK 请求（位置样本＝位置存在性 IK——KIN-P2/A02 起
+        // taskSpace=PositionOnly（3 维任务子空间：姿态误差不进目标函数，
+        // 收敛判据只查位置残差；旧"姿态容差 π"落值已废——见
+        // kPoseFreeTolerance 移除注）；位姿样本＝完整位姿 IK）。
         IkRequest ikRequest;
         if (sample.kind == SampleKind::Position) {
             ikRequest.targetInBase = rw::math::Transform3D<double>(
                 sample.position,
                 rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
-            ikRequest.orientationTolerance = kPoseFreeTolerance;
+            // 仅位置任务（A02）——姿态自由由任务维度表达；姿态容差仍
+            // 携带查询值（请求合法域校验面——不参与本任务收敛判定）。
+            ikRequest.taskSpace = IkTaskSpace::PositionOnly;
+            ikRequest.orientationTolerance = query.orientationTolerance;
         } else {
             ikRequest.targetInBase = sample.pose;
             ikRequest.orientationTolerance = query.orientationTolerance;

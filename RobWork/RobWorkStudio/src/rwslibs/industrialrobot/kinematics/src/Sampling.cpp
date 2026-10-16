@@ -18,9 +18,13 @@
  *     ——D-KIN-6，常量与序见各函数注；
  *   - sampleSetIdentity canonical 字节布局见 sampleSetIdentity 函数注
  *     （O-38/P-KIN-3 冻结前对账面＝快照 SamplingPlanRef 逐字节比对）；
- *   - 位置样本评估的"orientation 无约束"落值＝姿态残差容差取 π rad
- *     （角度型残差量程 [0,π]——π 容差接受任意姿态，存在性口径的结构
- *     落值），随卡 §14.6 v0.6 登记。
+ *   - 位置样本评估的姿态自由表达（KIN-P2/A02 起更新）：旧"姿态残差
+ *     容差取 π rad 的无约束落值"（随卡 §14.6 v0.6 登记）已由
+ *     IkRequest.taskSpace=PositionOnly 的任务维度语义取代（3 维任务
+ *     子空间——姿态项不进目标函数；π 容差方案下姿态仍参与 6 维迭代，
+ *     位置可达解被姿态项牵制，审查 20261016 A02）。本 TU 不再承载该
+ *     落值（样本生成只产位置/位姿，评估面在 Evaluators.cpp/
+ *     Workspace.cpp）。
  *
  * 线程安全：全部为纯函数（无共享可变状态）；确定性：位模式直写/无
  * 环境熵（NFR-COR-01/02）。
@@ -62,6 +66,23 @@ double unitFromU64(std::uint64_t v)
     return static_cast<double>(v >> 11) * (1.0 / 9007199254740992.0);  // 2^53
 }
 
+/// (seed, 序号) 二元组的完整 64 位流种子派生（KIN-P5/审查 A06 修复——
+/// 与 Ik.cpp streamSeedFor 同算法同形态的自持副本：三步 splitmix64
+/// avalanche，任意 1 位输入差异扩散到输出约半数字位）。旧式
+/// "seed·2³²＋k" 在 uint64 模 2⁶⁴ 算术下把 seed 高 32 位与样本序写进
+/// 同一加法域——seed=1 与 seed=2³²＋1 的第 k 个样本状态相同，整个
+/// 位置序列对 seed 高 32 位不敏感（审查 A06 反例）。派生规则与注释
+/// 见 Ik.cpp 同名函数（唯一算法说明点，此处不重复展开）。
+std::uint64_t streamSeedFor(std::uint64_t seed, std::uint64_t index)
+{
+    std::uint64_t s = seed;
+    const std::uint64_t a = splitmix64(s);
+    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;
+    const std::uint64_t b = splitmix64(t);
+    std::uint64_t u = a ^ b;
+    return splitmix64(u);
+}
+
 /// 黄金角 φ₀＝π(3−√5)（rad——斐波那契螺旋的球面均匀分离角；常量字面
 /// 锁定，不用运行期表达式——跨平台位级一致的确定性承载面，D-KIN-6）。
 constexpr double kFibonacciGoldenAngle = 2.39996322972865332223;
@@ -69,9 +90,10 @@ constexpr double kFibonacciGoldenAngle = 2.39996322972865332223;
 /// π（rad——roll 均分的全周端点；字面锁定同上）。
 constexpr double kPi = 3.14159265358979323846;
 
-/// 位置样本评估的"姿态无约束"残差容差落值（rad——角度型残差量程 [0,π]，
-/// π 容差接受任意姿态＝存在性口径；见文件头"实现口径"注）。
-constexpr double kOrientationFreeTolerance = kPi;
+// ★ KIN-P2（审查 A02）：旧"位置样本姿态无约束容差落值"
+// （kOrientationFreeTolerance＝π）移除——该常量在本 TU 已无消费点
+// （位置样本的 IK 评估面在 Evaluators.cpp/Workspace.cpp），任务自由
+// 语义由 IkRequest.taskSpace=PositionOnly 承载（见文件头实现口径注）。
 
 // =====================================================================
 // 载荷编码小工具（T04/T05 编码器的同构形态——绑定块共享布局）
@@ -141,14 +163,20 @@ void putCoverageTotals(std::vector<std::uint8_t>& out, const CoverageTotals& t)
 core::ContentIdentity sampleSetIdentity(const core::ContentIdentity& planContentIdentity,
                                         const RegionSamplingBudget& budget)
 {
-    // canonical 字节布局（codec 版本 1——布局全文见头文件函数注；登记随
-    // 卡 §14.6 v0.6，evidence 冻结时以此为准对齐——P-KIN-3 三方一致义务；
-    // 冻结前对账面＝快照 SamplingPlanRef 逐字节比对，布局漂移即对账失败
-    // 显性化，设计上安全）。
+    // canonical 字节布局（codec 版本 2——布局全文见头文件函数注；登记随
+    // 卡 §14.6 v0.6（v1）与 §14.6 v0.27（v2——KIN-P5/审查 A06），evidence
+    // 冻结时以此为准对齐——P-KIN-3 三方一致义务；冻结前对账面＝快照
+    // SamplingPlanRef 逐字节比对，布局漂移即对账失败显性化，设计上安全）。
+    // ★ v2（KIN-P5/审查 A06）：Random 位置采样与 SeededRandom 初值的
+    // 种子派生算法换 64 位完整混合——同 (计划, seed) 在 v1/v2 两代算法下
+    // 产出**不同的样本点**；codec 版本不升级会让新旧两代样本集假借同一
+    // 身份（审查 A06 明确禁止），故全局升版（Grid 样本几何虽与算法无关，
+    // 其逐样本 IK 评估的初值序列同样随 v3 求解器变化——保守全局升版，
+    // 宁可身份分层多一层，不可跨代假借）。
     std::vector<std::uint8_t> canonical;
     const char magic[] = "IRDSSID1";
     canonical.insert(canonical.end(), magic, magic + 7);
-    detail::putU32(canonical, 1U);  // codecVersion（演进即新版本，不回退）
+    detail::putU32(canonical, 2U);  // codecVersion（演进即新版本，不回退）
     // 计划身份取规范文本字节（"cid-<64hex>" ASCII——与 core 规范文本面
     // 同源；长度前缀定界，禁裸拼接的歧义）。
     const std::string planText = planContentIdentity.toCanonical();
@@ -208,10 +236,13 @@ generateRandomPositions(const RegionBox& box, std::uint32_t count, std::uint64_t
 {
     std::vector<rw::math::Vector3D<double>> out;
     out.reserve(count);
-    // 种子派生确定性序列（黄金锁定）：第 k 个样本 state＝seed·2³²＋k
-    // （混入样本序——与 Ik.cpp 初值生成同构），逐轴连续派生 x→y→z。
+    // 种子派生确定性序列（黄金锁定）：第 k 个样本状态＝(seed, k) 完整
+    // 64 位混合（streamSeedFor——KIN-P5/审查 A06：旧"seed·2³²＋k"丢弃
+    // seed 高 32 位；换用混合派生属算法语义变更，样本集身份经 IRDSSID
+    // codec 版本 1→2 同步升级——见 sampleSetIdentity 注），逐轴连续派生
+    // x→y→z。
     for (std::uint32_t k = 0; k < count; ++k) {
-        std::uint64_t state = seed * 0x100000000ull + k;
+        std::uint64_t state = streamSeedFor(seed, k);
         const double u0 = unitFromU64(splitmix64(state));
         const double u1 = unitFromU64(splitmix64(state));
         const double u2 = unitFromU64(splitmix64(state));

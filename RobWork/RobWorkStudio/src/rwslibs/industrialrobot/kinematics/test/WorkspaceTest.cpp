@@ -538,6 +538,55 @@ TEST(KinWorkspace, FacilityFailureSampleDataInsufficient_WP15T14)
     EXPECT_EQ(run.completedCount, std::uint64_t{4});
 }
 
+/// KIN-P2（审查 A02）——工作空间探索式采样的位置样本经**真实 IkSolver**
+/// 在退化链上闭环（审查 A02 的 Workspace.cpp 通道回归钉，与
+/// RegionCoverageTest 的 Evaluators.cpp 通道同源反例）：coaxialChainModel
+/// （六轴同轴、TCP 轴距 1 m）上的已知可达点 (0,1,0)（q*=(π/2,0,…)）。
+/// 修复前：位置样本 FullPose＋π 容差——姿态项参与 6 维迭代，位置可达
+/// 点被牵制为 DataInsufficient；修复后：taskSpace=PositionOnly——
+/// Reached（探索式点云的正确着色语义）。位姿样本的结局不在断言面
+/// （退化链上任意固定姿态目标几乎必然搜索未果——保守 DataInsufficient
+/// 语义本身正确）。
+TEST(KinWorkspace, PositionSampleRealSolverDegenerateChain_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "KIN-02", "KIN-04"},
+                  std::vector<std::string>{"AT-25"});
+
+    const rt::CanonicalModel model = coaxialChainModel();
+    TestView view(model);
+    const kin::IkSolver realSolver;  // 真实求解器（A02 闭环——非脚本结局）
+
+    // 单位置样本查询：区域盒心＝(0,1,0)（审查反例点）、边长 0.02——
+    // Grid 1×1×1 格心＝盒心；位姿维度 1×1（合法域——其结局不断言）。
+    WorkspaceSamplingQuery q;
+    q.region = makeRegion();
+    q.region.center = rw::math::Vector3D<double>(0.0, 1.0, 0.0);
+    q.region.size = rw::math::Vector3D<double>(0.02, 0.02, 0.02);
+    q.position.method = kin::PositionSamplingDefinition::Method::Grid;
+    q.position.gridCounts = {1U, 1U, 1U};
+    q.orientation.directionSamples = 1U;
+    q.orientation.rollSamples = 1U;
+    q.config = makeConfig(42U);
+    q.config.initialValuesCount = 4U;  // 多初值——修复面不依赖初值碰巧命中
+    q.config.iterationLimit = 256U;    // 审查反例同预算（修复前该预算下 0 解）
+    q.referenceQ.assign(6, 0.0);
+    q.tcp = toolRef();
+    q.solver = &realSolver;
+
+    RecordingContext ctx;
+    const kin::WorkspaceSampleRun run = kin::runWorkspaceSampling(view, q, ctx);
+
+    // 样本集：1 位置＋1 位姿（生成序黄金锁定——位置样本全序首位）。
+    ASSERT_EQ(run.samples.samples.size(), std::size_t{2});
+    EXPECT_EQ(run.samples.samples[0].kind, kin::SampleKind::Position);
+    EXPECT_NEAR(run.samples.samples[0].position[0], 0.0, 1e-12);
+    EXPECT_NEAR(run.samples.samples[0].position[1], 1.0, 1e-12);
+    // 位置样本（槽 0）终态＝Reached（修复前 DataInsufficient——A02）。
+    EXPECT_EQ(run.results[0].state, SampleState::Reached);
+    ASSERT_TRUE(run.results[0].bestSolution.has_value());
+    EXPECT_LE(run.results[0].bestSolution->positionResidual, 1e-6);
+}
+
 // =====================================================================
 // ACC3——点云着色/投影/图例/导出值行（AT-25；渲染数据本单元产、呈现
 // 归 ui View3D——§3.3 Render.hpp 纪律）
@@ -696,8 +745,8 @@ TEST(KinWorkspace, ExportCsvDeterministic_WP15T14_ACC3)
     EXPECT_EQ(csv1, csv2);
 
     const std::string header =
-        "sample-index,x-m,y-m,z-m,state,collision,has-solution,manipulability,"
-        "condition-number,min-joint-margin,position-residual-m,"
+        "sample-index,x-m,y-m,z-m,sampling-mode,state,collision,has-solution,"
+        "manipulability,condition-number,min-joint-margin,position-residual-m,"
         "orientation-residual-rad\n";
     EXPECT_EQ(csv1.substr(0, header.size()), header);
     EXPECT_EQ(std::count(csv1.begin(), csv1.end(), '\n'),
@@ -709,6 +758,9 @@ TEST(KinWorkspace, ExportCsvDeterministic_WP15T14_ACC3)
     ASSERT_NE(line1End, std::string::npos);
     const std::string line1 = csv1.substr(header.size(), line1End - header.size());
     EXPECT_EQ(line1.substr(0, 2), "0,");                       // 序号段
+    // 采样模式列（KIN-P5/KIN-09——区域模式的每点标注 cartesian-region；
+    // 契约版本 2 起新增列——迁移回退即本断言红）。
+    EXPECT_NE(line1.find(",cartesian-region,"), std::string::npos);
     EXPECT_NE(line1.find(",reached,"), std::string::npos);      // 状态 token
     EXPECT_NE(line1.find(",not-evaluated,"), std::string::npos); // 碰撞 token
     EXPECT_NE(line1.find(",1,"), std::string::npos);            // 有解标记
@@ -753,6 +805,21 @@ TEST(KinWorkspace, RenderVocabularyTokens_WP15T14_ACC3)
     EXPECT_EQ(kin::workspaceCollisionToken(1U), "in-collision");
     EXPECT_EQ(kin::workspaceCollisionToken(2U), "not-evaluated");
     EXPECT_EQ(kin::workspaceCollisionToken(9U), "not-evaluated");
+
+    // 采样模式三值 token（KIN-P5/KIN-09——点云/导出的模式来源标注；
+    // 越界值保守缺省"cartesian-region"——词表首值，不虚构类别）。
+    EXPECT_EQ(kin::workspaceSamplingModeToken(
+                  kin::WorkspaceSamplingMode::CartesianRegion),
+              "cartesian-region");
+    EXPECT_EQ(kin::workspaceSamplingModeToken(
+                  kin::WorkspaceSamplingMode::JointSpaceRandom),
+              "joint-random");
+    EXPECT_EQ(kin::workspaceSamplingModeToken(
+                  kin::WorkspaceSamplingMode::JointSpaceGrid),
+              "joint-grid");
+    EXPECT_EQ(kin::workspaceSamplingModeToken(
+                  static_cast<kin::WorkspaceSamplingMode>(9U)),
+              "cartesian-region");
 }
 
 // =====================================================================
@@ -1001,4 +1068,267 @@ TEST(KinWorkspace, RerunAfterCancelSameSampleSet_WP15T14_ACC2)
                   runFull.samples.samples[i].position);
     }
     EXPECT_EQ(runCancelled.sampleSetIdentity, runFull.sampleSetIdentity);
+}
+
+// =====================================================================
+// KIN-P5（审查条目 KIN-09 语义闭合）——关节空间采样→FK 点云
+// =====================================================================
+// 需求 KIN-09 权威语义"随机均匀/关节网格采样"的落点验收：样本＝权威
+// 关节向量（评价区间内随机/网格取点），点云坐标＝FK(构型) 的 TCP 位置
+// ——与旧径（区域盒笛卡尔采样→逐样本 IK）并存并在点云/导出中标注
+// 采样模式来源。解析对照用独立书写公式（附录 D 第 9 项独立参考实现
+// 类别——与产品 FkEvaluator 零共享代码）。
+// =====================================================================
+
+namespace {
+
+/// 二连杆 FK 的独立解析实现（黄金算例 A 几何常量 L1=1.1/L2=0.7 的
+/// 测试侧直写——两旋转关节轴平行 Z、TCP 沿末连杆 x 向）：
+///   p ＝ Rz(q1)·( (L1,0,0) ＋ Rz(q2)·(L2,0,0) )
+/// 展开式（独立推导——不复用产品实现）：
+///   px ＝ cos(q1)·(L1＋L2·cos q2) − sin(q1)·(L2·sin q2)
+///   py ＝ sin(q1)·(L1＋L2·cos q2) ＋ cos(q1)·(L2·sin q2)
+///   pz ＝ 0（平面臂——z 恒 0）。
+rw::math::Vector3D<double> analyticTwoLinkFk(double q1, double q2)
+{
+    constexpr double L1 = 1.1;  // m（KinFkFixture twoLinkModel 连杆 1）
+    constexpr double L2 = 0.7;  // m（连杆 2）
+    const double c1 = std::cos(q1);
+    const double s1 = std::sin(q1);
+    const double r = L1 + L2 * std::cos(q2);  // m（径向臂长）
+    const double z2 = L2 * std::sin(q2);      // m（切向分量）
+    return rw::math::Vector3D<double>(c1 * r - s1 * z2, s1 * r + c1 * z2, 0.0);
+}
+
+/// 关节空间网格查询（twoLinkModel 2 自由度；solver 不被关节模式消费
+/// ——传 nullptr 表达"无求解器依赖"的通道语义）。
+WorkspaceSamplingQuery makeJointGridQuery(std::uint64_t seed = 42U)
+{
+    WorkspaceSamplingQuery q;
+    q.mode = kin::WorkspaceSamplingMode::JointSpaceGrid;
+    q.jointGridCounts = {3U, 3U};  // 2 自由度各取 3 点（含两端）→ 9 样本
+    q.config = makeConfig(seed);
+    q.referenceQ = {0.0, 0.0};
+    q.tcp = toolRef();
+    q.solver = nullptr;
+    return q;
+}
+
+}  // namespace
+
+/// 关节网格→FK 点云的解析算例对照（KIN-09 权威语义钉）：3×3 全网格
+/// 的每点坐标与独立解析 FK 全等；采样模式标注 joint-grid；回写出口
+/// 返回采样构型本身。
+TEST(KinWorkspace, JointSpaceGridFkPointCloudAnalytic_KIN_P5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "KIN-01"},
+                  std::vector<std::string>{"AT-25"});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    RecordingContext ctx;
+
+    const kin::WorkspaceSampleRun run =
+        kin::runWorkspaceSampling(view, makeJointGridQuery(), ctx);
+    ASSERT_FALSE(run.cancelled);
+
+    // 样本面：模式回显＝JointSpaceGrid；9 样本（3×3 笛卡尔积——全网格
+    // 而非对角线：轴 0 慢、轴 1 快的黄金序，逐轴取点 {lo, 中点, hi}）。
+    ASSERT_EQ(run.mode, kin::WorkspaceSamplingMode::JointSpaceGrid);
+    ASSERT_EQ(run.jointConfigurations.size(), std::size_t{9});
+    ASSERT_EQ(run.results.size(), std::size_t{9});
+    ASSERT_EQ(run.samples.samples.size(), std::size_t{0})
+        << "关节模式不产区域样本记录（SampleSet 恒空——通道分立）";
+
+    // 期望网格点（轴 0 ∈ [−2.97,2.97] 三等分、轴 1 ∈ [−π,π] 三等分
+    // ——twoLinkModel 评价区间；枚举序＝轴 0 最慢）。
+    const double j1pts[3] = {-2.97, 0.0, 2.97};                    // rad
+    const double j2pts[3] = {-kPi, 0.0, kPi};                      // rad
+    for (std::size_t i = 0; i < 9; ++i) {
+        const kin::WorkspaceSampleResult& r = run.results[i];
+        const std::size_t i0 = i / 3U;
+        const std::size_t i1 = i % 3U;
+        ASSERT_EQ(r.sampleIndex, static_cast<std::uint64_t>(i));
+        ASSERT_EQ(r.state, SampleState::Reached)
+            << "样本 " << i << "：FK 构造性可达——恒 Reached（无搜索未果形态）";
+        ASSERT_EQ(r.jointConfiguration.size(), std::size_t{2});
+        EXPECT_DOUBLE_EQ(r.jointConfiguration[0], j1pts[i0]) << "样本 " << i;
+        EXPECT_DOUBLE_EQ(r.jointConfiguration[1], j2pts[i1]) << "样本 " << i;
+
+        // 点云坐标＝FK(构型) 的 TCP 位置——独立解析实现全等（附录 D
+        // 第 4 项位姿容差 1e-9；FK 数值路径 1e-15 量级，取 1e-12 裕量）。
+        const rw::math::Vector3D<double> expected =
+            analyticTwoLinkFk(j1pts[i0], j2pts[i1]);
+        EXPECT_NEAR(r.tcpPosition[0], expected[0], 1e-12) << "样本 " << i;
+        EXPECT_NEAR(r.tcpPosition[1], expected[1], 1e-12) << "样本 " << i;
+        EXPECT_NEAR(r.tcpPosition[2], expected[2], 1e-12) << "样本 " << i;
+
+        // 解级投影：残差恒 0（FK 无目标误差——构造性可达的语义边界）；
+        // 可操作度/裕量非负（真实指标——非脚本值）。
+        ASSERT_TRUE(r.bestSolution.has_value());
+        EXPECT_DOUBLE_EQ(r.bestSolution->positionResidual, 0.0);
+        EXPECT_DOUBLE_EQ(r.bestSolution->orientationResidual, 0.0);
+        EXPECT_GE(r.bestSolution->manipulability, 0.0);
+    }
+
+    // 点云/导出：采样模式来源标注（"点从哪来"的强制溯源列——KIN-09
+    // 语义闭合的呈现面契约）。
+    const WorkspacePointCloudRenderData cloud = kin::buildWorkspacePointCloud(run);
+    ASSERT_EQ(cloud.points.size(), std::size_t{9});
+    for (const kin::WorkspacePointCloudPoint& p : cloud.points) {
+        EXPECT_EQ(p.samplingMode,
+                  static_cast<std::uint8_t>(
+                      kin::WorkspaceSamplingMode::JointSpaceGrid));
+        EXPECT_EQ(p.state, SampleState::Reached);
+    }
+    const std::string csv = kin::workspacePointCloudExportCsv(cloud);
+    EXPECT_NE(csv.find(",joint-grid,"), std::string::npos)
+        << "导出行必须标注 joint-grid 模式（迁移回退/漏标注即红）";
+    EXPECT_EQ(csv.find(",cartesian-region,"), std::string::npos)
+        << "关节模式运行不得标注区域模式";
+
+    // 回写出口：FK 样本的最佳解 q＝采样构型本身（KIN-06 仅改会话姿态
+    // 的语义在关节模式下回写的就是被 FK 验证过的构型）。
+    const kin::RenderPointWriteback wb = kin::workspacePointWriteback(run, 4U);
+    EXPECT_EQ(wb.q, run.jointConfigurations[4]);
+}
+
+/// 关节随机→FK 点云：同种子重跑逐位一致＋64 位种子敏感（A06 同源钉）
+/// ＋样本落评价区间内。
+TEST(KinWorkspace, JointSpaceRandomDeterministicAndSeedSensitive_KIN_P5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "KIN-13", "NFR-COR-01"},
+                  std::vector<std::string>{"AT-25", "V-20"});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+
+    WorkspaceSamplingQuery q = makeJointGridQuery();
+    q.mode = kin::WorkspaceSamplingMode::JointSpaceRandom;
+    q.jointGridCounts.clear();
+    q.jointRandomCount = 12U;  // "样本数可配"（KIN-09 原文）
+
+    // 同种子重跑：构型集/点云逐位一致＋样本集身份一致（重跑核对键）。
+    RecordingContext ctxA1;
+    const kin::WorkspaceSampleRun runA1 = kin::runWorkspaceSampling(view, q, ctxA1);
+    RecordingContext ctxA2;
+    const kin::WorkspaceSampleRun runA2 = kin::runWorkspaceSampling(view, q, ctxA2);
+    ASSERT_EQ(runA1.mode, kin::WorkspaceSamplingMode::JointSpaceRandom);
+    ASSERT_EQ(runA1.jointConfigurations.size(), std::size_t{12});
+    ASSERT_EQ(runA1.results.size(), std::size_t{12});
+    EXPECT_EQ(runA1.jointConfigurations, runA2.jointConfigurations);
+    EXPECT_EQ(runA1.results, runA2.results);
+    EXPECT_EQ(runA1.sampleSetIdentity, runA2.sampleSetIdentity);
+
+    // 64 位种子敏感（审查 A06 同源）：seed=1 与 seed=1＋2³² 只差高位
+    // ——构型集必须不同（修复前派生在模 2⁶⁴ 下两 seed 状态相同）。
+    WorkspaceSamplingQuery qHigh = q;
+    qHigh.config.regionBudget.seed = 1U + (1ULL << 32);
+    qHigh.config.seed = qHigh.config.regionBudget.seed;
+    RecordingContext ctxHigh;
+    const kin::WorkspaceSampleRun runHigh =
+        kin::runWorkspaceSampling(view, qHigh, ctxHigh);
+    ASSERT_EQ(runHigh.jointConfigurations.size(), std::size_t{12});
+    EXPECT_NE(runA1.jointConfigurations, runHigh.jointConfigurations)
+        << "审查 A06：seed 高 32 位必须影响关节随机采样序列";
+    EXPECT_NE(runA1.sampleSetIdentity, runHigh.sampleSetIdentity);
+
+    // 样本域：每构型逐轴落在评价区间内（随机均匀的采样域契约）。
+    for (const auto& cfg : runA1.jointConfigurations) {
+        ASSERT_EQ(cfg.size(), std::size_t{2});
+        EXPECT_GE(cfg[0], -2.97);
+        EXPECT_LE(cfg[0], 2.97);
+        EXPECT_GE(cfg[1], -kPi);
+        EXPECT_LE(cfg[1], kPi);
+        // 全部 Reached＋点云坐标与该构型的独立解析 FK 全等（构造性
+        // 可达——抽查 3 个样本防"状态齐刷"式弱断言）。
+    }
+    for (const std::size_t i : {std::size_t{0}, std::size_t{5}, std::size_t{11}}) {
+        const kin::WorkspaceSampleResult& r = runA1.results[i];
+        ASSERT_EQ(r.state, SampleState::Reached);
+        const rw::math::Vector3D<double> expected =
+            analyticTwoLinkFk(r.jointConfiguration[0], r.jointConfiguration[1]);
+        EXPECT_NEAR(r.tcpPosition[0], expected[0], 1e-12) << "样本 " << i;
+        EXPECT_NEAR(r.tcpPosition[1], expected[1], 1e-12) << "样本 " << i;
+    }
+}
+
+/// 关节空间查询校验矩阵＋模式分派面：网格维度/零格/组合爆炸 fail-fast；
+/// 关节模式不消费区域盒（缺省零盒不拒——校验按模式分派）；零样本合法；
+/// FK 值面错误（无工具模型）＝DataInsufficient 不虚构可达。
+TEST(KinWorkspace, JointSpaceQueryValidationAndFkErrorFace_KIN_P5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "NFR-COR-03", "KIN-05"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+
+    // 网格维度≠自由度（2 轴模型给 3 轴计数）→ fail-fast。
+    {
+        WorkspaceSamplingQuery q = makeJointGridQuery();
+        q.jointGridCounts = {3U, 3U, 3U};
+        RecordingContext ctx;
+        EXPECT_THROW(kin::runWorkspaceSampling(view, q, ctx), std::invalid_argument);
+    }
+    // 零格计数（每轴取点数须 ≥1）→ fail-fast。
+    {
+        WorkspaceSamplingQuery q = makeJointGridQuery();
+        q.jointGridCounts = {3U, 0U};
+        RecordingContext ctx;
+        EXPECT_THROW(kin::runWorkspaceSampling(view, q, ctx), std::invalid_argument);
+    }
+    // 笛卡尔积超上限（400×400=160000 > kJointGridMaxTotalSamples=100000
+    // ——组合爆炸防护闸；拒绝而非静默截断，NFR-COR-03）。
+    {
+        WorkspaceSamplingQuery q = makeJointGridQuery();
+        q.jointGridCounts = {400U, 400U};
+        RecordingContext ctx;
+        EXPECT_THROW(kin::runWorkspaceSampling(view, q, ctx), std::invalid_argument);
+    }
+    // 模式分派负检：JointSpaceGrid 下区域盒不消费——缺省零尺寸盒不拒
+    // （区域校验越界会强迫调用方填无意义的区域值）。
+    {
+        WorkspaceSamplingQuery q = makeJointGridQuery();
+        EXPECT_DOUBLE_EQ(q.region.size[0], 0.0);  // 未填区域盒（缺省零）
+        RecordingContext ctx;
+        const kin::WorkspaceSampleRun run = kin::runWorkspaceSampling(view, q, ctx);
+        EXPECT_EQ(run.results.size(), std::size_t{9});  // 校验未误拒
+    }
+    // 零样本合法（随机 count=0——空产物、零计数守恒；I-REQ-6 口径）。
+    {
+        WorkspaceSamplingQuery q = makeJointGridQuery();
+        q.mode = kin::WorkspaceSamplingMode::JointSpaceRandom;
+        q.jointGridCounts.clear();
+        q.jointRandomCount = 0U;
+        RecordingContext ctx;
+        const kin::WorkspaceSampleRun run = kin::runWorkspaceSampling(view, q, ctx);
+        EXPECT_EQ(run.results.size(), std::size_t{0});
+        EXPECT_EQ(run.completedCount, 0U);
+        EXPECT_EQ(run.notRunCount, 0U);
+    }
+    // FK 值面错误（模型侧事实）：无工具模型（KIN-NO-TCP）→ 全样本
+    // DataInsufficient＋原因非空——绝不虚构可达（C5/C8/KIN-05 同源）。
+    {
+        const rt::CanonicalModel noToolModel = makeModel(
+            std::vector<rt::CanonicalJoint>{
+                revolute("nt1", rw::math::Vector3D<double>(0, 0, 1),
+                         trans(0, 0, 0), -2.97, 2.97),
+                revolute("nt2", rw::math::Vector3D<double>(0, 0, 1),
+                         trans(1.1, 0, 0), -kPi, kPi)},
+            trans(0.7, 0, 0), trans(0, 0, 0), false);
+        TestView noToolView(noToolModel);
+        RecordingContext ctx;
+        const kin::WorkspaceSampleRun run =
+            kin::runWorkspaceSampling(noToolView, makeJointGridQuery(), ctx);
+        ASSERT_EQ(run.results.size(), std::size_t{9});
+        for (const kin::WorkspaceSampleResult& r : run.results) {
+            EXPECT_EQ(r.state, SampleState::DataInsufficient)
+                << "样本 " << r.sampleIndex;
+            EXPECT_FALSE(r.reason.empty());
+            EXPECT_NE(r.reason.find("FK 评估失败"), std::string::npos);
+            EXPECT_FALSE(r.bestSolution.has_value())
+                << "FK 失败样本不得携带解（绝不虚构可达）";
+        }
+    }
 }

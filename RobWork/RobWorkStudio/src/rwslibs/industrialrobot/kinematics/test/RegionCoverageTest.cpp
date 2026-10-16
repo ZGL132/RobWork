@@ -60,8 +60,9 @@ using kin::SampleResultSet;
 
 namespace {
 
-/// π（rad——位置样本姿态无约束落值的测试侧判别常量；与产品实现同一
-/// 数学量，独立书写以防常量漂移静默）。
+/// π（rad——测试侧通用角常量（斐波那契/roll 黄金值断言等用）；位置样本
+/// 姿态自由的判别已随 KIN-P2/A02 改为任务空间模式（taskSpace），不再
+/// 以 π 容差承载）。
 constexpr double kPi = 3.14159265358979323846;
 
 // =====================================================================
@@ -159,7 +160,8 @@ public:
     /// 结局谓词：入参＝请求（目标位姿/容差可判别）；返回结局种类。
     using Predicate = std::function<kin::IkOutcomeKind(const kin::IkRequest&)>;
 
-    /// 样本种类判别（测试侧标记——按姿态容差是否为"无约束落值 π"）。
+    /// 样本种类判别（测试侧标记——按请求任务空间模式，KIN-P2/A02 起
+    /// 位置存在性＝PositionOnly 3 维任务）。
     enum class RequestKind : std::uint8_t { Position, Pose };
 
     /// 记录的单次请求摘要（接线断言面）。
@@ -167,6 +169,7 @@ public:
         rw::math::Vector3D<double> targetPosition;
         double positionTolerance = 0.0;
         double orientationTolerance = 0.0;
+        kin::IkTaskSpace taskSpace = kin::IkTaskSpace::FullPose;  ///< 任务维度（A02）
         RequestKind kind = RequestKind::Position;
     };
 
@@ -178,10 +181,13 @@ public:
         rec.targetPosition = request.targetInBase.P();
         rec.positionTolerance = request.positionTolerance;
         rec.orientationTolerance = request.orientationTolerance;
-        // 位置样本判别：评估器以"姿态无约束落值 π"承载存在性口径——
-        // 记录面按该容差判别样本种类（与评估器实现内同一判据）。
-        rec.kind = request.orientationTolerance >= kPi ? RequestKind::Position
-                                                       : RequestKind::Pose;
+        rec.taskSpace = request.taskSpace;
+        // 位置样本判别（KIN-P2/A02 起）：评估器以 taskSpace=PositionOnly
+        // 承载位置存在性口径——记录面按任务模式判别（旧"姿态容差 π"
+        // 判别随该机制移除而失效，容差不再携带样本种类语义）。
+        rec.kind = request.taskSpace == kin::IkTaskSpace::PositionOnly
+                       ? RequestKind::Position
+                       : RequestKind::Pose;
         {
             std::lock_guard<std::mutex> lock(m_mutex);
             m_requests.push_back(rec);
@@ -502,13 +508,15 @@ TEST(KinRegionCoverage, SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3)
 
     // 公式黄金复算（测试侧独立组装 canonical 字节——与 Sampling.cpp 布局
     // 注逐字节一致，布局漂移即用例失败）：SHA-256 over ("IRDSSID1" ‖
-    // u32(1) ‖ u32(len) ‖ planContentIdentity 规范文本 ‖ u64 seed)。
+    // u32(2) ‖ u32(len) ‖ planContentIdentity 规范文本 ‖ u64 seed)。
+    // codec 版本 2＝KIN-P5/审查 A06（种子派生算法换代的全局升版——同
+    // (计划, seed) 在 v1/v2 两代算法下样本点不同，身份不得跨代假借）。
     const std::string planText = planId.toCanonical();
     std::vector<std::uint8_t> canonical;
     const char magic[] = "IRDSSID1";
     canonical.insert(canonical.end(), magic, magic + 7);
     for (int i = 0; i < 4; ++i) {
-        canonical.push_back(static_cast<std::uint8_t>((1U >> (8 * i)) & 0xFFu));
+        canonical.push_back(static_cast<std::uint8_t>((2U >> (8 * i)) & 0xFFu));
     }
     const std::uint32_t len = static_cast<std::uint32_t>(planText.size());
     for (int i = 0; i < 4; ++i) {
@@ -652,6 +660,20 @@ TEST(KinRegionCoverage, GoldenGeneratorsAndSameOrderRerun_WP15T06_ACC4)
         EXPECT_FALSE(r1[i] == r3[i]);
     }
 
+    // KIN-P5（审查 A06）：seed 高 32 位必须参与位置派生——seed=1 与
+    // seed=1＋2³² 只差高位（修复前 "seed·2³²＋k" 在模 2⁶⁴ 算术下两
+    // seed 状态相同→位置序列相同，本断言处红；修复后经 streamSeedFor
+    // 完整 64 位混合，任意 1 位种子差异扩散全序列）。
+    const std::vector<rw::math::Vector3D<double>> rLow =
+        kin::generateRandomPositions(box, 8U, 1U);
+    const std::vector<rw::math::Vector3D<double>> rHigh =
+        kin::generateRandomPositions(box, 8U, 1U + (1ULL << 32));
+    ASSERT_EQ(rLow.size(), 8U);
+    for (std::size_t i = 0; i < 8; ++i) {
+        EXPECT_FALSE(rLow[i] == rHigh[i])
+            << "样本 " << i << "：审查 A06——seed 高 32 位必须影响采样序列";
+    }
+
     // 复评同集同序（多计划面——计划序×计划内序，全局 sampleIndex 连续）。
     const SamplingPlan p1 = makePlan("rrp1", {2U, 1U, 1U});
     const SamplingPlan p2 = makePlan("rrp2", {1U, 2U, 1U});
@@ -753,9 +775,9 @@ TEST(KinRegionCoverage, CancellationPartialNotRunRerunSameSet_WP15T06_ACC4)
 }
 
 // =====================================================================
-// ACC5——逐样本评估接线：IK 分流（位置样本姿态无约束 π/位姿样本完整
-// 位姿）＋碰撞（缺检测器→DataInsufficient；无要求无会话→检查不在范
-// 围不降级）＋镜像独立计数
+// ACC5——逐样本评估接线：IK 分流（位置样本 taskSpace=PositionOnly〔
+// KIN-P2/A02〕/位姿样本完整位姿）＋碰撞（缺检测器→DataInsufficient；
+// 无要求无会话→检查不在范围不降级）＋镜像独立计数
 // =====================================================================
 
 TEST(KinRegionCoverage, PerSampleIkWiringPositionVsPose_WP15T06_ACC5)
@@ -778,15 +800,22 @@ TEST(KinRegionCoverage, PerSampleIkWiringPositionVsPose_WP15T06_ACC5)
         kin::runRegionCoverageComputation(view, query, req, context);
 
     // 逐请求接线断言：4 次求解（先 2 位置后 2 位姿——生成序黄金锁定）；
-    // 位置样本目标位置＝格心、姿态容差＝π（无约束落值）、位置容差＝
-    // 查询值；位姿样本姿态容差＝查询值、目标位置与位置样本同点。
+    // 位置样本目标位置＝格心、任务模式＝PositionOnly（KIN-P2/A02——
+    // 3 维任务子空间；姿态容差随请求携带查询值但不参与该任务收敛）、
+    // 位置容差＝查询值；位姿样本＝FullPose、姿态容差＝查询值、目标
+    // 位置与位置样本同点。
     ASSERT_EQ(solver.requests().size(), 4U);
     EXPECT_EQ(solver.requests()[0].kind, ScriptedSolver::RequestKind::Position);
     EXPECT_DOUBLE_EQ(solver.requests()[0].targetPosition[0], 0.25);
-    EXPECT_DOUBLE_EQ(solver.requests()[0].orientationTolerance, kPi);
+    EXPECT_EQ(solver.requests()[0].taskSpace, kin::IkTaskSpace::PositionOnly)
+        << "位置样本必须以仅位置任务维度提交（A02——姿态项不进目标函数）";
+    EXPECT_DOUBLE_EQ(solver.requests()[0].orientationTolerance,
+                     query.orientationTolerance);
     EXPECT_DOUBLE_EQ(solver.requests()[0].positionTolerance,
                      query.positionTolerance);
     EXPECT_EQ(solver.requests()[2].kind, ScriptedSolver::RequestKind::Pose);
+    EXPECT_EQ(solver.requests()[2].taskSpace, kin::IkTaskSpace::FullPose)
+        << "位姿样本保持完整位姿任务（v1 行为）";
     EXPECT_DOUBLE_EQ(solver.requests()[2].orientationTolerance,
                      query.orientationTolerance);
     EXPECT_DOUBLE_EQ(solver.requests()[2].targetPosition[0],
@@ -794,6 +823,67 @@ TEST(KinRegionCoverage, PerSampleIkWiringPositionVsPose_WP15T06_ACC5)
     // 全部样本 Reached（谓词恒可达）。
     EXPECT_EQ(computation.coverage.position.reached, 2U);
     EXPECT_EQ(computation.coverage.orientation.reached, 2U);
+}
+
+/// KIN-P2（审查 A02）——位置存在性样本经**真实 IkSolver** 在退化链上
+/// 闭环：审查反例载体（coaxialChainModel——六轴同轴、TCP 轴距 1 m，
+/// 位置工作空间＝xy 平面半径 1 m 圆）上的已知可达点 (0,1,0)（q*=
+/// (π/2,0,…)）。修复前：位置样本以 FullPose＋π 容差提交——姿态项参与
+/// 6 维迭代把位置可达解牵制出局，样本终态 DataInsufficient（覆盖计数
+/// 0，区域被误判"数据不足"）。修复后：taskSpace=PositionOnly 3 维任务
+/// ——样本 Reached（位置存在性正确成立）。DataInsufficient 的保守语义
+/// 本身不变（搜索未果≠证明不可达）——本钉验证的是"位置可达点不再被
+/// 姿态目标错误压制"。
+TEST(KinRegionCoverage, PositionSampleRealSolverDegenerateChain_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-04", "KIN-02"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = coaxialChainModel();
+    TestView view(model);
+    const kin::IkSolver realSolver;  // 真实求解器（A02 闭环——非脚本结局）
+
+    // 单位置样本计划：盒心＝(0,1,0)（审查反例点）、边长 0.02——Grid
+    // 1×1×1 的格心＝盒心；位姿维度 1×1（分母合法域——位姿样本的结局
+    // 不在本钉断言面：退化链上任意固定姿态目标几乎必然不可达）。
+    kin::SamplingPlan plan;
+    plan.regionObjectId = regionId("a02");
+    plan.planContentIdentity = planIdentityFrom("a02");
+    plan.box.center = rw::math::Vector3D<double>(0.0, 1.0, 0.0);
+    plan.box.size = rw::math::Vector3D<double>(0.02, 0.02, 0.02);
+    plan.position.method = kin::PositionSamplingDefinition::Method::Grid;
+    plan.position.gridCounts = {1U, 1U, 1U};
+    plan.orientation.directionSamples = 1U;
+    plan.orientation.rollSamples = 1U;
+
+    kin::RegionCoverageQuery query;
+    query.plans = {plan};
+    query.defaultTcp.toolObject = model.tools().front().objectId;
+    query.referenceQ.assign(6, 0.0);
+    query.initialStrategy = kin::InitialValueStrategy::JointGrid;
+    query.initialValuesCount = 4U;   // 多初值——修复面不依赖初值碰巧命中
+    query.iterationLimit = 256U;     // 审查反例同预算（修复前该预算下 0 解）
+    query.budget = makeBudget(42U);
+    query.solver = &realSolver;
+
+    const evidence::EvaluationRequest req =
+        makeRequest({makeRef(plan, query.budget)});
+    NoopContext context;
+    const kin::RegionCoverageComputation computation =
+        kin::runRegionCoverageComputation(view, query, req, context);
+
+    // 样本集：1 位置＋1 位姿（生成序黄金锁定——位置样本全序首位）。
+    ASSERT_EQ(computation.samples.samples.size(), 2U);
+    EXPECT_EQ(computation.samples.samples[0].kind, kin::SampleKind::Position);
+    EXPECT_NEAR(computation.samples.samples[0].position[0], 0.0, 1e-12);
+    EXPECT_NEAR(computation.samples.samples[0].position[1], 1.0, 1e-12);
+
+    // 位置样本（槽 0）终态＝Reached、位置存在性计数＝1（修复前
+    // DataInsufficient/0——A02 反例的调用方级回归钉）。
+    EXPECT_EQ(computation.results.results[0].sampleIndex, 0U);
+    EXPECT_EQ(computation.results.results[0].state, kin::SampleState::Reached);
+    EXPECT_EQ(computation.coverage.position.reached, 1U);
+    EXPECT_EQ(computation.coverage.position.planned, 1U);
 }
 
 TEST(KinRegionCoverage, CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5)

@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 
+#include <cmath>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -24,6 +25,7 @@
                                                    // 构造期命令标题 resolver 尚未注入，此处直读
                                                    // UiText 静态表与 requirements 面板先例同款）
 #include "KinPanelCommandCatalog.hpp"              // 命令目录（按钮词形与只读门控）
+#include "KinPanelUnits.hpp"                       // resolveKinDisplayToSi（提交面逆换算——A07）
 
 namespace sdurws {
 namespace ird {
@@ -125,17 +127,23 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     // ---- 右半：目标编辑＋Solve＋候选检查器。
     auto* right = new QVBoxLayout();
     auto* form = new QFormLayout();
-    // 目标位置编辑（显示制式文本——SI 换算经表单公共件解析口径；此处为
-    // 求解目标的轻量编辑位，单位投影文本由 L-K8 刷新统一回填）。
+    // 目标位置编辑（**显示制式**数值——行标签随当前制式标注单位；提交时
+    // 经 resolveKinDisplayToSi 逆换算回 SI 真值，会话/求解器只见 SI）。
+    // 行标签显式创建并持有（QFormLayout 内建标签拿不到可更新句柄——
+    // L-K8 切换制式后标签必须随制式重建；审查 A07 缺陷面①：修复前标签
+    // 为构造期硬编码 "（m）"，切到 mm 后标签失实引导错误输入解释）。
     m_targetX = new QLineEdit(pane);
     m_targetY = new QLineEdit(pane);
     m_targetZ = new QLineEdit(pane);
-    m_targetX->setPlaceholderText(tr("例如 0.400（单位：m）"));
-    m_targetY->setPlaceholderText(tr("例如 0.000（单位：m）"));
-    m_targetZ->setPlaceholderText(tr("例如 0.300（单位：m）"));
-    form->addRow(tr("目标 X（m）"), m_targetX);
-    form->addRow(tr("目标 Y（m）"), m_targetY);
-    form->addRow(tr("目标 Z（m）"), m_targetZ);
+    m_targetXLabel = new QLabel(pane);
+    m_targetYLabel = new QLabel(pane);
+    m_targetZLabel = new QLabel(pane);
+    form->addRow(m_targetXLabel, m_targetX);
+    form->addRow(m_targetYLabel, m_targetY);
+    form->addRow(m_targetZLabel, m_targetZ);
+    // 首版标注（按当前会话制式——构造期 displayUnits 尚为缺省 SI 直显，
+    // setDisplayUnits 注入后经 refreshAll 重建）。
+    refreshTargetUnitPresentation();
     layout->addLayout(form);
 
     m_solveButton = new QPushButton(tr("求解 IK"), pane);
@@ -208,13 +216,18 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
     m_statTable = makeTable({tr("统计"), tr("值")}, pane);
     layout->addWidget(m_statTable);
 
-    // 命令行（导出/复位/设默认——全部经编排函数，零内联逻辑）。
+    // 命令行（导出/复位/设默认/复算——全部经编排函数，零内联逻辑）。
     auto* buttons = new QHBoxLayout();
     m_exportJsonButton = new QPushButton(tr("导出 JSON"), pane);
     m_exportCsvButton = new QPushButton(tr("导出 CSV"), pane);
     m_resetHomeButton = new QPushButton(tr("复位 Home"), pane);
     m_setTcpButton = new QPushButton(tr("设默认 TCP"), pane);
     m_setDeviceButton = new QPushButton(tr("设默认设备"), pane);
+    // ★ KIN-P4：复算按钮（审查 §4——"原任务定义与当前快照重绑定"的
+    // 产品入口；会话级零修订——AT-04）。
+    m_recomputeButton = new QPushButton(tr("复算（当前快照）"), pane);
+    m_recomputeButton->setToolTip(
+        tr("按原任务定义（seed/参考构型自原结果身份携带）在当前快照重跑求解"));
     connect(m_exportJsonButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onExportJsonClicked);
     connect(m_exportCsvButton, &QPushButton::clicked, this,
@@ -225,8 +238,10 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
             &KinematicsPanelWidget::onSetDefaultTcpClicked);
     connect(m_setDeviceButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onSetDefaultDeviceClicked);
+    connect(m_recomputeButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onRecomputeClicked);
     for (QPushButton* b : {m_exportJsonButton, m_exportCsvButton, m_resetHomeButton,
-                           m_setTcpButton, m_setDeviceButton}) {
+                           m_setTcpButton, m_setDeviceButton, m_recomputeButton}) {
         buttons->addWidget(b);
     }
     layout->addLayout(buttons);
@@ -277,6 +292,9 @@ void KinematicsPanelWidget::renderSolutions(QTableWidget* table,
 
 void KinematicsPanelWidget::refreshAll()
 {
+    // 目标输入行标注随制式重建（KIN-P1 A07——L-K8 切换经 setDisplayUnits
+    // 进入本函数；标签/占位是 displayUnits 的呈现函数，零重算零修订）。
+    refreshTargetUnitPresentation();
     refreshPosePane();
     refreshResultsPane();
     refreshTaskArea();
@@ -296,10 +314,22 @@ void KinematicsPanelWidget::refreshAll()
     m_setDeviceButton->setEnabled(commandEnabled("kinematics.set-default-device",
                                                  kinCommandEnabledInSession("kinematics.set-default-device", writable)
                                                  && m_services.commandHandler != nullptr));
+    // 复位 Home（KIN-P3/审查 A09）：按钮可用性＝具名 Home 来源缝已装配
+    // ——来源缺失即显式禁用，绝不出现"以当前姿态充当 Home"的可达路径
+    // （缝在场但模型未定义 Home 的提示在点击路径给出——resetSessionHome
+    // FromNamedSource 拒绝态③）。只读会话可用（reset-session-pose＝
+    // readOnlyAllowed，会话级命令——目录表权威）。
+    m_resetHomeButton->setEnabled(static_cast<bool>(m_services.homePose));
     const bool exportReady = static_cast<bool>(m_services.exportWriter)
                              && m_session.lastSessionSolutionSetView != nullptr;
     m_exportJsonButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
     m_exportCsvButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
+    // 复算按钮（KIN-P4）：可用＝原解集在场（原任务定义来源）＋模型视图
+    // 与求解器在场（复算执行面）。复算为会话级零修订流（AT-04）——只读
+    // 会话不禁用（与 solve-ik 同 readOnlyAllowed 语义）。
+    m_recomputeButton->setEnabled(
+        m_session.lastSessionSolutionSet != nullptr
+        && m_services.ikSolver != nullptr && m_services.modelView != nullptr);
     m_solveButton->setEnabled(commandEnabled("kinematics.solve-ik",
                                              m_services.ikSolver != nullptr
                                              && m_services.modelView != nullptr));
@@ -311,6 +341,36 @@ void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProje
     // 显示文本重建；零重算（无任何评估调用）/零修订（无命令提交）。
     m_session.displayUnits = units;
     refreshAll();
+}
+
+void KinematicsPanelWidget::refreshTargetUnitPresentation()
+{
+    // 目标输入行的单位标注随显示制式重建（审查 A07 缺陷面①修复：修复前
+    // 标签为构造期硬编码 "（m）"，切到 mm 后标签失实）。标注同时携带
+    // **参考系标识"基座系"**（KIN-P1 验收"参考系标识"半区）：提交目标
+    // 经 runSinglePointSolve 进入 IkRequest.targetInBase（基座系 SI——
+    // 单元卡 §5.3），输入语义即基座系坐标。单位符号取当前制式长度 token
+    // 原文（core Units 冻结词表——"m"/"cm"/"mm"）；nullopt＝SI 直显制式。
+    const QString lengthSymbol =
+        m_session.displayUnits.has_value()
+            ? QString::fromStdString(
+                std::string(m_session.displayUnits->lengthUnit().symbol()))
+            : QStringLiteral("m");
+    if (m_targetXLabel != nullptr) {
+        m_targetXLabel->setText(tr("目标 X（%1，基座系）").arg(lengthSymbol));
+        m_targetX->setPlaceholderText(
+            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+    }
+    if (m_targetYLabel != nullptr) {
+        m_targetYLabel->setText(tr("目标 Y（%1，基座系）").arg(lengthSymbol));
+        m_targetY->setPlaceholderText(
+            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+    }
+    if (m_targetZLabel != nullptr) {
+        m_targetZLabel->setText(tr("目标 Z（%1，基座系）").arg(lengthSymbol));
+        m_targetZ->setPlaceholderText(
+            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+    }
 }
 
 void KinematicsPanelWidget::refreshPosePane()
@@ -328,8 +388,21 @@ void KinematicsPanelWidget::refreshPosePane()
         return;
     }
     const std::vector<double>& q = m_services.sessionPose->jointConfiguration();
-    const TcpRef tcp;  // canonical TCP（空 tcpKey——快照内解析）
-    const auto metrics = m_services.fkEvaluator->evaluate(*m_services.modelView, tcp, q);
+    // ★ KIN-P4/审查 §4：位姿页刷新的 TCP 经三入口统一解析单点
+    // （resolveSessionTcp——KIN-14 默认 TCP 权威）。修复前此处构造空
+    // TcpRef（canonical TCP 语义）——但 FK 不会仅凭空 tcpKey 自动找到
+    // toolObject，无工具快照下评估恒 KIN-NO-TCP 失败、有工具快照下依赖
+    // 隐式约定。解析失败＝位姿表空＋状态行显式提示（建模侧配置指引），
+    // 不虚构指标行。
+    const KinTcpResolution tcp = resolveSessionTcp(m_services);
+    if (!tcp.ok) {
+        renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
+        m_jointTable->setRowCount(0);
+        showStatusText(QString::fromStdString(tcp.statusText));
+        return;
+    }
+    const auto metrics =
+        m_services.fkEvaluator->evaluate(*m_services.modelView, tcp.tcp, q);
     if (!metrics.ok()) {
         // 失败如实呈现（KinematicsError 的稳定码 token＋detail——非模态
         // 状态行；token 转发表唯一出口 Errors.hpp）。
@@ -341,16 +414,27 @@ void KinematicsPanelWidget::refreshPosePane()
         return;
     }
     renderRows(m_poseTable, poseMetricRows(metrics.get(), m_session.displayUnits));
-    // 关节表（KIN-12 显示投影——显示制式下的关节向量）。
+    // 关节表（KIN-12 显示投影——显示制式下的关节向量；KIN-P3/审查 A05：
+    // 逐轴按天然量纲投影——转动/连续轴 rad→角度、移动轴 m→长度，"数值
+    // ＋单位"同显。逐轴类型从模型关节表提取（dofJointTypes——FK 成功
+    // 蕴含 q 维度＝dof，类型表逐轴对齐）。
+    const std::vector<runtime::JointType> axisTypes =
+        dofJointTypes(m_services.modelView->model());
     m_jointTable->setRowCount(static_cast<int>(q.size()));
     for (std::size_t i = 0; i < q.size(); ++i) {
         m_jointTable->setItem(static_cast<int>(i), 0,
                               new QTableWidgetItem(tr("J%1").arg(i + 1)));
-        const double shown = m_session.displayUnits.has_value()
-                                 ? m_session.displayUnits->projectAngle(q[i])
-                                 : q[i];
+        // 防御面：FK 契约保证 q.size()==axisTypes.size()（同 dof 链序）；
+        // 越界即装配层模型不一致——如实呈现占位不虚构数值（不抛异常穿
+        // 越 Qt 槽，与 NFR-COR-03 的就地反馈同则）。
+        const QString cell =
+            i < axisTypes.size()
+                ? QString::fromStdString(
+                    formatJointAxisText(q[i], axisTypes[i],
+                                        m_session.displayUnits))
+                : QStringLiteral("—");
         m_jointTable->setItem(static_cast<int>(i), 1,
-                              new QTableWidgetItem(QString::number(shown)));
+                              new QTableWidgetItem(cell));
     }
 }
 
@@ -362,9 +446,19 @@ void KinematicsPanelWidget::refreshResultsPane()
         renderRows(m_inspectorTable, std::vector<KinNamedValueRow>{});
         return;
     }
+    // 逐轴类型真值（KIN-P3/审查 A05——q 列逐轴投影的模型来源）。解集在
+    // 场而模型视图缺失的形态不经本面板任何流产生（求解前置模型视图）；
+    // 防御面＝如实清空不虚构（零投影语义可用——猜量纲即 A05 复辟）。
+    if (m_services.modelView == nullptr) {
+        renderSolutions(m_solutionTable, std::vector<KinSolutionRow>{});
+        fillSingleColumn(m_statTable, QStringList{});
+        renderRows(m_inspectorTable, std::vector<KinNamedValueRow>{});
+        return;
+    }
     const IKinematicSolutionSet& set = *m_session.lastSessionSolutionSetView;
     renderSolutions(m_solutionTable,
                     solutionRowsFor(set, m_usableOnly->isChecked(),
+                                    dofJointTypes(m_services.modelView->model()),
                                     m_session.displayUnits));
     // 统计行（四计数直投——零自算）。
     const auto st = set.statistics();
@@ -457,35 +551,56 @@ void KinematicsPanelWidget::focusTaskPoint(const std::optional<core::ObjectId>& 
 
 void KinematicsPanelWidget::onSolveClicked()
 {
-    // L-K2 转接（零内联逻辑——编排函数承担）。目标位姿从编辑字段读取
-    // （显示制式数值＝SI 直读的轻量编辑位——单位换算经会话投影；字段
-    // 解析失败就地反馈保留原值，UX-05）。
+    // L-K2 转接（零内联逻辑——编排函数承担）。目标位姿从编辑字段读取：
+    // 字段承载**显示制式**数值（行标签随制式标注单位——见
+    // refreshTargetUnitPresentation），提交前按所选单位**逆换算回 SI
+    // 真值**（resolveKinDisplayToSi——mm 输入 0.1 → 1e-4 m），会话/求解
+    // 器只见 SI（IkRequest.targetInBase＝基座系 m，§5.3）。审查条目 A07
+    // 修复：修复前此处直读显示值并用 projectLength（SI→显示的正向投影）
+    // 再放大——方向反转（mm 输入 0.1 → 100 m，按任何解释均非法）。
     bool okX = false, okY = false, okZ = false;
     double x = m_targetX->text().toDouble(&okX);
     double y = m_targetY->text().toDouble(&okY);
     double z = m_targetZ->text().toDouble(&okZ);
-    if (!okX || !okY || !okZ) {
-        showStatusText(tr("目标位姿非法（数值解析失败）——原值保留"));
+    // 解析失败**或非有限**（"inf"/"nan" 可被解析但不是合法坐标——
+    // NFR-COR-03 非有限不静默）＝调用方输入错误：就地反馈保留原值
+    // （UX-05），不向求解器传递非有限目标（域 IkRequest 校验 fail-fast
+    // 的调用方侧前置拦截——交互层拒绝而非异常穿越 Qt 槽）。
+    if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
+        || !std::isfinite(z)) {
+        showStatusText(tr("目标位姿非法（数值解析失败或非有限）——原值保留"));
         return;
     }
-    if (m_session.displayUnits.has_value()) {
-        // 显示制式→SI（角度制式影响位置分量的场景不存在——位置恒长度；
-        // 此处直读 m 数值，投影仅影响回填呈现）。
-        x = m_session.displayUnits->projectLength(x);
-        y = m_session.displayUnits->projectLength(y);
-        z = m_session.displayUnits->projectLength(z);
-    }
+    // 显示制式→SI 逆换算（唯一换算点 KinPanelUnits::resolveKinDisplayToSi
+    // ——nullopt 制式恒等；换算方向与读侧 projectLength 相反）。
+    x = resolveKinDisplayToSi(x, m_session.displayUnits);
+    y = resolveKinDisplayToSi(y, m_session.displayUnits);
+    z = resolveKinDisplayToSi(z, m_session.displayUnits);
     // 位姿构造用 9 参旋转（头内 inline）——不实例化引用 rw 库符号的单参构造（冒烟链接面）。
     const rw::math::Transform3D<double> target(
         rw::math::Vector3D<double>(x, y, z),
         rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
                                      0.0, 1.0, 0.0,
                                      0.0, 0.0, 1.0));
-    IkRequest request;  // 其余字段＝契约缺省（harness/装配层可注入完整请求）
+    // 会话求解请求装配（KIN-P2/审查 A08——从会话/模型装配完整合法请求：
+    // TCP 经 KIN-14 默认工具解析、初值/容差/迭代来自求解配置、referenceQ
+    // 取会话姿态、intervals 取模型限位）。装配失败＝显式呈现稳定诊断码
+    // 并停在原地，绝不提交残缺请求（修复前此处以默认构造 IkRequest 直传
+    // ——TCP 空/初值空/referenceQ 与 intervals 维度 0，真实 IkSolver 校验
+    // 必 fail-fast，异常穿越 Qt 槽）。
+    const KinSolveRequestAssembly assembly =
+        assembleSessionSolveRequest(m_services, m_session);
+    if (!assembly.ok) {
+        showStatusText(QString::fromStdString(assembly.statusText));
+        return;
+    }
     const KinSolveFlowResult r =
-        runSinglePointSolve(m_services, m_session, target, request);
+        runSinglePointSolve(m_services, m_session, target, assembly.request);
     showStatusText(QString::fromStdString(r.statusText));
-    refreshResultsPane();
+    // 全面板刷新（★ KIN-P4——refreshAll 而非仅结果页：解集入会话态后
+    // 导出/复算按钮的门控随即点亮——修复前按钮态停留在求解前的"无结果
+    // 禁用"，用户求解成功仍不能导出，闭环断链）。现取重投影零缓存。
+    refreshAll();
 }
 
 void KinematicsPanelWidget::onBatchClicked()
@@ -505,21 +620,31 @@ void KinematicsPanelWidget::onCoverageRunClicked()
 
 void KinematicsPanelWidget::onResetHomeClicked()
 {
-    // L-K4 复位 Home（Home 构型取关节表当前值——宿主自命名位姿集注入的
-    // 语义在装配层；此处以会话关节投影承载演示通道）。
-    std::vector<double> homeQ;
-    if (m_services.sessionPose != nullptr && m_services.sessionPose->isSet()) {
-        homeQ = m_services.sessionPose->jointConfiguration();
-    }
+    // L-K4 转接（KIN-P3/审查 A09——具名来源版）：Home 目标只能来自
+    // KinPanelServices.homePose 具名来源缝（装配层从命名位姿集保留键
+    // homeConfiguration 解析）；来源缺失＝按钮已禁用（refreshAll 门控），
+    // 缝在场但未定义 Home/维度不符＝编排函数给明确提示。修复前此处把
+    // 当前会话姿态原样写回（无目标来源的假成功——审查 A09 根因），已废。
+    // 零修订语义不变：只写会话姿态（KIN-06/AT-04——PA-2 不动设计修订）。
     showStatusText(QString::fromStdString(
-        resetSessionHome(m_services.sessionPose, homeQ)));
+        resetSessionHomeFromNamedSource(m_services)));
 }
 
 void KinematicsPanelWidget::onSetDefaultTcpClicked()
 {
-    // L-K9 转接（canonical TCP——快照内解析）。
+    // L-K9 转接。★ KIN-P4/审查 §4：设默认 TCP 的目标身份经三入口统一
+    // 解析单点（resolveSessionTcp——KIN-14 默认工具权威）取得合法工具
+    // 身份；解析失败＝显式提示并停在原地，绝不提交空 TcpRef（修复前恒
+    // 传 TcpRef{}——modeling 侧 defaultTcp 断言对空 toolObject 的悬空
+    // 引用必拒，用户只见抽象诊断码不见原因）。
+    const KinTcpResolution tcp = resolveSessionTcp(m_services);
+    if (!tcp.ok) {
+        showStatusText(QString::fromStdString(
+            "设默认 TCP 不可用：" + tcp.statusText));
+        return;
+    }
     showStatusText(QString::fromStdString(
-        submitSetDefaultTcp(m_services, m_session, TcpRef{})));
+        submitSetDefaultTcp(m_services, m_session, tcp.tcp)));
 }
 
 void KinematicsPanelWidget::onSetDefaultDeviceClicked()
@@ -545,10 +670,47 @@ void KinematicsPanelWidget::onExportCsvClicked()
         exportSessionResults(m_services, m_session, "kin-results.csv", true)));
 }
 
+void KinematicsPanelWidget::onRecomputeClicked()
+{
+    // KIN-P4 转接（复算编排——目标位姿取面板当前编辑值；原任务定义的
+    // seed/referenceQ 自原结果身份显式携带，快照重绑定为当前会话锚）。
+    // 目标字段解析失败/非有限＝调用方输入错误，就地反馈不向求解器传递
+    // （与 onSolveClicked 同门控语义——复算同属提交求解的入口）。
+    bool okX = false, okY = false, okZ = false;
+    double x = m_targetX->text().toDouble(&okX);
+    double y = m_targetY->text().toDouble(&okY);
+    double z = m_targetZ->text().toDouble(&okZ);
+    if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
+        || !std::isfinite(z)) {
+        showStatusText(tr("复算目标位姿非法（数值解析失败或非有限）——原值保留"));
+        return;
+    }
+    // 显示制式→SI 逆换算（与求解入口同一换算单点——A07 同则）。
+    x = resolveKinDisplayToSi(x, m_session.displayUnits);
+    y = resolveKinDisplayToSi(y, m_session.displayUnits);
+    z = resolveKinDisplayToSi(z, m_session.displayUnits);
+    // 位姿构造用 9 参旋转（与求解入口同形——冒烟链接面）。
+    const rw::math::Transform3D<double> target(
+        rw::math::Vector3D<double>(x, y, z),
+        rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
+                                     0.0, 1.0, 0.0,
+                                     0.0, 0.0, 1.0));
+    const KinRecomputeFlowResult r =
+        recomputeSessionFromIdentity(m_services, m_session, target);
+    showStatusText(QString::fromStdString(r.statusText));
+    // 全面板刷新（同求解入口——新解集入会话态后门控/解表同步）。
+    refreshAll();
+}
+
 void KinematicsPanelWidget::onSolutionSelectionChanged()
 {
     // L-K1 检查器联动（选中→SolutionRef→检查器行集现取）。
     if (!m_session.lastSessionSolutionSetView || m_inspectorTable == nullptr) {
+        return;
+    }
+    // 逐轴类型真值缺失（模型视图不在场——与 refreshResultsPane 同防御
+    // 口径）＝联动数据不可投影，如实不联动。
+    if (m_services.modelView == nullptr) {
         return;
     }
     const QModelIndex idx = m_solutionTable->currentIndex();
@@ -558,6 +720,7 @@ void KinematicsPanelWidget::onSolutionSelectionChanged()
     const auto renderRow = static_cast<std::size_t>(idx.row());
     const auto rows = solutionRowsFor(*m_session.lastSessionSolutionSetView,
                                       m_usableOnly->isChecked(),
+                                      dofJointTypes(m_services.modelView->model()),
                                       m_session.displayUnits);
     if (renderRow >= rows.size()) {
         return;
@@ -576,8 +739,14 @@ void KinematicsPanelWidget::onSolutionDoubleClicked(int row, int column)
     if (!m_session.lastSessionSolutionSetView || m_services.sessionPose == nullptr) {
         return;
     }
+    // 逐轴类型真值缺失（与 refreshResultsPane 同防御口径）＝行集不可
+    // 投影，如实不回写。
+    if (m_services.modelView == nullptr) {
+        return;
+    }
     const auto rows = solutionRowsFor(*m_session.lastSessionSolutionSetView,
                                       m_usableOnly->isChecked(),
+                                      dofJointTypes(m_services.modelView->model()),
                                       m_session.displayUnits);
     if (row < 0 || static_cast<std::size_t>(row) >= rows.size()) {
         return;

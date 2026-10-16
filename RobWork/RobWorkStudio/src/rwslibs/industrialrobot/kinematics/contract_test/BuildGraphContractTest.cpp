@@ -156,16 +156,19 @@ TEST(KinBuildGraph, UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：六条登记边＋本单元五目标（产品/测试/契约测试/插件/harness
-    // ——_plugin 与 _app 随 WP-15-T12 落位：卡 §3.2 明文＋DTB §5.1 v0.20
-    // "插件 GUI 手动验证通道 sdurws_ird_<unit>_app"）＋sdurws_ird_ui
-    // （WP-15-T12 插件装配面边——卡 §3.2"插件目标 → 本计算库＋
-    // sdurws_ird_ui"明文；表外边 kinematics->ui 按 WP-13-T15 modeling->ui
-    // 先例具名登记）＋sdurws_ird_testkit（报告设施——T-1 允许形态＝仅
-    // 测试目标可链，产品目标由 NoTestkitEdge 钉住）。
+    // 白名单：六条登记边＋本单元六目标（产品/测试/契约测试/GUI 测试/
+    // 插件/harness——_plugin 与 _app 随 WP-15-T12 落位：卡 §3.2 明文＋
+    // DTB §5.1 v0.20 "插件 GUI 手动验证通道 sdurws_ird_<unit>_app"；
+    // _gui_test 随 KIN-P1 落位——审查条目 A07 的真实 widget 回归载体，
+    // 同单元测试目标形态零跨单元边）＋sdurws_ird_ui（WP-15-T12 插件装
+    // 配面边——卡 §3.2"插件目标 → 本计算库＋sdurws_ird_ui"明文；表外
+    // 边 kinematics->ui 按 WP-13-T15 modeling->ui 先例具名登记）＋
+    // sdurws_ird_testkit（报告设施——T-1 允许形态＝仅测试目标可链，
+    // 产品目标由 NoTestkitEdge 钉住）。
     std::set<std::string> allowed = {"sdurws_ird_kinematics",
                                      "sdurws_ird_kinematics_test",
                                      "sdurws_ird_kinematics_contract_test",
+                                     "sdurws_ird_kinematics_gui_test",
                                      "sdurws_ird_kinematics_plugin",
                                      "sdurws_ird_kinematics_app",
                                      "sdurws_ird_ui",
@@ -265,10 +268,13 @@ TEST(KinBuildGraph, NoTestkitEdgeOnProductTarget_WP15T02_ACC3)
         if (line.find("sdurws_ird_testkit") == std::string::npos) { continue; }
         ++testkitLines;
         // T-1 允许形态的唯一落点：测试目标的链接语句（目标名与 testkit
-        // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析）。
+        // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析；
+        // _gui_test 随 KIN-P1 落位——同单元测试目标同形态，QApplication
+        // main 的真实 widget 回归载体）。
         const bool onTestTargetLine
             = (line.find("sdurws_ird_kinematics_test") != std::string::npos
-               || line.find("sdurws_ird_kinematics_contract_test") != std::string::npos)
+               || line.find("sdurws_ird_kinematics_contract_test") != std::string::npos
+               || line.find("sdurws_ird_kinematics_gui_test") != std::string::npos)
               && line.find("target_link_libraries") != std::string::npos;
         EXPECT_TRUE(onTestTargetLine)
             << "testkit 引用必须落在测试目标链接语句行（T-1：产品目标零 "

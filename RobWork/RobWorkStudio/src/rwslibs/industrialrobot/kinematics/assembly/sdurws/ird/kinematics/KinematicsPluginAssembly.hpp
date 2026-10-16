@@ -37,6 +37,7 @@
 #include <sdurws/ird/ui/ICommandRegistry.hpp>     // ui::CommandAvailability（按钮门控）
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（会话事实基线——kinematics 公共头）
 #include <sdurws/ird/kinematics/KinematicsPanelChannels.hpp>  // UI-T64 装配通道值面（同目录公共头——R-2 装配层零私有头）
+#include <sdurws/ird/kinematics/SolutionSet.hpp>  // IkSolutionSet（KIN-P4 会话解集回写入参——域原值面）
 
 namespace sdurws {
 namespace ird {
@@ -150,6 +151,41 @@ struct KinematicsPluginAssembly {
     void bindSessionFacts(core::ContentIdentity snapshotId, std::uint64_t epoch,
                           bool writable,
                           const AnalysisConfiguration& config);
+
+    /**
+     * @brief 清空命令门面缝（KIN-P4——项目拆除拍：mergeAssemblyChannels
+     *        的"非空才覆盖"语义无法表达清空，本方法是命令缝的唯一显式
+     *        清除面。清空后面板按钮门控在下一拍 refreshAll 时禁用——
+     *        "无项目态＝设默认命令不可达"的诚实降级，零悬垂指针）。
+     *
+     * 线程约束：仅 UI 线程（§9.4 会话态纪律）。
+     */
+    void clearCommandHandler();
+
+    /**
+     * @brief 后台会话求解结果写入会话态（KIN-P4——SessionSolve 后台通道
+     *        完成后的结构化回写面；KinPanelFlows::runSinglePointSolve
+     *        尾段的等价落点，宿主零私有类型解引用）。
+     *
+     * 写入语义与内联路径逐字一致（唯一写点不因通道分叉）：
+     *   - lastSessionSolutionSet＝传入解集（会话级原值——导出/结果绑定
+     *     消费的具体值面）；
+     *   - lastSessionSolutionSetView＝同批构造的稳定排序视图（解表/检查
+     *     器渲染面——双面同源零二次求解）；
+     *   - 随后触发面板现取重投影（refreshFromSession——事件驱动出口）。
+     *
+     * 调用方义务（锚核对）：传入前必须核对解集的提交锚与当前会话一致
+     * （执行器账面 snapshotId/epoch 与 bindSessionFacts 写入值比对——
+     * 迟到/跨快照结果不得进入本方法，L-K12；本方法不重复判定——判定
+     * 权威在执行器账面纪律）。
+     *
+     * 线程约束：仅 UI 线程（后台完成须经 QMetaObject::invokeMethod 回投
+     * 后调用——与 noteAssemblyBackgroundResult 同义务）。
+     *
+     * @param set [in] 后台求解的会话级解集（shared_ptr 值转移——非空；
+     *             空指针＝调用方装配违约，防御面静默忽略＋空返回）
+     */
+    void applySessionSolveOutcome(std::shared_ptr<const IkSolutionSet> set);
 
     /// 文案解析绑定（titleKey→工程用语；转发模块内部）。
     void bindTextResolver(std::function<QString(const std::string& titleKey)> resolve);

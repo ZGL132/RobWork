@@ -102,7 +102,11 @@ namespace sdurws::ird::kinematics {
 inline constexpr char kRegionCoverageEvaluationKey[] = "kin-region-coverage";
 
 /// 评估器输入/输出契约版本（进 sliceId——CON-04；一经交付不回退）。
-inline constexpr std::uint32_t kRegionCoverageContractVersion = 1U;
+/// ★ v2（KIN-P5/审查 A06）：Random 位置采样与逐样本 IK 的 SeededRandom
+///   初值序列随 64 位完整种子混合（kIkSolverContractVersion 2→3 同批）
+///   整体改变——同 (计划, 种子) 在 v1/v2 两代下的覆盖率结论可不同，版本
+///   不升级会让两代评估产出假借同一 slice 身份比较。
+inline constexpr std::uint32_t kRegionCoverageContractVersion = 2U;
 
 /// 域载荷登记 token（evidence §7.1 域词表——卡面点形保留；v1 随
 /// canonical 布局 codec 版本演进）。
@@ -442,8 +446,10 @@ struct SampleResultSet {
  *        sampleSetIdentity ＝ SHA-256 over (planContentIdentity ‖
  *        预算/种子参数 canonical)）。
  *
- * canonical 字节布局（codec 版本 1——**格式冻结前**的 kinematics 实现
- * 落值，登记随单元卡 §14.6 v0.6；evidence 卡冻结 canonical 格式时以此
+ * canonical 字节布局（codec 版本 2——**格式冻结前**的 kinematics 实现
+ * 落值，登记随单元卡 §14.6 v0.6（v1）/§14.6 v0.27（v2——KIN-P5/审查
+ * A06 种子派生算法换代的全局升版：同 (计划, seed) 在两代算法下样本点
+ * 不同，身份不得跨代假借）；evidence 卡冻结 canonical 格式时以此
  * 为准对齐——P-KIN-3 三方一致义务；冻结前对账面＝快照 SamplingPlanRef
  * 逐字节比对，不一致即 DataInsufficient，本布局的任何漂移都会被对账
  * 捕获，设计上安全）：
@@ -451,7 +457,8 @@ struct SampleResultSet {
  *   "IRDSSID"（7 字节 ASCII magic——字面常量 "IRDSSID1" 的前 7 字节，
  *     实写口径与实现一致：F-395 督办纠正——原登记"8 字节"系把字面量
  *     尾数字符误计入 magic 长度，实现只取 7 字节，尾位 '1' 不入字节流）
- *   ‖ u32 codecVersion = 1（小端）
+ *   ‖ u32 codecVersion = 2（小端——v1→v2 随 KIN-P5/审查 A06 种子派生
+ *     算法换代全局升版，见上注）
  *   ‖ u32 planIdLength（小端）‖ planContentIdentity.toCanonical()（ASCII，
  *     形如 "cid-<64hex>"——规范文本字节，与 core 规范文本面同源）
  *   ‖ u64 seed（小端——预算/种子参数 canonical 的当前全集；Grid 采样
@@ -505,10 +512,14 @@ generateGridPositions(const RegionBox& box, const std::array<std::uint32_t, 3>& 
  * @brief 种子派生伪随机位置采样（§7.2"Random→seed 派生序列"的唯一实现
  *        点；§3.4"随机性唯一来源＝seed 派生确定性序列"）。
  *
- * 生成规则（D-KIN-6；黄金锁定 T13）：第 k 个样本（0 起）的序列状态
- * state ＝ seed·2³² ＋ k（混入样本序——与 Ik.cpp 初值生成同构的确定性
- * 纪律），逐轴 u∈[0,1) 由 splitmix64(state) 连续派生（x→y→z 各演进一步
- * ——同初值生成"逐轴连续派生"的同款形态），坐标＝min ＋ u·size。
+ * 生成规则（D-KIN-6；黄金锁定 T13，KIN-P5/审查 A06 起种子派生换
+ * 64 位完整混合）：第 k 个样本（0 起）的序列状态 state ＝ streamSeed-
+ * For(seed, k)——(seed, k) 二元组各经 splitmix64 avalanche 后异或再去
+ * 相关（旧式 "seed·2³²＋k" 在 uint64 模 2⁶⁴ 算术下系统性丢弃 seed 高
+ * 32 位——审查 A06 反例：seed=1 与 seed=2³²＋1 序列相同；该变更随
+ * IRDSSID codec 版本 1→2 登记，见 sampleSetIdentity 注），逐轴 u∈[0,1)
+ * 由 splitmix64(state) 连续派生（x→y→z 各演进一步——同初值生成"逐轴
+ * 连续派生"的同款形态），坐标＝min ＋ u·size。
  *
  * @param box  [in] 区域盒（基座系 {B}；单位 m）
  * @param count [in] 样本数（无量纲；0 → 空集）

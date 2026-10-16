@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#include <rw/math/Transform3D.hpp>              // 后台请求目标位姿值（KIN-P4 表尾追加）
+
 #include <sdurws/ird/core/Digest.hpp>       // core::ContentIdentity（绑定身份）
 #include <sdurws/ird/core/Identity.hpp>     // core::ObjectId（点/关节锚）
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（求解配置值）
@@ -191,6 +193,13 @@ enum class KinBackgroundKind : std::uint8_t {
  * 层——面板只表达"哪类评估、绑哪个快照与配置"）：批量点集/覆盖计划等
  * 切片细节由装配层从 requirements 切片与计划构造（面板零切片解析——R-1）。
  * epoch＝提交时会话纪元（完成回执比对用——迟到结果不进当前会话）。
+ *
+ * ★ KIN-P4 表尾追加 solveTargetInBase（与通道值面 KinChannelBackground-
+ * Request.solveTargetInBase 同构同拍——翻译单点逐字段透传）：SessionSolve
+ * 后台通道的目标位姿载荷。修复前最小载荷不含目标——后台执行器无法还原
+ * "求解什么"，SessionSolve 通道只能整体拒绝（审查报告 §4 第二条的根因
+ * 半区；另一半在执行器）。缺省 nullopt＝请求缺目标（执行器如实拒绝）；
+ * 仅 SessionSolve 消费，另两类 kind 忽略。基座系 {B} TCP 目标（m——§5.3）。
  */
 struct KinBackgroundRequest {
     /// 请求类别（三值词表——见枚举注）。
@@ -202,6 +211,8 @@ struct KinBackgroundRequest {
     core::ContentIdentity configDigest;
     /// 提交时会话纪元（迟到判定锚——面板模块现值，见 KinModuleSessionState）。
     std::uint64_t epoch = 0;
+    /// 单点求解目标位姿（KIN-P4 表尾追加——仅 SessionSolve 消费）。
+    std::optional<rw::math::Transform3D<double>> solveTargetInBase;
 };
 
 /**
@@ -280,6 +291,30 @@ using KinConfigPersistFn = std::function<bool(const AnalysisConfiguration&)>;
 using KinCommandSubmitFn = std::function<void(const std::string& commandId)>;
 
 /**
+ * @brief 具名 Home 姿态来源缝（KIN-P3/审查 A09——复位 Home 的唯一目标
+ *        来源；"经名称/端口解析"的端口半区）。
+ *
+ * 语义：返回**具名 Home 构型**（rad|m 链序 SI 真值）——装配层从模型/
+ * 会话定义的命名位姿集解析（建模侧保留键 homeConfiguration——MDL-17/
+ * V-27；本单元不解析位姿集对象，units/kinematics.md §14.6 v0.8 登记
+ * 口径），经端口投影为关节向量。返回值三态：
+ *   - 有值＝Home 在场（复位 Home 以该值为目标覆写会话姿态——零修订）；
+ *   - nullopt＝模型/会话未定义 Home（面板给明确提示，绝不写回）；
+ *   - 缝为空（bool(f)==false）＝来源未装配（按钮显式禁用——能力降级
+ *     如实呈现，与其他缝同纪律）。
+ *
+ * ★ 审查 A09 根因与修复口径：修复前 widget 复位 Home 槽把当前会话姿态
+ * 原样写回（读 q → reset(q)——值不变的假成功，无目标来源语义）。修复
+ * 后 Home 只能来自本缝（具名来源）；来源缺失＝显式禁用/明确提示，绝
+ * 不静默把当前姿态充当 Home（KIN-06/AT-04：会话回写零修订的语义前提
+ * 是"有明确目标"——无目标写回既非复位也不可追溯）。纯查询（幂等无副
+ * 作用）——面板每次点击现调零缓存（§9.8"面板不缓存权威"同则）。
+ *
+ * 线程约束：仅 UI 线程调用（§3.4——缝面同则）。
+ */
+using KinHomePoseProvider = std::function<std::optional<std::vector<double>>()>;
+
+/**
  * @brief 面板服务缝聚合（构造注入——装配层/harness/测试的一次性接线点）。
  *
  * 所有权：全部指针/缝为非 owning（调用方保证存活期覆盖面板使用期——
@@ -313,6 +348,9 @@ struct KinPanelServices {
     KinConfigPersistFn configPersist;
     /// 命令提交出口（域命令激活的统一出口——空＝命令按钮禁用）。
     KinCommandSubmitFn commandSubmit;
+    /// 具名 Home 姿态来源（L-K4 复位 Home 唯一目标来源——KIN-P3/审查
+    /// A09；空＝复位 Home 按钮禁用，绝不以当前姿态充当 Home）。
+    KinHomePoseProvider homePose;
 };
 
 /**

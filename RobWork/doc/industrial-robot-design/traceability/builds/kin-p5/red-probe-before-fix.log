@@ -1,0 +1,60 @@
+KIN-P5 修复前红验证记录
+========================
+
+目的：实证 KIN-P5 新增回归断言在审查基线（kin-p4 == da7db502，旧实现）上
+能复现失败（工作包流程强制第 4 条"修复前能复现失败"）。
+
+方法：git stash 本包全部改动 → 工作树回到旧实现 → 临时探针
+KinP5RedProbe.cpp（仅用旧 API，断言与正式回归用例同源——审查反例数据
+同源 audit/kin-current/AuditProbe.cpp）临时挂入 sdurws_ird_kinematics_test
+目标 → 集成树增量构建 → 定向运行 → 记录 → 撤销探针与 CMake 行 →
+git stash pop 恢复本包改动。探针文件未入库。
+
+执行命令：
+  cmake --build build --config Release --target sdurws_ird_kinematics_test
+  sdurws_ird_kinematics_test.exe --gtest_filter=KinP5Red.*
+
+实际输出（2026-10-16，原样摘录关键段）：
+----------------------------------------
+[----------] 2 tests from KinP5Red
+[ RUN      ] KinP5Red.A04_DegenerateChainUpperBoundShouldBeFound
+.../KinP5RedProbe.cpp(47): error: The difference between out.get().rays[0].rMax and 1.0 is 1, which exceeds 1e-4, where
+out.get().rays[0].rMax evaluates to 0,
+1.0 evaluates to 1, and
+1e-4 evaluates to 0.0001.
+审查 A04：圆形工作空间 +X 最外可达 1 m 必须被估算命中（实际 0）
+
+[  FAILED  ] KinP5Red.A04_DegenerateChainUpperBoundShouldBeFound (3 ms)
+[ RUN      ] KinP5Red.A06_SeedHighBitsShouldChangeInitialSequence
+.../KinP5RedProbe.cpp(69): error: Expected: (a) != (b), actual: { { 0.53260351467817202, ... }, ... } vs { { 0.53260351467817202, ... }, ... }
+（两个 4×6 初值矩阵逐字节相同——seed=1 与 seed=1+2^32 的序列在旧实现下一致）
+审查 A06：不同 64 位种子必须产生不同初值序列
+
+[  FAILED  ] KinP5Red.A06_SeedHighBitsShouldChangeInitialSequence (0 ms)
+[==========] 2 tests from 1 test suite ran. (3 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] KinP5Red.A04_DegenerateChainUpperBoundShouldBeFound
+[  FAILED  ] KinP5Red.A06_SeedHighBitsShouldChangeInitialSequence
+----------------------------------------
+
+结论：
+  - A04 反例（六轴同轴退化链，圆形工作空间 +X 最外可达 1 m）：旧实现
+    Rmax 实测输出 0（审查报告 §3 A04 所述"32 次探针后输出 Rmax=0"在
+    本基线复现）——修复后同一几何 Rmax≈1.0（正式用例
+    KinEnvelope.DegenerateChainUpperBoundProbeFirst_KIN_P5 通过）。
+  - A06 反例：旧实现 seed=1 与 seed=1+2^32 的初值序列逐字节相同（高
+    32 位被丢弃）——修复后两 seed 序列不同且同种子可复现（正式用例
+    KinIk.SeededRandomFull64BitSeedSensitivity_A06_KIN_P5、
+    KinEnvelope.ProbeSeedFull64BitSensitivity_A06_KIN_P5、
+    KinWorkspace.JointSpaceRandomDeterministicAndSeedSensitive_KIN_P5
+    及 RegionCoverageTest 随机采样高位敏感断言通过）。
+  - KIN-09 关节空间采样模式在旧实现不存在（API 编译级缺位——能力缺
+    失强于测试失败；解析算例钉
+    KinWorkspace.JointSpaceGridFkPointCloudAnalytic_KIN_P5 等锚定新实
+    现正确性）。
+
+修复后（本包改动恢复、重建）四测试目标全绿：
+  集成 kinematics_test 258=257 过+1 登记 skip+0 败；契约 57/57；
+  ui_test 305/305；ui_contract_test 42/42；gui_test 14/14；
+  冒烟 kinematics_test 252=251 过+1 skip+0 败、契约 57/57。

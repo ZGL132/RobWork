@@ -24,6 +24,7 @@
 #include <sdurws/ird/evidence/Snapshot.hpp>   // AnalysisSnapshot（validateProof 绑定核对面）
 #include <sdurws/ird/kinematics/Bounds.hpp>
 #include <sdurws/ird/kinematics/Evaluators.hpp>  // encodeTaskPointIkPayloadCanonical（payload 字节面）
+#include <sdurws/ird/kinematics/Fk.hpp>      // FkEvaluator（解 q 的独立 FK 复验——A02 正面证据法）
 #include <sdurws/ird/kinematics/Ik.hpp>
 #include <sdurws/ird/kinematics/SolutionSet.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
@@ -270,6 +271,154 @@ TEST(KinIk, FkFacilityFailureYieldsValueFormNotThrow_F746_3)
     EXPECT_EQ(out.solutionSet.searchRecord->searchBudgetUsed, 0U);
     // 绑定面照常（§5.6 双重绑定——素材可溯源）。
     EXPECT_EQ(out.solutionSet.targetRef.pointOid, req.targetRef.pointOid);
+}
+
+// =====================================================================
+// KIN-P2（审查 A02）——仅位置任务的独立任务维度
+// =====================================================================
+
+/**
+ * @brief 审查 A02 反例的产品回归钉（载体几何＝夹具 coaxialChainModel——
+ *        六轴同轴退化链，与审查探针 AuditCounterexample.
+ *        PositionOnlyShouldNotOptimizeOrientation 同源）。
+ *
+ * 三段断言（每段对应审查结论的一个面）：
+ *  a) 现症对照（缺陷机理面）：完整位姿任务（FullPose）即使姿态容差
+ *     放宽到 π，6 维任务在该链上**真实无解**（姿态自由仅 Rz(Σqᵢ) 一维，
+ *     目标姿态＝恒等阵要求 Σqᵢ≡0 (mod 2π)，此时 TCP 回到 (1,0,0)——
+ *     位置 (0,1,0) 与姿态恒等不可兼得），搜索未果＝正确结局（审查实测
+ *     256 次迭代 0 解）。该段钉住"旧 π 容差方案为何失败"的机理，防
+ *     回退到伪姿态自由表达。
+ *  b) 修复面：PositionOnly 任务（3 维子空间）同一目标零初值收敛——
+ *     且姿态容差收紧到 1e-12（远严于任何可达姿态残差）仍必收敛，钉住
+ *     "姿态残差不参与收敛判据"（若实现错误地把姿态放回判据，本段必
+ *     零解红）。解位置残差入容差、独立 FK 复验 TCP≈(0,1,0)（审查
+ *     正面证据法——FkEvaluator 独立复算）；姿态残差如实记录且 > 容差
+ *     （信息性——证明姿态确未被约束）。
+ *  c) 默认值钉：IkRequest 默认 FullPose（表尾追加零行为漂移——既有
+ *     调用点/黄金数据面不变）。
+ *  契约版本钉：本语义扩展伴随 kIkSolverContractVersion 1→2（CON-04
+ *  ——升级即新切片身份；v3＝KIN-P5/A06 种子派生换代，未来再升版本时
+ *  同步更新本断言与升级说明）。
+ */
+TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-04"},
+                  std::vector<std::string>{});
+    EXPECT_GE(kIkSolverContractVersion, 2U)
+        << "A02 任务维度语义扩展伴随契约版本升级（CON-04）——v3 起"
+           "SeededRandom 派生换代再升（A06），再升版本时同步更新本钉与"
+           "单元卡登记";
+
+    const rt::CanonicalModel model = coaxialChainModel();
+    TestView view(model);
+    const kin::FkEvaluator fk;
+    kin::TcpRef tcp;
+    tcp.toolObject = model.tools().front().objectId;
+    tcp.tcpKey = model.tools().front().localName;
+    constexpr double kPi = 3.14159265358979323846;
+
+    // 已知解解析验证（反例数据的前提 sanity）：q*=(π/2,0,…,0) 的 TCP
+    // 位置＝(0,1,0)（六轴同轴全 z、TCP 偏置 x+1 m——Rz(π/2)·(1,0,0)）。
+    {
+        const auto m = fk.evaluate(view, tcp, {kPi / 2, 0, 0, 0, 0, 0});
+        ASSERT_TRUE(m.ok());
+        expectGoldenNear(m.get().tcpInBase.P()[0], 0.0, "已知解 TCP x");
+        expectGoldenNear(m.get().tcpInBase.P()[1], 1.0, "已知解 TCP y");
+        expectGoldenNear(m.get().tcpInBase.P()[2], 0.0, "已知解 TCP z");
+    }
+
+    // 公共请求面（审查反例参数：目标 (0,1,0)、零初值、迭代上限 256）。
+    auto baseRequest = [&](kin::IkTaskSpace space) {
+        IkRequest req;
+        req.targetInBase = trans(0.0, 1.0, 0.0);
+        req.modelView = &view;
+        req.tcp = tcp;
+        req.positionTolerance = 1e-6;                      // m
+        req.orientationTolerance = kPi;                    // rad（审查反例的放宽值）
+        req.iterationLimit = 256U;
+        req.initialValues.push_back(std::vector<double>(6, 0.0));
+        req.intervals = kin::evaluationIntervals(view);
+        req.referenceQ.assign(6, 0.0);
+        req.taskSpace = space;
+        return req;
+    };
+
+    // a) 现症对照：FullPose＋π 容差——6 维任务真实无解（姿态恒等与
+    //    位置 (0,1,0) 在该链上不可兼得），零解＝搜索未果（保守语义）。
+    {
+        const IkOutcome out =
+            IkSolver().solve(baseRequest(kin::IkTaskSpace::FullPose));
+        EXPECT_EQ(out.outcomeKind, IkOutcomeKind::MultiInitNoConvergence);
+        EXPECT_TRUE(out.solutionSet.solutions.empty())
+            << "完整位姿任务在该退化链上无解析解——出现解说明对照面失真";
+        ASSERT_TRUE(out.solutionSet.searchRecord.has_value());
+        EXPECT_FALSE(out.proofMaterial.has_value())
+            << "搜索未果≠证明不可达（§8.1 C5——保守语义不得输出不可行）";
+    }
+
+    // b) 修复面：PositionOnly——姿态容差收紧到 1e-12 仍收敛（钉"姿态
+    //    不进判据"），位置残差入容差＋独立 FK 复验。
+    {
+        IkRequest req = baseRequest(kin::IkTaskSpace::PositionOnly);
+        req.orientationTolerance = 1e-12;  // rad——远严于任何可达姿态残差
+        const IkOutcome out = IkSolver().solve(req);
+
+        EXPECT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound);
+        ASSERT_EQ(out.solutionSet.solutions.size(), 1U);
+        const KinematicSolution& s = out.solutionSet.solutions.front();
+        EXPECT_LE(s.positionResidual, req.positionTolerance)
+            << "仅位置任务的收敛判据＝位置残差入容差";
+        EXPECT_GT(s.orientationResidual, 1e-6)
+            << "姿态残差如实记录且量级大——证明姿态确未被约束（若参与"
+               "判据则上收紧敛必失败）";
+        // 独立 FK 复验（审查正面证据法——解 q 经 FkEvaluator 独立复算，
+        // TCP 位置 ≈ (0,1,0)）。
+        const auto m = fk.evaluate(view, tcp, s.q);
+        ASSERT_TRUE(m.ok());
+        EXPECT_NEAR(m.get().tcpInBase.P()[0], 0.0, 1e-6);
+        EXPECT_NEAR(m.get().tcpInBase.P()[1], 1.0, 1e-6);
+        EXPECT_NEAR(m.get().tcpInBase.P()[2], 0.0, 1e-6);
+        // 硬过滤照常工作（②限位用真实区间——解在 [-π,π] 内）。
+        for (std::size_t i = 0; i < s.q.size(); ++i) {
+            EXPECT_GE(s.q[i], -kPi);
+            EXPECT_LE(s.q[i], kPi);
+        }
+    }
+
+    // c) 默认值钉：表尾追加字段默认 FullPose——既有调用点行为逐位不变。
+    EXPECT_EQ(IkRequest{}.taskSpace, kin::IkTaskSpace::FullPose);
+    EXPECT_EQ(static_cast<unsigned>(kin::IkTaskSpace::FullPose), 0U)
+        << "枚举数值进入二进制契约（追加纪律）——FullPose 恒 0";
+    EXPECT_EQ(static_cast<unsigned>(kin::IkTaskSpace::PositionOnly), 1U);
+}
+
+/// 任务空间模式词表外值 fail-fast（uint8 位型强转的越界值不可静默通过
+/// ——NFR-COR-03；KIN-P2/A02 请求校验面的新增条目）。
+TEST(KinIk, TaskSpaceOutOfRangeFailsFast_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+
+    IkRequest req = makeRequest(view, transformOf(golden), {{0.1, 0.1}});
+    // 词表外强转（FullPose=0/PositionOnly=1 之外的位型）。
+    req.taskSpace = static_cast<kin::IkTaskSpace>(7U);
+    EXPECT_THROW(
+        {
+            try {
+                (void)IkSolver().solve(req);
+            } catch (const std::invalid_argument& e) {
+                EXPECT_NE(std::string(e.what()).find("taskSpace"),
+                          std::string::npos)
+                    << "拒绝消息必须定位 taskSpace 字段（NFR-COR-03）";
+                throw;
+            }
+        },
+        std::invalid_argument);
 }
 
 // =====================================================================
@@ -536,6 +685,65 @@ TEST(KinIk, InitialValueStrategiesDeterministic_WP15T04_ACC2)
                                            1U, 0U, intervals, ref);
     ASSERT_EQ(g1.size(), 1U);
     expectGoldenNear(g1[0][0], 0.0, "网格单点取中点");
+}
+
+// =====================================================================
+// KIN-P5（审查 A06）——SeededRandom 种子完整 64 位敏感＋同种子可复现
+// =====================================================================
+
+/**
+ * @brief 审查 A06 反例钉：旧派生 "seed·2³²＋k" 在 uint64 模 2⁶⁴ 算术下
+ *        丢弃 seed 高 32 位——seed=1 与 seed=2³²＋1 的第 k 项状态相同
+ *        （1·2³²＋k ≡ (2³²＋1)·2³²＋k mod 2⁶⁴），整条初值序列对高位
+ *        不敏感（修复前本用例 EXPECT_NE 处红）。修复后 (seed,k) 经
+ *        streamSeedFor 完整 64 位混合：不同 64 位 seed 必不同序列、
+ *        同 seed 可复现（NFR-COR-01 不因换派生破坏）。
+ */
+TEST(KinIk, SeededRandomFull64BitSeedSensitivity_A06_KIN_P5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-13", "KIN-02", "NFR-COR-01"},
+                  std::vector<std::string>{});
+
+    namespace kin = sdurws::ird::kinematics;
+    const std::vector<kin::JointInterval> intervals = {
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+    };
+    const std::vector<double> ref(6, 0.0);
+
+    // 审查反例对：seed 只差高 32 位（1 与 1＋2³²）——初值矩阵必须不同。
+    const auto low = kin::makeInitialValues(kin::InitialValueStrategy::SeededRandom,
+                                            4U, 1U, intervals, ref);
+    const auto high = kin::makeInitialValues(kin::InitialValueStrategy::SeededRandom,
+                                             4U, 1U + (1ULL << 32), intervals, ref);
+    ASSERT_EQ(low.size(), 4U);
+    ASSERT_EQ(high.size(), 4U);
+    EXPECT_NE(low, high)
+        << "审查 A06：seed 高 32 位必须参与初值派生（修复前两 seed 序列"
+           "相同——多初值多样性来源被静默丢弃）";
+
+    // 低位差异同样敏感（1 与 2——防"只对高位翻转敏感"的退化实现）。
+    const auto other = kin::makeInitialValues(kin::InitialValueStrategy::SeededRandom,
+                                              4U, 2U, intervals, ref);
+    EXPECT_NE(low, other) << "相邻低位 seed 亦须不同序列";
+
+    // 同种子可复现（确定性——NFR-COR-01；重跑逐位一致）。
+    const auto lowAgain = kin::makeInitialValues(kin::InitialValueStrategy::SeededRandom,
+                                                 4U, 1U, intervals, ref);
+    EXPECT_EQ(low, lowAgain) << "同 seed 必得同序列（§3.4——随机性唯一来源）";
+
+    // 序列值仍在评价区间内（派生换代不破坏采样域契约）。
+    for (const auto& q : low) {
+        ASSERT_EQ(q.size(), 6U);
+        for (const double v : q) {
+            EXPECT_GE(v, -1.0);
+            EXPECT_LE(v, 1.0);
+        }
+    }
 }
 
 // =====================================================================

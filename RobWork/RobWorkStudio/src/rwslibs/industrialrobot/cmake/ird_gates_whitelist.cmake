@@ -517,6 +517,14 @@ set(IRD_TEST_TARGET_EDGES
     "sdurws_ird_ui_test->sdurws_ird_requirements"
     "sdurws_ird_ui_test->sdurws_ird_modeling_plugin"
     "sdurws_ird_ui_test->sdurws_ird_kinematics_plugin"
+    # KIN-P4（2026-10-16）——ui_test 宿主服务装配用例的测试面直链（登记
+    # 提交件 traceability/kin-p4-gate-registrations.md）：KinProjectCommand-
+    # Gateway 用例消费 project::IProjectQueryPort/CommandResult 值面（网关
+    # 转译语义自证），导出写出缝用例消费 io::AtomicFile 真实写出（L-K10
+    # 写出半区的产品级自证）；两目标为公共头消费＋测试面直链，产品库
+    # sdurws_ird_ui 本体零触碰（LinkageContractTest 目标清单同步不变）。
+    "sdurws_ird_ui_test->sdurws_ird_project"
+    "sdurws_ird_ui_test->sdurws_ird_io"
     "sdurws_ird_dynamics_contract_test->sdurws_ird_ui"      # ASM-PLUG 收口批（2026-10-10）——真实注册端口消费面
     "sdurws_ird_selection_contract_test->sdurws_ird_ui"     # ASM-PLUG 收口批（2026-10-10）——同款
     "sdurws_ird_optimization_contract_test->sdurws_ird_ui"  # ASM-PLUG 收口批（2026-10-10）——同款
