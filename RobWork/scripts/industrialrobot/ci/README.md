@@ -67,6 +67,13 @@ CI 常驻门禁正式激活。两份模板与部署文件的同批修订（逐�
      今日树 enable_testing 位于单元作用域，根 ctest 看不到叶子测试）；增依赖 DLL PATH 供给（vcpkg 动态 triplet）；
      移植 gate-all F-715 SKIP 口径（python313.dll 不可达时 ui 系目标记 SKIP 不判 FAIL——本地全量面实测
      `sdurws_ird_ui_test` 即此签名，退出码 8）。GUI 规则面逐字保留。
+     **七跑口径修正（run 38953336225）**：首轮移植的"退出码 8＋python 不可达→SKIP"判据产生系统性误放行——
+     ctest 对**任何**测试失败一律返回 8，该轮 3 个 `_gui_test` 超时（kinematics/modeling/requirements，
+     各挂 600 s 被有界终止）与 1 个 perf 断言失败（OptParallelThroughput.FixedCandidateMedianThroughput，
+     阈值在 4 核 runner 超标）全被误归因 SKIP 而假绿。修正后分诊以输出内容为准：
+     `***Timeout`（F-728）与 `[  FAILED  ]`（gtest 断言）一律 FAIL；仅"非超时、无 gtest 输出、0xC0000135
+     族且 python313.dll 不可达"（进程未启动的加载失败）才 SKIP。八轮起 CI 诚实红在上述 4 个已知项，
+     处置口径（排查修复／阈值重校准／登记豁免）待所有者裁决。
    - `check-boundaries.ps1`：由 eb777e2 静态正则扫描器整体替换为 **ird_gates 执行器**——静态扫描器 R3 白名单
      停留在 `_test` 单段命名，对今日 `_contract_test/_gui_test/_perf_test` 必然误报"未登记 target"；ird_gates 是
      实际维护的边界权威（gate-all 第 2 步同款调用）。
