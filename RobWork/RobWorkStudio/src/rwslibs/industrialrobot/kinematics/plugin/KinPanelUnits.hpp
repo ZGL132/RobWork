@@ -115,6 +115,32 @@ std::pair<std::string, std::string> reprojectSolutionColumns(
 std::optional<DisplayUnitProjection> tryFindKinDisplayUnits(
     std::string_view lengthSymbol, std::string_view angleSymbol);
 
+/**
+ * @brief 显示制式数值→SI 真值（提交面逆换算——projectLength 的逆方向；
+ *        KIN-P1 审查条目 A07 修复的换算半区）。
+ *
+ * 背景（A07 根因与修复口径）：目标输入框承载的是**显示制式**数值（行
+ * 标签随当前制式标注单位）；提交给会话/求解器的必须是 SI 真值
+ * （IkRequest.targetInBase＝基座系 m，§5.3）。修复前 widget 把显示值
+ * 直读后用 projectLength（SI→显示的正向读侧投影）再放大——换算方向
+ * 反转：mm 制式输入 0.1 被提交为 100 m。本函数是"显示→SI"的唯一
+ * 换算点：value_si＝value_display×siFactor（core Units 因子表——
+ * mm→0.001、cm→0.01、m→1；与 core Quantity::make 同一算术口径，
+ * 非第二换算实现）。
+ *
+ * @param displayValue [in] 显示制式数值（单位＝displayUnits 所选长度
+ *                     单位；nullopt＝SI 直显制式，原值返回）
+ * @param displayUnits [in] 当前显示单位投影（KIN-12 投影句柄）
+ * @return SI 真值（单位 m）；确定性纯函数（同输入同输出——NFR-COR-02）
+ *
+ * 非有限输入原样传递（不在此拒绝——拒绝面在调用方交互层：解析后以
+ * std::isfinite 就地反馈并保留原值，NFR-COR-03）。
+ *
+ * 纯函数；线程安全；确定性。
+ */
+double resolveKinDisplayToSi(double displayValue,
+                             const std::optional<DisplayUnitProjection>& displayUnits);
+
 }  // namespace kinematics
 }  // namespace ird
 }  // namespace sdurws

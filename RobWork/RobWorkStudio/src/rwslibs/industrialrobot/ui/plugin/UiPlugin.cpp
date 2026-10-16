@@ -4047,8 +4047,10 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                     // 纪律：snapshotId+epoch 与当前会话绑定一致才投影
                     // （跨快照账面＝PA 权威镜像的呈现侧拒绝——不虚构
                     // 判定）；区域锚过滤（多计划结果的逐区域切片）；
-                    // 坐标基座系→世界系（执行器视图 worldToBase 的逆——
-                    // 唯一读取点反向，零第二套基座变换代数）。
+                    // 坐标基座系→世界系（执行器视图 worldToBase 直乘——
+                    // 值语义 T_world_base＝基座相对世界的位姿（core §4.6
+                    // 读法），其正读即基座→世界的点变换算子：p_world＝
+                    // T_world_base·p_base；零第二套基座变换代数）。
                     std::optional<kinematics::KinChannelCoverageResult> coverage =
                         m_kinEvaluation != nullptr
                             ? m_kinEvaluation->latestCoverageResult()
@@ -4070,11 +4072,19 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                         && m_kinEvaluation != nullptr
                         && coverage->snapshotId == m_kinEvaluation->snapshotId()
                         && coverage->epoch == m_kinEvaluation->epoch()) {
-                        // T_world_base（快照唯一读取点的逆——世界系变换；
-                        // rw::math::inverse＝Transform3D 逆的自由函数单点）。
+                        // T_world_base（快照唯一读取点**直乘**——基座系样本
+                        // 点回世界系：p_world＝T_world_base·p_base。★ 审查
+                        // A01 连带修正（KIN-P1）：接口名 worldToBase() 的
+                        // 值语义是 T_world_base（"世界系中看基座"——
+                        // Snapshot.hpp §6.4 行），基座→世界是直乘；修复前
+                        // 此处取逆得 T_base_world 作用在基座系点上（方向
+                        // 双错），恰与通道投影的镜像错误抵消、显示碰巧
+                        // 正确——通道修正为真值后本处必须同步修正，否则
+                        // 着色点错位（世界/基座转换闭环的呈现半区）。
+                        // rw::math::inverse 不再使用——逆运算归
+                        // runtime invertWorldBase 唯一权威（通道切片侧）。
                         const rw::math::Transform3D<double> worldTbase =
-                            rw::math::inverse(
-                                m_kinEvaluation->sessionView()->worldToBase());
+                            m_kinEvaluation->sessionView()->worldToBase();
                         // 该区域逐样本切片（着色点层＝全 kind 样本透传——
                         // 位置/位姿样本都上屏；计数已抽至纯函数）。
                         grid.samples.reserve(coverage->samples.size());

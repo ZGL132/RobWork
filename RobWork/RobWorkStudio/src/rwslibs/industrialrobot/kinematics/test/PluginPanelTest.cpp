@@ -495,6 +495,40 @@ TEST(PluginPanelLinks, LK8_UnitSwitchReprojectionNoRecompute_ACC1)
     EXPECT_EQ(h.commandSubmitCount, 0);
 }
 
+/// KIN-P1（审查条目 A07 换算半区回归）：显示制式→SI 逆换算（提交面
+/// resolveKinDisplayToSi）——m/cm/mm 三制式输入"同一物理目标 0.1 m"
+/// 的正确显示值（0.1/10/100）逆换算回一致 SI；A07 反例数值（mm 显示值
+/// 0.1 → 1e-4 m，非 0.1、更非修复前的 100）；与读侧 projectLength 互逆。
+TEST(PluginPanelLinks, DisplayToSi_ConsistentSiAcrossUnitSystems_KIN_P1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-12"},
+                  std::vector<std::string>{"AT-27"});
+    // 三制式一致性：同一物理目标 0.1 m 的各制式正确显示值 → 一致 SI。
+    const auto mUnits = tryFindKinDisplayUnits("m", "rad");
+    const auto cmUnits = tryFindKinDisplayUnits("cm", "deg");
+    const auto mmUnits = tryFindKinDisplayUnits("mm", "deg");
+    ASSERT_TRUE(mUnits.has_value());
+    ASSERT_TRUE(cmUnits.has_value());
+    ASSERT_TRUE(mmUnits.has_value());
+    EXPECT_DOUBLE_EQ(resolveKinDisplayToSi(0.1, mUnits), 0.1);   // m：因子 1
+    EXPECT_NEAR(resolveKinDisplayToSi(10.0, cmUnits), 0.1, 1e-15);   // 10 cm
+    EXPECT_NEAR(resolveKinDisplayToSi(100.0, mmUnits), 0.1, 1e-15);  // 100 mm
+    // A07 反例数值钉扎：mm 显示值 0.1（＝0.1 mm）→ 1e-4 m。
+    // （修复前缺陷：被 projectLength 正向放大为 100 m。）
+    EXPECT_NEAR(resolveKinDisplayToSi(0.1, mmUnits), 1e-4, 1e-18);
+    // nullopt＝SI 直显制式恒等（未选制式时输入即 SI）。
+    EXPECT_DOUBLE_EQ(resolveKinDisplayToSi(0.1, std::nullopt), 0.1);
+    // 与读侧投影互逆：0.1 m 经"逆换算→正向投影"往返回 0.1（mm 制式——
+    // 乘除各一次，误差 ≤ 2 ulp；不承诺位精确——AnalysisConfig 呈现层
+    // 容差口径）。
+    EXPECT_NEAR(mmUnits->projectLength(resolveKinDisplayToSi(0.1, mmUnits)),
+                0.1, 1e-15);
+    // 因子语义钉扎（core Units §4.4：value_si＝value×factor）。
+    EXPECT_DOUBLE_EQ(mmUnits->lengthUnit().siFactor(), 0.001);
+    EXPECT_DOUBLE_EQ(cmUnits->lengthUnit().siFactor(), 0.01);
+    EXPECT_DOUBLE_EQ(mUnits->lengthUnit().siFactor(), 1.0);
+}
+
 /// L-K9 设默认 TCP/设备：经门面→①端口投影（新修订回执→依赖重算提示；
 /// 只读拒绝；NotCommitted 诊断透传）。
 TEST(PluginPanelLinks, LK9_SetDefaultViaGateway_ACC1)

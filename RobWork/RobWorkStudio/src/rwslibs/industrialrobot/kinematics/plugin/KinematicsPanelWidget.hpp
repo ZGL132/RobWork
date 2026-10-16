@@ -151,6 +151,9 @@ private:
     // ---- 刷新半区（现取重投影——零缓存）----
     void refreshPosePane();         // 位姿指标行＋关节表（KIN-12 投影）
     void refreshResultsPane();      // 解表/统计/检查器
+    /// 目标输入行单位标注重建（KIN-P1 A07——标签/占位随显示制式＋基座系
+    /// 参考系标识；refreshAll 与 L-K8 切换路径共同出口）。
+    void refreshTargetUnitPresentation();
     void renderRows(QTableWidget* table, const std::vector<KinNamedValueRow>& rows);
     void renderSolutions(QTableWidget* table, const std::vector<KinSolutionRow>& rows);
 
@@ -163,9 +166,12 @@ private:
     // ---- 页①控件（raw 指针＝Qt 父子所有权）----
     QTableWidget* m_poseTable = nullptr;    ///< 位姿指标行表
     QTableWidget* m_jointTable = nullptr;   ///< 关节表（显示单位投影 KIN-12）
-    QLineEdit* m_targetX = nullptr;         ///< 求解目标位置编辑（m 显示制式）
+    QLineEdit* m_targetX = nullptr;         ///< 求解目标位置编辑（显示制式数值——提交逆换算回 SI，A07）
     QLineEdit* m_targetY = nullptr;
     QLineEdit* m_targetZ = nullptr;
+    QLabel* m_targetXLabel = nullptr;       ///< 目标 X 行标签（单位符号随显示制式重建——A07 缺陷面①）
+    QLabel* m_targetYLabel = nullptr;       ///< 同上（Y 轴）
+    QLabel* m_targetZLabel = nullptr;       ///< 同上（Z 轴）
     QPushButton* m_solveButton = nullptr;   ///< Solve（L-K2）
     QTableWidget* m_inspectorTable = nullptr; ///< 候选检查器（健康摘要/关节）
     std::vector<QLineEdit*> m_jointEditors; ///< 关节表编辑行（求解目标参考构型）

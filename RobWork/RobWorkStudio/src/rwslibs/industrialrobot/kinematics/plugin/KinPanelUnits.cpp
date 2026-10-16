@@ -140,6 +140,21 @@ std::optional<DisplayUnitProjection> tryFindKinDisplayUnits(
     return DisplayUnitProjection::tryFind(lengthSymbol, angleSymbol);
 }
 
+double resolveKinDisplayToSi(double displayValue,
+                             const std::optional<DisplayUnitProjection>& displayUnits)
+{
+    // 显示→SI 逆换算＝SI 因子直乘（value_si＝value×factor——core Units
+    // §4.4 因子表语义，mm→0.001/cm→0.01/m→1；与 Quantity::make 同一
+    // 算术，非第二换算实现）。nullopt＝SI 直显制式，恒等返回。
+    // 审查 A07 修复：修复前 widget 用 projectLength（SI→显示正向）处理
+    // 显示值——方向反转（mm 输入 0.1 → 100 m）；提交面的正确方向是
+    // 因子直乘（mm 输入 0.1 → 1e-4 m）。目标输入恒为长度轴（位置 XYZ
+    // ——单位随长度制式；角度制式不参与位置分量，§5.3 目标＝基座系 m）。
+    return displayUnits.has_value()
+               ? displayValue * displayUnits->lengthUnit().siFactor()
+               : displayValue;
+}
+
 }  // namespace kinematics
 }  // namespace ird
 }  // namespace sdurws

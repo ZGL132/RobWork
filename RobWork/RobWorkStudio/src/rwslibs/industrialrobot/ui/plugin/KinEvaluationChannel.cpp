@@ -22,7 +22,12 @@
 #include <sdurws/ird/kinematics/KinTypes.hpp>        // TcpRef/BatchDemands
 #include <sdurws/ird/requirements/RequirementTypes.hpp>  // WorkRegion/SamplingPlan/RequirementReference
 #include <sdurws/ird/requirements/Sampling.hpp>      // ISamplingPlanBuilder（计划摘要域函数——零复制）
+#include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // invertWorldBase（§6.1 权威反解纯函数——
+                                                      // 审查 A01 修复：T_base_world 唯一来源，
+                                                      // ui 零第二套基座变换代数）
 #include <sdurws/ird/runtime/CanonicalModel.hpp>     // CanonicalModel（referenceQ/defaultTcp 提取）
+
+#include <exception>
 
 namespace sdurws {
 namespace ird {
@@ -146,30 +151,97 @@ bool KinEvaluationExecutor::projectPlan(const requirements::SamplingPlan& plan,
         return false;
     }
 
-    // ---- 第二步：旋转检测（R1 轴对齐盒约束的诚实拒绝面）。
-    // kinematics RegionBox 是基座系**轴对齐**盒；refFrame 相对基座存在
-    // 旋转时盒变换后不再轴对齐——取保守包络会悄悄改变覆盖率语义（区
-    // 域变大），旋转参考系解析留后续任务（契约批注），此处如实拒绝。
-    const rw::math::Transform3D<double> baseTref =
-        m_snapshot->worldToBase() * worldTref;  // T_base_ref＝T_base_world·T_world_ref
+    // ---- 第二步：参考系→基座系合成（T_base_ref＝T_base_world·T_world_ref）。
+    // ★ 审查条目 A01 修复（KIN-P1）：runtime 权威读取点 worldToBase() 的
+    // **值语义是 T_world_base**（基座相对世界的位姿——Snapshot.hpp §6.4
+    // 行"§9.1 唯一存储在 CanonicalModel.world"；接口名中的 world→base 指
+    // "世界系中看基座"，不是"世界坐标→基座坐标"的换算阵）。宿主此处要把
+    // refFrame 系（世界系位姿 worldTref）解析到基座系，需要其逆
+    // T_base_world：按 runtime §6.3"不新增第二套基座变换规则"，经
+    // BaseWorldTransform 的权威反解纯函数 invertWorldBase 取得（正交旋转
+    // 转置实现）——不在 ui 另造变换真值。修复前宿主把 T_world_base 直接
+    // 当 T_base_world 复合（少取一次逆）：基座世界 X=1 m、世界采样点
+    // X=0.65 m 时基座坐标得 1.65 m（应为 −0.35 m），区域评估位置整体
+    // 错位。
+    //
+    // 错误语义：invertWorldBase 对非正交旋转 fail-fast（RuntimeError——
+    // 调用方契约违约）。产品路径的 T_world_base 已过编译链 S5 合法域校验
+    // （正交性/有限性），本异常不可达；测试替身若注入非法旋转，此处转译
+    // 为切片失败如实拒绝（不静默、也不让异常穿越受理面——ERR-01 同源
+    // 纪律：拒绝 reason 带根因）。
+    rw::math::Transform3D<double> tBaseWorld;
+    try {
+        tBaseWorld = runtime::invertWorldBase(m_snapshot->worldToBase());
+    } catch (const std::exception& e) {
+        errorText = std::string("基座—世界变换反解失败（T_world_base 非法"
+                                "——非正交旋转）：") + e.what();
+        return false;
+    }
+    // 复合读法（core §4.6）：T_ac＝T_ab·T_bc——refFrame 系在基座系的表达
+    // ＝(基座系看世界)·(世界系看 refFrame)。平移单位 m、旋转无量纲。
+    const rw::math::Transform3D<double> baseTref = tBaseWorld * worldTref;
+
+    // ---- 第三步：盒可表示性判定（R1 轴对齐盒约束——按 runtime 设施真实
+    // 能力划定支持面，KIN-P1 A01 修复半区）。
+    // kinematics RegionBox 是基座系**轴对齐**盒；refFrame 相对基座的旋转
+    // 只有在盒映射后仍轴对齐时才能精确投影——即 R_base_ref 为**符号置换
+    // 阵**（轴交换/轴翻转：每行每列恰一个 ±1，恒等为其特例）。runtime
+    // 反解设施对任意正交旋转均可反解（纯函数无姿态限制），故判定不看
+    // "有无旋转"而看"盒可否精确表示"：安装三预设（Ground 恒等/Inverted
+    // R_x(π)/Wall R_y(π/2)——P-RT-4 冻结矩阵均为符号置换阵）与轴交换的
+    // 模型帧自此精确支持（KIN-P1 验收"平移/侧装/倒装基座安放下世界→基座
+    // 转换全部正确"；修复前旋转检测把倒装/侧装安放下的一切区域——含
+    // World 参考系——整体误拒）；任意角旋转下盒呈斜置，取保守包络会静默
+    // 放大区域、改变覆盖率语义——维持显式拒绝（审查报告 §3 A01 注"旋转
+    // 参考系……平移反例不能当作任意旋转都已实测"的保留半区），不静默
+    // 扩权。判定容差 1e-9＝装配投影的数值零（沿用原恒等检测口径：仅吸收
+    // 恒等/预设矩阵的浮点表示误差，预设矩阵元素精确 ∈{0,±1}，正交组合
+    // 不引入舍入放大）。
     const rw::math::Rotation3D<double>& r = baseTref.R();
-    const double rotNorm = std::max({std::fabs(r(0, 0) - 1.0), std::fabs(r(0, 1)),
-                                     std::fabs(r(0, 2)), std::fabs(r(1, 0)),
-                                     std::fabs(r(1, 1) - 1.0), std::fabs(r(1, 2)),
-                                     std::fabs(r(2, 0)), std::fabs(r(2, 1)),
-                                     std::fabs(r(2, 2) - 1.0)});
-    if (rotNorm > 1e-9) {  // 1e-9＝装配投影的数值零（远小于任何工程容差；
-                           // 仅吸收恒等矩阵的浮点表示误差）
-        errorText = "区域参考系相对基座存在旋转——R1 轴对齐盒约束，旋转"
-                    "参考系解析留后续任务";
+    bool signedPermutation = true;
+    for (int i = 0; i < 3 && signedPermutation; ++i) {
+        int dominantCol = -1;  // 该行主导元素（|r|≈1）列号——符号置换每行恰一
+        for (int j = 0; j < 3; ++j) {
+            const double magnitude = std::fabs(r(i, j));
+            if (magnitude > 1.0 - 1e-9) {
+                if (dominantCol >= 0) {
+                    signedPermutation = false;  // 一行两主导——非置换（任意角）
+                    break;
+                }
+                dominantCol = j;
+            } else if (magnitude > 1e-9) {
+                signedPermutation = false;  // 非主导非零元素——任意角形态
+                break;
+            }
+        }
+        if (dominantCol < 0) {
+            signedPermutation = false;  // 全零行——非正交（非法旋转，拒绝）
+        }
+    }
+    if (!signedPermutation) {
+        errorText = "区域参考系相对基座存在任意角旋转（盒变换后非轴对齐）——"
+                    "R1 轴对齐盒约束，旋转参考系解析留后续任务";
         return false;
     }
 
-    // ---- 第三步：盒平移直投（旋转已排除——中心点平移变换，尺寸不变）。
-    out.box.center = baseTref.P() + region.box.center;  // 平移合成（基座系，m）
-    out.box.size = region.box.size;                     // 尺寸原值（m；非退化校验归域装配面）
+    // ---- 第四步：盒中心/尺寸精确投影（旋转已限定恒等或符号置换）。
+    // 中心：基座系中心＝T_base_ref·(参考系中心)＝P＋R·c——恒等时退化为
+    // 原平移直投（既有行为不变）；符号置换时轴交换/翻转下的精确点变换。
+    // 尺寸：|R|·size 逐行求和——符号置换每行恰一个 ±1，即取被换到该轴的
+    // 原边长（轴翻转不改边长）。这是 RegionBox（轴对齐盒）的表示换算，
+    // 非第二套变换真值——变换值全部来自 runtime 反解设施。
+    rw::math::Vector3D<double> projectedSize;
+    for (int i = 0; i < 3; ++i) {
+        double sum = 0.0;
+        for (int j = 0; j < 3; ++j) {
+            sum += std::fabs(r(i, j)) * region.box.size[j];
+        }
+        projectedSize[i] = sum;  // 单位 m（符号置换下＝被置换的原边长）
+    }
+    out.box.center = baseTref.P() + baseTref.R() * region.box.center;
+    out.box.size = projectedSize;
 
-    // ---- 第四步：采样定义投影（域值→域投影型——字段搬运零换算）。
+    // ---- 第五步：采样定义投影（域值→域投影型——字段搬运零换算）。
     // 位置侧：工作集计划条目恒为规范化 Grid 形态（D-REQ-2——计划构建
     // 期规范化），GridBySpacing 出现即编辑器契约违约（如实拒绝，不静默
     // 再规范化——规范化域函数单点在 requirements，本执行器零复制）。
@@ -192,7 +264,7 @@ bool KinEvaluationExecutor::projectPlan(const requirements::SamplingPlan& plan,
     out.orientation.rollSamples = plan.orientationSampling.rollSamples;
     out.orientation.methodToken = plan.orientationSampling.methodToken;
 
-    // ---- 第五步：计划内容身份（域函数现算——零复制纪律；CON-05 禁
+    // ---- 第六步：计划内容身份（域函数现算——零复制纪律；CON-05 禁
     // 伪造身份）。requirements::SamplingPlanBuilder 无状态，digest 产出
     // 计划 canonical 摘要与分母面——摘要字节直构 ContentIdentity。
     static const requirements::SamplingPlanBuilder kPlanBuilder{};

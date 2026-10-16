@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 
+#include <cmath>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -24,6 +25,7 @@
                                                    // 构造期命令标题 resolver 尚未注入，此处直读
                                                    // UiText 静态表与 requirements 面板先例同款）
 #include "KinPanelCommandCatalog.hpp"              // 命令目录（按钮词形与只读门控）
+#include "KinPanelUnits.hpp"                       // resolveKinDisplayToSi（提交面逆换算——A07）
 
 namespace sdurws {
 namespace ird {
@@ -125,17 +127,23 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     // ---- 右半：目标编辑＋Solve＋候选检查器。
     auto* right = new QVBoxLayout();
     auto* form = new QFormLayout();
-    // 目标位置编辑（显示制式文本——SI 换算经表单公共件解析口径；此处为
-    // 求解目标的轻量编辑位，单位投影文本由 L-K8 刷新统一回填）。
+    // 目标位置编辑（**显示制式**数值——行标签随当前制式标注单位；提交时
+    // 经 resolveKinDisplayToSi 逆换算回 SI 真值，会话/求解器只见 SI）。
+    // 行标签显式创建并持有（QFormLayout 内建标签拿不到可更新句柄——
+    // L-K8 切换制式后标签必须随制式重建；审查 A07 缺陷面①：修复前标签
+    // 为构造期硬编码 "（m）"，切到 mm 后标签失实引导错误输入解释）。
     m_targetX = new QLineEdit(pane);
     m_targetY = new QLineEdit(pane);
     m_targetZ = new QLineEdit(pane);
-    m_targetX->setPlaceholderText(tr("例如 0.400（单位：m）"));
-    m_targetY->setPlaceholderText(tr("例如 0.000（单位：m）"));
-    m_targetZ->setPlaceholderText(tr("例如 0.300（单位：m）"));
-    form->addRow(tr("目标 X（m）"), m_targetX);
-    form->addRow(tr("目标 Y（m）"), m_targetY);
-    form->addRow(tr("目标 Z（m）"), m_targetZ);
+    m_targetXLabel = new QLabel(pane);
+    m_targetYLabel = new QLabel(pane);
+    m_targetZLabel = new QLabel(pane);
+    form->addRow(m_targetXLabel, m_targetX);
+    form->addRow(m_targetYLabel, m_targetY);
+    form->addRow(m_targetZLabel, m_targetZ);
+    // 首版标注（按当前会话制式——构造期 displayUnits 尚为缺省 SI 直显，
+    // setDisplayUnits 注入后经 refreshAll 重建）。
+    refreshTargetUnitPresentation();
     layout->addLayout(form);
 
     m_solveButton = new QPushButton(tr("求解 IK"), pane);
@@ -277,6 +285,9 @@ void KinematicsPanelWidget::renderSolutions(QTableWidget* table,
 
 void KinematicsPanelWidget::refreshAll()
 {
+    // 目标输入行标注随制式重建（KIN-P1 A07——L-K8 切换经 setDisplayUnits
+    // 进入本函数；标签/占位是 displayUnits 的呈现函数，零重算零修订）。
+    refreshTargetUnitPresentation();
     refreshPosePane();
     refreshResultsPane();
     refreshTaskArea();
@@ -311,6 +322,36 @@ void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProje
     // 显示文本重建；零重算（无任何评估调用）/零修订（无命令提交）。
     m_session.displayUnits = units;
     refreshAll();
+}
+
+void KinematicsPanelWidget::refreshTargetUnitPresentation()
+{
+    // 目标输入行的单位标注随显示制式重建（审查 A07 缺陷面①修复：修复前
+    // 标签为构造期硬编码 "（m）"，切到 mm 后标签失实）。标注同时携带
+    // **参考系标识"基座系"**（KIN-P1 验收"参考系标识"半区）：提交目标
+    // 经 runSinglePointSolve 进入 IkRequest.targetInBase（基座系 SI——
+    // 单元卡 §5.3），输入语义即基座系坐标。单位符号取当前制式长度 token
+    // 原文（core Units 冻结词表——"m"/"cm"/"mm"）；nullopt＝SI 直显制式。
+    const QString lengthSymbol =
+        m_session.displayUnits.has_value()
+            ? QString::fromStdString(
+                std::string(m_session.displayUnits->lengthUnit().symbol()))
+            : QStringLiteral("m");
+    if (m_targetXLabel != nullptr) {
+        m_targetXLabel->setText(tr("目标 X（%1，基座系）").arg(lengthSymbol));
+        m_targetX->setPlaceholderText(
+            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+    }
+    if (m_targetYLabel != nullptr) {
+        m_targetYLabel->setText(tr("目标 Y（%1，基座系）").arg(lengthSymbol));
+        m_targetY->setPlaceholderText(
+            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+    }
+    if (m_targetZLabel != nullptr) {
+        m_targetZLabel->setText(tr("目标 Z（%1，基座系）").arg(lengthSymbol));
+        m_targetZ->setPlaceholderText(
+            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+    }
 }
 
 void KinematicsPanelWidget::refreshPosePane()
@@ -457,24 +498,31 @@ void KinematicsPanelWidget::focusTaskPoint(const std::optional<core::ObjectId>& 
 
 void KinematicsPanelWidget::onSolveClicked()
 {
-    // L-K2 转接（零内联逻辑——编排函数承担）。目标位姿从编辑字段读取
-    // （显示制式数值＝SI 直读的轻量编辑位——单位换算经会话投影；字段
-    // 解析失败就地反馈保留原值，UX-05）。
+    // L-K2 转接（零内联逻辑——编排函数承担）。目标位姿从编辑字段读取：
+    // 字段承载**显示制式**数值（行标签随制式标注单位——见
+    // refreshTargetUnitPresentation），提交前按所选单位**逆换算回 SI
+    // 真值**（resolveKinDisplayToSi——mm 输入 0.1 → 1e-4 m），会话/求解
+    // 器只见 SI（IkRequest.targetInBase＝基座系 m，§5.3）。审查条目 A07
+    // 修复：修复前此处直读显示值并用 projectLength（SI→显示的正向投影）
+    // 再放大——方向反转（mm 输入 0.1 → 100 m，按任何解释均非法）。
     bool okX = false, okY = false, okZ = false;
     double x = m_targetX->text().toDouble(&okX);
     double y = m_targetY->text().toDouble(&okY);
     double z = m_targetZ->text().toDouble(&okZ);
-    if (!okX || !okY || !okZ) {
-        showStatusText(tr("目标位姿非法（数值解析失败）——原值保留"));
+    // 解析失败**或非有限**（"inf"/"nan" 可被解析但不是合法坐标——
+    // NFR-COR-03 非有限不静默）＝调用方输入错误：就地反馈保留原值
+    // （UX-05），不向求解器传递非有限目标（域 IkRequest 校验 fail-fast
+    // 的调用方侧前置拦截——交互层拒绝而非异常穿越 Qt 槽）。
+    if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
+        || !std::isfinite(z)) {
+        showStatusText(tr("目标位姿非法（数值解析失败或非有限）——原值保留"));
         return;
     }
-    if (m_session.displayUnits.has_value()) {
-        // 显示制式→SI（角度制式影响位置分量的场景不存在——位置恒长度；
-        // 此处直读 m 数值，投影仅影响回填呈现）。
-        x = m_session.displayUnits->projectLength(x);
-        y = m_session.displayUnits->projectLength(y);
-        z = m_session.displayUnits->projectLength(z);
-    }
+    // 显示制式→SI 逆换算（唯一换算点 KinPanelUnits::resolveKinDisplayToSi
+    // ——nullopt 制式恒等；换算方向与读侧 projectLength 相反）。
+    x = resolveKinDisplayToSi(x, m_session.displayUnits);
+    y = resolveKinDisplayToSi(y, m_session.displayUnits);
+    z = resolveKinDisplayToSi(z, m_session.displayUnits);
     // 位姿构造用 9 参旋转（头内 inline）——不实例化引用 rw 库符号的单参构造（冒烟链接面）。
     const rw::math::Transform3D<double> target(
         rw::math::Vector3D<double>(x, y, z),
