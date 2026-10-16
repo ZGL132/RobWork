@@ -31,6 +31,11 @@
 #      今日树适配：RWS_BUILD_INDUSTRIALROBOT=ON、全量测试面构建、叶子测试发现、
 #      ird_gates 边界执行器、全单元出包）——适配明细见 ci/README.md「2026-10-16
 #      激活」节与 patches/PATCHES.md 0003 号。
+#   4) 依赖供给守卫包由 libzip 改为 pugixml（当前最新加入端口）——缓存 restore-keys
+#      前缀回退机制本就容忍 workflow 变更后命中旧依赖树（run 38947428868 实证：回退
+#      命中首跑缓存、libzip 在位→守卫短路跳过安装→新增端口仍缺失）。约定：今后依赖
+#      清单扩项时，同步把守卫包换成最新加入的端口；vcpkg 安装对已装端口增量跳过，
+#      守卫触发后补装代价只有新端口本身。
 
 name: industrial-robot-windows-gate
 
@@ -68,7 +73,7 @@ jobs:
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
-          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/pugixml')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -169,7 +174,7 @@ jobs:
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
-          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/pugixml')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -270,7 +275,7 @@ jobs:
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
-          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/pugixml')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -376,7 +381,7 @@ jobs:
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
-          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/pugixml')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -479,7 +484,7 @@ jobs:
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
-          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/pugixml')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -580,7 +585,7 @@ jobs:
         run: 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
       - name: 依赖供给（vendored vcpkg，前缀＝流水线变量 CMAKE_PREFIX_PATH）
         run: >-
-          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+          if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/pugixml')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null

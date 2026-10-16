@@ -39,6 +39,10 @@ CI 常驻门禁正式激活。两份模板与部署文件的同批修订（逐�
    **首跑实证（run 38936681670，2026-10-16）**：configure 于 modeling 单元 `find_package(pugixml)` 失败
    （job 耗时 1h20m——fresh 依赖树全量源码编译，缓存随后按 `if: always()` 保存）；pugixml/expat 即本条修订依据，
    盘点口径＝全单元 `find_package` REQUIRED 清单（GTest/Qt6/Boost/Eigen3/libzip 原清单已覆盖）。
+   **二跑实证（run 38947428868）**：缓存回退命中首跑旧树后，供给步守卫包 `libzip` 在位→短路跳过安装→
+   pugixml 仍缺失。守卫包改为 pugixml（最新加入端口）；**约定：今后扩依赖清单时同步换守卫包**——
+   缓存前缀回退机制与"守卫单个旧包"组合存在结构性盲区，守卫指向最新端口即闭环（vcpkg 已装端口增量跳过，
+   补装代价仅新端口本身）。
 3. **入口脚本落位** `RobWork/scripts/industrial-robot/`（6 文件，eb777e2 参考实现＋今日树适配，0003 号补丁登记）：
    - `common.ps1`：与 eb777e2 逐字节一致（VS x64 环境发现/原生日志执行/Qt 冲突检测）。
    - `configure.ps1`：固定选项增 `-DRWS_BUILD_INDUSTRIALROBOT=ON`（0001 号补丁 option，不传则子树不进构建图）、

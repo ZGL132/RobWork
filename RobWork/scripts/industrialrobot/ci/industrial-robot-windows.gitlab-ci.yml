@@ -26,6 +26,9 @@
 #   2) 六个入口脚本正式落位 RobWork/scripts/industrial-robot/（eb777e2 参考实现＋
 #      今日树适配）——适配明细见 ci/README.md「2026-10-16 激活」节与
 #      patches/PATCHES.md 0003 号。
+#   3) 依赖供给守卫包由 libzip 改为 pugixml（当前最新加入端口）——缓存前缀回退机制
+#      会容忍清单变更后命中旧依赖树，守卫若指向旧包即短路跳过新增端口安装
+#      （GitHub 通道 run 38947428868 实证）。约定：今后扩依赖清单时同步换守卫包。
 
 stages:
   - industrial-robot-gate
@@ -52,7 +55,7 @@ variables:
     - 'Write-Output "checkout: $CI_COMMIT_SHA ($CI_COMMIT_REF_NAME)"'
     - 'Write-Output "VS x64: cl.exe/cmake.exe/ctest.exe 由入口脚本发现并初始化（VsDevCmd -arch=x64 -host_arch=x64，找不到 VS x64 立即失败）"'
     - >-
-      if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/libzip')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
+      if (-not (Test-Path '.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows/share/pugixml')) { & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed" }
     - |
       New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
       @'
