@@ -1,4 +1,4 @@
-[==========] Running 238 tests from 30 test suites.
+[==========] Running 239 tests from 30 test suites.
 [----------] Global test environment set-up.
 [----------] 4 tests from KinGoldenFk
 [ RUN      ] KinGoldenFk.V01_AnalyticCasesCloseWithinProfile_WP15T13_ACC1
@@ -9,7 +9,7 @@
 [       OK ] KinGoldenFk.V01_EdgeCaseCarriersZeroNearCancellation_WP15T13_ACC1 (1 ms)
 [ RUN      ] KinGoldenFk.ACC5_RepeatEvaluateCanonicalBitwise_WP15T13_ACC5
 [       OK ] KinGoldenFk.ACC5_RepeatEvaluateCanonicalBitwise_WP15T13_ACC5 (1 ms)
-[----------] 4 tests from KinGoldenFk (7 ms total)
+[----------] 4 tests from KinGoldenFk (6 ms total)
 
 [----------] 3 tests from KinGoldenIkDedup
 [ RUN      ] KinGoldenIkDedup.V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1
@@ -17,7 +17,7 @@
 [ RUN      ] KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1
 [       OK ] KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1 (1 ms)
 [ RUN      ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5
-[       OK ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5 (1 ms)
+[       OK ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5 (0 ms)
 [----------] 3 tests from KinGoldenIkDedup (3 ms total)
 
 [----------] 4 tests from KinGoldenOutcomes
@@ -33,16 +33,16 @@
 
 [----------] 5 tests from KinGoldenCoverage
 [ RUN      ] KinGoldenCoverage.V14_FixedCount100of60_WP15T13_ACC1
-[       OK ] KinGoldenCoverage.V14_FixedCount100of60_WP15T13_ACC1 (1596 ms)
+[       OK ] KinGoldenCoverage.V14_FixedCount100of60_WP15T13_ACC1 (1572 ms)
 [ RUN      ] KinGoldenCoverage.V14_InsufficientKeepsDenominator_WP15T13_ACC1
-[       OK ] KinGoldenCoverage.V14_InsufficientKeepsDenominator_WP15T13_ACC1 (1772 ms)
+[       OK ] KinGoldenCoverage.V14_InsufficientKeepsDenominator_WP15T13_ACC1 (1703 ms)
 [ RUN      ] KinGoldenCoverage.V13_ZeroSamplePlanDowngraded_WP15T13_ACC1
 [       OK ] KinGoldenCoverage.V13_ZeroSamplePlanDowngraded_WP15T13_ACC1 (3 ms)
 [ RUN      ] KinGoldenCoverage.ACC1_SampleSetMatchesGoldenCenters_WP15T13_ACC1
-[       OK ] KinGoldenCoverage.ACC1_SampleSetMatchesGoldenCenters_WP15T13_ACC1 (2941 ms)
+[       OK ] KinGoldenCoverage.ACC1_SampleSetMatchesGoldenCenters_WP15T13_ACC1 (2925 ms)
 [ RUN      ] KinGoldenCoverage.ACC5_Thread1vs8EquivalentSetAndStableOrder_WP15T13_ACC5
-[       OK ] KinGoldenCoverage.ACC5_Thread1vs8EquivalentSetAndStableOrder_WP15T13_ACC5 (5744 ms)
-[----------] 5 tests from KinGoldenCoverage (12058 ms total)
+[       OK ] KinGoldenCoverage.ACC5_Thread1vs8EquivalentSetAndStableOrder_WP15T13_ACC5 (5837 ms)
+[----------] 5 tests from KinGoldenCoverage (12042 ms total)
 
 [----------] 3 tests from KinErrors
 [ RUN      ] KinErrors.ErrorCodeTokensMatchSection92Row_WP15T02_ACC4
@@ -68,14 +68,14 @@
 
 [----------] 4 tests from KinBuildRedLine
 [ RUN      ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1
-[       OK ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1 (28 ms)
+[       OK ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1 (27 ms)
 [ RUN      ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5
-[       OK ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5 (22 ms)
+[       OK ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5 (19 ms)
 [ RUN      ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5
-[       OK ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5 (19 ms)
+[       OK ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5 (17 ms)
 [ RUN      ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1
 [       OK ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1 (14 ms)
-[----------] 4 tests from KinBuildRedLine (84 ms total)
+[----------] 4 tests from KinBuildRedLine (78 ms total)
 
 [----------] 15 tests from KinFk
 [ RUN      ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1
@@ -171,7 +171,7 @@
 [----------] 1 test from KinReproBenchmark
 [ RUN      ] KinReproBenchmark.Batch1vs8ThreadEquivalentSetAndOrder_WP23T09_ACC1
 [       OK ] KinReproBenchmark.Batch1vs8ThreadEquivalentSetAndOrder_WP23T09_ACC1 (18 ms)
-[----------] 1 test from KinReproBenchmark (19 ms total)
+[----------] 1 test from KinReproBenchmark (18 ms total)
 
 [----------] 14 tests from KinRegionCoverage
 [ RUN      ] KinRegionCoverage.FixedCountGoldenReach60_WP15T06_ACC1
@@ -247,7 +247,7 @@
 [       OK ] KinSolutionSetView.FilteredIdempotentWithNullPredicateContract_WP15T09_ACC1 (0 ms)
 [ RUN      ] KinSolutionSetView.ConcurrentReadOnlyAccessAgrees_WP15T09_ACC1
 [       OK ] KinSolutionSetView.ConcurrentReadOnlyAccessAgrees_WP15T09_ACC1 (0 ms)
-[----------] 5 tests from KinSolutionSetView (1 ms total)
+[----------] 5 tests from KinSolutionSetView (0 ms total)
 
 [----------] 8 tests from KinExport
 [ RUN      ] KinExport.SolutionRowsCarryIdentityAndObjectRefs_WP15T09_ACC2
@@ -371,7 +371,7 @@
 [ RUN      ] KinWorkspace.FacilityFailureSampleDataInsufficient_WP15T14
 [       OK ] KinWorkspace.FacilityFailureSampleDataInsufficient_WP15T14 (0 ms)
 [ RUN      ] KinWorkspace.PositionSampleRealSolverDegenerateChain_KIN_P2
-[       OK ] KinWorkspace.PositionSampleRealSolverDegenerateChain_KIN_P2 (1 ms)
+[       OK ] KinWorkspace.PositionSampleRealSolverDegenerateChain_KIN_P2 (0 ms)
 [ RUN      ] KinWorkspace.PointCloudStatesAndScalars_WP15T14_ACC3
 [       OK ] KinWorkspace.PointCloudStatesAndScalars_WP15T14_ACC3 (0 ms)
 [ RUN      ] KinWorkspace.ProjectionsXY_XZ_YZ_WP15T14_ACC3
@@ -394,9 +394,9 @@
 [       OK ] KinWorkspace.RerunAfterCancelSameSampleSet_WP15T14_ACC2 (0 ms)
 [----------] 19 tests from KinWorkspace (6 ms total)
 
-[----------] 11 tests from KinEnvelope
+[----------] 12 tests from KinEnvelope
 [ RUN      ] KinEnvelope.Acc1_RayBoundaryDefault180SphericalShell_WP15T15
-[       OK ] KinEnvelope.Acc1_RayBoundaryDefault180SphericalShell_WP15T15 (6536 ms)
+[       OK ] KinEnvelope.Acc1_RayBoundaryDefault180SphericalShell_WP15T15 (6177 ms)
 [ RUN      ] KinEnvelope.Acc1_CancellableMidRun_WP15T15
 [       OK ] KinEnvelope.Acc1_CancellableMidRun_WP15T15 (0 ms)
 [ RUN      ] KinEnvelope.Acc1_CancellableAtEntry_WP15T15
@@ -409,6 +409,8 @@
 [       OK ] KinEnvelope.Acc3_DirectionSetGoldenAndRerunDeterminism_WP15T15 (2 ms)
 [ RUN      ] KinEnvelope.ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15
 [       OK ] KinEnvelope.ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.PositionProbeUsesTaskSpaceSemantics_KIN_P2
+[       OK ] KinEnvelope.PositionProbeUsesTaskSpaceSemantics_KIN_P2 (0 ms)
 [ RUN      ] KinEnvelope.FacilityFailureNonTerminalStopsAll_WP15T15
 [       OK ] KinEnvelope.FacilityFailureNonTerminalStopsAll_WP15T15 (0 ms)
 [ RUN      ] KinEnvelope.PlanarArmAllRaysApproximateEmpty_WP15T15
@@ -417,7 +419,7 @@
 [       OK ] KinEnvelope.FailFastValidationMatrix_WP15T15 (0 ms)
 [ RUN      ] KinEnvelope.NoTcpErrorFace_WP15T15
 [       OK ] KinEnvelope.NoTcpErrorFace_WP15T15 (0 ms)
-[----------] 11 tests from KinEnvelope (6542 ms total)
+[----------] 12 tests from KinEnvelope (6183 ms total)
 
 [----------] 17 tests from KinPoseReachability
 [ RUN      ] KinPoseReachability.PlanPreviewTargetCount_WP15T16_ACC1_AT26
@@ -462,7 +464,7 @@
 [ RUN      ] PluginPanelLinks.LK2_SinglePointSolveInline_ACC1
 [       OK ] PluginPanelLinks.LK2_SinglePointSolveInline_ACC1 (0 ms)
 [ RUN      ] PluginPanelLinks.LK2_InlineBudgetExceededDefersToBackground_ACC1
-[       OK ] PluginPanelLinks.LK2_InlineBudgetExceededDefersToBackground_ACC1 (8 ms)
+[       OK ] PluginPanelLinks.LK2_InlineBudgetExceededDefersToBackground_ACC1 (5 ms)
 [ RUN      ] PluginPanelLinks.LK2_AssembleSessionSolveRequestComplete_KIN_P2
 [       OK ] PluginPanelLinks.LK2_AssembleSessionSolveRequestComplete_KIN_P2 (0 ms)
 [ RUN      ] PluginPanelLinks.LK2_AssembleSessionSolveRequestFailures_KIN_P2
@@ -494,7 +496,7 @@ D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrial
 GUI 呈现仅登记（envUnavailable 如实登记——不标注通过）
 
 [  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1 (0 ms)
-[----------] 17 tests from PluginPanelLinks (10 ms total)
+[----------] 17 tests from PluginPanelLinks (6 ms total)
 
 [----------] 3 tests from KinCommandCatalog
 [ RUN      ] KinCommandCatalog.DomainCommandsMatchSection98Table_ACC3
@@ -570,7 +572,7 @@ GUI 呈现仅登记（envUnavailable 如实登记——不标注通过）
 [----------] 6 tests from KinCollisionPort (2 ms total)
 
 [----------] Global test environment tear-down
-[==========] 238 tests from 30 test suites ran. (18764 ms total)
-[  PASSED  ] 237 tests.
+[==========] 239 tests from 30 test suites ran. (18376 ms total)
+[  PASSED  ] 238 tests.
 [  SKIPPED ] 1 test, listed below:
 [  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1

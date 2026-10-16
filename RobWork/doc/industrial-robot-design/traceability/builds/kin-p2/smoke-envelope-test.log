@@ -1,0 +1,33 @@
+Note: Google Test filter = KinEnvelope.*
+[==========] Running 12 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 12 tests from KinEnvelope
+[ RUN      ] KinEnvelope.Acc1_RayBoundaryDefault180SphericalShell_WP15T15
+[       OK ] KinEnvelope.Acc1_RayBoundaryDefault180SphericalShell_WP15T15 (3829 ms)
+[ RUN      ] KinEnvelope.Acc1_CancellableMidRun_WP15T15
+[       OK ] KinEnvelope.Acc1_CancellableMidRun_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.Acc1_CancellableAtEntry_WP15T15
+[       OK ] KinEnvelope.Acc1_CancellableAtEntry_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.Acc1_CancelPropagatedFromSolver_WP15T15
+[       OK ] KinEnvelope.Acc1_CancelPropagatedFromSolver_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.Acc2_ApproximationMarking_WP15T15
+[       OK ] KinEnvelope.Acc2_ApproximationMarking_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.Acc3_DirectionSetGoldenAndRerunDeterminism_WP15T15
+[       OK ] KinEnvelope.Acc3_DirectionSetGoldenAndRerunDeterminism_WP15T15 (2 ms)
+[ RUN      ] KinEnvelope.ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15
+[       OK ] KinEnvelope.ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.PositionProbeUsesTaskSpaceSemantics_KIN_P2
+[       OK ] KinEnvelope.PositionProbeUsesTaskSpaceSemantics_KIN_P2 (0 ms)
+[ RUN      ] KinEnvelope.FacilityFailureNonTerminalStopsAll_WP15T15
+[       OK ] KinEnvelope.FacilityFailureNonTerminalStopsAll_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.PlanarArmAllRaysApproximateEmpty_WP15T15
+[       OK ] KinEnvelope.PlanarArmAllRaysApproximateEmpty_WP15T15 (1 ms)
+[ RUN      ] KinEnvelope.FailFastValidationMatrix_WP15T15
+[       OK ] KinEnvelope.FailFastValidationMatrix_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.NoTcpErrorFace_WP15T15
+[       OK ] KinEnvelope.NoTcpErrorFace_WP15T15 (0 ms)
+[----------] 12 tests from KinEnvelope (3836 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 1 test suite ran. (3836 ms total)
+[  PASSED  ] 12 tests.

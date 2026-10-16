@@ -95,8 +95,10 @@ enum class ProbeVerdict : std::uint8_t {
  * @brief 在基座系 {B} 的 p＝t·d 处做一次位置存在性 IK 探测。
  *
  * 请求组装口径（与 Evaluators.cpp 区域覆盖通道"位置样本＝位置存在性
- * IK"逐项同源）：目标姿态＝恒等、姿态容差＝π（kEnvelopePoseFreeTolerance
- * ——收敛判据逐项比较故收敛⇔位置入容差）；碰撞会话恒空（KIN-10 无
+ * IK"逐项同源，KIN-P2/A02 任务维度语义）：目标姿态＝恒等（仅作 IK 请求
+ * 形态满足——PositionOnly 任务不消费姿态误差）、taskSpace=PositionOnly
+ * （3 维任务子空间——姿态项不进目标函数，收敛判据只查位置残差；姿态
+ * 容差透传查询值仅作请求合法域载体）；碰撞会话恒空（KIN-10 无
  * 碰撞要求——纯运动学可达边界，EnvelopeQuery 结构体注）；取消探针
  * 原样透传（求解器内部 kIkCancellationProbeInterval 迭代粒度查询）。
  *
@@ -148,12 +150,19 @@ ProbeVerdict probeReachability(double t,
     ++probeSerial;    // 全局序号推进（与本次 IK 调用一一对应）
     ++rayProbeCount;  // 方向面计数同步（守恒式右端/左端同步推进）
 
-    // IK 请求（位置存在性——姿态无约束落值 π；身份面回填调用方绑定）。
+    // IK 请求（位置存在性——KIN-P2/A02 起 taskSpace=PositionOnly：3 维
+    // 任务子空间，姿态误差不进目标函数，收敛判据只查位置残差；姿态容差
+    // 在该任务下不被消费，保持 IkRequest 默认合法值（1e-6 rad>0——请求
+    // 合法域载体；EnvelopeQuery 投影面刻意不含姿态容差字段——"不预建无
+    // 消费者条目"纪律，与旧 π 落值常量的裁剪同因）。旧"姿态无约束落值
+    // π"机制废除——kEnvelopePoseFreeTolerance 已随本迁移移除，π 方案下
+    // 姿态仍参与 6 维迭代会把位置可达探针点牵制出局〔审查 A02 同源〕。
+    // 身份面回填调用方绑定）。
     IkRequest request;
     request.targetInBase = rw::math::Transform3D<double>(
         direction * t, rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
     request.positionTolerance = query.positionTolerance;
-    request.orientationTolerance = kEnvelopePoseFreeTolerance;
+    request.taskSpace = IkTaskSpace::PositionOnly;
     request.modelView = &view;
     request.tcp = tcp;
     request.initialValues = initialValues;

@@ -484,13 +484,16 @@ TEST(KinEnvelope, ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15)
 
     // 脚本边界替身：‖p‖ ≤ 1.5 m 可达、否则搜索未果（MultiInitNo-
     // Convergence——近似根源 2 的"当不可达侧使用"轨）。锚点 t=0.9 命中
-    // 可达；二分边界收敛于 1.5 m。记录逐请求半径与姿态容差（接线断言面
-    // ——RegionCoverageTest ScriptedSolver 同款先例）。
+    // 可达；二分边界收敛于 1.5 m。记录逐请求半径与任务空间模式（接线
+    // 断言面——RegionCoverageTest ScriptedSolver 同款先例；KIN-P2/A02
+    // 起存在性口径判别＝taskSpace，旧"姿态容差 π"判别随该机制移除）。
     class RadiusBoundarySolver final : public kin::IIkSolver {
     public:
         struct RecordedRequest {
             double probedRadius = 0.0;          ///< ‖p‖（m，基座系 {B}）
-            double orientationTolerance = 0.0;  ///< rad（存在性口径判别）
+            double orientationTolerance = 0.0;  ///< rad（合法域载体——不参与判定）
+            kin::IkTaskSpace taskSpace =
+                kin::IkTaskSpace::FullPose;     ///< 任务维度（存在性口径判别）
         };
 
         mutable std::vector<RecordedRequest> requests;
@@ -501,6 +504,7 @@ TEST(KinEnvelope, ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15)
             RecordedRequest rec;
             rec.probedRadius = p.norm2();  // rw norm2＝欧氏 2-范数（m）
             rec.orientationTolerance = request.orientationTolerance;
+            rec.taskSpace = request.taskSpace;
             requests.push_back(rec);
 
             kin::IkOutcome out;
@@ -533,12 +537,16 @@ TEST(KinEnvelope, ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15)
         EXPECT_GE(ray.rMax, 1.5 - 1e-3) << "方向 " << ray.directionIndex;
     }
 
-    // 存在性口径接线：全部探针＝位置存在性 IK（姿态无约束落值 π——
-    // kEnvelopePoseFreeTolerance 同值）。
+    // 存在性口径接线（KIN-P2/A02 迁移后）：全部探针＝位置存在性 IK
+    // （taskSpace=PositionOnly——姿态项不进目标函数）；姿态容差为请求
+    // 合法域载体（IkRequest 默认合法值，不参与本任务收敛判定——断言
+    // >0 有限即可，恒 π 的旧钉随 kEnvelopePoseFreeTolerance 移除废除）。
     ASSERT_GT(radiusSolver.requests.size(), 0U);
     for (const auto& rec : radiusSolver.requests) {
-        EXPECT_DOUBLE_EQ(rec.orientationTolerance,
-                         kin::kEnvelopePoseFreeTolerance);
+        EXPECT_EQ(rec.taskSpace, kin::IkTaskSpace::PositionOnly)
+            << "包络位置探针必须以仅位置任务维度提交（A02 迁移钉）";
+        EXPECT_GT(rec.orientationTolerance, 0.0);
+        EXPECT_TRUE(std::isfinite(rec.orientationTolerance));
     }
     // 探测点全部在解析上界内（hi 侧解析免探测——预算不越过 Rup；
     // 1e-9 m 裕量吸收单位向量模长的 1±ε 浮点噪声）。
@@ -554,6 +562,87 @@ TEST(KinEnvelope, ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15)
     }
     EXPECT_EQ(raySum, env.probeCount);
     EXPECT_EQ(env.probeCount, radiusSolver.requests.size());
+}
+
+// =====================================================================
+// KIN-P2（审查 A02 验收驳回补迁移）——包络位置探针的任务维度行为钉
+// =====================================================================
+
+/**
+ * @brief 包络探针必须以 PositionOnly 任务维度发起位置存在性判定（行为
+ *        级迁移钉——非仅字段透传）。
+ *
+ * 替身模拟"位置实心可达、姿态自由度不足"的链（审查 A02 形态）：仅当
+ * 请求以 taskSpace=PositionOnly（位置存在性）提交时按 ‖p‖≤1.5 判可达；
+ * FullPose 请求（姿态恒等目标）一律搜索未果——即姿态项牵制位置解的
+ * 缺陷形态。包络必须以 PositionOnly 探针使 rMax 收敛到脚本边界 1.5 m；
+ * 若实现回退旧"π 容差/FullPose"机制（迁移回退），全部探针搜索未果、
+ * 锚点耗尽 → rMax=0——本用例红。修复前（2c163349 主提交漏迁移包络
+ * 通道）即此红形态；这是探针级可观测差异的锚点——真实几何端到端的
+ * rMax 差异在退化链上会被审查 A04 的锚点未命中机制（位置可达集为
+ * 环/壳时内锚点全灭）掩盖，故以脚本边界承载行为差异（与 RadiusBoundary
+ * 替身同族口径）。
+ */
+TEST(KinEnvelope, PositionProbeUsesTaskSpaceSemantics_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-10", "KIN-02", "KIN-04"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = sphericalShellModel();
+    TestView view(model);
+
+    // 姿态受限链替身：PositionOnly（位置存在性）→ ‖p‖≤1.5 可达；
+    // FullPose → 一律搜索未果（姿态自由度不足的 A02 缺陷形态模拟）。
+    // 记录 taskSpace 供迁移面断言。
+    class PositionOnlyBoundarySolver final : public kin::IIkSolver {
+    public:
+        mutable int positionOnlyCalls = 0;   ///< PositionOnly 请求计数
+        mutable int fullPoseCalls = 0;       ///< FullPose 请求计数（期望 0）
+
+        kin::IkOutcome solve(const kin::IkRequest& request) const override
+        {
+            const rw::math::Vector3D<double> p = request.targetInBase.P();
+            kin::IkOutcome out;
+            if (request.taskSpace == kin::IkTaskSpace::PositionOnly) {
+                ++positionOnlyCalls;
+                if (p.norm2() <= 1.5) {
+                    out.outcomeKind = kin::IkOutcomeKind::SolutionsFound;
+                    kin::KinematicSolution s;
+                    s.q = {0.0, 0.0, 0.0};
+                    out.solutionSet.solutions.push_back(s);
+                    return out;
+                }
+            } else {
+                ++fullPoseCalls;  // 迁移回退即非零——行为钉的失败面
+            }
+            out.outcomeKind = kin::IkOutcomeKind::MultiInitNoConvergence;
+            kin::IkSearchRecord record;
+            out.solutionSet.searchRecord = record;
+            return out;
+        }
+    };
+    PositionOnlyBoundarySolver solver;
+
+    EnvelopeQuery query = makeQuery(&solver, 4U);
+    const kin::Expected<EnvelopeResult> result =
+        kin::computeApproximateEnvelope(view, shellTcp(), query);
+    ASSERT_TRUE(result.ok());
+    const EnvelopeResult& env = result.get();
+
+    // 行为差异面：rMax 收敛于位置存在性边界 1.5 m（迁移回退→rMax=0）。
+    ASSERT_EQ(env.rays.size(), 4U);
+    for (const EnvelopeRayRecord& ray : env.rays) {
+        ASSERT_EQ(ray.state, EnvelopeRayState::Computed) << "方向 "
+                                                         << ray.directionIndex;
+        EXPECT_LE(ray.rMax, 1.5) << "方向 " << ray.directionIndex;
+        EXPECT_GE(ray.rMax, 1.5 - 1e-3)
+            << "方向 " << ray.directionIndex
+            << "（rMax=0＝位置存在性探针被姿态项牵制的迁移回退形态）";
+    }
+    // 迁移面：全部探针 PositionOnly、零 FullPose 泄漏。
+    EXPECT_GT(solver.positionOnlyCalls, 0);
+    EXPECT_EQ(solver.fullPoseCalls, 0)
+        << "包络探针不得以完整位姿任务发起位置存在性判定（A02）";
 }
 
 // =====================================================================

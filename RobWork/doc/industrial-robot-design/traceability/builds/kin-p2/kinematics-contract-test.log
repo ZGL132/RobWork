@@ -10,8 +10,8 @@
 [ RUN      ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3
 [       OK ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3 (0 ms)
 [ RUN      ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5
-[       OK ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5 (14 ms)
-[----------] 5 tests from KinBuildGraph (17 ms total)
+[       OK ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5 (13 ms)
+[----------] 5 tests from KinBuildGraph (16 ms total)
 
 [----------] 6 tests from KinPoseMetricsEval
 [ RUN      ] KinPoseMetricsEval.DescriptorMatchesSection43Row_WP15T03_ACC4
@@ -40,7 +40,7 @@
 [ RUN      ] KinTaskPointIkEval.EvaluateSuccessProducesBoundPayload_WP15T04_ACC4
 [       OK ] KinTaskPointIkEval.EvaluateSuccessProducesBoundPayload_WP15T04_ACC4 (0 ms)
 [ RUN      ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2
-[       OK ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2 (2 ms)
+[       OK ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2 (1 ms)
 [ RUN      ] KinTaskPointIkEval.AnalyticBoundDeliversProofMaterial_WP15T04_ACC4
 [       OK ] KinTaskPointIkEval.AnalyticBoundDeliversProofMaterial_WP15T04_ACC4 (0 ms)
 [ RUN      ] KinTaskPointIkEval.CancellationYieldsZeroMaterial_WP15T04_ACC2
@@ -51,7 +51,7 @@
 [       OK ] KinTaskPointIkEval.CollisionFilteredDiagEmittedPerRecord_WP15T07_ACC1 (0 ms)
 [ RUN      ] KinTaskPointIkEval.FacilityFailureYieldsEvidenceMissingDiag_WP15T07_ACC2
 [       OK ] KinTaskPointIkEval.FacilityFailureYieldsEvidenceMissingDiag_WP15T07_ACC2 (0 ms)
-[----------] 11 tests from KinTaskPointIkEval (3 ms total)
+[----------] 11 tests from KinTaskPointIkEval (1 ms total)
 
 [----------] 15 tests from KinTaskPointsBatchEval
 [ RUN      ] KinTaskPointsBatchEval.DescriptorMatchesSection43Row_WP15T05_ACC4
@@ -109,14 +109,14 @@
 
 [----------] 4 tests from KinCollisionConsistency
 [ RUN      ] KinCollisionConsistency.StaticScanNoCollisionImplementationCopy_WP15T07_ACC3
-[       OK ] KinCollisionConsistency.StaticScanNoCollisionImplementationCopy_WP15T07_ACC3 (11 ms)
+[       OK ] KinCollisionConsistency.StaticScanNoCollisionImplementationCopy_WP15T07_ACC3 (10 ms)
 [ RUN      ] KinCollisionConsistency.StructuralNoCollisionEnableSwitch_WP15T07_ACC5
 [       OK ] KinCollisionConsistency.StructuralNoCollisionEnableSwitch_WP15T07_ACC5 (0 ms)
 [ RUN      ] KinCollisionConsistency.PolicyResolvedDependencyInAllDescriptors_WP15T07_ACC3
 [       OK ] KinCollisionConsistency.PolicyResolvedDependencyInAllDescriptors_WP15T07_ACC3 (0 ms)
 [ RUN      ] KinCollisionConsistency.CollisionDiagCodeConstantsRegistered_WP15T07_ACC2
 [       OK ] KinCollisionConsistency.CollisionDiagCodeConstantsRegistered_WP15T07_ACC2 (0 ms)
-[----------] 4 tests from KinCollisionConsistency (11 ms total)
+[----------] 4 tests from KinCollisionConsistency (10 ms total)
 
 [----------] 3 tests from KinCommandsContract
 [ RUN      ] KinCommandsContract.O35NoDotTokenAndValuePinning_WP15T08_ACC4
@@ -131,7 +131,7 @@
 [ RUN      ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4
 [       OK ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4 (0 ms)
 [ RUN      ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2
-[       OK ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2 (4 ms)
+[       OK ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2 (3 ms)
 [ RUN      ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2
 [       OK ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2 (0 ms)
 [ RUN      ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4
@@ -139,5 +139,5 @@
 [----------] 4 tests from KinPluginGraph (4 ms total)
 
 [----------] Global test environment tear-down
-[==========] 57 tests from 8 test suites ran. (48 ms total)
+[==========] 57 tests from 8 test suites ran. (43 ms total)
 [  PASSED  ] 57 tests.

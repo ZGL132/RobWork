@@ -89,12 +89,19 @@ inline constexpr std::uint32_t kEnvelopeDirectionCountDefault = 180U;
 /// 本计算通道的算法契约版本（§8.4"求解器版本入身份"同族——Rmax 边界
 /// 算法（锚点指数探测＋二分）的版本锚；升级即换算法语义，消费方据此
 /// 判结果可比性。一经交付不回退）。
-inline constexpr std::uint32_t kEnvelopeContractVersion = 1U;
+/// ★ v2（KIN-P2/A02 验收驳回补迁移）：位置存在性探针由"姿态容差 π 落
+/// 值"迁移为 IkRequest.taskSpace=PositionOnly（3 维任务子空间）——探针
+/// 判定语义翻转（同方向同 t 的探针可由搜索未果翻为可达），版本不升会
+/// 让跨迁移的 Rmax 结果假借同一身份比较（与 kIkSolverContractVersion
+/// 同批 1→2 的同构理由）。
+inline constexpr std::uint32_t kEnvelopeContractVersion = 2U;
 
-/// 位置存在性探针的姿态无约束落值（rad＝π——收敛判据逐项比较故
-/// 收敛⇔位置入容差；Evaluators.cpp kPoseFreeTolerance 的同义同值落点
-/// ——TU 局部常量先例，两处同值由 EnvelopeTest 探针判别用例钉住）。
-inline constexpr double kEnvelopePoseFreeTolerance = 3.14159265358979323846;
+// ★ KIN-P2/A02 验收驳回补迁移：旧"位置存在性探针姿态无约束落值 π"
+// （kEnvelopePoseFreeTolerance）移除——探针现以 IkRequest.taskSpace=
+// PositionOnly 承载姿态自由（姿态项不进目标函数；π 容差方案下姿态仍
+// 参与 6 维迭代，位置可达探针点被姿态项牵制出局——审查 A02 同源）。
+// Evaluators.cpp/Workspace.cpp/Sampling.cpp 的同机制常量已于 KIN-P2 主
+// 提交（2c163349）同批移除。
 
 /**
  * @brief "近似、非精确"固定标注文案（KIN-10 原文词＋§7.3 两条禁令——
@@ -196,7 +203,9 @@ struct EnvelopeRayRecord {
  *
  * 求解配置为 config.ik（AnalysisConfiguration）的 T15 直传投影（T04/
  * T05/T06 查询同构形态）——包络通道实际消费的字段子集：无姿态容差
- * （位置存在性探针以 π 无约束落值，见 kEnvelopePoseFreeTolerance 注）、
+ * 字段（位置存在性探针以 taskSpace=PositionOnly 承载姿态自由——
+ * KIN-P2/A02，该任务不消费姿态容差，IkRequest 默认合法值作请求合法域
+ * 载体；"不预建无消费者条目"纪律）、
  * 无碰撞会话（KIN-10 原文无碰撞要求——Rmax 是纯运动学可达边界，碰撞
  * 感知包络属 KIN-09 点云/后续扩展，本通道不注入碰撞会话）。
  *
@@ -350,7 +359,8 @@ struct EnvelopeResult {
  *   1. 解析外括号：Rup＝computeAnalyticReachBound(view, tcp).totalRadius
  *      （三角形不等式确定性上界——hi 侧免探测）；
  *   2. 内锚点探测：t_k＝Rup·2⁻ᵏ（k=1..anchorProbesMax）逐点做位置
- *      存在性 IK（姿态无约束落值 π），首个可达点即锚点 lo——环带形
+ *      存在性 IK（taskSpace=PositionOnly——KIN-P2/A02 任务维度语义），
+ *      首个可达点即锚点 lo——环带形
  *      工作空间（原点不可达）在此步跨越内空洞；
  *   3. 二分收敛：在 (lo, Rup] 上对分——mid 可达则 lo=mid、否则 hi=mid
  *      （区间宽 ≤ positionTolerance 或迭代数耗尽即停），rMax＝lo
