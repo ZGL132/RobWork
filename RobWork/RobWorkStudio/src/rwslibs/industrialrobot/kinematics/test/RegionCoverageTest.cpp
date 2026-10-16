@@ -508,13 +508,15 @@ TEST(KinRegionCoverage, SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3)
 
     // 公式黄金复算（测试侧独立组装 canonical 字节——与 Sampling.cpp 布局
     // 注逐字节一致，布局漂移即用例失败）：SHA-256 over ("IRDSSID1" ‖
-    // u32(1) ‖ u32(len) ‖ planContentIdentity 规范文本 ‖ u64 seed)。
+    // u32(2) ‖ u32(len) ‖ planContentIdentity 规范文本 ‖ u64 seed)。
+    // codec 版本 2＝KIN-P5/审查 A06（种子派生算法换代的全局升版——同
+    // (计划, seed) 在 v1/v2 两代算法下样本点不同，身份不得跨代假借）。
     const std::string planText = planId.toCanonical();
     std::vector<std::uint8_t> canonical;
     const char magic[] = "IRDSSID1";
     canonical.insert(canonical.end(), magic, magic + 7);
     for (int i = 0; i < 4; ++i) {
-        canonical.push_back(static_cast<std::uint8_t>((1U >> (8 * i)) & 0xFFu));
+        canonical.push_back(static_cast<std::uint8_t>((2U >> (8 * i)) & 0xFFu));
     }
     const std::uint32_t len = static_cast<std::uint32_t>(planText.size());
     for (int i = 0; i < 4; ++i) {
@@ -656,6 +658,20 @@ TEST(KinRegionCoverage, GoldenGeneratorsAndSameOrderRerun_WP15T06_ACC4)
     for (std::size_t i = 0; i < 8; ++i) {
         EXPECT_TRUE(r1[i] == r2[i]);
         EXPECT_FALSE(r1[i] == r3[i]);
+    }
+
+    // KIN-P5（审查 A06）：seed 高 32 位必须参与位置派生——seed=1 与
+    // seed=1＋2³² 只差高位（修复前 "seed·2³²＋k" 在模 2⁶⁴ 算术下两
+    // seed 状态相同→位置序列相同，本断言处红；修复后经 streamSeedFor
+    // 完整 64 位混合，任意 1 位种子差异扩散全序列）。
+    const std::vector<rw::math::Vector3D<double>> rLow =
+        kin::generateRandomPositions(box, 8U, 1U);
+    const std::vector<rw::math::Vector3D<double>> rHigh =
+        kin::generateRandomPositions(box, 8U, 1U + (1ULL << 32));
+    ASSERT_EQ(rLow.size(), 8U);
+    for (std::size_t i = 0; i < 8; ++i) {
+        EXPECT_FALSE(rLow[i] == rHigh[i])
+            << "样本 " << i << "：审查 A06——seed 高 32 位必须影响采样序列";
     }
 
     // 复评同集同序（多计划面——计划序×计划内序，全局 sampleIndex 连续）。

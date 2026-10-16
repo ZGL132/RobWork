@@ -288,6 +288,34 @@ std::uint64_t splitmix64(std::uint64_t& state)
     return z ^ (z >> 31);
 }
 
+/// (seed, 序号) 二元组的完整 64 位流种子派生（KIN-P5/审查 A06 修复——
+/// 唯一混合点：SeededRandom 初值流的每初值状态由此产出）。
+///
+/// 为什么不用旧式 "seed·2³²＋k"：uint64 乘法按模 2⁶⁴ 回卷，seed 的
+/// 高 32 位与 k 写进同一加法域——seed=1 与 seed=2³²＋1 的第 k 项状态
+/// 完全相同（1·2³²＋k ≡ (2³²＋1)·2³²＋k mod 2⁶⁴），整个初值序列对
+/// seed 高 32 位不敏感（审查 A06 反例：不同 64 位种子生成相同序列，
+/// 多样性来源被静默丢弃）。
+///
+/// 派生规则（确定性——同 (seed, index) 同输出；跨平台位级一致）：
+///   a ＝ splitmix64(seed)——seed 全 64 位 avalanche（高位翻转雪崩到
+///       全字宽，任何 1 位 seed 差异扩散为约半数位差异）；
+///   b ＝ splitmix64(index ⊕ 黄金常量)——序号独立 avalanche（⊕常量
+///       把 index=0 拉离 a 的恒等点，防 a⊕0=a 的平凡回归）；
+///   输出 ＝ splitmix64(a ⊕ b)——再 avalanche 消除异或的线性结构。
+/// 三步后 (seed, index) 任一输入位的改变都以约 1/2 概率翻转输出的任
+/// 一位——两个不同 64 位 seed 生成不同序列（除非发生 SHA 级碰撞，对
+/// splitmix64 双射 avalanche 实际不可构造）。
+std::uint64_t streamSeedFor(std::uint64_t seed, std::uint64_t index)
+{
+    std::uint64_t s = seed;
+    const std::uint64_t a = splitmix64(s);
+    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;
+    const std::uint64_t b = splitmix64(t);
+    std::uint64_t u = a ^ b;
+    return splitmix64(u);
+}
+
 /// u64 → [0,1) 均匀归一化（53 位有效——双精度无偏下界）。
 double unitFromU64(std::uint64_t v)
 {
@@ -327,11 +355,13 @@ std::vector<std::vector<double>> makeInitialValues(InitialValueStrategy strategy
         break;
     }
     case InitialValueStrategy::SeededRandom: {
-        // seed 派生确定性序列：第 k 个初值逐轴 u_k,i∈[0,1)（splitmix64
-        // 按初值序→轴序派生——同 seed 同矩阵；混入 k 防逐轴重复序列）。
+        // seed 派生确定性序列：第 k 个初值状态＝(seed, k) 完整 64 位混合
+        // （streamSeedFor——KIN-P5/审查 A06：旧"seed·2³²＋k"在模 2⁶⁴
+        // 算术下丢弃 seed 高 32 位，不同高位种子假借同序列；混合派生后
+        // 逐轴 u_k,i∈[0,1)（splitmix64 按轴序连续派生——同 seed 同矩阵）。
         out.reserve(count);
         for (std::uint32_t k = 0; k < count; ++k) {
-            std::uint64_t state = seed * 0x100000000ull + k;  // 混入初值序
+            std::uint64_t state = streamSeedFor(seed, k);  // 初值序入混合
             std::vector<double> q;
             q.reserve(intervals.size());
             for (const auto& itv : intervals) {

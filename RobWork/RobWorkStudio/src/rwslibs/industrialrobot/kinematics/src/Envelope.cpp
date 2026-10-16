@@ -1,9 +1,9 @@
 /**
  * @file   Envelope.cpp
- * @brief  近似外包络估算（KIN-10）实现——射线边界二分搜索（内锚点指数
- *         探测＋对分收敛）、位置存在性探针（§7.2 存在性口径）、协作
- *         取消传播与结果组装。算法语义与"近似、非精确"的三个数学根源
- *         见 Envelope.hpp 文件头注（本实现注只写落值细节）。
+ * @brief  近似外包络估算（KIN-10）实现——射线边界二分搜索（等差径向
+ *         站点扫描＋外端区间对分收敛）、位置存在性探针（§7.2 存在性
+ *         口径）、协作取消传播与结果组装。算法语义与"近似、非精确"的
+ *         三个数学根源见 Envelope.hpp 文件头注（本实现注只写落值细节）。
  *
  * 设计依据：
  *   - units/kinematics.md §7.3（KIN-10 边界——估算不作 Must 判定依据）、
@@ -12,11 +12,15 @@
  *     随机来源）、§9.1（非异常出口＋fail-fast 两轨）、§3.4（SI；纯
  *     函数服务）
  *   - REQUIREMENTS KIN-10/AT-26（原文见 Envelope.hpp 文件头注）
+ *   - 审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3
+ *     A04（包络漏估——"找到 R=0"与"未找到"不分、上界点被误称已证
+ *     不可达）与 A06（种子高 32 位丢失）——本 TU 的 KIN-P5 重构落点
  *   - 任务契约 tasks/foundation/WP-15-T15.json acceptance 1~4
  *
  * 线程安全：纯函数、无共享可变状态（§3.4）；单线程顺序执行。
- * 确定性：探针种子＝query.seed 的 splitmix64 派生（混入全局探测序号
- * ——方向序/锚点序/二分序的单调计数），同输入同初值序列（NFR-COR-01）。
+ * 确定性：探针种子＝(query.seed, probeSerial) 的 streamSeedFor 完整
+ * 64 位混合派生（混入全局探测序号——方向序/站点序/二分序的单调计数），
+ * 同输入同初值序列（NFR-COR-01；A06 起不同 64 位 seed 必不同序列）。
  */
 
 #include <sdurws/ird/kinematics/Envelope.hpp>
@@ -40,9 +44,9 @@ namespace {
 // 局部常量与工具（TU 内——唯一书写点在头文件的禁止面之外的实现细节）
 // =====================================================================
 
-/// 内锚点指数探测的最小距离下限（m）：t_k＝Rup·2⁻ᵏ 衰减到该值以下即停
-/// ——浮点下溢防护（Rup 极小时 2⁻ᵏ 可能次正规化）；该量级（<1e-12 m）
-/// 远低于任何物理容差，判"无可达样本"不损失实际分辨率。
+/// 内锚点探测的最小距离下限（m）：等差站点 t_j＝Rup·j/M 衰减到该值
+/// 以下即停——浮点下溢防护（Rup 极小时末批站点可能次正规化）；该量级
+/// （<1e-12 m）远低于任何物理容差，跳过这些站点不损失实际分辨率。
 constexpr double kAnchorMinDistance = 1e-12;
 
 /// splitmix64（确定性伪随机序列源——§3.4；Ik.cpp/Sampling.cpp 同款
@@ -56,14 +60,30 @@ std::uint64_t splitmix64(std::uint64_t& state)
     return z ^ (z >> 31);
 }
 
-/// 探针初值种子派生（确定性——同 (seed, probeSerial) 同初值集）：状态
-/// ＝seed·2³²＋probeSerial（Ik.cpp 初值派生"seed·2³²＋k"同构形态——
-/// probeSerial 是全计算单调计数，天然覆盖方向/锚点/二分三维序），再经
-/// 一轮 splitmix64 去相关后作为该探针的 makeInitialValues 种子。
+/// (seed, 序号) 二元组的完整 64 位流种子派生（KIN-P5/审查 A06 修复——
+/// 与 Ik.cpp streamSeedFor 同算法同形态的自持副本：三步 splitmix64
+/// avalanche，任意 1 位输入差异扩散到输出约半数字位）。旧式
+/// "seed·2³²＋probeSerial" 在 uint64 模 2⁶⁴ 算术下把 seed 高 32 位与
+/// 探针序写进同一加法域——seed=1 与 seed=2³²＋1 的同序号探针状态相同，
+/// 初值序列对 seed 高 32 位不敏感（审查 A06 反例）。派生规则与注释见
+/// Ik.cpp 同名函数（唯一算法说明点，此处不重复展开）。
+std::uint64_t streamSeedFor(std::uint64_t seed, std::uint64_t index)
+{
+    std::uint64_t s = seed;
+    const std::uint64_t a = splitmix64(s);
+    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;
+    const std::uint64_t b = splitmix64(t);
+    std::uint64_t u = a ^ b;
+    return splitmix64(u);
+}
+
+/// 探针初值种子派生（确定性——同 (seed, probeSerial) 同初值集）：
+/// (seed, probeSerial) 经 streamSeedFor 完整 64 位混合（A06——probeSerial
+/// 是全计算单调计数，天然覆盖方向/站点/二分三维序），输出直接作为该
+/// 探针的 makeInitialValues 种子。
 std::uint64_t probeSeedFor(std::uint64_t seed, std::uint64_t probeSerial)
 {
-    std::uint64_t state = seed * 0x100000000ull + probeSerial;
-    return splitmix64(state);
+    return streamSeedFor(seed, probeSerial);
 }
 
 /// 调用方契约违约 fail-fast（§9.1——std::invalid_argument，不进结果对象）。
@@ -316,8 +336,22 @@ Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,
         return Expected<EnvelopeResult>::ok(std::move(result));
     }
 
-    // ---- 第 3 步：逐方向射线边界（内锚点指数探测＋二分收敛——头注
-    // 算法 2/3/4 步；单线程顺序执行，方向序＝生成序）。----
+    // ---- 第 3 步：逐方向射线边界（等差径向站点扫描＋外端区间二分
+    // 收敛——头注算法 2/3/4 步，KIN-P5/审查 A04 重构版；单线程顺序执行，
+    // 方向序＝生成序）。----
+    //
+    // 旧算法（内锚点几何序列 Rup·2⁻ᵏ＋hi=Rup 免探测）的两处缺陷（审查
+    // A04 反例驱动）：
+    //   ①上界点被当作"已证不可达"免探测——错误表述：三角形不等式取等
+    //     时（共线串联）上界点恰可达（六轴同轴链 TCP 距轴 1 m 的零位
+    //     构型精确到达 (1,0,0)），旧算法对这类方向系统性漏检整条射线；
+    //   ②几何序列在原点邻域过密、在 (Rup/2, Rup] 只有一个探测点——
+    //     窄环带（如 [0.4,0.5]·Rup）落在探测缝隙里即全灭，且全灭被并入
+    //     Computed 态输出 rMax=0 的"确定结论"，掩盖"没有找到"的事实。
+    // 新算法把预算改为 M＝anchorProbesMax 个等差站点 t_j＝Rup·j/M
+    // （分辨率 Rup/M 显式承载窄带检测能力），由外向内扫描——首个可达
+    // 站即外边界区间的内端（外端＝其外一站点，已探明不可达），二分只
+    // 收敛这一个区间；站点全灭→NoSampleFound 低置信态（诚实"未找到"）。
     std::uint64_t probeSerial = 0;   // 全局探针单调计数（种子派生输入）
     bool stopAll = false;            // 取消/设施失败后的全局停止旗标
     IkFacilityFailure facility;      // 设施失败素材（转载自底层求解 outcome）
@@ -325,16 +359,21 @@ Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,
     for (std::uint32_t j = 0; j < query.directionCount && !stopAll; ++j) {
         EnvelopeRayRecord& ray = result.rays[j];
 
-        // ---- 3a. 内锚点探测（t_k＝Rup·2⁻ᵏ——环带工作空间的内空洞
-        // 在此步跨越；k 从 1 起：t₀＝Rup 是解析已证不可达点，不探测）。
-        // 步数耗尽未命中→近似空结论（rMax=0，Computed）——文件头注
-        // 近似根源 2 的直接体现。----
-        bool anchored = false;
-        double lo = 0.0;  // 已证实可达的最远距离（m；锚点/二分推进）
-        for (std::uint32_t k = 1; k <= query.anchorProbesMax; ++k) {
-            const double t = reachUpper * std::ldexp(1.0, -static_cast<int>(k));
+        // ---- 3a. 等差站点扫描（由外向内；多锚点——上界点先行试探）。
+        // 扫描至首个可达站即止：其外站点已探明不可达（外端 hi 来源）、
+        // 其内站点不影响外边界下估计（内岛/空腔属近似根源 3 的登记边界
+        // ——本算法只承诺外边界）。----
+        bool anchored = false;       // 是否找到可达站
+        double lo = 0.0;             // 已证实可达的最远距离（m——外端区间内端）
+        double hi = 0.0;             // 外端区间外端（m——首个可达站外一站点；可达站为上界点时无语义）
+        for (std::uint32_t jj = query.anchorProbesMax; jj >= 1U; --jj) {
+            // 站点距离（m）：t＝Rup·jj/M——jj=M 即上界点 Rup（先行试探：
+            // 上界可可达——审查 A04 措辞修正的落点），jj=1 即最近原点站。
+            const double t = reachUpper * (static_cast<double>(jj)
+                / static_cast<double>(query.anchorProbesMax));
             if (t < kAnchorMinDistance) {
-                break;  // 浮点下限防护——该量级低于任何物理分辨率
+                // 浮点下限防护：更内侧站点只会更小——直接终止内扫。
+                break;
             }
             const ProbeVerdict verdict =
                 probeReachability(t, directions[j], view, tcp, query,
@@ -343,12 +382,12 @@ Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,
             if (verdict == ProbeVerdict::Reached) {
                 lo = t;
                 anchored = true;
-                break;
+                break;  // 首个（最外侧）可达站——内扫即止
             }
             if (verdict == ProbeVerdict::Cancelled) {
                 // 取消传播（D-KIN-9）：本方向标记后停止全部后续方向。
                 ray.state = EnvelopeRayState::NotRun;
-                ray.reason = "协作取消（内锚点探测中断）";
+                ray.reason = "协作取消（径向站点扫描中断）";
                 result.cancelled = true;
                 stopAll = true;
                 break;
@@ -358,12 +397,14 @@ Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,
                 // NotRun 如实标记；facility 已由探针转载底层 outcome
                 // 素材（stage/detail 原值——不加工）。
                 ray.state = EnvelopeRayState::NotRun;
-                ray.reason = "求解设施失败（内锚点探测中断——该方向证据缺失）";
+                ray.reason = "求解设施失败（径向站点扫描中断——该方向证据缺失）";
                 result.facilityFailure = facility;
                 stopAll = true;
                 break;
             }
-            // NotFound：继续内缩探测（下一 k）。
+            // NotFound：本站点探明不可达——记录为当前外端（后续可达站
+            // 的外边界区间即 [下一可达站, 本站]），继续内扫。
+            hi = t;
         }
 
         if (stopAll) {
@@ -371,20 +412,26 @@ Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,
         }
 
         if (!anchored) {
-            // 近似空结论：探测分辨率内未发现可达样本（含平面臂/受限
-            // 锥等该方向天然不可达形态）——rMax=0、Computed、零额外
-            // 探测。这不构成"该方向确定性不可达"的工程结论（近似根源
-            // 2；§7.3 禁令随 precision/note 随行）。
-            ray.state = EnvelopeRayState::Computed;
-            ray.rMax = 0.0;
+            // ---- 站点全灭：未找到可达样本（KIN-P5/审查 A04 诚实性
+            // 修复）。低置信观测而非确定结论：可能是真不可达，也可能
+            // 可达集窄于站点分辨率（Rup/M）或数值搜索未果（近似根源
+            // 2）。旧行为（Computed＋rMax=0 的"近似空确定结论"）废除
+            // ——"找到半径为零"与"没有找到"自此在状态词表分立。----
+            ray.state = EnvelopeRayState::NoSampleFound;
+            ray.rMax = 0.0;  // 占位——本态下 rMax 无语义（EnvelopeRayRecord 注）
+            ray.reason =
+                "未找到可达样本（低置信——探测分辨率 Rup/"
+                + std::to_string(query.anchorProbesMax)
+                + " 内无命中；不构成该方向确定性不可达结论——搜索未果不作"
+                "不可行证明，窄于分辨率的可达带亦可能被漏检）";
             continue;
         }
 
-        // ---- 3b. 二分收敛（(lo, Rup] 上对分——mid 可达则外推 lo、
-        // 不可达则内缩 hi；hi=Rup 初值是解析已证不可达点，免探测。
-        // 终止＝区间宽 ≤ positionTolerance（物理分辨率早停）或迭代数
-        // 耗尽（精度兜底）。rMax＝lo——"已证实可达的最远距离"下估计。----
-        double hi = reachUpper;
+        // ---- 3b. 外端区间二分收敛（(lo, hi] 上对分——mid 可达则外推
+        // lo、不可达则内缩 hi；lo=hi（可达站＝上界点）时区间已空、循环
+        // 自然不进入。终止＝区间宽 ≤ positionTolerance（物理分辨率早停）
+        // 或迭代数耗尽（精度兜底）。rMax＝lo——"已证实可达的最远距离"
+        // 下估计。----
         for (std::uint32_t it = 0;
              it < query.bisectIterationsMax && (hi - lo) > query.positionTolerance;
              ++it) {

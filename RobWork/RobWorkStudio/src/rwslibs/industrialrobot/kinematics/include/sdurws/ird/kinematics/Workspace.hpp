@@ -138,7 +138,54 @@ inline constexpr char kWorkspacePlanMagic[] = "IRDWSP1";
 
 /// 点云渲染/导出数据契约版本（导出值行头与图例词表的演进锚——一经
 /// 交付不回退，CON-04 同款纪律；呈现侧按其解释行集）。
-inline constexpr std::uint32_t kWorkspaceRenderContractVersion = 1U;
+/// ★ v2（KIN-P5/KIN-09 关节空间采样语义闭合）：点云单点新增采样模式
+/// 类别列（samplingMode）＋导出 CSV 表头新增 "sampling-mode" 列（三值
+/// token——cartesian-region/joint-random/joint-grid）；行集消费方按
+/// 本版本解释列布局。
+inline constexpr std::uint32_t kWorkspaceRenderContractVersion = 2U;
+
+/// 关节空间网格采样的总样本数上限（无量纲计数——组合爆炸防护闸）。
+/// 依据：全网格样本数＝∏jointGridCounts[i]，6 轴×每轴 10 格即 10⁶——
+/// 每样本一次 FK＋指标评估（亚毫秒级），10⁵ 上限把单次运行压在秒级
+/// 预算内（与区域覆盖批量黄金批大小 256×常规计划量同量级）；超限属
+/// 调用方参数错误——validateWorkspaceSamplingQuery fail-fast（NFR-COR-03
+/// 拒绝而非静默截断）。
+inline constexpr std::uint32_t kJointGridMaxTotalSamples = 100000U;
+
+// =====================================================================
+// WorkspaceSamplingMode——采样模式三值词表（KIN-P5/KIN-09 语义闭合）
+// =====================================================================
+
+/**
+ * @brief 工作空间采样模式三值词表（KIN-P5 关节空间采样语义闭合——
+ *        需求 KIN-09 权威语义"随机均匀/关节网格采样"的**关节空间**
+ *        直采落点；旧实现只有"区域盒笛卡尔采样→逐样本 IK"一径（登记
+ *        随卡 §14.6 v0.20 的落点偏差），本词表使其与关节空间两模式
+ *        并存并在点云/导出中标注来源）。值语义纯结构；线程安全。
+ */
+enum class WorkspaceSamplingMode : std::uint8_t {
+    /// 区域盒位置/姿态采样→逐样本 IK（旧唯一径——行为保持，逐样本
+    /// 语义见 runWorkspaceSampling 注；笛卡尔区域定义查询面直用）。
+    CartesianRegion,
+    /// 关节空间随机均匀采样→逐构型 FK 产点云（KIN-09 权威语义——
+    /// seed 派生确定性序列；样本＝权威关节向量 q，点＝FK(q) 的 TCP
+    /// 位置；"随机均匀"语义＝评价区间内均匀撒点）。
+    JointSpaceRandom,
+    /// 关节空间全网格采样→逐构型 FK 产点云（KIN-09 权威语义——
+    /// 逐自由度等分取点的**笛卡尔积**全网格；与初值策略 JointGrid
+    /// 的对角线取点不同构，见该策略注的分工说明）。
+    JointSpaceGrid,
+};
+
+/**
+ * @brief 采样模式 token（点云/导出行的稳定键——采样模式来源标注的
+ *        词表锚；禁第二处字面量）。
+ * @param mode [in] 采样模式
+ * @return "cartesian-region"/"joint-random"/"joint-grid"
+ *
+ * 纯函数；线程安全；不抛。
+ */
+std::string_view workspaceSamplingModeToken(WorkspaceSamplingMode mode) noexcept;
 
 // =====================================================================
 // 呈现词表（着色维度/投影面/渲染模式——需求 KIN-09 原文三组词表的
@@ -270,24 +317,45 @@ std::string_view workspaceRenderStyleToken(WorkspaceRenderStyle style) noexcept;
  * 去重阈值 rad|m 逐轴；计数/线程数/批大小无量纲。
  */
 struct WorkspaceSamplingQuery {
-    // ---- 探索式采样定义（区域＋位置/姿态采样——§7.2 投影值直用）----
+    // ---- 采样模式与定义（KIN-P5/KIN-09 语义闭合——模式分派面）----
+    /// 采样模式（三值词表——缺省 CartesianRegion 保持旧径行为；
+    /// JointSpaceRandom/JointSpaceGrid 两模式经 FK 产点云，见枚举注）。
+    WorkspaceSamplingMode mode = WorkspaceSamplingMode::CartesianRegion;
     /// 采样区域（基座系 {B} 轴对齐盒；size 三分量 >0 有限——RegionBox
-    /// 契约；探索式的区域由面板直接给出，宿主无需解析 refFrame）。
+    /// 契约；探索式的区域由面板直接给出，宿主无需解析 refFrame。仅
+    /// CartesianRegion 模式消费——关节空间模式下本字段为查询回显、
+    /// 不参与校验与生成）。
     RegionBox region;
     /// 位置采样定义（Random{randomCount}＝随机均匀撒点 / Grid{gridCounts}
-    /// ＝体心网格——§7.2 两方法的探索式直用；需求原文"关节网格"的
-    /// 语义落位说明：本查询承载的是**区域位置网格**（与 KIN-04 同源
-    /// 的 §7.2 Grid——契约 acceptance 1"复用 §7.2 采样黄金设施——网格
-    /// 体心"的落点），关节空间网格语义归初值策略 JointGrid（§5.3，
-    /// 逐样本 IK 的初值生成）——两者是不同层面的"网格"，该落点偏差
-    /// 登记随卡 §14.6 v0.20）。
+    /// ＝体心网格——§7.2 两方法的探索式直用；仅 CartesianRegion 模式
+    /// 消费。需求原文"关节网格"的语义落位（§14.6 v0.20 登记"区域位置
+    /// 网格"偏差）已由 KIN-P5 关节空间模式闭合——需求权威的"关节空间
+    /// 随机/网格采样→FK"由 mode=JointSpaceRandom/JointSpaceGrid 承载，
+    /// 本字段回归纯笛卡尔区域语义）。
     PositionSamplingDefinition position;
     /// 姿态采样定义（方向集×roll——**可选**：KIN-09 主径为位置点云
     /// （工作空间＝TCP 可达位置集合），位姿样本经 directionSamples=
     /// rollSamples=1 的单方向单 roll 退化配置承载（与 §7.2"位姿样本
     /// 数随位置样本数同零"的零样本判定兼容——本查询不使用该退化路径，
-    /// 见 validateWorkspaceSamplingQuery 注）；斐波那契螺旋黄金复用）。
+    /// 见 validateWorkspaceSamplingQuery 注）；斐波那契螺旋黄金复用。
+    /// 仅 CartesianRegion 模式消费）。
     OrientationSamplingDefinition orientation;
+
+    // ---- 关节空间采样定义（mode=JointSpace* 时消费；KIN-09 权威
+    //      语义"样本数/网格步数可配"的落点）----
+    /// 关节空间随机样本数（mode=JointSpaceRandom 消费；无量纲计数，
+    /// 0 合法＝零样本场景——与区域通道零样本口径一致；"样本数可配"
+    /// 的落点。随机序列种子＝config.regionBudget.seed（单一种子纪律
+    /// ——与区域模式同源，I-KIN-4 零种子拒绝由配置校验面承载））。
+    std::uint32_t jointRandomCount = 0U;
+    /// 关节空间网格逐自由度取点数（mode=JointSpaceGrid 消费；链序、
+    /// 长度须＝设备自由度，每轴 ≥1——每轴在评价区间 [lo,hi] 上等分取
+    /// counts[i] 个点（**含两端**：counts[i]≥2 时端点即限位点，=1 取
+    /// 区间中点）；总样本数＝∏counts[i]（笛卡尔积全网格——与初值策略
+    /// JointGrid 的对角线取点不同构，分工见该策略注），上限
+    /// kJointGridMaxTotalSamples（超限＝调用方参数错误 fail-fast）。
+    /// "网格步数可配"的落点。单位：计数无量纲。
+    std::vector<std::uint32_t> jointGridCounts;
 
     // ---- 求解配置直投（AnalysisConfiguration 的逐字段投影——KIN-13；
     //      种子权威面见 struct 注）----
@@ -323,8 +391,9 @@ struct WorkspaceSamplingQuery {
 
     bool operator==(const WorkspaceSamplingQuery& o) const
     {
-        return region == o.region && position == o.position
-            && orientation == o.orientation && config == o.config
+        return mode == o.mode && region == o.region && position == o.position
+            && orientation == o.orientation && jointRandomCount == o.jointRandomCount
+            && jointGridCounts == o.jointGridCounts && config == o.config
             && referenceQ == o.referenceQ && tcp == o.tcp
             && collisionSession == o.collisionSession
             && maxBatchSize == o.maxBatchSize && solver == o.solver
@@ -429,9 +498,17 @@ struct WorkspaceSampleResult {
     /// 原因文本（NotRun 必填非空——ERR-01；缺碰撞会话/设施失败轨的
     /// DataInsufficient 携带原因；其余状态为空）。
     std::string reason;
-    /// 采样点位置（基座系 {B}，单位 m——点云坐标＝samples.samples[...]
-    /// .position 的直投副本；NotRun 样本同样携带——采样点存在先于评估）。
+    /// 采样点位置（基座系 {B}，单位 m——点云坐标；区域模式＝采样点
+    /// 位置本身（区域定义点，NotRun 样本同样携带——采样点存在先于
+    /// 评估）；关节模式＝FK(采样构型) 的 TCP 位置（KIN-P5/关节空间
+    /// 采样——点即"该构型可达"的构造性凭据；NotRun 槽位无位置事实
+    /// ——保持默认占位且不入点云/值域，见 buildWorkspacePointCloud 注）。
     rw::math::Vector3D<double> tcpPosition = rw::math::Vector3D<double>(0.0, 0.0, 0.0);
+    /// 采样构型（rad|m 逐自由度链序——**仅关节空间模式**的 Reached
+    /// 样本携带（采样定义本身）；区域模式恒空（区域样本的定义是位置
+    /// 点不是构型）。FK 样本的该构型即"可达性凭据"——点云回写出口
+    /// （workspacePointWriteback）据此返回采样构型本身）。
+    std::vector<double> jointConfiguration;
     /// 最佳解（可空——Reached 样本携带稳定排序首位解；着色六标量与
     /// 回写 q 的唯一来源，见 struct 注）。
     std::optional<KinematicSolution> bestSolution;
@@ -451,6 +528,7 @@ struct WorkspaceSampleResult {
             || outcomeKind != o.outcomeKind
             || collisionNotEvaluated != o.collisionNotEvaluated
             || reason != o.reason || tcpPosition != o.tcpPosition
+            || jointConfiguration != o.jointConfiguration
             || collisionFiltered != o.collisionFiltered
             || bestSolution.has_value() != o.bestSolution.has_value()) {
             return false;
@@ -497,8 +575,14 @@ struct WorkspaceSampleResult {
  */
 struct WorkspaceSampleRun {
     // ---- 参数溯源回显（会话内——R2 边界：不入快照/不冻结/不入身份）----
+    /// 采样模式（KIN-P5/KIN-09——三值词表原样回显；点云/导出的模式
+    /// 标注取值源）。
+    WorkspaceSamplingMode mode = WorkspaceSamplingMode::CartesianRegion;
     /// 采样计划投影（workspaceSamplingPlan 产出——含会话内计划内容
-    /// 身份；回显与重跑核对用，绝不对账快照凭据）。
+    /// 身份；回显与重跑核对用，绝不对账快照凭据。关节空间模式下计划
+    /// 身份的 canonical 含模式与关节采样定义（编码见 Workspace.cpp
+    /// workspacePlanContentIdentityImpl 注），box/position/orientation
+    /// 字段为查询回显、生成面不消费）。
     SamplingPlan plan;
     /// 样本集身份（sampleSetIdentity(plan.planContentIdentity, budget)
     /// ——§7.2 公式复用；会话内重跑一致性核对键——acceptance 1"同
@@ -510,10 +594,16 @@ struct WorkspaceSampleRun {
 
     // ---- 样本与结果 ----
     /// 确定性样本集（§7.2 生成设施复用——D-KIN-6：同 (定义,种子) 同
-    /// 集同序）。
+    /// 集同序。仅 CartesianRegion 模式填充——关节空间模式样本定义是
+    /// 构型不是 SampleRecord，样本集恒空、逐样本定义走 jointConfigurations）。
     SampleSet samples;
-    /// 逐样本结果（与 samples 按 sampleIndex 双射对齐——完整性自检
-    /// 见 runWorkspaceSampling 注）。
+    /// 关节空间采样构型集（mode=JointSpace* 时与 results 按下标对齐——
+    /// 每样本的权威关节向量（采样定义原值，rad|m 链序）；CartesianRegion
+    /// 模式恒空。确定性：同 (模式参数, 种子, 区间) 同集同序（随机＝
+    /// seed 派生序列、网格＝笛卡尔积黄金序））。
+    std::vector<std::vector<double>> jointConfigurations;
+    /// 逐样本结果（与 samples/jointConfigurations 按 sampleIndex 双射
+    /// 对齐——完整性自检见 runWorkspaceSampling 注）。
     std::vector<WorkspaceSampleResult> results;
 
     // ---- 完整性事实（partial 如实——acceptance 2）----
@@ -532,8 +622,9 @@ struct WorkspaceSampleRun {
     /// 两值；results 逐条（vector ==——元素等值算子已定义）。
     bool operator==(const WorkspaceSampleRun& o) const
     {
-        if (plan != o.plan || sampleSetIdentity != o.sampleSetIdentity
+        if (mode != o.mode || plan != o.plan || sampleSetIdentity != o.sampleSetIdentity
             || budget != o.budget || results != o.results
+            || jointConfigurations != o.jointConfigurations
             || samples.samples.size() != o.samples.samples.size()
             || samples.plannedPositionSamples != o.samples.plannedPositionSamples
             || samples.plannedPoseSamples != o.samples.plannedPoseSamples
@@ -565,22 +656,30 @@ struct WorkspaceSampleRun {
  *        fail-fast 不钳制，NFR-COR-03；校验序固定——同一坏查询必报
  *        同一首错，NFR-COR-02）。
  *
- * 校验面（按序）：
+ * 校验面（按序；KIN-P5 起按模式分派——CartesianRegion 校验区域/位置/
+ * 姿态定义，JointSpace* 校验关节采样定义，两族互不越界）：
  *   1. config 合法域（validateAnalysisConfiguration 复用——I-KIN-4：
  *      config.seed≠0∧config.regionBudget.seed≠0、容差/迭代/计数下界；
  *      KIN-13 语义的权威校验点——"种子经 AnalysisConfiguration 配置"
  *      的落地面）；
- *   2. 区域盒（size 三分量 >0 有限——RegionBox 契约）；
- *   3. 位置采样定义良构（Grid 任一轴计数为 0 → 零样本场景**合法**
- *      （与 §7.2 零样本口径一致——运行产物为空集，不拒）；Random 的
- *      randomCount=0 同理合法；枚举值域防御）；
- *   4. 姿态采样定义（directionSamples/rollSamples ≥1——requirements
- *      词表原文；methodToken 允许空）；
- *   5. referenceQ 维度＝设备自由度且全有限（D-KIN-4）；
- *   6. maxBatchSize ≥1；
- *   7. TCP 在场性**不在此拒**（快照工具缺失＝运行期 KIN-NO-TCP 素材
+ *   2. 采样模式词表值域（WorkspaceSamplingMode 三值防御——uint8 位型
+ *      强转可造出词表外值，NFR-COR-03）；
+ *   3. CartesianRegion 面：区域盒（size 三分量 >0 有限——RegionBox
+ *      契约）；位置采样定义良构（Grid 任一轴计数为 0 → 零样本场景
+ *      **合法**（与 §7.2 零样本口径一致——运行产物为空集，不拒）；
+ *      Random 的 randomCount=0 同理合法；枚举值域防御）；姿态采样定义
+ *      （directionSamples/rollSamples ≥1——requirements 词表原文；
+ *      methodToken 允许空）；
+ *   4. JointSpaceRandom 面：jointRandomCount 无下界（0＝零样本合法）；
+ *   5. JointSpaceGrid 面：jointGridCounts 长度＝设备自由度、每轴 ≥1、
+ *      笛卡尔积 ≤ kJointGridMaxTotalSamples（组合爆炸防护——调用方
+ *      参数错误 fail-fast，NFR-COR-03 拒绝而非静默截断）；
+ *   6. referenceQ 维度＝设备自由度且全有限（D-KIN-4——三模式共同
+ *      消费：区域模式的排序参考/初值伴随、关节模式的 FK 排序伴随）；
+ *   7. maxBatchSize ≥1；
+ *   8. TCP 在场性**不在此拒**（快照工具缺失＝运行期 KIN-NO-TCP 素材
  *      轨——T03/T06 两分口径同源：模型侧缺失≠调用方违约；tcp 悬空
- *      在运行期由求解器解析面暴露）。
+ *      在运行期由求解器/FK 解析面暴露）。
  *
  * @param view  [in] 只读模型视图（自由度来源；调用方保证存活）
  * @param query [in] 探索式采样查询
@@ -603,22 +702,39 @@ void validateWorkspaceSamplingQuery(const IKinRuntimeView& view,
  *        经宿主上下文——EX-T03/05/08 消费面）。
  *
  * 执行口径（§7.2/§8.3/§8.4 语义复用——T06 runRegionCoverageComputation
- * 同构，差异见各步注）：
- *   - 步骤 1 采样计划：workspaceSamplingPlan(query)＋generateSampleSet
- *     （{plan}, budget——§7.2 黄金生成设施：Grid 体心/Random splitmix64/
- *     斐波那契螺旋×roll 均分；同 (定义,种子) 同集同序——acceptance 1
- *     确定性的结构来源）；
- *   - 步骤 2 评估环境：评价区间/初值集从视图与配置一次提取（初值
- *     种子与采样种子同源＝config.regionBudget.seed——§3.4 单一种子
- *     纪律）；求解器＝query.solver 或内置 IkSolver；
+ * 同构，差异见各步注；KIN-P5 起按 query.mode 分派）：
+ *   - 步骤 1 采样计划与样本集：
+ *     · CartesianRegion（旧径，行为保持）——workspaceSamplingPlan(query)
+ *       ＋generateSampleSet（{plan}, budget——§7.2 黄金生成设施：Grid
+ *       体心/Random splitmix64/斐波那契螺旋×roll 均分；同 (定义,种子)
+ *       同集同序——acceptance 1 确定性的结构来源）；
+ *     · JointSpaceRandom/JointSpaceGrid（KIN-09 权威语义落点）——
+ *       关节空间确定性采样（随机＝seed 派生序列〔streamSeedFor 完整
+ *       64 位混合——A06 同源〕、网格＝逐轴等分取点笛卡尔积）生成逐
+ *       样本权威关节向量集，**经 FK 产点云**（KIN-09 原文"关节空间
+ *       采样"的构造性语义：构型可达由 FK 全序保证，无搜索未果形态）；
+ *       计划身份的 canonical 含模式与关节采样定义（codec 版本 2——
+ *       Workspace.cpp 编码注），样本集身份公式不变；
+ *   - 步骤 2 评估环境：区域模式提取评价区间/初值集（初值种子与采样
+ *     种子同源＝config.regionBudget.seed——§3.4 单一种子纪律），求解器
+ *     ＝query.solver 或内置 IkSolver；关节模式提取评价区间（采样域）
+ *     与 FkEvaluator（§9.2 纯函数服务——KIN-01 权威实现）；
  *   - 步骤 3 逐样本评估：分批（maxBatchSize）＋批间取消查询（每批至
  *     少一次）＋批内并行分片（threadCount——各线程只写全序槽位，合并
- *     按全序；异常按分片序重抛首错）＋逐样本 IK（位置样本＝位置存在
- *     性 IK——taskSpace=PositionOnly 任务维度〔KIN-P2/A02，旧姿态容
- *     差 π 落值机制已废〕；位姿样本＝完整位姿 IK；IkRequest 的
- *     身份面字段以零值/回显值填充——探索式不入切片身份，requestIdentity
- *     仅作求解器契约的形态满足）；结局→样本状态映射同 §7.2 词表；
- *     Reached 样本提取稳定排序首位解为 bestSolution；
+ *     按全序；异常按分片序重抛首错）＋逐样本求解：
+ *     · 区域模式逐样本 IK（位置样本＝位置存在性 IK——taskSpace=
+ *       PositionOnly 任务维度〔KIN-P2/A02，旧姿态容差 π 落值机制已废〕；
+ *       位姿样本＝完整位姿 IK；IkRequest 的身份面字段以零值/回显值
+ *       填充——探索式不入切片身份，requestIdentity 仅作求解器契约的
+ *       形态满足）；结局→样本状态映射同 §7.2 词表；Reached 样本提取
+ *       稳定排序首位解为 bestSolution；
+ *     · 关节模式逐样本 FK（FkEvaluator.evaluate(view, tcp, q)）——
+ *       成功＝Reached（tcpPosition＝FK 的 tcpInBase 平移、jointConfiguration
+ *       ＝采样构型、bestSolution＝PoseMetrics 投影：q/零残差〔FK 无
+ *       目标误差——构造性可达〕/裕量/可操作度/条件数）、FK 值面错误
+ *       （NoTcp 等——模型侧事实）＝DataInsufficient（原因携带错误码
+ *       语义，绝不虚构可达）；FK 不可取消（§9.2"可预测 <1 s 内联"）
+ *       ——取消粒度仍由批间查询承载。
  *   - 步骤 4 批完成：checkpointSink 批 watermark＋reportProgress
  *     （批粒度，phase=kWorkspaceSamplingPhase——EX-T05 事件分发由
  *     宿主上下文承接）；
@@ -667,11 +783,16 @@ WorkspaceSampleRun runWorkspaceSampling(const IKinRuntimeView& view,
  * （全样本有值）。值语义纯结构；线程安全。
  */
 struct WorkspacePointCloudPoint {
-    /// 样本全局序（0 起连续——samples.samples 对齐键；导出行与选中
-    /// 联动的稳定键）。
+    /// 样本全局序（0 起连续——results 对齐键；导出行与选中联动的
+    /// 稳定键）。
     std::uint64_t sampleIndex = 0;
     /// 点位置（基座系 {B}，单位 m——投影/三维散点的坐标源）。
     rw::math::Vector3D<double> position = rw::math::Vector3D<double>(0.0, 0.0, 0.0);
+    /// 采样模式类别（KIN-P5/KIN-09——WorkspaceSamplingMode 词表值
+    /// （0=cartesian-region/1=joint-random/2=joint-grid）；点云与导出
+    /// 的采样模式来源标注（需求 KIN-09 语义闭合——"点从哪来"的强制
+    /// 溯源列）。
+    std::uint8_t samplingMode = 0U;
     /// 状态类别（五值——ByState 着色的类别键）。
     SampleState state = SampleState::NotRun;
     /// 碰撞三态类别（ByCollision 着色——workspaceCollisionToken 词表；
@@ -696,7 +817,8 @@ struct WorkspacePointCloudPoint {
     bool operator==(const WorkspacePointCloudPoint& o) const
     {
         return sampleIndex == o.sampleIndex && position == o.position
-            && state == o.state && collisionClass == o.collisionClass
+            && samplingMode == o.samplingMode && state == o.state
+            && collisionClass == o.collisionClass
             && hasSolution == o.hasSolution
             && manipulability == o.manipulability
             && conditionNumber == o.conditionNumber
@@ -847,15 +969,18 @@ WorkspaceColorLegend workspaceLegendFor(const WorkspacePointCloudRenderData& dat
  *        导出零修订（KIN-08/AT-04 同款——纯值行，写出经 io 通道由
  *        插件侧触发）。
  *
- * 行格式（契约版本 1；首行为表头——呈现侧/测试的解析锚）：
+ * 行格式（契约版本 2；首行为表头——呈现侧/测试的解析锚）：
  * @code
- * sample-index,x-m,y-m,z-m,state,collision,has-solution,manipulability,
- * condition-number,min-joint-margin,position-residual-m,orientation-residual-rad
+ * sample-index,x-m,y-m,z-m,sampling-mode,state,collision,has-solution,
+ * manipulability,condition-number,min-joint-margin,position-residual-m,
+ * orientation-residual-rad
  * @endcode
  * 数值文本＝最短往返十进制（std::chrono 无关——格式化确定性由
  * snprintf("%.17g") 保证，跨进程逐位一致——NFR-COR-02；+∞ 文本
- * "inf"）；类别列＝稳定 token（workspace*Token 词表）。CSV 转义：
- * 全字段无逗号/引号字符（token 词表封闭）——无需引号包裹。
+ * "inf"）；类别列＝稳定 token（workspace*Token 词表；sampling-mode 列
+ * ＝workspaceSamplingModeToken 三值——KIN-P5/KIN-09 采样模式来源标注，
+ * 契约版本 2 起新增列）。CSV 转义：全字段无逗号/引号字符（token 词表
+ * 封闭）——无需引号包裹。
  *
  * @param data [in] 点云渲染数据
  * @return CSV 文本（行序＝points 全序；含表头行；空点云→仅表头）

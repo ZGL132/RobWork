@@ -74,7 +74,14 @@ inline constexpr char kTaskPointIkEvaluationKey[] = "kin-task-point-ik";
 ///   结论可不同（修复前搜索未果 DataInsufficient、修复后可达 Reached），
 ///   版本不升级会让检查点续跑/评估对账把两个语义时代的产出混在同一
 ///   run 里（§8.4 版本核对的本意即防此）。
-inline constexpr std::uint32_t kIkSolverContractVersion = 2U;
+/// ★ v3（KIN-P5——审查条目 A06）：SeededRandom 初值序列的种子派生由
+///   "seed·2³²＋k"（uint64 模 2⁶⁴ 算术系统性丢弃 seed 高 32 位——seed=1
+///   与 seed=2³²＋1 序列相同）改为 (seed, k) 二元组完整 64 位混合（各经
+///   splitmix64 avalanche 后异或再去相关——见 src/Ik.cpp streamSeedFor）。
+///   同 seed 序列整体改变 ⇒ 同请求可产出不同初值/不同解 ⇒ 修复前后的
+///   解集不可假借同一版本比较（审查 A06 明确要求：不能让新旧算法假借
+///   同一身份）；JointGrid/ReferenceQ 两策略不消费 seed、数值逐位不变。
+inline constexpr std::uint32_t kIkSolverContractVersion = 3U;
 
 /// 阻尼最小二乘的阻尼系数 λ（无量纲设计默认——Δq＝Jᵀ(JJᵀ＋λ²I₆)⁻¹e；
 /// λ²＝1e-6 在米级工作半径下近伪逆、近奇异处抑振荡；随黄金数据集锁定
@@ -99,8 +106,17 @@ enum class InitialValueStrategy : std::uint8_t {
     /// seed 派生确定性伪随机序列（逐关节在评价区间内均匀采样——同 seed
     /// 同序列，§3.4 随机性唯一来源）。
     SeededRandom,
-    /// 限位空间均分（沿评价区间对角线取 count 个等分点——count=1 取
-    /// 区间中点；不做自由度组合展开，登记随卡 §14.6 v0.4、黄金锁定 T13）。
+    /// 限位空间均分（沿评价区间**对角线**取 count 个等分点——count=1 取
+    /// 区间中点；不做自由度组合展开，登记随卡 §14.6 v0.4、黄金锁定
+    /// T13。★ KIN-P5 如实登记（审查 20261016 §2"JointGrid 沿对角取点
+    /// 并非全网格"）：本策略是 IK 初值生成的有界预算面——count 个点
+    /// 同时施加于全部自由度（q_i＝lo_i＋t_k·(hi_i−lo_i) 同比例），产出
+    /// 的是对角线点列而非 ∏counts 的笛卡尔积全网格（全网格点数随自由
+    /// 度指数爆炸，与"初值数量可配"的有界预算语义冲突）。需求 KIN-09
+    /// "关节网格采样"的全网格语义由工作空间通道的
+    /// WorkspaceSamplingMode::JointSpaceGrid 承载（Workspace.hpp
+    /// jointGridCounts——逐轴取点笛卡尔积，带总样本数上限闸），两层
+    /// "网格"各安其位）。
     JointGrid,
 };
 
@@ -138,9 +154,10 @@ std::vector<JointInterval> evaluationIntervals(const IKinRuntimeView& view);
  * 逐策略语义（登记随卡 §14.6 v0.4；黄金锁定 T13）：
  *   - ReferenceQ：返回 {referenceQ}（1 个初值——count 被忽略）；
  *   - SeededRandom：count 个初值；第 k 个初值逐轴取
- *     lo_i＋u·(hi_i−lo_i)，u∈[0,1) 由 splitmix64(seed·2³²＋k) 归一化
- *     派生（确定性序列——同 seed 同矩阵；无工作范围 continuous 轴的
- *     采样名义区间取 [−π,π]，rad）；
+ *     lo_i＋u·(hi_i−lo_i)，u∈[0,1) 由 (seed, k) 完整 64 位混合流
+ *     （streamSeedFor——splitmix64 三步派生，KIN-P5/A06 起）归一化
+ *     派生（确定性序列——同 seed 同矩阵、不同 64 位 seed 必不同序
+ *     列；无工作范围 continuous 轴的采样名义区间取 [−π,π]，rad）；
  *   - JointGrid：count 个初值沿区间对角线均分：t_k＝k/(count−1)
  *     （count=1 → t=0.5），q_i＝lo_i＋t_k·(hi_i−lo_i)；bounded=false
  *     轴取名义区间 [−π,π] 的同比例点。

@@ -298,15 +298,17 @@ TEST(KinIk, FkFacilityFailureYieldsValueFormNotThrow_F746_3)
  *  c) 默认值钉：IkRequest 默认 FullPose（表尾追加零行为漂移——既有
  *     调用点/黄金数据面不变）。
  *  契约版本钉：本语义扩展伴随 kIkSolverContractVersion 1→2（CON-04
- *  ——升级即新切片身份；未来再升版本时同步更新本断言与升级说明）。
+ *  ——升级即新切片身份；v3＝KIN-P5/A06 种子派生换代，未来再升版本时
+ *  同步更新本断言与升级说明）。
  */
 TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-04"},
                   std::vector<std::string>{});
-    EXPECT_EQ(kIkSolverContractVersion, 2U)
-        << "A02 任务维度语义扩展伴随契约版本升级（CON-04）——再升版本时"
-           "同步更新本钉与单元卡登记";
+    EXPECT_GE(kIkSolverContractVersion, 2U)
+        << "A02 任务维度语义扩展伴随契约版本升级（CON-04）——v3 起"
+           "SeededRandom 派生换代再升（A06），再升版本时同步更新本钉与"
+           "单元卡登记";
 
     const rt::CanonicalModel model = coaxialChainModel();
     TestView view(model);
@@ -683,6 +685,65 @@ TEST(KinIk, InitialValueStrategiesDeterministic_WP15T04_ACC2)
                                            1U, 0U, intervals, ref);
     ASSERT_EQ(g1.size(), 1U);
     expectGoldenNear(g1[0][0], 0.0, "网格单点取中点");
+}
+
+// =====================================================================
+// KIN-P5（审查 A06）——SeededRandom 种子完整 64 位敏感＋同种子可复现
+// =====================================================================
+
+/**
+ * @brief 审查 A06 反例钉：旧派生 "seed·2³²＋k" 在 uint64 模 2⁶⁴ 算术下
+ *        丢弃 seed 高 32 位——seed=1 与 seed=2³²＋1 的第 k 项状态相同
+ *        （1·2³²＋k ≡ (2³²＋1)·2³²＋k mod 2⁶⁴），整条初值序列对高位
+ *        不敏感（修复前本用例 EXPECT_NE 处红）。修复后 (seed,k) 经
+ *        streamSeedFor 完整 64 位混合：不同 64 位 seed 必不同序列、
+ *        同 seed 可复现（NFR-COR-01 不因换派生破坏）。
+ */
+TEST(KinIk, SeededRandomFull64BitSeedSensitivity_A06_KIN_P5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-13", "KIN-02", "NFR-COR-01"},
+                  std::vector<std::string>{});
+
+    namespace kin = sdurws::ird::kinematics;
+    const std::vector<kin::JointInterval> intervals = {
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+        kin::JointInterval{-1.0, 1.0, true},
+    };
+    const std::vector<double> ref(6, 0.0);
+
+    // 审查反例对：seed 只差高 32 位（1 与 1＋2³²）——初值矩阵必须不同。
+    const auto low = kin::makeInitialValues(kin::InitialValueStrategy::SeededRandom,
+                                            4U, 1U, intervals, ref);
+    const auto high = kin::makeInitialValues(kin::InitialValueStrategy::SeededRandom,
+                                             4U, 1U + (1ULL << 32), intervals, ref);
+    ASSERT_EQ(low.size(), 4U);
+    ASSERT_EQ(high.size(), 4U);
+    EXPECT_NE(low, high)
+        << "审查 A06：seed 高 32 位必须参与初值派生（修复前两 seed 序列"
+           "相同——多初值多样性来源被静默丢弃）";
+
+    // 低位差异同样敏感（1 与 2——防"只对高位翻转敏感"的退化实现）。
+    const auto other = kin::makeInitialValues(kin::InitialValueStrategy::SeededRandom,
+                                              4U, 2U, intervals, ref);
+    EXPECT_NE(low, other) << "相邻低位 seed 亦须不同序列";
+
+    // 同种子可复现（确定性——NFR-COR-01；重跑逐位一致）。
+    const auto lowAgain = kin::makeInitialValues(kin::InitialValueStrategy::SeededRandom,
+                                                 4U, 1U, intervals, ref);
+    EXPECT_EQ(low, lowAgain) << "同 seed 必得同序列（§3.4——随机性唯一来源）";
+
+    // 序列值仍在评价区间内（派生换代不破坏采样域契约）。
+    for (const auto& q : low) {
+        ASSERT_EQ(q.size(), 6U);
+        for (const double v : q) {
+            EXPECT_GE(v, -1.0);
+            EXPECT_LE(v, 1.0);
+        }
+    }
 }
 
 // =====================================================================

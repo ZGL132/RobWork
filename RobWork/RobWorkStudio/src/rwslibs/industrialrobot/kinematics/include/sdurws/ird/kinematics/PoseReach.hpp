@@ -99,7 +99,11 @@ namespace sdurws::ird::kinematics {
 inline constexpr char kPoseReachabilityEvaluationKey[] = "kin-pose-reachability";
 
 /// 评估器输入/输出契约版本（进 sliceId——CON-04；一经交付不回退）。
-inline constexpr std::uint32_t kPoseReachabilityContractVersion = 1U;
+/// ★ v2（KIN-P5/审查 A06）：逐目标初值的 SeededRandom 序列随 64 位完整
+///   种子混合（kIkSolverContractVersion 2→3 同批）整体改变——同 (目标集,
+///   种子) 在 v1/v2 两代下的可达性结论可不同，版本不升级会让两代评估
+///   产出假借同一 slice 身份比较。
+inline constexpr std::uint32_t kPoseReachabilityContractVersion = 2U;
 
 /// 域载荷登记 token（evidence §7.1 域词表——卡面点形保留；v1 随
 /// canonical 布局 codec 版本演进）。

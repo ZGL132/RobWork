@@ -1,0 +1,278 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\core\Release\sdurws_ird_core.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Diagnostics.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  ParamSchema.cpp
+  Catalog.cpp
+  Factory.cpp
+  Confirmable.cpp
+  Aggregation.cpp
+  Logging.cpp
+  Redaction.cpp
+  CrashReport.cpp
+  正在生成代码...
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Evidence.cpp
+  Errors.cpp
+  Snapshot.cpp
+  Slice.cpp
+  Verdict.cpp
+  Envelope.cpp
+  Currentness.cpp
+  Compatibility.cpp
+  Evaluator.cpp
+  正在生成代码...
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\evidence\Release\sdurws_ird_evidence.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Project.cpp
+  Codec.cpp
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5): warning C4297: “sdurws::ird::project::ProjectStore::handlerRegistry”: 假定函数不引发异常，但确实发生了 [D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\project\sdurws_ird_project.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5):
+      在函数上指定了 __declspec(nothrow)、throw()、noexcept(true)或 noexcept
+  
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  SolidifyServiceImpl.cpp
+  StoreClone.cpp
+  SaveAsServiceImpl.cpp
+  PackageServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+  正在生成代码...
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\project\Release\sdurws_ird_project.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Execution.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  StateMachine.cpp
+  Controller.cpp
+  Scheduler.cpp
+  RunRegistry.cpp
+  Admission.cpp
+  EventBus.cpp
+  ChannelProtocol.cpp
+  WorkerSupervisor.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\execution\sdurws_ird_execution.vcxproj]
+  (编译源文件“../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(308,43):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(306,38):
+              请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  Checkpoint.cpp
+  CacheCoordinator.cpp
+  ChannelPair.cpp
+  JobScope.cpp
+  MemProbe.cpp
+  ProcessLauncher.cpp
+  正在生成代码...
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\execution\Release\sdurws_ird_execution.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  Policy.cpp
+  Errors.cpp
+  Diagnostics.cpp
+  PolicyInput.cpp
+  PolicyParsing.cpp
+  PolicyPort.cpp
+  SystemDefaultPolicy.cpp
+  正在生成代码...
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\policy\Release\sdurws_ird_policy.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  Runtime.cpp
+  Errors.cpp
+  DescriptionValidator.cpp
+  CanonicalModel.cpp
+  Codec.cpp
+  NameMap.cpp
+  BaseWorldTransform.cpp
+  正在生成代码...
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\runtime\Release\sdurws_ird_runtime.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  Errors.cpp
+  DiagCodes.cpp
+  Fk.cpp
+  Evaluators.cpp
+  Evidence.cpp
+  KinTypes.cpp
+  Bounds.cpp
+  Ik.cpp
+  SolutionSet.cpp
+  Sampling.cpp
+  Workspace.cpp
+  PoseReach.cpp
+  Commands.cpp
+  Export.cpp
+  Recompute.cpp
+  AnalysisConfig.cpp
+  Render.cpp
+  Envelope.cpp
+  正在生成代码...
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\Release\sdurws_ird_kinematics.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  Ui.cpp
+  WorkbenchShell.cpp
+  WorkbenchContent.cpp
+  ShellSupport.cpp
+  StatusProjection.cpp
+  View3DPlaceholder.cpp
+  CommandRegistry.cpp
+  GlobalShortcutRegistry.cpp
+  CommandPalette.cpp
+  PolicySummaryCard.cpp
+  DomainReadinessSummaryCard.cpp
+  FormEditCommon.cpp
+  ParamTablePanel.cpp
+  UiText.cpp
+  StageNavigationModel.cpp
+  AboutDialog.cpp
+  UiSessionController.cpp
+  DraftController.cpp
+  DiagnosticPresentation.cpp
+  CommandInteractionBridge.cpp
+  正在生成代码...
+  正在编译...
+  TaskPresentation.cpp
+  PluginUiRegistrar.cpp
+  HostController.cpp
+  RuntimePublishBridge.cpp
+  SelectionService.cpp
+  IndustrialProjectTree.cpp
+  PropertyInspector.cpp
+  FlowLayout.cpp
+  UiTheme.cpp
+  正在生成代码...
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  KinPanelUnits.cpp
+  KinPanelCommandCatalog.cpp
+  KinPanelModel.cpp
+  KinPanelFlows.cpp
+  KinematicsPanelWidget.cpp
+  KinematicsUiModule.cpp
+  KinHostMigrationProviders.cpp
+  KinematicsPluginAssembly.cpp
+  mocs_compilation_Release.cpp
+  正在生成代码...
+  sdurws_ird_kinematics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\Release\sdurws_ird_kinematics_plugin.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  TestMainReport.cpp
+  GoldenKinTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp(1215,45): warning C4804: “>”: 在操作中使用类型“bool”不安全 [D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  FkTest.cpp
+  IkTest.cpp
+  TaskPointsBatchTest.cpp
+  ReproBenchmarkTest.cpp
+  RegionCoverageTest.cpp
+  CommandsTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\CommandsTest.cpp(590,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\sdurws_ird_kinematics_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\CommandsTest.cpp(611,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  SolutionSetViewTest.cpp
+  ExportTest.cpp
+  RecomputeTest.cpp
+  AnalysisConfigTest.cpp
+  RenderTest.cpp
+  WorkspaceTest.cpp
+  EnvelopeTest.cpp
+  PoseReachTest.cpp
+  PluginPanelTest.cpp
+  正在生成代码...
+  正在编译...
+  KinP4FlowsTest.cpp
+  HostMigrationTest.cpp
+  正在生成代码...
+  sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\Release\sdurws_ird_kinematics_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\Release\sdurws_ird_kinematics.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\Release\sdurws_ird_kinematics_plugin.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  PoseMetricsEvaluatorContractTest.cpp
+  TaskPointIkEvaluatorContractTest.cpp
+  TaskPointsBatchEvaluatorContractTest.cpp
+  RegionCoverageEvaluatorContractTest.cpp
+  CollisionConsistencyContractTest.cpp
+  CommandFacadeContractTest.cpp
+  PluginGraphContractTest.cpp
+  正在生成代码...
+  sdurws_ird_kinematics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\kin-p5-smoke\kinematics\Release\sdurws_ird_kinematics_contract_test.exe
