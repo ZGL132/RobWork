@@ -361,6 +361,65 @@ TEST(SelCatalogImport, DictionaryDeviationFromV1ContractLocated)
     EXPECT_EQ(iss->file, kCatalogFileManifest);
 }
 
+/** 契约列被表头/字典同步改名（绕过唯一门）：schema 级契约核对定位缺列
+ *  并跳过行级——不再以未文档化 std::out_of_range 崩出（F-813——schema
+ *  门与行级键面一致性的回归钉；§5.3"schema 级抛出＋行级报告"两分法）。 */
+TEST(SelCatalogImport, ContractColumnMissingNoThrowLocated_F_813_SEL02)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-02"},
+                  std::vector<std::string>{"AT-08"});
+
+    const CatalogImporter importer;
+    ParsedCatalogInput input = makeBaselineInput();
+    CatalogManifest manifest = makeBaselineManifest();
+    // 缺陷注入：motors 表契约列 rotor_inertia_kgm2（第 17 列）在表头与
+    // 字典两侧同步改名——checkTableSchema（表头 vs 字典逐位比对）全过、
+    // 唯一门被绕过，行级 colIdx 查契约列名将落空。
+    ParsedFileTable& motors = *input.files.begin();
+    const std::size_t col = 16;
+    std::vector<std::string> header = motorHeader();
+    ASSERT_EQ(header[col], "rotor_inertia_kgm2");
+    header[col] = "rotor_inertia";
+    std::vector<std::vector<std::string>> rows;
+    for (std::size_t r = 0; r < rowCount(motors); ++r) {
+        rows.push_back(cellRowOf(motors, r));   // 行数据原样（列位未动）
+    }
+    motors = makeTable(kCatalogFileMotors, header, rows);
+    manifest.fieldDictionary[0].fields[col].column = "rotor_inertia";
+    // 行级证据注入：M-100 额定转矩置 0（>0 契约违约）——行级若仍执行，
+    // 报告必含 RANGE-INVALID；修复后行级被跳过则不含（列契约破坏时
+    // 逐行校验无定位价值——与 checkTableSchema 失配表的跳过纪律一致）。
+    ASSERT_TRUE(editRow(motors, "model_id", "M-100", "rated_torque_nm", "0"));
+
+    // 红线断言一：缺列场景不再抛未文档化异常（缺陷态＝colIdx.at 抛
+    // std::out_of_range——既非报告返回也非 schema 级异常）。
+    CatalogValidationReport rep;
+    EXPECT_NO_THROW(rep = importer.validate(input, manifest));
+
+    // 红线断言二：schema 级契约核对定位缺失的契约列（file/column 双定位）。
+    bool contractColLocated = false;
+    for (const CatalogIssue& iss : rep.issues) {
+        if (iss.code == std::string{kSelCatalogSchemaMismatch}
+            && iss.file == std::string{kCatalogFileMotors}
+            && iss.column == "rotor_inertia_kgm2") {
+            contractColLocated = true;
+        }
+    }
+    EXPECT_TRUE(contractColLocated)
+        << "契约列 rotor_inertia_kgm2 缺表头未被 schema 级核对定位（F-813）";
+
+    // 红线断言三：行级被跳过——注入的范围违约不产 issue（报 schema 面
+    // 而非行级噪音）。
+    bool rangeIssue = false;
+    for (const CatalogIssue& iss : rep.issues) {
+        if (iss.code == std::string{kSelCatalogRangeInvalid}
+            && iss.file == std::string{kCatalogFileMotors}) {
+            rangeIssue = true;
+        }
+    }
+    EXPECT_FALSE(rangeIssue) << "契约列缺失的表不应进入行级校验（F-813——缺列走报告）";
+}
+
 // =====================================================================
 // 单位/必填/唯一性（§5.3 行 2~4）
 // =====================================================================

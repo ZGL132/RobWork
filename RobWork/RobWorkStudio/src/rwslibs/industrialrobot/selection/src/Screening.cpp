@@ -89,7 +89,7 @@ void requireFinite(double value, const char* what)
 
 /// 能力不足判定（阈值比较的唯一口径）。
 ///
-/// 语义：actual 超出限值 limit 且超出量大于该量纲的附录 D C7 绝对容差
+/// 语义：工作点超出限值且超出量大于该量纲的附录 D C7 绝对容差
 /// 时才判"不足"——边界上"刚好满足"（差值在浮点噪声级）不误淘汰
 /// （CapabilityCurveTest 头注口径：附录 D 容差的筛选层消费点在本函数）。
 /// 容差来源＝core::runtimeAbsoluteTolerance（C7 单点转写：torque 1e-9、
@@ -97,14 +97,20 @@ void requireFinite(double value, const char* what)
 /// 电压/时间/力等）返回 nullopt→容差 0＝精确比较（不得引入产品侧相对
 /// 校验——C7 纪律）。
 ///
-/// @param actual [in] 工作点侧值（SI 域）
-/// @param limit  [in] 能力限值（SI 域；"≤ limit 为满足"语义）
+/// 幅值口径（F-814）：工作点取绝对值参与比较——目录能力值为正（转矩/
+/// 转速/功率幅值口径，FeasibleSet.hpp MarginFact 数值语义），四象限负
+/// 工作点的量值同按幅值对能力；纯带符号比较会让负工作点静默通过全部
+/// 能力判据（筛选层判通过、指标层出负裕量，输出自相矛盾）。呈现面
+/// （RejectionReason.actual）仍如实携带原值——幅值语义只改判定不改事实。
+///
+/// @param actual [in] 工作点侧值（SI 域；可负——幅值口径参与比较）
+/// @param limit  [in] 能力限值（SI 域；>0——"≤ limit 为满足"语义）
 /// @param kind   [in] 比较量纲（容差查表键）
 /// @return true＝能力不足（淘汰侧）；false＝满足或容差内
 bool exceedsLimit(double actual, double limit, core::QuantityKind kind)
 {
     const double tol = core::runtimeAbsoluteTolerance(kind).value_or(0.0);
-    return actual > limit + tol;
+    return std::abs(actual) > limit + tol;   // 幅值比较（F-814——负工作点不因符号静默通过）
 }
 
 /// 反向不足判定（要求值下限语义：目录值 actual 低于要求 limit 判不足——
