@@ -317,27 +317,81 @@ std::string resetSessionHome(KinSessionPose* sessionPose,
     return "已复位 Home（零修订——仅会话态）";
 }
 
-std::optional<std::string> tcpBackfillText(const KinSessionPose* sessionPose,
-                                           const KinModuleSessionState& session,
-                                           const std::vector<double>& jointsSi)
+std::string resetSessionHomeFromNamedSource(const KinPanelServices& services)
+{
+    // ---- 拒绝态①：会话姿态缝未装配（无写点可落——如实说明）。
+    if (services.sessionPose == nullptr) {
+        return "复位 Home 不可用：会话姿态未装配";
+    }
+    // ---- 拒绝态②：具名 Home 来源缝未装配（KIN-P3/审查 A09——来源未
+    // 装配＝按钮应已禁用；此处为直达槽路径的防御面，显式拒绝不写回）。
+    if (!services.homePose) {
+        return "复位 Home 不可用：具名 Home 来源未装配"
+               "（需装配层从命名位姿集保留键 homeConfiguration 注入）";
+    }
+    // ---- 拒绝态③：来源在场但模型/会话未定义 Home（nullopt）——绝不
+    // 静默把当前姿态充当 Home（审查 A09 根因即"无目标来源的原样写回"
+    // 假成功），给用户明确提示。
+    const std::optional<std::vector<double>> home = services.homePose();
+    if (!home.has_value()) {
+        return "复位 Home 不可用：模型/会话未定义具名 Home 姿态"
+               "（命名位姿集保留键 homeConfiguration 缺失——请先在建模侧"
+               "定义 Home）——未写回";
+    }
+    // ---- 拒绝态④：来源值维度与设备自由度不符（装配层解析违约/模型
+    // 变更未同步）——显式反馈不钳制不截断（截断写回会伪造复位语义，
+    // NFR-COR-03）。dof 口径与求解器/FK 一致（Fixed 不消耗 q）。
+    std::size_t dof = 0;
+    if (services.modelView != nullptr) {
+        for (const runtime::CanonicalJoint& j :
+             services.modelView->model().chain().joints) {
+            if (j.type != runtime::JointType::Fixed) {
+                ++dof;
+            }
+        }
+    }
+    if (services.modelView == nullptr || home->size() != dof) {
+        return "复位 Home 不可用：Home 维度 " + std::to_string(home->size())
+               + " != 设备自由度 " + std::to_string(dof)
+               + "（来源解析违约或模型已变更）——未写回";
+    }
+    // ---- 通过：唯一写点覆写会话姿态（零修订——KIN-06/AT-04）。
+    return resetSessionHome(services.sessionPose, *home);
+}
+
+std::optional<std::string> tcpBackfillText(
+    const KinSessionPose* sessionPose, const KinModuleSessionState& session,
+    const std::vector<double>& jointsSi,
+    const std::vector<runtime::JointType>& dofJointTypes)
 {
     // 未设置（isSet()==false）或缝空——ui 回退编辑器缺省值，不得读值
     // （KinSessionPose.hpp 契约）。
     if (sessionPose == nullptr || !sessionPose->isSet()) {
         return std::nullopt;
     }
+    // 维度契约：逐轴类型表与关节向量同维同链序（KIN-P3/审查 A05——失配
+    // ＝调用方装配错误，fail-fast 而非猜量纲）。
+    if (jointsSi.size() != dofJointTypes.size()) {
+        throw std::invalid_argument(
+            "tcpBackfillText: 关节向量维度 " + std::to_string(jointsSi.size())
+            + " != 逐轴类型表维度 " + std::to_string(dofJointTypes.size()));
+    }
     // 会话姿态→显示制式文本（仅呈现默认值——求解身份不含会话，D-KIN-4）。
+    // 逐轴按天然量纲投影（移动轴长度/转动轴角度——审查 A05 同缺陷面的
+    // 修复：修复前回填文本对全轴按角度投影，混合链移动轴显示失实）。
     std::string text;
     const std::vector<double>& q = sessionPose->jointConfiguration();
+    if (q.size() != dofJointTypes.size()) {
+        throw std::invalid_argument(
+            "tcpBackfillText: 会话姿态维度 " + std::to_string(q.size())
+            + " != 逐轴类型表维度 " + std::to_string(dofJointTypes.size()));
+    }
     for (std::size_t i = 0; i < q.size(); ++i) {
-        // 关节角主导量纲——按角度制式投影（rad→deg；nullopt＝SI 直显）。
-        const double shown = session.displayUnits.has_value()
-                                 ? session.displayUnits->projectAngle(q[i])
-                                 : q[i];
         if (i != 0) {
             text += ", ";
         }
-        text += std::to_string(shown);
+        text += formatJointAxisText(q[i], dofJointTypes[i],
+                                    session.displayUnits);
     }
     return text;
 }

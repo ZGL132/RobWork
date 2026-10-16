@@ -231,19 +231,51 @@ std::string resetSessionHome(KinSessionPose* sessionPose,
                              const std::vector<double>& homeQ);
 
 /**
+ * @brief 复位 Home——具名来源版（KIN-P3/审查 A09 的编排落点：Home 目标
+ *        只能来自 KinPanelServices.homePose 具名来源缝，绝不以当前姿态
+ *        充当 Home）。
+ *
+ * 执行序（四态如实，拒绝路径零写回）：
+ *   1. 会话姿态缝未装配→"复位不可用"（无写点可落）；
+ *   2. homePose 来源缝未装配→"复位不可用：具名 Home 来源未装配"——
+ *      调用方（widget）应已禁用按钮，此分支为防御面（直达槽的路径）；
+ *   3. 来源在场但模型/会话未定义 Home（nullopt）→"复位不可用：未定义
+ *      具名 Home 姿态（保留键 homeConfiguration 缺失）"——显式提示，
+ *      不写回；
+ *   4. 来源值维度与设备自由度不符→"复位不可用：Home 维度 ≠ 设备自由度"
+ *      （装配层解析违约/模型变更未同步的显式反馈——NFR-COR-03 不钳制
+ *      不截断，截断写回会伪造复位语义）；
+ *   5. 全部通过→resetSessionHome（唯一写点覆写会话姿态——零修订）。
+ *
+ * @param services [in] 服务缝（sessionPose/homePose/modelView）
+ * @return 状态行文本（成功/三拒绝态——语义见执行序）
+ *
+ * 纯编排；UI 线程；零修订（结构保证——无任何命令提交通道）。
+ */
+std::string resetSessionHomeFromNamedSource(const KinPanelServices& services);
+
+/**
  * @brief "以当前 TCP 为目标"回填（L-K5——会话态读→显示单位回填；仅呈现
  *        默认值，求解身份不含会话——D-KIN-4）。
  *
- * @param sessionPose [in] 会话姿态容器（可空/未设置→nullopt——ui 回退
- *                    编辑器缺省值，不得读值）
- * @param jointsSi    [in] 当前设备关节向量（rad|m——目标编辑器的 SI 基线）
+ * @param sessionPose   [in] 会话姿态容器（可空/未设置→nullopt——ui 回退
+ *                      编辑器缺省值，不得读值）
+ * @param session       [in] 会话态（displayUnits 投影读取）
+ * @param jointsSi      [in] 当前设备关节向量（rad|m——目标编辑器的 SI 基线）
+ * @param dofJointTypes [in] 逐自由度关节类型表（KIN-P3/审查 A05——回填
+ *                      文本逐轴按天然量纲投影：移动轴长度、转动轴角度；
+ *                      与 jointsSi 同维同链序，失配＝调用方装配错误）
  * @return 回填文本（显示制式下的关节向量文本；未设置/缝空＝nullopt）
+ *
+ * @throws std::invalid_argument jointsSi 与 dofJointTypes 维度不一致或
+ *         分量非有限（同显示投影契约）
  *
  * 纯编排；UI 线程。
  */
-std::optional<std::string> tcpBackfillText(const KinSessionPose* sessionPose,
-                                           const KinModuleSessionState& session,
-                                           const std::vector<double>& jointsSi);
+std::optional<std::string> tcpBackfillText(
+    const KinSessionPose* sessionPose, const KinModuleSessionState& session,
+    const std::vector<double>& jointsSi,
+    const std::vector<runtime::JointType>& dofJointTypes);
 
 // =====================================================================
 // L-K7 求解配置编辑（确认→保存→依赖提示——不自动重算）

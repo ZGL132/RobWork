@@ -40,12 +40,22 @@ std::string generalText(double v)
 }  // namespace
 
 std::string formatKinQuantityText(double siValue, const std::string& unitToken,
-                                  const std::optional<DisplayUnitProjection>& displayUnits)
+                                  const std::optional<DisplayUnitProjection>& displayUnits,
+                                  std::string_view infinityText)
 {
-    // 非有限拒绝（NFR-COR-03）：显示非有限值即伪造数据——fail-fast。
+    // 非有限值三分类（KIN-P3/审查 A03——修复前对一切非有限值 fail-fast，
+    // 把 FK 契约内的合法无穷（奇异条件数 +∞/无界裕量 +∞）也拒之门外，
+    // 奇异状态完全无法显示）：
+    //   1. 合法 +∞：原样呈现 infinityText 语义词（"奇异/∞"/"无界"）——
+    //      禁止截断成有限数字（截断即伪造数据，比抛异常更失实）；
+    //   2. NaN/−∞：这些量的值域不含该两类（条件数 ≥1、裕量可负但有限、
+    //      长度/角度有限）→ 上游计算违约，fail-fast 不渲染伪数据。
+    if (std::isinf(siValue) && siValue > 0.0) {
+        return std::string(infinityText);
+    }
     if (!std::isfinite(siValue)) {
         throw std::invalid_argument(
-            "formatKinQuantityText: 非有限 SI 值不可渲染（NaN/±∞）");
+            "formatKinQuantityText: 非有限 SI 值不可渲染（NaN/−∞——上游计算违约）");
     }
 
     // ---- 无量纲：直显数值不带单位后缀（工程惯例——ui 同案）----
@@ -82,6 +92,11 @@ std::vector<KinNamedValueRow> reprojectMetricRows(
 {
     // 整表重建（非逐格改写）：避免半新半旧混合呈现——见 KinPanelUnits.hpp
     // 文件头注。SI 真值逐行原样搬运（权威不动，V-17）。
+    // 合法 +∞ 行（KIN-P3/审查 A03）的重投影语义：+∞ 的呈现语义词（"奇
+    // 异/∞"/"无界"）是行构建期按行语义选定的、与单位制式无关——重投影
+    // 无法从 (siValue, unitToken) 再推导它，故原样保留首建 displayText
+    // （修复中途形态曾把 +∞ 行退化成缺省 "∞"——L-K8 单位切换的幂等性
+    // 要求语义词跨制式稳定）。NaN/−∞ 行仍走 format 的 fail-fast 拒绝面。
     std::vector<KinNamedValueRow> out;
     out.reserve(rows.size());
     for (const KinNamedValueRow& r : rows) {
@@ -90,35 +105,79 @@ std::vector<KinNamedValueRow> reprojectMetricRows(
         rebuilt.label = r.label;
         rebuilt.siValue = r.siValue;   // SI 真值不变
         rebuilt.unitToken = r.unitToken;
+        const bool legitInfinity = std::isinf(r.siValue) && r.siValue > 0.0;
         rebuilt.displayText =
-            formatKinQuantityText(r.siValue, r.unitToken, displayUnits); // 唯一变化面
+            legitInfinity
+                ? r.displayText  // +∞ 行：语义词与制式无关——原样保留
+                : formatKinQuantityText(r.siValue, r.unitToken, displayUnits);
         out.push_back(std::move(rebuilt));
     }
     return out;
 }
 
-std::pair<std::string, std::string> reprojectSolutionColumns(
-    const std::vector<double>& qSi, double residualSiM,
-    const std::optional<DisplayUnitProjection>& displayUnits)
+double projectJointAxisToDisplay(double siValue, runtime::JointType jointType,
+                                 const std::optional<DisplayUnitProjection>& displayUnits)
 {
-    // 关节向量：逐分量按其天然单位投影（转动 rad、移动 m——混合链逐分量
-    // 各自走对应量纲投影；这里以"向量整体语义"由调用方保证单位口径，本
-    // 函数按角度/长度两类投影的最大公约语义处理：分量逐个经 format 单值
-    // 面会带单位后缀不适合逗号串，故直接经投影数值拼装逗号分隔文本）。
+    // 关节向量分量按契约恒有限（求解器/FK 产出——§5.1 q_authoritative）；
+    // 非有限即上游违约，fail-fast 不渲染（与 formatKinQuantityText 同纪律）。
+    if (!std::isfinite(siValue)) {
+        throw std::invalid_argument(
+            "projectJointAxisToDisplay: 关节分量非有限（上游计算违约）");
+    }
+    // Fixed 关节不消耗 q（装配层 dof 提取应已滤除——出现在类型表即调用
+    // 方装配错误，fail-fast 而非猜一个量纲继续）。
+    if (jointType == runtime::JointType::Fixed) {
+        throw std::invalid_argument(
+            "projectJointAxisToDisplay: Fixed 关节不消耗 q（逐轴类型表装配错误）");
+    }
+    // 逐轴天然量纲分派（A05 修复核心）：移动轴走长度投影（m→mm/cm）、
+    // 转动/连续轴走角度投影（rad→deg）；nullopt＝SI 直显恒等。
+    if (jointType == runtime::JointType::Prismatic) {
+        return displayUnits.has_value() ? displayUnits->projectLength(siValue)
+                                        : siValue;
+    }
+    return displayUnits.has_value() ? displayUnits->projectAngle(siValue)
+                                    : siValue;
+}
+
+std::string formatJointAxisText(double siValue, runtime::JointType jointType,
+                                const std::optional<DisplayUnitProjection>& displayUnits)
+{
+    // 数值半区复用唯一投影判定点（零第二实现——projectJointAxisToDisplay
+    // 的量纲分派即本函数的换算语义）。
+    const double shown =
+        projectJointAxisToDisplay(siValue, jointType, displayUnits);
+    // 单位后缀取当前制式对应量纲的 token 原文（移动轴→长度单位、转动/
+    // 连续轴→角度单位；nullopt＝SI 直显，用 SI token "m"/"rad"）。
+    const bool prismatic = jointType == runtime::JointType::Prismatic;
+    const std::string symbol =
+        displayUnits.has_value()
+            ? std::string(prismatic ? displayUnits->lengthUnit().symbol()
+                                    : displayUnits->angleUnit().symbol())
+            : std::string(prismatic ? "m" : "rad");
+    return generalText(shown) + " " + symbol;
+}
+
+std::pair<std::string, std::string> reprojectSolutionColumns(
+    const std::vector<double>& qSi, const std::vector<runtime::JointType>& dofJointTypes,
+    double residualSiM, const std::optional<DisplayUnitProjection>& displayUnits)
+{
+    // 逐轴类型表与 q 向量必须同维同链序（KIN-P3/审查 A05 契约面——调用
+    // 方从模型关节表经 dofJointTypes 提取；维度失配＝装配错误 fail-fast，
+    // 绝不回退"全轴按角度猜"的旧语义——那正是 A05 根因）。
+    if (qSi.size() != dofJointTypes.size()) {
+        throw std::invalid_argument(
+            "reprojectSolutionColumns: 关节向量维度 " + std::to_string(qSi.size())
+            + " != 逐轴类型表维度 " + std::to_string(dofJointTypes.size())
+            + "（调用方装配错误——类型表须与 q 同链序同维度）");
+    }
+    // 关节向量：逐分量按其天然量纲投影（转动/连续 rad→角度、移动 m→长度
+    // ——projectJointAxisToDisplay 唯一判定点；分量文本为裸数值逗号串，
+    // 单位语义由列头与关节表的逐轴"数值 单位"文本承载）。
     std::string qText;
     for (std::size_t i = 0; i < qSi.size(); ++i) {
-        double v = qSi[i];
-        if (!std::isfinite(v)) {
-            throw std::invalid_argument(
-                "reprojectSolutionColumns: 关节向量含非有限分量");
-        }
-        // 混合链的分量量纲无法从 double 本身判定——投影语义按角度制式
-        // 统一（关节角是主导量纲；移动关节分量在 R1 面板呈现按长度制式
-        // 由调用方以 metric 行单独承载）。此处经 DisplayUnitProjection 的
-        // 角度投影（rad→deg）或原值（nullopt）。
-        if (displayUnits.has_value()) {
-            v = displayUnits->projectAngle(v);
-        }
+        const double v =
+            projectJointAxisToDisplay(qSi[i], dofJointTypes[i], displayUnits);
         if (i != 0) {
             qText += ", ";
         }

@@ -280,6 +280,30 @@ using KinConfigPersistFn = std::function<bool(const AnalysisConfiguration&)>;
 using KinCommandSubmitFn = std::function<void(const std::string& commandId)>;
 
 /**
+ * @brief 具名 Home 姿态来源缝（KIN-P3/审查 A09——复位 Home 的唯一目标
+ *        来源；"经名称/端口解析"的端口半区）。
+ *
+ * 语义：返回**具名 Home 构型**（rad|m 链序 SI 真值）——装配层从模型/
+ * 会话定义的命名位姿集解析（建模侧保留键 homeConfiguration——MDL-17/
+ * V-27；本单元不解析位姿集对象，units/kinematics.md §14.6 v0.8 登记
+ * 口径），经端口投影为关节向量。返回值三态：
+ *   - 有值＝Home 在场（复位 Home 以该值为目标覆写会话姿态——零修订）；
+ *   - nullopt＝模型/会话未定义 Home（面板给明确提示，绝不写回）；
+ *   - 缝为空（bool(f)==false）＝来源未装配（按钮显式禁用——能力降级
+ *     如实呈现，与其他缝同纪律）。
+ *
+ * ★ 审查 A09 根因与修复口径：修复前 widget 复位 Home 槽把当前会话姿态
+ * 原样写回（读 q → reset(q)——值不变的假成功，无目标来源语义）。修复
+ * 后 Home 只能来自本缝（具名来源）；来源缺失＝显式禁用/明确提示，绝
+ * 不静默把当前姿态充当 Home（KIN-06/AT-04：会话回写零修订的语义前提
+ * 是"有明确目标"——无目标写回既非复位也不可追溯）。纯查询（幂等无副
+ * 作用）——面板每次点击现调零缓存（§9.8"面板不缓存权威"同则）。
+ *
+ * 线程约束：仅 UI 线程调用（§3.4——缝面同则）。
+ */
+using KinHomePoseProvider = std::function<std::optional<std::vector<double>>()>;
+
+/**
  * @brief 面板服务缝聚合（构造注入——装配层/harness/测试的一次性接线点）。
  *
  * 所有权：全部指针/缝为非 owning（调用方保证存活期覆盖面板使用期——
@@ -313,6 +337,9 @@ struct KinPanelServices {
     KinConfigPersistFn configPersist;
     /// 命令提交出口（域命令激活的统一出口——空＝命令按钮禁用）。
     KinCommandSubmitFn commandSubmit;
+    /// 具名 Home 姿态来源（L-K4 复位 Home 唯一目标来源——KIN-P3/审查
+    /// A09；空＝复位 Home 按钮禁用，绝不以当前姿态充当 Home）。
+    KinHomePoseProvider homePose;
 };
 
 /**

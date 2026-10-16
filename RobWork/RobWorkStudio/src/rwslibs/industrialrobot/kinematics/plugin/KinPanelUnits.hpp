@@ -25,9 +25,11 @@
 
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // DisplayUnitProjection（KIN-12 投影句柄）
+#include <sdurws/ird/runtime/Description.hpp>        // runtime::JointType（A05 逐轴量纲——关节类型词表）
 #include "KinPanelTypes.hpp"                          // 行集值（同目录插件私有头）
 
 namespace sdurws {
@@ -45,31 +47,98 @@ namespace kinematics {
  *   - 无量纲（"1"）：直显数值不带单位后缀（工程惯例——ui 同案）；
  *   - 其它 token：直显数值＋token 原文（裕量/条件数等无量纲比）。
  *
+ * 非有限值三分类（KIN-P3/审查 A03——显示层的非法值纪律）：
+ *   - **合法无穷（+∞）**：域设施契约内的合法产出（Fk.hpp：奇异条件数
+ *     ＝+∞ 且以 isFinite 标记承载"不静默截断"；连续关节无工作范围的
+ *     关节裕量＝+∞——KinTypes.hpp）→ 原样返回 infinityText 语义词
+ *     （调用方按行语义供给，如条件数行"奇异/∞"、裕量行"无界"），**禁
+ *     止截断成有限数字**（截断即伪造数据——比抛异常更严重的失实）；
+ *   - **非法 NaN／−∞**：上游计算违约（这些量的值域不含 NaN/−∞）→ 抛
+ *     std::invalid_argument fail-fast（NFR-COR-03——不渲染伪数据）；
+ *   - **未知/不适用**：不落在本函数（行集层的承载形态是文本行——如
+ *     碰撞"未评价"三态词、覆盖"零样本——比率不存在"，见 KinPanelModel
+ *     的同案行），数值行只承载"有限值或合法 +∞"两类。
+ *
  * 数值格式：6 位有效数字 general（std::to_chars，locale 无关——NFR-COR-02；
  * 与 ui formatFieldValueText 同精度口径）。
  *
- * @param siValue      [in] SI 真值（须有限——非有限属上游计算违约，抛
- *                     std::invalid_argument，不渲染伪数据）
- * @param unitToken    [in] SI 单位 token（"m"/"rad"/"1"/……）
- * @param displayUnits [in] 显示单位投影（nullopt＝SI 直显制式）
- * @return "300 mm"/"0.3 m"/"500" 形态显示文本
+ * @param siValue        [in] SI 真值（有限值或合法 +∞——NaN/−∞ 属上游
+ *                       计算违约，抛 std::invalid_argument）
+ * @param unitToken      [in] SI 单位 token（"m"/"rad"/"1"/……）
+ * @param displayUnits   [in] 显示单位投影（nullopt＝SI 直显制式）
+ * @param infinityText   [in] siValue＝+∞ 时的呈现语义词（调用方按行语义
+ *                       供给："奇异/∞"/"无界"；缺省泛化 "∞"；原样返回
+ *                       不带单位后缀——无穷无量纲可比，投影无意义）
+ * @return "300 mm"/"0.3 m"/"500"/"奇异/∞" 形态显示文本
  *
- * @throws std::invalid_argument siValue 非有限，或 unitToken 需投影但非
- *         "m"/"rad"（投影句柄只覆盖 R1 两量纲——调用方错选即装配错误）
+ * @throws std::invalid_argument siValue 为 NaN 或 −∞（上游计算违约），
+ *         或 unitToken 需投影但非 "m"/"rad"（投影句柄只覆盖 R1 两量纲
+ *         ——调用方错选即装配错误）
  *
  * 纯函数；线程安全；确定性。
  */
 std::string formatKinQuantityText(double siValue, const std::string& unitToken,
-                                  const std::optional<DisplayUnitProjection>& displayUnits);
+                                  const std::optional<DisplayUnitProjection>& displayUnits,
+                                  std::string_view infinityText = "∞");
+
+/**
+ * @brief 单关节分量显示投影（KIN-P3/审查 A05——逐轴按其**天然量纲**选
+ *        择长度/角度换算的唯一判定点）。
+ *
+ * 背景（A05 根因）：混合链（转动＋移动）的关节向量各分量量纲不同
+ * （转动 rad／移动 m，§5.1 q_authoritative 口径），修复前显示层对整条
+ * 向量统一按角度投影（reprojectSolutionColumns 旧实现）——移动轴
+ * 0.1 m 在 mm 制式下被误显示 5.72958（deg 数值）。double 数组本身不
+ * 携带量纲信息，逐轴类型必须由调用方从模型关节表传下（禁止从数值
+ * 大小猜测——装配层契约）。
+ *
+ * @param siValue      [in] 该轴 SI 真值（转动 rad／移动 m；须有限——
+ *                     关节向量分量按求解器契约恒有限，非有限属上游违约）
+ * @param jointType    [in] 该轴关节类型（模型关节表逐轴值——链序与 q
+ *                     对齐；Fixed 不消耗 q，传入即装配错误）
+ * @param displayUnits [in] 显示单位投影（nullopt＝SI 直显——恒等返回）
+ * @return 显示数值（移动轴经长度投影、转动/连续轴经角度投影；nullopt
+ *         制式＝SI 原值）
+ *
+ * @throws std::invalid_argument siValue 非有限，或 jointType 为 Fixed
+ *         （Fixed 关节不消耗 q——出现在 dof 类型表即调用方装配错误）
+ *
+ * 纯函数；线程安全；确定性。
+ */
+double projectJointAxisToDisplay(double siValue, runtime::JointType jointType,
+                                 const std::optional<DisplayUnitProjection>& displayUnits);
+
+/**
+ * @brief 单关节分量的"数值＋单位"显示文本（widget 关节表单元格的唯一
+ *        格式化点——projectJointAxisToDisplay 的文本半区）。
+ *
+ * @param siValue      [in] 该轴 SI 真值（同 projectJointAxisToDisplay）
+ * @param jointType    [in] 该轴关节类型（同上）
+ * @param displayUnits [in] 显示单位投影（nullopt＝SI 直显——单位后缀
+ *                     用 SI token "m"/"rad" 原文）
+ * @return "100 mm"/"5.72958 deg"/"0.1 m" 形态显示文本（6 位有效数字
+ *         general——与 formatKinQuantityText 同精度口径）
+ *
+ * @throws std::invalid_argument 同 projectJointAxisToDisplay
+ *
+ * 纯函数；线程安全；确定性。
+ */
+std::string formatJointAxisText(double siValue, runtime::JointType jointType,
+                                const std::optional<DisplayUnitProjection>& displayUnits);
 
 /**
  * @brief 位姿指标行集重投影（L-K8——以新显示制式整表重建显示文本；
  *        SI 真值逐行原样保留）。
  *
+ * 合法 +∞ 行（KIN-P3/审查 A03）语义：+∞ 的呈现语义词（"奇异/∞"/"无
+ * 界"）在行构建期按行语义选定、与单位制式无关——重投影原样保留该行
+ * displayText（幂等），仅有限行随新制式重换算；NaN/−∞ 行仍经 format
+ * 的 fail-fast 拒绝面（不因重投影放大通过面）。
+ *
  * @param rows         [in] 现有行集（siValue/unitToken 为权威输入）
  * @param displayUnits [in] 新显示单位投影（nullopt＝SI 直显）
- * @return 重建后的行集（行序/键/标签/siValue 逐位不变——仅 displayText
- *         随制式变化；调用方所有）
+ * @return 重建后的行集（行序/键/标签/siValue 逐位不变——有限行
+ *         displayText 随制式变化；调用方所有）
  *
  * 纯函数；线程安全；确定性。
  */
@@ -86,18 +155,29 @@ std::vector<KinNamedValueRow> reprojectMetricRows(
  * KinPanelModel::solutionRowsFor）。此处的重投影语义＝同制式下重查文本
  * 的便捷面（q 值向量逐分量换算）。
  *
- * @param qSi          [in] 关节向量 SI 真值（rad|m 链序——解对象 q 原值）
- * @param residualSiM  [in] 位置残差（单位 m；无量纲列不参与投影）
- * @param displayUnits [in] 显示单位投影（nullopt＝SI 直显）
+ * 逐轴量纲（KIN-P3/审查 A05）：q 的逐分量投影经 projectJointAxisToDisplay
+ * ——转动/连续轴走角度投影、移动轴走长度投影；逐轴类型由调用方从模型
+ * 关节表提取（KinPanelModel::dofJointTypes）后传入，本函数不做任何"从
+ * 数值猜量纲"的启发式（A05 根因即旧实现的全轴角度假设）。文本形态为
+ * 裸数值逗号串（"5.72958, 100"——单位语义由列头/关节表承载，逗号串内
+ * 不重复后缀；逐轴单位文本面见 formatJointAxisText）。
+ *
+ * @param qSi           [in] 关节向量 SI 真值（rad|m 链序——解对象 q 原值）
+ * @param dofJointTypes [in] 逐自由度关节类型表（链序与 qSi 对齐——Fixed
+ *                      不消耗 q 故不在表内；维度与 qSi 不一致＝调用方
+ *                      装配错误）
+ * @param residualSiM   [in] 位置残差（单位 m；无量纲列不参与投影）
+ * @param displayUnits  [in] 显示单位投影（nullopt＝SI 直显）
  * @return 重投影后的（qText, positionResidualText）二元组
  *
- * @throws std::invalid_argument 输入含非有限值（同 formatKinQuantityText）
+ * @throws std::invalid_argument qSi 与 dofJointTypes 维度不一致、输入含
+ *         非有限分量，或类型表含 Fixed（同 projectJointAxisToDisplay）
  *
  * 纯函数；线程安全；确定性。
  */
 std::pair<std::string, std::string> reprojectSolutionColumns(
-    const std::vector<double>& qSi, double residualSiM,
-    const std::optional<DisplayUnitProjection>& displayUnits);
+    const std::vector<double>& qSi, const std::vector<runtime::JointType>& dofJointTypes,
+    double residualSiM, const std::optional<DisplayUnitProjection>& displayUnits);
 
 /**
  * @brief R1 显示单位制式切换的合法性判定与构造（L-K8 入口——单位切换

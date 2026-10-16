@@ -513,6 +513,11 @@ ird_add_gtest(sdurws_ird_kinematics_test)
 add_executable(sdurws_ird_kinematics_gui_test
     gui_test/TestMainReport.cpp            # QApplication 形态 main（ui_gui_test 先例）
     gui_test/KinematicsPanelInputGuiTest.cpp)  # KIN-P1 A07——目标输入单位制回归
+# KIN-P3（审查 A05/A09）——指标显示与会话操作的 widget 行为回归（同目标
+# 增列：真实 widget 才能复现"关节表逐轴单位"与"复位 Home 拒绝语义"缺陷
+# 形态；QCoreApplication 级 sdurws_ird_kinematics_test 不构造 QWidget）。
+target_sources(sdurws_ird_kinematics_gui_test PRIVATE
+    gui_test/KinematicsPanelSessionGuiTest.cpp)
 target_compile_features(sdurws_ird_kinematics_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_gui_test PROPERTIES
     CXX_STANDARD 17

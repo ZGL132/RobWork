@@ -307,6 +307,12 @@ void KinematicsPanelWidget::refreshAll()
     m_setDeviceButton->setEnabled(commandEnabled("kinematics.set-default-device",
                                                  kinCommandEnabledInSession("kinematics.set-default-device", writable)
                                                  && m_services.commandHandler != nullptr));
+    // 复位 Home（KIN-P3/审查 A09）：按钮可用性＝具名 Home 来源缝已装配
+    // ——来源缺失即显式禁用，绝不出现"以当前姿态充当 Home"的可达路径
+    // （缝在场但模型未定义 Home 的提示在点击路径给出——resetSessionHome
+    // FromNamedSource 拒绝态③）。只读会话可用（reset-session-pose＝
+    // readOnlyAllowed，会话级命令——目录表权威）。
+    m_resetHomeButton->setEnabled(static_cast<bool>(m_services.homePose));
     const bool exportReady = static_cast<bool>(m_services.exportWriter)
                              && m_session.lastSessionSolutionSetView != nullptr;
     m_exportJsonButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
@@ -382,16 +388,27 @@ void KinematicsPanelWidget::refreshPosePane()
         return;
     }
     renderRows(m_poseTable, poseMetricRows(metrics.get(), m_session.displayUnits));
-    // 关节表（KIN-12 显示投影——显示制式下的关节向量）。
+    // 关节表（KIN-12 显示投影——显示制式下的关节向量；KIN-P3/审查 A05：
+    // 逐轴按天然量纲投影——转动/连续轴 rad→角度、移动轴 m→长度，"数值
+    // ＋单位"同显。逐轴类型从模型关节表提取（dofJointTypes——FK 成功
+    // 蕴含 q 维度＝dof，类型表逐轴对齐）。
+    const std::vector<runtime::JointType> axisTypes =
+        dofJointTypes(m_services.modelView->model());
     m_jointTable->setRowCount(static_cast<int>(q.size()));
     for (std::size_t i = 0; i < q.size(); ++i) {
         m_jointTable->setItem(static_cast<int>(i), 0,
                               new QTableWidgetItem(tr("J%1").arg(i + 1)));
-        const double shown = m_session.displayUnits.has_value()
-                                 ? m_session.displayUnits->projectAngle(q[i])
-                                 : q[i];
+        // 防御面：FK 契约保证 q.size()==axisTypes.size()（同 dof 链序）；
+        // 越界即装配层模型不一致——如实呈现占位不虚构数值（不抛异常穿
+        // 越 Qt 槽，与 NFR-COR-03 的就地反馈同则）。
+        const QString cell =
+            i < axisTypes.size()
+                ? QString::fromStdString(
+                    formatJointAxisText(q[i], axisTypes[i],
+                                        m_session.displayUnits))
+                : QStringLiteral("—");
         m_jointTable->setItem(static_cast<int>(i), 1,
-                              new QTableWidgetItem(QString::number(shown)));
+                              new QTableWidgetItem(cell));
     }
 }
 
@@ -403,9 +420,19 @@ void KinematicsPanelWidget::refreshResultsPane()
         renderRows(m_inspectorTable, std::vector<KinNamedValueRow>{});
         return;
     }
+    // 逐轴类型真值（KIN-P3/审查 A05——q 列逐轴投影的模型来源）。解集在
+    // 场而模型视图缺失的形态不经本面板任何流产生（求解前置模型视图）；
+    // 防御面＝如实清空不虚构（零投影语义可用——猜量纲即 A05 复辟）。
+    if (m_services.modelView == nullptr) {
+        renderSolutions(m_solutionTable, std::vector<KinSolutionRow>{});
+        fillSingleColumn(m_statTable, QStringList{});
+        renderRows(m_inspectorTable, std::vector<KinNamedValueRow>{});
+        return;
+    }
     const IKinematicSolutionSet& set = *m_session.lastSessionSolutionSetView;
     renderSolutions(m_solutionTable,
                     solutionRowsFor(set, m_usableOnly->isChecked(),
+                                    dofJointTypes(m_services.modelView->model()),
                                     m_session.displayUnits));
     // 统计行（四计数直投——零自算）。
     const auto st = set.statistics();
@@ -564,14 +591,14 @@ void KinematicsPanelWidget::onCoverageRunClicked()
 
 void KinematicsPanelWidget::onResetHomeClicked()
 {
-    // L-K4 复位 Home（Home 构型取关节表当前值——宿主自命名位姿集注入的
-    // 语义在装配层；此处以会话关节投影承载演示通道）。
-    std::vector<double> homeQ;
-    if (m_services.sessionPose != nullptr && m_services.sessionPose->isSet()) {
-        homeQ = m_services.sessionPose->jointConfiguration();
-    }
+    // L-K4 转接（KIN-P3/审查 A09——具名来源版）：Home 目标只能来自
+    // KinPanelServices.homePose 具名来源缝（装配层从命名位姿集保留键
+    // homeConfiguration 解析）；来源缺失＝按钮已禁用（refreshAll 门控），
+    // 缝在场但未定义 Home/维度不符＝编排函数给明确提示。修复前此处把
+    // 当前会话姿态原样写回（无目标来源的假成功——审查 A09 根因），已废。
+    // 零修订语义不变：只写会话姿态（KIN-06/AT-04——PA-2 不动设计修订）。
     showStatusText(QString::fromStdString(
-        resetSessionHome(m_services.sessionPose, homeQ)));
+        resetSessionHomeFromNamedSource(m_services)));
 }
 
 void KinematicsPanelWidget::onSetDefaultTcpClicked()
@@ -610,6 +637,11 @@ void KinematicsPanelWidget::onSolutionSelectionChanged()
     if (!m_session.lastSessionSolutionSetView || m_inspectorTable == nullptr) {
         return;
     }
+    // 逐轴类型真值缺失（模型视图不在场——与 refreshResultsPane 同防御
+    // 口径）＝联动数据不可投影，如实不联动。
+    if (m_services.modelView == nullptr) {
+        return;
+    }
     const QModelIndex idx = m_solutionTable->currentIndex();
     if (!idx.isValid()) {
         return;
@@ -617,6 +649,7 @@ void KinematicsPanelWidget::onSolutionSelectionChanged()
     const auto renderRow = static_cast<std::size_t>(idx.row());
     const auto rows = solutionRowsFor(*m_session.lastSessionSolutionSetView,
                                       m_usableOnly->isChecked(),
+                                      dofJointTypes(m_services.modelView->model()),
                                       m_session.displayUnits);
     if (renderRow >= rows.size()) {
         return;
@@ -635,8 +668,14 @@ void KinematicsPanelWidget::onSolutionDoubleClicked(int row, int column)
     if (!m_session.lastSessionSolutionSetView || m_services.sessionPose == nullptr) {
         return;
     }
+    // 逐轴类型真值缺失（与 refreshResultsPane 同防御口径）＝行集不可
+    // 投影，如实不回写。
+    if (m_services.modelView == nullptr) {
+        return;
+    }
     const auto rows = solutionRowsFor(*m_session.lastSessionSolutionSetView,
                                       m_usableOnly->isChecked(),
+                                      dofJointTypes(m_services.modelView->model()),
                                       m_session.displayUnits);
     if (row < 0 || static_cast<std::size_t>(row) >= rows.size()) {
         return;

@@ -20,16 +20,20 @@ namespace kinematics {
 namespace {
 
 /// 便捷装配：命名数值行（SI 值＋单位 token → 投影文本一行）。
+/// infinityText＝该行遇合法 +∞ 时的呈现语义词（KIN-P3/审查 A03——调用
+/// 方按行语义供给：条件数行"奇异/∞"、裕量行"无界"；缺省泛化 "∞"）。
 KinNamedValueRow makeRow(std::string key, std::string label, double siValue,
                          std::string unitToken,
-                         const std::optional<DisplayUnitProjection>& units)
+                         const std::optional<DisplayUnitProjection>& units,
+                         std::string_view infinityText = "∞")
 {
     KinNamedValueRow row;
     row.key = std::move(key);
     row.label = std::move(label);
     row.siValue = siValue;
     row.unitToken = unitToken;
-    row.displayText = formatKinQuantityText(siValue, row.unitToken, units);
+    row.displayText = formatKinQuantityText(siValue, row.unitToken, units,
+                                            infinityText);
     return row;
 }
 
@@ -69,12 +73,16 @@ std::vector<KinNamedValueRow> poseMetricRows(
                            metrics.tcpInBase.R()(2, 2), "1", displayUnits));
 
     // ---- 2. 无量纲指标（条件数/可操作度/最小裕量）----
+    // 合法无穷的行级语义（KIN-P3/审查 A03）：条件数 +∞＝σmin＝0 的奇异
+    // 状态（Fk.hpp 契约"奇异→+∞，不静默截断"）——呈现"奇异/∞"；裕量
+    // +∞＝连续关节无工作范围的无界裕量（KinTypes.hpp"全无界＝+∞"）——
+    // 呈现"无界"。两者均原样呈现，禁止截断成有限数字。
     rows.push_back(makeRow("cond", "条件数", metrics.conditionNumber, "1",
-                           displayUnits));
+                           displayUnits, "奇异/∞"));
     rows.push_back(makeRow("manip", "可操作度", metrics.manipulability, "1",
                            displayUnits));
     rows.push_back(makeRow("min-margin", "最小关节裕量", metrics.minimumJointMargin,
-                           "1", displayUnits));
+                           "1", displayUnits, "无界"));
 
     // ---- 3. 奇异值逐条（sigma-1..n——链序；无量纲）----
     for (std::size_t i = 0; i < metrics.singularValues.size(); ++i) {
@@ -83,18 +91,38 @@ std::vector<KinNamedValueRow> poseMetricRows(
                                metrics.singularValues[i], "1", displayUnits));
     }
 
-    // ---- 4. 关节裕量逐关节（margin-j1..n——链序；无量纲归一化比）----
+    // ---- 4. 关节裕量逐关节（margin-j1..n——链序；无量纲归一化比；+∞＝
+    //      该关节连续且无工作范围——"无界"呈现，A03 同则）----
     for (std::size_t i = 0; i < metrics.jointMargins.size(); ++i) {
         rows.push_back(makeRow("margin-j" + std::to_string(i + 1),
                                "关节裕量 J" + std::to_string(i + 1),
-                               metrics.jointMargins[i], "1", displayUnits));
+                               metrics.jointMargins[i], "1", displayUnits,
+                               "无界"));
     }
     return rows;
 }
 
-std::vector<KinSolutionRow> solutionRowsFor(const IKinematicSolutionSet& set,
-                                            bool usableOnly,
-                                            const std::optional<DisplayUnitProjection>& displayUnits)
+std::vector<runtime::JointType> dofJointTypes(const runtime::CanonicalModel& model)
+{
+    // 链序遍历＋Fixed 滤除（Fixed 不消耗 q——与求解器/FK/
+    // assembleSessionSolveRequest 的 dof 口径一致）：产出与
+    // q_authoritative 同维同序的类型表——显示投影逐轴量纲的唯一真值来源
+    // （KIN-P3/审查 A05：double 数组不携带量纲，逐轴类型必须从模型关节
+    // 表提取传递，禁止显示层猜测）。
+    std::vector<runtime::JointType> types;
+    types.reserve(model.chain().joints.size());
+    for (const runtime::CanonicalJoint& j : model.chain().joints) {
+        if (j.type != runtime::JointType::Fixed) {
+            types.push_back(j.type);
+        }
+    }
+    return types;
+}
+
+std::vector<KinSolutionRow> solutionRowsFor(
+    const IKinematicSolutionSet& set, bool usableOnly,
+    const std::vector<runtime::JointType>& dofJointTypes,
+    const std::optional<DisplayUnitProjection>& displayUnits)
 {
     // 排序权威＝set.sorted()（构造时四键稳定排序——本函数零自排）；
     // 筛选权威＝规范谓词工厂产出的谓词逐解调用（NFR-MNT-04——比较式
@@ -116,15 +144,21 @@ std::vector<KinSolutionRow> solutionRowsFor(const IKinematicSolutionSet& set,
         row.rank = i;  // rank＝视图稳定序位置（筛选不改变序语义）
         row.signature = s.signature;
         // q 文本与残差列经投影出口（reprojectSolutionColumns——单位换算
-        // 唯一通道）；裕量/条件数为无量纲直投。
-        const auto cols =
-            reprojectSolutionColumns(s.q, s.positionResidual, displayUnits);
+        // 唯一通道；q 逐轴按 dofJointTypes 量纲投影——KIN-P3/审查 A05：
+        // 转动/连续轴角度、移动轴长度，零"全轴角度猜"）。
+        const auto cols = reprojectSolutionColumns(s.q, dofJointTypes,
+                                                   s.positionResidual,
+                                                   displayUnits);
         row.qText = cols.first;
         row.positionResidualText = cols.second;
+        // 裕量/条件数：无量纲直投；合法 +∞ 按行语义呈现（KIN-P3/审查
+        // A03——解表列与指标行同则："无界"/"奇异/∞"，不截断不抛异常）。
         row.minJointMarginText =
-            formatKinQuantityText(s.minimumJointMargin, "1", displayUnits);
+            formatKinQuantityText(s.minimumJointMargin, "1", displayUnits,
+                                  "无界");
         row.conditionNumberText =
-            formatKinQuantityText(s.conditionNumber, "1", displayUnits);
+            formatKinQuantityText(s.conditionNumber, "1", displayUnits,
+                                  "奇异/∞");
         row.collisionToken = collisionTokenOf(s.collisionStatus);
         rows.push_back(std::move(row));
     }
@@ -165,11 +199,12 @@ std::vector<KinNamedValueRow> solutionInspectorRows(
     const KinematicSolution& s = ordered[ref.solutionIndex];
 
     std::vector<KinNamedValueRow> rows;
-    // 健康摘要半区（裕量/条件数/残差——与解表同源零二口径）。
+    // 健康摘要半区（裕量/条件数/残差——与解表同源零二口径；合法 +∞ 按
+    // A03 行语义词呈现："无界"/"奇异/∞"）。
     rows.push_back(makeRow("insp-margin", "最小关节裕量", s.minimumJointMargin,
-                           "1", displayUnits));
+                           "1", displayUnits, "无界"));
     rows.push_back(makeRow("insp-cond", "条件数", s.conditionNumber, "1",
-                           displayUnits));
+                           displayUnits, "奇异/∞"));
     rows.push_back(makeRow("insp-res-pos", "位置残差", s.positionResidual, "m",
                            displayUnits));
     rows.push_back(makeRow("insp-res-ori", "姿态残差", s.orientationResidual,
@@ -177,11 +212,12 @@ std::vector<KinNamedValueRow> solutionInspectorRows(
     rows.push_back(makeRow("insp-manip", "可操作度", s.manipulability, "1",
                            displayUnits));
     // 关节半区（q 逐关节——rad|m 投影）与雅可比半区不在本行集（雅可比
-    // 矩阵文本由 widget 表格直呈 PoseMetrics 产出——此处保持行集语义）。
+    // 矩阵文本由 widget 表格直呈 PoseMetrics 产出——此处保持行集语义）；
+    // 逐关节裕量 +∞＝无界（A03 同则）。
     for (std::size_t i = 0; i < s.jointMargins.size(); ++i) {
         rows.push_back(makeRow("insp-margin-j" + std::to_string(i + 1),
                                "裕量 J" + std::to_string(i + 1),
-                               s.jointMargins[i], "1", displayUnits));
+                               s.jointMargins[i], "1", displayUnits, "无界"));
     }
     // 碰撞半区（三态词直投——文本行）。
     KinNamedValueRow collision;
