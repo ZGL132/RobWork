@@ -228,10 +228,20 @@ struct LoopHarness {
         state.snapshotId = snapshotIdFrom(anchor);
     }
 
-    /// 目标输入三编辑（构造序＝X/Y/Z——表单登记序）。
+    /// 目标位置三编辑（★ KIN-R2 任务4：目标编辑扩为六字段后按 objectName
+    /// 定位位置分量——findChildren 顺序不可依赖；姿态 RPY 留空＝0，本
+    /// 闭环的目标姿态即单位阵。缺件时返回值短于 3——调用方
+    /// ASSERT_GE(edits.size(), 3) 即红，gtest 断言不可用于本非 void 助手）。
     QList<QLineEdit*> targetEdits() const
     {
-        return panel->findChildren<QLineEdit*>();
+        QList<QLineEdit*> edits;
+        for (const char* name : {"target-x", "target-y", "target-z"}) {
+            if (QLineEdit* edit =
+                    panel->findChild<QLineEdit*>(QString(name))) {
+                edits << edit;
+            }
+        }
+        return edits;
     }
 
     /// 按钮定位（可读文本——真实点击靶）。

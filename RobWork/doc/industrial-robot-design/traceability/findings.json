@@ -8794,19 +8794,21 @@
       "id": "F-902",
       "source": "traceability/acceptance/kin-p3-2026-10-16-acceptance.md advisory A-1（随验收记录转登，验收日期 2026-10-16，verdict=PASS；2026-10-16 落库）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "KIN-P3 验收建议：formatKinQuantityText（KinPanelUnits.cpp:53-55）对一切 +∞ 返回语义词、不区分该量域契约是否允许无穷——验收探针实测域外位置行 siValue=+∞（上游深度违约）静默显示『∞』而非 fail-fast（修复前此处抛异常；未截断未谎报、仅上游双重违约时可达）；建议接线 FK 刷新时按行收紧合法无穷白名单",
-      "owner": "R2 呈现批次（FK 刷新接线时一并收紧）"
+      "owner": "R2 呈现批次（FK 刷新接线时一并收紧）",
+      "resolution": "KIN-R2 呈现批次修复：formatKinQuantityText 第四参数改 std::optional——行白名单即域契约判定（条件数行\"奇异/∞\"、裕量行\"无界\"显式供给＝合法无穷；缺省 nullopt＝该量域契约不含无穷），域外 +∞（位置/旋转矩阵元/RPY/奇异值/可操作度/残差）不再静默显示\"∞\"、走\"非法值(+∞)\"显式标记轨（KinPanelUnits.cpp kOutOfRangeInfinityText；reprojectMetricRows 对一切 +∞ 行保留构建期 displayText——标记跨制式稳定）；NaN/−∞ fail-fast 与审查 A03 三分类不回归。红→绿：kin-r2-red-before-fix.log（修复前域外位置行\"∞\"）→ kin-r2-green-after-fix.log；回归 PluginPanelLinks.KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902＋A03 三用例全绿（kinematics_test 265 过＋1 登记 skip，分支 kin-r2-ui 提交 5bec2389）。"
     },
     {
       "id": "F-903",
       "source": "traceability/acceptance/kin-p3-2026-10-16-acceptance.md advisory A-2（随验收记录转登，验收日期 2026-10-16，verdict=PASS；2026-10-16 落库）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "KIN-P3 验收建议：来源缝返回含 NaN 的 Home 时维度检查通过、写入口（Commands.cpp:126-130 fail-fast）异常穿越编排函数直达 Qt 槽，与维度违约的显式提示轨双轨不一致（探针实测异常传播、会话态零污染；正常装配下 Home 来自命名位姿集解析不含 NaN）——建议编排层补非有限检查转提示轨",
-      "owner": "R2 呈现批次（宿主装配落地时）"
+      "owner": "R2 呈现批次（宿主装配落地时）",
+      "resolution": "KIN-R2 呈现批次修复：resetSessionHomeFromNamedSource 增拒绝态⑤（KinPanelFlows.cpp——来源值逐分量 isfinite 检查）：Home 来源值含非有限分量（NaN/±∞、维度合法）时与维度违约同走显式提示轨（\"第 i 分量非有限……未写回\"），编排层不再让可预见的调用方违约以异常形态离开本函数（修复前 KinSessionPose 写入口 fail-fast 异常直达 Qt 槽——双轨不一致）；会话态零触碰、零修订语义不变。红→绿：PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903 同批红证（NaN/−∞ 两形态修复前异常传播）→ 修复后全绿；同批落位正式宿主门控收敛（复位 Home 按钮＝homePose 缝在场且现取查询有 Home 定义——gui_test ResetHome_DefinedSourceEnablesButton_KIN_R2/ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3，分支 kin-r2-ui 提交 5bec2389）。"
     },
     {
       "id": "F-904",
@@ -8824,7 +8826,8 @@
       "status": "open",
       "registeredAt": "2026-10-16",
       "title": "KIN-P5 验收建议：包络/采样契约破坏性演进下游感知——EnvelopeRayState 2→3 值（新增 NoSampleFound）、点云 CSV v2 sampling-mode 列、区域模式随机序列随 A06 splitmix64 换派生与旧版同查询样本集不可比（IRDSSID v2 身份已分立符合 CON-04 预期）；下游呈现批次接线与缓存类消费方需逐项感知核对",
-      "owner": "R2 呈现批次＋缓存类消费方任务"
+      "owner": "R2 呈现批次＋缓存类消费方任务",
+      "resolution": "R2 呈现批次感知已完成（kin-r2-ui 分支，提交 5bec2389/8311b3dc）：①点云 CSV 契约 v2 sampling-mode 列已接通面板导出（KinPanelFlows.exportWorkspacePointCloudCsv＋PluginPanelLinks.WorkspaceSampling_PointCloudCsvExportV2_F905 钉扎——表头 sample-index,x-m,y-m,z-m,sampling-mode,...、关节模式行 joint-random/joint-grid token）；②EnvelopeRayState NoSampleFound 三值词表域侧感知（本批包络呈现入口未落位——三维散点/包络浏览勘察结论与登记见 units/kinematics.md §14.6 v0.30 与 kin-r2 批次报告 openIssues）；③IRDSSID v2/算法版本分立提示随批次报告转达缓存类消费方——缓存类消费方逐项核对半区仍 open（owner 不变）。"
     }
   ]
 }

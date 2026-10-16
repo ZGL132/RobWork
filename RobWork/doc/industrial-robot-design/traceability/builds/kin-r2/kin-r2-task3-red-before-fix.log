@@ -1,0 +1,22 @@
+Note: Google Test filter = KinematicsPanelSampling.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinematicsPanelSampling
+[ RUN      ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsPanelSamplingGuiTest.cpp(123): error: Expected: (cx) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2 (12 ms)
+[ RUN      ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsPanelSamplingGuiTest.cpp(157): error: Expected: (mode) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2 (3 ms)
+[----------] 2 tests from KinematicsPanelSampling (15 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (15 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2
+[  FAILED  ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2
+
+ 2 FAILED TESTS

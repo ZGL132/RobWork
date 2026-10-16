@@ -35,6 +35,7 @@
 #include <sdurws/ird/kinematics/Recompute.hpp>       // KinRecomputeRequest（KIN-P4 复算流）
 #include <sdurws/ird/kinematics/Render.hpp>          // RenderPointWriteback/选中联动（L-K4/L-K1）
 #include <sdurws/ird/kinematics/SolutionSet.hpp>     // IKinematicSolutionSet/SolutionRef
+#include <sdurws/ird/evidence/Evaluator.hpp>         // evidence::IEvaluationContext（★ KIN-R2 任务3——采样宿主上下文接口）
 #include "KinPanelTypes.hpp"                          // 会话态/服务缝/后台值（同目录私有头）
 
 namespace sdurws {
@@ -273,7 +274,7 @@ std::string resetSessionHome(KinSessionPose* sessionPose,
  *        只能来自 KinPanelServices.homePose 具名来源缝，绝不以当前姿态
  *        充当 Home）。
  *
- * 执行序（四态如实，拒绝路径零写回）：
+ * 执行序（六态如实，拒绝路径零写回）：
  *   1. 会话姿态缝未装配→"复位不可用"（无写点可落）；
  *   2. homePose 来源缝未装配→"复位不可用：具名 Home 来源未装配"——
  *      调用方（widget）应已禁用按钮，此分支为防御面（直达槽的路径）；
@@ -283,10 +284,15 @@ std::string resetSessionHome(KinSessionPose* sessionPose,
  *   4. 来源值维度与设备自由度不符→"复位不可用：Home 维度 ≠ 设备自由度"
  *      （装配层解析违约/模型变更未同步的显式反馈——NFR-COR-03 不钳制
  *      不截断，截断写回会伪造复位语义）；
- *   5. 全部通过→resetSessionHome（唯一写点覆写会话姿态——零修订）。
+ *   5. 来源值含非有限分量（NaN/±∞——F-903 双轨统一）→"复位不可用：
+ *      第 i 分量非有限……未写回"（值面违约与维度违约同走提示轨——
+ *      修复前该形态只在写入口 fail-fast、异常直达 Qt 槽，与提示轨双轨
+ *      不一致；编排层前置拦截后不再有可预见的调用方违约以异常形态
+ *      离开本函数）；
+ *   6. 全部通过→resetSessionHome（唯一写点覆写会话姿态——零修订）。
  *
  * @param services [in] 服务缝（sessionPose/homePose/modelView）
- * @return 状态行文本（成功/三拒绝态——语义见执行序）
+ * @return 状态行文本（成功/各拒绝态——语义见执行序）
  *
  * 纯编排；UI 线程；零修订（结构保证——无任何命令提交通道）。
  */
@@ -477,6 +483,167 @@ KinRecomputeFlowResult recomputeSessionFromIdentity(
 std::string exportSessionResults(const KinPanelServices& services,
                                  const KinModuleSessionState& session,
                                  const std::string& targetPath, bool asCsv);
+
+// =====================================================================
+// 探索式工作空间采样（★ KIN-R2 任务3/KIN-09——结果与可视化面板的采样
+// 模式编辑入口的编排半区；域计算核 runWorkspaceSampling 已在 P5 落位，
+// 本节把面板参数装配为域查询并承接点云产物入会话态）
+// =====================================================================
+
+/**
+ * @brief 探索式采样的最小宿主上下文（evidence::IEvaluationContext 实现
+ *        ——内联运行面：无外部取消源、无进度设施、无快照物化读取）。
+ *
+ * 诚实边界（随卡 §14.6 v0.29 登记）：KIN-09 原文"可取消、有进度"的
+ * 后台通道化归后续批次——本上下文对应的是**小预算内联运行**语义（面板
+ * 暴露的样本量级为演示/诊断面），取消恒 false、进度上报即弃（不伪造
+ * 百分比——reportProgress 显式空实现，与执行器侧"进度设施未装配不伪造"
+ * 同则）。物化读取恒 nullopt——探索式零物化消费（NullEvaluationContext
+ * 同款语义）。
+ *
+ * 线程约束：仅 UI 线程构造与传引用（与面板流同约束）。
+ */
+class KinInlineSamplingContext final : public evidence::IEvaluationContext {
+public:
+    bool cancellationRequested() const override
+    {
+        return false;  // 内联运行无外部取消源——诚实常值（非伪造取消）
+    }
+    void reportProgress(std::uint8_t percent, std::string_view phase) override
+    {
+        (void)percent;
+        (void)phase;  // 进度设施未装配——不上报不伪造（EX-T05 通道留后续）
+    }
+    std::optional<std::vector<std::uint8_t>> tryObjectBytes(
+        core::ObjectId objectId, core::ContentVersion contentVersion) const override
+    {
+        (void)objectId;
+        (void)contentVersion;
+        return std::nullopt;  // 探索式零物化消费（纯计算面）
+    }
+};
+
+/**
+ * @brief 探索式采样运行结果（编排值——状态行文本＋模式溯源 token）。
+ *
+ * samplingModeToken＝workspaceSamplingModeToken(mode) 三值词表词
+ * （"cartesian-region"/"joint-random"/"joint-grid"——F-905 下游感知
+ * 半区：面板呈现与导出行的采样模式来源标注同源，禁第二处字面量）。
+ */
+struct KinWorkspaceSamplingFlowResult {
+    /// 运行是否已入会话态（true＝lastWorkspaceRun 已更新——含 cancelled
+    /// partial 产物；false＝拒绝/失败轨，会话态零触碰）。
+    bool ok = false;
+    /// 状态行文本（成功摘要含模式/完成/可达计数；拒绝轨含原因——ERR-01）。
+    std::string statusText;
+    /// 采样模式 token（F-905 溯源标注——呈现/导出同源词表值）。
+    std::string samplingModeToken;
+};
+
+/**
+ * @brief 运行一次探索式工作空间采样并入会话态（★ KIN-R2 任务3——面板
+ *        "运行采样"的编排落点；KIN-09 全链的 UI 侧承接）。
+ *
+ * 执行序（拒绝轨零会话写入）：
+ *   1. 缝校验（modelView 未装配→如实拒绝）；
+ *   2. TCP 解析（resolveSessionTcp 三入口统一单点——区域模式逐样本 IK
+ *      与关节模式 FK 都需要合法工具身份；失败＝KIN-NO-TCP 提示）；
+ *   3. 域查询装配（mode/区域盒/位置采样定义/关节采样定义直投；姿态
+ *      定义退化单方向单 roll——KIN-09 位置点云主径；config＝会话
+ *      savedConfig〔seed/预算权威——I-KIN-4 非法配置由域校验面拒绝〕；
+ *      referenceQ＝模型链零位〔D-KIN-4 显式输入的确定性投影——与正式
+ *      通道执行器同口径〕；tcp＝解析产物）；
+ *   4. 域校验（validateWorkspaceSamplingQuery——invalid_argument＝调用
+ *      方参数错误，转状态行不让异常穿越 Qt 槽）；
+ *   5. 内联运行（runWorkspaceSampling＋KinInlineSamplingContext——
+ *      cancelled partial 产物合法入会话态并如实标注）；
+ *   6. 产物入会话态（lastWorkspaceRun 唯一写点）＋摘要文本。
+ *
+ * @param services [in] 服务缝（modelView 必需；ikSolver 可空＝域内置
+ *                 求解器——生产路径）
+ * @param session  [in,out] 会话态（savedConfig 读取；lastWorkspaceRun
+ *                 唯一写点）
+ * @param params   [in] 面板采样参数（SI 真值——widget 提交面已换算）
+ * @param context  [in] 宿主上下文（KinInlineSamplingContext 缺省形态；
+ *                 测试可注入取消探针替身）
+ * @return 编排结果（ok/状态行/模式 token——语义见结构注）
+ *
+ * 纯编排；UI 线程；探索式产物不入 results 归档（R2 边界——域类型级
+ * 保证）；求解配置 seed=0 等非法值由域校验面拒绝转状态行。
+ */
+KinWorkspaceSamplingFlowResult runWorkspaceSamplingFlow(
+    const KinPanelServices& services, KinModuleSessionState& session,
+    const KinWorkspaceSamplingParams& params,
+    evidence::IEvaluationContext& context);
+
+/**
+ * @brief 导出点云 CSV（★ KIN-R2 任务3/F-905——结果与可视化面板"导出
+ *        点云"的编排落点；契约版本 2 行格式含 sampling-mode 溯源列）。
+ *
+ * 数据链：lastWorkspaceRun → buildWorkspacePointCloud（域渲染数据唯一
+ * 组装点）→ workspacePointCloudExportCsv（v2 编码）→ exportWriter 缝。
+ * 未采样/缝未装配/写出失败＝如实四态（与 exportSessionResults 同纪律）。
+ *
+ * @param services   [in] 服务缝（exportWriter）
+ * @param session    [in] 会话态（lastWorkspaceRun——nullopt＝无产物）
+ * @param targetPath [in] 目标文件路径
+ * @return 状态行文本
+ *
+ * 纯编排；UI 线程；零修订（值行导出——AT-04 同则）。
+ */
+std::string exportWorkspacePointCloudCsv(const KinPanelServices& services,
+                                         const KinModuleSessionState& session,
+                                         const std::string& targetPath);
+
+/**
+ * @brief 点云样本会话回写（★ KIN-R2 任务3——可视化点回写的采样面落点；
+ *        KIN-06/AT-04 零修订）。
+ *
+ * 数据链：lastWorkspaceRun → workspacePointWriteback（域唯一产出点——
+ * 关节模式样本返回采样构型、区域模式样本返回最佳解 q）→
+ * applyPoseWriteback（既有会话回写通道）。样本越界/无解＝域 fail-fast
+ * 异常就地转状态行（不穿越 Qt 槽）。
+ *
+ * @param services    [in] 服务缝（sessionPose）
+ * @param session     [in] 会话态（lastWorkspaceRun）
+ * @param sampleIndex [in] 采样点全局序（results 对齐键——面板回写输入
+ *                    字段）
+ * @return 状态行文本
+ *
+ * 纯编排；UI 线程；零修订。
+ */
+std::string writebackWorkspacePoint(const KinPanelServices& services,
+                                    const KinModuleSessionState& session,
+                                    std::uint64_t sampleIndex);
+
+/**
+ * @brief 导出投影视图 PNG（★ KIN-R2 任务6——"PNG 导出"最小可用入口的
+ *        写出半区；零 Qt——PNG 字节编码在 widget 呈现面完成，本函数只
+ *        承接字节经既有 exportWriter 缝落盘）。
+ *
+ * 勘察口径（随卡 §14.6 v0.30 登记）：三维视图截图 PNG 的权威承载归
+ * 框架 RWStudioView3D（REQUIREMENTS 附录 A"等价承接"行——UX-11/AT-25）；
+ * 接入 RWStudio 场景的三维散点/包络渲染需扩展 ui 单元 View3DPreview-
+ * Contract 值面＋HostView3DPreviewBackend 场景节点管理（数千点元的
+ * 生命周期/性能面）——成本超出本批，登记后续批次。本入口为**面板内
+ * 2D 正交投影**（域 projectWorkspacePoints——XY/XZ/YZ 舍轴投影）的
+ * QPainter 画布 PNG：字节面经 exportWriter（io AtomicFile write 以
+ * std::string_view 承载——二进制安全，已核实）落盘，与文本导出同一
+ * 通道同一纪律。
+ *
+ * @param services   [in] 服务缝（exportWriter）
+ * @param session    [in] 会话态（lastWorkspaceRun——nullopt＝无产物）
+ * @param targetPath [in] 目标文件路径
+ * @param pngBytes   [in] PNG 编码字节（widget 呈现面产出——本函数零
+ *                    解释零转码直传写出缝）
+ * @return 状态行文本（成功/写出失败/通道未装配/无产物——如实四态）
+ *
+ * 纯编排；UI 线程；零修订。
+ */
+std::string exportWorkspaceProjectionPng(const KinPanelServices& services,
+                                         const KinModuleSessionState& session,
+                                         const std::string& targetPath,
+                                         const std::string& pngBytes);
 
 }  // namespace kinematics
 }  // namespace ird

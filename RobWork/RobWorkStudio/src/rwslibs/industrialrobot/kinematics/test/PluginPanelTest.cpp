@@ -1152,6 +1152,8 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SingularConditionNumberRow_KIN_P3)
     std::vector<KinNamedValueRow> rows;
     EXPECT_NO_THROW({ rows = poseMetricRows(metrics.get(), std::nullopt); });
     // 条件数行语义正确：语义词"奇异/∞"、SI 真值 +∞ 原样（显示层不截断）。
+    // 行定位按 key（KIN-R2 任务4 起行集含双参考系/RPY/矩阵 9 元——索引
+    // 定位脆弱，键为稳定锚）。
     const auto cond = std::find_if(rows.begin(), rows.end(),
                                    [](const KinNamedValueRow& r) {
                                        return r.key == "cond";
@@ -1163,8 +1165,12 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SingularConditionNumberRow_KIN_P3)
     PoseMetrics nearSingular;
     nearSingular.conditionNumber = 12345.678;
     const auto nearRows = poseMetricRows(nearSingular, std::nullopt);
-    EXPECT_NE(nearRows[6].displayText.find("12345.7"), std::string::npos)
-        << nearRows[6].displayText;  // 6 位有效数字 general
+    const auto nearCond =
+        std::find_if(nearRows.begin(), nearRows.end(),
+                     [](const KinNamedValueRow& r) { return r.key == "cond"; });
+    ASSERT_NE(nearCond, nearRows.end());
+    EXPECT_NE(nearCond->displayText.find("12345.7"), std::string::npos)
+        << nearCond->displayText;  // 6 位有效数字 general
 }
 
 /// A03 回归②：关节裕量无界 +∞（连续关节无工作范围——合法无界）呈现
@@ -1263,8 +1269,9 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3)
         }
     }
     // 整表重投影对 +∞ 行幂等（+∞ 呈现与制式无关）、对有限行重换算；
-    // SI 真值逐行不动（V-17）。行数＝TCP 位置 3＋姿态对角 3＋cond/
-    // manip/min-margin 3（奇异值/裕量向量空——最小构造）＝9。
+    // SI 真值逐行不动（V-17）。行数＝TCP 基座系 3＋世界系 3＋RPY 3＋
+    // 矩阵 9＋cond/manip/min-margin 3（奇异值/裕量向量空——最小构造）
+    // ＝21（KIN-R2 任务4 双参考系＋完整姿态行集布局）。
     const auto reprojected = reprojectMetricRows(
         poseMetricRows([] {
             PoseMetrics m;
@@ -1273,7 +1280,7 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3)
             return m;
         }(), std::nullopt),
         tryFindKinDisplayUnits("mm", "deg"));
-    ASSERT_EQ(reprojected.size(), 9U);
+    ASSERT_EQ(reprojected.size(), 21U);
     bool sawCond = false;
     for (const auto& r : reprojected) {
         if (r.key == "cond") {
@@ -1283,6 +1290,88 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3)
         }
     }
     EXPECT_TRUE(sawCond);
+}
+
+/// F-902 回归：域外无穷白名单按行收紧——域契约**不含**无穷的量（TCP
+/// 位置/旋转矩阵元/可操作度/奇异值/残差——Fk.hpp PoseMetrics 字段规则）
+/// siValue=+∞（上游双重违约形态）不再静默显示泛化"∞"，走"非法值(+∞)"
+/// 显式标记轨；域内合法无穷（条件数/关节裕量——Fk.hpp:108-112/
+/// KinTypes.hpp:272-273）语义词呈现不回归（A03 三分类保留）；NaN/−∞
+/// 拒绝面不松动。修复前 formatKinQuantityText 对一切 +∞ 返回语义词
+/// （缺省"∞"）——F-902 探针实测域外位置行 siValue=+∞ 被静默放行。
+TEST(PluginPanelLinks, KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01"}, std::vector<std::string>{});
+    const double inf = std::numeric_limits<double>::infinity();
+
+    // ---- 直接格式化面：白名单参数即域契约判定（有值＝合法、缺省＝域外）。
+    // 域外 +∞：位置行（"m"）与无量纲行（"1"）——修复前此处返回"∞"（红）。
+    EXPECT_EQ(formatKinQuantityText(inf, "m", std::nullopt), "非法值(+∞)");
+    EXPECT_EQ(formatKinQuantityText(inf, "1", std::nullopt), "非法值(+∞)");
+    // 域内合法无穷不回归（A03 行为保留）：白名单在场＝语义词原样返回。
+    EXPECT_EQ(formatKinQuantityText(inf, "1", std::nullopt, "奇异/∞"),
+              "奇异/∞");
+    EXPECT_EQ(formatKinQuantityText(inf, "1", std::nullopt, "无界"), "无界");
+    // NaN/−∞ 拒绝面不松动：任何行（含白名单行）的值域都不含该两类——
+    // fail-fast 不渲染伪数据（与 F-902 的"+∞ 分轨"正交）。
+    EXPECT_THROW(
+        formatKinQuantityText(std::numeric_limits<double>::quiet_NaN(), "1",
+                              std::nullopt),
+        std::invalid_argument);
+    EXPECT_THROW(formatKinQuantityText(-inf, "1", std::nullopt, "无界"),
+                 std::invalid_argument);
+
+    // ---- 行集面：域外行与域内行同表混排互不误伤（白名单按行生效的
+    // 表级证据）。域外形态＝直接构造指标值（行构建面纯搬运；FK 契约
+    // 恒有限——本行的 +∞ 只能来自上游双重违约，即 F-902 的可达前提）。
+    PoseMetrics metrics;
+    metrics.tcpInBase.P()[0] = inf;        // TCP X（m——域外）
+    metrics.tcpInBase.R()(0, 0) = inf;     // 旋转矩阵元（∈[-1,1]——域外）
+    metrics.manipulability = inf;          // 可操作度（≥0 有限——域外）
+    metrics.singularValues = {inf};        // 奇异值（SVD 有限产出——域外）
+    metrics.conditionNumber = inf;         // 条件数（奇异＝+∞——域内合法）
+    metrics.minimumJointMargin = inf;      // 最小裕量（全无界＝+∞——域内合法）
+    std::vector<KinNamedValueRow> rows;
+    EXPECT_NO_THROW({ rows = poseMetricRows(metrics, std::nullopt); });
+    auto findRow = [&rows](const std::string& key) -> const KinNamedValueRow* {
+        const auto it = std::find_if(rows.begin(), rows.end(),
+                                     [&key](const KinNamedValueRow& r) {
+                                         return r.key == key;
+                                     });
+        return it != rows.end() ? &*it : nullptr;
+    };
+    // 域外四行：显式标记（修复前为"∞"——红）。
+    ASSERT_NE(findRow("tcp-x"), nullptr);
+    EXPECT_STREQ(findRow("tcp-x")->displayText.c_str(), "非法值(+∞)");
+    ASSERT_NE(findRow("tcp-rot-r0c0"), nullptr);
+    EXPECT_STREQ(findRow("tcp-rot-r0c0")->displayText.c_str(), "非法值(+∞)");
+    ASSERT_NE(findRow("manip"), nullptr);
+    EXPECT_STREQ(findRow("manip")->displayText.c_str(), "非法值(+∞)");
+    ASSERT_NE(findRow("sigma-1"), nullptr);
+    EXPECT_STREQ(findRow("sigma-1")->displayText.c_str(), "非法值(+∞)");
+    // 域内两行：语义词（A03 不回归）。
+    ASSERT_NE(findRow("cond"), nullptr);
+    EXPECT_STREQ(findRow("cond")->displayText.c_str(), "奇异/∞");
+    ASSERT_NE(findRow("min-margin"), nullptr);
+    EXPECT_STREQ(findRow("min-margin")->displayText.c_str(), "无界");
+    // SI 真值不被呈现层篡改（V-17——标记行同样保留 +∞ 原值）。
+    EXPECT_TRUE(std::isinf(findRow("tcp-x")->siValue)
+                && findRow("tcp-x")->siValue > 0.0);
+
+    // ---- 重投影幂等：域外标记与制式无关（切 mm/deg 后仍为显式标记，
+    // 不退化回泛化"∞"或数值）；域内语义词跨制式稳定（L-K8 同则）。
+    const auto mmDeg = tryFindKinDisplayUnits("mm", "deg");
+    ASSERT_TRUE(mmDeg.has_value());
+    const auto reprojected = reprojectMetricRows(rows, mmDeg);
+    ASSERT_EQ(reprojected.size(), rows.size());
+    for (const auto& r : reprojected) {
+        if (r.key == "tcp-x") {
+            EXPECT_STREQ(r.displayText.c_str(), "非法值(+∞)");
+        }
+        if (r.key == "cond") {
+            EXPECT_STREQ(r.displayText.c_str(), "奇异/∞");
+        }
+    }
 }
 
 /// A05 回归①：混合链（转动＋移动）解列逐轴投影——移动轴 0.1 m 在
@@ -1428,6 +1517,284 @@ TEST(PluginPanelLinks, ResetHome_NamedSourceFlowGatesAndWrites_KIN_P3)
     EXPECT_NE(ok.find("已复位 Home"), std::string::npos) << ok;
     EXPECT_EQ(h.sessionPose.jointConfiguration(), (std::vector<double>{1.0, -2.0}));
     EXPECT_EQ(h.commandSubmitCount, 0);
+}
+
+/// F-903 回归：Home 来源值含非有限分量（维度合法）——编排层前置拦截
+/// 转显式提示轨（与维度违约同轨），异常不再穿越编排函数；会话姿态零
+/// 写回。修复前该形态只在写入口（KinSessionPose::setJointConfiguration
+/// fail-fast）拒绝——std::invalid_argument 直达 Qt 槽，与维度违约的
+/// 提示轨双轨不一致（验收探针实测异常传播、会话态零污染）。
+TEST(PluginPanelLinks, ResetHome_NonFiniteSourceExplicitHintTrack_F903)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-06"}, std::vector<std::string>{"AT-04"});
+    Harness h;
+    h.sessionPose.setJointConfiguration({0.4, 0.4});  // 当前姿态非零（写回断言基线）
+
+    // 值面违约①：NaN 分量（维度 2＝二连杆 dof——维度检查通过、值非法）。
+    {
+        KinPanelServices nanHome = h.services;
+        nanHome.homePose = [] {
+            return std::optional<std::vector<double>>(
+                std::vector<double>{1.0, std::numeric_limits<double>::quiet_NaN()});
+        };
+        // 修复前此处抛 std::invalid_argument（写入口 fail-fast 穿越编排
+        // 函数——红）；修复后转提示轨不抛。
+        std::string text;
+        EXPECT_NO_THROW({ text = resetSessionHomeFromNamedSource(nanHome); });
+        EXPECT_NE(text.find("非有限"), std::string::npos) << text;
+        EXPECT_NE(text.find("未写回"), std::string::npos) << text;
+        // 会话姿态零写回（不钳制不置零——NaN 分量不得污染会话态）。
+        EXPECT_EQ(h.sessionPose.jointConfiguration(),
+                  (std::vector<double>{0.4, 0.4}));
+    }
+    // 值面违约②：−∞ 分量（同一非有限拒绝面——isfinite 单点判定）。
+    {
+        KinPanelServices negInfHome = h.services;
+        negInfHome.homePose = [] {
+            return std::optional<std::vector<double>>(
+                std::vector<double>{-std::numeric_limits<double>::infinity(), 0.5});
+        };
+        std::string text;
+        EXPECT_NO_THROW({ text = resetSessionHomeFromNamedSource(negInfHome); });
+        EXPECT_NE(text.find("非有限"), std::string::npos) << text;
+        EXPECT_EQ(h.sessionPose.jointConfiguration(),
+                  (std::vector<double>{0.4, 0.4}));
+    }
+    EXPECT_EQ(h.commandSubmitCount, 0);  // 拒绝路径零修订（KIN-06/AT-04）
+}
+
+// =====================================================================
+// KIN-R2 任务3——探索式工作空间采样编排（面板模式编辑入口的零 Qt 半区；
+// 域计算核 WorkspaceTest 已钉——本组只钉"面板参数→域查询→产物入会话
+// 态→导出/回写走既有通道"的编排面与 F-905 下游感知）
+// =====================================================================
+
+/// 关节随机采样全链：面板参数（mode=JointSpaceRandom、样本数 8）→域
+/// 查询装配→内联 FK 采样→产物入会话态（逐样本 Reached——FK 构造性
+/// 可达、样本携带采样构型）＋模式 token 溯源（F-905——"joint-random"
+/// 词表词，禁第二处字面量）。
+TEST(PluginPanelLinks, WorkspaceSampling_JointRandomFlow_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    Harness h;  // twoLinkModel（带工具——FK 消费合法 TCP）
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::JointSpaceRandom;
+    params.jointRandomCount = 8;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    EXPECT_TRUE(r.ok) << r.statusText;
+    EXPECT_EQ(r.samplingModeToken, "joint-random");
+    EXPECT_NE(r.statusText.find("采样完成"), std::string::npos) << r.statusText;
+    ASSERT_TRUE(h.session.lastWorkspaceRun != nullptr);
+    const WorkspaceSampleRun& run = *h.session.lastWorkspaceRun;
+    EXPECT_EQ(run.mode, WorkspaceSamplingMode::JointSpaceRandom);
+    ASSERT_EQ(run.results.size(), 8U);
+    for (const WorkspaceSampleResult& s : run.results) {
+        // 关节模式 FK 全序：构型可达由 FK 保证——零搜索未果形态（域
+        // KIN-09 权威语义；DataInsufficient 仅 FK 值面错误可达）。
+        EXPECT_EQ(s.state, SampleState::Reached) << s.sampleIndex;
+        EXPECT_FALSE(s.jointConfiguration.empty()) << s.sampleIndex;
+        EXPECT_TRUE(s.bestSolution.has_value()) << s.sampleIndex;
+    }
+}
+
+/// 区域盒模式全链（随机撒点）：区域盒尺寸合法（>0）→逐样本 IK 评估→
+/// 产物入会话态＋"cartesian-region" token（旧径行为保持——模式词表
+/// 回显）。区域零样本合法口径：randomCount=0 → 空产物 ok=true（状态行
+/// 含"共 0"——零样本不拒绝不虚构）。
+TEST(PluginPanelLinks, WorkspaceSampling_CartesianRegionFlow_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    Harness h;
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::CartesianRegion;
+    params.regionCenterX = 0.6;  // 基座系 m（部分落在二连杆可达环内）
+    params.regionSizeX = 0.2;
+    params.regionSizeY = 0.2;
+    params.regionSizeZ = 0.2;
+    params.positionRandom = true;
+    params.regionRandomCount = 4;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    EXPECT_TRUE(r.ok) << r.statusText;
+    EXPECT_EQ(r.samplingModeToken, "cartesian-region");
+    ASSERT_TRUE(h.session.lastWorkspaceRun != nullptr);
+    // 样本数＝位置样本 4＋退化位姿样本 4（§7.2 样本集语义：位置样本与
+    // (位置×方向×roll) 位姿样本分列——单方向单 roll 退化配置下位姿样本
+    // 数＝位置数，两类样本全部逐样本评估，域分母口径原样承接）。
+    EXPECT_EQ(h.session.lastWorkspaceRun->results.size(), 8U);
+
+    // 零样本口径：randomCount=0 → 空产物（合法——与域零样本判定一致）。
+    KinWorkspaceSamplingParams zero = params;
+    zero.regionRandomCount = 0;
+    const KinWorkspaceSamplingFlowResult rz =
+        runWorkspaceSamplingFlow(h.services, h.session, zero, ctx);
+    EXPECT_TRUE(rz.ok) << rz.statusText;
+    ASSERT_TRUE(h.session.lastWorkspaceRun != nullptr);
+    EXPECT_EQ(h.session.lastWorkspaceRun->results.size(), 0U);
+}
+
+/// 非法查询拒绝轨：区域尺寸 ≤0（RegionBox 契约违约）与配置 seed=0
+/// （I-KIN-4）——域校验 invalid_argument 转显式状态行（不抛、不穿越
+/// 调用方），会话态零触碰（lastWorkspaceRun 保持空）。
+TEST(PluginPanelLinks, WorkspaceSampling_InvalidQueryExplicitReject_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "NFR-COR-03"},
+                  std::vector<std::string>{});
+    Harness h;
+    KinInlineSamplingContext ctx;
+    // 形态①：区域盒零尺寸（RegionBox size 三分量须 >0）。
+    {
+        KinWorkspaceSamplingParams params;
+        params.regionSizeX = 0.0;  // 违例——域校验首错
+        const KinWorkspaceSamplingFlowResult r =
+            runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+        EXPECT_FALSE(r.ok);
+        EXPECT_NE(r.statusText.find("采样查询非法"), std::string::npos)
+            << r.statusText;
+        EXPECT_EQ(h.session.lastWorkspaceRun, nullptr);  // 会话态零触碰
+    }
+    // 形态②：配置 seed=0（I-KIN-4——savedConfig 会话纪律的越界注入）。
+    {
+        h.session.savedConfig.seed = 0;
+        KinWorkspaceSamplingParams params;
+        params.mode = WorkspaceSamplingMode::JointSpaceRandom;
+        params.jointRandomCount = 2;
+        const KinWorkspaceSamplingFlowResult r =
+            runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+        EXPECT_FALSE(r.ok);
+        EXPECT_NE(r.statusText.find("非法"), std::string::npos) << r.statusText;
+        EXPECT_EQ(h.session.lastWorkspaceRun, nullptr);
+    }
+}
+
+/// 点云 CSV 导出（F-905 导出半区）：契约 v2 表头含 sampling-mode 溯源
+/// 列、行值携带关节模式 token；导出走既有 exportWriter 缝（路径/内容
+/// 由记录缝捕获）＋零修订（命令出口计数为零）。无产物＝如实拒绝。
+TEST(PluginPanelLinks, WorkspaceSampling_PointCloudCsvExportV2_F905)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    Harness h;
+    // 无产物态：如实拒绝（不虚构空文件）。
+    EXPECT_NE(exportWorkspacePointCloudCsv(h.services, h.session, "x.csv")
+                  .find("无可导出点云"),
+              std::string::npos);
+
+    // 关节网格采样（每轴 2 点 ×2 轴＝4 样本）后导出。
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::JointSpaceGrid;
+    params.jointGridPerAxis = 2;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    ASSERT_TRUE(r.ok) << r.statusText;
+
+    const std::string status =
+        exportWorkspacePointCloudCsv(h.services, h.session, "kin-ws.csv");
+    EXPECT_NE(status.find("已导出点云"), std::string::npos) << status;
+    EXPECT_NE(status.find("sampling-mode"), std::string::npos) << status;
+    EXPECT_EQ(h.exportedPath, "kin-ws.csv");
+    // 契约 v2 表头（首行——呈现/测试解析锚）：sampling-mode 列在场；
+    // 关节模式行携带 "joint-grid" token（点从哪来的强制溯源）。
+    ASSERT_FALSE(h.exportedContent.empty());
+    const std::string header =
+        h.exportedContent.substr(0, h.exportedContent.find('\n'));
+    EXPECT_NE(header.find("sample-index,x-m,y-m,z-m,sampling-mode"),
+              std::string::npos)
+        << header;
+    EXPECT_NE(h.exportedContent.find("joint-grid"), std::string::npos);
+    // 数据行数＝样本数 4（表头 1 行＋数据 4 行）。
+    const int lines = static_cast<int>(
+        std::count(h.exportedContent.begin(), h.exportedContent.end(), '\n'));
+    EXPECT_EQ(lines, 5);
+    EXPECT_EQ(h.commandSubmitCount, 0);  // 导出零修订（AT-04）
+}
+
+/// 样本回写与守卫轨：关节模式样本回写走既有会话回写通道（会话姿态＝
+/// 采样构型；零修订——命令出口零触碰）；越界样本域 fail-fast 转状态行
+/// 不抛；会话姿态缝未装配＝如实拒绝。
+TEST(PluginPanelLinks, WorkspaceSampling_PointWritebackAndGuards_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "KIN-06"},
+                  std::vector<std::string>{"AT-04"});
+    Harness h;
+    // 无产物守卫。
+    EXPECT_NE(writebackWorkspacePoint(h.services, h.session, 0)
+                  .find("尚未运行采样"),
+              std::string::npos);
+
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::JointSpaceRandom;
+    params.jointRandomCount = 4;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    ASSERT_TRUE(r.ok) << r.statusText;
+    const std::vector<double> sample0 =
+        h.session.lastWorkspaceRun->results.front().jointConfiguration;
+
+    // 回写样本 0：会话姿态＝采样构型（KIN-06 零修订——命令出口零触碰）。
+    const std::string ok =
+        writebackWorkspacePoint(h.services, h.session, 0);
+    EXPECT_NE(ok.find("已更新"), std::string::npos) << ok;
+    EXPECT_EQ(h.sessionPose.jointConfiguration(), sample0);
+    EXPECT_EQ(h.commandSubmitCount, 0);
+
+    // 越界样本：域 fail-fast 转状态行（不抛——提示轨，F-903 同则）。
+    std::string reject;
+    EXPECT_NO_THROW({ reject = writebackWorkspacePoint(h.services, h.session, 9999); });
+    EXPECT_NE(reject.find("回写被拒"), std::string::npos) << reject;
+
+    // 会话姿态缝未装配：如实拒绝。
+    KinPanelServices noPose = h.services;
+    noPose.sessionPose = nullptr;
+    EXPECT_NE(writebackWorkspacePoint(noPose, h.session, 0)
+                  .find("会话姿态未装配"),
+              std::string::npos);
+}
+
+/// 投影视图 PNG 写出编排（★ KIN-R2 任务6——零 Qt 半区）：四态守卫
+/// （无产物/空字节/成功写出/通道未装配）；字节直传不解释（二进制安全
+/// 面由 io write(string_view) 承载——此处钉"内容逐字节到缝"的编排
+/// 契约；真实 PNG 编码在 gui 半区验证）。
+TEST(PluginPanelLinks, WorkspaceSampling_ProjectionPngExportGuards_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    Harness h;
+    // 无产物态：如实拒绝。
+    EXPECT_NE(exportWorkspaceProjectionPng(h.services, h.session, "x.png",
+                                           std::string("bytes"))
+                  .find("无可导出投影"),
+              std::string::npos);
+    // 采样后：空字节（呈现面编码异常的误用形态）拒绝；非空字节成功
+    // 落缝（路径/内容逐字节捕获——零转码契约）。
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::JointSpaceRandom;
+    params.jointRandomCount = 3;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    ASSERT_TRUE(r.ok) << r.statusText;
+
+    EXPECT_NE(exportWorkspaceProjectionPng(h.services, h.session, "x.png",
+                                           std::string())
+                  .find("画布编码为空"),
+              std::string::npos);
+    const std::string status = exportWorkspaceProjectionPng(
+        h.services, h.session, "kin-ws.png", std::string("\x89PNG-mock", 9));
+    EXPECT_NE(status.find("已导出投影视图"), std::string::npos) << status;
+    EXPECT_EQ(h.exportedPath, "kin-ws.png");
+    EXPECT_EQ(h.exportedContent, std::string("\x89PNG-mock", 9));  // 逐字节
+    // 写出缝未装配：如实拒绝。
+    KinPanelServices noWriter = h.services;
+    noWriter.exportWriter = nullptr;
+    EXPECT_NE(exportWorkspaceProjectionPng(noWriter, h.session, "x.png",
+                                           std::string("bytes"))
+                  .find("写出通道未装配"),
+              std::string::npos);
+    EXPECT_EQ(h.commandSubmitCount, 0);  // 导出零修订（AT-04）
 }
 
 }  // namespace

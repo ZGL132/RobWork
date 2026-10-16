@@ -1,0 +1,95 @@
+Note: Google Test filter = *OutOfDomainInfinityMarker_F902:*NonFiniteSourceExplicitHintTrack_F903
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from PluginPanelLinks
+[ RUN      ] PluginPanelLinks.KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1309): error: Expected equality of these values:
+  formatKinQuantityText(inf, "m", std::nullopt)
+    Which is: "\xE2\x88\x9E"
+    As Text: "∞"
+  "非法值(+∞)"
+    Which is: "\xE9\x9D\x9E\xE6\xB3\x95\xE5\x80\xBC(+\xE2\x88\x9E)"
+    As Text: "非法值(+∞)"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1310): error: Expected equality of these values:
+  formatKinQuantityText(inf, "1", std::nullopt)
+    Which is: "\xE2\x88\x9E"
+    As Text: "∞"
+  "非法值(+∞)"
+    Which is: "\xE9\x9D\x9E\xE6\xB3\x95\xE5\x80\xBC(+\xE2\x88\x9E)"
+    As Text: "非法值(+∞)"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1345): error: Expected equality of these values:
+  findRow("tcp-x")->displayText.c_str()
+    Which is: "\xE2\x88\x9E"
+    As Text: "∞"
+  "非法值(+∞)"
+    Which is: "\xE9\x9D\x9E\xE6\xB3\x95\xE5\x80\xBC(+\xE2\x88\x9E)"
+    As Text: "非法值(+∞)"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1346): error: Expected: (findRow("tcp-rot-r0c0")) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] PluginPanelLinks.KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902 (0 ms)
+[ RUN      ] PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1543): error: Expected: { text = resetSessionHomeFromNamedSource(nanHome); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "KinSessionPose：会话姿态含非有限分量（rad/m——NaN/±∞ 拒绝入态）".
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1544): error: Expected: (text.find("非有限")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1545): error: Expected: (text.find("未写回")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1558): error: Expected: { text = resetSessionHomeFromNamedSource(negInfHome); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "KinSessionPose：会话姿态含非有限分量（rad/m——NaN/±∞ 拒绝入态）".
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(1559): error: Expected: (text.find("非有限")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+
+[  FAILED  ] PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903 (0 ms)
+[----------] 2 tests from PluginPanelLinks (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] PluginPanelLinks.KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902
+[  FAILED  ] PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903
+
+ 2 FAILED TESTS
+Note: Google Test filter = *RpyAttitudeRoundtrip_KIN_R2:*SourceAbsentExplicitHintNoWriteback_KIN_P3:*TargetLabels_FollowDisplayUnitSystem_KIN_P1
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinematicsPanelInput
+[ RUN      ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsPanelInputGuiTest.cpp(173): error: Expected equality of these values:
+  texts.size()
+    Which is: 3
+  6
+
+[  FAILED  ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1 (13 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsPanelInputGuiTest.cpp(500): error: Expected equality of these values:
+  edits.size()
+    Which is: 0
+  6U
+    Which is: 6
+
+[  FAILED  ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2 (1 ms)
+[----------] 2 tests from KinematicsPanelInput (15 ms total)
+
+[----------] 1 test from KinematicsPanelSession
+[ RUN      ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsPanelSessionGuiTest.cpp(277): error: Value of: button->isEnabled()
+  Actual: true
+Expected: false
+
+[  FAILED  ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3 (1 ms)
+[----------] 1 test from KinematicsPanelSession (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (17 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1
+[  FAILED  ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2
+[  FAILED  ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3
+
+ 3 FAILED TESTS

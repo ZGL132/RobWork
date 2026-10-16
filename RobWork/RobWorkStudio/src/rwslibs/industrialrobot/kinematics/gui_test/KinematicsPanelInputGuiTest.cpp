@@ -36,11 +36,14 @@
 #include <QLineEdit>
 #include <QMetaObject>
 
+#include <cmath>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
+#include <rw/math/Constants.hpp>  // rw::math::Pi/Deg2Rad（期望角换算——库权威常量）
+#include <rw/math/RPY.hpp>  // RPY（★ KIN-R2 任务4——期望旋转的库设施构造）
 #include <sdurws/ird/kinematics/Ik.hpp>  // IIkSolver/IkRequest（记录求解器）
 #include "KinFkFixture.hpp"              // TestView/sixAxisModel（同单元夹具）
 #include "plugin/KinematicsPanelWidget.hpp"  // 被测面板（真实 QWidget）
@@ -94,13 +97,25 @@ struct PanelHarness {
         panel = std::make_unique<KinematicsPanelWidget>(services, state);
     }
 
-    /// 目标输入三编辑（构造序＝X/Y/Z——表单登记序，探针按序取值）。
+    /// 目标输入六编辑（★ KIN-R2 任务4：位置 XYZ＋姿态 RPY——按 objectName
+    /// 确定性取值，序＝X/Y/Z/Roll/Pitch/Yaw；findChildren 顺序不依赖）。
+    /// 缺件时返回值短于 6——调用方 ASSERT_EQ(edits.size(), 6U) 即红
+    /// （gtest 断言不可用于非 void 辅助函数，红证由调用方承载）。
     QList<QLineEdit*> targetEdits() const
     {
-        return panel->findChildren<QLineEdit*>();
+        QList<QLineEdit*> edits;
+        for (const char* name :
+             {"target-x", "target-y", "target-z", "target-roll",
+              "target-pitch", "target-yaw"}) {
+            if (QLineEdit* edit = panel->findChild<QLineEdit*>(QString(name))) {
+                edits << edit;
+            }
+        }
+        return edits;
     }
 
-    /// 目标轴标签文本集合（表单 QLabel——标签随制式断言面）。
+    /// 目标轴标签文本集合（表单 QLabel——位置三轴＋姿态 RPY 三行的
+    /// 随制式断言面）。
     QStringList targetLabelTexts() const
     {
         QStringList texts;
@@ -109,8 +124,9 @@ struct PanelHarness {
             const QString text = label->text();
             if (text.startsWith(QStringLiteral("目标 X"))
                 || text.startsWith(QStringLiteral("目标 Y"))
-                || text.startsWith(QStringLiteral("目标 Z"))) {
-                texts << text;  // 只取目标轴行标签（状态行等无关标签不入集）
+                || text.startsWith(QStringLiteral("目标 Z"))
+                || text.startsWith(QStringLiteral("目标 RPY-"))) {
+                texts << text;  // 只取目标行标签（状态行等无关标签不入集）
             }
         }
         return texts;
@@ -153,10 +169,14 @@ TEST(KinematicsPanelInput, TargetLabels_FollowDisplayUnitSystem_KIN_P1)
     // 缺省（未注入制式＝SI 直显）：三轴标签标注 m＋基座系参考系标识。
     {
         const QStringList texts = h.targetLabelTexts();
-        ASSERT_EQ(texts.size(), 3);
+        // ★ KIN-R2 任务4：位置三轴＋姿态 RPY 三行——六标签齐全。
+        ASSERT_EQ(texts.size(), 6);
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 X（m，基座系）")));
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 Y（m，基座系）")));
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 Z（m，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Roll（rad，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Pitch（rad，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Yaw（rad，基座系）")));
     }
 
     // L-K8 切换 mm/deg：标签随制式重建（零重算/零修订——呈现半区）。
@@ -165,10 +185,14 @@ TEST(KinematicsPanelInput, TargetLabels_FollowDisplayUnitSystem_KIN_P1)
     h.panel->setDisplayUnits(mm);
     {
         const QStringList texts = h.targetLabelTexts();
-        ASSERT_EQ(texts.size(), 3);
+        ASSERT_EQ(texts.size(), 6);
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 X（mm，基座系）")));
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 Y（mm，基座系）")));
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 Z（mm，基座系）")));
+        // 角度量纲随制式独立标注（deg——长度 mm、角度 deg 分立，KIN-R2）。
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Roll（deg，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Pitch（deg，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Yaw（deg，基座系）")));
         // 不得残留旧制式硬编码形态 "（m）"（精确全串比对已保证制式正确；
         // 此处对修复前的旧文本再补一钉——防回归回退到"标签恒 m"）。
         for (const QString& text : texts) {
@@ -205,7 +229,7 @@ TEST(KinematicsPanelInput, TargetSubmit_ConsistentSiAcrossUnitSystems_KIN_P1)
         h.panel->setDisplayUnits(units);
 
         const QList<QLineEdit*> edits = h.targetEdits();
-        ASSERT_EQ(edits.size(), 3U);
+        ASSERT_EQ(edits.size(), 6U);  // 六字段（位置 3＋姿态 RPY 3——KIN-R2 任务4）
         edits[0]->setText(QString::fromStdString(inputText));
         edits[1]->setText(QStringLiteral("0"));
         edits[2]->setText(QStringLiteral("0"));
@@ -230,7 +254,7 @@ TEST(KinematicsPanelInput, TargetSubmit_mmInput01IsTenthMillimetre_KIN_P1)
     h.panel->setDisplayUnits(mm);
 
     const QList<QLineEdit*> edits = h.targetEdits();
-    ASSERT_EQ(edits.size(), 3U);
+    ASSERT_EQ(edits.size(), 6U);  // 六字段（位置 3＋姿态 RPY 3——KIN-R2 任务 4）
     edits[0]->setText(QStringLiteral("0.1"));
     edits[1]->setText(QStringLiteral("0"));
     edits[2]->setText(QStringLiteral("0"));
@@ -248,7 +272,7 @@ TEST(KinematicsPanelInput, TargetSubmit_RejectsNonFiniteInput_KIN_P1)
     PanelHarness h;
 
     const QList<QLineEdit*> edits = h.targetEdits();
-    ASSERT_EQ(edits.size(), 3U);
+    ASSERT_EQ(edits.size(), 6U);  // 六字段（位置 3＋姿态 RPY 3——KIN-R2 任务 4）
     edits[0]->setText(QStringLiteral("inf"));
     edits[1]->setText(QStringLiteral("0"));
     edits[2]->setText(QStringLiteral("0"));
@@ -318,11 +342,18 @@ struct AssembleHarness {
 
     void setTarget(const QString& x, const QString& y, const QString& z)
     {
-        const QList<QLineEdit*> edits = panel->findChildren<QLineEdit*>();
-        ASSERT_EQ(edits.size(), 3U);
-        edits[0]->setText(x);
-        edits[1]->setText(y);
-        edits[2]->setText(z);
+        // 位置分量按 objectName 定位（★ KIN-R2 任务4——六字段后
+        // findChildren 顺序不可依赖）；姿态 RPY 三字段留空＝0（历史
+        // 单位旋转行为——本夹具用例均为位置目标）。
+        QLineEdit* ex = panel->findChild<QLineEdit*>(QStringLiteral("target-x"));
+        QLineEdit* ey = panel->findChild<QLineEdit*>(QStringLiteral("target-y"));
+        QLineEdit* ez = panel->findChild<QLineEdit*>(QStringLiteral("target-z"));
+        ASSERT_NE(ex, nullptr);
+        ASSERT_NE(ey, nullptr);
+        ASSERT_NE(ez, nullptr);
+        ex->setText(x);
+        ey->setText(y);
+        ez->setText(z);
     }
 
     void clickSolve()
@@ -392,8 +423,9 @@ TEST(KinematicsPanelInput, SolveButton_CarriesCompleteAssembledRequest_KIN_P2)
 /// 此处不再用退化链——其任意构型雅可比奇异，条件数 +∞ 会触发
 /// 审查 A03 的显示格式化拒绝面〔KIN-P3 范围，不属于本包修复面〕，
 /// 与 A08 装配链路无关）。目标＝q*=(0.3,−0.3) 的精确可达位姿：姿态
-/// Rz(0)=I 恰匹配面板输入能力（目标只编辑位置、姿态恒单位阵——
-/// 审查 §4 已知边界），位置 (1.1·cos0.3＋0.7, 1.1·sin0.3, 0) 解析现算。
+/// Rz(0)=I（零姿态。KIN-R2 后面板已支持完整 RPY 姿态编辑，本用例仍取
+/// 零姿态以聚焦 A08 请求装配链路本身——"姿态恒单位阵"的旧输入边界
+/// 已由本文件 RPY 往返/非有限姿态用例闭合），位置 (1.1·cos0.3＋0.7, 1.1·sin0.3, 0) 解析现算。
 /// 修复前：残缺请求触发求解器 fail-fast（std::invalid_argument 穿越
 /// 槽函数），本用例红；修复后：SolutionsFound＋解集入会话态＋状态行
 /// 内联完成。
@@ -442,5 +474,77 @@ TEST(KinematicsPanelInput, SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2)
 
     EXPECT_FALSE(h.recorder.received.has_value());
     EXPECT_NE(h.panel->lastStatusText().toStdString().find("KIN-NO-TCP"),
+              std::string::npos);
+}
+
+// =====================================================================
+// KIN-R2 任务4——目标姿态 RPY 编辑（审查 §4"目标只编辑 XYZ、姿态固定
+// 为单位旋转"的修复面）：姿态角按显示制式输入、提交逆换算回 SI rad
+// 后经 rw::math::RPY 构造完整旋转（求解器收到完整位姿目标）。
+// =====================================================================
+
+/// RPY 往返钉扎：deg 制式输入 roll=30/pitch=0/yaw=90，提交给求解器的
+/// targetInBase 旋转必须等于 RPY(π/6, 0, π/2)（rw::math::RPY 库语义
+/// ——Z-Y-X 欧角）。修复前姿态恒单位旋转（无编辑入口——审查 §4 已知
+/// 边界，本用例修复前红）。
+TEST(KinematicsPanelInput, TargetSubmit_RpyAttitudeRoundtrip_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"},
+                  std::vector<std::string>{});
+    PanelHarness h;
+    // deg 制式（角度标注/输入面；长度保持 m——两量纲分立独立换算）。
+    const auto deg = DisplayUnitProjection::tryFind("m", "deg");
+    ASSERT_TRUE(deg.has_value());
+    h.panel->setDisplayUnits(deg);
+
+    const QList<QLineEdit*> edits = h.targetEdits();
+    ASSERT_EQ(edits.size(), 6U);
+    edits[0]->setText(QStringLiteral("1"));   // X＝1 m
+    edits[1]->setText(QStringLiteral("0"));
+    edits[2]->setText(QStringLiteral("0"));
+    edits[3]->setText(QStringLiteral("30"));  // roll＝30 deg＝π/6 rad
+    edits[4]->setText(QStringLiteral("0"));   // pitch＝0
+    edits[5]->setText(QStringLiteral("90"));  // yaw＝90 deg＝π/2 rad
+    h.clickSolve();
+
+    ASSERT_TRUE(h.solver.received.has_value());
+    // 期望旋转：显示制式 deg → SI rad 逆换算后经 rw::math::RPY 构造
+    // （与 widget 同一库设施——期望值即库权威语义，零手写三角）。
+    const double r = 30.0 * (rw::math::Pi / 180.0);   // rad
+    const double y = 90.0 * (rw::math::Pi / 180.0);   // rad
+    const rw::math::Rotation3D<double> expect =
+        rw::math::RPY<double>(r, 0.0, y).toRotation3D();
+    const rw::math::Rotation3D<double>& got =
+        h.solver.received->targetInBase.R();
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            EXPECT_NEAR(got(i, j), expect(i, j), 1e-12)
+                << "R[" << i << "][" << j << "]";
+        }
+    }
+    // 位置分量同请求不回归（deg 制式只影响角度半区——长度 m 恒等）。
+    EXPECT_DOUBLE_EQ(h.solver.received->targetInBase.P()[0], 1.0);
+}
+
+/// 非有限姿态输入拒绝（NFR-COR-03 交互层拒绝——yaw="inf" 解析成功但
+/// 非有限：提交面就地反馈保留原值，求解器零触达——与位置分量的非有限
+/// 拒绝同则，KIN-R2 任务4 的姿态半区）。
+TEST(KinematicsPanelInput, TargetSubmit_RejectsNonFiniteAttitude_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-COR-03"},
+                  std::vector<std::string>{});
+    PanelHarness h;
+    const QList<QLineEdit*> edits = h.targetEdits();
+    ASSERT_EQ(edits.size(), 6U);
+    edits[0]->setText(QStringLiteral("0"));
+    edits[1]->setText(QStringLiteral("0"));
+    edits[2]->setText(QStringLiteral("0"));
+    edits[3]->setText(QStringLiteral("0"));
+    edits[4]->setText(QStringLiteral("0"));
+    edits[5]->setText(QStringLiteral("inf"));  // 非有限姿态角
+    h.clickSolve();
+    // 求解器零触达（受理前拒绝）＋状态行如实反馈（姿态分量语义）。
+    EXPECT_FALSE(h.solver.received.has_value());
+    EXPECT_NE(h.panel->lastStatusText().toStdString().find("姿态"),
               std::string::npos);
 }

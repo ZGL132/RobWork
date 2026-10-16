@@ -9,9 +9,11 @@
 #include "KinematicsPanelWidget.hpp"
 
 #include <QFormLayout>
+#include <QBuffer>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLineEdit>
+#include <QPainter>
 #include <QVBoxLayout>
 
 #include <cmath>
@@ -24,8 +26,9 @@
 #include <sdurws/ird/ui/UiText.hpp>                // 文案键解析（UI-T25——迁移标记标签挂键；
                                                    // 构造期命令标题 resolver 尚未注入，此处直读
                                                    // UiText 静态表与 requirements 面板先例同款）
+#include <rw/math/RPY.hpp>                        // RPY（★ KIN-R2 任务4——目标姿态编辑的库设施直调）
 #include "KinPanelCommandCatalog.hpp"              // 命令目录（按钮词形与只读门控）
-#include "KinPanelUnits.hpp"                       // resolveKinDisplayToSi（提交面逆换算——A07）
+#include "KinPanelUnits.hpp"                       // resolveKinDisplayToSi/resolveKinAngleDisplayToSi（提交面逆换算——A07/KIN-R2）
 
 namespace sdurws {
 namespace ird {
@@ -116,8 +119,13 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     auto* pane = new QWidget(this);
     auto* layout = new QHBoxLayout(pane);
 
-    // ---- 左半：位姿指标行表＋关节表（KIN-12 显示投影）。
+    // ---- 左半：参考系标识行＋位姿指标行表＋关节表（KIN-12 显示投影）。
+    // ★ KIN-R2 任务4（审查 §4 坐标系标识）：标识行由 refreshPosePane 随
+    // TCP 解析现投（工具身份＋双参考系口径说明——用户不必猜位姿值在哪个
+    // 系下表达）。
     auto* left = new QVBoxLayout();
+    m_frameLabel = new QLabel(pane);
+    left->addWidget(m_frameLabel);
     m_poseTable = makeTable({tr("指标"), tr("值")}, pane);
     left->addWidget(m_poseTable);
     m_jointTable = makeTable({tr("关节"), tr("当前构型")}, pane);
@@ -138,9 +146,31 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     m_targetXLabel = new QLabel(pane);
     m_targetYLabel = new QLabel(pane);
     m_targetZLabel = new QLabel(pane);
+    // objectName＝稳定定位锚（gui_test 按名取控件——findChildren 顺序
+    // 依赖创建序，六字段扩展后按名取值为确定性语义；KIN-R2 任务4）。
+    m_targetX->setObjectName(QStringLiteral("target-x"));
+    m_targetY->setObjectName(QStringLiteral("target-y"));
+    m_targetZ->setObjectName(QStringLiteral("target-z"));
     form->addRow(m_targetXLabel, m_targetX);
     form->addRow(m_targetYLabel, m_targetY);
     form->addRow(m_targetZLabel, m_targetZ);
+    // ★ KIN-R2 任务4（审查 §4"目标姿态固定为单位旋转"修复面）：目标
+    // 姿态以 RPY（roll-pitch-yaw，Z-Y-X 欧角约定随 rw::math::RPY 语义）
+    // 三字段编辑——**显示制式**角度值（deg/rad 随制式），提交经
+    // resolveKinAngleDisplayToSi 逆换算回 SI rad 后经 rw::math::RPY
+    // 构造完整旋转（空输入＝缺省 0，即历史单位旋转行为——向后兼容）。
+    m_targetRoll = new QLineEdit(pane);
+    m_targetPitch = new QLineEdit(pane);
+    m_targetYaw = new QLineEdit(pane);
+    m_targetRollLabel = new QLabel(pane);
+    m_targetPitchLabel = new QLabel(pane);
+    m_targetYawLabel = new QLabel(pane);
+    m_targetRoll->setObjectName(QStringLiteral("target-roll"));
+    m_targetPitch->setObjectName(QStringLiteral("target-pitch"));
+    m_targetYaw->setObjectName(QStringLiteral("target-yaw"));
+    form->addRow(m_targetRollLabel, m_targetRoll);
+    form->addRow(m_targetPitchLabel, m_targetPitch);
+    form->addRow(m_targetYawLabel, m_targetYaw);
     // 首版标注（按当前会话制式——构造期 displayUnits 尚为缺省 SI 直显，
     // setDisplayUnits 注入后经 refreshAll 重建）。
     refreshTargetUnitPresentation();
@@ -215,6 +245,116 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
 
     m_statTable = makeTable({tr("统计"), tr("值")}, pane);
     layout->addWidget(m_statTable);
+
+    // ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——采样模式编辑入口）：
+    // 模式三值（区域盒 IK 采样/关节随机 FK 采样/关节网格 FK 采样——域
+    // WorkspaceSamplingMode 词表序）；参数字段随模式互斥启用
+    // （refreshWsParamVisibility）；运行/导出/回写全部经编排函数零内联
+    // 逻辑。字段 objectName＝"ws-*"（gui_test 稳定定位锚）。
+    m_wsModeBox = new QComboBox(pane);
+    m_wsModeBox->setObjectName(QStringLiteral("ws-mode-box"));
+    m_wsModeBox->addItem(tr("区域盒（IK 采样）"));
+    m_wsModeBox->addItem(tr("关节随机（FK 采样）"));
+    m_wsModeBox->addItem(tr("关节网格（FK 采样）"));
+    connect(m_wsModeBox, &QComboBox::currentIndexChanged, this,
+            &KinematicsPanelWidget::onWsModeChanged);
+    m_wsPositionMethodBox = new QComboBox(pane);
+    m_wsPositionMethodBox->setObjectName(QStringLiteral("ws-position-method"));
+    m_wsPositionMethodBox->addItem(tr("随机均匀"));
+    m_wsPositionMethodBox->addItem(tr("体心网格"));
+
+    auto makeWsEdit = [pane](const QString& objectName,
+                             const QString& text) {
+        QLineEdit* edit = new QLineEdit(text, pane);
+        edit->setObjectName(objectName);
+        return edit;
+    };
+    m_wsRegionCX = makeWsEdit(QStringLiteral("ws-region-cx"), QStringLiteral("0"));
+    m_wsRegionCY = makeWsEdit(QStringLiteral("ws-region-cy"), QStringLiteral("0"));
+    m_wsRegionCZ = makeWsEdit(QStringLiteral("ws-region-cz"), QStringLiteral("0"));
+    m_wsRegionSX = makeWsEdit(QStringLiteral("ws-region-sx"), QStringLiteral("0.2"));
+    m_wsRegionSY = makeWsEdit(QStringLiteral("ws-region-sy"), QStringLiteral("0.2"));
+    m_wsRegionSZ = makeWsEdit(QStringLiteral("ws-region-sz"), QStringLiteral("0.2"));
+    m_wsRegionRandom = makeWsEdit(QStringLiteral("ws-region-random"), QStringLiteral("64"));
+    m_wsRegionGridX = makeWsEdit(QStringLiteral("ws-region-grid-x"), QStringLiteral("2"));
+    m_wsRegionGridY = makeWsEdit(QStringLiteral("ws-region-grid-y"), QStringLiteral("2"));
+    m_wsRegionGridZ = makeWsEdit(QStringLiteral("ws-region-grid-z"), QStringLiteral("2"));
+    m_wsJointRandom = makeWsEdit(QStringLiteral("ws-joint-random"), QStringLiteral("64"));
+    m_wsJointGrid = makeWsEdit(QStringLiteral("ws-joint-grid"), QStringLiteral("2"));
+    m_wsSampleIndex = makeWsEdit(QStringLiteral("ws-sample-index"), QString());
+
+    auto* wsForm = new QFormLayout();
+    wsForm->addRow(tr("采样模式"), m_wsModeBox);
+    wsForm->addRow(tr("区域中心 X（长度制式单位，基座系）"),
+                   m_wsRegionCX);
+    wsForm->addRow(tr("区域中心 Y（长度制式单位，基座系）"),
+                   m_wsRegionCY);
+    wsForm->addRow(tr("区域中心 Z（长度制式单位，基座系）"),
+                   m_wsRegionCZ);
+    wsForm->addRow(tr("区域边长 X（长度制式单位，基座系）"),
+                   m_wsRegionSX);
+    wsForm->addRow(tr("区域边长 Y（长度制式单位，基座系）"),
+                   m_wsRegionSY);
+    wsForm->addRow(tr("区域边长 Z（长度制式单位，基座系）"),
+                   m_wsRegionSZ);
+    wsForm->addRow(tr("区域位置采样"), m_wsPositionMethodBox);
+    wsForm->addRow(tr("区域随机样本数"), m_wsRegionRandom);
+    wsForm->addRow(tr("区域网格计数 X/Y/Z"), m_wsRegionGridX);
+    wsForm->addRow(QString(), m_wsRegionGridY);
+    wsForm->addRow(QString(), m_wsRegionGridZ);
+    wsForm->addRow(tr("关节随机样本数"), m_wsJointRandom);
+    wsForm->addRow(tr("关节网格每轴取点数"), m_wsJointGrid);
+    layout->addLayout(wsForm);
+
+    auto* wsButtons = new QHBoxLayout();
+    m_wsRunButton = new QPushButton(tr("运行采样"), pane);
+    m_wsRunButton->setToolTip(tr("探索式采样（KIN-09）——内联运行，样本量级为演示/诊断面"));
+    m_wsExportCsvButton = new QPushButton(tr("导出点云 CSV"), pane);
+    m_wsWritebackButton = new QPushButton(tr("回写样本构型到会话"), pane);
+    connect(m_wsRunButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onWsRunClicked);
+    connect(m_wsExportCsvButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onWsExportCsvClicked);
+    connect(m_wsWritebackButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onWsWritebackClicked);
+    wsButtons->addWidget(m_wsRunButton);
+    wsButtons->addWidget(m_wsExportCsvButton);
+    wsButtons->addWidget(m_wsSampleIndex);
+    wsButtons->addWidget(m_wsWritebackButton);
+    layout->addLayout(wsButtons);
+
+    // 采样摘要表（lastWorkspaceRun 现投——模式 token/状态计数/取消标记；
+    // F-905 感知半区：模式 token 行即"点从哪来"的强制溯源标注）。
+    m_wsSummaryTable = makeTable({tr("采样摘要"), tr("值")}, pane);
+    layout->addWidget(m_wsSummaryTable);
+
+    // ---- 投影视图（★ KIN-R2 任务6——"三维或投影视图＋PNG 导出"最小
+    // 可用入口）：面板内 2D 正交投影散点画布（XY/XZ/YZ 舍轴语义随域
+    // projectWorkspacePoints；坐标恒基座系 {B}，单位 m）。三维视图截图
+    // PNG 权威归框架 RWStudioView3D（附录 A"等价承接"——勘察口径随卡
+    // §14.6 v0.30 登记）；本画布为零框架依赖的投影视图（评审/取证的
+    // 确定性出图面）。objectName＝"ws-projection-*"（gui_test 定位锚）。
+    m_wsProjectionPlaneBox = new QComboBox(pane);
+    m_wsProjectionPlaneBox->setObjectName(QStringLiteral("ws-projection-plane"));
+    m_wsProjectionPlaneBox->addItem(tr("XY 投影（俯视）"));
+    m_wsProjectionPlaneBox->addItem(tr("XZ 投影（正视）"));
+    m_wsProjectionPlaneBox->addItem(tr("YZ 投影（侧视）"));
+    connect(m_wsProjectionPlaneBox, &QComboBox::currentIndexChanged, this,
+            &KinematicsPanelWidget::onWsProjectionPlaneChanged);
+    auto* projectionRow = new QHBoxLayout();
+    projectionRow->addWidget(new QLabel(tr("投影面"), pane));
+    projectionRow->addWidget(m_wsProjectionPlaneBox);
+    projectionRow->addStretch(1);
+    m_wsExportPngButton = new QPushButton(tr("导出投影视图 PNG"), pane);
+    connect(m_wsExportPngButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onWsExportPngClicked);
+    projectionRow->addWidget(m_wsExportPngButton);
+    layout->addLayout(projectionRow);
+    m_wsCanvasLabel = new QLabel(pane);
+    m_wsCanvasLabel->setObjectName(QStringLiteral("ws-projection-canvas"));
+    m_wsCanvasLabel->setMinimumSize(480, 360);
+    m_wsCanvasLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(m_wsCanvasLabel);
 
     // 命令行（导出/复位/设默认/复算——全部经编排函数，零内联逻辑）。
     auto* buttons = new QHBoxLayout();
@@ -314,12 +454,20 @@ void KinematicsPanelWidget::refreshAll()
     m_setDeviceButton->setEnabled(commandEnabled("kinematics.set-default-device",
                                                  kinCommandEnabledInSession("kinematics.set-default-device", writable)
                                                  && m_services.commandHandler != nullptr));
-    // 复位 Home（KIN-P3/审查 A09）：按钮可用性＝具名 Home 来源缝已装配
-    // ——来源缺失即显式禁用，绝不出现"以当前姿态充当 Home"的可达路径
-    // （缝在场但模型未定义 Home 的提示在点击路径给出——resetSessionHome
-    // FromNamedSource 拒绝态③）。只读会话可用（reset-session-pose＝
-    // readOnlyAllowed，会话级命令——目录表权威）。
-    m_resetHomeButton->setEnabled(static_cast<bool>(m_services.homePose));
+    // 复位 Home（KIN-P3/审查 A09；★ KIN-R2 任务5——正式宿主装配的可用性
+    // 语义收敛）：按钮可用性＝具名 Home 来源缝已装配**且现取查询确实
+    // 解析出 Home 定义**。有定义才可用、无定义显式禁用（诚实降级——
+    // 修复前"缝在场即点亮"，模型未定义 Home 时按钮可达但点击必得"未
+    // 定义"提示，可用性暗示与实际能力不符）；缝未装配同样禁用。三条
+    // 门控共同保证"绝不出现以当前姿态充当 Home 的可达路径"（审查 A09
+    // 红线）。现取查询零缓存（KinHomePoseProvider 契约——纯查询幂等，
+    // UI 线程现调；项目态变化经 refreshAll 重进门控）。缝在场但查询
+    // 未定义 Home 的明确提示保留在点击路径（resetSessionHomeFromNamed-
+    // Source 拒绝态③——直达槽防御面语义不变）。只读会话不禁用
+    // （reset-session-pose＝readOnlyAllowed，会话级命令——目录表权威）。
+    m_resetHomeButton->setEnabled(
+        static_cast<bool>(m_services.homePose)
+        && m_services.homePose().has_value());
     const bool exportReady = static_cast<bool>(m_services.exportWriter)
                              && m_session.lastSessionSolutionSetView != nullptr;
     m_exportJsonButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
@@ -333,6 +481,26 @@ void KinematicsPanelWidget::refreshAll()
     m_solveButton->setEnabled(commandEnabled("kinematics.solve-ik",
                                              m_services.ikSolver != nullptr
                                              && m_services.modelView != nullptr));
+    // ---- 探索式采样组门控（★ KIN-R2 任务3）：运行＝模型视图在场（执行
+    // 面；TCP 解析在流内显式拒绝）；导出＝写出缝＋会话已有采样产物；
+    // 回写＝会话姿态写点＋产物在场。缺一即禁用（诚实降级，与其他缝同
+    // 纪律）。
+    m_wsRunButton->setEnabled(m_services.modelView != nullptr);
+    m_wsExportCsvButton->setEnabled(
+        static_cast<bool>(m_services.exportWriter)
+        && m_session.lastWorkspaceRun != nullptr);
+    m_wsWritebackButton->setEnabled(
+        m_services.sessionPose != nullptr
+        && m_session.lastWorkspaceRun != nullptr);
+    m_wsExportPngButton->setEnabled(
+        static_cast<bool>(m_services.exportWriter)
+        && m_session.lastWorkspaceRun != nullptr);
+    // 采样参数字段使能面＋摘要表现投＋画布重绘（事件驱动出口——模式
+    // 切换经 onWsModeChanged、投影面切换经 onWsProjectionPlaneChanged
+    // 亦单独重进对应半区）。
+    refreshWsParamVisibility();
+    refreshWsSummary();
+    refreshWsProjectionCanvas();
 }
 
 void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProjection>& units)
@@ -349,13 +517,21 @@ void KinematicsPanelWidget::refreshTargetUnitPresentation()
     // 标签为构造期硬编码 "（m）"，切到 mm 后标签失实）。标注同时携带
     // **参考系标识"基座系"**（KIN-P1 验收"参考系标识"半区）：提交目标
     // 经 runSinglePointSolve 进入 IkRequest.targetInBase（基座系 SI——
-    // 单元卡 §5.3），输入语义即基座系坐标。单位符号取当前制式长度 token
-    // 原文（core Units 冻结词表——"m"/"cm"/"mm"）；nullopt＝SI 直显制式。
+    // 单元卡 §5.3），输入语义即基座系坐标。单位符号取当前制式长度/角度
+    // token 原文（core Units 冻结词表——"m"/"cm"/"mm"、"rad"/"deg"）；
+    // nullopt＝SI 直显制式。★ KIN-R2 任务4：新增姿态 RPY 三行的角度
+    // 标注（角度量纲与长度量纲分立——resolveKinAngleDisplayToSi 的
+    // 提交面对位；R/P/Y 为 Z-Y-X 欧角约定随 rw::math::RPY 语义）。
     const QString lengthSymbol =
         m_session.displayUnits.has_value()
             ? QString::fromStdString(
                 std::string(m_session.displayUnits->lengthUnit().symbol()))
             : QStringLiteral("m");
+    const QString angleSymbol =
+        m_session.displayUnits.has_value()
+            ? QString::fromStdString(
+                std::string(m_session.displayUnits->angleUnit().symbol()))
+            : QStringLiteral("rad");
     if (m_targetXLabel != nullptr) {
         m_targetXLabel->setText(tr("目标 X（%1，基座系）").arg(lengthSymbol));
         m_targetX->setPlaceholderText(
@@ -371,6 +547,21 @@ void KinematicsPanelWidget::refreshTargetUnitPresentation()
         m_targetZ->setPlaceholderText(
             tr("基座系坐标，单位：%1").arg(lengthSymbol));
     }
+    if (m_targetRollLabel != nullptr) {
+        m_targetRollLabel->setText(tr("目标 RPY-Roll（%1，基座系）").arg(angleSymbol));
+        m_targetRoll->setPlaceholderText(
+            tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
+    }
+    if (m_targetPitchLabel != nullptr) {
+        m_targetPitchLabel->setText(tr("目标 RPY-Pitch（%1，基座系）").arg(angleSymbol));
+        m_targetPitch->setPlaceholderText(
+            tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
+    }
+    if (m_targetYawLabel != nullptr) {
+        m_targetYawLabel->setText(tr("目标 RPY-Yaw（%1，基座系）").arg(angleSymbol));
+        m_targetYaw->setPlaceholderText(
+            tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
+    }
 }
 
 void KinematicsPanelWidget::refreshPosePane()
@@ -378,6 +569,9 @@ void KinematicsPanelWidget::refreshPosePane()
     // 位姿指标：域设施直调（IFkEvaluator——缝未装配＝空态呈现，不虚构行）。
     if (m_services.fkEvaluator == nullptr || m_services.modelView == nullptr) {
         renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
+        if (m_frameLabel != nullptr) {
+            m_frameLabel->setText(tr("参考系标识：模型视图或评估器未装配——位姿页空态"));
+        }
         return;
     }
     // 会话姿态在设即评估之；未设＝空呈现（零虚构数据行——零位评估会
@@ -385,6 +579,9 @@ void KinematicsPanelWidget::refreshPosePane()
     if (m_services.sessionPose == nullptr || !m_services.sessionPose->isSet()) {
         renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
         m_jointTable->setRowCount(0);
+        if (m_frameLabel != nullptr) {
+            m_frameLabel->setText(tr("参考系标识：会话姿态未设置——位姿页空态"));
+        }
         return;
     }
     const std::vector<double>& q = m_services.sessionPose->jointConfiguration();
@@ -398,8 +595,23 @@ void KinematicsPanelWidget::refreshPosePane()
     if (!tcp.ok) {
         renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
         m_jointTable->setRowCount(0);
+        if (m_frameLabel != nullptr) {
+            m_frameLabel->setText(tr("参考系标识：TCP 未解析（见状态行）"));
+        }
         showStatusText(QString::fromStdString(tcp.statusText));
         return;
+    }
+    // ★ KIN-R2 任务4（审查 §4 坐标系标识）：TCP 工具身份＋双参考系口径
+    // 随解析结果现投——用户据此可知位姿值在哪个系下表达、TCP 属哪个
+    // 工具（tcpKey 空＝canonical TCP——解析单点的显式名纪律）。
+    if (m_frameLabel != nullptr) {
+        m_frameLabel->setText(
+            tr("TCP：%1（工具 %2）——位姿值按基座系 {B}（T_base_tcp）与"
+               "世界系 {W}（T_world_tcp）双参考系呈现")
+                .arg(tcp.tcp.tcpKey.empty()
+                         ? QStringLiteral("canonical TCP")
+                         : QString::fromStdString(tcp.tcp.tcpKey),
+                     QString::fromStdString(tcp.tcp.toolObject.toCanonical())));
     }
     const auto metrics =
         m_services.fkEvaluator->evaluate(*m_services.modelView, tcp.tcp, q);
@@ -549,39 +761,76 @@ void KinematicsPanelWidget::focusTaskPoint(const std::optional<core::ObjectId>& 
     m_taskPointTable->setCurrentItem(nullptr);
 }
 
-void KinematicsPanelWidget::onSolveClicked()
+std::optional<rw::math::Transform3D<double>>
+KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
 {
-    // L-K2 转接（零内联逻辑——编排函数承担）。目标位姿从编辑字段读取：
-    // 字段承载**显示制式**数值（行标签随制式标注单位——见
-    // refreshTargetUnitPresentation），提交前按所选单位**逆换算回 SI
-    // 真值**（resolveKinDisplayToSi——mm 输入 0.1 → 1e-4 m），会话/求解
-    // 器只见 SI（IkRequest.targetInBase＝基座系 m，§5.3）。审查条目 A07
-    // 修复：修复前此处直读显示值并用 projectLength（SI→显示的正向投影）
-    // 再放大——方向反转（mm 输入 0.1 → 100 m，按任何解释均非法）。
+    // ---- 位置分量（显示制式 → SI）：解析失败**或非有限**（"inf"/"nan"
+    // 可被解析但不是合法坐标——NFR-COR-03 非有限不静默）＝调用方输入
+    // 错误：就地反馈保留原值（UX-05），不向求解器传递非有限目标（域
+    // IkRequest 校验 fail-fast 的调用方侧前置拦截——交互层拒绝而非异常
+    // 穿越 Qt 槽）。审查条目 A07：显示制式→SI 逆换算唯一出口
+    // resolveKinDisplayToSi（mm 输入 0.1 → 1e-4 m——修复前方向反转）。
     bool okX = false, okY = false, okZ = false;
     double x = m_targetX->text().toDouble(&okX);
     double y = m_targetY->text().toDouble(&okY);
     double z = m_targetZ->text().toDouble(&okZ);
-    // 解析失败**或非有限**（"inf"/"nan" 可被解析但不是合法坐标——
-    // NFR-COR-03 非有限不静默）＝调用方输入错误：就地反馈保留原值
-    // （UX-05），不向求解器传递非有限目标（域 IkRequest 校验 fail-fast
-    // 的调用方侧前置拦截——交互层拒绝而非异常穿越 Qt 槽）。
     if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
         || !std::isfinite(z)) {
-        showStatusText(tr("目标位姿非法（数值解析失败或非有限）——原值保留"));
-        return;
+        showStatusText(tr("%1位姿非法（位置分量解析失败或非有限）——原值保留")
+                           .arg(errorPrefix));
+        return std::nullopt;
     }
-    // 显示制式→SI 逆换算（唯一换算点 KinPanelUnits::resolveKinDisplayToSi
-    // ——nullopt 制式恒等；换算方向与读侧 projectLength 相反）。
     x = resolveKinDisplayToSi(x, m_session.displayUnits);
     y = resolveKinDisplayToSi(y, m_session.displayUnits);
     z = resolveKinDisplayToSi(z, m_session.displayUnits);
-    // 位姿构造用 9 参旋转（头内 inline）——不实例化引用 rw 库符号的单参构造（冒烟链接面）。
-    const rw::math::Transform3D<double> target(
-        rw::math::Vector3D<double>(x, y, z),
-        rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0));
+
+    // ---- 姿态分量（★ KIN-R2 任务4——RPY 三字段，审查 §4"姿态固定为
+    // 单位旋转"修复面）：空输入＝0（历史行为兼容——修复前姿态恒单位
+    // 旋转，即 RPY 全零的等价形态）；非空须可解析且有限。显示制式→
+    // SI rad 经 resolveKinAngleDisplayToSi（角度量纲独立入口——误走
+    // 长度版会按长度因子换算，量纲错配）。
+    auto parseAngle = [this](QLineEdit* edit, bool* ok) -> double {
+        const QString text = edit->text().trimmed();
+        if (text.isEmpty()) {
+            *ok = true;      // 空＝0（单位旋转缺省——向后兼容语义）
+            return 0.0;
+        }
+        return text.toDouble(ok);
+    };
+    bool okR = false, okP = false, okYw = false;
+    double roll = parseAngle(m_targetRoll, &okR);
+    double pitch = parseAngle(m_targetPitch, &okP);
+    double yaw = parseAngle(m_targetYaw, &okYw);
+    if (!okR || !okP || !okYw || !std::isfinite(roll) || !std::isfinite(pitch)
+        || !std::isfinite(yaw)) {
+        showStatusText(tr("%1位姿非法（姿态分量解析失败或非有限）——原值保留")
+                           .arg(errorPrefix));
+        return std::nullopt;
+    }
+    roll = resolveKinAngleDisplayToSi(roll, m_session.displayUnits);    // rad
+    pitch = resolveKinAngleDisplayToSi(pitch, m_session.displayUnits);  // rad
+    yaw = resolveKinAngleDisplayToSi(yaw, m_session.displayUnits);      // rad
+
+    // ---- 基座系 {B} 目标位姿组装：位置（m）＋RPY→旋转（rw::math 库
+    // 设施直调——Z-Y-X 欧角约定，零自写三角）。位姿构造用 9 参旋转的
+    // 历史形态由 RPY(0,0,0).toRotation3D()（恒等阵）承载——冒烟链接面
+    // 不变（不实例化引用 rw 库符号的单参构造）。
+    const rw::math::RPY<double> rpy(roll, pitch, yaw);
+    return rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(x, y, z), rpy.toRotation3D());
+}
+
+void KinematicsPanelWidget::onSolveClicked()
+{
+    // L-K2 转接（零内联逻辑——编排函数承担）。目标位姿六字段读取与
+    // 逆换算收拢到 readTargetPoseFromEditors 单点（★ KIN-R2 任务4——
+    // 位置 XYZ＋姿态 RPY；解析失败＝就地反馈并停在提交前，绝不向求解
+    // 器传递非法/非有限目标）。
+    const std::optional<rw::math::Transform3D<double>> target =
+        readTargetPoseFromEditors(tr("目标"));
+    if (!target.has_value()) {
+        return;  // 反馈已在 helper 内就地给出——保留原值停在原地
+    }
     // 会话求解请求装配（KIN-P2/审查 A08——从会话/模型装配完整合法请求：
     // TCP 经 KIN-14 默认工具解析、初值/容差/迭代来自求解配置、referenceQ
     // 取会话姿态、intervals 取模型限位）。装配失败＝显式呈现稳定诊断码
@@ -595,7 +844,7 @@ void KinematicsPanelWidget::onSolveClicked()
         return;
     }
     const KinSolveFlowResult r =
-        runSinglePointSolve(m_services, m_session, target, assembly.request);
+        runSinglePointSolve(m_services, m_session, *target, assembly.request);
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（★ KIN-P4——refreshAll 而非仅结果页：解集入会话态后
     // 导出/复算按钮的门控随即点亮——修复前按钮态停留在求解前的"无结果
@@ -674,32 +923,365 @@ void KinematicsPanelWidget::onRecomputeClicked()
 {
     // KIN-P4 转接（复算编排——目标位姿取面板当前编辑值；原任务定义的
     // seed/referenceQ 自原结果身份显式携带，快照重绑定为当前会话锚）。
-    // 目标字段解析失败/非有限＝调用方输入错误，就地反馈不向求解器传递
-    // （与 onSolveClicked 同门控语义——复算同属提交求解的入口）。
-    bool okX = false, okY = false, okZ = false;
-    double x = m_targetX->text().toDouble(&okX);
-    double y = m_targetY->text().toDouble(&okY);
-    double z = m_targetZ->text().toDouble(&okZ);
-    if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
-        || !std::isfinite(z)) {
-        showStatusText(tr("复算目标位姿非法（数值解析失败或非有限）——原值保留"));
-        return;
+    // 目标六字段读取与逆换算同一单点（★ KIN-R2 任务4——与求解入口共用
+    // readTargetPoseFromEditors；复算同属提交求解的入口，解析失败就地
+    // 反馈不向求解器传递）。
+    const std::optional<rw::math::Transform3D<double>> target =
+        readTargetPoseFromEditors(tr("复算目标"));
+    if (!target.has_value()) {
+        return;  // 反馈已在 helper 内就地给出——保留原值停在原地
     }
-    // 显示制式→SI 逆换算（与求解入口同一换算单点——A07 同则）。
-    x = resolveKinDisplayToSi(x, m_session.displayUnits);
-    y = resolveKinDisplayToSi(y, m_session.displayUnits);
-    z = resolveKinDisplayToSi(z, m_session.displayUnits);
-    // 位姿构造用 9 参旋转（与求解入口同形——冒烟链接面）。
-    const rw::math::Transform3D<double> target(
-        rw::math::Vector3D<double>(x, y, z),
-        rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0));
     const KinRecomputeFlowResult r =
-        recomputeSessionFromIdentity(m_services, m_session, target);
+        recomputeSessionFromIdentity(m_services, m_session, *target);
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（同求解入口——新解集入会话态后门控/解表同步）。
     refreshAll();
+}
+
+// ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——槽与刷新实现）------------
+
+void KinematicsPanelWidget::refreshWsParamVisibility()
+{
+    // 字段使能面＝模式分派（与域 validateWorkspaceSamplingQuery 的按模式
+    // 校验面对位——区域模式消费区域盒/位置采样定义、关节模式消费关节
+    // 采样定义，两族互不越界；禁用态字段值不参与装配——widget 装配函数
+    // 按模式显式取值）。
+    const int mode = m_wsModeBox != nullptr ? m_wsModeBox->currentIndex() : 0;
+    const bool cartesian = mode == 0;  // WorkspaceSamplingMode::CartesianRegion
+    const bool jointRandom = mode == 1;
+    const bool jointGrid = mode == 2;
+    const bool positionRandom =
+        cartesian
+        && m_wsPositionMethodBox != nullptr
+        && m_wsPositionMethodBox->currentIndex() == 0;
+    QLineEdit* const cartesianEdits[] = {m_wsRegionCX, m_wsRegionCY, m_wsRegionCZ,
+                                         m_wsRegionSX, m_wsRegionSY, m_wsRegionSZ};
+    for (QLineEdit* edit : cartesianEdits) {
+        if (edit != nullptr) {
+            edit->setEnabled(cartesian);
+        }
+    }
+    if (m_wsPositionMethodBox != nullptr) {
+        m_wsPositionMethodBox->setEnabled(cartesian);
+    }
+    if (m_wsRegionRandom != nullptr) {
+        m_wsRegionRandom->setEnabled(positionRandom);
+    }
+    QLineEdit* const gridEdits[] = {m_wsRegionGridX, m_wsRegionGridY, m_wsRegionGridZ};
+    for (QLineEdit* edit : gridEdits) {
+        if (edit != nullptr) {
+            edit->setEnabled(cartesian && !positionRandom);
+        }
+    }
+    if (m_wsJointRandom != nullptr) {
+        m_wsJointRandom->setEnabled(jointRandom);
+    }
+    if (m_wsJointGrid != nullptr) {
+        m_wsJointGrid->setEnabled(jointGrid);
+    }
+}
+
+void KinematicsPanelWidget::refreshWsSummary()
+{
+    // 摘要表现投（lastWorkspaceRun 现取零缓存——无产物＝空表，不虚构
+    // "未采样"数据行）。行集：模式 token（F-905 溯源标注）/样本总数/
+    // 可达/不可达/数据不足/未运行/取消标记。全部计数来自域产物逐样本
+    // 状态（SampleState 五值词表），零估算。
+    if (m_wsSummaryTable == nullptr) {
+        return;
+    }
+    if (!m_session.lastWorkspaceRun) {
+        m_wsSummaryTable->setRowCount(0);
+        return;
+    }
+    const WorkspaceSampleRun& run = *m_session.lastWorkspaceRun;
+    std::uint64_t reached = 0;
+    std::uint64_t unreachable = 0;
+    std::uint64_t dataInsufficient = 0;
+    for (const WorkspaceSampleResult& r : run.results) {
+        switch (r.state) {
+            case SampleState::Reached:
+                ++reached;
+                break;
+            case SampleState::Unreachable:
+                ++unreachable;
+                break;
+            case SampleState::DataInsufficient:
+                ++dataInsufficient;
+                break;
+            default:
+                break;
+        }
+    }
+    const auto text = [](std::string v) {
+        return QString::fromStdString(std::move(v));
+    };
+    fillSingleColumn(
+        m_wsSummaryTable,
+        {text("模式 " + std::string(workspaceSamplingModeToken(run.mode))),
+         text("样本总数 " + std::to_string(run.results.size())),
+         text("可达 " + std::to_string(reached)),
+         text("不可达 " + std::to_string(unreachable)),
+         text("数据不足 " + std::to_string(dataInsufficient)),
+         text("未运行 " + std::to_string(run.notRunCount)),
+         text(run.cancelled ? std::string("已取消（partial 产物）")
+                            : std::string("完整运行"))});
+}
+
+void KinematicsPanelWidget::onWsModeChanged(int index)
+{
+    // 模式切换＝参数字段使能面重建（编辑即草稿——运行时才装配域查询；
+    // index 即 WorkspaceSamplingMode 枚举序，QComboBox 值域排除非法值）。
+    Q_UNUSED(index);
+    refreshWsParamVisibility();
+}
+
+void KinematicsPanelWidget::onWsRunClicked()
+{
+    // 编辑字段 → 面板参数（SI 真值）：区域盒中心/边长按显示制式读入并
+    // 经 resolveKinDisplayToSi 逆换算（与目标编辑器同纪律——提交面唯一
+    // 换算点）；计数字段按无符号整数解析。解析失败/非有限/越界＝调用方
+    // 输入错误：就地反馈保留原值，不提交残缺查询（域校验 fail-fast 的
+    // 交互层前置拦截——与 F-903 提示轨同则，异常不穿越 Qt 槽）。
+    KinWorkspaceSamplingParams params;
+    params.mode = static_cast<WorkspaceSamplingMode>(
+        m_wsModeBox != nullptr ? m_wsModeBox->currentIndex() : 0);
+    // 区域盒几何（仅区域模式装配——关节模式禁用态字段不取值）。
+    if (params.mode == WorkspaceSamplingMode::CartesianRegion) {
+        bool ok = false;
+        auto readLength = [this, &ok](QLineEdit* edit) -> double {
+            const QString t = edit->text().trimmed();
+            bool good = false;
+            const double v = t.toDouble(&good);
+            if (!good || !std::isfinite(v)) {
+                ok = false;
+                return 0.0;
+            }
+            return resolveKinDisplayToSi(v, m_session.displayUnits);  // SI m
+        };
+        params.regionCenterX = readLength(m_wsRegionCX);
+        if (ok) {
+            params.regionCenterY = readLength(m_wsRegionCY);
+        }
+        if (ok) {
+            params.regionCenterZ = readLength(m_wsRegionCZ);
+        }
+        if (ok) {
+            params.regionSizeX = readLength(m_wsRegionSX);
+        }
+        if (ok) {
+            params.regionSizeY = readLength(m_wsRegionSY);
+        }
+        if (ok) {
+            params.regionSizeZ = readLength(m_wsRegionSZ);
+        }
+        if (!ok) {
+            showStatusText(tr("采样参数非法（区域盒含不可解析或非有限数值）"
+                              "——原值保留"));
+            return;
+        }
+        params.positionRandom =
+            m_wsPositionMethodBox->currentIndex() == 0;
+        if (params.positionRandom) {
+            params.regionRandomCount =
+                m_wsRegionRandom->text().trimmed().toUInt(&ok);
+            if (!ok) {
+                showStatusText(tr("采样参数非法（区域随机样本数非非负整数）"
+                                  "——原值保留"));
+                return;
+            }
+        } else {
+            bool okX = false, okY = false, okZ = false;
+            params.regionGridCounts[0] =
+                m_wsRegionGridX->text().trimmed().toUInt(&okX);
+            params.regionGridCounts[1] =
+                m_wsRegionGridY->text().trimmed().toUInt(&okY);
+            params.regionGridCounts[2] =
+                m_wsRegionGridZ->text().trimmed().toUInt(&okZ);
+            if (!okX || !okY || !okZ) {
+                showStatusText(tr("采样参数非法（区域网格计数非非负整数）"
+                                  "——原值保留"));
+                return;
+            }
+        }
+    }
+    // 关节模式参数（按模式装配——统一值施加全轴的 UI 子集语义）。
+    if (params.mode == WorkspaceSamplingMode::JointSpaceRandom) {
+        bool ok = false;
+        params.jointRandomCount = m_wsJointRandom->text().trimmed().toUInt(&ok);
+        if (!ok) {
+            showStatusText(tr("采样参数非法（关节随机样本数非非负整数）——原值保留"));
+            return;
+        }
+    }
+    if (params.mode == WorkspaceSamplingMode::JointSpaceGrid) {
+        bool ok = false;
+        params.jointGridPerAxis = m_wsJointGrid->text().trimmed().toUInt(&ok);
+        if (!ok || params.jointGridPerAxis < 1U) {
+            showStatusText(tr("采样参数非法（关节网格每轴取点数须 ≥1）——原值保留"));
+            return;
+        }
+    }
+    // 内联运行（编排函数——校验/运行/入会话态；拒绝轨转状态行）。
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(m_services, m_session, params, m_wsContext);
+    showStatusText(QString::fromStdString(r.statusText));
+    // 全面板刷新（导出/回写按钮门控随产物点亮＋摘要表现投）。
+    refreshAll();
+}
+
+void KinematicsPanelWidget::onWsExportCsvClicked()
+{
+    // 编排转接（契约 v2 CSV——行头含 sampling-mode 溯源列，F-905 导出
+    // 半区；文件名固定于导出目录——写出经 io AtomicFile 装配缝）。
+    showStatusText(QString::fromStdString(exportWorkspacePointCloudCsv(
+        m_services, m_session, "kin-workspace-pointcloud.csv")));
+}
+
+void KinematicsPanelWidget::onWsWritebackClicked()
+{
+    // 样本序解析（results 全局序——空/非法＝输入错误就地反馈）。
+    bool ok = false;
+    const std::uint64_t sampleIndex =
+        m_wsSampleIndex->text().trimmed().toULongLong(&ok);
+    if (!ok) {
+        showStatusText(tr("回写样本序非法（须为非负整数）——原值保留"));
+        return;
+    }
+    // 编排转接（域回写值→既有会话回写通道——KIN-06 零修订；无解/越界
+    // 样本拒绝轨在编排内转状态行）。
+    showStatusText(QString::fromStdString(
+        writebackWorkspacePoint(m_services, m_session, sampleIndex)));
+    // 会话姿态已更新——位姿页随刷新现投（事件驱动，零缓存）。
+    refreshPosePane();
+}
+
+void KinematicsPanelWidget::refreshWsProjectionCanvas()
+{
+    // 投影散点画布重绘（★ KIN-R2 任务6）。数据链（全部域设施直调，零
+    // 二次计算语义）：lastWorkspaceRun → buildWorkspacePointCloud（渲染
+    // 数据唯一组装点）→ projectWorkspacePoints（舍轴投影唯一实现点）→
+    // QPainter 离屏绘制。无产物＝占位画布（不虚构数据）。
+    if (m_wsCanvasLabel == nullptr) {
+        return;
+    }
+    const int width = 480;   // 画布宽（px——呈现几何，非业务量）
+    const int height = 360;  // 画布高（px）
+    QPixmap canvas(width, height);
+    canvas.fill(Qt::white);
+    if (!m_session.lastWorkspaceRun) {
+        // 占位画布（无产物态——与摘要表空表同口径）。
+        QPainter placeholder(&canvas);
+        placeholder.setPen(Qt::gray);
+        placeholder.drawRect(0, 0, width - 1, height - 1);
+        placeholder.drawText(canvas.rect(), Qt::AlignCenter,
+                             tr("暂无点云数据——请先运行工作空间采样"));
+        m_wsCanvasLabel->setPixmap(canvas);
+        return;
+    }
+    const WorkspaceSampleRun& run = *m_session.lastWorkspaceRun;
+    const auto plane = static_cast<WorkspaceProjectionPlane>(
+        m_wsProjectionPlaneBox != nullptr ? m_wsProjectionPlaneBox->currentIndex()
+                                          : 0);
+    const WorkspacePointCloudRenderData data = buildWorkspacePointCloud(run);
+    const std::vector<std::pair<double, double>> projected =
+        projectWorkspacePoints(data, plane);
+
+    QPainter painter(&canvas);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(Qt::lightGray);
+    painter.drawRect(0, 0, width - 1, height - 1);
+
+    // 值域→像素映射（基座系 m 实测极值——data.positionMin/Max 值域
+    // 自检面；退化值域（min==max，如单点云）以 ±0.05 m 邻域兜底避免
+    // 除零——纯呈现几何边界，不触权威值）。边距 32 px 留轴标注。
+    const double marginPx = 32.0;
+    const double lo[3] = {data.positionMin[0], data.positionMin[1],
+                          data.positionMin[2]};
+    const double hi[3] = {data.positionMax[0], data.positionMax[1],
+                          data.positionMax[2]};
+    // 投影面→(横轴, 纵轴) 分量索引（XY→(0,1)/XZ→(0,2)/YZ→(1,2)——与
+    // projectWorkspacePoints 的舍轴语义对位，仅用于轴标注）。
+    const int axisPair[3][2] = {{0, 1}, {0, 2}, {1, 2}};
+    const int axisH = axisPair[static_cast<int>(plane)][0];
+    const int axisV = axisPair[static_cast<int>(plane)][1];
+    auto mapH = [&](double v) {
+        const double lo_v = std::min(lo[axisH], hi[axisH] - 0.05);
+        const double hi_v = std::max(hi[axisH], lo_v + 0.05);
+        return marginPx
+               + (v - lo_v) / (hi_v - lo_v) * (width - 2.0 * marginPx);
+    };
+    auto mapV = [&](double v) {
+        const double lo_v = std::min(lo[axisV], hi[axisV] - 0.05);
+        const double hi_v = std::max(hi[axisV], lo_v + 0.05);
+        // 纵轴翻转（数学坐标向上、画布坐标向下）。
+        return (height - marginPx)
+               - (v - lo_v) / (hi_v - lo_v) * (height - 2.0 * marginPx);
+    };
+
+    // 逐点绘制（点序＝results 全序——确定性呈现；颜色按 SampleState
+    // 五值类别直投——图例与摘要表同源计数，零业务判定）。
+    for (std::size_t i = 0; i < projected.size(); ++i) {
+        const WorkspacePointCloudPoint& p = data.points[i];
+        switch (p.state) {
+            case SampleState::Reached:
+                painter.setPen(QColor(0, 144, 0));       // 可达＝绿
+                break;
+            case SampleState::Unreachable:
+                painter.setPen(QColor(200, 0, 0));       // 不可达＝红
+                break;
+            case SampleState::DataInsufficient:
+                painter.setPen(QColor(216, 120, 0));     // 数据不足＝橙
+                break;
+            default:
+                painter.setPen(QColor(128, 128, 128));   // 未运行/不适用＝灰
+                break;
+        }
+        painter.drawPoint(QPointF(mapH(projected[i].first),
+                                  mapV(projected[i].second)));
+    }
+
+    // 轴标注＋图例（坐标恒基座系 {B} 单位 m——KIN-09 投影语义；图例
+    // 计数与摘要表同源——一处真相）。
+    painter.setPen(Qt::black);
+    const QString axisNames[3] = {tr("X"), tr("Y"), tr("Z")};
+    painter.drawText(width - marginPx, height - 8,
+                     tr("%1 (m)").arg(axisNames[axisH]));
+    painter.drawText(4, marginPx - 8, tr("%1 (m)").arg(axisNames[axisV]));
+    painter.drawText(marginPx, 16,
+                     tr("图例：绿=可达 红=不可达 橙=数据不足 灰=未运行"
+                        "（%1 点）")
+                         .arg(static_cast<qlonglong>(projected.size())));
+    painter.end();
+    m_wsCanvasLabel->setPixmap(canvas);
+}
+
+void KinematicsPanelWidget::onWsProjectionPlaneChanged(int index)
+{
+    // 投影面切换＝画布重绘（纯呈现态——零采样重算零修订）。
+    Q_UNUSED(index);
+    refreshWsProjectionCanvas();
+}
+
+void KinematicsPanelWidget::onWsExportPngClicked()
+{
+    // 画布 PNG 编码（QPixmap→PNG 字节缓冲——呈现面编码；字节经
+    // exportWorkspaceProjectionPng 编排写出——io write 以 string_view
+    // 承载二进制安全）。编码失败（空设备）＝就地反馈不写出。
+    const QPixmap canvas = m_wsCanvasLabel != nullptr && !m_wsCanvasLabel->pixmap().isNull()
+                               ? m_wsCanvasLabel->pixmap()
+                               : QPixmap();
+    QByteArray pngBytes;
+    QBuffer buffer(&pngBytes);
+    buffer.open(QIODevice::WriteOnly);
+    if (canvas.isNull() || !canvas.save(&buffer, "PNG")) {
+        showStatusText(tr("PNG 导出不可用：画布编码失败——原状态保留"));
+        return;
+    }
+    buffer.close();
+    showStatusText(QString::fromStdString(exportWorkspaceProjectionPng(
+        m_services, m_session, "kin-workspace-projection.png",
+        std::string(pngBytes.constData(), static_cast<std::size_t>(pngBytes.size())))));
 }
 
 void KinematicsPanelWidget::onSolutionSelectionChanged()

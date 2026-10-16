@@ -16,6 +16,7 @@
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // validateAnalysisConfiguration（装配前置校验——域设施）
 #include <sdurws/ird/kinematics/DiagCodes.hpp>       // kKinNoTcp/kKinConfigIllegal（稳定诊断码——禁字符串拼码）
 #include <sdurws/ird/kinematics/Export.hpp>  // 导出打包/编码（KIN-08 值行——域设施）
+#include <sdurws/ird/kinematics/Workspace.hpp>  // 探索式采样计算核/点云渲染/回写（★ KIN-R2 任务3——域设施直调）
 #include "KinPanelCommandCatalog.hpp"        // kinCommandEnabledInSession（L-K11 id 门控）
 #include "KinPanelModel.hpp"                 // configChangeHintRows（L-K7 提示行化）
 #include "KinPanelUnits.hpp"                 // formatKinQuantityText（L-K5 回填投影）
@@ -390,6 +391,20 @@ std::string resetSessionHomeFromNamedSource(const KinPanelServices& services)
                + " != 设备自由度 " + std::to_string(dof)
                + "（来源解析违约或模型已变更）——未写回";
     }
+    // ---- 拒绝态⑤：来源值含非有限分量（F-903——NaN Home 双轨统一）。
+    // 修复前维度检查通过而值含 NaN 时，非有限拒绝只在写入口
+    // （KinSessionPose::setJointConfiguration 的 fail-fast）触发——异常
+    // 穿越编排函数直达 Qt 槽，与维度违约的显式提示轨双轨不一致（验收
+    // 探针实测异常传播、会话态零污染）。本态前置拦截：值面违约与维度
+    // 违约同走提示轨（显式反馈零写回），编排层不再让任何可预见的调用
+    // 方违约以异常形态离开本函数。NaN/±∞ 的可达来源＝装配层解析违约
+    // （正常装配下 Home 来自命名位姿集解码的合法数值）。
+    for (std::size_t i = 0; i < home->size(); ++i) {
+        if (!std::isfinite((*home)[i])) {
+            return "复位 Home 不可用：Home 第 " + std::to_string(i + 1)
+                   + " 分量非有限（NaN/±∞——来源解析违约）——未写回";
+        }
+    }
     // ---- 通过：唯一写点覆写会话姿态（零修订——KIN-06/AT-04）。
     return resetSessionHome(services.sessionPose, *home);
 }
@@ -719,6 +734,219 @@ std::string exportSessionResults(const KinPanelServices& services,
         return "已导出副本（" + targetPath + "）——零修订";
     }
     return "导出写出失败（目标路径不可写？）——旧文件不受影响";
+}
+
+// =====================================================================
+// 探索式工作空间采样（★ KIN-R2 任务3/KIN-09——实现落点；声明面见
+// KinPanelFlows.hpp 本节注）
+// =====================================================================
+
+KinWorkspaceSamplingFlowResult runWorkspaceSamplingFlow(
+    const KinPanelServices& services, KinModuleSessionState& session,
+    const KinWorkspaceSamplingParams& params,
+    evidence::IEvaluationContext& context)
+{
+    KinWorkspaceSamplingFlowResult result;
+    // 模式溯源 token（F-905 感知半区——域词表唯一出口，禁第二处字面量；
+    // 拒绝轨也回填 token 便于状态行标注"哪种模式被拒"）。
+    result.samplingModeToken =
+        std::string(workspaceSamplingModeToken(params.mode));
+
+    // ---- 拒绝态①：模型视图缝未装配（采样执行面缺失——如实拒绝）。
+    if (services.modelView == nullptr) {
+        result.statusText = "采样不可用：模型视图未装配";
+        return result;
+    }
+    const IKinRuntimeView& view = *services.modelView;
+
+    // ---- 拒绝态②：TCP 身份解析（三入口统一单点——区域模式逐样本 IK
+    // 与关节模式 FK 都消费合法工具身份；失败＝KIN-NO-TCP 提示轨，绝不
+    // 以空 TcpRef 继续走流）。
+    const KinTcpResolution tcp = resolveSessionTcp(services);
+    if (!tcp.ok) {
+        result.statusText = "采样不可用：" + tcp.statusText;
+        return result;
+    }
+
+    // ---- 步骤 1：域查询装配（面板参数 SI 直投；语义逐字段对位
+    // WorkspaceSamplingQuery 注——装配层零再加工）。
+    WorkspaceSamplingQuery query;
+    query.mode = params.mode;
+    query.region.center = rw::math::Vector3D<double>(
+        params.regionCenterX, params.regionCenterY, params.regionCenterZ);  // 基座系 m
+    query.region.size = rw::math::Vector3D<double>(
+        params.regionSizeX, params.regionSizeY, params.regionSizeZ);        // 基座系 m
+    // 位置采样定义（仅区域模式消费）：随机＝randomCount 撒点、网格＝
+    // 三轴计数体心网格（§7.2 两方法探索式直用）。
+    query.position.method = params.positionRandom
+                                ? kinematics::PositionSamplingDefinition::Method::Random
+                                : kinematics::PositionSamplingDefinition::Method::Grid;
+    query.position.gridCounts = params.regionGridCounts;
+    query.position.randomCount = params.regionRandomCount;
+    // 姿态定义退化单方向单 roll（KIN-09 主径为位置点云——面板不暴露
+    // 姿态采样编辑，登记为呈现批次边界；斐波那契螺旋×roll 均分在退化
+    // 配置下即单姿态）。
+    query.orientation.directionSamples = 1U;
+    query.orientation.rollSamples = 1U;
+    // 关节模式参数（域面收 per-axis 向量——面板统一值施加全部自由度，
+    // UI 参数化子集登记于参数结构注）。
+    query.jointRandomCount = params.jointRandomCount;
+    // ---- 步骤 2：设备自由度（Fixed 不消耗 q——与求解器/FK 同一口径）。
+    std::size_t dof = 0;
+    for (const runtime::CanonicalJoint& j : view.model().chain().joints) {
+        if (j.type != runtime::JointType::Fixed) {
+            ++dof;
+        }
+    }
+    query.jointGridCounts.assign(dof, params.jointGridPerAxis);
+    // ---- 步骤 3：求解配置直投（seed/预算权威面——savedConfig 会话
+    // 纪律恒合法；配置非法（如 seed=0）由域校验面拒绝转状态行）。
+    query.config = session.savedConfig;
+    // ---- 步骤 4：排序参考构型＝模型链零位（D-KIN-4 显式输入的确定性
+    // 投影——与正式通道执行器 sliceCoverage 同口径，零会话隐式读取）。
+    for (const runtime::CanonicalJoint& j : view.model().chain().joints) {
+        if (j.type != runtime::JointType::Fixed) {
+            query.referenceQ.push_back(j.zeroOffset);  // rad|m（链序）
+        }
+    }
+    query.tcp = tcp.tcp;
+    // 碰撞会话不注入（统一策略注入面——空＝碰撞不在范围，逐样本
+    // collisionNotEvaluated 如实标记，绝不解读为无碰撞——KIN-05）；批
+    // 大小/求解器替身沿域缺省（256/D-KIN-6；services.ikSolver 缺省不
+    // 注入——探索式与单点求解的通道分立，注入语义留装配层后续批次）。
+
+    // ---- 步骤 5：域校验（invalid_argument＝调用方参数错误——转状态行
+    // 不让异常穿越 Qt 槽；文案含首错字段/实际值/合法域）。
+    try {
+        validateWorkspaceSamplingQuery(view, query);
+    } catch (const std::invalid_argument& e) {
+        result.statusText =
+            std::string("采样查询非法（") + result.samplingModeToken
+            + "）：" + e.what();
+        return result;
+    }
+
+    // ---- 步骤 6：内联运行（域计算核——取消/进度经注入上下文；
+    // logic_error＝域内部不变量破坏，如实转状态行不静默）。
+    WorkspaceSampleRun run;
+    try {
+        run = runWorkspaceSampling(view, query, context);
+    } catch (const std::invalid_argument& e) {
+        // 域校验链兜底（步骤 5 已前置拦——此态属防御面）。
+        result.statusText =
+            std::string("采样查询非法（") + result.samplingModeToken
+            + "）：" + e.what();
+        return result;
+    } catch (const std::exception& e) {
+        result.statusText = std::string("采样运行失败：") + e.what();
+        return result;
+    }
+
+    // ---- 步骤 7：产物入会话态（唯一写点——含 cancelled partial 产物；
+    // R2 边界：探索式产物不入 results 归档，域类型级无覆盖率字段）。
+    const std::uint64_t total = run.results.size();
+    std::uint64_t reached = 0;
+    std::uint64_t dataInsufficient = 0;
+    std::uint64_t unreachable = 0;
+    for (const WorkspaceSampleResult& r : run.results) {
+        // 逐样本状态计数（五值词表——呈现侧摘要的真实计数面，零估算）。
+        switch (r.state) {
+            case SampleState::Reached:
+                ++reached;
+                break;
+            case SampleState::DataInsufficient:
+                ++dataInsufficient;
+                break;
+            case SampleState::Unreachable:
+                ++unreachable;
+                break;
+            default:
+                break;  // NotRun/NotApplicable——notRun 数由 run 自带
+        }
+    }
+    session.lastWorkspaceRun =
+        std::make_shared<const WorkspaceSampleRun>(std::move(run));
+    result.ok = true;
+    result.statusText =
+        std::string("采样完成（") + result.samplingModeToken + "）：共 "
+        + std::to_string(total) + " 样本，可达 " + std::to_string(reached)
+        + "、不可达 " + std::to_string(unreachable) + "、数据不足 "
+        + std::to_string(dataInsufficient)
+        + (session.lastWorkspaceRun->cancelled
+               ? "；运行被取消（partial 产物——未运行样本如实保留）"
+               : "");
+    return result;
+}
+
+std::string exportWorkspacePointCloudCsv(const KinPanelServices& services,
+                                         const KinModuleSessionState& session,
+                                         const std::string& targetPath)
+{
+    // ---- 四态如实（与 exportSessionResults 同纪律）：缝未装配/无产物/
+    // 写出失败/成功。
+    if (!services.exportWriter) {
+        return "点云导出不可用：写出通道未装配";
+    }
+    if (!session.lastWorkspaceRun) {
+        return "无可导出点云（尚未运行采样——先运行一次工作空间采样）";
+    }
+    // ---- 域设施链（渲染数据唯一组装点→契约 v2 CSV 编码——行头含
+    // sampling-mode 溯源列，F-905 下游感知的导出半区；呈现侧零自拼行）。
+    const WorkspacePointCloudRenderData data =
+        buildWorkspacePointCloud(*session.lastWorkspaceRun);
+    const std::string content = workspacePointCloudExportCsv(data);
+    if (services.exportWriter(targetPath, content)) {
+        return "已导出点云（" + targetPath + "，契约 v2 含 sampling-mode 列）——零修订";
+    }
+    return "点云导出写出失败（目标路径不可写？）——旧文件不受影响";
+}
+
+std::string writebackWorkspacePoint(const KinPanelServices& services,
+                                    const KinModuleSessionState& session,
+                                    std::uint64_t sampleIndex)
+{
+    // ---- 拒绝态：会话姿态缝/采样产物缺位（如实——不虚构写入）。
+    if (services.sessionPose == nullptr) {
+        return "回写不可用：会话姿态未装配";
+    }
+    if (!session.lastWorkspaceRun) {
+        return "回写不可用：尚未运行采样（先运行一次工作空间采样）";
+    }
+    // ---- 域回写值→既有会话回写通道（workspacePointWriteback 对越界/
+    // 无解样本 fail-fast——就地转状态行，异常不穿越 Qt 槽；NFR-COR-03
+    // 与 F-903 提示轨同则）。
+    try {
+        const RenderPointWriteback writeback =
+            workspacePointWriteback(*session.lastWorkspaceRun, sampleIndex);
+        return applyPoseWriteback(services.sessionPose, writeback)
+               + "（样本 " + std::to_string(sampleIndex) + "）";
+    } catch (const std::invalid_argument& e) {
+        return std::string("回写被拒：") + e.what();
+    }
+}
+
+std::string exportWorkspaceProjectionPng(const KinPanelServices& services,
+                                         const KinModuleSessionState& session,
+                                         const std::string& targetPath,
+                                         const std::string& pngBytes)
+{
+    // ---- 四态如实（与点云 CSV 导出同纪律）。空 PNG 字节＝呈现面编码
+    // 失败的误用形态——如实拒绝不写空文件。
+    if (!services.exportWriter) {
+        return "PNG 导出不可用：写出通道未装配";
+    }
+    if (!session.lastWorkspaceRun) {
+        return "无可导出投影（尚未运行采样——先运行一次工作空间采样）";
+    }
+    if (pngBytes.empty()) {
+        return "PNG 导出不可用：画布编码为空（呈现面异常）";
+    }
+    // ---- 写出（字节直传——io write 以 std::string_view 承载，二进制
+    // 安全；PNG 权威分工的勘察口径见头注）。
+    if (services.exportWriter(targetPath, pngBytes)) {
+        return "已导出投影视图（" + targetPath + "）——零修订";
+    }
+    return "PNG 导出写出失败（目标路径不可写？）——旧文件不受影响";
 }
 
 }  // namespace kinematics

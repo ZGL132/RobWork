@@ -141,6 +141,14 @@ private Q_SLOTS:
     void onRecomputeClicked();        // KIN-P4 复算（原任务定义×当前快照重绑定）
     void onSolutionSelectionChanged();// L-K1 解表选中→检查器联动
     void onSolutionDoubleClicked(int row, int column); // L-K4 双击→会话姿态回写
+    // ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——结果与可视化面板）----
+    void onWsModeChanged(int index);      // 采样模式切换（参数字段使能面）
+    void onWsRunClicked();                // 运行采样（内联编排）
+    void onWsExportCsvClicked();          // 导出点云 CSV（契约 v2 含 sampling-mode 列）
+    void onWsWritebackClicked();          // 样本构型回写会话（KIN-06 零修订）
+    // ---- 投影视图（★ KIN-R2 任务6）----
+    void onWsProjectionPlaneChanged(int index); // 投影面切换（画布重绘）
+    void onWsExportPngClicked();          // 导出投影视图 PNG（画布字节经写出缝）
 
 private:
     // ---- 四面板构建（构造期一次——布局骨架；内容全走刷新）----
@@ -152,9 +160,26 @@ private:
     // ---- 刷新半区（现取重投影——零缓存）----
     void refreshPosePane();         // 位姿指标行＋关节表（KIN-12 投影）
     void refreshResultsPane();      // 解表/统计/检查器
+    /// 采样组参数字段使能面（★ KIN-R2 任务3——随模式切换启用对应参数：
+    /// 区域盒字段/区域位置采样字段/关节随机/关节网格互斥启用）。
+    void refreshWsParamVisibility();
+    /// 采样组摘要表现投（lastWorkspaceRun 现取——模式 token/状态计数/
+    /// 取消标记零缓存；无产物＝空表）。
+    void refreshWsSummary();
+    /// 投影散点画布重绘（★ KIN-R2 任务6——lastWorkspaceRun→
+    /// buildWorkspacePointCloud→projectWorkspacePoints→QPainter 离屏
+    /// 绘制；无产物＝占位文本画布。绘制定位（数据→像素映射）为呈现
+    /// 几何，业务语义（状态类别色/图例计数）直投域值，零业务判定）。
+    void refreshWsProjectionCanvas();
     /// 目标输入行单位标注重建（KIN-P1 A07——标签/占位随显示制式＋基座系
     /// 参考系标识；refreshAll 与 L-K8 切换路径共同出口）。
     void refreshTargetUnitPresentation();
+    /// 目标位姿六字段读取（★ KIN-R2 任务4——位置 XYZ＋姿态 RPY 编辑值 →
+    /// 基座系 SI 目标位姿；显示制式逆换算唯一出口 resolveKinDisplayToSi/
+    /// resolveKinAngleDisplayToSi。解析失败/非有限＝就地反馈并返回
+    /// nullopt——调用方停在原提交前，不向求解器传非法目标）。
+    std::optional<rw::math::Transform3D<double>> readTargetPoseFromEditors(
+        const QString& errorPrefix);
     void renderRows(QTableWidget* table, const std::vector<KinNamedValueRow>& rows);
     void renderSolutions(QTableWidget* table, const std::vector<KinSolutionRow>& rows);
 
@@ -165,6 +190,7 @@ private:
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询
 
     // ---- 页①控件（raw 指针＝Qt 父子所有权）----
+    QLabel* m_frameLabel = nullptr;         ///< 参考系/TCP 身份标识行（★ KIN-R2 任务4——坐标系标识）
     QTableWidget* m_poseTable = nullptr;    ///< 位姿指标行表
     QTableWidget* m_jointTable = nullptr;   ///< 关节表（显示单位投影 KIN-12）
     QLineEdit* m_targetX = nullptr;         ///< 求解目标位置编辑（显示制式数值——提交逆换算回 SI，A07）
@@ -173,6 +199,12 @@ private:
     QLabel* m_targetXLabel = nullptr;       ///< 目标 X 行标签（单位符号随显示制式重建——A07 缺陷面①）
     QLabel* m_targetYLabel = nullptr;       ///< 同上（Y 轴）
     QLabel* m_targetZLabel = nullptr;       ///< 同上（Z 轴）
+    QLineEdit* m_targetRoll = nullptr;      ///< 目标姿态 RPY-Roll 编辑（★ KIN-R2 任务4——显示制式角度，提交逆换算回 SI rad）
+    QLineEdit* m_targetPitch = nullptr;     ///< 目标姿态 RPY-Pitch 编辑（同上）
+    QLineEdit* m_targetYaw = nullptr;       ///< 目标姿态 RPY-Yaw 编辑（同上）
+    QLabel* m_targetRollLabel = nullptr;    ///< RPY-Roll 行标签（角度单位随显示制式重建）
+    QLabel* m_targetPitchLabel = nullptr;   ///< RPY-Pitch 行标签（同上）
+    QLabel* m_targetYawLabel = nullptr;     ///< RPY-Yaw 行标签（同上）
     QPushButton* m_solveButton = nullptr;   ///< Solve（L-K2）
     QTableWidget* m_inspectorTable = nullptr; ///< 候选检查器（健康摘要/关节）
     std::vector<QLineEdit*> m_jointEditors; ///< 关节表编辑行（求解目标参考构型）
@@ -195,6 +227,35 @@ private:
     QPushButton* m_setTcpButton = nullptr;     ///< 设默认 TCP（L-K9）
     QPushButton* m_setDeviceButton = nullptr;  ///< 设默认设备（L-K9）
     QPushButton* m_recomputeButton = nullptr;  ///< 复算（KIN-P4——原任务定义×当前快照）
+
+    // ---- 页④探索式采样组（★ KIN-R2 任务3/KIN-09——编辑入口＋运行＋
+    // 导出＋回写；raw 指针＝Qt 父子所有权）----
+    QComboBox* m_wsModeBox = nullptr;        ///< 采样模式（区域盒/关节随机/关节网格——域三值词表序）
+    QComboBox* m_wsPositionMethodBox = nullptr; ///< 区域位置采样方法（随机/网格——仅区域模式启用）
+    QLineEdit* m_wsRegionCX = nullptr;       ///< 区域盒中心 X（显示制式长度——提交逆换算 SI m）
+    QLineEdit* m_wsRegionCY = nullptr;       ///< 区域盒中心 Y（同上）
+    QLineEdit* m_wsRegionCZ = nullptr;       ///< 区域盒中心 Z（同上）
+    QLineEdit* m_wsRegionSX = nullptr;       ///< 区域盒边长 X（同上；须 >0）
+    QLineEdit* m_wsRegionSY = nullptr;       ///< 区域盒边长 Y（同上）
+    QLineEdit* m_wsRegionSZ = nullptr;       ///< 区域盒边长 Z（同上）
+    QLineEdit* m_wsRegionRandom = nullptr;   ///< 区域随机样本数（无量纲）
+    QLineEdit* m_wsRegionGridX = nullptr;    ///< 区域网格 X 轴计数（无量纲）
+    QLineEdit* m_wsRegionGridY = nullptr;    ///< 区域网格 Y 轴计数（无量纲）
+    QLineEdit* m_wsRegionGridZ = nullptr;    ///< 区域网格 Z 轴计数（无量纲）
+    QLineEdit* m_wsJointRandom = nullptr;    ///< 关节随机样本数（无量纲）
+    QLineEdit* m_wsJointGrid = nullptr;      ///< 关节网格逐轴取点数（无量纲——统一值施加全轴）
+    QPushButton* m_wsRunButton = nullptr;    ///< 运行采样（内联编排——runWorkspaceSamplingFlow）
+    QPushButton* m_wsExportCsvButton = nullptr; ///< 导出点云 CSV（exportWorkspacePointCloudCsv）
+    QLineEdit* m_wsSampleIndex = nullptr;    ///< 回写样本序输入（results 全局序）
+    QPushButton* m_wsWritebackButton = nullptr; ///< 样本构型回写会话（writebackWorkspacePoint）
+    QTableWidget* m_wsSummaryTable = nullptr;   ///< 采样摘要表（lastWorkspaceRun 现投）
+    KinInlineSamplingContext m_wsContext;   ///< 内联采样宿主上下文（无取消/进度设施——诚实边界）
+
+    // ---- 页④投影视图（★ KIN-R2 任务6——2D 正交投影散点画布＋PNG 导出
+    // 的最小可用入口；三维 RWStudioView3D 接入成本登记后续批次）----
+    QComboBox* m_wsProjectionPlaneBox = nullptr; ///< 投影面（XY/XZ/YZ——域三值词表序）
+    QLabel* m_wsCanvasLabel = nullptr;       ///< 散点画布（QPixmap 载体——离屏 QPainter 绘制）
+    QPushButton* m_wsExportPngButton = nullptr; ///< 导出投影视图 PNG（exportWorkspaceProjectionPng）
 
     // ---- 容器与状态 ----
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器

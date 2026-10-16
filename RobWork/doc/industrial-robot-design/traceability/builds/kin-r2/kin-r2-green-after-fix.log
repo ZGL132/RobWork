@@ -1,0 +1,35 @@
+Note: Google Test filter = *OutOfDomainInfinityMarker_F902:*NonFiniteSourceExplicitHintTrack_F903
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from PluginPanelLinks
+[ RUN      ] PluginPanelLinks.KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902
+[       OK ] PluginPanelLinks.KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902 (0 ms)
+[ RUN      ] PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903
+[       OK ] PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903 (0 ms)
+[----------] 2 tests from PluginPanelLinks (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.
+Note: Google Test filter = *RpyAttitudeRoundtrip_KIN_R2:*SourceAbsentExplicitHintNoWriteback_KIN_P3:*TargetLabels_FollowDisplayUnitSystem_KIN_P1:*DefinedSourceEnablesButton_KIN_R2:*RejectsNonFiniteAttitude_KIN_R2
+[==========] Running 5 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from KinematicsPanelInput
+[ RUN      ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1
+[       OK ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1 (17 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2
+[       OK ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2 (2 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteAttitude_KIN_R2
+[       OK ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteAttitude_KIN_R2 (1 ms)
+[----------] 3 tests from KinematicsPanelInput (21 ms total)
+
+[----------] 2 tests from KinematicsPanelSession
+[ RUN      ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3 (1 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_DefinedSourceEnablesButton_KIN_R2
+[       OK ] KinematicsPanelSession.ResetHome_DefinedSourceEnablesButton_KIN_R2 (2 ms)
+[----------] 2 tests from KinematicsPanelSession (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test suites ran. (25 ms total)
+[  PASSED  ] 5 tests.

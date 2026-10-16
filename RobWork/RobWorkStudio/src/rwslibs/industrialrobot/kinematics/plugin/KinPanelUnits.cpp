@@ -39,19 +39,36 @@ std::string generalText(double v)
 
 }  // namespace
 
+/// 域外无穷的显式标记文本（F-902——按行白名单收紧的拒绝半区呈现词）。
+/// 语义：该行的量域契约不含无穷（位置/残差恒有限、旋转矩阵元 ∈[-1,1]、
+/// 奇异值/可操作度有限——Fk.hpp PoseMetrics 字段规则/KinTypes.hpp §6.1），
+/// siValue=+∞ 即上游双重违约（FK 契约要求有限值却产出无穷）。呈现"非法
+/// 值(+∞)"而非静默"∞"：读者一眼可分辨"契约内合法无穷（奇异/∞、无界）"
+/// 与"契约外违约值"；不带单位后缀（无穷与量纲投影无意义——合法无穷行
+/// 同则）。行集层的标记与制式无关（reprojectMetricRows 对一切 +∞ 行
+/// 原样保留 displayText——标记词亦跨制式稳定）。
+constexpr const char* kOutOfRangeInfinityText = "非法值(+∞)";
+
 std::string formatKinQuantityText(double siValue, const std::string& unitToken,
                                   const std::optional<DisplayUnitProjection>& displayUnits,
-                                  std::string_view infinityText)
+                                  std::optional<std::string_view> infinityText)
 {
-    // 非有限值三分类（KIN-P3/审查 A03——修复前对一切非有限值 fail-fast，
-    // 把 FK 契约内的合法无穷（奇异条件数 +∞/无界裕量 +∞）也拒之门外，
-    // 奇异状态完全无法显示）：
-    //   1. 合法 +∞：原样呈现 infinityText 语义词（"奇异/∞"/"无界"）——
-    //      禁止截断成有限数字（截断即伪造数据，比抛异常更失实）；
-    //   2. NaN/−∞：这些量的值域不含该两类（条件数 ≥1、裕量可负但有限、
-    //      长度/角度有限）→ 上游计算违约，fail-fast 不渲染伪数据。
+    // 非有限值三分类（KIN-P3/审查 A03 三分类保留；★ F-902 按行收紧——
+    // 修复前对一切 +∞ 返回 infinityText（缺省泛化"∞"），域外位置行
+    // siValue=+∞（上游深度违约）被静默放行）：
+    //   1. 合法 +∞（行白名单在场）：原样呈现 infinityText 语义词
+    //      （"奇异/∞"/"无界"）——禁止截断成有限数字（截断即伪造数据，
+    //      比抛异常更失实）；
+    //   2. 域外 +∞（白名单缺省）：该量域契约不含无穷——显式"非法值(+∞)"
+    //      标记轨（不再静默"∞"）；呈现而非抛异常的原因：显示层异常会
+    //      穿越 Qt 槽（A03 教训），且违约的呈现事实比炸掉整表更可诊断；
+    //   3. NaN/−∞：任何行的值域都不含该两类 → 上游计算违约，fail-fast
+    //      不渲染伪数据（A03 拒绝半区不松动）。
     if (std::isinf(siValue) && siValue > 0.0) {
-        return std::string(infinityText);
+        // 域内/域外的唯一判定面＝行白名单参数（调用方按 Fk.hpp:108-112/
+        // KinTypes.hpp:272-273 的域契约逐行供给——本函数零量表复制，
+        // 单一事实源在调用方的行语义）。
+        return std::string(infinityText.value_or(kOutOfRangeInfinityText));
     }
     if (!std::isfinite(siValue)) {
         throw std::invalid_argument(
@@ -92,11 +109,14 @@ std::vector<KinNamedValueRow> reprojectMetricRows(
 {
     // 整表重建（非逐格改写）：避免半新半旧混合呈现——见 KinPanelUnits.hpp
     // 文件头注。SI 真值逐行原样搬运（权威不动，V-17）。
-    // 合法 +∞ 行（KIN-P3/审查 A03）的重投影语义：+∞ 的呈现语义词（"奇
-    // 异/∞"/"无界"）是行构建期按行语义选定的、与单位制式无关——重投影
-    // 无法从 (siValue, unitToken) 再推导它，故原样保留首建 displayText
-    // （修复中途形态曾把 +∞ 行退化成缺省 "∞"——L-K8 单位切换的幂等性
-    // 要求语义词跨制式稳定）。NaN/−∞ 行仍走 format 的 fail-fast 拒绝面。
+    // +∞ 行（KIN-P3/审查 A03；F-902 起含两类）的重投影语义：+∞ 的呈现
+    // 文本（行白名单语义词"奇异/∞"/"无界"，或域外标记"非法值(+∞)"）是
+    // 行构建期按行语义选定的、与单位制式无关——重投影无法从
+    // (siValue, unitToken) 再推导它，故原样保留首建 displayText（修复
+    // 中途形态曾把 +∞ 行退化成缺省 "∞"——L-K8 单位切换的幂等性要求
+    // 语义词跨制式稳定；F-902 的域外标记同则——域外 +∞ 行切制式后仍
+    // 显式标记，不退化回数值或泛化"∞"）。NaN/−∞ 行仍走 format 的
+    // fail-fast 拒绝面。
     std::vector<KinNamedValueRow> out;
     out.reserve(rows.size());
     for (const KinNamedValueRow& r : rows) {
@@ -211,6 +231,18 @@ double resolveKinDisplayToSi(double displayValue,
     // ——单位随长度制式；角度制式不参与位置分量，§5.3 目标＝基座系 m）。
     return displayUnits.has_value()
                ? displayValue * displayUnits->lengthUnit().siFactor()
+               : displayValue;
+}
+
+double resolveKinAngleDisplayToSi(double displayValue,
+                                  const std::optional<DisplayUnitProjection>& displayUnits)
+{
+    // 角度量纲的显示→SI 逆换算（★ KIN-R2 任务4——目标姿态 RPY 编辑的
+    // 提交面；与长度版 resolveKinDisplayToSi 同一算术、另一量纲——
+    // deg→π/180、rad→1；角度制式不参与位置分量，本函数只服务姿态分量）。
+    // 产出恒为 SI rad（不是度）——与 IkRequest 姿态容差/姿态残差同口径。
+    return displayUnits.has_value()
+               ? displayValue * displayUnits->angleUnit().siFactor()
                : displayValue;
 }
 
