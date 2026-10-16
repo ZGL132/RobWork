@@ -40,9 +40,13 @@ CI 常驻门禁正式激活。两份模板与部署文件的同批修订（逐�
    （job 耗时 1h20m——fresh 依赖树全量源码编译，缓存随后按 `if: always()` 保存）；pugixml/expat 即本条修订依据，
    盘点口径＝全单元 `find_package` REQUIRED 清单（GTest/Qt6/Boost/Eigen3/libzip 原清单已覆盖）。
    **二跑实证（run 38947428868）**：缓存回退命中首跑旧树后，供给步守卫包 `libzip` 在位→短路跳过安装→
-   pugixml 仍缺失。守卫包改为 pugixml（最新加入端口）；**约定：今后扩依赖清单时同步换守卫包**——
-   缓存前缀回退机制与"守卫单个旧包"组合存在结构性盲区，守卫指向最新端口即闭环（vcpkg 已装端口增量跳过，
-   补装代价仅新端口本身）。
+   pugixml 仍缺失。**三跑实证（run 38948093498）**：守卫改 pugixml 后 configure 通过（2m15s），但 build job
+   于框架库（sdurw_core）编译缺 `boost/spirit` 等仅头文件库——供给清单原只列五个编译型 boost 库，8 月参考
+   运行仅构建 core 双目标、框架库不进编译图故未暴露。两轮合计修订：
+   - 依赖清单补 15 个 boost 端口（框架源码全量 include 扫描盘点：algorithm/asio/bind/function/graph/
+     lambda/math/mpl/multi-index/numeric-conversion/property-tree/random/serialization/spirit/tuple）；
+   - 守卫改为**清单末项**（`include/boost/tuple/tuple.hpp`）——前缀回退机制与"守卫单个包"组合的结构性
+     盲区以"守卫随清单末项同步推进"闭环（vcpkg 已装端口增量跳过，补装代价仅新端口）。
 3. **入口脚本落位** `RobWork/scripts/industrial-robot/`（6 文件，eb777e2 参考实现＋今日树适配，0003 号补丁登记）：
    - `common.ps1`：与 eb777e2 逐字节一致（VS x64 环境发现/原生日志执行/Qt 冲突检测）。
    - `configure.ps1`：固定选项增 `-DRWS_BUILD_INDUSTRIALROBOT=ON`（0001 号补丁 option，不传则子树不进构建图）、
