@@ -8808,7 +8808,7 @@
       "registeredAt": "2026-10-16",
       "title": "KIN-P3 验收建议：来源缝返回含 NaN 的 Home 时维度检查通过、写入口（Commands.cpp:126-130 fail-fast）异常穿越编排函数直达 Qt 槽，与维度违约的显式提示轨双轨不一致（探针实测异常传播、会话态零污染；正常装配下 Home 来自命名位姿集解析不含 NaN）——建议编排层补非有限检查转提示轨",
       "owner": "R2 呈现批次（宿主装配落地时）",
-      "resolution": "KIN-R2 呈现批次修复：resetSessionHomeFromNamedSource 增拒绝态⑤（KinPanelFlows.cpp——来源值逐分量 isfinite 检查）：Home 来源值含非有限分量（NaN/±∞、维度合法）时与维度违约同走显式提示轨（\"第 i 分量非有限……未写回\"），编排层不再让可预见的调用方违约以异常形态离开本函数（修复前 KinSessionPose 写入口 fail-fast 异常直达 Qt 槽——双轨不一致）；会话态零触碰、零修订语义不变。红→绿：PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F902 同批红证（NaN/−∞ 两形态修复前异常传播）→ 修复后全绿；同批落位正式宿主门控收敛（复位 Home 按钮＝homePose 缝在场且现取查询有 Home 定义——gui_test ResetHome_DefinedSourceEnablesButton_KIN_R2/ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3，分支 kin-r2-ui 提交 5bec2389）。"
+      "resolution": "KIN-R2 呈现批次修复：resetSessionHomeFromNamedSource 增拒绝态⑤（KinPanelFlows.cpp——来源值逐分量 isfinite 检查）：Home 来源值含非有限分量（NaN/±∞、维度合法）时与维度违约同走显式提示轨（\"第 i 分量非有限……未写回\"），编排层不再让可预见的调用方违约以异常形态离开本函数（修复前 KinSessionPose 写入口 fail-fast 异常直达 Qt 槽——双轨不一致）；会话态零触碰、零修订语义不变。红→绿：PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903 同批红证（NaN/−∞ 两形态修复前异常传播）→ 修复后全绿；同批落位正式宿主门控收敛（复位 Home 按钮＝homePose 缝在场且现取查询有 Home 定义——gui_test ResetHome_DefinedSourceEnablesButton_KIN_R2/ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3，分支 kin-r2-ui 提交 5bec2389）。"
     },
     {
       "id": "F-904",
