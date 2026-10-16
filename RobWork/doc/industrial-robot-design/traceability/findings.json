@@ -8699,6 +8699,132 @@
       "registeredAt": "2026-10-16",
       "title": "WP-23-T08 验收建议级 G-3：units/optimization.md §9.2 锚行『B-07 待回填』翻面随治理批（forbiddenFiles 纪律——T06 对 B-05/T07 对 B-06 同款先例）；业务评估器真实现端到端时限画像归集成模式扩展测量挂点（替身边界已在用例文件头/manifest/首测报告三处如实申报）",
       "owner": "治理批（B-07 锚行翻面）＋后续治理面（扩展测量挂点）"
+    },
+    {
+      "id": "F-892",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A01（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p1-2026-10-16-acceptance.md（verdict=PASS；KIN-P1 栈顶 0afc080a，2026-10-16 合入 redesign-main 7737f677）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A01 区域坐标转换错误：ui/plugin/KinEvaluationChannel.cpp 旧 worldToBase()（值语义 T_world_base）被当作 T_base_world 复合，世界采样点转基座系少取一次逆（基座世界 X=1 m、采样点 X=0.65 m 实得 1.65 m，应为 −0.35 m），区域位置覆盖整体受污染",
+      "resolution": "KIN-P1 修复：经 runtime 权威设施 invertWorldBase 反解 T_base_world 后按 T_base_ref＝T_base_world·T_world_ref 复合（KinEvaluationChannel.cpp:172-182）；旋转支持面按符号置换阵划定（预设安放＋轴交换）、任意角旋转保持显式拒绝并登记；回归测试入 ui/test/KinEvaluationChannelTest.cpp；对抗验收 PASS（含验收人新反例攻击与 origin 推送核对）。"
+    },
+    {
+      "id": "F-893",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A02（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p2-2026-10-16-acceptance.md（verdict=PASS；KIN-P2 栈顶 240c35cf，2026-10-16 合入 redesign-main 7737f677）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A02 仅位置任务求解仍优化姿态：调用侧只把姿态容差放宽到 π，仍用 6 维误差与完整 Jacobian 迭代，位置可达解被姿态项牵制漏掉（六同轴转动关节退化链 q=(π/2,0,…) 达 (0,1,0)，位置模式零初值 256 次迭代 0 解；Ik.cpp:140/178/537、Workspace.cpp:467、Evaluators.cpp 位置样本分支）",
+      "resolution": "KIN-P2 修复：PositionOnly 任务改独立任务维度（IkTaskSpace::PositionOnly，3 维位置误差＋对应 Jacobian 子块，旧 π 容差落值机制废除、kEnvelopePoseFreeTolerance 全仓清零）；Envelope 通道一并迁移（kEnvelopeContractVersion 1→2 带同构升级理由）；DataInsufficient 保守语义保留（搜索未果≠证明不可达）；回归测试 IkTest/EnvelopeTest/RegionCoverageTest＋行为级迁移钉 PositionProbeUsesTaskSpaceSemantics_KIN_P2（迁移回退即红）；验收 attempt 2 PASS。"
+    },
+    {
+      "id": "F-894",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A03（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p3-2026-10-16-acceptance.md（verdict=PASS；KIN-P3 栈顶 e53a0c3f，2026-10-16 合入 redesign-main 7737f677）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A03 合法无穷显示异常：FK 产出奇异条件数 +∞ 为合法值，poseMetricRows() 格式化却抛 invalid_argument，奇异状态无法显示且不能截断成有限数（KinPanelUnits.cpp:42/KinPanelModel.cpp:72）",
+      "resolution": "KIN-P3 修复：非有限三分类——+∞→行级语义词（『奇异/∞』『无界』）不截断不抛、NaN/−∞→保留 invalid_argument 契约轨；行语义词落点 KinPanelModel.cpp:80-220，reproject 幂等保词；域契约对齐 Fk.hpp:108-112/KinTypes.hpp:272-273；奇异/近奇异/无界均不再抛显示异常，回归 PluginPanelTest＋真实 widget 用例；验收 PASS（域外无穷白名单按行收紧转登 F-902）。"
+    },
+    {
+      "id": "F-895",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A04（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p5-2026-10-16-acceptance.md（verdict=PASS；KIN-P5 栈顶 7737f677，2026-10-16 合入 redesign-main 同提交）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A04 近似外包络漏估：半径 1 m 圆形工作空间 +X 最外可达 1 m，32 次探针后输出 Rmax=0（内锚点全灭→Computed 空结论，契约原允许）；且几何上界点被误称『已证不可达』而免探测（Envelope.cpp 旧 325/364/378）",
+      "resolution": "KIN-P5 修复：等差站点扫描＋EnvelopeRayState 新增 NoSampleFound 态（2→3 值，契约版本升级），区分『找到 R=0』与『未找到』（未找到以低置信呈现不误导）、上界点先行试探；窄环带反例 [0.40,0.474] 与非星形边界钉于 EnvelopeTest；验收人零共享上下文自构 31/31 对抗探针（含实施者未覆盖的极窄带参数）通过；预算固有边界转登 F-904、下游演进感知转登 F-905。"
+    },
+    {
+      "id": "F-896",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A05（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p3-2026-10-16-acceptance.md（verdict=PASS；KIN-P3 栈顶 e53a0c3f，2026-10-16 合入 redesign-main 7737f677）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A05 移动关节被按角度显示：混合链移动轴 0.1 m 在 mm 制式解列显示 5.72958（误用角度换算；投影接口只有 double 数组、无逐轴关节类型，KinPanelUnits.cpp:100/KinematicsPanelWidget.cpp:350）",
+      "resolution": "KIN-P3 修复：projectJointAxisToDisplay 逐轴按关节类型选长度/角度投影（KinPanelUnits.cpp:118-141），关节表贯通传递、不做 double 数组猜测；formatJointAxisText 单测钉住投影函数，解表路径真实 widget 用例闭环；验收 PASS。"
+    },
+    {
+      "id": "F-897",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A06（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p5-2026-10-16-acceptance.md（verdict=PASS；KIN-P5 栈顶 7737f677，2026-10-16 合入 redesign-main 同提交）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A06 随机种子高 32 位丢失：seed*2^32+k 在 uint64 同加法域系统性溢出，seed=1 与 seed=4294967297 生成完全相同初值序列（Ik.cpp:318/Sampling.cpp:214/Envelope.cpp:65），随机搜索多样性受损",
+      "resolution": "KIN-P5 修复：streamSeedFor 三步 splitmix64 全 64 位混合（Ik.cpp:314，双射保证高位参与）；同步算法版本/样本身份升级（IRDSSID v2 分立，新旧算法不假借同一身份，缓存兼容）；不同 64 位种子序列相异、同种子可复现已钉测试；验收 PASS（旧版样本集不可比性转登 F-905）。"
+    },
+    {
+      "id": "F-898",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A07（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p1-2026-10-16-acceptance.md（verdict=PASS；KIN-P1 栈顶 0afc080a，2026-10-16 合入 redesign-main 7737f677）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A07 目标输入单位换算方向错误：切到 mm 后输入框标签仍标 m、输入 0.1 按 ×1000 换算成 100 m 提交（按 m 标签应为 0.1 m、按 mm 解释应为 0.0001 m，KinematicsPanelWidget.cpp:474），求解目标被系统性放大",
+      "resolution": "KIN-P1 修复：显示值与 SI 真值分离——标签跟随当前单位制、提交按所选单位逆换算回 SI（KinematicsPanelWidget.cpp:509-525 非有限守卫面）；m/cm/mm 三制式同一目标 SI 值一致有回归用例；验收 PASS。"
+    },
+    {
+      "id": "F-899",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A08（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p2-2026-10-16-acceptance.md 与 kin-p4-2026-10-16-acceptance.md（verdict=PASS；KIN-P4 栈顶 da7db502，2026-10-16 合入 redesign-main 7737f677）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A08 『求解 IK』按钮请求装配不完整：真实控件事件提交的请求缺合法 TCP 身份/初值/参考构型 referenceQ/逐轴区间 intervals，直接接真实求解器即请求校验 fail-fast（KinematicsPanelWidget.cpp:484/KinPanelFlows.cpp:46，校验在 Ik.cpp:360 起）",
+      "resolution": "KIN-P2 修复控件/流层请求装配语义（合法 TCP 解析、初值来自求解配置、referenceQ 取会话姿态、逐轴区间取模型限位，注入求解器＋真实控件事件探针闭环）；KIN-P4 接通正式宿主（KinHostServicesAssembly.cpp 新建、KinEvaluationChannel SessionSolve/TaskPointsBatch 改真实分发、默认 TCP 刷新/求解/设默认三入口统一名称解析）；六轴无旋 TCP 变体端到端用例（KinHostLoopGuiTest 三阶段断言：dof=6 回写钉/解析不可达空解钉/身份重绑定钉/导出锚非零钉）覆盖『改型→任务点→求解→比较→预览→导出→重开复算』；验收 attempt 2 PASS；sdurws_ird_studio 实机人工交互验收归所有者。"
+    },
+    {
+      "id": "F-900",
+      "source": "审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A09（2026-10-16 转登）＋修复验收 traceability/acceptance/kin-p3-2026-10-16-acceptance.md（verdict=PASS；KIN-P3 栈顶 e53a0c3f，2026-10-16 合入 redesign-main 7737f677）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-16",
+      "title": "A09 『复位 Home』无目标来源：点击后只读取当前 q 并原样写回（KinematicsPanelWidget.cpp:506），无论当前姿态为何都写回自身，缺具名 Home 目标来源",
+      "resolution": "KIN-P3 修复：Home 必须来自具名来源（命名位姿集端口解析的 homePose 缝），缝缺省＝按钮禁用诚实降级、绝不静默把当前姿态当 Home；会话回写仅动关节姿态、零设计修订（PA-2）复核通过；验收 PASS（NaN 来源双轨不一致转登 F-903、homePose 正式宿主装配归 R2 呈现批次）。"
+    },
+    {
+      "id": "F-901",
+      "source": "traceability/acceptance/kin-p1-2026-10-16-acceptance.md advisory A-1（随验收记录转登，验收日期 2026-10-16，verdict=PASS；2026-10-16 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "KIN-P1 验收建议：A01 置换判定（KinEvaluationChannel.cpp:201-220）只查每行恰一主导元＋无杂散元、未显式校验列唯一性——正交输入（编译链 S5 校验的 T_world_base×刚体 worldTref）下行条件已蕴含置换阵、产品路径不可达；仅当 resolveFrame 缝返回病态非正交位姿时可能漏判，建议后续给 resolveFrame 返回值加正交性防御",
+      "owner": "后续 ui 单元任务/治理面"
+    },
+    {
+      "id": "F-902",
+      "source": "traceability/acceptance/kin-p3-2026-10-16-acceptance.md advisory A-1（随验收记录转登，验收日期 2026-10-16，verdict=PASS；2026-10-16 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "KIN-P3 验收建议：formatKinQuantityText（KinPanelUnits.cpp:53-55）对一切 +∞ 返回语义词、不区分该量域契约是否允许无穷——验收探针实测域外位置行 siValue=+∞（上游深度违约）静默显示『∞』而非 fail-fast（修复前此处抛异常；未截断未谎报、仅上游双重违约时可达）；建议接线 FK 刷新时按行收紧合法无穷白名单",
+      "owner": "R2 呈现批次（FK 刷新接线时一并收紧）"
+    },
+    {
+      "id": "F-903",
+      "source": "traceability/acceptance/kin-p3-2026-10-16-acceptance.md advisory A-2（随验收记录转登，验收日期 2026-10-16，verdict=PASS；2026-10-16 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "KIN-P3 验收建议：来源缝返回含 NaN 的 Home 时维度检查通过、写入口（Commands.cpp:126-130 fail-fast）异常穿越编排函数直达 Qt 槽，与维度违约的显式提示轨双轨不一致（探针实测异常传播、会话态零污染；正常装配下 Home 来自命名位姿集解析不含 NaN）——建议编排层补非有限检查转提示轨",
+      "owner": "R2 呈现批次（宿主装配落地时）"
+    },
+    {
+      "id": "F-904",
+      "source": "traceability/acceptance/kin-p5-2026-10-16-acceptance.md advisory A-3（随验收记录转登，验收日期 2026-10-16，verdict=PASS；2026-10-16 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "KIN-P5 验收建议：包络站点扫描预算固有边界——可达带窄于站点分辨率 Rup/M 的环带可能整带漏检、非星形（射线多岛）工作空间更外侧可达岛不可发现（站点扫描只承诺最外可达区间；NoSampleFound 低置信态已保证漏检不以确定结论呈现，极窄带反例 [0.40,0.474] 已钉）；如需更高置信需外层探测增强或分辨率自适应",
+      "owner": "算法质量后续任务（非阻断）"
+    },
+    {
+      "id": "F-905",
+      "source": "traceability/acceptance/kin-p5-2026-10-16-acceptance.md advisory A-1/A-2（随验收记录转登，验收日期 2026-10-16，verdict=PASS；2026-10-16 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-16",
+      "title": "KIN-P5 验收建议：包络/采样契约破坏性演进下游感知——EnvelopeRayState 2→3 值（新增 NoSampleFound）、点云 CSV v2 sampling-mode 列、区域模式随机序列随 A06 splitmix64 换派生与旧版同查询样本集不可比（IRDSSID v2 身份已分立符合 CON-04 预期）；下游呈现批次接线与缓存类消费方需逐项感知核对",
+      "owner": "R2 呈现批次＋缓存类消费方任务"
     }
   ]
 }
