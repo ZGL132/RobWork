@@ -26,10 +26,10 @@
 #   2) 六个入口脚本正式落位 RobWork/scripts/industrial-robot/（eb777e2 参考实现＋
 #      今日树适配）——适配明细见 ci/README.md「2026-10-16 激活」节与
 #      patches/PATCHES.md 0003 号。
-#   3) 依赖供给无条件执行（原 libzip 单文件守卫移除）＋依赖清单补 15 个 boost 仅头
-#      文件端口——缓存前缀回退会容忍清单变更后命中旧树，单文件守卫探针被旧树或其
-#      传递依赖满足即短路（GitHub 通道三轮实证，run 38947428868/38948093498/
-#      38949126339）；vcpkg 已装端口秒级校验跳过，无条件执行对一切缓存状态自愈。
+#   3) 依赖供给无条件执行（原 libzip 单文件守卫移除）＋依赖清单补 24 个 boost 端口（三轮盘点收敛：目录形态 15 个＋根级单头文件形态 9 个，端口名经 vendored vcpkg ports 目录逐一核对）——原注释行
+#   依赖供给无条件执行；缓存前缀回退会容忍清单变更后命中旧树，单文件守卫探针被旧树或其
+#      传递依赖满足即短路（GitHub 通道四轮实证，run 38947428868/38948093498/
+#      38949126339/38950026889）；vcpkg 已装端口秒级校验跳过，无条件执行对一切缓存状态自愈。
 #      boost 缺口盘点＝框架源码全量 include 扫描；今后扩清单只改清单本身。
 
 stages:
@@ -62,7 +62,7 @@ variables:
     # （GitHub 通道 run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对
     # 已装端口秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
     - >-
-      & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
+      & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple boost-any boost-circular-buffer boost-lexical-cast boost-multi-array boost-optional boost-smart-ptr boost-tokenizer boost-unordered boost-utility --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
     - |
       New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
       @'

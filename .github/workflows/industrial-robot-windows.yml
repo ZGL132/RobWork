@@ -38,10 +38,10 @@
 #      预装满足）；vcpkg install 对已装端口秒级校验跳过、仅补装缺口，无条件执行
 #      对一切缓存状态自愈，代价＝每 job 数十秒状态校验。今后扩依赖清单只改清单
 #      本身，无需再动供给步其余部分。
-#   5) 依赖清单补 15 个 boost 端口（algorithm/asio/bind/function/graph/lambda/math/
+#   5) 依赖清单补 24 个 boost 端口——三轮盘点收敛（见 ci/README 六跑实证）：首轮目录形
 #      mpl/multi-index/numeric-conversion/property-tree/random/serialization/spirit/
 #      tuple）——框架源码（sdurw_core 等）实际 include 的仅头文件 boost 库（全量
-#      include 扫描盘点）；8 月参考运行只构建 sdurws_ird_core 双目标、框架库不进
+#   扫描为本口径权威。8 月参考运行只构建 sdurws_ird_core 双目标、框架库不进
 #      编译图，故当时未暴露（run 38948093498 build job 实证 boost/spirit 等缺头）。
 
 name: industrial-robot-windows-gate
@@ -85,7 +85,7 @@ jobs:
         # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
         # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple boost-any boost-circular-buffer boost-lexical-cast boost-multi-array boost-optional boost-smart-ptr boost-tokenizer boost-unordered boost-utility --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -191,7 +191,7 @@ jobs:
         # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
         # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple boost-any boost-circular-buffer boost-lexical-cast boost-multi-array boost-optional boost-smart-ptr boost-tokenizer boost-unordered boost-utility --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -297,7 +297,7 @@ jobs:
         # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
         # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple boost-any boost-circular-buffer boost-lexical-cast boost-multi-array boost-optional boost-smart-ptr boost-tokenizer boost-unordered boost-utility --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -408,7 +408,7 @@ jobs:
         # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
         # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple boost-any boost-circular-buffer boost-lexical-cast boost-multi-array boost-optional boost-smart-ptr boost-tokenizer boost-unordered boost-utility --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -516,7 +516,7 @@ jobs:
         # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
         # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple boost-any boost-circular-buffer boost-lexical-cast boost-multi-array boost-optional boost-smart-ptr boost-tokenizer boost-unordered boost-utility --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null
@@ -622,7 +622,7 @@ jobs:
         # （run 38947428868/38948093498/38949126339 三轮实证）；vcpkg 对已装端口
         # 秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈。
         run: >-
-          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install qtbase boost-filesystem boost-system boost-thread boost-program-options boost-date-time eigen3 qhull zlib libzip bzip2 gtest pugixml expat boost-algorithm boost-asio boost-bind boost-function boost-graph boost-lambda boost-math boost-mpl boost-multi-index boost-numeric-conversion boost-property-tree boost-random boost-serialization boost-spirit boost-tuple boost-any boost-circular-buffer boost-lexical-cast boost-multi-array boost-optional boost-smart-ptr boost-tokenizer boost-unordered boost-utility --triplet x64-windows --x-install-root "$PWD/.cache/industrial-robot/dependencies/vcpkg/installed"
       - name: 模板供给（gitignored 双 ini 模板，等价 WP-01 计划 §5.6 操作员复制）
         run: |
           New-Item -ItemType Directory -Force "$PWD/RobWork/RobWorkStudio/bin" | Out-Null

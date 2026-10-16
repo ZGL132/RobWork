@@ -47,10 +47,14 @@ CI 常驻门禁正式激活。两份模板与部署文件的同批修订（逐�
    供给步改无条件执行后命令整条未生效——修订时把 `#` 说明行写进了 `run: >-` 折叠标量内，YAML 折叠把全部
    行折叠成一行且以 `#` 开头，PowerShell 整行视为注释，安装命令被吞（步骤假绿秒过）。终态修订：
    - 依赖清单补 15 个 boost 端口（框架源码全量 include 扫描盘点：algorithm/asio/bind/function/graph/
-     lambda/math/mpl/multi-index/numeric-conversion/property-tree/random/serialization/spirit/tuple）；
+       lambda/math/mpl/multi-index/numeric-conversion/property-tree/random/serialization/spirit/tuple，共 15 个）；
    - **供给步无条件执行 vcpkg install，守卫整个移除**——单文件/单包探针被旧树或其传递依赖满足即短路，
      三轮实证无可靠探针；vcpkg 对已装端口秒级校验跳过、仅补装缺口，无条件执行对一切缓存状态自愈
      （代价＝每 job 数十秒校验）。今后扩依赖清单只改清单本身；
+   **六跑实证（run 38951075560）**：build 于 sdurw_sensor 报 `boost/multi_array.hpp` 缺失——该头为
+   boost **根级单文件**（无目录斜杠），首轮目录形态正则漏配；补根级形态扫描所得 9 端口
+   （any/circular-buffer/lexical-cast/multi-array/optional/smart-ptr/tokenizer/unordered/utility，
+   端口名经 vendored vcpkg ports 目录逐一核对，cstdint/version 等由基础端口随装），合计 24 个。
    - **教训（CI yml 改写规范）**：`run: >-`／`- >-` 折叠标量内禁止写 `#` 说明行——会被折叠为脚本注释
      吞掉整条命令；说明一律放标量外的 YAML 注释位。校验口径＝解析 YAML 后打印 run 脚本文本确认命令
      完整且不以 `#` 开头（本节同批已执行并登记）。
