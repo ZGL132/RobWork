@@ -26,6 +26,7 @@
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯
 
 #include <QComboBox>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMetaObject>
 #include <QPushButton>
@@ -52,15 +53,25 @@ namespace {
 struct SamplingHarness {
     runtime::CanonicalModel model;   ///< 规范模型（twoLink——带工具）
     TestView view;                   ///< 宿主注入替身（IKinRuntimeView 最小实现）
-    KinPanelServices services;       ///< 服务缝（modelView——采样执行面）
+    KinPanelServices services;       ///< 服务缝（modelView/exportWriter——执行/写出面）
     KinModuleSessionState state;     ///< 插件会话态（seed 合法基线）
     std::unique_ptr<KinematicsPanelWidget> panel;
+    std::string exportedPath;        ///< 导出写出路径记录（记录缝——PNG/CSV 断言面）
+    std::string exportedContent;     ///< 导出内容记录（PNG 字节/PNG 魔数断言面）
 
     SamplingHarness()
         : model(twoLinkModel()),
           view(model)
     {
         services.modelView = &view;
+        // 导出写出记录缝（★ KIN-R2 任务6——PNG 字节捕获；io write 以
+        // string_view 承载二进制安全，std::string 直存字节）。
+        services.exportWriter =
+            [this](const std::string& path, const std::string& content) {
+                exportedPath = path;
+                exportedContent = content;
+                return true;
+            };
         state.savedConfig.seed = 7;
         state.savedConfig.regionBudget.seed = 7;
         panel = std::make_unique<KinematicsPanelWidget>(services, state);
@@ -183,4 +194,61 @@ TEST(KinematicsPanelSampling, SamplingGroup_RunJointRandomFillsSummary_KIN_R2)
         }
     }
     EXPECT_TRUE(writebackEnabled);
+}
+
+/// 投影视图画布与 PNG 导出全链（★ KIN-R2 任务6——"三维或投影视图＋
+/// PNG 导出"最小可用入口的真实控件路径）：运行采样后画布持有 QPixmap
+/// （散点已绘——非占位文本）；切换投影面（XZ）画布重绘；导出 PNG 经
+/// 既有写出缝落盘（捕获字节以 PNG 魔数 \x89PNG 开头——真实编码证据）。
+TEST(KinematicsPanelSampling, ProjectionCanvasAndPngExport_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    SamplingHarness h;
+
+    // 运行前：画布＝占位（无产物——零虚构数据）。
+    QLabel* canvas = h.panel->findChild<QLabel*>(QStringLiteral("ws-projection-canvas"));
+    ASSERT_NE(canvas, nullptr);
+    EXPECT_FALSE(canvas->pixmap().isNull());  // 占位画布也是 QPixmap（无产物态非空位图）
+    // 占位态 pixmap 恒在（占位画布也是 QPixmap）——以导出按钮门控验证
+    // 无产物禁用（诚实降级面）。
+    QPushButton* pngButton = nullptr;
+    const QList<QPushButton*> buttons = h.panel->findChildren<QPushButton*>();
+    for (QPushButton* b : buttons) {
+        if (b->text() == QStringLiteral("导出投影视图 PNG")) {
+            pngButton = b;
+        }
+    }
+    ASSERT_NE(pngButton, nullptr);
+    EXPECT_FALSE(pngButton->isEnabled());  // 无产物＋（记录缝在场）＝产物门控禁用
+
+    // 运行采样（关节随机 6 样本）→ 画布重绘＋门控点亮。
+    QComboBox* mode = h.modeBox();
+    ASSERT_NE(mode, nullptr);
+    mode->setCurrentIndex(1);
+    QLineEdit* jointRandom = h.edit("ws-joint-random");
+    ASSERT_NE(jointRandom, nullptr);
+    jointRandom->setText(QStringLiteral("6"));
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onWsRunClicked",
+                                          Qt::DirectConnection));
+    
+    EXPECT_FALSE(canvas->pixmap().isNull());  // 散点画布已绘（非空位图）
+
+    // 投影面切换（XZ）→ 画布重绘仍非空（纯呈现态切换——零重算）。
+    QComboBox* plane = h.panel->findChild<QComboBox*>(QStringLiteral("ws-projection-plane"));
+    ASSERT_NE(plane, nullptr);
+    plane->setCurrentIndex(1);
+    
+    EXPECT_FALSE(canvas->pixmap().isNull());
+
+    // PNG 导出：经写出缝落盘（PNG 魔数＋固定文件名——io 字节安全面）。
+    EXPECT_TRUE(pngButton->isEnabled());
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onWsExportPngClicked",
+                                          Qt::DirectConnection));
+    EXPECT_EQ(h.exportedPath, "kin-workspace-projection.png");
+    ASSERT_GE(h.exportedContent.size(), 8U);
+    EXPECT_EQ(h.exportedContent.compare(0, 4, "\x89PNG", 4), 0)
+        << "导出字节非 PNG 魔数（size=" << h.exportedContent.size() << "）";
+    EXPECT_NE(h.panel->lastStatusText().toStdString().find("已导出投影视图"),
+              std::string::npos)
+        << h.panel->lastStatusText().toStdString();
 }

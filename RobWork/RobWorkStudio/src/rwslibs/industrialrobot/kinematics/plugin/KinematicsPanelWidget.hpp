@@ -146,6 +146,9 @@ private Q_SLOTS:
     void onWsRunClicked();                // 运行采样（内联编排）
     void onWsExportCsvClicked();          // 导出点云 CSV（契约 v2 含 sampling-mode 列）
     void onWsWritebackClicked();          // 样本构型回写会话（KIN-06 零修订）
+    // ---- 投影视图（★ KIN-R2 任务6）----
+    void onWsProjectionPlaneChanged(int index); // 投影面切换（画布重绘）
+    void onWsExportPngClicked();          // 导出投影视图 PNG（画布字节经写出缝）
 
 private:
     // ---- 四面板构建（构造期一次——布局骨架；内容全走刷新）----
@@ -163,6 +166,11 @@ private:
     /// 采样组摘要表现投（lastWorkspaceRun 现取——模式 token/状态计数/
     /// 取消标记零缓存；无产物＝空表）。
     void refreshWsSummary();
+    /// 投影散点画布重绘（★ KIN-R2 任务6——lastWorkspaceRun→
+    /// buildWorkspacePointCloud→projectWorkspacePoints→QPainter 离屏
+    /// 绘制；无产物＝占位文本画布。绘制定位（数据→像素映射）为呈现
+    /// 几何，业务语义（状态类别色/图例计数）直投域值，零业务判定）。
+    void refreshWsProjectionCanvas();
     /// 目标输入行单位标注重建（KIN-P1 A07——标签/占位随显示制式＋基座系
     /// 参考系标识；refreshAll 与 L-K8 切换路径共同出口）。
     void refreshTargetUnitPresentation();
@@ -242,6 +250,12 @@ private:
     QPushButton* m_wsWritebackButton = nullptr; ///< 样本构型回写会话（writebackWorkspacePoint）
     QTableWidget* m_wsSummaryTable = nullptr;   ///< 采样摘要表（lastWorkspaceRun 现投）
     KinInlineSamplingContext m_wsContext;   ///< 内联采样宿主上下文（无取消/进度设施——诚实边界）
+
+    // ---- 页④投影视图（★ KIN-R2 任务6——2D 正交投影散点画布＋PNG 导出
+    // 的最小可用入口；三维 RWStudioView3D 接入成本登记后续批次）----
+    QComboBox* m_wsProjectionPlaneBox = nullptr; ///< 投影面（XY/XZ/YZ——域三值词表序）
+    QLabel* m_wsCanvasLabel = nullptr;       ///< 散点画布（QPixmap 载体——离屏 QPainter 绘制）
+    QPushButton* m_wsExportPngButton = nullptr; ///< 导出投影视图 PNG（exportWorkspaceProjectionPng）
 
     // ---- 容器与状态 ----
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器

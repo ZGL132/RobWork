@@ -9,9 +9,11 @@
 #include "KinematicsPanelWidget.hpp"
 
 #include <QFormLayout>
+#include <QBuffer>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLineEdit>
+#include <QPainter>
 #include <QVBoxLayout>
 
 #include <cmath>
@@ -326,6 +328,34 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
     m_wsSummaryTable = makeTable({tr("采样摘要"), tr("值")}, pane);
     layout->addWidget(m_wsSummaryTable);
 
+    // ---- 投影视图（★ KIN-R2 任务6——"三维或投影视图＋PNG 导出"最小
+    // 可用入口）：面板内 2D 正交投影散点画布（XY/XZ/YZ 舍轴语义随域
+    // projectWorkspacePoints；坐标恒基座系 {B}，单位 m）。三维视图截图
+    // PNG 权威归框架 RWStudioView3D（附录 A"等价承接"——勘察口径随卡
+    // §14.6 v0.30 登记）；本画布为零框架依赖的投影视图（评审/取证的
+    // 确定性出图面）。objectName＝"ws-projection-*"（gui_test 定位锚）。
+    m_wsProjectionPlaneBox = new QComboBox(pane);
+    m_wsProjectionPlaneBox->setObjectName(QStringLiteral("ws-projection-plane"));
+    m_wsProjectionPlaneBox->addItem(tr("XY 投影（俯视）"));
+    m_wsProjectionPlaneBox->addItem(tr("XZ 投影（正视）"));
+    m_wsProjectionPlaneBox->addItem(tr("YZ 投影（侧视）"));
+    connect(m_wsProjectionPlaneBox, &QComboBox::currentIndexChanged, this,
+            &KinematicsPanelWidget::onWsProjectionPlaneChanged);
+    auto* projectionRow = new QHBoxLayout();
+    projectionRow->addWidget(new QLabel(tr("投影面"), pane));
+    projectionRow->addWidget(m_wsProjectionPlaneBox);
+    projectionRow->addStretch(1);
+    m_wsExportPngButton = new QPushButton(tr("导出投影视图 PNG"), pane);
+    connect(m_wsExportPngButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onWsExportPngClicked);
+    projectionRow->addWidget(m_wsExportPngButton);
+    layout->addLayout(projectionRow);
+    m_wsCanvasLabel = new QLabel(pane);
+    m_wsCanvasLabel->setObjectName(QStringLiteral("ws-projection-canvas"));
+    m_wsCanvasLabel->setMinimumSize(480, 360);
+    m_wsCanvasLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(m_wsCanvasLabel);
+
     // 命令行（导出/复位/设默认/复算——全部经编排函数，零内联逻辑）。
     auto* buttons = new QHBoxLayout();
     m_exportJsonButton = new QPushButton(tr("导出 JSON"), pane);
@@ -462,10 +492,15 @@ void KinematicsPanelWidget::refreshAll()
     m_wsWritebackButton->setEnabled(
         m_services.sessionPose != nullptr
         && m_session.lastWorkspaceRun != nullptr);
-    // 采样参数字段使能面＋摘要表现投（事件驱动出口——模式切换经
-    // onWsModeChanged 亦单独重进）。
+    m_wsExportPngButton->setEnabled(
+        static_cast<bool>(m_services.exportWriter)
+        && m_session.lastWorkspaceRun != nullptr);
+    // 采样参数字段使能面＋摘要表现投＋画布重绘（事件驱动出口——模式
+    // 切换经 onWsModeChanged、投影面切换经 onWsProjectionPlaneChanged
+    // 亦单独重进对应半区）。
     refreshWsParamVisibility();
     refreshWsSummary();
+    refreshWsProjectionCanvas();
 }
 
 void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProjection>& units)
@@ -1119,6 +1154,134 @@ void KinematicsPanelWidget::onWsWritebackClicked()
         writebackWorkspacePoint(m_services, m_session, sampleIndex)));
     // 会话姿态已更新——位姿页随刷新现投（事件驱动，零缓存）。
     refreshPosePane();
+}
+
+void KinematicsPanelWidget::refreshWsProjectionCanvas()
+{
+    // 投影散点画布重绘（★ KIN-R2 任务6）。数据链（全部域设施直调，零
+    // 二次计算语义）：lastWorkspaceRun → buildWorkspacePointCloud（渲染
+    // 数据唯一组装点）→ projectWorkspacePoints（舍轴投影唯一实现点）→
+    // QPainter 离屏绘制。无产物＝占位画布（不虚构数据）。
+    if (m_wsCanvasLabel == nullptr) {
+        return;
+    }
+    const int width = 480;   // 画布宽（px——呈现几何，非业务量）
+    const int height = 360;  // 画布高（px）
+    QPixmap canvas(width, height);
+    canvas.fill(Qt::white);
+    if (!m_session.lastWorkspaceRun) {
+        // 占位画布（无产物态——与摘要表空表同口径）。
+        QPainter placeholder(&canvas);
+        placeholder.setPen(Qt::gray);
+        placeholder.drawRect(0, 0, width - 1, height - 1);
+        placeholder.drawText(canvas.rect(), Qt::AlignCenter,
+                             tr("暂无点云数据——请先运行工作空间采样"));
+        m_wsCanvasLabel->setPixmap(canvas);
+        return;
+    }
+    const WorkspaceSampleRun& run = *m_session.lastWorkspaceRun;
+    const auto plane = static_cast<WorkspaceProjectionPlane>(
+        m_wsProjectionPlaneBox != nullptr ? m_wsProjectionPlaneBox->currentIndex()
+                                          : 0);
+    const WorkspacePointCloudRenderData data = buildWorkspacePointCloud(run);
+    const std::vector<std::pair<double, double>> projected =
+        projectWorkspacePoints(data, plane);
+
+    QPainter painter(&canvas);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(Qt::lightGray);
+    painter.drawRect(0, 0, width - 1, height - 1);
+
+    // 值域→像素映射（基座系 m 实测极值——data.positionMin/Max 值域
+    // 自检面；退化值域（min==max，如单点云）以 ±0.05 m 邻域兜底避免
+    // 除零——纯呈现几何边界，不触权威值）。边距 32 px 留轴标注。
+    const double marginPx = 32.0;
+    const double lo[3] = {data.positionMin[0], data.positionMin[1],
+                          data.positionMin[2]};
+    const double hi[3] = {data.positionMax[0], data.positionMax[1],
+                          data.positionMax[2]};
+    // 投影面→(横轴, 纵轴) 分量索引（XY→(0,1)/XZ→(0,2)/YZ→(1,2)——与
+    // projectWorkspacePoints 的舍轴语义对位，仅用于轴标注）。
+    const int axisPair[3][2] = {{0, 1}, {0, 2}, {1, 2}};
+    const int axisH = axisPair[static_cast<int>(plane)][0];
+    const int axisV = axisPair[static_cast<int>(plane)][1];
+    auto mapH = [&](double v) {
+        const double lo_v = std::min(lo[axisH], hi[axisH] - 0.05);
+        const double hi_v = std::max(hi[axisH], lo_v + 0.05);
+        return marginPx
+               + (v - lo_v) / (hi_v - lo_v) * (width - 2.0 * marginPx);
+    };
+    auto mapV = [&](double v) {
+        const double lo_v = std::min(lo[axisV], hi[axisV] - 0.05);
+        const double hi_v = std::max(hi[axisV], lo_v + 0.05);
+        // 纵轴翻转（数学坐标向上、画布坐标向下）。
+        return (height - marginPx)
+               - (v - lo_v) / (hi_v - lo_v) * (height - 2.0 * marginPx);
+    };
+
+    // 逐点绘制（点序＝results 全序——确定性呈现；颜色按 SampleState
+    // 五值类别直投——图例与摘要表同源计数，零业务判定）。
+    for (std::size_t i = 0; i < projected.size(); ++i) {
+        const WorkspacePointCloudPoint& p = data.points[i];
+        switch (p.state) {
+            case SampleState::Reached:
+                painter.setPen(QColor(0, 144, 0));       // 可达＝绿
+                break;
+            case SampleState::Unreachable:
+                painter.setPen(QColor(200, 0, 0));       // 不可达＝红
+                break;
+            case SampleState::DataInsufficient:
+                painter.setPen(QColor(216, 120, 0));     // 数据不足＝橙
+                break;
+            default:
+                painter.setPen(QColor(128, 128, 128));   // 未运行/不适用＝灰
+                break;
+        }
+        painter.drawPoint(QPointF(mapH(projected[i].first),
+                                  mapV(projected[i].second)));
+    }
+
+    // 轴标注＋图例（坐标恒基座系 {B} 单位 m——KIN-09 投影语义；图例
+    // 计数与摘要表同源——一处真相）。
+    painter.setPen(Qt::black);
+    const QString axisNames[3] = {tr("X"), tr("Y"), tr("Z")};
+    painter.drawText(width - marginPx, height - 8,
+                     tr("%1 (m)").arg(axisNames[axisH]));
+    painter.drawText(4, marginPx - 8, tr("%1 (m)").arg(axisNames[axisV]));
+    painter.drawText(marginPx, 16,
+                     tr("图例：绿=可达 红=不可达 橙=数据不足 灰=未运行"
+                        "（%1 点）")
+                         .arg(static_cast<qlonglong>(projected.size())));
+    painter.end();
+    m_wsCanvasLabel->setPixmap(canvas);
+}
+
+void KinematicsPanelWidget::onWsProjectionPlaneChanged(int index)
+{
+    // 投影面切换＝画布重绘（纯呈现态——零采样重算零修订）。
+    Q_UNUSED(index);
+    refreshWsProjectionCanvas();
+}
+
+void KinematicsPanelWidget::onWsExportPngClicked()
+{
+    // 画布 PNG 编码（QPixmap→PNG 字节缓冲——呈现面编码；字节经
+    // exportWorkspaceProjectionPng 编排写出——io write 以 string_view
+    // 承载二进制安全）。编码失败（空设备）＝就地反馈不写出。
+    const QPixmap canvas = m_wsCanvasLabel != nullptr && !m_wsCanvasLabel->pixmap().isNull()
+                               ? m_wsCanvasLabel->pixmap()
+                               : QPixmap();
+    QByteArray pngBytes;
+    QBuffer buffer(&pngBytes);
+    buffer.open(QIODevice::WriteOnly);
+    if (canvas.isNull() || !canvas.save(&buffer, "PNG")) {
+        showStatusText(tr("PNG 导出不可用：画布编码失败——原状态保留"));
+        return;
+    }
+    buffer.close();
+    showStatusText(QString::fromStdString(exportWorkspaceProjectionPng(
+        m_services, m_session, "kin-workspace-projection.png",
+        std::string(pngBytes.constData(), static_cast<std::size_t>(pngBytes.size())))));
 }
 
 void KinematicsPanelWidget::onSolutionSelectionChanged()

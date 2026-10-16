@@ -925,6 +925,30 @@ std::string writebackWorkspacePoint(const KinPanelServices& services,
     }
 }
 
+std::string exportWorkspaceProjectionPng(const KinPanelServices& services,
+                                         const KinModuleSessionState& session,
+                                         const std::string& targetPath,
+                                         const std::string& pngBytes)
+{
+    // ---- 四态如实（与点云 CSV 导出同纪律）。空 PNG 字节＝呈现面编码
+    // 失败的误用形态——如实拒绝不写空文件。
+    if (!services.exportWriter) {
+        return "PNG 导出不可用：写出通道未装配";
+    }
+    if (!session.lastWorkspaceRun) {
+        return "无可导出投影（尚未运行采样——先运行一次工作空间采样）";
+    }
+    if (pngBytes.empty()) {
+        return "PNG 导出不可用：画布编码为空（呈现面异常）";
+    }
+    // ---- 写出（字节直传——io write 以 std::string_view 承载，二进制
+    // 安全；PNG 权威分工的勘察口径见头注）。
+    if (services.exportWriter(targetPath, pngBytes)) {
+        return "已导出投影视图（" + targetPath + "）——零修订";
+    }
+    return "PNG 导出写出失败（目标路径不可写？）——旧文件不受影响";
+}
+
 }  // namespace kinematics
 }  // namespace ird
 }  // namespace sdurws

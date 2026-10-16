@@ -616,6 +616,35 @@ std::string writebackWorkspacePoint(const KinPanelServices& services,
                                     const KinModuleSessionState& session,
                                     std::uint64_t sampleIndex);
 
+/**
+ * @brief 导出投影视图 PNG（★ KIN-R2 任务6——"PNG 导出"最小可用入口的
+ *        写出半区；零 Qt——PNG 字节编码在 widget 呈现面完成，本函数只
+ *        承接字节经既有 exportWriter 缝落盘）。
+ *
+ * 勘察口径（随卡 §14.6 v0.30 登记）：三维视图截图 PNG 的权威承载归
+ * 框架 RWStudioView3D（REQUIREMENTS 附录 A"等价承接"行——UX-11/AT-25）；
+ * 接入 RWStudio 场景的三维散点/包络渲染需扩展 ui 单元 View3DPreview-
+ * Contract 值面＋HostView3DPreviewBackend 场景节点管理（数千点元的
+ * 生命周期/性能面）——成本超出本批，登记后续批次。本入口为**面板内
+ * 2D 正交投影**（域 projectWorkspacePoints——XY/XZ/YZ 舍轴投影）的
+ * QPainter 画布 PNG：字节面经 exportWriter（io AtomicFile write 以
+ * std::string_view 承载——二进制安全，已核实）落盘，与文本导出同一
+ * 通道同一纪律。
+ *
+ * @param services   [in] 服务缝（exportWriter）
+ * @param session    [in] 会话态（lastWorkspaceRun——nullopt＝无产物）
+ * @param targetPath [in] 目标文件路径
+ * @param pngBytes   [in] PNG 编码字节（widget 呈现面产出——本函数零
+ *                    解释零转码直传写出缝）
+ * @return 状态行文本（成功/写出失败/通道未装配/无产物——如实四态）
+ *
+ * 纯编排；UI 线程；零修订。
+ */
+std::string exportWorkspaceProjectionPng(const KinPanelServices& services,
+                                         const KinModuleSessionState& session,
+                                         const std::string& targetPath,
+                                         const std::string& pngBytes);
+
 }  // namespace kinematics
 }  // namespace ird
 }  // namespace sdurws

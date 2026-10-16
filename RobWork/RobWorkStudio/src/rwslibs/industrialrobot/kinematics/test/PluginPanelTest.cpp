@@ -1755,4 +1755,46 @@ TEST(PluginPanelLinks, WorkspaceSampling_PointWritebackAndGuards_KIN_R2)
               std::string::npos);
 }
 
+/// 投影视图 PNG 写出编排（★ KIN-R2 任务6——零 Qt 半区）：四态守卫
+/// （无产物/空字节/成功写出/通道未装配）；字节直传不解释（二进制安全
+/// 面由 io write(string_view) 承载——此处钉"内容逐字节到缝"的编排
+/// 契约；真实 PNG 编码在 gui 半区验证）。
+TEST(PluginPanelLinks, WorkspaceSampling_ProjectionPngExportGuards_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    Harness h;
+    // 无产物态：如实拒绝。
+    EXPECT_NE(exportWorkspaceProjectionPng(h.services, h.session, "x.png",
+                                           std::string("bytes"))
+                  .find("无可导出投影"),
+              std::string::npos);
+    // 采样后：空字节（呈现面编码异常的误用形态）拒绝；非空字节成功
+    // 落缝（路径/内容逐字节捕获——零转码契约）。
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::JointSpaceRandom;
+    params.jointRandomCount = 3;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    ASSERT_TRUE(r.ok) << r.statusText;
+
+    EXPECT_NE(exportWorkspaceProjectionPng(h.services, h.session, "x.png",
+                                           std::string())
+                  .find("画布编码为空"),
+              std::string::npos);
+    const std::string status = exportWorkspaceProjectionPng(
+        h.services, h.session, "kin-ws.png", std::string("\x89PNG-mock", 9));
+    EXPECT_NE(status.find("已导出投影视图"), std::string::npos) << status;
+    EXPECT_EQ(h.exportedPath, "kin-ws.png");
+    EXPECT_EQ(h.exportedContent, std::string("\x89PNG-mock", 9));  // 逐字节
+    // 写出缝未装配：如实拒绝。
+    KinPanelServices noWriter = h.services;
+    noWriter.exportWriter = nullptr;
+    EXPECT_NE(exportWorkspaceProjectionPng(noWriter, h.session, "x.png",
+                                           std::string("bytes"))
+                  .find("写出通道未装配"),
+              std::string::npos);
+    EXPECT_EQ(h.commandSubmitCount, 0);  // 导出零修订（AT-04）
+}
+
 }  // namespace
