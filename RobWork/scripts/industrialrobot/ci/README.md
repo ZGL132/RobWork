@@ -31,9 +31,14 @@ CI 常驻门禁正式激活。两份模板与部署文件的同批修订（逐�
 1. **触发器收窄**（仅 GitHub 执行通道）：`on: push` 无过滤＋`pull_request: main` →
    `push: redesign-main`＋`pull_request: redesign-main`＋`workflow_dispatch`。理由＝main 已冻结（AGENTS §6.2）、
    无过滤 push 会对全部任务分支的每次推送触发多小时运行。GitLab 侧 `rules:` 保持"任意分支＋MR"未动（豁免执行态，触发面待 Runner 接入时随接入契约裁决）。
-2. **依赖供给补 gtest**（双文件镜像，脚本行一致）：今日树各单元 CMake 含
-   `find_package(GTest CONFIG REQUIRED)`（DTB §5.5，自 WP-02-T01 起）；2026-08-31 验证运行时点 core_test 尚非
-   gtest 测试、RWS_BUILD_INDUSTRIALROBOT 补丁（0001，2026-09-09）未落地，故当时缺 gtest 也能通过，今日不能。
+2. **依赖供给补 gtest＋pugixml＋expat**（双文件镜像，脚本行一致）：今日树各单元 CMake 含
+   `find_package(GTest CONFIG REQUIRED)`（DTB §5.5，自 WP-02-T01 起）、
+   `find_package(pugixml CONFIG REQUIRED)`（modeling 单元）、`find_package(expat CONFIG REQUIRED)`
+   （io 单元）；2026-08-31 验证运行时点 core_test 尚非 gtest 测试、RWS_BUILD_INDUSTRIALROBOT 补丁（0001，2026-09-09）未落地，
+   且 modeling/io 两单元尚未进 CI 视野，故当时三项均无需求。
+   **首跑实证（run 38936681670，2026-10-16）**：configure 于 modeling 单元 `find_package(pugixml)` 失败
+   （job 耗时 1h20m——fresh 依赖树全量源码编译，缓存随后按 `if: always()` 保存）；pugixml/expat 即本条修订依据，
+   盘点口径＝全单元 `find_package` REQUIRED 清单（GTest/Qt6/Boost/Eigen3/libzip 原清单已覆盖）。
 3. **入口脚本落位** `RobWork/scripts/industrial-robot/`（6 文件，eb777e2 参考实现＋今日树适配，0003 号补丁登记）：
    - `common.ps1`：与 eb777e2 逐字节一致（VS x64 环境发现/原生日志执行/Qt 冲突检测）。
    - `configure.ps1`：固定选项增 `-DRWS_BUILD_INDUSTRIALROBOT=ON`（0001 号补丁 option，不传则子树不进构建图）、
