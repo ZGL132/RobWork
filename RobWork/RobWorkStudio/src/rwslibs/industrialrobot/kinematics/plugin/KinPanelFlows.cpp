@@ -390,6 +390,20 @@ std::string resetSessionHomeFromNamedSource(const KinPanelServices& services)
                + " != 设备自由度 " + std::to_string(dof)
                + "（来源解析违约或模型已变更）——未写回";
     }
+    // ---- 拒绝态⑤：来源值含非有限分量（F-903——NaN Home 双轨统一）。
+    // 修复前维度检查通过而值含 NaN 时，非有限拒绝只在写入口
+    // （KinSessionPose::setJointConfiguration 的 fail-fast）触发——异常
+    // 穿越编排函数直达 Qt 槽，与维度违约的显式提示轨双轨不一致（验收
+    // 探针实测异常传播、会话态零污染）。本态前置拦截：值面违约与维度
+    // 违约同走提示轨（显式反馈零写回），编排层不再让任何可预见的调用
+    // 方违约以异常形态离开本函数。NaN/±∞ 的可达来源＝装配层解析违约
+    // （正常装配下 Home 来自命名位姿集解码的合法数值）。
+    for (std::size_t i = 0; i < home->size(); ++i) {
+        if (!std::isfinite((*home)[i])) {
+            return "复位 Home 不可用：Home 第 " + std::to_string(i + 1)
+                   + " 分量非有限（NaN/±∞——来源解析违约）——未写回";
+        }
+    }
     // ---- 通过：唯一写点覆写会话姿态（零修订——KIN-06/AT-04）。
     return resetSessionHome(services.sessionPose, *home);
 }

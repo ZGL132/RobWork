@@ -12,6 +12,8 @@
 #include <stdexcept>
 #include <utility>
 
+#include <rw/math/RPY.hpp>  // RPY（★ KIN-R2 任务4——完整姿态呈现的库设施直调；RobWork 权威欧拉角实现，零自写三角分解）
+
 #include "KinPanelUnits.hpp"  // formatKinQuantityText（显示投影唯一出口）
 
 namespace sdurws {
@@ -20,12 +22,17 @@ namespace kinematics {
 namespace {
 
 /// 便捷装配：命名数值行（SI 值＋单位 token → 投影文本一行）。
-/// infinityText＝该行遇合法 +∞ 时的呈现语义词（KIN-P3/审查 A03——调用
-/// 方按行语义供给：条件数行"奇异/∞"、裕量行"无界"；缺省泛化 "∞"）。
+/// infinityText＝该行遇 +∞ 时的呈现语义词（KIN-P3/审查 A03；★ F-902
+/// 按行收紧——调用方只对**域契约允许无穷的行**供给词：条件数行"奇异/∞"
+/// （Fk.hpp:108-112 奇异→+∞）、裕量行"无界"（KinTypes.hpp:272-273 连续
+/// 无工作范围＝+∞/全无界＝+∞）；缺省 nullopt＝该量域契约不含无穷
+/// （位置/旋转矩阵元/奇异值/可操作度/残差——Fk.hpp PoseMetrics 字段
+/// 规则），域外 +∞ 走"非法值(+∞)"显式标记轨，不再静默显示泛化"∞"）。
 KinNamedValueRow makeRow(std::string key, std::string label, double siValue,
                          std::string unitToken,
                          const std::optional<DisplayUnitProjection>& units,
-                         std::string_view infinityText = "∞")
+                         std::optional<std::string_view> infinityText
+                         = std::nullopt)
 {
     KinNamedValueRow row;
     row.key = std::move(key);
@@ -52,31 +59,63 @@ std::vector<KinNamedValueRow> poseMetricRows(
     const PoseMetrics& metrics,
     const std::optional<DisplayUnitProjection>& displayUnits)
 {
-    // 行构建序固定（头注 1~4——呈现稳定序，NFR-COR-02）。全部数值来自
-    // IFkEvaluator::evaluate 产出值（域设施），此处零计算只投影。
+    // 行构建序固定（头注 1~5——呈现稳定序，NFR-COR-02）。全部数值来自
+    // IFkEvaluator::evaluate 产出值（域设施），此处零业务计算只投影。
     std::vector<KinNamedValueRow> rows;
 
-    // ---- 1. TCP 位姿（位置三轴行＋姿态旋转矩阵对角元摘要行）：位置为
-    //      长度量纲（m 投影）；姿态以方向余弦对角元直投（无量纲——呈现
-    //      层零三角换算，RPY 分解属计算逻辑不落插件）。----
-    rows.push_back(makeRow("tcp-x", "TCP X", metrics.tcpInBase.P()[0], "m",
-                           displayUnits));
-    rows.push_back(makeRow("tcp-y", "TCP Y", metrics.tcpInBase.P()[1], "m",
-                           displayUnits));
-    rows.push_back(makeRow("tcp-z", "TCP Z", metrics.tcpInBase.P()[2], "m",
-                           displayUnits));
-    rows.push_back(makeRow("tcp-rot-xx", "姿态 R[0][0]",
-                           metrics.tcpInBase.R()(0, 0), "1", displayUnits));
-    rows.push_back(makeRow("tcp-rot-yy", "姿态 R[1][1]",
-                           metrics.tcpInBase.R()(1, 1), "1", displayUnits));
-    rows.push_back(makeRow("tcp-rot-zz", "姿态 R[2][2]",
-                           metrics.tcpInBase.R()(2, 2), "1", displayUnits));
+    // ---- 1. TCP 位置（双参考系——★ KIN-R2 任务4/审查 §4 坐标系标识）：
+    //      基座系 {B}（T_base_tcp）与世界系 {W}（T_world_tcp——经 view.
+    //      worldToBase() 唯一组合，Fk.hpp 契约）各三轴行。位置为长度量纲
+    //      （m 投影）；两参考系均域外无穷收紧（F-902 白名单缺省——位置
+    //      契约恒有限）。
+    rows.push_back(makeRow("tcp-x", "TCP X（基座系）",
+                           metrics.tcpInBase.P()[0], "m", displayUnits));
+    rows.push_back(makeRow("tcp-y", "TCP Y（基座系）",
+                           metrics.tcpInBase.P()[1], "m", displayUnits));
+    rows.push_back(makeRow("tcp-z", "TCP Z（基座系）",
+                           metrics.tcpInBase.P()[2], "m", displayUnits));
+    rows.push_back(makeRow("tcp-world-x", "TCP X（世界系）",
+                           metrics.tcpInWorld.P()[0], "m", displayUnits));
+    rows.push_back(makeRow("tcp-world-y", "TCP Y（世界系）",
+                           metrics.tcpInWorld.P()[1], "m", displayUnits));
+    rows.push_back(makeRow("tcp-world-z", "TCP Z（世界系）",
+                           metrics.tcpInWorld.P()[2], "m", displayUnits));
 
-    // ---- 2. 无量纲指标（条件数/可操作度/最小裕量）----
-    // 合法无穷的行级语义（KIN-P3/审查 A03）：条件数 +∞＝σmin＝0 的奇异
-    // 状态（Fk.hpp 契约"奇异→+∞，不静默截断"）——呈现"奇异/∞"；裕量
-    // +∞＝连续关节无工作范围的无界裕量（KinTypes.hpp"全无界＝+∞"）——
-    // 呈现"无界"。两者均原样呈现，禁止截断成有限数字。
+    // ---- 2. 完整姿态呈现（★ KIN-R2 任务4/审查 §4——修复前仅旋转矩阵
+    //      三个对角元，不能完整表达三维姿态）：
+    //      2a. RPY 三行（rad——角度量纲投影；换算经 rw::math::RPY 库
+    //          设施（RobWork 权威欧拉角实现），本层零自写三角分解——
+    //          旧决策"RPY 分解不落插件"随审查 §4 完整姿态要求修订为
+    //          "库设施直调、零自写三角"（呈现投影，不入任何计算身份，
+    //          随卡 §14.6 增量修订登记）。worldTref→基座系的 RPY 语义
+    //          即"基座系中看 TCP 姿态"。
+    //      2b. 旋转矩阵 9 元逐行只读（无量纲，∈[-1,1]——正交阵契约；
+    //          域外无穷收紧同 F-902）。RPY 在万向锁邻域的库侧 epsilon
+    //          特判不改变矩阵元的直投真值——矩阵行是姿态的第一性呈现，
+    //          RPY 行是工程可读投影，两者互补不互替。
+    const rw::math::RPY<double> rpy(metrics.tcpInBase.R());
+    rows.push_back(makeRow("tcp-rpy-roll", "姿态 RPY-Roll（基座系）",
+                           rpy[0], "rad", displayUnits));
+    rows.push_back(makeRow("tcp-rpy-pitch", "姿态 RPY-Pitch（基座系）",
+                           rpy[1], "rad", displayUnits));
+    rows.push_back(makeRow("tcp-rpy-yaw", "姿态 RPY-Yaw（基座系）",
+                           rpy[2], "rad", displayUnits));
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            rows.push_back(makeRow(
+                "tcp-rot-r" + std::to_string(r) + "c" + std::to_string(c),
+                "姿态 R[" + std::to_string(r) + "][" + std::to_string(c)
+                    + "]（基座系）",
+                metrics.tcpInBase.R()(r, c), "1", displayUnits));
+        }
+    }
+
+    // ---- 3. 无量纲指标（条件数/可操作度/最小裕量）----
+    // 合法无穷的行级语义（KIN-P3/审查 A03；F-902 白名单按行收紧）：
+    // 条件数 +∞＝σmin=0 的奇异状态（Fk.hpp 契约"奇异→+∞，不静默截断"）
+    // ——呈现"奇异/∞"；裕量 +∞＝连续关节无工作范围的无界裕量
+    // （KinTypes.hpp"全无界＝+∞"）——呈现"无界"。两者均原样呈现，
+    // 禁止截断成有限数字。可操作度域契约恒有限（≥0）——白名单缺省。
     rows.push_back(makeRow("cond", "条件数", metrics.conditionNumber, "1",
                            displayUnits, "奇异/∞"));
     rows.push_back(makeRow("manip", "可操作度", metrics.manipulability, "1",
@@ -84,14 +123,14 @@ std::vector<KinNamedValueRow> poseMetricRows(
     rows.push_back(makeRow("min-margin", "最小关节裕量", metrics.minimumJointMargin,
                            "1", displayUnits, "无界"));
 
-    // ---- 3. 奇异值逐条（sigma-1..n——链序；无量纲）----
+    // ---- 4. 奇异值逐条（sigma-1..n——链序；无量纲）----
     for (std::size_t i = 0; i < metrics.singularValues.size(); ++i) {
         rows.push_back(makeRow("sigma-" + std::to_string(i + 1),
                                "奇异值 σ" + std::to_string(i + 1),
                                metrics.singularValues[i], "1", displayUnits));
     }
 
-    // ---- 4. 关节裕量逐关节（margin-j1..n——链序；无量纲归一化比；+∞＝
+    // ---- 5. 关节裕量逐关节（margin-j1..n——链序；无量纲归一化比；+∞＝
     //      该关节连续且无工作范围——"无界"呈现，A03 同则）----
     for (std::size_t i = 0; i < metrics.jointMargins.size(); ++i) {
         rows.push_back(makeRow("margin-j" + std::to_string(i + 1),

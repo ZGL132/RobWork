@@ -24,8 +24,9 @@
 #include <sdurws/ird/ui/UiText.hpp>                // 文案键解析（UI-T25——迁移标记标签挂键；
                                                    // 构造期命令标题 resolver 尚未注入，此处直读
                                                    // UiText 静态表与 requirements 面板先例同款）
+#include <rw/math/RPY.hpp>                        // RPY（★ KIN-R2 任务4——目标姿态编辑的库设施直调）
 #include "KinPanelCommandCatalog.hpp"              // 命令目录（按钮词形与只读门控）
-#include "KinPanelUnits.hpp"                       // resolveKinDisplayToSi（提交面逆换算——A07）
+#include "KinPanelUnits.hpp"                       // resolveKinDisplayToSi/resolveKinAngleDisplayToSi（提交面逆换算——A07/KIN-R2）
 
 namespace sdurws {
 namespace ird {
@@ -116,8 +117,13 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     auto* pane = new QWidget(this);
     auto* layout = new QHBoxLayout(pane);
 
-    // ---- 左半：位姿指标行表＋关节表（KIN-12 显示投影）。
+    // ---- 左半：参考系标识行＋位姿指标行表＋关节表（KIN-12 显示投影）。
+    // ★ KIN-R2 任务4（审查 §4 坐标系标识）：标识行由 refreshPosePane 随
+    // TCP 解析现投（工具身份＋双参考系口径说明——用户不必猜位姿值在哪个
+    // 系下表达）。
     auto* left = new QVBoxLayout();
+    m_frameLabel = new QLabel(pane);
+    left->addWidget(m_frameLabel);
     m_poseTable = makeTable({tr("指标"), tr("值")}, pane);
     left->addWidget(m_poseTable);
     m_jointTable = makeTable({tr("关节"), tr("当前构型")}, pane);
@@ -138,9 +144,31 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     m_targetXLabel = new QLabel(pane);
     m_targetYLabel = new QLabel(pane);
     m_targetZLabel = new QLabel(pane);
+    // objectName＝稳定定位锚（gui_test 按名取控件——findChildren 顺序
+    // 依赖创建序，六字段扩展后按名取值为确定性语义；KIN-R2 任务4）。
+    m_targetX->setObjectName(QStringLiteral("target-x"));
+    m_targetY->setObjectName(QStringLiteral("target-y"));
+    m_targetZ->setObjectName(QStringLiteral("target-z"));
     form->addRow(m_targetXLabel, m_targetX);
     form->addRow(m_targetYLabel, m_targetY);
     form->addRow(m_targetZLabel, m_targetZ);
+    // ★ KIN-R2 任务4（审查 §4"目标姿态固定为单位旋转"修复面）：目标
+    // 姿态以 RPY（roll-pitch-yaw，Z-Y-X 欧角约定随 rw::math::RPY 语义）
+    // 三字段编辑——**显示制式**角度值（deg/rad 随制式），提交经
+    // resolveKinAngleDisplayToSi 逆换算回 SI rad 后经 rw::math::RPY
+    // 构造完整旋转（空输入＝缺省 0，即历史单位旋转行为——向后兼容）。
+    m_targetRoll = new QLineEdit(pane);
+    m_targetPitch = new QLineEdit(pane);
+    m_targetYaw = new QLineEdit(pane);
+    m_targetRollLabel = new QLabel(pane);
+    m_targetPitchLabel = new QLabel(pane);
+    m_targetYawLabel = new QLabel(pane);
+    m_targetRoll->setObjectName(QStringLiteral("target-roll"));
+    m_targetPitch->setObjectName(QStringLiteral("target-pitch"));
+    m_targetYaw->setObjectName(QStringLiteral("target-yaw"));
+    form->addRow(m_targetRollLabel, m_targetRoll);
+    form->addRow(m_targetPitchLabel, m_targetPitch);
+    form->addRow(m_targetYawLabel, m_targetYaw);
     // 首版标注（按当前会话制式——构造期 displayUnits 尚为缺省 SI 直显，
     // setDisplayUnits 注入后经 refreshAll 重建）。
     refreshTargetUnitPresentation();
@@ -314,12 +342,20 @@ void KinematicsPanelWidget::refreshAll()
     m_setDeviceButton->setEnabled(commandEnabled("kinematics.set-default-device",
                                                  kinCommandEnabledInSession("kinematics.set-default-device", writable)
                                                  && m_services.commandHandler != nullptr));
-    // 复位 Home（KIN-P3/审查 A09）：按钮可用性＝具名 Home 来源缝已装配
-    // ——来源缺失即显式禁用，绝不出现"以当前姿态充当 Home"的可达路径
-    // （缝在场但模型未定义 Home 的提示在点击路径给出——resetSessionHome
-    // FromNamedSource 拒绝态③）。只读会话可用（reset-session-pose＝
-    // readOnlyAllowed，会话级命令——目录表权威）。
-    m_resetHomeButton->setEnabled(static_cast<bool>(m_services.homePose));
+    // 复位 Home（KIN-P3/审查 A09；★ KIN-R2 任务5——正式宿主装配的可用性
+    // 语义收敛）：按钮可用性＝具名 Home 来源缝已装配**且现取查询确实
+    // 解析出 Home 定义**。有定义才可用、无定义显式禁用（诚实降级——
+    // 修复前"缝在场即点亮"，模型未定义 Home 时按钮可达但点击必得"未
+    // 定义"提示，可用性暗示与实际能力不符）；缝未装配同样禁用。三条
+    // 门控共同保证"绝不出现以当前姿态充当 Home 的可达路径"（审查 A09
+    // 红线）。现取查询零缓存（KinHomePoseProvider 契约——纯查询幂等，
+    // UI 线程现调；项目态变化经 refreshAll 重进门控）。缝在场但查询
+    // 未定义 Home 的明确提示保留在点击路径（resetSessionHomeFromNamed-
+    // Source 拒绝态③——直达槽防御面语义不变）。只读会话不禁用
+    // （reset-session-pose＝readOnlyAllowed，会话级命令——目录表权威）。
+    m_resetHomeButton->setEnabled(
+        static_cast<bool>(m_services.homePose)
+        && m_services.homePose().has_value());
     const bool exportReady = static_cast<bool>(m_services.exportWriter)
                              && m_session.lastSessionSolutionSetView != nullptr;
     m_exportJsonButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
@@ -349,13 +385,21 @@ void KinematicsPanelWidget::refreshTargetUnitPresentation()
     // 标签为构造期硬编码 "（m）"，切到 mm 后标签失实）。标注同时携带
     // **参考系标识"基座系"**（KIN-P1 验收"参考系标识"半区）：提交目标
     // 经 runSinglePointSolve 进入 IkRequest.targetInBase（基座系 SI——
-    // 单元卡 §5.3），输入语义即基座系坐标。单位符号取当前制式长度 token
-    // 原文（core Units 冻结词表——"m"/"cm"/"mm"）；nullopt＝SI 直显制式。
+    // 单元卡 §5.3），输入语义即基座系坐标。单位符号取当前制式长度/角度
+    // token 原文（core Units 冻结词表——"m"/"cm"/"mm"、"rad"/"deg"）；
+    // nullopt＝SI 直显制式。★ KIN-R2 任务4：新增姿态 RPY 三行的角度
+    // 标注（角度量纲与长度量纲分立——resolveKinAngleDisplayToSi 的
+    // 提交面对位；R/P/Y 为 Z-Y-X 欧角约定随 rw::math::RPY 语义）。
     const QString lengthSymbol =
         m_session.displayUnits.has_value()
             ? QString::fromStdString(
                 std::string(m_session.displayUnits->lengthUnit().symbol()))
             : QStringLiteral("m");
+    const QString angleSymbol =
+        m_session.displayUnits.has_value()
+            ? QString::fromStdString(
+                std::string(m_session.displayUnits->angleUnit().symbol()))
+            : QStringLiteral("rad");
     if (m_targetXLabel != nullptr) {
         m_targetXLabel->setText(tr("目标 X（%1，基座系）").arg(lengthSymbol));
         m_targetX->setPlaceholderText(
@@ -371,6 +415,21 @@ void KinematicsPanelWidget::refreshTargetUnitPresentation()
         m_targetZ->setPlaceholderText(
             tr("基座系坐标，单位：%1").arg(lengthSymbol));
     }
+    if (m_targetRollLabel != nullptr) {
+        m_targetRollLabel->setText(tr("目标 RPY-Roll（%1，基座系）").arg(angleSymbol));
+        m_targetRoll->setPlaceholderText(
+            tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
+    }
+    if (m_targetPitchLabel != nullptr) {
+        m_targetPitchLabel->setText(tr("目标 RPY-Pitch（%1，基座系）").arg(angleSymbol));
+        m_targetPitch->setPlaceholderText(
+            tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
+    }
+    if (m_targetYawLabel != nullptr) {
+        m_targetYawLabel->setText(tr("目标 RPY-Yaw（%1，基座系）").arg(angleSymbol));
+        m_targetYaw->setPlaceholderText(
+            tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
+    }
 }
 
 void KinematicsPanelWidget::refreshPosePane()
@@ -378,6 +437,9 @@ void KinematicsPanelWidget::refreshPosePane()
     // 位姿指标：域设施直调（IFkEvaluator——缝未装配＝空态呈现，不虚构行）。
     if (m_services.fkEvaluator == nullptr || m_services.modelView == nullptr) {
         renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
+        if (m_frameLabel != nullptr) {
+            m_frameLabel->setText(tr("参考系标识：模型视图或评估器未装配——位姿页空态"));
+        }
         return;
     }
     // 会话姿态在设即评估之；未设＝空呈现（零虚构数据行——零位评估会
@@ -385,6 +447,9 @@ void KinematicsPanelWidget::refreshPosePane()
     if (m_services.sessionPose == nullptr || !m_services.sessionPose->isSet()) {
         renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
         m_jointTable->setRowCount(0);
+        if (m_frameLabel != nullptr) {
+            m_frameLabel->setText(tr("参考系标识：会话姿态未设置——位姿页空态"));
+        }
         return;
     }
     const std::vector<double>& q = m_services.sessionPose->jointConfiguration();
@@ -398,8 +463,23 @@ void KinematicsPanelWidget::refreshPosePane()
     if (!tcp.ok) {
         renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
         m_jointTable->setRowCount(0);
+        if (m_frameLabel != nullptr) {
+            m_frameLabel->setText(tr("参考系标识：TCP 未解析（见状态行）"));
+        }
         showStatusText(QString::fromStdString(tcp.statusText));
         return;
+    }
+    // ★ KIN-R2 任务4（审查 §4 坐标系标识）：TCP 工具身份＋双参考系口径
+    // 随解析结果现投——用户据此可知位姿值在哪个系下表达、TCP 属哪个
+    // 工具（tcpKey 空＝canonical TCP——解析单点的显式名纪律）。
+    if (m_frameLabel != nullptr) {
+        m_frameLabel->setText(
+            tr("TCP：%1（工具 %2）——位姿值按基座系 {B}（T_base_tcp）与"
+               "世界系 {W}（T_world_tcp）双参考系呈现")
+                .arg(tcp.tcp.tcpKey.empty()
+                         ? QStringLiteral("canonical TCP")
+                         : QString::fromStdString(tcp.tcp.tcpKey),
+                     QString::fromStdString(tcp.tcp.toolObject.toCanonical())));
     }
     const auto metrics =
         m_services.fkEvaluator->evaluate(*m_services.modelView, tcp.tcp, q);
@@ -549,39 +629,76 @@ void KinematicsPanelWidget::focusTaskPoint(const std::optional<core::ObjectId>& 
     m_taskPointTable->setCurrentItem(nullptr);
 }
 
-void KinematicsPanelWidget::onSolveClicked()
+std::optional<rw::math::Transform3D<double>>
+KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
 {
-    // L-K2 转接（零内联逻辑——编排函数承担）。目标位姿从编辑字段读取：
-    // 字段承载**显示制式**数值（行标签随制式标注单位——见
-    // refreshTargetUnitPresentation），提交前按所选单位**逆换算回 SI
-    // 真值**（resolveKinDisplayToSi——mm 输入 0.1 → 1e-4 m），会话/求解
-    // 器只见 SI（IkRequest.targetInBase＝基座系 m，§5.3）。审查条目 A07
-    // 修复：修复前此处直读显示值并用 projectLength（SI→显示的正向投影）
-    // 再放大——方向反转（mm 输入 0.1 → 100 m，按任何解释均非法）。
+    // ---- 位置分量（显示制式 → SI）：解析失败**或非有限**（"inf"/"nan"
+    // 可被解析但不是合法坐标——NFR-COR-03 非有限不静默）＝调用方输入
+    // 错误：就地反馈保留原值（UX-05），不向求解器传递非有限目标（域
+    // IkRequest 校验 fail-fast 的调用方侧前置拦截——交互层拒绝而非异常
+    // 穿越 Qt 槽）。审查条目 A07：显示制式→SI 逆换算唯一出口
+    // resolveKinDisplayToSi（mm 输入 0.1 → 1e-4 m——修复前方向反转）。
     bool okX = false, okY = false, okZ = false;
     double x = m_targetX->text().toDouble(&okX);
     double y = m_targetY->text().toDouble(&okY);
     double z = m_targetZ->text().toDouble(&okZ);
-    // 解析失败**或非有限**（"inf"/"nan" 可被解析但不是合法坐标——
-    // NFR-COR-03 非有限不静默）＝调用方输入错误：就地反馈保留原值
-    // （UX-05），不向求解器传递非有限目标（域 IkRequest 校验 fail-fast
-    // 的调用方侧前置拦截——交互层拒绝而非异常穿越 Qt 槽）。
     if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
         || !std::isfinite(z)) {
-        showStatusText(tr("目标位姿非法（数值解析失败或非有限）——原值保留"));
-        return;
+        showStatusText(tr("%1位姿非法（位置分量解析失败或非有限）——原值保留")
+                           .arg(errorPrefix));
+        return std::nullopt;
     }
-    // 显示制式→SI 逆换算（唯一换算点 KinPanelUnits::resolveKinDisplayToSi
-    // ——nullopt 制式恒等；换算方向与读侧 projectLength 相反）。
     x = resolveKinDisplayToSi(x, m_session.displayUnits);
     y = resolveKinDisplayToSi(y, m_session.displayUnits);
     z = resolveKinDisplayToSi(z, m_session.displayUnits);
-    // 位姿构造用 9 参旋转（头内 inline）——不实例化引用 rw 库符号的单参构造（冒烟链接面）。
-    const rw::math::Transform3D<double> target(
-        rw::math::Vector3D<double>(x, y, z),
-        rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0));
+
+    // ---- 姿态分量（★ KIN-R2 任务4——RPY 三字段，审查 §4"姿态固定为
+    // 单位旋转"修复面）：空输入＝0（历史行为兼容——修复前姿态恒单位
+    // 旋转，即 RPY 全零的等价形态）；非空须可解析且有限。显示制式→
+    // SI rad 经 resolveKinAngleDisplayToSi（角度量纲独立入口——误走
+    // 长度版会按长度因子换算，量纲错配）。
+    auto parseAngle = [this](QLineEdit* edit, bool* ok) -> double {
+        const QString text = edit->text().trimmed();
+        if (text.isEmpty()) {
+            *ok = true;      // 空＝0（单位旋转缺省——向后兼容语义）
+            return 0.0;
+        }
+        return text.toDouble(ok);
+    };
+    bool okR = false, okP = false, okYw = false;
+    double roll = parseAngle(m_targetRoll, &okR);
+    double pitch = parseAngle(m_targetPitch, &okP);
+    double yaw = parseAngle(m_targetYaw, &okYw);
+    if (!okR || !okP || !okYw || !std::isfinite(roll) || !std::isfinite(pitch)
+        || !std::isfinite(yaw)) {
+        showStatusText(tr("%1位姿非法（姿态分量解析失败或非有限）——原值保留")
+                           .arg(errorPrefix));
+        return std::nullopt;
+    }
+    roll = resolveKinAngleDisplayToSi(roll, m_session.displayUnits);    // rad
+    pitch = resolveKinAngleDisplayToSi(pitch, m_session.displayUnits);  // rad
+    yaw = resolveKinAngleDisplayToSi(yaw, m_session.displayUnits);      // rad
+
+    // ---- 基座系 {B} 目标位姿组装：位置（m）＋RPY→旋转（rw::math 库
+    // 设施直调——Z-Y-X 欧角约定，零自写三角）。位姿构造用 9 参旋转的
+    // 历史形态由 RPY(0,0,0).toRotation3D()（恒等阵）承载——冒烟链接面
+    // 不变（不实例化引用 rw 库符号的单参构造）。
+    const rw::math::RPY<double> rpy(roll, pitch, yaw);
+    return rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(x, y, z), rpy.toRotation3D());
+}
+
+void KinematicsPanelWidget::onSolveClicked()
+{
+    // L-K2 转接（零内联逻辑——编排函数承担）。目标位姿六字段读取与
+    // 逆换算收拢到 readTargetPoseFromEditors 单点（★ KIN-R2 任务4——
+    // 位置 XYZ＋姿态 RPY；解析失败＝就地反馈并停在提交前，绝不向求解
+    // 器传递非法/非有限目标）。
+    const std::optional<rw::math::Transform3D<double>> target =
+        readTargetPoseFromEditors(tr("目标"));
+    if (!target.has_value()) {
+        return;  // 反馈已在 helper 内就地给出——保留原值停在原地
+    }
     // 会话求解请求装配（KIN-P2/审查 A08——从会话/模型装配完整合法请求：
     // TCP 经 KIN-14 默认工具解析、初值/容差/迭代来自求解配置、referenceQ
     // 取会话姿态、intervals 取模型限位）。装配失败＝显式呈现稳定诊断码
@@ -595,7 +712,7 @@ void KinematicsPanelWidget::onSolveClicked()
         return;
     }
     const KinSolveFlowResult r =
-        runSinglePointSolve(m_services, m_session, target, assembly.request);
+        runSinglePointSolve(m_services, m_session, *target, assembly.request);
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（★ KIN-P4——refreshAll 而非仅结果页：解集入会话态后
     // 导出/复算按钮的门控随即点亮——修复前按钮态停留在求解前的"无结果
@@ -674,29 +791,16 @@ void KinematicsPanelWidget::onRecomputeClicked()
 {
     // KIN-P4 转接（复算编排——目标位姿取面板当前编辑值；原任务定义的
     // seed/referenceQ 自原结果身份显式携带，快照重绑定为当前会话锚）。
-    // 目标字段解析失败/非有限＝调用方输入错误，就地反馈不向求解器传递
-    // （与 onSolveClicked 同门控语义——复算同属提交求解的入口）。
-    bool okX = false, okY = false, okZ = false;
-    double x = m_targetX->text().toDouble(&okX);
-    double y = m_targetY->text().toDouble(&okY);
-    double z = m_targetZ->text().toDouble(&okZ);
-    if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
-        || !std::isfinite(z)) {
-        showStatusText(tr("复算目标位姿非法（数值解析失败或非有限）——原值保留"));
-        return;
+    // 目标六字段读取与逆换算同一单点（★ KIN-R2 任务4——与求解入口共用
+    // readTargetPoseFromEditors；复算同属提交求解的入口，解析失败就地
+    // 反馈不向求解器传递）。
+    const std::optional<rw::math::Transform3D<double>> target =
+        readTargetPoseFromEditors(tr("复算目标"));
+    if (!target.has_value()) {
+        return;  // 反馈已在 helper 内就地给出——保留原值停在原地
     }
-    // 显示制式→SI 逆换算（与求解入口同一换算单点——A07 同则）。
-    x = resolveKinDisplayToSi(x, m_session.displayUnits);
-    y = resolveKinDisplayToSi(y, m_session.displayUnits);
-    z = resolveKinDisplayToSi(z, m_session.displayUnits);
-    // 位姿构造用 9 参旋转（与求解入口同形——冒烟链接面）。
-    const rw::math::Transform3D<double> target(
-        rw::math::Vector3D<double>(x, y, z),
-        rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0));
     const KinRecomputeFlowResult r =
-        recomputeSessionFromIdentity(m_services, m_session, target);
+        recomputeSessionFromIdentity(m_services, m_session, *target);
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（同求解入口——新解集入会话态后门控/解表同步）。
     refreshAll();

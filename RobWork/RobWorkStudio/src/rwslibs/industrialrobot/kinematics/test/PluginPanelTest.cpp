@@ -1152,6 +1152,8 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SingularConditionNumberRow_KIN_P3)
     std::vector<KinNamedValueRow> rows;
     EXPECT_NO_THROW({ rows = poseMetricRows(metrics.get(), std::nullopt); });
     // 条件数行语义正确：语义词"奇异/∞"、SI 真值 +∞ 原样（显示层不截断）。
+    // 行定位按 key（KIN-R2 任务4 起行集含双参考系/RPY/矩阵 9 元——索引
+    // 定位脆弱，键为稳定锚）。
     const auto cond = std::find_if(rows.begin(), rows.end(),
                                    [](const KinNamedValueRow& r) {
                                        return r.key == "cond";
@@ -1163,8 +1165,12 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SingularConditionNumberRow_KIN_P3)
     PoseMetrics nearSingular;
     nearSingular.conditionNumber = 12345.678;
     const auto nearRows = poseMetricRows(nearSingular, std::nullopt);
-    EXPECT_NE(nearRows[6].displayText.find("12345.7"), std::string::npos)
-        << nearRows[6].displayText;  // 6 位有效数字 general
+    const auto nearCond =
+        std::find_if(nearRows.begin(), nearRows.end(),
+                     [](const KinNamedValueRow& r) { return r.key == "cond"; });
+    ASSERT_NE(nearCond, nearRows.end());
+    EXPECT_NE(nearCond->displayText.find("12345.7"), std::string::npos)
+        << nearCond->displayText;  // 6 位有效数字 general
 }
 
 /// A03 回归②：关节裕量无界 +∞（连续关节无工作范围——合法无界）呈现
@@ -1263,8 +1269,9 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3)
         }
     }
     // 整表重投影对 +∞ 行幂等（+∞ 呈现与制式无关）、对有限行重换算；
-    // SI 真值逐行不动（V-17）。行数＝TCP 位置 3＋姿态对角 3＋cond/
-    // manip/min-margin 3（奇异值/裕量向量空——最小构造）＝9。
+    // SI 真值逐行不动（V-17）。行数＝TCP 基座系 3＋世界系 3＋RPY 3＋
+    // 矩阵 9＋cond/manip/min-margin 3（奇异值/裕量向量空——最小构造）
+    // ＝21（KIN-R2 任务4 双参考系＋完整姿态行集布局）。
     const auto reprojected = reprojectMetricRows(
         poseMetricRows([] {
             PoseMetrics m;
@@ -1273,7 +1280,7 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3)
             return m;
         }(), std::nullopt),
         tryFindKinDisplayUnits("mm", "deg"));
-    ASSERT_EQ(reprojected.size(), 9U);
+    ASSERT_EQ(reprojected.size(), 21U);
     bool sawCond = false;
     for (const auto& r : reprojected) {
         if (r.key == "cond") {
@@ -1283,6 +1290,88 @@ TEST(PluginPanelLinks, KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3)
         }
     }
     EXPECT_TRUE(sawCond);
+}
+
+/// F-902 回归：域外无穷白名单按行收紧——域契约**不含**无穷的量（TCP
+/// 位置/旋转矩阵元/可操作度/奇异值/残差——Fk.hpp PoseMetrics 字段规则）
+/// siValue=+∞（上游双重违约形态）不再静默显示泛化"∞"，走"非法值(+∞)"
+/// 显式标记轨；域内合法无穷（条件数/关节裕量——Fk.hpp:108-112/
+/// KinTypes.hpp:272-273）语义词呈现不回归（A03 三分类保留）；NaN/−∞
+/// 拒绝面不松动。修复前 formatKinQuantityText 对一切 +∞ 返回语义词
+/// （缺省"∞"）——F-902 探针实测域外位置行 siValue=+∞ 被静默放行。
+TEST(PluginPanelLinks, KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01"}, std::vector<std::string>{});
+    const double inf = std::numeric_limits<double>::infinity();
+
+    // ---- 直接格式化面：白名单参数即域契约判定（有值＝合法、缺省＝域外）。
+    // 域外 +∞：位置行（"m"）与无量纲行（"1"）——修复前此处返回"∞"（红）。
+    EXPECT_EQ(formatKinQuantityText(inf, "m", std::nullopt), "非法值(+∞)");
+    EXPECT_EQ(formatKinQuantityText(inf, "1", std::nullopt), "非法值(+∞)");
+    // 域内合法无穷不回归（A03 行为保留）：白名单在场＝语义词原样返回。
+    EXPECT_EQ(formatKinQuantityText(inf, "1", std::nullopt, "奇异/∞"),
+              "奇异/∞");
+    EXPECT_EQ(formatKinQuantityText(inf, "1", std::nullopt, "无界"), "无界");
+    // NaN/−∞ 拒绝面不松动：任何行（含白名单行）的值域都不含该两类——
+    // fail-fast 不渲染伪数据（与 F-902 的"+∞ 分轨"正交）。
+    EXPECT_THROW(
+        formatKinQuantityText(std::numeric_limits<double>::quiet_NaN(), "1",
+                              std::nullopt),
+        std::invalid_argument);
+    EXPECT_THROW(formatKinQuantityText(-inf, "1", std::nullopt, "无界"),
+                 std::invalid_argument);
+
+    // ---- 行集面：域外行与域内行同表混排互不误伤（白名单按行生效的
+    // 表级证据）。域外形态＝直接构造指标值（行构建面纯搬运；FK 契约
+    // 恒有限——本行的 +∞ 只能来自上游双重违约，即 F-902 的可达前提）。
+    PoseMetrics metrics;
+    metrics.tcpInBase.P()[0] = inf;        // TCP X（m——域外）
+    metrics.tcpInBase.R()(0, 0) = inf;     // 旋转矩阵元（∈[-1,1]——域外）
+    metrics.manipulability = inf;          // 可操作度（≥0 有限——域外）
+    metrics.singularValues = {inf};        // 奇异值（SVD 有限产出——域外）
+    metrics.conditionNumber = inf;         // 条件数（奇异＝+∞——域内合法）
+    metrics.minimumJointMargin = inf;      // 最小裕量（全无界＝+∞——域内合法）
+    std::vector<KinNamedValueRow> rows;
+    EXPECT_NO_THROW({ rows = poseMetricRows(metrics, std::nullopt); });
+    auto findRow = [&rows](const std::string& key) -> const KinNamedValueRow* {
+        const auto it = std::find_if(rows.begin(), rows.end(),
+                                     [&key](const KinNamedValueRow& r) {
+                                         return r.key == key;
+                                     });
+        return it != rows.end() ? &*it : nullptr;
+    };
+    // 域外四行：显式标记（修复前为"∞"——红）。
+    ASSERT_NE(findRow("tcp-x"), nullptr);
+    EXPECT_STREQ(findRow("tcp-x")->displayText.c_str(), "非法值(+∞)");
+    ASSERT_NE(findRow("tcp-rot-r0c0"), nullptr);
+    EXPECT_STREQ(findRow("tcp-rot-r0c0")->displayText.c_str(), "非法值(+∞)");
+    ASSERT_NE(findRow("manip"), nullptr);
+    EXPECT_STREQ(findRow("manip")->displayText.c_str(), "非法值(+∞)");
+    ASSERT_NE(findRow("sigma-1"), nullptr);
+    EXPECT_STREQ(findRow("sigma-1")->displayText.c_str(), "非法值(+∞)");
+    // 域内两行：语义词（A03 不回归）。
+    ASSERT_NE(findRow("cond"), nullptr);
+    EXPECT_STREQ(findRow("cond")->displayText.c_str(), "奇异/∞");
+    ASSERT_NE(findRow("min-margin"), nullptr);
+    EXPECT_STREQ(findRow("min-margin")->displayText.c_str(), "无界");
+    // SI 真值不被呈现层篡改（V-17——标记行同样保留 +∞ 原值）。
+    EXPECT_TRUE(std::isinf(findRow("tcp-x")->siValue)
+                && findRow("tcp-x")->siValue > 0.0);
+
+    // ---- 重投影幂等：域外标记与制式无关（切 mm/deg 后仍为显式标记，
+    // 不退化回泛化"∞"或数值）；域内语义词跨制式稳定（L-K8 同则）。
+    const auto mmDeg = tryFindKinDisplayUnits("mm", "deg");
+    ASSERT_TRUE(mmDeg.has_value());
+    const auto reprojected = reprojectMetricRows(rows, mmDeg);
+    ASSERT_EQ(reprojected.size(), rows.size());
+    for (const auto& r : reprojected) {
+        if (r.key == "tcp-x") {
+            EXPECT_STREQ(r.displayText.c_str(), "非法值(+∞)");
+        }
+        if (r.key == "cond") {
+            EXPECT_STREQ(r.displayText.c_str(), "奇异/∞");
+        }
+    }
 }
 
 /// A05 回归①：混合链（转动＋移动）解列逐轴投影——移动轴 0.1 m 在
@@ -1428,6 +1517,50 @@ TEST(PluginPanelLinks, ResetHome_NamedSourceFlowGatesAndWrites_KIN_P3)
     EXPECT_NE(ok.find("已复位 Home"), std::string::npos) << ok;
     EXPECT_EQ(h.sessionPose.jointConfiguration(), (std::vector<double>{1.0, -2.0}));
     EXPECT_EQ(h.commandSubmitCount, 0);
+}
+
+/// F-903 回归：Home 来源值含非有限分量（维度合法）——编排层前置拦截
+/// 转显式提示轨（与维度违约同轨），异常不再穿越编排函数；会话姿态零
+/// 写回。修复前该形态只在写入口（KinSessionPose::setJointConfiguration
+/// fail-fast）拒绝——std::invalid_argument 直达 Qt 槽，与维度违约的
+/// 提示轨双轨不一致（验收探针实测异常传播、会话态零污染）。
+TEST(PluginPanelLinks, ResetHome_NonFiniteSourceExplicitHintTrack_F903)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-06"}, std::vector<std::string>{"AT-04"});
+    Harness h;
+    h.sessionPose.setJointConfiguration({0.4, 0.4});  // 当前姿态非零（写回断言基线）
+
+    // 值面违约①：NaN 分量（维度 2＝二连杆 dof——维度检查通过、值非法）。
+    {
+        KinPanelServices nanHome = h.services;
+        nanHome.homePose = [] {
+            return std::optional<std::vector<double>>(
+                std::vector<double>{1.0, std::numeric_limits<double>::quiet_NaN()});
+        };
+        // 修复前此处抛 std::invalid_argument（写入口 fail-fast 穿越编排
+        // 函数——红）；修复后转提示轨不抛。
+        std::string text;
+        EXPECT_NO_THROW({ text = resetSessionHomeFromNamedSource(nanHome); });
+        EXPECT_NE(text.find("非有限"), std::string::npos) << text;
+        EXPECT_NE(text.find("未写回"), std::string::npos) << text;
+        // 会话姿态零写回（不钳制不置零——NaN 分量不得污染会话态）。
+        EXPECT_EQ(h.sessionPose.jointConfiguration(),
+                  (std::vector<double>{0.4, 0.4}));
+    }
+    // 值面违约②：−∞ 分量（同一非有限拒绝面——isfinite 单点判定）。
+    {
+        KinPanelServices negInfHome = h.services;
+        negInfHome.homePose = [] {
+            return std::optional<std::vector<double>>(
+                std::vector<double>{-std::numeric_limits<double>::infinity(), 0.5});
+        };
+        std::string text;
+        EXPECT_NO_THROW({ text = resetSessionHomeFromNamedSource(negInfHome); });
+        EXPECT_NE(text.find("非有限"), std::string::npos) << text;
+        EXPECT_EQ(h.sessionPose.jointConfiguration(),
+                  (std::vector<double>{0.4, 0.4}));
+    }
+    EXPECT_EQ(h.commandSubmitCount, 0);  // 拒绝路径零修订（KIN-06/AT-04）
 }
 
 }  // namespace
