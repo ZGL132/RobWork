@@ -141,6 +141,11 @@ private Q_SLOTS:
     void onRecomputeClicked();        // KIN-P4 复算（原任务定义×当前快照重绑定）
     void onSolutionSelectionChanged();// L-K1 解表选中→检查器联动
     void onSolutionDoubleClicked(int row, int column); // L-K4 双击→会话姿态回写
+    // ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——结果与可视化面板）----
+    void onWsModeChanged(int index);      // 采样模式切换（参数字段使能面）
+    void onWsRunClicked();                // 运行采样（内联编排）
+    void onWsExportCsvClicked();          // 导出点云 CSV（契约 v2 含 sampling-mode 列）
+    void onWsWritebackClicked();          // 样本构型回写会话（KIN-06 零修订）
 
 private:
     // ---- 四面板构建（构造期一次——布局骨架；内容全走刷新）----
@@ -152,6 +157,12 @@ private:
     // ---- 刷新半区（现取重投影——零缓存）----
     void refreshPosePane();         // 位姿指标行＋关节表（KIN-12 投影）
     void refreshResultsPane();      // 解表/统计/检查器
+    /// 采样组参数字段使能面（★ KIN-R2 任务3——随模式切换启用对应参数：
+    /// 区域盒字段/区域位置采样字段/关节随机/关节网格互斥启用）。
+    void refreshWsParamVisibility();
+    /// 采样组摘要表现投（lastWorkspaceRun 现取——模式 token/状态计数/
+    /// 取消标记零缓存；无产物＝空表）。
+    void refreshWsSummary();
     /// 目标输入行单位标注重建（KIN-P1 A07——标签/占位随显示制式＋基座系
     /// 参考系标识；refreshAll 与 L-K8 切换路径共同出口）。
     void refreshTargetUnitPresentation();
@@ -208,6 +219,29 @@ private:
     QPushButton* m_setTcpButton = nullptr;     ///< 设默认 TCP（L-K9）
     QPushButton* m_setDeviceButton = nullptr;  ///< 设默认设备（L-K9）
     QPushButton* m_recomputeButton = nullptr;  ///< 复算（KIN-P4——原任务定义×当前快照）
+
+    // ---- 页④探索式采样组（★ KIN-R2 任务3/KIN-09——编辑入口＋运行＋
+    // 导出＋回写；raw 指针＝Qt 父子所有权）----
+    QComboBox* m_wsModeBox = nullptr;        ///< 采样模式（区域盒/关节随机/关节网格——域三值词表序）
+    QComboBox* m_wsPositionMethodBox = nullptr; ///< 区域位置采样方法（随机/网格——仅区域模式启用）
+    QLineEdit* m_wsRegionCX = nullptr;       ///< 区域盒中心 X（显示制式长度——提交逆换算 SI m）
+    QLineEdit* m_wsRegionCY = nullptr;       ///< 区域盒中心 Y（同上）
+    QLineEdit* m_wsRegionCZ = nullptr;       ///< 区域盒中心 Z（同上）
+    QLineEdit* m_wsRegionSX = nullptr;       ///< 区域盒边长 X（同上；须 >0）
+    QLineEdit* m_wsRegionSY = nullptr;       ///< 区域盒边长 Y（同上）
+    QLineEdit* m_wsRegionSZ = nullptr;       ///< 区域盒边长 Z（同上）
+    QLineEdit* m_wsRegionRandom = nullptr;   ///< 区域随机样本数（无量纲）
+    QLineEdit* m_wsRegionGridX = nullptr;    ///< 区域网格 X 轴计数（无量纲）
+    QLineEdit* m_wsRegionGridY = nullptr;    ///< 区域网格 Y 轴计数（无量纲）
+    QLineEdit* m_wsRegionGridZ = nullptr;    ///< 区域网格 Z 轴计数（无量纲）
+    QLineEdit* m_wsJointRandom = nullptr;    ///< 关节随机样本数（无量纲）
+    QLineEdit* m_wsJointGrid = nullptr;      ///< 关节网格逐轴取点数（无量纲——统一值施加全轴）
+    QPushButton* m_wsRunButton = nullptr;    ///< 运行采样（内联编排——runWorkspaceSamplingFlow）
+    QPushButton* m_wsExportCsvButton = nullptr; ///< 导出点云 CSV（exportWorkspacePointCloudCsv）
+    QLineEdit* m_wsSampleIndex = nullptr;    ///< 回写样本序输入（results 全局序）
+    QPushButton* m_wsWritebackButton = nullptr; ///< 样本构型回写会话（writebackWorkspacePoint）
+    QTableWidget* m_wsSummaryTable = nullptr;   ///< 采样摘要表（lastWorkspaceRun 现投）
+    KinInlineSamplingContext m_wsContext;   ///< 内联采样宿主上下文（无取消/进度设施——诚实边界）
 
     // ---- 容器与状态 ----
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器

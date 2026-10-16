@@ -1563,4 +1563,196 @@ TEST(PluginPanelLinks, ResetHome_NonFiniteSourceExplicitHintTrack_F903)
     EXPECT_EQ(h.commandSubmitCount, 0);  // 拒绝路径零修订（KIN-06/AT-04）
 }
 
+// =====================================================================
+// KIN-R2 任务3——探索式工作空间采样编排（面板模式编辑入口的零 Qt 半区；
+// 域计算核 WorkspaceTest 已钉——本组只钉"面板参数→域查询→产物入会话
+// 态→导出/回写走既有通道"的编排面与 F-905 下游感知）
+// =====================================================================
+
+/// 关节随机采样全链：面板参数（mode=JointSpaceRandom、样本数 8）→域
+/// 查询装配→内联 FK 采样→产物入会话态（逐样本 Reached——FK 构造性
+/// 可达、样本携带采样构型）＋模式 token 溯源（F-905——"joint-random"
+/// 词表词，禁第二处字面量）。
+TEST(PluginPanelLinks, WorkspaceSampling_JointRandomFlow_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    Harness h;  // twoLinkModel（带工具——FK 消费合法 TCP）
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::JointSpaceRandom;
+    params.jointRandomCount = 8;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    EXPECT_TRUE(r.ok) << r.statusText;
+    EXPECT_EQ(r.samplingModeToken, "joint-random");
+    EXPECT_NE(r.statusText.find("采样完成"), std::string::npos) << r.statusText;
+    ASSERT_TRUE(h.session.lastWorkspaceRun != nullptr);
+    const WorkspaceSampleRun& run = *h.session.lastWorkspaceRun;
+    EXPECT_EQ(run.mode, WorkspaceSamplingMode::JointSpaceRandom);
+    ASSERT_EQ(run.results.size(), 8U);
+    for (const WorkspaceSampleResult& s : run.results) {
+        // 关节模式 FK 全序：构型可达由 FK 保证——零搜索未果形态（域
+        // KIN-09 权威语义；DataInsufficient 仅 FK 值面错误可达）。
+        EXPECT_EQ(s.state, SampleState::Reached) << s.sampleIndex;
+        EXPECT_FALSE(s.jointConfiguration.empty()) << s.sampleIndex;
+        EXPECT_TRUE(s.bestSolution.has_value()) << s.sampleIndex;
+    }
+}
+
+/// 区域盒模式全链（随机撒点）：区域盒尺寸合法（>0）→逐样本 IK 评估→
+/// 产物入会话态＋"cartesian-region" token（旧径行为保持——模式词表
+/// 回显）。区域零样本合法口径：randomCount=0 → 空产物 ok=true（状态行
+/// 含"共 0"——零样本不拒绝不虚构）。
+TEST(PluginPanelLinks, WorkspaceSampling_CartesianRegionFlow_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    Harness h;
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::CartesianRegion;
+    params.regionCenterX = 0.6;  // 基座系 m（部分落在二连杆可达环内）
+    params.regionSizeX = 0.2;
+    params.regionSizeY = 0.2;
+    params.regionSizeZ = 0.2;
+    params.positionRandom = true;
+    params.regionRandomCount = 4;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    EXPECT_TRUE(r.ok) << r.statusText;
+    EXPECT_EQ(r.samplingModeToken, "cartesian-region");
+    ASSERT_TRUE(h.session.lastWorkspaceRun != nullptr);
+    // 样本数＝位置样本 4＋退化位姿样本 4（§7.2 样本集语义：位置样本与
+    // (位置×方向×roll) 位姿样本分列——单方向单 roll 退化配置下位姿样本
+    // 数＝位置数，两类样本全部逐样本评估，域分母口径原样承接）。
+    EXPECT_EQ(h.session.lastWorkspaceRun->results.size(), 8U);
+
+    // 零样本口径：randomCount=0 → 空产物（合法——与域零样本判定一致）。
+    KinWorkspaceSamplingParams zero = params;
+    zero.regionRandomCount = 0;
+    const KinWorkspaceSamplingFlowResult rz =
+        runWorkspaceSamplingFlow(h.services, h.session, zero, ctx);
+    EXPECT_TRUE(rz.ok) << rz.statusText;
+    ASSERT_TRUE(h.session.lastWorkspaceRun != nullptr);
+    EXPECT_EQ(h.session.lastWorkspaceRun->results.size(), 0U);
+}
+
+/// 非法查询拒绝轨：区域尺寸 ≤0（RegionBox 契约违约）与配置 seed=0
+/// （I-KIN-4）——域校验 invalid_argument 转显式状态行（不抛、不穿越
+/// 调用方），会话态零触碰（lastWorkspaceRun 保持空）。
+TEST(PluginPanelLinks, WorkspaceSampling_InvalidQueryExplicitReject_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "NFR-COR-03"},
+                  std::vector<std::string>{});
+    Harness h;
+    KinInlineSamplingContext ctx;
+    // 形态①：区域盒零尺寸（RegionBox size 三分量须 >0）。
+    {
+        KinWorkspaceSamplingParams params;
+        params.regionSizeX = 0.0;  // 违例——域校验首错
+        const KinWorkspaceSamplingFlowResult r =
+            runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+        EXPECT_FALSE(r.ok);
+        EXPECT_NE(r.statusText.find("采样查询非法"), std::string::npos)
+            << r.statusText;
+        EXPECT_EQ(h.session.lastWorkspaceRun, nullptr);  // 会话态零触碰
+    }
+    // 形态②：配置 seed=0（I-KIN-4——savedConfig 会话纪律的越界注入）。
+    {
+        h.session.savedConfig.seed = 0;
+        KinWorkspaceSamplingParams params;
+        params.mode = WorkspaceSamplingMode::JointSpaceRandom;
+        params.jointRandomCount = 2;
+        const KinWorkspaceSamplingFlowResult r =
+            runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+        EXPECT_FALSE(r.ok);
+        EXPECT_NE(r.statusText.find("非法"), std::string::npos) << r.statusText;
+        EXPECT_EQ(h.session.lastWorkspaceRun, nullptr);
+    }
+}
+
+/// 点云 CSV 导出（F-905 导出半区）：契约 v2 表头含 sampling-mode 溯源
+/// 列、行值携带关节模式 token；导出走既有 exportWriter 缝（路径/内容
+/// 由记录缝捕获）＋零修订（命令出口计数为零）。无产物＝如实拒绝。
+TEST(PluginPanelLinks, WorkspaceSampling_PointCloudCsvExportV2_F905)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"}, std::vector<std::string>{});
+    Harness h;
+    // 无产物态：如实拒绝（不虚构空文件）。
+    EXPECT_NE(exportWorkspacePointCloudCsv(h.services, h.session, "x.csv")
+                  .find("无可导出点云"),
+              std::string::npos);
+
+    // 关节网格采样（每轴 2 点 ×2 轴＝4 样本）后导出。
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::JointSpaceGrid;
+    params.jointGridPerAxis = 2;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    ASSERT_TRUE(r.ok) << r.statusText;
+
+    const std::string status =
+        exportWorkspacePointCloudCsv(h.services, h.session, "kin-ws.csv");
+    EXPECT_NE(status.find("已导出点云"), std::string::npos) << status;
+    EXPECT_NE(status.find("sampling-mode"), std::string::npos) << status;
+    EXPECT_EQ(h.exportedPath, "kin-ws.csv");
+    // 契约 v2 表头（首行——呈现/测试解析锚）：sampling-mode 列在场；
+    // 关节模式行携带 "joint-grid" token（点从哪来的强制溯源）。
+    ASSERT_FALSE(h.exportedContent.empty());
+    const std::string header =
+        h.exportedContent.substr(0, h.exportedContent.find('\n'));
+    EXPECT_NE(header.find("sample-index,x-m,y-m,z-m,sampling-mode"),
+              std::string::npos)
+        << header;
+    EXPECT_NE(h.exportedContent.find("joint-grid"), std::string::npos);
+    // 数据行数＝样本数 4（表头 1 行＋数据 4 行）。
+    const int lines = static_cast<int>(
+        std::count(h.exportedContent.begin(), h.exportedContent.end(), '\n'));
+    EXPECT_EQ(lines, 5);
+    EXPECT_EQ(h.commandSubmitCount, 0);  // 导出零修订（AT-04）
+}
+
+/// 样本回写与守卫轨：关节模式样本回写走既有会话回写通道（会话姿态＝
+/// 采样构型；零修订——命令出口零触碰）；越界样本域 fail-fast 转状态行
+/// 不抛；会话姿态缝未装配＝如实拒绝。
+TEST(PluginPanelLinks, WorkspaceSampling_PointWritebackAndGuards_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "KIN-06"},
+                  std::vector<std::string>{"AT-04"});
+    Harness h;
+    // 无产物守卫。
+    EXPECT_NE(writebackWorkspacePoint(h.services, h.session, 0)
+                  .find("尚未运行采样"),
+              std::string::npos);
+
+    KinWorkspaceSamplingParams params;
+    params.mode = WorkspaceSamplingMode::JointSpaceRandom;
+    params.jointRandomCount = 4;
+    KinInlineSamplingContext ctx;
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(h.services, h.session, params, ctx);
+    ASSERT_TRUE(r.ok) << r.statusText;
+    const std::vector<double> sample0 =
+        h.session.lastWorkspaceRun->results.front().jointConfiguration;
+
+    // 回写样本 0：会话姿态＝采样构型（KIN-06 零修订——命令出口零触碰）。
+    const std::string ok =
+        writebackWorkspacePoint(h.services, h.session, 0);
+    EXPECT_NE(ok.find("已更新"), std::string::npos) << ok;
+    EXPECT_EQ(h.sessionPose.jointConfiguration(), sample0);
+    EXPECT_EQ(h.commandSubmitCount, 0);
+
+    // 越界样本：域 fail-fast 转状态行（不抛——提示轨，F-903 同则）。
+    std::string reject;
+    EXPECT_NO_THROW({ reject = writebackWorkspacePoint(h.services, h.session, 9999); });
+    EXPECT_NE(reject.find("回写被拒"), std::string::npos) << reject;
+
+    // 会话姿态缝未装配：如实拒绝。
+    KinPanelServices noPose = h.services;
+    noPose.sessionPose = nullptr;
+    EXPECT_NE(writebackWorkspacePoint(noPose, h.session, 0)
+                  .find("会话姿态未装配"),
+              std::string::npos);
+}
+
 }  // namespace
