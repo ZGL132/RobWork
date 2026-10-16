@@ -244,6 +244,88 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
     m_statTable = makeTable({tr("统计"), tr("值")}, pane);
     layout->addWidget(m_statTable);
 
+    // ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——采样模式编辑入口）：
+    // 模式三值（区域盒 IK 采样/关节随机 FK 采样/关节网格 FK 采样——域
+    // WorkspaceSamplingMode 词表序）；参数字段随模式互斥启用
+    // （refreshWsParamVisibility）；运行/导出/回写全部经编排函数零内联
+    // 逻辑。字段 objectName＝"ws-*"（gui_test 稳定定位锚）。
+    m_wsModeBox = new QComboBox(pane);
+    m_wsModeBox->setObjectName(QStringLiteral("ws-mode-box"));
+    m_wsModeBox->addItem(tr("区域盒（IK 采样）"));
+    m_wsModeBox->addItem(tr("关节随机（FK 采样）"));
+    m_wsModeBox->addItem(tr("关节网格（FK 采样）"));
+    connect(m_wsModeBox, &QComboBox::currentIndexChanged, this,
+            &KinematicsPanelWidget::onWsModeChanged);
+    m_wsPositionMethodBox = new QComboBox(pane);
+    m_wsPositionMethodBox->setObjectName(QStringLiteral("ws-position-method"));
+    m_wsPositionMethodBox->addItem(tr("随机均匀"));
+    m_wsPositionMethodBox->addItem(tr("体心网格"));
+
+    auto makeWsEdit = [pane](const QString& objectName,
+                             const QString& text) {
+        QLineEdit* edit = new QLineEdit(text, pane);
+        edit->setObjectName(objectName);
+        return edit;
+    };
+    m_wsRegionCX = makeWsEdit(QStringLiteral("ws-region-cx"), QStringLiteral("0"));
+    m_wsRegionCY = makeWsEdit(QStringLiteral("ws-region-cy"), QStringLiteral("0"));
+    m_wsRegionCZ = makeWsEdit(QStringLiteral("ws-region-cz"), QStringLiteral("0"));
+    m_wsRegionSX = makeWsEdit(QStringLiteral("ws-region-sx"), QStringLiteral("0.2"));
+    m_wsRegionSY = makeWsEdit(QStringLiteral("ws-region-sy"), QStringLiteral("0.2"));
+    m_wsRegionSZ = makeWsEdit(QStringLiteral("ws-region-sz"), QStringLiteral("0.2"));
+    m_wsRegionRandom = makeWsEdit(QStringLiteral("ws-region-random"), QStringLiteral("64"));
+    m_wsRegionGridX = makeWsEdit(QStringLiteral("ws-region-grid-x"), QStringLiteral("2"));
+    m_wsRegionGridY = makeWsEdit(QStringLiteral("ws-region-grid-y"), QStringLiteral("2"));
+    m_wsRegionGridZ = makeWsEdit(QStringLiteral("ws-region-grid-z"), QStringLiteral("2"));
+    m_wsJointRandom = makeWsEdit(QStringLiteral("ws-joint-random"), QStringLiteral("64"));
+    m_wsJointGrid = makeWsEdit(QStringLiteral("ws-joint-grid"), QStringLiteral("2"));
+    m_wsSampleIndex = makeWsEdit(QStringLiteral("ws-sample-index"), QString());
+
+    auto* wsForm = new QFormLayout();
+    wsForm->addRow(tr("采样模式"), m_wsModeBox);
+    wsForm->addRow(tr("区域中心 X（长度制式单位，基座系）"),
+                   m_wsRegionCX);
+    wsForm->addRow(tr("区域中心 Y（长度制式单位，基座系）"),
+                   m_wsRegionCY);
+    wsForm->addRow(tr("区域中心 Z（长度制式单位，基座系）"),
+                   m_wsRegionCZ);
+    wsForm->addRow(tr("区域边长 X（长度制式单位，基座系）"),
+                   m_wsRegionSX);
+    wsForm->addRow(tr("区域边长 Y（长度制式单位，基座系）"),
+                   m_wsRegionSY);
+    wsForm->addRow(tr("区域边长 Z（长度制式单位，基座系）"),
+                   m_wsRegionSZ);
+    wsForm->addRow(tr("区域位置采样"), m_wsPositionMethodBox);
+    wsForm->addRow(tr("区域随机样本数"), m_wsRegionRandom);
+    wsForm->addRow(tr("区域网格计数 X/Y/Z"), m_wsRegionGridX);
+    wsForm->addRow(QString(), m_wsRegionGridY);
+    wsForm->addRow(QString(), m_wsRegionGridZ);
+    wsForm->addRow(tr("关节随机样本数"), m_wsJointRandom);
+    wsForm->addRow(tr("关节网格每轴取点数"), m_wsJointGrid);
+    layout->addLayout(wsForm);
+
+    auto* wsButtons = new QHBoxLayout();
+    m_wsRunButton = new QPushButton(tr("运行采样"), pane);
+    m_wsRunButton->setToolTip(tr("探索式采样（KIN-09）——内联运行，样本量级为演示/诊断面"));
+    m_wsExportCsvButton = new QPushButton(tr("导出点云 CSV"), pane);
+    m_wsWritebackButton = new QPushButton(tr("回写样本构型到会话"), pane);
+    connect(m_wsRunButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onWsRunClicked);
+    connect(m_wsExportCsvButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onWsExportCsvClicked);
+    connect(m_wsWritebackButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onWsWritebackClicked);
+    wsButtons->addWidget(m_wsRunButton);
+    wsButtons->addWidget(m_wsExportCsvButton);
+    wsButtons->addWidget(m_wsSampleIndex);
+    wsButtons->addWidget(m_wsWritebackButton);
+    layout->addLayout(wsButtons);
+
+    // 采样摘要表（lastWorkspaceRun 现投——模式 token/状态计数/取消标记；
+    // F-905 感知半区：模式 token 行即"点从哪来"的强制溯源标注）。
+    m_wsSummaryTable = makeTable({tr("采样摘要"), tr("值")}, pane);
+    layout->addWidget(m_wsSummaryTable);
+
     // 命令行（导出/复位/设默认/复算——全部经编排函数，零内联逻辑）。
     auto* buttons = new QHBoxLayout();
     m_exportJsonButton = new QPushButton(tr("导出 JSON"), pane);
@@ -369,6 +451,21 @@ void KinematicsPanelWidget::refreshAll()
     m_solveButton->setEnabled(commandEnabled("kinematics.solve-ik",
                                              m_services.ikSolver != nullptr
                                              && m_services.modelView != nullptr));
+    // ---- 探索式采样组门控（★ KIN-R2 任务3）：运行＝模型视图在场（执行
+    // 面；TCP 解析在流内显式拒绝）；导出＝写出缝＋会话已有采样产物；
+    // 回写＝会话姿态写点＋产物在场。缺一即禁用（诚实降级，与其他缝同
+    // 纪律）。
+    m_wsRunButton->setEnabled(m_services.modelView != nullptr);
+    m_wsExportCsvButton->setEnabled(
+        static_cast<bool>(m_services.exportWriter)
+        && m_session.lastWorkspaceRun != nullptr);
+    m_wsWritebackButton->setEnabled(
+        m_services.sessionPose != nullptr
+        && m_session.lastWorkspaceRun != nullptr);
+    // 采样参数字段使能面＋摘要表现投（事件驱动出口——模式切换经
+    // onWsModeChanged 亦单独重进）。
+    refreshWsParamVisibility();
+    refreshWsSummary();
 }
 
 void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProjection>& units)
@@ -804,6 +901,224 @@ void KinematicsPanelWidget::onRecomputeClicked()
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（同求解入口——新解集入会话态后门控/解表同步）。
     refreshAll();
+}
+
+// ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——槽与刷新实现）------------
+
+void KinematicsPanelWidget::refreshWsParamVisibility()
+{
+    // 字段使能面＝模式分派（与域 validateWorkspaceSamplingQuery 的按模式
+    // 校验面对位——区域模式消费区域盒/位置采样定义、关节模式消费关节
+    // 采样定义，两族互不越界；禁用态字段值不参与装配——widget 装配函数
+    // 按模式显式取值）。
+    const int mode = m_wsModeBox != nullptr ? m_wsModeBox->currentIndex() : 0;
+    const bool cartesian = mode == 0;  // WorkspaceSamplingMode::CartesianRegion
+    const bool jointRandom = mode == 1;
+    const bool jointGrid = mode == 2;
+    const bool positionRandom =
+        cartesian
+        && m_wsPositionMethodBox != nullptr
+        && m_wsPositionMethodBox->currentIndex() == 0;
+    QLineEdit* const cartesianEdits[] = {m_wsRegionCX, m_wsRegionCY, m_wsRegionCZ,
+                                         m_wsRegionSX, m_wsRegionSY, m_wsRegionSZ};
+    for (QLineEdit* edit : cartesianEdits) {
+        if (edit != nullptr) {
+            edit->setEnabled(cartesian);
+        }
+    }
+    if (m_wsPositionMethodBox != nullptr) {
+        m_wsPositionMethodBox->setEnabled(cartesian);
+    }
+    if (m_wsRegionRandom != nullptr) {
+        m_wsRegionRandom->setEnabled(positionRandom);
+    }
+    QLineEdit* const gridEdits[] = {m_wsRegionGridX, m_wsRegionGridY, m_wsRegionGridZ};
+    for (QLineEdit* edit : gridEdits) {
+        if (edit != nullptr) {
+            edit->setEnabled(cartesian && !positionRandom);
+        }
+    }
+    if (m_wsJointRandom != nullptr) {
+        m_wsJointRandom->setEnabled(jointRandom);
+    }
+    if (m_wsJointGrid != nullptr) {
+        m_wsJointGrid->setEnabled(jointGrid);
+    }
+}
+
+void KinematicsPanelWidget::refreshWsSummary()
+{
+    // 摘要表现投（lastWorkspaceRun 现取零缓存——无产物＝空表，不虚构
+    // "未采样"数据行）。行集：模式 token（F-905 溯源标注）/样本总数/
+    // 可达/不可达/数据不足/未运行/取消标记。全部计数来自域产物逐样本
+    // 状态（SampleState 五值词表），零估算。
+    if (m_wsSummaryTable == nullptr) {
+        return;
+    }
+    if (!m_session.lastWorkspaceRun) {
+        m_wsSummaryTable->setRowCount(0);
+        return;
+    }
+    const WorkspaceSampleRun& run = *m_session.lastWorkspaceRun;
+    std::uint64_t reached = 0;
+    std::uint64_t unreachable = 0;
+    std::uint64_t dataInsufficient = 0;
+    for (const WorkspaceSampleResult& r : run.results) {
+        switch (r.state) {
+            case SampleState::Reached:
+                ++reached;
+                break;
+            case SampleState::Unreachable:
+                ++unreachable;
+                break;
+            case SampleState::DataInsufficient:
+                ++dataInsufficient;
+                break;
+            default:
+                break;
+        }
+    }
+    const auto text = [](std::string v) {
+        return QString::fromStdString(std::move(v));
+    };
+    fillSingleColumn(
+        m_wsSummaryTable,
+        {text("模式 " + std::string(workspaceSamplingModeToken(run.mode))),
+         text("样本总数 " + std::to_string(run.results.size())),
+         text("可达 " + std::to_string(reached)),
+         text("不可达 " + std::to_string(unreachable)),
+         text("数据不足 " + std::to_string(dataInsufficient)),
+         text("未运行 " + std::to_string(run.notRunCount)),
+         text(run.cancelled ? std::string("已取消（partial 产物）")
+                            : std::string("完整运行"))});
+}
+
+void KinematicsPanelWidget::onWsModeChanged(int index)
+{
+    // 模式切换＝参数字段使能面重建（编辑即草稿——运行时才装配域查询；
+    // index 即 WorkspaceSamplingMode 枚举序，QComboBox 值域排除非法值）。
+    Q_UNUSED(index);
+    refreshWsParamVisibility();
+}
+
+void KinematicsPanelWidget::onWsRunClicked()
+{
+    // 编辑字段 → 面板参数（SI 真值）：区域盒中心/边长按显示制式读入并
+    // 经 resolveKinDisplayToSi 逆换算（与目标编辑器同纪律——提交面唯一
+    // 换算点）；计数字段按无符号整数解析。解析失败/非有限/越界＝调用方
+    // 输入错误：就地反馈保留原值，不提交残缺查询（域校验 fail-fast 的
+    // 交互层前置拦截——与 F-903 提示轨同则，异常不穿越 Qt 槽）。
+    KinWorkspaceSamplingParams params;
+    params.mode = static_cast<WorkspaceSamplingMode>(
+        m_wsModeBox != nullptr ? m_wsModeBox->currentIndex() : 0);
+    // 区域盒几何（仅区域模式装配——关节模式禁用态字段不取值）。
+    if (params.mode == WorkspaceSamplingMode::CartesianRegion) {
+        bool ok = false;
+        auto readLength = [this, &ok](QLineEdit* edit) -> double {
+            const QString t = edit->text().trimmed();
+            bool good = false;
+            const double v = t.toDouble(&good);
+            if (!good || !std::isfinite(v)) {
+                ok = false;
+                return 0.0;
+            }
+            return resolveKinDisplayToSi(v, m_session.displayUnits);  // SI m
+        };
+        params.regionCenterX = readLength(m_wsRegionCX);
+        if (ok) {
+            params.regionCenterY = readLength(m_wsRegionCY);
+        }
+        if (ok) {
+            params.regionCenterZ = readLength(m_wsRegionCZ);
+        }
+        if (ok) {
+            params.regionSizeX = readLength(m_wsRegionSX);
+        }
+        if (ok) {
+            params.regionSizeY = readLength(m_wsRegionSY);
+        }
+        if (ok) {
+            params.regionSizeZ = readLength(m_wsRegionSZ);
+        }
+        if (!ok) {
+            showStatusText(tr("采样参数非法（区域盒含不可解析或非有限数值）"
+                              "——原值保留"));
+            return;
+        }
+        params.positionRandom =
+            m_wsPositionMethodBox->currentIndex() == 0;
+        if (params.positionRandom) {
+            params.regionRandomCount =
+                m_wsRegionRandom->text().trimmed().toUInt(&ok);
+            if (!ok) {
+                showStatusText(tr("采样参数非法（区域随机样本数非非负整数）"
+                                  "——原值保留"));
+                return;
+            }
+        } else {
+            bool okX = false, okY = false, okZ = false;
+            params.regionGridCounts[0] =
+                m_wsRegionGridX->text().trimmed().toUInt(&okX);
+            params.regionGridCounts[1] =
+                m_wsRegionGridY->text().trimmed().toUInt(&okY);
+            params.regionGridCounts[2] =
+                m_wsRegionGridZ->text().trimmed().toUInt(&okZ);
+            if (!okX || !okY || !okZ) {
+                showStatusText(tr("采样参数非法（区域网格计数非非负整数）"
+                                  "——原值保留"));
+                return;
+            }
+        }
+    }
+    // 关节模式参数（按模式装配——统一值施加全轴的 UI 子集语义）。
+    if (params.mode == WorkspaceSamplingMode::JointSpaceRandom) {
+        bool ok = false;
+        params.jointRandomCount = m_wsJointRandom->text().trimmed().toUInt(&ok);
+        if (!ok) {
+            showStatusText(tr("采样参数非法（关节随机样本数非非负整数）——原值保留"));
+            return;
+        }
+    }
+    if (params.mode == WorkspaceSamplingMode::JointSpaceGrid) {
+        bool ok = false;
+        params.jointGridPerAxis = m_wsJointGrid->text().trimmed().toUInt(&ok);
+        if (!ok || params.jointGridPerAxis < 1U) {
+            showStatusText(tr("采样参数非法（关节网格每轴取点数须 ≥1）——原值保留"));
+            return;
+        }
+    }
+    // 内联运行（编排函数——校验/运行/入会话态；拒绝轨转状态行）。
+    const KinWorkspaceSamplingFlowResult r =
+        runWorkspaceSamplingFlow(m_services, m_session, params, m_wsContext);
+    showStatusText(QString::fromStdString(r.statusText));
+    // 全面板刷新（导出/回写按钮门控随产物点亮＋摘要表现投）。
+    refreshAll();
+}
+
+void KinematicsPanelWidget::onWsExportCsvClicked()
+{
+    // 编排转接（契约 v2 CSV——行头含 sampling-mode 溯源列，F-905 导出
+    // 半区；文件名固定于导出目录——写出经 io AtomicFile 装配缝）。
+    showStatusText(QString::fromStdString(exportWorkspacePointCloudCsv(
+        m_services, m_session, "kin-workspace-pointcloud.csv")));
+}
+
+void KinematicsPanelWidget::onWsWritebackClicked()
+{
+    // 样本序解析（results 全局序——空/非法＝输入错误就地反馈）。
+    bool ok = false;
+    const std::uint64_t sampleIndex =
+        m_wsSampleIndex->text().trimmed().toULongLong(&ok);
+    if (!ok) {
+        showStatusText(tr("回写样本序非法（须为非负整数）——原值保留"));
+        return;
+    }
+    // 编排转接（域回写值→既有会话回写通道——KIN-06 零修订；无解/越界
+    // 样本拒绝轨在编排内转状态行）。
+    showStatusText(QString::fromStdString(
+        writebackWorkspacePoint(m_services, m_session, sampleIndex)));
+    // 会话姿态已更新——位姿页随刷新现投（事件驱动，零缓存）。
+    refreshPosePane();
 }
 
 void KinematicsPanelWidget::onSolutionSelectionChanged()

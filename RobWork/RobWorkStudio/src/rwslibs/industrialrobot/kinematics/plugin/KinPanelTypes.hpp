@@ -26,6 +26,7 @@
 #ifndef IRD_KINEMATICS_PLUGIN_KINPANELTYPES_HPP
 #define IRD_KINEMATICS_PLUGIN_KINPANELTYPES_HPP
 
+#include <array>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -41,6 +42,7 @@
 #include <sdurws/ird/kinematics/Commands.hpp>        // KinSessionPose（会话姿态唯一写点）
 #include <sdurws/ird/kinematics/Ik.hpp>              // IIkSolver（单点求解消费面）
 #include <sdurws/ird/kinematics/SolutionSet.hpp>     // IKinematicSolutionSet（会话解集视图）
+#include <sdurws/ird/kinematics/Workspace.hpp>       // WorkspaceSamplingMode/WorkspaceSampleRun（★ KIN-R2 任务3——探索式采样面板值的域载体）
 
 namespace sdurws {
 namespace ird {
@@ -315,6 +317,51 @@ using KinCommandSubmitFn = std::function<void(const std::string& commandId)>;
 using KinHomePoseProvider = std::function<std::optional<std::vector<double>>()>;
 
 /**
+ * @brief 探索式采样面板参数（★ KIN-R2 任务3/KIN-09——采样模式编辑入口
+ *        的零 Qt 值面；widget 编辑字段 → 域 WorkspaceSamplingQuery 的
+ *        装配前置值）。
+ *
+ * 字段语义（全部 SI 真值——显示制式换算在 widget 提交面完成，与目标
+ * 编辑器同纪律 KIN-12）：
+ *   - mode 三值（区域盒 IK 采样/关节随机 FK 采样/关节网格 FK 采样——
+ *     WorkspaceSamplingMode 词表，域权威语义随枚举注）；
+ *   - 区域模式消费 regionCenter/regionSize（基座系 {B} 轴对齐盒，单位
+ *     m；size 三分量须 >0）与位置采样定义（随机＝positionRandom＋
+ *     regionRandomCount / 网格＝regionGridCounts 三轴计数）；姿态定义
+ *     域面退化单方向单 roll（KIN-09 主径为位置点云——面板不暴露姿态
+ *     采样编辑，登记为呈现批次边界）；
+ *   - 关节模式消费 jointRandomCount（随机样本数）与 jointGridPerAxis
+ *     （网格逐轴统一取点数——面板以单一数值施加全轴，逐轴异值编辑留
+ *     后续批次；域面仍收 per-axis 向量，此处仅是 UI 参数化子集）。
+ *
+ * 值语义纯结构；线程安全。
+ */
+struct KinWorkspaceSamplingParams {
+    /// 采样模式（三值词表——缺省区域盒保持旧径行为）。
+    WorkspaceSamplingMode mode = WorkspaceSamplingMode::CartesianRegion;
+    /// 区域盒中心（基座系 {B}，单位 m——仅区域模式消费）。
+    double regionCenterX = 0.0;
+    double regionCenterY = 0.0;
+    double regionCenterZ = 0.0;
+    /// 区域盒三边长（基座系 {B}，单位 m；须 >0 有限——RegionBox 契约）。
+    double regionSizeX = 0.2;
+    double regionSizeY = 0.2;
+    double regionSizeZ = 0.2;
+    /// 区域模式位置采样：true＝随机均匀（randomCount 撒点）、false＝体
+    /// 心网格（gridCounts 三轴计数——§7.2 两方法探索式直用）。
+    bool positionRandom = true;
+    /// 区域随机样本数（无量纲；0＝零样本合法——与域零样本口径一致）。
+    std::uint32_t regionRandomCount = 64;
+    /// 区域网格逐轴计数（x/y/z 链序；0 计数轴＝零样本合法——域校验面）。
+    std::array<std::uint32_t, 3> regionGridCounts{2, 2, 2};
+    /// 关节空间随机样本数（无量纲——mode=JointSpaceRandom 消费）。
+    std::uint32_t jointRandomCount = 64;
+    /// 关节空间网格逐轴取点数（无量纲、每轴 ≥1——mode=JointSpaceGrid
+    /// 消费；面板以统一值施加全部自由度——域面收 per-axis 向量）。
+    std::uint32_t jointGridPerAxis = 2;
+};
+
+/**
  * @brief 面板服务缝聚合（构造注入——装配层/harness/测试的一次性接线点）。
  *
  * 所有权：全部指针/缝为非 owning（调用方保证存活期覆盖面板使用期——
@@ -382,6 +429,14 @@ struct KinModuleSessionState {
     /// 基线；**会话纪律：必须为合法配置**——装配层注入或保存流更新后
     /// 恒过 validateAnalysisConfiguration，编排函数对其摘要计算零防御）。
     AnalysisConfiguration savedConfig{};
+    /// 最近一次探索式采样运行产物（★ KIN-R2 任务3/KIN-09——结果与可视
+    /// 化面板点云/导出/回写的数据源；nullopt＝尚未采样。持有域冻结值
+    /// WorkspaceSampleRun 本体（会话权威态——面板投影经
+    /// buildWorkspacePointCloud 现取零缓存）；R2 边界：探索式产物不入
+    /// results 归档/证据通道（结构上无覆盖率字段——域类型级保证），
+    /// 快照换绑时随会话整体失效（attachSnapshot 账面清空——迟到/跨
+    /// 快照误投影由呈现侧以会话锚纪律排除）。
+    std::shared_ptr<const WorkspaceSampleRun> lastWorkspaceRun;
     /// 会话纪元（单调递增——后台提交时随请求携带，完成回执比对；
     /// 会话切换/新提交推进该值）。
     std::uint64_t epoch = 1;
