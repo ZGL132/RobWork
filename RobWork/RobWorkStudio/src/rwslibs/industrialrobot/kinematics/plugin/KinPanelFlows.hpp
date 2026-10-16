@@ -273,7 +273,7 @@ std::string resetSessionHome(KinSessionPose* sessionPose,
  *        只能来自 KinPanelServices.homePose 具名来源缝，绝不以当前姿态
  *        充当 Home）。
  *
- * 执行序（四态如实，拒绝路径零写回）：
+ * 执行序（六态如实，拒绝路径零写回）：
  *   1. 会话姿态缝未装配→"复位不可用"（无写点可落）；
  *   2. homePose 来源缝未装配→"复位不可用：具名 Home 来源未装配"——
  *      调用方（widget）应已禁用按钮，此分支为防御面（直达槽的路径）；
@@ -283,10 +283,15 @@ std::string resetSessionHome(KinSessionPose* sessionPose,
  *   4. 来源值维度与设备自由度不符→"复位不可用：Home 维度 ≠ 设备自由度"
  *      （装配层解析违约/模型变更未同步的显式反馈——NFR-COR-03 不钳制
  *      不截断，截断写回会伪造复位语义）；
- *   5. 全部通过→resetSessionHome（唯一写点覆写会话姿态——零修订）。
+ *   5. 来源值含非有限分量（NaN/±∞——F-903 双轨统一）→"复位不可用：
+ *      第 i 分量非有限……未写回"（值面违约与维度违约同走提示轨——
+ *      修复前该形态只在写入口 fail-fast、异常直达 Qt 槽，与提示轨双轨
+ *      不一致；编排层前置拦截后不再有可预见的调用方违约以异常形态
+ *      离开本函数）；
+ *   6. 全部通过→resetSessionHome（唯一写点覆写会话姿态——零修订）。
  *
  * @param services [in] 服务缝（sessionPose/homePose/modelView）
- * @return 状态行文本（成功/三拒绝态——语义见执行序）
+ * @return 状态行文本（成功/各拒绝态——语义见执行序）
  *
  * 纯编排；UI 线程；零修订（结构保证——无任何命令提交通道）。
  */

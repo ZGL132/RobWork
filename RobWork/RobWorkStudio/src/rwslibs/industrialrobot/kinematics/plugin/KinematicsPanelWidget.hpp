@@ -155,6 +155,12 @@ private:
     /// 目标输入行单位标注重建（KIN-P1 A07——标签/占位随显示制式＋基座系
     /// 参考系标识；refreshAll 与 L-K8 切换路径共同出口）。
     void refreshTargetUnitPresentation();
+    /// 目标位姿六字段读取（★ KIN-R2 任务4——位置 XYZ＋姿态 RPY 编辑值 →
+    /// 基座系 SI 目标位姿；显示制式逆换算唯一出口 resolveKinDisplayToSi/
+    /// resolveKinAngleDisplayToSi。解析失败/非有限＝就地反馈并返回
+    /// nullopt——调用方停在原提交前，不向求解器传非法目标）。
+    std::optional<rw::math::Transform3D<double>> readTargetPoseFromEditors(
+        const QString& errorPrefix);
     void renderRows(QTableWidget* table, const std::vector<KinNamedValueRow>& rows);
     void renderSolutions(QTableWidget* table, const std::vector<KinSolutionRow>& rows);
 
@@ -165,6 +171,7 @@ private:
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询
 
     // ---- 页①控件（raw 指针＝Qt 父子所有权）----
+    QLabel* m_frameLabel = nullptr;         ///< 参考系/TCP 身份标识行（★ KIN-R2 任务4——坐标系标识）
     QTableWidget* m_poseTable = nullptr;    ///< 位姿指标行表
     QTableWidget* m_jointTable = nullptr;   ///< 关节表（显示单位投影 KIN-12）
     QLineEdit* m_targetX = nullptr;         ///< 求解目标位置编辑（显示制式数值——提交逆换算回 SI，A07）
@@ -173,6 +180,12 @@ private:
     QLabel* m_targetXLabel = nullptr;       ///< 目标 X 行标签（单位符号随显示制式重建——A07 缺陷面①）
     QLabel* m_targetYLabel = nullptr;       ///< 同上（Y 轴）
     QLabel* m_targetZLabel = nullptr;       ///< 同上（Z 轴）
+    QLineEdit* m_targetRoll = nullptr;      ///< 目标姿态 RPY-Roll 编辑（★ KIN-R2 任务4——显示制式角度，提交逆换算回 SI rad）
+    QLineEdit* m_targetPitch = nullptr;     ///< 目标姿态 RPY-Pitch 编辑（同上）
+    QLineEdit* m_targetYaw = nullptr;       ///< 目标姿态 RPY-Yaw 编辑（同上）
+    QLabel* m_targetRollLabel = nullptr;    ///< RPY-Roll 行标签（角度单位随显示制式重建）
+    QLabel* m_targetPitchLabel = nullptr;   ///< RPY-Pitch 行标签（同上）
+    QLabel* m_targetYawLabel = nullptr;     ///< RPY-Yaw 行标签（同上）
     QPushButton* m_solveButton = nullptr;   ///< Solve（L-K2）
     QTableWidget* m_inspectorTable = nullptr; ///< 候选检查器（健康摘要/关节）
     std::vector<QLineEdit*> m_jointEditors; ///< 关节表编辑行（求解目标参考构型）

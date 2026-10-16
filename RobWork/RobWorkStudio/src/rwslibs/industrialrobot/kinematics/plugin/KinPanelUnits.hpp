@@ -47,29 +47,40 @@ namespace kinematics {
  *   - 无量纲（"1"）：直显数值不带单位后缀（工程惯例——ui 同案）；
  *   - 其它 token：直显数值＋token 原文（裕量/条件数等无量纲比）。
  *
- * 非有限值三分类（KIN-P3/审查 A03——显示层的非法值纪律）：
- *   - **合法无穷（+∞）**：域设施契约内的合法产出（Fk.hpp：奇异条件数
- *     ＝+∞ 且以 isFinite 标记承载"不静默截断"；连续关节无工作范围的
- *     关节裕量＝+∞——KinTypes.hpp）→ 原样返回 infinityText 语义词
- *     （调用方按行语义供给，如条件数行"奇异/∞"、裕量行"无界"），**禁
- *     止截断成有限数字**（截断即伪造数据——比抛异常更严重的失实）；
- *   - **非法 NaN／−∞**：上游计算违约（这些量的值域不含 NaN/−∞）→ 抛
- *     std::invalid_argument fail-fast（NFR-COR-03——不渲染伪数据）；
+ * 非有限值三分类（KIN-P3/审查 A03——显示层的非法值纪律；★ F-902 按行
+ * 收紧：合法无穷白名单从"对一切 +∞ 放行"改为"按行所属量的域契约判定"
+ * ——白名单即本参数：调用方按行语义供给语义词＝该行域契约允许 +∞；
+ * 缺省（nullopt）＝该量域契约不含无穷，域外 +∞ 不再静默显示"∞"）：
+ *   - **合法无穷（+∞ 且 infinityText 在场）**：域设施契约内的合法产出
+ *     （Fk.hpp：奇异条件数＝+∞ 且以 isFinite 标记承载"不静默截断"；
+ *     连续关节无工作范围的关节裕量＝+∞——KinTypes.hpp）→ 原样返回
+ *     infinityText 语义词（条件数行"奇异/∞"、裕量行"无界"），**禁止
+ *     截断成有限数字**（截断即伪造数据——比抛异常更严重的失实）；
+ *   - **域外无穷（+∞ 且 infinityText 缺省）**：该量的域契约不含无穷
+ *     （位置/残差恒有限——Fk.hpp PoseMetrics 字段规则；旋转矩阵元
+ *     ∈[-1,1]；奇异值/可操作度有限）→ 上游双重违约的显式呈现轨：返回
+ *     "非法值(+∞)"标记文本（不再静默显示泛化"∞"——F-902 探针实测
+ *     域外位置行 siValue=+∞ 曾被当合法无穷放行）。呈现而非抛异常的
+ *     原因：显示格式化层抛异常会穿越 Qt 槽（A03 教训），且域外无穷
+ *     属上游违约的**呈现事实**——行文本如实标记比炸掉整表更可诊断；
+ *   - **非法 NaN／−∞**：上游计算违约（任何行的值域都不含 NaN/−∞）→
+ *     抛 std::invalid_argument fail-fast（NFR-COR-03——不渲染伪数据）；
  *   - **未知/不适用**：不落在本函数（行集层的承载形态是文本行——如
  *     碰撞"未评价"三态词、覆盖"零样本——比率不存在"，见 KinPanelModel
- *     的同案行），数值行只承载"有限值或合法 +∞"两类。
+ *     的同案行），数值行只承载"有限值、合法 +∞ 或域外 +∞ 标记"三类。
  *
  * 数值格式：6 位有效数字 general（std::to_chars，locale 无关——NFR-COR-02；
  * 与 ui formatFieldValueText 同精度口径）。
  *
- * @param siValue        [in] SI 真值（有限值或合法 +∞——NaN/−∞ 属上游
- *                       计算违约，抛 std::invalid_argument）
+ * @param siValue        [in] SI 真值（有限值，或按行契约的 +∞——NaN/−∞
+ *                       属上游计算违约，抛 std::invalid_argument）
  * @param unitToken      [in] SI 单位 token（"m"/"rad"/"1"/……）
  * @param displayUnits   [in] 显示单位投影（nullopt＝SI 直显制式）
- * @param infinityText   [in] siValue＝+∞ 时的呈现语义词（调用方按行语义
- *                       供给："奇异/∞"/"无界"；缺省泛化 "∞"；原样返回
- *                       不带单位后缀——无穷无量纲可比，投影无意义）
- * @return "300 mm"/"0.3 m"/"500"/"奇异/∞" 形态显示文本
+ * @param infinityText   [in] 该行合法无穷的呈现语义词（按行域契约供给：
+ *                       条件数行"奇异/∞"、裕量行"无界"——有值＝该行
+ *                       白名单放行；缺省 nullopt＝该量域契约不含无穷，
+ *                       +∞ 走"非法值(+∞)"标记轨——F-902 按行收紧）
+ * @return "300 mm"/"0.3 m"/"500"/"奇异/∞"/"非法值(+∞)" 形态显示文本
  *
  * @throws std::invalid_argument siValue 为 NaN 或 −∞（上游计算违约），
  *         或 unitToken 需投影但非 "m"/"rad"（投影句柄只覆盖 R1 两量纲
@@ -79,7 +90,8 @@ namespace kinematics {
  */
 std::string formatKinQuantityText(double siValue, const std::string& unitToken,
                                   const std::optional<DisplayUnitProjection>& displayUnits,
-                                  std::string_view infinityText = "∞");
+                                  std::optional<std::string_view> infinityText
+                                  = std::nullopt);
 
 /**
  * @brief 单关节分量显示投影（KIN-P3/审查 A05——逐轴按其**天然量纲**选
@@ -220,6 +232,31 @@ std::optional<DisplayUnitProjection> tryFindKinDisplayUnits(
  */
 double resolveKinDisplayToSi(double displayValue,
                              const std::optional<DisplayUnitProjection>& displayUnits);
+
+/**
+ * @brief 显示制式角度值→SI 真值（rad）——★ KIN-R2 任务4（目标姿态
+ *        RPY 编辑的提交面逆换算；resolveKinDisplayToSi 的角度量纲对位
+ *        ——同一算术、另一量纲，非第二换算实现）。
+ *
+ * 背景（为什么需要独立入口）：目标姿态编辑（KIN-R2 任务4——审查 §4
+ * "姿态固定为单位旋转"的修复面）承载的是**显示制式**角度值（deg/rad
+ * 随制式），提交给求解器的必须是 SI rad。resolveKinDisplayToSi 硬编码
+ * 长度量纲（位置 XYZ 专用——A07 修复面），角度输入若误走该入口会把
+ * deg 当长度因子换算——量纲错配。本函数与长度版互为对位：两量纲各自
+ * 的唯一换算点（KIN-12 唯一出口纪律不变——因子表同源 core Units）。
+ *
+ * @param displayValue [in] 显示制式角度值（单位＝displayUnits 所选角度
+ *                     单位；nullopt＝SI 直显制式，原值返回）
+ * @param displayUnits [in] 当前显示单位投影
+ * @return SI 真值（单位 rad——不是度）；确定性纯函数（NFR-COR-02）
+ *
+ * 非有限输入原样传递（不在此拒绝——拒绝面在调用方交互层：与位置分量
+ * 的 isfinite 就地反馈同则，NFR-COR-03）。
+ *
+ * 纯函数；线程安全；确定性。
+ */
+double resolveKinAngleDisplayToSi(double displayValue,
+                                  const std::optional<DisplayUnitProjection>& displayUnits);
 
 }  // namespace kinematics
 }  // namespace ird

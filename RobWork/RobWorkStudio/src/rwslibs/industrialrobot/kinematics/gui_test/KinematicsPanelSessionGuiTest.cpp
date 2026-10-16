@@ -259,7 +259,9 @@ TEST(KinematicsPanelSession, ResetHome_MissingSourceDisablesButton_KIN_P3)
     EXPECT_TRUE(roButton->isEnabled());
 }
 
-/// A09 回归③：缝在场但模型/会话未定义 Home——按钮可用、点击给明确
+/// A09 回归③（★ KIN-R2 任务5 语义收敛）：缝在场但模型/会话未定义
+/// Home——按钮**显式禁用**（有定义才可用、无定义诚实降级——修复前
+/// "缝在场即点亮"，可用性暗示与实际能力不符）；直达槽防御面仍给明确
 /// 提示（"未定义…未写回"），会话姿态零写回（绝不以当前姿态充当 Home）。
 TEST(KinematicsPanelSession, ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3)
 {
@@ -272,13 +274,36 @@ TEST(KinematicsPanelSession, ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P
 
     QPushButton* button = h.homeButton();
     ASSERT_NE(button, nullptr);
-    EXPECT_TRUE(button->isEnabled());  // 缝在场＝可用（提示在点击路径）
+    EXPECT_FALSE(button->isEnabled());  // 无定义＝禁用（KIN-R2 任务5——诚实降级）
+    // 直达槽防御面（绕过 disabled 拦截的调用路径）：仍显式提示零写回。
     ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onResetHomeClicked",
                                           Qt::DirectConnection));
     const std::string status = h.panel->lastStatusText().toStdString();
     EXPECT_NE(status.find("未定义"), std::string::npos) << status;
     EXPECT_NE(status.find("未写回"), std::string::npos) << status;
     EXPECT_EQ(h.sessionPose.jointConfiguration(), std::vector<double>(6, 0.4));
+}
+
+/// KIN-R2 任务5 回归：正式宿主装配可用性语义——缝在场且有 Home 定义
+/// ＝按钮可用（有定义才点亮）；会话/项目态变化经 refreshAll 重进门控
+/// （此处以 setWritable 触发刷新、门控随现取查询稳定——无定义态禁用
+/// 不因刷新翻转）。
+TEST(KinematicsPanelSession, ResetHome_DefinedSourceEnablesButton_KIN_R2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-06"}, std::vector<std::string>{});
+    SessionPanelHarness h(sixAxisModel());
+    const std::vector<double> home(6, 0.0);
+    h.services.homePose = [&home] {
+        return std::optional<std::vector<double>>(home);
+    };
+    h.createPanel();
+    QPushButton* button = h.homeButton();
+    ASSERT_NE(button, nullptr);
+    EXPECT_TRUE(button->isEnabled());  // 有定义＝可用
+    // 运行期刷新重进：门控随现取查询稳定（有定义仍可用——不是一次性的
+    // 构造期快照）。
+    h.panel->setWritable(true);
+    EXPECT_TRUE(button->isEnabled());
 }
 
 /// A09 回归④：来源值维度与设备自由度不符——点击显式反馈（"维度…未

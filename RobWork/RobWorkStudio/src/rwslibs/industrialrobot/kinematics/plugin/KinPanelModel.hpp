@@ -48,22 +48,28 @@ namespace kinematics {
  *        关节裕量的逐项一行投影）。
  *
  * 行构建序（固定——呈现稳定序，NFR-COR-02）：
- *   1. tcp-x/tcp-y/tcp-z/tcp-rx/…（TCP 位姿——位置 m/姿态 rad 投影）；
- *   2. cond/manipulability/min-margin（无量纲指标）；
- *   3. singular values 逐条（sigma-1..n——无量纲）；
- *   4. joint margins 逐关节（margin-j1..n——无量纲，链序）。
+ *   1. tcp-x/y/z（基座系）＋tcp-world-x/y/z（世界系）——TCP 位置双
+ *      参考系（★ KIN-R2 任务4/审查 §4 坐标系标识；m 投影）；
+ *   2. tcp-rpy-roll/pitch/yaw（基座系 RPY——rad 投影，rw::math::RPY
+ *      库设施直调零自写三角）＋tcp-rot-rRcC 九元（旋转矩阵逐元只读，
+ *      无量纲）——★ KIN-R2 任务4 完整姿态呈现（修复前仅三个对角元）；
+ *   3. cond/manip/min-margin（无量纲指标）；
+ *   4. singular values 逐条（sigma-1..n——无量纲）；
+ *   5. joint margins 逐关节（margin-j1..n——无量纲，链序）。
  *
- * 合法无穷的行级语义（KIN-P3/审查 A03——显示三分类纪律的行半区）：
- * 条件数行 +∞＝奇异（呈现"奇异/∞"）；最小裕量行与逐关节裕量行 +∞＝
- * 无界（连续关节无工作范围——呈现"无界"）。均原样呈现不截断；NaN/
- * −∞ 仍属上游违约照旧 fail-fast（拒绝面在 formatKinQuantityText）。
+ * 合法无穷的行级语义（KIN-P3/审查 A03；★ F-902 白名单按行收紧——
+ * 显示三分类纪律的行半区）：条件数行 +∞＝奇异（呈现"奇异/∞"）；最小
+ * 裕量行与逐关节裕量行 +∞＝无界（连续关节无工作范围——呈现"无界"）。
+ * 均原样呈现不截断；位置/姿态/RPY/矩阵元/奇异值/可操作度各行的域契约
+ * 不含无穷——域外 +∞ 走"非法值(+∞)"标记轨（不再静默显示泛化"∞"）；
+ * NaN/−∞ 仍属上游违约照旧 fail-fast（拒绝面在 formatKinQuantityText）。
  *
  * @param metrics      [in] 位姿指标（IFkEvaluator::evaluate 产出——域设施）
  * @param displayUnits [in] 显示单位投影（nullopt＝SI 直显）
  * @return 指标行集（每次调用现建——面板零缓存）
  *
  * @throws std::invalid_argument 指标含 NaN/−∞（上游违约——fail-fast；
- *         合法 +∞ 不拒绝，见上行语义）
+ *         合法 +∞ 与域外 +∞ 标记轨不拒绝，见上行语义）
  *
  * 纯函数；线程安全；确定性。
  */
