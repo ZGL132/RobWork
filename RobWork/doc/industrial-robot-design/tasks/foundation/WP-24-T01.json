@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-24-T01",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "冻结版本基线首版（阶段 A 收口登记、阶段 E 复核）",
+  "status": "planned",
+  "dependsOn": [
+    "WP-01-T01"
+  ],
+  "requirements": [
+    "NFR-DEP-05"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#NFR-DEP-05",
+    "ARCHITECTURE.md#5.2",
+    "units/policy.md#P-POL-5",
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/**"
+  ],
+  "outputs": [
+    "baseline",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-24-T01.json"
+  ],
+  "branch": "wp24-t01",
+  "interUnit": false,
+  "acceptance": [
+    "基线字段齐备并与构建树一致；policy CollisionBackendDescriptor 取值回填（DTB §2.25 T01 行照抄——前置列\"WP-01-T01、M0\"中 M0 为里程碑非契约不编码，dependsOn 只登可编码契约项 WP-01-T01；交付物 ird/share/baseline.md v1.0 已随 96d5c5be 并入 redesign-main，本卡补契约/验收面不产生新实现义务）"
+  ],
+  "note": "补立卡：依 2026-10-14 草稿补立——待所有者追认，不追认则回退（依据＝reconciliation/wp24-t05-dependency-note-20261014.md §2 第 1 步骨架，字段按 ird-task/1 schema 与 validate-task 必备集，内容按 DTB §2.25 T01 行照抄口径，同 WP-24-T04~T07 补立批先例）。语义取舍显式登记待所有者追认：①status 取 planned（草稿 §4.1 建议值，与其他补立卡一致，随后走验收/追认翻牌；不取历史追认态）；②验收路径（补验收或所有者追认）归立卡批/所有者按 governance 纪律裁定，阶段 E 复核义务随行；③骨架字段以立卡批复核为准。前置\"WP-01-T01、M0\"中 M0 为里程碑非契约、不伪造依赖如实登记（WP-25-T03 同款措辞）。背景：本卡立卡前契约缺位系历史欠账——T01 交付物 2026-09-26 落位时 tasks/foundation/ 尚无 WP-24 系列卡（T02~T09 系 2026-10-13 治理批 v0.67 按 DTB §2.25 补立，唯 T01 因\"全库无契约\"被跳过），T05 等下游卡因此登记\"不伪造依赖\"绕行（UI-T10/WP-25-T03 先例同族）。"
+}
