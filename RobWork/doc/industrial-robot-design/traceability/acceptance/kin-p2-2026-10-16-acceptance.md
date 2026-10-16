@@ -1,10 +1,37 @@
-# KIN-P2 独立验收记录（attempt 1）
+# KIN-P2 独立验收记录（attempt 1 → attempt 2 复核通过）
 
 - 验收对象：工作包 KIN-P2 求解请求与位置任务（审查 20261016 A02/A08 修复批）
-- 分支 / 提交：`kin-p2` @ `2c163349d2145b0fba77cc5352fcbdfd86b21bde`（local = origin/kin-p2，推送已核实）
+- 分支 / 提交：`kin-p2`——attempt 1 对象 `2c163349`；**attempt 2 对象 `8d1bf91a5a6ed61a9b09e4a788673dc23507041f`**（local = origin/kin-p2，推送已核实）
 - 验收人：P2 验收者（对抗式独立验收会话，与实施者零共享上下文；本记录为唯一写入库文件）
 - 验收日期：2026-10-16
-- **结论：FAIL（1 项 blocker——文档失实；代码修复面本身经受住了全部对抗攻击）**
+- **结论（attempt 2）：PASS（零 blocker）**
+  - attempt 1：FAIL（1 blocker B-1——单元卡 v0.24 头行对 Envelope 的改造声明失实，详见 §1/§2）
+  - attempt 2：实施者提交 `8d1bf91a` 补做 Envelope 通道迁移（选择 attempt 1 裁定的"补迁移"路径），按记录裁定的 §3/§4 口径完成通道级复核——**B-1 消除，零新增 blocker**（复核证据见 §0）
+
+---
+
+## 0. attempt 2 复核（2026-10-16，B-1 消除验证）
+
+实施者 `8d1bf91a`（[KIN-P2] 补做 Envelope 通道位置探针任务维度迁移，四段式齐备）改动：Envelope.cpp / Envelope.hpp / EnvelopeTest.cpp＋单元卡勘误＋留痕重录（239/57/7）＋smoke-envelope-test.log 新增。逐项复核（全部为本验收人真实执行）：
+
+| 复核项 | 证据 | 结论 |
+| --- | --- | --- |
+| 根因层迁移 | `Envelope.cpp:153-166`（diff）：探针请求 `request.taskSpace = IkTaskSpace::PositionOnly`，`orientationTolerance = kEnvelopePoseFreeTolerance` 赋值删除（保持 IkRequest 默认合法值作请求合法域载体——该任务不消费姿态容差） | ✓ 根因层修复（非表面改动） |
+| π 常量清除 | `kEnvelopePoseFreeTolerance` 全仓仅存于"已移除"注（Envelope.hpp:100、Envelope.cpp:158、EnvelopeTest.cpp:543），零活代码引用 | ✓ π 机制第三处消费点全数废除 |
+| 契约版本升级 | `Envelope.hpp:92` `kEnvelopeContractVersion = 2U`＋头注升级理由（探针判定语义翻转——同方向同 t 可由搜索未果翻为可达，与 kIkSolverContractVersion 1→2 同构） | ✓ CON-04 身份分离落实 |
+| 测试改造 | `EnvelopeTest.cpp` ProbeWiring 接线断言改 `taskSpace==PositionOnly`＋姿态容差合法域断言（恒 π 旧钉废除——**强化非弱化**）；新增 `PositionProbeUsesTaskSpaceSemantics_KIN_P2`（`EnvelopeTest.cpp:567` 起）行为级迁移钉：脚本替身 PositionOnly 按边界判可达、FullPose 一律搜索未果——**迁移回退即红**（rMax=0＋fullPoseCalls>0） | ✓ 断言有强度、名带 KIN_P2/KIN-10/KIN-02 追溯 |
+| 文档勘误 | `kinematics.md:7` v0.24 头行加勘误注（如实承认初版声明失实＋描述补救）；正文更正为"三调用侧…全数废除"（迁移后为真）；§14.6 v0.24 详情行增 ③′ 包络迁移登记（契约版本理由＋A04 锚点机制掩盖真实几何差异的边界如实登记） | ✓ B-1 文档失实消除且登记诚实 |
+| 留痕重录 | kinematics-test.xml root `tests="239" failures="0"`（238＋1 新增）、contract `57/0`、gui `7/0`；smoke-envelope-test.log `12 PASSED`；集成树二进制 mtime（17:43-17:45）晚于最新源码（17:41-17:42） | ✓ 真实且新鲜 |
+| 定向复跑（集成树 exe） | `--gtest_filter=KinEnvelope.*` → **12/12 PASSED**；attempt 1 全部定向集复跑 → A02/A08 集 **26/26**、gui **3/3**、contract **11/11**——零回归 | ✓ 本验收人实测 |
+| 独立对抗探针（包络通道，自造数据/真求解器端到端） | probe2（`%TEMP%/kin-p2-acc-probe/KinP2AccProbe2.cpp`）：**P7** 自造"移动 z＋平面 2R"链（工作空间＝环形柱体 r∈[0.4,1.8]、\|z\|≤0.5 m，恒等姿态仅 r=1.8 m 圆柱面可达成——旧 π/FullPose 机制下锚点/二分必全灭）→ `computeApproximateEnvelope` 180 方向 **90 方向 rMax ≥ 1.0 m（max 1.865 m）**——PositionOnly 在真实包络路径行为级生效的直接证据；**P8** 同轴退化链（测度为零工作空间）**零假阳性**（180 方向 rMax 全 0，圆内点未被误判可达）；**P9** kEnvelopeContractVersion==2 钉 | ✓ 三项全过，迁移被行为证据证实 |
+| 红线复查 | ird_gates 独立直跑 exit=0 零命中（R-1~R-5/T-1/T-2/SUB/GRAPH/LIB/SA02）；validate-docs PASS（20/12/355）；Envelope 三文件零 Qt include、零新跨单元依赖 | ✓ |
+| 提交核对 | `8d1bf91a` 四段式齐备（What 按 5 文件/Why 对驳回条目/How 真实数字含"新用例未迁移形态下红"/影响面含契约版本兼容性）；local=origin 同值 | ✓ |
+
+attempt 2 未发现新 blocker。§7 advisory A-1（Envelope π 残留登记 KIN-P5）已由迁移本身消除；A-2/A-3/A-4 维持原状（不阻断）。
+
+---
+
+以下为 attempt 1 记录（存档——结论 FAIL 的证据链，B-1 定性与 attempt 2 修复的对应关系以本节为准）。
 
 ---
 
@@ -113,4 +140,5 @@ A02/A08 两项的**代码级根因修复经读码定位与独立对抗探针验�
 
 ## 9. 裁定
 
-FAIL——B-1 修复（文档行更正或 Envelope 补迁移，其一即可）并重新推送后，按协议对 B-1 复核即可（代码面无需重验；若选择补做 Envelope 迁移则需按本记录 §3/§4 口径对 Envelope 通道另行验证）。
+- attempt 1（对象 `2c163349`）：FAIL——B-1（文档失实），裁定"文档行更正或 Envelope 补迁移，其一即可；若补迁移则需按 §3/§4 口径对 Envelope 通道另行验证"。
+- **attempt 2（对象 `8d1bf91a`）：PASS——零 blocker**。实施者选择补迁移路径，本验收按裁定口径完成通道级复核（§0）：代码根因层迁移＋契约版本升级＋行为级迁移钉＋文档勘误＋独立探针行为证据（真求解器端到端 rMax 判别）全部落实，既有定向集与门禁零回归。KIN-P2 验收标准（真实按钮请求通过 IkSolver 请求校验；完整位姿与仅位置两类任务分别闭环；多初值、限位、碰撞证据链路正常；既有 231 项运动学测试与 57 项契约测试零回归——现为 239/57 含本包新增）全部满足。
