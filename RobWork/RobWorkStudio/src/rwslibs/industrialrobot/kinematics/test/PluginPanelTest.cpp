@@ -299,6 +299,134 @@ TEST(PluginPanelLinks, LK2_InlineBudgetExceededDefersToBackground_ACC1)
     EXPECT_NE(result.statusText.find("超预算"), std::string::npos);  // 状态反馈
 }
 
+/// KIN-P2（审查 A08）——会话求解请求装配：从模型/会话/配置装配完整
+/// 合法请求（修复前真实按钮以默认构造 IkRequest 提交——TCP 空/初值空/
+/// referenceQ 与 intervals 维度 0，真实 IkSolver 校验必 fail-fast）。
+/// 本用例钉装配面逐字段来源：TCP＝KIN-14 默认工具解析、初值＝配置×
+/// 区间×referenceQ 经域设施物化、referenceQ＝会话姿态、intervals＝模型
+/// 评价区间、容差/迭代/去重＝配置直传。
+TEST(PluginPanelLinks, LK2_AssembleSessionSolveRequestComplete_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-13", "KIN-14"},
+                  std::vector<std::string>{});
+    Harness h;
+
+    // 配置面：SeededRandom×3（"初值与数量来自求解配置"的断言载体——
+    // seed=7 会话基线，I-KIN-4 合法域）。
+    h.session.savedConfig.initialStrategy = InitialValueStrategy::SeededRandom;
+    h.session.savedConfig.initialValuesCount = 3U;
+    h.session.savedConfig.iterationLimit = 128U;
+    h.session.savedConfig.positionResidualTolerance = 5e-7;        // m
+    h.session.savedConfig.orientationResidualTolerance = 2e-6;     // rad
+    h.session.savedConfig.ikDedupThresholdPerAxis = 4e-6;          // rad|m 逐轴
+
+    // 会话姿态在场面：referenceQ 必须取会话姿态（非零可判别值）。
+    h.sessionPose.setJointConfiguration({0.1, -0.2});
+
+    const auto a = assembleSessionSolveRequest(h.services, h.session);
+    ASSERT_TRUE(a.ok) << a.statusText;
+
+    // TCP：KIN-14 默认工具解析（objectId 命中快照 Tool 类别＋tcpKey＝
+    // 工具局部名——名称可解析的显式自描述形态，A08 字段①）。
+    const runtime::CanonicalTool& tool = h.model.tools().front();
+    EXPECT_EQ(a.request.tcp.toolObject, tool.objectId);
+    EXPECT_EQ(a.request.tcp.tcpKey, tool.localName);
+    const auto loc = h.model.findObject(a.request.tcp.toolObject);
+    ASSERT_TRUE(loc.has_value());
+    EXPECT_EQ(loc->kind, runtime::CanonicalModel::ObjectKind::Tool);
+
+    // 初值：数量来自配置、值＝makeInitialValues 同参产出（域设施唯一
+    // 实现点——装配零本地重写的结构钉）。
+    ASSERT_EQ(a.request.initialValues.size(), 3U);
+    const auto expected = makeInitialValues(
+        InitialValueStrategy::SeededRandom, 3U, 7U,
+        evaluationIntervals(h.view), {0.1, -0.2});
+    EXPECT_EQ(a.request.initialValues, expected);
+
+    // referenceQ＝会话姿态；intervals＝模型评价区间（evaluationIntervals
+    // 同源——逐轴三字段相等，A08 字段③④；JointInterval 无聚合等值——
+    // 测试面逐字段比较）。
+    EXPECT_EQ(a.request.referenceQ, (std::vector<double>{0.1, -0.2}));
+    {
+        const auto expectItv = evaluationIntervals(h.view);
+        ASSERT_EQ(a.request.intervals.size(), expectItv.size());
+        for (std::size_t i = 0; i < expectItv.size(); ++i) {
+            EXPECT_EQ(a.request.intervals[i].bounded, expectItv[i].bounded);
+            EXPECT_DOUBLE_EQ(a.request.intervals[i].lower, expectItv[i].lower);
+            EXPECT_DOUBLE_EQ(a.request.intervals[i].upper, expectItv[i].upper);
+        }
+    }
+
+    // 配置字段直传（容差/迭代上限/去重阈值——A08 字段⑤）。
+    EXPECT_DOUBLE_EQ(a.request.positionTolerance, 5e-7);
+    EXPECT_DOUBLE_EQ(a.request.orientationTolerance, 2e-6);
+    EXPECT_EQ(a.request.iterationLimit, 128U);
+    EXPECT_DOUBLE_EQ(a.request.dedupThresholdPerAxis, 4e-6);
+}
+
+/// 装配失败/回退面（显式拒绝语义——绝不提交残缺请求，NFR-COR-03）：
+/// 无工具→KIN-NO-TCP；非法配置→KIN-CONFIG-ILLEGAL；会话姿态维度违约
+/// →显式拒绝；视图空→拒绝；会话未设置→referenceQ 零位回退。
+TEST(PluginPanelLinks, LK2_AssembleSessionSolveRequestFailures_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    // a) 无工具模型（tools 空＋defaultTcpIndex 空）→ 装配失败＋稳定
+    //    诊断码 KIN-NO-TCP（A08"解析失败显式报错"义务）。
+    {
+        const auto bare = makeModel(
+            std::vector<rt::CanonicalJoint>{
+                revolute("b0", rw::math::Vector3D<double>(0, 0, 1),
+                         trans(0, 0, 0), -1.0, 1.0)},
+            trans(0.3, 0, 0), trans(0, 0, 0), false);
+        TestView view(bare);
+        KinPanelServices s;
+        s.modelView = &view;
+        KinModuleSessionState st;
+        st.savedConfig.seed = 1;
+        st.savedConfig.regionBudget.seed = 1;
+        const auto a = assembleSessionSolveRequest(s, st);
+        EXPECT_FALSE(a.ok);
+        EXPECT_NE(a.statusText.find("KIN-NO-TCP"), std::string::npos);
+    }
+    // b) 非法配置（未初始化会话的默认构造 seed=0——I-KIN-4 非法）→
+    //    KIN-CONFIG-ILLEGAL（非法配置绝不流入 makeInitialValues——
+    //    其 seed=0 行为契约即"输出无定义"）。
+    {
+        Harness h;
+        h.session.savedConfig.seed = 0;  // 会话纪律违约面（构造置 7 后回置）
+        const auto a = assembleSessionSolveRequest(h.services, h.session);
+        EXPECT_FALSE(a.ok);
+        EXPECT_NE(a.statusText.find("KIN-CONFIG-ILLEGAL"), std::string::npos);
+    }
+    // c) 会话姿态维度违约（1 维 ≠ 2 dof）→ 显式拒绝（装配层注入事实
+    //    错误不可钳制——NFR-COR-03）。
+    {
+        Harness h;
+        h.sessionPose.setJointConfiguration({0.1});
+        const auto a = assembleSessionSolveRequest(h.services, h.session);
+        EXPECT_FALSE(a.ok);
+        EXPECT_NE(a.statusText.find("维度"), std::string::npos);
+    }
+    // d) 模型视图缝空 → 拒绝（装配无输入真值面）。
+    {
+        KinPanelServices s;
+        KinModuleSessionState st;
+        st.savedConfig.seed = 1;
+        st.savedConfig.regionBudget.seed = 1;
+        EXPECT_FALSE(assembleSessionSolveRequest(s, st).ok);
+    }
+    // e) 会话姿态未设置 → referenceQ 零位回退（dof 维全零——确定性
+    //    无信息注入回退；面板此态下关节表为空）。
+    {
+        Harness h;
+        const auto a = assembleSessionSolveRequest(h.services, h.session);
+        ASSERT_TRUE(a.ok);
+        EXPECT_EQ(a.request.referenceQ, (std::vector<double>{0.0, 0.0}));
+    }
+}
+
 /// L-K3 批量验证提交-进度-取消：受理→任务投影行现取；完成回执呈现。
 TEST(PluginPanelLinks, LK3_BatchSubmitAndTaskProjection_ACC1)
 {

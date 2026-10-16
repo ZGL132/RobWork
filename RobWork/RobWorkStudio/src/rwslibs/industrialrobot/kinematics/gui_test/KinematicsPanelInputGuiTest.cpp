@@ -258,3 +258,189 @@ TEST(KinematicsPanelInput, TargetSubmit_RejectsNonFiniteInput_KIN_P1)
     EXPECT_NE(h.panel->lastStatusText().toStdString().find("非法"),
               std::string::npos);
 }
+
+// =====================================================================
+// KIN-P2（审查 A08）——真实按钮请求装配：会话求解请求必须从会话/模型
+// 装配完整合法（TCP 身份可解析、初值/容差/迭代来自配置、referenceQ 取
+// 会话姿态、intervals 取模型限位），失败显式给稳定诊断码不提交残缺
+// 请求；并以真实 IkSolver 闭环验证"请求通过求解器校验面"。
+// =====================================================================
+
+namespace {
+
+/// 无工具模型（装配失败轨的载体——tools 空＋defaultTcpIndex 空）。
+rt::CanonicalModel makeToollessCoaxModel()
+{
+    std::vector<rt::CanonicalJoint> joints;
+    for (int i = 0; i < 2; ++i) {
+        joints.push_back(revolute("t" + std::to_string(i),
+                                  rw::math::Vector3D<double>(0, 0, 1),
+                                  trans(0, 0, 0), -1.0, 1.0));
+    }
+    // withTool=false——builder 产出无工具模型（KIN-NO-TCP"未配置"分支）。
+    return makeModel(joints, trans(0.3, 0, 0), trans(0, 0, 0), false);
+}
+
+/// A08 专用夹具（视图/求解器可换——记录求解器装配断言＋真实求解器
+/// 闭环断言两形态；会话基线纪律同 PanelHarness，I-KIN-4 seed≥1）。
+struct AssembleHarness {
+    TestView view{coaxialChainModel()};   // 六轴同轴链（夹具 A02 载体几何）
+    WidgetRecordingSolver recorder;
+    IkSolver realSolver;                  // 真实产品求解器（闭环形态注入）
+    KinPanelServices services;
+    KinModuleSessionState state;
+    std::unique_ptr<KinematicsPanelWidget> panel;
+
+    explicit AssembleHarness(bool useRealSolver) : view(coaxialChainModel())
+    {
+        services.modelView = &view;
+        services.ikSolver = useRealSolver
+                                ? static_cast<const IIkSolver*>(&realSolver)
+                                : static_cast<const IIkSolver*>(&recorder);
+        state.savedConfig.seed = 1;
+        state.savedConfig.regionBudget.seed = 1;
+        // 求解预算面（闭环用例需要真收敛——缺省 iterationLimit=1/
+        // initialValuesCount=1 是合法但不足以从零初值收敛的预算；
+        // 配置本就是装配语义的驱动面，此处即其会话事实）。
+        state.savedConfig.iterationLimit = 256U;
+        state.savedConfig.initialValuesCount = 4U;
+        panel = std::make_unique<KinematicsPanelWidget>(services, state);
+    }
+
+    /// 无工具形态（视图换 bare 模型——装配失败轨载体）。
+    static AssembleHarness toolless()
+    {
+        AssembleHarness h(false);
+        h.view = TestView(makeToollessCoaxModel());
+        h.panel = std::make_unique<KinematicsPanelWidget>(h.services, h.state);
+        return h;
+    }
+
+    void setTarget(const QString& x, const QString& y, const QString& z)
+    {
+        const QList<QLineEdit*> edits = panel->findChildren<QLineEdit*>();
+        ASSERT_EQ(edits.size(), 3U);
+        edits[0]->setText(x);
+        edits[1]->setText(y);
+        edits[2]->setText(z);
+    }
+
+    void clickSolve()
+    {
+        ASSERT_TRUE(QMetaObject::invokeMethod(panel.get(), "onSolveClicked",
+                                              Qt::DirectConnection));
+    }
+};
+
+}  // namespace
+
+/// 装配字段完整钉（记录求解器——逐字段断言装配来源）：真实按钮提交的
+/// 请求必须携带可解析 TCP（KIN-14 默认工具＋tcpKey＝工具名）、非空初值
+/// 集（配置物化）、dof 维 referenceQ 与 intervals（模型限位）与配置
+/// 直传的求解参数。修复前：默认构造请求直传——TCP 空/初值空/维度 0，
+/// 本用例红（审查 A08 探针 AuditWidget.SolveRequestMustCarryResolved-
+/// TcpAndInitialValues 的产品测试化）。
+TEST(KinematicsPanelInput, SolveButton_CarriesCompleteAssembledRequest_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-13", "KIN-14"},
+                  std::vector<std::string>{});
+    AssembleHarness h(false);
+
+    h.setTarget(QStringLiteral("0"), QStringLiteral("1"), QStringLiteral("0"));
+    h.clickSolve();
+
+    ASSERT_TRUE(h.recorder.received.has_value());
+    const IkRequest& req = *h.recorder.received;
+
+    // TCP 身份：命中快照工具＋tcpKey＝工具局部名（自描述形态）。
+    const auto loc = h.view.model().findObject(req.tcp.toolObject);
+    ASSERT_TRUE(loc.has_value()) << "TCP 身份必须经名称解析为可解析工具";
+    EXPECT_EQ(loc->kind, runtime::CanonicalModel::ObjectKind::Tool);
+    EXPECT_EQ(req.tcp.tcpKey, h.view.model().tools().front().localName);
+
+    // 初值集：非空（来自配置——缺省 JointGrid×1）且逐项 dof 维。
+    ASSERT_FALSE(req.initialValues.empty());
+    for (const std::vector<double>& q0 : req.initialValues) {
+        ASSERT_EQ(q0.size(), 6U);
+    }
+    // referenceQ/intervals：dof 维（会话未设置→零位回退；区间取模型限位
+    // ——与 evaluationIntervals 同源逐轴比较，JointInterval 无聚合等值）。
+    EXPECT_EQ(req.referenceQ.size(), 6U);
+    ASSERT_EQ(req.intervals.size(), 6U);
+    {
+        const std::vector<JointInterval> expectItv = evaluationIntervals(h.view);
+        ASSERT_EQ(req.intervals.size(), expectItv.size());
+        for (std::size_t i = 0; i < expectItv.size(); ++i) {
+            EXPECT_EQ(req.intervals[i].bounded, expectItv[i].bounded);
+            EXPECT_DOUBLE_EQ(req.intervals[i].lower, expectItv[i].lower);
+            EXPECT_DOUBLE_EQ(req.intervals[i].upper, expectItv[i].upper);
+        }
+    }
+    // 求解参数：配置直传（缺省配置 iterationLimit=1/容差 1e-6）。
+    EXPECT_EQ(req.iterationLimit, h.state.savedConfig.iterationLimit);
+    EXPECT_DOUBLE_EQ(req.positionTolerance,
+                     h.state.savedConfig.positionResidualTolerance);
+    EXPECT_DOUBLE_EQ(req.orientationTolerance,
+                     h.state.savedConfig.orientationResidualTolerance);
+    // 目标位姿＝输入的 SI 真值（A07 逆换算链不回归——(0,1,0)）。
+    EXPECT_DOUBLE_EQ(req.targetInBase.P()[1], 1.0);
+}
+
+/// 真实求解器闭环（验收标准"真实按钮使用真实求解器"）：载体＝
+/// twoLinkModel（平面二连杆——一般位形非奇异；审查 A02 的退化链闭环
+/// 已由 IkTest/RegionCoverageTest/WorkspaceTest 的 KIN_P2 用例承载，
+/// 此处不再用退化链——其任意构型雅可比奇异，条件数 +∞ 会触发
+/// 审查 A03 的显示格式化拒绝面〔KIN-P3 范围，不属于本包修复面〕，
+/// 与 A08 装配链路无关）。目标＝q*=(0.3,−0.3) 的精确可达位姿：姿态
+/// Rz(0)=I 恰匹配面板输入能力（目标只编辑位置、姿态恒单位阵——
+/// 审查 §4 已知边界），位置 (1.1·cos0.3＋0.7, 1.1·sin0.3, 0) 解析现算。
+/// 修复前：残缺请求触发求解器 fail-fast（std::invalid_argument 穿越
+/// 槽函数），本用例红；修复后：SolutionsFound＋解集入会话态＋状态行
+/// 内联完成。
+TEST(KinematicsPanelInput, SolveButton_CompletesRealSolveThroughAssembler_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-04"},
+                  std::vector<std::string>{});
+    // 载体换 twoLink（Harness 的 view 成员可赋值——值语义）。
+    AssembleHarness h(true);
+    h.view = TestView(twoLinkModel());
+    h.panel = std::make_unique<KinematicsPanelWidget>(h.services, h.state);
+
+    // q*=(0.3,−0.3) 的 TCP 位置（q1+q2=0 → 姿态恒等；黄金算例 A 几何
+    // L1=1.1/L2=0.7——第二段沿 x 轴方向的解析合成）。15 位有效数字
+    // 序列化（QString::number——输入文本的舍入误差远小于位置容差）。
+    const double qx = 1.1 * std::cos(0.3) + 0.7;
+    const double qy = 1.1 * std::sin(0.3);
+    h.setTarget(QString::number(qx, 'g', 15),
+                QString::number(qy, 'g', 15),
+                QStringLiteral("0"));
+    // 修复前此处抛 std::invalid_argument（TCP 空→KIN-NO-TCP 轨）穿越
+    // Qt 槽——真实求解器 fail-fast 面的回归钉。
+    ASSERT_NO_THROW(h.clickSolve());
+
+    // 会话态写点：解集非空、首解位置残差入容差（JointGrid 多初值＝
+    // 区间对角点——非奇异链 DLS 预算内收敛）。
+    ASSERT_TRUE(h.state.lastSessionSolutionSet != nullptr);
+    ASSERT_EQ(h.state.lastSessionSolutionSet->solutions.size(), 1U);
+    EXPECT_LE(h.state.lastSessionSolutionSet->solutions.front().positionResidual,
+              h.state.savedConfig.positionResidualTolerance);
+    // 状态行＝内联完成（非装配失败/非转后台）。
+    EXPECT_NE(h.panel->lastStatusText().toStdString().find("内联完成"),
+              std::string::npos);
+}
+
+/// 装配失败显式报错（无工具模型）：状态行携带稳定诊断码 KIN-NO-TCP，
+/// 求解器零触达（残缺请求绝不提交——A08"解析失败显式报错"义务）。
+TEST(KinematicsPanelInput, SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-14"},
+                  std::vector<std::string>{});
+    AssembleHarness h = AssembleHarness::toolless();
+
+    h.setTarget(QStringLiteral("0"), QStringLiteral("0"), QStringLiteral("0"));
+    h.clickSolve();
+
+    EXPECT_FALSE(h.recorder.received.has_value());
+    EXPECT_NE(h.panel->lastStatusText().toStdString().find("KIN-NO-TCP"),
+              std::string::npos);
+}

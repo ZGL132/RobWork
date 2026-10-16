@@ -60,6 +60,68 @@ struct KinSolveFlowResult {
 };
 
 /**
+ * @brief 会话求解请求的装配结果（KIN-P2/A08——assembleSessionSolveRequest
+ *        的产出值）。
+ *
+ * ok==false 时请求**不得**提交求解器：装配失败意味着请求会 fail-fast
+ * （KIN-NO-TCP/配置非法等调用方错误轨）——按钮路径把 statusText 呈现给
+ * 用户并停在原地，绝不提交残缺请求（审查 A08 根因之一即"提交缺字段请
+ * 期望求解器兜底"）。
+ */
+struct KinSolveRequestAssembly {
+    /// 装配是否成功（false＝request 无语义，statusText 承载失败原因）。
+    bool ok = false;
+    /// 装配产出的完整请求（ok==true 时通过 IkSolver 请求校验面——
+    /// TCP 已解析、初值/referenceQ/intervals 维度齐全、配置字段透传）。
+    IkRequest request;
+    /// 装配失败原因（ok==false 非空——含稳定诊断码 KIN-NO-TCP/
+    /// KIN-CONFIG-ILLEGAL 等，供状态行直显）。
+    std::string statusText;
+};
+
+/**
+ * @brief 从会话/模型装配完整合法的单点求解请求（L-K2 装配半区——
+ *        KIN-P2/审查 A08 的修复落点）。
+ *
+ * ★ 审查 A08 根因：真实按钮曾以默认构造 IkRequest 提交（TCP 身份空/
+ * 初值空/referenceQ 维度 0/intervals 维度 0/迭代上限 0）——真实
+ * IkSolver 请求校验（fail-fast 轨）必然拒绝，异常穿越 Qt 槽。本函数把
+ * 装配义务显式化，逐字段来源：
+ *   - TCP 身份：模型快照 defaultTcpIndex（KIN-14 默认 TCP 权威）→
+ *     TcpRef{tool.objectId, tool.localName}——名称经快照对象索引可解析
+ *     （空 tcpKey 语义上等价 canonical TCP，此处显式填 localName 使请
+ *     求自描述）；无工具/默认索引缺失＝KIN-NO-TCP 装配失败（显式报错
+ *     不提交——解析失败的请求没有"先发后修"的道理）；
+ *   - 初值集：savedConfig（initialStrategy/initialValuesCount/seed）×
+ *     evaluationIntervals(view) × referenceQ——经域设施 makeInitialValues
+ *     唯一实现点物化（零本地重写）；
+ *   - referenceQ：当前会话姿态（KinSessionPose——宿主持有的会话事实）；
+ *     会话未设置时以模型零位回退（确定性、如实注释——面板此态下关节
+ *     表为空，零位是唯一无信息注入的确定性选择）；会话姿态维度与模型
+ *     自由度不符＝装配失败显式拒绝（NFR-COR-03 不钳制）；
+ *   - intervals：evaluationIntervals(view)——逐轴模型关节限位（三态：
+ *     bounds→workingRange→无分析限位如实 bounded=false）；
+ *   - 容差/迭代上限/去重阈值：savedConfig 同名字段直传；
+ *   - 碰撞会话/取消探针/对象绑定/结果身份：不装配（缝归 KIN-P4 正式
+ *     宿主；单点会话求解零绑定——D-KIN-4 身份不含会话）。
+ *
+ * savedConfig 前置校验（validateAnalysisConfiguration）：会话纪律要求
+ * savedConfig 恒合法（KinPanelTypes.hpp 注），但装配是"合法配置→合法
+ * 请求"的边界——配置非法（如默认构造 seed=0 的未初始化会话）时显式
+ * 失败并给 KIN-CONFIG-ILLEGAL，绝不让非法配置流入 makeInitialValues
+ * （其 seed=0 行为契约即"输出无定义"）。
+ *
+ * @param services [in] 服务缝（modelView/sessionPose——空视图＝装配失败）
+ * @param session  [in] 会话态（savedConfig 读取——零写入）
+ * @return 装配结果（ok/statusText/request——语义见 KinSolveRequestAssembly）
+ *
+ * 纯编排（零求解算术——初值物化经域设施）；UI 线程；确定性（同会话
+ * 同模型同输出——NFR-COR-01/02）。
+ */
+KinSolveRequestAssembly assembleSessionSolveRequest(
+    const KinPanelServices& services, const KinModuleSessionState& session);
+
+/**
  * @brief 单点求解流（L-K2 唯一编排点）。
  *
  * 执行序：
@@ -76,7 +138,8 @@ struct KinSolveFlowResult {
  * @param session     [in,out] 会话态（内联成功时写入 lastSessionSolutionSet）
  * @param targetInBase [in] 求解目标位姿（基座坐标系 {B}——§5.1 唯一来源）
  * @param request     [in] 求解请求其余字段（初值/容差/区间/配置投影——
- *                    调用方从配置面板与快照装配；本函数零再加工）
+ *                    产品路径经 assembleSessionSolveRequest 装配（KIN-P2/
+ *                    A08）；本函数零再加工）
  * @param inlineBudget [in] 内联预算（缺省 kInlineBudgetMs——产品口径；
  *                    测试注入更小值以确定性触发超界分支，不改产品门槛）
  * @return 编排结果（解表内容经 session.lastSessionSolutionSet 现取——

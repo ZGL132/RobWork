@@ -404,13 +404,15 @@ SamplingPlan workspaceSamplingPlan(const WorkspaceSamplingQuery& query);
  *     点云浏览是"每采样点一个代表解"的估算语义，全解集消费归单点
  *     求解/批量通道）。
  *
- * 姿态误差的语义边界（诚实登记，随卡 §14.6 v0.20）：位置样本的姿态
- * 无约束（§7.2 存在性口径——求解姿态容差以 π 落值，kPoseFreeTolerance
- * 同源），其 bestSolution.orientationResidual 是"该构型对采样位置的
- * IK 复算姿态残差"（数值有界但非位姿目标误差）——着色呈现时呈现侧
- * 应按"位置样本姿态无约束"事实解释；位姿样本（完整位姿 IK）的残差
- * 才是完整位姿误差。本结构不另设"有效/无意义"标记——维度语义由
- * 采样定义（position.kind）决定，呈现侧可查。
+ * 姿态误差的语义边界（诚实登记，随卡 §14.6 v0.20；KIN-P2/A02 更新落值
+ * 机制）：位置样本的姿态无约束（§7.2 存在性口径——求解以
+ * IkRequest.taskSpace=PositionOnly 承载，3 维任务子空间：姿态项不进目
+ * 标函数；旧"姿态容差 π 落值"机制已废——审查 20261016 A02），其
+ * bestSolution.orientationResidual 是"该构型对采样位置的 IK 复算姿态
+ * 残差"（数值有界但非位姿目标误差）——着色呈现时呈现侧应按"位置样本
+ * 姿态无约束"事实解释；位姿样本（完整位姿 IK）的残差才是完整位姿
+ * 误差。本结构不另设"有效/无意义"标记——维度语义由采样定义
+ * （position.kind）决定，呈现侧可查。
  *
  * 值语义纯结构；线程安全（并发只读）。
  */
@@ -612,7 +614,8 @@ void validateWorkspaceSamplingQuery(const IKinRuntimeView& view,
  *   - 步骤 3 逐样本评估：分批（maxBatchSize）＋批间取消查询（每批至
  *     少一次）＋批内并行分片（threadCount——各线程只写全序槽位，合并
  *     按全序；异常按分片序重抛首错）＋逐样本 IK（位置样本＝位置存在
- *     性 IK——姿态容差 π 落值；位姿样本＝完整位姿 IK；IkRequest 的
+ *     性 IK——taskSpace=PositionOnly 任务维度〔KIN-P2/A02，旧姿态容
+ *     差 π 落值机制已废〕；位姿样本＝完整位姿 IK；IkRequest 的
  *     身份面字段以零值/回显值填充——探索式不入切片身份，requestIdentity
  *     仅作求解器契约的形态满足）；结局→样本状态映射同 §7.2 词表；
  *     Reached 样本提取稳定排序首位解为 bestSolution；

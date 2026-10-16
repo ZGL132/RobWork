@@ -538,6 +538,55 @@ TEST(KinWorkspace, FacilityFailureSampleDataInsufficient_WP15T14)
     EXPECT_EQ(run.completedCount, std::uint64_t{4});
 }
 
+/// KIN-P2（审查 A02）——工作空间探索式采样的位置样本经**真实 IkSolver**
+/// 在退化链上闭环（审查 A02 的 Workspace.cpp 通道回归钉，与
+/// RegionCoverageTest 的 Evaluators.cpp 通道同源反例）：coaxialChainModel
+/// （六轴同轴、TCP 轴距 1 m）上的已知可达点 (0,1,0)（q*=(π/2,0,…)）。
+/// 修复前：位置样本 FullPose＋π 容差——姿态项参与 6 维迭代，位置可达
+/// 点被牵制为 DataInsufficient；修复后：taskSpace=PositionOnly——
+/// Reached（探索式点云的正确着色语义）。位姿样本的结局不在断言面
+/// （退化链上任意固定姿态目标几乎必然搜索未果——保守 DataInsufficient
+/// 语义本身正确）。
+TEST(KinWorkspace, PositionSampleRealSolverDegenerateChain_KIN_P2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "KIN-02", "KIN-04"},
+                  std::vector<std::string>{"AT-25"});
+
+    const rt::CanonicalModel model = coaxialChainModel();
+    TestView view(model);
+    const kin::IkSolver realSolver;  // 真实求解器（A02 闭环——非脚本结局）
+
+    // 单位置样本查询：区域盒心＝(0,1,0)（审查反例点）、边长 0.02——
+    // Grid 1×1×1 格心＝盒心；位姿维度 1×1（合法域——其结局不断言）。
+    WorkspaceSamplingQuery q;
+    q.region = makeRegion();
+    q.region.center = rw::math::Vector3D<double>(0.0, 1.0, 0.0);
+    q.region.size = rw::math::Vector3D<double>(0.02, 0.02, 0.02);
+    q.position.method = kin::PositionSamplingDefinition::Method::Grid;
+    q.position.gridCounts = {1U, 1U, 1U};
+    q.orientation.directionSamples = 1U;
+    q.orientation.rollSamples = 1U;
+    q.config = makeConfig(42U);
+    q.config.initialValuesCount = 4U;  // 多初值——修复面不依赖初值碰巧命中
+    q.config.iterationLimit = 256U;    // 审查反例同预算（修复前该预算下 0 解）
+    q.referenceQ.assign(6, 0.0);
+    q.tcp = toolRef();
+    q.solver = &realSolver;
+
+    RecordingContext ctx;
+    const kin::WorkspaceSampleRun run = kin::runWorkspaceSampling(view, q, ctx);
+
+    // 样本集：1 位置＋1 位姿（生成序黄金锁定——位置样本全序首位）。
+    ASSERT_EQ(run.samples.samples.size(), std::size_t{2});
+    EXPECT_EQ(run.samples.samples[0].kind, kin::SampleKind::Position);
+    EXPECT_NEAR(run.samples.samples[0].position[0], 0.0, 1e-12);
+    EXPECT_NEAR(run.samples.samples[0].position[1], 1.0, 1e-12);
+    // 位置样本（槽 0）终态＝Reached（修复前 DataInsufficient——A02）。
+    EXPECT_EQ(run.results[0].state, SampleState::Reached);
+    ASSERT_TRUE(run.results[0].bestSolution.has_value());
+    EXPECT_LE(run.results[0].bestSolution->positionResidual, 1e-6);
+}
+
 // =====================================================================
 // ACC3——点云着色/投影/图例/导出值行（AT-25；渲染数据本单元产、呈现
 // 归 ui View3D——§3.3 Render.hpp 纪律）

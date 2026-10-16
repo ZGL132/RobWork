@@ -67,7 +67,14 @@ inline constexpr char kTaskPointIkEvaluationKey[] = "kin-task-point-ik";
 /// 求解器算法契约版本＝评估器契约版本（§8.4 单一值；进 descriptor、
 /// 解的 solverContractVersion 与证明素材 producerContractVersion；
 /// 升级即新切片身份——CON-04，一经交付不回退）。
-inline constexpr std::uint32_t kIkSolverContractVersion = 1U;
+/// ★ v2（KIN-P2——审查条目 A02）：请求词表追加 IkTaskSpace 任务空间
+///   模式（仅位置任务＝3 维任务子空间求解，替代旧"姿态容差放宽 π"的
+///   伪姿态自由表达）。完整位姿路径数值逐位不变（黄金数据集不受影响），
+///   但"同版本同求解语义"的行为集整体扩了——修复前后位置存在性样本的
+///   结论可不同（修复前搜索未果 DataInsufficient、修复后可达 Reached），
+///   版本不升级会让检查点续跑/评估对账把两个语义时代的产出混在同一
+///   run 里（§8.4 版本核对的本意即防此）。
+inline constexpr std::uint32_t kIkSolverContractVersion = 2U;
 
 /// 阻尼最小二乘的阻尼系数 λ（无量纲设计默认——Δq＝Jᵀ(JJᵀ＋λ²I₆)⁻¹e；
 /// λ²＝1e-6 在米级工作半径下近伪逆、近奇异处抑振荡；随黄金数据集锁定
@@ -240,6 +247,49 @@ public:
 // IkRequest——求解请求（§5.3 请求字段表逐项；§9.2 solve() 唯一入参）
 // =====================================================================
 
+// =====================================================================
+// IkTaskSpace——任务空间模式（KIN-P2 审查条目 A02 表尾追加；§5.3 请求
+// 字段表"任务维度"的词表落点）
+// =====================================================================
+
+/**
+ * @brief IK 任务空间模式（审查 20261016 A02 的修复词表——表尾追加，
+ *        登记随单元卡 §14.6）。
+ *
+ * 为什么需要显式任务维度（A02 根因）：仅位置存在性任务（KIN-04 区域
+ * 采样的位置样本等）的工程语义是"存在 q 使 TCP 位置入容差即可，姿态
+ * 任意"。旧实现把该语义表达为"姿态容差放宽到 π"——但 6 维误差向量与
+ * 完整 Jacobian 仍在迭代，姿态项照样进目标函数：在姿态自由度不足的
+ * 合法链上（如六轴同轴退化链），位置可达的点会被"永远修不到的姿态
+ * 目标"牵制，DLS 收敛不到位置容差内，位置存在性被错误判为搜索未果。
+ * 正确表达是任务子空间本身降维：仅位置任务只优化 3 维位置误差及
+ * Jacobian 对应子块，姿态自由轴根本不进目标函数（收敛判据/残差复验
+ * 同步只看位置残差）。
+ *
+ * 语义边界：
+ *   - FullPose：6 维任务（位置 3＋姿态 3 全部进目标函数与两项收敛判据）
+ *     ——KIN-02 完整位姿 IK 的既有路径，v1 行为逐位不变（默认值——
+ *     既有调用点零改动）；
+ *   - PositionOnly：3 维任务（只位置误差进目标函数；收敛判据与硬过滤
+ *     ①残差复验只查位置残差 ≤ positionTolerance）。解记录仍如实携带
+ *     姿态残差（信息性指标——不参与收敛/过滤判定；调用方不得以
+ *     orientationTolerance 解读它的满足性，它不是本任务的判定维度）。
+ *
+ * DataInsufficient 保守语义不变（§8.1 C5/C8）：PositionOnly 下搜索未果
+ * 仍只产"未果"素材、不得输出不可行——搜索未果≠证明不可达。
+ *
+ * 枚举值域受 solve() 入口校验（值域外＝调用方契约违约 fail-fast——
+ * NFR-COR-03；位型强转的越界值不可静默通过）。
+ */
+enum class IkTaskSpace : std::uint8_t {
+    /// 完整位姿任务——6 维（位置＋姿态全进目标函数；KIN-02 既有路径，
+    /// v1 行为逐位保持）。
+    FullPose = 0,
+    /// 仅位置任务——3 维（姿态自由：姿态误差不进目标函数；KIN-04 位置
+    /// 存在性口径的正确任务维度）。
+    PositionOnly = 1,
+};
+
 /**
  * @brief 多初值 IK 求解请求（§5.3 字段表；值语义，调用方组装）。
  *
@@ -261,7 +311,10 @@ struct IkRequest {
     rw::math::Transform3D<double> targetInBase = runtime::detail::identityTransform3D();
     /// 位置残差容差（m；默认 1e-6——附录 D 第 1 项）。
     double positionTolerance = 1e-6;
-    /// 姿态残差容差（rad；默认 1e-6——附录 D 第 2 项）。
+    /// 姿态残差容差（rad；默认 1e-6——附录 D 第 2 项）。★ 语义随
+    /// taskSpace：仅 FullPose 任务参与收敛判据；PositionOnly 任务下
+    /// positionTolerance 是唯一收敛容差，本字段仅作请求合法域校验
+    /// （>0 有限）与身份面一致性载体，不参与判定。
     double orientationTolerance = 1e-6;
     /// 模型视图（非 owning——FK 复算与限位评价的唯一真值来源；空＝
     /// 调用方契约违约）。
@@ -292,6 +345,10 @@ struct IkRequest {
     /// 结果身份（snapshotId/sliceId/configDigest/mode/seed/referenceQ
     /// ——§5.6 绑定五元组载体；评估器由 EvaluationRequest 填充）。
     IkRequestIdentity requestIdentity;
+    /// 任务空间模式（KIN-P2/A02 表尾追加——默认 FullPose 保持既有
+    /// 调用点行为逐位不变；追加成员带默认值——T07 追加纪律同款：既有
+    /// 聚合初始化调用点合法，二进制契约按表尾追加不重排）。
+    IkTaskSpace taskSpace = IkTaskSpace::FullPose;
 };
 
 // =====================================================================
@@ -422,7 +479,8 @@ struct IkOutcome {
  *     FrameUnresolved）；
  *   - referenceQ／初值集维度或有限性违例、initialValues 空集、
  *     iterationLimit=0、去重阈值非有限或 ≤0、intervals 维度/有序性
- *     违例（请求组装错误——同轨拒绝，不钳制不置零，NFR-COR-03）。
+ *     违例、taskSpace 词表外值（KIN-P2/A02 表尾追加的值域校验——
+ *     请求组装错误同轨拒绝，不钳制不置零，NFR-COR-03）。
  *
  * 不抛承诺的完整口径（F-746③ 兑现——audit 实测三处 FK 复算失败原走
  * std::logic_error，与"@return 不抛"承诺矛盾）：solve() 在调用方契约违约

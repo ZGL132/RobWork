@@ -826,7 +826,8 @@ struct RegionCoverageQuery {
     /// 位置残差容差（m；>0 有限——附录 D 第 1 项）。
     double positionTolerance = 1e-6;
     /// 姿态残差容差（rad；>0 有限——附录 D 第 2 项；仅位姿样本消费，
-    /// 位置样本以 π 无约束落值——Sampling.cpp 文件头注）。
+    /// 位置样本的任务模式为 PositionOnly（KIN-P2/A02——姿态不进目标
+    /// 函数，本容差不参与其收敛判定，仅作请求合法域载体））。
     double orientationTolerance = 1e-6;
     /// 去重阈值（rad|m 逐轴；>0 有限——附录 D 第 3 项）。
     double dedupThresholdPerAxis = 1e-6;
@@ -916,7 +917,8 @@ evidence::EvaluatorDescriptor makeRegionCoverageDescriptor();
  *   3. 零样本判定——计划样本乘积=0→覆盖率不定义→KIN-COVERAGE-ZERO-
  *      SAMPLES＋DataInsufficient 素材（绝不输出 0%/100%——无比率字段，
  *      V-13）；
- *   4. 逐样本评估——IK（位置样本＝位置存在性 IK〔姿态无约束落值 π〕；
+ *   4. 逐样本评估——IK（位置样本＝位置存在性 IK〔taskSpace=PositionOnly
+ *      任务维度——KIN-P2/A02，旧姿态容差 π 落值机制已废〕；
  *      位姿样本＝完整位姿 IK）＋碰撞（会话在场时随求解硬过滤③；要求在
  *      场而缺会话→该样本 DataInsufficient——KIN-05 承接）；样本批分批
  *      ＋协作取消（NotRun 如实保留）＋检查点 watermark＋进度；

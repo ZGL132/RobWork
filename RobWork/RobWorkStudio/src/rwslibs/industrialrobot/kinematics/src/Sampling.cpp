@@ -18,9 +18,13 @@
  *     ——D-KIN-6，常量与序见各函数注；
  *   - sampleSetIdentity canonical 字节布局见 sampleSetIdentity 函数注
  *     （O-38/P-KIN-3 冻结前对账面＝快照 SamplingPlanRef 逐字节比对）；
- *   - 位置样本评估的"orientation 无约束"落值＝姿态残差容差取 π rad
- *     （角度型残差量程 [0,π]——π 容差接受任意姿态，存在性口径的结构
- *     落值），随卡 §14.6 v0.6 登记。
+ *   - 位置样本评估的姿态自由表达（KIN-P2/A02 起更新）：旧"姿态残差
+ *     容差取 π rad 的无约束落值"（随卡 §14.6 v0.6 登记）已由
+ *     IkRequest.taskSpace=PositionOnly 的任务维度语义取代（3 维任务
+ *     子空间——姿态项不进目标函数；π 容差方案下姿态仍参与 6 维迭代，
+ *     位置可达解被姿态项牵制，审查 20261016 A02）。本 TU 不再承载该
+ *     落值（样本生成只产位置/位姿，评估面在 Evaluators.cpp/
+ *     Workspace.cpp）。
  *
  * 线程安全：全部为纯函数（无共享可变状态）；确定性：位模式直写/无
  * 环境熵（NFR-COR-01/02）。
@@ -69,9 +73,10 @@ constexpr double kFibonacciGoldenAngle = 2.39996322972865332223;
 /// π（rad——roll 均分的全周端点；字面锁定同上）。
 constexpr double kPi = 3.14159265358979323846;
 
-/// 位置样本评估的"姿态无约束"残差容差落值（rad——角度型残差量程 [0,π]，
-/// π 容差接受任意姿态＝存在性口径；见文件头"实现口径"注）。
-constexpr double kOrientationFreeTolerance = kPi;
+// ★ KIN-P2（审查 A02）：旧"位置样本姿态无约束容差落值"
+// （kOrientationFreeTolerance＝π）移除——该常量在本 TU 已无消费点
+// （位置样本的 IK 评估面在 Evaluators.cpp/Workspace.cpp），任务自由
+// 语义由 IkRequest.taskSpace=PositionOnly 承载（见文件头实现口径注）。
 
 // =====================================================================
 // 载荷编码小工具（T04/T05 编码器的同构形态——绑定块共享布局）

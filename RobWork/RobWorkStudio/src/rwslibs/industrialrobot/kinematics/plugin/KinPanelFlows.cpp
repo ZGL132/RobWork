@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <utility>
 
+#include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // validateAnalysisConfiguration（装配前置校验——域设施）
+#include <sdurws/ird/kinematics/DiagCodes.hpp>       // kKinNoTcp/kKinConfigIllegal（稳定诊断码——禁字符串拼码）
 #include <sdurws/ird/kinematics/Export.hpp>  // 导出打包/编码（KIN-08 值行——域设施）
 #include "KinPanelCommandCatalog.hpp"        // kinCommandEnabledInSession（L-K11 id 门控）
 #include "KinPanelModel.hpp"                 // configChangeHintRows（L-K7 提示行化）
@@ -40,6 +42,114 @@ constexpr const char* kKeySeed = "seed";
 constexpr double kMaxUint53 = 9007199254740992.0;
 
 }  // namespace
+
+KinSolveRequestAssembly assembleSessionSolveRequest(
+    const KinPanelServices& services, const KinModuleSessionState& session)
+{
+    KinSolveRequestAssembly out;
+
+    // ---- 步骤 0：模型视图缝（装配的输入真值面——空视图无从装配）。
+    if (services.modelView == nullptr) {
+        out.statusText = "求解不可用：模型视图未装配";
+        return out;
+    }
+    const runtime::CanonicalModel& model = services.modelView->model();
+
+    // ---- 步骤 1：TCP 身份解析（A08 字段①——"合法 TCP 身份"义务）。
+    // KIN-14 默认 TCP 权威（defaultTcpIndex——K14：tools 非空时必有值且
+    // 指向 tools 内项）经快照对象索引落实为 TcpRef{toolObject, localName}。
+    // 解析失败＝显式装配失败（稳定诊断码 KIN-NO-TCP），绝不提交残缺
+    // 请求让求解器 fail-fast（A08 根因修复——错误就地呈现给用户）。
+    const std::vector<runtime::CanonicalTool>& tools = model.tools();
+    const std::optional<std::uint32_t>& defaultIdx = model.defaultTcpIndex();
+    if (tools.empty() || !defaultIdx.has_value()
+        || *defaultIdx >= tools.size()) {
+        // 尾分支是防御面：builder 不变量已保证 defaultTcpIndex 指向有效
+        // 项，越界＝装配层拿到未过 builder 的模型（内部违约如实拒绝）。
+        out.statusText = std::string("求解不可用：TCP 未解析——快照无默认工具"
+                                     "（")
+                         + std::string(kKinNoTcp)
+                         + "；请先在建模侧配置工具与默认 TCP";
+        return out;
+    }
+    const runtime::CanonicalTool& tool = tools.at(*defaultIdx);
+    out.request.tcp.toolObject = tool.objectId;
+    // tcpKey 显式填工具局部名（canonical TCP 以其所属工具命名——解析
+    // 规则见 KinTypes.hpp TcpRef 注；空串语义等价但显式名让请求自描述、
+    // 不依赖"空＝canonical"的隐式约定）。
+    out.request.tcp.tcpKey = tool.localName;
+
+    // ---- 步骤 2：求解配置前置校验（A08 字段④⑤的来源合法性——
+    // savedConfig 会话纪律要求恒合法，但装配是边界：未初始化会话的
+    // 默认构造配置 seed=0 非法（I-KIN-4），流入 makeInitialValues 属
+    // "输出无定义"契约面。此处显式校验并以 KIN-CONFIG-ILLEGAL 拒绝，
+    // NFR-COR-03 不钳制不静默）。
+    try {
+        validateAnalysisConfiguration(session.savedConfig);
+    } catch (const std::invalid_argument& e) {
+        out.statusText = std::string("求解不可用：求解配置非法（")
+                         + std::string(kKinConfigIllegal) + "）：" + e.what();
+        return out;
+    }
+    const AnalysisConfiguration& config = session.savedConfig;
+
+    // ---- 步骤 3：逐轴评价区间（A08 字段④——模型关节限位，无界轴
+    // 如实表达）。经域设施 evaluationIntervals 唯一实现点提取（三态：
+    // bounds→workingRange→bounded=false）——与求解器限位过滤同源，
+    // 零第二套真值。
+    const std::vector<JointInterval> intervals = evaluationIntervals(*services.modelView);
+
+    // 设备自由度（Fixed 不消耗 q——与求解器/FK 同一口径的链序计数）。
+    std::size_t dof = 0;
+    for (const runtime::CanonicalJoint& j : model.chain().joints) {
+        if (j.type != runtime::JointType::Fixed) {
+            ++dof;
+        }
+    }
+
+    // ---- 步骤 4：参考构型（A08 字段③——当前会话姿态）。
+    // 会话已设置且维度符→直接采用；维度违约→显式失败（会话姿态由装配
+    // 层注入，尺寸错是装配事实不是可钳制的输入——NFR-COR-03）；未装配
+    // /未设置→模型零位回退（面板此态下关节表为空，零位是唯一无信息
+    // 注入的确定性回退——求解身份不含会话（D-KIN-4），回退值同为显式
+    // 输入面，不构成对会话的隐式读取）。
+    if (services.sessionPose != nullptr && services.sessionPose->isSet()) {
+        const std::vector<double>& poseQ = services.sessionPose->jointConfiguration();
+        if (poseQ.size() != dof) {
+            out.statusText = "求解不可用：会话关节姿态维度 "
+                             + std::to_string(poseQ.size()) + " != 设备自由度 "
+                             + std::to_string(dof) + "（装配层注入违约——拒绝）";
+            return out;
+        }
+        out.request.referenceQ = poseQ;
+    } else {
+        out.request.referenceQ.assign(dof, 0.0);
+    }
+
+    // ---- 步骤 5：初值集物化（A08 字段②——初值与数量来自求解配置）。
+    // 经域设施 makeInitialValues 唯一实现点（策略三值×配置 seed——§3.4
+    // 随机性唯一来源），零本地重写。
+    out.request.initialValues = makeInitialValues(
+        config.initialStrategy, config.initialValuesCount, config.seed,
+        intervals, out.request.referenceQ);
+
+    // ---- 步骤 6：配置字段直传（容差/迭代上限/去重阈值——求解参数面
+    // 与批量通道同源配置，KIN-13）。
+    out.request.positionTolerance = config.positionResidualTolerance;      // m
+    out.request.orientationTolerance = config.orientationResidualTolerance; // rad（不是度）
+    out.request.iterationLimit = config.iterationLimit;
+    out.request.dedupThresholdPerAxis = config.ikDedupThresholdPerAxis;    // rad|m 逐轴
+
+    // ---- 步骤 7：intervals 交付（步骤 3 提取、维度已按 dof 校齐——
+    // 请求校验面要求与 modelView 同快照，此处即同一次提取）。
+    out.request.intervals = intervals;
+
+    // 碰撞会话/取消探针/对象绑定/结果身份：不装配——碰撞缝归正式宿主
+    // （KIN-P4；缺会话＝求解器标记 collisionNotEvaluated 证据缺失，如实
+    // 语义）；单点会话求解零对象绑定、身份不含会话（D-KIN-4）。
+    out.ok = true;
+    return out;
+}
 
 KinSolveFlowResult runSinglePointSolve(const KinPanelServices& services,
                                        KinModuleSessionState& session,

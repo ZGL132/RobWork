@@ -54,11 +54,12 @@ namespace {
 // 内部工具（文件局部——不进公共面）
 // =====================================================================
 
-/// 位置样本的求解姿态自由容差落值（π rad——姿态无约束的收敛判据上限；
-/// 与 Evaluators.cpp kPoseFreeTolerance 同值同义。数值书写在此重复是
-/// 两条通道各自封闭的代价（见 Workspace.cpp 文件头"两管线刻意不共享
-/// 代码"注），语义单一性由双方注释互引保证）。
-constexpr double kWorkspacePoseFreeTolerance = 3.14159265358979323846;
+// ★ KIN-P2（审查 A02）：旧"位置样本姿态自由容差落值 π"
+// （kWorkspacePoseFreeTolerance）随任务维度语义移除——位置存在性样本
+// 现以 IkRequest.taskSpace=PositionOnly（3 维任务子空间）表达姿态自由，
+// 姿态项不再进目标函数（π 容差方案下姿态仍参与 6 维迭代，位置可达解
+// 会被姿态项牵制——A02 根因）；Evaluators.cpp kPoseFreeTolerance 同批
+// 移除。
 
 /**
  * @brief 内置默认求解器（生产路径——query.solver 为空时的求解实现）。
@@ -458,13 +459,21 @@ WorkspaceSampleRun runWorkspaceSampling(const IKinRuntimeView& view,
         result.tcpPosition = sample.position;
 
         // 逐样本 IK 请求（与 T06 逐样本面同构）：位置样本＝位置存在性
-        // IK（姿态无约束——容差 π 落值）；位姿样本＝完整位姿 IK。
+        // IK——KIN-P2/A02 起 taskSpace=PositionOnly（3 维任务子空间：
+        // 姿态误差不进目标函数，收敛/复验只查位置残差；旧"姿态容差 π"
+        // 方案已废——它仍让姿态项参与 6 维迭代，位置可达解被牵制）；
+        // 位姿样本＝完整位姿 IK（taskSpace 默认 FullPose）。
         IkRequest ikRequest;
         if (sample.kind == SampleKind::Position) {
             ikRequest.targetInBase = rw::math::Transform3D<double>(
                 sample.position,
                 rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
-            ikRequest.orientationTolerance = kWorkspacePoseFreeTolerance;
+            // 仅位置任务（A02）——姿态自由由任务维度表达，不由容差放宽
+            // 表达；orientationTolerance 仍携带配置值（请求合法域校验面
+            // ——不参与本任务收敛判定）。
+            ikRequest.taskSpace = IkTaskSpace::PositionOnly;
+            ikRequest.orientationTolerance =
+                query.config.orientationResidualTolerance;
         } else {
             ikRequest.targetInBase = sample.pose;
             ikRequest.orientationTolerance = query.config.orientationResidualTolerance;

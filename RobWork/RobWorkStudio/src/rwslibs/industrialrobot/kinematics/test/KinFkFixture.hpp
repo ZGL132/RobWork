@@ -293,6 +293,25 @@ inline rt::CanonicalModel allFixedModel()
     return makeModel(joints, trans(0, 0, 0.1));
 }
 
+/// 审查 A02 载体几何：六轴同轴退化链（六个转动关节轴全为 z 且同过
+/// 原点——合法但退化：位置工作空间＝xy 平面半径 1 m 的圆，姿态自由度
+/// 仅 Rz(Σqᵢ) 一维）。用途：仅位置存在性任务（KIN-04 位置样本）的
+/// 反例载体——姿态目标不可达而位置可达，暴露"姿态项牵制位置解"的
+/// 任务维度缺陷（KIN-P2/审查 A02；构造工具与 AuditProbe 反例同源）。
+inline rt::CanonicalModel coaxialChainModel()
+{
+    constexpr double kPi = 3.14159265358979323846;
+    std::vector<rt::CanonicalJoint> joints;
+    for (int i = 0; i < 6; ++i) {
+        joints.push_back(revolute("c" + std::to_string(i),
+                                  rw::math::Vector3D<double>(0, 0, 1),
+                                  trans(0, 0, 0), -kPi, kPi));
+    }
+    // TCP 偏置：沿 x 1 m——q 全零时 TCP=(1,0,0)（姿态恒等）；q1=π/2
+    // 时 TCP=(0,1,0)（审查反例的已知解）。
+    return makeModel(joints, trans(1, 0, 0));
+}
+
 /// 裕量归一化算例：有界中点/限位、连续带工作范围、连续无工作范围。
 inline rt::CanonicalModel marginModel()
 {

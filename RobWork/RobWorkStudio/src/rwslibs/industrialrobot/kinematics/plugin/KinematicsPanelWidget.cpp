@@ -529,9 +529,20 @@ void KinematicsPanelWidget::onSolveClicked()
         rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
                                      0.0, 1.0, 0.0,
                                      0.0, 0.0, 1.0));
-    IkRequest request;  // 其余字段＝契约缺省（harness/装配层可注入完整请求）
+    // 会话求解请求装配（KIN-P2/审查 A08——从会话/模型装配完整合法请求：
+    // TCP 经 KIN-14 默认工具解析、初值/容差/迭代来自求解配置、referenceQ
+    // 取会话姿态、intervals 取模型限位）。装配失败＝显式呈现稳定诊断码
+    // 并停在原地，绝不提交残缺请求（修复前此处以默认构造 IkRequest 直传
+    // ——TCP 空/初值空/referenceQ 与 intervals 维度 0，真实 IkSolver 校验
+    // 必 fail-fast，异常穿越 Qt 槽）。
+    const KinSolveRequestAssembly assembly =
+        assembleSessionSolveRequest(m_services, m_session);
+    if (!assembly.ok) {
+        showStatusText(QString::fromStdString(assembly.statusText));
+        return;
+    }
     const KinSolveFlowResult r =
-        runSinglePointSolve(m_services, m_session, target, request);
+        runSinglePointSolve(m_services, m_session, target, assembly.request);
     showStatusText(QString::fromStdString(r.statusText));
     refreshResultsPane();
 }
