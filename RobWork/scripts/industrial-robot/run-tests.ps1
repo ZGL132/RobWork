@@ -23,12 +23,14 @@
 #      Qt6/boost/zlib 等 DLL；CI 无 vcpkg toolchain 的 applocal 部署，故把各前缀
 #      bin 目录前置注入 PATH（仅当目录真实存在）。本地操作员环境已有等效供给时
 #      此注入为幂等空操作。
-#   4) 移植 gate-all.ps1 的 F-715 SKIP 口径：sdurws_ird_ui_test 经框架 sdurws 静态库
-#      接口面链入 python313.dll（→zlib.dll 同目录相依），该 DLL 不随构建部署、只能
-#      由 PATH 供给；环境不可达时加载失败（0xC0000135 族，ctest 包装实测退出码 8）。
-#      按 F-715 既有裁决，"环境前置不可达"不是被测面缺陷——记 SKIP＋归因，不计失败，
-#      杜绝验收与 CI 场景的系统性误报（gate-all.ps1 Invoke-GateTest 同款判定）。
-#      补 -PythonDir <目录> 或设 SDURWS_IRD_PYTHON_DIR 即可转真实执行。
+#   4) 移植 gate-all.ps1 的 F-715 SKIP 口径并按七跑实证收窄：sdurws_ird_ui_test 经
+#      框架 sdurws 静态库接口面链入 python313.dll（→zlib.dll 同目录相依），该 DLL
+#      不随构建部署、只能由 PATH 供给；不可达时加载失败。分诊以输出内容为准：
+#      ***Timeout（F-728 有界超时）与 [  FAILED  ]（gtest 断言失败）一律 FAIL；
+#      仅"非超时、无 gtest 输出、0xC0000135 族（ctest 对测试失败一律返回 8，
+#      run 38953336225 实证旧判据'退出码 8'会误放行任意失败）且 python313.dll
+#      不可达"才记 SKIP＋归因不计失败。补 -PythonDir/SDURWS_IRD_PYTHON_DIR 即
+#      可转真实执行。
 #   登记依据：ci/README.md「2026-10-16 激活」节＋patches/PATCHES.md 0003 号。
 param(
     [ValidateSet('Debug', 'Release')]
@@ -215,14 +217,35 @@ foreach ($name in $selected) {
         -LogFile $logFile -Label ('ctest -R ^' + $name + '$（超时 ' + $CTestTimeoutSec + ' s）')
     if ($run.ExitCode -eq 0) { continue }
 
-    # F-715 SKIP 分流（2026-10-16 激活适配④）：0xC0000135 族（ctest 包装实测退出码 8，
-    # 直接加载失败＝有符号 -1073741515）且 python313.dll 探测不可达——环境前置缺失，
-    # 不是被测面缺陷，记 SKIP＋归因不计失败（gate-all.ps1 Invoke-GateTest 同款判定）
-    if (-not $script:PythonDll -and ($run.ExitCode -eq 8 -or $run.ExitCode -eq -1073741515)) {
-        $skipped.Add($name)
-        Write-IndustrialRobotLog -LogFile $logFile -Line ('[SKIP] ' + $name + '（python313.dll 不可达，加载失败 0xC0000135 族——F-715 归因，不计失败）')
+    # ---- 失败分诊（顺序不可换；七跑实证口径修正，见文件头说明④）----
+    # 实证：ctest 对"测试失败"一律返回退出码 8（超时终止、gtest 断言失败、加载失败
+    # 三者同码），"退出码 8"单独作为 F-715 判据会把任意失败误归因 SKIP（run
+    # 38953336225 三个 _gui_test 超时＋一个 perf 断言失败被误放行）。分诊以输出
+    # 内容为准：
+    $joinedOutput = ($run.Lines -join "`n")
+    # ① F-728 超时优先：输出含 ***Timeout ＝ 挂住被有界终止——FAIL，不静默放行
+    #    （gate-all 口径：ctest 是规范执行通道，其超时须排查闭环；CI 挂住多属
+    #    环境差异如无交互桌面，须定位而非归因 python）
+    if ($joinedOutput -match '\*\*\*Timeout') {
+        $failed.Add($name)
+        Write-IndustrialRobotLog -LogFile $logFile -Line ('[FAIL] ' + $name + '（ctest 超时 ' + $CTestTimeoutSec + ' s，挂住已终止——F-728 防线；排查 CI 环境挂起原因，勿归因 python 缺失）')
         continue
     }
+    # ② gtest 实际执行失败的标志：[  FAILED  ] 横幅 ＝ 进程已启动、断言失败——FAIL
+    if ($joinedOutput -match '\[\s+FAILED\s+\]') {
+        $failed.Add($name)
+        Write-IndustrialRobotLog -LogFile $logFile -Line ('[FAIL] ' + $name + '（gtest 断言失败——进程已实际执行，非环境前置缺失）')
+        continue
+    }
+    # ③ F-715 SKIP（窄口径）：非超时、无 gtest 失败输出、0xC0000135 族退出码且
+    #    python313.dll 探测不可达——进程根本没启动的加载失败，环境前置缺失不是
+    #    被测面缺陷，记 SKIP＋归因不计失败（gate-all Invoke-GateTest 本意口径）
+    if (-not $script:PythonDll -and ($run.ExitCode -eq 8 -or $run.ExitCode -eq -1073741515)) {
+        $skipped.Add($name)
+        Write-IndustrialRobotLog -LogFile $logFile -Line ('[SKIP] ' + $name + '（无 gtest 输出的加载失败 0xC0000135 族且 python313.dll 不可达——F-715 归因，不计失败）')
+        continue
+    }
+    # ④ 其余一律 FAIL（退出码透传定位）
     $failed.Add($name)
     Write-IndustrialRobotLog -LogFile $logFile -Line ('[FAIL] ' + $name + '（退出码 ' + $run.ExitCode + '）')
 }
