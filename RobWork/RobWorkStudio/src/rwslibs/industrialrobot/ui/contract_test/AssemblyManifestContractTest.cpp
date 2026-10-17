@@ -448,12 +448,15 @@ TEST(AssemblyManifest, RequiredUnwiredCarriesOpenWaiver_UI_T83)
     }
 }
 
-/** wired 条目的 handleSymbol↔token 一致性＋锚点格式（UI-T84——F-916 消账）：
- *  ①wired ⇒ handleSymbol 非空且恰为 "<moduleId>::kModuleHandle"（与扫描
- *  面经 constexpr 定义解析出的 token 同源——清单手写列与代码真值不可漂
- *  移）；②wired ⇒ wiredAnchor 非空且为 "<路径>:<行号>" 格式、路径在
- *  industrialrobot/ 下真实存在（格式+存在性双重复核，与 validate-docs
- *  结构面交叉独立）。 */
+/** wired 条目的 handleSymbol↔token 一致性＋锚点行级核对（UI-T84——F-916
+ *  消账＋验收建议 4 升级）：①wired ⇒ handleSymbol 非空且恰为
+ *  "<moduleId>::kModuleHandle"（与扫描面经 constexpr 定义解析出的 token
+ *  同源——清单手写列与代码真值不可漂移）；②wired ⇒ wiredAnchor 非空且为
+ *  "<路径>:<行号>" 格式、路径在 industrialrobot/ 下真实存在；③锚点行
+ *  **内容**核对（IRD-NOTE-006 锚点规则本意——行号会随编辑漂移，行内容
+ *  漂移即登记失实）：锚点行必须含 "attachModule("，且自锚点行起 3 行
+ *  窗口内可见 handleSymbol token（生产 attachModule 为多行调用形态，
+ *  token 在续行——窗口即域归属绑定）。 */
 TEST(AssemblyManifest, WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84)
 {
     IRD_TEST_INFO(std::vector<std::string>{"NFR-MNT-05"},
@@ -476,5 +479,31 @@ TEST(AssemblyManifest, WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84
         const fs::path anchorFile = unitRoot() / fs::path{m[1].str()};
         EXPECT_TRUE(fs::exists(anchorFile))
             << "wiredAnchor 路径不存在（锚点失实）: " << anchorFile.string();
+
+        // 锚点行级核对（③——行内容含调用＋token 窗口可见；行号失准＝
+        // 本断言红，倒逼清单随代码同步）。
+        std::ifstream in{anchorFile};
+        ASSERT_TRUE(in.good()) << "wiredAnchor 文件不可读: " << anchorFile.string();
+        const int anchorLine = std::stoi(m[2].str());
+        bool anchorIsAttachCall = false;
+        bool tokenSeenInWindow = false;
+        std::string lineText;
+        for (int current = 1;
+             std::getline(in, lineText) && current <= anchorLine + 2; ++current) {
+            if (current == anchorLine) {
+                anchorIsAttachCall =
+                    lineText.find("attachModule(") != std::string::npos;
+            }
+            if (current >= anchorLine && current <= anchorLine + 2
+                && lineText.find(e.handleSymbol) != std::string::npos) {
+                tokenSeenInWindow = true;
+            }
+        }
+        EXPECT_TRUE(anchorIsAttachCall)
+            << "wiredAnchor 行必须是 attachModule 调用（行级核对——行号漂移"
+               "＝登记失实）: " << e.wiredAnchor;
+        EXPECT_TRUE(tokenSeenInWindow)
+            << "锚点行起 3 行窗口内必须可见 handleSymbol token（多行调用"
+               "域归属绑定）: " << e.moduleId << " → " << e.handleSymbol;
     }
 }

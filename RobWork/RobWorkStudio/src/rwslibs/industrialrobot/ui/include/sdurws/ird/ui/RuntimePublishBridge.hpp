@@ -467,6 +467,15 @@ public:
     ///     重入不再触碰未绑定态）。
     [[nodiscard]] bool hasBoundSession() const noexcept { return m_bound.has_value(); }
 
+    /// @brief 查询当前绑定的宿主项目身份（nullopt＝未绑定）。UI-T84 返工批
+    ///        增补：acceptance 1 需要断言 attachOrSwitch 分派后"绑定前移到
+    ///        新项目"（switch 语义的可观测终点）——仅有 hasBoundSession 位
+    ///        无法区分旧绑残留与新绑到位；值拷贝读面，零共享态暴露。
+    [[nodiscard]] std::optional<core::ProjectId> boundProject() const
+    {
+        return m_bound;
+    }
+
     /**
      * @brief 解绑宿主会话（宿主会话销毁——项目关闭/切换拆除的呈现侧收口）。
      *

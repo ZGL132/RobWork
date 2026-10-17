@@ -8932,6 +8932,33 @@
       "registeredAt": "2026-10-17",
       "title": "解析语义微差：契约 acceptance ① 提及 manifest handleSymbol 表参与解析，实现只消费 constexpr 定义＋字面量分支（handleSymbol 列未被测试消费，无 token 与清单 handleSymbol 一致断言）——Tier A validate-docs 已独立校验 handleSymbol 结构面，双向锁定目标仍达成",
       "owner": "后续治理批（补 token↔handleSymbol 一致断言或在单元卡注明分工）"
+    },
+    {
+      "id": "F-917",
+      "source": "WP-10-T84 返工批 acceptance 4 全链契约测试实装实测（HostDraftChainContractTest 段 B，真实 ProjectStoreFactory 存储＋生产 RequirementsDraftSource＋生产 DraftController；2026-10-17）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-17",
+      "title": "域草稿载荷二进制帧与工程草稿文件格式 UTF-8 校验冲突（草稿链内容编码缺陷）：requirements 载荷＝encodeRequirementCommandPayload 二进制帧（magic+u32+长度前缀字节串，requirements/src/CommandHandlers.cpp:167），而 project 草稿文件 payload 字段经 appendJsonString 强制 UTF-8 校验（project/src/Codec.cpp，无效序列抛 invalid_argument fail-fast）——二进制帧保存必被拒（实测稳定复现），需求域草稿在现行格式下无合法落盘形态；modeling 域载荷同 CommandHandlers 帧模式（encodeModelCommandPayload），同款嫌疑未实测。注：F-911 修复面（查询半区适配器）与写半区适配器行为正确，缺陷在域载荷内容编码与文件格式的契约缝隙。裁决方向：载荷 base64/hex 文本化（保帧格式）或草稿格式二进制安全化（改 project 格式契约）；requirements/modeling 两域一致处置",
+      "owner": "所有者裁决（跨域契约：requirements/modeling 载荷编码 × project 草稿格式——不属 WP-10-T84 可修面，测试以稳定拒绝钉承载现状证据）"
+    },
+    {
+      "id": "F-918",
+      "source": "WP-10-T84 返工批 acceptance 4 全链契约测试实装实测（同 F-917 探针：list 稳定返空→dev sink 抓得 list skip reason=parse:format-legacy document=1 supported=10000；2026-10-17）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-17",
+      "title": "草稿 schemaVersion 权威倒置：ui 侧 DraftDocumentProjection 契约写『草稿格式版本（域组装方填写）』，域侧遂填各自载荷内版本（requirements=kRequirementCommandPayloadVersion=1，modeling=kCommandPayloadVersion=2）；而 project 草稿文件把该字段按 §8.11 主.次版本编码解释（kSchemaVersionScale=10000，当前支持 10000＝主版本 1）——主版本 0（1、2 均落此区间）即 FormatLegacy 拒读，且 DraftServiceImpl::save 不校验该字段：**每份草稿都保存成功落盘却永远读不回**（list/tryLoad 稳定跳过，dev 诊断仅留痕），草稿恢复链在现行装配下整体不可用。裁决方向：格式版本权威归 project（save 归一化为 kSchemaVersionCurrent，或落盘前校验拒写＝fail-fast 前移），ui 投影字段改义为『域版本仅呈现不落盘』；两域草稿源同步修订",
+      "owner": "所有者裁决（跨域契约：ui 投影字段语义 × project 格式版本权威——不属 WP-10-T84 可修面，段 A 测试以消费 project 公共常量 kSchemaVersionCurrent 承载现行事实）"
+    },
+    {
+      "id": "F-919",
+      "source": "WP-10-T84 返工批 gate-all -QtPrefix 全矩阵核查（2026-10-18 凌晨——补 -QtPrefix 后冒烟树首次深入构建段，暴露此前历次 gate-all 因冒烟配置缺 Qt 前缀〔F-455〕止步于配置段而未达的链接面；2026-10-17）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "kinematics 单元独立冒烟树链接缺陷：sdurws_ird_kinematics_plugin 的 KinematicsPanelWidget.obj 引用 rw::math::RPY<double>::toRotation3D（readTargetPoseFromEditors），但 kinematics/CMakeLists.txt 全文零 sdurw_math 链接——集成树靠传递依赖（他目标 PUBLIC 链 sdurw_math）遮蔽，独立冒烟树无该传递供给即 LNK2019×2/LNK1120（sdurws_ird_kinematics_test 与 sdurws_ird_kinematics_gui_test 两目标构建失败）。WP-10-T84 触碰面（ui/requirements）零关联——纯 kinematics 单元链接面缺陷，gate-all 全矩阵 96/99 中仅此 2 项 FAIL，其余全绿",
+      "owner": "kinematics 单元批次（修复方向：插件/测试目标显式链接 sdurw_math，或收敛其显式依赖的传递供给目标——独立冒烟树口径 DTB §5.5；不属 WP-10-T84 可修面，登记留痕）"
     }
   ]
 }

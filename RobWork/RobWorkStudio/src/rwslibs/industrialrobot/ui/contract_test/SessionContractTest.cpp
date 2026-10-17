@@ -32,6 +32,8 @@
 #include <sdurws/ird/ui/UiProjections.hpp>
 #include <sdurws/ird/ui/UiSessionController.hpp>
 #include <sdurws/ird/ui/UiTypes.hpp>
+#include <sdurws/ird/ui/IDraftController.hpp>       // UI-T84 ACC1——真实 DraftController（生产三控制器组装面）
+#include <sdurws/ird/ui/RuntimePublishBridge.hpp>   // UI-T84 ACC1——生产桥分派（attachOrSwitchHostSession）
 
 #include <chrono>
 #include <functional>
@@ -410,6 +412,200 @@ TEST(SessionContract, O31SessionFacesAreUiOwnedInterfaces)
     ASSERT_EQ(h.controller->state(), UiSessionState::Draining);
     h.factory->lastStore->release();
     EXPECT_EQ(h.controller->state(), UiSessionState::NoProject);
+}
+
+// =====================================================================
+// F-910 关闭→同进程重开分派契约（UI-T84 acceptance 1——返工修订语义）
+// =====================================================================
+
+/// 草稿查询端口替身（真实 DraftController 的对端装配半区）：清单恒空。
+/// 本测试对象是关闭→重开的**分派与状态机**面；磁盘保真已由
+/// HostDraftChainContractTest 真实存储面覆盖，此处零重复。
+class Acc1DraftQueryPort final : public ui::IUiDraftQueryPort {
+public:
+    std::vector<ui::DraftRowProjection> listDrafts() const override { return {}; }
+};
+
+/// 草稿写半区端口替身：落盘/放弃恒成功，读取恒 Missing（缺省安全值）。
+class Acc1DraftStorePort final : public ui::IUiDraftStorePort {
+public:
+    ui::DraftSaveOutcome save(const ui::DraftDocumentProjection&) override
+    {
+        ui::DraftSaveOutcome out;
+        out.ok = true;
+        return out;
+    }
+    ui::DraftLoadOutcome tryLoad(const std::string&) override { return {}; }
+    ui::DraftDiscardOutcome discard(const std::string&) override
+    {
+        ui::DraftDiscardOutcome out;
+        out.ok = true;
+        return out;
+    }
+};
+
+/// 模块草稿源替身（IModuleDraftSource 端口合规最小实现——载荷固定文本，
+/// 使 saveAll 真实组装出一份文档走通脏关闭链）。
+class Acc1ModuleDraftSource final : public ui::IModuleDraftSource {
+public:
+    Acc1ModuleDraftSource(std::string moduleId, std::string displayName)
+        : m_moduleId(std::move(moduleId)), m_displayName(std::move(displayName))
+    {
+    }
+    std::string displayName() const override { return m_displayName; }
+    ui::DraftDocumentProjection buildDraftDocument() const override
+    {
+        ui::DraftDocumentProjection doc;
+        doc.moduleId = m_moduleId;
+        doc.schemaVersion = 1;
+        doc.payload = "acc1-dirty-close";
+        return doc;
+    }
+    void adoptRestoredDocument(const ui::DraftDocumentProjection&) override {}
+    void rebuildOnRevision(const std::string&) override {}
+
+private:
+    std::string m_moduleId;
+    std::string m_displayName;
+};
+
+/// 呈现构造端口替身：恒无视图（本测试只用桥的绑定态分派面——不消费
+/// 呈现事件，fetch 不被触达即为本用例的声明边界）。
+class Acc1PresentationSource final : public ui::IUiPresentationSource {
+public:
+    std::optional<ui::PresentationViewProjection> fetchPresentation(
+        const ui::PresentationEventFacts& /*facts*/) override
+    {
+        return std::nullopt;
+    }
+};
+
+/// 宿主刷新端口替身：应用恒成功（桥构造必填依赖——装配纪律面）。
+class Acc1PresentationOutlet final : public ui::IUiPresentationOutlet {
+public:
+    ui::PresentationApplyReport applyPresentation(
+        const ui::PresentationViewProjection& /*view*/) override
+    {
+        ui::PresentationApplyReport report;
+        report.ok = true;
+        return report;
+    }
+    void releasePresentation() override {}
+};
+
+/** 关闭→同进程重开，生产三控制器组装（UI-T84 acceptance 1 返工修订口径）：
+ *  真实 UiSessionController＋RuntimePublishBridge＋DraftController 按生产
+ *  接线形态组装——presentContext＝生产分派形态 attachOrSwitchHostSession
+ *  （UiPlugin 同构，F-910 载重修复面）；脏事实经 DraftController
+ *  onSessionDirtyChanged→session.reportSessionDirty 生产者接线；
+ *  [保存] 决议经 saveAllDraftsManual→真实 saveAll(CloseDialog)。
+ *  钉三件事：①脏会话关闭全程零逃逸（beginClose/resolve/release 无异常
+ *  穿出）；②关闭完成控制器归 NoProject；③桥旧绑在时重开不炸——
+ *  attachOrSwitch 按绑定态走 switch（绑定前移到新项目，boundProject 可
+ *  观测）。修复前该形态＝attach 双挂 fail-fast 整站退出（红面已由验收
+ *  attempt 1 N2 变异实证），此处钉修复后的绿面。 */
+TEST(SessionContract, CloseThenReopenDispatchesAttachOrSwitchWithoutEscape_UI_T84_ACC1)
+{
+    // ---- 装配半区（端口替身零 owning shared_ptr——栈对象生命周期覆盖全程）----
+    auto bridgeSource = std::make_shared<Acc1PresentationSource>();
+    auto bridgeOutlet = std::make_shared<Acc1PresentationOutlet>();
+    ui::RuntimePublishBridge::Deps bridgeDeps;
+    bridgeDeps.source = bridgeSource;
+    bridgeDeps.outlet = bridgeOutlet;
+    ui::RuntimePublishBridge bridge{bridgeDeps};  // 桥无默认构造（装配 fail-fast 面）
+    Acc1DraftQueryPort draftQuery;
+    Acc1DraftStorePort draftStore;
+    Acc1ModuleDraftSource source("acc1-module", "acc1 模块");
+
+    // 会话控制器先行（presentContext 与 saveAllDraftsManual 都要触达
+    // DraftController——后者滞后创建，经 unique_ptr 间接持有）。
+    ProtocolHarness h;
+    std::unique_ptr<ui::IDraftController> draftCtl;
+    UiSessionControllerDeps d = h.deps();
+    d.presentContext = [&](const ui::ProjectContextProjection& projection) {
+        if (!projection.project.has_value()) {
+            return;  // 首页态投影（无项目）不触发分派——生产分派同构
+        }
+        // 生产分派形态：attachOrSwitch 按绑定态分派（未绑定 attach／已
+        // 绑定 switch）——壳层拆绑缺失/迟到的容错正是 F-910 修复语义。
+        // 注意 presentContext 会被重呈现多次触发（reportSessionDirty/
+        // 状态翻转均重放——presentContextLocked 契约），故本 lambda 只做
+        // 幂等分派，不承担一次性装配（DraftController 绑定归下方壳层
+        // attach 镜像——生产 attachPresentationSession 同位）。
+        bridge.attachOrSwitchHostSession(projection.project->projectId);
+    };
+    // [保存] 决议委托（生产接线——UiPlugin 同构：CloseDialog 触发真实落盘）。
+    d.saveAllDraftsManual = [&]() {
+        return draftCtl->saveAll(ui::SaveTrigger::CloseDialog).failedCount == 0;
+    };
+    h.build(std::move(d));
+
+    // DraftController 脏翻转→会话脏标记（生产者接线——reportSessionDirty
+    // 唯一注入面；UI-T12 承诺的 L5 接线形态）。
+    ui::DraftControllerDeps dd;
+    dd.postToDiskThread = [](std::function<void()> task) -> bool {
+        task();  // 内联执行（testkit §6.7——单线程测试 Marshal 语义等价）
+        return true;
+    };
+    dd.postToUiThread = [](std::function<void()> task) -> bool {
+        task();
+        return true;
+    };
+    dd.onSessionDirtyChanged = [session = h.controller.get()](bool dirty) {
+        session->reportSessionDirty(dirty);  // 生产者接线（h.build 已建控制器——非空）
+    };
+    draftCtl = ui::createDraftController(std::move(dd));
+
+    // ---- 会话①：打开→壳层 attach 镜像→编辑置脏（真实脏链）----
+    h.openDefault();
+    ASSERT_EQ(h.controller->state(), UiSessionState::OpenWritable);
+    ASSERT_TRUE(bridge.hasBoundSession());
+    const core::ProjectId firstId = h.factory->lastStore->project;
+    // DraftController 绑定（壳层 attachPresentationSession 镜像——§10.5
+    // 归属三元组取现场存储事实；与 presentContext 重呈现解耦）。
+    ui::DraftSessionBinding binding;
+    binding.projectId = firstId;
+    binding.writable = true;
+    binding.drafts.reset(&draftQuery, [](ui::IUiDraftQueryPort*) {});
+    binding.store.reset(&draftStore, [](ui::IUiDraftStorePort*) {});
+    draftCtl->bindSession(binding);
+    draftCtl->attachModule("acc1-module", source);
+    draftCtl->notifySessionDirty("acc1-module");  // 脏链直达会话标记（伴随重呈现）
+    (void)h.controller->beginClose(UiCloseIntent::CloseProject);
+
+    // ---- 关闭：[保存] 决议走真实 saveAll(CloseDialog)——零逃逸面----
+    CloseDecision saveDecision;
+    saveDecision.confirmed = true;
+    saveDecision.draft = DraftDisposition::Save;
+    saveDecision.task = TaskDisposition::Wait;
+    ASSERT_EQ(h.controller->resolveCloseDialog(saveDecision).status,
+              CloseDialogResolution::Status::Confirmed)
+        << "脏会话[保存]关闭必须零逃逸（F-910 修复面——异常不再穿出协议面）";
+    h.factory->lastStore->release();  // 归档收口→NoProject
+    ASSERT_EQ(h.controller->state(), UiSessionState::NoProject);
+
+    // 壳层收口镜像（拆绑归 UI 壳层——模型层重开前显式拆绑，生产同序）。
+    draftCtl->unbindSession();
+
+    // ---- 同进程重开：桥旧绑已被壳层拆绑→attach 分派（常态路径）----
+    h.openDefault();
+    ASSERT_EQ(h.controller->state(), UiSessionState::OpenWritable)
+        << "重开必须零逃逸且回到 Open*";
+    const core::ProjectId secondId = h.factory->lastStore->project;
+    EXPECT_FALSE(secondId == firstId) << "协议替身每次打开生成新项目身份";
+    ASSERT_TRUE(bridge.hasBoundSession());
+    ASSERT_TRUE(bridge.boundProject().has_value());
+    EXPECT_EQ(*bridge.boundProject(), secondId)
+        << "重开分派后桥绑定＝新项目（attach 常态路径可观测终点）";
+
+    // ---- 分派容错面（switch 半区——壳层拆绑缺失/迟到也不炸）----
+    // 直接再触发一次分派（旧绑还在、身份不同）＝重开期重复 presentContext
+    // 的防御形态：attachOrSwitch 走 switch 换绑而非 attach 双挂（F-910
+    // 修复前此形态 logic_error 整站退出）。
+    bridge.attachOrSwitchHostSession(secondId);
+    ASSERT_TRUE(bridge.boundProject().has_value());
+    EXPECT_EQ(*bridge.boundProject(), secondId)
+        << "分派后绑定必须前移到新项目（switch 语义可观测终点）";
 }
 
 }  // namespace

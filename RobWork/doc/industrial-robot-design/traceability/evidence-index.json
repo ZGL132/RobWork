@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-17T20:17:56+08:00",
+  "generatedAt": "2026-10-18T01:14:14+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -11,24 +11,24 @@
   },
   "summary": {
     "totalFiles": 6596,
-    "totalBytes": 207528194,
+    "totalBytes": 207533955,
     "byKind": {
-      "acceptance-record": 511,
-      "governance-record": 30,
-      "json-data": 7,
-      "markdown-doc": 41,
-      "pipeline-artifact": 2,
       "benchmark": 8,
-      "log": 1,
+      "acceptance-record": 511,
       "gtest-report": 335,
+      "log": 1,
+      "json-data": 7,
+      "build-log": 5660,
+      "markdown-doc": 41,
       "manual-acceptance": 1,
-      "build-log": 5660
+      "pipeline-artifact": 2,
+      "governance-record": 30
     },
     "byLifecycle": {
+      "superseded": 0,
       "current": 70,
       "historical": 519,
-      "unverified": 6007,
-      "superseded": 0
+      "unverified": 6007
     },
     "associated": 592,
     "unassociated": 6004,
@@ -36826,24 +36826,24 @@
       "path": "builds/wp10-t84/sdurws_ird_ui_contract_test.xml",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 17084,
-      "sha256": "ef8e63a691ce8a1fd6abde4b93097aefab917a7e76a606c8ae782be3eef2edfd",
+      "bytes": 18587,
+      "sha256": "fbeafa03f578ab0e42c44ff4c143ab4a87aec71e7f9f58c347fb992d599e60c4",
       "lifecycle": "unverified"
     },
     {
       "path": "builds/wp10-t84/sdurws_ird_ui_gui_test.xml",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 30561,
-      "sha256": "3edc04c86dd582982ebc076cdf8befb2fad377e655854e27f5c939da7dfdafad",
+      "bytes": 30569,
+      "sha256": "a6a0a2570438484f2bce3807a389ee1688b8676d5326fc9013f913c7b58adb9a",
       "lifecycle": "unverified"
     },
     {
       "path": "builds/wp10-t84/sdurws_ird_ui_test.xml",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 103078,
-      "sha256": "154d8e93695af7f23395c8c02ee159e038861e6c6e66981b418d96818f890028",
+      "bytes": 103081,
+      "sha256": "6cb0f59c9f736fc1cd106082af0bf835c4e99ea7cc1e83ede440ac10a0afc60a",
       "lifecycle": "unverified"
     },
     {
@@ -51506,7 +51506,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1135485,
+      "bytes": 1139732,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -54699,7 +54699,7 @@
       "kind": "json-data",
       "taskIds": [],
       "bytes": 1003,
-      "sha256": "45ffaa9aa66c754cd878b8c9aee2b64dda18f0aff3484137a3fb2b0bc9424008",
+      "sha256": "9fed86b5efcda295e35281c7a5684f54cd79d9e32d084519ab74fbd28a01c021",
       "lifecycle": "unverified"
     },
     {

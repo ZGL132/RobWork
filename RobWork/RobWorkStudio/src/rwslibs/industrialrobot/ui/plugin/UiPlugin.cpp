@@ -5110,8 +5110,10 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
                                         .value_or("") == "World.UnknownFrame";
             std::cout << "[ird-ui-smoke] step5 l3-runtimeonly="
                       << (step5Ok ? "ok" : "fail") << std::endl;
-            // 步 6：关闭清理（直接驱动 teardown——同步形态；关闭对话框的
-            // 交互流归 GUI 手动冒烟序列，此处验证清理编排本体）。
+            // 步 6：清理选中断言（UI-T84 返工批注释修正——本步实际验证
+            // 的是选中集清空；项目关闭编排已移至步 8 的 beginClose 全链，
+            // 原注释"关闭清理/teardown"与代码不符，按 §2.6 过期注释口径
+            // 随批修正——验收 UI-T84 attempt 1 建议 6）。
             if (m_selection) {
                 m_selection->clearSelection(ui::SelectionSource::Command);
             }

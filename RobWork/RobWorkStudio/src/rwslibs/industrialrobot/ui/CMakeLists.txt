@@ -603,11 +603,13 @@ endif()
 if(TARGET sdurws)
     target_sources(sdurws_ird_ui_contract_test PRIVATE
         contract_test/HostIntegrationContractTest.cpp
+        contract_test/HostDraftChainContractTest.cpp  # UI-T84——F-911 全链保真（真实工程存储＋生产查询适配器→restoreOnOpen→adopt 逐字节一致；requirements_plugin 链接面经本门控块——集成树专属，PresentationBridge 同因先例）
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainModuleRunner.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainAssembly.cpp  # ASM-STUDIO——bundle 符号面（析构/statusOf out-of-line）；本 TU 内 assembleDomainPlugins 不被调用（QDockWidget 依赖），仅链接承载
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/ExtraDomainAssembly.cpp)  # ASM-STUDIO——宿主三新域承接 TU（被测面本体）
     target_include_directories(sdurws_ird_ui_contract_test PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR})
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../requirements/plugin)  # UI-T84——RequirementsUiModule.hpp（RequirementsDraftSource 被测源完整类型；插件私有 include 面仅本测试目标，产品目标零消费）
     target_link_libraries(sdurws_ird_ui_contract_test PRIVATE
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
