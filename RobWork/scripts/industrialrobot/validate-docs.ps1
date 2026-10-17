@@ -156,5 +156,20 @@ foreach ($sd in 'implemented','proposed','rejected') {
     }
   }
 }
+# ---------- 执行协议 Skills 门禁（Agent-native 治理 Task 5，2026-10-17） ----------
+# 六个阶段 Skill 是执行协议的操作化载体（验收口径＝新会话按 AGENTS.md 入口能找到并
+# 照执行，不要求运行端自动触发）。本段校验六件 SKILL.md 存在且 frontmatter 含
+# name/description（最低可用格式）；协议权威仍在 PIPE/ACC/CCP 与根 AGENTS，Skill 只是速查。
+$skillNames = @('ird-discover-change','ird-design-change','ird-implement-task','ird-verify-change','ird-qt-gui-windows','ird-handoff')
+$skillsBase = Join-Path $RepoRoot '.agents/skills'
+$skillCount = 0
+foreach ($sn in $skillNames) {
+  $sp = Join-Path $skillsBase "$sn/SKILL.md"
+  if (-not (Test-Path $sp)) { $errors += "missing skill file: $sn/SKILL.md"; continue }
+  $skillCount++
+  $head = (Get-Content $sp -TotalCount 15) -join "`n"
+  if ($head -notmatch 'name:\s*\S') { $errors += "skill frontmatter missing name: $sn" }
+  if ($head -notmatch 'description:\s*\S') { $errors += "skill frontmatter missing description: $sn" }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
-Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes)"
+Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills)"

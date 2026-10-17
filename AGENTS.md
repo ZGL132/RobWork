@@ -305,6 +305,8 @@ RobWork/doc/industrial-robot-design/
 
 **任何一步失败停在原地登记，不带病前进。**
 
+**执行协议 Skills**（`RobWork/.agents/skills/`）：六个阶段 Skill——`ird-discover-change`（侦察）→ `ird-design-change`（设计）→ `ird-implement-task`（实施）→ `ird-verify-change`（验证）→ `ird-handoff`（交接），外加 `ird-qt-gui-windows`（GUI 测试操作规程）。实施/验收会话按阶段取用；Skill 是上述协议的操作化速查，冲突以 DTB §5.7 / acceptance-protocol / 根本文件为准。验收口径＝新会话按 AGENTS.md 入口能找到并照执行，不要求运行端自动触发。
+
 ---
 
 ## 7. 沟通与交付约定

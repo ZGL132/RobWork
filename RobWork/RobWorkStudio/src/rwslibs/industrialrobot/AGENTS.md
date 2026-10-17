@@ -52,8 +52,8 @@
 
 ## 5. Windows GUI 测试规则
 
-- 工具链 Visual Studio 2022 x64；`QT_QPA_PLATFORM=windows`，**禁止 offscreen**；路径用绝对路径；一次只跑一个 GUI 可执行文件（避免窗口焦点/输入串扰）。
-- 依据：治理计划 Task 5（该规则将随任务落成 `ird-qt-gui-windows` skill，本节届时改为引用）。
+- 硬规则速查：VS2022 x64；`QT_QPA_PLATFORM=windows`，**禁止 offscreen**；绝对路径；一次只跑一个 GUI 可执行文件。
+- 操作细节（挂起处置、qt.conf 前置、留痕、二次启动复位）见 `RobWork/.agents/skills/ird-qt-gui-windows/SKILL.md`（治理 Task 5 已落成——本节保留红线速查，操作面唯一 home 归该 Skill）。
 
 ## 6. 构建自查（每次提交前）
 

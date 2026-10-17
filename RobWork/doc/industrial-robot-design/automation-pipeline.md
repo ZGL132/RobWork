@@ -76,6 +76,8 @@
 
 ## 1. 角色映射
 
+> **执行协议 Skills**（治理 Task 5，2026-10-17）：六个阶段 Skill 位于 `RobWork/.agents/skills/`（ird-discover-change / ird-design-change / ird-implement-task / ird-verify-change / ird-qt-gui-windows / ird-handoff）——实施/验收角色按阶段取用；Skill 是协议的操作化速查，冲突以本协议与 ACC/CCP 为准（验收口径＝新会话按 AGENTS.md 入口能找到并照执行，不要求运行端自动触发）。
+
 | 协议角色 | 流水线承载 | 独立性保证 |
 | --- | --- | --- |
 | 实施者 | 当前 tick 会话的实施角色，仅输入：任务契约路径、分支名、base SHA；返工时另含 `lastFailureRecord` | 首次实施不读验收历史；返工仅读取该不可变失败记录；角色切换前按 §5 对账 |
