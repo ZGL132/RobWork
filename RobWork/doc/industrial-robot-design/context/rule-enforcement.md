@@ -23,6 +23,7 @@
 | `validate-docs.ps1` | 文档锚点（PIPE/ACC 关键语义）、B.1、20 单元、任务 ID 唯一、追踪矩阵、phase-one 索引、资产清单（路径/分类/链接/根级全覆盖）、分层规则入口（分区文件存在＋权威链接＋根回链）、Agent Notes（结构/编号/计划语气黑名单）、执行协议 Skills（六件存在性＋frontmatter） |
 | `validate-state.ps1` | state.json schema、phase 枚举、SHA 冻结链⑩、run 租约、队列可领取性 |
 | `validate-task.ps1` / `verify-task.ps1` | 任务契约字段完备性（ready 必备字段）/ 任务验证命令执行与证据核验 |
+| `build-context-pack.ps1` / `validate-context-pack.ps1` | 上下文包生成与新鲜度校验（源文件 SHA-256 重算，STALE=exit 2）；PIPE 权威红线——包内 state.json 状态字段副本（JSON 形态扫描）即 exit 1 |
 | `gate-all.ps1` | 集成＋冒烟一键全量门禁 |
 | CI 双模板（`scripts/industrialrobot/ci/`） | 远端常驻：构建＋测试（`^sdurws_ird_.*_test$` 全目标）＋文档门禁 |
 | CMake 目标注册面 | C++17（CXX_STANDARD 17 显式）、gtest 接入（find_package GTest CONFIG REQUIRED）、vcpkg toolchain 解析 |
@@ -66,7 +67,7 @@
 | 最小阅读路径（§3） | behavioral | 阅读阶梯传导 |
 | 提交前缀（§4） | behavioral | 同根 §6.2 |
 | 根级资产必须登记（§4） | gate | validate-docs 资产清单门禁（unregistered root-level asset 即失败） |
-| PIPE 权威红线：不复制 state.json 状态字段（§4） | review | Task 6/7 落地后由 validate-context-pack/evidence-index 脚本 gate 化（当前 review） |
+| PIPE 权威红线：不复制 state.json 状态字段（§4） | gate＋review | validate-context-pack.ps1（Task 6 起：包内状态字段副本即 exit 1，实测验证）；evidence-index 侧随 Task 7 |
 | 不批量移动/删除旧文档与证据（§4） | behavioral | 治理计划停止条件（Task 1–3 期） |
 
 ### 3.3 源码区 AGENTS.md（industrialrobot/）

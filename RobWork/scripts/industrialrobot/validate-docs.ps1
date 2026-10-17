@@ -171,5 +171,20 @@ foreach ($sn in $skillNames) {
   if ($head -notmatch 'name:\s*\S') { $errors += "skill frontmatter missing name: $sn" }
   if ($head -notmatch 'description:\s*\S') { $errors += "skill frontmatter missing description: $sn" }
 }
+# ---------- 上下文包门禁（Agent-native 治理 Task 6，2026-10-17） ----------
+# context/packs/ 是脚本生成的按任务上下文包（生成物禁手改）。本段轻量校验生成器
+# 标记与指纹段头——防手改伪装；新鲜度（SHA-256 重算报 STALE）与 PIPE 权威红线
+# （包内禁 state.json 状态字段副本）由专用脚本 validate-context-pack.ps1 承担
+# （过期是预期状态，不在此失败——包按需重生成）。
+$packsDir = Join-Path $base 'context/packs'
+$packCount = 0
+if (Test-Path $packsDir) {
+  foreach ($pk in @(Get-ChildItem $packsDir -Filter '*.md' -ErrorAction SilentlyContinue)) {
+    $packCount++
+    $pt = Get-Content $pk.FullName -Raw -Encoding UTF8
+    if ($pt -notmatch 'build-context-pack\.ps1') { $errors += "pack missing generator marker: $($pk.Name)" }
+    if ($pt -notmatch '源文件指纹') { $errors += "pack missing SHA-256 fingerprint section: $($pk.Name)" }
+  }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
-Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills)"
+Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills, $packCount packs)"
