@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "ird-asset-inventory/1",
+  "base": "RobWork/doc/industrial-robot-design",
+  "createdAt": "2026-10-17",
+  "createdBy": "Agent-native 治理 Task 1（计划 docs/superpowers/plans/2026-10-16-agent-native-context-governance-plan.md）",
+  "kinds": ["authority", "workflow", "task-source", "generated", "evidence", "decision", "archive"],
+  "owners": ["owner", "pipeline", "sessions", "script"],
+  "assets": [
+    {
+      "path": "REQUIREMENTS.md",
+      "kind": "authority",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": [],
+      "note": "需求语义唯一权威（ID 如 ARC-01）；章节级取用，禁止整册加载"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "kind": "authority",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["REQUIREMENTS.md"],
+      "note": "20 单元组成/分层/端口/决策 SA-xx 的权威"
+    },
+    {
+      "path": "DETAILED-DESIGN.md",
+      "kind": "authority",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["units"],
+      "note": "20 单元详设索引，逐卡入口指向 units/<unit>.md"
+    },
+    {
+      "path": "development-task-breakdown.md",
+      "kind": "task-source",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["tasks", "units"],
+      "note": "任务拆分（WPnn-Tkk）与构建约定（§5）权威；§4 待裁决 O-xx 权威本体在此。追加式治理文档，禁止默认整册加载"
+    },
+    {
+      "path": "automation-pipeline.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["traceability/pipeline/state.json"],
+      "note": "PIPE 执行协议；§0.2 定义 state.json schema"
+    },
+    {
+      "path": "acceptance-protocol.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["traceability/acceptance"],
+      "note": "对抗式验收协议（ACC）；验收记录落库于 traceability/acceptance/"
+    },
+    {
+      "path": "contract-compilation.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["tasks"],
+      "note": "任务契约编译协议（CCP）；管辖 tasks/ 与 tasks/foundation/ 契约的 planned→ready 编译"
+    },
+    {
+      "path": "governance-log.md",
+      "kind": "workflow",
+      "owner": "sessions",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["development-task-breakdown.md", "units"],
+      "note": "P-*/O-* 待裁决项流转台账；权威本体在各单元卡与 DTB §4，台账只登记流转不裁决"
+    },
+    {
+      "path": "performance-baseline.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["REQUIREMENTS.md", "units/testkit.md"],
+      "note": "性能基准清单与测量协议登记（WP-23-T01 产物）；需求语义权威在 REQUIREMENTS，达标数值照抄需求原文"
+    },
+    {
+      "path": "tasks",
+      "kind": "task-source",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["development-task-breakdown.md"],
+      "note": "任务契约 JSON 目录（validate-docs 校验 taskId 模式与唯一性）；按任务 ID 取用，不通读"
+    },
+    {
+      "path": "traceability",
+      "kind": "evidence",
+      "owner": "sessions",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["traceability/findings.json"],
+      "note": "运行/验收/构建证据库（约 6600 文件）；load-bearing 结构条目单独登记（见下），其余默认不进上下文、按需检索"
+    },
+    {
+      "path": "units",
+      "kind": "authority",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["DETAILED-DESIGN.md"],
+      "note": "20 单元详设卡 units/<unit>.md；按 ownerUnit 章节级取用"
+    },
+    {
+      "path": "context",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": true,
+      "generated": false,
+      "canonicalLinks": [],
+      "note": "治理元层：资产分类/默认上下文规则/阅读入口（本目录）；唯一 defaultContext=true 的根级资产"
+    },
+    {
+      "path": "traceability/pipeline/state.json",
+      "kind": "authority",
+      "owner": "pipeline",
+      "defaultContext": false,
+      "generated": true,
+      "canonicalLinks": ["automation-pipeline.md"],
+      "note": "流水线状态唯一权威（schema 见 PIPE §0.2，validate-state.ps1 校验）。清单与上下文包只引用不复制状态字段（评审修正 3 红线）"
+    },
+    {
+      "path": "traceability/findings.json",
+      "kind": "workflow",
+      "owner": "sessions",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["governance-log.md"],
+      "note": "findings 唯一登记簿；问题登记/消账以此为准"
+    },
+    {
+      "path": "traceability/requirements-to-units.json",
+      "kind": "authority",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["REQUIREMENTS.md", "units"],
+      "note": "需求→单元追踪矩阵结构数据；validate-docs 校验单元有效性与 masterWp 模式"
+    },
+    {
+      "path": "traceability/phase-one-task-index.json",
+      "kind": "task-source",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["tasks"],
+      "note": "阶段一任务索引；validate-docs 校验 sourceRow 与设计卡逐字一致"
+    }
+  ]
+}

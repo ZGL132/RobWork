@@ -54,5 +54,49 @@ if (-not (Test-Path $phaseIndexPath)) {
     if (-not $designText.Contains($entry.sourceRow)) { $errors += "phase index task row mismatch: $($entry.taskId)" }
   }
 }
+# ---------- 资产清单门禁（Agent-native 治理 Task 1，2026-10-17） ----------
+# context/README.md 定义七类资产与默认上下文规则，asset-inventory.json 是机读登记簿。
+# 本段把"清单完整性"变成机器检查：路径存在、分类/字段/布尔类型合法、canonicalLinks
+# 可解析、设计树根级资产全覆盖——新增根级文件/目录未登记即报错，防止 Agent 上下文
+# 地图缺位失真（清单字段口径见 context/README.md §6）。
+$invKinds = @('authority','workflow','task-source','generated','evidence','decision','archive')
+$invOwners = @('owner','pipeline','sessions','script')
+$assetCount = 0
+$contextReadme = Join-Path $base 'context/README.md'
+$inventoryPath = Join-Path $base 'context/asset-inventory.json'
+if (-not (Test-Path $contextReadme)) { $errors += 'missing context/README.md (asset classification rules)' }
+if (-not (Test-Path $inventoryPath)) {
+  $errors += 'missing context/asset-inventory.json'
+} else {
+  $inv = $null
+  try { $inv = Get-Content $inventoryPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $errors += "asset-inventory.json is not valid JSON: $_" }
+  if ($inv) {
+    if ($inv.schemaVersion -ne 'ird-asset-inventory/1') { $errors += "asset-inventory schemaVersion must be 'ird-asset-inventory/1', got '$($inv.schemaVersion)'" }
+    $registered = @()
+    foreach ($a in @($inv.assets)) {
+      foreach ($f in 'path','kind','owner','defaultContext','generated','canonicalLinks') {
+        if ($a.PSObject.Properties.Name -notcontains $f) { $errors += "asset-inventory entry missing field '$f': $($a.path)" }
+      }
+      if ($a.kind -notin $invKinds) { $errors += "asset-inventory invalid kind '$($a.kind)': $($a.path)" }
+      if ($a.owner -notin $invOwners) { $errors += "asset-inventory invalid owner '$($a.owner)': $($a.path)" }
+      if ($a.defaultContext -isnot [bool]) { $errors += "asset-inventory defaultContext must be boolean: $($a.path)" }
+      if ($a.generated -isnot [bool]) { $errors += "asset-inventory generated must be boolean: $($a.path)" }
+      if ($registered -contains $a.path) { $errors += "asset-inventory duplicate path: $($a.path)" }
+      $registered += $a.path
+      if (-not (Test-Path (Join-Path $base $a.path))) { $errors += "asset-inventory path not found: $($a.path)"; continue }
+      # canonicalLinks：相对设计树根的路径，可带 #锚点（锚段无文件系统语义，校验时剥离只验路径存在）
+      foreach ($link in @($a.canonicalLinks)) {
+        if (-not (Test-Path (Join-Path $base ($link -replace '#.*$','')))) { $errors += "asset-inventory broken canonicalLink '$link' at: $($a.path)" }
+      }
+    }
+    # 根级全覆盖：设计树根下每个文件/目录都必须已登记（-contains 大小写不敏感，匹配 Windows 文件系统语义）。
+    # 点前缀条目跳过——那是工具本地目录（如 .zcode 工作流运行产物，自含 .gitignore 自忽略），
+    # 不是设计资产，不进清单（context/README.md §6 规则 5）。
+    foreach ($r in @(Get-ChildItem $base -Force | Where-Object { $_.Name -notlike '.*' } | ForEach-Object { $_.Name })) {
+      if ($registered -notcontains $r) { $errors += "unregistered root-level asset: $r" }
+    }
+    $assetCount = @($inv.assets).Count
+  }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
-Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files)"
+Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets)"
