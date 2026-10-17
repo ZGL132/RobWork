@@ -7,7 +7,7 @@
 | 日期 | 2026-10-17 |
 | 记录性质 | Agent-native 治理 Task 8 试点：新会话只凭仓库＋任务 ID＋分支＋上下文包接手，五段留痕（discover → design → implement → verify → handoff） |
 | 接手输入 | 任务 ID＋执行分支＋`context/packs/CORE-T11.md`（四项，无其他背景） |
-| 交付提交 | 本文件所在 `wp03-t11` 单提交（head SHA 随推送报告回填，见 §8） |
+| 交付提交 | attempt 1＝`b53477be`（送验冻结 head；独立对抗式验收 verdict=**FAIL**，处置见 §9）；attempt 2 返工轮＝merge `0e5714fc`＋返工提交（本文件所在提交，SHA 以推送后 `git ls-remote origin wp03-t11` 冻结值为准——口径见 §9） |
 
 ---
 
@@ -105,7 +105,7 @@
 ## 5. 证据路径
 
 - 命令输出实录：本文件 §4（逐字摘录关键行与退出码；完整 stdout 未另行落库——本任务 allowedFiles 不含 traceability/，验证留痕以本文件为契约指定载体）。
-- 卡面改动证据：`git show <head>`（units/core.md 4 处编辑：版本行/§3.1 首句/§3.1 DiagData 格/§12.2 两行）。
+- 卡面改动证据：`git show b53477be`（units/core.md 4 处编辑：版本行/§3.1 首句/§3.1 DiagData 格/§12.2 两行；attempt 1 送验冻结 head）。
 - 包再生成证据：`context/packs/CORE-T11.md`、`context/packs/CORE-T01.md` 头部生成时间与指纹表更新。
 - 前置状态证据：`tasks/foundation/CORE-T10.json` status=done；`traceability/pipeline/state.json` 本体（discover 段读取）。
 
@@ -125,6 +125,42 @@
 
 ## 8. 下一步
 
-1. 所有者/验收者按 `doc/industrial-robot-design/acceptance-protocol.md` 对 `wp03-t11` 单提交做对抗式验收；验收请求四元组——任务 ID＝CORE-T11、分支＝`wp03-t11`、commit 范围＝`458250f0..HEAD`（单提交）、证据位置＝本文件 §4/§5。
+1. 所有者/验收者按 `doc/industrial-robot-design/acceptance-protocol.md` 对 `wp03-t11` 做对抗式验收；attempt 1 验收请求四元组——任务 ID＝CORE-T11、分支＝`wp03-t11`、commit 范围＝`458250f0..b53477be`（单提交）、证据位置＝本文件 §4/§5。**后记：attempt 1 verdict=FAIL（两阻断项），返工处置与 attempt 2 请求四元组见 §9。**
 2. pass 后由所有者决策合入 redesign-main 并推送（动作可委托，决策不可）。
 3. 演练数据回收：§6 六条问题即本次试点要收集的关键数据，供治理 Task 8 复盘（上下文包自足性/路径约定/Skills 加载机制/多包连带再生成）参考。
+
+## 9. 返工轮（attempt 2，2026-10-17）
+
+### 9.1 attempt 1 验收结论与阻断项
+
+独立对抗式验收（干净树复现）verdict=**FAIL**，两阻断项：
+
+- **阻断①（系统缺陷，非本实施批返工项）**：F-908（证据索引计数失配——validate-docs 证据枚举基准含 36 个 gitignored 未跟踪产物，干净 git 检出 6590 vs 主工作区 6626，任何 fresh 树/CI 必失败）＋F-909（上下文包指纹字节级 SHA-256 行尾敏感——autocrlf 检出差异致干净树全量 9 处指纹 STALE 误报）。已由治理会话在 redesign-main 修复并推送（commit `9d297aab`，F-908/F-909 登记 findings.json 随批 fixed）。
+- **阻断②（本批返工项）**：本文件 head SHA 未回填（交付提交行/§5/§8 用占位或 HEAD 字样）——验收者无法冻结对账基线。
+
+### 9.2 返工动作（全部完成）
+
+1. **并入修复（前向合并，不改写历史）**：`git merge origin/redesign-main`（`9d297aab`）→ merge commit＝`0e5714fc`。`packs/CORE-T01.md`、`packs/CORE-T11.md` 内容冲突（主线侧已按 blob SHA 新口径重建 vs 本地字节级 SHA 再生成版）——按返工指令取主线侧完成合并，随后以合并终态源文件重跑 `build-context-pack.ps1 -TaskId CORE-T01` 与 `-TaskId CORE-T11`（fingerprints=8 各，blob SHA 口径），终态内容入本返工提交。
+2. **SHA 回填（阻断②消除）**：attempt 1 送验冻结 head＝`b53477be` 已回填至——头部字段表"交付提交"行、§5 卡面改动证据（`git show b53477be`）、§8 第 1 条（范围 `458250f0..b53477be`＋FAIL 后记）。
+3. **本节登记**：返工过程与 attempt 2 请求口径落此节。
+
+### 9.3 attempt 2 验收请求四元组
+
+- 任务 ID＝CORE-T11；
+- 分支＝`wp03-t11`；
+- commit 范围＝`b53477be..origin/wp03-t11`（＝merge `0e5714fc`＋本返工提交；**最终 head 以推送后 `git ls-remote origin wp03-t11` 冻结值为准——本口径在此写明，避免记录自引用**，验收者以 ls-remote 值对账）；
+- 证据位置＝本文件 §4（attempt 1 命令实录）＋§9.4（attempt 2 复验口径——推送后执行，结果四态随 attempt 2 汇报交付）；
+
+### 9.4 attempt 2 推送后复验（口径；结果随汇报交付）
+
+返工提交推送 `origin wp03-t11` 后执行下列命令并按四态报告（结果随 attempt 2 汇报交付，不回填本文件——本文件不含推送后才能确定的结论，与 §9.3 ls-remote 冻结口径同理，避免记录自引用）：
+
+- `pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1`
+- `pwsh -File RobWork/scripts/industrialrobot/validate-context-pack.ps1 -All`
+- 若证据索引因合并面变化报过期：重跑 `pwsh -File RobWork/scripts/industrialrobot/index-evidence.ps1` 后复验，如实记录（F-908 后计数口径＝git 跟踪面，本返工批零新增 traceability 证据文件，预期计数稳定）。
+
+### 9.5 下一步（更新，替代 §8 第 1/2 条）
+
+1. 验收者按 acceptance-protocol.md 对 §9.3 四元组做 attempt 2 全量验收（干净树重配重跑）。
+2. pass 后由所有者决策合入 redesign-main 并推送（动作可委托，决策不可）。
+3. 演练复盘补两条数据：①attempt 1 的 FAIL 两阻断中一条是治理脚本环境敏感缺陷（fresh 树才暴露）——"实施者本地全绿≠验收复现绿"的实例；②head SHA 自引用问题（记录文件无法含自身提交 SHA）——本节固化"ls-remote 冻结值"口径供后续任务复用。
