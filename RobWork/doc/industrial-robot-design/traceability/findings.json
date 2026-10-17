@@ -8985,6 +8985,8 @@
       "title": "evidence-index 在全新 checkout 环境复现失配：实施树 validate-docs PASS 而验收 detached worktree 中同命令对返工批新增留痕文件报 size mismatch——验收定案根因＝索引再生成（01:14:14）与入提交（01:15:07）间 53 秒时序滑脱；备选根因＝autocrlf 归一化往返改变工作副本尺寸（git add 时 LF→CRLF 警告在案）。实施者主树侧最终 validate-docs 为 PASS（F-919 登记后再生索引），失配仅在验收 worktree 复现，机制未定案",
       "owner": "合入段前置动作（重跑 index-evidence.ps1 后须在全新 worktree 复跑 validate-docs -DeepEvidence 验证跨检出可复现；若仍失配则按 CRLF 归一化方向定案——.gitattributes 口径或 index-evidence 按 blob 内容哈希而非工作副本尺寸）",
       "resolution": "合入前置已执行（d92902c9 合入批 2026-10-18）：全新 detached worktree @ a3df5368 上 validate-docs -DeepEvidence PASS——失配在当前状态不再复现；机制未定案（时序滑脱 vs CRLF 归一化）留观察，若复现按 CRLF 方向排查（.gitattributes 或 index-evidence 改按 blob 内容哈希）。",
+      "recurrence": "UI-T85 验收 attempt 1 复现（acc/UI-T85/1@55981b27，2026-10-18）：留痕文件 6 个（builds/wp10-t85/ 4 XML＋2 log）已提交但索引零条目（6599 vs 6605），冻结 SHA 全新检出 validate-docs 普通/-DeepEvidence 双 exit 1。",
+      "mechanismConfirmed": "机制本轮定案（非 CRLF 方向）：index-evidence.ps1 以 git 跟踪面为枚举基准（脚本扫描段『git ls-files』明示——gitignored 历史产物防误收的设计取舍），实施批在 git add 之前再生索引＝新留痕文件未被跟踪故零条目；主树内 validate-docs 未报是因未跟踪文件不参与其索引↔磁盘对账口径——跨检出（全部文件已跟踪）即暴露。防复现口径＝索引再生必须位于 git add 之后、commit 之前（纳入实施自查清单），UI-T85 返工批已按此执行并以全新 worktree 复跑闭环。",
       "fixedAt": "2026-10-18"
     },
     {
@@ -8994,7 +8996,9 @@
       "status": "open",
       "registeredAt": "2026-10-18",
       "title": "冒烟 step8 注释残留 attempt 1 已废弃的旧根因叙事（『关闭拍 presentContext 重入双 teardown 命中桥未绑定拆绑』——返工批已按四轮探针实证修订 ui.md/卡面，但 UiPlugin.cpp step8 注释半区漏网未同步；真实触发面＝关闭不拆绑重复挂接、放大面＝undo 可用性谓词查询已关上下文）",
-      "owner": "后续 ui 批（注释同步，§2.6 过期注释口径）"
+      "owner": "后续 ui 批（注释同步，§2.6 过期注释口径）",
+      "resolution": "UI-T85 返工批顺手消账（wp10-t85；UI-T85 验收 attempt 1 建议 A-3 指认该消账面在本批 allowedFiles 内）：UiPlugin.cpp step8 注释改写为四轮探针实证的权威叙事（触发面＝关闭不拆绑→重开重复挂接 attach fail-fast〔N2 变异实证〕；放大面＝undoRedoDisablement 查询已关上下文——A5 本体），并标注 F-921 消账标记。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-922",
@@ -9003,7 +9007,9 @@
       "status": "open",
       "registeredAt": "2026-10-18",
       "title": "SessionContractTest ACC1 重开段注释误标分派半区：注释写『桥旧绑已被壳层拆绑→attach 分派（常态路径）』，实际该步触发前 draftCtl->unbindSession 只拆草稿控制器、桥仍绑旧项目，attachOrSwitch 走的是 switch 半区（覆盖本身完整——变异证红已证；仅注释与行为不符）",
-      "owner": "后续 ui 批（注释修正）"
+      "owner": "后续 ui 批（注释修正）",
+      "resolution": "UI-T85 返工批顺手消账（wp10-t85；UI-T85 验收 attempt 1 建议 A-3 同面指认）：SessionContractTest ACC1 重开段注释与断言消息改标 switch 换绑半区（unbindSession 只拆草稿控制器、桥仍绑旧项目——分派走 switch 换绑而非首次挂接），纯注释/消息文本零行为。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-923",
@@ -9022,6 +9028,33 @@
       "registeredAt": "2026-10-18",
       "title": "冒烟断言下限锚随漂移钝化：step4（>=3 且逐行 NoDraft）与 step7（>=10）放宽有登记理由（域扩展/命令漂移），但下限锚会随域增长持续失去精确性——应随面板登记表测试收敛回精确计数",
       "owner": "后续 ui 批（随面板登记表测试收敛处置）"
+    },
+    {
+      "id": "F-925",
+      "source": "UI-T85 验收 attempt 1 建议清单 A-1（acc/UI-T85/1@55981b27；2026-10-18）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "ui_test 并行编译负载下偶发不稳定：验收者实跑 6 次中 1 次出现 3 用例失败（其余 5 次全绿；失败用例名未捕获——输出被并行构建日志淹没；草稿链相关用例全程稳定）。实施者主树复跑未复现（attempt 1 返工自检）——疑环境负载型（验收者同一 worktree 并行配置＋构建＋测试），非定论",
+      "owner": "后续 ui 批（定性：复现时捕获用例名与并行度，判定环境负载型 vs 真实竞态；非 UI-T85 可修面）"
+    },
+    {
+      "id": "F-926",
+      "source": "UI-T85 验收 attempt 1 建议清单 A-2（acc/UI-T85/1@55981b27；2026-10-18）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "提交信息验证段计数口径未区分 passed/skipped：UI-T85 实施批 commit 写『ui_gui_test 84/84』，实际＝83 通过＋1 环境跳过（F-620 已登记的 GUI 环境依赖用例；无失败但表述失准）。已推送提交不改写（§6.3 红线），本条登记为口径修正义务",
+      "owner": "治理批（提交信息模板口径增补：验证段计数区分 passed/skipped——rule-enforcement.md『留痕证据文件化』行同域候选）"
+    },
+    {
+      "id": "F-927",
+      "source": "UI-T85 验收 attempt 1 建议清单 A-4（acc/UI-T85/1@55981b27；2026-10-18；验收者实测 configure 失败现场与 RobWorkStudio/src/CMakeLists.txt:58 configure_file 语义复核）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "AGENTS.md §4.1 F-907 勘误表述与 configure_file 实际路径不符：现文写『复制至构建树源码侧 build/RobWorkStudio/bin/』，实际 configure_file 输入＝源码树侧 ${RWS_ROOT}/bin/RobWorkStudio.ini.template.static（RWS_ROOT＝RobWorkStudio 源码树——fresh worktree 即 <worktree>/RobWork/RobWorkStudio/bin/），配置自产出 bin/none/RobWorkStudio.ini.template（RWS_BUILD_TYPE=none）；构建树侧复制不构成有效前置",
+      "owner": "治理批（根规则文件修订——AGENTS.md 不属 UI-T85 allowedFiles，实施批不代改；修订时同步订正 DTB §5.1 同源表述）"
     }
   ]
 }
