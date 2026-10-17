@@ -1006,7 +1006,13 @@ void IrdWorkbenchHostPlugin::initialize()
     contentDeps.undoRedoDisablement =
         [this](const std::string& commandId) -> std::optional<ui::DisableReason> {
         const auto adapter = m_lastStoreAdapter;
-        if (adapter == nullptr) {
+        // 上下文已关闭＝无项目态诚实降级（F-910 根因面修复——UI-T84 验收
+        // 追查定位：关闭收尾期 resetForSessionDetached→refreshUndoButtons
+        // →本谓词 branchTips 查询已关闭上下文抛 StoreError(context-closed)，
+        // 修复前无隔离面时穿事件循环→StudioMain 兜底退出＝手工验证 A5 的
+        // 真实传播链）。可用性快照查询在关闭后语义上恒为"无项目→禁用"，
+        // 返回值轨降级非吞错——真值形态的值面表达。
+        if (adapter == nullptr || adapter->isClosed()) {
             return ui::DisableReason{"reason.no-project"};
         }
         const auto tips = adapter->projectStore().query().branchTips();
@@ -3853,18 +3859,47 @@ void IrdWorkbenchHostPlugin::syncDomainModulesToContext(
     // 无项目（关闭完成/切换 A 段排空）：会话脱离——模块锚清空＋草稿工作
     // 集复位＋面板空态（§8.6 表处置的模块半区；磁盘草稿零触碰）＋项目
     // 关闭统一清理八类对象（UI-T23 acceptance 4——具名用例承载）。
-    m_domains->modeling.onSessionDetached();
+    // UI-T84 顺序契约：本链须先于 teardown 完成但任何一步异常不得阻断
+    // teardown（桥拆绑/呈现释放是关闭态最关键转换；F-910 验收追查实证
+    // undo 可用性谓词族查询在关闭上下文抛 StoreError 时 teardown 被跳过
+    // ＝呈现会话跨关闭残留）。根因面（undoRedoDisablement 谓词）已修
+    // （isClosed 诚实降级），此处为纵深：逐段隔离留痕后继续清理。
+    try {
+        m_domains->modeling.onSessionDetached();
+    } catch (const std::exception& detachError) {
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel,
+                                    std::string("modeling 会话脱离异常（隔离继续清理）：")
+                                        + detachError.what());
+        }
+    }
     if (m_domains->requirements.has_value()) {
-        m_domains->requirements->onSessionDetached();
+        try {
+            m_domains->requirements->onSessionDetached();
+        } catch (const std::exception& detachError) {
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel,
+                                        std::string("requirements 会话脱离异常（隔离继续清理）：")
+                                            + detachError.what());
+            }
+        }
     }
     // kinematics 会话脱离（UI-T64——执行器快照解绑＋面板绑定键同步清空
     // ——拆除拍对称收口：无项目态受理由快照缺位拒绝，不残留旧会话绑定；
     // 私有会话态零解引用——门面 bindSessionFacts）。
     if (m_kinEvaluation != nullptr && m_domains->kinematics.has_value()) {
-        m_kinEvaluation->attachSnapshot(nullptr, core::ContentIdentity{});
-        m_domains->kinematics->bindSessionFacts(
-            core::ContentIdentity{}, m_kinEvaluation->epoch(),
-            m_kinSessionWritable, m_kinConfigBaseline);
+        try {
+            m_kinEvaluation->attachSnapshot(nullptr, core::ContentIdentity{});
+            m_domains->kinematics->bindSessionFacts(
+                core::ContentIdentity{}, m_kinEvaluation->epoch(),
+                m_kinSessionWritable, m_kinConfigBaseline);
+        } catch (const std::exception& detachError) {
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel,
+                                        std::string("kinematics 会话脱离异常（隔离继续清理）：")
+                                            + detachError.what());
+            }
+        }
     }
     teardownSharedSurfacesForClose();
 }
@@ -4828,22 +4863,16 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
         m_highlightOutlet->clearHighlight();
     }
 
-    // ③共享属性检查器＋①项目树：模型状态复位（检查器经空选中询问→
-    //    NoSelection 占位态；树经 rebuild 空集→五空组形态——域 Provider
-    //    无会话供给空集的合法二态）＋面板 refresh（渲染同步，占位态）。
-    refreshSharedSurfaces();
-
-    // ④复杂编辑宿装页：检查器面板 refresh 在非对象态下清宿装容器
-    //    （UI-T22 契约"切换对象清宿装——零残留"的关闭路径复用）——上一步
-    //    的面板 refresh 已承载，此处 Dev 留痕声明核查点（具名用例在集成
-    //    测试断言宿装容器为空）。
-
-    // ⑤HostWorkCell 呈现对象：宿主高亮出口的按名清除已执行（上方②）；
-    //    呈现装配收口（UI-T46——原登记"随呈现装配接续"的扩展点）：
+    // ⑤HostWorkCell 呈现对象（UI-T84 前移——原序在共享面刷新之后）：
     //    detachHostSession（桥：释放宿主呈现＋清当前呈现与绑定）＋名称
     //    映射真值端口回诚实空二态（拾取反解/高亮判定回落未应用分支）＋
-    //    编译端口随会话销毁（旧快照不跨会话残留）。无桥形态（降级基线）
-    //    ＝前两步幂等静默，编译端口照常清理。
+    //    编译端口随会话销毁（旧快照不跨会话残留）。前移理由＝关闭态
+    //    顺序的正确性：③共享面空态刷新（refreshSharedSurfaces→域就绪
+    //    汇聚/面板 refresh）在已关闭上下文上存在查询面（F-910 验收追查
+    //    实证——undo 可用性谓词同族），异常若先于本步发生将跳过桥拆绑
+    //    （呈现会话跨关闭残留——"旧快照不跨会话残留"纪律违约，且重开
+    //    拍依赖桥绑定态分派）。呈现解绑前置＝最关键状态转换不被后续
+    //    刷新面异常跳过；无桥形态（降级基线）＝幂等静默。
     if (m_publishBridge) {
         m_publishBridge->detachHostSession();
     }
@@ -4851,6 +4880,18 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
         m_runtimeNameMap->clearPresentation();
     }
     m_compilePort.reset();
+
+    // ③共享属性检查器＋①项目树：模型状态复位（检查器经空选中询问→
+    //    NoSelection 占位态；树经 rebuild 空集→五空组形态——域 Provider
+    //    无会话供给空集的合法二态）＋面板 refresh（渲染同步，占位态）。
+    //    呈现会话已先行解绑（上方⑤）——本步在关闭上下文上的残余查询
+    //    面若抛出，由 presentContext 捕获边界隔离留痕（不再阻断拆绑）。
+    refreshSharedSurfaces();
+
+    // ④复杂编辑宿装页：检查器面板 refresh 在非对象态下清宿装容器
+    //    （UI-T22 契约"切换对象清宿装——零残留"的关闭路径复用）——上一步
+    //    的面板 refresh 已承载，此处 Dev 留痕声明核查点（具名用例在集成
+    //    测试断言宿装容器为空）。
 
     // ⑥TimedStatePath 播放驱动：当前装配形态无 Playback 发布缝（B1-SPEC
     //    D9 的 TimedStatePath 载体经 UI-T20 发布桥承载——同⑤随呈现装配
