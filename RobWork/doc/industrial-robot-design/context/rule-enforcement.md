@@ -45,6 +45,7 @@
 | gtest 测试框架（§3） | gate | find_package(GTest CONFIG REQUIRED) 构建面 |
 | 双模式构建＋缓存确认 grep（§4.1） | review | ACC"重配重跑"环节（验收者 fresh 树亲证） |
 | 测试真实执行留痕（§4.2） | gate＋review | verify-task.ps1（证据存在性）＋ACC 重跑对账 |
+| 留痕证据文件化（F-915 口径——测试运行证据以 gtest XML（`<target>_report` 目标产物）等文件入库 traceability/，**提交信息文字不构成留痕载体**） | review | ACC 验收对账（比对分支声明的运行结果与 traceability/ 内 XML 实件；UI-T84 起随批兑现——负例/演示类运行同样落文件） |
 | L2 计算内核零 Qt（§5.1） | gate | BuildRedLineTest NoQtInclude_NFR_MNT_01_R3 |
 | 业务域互链禁止 R-1（§5.2） | gate | BuildRedLineTest NoCrossUnitInclude＋ird_gates 依赖边 |
 | 跨单元私有头禁止 R-2（§5.3） | gate | BuildRedLineTest NoCrossUnitInclude_R1_R2_T1 / PublicHeaderPathLayout_R2 |

@@ -26,11 +26,14 @@ $indexPath = Join-Path $traceDir 'evidence-index.json'
 $shaCapBytes = 512KB
 
 # 内容口径：文本证据 CRLF/CR 规范化为 LF；二进制按原始字节。
+# 共享文本扩展名白名单单源加载（F-912——与 validate-docs.ps1 同读 config/
+# text-extensions.txt 一份口径，杜绝双份漂移；脚本相对解析，调用方式无关）。
+$script:TextExtensions = @(Get-Content (Join-Path $PSScriptRoot 'config\text-extensions.txt') |
+  ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' -and -not $_.StartsWith('#') })
 function Get-IndexedContent([string]$LiteralPath, [long]$Cap) {
   $f = Get-Item -LiteralPath $LiteralPath
   [byte[]]$b = [IO.File]::ReadAllBytes($f.FullName)
-  $textExt = @('.md','.txt','.log','.xml','.json','.ps1','.cpp','.hpp','.h','.cmake','.csv','.norm','.uniq','.dedup','.err','.diff','.urdf','.py','.svg','.yaml','.yml','.html','.htm','.ini','.bat','.cmd','.sh')
-  $isText = ($textExt -contains $f.Extension.ToLowerInvariant()) -or $f.Name -eq '.gitattributes'
+  $isText = ($script:TextExtensions -contains $f.Extension.ToLowerInvariant()) -or $f.Name -eq '.gitattributes'
   if ($isText -and -not ($b -contains [byte]0)) {
     $enc = [Text.Encoding]::GetEncoding(28591)
     $text = $enc.GetString($b).Replace("`r`n", "`n").Replace("`r", "`n")

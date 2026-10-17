@@ -8843,10 +8843,12 @@
       "id": "F-907",
       "source": "traceability/acceptance/WP-13-T23-20261017.md advisory A-2（随验收记录转登，验收日期 2026-10-17，verdict=PASS；2026-10-17 落库）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-17",
       "title": "验收环境口径澄清：AGENTS §4.1 集成模式配置命令未带 -DCMAKE_TOOLCHAIN_FILE（vcpkg）——验收者 fresh worktree 实测缺参时配置在 FindBoost 处失败（missing Boost_INCLUDE_DIR/filesystem/system/program_options/date_time），补参后成功；RobWorkStudio.ini.template.static 的复制目标按 RobWorkStudio/src/CMakeLists.txt:58 的 configure_file 语义实为源码树 bin/ 而非构建树 bin/（AGENTS 已登记该文件不入库，但复制目标表述有偏差）",
-      "owner": "治理批（AGENTS §4.1/DTB §5.1 文档澄清，非产品缺陷）"
+      "owner": "治理批（AGENTS §4.1/DTB §5.1 文档澄清，非产品缺陷）",
+      "resolution": "AGENTS §4.1 集成配置命令补 -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake＋ini 模板复制目标勘误为构建树源码侧 build/RobWorkStudio/bin/；DTB §5.1 fresh 前置行同步补④勘误注＋⑤集成配置带参项（2026-10-17 治理批）",
+      "fixedAt": "2026-10-17"
     },
     {
       "id": "F-908",
@@ -8890,10 +8892,12 @@
       "id": "F-912",
       "source": "codex/governance-validation-fixes@5d59ccd5 合入审核（2026-10-17，redesign-main 侧对抗式核查）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-17",
       "title": "内容口径白名单双份复制：index-evidence.ps1 与 validate-docs.ps1 各持一份 27 项文本扩展名表（Get-IndexedContent）——单侧增删会使生成器与校验器口径漂移，深校验出现系统性误报/漏报；建议提取共享口径文件或单源生成",
-      "owner": "治理批（脚本重构，非阻断）"
+      "owner": "治理批（脚本重构，非阻断）",
+      "resolution": "单源化落地：scripts/industrialrobot/config/text-extensions.txt 共享配置（每行一扩展名＋注释行支持），两脚本脚本相对加载一次（$script:TextExtensions，函数体只引用——6596 文件量级免逐文件重读）；行为等价性实测（index-evidence 6592 计数不变＋validate-docs -DeepEvidence PASS）",
+      "fixedAt": "2026-10-17"
     },
     {
       "id": "F-913",
@@ -8919,10 +8923,12 @@
       "id": "F-915",
       "source": "traceability/acceptance/UI-T83-20261017.md 建议 C（同上 attempt 1）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-17",
       "title": "留痕缺口：本批未再生 <target>_report gtest XML（build 树 ui/gtest_reports 停留 9 月旧件），负例两向演示以 commit message 验证段承载（F-081→F-106 家族同型）",
-      "owner": "治理批（留痕口径统一处置，非阻断）"
+      "owner": "治理批（留痕口径统一处置，非阻断）",
+      "resolution": "两半处置：①纪律面——rule-enforcement.md 增『留痕证据文件化』行（review 级：提交信息文字不构成留痕载体，运行证据以 gtest XML 等文件入库 traceability/，ACC 对账实件）；②实践面——UI-T84 修复批随批兑现（三套件 XML 经 _report 目标再生入库 traceability/builds/wp10-t84/＋冒烟实录 log）",
+      "fixedAt": "2026-10-17"
     },
     {
       "id": "F-916",

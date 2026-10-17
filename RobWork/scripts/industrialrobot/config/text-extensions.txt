@@ -1,0 +1,29 @@
+# 文本扩展名白名单（F-912 单源化——index-evidence.ps1 生成器与 validate-docs.ps1 校验器同读本文件，杜绝双份漂移）。
+# 每行一个扩展名（含点、小写）；# 开头为注释行。
+.md
+.txt
+.log
+.xml
+.json
+.ps1
+.cpp
+.hpp
+.h
+.cmake
+.csv
+.norm
+.uniq
+.dedup
+.err
+.diff
+.urdf
+.py
+.svg
+.yaml
+.yml
+.html
+.htm
+.ini
+.bat
+.cmd
+.sh

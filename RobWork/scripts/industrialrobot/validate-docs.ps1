@@ -8,11 +8,15 @@
 $base = Join-Path $RepoRoot 'doc/industrial-robot-design'
 $errors = @()
 # 与 index-evidence.ps1 相同的内容口径：文本 CRLF/CR 规范化为 LF，二进制按原始字节。
+# 共享文本扩展名白名单单源加载（F-912——生成器与校验器同读 config/
+# text-extensions.txt 一份口径，杜绝双份漂移；脚本相对解析，调用方式无关；
+# 函数体内只引用，避免逐文件重读配置——6596 文件量级）。
+$script:TextExtensions = @(Get-Content (Join-Path $PSScriptRoot 'config\text-extensions.txt') |
+  ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' -and -not $_.StartsWith('#') })
 function Get-IndexedContent([string]$LiteralPath, [switch]$WithHash) {
   $f = Get-Item -LiteralPath $LiteralPath
   [byte[]]$b = [IO.File]::ReadAllBytes($f.FullName)
-  $textExt = @('.md','.txt','.log','.xml','.json','.ps1','.cpp','.hpp','.h','.cmake','.csv','.norm','.uniq','.dedup','.err','.diff','.urdf','.py','.svg','.yaml','.yml','.html','.htm','.ini','.bat','.cmd','.sh')
-  $isText = ($textExt -contains $f.Extension.ToLowerInvariant()) -or $f.Name -eq '.gitattributes'
+  $isText = ($script:TextExtensions -contains $f.Extension.ToLowerInvariant()) -or $f.Name -eq '.gitattributes'
   if ($isText -and -not ($b -contains [byte]0)) { $enc = [Text.Encoding]::GetEncoding(28591); $b = $enc.GetBytes($enc.GetString($b).Replace("`r`n", "`n").Replace("`r", "`n")) }
   $hash = $null
   if ($WithHash) { $sha = [Security.Cryptography.SHA256]::Create(); $hash = ([BitConverter]::ToString($sha.ComputeHash($b)).Replace('-','')).ToLowerInvariant(); $sha.Dispose() }

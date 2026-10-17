@@ -165,9 +165,13 @@ std::string computeDigest(...);  // 实际是 SHA-256
 
 ```bash
 # 集成模式（唯一交付口径）：仓库根 build/ + RWS_BUILD_INDUSTRIALROBOT=ON
+# ⚠ 集成配置命令必须带 vcpkg toolchain 参数（F-907——验收实测缺参时在
+#   FindBoost 处失败 missing Boost_INCLUDE_DIR/filesystem/system/program_options/
+#   date_time；既有 build/ 缓存已带参故日常构建不踩，fresh 树必踩）：
 # ⚠ build/ 构建树初始配置于基线 31b8184 时代（缓存中无该选项）；现已重新配置开启，
 #   缓存当前为 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON——构建前仍须 grep 确认（构建树被重置/重配时可能回到默认 OFF）：
-cmake -S RobWork -B build -G "Visual Studio 17 2022" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON
+cmake -S RobWork -B build -G "Visual Studio 17 2022" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON \
+  -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
 grep RWS_BUILD_INDUSTRIALROBOT build/CMakeCache.txt   # 确认输出 :BOOL=ON 再构建
 cmake --build build --config Release
 
@@ -182,7 +186,7 @@ cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <任意临时目�
 cmake --build <该目录>
 ```
 
-- ⚠ **全新克隆/worktree 配置前**：`RobWorkStudio.ini.template.static` 被 .gitignore `[Bb]in/` 规则吞没不入库（框架配置必需，缺则卡 `RobWorkStudio/src/CMakeLists.txt:58`）——手工自**源码树** `RobWork/RobWorkStudio/bin/`（非 build/）复制至构建树对应 bin/；运行测试 exe 的其余 fresh 前置（框架 DLL／vcpkg 与 python PATH）见 DTB §5.1『fresh 树运行时前置』行（F-007/F-475）。
+- ⚠ **全新克隆/worktree 配置前**：`RobWorkStudio.ini.template.static` 被 .gitignore `[Bb]in/` 规则吞没不入库（框架配置必需，缺则卡 `RobWorkStudio/src/CMakeLists.txt:58`）——手工自**源码树** `RobWork/RobWorkStudio/bin/`（非 build/）复制至**构建树源码侧** `build/RobWorkStudio/bin/`（F-907 勘误——configure_file 语义的复制目标按 CMake 源目录相对路径落位，非仓库根 bin/；验收实测缺该文件时配置在 `RobWorkStudio/src/CMakeLists.txt:58` 失败）；运行测试 exe 的其余 fresh 前置（框架 DLL／vcpkg 与 python PATH）见 DTB §5.1『fresh 树运行时前置』行（F-007/F-475）。
 - 工具链：MSVC 2022 x64（Visual Studio 17 2022 生成器），Qt 与 vcpkg 依赖已就位。
 - 治理脚本调用：`pwsh -File RobWork/scripts/industrialrobot/<脚本>.ps1`（pwsh 7 与 Windows PowerShell 5.1 均可——脚本对仓库根做自检解析，与调用方式无关；口径登记于 DTB §5.1）。
 - **仅冒烟通过不构成任务完成**；集成模式零错误是 DoD 第 1 条。
