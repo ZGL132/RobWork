@@ -25,6 +25,21 @@ $traceDir = Join-Path $base 'traceability'
 $indexPath = Join-Path $traceDir 'evidence-index.json'
 $shaCapBytes = 512KB
 
+# 内容口径：文本证据 CRLF/CR 规范化为 LF；二进制按原始字节。
+function Get-IndexedContent([string]$LiteralPath, [long]$Cap) {
+  $f = Get-Item -LiteralPath $LiteralPath
+  [byte[]]$b = [IO.File]::ReadAllBytes($f.FullName)
+  $textExt = @('.md','.txt','.log','.xml','.json','.ps1','.cpp','.hpp','.h','.cmake','.csv','.norm','.uniq','.dedup','.err','.diff','.urdf','.py','.svg','.yaml','.yml','.html','.htm','.ini','.bat','.cmd','.sh')
+  $isText = ($textExt -contains $f.Extension.ToLowerInvariant()) -or $f.Name -eq '.gitattributes'
+  if ($isText -and -not ($b -contains [byte]0)) {
+    $enc = [Text.Encoding]::GetEncoding(28591)
+    $text = $enc.GetString($b).Replace("`r`n", "`n").Replace("`r", "`n")
+    $b = $enc.GetBytes($text)
+  }
+  $hash = $null
+  if ($b.Length -le $Cap) { $sha = [Security.Cryptography.SHA256]::Create(); $hash = ([BitConverter]::ToString($sha.ComputeHash($b)).Replace('-','')).ToLowerInvariant(); $sha.Dispose() }
+  return @{ Bytes = $b.Length; Sha256 = $hash }
+}
 # ---------- 任务契约状态表（lifecycle 判定用）----------
 $taskStatus = @{}
 foreach ($f in @(Get-ChildItem (Join-Path $base 'tasks') -Recurse -Filter '*.json' -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'foundation-tasks.json' })) {
@@ -115,13 +130,15 @@ foreach ($f in $files) {
   if ($machineCurrent -contains $rel) { $lc = 'current' }
   elseif ($openRefPaths.ContainsKey($rel)) { $lc = 'current' }
   elseif ($ids.Count -and (@($ids | Where-Object { $taskStatus.ContainsKey($_) -and $taskStatus[$_] -eq 'done' }).Count -eq $ids.Count)) { $lc = 'historical' }
+  $content = Get-IndexedContent $f.FullName $shaCapBytes
+  $canonicalLength = $content.Bytes
   $sha = $null
-  if ($f.Length -le $shaCapBytes) { $sha = (Get-FileHash -Algorithm SHA256 -LiteralPath $f.FullName).Hash.ToLowerInvariant(); $shaComputed++; if (-not $shaGroups.ContainsKey($sha)) { $shaGroups[$sha] = @() }; $shaGroups[$sha] += $rel }
+  if ($canonicalLength -le $shaCapBytes) { $sha = $content.Sha256; $shaComputed++; if (-not $shaGroups.ContainsKey($sha)) { $shaGroups[$sha] = @() }; $shaGroups[$sha] += $rel }
   else { $shaSkipped++ }
   $byKind[$kind] = 1 + $(if ($byKind.ContainsKey($kind)) { $byKind[$kind] } else { 0 })
   $byLifecycle[$lc]++
-  $totalBytes += $f.Length
-  $entries += [PSCustomObject]@{ path = $rel; kind = $kind; taskIds = $ids; bytes = $f.Length; sha256 = $sha; lifecycle = $lc }
+  $totalBytes += $canonicalLength
+  $entries += [PSCustomObject]@{ path = $rel; kind = $kind; taskIds = $ids; bytes = $canonicalLength; sha256 = $sha; lifecycle = $lc }
 }
 # 重复组（同 SHA 不同路径；只列组数与规模，路径明细入 duplicateGroups，封顶 100 组防索引膨胀）
 $dupGroups = @()
@@ -136,6 +153,7 @@ if ($dupTotal) {
 
 $index = [PSCustomObject]@{
   schemaVersion = 'ird-evidence-index/1'
+  contentBasis = 'text-crlf-to-lf-v1'
   generatedAt = (Get-Date -Format 'yyyy-MM-ddTHH:mm:sszzz')
   generatedBy = 'index-evidence.ps1（治理 Task 7）'
   lifecycleRules = [PSCustomObject]@{

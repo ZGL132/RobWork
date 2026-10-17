@@ -8885,6 +8885,15 @@
       "registeredAt": "2026-10-17",
       "title": "需求域草稿源未挂接 DraftController：生产 attachModule 唯一调用仅挂 modeling（UiPlugin.cpp:2485），RequirementsDraftSource 已实现（RequirementsUiModule.hpp:459，含 buildDraftDocument/adoptRestoredDocument 全套）但仅测试构造使用——需求草稿零落盘零恢复，PM-04/V-13 保存半区断裂。疑点随批核对：V-13『草稿 60s 周期落盘』当前装配只见手动/关闭触发，未见周期定时器。挂接后仍需全链验证（默认分支锚与 DraftQueryPortStub 在生产 PortAdapters 的现状处置）",
       "owner": "集成父批次『宿主装配与生命周期收口』子批 B（修复方案归所有者裁决）"
+    },
+    {
+      "id": "F-912",
+      "source": "codex/governance-validation-fixes@5d59ccd5 合入审核（2026-10-17，redesign-main 侧对抗式核查）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-17",
+      "title": "内容口径白名单双份复制：index-evidence.ps1 与 validate-docs.ps1 各持一份 27 项文本扩展名表（Get-IndexedContent）——单侧增删会使生成器与校验器口径漂移，深校验出现系统性误报/漏报；建议提取共享口径文件或单源生成",
+      "owner": "治理批（脚本重构，非阻断）"
     }
   ]
 }

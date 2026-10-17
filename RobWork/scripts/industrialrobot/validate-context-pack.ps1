@@ -42,25 +42,28 @@ foreach ($p in $packs) {
   # per-pack 新鲜标记（审查 P2 对策，2026-10-17）：按包名匹配 stale 数组会把只含
   # 任务 ID 的 DRIFT 行漏算，出现 stale>0 而 fresh=包总数的误导统计
   $packHasStale = $false
+  $structuralBefore = $structural.Count
   # ① 结构检查（2026-10-17 二轮审查 P2 对策：契约存在性/身份一致性移出状态行解析
   # 之外——伪造包删掉"任务状态（契约）"行不应绕过契约核对；指纹表头必须显式
   # 'git blob SHA-1'——防 SHA-256 误标口径的包混入）
   if ($t -notmatch 'build-context-pack\.ps1') { $structural += "pack missing generator marker: $($p.Name)" }
   if ($t -notmatch '源文件指纹') { $structural += "pack missing blob-SHA fingerprint section: $($p.Name)" }
   if ($t -notmatch '(?m)^\|\s*源文件\s*\|\s*git blob SHA-1\s*\|') { $structural += "pack fingerprint table header must be 'git blob SHA-1': $($p.Name)" }
-  if ($t -notmatch '\|\s*任务状态（契约）\s*\|') { $structural += "pack missing contract status row: $($p.Name)" }
+  $statusMatch = [regex]::Match($t, '(?m)^\|\s*任务状态（契约）\s*\|\s*(planned|ready|blocked|done|design-written)\s*\|\s*$')
+  $statusRow = [regex]::Match($t, '(?m)^\|\s*任务状态（契约）\s*\|.*$')
+  if (-not $statusRow.Success) { $structural += "pack missing contract status row: $($p.Name)" }
+  elseif (-not $statusMatch.Success) { $structural += "pack contract status row is empty or invalid: $($p.Name)" }
   # 契约存在性与身份一致性（无条件执行，不依赖状态行存在）
   $contractFile = @(Get-ChildItem (Join-Path $base 'tasks') -Recurse -Filter "$tid.json" | Select-Object -First 1)
   $cxPack = $null
   if ($contractFile.Count) { $cxPack = Get-Content $contractFile[0].FullName -Raw -Encoding UTF8 | ConvertFrom-Json }
   else { $structural += "pack references unknown task (contract JSON not found): $($p.Name)" }
-  if ($t -match '(?m)^#\s*上下文包：(\S+?)(?:\s|——)') {
-    $packTid = $Matches[1]
+  $headingMatch = [regex]::Match($t, '(?m)^#\s*上下文包：(?<taskId>\S+)\s+——\s+(?<title>.+?)\s*$')
+  if ($headingMatch.Success) {
+    $packTid = $headingMatch.Groups['taskId'].Value
     if ($packTid -ne $tid) { $structural += "pack heading taskId mismatch: heading=$packTid file=$tid ($($p.Name))" }
     if ($cxPack -and "$($cxPack.taskId)" -ne $tid) { $structural += "contract taskId mismatch: contract=$($cxPack.taskId) file=$tid ($($p.Name))" }
-    if ($t -match '(?m)^#\s*上下文包：\S+\s*——\s*(.+?)\s*$') {
-      if ($cxPack -and ("$($cxPack.title)".Trim() -ne $Matches[1])) { $structural += "pack heading title mismatch with contract: ($($p.Name))" }
-    }
+    if ($cxPack -and ("$($cxPack.title)".Trim() -ne $headingMatch.Groups['title'].Value.Trim())) { $structural += "pack heading title mismatch with contract: ($($p.Name))" }
   } else { $structural += "pack heading '上下文包：<taskId> —— <title>' unparsable: $($p.Name)" }
   # ④ PIPE 权威红线：包内禁流水线状态字段副本（JSON 形态匹配，误报面窄）
   foreach ($marker in '"phase"\s*:', '"heartbeat"', '"queue"\s*:') {
@@ -82,19 +85,21 @@ foreach ($p in $packs) {
       if (-not $newSha) { $stale += "MISSING git-object: $rel (pack $($p.Name))"; $packHasStale = $true; continue }
       if ("$newSha".ToLowerInvariant() -ne $oldSha) { $stale += "STALE source: $rel (pack $($p.Name))——重跑 build-context-pack.ps1 -TaskId $tid 刷新"; $packHasStale = $true }
     } elseif ($inTable -and $line -match '^\|' -and $line -notmatch '^\|\s*---') {
-      # 表内出现非 40 位十六进制行——结构可疑（旧版 64 位字节哈希包同理判旧）
-      if ($rowSeen -gt 0 -or $line -notmatch '^\|\s*源文件') { }
+      # 指纹表中的每一条数据行都必须可解析；非法摘要不能被忽略，否则该源文件会
+      # 从新鲜度核验面静默消失。表头已在结构检查中单独核验。
+      $structural += "pack fingerprint row is malformed (expected 40-char git blob SHA-1): $($p.Name)"
     } elseif ($inTable) {
       $inTable = $false
     }
   }
   if ($rowSeen -eq 0) { $structural += "pack fingerprint table empty/unparsable: $($p.Name)" }
   # ③ 契约状态漂移：状态行缺失已在 ① 报结构错；两者齐备时比对（复用 ① 的 $cxPack）
-  if ($cxPack -and $t -match '\|\s*任务状态（契约）\s*\|\s*(\S+)\s*\|') {
-    $packedStatus = $Matches[1]
+  if ($cxPack -and $statusMatch.Success) {
+    $packedStatus = $statusMatch.Groups[1].Value
     if ("$($cxPack.status)" -ne "$packedStatus") { $stale += "DRIFT contract status: pack=$packedStatus current=$($cxPack.status) ($tid) (pack $($p.Name))"; $packHasStale = $true }
   }
-  if (-not $packHasStale) { $fresh++ }
+  # structural 包不能计入 fresh；fresh 表示结构正确且所有指纹均新鲜的包。
+  if ($structural.Count -eq $structuralBefore -and -not $packHasStale) { $fresh++ }
 }
 foreach ($s in $structural) { Write-Error "validate-context-pack: $s" }
 foreach ($s in $stale) { Write-Warning "validate-context-pack: $s" }
