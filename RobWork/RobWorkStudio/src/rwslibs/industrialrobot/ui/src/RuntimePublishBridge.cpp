@@ -118,6 +118,21 @@ void RuntimePublishBridge::switchHostSession(const core::ProjectId& project)
     emitDevLine("host session switched: project=" + project.toCanonical());
 }
 
+void RuntimePublishBridge::attachOrSwitchHostSession(const core::ProjectId& project)
+{
+    // F-910 修复面（处置文档 §4 子批 A"打开回调按当前绑定态分派"）：
+    // 打开成功回调的唯一入口按绑定态二分——未绑定＝常规打开（attach 清空
+    // 语义，新会话新挂）；已绑定＝切换流（switch 保留旧宿主画面到新呈现
+    // 替换成功——acceptance 3 语义）。分派在桥内收敛后，调用方对已绑定桥
+    // 误调 attach 的形态不再可达（切换流 double-attach 根因面消除）；
+    // attach/switch 各自的前置校验原样保留，非法序列仍 fail-fast 不吞。
+    if (m_bound.has_value()) {
+        switchHostSession(project);
+        return;
+    }
+    attachHostSession(project);
+}
+
 void RuntimePublishBridge::detachHostSession()
 {
     if (!m_bound.has_value()) {

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T84",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主装配与生命周期收口（F-910/F-911 修复＋Tier B 断言——集成父批次）",
+  "status": "ready",
+  "dependsOn": ["UI-T83"],
+  "requirements": ["PM-04", "NFR-REL-01"],
+  "designRefs": [
+    "units/ui.md#5.8",
+    "units/ui.md#11.6",
+    "units/ui.md#12.5"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPluginAssembly.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/**",
+    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T84.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**"
+  ],
+  "outputs": ["code-fix", "contract-test", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_ui_gui_test sdurws_ird_studio",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -R \"sdurws_ird_ui_test|sdurws_ird_ui_contract_test\" --output-on-failure"
+  ],
+  "branch": "wp10-t84",
+  "interUnit": false,
+  "acceptance": [
+    "子批 A（F-910）：复现测试先红后绿——真实 UiSessionController＋DraftController＋RuntimePublishBridge 按生产接线形态组装，关闭→同进程重开（真实宿主冒烟走全链；验收 attempt 1 实证修复前红＝关闭不拆绑→重开重复挂接 fail-fast 整站退出），修复后零逃逸＋桥绑定前移（attachOrSwitch 分派——未绑定 attach／已绑定 switch）＋控制器归 NoProject（修订依据：验收建议 1——原『重入双 teardown／桥恰 detach 一次』文本与实证根因不符，随返工按实际语义修订）",
+    "子批 A：桥增 attachOrSwitchHostSession（未绑定→attach／已绑定→switch——处置文档§4 修复方向），切换流 double-attach 关闭；teardown 幂等护栏（每会话恰一次，新会话重武装）；presentContext 回调边界异常隔离三要素（Dev 留痕＋状态栏可见＋恢复成功条件验证后才提示可重试）；undoRedo 可用性判定加已关上下文守卫（A5 放大面根修——关闭收尾期查询已关上下文＝NoProject 而非 StoreError 逃逸）",
+    "子批 B（F-911）：RequirementsDraftSource 经生产打开路径 attachModule 挂接（requirements::kModuleHandle 补建于 RequirementsPluginAssembly.hpp）；生产 drafts 查询半区真实适配替换 DraftQueryPortStub（project::DraftService::list → DraftRowProjection——PortAdapters.hpp:341 既定设计）；宿主 QTimer 驱动 tickAutosave 兑现 V-13 60s 周期落盘",
+    "子批 B 全链测试（两段式——返工批修订，F-917/F-918 登记后按 DTB §5.4）：段 A 端口级保真＝真实 DraftService（临时目录）＋生产 StorePortAdapter/StoreDraftQueryPortAdapter＋端口合规文本载荷源——编辑→saveAll 落盘→新控制器经真实查询适配器 restoreOnOpen→adopt 逐字节一致（禁止夹具自行接线——一律用生产适配器类）；段 B＝生产 RequirementsDraftSource 二进制载荷稳定拒绝钉（F-917 现状证据——载荷编码 × 草稿格式契约缝隙归所有者裁决，裁决落地后本段翻转为正向全链断言）",
+    "Tier B＋F-916：清单 requirements 翻 wired:true（wiredAnchor/handleSymbol 填实、waiver 摘除）；AssemblyManifestContractTest 增 manifest handleSymbol↔调用点 token 一致断言＋wiredAnchor 行级核对（锚点行内容含 attachModule(——IRD-NOTE-006 锚点规则本意，验收建议 4）",
+    "双模式构建零错误＋既有 ui_test/ui_contract_test/ui_gui_test 零回归＋ird_gates 零命中＋gtest XML 留痕（F-915 口径：本批报告经 <target>_report 目标再生并入 traceability）"
+  ],
+  "note": "集成父批次「宿主装配与生命周期收口」（findings F-910/F-911 owner 行的执行批；处置文档 §4 两子批方向已由所有者 2026-10-17『先修复 F-910 和 F-911』口令授权）。复现前置纪律：子批 A 不在因果链证实前改产品代码——复现测试即证实载体。E2E 五场景（ui.md §12.5）中 S1/S3 由本批测试面钉住，S2 由桥测试覆盖切换分派；真实 GUI 全程验证与 S4/S5 全形态归集成验收面如实登记覆盖度。返工批（验收 attempt 1 FAIL 后）登记三项裁决追认：A1＝forbiddenFiles(DTB) × DTB §5.4『实现与任务卡偏差必须登记』工作流规则冲突（attempt 1 实测 DTB 仅触碰版本行＋§2.11 行，非语义篡改；追认归合入段，UI-T83 先例同型）；A2＝allowedFiles 漏列 traceability/builds/** 与 evidence-index.json（验收第 6 条＋F-915 口径强制产出的留痕工件面——本卡已增补）；A3＝本卡 acceptance/note 修订属实施期卡自改（DTB §5.4 增量修订），归所有者合入段追认。返工批另登记 F-917（域载荷二进制帧 × 草稿格式 UTF-8 校验冲突）与 F-918（schemaVersion 权威倒置——域填载荷内版本 1/2，格式按 §8.11 主次版本编码解释为拒读——草稿写成功永不读回）：均 blocking、跨域契约归所有者裁决，本卡以两段式测试承载现状证据，不私有越权修复。"
+}

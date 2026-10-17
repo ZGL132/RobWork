@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-17T20:23:48+08:00",
+  "generatedAt": "2026-10-18T04:07:57+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6592,
-    "totalBytes": 207378215,
+    "totalFiles": 6599,
+    "totalBytes": 207589163,
     "byKind": {
-      "json-data": 7,
-      "manual-acceptance": 1,
-      "pipeline-artifact": 2,
-      "gtest-report": 335,
-      "governance-record": 30,
-      "benchmark": 8,
+      "build-log": 5661,
       "log": 1,
+      "pipeline-artifact": 2,
+      "governance-record": 30,
+      "manual-acceptance": 1,
+      "benchmark": 8,
+      "acceptance-record": 513,
+      "json-data": 7,
       "markdown-doc": 41,
-      "build-log": 5656,
-      "acceptance-record": 511
+      "gtest-report": 335
     },
     "byLifecycle": {
-      "unverified": 6003,
-      "superseded": 0,
+      "historical": 519,
+      "unverified": 6010,
       "current": 70,
-      "historical": 519
+      "superseded": 0
     },
-    "associated": 592,
-    "unassociated": 6000,
-    "shaComputed": 6574,
+    "associated": 594,
+    "unassociated": 6005,
+    "shaComputed": 6581,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -4487,6 +4487,26 @@
       "bytes": 4608,
       "sha256": "ad1b349daf8e1485a9e12951b6ee8dd8c021a8787b3c23127e521c2e7097972e",
       "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/UI-T84-20261017.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "UI-T84"
+      ],
+      "bytes": 17467,
+      "sha256": "0fdd409e6575acbf955751c115a6bf275baa32ad73334a767ff59135632d2fe0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/UI-T84-20261018.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "UI-T84"
+      ],
+      "bytes": 30400,
+      "sha256": "0fec76d50dbee0b5ce241a681b6d0d6833f4bd810d0311cb04778c8bcfd8451a",
+      "lifecycle": "unverified"
     },
     {
       "path": "acceptance/WP-00-T01-20260910.md",
@@ -36823,6 +36843,46 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp10-t84/sdurws_ird_ui_contract_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18587,
+      "sha256": "fbeafa03f578ab0e42c44ff4c143ab4a87aec71e7f9f58c347fb992d599e60c4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp10-t84/sdurws_ird_ui_gui_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 30569,
+      "sha256": "a6a0a2570438484f2bce3807a389ee1688b8676d5326fc9013f913c7b58adb9a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp10-t84/sdurws_ird_ui_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 103081,
+      "sha256": "6cb0f59c9f736fc1cd106082af0bf835c4e99ea7cc1e83ede440ac10a0afc60a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp10-t84/smoke-run-20261017-rework.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2293,
+      "sha256": "59845a30062d5a03323dd50a698a729e888ebd261458f4fe4f51cc50bee2640b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp10-t84/smoke-run-20261017.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 648,
+      "sha256": "72af0f430561314a2e8a384d3b0d3bd4f36937f9292eac2a2790c74274731f92",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp11-t01/gates-ird-gates-base-compare.log",
       "kind": "build-log",
       "taskIds": [],
@@ -51474,7 +51534,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1136643,
+      "bytes": 1144780,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -54666,8 +54726,8 @@
       "path": "production-assembly-manifest.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1237,
-      "sha256": "63285f7770a3717bfd073166fcce7e0ad788b25d6ba8b1bc2ca35107b5f26a33",
+      "bytes": 1003,
+      "sha256": "9fed86b5efcda295e35281c7a5684f54cd79d9e32d084519ab74fbd28a01c021",
       "lifecycle": "unverified"
     },
     {

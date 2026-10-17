@@ -14,6 +14,9 @@
 
 #include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>
 
+#include <memory>      // std::make_unique（requirementsDraftSource 惰性缓存——UI-T84）
+#include <stdexcept>   // std::logic_error（装配违约 fail-fast——UI-T84 门面缝前置校验）
+
 // 同单元私有头（R-2 不跨单元——本 TU 编入 requirements 插件目标自身；
 // 宿主装配层消费面只见 assembly/ 公共头，零本清单外溢）。
 #include "PanelCommandCatalog.hpp"      // requirementsPanelRegistration/requirementsDomainCommands（§9.8 登记数据）
@@ -39,9 +42,32 @@ RequirementsPluginAssembly& RequirementsPluginAssembly::operator=(
 
 void RequirementsPluginAssembly::attachEditor(IRequirementEditor* editor)
 {
+    // 草稿源换绑检测键记录（F-911 门面缝——先记后转；nullptr＝会话终结
+    // 解除，requirementsDraftSource 此后按前置校验如实拒绝）。
+    m_attachedEditor = editor;
     if (m_impl != nullptr) {
         m_impl->attachEditor(editor);  // 草稿唯一写目标注入（模块头注为权威语义）
     }
+}
+
+ui::IModuleDraftSource& RequirementsPluginAssembly::requirementsDraftSource()
+{
+    // 前置校验（装配违约 fail-fast——AGENTS §3 调用方错误轨）：模块或编
+    // 辑器缺位＝宿主在装配序未完成时取源，无编辑器的草稿源 buildDraft
+    // Document 全部无意义，不产出空文档源。
+    if (m_impl == nullptr || m_attachedEditor == nullptr) {
+        throw std::logic_error(
+            "RequirementsPluginAssembly::requirementsDraftSource: 模块或编辑器"
+            "未装配（attachEditor 先行——§10.5 挂接前置）");
+    }
+    // 惰性缓存＋换绑重建（源对象存模块/编辑器引用——编辑器指针变化后
+    // 旧源引用失效，必须重建；同指针重复取用返回同一实例）。
+    if (m_draftSource == nullptr || m_cachedEditor != m_attachedEditor) {
+        m_draftSource = std::make_unique<RequirementsDraftSource>(*m_impl,
+                                                                  *m_attachedEditor);
+        m_cachedEditor = m_attachedEditor;
+    }
+    return *m_draftSource;
 }
 
 void RequirementsPluginAssembly::bindSessionAnchor(

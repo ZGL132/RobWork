@@ -265,6 +265,8 @@ struct ManifestEntry
     bool required = false;
     bool wired = false;
     std::string waiverFinding;
+    std::string handleSymbol;  ///< 清单 handleSymbol 列（wired 条目须与 token 同源——UI-T84/F-916）
+    std::string wiredAnchor;   ///< 清单 wiredAnchor 列（"<仓库相对路径>:<行>"——UI-T84 格式复核）
 };
 
 /// 解析 production-assembly-manifest.json 的 draftModules 数组：按 "moduleId"
@@ -295,6 +297,14 @@ std::vector<ManifestEntry> parseManifest(const std::string& text)
         }
         if (std::regex_search(chunk, m, std::regex{R"re("finding"\s*:\s*"([^"]+)")re"})) {
             e.waiverFinding = m[1].str();
+        }
+        if (std::regex_search(chunk, m,
+                              std::regex{R"re("handleSymbol"\s*:\s*"([^"]+)")re"})) {
+            e.handleSymbol = m[1].str();
+        }
+        if (std::regex_search(chunk, m,
+                              std::regex{R"re("wiredAnchor"\s*:\s*"([^"]+)")re"})) {
+            e.wiredAnchor = m[1].str();
         }
         entries.push_back(e);
     }
@@ -435,5 +445,65 @@ TEST(AssemblyManifest, RequiredUnwiredCarriesOpenWaiver_UI_T83)
         EXPECT_EQ(status, "open")
             << "豁免必须挂在 open finding 上（finding 已关闭而豁免未删＝登记失实）: "
             << e.moduleId << " waiver→" << e.waiverFinding << " status=" << status;
+    }
+}
+
+/** wired 条目的 handleSymbol↔token 一致性＋锚点行级核对（UI-T84——F-916
+ *  消账＋验收建议 4 升级）：①wired ⇒ handleSymbol 非空且恰为
+ *  "<moduleId>::kModuleHandle"（与扫描面经 constexpr 定义解析出的 token
+ *  同源——清单手写列与代码真值不可漂移）；②wired ⇒ wiredAnchor 非空且为
+ *  "<路径>:<行号>" 格式、路径在 industrialrobot/ 下真实存在；③锚点行
+ *  **内容**核对（IRD-NOTE-006 锚点规则本意——行号会随编辑漂移，行内容
+ *  漂移即登记失实）：锚点行必须含 "attachModule("，且自锚点行起 3 行
+ *  窗口内可见 handleSymbol token（生产 attachModule 为多行调用形态，
+ *  token 在续行——窗口即域归属绑定）。 */
+TEST(AssemblyManifest, WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-MNT-05"},
+                  std::vector<std::string>{"TIER-A-SCAN", "IRD-NOTE-006", "F-916"});
+    const auto& w = world();
+    static const std::regex anchorRe{R"re(([^:]+):(\d+)$)re"};
+    for (const auto& e : w.manifest) {
+        if (!e.wired) {
+            continue;
+        }
+        EXPECT_FALSE(e.handleSymbol.empty())
+            << "wired 条目必须登记 handleSymbol: " << e.moduleId;
+        EXPECT_EQ(e.handleSymbol, e.moduleId + "::kModuleHandle")
+            << "handleSymbol 与模块 token 不同源（清单手写漂移）: " << e.moduleId;
+        EXPECT_FALSE(e.wiredAnchor.empty())
+            << "wired 条目必须登记 wiredAnchor: " << e.moduleId;
+        std::smatch m;
+        ASSERT_TRUE(std::regex_match(e.wiredAnchor, m, anchorRe))
+            << "wiredAnchor 须为 \"<路径>:<行号>\" 格式: " << e.wiredAnchor;
+        const fs::path anchorFile = unitRoot() / fs::path{m[1].str()};
+        EXPECT_TRUE(fs::exists(anchorFile))
+            << "wiredAnchor 路径不存在（锚点失实）: " << anchorFile.string();
+
+        // 锚点行级核对（③——行内容含调用＋token 窗口可见；行号失准＝
+        // 本断言红，倒逼清单随代码同步）。
+        std::ifstream in{anchorFile};
+        ASSERT_TRUE(in.good()) << "wiredAnchor 文件不可读: " << anchorFile.string();
+        const int anchorLine = std::stoi(m[2].str());
+        bool anchorIsAttachCall = false;
+        bool tokenSeenInWindow = false;
+        std::string lineText;
+        for (int current = 1;
+             std::getline(in, lineText) && current <= anchorLine + 2; ++current) {
+            if (current == anchorLine) {
+                anchorIsAttachCall =
+                    lineText.find("attachModule(") != std::string::npos;
+            }
+            if (current >= anchorLine && current <= anchorLine + 2
+                && lineText.find(e.handleSymbol) != std::string::npos) {
+                tokenSeenInWindow = true;
+            }
+        }
+        EXPECT_TRUE(anchorIsAttachCall)
+            << "wiredAnchor 行必须是 attachModule 调用（行级核对——行号漂移"
+               "＝登记失实）: " << e.wiredAnchor;
+        EXPECT_TRUE(tokenSeenInWindow)
+            << "锚点行起 3 行窗口内必须可见 handleSymbol token（多行调用"
+               "域归属绑定）: " << e.moduleId << " → " << e.handleSymbol;
     }
 }

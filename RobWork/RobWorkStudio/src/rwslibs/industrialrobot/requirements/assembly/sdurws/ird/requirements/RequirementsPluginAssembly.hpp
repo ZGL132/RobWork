@@ -54,6 +54,7 @@ namespace ui {
 class IUiTreeNodesProvider;       // 前置声明（迁移三接入面句柄成员——完整类型
 class IUiPropertyPagesProvider;   //  在 ui 公共头；本头仅以 shared_ptr 携带）
 class IUiNameResolver;            // 前置声明（F-551 名称解析前端返回面——同上）
+class IModuleDraftSource;         // 前置声明（§10.5 草稿源视图返回面——UI-T84 门面缝）
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
@@ -61,6 +62,13 @@ class IUiNameResolver;            // 前置声明（F-551 名称解析前端返�
 namespace sdurws {
 namespace ird {
 namespace requirements {
+
+/// 模块句柄（ModuleDraftHandle 词表——与 descriptor.pluginId 同 token；
+/// 宿主装配层 attachModule 首参取此值。F-911 修复面 UI-T84：句柄 token
+/// "requirements" 与 RequirementsDraftSource 文档注释的模块 id 词表一致；
+/// 装配清单 production-assembly-manifest handleSymbol 与本常量同源——
+/// 生产装配登记先行纪律，IRD-NOTE-006）。
+inline constexpr char kModuleHandle[] = "requirements";
 
 class RequirementsUiModule;              // 前置声明（内部具体类型——消费方面只见接口）
 struct RequirementsModuleSessionState;   // 前置声明（会话态访问面——引用返回，完整类型在插件私有头）
@@ -201,6 +209,22 @@ struct RequirementsPluginAssembly {
      * @param writable [in] 当前项目会话是否可写
      */
     void setWritable(bool writable);
+
+    /**
+     * @brief 模块草稿源视图（§10.5 attachModule 第二参数——F-911 修复面，
+     *        UI-T84 生产装配挂接缝；modeling 门面 modelingDraftSource 同款
+     *        先例——消费方零 requirements 私有头依赖，R-2 门面纪律）。
+     *
+     * 惰性缓存：首次取用时刻构造 RequirementsDraftSource（模块＋编辑器
+     * 引用注入，源对象本体归本门面持有，存活期随门面）；编辑器换绑
+     * （attachEditor 注入不同指针）后下次取用重建缓存。非 const（缓存
+     * 位写点）。
+     *
+     * @pre attachEditor 已注入非空编辑器且模块在位——否则抛
+     *      std::logic_error（装配违约 fail-fast：无编辑器的草稿源四方法
+     *      全部无意义，不产出空文档源）。
+     */
+    ui::IModuleDraftSource& requirementsDraftSource();
 
     /**
      * @brief 绑定三维视图缝（装配期一次；网关装配完成后由宿主调用——
@@ -376,6 +400,15 @@ struct RequirementsPluginAssembly {
 
 private:
     class RequirementsUiModule* m_impl = nullptr;  ///< 具体模块（非 owning——module 持有）
+    /// 草稿源惰性缓存（requirementsDraftSource——首次取用构造；unique_ptr
+    /// 前向持有完整类型在插件 cpp 可见。移动赋值 =default 会搬移缓存位——
+    /// 装配产物按值入 optional 后取用前必然重新填充，语义安全）。
+    std::unique_ptr<ui::IModuleDraftSource> m_draftSource;
+    /// attachEditor 最近注入的编辑器（非 owning——草稿源构造实参＋换绑
+    /// 检测键；生产流程 attachEditor 一次定向，nullptr＝会话终结解除）。
+    IRequirementEditor* m_attachedEditor = nullptr;
+    /// 缓存构建时的编辑器（换绑检测——与 m_attachedEditor 不等即重建）。
+    IRequirementEditor* m_cachedEditor = nullptr;
 
     friend RequirementsPluginAssembly createRequirementsPluginAssembly();  ///< 唯一装配点
 };
