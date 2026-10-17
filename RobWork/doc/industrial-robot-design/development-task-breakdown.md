@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.84（2026-10-17，UI-T84 立卡与实现登记：§2.11 增 WP-10-T84 行〔宿主装配与生命周期收口——F-910/F-911 修复批；集成父批次，分支 wp10-t84〕）。前一版本 v0.83 保留如下。 |
+| 文档版本 | v0.85（2026-10-18，UI-T84 合入收尾：wp10-t84〔32bfda18..a3df5368〕经验收 attempt 2 PASS〔traceability/acceptance/UI-T84-20261018.md〕--no-ff 并入 redesign-main〔d92902c9〕；契约 UI-T84.json 翻 done；findings F-910/F-911/F-916/F-920 翻 fixed——F-917/F-918〔blocking，所有者裁决〕/F-919〔kinematics 链接面〕/F-921～F-924 保持 open 归后续批）。前一版本 v0.84 保留如下。 |
 | 文档版本 | v0.83（2026-10-17，治理 T2 立卡：§2.11 增 WP-10-T83 行〔≙UI-T83 装配完备性扫描面契约测试——IRD-NOTE-006 裁决落地方案 T2；先卡后码，契约 tasks/foundation/UI-T83.json ready 待独立评审放行；ui.md v1.106 §13 同批增行〕）。前一版本 v0.82 保留如下。 |
 | 文档版本 | v0.82（2026-10-17，治理试点任务登记：§2.4 增 WP-03-T11 行〔≙CORE-T11 单元卡与实现一致性核查——Agent-native 治理 Task 8 新会话接手试点批；先卡后码，契约 tasks/foundation/CORE-T11.json ready 待执行；core.md §9 同批增行（v0.13）〕）。前一版本 v0.81 保留如下。 |
 | 文档版本 | v0.81（2026-10-17，WP-13-T23 合入收尾——所有者"继续合入动作"指令）：①merge 130c2015 按 SHA 并入验收记录（acc/WP-13-T23/1@948ca02c——独立子会话对抗式验收 verdict=PASS：4.1~4.11 全过零阻断、fresh worktree 双模式重配重跑五套件 386/386＋17/17＋44 过+1 既有跳过＋316/316＋8/8、变异红证 M1/M2 后还原回绿、ird_gates 零命中）＋merge fcb0b22c 按 SHA 并入代码 wp13-t23-reliability-polish@07324d30（七提交 aa47c0c5..07324d30，零冲突）；②§2.14 补登 WP-13-T23 行（打磨批先码后卡——由 superpowers 计划驱动，设计语义登记在 modeling.md v0.45~v0.53 版本链）；③契约 tasks/foundation/WP-13-T23.json 补登 status=done（acceptance 数组按验收建议 A-1 回填验收记录 §2/§3 可复现命令与数字）；④findings.json 随验收记录转登 F-906（A-1 缺卡——本收尾批 fixed）与 F-907（A-2 环境口径澄清——open，归治理批：fresh worktree 集成配置需带 vcpkg toolchain 否则 FindBoost 失败；ini 模板复制目标实为源码树 bin/——AGENTS §4.1/DTB §5.1 澄清待治理批处置）。前一版本 v0.80 保留如下。 |

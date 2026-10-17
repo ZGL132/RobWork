@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "宿主装配与生命周期收口（F-910/F-911 修复＋Tier B 断言——集成父批次）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T83"],
   "requirements": ["PM-04", "NFR-REL-01"],
   "designRefs": [

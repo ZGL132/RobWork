@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T04:07:57+08:00",
+  "generatedAt": "2026-10-18T04:10:14+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -11,24 +11,24 @@
   },
   "summary": {
     "totalFiles": 6599,
-    "totalBytes": 207589163,
+    "totalBytes": 207591313,
     "byKind": {
-      "build-log": 5661,
-      "log": 1,
       "pipeline-artifact": 2,
-      "governance-record": 30,
-      "manual-acceptance": 1,
       "benchmark": 8,
-      "acceptance-record": 513,
       "json-data": 7,
       "markdown-doc": 41,
-      "gtest-report": 335
+      "governance-record": 30,
+      "acceptance-record": 513,
+      "gtest-report": 335,
+      "build-log": 5661,
+      "log": 1,
+      "manual-acceptance": 1
     },
     "byLifecycle": {
-      "historical": 519,
-      "unverified": 6010,
       "current": 70,
-      "superseded": 0
+      "unverified": 6008,
+      "superseded": 0,
+      "historical": 521
     },
     "associated": 594,
     "unassociated": 6005,
@@ -4496,7 +4496,7 @@
       ],
       "bytes": 17467,
       "sha256": "0fdd409e6575acbf955751c115a6bf275baa32ad73334a767ff59135632d2fe0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/UI-T84-20261018.md",
@@ -4506,7 +4506,7 @@
       ],
       "bytes": 30400,
       "sha256": "0fec76d50dbee0b5ce241a681b6d0d6833f4bd810d0311cb04778c8bcfd8451a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/WP-00-T01-20260910.md",
@@ -51534,7 +51534,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1144780,
+      "bytes": 1146930,
       "sha256": null,
       "lifecycle": "unverified"
     },
