@@ -2,7 +2,7 @@
 #
 # 职责：校验 context/packs/ 下上下文包的新鲜度与纪律——
 #   ① 结构：生成物标记＋指纹段存在（防手改伪装成生成物）；
-#   ② 新鲜度：逐行重算指纹表 SHA-256，源文件变化即报 STALE（过期）；
+#   ② 新鲜度：逐行重算指纹表（git blob SHA-1，40 位），源文件变化即报 STALE（过期）；
 #   ③ 契约状态漂移：包内"任务状态（契约）"与当前契约 JSON 不一致 → 提示重生成；
 #   ④ PIPE 权威红线（评审修正 3）：包内不得出现流水线状态字段副本（phase/heartbeat/
 #     queue 的 JSON 形态）——上下文包只指引读 state.json 本体，绝不复制状态。
@@ -26,7 +26,12 @@ if (-not (Test-Path $packsDir)) { Write-Output 'validate-context-pack: no packs 
 
 if ($TaskId) { $packs = @(Get-Item (Join-Path $packsDir "$TaskId.md") -ErrorAction SilentlyContinue) }
 else { $packs = @(Get-ChildItem $packsDir -Filter '*.md' -ErrorAction SilentlyContinue) }
-if (-not $packs.Count) { Write-Output 'validate-context-pack: no packs found (nothing to validate)'; exit 0 }
+if (-not $packs.Count) {
+  # 审查 P2 对策（2026-10-17）：指定 TaskId 而包不存在＝结构错误（先跑 build-context-pack
+  # 生成），不得与"全量模式无包可查"的成功态混为一谈
+  if ($TaskId) { Write-Error "validate-context-pack: pack not found for TaskId: $TaskId（先运行 build-context-pack.ps1 -TaskId $TaskId 生成）"; exit 1 }
+  Write-Output 'validate-context-pack: no packs found (nothing to validate)'; exit 0
+}
 
 $structural = @(); $stale = @(); $fresh = 0
 foreach ($p in $packs) {
@@ -34,15 +39,18 @@ foreach ($p in $packs) {
   # $tid 在循环体开头取本包任务 ID——STALE 提示要指向当前包（若只在漂移块内定义，
   # 多包循环时会沿用上一包的值，提示指向错误包：attempt 2 复审 suggestion 实测）
   $tid = [IO.Path]::GetFileNameWithoutExtension($p.Name)
+  # per-pack 新鲜标记（审查 P2 对策，2026-10-17）：按包名匹配 stale 数组会把只含
+  # 任务 ID 的 DRIFT 行漏算，出现 stale>0 而 fresh=包总数的误导统计
+  $packHasStale = $false
   # ① 结构检查
   if ($t -notmatch 'build-context-pack\.ps1') { $structural += "pack missing generator marker: $($p.Name)" }
-  if ($t -notmatch '源文件指纹') { $structural += "pack missing SHA-256 fingerprint section: $($p.Name)" }
+  if ($t -notmatch '源文件指纹') { $structural += "pack missing blob-SHA fingerprint section: $($p.Name)" }
   # ④ PIPE 权威红线：包内禁流水线状态字段副本（JSON 形态匹配，误报面窄）
   foreach ($marker in '"phase"\s*:', '"heartbeat"', '"queue"\s*:') {
     if ($t -match $marker) { $structural += "pack violates PIPE authority red line (state copy '$($marker.Trim())'): $($p.Name)" }
   }
   # ② 新鲜度：解析指纹表（| 相对路径 | git blob SHA |），逐行重算——指纹用
-  # git hash-object（经 clean 过滤，行尾无关）：字节级 SHA-256 在 core.autocrlf 下
+  # git hash-object（经 clean 过滤，行尾无关）：字节级哈希在 core.autocrlf 下
   # 随检出行尾漂移，干净树上全量误报 STALE（演练验收 F-909 教训）
   $inTable = $false; $rowSeen = 0
   foreach ($line in ($t -split '\r?\n')) {
@@ -52,10 +60,10 @@ foreach ($p in $packs) {
       $rel = $Matches[1].Trim(); $oldSha = $Matches[2].ToLowerInvariant()
       $rowSeen++
       $abs = Join-Path $repoTop $rel
-      if (-not (Test-Path -LiteralPath $abs)) { $stale += "MISSING source: $rel (pack $($p.Name))——重跑 build-context-pack.ps1 -TaskId $tid 刷新"; continue }
+      if (-not (Test-Path -LiteralPath $abs)) { $stale += "MISSING source: $rel (pack $($p.Name))——重跑 build-context-pack.ps1 -TaskId $tid 刷新"; $packHasStale = $true; continue }
       $newSha = (git -C $repoTop hash-object $abs 2>$null | Select-Object -First 1)
-      if (-not $newSha) { $stale += "MISSING git-object: $rel (pack $($p.Name))"; continue }
-      if ("$newSha".ToLowerInvariant() -ne $oldSha) { $stale += "STALE source: $rel (pack $($p.Name))——重跑 build-context-pack.ps1 -TaskId $tid 刷新" }
+      if (-not $newSha) { $stale += "MISSING git-object: $rel (pack $($p.Name))"; $packHasStale = $true; continue }
+      if ("$newSha".ToLowerInvariant() -ne $oldSha) { $stale += "STALE source: $rel (pack $($p.Name))——重跑 build-context-pack.ps1 -TaskId $tid 刷新"; $packHasStale = $true }
     } elseif ($inTable -and $line -match '^\|' -and $line -notmatch '^\|\s*---') {
       # 表内出现非 40 位十六进制行——结构可疑（旧版 64 位字节哈希包同理判旧）
       if ($rowSeen -gt 0 -or $line -notmatch '^\|\s*源文件') { }
@@ -64,17 +72,19 @@ foreach ($p in $packs) {
     }
   }
   if ($rowSeen -eq 0) { $structural += "pack fingerprint table empty/unparsable: $($p.Name)" }
-  # ③ 契约状态漂移：包内登记的契约 status vs 当前契约 JSON
+  # ③ 契约状态漂移：包内登记的契约 status vs 当前契约 JSON（审查 P2 对策：包存在
+  # 而契约缺失＝结构错误，不得静默跳过）
   if ($t -match '\|\s*任务状态（契约）\s*\|\s*(\S+)\s*\|') {
     $packedStatus = $Matches[1]
-    $tid = [IO.Path]::GetFileNameWithoutExtension($p.Name)
     $contractFile = @(Get-ChildItem (Join-Path $base 'tasks') -Recurse -Filter "$tid.json" | Select-Object -First 1)
     if ($contractFile.Count) {
       $cx = Get-Content $contractFile[0].FullName -Raw -Encoding UTF8 | ConvertFrom-Json
-      if ("$($cx.status)" -ne "$packedStatus") { $stale += "DRIFT contract status: pack=$packedStatus current=$($cx.status) ($tid)" }
+      if ("$($cx.status)" -ne "$packedStatus") { $stale += "DRIFT contract status: pack=$packedStatus current=$($cx.status) ($tid) (pack $($p.Name))"; $packHasStale = $true }
+    } else {
+      $structural += "pack references unknown task (contract JSON not found): $($p.Name)"
     }
   }
-  if (-not ($stale | Where-Object { $_ -match [regex]::Escape($p.Name) })) { $fresh++ }
+  if (-not $packHasStale) { $fresh++ }
 }
 foreach ($s in $structural) { Write-Error "validate-context-pack: $s" }
 foreach ($s in $stale) { Write-Warning "validate-context-pack: $s" }

@@ -3,7 +3,7 @@
 # 执行通道＝.github/workflows/industrial-robot-windows.yml（步骤顺序、job 划分、缓存
 # 白名单与脚本行逐字符一致）。
 # 步骤固定：checkout → VS x64 → configure → build → 模型测试 → GUI 规则通道预检 →
-#           check-boundaries → package → 上传日志/CTest XML/边界报告/安装 manifest。
+#           governance 门禁（docs/pack/证据索引） → check-boundaries → package → 上传日志/CTest XML/边界报告/安装 manifest。
 # 模型与 GUI 分离 job；GUI job 显式声明 QT_QPA_PLATFORM=windows（本机 GL 平台）执行。
 # 测试面（2026-10-12 治理批扩面，G-1 消账）：两测试 job 的 run-tests 正则由阶段 A 的
 # '^sdurws_ird_core_test$'（WP-01-T02 交付时点唯一已建测试目标的历史口径）扩为
@@ -167,6 +167,9 @@ ird-industrial-robot-boundaries:
     - job: ird-industrial-robot-gui-precheck
       artifacts: true
   script:
+    # governance 门禁（2026-10-17 治理批扩面——脚本行与 GitHub 侧逐字符一致）
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-docs.ps1 -DeepEvidence
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-context-pack.ps1 -All
     - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
 
 ird-industrial-robot-package:

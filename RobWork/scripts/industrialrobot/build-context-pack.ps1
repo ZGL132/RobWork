@@ -3,7 +3,7 @@
 # 职责：按任务 ID 解析契约 JSON，生成"最小充分上下文包"（context/packs/<TaskId>.md）——
 # 新会话接手任务时以此包替代通读 DTB/REQUIREMENTS 全文（上下文经济学）。
 # 包内容：任务身份、阅读阶梯、权威章节、代码/测试根、允许与禁止路径、验证命令、
-# 已知阻塞（dependsOn 非 done ＋ open findings 引用）、源文件 SHA-256 指纹。
+# 已知阻塞（dependsOn 非 done ＋ open findings 引用）、源文件 git blob SHA-1 指纹（40 位——本仓对象库为 sha1 格式，非 SHA-256）。
 #
 # 纪律（PIPE 权威红线，评审修正 3）：本脚本不读取也不复制 traceability/pipeline/
 # state.json 的任何状态字段——包内只写"流水线相位读 state.json 本体"的指引。
@@ -62,9 +62,9 @@ if (Test-Path $findingsPath) {
   $openFindings = @($fj.findings | Where-Object { "$($_.status)" -eq 'open' -and (("$($_.source)" -match [regex]::Escape($TaskId)) -or ("$($_.title)" -match [regex]::Escape($TaskId))) })
 }
 
-# ---------- 源文件指纹（git blob SHA）——validate-context-pack.ps1 的校验基准 ----------
+# ---------- 源文件指纹（git blob SHA-1，40 位）——validate-context-pack.ps1 的校验基准 ----------
 # 指纹面＝构成本包上下文基础的规则/契约/需求文件；路径一律相对仓库真正根（$repoTop）。
-# 指纹取 git hash-object（经 clean 过滤的 blob SHA，行尾无关）——字节级 SHA-256 在
+# 指纹取 git hash-object（经 clean 过滤的 blob SHA-1，行尾无关）——字节级哈希在
 # core.autocrlf 下随检出行尾漂移，干净树上全量误报 STALE（演练验收 F-909 教训）。
 function Get-BlobSha([string]$path) { $h = git -C $script:repoTop hash-object $path 2>$null | Select-Object -First 1; if (-not $h) { throw "git hash-object failed: $path" }; return "$h".ToLowerInvariant() }
 $fingerprintFiles = New-Object System.Collections.Generic.List[string]
@@ -142,9 +142,9 @@ $L.Add('## 6. 验收要点（契约 acceptance）')
 $L.Add('')
 foreach ($ac in @($contract.acceptance | Where-Object { $_ })) { $L.Add("- $ac") }
 $L.Add('')
-$L.Add('## 7. 源文件指纹（git blob SHA，行尾无关；相对仓库根；validate-context-pack.ps1 校验基准）')
+$L.Add('## 7. 源文件指纹（git blob SHA-1，40 位，行尾无关；相对仓库根；validate-context-pack.ps1 校验基准——非 SHA-256，本仓对象库为 sha1 格式）')
 $L.Add('')
-$L.Add('| 源文件 | SHA-256 |')
+$L.Add('| 源文件 | git blob SHA-1 |')
 $L.Add('| --- | --- |')
 foreach ($r in $shaRows) { $L.Add($r) }
 $L.Add('')

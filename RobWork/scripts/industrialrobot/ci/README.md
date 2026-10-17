@@ -16,6 +16,8 @@
 3. **缓存白名单**：仅 `.cache/industrial-robot/{dependencies,packages}/`，不缓存测试结果/结果库/项目快照；失败工件 `when: always`。
 4. **六条门禁行**：configure → build → 模型测试 → GUI 规则通道预检（`QT_QPA_PLATFORM=windows`）→ check-boundaries → package。
 
+> **2026-10-17 治理批扩面（审查 P1-1 消账）**：check-boundaries 前新增两条治理门禁行（双文件同步、脚本行逐字符一致纪律保持）——`validate-docs.ps1 -DeepEvidence`（文档锚点/资产清单/分层入口/Notes/Skills＋证据索引深比较：路径集合＋字节数＋SHA-256 复算）与 `validate-context-pack.ps1 -All`（上下文包新鲜度＋PIPE 权威红线）。依据＝治理计划"评审修正 2"（Task 6/7 校验完成即挂载）＋ gate-all 第 0.7 步同款。
+
 ## 与现状的差异说明（激活前置，非本模板缺陷）
 
 | # | 差异 | 激活处置 | 状态 |

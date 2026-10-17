@@ -1,4 +1,10 @@
-﻿param([string]$RepoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path)
+﻿param(
+  [string]$RepoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path,
+  # -DeepEvidence：证据索引深校验（路径集合＋字节数＋SHA-256 复算）——本地快速
+  # 门禁默认只做路径/字节数比较；gate-all 与 CI 通道传此开关做全量内容复算
+  # （2026-10-17 审查 P1-3 对策：仅比条目数无法发现"同数换内容"失配）
+  [switch]$DeepEvidence
+)
 $base = Join-Path $RepoRoot 'doc/industrial-robot-design'
 $errors = @()
 # PIPE/ACC 是定时执行器的可执行输入，不能只检查文件存在：以下锚点把 P0 并发临界区、
@@ -139,7 +145,10 @@ $notesBase = Join-Path $RepoRoot '.agents/notes'
 $noteSections = @('## Problem','## Decision','## Alternatives considered','## Consequences','## Verification','## Related sources')
 if (-not (Test-Path (Join-Path $notesBase 'README.md'))) { $errors += 'missing .agents/notes/README.md (decision record format)' }
 $noteCount = 0
-foreach ($sd in 'implemented','proposed','rejected') {
+foreach ($sd in 'implemented','proposed','rejected','archived') {
+  # archived 同受六段式/编号校验（审查 P2 对策，2026-10-17——目录规范四态齐查），
+  # 另要求注明取代关系（notes/README §2：顶部注明被哪条取代）；计划语气黑名单
+  # 仅约束 implemented（archived 陈述的是已生效后被取代的事实）
   $dir = Join-Path $notesBase $sd
   if (-not (Test-Path $dir)) { $errors += "missing notes status dir: $sd"; continue }
   foreach ($n in @(Get-ChildItem $dir -Filter '*.md' -ErrorAction SilentlyContinue)) {
@@ -149,6 +158,7 @@ foreach ($sd in 'implemented','proposed','rejected') {
       if ($nt -notmatch [regex]::Escape($sec)) { $errors += "note missing section '$sec': $($sd)/$($n.Name)" }
     }
     if ($nt -notmatch 'IRD-NOTE-') { $errors += "note missing IRD-NOTE id: $($sd)/$($n.Name)" }
+    if ($sd -eq 'archived' -and $nt -notmatch '取代') { $errors += "archived note missing supersession pointer: $($n.Name)（notes/README §2）" }
     if ($sd -eq 'implemented') {
       foreach ($w in '待实现','将落位','尚未实现','计划中','拟实现') {
         if ($nt -match $w) { $errors += "implemented note uses plan-tone wording '$w': $($n.Name)" }
@@ -209,6 +219,39 @@ if (-not (Test-Path $evidenceIndexPath)) {
     try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $actualEvidence = @(git -C $repoTopEv -c core.quotepath=off ls-files -- "RobWork/doc/industrial-robot-design/traceability" 2>$null | Where-Object { $_ -ne 'RobWork/doc/industrial-robot-design/traceability/evidence-index.json' }) } finally { [Console]::OutputEncoding = $prevEncEv }
     $evidenceCount = @($ei.entries).Count
     if ($evidenceCount -ne $actualEvidence.Count) { $errors += "evidence index out of date: index=$evidenceCount actual=$($actualEvidence.Count)——重跑 index-evidence.ps1" }
+    # 深比较（审查 P1-3 对策，2026-10-17）：数量一致不足以证明内容一致——路径被
+    # 交换/文件被同数替换时纯计数门禁失效。基准层：规范化路径集合双向比对＋逐
+    # 条目字节数；-DeepEvidence（gate-all/CI）追加索引中 sha256 非 null 者的
+    # SHA-256 复算。差异报错封顶 10 条＋总数，防错误刷屏。
+    $tracePrefixEv = 'RobWork/doc/industrial-robot-design/traceability/'
+    $indexByPath = @{}
+    foreach ($e in @($ei.entries)) { $indexByPath["$($e.path)"] = $e }
+    $mismatchCap = 10; $mismatchSeen = 0
+    foreach ($ap in $actualEvidence) {
+      $relEv = $ap.Substring($tracePrefixEv.Length)
+      if (-not $indexByPath.ContainsKey($relEv)) {
+        $mismatchSeen++; if ($mismatchSeen -le $mismatchCap) { $errors += "evidence index missing entry: $relEv——重跑 index-evidence.ps1" }
+      } else {
+        $entryEv = $indexByPath[$relEv]
+        $absEv = Join-Path $repoTopEv $ap
+        $actualLen = (Get-Item -LiteralPath $absEv).Length
+        if ([long]$entryEv.bytes -ne $actualLen) {
+          $mismatchSeen++; if ($mismatchSeen -le $mismatchCap) { $errors += "evidence index size mismatch: $relEv (index=$($entryEv.bytes) actual=$actualLen)——重跑 index-evidence.ps1" }
+        } elseif ($DeepEvidence -and "$($entryEv.sha256)") {
+          $shaNow = (Get-FileHash -Algorithm SHA256 -LiteralPath $absEv).Hash.ToLowerInvariant()
+          if ($shaNow -ne "$($entryEv.sha256)") {
+            $mismatchSeen++; if ($mismatchSeen -le $mismatchCap) { $errors += "evidence index sha mismatch: $relEv——内容已变，重跑 index-evidence.ps1" }
+          }
+        }
+      }
+    }
+    foreach ($ip in @($indexByPath.Keys)) {
+      $fullEv = $tracePrefixEv + "$ip"
+      if ($actualEvidence -notcontains $fullEv) {
+        $mismatchSeen++; if ($mismatchSeen -le $mismatchCap) { $errors += "evidence index stale entry: $ip（实际文件已不存在）——重跑 index-evidence.ps1" }
+      }
+    }
+    if ($mismatchSeen -gt $mismatchCap) { $errors += "evidence index mismatch total: $mismatchSeen（仅列前 $mismatchCap 条）——重跑 index-evidence.ps1" }
   }
 }
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }

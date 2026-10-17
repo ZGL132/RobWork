@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 生成时间 | 2026-10-17T14:14:31+08:00 |
-| 生成基线 | git HEAD 9d297aab65e6bc69712e70ee248909dacd1600e2 |
+| 生成时间 | 2026-10-17T14:48:40+08:00 |
+| 生成基线 | git HEAD 28d9fcf97d32296deaadaa5f6508fa5fc4374b48 |
 | 任务状态（契约） | done |
 | 单元 / 主 WP | core / WP-B |
 | 分支 | wp03-t01 |
@@ -50,9 +50,9 @@
 - gtest 按 development-task-breakdown §5.5 定稿接入（P-ENV-2 已关闭，CR-07）
 - 产品目标零 testkit 链接、零跨单元私有头
 
-## 7. 源文件指纹（git blob SHA，行尾无关；相对仓库根；validate-context-pack.ps1 校验基准）
+## 7. 源文件指纹（git blob SHA-1，40 位，行尾无关；相对仓库根；validate-context-pack.ps1 校验基准——非 SHA-256，本仓对象库为 sha1 格式）
 
-| 源文件 | SHA-256 |
+| 源文件 | git blob SHA-1 |
 | --- | --- |
 | RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T01.json | 10da2bf3fbebe548c37efd15da8ac2d428381087 |
 | RobWork/doc/industrial-robot-design/units/core.md | 5f0c2fbd83be50b1209e868b20b8418dd62cbdc0 |

@@ -187,6 +187,19 @@ if ($script:PythonDll) {
     Write-Host "  [python 前置] python313.dll 全程不可达——受影响目标（导入 python 运行库者）将以 SKIP＋归因记录（F-715）；补 -PythonDir <目录> 或设 SDURWS_IRD_PYTHON_DIR 后重跑可转 PASS" -ForegroundColor DarkCyan
 }
 
+# ---- 第 0.7 步：治理文档门禁（Agent-native 治理挂载，2026-10-17） ----
+# 设计依据：治理计划"评审修正 2"——Task 6/7 校验完成即挂载进 gate-all 与 CI，不等
+# 第三阶段统一接入（2026-10-17 审查 P1-1 消账）。两件：①validate-docs -DeepEvidence
+# （文档锚点/资产清单/分层入口/Notes/Skills＋证据索引深比较：路径集合＋字节数＋
+# SHA-256 复算）；②validate-context-pack -All（上下文包新鲜度＋PIPE 权威红线；
+# STALE 属可重生成态——重跑 build-context-pack 后复验）。index-evidence 为生成器
+# 不单列门禁步（其校验面已内嵌于 validate-docs 的证据一致性检查，失配报错自带
+# 重跑指引）。两脚本均为秒级~分钟级，不挤占第 3/4 步构建预算。
+& pwsh -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot/validate-docs.ps1" -DeepEvidence 2>&1 | Select-Object -Last 3 | Write-Host
+if ($LASTEXITCODE -eq 0) { Ok "治理文档门禁（validate-docs -DeepEvidence）" } else { Fail "治理文档门禁" "validate-docs 失败（退出码 $LASTEXITCODE——证据/资产/Notes/Skills/包结构其一失配，报错行有重跑指引）" }
+& pwsh -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot/validate-context-pack.ps1" -All 2>&1 | Select-Object -Last 3 | Write-Host
+if ($LASTEXITCODE -eq 0) { Ok "上下文包门禁（validate-context-pack -All）" } else { Fail "上下文包门禁" "validate-context-pack 失败（退出码 $LASTEXITCODE——STALE 过期包重跑 build-context-pack 生成后复验）" }
+
 # ---- 第 1 步：集成构建树确认/配置 ----
 $cacheFile = "$BuildDir/CMakeCache.txt"
 $needConf = -not (Test-Path $cacheFile)

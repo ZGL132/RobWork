@@ -20,13 +20,13 @@
 | --- | --- |
 | `BuildRedLineTest`（core/test） | 零 Qt include（R-3）、零跨单元 include（R-1/R-2）、公共头路径布局（R-2）——四用例：SourceTreeReachable / NoQtInclude_NFR_MNT_01_R3 / NoCrossUnitInclude_R1_R2_T1 / PublicHeaderPathLayout_R2 |
 | `ird_gates.cmake` ＋ `ird_gates_whitelist.cmake` | 单元依赖边/命中集检查（dependency-graph.json 允许边；R-3 等例外经白名单登记） |
-| `validate-docs.ps1` | 文档锚点（PIPE/ACC 关键语义）、B.1、20 单元、任务 ID 唯一、追踪矩阵、phase-one 索引、资产清单（路径/分类/链接/根级全覆盖）、分层规则入口（分区文件存在＋权威链接＋根回链）、Agent Notes（结构/编号/计划语气黑名单）、执行协议 Skills（六件存在性＋frontmatter） |
+| `validate-docs.ps1` | 文档锚点（PIPE/ACC 关键语义）、B.1、20 单元、任务 ID 唯一、追踪矩阵、phase-one 索引、资产清单（路径/分类/链接/根级全覆盖）、分层规则入口（分区文件存在＋权威链接＋根回链）、Agent Notes（四目录结构/编号/计划语气黑名单/archived 取代指针）、执行协议 Skills（六件存在性＋frontmatter）、证据索引一致性（计数＋路径集合双向＋字节数；`-DeepEvidence` 追加 SHA-256 复算——2026-10-17 审查 P1-3 对策） |
 | `validate-state.ps1` | state.json schema、phase 枚举、SHA 冻结链⑩、run 租约、队列可领取性 |
 | `validate-task.ps1` / `verify-task.ps1` | 任务契约字段完备性（ready 必备字段）/ 任务验证命令执行与证据核验 |
 | `build-context-pack.ps1` / `validate-context-pack.ps1` | 上下文包生成与新鲜度校验（源文件 SHA-256 重算，STALE=exit 2）；PIPE 权威红线——包内 state.json 状态字段副本（JSON 形态扫描）即 exit 1 |
 | `index-evidence.ps1` / validate-docs 证据段 | 证据摘要索引生成与一致性（新证据未重跑索引→条目数不符即门禁失败）；索引只存摘要不嵌内容；删除/移动三前置登记于 traceability/README.md §3 |
-| `gate-all.ps1` | 集成＋冒烟一键全量门禁 |
-| CI 双模板（`scripts/industrialrobot/ci/`） | 远端常驻：构建＋测试（`^sdurws_ird_.*_test$` 全目标）＋文档门禁 |
+| `gate-all.ps1` | 集成＋冒烟一键全量门禁＋第 0.7 步治理文档门禁（validate-docs -DeepEvidence＋validate-context-pack -All，2026-10-17 挂载——审查 P1-1 消账） |
+| CI 双模板（`scripts/industrialrobot/ci/`） | 远端常驻：构建＋测试（`^sdurws_ird_.*_test$` 全目标）＋治理门禁两步（validate-docs -DeepEvidence＋validate-context-pack，2026-10-17 扩面）＋check-boundaries |
 | CMake 目标注册面 | C++17（CXX_STANDARD 17 显式）、gtest 接入（find_package GTest CONFIG REQUIRED）、vcpkg toolchain 解析 |
 
 ## 3. 审计表（按规则来源分组）

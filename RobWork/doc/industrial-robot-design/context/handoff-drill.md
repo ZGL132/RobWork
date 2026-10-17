@@ -42,9 +42,11 @@
 | 10 | 本地 Skills 不经 Skill 工具自动调用，需读文照执行（实施者摩擦②） | 预期内 | 非缺陷——Task 5 既定验收口径（"按 AGENTS.md 入口能找到并照执行"）；留档 |
 | 11 | 环境小坑：Git Bash 无 python、管道后 `$?` 取 tail 退出码（实施者摩擦⑥） | 环境口径 | ird-verify-change 已有四态口径覆盖（退出码重定向取值）；留档 |
 
-## 3. 验证命令实录（Task 8 清单要求的四条，最终态）
+## 3. 验证命令实录（Task 8 清单要求的四条）
 
-- `pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1` → PASS（20 units, 12 trace entries, 357 task files, 26 registered assets, 5 notes, 6 skills, 2 packs, 6590 evidence）exit 0
+> 本节为收尾批（`28d9fcf9`）时点快照——资产数随登记增长（收尾批同批登记 handoff 两项后为 28），实时口径以门禁输出为准。
+
+- `pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1` → PASS（20 units, 12 trace entries, 357 task files, 28 registered assets, 5 notes, 6 skills, 2 packs, 6590 evidence）exit 0
 - `pwsh -File RobWork/scripts/industrialrobot/validate-context-pack.ps1 -All` → 2 packs fresh=2 exit 0
 - `pwsh -File RobWork/scripts/industrialrobot/index-evidence.ps1` → 6590 files（git 跟踪面，与干净检出一致）
 - `git diff --check` → clean
