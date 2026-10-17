@@ -202,7 +202,11 @@ if (-not (Test-Path $evidenceIndexPath)) {
   try { $ei = Get-Content $evidenceIndexPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $errors += "evidence-index.json is not valid JSON: $_" }
   if ($ei) {
     if ($ei.schemaVersion -ne 'ird-evidence-index/1') { $errors += "evidence-index schemaVersion must be 'ird-evidence-index/1', got '$($ei.schemaVersion)'" }
-    $actualEvidence = @(Get-ChildItem (Join-Path $base 'traceability') -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'evidence-index.json' })
+    # 计数基准＝git 跟踪面（与 index-evidence.ps1 一致；文件系统遍历会计入
+    # gitignored 产物导致干净检出失配——F-908 教训）
+    $repoTopEv = Split-Path -Parent $RepoRoot
+    $prevEncEv = [Console]::OutputEncoding
+    try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $actualEvidence = @(git -C $repoTopEv -c core.quotepath=off ls-files -- "RobWork/doc/industrial-robot-design/traceability" 2>$null | Where-Object { $_ -ne 'RobWork/doc/industrial-robot-design/traceability/evidence-index.json' }) } finally { [Console]::OutputEncoding = $prevEncEv }
     $evidenceCount = @($ei.entries).Count
     if ($evidenceCount -ne $actualEvidence.Count) { $errors += "evidence index out of date: index=$evidenceCount actual=$($actualEvidence.Count)——重跑 index-evidence.ps1" }
   }

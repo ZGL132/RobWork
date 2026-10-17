@@ -38,20 +38,23 @@ foreach ($p in $packs) {
   foreach ($marker in '"phase"\s*:', '"heartbeat"', '"queue"\s*:') {
     if ($t -match $marker) { $structural += "pack violates PIPE authority red line (state copy '$($marker.Trim())'): $($p.Name)" }
   }
-  # ② 新鲜度：解析指纹表（| 相对路径 | sha256 |），逐行重算
+  # ② 新鲜度：解析指纹表（| 相对路径 | git blob SHA |），逐行重算——指纹用
+  # git hash-object（经 clean 过滤，行尾无关）：字节级 SHA-256 在 core.autocrlf 下
+  # 随检出行尾漂移，干净树上全量误报 STALE（演练验收 F-909 教训）
   $inTable = $false; $rowSeen = 0
   foreach ($line in ($t -split '\r?\n')) {
     if ($line -match '^\|\s*源文件\s*\|') { $inTable = $true; continue }
     if ($inTable -and $line -match '^\|\s*---') { continue }
-    if ($inTable -and $line -match '^\|\s*([^|]+?)\s*\|\s*([0-9a-fA-F]{64})\s*\|\s*$') {
+    if ($inTable -and $line -match '^\|\s*([^|]+?)\s*\|\s*([0-9a-fA-F]{40})\s*\|\s*$') {
       $rel = $Matches[1].Trim(); $oldSha = $Matches[2].ToLowerInvariant()
       $rowSeen++
       $abs = Join-Path $repoTop $rel
-      if (-not (Test-Path -LiteralPath $abs)) { $stale += "MISSING source: $rel (pack $($p.Name))"; continue }
-      $newSha = (Get-FileHash -Algorithm SHA256 -LiteralPath $abs).Hash.ToLowerInvariant()
-      if ($newSha -ne $oldSha) { $stale += "STALE source: $rel (pack $($p.Name))" }
+      if (-not (Test-Path -LiteralPath $abs)) { $stale += "MISSING source: $rel (pack $($p.Name))——重跑 build-context-pack.ps1 -TaskId $tid 刷新"; continue }
+      $newSha = (git -C $repoTop hash-object $abs 2>$null | Select-Object -First 1)
+      if (-not $newSha) { $stale += "MISSING git-object: $rel (pack $($p.Name))"; continue }
+      if ("$newSha".ToLowerInvariant() -ne $oldSha) { $stale += "STALE source: $rel (pack $($p.Name))——重跑 build-context-pack.ps1 -TaskId $tid 刷新" }
     } elseif ($inTable -and $line -match '^\|' -and $line -notmatch '^\|\s*---') {
-      # 表内出现非 64 位十六进制行——结构可疑
+      # 表内出现非 40 位十六进制行——结构可疑（旧版 64 位字节哈希包同理判旧）
       if ($rowSeen -gt 0 -or $line -notmatch '^\|\s*源文件') { }
     } elseif ($inTable) {
       $inTable = $false

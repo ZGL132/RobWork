@@ -84,8 +84,22 @@ function Get-TaskIds([string]$rel) {
   return ,$ids
 }
 
-# ---------- 扫描（排除索引自身）----------
-$files = @(Get-ChildItem $traceDir -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'evidence-index.json' } | Sort-Object { $_.FullName })
+# ---------- 扫描（基准＝git 跟踪文件；排除索引自身）----------
+# 用 git ls-files 枚举而非文件系统遍历：主工作区可能存在 gitignored 历史产物
+# （截图/日志），计入会使干净检出（无这些文件）与索引计数失配、门禁误报
+# （演练验收 F-908 教训）。代价：未提交的新证据不计入——与"新证据落库同批
+# 重跑索引"纪律自洽（提交与索引同批完成）。
+$repoTop = Split-Path -Parent $RepoRoot
+$traceRel = $traceDir.Substring($repoTop.Length + 1).Replace('\','/')
+# core.quotepath=off＋UTF-8 控制台：git 默认对非 ASCII 路径做八进制转义加引号，
+# 中文文件名（如 ird-gates-增量登记.md）会解析失败（演练批实测 4 个文件丢失）
+$prevEnc = [Console]::OutputEncoding
+try {
+  [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+  $trackedList = @(git -C $repoTop -c core.quotepath=off ls-files -- $traceRel 2>$null)
+} finally { [Console]::OutputEncoding = $prevEnc }
+if (-not $trackedList.Count) { throw "git ls-files failed（证据枚举以 git 跟踪面为基准，不可用文件系统遍历替代）" }
+$files = @($trackedList | Where-Object { $_ -ne "$traceRel/evidence-index.json" } | ForEach-Object { Get-Item -LiteralPath (Join-Path $repoTop $_) } | Sort-Object { $_.FullName })
 $entries = @()
 $byKind = @{}; $byLifecycle = @{ current = 0; superseded = 0; historical = 0; unverified = 0 }
 $shaComputed = 0; $shaSkipped = 0; $totalBytes = [long]0; $associated = 0

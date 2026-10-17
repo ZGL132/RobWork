@@ -1,6 +1,6 @@
 {
   "schemaVersion": "ird-evidence-index/1",
-  "generatedAt": "2026-10-17T13:38:04+08:00",
+  "generatedAt": "2026-10-17T14:04:38+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -9,31 +9,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6626,
-    "totalBytes": 211606556,
+    "totalFiles": 6590,
+    "totalBytes": 209625046,
     "byKind": {
-      "build-log": 5692,
-      "governance-record": 30,
-      "manual-acceptance": 1,
-      "benchmark": 8,
-      "acceptance-record": 510,
+      "build-log": 5656,
       "pipeline-artifact": 2,
       "gtest-report": 335,
-      "log": 1,
+      "manual-acceptance": 1,
+      "benchmark": 8,
       "json-data": 6,
-      "markdown-doc": 41
+      "log": 1,
+      "acceptance-record": 510,
+      "markdown-doc": 41,
+      "governance-record": 30
     },
     "byLifecycle": {
-      "unverified": 6038,
-      "current": 70,
       "historical": 518,
-      "superseded": 0
+      "superseded": 0,
+      "current": 70,
+      "unverified": 6002
     },
     "associated": 591,
-    "unassociated": 6035,
-    "shaComputed": 6608,
+    "unassociated": 5999,
+    "shaComputed": 6572,
     "shaSkippedLarge": 18,
-    "duplicateGroupsTotal": 345,
+    "duplicateGroupsTotal": 330,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -142,7 +142,6 @@
         "acceptance/ui-t32-acc3/smoke/2-view-menu.png",
         "acceptance/ui-t34-acc1/smoke/2-view-menu.png",
         "acceptance/ui-t35-acc1/smoke/2-view-menu.png",
-        "builds/ui-t24/acc-smoke/2-view-menu.png",
         "builds/ui-t24/smoke/2-view-menu.png",
         "builds/ui-t25/smoke/2-view-menu.png",
         "builds/ui-t26/smoke/2-view-menu.png",
@@ -648,10 +647,6 @@
         "builds/gov-gate/red-fail-case.log",
         "builds/gov-gate/red-pass-case.log",
         "builds/ui-t38/acc-ird-gates-hitset-diff.txt",
-        "builds/ui-t38/acc-smoke/console-auto.err",
-        "builds/ui-t38/acc-smoke/console-layout.err",
-        "builds/ui-t38/acc-smoke/console-layout2.err",
-        "builds/ui-t38/acc-smoke/console-requirements-tour.err",
         "builds/ui-t38/gtest/sdurws_ird_testkit_prochelper.log",
         "builds/ui-t38/ird-gates-hitset-diff.txt",
         "builds/ui-t39/acc/acc-smoke-mut2/console-requirements-tour.err",
@@ -723,42 +718,18 @@
       ]
     },
     {
-      "sha256": "e5bf0fe5de029511cae5be6dcace4ddd9c765afca93b41ff8d0b7e52236dcedf",
-      "paths": [
-        "builds/ui-t24/acc-smoke/1-default-layout.png",
-        "builds/ui-t24/acc-smoke/3-domain-panel-summoned.png",
-        "builds/ui-t24/acc-smoke/7-second-start-memory.png",
-        "builds/ui-t24/smoke/3-domain-panel-summoned.png",
-        "builds/ui-t24/smoke/7-second-start-memory.png"
-      ]
-    },
-    {
-      "sha256": "add4f8e8fdf26cfadb871f01f4ccc37a6f1e5a28ec9d40debac7aa59790e1354",
-      "paths": [
-        "builds/ui-t24/acc-smoke/4-requirements-buttons.png",
-        "builds/ui-t24/smoke/4-requirements-buttons.png"
-      ]
-    },
-    {
-      "sha256": "c85f943e1cce75be78c42d479a3fa1476a0ca6a6dd8307d5e54dd669c3df45b4",
-      "paths": [
-        "builds/ui-t24/acc-smoke/5-requirements-narrow.png",
-        "builds/ui-t24/smoke/5-requirements-narrow.png"
-      ]
-    },
-    {
-      "sha256": "3e0a6f6e451856bc25b7529d7c45ce92a146e7eb4d6ffb18235fab5c12a0414f",
-      "paths": [
-        "builds/ui-t24/acc-smoke/6-min-window.png",
-        "builds/ui-t24/smoke/6-min-window.png"
-      ]
-    },
-    {
       "sha256": "c32aa2f55a6f149b3bf75609f4f4d15fdaabe528ca1b6430f258be4b69b124c6",
       "paths": [
         "builds/ui-t24/ird-gates-head.log",
         "builds/ui-t25/ird-gates-head.log",
         "builds/ui-t26/ird-gates-head.log"
+      ]
+    },
+    {
+      "sha256": "e5bf0fe5de029511cae5be6dcace4ddd9c765afca93b41ff8d0b7e52236dcedf",
+      "paths": [
+        "builds/ui-t24/smoke/3-domain-panel-summoned.png",
+        "builds/ui-t24/smoke/7-second-start-memory.png"
       ]
     },
     {
@@ -843,7 +814,6 @@
         "builds/ui-t37/smoke-r4/8-modeling-panel.png",
         "builds/ui-t37/smoke-r5/8-modeling-panel.png",
         "builds/ui-t37/smoke/8-modeling-panel.png",
-        "builds/ui-t38/acc-smoke/8-modeling-panel.png",
         "builds/ui-t38/smoke/8-modeling-panel.png"
       ]
     },
@@ -879,8 +849,6 @@
         "builds/ui-t37/smoke-r4/5-requirements-narrow.png",
         "builds/ui-t37/smoke-r5/4-requirements-buttons.png",
         "builds/ui-t37/smoke-r5/5-requirements-narrow.png",
-        "builds/ui-t38/acc-smoke/4-requirements-buttons.png",
-        "builds/ui-t38/acc-smoke/5-requirements-narrow.png",
         "builds/ui-t38/smoke/4-requirements-buttons.png",
         "builds/ui-t38/smoke/5-requirements-narrow.png"
       ]
@@ -921,95 +889,10 @@
       ]
     },
     {
-      "sha256": "1e6184e48eebb0268ae112c809fb41808352440497f607de7b3ac5483422cc6f",
-      "paths": [
-        "builds/ui-t38/acc-smoke/1-default-layout.png",
-        "builds/ui-t39/smoke/1-default-layout.png"
-      ]
-    },
-    {
-      "sha256": "190289c6d08f8e4ef433ade863650205ab09bc501a8cc83f06f0b4fa4b24e673",
-      "paths": [
-        "builds/ui-t38/acc-smoke/10-tasks-dock-summoned.png",
-        "builds/ui-t38/smoke/10-tasks-dock-summoned.png"
-      ]
-    },
-    {
       "sha256": "2bbb21f26686f0ac6f28393bd8583a0a2bc7208c08e662e95029c47a9c412146",
       "paths": [
-        "builds/ui-t38/acc-smoke/2-view-menu.png",
         "builds/ui-t38/smoke/2-view-menu.png",
         "builds/ui-t39/smoke/2-view-menu.png"
-      ]
-    },
-    {
-      "sha256": "67c39308f17e51e6b92a9055e22194eedd7d778498ba4bb2e7b30479647dc40c",
-      "paths": [
-        "builds/ui-t38/acc-smoke/3-domain-panel-summoned.png",
-        "builds/ui-t38/smoke/3-domain-panel-summoned.png"
-      ]
-    },
-    {
-      "sha256": "52ddbca39ecb9762de83dbd16ccde921827c9310314be18dff4fcdc475078b03",
-      "paths": [
-        "builds/ui-t38/acc-smoke/6-min-window.png",
-        "builds/ui-t38/smoke/6-min-window.png"
-      ]
-    },
-    {
-      "sha256": "c92f2d4862f7f978500199a7d87fd5bc4723a282a01970617795bdb61506a13d",
-      "paths": [
-        "builds/ui-t38/acc-smoke/7-second-start-memory.png",
-        "builds/ui-t38/smoke/7-second-start-memory.png"
-      ]
-    },
-    {
-      "sha256": "2b773ff66d3ce747cc9321add246c3c92b1dbb7011f703bf0b39c9286b79bae4",
-      "paths": [
-        "builds/ui-t38/acc-smoke/9-kinematics-panel.png",
-        "builds/ui-t38/smoke/9-kinematics-panel.png"
-      ]
-    },
-    {
-      "sha256": "a30f65ca128e3ff20c2add9ed7d8bcb556abe88bf1886c2e29144f35dc00d8cd",
-      "paths": [
-        "builds/ui-t38/acc-smoke/geometry-report.txt",
-        "builds/ui-t38/smoke/geometry-report.txt"
-      ]
-    },
-    {
-      "sha256": "9b8216fd730e473ec569c9552f0f4689df017ed5e75fffbaec6127067943e648",
-      "paths": [
-        "builds/ui-t38/acc-smoke/tour-1-panel-empty-state.png",
-        "builds/ui-t38/smoke/tour-1-panel-empty-state.png"
-      ]
-    },
-    {
-      "sha256": "0cc1df9937261bc04ba14a5f1561b0e4398dcde0fbc88ed66efaff40ba33e7f9",
-      "paths": [
-        "builds/ui-t38/acc-smoke/tour-2-station-edited.png",
-        "builds/ui-t38/smoke/tour-2-station-edited.png"
-      ]
-    },
-    {
-      "sha256": "eb88682e7f1e4e0998df3fd457c3c8e1a426219ac1782d70f953fd081b824bb0",
-      "paths": [
-        "builds/ui-t38/acc-smoke/tour-3-region-sampling.png",
-        "builds/ui-t38/smoke/tour-3-region-sampling.png"
-      ]
-    },
-    {
-      "sha256": "ab60f703e324c251c5190261bcd215284c557e7d2ea76f2419725e1b45193648",
-      "paths": [
-        "builds/ui-t38/acc-smoke/tour-4-validation.png",
-        "builds/ui-t38/smoke/tour-4-validation.png"
-      ]
-    },
-    {
-      "sha256": "490cf9c7bc2ce0031a318c23138a5ba5ce0f9bcf3ad786ab6fe93d8acbcce083",
-      "paths": [
-        "builds/ui-t38/acc-smoke/tour-5-final-state.png",
-        "builds/ui-t38/smoke/tour-5-final-state.png"
       ]
     },
     {
@@ -1075,6 +958,125 @@
       "paths": [
         "builds/ui-t41/acc/gates-selftest-base/fail_sub/CMakeLists.txt",
         "builds/ui-t41/acc/gates-selftest-head/fail_sub/CMakeLists.txt"
+      ]
+    },
+    {
+      "sha256": "a9e08bd544b49edff7ac84b5d60e3463f43ffec400da2b081c63422e3b03ed29",
+      "paths": [
+        "builds/ui-t41/acc/gates-selftest-base/fail_t1/CMakeLists.txt",
+        "builds/ui-t41/acc/gates-selftest-head/fail_t1/CMakeLists.txt"
+      ]
+    },
+    {
+      "sha256": "748652c89a865ecc6c832e7581d274096d519064131dcbbde195fd97e4faaf77",
+      "paths": [
+        "builds/ui-t41/acc/gates-selftest-base/fail_t2/CMakeLists.txt",
+        "builds/ui-t41/acc/gates-selftest-head/fail_t2/CMakeLists.txt"
+      ]
+    },
+    {
+      "sha256": "701a40a7c1c4a6b469e6cb12e0a96f62ef9d53adf66fbb465b4b550d2351ecfb",
+      "paths": [
+        "builds/ui-t41/acc/gates-selftest-base/pass_clean/CMakeLists.txt",
+        "builds/ui-t41/acc/gates-selftest-head/pass_clean/CMakeLists.txt"
+      ]
+    },
+    {
+      "sha256": "79217c7ed9af57352c7b9e828bcf9fa713f70e58bb2cbbf7ff158f76ac9b3b5a",
+      "paths": [
+        "builds/ui-t41/acc/gates-selftest-base/pass_clean/core/src/Core.cpp",
+        "builds/ui-t41/acc/gates-selftest-head/pass_clean/core/src/Core.cpp"
+      ]
+    },
+    {
+      "sha256": "6dc84fb85ee3ccfdd5fd94081c561fd0684e369c0c1951ded5daa33e2882f589",
+      "paths": [
+        "builds/ui-t41/acc/gates-selftest-base/pass_r4comment/core/src/Core.cpp",
+        "builds/ui-t41/acc/gates-selftest-head/pass_r4comment/core/src/Core.cpp"
+      ]
+    },
+    {
+      "sha256": "4d3e0341c73bd189d03f3dd68633127bc0c03586f7168efe391a2e5ea1c1e6eb",
+      "paths": [
+        "builds/ui-t42/acc/acc-clean-rebuild.log",
+        "builds/ui-t42/acc/acc-mut1-build.log",
+        "builds/ui-t42/acc/acc-mut2-build.log"
+      ]
+    },
+    {
+      "sha256": "79859fb179b81e6a82013f32824e2a4a59bd8db3dae080bb9b23e167d4895e36",
+      "paths": [
+        "builds/ui-t42/acc/acc-gates-hitset-base.txt",
+        "builds/ui-t42/acc/acc-gates-hitset-wt.txt"
+      ]
+    },
+    {
+      "sha256": "e153246d6a6fae9714b600b32e5eed5140ea1e2a3d7a0593f5901c0b0fac8429",
+      "paths": [
+        "builds/ui-t43/validate-docs.log",
+        "builds/ui-t44/validate-docs.log",
+        "builds/wp13-t21/validate-docs.log"
+      ]
+    },
+    {
+      "sha256": "267686fdc860a6292b0e99f671306ba96f57b6b8af1277bb5cf3ff2ce7e382e7",
+      "paths": [
+        "builds/ui-t48/sdurws_ird_modeling_contract_test.log",
+        "builds/ui-t49/sdurws_ird_modeling_contract_test.log"
+      ]
+    },
+    {
+      "sha256": "a9d4bd5f34557e9123618afbdbdf3c41f8c16efa0133823a0324bcaf859b7a51",
+      "paths": [
+        "builds/ui-t58/ird-gates-branch-hits-normalized.txt",
+        "builds/ui-t59/ird-gates-branch-hits-normalized.txt",
+        "builds/ui-t60/ird-gates-branch-hits-normalized.txt",
+        "builds/ui-t61/ird-gates-branch-hits-normalized.txt",
+        "builds/ui-t62/ird-gates-branch-hits-normalized.txt",
+        "builds/ui-t63/ird-gates-branch-hits-normalized.txt"
+      ]
+    },
+    {
+      "sha256": "a870e09bca22ce60642f80316e493a633688a76c7bc7467ec0881354dd698a79",
+      "paths": [
+        "builds/ui-t58/ird-gates-branch.log",
+        "builds/ui-t59/ird-gates-branch.log",
+        "builds/ui-t60/ird-gates-branch.log",
+        "builds/ui-t61/ird-gates-branch.log",
+        "builds/ui-t62/ird-gates-branch.log",
+        "builds/ui-t63/ird-gates-branch.log"
+      ]
+    },
+    {
+      "sha256": "d10def653b4b22c46c32f0d9264eefb9ae3704abed1ac88368dcfbf44b511bbb",
+      "paths": [
+        "builds/ui-t65/ird-gates-base-hits-normalized.txt",
+        "builds/ui-t65/ird-gates-branch-hits-normalized.txt"
+      ]
+    },
+    {
+      "sha256": "baf03071da4899b6ab94a0e36ed640adb633f04f1323b3a6f91b92691f6ed95a",
+      "paths": [
+        "builds/ui-t66/ird-gates-base-hits-normalized.txt",
+        "builds/ui-t66/ird-gates-branch-hits-normalized.txt"
+      ]
+    },
+    {
+      "sha256": "0265c0831a2dc9d6a8afa4a33c6e3d839078e783b6cb293339d2535956525639",
+      "paths": [
+        "builds/ui-t67/smoke-tour-modeling/mtour-4-structure.png",
+        "builds/ui-t67/smoke-tour-modeling/mtour-5-applied.png"
+      ]
+    },
+    {
+      "sha256": "cc096862dcf884c9577588bdef918f2b575a39ff7542709bf07853815b2c0275",
+      "paths": [
+        "builds/ui-t67/smoke-tour-modeling/mtour-export.irdbundle",
+        "builds/ui-t68/smoke-tour-modeling/mtour-export.irdbundle",
+        "builds/ui-t71/smoke-tour-modeling/mtour-export.irdbundle",
+        "builds/ui-t72/smoke-tour-modeling/mtour-export.irdbundle",
+        "builds/ui-t73/smoke-tour-modeling/mtour-export.irdbundle",
+        "builds/ui-t74/smoke-tour-modeling/mtour-export.irdbundle"
       ]
     }
   ],
@@ -10246,99 +10248,11 @@
       "lifecycle": "unverified"
     },
     {
-      "path": "builds/ui-t24/acc-smoke/1-default-layout.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 122372,
-      "sha256": "e5bf0fe5de029511cae5be6dcace4ddd9c765afca93b41ff8d0b7e52236dcedf",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/2-view-menu.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 5171,
-      "sha256": "ec26bc99462e158632175b80be1f0addfc354381e3c8f1fba503ea87848a8923",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/3-domain-panel-summoned.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 122372,
-      "sha256": "e5bf0fe5de029511cae5be6dcace4ddd9c765afca93b41ff8d0b7e52236dcedf",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/4-requirements-buttons.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 13290,
-      "sha256": "add4f8e8fdf26cfadb871f01f4ccc37a6f1e5a28ec9d40debac7aa59790e1354",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/5-requirements-narrow.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 14084,
-      "sha256": "c85f943e1cce75be78c42d479a3fa1476a0ca6a6dd8307d5e54dd669c3df45b4",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/6-min-window.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 125720,
-      "sha256": "3e0a6f6e451856bc25b7529d7c45ce92a146e7eb4d6ffb18235fab5c12a0414f",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/7-second-start-memory.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 122372,
-      "sha256": "e5bf0fe5de029511cae5be6dcace4ddd9c765afca93b41ff8d0b7e52236dcedf",
-      "lifecycle": "unverified"
-    },
-    {
       "path": "builds/ui-t24/acc-smoke/acc-mutation-m2.log",
       "kind": "build-log",
       "taskIds": [],
       "bytes": 483,
       "sha256": "d00059424d66e3db8b4244c64a647bdc92819ca2725674111f65452542635c7c",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/acc-smoke-run.log",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 1006,
-      "sha256": "2686141ced76aa45b7eb7105b63b53fdaf469c0caa7b984713991b57b8a2fd36",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/console-layout.log",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 3933,
-      "sha256": "093a99547e891a90337c6c5bc21748de2e3898de15c511a38fdd5ca443688fcb",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/console-layout2.log",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 2121,
-      "sha256": "70a5771ad666be4127228eb3c53499c901a9973fd9bad23f6b9141e863677538",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t24/acc-smoke/geometry-report.txt",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 12867,
-      "sha256": "402a5c060673ddaaaf4cd14f2da307b61b5a64ed71f09c929c771c46c2c6c166",
       "lifecycle": "unverified"
     },
     {
@@ -12555,198 +12469,6 @@
       "taskIds": [],
       "bytes": 1743,
       "sha256": "957a16091ee39b226ab1f49632392b19412d6b96fbad10bd08f6d79bd030f478",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/1-default-layout.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 127902,
-      "sha256": "1e6184e48eebb0268ae112c809fb41808352440497f607de7b3ac5483422cc6f",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/10-tasks-dock-summoned.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 135475,
-      "sha256": "190289c6d08f8e4ef433ade863650205ab09bc501a8cc83f06f0b4fa4b24e673",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/2-view-menu.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 5542,
-      "sha256": "2bbb21f26686f0ac6f28393bd8583a0a2bc7208c08e662e95029c47a9c412146",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/3-domain-panel-summoned.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 130721,
-      "sha256": "67c39308f17e51e6b92a9055e22194eedd7d778498ba4bb2e7b30479647dc40c",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/4-requirements-buttons.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 18670,
-      "sha256": "e263242a284c4b43d744f31fb54264f2bb8bd9cb74fb8a2198a2a581254005e6",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/5-requirements-narrow.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 18670,
-      "sha256": "e263242a284c4b43d744f31fb54264f2bb8bd9cb74fb8a2198a2a581254005e6",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/6-min-window.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 134666,
-      "sha256": "52ddbca39ecb9762de83dbd16ccde921827c9310314be18dff4fcdc475078b03",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/7-second-start-memory.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 125657,
-      "sha256": "c92f2d4862f7f978500199a7d87fd5bc4723a282a01970617795bdb61506a13d",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/8-modeling-panel.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 24857,
-      "sha256": "60340b03912d4dbd5339e38a45bda5a768b7696118c429994ba4d2eae7588c32",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/9-kinematics-panel.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 11989,
-      "sha256": "2b773ff66d3ce747cc9321add246c3c92b1dbb7011f703bf0b39c9286b79bae4",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/console-auto.err",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/console-auto.log",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 2064,
-      "sha256": "c04d476d3c7175fc64a646b8ea46207a0e26b2cfb6740395855a0d2f29246c92",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/console-layout.err",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/console-layout.log",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 6492,
-      "sha256": "c615d5ec74d41d28cf3e90747cd1307a80b6cb56036270c9799c54c672f557e9",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/console-layout2.err",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/console-layout2.log",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 2153,
-      "sha256": "a94a94755ed27658f5dba13614cb1524f52829492e0fd1bb9ca5706682630cd0",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/console-requirements-tour.err",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/console-requirements-tour.log",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 5125,
-      "sha256": "e385096ba12bd9ade6e106e9701e463e8d7448127e1ce59606004c9aef56adbd",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/geometry-report.txt",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 10811,
-      "sha256": "a30f65ca128e3ff20c2add9ed7d8bcb556abe88bf1886c2e29144f35dc00d8cd",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/tour-1-panel-empty-state.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 131407,
-      "sha256": "9b8216fd730e473ec569c9552f0f4689df017ed5e75fffbaec6127067943e648",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/tour-2-station-edited.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 131721,
-      "sha256": "0cc1df9937261bc04ba14a5f1561b0e4398dcde0fbc88ed66efaff40ba33e7f9",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/tour-3-region-sampling.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 133068,
-      "sha256": "eb88682e7f1e4e0998df3fd457c3c8e1a426219ac1782d70f953fd081b824bb0",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/tour-4-validation.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 137484,
-      "sha256": "ab60f703e324c251c5190261bcd215284c557e7d2ea76f2419725e1b45193648",
-      "lifecycle": "unverified"
-    },
-    {
-      "path": "builds/ui-t38/acc-smoke/tour-5-final-state.png",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 134522,
-      "sha256": "490cf9c7bc2ce0031a318c23138a5ba5ce0f9bcf3ad786ab6fe93d8acbcce083",
       "lifecycle": "unverified"
     },
     {
@@ -51486,14 +51208,6 @@
       "lifecycle": "unverified"
     },
     {
-      "path": "builds/wp24-t09/staging-smoke/rwsettings.xml",
-      "kind": "build-log",
-      "taskIds": [],
-      "bytes": 8919,
-      "sha256": "cae1d5354357985712f5d2895ea2706f9bed9cd33821c4d35592086976814f88",
-      "lifecycle": "unverified"
-    },
-    {
       "path": "builds/wp24-t09/staging-smoke/staging-smoke-1-main-window.png",
       "kind": "build-log",
       "taskIds": [],
@@ -51753,7 +51467,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1137136,
+      "bytes": 1138849,
       "sha256": null,
       "lifecycle": "unverified"
     },
