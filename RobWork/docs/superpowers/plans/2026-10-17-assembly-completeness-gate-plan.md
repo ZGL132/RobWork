@@ -3,7 +3,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 文档版本 | v1.0（2026-10-17 起草，待所有者裁决） |
-| 上游决策 | IRD-NOTE-006（proposed——装配与生命周期验证加固，本方案为其第 1/2/3 条的具体落地设计） |
+| 上游决策 | IRD-NOTE-006（implemented——2026-10-17 所有者裁决"通过并按 T1 开工"；本方案为其第 1/2/3 条的具体落地设计） |
 | 关联缺陷 | F-910（生命周期/异常）、F-911（需求草稿挂接缺失——本门禁的天然首个负例） |
 | 侦察事实（2026-10-17，redesign-main@232f4fd6） | 生产装配入口＝`assembleDomainPlugins`（ui/plugin/UiPlugin.cpp:688 → DomainAssembly.cpp）；草稿挂接生产唯一调用 `m_draft->attachModule(modeling::kModuleHandle, …)`（UiPlugin.cpp:2485 打开回调，含 try 隔离）；`modeling::kModuleHandle`＝constexpr（assembly 与 plugin 双定义 "modeling"）；requirements 注册键为字符串 `"requirements"`（requirements.md §11.2，无 constexpr 句柄）；文本扫描契约测试先例＝PluginGraphContractTest（IRD_*_UNIT_ROOT 注入＋指令行扫描，gtest） |
 

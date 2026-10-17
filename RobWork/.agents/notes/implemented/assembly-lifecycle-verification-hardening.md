@@ -3,7 +3,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 编号 | IRD-NOTE-006 |
-| 状态 | proposed（2026-10-17 提案，随 F-910/F-911 手工验证发现起草；待所有者裁决后迁 implemented） |
+| 状态 | implemented（2026-10-17 所有者裁决"通过并按 T1 开工"——四条＋附则＋三条细化全部采纳；proposed→implemented 迁移同批完成） |
 | 关联 | F-910/F-911；docs/superpowers/2026-10-17-host-assembly-lifecycle-gaps-disposition.md |
 
 ## Problem
