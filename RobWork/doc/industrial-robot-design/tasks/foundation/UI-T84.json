@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T84",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主装配与生命周期收口（F-910/F-911 修复＋Tier B 断言——集成父批次）",
+  "status": "ready",
+  "dependsOn": ["UI-T83"],
+  "requirements": ["PM-04", "NFR-REL-01"],
+  "designRefs": [
+    "units/ui.md#5.8",
+    "units/ui.md#11.6",
+    "units/ui.md#12.5"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T84.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**"
+  ],
+  "outputs": ["code-fix", "contract-test", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_ui_gui_test sdurws_ird_studio",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -R \"sdurws_ird_ui_test|sdurws_ird_ui_contract_test\" --output-on-failure"
+  ],
+  "branch": "wp10-t84",
+  "interUnit": false,
+  "acceptance": [
+    "子批 A（F-910）：复现测试先红后绿——真实 UiSessionController＋DraftController＋RuntimePublishBridge 按生产接线形态组装，脏会话关闭触发 presentContext 重入双 teardown，修复前 logic_error 逃逸（红）、修复后零逃逸且桥恰 detach 一次、控制器归 NoProject",
+    "子批 A：桥增 attachOrSwitchHostSession（未绑定→attach／已绑定→switch——处置文档§4 修复方向），切换流 double-attach 关闭；teardown 幂等护栏（每会话恰一次，新会话重武装）；presentContext 回调边界异常隔离三要素（Dev 留痕＋状态栏可见＋恢复成功条件验证后才提示可重试）",
+    "子批 B（F-911）：RequirementsDraftSource 经生产打开路径 attachModule 挂接（requirements::kModuleHandle 补建于 RequirementsPluginAssembly.hpp）；生产 drafts 查询半区真实适配替换 DraftQueryPortStub（project::DraftService::list → DraftRowProjection——PortAdapters.hpp:341 既定设计）；宿主 QTimer 驱动 tickAutosave 兑现 V-13 60s 周期落盘",
+    "子批 B 全链测试：真实 DraftController＋真实 DraftService（临时目录）＋RequirementsDraftSource——编辑→Autosave 落盘→新控制器经真实查询适配器 restoreOnOpen→adopt 内容逐字节一致（禁止夹具自行接线——一律用生产适配器类）",
+    "Tier B＋F-916：清单 requirements 翻 wired:true（wiredAnchor/handleSymbol 填实、waiver 摘除）；AssemblyManifestContractTest 增 manifest handleSymbol↔调用点 token 一致断言",
+    "双模式构建零错误＋既有 ui_test/ui_contract_test/ui_gui_test 零回归＋ird_gates 零命中＋gtest XML 留痕（F-915 口径：本批报告经 <target>_report 目标再生并入 traceability）"
+  ],
+  "note": "集成父批次「宿主装配与生命周期收口」（findings F-910/F-911 owner 行的执行批；处置文档 §4 两子批方向已由所有者 2026-10-17『先修复 F-910 和 F-911』口令授权）。复现前置纪律：子批 A 不在因果链证实前改产品代码——复现测试即证实载体。E2E 五场景（ui.md §12.5）中 S1/S3 由本批测试面钉住，S2 由桥测试覆盖切换分派；真实 GUI 全程验证与 S4/S5 全形态归集成验收面如实登记覆盖度。"
+}
