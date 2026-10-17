@@ -213,6 +213,17 @@ cmake --build <该目录>
 
 ### 6.1 权威文档（写代码前先读对应章节）
 
+**分层阅读顺序（Agent 接手任务时的进入阶梯——逐层按需取用，禁止跳层通读）：**
+
+1. **根规则**：本文件（协作/编码/分支红线总入口）；
+2. **分区规则**（按任务性质二选一，跨区任务两个都读）：设计区 `RobWork/doc/industrial-robot-design/AGENTS.md`（文档链权威关系与阅读路径）｜源码区 `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md`（代码红线速查与测试规则）；
+3. **对应单元**：`units/<unit>.md`（按 ownerUnit 章节级取用）；
+4. **任务契约**：`tasks/<taskId>.json`；
+5. **验证脚本**：`RobWork/scripts/industrialrobot/`（validate-docs / validate-task / verify-task / gate-all）；
+6. **证据**：经设计区 `context/asset-inventory.json` 定位（traceability 证据默认不加载；统一证据索引随治理 Task 7 建）。
+
+> 资产七类分层与默认上下文规则见设计区 `context/README.md`。分区 AGENTS.md 是根规则的本地速查与指向，不是第二份权威——冲突时一律以本文件为准。
+
 ```
 RobWork/doc/industrial-robot-design/
 ├── REQUIREMENTS.md                    # 需求语义与验收标准（唯一权威，ID 如 ARC-01）

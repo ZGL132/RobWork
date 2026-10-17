@@ -120,5 +120,16 @@ if (-not (Test-Path $srcAgentsPath)) {
   # 回指锚兼容"根 AGENTS.md"与 Markdown 反引号写法"根 `AGENTS.md`"（\s* 吃空格、`? 吃反引号）
   if ($srcAgentsText -notmatch '根\s*`?AGENTS\.md') { $errors += 'source AGENTS.md missing root AGENTS.md back-reference' }
 }
+# 根 AGENTS.md 阅读阶梯回链：必须同时指向两个分区规则入口（根 §6.1 分层阅读顺序）。
+# 根文件在仓库根（$RepoRoot 默认解析为 RobWork/ 子目录，故先取上一级；兼容显式传仓库根）。
+$rootAgentsPath = Join-Path $RepoRoot '..\AGENTS.md'
+if (-not (Test-Path $rootAgentsPath)) { $rootAgentsPath = Join-Path $RepoRoot 'AGENTS.md' }
+if (-not (Test-Path $rootAgentsPath)) {
+  $errors += 'root AGENTS.md not found (expected at repo root)'
+} else {
+  $rootAgentsText = Get-Content $rootAgentsPath -Raw -Encoding UTF8
+  if ($rootAgentsText -notmatch [regex]::Escape('doc/industrial-robot-design/AGENTS.md')) { $errors += 'root AGENTS.md missing design-tree AGENTS.md reading-order link' }
+  if ($rootAgentsText -notmatch [regex]::Escape('rwslibs/industrialrobot/AGENTS.md')) { $errors += 'root AGENTS.md missing source-area AGENTS.md reading-order link' }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
 Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets)"
