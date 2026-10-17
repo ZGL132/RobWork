@@ -115,13 +115,22 @@
       "note": "20 单元详设卡 units/<unit>.md；按 ownerUnit 章节级取用"
     },
     {
+      "path": "AGENTS.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": true,
+      "generated": false,
+      "canonicalLinks": ["context/README.md"],
+      "note": "设计区分层规则入口（治理 Task 2）：权威关系表、最小阅读路径、修订纪律；新会话进入设计树第一读"
+    },
+    {
       "path": "context",
       "kind": "workflow",
       "owner": "owner",
       "defaultContext": true,
       "generated": false,
       "canonicalLinks": [],
-      "note": "治理元层：资产分类/默认上下文规则/阅读入口（本目录）；唯一 defaultContext=true 的根级资产"
+      "note": "治理元层：资产分类/默认上下文规则/阅读入口（本目录）；与 AGENTS.md 同为 defaultContext=true 的入口资产"
     },
     {
       "path": "traceability/pipeline/state.json",

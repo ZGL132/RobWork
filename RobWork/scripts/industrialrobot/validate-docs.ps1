@@ -98,5 +98,27 @@ if (-not (Test-Path $inventoryPath)) {
     $assetCount = @($inv.assets).Count
   }
 }
+# ---------- 分层规则入口门禁（Agent-native 治理 Task 2，2026-10-17） ----------
+# 根 AGENTS.md 是唯一总入口，设计区/源码区各设一层本地 AGENTS.md（阅读阶梯见根 §6.1）。
+# 本段检查两份分区规则文件存在、设计区规则写全六类权威资产与 context/ 入口链接、
+# 源码区规则回指根 AGENTS.md——防止分层入口被删或断链而无人察觉（引用不复制原则：
+# 分区文件只做速查与指向，全量规则仍在根 AGENTS.md，防止两份文本漂移）。
+$designAgentsPath = Join-Path $base 'AGENTS.md'
+if (-not (Test-Path $designAgentsPath)) {
+  $errors += 'missing design-tree AGENTS.md (layered rule entry)'
+} else {
+  $designAgentsText = Get-Content $designAgentsPath -Raw -Encoding UTF8
+  foreach ($anchor in 'REQUIREMENTS.md','ARCHITECTURE.md','development-task-breakdown.md','tasks','traceability','units','context/README.md') {
+    if ($designAgentsText -notmatch [regex]::Escape($anchor)) { $errors += "design AGENTS.md missing authority link: $anchor" }
+  }
+}
+$srcAgentsPath = Join-Path $RepoRoot 'RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md'
+if (-not (Test-Path $srcAgentsPath)) {
+  $errors += 'missing source-area AGENTS.md (layered rule entry)'
+} else {
+  $srcAgentsText = Get-Content $srcAgentsPath -Raw -Encoding UTF8
+  # 回指锚兼容"根 AGENTS.md"与 Markdown 反引号写法"根 `AGENTS.md`"（\s* 吃空格、`? 吃反引号）
+  if ($srcAgentsText -notmatch '根\s*`?AGENTS\.md') { $errors += 'source AGENTS.md missing root AGENTS.md back-reference' }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
 Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets)"

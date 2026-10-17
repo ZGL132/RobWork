@@ -5,7 +5,7 @@
 | 文档版本 | v1.0（2026-10-17，随 Agent-native 治理 Task 1 建立） |
 | 用途 | 定义本设计树（`doc/industrial-robot-design/`）全部资产的**七类分层**与**默认是否进入 Agent 上下文**的规则；配套机器清单见同目录 `asset-inventory.json`（由 validate-docs.ps1 门禁校验） |
 | 上游 | 仓库根 `AGENTS.md`（Agent 协作总入口）；实施计划 `docs/superpowers/plans/2026-10-16-agent-native-context-governance-plan.md` |
-| 阅读阶梯 | 新会话：根 AGENTS.md → 本文件 → `asset-inventory.json` → 按任务 ID 取 `tasks/` 契约 → 按 ownerUnit 取 `units/<unit>.md` 对应章节 |
+| 阅读阶梯 | 新会话：根 AGENTS.md → 本树 `AGENTS.md`（分区规则）→ 本文件 → `asset-inventory.json` → 按任务 ID 取 `tasks/` 契约 → 按 ownerUnit 取 `units/<unit>.md` 对应章节 |
 
 ---
 
@@ -33,10 +33,11 @@
 新会话接手任务时的**默认且仅默认**加载以下内容，其余资产一律按需章节级取用：
 
 1. 仓库根 `AGENTS.md`（协作与编码总规则）；
-2. 本文件 + `asset-inventory.json`（资产地图）；
-3. 按任务 ID 取 `tasks/<taskId>.json` 契约；
-4. 按契约的 ownerUnit / 需求引用取 `units/<unit>.md` 对应章节与 REQUIREMENTS 对应条目；
-5. 流水线当前状态读 `traceability/pipeline/state.json` 本体（见 §4）。
+2. 本树 `AGENTS.md`（设计区分层规则：权威关系与阅读路径，治理 Task 2 建）；
+3. 本文件 + `asset-inventory.json`（资产地图）；
+4. 按任务 ID 取 `tasks/<taskId>.json` 契约；
+5. 按契约的 ownerUnit / 需求引用取 `units/<unit>.md` 对应章节与 REQUIREMENTS 对应条目；
+6. 流水线当前状态读 `traceability/pipeline/state.json` 本体（见 §4）。
 
 **禁止**默认整册加载：REQUIREMENTS.md、ARCHITECTURE.md、development-task-breakdown.md、traceability/ 证据。阅读路径细化（核心算法/Qt 功能/持久化/流程门禁/测试故障五条）由 Task 3 的 `context/reading-paths.md` 补齐。
 

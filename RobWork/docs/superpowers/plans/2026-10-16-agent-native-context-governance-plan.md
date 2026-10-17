@@ -41,14 +41,14 @@
 
 - Create: RobWork/doc/industrial-robot-design/AGENTS.md
 - Create: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md
-- Create: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/tests/AGENTS.md
 - Modify: AGENTS.md
+- （落位适配 2026-10-17：原定 tests/AGENTS.md 并入源码区 AGENTS.md 的"测试规则"节——仓库无顶层 tests/ 目录，测试按 `<unit>/test`、`<unit>/contract_test`、`<unit>/gui_test`、`<unit>/perf_test` 分散组织，单设 tests/ 目录放规则文件不会被按目录工作的 Agent 发现）
 
 - [ ] 在根 AGENTS.md 增加阅读顺序：根规则、设计规则、对应 unit、任务 JSON、验证脚本、证据索引。
 - [ ] 在 design/AGENTS.md 明确 REQUIREMENTS、ARCHITECTURE、units、development-task-breakdown、tasks 和 traceability 的权威关系。
 - [ ] 在源码 AGENTS.md 只保留 C++17、命名空间、Qt 分层、公共头、框架只读、注释契约、测试命名和 Windows GUI 规则。
-- [ ] 在 tests/AGENTS.md 规定单元、契约、集成和 GUI 测试的所有者与证据输出。
-- [ ] 扩展 validate-docs.ps1 检查规则文件存在及链接有效；运行门禁并提交 [docs] 增加工业机械臂分层 Agent 规则入口。
+- [ ] 在源码区 AGENTS.md 测试规则节规定单元、契约、GUI、性能四类测试的所有者与证据输出；"集成"口径＝双模式构建的集成模式门禁（根 §4.1，唯一交付口径）。
+- [ ] 扩展 validate-docs.ps1 检查规则文件存在及链接有效；运行门禁并提交 [docs] 增加工业机械臂分层 Agent 规则入口。根 AGENTS.md 的改动单独成提交、单独验收（回退讨论对策：入口文件影响所有后续会话）。
 
 ### Task 3：建立最小阅读路径，停止默认全文加载
 
