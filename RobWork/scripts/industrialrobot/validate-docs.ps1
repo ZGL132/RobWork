@@ -131,5 +131,30 @@ if (-not (Test-Path $rootAgentsPath)) {
   if ($rootAgentsText -notmatch [regex]::Escape('doc/industrial-robot-design/AGENTS.md')) { $errors += 'root AGENTS.md missing design-tree AGENTS.md reading-order link' }
   if ($rootAgentsText -notmatch [regex]::Escape('rwslibs/industrialrobot/AGENTS.md')) { $errors += 'root AGENTS.md missing source-area AGENTS.md reading-order link' }
 }
+# ---------- Agent Notes 决策记录门禁（Agent-native 治理 Task 4，2026-10-17） ----------
+# .agents/notes/ 是长期决策叙事（治理原则 5：决策即资产）。本段校验目录结构、六段式
+# 齐全与 implemented 禁计划语气（启发式黑名单——机器拦明显违例，真把关在验收 review）。
+# 权威分工：ARCHITECTURE 仍是规则 normative 权威，Notes 只承载叙事不复制规则正文。
+$notesBase = Join-Path $RepoRoot '.agents/notes'
+$noteSections = @('## Problem','## Decision','## Alternatives considered','## Consequences','## Verification','## Related sources')
+if (-not (Test-Path (Join-Path $notesBase 'README.md'))) { $errors += 'missing .agents/notes/README.md (decision record format)' }
+$noteCount = 0
+foreach ($sd in 'implemented','proposed','rejected') {
+  $dir = Join-Path $notesBase $sd
+  if (-not (Test-Path $dir)) { $errors += "missing notes status dir: $sd"; continue }
+  foreach ($n in @(Get-ChildItem $dir -Filter '*.md' -ErrorAction SilentlyContinue)) {
+    $noteCount++
+    $nt = Get-Content $n.FullName -Raw -Encoding UTF8
+    foreach ($sec in $noteSections) {
+      if ($nt -notmatch [regex]::Escape($sec)) { $errors += "note missing section '$sec': $($sd)/$($n.Name)" }
+    }
+    if ($nt -notmatch 'IRD-NOTE-') { $errors += "note missing IRD-NOTE id: $($sd)/$($n.Name)" }
+    if ($sd -eq 'implemented') {
+      foreach ($w in '待实现','将落位','尚未实现','计划中','拟实现') {
+        if ($nt -match $w) { $errors += "implemented note uses plan-tone wording '$w': $($n.Name)" }
+      }
+    }
+  }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
-Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets)"
+Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes)"

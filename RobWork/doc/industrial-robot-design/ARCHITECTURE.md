@@ -61,6 +61,8 @@ units/*.md ＋ development-task-breakdown.md —— 单元任务卡与任务/构
 | PA-6 | 框架为基线、不作分叉 | RobWork/RobWorkStudio/RobWorkSim 零源码修改，确需修改走集中补丁登记（§5，SA-02） |
 | PA-7 | 架构一次成型、分期启用 | R1/R2 全量范围共用同一架构；R2 能力（MDL-18/21、KIN-09~11、SEL-09-S1/MDL-12-S1、TRJ-08-S1~S3、OPT-D、PM 分期子项）在既有单元内扩展，不新增架构机制（§10.2 核对表） |
 
+> **决策叙事**（问题/备选/后果，治理 Task 4 于 2026-10-17 迁移登记）：PA-2 不可变历史见 [IRD-NOTE-003](../../.agents/notes/implemented/pa2-immutable-revision-history.md)；PA-5 计算与界面分离见 [IRD-NOTE-004](../../.agents/notes/implemented/pa5-compute-ui-separation-zero-qt.md)。本表仍是规则 normative 权威，Notes 只承载叙事，不复制规则正文。
+
 ### 1.4 命名与引用约定
 
 - 需求条目引用 `REQUIREMENTS.md` 的 ID（如 ARC-01、AT-18）；本文不重定义、不收窄、不扩大其语义。需求附录引用按 v1.8 起编号：附录 A（旧代码功能级台账）、附录 B（旧功能处置三分类）、附录 C（待冻结前置）；附录 D（数值容差汇总表）按 v1.13 起存在（P-01 冻结产物），正文 §7.6 等已引用。
@@ -190,6 +192,8 @@ L1  框架基线      RobWork(rw) │ RobWorkSim(rwsim) │ RobWorkStudio(rws) �
 
 **SA-10（依赖红线即构建门禁）**：上述红线不是评审约定而是构建期硬门禁；例外只能登记在权威所有者单元（如 R-4 的名称解析器、R-3 的 ui 单元），未登记例外出现即失败。
 
+> **决策叙事**（治理 Task 4 于 2026-10-17 迁移登记）：R-1 业务域互链禁止与六类端口设计见 [IRD-NOTE-002](../../.agents/notes/implemented/r1-business-unit-no-interlink.md)。
+
 ### 3.3 业务域单元的二分结构
 
 每个业务域单元交付两类目标：
@@ -316,6 +320,8 @@ execution 的 ResourceController 汇总主进程＋全部工作进程内存占�
 | Qt | UI、进程与线程设施 | L3 以上允许；L2 禁止 |
 
 ### 5.2 SA-02：框架零修改＋集中补丁登记
+
+> **决策叙事**（治理 Task 4 于 2026-10-17 迁移登记）：[IRD-NOTE-001](../../.agents/notes/implemented/sa02-framework-zero-modification.md)。
 
 力争对 RobWork/RobWorkStudio/RobWorkSim 源码**零修改**。确需修改时：
 
@@ -464,6 +470,8 @@ Verified 结果与正式报告引用的外部资源（网格、目录）必须�
 **禁止清单（ARC-02）**：读取其他插件控件、内存对象或私有文件；持有影响计算的私有开关、默认值或重复算法（ARC-05）；静态扫描验收零命中（NFR-MNT-02/07）。
 
 ### 7.3 权威模型与确定性编译（支柱三，SA-04）
+
+> **决策叙事**（治理 Task 4 于 2026-10-17 迁移登记）：[IRD-NOTE-005](../../.agents/notes/implemented/sa04-deterministic-compilation.md)。
 
 三段链，运动学真值唯一（ARC-03）：
 

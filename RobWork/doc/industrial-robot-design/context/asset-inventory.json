@@ -160,6 +160,15 @@
       "note": "规则执法分级审计表（gate/review/behavioral＋执法者指针，治理原则 1 落地，Task 3）；新规则落文时同步登记"
     },
     {
+      "path": "../../.agents/notes",
+      "kind": "decision",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["../../.agents/notes/README.md"],
+      "note": "长期决策记录 Agent Notes（治理 Task 4 建）：六段式叙事；已决叙事归此、在途待裁决归 governance-log、规则正文权威仍归 ARCHITECTURE。跨树登记（路径相对本设计树根出逃两级）"
+    },
+    {
       "path": "traceability/pipeline/state.json",
       "kind": "authority",
       "owner": "pipeline",

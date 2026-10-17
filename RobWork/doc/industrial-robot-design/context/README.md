@@ -25,7 +25,7 @@
 | task-source | 任务契约来源 | development-task-breakdown.md、tasks/*.json、traceability/phase-one-task-index.json | 否——**按任务 ID 取对应契约**，不通读 | 契约编译按 CCP 协议；修订与任务行同批 |
 | generated | 脚本生成物，**禁止手改** | context/packs/（Task 6 建）、traceability/evidence-index.json（Task 7 建）；state.json 具机器生成属性但按 authority 语义登记（权威优先，`generated=true` 标记生成方式） | 否——经校验脚本消费 | 只能由对应脚本重建；过期即重跑脚本，不手工修补 |
 | evidence | 运行与验收证据 | traceability/ 下验收记录、构建日志、gtest XML、findings 附件等 | 否——**默认不加载**，按任务/单元经索引检索（Task 7 前用路径约定） | 只增不改（PA-2 不可变历史精神）；删除/移动须先过证据索引 |
-| decision | 长期决策记录（Agent Notes） | `RobWork/.agents/notes/`（Task 4 建，当前为空） | 否——按决策主题检索 | Problem/Decision/Alternatives/Consequences/Verification/Related sources 六段式；implemented 不得用计划语气 |
+| decision | 长期决策记录（Agent Notes） | `RobWork/.agents/notes/`（Task 4 已建：implemented 五条） | 否——按决策主题检索 | Problem/Decision/Alternatives/Consequences/Verification/Related sources 六段式；implemented 不得用计划语气（validate-docs 启发式黑名单＋验收 review 把关） |
 | archive | 已被取代的历史资产 | 当前无 | 否 | 任何资产移入 archive 前必须先过 Task 7 证据索引的链接完整性校验 |
 
 ## 3. 新会话默认上下文规则（起步集）
