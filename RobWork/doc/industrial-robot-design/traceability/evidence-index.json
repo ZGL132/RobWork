@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-17T18:12:34+08:00",
+  "generatedAt": "2026-10-17T18:26:10+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6591,
-    "totalBytes": 207372449,
+    "totalFiles": 6592,
+    "totalBytes": 207377057,
     "byKind": {
-      "json-data": 7,
       "manual-acceptance": 1,
-      "log": 1,
+      "build-log": 5656,
       "markdown-doc": 41,
       "pipeline-artifact": 2,
-      "governance-record": 30,
-      "acceptance-record": 510,
+      "acceptance-record": 511,
+      "benchmark": 8,
+      "json-data": 7,
       "gtest-report": 335,
-      "build-log": 5656,
-      "benchmark": 8
+      "governance-record": 30,
+      "log": 1
     },
     "byLifecycle": {
-      "current": 70,
-      "historical": 518,
       "unverified": 6003,
-      "superseded": 0
+      "superseded": 0,
+      "historical": 519,
+      "current": 70
     },
-    "associated": 591,
+    "associated": 592,
     "unassociated": 6000,
-    "shaComputed": 6573,
+    "shaComputed": 6574,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -4476,6 +4476,16 @@
       ],
       "bytes": 6483,
       "sha256": "21fc70b31fa4b221ef2b3a0e17a73c7bb368f0e91d6868ab17e76beb4120a9bb",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/UI-T83-20261017.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "UI-T83"
+      ],
+      "bytes": 4608,
+      "sha256": "ad1b349daf8e1485a9e12951b6ee8dd8c021a8787b3c23127e521c2e7097972e",
       "lifecycle": "historical"
     },
     {
