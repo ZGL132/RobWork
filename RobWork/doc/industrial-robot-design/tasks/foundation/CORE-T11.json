@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-B",
   "title": "单元卡与实现一致性核查（治理试点：上下文包新会话接手）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T10"],
   "requirements": ["NFR-MNT-05"],
   "designRefs": ["units/core.md#9", "units/core.md#3", "units/core.md#10"],
@@ -34,5 +34,5 @@
     "发现语义级偏差登记 findings.json（不私改设计语义）",
     "交接记录含实际 SHA、命令与四态验证结果"
   ],
-  "note": "Agent-native 治理 Task 8 试点：新会话只凭仓库＋TaskId＋分支＋上下文包接手（先卡后码；授权链＝治理计划 Task 8＋所有者逐任务推进指令）。"
+  "note": "Agent-native 治理 Task 8 试点：新会话只凭仓库＋TaskId＋分支＋上下文包接手（先卡后码；授权链＝治理计划 Task 8＋所有者逐任务推进指令）。2026-10-17 合入 redesign-main：attempt 1 verdict=FAIL（两阻断——F-908/F-909 治理脚本环境敏感缺陷，归主线 9d297aab 修复；head SHA 未回填）→ 返工 397a5465 → attempt 2 verdict=PASS（独立对抗式验收；canonical 总记录 context/handoff-drill.md，实施者一手记录经合并第二父提交留档）；实现批 wp03-t11 合入提交 213dcfe7（冲突 3 文件按 canonical 口径取主线侧＋两包按合并终态再生成），本卡随收尾批翻 done。"
 }
