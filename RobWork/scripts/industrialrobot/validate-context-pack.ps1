@@ -42,9 +42,26 @@ foreach ($p in $packs) {
   # per-pack 新鲜标记（审查 P2 对策，2026-10-17）：按包名匹配 stale 数组会把只含
   # 任务 ID 的 DRIFT 行漏算，出现 stale>0 而 fresh=包总数的误导统计
   $packHasStale = $false
-  # ① 结构检查
+  # ① 结构检查（2026-10-17 二轮审查 P2 对策：契约存在性/身份一致性移出状态行解析
+  # 之外——伪造包删掉"任务状态（契约）"行不应绕过契约核对；指纹表头必须显式
+  # 'git blob SHA-1'——防 SHA-256 误标口径的包混入）
   if ($t -notmatch 'build-context-pack\.ps1') { $structural += "pack missing generator marker: $($p.Name)" }
   if ($t -notmatch '源文件指纹') { $structural += "pack missing blob-SHA fingerprint section: $($p.Name)" }
+  if ($t -notmatch '(?m)^\|\s*源文件\s*\|\s*git blob SHA-1\s*\|') { $structural += "pack fingerprint table header must be 'git blob SHA-1': $($p.Name)" }
+  if ($t -notmatch '\|\s*任务状态（契约）\s*\|') { $structural += "pack missing contract status row: $($p.Name)" }
+  # 契约存在性与身份一致性（无条件执行，不依赖状态行存在）
+  $contractFile = @(Get-ChildItem (Join-Path $base 'tasks') -Recurse -Filter "$tid.json" | Select-Object -First 1)
+  $cxPack = $null
+  if ($contractFile.Count) { $cxPack = Get-Content $contractFile[0].FullName -Raw -Encoding UTF8 | ConvertFrom-Json }
+  else { $structural += "pack references unknown task (contract JSON not found): $($p.Name)" }
+  if ($t -match '(?m)^#\s*上下文包：(\S+?)(?:\s|——)') {
+    $packTid = $Matches[1]
+    if ($packTid -ne $tid) { $structural += "pack heading taskId mismatch: heading=$packTid file=$tid ($($p.Name))" }
+    if ($cxPack -and "$($cxPack.taskId)" -ne $tid) { $structural += "contract taskId mismatch: contract=$($cxPack.taskId) file=$tid ($($p.Name))" }
+    if ($t -match '(?m)^#\s*上下文包：\S+\s*——\s*(.+?)\s*$') {
+      if ($cxPack -and ("$($cxPack.title)".Trim() -ne $Matches[1])) { $structural += "pack heading title mismatch with contract: ($($p.Name))" }
+    }
+  } else { $structural += "pack heading '上下文包：<taskId> —— <title>' unparsable: $($p.Name)" }
   # ④ PIPE 权威红线：包内禁流水线状态字段副本（JSON 形态匹配，误报面窄）
   foreach ($marker in '"phase"\s*:', '"heartbeat"', '"queue"\s*:') {
     if ($t -match $marker) { $structural += "pack violates PIPE authority red line (state copy '$($marker.Trim())'): $($p.Name)" }
@@ -72,17 +89,10 @@ foreach ($p in $packs) {
     }
   }
   if ($rowSeen -eq 0) { $structural += "pack fingerprint table empty/unparsable: $($p.Name)" }
-  # ③ 契约状态漂移：包内登记的契约 status vs 当前契约 JSON（审查 P2 对策：包存在
-  # 而契约缺失＝结构错误，不得静默跳过）
-  if ($t -match '\|\s*任务状态（契约）\s*\|\s*(\S+)\s*\|') {
+  # ③ 契约状态漂移：状态行缺失已在 ① 报结构错；两者齐备时比对（复用 ① 的 $cxPack）
+  if ($cxPack -and $t -match '\|\s*任务状态（契约）\s*\|\s*(\S+)\s*\|') {
     $packedStatus = $Matches[1]
-    $contractFile = @(Get-ChildItem (Join-Path $base 'tasks') -Recurse -Filter "$tid.json" | Select-Object -First 1)
-    if ($contractFile.Count) {
-      $cx = Get-Content $contractFile[0].FullName -Raw -Encoding UTF8 | ConvertFrom-Json
-      if ("$($cx.status)" -ne "$packedStatus") { $stale += "DRIFT contract status: pack=$packedStatus current=$($cx.status) ($tid) (pack $($p.Name))"; $packHasStale = $true }
-    } else {
-      $structural += "pack references unknown task (contract JSON not found): $($p.Name)"
-    }
+    if ("$($cxPack.status)" -ne "$packedStatus") { $stale += "DRIFT contract status: pack=$packedStatus current=$($cxPack.status) ($tid) (pack $($p.Name))"; $packHasStale = $true }
   }
   if (-not $packHasStale) { $fresh++ }
 }

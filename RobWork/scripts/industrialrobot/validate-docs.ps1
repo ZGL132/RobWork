@@ -183,7 +183,7 @@ foreach ($sn in $skillNames) {
 }
 # ---------- 上下文包门禁（Agent-native 治理 Task 6，2026-10-17） ----------
 # context/packs/ 是脚本生成的按任务上下文包（生成物禁手改）。本段轻量校验生成器
-# 标记与指纹段头——防手改伪装；新鲜度（SHA-256 重算报 STALE）与 PIPE 权威红线
+# 标记与指纹段头——防手改伪装；新鲜度（git blob SHA-1 重算报 STALE）与 PIPE 权威红线
 # （包内禁 state.json 状态字段副本）由专用脚本 validate-context-pack.ps1 承担
 # （过期是预期状态，不在此失败——包按需重生成）。
 $packsDir = Join-Path $base 'context/packs'
@@ -193,7 +193,8 @@ if (Test-Path $packsDir) {
     $packCount++
     $pt = Get-Content $pk.FullName -Raw -Encoding UTF8
     if ($pt -notmatch 'build-context-pack\.ps1') { $errors += "pack missing generator marker: $($pk.Name)" }
-    if ($pt -notmatch '源文件指纹') { $errors += "pack missing SHA-256 fingerprint section: $($pk.Name)" }
+    if ($pt -notmatch '源文件指纹') { $errors += "pack missing blob-SHA fingerprint section: $($pk.Name)" }
+    if ($pt -notmatch '(?m)^\|\s*源文件\s*\|\s*git blob SHA-1\s*\|') { $errors += "pack fingerprint table header must be 'git blob SHA-1': $($pk.Name)" }
   }
 }
 # ---------- 证据索引门禁（Agent-native 治理 Task 7，2026-10-17） ----------

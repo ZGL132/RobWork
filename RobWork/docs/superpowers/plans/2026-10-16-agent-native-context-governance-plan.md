@@ -29,7 +29,7 @@
 | 真实验证优先 | mock 只允许在昂贵/非确定边界 | 源码区 AGENTS.md §4 测试替身政策（2026-10-17 落文，review 层执法） |
 | 决策即资产 | 理由与被否方案是组织记忆，遗忘是负债 | Task 4（Agent Notes 六段式含 Alternatives considered）；与 governance-log（待裁决流转）分工：Notes 记已决，台账记在途 |
 | 人机同规 | 人与 Agent 过同一套门禁，提交署名人负最终责任 | 根 AGENTS.md §6.2 人机同规条款（2026-10-17 落文，review 层执法）；CI 对所有提交者一致 |
-| 证据文化 | A claim is falsifiable and recomputable | 根 §7 三态汇报；DoD 留痕；Task 6/7（源文件 SHA-256＋可重算上下文包/证据索引） |
+| 证据文化 | A claim is falsifiable and recomputable | 根 §7 三态汇报；DoD 留痕；Task 6/7（源文件 git blob SHA-1＋可重算上下文包/证据索引） |
 
 执行纪律：**先门禁后加速**（新自动化上线前对应门禁先落）；原则只安一个家（本节），各层文档引用不复制；宁标 behavioral，不造摆设门禁——字符串满足型检查教会 Agent 作弊，违背原则本意。
 
@@ -138,7 +138,7 @@
 - Modify: validate-docs.ps1
 
 - [ ] build-context-pack.ps1 接受 TaskId 或 Unit，解析任务 JSON 的 ownerUnit、需求、验证命令和证据路径。
-- [ ] 输出 taskId.md，包含任务身份、基线、规则、权威章节、代码根、禁止路径、验证命令和已知阻塞，并记录源文件 SHA-256。
+- [ ] 输出 taskId.md，包含任务身份、基线、规则、权威章节、代码根、禁止路径、验证命令和已知阻塞，并记录源文件指纹（2026-10-17 修正：git blob SHA-1，40 位——原拟 SHA-256，实测字节哈希在 autocrlf 下随检出行尾漂移改 blob 指纹，F-909）。
 - [ ] validate-context-pack.ps1 在源文件变化后报告 pack 过期；默认不嵌入 traceability 原始日志。
 - [ ] 选择一个 core 或 diagnostics 任务试生成，确认不读完整 development-task-breakdown.md 也能定位实现和测试。
 - [ ] 运行两个脚本和 validate-docs.ps1；提交 [tooling] 增加按任务生成的工业机械臂上下文包。

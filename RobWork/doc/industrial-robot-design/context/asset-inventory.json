@@ -202,7 +202,7 @@
       "defaultContext": false,
       "generated": true,
       "canonicalLinks": [],
-      "note": "按任务生成的最小上下文包（build-context-pack.ps1，治理 Task 6）：任务身份/阅读阶梯/权威章节/改动面/验证命令/已知阻塞/源文件 SHA-256 指纹；validate-context-pack.ps1 报过期（STALE=exit 2）；接手任务时按需生成消费，不默认加载"
+      "note": "按任务生成的最小上下文包（build-context-pack.ps1，治理 Task 6）：任务身份/阅读阶梯/权威章节/改动面/验证命令/已知阻塞/源文件 git blob SHA-1 指纹（40 位，行尾无关）；validate-context-pack.ps1 报过期（STALE=exit 2）；接手任务时按需生成消费，不默认加载"
     },
     {
       "path": "traceability/pipeline/state.json",
