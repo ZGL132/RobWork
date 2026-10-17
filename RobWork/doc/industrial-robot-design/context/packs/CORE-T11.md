@@ -4,9 +4,9 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 生成时间 | 2026-10-17T18:38:10+08:00 |
-| 生成基线 | git HEAD a07ebe3b16e9ab98f35309b18b3d47a0fa999f0e |
-| 任务状态（契约） | ready |
+| 生成时间 | 2026-10-17T18:42:21+08:00 |
+| 生成基线 | git HEAD f2e3289c4a799b0246ef2675d37f1a4430709c16 |
+| 任务状态（契约） | done |
 | 单元 / 主 WP | core / WP-B |
 | 分支 | wp03-t11 |
 | 跨单元 | False |
@@ -60,7 +60,7 @@
 
 | 源文件 | git blob SHA-1 |
 | --- | --- |
-| RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T11.json | 0f5eff39e400784a52c7d98892c42f2b506c4225 |
+| RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T11.json | 6e74778d5f400e46cdd36b84a1bdde77c1886522 |
 | RobWork/doc/industrial-robot-design/units/core.md | 07e3b38a4bc98d0e2223cf5de83d7c8880c99dce |
 | RobWork/doc/industrial-robot-design/REQUIREMENTS.md | 349489fe5cf47c956a8007a58c187568642533ad |
 | RobWork/doc/industrial-robot-design/context/reading-paths.md | 1b7d1bcc50fca5b8e0efd7947bb76ae79a77e87f |
