@@ -770,7 +770,18 @@ void IrdWorkbenchHostPlugin::initialize()
         // 方先落定（关闭链 resetToNoProject 先于本回调），验证"无项目"成
         // 立才提示可重试，不成立则提示重启（状态不可确认→显性故障处置）。
         try {
+            // 边界覆盖整个回调体（UI-T84 实测扩面）：除域同步外，内容面
+            // 投影（presentProjectContext→命令可用性重估——undo/redo 谓词
+            // 现取 branchTips）与投影缓存同在关闭收尾的已关闭上下文上跑，
+            // 同属本捕获边界（冒烟 step8 实测 context-closed 由此逃逸）。
             syncDomainModulesToContext(context);
+            if (m_content) {
+                m_content->presentProjectContext(context);
+            }
+            // 投影缓存（UI-T39——撤销/重做后重发触发谓词重估的快照源；项目
+            // 关闭的空投影同样缓存——关闭后的撤销重发即"无项目"快照，门控
+            // 语义一致）。
+            m_lastContextProjection = context;
         } catch (const std::exception& syncError) {
             const bool recoveredNoProject =
                 (m_controller == nullptr || !m_controller->hasOpenSession());
@@ -790,13 +801,6 @@ void IrdWorkbenchHostPlugin::initialize()
                     8000);
             }
         }
-        if (m_content) {
-            m_content->presentProjectContext(context);
-        }
-        // 投影缓存（UI-T39——撤销/重做后重发触发谓词重估的快照源；项目
-        // 关闭的空投影同样缓存——关闭后的撤销重发即"无项目"快照，门控
-        // 语义一致）。
-        m_lastContextProjection = context;
     };
     // 关闭对话框"保存"决议的执行半区（§5.4/[保存]→saveAll(Manual)）：
     // UI-T17 起接线（此前与 harness 同口径不接线——关闭链路不可达；本任务
@@ -2648,7 +2652,31 @@ void IrdWorkbenchHostPlugin::assembleDraftChain()
     // 计数收口随上下文销毁语义一并作废）。
     deps.postToUiThread = [this](std::function<void()> task) -> bool {
         if (m_dockBody.data() != nullptr) {
-            QMetaObject::invokeMethod(m_dockBody.data(), std::move(task),
+            // Marshal 边界异常隔离（F-910 同批——UI-T84，异常隔离三要素的
+            // Qt 回调边界半区）：队列回执在 Qt 事件循环内执行，任何异常将
+            // 直穿 exec() 落到 StudioMain 兜底 catch 致整站退出（A5 放大环
+            // 节的队列面——真机冒烟 step8 实测：关闭收尾期迟到回执查询已
+            // 关闭上下文抛 context-closed）。回执边界捕获：Dev 留痕可归因
+            // ＋状态栏可见；状态一致性由各回执自身补偿语义承载（落盘回执
+            // 只更新脏位/状态行，失败形态走既有返回值轨），不吞不崩。
+            auto guarded = [this, task = std::move(task)]() mutable {
+                try {
+                    task();
+                } catch (const std::exception& receiptError) {
+                    if (m_diag.pipeline) {
+                        m_diag.pipeline->logDev(
+                            kPluginDevChannel,
+                            std::string("回执Marshal异常已隔离：")
+                                + receiptError.what());
+                    }
+                    if (m_hostStatusBar != nullptr) {
+                        m_hostStatusBar->showMessage(
+                            QString::fromUtf8("后台回执处理异常（已隔离，详情见开发日志）"),
+                            8000);
+                    }
+                }
+            };
+            QMetaObject::invokeMethod(m_dockBody.data(), std::move(guarded),
                                       Qt::QueuedConnection);
             return true;
         }
@@ -5018,8 +5046,13 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
                         m_diag.pipeline->logDev(kPluginDevChannel, message);
                     }
                 });
-            const bool step4Ok = applyReport.entries.size() == std::size_t{3}
-                                 && applyReport.noDraftCount() == 3;
+            // 冒烟断言随域扩展如实校正（UI-T84 实测登记）：遍历语义不变
+            // （全部 NoDraft——demo 无域编辑，不产生空修订），模块数随草稿
+            // 源挂接面增长（三域时代断言 3，六模块时代为 6——需求域经
+            // F-911 挂接后纳入遍历）。判据锚定"逐行 NoDraft"语义而非计数。
+            const bool step4Ok = applyReport.entries.size() >= std::size_t{3}
+                                 && applyReport.entries.size()
+                                        == applyReport.noDraftCount();
             std::cout << "[ird-ui-smoke] step4 apply-modules="
                       << applyReport.entries.size()
                       << " noDraft=" << applyReport.noDraftCount()
@@ -5058,8 +5091,12 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
                 for (const ui::PluginAssemblyReport& report :
                      bundleAboutSource(*m_domains)->assemblyReports()) {
                     if (report.pluginId == "modeling") {
+                        // 命令数下限锚（UI-T84 实测校正：初版钉 10——后续批
+                        // 次为 modeling 追加命令后漂为 11，冒烟因环境门未跑
+                        // 未被看住；改下限锚≥10 保持"句法校验通过面非缩水"
+                        // 语义，精确计数回归随面板登记表测试承载）。
                         step7Ok = report.ok && report.panelsLoaded == 1
-                                  && report.commandsRegistered == 10;
+                                  && report.commandsRegistered >= 10;
                         modelingCommands = report.commandsRegistered;
                         break;
                     }
@@ -5069,8 +5106,74 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
                       << (step7Ok ? "ok" : "fail") << " commands="
                       << modelingCommands << std::endl;
 
+            // 步骤 8（UI-T84——F-910 真实宿主 S1）：同进程关闭→重开全协议。
+            // 关闭走真实状态机（beginClose→resolveCloseDialog Confirmed——
+            // 对话框呈现归交互流，此处直投决议值面），同步或 Draining 收口
+            // 后重开同一 demo 路径（openViaSessionController 交互同款入口）。
+            // 断言面＝重开成功＋桥重新绑定＋草稿会话在位——修复前脏位/孤
+            // 儿草稿形态下关闭拍 presentContext 重入双 teardown 命中桥"未
+            // 绑定拆绑"logic_error 直穿事件循环（StudioMain 兜底退出＝
+            // 手工验证 A5），修复后本步零异常通过。
+            bool step8Ok = false;
+            try {
+            if (m_controller != nullptr && m_controller->hasOpenSession()) {
+                std::cout << "[ird-ui-smoke] step8 probe: begin-close" << std::endl;
+                (void)m_controller->beginClose(UiCloseIntent::CloseProject);
+                std::cout << "[ird-ui-smoke] step8 probe: resolve-close" << std::endl;
+                const CloseDialogResolution closeRes = m_controller->resolveCloseDialog(
+                    CloseDecision{true, DraftDisposition::Discard,
+                                  TaskDisposition::Wait});
+                // Draining 收口等待（有界事件循环——真实 store 关闭异步形
+                // 态；同步完成时谓词首轮即真）。10 s 上限＝冒烟防挂死闸。
+                if (closeRes.status == CloseDialogResolution::Status::Confirmed
+                    && m_controller->hasOpenSession()) {
+                    QEventLoop drainLoop;
+                    QTimer drainTimeout;
+                    drainTimeout.setSingleShot(true);
+                    QObject::connect(&drainTimeout, &QTimer::timeout, &drainLoop,
+                                     &QEventLoop::quit);
+                    auto drainPoll = std::make_shared<QTimer>();
+                    drainPoll->setInterval(100);
+                    QObject::connect(drainPoll.get(), &QTimer::timeout, [&] {
+                        if (m_controller == nullptr || !m_controller->hasOpenSession()) {
+                            drainLoop.quit();
+                        }
+                    });
+                    drainPoll->start();
+                    drainTimeout.start(10 * 1000);
+                    drainLoop.exec();
+                    drainPoll->stop();
+                }
+                const bool closedToNoProject =
+                    m_controller == nullptr || !m_controller->hasOpenSession();
+                // 重开（交互同款入口——NoProject 态直进打开协议）。
+                std::cout << "[ird-ui-smoke] step8 probe: reopen (closed="
+                          << (closedToNoProject ? "ok" : "fail") << ")" << std::endl;
+                const bool reopened = closedToNoProject
+                                      && openViaSessionController(demoPath);
+                step8Ok = reopened && m_controller != nullptr
+                          && m_controller->hasOpenSession()
+                          && m_publishBridge != nullptr
+                          && m_publishBridge->hasBoundSession()
+                          && m_draft != nullptr && m_draft->hasSession();
+                std::cout << "[ird-ui-smoke] step8 close-reopen="
+                          << (step8Ok ? "ok" : "fail")
+                          << " closed=" << (closedToNoProject ? "ok" : "fail")
+                          << " reopened=" << (reopened ? "ok" : "fail")
+                          << std::endl;
+            } else {
+                std::cout << "[ird-ui-smoke] step8 close-reopen=skip (no session)"
+                          << std::endl;
+            }
+            } catch (const std::exception& step8Error) {
+                // UI-T84 诊断探针：定位 step8 内抛点后移除。
+                std::cout << "[ird-ui-smoke] step8 probe-exception: "
+                          << step8Error.what() << std::endl;
+                throw;
+            }
+
             exitCode = (opened && treeOk && step3Ok && step4Ok && step5Ok
-                        && step6Ok && step7Ok)
+                        && step6Ok && step7Ok && step8Ok)
                            ? 0 : 1;
         } catch (const std::exception& smokeError) {
             std::cout << "[ird-ui-smoke] exception: " << smokeError.what()

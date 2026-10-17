@@ -602,22 +602,37 @@ StoreDraftQueryPortAdapter::StoreDraftQueryPortAdapter(
 std::vector<DraftRowProjection> StoreDraftQueryPortAdapter::listDrafts() const
 {
     std::vector<DraftRowProjection> rows;
-    // 缺省主分支清单（INV-M3 单默认分支；写半区 binding.branchId 同锚——
-    // 两端对称，草稿落盘/清单永不跨分支错位）。
-    for (const auto& info : m_store->projectStore().drafts().list(core::BranchId{})) {
-        DraftRowProjection row;
-        // 文档键＝模块 token（§4.1 行命名 <module>.draft.json 的语义键——
-        // ui 侧不做路径拼装/内容解析，丢弃语义收敛在模块配对键上）。
-        row.documentKey = info.moduleId;
-        row.moduleId = info.moduleId;
-        row.stale = info.stale;
-        // 基线修订 canonical（呈现与冲突对照用；缺省保留值→空串——
-        // DraftRowProjection 契约"损坏条目为空串"同口径）。
-        row.baseRevisionCanonical =
-            info.baseRevision.isValid() ? info.baseRevision.toCanonical() : std::string{};
-        // displayName 留空（域模块显示名由 DraftController 汇总时按挂接
-        // 模块补齐——磁盘行自身无显示名权威，零虚构）。
-        rows.push_back(std::move(row));
+    if (m_store == nullptr) {
+        return rows;
+    }
+    try {
+        // 缺省主分支清单（INV-M3 单默认分支；写半区 binding.branchId 同锚
+        // ——两端对称，草稿落盘/清单永不跨分支错位）。
+        for (const auto& info : m_store->projectStore().drafts().list(core::BranchId{})) {
+            DraftRowProjection row;
+            // 文档键＝模块 token（§4.1 行命名 <module>.draft.json 的语义键
+            // ——ui 侧不做路径拼装/内容解析，丢弃语义收敛在模块配对键上）。
+            row.documentKey = info.moduleId;
+            row.moduleId = info.moduleId;
+            row.stale = info.stale;
+            // 基线修订 canonical（呈现与冲突对照用；缺省保留值→空串——
+            // DraftRowProjection 契约"损坏条目为空串"同口径）。
+            row.baseRevisionCanonical =
+                info.baseRevision.isValid() ? info.baseRevision.toCanonical()
+                                            : std::string{};
+            // displayName 留空（域模块显示名由 DraftController 汇总时按挂
+            // 接模块补齐——磁盘行自身无显示名权威，零虚构）。
+            rows.push_back(std::move(row));
+        }
+    } catch (const project::StoreError& error) {
+        // 上下文关闭＝"无草稿"的真值形态（UI-T84 实测——关闭决议/Draining
+        // 呈现链会在上下文失效后仍触发 listDrafts，读轨按 §4.7 拒绝）：此
+        // 时磁盘清单如实为空，返空行集即诚实投影。其他 StoreError（锁/
+        // 介质/损坏族）照常穿透——呈现面各有隔离留痕边界，不在此吞。
+        if (error.code() == project::StoreErrorCode::ContextClosed) {
+            return {};
+        }
+        throw;
     }
     return rows;
 }
