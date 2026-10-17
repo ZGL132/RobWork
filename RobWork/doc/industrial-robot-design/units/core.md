@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.13（2026-10-17，CORE-T11 试点任务行登记——§9 增行〔Agent-native 治理 Task 8 新会话接手试点批〕）；v0.12（F-618 诊断面 schema 演进——§4.8 DiagnosticLevel 词表＋DiagnosticRecord.level 字段增列（尾追加，缺省 Error）＋序列化兼容口径＋§5.7 签名同步；v0.11＝CORE-T10 文档与门禁同步；v0.4~v0.10＝CORE-T02~T08 落位登记；v0.2/v0.3＝FOUNDATION-CR-01 契约审查与 P-ENV-1 消账；v0.1＝首版草案） |
+| 文档版本 | v0.14（2026-10-17，CORE-T11 卡面与实现一致性核查落位——§3.1 两处笔误级同步修正〔首句公共头模块计数 10→9、README 保留位单列；DiagData.hpp 内容摘要补 DiagnosticLevel（v0.12 F-618 增列时本列漏同步）〕＋§12.2 补记 v0.13 行；公共头与测试目标两清单与实现树实测一致，无语义级偏差，核查留痕见 context/handoff-drill.md）；v0.13（2026-10-17，CORE-T11 试点任务行登记——§9 增行〔Agent-native 治理 Task 8 新会话接手试点批〕）；v0.12（F-618 诊断面 schema 演进——§4.8 DiagnosticLevel 词表＋DiagnosticRecord.level 字段增列（尾追加，缺省 Error）＋序列化兼容口径＋§5.7 签名同步；v0.11＝CORE-T10 文档与门禁同步；v0.4~v0.10＝CORE-T02~T08 落位登记；v0.2/v0.3＝FOUNDATION-CR-01 契约审查与 P-ENV-1 消账；v0.1＝首版草案） |
 | 日期 | 2026-09-11 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-CORE |
@@ -145,7 +145,7 @@ core 是"任何层都可依赖"的 L2 平台内核（ARCHITECTURE §3.5 共享�
 
 ### 3.1 组成
 
-core 由 10 个公共头模块＋1 个编译实现组成（实现文件随任务落地，头为契约权威）：
+core 由 9 个公共头模块＋1 个 README 保留位＋1 个编译实现组成（实现文件随任务落地，头为契约权威；v0.14 勘误：原表述"10 个公共头模块"系将 README 保留位〔不参与编译〕误计入模块数，与 v0.11 变更记录"九模块"口径不一致）：
 
 | 头（`core/include/sdurws/ird/core/`） | 内容 | 详见 |
 | --- | --- | --- |
@@ -155,7 +155,7 @@ core 由 10 个公共头模块＋1 个编译实现组成（实现文件随任务
 | `Units.hpp` | QuantityKind、UnitToken、单位表、convert/tryConvert、Quantity\<K\> 及别名 | §4.4、§5.4 |
 | `Compare.hpp` | Tolerance、closeWithin、allCloseWithin、runtimeAbsoluteTolerance | §4.5、§5.5 |
 | `Evaluation.hpp` | EvaluationMode、TaskOutcome、EngineeringStatus、TaskState 及 token 往返 | §4.7、§5.6 |
-| `DiagData.hpp` | DiagCode、DiagnosticRecord、ComparativeValue/Fields、ConfirmationState/Credential、ConfirmableFinding | §4.8、§5.7 |
+| `DiagData.hpp` | DiagCode、DiagnosticLevel（F-618，v0.12 增列）、DiagnosticRecord、ComparativeValue/Fields、ConfirmationState/Credential、ConfirmableFinding | §4.8、§5.7 |
 | `Events.hpp` | DomainEventKind、四类事件载荷、DomainEvent、IDomainEventSink/IDomainEventBus/IEventSubscription | §4.9、§5.8 |
 | `Errors.hpp` | CoreError | §4.10 |
 | `README.md` | 既有保留位说明（不参与编译） | — |
@@ -993,6 +993,8 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | v0.10 | 2026-09-11 | CORE-T08（≙WP-03-T08）落位登记：①§4.9/§5.8 四类领域事件（RevisionCommitted/DependencyInvalidated/TaskStatusChanged/ResultArchived——token 冻结）＋四载荷（首修订无 parent；失效不携带对象清单；归档不携带路径——防 DTO 膨胀）＋DomainEvent 工厂（kind↔variant 一致性由构造路径保证）＋访问守卫（错配抛 core/events/kind-payload）按原文契约实现；②总线/sink/订阅接口归 core，实现归 execution·ui（L5 注入）；③测试内参考总线 ReferenceEventBus（FIFO/幂等退订/多订阅）为 §5.8 语义钉子——不进产品链接面（T-1 由生产面扫描钉住） |
 | v0.11 | 2026-09-11 | CORE-T10（≙WP-03-T10）文档与门禁同步：①README 落位状态更新（九公共头模块＋测试体清单——任务指向零偏差核对）；②§10.2 P-D-1/P-AR-3 事实性关闭（五消费卡交叉核对＋evidence §3.4 回复落卡，引用 governance-log §1.1/O-24 同源）；③UT-BUILD 并入 CI 建议：已由 WP-01-T02 交付的 gate-all.ps1＋ci/ 模板承载（红线扫描与 UT-BUILD 同源——消账至 wp01-t02 交付记录，WP-01-T02 已 done 无需再提交）；④P-AR-1/P-AR-2 维持 open（架构所有者）；⑤head 公共头清单：Errors/Identity/Digest/Provenance/Units/Compare/Evaluation/DiagData/Events 九模块 |
 | v0.12 | 2026-10-10 | F-618 诊断面 schema 演进（所有者裁决 2026-10-09 排期；分支 diag-schema-level，先单元卡后代码）：§4.8 增列 `DiagnosticLevel` 词表（`Error`/`Warning` 两值）与 `DiagnosticRecord.level` 字段（表尾追加，既有字段语义零改写——PA-2），**缺省语义＝`Error`**（fail-closed：警告产生路径须显式声明 `Warning`，漏标在 runtime builder 可见地被拒——§4.3.5 按级别拒绝的失败方向取舍）；工厂 `make()` 尾参缺省 `Error`，既有构造路径源码兼容零改写；登记序列化兼容口径（记录尾追加＋各编码面版本纪律，core §4.8 新增段）；级别轴与 diagnostics `DiagnosticSeverity` 呈现轴正交、映射归 diagnostics 注册期验证（core 不承载映射——CR-08 同精神）；§5.7 签名同步。实现落位与消费面适配登记见 diagnostics.md/runtime.md 同批版本 |
+| v0.13 | 2026-10-17 | CORE-T11 试点任务行登记（补记：治理提交 458250f0 当期仅更新文档头版本行，本行随 v0.14 补齐）：§9 增 CORE-T11 行〔Agent-native 治理 Task 8 新会话接手试点批，≙WP-03-T11〕；接口与既有任务行零修改 |
+| v0.14 | 2026-10-17 | CORE-T11（≙WP-03-T11）卡面与实现一致性核查落位：①公共头清单（§3.1 表）与 `include/sdurws/ird/core/` 实测文件集比对——**一致**（9 个 .hpp＋README.md 逐一对应；抽查 Identity/Events/Errors/README 内容摘要与实测相符）；②测试目标登记（§3.3/§8）与 `core/CMakeLists.txt` 实测注册比对——**一致**（卡面登记 `sdurws_ird_core_test` 唯一＝实测注册唯一，无 contract/gui/perf 目标；§3.3 目标名/别名/C++17/链 sdurw_math 与实测逐项相符）；③笔误级修正两处：§3.1 首句模块计数 10→9（README 保留位不计入模块，对齐 v0.11"九模块"口径）、DiagData.hpp 内容摘要补 DiagnosticLevel（v0.12 增列时 §4.8/§5.7 已同步而 §3.1 摘要列漏同步——实测 DiagData.hpp 含 `enum class DiagnosticLevel` 与 `level` 字段）；④无语义级偏差——findings.json 零新增；核查过程、命令与四态验证留痕见 `context/handoff-drill.md` |
 
 ### 12.3 自审记录（v0.1 交付前逐项检查；自审≠实现测试≠正式验收）
 
