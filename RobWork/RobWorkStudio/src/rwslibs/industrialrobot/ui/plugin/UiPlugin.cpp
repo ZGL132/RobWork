@@ -5115,11 +5115,8 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
             // 绑定拆绑"logic_error 直穿事件循环（StudioMain 兜底退出＝
             // 手工验证 A5），修复后本步零异常通过。
             bool step8Ok = false;
-            try {
             if (m_controller != nullptr && m_controller->hasOpenSession()) {
-                std::cout << "[ird-ui-smoke] step8 probe: begin-close" << std::endl;
                 (void)m_controller->beginClose(UiCloseIntent::CloseProject);
-                std::cout << "[ird-ui-smoke] step8 probe: resolve-close" << std::endl;
                 const CloseDialogResolution closeRes = m_controller->resolveCloseDialog(
                     CloseDecision{true, DraftDisposition::Discard,
                                   TaskDisposition::Wait});
@@ -5147,8 +5144,6 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
                 const bool closedToNoProject =
                     m_controller == nullptr || !m_controller->hasOpenSession();
                 // 重开（交互同款入口——NoProject 态直进打开协议）。
-                std::cout << "[ird-ui-smoke] step8 probe: reopen (closed="
-                          << (closedToNoProject ? "ok" : "fail") << ")" << std::endl;
                 const bool reopened = closedToNoProject
                                       && openViaSessionController(demoPath);
                 step8Ok = reopened && m_controller != nullptr
@@ -5164,12 +5159,6 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
             } else {
                 std::cout << "[ird-ui-smoke] step8 close-reopen=skip (no session)"
                           << std::endl;
-            }
-            } catch (const std::exception& step8Error) {
-                // UI-T84 诊断探针：定位 step8 内抛点后移除。
-                std::cout << "[ird-ui-smoke] step8 probe-exception: "
-                          << step8Error.what() << std::endl;
-                throw;
             }
 
             exitCode = (opened && treeOk && step3Ok && step4Ok && step5Ok

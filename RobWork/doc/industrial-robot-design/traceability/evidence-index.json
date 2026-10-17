@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-17T18:26:10+08:00",
+  "generatedAt": "2026-10-17T20:14:59+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -11,24 +11,24 @@
   },
   "summary": {
     "totalFiles": 6592,
-    "totalBytes": 207377057,
+    "totalBytes": 207376823,
     "byKind": {
-      "manual-acceptance": 1,
       "build-log": 5656,
+      "log": 1,
+      "manual-acceptance": 1,
       "markdown-doc": 41,
-      "pipeline-artifact": 2,
-      "acceptance-record": 511,
       "benchmark": 8,
-      "json-data": 7,
       "gtest-report": 335,
-      "governance-record": 30,
-      "log": 1
+      "pipeline-artifact": 2,
+      "json-data": 7,
+      "acceptance-record": 511,
+      "governance-record": 30
     },
     "byLifecycle": {
       "unverified": 6003,
       "superseded": 0,
-      "historical": 519,
-      "current": 70
+      "current": 70,
+      "historical": 519
     },
     "associated": 592,
     "unassociated": 6000,
@@ -54666,8 +54666,8 @@
       "path": "production-assembly-manifest.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1237,
-      "sha256": "63285f7770a3717bfd073166fcce7e0ad788b25d6ba8b1bc2ca35107b5f26a33",
+      "bytes": 1003,
+      "sha256": "45ffaa9aa66c754cd878b8c9aee2b64dda18f0aff3484137a3fb2b0bc9424008",
       "lifecycle": "unverified"
     },
     {
