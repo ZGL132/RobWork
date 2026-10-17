@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 生成时间 | 2026-10-17T13:42:58+08:00 |
-| 生成基线 | git HEAD bb891fe59a9b3e107c82c239648a5720b69140c7 |
+| 生成时间 | 2026-10-17T14:05:48+08:00 |
+| 生成基线 | git HEAD 458250f0ed55d6cdb892d0334d7747f5977bdecd |
 | 任务状态（契约） | ready |
 | 单元 / 主 WP | core / WP-B |
 | 分支 | wp03-t11 |
@@ -56,15 +56,15 @@
 - 发现语义级偏差登记 findings.json（不私改设计语义）
 - 交接记录含实际 SHA、命令与四态验证结果
 
-## 7. 源文件指纹（SHA-256，相对仓库根；validate-context-pack.ps1 校验基准）
+## 7. 源文件指纹（git blob SHA，行尾无关；相对仓库根；validate-context-pack.ps1 校验基准）
 
 | 源文件 | SHA-256 |
 | --- | --- |
-| RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T11.json | 155ec8b262bec32d3c6e1fadbe3a19a1ffb13c39ca2b118bedce96c8e7bc5427 |
-| RobWork/doc/industrial-robot-design/units/core.md | d90e67cd3c415b30fbe64e66de131ee1c399c08fd620b9fe0afa98dea9bebdc7 |
-| RobWork/doc/industrial-robot-design/REQUIREMENTS.md | 765a7701d78e5cde24b6c682ccedce69afd30dca198c6e0635999cb1c3dba6fa |
-| RobWork/doc/industrial-robot-design/context/reading-paths.md | d3a82675fb2aca3d672bae305d58271d695bba5bb6b82739e292fdc8e31d06ed |
-| RobWork/doc/industrial-robot-design/context/asset-inventory.json | 10e3907cccc0ae119842420b740b12b0b606348ebd602d0040d96ec409935aea |
-| AGENTS.md | 838e0bf6d28176822cc5da76143aa9d0ed668d9c18e3f7acb6034b509c005da8 |
-| RobWork/doc/industrial-robot-design/AGENTS.md | 4b41e2c693cac9545161aeffea16bb3ba86f19f0c8fea9970c10ae15284b2d59 |
-| RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md | 58d11d0ba4d46f73a97b6d78a94789534534091ac7525e8241ab2ffd0cb3844d |
+| RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T11.json | 0f5eff39e400784a52c7d98892c42f2b506c4225 |
+| RobWork/doc/industrial-robot-design/units/core.md | 5f0c2fbd83be50b1209e868b20b8418dd62cbdc0 |
+| RobWork/doc/industrial-robot-design/REQUIREMENTS.md | 349489fe5cf47c956a8007a58c187568642533ad |
+| RobWork/doc/industrial-robot-design/context/reading-paths.md | 1b7d1bcc50fca5b8e0efd7947bb76ae79a77e87f |
+| RobWork/doc/industrial-robot-design/context/asset-inventory.json | 9f671a19141b195ce9912af9915e9a1cd4022ccb |
+| AGENTS.md | c660ccea2fef899091407b67c32a49a1e47446a9 |
+| RobWork/doc/industrial-robot-design/AGENTS.md | 86b3f664b81da562f1ec0fbfb2c1995e8f360c5f |
+| RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md | 2afad9e486d04d220bf5f077a0f577cd86992d71 |

@@ -8847,6 +8847,26 @@
       "registeredAt": "2026-10-17",
       "title": "验收环境口径澄清：AGENTS §4.1 集成模式配置命令未带 -DCMAKE_TOOLCHAIN_FILE（vcpkg）——验收者 fresh worktree 实测缺参时配置在 FindBoost 处失败（missing Boost_INCLUDE_DIR/filesystem/system/program_options/date_time），补参后成功；RobWorkStudio.ini.template.static 的复制目标按 RobWorkStudio/src/CMakeLists.txt:58 的 configure_file 语义实为源码树 bin/ 而非构建树 bin/（AGENTS 已登记该文件不入库，但复制目标表述有偏差）",
       "owner": "治理批（AGENTS §4.1/DTB §5.1 文档澄清，非产品缺陷）"
+    },
+    {
+      "id": "F-908",
+      "source": "traceability/handoff 演练（context/handoff-drill.md 验收段，attempt 1 verdict=FAIL 阻断①；2026-10-17 独立评审会话 detached worktree 复现）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-17",
+      "title": "证据索引计入 gitignored 文件：index-evidence.ps1 以文件系统遍历枚举，主工作区含 36 个 gitignored 历史 UI smoke 截图/日志（6626）而干净 git 检出仅 6590——validate-docs 证据计数门禁在任何 fresh 树/CI 上必然失败",
+      "resolution": "index-evidence.ps1 与 validate-docs.ps1 计数基准改为 git ls-files 跟踪面（同批重跑索引实测 6590 与干净检出一致）；代价＝未提交新证据不计入，与『新证据落库同批重跑索引』纪律自洽。",
+      "fixedAt": "2026-10-17"
+    },
+    {
+      "id": "F-909",
+      "source": "traceability/handoff 演练（context/handoff-drill.md 验收段，attempt 1 verdict=FAIL 阻断①；2026-10-17 独立评审会话 detached worktree 复现）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-17",
+      "title": "上下文包指纹行尾敏感：build/validate-context-pack 用字节级 SHA-256（Get-FileHash），core.autocrlf=true 下干净检出为 CRLF 与主工作区 LF 哈希失配——干净树上全部包 9 处指纹 STALE 误报",
+      "resolution": "指纹改用 git hash-object（经 clean 过滤的 blob SHA，行尾无关）：build-context-pack 生成、validate-context-pack 重算（正则 64→40 位）同批切换，两个既有包重建后 fresh。",
+      "fixedAt": "2026-10-17"
     }
   ]
 }
