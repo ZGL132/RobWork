@@ -20,7 +20,7 @@
 ## 2. 索引纪律
 
 1. **新证据落库同批重跑** `pwsh -File RobWork/scripts/industrialrobot/index-evidence.ps1`——validate-docs.ps1 校验索引条目数与实际文件数一致，不一致即门禁失败（报错信息附重跑指引）。
-2. 索引只存摘要（路径/类型/任务关联/字节数/SHA-256/生命周期），**绝不嵌入文件内容**；SHA 仅计算 ≤512KB 文件（大文件跳过并在 summary 计数）。
+2. 索引只存摘要（路径/类型/任务关联/字节数/SHA-256/生命周期），**绝不嵌入文件内容**；SHA 仅计算 ≤512KB 文件（大文件跳过并在 summary 计数）。索引 `contentBasis=text-crlf-to-lf-v1`：文本证据的 CRLF/CR 统一为 LF 后再计算字节数与 SHA-256，消除 `core.autocrlf` 检出造成的伪漂移；二进制文件保留原始字节。生成器与校验器必须使用同一口径。
 3. 重复检测：同 SHA-256 不同路径计为重复组（summary 报告总数，明细封顶 100 组防索引膨胀）。
 4. 任务关联是**文件名启发式**（wp-nn-tkk / UNIT-Tnn 模式）：未关联不代表无主，只代表不可自动归属。
 

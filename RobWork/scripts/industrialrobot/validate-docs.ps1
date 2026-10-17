@@ -7,6 +7,17 @@
 )
 $base = Join-Path $RepoRoot 'doc/industrial-robot-design'
 $errors = @()
+# 与 index-evidence.ps1 相同的内容口径：文本 CRLF/CR 规范化为 LF，二进制按原始字节。
+function Get-IndexedContent([string]$LiteralPath, [switch]$WithHash) {
+  $f = Get-Item -LiteralPath $LiteralPath
+  [byte[]]$b = [IO.File]::ReadAllBytes($f.FullName)
+  $textExt = @('.md','.txt','.log','.xml','.json','.ps1','.cpp','.hpp','.h','.cmake','.csv','.norm','.uniq','.dedup','.err','.diff','.urdf','.py','.svg','.yaml','.yml','.html','.htm','.ini','.bat','.cmd','.sh')
+  $isText = ($textExt -contains $f.Extension.ToLowerInvariant()) -or $f.Name -eq '.gitattributes'
+  if ($isText -and -not ($b -contains [byte]0)) { $enc = [Text.Encoding]::GetEncoding(28591); $b = $enc.GetBytes($enc.GetString($b).Replace("`r`n", "`n").Replace("`r", "`n")) }
+  $hash = $null
+  if ($WithHash) { $sha = [Security.Cryptography.SHA256]::Create(); $hash = ([BitConverter]::ToString($sha.ComputeHash($b)).Replace('-','')).ToLowerInvariant(); $sha.Dispose() }
+  return @{ Bytes = $b.Length; Sha256 = $hash }
+}
 # PIPE/ACC 是定时执行器的可执行输入，不能只检查文件存在：以下锚点把 P0 并发临界区、
 # 验收失败证据回传与 evidence 分支命名的关键语义纳入文档门禁，防止后续修订悄然删回旧规则。
 $pipelineText = Get-Content (Join-Path $base 'automation-pipeline.md') -Raw -Encoding UTF8
@@ -213,6 +224,7 @@ if (-not (Test-Path $evidenceIndexPath)) {
   try { $ei = Get-Content $evidenceIndexPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $errors += "evidence-index.json is not valid JSON: $_" }
   if ($ei) {
     if ($ei.schemaVersion -ne 'ird-evidence-index/1') { $errors += "evidence-index schemaVersion must be 'ird-evidence-index/1', got '$($ei.schemaVersion)'" }
+    if ($ei.contentBasis -ne "text-crlf-to-lf-v1") { $errors += "evidence index contentBasis must be text-crlf-to-lf-v1——重跑 index-evidence.ps1" }
     # 计数基准＝git 跟踪面（与 index-evidence.ps1 一致；文件系统遍历会计入
     # gitignored 产物导致干净检出失配——F-908 教训）
     $repoTopEv = Split-Path -Parent $RepoRoot
@@ -235,11 +247,12 @@ if (-not (Test-Path $evidenceIndexPath)) {
       } else {
         $entryEv = $indexByPath[$relEv]
         $absEv = Join-Path $repoTopEv $ap
-        $actualLen = (Get-Item -LiteralPath $absEv).Length
+        $contentEv = Get-IndexedContent $absEv -WithHash:$DeepEvidence
+        $actualLen = $contentEv.Bytes
         if ([long]$entryEv.bytes -ne $actualLen) {
           $mismatchSeen++; if ($mismatchSeen -le $mismatchCap) { $errors += "evidence index size mismatch: $relEv (index=$($entryEv.bytes) actual=$actualLen)——重跑 index-evidence.ps1" }
         } elseif ($DeepEvidence -and "$($entryEv.sha256)") {
-          $shaNow = (Get-FileHash -Algorithm SHA256 -LiteralPath $absEv).Hash.ToLowerInvariant()
+          $shaNow = $contentEv.Sha256
           if ($shaNow -ne "$($entryEv.sha256)") {
             $mismatchSeen++; if ($mismatchSeen -le $mismatchCap) { $errors += "evidence index sha mismatch: $relEv——内容已变，重跑 index-evidence.ps1" }
           }
