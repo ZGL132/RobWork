@@ -8867,6 +8867,24 @@
       "title": "上下文包指纹行尾敏感：build/validate-context-pack 用字节级 SHA-256（Get-FileHash），core.autocrlf=true 下干净检出为 CRLF 与主工作区 LF 哈希失配——干净树上全部包 9 处指纹 STALE 误报",
       "resolution": "指纹改用 git hash-object（经 clean 过滤的 blob SHA，行尾无关）：build-context-pack 生成、validate-context-pack 重算（正则 64→40 位）同批切换，两个既有包重建后 fresh。",
       "fixedAt": "2026-10-17"
+    },
+    {
+      "id": "F-910",
+      "source": "docs/superpowers/2026-10-17-host-assembly-lifecycle-gaps-disposition.md（手工验证会话 A5 复现：同进程关闭项目→重开弹 critical 对话框后整站退出；两轮静态复核，2026-10-17）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-17",
+      "title": "宿主项目『关闭→同进程重开』打开失败且整站退出（故障族＝触发＋放大两环节）：触发面桥绑定生命周期不闭合——重复 attach fail-fast 属代码事实（RuntimePublishBridge.cpp:82-97）且 switchHostSession 无生产调用点，但『关闭路径漏 detach』为待证假设（detach 调用实际存在于 UiPlugin.cpp:4713，需复现区分：清理未进入/提前抛错/时序重复 attach）；放大面打开链路异常穿透至 StudioMain.cpp:560-573 兜底 catch 致 return -1（退出分支存在，本次传播链待复现）。处置＝集成父批次子批 A：先复现证实因果链再定修复；异常隔离须三要素（捕获边界/回滚责任/恢复成功条件——仅恢复确认后才可提示重试）",
+      "owner": "集成父批次『宿主装配与生命周期收口』子批 A（修复方案归所有者裁决）"
+    },
+    {
+      "id": "F-911",
+      "source": "docs/superpowers/2026-10-17-host-assembly-lifecycle-gaps-disposition.md（手工验证会话实测 drafts/ 目录从未创建＋静态复核直接代码证据，2026-10-17）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-17",
+      "title": "需求域草稿源未挂接 DraftController：生产 attachModule 唯一调用仅挂 modeling（UiPlugin.cpp:2485），RequirementsDraftSource 已实现（RequirementsUiModule.hpp:459，含 buildDraftDocument/adoptRestoredDocument 全套）但仅测试构造使用——需求草稿零落盘零恢复，PM-04/V-13 保存半区断裂。疑点随批核对：V-13『草稿 60s 周期落盘』当前装配只见手动/关闭触发，未见周期定时器。挂接后仍需全链验证（默认分支锚与 DraftQueryPortStub 在生产 PortAdapters 的现状处置）",
+      "owner": "集成父批次『宿主装配与生命周期收口』子批 B（修复方案归所有者裁决）"
     }
   ]
 }
