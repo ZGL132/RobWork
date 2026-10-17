@@ -434,6 +434,36 @@ TEST(MdlCanonicalBridge, JointsExplicitMappingWithZeroOffsetFold_WP13T12_ACC1)
 }
 
 /**
+ * @brief 零位折叠前必须拒绝不可归一化轴（I-MDL-6 防御面）。
+ *
+ * 正常解码路径会先把零轴标记为 MalformedPayload；CanonicalBridge 的
+ * 映射内核仍保留 UnitIllegal 防线，不能假定所有内部调用方都经过同一条
+ * 编辑路径。zeroOffset 非零时若直接把零轴送入 Rodrigues 公式，会产生
+ * NaN 旋转并把非法值带入 runtime；本用例固定要求公共边界在折叠前失败，
+ * 避免“成功构造但姿态已污染”。
+ */
+TEST(MdlCanonicalBridge, RejectsZeroAxisBeforeZeroOffsetFold_WP13T23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    RobotDesign design = minimalDesign();
+    design.joints.front().zeroOffset = 0.25;  // rad——触发折叠路径
+    design.joints.front().axis =
+        core::SourcedValue<rwmath::Vector3D<double>>::provided(
+            rwmath::Vector3D<double>(0.0, 0.0, 0.0), userProv());
+
+    BridgeClosure closure;
+    putRoot(closure, design);
+    const auto built = buildFrom(closure);
+    ASSERT_FALSE(built.ok()) << "零轴不得进入 Rodrigues 折叠并产生 NaN";
+    // canonical 字节解码的输入质量门先行拒绝零轴；若未来放宽该门，
+    // mapJoint 的折叠防线应返回 UnitIllegal，测试仍要求不可成功映射。
+    EXPECT_EQ(built.error().code, ModelingErrorCode::MalformedPayload);
+    EXPECT_NE(built.error().detail.find("axis"), std::string::npos);
+}
+
+/**
  * @brief ACC1 行 3（DH 权威先经 §7.4 展开）：单关节标准 DH 链（θ_offset/
  *        d/a/α 手算期望——F-590 零位烘焙纪律：展开几何＝Rot_z(θ)·Trans_z(d)·
  *        Trans_x(a)·Rot_x(α)（q_model=0 位姿，zeroOffset 不入几何）＋F-591

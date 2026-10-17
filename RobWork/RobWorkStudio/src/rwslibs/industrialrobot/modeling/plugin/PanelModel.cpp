@@ -595,6 +595,10 @@ ReadinessBarProjection projectReadinessBar(const ModelReadinessReport& report)
     proj.counts.warnings = report.warnings.size();
     proj.counts.confirmables = report.confirmables.size();
     proj.counts.notes = report.notes.size();
+    proj.counts.notProvided = static_cast<std::size_t>(std::count_if(
+        report.notes.begin(), report.notes.end(), [](const ReadinessNote& n) {
+            return n.kind == ReadinessNoteKind::NotProvided;
+        }));
 
     // 逐项行（组序 blocking→warning→confirmable→note；组内报告稳定序保序
     // 展开——不二次排序，单一排序权威纪律）。摘要＝报告原文三段拼接
@@ -622,9 +626,15 @@ ReadinessBarProjection projectReadinessBar(const ModelReadinessReport& report)
     }
     for (const ReadinessNote& n : report.notes) {
         ReadinessItemRow r;
-        r.severity = "note";
+        // NotProvided 与普通上下文提示分开投影，避免工程师把“字段未进入
+        // 当前计算内核”误读成普通说明；Blocking/Warning/Confirmable 仍由
+        // 报告三组直投，呈现层不重新判定严重度。
+        r.severity = n.kind == ReadinessNoteKind::NotProvided ? "not-provided" : "note";
         r.summary = n.summary;
-        r.jumpTarget = std::nullopt;  // 呈现级结论无对象主体——不伪造定位
+        r.jumpTarget = n.subject;  // 有对象锚时允许 UI 反向定位；无锚不伪造
+        r.fieldPath = n.fieldPath;
+        r.unitText = n.unitText;
+        r.recommendedAction = n.recommendedAction;
         proj.items.push_back(std::move(r));
     }
     return proj;

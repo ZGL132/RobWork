@@ -106,8 +106,18 @@ namespace {
 // 数值程序常数（求解过程参数——非工程阈值；判定只用附录 D 阈值）
 // =====================================================================
 
-/// 数值微分中心差分布长（对 θ/α rad 与 d/a m 同步长——量级同阶；过程常数）。
-constexpr double kDerivativeStep = 1e-6;
+/// 数值微分相对步长（无量纲比例；实际步长按参数类别与目标链尺度计算）。
+/// 角度坐标使用 rad，长度坐标使用 m，避免用同一个“1e-6”同时解释两种
+/// 量纲；中心差分仍保持 O(h²) 截断误差。
+constexpr double kDerivativeRelativeStep = 1e-6;
+/// 位置归一化的最小工程尺度（1 mm）：比该尺度更小的模型仍保留米制残差，
+/// 避免把微型机构的平移项数值压到双精度噪声以下；该值只用于求解器缩放，
+/// 附录 D 的最终位置判定仍使用 kDhExactOriginPositionToleranceM。
+constexpr double kMinimumPositionScaleM = 1e-3;
+/// 数值求解可接受的最大目标尺度（m）。超过该量级即使归一化也无法给出
+/// 有工程意义的 DH 参数，直接走 AnalysisFailed，避免把“超大输入被缩放后
+/// 看似收敛”误报为有效设计结论。
+constexpr double kMaximumPositionScaleM = 1e100;
 /// LM 迭代上限（§7.5"固定迭代上限"的落值；过程常数）。
 constexpr std::size_t kMaxIterations = 200;
 /// LM 阻尼初值与界限（过程常数——界限防除零/无界循环）。
@@ -399,6 +409,7 @@ std::string formatDouble(double v)
 struct SolverTargets {
     std::vector<rw::math::Vector3D<double>> originPositions;  ///< T_{0,i} 原点（m）
     std::vector<rw::math::Vector3D<double>> axisDirections;   ///< z_i 单位向量（无量纲）
+    double positionScaleM = 1.0;  ///< 求解器平移残差归一化尺度（m）
     // zeroOffsets 字段已随 F-590 零位烘焙纪律移除：重建/种子均不再消费
     // （θ_offset 单独入几何，zeroOffset 不在求解相位内）。
     std::size_t size() const noexcept { return originPositions.size(); }
@@ -456,15 +467,19 @@ std::vector<double> residualOf(const std::vector<double>& x, const SolverTargets
         // dhRebuildStep 注——F-631）。
         const rw::math::Transform3D<double> step = dhRebuildStep(x, i, targets.size());
         acc = transformMul(acc, step);
-        // 原点位置残差（3 分量，m）。
-        r.push_back(acc.P()[0] - targets.originPositions[i][0]);
-        r.push_back(acc.P()[1] - targets.originPositions[i][1]);
-        r.push_back(acc.P()[2] - targets.originPositions[i][2]);
+        // 原点位置残差（3 分量，m）按整条链的特征长度归一化为无量纲，
+        // 使 1 m 机构与 10 mm 机构在 LM 中具有可比的平移/姿态权重；
+        // 轴向误差也用同一尺度归一化，保持原始“位置与轴角同权”的目标
+        // 函数比例不变。deviationsOf 仍保留原始 m/rad 值，最终验收不受缩放影响。
+        const double invPositionScale = 1.0 / targets.positionScaleM;
+        r.push_back((acc.P()[0] - targets.originPositions[i][0]) * invPositionScale);
+        r.push_back((acc.P()[1] - targets.originPositions[i][1]) * invPositionScale);
+        r.push_back((acc.P()[2] - targets.originPositions[i][2]) * invPositionScale);
         // 轴方向残差（3 分量——cross(z_rec, A_i)）。
         const rw::math::Vector3D<double> cz = zAxisOf(acc).cross(targets.axisDirections[i]);
-        r.push_back(cz[0]);
-        r.push_back(cz[1]);
-        r.push_back(cz[2]);
+        r.push_back(cz[0] * invPositionScale);
+        r.push_back(cz[1] * invPositionScale);
+        r.push_back(cz[2] * invPositionScale);
     }
     return r;
 }
@@ -528,10 +543,12 @@ bool solveLinearSystem(std::vector<double> a, std::vector<double> b, std::size_t
 }
 
 /**
- * @brief 数值雅可比（中心差分，固定步长；m×4n 行主序）。
+ * @brief 数值雅可比（按量纲与链尺度自适应中心差分；m×4n 行主序）。
  *
- * 中心差分而非前向：截断误差 O(h²)——同一步长下精度高一个量级，改善
- * 1×10⁻⁹ m/rad 判定区的收敛质量（过程选择，不影响判定语义）。
+ * 中心差分而非前向：截断误差 O(h²)。θ/α 采用 rad 步长，d/a 采用 m
+ * 步长，并按当前参数幅值与 1 mm 零附近尺度取相对步长；这避免长度参数
+ * 很大或很小时固定 1e-6 m 带来的舍入/截断失衡（过程选择，不改变最终
+ * 附录 D 判定语义）。
  */
 std::vector<double> numericJacobian(const std::vector<double>& x,
                                     const SolverTargets& targets)
@@ -545,12 +562,22 @@ std::vector<double> numericJacobian(const std::vector<double>& x,
     for (std::size_t jCol = 0; jCol < n; ++jCol) {
         xa = x;
         xb = x;
-        xa[jCol] += kDerivativeStep;
-        xb[jCol] -= kDerivativeStep;
+        const std::size_t coordinate = jCol % 4U;
+        // 长度坐标以 1 mm 作为零附近的相对步长下限，而不是直接使用整条
+        // 链的 positionScaleM；否则一个 2 mm 的 a 参数会被迫用 1 m 级步长，
+        // 小参数的导数被截断误差淹没。大参数仍按自身幅值放大步长。
+        const double referenceScale = (coordinate == 0U || coordinate == 3U)
+                                          ? 1.0
+                                          : std::max(kMinimumPositionScaleM,
+                                                     std::abs(x[jCol]));
+        const double h = kDerivativeRelativeStep
+                       * std::max(referenceScale, std::abs(x[jCol]));
+        xa[jCol] += h;
+        xb[jCol] -= h;
         const std::vector<double> ra = residualOf(xa, targets);
         const std::vector<double> rb = residualOf(xb, targets);
         for (std::size_t iRow = 0; iRow < m; ++iRow) {
-            j[iRow * n + jCol] = (ra[iRow] - rb[iRow]) / (2.0 * kDerivativeStep);
+            j[iRow * n + jCol] = (ra[iRow] - rb[iRow]) / (2.0 * h);
         }
     }
     return j;
@@ -583,6 +610,10 @@ LmResult lmSolve(const SolverTargets& targets, std::vector<double> x0,
     const std::size_t n = x0.size();
     const std::size_t m = targets.size() * 6;
 
+    if (!std::isfinite(targets.positionScaleM)
+        || targets.positionScaleM > kMaximumPositionScaleM) {
+        return {DhConvergenceState::Diverged, x0};
+    }
     std::vector<double> r = residualOf(x0, targets);
     double cost = costOf(r);
     // 初值即非有限（1e200 级溢出样本——AnalysisFailed UT 边界）：LM 迭代
@@ -936,13 +967,18 @@ SolverFrameTargets targetsFromExplicit(const std::vector<JointEntry>& joints)
     t.base.axisDirections.reserve(joints.size());
     t.rotations.reserve(joints.size());
     rw::math::Transform3D<double> acc = identityTransform();
+    double maxPositionMagnitude = 0.0;
     for (const JointEntry& joint : joints) {
         // 显式侧相对变换入链（JointPose→Transform3D 同构转换——零语义差）。
         acc = transformMul(acc, static_cast<rw::math::Transform3D<double>>(joint.origin.value()));
         t.base.originPositions.push_back(acc.P());
         t.base.axisDirections.push_back(zAxisOf(acc));
         t.rotations.push_back(acc.R());
+        maxPositionMagnitude = std::max(maxPositionMagnitude, acc.P().norm2());
     }
+    // 位置尺度取目标原点最大范数，并设 1 mm 下限；同一尺度用于所有
+    // 残差行和长度参数差分，保证 LM 的平移项无量纲且确定性。
+    t.base.positionScaleM = std::max(kMinimumPositionScaleM, maxPositionMagnitude);
     return t;
 }
 

@@ -37,8 +37,9 @@ namespace sdurws::ird::modeling::inertiamath {
  * （判定边界由测试用清晰例钉住；边界浮点噪声 ~1e-16 相对量级）。
  *
  * 数学（对称阵 A=[[x,p,q],[p,y,r],[q,r,z]]）：
- *   p1 = x²+y²+z²+2(p²+q²+r²)；p1=0 → 零阵（特征值全 0）；
- *   否则 q_ = tr(A)/3，p2 = Σ(xᵢ-q_)²+2(p²+q²+r²)，p_ = √(p2/6)，
+ *   六个分量全为 0 → 零阵（特征值全 0）；否则 q_ = tr(A)/3，
+ *   p2 = Σ(xᵢ-q_)²+2(p²+q²+r²)，p2=0 → 各向同性阵（特征值全为 q_），
+ *   p2>0 时 p_ = √(p2/6)，
  *   B = (A - q_·I)/p_，r_ = det(B)/2 夹取到 [-1,1]，φ = acos(r_)/3，
  *   λmax = q_ + 2p_·cos(φ)，λmin = q_ + 2p_·cos(φ+2π/3)，
  *   λmid = 3q_-λmax-λmin。
@@ -52,9 +53,13 @@ namespace sdurws::ird::modeling::inertiamath {
  */
 inline std::array<double, 3> symmetricEigenvalues3x3(const InertiaTensor& t) noexcept
 {
-    const double p1 = t.ixx * t.ixx + t.iyy * t.iyy + t.izz * t.izz
-                    + 2.0 * (t.ixy * t.ixy + t.ixz * t.ixz + t.iyz * t.iyz);
-    if (p1 == 0.0) {
+    // 先按分量判断真正的零矩阵，而不是用平方和 p1==0 判断：极小但
+    // 合法的惯量（例如 1e-300 kg·m²）平方后会下溢为 0，不能因此被
+    // 错当成零矩阵。零矩阵分支必须优先于 p2 边界处理，SPD 判定仍会
+    // 正确拒绝其最小特征值不严格大于 0（I-MDL-5）。
+    const bool isZeroMatrix = t.ixx == 0.0 && t.iyy == 0.0 && t.izz == 0.0
+                           && t.ixy == 0.0 && t.ixz == 0.0 && t.iyz == 0.0;
+    if (isZeroMatrix) {
         // 零矩阵：特征值全 0（SPD 判定将正确拒绝——零惯量非正定）
         return {0.0, 0.0, 0.0};
     }
@@ -63,6 +68,13 @@ inline std::array<double, 3> symmetricEigenvalues3x3(const InertiaTensor& t) noe
                     + (t.iyy - trThird) * (t.iyy - trThird)
                     + (t.izz - trThird) * (t.izz - trThird)
                     + 2.0 * (t.ixy * t.ixy + t.ixz * t.ixz + t.iyz * t.iyz);
+    if (p2 == 0.0) {
+        // 各向同性张量的三个对角项相等且积项为零，此时 pNorm=0；
+        // 直接返回三重平均值，避免后续 B=(A−qI)/pNorm 形成 0/0。
+        // 该分支也覆盖大尺度输入的 p1 溢出场景，因为 p2 只描述偏离
+        // 各向同性部分的能量，仍可保持为零（WP-13-T23）。
+        return {trThird, trThird, trThird};
+    }
     const double pNorm = std::sqrt(p2 / 6.0);
     // B = (A - trThird·I) / pNorm（p2>0 蕴含 pNorm>0——非零阵不会除零）
     const double bx = (t.ixx - trThird) / pNorm, bp = t.ixy / pNorm, bq = t.ixz / pNorm;

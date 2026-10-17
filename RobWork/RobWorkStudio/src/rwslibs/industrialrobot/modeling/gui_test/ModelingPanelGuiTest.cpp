@@ -210,6 +210,44 @@ protected:
     std::unique_ptr<ModelingPanelWidget> m_panel;  ///< 被测面板（Qt 父子自毁）
 };
 
+/**
+ * @brief 就绪条把 NotProvided 的中文状态和字段三要素呈现给工程师（WP-13-T23）。
+ *
+ * 本用例验证 UI 只渲染 ReadinessNote 提供的事实：状态标签、字段路径、
+ * 单位和修复建议均可观察；它不在 Qt 层重新推导任何计算结论。
+ */
+TEST_F(ModelingPanelGuiTest, ReadinessBar_NotProvidedStatusAndActionVisible_WP13T23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "UX-03"},
+                  std::vector<std::string>{});
+
+    ModelReadinessReport report;
+    ReadinessNote note;
+    note.layer = ReadinessLayer::L9Drivetrain;
+    note.subjectPath = "drivetrain.velocityAcceleration";
+    note.summary = "关节速度/加速度尚未进入当前建模 schema";
+    note.kind = ReadinessNoteKind::NotProvided;
+    note.subject = m_ws.design.joints.front().objectId;
+    note.fieldPath = "joints[*].maxVelocity / joints[*].maxAcceleration";
+    note.unitText = "rad·s⁻¹ / rad·s⁻²";
+    note.recommendedAction = "请在传动或策略模块补录";
+    report.notes.push_back(note);
+
+    m_panel->refreshPanel(m_ws, report);
+    auto* items = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_modeling_readiness_items"));
+    ASSERT_NE(items, nullptr);
+    ASSERT_EQ(items->topLevelItemCount(), 13)
+        << "12 层结果＋1 条 NotProvided 逐项提示应同时可见";
+    const QTreeWidgetItem* item = items->topLevelItem(0);
+    ASSERT_NE(item, nullptr);
+    EXPECT_TRUE(item->text(0).startsWith(QStringLiteral("[未提供]")));
+    EXPECT_TRUE(item->text(0).contains(QStringLiteral("schema")));
+    EXPECT_TRUE(item->toolTip(0).contains(QStringLiteral("joints[*].maxVelocity")));
+    EXPECT_TRUE(item->toolTip(0).contains(QStringLiteral("rad·s⁻¹ / rad·s⁻²")));
+    EXPECT_TRUE(item->toolTip(0).contains(QStringLiteral("传动或策略模块")));
+}
+
 // =====================================================================
 // P0-1 表单全清：重复刷新/往返选中后属性行数恒定（removeRow(0) 单次
 // 无循环→行无上限增长的缺陷在此钉死——行数恒定即"清空删尽"的观测面）。

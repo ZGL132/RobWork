@@ -469,6 +469,46 @@ TEST(MdlPropertyEstimation, SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2)
     EXPECT_NEAR(props.centerOfMass[2], 0.0, closeTolerance(0.0));
 }
 
+/// 各向同性惯量的特征值边界（WP-13-T23）：p2=0 时三重特征值就是
+/// 对角线平均值，不能让解析式继续构造 B 矩阵而产生 0/0。测试同时钉住
+/// 极小与大量级的有限张量，确保边界处理不会把合法物性误报成非有限值；
+/// 三个量级均对应 kg·m²，且六分量张量位于连杆参考系。
+TEST(MdlPropertyEstimation, IsotropicInertiaEigenvaluesRemainFinite_WP13T23)
+{
+    IRD_TEST_INFO("MDL-05", {}, std::nullopt);
+    using sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3;
+
+    const std::array<double, 3> expected{2.0, 2.0, 2.0};
+    InertiaTensor ordinary;
+    ordinary.ixx = 2.0;
+    ordinary.iyy = 2.0;
+    ordinary.izz = 2.0;
+    const auto ordinaryEig = symmetricEigenvalues3x3(ordinary);
+    EXPECT_EQ(ordinaryEig, expected);
+
+    // 物性断言公共流程也必须接受合法的各向同性 SPD 张量；这验证边界
+    // 修复确实贯穿 I-MDL-5 核查，而不是只在私有特征值函数上过拟合。
+    const auto provided = SourcedValue<InertiaTensor>::provided(
+        ordinary, ValueProvenance::make(ProvenanceKind::UserProvided));
+    std::vector<sdurws::ird::modeling::InvariantViolation> violations;
+    sdurws::ird::modeling::inertiamath::checkInertiaAssertions(
+        violations, provided, "links[isotropic]");
+    EXPECT_TRUE(violations.empty());
+
+    for (const double scale : {1e-300, 1e300}) {
+        InertiaTensor extreme;
+        extreme.ixx = scale;
+        extreme.iyy = scale;
+        extreme.izz = scale;
+        const auto eig = symmetricEigenvalues3x3(extreme);
+        for (const double value : eig) {
+            EXPECT_TRUE(std::isfinite(value)) << "各向同性有限张量不应产生 NaN/Inf，scale=" << scale;
+            EXPECT_DOUBLE_EQ(value, scale)
+                << "三重特征值应等于各向同性对角值，scale=" << scale;
+        }
+    }
+}
+
 /// 输出自检反例拒收（§9.4.6 @post"自检失败=内部错误码，不输出非法张量"）：
 ///   分量级反例（私有头直检——对称超差/非正定/三角不等式逐条触发，
 ///   容差边界恰可过）；公共面反例（尺寸合法但算术溢出→SynthesisFailed，

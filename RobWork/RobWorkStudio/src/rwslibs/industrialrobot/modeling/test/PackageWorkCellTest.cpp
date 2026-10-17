@@ -303,6 +303,32 @@ TEST(MdlPackageWorkCell, WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5)
     EXPECT_EQ(failDiags.front().code, std::string(kMdlExportFailed));
     EXPECT_EQ(readFile(guarded), std::string("PREVIOUS")) << "旧输出完好（V-29）";
 
+    // ---- 多文件事务：DWC 暂存失败时 WC 也必须保持旧版本 ----
+    // 旧实现先 commit WC、再 prepare/write DWC，第二面失败会留下“新 WC＋旧
+    // DWC”的半套结果。当前实现要求所有面先进入同目录暂存区，任何一面
+    // 失败都 abort 全部暂存会话；工程师重试前看到的仍是上一套完整输出。
+    const std::filesystem::path transactionWc = dir / "transaction-wc.xml";
+    const std::filesystem::path missingParent = dir / "missing-parent";
+    std::filesystem::remove_all(missingParent);
+    {
+        std::ofstream out(transactionWc, std::ios::binary);
+        out << "PREVIOUS-WC";
+    }
+    WorkCellExportTarget stagedFailure;
+    stagedFailure.wcTargetFile = transactionWc;
+    stagedFailure.dwcTargetFile = missingParent / "transaction-dwc.xml";
+    std::vector<core::DiagnosticRecord> stagedFailureDiags;
+    const PackageExportOutcome stagedFailureResult =
+        exportWorkCellXml(*snapshot, stagedFailure, stagedFailureDiags);
+    ASSERT_FALSE(stagedFailureResult.ok) << "DWC 父目录不存在应在发布前失败";
+    EXPECT_EQ(stagedFailureResult.error.code, ModelingErrorCode::ExportFailed);
+    EXPECT_EQ(readFile(transactionWc), std::string("PREVIOUS-WC"))
+        << "DWC 暂存失败不能先替换 WC（多文件事务恢复）";
+    for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+        EXPECT_NE(entry.path().extension(), ".tmp")
+            << "失败后不得残留任一导出暂存文件：" << entry.path().string();
+    }
+
     // ---- DWC 能力缺失拒绝面：requestDynamicWorkCell=false 的快照 ----
     CompileOptions noDwc;
     noDwc.requestDynamicWorkCell = false;

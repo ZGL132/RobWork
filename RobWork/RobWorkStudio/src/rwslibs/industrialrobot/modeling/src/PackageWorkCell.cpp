@@ -116,29 +116,47 @@ std::string xmlTransform(const rw::math::Transform3D<double>& t)
     return out;
 }
 
-/// 单文件原子落盘（io AtomicFile prepare→写入→commit——失败 abort，目标
-/// 零接触；返回空串＝成功，非空＝io 稳定码 token 定位的环境失败描述）。
-bool atomicWrite(const std::filesystem::path& targetFile, io::ReplacePolicy replace,
-                 const std::string& bytes, std::string* failDetail)
+/// 一个待发布文件的事务会话：先 prepare＋write，待所有请求面都成功后
+/// 才进入 commit。这样 WC 成功而 DWC 目标不可写时，WC 仍停留在旧版本，
+/// 不会出现“半套导出”被工程师误认为可用的状态（MDL-20/V-29）。
+struct PendingAtomicFile {
+    io::IAtomicFileWriterPtr writer;
+    io::AtomicTarget target;
+    std::string bytes;
+};
+
+/// 暂存单文件（prepare→write），不触碰最终目标；失败由调用方统一 abort
+/// 已暂存会话，确保本次多文件事务在发布前整体回滚。
+bool stageAtomicFile(const std::filesystem::path& targetFile,
+                     io::ReplacePolicy replace, const std::string& bytes,
+                     PendingAtomicFile* pending, std::string* failDetail)
 {
-    io::IAtomicFileWriterPtr writer = io::makeAtomicFileWriter();
-    auto prepared = writer->prepare(targetFile, replace);
+    pending->writer = io::makeAtomicFileWriter();
+    auto prepared = pending->writer->prepare(targetFile, replace);
     if (!prepared) {
         *failDetail = std::move(prepared.error.detail);
+        pending->writer.reset();
         return false;
     }
-    io::AtomicTarget atomicTarget = prepared.value;
-    if (auto written = atomicTarget.write(bytes); !written) {
-        (void)writer->abort(atomicTarget);   // 暂存清理——目标不变（V-29 同款）
+    pending->target = std::move(prepared.value);
+    if (auto written = pending->target.write(bytes); !written) {
+        (void)pending->writer->abort(pending->target);
         *failDetail = std::move(written.error.detail);
+        pending->writer.reset();
         return false;
     }
-    if (auto committed = writer->commit(atomicTarget); !committed) {
-        (void)writer->abort(atomicTarget);
-        *failDetail = std::move(committed.error.detail);
-        return false;
-    }
+    pending->bytes = bytes;
     return true;
+}
+
+/// 清理尚未发布的暂存会话（abort 对已终态会话幂等——可统一调用）。
+void abortPending(std::vector<PendingAtomicFile>& pending)
+{
+    for (PendingAtomicFile& file : pending) {
+        if (file.writer != nullptr) {
+            (void)file.writer->abort(file.target);
+        }
+    }
 }
 
 /// 导出失败错误值构造（Package.cpp 匿名命名空间的 makeError 不跨 TU 暴露
@@ -234,7 +252,8 @@ PackageExportOutcome exportWorkCellXml(const runtime::RuntimeSnapshot& snapshot,
     PackageExportOutcome outcome;
 
     // ---- WC 面（数据源＝快照只读视图——Compiled 态前置由调用方保证）----
-    std::string wcXml;
+    std::vector<PendingAtomicFile> pending;
+    pending.reserve(2);
     std::uint64_t writtenFiles = 0;
     std::uint64_t writtenBytes = 0;
 
@@ -265,11 +284,14 @@ PackageExportOutcome exportWorkCellXml(const runtime::RuntimeSnapshot& snapshot,
         xml += "</ird-workcell-export>\n";
 
         std::string failDetail;
-        if (!atomicWrite(target.wcTargetFile, target.replace, xml, &failDetail)) {
+        pending.emplace_back();
+        if (!stageAtomicFile(target.wcTargetFile, target.replace, xml,
+                             &pending.back(), &failDetail)) {
+            pending.pop_back();
+            abortPending(pending);
             return failExport(diags, "wc-write", std::move(failDetail));
         }
-        ++writtenFiles;
-        writtenBytes += xml.size();
+        writtenBytes += pending.back().bytes.size();
     }
 
     // ---- DWC 面（能力门控——快照无 DWC 而请求了 DWC 目标＝失败）----
@@ -296,11 +318,26 @@ PackageExportOutcome exportWorkCellXml(const runtime::RuntimeSnapshot& snapshot,
         xml += "</ird-dwc-export>\n";
 
         std::string failDetail;
-        if (!atomicWrite(target.dwcTargetFile, target.replace, xml, &failDetail)) {
+        pending.emplace_back();
+        if (!stageAtomicFile(target.dwcTargetFile, target.replace, xml,
+                             &pending.back(), &failDetail)) {
+            pending.pop_back();
+            abortPending(pending);
             return failExport(diags, "dwc-write", std::move(failDetail));
         }
+        writtenBytes += pending.back().bytes.size();
+    }
+
+    // 所有目标均已 prepare＋write 后才发布。commit 失败时清理尚未发布的
+    // 暂存；已发布目标由 io 原子替换保证不会出现半截文件。正常环境下
+    // commit 失败只可能是最后一步的外部文件系统故障，诊断会明确指出
+    // 发布阶段，调用方不得把本次结果当成完整导出。
+    for (PendingAtomicFile& file : pending) {
+        if (auto committed = file.writer->commit(file.target); !committed) {
+            abortPending(pending);
+            return failExport(diags, "commit", std::move(committed.error.detail));
+        }
         ++writtenFiles;
-        writtenBytes += xml.size();
     }
 
     outcome.ok = true;

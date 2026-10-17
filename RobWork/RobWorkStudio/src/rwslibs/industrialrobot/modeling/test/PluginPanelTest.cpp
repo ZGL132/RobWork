@@ -453,6 +453,38 @@ TEST(PluginPanel, ReadinessBar_LayersCountsAndJumpTargets_WP13T15_ACC2)
         << "note 行呈现报告原文（零业务文案加工）";
 }
 
+/**
+ * @brief NotProvided 就绪提示保留对象、字段、单位和修复建议（可靠设计的
+ *        最小呈现契约——UI 可据此定位而无需猜测计算语义）。
+ */
+TEST(PluginPanel, ReadinessBar_NotProvidedCarriesFieldUnitAndAction_WP13T23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "MDL-16"},
+                  std::vector<std::string>{});
+
+    ModelReadinessReport report;
+    ReadinessNote note;
+    note.layer = ReadinessLayer::L9Drivetrain;
+    note.subjectPath = "drivetrain.velocityAcceleration";
+    note.summary = "速度/加速度未进入建模 schema";
+    note.kind = ReadinessNoteKind::NotProvided;
+    note.subject = fixedOid(0xC0);
+    note.fieldPath = "joints[*].maxVelocity / joints[*].maxAcceleration";
+    note.unitText = "rad·s⁻¹ / rad·s⁻²";
+    note.recommendedAction = "在传动或策略模块补录";
+    report.notes.push_back(note);
+
+    const auto bar = projectReadinessBar(report);
+    ASSERT_EQ(bar.items.size(), std::size_t{1});
+    EXPECT_EQ(bar.items[0].severity, "not-provided");
+    EXPECT_EQ(bar.counts.notProvided, std::size_t{1});
+    ASSERT_TRUE(bar.items[0].jumpTarget.has_value());
+    EXPECT_TRUE(*bar.items[0].jumpTarget == fixedOid(0xC0));
+    EXPECT_EQ(bar.items[0].fieldPath, note.fieldPath);
+    EXPECT_EQ(bar.items[0].unitText, note.unitText);
+    EXPECT_EQ(bar.items[0].recommendedAction, note.recommendedAction);
+}
+
 /// 预览页：仅基于已应用修订（D-MDL-10——编辑态即时 XML 预览不提供）。
 /// 行为面：空修订＝空页；内容按行拆分；工作集不可作预览源（类型强制——
 /// buildPreviewPage 只收 AppliedRevisionView，ModelingWorkingSet 无重载，
