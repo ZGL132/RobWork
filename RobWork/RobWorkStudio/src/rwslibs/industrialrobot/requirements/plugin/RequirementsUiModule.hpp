@@ -460,11 +460,18 @@ private:
  *        "requirements"（ModuleDraftHandle 注册表键同词表））。
  *
  * 草稿文档载荷语义（域侧自治——ui 只搬运不解析，CR-02/D-10）：
- *   payload＝RequirementCommandPayload{Apply, 五对象槽}的 canonical 字节
- *   （与 draft.apply 命令载荷同构同版本——一套编码两处消费，NFR-MNT-03；
- *   schemaVersion=kRequirementCommandPayloadVersion）。恢复＝解码五对象→
- *   以内存闭包视图重建编辑器基线（工作集即恢复的草稿内容）→置
- *   restoredDraftPending（应用资格位）。
+ *   payload＝hex 铠装后的 ASCII 文本（F-917 所有者裁决 2026-10-18）——
+ *   铠装内容＝RequirementCommandPayload{Apply, 五对象槽}的 canonical 字节
+ *   （与 draft.apply 命令载荷同构同版本——一套编码两处消费，NFR-MNT-03）
+ *   经小写 hex 编码。为什么铠装：二进制帧过不了 project 草稿格式 payload
+ *   字段的 UTF-8 校验（findings F-917），hex 文本纯 ASCII 必过——与
+ *   modeling 建模域既有铠装惯例同型。铠装/解铠装对称于本域插件边界内侧
+ *   （ui 控制器与 project 存储零感知——CR-02 只搬运不解析不动）。
+ *   schemaVersion＝域内载荷版本（kRequirementCommandPayloadVersion），
+ *   仅呈现/遥测不落盘——落盘格式版本由 project save 归一化（F-918 裁决，
+ *   本值在 save 侧被忽略）。恢复＝解 hex 铠装→解码五对象→以内存闭包
+ *   视图重建编辑器基线（工作集即恢复的草稿内容）→置 restoredDraftPending
+ *   （应用资格位）。
  *
  * 线程约束：四方法均仅 UI 线程被控制器调用（§10.5 契约表）。
  */
@@ -493,7 +500,8 @@ public:
      * ——到达即装配违约 fail-fast，不产出空文档）。
      *
      * @return 草稿文档投影（moduleId="requirements"；payload＝五对象载荷
-     *         canonical 字节；baseRevisionId 取编辑器草稿态〔未标注＝空
+     *         canonical 字节的 hex 铠装文本〔F-917——见类注〕；
+     *         baseRevisionId 取编辑器草稿态〔未标注＝空
      *         保留值〕；savedAtUtc 留空——控制器在分派时刻填写）
      *
      * @throws std::logic_error 编辑器未载入基线（装配违约）
@@ -507,10 +515,10 @@ public:
      *
      * @param document [in] 恢复的文档值（payload 语义见类注）
      *
-     * @throws std::runtime_error 载荷破损/版本不受理/对象解码失败/根引用
-     *               表不完整（草稿文件级数据缺陷——fail-fast 不吞：损坏
-     *               恢复横幅面由控制器按 RestoreOutcome 呈现，域侧不虚构
-     *               可用工作集）
+     * @throws std::runtime_error hex 解铠装失败/载荷破损/版本不受理/对象
+     *               解码失败/根引用表不完整（草稿文件级数据缺陷——fail-fast
+     *               不吞不猜测：损坏恢复横幅面由控制器按 RestoreOutcome
+     *               呈现，域侧不虚构可用工作集）
      */
     void adoptRestoredDocument(const ui::DraftDocumentProjection& document) override;
 

@@ -1,0 +1,38 @@
+=== UI-T85 集成模式构建（仓库根 build/，RWS_BUILD_INDUSTRIALROBOT=ON）===
+RWS_BUILD_INDUSTRIALROBOT:BOOL=ON
+
+$ cmake --build build --config Release --target sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_ui_gui_test sdurws_ird_project_test sdurws_ird_studio
+  Automatic MOC for target sdurws_playback
+  sdurws_playback.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_playback.lib
+  Automatic MOC for target sdurws_treeview
+  sdurws_treeview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_treeview.lib
+  Automatic MOC for target sdurws_ird_studio
+  sdurws_ird_studio.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_studio.exe
+exit=0
+
+=== ird_gates（依赖红线/补丁门禁）===
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+exit=0
+
+=== ctest ui（test＋contract_test）===
+1/2 Test #1: sdurws_ird_ui_test ...............   Passed    1.95 sec
+2/2 Test #2: sdurws_ird_ui_contract_test ......   Passed    1.15 sec
+100% tests passed, 0 tests failed out of 2
+
+=== ctest project ===
+1/1 Test #1: sdurws_ird_project_test ..........   Passed   14.37 sec
+100% tests passed, 0 tests failed out of 1
+
+=== requirements/modeling 回归（受益域零改动确认）===
+100% tests passed, 0 tests failed out of 3
+100% tests passed, 0 tests failed out of 3
+
+=== 定向钉子复核 ===
+[       OK ] HostDraftChain.TextPayloadSaveReopenRestoreByteEqual_UI_T84_ACC4 (44 ms)
+[       OK ] HostDraftChain.RequirementsDraftFullChainByteEqual_UI_T85_F917 (36 ms)
+[       OK ] HostDraftChain.ClosedContextListReturnsEmptyTruth_UI_T84 (22 ms)
+[  PASSED  ] 3 tests.
+[       OK ] DraftServiceTest.DomainVersionInputNormalizedReadableBackRoundtripPin (38 ms)
+[  PASSED  ] 1 test.

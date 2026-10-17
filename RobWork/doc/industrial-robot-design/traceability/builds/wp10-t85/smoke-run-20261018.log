@@ -1,0 +1,18 @@
+=== UI-T85 独立冒烟模式（DTB §5.5 口径——vcpkg toolchain＋Qt 前缀两参数）===
+
+$ cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build/acc-smoke-wp10-t85 -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64
+（配置输出：Configuring done / Generating done / Build files written——2026-10-18 实录，残留树清理后全新配置）
+
+$ cmake --build build/acc-smoke-wp10-t85 --config Release --target sdurws_ird_project_test sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_ui_gui_test sdurws_ird_requirements_test sdurws_ird_modeling_test
+（构建输出：错误计数=0，exit=0——六目标零错误〔2026-10-18 后台实录，日志全文见会话执行记录〕）
+
+=== 冒烟树 ctest（project＋ui 两套件）===
+1/1 Test #1: sdurws_ird_project_test ..........   Passed   13.16 sec
+100% tests passed, 0 tests failed out of 1
+1/2 Test #1: sdurws_ird_ui_test ...............   Passed    1.78 sec
+2/2 Test #2: sdurws_ird_ui_contract_test ......   Passed    1.34 sec
+100% tests passed, 0 tests failed out of 2
+
+=== 口径注 ===
+1. 独立冒烟按受影响单元定向执行（project/ui/requirements/modeling 六目标）——非 gate-all 全矩阵；kinematics 两目标独立树链接缺陷为已登记 findings F-919（不属本批可修面，未触碰）。
+2. 冒烟树源文件与集成树同源（同一工作树 wp10-t85 分支）。

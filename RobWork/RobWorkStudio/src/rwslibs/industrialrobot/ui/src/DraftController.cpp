@@ -773,8 +773,13 @@ private:
      *        fail-fast，不把半成品投进落盘线程）。
      *
      * moduleId 与挂接句柄一致（错位＝域源组装违约）；token 词法与
-     * schemaVersion 非零（0＝未填写保留值——落盘 0 版本文档属装配
-     * 缺陷，对端将按格式校验拒绝，提前拦截）。
+     * schemaVersion 非零。schemaVersion 语义（F-918 所有者裁决
+     * 2026-10-18）：本字段＝域内草稿格式版本，仅呈现/遥测——**不落盘**
+     * （落盘格式版本由 project save 归一化为 kSchemaVersionCurrent，调用
+     * 方传入值被对端忽略）。本处仅做非零检查（0＝未填写保留值——域源
+     * 组装健全性检查：填了 0 说明域源漏填自身版本，属装配缺陷提前拦截；
+     * 值本身不参与落盘格式判定，独立评审在案——"仅拒零值不构成提前拒绝
+     * 缺口"）。
      */
     void validateDocument(const ModuleDraftHandle& handle,
                           const DraftDocumentProjection& document) const
@@ -786,8 +791,9 @@ private:
         }
         if (document.schemaVersion == 0) {
             throw std::invalid_argument(
-                "ui/draft: 草稿文档 schemaVersion 未填写（0＝保留值——域"
-                "组装方须携带格式版本，§4.4.5）: " + handle);
+                "ui/draft: 草稿文档 schemaVersion 未填写（0＝保留值——域源"
+                "须携带非零域内版本，仅呈现/遥测不落盘〔F-918 归一化〕）: "
+                + handle);
         }
     }
 

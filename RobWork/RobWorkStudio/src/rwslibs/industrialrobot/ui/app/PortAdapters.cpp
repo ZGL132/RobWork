@@ -371,10 +371,12 @@ ui::DraftOrigin draftOriginFromProject(project::DraftOrigin origin)
 
 DraftSaveOutcome StorePortAdapter::save(const DraftDocumentProjection& document)
 {
-    // 值翻译（零加工）：schemaVersion 0＝"未填写保留值"（投影契约禁止落盘
-    // 0——DraftController 侧保证；此处直传，对端校验链兜底）；payload 为域
-    // canonical 字节原样透传（CR-02/D-10——适配器不解析）。分支由文档自身
-    // 携带（branchId 字段），分支锚不消费。
+    // 值翻译（零加工）：schemaVersion 透传后由对端 save 归一化——落盘格
+    // 式版本权威归 project（DraftServiceImpl::save 落盘前写
+    // kSchemaVersionCurrent，调用方值忽略并留 dev 诊断，F-918 裁决；
+    // 投影字段＝域内版本仅呈现/遥测）；payload 为域自有字节原样透传
+    // （CR-02/D-10——适配器不解析，域侧铠装等编码归域插件边界内侧，
+    // F-917）。分支由文档自身携带（branchId 字段），分支锚不消费。
     project::DraftDocument doc;
     doc.schemaVersion = static_cast<int>(document.schemaVersion);
     doc.projectId = document.projectId;
