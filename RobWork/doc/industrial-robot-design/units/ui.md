@@ -5,6 +5,7 @@
 | 项目 | 内容 |
 | --- | --- |
 | 文档代号 | UNIT-UI |
+| 文档版本 | v1.105（2026-10-17，装配完备性治理 T3 增量——IRD-NOTE-006 所有者裁决通过〔落地方案 docs/superpowers/plans/2026-10-17-assembly-completeness-gate-plan.md〕）：§5.8 桥与会话绑定状态机（含失败转换）＋异常隔离三要素；§11.6 生产装配清单与接缝登记（production-assembly-manifest 权威＋装配注释锚点规则）；§12.5 真实宿主 E2E 五场景（集成批次 DoD＋杀进程承诺边界＋禁止夹具接线）。纯治理登记批，零产品源码。前一版本保留如下。 |
 | 文档版本 | v1.104（2026-10-16，KIN-P4 正式产品闭环 ui 侧实施登记）：①新 TU `plugin/KinHostServicesAssembly.{hpp,cpp}`（宿主服务装配半区——kinematics 面板七缝的产品物：KinProjectCommandGateway ①/②端口投影网关〔fetchBaseline 分支/tip/根对象字节＋NoDevice 值面轨；submit 信封逐字段转译＋四态两态投影——非提交态 diagnostics 透传、code 承载对端 status 词表 token〕＋patchRootDesignDefaultTcp〔modeling RobotDesignCodec 权威〕＋makeKinExportWriter〔io AtomicFile 真实原子写出＋目录代建；环境变量 IRD_KIN_EXPORT_DIR／缺省 AppData〕＋makeKinConfigPersist/restoreKinConfig〔QSettings×AnalysisConfigurationCodec 保存/恢复闭环，损坏如实回退〕＋makeKinHomePoseProvider〔named-pose-set 保留键 homeConfiguration〕）——同源编入 sdurws_ird_ui_plugin/sdurws_ird_studio/sdurws_ird_ui_test（守卫块）；②wireKinematicsEvaluationChannel 扩展（通道值面七缝注入＋配置恢复＋sessionSolveRoute 结构化回投闭包〔锚核对→门面 applySessionSolveOutcome 写会话态〕＋taskPoints 投影合入批量逐点账面〔锚核对〕）；③项目打开拍 installKinematicsCommandHandler（网关/门面构造＋HostCommandInteraction 确认桥＋补缝刷新）＋teardown 清缝（门面 clearCommandHandler）＋通道请求 solveTargetInBase 表尾追加；④ui_test 增链 sdurws_ird_project/sdurws_ird_io（IRD_TEST_TARGET_EDGES 两增登——traceability/kin-p4-gate-registrations.md）＋新文件 KinHostServicesAssemblyTest 8 用例＋KinEvaluationChannelTest 3 新 1 改造（SessionSolve/TaskPointsBatch 真实分发＋换绑取消＋逐点账面——原两 kind 整体拒绝断言随真实分发退役翻转）；验证 ui_test 305/305、ui_contract_test 42/42、ird_gates 零命中；留痕 traceability/builds/kin-p4/；详见 §16.7 v1.104。契约 ready，等待独立验收，不代表已合入。前一版本保留如下。 |
 | 文档版本 | v1.103（2026-10-16，KIN-P1 坐标修复批 ui 侧实施登记）：plugin/KinEvaluationChannel.cpp 区域投影经 runtime invertWorldBase 权威反解求 T_base_world（审查 A01 根因——T_world_base 被当 T_base_world 复合少取一次逆）＋符号置换旋转精确支持/任意角旋转保持拒绝＋UiPlugin 着色回投改 worldToBase 直乘（连带修正——与通道投影的镜像错误抵消面消除）；ui_test 增 KIN-P1 五用例修复前全红复现、修复后 294/294。详见 §16.7 v1.103。契约 ready，等待独立验收，不代表已合入。前一版本保留如下。 |
 | 文档版本 | v1.102（2026-10-15，UI-T82 统一停靠与缩放防重叠实施登记）：§4.4/4.5 增嵌入宿主的六域标签组、滚动视口和显隐解释；§10.1 增 factory-reset-only 注入例外；§13 登记后继任务。契约 ready，等待独立验收，不代表已合入。前一版本保留如下。 |
@@ -515,6 +516,23 @@ S2 项目切换（A→B）：
 - 迟到结果继续归档：UI 会话已切换/已关闭不影响 execution 归档路径（RunRegistry 核对→按登记记录写 `results/<run-id>/`→ResultArchived 事件）；ui 收到该事件时按 epoch 过滤（§6.2）只更新"后台任务"只读清单。
 - 已释放上下文的写请求：project 侧拒绝（context-closed）；ui 侧显示 `UI-SESSION-CONTEXT-INVALID`（§5.3），**不重试、不缓存待写**。
 - 归档失败（archivePhase=ArchiveFailed）：不阻塞关闭（归档失败不改任务终态——execution §9）；ui 在后台任务清单标记"归档失败"＋诊断入口。
+
+### 5.8 桥与会话绑定状态机（RuntimePublishBridge——含失败转换；v1.105 治理增量）
+
+呈现桥（`RuntimePublishBridge`）的宿主会话绑定状态机——**每行的失败/中止转换与成功转换同为必须实现并测试的面**（happy path 之外的转换不得缺测；IRD-NOTE-006）：
+
+| 当前态 | 事件 | 下一态 | 失败/中止转换（必须实现并测试） |
+| --- | --- | --- | --- |
+| Unbound | `attachHostSession(project)` | Bound(project) | project 全零保留值→抛 invalid_argument（fail-fast，Unbound 保持） |
+| Bound(A) | `detachHostSession` | Unbound | 释放失败→诊断留痕＋按下方三要素处置（状态承诺以恢复验证为准） |
+| Bound(A) | `switchHostSession(B)` | Bound(B) | 替换失败→回滚至 Bound(A)（宿主画面保留到替换成功的语义不破坏） |
+| Bound(A) | `attachHostSession(A/B)` | ——（拒绝） | 抛 logic_error（叠加绑定禁令——关闭再打开应走 detach→attach，保留旧呈现的切换才走 switch） |
+
+**异常隔离三要素**（打开/关闭/切换协议层；fail-fast 语义保留在桥/内核内不吞）：
+
+1. **捕获边界**＝打开/关闭/切换操作边界＋承载这些操作的 Qt 回调边界（异常不得穿透事件循环至 StudioMain 顶层兜底带崩整站——F-910 放大面的处置约定）；
+2. **回滚责任**＝诊断信息保留＋对应补偿或清理（异常抛出前存储上下文/桥绑定/草稿会话/界面可能已部分更新——补偿覆盖已更新半区）；
+3. **恢复成功条件**＝验证状态回到"旧项目完整保留"或"干净的无项目状态"后，才允许提示可重试；状态不可确认→停用相关操作＋显式故障处置流程。
 
 ---
 
@@ -1523,6 +1541,19 @@ public:
 | 命令面板入口整合 | 注册表/面板/快捷键设施 | 业务命令注册与全局入口（WP-22-T11/T12） |
 | 强制放弃兜底 | T_force 计时与确认对话 | abandonAll 调用（L5 关闭控制器） |
 
+### 11.6 生产装配清单与接缝登记（v1.105 治理增量——IRD-NOTE-006）
+
+**生产装配清单**（`traceability/production-assembly-manifest.json`，`ird-assembly-manifest/1`）是"当前产品配置必需装配集合"的**唯一权威**，三层门禁共用：Tier A 结构面（validate-docs.ps1——schema/唯一性/wired 锚点/waiver 挂 open finding 且关闭即失效）＋Tier A 扫描面（`AssemblyManifestContractTest`——生产源调用点与登记双向锁定＋未知 token 强制登记）＋Tier B 真实装配断言（经真实生产装配入口核对注册集合，挂 F-910/F-911 修复批 DoD）。**新域接入/移除必须先改清单后改代码（登记先行）。**
+
+**接缝登记表**（跨单元接线逐缝一行；状态与清单 wired/waiver 同步）：
+
+| 接缝（接口） | 实现侧 | 生产调用锚点（相对 industrialrobot/） | 状态 |
+| --- | --- | --- | --- |
+| `IDraftController::attachModule`（§10.5） | modeling 草稿源（ModelingPluginAssembly） | ui/plugin/UiPlugin.cpp:2485 | 已接线 |
+| 同上 | RequirementsDraftSource（requirements/plugin/RequirementsUiModule.hpp:459） | —— | **未接线（F-911，waiver 挂清单——子批 B 修复）** |
+
+**装配性注释锚点规则**：本单元及各域代码中，凡注释断言"随装配挂接／经 XX 接入"者，必须附可核对锚点（生产调用点 `文件:行` 或承接任务号）；无锚点＝废注释，review 打回（rule-enforcement 登记 review 层——注释是待核对的声明，不是证据）。
+
 ---
 
 ## 12. 验证方案及 Windows GUI 测试流程
@@ -1609,6 +1640,20 @@ public:
 
 - 每例绑定 TestRecord（passed/failed/skipped/notRun/envUnavailable/datasetInvalid）；GUI 用例环境不满足记 `envUnavailable`（不得绿灯，testkit §7.5）。
 - 本文档自审（§16.6）**不等同于**测试通过或正式验收；全部用例执行状态以 ctest/ird-test-report.json 留痕为准。
+
+### 12.5 真实宿主 E2E 五场景（集成批次 DoD；v1.105 治理增量——IRD-NOTE-006）
+
+| 场景 | 核心断言 |
+| --- | --- |
+| S1 同进程：打开 A→关闭→重新打开 A | 桥与会话状态正确复位，无重复挂接（§5.8 状态机——F-910 触发面） |
+| S2 切换：A→B（成功/取消/失败三态） | 成功切到 B；取消或失败时 A 保持一致 |
+| S3 未应用编辑→草稿保存成功→关闭/重启→恢复 | 恢复未应用内容，不额外产生正式修订 |
+| S4 编辑→应用成功→关闭/重启→打开 | 正式修订及其内容正确恢复（应用成功后草稿可能已清理——与 S3 是两种持久化语义，分列不得混测） |
+| S5 草稿保存失败、呈现释放失败 | 错误可见，状态符合约定，不误报成功 |
+
+- **杀进程恢复承诺边界**：只承诺恢复**最后一次成功持久化的草稿**，不承诺未触发保存的编辑全部保留（如实口径，不过度承诺）。
+- **测试纪律**：必须复用真实生产装配（真实 RobWorkStudio.exe），**禁止测试夹具自行把漏掉的线接好**——夹具接线会把生产缺陷再次掩盖（F-911 教训）。
+- 执行面为集成批次 DoD 项（半自动＋留痕起步；截图/报告入 traceability 并经证据索引检索）。
 
 ---
 
@@ -1908,6 +1953,7 @@ public:
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v1.105 | 2026-10-17 | **装配完备性治理 T3 增量**（IRD-NOTE-006 所有者裁决通过〔2026-10-17"通过并按 T1 开工"〕；落地方案 docs/superpowers/plans/2026-10-17-assembly-completeness-gate-plan.md；纯治理登记零产品源码）：①**§5.8 桥与会话绑定状态机**——RuntimePublishBridge 绑定四转换含失败/中止转换列（attach 无效身份 fail-fast／detach 释放失败留痕三要素处置／switch 替换失败回滚 Bound(A)／叠加绑定禁令），异常隔离三要素（捕获边界＝操作边界＋Qt 回调边界、回滚责任＝诊断保留＋补偿清理、恢复成功条件＝回到"旧项目完整"或"干净无项目"验证后才许提示可重试）——F-910 触发/放大面的设计侧收口约定；②**§11.6 生产装配清单与接缝登记**——production-assembly-manifest.json（ird-assembly-manifest/1）为必需装配集合唯一权威（三层门禁：Tier A 结构面已随 T1 落地 validate-docs、扫描面 AssemblyManifestContractTest 随 T2、Tier B 真实装配断言挂 F-910/F-911 修复批 DoD），接缝登记表首两行（modeling 已接线／RequirementsDraftSource 未接线 F-911 waiver），装配性注释锚点规则（无锚点＝废注释 review 打回）；③**§12.5 真实宿主 E2E 五场景**——同进程关/重开、A→B 三态、草稿保存恢复、应用后修订恢复、保存/释放失败（草稿与正式修订两种持久化语义分列），杀进程只承诺最后一次成功持久化的草稿，禁止夹具自行接线（F-911 教训）。需求语义零变化；关联 findings F-910/F-911（open，修复归集成父批次两子批） |
 | v1.104 | 2026-10-16 | KIN-P4 正式产品闭环 ui 侧落位（审查报告 audit/kin-current/运动学模块重新审查-20261016.md §4 第一/二条＋§5 KIN-P4 行验收；分支 kin-p4 基点 e53a0c3f（kin-p3 验收记录），验证留痕 traceability/builds/kin-p4/）：①**宿主服务装配半区新 TU plugin/KinHostServicesAssembly.{hpp,cpp}**（同源编入 ui_plugin/studio/ui_test〔守卫块〕）——kinematics 面板七缝的产品物：KinProjectCommandGateway（IKinProjectCommandGateway 实现——fetchBaseline＝branchTips 首条〔INV-M3〕＋HEAD 闭包扫 robot-design 根〔token 常量＝kinematics kRobotDesignObjectTypeToken〕＋tryObject 取根字节，无根/端口异常＝NoDevice 值面错误轨〔异常不穿越门面〕；submit＝KinCommandEnvelope→project::CommandEnvelope 同构转译＋四态两态投影——Committed 携新修订、非提交态对端 diagnostics 原样透传/无记录时以 status 词表 token 作 DiagCode 透明承载〔project 权威词表直投非私造码，语义登记归 kinematics.md §14.6 v0.26〕）＋patchRootDesignDefaultTcp（modeling RobotDesignCodec 解码→写 defaultTcp→重编码——宿主零第二套编解码器）＋makeKinExportWriter（io AtomicFile prepare→write→commit 真实原子写出＋目录代建〔create_directories——AtomicFile 父目录契约的装配层补偿〕；目录＝环境变量 IRD_KIN_EXPORT_DIR／缺省 QStandardPaths AppData/kinematics-exports）＋makeKinConfigPersist/restoreKinConfig（QSettings〔IniFormat/UserScope RobWork/IRD-Studio〕×AnalysisConfigurationCodec canonical v1——保存 sync 落盘/恢复双段校验，损坏/缺键如实 nullopt 回退缺省基线〔NFR-COR-03 不钳制〕）＋makeKinHomePoseProvider（named-pose-set 保留键 homeConfiguration 经 modeling Codec 解析——KIN-P3 A09 homePose 缝的宿主半区兑现）。②**wireKinematicsEvaluationChannel 扩展**：通道值面七缝注入（ikSolver/fkEvaluator/sessionPose/commandHandler/exportWriter/configPersist/homePose——审查 §4"降级服务"通道未定义面全消）；sessionSolveRoute 结构化回投闭包（快照锚核对→m_domains->kinematics->applySessionSolveOutcome 写会话态）；taskPoints 投影合入批量逐点账面（latestBatchSnapshotId 锚核对后按 pointOid 合结果列）；配置恢复（restoreKinConfig→基线注入）。③**会话生命周期接线**：项目打开成功拍 installKinematicsCommandHandler（网关/门面构造〔提交闭包＝HostCommandInteraction 确认桥——与 apply 编排同形态〕＋通道补缝＋refreshFromSession）；teardownSharedSurfacesForClose 拍 clearCommandHandler＋reset（先清缝后毁对象——零悬垂）。④**通道请求扩展**：KinChannelBackgroundRequest 表尾追加 solveTargetInBase（SessionSolve 目标载荷——runSinglePointSolve 转后台路径填入；私有 KinBackgroundRequest 同构同拍，翻译单点透传）。⑤**测试**：ui_test 新文件 KinHostServicesAssemblyTest 8 用例（网关黄金路径/NoDevice/信封转译回显/补丁缝错误轨/真实原子写回读一致/目录代建/保存恢复等值/损坏回退）＋KinEvaluationChannelTest 3 新 1 改造（SessionSolve 真实求解/换绑取消〔SlowCancelSolver 替身〕/批量逐点账面/不完整请求拒绝面翻转）；ui_test 链接面增链 sdurws_ird_project/sdurws_ird_io（IRD_TEST_TARGET_EDGES 表尾两增登——traceability/kin-p4-gate-registrations.md）。⑥验证：ui_test 305/305、ui_contract_test 42/42、ird_gates 全部检查通过零命中；留痕 traceability/builds/kin-p4/。需求语义零变化（本批为装配执行面落位——评估域语义全部在 kinematics 域设施）；O-31 常驻红线保持（产品库 sdurws_ird_ui 本体零触碰——project/io 仅测试面直链）。 |
 | v1.103 | 2026-10-16 | KIN-P1 坐标修复批 ui 侧落位（审查报告 audit/kin-current/运动学模块重新审查-20261016.md §3 A01＋§5 KIN-P1 验收"平移/侧装/倒装基座安放下世界→基座转换全部正确；世界/基座转换闭环"；分支 kin-p1 基点 redesign-main@c1f901f4，验证留痕 traceability/builds/kin-p1/）：①**A01 根因修复（plugin/KinEvaluationChannel.cpp projectPlan）**——runtime 权威读取点 worldToBase() 的**值语义是 T_world_base**（基座相对世界的位姿；Snapshot.hpp §6.4 行；本卡 §13 UI-T65 行"坐标基座→世界系经 worldToBase 逆变换"登记的正是被混淆的方向语义，随本版由本行纠正），宿主把 refFrame 系解析到基座系需其逆 T_base_world——修复前把 T_world_base 直接当 T_base_world 复合（少取一次逆）：基座世界 X=1 m、世界采样点 X=0.65 m 时基座坐标得 1.65 m（应为 −0.35 m），区域覆盖评估位置整体错位；修复按 runtime §6.3"不新增第二套基座变换规则"经 BaseWorldTransform 权威反解纯函数 invertWorldBase 取得（ui 零第二套变换真值），非正交 fail-fast 转译为切片失败如实拒绝（ERR-01）。②**旋转参考系支持面按 runtime 设施真实能力划定**——R_base_ref 为**符号置换阵**（轴交换/轴翻转，恒等为特例）时盒映射后仍轴对齐，中心/尺寸精确投影（尺寸＝|R|·size 逐行置换——RegionBox 表示换算，非第二套变换真值）；安装三预设（Ground 恒等/Inverted R_x(π)/Wall R_y(π/2)——P-RT-4 冻结矩阵均符号置换）与轴交换模型帧自此精确支持（修复前旋转检测把倒装/侧装安放下一切区域——含 World 参考系——整体误拒）；任意角旋转维持显式拒绝（保守包络会静默改变覆盖率语义——不静默扩权，拒绝 reason 更新为"任意角旋转（盒变换后非轴对齐）"）。③**A01 连带修正（plugin/UiPlugin.cpp 覆盖着色回投）**——基座系样本点回世界系由 `inverse(worldToBase())` 改为 `worldToBase()` **直乘**（p_world＝T_world_base·p_base）：修复前取逆得 T_base_world 作用在基座系点上（方向双错），恰与通道投影的镜像错误抵消、显示碰巧正确——通道修正为真值后本处必须同步修正，否则着色点错位（§13 UI-T65 行⑤"坐标基座→世界系经 worldToBase 逆变换"的登记语义随本行纠正）；rw::math::inverse 在本面不再使用，逆运算归 runtime invertWorldBase 唯一权威（通道切片侧）。④**测试**：ui/test/KinEvaluationChannelTest 新增五用例（KIN_P1 段——平移反例〔审查 A01 原始数据 1.65≠−0.35〕/倒装预设精确＋闭环/侧装预设尺寸置换＋闭环/轴交换模型帧精确支持/任意角旋转保持拒绝），FixtureView 扩展注入 T_world_base（替身按 runtime 语义原样返回值）；**修复前五用例全红复现**（1.65 实测＋倒装/侧装/轴交换三场景全部误拒），修复后 ui_test 294/294（基线 289＋5）、ui_contract_test 42/42、ui_gui_test 84/84 全绿。⑤验证：集成模式受影响目标构建零错误（kinematics/ui/ui_plugin/studio/测试六目标）；ird_gates 零命中；留痕 traceability/builds/kin-p1/（构建日志＋六套件 gtest XML＋ird_gates 日志）。kinematics 侧同批落位（目标输入逆换算/标签随制式/新 gui_test 目标）登记归 kinematics.md §14.6 v0.23。需求语义零变化（KIN-04/KIN-07 评估语义原文不动——本批为坐标投影正确性修复）；M-11/AT-37 观测点纪律保持（变换真值唯一来源 runtime）。 |
 | v1.100 | 2026-10-12 | **WP-24-T02 实现落位登记——应用启动与异常诊断（PM-17/AT-11）studio 壳装配面**（契约 tasks/foundation/WP-24-T02.json；分支 pipeline4/redesign-main——平台服务域补全批统一实施分支，≙规范分支 wp24-t02；diagnostics.md §12.1 协作行消账联动＝该卡 v0.15，本卡 §13 增 WP24-T02 行）：①**崩溃捕获设施落位**（studio/CrashCapture.{hpp,cpp} 新 TU——零 Qt，捕获路径纪律的结构性保证）：OS 级捕获＝Windows SEH 过滤器（SetUnhandledExceptionFilter——硬件异常单一承接面）＋CRT 终止族（signal(SIGABRT)＋_set_invalid_parameter_handler＋_set_purecall_handler＋std::set_terminate）＋SetErrorMode 抑制 WER 对话框；**SIGSEGV/SIGILL/SIGFPE 不登记**（实施期实测：CRT 信号处置器在位时把硬件异常翻译成信号回调并抢先于 unhandled filter——av 现场走 crt-sigsegv 丢失异常码/地址细节，修复后真机复验走 seh-access-violation；信号面让位 SEH 口径登记于 diagnostics.md §14.4 v0.15）；捕获路径纪律＝防重入一次性闸门（atomic_flag——过滤器重入/二次崩溃/并发崩溃三形态）＋noexcept（快照采集与写盘两段独立异常隔离——采集失败按段缺失不连坐写盘）＋看门狗自我了断（安装期预建线程＋事件对；挂起超时 TerminateProcess 专用退出码 0xC0DE7001）；捕获点组装 CrashReportInput 六段经既有 CrashReportWriter 写用户目录（**diagnostics 单元源码零改动**——Writer 设施沿用不重写，DIAG-T08 分工冻结兑现）；StudioMain 入口最先安装（⓪b——先于框架初始化/GLUT/窗口装配）；UiPlugin::initialize 经 setCrashSnapshotSource 接线会话诊断栈 dev 日志尾（§7.6 第③段——PluginDevTailCrashSource 适配器；活动任务/finding/打开项目三段壳侧无可达登记权威如实留空〔登记权威在 project/execution 会话态——契约 note 登记〕）；快照源注册/析构解除配对（插件消亡后捕获路径零悬挂）。②**PM-17 启动序盘点与增量**（StudioMain）：静态插件装配既有（四官方组件＋六域装配基座——不重复实现）；命令行参数＝--no-splash〔闪屏禁用，覆盖设置不回写〕＋--ird-crash-test {av\|abort}〔受控崩溃测试通道——防误触四道闸：全 token 精确匹配/模式白名单封闭/命中即短路不建 UI/崩溃形态显性可见；hang 形态不入产品参数面（挂起桩只在测试子进程快照源内）〕，消费 token 自 argv 摘除（Qt 参数面零污染）；设置加载＝QSettings startup/splash-enabled（NativeFormat，org=sdurws-ird/app=industrial-robot-studio——最小启动项集，其余随 PM-14 各任务）；闪屏＝QSplashScreen 最小实现（程序绘制画面——零外部美术资产依赖；可经设置或 --no-splash 禁用；主窗口 show 后 splash.finish 收尾）。③**测试落位**：ui_test 增 CrashCaptureTest.cpp 五用例（发射核心六段组装含五元组 canonical/finding 状态 token 逐段断言；无源空段诚实留空；重入闸门〔快照源内再发射被拒且外层照常〕；写失败降级〔目录被文件占位——WriteFailed 可观测不抛〕；快照源抛异常按段缺失报告照常）；ui_contract_test 增 StudioCrashContractTest.cpp 三进程级用例＋StudioCrashChild.{hpp,cpp} 子进程通道（main 拦截 --ird-wp24-t02-child——Tx15Child 同款协议）：真 SEH 访问违例→诊断文件落盘且脱敏（凭据 hunter2/令牌/用户名 somebody/唯一目录名零命中＋[REDACTED:credential]/[REDACTED:token]/[USER] 标记在案＋普通行与文件名不误伤＋devLogTail=4 计数——子进程管线**不挂脱敏**，断言精确落在 Writer 侧第二道防线）、CRT abort 同款（exceptionType=crt-abort）、hang→看门狗 841 ms 自我了断且零半成品文件；**真机实证**＝sdurws_ird_studio --ird-crash-test av（产品二进制：崩溃文件落用户目录 crash\，exceptionType=seh-access-violation＋code/address 消息）＋--ird-crash-test 缺模式/未知模式 exit=2 stderr 说明（防误触面实测）。④**验证**：集成模式 sdurws_ird_studio＋ui_test 272/272（基线 267＋5）＋ui_contract_test 38/38（基线 35＋3）＋ui_plugin 零错误；独立冒烟（build-smoke-t24）ui_test 252/252＋contract 25/25；ird_gates 零新增命中（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中）；validate-task PASS＋validate-docs PASS；留痕 traceability/builds/wp24-t02/（gtest XML×2＋ird-test-report×4＋双模式构建/测试/gates/validate 日志）。**诚实边界**：RobWorkStudio.ini 模板缺位（fresh worktree bin——F-007 既知前置）使 GUI 全程启动未在本树点验（启动序 GUI 面经崩溃通道＋参数面实测覆盖，正常无参启动回归归所有者实机点验）；崩溃报告第③段以外三运行期段（任务/finding/项目）留空＝壳侧诚实降态，段接线随 project/execution 会话态可达任务增量。需求语义零变化：PM-17/AT-11/NFR-SEC-07 承接语义按 diagnostics.md §7.6/§7.7 与 ARCH §4.1 原文落位 |
