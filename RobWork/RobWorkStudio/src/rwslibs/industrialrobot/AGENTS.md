@@ -43,6 +43,13 @@
 
 **证据输出**（根 §4.2）：gtest XML ＋ `ird-test-report.json` ＋ 构建日志，落 `doc/industrial-robot-design/traceability/` 留痕；证据文件**只增不改**。
 
+**测试替身（mock）政策**（治理原则"真实验证优先"，review 层执法——验收时核查，不做 lint）：
+
+- 测试替身**只允许打在六类端口边界**（命令/查询/评估器/策略/事件/名称），即昂贵或副作用型依赖处（如跨单元编译调用、写路径）；现范例＝modeling 单元的 `MockCompilePort`（观测"零编译调用"契约）。
+- 计算逻辑、数学算法、数据变换**一律真实验证**，不得打替身绕过。
+- 手写 fake 优先（计数观测/桩实现），**不引入 gmock 依赖**——当前依赖面零 gmock，保持经 vcpkg 的最小依赖纪律。
+- 单元内替身＋契约层真接线两层合起来才构成完整验证：跨单元真实交互由 `<unit>/contract_test/` 覆盖，替身不得渗透到契约测试。
+
 ## 5. Windows GUI 测试规则
 
 - 工具链 Visual Studio 2022 x64；`QT_QPA_PLATFORM=windows`，**禁止 offscreen**；路径用绝对路径；一次只跑一个 GUI 可执行文件（避免窗口焦点/输入串扰）。

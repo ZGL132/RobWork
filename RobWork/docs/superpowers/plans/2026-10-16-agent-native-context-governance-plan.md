@@ -17,6 +17,22 @@
 
 另附一条保留意见：Task 5 Skills 的验收口径是"新会话按 AGENTS.md 入口能找到并照执行"，不要求运行端自动发现/自动触发（项目级 skills 的自动发现能力因 Agent 运行端而异）。
 
+**治理原则（2026-10-17 确认吸收，立法自检清单）：**
+
+以下七条是本计划及其产出文档**立规时**的自检原则——每立一条新规则时对照，而非逐条建成新机制的改造任务。各原则的执法载体/归属任务：
+
+| 原则 | 语义 | 执法载体/归属 |
+| --- | --- | --- |
+| 无执法不立规 | 规则须声明执法层：gate（机器门禁）/ review（验收核查）/ behavioral（行为约定，靠阅读阶梯传导）；不可执法的规则不得假装可执法 | 规则执法分级审计随 Task 3；新增规则落文时即标注层级 |
+| 上下文经济学 | 宪法有预算、one home per fact、细节指针化——上下文是稀缺资源 | Task 3（最小阅读路径/三段式/链接化）；分区 AGENTS.md 已"引用不复制"；失败换来的事实（F-007/F-455 类）保留原地不指针化 |
+| 测试防作弊 | 验证世界而非自我报告（agent 时代必需） | 对抗式验收（ACC：全新上下文重配重跑＋验证测试真实失败能力）；SHA 冻结链（validate-state ⑩）；Task 8 新会话演练 |
+| 真实验证优先 | mock 只允许在昂贵/非确定边界 | 源码区 AGENTS.md §4 测试替身政策（2026-10-17 落文，review 层执法） |
+| 决策即资产 | 理由与被否方案是组织记忆，遗忘是负债 | Task 4（Agent Notes 六段式含 Alternatives considered）；与 governance-log（待裁决流转）分工：Notes 记已决，台账记在途 |
+| 人机同规 | 人与 Agent 过同一套门禁，提交署名人负最终责任 | 根 AGENTS.md §6.2 人机同规条款（2026-10-17 落文，review 层执法）；CI 对所有提交者一致 |
+| 证据文化 | A claim is falsifiable and recomputable | 根 §7 三态汇报；DoD 留痕；Task 6/7（源文件 SHA-256＋可重算上下文包/证据索引） |
+
+执行纪律：**先门禁后加速**（新自动化上线前对应门禁先落）；原则只安一个家（本节），各层文档引用不复制；宁标 behavioral，不造摆设门禁——字符串满足型检查教会 Agent 作弊，违背原则本意。
+
 ---
 
 ### Task 1：冻结基线并建立资产清单
@@ -56,6 +72,7 @@
 
 - Create: RobWork/doc/industrial-robot-design/README.md
 - Create: RobWork/doc/industrial-robot-design/context/reading-paths.md
+- Create: RobWork/doc/industrial-robot-design/context/rule-enforcement.md
 - Modify: DETAILED-DESIGN.md
 - Modify: development-task-breakdown.md
 - Modify: automation-pipeline.md
@@ -66,6 +83,7 @@
 - [ ] reading-paths.md 定义核心算法、Qt 功能、项目持久化、流程门禁、测试故障五条路径；每条列必须读、按需读、禁止默认读的内容。
 - [ ] 为四份大文档增加"本文负责／本文不负责／下游入口"三段并用链接替代重复叙述。第一遍只做加法——历史叙述与重复模板的**删除推迟**到 Task 7 证据索引建成、可做链接完整性校验之后单独批次执行（评审修正 4）。
 - [ ] 为任务 JSON 统一补齐 status、ownerUnit、sourceRequirements、verificationCommands、evidencePath；字段口径对齐 automation-pipeline.md §0.2 state.json 既有 schema 与 findings.json 登记簿，不另造第二套状态语义——任务执行态以 state.json 为唯一权威，任务 JSON 只承载引用与验证信息（评审修正 1）。旧字段先兼容读取并由脚本报告缺失。
+- [ ] 规则执法分级审计（治理原则 1 落地）：根/分区 AGENTS.md 逐条规则标注执法层级 gate（机器门禁）/ review（验收核查）/ behavioral（行为约定）＋gate 指针，产出 context/rule-enforcement.md 分级表；无层级条款三选一处置（补门禁、降为建议、删除）——审计只加标注，不批量删规则。
 - [ ] 运行文档门禁、JSON 校验和 git diff --check；提交 [docs] 建立工业机械臂最小阅读路径与文档职责。
 
 ### Task 4：迁移长期决策到 Agent Notes
