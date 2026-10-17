@@ -8952,7 +8952,7 @@
       "status": "open",
       "registeredAt": "2026-10-17",
       "title": "域草稿载荷二进制帧与工程草稿文件格式 UTF-8 校验冲突（草稿链内容编码缺陷）：requirements 载荷＝encodeRequirementCommandPayload 二进制帧（magic+u32+长度前缀字节串，requirements/src/CommandHandlers.cpp:167），而 project 草稿文件 payload 字段经 appendJsonString 强制 UTF-8 校验（project/src/Codec.cpp，无效序列抛 invalid_argument fail-fast）——二进制帧保存必被拒（实测稳定复现），需求域草稿在现行格式下无合法落盘形态；modeling 域载荷同 CommandHandlers 帧模式（encodeModelCommandPayload），同款嫌疑未实测。注：F-911 修复面（查询半区适配器）与写半区适配器行为正确，缺陷在域载荷内容编码与文件格式的契约缝隙。裁决方向：载荷 base64/hex 文本化（保帧格式）或草稿格式二进制安全化（改 project 格式契约）；requirements/modeling 两域一致处置",
-      "owner": "所有者裁决（跨域契约：requirements/modeling 载荷编码 × project 草稿格式——不属 WP-10-T84 可修面，测试以稳定拒绝钉承载现状证据）"
+      "owner": "所有者裁决 2026-10-18（执行批 UI-T85）：hex 铠装——requirements 草稿源边界 hexArmor(frame)/unhexArmor 对称（对齐 modeling 既有惯例：建模域当年即为此契约选 hex 铠装，ModelingUiModule::buildDraftDocument 在案先例；波及面已实测收窄为 requirements 独域，modeling 嫌疑证伪）；备选已评估否决——base64（与 modeling 形成双铠装惯例）/草稿格式二进制安全化（为单域缺陷改全格式契约，churn 最大）/域载荷改 JSON（双编码路径同步维护）"
     },
     {
       "id": "F-918",
@@ -8961,7 +8961,7 @@
       "status": "open",
       "registeredAt": "2026-10-17",
       "title": "草稿 schemaVersion 权威倒置：ui 侧 DraftDocumentProjection 契约写『草稿格式版本（域组装方填写）』，域侧遂填各自载荷内版本（requirements=kRequirementCommandPayloadVersion=1，modeling=kCommandPayloadVersion=2）；而 project 草稿文件把该字段按 §8.11 主.次版本编码解释（kSchemaVersionScale=10000，当前支持 10000＝主版本 1）——主版本 0（1、2 均落此区间）即 FormatLegacy 拒读，且 DraftServiceImpl::save 不校验该字段：**每份草稿都保存成功落盘却永远读不回**（list/tryLoad 稳定跳过，dev 诊断仅留痕），草稿恢复链在现行装配下整体不可用。裁决方向：格式版本权威归 project（save 归一化为 kSchemaVersionCurrent，或落盘前校验拒写＝fail-fast 前移），ui 投影字段改义为『域版本仅呈现不落盘』；两域草稿源同步修订",
-      "owner": "所有者裁决（跨域契约：ui 投影字段语义 × project 格式版本权威——不属 WP-10-T84 可修面，段 A 测试以消费 project 公共常量 kSchemaVersionCurrent 承载现行事实）"
+      "owner": "所有者裁决 2026-10-18（执行批 UI-T85）：project save 归一化——DraftServiceImpl::save 落盘前 schemaVersion := kSchemaVersionCurrent（格式所有者写自己的版本；调用方传入值忽略并留 dev 诊断），ui 投影字段改义『域内版本仅呈现/遥测——不落盘』；两域零改动自动受益。备选已评估否决——save 校验拒写（把 10000 编码知识反向扩散给所有调用方）/ui 适配器侧填常量（格式知识进 L5 边界，不如 save 单点靠近权威）"
     },
     {
       "id": "F-919",

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T85",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "草稿链格式裁决落地——F-917 hex 铠装＋F-918 版本权威归一（跨域修复批）",
+  "status": "ready",
+  "dependsOn": ["UI-T84"],
+  "requirements": ["PM-04", "NFR-REL-01"],
+  "designRefs": [
+    "units/ui.md#8",
+    "units/ui.md#12.5",
+    "units/project.md#5.4",
+    "units/requirements.md#2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsUiModule.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsUiModule.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/DraftServiceImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/DraftServiceImpl.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/DraftService.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/**",
+    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T85.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp"
+  ],
+  "outputs": ["code-fix", "contract-test", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_ui_gui_test sdurws_ird_project_test sdurws_ird_studio",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -R \"sdurws_ird_ui_test|sdurws_ird_ui_contract_test\" --output-on-failure",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/project -C Release -R sdurws_ird_project_test --output-on-failure"
+  ],
+  "branch": "wp10-t85",
+  "interUnit": true,
+  "knownPitfalls": ["CR-02"],
+  "acceptance": [
+    "F-918 归一化守卫钉（project 单元测试）：DraftServiceImpl::save 落盘前 schemaVersion := kSchemaVersionCurrent（格式所有者写自己的版本——调用方传入值忽略并留 dev 诊断），域内版本输入（如 1/2）落盘后 list/tryLoad 可读回；roundtrip 守卫钉 save→list→tryLoad 钉住；DraftService.hpp save 契约文本同步（schemaVersion 语义改『由本服务归一化——调用方值忽略』）",
+    "F-917 hex 铠装对称（requirements 域）：RequirementsDraftSource buildDraftDocument payload＝hexArmor(encodeRequirementCommandPayload 帧)（ASCII——过 payload 字段 UTF-8 校验，与 modeling 建模域既有铠装惯例同型）；adoptRestoredDocument 先 unhexArmor 再 tryDecodeRequirementCommandPayload（解铠装失败＝草稿损坏语义 fail-fast，不猜测）；铠装仅在域插件边界内侧——CR-02 ui 只搬运不解析不动",
+    "HostDraftChainContractTest 段 B 翻正向：F-917 稳定拒绝钉移除，改为 requirements 域 编辑→saveAll→重开→restoreOnOpen→adopt 内容逐字节一致全链断言（翻转即 F-917 关闭验收面）；段 A 文本源 schemaVersion 消费语义随 F-918 归一化同步（可回归域内版本值——归一化后不影响可读回）",
+    "ui 投影契约改义登记：DraftDocumentProjection.schemaVersion 注释改『域内草稿格式版本仅呈现/遥测——不落盘；落盘格式版本由 project save 归一化（F-918 裁决）』（UiProjections.hpp＋units/ui.md §8 同步）；双模式构建零错误＋四套件零回归＋ird_gates 零命中＋gtest XML 留痕再生入库（F-915 口径）",
+    "文档同步收尾：findings F-917/F-918 翻 fixed（resolution 记裁决方案落地与翻转测试证据）；units/project.md（§5.4 save 归一化语义＋§12 任务行）/units/requirements.md/units/ui.md 增量修订；DTB 版本行递增；验证留痕 traceability/builds/wp10-t85/"
+  ],
+  "note": "所有者裁决 2026-10-18 落地批（F-917/F-918 两 blocking 的方案面——裁决全文见 findings 两 owner 行：F-917＝hex 铠装对齐 modeling 既有惯例〔modeling 嫌疑同批证伪——其 hex 铠装先例即为此契约所设，波及面收窄为 requirements 独域〕；F-918＝project save 归一化〔格式所有者写自己的版本，两域零改动自动受益〕）。E2E 场景 §12.5 草稿保存/恢复（S3 形态）由本批段 B 正向断言钉住。modeling 域零改动受益（归一化后其既有 hex 铠装草稿链自动可读回——建模既有测试回归确认，无建模文件触碰）。F-918 落盘格式版本语义零变化（仍 §8.11 主.次编码），REQUIREMENTS/ARCHITECTURE 零触碰。立卡先于编码（UI-T83 治理 T2 先例），status=ready 待独立评审放行。"
+}
