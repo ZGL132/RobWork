@@ -58,5 +58,5 @@ ready 契约的字段完备性由 `validate-task.ps1` 把关（CCP 协议），�
 **适用**：gtest 失败、ird_gates 命中、CI 红、gui_test 挂起。
 
 - **必须读**：失败输出本体（gtest XML / 构建日志 / ird-test-report）→ 任务契约 `verify`/`acceptance` → 对应单元卡测试节。
-- **按需读**：`traceability/gtest-reports/`（历史留痕）、`traceability/findings.json`（同类已知问题检索）、`cmake/ird_gates.cmake`＋`ird_gates_whitelist.cmake`（命中项与白名单）、DTB §5（构建与留痕口径——如 §5.5 双 report 口径）。
+- **按需读**：`traceability/evidence-index.json`（**证据检索第一入口**——按任务/类型/生命周期过滤后再开原始文件）、`traceability/gtest-reports/`（历史留痕）、`traceability/findings.json`（同类已知问题检索）、`cmake/ird_gates.cmake`＋`ird_gates_whitelist.cmake`（命中项与白名单）、DTB §5（构建与留痕口径——如 §5.5 双 report 口径）。
 - **禁止默认读**：整册设计文档（先复现定位再回查语义）、历史验收记录全文、无关单元卡。

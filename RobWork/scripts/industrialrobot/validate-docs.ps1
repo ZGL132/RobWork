@@ -186,5 +186,26 @@ if (Test-Path $packsDir) {
     if ($pt -notmatch '源文件指纹') { $errors += "pack missing SHA-256 fingerprint section: $($pk.Name)" }
   }
 }
+# ---------- 证据索引门禁（Agent-native 治理 Task 7，2026-10-17） ----------
+# traceability/ 是只增证据库，evidence-index.json 是其摘要索引（Agent 检索默认入口，
+# 生成物禁手改）。本段校验：索引存在、schema 正确、条目数与实际文件数一致——
+# 新证据落库未重跑 index-evidence.ps1 即失败（报错附重跑指引）。生命周期与删除
+# 前置规则见 traceability/README.md。
+$evidenceReadme = Join-Path $base 'traceability/README.md'
+if (-not (Test-Path $evidenceReadme)) { $errors += 'missing traceability/README.md (evidence lifecycle rules)' }
+$evidenceIndexPath = Join-Path $base 'traceability/evidence-index.json'
+$evidenceCount = 0
+if (-not (Test-Path $evidenceIndexPath)) {
+  $errors += 'missing traceability/evidence-index.json (run: pwsh -File RobWork/scripts/industrialrobot/index-evidence.ps1)'
+} else {
+  $ei = $null
+  try { $ei = Get-Content $evidenceIndexPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $errors += "evidence-index.json is not valid JSON: $_" }
+  if ($ei) {
+    if ($ei.schemaVersion -ne 'ird-evidence-index/1') { $errors += "evidence-index schemaVersion must be 'ird-evidence-index/1', got '$($ei.schemaVersion)'" }
+    $actualEvidence = @(Get-ChildItem (Join-Path $base 'traceability') -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'evidence-index.json' })
+    $evidenceCount = @($ei.entries).Count
+    if ($evidenceCount -ne $actualEvidence.Count) { $errors += "evidence index out of date: index=$evidenceCount actual=$($actualEvidence.Count)——重跑 index-evidence.ps1" }
+  }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
-Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills, $packCount packs)"
+Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills, $packCount packs, $evidenceCount evidence)"

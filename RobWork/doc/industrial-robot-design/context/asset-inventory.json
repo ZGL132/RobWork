@@ -221,6 +221,24 @@
       "generated": false,
       "canonicalLinks": ["tasks"],
       "note": "阶段一任务索引；validate-docs 校验 sourceRow 与设计卡逐字一致"
+    },
+    {
+      "path": "traceability/README.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["traceability/evidence-index.json", "context/README.md"],
+      "note": "证据库规则（治理 Task 7）：生命周期定义（current/superseded/historical/unverified）、索引纪律（新证据同批重跑 index-evidence.ps1）、删除/移动三前置——大文档删除批次的放行条件"
+    },
+    {
+      "path": "traceability/evidence-index.json",
+      "kind": "generated",
+      "owner": "script",
+      "defaultContext": false,
+      "generated": true,
+      "canonicalLinks": ["traceability/README.md"],
+      "note": "证据摘要索引（index-evidence.ps1，治理 Task 7）：6625 条目（路径/类型/任务关联/字节/SHA-256/生命周期）；Agent 检索证据默认入口，只存摘要不嵌内容；validate-docs 校验条目数与实际一致"
     }
   ]
 }

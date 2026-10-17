@@ -1,0 +1,146 @@
+﻿# 证据索引生成器（治理 Task 7，2026-10-17）。
+#
+# 职责：扫描 traceability/ 全部证据文件，生成**摘要索引** evidence-index.json——
+# Agent 检索证据的默认入口（按任务/单元/类型查路径，再按需打开原始文件），
+# 替代通读证据目录（上下文经济学：索引只存摘要，绝不嵌入文件内容）。
+#
+# 每条索引：相对路径、类型（目录/扩展名映射）、关联任务 ID（文件名启发式）、
+# 字节数、SHA-256（仅 ≤512KB 文件——大文件跳过并在 summary 计数）、生命周期。
+#
+# 生命周期判定规则（诚实口径，保守起步）：
+#   current     ＝被 open finding 的 source 引用，或 pipeline 机器维护载体（state.json/b1 manifest）；
+#   historical  ＝关联任务全部 done（已完成工作的历史留痕）；
+#   superseded  ＝被取代——需人工标记，首轮一律不判；
+#   unverified  ＝无法自动判定当前性（默认值）。
+#
+# 纪律：本脚本只读扫描＋生成索引，不移动/不删除/不修改任何证据文件（只增纪律）。
+# 用法：pwsh -File index-evidence.ps1 [-RepoRoot <RobWork 目录>]
+param([string]$RepoRoot = "")
+$scriptDir = $PSScriptRoot
+if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
+if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir "..\..")).Path }
+$base = Join-Path $RepoRoot 'doc/industrial-robot-design'
+if (-not (Test-Path $base)) { throw "repo root resolution failed: doc base not found under '$RepoRoot'（请用 -RepoRoot 显式指定 RobWork 目录）" }
+$traceDir = Join-Path $base 'traceability'
+$indexPath = Join-Path $traceDir 'evidence-index.json'
+$shaCapBytes = 512KB
+
+# ---------- 任务契约状态表（lifecycle 判定用）----------
+$taskStatus = @{}
+foreach ($f in @(Get-ChildItem (Join-Path $base 'tasks') -Recurse -Filter '*.json' -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'foundation-tasks.json' })) {
+  try { $x = Get-Content $f.FullName -Raw -Encoding UTF8 | ConvertFrom-Json; if ($x -and $x.taskId) { $taskStatus["$($x.taskId)"] = "$($x.status)" } } catch { }
+}
+# ---------- open findings 引用的证据路径集合（current 判定用）----------
+$openRefPaths = @{}
+try {
+  $fj = Get-Content (Join-Path $traceDir 'findings.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+  foreach ($fd in @($fj.findings)) {
+    if ("$($fd.status)" -ne 'open') { continue }
+    $src = "$($fd.source)" -replace '#.*$',''
+    if ($src -match '^traceability/(.+)$') { $openRefPaths[$Matches[1].Replace('\','/')] = $true }
+  }
+} catch { }
+# 机器维护的现行载体（引用不复制内容——PIPE 权威红线）
+$machineCurrent = @('pipeline/state.json','pipeline/b1-host-integration-batch.json')
+
+function Get-EvidenceKind([string]$rel, [string]$ext) {
+  $top = ($rel -split '/')[0]
+  switch ($top) {
+    'acceptance' { return 'acceptance-record' }
+    'manual-acceptance' { return 'manual-acceptance' }
+    'gtest-reports' { return 'gtest-report' }
+    'builds' { return 'build-log' }
+    'benchmarks' { return 'benchmark' }
+    'pipeline' { return 'pipeline-artifact' }
+    'closeout' { return 'governance-record' }
+    'reconciliation' { return 'governance-record' }
+    'reviews' { return 'governance-record' }
+    'engineering-polish' { return 'governance-record' }
+  }
+  if ($ext -in '.png','.jpg','.jpeg','.bmp') { return 'screenshot' }
+  if ($ext -eq '.xml') { return 'xml-report' }
+  if ($ext -eq '.json') { return 'json-data' }
+  if ($ext -eq '.md') { return 'markdown-doc' }
+  if ($ext -eq '.log' -or $ext -eq '.txt') { return 'log' }
+  if ($ext -eq '.ps1') { return 'script' }
+  return 'other'
+}
+# 任务 ID 规范化：wp 风格补零到两位（wp04-t16→WP-04-T16）；单元风格原样大写
+function ConvertTo-CanonicalTaskId([string]$raw) {
+  $u = $raw.ToUpperInvariant()
+  if ($u -match '^WP-(\d+)-T(\d+)$') { return ('WP-{0:D2}-T{1:D2}' -f [int]$Matches[1], [int]$Matches[2]) }
+  return $u
+}
+function Get-TaskIds([string]$rel) {
+  $ids = @()
+  foreach ($m in [regex]::Matches($rel, '(?i)(?:^|[/_.\-])(wp-\d{1,3}-t\d{1,3})(?:$|[/_.\-0-9])')) {
+    $c = ConvertTo-CanonicalTaskId $m.Groups[1].Value
+    if ($ids -notcontains $c) { $ids += $c }
+  }
+  foreach ($m in [regex]::Matches($rel, '(?:^|[/_.\-])([A-Z]{2,6}-T\d{1,3})(?:$|[/_.\-0-9])')) {
+    $c = $m.Groups[1].Value
+    if ($ids -notcontains $c) { $ids += $c }
+  }
+  return ,$ids
+}
+
+# ---------- 扫描（排除索引自身）----------
+$files = @(Get-ChildItem $traceDir -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'evidence-index.json' } | Sort-Object { $_.FullName })
+$entries = @()
+$byKind = @{}; $byLifecycle = @{ current = 0; superseded = 0; historical = 0; unverified = 0 }
+$shaComputed = 0; $shaSkipped = 0; $totalBytes = [long]0; $associated = 0
+$shaGroups = @{}
+foreach ($f in $files) {
+  $rel = $f.FullName.Substring($traceDir.Length + 1).Replace('\','/')
+  $ext = $f.Extension.ToLowerInvariant()
+  $kind = Get-EvidenceKind $rel $ext
+  $ids = Get-TaskIds $rel
+  if ($ids.Count) { $associated++ }
+  # 生命周期（规则见文件头）
+  $lc = 'unverified'
+  if ($machineCurrent -contains $rel) { $lc = 'current' }
+  elseif ($openRefPaths.ContainsKey($rel)) { $lc = 'current' }
+  elseif ($ids.Count -and (@($ids | Where-Object { $taskStatus.ContainsKey($_) -and $taskStatus[$_] -eq 'done' }).Count -eq $ids.Count)) { $lc = 'historical' }
+  $sha = $null
+  if ($f.Length -le $shaCapBytes) { $sha = (Get-FileHash -Algorithm SHA256 -LiteralPath $f.FullName).Hash.ToLowerInvariant(); $shaComputed++; if (-not $shaGroups.ContainsKey($sha)) { $shaGroups[$sha] = @() }; $shaGroups[$sha] += $rel }
+  else { $shaSkipped++ }
+  $byKind[$kind] = 1 + $(if ($byKind.ContainsKey($kind)) { $byKind[$kind] } else { 0 })
+  $byLifecycle[$lc]++
+  $totalBytes += $f.Length
+  $entries += [PSCustomObject]@{ path = $rel; kind = $kind; taskIds = $ids; bytes = $f.Length; sha256 = $sha; lifecycle = $lc }
+}
+# 重复组（同 SHA 不同路径；只列组数与规模，路径明细入 duplicateGroups，封顶 100 组防索引膨胀）
+$dupGroups = @()
+$dupTotal = 0
+foreach ($kv in $shaGroups.GetEnumerator()) { if ($kv.Value.Count -gt 1) { $dupTotal++ } }
+if ($dupTotal) {
+  $i = 0
+  foreach ($kv in ($shaGroups.GetEnumerator() | Sort-Object { $_.Value[0] })) {
+    if ($kv.Value.Count -gt 1) { $dupGroups += [PSCustomObject]@{ sha256 = $kv.Key; paths = @($kv.Value | Sort-Object) }; $i++; if ($i -ge 100) { break } }
+  }
+}
+
+$index = [PSCustomObject]@{
+  schemaVersion = 'ird-evidence-index/1'
+  generatedAt = (Get-Date -Format 'yyyy-MM-ddTHH:mm:sszzz')
+  generatedBy = 'index-evidence.ps1（治理 Task 7）'
+  lifecycleRules = [PSCustomObject]@{
+    current    = '被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）'
+    superseded = '被取代——需人工标记，首轮不自动判定'
+    historical = '关联任务契约状态全部 done（已完成工作的历史留痕）'
+    unverified = '无法自动判定当前性（默认；含未关联任务与任务未完成的证据）'
+  }
+  summary = [PSCustomObject]@{
+    totalFiles = $files.Count; totalBytes = $totalBytes
+    byKind = $byKind; byLifecycle = $byLifecycle
+    associated = $associated; unassociated = ($files.Count - $associated)
+    shaComputed = $shaComputed; shaSkippedLarge = $shaSkipped
+    duplicateGroupsTotal = $dupTotal; duplicateGroupsListed = $dupGroups.Count
+  }
+  duplicateGroups = $dupGroups
+  entries = $entries
+}
+[System.IO.File]::WriteAllText($indexPath, ($index | ConvertTo-Json -Depth 6), (New-Object System.Text.UTF8Encoding($false)))
+Write-Output "index-evidence: $($files.Count) files, $(('{0:N1}' -f ($totalBytes/1MB))) MB -> traceability/evidence-index.json"
+Write-Output "index-evidence: lifecycle current=$($byLifecycle.current) historical=$($byLifecycle.historical) unverified=$($byLifecycle.unverified); associated=$associated unassociated=$($files.Count - $associated)"
+Write-Output "index-evidence: sha computed=$shaComputed skippedLarge=$shaSkipped; duplicateGroups=$dupTotal (listed $($dupGroups.Count))"
