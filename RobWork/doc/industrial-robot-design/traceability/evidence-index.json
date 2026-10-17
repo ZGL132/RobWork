@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-17T20:14:59+08:00",
+  "generatedAt": "2026-10-17T20:17:56+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6592,
-    "totalBytes": 207376823,
+    "totalFiles": 6596,
+    "totalBytes": 207528194,
     "byKind": {
-      "build-log": 5656,
-      "log": 1,
-      "manual-acceptance": 1,
-      "markdown-doc": 41,
-      "benchmark": 8,
-      "gtest-report": 335,
-      "pipeline-artifact": 2,
-      "json-data": 7,
       "acceptance-record": 511,
-      "governance-record": 30
+      "governance-record": 30,
+      "json-data": 7,
+      "markdown-doc": 41,
+      "pipeline-artifact": 2,
+      "benchmark": 8,
+      "log": 1,
+      "gtest-report": 335,
+      "manual-acceptance": 1,
+      "build-log": 5660
     },
     "byLifecycle": {
-      "unverified": 6003,
-      "superseded": 0,
       "current": 70,
-      "historical": 519
+      "historical": 519,
+      "unverified": 6007,
+      "superseded": 0
     },
     "associated": 592,
-    "unassociated": 6000,
-    "shaComputed": 6574,
+    "unassociated": 6004,
+    "shaComputed": 6578,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -36820,6 +36820,38 @@
       "taskIds": [],
       "bytes": 233,
       "sha256": "7214bedce4ef52920800e4b298060bce18728ca8a6100b69216123e45f5a6d83",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp10-t84/sdurws_ird_ui_contract_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17084,
+      "sha256": "ef8e63a691ce8a1fd6abde4b93097aefab917a7e76a606c8ae782be3eef2edfd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp10-t84/sdurws_ird_ui_gui_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 30561,
+      "sha256": "3edc04c86dd582982ebc076cdf8befb2fad377e655854e27f5c939da7dfdafad",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp10-t84/sdurws_ird_ui_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 103078,
+      "sha256": "154d8e93695af7f23395c8c02ee159e038861e6c6e66981b418d96818f890028",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp10-t84/smoke-run-20261017.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 648,
+      "sha256": "72af0f430561314a2e8a384d3b0d3bd4f36937f9292eac2a2790c74274731f92",
       "lifecycle": "unverified"
     },
     {
