@@ -72,8 +72,14 @@ CI 常驻门禁正式激活。两份模板与部署文件的同批修订（逐�
      各挂 600 s 被有界终止）与 1 个 perf 断言失败（OptParallelThroughput.FixedCandidateMedianThroughput，
      阈值在 4 核 runner 超标）全被误归因 SKIP 而假绿。修正后分诊以输出内容为准：
      `***Timeout`（F-728）与 `[  FAILED  ]`（gtest 断言）一律 FAIL；仅"非超时、无 gtest 输出、0xC0000135
-     族且 python313.dll 不可达"（进程未启动的加载失败）才 SKIP。八轮起 CI 诚实红在上述 4 个已知项，
-     处置口径（排查修复／阈值重校准／登记豁免）待所有者裁决。
+     族且 python313.dll 不可达"（进程未启动的加载失败）才 SKIP。
+     **八轮实证（run 38974887360，口径修正后首个诚实红）**：6/46 目标失败，分四类待所有者裁决——
+     ① GUI 挂起×4（kinematics/modeling/requirements/ui 的 _gui_test，各 600 s 超时，无 stdout，
+       CI runner 环境挂起原因待排查）；② 性能阈值×1（optimization_perf 的
+       OptParallelThroughput.FixedCandidateMedianThroughputRatio_WP23T07_B06，共享 4 核 runner 超标）；
+     ③ 产品疑点×1（requirements_test 两断言：CsvUnitNormalization 读到 1.9e-312 垃圾值疑未初始化内存、
+       TransportGolden 0.3 精确比较未容差——本机绿 CI 红，属 CI 首次异构硬件暴露的真实问题，
+       门禁价值实证）。
    - `check-boundaries.ps1`：由 eb777e2 静态正则扫描器整体替换为 **ird_gates 执行器**——静态扫描器 R3 白名单
      停留在 `_test` 单段命名，对今日 `_contract_test/_gui_test/_perf_test` 必然误报"未登记 target"；ird_gates 是
      实际维护的边界权威（gate-all 第 2 步同款调用）。
