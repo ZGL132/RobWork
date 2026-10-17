@@ -488,7 +488,8 @@ add_executable(sdurws_ird_ui_contract_test
     contract_test/Section12RegistryTest.cpp
     contract_test/PortAdaptersExecutorContractTest.cpp  # R3-A16/C3 返工批 O-12——SerialTaskExecutor 受理位契约面（app/PortAdapters.cpp 同源编入见下方增列块）
     contract_test/StudioCrashContractTest.cpp  # WP-24-T02——进程级崩溃契约（AT-11：子崩→文件落盘脱敏）
-    contract_test/StudioCrashChild.cpp)        # WP-24-T02——子进程模式实现（main 拦截分派——Tx15Child 同款）
+    contract_test/StudioCrashChild.cpp         # WP-24-T02——子进程模式实现（main 拦截分派——Tx15Child 同款）
+    contract_test/AssemblyManifestContractTest.cpp)  # UI-T83——装配完备性扫描面（治理 T2/IRD-NOTE-006：生产 attachModule 调用与清单双向锁定）
 
 # WP-24-T02 增列：被测 TU 同源编入（捕获发射核心与产品同一翻译单元——
 # 子进程装捕获走产品真实路径；零 Qt，两模式可跑）。绝对锚定同 ui_test 段。
