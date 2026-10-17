@@ -2,6 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.82（2026-10-17，治理试点任务登记：§2.4 增 WP-03-T11 行〔≙CORE-T11 单元卡与实现一致性核查——Agent-native 治理 Task 8 新会话接手试点批；先卡后码，契约 tasks/foundation/CORE-T11.json ready 待执行；core.md §9 同批增行（v0.13）〕）。前一版本 v0.81 保留如下。 |
 | 文档版本 | v0.81（2026-10-17，WP-13-T23 合入收尾——所有者"继续合入动作"指令）：①merge 130c2015 按 SHA 并入验收记录（acc/WP-13-T23/1@948ca02c——独立子会话对抗式验收 verdict=PASS：4.1~4.11 全过零阻断、fresh worktree 双模式重配重跑五套件 386/386＋17/17＋44 过+1 既有跳过＋316/316＋8/8、变异红证 M1/M2 后还原回绿、ird_gates 零命中）＋merge fcb0b22c 按 SHA 并入代码 wp13-t23-reliability-polish@07324d30（七提交 aa47c0c5..07324d30，零冲突）；②§2.14 补登 WP-13-T23 行（打磨批先码后卡——由 superpowers 计划驱动，设计语义登记在 modeling.md v0.45~v0.53 版本链）；③契约 tasks/foundation/WP-13-T23.json 补登 status=done（acceptance 数组按验收建议 A-1 回填验收记录 §2/§3 可复现命令与数字）；④findings.json 随验收记录转登 F-906（A-1 缺卡——本收尾批 fixed）与 F-907（A-2 环境口径澄清——open，归治理批：fresh worktree 集成配置需带 vcpkg toolchain 否则 FindBoost 失败；ini 模板复制目标实为源码树 bin/——AGENTS §4.1/DTB §5.1 澄清待治理批处置）。前一版本 v0.80 保留如下。 |
 | 文档版本 | v0.80（2026-10-15，UI-T82 合入收尾——所有者"验收合格即合入"预授权）：①merge ef85ca6f 并入 wp10-t82@14f6a76c（DTB 版本表一处同锚点加行冲突——解为 v0.79/v0.78 双保留序，无语义取舍）＋按 SHA 落库 attempt 1 验收记录；②attempt 1 对抗式独立验收 PASS（traceability/acceptance/UI-T82-20261015.md@acc/UI-T82/1@7de79b98：4.1~4.11 全过零阻断——186 文件零越界/T82 无占用；双模式四目标＋门禁 EXIT=0；净室宿主探针 100% 档独立复现 94 PASS/0 FAIL＋4 截图〔ini 备份/恢复校验一致〕；双变异探针翻红排恒真；套件冒烟 74/255＋集成 84〔83 过＋1 既有剪贴板用例环境性 SKIP——COM 0x800401d0 单跑复核在案非本批面〕＋281；建议级 G-1 驱动脚本硬编码路径/G-2 净室巡检建议显式 settings-override 随记录转登）；③本批契约 UI-T82.json status ready→done；④集成面复测（studio/plugin/gui/model＋门禁）随本合入批推送前亲跑。前一版本 v0.79 保留如下。 |
 | 文档版本 | v0.79（2026-10-15，UI-T82 立项与实施登记）：所有者截图反馈全屏/缩放面板重叠，并选定统一停靠布局；§2.11 增 WP-10-T82，契约 tasks/foundation/UI-T82.json 保持 ready 待独立验收。六域标签组/滚动边界/关闭记忆及菜单时序修复，框架和计算域零修改。前一版本保留如下。 |
@@ -229,6 +230,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-03-T08 | 实现事件契约〔≙CORE-T08〕 | core | WP-03-T02/T06 | core.md §4.9、§5.8 | `Events.*`（⑤端口接口归 core） | TASK-03、ARCH §7.2⑤ | UT-EVT 载荷一致性＋参考总线 FIFO/退订用例通过 | 事件不携带数据快照（D-9） | M |
 | WP-03-T09 | 实现约定锁定与值语义测试〔≙CORE-T09〕 | core | WP-03-T01 | core.md §4.6、§8 | `core/test/*`（UT-CONV/UT-VAL） | ARCH §7.3（位姿约定）、NFR-COR-02 | 已知算例（旋转复合/逆）与值语义（拷贝/移动/哈希）断言通过 | — | S |
 | WP-03-T10 | 文档与门禁同步〔≙CORE-T10〕 | core | WP-03-T01~T09 | core.md 全文 | README 指向核对；UT-BUILD 并入 CI 建议（WP-01-T02）；§10.2 待裁决项状态更新 | NFR-MNT-05 | 本文与实现零偏差登记；P-AR/P-D/P-ENV 项状态最新 | — | S |
+| WP-03-T11 | 单元卡与实现一致性核查（治理试点）〔≙CORE-T11〕 | core | WP-03-T10 | core.md §3/§5/§9/§10 | 卡面增量修订（公共头清单/测试目标登记与实现比对）；治理演练记录 context/handoff-drill.md | NFR-MNT-05 | 公共头与测试目标两清单与实现实测一致或差异逐条登记处置；演练五段留痕可回溯 | Agent-native 治理 Task 8 试点批（先卡后码） | S |
 
 ### 2.5 WP-04 project（单元卡 units/project.md §12，已存在；T17~T20 为本文新登记、卡 §13.1 已预留）
 

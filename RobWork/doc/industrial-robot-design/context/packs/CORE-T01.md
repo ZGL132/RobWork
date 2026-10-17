@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 生成时间 | 2026-10-17T13:38:18+08:00 |
-| 生成基线 | git HEAD f394eb01f602b306023b67fa022a3657c3498dd4 |
+| 生成时间 | 2026-10-17T13:42:58+08:00 |
+| 生成基线 | git HEAD bb891fe59a9b3e107c82c239648a5720b69140c7 |
 | 任务状态（契约） | done |
 | 单元 / 主 WP | core / WP-B |
 | 分支 | wp03-t01 |
@@ -55,7 +55,7 @@
 | 源文件 | SHA-256 |
 | --- | --- |
 | RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T01.json | 0186d0c392de4f16048091fd53d22a43c5b708e56429ef8042bc8857b2f12658 |
-| RobWork/doc/industrial-robot-design/units/core.md | e2a8bc34754703832e5a2fb602b12c36432583a6994a28ef9f079d2b33da57b4 |
+| RobWork/doc/industrial-robot-design/units/core.md | d90e67cd3c415b30fbe64e66de131ee1c399c08fd620b9fe0afa98dea9bebdc7 |
 | RobWork/doc/industrial-robot-design/REQUIREMENTS.md | 765a7701d78e5cde24b6c682ccedce69afd30dca198c6e0635999cb1c3dba6fa |
 | RobWork/doc/industrial-robot-design/context/reading-paths.md | d3a82675fb2aca3d672bae305d58271d695bba5bb6b82739e292fdc8e31d06ed |
 | RobWork/doc/industrial-robot-design/context/asset-inventory.json | 10e3907cccc0ae119842420b740b12b0b606348ebd602d0040d96ec409935aea |

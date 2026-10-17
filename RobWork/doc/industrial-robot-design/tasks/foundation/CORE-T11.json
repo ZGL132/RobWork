@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "CORE-T11",
+  "unit": "core",
+  "masterWp": "WP-B",
+  "title": "单元卡与实现一致性核查（治理试点：上下文包新会话接手）",
+  "status": "ready",
+  "dependsOn": ["CORE-T10"],
+  "requirements": ["NFR-MNT-05"],
+  "designRefs": ["units/core.md#9", "units/core.md#3", "units/core.md#10"],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/context/handoff-drill.md",
+    "RobWork/doc/industrial-robot-design/context/packs/*",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+  ],
+  "outputs": ["doc-update"],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-context-pack.ps1 -All"
+  ],
+  "branch": "wp03-t11",
+  "interUnit": false,
+  "acceptance": [
+    "core.md §3 公共头清单与 include/sdurws/ird/core/ 实测文件集比对：一致或差异逐条登记处置（笔误修正/语义偏差转 findings）",
+    "core.md §10 测试目标登记与 core/CMakeLists.txt 实测注册比对：同上口径",
+    "卡面增量修订以最小增量落盘（版本行＋受影响节），不改写既有语义",
+    "发现语义级偏差登记 findings.json（不私改设计语义）",
+    "交接记录含实际 SHA、命令与四态验证结果"
+  ],
+  "note": "Agent-native 治理 Task 8 试点：新会话只凭仓库＋TaskId＋分支＋上下文包接手（先卡后码；授权链＝治理计划 Task 8＋所有者逐任务推进指令）。"
+}
