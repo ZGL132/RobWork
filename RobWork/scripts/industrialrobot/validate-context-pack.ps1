@@ -31,6 +31,9 @@ if (-not $packs.Count) { Write-Output 'validate-context-pack: no packs found (no
 $structural = @(); $stale = @(); $fresh = 0
 foreach ($p in $packs) {
   $t = Get-Content $p.FullName -Raw -Encoding UTF8
+  # $tid 在循环体开头取本包任务 ID——STALE 提示要指向当前包（若只在漂移块内定义，
+  # 多包循环时会沿用上一包的值，提示指向错误包：attempt 2 复审 suggestion 实测）
+  $tid = [IO.Path]::GetFileNameWithoutExtension($p.Name)
   # ① 结构检查
   if ($t -notmatch 'build-context-pack\.ps1') { $structural += "pack missing generator marker: $($p.Name)" }
   if ($t -notmatch '源文件指纹') { $structural += "pack missing SHA-256 fingerprint section: $($p.Name)" }

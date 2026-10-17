@@ -18,7 +18,7 @@ description: 工业机械臂任务实施——一次只处理一个任务卡：�
    - 独立冒烟模式通过（必带 vcpkg toolchain＋Qt 前缀两参数）；
    - `ird_gates` 零命中（白名单登记件除外，命中集与登记基线 diff 一致）；
    - 测试真实执行并留痕（gtest XML＋per-exe ird-test-report 双 report 口径，DTB §5.5）——**未执行不得标通过**。
-5. **提交**：commit 四段式正文（改动内容/改动原因/验证结果/影响面，根 §6.3）；代码＋测试＋CMake＋契约文档**同一提交**；提交后立即 `git push origin <任务分支>`。
+5. **提交**：**先核查当前分支**（`git branch --show-current` 必须等于契约 `branch`——多会话共享同一工作树时曾发生提交误落任务分支/主线的实测事故）→ commit 四段式正文（改动内容/改动原因/验证结果/影响面，根 §6.3）；代码＋测试＋CMake＋契约文档**同一提交**；提交后立即 `git push origin <任务分支>`。
 6. **验收请求**：固定四元组——任务 ID、分支名、commit 范围（base..head）、证据位置。
 
 ## 禁止项

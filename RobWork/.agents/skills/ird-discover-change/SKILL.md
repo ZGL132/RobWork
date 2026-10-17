@@ -7,6 +7,7 @@ description: 工业机械臂任务侦察——接到任务 ID 或变更请求后
 
 **时机**：接手任何任务的第一步（实施会话开工、验收会话对账前、人工排查切入）。
 **输入**：任务 ID（如 `WP-13-T24`）或一段变更描述。
+**路径提示**：仓库根目录内含同名 `RobWork/` 子目录（源码与设计文档都在该子树内）——相对路径一律按根 AGENTS.md §1 目录表口径解析，勿按"仓库根＝源码根"直觉拼接（演练实录摩擦①）。
 **权威依据**：任务契约（`ird-task/1` schema）＋阅读路径（`doc/industrial-robot-design/context/reading-paths.md`）＋依赖白名单（`traceability/dependency-graph.json`）。
 
 ## 步骤

@@ -160,6 +160,24 @@
       "note": "规则执法分级审计表（gate/review/behavioral＋执法者指针，治理原则 1 落地，Task 3）；新规则落文时同步登记"
     },
     {
+      "path": "context/handoff-template.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["../../.agents/skills/ird-handoff/SKILL.md"],
+      "note": "会话交接记录模板（治理 Task 8 固化；内容源＝ird-handoff Skill，两处同步修订）；SHA 口径＝冻结 head 用字面值、后续追加以 origin 引用＋ls-remote 冻结为准"
+    },
+    {
+      "path": "context/handoff-drill.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["context/handoff-template.md"],
+      "note": "新会话接手演练总记录（治理 Task 8，CORE-T11 试点，attempt 2 PASS）：时间线 SHA 链／11 条摩擦→修法对照／完成定义逐项对照；合入 wp03-t11 时同名文件以本版为准"
+    },
+    {
       "path": "../../.agents/notes",
       "kind": "decision",
       "owner": "owner",
