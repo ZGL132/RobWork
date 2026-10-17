@@ -10,6 +10,7 @@
   "designRefs": ["units/ui.md#11.6", "traceability/production-assembly-manifest.json"],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
     "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json"
   ],
   "forbiddenFiles": [
@@ -22,7 +23,7 @@
   "outputs": ["contract-test"],
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_ui_contract_test",
-    "ctest --test-dir build -C Release -R AssemblyManifestContractTest --output-on-failure"
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -R sdurws_ird_ui_contract_test --output-on-failure"
   ],
   "branch": "wp10-t83",
   "interUnit": false,

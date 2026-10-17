@@ -8894,6 +8894,44 @@
       "registeredAt": "2026-10-17",
       "title": "内容口径白名单双份复制：index-evidence.ps1 与 validate-docs.ps1 各持一份 27 项文本扩展名表（Get-IndexedContent）——单侧增删会使生成器与校验器口径漂移，深校验出现系统性误报/漏报；建议提取共享口径文件或单源生成",
       "owner": "治理批（脚本重构，非阻断）"
+    },
+    {
+      "id": "F-913",
+      "source": "traceability/acceptance/UI-T83-20261017.md 建议 A（独立对抗式验收 attempt 1，verdict=PASS，2026-10-17）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-17",
+      "title": "契约 verify 空匹配假阴性通道：UI-T83.json verify 第 2 条 ctest --test-dir build -R AssemblyManifestContractTest 逐字执行＝No tests were found 且 exit 0（空真通过）——add_test 按目标名注册于单元构建子目录（父目录 CTest 链不传递）且 -R 用例名匹配不到目标名",
+      "resolution": "verify 第 2 条改为 ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -R sdurws_ird_ui_contract_test --output-on-failure（随批修正，实测可执行）。",
+      "fixedAt": "2026-10-17"
+    },
+    {
+      "id": "F-914",
+      "source": "traceability/acceptance/UI-T83-20261017.md 建议 B（同上 attempt 1）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-17",
+      "title": "契约与改动面不一致：ui/CMakeLists.txt（源列表增列）不在 UI-T83 allowedFiles——单元卡 v1.105 任务表行已先登记实现面含 CMake 且 verify 要求构建新测试目标（机械必要性），先例契约以 unit/** 覆盖 CMake",
+      "resolution": "allowedFiles 增列 ui/CMakeLists.txt（随批修正）。",
+      "fixedAt": "2026-10-17"
+    },
+    {
+      "id": "F-915",
+      "source": "traceability/acceptance/UI-T83-20261017.md 建议 C（同上 attempt 1）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-17",
+      "title": "留痕缺口：本批未再生 <target>_report gtest XML（build 树 ui/gtest_reports 停留 9 月旧件），负例两向演示以 commit message 验证段承载（F-081→F-106 家族同型）",
+      "owner": "治理批（留痕口径统一处置，非阻断）"
+    },
+    {
+      "id": "F-916",
+      "source": "traceability/acceptance/UI-T83-20261017.md 建议 D（同上 attempt 1）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-17",
+      "title": "解析语义微差：契约 acceptance ① 提及 manifest handleSymbol 表参与解析，实现只消费 constexpr 定义＋字面量分支（handleSymbol 列未被测试消费，无 token 与清单 handleSymbol 一致断言）——Tier A validate-docs 已独立校验 handleSymbol 结构面，双向锁定目标仍达成",
+      "owner": "后续治理批（补 token↔handleSymbol 一致断言或在单元卡注明分工）"
     }
   ]
 }
