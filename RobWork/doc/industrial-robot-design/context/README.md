@@ -39,7 +39,7 @@
 5. 按契约的 ownerUnit / 需求引用取 `units/<unit>.md` 对应章节与 REQUIREMENTS 对应条目；
 6. 流水线当前状态读 `traceability/pipeline/state.json` 本体（见 §4）。
 
-**禁止**默认整册加载：REQUIREMENTS.md、ARCHITECTURE.md、development-task-breakdown.md、traceability/ 证据。阅读路径细化（核心算法/Qt 功能/持久化/流程门禁/测试故障五条）由 Task 3 的 `context/reading-paths.md` 补齐。
+**禁止**默认整册加载：REQUIREMENTS.md、ARCHITECTURE.md、development-task-breakdown.md、traceability/ 证据。阅读路径细化（核心算法/Qt 功能/持久化/流程门禁/测试故障五条）见 `reading-paths.md`（治理 Task 3 已建）。规则执法分级审计见 `rule-enforcement.md`（治理原则 1 落地）。
 
 ## 4. 与 PIPE 的权威关系（评审修正 3，红线）
 

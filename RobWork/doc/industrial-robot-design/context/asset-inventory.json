@@ -124,13 +124,40 @@
       "note": "设计区分层规则入口（治理 Task 2）：权威关系表、最小阅读路径、修订纪律；新会话进入设计树第一读"
     },
     {
+      "path": "README.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["AGENTS.md", "context/README.md"],
+      "note": "设计树人类入口：定位/阶段快照/入口表/变更速查/最短阅读路径（Task 3）；Agent 阅读阶梯不经此文件（上下文经济学）"
+    },
+    {
       "path": "context",
       "kind": "workflow",
       "owner": "owner",
       "defaultContext": true,
       "generated": false,
-      "canonicalLinks": [],
+      "canonicalLinks": ["context/reading-paths.md"],
       "note": "治理元层：资产分类/默认上下文规则/阅读入口（本目录）；与 AGENTS.md 同为 defaultContext=true 的入口资产"
+    },
+    {
+      "path": "context/reading-paths.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["context/README.md", "tasks", "units"],
+      "note": "五条任务型阅读路径（必须读/按需读/禁止默认读）＋任务契约 schema 映射（Task 3）；接任务时按路径取用"
+    },
+    {
+      "path": "context/rule-enforcement.md",
+      "kind": "workflow",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["AGENTS.md"],
+      "note": "规则执法分级审计表（gate/review/behavioral＋执法者指针，治理原则 1 落地，Task 3）；新规则落文时同步登记"
     },
     {
       "path": "traceability/pipeline/state.json",

@@ -15,6 +15,8 @@
 - development-task-breakdown.md：主 WP 交付目标、跨单元集成、里程碑和退出条件。
 - 需求追踪矩阵：位于 development-task-breakdown.md §3，维护需求 → AT → 单元任务 → 主 WP 的唯一映射。
 
+**本文职责边界**（2026-10-17 随治理 Task 3 增补）：本文负责 20 单元详设**索引**与状态视图；不负责单元内部语义（各 `units/<unit>.md` 为权威）、任务排期（DTB）、执行状态（`traceability/pipeline/state.json`）。下游入口：`units/<unit>.md`、`traceability/unit-status.json`、`traceability/phase-one-task-index.json`。
+
 ## 20 单元状态
 
 2026-09-10：第一批 11 份详设已编写，剩余 9 份待产出。五基础单元保持 contract-review，其余六单元保持 Draft；无单元因文档完成而自动 frozen。第一批包含 reporting，属于设计批次，不改变 REQUIREMENTS 阶段 A～E 的功能启用范围。编码准入与待办见 [phase-one-readiness.md](traceability/phase-one-readiness.md)。2026-09-22：modeling／requirements／kinematics 三卡产出（14/20 已编写，剩余 6 份待产出：trajectory/dynamics/drivetrain/selection/optimization/workflow）。2026-10-06：trajectory／dynamics／drivetrain／selection／optimization／workflow 六卡产出（**20/20 已编写**；六卡均为 v0.1 首版草案、状态 `Draft`，分别为 WP-16-T01／WP-17-T01／WP-18-T01／WP-19-T01／WP-20-T01／WP-22-T01 交付物；详设收官，索引表行与 unit-status.json 随本治理批次同步）。

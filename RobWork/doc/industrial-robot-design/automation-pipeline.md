@@ -8,6 +8,14 @@
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
 | 并发载体 | `.git/ird-pipeline-tick.lock`（原子锁，`pipeline-lock.ps1` 管理——§0.1） |
 
+## 文档职责（本文负责／本文不负责／下游入口）
+
+> 2026-10-17 随 Agent-native 治理 Task 3 增补（加法修订，不改变既有章节语义与编号）。
+
+- **本文负责**：tick 编排协议全量（原子锁/fencing token、阶段流转、heartbeat、队列与依赖可领取性判定、B.1 批次与 manifest）、state.json schema（§0.2）、三段式循环的编排侧衔接、findings 多线解算口径。
+- **本文不负责**：验收清单本体（ACC——验收段完全复用其清单与独立性要求）；契约编译（CCP——ready 契约唯一产出通道）；任务拆分与任务行（DTB）；需求/架构语义。
+- **下游入口**：`traceability/pipeline/state.json`（状态唯一事实源）、`pipeline-lock.ps1`／`validate-state.ps1`（机器执法面）、`traceability/pipeline/b1-host-integration-batch.json`（批次 manifest）、`context/reading-paths.md` 路径四（流程门禁角色取用）。
+
 ## 0. 上下文自足性（tick 的全部输入）
 
 任何全新上下文的执行者只需四样东西即可正确执行一个 tick：①本文件；②`state.json`（含 docRefs 指针与完整状态）；③其内嵌引用的契约路径；④ B.1 批次启用时的 `b1-host-integration-batch.json` manifest。tick 提示词不携带历史对话；一切长期知识（约定/红线/流程）必须已在文档中——这是 DTB §5.7"持久状态落文档"的延伸。若 tick 发现 state.json 缺字段或与本文件矛盾：以本文件为准修复 state.json 并在汇报中注明。

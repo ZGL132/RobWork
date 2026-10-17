@@ -82,7 +82,7 @@
 - [ ] README.md 只保留项目定位、当前阶段、入口表、变更规则和最短阅读路径。
 - [ ] reading-paths.md 定义核心算法、Qt 功能、项目持久化、流程门禁、测试故障五条路径；每条列必须读、按需读、禁止默认读的内容。
 - [ ] 为四份大文档增加"本文负责／本文不负责／下游入口"三段并用链接替代重复叙述。第一遍只做加法——历史叙述与重复模板的**删除推迟**到 Task 7 证据索引建成、可做链接完整性校验之后单独批次执行（评审修正 4）。
-- [ ] 为任务 JSON 统一补齐 status、ownerUnit、sourceRequirements、verificationCommands、evidencePath；字段口径对齐 automation-pipeline.md §0.2 state.json 既有 schema 与 findings.json 登记簿，不另造第二套状态语义——任务执行态以 state.json 为唯一权威，任务 JSON 只承载引用与验证信息（评审修正 1）。旧字段先兼容读取并由脚本报告缺失。
+- [x] 任务 JSON 字段核对（2026-10-17 落地，口径据实收窄）：五字段中 status/ownerUnit/sourceRequirements/verificationCommands 经 357 份全查在 ird-task/1 既有 schema 已全量存在（status/unit/requirements/verify）——**不加同义新字段**（one home per fact，治理原则 2）；映射表落 context/reading-paths.md §0；evidencePath 不提前添加，归 Task 7 证据索引统一设计（防与 state.json acceptanceRecord 形成双权威）；ready 字段完备性维持 validate-task.ps1 既有把关，不建重复校验。
 - [ ] 规则执法分级审计（治理原则 1 落地）：根/分区 AGENTS.md 逐条规则标注执法层级 gate（机器门禁）/ review（验收核查）/ behavioral（行为约定）＋gate 指针，产出 context/rule-enforcement.md 分级表；无层级条款三选一处置（补门禁、降为建议、删除）——审计只加标注，不批量删规则。
 - [ ] 运行文档门禁、JSON 校验和 git diff --check；提交 [docs] 建立工业机械臂最小阅读路径与文档职责。
 

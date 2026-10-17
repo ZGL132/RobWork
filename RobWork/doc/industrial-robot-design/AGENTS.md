@@ -31,7 +31,7 @@
 
 1. 仓库根 `AGENTS.md` → 2. 本文件 → 3. `context/README.md` + `context/asset-inventory.json`（资产地图）→ 4. 按任务 ID 取 `tasks/<taskId>.json` → 5. 按契约 ownerUnit/需求引用取 `units/<unit>.md` 对应章节与 REQUIREMENTS 对应条目 → 6. 需要流水线状态时读 `traceability/pipeline/state.json` 本体。
 
-**禁止**默认整册加载：REQUIREMENTS.md、ARCHITECTURE.md、development-task-breakdown.md、traceability/ 证据（完整规则与理由见 `context/README.md` §2–§3）。五条任务型阅读路径（核心算法/Qt 功能/持久化/流程门禁/测试故障）由治理 Task 3 的 `context/reading-paths.md` 补齐，当前未建。
+**禁止**默认整册加载：REQUIREMENTS.md、ARCHITECTURE.md、development-task-breakdown.md、traceability/ 证据（完整规则与理由见 `context/README.md` §2–§3）。五条任务型阅读路径（核心算法/Qt 功能/持久化/流程门禁/测试故障）见 `context/reading-paths.md`（治理 Task 3 已建）。
 
 ## 4. 修订纪律
 

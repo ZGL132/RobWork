@@ -8,6 +8,14 @@
 | 适用范围 | `tasks/` 与 `tasks/foundation/` 下一切执行契约的 planned→ready 编译，及 ready 契约的后续修订 |
 | 留痕载体 | 编译评审结论追加登记 `traceability/contract-compile-log.md`（一行一契约；v1.1 建册并补录既有 10 份 ready/done 契约——含 branch/interUnit/knownPitfalls 逐份判定） |
 
+## 文档职责（本文负责／本文不负责／下游入口）
+
+> 2026-10-17 随 Agent-native 治理 Task 3 增补（加法修订，不改变既有章节语义与编号）。
+
+- **本文负责**：`tasks/` 下执行契约的 planned→ready 编译协议（角色与时机、质量标准、评审放行、branch/interUnit/knownPitfalls 判定）与 ready 契约后续修订规程。
+- **本文不负责**：任务行登记与契约家族归属（DTB §2/§8）；单元卡任务拆分表内容（units/*.md——编译源）；验收（ACC）；编排（PIPE）。
+- **下游入口**：`tasks/` 与 `tasks/foundation/`（契约本体）、`traceability/contract-compile-log.md`（编译留痕）、`validate-task.ps1`（字段完备性机器把关）、`context/reading-paths.md` §0（任务契约 schema 映射）。
+
 ## 0. 为什么需要本协议
 
 自动化流水线（PIPE）的全部核心机制——阅读阶梯按 designRefs 锚点定向阅读、防偷懒按 acceptance 逐条自证、验收按逐条证据表裁决——都以**"契约是单元卡的忠实编译产物"**为前提。现状是 150 份契约中绝大多数为占位（planned，空 requirements、泛化 acceptance、无锚点 designRefs、占位 title），而 planned→ready 的编译环节此前没有协议：谁编译、质量标准、是否评审均无载体。契约质量是实现的精度上限，本协议补上该环节（PIPE v1.3 审核结论 P0-1）。
