@@ -256,7 +256,16 @@
       "defaultContext": false,
       "generated": true,
       "canonicalLinks": ["traceability/README.md"],
-      "note": "证据摘要索引（index-evidence.ps1，治理 Task 7）：6625 条目（路径/类型/任务关联/字节/SHA-256/生命周期）；Agent 检索证据默认入口，只存摘要不嵌内容；validate-docs 校验条目数与实际一致"
+      "note": "证据摘要索引（index-evidence.ps1，治理 Task 7；contentBasis=text-crlf-to-lf-v1）：6590 条目（路径/类型/任务关联/规范化字节/SHA-256/生命周期）；Agent 检索证据默认入口，只存摘要不嵌内容；validate-docs 校验路径集合＋字节数（-DeepEvidence 追加 SHA-256 复算）"
+    },
+    {
+      "path": "traceability/production-assembly-manifest.json",
+      "kind": "authority",
+      "owner": "owner",
+      "defaultContext": false,
+      "generated": false,
+      "canonicalLinks": ["traceability/dependency-graph.json"],
+      "note": "生产装配清单（ird-assembly-manifest/1，装配完备性 T1/IRD-NOTE-006）：当前产品配置必需装配集合权威——wired/wiredAnchor 与 waiver（挂 open finding，关闭即失效）双向锁定；Tier A 结构面 validate-docs、扫描面 AssemblyManifestContractTest（T2）、Tier B 真实装配断言共用"
     }
   ]
 }

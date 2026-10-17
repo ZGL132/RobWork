@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "ird-assembly-manifest/1",
+  "productConfig": "studio-full",
+  "note": "当前产品配置（sdurws_ird_studio 全域装配）的生产装配必需清单。三层门禁共用本清单为权威：Tier A 结构面（validate-docs.ps1）＋Tier A 扫描面（ui/contract_test/AssemblyManifestContractTest，随 T2）＋Tier B 真实装配断言（随 F-910/F-911 修复批）。wiredAnchor 相对 industrialrobot/ 根。新域接入/移除必须先改本清单后改代码（登记先行——IRD-NOTE-006 裁决 2026-10-17）。",
+  "draftModules": [
+    {
+      "moduleId": "modeling",
+      "required": true,
+      "wired": true,
+      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2485",
+      "handleSymbol": "modeling::kModuleHandle",
+      "waiver": null
+    },
+    {
+      "moduleId": "requirements",
+      "required": true,
+      "wired": false,
+      "wiredAnchor": null,
+      "handleSymbol": null,
+      "waiver": {
+        "finding": "F-911",
+        "expiresWith": "finding-close",
+        "reason": "attachModule 接线缺失（生产唯一挂接仅 modeling），待集成父批次『宿主装配与生命周期收口』子批 B 修复（含 constexpr 句柄补建与真实装配断言）"
+      }
+    }
+  ]
+}

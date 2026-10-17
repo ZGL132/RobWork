@@ -268,5 +268,42 @@ if (-not (Test-Path $evidenceIndexPath)) {
     if ($mismatchSeen -gt $mismatchCap) { $errors += "evidence index mismatch total: $mismatchSeen（仅列前 $mismatchCap 条）——重跑 index-evidence.ps1" }
   }
 }
+# ---------- 生产装配清单门禁（装配完备性 Tier A 结构面，T1/IRD-NOTE-006 裁决通过） ----------
+# production-assembly-manifest.json 是"当前产品配置必需装配集合"的唯一权威。本段做
+# 结构面：schema／moduleId 唯一／wired 锚点格式与文件存在／wired 不得携带豁免／
+# required-unwired 必须挂 waiver 且 waiver 引用的 finding 必须 open——finding 关闭而
+# 豁免未删＝失败（豁免自动失效，防永久后门）。调用点扫描面归 T2 契约测试，
+# 真实装配断言归 Tier B（F-910/F-911 修复批 DoD）。
+$manifestPath = Join-Path $base 'traceability/production-assembly-manifest.json'
+if (-not (Test-Path $manifestPath)) {
+  $errors += 'missing traceability/production-assembly-manifest.json (ird-assembly-manifest/1)'
+} else {
+  $am = $null
+  try { $am = Get-Content $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $errors += "production-assembly-manifest.json is not valid JSON: $_" }
+  if ($am) {
+    if ($am.schemaVersion -ne 'ird-assembly-manifest/1') { $errors += "assembly manifest schemaVersion must be 'ird-assembly-manifest/1', got '$($am.schemaVersion)'" }
+    # waiver 联动需要 findings 状态表
+    $findingsStatus = @{}
+    try { $fsj = Get-Content (Join-Path $base 'traceability/findings.json') -Raw -Encoding UTF8 | ConvertFrom-Json; foreach ($fd in @($fsj.findings)) { $findingsStatus["$($fd.id)"] = "$($fd.status)" } } catch { $errors += 'findings.json unparsable (assembly waiver 联动需要)' }
+    $irdRoot = Join-Path $RepoRoot 'RobWorkStudio/src/rwslibs/industrialrobot'
+    $seenModuleIds = @()
+    foreach ($m in @($am.draftModules)) {
+      if ($seenModuleIds -contains "$($m.moduleId)") { $errors += "assembly manifest duplicate moduleId: $($m.moduleId)" }
+      $seenModuleIds += "$($m.moduleId)"
+      if ($m.wired) {
+        if (-not "$($m.wiredAnchor)" -or "$($m.wiredAnchor)" -notmatch '^[\w./\\-]+:\d+$') { $errors += "assembly manifest wired module missing/invalid wiredAnchor (<路径>:<行号>): $($m.moduleId)" }
+        elseif (-not (Test-Path (Join-Path $irdRoot ($m.wiredAnchor -replace ':\d+$','')))) { $errors += "assembly manifest wiredAnchor file not found: $($m.wiredAnchor)" }
+        if ($m.waiver) { $errors += "assembly manifest wired module must not carry waiver: $($m.moduleId)" }
+      } elseif ($m.required) {
+        if (-not $m.waiver -or -not "$($m.waiver.finding)") { $errors += "assembly manifest required-but-unwired module must carry waiver: $($m.moduleId)" }
+        else {
+          $fst = $findingsStatus["$($m.waiver.finding)"]
+          if ($null -eq $fst) { $errors += "assembly manifest waiver references unknown finding: $($m.waiver.finding) ($($m.moduleId))" }
+          elseif ($fst -ne 'open') { $errors += "assembly manifest waiver expired (finding $($m.waiver.finding)=$fst)——豁免随 finding 关闭自动失效: $($m.moduleId)" }
+        }
+      }
+    }
+  }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
 Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills, $packCount packs, $evidenceCount evidence)"
