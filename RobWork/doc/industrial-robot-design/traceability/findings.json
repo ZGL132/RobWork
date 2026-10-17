@@ -8828,6 +8828,25 @@
       "title": "KIN-P5 验收建议：包络/采样契约破坏性演进下游感知——EnvelopeRayState 2→3 值（新增 NoSampleFound）、点云 CSV v2 sampling-mode 列、区域模式随机序列随 A06 splitmix64 换派生与旧版同查询样本集不可比（IRDSSID v2 身份已分立符合 CON-04 预期）；下游呈现批次接线与缓存类消费方需逐项感知核对",
       "owner": "R2 呈现批次＋缓存类消费方任务",
       "resolution": "R2 呈现批次感知已完成（kin-r2-ui 分支，提交 5bec2389/8311b3dc）：①点云 CSV 契约 v2 sampling-mode 列已接通面板导出（KinPanelFlows.exportWorkspacePointCloudCsv＋PluginPanelLinks.WorkspaceSampling_PointCloudCsvExportV2_F905 钉扎——表头 sample-index,x-m,y-m,z-m,sampling-mode,...、关节模式行 joint-random/joint-grid token）；②EnvelopeRayState NoSampleFound 三值词表域侧感知（本批包络呈现入口未落位——三维散点/包络浏览勘察结论与登记见 units/kinematics.md §14.6 v0.30 与 kin-r2 批次报告 openIssues）；③IRDSSID v2/算法版本分立提示随批次报告转达缓存类消费方——缓存类消费方逐项核对半区仍 open（owner 不变）。"
+    },
+    {
+      "id": "F-906",
+      "source": "traceability/acceptance/WP-13-T23-20261017.md advisory A-1（随验收记录转登，验收日期 2026-10-17，verdict=PASS；2026-10-17 落库）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-17",
+      "title": "WP-13-T23 验收建议：无 canonical 契约卡（tasks/ 无 WP-13-T23.json、DTB 任务拆分无该任务行）——打磨批先码后卡，致验收 4.3/4.4 无契约基准（按无契约口径适配：范围核对以提交声明文件集＋框架/patches 零触碰为准）",
+      "resolution": "2026-10-17 合入收尾批同拍补登：tasks/foundation/WP-13-T23.json status=done（acceptance 数组回填验收记录 §2/§3 可复现命令与数字）＋DTB §2.14 WP-13-T23 行登记（DTB v0.81）；validate-task/validate-docs PASS。",
+      "fixedAt": "2026-10-17"
+    },
+    {
+      "id": "F-907",
+      "source": "traceability/acceptance/WP-13-T23-20261017.md advisory A-2（随验收记录转登，验收日期 2026-10-17，verdict=PASS；2026-10-17 落库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-17",
+      "title": "验收环境口径澄清：AGENTS §4.1 集成模式配置命令未带 -DCMAKE_TOOLCHAIN_FILE（vcpkg）——验收者 fresh worktree 实测缺参时配置在 FindBoost 处失败（missing Boost_INCLUDE_DIR/filesystem/system/program_options/date_time），补参后成功；RobWorkStudio.ini.template.static 的复制目标按 RobWorkStudio/src/CMakeLists.txt:58 的 configure_file 语义实为源码树 bin/ 而非构建树 bin/（AGENTS 已登记该文件不入库，但复制目标表述有偏差）",
+      "owner": "治理批（AGENTS §4.1/DTB §5.1 文档澄清，非产品缺陷）"
     }
   ]
 }
