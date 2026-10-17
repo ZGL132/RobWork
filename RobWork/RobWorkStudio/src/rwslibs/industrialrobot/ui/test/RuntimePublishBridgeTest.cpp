@@ -357,6 +357,50 @@ TEST(RuntimePublishBridge, PresentationLifecycleFollowsHostSession_UI_T20_ACC1)
 }
 
 // =====================================================================
+// F-910 修复面（UI-T84）——attachOrSwitchHostSession 按绑定态分派
+// =====================================================================
+
+/** 打开回调唯一入口按当前绑定态二分（处置文档 §4 子批 A 修复方向）：
+ *  未绑定→attach（常规打开）；已绑定→switch（切换流——原生产恒 attach
+ *  在此形态触发"重复挂接"logic_error 且 m_dialogPending 卡死）；宿主呈现
+ *  零释放（switch 保留语义）。 */
+TEST(RuntimePublishBridge, AttachOrSwitchDispatchesByBindingState_UI_T84)
+{
+    BridgeFixture f;
+
+    // 未绑定态：分派走 attach——绑定建立、宿主呈现零释放。
+    EXPECT_FALSE(f.bridge->hasBoundSession());
+    f.bridge->attachOrSwitchHostSession(idFrom<core::ProjectId>("prj-a"));
+    EXPECT_TRUE(f.bridge->hasBoundSession());
+    EXPECT_EQ(f.outlet->releaseCount(), 0) << "常规打开不释放宿主呈现";
+
+    // 已绑定态（切换流 A→B）：分派走 switch——不抛、绑定前移、旧宿主
+    // 画面保留（releaseCount 不变——switch 契约"旧呈现保留到替换成功"）。
+    f.bridge->attachOrSwitchHostSession(idFrom<core::ProjectId>("prj-b"));
+    EXPECT_TRUE(f.bridge->hasBoundSession());
+    EXPECT_EQ(f.outlet->releaseCount(), 0) << "切换不释放宿主呈现（保留到新呈现替换成功）";
+
+    // 拆绑后分派回到 attach 形态（关闭→重开的合法序列——detach→attach）。
+    f.bridge->detachHostSession();
+    EXPECT_FALSE(f.bridge->hasBoundSession());
+    f.bridge->attachOrSwitchHostSession(idFrom<core::ProjectId>("prj-a"));
+    EXPECT_TRUE(f.bridge->hasBoundSession());
+}
+
+/** 无效身份在两种绑定态下同被拒绝（attach/switch 各自前置校验在分派
+ *  入口后原样生效——分派不改语义，只改路径选择）。 */
+TEST(RuntimePublishBridge, AttachOrSwitchRejectsInvalidIdentity_UI_T84)
+{
+    BridgeFixture f;
+    const core::ProjectId invalid{};  // 全零保留值
+    EXPECT_THROW(f.bridge->attachOrSwitchHostSession(invalid), std::invalid_argument)
+        << "未绑定态下无效身份拒绝（attach 前置校验穿透）";
+    f.bridge->attachOrSwitchHostSession(idFrom<core::ProjectId>("prj-a"));
+    EXPECT_THROW(f.bridge->attachOrSwitchHostSession(invalid), std::invalid_argument)
+        << "已绑定态下无效身份拒绝（switch 前置校验穿透）";
+}
+
+// =====================================================================
 // acceptance 2——三类身份对账与"旧呈现身份失效"
 // =====================================================================
 

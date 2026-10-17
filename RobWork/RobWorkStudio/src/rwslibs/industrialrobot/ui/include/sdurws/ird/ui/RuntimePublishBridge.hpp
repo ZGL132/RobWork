@@ -448,6 +448,26 @@ public:
     void switchHostSession(const core::ProjectId& project);
 
     /**
+     * @brief 按当前绑定态分派挂接（F-910 修复面——打开回调唯一入口）。
+     *
+     * 设计依据：处置文档 §4 子批 A 修复方向"打开回调按当前绑定态分派"。
+     * 生产打开协议（UiPlugin::attachPresentationSession）此前恒调 attach，
+     * 切换流（A 仍绑定→打开候选 B）必触发"重复挂接"logic_error；本入口
+     * 把"打开成功回调"语义收敛为状态分派：
+     *   - 未绑定 → attachHostSession（常规打开——清空呈现语义新挂）；
+     *   - 已绑定 → switchHostSession（切换流——旧宿主画面保留到新呈现
+     *     替换成功，acceptance 3 语义）。
+     *
+     * @param project [in] 会话归属项目（有效性校验同 attach/switch）
+     */
+    void attachOrSwitchHostSession(const core::ProjectId& project);
+
+    /// @brief 查询当前是否绑定宿主会话（F-910 修复面——teardown 幂等护栏
+    ///        的判定位；宿主关闭清理在调用 detach 前先核对本位，双 teardown
+    ///     重入不再触碰未绑定态）。
+    [[nodiscard]] bool hasBoundSession() const noexcept { return m_bound.has_value(); }
+
+    /**
      * @brief 解绑宿主会话（宿主会话销毁——项目关闭/切换拆除的呈现侧收口）。
      *
      * 执行：outlet.releasePresentation()（宿主呈现释放——尽力而为）→

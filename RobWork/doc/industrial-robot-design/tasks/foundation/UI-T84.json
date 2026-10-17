@@ -15,6 +15,7 @@
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPluginAssembly.cpp",
     "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json",
     "RobWork/doc/industrial-robot-design/traceability/findings.json",
     "RobWork/doc/industrial-robot-design/units/ui.md",

@@ -334,12 +334,42 @@ private:
 // =====================================================================
 
 /**
+ * @brief 草稿清单真实适配（F-911 修复面——UI-T84 生产装配）。
+ *
+ * 设计依据：本头原 DraftQueryPortStub 注释既定的替换形态——
+ * project::DraftService::list(缺省主分支) → DraftRowProjection（INV-M3
+ * 单默认分支；写半区 binding.branchId 同锚，两端对称）。此前生产 open
+ * 绑定的是恒空桩（listDrafts 返 {}），restoreOnOpen 的 list→tryLoad 链
+ * 在生产永远查不到磁盘草稿——恢复链整体断裂（手工验证 drafts/ 从未
+ * 出现的伴生面）。本类是纯只读翻译适配：行集逐条映射，不缓存不解析
+ * payload（CR-02/D-10——ui 搬运不解析）。
+ *
+ * 生命周期：非 owning 持 StorePortAdapter（open 现场构造——适配器与
+ * store 同存活期，SessionPortBundle 值语义搬运）。
+ * 线程约束：仅 UI 线程调用（§8.2 汇总/关闭对话框装配面短查询）。
+ */
+class StoreDraftQueryPortAdapter final : public IUiDraftQueryPort {
+public:
+    /// @brief 构造（绑定已打开的存储适配器——空指针＝装配违约，构造即拒）。
+    explicit StoreDraftQueryPortAdapter(
+        std::shared_ptr<class StorePortAdapter> store);
+
+    /// @brief 磁盘草稿清单（DraftService::list 逐条映射；服务异常如实穿
+    ///        透——调用方 restoreOnOpen/关闭对话框各有隔离留痕边界）。
+    std::vector<DraftRowProjection> listDrafts() const override;
+
+private:
+    std::shared_ptr<class StorePortAdapter> m_store; ///< 存储适配器（非 owning——open 现场同存活期）
+};
+
+/**
  * @brief 草稿清单桩端口（C-5 读半区）：v0.1 harness 未装配 DraftController
  *        （§8 草稿链路的装配任务未启动），开发期无草稿写路径——磁盘草稿
  *        行集如实恒空（关闭对话框草稿区呈现"无草稿"，不虚构行）。
  *
- * 真实适配（project::DraftService::list(main) → DraftRowProjection）随草稿
- * 链路装配任务落位时替换；适配点单一（本类），ui 侧零改动。
+ * F-911 修复后本桩仅存于 harness/测试装配（生产 open 已换
+ * StoreDraftQueryPortAdapter）——桩类保留＝harness"零值诚实边界"语义
+ * 仍有真实载体，非生产路径死代码。
  */
 class DraftQueryPortStub final : public IUiDraftQueryPort {
 public:

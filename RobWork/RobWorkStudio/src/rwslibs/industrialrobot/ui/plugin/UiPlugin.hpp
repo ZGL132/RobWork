@@ -523,6 +523,17 @@ private:
     QStatusBar* m_hostStatusBar = nullptr; ///< 宿主状态栏（UI-T18 状态投影面——PM-11 永久位＋瞬态消息）
     std::shared_ptr<app::StorePortAdapter> m_lastStoreAdapter; ///< 最近打开的存储适配器（T03b-2——apply 网关命令端口来源）
     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）
+    QTimer* m_draftAutosaveTimer = nullptr;                   ///< 草稿周期落盘驱动（V-13/PM-04——UI-T84：宿主侧 tickAutosave 触发半区，惰性创建；控制器内 60 s 节律判定，本定时器只按秒级拍驱动入口）
+    /// 项目关闭统一清理的幂等护栏（F-910 修复面——UI-T84）。
+    ///
+    /// 背景：关闭完成拍 presentContext 回调链存在合法重入（unbindSession
+    /// 触发脏位观察器→reportSessionDirty→二次空投影投递），无护栏时
+    /// teardownSharedSurfacesForClose 会执行两遍，第二遍 detachHostSession
+    /// 命中桥"未绑定拆绑"logic_error——异步关闭场景下异常直穿 Qt 事件
+    /// 循环→StudioMain 兜底 catch→整站退出（手工验证 A5 现象的根因链）。
+    /// 语义：每个绑定会话周期内 teardown 恰执行一次；新会话绑定拍
+    /// （attachPresentationSession）重武装。非线程安全：仅 UI 线程访问。
+    bool m_sharedSurfacesTornDown = false;
     QMenu* m_recentMenu = nullptr;                            ///< "最近项目"子菜单（aboutToShow 重建）
     /// 框架菜单命令动作登记条目（F-553——禁用原因 tooltip 的承载结构）。
     ///

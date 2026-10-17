@@ -563,8 +563,12 @@ OpenStoreOutcome StoreFactoryPortAdapter::open(const std::string& canonicalPath,
         }
 
         // 端口绑定集出参（"失败＝无绑定泄漏在签名上自明"——成功才写）。
+        // drafts 查询半区＝真实适配（F-911 修复面 UI-T84——DraftService::
+        // list 逐条映射；原 DraftQueryPortStub 恒空使 restoreOnOpen 在生产
+        // 永远查不到磁盘草稿，恢复链断裂）。适配器先于 store 移动构造
+        // （内部 shared_ptr 自持引用，与 outBindings.store 同存活期）。
+        outBindings.drafts = std::make_shared<StoreDraftQueryPortAdapter>(storePort);
         outBindings.store = std::move(storePort);
-        outBindings.drafts = std::make_shared<DraftQueryPortStub>();
         outBindings.tasks = std::make_shared<SessionTaskPortStub>();
         return outcome;
     } catch (const project::StoreError& error) {
@@ -581,6 +585,42 @@ OpenStoreOutcome StoreFactoryPortAdapter::open(const std::string& canonicalPath,
 // =====================================================================
 // v0.1 桩端口实现（恒值——诚实边界见 PortAdapters.hpp 各类注释）
 // =====================================================================
+
+StoreDraftQueryPortAdapter::StoreDraftQueryPortAdapter(
+    std::shared_ptr<StorePortAdapter> store)
+    : m_store(std::move(store))
+{
+    // 空存储适配＝装配违约 fail-fast（AGENTS §3 调用方错误轨——无查询
+    // 对象的适配器会制造"磁盘无草稿"假象，与桩的诚实恒空不同性质）。
+    if (m_store == nullptr) {
+        throw std::invalid_argument(
+            "StoreDraftQueryPortAdapter: store 适配器必填非空（F-911 查询"
+            "半区真实适配——空绑定＝装配缺陷）");
+    }
+}
+
+std::vector<DraftRowProjection> StoreDraftQueryPortAdapter::listDrafts() const
+{
+    std::vector<DraftRowProjection> rows;
+    // 缺省主分支清单（INV-M3 单默认分支；写半区 binding.branchId 同锚——
+    // 两端对称，草稿落盘/清单永不跨分支错位）。
+    for (const auto& info : m_store->projectStore().drafts().list(core::BranchId{})) {
+        DraftRowProjection row;
+        // 文档键＝模块 token（§4.1 行命名 <module>.draft.json 的语义键——
+        // ui 侧不做路径拼装/内容解析，丢弃语义收敛在模块配对键上）。
+        row.documentKey = info.moduleId;
+        row.moduleId = info.moduleId;
+        row.stale = info.stale;
+        // 基线修订 canonical（呈现与冲突对照用；缺省保留值→空串——
+        // DraftRowProjection 契约"损坏条目为空串"同口径）。
+        row.baseRevisionCanonical =
+            info.baseRevision.isValid() ? info.baseRevision.toCanonical() : std::string{};
+        // displayName 留空（域模块显示名由 DraftController 汇总时按挂接
+        // 模块补齐——磁盘行自身无显示名权威，零虚构）。
+        rows.push_back(std::move(row));
+    }
+    return rows;
+}
 
 std::vector<DraftRowProjection> DraftQueryPortStub::listDrafts() const
 {

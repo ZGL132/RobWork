@@ -88,6 +88,7 @@
 #include <sdurws/ird/requirements/CommandHandlers.hpp>  // registerRequirementCommandHandlers（UI-T39——装配期处理器注册，§5.3.5 公共通道）
 #include <sdurws/ird/requirements/ObjectTypes.hpp>  // requirements::kReqSetObjectType（根回填 token——公共头常量）
 #include <sdurws/ird/requirements/RevisionSyncPolicy.hpp>  // planExternalRevisionSync（UI-T35 P2 外部修订同步三分岔判定——纯函数）
+#include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // requirements::kModuleHandle＋requirementsDraftSource 门面缝（F-911 生产装配挂接——UI-T84）
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（UI-T64——会话态 savedConfig 合法基线）
 #include <sdurws/ird/kinematics/KinematicsPluginAssembly.hpp>  // kinematics 装配门面（UI-T23；UI-T64 通道注入/note 入口）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
@@ -115,6 +116,7 @@
 #include "ExtraDomainAssembly.hpp"      // dynamicsPanelWidget 等（三域取件——ASM-PANEL）
 #include "DomainAssemblyShared.hpp"     // kAssemblyFailedCode（§11.3 稳定码文本单点）
 #include <memory>                       // std::static_pointer_cast（extraAssemblies 类型擦除句柄还原）
+#include <chrono>                       // std::chrono::steady_clock（V-13 周期落盘驱动拍——UI-T84）
 #endif
 
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>  // modeling::isAssembledModelingCommand（UI-T42——F-466 路由判定出线）
@@ -756,7 +758,38 @@ void IrdWorkbenchHostPlugin::initialize()
         if (!context.project.has_value() && m_draft && m_draft->hasSession()) {
             m_draft->unbindSession();
         }
-        syncDomainModulesToContext(context);
+        // F-910 修复面（异常隔离三要素——捕获边界，UI-T84）：本回调是控制
+        // 器状态迁移（打开成功/关闭完成/脏位重投）的宿主承接边界，运行于
+        // Qt 回调上下文（含 store 关闭回调沿 UI 线程的重入路径）——域同步
+        // 抛出的异常若穿透本 lambda，将沿 presentContextLocked→
+        // finishCurrentClose→onStoreClosed 直穿 Qt 事件循环、落到 StudioMain
+        // 兜底 catch 致整站退出（手工验证 A5"关闭后弹 critical 即退出"的
+        // 放大环节）。此处隔离＝操作边界捕获，不吞不崩：①回滚责任＝Dev
+        // 留痕可归因（teardown 幂等护栏已保证桥不处于半拆绑态——见
+        // teardownSharedSurfacesForClose）；②恢复成功条件＝控制器态由调用
+        // 方先落定（关闭链 resetToNoProject 先于本回调），验证"无项目"成
+        // 立才提示可重试，不成立则提示重启（状态不可确认→显性故障处置）。
+        try {
+            syncDomainModulesToContext(context);
+        } catch (const std::exception& syncError) {
+            const bool recoveredNoProject =
+                (m_controller == nullptr || !m_controller->hasOpenSession());
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(
+                    kPluginDevChannel,
+                    std::string("上下文同步异常已隔离（恢复=")
+                        + (recoveredNoProject ? "无项目态已确认，可重试打开"
+                                              : "状态未确认，请重启应用")
+                        + "）：" + syncError.what());
+            }
+            if (m_hostStatusBar != nullptr) {
+                m_hostStatusBar->showMessage(
+                    QString::fromUtf8(recoveredNoProject
+                                          ? "项目操作出现异常（已恢复到无项目状态，可重试）"
+                                          : "项目操作出现异常（状态未确认，请重启应用）"),
+                    8000);
+            }
+        }
         if (m_content) {
             m_content->presentProjectContext(context);
         }
@@ -2481,21 +2514,57 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                 // 成功后恰挂一次，可写会话才接受——只读/已占用异常隔离留
                 // 痕不中断打开协议）。
                 if (m_domains) {
+                    // F-911/F-910 修复批（UI-T84）：草稿源挂接按域独立隔离
+                    // （单域失败不连坐他域——原实现 modeling 挂接与恢复同
+                    // try，一处抛即跳过全部），恢复在挂接全部完成后统一
+                    // 执行（restoreOnOpen 遍历已挂模块）。
                     try {
                         m_draft->attachModule(
                             modeling::kModuleHandle,
                             modelingDraftSource(*m_domains));
-                        // 草稿恢复（§8.3 restoreOnOpen——list→tryLoad→adopt
-                        // →面板刷新）：demo 项目/历史项目的建模草稿在打开
-                        // 时回填面板；失败隔离留痕不中断打开协议。
-                        m_draft->restoreOnOpen();
-                        m_domains->modeling.refreshFromSession();
                     } catch (const std::exception& attachError) {
                         if (m_diag.pipeline) {
                             m_diag.pipeline->logDev(
                                 kPluginDevChannel,
                                 std::string("建模草稿源挂接跳过：")
                                     + attachError.what());
+                        }
+                    }
+                    // 需求域草稿源挂接（F-911 修复面——此前生产 attachModule
+                    // 唯一调用仅 modeling，RequirementsDraftSource 已实现但
+                    // 无生产调用点＝需求草稿零落盘零恢复）。源视图经公共装
+                    // 配门面出线（RequirementsPluginAssembly::requirements
+                    // DraftSource——R-2 门面纪律，modelingDraftSource 同款先
+                    // 例；存活期随域门面，宿主零持有）；模块句柄＝
+                    // requirements::kModuleHandle（清单 handleSymbol 同源
+                    // token——装配清单登记先行纪律，IRD-NOTE-006）。
+                    if (m_domains->requirements.has_value()) {
+                        try {
+                            m_draft->attachModule(
+                                requirements::kModuleHandle,
+                                m_domains->requirements->requirementsDraftSource());
+                        } catch (const std::exception& attachError) {
+                            if (m_diag.pipeline) {
+                                m_diag.pipeline->logDev(
+                                    kPluginDevChannel,
+                                    std::string("需求草稿源挂接跳过：")
+                                        + attachError.what());
+                            }
+                        }
+                    }
+                    try {
+                        // 草稿恢复（§8.3 restoreOnOpen——list→tryLoad→adopt
+                        // →面板刷新）：磁盘草稿经生产查询适配器列出（F-911
+                        // 修复——此前 binding.drafts 挂 DraftQueryPortStub 恒
+                        // 返空，恢复链整体断裂）；失败隔离留痕不中断打开协议。
+                        m_draft->restoreOnOpen();
+                        m_domains->modeling.refreshFromSession();
+                    } catch (const std::exception& restoreError) {
+                        if (m_diag.pipeline) {
+                            m_diag.pipeline->logDev(
+                                kPluginDevChannel,
+                                std::string("草稿恢复跳过：")
+                                    + restoreError.what());
                         }
                     }
                 }
@@ -4543,10 +4612,28 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
                                 "F-461 modeling 半区收口）");
     }
 
-    // 桥会话绑定（绑定后等待首次发布事件——attach 重复＝状态机违约，
-    // 会话内单次调用由打开协议保证）。
+    // 桥会话绑定（F-910 修复面——按当前绑定态分派：未绑定＝attach（常规
+    // 打开），已绑定＝switch（切换流——A 绑定中打开候选 B，原恒 attach 在
+    // 此形态必触发"重复挂接"logic_error 且 m_dialogPending 卡死）。分派语
+    // 义见 RuntimePublishBridge::attachOrSwitchHostSession）。
+    // 同拍重武装关闭清理幂等护栏（新会话周期开始——本会话关闭拍的
+    // teardown 恢复可执行；见 m_sharedSurfacesTornDown 注释）。
+    m_sharedSurfacesTornDown = false;
+    // V-13/PM-04 周期落盘驱动（UI-T84——此前 tickAutosave 无生产触发源，
+    // 草稿只有手动/关闭两个落盘拍）：本定时器只按秒级拍驱动入口，60 s 节
+    // 律判定与在途跳过在控制器 tickAutosave 内（§8.4——单一节律权威）。
+    if (m_draftAutosaveTimer == nullptr) {
+        m_draftAutosaveTimer = new QTimer(this);
+        m_draftAutosaveTimer->setInterval(5 * 1000);  // 驱动拍 5 s（单位 ms）——≠落盘周期
+        connect(m_draftAutosaveTimer, &QTimer::timeout, this, [this] {
+            if (m_draft && m_draft->hasSession()) {
+                (void)m_draft->tickAutosave(std::chrono::steady_clock::now());
+            }
+        });
+    }
+    m_draftAutosaveTimer->start();
     if (m_publishBridge != nullptr) {
-        m_publishBridge->attachHostSession(project);
+        m_publishBridge->attachOrSwitchHostSession(project);
     }
 }
 
@@ -4656,6 +4743,26 @@ void IrdWorkbenchHostPlugin::refreshReadinessSummary()
 
 void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
 {
+    // F-910 修复面（幂等护栏——根因最小面）：关闭完成拍的本函数在
+    // presentContext 合法重入下会被调用两次（unbindSession 脏位翻转→
+    // reportSessionDirty→二次空投影投递）——无护栏时第二遍 detachHostSession
+    // 命中桥"未绑定拆绑"logic_error（同步关闭被 catch 成警告框；异步关闭
+    // 在无保护上下文直穿 Qt 事件循环→StudioMain 兜底 catch→整站退出，
+    // 手工验证 A5 根因链）。会话周期内 teardown 恰执行一次：首次置位，
+    // 重入幂等跳过（留痕）；新会话绑定拍（attachPresentationSession）重武装。
+    if (m_sharedSurfacesTornDown) {
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel,
+                                    "project close teardown: idempotent skip (reentrant projection)");
+        }
+        return;
+    }
+    m_sharedSurfacesTornDown = true;
+    // 周期落盘驱动随会话停止（V-13 触发半区只服务在位会话——无项目态
+    // tickAutosave 分派无意义）。
+    if (m_draftAutosaveTimer != nullptr) {
+        m_draftAutosaveTimer->stop();
+    }
     // 项目关闭统一清理（acceptance 4——九类对象逐类收口〔UI-T77/F-559
     // 增第九类：三维预览投影缓存〕；清理序＝依赖序：先退订消费者再清
     // 状态源，防止清理过程中的重入回调）。
