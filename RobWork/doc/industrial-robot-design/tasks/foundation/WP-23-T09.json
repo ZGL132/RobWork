@@ -53,7 +53,12 @@
   "verify": [
     "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T09.json",
     "cmake --build build --config Release --target sdurws_ird_testkit_test sdurws_ird_kinematics_test sdurws_ird_trajectory_test sdurws_ird_dynamics_test sdurws_ird_selection_test sdurws_ird_optimization_test",
-    "ctest --test-dir build -C Release -R \"sdurws_ird_(testkit|kinematics|trajectory|dynamics|selection|optimization)_test\" --output-on-failure"
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/testkit -C Release -R \"^sdurws_ird_testkit_test$\" --output-on-failure",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -R \"^sdurws_ird_kinematics_test$\" --output-on-failure",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/trajectory -C Release -R \"^sdurws_ird_trajectory_test$\" --output-on-failure",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/dynamics -C Release -R \"^sdurws_ird_dynamics_test$\" --output-on-failure",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/selection -C Release -R \"^sdurws_ird_selection_test$\" --output-on-failure",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/optimization -C Release -R \"^sdurws_ird_optimization_test$\" --output-on-failure"
   ],
   "branch": "wp23-t09",
   "interUnit": false,

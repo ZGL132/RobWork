@@ -1,0 +1,9 @@
+Test project D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/reporting
+    Start 1: sdurws_ird_reporting_test
+1/2 Test #1: sdurws_ird_reporting_test ............   Passed    0.85 sec
+    Start 2: sdurws_ird_reporting_contract_test
+2/2 Test #2: sdurws_ird_reporting_contract_test ...   Passed    0.60 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   1.52 sec

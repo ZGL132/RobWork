@@ -1,4 +1,4 @@
-﻿{
+{
   "schemaVersion": "ird-task/1",
   "taskId": "RPT-T11",
   "unit": "reporting",
@@ -42,7 +42,7 @@
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_reporting_test",
     "cmake --build build --config Release --target sdurws_ird_reporting_contract_test",
-    "ctest --test-dir build -C Release -R \"^sdurws_ird_reporting\" --output-on-failure"
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/reporting -C Release -R \"^sdurws_ird_reporting\" --output-on-failure"
   ],
   "branch": "wp12-t11",
   "interUnit": true,

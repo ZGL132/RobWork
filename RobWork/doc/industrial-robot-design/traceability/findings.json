@@ -2110,11 +2110,13 @@
       "id": "F-201",
       "source": "traceability/acceptance/IO-T06-20260917-r2.md §4.10（验收 attempt 2，送验对象 de10bec9）：留痕载体核对发现条文与实践脱节",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "acceptance-protocol.md §4.10 条文『phase-one-validation.log 或 resultNote 已更新』与流水线实践脱节：phase-one-validation.log 尾行停在 CORE-T01（2026-09-10），其后的全部已合入任务（TK-T03 系至 IO-T05 系数十个）均未追加；traceability/pipeline/state.json 的 schema 中不存在 resultNote 字段（全文 grep 计数 0）——条文两个载体均无实际维护路径。任务级验证留痕的实际落位为 traceability/builds/<branch>/（gtest XML＋ird-test-report.json＋日志），IO-T06 attempt 1/2 验收均按此口径判定 4.10",
       "owner": "ACC/PIPE 文档所有者（acceptance-protocol.md 与 automation-pipeline.md 的条文修订）",
-      "resolution": "不构成 IO-T06 返工项（pass 判定不受影响——任务级留痕 16 文件真实落库且数值经验收者双模式复现一致）。建议 ACC 修订 §4.10 为『任务级留痕目录（traceability/builds/<branch>/）落位：gtest XML＋ird-test-report.json＋构建/测试/验证日志』口径并删去无维护路径的两载体表述，或恢复对应载体的维护机制——两者择一，消除历史任务的口径歧义"
+      "resolution": "不构成 IO-T06 返工项（pass 判定不受影响——任务级留痕 16 文件真实落库且数值经验收者双模式复现一致）。建议 ACC 修订 §4.10 为『任务级留痕目录（traceability/builds/<branch>/）落位：gtest XML＋ird-test-report.json＋构建/测试/验证日志』口径并删去无维护路径的两载体表述，或恢复对应载体的维护机制——两者择一，消除历史任务的口径歧义",
+      "resolution": "ACCEPTANCE §4.10 留痕判据对齐实践（2026-10-18）：删除已停更的 phase-one-validation.log（尾行停在 CORE-T01）与不存在的 state.resultNote 字段；改写为 traceability/builds/<branch>/ 三件套（gtest XML＋ird-test-report.json＋构建日志）为唯一实际落位与判定依据；ACC v1.9 版本行/变更记录同步。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-202",
@@ -2639,11 +2641,13 @@
       "id": "F-251",
       "source": "traceability/acceptance/RPT-T11-20260920.md#4.3-问题清单-G-2（attempt 1，verdict=fail，2026-09-20；送验对象 e412eea23c36a9caec76624ba2830b41730f9ddb，分支 wp12-t11）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-20",
       "title": "契约 verify 第 3 条 ctest 命令在任何树上空转：ctest --test-dir build -C Release -R \"^sdurws_ird_reporting\" 恒 exit 0＋『No tests were found!!!』——框架顶层至 RobWorkStudio/src 各级 CTestTestfile.cmake 全部缺失（框架未在顶层调用 enable_testing，worktree 全新树与主树逐级 ls 双实证），ctest 自 build/ 根无法递归发现任何测试；RPT-T11 契约 note 援引的『UI-T14 ctest 先例』（UI-T14 契约 verify 同款 --test-dir build 口径）将同族踩中。测试实质执行真实成立（修正路径 --test-dir 指到 reporting 叶子目录 2/2 通过＋直接执行双 exe 196＋58 双模式全绿），故为建议级口径缺陷非执行造假",
       "owner": "构建约定所有者（DTB §5.1 辖域）",
-      "resolution": "二选一：①框架接线修复（RobWork 顶层或 RobWorkStudio 级按 BUILD_TESTING 调 enable_testing 使 CTestTestfile 链贯通——涉框架 CMake 按 SA-02 先登记 patch）；②契约 verify 口径修订（--test-dir 指向单元叶子构建目录，或改直接执行/target 口径）并同步 UI-T14 契约同款命令；PIPE 附录 C 实施者模板提示 verify 命令须以『发现并执行非零个测试』为准验收〔并入注记 2026-10-16 转登批：asm-studio-20261010.md §3 S-2（ctest 注册树列表为 0 的既有缺陷）复现确认同一根因，2026-10-10——随 findings 转登批并入来源引用，不另立号。〕"
+      "resolution": "二选一：①框架接线修复（RobWork 顶层或 RobWorkStudio 级按 BUILD_TESTING 调 enable_testing 使 CTestTestfile 链贯通——涉框架 CMake 按 SA-02 先登记 patch）；②契约 verify 口径修订（--test-dir 指向单元叶子构建目录，或改直接执行/target 口径）并同步 UI-T14 契约同款命令；PIPE 附录 C 实施者模板提示 verify 命令须以『发现并执行非零个测试』为准验收〔并入注记 2026-10-16 转登批：asm-studio-20261010.md §3 S-2（ctest 注册树列表为 0 的既有缺陷）复现确认同一根因，2026-10-10——随 findings 转登批并入来源引用，不另立号。〕",
+      "resolution": "契约 ctest 路径口径修正（2026-10-18）：RPT-T11 verify 第 3 条 ctest --test-dir build（框架根）→ build/RobWorkStudio/src/rwslibs/industrialrobot/reporting；同族 UI-T14 两行（-L ^ird$/^ird_gui$）→ ui 叶子目录；排查中另发现 WP-23-T09 同型（build 根 -R 六单元）并拆为六个叶子目录 ctest 行。validate-task 四份全 PASS。根因：框架未在顶层 enable_testing，build/ 根无 CTestTestfile.cmake，--test-dir build 恒 No tests found（exit 0 空转）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-252",
@@ -2700,11 +2704,12 @@
       "id": "F-257",
       "source": "traceability/acceptance/RPT-T12-20260920-r2.md#4.10／发现的问题清单-G-2（attempt 2，verdict=pass，2026-09-20；送验对象 552c66d1ddb39e468899705822b0424da5b0fa70，分支 wp12-t12）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-20",
       "title": "gates-all-note.txt（builds/wp12-t12）尾句『归一化 diff 复核见 validate-task.log 附录』为悬空指引——validate-task.log 仅含 1 行『validate-task: PASS (1 tasks)』输出、无任何附录内容；GATES-HIT-SET-IDENTICAL 的实质证据由在库 gates-hit-set-diff.txt（差异仅 worktree 路径前缀）与验收者 attempt 2 双树直跑归一化零差异独立成立，纯指引文字失准、非证据缺失（attempt 1 G-1 的三处悬空引用中两处已随 552c66d1 补交闭环，本处为其残余形态）",
       "owner": "reporting 单元实施者（后续 reporting 留痕修订时顺带更正该句指向）",
-      "resolution": "后续 reporting 留痕修订时将该句改为指向 gates-hit-set-diff.txt，或在 gates-all-note.txt 内直接载归一化比对方法与结论（双树直跑、路径前缀归一、逐行 diff 为空）；不要求单独返工。不阻塞 RPT-T12 合入（attempt 2 verdict=pass）。编号顺延自 F-256。"
+      "resolution": "后续 reporting 留痕修订时将该句改为指向 gates-hit-set-diff.txt，或在 gates-all-note.txt 内直接载归一化比对方法与结论（双树直跑、路径前缀归一、逐行 diff 为空）；不要求单独返工。不阻塞 RPT-T12 合入（attempt 2 verdict=pass）。编号顺延自 F-256。",
+      "closureReason": "B7 第二批同型处置（2026-10-18）：gates-all-note.txt 属已入库历史证据（builds/wp12-t12，只增不改），尾句悬空指引不回写；GATES-HIT-SET-IDENTICAL 的实质证据由在库 gates-hit-set-diff.txt 与验收 attempt 2 双树归一化零差异独立成立。按「历史证据不可改＋实质证据在案」关闭。"
     },
     {
       "id": "F-258",
@@ -5438,10 +5443,11 @@
       "id": "F-527",
       "source": "acc/ui-t64/1@87760059 验收记录建议级 S3（UI-T64 独立子会话对抗式验收 2026-10-06）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-06",
       "title": "冒烟树留痕计数口径不统一：commit/README/DTB/ui.md 声明'冒烟树 kinematics 176＋ui 239 全绿'为 gtest 直接计数，验收者以 ctest 单元子目录口径复证（各单元 2/2 100% passed）——两口径结论相容但计数不可直接互查（ctest 汇总行不携带 gtest 用例数）；近批同口径，非本批缺陷",
-      "owner": "治理批次统一'冒烟留痕＝gtest XML 或 ctest --output-on-failure 之一'的载体口径，便于验收侧逐数核对"
+      "owner": "治理批次统一'冒烟留痕＝gtest XML 或 ctest --output-on-failure 之一'的载体口径，便于验收侧逐数核对",
+      "closureReason": "B7 第二批同型处置（2026-10-18）：gtest 直接计数与 ctest 单元子目录口径的差异属说明性事项（两口径结论相容、ctest 汇总不携带用例数），非缺陷；后续批次统一以 ird-test-report.json 为计数口径（F-526 家族先例）。按「无动作/说明性」关闭。"
     },
     {
       "id": "F-528",
@@ -8689,10 +8695,12 @@
       "id": "F-869",
       "source": "traceability/acceptance/WP-23-T04-20261013.md §建议级 S-3（验收日期 2026-10-13，verdict=PASS；记录提交 020cb14a）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "WP-23-T04 验收建议级 S-3（契约 verify ③ 路径口径）：本卡 verify 第 3 条 ctest 路径写作 <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot（集成树布局）；冒烟树 ctest 注册在单元叶子目录（kinematics/、ui/），字面路径不存在；验收以同 -R 集合分叶目录亲跑全绿等价覆盖；处置：随治理批将该路径改为叶子目录口径（T02/T03 卡先例）",
-      "owner": "契约/治理批（verify 路径改叶子目录口径）"
+      "owner": "契约/治理批（verify 路径改叶子目录口径）",
+      "resolution": "WP-23-T04 verify ③ 路径口径修正（2026-10-18）：原 <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot（集成树布局）改为冒烟树叶子目录两条（kinematics、ui），与 T02/T03 先例一致；validate-task PASS。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-870",

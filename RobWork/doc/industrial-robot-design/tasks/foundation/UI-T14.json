@@ -26,8 +26,8 @@
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
   "verify": [
-    "ctest --test-dir build -C Release -L \"^ird$\"",
-    "ctest --test-dir build -C Release -L \"^ird_gui$\""
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird_gui$\""
   ],
   "branch": "wp10-t14",
   "interUnit": true,

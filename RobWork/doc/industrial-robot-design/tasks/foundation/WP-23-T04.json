@@ -40,7 +40,8 @@
   "verify": [
     "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-23-T04.json",
     "cmake --build <冒烟构建目录> --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test sdurws_ird_ui_contract_test sdurws_ird_ui_largedata_perf_test",
-    "ctest --test-dir <冒烟构建目录>/RobWorkStudio/src/rwslibs/industrialrobot -C Release -R \"sdurws_ird_(kinematics_(test|contract_test)|ui_contract_test|ui_largedata_perf_test)\" --output-on-failure"
+    "ctest --test-dir <冒烟构建目录>/kinematics -C Release -R \"sdurws_ird_kinematics_(test|contract_test)\" --output-on-failure",
+    "ctest --test-dir <冒烟构建目录>/ui -C Release -R \"sdurws_ird_ui_(contract_test|largedata_perf_test)\" --output-on-failure"
   ],
   "branch": "wp23-t04",
   "interUnit": false,
