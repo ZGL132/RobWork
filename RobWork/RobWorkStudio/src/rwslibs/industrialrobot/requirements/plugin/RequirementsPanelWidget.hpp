@@ -400,14 +400,13 @@ private:
 
     /// 工位值提交（复合/二态控件共用轨——队列化出信号处理器：提交链同步
     /// 刷新重建控件树，槽内直执＝发射控件被删 use-after-free——返工修复）。
+    /// @brief 基于发起时完整工位基线排队变换；仅UI线程，过期拒绝，不拥有编辑器。
+    void queueStationEdit(std::function<TaskPoint(const TaskPoint&)> transform);
     void submitStationValue(const std::string& key, const QString& text);
-    void submitStationValueNow(const std::string& key, const QString& text);
     /// 工位二态提交（applyStationToggleEdit——启用开关/自由度矩阵共用）。
     void submitStationToggle(const std::string& key, bool on);
-    void submitStationToggleNow(const std::string& key, bool on);
     /// 工位枚举提交（applyStationEnumEdit——等级 QComboBox；UI-T37 返工）。
     void submitStationEnumValue(const std::string& key, const QString& text);
-    void submitStationEnumValueNow(const std::string& key, const QString& text);
     /// 区域值提交（onRegionFieldEditingFinished 的 sender 无关形）。
     void submitRegionValue(const std::string& key, const QString& text);
     void submitRegionValueNow(const std::string& key, const QString& text);

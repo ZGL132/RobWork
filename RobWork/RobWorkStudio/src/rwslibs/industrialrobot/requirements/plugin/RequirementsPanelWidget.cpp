@@ -11,6 +11,7 @@
 #include "RequirementsPanelWidget.hpp"
 #include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次＋UI-T33 三维缝重载）
 #include "ConditionStructureForm.hpp"  // WP-14-T12：负载/事件结构暂存，确认后原子写草稿。
+#include "StationDefinitionDialog.hpp" // WP-14-T12：完整引用与姿态载荷一次确认。
 
 #include <QBrush>
 #include <QAction>   // 导入下拉菜单动作（返工⑤）
@@ -1838,9 +1839,8 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     // 行投影（writable 门控在模型层——applyReadOnlyGate 同源规则内置）。
     m_stationRows = stationFieldsFor(*point, m_writable);
 
-    // 数量词表（一次取用——行键可编辑性的裁决面）。UI-T37 崩溃修复：本页
-    // 名称/等级/段/姿态种类等行此前呈可编辑态而词表无键，提交即触发"词表
-    // 外键 fail-fast"崩溃——本批起对齐区域轨 T31 诚实降级（非词表行只读）。
+    // 数量字段用唯一单位词表；名称/备注/顺序键有独立文本轨，枚举走类型
+    // 词表，结构引用由完整定义表单暂存。不可将“无数量spec”泛化为只读。
     const std::vector<ui::QuantityFieldSpec> specs = stationQuantitySpecs();
     const auto specDriven = [&specs](const std::string& key) {
         for (const ui::QuantityFieldSpec& s : specs) {
@@ -1898,12 +1898,14 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
             form->addRow(new QLabel(QString::fromStdString(r.label), this), combo);
             return;
         }
-        const bool placeholder =
-            r.valueText == "未提供" || r.valueText == "未设";
+        // 名称/备注中的“未设”是合法原文，只有结构占位行才能清空显示。
+        const bool textField = r.fieldKey == "name" || r.fieldKey == "note" || r.fieldKey == "sequence-key";
+        const bool placeholder = (r.fieldKey == "sequence-key" && !point->sequenceKey)
+            || (!textField && (r.valueText == "未提供" || r.valueText == "未设"));
         auto* edit = new QLineEdit(
             placeholder ? QString() : QString::fromStdString(r.valueText), this);
         const bool editable = r.enablement == StationFieldEnablement::Editable
-                              && specDriven(r.fieldKey) && m_writable;
+                              && (specDriven(r.fieldKey) || textField) && m_writable;
         edit->setReadOnly(!editable);
         edit->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
         // 权威文本（幻影脏化短路基准——提交/刷新双轨同源）。
@@ -2104,32 +2106,16 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
             }
             connect(b, &QPushButton::clicked, this,
                     [this, keys, on = p.on](bool) {
-                        IRequirementEditor* editor =
-                            m_editTarget ? m_editTarget() : nullptr;
-                        if (editor == nullptr || !m_writable
-                            || !m_lastSelected.has_value()) {
-                            return;
-                        }
-                        const RequirementWorkingSet& ws = editor->workingSet();
-                        for (const TaskPoint& pt : ws.points.entries) {
-                            if (pt.objectId != m_lastSelected.value()) {
-                                continue;
+                        // 六轴预设是一次用户操作，必须只排队一个完整值。
+                        // 逐轴排队既会被基线守卫拒绝，也会让撤销只恢复最后一轴。
+                        queueStationEdit([keys, on](const TaskPoint& base) {
+                            TaskPoint candidate = base;
+                            std::vector<std::string> known;
+                            for (const auto& key : keys) {
+                                candidate = applyStationToggleEdit(candidate, key.toStdString(), on, known);
                             }
-                            const ConstrainedDof& d = pt.pose.constrainedDof;
-                            for (const QString& k : keys) {
-                                bool cur = false;
-                                if (k == QStringLiteral("dof-x")) { cur = d.x; }
-                                else if (k == QStringLiteral("dof-y")) { cur = d.y; }
-                                else if (k == QStringLiteral("dof-z")) { cur = d.z; }
-                                else if (k == QStringLiteral("dof-roll")) { cur = d.roll; }
-                                else if (k == QStringLiteral("dof-pitch")) { cur = d.pitch; }
-                                else if (k == QStringLiteral("dof-yaw")) { cur = d.yaw; }
-                                if (cur != on) {
-                                    submitStationToggle(k.toStdString(), on);
-                                }
-                            }
-                            return;
-                        }
+                            return candidate; // 全自由由域至少一约束不变量整体拒绝，零部分写入。
+                        });
                     });
             pl->addWidget(b);
         }
@@ -2260,6 +2246,34 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         renderTextRow(form, r);
     }
     renderDofMatrix(dofRows);
+    // 完整定义入口补齐文本、参考系/TCP与引用型规则。对话框独立暂存，
+    // 关闭后才写草稿；同步提交不会销毁仍在发信的对话框按钮。
+    auto* definition = new QPushButton(QStringLiteral("编辑名称、参考系/TCP与完整姿态…"), this);
+    definition->setObjectName("ird_station_definition_edit");
+    definition->setEnabled(m_writable);
+    connect(definition, &QPushButton::clicked, this, [this, base = *point] {
+        auto* editor = m_editTarget ? m_editTarget() : nullptr;
+        if (!editor || !m_writable) { return; }
+        const auto candidate = editStationDefinition(this, base, editor->workingSet().points);
+        if (!candidate || *candidate == base) { return; }
+        // 模态嵌套事件循环仍可能切换会话或接收外部修订，确认后重新核对。
+        if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
+        for (const auto& current : editor->workingSet().points.entries) {
+            if (current.objectId != base.objectId) { continue; }
+            if (current != base) { showStatusLine("工位已改变，请重新打开完整定义"); return; }
+            // 排队到发起入口按钮完成发信后；二次守卫防止排队期间改写旧基线。
+            QMetaObject::invokeMethod(this, [this, editor, base, value = *candidate] {
+                if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
+                for (const auto& latest : editor->workingSet().points.entries) {
+                    if (latest.objectId != base.objectId) { continue; }
+                    if (latest != base) { showStatusLine("工位已改变，请重新打开完整定义"); return; }
+                    submitStructuralEdit(RequirementEdit{value}); return;
+                }
+            }, Qt::QueuedConnection);
+            return;
+        }
+    });
+    m_stationBasicForm->addRow(definition);
 }
 
 void RequirementsPanelWidget::showStatusLine(const QString& text)
@@ -2288,106 +2302,80 @@ QFormLayout* RequirementsPanelWidget::stationFormForKey(const std::string& key) 
     return nullptr;  // 词表外键＝投影/卡片漂移（调用方 fail-fast）
 }
 
-void RequirementsPanelWidget::submitStationValue(const std::string& key,
-                                                 const QString& text)
+/**
+ * @brief 固定发起编辑器和工位基线，队列执行变换，避免切换选中后写错对象。
+ * @param transform [in] 对原条目的纯值变换；用户解析错误抛invalid_argument。
+ * 所有状态限UI线程；指针仅作身份比较，执行前经当前provider重新取得并核对。
+ */
+void RequirementsPanelWidget::queueStationEdit(std::function<TaskPoint(const TaskPoint&)> transform)
 {
-    // 队列化出信号处理器（UI-T37 返工——修改容差/启用即崩的根因修复）：
-    // 提交链会同步刷新并清空重建控件树；若在信号槽内直接执行，正在发射
-    // 信号的控件（SpinBox/行编辑/Switch）会在发射途中被删除＝use-after-
-    // free。旧插件同场景不崩＝其刷新为固定控件回填不重建；本面板重建式
-    // 刷新下，队列化（事件循环下一拍执行，控件删除发生在发射完成后）是
-    // 等价的出险排除。
-    QMetaObject::invokeMethod(
-        this,
-        [this, key, text] { submitStationValueNow(key, text); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitStationValueNow(const std::string& key,
-                                                    const QString& text)
-{
-    // L-R2 提交轨（复合/SpinBox 控件共用——与行编辑槽同语义；显键形供
-    // 非 QLineEdit 控件复用）。权威值短路在控件侧已完成。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const TaskPoint& p : ws.points.entries) {
-        if (p.objectId != m_lastSelected.value()) {
-            continue;
-        }
-        for (const ui::QuantityFieldSpec& spec : stationQuantitySpecs()) {
-            if (spec.key != key) {
-                continue;
-            }
-            const ui::ValueParseResult parsed =
-                parseFieldValueText(text.toStdString(), spec);
-            if (!parsed.ok) {
-                showStatusLine(QString::fromStdString(parsed.reason));
-                renderInspector(ws);  // 回退显示工作集权威值
+    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || !m_lastSelected) { return; }
+    for (const auto& point : editor->workingSet().points.entries) {
+        if (point.objectId != *m_lastSelected) { continue; }
+        QMetaObject::invokeMethod(this, [this, editor, base = point, transform = std::move(transform)] {
+            if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
+            for (const auto& latest : editor->workingSet().points.entries) {
+                if (latest.objectId != base.objectId) { continue; }
+                if (latest != base) { showStatusLine("工位已改变，请重新输入"); return; }
+                try {
+                    const TaskPoint candidate = transform(base);
+                    if (candidate == base) { return; } // 失焦或重复信号不制造局部撤销记录。
+                    if (submitEntryEdit(*editor, *this, candidate) == EditSubmitOutcome::Applied) {
+                        m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                    }
+                } catch (const std::invalid_argument& failure) {
+                    // 用户非法数值原位反馈，保留输入；内部词表错误仍走logic_error。
+                    showStatusLine(QString::fromUtf8(failure.what()));
+                }
                 return;
             }
+        }, Qt::QueuedConnection);
+        return;
+    }
+}
+
+void RequirementsPanelWidget::submitStationValue(const std::string& key, const QString& text)
+{
+    queueStationEdit([key, text](const TaskPoint& base) {
+        // 文本不参与单位/数量解析；顺序键空输入显式清除可选前驱，零不是缺失。
+        if (key == "name" || key == "note" || key == "sequence-key") {
+            TaskPoint out = base;
+            if (key == "name") { out.name = text.trimmed().toStdString(); }
+            else if (key == "note") { out.note = text.toStdString(); }
+            else { out.sequenceKey = text.trimmed().isEmpty() ? std::nullopt
+                : std::optional<std::string>(text.trimmed().toStdString()); }
+            return out;
+        }
+        for (const auto& spec : stationQuantitySpecs()) {
+            if (spec.key != key) { continue; }
+            const auto parsed = parseFieldValueText(text.toStdString(), spec);
+            if (!parsed.ok) { throw std::invalid_argument(parsed.reason); }
             ui::ParamEditSet edits;
             ui::ParamChange change;
-            change.key = key;
-            change.label = spec.label;
-            change.newSi = parsed.siValue;
+            change.key = key; change.label = spec.label; change.newSi = parsed.siValue;
             edits.changes.push_back(change);
             std::vector<std::string> known;
-            const TaskPoint candidate = applyStationEditSet(p, edits, known);
-            const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
-            if (outcome == EditSubmitOutcome::Applied) {
-                m_undoTracker.recordAppliedEdit();
-            }
-            return;
+            return applyStationEditSet(base, edits, known);
         }
         throw std::logic_error("工位面板：编辑行携带词表外键 " + key);
-    }
+    });
 }
 
 void RequirementsPanelWidget::submitStationToggle(const std::string& key, bool on)
 {
-    // 队列化出信号处理器（同 submitStationValue——提交链同步删发射控件＝UB）。
-    QMetaObject::invokeMethod(
-        this, [this, key, on] { submitStationToggleNow(key, on); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitStationEnumValue(const std::string& key,
-                                                     const QString& text)
-{
-    // 队列化出信号处理器（QComboBox currentIndexChanged 同样可能发生在
-    // 面板重建期——同 UB 排除口径）。
-    QMetaObject::invokeMethod(
-        this, [this, key, text] { submitStationEnumValueNow(key, text); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitStationEnumValueNow(const std::string& key,
-                                                        const QString& text)
-{
-    // 枚举提交轨（applyStationEnumEdit——等级 QComboBox；域裁决同链）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const TaskPoint& p : ws.points.entries) {
-        if (p.objectId != m_lastSelected.value()) {
-            continue;
-        }
+    queueStationEdit([key, on](const TaskPoint& base) {
         std::vector<std::string> known;
-        const TaskPoint candidate =
-            applyStationEnumEdit(p, key, text.toStdString(), known);
-        const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
-        }
-        return;
-    }
+        return applyStationToggleEdit(base, key, on, known);
+    });
+}
+
+void RequirementsPanelWidget::submitStationEnumValue(const std::string& key, const QString& text)
+{
+    queueStationEdit([key, text](const TaskPoint& base) {
+        std::vector<std::string> known;
+        return applyStationEnumEdit(base, key, text.toStdString(), known);
+    });
 }
 
 void RequirementsPanelWidget::submitRegionEnumValue(const std::string& key,
@@ -2482,30 +2470,6 @@ void RequirementsPanelWidget::submitConditionEnumValueNow(const std::string& key
         if (outcome == EditSubmitOutcome::Applied) {
             m_undoTracker.recordAppliedEdit();
             refreshUndoButtons();
-        }
-        return;
-    }
-}
-
-void RequirementsPanelWidget::submitStationToggleNow(const std::string& key, bool on)
-{
-    // 二态提交轨（启用开关/自由度矩阵——applyStationToggleEdit 布尔回填
-    // ＋submitEntryEdit 域裁决；拒绝面与行编辑同链）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const TaskPoint& p : ws.points.entries) {
-        if (p.objectId != m_lastSelected.value()) {
-            continue;
-        }
-        std::vector<std::string> known;
-        const TaskPoint candidate = applyStationToggleEdit(p, key, on, known);
-        const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
         }
         return;
     }

@@ -82,3 +82,8 @@
 - [ ] 集成构建和独立冒烟；requirements/ui相关模型、契约、GUI全部真实执行并保留XML、ird-test-report.json、日志，区分passed/skipped/failed。
 - [ ] ird_gates、verify-task-scope、commit-lint、validate-docs通过；新增证据git add后重建evidence-index。
 - [ ] 完整修改逐批commit并push origin wp14-t12；不自行合入redesign-main。仅当120项均有实际通过证据才声明全功能通过。
+
+## 执行进度补记（不替代最终120项验收）
+
+- 第一批 `157e73ca`：模板类别/实时预览、工况文本轨；第二批 `d590973f`：工况结构完整暂存及提交对象守卫。
+- 第三批：工位完整定义与文本编辑、工位提交对象守卫、六轴预设原子撤销；双模式各290通过+1旧占位跳过。正式宿主引用/三维全量验收仍待执行，后续阶段继续。

@@ -1443,6 +1443,7 @@ TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
     QPushButton* constrainAll = m_panel->findChild<QPushButton*>(
         QStringLiteral("ird_dof_preset_constrain"));
     ASSERT_NE(constrainAll, nullptr) << "快捷预设行缺失";
+    const auto beforePreset = m_editor.workingSet().points.entries.front();
     constrainAll->click();
     QApplication::processEvents();
     const auto& dofAll =
@@ -1450,6 +1451,9 @@ TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
     EXPECT_TRUE(dofAll.x && dofAll.y && dofAll.z && dofAll.roll && dofAll.pitch
                 && dofAll.yaw)
         << "全部约束预设未批量生效";
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), beforePreset)
+        << "REQ-11：六轴预设须一次撤销完整恢复";
 }
 
 /// UI-T37 R1 区域复合行与实时预览（acceptance 2）：盒中心三编辑器同容器、
@@ -1514,22 +1518,20 @@ TEST_F(RequirementsSessionGuiTest, RegionCompositeAndLiveCount_UI_T37)
         << "覆盖率滑块未接通双联提交轨";
 }
 
-/// UI-T37 R1 崩溃修复回归（词表外键陷阱）：非数量行（名称/段/顺序键）只读
-/// 灰显——此前呈可编辑态但提交即"词表外键 fail-fast"崩溃；行编辑器权威值
-/// 零变化（不进入编辑流）。
-TEST_F(RequirementsSessionGuiTest, NonQuantityRowsReadOnly_UI_T37)
+/// WP-14-T12保留溯源只读纪律；名称/顺序键已有类型正确的文本轨，不再禁用。
+TEST_F(RequirementsSessionGuiTest, SourceRowsReadOnly_UI_T37)
 {
     IRD_TEST_INFO("ERR-01", {}, std::nullopt);
     m_panel->refreshPanel(m_editor.workingSet(), m_report);
     m_panel->focusObject(m_editor.workingSet().points.entries.front().objectId);
     QApplication::processEvents();
     // segment-approach 返工③起为下拉复合行（启用/轴/距离）——不再断言只读。
-    const char* readonlyKeys[] = {"name", "sequence-key"};
+    const char* readonlyKeys[] = {"source"};
     for (const char* key : readonlyKeys) {
         QLineEdit* edit = fieldEditor(*m_panel, key);
         ASSERT_NE(edit, nullptr) << "行缺失: " << key;
         EXPECT_TRUE(edit->isReadOnly())
-            << "非数量行应只读（词表外键崩溃修复）: " << key;
+            << "来源事实必须只读: " << key;
     }
     // 权威值零变化（只读行不进入编辑流——域状态不被触碰）。
     const std::string nameBefore =
@@ -2262,6 +2264,155 @@ TEST_F(RequirementsSessionGuiTest, ConditionNameAndNoteEditing_AT02_WP14T12)
                   QStringLiteral("搬运工况-名称验证").toStdString());
         ASSERT_TRUE(m_editor.undoLocal());
         m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    }
+}
+
+/** @brief REQ-01/09：生产完整定义对话框暂存名称、引用及规则，一次确认/撤销。 */
+TEST_F(RequirementsSessionGuiTest, StationDefinitionAtomicReferences_AT23_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* button = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+    ASSERT_NE(button, nullptr) << "工位必须可完整编辑参考系、TCP及引用型姿态规则";
+    const std::string objectId = "obj-12345678901234567890123456789012";
+    QTimer::singleShot(0, [this, objectId, before] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog, nullptr);
+        dialog->findChild<QLineEdit*>("station-name")->setText("完整工位");
+        dialog->findChild<QComboBox*>("station-process")->setCurrentIndex(5); // Inspect
+        dialog->findChild<QComboBox*>("station-reference-kind")->setCurrentIndex(1);
+        dialog->findChild<QLineEdit*>("station-reference-object")->setText(QString::fromStdString(objectId));
+        dialog->findChild<QComboBox*>("station-tcp-kind")->setCurrentIndex(2);
+        dialog->findChild<QLineEdit*>("station-tcp-object")->setText(QString::fromStdString(objectId));
+        dialog->findChild<QLineEdit*>("station-tcp-key")->setText("tcp-main");
+        dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(1);
+        dialog->findChild<QLineEdit*>("station-target-object")->setText(QString::fromStdString(objectId));
+        EXPECT_EQ(m_editor.workingSet().points.entries.front(), before) << "确认前不得写草稿";
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    button->click();
+    QApplication::processEvents();
+    const TaskPoint after = m_editor.workingSet().points.entries.front();
+    EXPECT_EQ(after.name, "完整工位");
+    EXPECT_EQ(after.processTag, ProcessTag::Inspect);
+    EXPECT_EQ(after.refFrame.kind, RequirementRefKind::ModelFrame);
+    ASSERT_TRUE(after.tcpRef);
+    EXPECT_EQ(after.tcpRef->tcpKey, "tcp-main");
+    EXPECT_EQ(after.pose.orientation.kind, OrientationRuleKind::AlignFrame);
+    EXPECT_EQ(after.pose.orientation.targetFrame.objectId, after.refFrame.objectId);
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), before) << "全部字段须一次撤销";
+}
+
+/** @brief REQ-01/09：缺目标引用保留表单与错误，取消零写入，只读禁写。 */
+TEST_F(RequirementsSessionGuiTest, StationDefinitionRejectCancel_AT23_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* button = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+    ASSERT_NE(button, nullptr);
+    QTimer::singleShot(0, [this, before] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog, nullptr);
+        dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(2);
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        EXPECT_TRUE(dialog->isVisible()) << "缺几何对象应保留输入";
+        EXPECT_FALSE(dialog->findChild<QLabel*>("station-definition-error")->text().isEmpty());
+        EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+        dialog->reject();
+    });
+    button->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+    m_panel->setWritable(false);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    auto* readOnlyButton = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+    ASSERT_NE(readOnlyButton, nullptr);
+    EXPECT_FALSE(readOnlyButton->isEnabled());
+}
+
+/** @brief REQ-01：排队编辑后立即选另一工位，输入仍只能写回发起对象。 */
+TEST_F(RequirementsSessionGuiTest, StationQueuedValueKeepsAnchor_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    const TaskPoint second = makePoint("第二工位", 4, 5, 6);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{second}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    QDoubleSpinBox* spin = nullptr;
+    for (auto* candidate : m_panel->findChildren<QDoubleSpinBox*>()) {
+        if (candidate->property("irdFieldKey").toString() == "tolerance-position") { spin = candidate; break; }
+    }
+    ASSERT_NE(spin, nullptr);
+    spin->setValue(0.05);
+    QMetaObject::invokeMethod(spin, "editingFinished", Qt::DirectConnection);
+    m_panel->focusObject(second.objectId); // 先切选中，不给排队提交运行机会。
+    QApplication::processEvents();
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        EXPECT_DOUBLE_EQ(point.tolerance.positionTolerance,
+            point.objectId == before.objectId ? 0.05 : second.tolerance.positionTolerance);
+    }
+}
+
+/** @brief AT-23：五规则均由生产表单构建，非活动载荷归默认，数值不丢失。 */
+TEST_F(RequirementsSessionGuiTest, StationDefinitionFiveRules_AT23_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    for (int kind = 0; kind < 5; ++kind) {
+        m_panel->refreshPanel(m_editor.workingSet(), m_report);
+        m_panel->focusObject(before.objectId);
+        auto* button = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+        ASSERT_NE(button, nullptr);
+        QTimer::singleShot(0, [kind] {
+            auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            ASSERT_NE(dialog, nullptr);
+            dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(kind);
+            dialog->findChild<QLineEdit*>("station-rpy")->setText("0.1234567891234567, -0.2, 0.3");
+            dialog->findChild<QLineEdit*>("station-target-object")->setText("obj-12345678901234567890123456789012");
+            dialog->findChild<QLineEdit*>("station-scene")->setText("obj-12345678901234567890123456789012");
+            dialog->findChild<QComboBox*>("station-feature")->setCurrentIndex(1);
+            dialog->findChild<QCheckBox*>("station-invert")->setChecked(true);
+            dialog->findChild<QLineEdit*>("station-target-point")->setText("1, 2, 3");
+            dialog->findChild<QLineEdit*>("station-roll-min")->setText("-1.2");
+            dialog->findChild<QLineEdit*>("station-roll-max")->setText("2.3");
+            dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        });
+        button->click(); QApplication::processEvents();
+        const auto after = m_editor.workingSet().points.entries.front();
+        EXPECT_EQ(after.pose.orientation.kind, static_cast<OrientationRuleKind>(kind));
+        EXPECT_FALSE(validateTaskPoint(after).has_value());
+        EXPECT_EQ(after.pose.position, before.pose.position) << "未改位置须保留值及来源";
+        if (kind == 0) { EXPECT_DOUBLE_EQ(after.pose.orientation.fixedRpy[0], 0.1234567891234567); }
+        if (kind == 2) { EXPECT_TRUE(after.pose.orientation.invertNormal); EXPECT_EQ(after.pose.orientation.feature, OrientationFeature::FramePlaneNormal); }
+        if (kind == 4) { EXPECT_DOUBLE_EQ(after.pose.orientation.rollRange.min, -1.2); EXPECT_DOUBLE_EQ(after.pose.orientation.rollRange.max, 2.3); }
+        ASSERT_TRUE(m_editor.undoLocal());
+        EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+    }
+}
+
+/** @brief REQ-01：普通名称/备注有类型正确的直接编辑轨，不受数量词表禁用。 */
+TEST_F(RequirementsSessionGuiTest, StationTextEditing_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    for (const char* key : {"name", "note"}) {
+        m_panel->refreshPanel(m_editor.workingSet(), m_report);
+        m_panel->focusObject(before.objectId);
+        auto* edit = fieldEditor(*m_panel, key);
+        ASSERT_NE(edit, nullptr);
+        ASSERT_FALSE(edit->isReadOnly()) << "名称和备注必须能直接输入";
+        edit->setText("工位文本验证");
+        QMetaObject::invokeMethod(edit, "editingFinished", Qt::DirectConnection);
+        QApplication::processEvents();
+        const auto& point = m_editor.workingSet().points.entries.front();
+        EXPECT_EQ(std::string(key) == "name" ? point.name : point.note, "工位文本验证");
+        ASSERT_TRUE(m_editor.undoLocal());
     }
 }
 
