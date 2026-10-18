@@ -10,6 +10,7 @@
 
 #include "RequirementsPanelWidget.hpp"
 #include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次＋UI-T33 三维缝重载）
+#include "ConditionStructureForm.hpp"  // WP-14-T12：负载/事件结构暂存，确认后原子写草稿。
 
 #include <QBrush>
 #include <QAction>   // 导入下拉菜单动作（返工⑤）
@@ -2431,37 +2432,56 @@ void RequirementsPanelWidget::submitRegionEnumValueNow(const std::string& key,
 void RequirementsPanelWidget::submitConditionEnumValue(const std::string& key,
                                                        const QString& text)
 {
-    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
-    QMetaObject::invokeMethod(
-        this, [this, key, text] { submitConditionEnumValueNow(key, text); },
-        Qt::QueuedConnection);
+    // 发起时固定身份；排队期间切换行不能把输入写到新选中工况（WP-14-T12）。
+    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || !m_conditionTable->currentItem()) { return; }
+    const auto selected = nodeAnchor(m_conditionTable->currentItem());
+    if (!selected) { return; }
+    for (const auto& condition : editor->workingSet().conditions.entries) {
+        if (condition.objectId == *selected) {
+            QMetaObject::invokeMethod(this, [this, key, text, base = condition, editor] {
+                submitConditionEnumValueNow(key, text, base, editor);
+            }, Qt::QueuedConnection);
+            return;
+        }
+    }
 }
 
 void RequirementsPanelWidget::submitConditionEnumValueNow(const std::string& key,
-                                                          const QString& text)
+    const QString& text, const OperatingCondition& base, IRequirementEditor* expectedEditor)
 {
     // 工况枚举提交轨（applyConditionEnumEdit——等级/启用；域裁决同链）。
     m_threadGuard.assertOnUiThread();
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
+    if (editor == nullptr || editor != expectedEditor || !m_writable) {
         return;
     }
     const RequirementWorkingSet& ws = editor->workingSet();
     for (const OperatingCondition& c : ws.conditions.entries) {
-        std::optional<core::ObjectId> selected;
-        if (m_conditionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_conditionTable->currentItem());
-        }
-        if (!selected.has_value() || c.objectId != selected.value()) {
-            continue;
-        }
+        if (c.objectId != base.objectId) { continue; }
+        if (c != base) { showStatusLine("工况已改变，请重新输入"); return; }
         std::vector<std::string> known;
-        const OperatingCondition candidate =
-            applyConditionEnumEdit(c, key, text.toStdString(), known);
+        OperatingCondition candidate = c;
+        if (key == "name" || key == "note" || key == "level" || key == "enabled") {
+            candidate = applyConditionEnumEdit(c, key, text.toStdString(), known);
+        } else if (key == "cycle-time" && text.trimmed().isEmpty()) {
+            candidate.targetCycleTimeS.reset();  // 显式清空可选节拍≠提供零秒。
+        } else {
+            const auto specs = conditionQuantitySpecs(c);
+            const auto spec = std::find_if(specs.begin(), specs.end(), [&key](const auto& value) { return value.key == key; });
+            if (spec == specs.end()) { throw std::logic_error("工况面板：编辑行携带词表外键 " + key); }
+            const auto parsed = parseFieldValueText(text.toStdString(), *spec);
+            if (!parsed.ok) { showStatusLine(QString::fromStdString(parsed.reason)); return; }
+            ui::ParamEditSet edits;
+            ui::ParamChange change; change.key = key; change.label = spec->label; change.newSi = parsed.siValue;
+            edits.changes.push_back(change);
+            candidate = applyConditionEditSet(c, edits, known);
+        }
         const EditSubmitOutcome outcome =
             submitEntryEdit(*editor, *this, RequirementEdit{candidate});
         if (outcome == EditSubmitOutcome::Applied) {
             m_undoTracker.recordAppliedEdit();
+            refreshUndoButtons();
         }
         return;
     }
@@ -2968,6 +2988,27 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
         if (const auto anchor = nodeAnchor(m_conditionTable->currentItem())) {
             for (const OperatingCondition& c : ws.conditions.entries) {
                 if (c.objectId == anchor.value()) {
+                    // REQ-04：结构编辑器只拥有进入基线的副本。确认排到信号返回后，
+                    // 并绑定原编辑器/对象及基线；切换选择不改写新对象，外部刷新或
+                    // 另一编辑已改变原对象时拒绝过期候选，避免覆盖新数据。
+                    auto* structure = new ConditionStructureForm(c, ws.points.entries, m_writable,
+                        [this, base = c, expectedEditor = (m_editTarget ? m_editTarget() : nullptr)](OperatingCondition candidate) {
+                            QMetaObject::invokeMethod(this,
+                                [this, base, expectedEditor, candidate = std::move(candidate)] {
+                                    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+                                    if (!m_writable || !editor || editor != expectedEditor) { return; }
+                                    const auto& entries = editor->workingSet().conditions.entries;
+                                    const auto found = std::find_if(entries.begin(), entries.end(),
+                                        [&base](const OperatingCondition& value) { return value.objectId == base.objectId; });
+                                    if (found == entries.end() || *found != base) {
+                                        showStatusLine("工况已改变，请刷新结构表后重试"); return;
+                                    }
+                                    if (submitEntryEdit(*editor, *this, RequirementEdit{candidate}) == EditSubmitOutcome::Applied) {
+                                        m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                                    }
+                                }, Qt::QueuedConnection);
+                        }, this);
+                    m_conditionForm->addRow(structure);
                     for (const StationFieldRow& fr :
                          conditionFieldsFor(c, m_conditionService, m_writable)) {
                         // 枚举下拉行（UI-T37 返工②——等级/启用一律
@@ -3017,8 +3058,10 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
                         // B2（UI-T31）：数值行按 enablement 可编（specs 词
                         // 表行——onConditionFieldEditingFinished 提交轨）；
                         // 派生/引用行保持只读（区域页同款收窄）。
-                        const bool editable =
-                            fr.enablement == StationFieldEnablement::Editable;
+                        // 结构字段由上方完整暂存表承担；下方仅提供摘要。只有已有
+                        // 提交轨的文本/节拍保留逐字段编辑，不能把摘要当数量解析。
+                        const bool editable = fr.enablement == StationFieldEnablement::Editable
+                            && (fr.fieldKey == "name" || fr.fieldKey == "note" || fr.fieldKey == "cycle-time");
                         edit->setReadOnly(!editable);
                         edit->setProperty("irdFieldKey",
                                           QString::fromStdString(fr.fieldKey));
@@ -3467,69 +3510,13 @@ void RequirementsPanelWidget::submitRegionCountsNow(
 
 void RequirementsPanelWidget::onConditionFieldEditingFinished()
 {
-    // B2（UI-T31）工况轨——同构（applyConditionEditSet 回填）。
+    // REQ-04/UX-05：从信号sender复制文本后即退出；所有字段统一排队，
+    // 原对象与会话在发起时绑定，刷新不得销毁当前发信控件或改写新选中行。
     m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;
-    }
     auto* edit = qobject_cast<QLineEdit*>(QObject::sender());
-    if (edit == nullptr) {
-        return;
-    }
-    if (edit->text() == edit->property("irdAuthoritativeValue").toString()) {
-        return;
-    }
-    const std::string key = edit->property("irdFieldKey").toString().toStdString();
-    const RequirementWorkingSet& ws = editor->workingSet();
-    if (m_conditionTable->currentItem() == nullptr) {
-        return;
-    }
-    const auto selected = nodeAnchor(m_conditionTable->currentItem());
-    if (!selected.has_value()) {
-        return;
-    }
-    for (const OperatingCondition& c : ws.conditions.entries) {
-        if (c.objectId != selected.value()) {
-            continue;
-        }
-        // REQ-04/UX-05：文本不是物理量，不能送进数量词表。队列提交使刷新
-        // 发生在 editingFinished 返回之后，避免销毁当前发信的 QLineEdit。
-        if (key == "name" || key == "note") {
-            submitConditionEnumValue(key, edit->text());
-            return;
-        }
-        for (const ui::QuantityFieldSpec& spec : conditionQuantitySpecs(c)) {
-            if (spec.key != key) {
-                continue;
-            }
-            const ui::ValueParseResult parsed =
-                parseFieldValueText(edit->text().toStdString(), spec);
-            if (!parsed.ok) {
-                showStatusLine(QString::fromStdString(parsed.reason));
-                renderConditionPage(ws);
-                return;
-            }
-            ui::ParamEditSet edits;
-            ui::ParamChange change;
-            change.key = key;
-            change.label = spec.label;
-            change.newSi = parsed.siValue;
-            edits.changes.push_back(change);
-            std::vector<std::string> known;
-            const OperatingCondition candidate =
-                applyConditionEditSet(c, edits, known);
-            const EditSubmitOutcome outcome =
-                submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-            if (outcome == EditSubmitOutcome::Applied) {
-                m_undoTracker.recordAppliedEdit();
-            }
-            return;
-        }
-        throw std::logic_error("工况面板：编辑行携带词表外键 " + key);
-    }
+    if (!edit || edit->text() == edit->property("irdAuthoritativeValue").toString()) { return; }
+    submitConditionEnumValue(edit->property("irdFieldKey").toString().toStdString(), edit->text());
 }
-
 void RequirementsPanelWidget::onCommandButtonClicked()
 {
     // 域命令区：按钮激活→转发注入的提交出口（不本地执行任何域逻辑——

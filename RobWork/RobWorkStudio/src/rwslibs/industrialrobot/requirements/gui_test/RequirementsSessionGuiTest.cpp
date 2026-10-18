@@ -34,6 +34,8 @@
 #include <QTabWidget>
 #include <QToolButton>  // 卡片折叠三角断言（UI-T37 返工⑤）
 #include <QTreeWidget>
+#include <QTableWidget>  // WP-14-T12：生产工况结构表，验证空集合的新增与原子应用。
+#include <QListWidget>  // 适用工位多选的真实控件。
 #include <QWidget>
 
 #include <sdurws/ird/ui/FlowLayout.hpp>  // 边距耦合半区（UI-T36 G-1 守卫重构——公共头 R-2 合规）
@@ -2261,4 +2263,155 @@ TEST_F(RequirementsSessionGuiTest, ConditionNameAndNoteEditing_AT02_WP14T12)
         ASSERT_TRUE(m_editor.undoLocal());
         m_panel->refreshPanel(m_editor.workingSet(), m_report);
     }
+}
+
+/** @brief REQ-04：空工况可新增负载和三类事件，确认一次写入、一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, ConditionStructureAtomicApply_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(m_editor.workingSet().conditions.entries.front().objectId);
+    auto* payloads = m_panel->findChild<QTableWidget*>("ird_condition_payloads");
+    auto* events = m_panel->findChild<QTableWidget*>("ird_condition_events");
+    auto* addPayload = m_panel->findChild<QPushButton*>("ird_condition_add_payload");
+    auto* addEvent = m_panel->findChild<QPushButton*>("ird_condition_add_event");
+    auto* apply = m_panel->findChild<QPushButton*>("ird_condition_structure_apply");
+    ASSERT_NE(payloads, nullptr) << "空工况必须提供负载结构编辑入口";
+    ASSERT_NE(events, nullptr);
+    ASSERT_NE(addPayload, nullptr);
+    ASSERT_NE(addEvent, nullptr);
+    ASSERT_NE(apply, nullptr);
+    const OperatingCondition before = m_editor.workingSet().conditions.entries.front();
+    addPayload->click();
+    payloads->item(0, 3)->setText("2.5");  // kg；不是缺失转零。
+    payloads->item(0, 4)->setText("0.1, 0.2, 0.3");  // 工具TCP系，m。
+    payloads->item(0, 5)->setText("0.4");  // kg·m²。
+    for (int i = 0; i < 3; ++i) {
+        addEvent->click();
+        auto* kind = qobject_cast<QComboBox*>(events->cellWidget(i, 0));
+        ASSERT_NE(kind, nullptr);
+        kind->setCurrentIndex(i);  // Grasp / Release / Dwell。
+        events->item(i, 2)->setText("1.25");  // s。
+    }
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before)
+        << "结构表修改在确认前不能写入草稿";
+    apply->click();
+    QApplication::processEvents();
+    const auto& actual = m_editor.workingSet().conditions.entries.front();
+    ASSERT_EQ(actual.payloads.size(), 1);
+    EXPECT_DOUBLE_EQ(actual.payloads[0].mass.value(), 2.5);
+    EXPECT_DOUBLE_EQ(actual.payloads[0].com.value()[1], 0.2);
+    EXPECT_DOUBLE_EQ(actual.payloads[0].inertia.value(), 0.4);
+    ASSERT_EQ(actual.events.size(), 3);
+    EXPECT_EQ(actual.events[2].type, ConditionEventType::Dwell);
+    EXPECT_DOUBLE_EQ(*actual.events[2].durationS, 1.25);
+    EXPECT_EQ(actual.events[0].stationRef, m_editor.workingSet().points.entries.front().objectId);
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before)
+        << "整张结构表必须一次撤销，不留下半个负载/事件集合";
+}
+
+/** @brief REQ-04/UX-03：非法物性、取消、只读均零写入，不抛内部词表异常。 */
+TEST_F(RequirementsSessionGuiTest, ConditionStructureRejectCancelReadOnly_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(m_editor.workingSet().conditions.entries.front().objectId);
+    auto* add = m_panel->findChild<QPushButton*>("ird_condition_add_payload");
+    ASSERT_NE(add, nullptr);
+    const auto before = m_editor.workingSet().conditions.entries.front();
+    add->click();
+    auto* payloads = m_panel->findChild<QTableWidget*>("ird_condition_payloads");
+    ASSERT_NE(payloads, nullptr);
+    payloads->item(0, 3)->setText("-2");
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before);
+    auto* error = m_panel->findChild<QLabel*>("ird_condition_structure_error");
+    ASSERT_NE(error, nullptr);
+    EXPECT_FALSE(error->text().isEmpty());
+    m_panel->findChild<QPushButton*>("ird_condition_structure_cancel")->click();
+    EXPECT_EQ(payloads->rowCount(), 0) << "取消恢复进入表单时的结构";
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before);
+    m_panel->setWritable(false);
+    QApplication::processEvents();
+    EXPECT_FALSE(m_panel->findChild<QPushButton*>("ird_condition_add_payload")->isEnabled());
+    EXPECT_FALSE(m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->isEnabled());
+}
+
+/** @brief REQ-04：文本提交排队后切换选中，必须仍编辑发起时的工况。 */
+TEST_F(RequirementsSessionGuiTest, ConditionQueuedEditKeepsOriginalAnchor_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    const auto original = m_editor.workingSet().conditions.entries.front();
+    auto other = original; other.objectId = core::ObjectId::generate(); other.name = "C2";
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{other}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(original.objectId);
+    QLineEdit* field = nullptr;
+    for (auto* edit : m_panel->findChildren<QLineEdit*>()) {
+        if (edit->property("irdFieldKey").toString() == "note") { field = edit; break; }
+    }
+    ASSERT_NE(field, nullptr);
+    field->setText("仅修改原工况");
+    QMetaObject::invokeMethod(field, "editingFinished", Qt::DirectConnection);
+    m_panel->focusObject(other.objectId);  // 不先处理排队的提交。
+    QApplication::processEvents();
+    for (const auto& condition : m_editor.workingSet().conditions.entries) {
+        EXPECT_EQ(condition.note, condition.objectId == original.objectId ? "仅修改原工况" : other.note)
+            << "延迟提交不能使用执行时的新选中对象";
+    }
+}
+
+/** @brief REQ-04：环境/工具/适用范围/要求值可编辑，物性缺失不转零，增删可撤销。 */
+TEST_F(RequirementsSessionGuiTest, ConditionReferencesAndFourStates_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    const auto before = m_editor.workingSet().conditions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* payloads = m_panel->findChild<QTableWidget*>("ird_condition_payloads");
+    ASSERT_NE(payloads, nullptr);
+    m_panel->findChild<QPushButton*>("ird_condition_add_payload")->click();
+    payloads->item(0, 3)->setText("0");  // 明确提供的零质量；域契约允许非负。
+    payloads->item(0, 4)->setText("不适用");
+    // 惯量保持未提供，不能因其它字段确认而转成0。
+    const auto envId = core::ObjectId::generate();
+    m_panel->findChild<QLineEdit*>("ird_condition_environment")->setText(QString::fromStdString(envId.toCanonical()));
+    m_panel->findChild<QLineEdit*>("ird_condition_margin")->setText("0.1");
+    m_panel->findChild<QCheckBox*>("ird_condition_collision")->setChecked(false);
+    m_panel->findChild<QComboBox*>("ird_condition_scope")->setCurrentIndex(1);
+    m_panel->findChild<QListWidget*>("ird_condition_stations")->item(0)->setCheckState(Qt::Checked);
+    m_panel->findChild<QPushButton*>("ird_condition_add_tool")->click();
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click();
+    QApplication::processEvents();
+    const auto actual = m_editor.workingSet().conditions.entries.front();
+    ASSERT_EQ(actual.payloads.size(), 1);
+    EXPECT_EQ(actual.payloads[0].mass.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(actual.payloads[0].mass.value(), 0);
+    EXPECT_EQ(actual.payloads[0].com.state(), core::FieldState::NotApplicable);
+    EXPECT_EQ(actual.payloads[0].inertia.state(), core::FieldState::NotProvided);
+    ASSERT_EQ(actual.environmentRefs.size(), 1);
+    EXPECT_EQ(actual.environmentRefs.front(), envId);
+    EXPECT_EQ(actual.appliesTo.scope, AppliesToScope::Stations);
+    EXPECT_EQ(actual.appliesTo.stations, std::vector<core::ObjectId>{m_editor.workingSet().points.entries.front().objectId});
+    ASSERT_EQ(actual.toolRefs.size(), 1);
+    EXPECT_EQ(actual.toolRefs.front().kind, RequirementRefKind::DefaultTcp);
+    EXPECT_FALSE(actual.demands.collisionFreeRequired);
+    EXPECT_DOUBLE_EQ(*actual.demands.minimumJointMargin, 0.1);
+    // 刷新后未变物性必须保留原始provenance；再改裕量，不重建来源。
+    m_panel->findChild<QLineEdit*>("ird_condition_margin")->setText("0.2");
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front().payloads, actual.payloads);
+    ASSERT_TRUE(m_editor.undoLocal());
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    payloads = m_panel->findChild<QTableWidget*>("ird_condition_payloads");
+    payloads->setCurrentCell(0, 3);
+    m_panel->findChild<QPushButton*>("ird_condition_remove_payload")->click();
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click();
+    QApplication::processEvents();
+    EXPECT_TRUE(m_editor.workingSet().conditions.entries.front().payloads.empty());
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), actual);
 }

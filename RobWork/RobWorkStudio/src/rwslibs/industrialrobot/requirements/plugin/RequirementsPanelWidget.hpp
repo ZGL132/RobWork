@@ -428,7 +428,15 @@ private:
     void submitRegionEnumValue(const std::string& key, const QString& text);
     void submitRegionEnumValueNow(const std::string& key, const QString& text);
     void submitConditionEnumValue(const std::string& key, const QString& text);
-    void submitConditionEnumValueNow(const std::string& key, const QString& text);
+    /**
+     * @brief 执行已绑定原工况的排队字段提交；全在UI线程，不持控件裸指针。
+     * @param key [in] 名称/备注/枚举或数量词表键。
+     * @param text [in] 用户原始输入；数量含显式显示单位。
+     * @param base [in] 发起时对象及值；已改变则拒绝，避免过期写入。
+     * @param expectedEditor [in] 发起会话的非拥有指针，仅用于身份比较，绝不解引用。
+     */
+    void submitConditionEnumValueNow(const std::string& key, const QString& text,
+                                    const OperatingCondition& base, IRequirementEditor* expectedEditor);
     /// 状态文本统一出口（横幅可见性随文本——R2 警示条）。
     void showStatusLine(const QString& text);
 

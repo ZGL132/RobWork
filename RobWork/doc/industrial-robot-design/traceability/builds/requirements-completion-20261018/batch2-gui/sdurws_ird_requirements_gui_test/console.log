@@ -1,0 +1,122 @@
+[==========] Running 54 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 44 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.SessionDataPlane_FourSetsIntoPanel_UI_T29
+[       OK ] RequirementsSessionGuiTest.SessionDataPlane_FourSetsIntoPanel_UI_T29 (365 ms)
+[ RUN      ] RequirementsSessionGuiTest.LocateSinkProductionWiring_ValidationRowClickFocusesTree_UI_T71
+[       OK ] RequirementsSessionGuiTest.LocateSinkProductionWiring_ValidationRowClickFocusesTree_UI_T71 (25 ms)
+[ RUN      ] RequirementsSessionGuiTest.DraftHintAndTreeTitle_DualTreeRoleLabels_F499
+[       OK ] RequirementsSessionGuiTest.DraftHintAndTreeTitle_DualTreeRoleLabels_F499 (10 ms)
+[ RUN      ] RequirementsSessionGuiTest.PostEditComposition_HostActionThenRefresh_UI_T29
+[       OK ] RequirementsSessionGuiTest.PostEditComposition_HostActionThenRefresh_UI_T29 (9 ms)
+[ RUN      ] RequirementsSessionGuiTest.GateTruthSource_BlockingDoubleState_UI_T29
+[       OK ] RequirementsSessionGuiTest.GateTruthSource_BlockingDoubleState_UI_T29 (8 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleAdd_ThreeCollections_UI_T30
+[       OK ] RequirementsSessionGuiTest.LifecycleAdd_ThreeCollections_UI_T30 (71 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleDuplicate_CopyFieldsAndSelect_UI_T30
+[       OK ] RequirementsSessionGuiTest.LifecycleDuplicate_CopyFieldsAndSelect_UI_T30 (48 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleRemoveAnchorFallbackAndUndo_UI_T30
+[       OK ] RequirementsSessionGuiTest.LifecycleRemoveAnchorFallbackAndUndo_UI_T30 (42 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleButtons_DisabledWithoutSession_UI_T30
+[       OK ] RequirementsSessionGuiTest.LifecycleButtons_DisabledWithoutSession_UI_T30 (20 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionFieldEditing_FourStates_UI_T31
+[       OK ] RequirementsSessionGuiTest.RegionFieldEditing_FourStates_UI_T31 (26 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionCycleTime_SetFromUnset_UI_T31
+[       OK ] RequirementsSessionGuiTest.ConditionCycleTime_SetFromUnset_UI_T31 (40 ms)
+[ RUN      ] RequirementsSessionGuiTest.FieldEditing_ReadOnlyGate_UI_T31
+[       OK ] RequirementsSessionGuiTest.FieldEditing_ReadOnlyGate_UI_T31 (53 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationPositionEditing_ThreeAxis_UI_T47
+[       OK ] RequirementsSessionGuiTest.StationPositionEditing_ThreeAxis_UI_T47 (38 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_TemplateMirrorArray_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_TemplateMirrorArray_UI_T32 (33 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_CreateArray_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_CreateArray_UI_T32 (33 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_ExportCopy_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_ExportCopy_UI_T32 (26 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_ImportCsvPartial_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_ImportCsvPartial_UI_T32 (32 ms)
+[ RUN      ] RequirementsSessionGuiTest.CommandFlows_JsonAndDegrades_UI_T32
+[       OK ] RequirementsSessionGuiTest.CommandFlows_JsonAndDegrades_UI_T32 (26 ms)
+[ RUN      ] RequirementsSessionGuiTest.ValidationFilters_HeaderAndRevisionNote_UI_T34
+[       OK ] RequirementsSessionGuiTest.ValidationFilters_HeaderAndRevisionNote_UI_T34 (9 ms)
+[ RUN      ] RequirementsSessionGuiTest.FacadeSessionBaseRevisionRoundtrip_UI_T35
+[       OK ] RequirementsSessionGuiTest.FacadeSessionBaseRevisionRoundtrip_UI_T35 (6 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionConditionRows_BusinessColumns_UI_T36
+[       OK ] RequirementsSessionGuiTest.RegionConditionRows_BusinessColumns_UI_T36 (9 ms)
+[ RUN      ] RequirementsSessionGuiTest.TreeHierarchy_GroupsAndTabLinkage_UI_T36
+[       OK ] RequirementsSessionGuiTest.TreeHierarchy_GroupsAndTabLinkage_UI_T36 (19 ms)
+[ RUN      ] RequirementsSessionGuiTest.LifecycleButton_NoVerticalClipping_UI_T36
+[       OK ] RequirementsSessionGuiTest.LifecycleButton_NoVerticalClipping_UI_T36 (341 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationCards_ModernControls_UI_T37
+[       OK ] RequirementsSessionGuiTest.StationCards_ModernControls_UI_T37 (232 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionCompositeAndLiveCount_UI_T37
+[       OK ] RequirementsSessionGuiTest.RegionCompositeAndLiveCount_UI_T37 (42 ms)
+[ RUN      ] RequirementsSessionGuiTest.NonQuantityRowsReadOnly_UI_T37
+[       OK ] RequirementsSessionGuiTest.NonQuantityRowsReadOnly_UI_T37 (34 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionTagAndWizard_UI_T37
+[       OK ] RequirementsSessionGuiTest.ConditionTagAndWizard_UI_T37 (27 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionSingleTableDetailCard_UI_T37R4
+[       OK ] RequirementsSessionGuiTest.ConditionSingleTableDetailCard_UI_T37R4 (11 ms)
+[ RUN      ] RequirementsSessionGuiTest.EmptyStateFoldImportBreadcrumb_UI_T37R5
+[       OK ] RequirementsSessionGuiTest.EmptyStateFoldImportBreadcrumb_UI_T37R5 (265 ms)
+[ RUN      ] RequirementsSessionGuiTest.ImportDropdownAndUndoTrim_UI_T37R5
+[       OK ] RequirementsSessionGuiTest.ImportDropdownAndUndoTrim_UI_T37R5 (68 ms)
+[ RUN      ] RequirementsSessionGuiTest.ValidationBoardAndSemanticLayers_UI_T37
+[       OK ] RequirementsSessionGuiTest.ValidationBoardAndSemanticLayers_UI_T37 (33 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSelectionLinkage_UI_T37R
+[       OK ] RequirementsSessionGuiTest.RegionSelectionLinkage_UI_T37R (102 ms)
+[ RUN      ] RequirementsSessionGuiTest.ProjectUndoCommandIdAndGate_UI_T39
+[       OK ] RequirementsSessionGuiTest.ProjectUndoCommandIdAndGate_UI_T39 (19 ms)
+[ RUN      ] RequirementsSessionGuiTest.DraftUndoRerunsReadinessChain_UI_T39
+[       OK ] RequirementsSessionGuiTest.DraftUndoRerunsReadinessChain_UI_T39 (31 ms)
+[ RUN      ] RequirementsSessionGuiTest.SessionDetachedResetsPanel_UI_T39
+[       OK ] RequirementsSessionGuiTest.SessionDetachedResetsPanel_UI_T39 (32 ms)
+[ RUN      ] RequirementsSessionGuiTest.WritableSwitchRefreshesAll_UI_T39
+[       OK ] RequirementsSessionGuiTest.WritableSwitchRefreshesAll_UI_T39 (85 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReadOnlyStagedBeforePanelCreate_L_R12
+[       OK ] RequirementsSessionGuiTest.ReadOnlyStagedBeforePanelCreate_L_R12 (54 ms)
+[ RUN      ] RequirementsSessionGuiTest.CollapseSurvivesFieldRefresh_UI_T39
+[       OK ] RequirementsSessionGuiTest.CollapseSurvivesFieldRefresh_UI_T39 (28 ms)
+[ RUN      ] RequirementsSessionGuiTest.MirrorRequiresStationAnchor_UI_T39
+[       OK ] RequirementsSessionGuiTest.MirrorRequiresStationAnchor_UI_T39 (20 ms)
+[ RUN      ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12 (1021 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12 (179 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionStructureAtomicApply_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionStructureAtomicApply_AT02_WP14T12 (56 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionStructureRejectCancelReadOnly_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionStructureRejectCancelReadOnly_AT02_WP14T12 (40 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionQueuedEditKeepsOriginalAnchor_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionQueuedEditKeepsOriginalAnchor_AT02_WP14T12 (58 ms)
+[----------] 44 tests from RequirementsSessionGuiTest (3749 ms total)
+
+[----------] 3 tests from RequirementRevisionSync
+[ RUN      ] RequirementRevisionSync.SelfAppliedEventSkips_UI_T35
+[       OK ] RequirementRevisionSync.SelfAppliedEventSkips_UI_T35 (0 ms)
+[ RUN      ] RequirementRevisionSync.ZeroEditRewiresFromHead_UI_T35
+[       OK ] RequirementRevisionSync.ZeroEditRewiresFromHead_UI_T35 (0 ms)
+[ RUN      ] RequirementRevisionSync.DirtyDraftStaysStale_UI_T35
+[       OK ] RequirementRevisionSync.DirtyDraftStaysStale_UI_T35 (0 ms)
+[----------] 3 tests from RequirementRevisionSync (0 ms total)
+
+[----------] 7 tests from RequirementsView3DFlow
+[ RUN      ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33
+[       OK ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33 (10 ms)
+[ RUN      ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33
+[       OK ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33 (32 ms)
+[ RUN      ] RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52
+[       OK ] RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52 (11 ms)
+[ RUN      ] RequirementsView3DFlow.StationMarkersCarryPositionWhenProvided_UI_T77
+[       OK ] RequirementsView3DFlow.StationMarkersCarryPositionWhenProvided_UI_T77 (11 ms)
+[ RUN      ] RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77
+[       OK ] RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77 (15 ms)
+[ RUN      ] RequirementsView3DFlow.SampleResultList_EmptyStateHonest_FIX_T2
+[       OK ] RequirementsView3DFlow.SampleResultList_EmptyStateHonest_FIX_T2 (12 ms)
+[ RUN      ] RequirementsView3DFlow.SampleResultList_ClickEmitsHighlightRequest_FIX_T2
+[       OK ] RequirementsView3DFlow.SampleResultList_ClickEmitsHighlightRequest_FIX_T2 (13 ms)
+[----------] 7 tests from RequirementsView3DFlow (107 ms total)
+
+[----------] Global test environment tear-down
+[==========] 54 tests from 3 test suites ran. (3856 ms total)
+[  PASSED  ] 54 tests.
