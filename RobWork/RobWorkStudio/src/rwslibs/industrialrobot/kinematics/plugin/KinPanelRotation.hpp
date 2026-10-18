@@ -46,18 +46,28 @@ namespace kinematics {
 rw::math::Rotation3D<double> rotationFromRpySi(double roll, double pitch, double yaw);
 
 /**
+ * @brief 万向锁判定阈值默认值（rad 无关，余弦值域）——全文唯一来源。
+ *
+ * 取值 1e-5 与 rw::math::RPY(const Rotation3D&, T epsilon = 1e-5) 的框架
+ * 默认一致（F-933：此前头文件默认字面量、cpp 常量与注释三处重复，存漂移
+ * 温床；现统一为本常量，实现只消费参数、不再自带第二份字面量）。
+ */
+inline constexpr double kGimbalEpsilonDefault = 1e-5;
+
+/**
  * @brief 旋转矩阵 → RPY 三个 SI 角度（rad，Z-Y-X；与 rw::math::RPY(R) 同式）。
  *
  * 复现 RPY.cpp 的闭式解：beta=asin(-r31)、alpha=atan2(r21,r11)、
  * gamma=atan2(r32,r33)；|cos(beta)| < epsilon 时走万向锁分支（alpha=0，
- * gamma=atan2(r12,r22)，beta=±90°）。epsilon 默认 1e-5 与框架一致。
+ * gamma=atan2(r12,r22)，beta=±90°）。
  *
  * @param R       [in] 旋转矩阵（须正交；调用方保证）
- * @param epsilon [in] 万向锁判定阈值（默认 1e-5，与 rw::math::RPY 一致）
+ * @param epsilon [in] 万向锁判定阈值（默认 kGimbalEpsilonDefault＝1e-5，
+ *                    与 rw::math::RPY 框架默认一致）
  * @return {roll, pitch, yaw}（rad）
  */
 std::array<double, 3> rpyFromRotationSi(const rw::math::Rotation3D<double>& R,
-                                        double epsilon = 1e-5);
+                                        double epsilon = kGimbalEpsilonDefault);
 
 }  // namespace kinematics
 }  // namespace ird

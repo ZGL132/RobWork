@@ -2,6 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.94（2026-10-18，kinematics 清理批：§2.16 T19 行符号归属订正为 KinPanelRotation::rotationFromRpySi、inputs 列补 KinPanelRotation、kGimbalEpsilon 单一来源；F-932/F-933 消账；kinematics.md v0.33 同批）。前一版本 v0.93 保留如下。 |
 | 文档版本 | v0.93（2026-10-18，commit-lint 止增批：§5.1 脚本清单增 commit-lint〔前缀白名单＋标题非空话＋四段正文；-Range 只查新增提交，历史 F-012 豁免〕；AGENTS §6.3 同步自检与 passed/skipped 计数口径〔F-926 消账〕；F-012 整族销案〔历史不回写〕）。前一版本 v0.92 保留如下。 |
 | 文档版本 | v0.92（2026-10-18，WP-15-T19 合入收尾：wp15-t19〔87fec2c3..b9601d97b8ba，独立验收 attempt 1 PASS——0 阻断／2 建议 F-932/F-933，记录 traceability/acceptance/wp-15-t19-20261018.md @ acc/wp-15-t19/1 775cc37e〕按 PIPE §4.7 先合记录（10917d0c）后合代码（04ea1704）--no-ff 并入 redesign-main〔87fec2c3..04ea1704，零冲突〕；契约 WP-15-T19 翻 done；evidence-index 再生成；验收段补齐 GUI 用例运行（集成/冒烟各 20/20）。前一版本 v0.91 保留如下。 |
 | 文档版本 | v0.91（2026-10-18，WP-15-T19 按所有者裁决路线 A 实施：§2.16 T19 行更新为「插件 Eigen 头文件轴角组合＋集成等价钉」；契约 status ready（blocked 解除）；kinematics.md v0.32 §11 行同步）。前一版本 v0.90 保留如下。 |
@@ -518,7 +519,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-15-T16 | 实现独立位姿可达性分析（R2/D）——契约已立卡（tasks/foundation/WP-15-T16.json，ready，2026-10-13 同批；分支 wp15-t16；开工前置＝T14 done——依赖诚实） | kinematics | WP-15-T14 | kinematics.md（卡预留） | 位置×方向×滚转采样＋计划预览＋方向覆盖率报告 | KIN-11、AT-26 | 计划预览 IK 目标数；协作取消；覆盖率报告用例通过 | — | M |
 | WP-15-T17 | 实现扩展显示单位（R2） | kinematics | WP-15-T10 | §17.1 子项 | inch/grad/turn 换算 | KIN-12-S1 | 换算正确且不影响 SI 真值 | — | S |
 | WP-15-T18 | 运动学迁移（方案 B.1 迁移链，SA-18 D8/D9/D11；接续 WP-14-T10 串行） | kinematics | WP-14-T10（串行迁移——§5.3 共享 UI 互斥，不并行） | B1-SPEC §2/§5；kinematics.md §9.8（插件界面）；WP-10-T21/T22 注册协议 | 运动学域三接入面（任务点/结果/分析配置入项目树；常用字段入检查器；求解配置入复杂编辑页）＋Jog 面板（会话姿态操作入口，零修订）＋Playback 面板运动学衔接（TimedStatePath 播放驱动会话姿态，零修订）＋本域自持导航 deprecated 标记 | KIN-06（会话姿态零修订）、KIN-12（显示单位纯投影呈现）、AT-04 | Jog/Playback 操作后零修订零失效断言（AT-04 口径）；运动学对象经项目树→检查器→复杂编辑页全链路用例通过；失败点/薄弱区渲染数据投放唯一 RWStudioView3D（D7）；ird_gates 增量登记；留痕 traceability/builds/wp15-t18/ | 修改共享 UI 装配面禁止（§5.3 互斥）；删除未迁移域可用性禁止；插件零计算逻辑红线不变；完整轨迹动画仍归 trajectory 域（未立项，本任务只做 Playback 呈现衔接） | M |
-| WP-15-T19 | 修复独立冒烟树运动学链接缺陷（F-919；**路线 A 实施**——插件经 Eigen 头文件轴角组合复现 RPY 的 Z-Y-X 矩阵〔库设施，非自写三角〕＋集成侧 `IRD_HAVE_SDURW_MATH` 门控等价钉 1e-12；独立冒烟不再引用非内联 `RPY::toRotation3D`） | kinematics | —（无技术前置；T12 插件目标已落位） | findings F-919；kinematics.md §3.2/§11；kinematics/plugin/KinPanelFlows｜KinematicsPanelWidget；test/KinP4FlowsTest | KinPanelFlows::rotationFromRpySi＋插件调用点替换＋集成等价钉＋CMake 门控 | NFR-MNT-05、ARC-02（构建链接缺陷无专门需求条目，映射依据见契约 note） | 独立冒烟树三目标零 LNK＋集成零错误＋kinematics_test 绿（等价钉真实执行）＋ird_gates 零新增＋validate-docs PASS | 不改计算语义（等价钉钉住）；插件零自写三角；Eigen 仅头文件依赖；REQUIREMENTS/ARCHITECTURE 零触碰 | S |
+| WP-15-T19 | 修复独立冒烟树运动学链接缺陷（F-919；**路线 A 实施**——插件经 Eigen 头文件轴角组合复现 RPY 的 Z-Y-X 矩阵〔库设施，非自写三角〕＋集成侧 `IRD_HAVE_SDURW_MATH` 门控等价钉 1e-12；独立冒烟不再引用非内联 `RPY::toRotation3D`） | kinematics | —（无技术前置；T12 插件目标已落位） | findings F-919；kinematics.md §3.2/§11；kinematics/plugin/KinPanelRotation｜KinematicsPanelWidget；test/KinP4FlowsTest | KinPanelRotation::rotationFromRpySi＋插件调用点替换＋集成等价钉＋CMake 门控 | NFR-MNT-05、ARC-02（构建链接缺陷无专门需求条目，映射依据见契约 note） | 独立冒烟树三目标零 LNK＋集成零错误＋kinematics_test 绿（等价钉真实执行）＋ird_gates 零新增＋validate-docs PASS | 不改计算语义（等价钉钉住）；插件零自写三角；Eigen 仅头文件依赖；REQUIREMENTS/ARCHITECTURE 零触碰 | S |
 
 ### 2.17 WP-16 trajectory（单元卡待产出；TRJ-01~08）
 

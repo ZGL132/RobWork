@@ -812,7 +812,7 @@ KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
     yaw = resolveKinAngleDisplayToSi(yaw, m_session.displayUnits);      // rad
 
     // ---- 基座系 {B} 目标位姿组装：位置（m）＋RPY→旋转。Z-Y-X 语义由
-    // KinPanelFlows::rotationFromRpySi 单点承载（F-919）：该实现用 Eigen 头文件
+    // KinPanelRotation::rotationFromRpySi 单点承载（F-919）：该实现用 Eigen 头文件
     // 轴角组合复现 rw::math::RPY 的同一矩阵，刻意不实例化 RPY::toRotation3D
     // （非内联符号——独立冒烟树无框架库会 LNK2019）；等价性由集成侧
     // IRD_HAVE_SDURW_MATH 用例逐元钉住，界面层零自写三角。

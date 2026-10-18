@@ -17,8 +17,6 @@ namespace ird {
 namespace kinematics {
 
 namespace {
-// 与 rw::math::RPY 的万向锁分支保持同一常量（RPY.cpp 默认 epsilon=1e-5）。
-constexpr double kGimbalEpsilon = 1e-5;
 // 90° 常量（避免依赖框架 Constants.hpp；值取 IEEE-754 double 的 π/2 最近值）。
 constexpr double kHalfPi = 1.5707963267948966192313216916398;
 }  // namespace
@@ -76,9 +74,6 @@ std::array<double, 3> rpyFromRotationSi(const rw::math::Rotation3D<double>& R,
     }
     return out;
 }
-
-// 显式引用常量，保证编译器不因未使用而告警（同时把 1e-5 口径写在单一位置）。
-[[maybe_unused]] const double kGimbalEpsilonRef = kGimbalEpsilon;
 
 }  // namespace kinematics
 }  // namespace ird

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T11:23:11+08:00",
+  "generatedAt": "2026-10-18T11:31:27+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6620,
-    "totalBytes": 208624811,
+    "totalFiles": 6625,
+    "totalBytes": 209015519,
     "byKind": {
-      "build-log": 5680,
+      "build-log": 5685,
       "markdown-doc": 41,
+      "log": 1,
       "gtest-report": 335,
+      "acceptance-record": 515,
       "manual-acceptance": 1,
       "pipeline-artifact": 2,
       "json-data": 7,
-      "log": 1,
-      "benchmark": 8,
       "governance-record": 30,
-      "acceptance-record": 515
+      "benchmark": 8
     },
     "byLifecycle": {
-      "historical": 524,
-      "current": 69,
+      "unverified": 6032,
       "superseded": 0,
-      "unverified": 6027
+      "current": 69,
+      "historical": 524
     },
     "associated": 596,
-    "unassociated": 6024,
-    "shaComputed": 6602,
+    "unassociated": 6029,
+    "shaComputed": 6607,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -10092,6 +10092,46 @@
       "taskIds": [],
       "bytes": 1379,
       "sha256": "04d9c05f3ffef07aa74058a3480488ad57e60463447ef004e4c685043db9acec",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kin-t19-clean/integrate-build-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29576,
+      "sha256": "ac6b64f6d3b8e2f62aaa6a525bce60e4802c53184d15493f48173ec9b02636be",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kin-t19-clean/ird-test-report-integration.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 221484,
+      "sha256": "fefc733c07e6acc6ac8da96b1a09e03a9628606f8101a7e9543a1c42801f95e4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kin-t19-clean/kinematics_test-integration.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 44638,
+      "sha256": "fff8003bd6f1872c202ac8be086067181ac46d08e31404ecf424f0f15c72f37b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kin-t19-clean/kinematics_test-integration.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 89201,
+      "sha256": "93c36253d2879a9ce87751ed3095e8742b93bb5dd2d1685d43d89bca66d2acfc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kin-t19-clean/smoke-build-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4928,
+      "sha256": "687eaa81321ed4c0da3bb1a9fec046884fb2d9cfdc14fbf5fe6038750bb0b041",
       "lifecycle": "unverified"
     },
     {
@@ -51706,7 +51746,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1162617,
+      "bytes": 1163498,
       "sha256": null,
       "lifecycle": "unverified"
     },
