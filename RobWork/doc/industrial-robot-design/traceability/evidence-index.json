@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T11:45:13+08:00",
+  "generatedAt": "2026-10-18T12:17:49+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6627,
-    "totalBytes": 209070573,
+    "totalFiles": 6628,
+    "totalBytes": 209086752,
     "byKind": {
-      "json-data": 7,
-      "pipeline-artifact": 2,
-      "acceptance-record": 515,
       "log": 1,
-      "markdown-doc": 41,
-      "manual-acceptance": 1,
+      "json-data": 7,
+      "acceptance-record": 515,
       "build-log": 5685,
-      "gtest-report": 335,
+      "pipeline-artifact": 2,
       "benchmark": 8,
-      "governance-record": 32
+      "governance-record": 33,
+      "manual-acceptance": 1,
+      "gtest-report": 335,
+      "markdown-doc": 41
     },
     "byLifecycle": {
-      "current": 49,
-      "historical": 544,
-      "superseded": 0,
-      "unverified": 6034
+      "current": 44,
+      "historical": 549,
+      "unverified": 6035,
+      "superseded": 0
     },
     "associated": 596,
-    "unassociated": 6031,
-    "shaComputed": 6609,
+    "unassociated": 6032,
+    "shaComputed": 6610,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -2220,7 +2220,7 @@
       ],
       "bytes": 23078,
       "sha256": "f40b35bf56833fafc99d51146ac81e8322b3e52acb00f30fe24afd36b54507ed",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/PRJ-T03-20260915.md",
@@ -2230,7 +2230,7 @@
       ],
       "bytes": 24430,
       "sha256": "052c4238b7694191f0561d38b001f3cfdc7ccd53c03260ec3841d92b705fd76a",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/PRJ-T04-20260916.md",
@@ -2240,7 +2240,7 @@
       ],
       "bytes": 26931,
       "sha256": "f9b10f15700d0a0c82b768026626cf76630506c94a6a8371cbae06a9e1e29a82",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/PRJ-T05-20260916.md",
@@ -2420,7 +2420,7 @@
       ],
       "bytes": 28458,
       "sha256": "464abda9219d545d87b636553de1b578d9289051f95168052d7136739017fda9",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T07-20260920.md",
@@ -2800,7 +2800,7 @@
       ],
       "bytes": 11088,
       "sha256": "2a04a4983948a6468a1a1592acec228891badde86d6d961f656f34f6d2b23713",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/UI-T02-20260919.md",
@@ -51746,7 +51746,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1201645,
+      "bytes": 1212973,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -54996,6 +54996,14 @@
       "taskIds": [],
       "bytes": 5147,
       "sha256": "0ffd06f400a33b0b1565d988e05c4daf770dba4a42b769507f4d21235c79f9e3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reviews/b7-triage-20261018-b2.md",
+      "kind": "governance-record",
+      "taskIds": [],
+      "bytes": 4851,
+      "sha256": "d3629b54e82571b4e0b81e939d615a03033f6c63eae67bfa22782a7e568eb4c2",
       "lifecycle": "unverified"
     },
     {

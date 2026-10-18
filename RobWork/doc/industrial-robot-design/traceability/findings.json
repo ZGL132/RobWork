@@ -253,11 +253,12 @@
       "id": "F-025",
       "source": "traceability/acceptance/TK-T11-20260911.md#4.9/4.10（attempt 1，送验对象 10afd5555）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-11",
       "title": "TK-T11 提交 10afd55 正文与留痕的计数/份数出入（留痕文件本身准确，方向均为少报、无粉饰）：①称\"16 个新用例…EventWatchPath 双路径 6\"，实测新增 17 个（head XML 97−base wp02-t10 XML 80；EventWatchPath 7 个，XML 按 classname 清点）；②称\"ird-test-report 三份（默认/run/smoke 变体）\"，实际入库两份（ird-test-report.json＝集成默认＋ird-test-report-smoke.json）",
       "owner": "实施纪律（DTB §5 会话流程所有者；提交已推送不追溯改写，归入自查项）",
-      "resolution": "不追溯改写已推送提交（AGENTS §6.3）；后续提交信息中的份数/计数以 ls 与 gtest XML 实际清点为准（AGENTS §6.3 第 4 条如实陈述的行文面），可与 F-024 同批在实施者模板补一句\"数字须与留痕文件清点一致\"提醒。"
+      "resolution": "不追溯改写已推送提交（AGENTS §6.3）；后续提交信息中的份数/计数以 ls 与 gtest XML 实际清点为准（AGENTS §6.3 第 4 条如实陈述的行文面），可与 F-024 同批在实施者模板补一句\"数字须与留痕文件清点一致\"提醒。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-026",
@@ -420,11 +421,12 @@
       "id": "F-041",
       "source": "traceability/acceptance/RT-T06-20260912.md#4.9/4.10-G-1（attempt 1，送验对象 ca789342c，提交 39fae2e/5034611＋ird-test-report.json）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-12",
       "title": "RT-T06 计数失实（F-025 同型）：提交信息与 ird-test-report.json 多处称『新增 30 例／既有 142 例回归』，实测新增 42 例／既有 130 例——新测试文件 TEST 定义逐条清点＝42；送验 XML 172 − 基线 wp06-t05 XML tests=\"130\"＝42；报告自身逐例 trace 清单亦为 42 条，30＋142 恰凑 172 系构造性错拆；另报告 probe 段引用不存在的 probe-test-run.log 文件名（探针运行内容实在 probe-build.log 末段，证据本体完整）。总量 172 与通过态准确、逐例清单完整，方向无粉饰，不构成阻断",
       "owner": "实施纪律（与 F-025 提交信息/报告准确性面同辖域；提交已推送不追溯改写）",
-      "resolution": "不追溯改写已推送提交与留痕文件（AGENTS §6.3）；后续提交信息与报告摘要中的用例计数一律以 gtest XML 顶格计数与 TEST 定义清点为准（新增数＋既有数须分别对照基线 XML 复核），文件名引用以 ls 实际清单为准。编号顺延自 F-040，合入时由所有者确认与并行 evidence 分支无撞车。"
+      "resolution": "不追溯改写已推送提交与留痕文件（AGENTS §6.3）；后续提交信息与报告摘要中的用例计数一律以 gtest XML 顶格计数与 TEST 定义清点为准（新增数＋既有数须分别对照基线 XML 复核），文件名引用以 ls 实际清单为准。编号顺延自 F-040，合入时由所有者确认与并行 evidence 分支无撞车。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-042",
@@ -793,11 +795,12 @@
       "id": "F-077",
       "source": "POL-T04 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T04-20260913.md §4.10，送验对象 2df7eb2cdfd2b81ebe0b28ddf5c856b562047c6e，提交 272aeeaf）：验收者以 git ls-tree 清点留痕文件与提交正文清单比对",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-13",
       "title": "POL-T04 留痕提交 272aeeaf 正文清单与实际入库出入：正文称『新增 10 件留痕』却逐一列出 11 个文件名，其中 smoke-test-run.log 不存在于送验提交（git cat-file -e 实证 fatal: path does not exist；实际入库 10 件为 smoke-configure/smoke-build/integration-build/integration-test-run/ird_gates-base/ird_gates-current/gate-all 七份日志＋双模式 XML 两份＋ird-test-report.json）——F-025/F-041 同型（提交信息文件清单/份数与 ls 实际清点不符），方向为列出不存在文件＋份数口径混乱；证据本体不缺（冒烟测试运行由 sdurws_ird_policy_test-smoke.xml〔tests=97 failures=0〕承载，验收者亲手复跑一致），无粉饰，不构成阻断",
       "owner": "实施纪律（与 F-025/F-041 提交信息准确性面同辖域；提交已推送不追溯改写）",
-      "resolution": "不追溯改写已推送提交（AGENTS §6.3）；后续提交信息中的留痕份数/文件名以 git ls-files／实际 diff --stat 清点为准（列名清单须与份数自洽），可与 F-012 家族模板补救同批在实施者模板补一句提醒。编号顺延自 F-076，合入时由所有者确认与并行 evidence 分支无撞车。"
+      "resolution": "不追溯改写已推送提交（AGENTS §6.3）；后续提交信息中的留痕份数/文件名以 git ls-files／实际 diff --stat 清点为准（列名清单须与份数自洽），可与 F-012 家族模板补救同批在实施者模板补一句提醒。编号顺延自 F-076，合入时由所有者确认与并行 evidence 分支无撞车。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-078",
@@ -824,11 +827,12 @@
       "id": "F-080",
       "source": "POL-T05 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T05-20260913.md §4.9/§4.10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-13",
       "title": "F-025/F-041/F-077 计数失实家族同型再现：POL-T05 留痕提交 477491b7 正文称『新增 10 件留痕』实际列出并入库 11 件（git diff --name-status 实证 11 个 A 文件）；与 F-077 不同——本例文件清单完整且全部真实入库、无不存在文件，仅总数少报 1 件，方向保守、无粉饰；数值主张本身（双模式 112/112、ird_gates 5 项既有命中、GATE_DELTA_ZERO）经验收者亲手复现准确",
       "owner": "构建约定所有者（提交自查清单口径）；实施者自查为辅助",
-      "resolution": "并入 F-025 家族统一处置：提交模板补『正文计数与逐件清单须对账一致』自查项（建议以 git diff --name-status 清点为准）。不影响 POL-T05 验收（pass）。编号顺延自 F-079。"
+      "resolution": "并入 F-025 家族统一处置：提交模板补『正文计数与逐件清单须对账一致』自查项（建议以 git diff --name-status 清点为准）。不影响 POL-T05 验收（pass）。编号顺延自 F-079。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-081",
@@ -1055,21 +1059,23 @@
       "id": "F-102",
       "source": "DIAG-T04 验收段 attempt 1（2026-09-14，traceability/acceptance/DIAG-T04-20260914.md §4.9/§4.10，送验对象 6dd6e665168d03fbe3f487e9c9fac3dc5839035e，分支 wp09-t04）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-14",
       "title": "F-081/F-083/F-085/F-087/F-088/F-090 家族第 7 例（悬空引用/声称在库而实际未入库）且首次涉及 gtest XML 本体：DIAG-T04 送验两提交（af5b7ee7 验证段'四份 gtest XML 与 ird-test-report.json 留痕 traceability/builds/wp09-t04/'、6dd6e665'logs 字段与本批文件一一对应'）与 ird-test-report.json（gtestXml 字段列 4 份 XML、logs.verifyTargetBuild 引用 verify-target-build.log）声称在库的 5 件证据未入库——git ls-tree 6dd6e666 实证 builds/wp09-t04/ 仅 8 件（ird-test-report.json＋7 份 add -f 例外的 .log）；4 份 XML 非 gitignore 命中（check-ignore exit=1，单纯漏 git add，实施工作树本地存在该 4 件未跟踪）；verify-target-build.log 命中 .gitignore:87 *.log（F-010 根因第 8 次复踩）。证据本体不缺：双模式 41/41＋3/3 由验收者在 detached worktree 从零复现一致，数值主张全部准确、无粉饰",
       "owner": "实施者侧（本分支补交 XML 可随后续任务或收尾登记；当前任务分支已冻结不追改）；治理侧（F-010 根修——traceability/** 白名单例外规则；PIPE 附录 C 实施者模板加'留痕清单逐件 git ls-tree 自检'硬性自查项）",
-      "resolution": "建议级，不阻断 DIAG-T04 验收（pass，沿 F-081 家族既判先例）。与 F-010 根修合并处置：.gitignore 增 traceability/** 留痕白名单例外（!traceability/**/*.log 等）可一次性终结本家族 8 次复踩；实施者模板建议增加提交前 git ls-tree 与报告字段逐项比对自查。"
+      "resolution": "建议级，不阻断 DIAG-T04 验收（pass，沿 F-081 家族既判先例）。与 F-010 根修合并处置：.gitignore 增 traceability/** 留痕白名单例外（!traceability/**/*.log 等）可一次性终结本家族 8 次复踩；实施者模板建议增加提交前 git ls-tree 与报告字段逐项比对自查。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-103",
       "source": "DIAG-T05 验收段 attempt 1（2026-09-14，traceability/acceptance/DIAG-T05-20260914.md §4.9/§4.10，送验对象 e98e693d187dbd613cfa2d2730fb9a24b6692940，分支 wp09-t05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-14",
       "title": "F-081/F-102 家族第 8 例（声称在库而实际未入库）且首次全部缺失：DIAG-T05 送验提交 e98e693d 正文声称入库'ird-test-report.json…＋4 份 gtest XML（两目标×两模式）＋8 份日志'、ird-test-report.json 的 logs/gtestXml 字段列出同一批 13 份文件——git ls-tree @e98e693d 实证 builds/wp09-t05/ 仅 ird-test-report.json 1 件，13 份声称文件零入库；7 份 .log 在实施工作树本地存在但命中 .gitignore:87 *.log（check-ignore 实证，git status 不显示，未按 wp09-t03/t04 先例 add -f——F-010 根因第 9 次复踩）；4 份 XML 中 2 份滞留主构建树 gtest_reports/（2026-09-14 13:19 生成）、2 份冒烟版无踪，均未落 wp09-t05/。证据本体不缺：双模式 54/54＋9/9、ird_gates 7 命中零 diagnostics、validate-task PASS 由验收者在 detached worktree 从零复现一致，数值主张全部准确、无粉饰",
       "owner": "实施者侧（沿 c155aa62 补交先例：7 份 .log add -f＋4 份 XML 自构建树 gtest_reports/ 拷贝补交；当前任务分支已冻结，随收尾或下一任务处理；冒烟两份 XML 需在冒烟树重跑 _report 目标补生成）；治理侧（F-010 根修同 F-102 处置——.gitignore traceability/** 白名单例外一次性终结家族复踩）",
-      "resolution": "建议级，不阻断 DIAG-T05 验收（pass，沿 F-081/F-102 家族既判先例）。与 F-010 根修合并处置同 F-102；建议实施者模板自查项升级为硬门槛：提交正文中列名的每一份留痕文件须逐一 git ls-tree 核对在场。"
+      "resolution": "建议级，不阻断 DIAG-T05 验收（pass，沿 F-081/F-102 家族既判先例）。与 F-010 根修合并处置同 F-102；建议实施者模板自查项升级为硬门槛：提交正文中列名的每一份留痕文件须逐一 git ls-tree 核对在场。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-104",
@@ -1096,11 +1102,12 @@
       "id": "F-106",
       "source": "DIAG-T06 验收段 attempt 1（2026-09-14，traceability/acceptance/DIAG-T06-20260914.md §4.9/§4.10，送验对象 fd3698d318117571416e2e8f69b3bcbf21143043，分支 wp09-t06）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-14",
       "title": "F-081/F-102/F-103 家族第 9 例（声称在库而实际未入库；本例为部分缺失且无 logs/gtestXml 索引字段）：DIAG-T06 留痕提交 fd3698d3 正文声称入库『integration/smoke 构建·配置·测试运行日志、契约 verify 命令日志、ird_gates 输出（7 命中＝基线零新增）、validate-task PASS、gtest XML 两份、ird-test-report.json』，git ls-tree @fd3698d3 实证 builds/wp09-t06/ 仅 3 件（integration-gtest-diagnostics-test.xml、integration-gtest-diagnostics-contract-test.xml、ird-test-report.json）——正文声称的全部 .log 缺失（ird-test-report.json 本例无 logs/gtestXml 字段，日志引用仅 gates 字段提及 gates-current-wp09t06.log 一处且该文件不在库）；较 F-103 改进面：2 份集成 gtest XML 已实际入库；根因 .gitignore:87 全局 *.log（F-010）仍未按先例 add -f；数值主张（双模式 65/65＋9/9、ird_gates 7 命中同分布零 diagnostics、validate-task PASS、validate-docs PASS）经验收者亲手复现全部准确，测试结果无粉饰",
       "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f）",
-      "resolution": "建议级，不阻断 DIAG-T06 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式亲跑构建/测试/门禁/脚本一致）。修复方向同 F-103：流程层面根治 .gitignore 吞留痕。"
+      "resolution": "建议级，不阻断 DIAG-T06 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式亲跑构建/测试/门禁/脚本一致）。修复方向同 F-103：流程层面根治 .gitignore 吞留痕。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-107",
@@ -1117,11 +1124,12 @@
       "id": "F-108",
       "source": "DIAG-T07 验收段 attempt 2（2026-09-14，traceability/acceptance/DIAG-T07-20260914.md §4.9/§4.10，送验对象 cf30112f45169c29b431556228762221587ce594，分支 wp09-t07）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-14",
       "title": "F-081/F-102/F-103/F-106 家族第 10 例（声称在库而实际未入库）：DIAG-T07 留痕提交 cf30112f 正文声称入库『integration/smoke 构建日志、测试运行日志、契约 verify 命令日志（verify-target-build.log）、ird_gates 输出、validate-task PASS、gtest XML 四份、ird-test-report.json』，git ls-tree @cf30112f 实证 builds/wp09-t07/ 仅 5 件（双模式 gtest XML 四份＋ird-test-report.json）——正文声称的全部 .log 缺失（ird-test-report.json gates 字段引用 gates-current-wp09t07.log 一处且该文件不在库）；较 F-106 改进面：双模式 gtest XML 四份已实际入库（集成＋冒烟各两目标）；根因 .gitignore:87 全局 *.log（F-010）仍未按先例 add -f；数值主张（双模式 77/77＋9/9、ird_gates 7 命中＝wp09-t06 基线逐码一致零 diagnostics、validate-task/verify-task PASS）经验收者全新 worktree 从零配置亲手复现全部准确，测试结果无粉饰",
       "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f）",
-      "resolution": "建议级，不阻断 DIAG-T07 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-103/F-106：流程层面根治 .gitignore 吞留痕。"
+      "resolution": "建议级，不阻断 DIAG-T07 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-103/F-106：流程层面根治 .gitignore 吞留痕。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-109",
@@ -1148,11 +1156,12 @@
       "id": "F-111",
       "source": "DIAG-T08 验收段 attempt 3（2026-09-15，traceability/acceptance/DIAG-T08-20260915.md §4.9/§4.10，送验对象 a11f1726d8d4dface4b33a2f3a145c3cbb2a1eee，分支 wp09-t08）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-15",
       "title": "F-081/F-102/F-103/F-106/F-108 家族第 11 例（声称在库而实际未入库）：DIAG-T08 留痕提交 a11f1726 正文声称入库『双模式构建日志、gtest XML×4、测试运行日志、ird-test-report.json、validate-task.log、verify-task.log、verify-target-build.log、gates-current-wp09t08.log、gates-ird-gates-target.log』，git ls-tree @a11f1726 实证 builds/wp09-t08/ 仅 5 件（双模式 gtest XML 四份＋ird-test-report.json）——正文声称的全部 .log 缺失（ird-test-report.json gates 字段引用 gates-current-wp09t08.log＋gates-ird-gates-target.log 两处且两文件均不在库）；根因 .gitignore:87 全局 *.log（F-010）仍未按先例 add -f；数值主张（双模式 98/98＋9/9、既有 77＋9 零回归、新增 21 用例、ird_gates 7 命中＝wp09-t07 基线逐码一致零 diagnostics、validate-task/verify-task PASS）经验收者全新 worktree 从零配置亲手复现全部准确，测试结果无粉饰",
       "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——家族连续 11 例，流程级根治诉求升级）",
-      "resolution": "建议级，不阻断 DIAG-T08 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-103/F-106/F-108。"
+      "resolution": "建议级，不阻断 DIAG-T08 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-103/F-106/F-108。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-112",
@@ -1169,21 +1178,23 @@
       "id": "F-113",
       "source": "DIAG-T09 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T09-20260915.md §4.10，送验对象 4d4bf83c11bfe6c626efe6d5d25084beff4671a4，分支 wp09-t09）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-15",
       "title": "F-087/F-090 悬空引用家族再现：DIAG-T09 送验的 traceability/builds/wp09-t09/ird-test-report.json 的 gates 字段（『留痕 gates-ird-gates-target.log』『留痕 integration-build.log』）与 selfCheck.validateTask 字段（『留痕 verify-task.log/validate-task.log』）引用 4 件 .log 文件均未入库（git ls-tree 4d4bf83c 实证该目录仅 5 件：ird-test-report.json＋双模式 gtest XML 四份；根 .gitignore『*.log』规则同 F-010 根因）；提交正文 4d4bf83c 干净——仅声称 XML×4＋report 且与 ls-tree 逐件一致（较 F-085/F-088『正文逐件列举不存在文件』为轻）。证据本体不缺：双模式 XML（integration 107/107＋14/14、smoke 107/107＋14/14 顶格实测）与 report 全部数值主张（双模式 107/107＋14/14、ird_gates 7 命中＝wp09-t08 基线逐码一致零 diagnostics、validate-task PASS、verify-task PASS）经验收者在 detached worktree @SHA 从零亲手复现准确，判级沿 F-081/F-083/F-085/F-087/F-088/F-090 先例＝建议级不阻断",
       "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀，或报告字段只引用在库文件）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——悬空引用/未入库家族累计第 12 例，流程级根治诉求再升一级）",
-      "resolution": "建议级，不阻断 DIAG-T09 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致，ird_gates 命中分布与报告逐码一致）。修复方向同 F-087/F-090。"
+      "resolution": "建议级，不阻断 DIAG-T09 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致，ird_gates 命中分布与报告逐码一致）。修复方向同 F-087/F-090。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-114",
       "source": "DIAG-T10 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T10-20260915.md §4.9/§4.10，送验对象 76c128d7351200e00d5792271007e38d69113ff2，分支 wp09-t10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-15",
       "title": "F-113/F-111 悬空引用/幻影清单家族第 13 例（较 DIAG-T09 加重：正文＋报告双幻影）：DIAG-T10 送验的 traceability/builds/wp09-t10/ird-test-report.json 的 gates 字段（『留痕 gates-ird-gates-target.log』）与 selfCheck 字段（『留痕 validate-task.log』『留痕 verify-task.log』『留痕 integration-build.log』『留痕 smoke-build.log』）引用 5 件 .log 均未入库（git ls-tree @76c128d7 实证该目录仅 5 件：ird-test-report.json＋双模式 gtest XML 四份）；且留痕提交 76c128d7 正文 What 段声称入库 integration-build.log/smoke-build.log/smoke-configure.log/测试运行日志×4/ird-test-report.json/validate-task.log/verify-task.log/gates-ird-gates-target.log 约 12 件，与实际入库 5 件不符（根 .gitignore『*.log』规则同 F-010 根因）。证据本体不缺：双模式 XML（integration 115/115＋26/26、smoke 115/115＋26/26 顶格实测）与 report 全部数值主张（双模式 115/115＋26/26、ird_gates 8 命中＝wp09-t09 基线 7＋新增 1 逐条一致、validate-task PASS、verify-task PASS）经验收者 detached worktree @SHA 从零亲手复现准确，判级沿 F-081/F-085/F-087/F-090/F-111/F-113 先例＝建议级不阻断",
       "owner": "实施者侧（留痕入库前核对 git status/check-ignore——被吞日志须 add -f 或改 .txt 后缀，或报告/提交正文只引用在库文件）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——家族累计 13 例，流程级根治诉求再升级）",
-      "resolution": "建议级，不阻断 DIAG-T10 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-113/F-111。"
+      "resolution": "建议级，不阻断 DIAG-T10 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-113/F-111。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-115",
@@ -1222,11 +1233,12 @@
       "id": "F-118",
       "source": "DIAG-T11 验收段 attempt 1（2026-09-15，traceability/acceptance/DIAG-T11-20260915.md §4.8/§4.10，送验对象 8d345a43cc90beb7be3434d5d9545a5713868402，分支 wp09-t11）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-15",
       "title": "F-113/F-111/F-114 悬空引用/幻影清单家族第 14 例（较 F-114 减轻：正文无幻影、仅报告字段幻影）：DIAG-T11 送验的 traceability/builds/wp09-t11/ird-test-report.json 的 gates 字段（『留痕 gates-ird-gates-target.log』）与 selfCheck.validateTask 字段（『留痕 validate-task.log』『留痕 verify-task.log＋validate-docs.log』）及 probeCapability④（『留痕 integration-build.log』『留痕 smoke-build.log/smoke-configure.log』）引用 7 件 .log 均未入库（git ls-tree 8d345a43 实证该目录仅 5 件：ird-test-report.json＋双模式 gtest XML 四份；根 .gitignore『*.log』规则同 F-010 根因）；但留痕提交 866ce899 正文已如实声明『构建/门禁/验证脚本日志按仓库惯例留磁盘不提交（同 wp09-t10 口径）』——正文与报告字段口径不一致。证据本体不缺：双模式 XML（integration 115/115＋26/26、smoke 115/115＋26/26 顶格实测）与 report 全部数值主张（双模式 115/115＋26/26、ird_gates 8 命中＝wp09-t10 基线逐码一致零新增——验收者 cmake --build --target ird_gates 亲跑命中集逐码比对、validate-task PASS、verify-task PASS）经验收者 detached worktree @SHA 从零亲手复现准确，判级沿 F-111/F-113/F-114 先例＝建议级不阻断",
       "owner": "实施者侧（报告字段只引用在库文件；被吞日志须 add -f 或改 .txt 后缀）＋构建约定所有者（F-010 根因：.gitignore 对 traceability/** 增加例外或流程强制 add -f——家族累计 14 例，流程级根治诉求再升级）",
-      "resolution": "建议级，不阻断 DIAG-T11 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-113/F-114：报告 selfCheck/gates 字段引用与提交正文声明二选一对齐（要么入库要么字段不引用）。"
+      "resolution": "建议级，不阻断 DIAG-T11 验收（pass）——证据本体不缺（验收者集成＋冒烟双模式从零亲跑构建/测试/门禁/脚本一致）。修复方向同 F-113/F-114：报告 selfCheck/gates 字段引用与提交正文声明二选一对齐（要么入库要么字段不引用）。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-119",
@@ -1296,11 +1308,12 @@
       "id": "F-125",
       "source": "traceability/acceptance/PRJ-T02-20260915.md#4.9/4.10（attempt 2；验收者 git show --stat 实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-15",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114 之后又一例）：PRJ-T02 送验提交 04315ecb 正文声称新增『4 份 gtest XML＋9 份构建/测试/门禁/校验日志』，实际入库仅 6 件留痕（XML×4＋ird-test-report.json＋s72-win32-docs-crosscheck.md）、日志 0 份（git show --stat 实证 7 文件含 units/project.md）；ird-test-report.json 的 gates.validateTask 字段引用『validate-task.log』亦为库外幻影引用。根因沿袭 F-010（.gitignore 全局 *.log 规则吞没 traceability/** 留痕日志）。验证结论性内容（双模式 18/18＋5/5、verify exit 0、validate-task/validate-docs PASS、ird_gates 8 命中基线）经验收者全新树独立复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 自查正文清单与实际入库一致）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
-      "resolution": "处置建议＝①.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀，使实施侧生成的日志可入库（F-010 根因消账）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务的 9 份日志若实施侧仍留存，可随 PRJ-T03 送验或返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-124，合入时由所有者确认。"
+      "resolution": "处置建议＝①.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀，使实施侧生成的日志可入库（F-010 根因消账）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务的 9 份日志若实施侧仍留存，可随 PRJ-T03 送验或返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-124，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-126",
@@ -1317,11 +1330,12 @@
       "id": "F-127",
       "source": "traceability/acceptance/PRJ-T03-20260915.md#4.9/4.10（attempt 3；验收者 git ls-tree／check-ignore 实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-15",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125 之后又一例，F-125 后同日同单元再例）：PRJ-T03 送验提交 65520d6a 正文声称入库『双模式构建/配置日志＋测试运行日志＋gtest XML×4＋validate-task.log（PASS）＋verify-target-build.log（契约 verify 两命令 exit 0）＋gates-ird-gates-target.log』，git ls-tree @65520d6a 实证 builds/wp04-t03/ 仅 5 件（ird-test-report.json＋双模式 gtest XML 四份）——10 份 .log 全部未入库（实施工作树本地存在、命中根 .gitignore:87 *.log 规则，check-ignore 实证）；ird-test-report.json 的 gates 字段引用 validate-task.log/gates-ird-gates-target.log 亦为库外幻影引用。F-125 处置建议③（PRJ-T02 的 9 份日志随 PRJ-T03 送验补交）未被执行。验证结论性内容（双模式 38/38＋10/10、ird_gates 8 命中＝F-115 基线零 project、validate-task/verify-task/validate-docs PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 自查正文清单与实际入库一致）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
-      "resolution": "处置建议＝①同 F-125：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 10 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-126，合入时由所有者确认。"
+      "resolution": "处置建议＝①同 F-125：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 10 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-126，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-128",
@@ -1338,11 +1352,12 @@
       "id": "F-129",
       "source": "traceability/acceptance/PRJ-T04-20260916.md#4.9/4.10（attempt 1；验收者 git ls-tree／check-ignore 实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127 之后第 11 例，F-127 后同单元再例）：PRJ-T04 送验提交 a148a99e 正文声称新增 traceability/builds/wp04-t04/『14 个证据文件』（integration-build.log／verify-target-build.log／smoke-configure.log／smoke-build.log／四份测试运行日志／gates-ird-gates-target.log／validate-task.log 等 10 份 .log），git ls-tree 实证仅入库 5 件（ird-test-report.json＋双模式 gtest XML 四份），.log 全部未入库且 check-ignore 实证命中根 .gitignore:87 *.log 规则；ird-test-report.json 的 gates 字段（validate-task.log/gates-ird-gates-target.log）与 buildModes 字段（四份构建日志）共六处库外幻影引用。F-127 处置建议③（PRJ-T03 的 10 份日志随返工窗口补交）未被执行。验证结论性内容（两模式 81/81＋10/10、契约 verify exit 0、ird_gates 8 命中零 project、validate-task PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 自查正文清单与实际入库一致）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
-      "resolution": "处置建议＝①同 F-125/F-127：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀（F-010 根因消账，家族第 11 例后处置紧迫度上升）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 10 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-128，合入时由所有者确认。"
+      "resolution": "处置建议＝①同 F-125/F-127：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀（F-010 根因消账，家族第 11 例后处置紧迫度上升）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 10 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的日志引用字段。编号顺延自 F-128，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-130",
@@ -1370,11 +1385,12 @@
       "id": "F-132",
       "source": "traceability/acceptance/PRJ-T05-20260916.md#4.8/4.10（attempt 2；验收者 git ls-tree 实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129 之后第 12 例，但为首个『明示形态』）：PRJ-T05 送验提交 b6cc2352 正文新增 traceability/builds/wp04-t05/『15 个证据文件』时主动明示『其中 5 个非日志文件随本提交入库，10 个 .log 证据文件因 .gitignore *.log 规则不入库、以工作区文件形态留痕』（较 F-129 的 a148a99e 隐匿形态诚实度提升，无隐瞒成分）；git ls-tree 实证入库 5 件（ird-test-report.json＋双模式 gtest XML 四份）与明示一致。残留问题：ird-test-report.json 的 gates 字段（gates-ird-gates-target.log/validate-task.log）与 buildModes 字段（integration-build.log/verify-target-build.log/smoke-configure.log/smoke-build.log）共六处引用仍为库外路径——后来者仅凭库内产物无法按图索骥取证。验证结论性内容（两模式 109/109＋10/10、契约 verify exit 0、ird_gates 8 命中零 project 零新增、validate-task PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）——F-129 处置紧迫度注记在本例继续累积（家族已 12 例）",
-      "resolution": "处置建议＝同 F-129：①.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀；②ird-test-report.json 的日志引用字段注明『工作区留痕（不入库）』或随根因消账后改为可入库路径。编号顺延自 F-131，合入时由所有者确认。"
+      "resolution": "处置建议＝同 F-129：①.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀；②ird-test-report.json 的日志引用字段注明『工作区留痕（不入库）』或随根因消账后改为可入库路径。编号顺延自 F-131，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-133",
@@ -1411,11 +1427,12 @@
       "id": "F-136",
       "source": "traceability/acceptance/PRJ-T06-20260916.md#4.9/4.10（attempt 1，验收者 git ls-tree＋ird-test-report.json evidence 字段实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族边缘再现（F-081…F-132 家族第 13 例；较 F-132 的『明示形态』退半步、较 F-129 隐匿形态有实质缓解）：PRJ-T06 送验提交 e70031c8 正文列举『新增 traceability/builds/wp04-t06/：冒烟配置/构建日志、集成全量构建日志、…运行日志＋gtest XML（8 份）、ird_gates 门禁日志、契约 verify 命令日志、validate-task 日志…』但未在提交信息内内联说明其中 9 份 .log 受 .gitignore 第 87 行管控不入库（wp04-t05 先例 b6cc2352 曾内联明示）；缓解事实：同提交入库的 ird-test-report.json 的 evidence.localOnlyNote 字段已按 F-132 处置建议②完整注明『9 份 .log 工作区留痕不入库、与 wp04-t03/t04/t05 交付形态一致』，evidence.committed 列表与 git ls-tree 实测 5 件逐项一致——F-132 家族诉求（库内可按图索骥）实质达成，残留仅为提交信息自身措辞。验证结论性内容（两模式 133/133＋10/10、契约 verify exit 0、ird_gates 8 命中与 wp04-t05 基线逐项一致零新增、validate-task PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）——家族已 13 例，根因处置紧迫度注记在本例继续累积",
-      "resolution": "处置建议＝同 F-129/F-132：①.gitignore 增加否定规则或留痕日志统一 .txt 后缀（根因收口后本家族自动消账）；②提交信息列举证据文件时内联注明『X 份入库＋Y 份 .log 工作区留痕』。编号顺延自 F-135，合入时由所有者确认。"
+      "resolution": "处置建议＝同 F-129/F-132：①.gitignore 增加否定规则或留痕日志统一 .txt 后缀（根因收口后本家族自动消账）；②提交信息列举证据文件时内联注明『X 份入库＋Y 份 .log 工作区留痕』。编号顺延自 F-135，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-137",
@@ -1431,11 +1448,12 @@
       "id": "F-138",
       "source": "traceability/acceptance/PRJ-T07-20260916.md#4.9/4.10（attempt 1，送验对象 448d2e4f715d58fee7ba3a9183a631c405fc9912，分支 wp04-t07，验收者 git ls-tree／ird-test-report.json evidence 字段实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129/F-132/F-136 之后第 14 例；形态较 F-136 的缓解措施〔evidence.localOnlyNote 字段〕退步）：PRJ-T07 送验提交 65e05bee 正文声称入库 traceability/builds/wp04-t07/『15 项证据』（双模式测试运行日志四份、集成全量构建日志、冒烟配置/构建日志、ird_gates 目标日志、validate-task 日志、verify-target-build 日志），git ls-tree 实证仅入库 5 件（ird-test-report.json＋双模式 gtest XML 四份）——10 份 .log 全部未入库（命中根 .gitignore:87 *.log 规则＝F-010 根因），且 65e05bee 正文未内联明示该处置（448d2e4f 正文有『.log 按仓库惯例留工作树不入库』补述，但晚于声称性提交）；ird-test-report.json 的 evidence.committed 列表将 10 份库外 .log 与 5 件库内文件混列于同一 committed 字段且无 localOnlyNote 字段——后来者仅凭该字段无法区分库内/库外证据。验证结论性内容（两模式 151/151＋10/10、ird_gates 8 命中＝wp04-t06 基线零新增零 project 项、契约 verify exit 0、validate-task PASS、validate-docs PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：evidence.committed 字段应只列库内文件或增设 localOnlyNote 区分——F-136 先例形态）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
-      "resolution": "处置建议＝①evidence.committed 字段收敛为库内实测清单（git ls-tree 口径），库外留痕移入独立的 localOnlyNote 字段（F-136/wp04-t06 先例 b6cc2352 已示范）；②提交信息列举证据时内联注明『X 件入库＋Y 份 .log 工作区留痕』；③根因处置同 F-129/F-132 建议（.gitignore 否定规则或留痕统一 .txt 后缀）。编号顺延自 F-137，合入时由所有者确认。"
+      "resolution": "处置建议＝①evidence.committed 字段收敛为库内实测清单（git ls-tree 口径），库外留痕移入独立的 localOnlyNote 字段（F-136/wp04-t06 先例 b6cc2352 已示范）；②提交信息列举证据时内联注明『X 件入库＋Y 份 .log 工作区留痕』；③根因处置同 F-129/F-132 建议（.gitignore 否定规则或留痕统一 .txt 后缀）。编号顺延自 F-137，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-139",
@@ -1462,11 +1480,12 @@
       "id": "F-141",
       "source": "traceability/acceptance/PRJ-T08-20260916.md#4.10（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08，验收者 git ls-tree／ird-test-report.json builds 字段实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129/F-132/F-136/F-138 之后第 15 例，较 F-138 无缓解形态再现）：PRJ-T08 送验提交 69ca3e2c 正文声称入库 traceability/builds/wp04-t08/ 十项证据（ird-test-report.json＋四份 gtest XML＋smoke-configure/smoke-build/integration-build 四份测试控制台日志/verify-target-build/validate-task 共七份 .log），git ls-tree 实证仅入库 5 件（ird-test-report.json＋四份 XML）——七份 .log 全部命中根 .gitignore:87 *.log 规则（F-010 根因）未入库，且提交正文未内联明示该处置；ird-test-report.json 的 builds[] 字段将四份库外 .log 与库内结论混列且无 localOnlyNote 字段（F-138 处置建议①的收敛形态未采纳）。缓解面：后续提交 3e19fc67 主动自曝并修正了 XML 缺失根因（MSYS 路径传 Windows 程序致 gtest_output 未落盘而退出码 0——教训登记属实），且验证结论性内容（两模式 169/169＋10/10、validate-task PASS）经验收者 detached worktree 亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：builds[]/evidence 字段只列库内文件或增设 localOnlyNote——F-136/F-138 先例形态）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
-      "resolution": "处置建议＝①ird-test-report.json 的 builds[] 收敛为库内实测清单（git ls-tree 口径），库外留痕移入 localOnlyNote（F-136/wp04-t06 先例已示范）；②提交信息列举证据时内联注明『X 件入库＋Y 份 .log 工作区留痕』；③根因处置同 F-129/F-132/F-138 建议（.gitignore 否定规则或留痕统一 .txt 后缀）。编号顺延自 F-140，合入时由所有者确认。"
+      "resolution": "处置建议＝①ird-test-report.json 的 builds[] 收敛为库内实测清单（git ls-tree 口径），库外留痕移入 localOnlyNote（F-136/wp04-t06 先例已示范）；②提交信息列举证据时内联注明『X 件入库＋Y 份 .log 工作区留痕』；③根因处置同 F-129/F-132/F-138 建议（.gitignore 否定规则或留痕统一 .txt 后缀）。编号顺延自 F-140，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-142",
@@ -1535,11 +1554,12 @@
       "id": "F-148",
       "source": "traceability/acceptance/PRJ-T09-20260916.md#4.10（attempt 1，送验对象 93489c02687e80eb97ba8e8d3267f72f530aff0e，分支 wp04-t09，验收者 git ls-tree／.gitignore 实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129/F-132/F-136/F-138/F-141 之后第 16 例，F-141 无缓解形态再现）：PRJ-T09 留痕提交 93489c02 正文声称 traceability/builds/wp04-t09/ 新增 integration-build.log／smoke-configure.log／smoke-build.log／verify-target-build.log／validate-task.log 五份 .log『＋运行日志』共约七件，git ls-tree 实证仅入库 5 件（ird-test-report.json＋四份 gtest XML）——.log 全部命中根 .gitignore:87 *.log 规则（F-010 根因）未入库，提交正文未内联明示该处置；ird-test-report.json builds[] 四字段引用的 .log 均为库外文件且无 localOnlyNote 字段（F-136/F-138 建议形态未采纳）。缓解面：四份 gtest XML 本体全部在库（PRJ-T08 曾缺 XML 的更严重形态未再现）；提交正文列出的结论性数据（183/183＋10/10、exit 0、validate-task PASS）经验收者双模式亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：builds[]/正文只列库内文件或增设 localOnlyNote／内联注明『X 件入库＋Y 份 .log 工作区留痕』——F-136/F-138/F-141 先例形态）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者，已六连跳）",
-      "resolution": "处置建议＝同 F-141：①builds[] 收敛为库内实测清单（git ls-tree 口径），库外留痕移入 localOnlyNote；②提交信息列举证据时内联注明入库/库外件数；③根因处置同 F-129/F-132/F-138/F-141 建议（.gitignore 否定规则 traceability/** 或留痕统一改后缀）。编号顺延自 F-147，合入时由所有者确认。"
+      "resolution": "处置建议＝同 F-141：①builds[] 收敛为库内实测清单（git ls-tree 口径），库外留痕移入 localOnlyNote；②提交信息列举证据时内联注明入库/库外件数；③根因处置同 F-129/F-132/F-138/F-141 建议（.gitignore 否定规则 traceability/** 或留痕统一改后缀）。编号顺延自 F-147，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-149",
@@ -1576,11 +1596,12 @@
       "id": "F-152",
       "source": "traceability/acceptance/PRJ-T10-20260916.md#4.9-4.10（attempt 1，送验对象 37d05852530d6512b22091c9a1f24ad027908820，分支 wp04-t10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-118/F-125/F-127/F-129/F-132/F-136/F-138/F-141/F-148 之后又一例，且为家族规模之最）：PRJ-T10 留痕提交 37d05852 正文与 ird-test-report.json builds[]/gates 段声称 11 份日志（integration-build.log、integration-contract-build.log、verify-target-build.log、smoke-configure.log、smoke-build.log、smoke-test-run.log、smoke-contract-test-run.log、integration-test-run.log、integration-contract-test-run.log、ird-gates.log、validate-task.log），git ls-tree @37d05852 实证 builds/wp04-t10/ 仅 5 件（ird-test-report.json＋双模式 gtest XML 四份）、.log 零入库。验证结论性内容（双模式 206/206＋15/15、ird_gates 9 命中＝wp04-t08/t09 基线零新增、validate-task PASS）经验收者 detached worktree 亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 自查正文清单与实际入库一致）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
-      "resolution": "处置建议＝①同 F-125/F-127/F-129：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀（家族第 18 例后处置紧迫度持续上升）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 11 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的 builds[]/gates 日志引用字段。编号顺延自 F-151，合入时由所有者确认。"
+      "resolution": "处置建议＝①同 F-125/F-127/F-129：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀（家族第 18 例后处置紧迫度持续上升）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 11 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的 builds[]/gates 日志引用字段。编号顺延自 F-151，合入时由所有者确认。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-153",
@@ -1628,11 +1649,12 @@
       "id": "F-157",
       "source": "traceability/acceptance/PRJ-T11-20260916.md#4.9/4.10-G-1（attempt 1，送验对象 cdb242646be12eab64678cb93794be9efeef4d51，分支 wp04-t11）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-118/F-125/F-127/F-129/F-132/F-136/F-138/F-141/F-148/F-152 之后又一例）：PRJ-T11 留痕提交 cdb24264 正文声称『traceability/builds/wp04-t11/ 全套执行证据（16 文件）』（integration-build.log／integration-contract-build.log／verify-target-build.log／smoke-configure.log／smoke-build.log／smoke-test-run.log／smoke-contract-test-run.log／integration-test-run.log／integration-contract-test-run.log／ird-gates.log／validate-task.log 等），ird-test-report.json builds[] 九项与 gates 两项引用的全部 .log 亦均为库外文件；git ls-tree @cdb24264 实证 builds/wp04-t11/ 仅入库 5 件（ird-test-report.json＋双模式 gtest XML 四份），.log 零入库（.gitignore:87 *.log 规则逐文件命中——F-010 根因第九次踩中，F-153 第八次之后），提交正文未内联明示该处置（F-136/F-138 建议形态未采纳）。缓解面：结论性数据（两模式 219/219＋15/15、ird_gates 9 命中＝F-145 基线零新增、validate-task PASS、validate-docs 同数字）经验收者 detached worktree 全新树亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
       "owner": "实施纪律（DTB §5 会话流程所有者；提交已推送不追溯改写）",
-      "resolution": "处置建议＝同 F-153：留痕日志以 git add -f 强加入库（wp02-t02/wp02-t08/wp04-t01/wp05-* 等任务先例）或在提交正文/ird-test-report.json localOnlyNote 内联明示『.log 因 .gitignore 未入库、证据本体＝XML＋report』；根本处置仍为 F-010 的 traceability/** 负向豁免。编号顺延自 F-156，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝同 F-153：留痕日志以 git add -f 强加入库（wp02-t02/wp02-t08/wp04-t01/wp05-* 等任务先例）或在提交正文/ird-test-report.json localOnlyNote 内联明示『.log 因 .gitignore 未入库、证据本体＝XML＋report』；根本处置仍为 F-010 的 traceability/** 负向豁免。编号顺延自 F-156，合入时由所有者确认与并行验收分支无撞车。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-158",
@@ -1711,21 +1733,23 @@
       "id": "F-165",
       "source": "traceability/acceptance/PRJ-T13-20260916.md#4.10-G-3（attempt 1，送验对象 03eb0fe0012b4e7a4318ca7bed812653b279f144，分支 wp04-t13；验收者 git ls-tree 实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125 之后又一例）：PRJ-T13 送验提交 03eb0fe0 正文声称新增『构建日志五份＋测试执行日志四份＋ird-gates.log＋validate-task.log』且『与 wp04-t03～t12 同构』，实际入库仅 5 件留痕（XML×4＋ird-test-report.json）、日志 0 份（git ls-tree 实证 builds/wp04-t13/ 恰 5 文件；对照 T12 目录实有 16 件、T10/T11 同为 5 件形态）；ird-test-report.json 的 builds[].log 与 gates 字段引用的 11 份日志均为库外幻影引用。根因沿袭 F-010（.gitignore:87 全局 *.log 规则吞没 traceability/** 留痕日志）。验证结论性内容（两模式 242/242＋15/15、verify exit 0、ird_gates 9 命中零新增、validate-task PASS）经验收者全新树亲手复现全部为真，无结论性粉饰——按家族既有判例（F-125）登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 核对正文清单与实际入库一致；日志入库用 git add -f 或 .txt 后缀）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
-      "resolution": "处置建议＝①F-010 根因消账（.gitignore 增否定规则 !RobWork/doc/industrial-robot-design/traceability/**/*.log 或留痕统一 .txt 后缀）使 T10/T11/T13 形态的日志可入库；②本任务 11 份日志若实施侧仍留存，可随合入窗口或返工窗口补交，否则更正 ird-test-report.json 的日志引用字段；③提交前以 git status/diff --stat 核对正文清单与实际入库件数一致。编号顺延自 F-164，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝①F-010 根因消账（.gitignore 增否定规则 !RobWork/doc/industrial-robot-design/traceability/**/*.log 或留痕统一 .txt 后缀）使 T10/T11/T13 形态的日志可入库；②本任务 11 份日志若实施侧仍留存，可随合入窗口或返工窗口补交，否则更正 ird-test-report.json 的日志引用字段；③提交前以 git status/diff --stat 核对正文清单与实际入库件数一致。编号顺延自 F-164，合入时由所有者确认与并行验收分支无撞车。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-166",
       "source": "traceability/acceptance/PRJ-T14-20260917.md#4.10-G-2（attempt 1，送验对象 bdb01a2f8a2bd20df81d68458e988733f62de9fb，分支 wp04-t14；验收者 git ls-tree／check-ignore 实证）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-17",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129/F-132/F-136/F-138/F-165 之后第 16 例）：PRJ-T14 送验提交 bdb01a2f 正文声称新增 traceability/builds/wp04-t14/ 下『构建日志五份＋测试执行日志四份＋ird-gates.log＋validate-task.log』且 Acc-Covered 页脚称『运行证据全量落盘 traceability/builds/wp04-t14/』，git ls-tree 实证仅入库 5 件（ird-test-report.json＋双模式 gtest XML 四份）——11 份 .log 全部未入库且 check-ignore 实证命中根 .gitignore:87 *.log 规则（F-010 根因）；提交正文未内联明示该处置（较 F-132 的 PRJ-T05 明示形态退步、同 F-138 判定的隐匿形态），ird-test-report.json 的 builds[].log 字段（10 处）与 gates 字段（ird-gates.log/validate-task.log）共 12 处库外引用且无 evidence.localOnlyNote 字段——后来者仅凭库内产物无法区分库内/库外证据。验证结论性内容（两模式 253/253＋18/18、契约 verify exit 0×2、ird_gates 实跑 9 命中＝7×SUB＋1×T1＋1×R4 零新增、validate-task PASS）经验收者 detached worktree 从零配置亲手复现全部为真，无结论性粉饰——按家族既有判例（F-125）登记建议级",
       "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 核对正文清单与实际入库一致；日志入库用 git add -f 或 .txt 后缀）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
-      "resolution": "处置建议＝①F-010 根因消账（.gitignore 增否定规则 !RobWork/doc/industrial-robot-design/traceability/**/*.log 或留痕统一 .txt 后缀——F-165 建议①同批执行）；②本任务 11 份日志若实施侧仍留存可随合入窗口补交，否则更正 ird-test-report.json 的 builds[].log/gates 引用并补 evidence.localOnlyNote 字段；③提交前以 git status/diff --stat 核对正文清单与实际入库件数一致。编号顺延自 F-165，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝①F-010 根因消账（.gitignore 增否定规则 !RobWork/doc/industrial-robot-design/traceability/**/*.log 或留痕统一 .txt 后缀——F-165 建议①同批执行）；②本任务 11 份日志若实施侧仍留存可随合入窗口补交，否则更正 ird-test-report.json 的 builds[].log/gates 引用并补 evidence.localOnlyNote 字段；③提交前以 git status/diff --stat 核对正文清单与实际入库件数一致。编号顺延自 F-165，合入时由所有者确认与并行验收分支无撞车。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-167",
@@ -1783,11 +1807,12 @@
       "id": "F-172",
       "source": "traceability/acceptance/PRJ-T15-20260917.md#4.10-G-3（attempt 1，送验对象 a52dbd9388c8241e8a1e92775ef83f2c2eae1fef，分支 wp04-t15）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-17",
       "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-118/F-125/F-127/F-129/F-132/F-136/F-138/F-141/F-148/F-152/F-157/F-165/F-166 之后又一例）且 F-010 根因第九次踩中：a52dbd93 正文与 ird-test-report.json 声称入库 traceability/builds/wp04-t15/ 下『双模式构建日志×3＋verify 日志＋gtest XML 四份＋运行日志四份＋ird-gates.log＋validate-task.log』，提交树实测仅 5 份 ird-test-report*.json 在库——*.log 七份被 .gitignore:87 全局规则吞（F-081/F-083/F-085/F-087/F-088/F-090/F-153 之后第八次踩中该根因，本例第九次）；4 份 gtest XML 不在任何 ignore 规则内（check-ignore 实证）属生成后未提交。缓解事实：等价用例级明细以四份 listenerReport JSON（ird-test-report-unit/contract-*-smoke/integration.json）在库承载且两模式 durationMs 差异证实真实独立运行；验证结论（28/28＋254+1 skipped＋gates 11＋validate-task PASS）经验收者亲手复现全部为真——无结论性粉饰，按 F-166 判例建议级不阻断",
       "owner": "构建约定所有者（F-010 根因——.gitignore 负向豁免或 .txt 后缀约定）＋实施侧（XML 等未入 ignore 的留痕应在 git status 核对后入库；F-010 处置建议『留痕提交前以 git status 核对实际入库清单』再次未执行）",
-      "resolution": "处置建议＝同 F-010/F-166：①为 traceability/** 增加 .gitignore 负向豁免（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或明文化『留痕一律 .txt 后缀』约定；②gtest XML 与 listenerReport 二选一在库即可但报告字段不得引用未入库文件名（幻影字段治理——同 F-113/F-114 家族处置）。编号顺延自 F-171，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝同 F-010/F-166：①为 traceability/** 增加 .gitignore 负向豁免（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或明文化『留痕一律 .txt 后缀』约定；②gtest XML 与 listenerReport 二选一在库即可但报告字段不得引用未入库文件名（幻影字段治理——同 F-113/F-114 家族处置）。编号顺延自 F-171，合入时由所有者确认与并行验收分支无撞车。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交/报告的「声称在库而实际未入库/悬空引用」实例——已推送历史不可回写；同类风险已由证据索引（Task 7 摘要索引）＋未跟踪证据硬失败门禁（F-929）＋ACC 4.10 留痕核对结构性降级（声明可机械核对）；历史实例按家族关闭，不追改。"
     },
     {
       "id": "F-173",
@@ -2474,11 +2499,12 @@
       "id": "F-238",
       "source": "traceability/acceptance/RPT-T06-20260920.md#4.9／发现的问题-G-1（attempt 1，verdict=pass，2026-09-20；送验对象 6dc1b140ead7b6e100772d4bbac4640a83efed2a，分支 wp12-t06）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-20",
       "title": "F-041/F-073/F-236 同族再现（散文计数失准）：RPT-T06 留痕提交 6dc1b140 正文汇总短语『新增 traceability/builds/wp12-t06/ 九件留痕』与实际入库 17 件不符（8 个要点组；『九件』在件数/组数任一口径下均不成立）。方向为少报：要点组已完整枚举全部 17 件（ird-test-report.json＋四份 gtest XML＋11 份 .log＋gates-hit-set-diff.txt）且全部实际在库（验收者 git ls-tree 17/17 实证——F-010 幻影家族零复踩），纯汇总计数笔误；本任务其余散文计数（RenderTest 16 条、契约测试 7 条、单元 94＝78＋16、契约 25＝18＋7、新增 23/既有 96）经验收者 grep ^TEST 与双模式亲跑全部准确",
       "owner": "reporting 单元实施者（后续 RPT-T07+ 提交与报告的散文计数自清点核对——F-236 同 owner 同口径）；F-041/F-073/F-236 家族可在治理面合并处置",
-      "resolution": "随 F-236 家族合并处置：报告/提交散文计数以 ls-tree/XML 顶格实测为准，或以要点组逐件枚举替代汇总基数；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T06 合入（attempt 1 verdict=pass）。编号顺延自 F-237。"
+      "resolution": "随 F-236 家族合并处置：报告/提交散文计数以 ls-tree/XML 顶格实测为准，或以要点组逐件枚举替代汇总基数；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T06 合入（attempt 1 verdict=pass）。编号顺延自 F-237。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-239",
@@ -2591,11 +2617,12 @@
       "id": "F-249",
       "source": "traceability/acceptance/RPT-T10-20260920.md#4.9／发现的问题清单-G-3（attempt 1，verdict=pass，2026-09-20；送验对象 4110786ab67144385fe487f5be103f19c9f9eeae，分支 wp12-t10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-20",
       "title": "F-041/F-073/F-235/F-236/F-238/F-243/F-025 散文计数失准家族再现（RPT-T10 三处，方向混杂、无证据缺失、实质结论经独立复跑全部成立）：①0c95de0e 正文『留痕目录（17 个文件）』与该提交实入库 7 件不符（7＋被吞 11＝18，『17』与最终在库数亦不合）；②4110786a 正文『十份 .log』实入库 11 件（少报 1）；③ird-test-report.json gates 段与 55e34f9d 正文『base/branch 各 61 处 IRD-GATE- 命中』——61 为原始日志行数（含流式＋摘要两遍重复与自测提及），独立命中实为 27 项（日志自身『命中 27 项』与 gates-all-note.txt『原始 IRD-GATE- 行各 61 处』口径准确在案）——与 F-243 对 wp12-t09 同字段的裁定同型",
       "owner": "reporting 单元实施者（后续提交正文与 ird-test-report 的计数以可机核命令输出为准）；F-012 家族模板补救落地后随模板带计数核对提示",
-      "resolution": "与 F-041/F-243 计数家族合并处置：留痕/正文计数逐项以 git show --name-status、grep -c 等可机核输出为源，命中数区分『原始行数』与『独立命中数』两口径。不阻塞 RPT-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-248。"
+      "resolution": "与 F-041/F-243 计数家族合并处置：留痕/正文计数逐项以 git show --name-status、grep -c 等可机核输出为源，命中数区分『原始行数』与『独立命中数』两口径。不阻塞 RPT-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-248。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-250",
@@ -3084,11 +3111,12 @@
       "id": "F-296",
       "source": "traceability/acceptance/WP-10-T15-20260922-r2.md §4.9（attempt 2，verdict=pass，2026-09-22）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-22",
       "title": "F-025/F-041/F-243/F-249/F-256 散文计数失准家族新例（送验提交 101a8d4a 正文两处）：①「ird-test-report.json 五件（集成 model/contract/gui＋冒烟 model/contract/gui）」——括注列 6 件、在库实为 6 件（ird-test-report.json/-contract/-gui/-smoke/-contract-smoke/-gui-smoke，全部 decisive=true 经验收亲验）；②「冒烟模式测试六件（-smoke 后缀 XML/JSON/console）」——-smoke 后缀文件实为 3 XML＋3 console 共 6 件（JSON 三件名属 ird-test-report-*-smoke 系，括注三类型与六件数不自洽）。方向均为少报/枚举口径含混、无粉饰，实质结论（154＋22＋28 全过）经亲测全真",
       "owner": "ui 单元实施者（留痕类提交正文的件数枚举与实际入库件数提交前核对；家族纪律与 F-249 处置建议同源）",
-      "resolution": "随下次触碰留痕登记的任务顺手在提交模板执行「正文件数＝git diff --name-status 实数」自查；编号顺延自 F-295。"
+      "resolution": "随下次触碰留痕登记的任务顺手在提交模板执行「正文件数＝git diff --name-status 实数」自查；编号顺延自 F-295。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-297",
@@ -3244,11 +3272,12 @@
       "id": "F-311",
       "source": "traceability/acceptance/WP-13-T06-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；验收者 git diff --name-only 逐件清点对照提交正文）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-23",
       "title": "F-041/F-080/F-236/F-249/F-256 散文计数失准家族再现：提交 803b435a 正文称「归档 traceability/builds/wp13-t06/ 十八件验证留痕」，实际该提交入库 21 件（13 日志＋4 gtest XML＋4 ird-test-report JSON——git diff --name-only 清点）；方向＝少报、无粉饰（在库文件多于声明），正文枚举「＋ird_gates 比对三件」句式与 18 的拆算亦不自洽",
       "owner": "实施者侧提交信息规范（归档前以 git diff --name-only | wc -l 实测计数再落笔）",
-      "resolution": "处置建议＝随散文计数家族统一处置（归档类提交正文计数以实测命令输出为准）；不追溯改写已推送提交历史。编号顺延自 F-310。"
+      "resolution": "处置建议＝随散文计数家族统一处置（归档类提交正文计数以实测命令输出为准）；不追溯改写已推送提交历史。编号顺延自 F-310。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-312",
@@ -3686,11 +3715,12 @@
       "id": "F-360",
       "source": "traceability/acceptance/WP-14-T02-20260925.md §1/4.9（attempt 1，verdict=pass，2026-09-25；验收者对提交 07d2f6d6 验证段逐条与留痕及独立直跑实测比对时发现）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-25",
       "title": "WP-14-T02 提交信息与比对附件散文计数失准（F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343 家族再现）：称「与 base 侧既有 36 处同型」——验收者实测 base(e42de114) 侧 testkit 直链 SUB 去重 23 处（全码含 testkit 字样 25 处、base SUB 全量 29 处、base 命中全量 58 处，均非 36），送验附件 ird_gates_base.log 同为 23。计数方向为多报、无证据缺失、核心增量结论（+2，base 58→head 60）与全部其他验证声称经实测一致，不构成粉饰",
       "owner": "WP-14-T02 实施面（记录性更正即可，不阻塞合入）；家族根治同 F-041 处置建议",
-      "resolution": "编号顺延自 F-359。"
+      "resolution": "编号顺延自 F-359。",
+      "closureReason": "B7 分诊第二批（2026-10-18）：历史提交正文的计数/份数失准——已推送提交不可改写（AGENTS §6.3 红线），口径规则已入 AGENTS §6.3（F-926：验证段计数必须区分 passed/skipped，禁止 N/N 掩盖）并由 review 抽查；按家族决议关闭，不逐条追改历史文本。"
     },
     {
       "id": "F-361",
