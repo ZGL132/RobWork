@@ -2314,6 +2314,20 @@ void IrdWorkbenchHostPlugin::enforceCentralMinWidth()
     if (central == nullptr || !hostWindow->isVisible()) {
         return;  // 无中央控件/窗口不在屏（启动过程、最小化）——不介入
     }
+    // WP-14-T12/A-12：需求表单的可读首选宽度为520逻辑像素；窄窗仍可滚动，
+    // 但放大窗口后不能永久保留保护器压出的240px窄列。仅恢复不足420px的
+    // 非浮动需求列；已有可读用户宽度不改，中央320px与分隔条12px优先保留。
+    // 不设新的硬最小值，低分辨率/高DPI下仍可回落既有滚动地板。
+    if (m_requirementsDock && m_requirementsDock->isVisible() && !m_requirementsDock->isFloating()
+        && m_requirementsDock->width() < 420) {
+        const int available = central->width() + m_requirementsDock->width()
+            - kCentralMinReserveWidth - 12;
+        const int preferred = std::min(520, available);
+        if (preferred > m_requirementsDock->width()) {
+            hostWindow->resizeDocks({m_requirementsDock}, {preferred}, Qt::Horizontal);
+            return; // Qt下一次Resize拍复核中央预算，不读取本拍尚未落定的几何。
+        }
+    }
     if (central->width() >= kCentralMinReserveWidth) {
         return;  // 保留量达标——零操作（常态路径）
     }
@@ -2342,28 +2356,33 @@ void IrdWorkbenchHostPlugin::enforceCentralMinWidth()
     }
     // 主 Dock 最后收（承载工业项目树——业务主导航，优先保它宽裕）。
     for (QDockWidget* dock : leftColumn) {
-        const int target = clampFloor(dock);
+        if (remaining <= 0) { break; } // 回收够缺口即停，避免同列页签重复过度压缩。
+        const int target = std::max(clampFloor(dock), dock->width() - remaining);
         if (dock->width() > target) {
             remaining -= (dock->width() - target);
             hostWindow->resizeDocks({dock}, {target}, Qt::Horizontal);
         }
     }
     if (remaining > 0 && width() > clampFloor(this)) {
-        const int target = clampFloor(this);
+        const int target = std::max(clampFloor(this), width() - remaining);
         remaining -= (width() - target);
         hostWindow->resizeDocks({this}, {target}, Qt::Horizontal);
     }
     if (remaining > 0 && m_propsDock != nullptr && m_propsDock->isVisible()
         && m_propsDock->width() > clampFloor(m_propsDock)) {
-        const int target = clampFloor(m_propsDock);
+        const int target = std::max(clampFloor(m_propsDock), m_propsDock->width() - remaining);
         hostWindow->resizeDocks({m_propsDock}, {target}, Qt::Horizontal);
     }
     // 复核留痕（一次性——防御日志洪水；极端窄窗下物理放不下＝如实声明，
     // 不无限对抗用户拖拽）。
-    if (central->width() < kCentralMinReserveWidth && !m_centralGuardWarned) {
+    // resizeDocks异步落定；本拍旧宽度不足不能直接宣称“已收缩后仍放不下”。
+    // 在下一轮80ms稳定拍复核真正的剩余缺口，避免正常缩窗产生误导性告警。
+    QTimer::singleShot(80, this, [this, hostWindow] {
+      const auto* settledCentral = hostWindow->centralWidget();
+      if (settledCentral && settledCentral->width() < kCentralMinReserveWidth && !m_centralGuardWarned) {
         m_centralGuardWarned = true;
         const std::string facts = "[central-guard] 保留量未达成：中央 "
-                                + std::to_string(central->width()) + " px < "
+                                + std::to_string(settledCentral->width()) + " px < "
                                 + std::to_string(kCentralMinReserveWidth)
                                 + " px（本插件 Dock 已收缩到各自下限；窗口"
                                   "物理宽度不足，不再对抗用户）";
@@ -2371,7 +2390,8 @@ void IrdWorkbenchHostPlugin::enforceCentralMinWidth()
         if (m_diag.pipeline) {
             m_diag.pipeline->logDev(kPluginDevChannel, facts);
         }
-    }
+      }
+    });
 }
 
 // =====================================================================
@@ -5344,15 +5364,16 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
     // 驱动脚本负责双场景的 CWD 与辅助键夹具（见留痕 README）。
     const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
     const bool dockResize = (smoke == QLatin1String("dock-resize"));
+    const bool requirementsLayout = (smoke == QLatin1String("requirements-layout"));
     const bool firstRun = (smoke == QLatin1String("layout"));
     const bool secondRun = (smoke == QLatin1String("layout2"));
-    if (!firstRun && !secondRun && !dockResize) {
+    if (!firstRun && !secondRun && !dockResize && !requirementsLayout) {
         return;
     }
 
     // 度量/断言拍：1200 ms——晚于装载呈现自证（0 拍重申）与两拍宽度收束
     // （0/100 ms），取"宿主装载语义全部落定后"的稳定布局态。
-    QTimer::singleShot(1200, this, [this, firstRun, dockResize] {
+    QTimer::singleShot(1200, this, [this, firstRun, dockResize, requirementsLayout] {
         std::cout << "[ird-ui-smoke-layout] started mode="
                   << (firstRun ? "first" : "second") << std::endl;
         std::vector<std::string> lines;  // UTF-8 报告行（几何走查＋断言结论）
@@ -5396,6 +5417,46 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
         QWidget* central = hostWindow->centralWidget();
         lines.push_back("host-window cur=" + std::to_string(hostWindow->width())
                         + "x" + std::to_string(hostWindow->height()));
+
+        if (requirementsLayout) {
+            // WP-14-T12/A-12：沿真实菜单打开需求Dock，再从窄窗放大；不得在
+            // 测试里resizeDocks帮生产布局变绿。截图同时保留中央三维和需求表单。
+            m_content->setAuxVisible(kAuxKeyRequirementsDock, false);
+            for (const auto& toggle : m_hostAuxToggles) {
+                if (toggle.first == kAuxKeyRequirementsDock) { toggle.second->trigger(); break; }
+            }
+            for (int pass = 0; pass < 3; ++pass) {
+                hostWindow->showNormal();
+                hostWindow->resize(pass == 1 ? QSize(1024, 790) : QSize(1920, 1050));
+                if (pass != 1) { hostWindow->showMaximized(); }
+                settleEvents(400);
+                const auto name = std::string(pass == 1 ? "narrow" : "wide") + std::to_string(pass);
+                check(m_requirementsDock && m_requirementsDock->isVisible(), name + "-requirements-visible");
+                if (!m_requirementsDock) { continue; }
+                std::cout << "[ird-ui-smoke-layout] " << name << " host=" << hostWindow->width()
+                          << " req=" << m_requirementsDock->width() << " central=" << central->width() << std::endl;
+                if (pass != 1) {
+                    check(m_requirementsDock->width() >= 420, name + "-readable-width");
+                }
+                check(central->width() >= kCentralMinReserveWidth, name + "-central-reserve");
+                auto* scroll = qobject_cast<QScrollArea*>(m_requirementsDock->widget());
+                check(scroll && scroll->widget(), name + "-scroll-boundary");
+                if (scroll && scroll->widget()) {
+                    // 滚到末端后右/下边缘应进入视口，证明内容可达而非永久裁切。
+                    scroll->horizontalScrollBar()->setValue(scroll->horizontalScrollBar()->maximum());
+                    scroll->verticalScrollBar()->setValue(scroll->verticalScrollBar()->maximum());
+                    settleEvents(80);
+                    const QRect content = scroll->widget()->geometry();
+                    check(content.right() <= scroll->viewport()->width()
+                          && content.bottom() <= scroll->viewport()->height(), name + "-content-end-reachable");
+                    scroll->horizontalScrollBar()->setValue(0);
+                    scroll->verticalScrollBar()->setValue(0);
+                }
+                snapPng(hostWindow, ("requirements-layout-" + name + ".png").c_str());
+            }
+            QCoreApplication::exit(failures.empty() ? 0 : 1);
+            return;
+        }
 
         // UI-T82/UX-09/PM-14：真实六域宿主巡检，先钉住旧纵排布局的失败能力。
         // 环境变量显式启用才运行；只在独立工作目录执行，不创建/修改研发项目。
