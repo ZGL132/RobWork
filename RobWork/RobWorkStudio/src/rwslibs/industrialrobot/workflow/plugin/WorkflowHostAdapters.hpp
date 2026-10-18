@@ -71,7 +71,7 @@ namespace ird {
 namespace workflow {
 
 // =====================================================================
-// 端口适配器族（九接缝＋三个生命周期执行端口——逐一兑现"实现归 L5"）
+// 端口适配器族（十接缝＋三个生命周期执行端口——逐一兑现"实现归 L5"）
 // =====================================================================
 
 /**
@@ -431,7 +431,7 @@ private:
  * WorkflowError 点名缺失端口（F-536：装配缺陷不允许静默空转）。
  */
 struct WorkflowHostPorts {
-    // ---- 九接缝（§10.2 v0.5~v1.2 登记清单）----
+    // ---- 十接缝（§10.2 v0.5~v1.2 登记清单）----
     IDomainInitSubmitter* domainInit = nullptr;       ///< 领域初始化提交（v0.5）
     ICloseDecisionPort* closeDecisions = nullptr;     ///< 统一确认决策收集（v0.7）
     ICloseDraftPort* closeDrafts = nullptr;           ///< 草稿处置（v0.7）
@@ -552,7 +552,7 @@ private:
  * @brief 装配核查＋控制器装配（F-536 同族——装配期一次）。
  *
  * 核查清单（逐一执行，任一失败即 WorkflowError 并**点名缺失项**）：
- *   1. WorkflowHostPorts 全部 13 个端口指针非空（九接缝＋三执行端口＋
+ *   1. WorkflowHostPorts 全部 13 个端口指针非空（十接缝＋三执行端口＋
  *      重关联决策端口——编排核六方法的全部触达面）；
  *   2. WorkflowHostBridges 必填缝（currentStore/currentProjectId/
  *      activateStore/collectNewProjectInputs/selectOpenPath/

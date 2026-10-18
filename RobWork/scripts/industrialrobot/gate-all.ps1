@@ -1,4 +1,4 @@
-# =====================================================================
+﻿# =====================================================================
 # gate-all.ps1 —— 本地一键门禁（WP-01-T02，契约 tasks/WP-01-T02.json）
 #
 # 设计依据：
@@ -150,7 +150,7 @@ function Skip([string]$Name, [string]$Detail) {
 }
 
 # ---- 第 0 步：环境自检（守卫 7 口径） ----
-if (-not (Test-Path $Toolchain)) { Fail "环境自检" "vcpkg toolchain 不存在: $Toolchain" }
+if (-not (Test-Path $Toolchain)) { Fail "环境自检" "vcpkg toolchain 不存在: $Toolchain（worktree/非主树检出请显式传 -Toolchain <主仓>/vcpkg/scripts/buildsystems/vcpkg.cmake——F-766）" }
 
 # ---- 第 0.5 步：python 运行库前置探测/注入（F-715/TK-T12） ----
 # 测试可执行文件（今 sdurws_ird_ui_test——经框架 sdurws 静态库接口面）链入

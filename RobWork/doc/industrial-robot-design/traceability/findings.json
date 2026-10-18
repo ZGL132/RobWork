@@ -7632,10 +7632,12 @@
       "id": "F-757",
       "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-658→F-757，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：PowerEnergy.hpp『缺口时长计入 Δt』旧机制残留措辞",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。",
+      "resolution": "PowerEnergy.hpp §7.5 注释由「缺口时长计入相邻有效行 Δt」改为「缺口区间零贡献、缺口时长保留在分母 T_cycle（保守低估，F-589）」，与 PowerEnergy.cpp 实现（相邻 Ok 行跨缺口不做梯形插值）一致。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-758",
@@ -7650,19 +7652,23 @@
       "id": "F-759",
       "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-660→F-759，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：rneaTorques 头注释旧力臂口径残留",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。",
+      "resolution": "复核 InverseDynamics.cpp rneaTorques 头注释：现文已为「r_c＝关节原点→质心」＋平移定理（关节 i+1 原点−关节 i 原点），无「力臂＝comOffset」旧口径残留（F-589 修复时已同步改注）；零编辑翻 fixed，证据见注释 :891-902。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-760",
       "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-661→F-760，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：callRneaSample『零填充』注释失实",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。",
+      "resolution": "ForwardDynamics.cpp callRneaSample 两处注释改为「不可用＝usable=false，缓冲区可能已写入前段值（非零填充），调用方不得消费」——与实现一致（先 assign(n,0) 再按行填充，行态非 Ok 处 break，前段值已写入）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-761",
@@ -7680,8 +7686,7 @@
       "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：ProcessRunnerTest.cpp:416,418 断言字面量 \\d/\\f 转义失真（运行时串无反斜杠含 FormFeed），第二条断言未钉『纯反斜杠』意图；2N+1 主钉有效",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ProcessRunnerTest 断言转义修正（\\\\\\\\d/\\\\\\\\f 意图钉）。",
-      "resolution": "F-762 消账（2026-10-18）：ProcessRunnerTest 两处断言字面量改为真反斜杠（输入 L"C:\\\\dir\\\\file"／L"C:\\\\dir a\\\\"，期望串同步），消除 C4129 无效转义；重建 C4129 计数 0（原 2 条），testkit_test 110/110 通过（18.5s）——第二条断言现真正钉住“纯反斜杠原样通过”意图。证据 traceability/builds/gov-f762/。",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ProcessRunnerTest 断言转义修正（\\d/\\f 意图钉）。F-762 消账（2026-10-18）：两处断言字面量改为真反斜杠（输入 L\"C:\\dir\\file\"／L\"C:\\dir a\\\"，期望串同步），消除 C4129 无效转义；重建 C4129 计数 0（原 2 条），testkit_test 110/110 通过（18.5s）；证据 traceability/builds/gov-f762/。",
       "fixedAt": "2026-10-18"
     },
     {
@@ -7715,10 +7720,12 @@
       "id": "F-766",
       "source": "audit/round2-20261010（R2-A5 批）；2026-10-12 治理批转登（草案预编号 F-667→F-766，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：gate-all.ps1:101 worktree 漏传 -Toolchain 时自检报错文案不指向对策（建议追加提示行）",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：gate-all.ps1 漏参报错文案追加对策提示行。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：gate-all.ps1 漏参报错文案追加对策提示行。",
+      "resolution": "gate-all.ps1 环境自检失败文案追加对策行：worktree/非主树检出请显式传 -Toolchain <主仓>/vcpkg/scripts/buildsystems/vcpkg.cmake（F-766）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-767",
@@ -7751,19 +7758,23 @@
       "id": "F-770",
       "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-671→F-770，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：注释事实错误三处（『九接缝』实列十项；Settings.cpp:438 %APPDATA%/RobWork/ 过期路径等）",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：三处注释事实错误更正（九接缝计数、Settings.cpp:438 过期路径等）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：三处注释事实错误更正（九接缝计数、Settings.cpp:438 过期路径等）。",
+      "resolution": "三处注释事实错误已修：①九接缝→十接缝（族注释/§10.2 清单/13 端口核查 3 处，实际 10 接缝＋3 执行端口＝13）；②Settings.hpp 缺省路径补 RobWork 段（%APPDATA%/RobWork/industrialrobot/，与 Settings.cpp 缺省工厂一致）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-771",
       "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-672→F-771，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：Ctrl+Return（代码两处一致）vs Ctrl+Enter（ui.md §7.1）词形漂移",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Ctrl+Return/Enter 词形统一（代码与 ui.md §7.1 对齐——以 ui.md v1.91 现状为准）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Ctrl+Return/Enter 词形统一（代码与 ui.md §7.1 对齐——以 ui.md v1.91 现状为准）。",
+      "resolution": "ui.md §7.1 Ctrl+Enter→Ctrl+Return 两处（命令表 draft.apply 行＋运行期示意），与代码两处 GlobalShortcutRegistry 键名一致。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-772",
@@ -9353,6 +9364,17 @@
       "owner": "治理批（CI 可运行环境下挂载；本地/Skill 自检先行）",
       "resolution": "F-934 消账（2026-10-18）：GitHub workflow boundaries job checkout 增 fetch-depth: 0＋commit-lint 步骤（pull_request.base.sha／event.before／全零退化 HEAD~1）；GitLab variables 增 GIT_DEPTH: \"0\"＋boundaries script 同款步骤（MR diff base／CI_COMMIT_BEFORE_SHA／全零退化）。两模板 PyYAML safe_load 解析通过、命令本地模拟两场景 PASS（证据 traceability/builds/gov-commit-lint/commit-lint-ci-wiring-20261018.log）；云端首跑未执行（本地无 runner），首次运行结果待观察。",
       "fixedAt": "2026-10-18"
+    },
+    {
+      "id": "F-935",
+      "source": "P3 文本小修批（2026-10-18，gate-all 5.1 解析实测）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-18",
+      "title": "gate-all.ps1 缺 UTF-8 BOM：Windows PowerShell 5.1 按 ANSI 解码中文，ParseFile 报 21 处语法错误（DTB §5.1 「pwsh 7 与 5.1 均可」对 gate-all 失实）；补 BOM 后双 shell 解析 0 错误",
+      "resolution": "gate-all.ps1 补 UTF-8 BOM；Windows PowerShell 5.1 与 pwsh 7 ParseFile 均 0 错误（证据 traceability/builds/gov-p3-text/gate-all-parse.log）。",
+      "fixedAt": "2026-10-18",
+      "owner": "治理脚本维护方（新脚本统一带 BOM 的既有纪律由此案例再确认）"
     }
   ]
 }

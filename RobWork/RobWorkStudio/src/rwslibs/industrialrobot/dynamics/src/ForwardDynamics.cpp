@@ -103,7 +103,8 @@ constexpr double kSingularPivotRelative = 1e-14;
  *                  全行 Ok 才为 true；RNEA 数值失败时逆动力学按 §5.6 只
  *                  产**失败关节**的行并可截断后续样本——行数＜n 时原实现
  *                  的 .at() 满取以 std::out_of_range（非契约异常）穿出。
- *                  不可用时缓冲保持零填充，调用方走
+ *                  不可用时 usable=false；缓冲区可能已写入前段值（非零填充），
+ *                  调用方不得消费，走
  *                  DYN-FD-NUMERIC-ANOMALY 值面（§6.3.5 部分失败语义）。
  *
  * @throws DynamicsError 透传 evaluate 的调用方错误（物性复检等——与 τ_ref
@@ -139,7 +140,8 @@ void callRneaSample(const InverseDynRequest& base, double t,
     // 行提取：单样本产出按 (t, jointIndex 升序) 排序（evaluate §4.6 纪律）。
     // F-581：行数必须恰为 n 且全行 Ok 才可用——RNEA 数值失败时逆动力学
     // 只产失败关节的行（§5.6 部分产出），.at() 满取在行数＜n 时以
-    // std::out_of_range（非契约异常类型）穿出。不可用＝零填充缓冲返回。
+    // std::out_of_range（非契约异常类型）穿出。不可用＝usable=false，缓冲区
+    // 可能已写入前段值（非零填充）——调用方不得消费。
     const std::size_t n = q.size();
     tauTotal.assign(n, 0.0);
     tauInertia.assign(n, 0.0);

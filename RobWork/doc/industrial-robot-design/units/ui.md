@@ -766,7 +766,7 @@ struct CommandDescriptor {              // 注册时一次性给出，构造后�
 | `project.new` | Session | 是 | Ctrl+N | workflow 编排（ui 提供命令项） |
 | `project.open` | Session | 是 | Ctrl+O | 同上 |
 | `draft.save` | Project | 否 | Ctrl+S | ui DraftController |
-| `draft.apply` | Project | 否 | Ctrl+Enter | 域编辑器（经命令服务） |
+| `draft.apply` | Project | 否 | Ctrl+Return | 域编辑器（经命令服务） |
 | `project.undo` | Project | 否 | Ctrl+Z | ProjectCommandService.undoRedo |
 | `project.redo` | Project | 否 | Ctrl+Y | 同上 |
 | `scheme.switch` | Project | 否 | —（面板可达） | workflow |
@@ -865,7 +865,7 @@ L5壳 ─registerCommand(desc,handler)→ CommandRegistry（冲突拒绝＋诊�
     （业务插件经 IPluginUiRegistrar 间接注册，§11）
 
 运行期（产生修订的命令，例：draft.apply）：
-用户 Ctrl+Enter ─► GlobalShortcutRegistry（键→命令映射）
+用户 Ctrl+Return ─► GlobalShortcutRegistry（键→命令映射）
   ─► CommandRegistry.submit("draft.apply")
        ① 未知/不可执行/只读 → 拒绝＋诊断（UI-CMD-*）
        ② handler：域编辑器以草稿负载组装 CommandEnvelope

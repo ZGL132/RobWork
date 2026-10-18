@@ -317,8 +317,8 @@ private:
  * @brief 缺省用户设置文件路径（生产装配的缺省绑定值——用户目录解析）。
  *
  * 解析规则（跨平台词面；产品运行面＝Windows）：
- *   - Windows：`%APPDATA%/industrialrobot/user-settings.json`
- *     （APPDATA 环境变量非空时）；
+ *   - Windows：`%APPDATA%/RobWork/industrialrobot/user-settings.json`
+ *     （APPDATA 环境变量非空时；实现见 Settings.cpp 缺省工厂）；
  *   - 其他平台：`$HOME/.industrialrobot/user-settings.json`
  *     （HOME 环境变量非空时）；
  *   - 两者皆不可得：返回空路径（装配层应注入显式路径替代——构造空
