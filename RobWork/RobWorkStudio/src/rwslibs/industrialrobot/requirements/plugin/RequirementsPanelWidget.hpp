@@ -151,6 +151,15 @@ public:
      */
     std::function<bool()> interactiveWriteGuard(const IRequirementEditor* editor) const;
 
+    /**
+     * @brief 固定内联引用表单的完整工作集和目录，排队写回前拒绝漂移。
+     * @param editor [in] 非拥有编辑器身份；先过寿命/会话守卫才读取其工作集。
+     * @param choices [in] 与表单同一拍取得的目录值快照；空不等于未装配。
+     * @return 仅UI线程调用的谓词；会话/工作集/目录变化返回false，零写入。
+     */
+    std::function<bool()> referenceEditGuard(const IRequirementEditor* editor,
+        const std::vector<RequirementsReferenceChoice>& choices) const;
+
     /** @brief 注入区域三维预览出口（装配期；不注入＝预览仅文本摘要）。 */
     void setRegionPreviewSink(RegionPreviewSink sink);
 

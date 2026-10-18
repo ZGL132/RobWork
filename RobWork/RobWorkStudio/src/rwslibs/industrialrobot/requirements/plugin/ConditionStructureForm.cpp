@@ -6,6 +6,7 @@
  * 写入，防止销毁当前发信按钮。未变化的SourcedValue原样保留来源和四态。
  */
 #include "ConditionStructureForm.hpp"
+#include "ReferenceChoiceBox.hpp"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
@@ -105,9 +106,25 @@ QString cell(QTableWidget* table, int row, int column)
     return table->item(row, column)->text();
 }
 
-/** @brief 浅引用行投影；类型固定词表，无载荷引用不填假标识。 */
-void referenceRow(QTableWidget* table, int row, const RequirementReference& reference)
+/**
+ * @brief 浅引用行投影；装配目录时仅显示业务名称，兼容轨不填假标识。
+ * @param table [in,out] Qt表宿主；row为已插入行，控件归表格所有。
+ * @param reference [in] 原引用；preserve=false的新行不把默认值伪装成历史引用。
+ * @param choices [in] 目录副本的调用期借用；nullptr为未装配。
+ * @param preserve [in] 是否允许原缺失引用原样保留。
+ */
+void referenceRow(QTableWidget* table, int row, const RequirementReference& reference,
+    const std::vector<RequirementsReferenceChoice>* choices, bool preserve)
 {
+    if (choices) {
+        auto* choice=new ReferenceChoiceBox(*choices,{RequirementRefKind::Tool,RequirementRefKind::DefaultTcp},
+            preserve ? std::optional<RequirementReference>{reference} : std::nullopt,false,table);
+        table->setCellWidget(row,0,choice);
+        // 隐藏列仍保存原origin元数据，避免更换名称时丢失负载物性的四态来源。
+        table->setItem(row,1,new QTableWidgetItem);
+        table->setItem(row,2,new QTableWidgetItem);
+        return;
+    }
     auto* kind = new QComboBox(table);
     for (auto k : {RequirementRefKind::DefaultTcp, RequirementRefKind::Tool,
                     RequirementRefKind::World, RequirementRefKind::ModelFrame,
@@ -124,6 +141,9 @@ void referenceRow(QTableWidget* table, int row, const RequirementReference& refe
 /** @brief 解析浅引用，不裁剪用户提供的多余载荷；结构合法性归wellFormed域函数。 */
 RequirementReference readReference(QTableWidget* table, int row)
 {
+    if (const auto* choice=dynamic_cast<ReferenceChoiceBox*>(table->cellWidget(row,0))) {
+        return *choice->reference();
+    }
     RequirementReference reference;
     reference.kind = RequirementRefKind(qobject_cast<QComboBox*>(table->cellWidget(row, 0))->currentData().toInt());
     const auto id = cell(table, row, 1).trimmed();
@@ -146,8 +166,10 @@ QString idsText(const std::vector<core::ObjectId>& ids)
 
 ConditionStructureForm::ConditionStructureForm(const OperatingCondition& base,
     const std::vector<TaskPoint>& points, bool writable,
-    std::function<void(OperatingCondition)> submit, QWidget* parent)
-    : QWidget(parent), m_base(base), m_points(points), m_submit(std::move(submit))
+    std::function<void(OperatingCondition)> submit, QWidget* parent,
+    const std::vector<RequirementsReferenceChoice>* choices)
+    : QWidget(parent), m_base(base), m_points(points), m_submit(std::move(submit)),
+      m_choices(choices ? std::optional<std::vector<RequirementsReferenceChoice>>{*choices} : std::nullopt)
 {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -157,6 +179,15 @@ ConditionStructureForm::ConditionStructureForm(const OperatingCondition& base,
     m_payloads = table(this, "ird_condition_payloads", {"工具类别", "对象标识", "TCP键", "质量 (kg)", "质心 x,y,z (m)", "惯量 (kg·m²)"});
     m_events = table(this, "ird_condition_events", {"事件", "绑定工位", "时长 (s，空=未设)"});
     m_tools = table(this, "ird_condition_tools", {"工具类别", "对象标识", "TCP键"});
+    if (m_choices) {
+        for (auto* values : {m_payloads,m_tools}) {
+            values->horizontalHeaderItem(0)->setText("工具 / TCP名称");
+            values->setColumnHidden(1,true); values->setColumnHidden(2,true);
+        }
+    } else {
+        auto* missing=new QLabel("宿主名称目录未装配；工具及环境为兼容输入，不能证明引用当前存在",this);
+        missing->setWordWrap(true); layout->addWidget(missing);
+    }
     // 增删只操作暂存表；删除按钮不是持久化对象删除，不触发项目写路径。
     auto group = [this, layout, writable](const QString& title, QTableWidget* values,
         const char* addName, const char* removeName, std::function<void()> add) {
@@ -185,7 +216,7 @@ ConditionStructureForm::ConditionStructureForm(const OperatingCondition& base,
         addEvent(e);
     });
     group("工具引用", m_tools, "ird_condition_add_tool", "ird_condition_remove_tool", [this] {
-        RequirementReference ref; ref.kind = RequirementRefKind::DefaultTcp; addTool(ref);
+        RequirementReference ref; ref.kind = RequirementRefKind::DefaultTcp; addTool(ref,false);
     });
     auto* form = new QFormLayout;
     m_environment = new QLineEdit(this); m_environment->setObjectName("ird_condition_environment");
@@ -197,6 +228,11 @@ ConditionStructureForm::ConditionStructureForm(const OperatingCondition& base,
     m_scope->addItem("不适用", int(AppliesToScope::None));
     m_stations = new QListWidget(this); m_stations->setObjectName("ird_condition_stations");
     form->addRow("环境对象标识（逗号分隔）", m_environment);
+    if (m_choices) {
+        form->setRowVisible(m_environment,false);
+        m_environmentChoices=new QListWidget(this); m_environmentChoices->setObjectName("ird_condition_environment_choices");
+        m_environmentChoices->setEnabled(writable); form->addRow("环境对象（业务名称多选）",m_environmentChoices);
+    }
     form->addRow("碰撞要求", m_collision);
     form->addRow("最小关节裕量（rad/m，空=未设）", m_margin);
     form->addRow("适用范围", m_scope);
@@ -219,17 +255,17 @@ ConditionStructureForm::ConditionStructureForm(const OperatingCondition& base,
 void ConditionStructureForm::addPayload(const ConditionPayload& payload, int origin)
 {
     const int row = m_payloads->rowCount(); m_payloads->insertRow(row);
-    referenceRow(m_payloads, row, payload.toolRef);
+    referenceRow(m_payloads,row,payload.toolRef,m_choices ? &*m_choices : nullptr,origin>=0);
     m_payloads->item(row, 1)->setData(Qt::UserRole, origin);
     m_payloads->setItem(row, 3, new QTableWidgetItem(sourcedText(payload.mass, number)));
     m_payloads->setItem(row, 4, new QTableWidgetItem(sourcedText(payload.com, vectorText)));
     m_payloads->setItem(row, 5, new QTableWidgetItem(sourcedText(payload.inertia, number)));
 }
 
-void ConditionStructureForm::addTool(const RequirementReference& reference)
+void ConditionStructureForm::addTool(const RequirementReference& reference, bool preserve)
 {
     const int row = m_tools->rowCount(); m_tools->insertRow(row);
-    referenceRow(m_tools, row, reference);
+    referenceRow(m_tools,row,reference,m_choices ? &*m_choices : nullptr,preserve);
 }
 
 void ConditionStructureForm::addEvent(const ConditionEvent& event)
@@ -259,6 +295,30 @@ void ConditionStructureForm::reset()
     for (const auto& event : m_base.events) { addEvent(event); }
     for (const auto& tool : m_base.toolRefs) { addTool(tool); }
     m_environment->setText(idsText(m_base.environmentRefs));
+    if (m_environmentChoices) {
+        m_environmentChoices->clear();
+        const auto append=[this](const core::ObjectId& id,const QString& name,bool available,const QString& reason) {
+            const bool original=std::find(m_base.environmentRefs.begin(),m_base.environmentRefs.end(),id)!=m_base.environmentRefs.end();
+            auto* item=new QListWidgetItem(name,m_environmentChoices);
+            item->setData(Qt::UserRole,QString::fromStdString(id.toCanonical()));
+            item->setData(Qt::UserRole+1,available); item->setToolTip(reason);
+            item->setFlags(item->flags()|Qt::ItemIsUserCheckable);
+            // 原缺失环境可保留或移除；新不可用环境禁止勾选，确认层再防绕过。
+            if (!available && !original) { item->setFlags(item->flags() & ~Qt::ItemIsEnabled); }
+            item->setCheckState(original ? Qt::Checked : Qt::Unchecked);
+        };
+        for (const auto& entry : *m_choices) {
+            if (entry.reference.kind!=RequirementRefKind::SceneObject || !entry.reference.objectId) { continue; }
+            append(*entry.reference.objectId,QString::fromStdString(entry.displayName)+(entry.available ? QString() : QString("（不可用）")),
+                entry.available,QString::fromStdString(entry.unavailableReason));
+        }
+        for (std::size_t i=0;i<m_base.environmentRefs.size();++i) {
+            const auto& id=m_base.environmentRefs[i];
+            if (std::none_of(m_choices->begin(),m_choices->end(),[&](const auto& item) {
+                return item.reference.kind==RequirementRefKind::SceneObject && item.reference.objectId==id;
+            })) { append(id,QString("原环境 %1（目录中缺失，保留原值）").arg(i+1),false,"当前目录中无此环境"); }
+        }
+    }
     m_collision->setChecked(m_base.demands.collisionFreeRequired);
     m_margin->setText(m_base.demands.minimumJointMargin ? number(*m_base.demands.minimumJointMargin) : QString());
     m_scope->setCurrentIndex(m_scope->findData(int(m_base.appliesTo.scope)));
@@ -305,8 +365,31 @@ void ConditionStructureForm::apply()
             candidate.events.push_back(event);
         }
         candidate.environmentRefs.clear();
-        for (const auto& id : m_environment->text().split(',', Qt::SkipEmptyParts)) {
-            candidate.environmentRefs.push_back(core::ObjectId::fromCanonical(id.trimmed().toStdString()));
+        if (m_environmentChoices) {
+            std::vector<core::ObjectId> selected;
+            for (int i=0;i<m_environmentChoices->count();++i) {
+                const auto* item=m_environmentChoices->item(i);
+                if (item->checkState()!=Qt::Checked) { continue; }
+                const auto id=core::ObjectId::fromCanonical(item->data(Qt::UserRole).toString().toStdString());
+                if (!item->data(Qt::UserRole+1).toBool()
+                    && std::find(m_base.environmentRefs.begin(),m_base.environmentRefs.end(),id)==m_base.environmentRefs.end()) {
+                    throw std::invalid_argument("所选环境当前不可用，请重新选择业务目标");
+                }
+                selected.push_back(id);
+            }
+            // 保留未删除原引用的原顺序，再按目录顺序追加新选，避免只改物性就重排集合。
+            for (const auto& id : m_base.environmentRefs) {
+                if (std::find(selected.begin(),selected.end(),id)!=selected.end()) { candidate.environmentRefs.push_back(id); }
+            }
+            for (const auto& id : selected) {
+                if (std::find(candidate.environmentRefs.begin(),candidate.environmentRefs.end(),id)==candidate.environmentRefs.end()) {
+                    candidate.environmentRefs.push_back(id);
+                }
+            }
+        } else {
+            for (const auto& id : m_environment->text().split(',', Qt::SkipEmptyParts)) {
+                candidate.environmentRefs.push_back(core::ObjectId::fromCanonical(id.trimmed().toStdString()));
+            }
         }
         candidate.demands.collisionFreeRequired = m_collision->isChecked();
         candidate.demands.minimumJointMargin.reset();

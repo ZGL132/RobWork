@@ -10,12 +10,14 @@
 #include <QWidget>
 #include <functional>
 #include <sdurws/ird/requirements/RequirementTypes.hpp>
+#include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>
 class QFormLayout;
 class QComboBox;
 class QLineEdit;
 class QCheckBox;
 class QLabel;
 namespace sdurws::ird::requirements {
+class ReferenceChoiceBox;
 /** @brief 区域完整采样暂存区；草稿权威仍归外部编辑器，不保存编辑器指针。 */
 class RegionSamplingForm final : public QWidget {
 public:
@@ -25,9 +27,11 @@ public:
      * @param writable [in] false时全部编辑及确认禁用。
      * @param submit [in] 合法且变化的完整候选接收者；宿主须排队检查原基线。
      * @param parent [in] 非拥有Qt父对象，负责销毁本表单。
+     * @param choices [in] 可空名称目录快照；为空时明确显示能力缺失，保留原引用。
      */
     RegionSamplingForm(const WorkRegion& base, bool writable,
-                       std::function<void(WorkRegion)> submit, QWidget* parent);
+                       std::function<void(WorkRegion)> submit, QWidget* parent,
+                       const std::vector<RequirementsReferenceChoice>* choices = nullptr);
 private:
     /// @brief 按基线重填全部控件，清除错误与未确认输入；零写入。
     void reset();
@@ -54,6 +58,8 @@ private:
     QCheckBox* m_collision = nullptr; ///< 区域无碰撞要求。
     QLineEdit* m_margin = nullptr; ///< 可选关节裕量，rad/m依关节类型。
     QLabel* m_error = nullptr; ///< 用户输入错误；草稿未写入。
+    ReferenceChoiceBox* m_reference = nullptr; ///< Qt子控件；参考系不在本层解析或换算。
+    ReferenceChoiceBox* m_tcp = nullptr; ///< Qt子控件；可选工具精确到TCP键。
 };
 }
 #endif

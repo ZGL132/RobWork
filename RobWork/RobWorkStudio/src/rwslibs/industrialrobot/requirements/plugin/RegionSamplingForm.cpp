@@ -6,6 +6,7 @@
  * 不复制GridBySpacing规范化、不生成随机样本；确认后回传值，零持久化写入。
  */
 #include "RegionSamplingForm.hpp"
+#include "ReferenceChoiceBox.hpp"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
@@ -53,7 +54,8 @@ double finiteNumber(const QString& text)
 }
 
 RegionSamplingForm::RegionSamplingForm(const WorkRegion& base, bool writable,
-    std::function<void(WorkRegion)> submit, QWidget* parent)
+    std::function<void(WorkRegion)> submit, QWidget* parent,
+    const std::vector<RequirementsReferenceChoice>* choices)
     : QWidget(parent), m_base(base), m_submit(std::move(submit))
 {
     setObjectName("ird_region_sampling_form");
@@ -69,6 +71,16 @@ RegionSamplingForm::RegionSamplingForm(const WorkRegion& base, bool writable,
         fields->addRow(label, edit); return edit;
     };
     m_name = line("区域名称", "ird_region_definition_name");
+    if (choices) {
+        m_reference=new ReferenceChoiceBox(*choices,{RequirementRefKind::World,RequirementRefKind::ModelFrame,
+            RequirementRefKind::SceneObject},base.refFrame,false,this);
+        m_reference->setObjectName("ird_region_reference_choice"); fields->addRow("参考坐标系",m_reference);
+        m_tcp=new ReferenceChoiceBox(*choices,{RequirementRefKind::Tool,RequirementRefKind::DefaultTcp},base.tcpRef,true,this);
+        m_tcp->setObjectName("ird_region_tcp_choice"); fields->addRow("工具 / TCP",m_tcp);
+    }
+    auto* referenceHint=new QLabel(choices ? "按业务名选择引用；变更参考系不自动换算盒坐标"
+        : "宿主名称目录未装配；区域参考系和TCP保留原值",this);
+    referenceHint->setWordWrap(true); fields->addRow(referenceHint);
     m_method = new QComboBox(this); m_method->setObjectName("ird_region_sampling_method");
     m_method->addItem("网格计数 (Grid)", int(PositionSamplingMethod::Grid));
     m_method->addItem("网格间距 (GridBySpacing)", int(PositionSamplingMethod::GridBySpacing));
@@ -113,6 +125,7 @@ RegionSamplingForm::RegionSamplingForm(const WorkRegion& base, bool writable,
 void RegionSamplingForm::reset()
 {
     m_name->setText(QString::fromStdString(m_base.name));
+    if (m_reference) { m_reference->resetSelection(); m_tcp->resetSelection(); }
     m_method->setCurrentIndex(m_method->findData(int(m_base.positionSampling.method)));
     for (int axis = 0; axis < 3; ++axis) {
         m_counts[axis]->setText(QString::number(m_base.positionSampling.counts[axis]));
@@ -151,6 +164,7 @@ void RegionSamplingForm::apply()
     if (!isEnabled()) { return; } // 防御直接槽调用，禁写不只依赖按钮灰显。
     WorkRegion candidate = m_base;
     try {
+        if (m_reference) { candidate.refFrame=*m_reference->reference(); candidate.tcpRef=m_tcp->reference(); }
         candidate.name = m_name->text().toStdString();
         if (m_name->text().trimmed().isEmpty()) { throw std::invalid_argument("区域名称不能为空"); }
         candidate.positionSampling.method = PositionSamplingMethod(m_method->currentData().toInt());

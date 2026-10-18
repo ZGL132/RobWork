@@ -411,6 +411,25 @@ void RequirementsPanelWidget::setRegionPreviewSink(RegionPreviewSink sink)
     m_regionPreview = std::move(sink);
 }
 
+std::function<bool()> RequirementsPanelWidget::referenceEditGuard(const IRequirementEditor* editor,
+    const std::vector<RequirementsReferenceChoice>& choices) const
+{
+    const auto guard=interactiveWriteGuard(editor);
+    const auto directory=m_view3dSeams.referenceChoices;
+    const auto before=editor ? editor->workingSet() : RequirementWorkingSet{};
+    return [guard,directory,choices,before,editor] {
+        if (!guard() || editor->workingSet()!=before) { return false; }
+        if (!directory) { return true; } // 旧装配无目录仍复核会话及完整工作集。
+        const auto latest=directory();
+        if (latest.size()!=choices.size()) { return false; }
+        for (std::size_t i=0;i<choices.size();++i) {
+            if (latest[i].reference!=choices[i].reference || latest[i].displayName!=choices[i].displayName
+                || latest[i].available!=choices[i].available || latest[i].unavailableReason!=choices[i].unavailableReason) { return false; }
+        }
+        return true;
+    };
+}
+
 void RequirementsPanelWidget::setSampleResultsSink(SampleResultsSink sink)
 {
     // FIX-T2——采样结果清单出口（装配层注入；不注入＝清单恒空态零虚构）。
@@ -2774,9 +2793,13 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         m_regionBasicForm->addRow(makeBatchParameterTable(RequirementEdit{region}));
         // REQ-03：整块定义暂存；回调捕获进入基线而非排队执行时的选中行。
         // 一次提交/撤销，外部修改或会话切换时不得覆盖新权威值。
+        const auto directory=m_view3dSeams.referenceChoices;
+        const auto choices=directory ? directory() : std::vector<RequirementsReferenceChoice>{};
+        const auto directoryGuard=referenceEditGuard(m_editTarget ? m_editTarget() : nullptr,choices);
         auto* sampling = new RegionSamplingForm(region, m_writable,
-            [this, base = region, expectedEditor = (m_editTarget ? m_editTarget() : nullptr)](WorkRegion candidate) {
-                QMetaObject::invokeMethod(this, [this, base, expectedEditor, candidate = std::move(candidate)] {
+            [this, base = region, directoryGuard, expectedEditor = (m_editTarget ? m_editTarget() : nullptr)](WorkRegion candidate) {
+                QMetaObject::invokeMethod(this, [this, base, directoryGuard, expectedEditor, candidate = std::move(candidate)] {
+                    if (!directoryGuard()) { showStatusLine("会话、工作集或引用目录已改变，请刷新区域表单"); return; }
                     auto* editor = m_editTarget ? m_editTarget() : nullptr;
                     if (!m_writable || !editor || editor != expectedEditor) { return; }
                     for (const auto& latest : editor->workingSet().regions.entries) {
@@ -2788,7 +2811,7 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
                         return;
                     }
                 }, Qt::QueuedConnection);
-            }, this);
+            }, this, directory ? &choices : nullptr);
         m_regionBasicForm->addRow(sampling);
 
 
@@ -3208,10 +3231,14 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
                     // REQ-04：结构编辑器只拥有进入基线的副本。确认排到信号返回后，
                     // 并绑定原编辑器/对象及基线；切换选择不改写新对象，外部刷新或
                     // 另一编辑已改变原对象时拒绝过期候选，避免覆盖新数据。
+                    const auto directory=m_view3dSeams.referenceChoices;
+                    const auto choices=directory ? directory() : std::vector<RequirementsReferenceChoice>{};
+                    const auto directoryGuard=referenceEditGuard(m_editTarget ? m_editTarget() : nullptr,choices);
                     auto* structure = new ConditionStructureForm(c, ws.points.entries, m_writable,
-                        [this, base = c, expectedEditor = (m_editTarget ? m_editTarget() : nullptr)](OperatingCondition candidate) {
+                        [this, base = c, directoryGuard, expectedEditor = (m_editTarget ? m_editTarget() : nullptr)](OperatingCondition candidate) {
                             QMetaObject::invokeMethod(this,
-                                [this, base, expectedEditor, candidate = std::move(candidate)] {
+                                [this, base, directoryGuard, expectedEditor, candidate = std::move(candidate)] {
+                                    if (!directoryGuard()) { showStatusLine("会话、工作集或引用目录已改变，请刷新工况表单"); return; }
                                     auto* editor = m_editTarget ? m_editTarget() : nullptr;
                                     if (!m_writable || !editor || editor != expectedEditor) { return; }
                                     const auto& entries = editor->workingSet().conditions.entries;
@@ -3224,7 +3251,7 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
                                         m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
                                     }
                                 }, Qt::QueuedConnection);
-                        }, this);
+                        }, this, directory ? &choices : nullptr);
                     m_conditionForm->addRow(structure);
                     for (const StationFieldRow& fr :
                          conditionFieldsFor(c, m_conditionService, m_writable)) {

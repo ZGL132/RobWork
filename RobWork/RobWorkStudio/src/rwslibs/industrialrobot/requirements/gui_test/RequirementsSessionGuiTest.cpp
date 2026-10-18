@@ -3440,3 +3440,117 @@ TEST_F(RequirementsSessionGuiTest, NamedGeometryAndMultiTcpKeepIdentity_REQ09_AT
     EXPECT_EQ(after.refFrame,before.points.entries.front().refFrame);
     ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
 }
+
+/** @brief REQ-03：区域参考系/TCP按业务名选择，暂存不换算盒坐标，整批一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, NamedRegionReferencesAtomicAndStale_REQ03_AT02)
+{
+    IRD_TEST_INFO("REQ-03", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    RequirementReference frame; frame.kind=RequirementRefKind::SceneObject; frame.objectId=core::ObjectId::generate();
+    RequirementReference tcp; tcp.kind=RequirementRefKind::Tool; tcp.objectId=core::ObjectId::generate(); tcp.tcpKey="tip";
+    std::vector<RequirementsReferenceChoice> choices{{RequirementReference{},"世界坐标系",true,""},
+        {frame,"场景 / 区域夹具",true,""},{tcp,"工具 / 探针 / tip",true,""}};
+    RequirementsView3DSeams seams; seams.referenceChoices=[&] { return choices; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    m_panel->focusObject(before.regions.entries.front().objectId);
+    auto* reference=m_panel->findChild<QComboBox*>("ird_region_reference_choice");
+    auto* tool=m_panel->findChild<QComboBox*>("ird_region_tcp_choice");
+    ASSERT_NE(reference,nullptr) << "区域缺业务名称参考系入口";
+    ASSERT_NE(tool,nullptr) << "区域缺业务名称TCP入口";
+    reference->setCurrentIndex(reference->findText("场景 / 区域夹具"));
+    tool->setCurrentIndex(tool->findText("工具 / 探针 / tip"));
+    EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().refFrame,frame);
+    ASSERT_TRUE(m_editor.workingSet().regions.entries.front().tcpRef);
+    EXPECT_EQ(*m_editor.workingSet().regions.entries.front().tcpRef,tcp);
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().box,before.regions.entries.front().box);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(before.regions.entries.front().objectId);
+    reference=m_panel->findChild<QComboBox*>("ird_region_reference_choice");
+    reference->setCurrentIndex(reference->findText("场景 / 区域夹具"));
+    choices.pop_back(); // 与工位相同：未刷新表单不能向变化的目录提交。
+    m_panel->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-04：工况负载/工具/环境均按名称绑定，未确认零写入，过期拒绝。 */
+TEST_F(RequirementsSessionGuiTest, NamedConditionReferencesAtomicAndStale_REQ04_AT02)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    RequirementReference scene; scene.kind=RequirementRefKind::SceneObject; scene.objectId=core::ObjectId::generate();
+    RequirementReference tcp; tcp.kind=RequirementRefKind::Tool; tcp.objectId=core::ObjectId::generate(); tcp.tcpKey="tip";
+    std::vector<RequirementsReferenceChoice> choices{{scene,"场景 / 障碍物",true,""},{tcp,"工具 / 夹爪 / tip",true,""}};
+    RequirementsView3DSeams seams; seams.referenceChoices=[&] { return choices; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    m_panel->focusObject(before.conditions.entries.front().objectId);
+    auto* environment=m_panel->findChild<QListWidget*>("ird_condition_environment_choices");
+    ASSERT_NE(environment,nullptr) << "工况缺按业务名选择环境的入口";
+    ASSERT_EQ(environment->count(),1); environment->item(0)->setCheckState(Qt::Checked);
+    EXPECT_TRUE(m_panel->findChild<QLineEdit*>("ird_condition_environment")->isHidden());
+    m_panel->findChild<QPushButton*>("ird_condition_add_payload")->click();
+    m_panel->findChild<QPushButton*>("ird_condition_add_tool")->click();
+    for (const auto* name : {"ird_condition_payloads","ird_condition_tools"}) {
+        auto* table=m_panel->findChild<QTableWidget*>(name); ASSERT_NE(table,nullptr);
+        auto* combo=qobject_cast<QComboBox*>(table->cellWidget(0,0)); ASSERT_NE(combo,nullptr);
+        const int row=combo->findText("工具 / 夹爪 / tip"); ASSERT_GE(row,0); combo->setCurrentIndex(row);
+        EXPECT_TRUE(table->isColumnHidden(1)); EXPECT_TRUE(table->isColumnHidden(2));
+    }
+    EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click(); QApplication::processEvents();
+    const auto after=m_editor.workingSet().conditions.entries.front();
+    EXPECT_EQ(after.environmentRefs,std::vector<core::ObjectId>{*scene.objectId});
+    EXPECT_EQ(after.toolRefs,std::vector<RequirementReference>{tcp});
+    ASSERT_EQ(after.payloads.size(),1); EXPECT_EQ(after.payloads.front().toolRef,tcp);
+    EXPECT_EQ(after.payloads.front().mass.state(),core::FieldState::NotProvided);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(before.conditions.entries.front().objectId);
+    m_panel->findChild<QListWidget*>("ird_condition_environment_choices")->item(0)->setCheckState(Qt::Checked);
+    choices.clear();
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-03/04：历史缺失引用保留、新不可用环境拒绝、取消与只读零写入。 */
+TEST_F(RequirementsSessionGuiTest, NamedInlineReferencesMissingUnavailableCancelReadOnly_REQ04_AT02)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    auto condition=m_editor.workingSet().conditions.entries.front();
+    const auto missing=core::ObjectId::generate(); condition.environmentRefs={missing};
+    ConditionPayload payload; payload.toolRef.kind=RequirementRefKind::Tool;
+    payload.toolRef.objectId=core::ObjectId::generate(); payload.toolRef.tcpKey="missing-tip";
+    condition.payloads={payload}; ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{condition}).accepted);
+    const auto before=m_editor.workingSet();
+    RequirementReference blocked; blocked.kind=RequirementRefKind::SceneObject; blocked.objectId=core::ObjectId::generate();
+    RequirementsView3DSeams seams; seams.referenceChoices=[=] { return std::vector<RequirementsReferenceChoice>{
+        {blocked,"未发布环境",false,"没有运行时帧"}}; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report); m_panel->focusObject(condition.objectId);
+    auto* environments=m_panel->findChild<QListWidget*>("ird_condition_environment_choices");
+    ASSERT_NE(environments,nullptr); ASSERT_EQ(environments->count(),2);
+    EXPECT_EQ(environments->item(1)->checkState(),Qt::Checked);
+    EXPECT_TRUE(environments->item(1)->text().contains("缺失"));
+    auto* table=m_panel->findChild<QTableWidget*>("ird_condition_payloads"); ASSERT_NE(table,nullptr);
+    auto* tool=qobject_cast<QComboBox*>(table->cellWidget(0,0)); ASSERT_NE(tool,nullptr);
+    EXPECT_TRUE(tool->currentText().contains("缺失"));
+    table->item(0,3)->setText("2.5");
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click(); QApplication::processEvents();
+    const auto after=m_editor.workingSet().conditions.entries.front();
+    EXPECT_EQ(after.environmentRefs,condition.environmentRefs); EXPECT_EQ(after.payloads.front().toolRef,payload.toolRef);
+    EXPECT_DOUBLE_EQ(after.payloads.front().mass.value(),2.5);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(condition.objectId);
+    environments=m_panel->findChild<QListWidget*>("ird_condition_environment_choices");
+    EXPECT_FALSE(environments->item(0)->flags() & Qt::ItemIsEnabled);
+    environments->item(0)->setCheckState(Qt::Checked); // 程序绕过灰显也不能提交不可用新引用。
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+    EXPECT_FALSE(m_panel->findChild<QLabel*>("ird_condition_structure_error")->text().isEmpty());
+    m_panel->findChild<QPushButton*>("ird_condition_structure_cancel")->click();
+    EXPECT_EQ(environments->item(0)->checkState(),Qt::Unchecked);
+    EXPECT_EQ(environments->item(1)->checkState(),Qt::Checked);
+    m_panel->setWritable(false); QApplication::processEvents();
+    EXPECT_FALSE(m_panel->findChild<QListWidget*>("ird_condition_environment_choices")->isEnabled());
+    EXPECT_FALSE(m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->isEnabled());
+    EXPECT_EQ(m_editor.workingSet(),before);
+}

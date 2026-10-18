@@ -7947,6 +7947,78 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                     if (directorySeen) { ok(m_requirementsEditor.undoLocal(),"step5.7 named-reference-one-undo"); }
                     ok(m_requirementsEditor.workingSet()==beforeNamedReference,"step5.7 named-reference-undo-restores-all");
                     if (m_domains->requirements) { m_domains->requirements->refreshFromSession(); }
+                    // REQ-03/04：区域/工况同样走正式名称目录和真实表单，不注入候选。
+                    // 每段先新增，再确认引用，恰两次撤销还原整个工作集与原拾取前置。
+                    const auto beforeNamedForms=m_requirementsEditor.workingSet();
+                    auto* addRegion=m_requirementsDock->findChild<QPushButton*>("ird_req_add_regions");
+                    if (addRegion) { addRegion->click(); settleEvents(120); }
+                    bool regionNamed=false;
+                    auto* regionReference=m_requirementsDock->findChild<QComboBox*>("ird_region_reference_choice");
+                    const int regionRow=regionReference ? regionReference->findText("场景 / requirements-pick-fixture") : -1;
+                    ok(addRegion && regionRow>=0,"step5.7 real-region-reference-directory");
+                    if (regionRow>=0) {
+                        const auto staged=m_requirementsEditor.workingSet();
+                        regionReference->setCurrentIndex(regionRow);
+                        ok(m_requirementsEditor.workingSet()==staged,"step5.7 region-selection-zero-write");
+                        if (auto* apply=m_requirementsDock->findChild<QPushButton*>("ird_region_sampling_apply")) {
+                            apply->click(); settleEvents(120);
+                            const auto& regions=m_requirementsEditor.workingSet().regions.entries;
+                            regionNamed=!regions.empty() && regions.back().refFrame.kind==requirements::RequirementRefKind::SceneObject
+                                && regions.back().refFrame.objectId==fixtureId;
+                        }
+                    }
+                    ok(regionNamed,"step5.7 real-region-reference-confirm");
+                    if (regionNamed) { ok(m_requirementsEditor.undoLocal(),"step5.7 region-reference-one-undo"); }
+                    if (m_requirementsEditor.workingSet().regions.entries.size()>beforeNamedForms.regions.entries.size()) {
+                        ok(m_requirementsEditor.undoLocal(),"step5.7 named-region-creation-undo");
+                    }
+                    if (m_domains->requirements) { m_domains->requirements->refreshFromSession(); }
+                    ok(m_requirementsEditor.workingSet()==beforeNamedForms,"step5.7 named-region-restores-all");
+                    auto* addCondition=m_requirementsDock->findChild<QPushButton*>("ird_req_add_conditions");
+                    QTimer::singleShot(100,this,[&] {
+                        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+                        ok(dialog!=nullptr,"step5.7 condition-create-real-wizard");
+                        if (dialog) {
+                            if (auto* box=dialog->findChild<QDialogButtonBox*>()) { box->button(QDialogButtonBox::Ok)->click(); }
+                        }
+                    });
+                    if (addCondition) { addCondition->click(); settleEvents(120); }
+                    auto* environment=m_requirementsDock->findChild<QListWidget*>("ird_condition_environment_choices");
+                    QListWidgetItem* environmentItem=nullptr;
+                    if (environment) {
+                        for (int i=0;i<environment->count();++i) {
+                            if (environment->item(i)->text()=="场景 / requirements-pick-fixture") { environmentItem=environment->item(i); }
+                        }
+                    }
+                    ok(addCondition && environmentItem,"step5.7 real-condition-environment-directory");
+                    bool environmentNamed=false;
+                    if (environmentItem) {
+                        const auto staged=m_requirementsEditor.workingSet();
+                        environmentItem->setCheckState(Qt::Checked);
+                        ok(m_requirementsEditor.workingSet()==staged,"step5.7 environment-selection-zero-write");
+                        // 小高度Dock中必须沿内外滚动区把真实环境选择滚到可见位置；
+                        // 只截取上方条目列表不能证明下面的名称选择可达。
+                        for (auto* ancestor=environment->parentWidget();ancestor;ancestor=ancestor->parentWidget()) {
+                            if (auto* scroll=qobject_cast<QScrollArea*>(ancestor)) { scroll->ensureWidgetVisible(environment); }
+                        }
+                        settleEvents(60);
+                        ok(!environment->visibleRegion().isEmpty(),"step5.7 environment-choice-scroll-reachable");
+                        snapPng(m_requirementsDock,"mtour-condition-name-directory.png");
+                        snapPng(environment,"mtour-environment-name-choice.png");
+                        if (auto* apply=m_requirementsDock->findChild<QPushButton*>("ird_condition_structure_apply")) {
+                            apply->click(); settleEvents(120);
+                            const auto& conditions=m_requirementsEditor.workingSet().conditions.entries;
+                            environmentNamed=!conditions.empty() && fixtureId
+                                && conditions.back().environmentRefs==std::vector<core::ObjectId>{*fixtureId};
+                        }
+                    }
+                    ok(environmentNamed,"step5.7 real-environment-reference-confirm");
+                    if (environmentNamed) { ok(m_requirementsEditor.undoLocal(),"step5.7 environment-reference-one-undo"); }
+                    if (m_requirementsEditor.workingSet().conditions.entries.size()>beforeNamedForms.conditions.entries.size()) {
+                        ok(m_requirementsEditor.undoLocal(),"step5.7 named-condition-creation-undo");
+                    }
+                    if (m_domains->requirements) { m_domains->requirements->refreshFromSession(); }
+                    ok(m_requirementsEditor.workingSet()==beforeNamedForms,"step5.7 named-condition-restores-all");
                     const auto beforePick = m_requirementsEditor.workingSet();
                     const auto pickHead=adapter->projectStore().query().head().id;
                     ok(!beforePick.points.entries.empty(), "step5.7 target-point-present");
