@@ -6494,6 +6494,38 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             }
             applyButton->click(); settleEvents(300);
             const auto after = currentRegion();
+            // WP-14-T12/REQ-03：核对正式预览接线收到的世界系几何，不能仅凭
+            // 表单值通过就宣称三维正确。本遍历使用World参考，盒角可直接对账；
+            // 规则辅助格每条仅一轴延伸，Random不得沿残留Grid载荷画伪网格。
+            ok(m_reqBox.has_value() && m_reqGrid.has_value(), "step5 world-preview-layers-present");
+            if (m_reqBox && m_reqGrid) {
+                bool cornersMatch = true;
+                for (std::size_t i = 0; i < 8; ++i) {
+                    for (std::size_t axis = 0; axis < 3; ++axis) {
+                        const double sign = (i & (std::size_t(1) << axis)) ? 0.5 : -0.5;
+                        cornersMatch = cornersMatch && std::abs(m_reqBox->corners[i][axis]
+                            - (after.box.center[axis] + sign * after.box.size[axis])) < 1e-12;
+                    }
+                }
+                ok(cornersMatch, "step5 world-box-eight-corners");
+                bool aligned = true;
+                for (const auto& line : m_reqGrid->gridLines) {
+                    int changed = 0;
+                    for (std::size_t axis = 0; axis < 3; ++axis) {
+                        if (std::abs(line.first[axis] - line.second[axis]) > 1e-12) { ++changed; }
+                    }
+                    aligned = aligned && changed == 1;
+                }
+                ok(aligned, "step5 grid-lines-axis-aligned");
+                if (method == requirements::PositionSamplingMethod::Random) {
+                    ok(m_reqGrid->gridLines.empty(), "step5 random-no-fabricated-grid");
+                } else if (method == requirements::PositionSamplingMethod::Grid) {
+                    ok(m_reqGrid->gridLines.size() == 47, "step5 grid-4x3x2-has-47-boundary-lines");
+                } else {
+                    ok(!m_reqGrid->gridLines.empty() && m_reqGrid->gridLines.size() <= 3267,
+                       "step5 spacing-grid-present-and-bounded");
+                }
+            }
             ok(after.positionSampling.method == method, "step5 confirmed-method-" + std::to_string(int(method)));
             ok(after.orientationSampling.directionSamples == 12 && after.orientationSampling.rollSamples == 4,
                "step5 orientation-12x4");

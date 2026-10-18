@@ -29,6 +29,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <limits>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -600,17 +601,62 @@ TEST(PluginPanel, RegionPreviewGeometryOutlineAndGrid_ACC1)
     EXPECT_DOUBLE_EQ(geo.corners[7][1], 1.0);
     EXPECT_DOUBLE_EQ(geo.corners[7][2], 1.0);
     EXPECT_DOUBLE_EQ(geo.corners[0][0], -1.0);
-    // 格线数＝(counts[0]+1)+(counts[1]+1)+(counts[2]+1)＝4+3+2=9。
-    EXPECT_EQ(geo.gridLines.size(), std::size_t(9));
-    // 零计数轴不产线（零样本区域仅呈现轮廓——V-02 口径）。
+    // REQ-03：每条线只沿一轴延伸；横向两轴边界的笛卡尔积形成辅助格。
+    // 3×2 + 2×4 + 4×3 = 26；旧9条面对角线计数不能作为正确几何契约。
+    EXPECT_EQ(geo.gridLines.size(), std::size_t(26));
+    // 任一零计数使位置样本乘积为零，整盒无辅助格（V-02）。
     WorkRegion zeroAxis = region;
     zeroAxis.positionSampling =
         PositionSampling{PositionSamplingMethod::Grid, {0, 2, 2}, {0, 0, 0}, 0};
     const auto zeroGeo = regionPreviewGeometry(zeroAxis, service);
-    EXPECT_EQ(zeroGeo.gridLines.size(), std::size_t(6));  // 0+3+3（x 轴零计数→无格线，y/z 各 3 条）
+    EXPECT_TRUE(zeroGeo.gridLines.empty());
     // 摘要文本确定性（同输入同串）。
     EXPECT_EQ(geo.summaryText, regionPreviewGeometry(region, service).summaryText);
     EXPECT_NE(geo.summaryText.find("盒 2×2×2"), std::string::npos);
+}
+
+/** @brief REQ-03：采样辅助格须轴对齐，Random/零样本不伪造规则网格，显示复杂度有界。 */
+TEST(PluginPanel, RegionPreviewAxisAlignedAndBounded_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {}, std::nullopt);
+    WorkRegion region;
+    region.objectId = core::ObjectId::generate(); region.name = "几何核查";
+    region.box = BoundingBox{rw::math::Vector3D<double>(1,2,3), rw::math::Vector3D<double>(2,4,6)};
+    region.positionSampling.counts = {3,2,1};
+    WorkRegionService service;
+    const auto geometry = regionPreviewGeometry(region, service);
+    for (const auto& line : geometry.gridLines) {
+        int changed = 0;
+        for (int axis = 0; axis < 3; ++axis) { if (line.first[axis] != line.second[axis]) { ++changed; } }
+        EXPECT_EQ(changed, 1) << "三维格线不得成为面对角线";
+    }
+    auto random = region; random.positionSampling.method = PositionSamplingMethod::Random; random.positionSampling.count = 24;
+    EXPECT_TRUE(regionPreviewGeometry(random, service).gridLines.empty()) << "随机样本未生成，不可拿旧Grid载荷画格";
+    auto zero = region; zero.positionSampling.counts = {0,2,2};
+    EXPECT_TRUE(regionPreviewGeometry(zero, service).gridLines.empty()) << "位置样本乘积为零，仅显示盒轮廓";
+    auto dense = region; dense.positionSampling.counts = {10000,10000,10000};
+    const auto preview = regionPreviewGeometry(dense, service);
+    EXPECT_LE(preview.gridLines.size(), 3267u) << "最多33×33×3条呈现辅助线，不改变真实计划";
+    EXPECT_NE(preview.summaryText.find("抽稀"), std::string::npos) << "辅助显示抽稀必须可见";
+
+    // UINT32_MAX 的边界数必须在64位中计算；同输入同序，不依赖遍历输入数量。
+    dense.positionSampling.counts.fill(std::numeric_limits<std::uint32_t>::max());
+    const auto maximum = regionPreviewGeometry(dense, service);
+    EXPECT_EQ(maximum.gridLines.size(), 3267u);
+    EXPECT_EQ(maximum, regionPreviewGeometry(dense, service));
+    for (const auto& line : maximum.gridLines) {
+        for (int axis = 0; axis < 3; ++axis) {
+            const auto lower = region.box.center[axis] - region.box.size[axis] / 2;
+            const auto upper = region.box.center[axis] + region.box.size[axis] / 2;
+            EXPECT_GE(line.first[axis], lower); EXPECT_LE(line.first[axis], upper);
+            EXPECT_GE(line.second[axis], lower); EXPECT_LE(line.second[axis], upper);
+        }
+    }
+    // 保留盒的两端边界；体心样本本身不在该投影内生成。
+    ASSERT_FALSE(maximum.gridLines.empty());
+    EXPECT_EQ(maximum.gridLines.front().first, maximum.corners[0]);
+    EXPECT_EQ(maximum.gridLines.back().second, maximum.corners[7]);
+    EXPECT_NE(maximum.summaryText.find("单元边界辅助格"), std::string::npos);
 }
 
 /// 工况面板：负载/事件/节拍/适用范围投影＋必验清单预览（面板表第 4 行）。

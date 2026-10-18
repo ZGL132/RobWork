@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T21:26:48+08:00",
+  "generatedAt": "2026-10-18T21:41:32+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 7550,
-    "totalBytes": 262590036,
+    "totalFiles": 7623,
+    "totalBytes": 268328102,
     "byKind": {
+      "gtest-report": 335,
+      "acceptance-record": 515,
+      "build-log": 6673,
       "pipeline-artifact": 2,
       "benchmark": 8,
       "json-data": 7,
-      "build-log": 6600,
-      "markdown-doc": 41,
-      "log": 1,
-      "manual-acceptance": 1,
       "governance-record": 40,
-      "gtest-report": 335,
-      "acceptance-record": 515
+      "manual-acceptance": 1,
+      "markdown-doc": 41,
+      "log": 1
     },
     "byLifecycle": {
       "historical": 564,
+      "unverified": 7032,
       "current": 27,
-      "unverified": 6959,
       "superseded": 0
     },
     "associated": 596,
-    "unassociated": 6954,
-    "shaComputed": 7532,
+    "unassociated": 7027,
+    "shaComputed": 7605,
     "shaSkippedLarge": 18,
-    "duplicateGroupsTotal": 370,
+    "duplicateGroupsTotal": 371,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -499,6 +499,7 @@
         "builds/doc-t12/validate-task-ex-t08.log",
         "builds/doc-t12/validate-task-ex-t09.log",
         "builds/doc-t12/validate-task-ex-t10.log",
+        "builds/requirements-completion-20261018/batch11-build/ird-batch11-task.log",
         "builds/requirements-completion-20261018/batch7-build/validate-task.log",
         "builds/requirements-completion-20261018/batch8-build/validate-task.log",
         "builds/ui-t41/acc/acc-validate-task.log",
@@ -663,6 +664,7 @@
         "builds/requirements-completion-20261018/batch10-host-final/stderr.log",
         "builds/requirements-completion-20261018/batch10-host-nested-scroll/stderr.log",
         "builds/requirements-completion-20261018/batch10-host/stderr.log",
+        "builds/requirements-completion-20261018/batch11-host/stderr.log",
         "builds/requirements-completion-20261018/batch6-unit-red/sdurws_ird_ui_test/console.log",
         "builds/requirements-completion-20261018/batch7-host-red/stderr.log",
         "builds/requirements-completion-20261018/batch7-lifecycle-green/stderr.log",
@@ -904,6 +906,7 @@
       "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
       "paths": [
         "builds/requirements-completion-20261018/batch10-build/ird-gates.log",
+        "builds/requirements-completion-20261018/batch11-build/ird-batch11-gates.log",
         "builds/requirements-completion-20261018/batch7-build/ird-gates.log",
         "builds/requirements-completion-20261018/batch8-build/ird-gates.log",
         "builds/requirements-completion-20261018/batch9-build/ird-gates.log"
@@ -927,14 +930,16 @@
       "paths": [
         "builds/requirements-completion-20261018/batch10-host-final/tour-1-panel-empty-state.png",
         "builds/requirements-completion-20261018/batch10-host-nested-scroll/tour-1-panel-empty-state.png",
-        "builds/requirements-completion-20261018/batch10-host/tour-1-panel-empty-state.png"
+        "builds/requirements-completion-20261018/batch10-host/tour-1-panel-empty-state.png",
+        "builds/requirements-completion-20261018/batch11-host/tour-1-panel-empty-state.png"
       ]
     },
     {
       "sha256": "06fac1b83ead9bc1bb7a6e9e51af58691914d0a51ca880c0e1a9f4cf43d6de4d",
       "paths": [
         "builds/requirements-completion-20261018/batch10-host-final/tour-2-station-edited.png",
-        "builds/requirements-completion-20261018/batch10-host-nested-scroll/tour-2-station-edited.png"
+        "builds/requirements-completion-20261018/batch10-host-nested-scroll/tour-2-station-edited.png",
+        "builds/requirements-completion-20261018/batch11-host/tour-2-station-edited.png"
       ]
     },
     {
@@ -978,6 +983,13 @@
       "paths": [
         "builds/requirements-completion-20261018/batch10-integrated/sdurws_ird_requirements_contract_test/ird-test-report.json",
         "builds/requirements-completion-20261018/batch3-standalone/sdurws_ird_requirements_contract_test/ird-test-report.json"
+      ]
+    },
+    {
+      "sha256": "453d7907c8ed94adc8b36c2779dde2d8bb5bec05f3c7dcfac567a17d368d0d08",
+      "paths": [
+        "builds/requirements-completion-20261018/batch11-build/ird-batch11-standalone-build-serial.log",
+        "builds/requirements-completion-20261018/batch9-build/standalone.log"
       ]
     },
     {
@@ -1156,13 +1168,6 @@
       "paths": [
         "builds/ui-t36/smoke/3-domain-panel-summoned.png",
         "builds/ui-t36/smoke/7-second-start-memory.png"
-      ]
-    },
-    {
-      "sha256": "3d1b8756d81dd72ed9aed9883303c47263947d732e5ebf82e6a725f107effd54",
-      "paths": [
-        "builds/ui-t36/smoke/4-requirements-buttons.png",
-        "builds/ui-t36/smoke/5-requirements-narrow.png"
       ]
     }
   ],
@@ -13069,6 +13074,590 @@
       "taskIds": [],
       "bytes": 2789,
       "sha256": "f3624063c767b8e6fdb7ca33a61238ed2153aeaa892e2f13209e7224a16b8a0b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-docs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2169,
+      "sha256": "73d91f4226bd3278b0e71624431cca206d1a6615fec20d4843cf425d5948e017",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-gates.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1903,
+      "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-green-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2511,
+      "sha256": "e374a7510896fb7625b02dd55f27d8e4f64324ac763b8d4c6719fbb3999d1d16",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-integrated-build-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27928,
+      "sha256": "d23ee471525dabd92ccd591eb703276408145679d028d17554dc5bdc63ed4a6c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-integrated-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29906,
+      "sha256": "e5bc27f7d42bc0e23bc2318714bbcd0abaf590ae08cb3dc459d8650e0bb07ccd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-red-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2336,
+      "sha256": "a6f88913a24aa888ddf54f66e62b14110c766faeecf6d5b32362a614dceaaa7f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-standalone-build-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19577,
+      "sha256": "f7a7c5d20a55a1012897213f01920a3753e8cb067b3b28cf6fe1d68994426a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-standalone-build-serial.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19544,
+      "sha256": "453d7907c8ed94adc8b36c2779dde2d8bb5bec05f3c7dcfac567a17d368d0d08",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27490,
+      "sha256": "9bfa13d4e5d25f07e27a841e3f4f1b9f7b5c065337ef2e7de860814312e3940b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-build/ird-batch11-task.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 30,
+      "sha256": "dd3d79d803ced76a97c3aab86a2e92c31f986e34b88b6f583946da999d59c7e8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-green/sdurws_ird_requirements_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 657,
+      "sha256": "08e89daa48d76f0dfdade89f1fb06d95aff7bb04208290678886fe9a60de894d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-green/sdurws_ird_requirements_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 972,
+      "sha256": "03cc8d136affcab37d0ddfa6cd46509d338e99833144496f23c288a7e3b9bf58",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-green/sdurws_ird_requirements_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1905,
+      "sha256": "b0d356859d142c2db69ff82629a811412dbcdf282017de137882561fd37adb3f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8560,
+      "sha256": "9320bdafe16ac3bec5ca376f49d8109241adbd62838b5ee018ca1071dcc89f44",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-1-panel-empty-state.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 189373,
+      "sha256": "e9de5474488ed4b00db65b50ff37279d9f808fd7542ada227b376626fe6b8f67",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-2-station-edited.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 198109,
+      "sha256": "06fac1b83ead9bc1bb7a6e9e51af58691914d0a51ca880c0e1a9f4cf43d6de4d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3-confirm-0.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 196735,
+      "sha256": "6bcd8d5ef9b86221164d1810f4341755059ca0d67c9556f5ce11be5f4774b6ae",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3-confirm-1.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 209237,
+      "sha256": "e0e55d5c26660f1f9a70f13aa0505b1edfa165b5c8e132d39e418fe789d48f9a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3-confirm-2.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 261877,
+      "sha256": "d536aeb347bbcaaac04c0f234263dad07fe0d2d40eab013d480020c1c786148b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3-method-0.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 199712,
+      "sha256": "a4567e0982d10805c4a0f11cee90bd2f4cbecaa2d6517584d5c687a63310adb2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3-method-1.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 215334,
+      "sha256": "28da007754b4c9f17e6634bd6409d1f145a7c4060d57bb67a32013583e87ee0f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3-method-2.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 265808,
+      "sha256": "ff77078a60895cc1327b9ae8fa5912259192c322f35aa5f9c0a386e523101899",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3-region-sampling.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 231041,
+      "sha256": "2dfdbeb691abd893b46877738e45cb7237159fd0b759de5995508f6eaafe159b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3a-spacing.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 261527,
+      "sha256": "d241b5d6eccc2a6cf7329eb6ea93b6654d1d36594f7dfa5b42ea6da5f2eedd6d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-3b-random.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 196729,
+      "sha256": "f7426ab3d4251378497c753f84ca45989a2a0131fd238a3c082e8cf18a230ca5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-4-validation.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 239778,
+      "sha256": "f2842e8c5210f7288415cc0587b18499f2269958a37ea4b8848b20c95aa74f11",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-4b-view3d-coloring.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 171067,
+      "sha256": "b546c421c8ea8ac6e54146427af1cd8e12874012b543ffc235195e40ddc7bfd6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-4c-validation-row-click.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 240297,
+      "sha256": "385e10b95db8d770c922a1ae9103cd5f9fa945835912c0c50cd994e1d3ca23bb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-host/tour-5-final-state.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 249483,
+      "sha256": "013a0150af2118a99b54c777a27621108f988ebe5eb5d7b88ceff12f86959b2b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_contract_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3309,
+      "sha256": "c9a31611d18d6f61ab7de5f93f2a2202129d3041d438946c09e693cf0100f096",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_contract_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6732,
+      "sha256": "568b09d8249e53e68e862223b73dab14aaaeda36c748348c16162f678edc32a3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_contract_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13421,
+      "sha256": "a301180e17532af26e0eb7e6e80529b72efc05e4d58f5524d52da96bcec10cd2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_gui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13470,
+      "sha256": "04db993058b7675e1fca636073ff1e83629a45032e8ca66531481c34b14e5a0f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_gui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27368,
+      "sha256": "9e22f98661742602e18a68fecfda7528c65394ce5ec96edace0897d46e0bbf02",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_gui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61843,
+      "sha256": "396f4067b7d08a8bc684148fccc72a29d5cbd5a86cbd38337e036414af72ebb7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35761,
+      "sha256": "0cac16a3d0bc2b13ce0966b2c87ab9fd0ece77da48fe86bc8f6de713f5febfc6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75929,
+      "sha256": "0255dc1776b14f2a4df84710b71c39d4298fc8f15e6b0a84bb64faa1d0831786",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_requirements_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 184692,
+      "sha256": "024b5c33d5c77b3639a15b03aab47fb4abca8b32df872b45b1bbfecf70388c79",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_ui_gui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 16261,
+      "sha256": "2818a8afd5a42ece472625d7de44a18f70af42a1b15f2d087d5f8e7dbec72449",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_ui_gui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 31094,
+      "sha256": "52a5ce8a84757060738ff6d5d3d60589028e913761f4ca79b52b52416d20d36c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_ui_gui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 69009,
+      "sha256": "9f4a2296b0d4b07163e4556ba274faa7f2c657e6dbbee18d7961e906bedd5816",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_ui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53952,
+      "sha256": "d2d92a9222083a13d71a11e763b1a99faa416ca2ba17bd89ec545830321fc54c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_ui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 106521,
+      "sha256": "63c91f1721460896d1a4691de9ef3f0492425bdbce081cf3e1e4e7b41193090e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated-final/sdurws_ird_ui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 248903,
+      "sha256": "4c711aec29facfe2f624f697fc3143c9aa50c224e9c199ebf321d05ee972d85c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_contract_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3307,
+      "sha256": "bf25813d6fad4a79d4866827d2fc810b2ca2d3b9434f3522f37e8945cb5dd0b8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_contract_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6732,
+      "sha256": "1a9d283957b02d608f7e717477914aa3af949e6c06bbf1f9b2ef8463bbd87f6a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_contract_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13420,
+      "sha256": "02ff22d7d066c88b6f36220c66c2f950e73a999958fdb373e29f3d2087c1dbde",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_gui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13938,
+      "sha256": "4cab99b17531f0935cb7545444658b23f3ad5e26ef084c3f817908d55c2a8e96",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_gui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28134,
+      "sha256": "615b6c71f6684b6e855541e2335b4664efff3819560c1b10af4552e75a97dc92",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_gui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61905,
+      "sha256": "ccc0233c97d6298d88232d46c7c9d1aa9c2ddd163045a7fe81df91dc000b10e3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35761,
+      "sha256": "f164f8482e722223b29b24292eed9276aa3bb12355b3ee5869e7c7343db99713",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75930,
+      "sha256": "f4a1805c3b30c378d808307b9098bdd05d0a098a03ee4a959a2d84d5d704d88c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-integrated/sdurws_ird_requirements_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 184692,
+      "sha256": "3cd5b6b019ec0e023ddd602889a4e1c18f9d5042cd76e16b2caa57d18a82b848",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-red/sdurws_ird_requirements_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4079,
+      "sha256": "21271e83e43191d1d6853014e71d1876d6aa9215a034b010587ef84abbe6c3e9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-red/sdurws_ird_requirements_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8333,
+      "sha256": "f0196481922699f9c9482d430a0adb612156879943e9fcfec95ffca45d6a57c0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-red/sdurws_ird_requirements_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1100,
+      "sha256": "b03bdd3cf0bd2d3cf08c322ac16eb3913dde53ea70776c59c2f70652d828d998",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_contract_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3307,
+      "sha256": "4a483acc1b78a985906cbc646febae6919f4ca5e38b6a9871e568cbe7a36cfa0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_contract_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6732,
+      "sha256": "cdefc5efe1ba16c2a75a8ec9925b1f074381a77203df12df0394eae0f8092e54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_contract_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13420,
+      "sha256": "cdf05168aac452c47b98f4b81320e86437fd15e609988b4528554c06ee6c0dee",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_gui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13474,
+      "sha256": "d54f06720c78ff067c9c7532d8b3585673dca6b0fcb7e11bb8b4922499a5e202",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_gui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27370,
+      "sha256": "db158a6df974627131bc83cdb98b08b36f2768e697aeff785812522d32a599be",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_gui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61847,
+      "sha256": "55e0fa7851b48989dd4121918468bf095d0c6c1b95a90e88e3b85494ea7fb641",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35761,
+      "sha256": "b7ce5ceb2ccd72fa79bec2166cc06fa853b13bde1bbe8082a1f368bf21b1fbd1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75930,
+      "sha256": "7799f31405f2438faae2ad37710ac9e4e9857869644d8aee9f204565aeb47052",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_requirements_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 184692,
+      "sha256": "62b86fb72f1417bc3faf673154d1736899634436bcc42c1e7855dce47adcf21d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_ui_gui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14433,
+      "sha256": "148f4da476e91015d2e1032ce79c4e3ae5c92a4cb114e251c3a97204801381a3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_ui_gui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27570,
+      "sha256": "c4ecc9aee48e819169137ddab084cb2ac9fece956c74484bbfd9225e36f9e976",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_ui_gui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 60773,
+      "sha256": "32431225e060dc3ae88a327f7e033ba2f4b99a5b1b25b83a931b7cac4a4d743d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_ui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 46413,
+      "sha256": "4430ac4eb0d6704e884f8a00e19bdb88924e6fd974b0637a1af681ab85fcd287",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_ui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91680,
+      "sha256": "635eb61659f4dd49d8e10d1046cafbe03f3b77bb02e5707ef193c50c9e261f79",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch11-standalone/sdurws_ird_ui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 214940,
+      "sha256": "a874978ee741078e91c65f70883fd2155c01f8e49c86436542d9361ecce206b7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/BATCH11.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2533,
+      "sha256": "1c3db6fbd3b38e96670cbf5f3eefa0c2d6c5524665b18fd69f2203478ef5fd4b",
       "lifecycle": "unverified"
     },
     {

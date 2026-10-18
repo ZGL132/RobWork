@@ -321,7 +321,7 @@ TEST(RequirementsView3DFlow, RegionPreviewSink_ForwardsGridLines_UI_T52)
                   std::vector<std::string>{"UI-T52-ACC2"});
 
     // ①预置：带一个区域的基线（盒 0.4³ 中心 (0.1,0.2,0.3)＋Grid 采样
-    // 1×1×1——每轴 2 条格线、全局 6 条的最小可断言面）。
+    // 1×1×1——每个方向有2×2条边界辅助线，全局12条；旧6条面对角线已纠正）。
     MapClosure closure;
     RegionSet regions;
     WorkRegion region;
@@ -367,12 +367,19 @@ TEST(RequirementsView3DFlow, RegionPreviewSink_ForwardsGridLines_UI_T52)
     assembly.bindReadiness(RequirementReadinessReport{});
     assembly.refreshFromSession();
 
-    // ③断言：格线直投（6 条＝每轴 counts+1=2 条×3 轴）＋参考系原值＋
+    // ③断言：格线直投（12条＝每方向2×2条×3轴）＋参考系原值＋
     // 角点同源（center±half 确定算术——转换零重排零丢失）。
     ASSERT_TRUE(received.has_value()) << "区域预览未触发（regions 非空应投递）";
     EXPECT_EQ(received->refFrame.kind, RequirementRefKind::World);
-    ASSERT_EQ(received->gridLines.size(), std::size_t{6})
+    ASSERT_EQ(received->gridLines.size(), std::size_t{12})
         << "格线段丢失（UI-T52 转换缺口——acceptance 2 失守）";
+    for (const auto& line : received->gridLines) {
+        int changed = 0;
+        for (int axis = 0; axis < 3; ++axis) {
+            if (line.first[axis] != line.second[axis]) { ++changed; }
+        }
+        EXPECT_EQ(changed, 1) << "REQ-03：装配转发后辅助线仍应轴对齐";
+    }
     EXPECT_DOUBLE_EQ(received->corners[0][0], -0.1) << "角点 X 失实（转换重排/丢失）";
     EXPECT_DOUBLE_EQ(received->corners[0][1], 0.0) << "角点 Y 失实";
     EXPECT_DOUBLE_EQ(received->corners[0][2], 0.1) << "角点 Z 失实";

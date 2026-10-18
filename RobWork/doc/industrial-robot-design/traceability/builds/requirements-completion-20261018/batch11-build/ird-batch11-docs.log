@@ -1,0 +1,11 @@
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-green/sdurws_ird_requirements_test/console.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-green/sdurws_ird_requirements_test/gtest.xml
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-green/sdurws_ird_requirements_test/ird-test-report.json
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-host/stderr.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-host/stdout.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-host/tour-1-panel-empty-state.png
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-host/tour-2-station-edited.png
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-host/tour-3-confirm-0.png
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-host/tour-3-confirm-1.png
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/requirements-completion-20261018/batch11-host/tour-3-confirm-2.png
+Write-Error: untracked evidence total: 47（仅列前 10）——先 git add 再重跑 index-evidence.ps1
