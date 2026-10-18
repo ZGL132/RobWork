@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.3（2026-10-18：commit-lint 挂 CI（F-934 消账）——GitHub boundaries job fetch-depth 0＋新增提交范围步骤、GitLab GIT_DEPTH 0＋同款步骤；YAML 语法与命令本地验证，云端首跑待观察；前一版 v1.2＝提交信息面升 gate） |
+| 文档版本 | v1.4（2026-10-18：新增偶发失败观测工具 run-flake-probe（F-925）——重复运行＋后台负载＋失败用例点名/原始输出落盘；观测层，不改变测试门禁判定；前一版 v1.3＝commit-lint 挂 CI） |
 | 用途 | 根/分区 AGENTS.md 逐条规则的执法分级：每条规则声明由谁执法（gate / review / behavioral），杜绝"不可执法却假装可执法"的摆设条款 |
 | 维护纪律 | 新规则落文时**必须**同时在本表登记行；规则变更/执法者升级（behavioral→gate）随批同步。第一遍审计只加标注，不批量删规则 |
 
@@ -25,6 +25,7 @@
 | `validate-task.ps1` / `verify-task.ps1` | 任务契约字段完备性（ready 必备字段）/ 任务验证命令执行与证据核验 |
 | `verify-task-scope.ps1` | 任务改动范围机器预检：base..head 逐文件 vs 契约 `allowedFiles`/`forbiddenFiles`（ACC §4.1 机器执行面；2026-10-18 落位，F-928） |
 | `commit-lint.ps1` | 提交信息规范：前缀白名单（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）＋标题非空话＋正文四段（改动内容/改动原因/验证/影响面）；`-Range` 只查新增提交，历史存量按 F-012 豁免（2026-10-18 落位，F-934） |
+| `run-flake-probe.ps1` | 偶发失败观测（非门禁）：测试 exe 重复运行＋可选后台 CPU 负载，逐次落盘 gtest XML/stdout/stderr，失败用例点名并汇总（F-925；`-SelfTest` 校验解析器） |
 | `build-context-pack.ps1` / `validate-context-pack.ps1` | 上下文包生成与新鲜度校验（源文件 git blob SHA-1 重算，STALE=exit 2；表头/状态行/标题身份/契约存在性结构核验）；PIPE 权威红线——包内 state.json 状态字段副本（JSON 形态扫描）即 exit 1 |
 | `index-evidence.ps1` / validate-docs 证据段 | 证据摘要索引生成与一致性（新证据未重跑索引→条目数不符即门禁失败）；未跟踪证据提示（F-929）；索引只存摘要不嵌内容；删除/移动三前置登记于 traceability/README.md §3 |
 | `gate-all.ps1` | 集成＋冒烟一键全量门禁＋第 0.7 步治理文档门禁（validate-docs -DeepEvidence＋validate-context-pack -All，2026-10-17 挂载——审查 P1-1 消账） |

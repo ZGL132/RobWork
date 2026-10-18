@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T12:27:42+08:00",
+  "generatedAt": "2026-10-18T12:30:26+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6630,
-    "totalBytes": 209094791,
+    "totalFiles": 6646,
+    "totalBytes": 209880015,
     "byKind": {
-      "acceptance-record": 515,
       "gtest-report": 335,
-      "build-log": 5686,
-      "json-data": 7,
-      "manual-acceptance": 1,
-      "markdown-doc": 41,
-      "pipeline-artifact": 2,
-      "log": 1,
       "governance-record": 34,
-      "benchmark": 8
+      "build-log": 5702,
+      "manual-acceptance": 1,
+      "log": 1,
+      "json-data": 7,
+      "benchmark": 8,
+      "acceptance-record": 515,
+      "pipeline-artifact": 2,
+      "markdown-doc": 41
     },
     "byLifecycle": {
-      "historical": 549,
-      "unverified": 6039,
       "superseded": 0,
-      "current": 42
+      "unverified": 6055,
+      "current": 42,
+      "historical": 549
     },
     "associated": 596,
-    "unassociated": 6034,
-    "shaComputed": 6612,
+    "unassociated": 6050,
+    "shaComputed": 6628,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -9108,6 +9108,134 @@
       "taskIds": [],
       "bytes": 5378,
       "sha256": "a292640b5305e048de7701d0bc57b6bc51c1f93481f5fb6b41e7b5706cf56b27",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-001.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "4052654ddb89abb955cc641618ca8ab0cb25f0e1ab2bc5374b9ab1e54ead703e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-001.stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53457,
+      "sha256": "6e79a59834aac78a98ae30612eb2b1aa5587fda56fca98b4463824b45f986b70",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-001.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 103145,
+      "sha256": "793a28c01d4ffe84bd5b0f71535a937d3f704f870ebb92ea532be87409988668",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-002.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "2c9a422cc60e141a35c2f36187396ddb85d6a4a29ae8e6f76ae451fcd31ffe4b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-002.stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53449,
+      "sha256": "be49279977d671af095b24056380a79637ef6112e46fc5672156316faa956b7b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-002.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 103133,
+      "sha256": "94346e8b9b9214123739262ded2a4fbdd4662c6831cacceb26a18fd6a912cc47",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-003.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "605864662fe5aac23b5b65302d7e2381c913ecbfa11362aa3fb93371b89442fa",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-003.stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53449,
+      "sha256": "0f7fefde921675ea9770a77a11fc69bd26d9cf4de7ec2716b60f01e66b13023f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-003.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 103136,
+      "sha256": "700c5add6b1184bec3aa97e8c8656767db59f5c8e137af0dc9d689232176d44c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-004.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "e9c1708d8e30812ef5db186a5ac5488b6fa8c8249a6f2c287217e3575f792d4d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-004.stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53449,
+      "sha256": "5f9f287b8311129c1bba0d42f21ca3ede716c1f1c161fb564622f21bba0eb6a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-004.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 103137,
+      "sha256": "64b487ce85154f0fc2631b645ddee8b6492cc4f395b8cde5eb57572354509709",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-005.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "3642fe67bf20ab90e34ee3f7a011f300141d6d6363aff02fdf931e35259fec69",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-005.stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53451,
+      "sha256": "c9bcf2fac48ffc305f31170de1d1e8c546467c428d647fee2007bc88db398afd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/run-005.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 103131,
+      "sha256": "fba7ba5c363d1a94a9a8ae9cef87173d21407e6ae89ddd2d0be1684d1ceea3bc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f925/summary.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 873,
+      "sha256": "636393d09d42bedebe7a5eba58a6d02ffd33e1e398df89648ae74b9104e00184",
       "lifecycle": "unverified"
     },
     {
@@ -51754,7 +51882,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1216860,
+      "bytes": 1217549,
       "sha256": null,
       "lifecycle": "unverified"
     },

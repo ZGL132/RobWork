@@ -18,6 +18,7 @@ description: 工业机械臂变更验证——按变更面选择验证命令矩�
 | 治理/验证脚本 | ✓ | 被改脚本本体＋`validate-docs.ps1`（回归） |
 | 任务契约 JSON | ✓ | `validate-task.ps1 -TaskFile <契约>`；实施完成另跑 `verify-task.ps1` |
 | 任务改动范围 | ✓ | `verify-task-scope.ps1 -TaskFile <契约> -Base <base SHA> -Head <head SHA>`（ACC §4.1 机器预检；2026-10-18 起） |
+| 偶发失败排查 | 按需 | `run-flake-probe.ps1 -TestExe <exe> -Repeat N [-LoadJobs K]`——失败用例点名＋XML/stdout/stderr 落盘，把"偶发"变成可留痕事件（F-925） |
 | GUI 面 | ✓ | 按 `ird-qt-gui-windows` Skill 流程（真窗口，禁 offscreen） |
 
 ## 报告格式（四态，逐条）

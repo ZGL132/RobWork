@@ -9232,10 +9232,12 @@
       "id": "F-925",
       "source": "UI-T85 验收 attempt 1 建议清单 A-1（acc/UI-T85/1@55981b27；2026-10-18）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-18",
       "title": "ui_test 并行编译负载下偶发不稳定：验收者实跑 6 次中 1 次出现 3 用例失败（其余 5 次全绿；失败用例名未捕获——输出被并行构建日志淹没；草稿链相关用例全程稳定）。实施者主树复跑未复现（attempt 1 返工自检）——疑环境负载型（验收者同一 worktree 并行配置＋构建＋测试），非定论",
-      "owner": "后续 ui 批（定性：复现时捕获用例名与并行度，判定环境负载型 vs 真实竞态；非 UI-T85 可修面）"
+      "owner": "后续 ui 批（定性：复现时捕获用例名与并行度，判定环境负载型 vs 真实竞态；非 UI-T85 可修面）",
+      "resolution": "F-925 消账（2026-10-18）：新增 scripts/industrialrobot/run-flake-probe.ps1——测试 exe 重复 N 次＋可选 LoadJobs 后台 CPU 负载，逐次落盘 gtest XML/stdout/stderr，失败用例从 XML testcase[failure] 点名并汇总；-SelfTest 以合成失败 XML 自检解析路径。实测 ui_test 在 4 个负载进程下 5/5 全绿（未复现；只证明本次环境稳定，不证明无竞态），失败捕获路径自检 PASS（证据 traceability/builds/gov-f925/）。根因仍未定性（环境负载型 vs 真实竞态），但此后任何一次失败都会带用例名与原始输出落盘，可据此定性。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-926",
