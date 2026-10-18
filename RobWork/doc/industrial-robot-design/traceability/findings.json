@@ -286,11 +286,12 @@
       "id": "F-028",
       "source": "traceability/acceptance/DOC-T11-20260911.md#4.9（attempt 1，送验对象 1ca5167fa，提交 ae05e57 验证段）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-11",
       "title": "DOC-T11 提交 ae05e57 验证段『ird_gates：未执行——门禁未建成（PIPE 守卫未落地，如实标注）』理由条失实：ird_gates 已随 WP-01-T01/T02 建成（cmake/ird_gates.cmake＋ird_gates_whitelist.cmake＋scripts/gate-all.ps1 于送验 base bc458c00 在库；F-019 证其持续运行且基线红）——『未执行』为实（纯文档任务无构建面，未虚标任何通过），但理由与 2026-09-11 时点事实不符，系回退到 AGENTS §6.3『落地前』过时注记措辞；方向为少报、无粉饰，非阻断",
       "owner": "治理流程所有者（AGENTS §6.3 自查项措辞模板辖域；与 F-025 同为提交信息准确性面）",
-      "resolution": "纯治理文档批次沿用 DOC-T10（28ed5f3）准确口径：『ird_gates 自查＝validate-task 逐份三查代替（本任务无产品代码与构建目标）』；AGENTS §6.3 注记『ird_gates 随 WP-01-T01 落地，落地前如实标注门禁未建成』已过时（门禁 2026-09-10 落地），随下次 AGENTS 修订删除或改为『门禁已落地，纯文档任务以逐份三查等价代替并显式注明』。"
+      "resolution": "纯治理文档批次沿用 DOC-T10（28ed5f3）准确口径：『ird_gates 自查＝validate-task 逐份三查代替（本任务无产品代码与构建目标）』；AGENTS §6.3 注记『ird_gates 随 WP-01-T01 落地，落地前如实标注门禁未建成』已过时（门禁 2026-09-10 落地），随下次 AGENTS 修订删除或改为『门禁已落地，纯文档任务以逐份三查等价代替并显式注明』。",
+      "closureReason": "B7 分诊第四批（2026-10-18）：已推送提交/留痕不可改写（AGENTS §6.3 红线；traceability 只增不改）——本条指涉的历史文本与缺失原件均无法回写；同类风险由 ACC §4.10 留痕三件套（v1.9）＋validate-docs 证据门禁覆盖，按「历史不可回写」关闭。"
     },
     {
       "id": "F-029",
@@ -1512,11 +1513,12 @@
       "id": "F-144",
       "source": "traceability/acceptance/PRJ-T08-20260916.md#4.8/附（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08）：验收者实跑 ird_gates 与送验报告自查行比对",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-16",
       "title": "F-028/F-035 家族再现（实现类任务第二次）：PRJ-T08 为实现类任务，未实跑 ird_gates 自查，ird-test-report.json gates 字段称『未执行——如实标注：门禁目标随 WP-01-T01 落地前的口径与本单元既有任务一致』——理由失实：门禁已随 WP-01-T01 于 2026-09-10 建成且持续运行（F-019/F-051 证其基线红可运行），本单元前序任务（PRJ-T05/T06/T07）的报告均载有门禁结论（『ird_gates 命中集合与 wp04-t0x 基线逐项一致』）；F-035 处置建议『实现类任务一律实际执行 cmake --build build --config Release --target ird_gates 并登记真实结论』在本任务未传导。验收者实跑补证：exit 1 共 9 处命中（基线 8＋新增 R4 一处，见 F-145）——『未执行』为实（未虚标通过），方向为少报、无粉饰，但跳过的强制自查恰漏掉了本可发现的新增命中，非阻断",
       "owner": "实施纪律（DTB §5 会话流程所有者，与 F-035 同辖域）；AGENTS §6.3『ird_gates 随 WP-01-T01 落地，落地前如实标注门禁未建成』过时注记删除随 F-028/F-035 合并处置",
-      "resolution": "处置建议＝实现类任务一律实跑 ird_gates 并登记真实结论（红＝逐条解码命中归属，区分既有/新增）；模板/自查清单中删除『门禁未建成』过时口径（F-028/F-035 处置合并执行）。编号顺延自 F-143，合入时由所有者确认。"
+      "resolution": "处置建议＝实现类任务一律实跑 ird_gates 并登记真实结论（红＝逐条解码命中归属，区分既有/新增）；模板/自查清单中删除『门禁未建成』过时口径（F-028/F-035 处置合并执行）。编号顺延自 F-143，合入时由所有者确认。",
+      "closureReason": "B7 分诊第四批（2026-10-18）：已推送提交/留痕不可改写（AGENTS §6.3 红线；traceability 只增不改）——本条指涉的历史文本与缺失原件均无法回写；同类风险由 ACC §4.10 留痕三件套（v1.9）＋validate-docs 证据门禁覆盖，按「历史不可回写」关闭。"
     },
     {
       "id": "F-145",
@@ -3580,11 +3582,12 @@
       "id": "F-346",
       "source": "traceability/acceptance/WP-13-T11-20260925.md §4.9/§4.10（attempt 1，verdict=pass，2026-09-25；验收者对提交物清单 grep \".xml\" 与在库报告逐件对账）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-25",
       "title": "WP-13-T11 留痕缺 gtest JUnit XML 原件且 commit 表述失实：traceability/builds/wp13-t11/ 提交的是 testkit JSON 报告（ird-test-report/1 逐案明细）＋逐 exe 日志，全量 diff 无任何 .xml（T09/T10 先例均提交 gtest XML 原件），而实现提交 04982873 正文写'集成 gtest XML 两件…留痕'与实际提交物不符——逐案数据在库、自洽（193=184＋9、144=139＋5）且验收者由当前源码亲跑复现（193/193 逐件一致），非数据缺失、非粉饰；已推送提交不可改写——本条即留档",
       "owner": "实施者侧（后续留痕窗口补录 XML 原件到 traceability/builds/wp13-t11/，或经治理侧把 ird-test-report/1 JSON 报告登记为 XML 的等价留痕载体并同步 ACC §4.10 口径）",
-      "resolution": "编号顺延自 F-345。"
+      "resolution": "编号顺延自 F-345。",
+      "closureReason": "B7 分诊第四批（2026-10-18）：已推送提交/留痕不可改写（AGENTS §6.3 红线；traceability 只增不改）——本条指涉的历史文本与缺失原件均无法回写；同类风险由 ACC §4.10 留痕三件套（v1.9）＋validate-docs 证据门禁覆盖，按「历史不可回写」关闭。"
     },
     {
       "id": "F-347",
@@ -3600,11 +3603,12 @@
       "id": "F-348",
       "source": "traceability/acceptance/WP-13-T12-20260925.md §4.9/§4.10/§4.8（attempt 1，verdict=pass，2026-09-25；验收者对提交物清单 grep .xml 与在库报告逐件对账）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-25",
       "title": "WP-13-T12 留痕缺 gtest JUnit XML 原件且 commit 表述失实（F-346 同题复发，第二次）：traceability/builds/wp13-t12/ 提交的是 testkit JSON 报告（ird-test-report/1 逐案明细＋合并 222/222、171/171）＋构建/ctest 日志，全量 diff（1752bb85..541f554c）无任何 .xml，而文档同步提交 541f554c 正文写'集成 gtest XML 两件＋冒烟 gtest XML 两件'与实际提交物不符——逐案数据在库、自洽且验收者由送验源码亲跑复现（208/14/163/8 与合并报告逐件一致），非数据缺失、非粉饰；已推送提交不可改写——本条即留档",
       "owner": "实施者侧（后续留痕窗口把 gtest XML 原件随 traceability/builds/ 落位——--gtest_output=xml: 或 ctest 产出；commit 正文留痕清单与实际文件一致）；治理侧可考虑把 XML 在位核验纳入 verify-task 留痕清单或按 F-346 备选把 ird-test-report/1 JSON 登记为等价留痕载体并同步 ACC §4.10 口径",
-      "resolution": "编号顺延自 F-347。"
+      "resolution": "编号顺延自 F-347。",
+      "closureReason": "B7 分诊第四批（2026-10-18）：已推送提交/留痕不可改写（AGENTS §6.3 红线；traceability 只增不改）——本条指涉的历史文本与缺失原件均无法回写；同类风险由 ACC §4.10 留痕三件套（v1.9）＋validate-docs 证据门禁覆盖，按「历史不可回写」关闭。"
     },
     {
       "id": "F-349",
@@ -7303,10 +7307,11 @@
       "id": "F-723",
       "source": "acc/wp-16-t14/1 验收记录 §四 观察项 O-1（origin/acc/wp-16-t14/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t14-20261011.md，记录提交 bae7d2975f74653df3643748968d1aa282295f7a，验收日期 2026-10-11，verdict=pass）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-12",
       "title": "WP-16-T14 验收 O-1（信息性观察项，非阻断）：TRJ-LIMIT-EXCEEDED jerk 形态的管线产面无端到端触发——超限素材为测试侧直构（非 timeParameterize 产出）；定性：正常输入数学不可达（初值闭式恰在限值线、多段耦合由缩放环一轮精确收敛、maxIterations≥1 由 §15.8 前置校验强制，管线产面仅浮点病态下可达），实现 TU 头注与单元卡 §17.1 均已如实登记；验收标准「超限段定位诊断」由①jerk 缺失限值素材真实端到端诊断链＋②超限素材组装面两轨共同满足，与 WP-16-T08 验收先例同口径——不构成缺失",
-      "owner": "后续评估器批（登记于此供评估器组装批参考）"
+      "owner": "后续评估器批（登记于此供评估器组装批参考）",
+      "closureReason": "B7 分诊第四批（2026-10-18）：本条自述为观察/留档/已知项（零行动义务、非阻断），无待办动作；保留原文与证据链，按「说明性留档」关闭。"
     },
     {
       "id": "F-724",
@@ -7609,10 +7614,11 @@
       "id": "F-754",
       "source": "audit/round2-20261010（R2-A2 批）；2026-10-12 治理批转登（草案预编号 F-655→F-754，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-10",
       "title": "P3：Scheduler.cpp:117 析构摘闸无同步普通写——依赖『tick 驱动先停』装配纪律（现网核实一致，留档知情）",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Scheduler 析构摘闸补同步（atomic 或锁）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Scheduler 析构摘闸补同步（atomic 或锁）。",
+      "closureReason": "B7 分诊第四批（2026-10-18）：本条自述为观察/留档/已知项（零行动义务、非阻断），无待办动作；保留原文与证据链，按「说明性留档」关闭。"
     },
     {
       "id": "F-755",
@@ -7862,10 +7868,11 @@
       "id": "F-779",
       "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-680→F-779，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-10",
       "title": "P3：组合校核逐格全候选扫描性能（R-SEL-6 已知）",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：组合校核性能优化（可只登记已知项）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：组合校核性能优化（可只登记已知项）。",
+      "closureReason": "B7 分诊第四批（2026-10-18）：本条自述为观察/留档/已知项（零行动义务、非阻断），无待办动作；保留原文与证据链，按「说明性留档」关闭。"
     },
     {
       "id": "F-780",
@@ -8699,10 +8706,11 @@
       "id": "F-866",
       "source": "traceability/acceptance/WP-23-T03-20261013.md §3 S3（验收日期 2026-10-13，verdict=PASS；记录提交 24ee6aad）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-16",
       "title": "WP-23-T03 验收建议级 S3（观察两条，低危留档）：①正常腿预热剔除样本在 settle 组承载的是 d1 值（代码复用同一 sample 对象），因剔除不参与统计，纯语义洁癖；②超时腿 evidenceNote 累计串逐场景整体重打印（stderr 日志噪声；JSON 内仅一份完整串）——均不影响判定面，随 S1 批次顺手处理或留档",
-      "owner": "execution 基准所有者（随 F-864 批次顺手处理或维持留档）"
+      "owner": "execution 基准所有者（随 F-864 批次顺手处理或维持留档）",
+      "closureReason": "B7 分诊第四批（2026-10-18）：本条自述为观察/留档/已知项（零行动义务、非阻断），无待办动作；保留原文与证据链，按「说明性留档」关闭。"
     },
     {
       "id": "F-867",
@@ -8906,11 +8914,12 @@
       "id": "F-888",
       "source": "traceability/acceptance/WP-23-T07-20261014.md §3 问题清单 G-5（随本记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 71c44923，2026-10-15 落库）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-16",
       "title": "WP-23-T07 验收建议级 G-5（观察项，零行动义务）：M2 产品级对称变异（批序反转合并）对两腿互比型等价判定不可见——同实现前提的天然盲区非缺陷；稳定合并序的产品级变异核查归功能用例面（JointRunTest 固定期望序承载），后续测试者设计变异时选用单腿生效注入",
       "owner": "治理面（留档）；后续变异设计者（选用单腿生效注入）",
-      "resolution": "登记观察（记录原文『留档』）。"
+      "resolution": "登记观察（记录原文『留档』）。",
+      "closureReason": "B7 分诊第四批（2026-10-18）：本条自述为观察/留档/已知项（零行动义务、非阻断），无待办动作；保留原文与证据链，按「说明性留档」关闭。"
     },
     {
       "id": "F-889",
