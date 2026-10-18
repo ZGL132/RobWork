@@ -41,7 +41,14 @@
 #include <sdurws/ird/kinematics/SolutionSet.hpp>
 #include "KinFkFixture.hpp"              // sixAxisModel/TestView（同单元夹具）
 #include "plugin/KinPanelFlows.hpp"      // 被测编排（TCP 解析/求解/复算）
+#include "plugin/KinPanelRotation.hpp"   // F-919 RPY↔Rotation3D 私有转换（等价钉被测面）
 #include "plugin/KinPanelTypes.hpp"      // 会话态/服务缝
+
+// F-919 等价钉：仅集成模式（sdurw_math 目标存在）编译——独立冒烟树无框架库，
+// 调用 RPY::toRotation3D 会把链接缺陷带回测试目标（CMake 侧门控见 CMakeLists）。
+#ifdef IRD_HAVE_SDURW_MATH
+#include <rw/math/RPY.hpp>
+#endif
 
 // ---- 使用声明（与被测代码同一命名空间——用例可读性）--------------------
 using namespace sdurws::ird;
@@ -275,3 +282,43 @@ TEST(KinP4Flows, RecomputeSession_ExplicitRejectStates_KIN_P4)
     EXPECT_NE(noSnapshot.statusText.find("快照"), std::string::npos)
         << noSnapshot.statusText;
 }
+
+// F-919 等价钉（仅集成模式编译；独立冒烟树无框架库，见 CMakeLists 门控）：
+// KinPanelRotation 以 Eigen 头文件轴角组合（正向）与 RPY.cpp 同式闭式解（反向）
+// 替代 rw::math::RPY 的非内联符号。本用例对正向/反向逐元对照 rw 实现，
+// 角度组覆盖零位、三轴单项、混合角与 ±90° 万向锁——顺序/符号/epsilon 分支
+// 任一漂移都会在此变红；独立冒烟该用例编译为空，不把非内联符号带回链接面。
+#ifdef IRD_HAVE_SDURW_MATH
+TEST(KinPanelRotation, MatchesRwMathBothDirections_KIN_F919)
+{
+    const double cases[][3] = {
+        {0.0, 0.0, 0.0},          // 恒等（零位）
+        {0.7, 0.0, 0.0},          // 仅 roll（rw 语义：绕 z）
+        {0.0, 0.7, 0.0},          // 仅 pitch（绕 y）
+        {0.0, 0.0, 0.7},          // 仅 yaw（绕 x）
+        {0.3, -0.4, 0.5},         // 混合角（顺序敏感——Z·Y·X 与 X·Y·Z 在此不等）
+        {0.2, 1.5707963267948966, -0.3},   // +90° 万向锁邻域
+        {-0.2, -1.5707963267948966, 0.3},  // -90° 万向锁邻域
+    };
+    for (const auto& a : cases) {
+        const rw::math::Rotation3D<double> ours = rotationFromRpySi(a[0], a[1], a[2]);
+        const rw::math::Rotation3D<double> ref =
+            rw::math::RPY<double>(a[0], a[1], a[2]).toRotation3D();
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                EXPECT_NEAR(ours(r, c), ref(r, c), 1e-12)
+                    << "forward rpy=(" << a[0] << "," << a[1] << "," << a[2]
+                    << ") at (" << r << "," << c << ")";
+            }
+        }
+        // 反向：矩阵→RPY（含万向锁 epsilon 分支）与 rw 实现同式对照。
+        const std::array<double, 3> oursRpy = rpyFromRotationSi(ref);
+        const rw::math::RPY<double> refRpy(ref);
+        for (int k = 0; k < 3; ++k) {
+            EXPECT_NEAR(oursRpy[k], refRpy[k], 1e-12)
+                << "inverse rpy=(" << a[0] << "," << a[1] << "," << a[2]
+                << ") component " << k;
+        }
+    }
+}
+#endif  // IRD_HAVE_SDURW_MATH

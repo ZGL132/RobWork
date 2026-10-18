@@ -26,7 +26,7 @@
 #include <sdurws/ird/ui/UiText.hpp>                // 文案键解析（UI-T25——迁移标记标签挂键；
                                                    // 构造期命令标题 resolver 尚未注入，此处直读
                                                    // UiText 静态表与 requirements 面板先例同款）
-#include <rw/math/RPY.hpp>                        // RPY（★ KIN-R2 任务4——目标姿态编辑的库设施直调）
+#include "KinPanelRotation.hpp"                     // rotationFromRpySi（F-919：RPY→旋转，独立冒烟可链接）
 #include "KinPanelCommandCatalog.hpp"              // 命令目录（按钮词形与只读门控）
 #include "KinPanelUnits.hpp"                       // resolveKinDisplayToSi/resolveKinAngleDisplayToSi（提交面逆换算——A07/KIN-R2）
 
@@ -811,13 +811,14 @@ KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
     pitch = resolveKinAngleDisplayToSi(pitch, m_session.displayUnits);  // rad
     yaw = resolveKinAngleDisplayToSi(yaw, m_session.displayUnits);      // rad
 
-    // ---- 基座系 {B} 目标位姿组装：位置（m）＋RPY→旋转（rw::math 库
-    // 设施直调——Z-Y-X 欧角约定，零自写三角）。位姿构造用 9 参旋转的
-    // 历史形态由 RPY(0,0,0).toRotation3D()（恒等阵）承载——冒烟链接面
-    // 不变（不实例化引用 rw 库符号的单参构造）。
-    const rw::math::RPY<double> rpy(roll, pitch, yaw);
+    // ---- 基座系 {B} 目标位姿组装：位置（m）＋RPY→旋转。Z-Y-X 语义由
+    // KinPanelFlows::rotationFromRpySi 单点承载（F-919）：该实现用 Eigen 头文件
+    // 轴角组合复现 rw::math::RPY 的同一矩阵，刻意不实例化 RPY::toRotation3D
+    // （非内联符号——独立冒烟树无框架库会 LNK2019）；等价性由集成侧
+    // IRD_HAVE_SDURW_MATH 用例逐元钉住，界面层零自写三角。
     return rw::math::Transform3D<double>(
-        rw::math::Vector3D<double>(x, y, z), rpy.toRotation3D());
+        rw::math::Vector3D<double>(x, y, z),
+        rotationFromRpySi(roll, pitch, yaw));
 }
 
 void KinematicsPanelWidget::onSolveClicked()

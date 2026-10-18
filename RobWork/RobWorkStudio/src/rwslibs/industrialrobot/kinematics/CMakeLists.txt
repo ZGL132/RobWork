@@ -273,6 +273,8 @@ add_library(sdurws_ird_kinematics_plugin STATIC
     plugin/KinPanelModel.cpp
     plugin/KinPanelFlows.hpp           # 数据流编排（L-K2~L-K12 模型层可测流——零 Qt）
     plugin/KinPanelFlows.cpp
+    plugin/KinPanelRotation.hpp        # F-919：RPY↔Rotation3D 私有转换（独立冒烟无框架库可链接）
+    plugin/KinPanelRotation.cpp
     plugin/KinematicsPanelWidget.hpp   # 四面板主面板＋求解配置高级面板（Q_OBJECT——AUTOMOC 载体）
     plugin/KinematicsPanelWidget.cpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
     plugin/KinematicsUiModule.hpp      # ui.md §11.2 模块实现（P-KIN-7 对端冻结——正式继承）
@@ -465,6 +467,14 @@ target_include_directories(sdurws_ird_kinematics_test PRIVATE
 # 单元自包含）。
 target_compile_definitions(sdurws_ird_kinematics_test PRIVATE
     IRD_KINEMATICS_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+# F-919 等价钉门控（WP-15-T19）：仅在集成模式（框架库目标 sdurw_math 存在）
+# 编译"rotationFromRpySi 与 rw::math::RPY 逐元等价"用例——该用例会调用
+# RPY::toRotation3D 非内联符号；独立冒烟树无框架库，定义不注入即编译为空，
+# 保证冒烟链接面不因测试代码回退（与生产代码同一约束）。
+if(TARGET sdurw_math)
+    target_compile_definitions(sdurws_ird_kinematics_test PRIVATE IRD_HAVE_SDURW_MATH=1)
+endif()
 
 # vcpkg 的 gtest:x64-windows 是动态库（gtest.dll/gtest_main.dll）：把测试
 # 可执行文件的运行期 DLL 拷到其输出目录，保证不经 PATH 配置即可直接运行

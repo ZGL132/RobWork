@@ -8971,10 +8971,12 @@
       "id": "F-919",
       "source": "WP-10-T84 返工批 gate-all -QtPrefix 全矩阵核查（2026-10-18 凌晨——补 -QtPrefix 后冒烟树首次深入构建段，暴露此前历次 gate-all 因冒烟配置缺 Qt 前缀〔F-455〕止步于配置段而未达的链接面；2026-10-17）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-18",
       "title": "kinematics 单元独立冒烟树链接缺陷：sdurws_ird_kinematics_plugin 的 KinematicsPanelWidget.obj 引用 rw::math::RPY<double>::toRotation3D（readTargetPoseFromEditors），但 kinematics/CMakeLists.txt 全文零 sdurw_math 链接——集成树靠传递依赖（他目标 PUBLIC 链 sdurw_math）遮蔽，独立冒烟树无该传递供给即 LNK2019×2/LNK1120（sdurws_ird_kinematics_test 与 sdurws_ird_kinematics_gui_test 两目标构建失败）。WP-10-T84 触碰面（ui/requirements）零关联——纯 kinematics 单元链接面缺陷，gate-all 全矩阵 96/99 中仅此 2 项 FAIL，其余全绿",
-      "owner": "kinematics 单元批次（修复方向：插件/测试目标显式链接 sdurw_math，或收敛其显式依赖的传递供给目标——独立冒烟树口径 DTB §5.5；不属 WP-10-T84 可修面，登记留痕）"
+      "owner": "kinematics 单元批次（修复方向：插件/测试目标显式链接 sdurw_math，或收敛其显式依赖的传递供给目标——独立冒烟树口径 DTB §5.5；不属 WP-10-T84 可修面，登记留痕）",
+      "resolution": "F-919 消账（WP-15-T19，2026-10-18）：owner 行原建议的『显式链接 sdurw_math』经探针证伪（独立冒烟无框架库，LNK1181；证据 builds/wp15-t19/smoke-link-probe-20261018.log），按所有者裁决改走路线 A——插件经 KinPanelFlows 拆出的 KinPanelRotation 私有转换点以 Eigen 头文件轴角组合复现 RPY 正向矩阵、以 RPY.cpp 同式闭式解复现反向分解（含 epsilon=1e-5 万向锁分支），不再引用 RPY::toRotation3D / RPY(const Rotation3D&) 两个非内联符号；集成侧 IRD_HAVE_SDURW_MATH 门控等价钉逐元 1e-12 对照 rw::math::RPY（七组角度含 ±90° 万向锁），独立冒烟该用例编译为空。验证：独立冒烟树三目标构建零错误（LNK2019/LNK1120 消除）、集成三目标零错误；kinematics_test 集成 267 跑 266 过＋1 登记 skip、冒烟 260 跑 259 过＋1 登记 skip；ird_gates 零命中；留痕 builds/wp15-t19/。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-920",
