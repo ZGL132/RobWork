@@ -237,6 +237,29 @@ if (-not (Test-Path $evidenceIndexPath)) {
     $repoTopEv = Split-Path -Parent $RepoRoot
     $prevEncEv = [Console]::OutputEncoding
     try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $actualEvidence = @(git -C $repoTopEv -c core.quotepath=off ls-files -- "RobWork/doc/industrial-robot-design/traceability" 2>$null | Where-Object { $_ -ne 'RobWork/doc/industrial-robot-design/traceability/evidence-index.json' }) } finally { [Console]::OutputEncoding = $prevEncEv }
+    # 未跟踪证据检测（F-929，2026-10-18 Agent-native 治理优化批）：
+    # 索引与校验都以 git ls-files（跟踪面）为基准，新证据在 `git add` 之前对两者
+    # 都"隐形"——实施树 validate-docs 照样 PASS，换到干净检出/验收 worktree 才暴露
+    # 6 条 missing entry（UI-T85 attempt 1 B-1 的实际形态：索引 6599 vs 实际 6605）。
+    # 这里对 traceability/ 下任何未跟踪文件硬失败，把"先 git add、再索引、再校验"
+    # 的顺序变成门禁而不是口头纪律；gitignored 产物不在 git status 默认输出中，
+    # 不会误伤（F-908 的口径不变）。
+    $untrackedEvidence = @()
+    try {
+      $prevEncU = [Console]::OutputEncoding
+      try {
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+        $statusRaw = @(git -C $repoTopEv -c core.quotepath=off status --porcelain -z -uall -- "RobWork/doc/industrial-robot-design/traceability" 2>$null)
+      } finally { [Console]::OutputEncoding = $prevEncU }
+      foreach ($seg in (([string]::Join('', $statusRaw)) -split "`0")) {
+        # porcelain -z 每条为 "XY <path>"；只关心未跟踪 "?? "（新增 staged 的 "A " 已被 ls-files 收录）
+        if ($seg.Length -gt 3 -and $seg.StartsWith('?? ')) { $untrackedEvidence += $seg.Substring(3) }
+      }
+    } catch { }
+    if ($untrackedEvidence.Count -gt 0) {
+      foreach ($u in ($untrackedEvidence | Select-Object -First 10)) { $errors += "untracked evidence file (git add 后重跑 index-evidence.ps1): $u" }
+      if ($untrackedEvidence.Count -gt 10) { $errors += "untracked evidence total: $($untrackedEvidence.Count)（仅列前 10）——先 git add 再重跑 index-evidence.ps1" }
+    }
     $evidenceCount = @($ei.entries).Count
     if ($evidenceCount -ne $actualEvidence.Count) { $errors += "evidence index out of date: index=$evidenceCount actual=$($actualEvidence.Count)——重跑 index-evidence.ps1" }
     # 深比较（审查 P1-3 对策，2026-10-17）：数量一致不足以证明内容一致——路径被
@@ -273,6 +296,44 @@ if (-not (Test-Path $evidenceIndexPath)) {
       }
     }
     if ($mismatchSeen -gt $mismatchCap) { $errors += "evidence index mismatch total: $mismatchSeen（仅列前 $mismatchCap 条）——重跑 index-evidence.ps1" }
+  }
+}
+# ---------- findings 台账一致性门禁（F-930，2026-10-18 Agent-native 治理优化批） ----------
+# findings.json 是验收/治理发现的唯一登记簿（ACC §5 强制转登），但此前只被装配
+# 清单的 waiver 联动读取，字段一致性无人校验。UI-T85 返工批出现过"resolution＋
+# fixedAt 已写、status 仍 open"的漂移（commit 声称已翻 fixed，台账实际未闭合），
+# 而验收 4.8 恰以 open/fixed 状态做消账核对——状态字段失真会让核对结论整体失真。
+# 本段校验四类不变量：
+#   ① id 唯一且句法 F-nnn（编号是跨文档引用键，撞号/畸变会让引用指向错条目）；
+#   ② status ∈ open/fixed/closed、severity ∈ 四档（枚举外值无法被下游消费）；
+#   ③ registeredAt/fixedAt 为 yyyy-MM-dd（排序与"本轮是否已消账"判定的基础）；
+#   ④ fixedAt 与 status 互斥一致：写了 fixedAt 就必须 status=fixed。
+# ④ 是本批的直接动因；历史存量里"fixed 但无 fixedAt"（112 条）不追罚——那属于
+# 早期台账格式，强制补齐会制造 112 处无意义改写（PA-2 精神：只增不改）。
+$findingsPath = Join-Path $base 'traceability/findings.json'
+if (-not (Test-Path $findingsPath)) {
+  $errors += 'missing traceability/findings.json'
+} else {
+  $fjCheck = $null
+  try { $fjCheck = Get-Content $findingsPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $errors += "findings.json is not valid JSON: $_" }
+  if ($fjCheck) {
+    if ($fjCheck.schemaVersion -ne 'ird-findings/1') { $errors += "findings schemaVersion must be 'ird-findings/1', got '$($fjCheck.schemaVersion)'" }
+    $seenFindingIds = @{}
+    $findingCount = 0
+    foreach ($fd in @($fjCheck.findings)) {
+      $findingCount++
+      $fid = "$($fd.id)"
+      if ($fid -notmatch '^F-\d{3}$') { $errors += "findings invalid id: '$fid'" }
+      if ($seenFindingIds.ContainsKey($fid)) { $errors += "findings duplicate id: $fid" } else { $seenFindingIds[$fid] = $true }
+      if ("$($fd.status)" -notin @('open','fixed','closed')) { $errors += "findings invalid status: $fid ($($fd.status))" }
+      if ("$($fd.severity)" -notin @('blocking','major','minor','suggestion')) { $errors += "findings invalid severity: $fid ($($fd.severity))" }
+      if ("$($fd.registeredAt)" -and "$($fd.registeredAt)" -notmatch '^\d{4}-\d{2}-\d{2}$') { $errors += "findings invalid registeredAt: $fid ($($fd.registeredAt))" }
+      if ("$($fd.fixedAt)") {
+        if ("$($fd.fixedAt)" -notmatch '^\d{4}-\d{2}-\d{2}$') { $errors += "findings invalid fixedAt: $fid ($($fd.fixedAt))" }
+        if ("$($fd.status)" -ne 'fixed') { $errors += "findings status/fixedAt inconsistent: $fid status=$($fd.status) fixedAt=$($fd.fixedAt)——消账必须同批把 status 翻 fixed" }
+      }
+    }
+    if ($findingCount -eq 0) { $errors += 'findings.json has no entries' }
   }
 }
 # ---------- 生产装配清单门禁（装配完备性 Tier A 结构面，T1/IRD-NOTE-006 裁决通过） ----------

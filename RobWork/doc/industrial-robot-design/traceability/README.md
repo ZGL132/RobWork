@@ -2,10 +2,10 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.0（2026-10-17，随 Agent-native 治理 Task 7 建立） |
+| 文档版本 | v1.1（2026-10-18：§2 增索引时序纪律——先 git add 再索引再校验，未跟踪证据由 validate-docs 硬失败；F-929 消账。前一版 v1.0＝治理 Task 7 建立） |
 | 用途 | 证据库（约 6600 文件/200MB）的**检索入口与生命周期规则**：Agent 检索证据默认经 `evidence-index.json` 摘要索引，按任务/类型/生命周期过滤后按需打开原始文件——禁止目录遍历式通读（上下文经济学） |
 | 上游 | `context/README.md` §2 evidence 类；阅读路径五（`context/reading-paths.md` §5） |
-| 执法 | `index-evidence.ps1`（生成）＋`validate-docs.ps1`（索引存在＋条目数与实际文件数一致，新增证据未重跑索引即门禁失败） |
+| 执法 | `index-evidence.ps1`（生成＋未跟踪提示）＋`validate-docs.ps1`（索引存在＋条目数与实际文件数一致＋**未跟踪证据即失败**＋`-DeepEvidence` SHA-256 复算；新增证据未重跑索引即门禁失败） |
 | 纪律 | 本库**只增不改**（PA-2 精神延伸）；索引为生成物（`generated=true`）禁止手改 |
 
 ## 1. 生命周期（与索引 `lifecycle` 字段一致）
@@ -19,10 +19,11 @@
 
 ## 2. 索引纪律
 
-1. **新证据落库同批重跑** `pwsh -File RobWork/scripts/industrialrobot/index-evidence.ps1`——validate-docs.ps1 校验索引条目数与实际文件数一致，不一致即门禁失败（报错信息附重跑指引）。
-2. 索引只存摘要（路径/类型/任务关联/字节数/SHA-256/生命周期），**绝不嵌入文件内容**；SHA 仅计算 ≤512KB 文件（大文件跳过并在 summary 计数）。索引 `contentBasis=text-crlf-to-lf-v1`：文本证据的 CRLF/CR 统一为 LF 后再计算字节数与 SHA-256，消除 `core.autocrlf` 检出造成的伪漂移；二进制文件保留原始字节。生成器与校验器必须使用同一口径。
-3. 重复检测：同 SHA-256 不同路径计为重复组（summary 报告总数，明细封顶 100 组防索引膨胀）。
-4. 任务关联是**文件名启发式**（wp-nn-tkk / UNIT-Tnn 模式）：未关联不代表无主，只代表不可自动归属。
+1. **时序固定为「写证据 → git add → 索引 → 校验 → 提交」**（2026-10-18，F-929）：索引枚举基准是 `git ls-files`（跟踪面），未跟踪的新证据不会进索引；此时提交会造成"实施树 PASS、干净检出必挂"（UI-T85 attempt 1 B-1：索引 6599 vs 实际 6605，验收 worktree 六条 missing entry）。`validate-docs.ps1` 对 traceability/ 下未跟踪文件**硬失败**，`index-evidence.ps1` 对同一情形给出提示——顺序不再是口头纪律。
+2. **新证据落库同批重跑** `pwsh -File RobWork/scripts/industrialrobot/index-evidence.ps1`——validate-docs.ps1 校验索引条目数与实际文件数一致，不一致即门禁失败（报错信息附重跑指引）。
+3. 索引只存摘要（路径/类型/任务关联/字节数/SHA-256/生命周期），**绝不嵌入文件内容**；SHA 仅计算 ≤512KB 文件（大文件跳过并在 summary 计数）。索引 `contentBasis=text-crlf-to-lf-v1`：文本证据的 CRLF/CR 统一为 LF 后再计算字节数与 SHA-256，消除 `core.autocrlf` 检出造成的伪漂移；二进制文件保留原始字节。生成器与校验器必须使用同一口径。
+4. 重复检测：同 SHA-256 不同路径计为重复组（summary 报告总数，明细封顶 100 组防索引膨胀）。
+5. 任务关联是**文件名启发式**（wp-nn-tkk / UNIT-Tnn 模式）：未关联不代表无主，只代表不可自动归属。
 
 ## 3. 删除/移动前置条件（放行门槛）
 

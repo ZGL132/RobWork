@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.0（2026-10-17，随 Agent-native 治理 Task 3 建立——治理原则"无执法不立规"落地） |
+| 文档版本 | v1.1（2026-10-18：三项 behavioral/review 面升级为 gate——改动范围（verify-task-scope.ps1，F-928）、证据索引时序（未跟踪证据检测，F-929）、findings 状态一致性（F-930）；前一版 v1.0＝治理 Task 3 首轮审计） |
 | 用途 | 根/分区 AGENTS.md 逐条规则的执法分级：每条规则声明由谁执法（gate / review / behavioral），杜绝"不可执法却假装可执法"的摆设条款 |
 | 维护纪律 | 新规则落文时**必须**同时在本表登记行；规则变更/执法者升级（behavioral→gate）随批同步。第一遍审计只加标注，不批量删规则 |
 
@@ -20,11 +20,12 @@
 | --- | --- |
 | `BuildRedLineTest`（core/test） | 零 Qt include（R-3）、零跨单元 include（R-1/R-2）、公共头路径布局（R-2）——四用例：SourceTreeReachable / NoQtInclude_NFR_MNT_01_R3 / NoCrossUnitInclude_R1_R2_T1 / PublicHeaderPathLayout_R2 |
 | `ird_gates.cmake` ＋ `ird_gates_whitelist.cmake` | 单元依赖边/命中集检查（dependency-graph.json 允许边；R-3 等例外经白名单登记） |
-| `validate-docs.ps1` | 文档锚点（PIPE/ACC 关键语义）、B.1、20 单元、任务 ID 唯一、追踪矩阵、phase-one 索引、资产清单（路径/分类/链接/根级全覆盖）、分层规则入口（分区文件存在＋权威链接＋根回链）、Agent Notes（四目录结构/编号/计划语气黑名单/archived 取代指针）、执行协议 Skills（六件存在性＋frontmatter）、证据索引一致性（计数＋路径集合双向＋字节数；`-DeepEvidence` 追加 SHA-256 复算——2026-10-17 审查 P1-3 对策）、生产装配清单 Tier A 结构面（schema/唯一性/wired 锚点/waiver-挂-open-finding 且关闭即失效——T1） |
+| `validate-docs.ps1` | 文档锚点（PIPE/ACC 关键语义）、B.1、20 单元、任务 ID 唯一、追踪矩阵、phase-one 索引、资产清单（路径/分类/链接/根级全覆盖）、分层规则入口（分区文件存在＋权威链接＋根回链）、Agent Notes（四目录结构/编号/计划语气黑名单/archived 取代指针）、执行协议 Skills（六件存在性＋frontmatter）、证据索引一致性（计数＋路径集合双向＋字节数；`-DeepEvidence` 追加 SHA-256 复算——2026-10-17 审查 P1-3 对策）、**未跟踪证据检测**（traceability/ 下 `??` 文件即失败——强制 git add→索引→校验顺序，F-929）、**findings 台账不变量**（ID 唯一/status·severity 枚举/日期格式/fixedAt↔status 一致，F-930）、生产装配清单 Tier A 结构面（schema/唯一性/wired 锚点/waiver-挂-open-finding 且关闭即失效——T1） |
 | `validate-state.ps1` | state.json schema、phase 枚举、SHA 冻结链⑩、run 租约、队列可领取性 |
 | `validate-task.ps1` / `verify-task.ps1` | 任务契约字段完备性（ready 必备字段）/ 任务验证命令执行与证据核验 |
+| `verify-task-scope.ps1` | 任务改动范围机器预检：base..head 逐文件 vs 契约 `allowedFiles`/`forbiddenFiles`（ACC §4.1 机器执行面；2026-10-18 落位，F-928） |
 | `build-context-pack.ps1` / `validate-context-pack.ps1` | 上下文包生成与新鲜度校验（源文件 git blob SHA-1 重算，STALE=exit 2；表头/状态行/标题身份/契约存在性结构核验）；PIPE 权威红线——包内 state.json 状态字段副本（JSON 形态扫描）即 exit 1 |
-| `index-evidence.ps1` / validate-docs 证据段 | 证据摘要索引生成与一致性（新证据未重跑索引→条目数不符即门禁失败）；索引只存摘要不嵌内容；删除/移动三前置登记于 traceability/README.md §3 |
+| `index-evidence.ps1` / validate-docs 证据段 | 证据摘要索引生成与一致性（新证据未重跑索引→条目数不符即门禁失败）；未跟踪证据提示（F-929）；索引只存摘要不嵌内容；删除/移动三前置登记于 traceability/README.md §3 |
 | `gate-all.ps1` | 集成＋冒烟一键全量门禁＋第 0.7 步治理文档门禁（validate-docs -DeepEvidence＋validate-context-pack -All，2026-10-17 挂载——审查 P1-1 消账） |
 | CI 双模板（`scripts/industrialrobot/ci/`） | 远端常驻：构建＋测试（`^sdurws_ird_.*_test$` 全目标）＋治理门禁两步（validate-docs -DeepEvidence＋validate-context-pack，2026-10-17 扩面）＋check-boundaries |
 | CMake 目标注册面 | C++17（CXX_STANDARD 17 显式）、gtest 接入（find_package GTest CONFIG REQUIRED）、vcpkg toolchain 解析 |
@@ -37,6 +38,9 @@
 | --- | --- | --- |
 | 分支红线：main 冻结禁推（§0/§6.2） | behavioral | 升级候选：CI 检查 push 目标分支（未建，不虚标） |
 | 框架零源码修改 SA-02（§1/§5.4） | gate＋review | ird_gates 命中集＋ACC 范围核查（allowedFiles 越界即 FAIL） |
+| 契约范围 `allowedFiles`/`forbiddenFiles`（ACC §4.1） | gate＋review | `verify-task-scope.ps1` 机器预检（2026-10-18 起；逐文件命中判定）＋验收者 diff 语义复核（机器只证"路径在允许模式内"） |
+| 证据索引与提交时序（traceability/README §2） | gate | validate-docs 未跟踪证据检测（`??` 即失败）＋index-evidence 未跟踪提示——强制"git add→索引→校验"顺序（F-929） |
+| findings 台账状态一致性（ACC §5 强制转登） | gate | validate-docs findings 段：`fixedAt` 存在则 `status` 必须 fixed；ID 唯一/枚举/日期格式（F-930） |
 | 详细中文注释规范（§2 全节） | review | ACC 验收 checklist（注释规范核查项） |
 | 高危信息六表（§2.5） | review | 同上 |
 | C++17（§3，D-01） | gate | 各目标 CXX_STANDARD 17 显式声明（CMake 配置面） |
@@ -88,6 +92,7 @@
 ## 4. 审计处置汇总（2026-10-17 第一遍）
 
 - **升级候选**（behavioral→gate，待后续批次）：push 目标分支检查、commit-lint（前缀＋四段）、context pack 状态字段检查（Task 6）。
+- **2026-10-18 升级落地（本表 v1.1）**：①改动范围（ACC §4.1）→ `verify-task-scope.ps1` 机器预检（F-928）；②证据索引时序 → validate-docs 未跟踪证据硬失败（F-929，UI-T85 attempt 1 B-1 根因面）；③findings 状态一致性 → validate-docs 台账不变量（F-930，F-921/F-922 状态漂移实例）。三项均在 gate 层，不需要行为自觉。
 - **降级/维持 behavioral**（明示不造摆设门禁）：提交粒度纪律、中文交流规范、阅读路径、人机同规署名责任。
 - **删除项**：无——第一遍审计未发现"完全无执法载体且无保留价值"的条款（各 behavioral 条款均有事后审计或升级路径）。
 - 本表自身为 load-bearing 登记资产：路径存在性由 validate-docs 资产清单门禁保证（自反执法）。

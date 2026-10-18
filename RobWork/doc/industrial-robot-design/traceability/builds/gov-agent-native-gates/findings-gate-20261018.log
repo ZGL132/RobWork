@@ -1,0 +1,11 @@
+# gov-agent-native-gates 证据：findings 台账一致性门禁（F-930）负例实测
+# 日期 2026-10-18；向 open 的 F-004 注入 fixedAt（模拟"只写消账不翻状态"漂移），跑 validate-docs
+
+$ pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
+Write-Error: evidence index size mismatch: findings.json (index=1151117 actual=1151148)——重跑 index-evidence.ps1
+Write-Error: findings status/fixedAt inconsistent: F-004 status=open fixedAt=2026-10-18——消账必须同批把 status 翻 fixed
+exit=1
+
+## 还原后复跑（预期 PASS）
+validate-docs: PASS (20 units, 12 trace entries, 360 task files, 29 registered assets, 6 notes, 7 skills, 2 packs, 6599 evidence)
+exit=0

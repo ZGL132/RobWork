@@ -9018,6 +9018,39 @@
       "registeredAt": "2026-10-18",
       "title": "冒烟断言下限锚随漂移钝化：step4（>=3 且逐行 NoDraft）与 step7（>=10）放宽有登记理由（域扩展/命令漂移），但下限锚会随域增长持续失去精确性——应随面板登记表测试收敛回精确计数",
       "owner": "后续 ui 批（随面板登记表测试收敛处置）"
+    },
+    {
+      "id": "F-928",
+      "source": "UI-T85 验收 attempt 1（acc/UI-T85/1@55981b27，2026-10-18）流程面观察＋2026-10-18 Agent-native 治理优化批（所有者指令）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-18",
+      "title": "验收 4.1 改动范围长期靠人工比对 diff 与契约 allowedFiles：360 契约/单批常见 20+ 文件，越界是阻断级 FAIL 却没有任何脚本会红——范围约束只存在于验收者注意力里",
+      "resolution": "verify-task-scope.ps1 落位（base..head 逐文件 vs allowedFiles/forbiddenFiles；支持 dir/**、单层 *、尾部全角括号注记剥离；退出码二元可判）；ACC §3/§4.1 登记为机器预检（人工语义复核保留）；rule-enforcement v1.1 升 gate。实测：UI-T85 afc27ea2..28085715 22 文件 PASS；e23d07ec..1358ab44 报 6 条越界 FAIL；forbidden 注入 AGENTS.md 命中 FAIL（证据 traceability/builds/gov-agent-native-gates/scope-gate-20261018.log）。",
+      "owner": "实施段/验收段（脚本调用）；脚本维护归治理批",
+      "fixedAt": "2026-10-18"
+    },
+    {
+      "id": "F-929",
+      "source": "UI-T85 attempt 1 阻断 B-1 实体（acc/UI-T85/1@55981b27，2026-10-18）＋2026-10-18 Agent-native 治理优化批",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-18",
+      "title": "证据索引时序无门禁：索引与校验都以 git ls-files（跟踪面）为基准，新证据在 git add 之前对两者隐形——实施树 validate-docs 照常 PASS、干净检出必挂（UI-T85 attempt 1 B-1：索引 6599 vs 实际 6605，验收 worktree 六条 missing entry）",
+      "resolution": "validate-docs 增未跟踪证据硬失败（traceability/ 下 ?? 文件即 exit 1，报错附 git add→索引指引）；index-evidence 增未跟踪提示；traceability/README §2 固化『写证据→git add→索引→校验→提交』顺序；rule-enforcement v1.1 升 gate。实测负例：未跟踪 probe 文件 → validate-docs exit 1＋index-evidence 警告（证据 traceability/builds/gov-agent-native-gates/evidence-gate-20261018.log）。",
+      "owner": "实施段（索引再生顺序）；门禁维护归治理批",
+      "fixedAt": "2026-10-18"
+    },
+    {
+      "id": "F-930",
+      "source": "UI-T85 返工批 e23d07ec 台账漂移实例（F-921/F-922 只写 resolution+fixedAt 未翻 status）＋2026-10-18 Agent-native 治理优化批",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-18",
+      "title": "findings 台账字段一致性无校验：status 与 fixedAt/resolution 可互相矛盾——UI-T85 返工批出现 resolution＋fixedAt 已写、status 仍 open（commit 声称已翻 fixed），而 ACC 4.8 消账核对恰以 status 为准，状态失真会让核对结论整体失真",
+      "resolution": "validate-docs 增 findings 不变量段：ID 唯一/句法、status·severity 枚举、registeredAt·fixedAt 日期格式、fixedAt 存在则 status 必须 fixed；历史 112 条『fixed 但无 fixedAt』存量不追罚（只增不改）。rule-enforcement v1.1 升 gate。实测负例：F-004 注入 fixedAt 而 status=open → exit 1 并指名条目；存量 911 条零违规（证据 traceability/builds/gov-agent-native-gates/findings-gate-20261018.log）。",
+      "owner": "验收段/治理批（台账翻转同批）；门禁维护归治理批",
+      "fixedAt": "2026-10-18"
     }
   ]
 }

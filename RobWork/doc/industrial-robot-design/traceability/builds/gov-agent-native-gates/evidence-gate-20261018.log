@@ -1,0 +1,18 @@
+# gov-agent-native-gates 证据：证据索引时序门禁（F-929）负例实测
+# 日期 2026-10-18；先制造 traceability/ 下未跟踪文件，再跑 validate-docs 与 index-evidence
+
+## 步骤 1：未跟踪证据存在时 validate-docs（预期 exit 1）
+$ pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/gov-agent-native-gates/untracked-probe.log
+exit=1
+
+## 步骤 2：同一状态下 index-evidence（预期给出未跟踪提示，且不收录该文件）
+$ pwsh -File RobWork/scripts/industrialrobot/index-evidence.ps1
+警告: 检测到 1 个未跟踪证据文件——它们不会进入索引（git ls-files 基准）。先 git add 再重跑本脚本；validate-docs 会拒绝未跟踪证据。
+警告:   untracked: RobWork/doc/industrial-robot-design/traceability/builds/gov-agent-native-gates/untracked-probe.log
+index-evidence: 6599 files, 198.0 MB -> traceability/evidence-index.json
+index-evidence: lifecycle current=70 historical=521 unverified=6008; associated=594 unassociated=6005
+index-evidence: sha computed=6581 skippedLarge=18; duplicateGroups=334 (listed 100)
+
+## 步骤 3：删除 probe（后续正式留痕走 git add→索引→校验）
+probe removed

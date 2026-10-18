@@ -1,0 +1,27 @@
+# gov-agent-native-gates 证据：改动范围门禁（verify-task-scope.ps1）实测
+# 日期 2026-10-18；工作树 build/gov-agent-native-gates @ 74db8d42 + 本批未提交改动
+# 契约：UI-T85（取自 wp10-t85 分支，验收已按人工 4.1 判定 22 文件全在允许面）
+
+## 正例：UI-T85 afc27ea2..28085715
+$ pwsh -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile tmp/UI-T85.json -Base afc27ea2 -Head 28085715
+verify-task-scope: UI-T85 base=afc27ea2738b head=28085715e484 changed=22 allowedRules=15 forbiddenRules=4
+verify-task-scope: PASS UI-T85 —— 22 个路径全部在允许面内
+
+## 负例 1：同一契约套在越界提交 e23d07ec..1358ab44（治理 skill 提交，6 文件不在 UI-T85 允许面）
+$ pwsh -File ... -Base e23d07ec -Head 1358ab44
+verify-task-scope: UI-T85 base=e23d07ec2a00 head=1358ab446e39 changed=7 allowedRules=15 forbiddenRules=4
+  [out-of-scope] AGENTS.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/.agents/skills/ird-python313-dll/SKILL.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/context/asset-inventory.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/context/packs/CORE-T01.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/context/packs/CORE-T11.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/scripts/industrialrobot/validate-docs.ps1（未命中任何 allowedFiles 模式）
+verify-task-scope: FAIL UI-T85 —— 6 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）
+exit=1
+
+## 负例 2：forbiddenFiles 注入 AGENTS.md（允许面放宽为 **，验证禁止面优先级）
+$ pwsh -File ... -TaskFile tmp/UI-T85-forbidden.json -Base e23d07ec -Head 1358ab44
+verify-task-scope: UI-T85 base=e23d07ec2a00 head=1358ab446e39 changed=7 allowedRules=1 forbiddenRules=1
+  [forbidden] AGENTS.md  <= AGENTS.md
+verify-task-scope: FAIL UI-T85 —— 1 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）
+exit=1

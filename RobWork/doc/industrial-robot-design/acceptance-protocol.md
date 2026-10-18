@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.7（2026-10-05：新增 §2.2 独立子会话验收模式——所有者 2026-10-04 指令以独立子会话执行 UI-T53 验收，§2 第 1/2 条真实独立性因此可满足，v1.6"当前执行模型禁止子智能体"限制解除；§2.1 单会话降级保留为子会话不可用时的兜底；两模式共用 §3 全部硬保护。前一版 v1.6＝单会话执行例外） |
+| 文档版本 | v1.8（2026-10-18：§3 增 `verify-task-scope.ps1`——改动范围改为"机器预检＋人工复核"双轨，§4.1 同步；F-928 消账。前一版 v1.7＝独立子会话验收模式） |
 | 文档代号 | ACC |
 | 上游 | development-task-breakdown.md §5.7（三段式会话流程的所有者）、AGENTS.md §6.3/§6.4（提交与循环约定）、automation-pipeline.md §8 附录 C（验收者提示词模板） |
 | 适用范围 | 一切按 canonical 任务契约（tasks/foundation/*.json，状态 ready）实施的编码任务；纯文档任务可用其精简版（仅第 4.1/4.6/4.7/4.8 项） |
@@ -46,13 +46,13 @@
 - **复现现场（v1.3）**：在独立 worktree 建立——`git worktree add --detach <临时目录A> <headSha>`（**detached @ SHA，不用分支名**：任务分支可能仍被实施工作树检出，按分支建 worktree 会直接失败；且 detached 保证复现对象就是送验对象）。
 - **记录回传（v1.4，防记录随临时 worktree 消亡＋防重试分支冲突）**：验收记录不落在临时目录——`git worktree add -b acc/<taskId>/<attempt> <临时目录B> origin/redesign-main`（**attempt＝本次验收的尝试序号**，由编排者随验收请求下发（state.attempts.accept 递增后的值）——fail 后重试的新一轮验收使用新序号，`git worktree add -b` 永不与已存在的 evidence 分支重名冲突），记录写入 B 内 `traceability/acceptance/` 后 commit 并 `push origin acc/<taskId>/<attempt>`；**确认推送成功后才允许删除两个 worktree**。验收者向编排者输出三元组 `{branch, path, commit}`，其中 **commit＝evidence 分支上记录提交的 40 位完整 SHA——这是后续收尾按 SHA 合并的不可变对象**（evidence 分支即使被追加提交，合入口径也不受影响；分支漂移由收尾的 ref==commit 检测拦截）。记录分支随后续收尾随代码一起合入（先例：CORE-T01 验收记录先于代码合入 redesign-main）。
 - 干净构建树：集成模式**重新配置**（含 `-DRWS_BUILD_INDUSTRIALROBOT=ON`，确认缓存 `:BOOL=ON`）；独立冒烟模式另配临时目录（冒烟命令须带 vcpkg toolchain 参数，见 AGENTS.md §4.1——CORE-T01 验收 G-2 教训）。
-- 验证脚本（调用口径见 DTB §5.1，脚本对 -File/-Command 两种调用方式自检仓库根）：`validate-docs.ps1` / `validate-task.ps1 -TaskFile <契约>` / `verify-task.ps1 -TaskFile <契约>`（可先 `-DryRun` 核对解析与环境）/ `validate-state.ps1`（涉流水线状态时）。
+- 验证脚本（调用口径见 DTB §5.1，脚本对 -File/-Command 两种调用方式自检仓库根）：`validate-docs.ps1` / `validate-task.ps1 -TaskFile <契约>` / `verify-task.ps1 -TaskFile <契约>`（可先 `-DryRun` 核对解析与环境）/ `validate-state.ps1`（涉流水线状态时）/ **`verify-task-scope.ps1 -TaskFile <契约> -Base <base SHA> -Head <headSha>`**（4.1 改动范围的机器预检：逐文件核对 `allowedFiles`/`forbiddenFiles`；2026-10-18 治理批落位，F-928）。机器预检 PASS 不免除人工复核——它只证明"每个 diff 路径命中某个允许模式"，语义越界（改了不该改的语义）仍归验收者判断。
 
 ## 4. 验收清单（逐项出证据，11 项）
 
 | # | 检查项 | 通过标准 |
 | --- | --- | --- |
-| 4.1 | **改动范围** | base..head 间每个变更文件都在契约 `allowedFiles` 内；`forbiddenFiles` 零触碰；无未登记的框架源码改动（SA-02——patches/ 无新文件即无登记） |
+| 4.1 | **改动范围** | base..head 间每个变更文件都在契约 `allowedFiles` 内；`forbiddenFiles` 零触碰；无未登记的框架源码改动（SA-02——patches/ 无新文件即无登记）。**机器预检**：`verify-task-scope.ps1 -TaskFile <契约> -Base <base> -Head <headSha>` 须 PASS（v1.8；机器判定范围事实，人工复核语义与允许面合理性） |
 | 4.2 | **可复现构建** | 集成模式（重新配置后）与独立冒烟模式均零错误；结论留日志路径 |
 | 4.3 | **契约 verify 命令** | 逐条独立执行，全部成功 |
 | 4.4 | **acceptance 条目** | 契约 `acceptance` 数组逐项核对，均有对应证据；**未执行的不得标注通过**（含 `ird_gates`：WP-01-T01 落地前必须如实标注"未执行——门禁未建成"） |
@@ -81,6 +81,7 @@
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v1.8 | 2026-10-18 | 改动范围机器化（F-928 消账）：§3 验证脚本清单增 `verify-task-scope.ps1`（base..head 逐文件 vs allowedFiles/forbiddenFiles，退出码二元可判）；§4.1 通过标准增机器预检 PASS 前置——人工复核保留，机器只证"路径命中允许模式" |
 | v1.7 | 2026-10-05 | 新增 §2.2 独立子会话验收模式（优先模式；所有者 2026-10-04 UI-T53 验收指令授权首例）：自足指令/只读纪律/模式声明/保护不变四硬要求；§2.1 降级保留为兜底；v1.6"当前执行模型禁止子智能体"限制解除，其"恢复前须 PIPE/CCP 增量修订"待办由本修订闭合 |
 | v1.0 | 2026-09-10 | 随 DTB v0.6 建立：三段式（实施→验收→合入）流程的验收协议；10 项对抗式清单、独立性要求、裁决记录格式 |
 | v1.1 | 2026-09-10 | 新增第 4.11 条偷懒/缩水实现扫描（TODO/stub/空实现扫描、acceptance 逐条证据表、测试强度）；pass/fail 判据同步为 4.1~4.11；配合 automation-pipeline v1.1 防偷懒纪律 |

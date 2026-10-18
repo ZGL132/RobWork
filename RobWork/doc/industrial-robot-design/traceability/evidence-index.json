@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T08:07:39+08:00",
+  "generatedAt": "2026-10-18T09:41:02+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6599,
-    "totalBytes": 207592015,
+    "totalFiles": 6602,
+    "totalBytes": 207600412,
     "byKind": {
-      "build-log": 5661,
-      "governance-record": 30,
+      "log": 1,
+      "build-log": 5664,
+      "acceptance-record": 513,
+      "json-data": 7,
+      "benchmark": 8,
       "manual-acceptance": 1,
       "gtest-report": 335,
-      "json-data": 7,
       "pipeline-artifact": 2,
-      "acceptance-record": 513,
       "markdown-doc": 41,
-      "log": 1,
-      "benchmark": 8
+      "governance-record": 30
     },
     "byLifecycle": {
       "superseded": 0,
+      "historical": 521,
       "current": 70,
-      "unverified": 6008,
-      "historical": 521
+      "unverified": 6011
     },
     "associated": 594,
-    "unassociated": 6005,
-    "shaComputed": 6581,
+    "unassociated": 6008,
+    "shaComputed": 6584,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -9040,6 +9040,30 @@
       "taskIds": [],
       "bytes": 2255,
       "sha256": "7bef9c385435b6f05e046c1d9b089d045c8cbe2b9cee6e45a6e5b1b69c47f11f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-agent-native-gates/evidence-gate-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1326,
+      "sha256": "531afe72a9734456bbc9aa8ea3f8fe4040d9a6ed069476f06c9dc3c79ff7682d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-agent-native-gates/findings-gate-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 704,
+      "sha256": "a0d0854025ac72e49eac2e64ce994b2d797404fa4cd474b090c17671746ce294",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-agent-native-gates/scope-gate-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2162,
+      "sha256": "88a99a3fc657575a8f4a3244b08a793af5de07ee86f9d12a86ccbc15cd5aaff6",
       "lifecycle": "unverified"
     },
     {
@@ -51534,7 +51558,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1147632,
+      "bytes": 1151117,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -54742,8 +54766,8 @@
       "path": "README.md",
       "kind": "markdown-doc",
       "taskIds": [],
-      "bytes": 3730,
-      "sha256": "9cd3a34caa8ee9964bfdb0f18ca9870bd70e63ab526bc4c3f7e9687c8d1be0e1",
+      "bytes": 4450,
+      "sha256": "5bf337779c97710b7a662df54835d141dbca01f31e97aa3e9b80bf6bd1d851e7",
       "lifecycle": "unverified"
     },
     {

@@ -117,6 +117,26 @@ try {
   $trackedList = @(git -C $repoTop -c core.quotepath=off ls-files -- $traceRel 2>$null)
 } finally { [Console]::OutputEncoding = $prevEnc }
 if (-not $trackedList.Count) { throw "git ls-files failed（证据枚举以 git 跟踪面为基准，不可用文件系统遍历替代）" }
+# 未跟踪新证据提示（F-929，2026-10-18 Agent-native 治理优化批）：
+# 上面的枚举基准是 git 跟踪面，所以 `git add` 之前新增的证据不会被收录——若此时
+# 提交，索引与干净检出就会失配（UI-T85 attempt 1 B-1：索引 6599 vs 实际 6605，
+# 实施树 PASS、验收 worktree 六条 missing entry）。这里给出可操作提示；硬门禁
+# 在 validate-docs.ps1 的同名段（traceability/ 下未跟踪文件即 exit 1）。
+$untrackedFiles = @()
+try {
+  $prevEncU = [Console]::OutputEncoding
+  try {
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    $statusRaw = @(git -C $repoTop -c core.quotepath=off status --porcelain -z -uall -- $traceRel 2>$null)
+  } finally { [Console]::OutputEncoding = $prevEncU }
+  foreach ($seg in (([string]::Join('', $statusRaw)) -split "`0")) {
+    if ($seg.Length -gt 3 -and $seg.StartsWith('?? ')) { $untrackedFiles += $seg.Substring(3) }
+  }
+} catch { }
+if ($untrackedFiles.Count -gt 0) {
+  Write-Warning ("检测到 {0} 个未跟踪证据文件——它们不会进入索引（git ls-files 基准）。先 git add 再重跑本脚本；validate-docs 会拒绝未跟踪证据。" -f $untrackedFiles.Count)
+  $untrackedFiles | Select-Object -First 10 | ForEach-Object { Write-Warning "  untracked: $_" }
+}
 $files = @($trackedList | Where-Object { $_ -ne "$traceRel/evidence-index.json" } | ForEach-Object { Get-Item -LiteralPath (Join-Path $repoTop $_) } | Sort-Object { $_.FullName })
 $entries = @()
 $byKind = @{}; $byLifecycle = @{ current = 0; superseded = 0; historical = 0; unverified = 0 }
