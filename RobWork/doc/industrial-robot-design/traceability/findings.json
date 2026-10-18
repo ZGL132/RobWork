@@ -7677,10 +7677,12 @@
       "id": "F-762",
       "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-663→F-762，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：ProcessRunnerTest.cpp:416,418 断言字面量 \\d/\\f 转义失真（运行时串无反斜杠含 FormFeed），第二条断言未钉『纯反斜杠』意图；2N+1 主钉有效",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ProcessRunnerTest 断言转义修正（\\\\\\\\d/\\\\\\\\f 意图钉）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ProcessRunnerTest 断言转义修正（\\\\\\\\d/\\\\\\\\f 意图钉）。",
+      "resolution": "F-762 消账（2026-10-18）：ProcessRunnerTest 两处断言字面量改为真反斜杠（输入 L"C:\\\\dir\\\\file"／L"C:\\\\dir a\\\\"，期望串同步），消除 C4129 无效转义；重建 C4129 计数 0（原 2 条），testkit_test 110/110 通过（18.5s）——第二条断言现真正钉住“纯反斜杠原样通过”意图。证据 traceability/builds/gov-f762/。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-763",

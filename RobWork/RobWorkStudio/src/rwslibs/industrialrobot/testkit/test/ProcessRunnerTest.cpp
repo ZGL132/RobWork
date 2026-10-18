@@ -415,10 +415,12 @@ TEST(ProcessRunnerQuote, BackslashQuoteEscapingTwoNPlusOne_F596)
     namespace detail = sdurws::ird::testkit::detail;
     // 含 \" 序列：arg=[a\"b]（a、\、"、b）→ 发射 "a\\\"b"——解析还原 [a"b]。
     EXPECT_EQ(detail::quoteWindowsArg(L"a\\\"b"), L"\"a\\\\\\\"b\"");
-    // 纯反斜杠无引号：不加引号、原样（无分隔符风险）。
-    EXPECT_EQ(detail::quoteWindowsArg(L"C:\dir\file"), L"C:\dir\file");
+    // 纯反斜杠无引号：不加引号、原样（无分隔符风险）。F-762：字面量须写
+    // \\ 才是真反斜杠——原 \d/\f 为无效转义（C4129），运行时串无斜杠且含
+    // FormFeed，断言实际没钉住意图。
+    EXPECT_EQ(detail::quoteWindowsArg(L"C:\\dir\\file"), L"C:\\dir\\file");
     // 带空格＋结尾反斜杠：整体加引号且结尾反斜杠翻倍（收尾引号紧邻规则）。
-    EXPECT_EQ(detail::quoteWindowsArg(L"C:\dir a\\"), L"\"C:\dir a\\\\\"");
+    EXPECT_EQ(detail::quoteWindowsArg(L"C:\\dir a\\"), L"\"C:\\dir a\\\\\"");
     // 普通带空格参数：整体加引号、内部无转义。
     EXPECT_EQ(detail::quoteWindowsArg(L"hello world"), L"\"hello world\"");
 }

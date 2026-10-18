@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T12:41:42+08:00",
+  "generatedAt": "2026-10-18T12:44:58+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6666,
-    "totalBytes": 210220911,
+    "totalFiles": 6670,
+    "totalBytes": 210368592,
     "byKind": {
-      "json-data": 7,
-      "log": 1,
-      "acceptance-record": 515,
-      "governance-record": 36,
-      "gtest-report": 335,
       "pipeline-artifact": 2,
-      "build-log": 5720,
       "markdown-doc": 41,
       "benchmark": 8,
+      "gtest-report": 335,
+      "build-log": 5724,
+      "governance-record": 36,
+      "acceptance-record": 515,
+      "json-data": 7,
+      "log": 1,
       "manual-acceptance": 1
     },
     "byLifecycle": {
       "current": 42,
-      "superseded": 0,
+      "unverified": 6079,
       "historical": 549,
-      "unverified": 6075
+      "superseded": 0
     },
     "associated": 596,
-    "unassociated": 6070,
-    "shaComputed": 6648,
+    "unassociated": 6074,
+    "shaComputed": 6652,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -9228,6 +9228,38 @@
       "taskIds": [],
       "bytes": 547,
       "sha256": "31a0e26832e63cd0190eb19f399f584492b7d0a7f515a61f7a8905e5979877f0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f762/build-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1182,
+      "sha256": "f73475298a1ffc511cf4d1fb8e3fd1049ae2613f861800335530cee889a5880e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f762/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 84340,
+      "sha256": "11fb97396b57084d2032d03810f9424dce90f075e88ca9e47bf8367b5d2cc740",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f762/testkit_test.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20190,
+      "sha256": "deea39ee0dc80c145d3427f56ad90f3515f30d95af0b1d0f172d2f60693cb89f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f762/testkit_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41661,
+      "sha256": "cb138939ef35e6cb77c039740cfc029c7aa2f1b2d02db24322f9a2ee3ab21754",
       "lifecycle": "unverified"
     },
     {
@@ -52026,7 +52058,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1220731,
+      "bytes": 1221039,
       "sha256": null,
       "lifecycle": "unverified"
     },
