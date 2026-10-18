@@ -10,6 +10,7 @@
 
 #include "RequirementsPanelWidget.hpp"
 #include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次＋UI-T33 三维缝重载）
+#include "RegionSamplingForm.hpp"  // REQ-03：采样定义暂存，不生成样本。
 #include "ConditionStructureForm.hpp"  // WP-14-T12：负载/事件结构暂存，确认后原子写草稿。
 #include "StationDefinitionDialog.hpp" // WP-14-T12：完整引用与姿态载荷一次确认。
 
@@ -2520,43 +2521,50 @@ void RequirementsPanelWidget::submitStationEnumValue(const std::string& key, con
     });
 }
 
-void RequirementsPanelWidget::submitRegionEnumValue(const std::string& key,
-                                                    const QString& text)
+/**
+ * @brief 以发起时区域快照绑定原编辑器和ObjectId，再排队执行字段变换。
+ * @param transform [in] 候选变换；仅接受完整基线，不持控件或可变选中行。
+ *
+ * UI线程；原编辑器为非拥有身份标记，先与当前提供器比对才允许读取。
+ * 外部修改/删除/会话切换拒绝过期输入，防止排队期间把旧行数据写到新行。
+ */
+void RequirementsPanelWidget::queueRegionEdit(std::function<WorkRegion(const WorkRegion&)> transform)
 {
-    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
-    QMetaObject::invokeMethod(
-        this, [this, key, text] { submitRegionEnumValueNow(key, text); },
-        Qt::QueuedConnection);
+    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || !m_regionTable->currentItem()) { return; }
+    const auto selected = nodeAnchor(m_regionTable->currentItem());
+    if (!selected) { return; }
+    for (const auto& region : editor->workingSet().regions.entries) {
+        if (region.objectId != *selected) { continue; }
+        QMetaObject::invokeMethod(this, [this, editor, base = region, transform = std::move(transform)] {
+            m_threadGuard.assertOnUiThread();
+            if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
+            for (const auto& latest : editor->workingSet().regions.entries) {
+                if (latest.objectId != base.objectId) { continue; }
+                if (latest != base) { showStatusLine("区域已改变，请重新输入"); return; }
+                try {
+                    const WorkRegion candidate = transform(base);
+                    if (candidate == base) { return; } // 重复失焦信号不制造空撤销记录。
+                    if (submitEntryEdit(*editor, *this, candidate) == EditSubmitOutcome::Applied) {
+                        m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                    }
+                } catch (const std::invalid_argument& failure) {
+                    showStatusLine(QString::fromUtf8(failure.what()));
+                    renderRegionPage(editor->workingSet()); // 旧单字段轨沿用拒绝后回投权威值。
+                }
+                return;
+            }
+        }, Qt::QueuedConnection);
+        return;
+    }
 }
 
-void RequirementsPanelWidget::submitRegionEnumValueNow(const std::string& key,
-                                                       const QString& text)
+void RequirementsPanelWidget::submitRegionEnumValue(const std::string& key, const QString& text)
 {
-    // 区域枚举提交轨（applyRegionEnumEdit——等级 QComboBox；域裁决同链）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const WorkRegion& region : ws.regions.entries) {
-        std::optional<core::ObjectId> selected;
-        if (m_regionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_regionTable->currentItem());
-        }
-        if (!selected.has_value() || region.objectId != selected.value()) {
-            continue;
-        }
+    queueRegionEdit([key, text](const WorkRegion& base) {
         std::vector<std::string> known;
-        const WorkRegion candidate =
-            applyRegionEnumEdit(region, key, text.toStdString(), known);
-        const EditSubmitOutcome outcome =
-            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
-        }
-        return;
-    }
+        return applyRegionEnumEdit(base, key, text.toStdString(), known);
+    });
 }
 
 void RequirementsPanelWidget::submitConditionEnumValue(const std::string& key,
@@ -2682,6 +2690,25 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         const std::vector<StationFieldRow> fields =
             regionFieldsFor(region, m_regionService, m_writable);
         m_regionBasicForm->addRow(makeBatchParameterTable(RequirementEdit{region}));
+        // REQ-03：整块定义暂存；回调捕获进入基线而非排队执行时的选中行。
+        // 一次提交/撤销，外部修改或会话切换时不得覆盖新权威值。
+        auto* sampling = new RegionSamplingForm(region, m_writable,
+            [this, base = region, expectedEditor = (m_editTarget ? m_editTarget() : nullptr)](WorkRegion candidate) {
+                QMetaObject::invokeMethod(this, [this, base, expectedEditor, candidate = std::move(candidate)] {
+                    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+                    if (!m_writable || !editor || editor != expectedEditor) { return; }
+                    for (const auto& latest : editor->workingSet().regions.entries) {
+                        if (latest.objectId != base.objectId) { continue; }
+                        if (latest != base) { showStatusLine("区域已改变，请刷新采样表后重试"); return; }
+                        if (submitEntryEdit(*editor, *this, RequirementEdit{candidate}) == EditSubmitOutcome::Applied) {
+                            m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                        }
+                        return;
+                    }
+                }, Qt::QueuedConnection);
+            }, this);
+        m_regionBasicForm->addRow(sampling);
+
 
         // 词表面（可编辑裁决——UI-T37：采样计数/间距/随机数/备注等非词表
         // 行诚实灰显〔此前可编辑但提交即词表外键 fail-fast〕；覆盖率姿态
@@ -3478,142 +3505,38 @@ void RequirementsPanelWidget::onRegionFieldEditingFinished()
                       edit->text());
 }
 
-void RequirementsPanelWidget::submitRegionValue(const std::string& key,
-                                                const QString& text)
+void RequirementsPanelWidget::submitRegionValue(const std::string& key, const QString& text)
 {
-    // 队列化出信号处理器（同 submitStationValue——提交链同步删发射控件＝UB）。
-    QMetaObject::invokeMethod(
-        this, [this, key, text] { submitRegionValueNow(key, text); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitRegionValueNow(const std::string& key,
-                                                   const QString& text)
-{
-    // B2（UI-T31）区域轨统一提交：权威值短路（控件侧）→词表 spec 匹配→
-    // parseFieldValueText（唯一解析出口，SA-12）→applyRegionEditSet→
-    // submitEntryEdit 域裁决（接受/拒绝分流见 sink；四态语义与工位一致）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;  // 无会话/只读——不虚构可编辑
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const WorkRegion& region : ws.regions.entries) {
-        // 区域检查器绑定区域表选中行（renderRegionPage 的投影锚）。
-        std::optional<core::ObjectId> selected;
-        if (m_regionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_regionTable->currentItem());
-        }
-        if (!selected.has_value() || region.objectId != selected.value()) {
-            continue;
-        }
-        for (const ui::QuantityFieldSpec& spec : regionQuantitySpecs()) {
-            if (spec.key != key) {
-                continue;
-            }
-            const ui::ValueParseResult parsed =
-                parseFieldValueText(text.toStdString(), spec);
-            if (!parsed.ok) {
-                // 拒绝·解析面：就地错误＋回退权威值（重投影）。
-                showStatusLine(QString::fromStdString(parsed.reason));
-                renderRegionPage(ws);
-                return;
-            }
+    // 单位解析仍归公共数量词表；只改变排队的对象绑定，不复制单位换算或域裁决。
+    queueRegionEdit([key, text](const WorkRegion& base) {
+        for (const auto& spec : regionQuantitySpecs()) {
+            if (spec.key != key) { continue; }
+            const auto parsed = parseFieldValueText(text.toStdString(), spec);
+            if (!parsed.ok) { throw std::invalid_argument(parsed.reason); }
             ui::ParamEditSet edits;
-            ui::ParamChange change;
-            change.key = key;
-            change.label = spec.label;
-            change.newSi = parsed.siValue;
+            ui::ParamChange change; change.key = key; change.label = spec.label; change.newSi = parsed.siValue;
             edits.changes.push_back(change);
             std::vector<std::string> known;
-            const WorkRegion candidate = applyRegionEditSet(region, edits, known);
-            const EditSubmitOutcome outcome =
-                submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-            if (outcome == EditSubmitOutcome::Applied) {
-                m_undoTracker.recordAppliedEdit();  // L-R4 记账
-            }
-            return;
+            return applyRegionEditSet(base, edits, known);
         }
-        // 词表外键＝实现缺陷（行模型与 specs 词表漂移）——fail-fast。
         throw std::logic_error("区域面板：编辑行携带词表外键 " + key);
-    }
+    });
 }
 
 void RequirementsPanelWidget::submitRegionToggle(const std::string& key, bool on)
 {
-    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
-    QMetaObject::invokeMethod(
-        this, [this, key, on] { submitRegionToggleNow(key, on); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitRegionToggleNow(const std::string& key, bool on)
-{
-    // 区域二态提交轨（启用开关——applyRegionToggleEdit 布尔回填＋域裁决）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const WorkRegion& region : ws.regions.entries) {
-        std::optional<core::ObjectId> selected;
-        if (m_regionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_regionTable->currentItem());
-        }
-        if (!selected.has_value() || region.objectId != selected.value()) {
-            continue;
-        }
+    queueRegionEdit([key, on](const WorkRegion& base) {
         std::vector<std::string> known;
-        const WorkRegion candidate = applyRegionToggleEdit(region, key, on, known);
-        const EditSubmitOutcome outcome =
-            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
-        }
-        return;
-    }
+        return applyRegionToggleEdit(base, key, on, known);
+    });
 }
 
-void RequirementsPanelWidget::submitRegionCounts(
-    const std::array<std::uint32_t, 3>& counts)
+void RequirementsPanelWidget::submitRegionCounts(const std::array<std::uint32_t, 3>& counts)
 {
-    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
-    QMetaObject::invokeMethod(
-        this, [this, counts] { submitRegionCountsNow(counts); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitRegionCountsNow(
-    const std::array<std::uint32_t, 3>& counts)
-{
-    // 采样计数提交轨（UI-T37 R1——applyRegionSamplingCountsEdit 回填；计数
-    // 合法域归域校验链——拒绝面与行编辑同链，就地错误呈现一致）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const WorkRegion& region : ws.regions.entries) {
-        std::optional<core::ObjectId> selected;
-        if (m_regionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_regionTable->currentItem());
-        }
-        if (!selected.has_value() || region.objectId != selected.value()) {
-            continue;
-        }
+    queueRegionEdit([counts](const WorkRegion& base) {
         std::vector<std::string> known;
-        const WorkRegion candidate =
-            applyRegionSamplingCountsEdit(region, counts, known);
-        const EditSubmitOutcome outcome =
-            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
-        }
-        return;
-    }
+        return applyRegionSamplingCountsEdit(base, counts, known);
+    });
 }
 
 void RequirementsPanelWidget::onConditionFieldEditingFinished()

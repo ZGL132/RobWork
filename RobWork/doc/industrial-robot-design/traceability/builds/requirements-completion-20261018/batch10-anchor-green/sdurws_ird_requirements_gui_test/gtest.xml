@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.643" timestamp="2026-10-18T21:08:34.350" name="AllTests">
+  <testsuite name="RequirementsSessionGuiTest" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.643" timestamp="2026-10-18T21:08:34.350">
+    <testcase name="RegionBatchParametersAtomic_UX05_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="270" status="run" result="completed" time="0.419" timestamp="2026-10-18T21:08:34.350" classname="RequirementsSessionGuiTest" />
+    <testcase name="RegionSamplingCompleteAtomic_REQ03_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="288" status="run" result="completed" time="0.049" timestamp="2026-10-18T21:08:34.769" classname="RequirementsSessionGuiTest" />
+    <testcase name="RegionSamplingModesCancelAndReject_REQ03_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="319" status="run" result="completed" time="0.065" timestamp="2026-10-18T21:08:34.818" classname="RequirementsSessionGuiTest" />
+    <testcase name="RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="372" status="run" result="completed" time="0.109" timestamp="2026-10-18T21:08:34.884" classname="RequirementsSessionGuiTest" />
+  </testsuite>
+</testsuites>

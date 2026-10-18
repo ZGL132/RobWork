@@ -56,6 +56,7 @@
 #include <QSettings>       // ★ KIN-P4——求解配置持久化载体（用户级 Ini）
 #include <QStandardPaths>  // ★ KIN-P4——导出目录缺省解析（AppDataLocation）
 #include <QString>
+#include <QCheckBox>  // WP-14-T12：正式宿主采样暂存区的可选覆盖率交互。
 #include <QComboBox>  // 需求遍历通道（检查器下拉）
 #include <QTableWidget>  // 建模遍历通道（编辑页参数表——UI-T67 modeling-tour）
 #include <QDoubleSpinBox>  // 需求遍历通道（容差/距离编辑）
@@ -6309,13 +6310,22 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
                + (header != nullptr ? header->text().toStdString() : std::string("?"))
                + ")");
 
-        // ---- 拍 3：工位属性编辑（名称只读面/等级/启用/自由度/容差）------
+        // ---- 拍 3：工位属性编辑（名称/等级/启用/自由度/容差）----------
         step("3 station-fields");
-        // 名称行＝只读灰显（UI-T37 返工①——非数量行诚实降级；名称不在
-        // specs 词表，域侧无回填轨——只读即产品语义，遍历验证只读态）。
+        // WP-14-T12第三批已补文本轨；旧“只读即语义”断言过期，改为真实输入后
+        // 对账编辑器与树呈现，不能为旧测试重新禁用合法名称编辑。
         QLineEdit* nameEdit = editByFieldKey("name");
-        ok(nameEdit != nullptr && nameEdit->isReadOnly(),
-           "step3 name-editor-readonly (product-semantics)");
+        ok(nameEdit != nullptr && !nameEdit->isReadOnly(), "step3 name-editor-writable");
+        if (nameEdit && !nameEdit->isReadOnly()) {
+            const auto pointId = m_requirementsEditor.workingSet().points.entries.front().objectId;
+            nameEdit->setText(QStringLiteral("生产遍历工位"));
+            QMetaObject::invokeMethod(nameEdit, "editingFinished"); settleEvents(300);
+            bool renamed = false;
+            for (const auto& point : m_requirementsEditor.workingSet().points.entries) {
+                if (point.objectId == pointId) { renamed = point.name == "生产遍历工位"; }
+            }
+            ok(renamed, "step3 name-written-to-original-point");
+        }
         QComboBox* levelCombo = comboByName("ird_station_level_combo");
         ok(levelCombo != nullptr, "step3 level-combo-present");
         if (levelCombo != nullptr) {
@@ -6424,18 +6434,80 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
         ok(regionHeader != nullptr
                && regionHeader->text().startsWith(QStringLiteral("区域 > ")),
            "step5 region-added-breadcrumb");
-        // 采样计数（Grid 三轴分割——X/Y/Z 顺序三 spin；valueChanged 同步轨）
-        // ＋实时点数预览（改动后预览文本含乘积）。
-        const QList<QSpinBox*> countSpins =
-            panel->findChildren<QSpinBox*>(QStringLiteral("ird_region_count_spin"));
-        ok(countSpins.size() == 3, "step5 count-spins=3 (cur="
-                                       + std::to_string(countSpins.size()) + ")");
-        if (countSpins.size() == 3) {
-            countSpins[0]->setValue(4);
-            countSpins[1]->setValue(3);
-            countSpins[2]->setValue(2);
-            settleEvents(300);
-            ok(true, "step5 counts-submitted (4x3x2=24)");
+        // WP-14-T12：正式宿主真实完整采样表单，经确认后读取权威编辑器；
+        // 不以控件存在或“已点击”冒充数值通过，三种方法均实际写入并对照。
+        const auto regionId = m_requirementsEditor.workingSet().regions.entries.front().objectId;
+        auto currentRegion = [&]() -> requirements::WorkRegion {
+            for (const auto& region : m_requirementsEditor.workingSet().regions.entries) {
+                if (region.objectId == regionId) { return region; }
+            }
+            throw std::logic_error("采样遍历的原区域已丢失");
+        };
+        for (const auto method : {requirements::PositionSamplingMethod::GridBySpacing,
+                                  requirements::PositionSamplingMethod::Random,
+                                  requirements::PositionSamplingMethod::Grid}) {
+            auto* form = panel->findChild<QWidget*>("ird_region_sampling_form");
+            ok(form != nullptr, "step5 complete-sampling-form");
+            if (!form) { break; }
+            auto* methodCombo = form->findChild<QComboBox*>("ird_region_sampling_method");
+            ok(methodCombo != nullptr, "step5 method-selector");
+            if (!methodCombo) { break; }
+            methodCombo->setCurrentIndex(methodCombo->findData(int(method)));
+            if (method == requirements::PositionSamplingMethod::GridBySpacing) {
+                for (int axis = 0; axis < 3; ++axis) {
+                    form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))->setText("0.25");
+                }
+            } else if (method == requirements::PositionSamplingMethod::Random) {
+                form->findChild<QLineEdit*>("ird_region_random_count")->setText("24");
+            } else {
+                for (int axis = 0; axis < 3; ++axis) {
+                    form->findChild<QLineEdit*>(QString("ird_region_grid_count_%1").arg(axis))->setText(QString::number(4-axis));
+                }
+            }
+            form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("12");
+            form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("4");
+            form->findChild<QCheckBox*>("ird_region_orientation_coverage_enabled")->setChecked(true);
+            form->findChild<QLineEdit*>("ird_region_orientation_coverage")->setText("0.65");
+            const auto before = currentRegion();
+            ok(before.positionSampling.method != method || method == requirements::PositionSamplingMethod::Grid,
+               "step5 unconfirmed-definition-not-written");
+            // 人机可达性独立对账：先滚到方法选择器，再滚到确认按钮；
+            // 只调用屏外控件不能证明用户能在正式Dock完成同样操作。
+            auto* scroll = qobject_cast<QScrollArea*>(panel);
+            auto* applyButton = form->findChild<QPushButton*>("ird_region_sampling_apply");
+            ok(scroll && applyButton, "step5 scroll-and-confirm-present");
+            if (scroll && applyButton) {
+                // 区域卡本身有内层滚动区；须由内向外滚动每一层，外层直接
+                // ensureWidgetVisible不会穿透内层裁剪，不能误判控件不可达。
+                const auto reveal = [&](QWidget* target) {
+                    for (auto* ancestor = target->parentWidget(); ancestor; ancestor = ancestor->parentWidget()) {
+                        if (auto* area = qobject_cast<QScrollArea*>(ancestor)) {
+                            area->ensureWidgetVisible(target); settleEvents(100);
+                        }
+                    }
+                    return !target->visibleRegion().isEmpty();
+                };
+                ok(reveal(methodCombo), "step5 method-selector-reachable");
+                snapPng(hostWin, ("tour-3-method-" + std::to_string(int(method)) + ".png").c_str());
+                ok(reveal(applyButton), "step5 confirm-button-reachable");
+                snapPng(hostWin, ("tour-3-confirm-" + std::to_string(int(method)) + ".png").c_str());
+            }
+            applyButton->click(); settleEvents(300);
+            const auto after = currentRegion();
+            ok(after.positionSampling.method == method, "step5 confirmed-method-" + std::to_string(int(method)));
+            ok(after.orientationSampling.directionSamples == 12 && after.orientationSampling.rollSamples == 4,
+               "step5 orientation-12x4");
+            ok(after.coverageTargets.minOrientationCoverage && *after.coverageTargets.minOrientationCoverage == 0.65,
+               "step5 optional-orientation-coverage-set");
+            if (method == requirements::PositionSamplingMethod::GridBySpacing) {
+                ok(after.positionSampling.spacing == std::array<double,3>{0.25,0.25,0.25}, "step5 spacing-SI");
+                snapPng(hostWin, "tour-3a-spacing.png");
+            } else if (method == requirements::PositionSamplingMethod::Random) {
+                ok(after.positionSampling.count == 24, "step5 random-count-24");
+                snapPng(hostWin, "tour-3b-random.png");
+            } else {
+                ok(after.positionSampling.counts == std::array<std::uint32_t,3>{4,3,2}, "step5 grid-counts-4x3x2");
+            }
         }
         snapPng(hostWin, "tour-3-region-sampling.png");
 

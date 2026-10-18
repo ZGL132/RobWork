@@ -410,15 +410,14 @@ private:
     /// 工位枚举提交（applyStationEnumEdit——等级 QComboBox；UI-T37 返工）。
     void submitStationEnumValue(const std::string& key, const QString& text);
     /// 区域值提交（onRegionFieldEditingFinished 的 sender 无关形）。
+    /// @brief 固定原编辑器/区域/完整基线的UI队列；transform为值变换，无外部所有权。
+    void queueRegionEdit(std::function<WorkRegion(const WorkRegion&)> transform);
     void submitRegionValue(const std::string& key, const QString& text);
-    void submitRegionValueNow(const std::string& key, const QString& text);
     /// 区域二态提交（applyRegionToggleEdit）。
     void submitRegionToggle(const std::string& key, bool on);
-    void submitRegionToggleNow(const std::string& key, bool on);
     /// 区域采样计数提交（applyRegionSamplingCountsEdit——counts 三元组整数
     /// 回填；formatCounts 的逆变换，域规范化/裁决仍走 submitEntryEdit）。
     void submitRegionCounts(const std::array<std::uint32_t, 3>& counts);
-    void submitRegionCountsNow(const std::array<std::uint32_t, 3>& counts);
     /// 工位行键→所属卡片表单路由（词表分派——键族集合封闭）。
     QFormLayout* stationFormForKey(const std::string& key) const;
     /// 区域/工况表行同步（信号屏蔽——树点击驱动检查器联动用；返工③）。
@@ -427,7 +426,6 @@ private:
     /// 区域/工况枚举提交（applyRegionEnumEdit/applyConditionEnumEdit——
     /// 等级与启用 QComboBox 轨；返工②）。
     void submitRegionEnumValue(const std::string& key, const QString& text);
-    void submitRegionEnumValueNow(const std::string& key, const QString& text);
     void submitConditionEnumValue(const std::string& key, const QString& text);
     /**
      * @brief 执行已绑定原工况的排队字段提交；全在UI线程，不持控件裸指针。

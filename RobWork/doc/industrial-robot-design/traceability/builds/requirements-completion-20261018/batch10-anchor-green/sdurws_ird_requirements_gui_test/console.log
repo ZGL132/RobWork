@@ -1,0 +1,17 @@
+Note: Google Test filter = RequirementsSessionGuiTest.Region*WP14T12
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12 (419 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSamplingCompleteAtomic_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSamplingCompleteAtomic_REQ03_WP14T12 (49 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSamplingModesCancelAndReject_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSamplingModesCancelAndReject_REQ03_WP14T12 (65 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12 (109 ms)
+[----------] 4 tests from RequirementsSessionGuiTest (643 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (643 ms total)
+[  PASSED  ] 4 tests.

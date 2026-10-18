@@ -284,6 +284,163 @@ TEST_F(RequirementsSessionGuiTest, RegionBatchParametersAtomic_UX05_WP14T12)
     ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
 }
 
+/** @brief REQ-03：区域三种采样和可选姿态覆盖率可暂存，确认整批一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, RegionSamplingCompleteAtomic_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr) << "生产区域检查器缺完整采样编辑入口";
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    for (int axis = 0; axis < 3; ++axis) {
+        form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))->setText("0.25");
+    }
+    form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("12");
+    form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("4");
+    form->findChild<QCheckBox*>("ird_region_orientation_coverage_enabled")->setChecked(true);
+    form->findChild<QLineEdit*>("ird_region_orientation_coverage")->setText("0.65");
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before) << "编辑未确认应零写入";
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    const auto after = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(after.positionSampling.method, PositionSamplingMethod::GridBySpacing);
+    EXPECT_EQ(after.positionSampling.spacing, (std::array<double, 3>{0.25,0.25,0.25}));
+    EXPECT_EQ(after.orientationSampling.directionSamples, 12u);
+    EXPECT_EQ(after.orientationSampling.rollSamples, 4u);
+    ASSERT_TRUE(after.coverageTargets.minOrientationCoverage);
+    EXPECT_DOUBLE_EQ(*after.coverageTargets.minOrientationCoverage, 0.65);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    ASSERT_TRUE(m_editor.redoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), after);
+}
+
+/** @brief REQ-03：随机/零网格、可选覆盖率清除、取消及非法输入都走真实表单。 */
+TEST_F(RequirementsSessionGuiTest, RegionSamplingModesCancelAndReject_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05", "UX-11"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method"); ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::Random)));
+    form->findChild<QLineEdit*>("ird_region_random_count")->setText("24");
+    form->findChild<QPushButton*>("ird_region_sampling_cancel")->click();
+    EXPECT_EQ(method->currentData().toInt(), int(PositionSamplingMethod::Grid));
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::Random)));
+    form->findChild<QLineEdit*>("ird_region_random_count")->setText("4294967296");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    EXPECT_FALSE(form->findChild<QLabel*>("ird_region_sampling_error")->text().isEmpty());
+    form->findChild<QLineEdit*>("ird_region_random_count")->setText("-1");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    form->findChild<QLineEdit*>("ird_region_random_count")->setText("24");
+    form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before) << "姿态计数零必须拒绝";
+    form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("6");
+    form->findChild<QLineEdit*>("ird_region_definition_name")->setText(QStringLiteral("随机区域"));
+    form->findChild<QLineEdit*>("ird_region_definition_note")->setText(QStringLiteral("原文备注"));
+    form->findChild<QCheckBox*>("ird_region_collision")->setChecked(true);
+    form->findChild<QLineEdit*>("ird_region_margin")->setText("0.15");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    auto random = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(random.positionSampling.method, PositionSamplingMethod::Random);
+    EXPECT_EQ(random.positionSampling.count, 24u);
+    EXPECT_EQ(random.name, "随机区域"); EXPECT_EQ(random.note, "原文备注");
+    EXPECT_TRUE(random.demands.collisionFreeRequired); ASSERT_TRUE(random.demands.minimumJointMargin);
+    EXPECT_DOUBLE_EQ(*random.demands.minimumJointMargin, 0.15);
+    // 新投影后重新查控件；切回Grid允许位置零样本，绝不把未设姿态覆盖率造零。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::Grid)));
+    form->findChild<QLineEdit*>("ird_region_grid_count_0")->setText("0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    const auto grid = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(grid.positionSampling.method, PositionSamplingMethod::Grid);
+    EXPECT_EQ(grid.positionSampling.counts[0], 0u);
+    EXPECT_FALSE(grid.coverageTargets.minOrientationCoverage);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), random);
+    m_panel->setWritable(false); m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr); EXPECT_FALSE(form->isEnabled());
+}
+
+/** @brief REQ-03：旧数量/开关/等级/计数四轨在排队后切选中行，不得写到新区域。 */
+TEST_F(RequirementsSessionGuiTest, RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05"}, std::nullopt);
+    const auto first = m_editor.workingSet().regions.entries.front();
+    const auto second = makeRegion("第二区域");
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{second}).accepted);
+    for (int track = 0; track < 4; ++track) {
+        m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(first.objectId);
+        if (track == 0) {
+            QLineEdit* edit = nullptr;
+            for (auto* field : m_panel->findChildren<QLineEdit*>()) {
+                if (field->property("irdFieldKey").toString() == "box-center-x") { edit = field; break; }
+            }
+            ASSERT_NE(edit, nullptr); edit->setText("0.75"); QMetaObject::invokeMethod(edit, "editingFinished");
+        } else if (track == 1) {
+            auto* toggle = m_panel->findChild<QComboBox*>("ird_region_enabled_combo"); ASSERT_NE(toggle, nullptr);
+            toggle->setCurrentIndex(1);
+        } else if (track == 2) {
+            auto* level = m_panel->findChild<QComboBox*>("ird_region_level_combo"); ASSERT_NE(level, nullptr);
+            level->setCurrentText("Should");
+        } else {
+            const auto spins = m_panel->findChildren<QSpinBox*>("ird_region_count_spin"); ASSERT_EQ(spins.size(), 3);
+            spins[0]->setValue(3);
+        }
+        m_panel->focusObject(second.objectId); QApplication::processEvents();
+        for (const auto& region : m_editor.workingSet().regions.entries) {
+            if (region.objectId == second.objectId) { EXPECT_EQ(region, second) << "不得改写切换后的区域，轨=" << track; }
+            if (region.objectId == first.objectId) {
+                if (track == 0) { EXPECT_DOUBLE_EQ(region.box.center[0], 0.75); }
+                if (track == 1) { EXPECT_FALSE(region.enabled); }
+                if (track == 2) { EXPECT_EQ(region.level, RequirementLevel::Should); }
+                if (track == 3) { EXPECT_EQ(region.positionSampling.counts[0], 3u); }
+            }
+        }
+        if (::testing::Test::HasFailure()) { return; }
+    }
+}
+
+/** @brief REQ-03：完整暂存拒绝基线变化/禁写；姿态覆盖率可明确清除。 */
+TEST_F(RequirementsSessionGuiTest, RegionSamplingBaselineAndOptionalClear_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-11"}, std::nullopt);
+    auto before = m_editor.workingSet().regions.entries.front();
+    before.coverageTargets.minOrientationCoverage = 0.7;
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{before}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    form->findChild<QCheckBox*>("ird_region_orientation_coverage_enabled")->setChecked(false);
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_FALSE(m_editor.workingSet().regions.entries.front().coverageTargets.minOrientationCoverage);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    for (int axis=0; axis<3; ++axis) { form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))->setText("-0.1"); }
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    EXPECT_FALSE(form->findChild<QLabel*>("ird_region_sampling_error")->text().isEmpty());
+    for (int axis=0; axis<3; ++axis) { form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))->setText("0.1"); }
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); // 候选已排队。
+    auto newer = before; newer.note = "外部修改必须保留";
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{newer}).accepted);
+    QApplication::processEvents(); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), newer);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("3");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    m_panel->setWritable(false); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), newer);
+}
+
 /** @brief UX-05/REQ-04：未设节拍显示未设，取消零写入，确认节拍只进草稿。 */
 TEST_F(RequirementsSessionGuiTest, ConditionBatchParametersCancel_UX05_WP14T12)
 {
