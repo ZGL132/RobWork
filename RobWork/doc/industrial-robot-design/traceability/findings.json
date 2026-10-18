@@ -9101,6 +9101,26 @@
       "resolution": "WP-10-T85 合入收尾批补翻两条 status=fixed；F-930 门禁同批上线（fixedAt 存在而 status≠fixed 即 validate-docs 失败），同类漂移日后由机器拦截。编号说明：attempt 2 记录原建议 F-928 候选，该号已被 Agent-native 门禁批（F-928~F-930）占用，故顺延取 F-931。",
       "owner": "验收段/治理批（台账翻转与门禁同批）",
       "fixedAt": "2026-10-18"
+    },
+    {
+      "id": "F-932",
+      "source": "WP-15-T19 验收 attempt 1 S-1（acc/wp-15-t19/1，2026-10-18；验收 verdict pass 不阻断）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "符号归属笔误：rotationFromRpySi/rpyFromRotationSi 实际落位 kinematics/plugin/KinPanelRotation（namespace sdurws::ird::kinematics），但四处文本写作 KinPanelFlows::rotationFromRpySi——①KinematicsPanelWidget.cpp:815 代码注释；②units/kinematics.md §11 T19 行（v0.32 时点 :882）；③development-task-breakdown.md §2.16 T19 行 outputs 列（v0.91 时点 :519）；④tasks/foundation/WP-15-T19.json note。语义描述（Eigen 组合＋集成等价钉）无误、kinematics.md v0.32 版本行归属写法正确，但按现文到 KinPanelFlows 里 grep 不到该符号，误导首次读者",
+      "owner": "下批 kinematics 治理批（四处统一订正为 KinPanelRotation::；findings F-919 resolution 的「KinPanelFlows 拆出的 KinPanelRotation」系溯源措辞可保留）",
+      "resolution": ""
+    },
+    {
+      "id": "F-933",
+      "source": "WP-15-T19 验收 attempt 1 S-2（acc/wp-15-t19/1，2026-10-18；验收 verdict pass 不阻断）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "KinPanelRotation.cpp 匿名命名空间常量 kGimbalEpsilon 除 [[maybe_unused]] 的 kGimbalEpsilonRef 外零实际消费者——生效阈值实为头文件默认参数 epsilon = 1e-5，1e-5 口径现存三处（头文件默认值／kGimbalEpsilon 字面量／注释），留漂移温床",
+      "owner": "下批 kinematics 治理批（收敛为单一来源：默认参数改绑该常量，或删冗余常量与其引用变量）",
+      "resolution": ""
     }
   ]
 }
