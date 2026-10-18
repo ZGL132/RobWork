@@ -721,8 +721,29 @@ void IrdWorkbenchHostPlugin::initialize()
                     if (event.kind != core::DomainEventKind::RevisionCommitted) {
                         return;
                     }
-                    m_host->onRequirementExternalRevision(
-                        event.asRevisionCommitted().revision);
+                    // WP-14-T12/REQ-10：事务发布事件时仍持有存储独占锁，
+                    // 本订阅不能同步回查HEAD，否则同线程再次取writer互斥锁会失败。
+                    // 只复制值事件，待命令返回后由UI队列重读权威；QObject上下文
+                    // 保证宿主销毁时取消，项目身份与关闭守卫阻止迟到事件污染新项目。
+                    const auto payload = event.asRevisionCommitted();
+                    const auto source = m_host->m_lastStoreAdapter;
+                    QTimer::singleShot(0, m_host, [host = m_host, payload, source] {
+                        const auto adapter = host->m_lastStoreAdapter;
+                        if (adapter && adapter == source && !adapter->isClosed()
+                            && adapter->projectStore().projectId() == payload.project) {
+                            try {
+                                host->onRequirementExternalRevision(payload.revision);
+                            } catch (const std::exception& error) {
+                                // 队列任务已离开事件总线的异常边界，必须在本操作边界
+                                // 保留可归因错误并提示重开，禁止异常穿透Qt事件循环。
+                                reportLine(std::string("需求会话同步失败：") + error.what());
+                                if (host->m_hostStatusBar) {
+                                    host->m_hostStatusBar->showMessage(
+                                        QStringLiteral("需求会话同步失败，请重新打开项目；详情见日志"), 8000);
+                                }
+                            }
+                        }
+                    });
                 }
 
             private:
@@ -783,6 +804,9 @@ void IrdWorkbenchHostPlugin::initialize()
             // 语义一致）。
             m_lastContextProjection = context;
         } catch (const std::exception& syncError) {
+            // WP-14-T12：采样开发日志可能省略首个异常；保留操作边界的完整原因，
+            // 使正式宿主回归能够区分关闭残余查询与真正的打开/呈现故障。
+            reportLine(std::string("项目上下文同步失败：") + syncError.what());
             const bool recoveredNoProject =
                 (m_controller == nullptr || !m_controller->hasOpenSession());
             if (m_diag.pipeline) {
@@ -3320,7 +3344,9 @@ IrdWorkbenchHostPlugin::currentRequirementsCheckContext() const
     // HEAD 读取同源——store 查询端口现取）。F-554 根因修复的机制面：首应
     // 用后根引用表槽位被回填，空上下文的 R0 闭包核对必误判「悬空」。
     requirements::CheckContext ctx;
-    if (m_lastStoreAdapter != nullptr) {
+    // 关闭收尾仍会重算按钮/空态，已关闭上下文没有可查询闭包；
+    // 与撤销门控相同地返回空事实，不能把正常关闭误报成操作异常。
+    if (m_lastStoreAdapter != nullptr && !m_lastStoreAdapter->isClosed()) {
         ctx.closureRefs =
             m_lastStoreAdapter->projectStore().query().head().objectRefs;
     }
@@ -4697,6 +4723,35 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
     m_draftAutosaveTimer->start();
     if (m_publishBridge != nullptr) {
         m_publishBridge->attachOrSwitchHostSession(project);
+    }
+
+    // WP-14-T12/REQ-10：runtime是瞬态产物，关闭时随端口释放；重新打开已有项目
+    // 必须从已保存HEAD重建，不能等下一次建模命令才恢复TCP/FK和几何拾取能力。
+    // 空计划写入复用同一十段双编译链，只读已有闭包，不提交命令、不产生新修订；
+    // 无机器人根的新项目正常保持空场景，不能把“没有模型”当编译失败。
+    const project::RevisionView head = store.query().head();
+    const bool hasDesign = std::any_of(head.objectRefs.begin(), head.objectRefs.end(),
+        [](const project::ObjectRef& ref) { return ref.objectTypeToken == modeling::kRobotDesignObjectType; });
+    if (hasDesign) {
+        const std::vector<project::ObjectWrite> noWrites;
+        const auto restored = m_compilePort->compileWorkCellAndDwc(
+            project::CompileRequest{store.query(), noWrites, head.id});
+        if (restored.ok) {
+            // 发布桥已绑定新项目，沿现有呈现事务挂接WorkCell、名称映射及运动学快照。
+            // 失败回滚仍由发布桥负责，禁止另造一个呈现专用的机器人计算快照。
+            refreshPresentationAfterCommit();
+            reportLine("已从保存修订恢复机器人运行时：" + head.id.toCanonical());
+        } else {
+            // 数据可打开但模型不可编译时保留编辑能力，明确给出原稳定诊断，
+            // 不伪造空模型成功或偷偷应用一笔无变化的建模修订来掩盖恢复失败。
+            reportLine("机器人运行时恢复失败，请检查模型诊断后修复并应用");
+            for (const auto& diagnostic : restored.diagnostics) {
+                reportLine(diagnostic.cause + "；" + diagnostic.recommendedAction);
+            }
+            if (m_hostStatusBar) {
+                m_hostStatusBar->showMessage(QStringLiteral("机器人运行时恢复失败，请检查模型诊断"), 8000);
+            }
+        }
     }
 }
 
@@ -6896,6 +6951,54 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             }
         }
 
+        // WP-14-T12联合验证前置：generic-6r模板的origin按设计全部为零，
+        // 仅改一个关节会得到重叠链，不能用于判断完整机器人三维显示是否正确。
+        // 从真实参数表为六轴输入非退化尺寸（m/rad），仍经原确认/编辑/应用链。
+        step("3.5 spatial-chain-fixture");
+        for (int jointIndex = 1; jointIndex <= 6 && structTree; ++jointIndex) {
+            QTreeWidgetItem* target = nullptr;
+            QTreeWidgetItemIterator it(structTree);
+            const QString jointName = QStringLiteral("j%1").arg(jointIndex);
+            for (; *it; ++it) {
+                if ((*it)->text(0).endsWith(jointName)) { target = *it; break; }
+            }
+            ok(target != nullptr, "step3.5 joint-row-" + std::to_string(jointIndex));
+            if (!target) { continue; }
+            structTree->setCurrentItem(target);
+            settleEvents(100);
+            // 本遍历在一个外层QTimer槽内执行，嵌套事件循环不会自动销毁
+            // 外层登记deleteLater的旧编辑页；模拟下一真实用户事件前的删除拍，
+            // 再findChild当前页，避免误操作已排队删除、借用旧模型的表。
+            QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+            auto* editHost = panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+            auto* table = editHost ? editHost->findChild<QTableWidget*>(QStringLiteral("ird_param_table")) : nullptr;
+            auto* apply = editHost ? editHost->findChild<QPushButton*>(QStringLiteral("ird_param_apply")) : nullptr;
+            auto* confirm = editHost ? editHost->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes")) : nullptr;
+            bool allSet = table && apply && confirm;
+            const std::vector<std::pair<QString, QString>> values{
+                {QStringLiteral("origin-x"), QStringLiteral("0.10")},
+                {QStringLiteral("origin-z"), QStringLiteral("0.15")},
+                {QStringLiteral("origin-r"), jointIndex % 2 ? QStringLiteral("1.5707963267948966") : QStringLiteral("0")}};
+            for (const auto& field : values) {
+                bool found = false;
+                for (int row = 0; table && row < table->rowCount(); ++row) {
+                    if (table->item(row, 0)->data(Qt::UserRole).toString() == field.first) {
+                        table->item(row, 1)->setText(field.second);
+                        found = true;
+                        break;
+                    }
+                }
+                allSet = allSet && found;
+            }
+            ok(allSet, "step3.5 parameter-fields-" + std::to_string(jointIndex));
+            if (allSet) {
+                apply->click();
+                settleEvents(50);
+                confirm->click();
+                settleEvents(100);
+            }
+        }
+
         // ---- 拍 4：结构新增关节（链长 6→7）------------------------------
 
         step("4 structure-add-joint");
@@ -6988,6 +7091,12 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         }
         ok(!undoLit, "step5 project-undo-irreversible-first-apply");
         snapPng(hostWin, "mtour-5-applied.png");
+        // 他域提交也必须推动零编辑需求会话跟进HEAD；直接观测真实总线消费，
+        // 可揭露在存储写锁内同步回查引起的resource-deadlock事件丢失。
+        settleEvents(100);
+        ok(m_domains->requirements->sessionBaseRevision()
+               == std::optional<core::RevisionId>{m_lastStoreAdapter->projectStore().query().head().id},
+           "step5 requirements-follows-modeling-revision");
 
         QPushButton* exportBtn = panel->findChild<QPushButton*>(
             QStringLiteral("ird_modeling_cmd_modeling.export-package"));
@@ -7036,6 +7145,49 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         ok(exported, "step6 irdbundle-exists (path=" + exportPath.toStdString()
                + ")");
         snapPng(hostWin, "mtour-6-exported.png");
+
+        // WP-14-T12/REQ-10：真实建模应用后关闭并重开同一已保存项目，验证恢复runtime
+        // 而非仅恢复会话壳。全程原存储/编译/呈现链，不注入结果、不创建新修订。
+        step("5.5 reopen-saved-runtime");
+        const auto savedHead = m_lastStoreAdapter->projectStore().query().head().id;
+        (void)m_controller->beginClose(UiCloseIntent::CloseProject);
+        const auto closeResult = m_controller->resolveCloseDialog(
+            CloseDecision{true, DraftDisposition::Discard, TaskDisposition::Wait});
+        for (int attempt = 0; attempt < 100 && m_controller->hasOpenSession(); ++attempt) {
+            settleEvents(100); // 最多10秒等待真实关闭协议Draining完成，不并行启动第二宿主。
+        }
+        ok(!m_hostStatusBar || !m_hostStatusBar->currentMessage().contains(QStringLiteral("异常")),
+           "step5.5 close-without-context-error");
+        const bool reopened = closeResult.status == CloseDialogResolution::Status::Confirmed
+            && !m_controller->hasOpenSession() && openViaSessionController(demoPath.toStdString());
+        const bool restored = reopened && m_compilePort && m_compilePort->lastPublishedSnapshot();
+        ok(restored, "step5.5 saved-runtime-restored");
+        settleEvents(300); // 编译快照在位不等于宿主已完成呈现挂接，额外断言实际场景。
+        const auto restoredCell = getRobWorkStudio()->getWorkCell();
+        ok(reopened && m_controller->hasOpenSession(), "step5.5 real-open-session");
+        ok(restoredCell && !restoredCell->getDevices().empty(), "step5.5 host-device-restored");
+        ok(restoredCell && !restoredCell->getObjects().empty(), "step5.5 host-geometry-restored");
+        const auto restoredScene = getRobWorkStudio()->getWorkCellScene();
+        ok(restoredScene && restoredScene->getWorkCell() == restoredCell,
+           "step5.5 scene-workcell-matches-host");
+        ok(restoredScene && !restoredScene->getDrawables().empty(),
+           "step5.5 scene-has-drawables");
+        if (restoredCell && !restoredCell->getDevices().empty()) {
+            // 独立数值参照：六次平移均为(0.10,0,0.15)m，奇数轴Rx(pi/2)，
+            // 零关节角下依次累积得到世界系末端(0.60,-0.15,-0.15)m；
+            // 第七轴为新增恒等原点，不改变位置。不能只靠“有设备”验证真FK。
+            const auto endPose = rw::kinematics::Kinematics::worldTframe(
+                restoredCell->getDevices().front()->getEnd(), getRobWorkStudio()->getState());
+            const rw::math::Vector3D<> expectedEnd(0.60, -0.15, -0.15);
+            ok((endPose.P() - expectedEnd).norm2() < 1e-9,
+               "step5.5 spatial-fk-numeric-reference");
+        }
+        if (reopened) {
+            ok(m_lastStoreAdapter->projectStore().query().head().id == savedHead,
+               "step5.5 reopen-zero-revisions");
+        }
+        snapPng(hostWin, "mtour-5.5-reopened.png");
+
         QCoreApplication::exit(failedCount == 0 ? 0 : 1);
     });
 }
