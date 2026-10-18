@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 生成时间 | 2026-10-18T04:10:57+08:00 |
-| 生成基线 | git HEAD d92902c9695485511cffc8b6b79256079f8773ee |
+| 生成时间 | 2026-10-18T08:03:30+08:00 |
+| 生成基线 | git HEAD e23d07ec2a00182475859e74ce7dac7560cd334e |
 | 任务状态（契约） | done |
 | 单元 / 主 WP | core / WP-B |
 | 分支 | wp03-t01 |
@@ -58,7 +58,7 @@
 | RobWork/doc/industrial-robot-design/units/core.md | 07e3b38a4bc98d0e2223cf5de83d7c8880c99dce |
 | RobWork/doc/industrial-robot-design/REQUIREMENTS.md | 349489fe5cf47c956a8007a58c187568642533ad |
 | RobWork/doc/industrial-robot-design/context/reading-paths.md | 1b7d1bcc50fca5b8e0efd7947bb76ae79a77e87f |
-| RobWork/doc/industrial-robot-design/context/asset-inventory.json | fd7a53dad41d88956fb88057bb17b653936a4128 |
-| AGENTS.md | eed02a0ab6b7ccf9c0e643d56caa8db068049a85 |
+| RobWork/doc/industrial-robot-design/context/asset-inventory.json | 281f3f4a5978fd271ea7e0e6b5cb52d75125bfb7 |
+| AGENTS.md | 61c7ab3f4ee0652fd961f66e7f709c38f7eff89f |
 | RobWork/doc/industrial-robot-design/AGENTS.md | 86b3f664b81da562f1ec0fbfb2c1995e8f360c5f |
 | RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md | 2afad9e486d04d220bf5f077a0f577cd86992d71 |

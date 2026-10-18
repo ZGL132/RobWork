@@ -185,7 +185,10 @@ foreach ($sd in 'implemented','proposed','rejected','archived') {
 # 六个阶段 Skill 是执行协议的操作化载体（验收口径＝新会话按 AGENTS.md 入口能找到并
 # 照执行，不要求运行端自动触发）。本段校验六件 SKILL.md 存在且 frontmatter 含
 # name/description（最低可用格式）；协议权威仍在 PIPE/ACC/CCP 与根 AGENTS，Skill 只是速查。
-$skillNames = @('ird-discover-change','ird-design-change','ird-implement-task','ird-verify-change','ird-qt-gui-windows','ird-handoff')
+# ird-python313-dll（2026-10-18 治理批增）：python313.dll 运行期缺失处置规程——
+# DTB §5.1「fresh 树运行时前置」③行的操作面唯一 home（F-428/F-440/F-715/F-828 族），
+# AGENTS §4.1 fresh 树行挂引用、asset-inventory canonicalLinks 登记。
+$skillNames = @('ird-discover-change','ird-design-change','ird-implement-task','ird-verify-change','ird-qt-gui-windows','ird-handoff','ird-python313-dll')
 $skillsBase = Join-Path $RepoRoot '.agents/skills'
 $skillCount = 0
 foreach ($sn in $skillNames) {

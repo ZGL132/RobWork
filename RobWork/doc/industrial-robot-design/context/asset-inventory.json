@@ -192,8 +192,8 @@
       "owner": "owner",
       "defaultContext": false,
       "generated": false,
-      "canonicalLinks": ["../../.agents/skills/ird-qt-gui-windows/SKILL.md"],
-      "note": "执行协议 Skills 六件套（discover/design/implement/verify/qt-gui-windows/handoff，治理 Task 5）：协议操作化速查，权威在 PIPE/ACC/CCP 与根 AGENTS；源码区 AGENTS §5 的操作面唯一 home。跨树登记"
+      "canonicalLinks": ["../../.agents/skills/ird-qt-gui-windows/SKILL.md", "../../.agents/skills/ird-python313-dll/SKILL.md"],
+      "note": "执行协议 Skills 六件套（discover/design/implement/verify/qt-gui-windows/handoff，治理 Task 5）：协议操作化速查，权威在 PIPE/ACC/CCP 与根 AGENTS；源码区 AGENTS §5 的操作面唯一 home。跨树登记。ird-python313-dll（2026-10-18 增）：python313.dll 运行期缺失处置规程＝DTB §5.1「fresh 树运行时前置」③行的操作面唯一 home（F-428/F-440/F-715/F-828 族），AGENTS §4.1 fresh 树行同批挂引用"
     },
     {
       "path": "context/packs",
