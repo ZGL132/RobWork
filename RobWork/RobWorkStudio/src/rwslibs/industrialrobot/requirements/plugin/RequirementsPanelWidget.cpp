@@ -14,6 +14,7 @@
 #include "ConditionStructureForm.hpp"  // WP-14-T12：负载/事件结构暂存，确认后原子写草稿。
 #include "StationDefinitionDialog.hpp" // WP-14-T12：完整引用与姿态载荷一次确认。
 #include <QPointer> // 模态嵌套循环可能拆除面板；确认守卫不得解引用已销毁控件。
+#include <QShortcut> // 三维目标的页内快捷键，与菜单/按钮共用同一确认入口。
 
 #include <QBrush>
 #include <QAction>   // 导入下拉菜单动作（返工⑤）
@@ -55,6 +56,7 @@
 
 #include <algorithm>  // std::min（删除锚回落位次钳制）
 #include <charconv>   // std::to_chars（formatSiText——数值确定性文本化）
+#include <cmath>
 #include <functional>  // std::function（UI-T36 层级树递归定位）
 #include <set>        // uniqueEntryName 的已占名集合
 #include <map>        // 数量基线按稳定字段键查取，不从已格式化显示文本反解真值。
@@ -64,6 +66,41 @@
 
 namespace sdurws::ird::requirements {
 namespace {
+
+/** @brief 仅作交互位姿表达转换：字段roll/pitch/yaw(rad)按Rz·Ry·Rx组成无量纲旋转。 */
+rw::math::Rotation3D<> targetEditRotation(const rw::math::Vector3D<>& rpy)
+{
+    const double cr=std::cos(rpy[0]),sr=std::sin(rpy[0]),cp=std::cos(rpy[1]),sp=std::sin(rpy[1]);
+    const double cy=std::cos(rpy[2]),sy=std::sin(rpy[2]);
+    return {cy*cp,cy*sp*sr-sy*cr,cy*sp*cr+sy*sr,
+        sy*cp,sy*sp*sr+cy*cr,sy*sp*cr-cy*sr,-sp,cp*sr,cp*cr};
+}
+/** @brief 世界系确认矩阵反解roll/pitch/yaw(rad)，近万向锁保留首列微小余弦。 */
+rw::math::Vector3D<> targetEditRpy(const rw::math::Rotation3D<>& r)
+{
+    const double cp=std::hypot(r(0,0),r(1,0));
+    const double pitch=std::atan2(-r(2,0),cp);
+    return cp>1e-12 ? rw::math::Vector3D<>(std::atan2(r(2,1),r(2,2)),pitch,std::atan2(r(1,0),r(0,0)))
+        : rw::math::Vector3D<>(0,pitch,std::atan2(-r(0,1),r(1,1)));
+}
+/** @brief 交互端口值须为有限刚体位姿：m平移、正交右手旋转，误差容许1e-8无量纲。 */
+bool finiteTargetEditPose(const rw::math::Transform3D<>& pose)
+{
+    const auto& r=pose.R();
+    for (int i=0;i<3;++i) {
+        if (!std::isfinite(pose.P()[i])) { return false; }
+        for (int j=0;j<3;++j) { if (!std::isfinite(r(i,j))) { return false; } }
+    }
+    for (int i=0;i<3;++i) {
+        for (int j=0;j<3;++j) {
+            double dot=0; for (int k=0;k<3;++k) { dot+=r(k,i)*r(k,j); }
+            if (std::abs(dot-(i==j ? 1.0 : 0.0))>1e-8) { return false; }
+        }
+    }
+    const double determinant=r(0,0)*(r(1,1)*r(2,2)-r(1,2)*r(2,1))
+        -r(0,1)*(r(1,0)*r(2,2)-r(1,2)*r(2,0))+r(0,2)*(r(1,0)*r(2,1)-r(1,1)*r(2,0));
+    return std::abs(determinant-1.0)<=1e-8;
+}
 
 /**
  * @brief 批量表会话的Qt寿命壳（UX-05），拥有模型与出口且先销毁借用它们的视图。
@@ -1139,6 +1176,25 @@ QWidget* RequirementsPanelWidget::makeLifecycleBar(QWidget* parent,
         }
         lay->addWidget(btn);
     }
+    if (member==WorkingSetMember::Points) {
+        for (const bool creating : {true,false}) {
+            auto* button=new QPushButton(creating ? "三维创建目标…" : "三维移动选中…",bar);
+            const auto name=creating ? "ird_req_create_target_3d" : "ird_req_move_target_3d";
+            button->setObjectName(name); button->setProperty("irdLifecycle",true);
+            button->setProperty("irdLifecycleAction",creating ? "add" : "move");
+            button->setProperty("irdLifecycleKey","points"); lay->addWidget(button);
+            connect(button,&QPushButton::clicked,this,[this,creating] { onEditTarget3D(creating); });
+            auto* shortcut=new QShortcut(QKeySequence(creating ? "Alt+Shift+C" : "Alt+Shift+M"),this);
+            shortcut->setContext(Qt::WidgetWithChildrenShortcut);
+            connect(shortcut,&QShortcut::activated,button,&QPushButton::click);
+            // 更多操作也暴露同一入口；不注册另一套域命令或撤销路径。
+            if (m_moreMenuButton && m_moreMenuButton->menu()) {
+                auto* action=m_moreMenuButton->menu()->addAction(button->text());
+                action->setObjectName(QString(name)+"_menu"); action->setProperty("irdTargetButton",QString(name));
+                connect(action,&QAction::triggered,button,&QPushButton::click);
+            }
+        }
+    }
     return bar;
 }
 
@@ -1205,6 +1261,12 @@ void RequirementsPanelWidget::refreshLifecycleAndEmptyStates()
         btn->setToolTip(hasSelection ? QString() : noSelectionReason);
     }
     // 属性区空态（各页独立——选择面按本页对象集合判定，跨页互不影响）。
+    for (auto* action : findChildren<QAction*>()) {
+        const auto target=action->property("irdTargetButton").toString();
+        if (!target.isEmpty()) {
+            if (auto* button=findChild<QPushButton*>(target)) { action->setEnabled(button->isEnabled()); }
+        }
+    }
     const auto applyState = [](QScrollArea* scroll, QLabel* hint, bool has) {
         if (scroll != nullptr) { scroll->setVisible(has); }
         if (hint != nullptr) { hint->setVisible(!has); }
@@ -1264,8 +1326,73 @@ void RequirementsPanelWidget::refreshCommandEnablement()
         m_importDropdownButton->setEnabled(importAnyEnabled);
     }
     if (m_moreMenuButton != nullptr) {
+        for (auto* action : findChildren<QAction*>()) {
+            if (!action->property("irdTargetButton").toString().isEmpty() && action->isEnabled()) { moreAnyEnabled=true; }
+        }
         m_moreMenuButton->setEnabled(moreAnyEnabled);
     }
+}
+
+void RequirementsPanelWidget::onEditTarget3D(bool creating)
+{
+    auto* editor=m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || m_sessionDetached) { return; }
+    const auto seams=m_view3dSeams; // 嵌套交互期间装配替换也不借用成员function的存储。
+    if (!seams.editWorldTarget || !seams.referenceWorldPose) {
+        showStatusLine("三维目标交互或参考系世界变换未装配"); return;
+    }
+    const auto before=editor->workingSet();
+    const auto choices=seams.referenceChoices ? seams.referenceChoices() : std::vector<RequirementsReferenceChoice>{};
+    const auto guard=referenceEditGuard(editor,choices);
+    std::optional<TaskPoint> base;
+    RequirementReference reference;
+    if (!creating) {
+        for (const auto& point : before.points.entries) {
+            if (m_stationSelectedId==point.objectId) { base=point; break; }
+        }
+        if (!base || base->pose.position.state()!=core::FieldState::Provided) {
+            showStatusLine("请先选择已提供位置的工位"); return;
+        }
+        reference=base->refFrame;
+    }
+    const auto frame=seams.referenceWorldPose(reference);
+    if (!frame || !finiteTargetEditPose(*frame)) { showStatusLine("工位参考系当前不可解析，不能进行三维交互"); return; }
+    auto initial=rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1));
+    if (base) {
+        // 移动仅编辑位置。Fixed显示真实固定姿态；其它规则使用参考系交互轴，
+        // 宿主明确说明不是规则深解析结果，不在界面复制求解器的姿态真值。
+        // 使用框架公开的Eigen矩阵表达式；独立冒烟模式只提供数学模板头，
+        // 不能调用依赖框架显式实例化库的Rotation3D外联运算符。
+        initial=rw::math::Transform3D<>(rw::math::Vector3D<>(frame->R().e()*base->pose.position.value().e()+frame->P().e()),
+            base->pose.orientation.kind==OrientationRuleKind::Fixed
+                ? rw::math::Rotation3D<>(frame->R().e()*targetEditRotation(base->pose.orientation.fixedRpy).e()) : frame->R());
+    }
+    const auto confirmed=seams.editWorldTarget(initial,creating);
+    if (!guard()) { return; } // 面板销毁/切项目时不再访问this或原编辑器。
+    if (!confirmed) { showStatusLine("三维目标交互已取消，草稿未改变"); return; }
+    if (!finiteTargetEditPose(*confirmed)) { showStatusLine("三维目标返回无效位姿，草稿未改变"); return; }
+    const auto currentFrame=seams.referenceWorldPose(reference);
+    if (!currentFrame || *currentFrame!=*frame) { showStatusLine("参考系已移动，请重新进行三维交互"); return; }
+    TaskPoint candidate=base ? *base : TaskPoint{};
+    if (creating) {
+        // 仅最终确认后取号。世界系新目标约束完整六分量，来源明确为人工交互值。
+        candidate.objectId=core::ObjectId::generate(); candidate.name=uniqueEntryName(before,WorkingSetMember::Points,"三维目标");
+        candidate.refFrame=RequirementReference{}; candidate.pose.constrainedDof={true,true,true,true,true,true};
+        candidate.pose.orientation.kind=OrientationRuleKind::Fixed;
+        candidate.pose.orientation.fixedRpy=targetEditRpy(confirmed->R());
+        candidate.work=TaskSegment{true,SegmentAxis::ToolZ,1.0};
+    }
+    candidate.pose.position=core::SourcedValue<rw::math::Vector3D<>>::provided(
+        // 刚体旋转的逆为转置：把世界确认位置减去参考系原点，再旋回局部系。
+        creating ? confirmed->P() : rw::math::Vector3D<>(frame->R().e().transpose()*(confirmed->P().e()-frame->P().e())),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    if (base && candidate==*base) { return; }
+    QMetaObject::invokeMethod(this,[this,guard,seams,reference,frame,candidate] {
+        if (!guard()) { return; }
+        const auto latest=seams.referenceWorldPose(reference);
+        if (!latest || *latest!=*frame) { showStatusLine("参考系已移动，请重新进行三维交互"); return; }
+        if (submitStructuralEdit(RequirementEdit{candidate})) { focusObject(candidate.objectId); }
+    },Qt::QueuedConnection);
 }
 
 std::string RequirementsPanelWidget::uniqueEntryName(

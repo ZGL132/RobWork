@@ -475,6 +475,13 @@ private:
     /// 新增槽：构造合法起步条目（域夹具同款默认值）＋自动名防撞 →
     /// applyEdit → 接受＝sink 链刷新＋选中新条目；拒绝＝状态行就地错误。
     void onAddEntry(WorkingSetMember member);
+
+    /**
+     * @brief REQ-08：调用宿主临时三维工具，确认后复核基线并一次排队写回。
+     * @param creating [in] true创建World工位，false仅移动选中工位位置，保留其规则/引用。
+     * 仅UI线程；宿主取消、缺缝、会话/目录/参考系变化均零写入并就地反馈。
+     */
+    void onEditTarget3D(bool creating);
     /// 复制槽：当前选中条目深拷贝＋新 id＋『 副本』名防撞 → applyEdit →
     /// 选中副本；溯源字段保持源值（复件非伪造模板物——诚实登记）。
     void onDuplicateEntry(WorkingSetMember member);

@@ -20,10 +20,12 @@
  */
 
 #include <gtest/gtest.h>
+#include <limits> // 非有限交互返回值必须被拒绝，不能写入领域草稿。
 
 #include <QApplication>
 #include <QClipboard> // UX-05：真实剪贴板经过公共参数表粘贴入口。
 #include <QElapsedTimer>
+#include <QKeyEvent> // REQ-08：向真实窗口派发快捷键，覆盖按钮以外的用户入口。
 #include <QEventLoop>
 #include <QTimer>
 #include <QCheckBox>  // 启用 Switch 断言（UI-T37 R1）
@@ -3553,4 +3555,182 @@ TEST_F(RequirementsSessionGuiTest, NamedInlineReferencesMissingUnavailableCancel
     EXPECT_FALSE(m_panel->findChild<QListWidget*>("ird_condition_environment_choices")->isEnabled());
     EXPECT_FALSE(m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->isEnabled());
     EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-08：三维入口缺装配时诚实反馈并零写入，不伪造交互成功。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetMissingSeamIsExplicit_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet(); m_panel->refreshPanel(before,m_report);
+    m_panel->focusObject(before.points.entries.front().objectId);
+    auto* create=m_panel->findChild<QPushButton*>("ird_req_create_target_3d");
+    auto* move=m_panel->findChild<QPushButton*>("ird_req_move_target_3d");
+    ASSERT_NE(create,nullptr) << "缺少三维创建目标入口";
+    ASSERT_NE(move,nullptr) << "缺少三维移动选中工位入口";
+    create->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+    EXPECT_TRUE(m_panel->showCommandFeedbackText().contains("未装配"));
+}
+
+/** @brief REQ-08：真实刚体变换写回旋转非World参考系，确认一次撤销，取消/漂移零写。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetMoveTransformCancelAndStale_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    auto point=m_editor.workingSet().points.entries.front();
+    point.refFrame.kind=RequirementRefKind::SceneObject; point.refFrame.objectId=core::ObjectId::generate();
+    point.pose.position=core::SourcedValue<rw::math::Vector3D<double>>::provided({0.1,0.2,0.3},
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{point}).accepted); const auto before=m_editor.workingSet();
+    // 独立常量矩阵：参考系绕世界Z转90°，原局部(0.1,0.2,0.3)应到(0.8,2.1,3.3)m。
+    rw::math::Transform3D<> frame({1,2,3},rw::math::Rotation3D<>(0,-1,0,1,0,0,0,0,1));
+    int mode=0,calls=0;
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[&](const RequirementReference&) { return std::optional<rw::math::Transform3D<>>{frame}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>& initial,bool creating)->std::optional<rw::math::Transform3D<>> {
+        ++calls; EXPECT_FALSE(creating); EXPECT_EQ(m_editor.workingSet(),before);
+        EXPECT_NEAR(initial.P()[0],0.8,1e-12); EXPECT_NEAR(initial.P()[1],2.1,1e-12); EXPECT_NEAR(initial.P()[2],3.3,1e-12);
+        if (mode==1) { return std::nullopt; }
+        if (mode==2) { frame=rw::math::Transform3D<>({2,2,3},frame.R()); }
+        return rw::math::Transform3D<>(initial.P()+rw::math::Vector3D<>(0.3,-0.2,0.1),initial.R());
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report); m_panel->focusObject(point.objectId);
+    auto* move=m_panel->findChild<QPushButton*>("ird_req_move_target_3d"); ASSERT_NE(move,nullptr);
+    move->click(); QApplication::processEvents();
+    const auto actual=m_editor.workingSet().points.entries.front();
+    EXPECT_NEAR(actual.pose.position.value()[0],-0.1,1e-12);
+    EXPECT_NEAR(actual.pose.position.value()[1],-0.1,1e-12);
+    EXPECT_NEAR(actual.pose.position.value()[2],0.4,1e-12);
+    auto expected=point; expected.pose.position=actual.pose.position;
+    EXPECT_EQ(actual,expected) << "仅位置改变，原引用/规则/约束/TCP/工况关联不得改变";
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    for (mode=1;mode<=2;++mode) {
+        m_panel->refreshPanel(before,m_report); m_panel->focusObject(point.objectId);
+        m_panel->findChild<QPushButton*>("ird_req_move_target_3d")->click(); QApplication::processEvents();
+        EXPECT_EQ(m_editor.workingSet(),before) << "取消或参考系世界变换漂移不得写回";
+    }
+    EXPECT_EQ(calls,3);
+}
+
+/** @brief REQ-08：世界系三维创建使用返回位姿，确认前零写、一次撤销，禁写不调用端口。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetCreateAtomicAndReadOnly_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet(); int calls=0;
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[](const RequirementReference&) { return std::optional<rw::math::Transform3D<>>{
+        rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1))}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>&,bool creating) {
+        ++calls; EXPECT_TRUE(creating); EXPECT_EQ(m_editor.workingSet(),before);
+        return std::optional<rw::math::Transform3D<>>{rw::math::Transform3D<>({0.4,0.5,0.6},
+            rw::math::Rotation3D<>(0,-1,0,1,0,0,0,0,1))};
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    auto* create=m_panel->findChild<QPushButton*>("ird_req_create_target_3d"); ASSERT_NE(create,nullptr);
+    create->click(); QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(),before.points.entries.size()+1);
+    // 编辑器按ObjectId规范排序，新分配的随机身份不保证位于集合末尾。
+    const auto& entries=m_editor.workingSet().points.entries;
+    const auto added=std::find_if(entries.begin(),entries.end(),[&](const auto& candidate) {
+        return std::none_of(before.points.entries.begin(),before.points.entries.end(),
+            [&](const auto& old) { return candidate.objectId==old.objectId; });
+    });
+    ASSERT_NE(added,entries.end()); const auto& point=*added;
+    EXPECT_EQ(point.refFrame.kind,RequirementRefKind::World); EXPECT_TRUE(point.objectId.isValid());
+    EXPECT_NE(point.objectId,before.points.entries.front().objectId);
+    EXPECT_DOUBLE_EQ(point.pose.position.value()[0],0.4); EXPECT_DOUBLE_EQ(point.pose.position.value()[2],0.6);
+    EXPECT_EQ(point.pose.orientation.kind,OrientationRuleKind::Fixed);
+    EXPECT_NEAR(point.pose.orientation.fixedRpy[2],1.5707963267948966,1e-12);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->setWritable(false); QApplication::processEvents();
+    create=m_panel->findChild<QPushButton*>("ird_req_create_target_3d"); EXPECT_FALSE(create->isEnabled());
+    create->click(); QApplication::processEvents(); EXPECT_EQ(calls,1); EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-08：端口返回NaN/无穷/退化或左手矩阵时拒绝，保留完整草稿及撤销深度。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetInvalidRigidOutputZeroWrite_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    const auto identity=rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1));
+    int mode=0,calls=0;
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[&](const RequirementReference&) { return std::optional{identity}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>&,bool)->std::optional<rw::math::Transform3D<>> {
+        ++calls; auto result=identity;
+        if (mode==0) { result.P()[0]=std::numeric_limits<double>::quiet_NaN(); }
+        if (mode==1) { result.P()[2]=std::numeric_limits<double>::infinity(); }
+        if (mode==2) { result.R()(0,0)=0; }
+        if (mode==3) { result.R()(2,2)=-1; }
+        return result;
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    for (mode=0;mode<4;++mode) {
+        m_panel->findChild<QPushButton*>("ird_req_create_target_3d")->click(); QApplication::processEvents();
+        EXPECT_EQ(m_editor.workingSet(),before);
+        EXPECT_TRUE(m_panel->showCommandFeedbackText().contains("无效"));
+        EXPECT_FALSE(m_editor.undoLocal()) << "非法交互不得产生撤销记录";
+    }
+    EXPECT_EQ(calls,4);
+}
+
+/** @brief REQ-08：嵌套交互中重载/换编辑器以及确认后排队前外部修改均使旧确认失效。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetSessionAndQueuedBaselineGuard_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    const auto identity=rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1));
+    int mode=0;
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[&](const RequirementReference&) { return std::optional{identity}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>&,bool)->std::optional<rw::math::Transform3D<>> {
+        if (mode==0) { m_panel->noteBaselineReloaded(); }
+        if (mode==1) { m_panel->setEditTargetProvider([this] { return &m_editor; }); }
+        if (mode==2) {
+            QTimer::singleShot(0,m_panel.get(),[&] {
+                auto changed=m_editor.workingSet().points.entries.front(); changed.note="外部编辑优先";
+                ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{changed}).accepted);
+            });
+        }
+        return rw::math::Transform3D<>({0.4,0.5,0.6},identity.R());
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    for (mode=0;mode<3;++mode) {
+        m_panel->findChild<QPushButton*>("ird_req_create_target_3d")->click(); QApplication::processEvents();
+        if (mode<2) { EXPECT_EQ(m_editor.workingSet(),before); }
+        else {
+            EXPECT_EQ(m_editor.workingSet().points.entries.size(),before.points.entries.size());
+            EXPECT_EQ(m_editor.workingSet().points.entries.front().note,"外部编辑优先");
+            ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+        }
+        EXPECT_FALSE(m_editor.undoLocal()) << "过期确认不能留下额外撤销步骤";
+    }
+}
+
+/** @brief REQ-08：更多菜单与真实键盘快捷键共用三维确认入口，只读时同样禁止调用。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetMenuAndShortcutShareGate_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet(); int calls=0;
+    const auto identity=rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1));
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[&](const RequirementReference&) { return std::optional{identity}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>&,bool)->std::optional<rw::math::Transform3D<>> {
+        ++calls; return std::nullopt;
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    auto* action=m_panel->findChild<QAction*>("ird_req_create_target_3d_menu");
+    ASSERT_NE(action,nullptr) << "顶部更多菜单必须提供真实入口";
+    action->trigger(); EXPECT_EQ(calls,1);
+    m_panel->show(); m_panel->activateWindow(); m_panel->setFocus();
+    QEventLoop settle; QTimer::singleShot(100,&settle,&QEventLoop::quit); settle.exec();
+    const auto sendKey=[&] {
+        QKeyEvent press(QEvent::KeyPress,Qt::Key_C,Qt::AltModifier|Qt::ShiftModifier);
+        QApplication::sendEvent(m_panel.get(),&press);
+        QKeyEvent release(QEvent::KeyRelease,Qt::Key_C,Qt::AltModifier|Qt::ShiftModifier);
+        QApplication::sendEvent(m_panel.get(),&release); QApplication::processEvents();
+    };
+    sendKey(); EXPECT_EQ(calls,2) << "真实快捷键应进入同一交互端口";
+    m_panel->setWritable(false); QApplication::processEvents();
+    EXPECT_FALSE(action->isEnabled()); action->trigger(); sendKey();
+    EXPECT_EQ(calls,2); EXPECT_EQ(m_editor.workingSet(),before);
 }

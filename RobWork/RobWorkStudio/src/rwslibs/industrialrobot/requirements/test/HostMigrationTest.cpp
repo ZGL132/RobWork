@@ -793,6 +793,12 @@ TEST(HostMigration, Selection_UpstreamPickOnlyClosure_ACC2)
     EXPECT_EQ(service->selectedObjectIds().size(), 1u);
     EXPECT_EQ(service->selectedObjectIds().front(), point.objectId);
     EXPECT_EQ(service->selectionSource(), ui::SelectionSource::View3DPick);
+    // REQ-08：本地创建/撤销可能清空面板锚，但共享服务仍选中原对象。
+    // 再次拾取同一ID也必须重新定位，不能被共享事件去重吞掉用户操作。
+    highlight.calls.clear();
+    EXPECT_TRUE(adapter.reportView3DPick(point.objectId));
+    ASSERT_EQ(highlight.calls.size(),1u);
+    EXPECT_EQ(highlight.calls.back(),std::optional<core::ObjectId>(point.objectId));
 }
 
 // =====================================================================

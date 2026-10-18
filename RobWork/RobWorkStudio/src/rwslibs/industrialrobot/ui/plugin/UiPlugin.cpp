@@ -49,7 +49,10 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QMouseEvent>  // 三维拾取拦截（UI-T45——双击事件位形）
+#include <QKeyEvent> // 临时三维工具在视图获得焦点时也接受Esc取消。
+#include <QFormLayout> // 临时目标的位置/姿态检查，确认前仅保存界面值。
 #include <rw/graphics/SceneViewer.hpp> // REQ-10正式验证使用真实相机/视口，不替换raycast。
+#include <rw/math/RPY.hpp> // 三维创建的世界系RPY输入；构造参数按Z/Y/X轴排列。
 #include <QPushButton>
 #include <QRadioButton>
 #include <QStatusBar>
@@ -151,6 +154,22 @@ namespace ird {
 namespace ui {
 
 namespace {
+
+/**
+ * @brief REQ-08同步临时工具的栈上事件观察器；仅UI线程，无Qt子对象所有权。
+ * 析构时QObject自动退订；回调只在交互栈存活期借用宿主，结束恢复默认导航。
+ */
+class RequirementTargetEventFilter final : public QObject {
+public:
+    /** @brief 保存调用期事件处理器；handler[in]返回true表示本工具已消费事件。 */
+    explicit RequirementTargetEventFilter(std::function<bool(QObject*,QEvent*)> handler)
+        : m_handler(std::move(handler)) {}
+protected:
+    /** @brief 对应用事件转发到交互处理器；watched/event[in]仅本次回调借用。 */
+    bool eventFilter(QObject* watched,QEvent* event) override { return m_handler(watched,event); }
+private:
+    std::function<bool(QObject*,QEvent*)> m_handler; ///< 无跨线程状态，不延迟保存QEvent指针。
+};
 
 /// 开发日志目录名（相对当前工作目录——开发期通道形态；与 harness 的
 /// ird-harness-logs 同型不同名，两类通道的留痕互不混写）。
@@ -3293,6 +3312,10 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
         return;  // 需求域装配缺席（§11.3 失败隔离形态）——无接线面
     }
     auto& requirements = *m_domains->requirements;
+    // REQ-08/10：关闭会话会按门面契约退订共享选择服务；重新打开必须对称
+    // 恢复订阅。服务属于宿主、寿命跨项目，域适配器每次attach先退旧订阅，
+    // 因而重复接线不会累积监听器；失败空态仍由editor缺位阻止拾取写入。
+    if (m_selection) { requirements.attachSelectionService(*m_selection); }
 
     project::IProjectQueryPort& query = adapter.projectStore().query();
     const project::RevisionView head = query.head();
@@ -4416,6 +4439,190 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                 };
                 return key(left)<key(right);
             });
+            return result;
+        };
+        /**
+         * @brief REQ-08：真实相机投影的临时三维创建/移动，确认仅返回世界系值。
+         * @param initial [in] 有限刚体初值，平移m、旋转无量纲；非法输入fail-fast。
+         * @param creating [in] true允许创建时编辑RPY(rad)，false仅移动位置并保留输入旋转。
+         * @return 确认世界系位姿；取消/关闭/切项目/修订或场景改变返回nullopt。
+         * Qt子对象由本次工具清理；仅UI线程嵌套事件循环，无编辑器/项目写入。
+         */
+        seams.editWorldTarget=[this,studio](const rw::math::Transform3D<>& initial,bool creating)
+            -> std::optional<rw::math::Transform3D<>> {
+            for (int i=0;i<3;++i) {
+                if (!std::isfinite(initial.P()[i])) { throw std::invalid_argument("三维交互初值位置非有限"); }
+                for (int j=0;j<3;++j) {
+                    if (!std::isfinite(initial.R()(i,j))) { throw std::invalid_argument("三维交互初值旋转非有限"); }
+                }
+            }
+            const QPointer<IrdWorkbenchHostPlugin> owner(this);
+            const QPointer<rws::RobWorkStudio> guardedStudio(studio);
+            const QPointer<QWidget> viewWidget(m_view3d);
+            const auto adapter=m_lastStoreAdapter;
+            if (!guardedStudio || !viewWidget || !adapter || adapter->isClosed()
+                || viewWidget->property("irdTargetEditActive").toBool()) { return std::nullopt; }
+            const auto cell=studio->getWorkCell(); const auto revision=adapter->projectStore().query().head().id;
+            const auto view=studio->getView();
+            QPointer<QWidget> glWidget;
+            for (auto* child : viewWidget->findChildren<QWidget*>()) {
+                if (child->inherits("QOpenGLWidget")) { glWidget=child; break; }
+            }
+            if (!cell || !view || !glWidget || !m_view3dGateway) { return std::nullopt; }
+            const auto viewer=view->getSceneViewer();
+            if (!viewer || !viewer->getViewCamera()) { return std::nullopt; }
+            const auto sessionValid=[owner,guardedStudio,viewWidget,glWidget,adapter,cell,revision] {
+                return owner && guardedStudio && viewWidget && glWidget && !adapter->isClosed()
+                    && owner->m_lastStoreAdapter==adapter && guardedStudio->getWorkCell().get()==cell.get()
+                    && adapter->projectStore().query().head().id==revision;
+            };
+            QPointer<QDialog> dialog=new QDialog(studio);
+            dialog->setObjectName("ird_req_target_3d_tool");
+            dialog->setWindowTitle(creating ? "三维创建目标（确认前不写入）" : "三维移动工位（确认前不写入）");
+            dialog->setWindowFlags(Qt::Tool); dialog->setWindowModality(Qt::NonModal);
+            auto* layout=new QVBoxLayout(dialog);
+            auto* help=new QLabel("在三维视图中左键点击/拖动；沿按下时的视平面移动。可输入世界坐标调整深度。彩色轴为世界轴，灰线为交互姿态。Esc或取消不写入草稿。",dialog);
+            help->setWordWrap(true); layout->addWidget(help);
+            auto* fields=new QFormLayout; layout->addLayout(fields);
+            std::array<QLineEdit*,3> positions{},angles{};
+            auto candidate=initial;
+            const auto rpy=[](const rw::math::Rotation3D<>& r) {
+                const double cp=std::hypot(r(0,0),r(1,0)); const double pitch=std::atan2(-r(2,0),cp);
+                return cp>1e-12 ? rw::math::Vector3D<>(std::atan2(r(2,1),r(2,2)),pitch,std::atan2(r(1,0),r(0,0)))
+                    : rw::math::Vector3D<>(0,pitch,std::atan2(-r(0,1),r(1,1)));
+            };
+            const auto initialRpy=rpy(initial.R());
+            for (int i=0;i<3;++i) {
+                positions[i]=new QLineEdit(QString::number(initial.P()[i],'g',17),dialog);
+                positions[i]->setObjectName(QString("ird_target_world_%1").arg(i));
+                fields->addRow(QString("世界%1（m）").arg(QString("XYZ").mid(i,1)),positions[i]);
+                angles[i]=new QLineEdit(QString::number(initialRpy[i],'g',17),dialog);
+                angles[i]->setObjectName(QString("ird_target_rpy_%1").arg(i)); angles[i]->setReadOnly(!creating);
+                fields->addRow(QString("%1（rad）").arg(QStringList{"Roll","Pitch","Yaw"}[i]),angles[i]);
+            }
+            if (!creating) {
+                auto* note=new QLabel("仅移动位置，保留原姿态规则。显示的交互轴不替代规则解析结果。",dialog);
+                note->setWordWrap(true); layout->addWidget(note);
+            }
+            auto* error=new QLabel(dialog); error->setObjectName("ird_target_edit_error"); error->setWordWrap(true); layout->addWidget(error);
+            auto* buttons=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,dialog);
+            buttons->button(QDialogButtonBox::Ok)->setText("确认写入草稿"); layout->addWidget(buttons);
+            const auto showPreview=[&] {
+                if (!sessionValid() || !owner->m_view3dGateway) { return; }
+                ui::View3DPreviewUpdate update;
+                update.frameMarkers=owner->m_reqMarkers; update.boxOutline=owner->m_reqBox;
+                update.sampleGrid=owner->m_reqGrid.value_or(ui::View3DSampleGrid{});
+                update.frameMarkers.push_back({"临时目标（世界轴）",cell->getWorldFrame()->getName(),candidate.P()});
+                // 三根灰线只表达交互矩阵的列向量，不向计算域提交姿态约束；
+                // 0.15m为界面指示长度，与产品几何/容差及评估结果无关。
+                for (int i=0;i<3;++i) {
+                    rw::math::Vector3D<> axis(candidate.R()(0,i),candidate.R()(1,i),candidate.R()(2,i));
+                    update.sampleGrid->gridLines.push_back({candidate.P(),candidate.P()+axis*0.15});
+                }
+                owner->m_view3dGateway->applyPreview(update);
+            };
+            const auto readFields=[&] {
+                rw::math::Vector3D<> p,a;
+                for (int i=0;i<3;++i) {
+                    bool good=false; p[i]=positions[i]->text().toDouble(&good);
+                    if (!good || !std::isfinite(p[i])) { error->setText("世界坐标须为有限数（m）"); return false; }
+                    a[i]=angles[i]->text().toDouble(&good);
+                    if (!good || !std::isfinite(a[i])) { error->setText("姿态角须为有限数（rad）"); return false; }
+                }
+                auto rotation=initial.R();
+                if (creating) {
+                    // 字段按roll,pitch,yaw排列；框架RPY构造参数依Z/Y/X轴传入。
+                    rotation=rw::math::RPY<>(a[2],a[1],a[0]).toRotation3D();
+                }
+                candidate=rw::math::Transform3D<>(p,rotation); error->clear(); showPreview(); return true;
+            };
+            for (int i=0;i<3;++i) {
+                QObject::connect(positions[i],&QLineEdit::editingFinished,dialog,[&] { readFields(); });
+                QObject::connect(angles[i],&QLineEdit::editingFinished,dialog,[&] { readFields(); });
+            }
+            std::optional<rw::math::Transform3D<>> result;
+            QEventLoop loop;
+            QObject::connect(dialog,&QDialog::finished,&loop,&QEventLoop::quit);
+            QObject::connect(dialog,&QObject::destroyed,&loop,&QEventLoop::quit);
+            QObject::connect(buttons,&QDialogButtonBox::rejected,dialog,&QDialog::reject);
+            QObject::connect(buttons,&QDialogButtonBox::accepted,dialog,[&] {
+                if (sessionValid() && readFields()) { result=candidate; dialog->accept(); }
+                else if (!sessionValid()) { dialog->reject(); }
+            });
+            bool dragging=false;
+            rw::math::Vector3D<> planePoint=initial.P(),planeNormal(0,0,1),dragOffset;
+            const auto project=[&](const QPointF& local)->std::optional<rw::math::Vector3D<>> {
+                const auto camera=viewer->getViewCamera(); int vx=0,vy=0,w=0,h=0; camera->getViewport(vx,vy,w,h);
+                if (w<=0 || h<=0 || glWidget->width()<=0 || glWidget->height()<=0) { return std::nullopt; }
+                // Qt事件坐标为逻辑像素；相机viewport为framebuffer物理像素。
+                // 先按实际GL控件/DPR换算，再减viewport偏移，避免125%缩放下拖动漂移。
+                const double fullWidth=std::round(glWidget->width()*glWidget->devicePixelRatioF());
+                const double fullHeight=std::round(glWidget->height()*glWidget->devicePixelRatioF());
+                const double x=2*((local.x()/glWidget->width()*fullWidth-vx)/w)-1;
+                const double y=2*(((1-local.y()/glWidget->height())*fullHeight-vy)/h)-1;
+                const auto worldCamera=camera->getTransform();
+                rw::math::Vector3D<> origin,direction;
+                double left=0,right=0,bottom=0,top=0,nearPlane=0,farPlane=0,fovy=0,aspect=0;
+                const auto projection=camera->getProjectionMatrix();
+                if (projection.getOrtho(left,right,bottom,top,nearPlane,farPlane)) {
+                    origin=worldCamera*rw::math::Vector3D<>(left+(x+1)*0.5*(right-left),bottom+(y+1)*0.5*(top-bottom),0);
+                    direction=worldCamera.R()*rw::math::Vector3D<>(0,0,-1);
+                } else if (projection.getPerspective(fovy,aspect,nearPlane,farPlane)) {
+                    const double scale=std::tan(fovy*3.14159265358979323846/360.0); // ProjectionMatrix约定degrees。
+                    origin=worldCamera.P(); direction=worldCamera.R()*rw::math::Vector3D<>(x*aspect*scale,y*scale,-1);
+                } else { return std::nullopt; }
+                const double denominator=rw::math::dot(direction,planeNormal);
+                if (!std::isfinite(denominator) || std::abs(denominator)<1e-12) { return std::nullopt; }
+                const double distance=rw::math::dot(planePoint-origin,planeNormal)/denominator;
+                if (!std::isfinite(distance) || distance<0) { return std::nullopt; }
+                return origin+direction*distance;
+            };
+            RequirementTargetEventFilter filter([&](QObject* watched,QEvent* event) {
+                if (!glWidget || !viewWidget) { return false; }
+                auto* widget=qobject_cast<QWidget*>(watched);
+                if (!widget || !(widget==glWidget || glWidget->isAncestorOf(widget) || widget==viewWidget)) { return false; }
+                // 场景失效由50ms观察器退出，不能在任意Qt内部事件中同步reject，
+                // 否则窗口关闭/失焦事件可能重入本过滤器而递归取消。
+                if (!sessionValid()) { return false; }
+                if (event->type()==QEvent::KeyPress && static_cast<QKeyEvent*>(event)->key()==Qt::Key_Escape) {
+                    dialog->reject(); return true;
+                }
+                if (event->type()!=QEvent::MouseButtonPress && event->type()!=QEvent::MouseMove
+                    && event->type()!=QEvent::MouseButtonRelease && event->type()!=QEvent::MouseButtonDblClick) { return false; }
+                auto* mouse=static_cast<QMouseEvent*>(event);
+                if (event->type()==QEvent::MouseButtonPress && mouse->button()==Qt::LeftButton) {
+                    dragging=true; planePoint=candidate.P();
+                    const auto rotation=viewer->getViewCamera()->getTransform().R();
+                    planeNormal=rw::math::Vector3D<>(rotation(0,2),rotation(1,2),rotation(2,2));
+                    const auto hit=project(widget->mapTo(glWidget,mouse->position().toPoint()));
+                    if (!hit) { dragging=false; error->setText("当前视角不能投影到移动平面"); return true; }
+                    dragOffset=creating ? rw::math::Vector3D<>() : candidate.P()-*hit;
+                } else if (!dragging) { return mouse->button()==Qt::LeftButton; }
+                if (dragging) {
+                    const auto hit=project(widget->mapTo(glWidget,mouse->position().toPoint()));
+                    if (hit) {
+                        candidate=rw::math::Transform3D<>(*hit+dragOffset,candidate.R());
+                        for (int i=0;i<3;++i) { positions[i]->setText(QString::number(candidate.P()[i],'g',17)); }
+                        error->clear(); showPreview();
+                    } else { error->setText("当前视角不能投影到移动平面"); }
+                    if (event->type()==QEvent::MouseButtonRelease) { dragging=false; }
+                    return true;
+                }
+                return false;
+            });
+            QTimer watch; watch.setInterval(50);
+            QObject::connect(&watch,&QTimer::timeout,&loop,[&] { if (!sessionValid() && dialog) { dialog->reject(); } });
+            viewWidget->setProperty("irdTargetEditActive",true); qApp->installEventFilter(&filter); watch.start();
+            showPreview(); dialog->show(); loop.exec();
+            watch.stop(); qApp->removeEventFilter(&filter);
+            if (viewWidget) { viewWidget->setProperty("irdTargetEditActive",false); }
+            if (!sessionValid()) { result.reset(); }
+            if (dialog) { delete dialog.data(); }
+            if (owner && owner->m_view3dGateway) {
+                ui::View3DPreviewUpdate update;
+                update.frameMarkers=owner->m_reqMarkers; update.boxOutline=owner->m_reqBox; update.sampleGrid=owner->m_reqGrid;
+                owner->m_view3dGateway->applyPreview(update); // 所有退出路径清临时层，现取原域投影而非恢复旧场景缓存。
+            }
             return result;
         };
         m_domains->requirements->bindView3DSeams(std::move(seams));
@@ -8019,6 +8226,146 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                     }
                     if (m_domains->requirements) { m_domains->requirements->refreshFromSession(); }
                     ok(m_requirementsEditor.workingSet()==beforeNamedForms,"step5.7 named-condition-restores-all");
+                    // REQ-08：真实GL输入与正交相机给出独立可计算位移；不调用投影实现求期望值。
+                    // 八轨覆盖正交创建、World/旋转场景移动及透视创建的取消/确认；临时层必须清理。
+                    const auto beforeTargetTracks=m_requirementsEditor.workingSet();
+                    const auto oldProjection=viewer->getViewCamera()->getProjectionMatrix();
+                    const auto oldCamera=viewer->getTransform();
+                    rw::math::ProjectionMatrix orthographic;
+                    orthographic.setOrtho(-0.2,0.2,-0.2,0.2,0.01,10.0); // 世界m，视野宽高0.4m。
+                    viewer->setTransform(rw::math::Transform3D<>({0,0,1},rw::math::Rotation3D<>::identity()));
+                    viewer->getViewCamera()->setProjectionMatrix(orthographic); view->update(); settleEvents(150);
+                    for (int targetMode=0;targetMode<8;++targetMode) {
+                        const bool creating=targetMode<2 || targetMode>=6,confirm=targetMode%2==1;
+                        if (targetMode==6) {
+                            rw::math::ProjectionMatrix perspective;
+                            perspective.setPerspective(60.0,double(glWidget->width())/glWidget->height(),0.01,10.0);
+                            viewer->getViewCamera()->setProjectionMatrix(perspective); view->update(); settleEvents(100);
+                        }
+                        if (targetMode==4) {
+                            // 真实已编译旋转场景参考系：准备非World基线，交互仍走正式GL输入。
+                            auto point=beforeTargetTracks.points.entries.back();
+                            point.refFrame.kind=requirements::RequirementRefKind::SceneObject; point.refFrame.objectId=fixtureId;
+                            point.pose.position=core::SourcedValue<rw::math::Vector3D<>>::provided({0.05,0.06,0.07},
+                                core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+                            ok(m_requirementsEditor.applyEdit(requirements::RequirementEdit{point}).accepted,
+                               "step5.7 rotated-scene-target-baseline");
+                            m_domains->requirements->refreshFromSession();
+                        }
+                        const auto beforeTargetEdit=m_requirementsEditor.workingSet();
+                        if (!beforeTargetEdit.points.entries.empty()) {
+                            ok(m_domains->requirements->reportView3DPick(beforeTargetEdit.points.entries.back().objectId),
+                               "step5.7 target-pick-accepted-mode-"+std::to_string(targetMode));
+                        }
+                        const auto basePreview=m_view3dGateway->currentPreview();
+                        auto* targetButton=m_requirementsDock->findChild<QPushButton*>(
+                            creating ? "ird_req_create_target_3d" : "ird_req_move_target_3d");
+                        ok(targetButton && targetButton->isEnabled(),"step5.7 target-3d-entry-mode-"+std::to_string(targetMode));
+                        bool toolSeen=false; rw::math::Vector3D<> expectedPosition;
+                        QTimer answerTarget; answerTarget.setInterval(80);
+                        QObject::connect(&answerTarget,&QTimer::timeout,this,[&] {
+                            auto* dialog=hostWin->findChild<QDialog*>("ird_req_target_3d_tool");
+                            if (!dialog || !dialog->isVisible()) { return; }
+                            toolSeen=true;
+                            const auto beforePreviewWrite=m_requirementsEditor.workingSet();
+                            const QPoint start(glWidget->width()/2,glWidget->height()/2);
+                            const QPoint delta(std::max(1,glWidget->width()/10),-std::max(1,glWidget->height()/10));
+                            const QPoint end=start+delta;
+                            const auto send=[&](QEvent::Type type,const QPoint& local,Qt::MouseButton button,Qt::MouseButtons held) {
+                                QMouseEvent event(type,QPointF(local),QPointF(glWidget->mapToGlobal(local)),button,held,Qt::NoModifier);
+                                QApplication::sendEvent(glWidget,&event);
+                            };
+                            send(QEvent::MouseButtonPress,start,Qt::LeftButton,Qt::LeftButton);
+                            for (int beat=1;beat<=4;++beat) { send(QEvent::MouseMove,start+delta*beat/4,Qt::NoButton,Qt::LeftButton); }
+                            send(QEvent::MouseButtonRelease,end,Qt::LeftButton,Qt::NoButton);
+                            // 相机位于(0,0,1)m，透视60°：z=0平面半高tan(30°)，独立解析对照。
+                            expectedPosition=creating ? (targetMode>=6 ? rw::math::Vector3D<>(
+                                (2.0*end.x()/glWidget->width()-1)*double(glWidget->width())/glWidget->height()/std::sqrt(3.0),
+                                (1-2.0*end.y()/glWidget->height())/std::sqrt(3.0),0)
+                                : rw::math::Vector3D<>(-0.2+0.4*end.x()/glWidget->width(),0.2-0.4*end.y()/glWidget->height(),0))
+                                : (targetMode>=4 ? rw::math::Vector3D<>(
+                                    1.4+std::cos(0.7)*0.05+std::sin(0.7)*0.07,0.3+0.06,
+                                    0.2-std::sin(0.7)*0.05+std::cos(0.7)*0.07)
+                                    : beforeTargetEdit.points.entries.back().pose.position.value())
+                                    +rw::math::Vector3D<>(0.4*delta.x()/glWidget->width(),-0.4*delta.y()/glWidget->height(),0);
+                            const auto preview=m_view3dGateway->currentPreview();
+                            ok(preview.frameMarkers.size()==basePreview.frameMarkers.size()+1
+                                && preview.frameMarkers.back().position
+                                && (*preview.frameMarkers.back().position-expectedPosition).norm2()<1e-9,
+                               "step5.7 real-projected-preview-world-position-mode-"+std::to_string(targetMode));
+                            ok(m_requirementsEditor.workingSet()==beforePreviewWrite,
+                               "step5.7 continuous-drag-zero-draft-write-mode-"+std::to_string(targetMode));
+                            if (targetMode==7) {
+                                auto* yaw=dialog->findChild<QLineEdit*>("ird_target_rpy_2");
+                                ok(yaw && !yaw->isReadOnly(),"step5.7 real-create-world-yaw-entry");
+                                if (yaw) { yaw->setText("1.5707963267948966"); QMetaObject::invokeMethod(yaw,"editingFinished"); }
+                                const auto rotated=m_view3dGateway->currentPreview();
+                                bool axes=rotated.sampleGrid && rotated.sampleGrid->gridLines.size()>=3;
+                                if (axes) {
+                                    const auto& lines=rotated.sampleGrid->gridLines;
+                                    const rw::math::Vector3D<> directions[3]={{0,0.15,0},{-0.15,0,0},{0,0,0.15}};
+                                    for (int i=0;i<3;++i) {
+                                        const auto& line=lines[lines.size()-3+i];
+                                        axes=axes && (line.second-line.first-directions[i]).norm2()<1e-9;
+                                    }
+                                }
+                                ok(axes,"step5.7 create-yaw-preview-three-world-directions");
+                                snapPng(dialog,"mtour-target-3d-perspective-yaw.png");
+                            }
+                            if (targetMode==1) { snapPng(m_view3d,"mtour-target-3d-preview.png"); snapPng(dialog,"mtour-target-3d-tool.png"); }
+                            if (auto* box=dialog->findChild<QDialogButtonBox*>()) {
+                                box->button(confirm ? QDialogButtonBox::Ok : QDialogButtonBox::Cancel)->click();
+                            } else { dialog->reject(); }
+                        });
+                        answerTarget.start(); if (targetButton) { targetButton->click(); } answerTarget.stop();
+                        if (!toolSeen) {
+                            for (auto* label:m_requirementsDock->findChildren<QLabel*>()) {
+                                if (!label->text().isEmpty() && label->isVisible()) {
+                                    std::cout << "[ird-ui-smoke-mtour] target-entry-diagnostic " << label->text().toStdString() << std::endl;
+                                }
+                            }
+                            for (const auto& p:beforeTargetEdit.points.entries) {
+                                std::cout << "[ird-ui-smoke-mtour] target-baseline " << p.name
+                                    << " position-state=" << int(p.pose.position.state()) << std::endl;
+                            }
+                        }
+                        ok(toolSeen,"step5.7 real-target-3d-tool-mode-"+std::to_string(targetMode));
+                        ok(!view->property("irdTargetEditActive").toBool() && m_view3dGateway->currentPreview()==basePreview,
+                           "step5.7 target-preview-and-input-filter-restored-mode-"+std::to_string(targetMode));
+                        settleEvents(120);
+                        const auto after=m_requirementsEditor.workingSet();
+                        if (!confirm) { ok(after==beforeTargetEdit,"step5.7 target-cancel-zero-write-mode-"+std::to_string(targetMode)); }
+                        else if (creating) {
+                            const bool created=after.points.entries.size()==beforeTargetEdit.points.entries.size()+1;
+                            const auto added=std::find_if(after.points.entries.begin(),after.points.entries.end(),[&](const auto& p) {
+                                return std::none_of(beforeTargetEdit.points.entries.begin(),beforeTargetEdit.points.entries.end(),
+                                    [&](const auto& old) { return p.objectId==old.objectId; });
+                            });
+                            ok(created && added!=after.points.entries.end() && (added->pose.position.value()-expectedPosition).norm2()<1e-9,
+                               "step5.7 target-created-at-projected-position");
+                            if (targetMode==7) {
+                                ok(added!=after.points.entries.end() && std::abs(added->pose.orientation.fixedRpy[2]-1.5707963267948966)<1e-12,
+                                   "step5.7 create-yaw-stored-radians");
+                            }
+                            if (created) { ok(m_requirementsEditor.undoLocal(),"step5.7 target-create-one-undo"); }
+                        } else {
+                            const auto& moved=after.points.entries.back();
+                            auto expected=beforeTargetEdit.points.entries.back(); expected.pose.position=moved.pose.position;
+                            const auto local=targetMode>=4 ? rw::math::Vector3D<>(
+                                std::cos(0.7)*(expectedPosition[0]-1.4)-std::sin(0.7)*(expectedPosition[2]-0.2),
+                                expectedPosition[1]-0.3,
+                                std::sin(0.7)*(expectedPosition[0]-1.4)+std::cos(0.7)*(expectedPosition[2]-0.2)) : expectedPosition;
+                            ok(moved==expected && (moved.pose.position.value()-local).norm2()<1e-9,
+                               "step5.7 target-move-keeps-all-other-fields");
+                            if (after!=beforeTargetEdit) { ok(m_requirementsEditor.undoLocal(),"step5.7 target-move-one-undo"); }
+                        }
+                        ok(m_requirementsEditor.workingSet()==beforeTargetEdit,"step5.7 target-history-restored-mode-"+std::to_string(targetMode));
+                        if (m_domains->requirements) { m_domains->requirements->refreshFromSession(); }
+                    }
+                    ok(m_requirementsEditor.undoLocal() && m_requirementsEditor.workingSet()==beforeTargetTracks,
+                       "step5.7 rotated-scene-baseline-restored");
+                    m_domains->requirements->refreshFromSession();
+                    viewer->setTransform(oldCamera); viewer->getViewCamera()->setProjectionMatrix(oldProjection); view->update(); settleEvents(100);
                     const auto beforePick = m_requirementsEditor.workingSet();
                     const auto pickHead=adapter->projectStore().query().head().id;
                     ok(!beforePick.points.entries.empty(), "step5.7 target-point-present");
