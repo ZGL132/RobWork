@@ -7784,10 +7784,12 @@
       "id": "F-772",
       "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-673→F-772，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：CloseFlow Switch 不拒绝候选==当前项目（与 SchemeBranchSwitchFlow 同分支 fail-fast 口径不一致）",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：CloseFlow Switch 拒绝候选==当前项目（对齐 SchemeBranchSwitchFlow 口径）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：CloseFlow Switch 拒绝候选==当前项目（对齐 SchemeBranchSwitchFlow 口径）。",
+      "resolution": "F-772 消账（2026-10-18）：CloseFlow::run 的 Switch 分支增候选==当前项目判定（weakly_canonical 归一后比较，归一失败降级不阻断），与 SchemeBranchSwitchFlow 同分支 fail-fast 口径一致；新增用例 WfClose.SwitchToCurrentProjectPathFailsFast_F772（拒绝且零决策点/零关闭调用）。workflow_test 197/197、workflow_contract_test 77/77 通过。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-773",

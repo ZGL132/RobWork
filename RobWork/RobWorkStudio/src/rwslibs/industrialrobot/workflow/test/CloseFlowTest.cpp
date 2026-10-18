@@ -60,12 +60,14 @@ class CloseStoreStub final : public project::ProjectStore {
 public:
     int requestCloseCalls = 0;///< requestClose 调用计数（零关闭断言面）
     bool closedState = false; ///< Closed 态（requestClose 即置位——桩内同步排空）
+    /// 存储上下文规范化路径（F-772 同路径 Switch 拒绝用例用；缺省空）。
+    std::filesystem::path storePath;
 
     bool writable() const noexcept override { return !closedState; }
     project::LockInfo lockInfo() const override { return project::LockInfo{}; }
     core::ProjectId projectId() const noexcept override { return core::ProjectId{}; }
     project::SchemaInfo schema() const override { return project::SchemaInfo{}; }
-    std::filesystem::path canonicalPath() const override { return {}; }
+    std::filesystem::path canonicalPath() const override { return storePath; }
 
     // ---- 编排核不消费的端口引用（调用＝测试违约——诚实拒绝）----
     project::IProjectQueryPort& query() const noexcept override
@@ -730,6 +732,27 @@ TEST(WfClose, SchemeSwitchPreconditionViolationsFailFast)
     EXPECT_THROW((void)workflow::SchemeBranchSwitchFlow::run(empty, decisions, drafts),
                  workflow::WorkflowError);
     EXPECT_EQ(decisions.draftPrompts.size(), 0u);
+}
+
+/**
+ * F-772：项目切换的候选路径与当前项目相同（Switch 无意义）时 fail-fast，
+ * 与 SchemeBranchSwitchFlow 同分支拒绝同口径；不得进入草稿/任务决策点。
+ */
+TEST(WfClose, SwitchToCurrentProjectPathFailsFast_F772)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"PM-12"}, std::vector<std::string>{});
+
+    FlowRig rig;
+    rig.store.storePath = std::filesystem::temp_directory_path()
+                          / "ird-wf-close-switch-same-project";
+    workflow::CloseFlowRequest req = rig.request();
+    req.candidatePath = rig.store.storePath;  // 候选＝＝当前项目
+
+    EXPECT_THROW((void)workflow::CloseFlow::run(CloseKind::Switch, rig.store, req),
+                 workflow::WorkflowError);
+    EXPECT_EQ(rig.decisions.draftPrompts.size(), 0u);
+    EXPECT_EQ(rig.decisions.taskPrompts.size(), 0u);
+    EXPECT_EQ(rig.store.requestCloseCalls, 0);
 }
 
 /**

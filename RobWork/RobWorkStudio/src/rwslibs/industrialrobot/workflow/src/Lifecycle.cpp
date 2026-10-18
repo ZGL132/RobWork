@@ -795,6 +795,21 @@ CloseFlowOutcome CloseFlow::run(CloseKind kind,
         throw WorkflowError(
             "CloseFlow::run: Switch 请求缺少候选项目路径（装配违约）");
     }
+    // F-772：Switch 要求候选≠当前项目（与 SchemeBranchSwitchFlow 同口径）。
+    // 用 weakly_canonical 归一（候选目录可能尚未创建）；归一失败（如权限）
+    // 时不做拒绝——把"无法比较"降级为不阻断，避免误伤合法切换。
+    if (kind == CloseKind::Switch) {
+        std::error_code candEc;
+        std::error_code curEc;
+        const std::filesystem::path candidate =
+            std::filesystem::weakly_canonical(request.candidatePath, candEc);
+        const std::filesystem::path current =
+            std::filesystem::weakly_canonical(currentStore.canonicalPath(), curEc);
+        if (!candEc && !curEc && candidate == current) {
+            throw WorkflowError(
+                "CloseFlow::run: 候选项目与当前项目相同（Switch 无意义——装配违约）");
+        }
+    }
     if (kind != CloseKind::Switch && !request.candidatePath.empty()) {
         throw WorkflowError(
             "CloseFlow::run: 非 Switch 请求携带了候选项目路径（装配违约）");
