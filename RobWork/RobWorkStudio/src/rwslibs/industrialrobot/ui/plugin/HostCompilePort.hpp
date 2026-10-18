@@ -168,14 +168,14 @@ public:
      * @param query        [in] 存储查询端口（非 owning）
      * @param designToken  [in] 根对象类型 token（路由键——runtime
      *                     kRobotDesignObjectType 同源常量）
-     * @param plannedBytes [in] 计划写入载荷表（非 owning——按 ObjectId
-     *                     线性查找；计划写入集规模＝单命令写入数，小）
+     * @param plannedWrites [in] 完整计划对象槽（非拥有，仅同步编译调用期有效）；
+     *                     必须保留token，根按类型查找，部件按ObjectId查找，
+     *                     禁止按槽序猜测对象种类。单命令规模小，使用线性查找。
      */
     HostProjectClosureView(
         const project::IProjectQueryPort& query,
         std::string designToken,
-        const std::vector<std::pair<core::ObjectId, std::vector<std::uint8_t>>>*
-            plannedBytes);
+        const std::vector<project::ObjectWrite>* plannedWrites);
 
     std::optional<modeling::ClosureObject>
         tryObjectByToken(std::string_view objectTypeToken) const override;
@@ -185,8 +185,7 @@ public:
 private:
     const project::IProjectQueryPort* m_query;   ///< 存储取数面（非 owning）
     std::string m_designToken;                   ///< 根对象 token（路由键）
-    const std::vector<std::pair<core::ObjectId, std::vector<std::uint8_t>>>*
-        m_plannedBytes;                          ///< 计划写入载荷（非 owning）
+    const std::vector<project::ObjectWrite>* m_plannedWrites; ///< 完整计划槽；调用方持有，同步编译期间借用。
 };
 
 // =====================================================================

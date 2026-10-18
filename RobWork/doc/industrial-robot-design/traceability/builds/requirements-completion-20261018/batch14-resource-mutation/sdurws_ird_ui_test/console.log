@@ -1,0 +1,39 @@
+Note: Google Test filter = HostCompilePipelineTest.*REQ10_WP14T12
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from HostCompilePipelineTest
+[ RUN      ] HostCompilePipelineTest.ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(307): error: Value of: result.ok
+  Actual: false
+Expected: true
+新场景载荷不应丢类型，也不能被当作根对象解码
+
+RT-RESOURCE-MISSING: runtime/resource-missing: S4: 资源缺失（resourceId=obj-96bd572028b6ff4cfcca827455de3080）——未注入 IRuntimeResourceProvider 而清单非空
+[  FAILED  ] HostCompilePipelineTest.ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12 (0 ms)
+[ RUN      ] HostCompilePipelineTest.SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12
+RT-RESOURCE-MISSING: runtime/resource-missing: S4: 资源缺失（resourceId=obj-c23d53343948f528ede41e6f09e03ce8）——未注入 IRuntimeResourceProvider 而清单非空
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(353): error: Value of: result.ok
+  Actual: false
+Expected: true
+部件单独更新必须保留基线根，不要求根冗余写入
+
+[  FAILED  ] HostCompilePipelineTest.SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12 (0 ms)
+[ RUN      ] HostCompilePipelineTest.RecordedResourceIsRereadAndFailurePreservesSnapshot_REQ10_WP14T12
+RT-RESOURCE-MISSING: runtime/resource-missing: S4: 资源缺失（resourceId=obj-7cf075b70941fb7f3194af3632dd3f77）——未注入 IRuntimeResourceProvider 而清单非空
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(383): error: Value of: first.ok
+  Actual: false
+Expected: true
+真实Recorded资源必须能从现有io桥读取
+
+[  FAILED  ] HostCompilePipelineTest.RecordedResourceIsRereadAndFailurePreservesSnapshot_REQ10_WP14T12 (2 ms)
+[----------] 3 tests from HostCompilePipelineTest (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (3 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] HostCompilePipelineTest.ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12
+[  FAILED  ] HostCompilePipelineTest.SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12
+[  FAILED  ] HostCompilePipelineTest.RecordedResourceIsRereadAndFailurePreservesSnapshot_REQ10_WP14T12
+
+ 3 FAILED TESTS

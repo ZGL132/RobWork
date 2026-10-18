@@ -25,6 +25,8 @@
  */
 
 #include <gtest/gtest.h>
+#include <QFile> // 资源桥回归使用真实临时文件，io负责实际安全读取和摘要复核。
+#include <QTemporaryDir>
 
 #include <iostream>
 #include <map>
@@ -260,6 +262,139 @@ TEST_F(HostCompilePipelineTest, CompilePort_PublishesSnapshotAndCachesIt)
     EXPECT_GT(snapshot->nameMap().size(), 0u) << "S8 名称映射应随快照在位";
     // 编译基线对账（发布归属修订的编排取数面——呈现事实构造的输入）。
     EXPECT_TRUE(port.lastPublishedBaseRevision() == m_query->view.id);
+}
+
+/** @brief REQ-10：新场景计划位于根之前时也按真实token解引用并完成十段链。 */
+TEST_F(HostCompilePipelineTest, ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {"AT-23"}, std::nullopt);
+    const modeling::RobotDesignCodec codec;
+    const auto decoded=codec.decode(m_designBytes,modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    auto design=std::get<modeling::RobotDesign>(decoded.get());
+    modeling::SceneObject fixture;
+    fixture.objectId=core::ObjectId::generate(); fixture.localName="pick-fixture";
+    fixture.worldPose.P()=rw::math::Vector3D<>(0.4,0.2,0.1); // 世界系m，不预乘安装姿态。
+    const std::vector<std::uint8_t> geometryBytes{'s','o','l','i','d',' ','f','i','x','t','u','r','e'};
+    modeling::ResourceRef resource;
+    resource.resourceId="fixture-geometry"; resource.state=modeling::ResourceState::Solidified;
+    core::ContentDigester digest; digest.update(geometryBytes.data(),geometryBytes.size());
+    resource.contentDigest=digest.finalize();
+    core::ContentVersion version; version.bytes=resource.contentDigest;
+    resource.solidifiedObject=modeling::SolidifiedRef{core::ObjectId::generate(),version};
+    m_query->addObject(resource.solidifiedObject->objectId,"resource",geometryBytes);
+    design.resourceManifest.push_back(resource);
+    fixture.geometry=modeling::GeometryRef{}; fixture.geometry->resourceRefId=resource.resourceId;
+    design.sceneRefs.push_back(fixture.objectId);
+    const auto sceneBytes=codec.encode(modeling::ObjectVariant(fixture),modeling::kCurrentFormatVersion);
+    const auto rootBytes=codec.encode(modeling::ObjectVariant(design),modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(sceneBytes.ok()); ASSERT_TRUE(rootBytes.ok());
+    const std::vector<project::ObjectWrite> writes{
+        {fixture.objectId,std::string(modeling::kSceneObjectObjectType),sceneBytes.get()},
+        {m_rootId,std::string(modeling::kRobotDesignObjectType),rootBytes.get()}};
+    HostProjectClosureView closure(*m_query,std::string(modeling::kRobotDesignObjectType),&writes);
+    const auto root=closure.tryObjectByToken(modeling::kRobotDesignObjectType);
+    const auto scene=closure.tryObject(fixture.objectId);
+    ASSERT_TRUE(root); ASSERT_TRUE(scene);
+    EXPECT_EQ(root->bytes,rootBytes.get()) << "根检索不能依赖计划槽顺序";
+    EXPECT_EQ(scene->objectTypeToken,modeling::kSceneObjectObjectType);
+    EXPECT_EQ(scene->bytes,sceneBytes.get());
+    HostModelCompilePort port({m_query.get(),core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType),nullptr});
+    const project::CompileRequest request{*m_query,writes,m_query->view.id};
+    const auto result=port.compileWorkCellAndDwc(request);
+    for(const auto& diag:result.diagnostics){ std::cerr<<diag.code<<": "<<diag.cause<<'\n'; }
+    EXPECT_TRUE(result.ok) << "新场景载荷不应丢类型，也不能被当作根对象解码";
+}
+
+/** @brief REQ-10：仅改既有场景时，从基线取根、从计划取场景，不能按首条载荷猜根。 */
+TEST_F(HostCompilePipelineTest, SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {"AT-23"}, std::nullopt);
+    const modeling::RobotDesignCodec codec;
+    const auto decoded=codec.decode(m_designBytes,modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    auto design=std::get<modeling::RobotDesign>(decoded.get());
+    modeling::SceneObject fixture;
+    fixture.objectId=core::ObjectId::generate(); fixture.localName="pick-fixture";
+    const std::vector<std::uint8_t> geometryBytes{'s','o','l','i','d',' ','f','i','x','t','u','r','e'};
+    modeling::ResourceRef resource;
+    resource.resourceId="fixture-geometry"; resource.state=modeling::ResourceState::Solidified;
+    core::ContentDigester digest; digest.update(geometryBytes.data(),geometryBytes.size());
+    resource.contentDigest=digest.finalize();
+    core::ContentVersion version; version.bytes=resource.contentDigest;
+    resource.solidifiedObject=modeling::SolidifiedRef{core::ObjectId::generate(),version};
+    design.resourceManifest.push_back(resource);
+    fixture.geometry=modeling::GeometryRef{}; fixture.geometry->resourceRefId=resource.resourceId;
+    design.sceneRefs.push_back(fixture.objectId);
+    const auto rootBytes=codec.encode(modeling::ObjectVariant(design),modeling::kCurrentFormatVersion);
+    const auto oldSceneBytes=codec.encode(modeling::ObjectVariant(fixture),modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(rootBytes.ok()); ASSERT_TRUE(oldSceneBytes.ok());
+    m_query->view.objectRefs.clear(); m_query->objects.clear();
+    m_query->addObject(resource.solidifiedObject->objectId,"resource",geometryBytes);
+    m_query->addObject(m_rootId,std::string(modeling::kRobotDesignObjectType),rootBytes.get());
+    m_query->addObject(fixture.objectId,std::string(modeling::kSceneObjectObjectType),oldSceneBytes.get());
+    fixture.worldPose.P()=rw::math::Vector3D<>(0.6,0.3,0.2); // 更新世界系位置，单位m。
+    const auto sceneBytes=codec.encode(modeling::ObjectVariant(fixture),modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(sceneBytes.ok());
+    const std::vector<project::ObjectWrite> writes{
+        {fixture.objectId,std::string(modeling::kSceneObjectObjectType),sceneBytes.get()}};
+    HostProjectClosureView closure(*m_query,std::string(modeling::kRobotDesignObjectType),&writes);
+    const auto root=closure.tryObjectByToken(modeling::kRobotDesignObjectType);
+    const auto scene=closure.tryObject(fixture.objectId);
+    ASSERT_TRUE(root); ASSERT_TRUE(scene);
+    EXPECT_EQ(root->bytes,rootBytes.get()) << "无根计划时必须读取基线根";
+    EXPECT_EQ(scene->bytes,sceneBytes.get()) << "场景应读新计划，不能退回旧场景";
+    HostModelCompilePort port({m_query.get(),core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType),nullptr});
+    const project::CompileRequest request{*m_query,writes,m_query->view.id};
+    const auto result=port.compileWorkCellAndDwc(request);
+    for(const auto& diag:result.diagnostics){ std::cerr<<diag.code<<": "<<diag.cause<<'\n'; }
+    EXPECT_TRUE(result.ok) << "部件单独更新必须保留基线根，不要求根冗余写入";
+}
+
+/** @brief REQ-10/CON-03：Recorded资源经真实io读取，变化/缺失拒绝且不替换原快照。 */
+TEST_F(HostCompilePipelineTest, RecordedResourceIsRereadAndFailurePreservesSnapshot_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {"AT-23"}, std::nullopt);
+    QTemporaryDir directory; ASSERT_TRUE(directory.isValid());
+    const QString path=directory.filePath("fixture.stl");
+    const QByteArray content("solid fixture\nendsolid fixture\n");
+    QFile file(path); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    ASSERT_EQ(file.write(content),content.size()); file.close();
+    const modeling::RobotDesignCodec codec;
+    const auto decoded=codec.decode(m_designBytes,modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    auto design=std::get<modeling::RobotDesign>(decoded.get());
+    modeling::ResourceRef resource; resource.resourceId="fixture-resource";
+    core::ContentDigester digest; digest.update(content.constData(),static_cast<std::size_t>(content.size()));
+    resource.contentDigest=digest.finalize();
+    resource.externalRecord=modeling::ExternalResourceRecord{path.toStdString(),resource.contentDigest};
+    design.resourceManifest.push_back(resource);
+    const auto bytes=codec.encode(modeling::ObjectVariant(design),modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());
+    const std::vector<project::ObjectWrite> writes{
+        {m_rootId,std::string(modeling::kRobotDesignObjectType),bytes.get()}};
+    HostModelCompilePort port({m_query.get(),core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType),nullptr});
+    const project::CompileRequest request{*m_query,writes,m_query->view.id};
+    const auto first=port.compileWorkCellAndDwc(request);
+    for(const auto& diag:first.diagnostics){std::cerr<<diag.code<<": "<<diag.cause<<'\n';}
+    ASSERT_TRUE(first.ok) << "真实Recorded资源必须能从现有io桥读取";
+    const auto original=port.lastPublishedSnapshot(); ASSERT_NE(original,nullptr);
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly|QIODevice::Truncate));
+    ASSERT_EQ(file.write("changed",7),7); file.close();
+    const auto changed=port.compileWorkCellAndDwc(request);
+    EXPECT_FALSE(changed.ok);
+    EXPECT_TRUE(std::any_of(changed.diagnostics.begin(),changed.diagnostics.end(),[](const auto& d){
+        return d.cause.find("resource-changed")!=std::string::npos;}));
+    EXPECT_EQ(port.lastPublishedSnapshot(),original) << "资源变化不能替换已发布快照";
+    ASSERT_TRUE(file.remove());
+    const auto missing=port.compileWorkCellAndDwc(request);
+    EXPECT_FALSE(missing.ok);
+    EXPECT_TRUE(std::any_of(missing.diagnostics.begin(),missing.diagnostics.end(),[](const auto& d){
+        return d.cause.find("resource-missing")!=std::string::npos;}));
+    EXPECT_EQ(port.lastPublishedSnapshot(),original);
 }
 
 /// 编译失败面：非法对象字节→ok=false＋诊断非空（MDL-06——失败不提交，

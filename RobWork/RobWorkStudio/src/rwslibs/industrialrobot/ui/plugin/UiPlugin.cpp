@@ -49,6 +49,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QMouseEvent>  // 三维拾取拦截（UI-T45——双击事件位形）
+#include <rw/graphics/SceneViewer.hpp> // REQ-10正式验证使用真实相机/视口，不替换raycast。
 #include <QPushButton>
 #include <QRadioButton>
 #include <QStatusBar>
@@ -7495,6 +7496,240 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             ok(m_lastStoreAdapter->projectStore().query().head().id == savedHead,
                "step5.6 capture-and-local-history-zero-project-revisions");
             snapPng(hostWin, "mtour-capture-restored.png");
+        }
+
+        // WP-14-T12/REQ-10：公开命令创建夹具并真实双编译，不直接向WorkCell塞帧。
+        // runtime目前显示代理为标记盒，本段只证明Frame拾取/引用，不声称mesh保真。
+        step("5.7 real-scene-raycast-and-pick");
+        {
+            const auto adapter = m_lastStoreAdapter;
+            modeling::SceneObject fixture;
+            fixture.localName = "requirements-pick-fixture";
+            fixture.role = modeling::SceneObjectRole::Workpiece;
+            fixture.geometry=modeling::GeometryRef{};
+            fixture.geometry->resourceRefId="requirements-pick-fixture-mesh";
+            fixture.worldPose = rw::math::Transform3D<>(rw::math::Vector3D<>(1.4, 0.3, 0.2),
+                rw::math::RPY<>(0.0, 0.7, 0.0).toRotation3D());
+            const modeling::RobotDesignCodec codec;
+            const auto encoded = codec.encode(modeling::ObjectVariant(fixture), modeling::kCurrentFormatVersion);
+            ok(encoded.ok(), "step5.7 scene-fixture-encoded");
+            const auto tips = adapter->projectStore().query().branchTips();
+            if (encoded.ok() && !tips.empty()) {
+                modeling::CommandPayload payload;
+                // 合法场景必须具备几何资源。创建真实STL外部记录，由原io桥
+                // 实际读取/复核摘要；runtime仍只渲染标记盒，不能据此宣称mesh保真。
+                const QByteArray mesh("solid fixture\nfacet normal 0 0 1\nouter loop\n"
+                    "vertex -0.01 -0.01 0\nvertex 0.01 -0.01 0\nvertex 0 0.01 0\n"
+                    "endloop\nendfacet\nendsolid fixture\n");
+                const QString meshPath=(outDir.isEmpty()?QDir::tempPath():outDir)+"/mtour-fixture.stl";
+                QFile meshFile(meshPath);
+                const bool meshWritten=meshFile.open(QIODevice::WriteOnly)
+                    && meshFile.write(mesh)==mesh.size();
+                meshFile.close(); ok(meshWritten,"step5.7 real-fixture-resource-written");
+                core::ContentDigester hasher;
+                hasher.update(mesh.constData(),static_cast<std::size_t>(mesh.size()));
+                const auto digest=hasher.finalize();
+                bool rootReady=false;
+                for(const auto& ref:adapter->projectStore().query().head().objectRefs){
+                    if(ref.objectTypeToken!=modeling::kRobotDesignObjectType){continue;}
+                    const auto bytes=adapter->projectStore().query().tryObject(ref.objectId,ref.contentVersion);
+                    if(!bytes){continue;}
+                    const auto decodedRoot=codec.decode(*bytes,modeling::kCurrentFormatVersion);
+                    if(!decodedRoot.ok()||!std::holds_alternative<modeling::RobotDesign>(decodedRoot.get())){continue;}
+                    auto root=std::get<modeling::RobotDesign>(decodedRoot.get());
+                    modeling::ResourceRef resource;
+                    resource.resourceId=fixture.geometry->resourceRefId;
+                    resource.contentDigest=digest;
+                    resource.externalRecord=modeling::ExternalResourceRecord{meshPath.toStdString(),digest};
+                    root.resourceManifest.push_back(resource);
+                    const auto rootEncoded=codec.encode(modeling::ObjectVariant(root),modeling::kCurrentFormatVersion);
+                    if(rootEncoded.ok()){
+                        payload.objects.push_back({false,ref.objectId,std::string(modeling::kRobotDesignObjectType),rootEncoded.get()});
+                        rootReady=true;
+                    }
+                    break;
+                }
+                ok(rootReady,"step5.7 fixture-resource-record-root-ready");
+                payload.objects.push_back(modeling::PayloadObjectSlot{true, {},
+                    std::string(modeling::kSceneObjectObjectType), encoded.get()});
+                project::CommandEnvelope envelope;
+                envelope.branch = tips.front().id;
+                envelope.expectedRevision = adapter->projectStore().query().head().id;
+                envelope.commandType = std::string(modeling::kCmdApplyRobotDesign);
+                envelope.payloadFormatVersion = modeling::kCommandPayloadVersion;
+                envelope.payloadCanonical = modeling::encodeCommandPayload(payload);
+                HostCommandInteraction interaction(m_dockBody.data(), [this] {
+                    return m_controller && m_controller->hasOpenSession();
+                });
+                const auto submitted = adapter->projectStore().commands().submit(envelope, &interaction);
+                std::cout << "[ird-ui-smoke-mtour] scene-submit kind=" << static_cast<int>(submitted.status.kind)
+                    << " rejection=" << static_cast<int>(submitted.status.rejection)
+                    << " abort=" << static_cast<int>(submitted.status.abort) << std::endl;
+                for (const auto& diag : submitted.diagnostics) {
+                    std::cout << "[ird-ui-smoke-mtour] scene-submit diagnostic=" << diag.code << " " << diag.cause << std::endl;
+                }
+                ok(submitted.status.kind == project::CommandStatus::Kind::Committed,
+                   "step5.7 scene-fixture-real-command-committed");
+                // 本段直接走公开项目命令作前置，随后必须执行生产应用路径
+                // 同款发布拍；submit本身不拥有宿主呈现，不能把旧场景误判为编译失败。
+                if (submitted.committed()) { refreshPresentationAfterCommit(); }
+                settleEvents(500);
+                std::optional<core::ObjectId> fixtureId;
+                for (const auto& ref : adapter->projectStore().query().head().objectRefs) {
+                    if (ref.objectTypeToken != modeling::kSceneObjectObjectType) { continue; }
+                    const auto bytes = adapter->projectStore().query().tryObject(ref.objectId, ref.contentVersion);
+                    const auto decoded = bytes ? codec.decode(*bytes, modeling::kCurrentFormatVersion)
+                        : codec.decode({}, modeling::kCurrentFormatVersion);
+                    if (decoded.ok() && std::holds_alternative<modeling::SceneObject>(decoded.get())
+                        && std::get<modeling::SceneObject>(decoded.get()).localName == fixture.localName) {
+                        fixtureId = ref.objectId;
+                    }
+                }
+                const auto name = fixtureId && m_nameMapPort ? m_nameMapPort->resolveRuntimeName(*fixtureId) : std::nullopt;
+                auto* studio = getRobWorkStudio();
+                const auto view = studio->getView();
+                const auto cell = studio->getWorkCell();
+                auto* frame = name && cell ? cell->findFrame(*name) : nullptr;
+                ok(fixtureId && frame, "step5.7 fixture-real-runtime-frame");
+                if (frame && view) {
+                    const auto actual = rw::kinematics::Kinematics::worldTframe(frame, studio->getState());
+                    bool same = (actual.P() - fixture.worldPose.P()).norm2() < 1e-12;
+                    for (int r = 0; r < 3; ++r) { for (int c = 0; c < 3; ++c) {
+                        same = same && std::abs(actual.R()(r,c) - fixture.worldPose.R()(r,c)) < 1e-12;
+                    } }
+                    ok(same, "step5.7 fixture-world-transform-preserved");
+                    // 相机沿自身-Z看向夹具，避免机器人遮挡；视口中心为独立已知落点。
+                    const auto viewer = view->getSceneViewer();
+                    viewer->setTransform(rw::math::Transform3D<>(actual.P() + rw::math::Vector3D<>(0,0,0.4),
+                        rw::math::Rotation3D<>(1,0,0, 0,1,0, 0,0,1)));
+                    view->update(); settleEvents(300);
+                    int vx=0, vy=0, width=0, height=0;
+                    viewer->getViewCamera()->getViewport(vx,vy,width,height);
+                    const QPoint pixel(vx + width/2, vy + height/2);
+                    const auto* picked = view->pickFrame(pixel.x(), pixel.y());
+                    ok(picked == frame, "step5.7 real-center-pixel-raycast-hits-fixture");
+                    // 生产Ctrl双击从真实OpenGL子控件发出，验证事件坐标与名称反解全链。
+                    QWidget* glWidget = nullptr;
+                    for (auto* child : view->findChildren<QWidget*>()) {
+                        if (child->inherits("QOpenGLWidget")) { glWidget = child; break; }
+                    }
+                    ok(glWidget != nullptr, "step5.7 real-opengl-input-surface");
+                    if (glWidget) {
+                        const QPoint local = glWidget->rect().center();
+                        QMouseEvent event(QEvent::MouseButtonDblClick, QPointF(local),
+                            QPointF(glWidget->mapToGlobal(local)), Qt::LeftButton,
+                            Qt::LeftButton, Qt::ControlModifier);
+                        QApplication::sendEvent(glWidget, &event); settleEvents(150);
+                    }
+                    ok(m_selection->selectedObjectIds() == std::vector<core::ObjectId>{*fixtureId}
+                        && m_selection->selectionSource() == SelectionSource::View3DPick,
+                       "step5.7 ctrl-double-click-resolves-real-scene-object");
+                    m_content->showStagePanel(StageId::Requirements);
+                    auto* add = m_requirementsDock->findChild<QPushButton*>("ird_req_add_points");
+                    ok(add && add->isEnabled(), "step5.7 target-create-button");
+                    if (add) { add->click(); settleEvents(200); }
+                    const auto beforePick = m_requirementsEditor.workingSet();
+                    const auto pickHead=adapter->projectStore().query().head().id;
+                    ok(!beforePick.points.entries.empty(), "step5.7 target-point-present");
+                    if (!beforePick.points.entries.empty()) {
+                        const auto pointId = beforePick.points.entries.back().objectId;
+                        for (int mode = 0; mode < 4; ++mode) {
+                            // 每轮从同一基线开始，取消/Frame/正法向/反法向各走真实模态交互。
+                            m_domains->requirements->reportView3DPick(pointId);
+                            bool choiceSeen=false, confirmSeen=false;
+                            QTimer answer;
+                            answer.setInterval(80);
+                            QObject::connect(&answer, &QTimer::timeout, this, [&] {
+                                auto* modal = QApplication::activeModalWidget();
+                                if (auto* input = qobject_cast<QInputDialog*>(modal)) {
+                                    if (input->windowTitle().contains(QStringLiteral("拾取特征"))) {
+                                        choiceSeen=true;
+                                        if (auto* combo=input->findChild<QComboBox*>()) { combo->setCurrentIndex(mode > 1 ? mode-1 : 0); }
+                                        input->accept();
+                                    }
+                                } else if (auto* dialog=qobject_cast<QDialog*>(modal)) {
+                                    auto* buttons=dialog->findChild<QDialogButtonBox*>();
+                                    if (buttons && dialog->windowTitle().contains(QStringLiteral("确认"))) {
+                                        confirmSeen=true;
+                                        if (mode==3) { snapPng(dialog,"mtour-pick-normal-confirm.png"); }
+                                        if (auto* button=buttons->button(mode==0 ? QDialogButtonBox::Cancel : QDialogButtonBox::Ok)) { button->click(); }
+                                    }
+                                }
+                            });
+                            answer.start(); m_content->submitCommand("requirements.pick-feature"); answer.stop();
+                            settleEvents(150);
+                            ok(choiceSeen && confirmSeen, "step5.7 real-pick-dialogs-mode-"+std::to_string(mode));
+                            const auto after=m_requirementsEditor.workingSet();
+                            if (mode==0) { ok(after==beforePick,"step5.7 pick-cancel-zero-write"); continue; }
+                            const auto target=std::find_if(after.points.entries.begin(),after.points.entries.end(),
+                                [&](const auto& p){return p.objectId==pointId;});
+                            bool correct=target!=after.points.entries.end();
+                            if (correct) {
+                                const auto& rule=target->pose.orientation;
+                                correct=mode==1 ? (rule.kind==requirements::OrientationRuleKind::AlignFrame
+                                    && rule.targetFrame.kind==requirements::RequirementRefKind::SceneObject
+                                    && rule.targetFrame.objectId==fixtureId)
+                                    : (rule.kind==requirements::OrientationRuleKind::AlignGeometryNormal
+                                    && rule.targetSceneObject==fixtureId
+                                    && rule.feature==requirements::OrientationFeature::FramePlaneNormal
+                                    && rule.invertNormal==(mode==3));
+                            }
+                            ok(correct,"step5.7 pick-rule-and-object-id-mode-"+std::to_string(mode));
+                            QPushButton* undo=nullptr; QPushButton* redo=nullptr;
+                            for(auto* button:m_requirementsDock->findChildren<QPushButton*>()) {
+                                if(button->text()==QString::fromStdString(resolveText(TextKey{"panel.requirements.undo-draft.label"}))) {undo=button;}
+                                if(button->text()==QString::fromStdString(resolveText(TextKey{"panel.requirements.redo-draft.label"}))) {redo=button;}
+                            }
+                            ok(undo && undo->isEnabled(),"step5.7 pick-local-undo-enabled");
+                            if(undo){undo->click();settleEvents(100);}
+                            ok(m_requirementsEditor.workingSet()==beforePick,"step5.7 pick-one-undo");
+                            ok(redo && redo->isEnabled(),"step5.7 pick-local-redo-enabled");
+                            if(redo){redo->click();settleEvents(100);}
+                            ok(m_requirementsEditor.workingSet()==after,"step5.7 pick-one-redo");
+                            if(undo){undo->click();settleEvents(100);}
+                        }
+                        ok(adapter->projectStore().query().head().id==pickHead,
+                           "step5.7 pick-local-history-zero-project-revisions");
+                        // 空白raycast必须清空最近拾取；命令随后不得复用旧夹具。
+                        m_view3dGateway->handleViewDoubleClick(QPoint(vx+2,vy+2));
+                        m_domains->requirements->reportView3DPick(pointId);
+                        m_content->submitCommand("requirements.pick-feature"); settleEvents(100);
+                        ok(m_requirementsEditor.workingSet()==beforePick,
+                           "step5.7 blank-pick-clears-feature-zero-write");
+                        // 再真实拾取后以场景单对象命令移动夹具，触发新的编译/发布。
+                        // 旧拾取锚不得跨WorkCell/修订继续使用，不能直接塞一个假场景。
+                        m_view3dGateway->handleViewDoubleClick(pixel);
+                        modeling::SceneObject moved=fixture; moved.objectId=*fixtureId;
+                        moved.worldPose.P()[0]+=0.1; // 世界系已知位移，m。
+                        const auto movedBytes=codec.encode(modeling::ObjectVariant(moved),modeling::kCurrentFormatVersion);
+                        ok(movedBytes.ok(),"step5.7 moved-scene-encoded");
+                        if(movedBytes.ok()){
+                            modeling::CommandPayload movePayload;
+                            movePayload.objects.push_back({false,*fixtureId,std::string(modeling::kSceneObjectObjectType),movedBytes.get()});
+                            auto moveEnvelope=envelope;
+                            moveEnvelope.expectedRevision=adapter->projectStore().query().head().id;
+                            moveEnvelope.commandType=std::string(modeling::kCmdApplySceneObjects);
+                            moveEnvelope.payloadCanonical=modeling::encodeCommandPayload(movePayload);
+                            const auto movedResult=adapter->projectStore().commands().submit(moveEnvelope,&interaction);
+                            ok(movedResult.committed(),"step5.7 scene-only-update-real-command-committed");
+                            if(movedResult.committed()){refreshPresentationAfterCommit();}
+                            settleEvents(200);
+                            const auto afterMove=m_requirementsEditor.workingSet();
+                            m_domains->requirements->reportView3DPick(pointId);
+                            m_content->submitCommand("requirements.pick-feature");settleEvents(100);
+                            ok(m_requirementsEditor.workingSet()==afterMove,
+                               "step5.7 recompiled-scene-rejects-old-pick-zero-write");
+                            const auto newCell=studio->getWorkCell();
+                            auto* newFrame=name&&newCell?newCell->findFrame(*name):nullptr;
+                            ok(newCell!=cell && newFrame
+                                && (rw::kinematics::Kinematics::worldTframe(newFrame,studio->getState()).P()
+                                    - moved.worldPose.P()).norm2()<1e-12,
+                               "step5.7 scene-only-update-world-position-published");
+                        }
+                    }
+                    snapPng(hostWin,"mtour-5.7-scene-picked.png");
+                }
+            }
         }
 
         // WP-14-T12/A-10：在真实已打开项目的正式命令注册/面板中复验九条需求命令，
