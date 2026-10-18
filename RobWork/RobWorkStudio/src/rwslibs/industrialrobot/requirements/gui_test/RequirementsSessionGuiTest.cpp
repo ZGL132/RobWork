@@ -22,6 +22,10 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QClipboard> // UX-05：真实剪贴板经过公共参数表粘贴入口。
+#include <QElapsedTimer>
+#include <QEventLoop>
+#include <QTimer>
 #include <QCheckBox>  // 启用 Switch 断言（UI-T37 R1）
 #include <QGroupBox>  // 卡片分组定位（UI-T37 返工——QGroupBox 形态）
 #include <QLabel>
@@ -56,6 +60,25 @@ using namespace sdurws::ird;
 using namespace sdurws::ird::requirements;
 
 namespace {
+
+/**
+ * @brief 等待Windows真实剪贴板可读（最多3秒），不以空剪贴板冒充生产粘贴成功。
+ * @param text [in] TSV文本；测试窗销毁后OLE所有权消息可能尚未派发，先泵事件再重试。
+ * @return 实际读回完全一致才为true；超时仍由用例失败，不跳过或替换生产粘贴路径。
+ */
+bool setRequirementClipboard(const QString& text)
+{
+    QElapsedTimer deadline; deadline.start();
+    do {
+        QApplication::processEvents();
+        QApplication::clipboard()->setText(text);
+        if (QApplication::clipboard()->text() == text) { return true; }
+        QEventLoop messages;
+        QTimer::singleShot(20, &messages, &QEventLoop::quit);
+        messages.exec();
+    } while (deadline.elapsed() < 3000);
+    return false;
+}
 
 /// 闭包域字节源的测试实现（harness MapClosure 同款——内存映射形态）。
 class MapClosure final : public RequirementObjectClosureView {
@@ -200,6 +223,157 @@ protected:
     RequirementReadinessReport m_report{};            ///< 首刷就绪报告
     std::unique_ptr<RequirementsPanelWidget> m_panel; ///< 被测面板
 };
+
+/** @brief UX-05：工位批量输入先暂存，非法行定位，修正后整体确认与撤销。 */
+TEST_F(RequirementsSessionGuiTest, StationBatchParametersAtomic_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    const auto before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_station");
+    ASSERT_NE(batch, nullptr) << "需求工位必须有非模态筛选/批量参数编辑入口";
+    auto* filter = batch->findChild<QLineEdit*>("ird_param_filter");
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table");
+    ASSERT_NE(filter, nullptr); ASSERT_NE(table, nullptr);
+    const int allRows = table->rowCount();
+    filter->setText(QStringLiteral("容差"));
+    EXPECT_GT(table->rowCount(), 0); EXPECT_LT(table->rowCount(), allRows);
+    filter->clear();
+    auto* units = batch->findChild<QComboBox*>("ird_param_unit_switch"); ASSERT_NE(units, nullptr);
+    const int mmIndex = units->findText(QStringLiteral("长度：mm")); ASSERT_GE(mmIndex, 0);
+    units->setCurrentIndex(mmIndex); units->activated(mmIndex);
+    // 公共参数表以单位列声明输入单位，TSV值列只填数值，不重复附加单位后缀。
+    ASSERT_TRUE(setRequirementClipboard("pose-position-x\t250\ntolerance-position\tbad")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), before) << "粘贴仅暂存";
+    auto* impact = batch->findChild<QLabel*>("ird_param_impact");
+    ASSERT_NE(impact, nullptr);
+    EXPECT_TRUE(impact->text().contains(QStringLiteral("第2行"))) << impact->text().toStdString();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    EXPECT_TRUE(batch->findChild<QWidget*>("ird_param_confirm_region")->isHidden());
+    ASSERT_TRUE(setRequirementClipboard("tolerance-position\t2\npose-position-y\t500")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    QApplication::processEvents();
+    const auto after = m_editor.workingSet().points.entries.front();
+    EXPECT_DOUBLE_EQ(after.pose.position.value()[0], 0.25);
+    EXPECT_DOUBLE_EQ(after.pose.position.value()[1], 0.5);
+    EXPECT_DOUBLE_EQ(after.pose.position.value()[2], before.pose.position.value()[2]);
+    EXPECT_DOUBLE_EQ(after.tolerance.positionTolerance, 0.002);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+    ASSERT_TRUE(m_editor.redoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), after);
+}
+
+/** @brief UX-05/REQ-03：区域中心/尺寸批量修改经领域校验，只入一次撤销栈。 */
+TEST_F(RequirementsSessionGuiTest, RegionBatchParametersAtomic_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_region");
+    ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("box-center-x\t0.25\nbox-size-z\t0.75")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click(); QApplication::processEvents();
+    const auto after = m_editor.workingSet().regions.entries.front();
+    EXPECT_DOUBLE_EQ(after.box.center[0], 0.25); EXPECT_DOUBLE_EQ(after.box.size[2], 0.75);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+}
+
+/** @brief UX-05/REQ-04：未设节拍显示未设，取消零写入，确认节拍只进草稿。 */
+TEST_F(RequirementsSessionGuiTest, ConditionBatchParametersCancel_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    const auto before = m_editor.workingSet().conditions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_condition");
+    ASSERT_NE(batch, nullptr);
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table"); ASSERT_NE(table, nullptr);
+    EXPECT_NE(table->item(0, 1)->text(), QStringLiteral("0")) << "缺失节拍不能伪造成零";
+    ASSERT_TRUE(setRequirementClipboard("cycle-time\t4")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_cancel")->click();
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before);
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    ASSERT_FALSE(batch->findChild<QWidget*>("ird_param_confirm_region")->isHidden())
+        << batch->findChild<QLabel*>("ird_param_impact")->text().toStdString();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click(); QApplication::processEvents();
+    ASSERT_TRUE(m_editor.workingSet().conditions.entries.front().targetCycleTimeS);
+    EXPECT_DOUBLE_EQ(*m_editor.workingSet().conditions.entries.front().targetCycleTimeS, 4);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before);
+}
+
+/** @brief UX-05：暂存期间切换对象或进入只读，不得把输入写到另一个对象/禁写会话。 */
+TEST_F(RequirementsSessionGuiTest, BatchParametersAnchorAndReadOnly_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {"UX-11"}, std::nullopt);
+    const auto before = m_editor.workingSet().points.entries.front();
+    const auto second = makePoint("批量编辑第二工位", 4, 5, 6);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{second}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("pose-position-x\t0.25")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    m_panel->focusObject(second.objectId); // 确认已排队，改变选择不改变载荷目标。
+    QApplication::processEvents();
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (point.objectId == before.objectId) { EXPECT_DOUBLE_EQ(point.pose.position.value()[0], 0.25); }
+        if (point.objectId == second.objectId) { EXPECT_EQ(point, second); }
+    }
+    m_panel->focusObject(before.objectId);
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("pose-position-x\t0.75")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    m_panel->setWritable(false); QApplication::processEvents();
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (point.objectId == before.objectId) { EXPECT_DOUBLE_EQ(point.pose.position.value()[0], 0.25); }
+    }
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    EXPECT_FALSE(batch->isEnabled());
+}
+
+/** @brief UX-05：完整对象基线冲突或域校验拒绝时整批零写入，不留下表格假成功。 */
+TEST_F(RequirementsSessionGuiTest, BatchParametersRejectStaleBaseline_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {"REQ-09"}, std::nullopt);
+    const auto before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("pose-position-x\t0.25")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    auto changed = before; changed.note = "外部编辑不能被旧参数覆盖";
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{changed}).accepted);
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), changed);
+    // 下限/上限各自合法但区间逆序应由领域拒绝，不能部分应用其中一项。
+    changed.pose.orientation.kind = OrientationRuleKind::ToolRollFree;
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{changed}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("roll-min\t2\nroll-max\t1\npose-position-x\t0.5")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), changed);
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table"); ASSERT_NE(table, nullptr);
+    for (int row = 0; row < table->rowCount(); ++row) {
+        if (table->item(row, 0)->data(Qt::UserRole).toString() == "pose-position-x") {
+            EXPECT_EQ(table->item(row, 1)->text(), QStringLiteral("1"));
+        }
+    }
+}
 
 // =====================================================================
 // acceptance 1 会话数据面：基线闭包载入→四集合入面板（树投影＋定位）。

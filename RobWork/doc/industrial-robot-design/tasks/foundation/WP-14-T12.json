@@ -20,6 +20,7 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/FormEditCommon.cpp",
     "RobWork/docs/superpowers/plans/2026-10-18-requirements-completion.md",
     "RobWork/doc/industrial-robot-design/tasks/foundation/WP-14-T12.json",
     "RobWork/doc/industrial-robot-design/units/requirements.md",

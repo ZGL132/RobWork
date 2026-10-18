@@ -52,11 +52,48 @@
 #include <charconv>   // std::to_chars（formatSiText——数值确定性文本化）
 #include <functional>  // std::function（UI-T36 层级树递归定位）
 #include <set>        // uniqueEntryName 的已占名集合
+#include <map>        // 数量基线按稳定字段键查取，不从已格式化显示文本反解真值。
+#include <type_traits>
 #include <stdexcept>
 #include <utility>
 
 namespace sdurws::ird::requirements {
 namespace {
+
+/**
+ * @brief 批量表会话的Qt寿命壳（UX-05），拥有模型与出口且先销毁借用它们的视图。
+ * 面板刷新会删除本壳；确认回调只复制修改集，禁止同步刷新删除正在发信号的控件。
+ * 生命周期归需求面板父子树；非线程安全，仅UI线程访问。
+ */
+class RequirementParameterTable final : public QWidget, public ui::IFormEditOutlet {
+public:
+    /** @brief 装配独立暂存模型。specs为非空SI字段词表，回调只排队移交修改集。 */
+    RequirementParameterTable(std::vector<ui::QuantityFieldSpec> specs,
+        const std::map<std::string, std::optional<double>>& values,
+        std::function<void(const ui::ParamEditSet&)> submit, QWidget* parent)
+        : QWidget(parent), m_model(std::move(specs)), m_submit(std::move(submit))
+    {
+        // 直接从领域值建立SI基线，保留缺失态；显示格式精度不能成为权威数据来源。
+        for (const auto& spec : m_model.fields()) { m_model.setBaseline(spec.key, values.at(spec.key)); }
+        auto* layout = new QVBoxLayout(this);
+        layout->setContentsMargins(0, 0, 0, 0);
+        auto* toggle = new QPushButton(QStringLiteral("参数表：筛选 / 批量粘贴"), this);
+        toggle->setCheckable(true);
+        layout->addWidget(toggle);
+        m_view = ui::createParamTablePanel(m_model, this, {}, this);
+        layout->addWidget(m_view);
+        m_view->hide();
+        connect(toggle, &QPushButton::toggled, m_view, &QWidget::setVisible);
+    }
+    /** @brief 显式先释放保存模型/出口裸引用的公共视图，再析构成员，避免悬垂引用。 */
+    ~RequirementParameterTable() override { delete m_view; }
+    /** @brief 接收SI修改集值副本；最终业务校验与一次撤销由需求编辑器负责。 */
+    void applyEdits(const ui::ParamEditSet& edits) override { m_submit(edits); }
+private:
+    ui::ParamEditModel m_model; ///< 本表私有暂存，零正式工作集所有权。
+    std::function<void(const ui::ParamEditSet&)> m_submit; ///< 非同步刷新出口，仅UI线程。
+    QWidget* m_view = nullptr; ///< Qt子控件；析构中先销毁以满足公共组件引用契约。
+};
 
 // 树/表节点列上的锚存取（UI-T36 修复：锚列＝行末隐藏列——makeTable 追加
 // 的空标题末列。原 kAnchorColumn=1 为单列树形态遗留：两列以上显示列的
@@ -1190,6 +1227,110 @@ bool RequirementsPanelWidget::submitStructuralEdit(const RequirementEdit& edit)
     return true;
 }
 
+QWidget* RequirementsPanelWidget::makeBatchParameterTable(const RequirementEdit& edit)
+{
+    // 三类条目共享UI参数规则；仅字段映射留在需求域，不复制解析、单位或筛选逻辑。
+    // optional值直接保持未设/未提供，不给缺失位置补默认零向量。
+    return std::visit([this](const auto& base) -> QWidget* {
+        using Entry = std::decay_t<decltype(base)>;
+        if constexpr (std::is_same_v<Entry, TaskPoint> || std::is_same_v<Entry, WorkRegion>
+                      || std::is_same_v<Entry, OperatingCondition>) {
+            std::vector<ui::QuantityFieldSpec> specs;
+            std::map<std::string, std::optional<double>> values;
+            const char* name = nullptr;
+            if constexpr (std::is_same_v<Entry, TaskPoint>) {
+                name = "ird_req_batch_station"; specs = stationQuantitySpecs();
+                values = {{"tolerance-position", base.tolerance.positionTolerance},
+                    {"tolerance-orientation", base.tolerance.orientationTolerance},
+                    {"segment-approach-distance", base.approach.distanceM},
+                    {"segment-retract-distance", base.retract.distanceM},
+                    {"fixed-rpy-r", base.pose.orientation.fixedRpy[0]},
+                    {"fixed-rpy-p", base.pose.orientation.fixedRpy[1]},
+                    {"fixed-rpy-y", base.pose.orientation.fixedRpy[2]},
+                    {"target-point-x", base.pose.orientation.targetPoint[0]},
+                    {"target-point-y", base.pose.orientation.targetPoint[1]},
+                    {"target-point-z", base.pose.orientation.targetPoint[2]},
+                    {"roll-min", base.pose.orientation.rollRange.min},
+                    {"roll-max", base.pose.orientation.rollRange.max}};
+                if (const auto position = base.pose.position.tryValue()) {
+                    values.emplace("pose-position-x", (*position)[0]);
+                    values.emplace("pose-position-y", (*position)[1]);
+                    values.emplace("pose-position-z", (*position)[2]);
+                } else {
+                    // 四态位置必须先经完整定义建立三轴值；单轴编辑不能猜测其余两轴。
+                    specs.erase(std::remove_if(specs.begin(), specs.end(), [](const auto& spec) {
+                        return spec.key.rfind("pose-position-", 0) == 0;
+                    }), specs.end());
+                }
+                // 姿态参数只展示当前规则使用的键；修改隐藏规则不能形成可见成功假象。
+                const auto ruleKeys = orientationRuleParamKeys(base.pose.orientation.kind);
+                specs.erase(std::remove_if(specs.begin(), specs.end(), [&ruleKeys](const auto& spec) {
+                    const bool ruleField = spec.key.rfind("fixed-rpy-", 0) == 0
+                        || spec.key.rfind("target-point-", 0) == 0 || spec.key.rfind("roll-", 0) == 0;
+                    return ruleField && std::find(ruleKeys.begin(), ruleKeys.end(), spec.key) == ruleKeys.end();
+                }), specs.end());
+            } else if constexpr (std::is_same_v<Entry, WorkRegion>) {
+                name = "ird_req_batch_region"; specs = regionQuantitySpecs();
+                values = {{"box-center-x", base.box.center[0]}, {"box-center-y", base.box.center[1]},
+                    {"box-center-z", base.box.center[2]}, {"box-size-x", base.box.size[0]},
+                    {"box-size-y", base.box.size[1]}, {"box-size-z", base.box.size[2]},
+                    {"coverage-position", base.coverageTargets.minPositionCoverage},
+                    {"coverage-orientation", base.coverageTargets.minOrientationCoverage}};
+            } else {
+                name = "ird_req_batch_condition"; specs = conditionQuantitySpecs(base);
+                values.emplace("cycle-time", base.targetCycleTimeS);
+                for (std::size_t i = 0; i < base.payloads.size(); ++i) {
+                    values.emplace("payload-" + std::to_string(i + 1) + "-mass", base.payloads[i].mass.tryValue());
+                }
+            }
+            auto* expected = m_editTarget ? m_editTarget() : nullptr;
+            auto* table = new RequirementParameterTable(std::move(specs), values,
+                [this, base, expected](const ui::ParamEditSet& edits) {
+                    QMetaObject::invokeMethod(this, [this, base, expected, edits] {
+                        // 提交前重取会话与完整基线；切项目、对象删除或并发字段编辑均不覆盖新数据。
+                        auto* editor = m_editTarget ? m_editTarget() : nullptr;
+                        if (!m_writable || m_sessionDetached || !editor || editor != expected) { return; }
+                        const auto& entries = [&]() -> const std::vector<Entry>& {
+                            if constexpr (std::is_same_v<Entry, TaskPoint>) { return editor->workingSet().points.entries; }
+                            else if constexpr (std::is_same_v<Entry, WorkRegion>) { return editor->workingSet().regions.entries; }
+                            else { return editor->workingSet().conditions.entries; }
+                        }();
+                        const auto latest = std::find_if(entries.begin(), entries.end(), [&base](const auto& entry) {
+                            return entry.objectId == base.objectId;
+                        });
+                        if (latest == entries.end() || *latest != base) {
+                            renderInspector(editor->workingSet());
+                            renderRegionPage(editor->workingSet());
+                            renderConditionPage(editor->workingSet());
+                            showStatusLine("对象已改变，请重新打开参数表"); return;
+                        }
+                        try {
+                            std::vector<std::string> known;
+                            const Entry candidate = [&]() {
+                                if constexpr (std::is_same_v<Entry, TaskPoint>) { return applyStationEditSet(base, edits, known); }
+                                else if constexpr (std::is_same_v<Entry, WorkRegion>) { return applyRegionEditSet(base, edits, known); }
+                                else { return applyConditionEditSet(base, edits, known); }
+                            }();
+                            if (candidate != base && !submitStructuralEdit(RequirementEdit{candidate})) {
+                                // 公共表已经完成移交；域拒绝后重投权威基线，避免其本地新值冒充已应用。
+                                renderInspector(editor->workingSet());
+                                renderRegionPage(editor->workingSet());
+                                renderConditionPage(editor->workingSet());
+                            }
+                        } catch (const std::invalid_argument& error) {
+                            showStatusLine(QString::fromUtf8(error.what()));
+                        }
+                    }, Qt::QueuedConnection);
+                }, this);
+            table->setObjectName(name);
+            table->setEnabled(m_writable && expected && !m_sessionDetached);
+            return table;
+        } else {
+            throw std::logic_error("需求参数表仅接受工位、区域或工况条目");
+        }
+    }, edit);
+}
+
 /// 工况新增向导内建面板（UI-T37 R2 acceptance 4——缺省工厂；测试经
 /// setConditionWizardFactory 注入确定字段，本函数不进测试路径）。
 /// 三步一屏：名称（防撞默认）／目标节拍（0＝未设——『未设』占位不伪造）/
@@ -1838,6 +1979,7 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     }
     // 行投影（writable 门控在模型层——applyReadOnlyGate 同源规则内置）。
     m_stationRows = stationFieldsFor(*point, m_writable);
+    m_stationBasicForm->addRow(makeBatchParameterTable(RequirementEdit{*point}));
 
     // 数量字段用唯一单位词表；名称/备注/顺序键有独立文本轨，枚举走类型
     // 词表，结构引用由完整定义表单暂存。不可将“无数量spec”泛化为只读。
@@ -2539,6 +2681,7 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         }
         const std::vector<StationFieldRow> fields =
             regionFieldsFor(region, m_regionService, m_writable);
+        m_regionBasicForm->addRow(makeBatchParameterTable(RequirementEdit{region}));
 
         // 词表面（可编辑裁决——UI-T37：采样计数/间距/随机数/备注等非词表
         // 行诚实灰显〔此前可编辑但提交即词表外键 fail-fast〕；覆盖率姿态
@@ -2952,6 +3095,7 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
         if (const auto anchor = nodeAnchor(m_conditionTable->currentItem())) {
             for (const OperatingCondition& c : ws.conditions.entries) {
                 if (c.objectId == anchor.value()) {
+                    m_conditionForm->addRow(makeBatchParameterTable(RequirementEdit{c}));
                     // REQ-04：结构编辑器只拥有进入基线的副本。确认排到信号返回后，
                     // 并绑定原编辑器/对象及基线；切换选择不改写新对象，外部刷新或
                     // 另一编辑已改变原对象时拒绝过期候选，避免覆盖新数据。

@@ -109,6 +109,20 @@ ParamEditModel makeLoadedModel()
     return model;
 }
 
+/** @brief UX-05/KIN-12：切换显示单位后，单格与TSV都必须按当前单位转SI，不能沿用初始单位。 */
+TEST(FormEditModel, EditAfterUnitSwitchUsesCurrentUnit_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {"KIN-12"}, std::nullopt);
+    auto model = makeLoadedModel();
+    model.setDisplayUnitForKind(core::QuantityKind::Length, *core::UnitToken::find("cm"));
+    ASSERT_TRUE(model.setEditText("joint-clearance", "25"));
+    EXPECT_DOUBLE_EQ(*model.currentValueSi("joint-clearance"), 0.25);
+    model.setDisplayUnitForKind(core::QuantityKind::Length, *core::UnitToken::find("m"));
+    const auto report = model.batchPasteText("joint-clearance\t0.5");
+    ASSERT_EQ(report.acceptedCount, 1U);
+    EXPECT_DOUBLE_EQ(*model.currentValueSi("joint-clearance"), 0.5);
+}
+
 // =====================================================================
 // acceptance 1①：数值＋单位同显（KIN-12——切换仅影响显示不改 SI 真值）
 // =====================================================================

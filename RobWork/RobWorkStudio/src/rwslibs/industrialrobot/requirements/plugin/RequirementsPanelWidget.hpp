@@ -467,6 +467,14 @@ private:
     /// 结构编辑统一提交轨（applyEdit → 接受走 onEditApplied sink 链——
     /// UI-T29 组合子随之触发就绪重估；拒绝就地报错。返回接受与否）。
     bool submitStructuralEdit(const RequirementEdit& edit);
+
+    /**
+     * @brief 创建非模态数量参数表；筛选/单位/粘贴统一复用UI公共组件（UX-05）。
+     * @param base [in] 当前工位/区域/工况的完整值基线；其他编辑类型属装配错误。
+     * @return Qt父子树托管的表单；确认只排队提交到原编辑器和未改变的原对象。
+     * 仅UI线程；缺失值不补零，领域拒绝时保留原工作集并显示诊断。
+     */
+    QWidget* makeBatchParameterTable(const RequirementEdit& base);
     std::vector<ui::CommandDescriptor> m_commands;  ///< 域命令目录（§9.8 九条——装配数据）
     CommandSubmitFn m_commandSubmit;          ///< 命令提交出口（装配层注入；空＝按钮禁用）
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询

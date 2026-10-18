@@ -422,7 +422,10 @@ void ParamEditModel::setBaseline(const std::string& key, std::optional<double> s
 bool ParamEditModel::setEditText(const std::string& key, const std::string& text)
 {
     FieldState& st = stateOf(key);
-    const QuantityFieldSpec& sp = spec(key);
+    // UX-05/KIN-12：字段描述只保存初始显示制式；运行期单位选择保存在会话状态。
+    // 输入必须按用户当前看到的单位解析，否则切m→mm后250会被误解为250m。
+    QuantityFieldSpec sp = spec(key);
+    sp.displayUnit = st.displayUnit;
     const ValueParseResult parsed = parseFieldValueText(text, sp);
     if (!parsed.ok) {
         // 就地错误路径：只记录原因——基线/暂存一字不写（"保留原值"的
