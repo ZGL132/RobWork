@@ -9051,10 +9051,12 @@
       "id": "F-927",
       "source": "UI-T85 验收 attempt 1 建议清单 A-4（acc/UI-T85/1@55981b27；2026-10-18；验收者实测 configure 失败现场与 RobWorkStudio/src/CMakeLists.txt:58 configure_file 语义复核）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-18",
       "title": "AGENTS.md §4.1 F-907 勘误表述与 configure_file 实际路径不符：现文写『复制至构建树源码侧 build/RobWorkStudio/bin/』，实际 configure_file 输入＝源码树侧 ${RWS_ROOT}/bin/RobWorkStudio.ini.template.static（RWS_ROOT＝RobWorkStudio 源码树——fresh worktree 即 <worktree>/RobWork/RobWorkStudio/bin/），配置自产出 bin/none/RobWorkStudio.ini.template（RWS_BUILD_TYPE=none）；构建树侧复制不构成有效前置",
-      "owner": "治理批（根规则文件修订——AGENTS.md 不属 UI-T85 allowedFiles，实施批不代改；修订时同步订正 DTB §5.1 同源表述）"
+      "owner": "治理批（根规则文件修订——AGENTS.md 不属 UI-T85 allowedFiles，实施批不代改；修订时同步订正 DTB §5.1 同源表述）",
+      "resolution": "F-927 消账（2026-10-18 docs 批）：AGENTS §4.1 与 DTB §5.1 fresh 树行同步订正——前置文件必须位于源码树侧 RobWork/RobWorkStudio/bin/（configure_file 输入＝${RWS_ROOT}/bin/RobWorkStudio.ini.template.static，RWS_ROOT 即 RobWorkStudio 源码树），构建树侧 build/RobWorkStudio/bin/ 明确不作为有效前置；F-907 原『复制至构建树源码侧』表述作废（语义依据 RobWorkStudio/src/CMakeLists.txt:56-58）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-928",
