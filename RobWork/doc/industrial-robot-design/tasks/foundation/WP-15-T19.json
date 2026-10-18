@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "修复独立冒烟树运动学链接缺陷（F-919：显式链接 sdurw_math）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["NFR-MNT-05", "ARC-02"],
   "designRefs": [
@@ -56,5 +56,5 @@
     "设计偏离登记：KIN-R2 v0.28『rw 库设施直调零自写三角』表述更新为『Eigen 头文件轴角组合（Rz·Ry·Rx，与 rw::math::RPY 同序）＋集成等价钉』——插件仍零自写三角，Eigen 仅头文件依赖（不新增交付链接面）",
     "测试双件留痕（gtest XML＋ird-test-report）落 traceability/builds/wp15-t19/；ird_gates 零新增命中；validate-docs PASS；文档同步（units/kinematics.md v0.32 §11 行、DTB v0.91 §2.16 行、findings F-919 翻 fixed 并记证据）"
   ],
-  "note": "F-919 修复卡（2026-10-18 所有者指令「按照建议进行下一批」；同日所有者裁决路线 A）。编号说明：T17 为 R2 扩展显示单位预留位（kinematics.md v0.19 明文）、T18 已用于宿主迁移，故取 T19。需求映射诚实说明：构建链接缺陷无专门需求条目，按 NFR-MNT-05（依赖/目标卫生）与 ARC-02（插件边界目标可构建）承接，不改变需求语义。方案勘察：owner 行建议的『显式链接 sdurw_math』经实测证伪——独立冒烟模式不构建任何框架目标/库（core 亦仅 if(TARGET sdurw_math) 条件链接），显式写库名后链接期 LNK1181『无法打开输入文件 sdurw_math.lib』（证据 traceability/builds/wp15-t19/smoke-link-probe-20261018.log）；根因是 RPY::toRotation3D 为非内联符号（定义在 RPY.cpp）。所有者裁决路线 A：插件经 KinPanelFlows::rotationFromRpySi 以 Eigen 头文件轴角组合复现同一 Z-Y-X 矩阵（Rz(roll)·Ry(pitch)·Rx(yaw)，库设施而非自写三角）；集成侧 KinP4FlowsTest 以 IRD_HAVE_SDURW_MATH 门控逐元对照 rw::math::RPY（1e-12，五组角度），独立冒烟树不注入该定义、该用例编译为空，不把非内联符号带回测试链接。设计偏离按 DTB §5.4 登记：KIN-R2 v0.28『rw 库设施直调零自写三角』表述改述为『Eigen 头文件轴角组合＋集成等价钉』；插件仍零自写三角，Eigen 仅头文件依赖（不新增交付链接面）。"
+  "note": "F-919 修复卡（2026-10-18 所有者指令「按照建议进行下一批」；同日所有者裁决路线 A）。编号说明：T17 为 R2 扩展显示单位预留位（kinematics.md v0.19 明文）、T18 已用于宿主迁移，故取 T19。需求映射诚实说明：构建链接缺陷无专门需求条目，按 NFR-MNT-05（依赖/目标卫生）与 ARC-02（插件边界目标可构建）承接，不改变需求语义。方案勘察：owner 行建议的『显式链接 sdurw_math』经实测证伪——独立冒烟模式不构建任何框架目标/库（core 亦仅 if(TARGET sdurw_math) 条件链接），显式写库名后链接期 LNK1181『无法打开输入文件 sdurw_math.lib』（证据 traceability/builds/wp15-t19/smoke-link-probe-20261018.log）；根因是 RPY::toRotation3D 为非内联符号（定义在 RPY.cpp）。所有者裁决路线 A：插件经 KinPanelFlows::rotationFromRpySi 以 Eigen 头文件轴角组合复现同一 Z-Y-X 矩阵（Rz(roll)·Ry(pitch)·Rx(yaw)，库设施而非自写三角）；集成侧 KinP4FlowsTest 以 IRD_HAVE_SDURW_MATH 门控逐元对照 rw::math::RPY（1e-12，五组角度），独立冒烟树不注入该定义、该用例编译为空，不把非内联符号带回测试链接。设计偏离按 DTB §5.4 登记：KIN-R2 v0.28『rw 库设施直调零自写三角』表述改述为『Eigen 头文件轴角组合＋集成等价钉』；插件仍零自写三角，Eigen 仅头文件依赖（不新增交付链接面）。合入收尾（2026-10-18，所有者『继续』指令）：独立验收 attempt 1 verdict=pass（0 阻断／2 建议，记录 traceability/acceptance/wp-15-t19-20261018.md @ acc/wp-15-t19/1 775cc37e）；按 PIPE §4.7 先合记录（10917d0ce1d3e463ce492905a9c25d09339681d0）后合代码（04ea17048e8c2e7be4f67981b000192d2c4f1648），均 --no-ff 零冲突；建议项 F-932（KinPanelFlows:: 归属笔误）／F-933（kGimbalEpsilon 单一来源）随记录分支转登 open，归下批 kinematics 治理批；GUI 用例运行由验收段补齐（集成/冒烟各 20/20，windows 平台）。"
 }

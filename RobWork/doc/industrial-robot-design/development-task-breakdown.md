@@ -2,6 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.92（2026-10-18，WP-15-T19 合入收尾：wp15-t19〔87fec2c3..b9601d97b8ba，独立验收 attempt 1 PASS——0 阻断／2 建议 F-932/F-933，记录 traceability/acceptance/wp-15-t19-20261018.md @ acc/wp-15-t19/1 775cc37e〕按 PIPE §4.7 先合记录（10917d0c）后合代码（04ea1704）--no-ff 并入 redesign-main〔87fec2c3..04ea1704，零冲突〕；契约 WP-15-T19 翻 done；evidence-index 再生成；验收段补齐 GUI 用例运行（集成/冒烟各 20/20）。前一版本 v0.91 保留如下。 |
 | 文档版本 | v0.91（2026-10-18，WP-15-T19 按所有者裁决路线 A 实施：§2.16 T19 行更新为「插件 Eigen 头文件轴角组合＋集成等价钉」；契约 status ready（blocked 解除）；kinematics.md v0.32 §11 行同步）。前一版本 v0.90 保留如下。 |
 | 文档版本 | v0.90（2026-10-18，WP-15-T19 立卡（blocked）与 F-919 修复方案勘察：§2.16 增 WP-15-T19 行〔运动学独立冒烟树链接缺陷——显式链接 sdurw_math 方案被「冒烟树无框架库」实测证伪（LNK1181），A/B/C 三出路待所有者裁决，契约 task note 载证据〕；T17 为 R2 预留位故取 T19；kinematics.md §11 增行/版本递增同批）。前一版本 v0.89 保留如下。 |
 | 文档版本 | v0.89（2026-10-18，F-927 消账：AGENTS §4.1 与 §5.1 fresh 树行订正 F-907 前置落位表述——`RobWorkStudio.ini.template.static` 必须位于源码树侧 `RobWork/RobWorkStudio/bin/`（configure_file 的 `${RWS_ROOT}/bin/` 解析面），构建树侧 `build/...` 不构成有效前置；F-907 原『复制至构建树源码侧』表述作废）。前一版本 v0.88 保留如下。 |

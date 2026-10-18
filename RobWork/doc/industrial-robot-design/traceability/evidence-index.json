@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T10:47:02+08:00",
+  "generatedAt": "2026-10-18T11:15:50+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6618,
-    "totalBytes": 208605297,
+    "totalFiles": 6619,
+    "totalBytes": 208621977,
     "byKind": {
+      "log": 1,
+      "gtest-report": 335,
+      "acceptance-record": 515,
+      "json-data": 7,
+      "markdown-doc": 41,
+      "pipeline-artifact": 2,
       "manual-acceptance": 1,
       "build-log": 5679,
-      "pipeline-artifact": 2,
       "governance-record": 30,
-      "log": 1,
-      "acceptance-record": 514,
-      "markdown-doc": 41,
-      "benchmark": 8,
-      "json-data": 7,
-      "gtest-report": 335
+      "benchmark": 8
     },
     "byLifecycle": {
-      "unverified": 6026,
-      "historical": 522,
       "current": 70,
+      "unverified": 6026,
+      "historical": 523,
       "superseded": 0
     },
-    "associated": 595,
+    "associated": 596,
     "unassociated": 6023,
-    "shaComputed": 6600,
+    "shaComputed": 6601,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -5076,6 +5076,16 @@
       ],
       "bytes": 17222,
       "sha256": "982684ce5f124363f75bec47dbece1b3d47c1c472c2f0c8205c9134c05a18dd7",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/wp-15-t19-20261018.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-15-T19"
+      ],
+      "bytes": 14863,
+      "sha256": "29941370b300326f87f84bbcf73f509c045bb68927cb38b7261f4831547344f2",
       "lifecycle": "historical"
     },
     {
@@ -51688,7 +51698,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1159483,
+      "bytes": 1161300,
       "sha256": null,
       "lifecycle": "unverified"
     },
