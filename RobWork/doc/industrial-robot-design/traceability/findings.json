@@ -3283,11 +3283,13 @@
       "id": "F-312",
       "source": "traceability/acceptance/WP-13-T07-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；验收者 --gtest_list_tests 实测＋TEST 宏清点）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-23",
       "title": "F-041/F-080/F-236/F-249/F-256/F-311 散文计数失准家族再现：单元卡 §14.6 v0.8 行与送验两提交（abde6724/7156ff13）均称「新增 13 条 MdlTemplate 用例」，实测 TemplateTest.cpp 含 15 个 TEST（gtest_list_tests MdlTemplate 段 15 条；119 全量＝base 104＋新增 15），方向＝少报、无粉饰（在库测试多于声明）",
       "owner": "实施者侧提交信息与单元卡登记规范（登记前以 --gtest_list_tests 或 TEST 宏计数实测落笔）",
-      "resolution": "随散文计数家族统一处置（实测计数再落笔）；不追溯改写已推送提交历史与已推送单元卡行（增量修订时校正口径）。编号顺延自 F-311。"
+      "resolution": "随散文计数家族统一处置（实测计数再落笔）；不追溯改写已推送提交历史与已推送单元卡行（增量修订时校正口径）。编号顺延自 F-311。",
+      "resolution": "units/modeling.md §14.6 v0.8 行「新增 13 条 MdlTemplate」改为「15 条」（TemplateTest.cpp 15 个 TEST；119 全量＝base 104＋15）；零行为影响。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-313",
@@ -3326,11 +3328,13 @@
       "id": "F-316",
       "source": "traceability/acceptance/WP-13-T08-20260923.md §4.7/§4.9（attempt 1，verdict=pass，2026-09-23；验收者逐行通读 DiagCodes.hpp/.cpp 对照工厂实际条目数）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-23",
       "title": "DiagCodes.hpp modelingCodeDescriptors 工厂 @brief 计数失实：仍写『当前 16 项……T08 行八码』，实际工厂已含 17 项九码（WP-13-T08 v0.9 实现期增登行 MDL-READINESS-PHYSICS-MISSING 的计数与列举未同步入 @brief；同库 DiagCodes.cpp 文件头注『清单当前 17 项』与 DiagCodesTest 十七码封闭断言均为正确口径，测试通过）——AGENTS §2.5『注释随代码更新』轻微违反，零行为影响",
       "owner": "实施者侧（modeling 触碰窗口随手勘误 @brief 计数与列举）",
-      "resolution": "随下批 modeling 文件触碰顺带修正 @brief（16→17＋补列 PHYSICS-MISSING 增登行）；不追溯提交。编号顺延自 F-315。"
+      "resolution": "随下批 modeling 文件触碰顺带修正 @brief（16→17＋补列 PHYSICS-MISSING 增登行）；不追溯提交。编号顺延自 F-315。",
+      "resolution": "modeling DiagCodes.hpp modelingCodeDescriptors @brief 已演进为 26 项清单（T08 表行八码＋v0.9 增登 MDL-READINESS-PHYSICS-MISSING 一码；T09/T10/T13/T18 均在列），无残留「16 项」口径；DiagCodes.cpp/TEST 口径一致。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-317",
@@ -3523,21 +3527,25 @@
       "id": "F-342",
       "source": "traceability/acceptance/WP-13-T10-20260925.md §4.7/§4.8（attempt 1，verdict=pass，2026-09-25；验收者抽查实现文件注释时对账工厂计数）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "modeling/include/sdurws/ird/modeling/DiagCodes.hpp modelingCodeDescriptors @brief 计数失实（F-316/F-339 家族再现）：@brief 仍写\"当前 20 项\"且枚举止于 T09 行三码，而工厂经 WP-13-T10 §9.5 表尾追加两码（MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-TCP-INCOMPLETE）后实际返回 22 项——DiagCodes.cpp 文件头注已同步 22 项而 .hpp @brief 漏改；零行为影响（纯注释滞后），DiagCodesTest 22 码分期封闭断言本已正确",
       "owner": "实施者侧（后续 modeling 任务随 DiagCodes 增登动作同步 .hpp @brief 计数与枚举——与 F-316/F-339 同款顺手消账窗口）",
-      "resolution": "编号顺延自 F-341。"
+      "resolution": "编号顺延自 F-341。",
+      "resolution": "同上：@brief 已含 26 项并列入 T10 两码（MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-TCP-INCOMPLETE），DiagCodes.cpp 文件头与 .hpp 一致；「20 项」口径不再存在。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-343",
       "source": "traceability/acceptance/WP-13-T10-20260925.md §4.9/§4.8（attempt 1，verdict=pass，2026-09-25；验收者以送验 XML testsuite 计数对账提交散文）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "WP-13-T10 散文计数失准（F-041/F-080/F-236/F-249/F-256/F-311/F-312 家族再现）：实现提交 91b99d48 正文与单元卡 modeling.md §14.6 v0.12 ⑦ 均写\"MdlPartObjectCommands 12 条\"，实际该 testsuite 14 条（送验 integration-modeling-test.xml testsuite tests=\"14\"；总量 175=159＋14＋2 自洽）——权威留痕（XML/ird-test-report.json）数字全对，仅散文低估 2 条，非粉饰",
       "owner": "实施者侧（后续 modeling 文档同步窗口勘误 §14.6 v0.12 ⑦ 计数；已推送提交不可改写——本条即留档）",
-      "resolution": "编号顺延自 F-342。"
+      "resolution": "编号顺延自 F-342。",
+      "resolution": "units/modeling.md §14.6 v0.12 ⑦「MdlPartObjectCommands 12 条」改为「14 条」（送验 integration-modeling-test.xml testsuite tests=14；175＝159＋14＋2 自洽）；提交正文为历史文本不回写。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-344",
@@ -3643,21 +3651,25 @@
       "id": "F-353",
       "source": "traceability/acceptance/WP-13-T15-20260925.md §4.8/§4.10（attempt 1，verdict=pass，2026-09-25；验收者以全新冒烟构建树实跑测试可执行文件核对计数）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "units/modeling.md §14.6 v0.17 行⑧的冒烟计数散文与可复现实测不符：写「独立冒烟 Release 全量零错误（build_smoke_t15……QCoreApplication 级 246/246＋契约 8→14/14）」，而验收者全新冒烟树实跑 sdurws_ird_modeling_test＝200/200、sdurws_ird_modeling_contract_test＝8/8（T08 集成专属 gating 的 46 条用例冒烟不编入——T14 行同口径先例写 177/177＋8/8）；246/246＋14/14 为集成模式实测数（验收者复核为真），误置入冒烟括注——F-342/F-343/F-349 散文计数失准家族新增一例；在库冒烟日志 build-smoke-full.log 本身仅证 ctest 2/2，无 246 字样，不构成粉饰（两模式真实全绿），零行为影响",
       "owner": "modeling 卡所有者（文档收窄：v0.17 行⑧冒烟括注改为 200/200＋8/8，或注明 246/246 为集成口径；随下次单元卡增量修订顺手消账）",
-      "resolution": "编号顺延自 F-352。"
+      "resolution": "编号顺延自 F-352。",
+      "resolution": "units/modeling.md §14.6 v0.17 ⑧冒烟括注「246/246＋契约 8→14/14」改为「200/200＋契约 8/8」（冒烟编入 200＋8；246/14 为集成模式数）；冒烟 log 无 246 字样，零行为影响。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-354",
       "source": "traceability/acceptance/WP-13-T15-20260925.md §4.9（attempt 1，verdict=pass，2026-09-25；验收者逐条清点 test/PluginPanelTest.cpp 具名 TEST 宏并与提交散文对照）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "提交 be8aa7cd 正文与 units/modeling.md §14.6 v0.17 行⑤的具名用例分组计数漂移：写「23 条（ACC2 六/ACC3 五/ACC4 六/ACC5 四）」，分组和＝21≠23；实测 test/PluginPanelTest.cpp 具名 TEST 为 ACC2 7 条＋ACC3 6 条＋ACC4 6 条＋ACC5 4 条＝23（总数 23 正确，gtest XML 246/246 与 23 条 PluginPanel 记录均实证）——F-342/F-343/F-349 散文计数失准家族新增一例，仅分组叙述失准、总数与实质为零影响",
       "owner": "modeling 卡所有者（下次单元卡增量修订时将⑤分组计数校准为 7/6/6/4；commit 散文随仓库惯例不改写历史，登记即可）",
-      "resolution": "编号顺延自 F-353。"
+      "resolution": "编号顺延自 F-353。",
+      "resolution": "units/modeling.md §14.6 v0.17 ⑤分组「ACC2 六/ACC3 五/ACC4 六/ACC5 四」改为「ACC2 七/ACC3 六/ACC4 六/ACC5 四」（和＝23 保持；PluginPanelTest TEST 实测 7/6/6/4）；提交正文为历史文本不回写。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-355",
@@ -3930,11 +3942,13 @@
       "id": "F-380",
       "source": "traceability/acceptance/WP-15-T02-20260926.md §4.7/§4.9（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "kinematics DiagCodes.hpp L130 与 test/DiagCodesTest.cpp L67/L137 三处注释及 WP-15-T02 送验提交正文（「级别列 4 error/11 warning 原值」句）均声称 units/kinematics.md §9.6 全表级别列为「4 error＋11 warning」——实为 6 error＋9 warning（error＝KIN-NO-DEVICE/KIN-NO-TCP/KIN-TARGET-ILLEGAL/KIN-SOLVER-INTERNAL/KIN-CONFIG-ILLEGAL/KIN-SAMPLE-IDENTITY-MISMATCH，与卡 §9.6 原表、实现 DiagCodes.cpp、测试数据数组 kSection96IsError 三面一致）。数据与断言正确（验收者变异 M1：SOLVER-INTERNAL Error→Warning → DescriptorFieldsMatchSection96Rows 真变红，证明断言按 6/9 真值锁行），纯散文计数失实、方向为多报 error，非粉饰；违反 AGENTS §2.5「注释随代码更新」。F-379/F-041/F-370/F-376 散文计数家族新例。",
       "owner": "kinematics 实施会话（下次触及 DiagCodes.hpp/test 文件时把三处「4 error＋11 warning」改为「6 error＋9 warning」；提交正文已冻结不可改，以本条与本验收记录留档为凭）",
-      "resolution": "编号顺延自 F-379。"
+      "resolution": "编号顺延自 F-379。",
+      "resolution": "产品面已无「4 error/11 warning」文本（全树源码/单元卡 grep 零命中；仅历史验收记录保留不可改）；DiagCodesTest kSection96IsError 6 error/9 warning 真值在案，变异 M1 验证有效。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-381",
@@ -4003,11 +4017,13 @@
       "id": "F-387",
       "source": "traceability/acceptance/WP-15-T03-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "units/kinematics.md §14.6 v0.3 行⑧句尾『ird_gates base..head 归一化比对零新增命中（附件同目录）』与同一登记链的权威口径不一致：同提交的比对附件 ird-gates-base-head-compare.md 与实现提交 0ece5504 正文均明确为『+1 项 sanctioned 命中（Eigen PRIVATE——O-40，IRD-GATE-LIB ×2 行）』，验收者引擎直跑独立复跑同值（143→145 行/条、68→69 项）。卡面句『零新增命中』按字面少报 1 项 sanctioned 命中——F-025/F-041/F-073 散文计数家族新例，方向为少报、附件与提交正文准确、无粉饰，不构成阻断。",
       "owner": "kinematics 实施会话（下次触及 units/kinematics.md 时把⑧句尾改为『+1 项 sanctioned 命中（Eigen PRIVATE——O-40；附件同目录）』；提交正文已冻结不可改，以本条与验收记录为凭）",
-      "resolution": "编号顺延自 F-386。"
+      "resolution": "编号顺延自 F-386。",
+      "resolution": "units/kinematics.md v0.6 行已按 F-394 处置兑现纠正并标注（F-387 消账）：v0.3 ⑧「零新增命中」→「＋1 项 sanctioned 命中（Eigen PRIVATE——O-40）」；卡面现文为权威口径。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-388",
@@ -4033,11 +4049,13 @@
       "id": "F-390",
       "source": "traceability/acceptance/WP-15-T04-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "units/kinematics.md §14.6 v0.4 ⑥『KinIk 15 新用例』与实测不符：本批新增 test/IkTest.cpp 计 18 个 TEST（提交 1 a7580ddd 时 8＋提交 2 fb67389f 增 10；base 侧 T03 留痕 XML 实证 _test 目标 27 例、无 KinIk 套件；head 45 例＝27＋18），⑥句枚举列 15 项漏列 FilterOrderLimitBeforeCollision_WP15T04_ACC1／InitialValueStrategiesDeterministic_WP15T04_ACC2／DedupMergesWithinPerAxisTolerance_WP15T04_ACC1 三个具名用例——F-025/F-041/F-073/F-387 散文计数家族新例（方向为少报、附件 gtest XML 与提交正文 45/45＋20/20 实测数准确、无粉饰，不构成阻断）。",
       "owner": "kinematics 实施会话（下次触及 units/kinematics.md 时把⑥句『KinIk 15 新用例』改为『KinIk 18 新用例』并补列三用例名）",
-      "resolution": "编号顺延自 F-389。"
+      "resolution": "编号顺延自 F-389。",
+      "resolution": "units/kinematics.md v0.6 行已按 F-394 处置兑现纠正并标注（F-390 消账）：v0.4 ⑥「KinIk 15 新用例」→「18 新用例」并补列三具名用例。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-391",
@@ -4064,11 +4082,13 @@
       "id": "F-393",
       "source": "traceability/acceptance/WP-15-T05-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "units/kinematics.md §14.6 v0.5 ⑤『KinTaskPointsBatchEval 12 新契约用例』与实测不符：本批新增 contract_test/TaskPointsBatchEvaluatorContractTest.cpp 计 14 个 TEST（⑤句枚举亦仅列 13 项——线程数 1↔4 等价与分片连续区间两具名用例并作一项），base 侧契约目标 20 例、head 34 例＝20＋14（验收者源文件 TEST 计数＋head/实测 gtest XML tests=34 双面实证）；同批实现提交 4dee67fc 正文『契约 14 新用例＋既有 20＝34/34』准确——F-025/F-041/F-073/F-387/F-390 散文计数家族新例（方向为少报、XML 与提交正文实测数准确、无粉饰，不构成阻断）。",
       "owner": "kinematics 实施会话（下次触及 units/kinematics.md 时把⑤句『12 新契约用例』改为『14 新契约用例』并按文件实际 14 用例拆分枚举）",
-      "resolution": "编号顺延自 F-392。"
+      "resolution": "编号顺延自 F-392。",
+      "resolution": "units/kinematics.md v0.6 行已按 F-394 处置兑现纠正并标注（F-393 消账）：v0.5 ⑤「12 新契约用例」→「14 新契约用例」并拆分枚举。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-394",
@@ -4202,11 +4222,13 @@
       "id": "F-406",
       "source": "traceability/acceptance/WP-15-T10-20260927.md §4.8（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-27",
       "title": "findings.json 的 F-387/F-390/F-393 三条 status=open，但其指涉的 units/kinematics.md 卡面散文纠正已在 WP-15-T06（提交 2df969fb，早于 WP-15-T10 的 base 997b1fa8）兑现——§14.6 对应行含『（F-387 消账）』『（F-390 消账）』『（F-393 消账）』登记文字，验收者对读核实属实；状态未翻转导致后续每份验收的 4.8 未关闭条目核对都需重复甄别这三条（本验收为首次重复甄别并转登）。",
       "owner": "findings 册所有者（governance 治理会话：核对 §14.6 v0.6 行消账记录后把 F-387/F-390/F-393 翻 fixed 或注明销账依据）",
-      "resolution": "编号顺延自 F-405。"
+      "resolution": "编号顺延自 F-405。",
+      "resolution": "F-387/F-390/F-393 三态随本批翻 fixed（卡面纠正已在 v0.6 行兑现并登记消账标记），后续验收 4.8 重复甄别消除。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-407",
@@ -8244,19 +8266,23 @@
       "id": "F-824",
       "source": "traceability/acceptance/rpt-t14-20261012.md#S-1（在案于 origin/acc/rpt-t14/1 分支 governance 提交 260fc348；2026-10-12 收官治理批转登）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "RPT-T14 单元卡 §14.4 v0.17 第④项 gate-all 全树门禁计数笔误：写「gate-all.ps1 全树门禁 44/44 通过」——44 无法由 gate-all.ps1 当前计数口径（缓存确认 1＋ird_gates 1＋集成发现 1＋集成目标 N＋冒烟配置 1＋冒烟发现 1＋冒烟目标 N，集成树 40 个注册测试目标）产生，应为 85/85（commit 正文 85/85 经验收自洽为真——集成 43＋冒烟 42；两处结论方向一致均为全过，非粉饰）",
-      "resolution": "验收记录已推送不追改，本条为台账登记（口径以本条为准）；单元卡该数字如后续批次触碰 reporting 单元卡可顺手更正"
+      "resolution": "验收记录已推送不追改，本条为台账登记（口径以本条为准）；单元卡该数字如后续批次触碰 reporting 单元卡可顺手更正",
+      "resolution": "units/reporting.md §14.4 v0.17 ④「gate-all 全树门禁 44/44」改为「85/85」（gate-all 计数口径：集成 43＋冒烟 42；commit 正文 85/85 经验收自洽）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-825",
       "source": "traceability/acceptance/rpt-t15-20261012.md#S-1（在案于 origin/acc/rpt-t15/1 分支 governance 提交 97a320dd；2026-10-12 收官治理批转登）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "RPT-T15 单元卡/commit 的 LevelCEndToEndTest 新增用例计数失实：单元卡 §14.4 v0.18 行⑦与 commit（wp12-t15 头 adbb3a40＝主线合入 65ed3fc3）正文均写「新增 8 用例」，实测该文件含 11 个 TEST 且全为新增（集成总数 225＝RPT-T14 基线 214＋11；总数 225/225 与全绿结论登记真实可复现——非验证粉饰）",
-      "resolution": "单元卡已随本批勘误更正（units/reporting.md §14.4 v0.18 行 8→11，勘误行 v0.20 登记，收官治理批）；commit 已推送不追溯改写"
+      "resolution": "单元卡已随本批勘误更正（units/reporting.md §14.4 v0.18 行 8→11，勘误行 v0.20 登记，收官治理批）；commit 已推送不追溯改写",
+      "resolution": "F-825 所指标题已在 units/reporting.md v0.20 勘误行兑现（LevelCEndToEnd 新增用例 8→11；LevelCEndToEndTest 11 TEST，225＝214＋11），§14.4 v0.18 行⑦随 v0.20 更新；本批复核确认。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-826",
