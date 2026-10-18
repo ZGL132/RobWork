@@ -15,6 +15,20 @@
 
 namespace sdurws::ird::requirements {
 
+EditBatch importDraftBatch(const ImportOutcome& outcome)
+{
+    if (outcome.status == ImportOutcome::Status::Rejected) {
+        throw std::invalid_argument("导入向导：被拒绝的映射不能确认");
+    }
+    EditBatch batch; batch.ok = true; batch.newPoints = outcome.entries;
+    for (auto& entry : batch.newPoints) {
+        // 映射纯函数全零身份不能直接upsert，否则多行互相覆盖（A-09）。
+        entry.objectId = core::ObjectId::generate();
+    }
+    batch.summary = "导入完成：新增 " + std::to_string(batch.newPoints.size()) + " 个工位";
+    return batch;
+}
+
 void ImportWizardFlow::setSourceTable(const io::RawTable& table)
 {
     // ①接收 io 解析产物（文件面归 io/装配层——本流零文件 IO，PA-1）。
@@ -66,19 +80,17 @@ std::size_t ImportWizardFlow::confirmAndApplyToDraft(IRequirementEditor& editor)
     if (m_step != ImportWizardStep::Previewed && m_step != ImportWizardStep::Confirmed) {
         throw std::invalid_argument("导入向导：未执行映射即确认（步骤违约）");
     }
-    m_step = ImportWizardStep::Confirmed;
-
-    // 逐条入草稿（正确行条目——objectId 恒全零待命令 prepare 分配，O-36；
-    // 编辑器域校验链裁决：重名/非法条目被拒不入——拒绝差额由调用方据
-    // outcome().rowErrors 与返回值呈现，本流不吞不静默）。
-    std::size_t applied = 0;
-    for (const TaskPoint& entry : m_outcome.entries) {
-        if (editor.applyEdit(entry).accepted) {
-            applied += 1;
+    const auto batch = importDraftBatch(m_outcome);
+    m_applyError.reset();
+    if (!batch.newPoints.empty()) {
+        const auto applied = editor.applyEdit(batch);
+        if (!applied.accepted) {
+            m_applyError = applied.error; m_step = ImportWizardStep::Previewed;
+            return 0; // 整批拒绝，允许修正/取消；绝不落半批或静默跳过冲突条目。
         }
     }
     m_step = ImportWizardStep::Applied;
-    return applied;
+    return batch.newPoints.size();
 }
 
 void ImportWizardFlow::reset()
@@ -88,6 +100,7 @@ void ImportWizardFlow::reset()
     m_hasTable = false;
     m_outcome = ImportOutcome{};
     m_diags.clear();
+    m_applyError.reset();
     m_step = ImportWizardStep::SourceSelected;
 }
 

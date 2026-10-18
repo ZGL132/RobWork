@@ -20,8 +20,8 @@
  *     函数现算（映射与换算零复制——NFR-MNT-04；换算唯一经 core Units）；
  *   - "逐行错误清单"：mapCsv/mapJson 产出的 ImportOutcome 直投（部分成功
  *     语义——正确行保留、错误行定位到列与原文，AT-02）；
- *   - "确认→草稿"：确认后把正确行条目逐条经编辑器 applyEdit 入草稿
- *     （ImportOutcome.entries——objectId 恒全零待命令 prepare 分配，O-36）。
+ *   - "确认→草稿"：正确行分配独立编辑期身份并组装为一次 EditBatch，
+ *     整批接受或拒绝；一次撤销恢复全部正确行（REQ-11），正式身份仍归project。
  *   步骤推进是**显式动作**（每步一步），无自动跳步；回退＝重新 set 源。
  *
  * 线程约束：仅 UI 线程访问（§3.4——向导会话态）。确定性：步骤推进即调
@@ -36,8 +36,18 @@
 
 #include <sdurws/ird/requirements/Import.hpp>  // IRequirementImporter/ImportOutcome/FieldMapping/ImportUnitOptions（域映射唯一入口）
 #include <sdurws/ird/requirements/Editor.hpp>  // IRequirementEditor（草稿唯一写目标）
+#include <sdurws/ird/requirements/TemplateArray.hpp> // EditBatch：导入也遵循一次操作一次撤销。
 
 namespace sdurws::ird::requirements {
+
+/**
+ * @brief 将映射正确行组装成一个编辑批次，为每行分配独立临时身份。
+ * @param outcome [in] 非Rejected映射产物，只读；原导入来源和行号保持不变。
+ * @return 一批候选值；空entries时newPoints为空，调用方不应制造空编辑。
+ * @throws std::invalid_argument Rejected产物不能确认（调用步骤违约）。
+ * 仅UI线程；随机性仅来自编辑期ObjectId，正式分配权威仍归project准备阶段。
+ */
+EditBatch importDraftBatch(const ImportOutcome& outcome);
 
 // =====================================================================
 // 向导步骤与逐步数据（L-R10 五步的模型承载）
@@ -52,7 +62,7 @@ enum class ImportWizardStep : std::uint8_t {
     Mapped,          ///< ②表头已映射（自动/手动＋单位声明已定）
     Previewed,       ///< ③映射执行完毕（逐行错误清单在手——正确行可折叠预览）
     Confirmed,       ///< ④用户已确认（entries 待入草稿）
-    Applied,         ///< ⑤草稿写入完毕（正确行条目已 applyEdit）
+    Applied,         ///< ⑤草稿写入完毕（正确行条目整批 applyEdit，或零正确行无编辑）
 };
 
 /**
@@ -163,19 +173,17 @@ public:
     // ---- ④确认→⑤入草稿 -------------------------------------------------
 
     /**
-     * @brief 确认并写入草稿（L-R10 第④⑤步——正确行条目逐条 applyEdit
-     *        入编辑器工作集；entries 的 objectId 恒全零（O-36：待命令
-     *        prepare 分配），编辑器照常接受全零临时句柄）。
+     * @brief 确认并原子写入一批正确行；每行独立临时身份，一次撤销整体恢复。
      *
      * @param editor [in,out] 需求编辑器（草稿唯一写目标；仅 UI 线程）
-     * @return 入草稿条目数（=outcome().entries 中被编辑器接受的条目数；
-     *         拒绝条目（如重名）不入——调用方据 outcome().rowErrors 与
-     *         返回值差额呈现，本流不吞不静默）
+     * @return 成功返回整批条数，拒绝返回0且lastApplyError保留原因，工作集与栈不变。
      *
      * @throws std::invalid_argument 未执行 executeMapping 即确认（步骤违约
      *               ——fail-fast）
      */
     std::size_t confirmAndApplyToDraft(IRequirementEditor& editor);
+    /// @brief 最近确认的整批拒绝原因；成功/重置清空，调用方须呈现，不能静默丢弃。
+    const std::optional<RequirementError>& lastApplyError() const noexcept { return m_applyError; }
 
     /// 当前步骤（会话态只读投影——widget 据此驱动页面栈）。
     ImportWizardStep step() const noexcept { return m_step; }
@@ -190,6 +198,7 @@ private:
     bool m_hasTable = false;                 ///< 源是否已设置（步骤违约的判别位）
     ImportOutcome m_outcome{};               ///< ③导入产出（逐行错误清单＋正确行）
     std::vector<core::DiagnosticRecord> m_diags;  ///< 累积诊断（跨步骤）
+    std::optional<RequirementError> m_applyError; ///< 拒绝整批的输入错误，失败仍停留预览步骤。
 };
 
 // =====================================================================

@@ -23,6 +23,9 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QTableWidget>
+#include <QHeaderView>
+#include <QPlainTextEdit> // 全量导入明细可滚动/复制，原文不作为HTML解释。
 #include <QVBoxLayout>
 
 #include <sdurws/ird/io/Csv.hpp>         // makeCsvReader/RawTable（CSV 通道）
@@ -212,13 +215,95 @@ public:
         return true;
     }
 
+    bool editImportMapping(const io::RawTable& table, FieldMapping& mapping,
+                             ImportUnitOptions& units) override
+    {
+        // REQ-05：控件只收集声明，换算/字段语义全部调用既有领域函数。
+        QDialog dialog; dialog.setWindowTitle("CSV字段映射与单位预览"); dialog.resize(850, 650);
+        auto* layout = new QVBoxLayout(&dialog);
+        auto* grid = new QTableWidget(static_cast<int>(kImportFieldCount), 4, &dialog);
+        grid->setObjectName("import-mapping-table");
+        grid->setHorizontalHeaderLabels({"字段（*必填）", "CSV来源列", "输入单位", "原文 → SI预览"});
+        grid->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        grid->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        grid->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+        layout->addWidget(grid);
+        auto* message = new QLabel(&dialog); message->setWordWrap(true); layout->addWidget(message);
+        auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+        buttons->button(QDialogButtonBox::Ok)->setText("下一步：逐行预览");
+        buttons->button(QDialogButtonBox::Cancel)->setText("取消"); layout->addWidget(buttons);
+        std::array<QComboBox*, kImportFieldCount> columns{};
+        std::array<QComboBox*, kImportFieldCount> unitFields{};
+        FieldMapping stagedMapping = mapping; ImportUnitOptions stagedUnits = units;
+        const auto& dictionary = importer.fieldDictionary();
+        for (const auto& spec : dictionary.fields()) {
+            const auto row = static_cast<std::size_t>(spec.field);
+            const auto key = QString::fromStdString(std::string(importFieldToken(spec.field)));
+            grid->setItem(static_cast<int>(row), 0, new QTableWidgetItem(key + (spec.required ? " *" : "")));
+            auto* column = new QComboBox(grid); columns[row] = column;
+            column->setObjectName("import-map-" + key); column->addItem("未映射/忽略", -1);
+            for (std::size_t col = 0; col < table.report.header.size(); ++col) {
+                column->addItem(QString("%1：%2").arg(col + 1).arg(QString::fromStdString(table.report.header[col])), static_cast<int>(col));
+            }
+            if (mapping.isMapped(spec.field)) { column->setCurrentIndex(column->findData(static_cast<int>(mapping.columnFor(spec.field)))); }
+            auto* unit = new QComboBox(grid); unitFields[row] = unit;
+            unit->setObjectName("import-unit-" + key); unit->setEditable(true); unit->addItem("");
+            if (spec.kind == ImportColumnKind::Length) { unit->addItems({"m", "mm", "cm"}); unit->lineEdit()->setPlaceholderText("m（默认）"); }
+            else if (spec.kind == ImportColumnKind::Angle) { unit->addItems({"rad", "deg"}); unit->lineEdit()->setPlaceholderText("rad（默认）"); }
+            else { unit->setEnabled(false); }
+            unit->setCurrentText(QString::fromStdString(units.unitFor(spec.field)));
+            grid->setCellWidget(static_cast<int>(row), 1, column); grid->setCellWidget(static_cast<int>(row), 2, unit);
+            grid->setItem(static_cast<int>(row), 3, new QTableWidgetItem);
+        }
+        const auto refreshPreview = [&] {
+            bool complete = true;
+            QStringList issues;
+            for (const auto& spec : dictionary.fields()) {
+                const auto row = static_cast<std::size_t>(spec.field);
+                const int column = columns[row]->currentData().toInt();
+                if (column < 0) { stagedMapping.clear(spec.field); }
+                else { stagedMapping.assign(spec.field, static_cast<std::size_t>(column)); }
+                stagedUnits.setUnit(spec.field, unitFields[row]->currentText().trimmed().toStdString());
+                grid->item(static_cast<int>(row), 3)->setText("");
+                if (spec.required && column < 0) { complete = false; issues << QString::fromStdString(std::string(importFieldToken(spec.field))) + "缺少来源列"; }
+            }
+            // 域侧唯一换算入口与随后mapCsv同源；坏样本不转0，留到逐行错误。
+            for (const auto& sample : previewUnitConversion(table, stagedMapping, stagedUnits, dictionary)) {
+                const auto row = static_cast<int>(sample.field);
+                const QString siUnit = dictionary.spec(sample.field).kind == ImportColumnKind::Length ? "m" : "rad";
+                const QString result = !sample.unitUsable ? "单位无法换算"
+                    : sample.siSample ? QString::number(*sample.siSample, 'g', 17) + " " + siUnit : "样本不是有效数值（见下一步行错误）";
+                grid->item(row, 3)->setText(QString::fromStdString(sample.rawSample) + " "
+                    + QString::fromStdString(sample.declaredUnit) + " → " + result);
+                if (!sample.unitUsable) { complete = false; issues << QString::fromStdString(std::string(importFieldToken(sample.field))) + "单位非法"; }
+            }
+            message->setText(issues.isEmpty() ? "确认映射后将逐行预览；此步骤不写入草稿。未映射可选字段使用字典默认值。" : issues.join("；"));
+            buttons->button(QDialogButtonBox::Ok)->setEnabled(complete);
+        };
+        for (std::size_t row = 0; row < kImportFieldCount; ++row) {
+            QObject::connect(columns[row], &QComboBox::currentIndexChanged, &dialog, refreshPreview);
+            QObject::connect(unitFields[row], &QComboBox::currentTextChanged, &dialog, refreshPreview);
+        }
+        refreshPreview();
+        QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        if (dialog.exec() != QDialog::Accepted) { return false; }
+        mapping = stagedMapping; units = stagedUnits; return true;
+    }
+
     bool confirmImport(const QString& summaryText) override
     {
-        return QMessageBox::question(nullptr, QString::fromUtf8("导入预览确认"),
-                                     summaryText,
-                                     QMessageBox::Ok | QMessageBox::Cancel,
-                                     QMessageBox::Cancel)
-               == QMessageBox::Ok;
+        // A-09：所有错误都可滚动查看和复制；QMessageBox裁切与前8条限制均移除。
+        QDialog dialog; dialog.setWindowTitle("导入逐行预览与确认"); dialog.resize(850, 650);
+        auto* layout = new QVBoxLayout(&dialog);
+        auto* details = new QPlainTextEdit(&dialog); details->setObjectName("import-outcome-details");
+        details->setReadOnly(true); details->setPlainText(summaryText); layout->addWidget(details);
+        auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+        buttons->button(QDialogButtonBox::Ok)->setText("确认正确行写入草稿"); buttons->button(QDialogButtonBox::Cancel)->setText("取消");
+        layout->addWidget(buttons);
+        QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        return dialog.exec() == QDialog::Accepted;
     }
 
     RegenerateAction chooseRegenerateAction() override
@@ -452,7 +537,7 @@ bool confirmImportOutcome(RequirementsPanelWidget& panel, IRequirementEditor& ed
     if (outcome.status == ImportOutcome::Status::Rejected) {
         QString detail;
         for (const core::DiagnosticRecord& d : diags) {
-            detail += QString::fromStdString(d.cause) + QStringLiteral("\n");
+            detail += QString::fromStdString(d.context + "\n" + d.cause + "\n建议：" + d.recommendedAction) + QStringLiteral("\n");
         }
         note(panel, QString::fromUtf8("导入被拒绝（结构级）：") + detail.trimmed());
         return false;
@@ -461,34 +546,37 @@ bool confirmImportOutcome(RequirementsPanelWidget& panel, IRequirementEditor& ed
                           .arg(int(outcome.entries.size()))
                           .arg(int(outcome.rowErrors.size()));
     QString rows;
-    int shown = 0;
-    for (const core::DiagnosticRecord& e : outcome.rowErrors) {
-        if (shown++ >= 8) {
-            rows += QString::fromUtf8("……（共 %1 条）\n").arg(int(outcome.rowErrors.size()));
-            break;
+    // 不截断行级错误：context含原始行号/列名/原文，cause和action构成完整修正信息。
+    for (const auto& error : outcome.rowErrors) {
+        rows += QString::fromStdString(error.context + "\n原因：" + error.cause
+            + "\n建议：" + error.recommendedAction + "\n\n");
+    }
+    for (const auto& diagnostic : diags) {
+        rows += QString::fromStdString(diagnostic.context + "\n" + diagnostic.cause
+            + "\n建议：" + diagnostic.recommendedAction + "\n\n");
+    }
+    for (const auto& column : outcome.ignoredColumns) { rows += "忽略列：" + QString::fromStdString(column) + "\n"; }
+    for (const auto& field : outcome.defaultedFields) { rows += "使用默认字段：" + QString::fromStdString(field) + "\n"; }
+    for (const auto& point : outcome.entries) {
+        rows += "正确行工位：" + QString::fromStdString(point.name);
+        if (const auto position = point.pose.position.tryValue()) {
+            rows += QString("；位置（参考系下，m）：%1, %2, %3")
+                .arg((*position)[0], 0, 'g', 17).arg((*position)[1], 0, 'g', 17).arg((*position)[2], 0, 'g', 17);
         }
-        rows += QString::fromUtf8("行错误：%1\n").arg(QString::fromStdString(e.cause));
+        rows += "\n";
     }
     if (!host.confirmImport(summary + (rows.isEmpty() ? QString() : QStringLiteral("\n") + rows)
                             + QString::fromUtf8("\n\n确认导入正确行到草稿？"))) {
         return true;  // 用户取消
     }
-    int applied = 0;
-    for (const TaskPoint& p : outcome.entries) {
-        // 导入条目 objectId 恒全零（待命令 prepare 分配——O-36）：多条全零
-        // id 的单条 upsert 会互相覆盖（第二条命中第一条＝Update）。编辑期
-        // 逐条分配临时句柄（B1 新增同款 generate——正式 id 归 project prepare）。
-        TaskPoint entry = p;
-        entry.objectId = core::ObjectId::generate();
-        if (editor.applyEdit(RequirementEdit{entry}).accepted) {
-            ++applied;
-        }
+    if (outcome.entries.empty()) {
+        note(panel, "无正确行，未写入草稿"); return true; // 不产生空编辑或虚假脏标记。
     }
-    sink.onEditApplied("导入完成：新增 " + std::to_string(applied) + " 个工位（错误行 "
-                       + std::to_string(outcome.rowErrors.size()) + " 条已跳过）");
+    const auto batch = importDraftBatch(outcome);
+    if (submitBatchEdit(editor, sink, batch) != EditSubmitOutcome::Applied) { return false; }
     note(panel, QString::fromUtf8("已导入 %1 个工位（%2 条错误行跳过）")
-                    .arg(applied).arg(int(outcome.rowErrors.size())));
-    return applied > 0 || outcome.entries.empty();
+        .arg(batch.newPoints.size()).arg(outcome.rowErrors.size()));
+    return true;
 }
 
 bool flowImportCsv(RequirementsPanelWidget& panel, IRequirementEditor& editor,
@@ -521,8 +609,9 @@ bool flowImportCsv(RequirementsPanelWidget& panel, IRequirementEditor& editor,
     try {
         ImportWizardFlow wizard(importer);
         wizard.setSourceTable(read.value);
-        const ImportUnitOptions units = ImportUnitOptions::defaults();
-        const ImportMappingView view = wizard.prepareMapping(units);
+        ImportUnitOptions units = ImportUnitOptions::defaults();
+        ImportMappingView view = wizard.prepareMapping(units);
+        if (!host.editImportMapping(read.value, view.mapping, units)) { return true; }
         const ImportOutcome outcome = wizard.executeMapping(view.mapping, units);
         return confirmImportOutcome(panel, editor, sink, host, outcome,
                                     wizard.lastDiagnostics());

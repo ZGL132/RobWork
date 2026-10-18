@@ -25,13 +25,14 @@
 #include <string>
 
 #include <sdurws/ird/requirements/TemplateArray.hpp>  // TemplateParams/ArrayKind（表单应答值面）
+#include <sdurws/ird/requirements/Import.hpp> // WP-14-T12：私有映射对话框使用原字段/单位类型。
 #include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // RequirementsView3DSeams（UI-T33——门面消费面同单元）
 
 namespace sdurws::ird::requirements {
 
 class RequirementsPanelWidget;
 class IRequirementEditor;
-struct IRequirementEditSink;
+class IRequirementEditSink;
 
 /**
  * @brief 命令对话框宿主（UI-T32 返工测试缝——attempt1 fail B-1 的修复面）。
@@ -69,7 +70,17 @@ struct CommandDialogHost {
     /// @param count [in,out] 生成数量；@param spacing [in,out] 间距/半径。
     virtual bool editArrayParams(int& count, double& spacing) = 0;
 
-    /// 导入预览确认（计数＋行级错误清单——QMessageBox::question 应答面）。
+    /**
+     * @brief 暂存人工列映射及单位，显示域函数SI换算预览；取消不改入参。
+     * @param table [in] 已解析CSV，仅调用期借用；表头必须存在。
+     * @param mapping [in,out] 自动映射起点，确认才覆盖。
+     * @param units [in,out] 每字段单位声明，确认才覆盖，落库仍经core转换。
+     * @return true确认，false取消；仅UI线程，用户错误就地呈现。
+     */
+    virtual bool editImportMapping(const io::RawTable& table, FieldMapping& mapping,
+                                    ImportUnitOptions& units) = 0;
+
+    /// 导入预览确认（计数＋全量行级错误的可滚动纯文本；取消不写草稿）。
     virtual bool confirmImport(const QString& summaryText) = 0;
 
     /// 重生成/解除双动作选择（QMessageBox 三钮应答面）。

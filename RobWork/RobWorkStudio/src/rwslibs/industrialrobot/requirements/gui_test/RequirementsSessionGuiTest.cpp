@@ -28,6 +28,7 @@
 #include <QLineEdit>
 #include <QMenu>  // 导入下拉菜单断言（UI-T37 返工⑤）
 #include <QPushButton>
+#include <QPlainTextEdit> // AT-02：真实导入确认页全量纯文本错误展示。
 #include <QScrollArea>
 #include <QSlider>  // 覆盖率双联断言（UI-T37 R1）
 #include <QSpinBox>  // 采样计数复合行断言（UI-T37 R1）
@@ -784,6 +785,7 @@ TEST_F(RequirementsSessionGuiTest, StationPositionEditing_ThreeAxis_UI_T47)
 #include <QTemporaryDir>
 #include <QDir>
 #include "plugin/RequirementsCommandFlows.hpp"  // executeRequirementCommand/host 注入缝
+#include <sdurws/ird/requirements/Import.hpp> // WP-14-T12：字段行身份与实际单位预览断言。
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QTimer>
@@ -801,6 +803,8 @@ public:
     int arrayCount = 3;                          ///< 阵列数量应答
     double arraySpacing = 0.5;                   ///< 阵列间距应答
     bool importConfirmed = true;                 ///< 导入确认应答
+    bool productionMapping = false;              ///< WP-14-T12：映射步骤驱动真实Qt表单。
+    QString lastImportSummary;                   ///< 逐行错误的完整呈现证据。
     requirements::CommandDialogHost::RegenerateAction action =
         requirements::CommandDialogHost::RegenerateAction::Cancel;
 
@@ -831,7 +835,11 @@ public:
         spacing = arraySpacing;
         return arrayOk;
     }
-    bool confirmImport(const QString&) override { return importConfirmed; }
+    bool editImportMapping(const io::RawTable& table, FieldMapping& mapping, ImportUnitOptions& units) override
+    {
+        return !productionMapping || qtDialogHost().editImportMapping(table, mapping, units);
+    }
+    bool confirmImport(const QString& text) override { lastImportSummary = text; return importConfirmed; }
     requirements::CommandDialogHost::RegenerateAction chooseRegenerateAction() override
     {
         return action;
@@ -975,6 +983,21 @@ TEST_F(RequirementsSessionGuiTest, CommandFlows_ImportCsvPartial_UI_T32)
     EXPECT_EQ(m_editor.workingSet().points.entries.size(), before + 2)
         << m_panel->showCommandFeedbackText().toStdString()
         << "（部分成功语义：正确行应 +2、坏行跳过）";
+    // REQ-11 不仅要求编辑器有栈：用户必须能经真实面板按钮整批撤销/重做。
+    QPushButton* undo = nullptr;
+    QPushButton* redo = nullptr;
+    for (auto* button : m_panel->findChildren<QPushButton*>()) {
+        if (button->text() == QStringLiteral("撤销")) { undo = button; }
+        if (button->text() == QStringLiteral("重做")) { redo = button; }
+    }
+    ASSERT_NE(undo, nullptr); ASSERT_NE(redo, nullptr);
+    ASSERT_TRUE(undo->isEnabled()) << "CSV成功后草稿撤销按钮必须立即可用";
+    undo->click();
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), before)
+        << "REQ-11：一次CSV导入的正确行必须一次撤销整体恢复";
+    ASSERT_TRUE(redo->isEnabled());
+    redo->click();
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), before + 2);
 
     // 反例：坏结构（无表头行）——结构级拒绝（false＋就地反馈）。
     const QString badPath = QDir(dir.path()).filePath(QStringLiteral("bad.csv"));
@@ -988,6 +1011,122 @@ TEST_F(RequirementsSessionGuiTest, CommandFlows_ImportCsvPartial_UI_T32)
                                            m_editor, *m_panel, host))
         << "结构级拒绝应返回 false";
     EXPECT_EQ(m_editor.workingSet().points.entries.size(), mid);
+}
+
+/** @brief REQ-05/AT-02：未知表头人工映射、mm/deg的实际SI预览与落库一致。 */
+TEST_F(RequirementsSessionGuiTest, CsvProductionMappingAndUnits_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-05", {}, std::nullopt);
+    QTemporaryDir dir;
+    const QString path = QDir(dir.path()).filePath("mapping.csv");
+    QFile file(path); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    file.write("id,name,customX,y,z,yaw\ns1,映射工位,1000,2000,3000,90\n"); file.close();
+    FakeDialogHost host; host.openPath = path; host.productionMapping = true;
+    bool visited = false;
+    QTimer::singleShot(0, [&visited] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        if (!dialog) { return; }
+        visited = true;
+        auto* xColumn = dialog->findChild<QComboBox*>("import-map-x");
+        auto* xUnit = dialog->findChild<QComboBox*>("import-unit-x");
+        ASSERT_NE(xColumn, nullptr); ASSERT_NE(xUnit, nullptr);
+        xColumn->setCurrentIndex(xColumn->findData(2));
+        for (const char* key : {"x", "y", "z"}) {
+            dialog->findChild<QComboBox*>(QString("import-unit-%1").arg(key))->setCurrentText("mm");
+        }
+        dialog->findChild<QComboBox*>("import-unit-yaw")->setCurrentText("deg");
+        auto* table = dialog->findChild<QTableWidget*>("import-mapping-table");
+        ASSERT_NE(table, nullptr);
+        EXPECT_TRUE(table->item(static_cast<int>(ImportField::X), 3)->text().contains("1 m"));
+        EXPECT_TRUE(table->item(static_cast<int>(ImportField::Yaw), 3)->text().contains("rad"));
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    const bool ok = executeRequirementCommand("requirements.import-csv", *m_panel, m_editor, *m_panel, host);
+    QApplication::processEvents();
+    EXPECT_TRUE(visited) << "生产流必须呈现人工映射和单位预览步骤";
+    ASSERT_TRUE(ok) << m_panel->showCommandFeedbackText().toStdString();
+    bool found = false;
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (point.name != "映射工位") { continue; }
+        found = true; EXPECT_DOUBLE_EQ(point.pose.position.value()[0], 1.0);
+        EXPECT_DOUBLE_EQ(point.pose.position.value()[1], 2.0);
+        EXPECT_NEAR(point.pose.orientation.fixedRpy[2], 1.5707963267948966, 1e-14);
+    }
+    EXPECT_TRUE(found);
+}
+
+/** @brief AT-02：超过8条行错误仍逐条保留行号/列/原文和建议，取消零写入。 */
+TEST_F(RequirementsSessionGuiTest, CsvAllErrorDetails_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-05", {}, std::nullopt);
+    QTemporaryDir dir;
+    const QString path = QDir(dir.path()).filePath("errors.csv");
+    QFile file(path); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    QByteArray csv("id,name,x,y,z\n");
+    for (int row = 1; row <= 12; ++row) {
+        csv += QString("id%1,坏行%1,bad%1,0,0\n").arg(row).toUtf8();
+    }
+    file.write(csv); file.close();
+    const auto before = m_editor.workingSet();
+    FakeDialogHost host; host.openPath = path; host.importConfirmed = false;
+    EXPECT_TRUE(executeRequirementCommand("requirements.import-csv", *m_panel, m_editor, *m_panel, host));
+    for (int row = 1; row <= 12; ++row) {
+        EXPECT_TRUE(host.lastImportSummary.contains(QString("row=%1;").arg(row))) << row;
+        EXPECT_TRUE(host.lastImportSummary.contains(QString("bad%1").arg(row))) << row;
+    }
+    EXPECT_TRUE(host.lastImportSummary.contains("column=x"));
+    EXPECT_EQ(m_editor.workingSet(), before);
+
+    // 确认页采用真实生产控件，长文本可滚动复制，不能把CSV内容当富文本解释。
+    bool visited = false;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        if (!dialog) { return; }
+        visited = true;
+        auto* text = dialog->findChild<QPlainTextEdit*>("import-outcome-details");
+        if (text) {
+            EXPECT_TRUE(text->isReadOnly());
+            EXPECT_EQ(text->toPlainText(), host.lastImportSummary);
+            EXPECT_TRUE(text->toPlainText().contains("bad12"));
+        } else { ADD_FAILURE() << "生产确认页缺少可滚动全量明细"; }
+        dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().confirmImport(host.lastImportSummary));
+    EXPECT_TRUE(visited);
+}
+
+/** @brief REQ-05：缺必填映射/非法单位禁下一步，取消保留映射和单位原值。 */
+TEST_F(RequirementsSessionGuiTest, CsvMappingValidationCancel_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-05", {}, std::nullopt);
+    io::RawTable table; table.report.hasHeader = true;
+    table.report.header = {"id", "name", "x", "y", "z"};
+    auto mapping = autoDetectMapping(table, RequirementImporter{}.fieldDictionary()).mapping;
+    auto units = ImportUnitOptions::defaults();
+    const auto beforeMapping = mapping; const auto beforeUnits = units;
+    bool visited = false;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        if (!dialog) { return; }
+        visited = true;
+        auto* next = dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok);
+        auto* x = dialog->findChild<QComboBox*>("import-map-x");
+        auto* unit = dialog->findChild<QComboBox*>("import-unit-x");
+        if (next && x && unit) {
+            EXPECT_TRUE(next->isEnabled());
+            x->setCurrentIndex(0); EXPECT_FALSE(next->isEnabled());
+            x->setCurrentIndex(x->findData(2)); EXPECT_TRUE(next->isEnabled());
+            unit->setCurrentText("kg"); EXPECT_FALSE(next->isEnabled());
+            unit->setCurrentText("mm"); EXPECT_TRUE(next->isEnabled());
+        } else { ADD_FAILURE() << "映射页控件缺失"; }
+        dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().editImportMapping(table, mapping, units));
+    EXPECT_TRUE(visited);
+    EXPECT_EQ(mapping.columnOf, beforeMapping.columnOf);
+    for (std::size_t i = 0; i < kImportFieldCount; ++i) {
+        EXPECT_EQ(units.unitFor(static_cast<ImportField>(i)), beforeUnits.unitFor(static_cast<ImportField>(i)));
+    }
 }
 
 TEST_F(RequirementsSessionGuiTest, CommandFlows_JsonAndDegrades_UI_T32)

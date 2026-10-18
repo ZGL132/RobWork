@@ -1148,6 +1148,37 @@ TEST(PluginPanel, ImportWizardFlowFiveStepsToDraft_ACC4)
     EXPECT_THROW(fresh.prepareMapping(ImportUnitOptions::defaults()), std::invalid_argument);
 }
 
+/** @brief AT-02/REQ-11：多行导入分配独立临时身份，一次确认/撤销，重名零部分写。 */
+TEST(PluginPanel, ImportWizardAtomicRows_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-05", {}, std::nullopt);
+    RequirementImporter importer;
+    RequirementEditor editor = makeEditorWithOnePoint(nullptr);
+    const auto before = editor.workingSet();
+    ImportWizardFlow flow(importer);
+    flow.setSourceTable(makeTable({{"id", "name", "x", "y", "z"},
+        {"r1", "导入一", "1", "2", "3"}, {"r2", "导入二", "4", "5", "6"}}));
+    const auto mapping = flow.prepareMapping(ImportUnitOptions::defaults());
+    flow.executeMapping(mapping.mapping, ImportUnitOptions::defaults());
+    EXPECT_EQ(flow.confirmAndApplyToDraft(editor), 2U);
+    EXPECT_EQ(editor.workingSet().points.entries.size(), before.points.entries.size() + 2);
+    ASSERT_TRUE(editor.undoLocal());
+    EXPECT_EQ(editor.workingSet(), before) << "多行导入不能互相覆盖，亦不能拆成多步撤销";
+
+    // AT-02：正确行中有一行重名时，集合不变量应整批拒绝，不能留下另一行。
+    flow.setSourceTable(makeTable({{"id", "name", "x", "y", "z"},
+        {"r3", "另一正确行", "1", "2", "3"},
+        {"r4", before.points.entries.front().name, "4", "5", "6"}}));
+    const auto conflictMapping = flow.prepareMapping(ImportUnitOptions::defaults());
+    flow.executeMapping(conflictMapping.mapping, ImportUnitOptions::defaults());
+    const auto statusBefore = editor.draftStatus();
+    EXPECT_EQ(flow.confirmAndApplyToDraft(editor), 0U);
+    EXPECT_TRUE(flow.lastApplyError().has_value());
+    EXPECT_EQ(flow.step(), ImportWizardStep::Previewed);
+    EXPECT_EQ(editor.workingSet(), before);
+    EXPECT_EQ(editor.draftStatus().edits, statusBefore.edits);
+}
+
 /// L-R11：JSON 副本导出——成功提示路径／失败旧文件完好提示。
 TEST(PluginPanel, ExportCopyPromptSuccessAndFailureKeepsOldFile_ACC4)
 {

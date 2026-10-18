@@ -1,0 +1,11 @@
+Note: Google Test filter = *ImportWizardAtomicRows*:*CommandFlows_ImportCsvPartial*:*CsvProductionMappingAndUnits*:*CsvAllErrorDetails*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PluginPanel
+[ RUN      ] PluginPanel.ImportWizardAtomicRows_AT02_WP14T12
+[       OK ] PluginPanel.ImportWizardAtomicRows_AT02_WP14T12 (0 ms)
+[----------] 1 test from PluginPanel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.

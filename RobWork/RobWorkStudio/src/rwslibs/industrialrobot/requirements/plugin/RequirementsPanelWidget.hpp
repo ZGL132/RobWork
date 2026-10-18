@@ -281,6 +281,8 @@ public:
 
     /// 编辑接受分支：全面板增量刷新（经编辑目标提供器现取工作集）＋脏标记呈现。
     void onEditApplied(const std::string& changeSummary) override;
+    /** @brief 批次接受后记录一次局部撤销并刷新；仅UI线程，摘要[in]为UTF-8文字。 */
+    void onBatchEditApplied(const std::string& changeSummary) override;
     /// 会话脏通知（标题 `*` 标记呈现半区——PM-04/PM-11；信号上呈装配层）。
     void notifySessionDirty() override;
 

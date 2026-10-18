@@ -61,7 +61,7 @@ EditSubmitOutcome submitBatchEdit(IRequirementEditor& editor, IRequirementEditSi
     for (const core::DiagnosticRecord& warning : outcome.diagnostics) {
         sink.onBatchWarning(warning);
     }
-    sink.onEditApplied(outcome.changeSummary);
+    sink.onBatchEditApplied(outcome.changeSummary);
     sink.notifySessionDirty();
     return EditSubmitOutcome::Applied;
 }

@@ -3571,6 +3571,15 @@ void RequirementsPanelWidget::onProjectUndo()
 // IRequirementEditSink（L-R2 分流回调）
 // =====================================================================
 
+void RequirementsPanelWidget::onBatchEditApplied(const std::string& changeSummary)
+{
+    m_threadGuard.assertOnUiThread();
+    // REQ-11：整批只对应一个编辑器栈帧，记账必须发生在刷新按钮状态之前。
+    // 字段/结构轨自行记账，继续经onEditApplied刷新，避免一次动作变成两次撤销。
+    m_undoTracker.recordAppliedEdit();
+    onEditApplied(changeSummary);
+}
+
 void RequirementsPanelWidget::onEditApplied(const std::string& changeSummary)
 {
     // 接受分支：全面板增量刷新（经提供器现取工作集——不使用旧副本）＋
