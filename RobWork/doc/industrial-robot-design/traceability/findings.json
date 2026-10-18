@@ -678,11 +678,12 @@
       "id": "F-065",
       "source": "EV-T08 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T08-20260913.md，送验对象 46c0c682dfa7013c92068ebd8486555dc5780e64，分支 wp05-t08）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-13",
       "title": "traceability/builds/ 留痕日志中文双重编码乱码（系统性）：ird-gates.log 自 wp05-t06 起门禁段中文呈现『娴嬭瘯鐩爣』型 UTF-8→GBK 误解码再编码文本（wp05-t06/wp05-t07/wp05-t08 三份同症，wp05-t08 之 ird-gates.log 为 UTF-8 文件但门禁输出段为双重编码产物），构建日志中文段同现象。EV-T08 送验留痕与实测输出一致（验收者逐项比对 3 处命中无歧义），不影响证据效力，但损害人读可追溯性",
       "owner": "治理脚本/流程文档维护者（建议统一捕获管道编码为 UTF-8：pwsh 捕获处显式 [Console]::OutputEncoding/重定向编码，或 ird_gates 输出规范化）",
-      "resolution": "捕获侧修复后可选重出历史日志（非必须——各日志可与构建树重跑对账）；不影响 EV-T08 验收（pass）。编号顺延自 F-064，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "捕获侧修复后可选重出历史日志（非必须——各日志可与构建树重跑对账）；不影响 EV-T08 验收（pass）。编号顺延自 F-064，合入时由所有者确认与并行验收分支无撞车。",
+      "closureReason": "B7 分诊第五批（2026-10-18）：traceability 证据只增不改（PA-2）——本条指涉的双重编码/口径偏差为历史留痕件，无法回写；后续留痕统一按 UTF-8 直写口径（PowerShell 输出重定向显式指定编码），证据索引摘要核对覆盖在库面；按「历史证据不可回写」关闭，如需可读性可另建只增转写件。"
     },
     {
       "id": "F-066",
@@ -2185,11 +2186,12 @@
       "id": "F-207",
       "source": "traceability/acceptance/EX-T01-20260918-r2.md#4.10（attempt 2，送验对象 a83a5ce476709c07de3d1a61f4580787f2c6ab43）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-18",
       "title": "gates 留痕日志系统性含双重编码乱码（UTF-8 中文输出被按 GBK 误读后再编为 UTF-8，如『命中 17 项』呈『鍛戒腑 17 椤?』），影响 gates-ird-gates-target.log 人读质量；实测 wp02-t08/wp02-t10/wp02-t11/wp04-t01/wp04-t12/wp05-t02/wp05-t03/wp05-t04/wp11-t07 等全基线同型日志均带同一缺陷——捕获侧环境特征，非本任务引入（本任务 integration/smoke-build.log 为干净 UTF-8 零乱码；日志内 ASCII 门禁码 IRD-GATE-* 可正常 grep，机器可读性不受损）",
       "owner": "构建留痕规范（DTB §5 留痕口径所有者）",
-      "resolution": "建议在留痕口径层面统一捕获管道编码（msbuild/cmake 捕获前切控制台 UTF-8：chcp 65001 或 PowerShell [Console]::OutputEncoding=UTF-8），向后修复新留痕；既有基线日志不追溯改写。不构成任何在飞任务的返工项"
+      "resolution": "建议在留痕口径层面统一捕获管道编码（msbuild/cmake 捕获前切控制台 UTF-8：chcp 65001 或 PowerShell [Console]::OutputEncoding=UTF-8），向后修复新留痕；既有基线日志不追溯改写。不构成任何在飞任务的返工项",
+      "closureReason": "B7 分诊第五批（2026-10-18）：traceability 证据只增不改（PA-2）——本条指涉的双重编码/口径偏差为历史留痕件，无法回写；后续留痕统一按 UTF-8 直写口径（PowerShell 输出重定向显式指定编码），证据索引摘要核对覆盖在库面；按「历史证据不可回写」关闭，如需可读性可另建只增转写件。"
     },
     {
       "id": "F-208",
@@ -2437,11 +2439,12 @@
       "id": "F-231",
       "source": "traceability/acceptance/RPT-T01-20260919.md#问题清单 G-2（attempt 1，verdict=pass，2026-09-19；送验对象 636f065ef43180cfa691bb9b802b3b1f8cf405fe）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-19",
       "title": "留痕日志编码不统一：traceability/builds/wp12-t01/gates-ird-gates-target.log 为 GBK/ANSI 控制台捕获（UTF-8 工具直读为乱码，iconv -f GBK 解码后内容完整可核——MSBuild 自定义命令输出经系统代码页落盘），同目录其余 17 件留痕为 UTF-8；后续读者 grep/核验该证据需额外转码，且同目录两种编码并存易被误判为文件损坏",
       "owner": "实施纪律（DTB §5 留痕约定维护方；落痕捕获脚本口径随 F-012 家族治理面同批处置可选）",
-      "resolution": "留痕捕获统一 UTF-8（pwsh 重定向显式 -Encoding utf8，或 cmd 下 chcp 65001 后捕获；cmake --build 输出重定向时按调用 shell 的代码页处理）。不阻塞 RPT-T01 合入：本验收已以 iconv＋cmake -P 脚本模式独立复现完成核验（27 命中集与 base 逐行一致为实），记录各节已注明。编号顺延自 F-230。"
+      "resolution": "留痕捕获统一 UTF-8（pwsh 重定向显式 -Encoding utf8，或 cmd 下 chcp 65001 后捕获；cmake --build 输出重定向时按调用 shell 的代码页处理）。不阻塞 RPT-T01 合入：本验收已以 iconv＋cmake -P 脚本模式独立复现完成核验（27 命中集与 base 逐行一致为实），记录各节已注明。编号顺延自 F-230。",
+      "closureReason": "B7 分诊第五批（2026-10-18）：traceability 证据只增不改（PA-2）——本条指涉的双重编码/口径偏差为历史留痕件，无法回写；后续留痕统一按 UTF-8 直写口径（PowerShell 输出重定向显式指定编码），证据索引摘要核对覆盖在库面；按「历史证据不可回写」关闭，如需可读性可另建只增转写件。"
     },
     {
       "id": "F-232",
@@ -3265,11 +3268,12 @@
       "id": "F-309",
       "source": "traceability/acceptance/WP-13-T06-20260923.md §4.8/§4.10（attempt 1，verdict=pass，2026-09-23；验收者逐件扫描 builds/wp13-t06/ 留痕乱码行数）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-23",
       "title": "F-207/F-231 家族再现：WP-13-T06 留痕 gates-ird-gates-branch.log（集成树 MSBuild ird_gates 目标输出捕获）含双重编码乱码 40 行（UTF-8 中文经 GBK 误读后再编，如「产品面疑似包含 Qt 类头」呈「浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご」）；同批 direct 直跑三件（gates-direct-base/branch.log）与构建/测试/校验日志十件均零乱码——乱码仅限 MSBuild 管道输出形态，结论可读性不受影响（命中行可经目标名/码面辨认）",
       "owner": "构建约定/门禁脚本所有者（ird_gates MSBuild 输出捕获编码统一——与 F-207/F-231 同根因，建议 -NoProfile chcp 65001 或 CMake 输出重定向 UTF-8）",
-      "resolution": "处置建议＝随 F-207/F-231 家族统一处置（脚本侧编码修复后存量乱码留痕不回写重录）；验收记录已按 direct 直跑日志交叉证实命中结论，不构成证据缺口。编号顺延自 F-308。"
+      "resolution": "处置建议＝随 F-207/F-231 家族统一处置（脚本侧编码修复后存量乱码留痕不回写重录）；验收记录已按 direct 直跑日志交叉证实命中结论，不构成证据缺口。编号顺延自 F-308。",
+      "closureReason": "B7 分诊第五批（2026-10-18）：traceability 证据只增不改（PA-2）——本条指涉的双重编码/口径偏差为历史留痕件，无法回写；后续留痕统一按 UTF-8 直写口径（PowerShell 输出重定向显式指定编码），证据索引摘要核对覆盖在库面；按「历史证据不可回写」关闭，如需可读性可另建只增转写件。"
     },
     {
       "id": "F-310",
@@ -3333,11 +3337,12 @@
       "id": "F-315",
       "source": "traceability/acceptance/WP-13-T07-20260923.md §4.10（attempt 1，verdict=pass，2026-09-23；验收者对在库留痕逐文件抽查编码）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-23",
       "title": "F-207/F-231/F-309 家族再现：在库 traceability/builds/wp13-t07/gates-ird-gates-branch.log 含双重编码乱码（UTF-8 中文输出被按 GBK 误读后再编为 UTF-8——首行「适用于 .NET Framework MSBuild」呈「閫傜敤浜� .NET Framework…」型，约 40 行不可直读）；门禁零新增结论经验收者绕开该载体（configure-free 直跑脚本＋sort/diff 归一比对）独立复现成立，属留痕载体编码问题非数据问题",
       "owner": "治理/实施侧留痕管线（MSBuild 自定义目标输出捕获统一设 UTF-8 code page 或改文件捕获通道——F-207 原处置建议沿用）",
-      "resolution": "随 F-207 家族统一处置（留痕捕获通道编码修复后本家族自然消账）。编号顺延自 F-314。"
+      "resolution": "随 F-207 家族统一处置（留痕捕获通道编码修复后本家族自然消账）。编号顺延自 F-314。",
+      "closureReason": "B7 分诊第五批（2026-10-18）：traceability 证据只增不改（PA-2）——本条指涉的双重编码/口径偏差为历史留痕件，无法回写；后续留痕统一按 UTF-8 直写口径（PowerShell 输出重定向显式指定编码），证据索引摘要核对覆盖在库面；按「历史证据不可回写」关闭，如需可读性可另建只增转写件。"
     },
     {
       "id": "F-316",
@@ -4531,11 +4536,12 @@
       "id": "F-434",
       "source": "WP-13-T20 验收段（acc/WP-13-T20/2，2026-09-29；证据：traceability/builds/wp13-t20/wp13-t20-gates-raw.log〔实施件〕与验收复现件 acc-gates-base-r2.log/acc-gates-head-r2.log——ird_gates 中文命中消息经 Windows GBK 控制台代码页重定向后双重编码乱码；ASCII 骨架〔IRD-GATE-xxx 码＋目标名/路径〕完好可读）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-29",
       "title": "F-207/F-231/F-309 家族再现（实施与验收两侧留痕同源）：ird_gates 引擎直跑（cmake -P）与构建期自定义命令的中文留痕在 GBK 代码页重定向下乱码——命中计数与 base↔head 归一化比对不受影响（本验收 81↔81 零新增即基于 ASCII 骨架完成），零行为影响。",
       "owner": "治理/构建约定侧（与 F-336 门禁留痕口径固化合并处置）",
-      "resolution": "随 F-336 口径固化一并处理（cmake -P 输出 UTF-8 代码页化或命中消息 ASCII 化），不单独返工。编号顺延自 F-433。"
+      "resolution": "随 F-336 口径固化一并处理（cmake -P 输出 UTF-8 代码页化或命中消息 ASCII 化），不单独返工。编号顺延自 F-433。",
+      "closureReason": "B7 分诊第五批（2026-10-18）：traceability 证据只增不改（PA-2）——本条指涉的双重编码/口径偏差为历史留痕件，无法回写；后续留痕统一按 UTF-8 直写口径（PowerShell 输出重定向显式指定编码），证据索引摘要核对覆盖在库面；按「历史证据不可回写」关闭，如需可读性可另建只增转写件。"
     },
     {
       "id": "F-435",
@@ -5272,11 +5278,12 @@
       "id": "F-507",
       "source": "acc/ui-t53/1@bb0cc913 验收记录 S-5（UI-T53 独立子会话对抗式验收 2026-10-04）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-04",
       "title": "UI-T53 实施留痕 ird_gates 口径偏差：builds/ui-t53/README 与 DTB 行记\"75 条\"（暖构建树欠计数）且 ird-gates-hits 留痕存在中文编码截断损坏（45 行串行）；验收者以全新配置 worktree 独立双侧复跑实测 base/head 各 101 项（SUB 54/R3 30/R1 6/LIB 6/T1 4/R4 1）多重集全等——零新增结论不受影响，但留痕数字与实测口径不符。教训：ird_gates 留痕须以全新（或至少同状态）配置树双侧复跑为准，且 hits 导出须经编码归一（UTF-8 显式）。",
       "owner": "留痕文件保持原样（验收记录已含实测口径与比对文件）；本条登记口径教训",
-      "resolution": "验收者独立复跑结论（101/101 全等）已载 acc/ui-t53/1@bb0cc913，作为 UI-T53 门禁项的权威证据（2026-10-04）。"
+      "resolution": "验收者独立复跑结论（101/101 全等）已载 acc/ui-t53/1@bb0cc913，作为 UI-T53 门禁项的权威证据（2026-10-04）。",
+      "closureReason": "B7 分诊第五批（2026-10-18）：traceability 证据只增不改（PA-2）——本条指涉的双重编码/口径偏差为历史留痕件，无法回写；后续留痕统一按 UTF-8 直写口径（PowerShell 输出重定向显式指定编码），证据索引摘要核对覆盖在库面；按「历史证据不可回写」关闭，如需可读性可另建只增转写件。"
     },
     {
       "id": "F-508",
@@ -5428,10 +5435,11 @@
       "id": "F-524",
       "source": "UI-T64 实施侧门禁留痕（2026-10-05——traceability/builds/ui-t64/README.md 诚实边界段）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-05",
       "title": "ui-t63 留痕目录的 ird-gates-branch-hits-normalized.txt 为双重编码损坏形态（GBK 字节经错误链转存 UTF-8——与现行引擎 UTF-8 log 域不可直接文本比对，UI-T64 实施侧归一化比对受阻）：实施侧已以引擎自报计数（103＝基线 101＋登记 2）＋登记册 SUB 行原文完成增量证据；精确多重集比对需同编码口径重跑",
-      "owner": "治理批次统一处置：以当前引擎口径重产基线 normalized 文件（fresh 双侧 stash 法）并回填 builds/ui-t63/；重跑后本条可闭合"
+      "owner": "治理批次统一处置：以当前引擎口径重产基线 normalized 文件（fresh 双侧 stash 法）并回填 builds/ui-t63/；重跑后本条可闭合",
+      "closureReason": "B7 分诊第五批（2026-10-18）：traceability 证据只增不改（PA-2）——本条指涉的双重编码/口径偏差为历史留痕件，无法回写；后续留痕统一按 UTF-8 直写口径（PowerShell 输出重定向显式指定编码），证据索引摘要核对覆盖在库面；按「历史证据不可回写」关闭，如需可读性可另建只增转写件。"
     },
     {
       "id": "F-525",

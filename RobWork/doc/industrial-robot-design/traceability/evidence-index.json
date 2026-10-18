@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T13:06:53+08:00",
+  "generatedAt": "2026-10-18T13:08:01+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6715,
-    "totalBytes": 213404294,
+    "totalFiles": 6716,
+    "totalBytes": 213408928,
     "byKind": {
-      "gtest-report": 335,
-      "manual-acceptance": 1,
       "acceptance-record": 515,
-      "json-data": 7,
+      "manual-acceptance": 1,
+      "governance-record": 38,
       "markdown-doc": 41,
-      "governance-record": 37,
-      "pipeline-artifact": 2,
-      "log": 1,
+      "benchmark": 8,
+      "json-data": 7,
       "build-log": 5768,
-      "benchmark": 8
+      "log": 1,
+      "pipeline-artifact": 2,
+      "gtest-report": 335
     },
     "byLifecycle": {
+      "current": 40,
+      "unverified": 6125,
       "superseded": 0,
-      "historical": 549,
-      "unverified": 6124,
-      "current": 42
+      "historical": 551
     },
     "associated": 596,
-    "unassociated": 6119,
-    "shaComputed": 6697,
+    "unassociated": 6120,
+    "shaComputed": 6698,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -1718,7 +1718,7 @@
       ],
       "bytes": 20537,
       "sha256": "852e65ba9d432b85c29fe9508258bf48ee585a4e15b63501d1e5c6294647d82a",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/EX-T01-20260918.md",
@@ -2370,7 +2370,7 @@
       ],
       "bytes": 25384,
       "sha256": "9c7bdbc78f27ff1aac41917e9afc712a47936d564e8b44dcedb53627f0b49782",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T02-20260919.md",
@@ -52410,7 +52410,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1230961,
+      "bytes": 1234225,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -55684,6 +55684,14 @@
       "taskIds": [],
       "bytes": 1725,
       "sha256": "57d5de59814f30aeeefda3fa097e993dc80605aaada37cf5bb8224d51ab549d8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reviews/b7-triage-20261018-b5.md",
+      "kind": "governance-record",
+      "taskIds": [],
+      "bytes": 1370,
+      "sha256": "68595f66dcd9333df8393f93dcf4edc08cd98e09112a93a76d7941e7da2d6654",
       "lifecycle": "unverified"
     },
     {
