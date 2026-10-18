@@ -2366,7 +2366,9 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         enabledCombo->addItem(QStringLiteral("停用"));
         { QSignalBlocker blocker(enabledCombo);
         enabledCombo->setCurrentIndex(segOn ? 0 : 1); }
-        enabledCombo->setEnabled(m_writable);
+        // 作业段就是工位本身（REQ-02、§4.3），不可像接近/撤离段一样停用。
+        // 保留只读“启用”显示，域validateTaskPoint仍负责拒绝绕过界面的非法值。
+        enabledCombo->setEnabled(m_writable && key != QStringLiteral("segment-work"));
         connect(enabledCombo, &QComboBox::currentIndexChanged, this,
                 [this, key](int idx) {
                     submitStationToggle(key.toStdString(), idx == 0);

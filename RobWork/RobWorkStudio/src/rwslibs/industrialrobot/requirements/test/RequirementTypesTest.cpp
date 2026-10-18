@@ -66,6 +66,23 @@ WorkRegion makeValidRegion()
 
 }  // namespace
 
+/** @brief REQ-02/AT-06：作业段代表任务点本身，不能借关闭标志绕过三段约束。 */
+TEST(ReqInvariants, WorkSegmentCannotBeDisabled_REQ02_AT06)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-02"}, std::vector<std::string>{"AT-06"});
+    TaskPoint point = makeValidPoint();
+    ASSERT_FALSE(validateTaskPoint(point).has_value());
+    point.work.enabled = false;
+    const auto error = validateTaskPoint(point);
+    ASSERT_TRUE(error.has_value()) << "关闭作业段应拒绝，而不是把任务点本身从路径中移除";
+    EXPECT_EQ(error->code, RequirementErrorCode::IllegalTolerance);
+    bool located = false;
+    for (const auto& parameter : error->params) {
+        located = located || (parameter.first == "field" && parameter.second == "work.enabled");
+    }
+    EXPECT_TRUE(located) << "拒绝信息应精确指向work.enabled";
+}
+
 // =====================================================================
 // I-REQ-1（确定性编码）：集合条目按 ObjectId 字典序存放；同输入字节→
 // 同 ContentVersion 的 requirements 半区＝"同集合任意输入序必得同字节"

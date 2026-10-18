@@ -485,9 +485,19 @@ std::optional<RequirementError> validateTaskPoint(const TaskPoint& point)
     if (auto e = validateTolerance(point.tolerance)) {
         return e;
     }
-    // 三段校验：仅核对启用段的距离（m，>0 有限）——work 段恒启用（即
-    // 任务点本身，§4.3）恒过距离门；approach/retract 可关闭（关闭段不
-    // 进入 TRJ 路径构造，距离值不核）。
+    // REQ-02、单元卡§4.3：work就是任务点本身，不是可省略的进退辅助段。
+    // 原实现只查“已启用段的距离”，关闭work反而绕过校验，UI/JSON入口
+    // 都能形成没有作业段的任务。必须先验证恒启用不变量，再核距离；
+    // 非法输入保持原样并返回既有字段错误族，不静默补真或修写历史。
+    if (!point.work.enabled) {
+        RequirementError error;
+        error.code = RequirementErrorCode::IllegalTolerance;
+        error.params.emplace_back("field", "work.enabled");
+        error.detail = "requirements/types: 作业段即任务点本身，必须保持启用（REQ-02）";
+        return error;
+    }
+    // approach/retract可关闭；关闭段不进入TRJ路径，距离值暂不核。
+    // 启用段距离单位m，必须为正有限值，失败仍整条拒绝。
     const TaskSegment* segs[3] = {&point.approach, &point.work, &point.retract};
     static const char* segNames[3] = {"approach", "work", "retract"};
     for (int i = 0; i < 3; ++i) {

@@ -6347,6 +6347,15 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
 
         // ---- 拍 3：工位属性编辑（名称/等级/启用/自由度/容差）----------
         step("3 station-fields");
+        // REQ-01逐字段验收始终固定原ObjectId，列表排序/重投影后重新取值；
+        // 不能仅断言“信号已触发”，否则写错对象或未落域也会假通过。
+        const auto stationId = m_requirementsEditor.workingSet().points.entries.front().objectId;
+        auto currentStation = [&]() -> requirements::TaskPoint {
+            for (const auto& point : m_requirementsEditor.workingSet().points.entries) {
+                if (point.objectId == stationId) { return point; }
+            }
+            throw std::logic_error("正式遍历的原工位丢失");
+        };
         // WP-14-T12第三批已补文本轨；旧“只读即语义”断言过期，改为真实输入后
         // 对账编辑器与树呈现，不能为旧测试重新禁用合法名称编辑。
         QLineEdit* nameEdit = editByFieldKey("name");
@@ -6367,28 +6376,46 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             const int before = levelCombo->currentIndex();
             levelCombo->setCurrentIndex(before == 0 ? 1 : 0);  // Must↔Should
             settleEvents(300);
-            ok(true, "step3 level-toggled (idx-submitted)");
+            ok(currentStation().level == (before == 0 ? requirements::RequirementLevel::Should
+                                                     : requirements::RequirementLevel::Must),
+               "step3 level-authoritative-value");
         }
         QComboBox* enabledCombo = comboByName("ird_station_enabled_combo");
         ok(enabledCombo != nullptr, "step3 enabled-combo-present");
         if (enabledCombo != nullptr) {
-            enabledCombo->setCurrentIndex(enabledCombo->currentIndex() == 0 ? 1 : 0);
+            const bool expected = enabledCombo->currentIndex() != 0;
+            enabledCombo->setCurrentIndex(expected ? 0 : 1);
             settleEvents(300);
-            ok(true, "step3 enabled-toggled");
+            ok(currentStation().enabled == expected, "step3 enabled-authoritative-value");
         }
-        QComboBox* dofX = nullptr;
-        for (QComboBox* c : panel->findChildren<QComboBox*>(
-                 QStringLiteral("ird_dof_combo"))) {
-            if (c->property("irdDofKey").toString() == QStringLiteral("dof-x")) {
-                dofX = c;
-                break;
+        const char* dofKeys[] = {"dof-x", "dof-y", "dof-z", "dof-roll", "dof-pitch", "dof-yaw"};
+        auto dofControl = [&](const char* key) -> QComboBox* {
+            for (auto* control : panel->findChildren<QComboBox*>("ird_dof_combo")) {
+                if (control->property("irdDofKey").toString() == QLatin1String(key)) { return control; }
             }
+            return nullptr;
+        };
+        // 先建立六轴均约束的有效基线，再逐轴释放/恢复，避免“全部自由”
+        // 违反至少一约束的不变量而把正确拒绝误报为字段写入故障。
+        for (const char* key : dofKeys) {
+            auto* control = dofControl(key);
+            ok(control != nullptr, std::string("step3 control-present-") + key);
+            if (control) { control->setCurrentIndex(0); settleEvents(100); }
         }
-        ok(dofX != nullptr, "step3 dof-x-combo-present");
-        if (dofX != nullptr) {
-            dofX->setCurrentIndex(dofX->currentIndex() == 0 ? 1 : 0);  // 约束↔自由
-            settleEvents(300);
-            ok(true, "step3 dof-x-toggled");
+        for (std::size_t axis = 0; axis < 6; ++axis) {
+            for (const bool constrained : {false, true}) {
+                auto* control = dofControl(dofKeys[axis]);
+                if (!control) { ok(false, "step3 reprojected-dof-control-missing"); continue; }
+                control->setCurrentIndex(constrained ? 0 : 1); settleEvents(100);
+                const auto dof = currentStation().pose.constrainedDof;
+                const bool values[] = {dof.x, dof.y, dof.z, dof.roll, dof.pitch, dof.yaw};
+                bool correct = values[axis] == constrained;
+                for (std::size_t other = 0; other < 6; ++other) {
+                    if (other != axis) { correct = correct && values[other]; }
+                }
+                ok(correct, std::string("step3 authoritative-") + dofKeys[axis]
+                    + (constrained ? "-constrained" : "-free"));
+            }
         }
         // 容差行＝QDoubleSpinBox（renderSpinRow——编辑完成制提交）。
         QDoubleSpinBox* tolSpin = spinByFieldKey("tolerance-position");
@@ -6397,7 +6424,27 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             tolSpin->setValue(0.5);
             Q_EMIT tolSpin->editingFinished();  // 与失焦同源的提交信号
             settleEvents(300);
-            ok(true, "step3 tolerance-edited");
+            ok(std::abs(currentStation().tolerance.positionTolerance - 0.5) < 1e-12,
+               "step3 position-tolerance-authoritative-m");
+        }
+        const char* positionKeys[] = {"pose-position-x", "pose-position-y", "pose-position-z"};
+        const double positions[] = {1.25, -0.75, 0.4};  // 原参考系，m。
+        for (std::size_t axis = 0; axis < 3; ++axis) {
+            auto* spin = spinByFieldKey(positionKeys[axis]);
+            ok(spin != nullptr, std::string("step3 position-control-") + positionKeys[axis]);
+            if (spin) {
+                spin->setValue(positions[axis]); Q_EMIT spin->editingFinished(); settleEvents(150);
+                const auto value = currentStation().pose.position.tryValue();
+                ok(value && std::abs((*value)[axis] - positions[axis]) < 1e-12,
+                   std::string("step3 position-authoritative-m-") + positionKeys[axis]);
+            }
+        }
+        auto* angleTolerance = spinByFieldKey("tolerance-orientation");
+        ok(angleTolerance != nullptr, "step3 orientation-tolerance-control");
+        if (angleTolerance) {
+            angleTolerance->setValue(0.025); Q_EMIT angleTolerance->editingFinished(); settleEvents(150);
+            ok(std::abs(currentStation().tolerance.orientationTolerance - 0.025) < 1e-12,
+               "step3 orientation-tolerance-authoritative-rad");
         }
 
         // WP-14-T12/UX-05：正式面板展开并复制可回贴模板，不能只在测试中
@@ -6428,9 +6475,25 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             QStringLiteral("ird_segment_enabled_combo"));  // 首个＝接近段（投影序）
         ok(segEnabled != nullptr, "step4 segment-enabled-present");
         if (segEnabled != nullptr) {
+            const auto beforeInvalid = m_requirementsEditor.workingSet();
             segEnabled->setCurrentIndex(0);  // 启用接近段
             settleEvents(300);
-            ok(true, "step4 segment-approach-enabled");
+            ok(m_requirementsEditor.workingSet() == beforeInvalid,
+               "step4 zero-distance-enable-rejected-zero-write");
+            auto* restored = panel->findChild<QComboBox*>("ird_segment_enabled_combo");
+            ok(restored && restored->currentIndex() == 1,
+               "step4 rejected-enable-control-restores-authoritative-state");
+            // 先输入合法距离，再启用；初始0 m不能被测试偷偷换成正默认值。
+            auto* distance = restored ? restored->parentWidget()->findChild<QDoubleSpinBox*>() : nullptr;
+            ok(distance != nullptr, "step4 approach-distance-control");
+            if (distance) {
+                distance->setValue(0.12); Q_EMIT distance->editingFinished(); settleEvents(150);
+                ok(std::abs(currentStation().approach.distanceM - 0.12) < 1e-12,
+                   "step4 approach-distance-authoritative-m");
+                restored = panel->findChild<QComboBox*>("ird_segment_enabled_combo");
+                if (restored) { restored->setCurrentIndex(0); settleEvents(150); }
+                ok(currentStation().approach.enabled, "step4 valid-approach-enabled");
+            }
         }
         // 段轴下拉在重投影后重建——操作前重新定位（F-453 遍历侧纪律）。
         QComboBox* segAxis = panel->findChild<QComboBox*>(
@@ -6439,7 +6502,50 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
         if (segAxis != nullptr) {
             segAxis->setCurrentIndex(1);  // ToolZ→ReferenceZ
             settleEvents(300);
-            ok(true, "step4 segment-axis-switched");
+            ok(currentStation().approach.axis == requirements::SegmentAxis::ReferenceZ,
+               "step4 approach-authoritative-reference-axis");
+        }
+        // REQ-02：三段按接近/作业/撤离固定投影。定位每次重新执行，
+        // 以父行中的控件识别距离，避免误编辑另一段或复用已销毁控件。
+        auto segmentEnable = [&](int index) -> QComboBox* {
+            const auto controls = panel->findChildren<QComboBox*>("ird_segment_enabled_combo");
+            return controls.size() == 3 ? controls[index] : nullptr;
+        };
+        auto* retractEnable = segmentEnable(2);
+        auto* retractDistance = retractEnable
+            ? retractEnable->parentWidget()->findChild<QDoubleSpinBox*>() : nullptr;
+        ok(retractDistance != nullptr, "step4 retract-distance-control");
+        if (retractDistance) {
+            retractDistance->setValue(0.18); Q_EMIT retractDistance->editingFinished(); settleEvents(150);
+            retractEnable = segmentEnable(2);
+            if (retractEnable) { retractEnable->setCurrentIndex(0); settleEvents(150); }
+            ok(currentStation().retract.enabled
+                   && std::abs(currentStation().retract.distanceM - 0.18) < 1e-12,
+               "step4 retract-authoritative-enabled-distance-m");
+            retractEnable = segmentEnable(2);
+            auto* retractAxis = retractEnable
+                ? retractEnable->parentWidget()->findChild<QComboBox*>("ird_segment_axis_combo") : nullptr;
+            ok(retractAxis != nullptr, "step4 retract-axis-control");
+            if (retractAxis) { retractAxis->setCurrentIndex(1); settleEvents(150); }
+            ok(currentStation().retract.axis == requirements::SegmentAxis::ReferenceZ,
+               "step4 retract-authoritative-reference-axis");
+        }
+        auto* workEnable = segmentEnable(1);
+        ok(workEnable != nullptr && currentStation().work.enabled, "step4 work-segment-always-enabled");
+        ok(workEnable && !workEnable->isEnabled(), "step4 work-segment-control-readonly");
+        if (workEnable) {
+            for (auto* ancestor = workEnable->parentWidget(); ancestor; ancestor = ancestor->parentWidget()) {
+                if (auto* scroll = qobject_cast<QScrollArea*>(ancestor)) { scroll->ensureWidgetVisible(workEnable); }
+            }
+            settleEvents(100);
+            ok(!workEnable->visibleRegion().isEmpty(), "step4 work-segment-readonly-state-reachable");
+            snapPng(hostWin, "tour-2c-segments-verified.png");
+        }
+        if (workEnable && workEnable->isEnabled()) {
+            const auto beforeWork = m_requirementsEditor.workingSet();
+            workEnable->setCurrentIndex(1); settleEvents(150);
+            ok(m_requirementsEditor.workingSet() == beforeWork,
+               "step4 work-disable-rejected-zero-write");
         }
         // 姿态规则：五规则下拉切换→参数行重投影（Fixed→ToolRollFree 行集
         // 变化）。切换后卡片重建＝orient 指针失效——回切前必须重新定位
@@ -6461,6 +6567,34 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             }
         }
         snapPng(hostWin, "tour-2-station-edited.png");
+
+        // REQ-01：完整工位复制必须只改变身份和唯一名称；删除选中副本后
+        // 权威集合、树行及检查器须共同回落原对象。两步均走真实按钮提交轨。
+        const auto sourceStation = currentStation();
+        auto* duplicateStation = buttonOf("ird_req_duplicate_points");
+        ok(duplicateStation != nullptr, "step4 duplicate-entry-present");
+        if (duplicateStation) { duplicateStation->click(); settleEvents(200); }
+        const auto duplicatedPoints = m_requirementsEditor.workingSet().points.entries;
+        ok(duplicatedPoints.size() == 2 && stationEntryCount() == 2,
+           "step4 duplicate-model-and-tree-two-entries");
+        bool exactCopy = false;
+        for (auto copy : duplicatedPoints) {
+            if (copy.objectId != stationId) {
+                const bool independent = copy.objectId.isValid() && copy.name != sourceStation.name;
+                copy.objectId = sourceStation.objectId; copy.name = sourceStation.name;
+                exactCopy = independent && copy == sourceStation;
+            }
+        }
+        ok(exactCopy && currentStation() == sourceStation, "step4 duplicate-independent-full-value-copy");
+        auto* removeStation = buttonOf("ird_req_remove_points");
+        ok(removeStation != nullptr, "step4 remove-entry-present");
+        if (removeStation) { removeStation->click(); settleEvents(200); }
+        ok(m_requirementsEditor.workingSet().points.entries.size() == 1
+               && currentStation() == sourceStation && stationEntryCount() == 1,
+           "step4 remove-only-selected-copy");
+        auto* fallbackHeader = panel->findChild<QLabel*>("ird_req_tab_station_header");
+        ok(fallbackHeader && fallbackHeader->text().contains(QString::fromStdString(sourceStation.name)),
+           "step4 selection-fallback-original-station");
 
         // ---- 拍 5：卡片折叠＋区域新增＋盒尺寸＋采样计数------------------
         step("5 fold-region-sampling");
