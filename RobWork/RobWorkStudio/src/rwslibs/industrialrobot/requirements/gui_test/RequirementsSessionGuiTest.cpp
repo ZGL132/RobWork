@@ -266,6 +266,71 @@ TEST_F(RequirementsSessionGuiTest, StationBatchParametersAtomic_UX05_WP14T12)
     ASSERT_TRUE(m_editor.redoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), after);
 }
 
+/** @brief UX-05：筛选/单位切换后可取得真实字段键及精确数值模板，只读复制零写入。 */
+TEST_F(RequirementsSessionGuiTest, ParameterTsvTemplateFollowsFilterAndUnits_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    auto precise = m_editor.workingSet().points.entries.front();
+    precise.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(0.1234567891234567, 2.0, 3.0), precise.source);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{precise}).accepted);
+    const auto before = m_editor.workingSet();
+    m_panel->refreshPanel(before, m_report);
+    m_panel->focusObject(before.points.entries.front().objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_station");
+    ASSERT_NE(batch, nullptr);
+    auto* copy = batch->findChild<QPushButton*>("ird_req_copy_tsv");
+    ASSERT_NE(copy, nullptr) << "UX-05：用户必须能取得真实字段键与当前单位下的TSV模板";
+    auto* filter = batch->findChild<QLineEdit*>("ird_param_filter");
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table");
+    auto* units = batch->findChild<QComboBox*>("ird_param_unit_switch");
+    ASSERT_NE(filter, nullptr); ASSERT_NE(table, nullptr); ASSERT_NE(units, nullptr);
+    QString label;
+    for (int row = 0; row < table->rowCount(); ++row) {
+        if (table->item(row,0)->data(Qt::UserRole).toString() == "pose-position-x") {
+            label = table->item(row,0)->text(); break;
+        }
+    }
+    ASSERT_FALSE(label.isEmpty()); filter->setText(label);
+    const int mmIndex = units->findText(QStringLiteral("长度：mm")); ASSERT_GE(mmIndex, 0);
+    units->setCurrentIndex(mmIndex); units->activated(mmIndex);
+    copy->click(); QApplication::processEvents();
+    const QString copied = QGuiApplication::clipboard()->text();
+    const auto columns = copied.split('\t'); ASSERT_EQ(columns.size(), 2);
+    EXPECT_EQ(columns[0], "pose-position-x");
+    bool parsed = false; const double copiedMm = columns[1].toDouble(&parsed);
+    ASSERT_TRUE(parsed); EXPECT_DOUBLE_EQ(copiedMm, 0.1234567891234567 * 1000.0)
+        << "TSV回贴不能把工程值截成表格六位显示精度";
+    EXPECT_FALSE(copied.contains("pose-position-y\t")) << "模板只包含当前筛选行";
+    EXPECT_FALSE(copied.contains(" mm")) << "数值列不重复包含单位后缀";
+    EXPECT_EQ(m_editor.workingSet(), before) << "复制模板只读，不能改草稿";
+    m_panel->setWritable(false);
+    // 可写性变化会重建表单，重新定位新控件，不读取被销毁的旧窗口指针。
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    copy = batch->findChild<QPushButton*>("ird_req_copy_tsv"); ASSERT_NE(copy, nullptr);
+    filter = batch->findChild<QLineEdit*>("ird_param_filter"); ASSERT_NE(filter, nullptr);
+    units = batch->findChild<QComboBox*>("ird_param_unit_switch"); ASSERT_NE(units, nullptr);
+    filter->setText(label);
+    const int readOnlyMm = units->findText(QStringLiteral("长度：mm")); ASSERT_GE(readOnlyMm, 0);
+    units->setCurrentIndex(readOnlyMm); units->activated(readOnlyMm);
+    EXPECT_TRUE(copy->isEnabled()) << "只读会话仍可复制参数";
+    EXPECT_FALSE(batch->findChild<QPushButton*>("ird_param_paste")->isEnabled());
+    EXPECT_FALSE(batch->findChild<QPushButton*>("ird_param_apply")->isEnabled());
+    EXPECT_EQ(batch->findChild<QTableWidget*>("ird_param_table")->editTriggers(), QAbstractItemView::NoEditTriggers);
+    // Windows销毁旧表单后的OLE剪贴板所有权消息可能尚未完成；只重试真实
+    // 复制按钮并泵事件，不直接把期望文本写剪贴板，最多3秒仍失败则报错。
+    QElapsedTimer deadline; deadline.start();
+    QString readOnlyCopy;
+    do {
+        QApplication::processEvents(); copy->click();
+        readOnlyCopy = QGuiApplication::clipboard()->text();
+        if (readOnlyCopy == copied) { break; }
+        QEventLoop messages; QTimer::singleShot(20, &messages, &QEventLoop::quit); messages.exec();
+    } while (deadline.elapsed() < 3000);
+    EXPECT_EQ(readOnlyCopy, copied);
+    EXPECT_EQ(m_editor.workingSet(), before);
+}
+
 /** @brief UX-05/REQ-03：区域中心/尺寸批量修改经领域校验，只入一次撤销栈。 */
 TEST_F(RequirementsSessionGuiTest, RegionBatchParametersAtomic_UX05_WP14T12)
 {
@@ -495,7 +560,11 @@ TEST_F(RequirementsSessionGuiTest, BatchParametersAnchorAndReadOnly_UX05_WP14T12
         if (point.objectId == before.objectId) { EXPECT_DOUBLE_EQ(point.pose.position.value()[0], 0.25); }
     }
     batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
-    EXPECT_FALSE(batch->isEnabled());
+    // UX-05：只读禁写应核对真实写入口；筛选/复制保留可用，不能锁死整块表格。
+    EXPECT_TRUE(batch->isEnabled());
+    EXPECT_FALSE(batch->findChild<QPushButton*>("ird_param_paste")->isEnabled());
+    EXPECT_FALSE(batch->findChild<QPushButton*>("ird_param_apply")->isEnabled());
+    EXPECT_EQ(batch->findChild<QTableWidget*>("ird_param_table")->editTriggers(), QAbstractItemView::NoEditTriggers);
 }
 
 /** @brief UX-05：完整对象基线冲突或域校验拒绝时整批零写入，不留下表格假成功。 */

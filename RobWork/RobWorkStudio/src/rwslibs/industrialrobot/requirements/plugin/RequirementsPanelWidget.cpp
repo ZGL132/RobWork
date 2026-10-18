@@ -19,6 +19,8 @@
 #include <QAction>   // 导入下拉菜单动作（返工⑤）
 #include <QButtonGroup>  // 自由度分段互斥组（UI-T37 R1——约束/自由二态）
 #include <QCheckBox>  // 启用 Switch（UI-T37 R1——QSS 重绘指示器）
+#include <QClipboard> // UX-05：复制TSV模板走真实系统剪贴板，不写需求草稿。
+#include <QGuiApplication>
 #include <QColor>
 #include <QComboBox>
 #include <QDialog>
@@ -39,6 +41,7 @@
 #include <QStyle>     // 动态属性样式重算（UI-T37 R2——状态卡分色）
 #include <QSlider>      // 覆盖率滑块（UI-T37 R1——滑块+输入双联）
 #include <QTabWidget>
+#include <QTableWidget> // 只读参数表禁用编辑触发器，保留筛选/单位查看和复制。
 #include <QTreeWidget>
 #include <QPainter>  // Tag 药丸绘制（UI-T37 R2——彩色标签委托）
 #include <QVBoxLayout>
@@ -69,10 +72,10 @@ namespace {
  */
 class RequirementParameterTable final : public QWidget, public ui::IFormEditOutlet {
 public:
-    /** @brief 装配独立暂存模型。specs为非空SI字段词表，回调只排队移交修改集。 */
+    /** @brief 装配独立暂存模型。specs为非空SI字段词表；writable仅控制写入口，回调只排队移交修改集。 */
     RequirementParameterTable(std::vector<ui::QuantityFieldSpec> specs,
         const std::map<std::string, std::optional<double>>& values,
-        std::function<void(const ui::ParamEditSet&)> submit, QWidget* parent)
+        std::function<void(const ui::ParamEditSet&)> submit, bool writable, QWidget* parent)
         : QWidget(parent), m_model(std::move(specs)), m_submit(std::move(submit))
     {
         // 直接从领域值建立SI基线，保留缺失态；显示格式精度不能成为权威数据来源。
@@ -80,12 +83,53 @@ public:
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
         auto* toggle = new QPushButton(QStringLiteral("参数表：筛选 / 批量粘贴"), this);
+        toggle->setObjectName("ird_req_batch_toggle");
         toggle->setCheckable(true);
         layout->addWidget(toggle);
-        m_view = ui::createParamTablePanel(m_model, this, {}, this);
+        auto* pasteHelp = new QWidget(this);
+        auto* helpLayout = new QVBoxLayout(pasteHelp);
+        helpLayout->setContentsMargins(0, 0, 0, 0);
+        auto* help = new QLabel(QStringLiteral(
+            "TSV每行：参数键＋制表符＋数值。数值使用表中当前显示单位，不附单位后缀。"
+            "先复制当前筛选中有值的行作为模板；修改后粘贴暂存，再确认写入。"), pasteHelp);
+        help->setWordWrap(true); help->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        helpLayout->addWidget(help);
+        auto* copy = new QPushButton(QStringLiteral("复制当前筛选表格 TSV"), pasteHelp);
+        copy->setObjectName("ird_req_copy_tsv"); helpLayout->addWidget(copy);
+        layout->addWidget(pasteHelp); pasteHelp->hide();
+        connect(copy, &QPushButton::clicked, this, [this]() {
+            QStringList lines;
+            // UX-05：键和筛选行序来自同一公共模型，用户不必猜内部字段名。
+            // 未提供值不是零；仅复制有真值的行，帮助文案明确此范围。
+            for (const auto& key : m_model.visibleKeys()) {
+                const auto value = m_model.currentValueSi(key);
+                if (!value) { continue; }
+                const auto& spec = m_model.spec(key);
+                const double shown = core::convert(*value, spec.siUnit, m_model.displayUnit(key));
+                // 表格六位显示只供阅读，模板回贴会重新进入数值解析，必须保存
+                // double的17位往返精度，不能复制被舍入的显示文本再污染草稿。
+                char buffer[64];
+                const auto number = std::to_chars(buffer, buffer + sizeof(buffer), shown,
+                    std::chars_format::general, 17);
+                if (number.ec != std::errc()) {
+                    throw std::logic_error("需求TSV模板数值格式化失败：double缓冲假设被破坏");
+                }
+                lines.push_back(QString::fromStdString(key) + '\t'
+                    + QString::fromLatin1(buffer, static_cast<int>(number.ptr - buffer)));
+            }
+            QGuiApplication::clipboard()->setText(lines.join('\n'));
+        });
+        m_view = ui::createParamTablePanel(m_model, writable ? this : nullptr, {}, this);
+        if (!writable) {
+            // 只读仍允许复制、筛选和切换显示单位；公共件缺出口已禁用应用，
+            // 再关闭输入/粘贴，避免只读会话出现看似可修改的暂存值。
+            m_view->findChild<QTableWidget*>("ird_param_table")->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            m_view->findChild<QPushButton*>("ird_param_paste")->setEnabled(false);
+        }
         layout->addWidget(m_view);
         m_view->hide();
         connect(toggle, &QPushButton::toggled, m_view, &QWidget::setVisible);
+        connect(toggle, &QPushButton::toggled, pasteHelp, &QWidget::setVisible);
     }
     /** @brief 显式先释放保存模型/出口裸引用的公共视图，再析构成员，避免悬垂引用。 */
     ~RequirementParameterTable() override { delete m_view; }
@@ -1339,9 +1383,9 @@ QWidget* RequirementsPanelWidget::makeBatchParameterTable(const RequirementEdit&
                             showStatusLine(QString::fromUtf8(error.what()));
                         }
                     }, Qt::QueuedConnection);
-                }, this);
+                }, m_writable, this);
             table->setObjectName(name);
-            table->setEnabled(m_writable && expected && !m_sessionDetached);
+            table->setEnabled(expected && !m_sessionDetached);
             return table;
         } else {
             throw std::logic_error("需求参数表仅接受工位、区域或工况条目");

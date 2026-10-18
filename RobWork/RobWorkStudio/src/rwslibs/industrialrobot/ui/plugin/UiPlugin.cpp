@@ -28,6 +28,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QClipboard> // 正式需求tour验证复制模板的真实系统剪贴板结果。
 #include <QDateTime>                            // 快照创建时刻呈现格式化（UI-T59 来源头行）
 #include <QDir>
 #include <QDialog>
@@ -6396,6 +6397,28 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             Q_EMIT tolSpin->editingFinished();  // 与失焦同源的提交信号
             settleEvents(300);
             ok(true, "step3 tolerance-edited");
+        }
+
+        // WP-14-T12/UX-05：正式面板展开并复制可回贴模板，不能只在测试中
+        // 预知字段键；可见性和剪贴板均观测真实控件，不绕过生产回调。
+        auto* parameterTable = panel->findChild<QWidget*>("ird_req_batch_station");
+        auto* tableToggle = parameterTable ? parameterTable->findChild<QPushButton*>("ird_req_batch_toggle") : nullptr;
+        auto* copyTsv = parameterTable ? parameterTable->findChild<QPushButton*>("ird_req_copy_tsv") : nullptr;
+        ok(tableToggle && copyTsv, "step3 TSV-template-entry-present");
+        if (tableToggle && copyTsv) {
+            const auto beforeCopy = m_requirementsEditor.workingSet();
+            tableToggle->setChecked(true); settleEvents(100);
+            for (QWidget* parent = copyTsv->parentWidget(); parent; parent = parent->parentWidget()) {
+                if (auto* scroll = qobject_cast<QScrollArea*>(parent)) { scroll->ensureWidgetVisible(copyTsv); }
+            }
+            settleEvents(100);
+            ok(!copyTsv->visibleRegion().isEmpty(), "step3 TSV-copy-button-reachable");
+            copyTsv->click(); settleEvents(100);
+            ok(QApplication::clipboard()->text().contains("tolerance-position\t0.5"),
+               "step3 TSV-real-clipboard-key-and-current-value");
+            ok(m_requirementsEditor.workingSet() == beforeCopy, "step3 TSV-copy-zero-write");
+            snapPng(hostWin, "tour-2b-tsv-template.png");
+            tableToggle->setChecked(false);
         }
 
         // ---- 拍 4：动作阶段＋姿态规则-----------------------------------
