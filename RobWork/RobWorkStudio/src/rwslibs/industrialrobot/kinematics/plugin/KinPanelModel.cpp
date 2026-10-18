@@ -8,12 +8,12 @@
 
 #include "KinPanelModel.hpp"
 
+#include <array>
 #include <cmath>
 #include <stdexcept>
 #include <utility>
 
-#include <rw/math/RPY.hpp>  // RPY（★ KIN-R2 任务4——完整姿态呈现的库设施直调；RobWork 权威欧拉角实现，零自写三角分解）
-
+#include "KinPanelRotation.hpp"  // rpyFromRotationSi（F-919：与 rw::math::RPY(R) 同式复现，独立冒烟可链接）
 #include "KinPanelUnits.hpp"  // formatKinQuantityText（显示投影唯一出口）
 
 namespace sdurws {
@@ -84,16 +84,14 @@ std::vector<KinNamedValueRow> poseMetricRows(
     // ---- 2. 完整姿态呈现（★ KIN-R2 任务4/审查 §4——修复前仅旋转矩阵
     //      三个对角元，不能完整表达三维姿态）：
     //      2a. RPY 三行（rad——角度量纲投影；换算经 rw::math::RPY 库
-    //          设施（RobWork 权威欧拉角实现），本层零自写三角分解——
-    //          旧决策"RPY 分解不落插件"随审查 §4 完整姿态要求修订为
-    //          "库设施直调、零自写三角"（呈现投影，不入任何计算身份，
-    //          随卡 §14.6 增量修订登记）。worldTref→基座系的 RPY 语义
-    //          即"基座系中看 TCP 姿态"。
+    //          设施（F-919 后改为 KinPanelRotation 的同式复现——RPY.cpp 的
+    //          闭式解＋epsilon 万向锁分支原样移植，集成侧等价钉逐元对照；
+    //          旧『库设施直调』表述随 F-919 设计偏离登记改述）。worldTref→
+    //          基座系的 RPY 语义即"基座系中看 TCP 姿态"。
     //      2b. 旋转矩阵 9 元逐行只读（无量纲，∈[-1,1]——正交阵契约；
-    //          域外无穷收紧同 F-902）。RPY 在万向锁邻域的库侧 epsilon
-    //          特判不改变矩阵元的直投真值——矩阵行是姿态的第一性呈现，
-    //          RPY 行是工程可读投影，两者互补不互替。
-    const rw::math::RPY<double> rpy(metrics.tcpInBase.R());
+    //          域外无穷收紧同 F-902）。万向锁邻域的 epsilon 特判不改变矩阵元
+    //          的直投真值——矩阵行是姿态的第一性呈现，RPY 行是工程可读投影。
+    const std::array<double, 3> rpy = rpyFromRotationSi(metrics.tcpInBase.R());
     rows.push_back(makeRow("tcp-rpy-roll", "姿态 RPY-Roll（基座系）",
                            rpy[0], "rad", displayUnits));
     rows.push_back(makeRow("tcp-rpy-pitch", "姿态 RPY-Pitch（基座系）",

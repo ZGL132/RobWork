@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T10:36:36+08:00",
+  "generatedAt": "2026-10-18T10:47:02+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6610,
-    "totalBytes": 207879982,
+    "totalFiles": 6618,
+    "totalBytes": 208605297,
     "byKind": {
-      "benchmark": 8,
-      "build-log": 5671,
-      "gtest-report": 335,
-      "log": 1,
-      "json-data": 7,
-      "governance-record": 30,
       "manual-acceptance": 1,
+      "build-log": 5679,
       "pipeline-artifact": 2,
+      "governance-record": 30,
+      "log": 1,
+      "acceptance-record": 514,
       "markdown-doc": 41,
-      "acceptance-record": 514
+      "benchmark": 8,
+      "json-data": 7,
+      "gtest-report": 335
     },
     "byLifecycle": {
-      "superseded": 0,
-      "unverified": 6018,
+      "unverified": 6026,
+      "historical": 522,
       "current": 70,
-      "historical": 522
+      "superseded": 0
     },
     "associated": 595,
-    "unassociated": 6015,
-    "shaComputed": 6592,
+    "unassociated": 6023,
+    "shaComputed": 6600,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -47589,11 +47589,75 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp15-t19/integrate-run-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18446,
+      "sha256": "417a00618e1b0c8b2d3e8d5ddf3f38dc8719e379c9f2fb1e06a2576c01e04066",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp15-t19/ird-test-report-integration.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 221488,
+      "sha256": "ab614272678717db2ddb53d79659ea719f0ddde772a838cdcc8d0fddc99e468b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp15-t19/ird-test-report-smoke.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 215688,
+      "sha256": "08843b43d9b6379c84cc71fa59c4053fa38670bd8a92e9fc39777e5c9fbdf2f1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp15-t19/kinematics_test-integration.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 44645,
+      "sha256": "074d5e65c95e4cd21364580f5b1f736cf109508cf2b5aad57e75d967dabcf13c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp15-t19/kinematics_test-integration.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 89198,
+      "sha256": "ddf261f126a537c855f0bd4c48df37f43075e28fb205a2f5011c230aed2f7790",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp15-t19/kinematics_test-smoke.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 43298,
+      "sha256": "663f48ef61337944b6ab6fc1827c678cfe9effa056aad1fe84ebb115353dc759",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp15-t19/kinematics_test-smoke.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 86632,
+      "sha256": "cc60612a3bbe3a2237e2fecce3c2a03628a57a3b6ef78be03d93ff977f69fc0d",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp15-t19/smoke-link-probe-20261018.log",
       "kind": "build-log",
       "taskIds": [],
       "bytes": 1068,
       "sha256": "5a63229ebc0884b526533eb05fbd459aaa646ec7cd4b0dec8a2a07eb326eca91",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp15-t19/smoke-run-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4924,
+      "sha256": "3a13a626842b6bb62153eb1a2ba84e809c00b70c83e7a5efe5bb09f0b37e4d0c",
       "lifecycle": "unverified"
     },
     {
@@ -51624,7 +51688,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1158487,
+      "bytes": 1159483,
       "sha256": null,
       "lifecycle": "unverified"
     },

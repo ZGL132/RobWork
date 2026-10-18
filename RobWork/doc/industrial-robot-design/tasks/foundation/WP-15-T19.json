@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "修复独立冒烟树运动学链接缺陷（F-919：显式链接 sdurw_math）",
-  "status": "blocked",
+  "status": "ready",
   "dependsOn": [],
   "requirements": ["NFR-MNT-05", "ARC-02"],
   "designRefs": [
@@ -14,6 +14,14 @@
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelFlows.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelFlows.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelRotation.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelRotation.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelModel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinP4FlowsTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/KinematicsPanelInputGuiTest.cpp",
     "RobWork/doc/industrial-robot-design/tasks/foundation/WP-15-T19.json",
     "RobWork/doc/industrial-robot-design/units/kinematics.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
@@ -42,11 +50,11 @@
   "branch": "wp15-t19",
   "interUnit": false,
   "acceptance": [
-    "独立冒烟树全新配置（必带 vcpkg toolchain＋Qt 前缀两参数）后构建 sdurws_ird_kinematics_plugin / sdurws_ird_kinematics_test / sdurws_ird_kinematics_gui_test 三目标零错误——F-919 原形态为插件 .obj 引用 rw::math::RPY<double>::toRotation3D 而链接面无 sdurw_math，独立树 LNK2019×2/LNK1120；修复后该链接错误零命中",
-    "集成模式构建同一三目标零错误（既有 build/ 树，缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 先确认）——证明显式链接不破坏集成模式既有传递供给",
-    "kinematics 单元测试套件通过并留痕（gtest XML＋ird-test-report 双件，落 traceability/builds/wp15-t19/）；ird_gates 零新增命中（与修复前基线命中集归一 diff 一致）",
-    "CMake 改动注释说明依赖性质（PUBLIC：公共头暴露 rw::math 类型）与 F-919 根因（此前依赖他目标传递供给，独立树无供给）；不引入业务单元新边（sdurw_math 为框架基础库）",
-    "文档同步：units/kinematics.md §11 增 WP-15-T19 行＋版本行递增、DTB §2.16 增行＋版本行递增、findings F-919 翻 fixed（resolution 记修复与独立树验证证据）"
+    "独立冒烟树全新配置（vcpkg toolchain＋Qt 前缀两参数在位）后构建 sdurws_ird_kinematics_plugin / sdurws_ird_kinematics_test / sdurws_ird_kinematics_gui_test 三目标零错误——插件不再引用任何 rw::math 非内联符号（RPY::toRotation3D 与 RPY(const Rotation3D&) 两处分别由 KinPanelRotation 正向/反向实现替代），原 LNK2019/LNK1120 形态消除",
+    "集成模式构建同一三目标零错误；sdurws_ird_kinematics_test 全绿，且新增等价钉 RotationFromRpySi_MatchesRwMath_KIN_F919 在集成模式真实执行（IRD_HAVE_SDURW_MATH 注入；独立冒烟树该用例编译为空，不带回链接依赖）",
+    "等价钉强度：五组角度（零位/三轴单项/混合角）逐元 1e-12 对照 rw::math::RPY；Z-Y-X 顺序或符号写反必红（验收可做变异抽验）；证明 Eigen 轴角组合与 rw 库语义等价",
+    "设计偏离登记：KIN-R2 v0.28『rw 库设施直调零自写三角』表述更新为『Eigen 头文件轴角组合（Rz·Ry·Rx，与 rw::math::RPY 同序）＋集成等价钉』——插件仍零自写三角，Eigen 仅头文件依赖（不新增交付链接面）",
+    "测试双件留痕（gtest XML＋ird-test-report）落 traceability/builds/wp15-t19/；ird_gates 零新增命中；validate-docs PASS；文档同步（units/kinematics.md v0.32 §11 行、DTB v0.91 §2.16 行、findings F-919 翻 fixed 并记证据）"
   ],
-  "note": "F-919 修复卡（2026-10-18 所有者指令「按照建议进行下一批」）。编号说明：WP-15-T17 为 R2 扩展显示单位预留位（kinematics.md v0.19「T17 不在授权范围维持预留」），T18 已用于宿主迁移，故缺陷修复卡取 T19。需求映射诚实说明：F-919 是构建链接缺陷，REQUIREMENTS 无专门条目，按 NFR-MNT-05（依赖/目标卫生）与 ARC-02（插件边界目标可构建）承接——属验收基础设施修复，不改变需求语义。立卡先于编码；本卡 allowedFiles 含契约自身与 DTB/单元卡（立卡批触及）。〔blocked 2026-10-18，方案待所有者裁决〕实施勘察证伪了 F-919 owner 行建议的『插件目标显式链接 sdurw_math』：独立冒烟模式（industrialrobot 顶层 CMakeLists 判定 CMAKE_CURRENT_SOURCE_DIR==CMAKE_SOURCE_DIR）下不存在任何框架目标/库（core 亦仅 if(TARGET sdurw_math) 条件链接），显式写 sdurw_math 后冒烟链接实测 LNK1181『无法打开输入文件 sdurw_math.lib』；根因是 rw::math::RPY::toRotation3D 为非内联符号（定义在 RPY.cpp），而独立冒烟树无框架库可供。三条候选出路待裁决：A）把 readTargetPoseFromEditors 的 RPY→Rotation3D 改为 Eigen 头文件轴角组合（Rz(roll)·Ry(pitch)·Rx(yaw)，与 RPY.cpp 矩阵同序；用库设施而非自写三角），并在集成侧加与 rw::math::RPY 的等价钉——代价：变动 KIN-R2 v0.28『rw 库设施直调零自写三角』的设计表述、插件引入 Eigen 头依赖；B）扩展独立冒烟模式定义（为冒烟树提供 RobWork 库，如 gate-all 增框架构建/安装步骤）——代价：改动构建约定与 gate-all/CI 口径，波及全单元；C）将 kinematics plugin/gui_test 从独立冒烟面排除并如实降级 F-919——代价：冒烟覆盖面缩水、F-919 不真正修复。推荐 A（影响面最小且保持两模式可构建），但涉及设计表述与依赖面变化，按 DTB §4 语义裁决纪律停手等所有者，不自行改代码。"
+  "note": "F-919 修复卡（2026-10-18 所有者指令「按照建议进行下一批」；同日所有者裁决路线 A）。编号说明：T17 为 R2 扩展显示单位预留位（kinematics.md v0.19 明文）、T18 已用于宿主迁移，故取 T19。需求映射诚实说明：构建链接缺陷无专门需求条目，按 NFR-MNT-05（依赖/目标卫生）与 ARC-02（插件边界目标可构建）承接，不改变需求语义。方案勘察：owner 行建议的『显式链接 sdurw_math』经实测证伪——独立冒烟模式不构建任何框架目标/库（core 亦仅 if(TARGET sdurw_math) 条件链接），显式写库名后链接期 LNK1181『无法打开输入文件 sdurw_math.lib』（证据 traceability/builds/wp15-t19/smoke-link-probe-20261018.log）；根因是 RPY::toRotation3D 为非内联符号（定义在 RPY.cpp）。所有者裁决路线 A：插件经 KinPanelFlows::rotationFromRpySi 以 Eigen 头文件轴角组合复现同一 Z-Y-X 矩阵（Rz(roll)·Ry(pitch)·Rx(yaw)，库设施而非自写三角）；集成侧 KinP4FlowsTest 以 IRD_HAVE_SDURW_MATH 门控逐元对照 rw::math::RPY（1e-12，五组角度），独立冒烟树不注入该定义、该用例编译为空，不把非内联符号带回测试链接。设计偏离按 DTB §5.4 登记：KIN-R2 v0.28『rw 库设施直调零自写三角』表述改述为『Eigen 头文件轴角组合＋集成等价钉』；插件仍零自写三角，Eigen 仅头文件依赖（不新增交付链接面）。"
 }

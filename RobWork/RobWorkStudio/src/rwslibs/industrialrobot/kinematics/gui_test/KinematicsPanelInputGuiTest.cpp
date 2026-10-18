@@ -43,10 +43,10 @@
 #include <vector>
 
 #include <rw/math/Constants.hpp>  // rw::math::Pi/Deg2Rad（期望角换算——库权威常量）
-#include <rw/math/RPY.hpp>  // RPY（★ KIN-R2 任务4——期望旋转的库设施构造）
 #include <sdurws/ird/kinematics/Ik.hpp>  // IIkSolver/IkRequest（记录求解器）
 #include "KinFkFixture.hpp"              // TestView/sixAxisModel（同单元夹具）
 #include "plugin/KinematicsPanelWidget.hpp"  // 被测面板（真实 QWidget）
+#include "plugin/KinPanelRotation.hpp"       // F-919：期望旋转构建（独立冒烟可链接，等价钉见 KinP4FlowsTest）
 #include "plugin/KinPanelTypes.hpp"          // KinPanelServices/会话态
 
 // ---- 使用声明（与被测代码同一命名空间——用例可读性）--------------------
@@ -480,12 +480,14 @@ TEST(KinematicsPanelInput, SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2)
 // =====================================================================
 // KIN-R2 任务4——目标姿态 RPY 编辑（审查 §4"目标只编辑 XYZ、姿态固定
 // 为单位旋转"的修复面）：姿态角按显示制式输入、提交逆换算回 SI rad
-// 后经 rw::math::RPY 构造完整旋转（求解器收到完整位姿目标）。
+// 后经 KinPanelRotation::rotationFromRpySi 构造完整旋转（求解器收到完整
+// 位姿目标）。F-919：不再直接引用 rw::math::RPY 的非内联符号，保证独立
+// 冒烟树可链接；与 rw::math::RPY 的语义等价由 KinP4FlowsTest 门控用例钉住。
 // =====================================================================
 
 /// RPY 往返钉扎：deg 制式输入 roll=30/pitch=0/yaw=90，提交给求解器的
-/// targetInBase 旋转必须等于 RPY(π/6, 0, π/2)（rw::math::RPY 库语义
-/// ——Z-Y-X 欧角）。修复前姿态恒单位旋转（无编辑入口——审查 §4 已知
+/// targetInBase 旋转必须等于 RPY(π/6, 0, π/2)（Z-Y-X 欧角语义；等价性见
+/// KinP4FlowsTest）。修复前姿态恒单位旋转（无编辑入口——审查 §4 已知
 /// 边界，本用例修复前红）。
 TEST(KinematicsPanelInput, TargetSubmit_RpyAttitudeRoundtrip_KIN_R2)
 {
@@ -508,12 +510,12 @@ TEST(KinematicsPanelInput, TargetSubmit_RpyAttitudeRoundtrip_KIN_R2)
     h.clickSolve();
 
     ASSERT_TRUE(h.solver.received.has_value());
-    // 期望旋转：显示制式 deg → SI rad 逆换算后经 rw::math::RPY 构造
-    // （与 widget 同一库设施——期望值即库权威语义，零手写三角）。
+    // 期望旋转：显示制式 deg → SI rad 逆换算后经 KinPanelRotation 构造
+    // （与 widget 同一转换单点；其与 rw::math::RPY 的逐元等价由 KinP4FlowsTest
+    // 门控用例钉住——测试面同样不引用框架非内联符号）。
     const double r = 30.0 * (rw::math::Pi / 180.0);   // rad
     const double y = 90.0 * (rw::math::Pi / 180.0);   // rad
-    const rw::math::Rotation3D<double> expect =
-        rw::math::RPY<double>(r, 0.0, y).toRotation3D();
+    const rw::math::Rotation3D<double> expect = rotationFromRpySi(r, 0.0, y);
     const rw::math::Rotation3D<double>& got =
         h.solver.received->targetInBase.R();
     for (int i = 0; i < 3; ++i) {
