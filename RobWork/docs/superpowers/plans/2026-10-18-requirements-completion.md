@@ -206,3 +206,14 @@
 第十四批实测增量：正式命令失败为RT-INPUT-INVALID，reader解引用新sceneRefs时取得空token。根因在HostProjectClosureView覆盖层只存(oid,bytes)，且按首条载荷猜根。精确扩展契约允许ui/plugin/HostCompilePort.cpp和.hpp（均私有装配文件），改为借用本次CompileRequest原有plannedWrites完整对象槽，按token选根、按OID返回类型+字节；无公共头/跨域边变化，不需公共接口设计门。指针仅同步编译调用期有效，UI原串行约束不变；未知OID仍回落查询，失败仍透传，摘要和身份算法不变。增加真实十段链新场景/工具及仅部件更新回归，保留原正式宿主红证据。
 
 第十四批资源前置增量八节：①场景几何是runtime必填，合法夹具需要真实几何资源；现有HostModelCompilePort没有注入既有CompileRequest.resources，所有带资源模型会失败，补现有端口装配。②仅在已放行HostCompilePort.cpp新增私有适配器，复用ui已登记/链接的io与runtime边及公开IRuntimeResourceAdapter/IRuntimeResourceProvider，不新增公共签名或依赖边。③SafePath、预算、Recorded重读/摘要检查全交io；宿主仅透传Missing/Changed/Budget，不自制文件读取真值或忽略资源。④同步编译栈持提供者，io持返回缓冲至析构；Solidified字节来自同一闭包，Recorded记录来自同一根对象。⑤UI线程同步调用，源只读，io处理缓冲线程安全；不跨编译持裸指针。⑥真实临时几何文件+Recorded摘要、Solidified闭包、新场景与仅部件更新，缺失/变化失败、原快照不替换；正式宿主创建/拾取继续，不以标记盒证明mesh保真。⑦单元卡/契约/证据同步；声明资源ID只取同次reader输出，按根清单序与Description资源表对应并核对数量/摘要/状态，不复制modeling私有派生算法。⑧无新增长期决策，继续既有io资源桥装配；不绕过其安全读取，也不更改runtime编译语义。
+
+### 第十五批工位固定/参考系姿态消费修复设计（既有私有宿主投影）
+
+1. 行为：REQ-01/09既有Fixed规则在批量运动学请求中使用R_base_ref·Rz(yaw)·Ry(pitch)·Rx(roll)，不丢掉fixedRpy；AlignFrame使用既有参考系解析缝取得目标参考系在基座系的旋转，与工位位置参考系分开解析。目标不可解析则拒绝受理并回指工位名，不默认为单位阵。
+2. 接口：仅精确增加ui/plugin/KinEvaluationChannel.cpp到契约允许面，复用已有resolveFrame和BatchTaskPoint.targetInBase；不改公共头、端口、依赖边或领域规则解析所有权。其他三规则与受约束分量尚需真实消费者能力，不据此宣称已支持。
+3. 失败：AlignFrame引用缺失/悬空复用现有解析失败信息，带工位名；Fixed非有限参数不送后台求解，定位拒绝。其余既有行为不在本批扩大或假定完成。
+4. 生命周期：仅受理UI线程上构造的值旋转，随既有BatchQuery按值捕获；解析缝不在后台调用，快照/纪元隔离不变。
+5. 线程：仍UI线程切片→后台真实求解→UI回投；不增加共享可变状态。
+6. 测试：先实际运行混合非零RPY/非恒等基座和参考系的数值回归、AlignFrame目标与位置参考系不同及悬空拒绝；使用解析混合旋转常量作为真实TCP安装姿态，零关节构型提供独立数值对照；完整真实IkSolver不打替身。双模式完整构建与既有全回归，正式宿主回归。
+7. 文档/确定性：原计划、单元卡、任务契约和新批证据同步；SI rad，固定Z-Y-X应用序，原字面/身份/摘要不改；不修改REQUIREMENTS/ARCHITECTURE。新增测试明示只是完整位姿固定/对齐规则消费，不能覆盖任意部分约束与滚转自由。
+8. 决策：无新长期架构决策。选择修正现有宿主装配，不在requirements复制运动学算法，也不将全部规则强行用单位姿态代替。

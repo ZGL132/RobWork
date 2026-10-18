@@ -85,6 +85,20 @@ public:
         , m_tWorldBase(tWorldBase)
     {
     }
+    /**
+     * @brief 为姿态消费回归设置真实工具安装旋转，关节链仍为解析二连杆。
+     * @param tWorldBase [in] 基座在世界系的位姿（m、正交旋转）。
+     * @param tcpRotation [in] 法兰到TCP的旋转（无量纲）；TCP平移仍为0.7 m。
+     * 测试持有模型值，后台仅只读；builder非法输入抛出，不能伪造求解结果。
+     */
+    FixtureView(rw::math::Transform3D<double> tWorldBase,
+                rw::math::Rotation3D<double> tcpRotation)
+        : m_model(makeModel(twoLinkModel().chain().joints,
+                            rw::math::Transform3D<double>(
+                                rw::math::Vector3D<double>(0.7, 0, 0), tcpRotation)))
+        , m_tWorldBase(tWorldBase)
+    {
+    }
     const runtime::CanonicalModel& model() const override { return m_model; }
     rw::math::Transform3D<double> worldToBase() const override
     {
@@ -1083,6 +1097,105 @@ TEST(KinEvaluationChannel, BatchChannel_RealComputationAndOutcomes_KIN_P4)
     // 完成通知（kind 对齐）。
     ASSERT_EQ(h.notes.size(), 1U);
     EXPECT_EQ(h.notes[0].kind, KinChannelBackgroundKind::TaskPointsBatch);
+}
+
+/**
+ * @brief REQ-09/AT-23：混合非零RPY必须经参考系和基座合成后进入真实IK。
+ * 零关节时TCP姿态是解析常量；只传参考系姿态将没有满足完整位姿的解。
+ */
+TEST(KinEvaluationChannel, BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "REQ-09"},
+                  std::vector<std::string>{"AT-23"});
+    constexpr double pi = 3.14159265358979323846;
+    const double h = std::sqrt(3.0) / 2.0;
+    // 独立解析常量：Rz(π/6)·Ry(π/6)·Rx(π/2)，与产品RPY构造无关。
+    const rw::math::Rotation3D<double> tcpR(
+        0.75, h / 2, 0.5, h / 2, 0.25, -h, -0.5, h, 0);
+    const rw::math::Transform3D<double> worldBase(
+        rw::math::Vector3D<double>(1, 2, 3), rotZ(pi / 2));
+    const rw::math::Transform3D<double> baseRef(
+        rw::math::Vector3D<double>(0.2, 0.3, 0.4), rotZ(pi / 2));
+    const auto frameId = idFrom<core::ObjectId>("req09-position-frame");
+    auto ws = makeWorksetWithTaskPoint();
+    auto& point = ws.points.entries.front();
+    point.refFrame.kind = req::RequirementRefKind::ModelFrame;
+    point.refFrame.objectId = frameId;
+    point.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        // 比全展边界内移1 μm（远小于1 mm位置容差），避免多次世界变换的
+        // 浮点舍入恰好越过解析半径上界；本用例集中验证姿态，而非边界证明。
+        rw::math::Vector3D<double>(-0.3, -1.6 + 1e-6, -0.4),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    point.pose.constrainedDof = {true, true, true, true, true, true};
+    point.pose.orientation.fixedRpy = {pi / 2, pi / 6, -pi / 3};
+    ScriptedEditor editor(ws);
+    ExecutorHarness harn;
+    harn.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor, [=](const core::ObjectId& id)
+            -> std::optional<rw::math::Transform3D<double>> {
+            return id == frameId ? std::optional<rw::math::Transform3D<double>>(
+                worldBase * baseRef) : std::nullopt;
+        }, QCoreApplication::instance(),
+        [&harn](const KinChannelBackgroundResultNote& note) { harn.notes.push_back(note); }});
+    harn.executor->attachView(std::make_shared<FixtureView>(worldBase, tcpR), harn.boundId);
+    auto config = makeLegalConfig();
+    config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    harn.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request;
+    request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = harn.boundId;
+    request.epoch = harn.executor->epoch();
+    const auto ack = harn.executor->submit(request);
+    ASSERT_TRUE(ack.accepted) << ack.reason;
+    harn.drain();
+    const auto results = harn.executor->latestBatchOutcomes();
+    ASSERT_EQ(results.size(), 1U);
+    EXPECT_EQ(results.begin()->second.outcomeState, "completed")
+        << "非零混合RPY与旋转参考系应还原零位TCP，而非使用参考系旋转";
+}
+
+/** @brief REQ-09/AT-23：对齐目标与位置参考系必须分别解析，悬空目标禁止受理。 */
+TEST(KinEvaluationChannel, BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-09"}, std::vector<std::string>{"AT-23"});
+    const auto targetId = idFrom<core::ObjectId>("req09-align-frame");
+    auto ws = makeWorksetWithTaskPoint();
+    ws.points.entries.front().pose.orientation.kind = req::OrientationRuleKind::AlignFrame;
+    ws.points.entries.front().pose.orientation.targetFrame.kind = req::RequirementRefKind::ModelFrame;
+    ws.points.entries.front().pose.orientation.targetFrame.objectId = targetId;
+    ws.points.entries.front().pose.constrainedDof = {true, true, true, true, true, true};
+    ScriptedEditor editor(ws);
+    ExecutorHarness harn;
+    bool available = true;
+    const auto tcpR = rotZ(0.6);
+    harn.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor, [&](const core::ObjectId& id)
+            -> std::optional<rw::math::Transform3D<double>> {
+            return available && id == targetId
+                ? std::optional<rw::math::Transform3D<double>>(
+                    rw::math::Transform3D<double>(rw::math::Vector3D<double>(3, 4, 5), tcpR))
+                : std::nullopt;
+        }, QCoreApplication::instance(),
+        [&harn](const KinChannelBackgroundResultNote& note) { harn.notes.push_back(note); }});
+    harn.executor->attachView(std::make_shared<FixtureView>(trans(0, 0, 0), tcpR), harn.boundId);
+    auto config = makeLegalConfig();
+    config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    harn.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request;
+    request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = harn.boundId;
+    request.epoch = harn.executor->epoch();
+    const auto ack = harn.executor->submit(request);
+    ASSERT_TRUE(ack.accepted) << ack.reason;
+    harn.drain();
+    const auto results = harn.executor->latestBatchOutcomes();
+    ASSERT_EQ(results.size(), 1U);
+    EXPECT_EQ(results.begin()->second.outcomeState, "completed");
+    available = false;
+    const auto rejected = harn.executor->submit(request);
+    EXPECT_FALSE(rejected.accepted) << "悬空对齐引用不得降级为单位姿态继续求解";
+    EXPECT_NE(rejected.reason.find(ws.points.entries.front().name), std::string::npos);
+    EXPECT_TRUE(rejected.taskRef.empty());
 }
 
 }  // namespace

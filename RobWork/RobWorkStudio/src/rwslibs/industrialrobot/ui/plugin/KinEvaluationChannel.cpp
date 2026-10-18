@@ -16,6 +16,7 @@
 #include <utility>
 
 #include <QMetaObject>
+#include <rw/math/RPY.hpp>  // 构造参数顺序为yaw/pitch/roll，区别于需求字段顺序
 
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // analysisConfigurationDigest（受理对齐键）
 #include <sdurws/ird/kinematics/Evaluators.hpp>      // runRegionCoverageComputation/RegionCoverageQuery
@@ -972,18 +973,16 @@ KinEvaluationExecutor::BatchSlice KinEvaluationExecutor::sliceBatch() const
                               : kinematics::BatchRequirementLevel::Should;
         projected.enabled = point.enabled;
         // ---- 点参考系解析（★ KIN-P4：与区域计划共用 projectRefFrameToBase
-        // 单点——World 恒等/ModelFrame 解析缝；旋转参考系按盒可表示性
-        // 同规则拒绝——任务点目标位姿同样受 R1 支持面约束，reason 如实）。
+        // 单点——World 恒等/ModelFrame 解析缝；任务点为完整位姿，
+        // 不受区域轴对齐盒的可表示性限制，旋转直接参与位姿链）。
         rw::math::Transform3D<double> baseTref;
         if (!projectRefFrameToBase(point.refFrame, baseTref, slice.errorText)) {
             return slice;
         }
         // ---- 目标位姿（refFrame 系 → 基座系 {B}：位置＝T_base_ref·p；
-        // 姿态＝R_base_ref·R_ref——point.pose.position 在 refFrame 系
-        // （RequirementTypes.hpp 字段注），任务点无独立姿态规则值时
-        // OrientationRule 缺省恒等旋转（五规则的位置存在性语义务经域
-        // 评估器解释——本投影直投约束位置与参考系旋转目标，与面板单点
-        // 求解的目标形态一致）。未提供位置（SourcedValue 四态——MDL-06
+        // point.pose.position 在 refFrame 系（RequirementTypes.hpp 字段注）。
+        // 位置与姿态的参考目标必须分开：AlignFrame的目标只决定旋转，
+        // 不能拿目标Frame的原点覆盖任务点位置。未提供位置（MDL-06
         // 缺失不转零）＝点数据不足，如实拒绝该点投影（ERR-01）。
         const std::optional<rw::math::Vector3D<double>> pointPosition =
             point.pose.position.tryValue();
@@ -994,9 +993,30 @@ KinEvaluationExecutor::BatchSlice KinEvaluationExecutor::sliceBatch() const
         }
         projected.targetInBase.P() =
             baseTref.P() + baseTref.R() * *pointPosition;
-        // 姿态：R_base_ref·R_ref_orientation（当前批仅位置存在性语义——
-        // 目标姿态取参考系旋转；域评估器按 orientationTolerance 判收敛）。
+        // REQ-09：固定姿态字面按roll/pitch/yaw（rad）存储，应用序是
+        // Rz(yaw)·Ry(pitch)·Rx(roll)。RobWork的RPY构造参数却按Z/Y/X，
+        // 因此必须显式反序传入，再左乘参考系→基座系的旋转。
+        // 这里只修复既有完整位姿载体能表达的Fixed/AlignFrame；其余规则
+        // 的方向约束/滚转自由与分量掩码仍需消费者能力，不能据此宣称完整支持。
         projected.targetInBase.R() = baseTref.R();
+        const auto& rule = point.pose.orientation;
+        if (rule.kind == requirements::OrientationRuleKind::Fixed) {
+            const auto& rpy = rule.fixedRpy;
+            if (!std::isfinite(rpy[0]) || !std::isfinite(rpy[1]) || !std::isfinite(rpy[2])) {
+                slice.errorText = "任务点「" + point.name + "」固定姿态含非有限角（rad）";
+                return slice;
+            }
+            projected.targetInBase.R() = baseTref.R()
+                * rw::math::RPY<double>(rpy[2], rpy[1], rpy[0]).toRotation3D();
+        } else if (rule.kind == requirements::OrientationRuleKind::AlignFrame) {
+            rw::math::Transform3D<double> baseTtarget;
+            if (!projectRefFrameToBase(rule.targetFrame, baseTtarget, slice.errorText)) {
+                // 目标悬空是输入错误；拒绝整个受理，既有结果账面不被替换。
+                slice.errorText = "任务点「" + point.name + "」对齐目标：" + slice.errorText;
+                return slice;
+            }
+            projected.targetInBase.R() = baseTtarget.R();
+        }
         // ---- 容差/要求值直投（I-REQ-5 >0 有限——域校验链保证）。
         projected.positionTolerance = point.tolerance.positionTolerance;    // m
         projected.orientationTolerance = point.tolerance.orientationTolerance; // rad

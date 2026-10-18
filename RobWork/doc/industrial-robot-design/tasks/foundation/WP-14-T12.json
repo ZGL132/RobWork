@@ -20,6 +20,7 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/FormEditCommon.cpp",
