@@ -7708,10 +7708,12 @@
       "id": "F-764",
       "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-665→F-764，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：EditorTest.cpp:512 F-585 钉『非末位删除』依赖随机 ObjectId（≈50% 触发），红灯能力非逐次确定",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：EditorTest F-585 钉改确定性构造（指定非末位目标）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：EditorTest F-585 钉改确定性构造（指定非末位目标）。",
+      "resolution": "F-764 消账（2026-10-18）：EditorTest.RemoveNonLastEntrySummaryUsesDeletedName_F585 改为删除排序后首个条目（两元素集合中必为非末位），断言摘要含被删名且不含后继名——回归钉从约 50% 概率触发变为每次必触发；requirements_test 214 通过＋1 登记 skip。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-765",

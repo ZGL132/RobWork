@@ -525,20 +525,24 @@ TEST(ReqEditor, RemoveNonLastEntrySummaryUsesDeletedName_F585)
     ASSERT_TRUE(e2.accepted);
     ASSERT_EQ(editor.workingSet().points.entries.size(), 2U);
 
-    // 取 P-ALPHA 的 id（按 objectId 排序后它可能非末位——删除非末位条目
-    // 才触发"后继左移覆盖 target 槽位"的悬垂面）。
-    core::ObjectId alphaId;
-    for (const auto& p : editor.workingSet().points.entries) {
-        if (p.name == "P-ALPHA") { alphaId = p.objectId; }
-    }
-    ASSERT_TRUE(alphaId.isValid());
+    // F-764：不赌随机 oid 排序——取排序后**首个**条目作为删除目标，它在
+    // 两元素集合中必然是非末位（原实现取 P-ALPHA，其是否末位取决于随机
+    // ObjectId，约 50% 概率根本不触发悬垂面）。
+    const auto& entries = editor.workingSet().points.entries;
+    ASSERT_GE(entries.size(), 2U);
+    const core::ObjectId targetId = entries[0].objectId;
+    const std::string targetName = entries[0].name;
+    const std::string otherName = entries[1].name;
+    ASSERT_NE(targetName, otherName);
 
-    auto rm = editor.applyEdit(removeEdit(alphaId, WorkingSetMember::Points));
+    auto rm = editor.applyEdit(removeEdit(targetId, WorkingSetMember::Points));
     ASSERT_TRUE(rm.accepted) << rm.error.detail;
-    // 摘要必须引用被删条目自己的名字（修复前非末位删除读到的是后继名
-    // "P-BETA"——张冠李戴；本断言即回归钉）。
-    EXPECT_NE(rm.changeSummary.find("P-ALPHA"), std::string::npos)
+    // 摘要必须引用被删条目自己的名字（修复前非末位删除读到的是后继名——
+    // 张冠李戴；本断言即回归钉，且目标恒为非末位）。
+    EXPECT_NE(rm.changeSummary.find(targetName), std::string::npos)
         << "删除摘要应引用被删条目名（实际：" << rm.changeSummary << "）";
+    EXPECT_EQ(rm.changeSummary.find(otherName), std::string::npos)
+        << "删除摘要不得引用后继条目名（实际：" << rm.changeSummary << "）";
     EXPECT_EQ(editor.workingSet().points.entries.size(), 1U);
-    EXPECT_EQ(editor.workingSet().points.entries[0].name, "P-BETA");
+    EXPECT_EQ(editor.workingSet().points.entries[0].name, otherName);
 }
