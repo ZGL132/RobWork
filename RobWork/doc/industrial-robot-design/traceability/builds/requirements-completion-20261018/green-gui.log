@@ -1,0 +1,13 @@
+Note: Google Test filter = *WP14T12*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12 (1063 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12 (42 ms)
+[----------] 2 tests from RequirementsSessionGuiTest (1105 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1105 ms total)
+[  PASSED  ] 2 tests.

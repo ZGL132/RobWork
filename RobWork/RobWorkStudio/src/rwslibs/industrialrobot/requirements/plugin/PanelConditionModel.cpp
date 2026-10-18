@@ -282,7 +282,12 @@ OperatingCondition applyConditionEnumEdit(const OperatingCondition& base,
     known.clear();
     // 枚举词表回填（UI-T37 返工②——等级/启用；词表外 fail-fast）。
     OperatingCondition out = base;
-    if (key == "level") {
+    if (key == "name") {
+        // REQ-04：名称由领域编辑器核查非空/唯一性，UI不将文本当作数量解析。
+        out.name = valueText;
+    } else if (key == "note") {
+        out.note = valueText;
+    } else if (key == "level") {
         const auto level = tryRequirementLevel(valueText);
         if (!level.has_value()) {
             throw std::invalid_argument("工况面板：等级词表外文本 " + valueText);

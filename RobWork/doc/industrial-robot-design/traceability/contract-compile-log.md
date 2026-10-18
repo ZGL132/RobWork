@@ -427,3 +427,12 @@
 | 2026-10-12 | PRJ-T18 v1.0 | tasks/foundation/PRJ-T18.json | 立卡 ready（同批授权，分支≙wp04-t18）→实施 e8e54523（PRJ-TX-11 GTEST_SKIP 转真实）→整批独立对抗验收 pass→done（WP-22-T07 前置缺口随之消账） | PASS | 编排会话（同上；验收记录 traceability/acceptance/platform-batch4-20261012.md）
 
 | 2026-10-12 | WP-24-T02 v1.0 | tasks/foundation/WP-24-T02.json | 立卡 ready（同批授权，分支≙wp24-t02）→实施 ab96f101→整批独立对抗验收 pass→done（验收观察项两项随批订正——verify 路径形态＋forbiddenFiles 笔误） | PASS | 编排会话（同上；验收记录 traceability/acceptance/platform-batch4-20261012.md）
+# WP-14-T12 编译补记（2026-10-18）
+
+来源：所有者要求基于需求模块 review 制定计划并实施，最终全部功能通过验证。
+契约：tasks/foundation/WP-14-T12.json；需求语义仍为 REQUIREMENTS §10/§18，
+设计八节与分步计划位于 RobWork/docs/superpowers/plans/2026-10-18-requirements-completion.md。
+本次放行范围为既有领域模型和既有跨域端口上的私有 UI 接线；不允许修改框架或公共头。
+需要新增跨域协作边/公共接口的后续步骤，须先登记具体设计，不以本补记代替设计门。
+分支 wp14-t12，基点 bd55ad59（源码与 redesign-main@a5ccb4d6 同源，保留两份审计文档提交）。
+validate-task.ps1 已实际执行，结果 PASS (1 tasks)。独立验收与合入决策尚未发生。

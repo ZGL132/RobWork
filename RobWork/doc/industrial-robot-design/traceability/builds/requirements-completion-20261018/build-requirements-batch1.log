@@ -1,0 +1,2114 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Automatic MOC for target qtpropertybrowser
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/ext/rwpqp/PQP/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/ext/rwyaobi/CMakeLists.txt
+  Auto build dll exports
+  PQP.cpp
+  Build.cpp
+  BV.cpp
+  TriDist.cpp
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  yaobi_mesh_interface.cpp
+  yaobi_moments.cpp
+  yaobi_obb_node.cpp
+  yaobi_tree_builder.cpp
+  yaobi_tri_overlap.cpp
+  yaobi.cpp
+  Auto build dll exports
+  Generating qrc_qtpropertybrowser.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/plugin/CMakeLists.txt
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/ext/qtpropertybrowser/CMakeLists.txt
+  DynamicLibraryLoader.cpp
+  DynamicLibraryLoaderBase.cpp
+  PluginFactory.cpp
+  PluginFactoryBase.cpp
+  PluginRepository.cpp
+  Auto build dll exports
+  qtpropertybrowser.cpp
+  qtpropertymanager.cpp
+  qteditorfactory.cpp
+  qtvariantproperty.cpp
+  qttreepropertybrowser.cpp
+  qtbuttonpropertybrowser.cpp
+  qtgroupboxpropertybrowser.cpp
+  qtpropertybrowserutils.cpp
+  qrc_qtpropertybrowser.cpp
+  mocs_compilation_Release.cpp
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\pqp.lib
+  Automatic MOC for target sdurws_ird_core
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/kinematics/CMakeLists.txt
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  Automatic MOC for target sdurws_ird_diagnostics
+  FixedFrame.cpp
+  FKRange.cpp
+  FKTable.cpp
+  Frame.cpp
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  FrameType.cpp
+  FrameMap.cpp
+  Kinematics.cpp
+  MovableFrame.cpp
+  State.cpp
+  QState.cpp
+  TreeState.cpp
+  StateCache.cpp
+  StateStructure.cpp
+  StateData.cpp
+  StateSetup.cpp
+  FramePairMap.cpp
+  StatelessData.cpp
+  Stateless.cpp
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Auto build dll exports
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_ui
+  DiagCodes.cpp
+  CatalogTypes.cpp
+  CatalogValidation.cpp
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_plugin.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_plugin.exp
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_reporting
+  Automatic MOC for target sdurws_ird_execution
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(397,26): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(401,26): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(403,26): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+  CapabilityCurve.cpp
+  CatalogProvider.cpp
+  Screening.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(966,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(967,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(430,39): warning C4996: 'QLocale::countryToString': Use territoryToString(Territory) instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(967,99): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(968,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(968,99): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(969,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(969,102): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(970,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(970,100): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(971,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(971,57): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(980,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(981,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(982,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(983,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(984,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(985,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(986,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(987,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(988,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(989,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(990,19): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(991,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(991,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1002,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1003,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1003,104): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1004,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1004,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1011,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1012,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1012,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1013,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1014,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1015,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1016,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1017,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1018,19): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1031,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1032,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1032,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1033,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1034,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1035,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1036,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1043,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1044,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1044,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1049,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1050,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1050,62): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1055,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1056,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1056,65): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1061,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1062,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1062,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1067,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1068,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1068,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1079,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1080,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1080,59): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1091,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1092,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1092,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1093,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1094,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1107,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1108,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1108,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1109,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1110,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1111,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1112,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1127,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1128,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1128,59): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1129,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1130,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1131,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1132,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1133,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1134,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1151,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1152,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1152,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1153,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1154,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1169,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1170,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1170,59): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1171,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1172,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1173,55): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1174,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1191,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1192,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1192,59): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1205,50): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1207,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1218,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1219,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1219,64): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1237,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1238,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1238,58): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1258,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1259,40): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1259,60): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1266,50): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1268,23): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1283,51): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(455,30): warning C4996: 'QLocale::countriesForLanguage': Query territory() on each entry from matchingLocales() instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(457,33): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(469,42): warning C4996: 'QLocale::countryToString': Use territoryToString(Territory) instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertybrowserutils.cpp(357,12): warning C4996: 'QKeyCombination::operator int': Use QKeyCombination instead of int [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertybrowserutils.cpp(358,12): warning C4996: 'QKeyCombination::operator int': Use QKeyCombination instead of int [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertybrowserutils.cpp(359,12): warning C4996: 'QKeyCombination::operator int': Use QKeyCombination instead of int [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1632,70): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertybrowserutils.cpp(360,12): warning C4996: 'QKeyCombination::operator int': Use QKeyCombination instead of int [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1632,37): warning C4996: 'QVariant::canConvert': 被声明为已否决 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1736,46): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(1736,24): warning C4996: 'QVariant::canConvert': 被声明为已否决 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2014,65): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2015,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+  CombinationCheck.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2018,71): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2019,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2022,66): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2023,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2026,66): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2027,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2030,66): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2031,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2034,66): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2035,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+  FeasibleSet.cpp
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+  Preference.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2038,70): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2039,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2042,75): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2043,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2046,68): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2047,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2050,70): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2051,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2054,69): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2055,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2058,68): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtvariantproperty.cpp(2059,38): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2464,43): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2471,43): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2587,59): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2616,59): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qtpropertymanager.cpp(2638,59): warning C4996: 'QLocale::country': Use territory() instead [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+  CatalogDiff.cpp
+  Backfill.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\ext\qtpropertybrowser\src\qteditorfactory.cpp(1736,14): warning C4996: 'QString::count': Use size() or length() instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\ext\qtpropertybrowser\qtpropertybrowser.vcxproj]
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_kinematics.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_kinematics.exp
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/geometry/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_requirements
+  Execution.cpp
+  Errors.cpp
+  Reporting.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  StateMachine.cpp
+  Controller.cpp
+  Scheduler.cpp
+  RunRegistry.cpp
+  Identity.cpp
+  ReportModel.cpp
+  ReportCodec.cpp
+  Sections.cpp
+  Admission.cpp
+  EventBus.cpp
+  ChannelProtocol.cpp
+  Builder.cpp
+  WorkerSupervisor.cpp
+  FrameworkSections.cpp
+  Checkpoint.cpp
+  CacheCoordinator.cpp
+  Render.cpp
+  ChannelPair.cpp
+  JobScope.cpp
+  Consistency.cpp
+  Archive.cpp
+  Export.cpp
+  Bundle.cpp
+  Roundtrip.cpp
+  MemProbe.cpp
+  mocs_compilation_Release.cpp
+  ProcessLauncher.cpp
+  mocs_compilation_Release.cpp
+  AABB.cpp
+  BSphere.cpp
+  BV.cpp
+  BVCollider.cpp
+  BVDistanceCalc.cpp
+  Box.cpp
+  Cone.cpp
+  Contour2D.cpp
+  ConvexHull2D.cpp
+  ConvexHull3D.cpp
+  ConvexHullND.cpp
+  Covariance.cpp
+  Cylinder.cpp
+  Delaunay.cpp
+  DistanceUtil.cpp
+  Geometry.cpp
+  GeometryData.cpp
+  GeometryUtil.cpp
+  HyperSphere.cpp
+  IndexedArray.cpp
+  IndexedTriArray.cpp
+  IndexedTriMesh.cpp
+  IndexedTriangle.cpp
+  IntersectUtil.cpp
+  Line.cpp
+  Model3D.cpp
+  OBB.cpp
+  OBBCollider.cpp
+  OBBFactory.cpp
+  OBBToleranceCollider.cpp
+  Object3D.cpp
+  PlainTriMesh.cpp
+  Plane.cpp
+  PointCloud.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(308,43):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(306,38):
+              请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  PolygonUtil.cpp
+  Primitive.cpp
+  Pyramid.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Model3D.cpp(202,59):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint32_t>”的引用
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint32_t>::scale(double)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+  
+  QHull3D.cpp
+  QHullND.cpp
+  Ray.cpp
+  Sphere.cpp
+  SphereDistanceCalc.cpp
+  TriMesh.cpp
+  TriMeshSurfaceSampler.cpp
+  TriTriIntersectDeviller.cpp
+  TriTriIntersectMoller.cpp
+  Triangle.cpp
+  TriangleUtil.cpp
+  Triangulate.cpp
+  Tube.cpp
+  AnalyticUtil.cpp
+  BREP.cpp
+  Curve.cpp
+  Face.cpp
+  GenericFace.cpp
+  ImplicitBREP.cpp
+  ImplicitFace.cpp
+  ImplicitShell.cpp
+  ImplicitSurface.cpp
+  ImplicitTorus.cpp
+  IndexedFaceArray.cpp
+  ParametricCurve.cpp
+  Shell.cpp
+  Surface.cpp
+  IndexedQuadraticFaceArray.cpp
+  PlainQuadraticShell.cpp
+  QuadraticBREP.cpp
+  QuadraticCurve.cpp
+  QuadraticFace.cpp
+  QuadraticShell.cpp
+  QuadraticSurface.cpp
+  QuadraticUtil.cpp
+  TriDistanceCalc.cpp
+  TriTriToleranceIntersect.cpp
+  sdurws_ird_selection.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  sdurws_ird_requirements.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_selection_plugin
+  qtpropertybrowser.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  SelectionPluginAssembly.cpp
+  SelPanelModel.cpp
+  SelPanelCommandCatalog.cpp
+  SelCatalogPanelWidget.cpp
+  SelUiModule.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  sdurws_ird_requirements_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
+  sdurws_ird_reporting.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  sdurws_ird_selection_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_selection_plugin.lib
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_geometry.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_geometry.exp
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\qhull_r.dll -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\qhull_r.dll done
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/sensor/CMakeLists.txt
+  Camera.cpp
+  CameraFirewire.cpp
+  CameraListener.cpp
+  CameraModel.cpp
+  Contact2D.cpp
+  Contact3D.cpp
+  FTSensor.cpp
+  FTSensorModel.cpp
+  Image.cpp
+  ImageUtil.cpp
+  RGBDCameraModel.cpp
+  Scanner.cpp
+  Scanner1D.cpp
+  Scanner25D.cpp
+  Scanner25DModel.cpp
+  Scanner2D.cpp
+  Scanner2DModel.cpp
+  Sensor.cpp
+  SensorModel.cpp
+  StereoCameraModel.cpp
+  TactileArray.cpp
+  TactileArrayModel.cpp
+  TactileArrayUtil.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_sensor.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_sensor.exp
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/models/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/graspplanning/CMakeLists.txt
+  CompositeDevice.cpp
+  CompositeJointDevice.cpp
+  ApproachMeasure3D.cpp
+  CMDistCCPMeasure3D.cpp
+  CompositeContactFilter.cpp
+  ControllerModel.cpp
+  CompositeGraspFilter.cpp
+  ContactDistThresFilter.cpp
+  DeformableObject.cpp
+  ContactValidateFilter.cpp
+  DependentJoint.cpp
+  DependentPrismaticJoint.cpp
+  Contour2DInfoMap.cpp
+  CurvatureThresFilter.cpp
+  DependentRevoluteJoint.cpp
+  Device.cpp
+  DeviceJacobianCalculator.cpp
+  DiceContactG3D.cpp
+  GWSMeasure3D.cpp
+  Grasp2D.cpp
+  DHParameterSet.cpp
+  Grasp3D.cpp
+  GraspQualityMeasure3D.cpp
+  JacobianCalculator.cpp
+  GraspTable.cpp
+  GraspValidateFilter.cpp
+  JacobianUtil.cpp
+  PlaneClearanceFilter.cpp
+  Joint.cpp
+  JointDevice.cpp
+  JointDeviceJacobianCalculator.cpp
+  MobileDevice.cpp
+  Object.cpp
+  SemiForceClosureFilter.cpp
+  ParallelDevice.cpp
+  WrenchMeasure3D.cpp
+  ParallelLeg.cpp
+  PrismaticJoint.cpp
+  QualityMeasure2D.cpp
+  PrismaticSphericalJoint.cpp
+  PrismaticUniversalJoint.cpp
+  RevoluteJoint.cpp
+  RigidBodyInfo.cpp
+  RigidObject.cpp
+  SE3Device.cpp
+  SerialDevice.cpp
+  SphericalJoint.cpp
+  TreeDevice.cpp
+  UniversalJoint.cpp
+  VirtualJoint.cpp
+  WorkCell.cpp
+  Models.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\models\DeformableObject.cpp(23,36):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint16_t>”的引用
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint16_t>::scale(double)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+  
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_models.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_models.exp
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_graspplanning.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_graspplanning.exp
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rwlibs/control/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/trajectory/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/graphics/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/proximity/CMakeLists.txt
+  Controller.cpp
+  JointController.cpp
+  SyncVelocityRamp.cpp
+  Blend.cpp
+  CircularInterpolator.cpp
+  CubicSplineFactory.cpp
+  CubicSplineInterpolator.cpp
+  Interpolator.cpp
+  InterpolatorUtil.cpp
+  LinearInterpolator.cpp
+  LloydHaywardBlend.cpp
+  ParabolicBlend.cpp
+  Path.cpp
+  Timed.cpp
+  TimedUtil.cpp
+  Trajectory.cpp
+  TrajectoryFactory.cpp
+  TrajectoryIterator.cpp
+  InterpolatorTrajectory.cpp
+  BlendedTrajectory.cpp
+  TimeMetricUtil.cpp
+  RampInterpolator.cpp
+  DrawableGeometryNode.cpp
+  SceneGraph.cpp
+  SceneNode.cpp
+  DrawableNode.cpp
+  DrawableNodeClone.cpp
+  BasicFilterStrategy.cpp
+  GroupNode.cpp
+  CollisionDetector.cpp
+  CollisionSetup.cpp
+  SceneCamera.cpp
+  WorkCellScene.cpp
+  SceneViewer.cpp
+  Render.cpp
+  CollisionStrategy.cpp
+  CollisionToleranceStrategy.cpp
+  DistanceCalculator.cpp
+  SceneDescriptor.cpp
+  DistanceMultiStrategy.cpp
+  DistanceStrategy.cpp
+  TextureData.cpp
+  ProximityCache.cpp
+  ProximityCalculator.cpp
+  ProximityData.cpp
+  ProximityFilter.cpp
+  ProximityFilterStrategy.cpp
+  ProximityModel.cpp
+  ProximitySetup.cpp
+  ProximitySetupRule.cpp
+  ProximityStrategy.cpp
+  ProximityStrategyData.cpp
+  Raycaster.cpp
+  BVTree.cpp
+  BVTreeCollider.cpp
+  BVTreeColliderFactory.cpp
+  BVTreeFactory.cpp
+  BVTreeToleranceCollider.cpp
+  BinaryBVTree.cpp
+  BinaryIdxBVTree.cpp
+  OBVTreeDFSCollider.cpp
+  ProximityStrategyRW.cpp
+  TreeDistanceCalc.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\proximity\DistanceCalculator.cpp(229,9): warning C4101: “i”: 未引用的局部变量 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\proximity\sdurw_proximity.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_control.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_control.exp
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_graphics.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_graphics.exp
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_proximity.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_proximity.exp
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_trajectory.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_trajectory.exp
+  Automatic MOC for target sdurws_ird_policy
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rwlibs/simulation/CMakeLists.txt
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  Policy.cpp
+  Errors.cpp
+  Diagnostics.cpp
+  PolicyInput.cpp
+  PolicyParsing.cpp
+  PolicyPort.cpp
+  SystemDefaultPolicy.cpp
+  CollisionEvaluator.cpp
+  CollisionQuery.cpp
+  RobWorkCollisionEvaluator.cpp
+  JointLimits.cpp
+  Compatibility.cpp
+  mocs_compilation_Release.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/loaders/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/invkin/CMakeLists.txt
+  FrameGrabber.cpp
+  FrameGrabber25D.cpp
+  GLFrameGrabber.cpp
+  SimulatedCamera.cpp
+  SimulatedKinect.cpp
+  GLFrameGrabber25D.cpp
+  KinematicSimulator.cpp
+  SimulatedController.cpp
+  SimulatedSensor.cpp
+  Simulator.cpp
+  SimulatedScanner25D.cpp
+  SimulatedScanner2D.cpp
+  AmbiguityResolver.cpp
+  ClosedFormIK.cpp
+  IterativeIK.cpp
+  IterativeMultiIK.cpp
+  CCDSolver.cpp
+  ParallelIKSolver.cpp
+  PieperSolver.cpp
+  IKMetaSolver.cpp
+  JacobianIKSolver.cpp
+  JacobianIKSolverM.cpp
+  ClosedFormIKSolverUR.cpp
+  WorkCellLoader.cpp
+  ClosedFormIKSolverKukaIIWA.cpp
+  QConstraint.cpp
+  WorkCellFactory.cpp
+  QNormalizer.cpp
+  StateConstraint.cpp
+  LoaderAC3D.cpp
+  Loader3DS.cpp
+  Model3DS.cpp
+  LoaderOBJ.cpp
+  LoaderTRI.cpp
+  STLFile.cpp
+  Model3DFactory.cpp
+  Model3DLoader.cpp
+  GeometryFactory.cpp
+  PathLoader.cpp
+  PathLoaderCSV.cpp
+  DependencyGraph.cpp
+  MultipleFileIterator.cpp
+  XMLParserUtil.cpp
+  XMLRWPreParser.cpp
+  XMLRWParser.cpp
+  XMLRWLoader.cpp
+  XMLErrorHandler.cpp
+  XMLParser.cpp
+  XML.cpp
+  DOMBasisTypes.cpp
+  DOMPropertyMapFormat.cpp
+  DOMPropertyMapLoader.cpp
+  DOMPropertyMapSaver.cpp
+  DOMPathLoader.cpp
+  DOMPathSaver.cpp
+  DOMTrajectoryLoader.cpp
+  DOMTrajectorySaver.cpp
+  DOMProximitySetupLoader.cpp
+  DOMProximitySetupSaver.cpp
+  DOMWorkCellSaver.cpp
+  CollisionSetupLoader.cpp
+  PGMLoader.cpp
+  #include <rw/common/Exception.hpp> is deprecated use #include <rw/core/Exception.hpp> instead
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\loaders\model3d\LoaderTRI.cpp(43,36):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint16_t>”的引用
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint16_t>::scale(double)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\loaders\model3d\LoaderOBJ.cpp(759,36):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint32_t>”的引用
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint32_t>::scale(double)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\loaders\model3d\Loader3DS.cpp(94,46):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint16_t>”的引用
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint16_t>::scale(double)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+  
+  PPMLoader.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\loaders\model3d\LoaderAC3D.cpp(123,65):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint16_t>”的引用
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint16_t>::scale(double)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+  
+  RGBLoader.cpp
+  ImageLoader.cpp
+  XercesErrorHandler.cpp
+  XercesUtils.cpp
+  XMLBasisTypes.cpp
+  XMLPathFormat.cpp
+  XMLPathLoader.cpp
+  XMLPathSaver.cpp
+  XMLTrajectoryFormat.cpp
+  XMLTrajectoryLoader.cpp
+  XMLTrajectorySaver.cpp
+  XMLPropertyFormat.cpp
+  XMLPropertyLoader.cpp
+  XMLPropertySaver.cpp
+  XMLProximitySetupLoader.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_simulation.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_simulation.exp
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Auto build dll exports
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_invkin.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_invkin.exp
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rwlibs/algorithms/CMakeLists.txt
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_loaders.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_loaders.exp
+  PlannerConstraint.cpp
+  QEdgeConstraint.cpp
+  QEdgeConstraintIncremental.cpp
+  PathPlanner.cpp
+  QToQPlanner.cpp
+  QToTPlanner.cpp
+  QToQSamplerPlanner.cpp
+  PlannerUtil.cpp
+  StopCriteria.cpp
+  QConstraint.cpp
+  QNormalizer.cpp
+  QIKSampler.cpp
+  QSampler.cpp
+  StateConstraint.cpp
+  PathAnalyzer.cpp
+  KDTree.cpp
+  KDTreeQ.cpp
+  IKQPSolver.cpp
+  QPController.cpp
+  QPSolver.cpp
+  XQPController.cpp
+  NullSpaceProjection.cpp
+  BasicGPM.cpp
+  BFGS.cpp
+  MovingAverage.cpp
+  RANSACModel.cpp
+  PointModel.cpp
+  LineModel.cpp
+  StructuredLineModel.cpp
+  PlaneModel.cpp
+  StablePose1DModel.cpp
+  StablePose0DModel.cpp
+  PointPairsRegistration.cpp
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\xerces-c_3_3.dll -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\xerces-c_3_3.dll done
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rwlibs/proximitystrategies/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rwlibs/task/CMakeLists.txt
+  Drawable.cpp
+  RenderArrow.cpp
+  RWGLFrameBuffer.cpp
+  DrawableFactory.cpp
+  DrawableUtil.cpp
+  RenderFrame.cpp
+  RenderGeometry.cpp
+  RenderLines.cpp
+  Action.cpp
+  Entity.cpp
+  Motion.cpp
+  Target.cpp
+  RenderMatrix.cpp
+  Task.cpp
+  SceneOpenGL.cpp
+  TactileArrayRender.cpp
+  TaskUtils.cpp
+  RWGLTexture.cpp
+  RenderImage.cpp
+  RenderModel3D.cpp
+  RenderUtil.cpp
+  RenderScan.cpp
+  RenderPointCloud.cpp
+  RenderCameraFrustum.cpp
+  DrawableGeometry.cpp
+  TypeRepository.cpp
+  RenderSmoothSkin.cpp
+  RenderForceTorque.cpp
+  GraspTask.cpp
+  RenderVelocity.cpp
+  RenderText.cpp
+  GraspTarget.cpp
+  ProximityStrategyPQP.cpp
+  GraspResult.cpp
+  GraspSubTask.cpp
+  DOMTaskFormat.cpp
+  DOMTaskLoader.cpp
+  DOMTaskSaver.cpp
+  ProximityStrategyYaobi.cpp
+  TaskLoader.cpp
+  TaskSaver.cpp
+  XMLTaskFormat.cpp
+  XMLTaskLoader.cpp
+  ProximityStrategyFactory.cpp
+  XMLTaskSaver.cpp
+  #include <rwlibs/os/glext_win32.hpp> is deprecated, use #include <rwlibs/opengl/glext_win32.hpp> instead
+  Auto build dll exports
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderModel3D.cpp(56,12): warning C4099: “rwlibs::opengl::TPFace”: 类型名称以前使用“class”现在使用的是“struct” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderModel3D.cpp(56,12):
+      参见“rwlibs::opengl::TPFace”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderModel3D.cpp(246,59):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint32_t>”的引用
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint32_t>::scale(double)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:             T=double [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:             T=double [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         with [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         [ [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:             T=double [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         ] [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  #include <rwlibs/os/glext_win32.hpp> is deprecated, use #include <rwlibs/opengl/glext_win32.hpp> instead
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_pathplanning.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_pathplanning.exp
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_proximitystrategies.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_proximitystrategies.exp
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_algorithms.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_algorithms.exp
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_opengl.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_opengl.exp
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\freeglut.dll -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\freeglut.dll done
+  Automatic MOC for target sdurws
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rwlibs/pathplanners/CMakeLists.txt
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_task.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_task.exp
+  Z3QToQPlanner.cpp
+  Z3Planner.cpp
+  PartialIndexTable.cpp
+  PRMPlanner.cpp
+  RRTQToQPlanner.cpp
+  RRTPlanner.cpp
+  ARWExpand.cpp
+  ARWPlanner.cpp
+  ARWQToQPlanner.cpp
+  SBLExpand.cpp
+  SBLInternal.cpp
+  SBLSetup.cpp
+  SBLOptions.cpp
+  SBLPlanner.cpp
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Generating ui_AboutBox.h
+  Generating ui_PropertyViewEditor.h
+  Generating ui_PropertyViewDialog.h
+  Generating qrc_rwstudio_resources.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rws/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWork/src/rwlibs/assembly/CMakeLists.txt
+  ArcBallController.cpp
+  RWSImageLoaderPlugin.cpp
+  ImageUtil.cpp
+  RobWorkStudio.cpp
+  RWStudioView3D.cpp
+  SceneOpenGLViewer.cpp
+  RobWorkStudioPlugin.cpp
+  AboutBox.cpp
+  HelpAssistant.cpp
+  RWSSpinBox.cpp
+  ImageView.cpp
+  PropertyViewEditor.cpp
+  PropertyViewDialog.cpp
+  PyPlugin.cpp
+  PythonRunner.cpp
+  qrc_rwstudio_resources.cpp
+  mocs_compilation_Release.cpp
+  AssemblyControlResponse.cpp
+  AssemblyControlStrategy.cpp
+  AssemblyParameterization.cpp
+  AssemblyRegistry.cpp
+  AssemblyResult.cpp
+  AssemblyState.cpp
+  AssemblyTask.cpp
+  CircularPiHControlStrategy.cpp
+  CircularPiHParameterization.cpp
+  PiHParameterization.cpp
+  PiHStrategy.cpp
+  SpiralParameterization.cpp
+  SpiralStrategy.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(189,13): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\src\rwlibs\pathplanners\sdurw_pathplanners.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rwlibs/pathplanners/prm/PRMPlanner.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(189,13):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\pathplanners\prm\PRMPlanner.cpp(208,35):
+          查看对正在编译的 类 模板 实例化“rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(135,24):
+          在编译 类 模板 成员函数“std::list<ValueType,std::allocator<ValueType>> rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors(const rw::math::Q &) const”时
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\pathplanners\prm\PRMPlanner.cpp(208,33):
+              请参阅 "rwlibs::pathplanners::PRMPlanner::addEdges" 中对 "rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors" 的第一个引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(138,13):
+          查看对正在编译的函数 模板 实例化“void rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors<std::list<ValueType,std::allocator<ValueType>>>(const rw::math::Q &,Collection &) const”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr,
+              Collection=std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>
+          ]
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(121,13):
+          查看对正在编译的函数 模板 实例化“void rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors<Collection>(int,std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,Collection &) const”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr,
+              Collection=std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>,
+              _Ty=rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>>::Dimension
+          ]
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rws\pythonpluginloader\PythonRunner.cpp(105,9): warning C4996: 'Py_SetProgramName': deprecated in 3.11 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rws\RWSSpinBox.cpp(22,31): warning C4996: 'QString::count': Use size() or length() instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(133,77): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(141,71): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(152,72): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(162,69): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rws\propertyview\PropertyViewEditor.cpp(173,70): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_pathplanners.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_pathplanners.exp
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rws\RobWorkStudio.cpp(484,22): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_assembly.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWork/libs/Release/sdurw_assembly.exp
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Automatic MOC and UIC for target sdurwsim
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkSim/src/rwsim/CMakeLists.txt
+  BallBallStrategy.cpp
+  Contact.cpp
+  ContactDetector.cpp
+  ContactDetectorData.cpp
+  ContactDetectorTracking.cpp
+  ContactModelGeometry.cpp
+  ContactStrategy.cpp
+  ContactStrategyData.cpp
+  ContactStrategyGeometry.cpp
+  ContactStrategyTracking.cpp
+  Body.cpp
+  RigidBody.cpp
+  BeamBody.cpp
+  KinematicBody.cpp
+  FixedBody.cpp
+  DynamicDevice.cpp
+  KinematicDevice.cpp
+  RigidDevice.cpp
+  DynamicWorkCell.cpp
+  ContactPoint.cpp
+  ContactCluster.cpp
+  ContactManifold.cpp
+  ContactDataMap.cpp
+  MaterialDataMap.cpp
+  DynamicUtil.cpp
+  SuctionCup.cpp
+  OBRManifold.cpp
+  BodyUtil.cpp
+  Constraint.cpp
+  SimulatedTactileSensor.cpp
+  TactileArraySensor.cpp
+  BodyContactSensor.cpp
+  SimulatedFTSensor.cpp
+  DynamicWorkCellLoader.cpp
+  DynamicWorkCellSaver.cpp
+  ScapePoseFormat.cpp
+  MovingAverage.cpp
+  PointRANSACFitting.cpp
+  DistModel.cpp
+  PlaneModel.cpp
+  CircleModel.cpp
+  SupportPose.cpp
+  PlanarSupportPoseGenerator.cpp
+  HughLineExtractor.cpp
+  RecursiveNewtonEuler.cpp
+  RestingPoseGenerator.cpp
+  CollisionFreeSampler.cpp
+  FiniteStateSampler.cpp
+  sdurws.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws.lib
+  SpherePoseSampler.cpp
+  Automatic MOC for target sdurws_treeview
+  Automatic MOC for target sdurws_jog
+  Automatic MOC for target sdurws_playback
+  Automatic MOC for target sdurws_log
+  StateSampler.cpp
+  PreshapeSampler.cpp
+  GraspPolicy.cpp
+  GraspStrategy.cpp
+  GraspPolicyFactory.cpp
+  GraspStrategyFactory.cpp
+  TargetConfigGraspPolicy.cpp
+  PoseSampler.cpp
+  BoxPoseSampler.cpp
+  SurfacePoseSampler.cpp
+  RenderGhost.cpp
+  RenderPoints.cpp
+  RenderPlanes.cpp
+  RenderCircles.cpp
+  PDController.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkSim\src\rwsim\loaders\DynamicWorkCellSaver.cpp(239,41): warning C4101: “e”: 未引用的局部变量 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkSim\src\rwsim\loaders\DynamicWorkCellSaver.cpp(249,45): warning C4101: “e”: 未引用的局部变量 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  SyncPDController.cpp
+  VelRampController.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(64,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(66,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(68,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  BeamJointController.cpp
+  SpringJointController.cpp
+  PoseController.cpp
+  SerialDeviceController.cpp
+  SimulatorLog.cpp
+  SimulatorLogEntry.cpp
+  LogCollisionResult.cpp
+  LogConstraintForceTorque.cpp
+  LogConstraints.cpp
+  LogContactForceTorque.cpp
+  LogContactSet.cpp
+  LogContactVelocities.cpp
+  LogDistanceResult.cpp
+  LogDistanceMultiResult.cpp
+  LogEquationSystem.cpp
+  LogForceTorque.cpp
+  LogPositions.cpp
+  LogMessage.cpp
+  Generating qrc_resources.cpp
+  Generating qrc_resources.cpp
+  LogValues.cpp
+  Generating qrc_resources.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/jog/CMakeLists.txt
+  LogVelocities.cpp
+  SimulatorLogScope.cpp
+  SimulatorLogUtil.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/treeview/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/log/CMakeLists.txt
+  LogStep.cpp
+  Generating qrc_playback_resources.cpp
+  SimulatorStatistics.cpp
+  DynamicSimulator.cpp
+  ThreadSimulator.cpp
+  PhysicsEngine.cpp
+  PhysicsEngineFactory.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/playback/CMakeLists.txt
+  GraspTaskSimulator.cpp
+  AssemblySimulator.cpp
+  TreeView.cpp
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+  RWSimulator.cpp
+  RWDebugRender.cpp
+  Jog.cpp
+  SliderTab.cpp
+  ShowLog.cpp
+  qrc_resources.cpp
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+  mocs_compilation_Release.cpp
+  BodyIntegrator.cpp
+  CNodePairMap.cpp
+  CNodePool.cpp
+  ConstantForceManipulator.cpp
+  ConstraintNode.cpp
+  PlayBack.cpp
+  Player.cpp
+  StateDraw.cpp
+  PlayBackSettings.cpp
+  qrc_playback_resources.cpp
+  ConstraintEdge.cpp
+  ContactGraph.cpp
+  ContactModelFactory.cpp
+  EulerIntegrator.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkSim\src\rwsim\rwphysics\ContactModelFactory.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  mocs_compilation_Release.cpp
+  ConstraintSolver.cpp
+  SequintialImpulseSolver.cpp
+  RWBody.cpp
+  RWBodyPool.cpp
+  ContactStrategyDMS.cpp
+  mocs_compilation_Release.cpp
+  sdurws_log.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_log.lib
+  sdurws_playback.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_playback.lib
+  sdurws_jog.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_jog.lib
+  sdurws_treeview.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_treeview.lib
+  ContactModel.cpp
+  RenderContacts.cpp
+  RenderContacts.cpp
+  BodyController.cpp
+  ContactModel.cpp
+  BodyController.cpp
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWorkSim/libs/Release/sdurwsim.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWorkSim/libs/Release/sdurwsim.exp
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_thread-vc143-mt-x64-1_92.dll -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\boost_thread-vc143-mt-x64-1_92.dll done
+  Automatic MOC for target sdurws_ird_runtime
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  Runtime.cpp
+  Errors.cpp
+  DescriptionValidator.cpp
+  CanonicalModel.cpp
+  Codec.cpp
+  NameMap.cpp
+  BaseWorldTransform.cpp
+  WorkCellCompiler.cpp
+  DynamicWorkCellCompiler.cpp
+  Snapshot.cpp
+  HostPresentationView.cpp
+  CacheKey.cpp
+  CompilerImpl.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_dynamics
+  Automatic MOC for target sdurws_ird_modeling
+  Automatic MOC for target sdurws_ird_kinematics
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_optimization
+  DiagCodes.cpp
+  InverseDynamics.cpp
+  SeriesBuilder.cpp
+  Envelope.cpp
+  PowerEnergy.cpp
+  ForwardDynamics.cpp
+  EvidenceBuilder.cpp
+  Replay.cpp
+  Commands.cpp
+  mocs_compilation_Release.cpp
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt
+  DiagCodes.cpp
+  Types.cpp
+  Variable.cpp
+  CandidatePatch.cpp
+  Constraint.cpp
+  Objective.cpp
+  Pareto.cpp
+  Generator.cpp
+  EvaluatorPorts.cpp
+  Run.cpp
+  Applier.cpp
+  Preflight.cpp
+  Export.cpp
+  JointStrategy.cpp
+  JointRun.cpp
+  mocs_compilation_Release.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  Fk.cpp
+  Evaluators.cpp
+  Evidence.cpp
+  KinTypes.cpp
+  Bounds.cpp
+  Ik.cpp
+  SolutionSet.cpp
+  Sampling.cpp
+  Workspace.cpp
+  PoseReach.cpp
+  Collision.cpp
+  Commands.cpp
+  ObjectTypes.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  RobotDesign.cpp
+  Export.cpp
+  Recompute.cpp
+  Parts.cpp
+  Codec.cpp
+  AnalysisConfig.cpp
+  PropertyEstimation.cpp
+  Render.cpp
+  Import.cpp
+  WorkCellReverseImport.cpp
+  XacroExpand.cpp
+  Envelope.cpp
+  Template.cpp
+  StructureEdit.cpp
+  mocs_compilation_Release.cpp
+  GeometryLinkEdit.cpp
+  Readiness.cpp
+  CommandHandlers.cpp
+  DhConvert.cpp
+  CanonicalBridge.cpp
+  Package.cpp
+  ModelDiff.cpp
+  PackageWorkCell.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_dynamics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_dynamics.lib
+  Automatic MOC for target sdurws_ird_dynamics_plugin
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt
+  DynPanelModel.cpp
+  DynPanelCommandCatalog.cpp
+  DynCurveChartView.cpp
+  DynamicsPanelWidget.cpp
+  DynUiModule.cpp
+  DynamicsPluginAssembly.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_optimization.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_optimization.lib
+  Automatic MOC for target sdurws_ird_optimization_plugin
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt
+  OptimizationPluginAssembly.cpp
+  OptPanelModel.cpp
+  OptimizationPanelWidget.cpp
+  OptUiModule.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_dynamics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_dynamics_plugin.lib
+  sdurws_ird_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  KinPanelUnits.cpp
+  KinPanelCommandCatalog.cpp
+  KinPanelModel.cpp
+  KinPanelFlows.cpp
+  KinPanelRotation.cpp
+  KinematicsPanelWidget.cpp
+  KinematicsUiModule.cpp
+  KinHostMigrationProviders.cpp
+  KinematicsPluginAssembly.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  sdurws_ird_optimization_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_optimization_plugin.lib
+  PanelModel.cpp
+  PanelEditFlow.cpp
+  GeometryResourceFlow.cpp
+  PanelCommandCatalog.cpp
+  HostMigrationProviders.cpp
+  ModelingPanelWidget.cpp
+  ModelingUiModule.cpp
+  ModelingCommandFlows.cpp
+  ModelingAuthorityFlows.cpp
+  ModelingXacroBridge.cpp
+  ModelingPluginAssembly.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(414,8): warning C4099: “sdurws::ird::kinematics::KinModuleSessionState”: 类型名称以前使用“class”现在使用的是“struct” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_plugin.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPluginAssembly.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(414,8):
+      参见“sdurws::ird::kinematics::KinModuleSessionState”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\plugin\ModelingCommandFlows.hpp(41,7): warning C4099: “sdurws::ird::core::ObjectId”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\modeling\sdurws_ird_modeling_plugin.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingCommandFlows.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Identity.hpp(104,1):
+      参见“sdurws::ird::core::ObjectId”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\plugin\ModelingCommandFlows.hpp(41,7): warning C4099: “sdurws::ird::core::ObjectId”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\modeling\sdurws_ird_modeling_plugin.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Identity.hpp(104,1):
+      参见“sdurws::ird::core::ObjectId”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\plugin\ModelingCommandFlows.hpp(41,7): warning C4099: “sdurws::ird::core::ObjectId”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\modeling\sdurws_ird_modeling_plugin.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingAuthorityFlows.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Identity.hpp(104,1):
+      参见“sdurws::ird::core::ObjectId”的声明
+  
+  sdurws_ird_kinematics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  sdurws_ird_modeling_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_studio
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  StudioMain.cpp
+  CrashCapture.cpp
+  UiPlugin.cpp
+  DomainAssembly.cpp
+  ExtraDomainAssembly.cpp
+  DomainModuleRunner.cpp
+  HostView3DGateway.cpp
+  HostView3DPreviewBackend.cpp
+  HostCompilePort.cpp
+  HostPresentationAdapters.cpp
+  QtTextBillboard.cpp
+  KinEvaluationChannel.cpp
+  KinHostServicesAssembly.cpp
+  PortAdapters.cpp
+  DiagnosticsAssembly.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.hpp(102,7): warning C4099: “sdurws::ird::core::ProjectId”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_studio.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Identity.hpp(108,1):
+      参见“sdurws::ird::core::ProjectId”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.hpp(102,7): warning C4099: “sdurws::ird::core::ProjectId”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_studio.vcxproj]
+  (编译源文件“sdurws_ird_studio_autogen/mocs_compilation_Release.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Identity.hpp(108,1):
+      参见“sdurws::ird::core::ProjectId”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.hpp(102,7): warning C4099: “sdurws::ird::core::ProjectId”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_studio.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/studio/StudioMain.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Identity.hpp(108,1):
+      参见“sdurws::ird::core::ProjectId”的声明
+  
+    正在创建库 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWorkStudio/libs/Release/sdurws_ird_studio.lib 和对象 C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWorkStudio/libs/Release/sdurws_ird_studio.exp
+  sdurws_ird_studio.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_studio.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\pugixml.dll -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\pugixml.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\bz2.dll -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\z.dll -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\z.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\freeglut.dll -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\freeglut.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  Automatic MOC for target sdurws_ird_diagnostics
+  Automatic MOC for target sdurws_ird_project
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_io
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  sdurws_ird_requirements_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
+  Automatic MOC for target sdurws_ird_requirements_test
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  TestMainReport.cpp
+  ObjectTypesTest.cpp
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  RequirementTypesTest.cpp
+  CodecTest.cpp
+  ServicesTest.cpp
+  SamplingTest.cpp
+  EditorTest.cpp
+  ImportTest.cpp
+  ReadinessTest.cpp
+  CommandHandlersTest.cpp
+  OrientationResolutionTest.cpp
+  CaptureTest.cpp
+  TemplateArrayTest.cpp
+  PluginPanelTest.cpp
+  HostMigrationTest.cpp
+  GoldenDatasetsContractTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_testkit
+  Automatic MOC for target sdurws_ird_diagnostics
+  Automatic MOC for target sdurws_ird_evidence
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_requirements_contract_test
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  PeerFaceContractTest.cpp
+  PluginGraphContractTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_contract_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
+  [ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_targets锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_registered_edge锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_openbench_worker锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_perf_unregistered锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_openbench_testkit锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_perf_lookalike锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4cliff锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r4cliff锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt

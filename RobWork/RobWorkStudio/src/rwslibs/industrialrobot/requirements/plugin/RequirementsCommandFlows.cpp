@@ -109,7 +109,7 @@ public:
         return static_cast<int>(items.indexOf(choice));
     }
 
-    bool editTemplateParams(TemplateParams& params) override
+    bool editTemplateParams(TemplateKind& kind, TemplateParams& params) override
     {
         // 六类参数表单＋生成计数预览（域函数试算——UI 零判定）。
         QDialog dialog;
@@ -123,6 +123,8 @@ public:
         for (const auto& k : kinds) {
             kindBox->addItem(QString::fromUtf8(k.second), int(k.first));
         }
+        // REQ-07：类别是独立枚举，参数形状不编码类别，必须显式预填与回传。
+        kindBox->setCurrentIndex(kindBox->findData(int(kind)));
         auto* baseName = new QLineEdit(QString::fromStdString(params.baseName), &dialog);
         auto* spacing = new QDoubleSpinBox(&dialog);
         spacing->setSuffix(QString::fromUtf8(" m"));
@@ -159,6 +161,11 @@ public:
         };
         QObject::connect(kindBox, &QComboBox::currentIndexChanged, &dialog, [&]() { applyDefaults(defaultTemplateParams(TemplateKind(kindBox->currentData().toInt()))); });
         QObject::connect(kindBox, &QComboBox::currentIndexChanged, &dialog, refreshPreview);
+        // REQ-07：所有影响生成数量/参数合法性的输入共享同一域试算，避免预览与确认分叉。
+        QObject::connect(countX, &QSpinBox::valueChanged, &dialog, refreshPreview);
+        QObject::connect(countY, &QSpinBox::valueChanged, &dialog, refreshPreview);
+        QObject::connect(spacing, &QDoubleSpinBox::valueChanged, &dialog, refreshPreview);
+        QObject::connect(baseName, &QLineEdit::textChanged, &dialog, refreshPreview);
         refreshPreview();
         auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                              Qt::Horizontal, &dialog);
@@ -169,7 +176,8 @@ public:
         if (dialog.exec() != QDialog::Accepted) {
             return false;
         }
-        params = defaultTemplateParams(TemplateKind(kindBox->currentData().toInt()));
+        kind = TemplateKind(kindBox->currentData().toInt());
+        params = defaultTemplateParams(kind);
         params.baseName = baseName->text().toStdString();
         params.spacingM = spacing->value();
         params.countX = countX->value();
@@ -274,16 +282,13 @@ bool flowExportCopy(RequirementsPanelWidget& panel, IRequirementEditor& editor,
 bool flowApplyTemplate(RequirementsPanelWidget& panel, IRequirementEditor& editor,
                        IRequirementEditSink& sink, CommandDialogHost& host)
 {
-    TemplateParams params = defaultTemplateParams(TemplateKind::Palletizing);
-    if (!host.editTemplateParams(params)) {
-        return true;  // 用户取消
+    // REQ-07：六类模板共享参数结构，类别必须从生产表单显式回传。
+    TemplateKind kind = TemplateKind::Palletizing;
+    TemplateParams params = defaultTemplateParams(kind);
+    if (!host.editTemplateParams(kind, params)) {
+        return true;  // 用户取消：没有草稿提交，也不改变生成来源。
     }
-    const EditBatch batch = templateService.applyTemplate(
-        TemplateKind::Palletizing, params);  // kind 在宿主表单内并入 params 语义
-    // 注：宿主确认的类别已并入 params（Qt 宿主实现里 params 来自所选类别的
-    // 黄金默认）——此处 kind 取 params 溯源一致的 Palletizing 由宿主约定：
-    // 宿主应把最终类别写回 params（refFrame/baseName 同源），此处统一以
-    // batch 域裁决为准；参数违例经 err 态批次就地反馈。
+    const EditBatch batch = templateService.applyTemplate(kind, params);
     if (!batch.ok) {
         note(panel, QString::fromUtf8("未应用（模板参数）：")
                         + QString::fromStdString(batch.error.detail));

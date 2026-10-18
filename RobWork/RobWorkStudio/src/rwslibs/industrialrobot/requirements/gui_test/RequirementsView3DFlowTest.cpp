@@ -154,7 +154,7 @@ struct FakeHost final : CommandDialogHost {
         lastChooseItems = items;
         return chooseItemAnswer;
     }
-    bool editTemplateParams(TemplateParams&) override { return false; }
+    bool editTemplateParams(TemplateKind&, TemplateParams&) override { return false; }
     bool editArrayParams(int&, double&) override { return false; }
     bool confirmImport(const QString& summaryText) override
     {

@@ -3493,6 +3493,12 @@ void RequirementsPanelWidget::onConditionFieldEditingFinished()
         if (c.objectId != selected.value()) {
             continue;
         }
+        // REQ-04/UX-05：文本不是物理量，不能送进数量词表。队列提交使刷新
+        // 发生在 editingFinished 返回之后，避免销毁当前发信的 QLineEdit。
+        if (key == "name" || key == "note") {
+            submitConditionEnumValue(key, edit->text());
+            return;
+        }
         for (const ui::QuantityFieldSpec& spec : conditionQuantitySpecs(c)) {
             if (spec.key != key) {
                 continue;

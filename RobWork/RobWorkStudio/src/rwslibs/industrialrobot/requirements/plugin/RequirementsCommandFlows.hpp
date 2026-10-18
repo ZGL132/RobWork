@@ -61,8 +61,9 @@ struct CommandDialogHost {
                                           const QStringList& items) = 0;
 
     /// 模板参数表单（六类下拉＋数值行＋计数预览——生产为 QDialog）。
+    /// @param kind [in,out] 初始/确认的类别；取消时保持原值，禁止由参数猜测类别。
     /// @param params [in,out] 进入＝表单预填（域黄金默认）；确认＝用户改后值。
-    virtual bool editTemplateParams(TemplateParams& params) = 0;
+    virtual bool editTemplateParams(TemplateKind& kind, TemplateParams& params) = 0;
 
     /// 阵列参数表单（构型选择在 chooseItem——本面承载数值参数）。
     /// @param count [in,out] 生成数量；@param spacing [in,out] 间距/半径。

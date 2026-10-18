@@ -782,6 +782,9 @@ TEST_F(RequirementsSessionGuiTest, StationPositionEditing_ThreeAxis_UI_T47)
 #include <QTemporaryDir>
 #include <QDir>
 #include "plugin/RequirementsCommandFlows.hpp"  // executeRequirementCommand/host 注入缝
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QTimer>
 
 namespace {
 
@@ -813,7 +816,7 @@ public:
     {
         return item;
     }
-    bool editTemplateParams(requirements::TemplateParams& params) override
+    bool editTemplateParams(requirements::TemplateKind&, requirements::TemplateParams& params) override
     {
         // 预置改动：1×2 网格（黄金默认的确定子集——用例断言可预期）。
         params.countX = 1;
@@ -2177,4 +2180,85 @@ TEST_F(RequirementsSessionGuiTest, MirrorRequiresStationAnchor_UI_T39)
         << "拒绝反馈未说明需要工位条目";
     EXPECT_EQ(m_editor.workingSet().points.entries.size(), before)
         << "被拒镜像产生了集合变更";
+}
+
+/**
+ * @brief AT-24：驱动生产模板对话框，验证所选六类别没有在编排层丢失。
+ *
+ * 测试不注入模板应答替身，QTimer 只模拟用户操作真实控件；生成、提交、
+ * 溯源与撤销均使用真实领域实现。每轮撤销恢复相同基线，防止名称冲突掩盖缺陷。
+ */
+TEST_F(RequirementsSessionGuiTest, ProductionTemplateKindsAndLivePreview_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-07", {}, std::nullopt);
+    const TemplateKind kinds[] = {TemplateKind::BinPicking, TemplateKind::MachineTending,
+        TemplateKind::Palletizing, TemplateKind::Inspection, TemplateKind::ToolChange,
+        TemplateKind::Handover};
+    const auto before = m_editor.workingSet().points.entries.size();
+    for (const TemplateKind kind : kinds) {
+        QTimer::singleShot(0, [kind] {
+            auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            ASSERT_NE(dialog, nullptr);
+            auto* combo = dialog->findChild<QComboBox*>();
+            ASSERT_NE(combo, nullptr);
+            combo->setCurrentIndex(combo->findData(int(kind)));
+            const auto counts = dialog->findChildren<QSpinBox*>();
+            ASSERT_EQ(counts.size(), 2);
+            counts[0]->setValue(3);
+            counts[1]->setValue(1);
+            bool previewMatches = false;
+            for (auto* label : dialog->findChildren<QLabel*>()) {
+                if (label->text() == QStringLiteral("将生成 3 个工位")) {
+                    previewMatches = true;
+                }
+            }
+            EXPECT_TRUE(previewMatches) << "AT-24：数量编辑后生产预览未同步";
+            dialog->accept();
+        });
+        ASSERT_TRUE(executeRequirementCommand("requirements.apply-template", *m_panel,
+                                              m_editor, *m_panel));
+        ASSERT_EQ(m_editor.workingSet().points.entries.size(), before + 3);
+        const auto expected = TemplateArrayService{}.applyTemplate(kind,
+            defaultTemplateParams(kind));
+        ASSERT_TRUE(expected.ok);
+        for (const auto& point : m_editor.workingSet().points.entries) {
+            if (!point.generation) { continue; }
+            EXPECT_EQ(point.generation->generatorId, expected.newPoints.front().generation->generatorId)
+                << "AT-24：用户选择的模板类别必须写入生成来源";
+            EXPECT_EQ(point.processTag, expected.newPoints.front().processTag)
+                << "AT-24：工艺标签必须与所选类别一致";
+        }
+        ASSERT_TRUE(m_editor.undoLocal());
+    }
+}
+
+/** @brief AT-02：工况文本编辑不能进入数量词表异常分支，且能整体撤销。 */
+TEST_F(RequirementsSessionGuiTest, ConditionNameAndNoteEditing_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    auto* table = m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_req_condition_table"));
+    ASSERT_NE(table, nullptr);
+    table->setCurrentItem(table->topLevelItem(0));
+    QApplication::processEvents();
+    for (const char* key : {"name", "note"}) {
+        QLineEdit* field = nullptr;
+        for (auto* edit : m_panel->findChildren<QLineEdit*>()) {
+            if (edit->property("irdFieldKey").toString() == QString::fromUtf8(key)) {
+                field = edit;
+                break;
+            }
+        }
+        ASSERT_NE(field, nullptr);
+        ASSERT_FALSE(field->isReadOnly());
+        field->setText(QStringLiteral("搬运工况-名称验证"));
+        EXPECT_NO_THROW(QMetaObject::invokeMethod(field, "editingFinished", Qt::DirectConnection))
+            << "AT-02：合法文本输入不得触发内部数量词表异常";
+        QApplication::processEvents();
+        const auto& c = m_editor.workingSet().conditions.entries.front();
+        EXPECT_EQ(key == std::string("name") ? c.name : c.note,
+                  QStringLiteral("搬运工况-名称验证").toStdString());
+        ASSERT_TRUE(m_editor.undoLocal());
+        m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    }
 }
