@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T11:31:27+08:00",
+  "generatedAt": "2026-10-18T11:36:11+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6625,
-    "totalBytes": 209015519,
+    "totalFiles": 6626,
+    "totalBytes": 209057110,
     "byKind": {
-      "build-log": 5685,
-      "markdown-doc": 41,
-      "log": 1,
-      "gtest-report": 335,
+      "benchmark": 8,
       "acceptance-record": 515,
+      "gtest-report": 335,
+      "json-data": 7,
+      "log": 1,
+      "governance-record": 31,
+      "markdown-doc": 41,
       "manual-acceptance": 1,
       "pipeline-artifact": 2,
-      "json-data": 7,
-      "governance-record": 30,
-      "benchmark": 8
+      "build-log": 5685
     },
     "byLifecycle": {
-      "unverified": 6032,
       "superseded": 0,
-      "current": 69,
-      "historical": 524
+      "historical": 544,
+      "current": 49,
+      "unverified": 6033
     },
     "associated": 596,
-    "unassociated": 6029,
-    "shaComputed": 6607,
+    "unassociated": 6030,
+    "shaComputed": 6608,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -1460,7 +1460,7 @@
       ],
       "bytes": 13424,
       "sha256": "7d93d29f05e92fcdbacfed34652474cbf13d9f45f8f0e9b3e68531c7bcd19706",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/DOC-T10-20260911.md",
@@ -1470,7 +1470,7 @@
       ],
       "bytes": 15638,
       "sha256": "c67753193cebb5348b56cea4d86001c31d957dc5e43c593a451df076642de904",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/DOC-T11-20260911.md",
@@ -1728,7 +1728,7 @@
       ],
       "bytes": 18311,
       "sha256": "7cff75b5e7655d0dd2988e5b479a69121922c83e595b0a57e9c3a61708a9a823",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/EX-T02-20260918.md",
@@ -1738,7 +1738,7 @@
       ],
       "bytes": 23343,
       "sha256": "0ddc43748038acff77f3e0f8bd81118211919bc85b0a1ebbdf229e623b72bcbf",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/EX-T03-20260918.md",
@@ -1748,7 +1748,7 @@
       ],
       "bytes": 28209,
       "sha256": "57b34dbad0191a8bf66a7456536ee25cdffaaf21f49567e39a60cc0f6bcfa41e",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/EX-T04-20260918.md",
@@ -1758,7 +1758,7 @@
       ],
       "bytes": 20986,
       "sha256": "7ca7d0dc79402632634e3df43a113e7a859d4f7b9418a382e639c392731d9a97",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/EX-T05-20260918.md",
@@ -1778,7 +1778,7 @@
       ],
       "bytes": 19844,
       "sha256": "d36a6b8c3e824417e13bedd0aa5a88138f91fa163cfe37b01d94d17fba1ec256",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/EX-T07-20260919.md",
@@ -1818,7 +1818,7 @@
       ],
       "bytes": 26072,
       "sha256": "5fe620988729a2ef091e1d86ef89d46d896e2f2910f84cc3898a3d97ec95b4f9",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/EX-T10-20260919.md",
@@ -1828,7 +1828,7 @@
       ],
       "bytes": 25070,
       "sha256": "c40b11f9ec282da43f64f666d18946c0fcd6f01b7b357733a33247c8969340ae",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/fix-panel-20261010.md",
@@ -2380,7 +2380,7 @@
       ],
       "bytes": 16621,
       "sha256": "1d6369e5e58a1f14258ea993410846abc8288650df77b3e4b2acb68bd0d7743d",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T03-20260919.md",
@@ -2390,7 +2390,7 @@
       ],
       "bytes": 13689,
       "sha256": "d2e92f388a8e6157d9375639c70448399c0a6e2a75546110332cd77c5c6021b7",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T04-20260919.md",
@@ -2430,7 +2430,7 @@
       ],
       "bytes": 24475,
       "sha256": "e85eecb7941659a4efb8b7e5e1327343342219ee4dc03d6cdeba93e4a3d3f235",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T08-20260920.md",
@@ -2440,7 +2440,7 @@
       ],
       "bytes": 26910,
       "sha256": "b640ade5de887672fe2fe6a12e4db255f6de6eb2c4b61cf459e87e493bf8d97a",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T09-20260920.md",
@@ -2490,7 +2490,7 @@
       ],
       "bytes": 25842,
       "sha256": "7d7d91fb81d9a3fa833c492fcacb5518b089499427c1e77cace127a1b37b074f",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/rpt-t14-20261012.md",
@@ -2554,7 +2554,7 @@
       ],
       "bytes": 15005,
       "sha256": "1eaca745decc219f7572afeeec58005a16f571dbf7b6df8e6dbe197ba3bb1628",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RT-T05-20260912.md",
@@ -2564,7 +2564,7 @@
       ],
       "bytes": 18716,
       "sha256": "296baff2352922ee4ad2bb2a01f3f86b3946a42d828b77e4d1bbaa3cff50f777",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RT-T06-20260912.md",
@@ -2584,7 +2584,7 @@
       ],
       "bytes": 19947,
       "sha256": "d45fcc9b18970ad794923f010b9ee03d12fcb32021f7a3a409bb8f59c4787d5c",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RT-T08-20260912.md",
@@ -2594,7 +2594,7 @@
       ],
       "bytes": 17629,
       "sha256": "bdc23b09ba8f976a6e7202f3fd3b27dd7cdcda57d6385257336a5e86c9a6ee8d",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RT-T09-20260912.md",
@@ -2614,7 +2614,7 @@
       ],
       "bytes": 20478,
       "sha256": "b059d028f003f37b195645c68b0ffab4dbc16298ef2c719440b38482327ab98b",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RT-T11-20260912.md",
@@ -2624,7 +2624,7 @@
       ],
       "bytes": 22274,
       "sha256": "db3d00a2f618f5abdbeefe92822cb920e7bfb98b5220cd65b16591636041de7a",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RT-T12-20260912-r2.md",
@@ -51746,7 +51746,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1163498,
+      "bytes": 1191863,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -54996,6 +54996,14 @@
       "taskIds": [],
       "bytes": 5147,
       "sha256": "0ffd06f400a33b0b1565d988e05c4daf770dba4a42b769507f4d21235c79f9e3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reviews/b7-triage-20261018.md",
+      "kind": "governance-record",
+      "taskIds": [],
+      "bytes": 13226,
+      "sha256": "b0fd9349211860ab1a8b58c0fda368ac496f3267f8010da1d51bf92be02507a9",
       "lifecycle": "unverified"
     },
     {
