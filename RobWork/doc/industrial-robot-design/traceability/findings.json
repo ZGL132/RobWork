@@ -8993,7 +8993,7 @@
       "id": "F-921",
       "source": "UI-T84 验收 attempt 2（PASS）遗留清单第 1 项（UiPlugin.cpp:5155-5158 实核在案；2026-10-18）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-18",
       "title": "冒烟 step8 注释残留 attempt 1 已废弃的旧根因叙事（『关闭拍 presentContext 重入双 teardown 命中桥未绑定拆绑』——返工批已按四轮探针实证修订 ui.md/卡面，但 UiPlugin.cpp step8 注释半区漏网未同步；真实触发面＝关闭不拆绑重复挂接、放大面＝undo 可用性谓词查询已关上下文）",
       "owner": "后续 ui 批（注释同步，§2.6 过期注释口径）",
@@ -9004,7 +9004,7 @@
       "id": "F-922",
       "source": "UI-T84 验收 attempt 2（PASS）遗留清单第 4 项（2026-10-18）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-18",
       "title": "SessionContractTest ACC1 重开段注释误标分派半区：注释写『桥旧绑已被壳层拆绑→attach 分派（常态路径）』，实际该步触发前 draftCtl->unbindSession 只拆草稿控制器、桥仍绑旧项目，attachOrSwitch 走的是 switch 半区（覆盖本身完整——变异证红已证；仅注释与行为不符）",
       "owner": "后续 ui 批（注释修正）",
@@ -9087,6 +9087,17 @@
       "title": "findings 台账字段一致性无校验：status 与 fixedAt/resolution 可互相矛盾——UI-T85 返工批出现 resolution＋fixedAt 已写、status 仍 open（commit 声称已翻 fixed），而 ACC 4.8 消账核对恰以 status 为准，状态失真会让核对结论整体失真",
       "resolution": "validate-docs 增 findings 不变量段：ID 唯一/句法、status·severity 枚举、registeredAt·fixedAt 日期格式、fixedAt 存在则 status 必须 fixed；历史 112 条『fixed 但无 fixedAt』存量不追罚（只增不改）。rule-enforcement v1.1 升 gate。实测负例：F-004 注入 fixedAt 而 status=open → exit 1 并指名条目；存量 911 条零违规（证据 traceability/builds/gov-agent-native-gates/findings-gate-20261018.log）。",
       "owner": "验收段/治理批（台账翻转同批）；门禁维护归治理批",
+      "fixedAt": "2026-10-18"
+    },
+    {
+      "id": "F-931",
+      "source": "UI-T85 验收 attempt 2 G-1（acc/UI-T85/2@500479c2，2026-10-18）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-18",
+      "title": "findings 台账 F-921/F-922 status 残留 open：resolution＋fixedAt 已写、代码实质消账经 attempt 2 亲验，唯二违反 fixedAt⟹fixed 惯例的条目（238/240），机器可读面把已闭合项继续计为未关闭",
+      "resolution": "WP-10-T85 合入收尾批补翻两条 status=fixed；F-930 门禁同批上线（fixedAt 存在而 status≠fixed 即 validate-docs 失败），同类漂移日后由机器拦截。编号说明：attempt 2 记录原建议 F-928 候选，该号已被 Agent-native 门禁批（F-928~F-930）占用，故顺延取 F-931。",
+      "owner": "验收段/治理批（台账翻转与门禁同批）",
       "fixedAt": "2026-10-18"
     }
   ]

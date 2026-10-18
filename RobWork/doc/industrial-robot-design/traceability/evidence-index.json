@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T10:18:40+08:00",
+  "generatedAt": "2026-10-18T10:19:43+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6608,
-    "totalBytes": 207857574,
+    "totalFiles": 6609,
+    "totalBytes": 207878395,
     "byKind": {
-      "manual-acceptance": 1,
-      "benchmark": 8,
-      "gtest-report": 335,
-      "markdown-doc": 41,
-      "pipeline-artifact": 2,
-      "acceptance-record": 513,
       "log": 1,
-      "build-log": 5670,
+      "acceptance-record": 514,
+      "gtest-report": 335,
       "governance-record": 30,
-      "json-data": 7
+      "build-log": 5670,
+      "benchmark": 8,
+      "pipeline-artifact": 2,
+      "manual-acceptance": 1,
+      "json-data": 7,
+      "markdown-doc": 41
     },
     "byLifecycle": {
-      "unverified": 6017,
+      "current": 70,
+      "historical": 522,
       "superseded": 0,
-      "historical": 521,
-      "current": 70
+      "unverified": 6017
     },
-    "associated": 594,
+    "associated": 595,
     "unassociated": 6014,
-    "shaComputed": 6590,
+    "shaComputed": 6591,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -4506,6 +4506,16 @@
       ],
       "bytes": 30400,
       "sha256": "0fec76d50dbee0b5ce241a681b6d0d6833f4bd810d0311cb04778c8bcfd8451a",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/UI-T85-20261018-r2.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "UI-T85"
+      ],
+      "bytes": 19918,
+      "sha256": "cc124f728dd964d2526bfac6e5a2a9a00cf760d872cf207bc952b1580830a9da",
       "lifecycle": "historical"
     },
     {
@@ -51606,7 +51616,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1157065,
+      "bytes": 1157968,
       "sha256": null,
       "lifecycle": "unverified"
     },
