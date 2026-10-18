@@ -34,6 +34,7 @@
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>
 #include <sdurws/ird/ui/UiPorts.hpp>
 #include <sdurws/ird/ui/UiProjections.hpp>
+#include "../src/CommandPalette_p.hpp"  // 同单元真实面板；只在命令执行出口记录调用。
 
 #include <algorithm>
 #include <memory>
@@ -215,6 +216,48 @@ TEST_F(CommandPaletteGuiTest, PaletteOpensViaDefaultShortcut_UI_PALETTE_1)
                     Qt::Key_Escape);
     pump();
     EXPECT_FALSE(palette->isVisible());
+}
+
+TEST_F(CommandPaletteGuiTest, RequirementsChineseFilterAndEnter_UX02_UX13)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+    ui::CommandRegistryDeps deps;
+    deps.ownerWhitelist = {"requirements"};
+    auto registry = ui::createCommandRegistry(std::move(deps));
+    ui::CommandDescriptor descriptor;
+    descriptor.id = "requirements.mirror-stations";
+    descriptor.ownerUnit = "requirements";
+    descriptor.titleKey = "cmd.requirements.mirror-stations.title";
+    int calls = 0;
+    ASSERT_EQ(registry->registerCommand(descriptor, [&calls](const auto&) {
+        ++calls; // 执行边界只记录次数，搜索/投影/控件/键盘派发均为真实实现。
+        ui::CommandOutcome result;
+        result.accepted = true;
+        return result;
+    }), ui::RegistrationResult::Ok);
+    registry->seal();
+    QWidget host;
+    host.resize(900, 600);
+    ui::detail::CommandPalettePanel palette(registry.get(), nullptr, &host);
+    host.show();
+    host.activateWindow();
+    QApplication::setActiveWindow(&host);
+    pump();
+    palette.open();
+    auto* filter = palette.findChild<QLineEdit*>(QStringLiteral("ird_command_palette_filter"));
+    auto* list = palette.findChild<QListWidget*>(QStringLiteral("ird_command_palette_list"));
+    ASSERT_NE(filter, nullptr);
+    ASSERT_NE(list, nullptr);
+    // 中文走textChanged同一过滤链；Enter用真实键盘事件，不能只断言模型标题。
+    filter->setText(QStringLiteral("镜像工位"));
+    pump();
+    ASSERT_EQ(list->count(), 1);
+    EXPECT_TRUE(list->item(0)->text().contains(QStringLiteral("镜像工位")));
+    EXPECT_FALSE(list->item(0)->text().contains(QStringLiteral("requirements.")));
+    QTest::keyClick(filter, Qt::Key_Return);
+    pump();
+    EXPECT_EQ(calls, 1) << "中文检索选中的命令必须恰好派发一次";
+    EXPECT_FALSE(palette.isVisible());
 }
 
 // =====================================================================

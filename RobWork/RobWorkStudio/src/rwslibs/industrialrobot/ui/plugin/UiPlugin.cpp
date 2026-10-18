@@ -42,6 +42,7 @@
 #include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>  // WP-14-T12：正式宿主命令面板中文过滤的真实行观测。
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QMenu>
@@ -7187,6 +7188,38 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                "step5.5 reopen-zero-revisions");
         }
         snapPng(hostWin, "mtour-5.5-reopened.png");
+
+        // WP-14-T12/A-10：在真实已打开项目的正式命令注册/面板中复验九条需求命令，
+        // 避免模型测试使用自造描述符掩盖生产装配词键错误。不执行会写草稿的命令。
+        m_content->showStagePanel(StageId::Requirements);
+        m_content->submitCommand("workbench.commandPalette");
+        settleEvents(200);
+        auto* palette = hostWin->findChild<QWidget*>(QStringLiteral("ird_command_palette"));
+        auto* filter = palette ? palette->findChild<QLineEdit*>(QStringLiteral("ird_command_palette_filter")) : nullptr;
+        auto* results = palette ? palette->findChild<QListWidget*>(QStringLiteral("ird_command_palette_list")) : nullptr;
+        ok(palette && palette->isVisible() && filter && results, "step7 real-command-palette");
+        std::size_t checkedCommands = 0;
+        for (const auto& command : m_content->commandRegistry().query({})) {
+            if (command.id.rfind("requirements.", 0) != 0) { continue; }
+            ++checkedCommands;
+            const auto expected = resolveText(command.titleKey);
+            ok(command.title == expected, "step7 chinese-title-" + command.id);
+            if (filter && results) {
+                filter->setText(QString::fromStdString(expected));
+                settleEvents(50);
+                bool found = false;
+                for (int row = 0; row < results->count(); ++row) {
+                    const auto* item = results->item(row);
+                    found = found || (item->data(Qt::UserRole).toString().toStdString() == command.id
+                        && item->text().contains(QString::fromStdString(expected))
+                        && !item->text().contains(QStringLiteral("requirements.")));
+                }
+                ok(found, "step7 chinese-filter-" + command.id);
+            }
+        }
+        ok(checkedCommands == 9, "step7 all-nine-requirements-commands");
+        snapPng(hostWin, "mtour-7-chinese-palette.png");
+        if (palette) { palette->hide(); }
 
         QCoreApplication::exit(failedCount == 0 ? 0 : 1);
     });

@@ -1,0 +1,18 @@
+Note: Google Test filter = CommandRegistryModel.RequirementsChineseTitlesAndSearch_UX02_UX13
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandRegistryModel
+[ RUN      ] CommandRegistryModel.RequirementsChineseTitlesAndSearch_UX02_UX13
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CommandRegistryModelTest.cpp(525): error: Expected: (row) != (found.end()), actual: 8-byte object <00-00 00-00 00-00 00-00> vs 8-byte object <00-00 00-00 00-00 00-00>
+中文工程标题必须能搜索到：导入 CSV
+
+[  FAILED  ] CommandRegistryModel.RequirementsChineseTitlesAndSearch_UX02_UX13 (0 ms)
+[----------] 1 test from CommandRegistryModel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] CommandRegistryModel.RequirementsChineseTitlesAndSearch_UX02_UX13
+
+ 1 FAILED TEST

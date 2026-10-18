@@ -24,6 +24,7 @@
  */
 
 #include <sdurws/ird/ui/ICommandRegistry.hpp>
+#include <sdurws/ird/ui/UiText.hpp>  // 域命令中文标题的统一权威，展示与搜索须同源。
 
 #include <QKeySequence>
 #include <QtGlobal>  // Q_ASSERT（运行期注册违约的调试期断言——§10.3）
@@ -130,6 +131,14 @@ std::string lookupKeyword(const std::string& key)
 
 std::string commandTransitionalTitle(const TextKey& titleKey)
 {
+    // WP-14-T12/A-10：UI-T09后域标题已在统一词表登记，不能只查早期壳层表。
+    // 先检查登记键再解析，保留本函数“未知键返回空串”的公共兼容契约；
+    // 不捕获resolveText异常，以免真正的词表违约被静默降级为内部命令ID。
+    // 内建键表运行期不变，函数局部只读缓存由C++静态初始化保证线程安全。
+    static const auto registeredKeys = registeredTextKeys();
+    if (std::find(registeredKeys.begin(), registeredKeys.end(), titleKey) != registeredKeys.end()) {
+        return resolveText(titleKey);
+    }
     return lookupTitle(titleKey);
 }
 
