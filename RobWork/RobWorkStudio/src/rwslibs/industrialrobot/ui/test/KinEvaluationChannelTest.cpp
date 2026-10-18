@@ -1158,44 +1158,48 @@ TEST(KinEvaluationChannel, BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23)
 TEST(KinEvaluationChannel, BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23)
 {
     IRD_TEST_INFO(std::vector<std::string>{"REQ-09"}, std::vector<std::string>{"AT-23"});
-    const auto targetId = idFrom<core::ObjectId>("req09-align-frame");
-    auto ws = makeWorksetWithTaskPoint();
-    ws.points.entries.front().pose.orientation.kind = req::OrientationRuleKind::AlignFrame;
-    ws.points.entries.front().pose.orientation.targetFrame.kind = req::RequirementRefKind::ModelFrame;
-    ws.points.entries.front().pose.orientation.targetFrame.objectId = targetId;
-    ws.points.entries.front().pose.constrainedDof = {true, true, true, true, true, true};
-    ScriptedEditor editor(ws);
-    ExecutorHarness harn;
-    bool available = true;
-    const auto tcpR = rotZ(0.6);
-    harn.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
-        &editor, [&](const core::ObjectId& id)
-            -> std::optional<rw::math::Transform3D<double>> {
-            return available && id == targetId
-                ? std::optional<rw::math::Transform3D<double>>(
-                    rw::math::Transform3D<double>(rw::math::Vector3D<double>(3, 4, 5), tcpR))
-                : std::nullopt;
-        }, QCoreApplication::instance(),
-        [&harn](const KinChannelBackgroundResultNote& note) { harn.notes.push_back(note); }});
-    harn.executor->attachView(std::make_shared<FixtureView>(trans(0, 0, 0), tcpR), harn.boundId);
-    auto config = makeLegalConfig();
-    config.initialStrategy = InitialValueStrategy::ReferenceQ;
-    harn.executor->setConfiguration(config);
-    KinChannelBackgroundRequest request;
-    request.kind = KinChannelBackgroundKind::TaskPointsBatch;
-    request.snapshotId = harn.boundId;
-    request.epoch = harn.executor->epoch();
-    const auto ack = harn.executor->submit(request);
-    ASSERT_TRUE(ack.accepted) << ack.reason;
-    harn.drain();
-    const auto results = harn.executor->latestBatchOutcomes();
-    ASSERT_EQ(results.size(), 1U);
-    EXPECT_EQ(results.begin()->second.outcomeState, "completed");
-    available = false;
-    const auto rejected = harn.executor->submit(request);
-    EXPECT_FALSE(rejected.accepted) << "悬空对齐引用不得降级为单位姿态继续求解";
-    EXPECT_NE(rejected.reason.find(ws.points.entries.front().name), std::string::npos);
-    EXPECT_TRUE(rejected.taskRef.empty());
+    // 同一解析端口承接模型根和场景Frame；每轮仍走真实IK，不能只给World兜底。
+    for (const auto referenceKind : {req::RequirementRefKind::ModelFrame, req::RequirementRefKind::SceneObject}) {
+        SCOPED_TRACE(int(referenceKind));
+        const auto targetId = idFrom<core::ObjectId>("req09-align-frame");
+        auto ws = makeWorksetWithTaskPoint();
+        ws.points.entries.front().pose.orientation.kind = req::OrientationRuleKind::AlignFrame;
+        ws.points.entries.front().pose.orientation.targetFrame.kind = referenceKind;
+        ws.points.entries.front().pose.orientation.targetFrame.objectId = targetId;
+        ws.points.entries.front().pose.constrainedDof = {true, true, true, true, true, true};
+        ScriptedEditor editor(ws);
+        ExecutorHarness harn;
+        bool available = true;
+        const auto tcpR = rotZ(0.6);
+        harn.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+            &editor, [&](const core::ObjectId& id)
+                -> std::optional<rw::math::Transform3D<double>> {
+                return available && id == targetId
+                    ? std::optional<rw::math::Transform3D<double>>(
+                        rw::math::Transform3D<double>(rw::math::Vector3D<double>(3, 4, 5), tcpR))
+                    : std::nullopt;
+            }, QCoreApplication::instance(),
+            [&harn](const KinChannelBackgroundResultNote& note) { harn.notes.push_back(note); }});
+        harn.executor->attachView(std::make_shared<FixtureView>(trans(0, 0, 0), tcpR), harn.boundId);
+        auto config = makeLegalConfig();
+        config.initialStrategy = InitialValueStrategy::ReferenceQ;
+        harn.executor->setConfiguration(config);
+        KinChannelBackgroundRequest request;
+        request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+        request.snapshotId = harn.boundId;
+        request.epoch = harn.executor->epoch();
+        const auto ack = harn.executor->submit(request);
+        ASSERT_TRUE(ack.accepted) << ack.reason;
+        harn.drain();
+        const auto results = harn.executor->latestBatchOutcomes();
+        ASSERT_EQ(results.size(), 1U);
+        EXPECT_EQ(results.begin()->second.outcomeState, "completed");
+        available = false;
+        const auto rejected = harn.executor->submit(request);
+        EXPECT_FALSE(rejected.accepted) << "悬空对齐引用不得降级为单位姿态继续求解";
+        EXPECT_NE(rejected.reason.find(ws.points.entries.front().name), std::string::npos);
+        EXPECT_TRUE(rejected.taskRef.empty());
+    }
 }
 
 }  // namespace

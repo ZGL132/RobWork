@@ -911,6 +911,7 @@ public:
 - WP-14-T12 第十四批联动：真实场景夹具经公开建模命令/双编译后拾取验证暴露宿主计划闭包丢失对象token；私有HostProjectClosureView改为借用完整ObjectWrite槽，根按token、部件按ObjectId现取类型与字节，无根写入时读取基线根。禁止按首条载荷猜根或丢类型要求reader放宽；同步编译期借用、身份摘要和公共端口不变。真实标记盒raycast与Frame/正反FramePlaneNormal确认分别留证，不把标记盒当作真实mesh或任意三角面法向。
 - WP-14-T12 第十五批消费：宿主批量运动学切片对Fixed按R_base_ref·Rz(yaw)·Ry(pitch)·Rx(roll)组装目标，AlignFrame独立解析目标参考系旋转，位置仍按工位参考系转换；目标悬空拒绝受理并带工位名，保留原结果账面。复用既有私有resolveFrame和BatchTaskPoint.targetInBase，不改公共接口/跨域边。真实IK以旋转基座/参考系及独立解析工具安装矩阵验证，撤去Fixed修复后实际失败。方向/几何法向/滚转自由及任意部分约束尚未由本批完成，不得据此宣称五规则消费全通过。
 - WP-14-T12 第十六批验收增量：正式宿主工位等级/启用、六分量约束与自由、XYZ与两容差、接近/撤离正距离与轴、完整复制/删除/选中回退均改为权威工作集值断言。发现作业段允许停用且校验遗漏：validateTaskPoint先拒绝work.enabled=false（既有IllegalTolerance，field=work.enabled），界面只读显示启用，兑现§4.3既有约束。历史非法值不静默改真；所有入口复用同一校验。接近/撤离初始0 m时直接启用应拒绝且控件回退，用户先填正距离再启用；测试须分别核对非法拒绝与合法写入，不再将点击计为通过。
+- WP-14-T12 第十七批参考系消费：正式宿主为已有KinEvaluationExecutor::Deps.resolveFrame接入当前runtime名称映射、WorkCell和State现取值；ModelFrame/SceneObject共享ObjectId解析，不缓存跨编译Frame裸指针。真实IK回归覆盖两种引用与悬空拒绝；正式宿主90°轴置换夹具作为区域参考系，实际覆盖通道受理/后台执行/缺碰撞检测器DataInsufficient及逐次局部撤销恢复。此降级回归不证明可达性、任意旋转盒或任务点批量求解。首轮无TCP批量拒绝、无TCP且无碰撞要求覆盖在上游IkRequest前置抛错均留痕，继续列为未完成。正式拾取回归须将独立raycast落点映射到OpenGL子控件再发输入，不得假设子控件中心与视口中心相同。
 - 同批资源前置：HostModelCompilePort绑定既有runtime资源端口，私有桥按同次reader声明键转接io资源适配器。Recorded记录来自同根清单，由io逐次安全读取/摘要检查；Solidified从同次闭包取匹配内容版本副本。Missing/Changed/Budget原样分类，失败不替换已发布快照。ui既有io/runtime链接边不变，无公共接口扩展；未实现的mesh渲染能力仍明确保留限制。
 
 DTB WP-14 任务包（v0.16 §2.15）为权威拆分；本卡视角的内部顺序：

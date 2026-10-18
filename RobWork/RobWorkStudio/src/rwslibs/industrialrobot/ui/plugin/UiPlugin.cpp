@@ -3043,9 +3043,8 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
     // 值拷入，channels 侧再持同一槽；std::function 拷贝即共享目标）。★
     // KIN-P4：sessionSolveRoute＝后台求解结构化回投（锚核对→门面
     // applySessionSolveOutcome 写会话态→面板刷新）；sessionSolver 缺省
-    // ＝执行器内置生产求解器。参考系解析缝维持空（空缝＝非 World 参考
-    // 系恒拒如实——区域/任务点 refFrame 的 R1 实际形态恒 World 缺省；
-    // ModelFrame 解析随帧名映射任务接续）。
+    // ＝执行器内置生产求解器。参考系解析使用当前runtime名称映射与
+    // 已发布WorkCell，不能让三维预览已能解析的合法引用在评估时恒被拒绝。
     auto sessionSolveRoute =
         [this](const kinematics::KinChannelSolveResult& result) {
             // 锚核对（账面纪律——消费方义务）：结果快照锚与当前会话绑定
@@ -3063,8 +3062,27 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
             m_domains->kinematics->applySessionSolveOutcome(
                 result.solutionSet);
         };
+    /**
+     * @brief REQ-01/03/09：按对象身份现取参考系的世界位姿。
+     * @param objectId [in] 当前修订中模型根或场景对象的有效身份。
+     * @return 世界系变换（平移m、旋转无量纲）；无宿主/帧/映射返回nullopt，
+     *         由执行器给出可定位拒绝，绝不以单位阵掩盖悬空引用。
+     *
+     * 仅UI线程受理切片调用：借用当前宿主和状态，不跨调用缓存Frame裸指针。
+     * 后台计算只收到变换值，项目切换和重新编译不会留下旧WorkCell引用。
+     */
+    auto resolveFrame = [this](const core::ObjectId& objectId)
+        -> std::optional<rw::math::Transform3D<>> {
+        auto* studio = getRobWorkStudio();
+        if (!studio || !m_nameMapPort) { return std::nullopt; }
+        const auto cell = studio->getWorkCell();
+        const auto name = m_nameMapPort->resolveRuntimeName(objectId);
+        auto* frame = cell && name ? cell->findFrame(*name) : nullptr;
+        if (!frame) { return std::nullopt; }
+        return rw::kinematics::Kinematics::worldTframe(frame, studio->getState());
+    };
     m_kinEvaluation = std::make_unique<KinEvaluationExecutor>(
-        KinEvaluationExecutor::Deps{&m_requirementsEditor, nullptr, this, route,
+        KinEvaluationExecutor::Deps{&m_requirementsEditor, std::move(resolveFrame), this, route,
                                     std::move(sessionSolveRoute), nullptr});
 
     // ---- 求解配置合法基线注入（恢复值或缺省——I-KIN-4 seed≥1；执行器
@@ -7749,7 +7767,12 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                     }
                     ok(glWidget != nullptr, "step5.7 real-opengl-input-surface");
                     if (glWidget) {
-                        const QPoint local = glWidget->rect().center();
+                        const QPoint local = glWidget->mapFrom(view.get(), pixel);
+                        // 发送坐标必须与独立raycast落点一致；视口中心不等于任意
+                        // OpenGL子控件中心（浮动/重排后可能有布局和视口偏移）。
+                        std::cout << "[ird-ui-smoke-mtour] pick pixel=" << pixel.x() << "," << pixel.y()
+                            << " local=" << local.x() << "," << local.y()
+                            << " gl=" << glWidget->width() << "x" << glWidget->height() << std::endl;
                         QMouseEvent event(QEvent::MouseButtonDblClick, QPointF(local),
                             QPointF(glWidget->mapToGlobal(local)), Qt::LeftButton,
                             Qt::LeftButton, Qt::ControlModifier);
@@ -7835,6 +7858,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                         m_view3dGateway->handleViewDoubleClick(pixel);
                         modeling::SceneObject moved=fixture; moved.objectId=*fixtureId;
                         moved.worldPose.P()[0]+=0.1; // 世界系已知位移，m。
+                        // 区域消费者现有载体只支持轴对齐盒；90°旋转仍可精确表示。
+                        moved.worldPose.R()=rw::math::RPY<>(1.5707963267948966,0,0).toRotation3D();
                         const auto movedBytes=codec.encode(modeling::ObjectVariant(moved),modeling::kCurrentFormatVersion);
                         ok(movedBytes.ok(),"step5.7 moved-scene-encoded");
                         if(movedBytes.ok()){
@@ -7859,6 +7884,61 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                                 && (rw::kinematics::Kinematics::worldTframe(newFrame,studio->getState()).P()
                                     - moved.worldPose.P()).norm2()<1e-12,
                                "step5.7 scene-only-update-world-position-published");
+                            // REQ-03正式参考系装配回归：使用已发布夹具的ObjectId，
+                            // 经公开编辑器构造区域/采样计划，不能注入名称或变换替身。
+                            // 显式要求碰撞检查而宿主未装配检测器，真实评估应诚实
+                            // 产出DataInsufficient；不把执行完成冒充可达性通过。
+                            // 无TCP但未要求碰撞的输入另有上游求解前置缺口，保留失败证据。
+                            ok(m_kinEvaluation && m_kinEvaluation->snapshotId().isValid(),
+                               "step5.7 kinematics-current-snapshot-bound");
+                            const auto beforeFrameProbe = m_requirementsEditor.workingSet();
+                            std::size_t probeEdits = 0;
+                            if (m_kinEvaluation) {
+                                requirements::WorkRegion probe;
+                                probe.objectId = core::ObjectId::generate();
+                                probe.name = "参考系装配验证区域";
+                                probe.refFrame.kind = requirements::RequirementRefKind::SceneObject;
+                                probe.refFrame.objectId = *fixtureId;
+                                probe.box.size = rw::math::Vector3D<>(0.02,0.02,0.02); // 夹具系m。
+                                probe.demands.collisionFreeRequired = true; // 真实缺检测器降级轨。
+                                const auto regionEdit = m_requirementsEditor.applyEdit(requirements::RequirementEdit{probe});
+                                ok(regionEdit.accepted,"step5.7 scene-frame-probe-region-valid");
+                                probeEdits += regionEdit.accepted ? 1 : 0;
+                                requirements::SamplingPlan plan;
+                                plan.objectId = core::ObjectId::generate();
+                                plan.regionRef = probe.objectId;
+                                const auto planEdit = m_requirementsEditor.applyEdit(requirements::RequirementEdit{plan});
+                                ok(planEdit.accepted,"step5.7 scene-frame-probe-plan-valid");
+                                probeEdits += planEdit.accepted ? 1 : 0;
+                                kinematics::KinChannelBackgroundRequest request;
+                                request.kind = kinematics::KinChannelBackgroundKind::RegionCoverage;
+                                request.snapshotId = m_kinEvaluation->snapshotId();
+                                request.epoch = m_kinEvaluation->epoch();
+                                const auto ack = m_kinEvaluation->submit(request);
+                                ok(ack.accepted,"step5.7 real-scene-reference-coverage-accepted: " + ack.reason);
+                                if (ack.accepted) {
+                                    for (int beat=0; beat<100 && !m_kinEvaluation->latestCoverageResult(); ++beat) {
+                                        settleEvents(50);
+                                    }
+                                    const auto outcome=m_kinEvaluation->latestCoverageResult();
+                                    std::cout << "[ird-ui-smoke-mtour] coverage result=" << bool(outcome)
+                                        << " error=" << (outcome ? outcome->errorText : "missing") << std::endl;
+                                    ok(outcome && outcome->ok && outcome->snapshotId==request.snapshotId
+                                        && !outcome->samples.empty(),
+                                       "step5.7 real-scene-reference-computation-completed");
+                                    if (outcome && outcome->ok) {
+                                        ok(outcome->downgraded && std::all_of(outcome->samples.begin(),outcome->samples.end(),
+                                            [](const auto& sample) { return sample.state==kinematics::KinChannelSampleState::DataInsufficient; }),
+                                           "step5.7 required-collision-unavailable-data-insufficient");
+                                    }
+                                }
+                            }
+                            while (probeEdits>0) {
+                                ok(m_requirementsEditor.undoLocal(),"step5.7 frame-probe-local-undo");
+                                --probeEdits;
+                            }
+                            ok(m_requirementsEditor.workingSet()==beforeFrameProbe,
+                               "step5.7 frame-probe-restores-entire-working-set");
                         }
                     }
                     snapPng(hostWin,"mtour-5.7-scene-picked.png");

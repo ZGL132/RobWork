@@ -175,7 +175,7 @@
 7. 文档：单元卡§9.8与新证据增量，保留失败历史；静态sessionRevisionId在命令发起时取模块当前基线副本；不改需求语义、诊断码或采样身份。
 8. 决策：无新增长期决策，复用现有暂存确认守卫；本批只关闭现有缝能证明的漏洞，三维创建/拖动以及引用目录缺口继续单独实施，不以本批替代原120项验收。
 
-### A-06/A-07 引用目录与三维交互装配缝设计（待所有者审阅，尚未改公共头）
+### A-06/A-07 引用目录与三维交互装配缝设计（所有者已批准精确设计）
 
 1. **行为规格**：REQ-01/04/09的参考系、姿态目标、工具/TCP、环境对象用业务名称选择，内部保留现有浅引用；缺失引用明确保留并标记，不自动改成World。REQ-08提供“三维创建目标”和“三维移动选中工位”：真实视图点击/拖动只更新临时预览，可检查世界系位置与姿态，取消零写入，最终确认才经需求编辑器一次入栈。移动保留原参考系、姿态规则、约束、来源等未编辑字段；创建在World系建立合法任务点。真实视图相机投影及场景世界变换归宿主，需求插件不读取建模私有类型。
 2. **精确接口**：仅扩展`requirements/assembly/sdurws/ird/requirements/RequirementsPluginAssembly.hpp`：新增纯值`RequirementsReferenceChoice { RequirementReference reference; std::string displayName; bool available = false; std::string unavailableReason; }`；在`RequirementsView3DSeams`表尾追加三个默认空函数：`std::function<std::vector<RequirementsReferenceChoice>()> referenceChoices`、`std::function<std::optional<rw::math::Transform3D<>>(const RequirementReference&)> referenceWorldPose`、`std::function<std::optional<rw::math::Transform3D<>>(const rw::math::Transform3D<>& initialWorldPose, bool creating)> editWorldTarget`。最后一个为同步UI交互端口，输入/返回均世界系m及旋转矩阵，不传编辑器、QObject或runtime裸指针；nullopt表示取消/环境不可用。既有六个字段不变，旧宿主未绑定时明确提示缺少能力。契约只增加这个精确头的allowedFiles，移除与之冲突的assembly整目录禁令；其余assembly文件仍不在允许清单。新增私有UI命令/按钮、文案和测试在既有允许文件内落位，不新增计算库互链。
@@ -186,7 +186,7 @@
 7. **文档和确定性**：仅本计划、单元卡§9.8/§11、任务契约和新证据同步，不改REQUIREMENTS/ARCHITECTURE语义。目录稳定排序为引用种类→业务名称→ObjectId canonical→tcpKey，同名显示足以辨识的业务上下文，用户界面不直接暴露内部OID。候选保持SI double精度，不从显示舍入值回读；旋转转换按需求字段Rz(yaw)·Ry(pitch)·Rx(roll)约定，不能直接照抄框架RPY参数次序。最终120行新快照与原审计分别保存。
 8. **备选和决策**：推荐上述装配缝，复用现有RequirementsView3DSeams宿主注入模式，无新增长期架构决策。备选一为需求插件直接读取建模私有对象/操控RWStudioView3D，违反R-1/R-2；备选二为宿主直接写需求编辑器并维护第二套撤销呈现，分裂既有面板记账；均不采用。任意子Frame和任意三角面法向持久化属于更大公共模型变更，本设计不偷偷添加或改写其token含义；若真实验收证明现有FramePlaneNormal无法承接需求，另提交精确语义裁决。
 
-审阅状态：待所有者批准这三个装配函数与一个纯值类型及相应精确契约放行；在批准前仅进行现有私有修复与验证。
+审阅状态：所有者已明确答复“批准按该精确设计实施”（2026-10-19收到）。仅放行本节所列三个默认空回调、一个纯值类型及对应精确头的契约调整；实施仍须逐项真实红绿验证。
 
 ### 第十三批参数表TSV格式可发现性（UX-05，私有呈现）
 
@@ -230,3 +230,14 @@
 8. 决策：无，仅把既有验证通道中的空断言替换为可证伪断言。
 
 第十六批第二轮真实宿主发现产品缺陷：作业段下拉允许停用，且validateTaskPoint仅校验启用段距离，没有兑现单元卡§4.3“work恒启用”。增量设计：①作业段仍展示启用，编辑控件禁用；领域唯一校验拒绝work.enabled=false，防JSON/程序入口绕过。②仅已有requirements/src/RequirementTypes.cpp及plugin/RequirementsPanelWidget.cpp和测试，不改公共头/格式/依赖边。③复用IllegalTolerance值码、field=work.enabled、定位说明，不静默把旧非法值改真；整次编辑拒绝、撤销栈/字节不变。④校验纯值、UI控件由Qt拥有，无新存活期。⑤同原域可重入/界面UI线程。⑥先模型拒绝失败回归，正式宿主已有真实失败；再全量模型/GUI/宿主，合法接近撤离先设置正距离后启用。⑦单元卡明确补齐既有不变量，保留非法历史输入原貌与失败证据，不改需求语义。⑧无新长期决策。
+
+### 第十七批非World参考系的正式消费者装配
+
+1. 行为：REQ-01/09中ModelFrame和SceneObject参考系经现有runtime名称映射解析到同一已发布WorkCell，Fixed/AlignFrame批量消费可实际受理；缺失引用拒绝而不造单位阵。
+2. 接口：仅已允许UiPlugin.cpp及KinEvaluationChannel.cpp，复用既有Deps.resolveFrame和名称端口。SceneObject属于RequirementReference既有值域，不增公共头/端口/依赖边。
+3. 失败：无宿主/WorkCell/名称/帧返回nullopt，保原可定位拒绝；按次现取映射和状态，不能缓存旧Frame裸指针。
+4. 生命周期：回调只在执行器UI切片拍调用，借用当前宿主，返回世界变换值；后台仍只持冻结BatchQuery与快照。
+5. 线程：原UI线程切片纪律不变，回调无项目写入和后台UI访问。
+6. 测试：既有真实IK对齐回归扩展SceneObject（先红）；正式modeling-tour真实夹具移动并转为90°轴置换后，经公开编辑器暂存SceneObject区域和单样本计划、实际覆盖受理并等待后台完成，随后逐次局部撤销恢复完整工作集。区域显式要求碰撞检查，宿主无检测器应诚实DataInsufficient，不能据此宣称可达性或任务点批量求解通过；最初批量探针受无TCP前置阻断、无TCP但无碰撞要求的覆盖探针在上游IkRequest前置抛错的证据均保留。它验证正式装配，不冒充引用下拉的人机交互。
+7. 文档：本计划/单元卡和新批证据；矩阵仍保留未完成的公共目录/三维编辑、方向约束和跨域问题；身份/摘要不变。
+8. 决策：无，补既有宿主回调，零第二套名称权威。

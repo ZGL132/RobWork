@@ -181,7 +181,10 @@ bool KinEvaluationExecutor::projectRefFrameToBase(
     // 任务点切片共用同一参考系代数，零第二份实现。）
     rw::math::Transform3D<double> worldTref =
         rw::math::Transform3D<double>::identity();
-    if (refFrame.kind == requirements::RequirementRefKind::ModelFrame) {
+    if (refFrame.kind == requirements::RequirementRefKind::ModelFrame
+        || refFrame.kind == requirements::RequirementRefKind::SceneObject) {
+        // REQ-01/09：夹具/零件也是既有可选参考系，按同一ObjectId名称端口
+        // 解析到已发布帧；不能在需求预览支持SceneObject而评估切片中漏掉它。
         if (!m_deps.resolveFrame || !refFrame.objectId
             || !refFrame.objectId->isValid()) {
             errorText = "参考系不可解析（引用缺载荷或解析缝未装配）";
@@ -197,7 +200,7 @@ bool KinEvaluationExecutor::projectRefFrameToBase(
         }
         worldTref = *resolved;
     } else if (refFrame.kind != requirements::RequirementRefKind::World) {
-        errorText = "参考系种类不在本批支持面（仅 World/ModelFrame）";
+        errorText = "参考系种类不可用于位姿参考（支持 World/ModelFrame/SceneObject）";
         return false;
     }
 
