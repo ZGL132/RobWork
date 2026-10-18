@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.15（2026-10-18，AI 执行就绪补充/单元任务退出条件两节转义损毁修复：未展开 core-ToUpper 模板→单位代号、locked→blocked、validate-* 首字母——F-005/F-006/F-058/F-078/F-936）。前一版本 v0.14 保留如下。 |
 | 文档版本 | v0.14（2026-10-17，CORE-T11 卡面与实现一致性核查落位——§3.1 两处笔误级同步修正〔首句公共头模块计数 10→9、README 保留位单列；DiagData.hpp 内容摘要补 DiagnosticLevel（v0.12 F-618 增列时本列漏同步）〕＋§12.2 补记 v0.13 行；公共头与测试目标两清单与实现树实测一致，无语义级偏差，核查留痕见 context/handoff-drill.md）；v0.13（2026-10-17，CORE-T11 试点任务行登记——§9 增行〔Agent-native 治理 Task 8 新会话接手试点批〕）；v0.12（F-618 诊断面 schema 演进——§4.8 DiagnosticLevel 词表＋DiagnosticRecord.level 字段增列（尾追加，缺省 Error）＋序列化兼容口径＋§5.7 签名同步；v0.11＝CORE-T10 文档与门禁同步；v0.4~v0.10＝CORE-T02~T08 落位登记；v0.2/v0.3＝FOUNDATION-CR-01 契约审查与 P-ENV-1 消账；v0.1＝首版草案） |
 | 日期 | 2026-09-11 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
@@ -1014,7 +1015,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 本单元进入 AI 实现前必须满足：
 
 - 本文中的职责、非职责、公共接口、数据模型、错误语义和不变量不得与 ARCHITECTURE.md 冲突。
-- 单元任务使用 $(core.ToUpper())-Txx 编号，并通过 doc/industrial-robot-design/tasks/*.json 声明前置任务、允许修改文件和验证命令。
+- 单元任务使用 CORE-Txx 编号，并通过 doc/industrial-robot-design/tasks/*.json 声明前置任务、允许修改文件和验证命令。
 - 跨单元协作只能使用本文列出的公共接口或架构端口；发现接口缺失、需求冲突或依赖未登记时，任务状态必须标记为 locked。
 - 实现完成必须通过单元测试、依赖门禁和追踪矩阵校验，不能只以代码编译成功作为完成条件。
 

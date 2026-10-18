@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T13:05:26+08:00",
+  "generatedAt": "2026-10-18T13:06:53+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -11,23 +11,23 @@
   },
   "summary": {
     "totalFiles": 6715,
-    "totalBytes": 213402784,
+    "totalBytes": 213404294,
     "byKind": {
-      "markdown-doc": 41,
-      "json-data": 7,
-      "governance-record": 37,
-      "build-log": 5768,
-      "benchmark": 8,
-      "manual-acceptance": 1,
-      "log": 1,
       "gtest-report": 335,
+      "manual-acceptance": 1,
+      "acceptance-record": 515,
+      "json-data": 7,
+      "markdown-doc": 41,
+      "governance-record": 37,
       "pipeline-artifact": 2,
-      "acceptance-record": 515
+      "log": 1,
+      "build-log": 5768,
+      "benchmark": 8
     },
     "byLifecycle": {
       "superseded": 0,
-      "unverified": 6124,
       "historical": 549,
+      "unverified": 6124,
       "current": 42
     },
     "associated": 596,
@@ -52410,7 +52410,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1229451,
+      "bytes": 1230961,
       "sha256": null,
       "lifecycle": "unverified"
     },

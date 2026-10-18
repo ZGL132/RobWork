@@ -46,21 +46,25 @@
       "id": "F-005",
       "source": "units/core.md 文末（本次 v1.3 治理修复中发现）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-10",
       "title": "core.md 'AI 执行就绪补充'与'单元任务退出条件'两节存在转义损毁：$(core.ToUpper()) 为未展开模板表达式、'标记为 locked'应为 blocked（\\b 被吞）、'alidate-docs.ps1/validate-task.ps1'缺首字母（\\v 被吞）",
       "owner": "详设所有者（units/core.md 辖域）",
-      "resolution": "随 core.md 下次增量修订重写该两节为可读文本（疑似历史写入时反斜杠转义被 shell/工具层吞掉，建议排查其他单元卡是否存在同型损毁）。"
+      "resolution": "随 core.md 下次增量修订重写该两节为可读文本（疑似历史写入时反斜杠转义被 shell/工具层吞掉，建议排查其他单元卡是否存在同型损毁）。",
+      "resolution": "core.md「AI 执行就绪补充/单元任务退出条件」两节修复：$(core.ToUpper())→CORE-Txx、标记为 locked→blocked、| 门禁 | alidate-docs.ps1/alidate-task.ps1→validate-docs.ps1/validate-task.ps1；卡头增 v0.15 登记行。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-006",
       "source": "traceability/acceptance/TK-T01-20260910.md#G-1",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-10",
       "title": "units/testkit.md 与 core.md（F-005）同型转义损毁：'AI 执行就绪补充/单元任务退出条件'两节 $(testkit.ToUpper()) 未展开、'alidate-docs.ps1' 缺首字母（\\v 被吞）、'标记为 locked'应为 blocked（\\b 被吞）",
       "owner": "详设所有者（units/testkit.md 辖域）",
-      "resolution": "随 testkit.md 下次增量修订重写该两节为可读文本；F-005 建议的全卡排查（18 张未修卡）仍待详设所有者执行。"
+      "resolution": "随 testkit.md 下次增量修订重写该两节为可读文本；F-005 建议的全卡排查（18 张未修卡）仍待详设所有者执行。",
+      "resolution": "testkit.md 同族修复（$(testkit.ToUpper())→TK-Txx、locked→blocked、validate-* 首字母）；卡头增 v1.8 登记行。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-007",
@@ -601,11 +605,13 @@
       "id": "F-058",
       "source": "EV-T02 验收段 attempt 1（2026-09-12，traceability/acceptance/EV-T02-20260912.md §4.8，送验对象 d1314a6d，分支 wp05-t02）：验收者全文通读 evidence.md 时发现，F-005/F-006 同族转义损毁第三份单元卡新实例",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-12",
       "title": "evidence.md 'AI 执行就绪补充'节存在 F-005（core.md）/F-006（testkit.md）同族转义损毁：$(evidence.ToUpper()) 为未展开模板表达式、'标记为 locked'应为 blocked（\\b 被吞）、'alidate-docs.ps1/alidate-task.ps1'缺首字母（\\v 被吞）——既有损毁非 EV-T02 引入（送验 diff 仅追加 §15.4 v0.3 一行，反证在档）",
       "owner": "evidence 详设所有者（文本本体）；与 F-005/F-006 家族合并处置归 DOC 治理任务（批量修正多份单元卡同节）",
-      "resolution": "并入 F-005/F-006 家族统一处置：DOC 治理任务批量修正 core.md/testkit.md/evidence.md 三份单元卡'AI 执行就绪补充/单元任务退出条件'两节的同型损毁，并排查其余单元卡是否还有第四例"
+      "resolution": "并入 F-005/F-006 家族统一处置：DOC 治理任务批量修正 core.md/testkit.md/evidence.md 三份单元卡'AI 执行就绪补充/单元任务退出条件'两节的同型损毁，并排查其余单元卡是否还有第四例",
+      "resolution": "evidence.md 同族修复（$(evidence.ToUpper())→EV-Txx、locked→blocked、validate-* 首字母）；卡头增 v1.4 登记行。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-059",
@@ -807,11 +813,13 @@
       "id": "F-078",
       "source": "POL-T04 验收段 attempt 1（2026-09-13，traceability/acceptance/POL-T04-20260913.md §4.8）：验收者按 F-005/F-006/F-058 家族排查口径对 policy.md 全文扫描",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-13",
       "title": "units/policy.md 'AI 执行就绪补充/单元任务退出条件'两节存在 F-005（core.md）/F-006（testkit.md）/F-058（evidence.md）同族转义损毁第四份单元卡实例：L1259 '$(policy.ToUpper())' 为未展开模板表达式、L1260 '标记为 locked' 应为 blocked（\\b 被吞）、L1271 'alidate-docs.ps1/alidate-task.ps1' 缺首字母（\\v 被吞）——既有损毁非 POL-T04 引入（送验 diff 对 policy.md 仅 +1 行＝§15.4 v0.5 变更记录，反证在档）；F-005 resolution 预判的'排查其他单元卡'至此已实证第四例",
       "owner": "policy 详设所有者（文本本体）；与 F-005/F-006/F-058 家族合并处置归 DOC 治理任务（批量修正多份单元卡同节）",
-      "resolution": "并入 F-005/F-006/F-058 家族统一处置：DOC 治理任务批量修正 core.md/testkit.md/evidence.md/policy.md 四份单元卡'AI 执行就绪补充/单元任务退出条件'两节的同型损毁；其余单元卡的家族排查继续随触及任务进行。不影响 POL-T04 验收（pass）。编号顺延自 F-077，合入时由所有者确认与并行 evidence 分支无撞车。"
+      "resolution": "并入 F-005/F-006/F-058 家族统一处置：DOC 治理任务批量修正 core.md/testkit.md/evidence.md/policy.md 四份单元卡'AI 执行就绪补充/单元任务退出条件'两节的同型损毁；其余单元卡的家族排查继续随触及任务进行。不影响 POL-T04 验收（pass）。编号顺延自 F-077，合入时由所有者确认与并行 evidence 分支无撞车。",
+      "resolution": "policy.md 同族修复（$(policy.ToUpper())→POL-Txx、locked→blocked、validate-* 首字母）；卡头增 v0.18 登记行。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-079",
@@ -9403,6 +9411,17 @@
       "resolution": "gate-all.ps1 补 UTF-8 BOM；Windows PowerShell 5.1 与 pwsh 7 ParseFile 均 0 错误（证据 traceability/builds/gov-p3-text/gate-all-parse.log）。",
       "fixedAt": "2026-10-18",
       "owner": "治理脚本维护方（新脚本统一带 BOM 的既有纪律由此案例再确认）"
+    },
+    {
+      "id": "F-936",
+      "source": "F-005 家族清扫（2026-10-18，转义损毁修复时发现）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-18",
+      "title": "runtime.md 同族转义损毁未被 F-005/F-006/F-058/F-078 覆盖：$(runtime.ToUpper())、locked、alidate-* 三处仍损毁",
+      "resolution": "runtime.md 同族修复（$(runtime.ToUpper())→RT-Txx、locked→blocked、validate-* 首字母）；卡头增 v0.25 登记行；五卡全量 grep 三模式零残留。",
+      "fixedAt": "2026-10-18",
+      "owner": "设计区文档维护（单元卡文本卫生）"
     }
   ]
 }

@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.18（2026-10-18，AI 执行就绪补充/单元任务退出条件两节转义损毁修复：未展开 policy-ToUpper 模板→单位代号、locked→blocked、validate-* 首字母——F-005/F-006/F-058/F-078/F-936）。前一版本 v0.17 保留如下。 |
 | 文档版本 | v0.17（2026-10-12，治理批台账滞后修正——§9.10 宿主装配段 F-546 状态句更正：findings F-546 已于 2026-10-07 随 UI-T74 修复翻 fixed（出路①草稿名感知装饰上下文落地），原"独立后续裁决项"表述滞留随批订正＋§15.4 v0.17 行；纯登记零契约语义变更。前一版本 v0.16（UI-T73/O-46 裁决出路②-scope 落位登记——§3.1 表增 SystemDefaultPolicy.hpp 行＋§9.10 新节：系统缺省策略集工厂（附录 D 唯一冻结默认 4π——JointThresholds 默认成员初始化即规格化承载；未裁决阈值 nullopt＝显式不适用 P-POL-2/O-10 口径不变）＋SystemDefaultPolicyProvider 解析半区供给器（保留身份任意版本应答／外来身份 MISSING／碰撞面 PortAssemblyIncomplete fail-fast）。前一版本 v0.15：WP-24-T01 冻结版本基线回填|
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
@@ -1301,7 +1302,7 @@ diagnostics：建议码表注册（§9.6）；文案与用户可见表述归其�
 本单元进入 AI 实现前必须满足：
 
 - 本文中的职责、非职责、公共接口、数据模型、错误语义和不变量不得与 ARCHITECTURE.md 冲突。
-- 单元任务使用 $(policy.ToUpper())-Txx 编号，并通过 doc/industrial-robot-design/tasks/*.json 声明前置任务、允许修改文件和验证命令。
+- 单元任务使用 POL-Txx 编号，并通过 doc/industrial-robot-design/tasks/*.json 声明前置任务、允许修改文件和验证命令。
 - 跨单元协作只能使用本文列出的公共接口或架构端口；发现接口缺失、需求冲突或依赖未登记时，任务状态必须标记为 locked。
 - 实现完成必须通过单元测试、依赖门禁和追踪矩阵校验，不能只以代码编译成功作为完成条件。
 
