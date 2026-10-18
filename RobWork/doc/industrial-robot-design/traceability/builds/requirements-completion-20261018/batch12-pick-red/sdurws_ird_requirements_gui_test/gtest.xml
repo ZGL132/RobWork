@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="4" disabled="0" errors="0" time="0.415" timestamp="2026-10-18T21:50:38.991" name="AllTests">
+  <testsuite name="RequirementsView3DFlow" tests="4" failures="4" disabled="0" skipped="0" errors="0" time="0.415" timestamp="2026-10-18T21:50:38.991">
+    <testcase name="CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp" line="215" status="run" result="completed" time="0.353" timestamp="2026-10-18T21:50:38.991" classname="RequirementsView3DFlow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:252&#x0A;Expected equality of these values:&#x0A;  sink.applied&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:252
+Expected equality of these values:
+  sink.applied
+    Which is: 0
+  1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:252&#x0A;Expected equality of these values:&#x0A;  sink.dirty&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:252
+Expected equality of these values:
+  sink.dirty
+    Which is: 0
+  1
+]]></failure>
+    </testcase>
+    <testcase name="PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp" line="306" status="run" result="completed" time="0.02" timestamp="2026-10-18T21:50:39.345" classname="RequirementsView3DFlow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:373&#x0A;Expected equality of these values:&#x0A;  sink.applied&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:373
+Expected equality of these values:
+  sink.applied
+    Which is: 0
+  1
+]]></failure>
+    </testcase>
+    <testcase name="ScenePickAndConfirmationGuard_REQ10_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp" line="377" status="run" result="completed" time="0.026" timestamp="2026-10-18T21:50:39.365" classname="RequirementsView3DFlow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:401&#x0A;Value of: written&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:401
+Value of: written
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:403&#x0A;Expected equality of these values:&#x0A;  rule.kind&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;  mode == 0 ? OrientationRuleKind::AlignFrame : OrientationRuleKind::AlignGeometryNormal&#x0A;    Which is: 1-byte object &lt;01&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:403
+Expected equality of these values:
+  rule.kind
+    Which is: 1-byte object <00>
+  mode == 0 ? OrientationRuleKind::AlignFrame : OrientationRuleKind::AlignGeometryNormal
+    Which is: 1-byte object <01>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:404&#x0A;Expected equality of these values:&#x0A;  rule.targetFrame.kind&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;  RequirementRefKind::SceneObject&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:404
+Expected equality of these values:
+  rule.targetFrame.kind
+    Which is: 1-byte object <00>
+  RequirementRefKind::SceneObject
+    Which is: 1-byte object <02>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:410&#x0A;Expected equality of these values:&#x0A;  sink.applied&#x0A;    Which is: 0&#x0A;  1&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:410
+Expected equality of these values:
+  sink.applied
+    Which is: 0
+  1
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:410&#x0A;Expected equality of these values:&#x0A;  sink.dirty&#x0A;    Which is: 0&#x0A;  1&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:410
+Expected equality of these values:
+  sink.dirty
+    Which is: 0
+  1
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:411&#x0A;Value of: editor.undoLocal()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:411
+Value of: editor.undoLocal()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+]]></failure>
+    </testcase>
+    <testcase name="ModulePreservesHostPickSeam_REQ10_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp" line="417" status="run" result="completed" time="0.014" timestamp="2026-10-18T21:50:39.392" classname="RequirementsView3DFlow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:436&#x0A;Value of: module.executeDomainCommand(&quot;requirements.pick-feature&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:436
+Value of: module.executeDomainCommand("requirements.pick-feature")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:438&#x0A;Expected equality of these values:&#x0A;  editor.workingSet().points.entries.front().pose.orientation.targetFrame.objectId&#x0A;    Which is: (nullopt)&#x0A;  stub.lastPicked&#x0A;    Which is: (16-byte object &lt;F7-91 A1-93 DA-4C 71-4F 72-3C 20-A7 07-36 EF-E5&gt;)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp:438
+Expected equality of these values:
+  editor.workingSet().points.entries.front().pose.orientation.targetFrame.objectId
+    Which is: (nullopt)
+  stub.lastPicked
+    Which is: (16-byte object <F7-91 A1-93 DA-4C 71-4F 72-3C 20-A7 07-36 EF-E5>)
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

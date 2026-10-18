@@ -11,12 +11,18 @@
  *     夹具——本文件同源复制最小集）。
  *
  * 断言纪律：替身缝（listDevices/tcpWorldPose 预置）驱动；草稿断言经
- * editor.workingSet() 现取；QCoreApplication 级（testkit §6.7）。
+ * editor.workingSet() 现取；QApplication真实Windows控件（testkit §6.7）。
  */
 
 #include <gtest/gtest.h>
 
 #include <QCoreApplication>
+#include <QApplication>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QMessageBox>
+#include <QTimer>
+#include <cmath>
 #include <optional>
 #include <string>
 #include <vector>
@@ -32,6 +38,7 @@
 #include "plugin/RequirementsCommandFlows.hpp"       // executeRequirementCommand（被测流）
 #include "plugin/PanelEditFlow.hpp"                   // IRequirementEditSink/EditRejection
 #include "plugin/RequirementsPanelWidget.hpp"         // 面板（flows 装配端）
+#include "plugin/RequirementsUiModule.hpp"            // 宿主注入缝的模块转发回归。
 
 using namespace sdurws::ird;
 using namespace sdurws::ird::requirements;
@@ -142,6 +149,7 @@ struct FakeHost final : CommandDialogHost {
     std::optional<int> chooseItemAnswer;       ///< 设备选择应答（nullopt＝取消）
     bool confirmAnswer = true;                 ///< 摘要确认应答
     QString lastConfirmText;                   ///< 确认文本留痕
+    std::function<void()> duringConfirm;       ///< 模态确认期间外部事实变化（端口边界故障注入）。
 
     std::optional<QString> saveFilePath(const QString&, const QString&,
                                         const QString&) override
@@ -161,6 +169,7 @@ struct FakeHost final : CommandDialogHost {
     bool confirmImport(const QString& summaryText) override
     {
         lastConfirmText = summaryText;
+        if (duringConfirm) { duringConfirm(); }
         return confirmAnswer;
     }
     RegenerateAction chooseRegenerateAction() override
@@ -171,8 +180,10 @@ struct FakeHost final : CommandDialogHost {
 
 /// 编辑通知收集替身（IRequirementEditSink 最小实现——PluginPanelTest 同款）。
 struct RecordingSink final : IRequirementEditSink {
-    void onEditApplied(const std::string&) override {}
-    void notifySessionDirty() override {}
+    int applied = 0; ///< 确认写入后必须恰好一次通知刷新/撤销记账。
+    int dirty = 0;   ///< 确认成功才允许标脏。
+    void onEditApplied(const std::string&) override { ++applied; }
+    void notifySessionDirty() override { ++dirty; }
     void onEditRejected(const EditRejection&) override {}
     void onBatchWarning(const core::DiagnosticRecord&) override {}
 };
@@ -209,6 +220,7 @@ TEST(RequirementsView3DFlow, CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33)
 
     RequirementEditor editor = makeEditorWithNoPoints();
     RequirementsPanelWidget panel(true);
+    panel.setEditTargetProvider([&]() -> IRequirementEditor* { return &editor; });
 
     StubSeams stub;
     stub.devices = {"Robot"};
@@ -238,6 +250,86 @@ TEST(RequirementsView3DFlow, CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33)
     EXPECT_DOUBLE_EQ(written[2], 0.3) << "捕获位置 Z 失实";
     EXPECT_NE(host.lastConfirmText.indexOf(QString::fromUtf8("捕获 TCP")), -1)
         << "确认摘要未含语义标题（REQ-08 确认门呈现面）";
+    EXPECT_EQ(sink.applied, 1); EXPECT_EQ(sink.dirty, 1);
+}
+
+/** @brief REQ-08/10：确认期间状态变更、禁写或会话脱离，原TCP不得落入新草稿。 */
+TEST(RequirementsView3DFlow, CaptureConfirmationRechecksFacts_REQ08_WP14T12)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    for (int change = 0; change < 7; ++change) {
+        SCOPED_TRACE(change);
+        auto editor = makeEditorWithNoPoints();
+        auto other = makeEditorWithNoPoints();
+        IRequirementEditor* active = &editor;
+        RequirementsPanelWidget panel(true);
+        panel.setEditTargetProvider([&]() { return active; });
+        StubSeams stub;
+        stub.devices = {"Robot"};
+        stub.pose = rw::math::Transform3D<>(rw::math::Vector3D<>(0.4,0.2,0.3),
+            rw::math::Rotation3D<>(1,0,0, 0,1,0, 0,0,1));
+        auto seams = stub.seams();
+        FakeHost host;
+        host.duringConfirm = [&]() {
+            if (change == 0) { stub.pose = rw::math::Transform3D<>(rw::math::Vector3D<>(0.8,0.2,0.3),
+                rw::math::Rotation3D<>(1,0,0, 0,1,0, 0,0,1)); }
+            if (change == 1) { panel.setWritable(false); }
+            if (change == 2) { panel.resetForSessionDetached(); }
+            if (change == 3) { active = &other; }
+            if (change == 4) { panel.noteBaselineReloaded(); }
+            if (change == 5) { stub.closureRefs.push_back(project::ObjectRef{core::ObjectId::generate(), {}, "scene-object", {}}); }
+            if (change == 6) { ASSERT_TRUE(editor.applyEdit(rootHeaderEdit("外部已改名称", "外部备注")).accepted); }
+        };
+        RecordingSink sink;
+        EXPECT_FALSE(executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams));
+        EXPECT_TRUE(editor.workingSet().points.entries.empty()) << "过期确认必须零写入";
+        EXPECT_TRUE(other.workingSet().points.entries.empty());
+        if (change == 6) { EXPECT_EQ(editor.workingSet().root.name, "外部已改名称"); }
+    }
+}
+
+/** @brief REQ-08：只读可查看捕获摘要，拒绝写草稿；取消也不得生成任务点。 */
+TEST(RequirementsView3DFlow, CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    auto editor = makeEditorWithNoPoints();
+    RequirementsPanelWidget panel(false);
+    panel.setEditTargetProvider([&]() -> IRequirementEditor* { return &editor; });
+    StubSeams stub;
+    stub.devices = {"Robot"};
+    // 独立模式只链接需求测试依赖；显式单位矩阵避免额外依赖框架静态identity符号。
+    stub.pose = rw::math::Transform3D<>(rw::math::Vector3D<>(0,0,0),
+        rw::math::Rotation3D<>(1,0,0, 0,1,0, 0,0,1));
+    auto seams = stub.seams(); FakeHost host; RecordingSink sink;
+    EXPECT_FALSE(executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams));
+    EXPECT_TRUE(editor.workingSet().points.entries.empty());
+    panel.setWritable(true); host.confirmAnswer = false;
+    EXPECT_FALSE(executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams));
+    EXPECT_TRUE(editor.workingSet().points.entries.empty());
+}
+
+/** @brief REQ-10：已知旋转和接近±90°俯仰捕获必须保真，不能把近奇异姿态吸附到万向锁。 */
+TEST(RequirementsView3DFlow, CaptureRotationNearGimbalLock_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {}, std::nullopt);
+    for (const double pitch : {0.2, 1.5707963267948966 - 1e-8, -1.5707963267948966 + 1e-8,
+                              1.5707963267948966, -1.5707963267948966}) {
+        SCOPED_TRACE(pitch);
+        auto editor = makeEditorWithNoPoints();
+        RequirementsPanelWidget panel(true);
+        panel.setEditTargetProvider([&]() -> IRequirementEditor* { return &editor; });
+        StubSeams stub; stub.devices = {"Robot"};
+        // 纯Ry旋转有已知独立参照：R00=R22=cos(pitch)，R02=-R20=sin(pitch)。
+        // 近±90°时sin已舍入到±1，而cos仍能保存1e-8rad偏离，不能只用asin反解。
+        const double c = std::cos(pitch), s = std::sin(pitch);
+        stub.pose = rw::math::Transform3D<>(rw::math::Vector3D<>(0,0,0),
+            rw::math::Rotation3D<>(c,0,s, 0,1,0, -s,0,c));
+        auto seams = stub.seams(); FakeHost host; RecordingSink sink;
+        ASSERT_TRUE(executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams));
+        const auto& captured = editor.workingSet().points.entries.front().pose.orientation.fixedRpy;
+        EXPECT_NEAR(captured[0], 0, 1e-12); EXPECT_NEAR(captured[1], pitch, 1e-12);
+        EXPECT_NEAR(captured[2], 0, 1e-12) << "REQ-10：捕获的完整世界姿态须保真";
+    }
 }
 
 /// 网关拾取登记＋目标点选中＋确认接受 → 姿态规则写回（AlignFrame——
@@ -310,6 +402,74 @@ TEST(RequirementsView3DFlow, PickFeature_PickedAndSelected_WritesOrientationRule
         << "AlignFrame 目标失实（picked 直投语义缺失）";
     EXPECT_NE(host.lastConfirmText.indexOf(QString::fromUtf8("拾取")), -1)
         << "确认摘要未含拾取语义（REQ-08 确认门呈现面）";
+    EXPECT_EQ(sink.applied, 1); EXPECT_EQ(sink.dirty, 1);
+}
+
+/** @brief REQ-09/10：场景Frame/法向/反向法向分流，不得把scene-object伪装成robot-design。 */
+TEST(RequirementsView3DFlow, ScenePickAndConfirmationGuard_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {}, std::nullopt);
+    for (int mode = 0; mode < 6; ++mode) {
+        SCOPED_TRACE(mode);
+        MapClosure closure; PointSet points; points.entries.push_back(makePoint("目标工位"));
+        fillBaseline(closure, points); RequirementEditor editor;
+        ASSERT_TRUE(editor.loadBaseline(closure).ok);
+        const auto original = editor.workingSet().points.entries.front();
+        RequirementsPanelWidget panel(true);
+        panel.setEditTargetProvider([&]() -> IRequirementEditor* { return &editor; });
+        panel.refreshPanel(editor.workingSet(), {}); panel.focusObject(original.objectId);
+        StubSeams stub; stub.lastPicked = core::ObjectId::generate();
+        stub.closureRefs.push_back(project::ObjectRef{*stub.lastPicked, {}, "scene-object", {}});
+        auto seams = stub.seams(); RecordingSink sink; FakeHost host;
+        host.chooseItemAnswer = mode < 3 ? mode : 1;
+        if (mode == 3) { host.duringConfirm = [&]() { stub.lastPicked = core::ObjectId::generate(); }; }
+        if (mode == 4) { host.duringConfirm = [&]() { panel.setWritable(false); }; }
+        if (mode == 5) { host.confirmAnswer = false; }
+        const bool written = executeRequirementCommand("requirements.pick-feature", panel, editor, sink, host, &seams);
+        if (mode >= 3) {
+            EXPECT_FALSE(written); EXPECT_EQ(editor.workingSet().points.entries.front(), original);
+            EXPECT_EQ(sink.applied, 0); EXPECT_EQ(sink.dirty, 0); continue;
+        }
+        EXPECT_TRUE(written);
+        const auto& rule = editor.workingSet().points.entries.front().pose.orientation;
+        EXPECT_EQ(rule.kind, mode == 0 ? OrientationRuleKind::AlignFrame : OrientationRuleKind::AlignGeometryNormal);
+        if (mode == 0) { EXPECT_EQ(rule.targetFrame.kind, RequirementRefKind::SceneObject); }
+        else {
+            EXPECT_EQ(rule.targetSceneObject, stub.lastPicked);
+            EXPECT_EQ(rule.feature, OrientationFeature::FramePlaneNormal);
+            EXPECT_EQ(rule.invertNormal, mode == 2);
+        }
+        EXPECT_EQ(sink.applied, 1); EXPECT_EQ(sink.dirty, 1);
+        ASSERT_TRUE(editor.undoLocal()); EXPECT_EQ(editor.workingSet().points.entries.front(), original);
+        ASSERT_TRUE(editor.redoLocal());
+    }
+}
+
+/** @brief REQ-10：模块必须保留宿主注入的拾取值，真实确认对话后才写入。 */
+TEST(RequirementsView3DFlow, ModulePreservesHostPickSeam_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {}, std::nullopt);
+    MapClosure closure; PointSet points; points.entries.push_back(makePoint("原工位"));
+    fillBaseline(closure, points); RequirementEditor editor; ASSERT_TRUE(editor.loadBaseline(closure).ok);
+    RequirementsPanelWidget panel(true); RequirementsUiModule module;
+    module.attachEditor(&editor); module.attachPanel(&panel);
+    // 生产面板工厂另行注入现取编辑器；本测试直接构造面板，须补齐同一接线。
+    panel.setEditTargetProvider([&]() -> IRequirementEditor* { return &editor; });
+    panel.refreshPanel(editor.workingSet(), {}); panel.focusObject(points.entries.front().objectId);
+    StubSeams stub; stub.lastPicked = core::ObjectId::generate();
+    stub.closureRefs.push_back(project::ObjectRef{*stub.lastPicked, {}, "robot-design", {}});
+    module.bindView3DSeams(stub.seams());
+    // 定时器只响应本次Qt模态框，绑定panel生命周期，测试结束不残留输入动作。
+    QTimer responder(&panel);
+    QObject::connect(&responder, &QTimer::timeout, &panel, [] {
+        if (auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget())) {
+            dialog->accept();
+        }
+    });
+    responder.start(20);
+    EXPECT_TRUE(module.executeDomainCommand("requirements.pick-feature")) << panel.showCommandFeedbackText().toStdString();
+    responder.stop();
+    EXPECT_EQ(editor.workingSet().points.entries.front().pose.orientation.targetFrame.objectId, stub.lastPicked);
 }
 
 /// 门面区域预览转发（UI-T52 acceptance 2——RegionPreviewGeometry→

@@ -1,0 +1,29 @@
+Note: Google Test filter = RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RequirementsView3DFlow
+[ RUN      ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(327): error: The difference between captured[1] and pitch is 9.9999999392252903e-09, which exceeds 1e-12, where
+captured[1] evaluates to 1.5707963267948966,
+pitch evaluates to 1.5707963167948966, and
+1e-12 evaluates to 9.9999999999999998e-13.
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(314): 1.5707963167948966
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(327): error: The difference between captured[1] and pitch is 9.9999999392252903e-09, which exceeds 1e-12, where
+captured[1] evaluates to -1.5707963267948966,
+pitch evaluates to -1.5707963167948966, and
+1e-12 evaluates to 9.9999999999999998e-13.
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(314): -1.5707963167948966
+
+[  FAILED  ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12 (392 ms)
+[----------] 1 test from RequirementsView3DFlow (392 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (392 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12
+
+ 1 FAILED TEST

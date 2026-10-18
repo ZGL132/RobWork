@@ -162,8 +162,8 @@ public:
 
     /**
      * @brief 绑定三维视图缝（UI-T33——宿主网关装配后调用；capture-tcp/
-     *        pick-feature 随之解除降级。lastPicked 缝在本模块内重写为
-     *        自引用闭包——本模块即拾取登记面）。
+     *        pick-feature 随之解除降级。保留宿主注入的lastPicked现取源；
+     *        仅缺省时回退本模块的拾取登记值，避免覆盖真实场景守卫）。
      */
     void bindView3DSeams(RequirementsView3DSeams seams);
 

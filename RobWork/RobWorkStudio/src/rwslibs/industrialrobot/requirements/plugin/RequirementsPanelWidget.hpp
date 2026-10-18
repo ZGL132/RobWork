@@ -143,6 +143,14 @@ public:
      */
     void setPostEditAction(PostEditAction action);
 
+    /**
+     * @brief 固定模态交互的原编辑器和会话代次，确认写回前现查可写资格（REQ-08）。
+     * @param editor [in] 非拥有编辑器身份；只比较地址，调用方保证成功守卫后才解引用。
+     * @return UI线程调用的谓词；面板销毁、脱离/重载、禁写或编辑器变化返回false。
+     * 不读取模型副本、不写草稿；std::bad_alloc按环境内存失败向外传播。
+     */
+    std::function<bool()> interactiveWriteGuard(const IRequirementEditor* editor) const;
+
     /** @brief 注入区域三维预览出口（装配期；不注入＝预览仅文本摘要）。 */
     void setRegionPreviewSink(RegionPreviewSink sink);
 
@@ -482,6 +490,7 @@ private:
     StationMarkersSink m_stationMarkersSink;  ///< 工位标记出口（UI-T33——装配层注入；空＝无投递）
     ConditionWizardFn m_conditionWizard;      ///< 工况向导缝（空＝内建对话框——R2）
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）
+    std::uint64_t m_interactionEpoch = 0;      ///< UI交互代次；会话/基线/写资格变化使旧确认失效。
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）
     bool m_sessionDetached = false;           ///< 会话脱离旗标（UI-T39——resetFor-
                                               ///< SessionDetached 置位、refreshPanel

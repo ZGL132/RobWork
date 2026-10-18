@@ -13,6 +13,7 @@
 #include "RegionSamplingForm.hpp"  // REQ-03：采样定义暂存，不生成样本。
 #include "ConditionStructureForm.hpp"  // WP-14-T12：负载/事件结构暂存，确认后原子写草稿。
 #include "StationDefinitionDialog.hpp" // WP-14-T12：完整引用与姿态载荷一次确认。
+#include <QPointer> // 模态嵌套循环可能拆除面板；确认守卫不得解引用已销毁控件。
 
 #include <QBrush>
 #include <QAction>   // 导入下拉菜单动作（返工⑤）
@@ -329,12 +330,28 @@ void RequirementsPanelWidget::setCommandAvailability(CommandAvailabilityFn avail
 
 void RequirementsPanelWidget::setEditTargetProvider(EditTargetProvider provider)
 {
+    ++m_interactionEpoch; // 更换提供器也使原身份绑定失效，即便复用同一编辑器地址。
     m_editTarget = std::move(provider);
 }
 
 void RequirementsPanelWidget::setPostEditAction(PostEditAction action)
 {
     m_postEditAction = std::move(action);
+}
+
+std::function<bool()> RequirementsPanelWidget::interactiveWriteGuard(
+    const IRequirementEditor* editor) const
+{
+    m_threadGuard.assertOnUiThread();
+    // QPointer只观察Qt生命周期；先核对现取身份，再允许调用方读原编辑器。
+    // 代次能识别“关闭再打开同一项目/同一编辑器地址”的ABA场景。
+    const QPointer<const RequirementsPanelWidget> panel(this);
+    const auto epoch = m_interactionEpoch;
+    return [panel, epoch, editor]() {
+        return panel && panel->m_interactionEpoch == epoch && panel->m_writable
+            && !panel->m_sessionDetached && panel->m_editTarget
+            && panel->m_editTarget() == editor;
+    };
 }
 
 void RequirementsPanelWidget::setRegionPreviewSink(RegionPreviewSink sink)
@@ -1586,6 +1603,7 @@ void RequirementsPanelWidget::refreshPanel(const RequirementWorkingSet& ws,
 
 void RequirementsPanelWidget::setWritable(bool writable)
 {
+    if (m_writable != writable) { ++m_interactionEpoch; } // 只读→可写也不能复活旧确认。
     m_writable = writable;  // L-R12——ui 只读横幅同源事实
     // 可写性切换＝全面板重投影（检查器行门控随行投影刷新；命令按钮可达
     // 性由 readOnlyAllowed 的 ui 命令门控面承担——本面板只控编辑行与撤销钮）。
@@ -1616,6 +1634,7 @@ void RequirementsPanelWidget::resetForSessionDetached()
     // （生命周期键、撤销键、命令键全部按上一会话末态呈现）。本方法把
     // 全部会话态归零、投影收拢为无会话空态。零修订（会话态清理面）。
     m_threadGuard.assertOnUiThread();
+    ++m_interactionEpoch;
     m_sessionDetached = true;  // 无会话判定旗标（refreshPanel 复位——UI-T39）
     // ①会话选中锚与草稿撤销记账归零（记账器事实源＝编辑器局部栈——栈
     //   已随基线复位/会话终结，记账同步归零；跨会话残留即"幽灵可撤销"）。
@@ -1697,6 +1716,7 @@ void RequirementsPanelWidget::noteBaselineReloaded()
     // 的撤销记账（对栈深的外部记账）同步归零，撤销/重做键随新记账刷新。
     // 零修订（记账是会话态）。
     m_threadGuard.assertOnUiThread();
+    ++m_interactionEpoch;
     m_undoTracker.reset();
     refreshUndoButtons();
 }

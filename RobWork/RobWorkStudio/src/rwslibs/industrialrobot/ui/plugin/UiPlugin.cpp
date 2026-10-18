@@ -167,20 +167,18 @@ bool isAssembledModelingCommand(const std::string& id)
     return modeling::isAssembledModelingCommand(id);
 }
 
-/// UI-T32 C 批次已装配的需求域命令（组1：导出副本/模板/镜像/阵列/重生成
-/// ——flows 装配 RequirementsCommandFlows 落位；组2 导入与组3 捕获/拾取
-/// 随后续提交逐条入此集合。assembled 逐条置位——未列条目保持注册期禁用）。
+/// 已有真实执行流的需求命令；注册期只判断装配，不缓存启动时的场景状态。
+/// 捕获/拾取已接真实宿主缝，无设备/未拾取等运行期前置由各流程就地说明。
 bool isAssembledRequirementCommand(const std::string& id)
 {
-    // UI-T35 P1-3（R2 审核整改）：捕获/拾取撤牌——此前 assembled 可点但
-    // 流程返回 false＝"按钮可用但执行失败"的不合格中间态；回注册期禁用
-    // （UI-T27 P0-4 语义——按钮不可达＋tooltip 引导），完整实现归
-    // UI-T33/D 批次（前置 View3D 阶段 B）。flows 降级函数保留为底座。
+    // WP-14-T12/REQ-10：旧撤牌清单没有随三维装配更新，导致真实数据在位
+    // 仍永久禁用。保留无项目/只读注册表门控，不绕开域侧确认与现场重查。
     static const std::set<std::string> kAssembled{
         "requirements.export-copy",  "requirements.apply-template",
         "requirements.mirror-stations", "requirements.create-array",
         "requirements.regenerate-linked", "requirements.import-csv",
         "requirements.import-json",
+        "requirements.capture-tcp", "requirements.pick-feature",
     };
     return kAssembled.count(id) != 0;
 }
@@ -4158,8 +4156,32 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
     }
 
     HostView3DGateway::Deps deps;
-    // 上行拾取缝（框架公开 API 直绑——屏幕坐标语义与事件位形同系）。
-    deps.pickFrame = [view](int x, int y) { return view->pickFrame(x, y); };
+    /** @brief UI线程最近真实拾取的值锚；函数闭包共享持有，场景Ptr防地址复用。
+     * 只缓存交互结果，不作名称或修订真值；每次消费仍查询现有权威端口。
+     */
+    struct RequirementsPickedAnchor {
+        rw::models::WorkCell::Ptr scene;
+        std::optional<core::ObjectId> objectId;
+        std::string projectId;
+        std::string revisionId;
+    };
+    const auto pickedAnchor = std::make_shared<RequirementsPickedAnchor>();
+    // 上行仍使用框架真实raycast；把反解结果固定到发起时项目/修订/场景。
+    // 此缓存与业务选中分离，用户回到需求工位后仍可确认刚拾取的夹具Frame。
+    deps.pickFrame = [this, view, studio, pickedAnchor](int x, int y) {
+        *pickedAnchor = RequirementsPickedAnchor{}; // 空白/失败拾取立即使旧结果失效。
+        auto* frame = view->pickFrame(x, y);
+        const auto adapter = m_lastStoreAdapter;
+        if (frame && studio && adapter && !adapter->isClosed() && m_nameMapPort) {
+            pickedAnchor->objectId = m_nameMapPort->resolveObjectIdFromRuntimeName(frame->getName());
+            if (pickedAnchor->objectId) {
+                pickedAnchor->scene = studio->getWorkCell();
+                pickedAnchor->projectId = adapter->projectStore().projectId().toCanonical();
+                pickedAnchor->revisionId = adapter->projectStore().query().head().id.toCanonical();
+            }
+        }
+        return frame;
+    };
     // TCP 帧缝（设备名→JointDevice 末端帧——WorkCell 现查，非 owning）。
     deps.resolveTcpFrame = [studio](const std::string& deviceName)
         -> const rw::kinematics::Frame* {
@@ -4229,7 +4251,18 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                            ? m_nameMapPort->resolveObjectIdFromRuntimeName(frameName)
                            : std::nullopt;
             };
-        seams.sessionRevisionId;  // 会话基线对账键＝空（无基线语义已定义——捕获请求随域门如实降级）
+        seams.lastPickedObjectId = [this, studio, pickedAnchor]() -> std::optional<core::ObjectId> {
+            const auto adapter = m_lastStoreAdapter;
+            if (!pickedAnchor->objectId || !studio || !adapter || adapter->isClosed()
+                || studio->getWorkCell() != pickedAnchor->scene
+                || adapter->projectStore().projectId().toCanonical() != pickedAnchor->projectId
+                || adapter->projectStore().query().head().id.toCanonical() != pickedAnchor->revisionId
+                || !m_nameMapPort || !m_nameMapPort->resolveRuntimeName(*pickedAnchor->objectId)) {
+                return std::nullopt; // 原场景/项目/修订已变化；禁止沿用旧拾取值。
+            }
+            return pickedAnchor->objectId;
+        };
+        // 捕获基线由需求模块在每次命令发起时从会话权威态取值，不能在启动期固化空串。
         // 会话闭包引用元数据（UI-T33——拾取写回浅核对的 CheckContext 来源）。
         // UI-T77（F-558）修复：改为**延迟现取**（捕 this→调用时经
         // currentRequirementsCheckContext() 同源现取）。原实现按绑定时点的
@@ -7353,6 +7386,93 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                "step5.5 reopen-zero-revisions");
         }
         snapPng(hostWin, "mtour-5.5-reopened.png");
+
+        // WP-14-T12/REQ-08/10：在真正恢复的六轴机器人上走生产命令与确认框。
+        // 独立FK取权威State做数值对照；取消、确认期间关节改变均零草稿写入。
+        step("5.6 real-fk-capture-confirmation");
+        if (restoredCell && !restoredCell->getDevices().empty() && m_domains->requirements) {
+            auto* studio = getRobWorkStudio();
+            const auto device = restoredCell->getDevices().front();
+            const auto before = m_requirementsEditor.workingSet();
+            // 正式阶段工厂按需创建面板；仅show空Dock不会装配域命令接收者。
+            m_content->showStagePanel(StageId::Requirements);
+            if (m_requirementsDock) { m_requirementsDock->show(); m_requirementsDock->raise(); }
+            settleEvents(200);
+            ok(m_content->commandRegistry().availability("requirements.capture-tcp").enabled,
+               "step5.6 capture-command-executable");
+            for (int attempt = 0; attempt < 3; ++attempt) {
+                bool sawConfirmation = false;
+                QTimer answer;
+                answer.setSingleShot(true);
+                QObject::connect(&answer, &QTimer::timeout, this, [&, attempt] {
+                    auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+                    auto* buttons = dialog ? dialog->findChild<QDialogButtonBox*>() : nullptr;
+                    if (!dialog || !buttons || !dialog->windowTitle().contains(QStringLiteral("捕获TCP"))) {
+                        ok(false, "step5.6 capture-confirmation-dialog-missing"); return;
+                    }
+                    sawConfirmation = true;
+                    const auto role = attempt == 0 ? QDialogButtonBox::Cancel : QDialogButtonBox::Ok;
+                    ok(buttons->button(role) && !buttons->button(role)->visibleRegion().isEmpty(),
+                       "step5.6 confirmation-button-reachable");
+                    snapPng(dialog, ("mtour-capture-confirm-" + std::to_string(attempt) + ".png").c_str());
+                    if (attempt == 1) {
+                        auto state = studio->getState();
+                        auto q = device->getQ(state);
+                        if (q.size() != 0) { q[0] += 0.1; device->setQ(q, state); studio->setState(state); }
+                    }
+                    buttons->button(role)->click();
+                });
+                answer.start(250);
+                m_content->submitCommand("requirements.capture-tcp");
+                answer.stop(); settleEvents(200);
+                ok(sawConfirmation, "step5.6 real-capture-confirmation-seen");
+                if (attempt < 2) {
+                    ok(m_requirementsEditor.workingSet() == before,
+                       attempt == 0 ? "step5.6 cancel-zero-write" : "step5.6 changed-fk-rejected-zero-write");
+                    continue;
+                }
+                const auto& points = m_requirementsEditor.workingSet().points.entries;
+                ok(points.size() == before.points.entries.size() + 1, "step5.6 captured-point-created");
+                const auto expected = rw::kinematics::Kinematics::worldTframe(device->getEnd(), studio->getState());
+                const auto captured = std::find_if(points.begin(), points.end(), [](const auto& point) {
+                    return point.name == "TcpCapture";
+                });
+                if (captured != points.end()) {
+                    ok(captured->pose.position.tryValue()
+                        && (*captured->pose.position.tryValue() - expected.P()).norm2() < 1e-12,
+                       "step5.6 captured-world-position-equals-real-fk");
+                    // 需求/建模字段采用Rz(yaw)·Ry(pitch)·Rx(roll)；框架RPY
+                    // 构造参数却按Z/Y/X轴依次传入，不能直接按字段下标照抄。
+                    const rw::math::RPY<> rpy(captured->pose.orientation.fixedRpy[2],
+                        captured->pose.orientation.fixedRpy[1], captured->pose.orientation.fixedRpy[0]);
+                    const auto rotation = rpy.toRotation3D();
+                    bool same = true;
+                    for (int row = 0; row < 3; ++row) { for (int col = 0; col < 3; ++col) {
+                        same = same && std::abs(rotation(row,col) - expected.R()(row,col)) < 1e-12;
+                    } }
+                    ok(same, "step5.6 captured-world-rotation-equals-real-fk");
+                }
+            }
+            // 使用生产局部撤销/重做按钮核对记账，避免域写入后界面没有可撤销入口。
+            QPushButton* undo = nullptr; QPushButton* redo = nullptr;
+            if (m_requirementsDock) {
+                for (auto* button : m_requirementsDock->findChildren<QPushButton*>()) {
+                    if (button->text() == QString::fromStdString(resolveText(TextKey{"panel.requirements.undo-draft.label"}))) { undo = button; }
+                    if (button->text() == QString::fromStdString(resolveText(TextKey{"panel.requirements.redo-draft.label"}))) { redo = button; }
+                }
+            }
+            ok(undo && undo->isEnabled(), "step5.6 capture-local-undo-enabled");
+            if (undo) { undo->click(); settleEvents(150); }
+            ok(m_requirementsEditor.workingSet() == before, "step5.6 capture-one-undo");
+            ok(redo && redo->isEnabled(), "step5.6 capture-local-redo-enabled");
+            if (redo) { redo->click(); settleEvents(150); }
+            ok(m_requirementsEditor.workingSet().points.entries.size() == before.points.entries.size() + 1,
+               "step5.6 capture-one-redo");
+            if (undo) { undo->click(); settleEvents(150); }
+            ok(m_lastStoreAdapter->projectStore().query().head().id == savedHead,
+               "step5.6 capture-and-local-history-zero-project-revisions");
+            snapPng(hostWin, "mtour-capture-restored.png");
+        }
 
         // WP-14-T12/A-10：在真实已打开项目的正式命令注册/面板中复验九条需求命令，
         // 避免模型测试使用自造描述符掩盖生产装配词键错误。不执行会写草稿的命令。

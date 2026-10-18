@@ -1,0 +1,91 @@
+Note: Google Test filter = RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12:RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12:RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33:RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from RequirementsView3DFlow
+[ RUN      ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(252): error: Expected equality of these values:
+  sink.applied
+    Which is: 0
+  1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(252): error: Expected equality of these values:
+  sink.dirty
+    Which is: 0
+  1
+
+[  FAILED  ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33 (353 ms)
+[ RUN      ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(373): error: Expected equality of these values:
+  sink.applied
+    Which is: 0
+  1
+
+[  FAILED  ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33 (20 ms)
+[ RUN      ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(401): error: Value of: written
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(403): error: Expected equality of these values:
+  rule.kind
+    Which is: 1-byte object <00>
+  mode == 0 ? OrientationRuleKind::AlignFrame : OrientationRuleKind::AlignGeometryNormal
+    Which is: 1-byte object <01>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(404): error: Expected equality of these values:
+  rule.targetFrame.kind
+    Which is: 1-byte object <00>
+  RequirementRefKind::SceneObject
+    Which is: 1-byte object <02>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(410): error: Expected equality of these values:
+  sink.applied
+    Which is: 0
+  1
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(410): error: Expected equality of these values:
+  sink.dirty
+    Which is: 0
+  1
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(411): error: Value of: editor.undoLocal()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(381): 0
+
+[  FAILED  ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12 (26 ms)
+[ RUN      ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(436): error: Value of: module.executeDomainCommand("requirements.pick-feature")
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(438): error: Expected equality of these values:
+  editor.workingSet().points.entries.front().pose.orientation.targetFrame.objectId
+    Which is: (nullopt)
+  stub.lastPicked
+    Which is: (16-byte object <F7-91 A1-93 DA-4C 71-4F 72-3C 20-A7 07-36 EF-E5>)
+
+[  FAILED  ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12 (14 ms)
+[----------] 4 tests from RequirementsView3DFlow (415 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (415 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33
+[  FAILED  ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33
+[  FAILED  ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12
+[  FAILED  ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12
+
+ 4 FAILED TESTS

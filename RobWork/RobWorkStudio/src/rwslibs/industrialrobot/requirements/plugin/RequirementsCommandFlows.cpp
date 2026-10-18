@@ -22,6 +22,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QPointer>
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QHeaderView>
@@ -64,7 +65,7 @@ void note(RequirementsPanelWidget& panel, const QString& text)
  *        重蹈同款纪律，改逐元素解析——与 modeling 侧 rotationToRpy 反解
  *        同式同源，公式一致性由各自单元测试钉住）。
  *
- * 正解约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)；反解：pitch＝-asin(R20)，
+ * 正解约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)；反解：pitch＝atan2(-R20,hypot(R00,R10))，
  * roll＝atan2(R21,R22)，yaw＝atan2(R10,R00)；万向锁（|R20|≈1）时
  * roll＝0、yaw 改由 atan2(-R01,R11) 确定（确定性特例——工程惯例）。
  *
@@ -73,8 +74,10 @@ void note(RequirementsPanelWidget& panel, const QString& text)
  */
 std::array<double, 3> rotationToRpyPresentation(const rw::math::Rotation3D<double>& R)
 {
-    const double pitch = -std::asin(std::clamp(R(2, 0), -1.0, 1.0));
-    const double cp = std::cos(pitch);
+    // 近±90°时R20可能先舍入成±1，asin会丢失仍保存在首列的微小余弦；
+    // WP-14-T12/REQ-10数值回归要求1e-8rad偏离不能被吸附到万向锁。
+    const double cp = std::hypot(R(0, 0), R(1, 0));
+    const double pitch = std::atan2(-R(2, 0), cp);
     if (std::abs(cp) > 1e-12) {
         return {std::atan2(R(2, 1), R(2, 2)), pitch, std::atan2(R(1, 0), R(0, 0))};
     }
@@ -396,12 +399,19 @@ public:
     bool confirmImport(const QString& summaryText) override
     {
         // A-09：所有错误都可滚动查看和复制；QMessageBox裁切与前8条限制均移除。
-        QDialog dialog; dialog.setWindowTitle("导入逐行预览与确认"); dialog.resize(850, 650);
+        const bool capture = summaryText.startsWith(QStringLiteral("捕获 TCP"));
+        const bool pick = summaryText.startsWith(QStringLiteral("拾取几何特征"));
+        QDialog dialog;
+        dialog.setWindowTitle(capture ? QStringLiteral("捕获TCP写回确认")
+            : pick ? QStringLiteral("拾取特征写回确认") : QStringLiteral("导入逐行预览与确认"));
+        dialog.resize(850, 650);
         auto* layout = new QVBoxLayout(&dialog);
         auto* details = new QPlainTextEdit(&dialog); details->setObjectName("import-outcome-details");
         details->setReadOnly(true); details->setPlainText(summaryText); layout->addWidget(details);
         auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
-        buttons->button(QDialogButtonBox::Ok)->setText("确认正确行写入草稿"); buttons->button(QDialogButtonBox::Cancel)->setText("取消");
+        buttons->button(QDialogButtonBox::Ok)->setText(capture || pick
+            ? QStringLiteral("确认写入草稿") : QStringLiteral("确认正确行写入草稿"));
+        buttons->button(QDialogButtonBox::Cancel)->setText("取消");
         layout->addWidget(buttons);
         QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
         QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
@@ -723,7 +733,7 @@ bool flowCaptureTcp(RequirementsPanelWidget& panel,
                     CommandDialogHost& host,
                     const RequirementsView3DSeams* view3d)
 {
-    (void)sink;  // 捕获经域服务直改编辑器——sink 编辑通知由面板刷新编排承接
+    const QPointer<RequirementsPanelWidget> panelAlive(&panel);
     // 缝缺省＝诚实降级原文（back-compat——绑定前两命令保持阶段 A 口径）。
     if (view3d == nullptr || !view3d->listDevices
         || !view3d->tcpWorldPose) {
@@ -731,6 +741,12 @@ bool flowCaptureTcp(RequirementsPanelWidget& panel,
                         "捕获 TCP 需要三维视图关节状态数据源——该数据源将在后续版本提供"));
         return false;
     }
+    // 发起即固定草稿和闭包，确认对话的嵌套事件循环可能切换项目或接收编辑。
+    // 守卫先检查原身份，短路后才读取原编辑器，不能向复用地址的新会话写旧值。
+    const auto canWrite = panel.interactiveWriteGuard(&editor);
+    const auto original = editor.workingSet();
+    const auto closureRefs = view3d->sessionClosureRefs
+        ? view3d->sessionClosureRefs() : std::vector<project::ObjectRef>{};
     // 设备清点（宿主 WorkCell 现查）：零台＝诚实失败；多台＝宿主下拉选择。
     const std::vector<std::string> devices = view3d->listDevices();
     if (devices.empty()) {
@@ -751,6 +767,7 @@ bool flowCaptureTcp(RequirementsPanelWidget& panel,
         if (!picked.has_value()) {
             return false;  // 用户取消——流程静默终止
         }
+        if (!panelAlive) { return false; }
         deviceName = candidates.at(*picked);
     }
     // TCP 世界系位姿（网关 State 只读——KIN-06 零修订）。
@@ -794,6 +811,17 @@ bool flowCaptureTcp(RequirementsPanelWidget& panel,
     if (!host.confirmImport(summary)) {  // 确认缝复用（CommandDialogHost 通用摘要确认面——REQ-08 语义)
         return false;  // 用户取消——流程静默终止（零数据变更）
     }
+    if (!panelAlive) { return false; }
+
+    // 写回前再次现取真值；位姿单位m/rad、世界系，比较原捕获矩阵而非摘要舍入值。
+    // UI线程同步FK无随机噪声，同状态应逐元素一致；任何变化都要求用户重捕。
+    const auto currentPose = view3d->tcpWorldPose(deviceName.toStdString());
+    if (!canWrite() || editor.workingSet() != original
+        || view3d->listDevices() != devices || currentPose != pose
+        || (view3d->sessionClosureRefs && view3d->sessionClosureRefs() != closureRefs)) {
+        note(panel, QString::fromUtf8("捕获未写入：会话、草稿、可写状态或TCP已改变，请重新捕获"));
+        return false;
+    }
 
     // 域服务裁决（REQ-08 确认门＋STALE 对账＋I-REQ-3/5 校验全部在域侧——
     // 流程零判定；World 缺省参考系＝捕获值世界系直投）。
@@ -812,7 +840,7 @@ bool flowCaptureTcp(RequirementsPanelWidget& panel,
 
     RequirementCaptureService service;
     const CaptureOutcome outcome =
-        service.captureTcpAsFixedPoint(editor, request, CheckContext{});
+        service.captureTcpAsFixedPoint(editor, request, CheckContext{closureRefs});
     for (const core::DiagnosticRecord& diag : outcome.diags) {
         note(panel, QString::fromStdString(diag.cause));
     }
@@ -820,8 +848,10 @@ bool flowCaptureTcp(RequirementsPanelWidget& panel,
         note(panel, QString::fromUtf8("捕获 TCP 未写入（域侧拒绝）——详见上方诊断"));
         return false;
     }
-    note(panel, QString::fromUtf8("已捕获 TCP 至新任务点 %1（位置世界系，"
-                                  "姿态规则未变更——域侧规则语义）")
+    // 域服务已产生恰一个局部栈帧；复用批次完成通知统一记账/刷新/标脏。
+    sink.onBatchEditApplied("捕获TCP并新建固定任务点");
+    sink.notifySessionDirty();
+    note(panel, QString::fromUtf8("已捕获 TCP 至新任务点 %1（位置与固定姿态均为世界系）")
                     .arg(QString::fromStdString(pointName)));
     return true;
 }
@@ -831,7 +861,7 @@ bool flowPickFeature(RequirementsPanelWidget& panel,
                      CommandDialogHost& host,
                      const RequirementsView3DSeams* view3d)
 {
-    (void)editor;  // 姿态写回经域服务直改编辑器
+    const QPointer<RequirementsPanelWidget> panelAlive(&panel);
     // 缝缺省＝诚实降级原文（back-compat 同 capture-tcp）。
     if (view3d == nullptr || !view3d->resolveFrameObjectId
         || !view3d->lastPickedObjectId) {
@@ -853,23 +883,61 @@ bool flowPickFeature(RequirementsPanelWidget& panel,
                         "拾取几何特征需要目标工位——请先在需求树或工位页选中目标任务点"));
         return false;
     }
+    const auto canWrite = panel.interactiveWriteGuard(&editor);
+    const auto original = editor.workingSet();
+    CheckContext closureContext;
+    if (view3d->sessionClosureRefs) { closureContext.closureRefs = view3d->sessionClosureRefs(); }
+    // 按现有浅引用契约分流；不能把场景对象或joint/link身份伪装成robot-design。
+    const auto ref = std::find_if(closureContext.closureRefs.begin(), closureContext.closureRefs.end(),
+        [&](const auto& value) { return value.objectId == *picked; });
+    if (ref == closureContext.closureRefs.end()) {
+        note(panel, QStringLiteral("拾取目标不在当前修订中，请重新拾取")); return false;
+    }
+    PickedFeature feature;
+    feature.target.objectId = *picked;
+    QString featureLabel;
+    if (ref->objectTypeToken == expectedTargetToken(RequirementRefKind::SceneObject)) {
+        feature.target.kind = RequirementRefKind::SceneObject;
+        const QStringList choices{QStringLiteral("对齐对象坐标系"),
+            QStringLiteral("对齐对象坐标平面法向"), QStringLiteral("对齐对象反向坐标平面法向")};
+        const auto choice = host.chooseItem(QStringLiteral("选择拾取特征"),
+            QStringLiteral("使用对象坐标系，或该坐标系平面的法向："), choices);
+        if (!choice || !panelAlive) { return false; }
+        if (*choice < 0 || *choice >= choices.size()) { return false; }
+        featureLabel = choices.at(*choice);
+        if (*choice != 0) {
+            feature.feature = OrientationFeature::FramePlaneNormal;
+            feature.invertNormal = *choice == 2;
+        }
+    } else if (ref->objectTypeToken == expectedTargetToken(RequirementRefKind::ModelFrame)) {
+        feature.target.kind = RequirementRefKind::ModelFrame;
+        featureLabel = QStringLiteral("对齐模型坐标系");
+    } else {
+        note(panel, QStringLiteral("该拾取对象不是可引用的模型或场景坐标系，请选择夹具/零件坐标系"));
+        return false;
+    }
 
     // 写回前确认（REQ-08——L-R6"写回前确认"的对话桥承载：用户拒绝＝
     // 零数据变更静默终止；确认凭据在用户 Yes 之后才采集——SA-15 禁止
     // 凭据先于确认事实存在）。
     const QString confirmText =
         QString::fromUtf8("拾取几何特征写回确认\n\n"
-                          "将把三维拾取的模型坐标系写入选中目标任务点的姿态"
-                          "规则（AlignFrame）。确认写回？");
+                          "将把三维拾取特征写入原目标工位：%1。确认写回？").arg(featureLabel);
     if (!host.confirmImport(confirmText)) {
         return false;  // 用户取消＝零数据变更（SA-15 导入路径取消面）
+    }
+    if (!panelAlive) { return false; }
+    if (!canWrite() || editor.workingSet() != original || panel.selectedPointId() != targetPoint
+        || view3d->lastPickedObjectId() != picked
+        || (view3d->sessionClosureRefs && view3d->sessionClosureRefs() != closureContext.closureRefs)) {
+        note(panel, QStringLiteral("拾取未写入：会话、目标、可写状态或拾取结果已改变，请重新拾取"));
+        return false;
     }
 
     // 域服务裁决（applyPickToOrientation——拾取目标→工位姿态规则写回；
     // 确认凭据随请求过域门）。
     ApplyPickRequest request;
-    request.picked.target.kind = RequirementRefKind::ModelFrame;
-    request.picked.target.objectId = *picked;  // ModelFrame 浅引用（帧拾取＝feature 空）
+    request.picked = feature;
     request.targetPointId = *targetPoint;
     request.confirmation = CaptureConfirmation::confirmed(
         "ui", std::chrono::system_clock::now());
@@ -878,10 +946,6 @@ bool flowPickFeature(RequirementsPanelWidget& panel,
     // 浅核对上下文（UI-T33 收口——会话闭包引用元数据经缝取自宿主查询
     // 端口 head().objectRefs；缝缺省/空返回＝空上下文——picked 目标浅
     // 核对如实拒绝，不虚构通过）。
-    CheckContext closureContext;
-    if (view3d->sessionClosureRefs) {
-        closureContext.closureRefs = view3d->sessionClosureRefs();
-    }
     const CaptureOutcome outcome =
         service.applyPickToOrientation(editor, request, closureContext);
     for (const core::DiagnosticRecord& diag : outcome.diags) {
@@ -891,6 +955,7 @@ bool flowPickFeature(RequirementsPanelWidget& panel,
         note(panel, QString::fromUtf8("拾取结果未写入（域侧拒绝）——详见上方诊断"));
         return false;
     }
+    sink.onBatchEditApplied("拾取特征并更新工位姿态规则");
     sink.notifySessionDirty();
     note(panel, QString::fromUtf8("拾取结果已写入目标工位姿态规则"));
     return true;
