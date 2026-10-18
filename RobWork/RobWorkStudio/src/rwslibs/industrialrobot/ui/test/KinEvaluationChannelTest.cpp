@@ -1286,3 +1286,98 @@ TEST(KinEvaluationChannel, BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15
         EXPECT_TRUE(rejected.notes.empty());
     }
 }
+
+/**
+ * @brief A-16/REQ-01：六个掩码位逐一真实消费，自由分量即使极大也不能进入可达证明。
+ * 目标各只有一个受约束分量，零位即满足；另设X=100m的真失败对照，禁止忽略所有掩码。
+ */
+TEST(KinEvaluationChannel, BatchHonorsEveryConstraintMask_REQ01_A16)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01"}, std::vector<std::string>{"AT-23"});
+    auto ws = makeWorksetWithTaskPoint();
+    const auto prototype = ws.points.entries.front(); ws.points.entries.clear();
+    for (int axis = 0; axis < 7; ++axis) {
+        auto point = prototype;
+        point.objectId = idFrom<core::ObjectId>("a16-mask-" + std::to_string(axis));
+        point.name = "分量约束" + std::to_string(axis);
+        auto& mask = point.pose.constrainedDof; mask = {};
+        rw::math::Vector3D<double> position(99, 99, 99); // 自由坐标，m；故意超出模型半径。
+        switch (axis) {
+            case 0: mask.x = true; position[0] = 1.8; break;
+            case 1: mask.y = true; position[1] = 0; break;
+            case 2: mask.z = true; position[2] = 0; break;
+            case 3: mask.roll = true; break;
+            case 4: mask.pitch = true; break;
+            case 5: mask.yaw = true; break;
+            default: mask.x = true; position[0] = 100; break;
+        }
+        point.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            position, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        ws.points.entries.push_back(point);
+    }
+    ScriptedEditor editor(ws); ExecutorHarness h; h.rebuildExecutorWithEditor(&editor);
+    auto config = makeLegalConfig(); config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    config.iterationLimit = 200; h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request; request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain();
+    const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 7U);
+    for (std::size_t i = 0; i < ws.points.entries.size(); ++i) {
+        const auto it = results.find(ws.points.entries[i].objectId); ASSERT_NE(it, results.end());
+        EXPECT_EQ(it->second.outcomeState, i == 6 ? "failed" : "completed")
+            << ws.points.entries[i].name << " " << it->second.outcomeText;
+    }
+}
+
+/** @brief A-16/REQ-09：方向/滚转规则不可静默按Fixed求解，数值反例须与规则一致。 */
+TEST(KinEvaluationChannel, BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-09"}, std::vector<std::string>{"AT-23"});
+    auto ws = makeWorksetWithTaskPoint();
+    auto prototype = ws.points.entries.front(); ws.points.entries.clear();
+    prototype.pose.constrainedDof = {true, true, true, true, true, true};
+    auto rollFree = prototype;
+    rollFree.objectId = idFrom<core::ObjectId>("a16-roll-free"); rollFree.name = "允许工具滚转";
+    rollFree.pose.orientation.kind = req::OrientationRuleKind::ToolRollFree;
+    // 两杆q=(0.3,-0.5)的独立解析位置，实际工具轴恒+Z，允许绕其滚转应成功。
+    rollFree.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(1.1*std::cos(0.3)+0.7*std::cos(-0.2),
+                                   1.1*std::sin(0.3)+0.7*std::sin(-0.2),0),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    ws.points.entries.push_back(rollFree);
+    auto fixed = rollFree; fixed.objectId = idFrom<core::ObjectId>("a16-fixed-control");
+    fixed.name = "固定姿态对照"; fixed.pose.orientation = {}; ws.points.entries.push_back(fixed);
+    auto pointing = prototype; pointing.objectId = idFrom<core::ObjectId>("a16-point-at");
+    pointing.name = "指向目标反例"; pointing.pose.orientation.kind = req::OrientationRuleKind::PointAtTarget;
+    pointing.pose.orientation.targetPoint = {0, 1, 0};
+    ws.points.entries.push_back(pointing);
+    const auto normalId = idFrom<core::ObjectId>("a16-normal-frame");
+    auto normal = prototype; normal.objectId = idFrom<core::ObjectId>("a16-normal-point");
+    normal.name = "对齐法向反例"; normal.pose.orientation.kind = req::OrientationRuleKind::AlignGeometryNormal;
+    normal.pose.orientation.targetSceneObject = normalId;
+    normal.pose.orientation.feature = req::OrientationFeature::FramePlaneNormal;
+    ws.points.entries.push_back(normal);
+    ScriptedEditor editor(ws); ExecutorHarness h;
+    h.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor, [=](const core::ObjectId& id) -> std::optional<rw::math::Transform3D<double>> {
+            // 名称端口给出独立黄金参考系：Rx(π/2)使局部+Z指向世界-Y。
+            // 两个平面转轴永远不能令工具+Z对齐该方向；求解/变换逻辑均为产品实现。
+            if (id != normalId) { return std::nullopt; }
+            return rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0),
+                rw::math::Rotation3D<double>(1,0,0,0,0,-1,0,1,0));
+        }, QCoreApplication::instance(),
+        [&h](const KinChannelBackgroundResultNote& note) { h.notes.push_back(note); }});
+    h.executor->attachView(h.view, h.boundId);
+    auto config = makeLegalConfig(); config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    config.iterationLimit = 200; h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request; request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain(); const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 4U);
+    for (const auto& point : ws.points.entries) {
+        const auto it = results.find(point.objectId); ASSERT_NE(it, results.end());
+        EXPECT_EQ(it->second.outcomeState, point.objectId == rollFree.objectId ? "completed" : "failed")
+            << point.name << " " << it->second.outcomeText;
+    }
+}

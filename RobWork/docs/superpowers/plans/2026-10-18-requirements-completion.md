@@ -374,3 +374,21 @@ A-15补充三授权登记：所有者已明确回复“批准该精确补充三�
 补充四范围汇总（尚待批准）：随后串行真实GUI20跑19通过、1失败，同一旧表示断言还在kinematics/gui_test/KinematicsPanelInputGuiTest.cpp第390行。全量检索该单元test/gui_test后，默认产物的旧键断言共两处；其余localName显式别名测试须保留。补充四最终仅申请上述两个测试文件各一处改EXPECT_TRUE(tcpKey.empty())及相邻注释；其他字段断言、产品代码均不变。补充四上一单文件问题被该汇总范围取代，两个真实失败证据保留。
 
 补充四授权登记：所有者已明确回复“批准这两处精确测试修正”，仅修改汇总的两个测试断言及相邻注释，产品不再扩面。
+
+### A-16 六分量与五姿态规则的真实求解消费（设计待所有者审阅）
+
+1. **行为与发现画像**：REQ-01明确受约束/自由分量；requirements §4.3约定xyz在refFrame系、roll/pitch/yaw为该系欧拉分量（rad）。REQ-09和§5.3要求五规则真实消费。现有UI切片完全不投影constrainedDof，只有Fixed/AlignFrame分支，其余静默使用refFrame旋转；IkSolver只支持FullPose/PositionOnly且无条件对完整目标位置作球半径证明。batch25-red-ui真实两用例均失败：六个零位已满足的单分量目标因自由坐标99m被拒；允许工具Z轴滚转的已知非零构型误失败；PointAtTarget与Rx(π/2)平面法向两个平面机器人不可能满足的方向反例误成功。固定完整姿态的不可达对照保持失败。不是仅表单保存问题，不得用重新命名状态或强制Fixed掩盖。
+
+2. **精确公共接口/文件面**：仅在kinematics/include/sdurws/ird/kinematics/KinTypes.hpp新增值类型TaskPoseConstraint，数据为`std::array<bool,6> constrainedDof`（默认全true）、`rw::math::Rotation3D<double> referenceInBase`（显式单位阵，refFrame轴在基座系表达）、`bool allowToolRoll=false`、`std::array<double,2> rollRange={-π,+π}`（rad）。只增相等比较，不增服务方法/跨域边。在Ik.hpp::IkRequest、Evidence.hpp::BatchTaskPoint、Evaluators.hpp::TaskPointIkQuery数据成员表尾各追加默认nullopt的`std::optional<TaskPoseConstraint> taskConstraint`；nullopt完全沿用旧FullPose/PositionOnly算法。允许Ik.hpp求解契约版本3→4、Evidence.hpp批量契约版本2→3，防旧结果/检查点冒用新消费语义；现有编解码随常量拒旧，不另改project或runtime格式。除这四个公共头外，不新增公共产品接口。精确产品实现仅kinematics/src/Ik.cpp、Evaluators.cpp、Evidence.cpp（如需同步既有版本注释/载荷契约）、ui/plugin/KinEvaluationChannel.cpp；测试放行kinematics/test/**、contract_test/**、gui_test/**中本语义与版本适配/回归，ui/test/**和UiPlugin.cpp已在任务允许面。同步units/kinematics.md、units/requirements.md、任务契约和本计划；requirements公共头/存储、runtime、框架均不改。
+
+3. **数值语义与失败**：UI只解析参考真值并投影约束值，运动学库负责唯一残差/迭代/复验。位置残差为`R_base_ref^T*(p_target-p_actual)`的启用分量；姿态为同一refFrame系内目标/实际ZYX欧拉分量的最短角差，只选启用分量，两类各按选中分量的二范数与m/rad容差比较。Fixed使用原字面RPY，AlignFrame使用权威目标Frame旋转。AlignGeometryNormal只接受有明确法向的FramePlaneNormal，取同一目标场景Frame的局部+Z并应用invertNormal；FrameOrigin不伪造法向，带工位/字段/原因/建议拒绝受理。PointAtTarget按“工具轴指向目标点”取refFrame内`targetPoint-point.position`，再转基座系；与工位重合无方向则拒绝，旧浅解析仍仅留参数来源，不将其原点归一提示当深度几何真值。方向规则以工具+Z为主轴，构造确定参考姿态：选与方向最不平行的基轴、固定tie顺序X/Y/Z，正交化；绕工具+Z自由。ToolRollFree以refFrame+Z为固定主轴，零滚转参考为refFrame旋转，在原rollRange中允许旋转；这不是把Euler roll分量直接删掉。允许滚转时在目标族`R_reference*Rz(theta)`中从实际旋转提取swing/twist，确定性选最近等价theta并按范围投影，再按原欧拉分量掩码算残差。范围≥2π等价全滚转自由；反向主轴/退化twist确定取零参考，不把180°方向反例变成零误差。mask全false、非正交参考旋转、非有限/空滚转区间为调用方违约fail-fast；UI输入错误提前定位拒绝，取消/设施失败仍用既有语义。只有xyz全受约束才允许沿既有球半径作不可达证明；部分位置不得以自由坐标证明不可达。新约束分支用真实FK上的中心差分Jacobian（各可动轴固定h=1e-7 rad或m、角差跨周展开）和既有阻尼/步长/限位纪律；迭代与独立FK复验复用同一约束残差。旧nullopt分支保持原解析Jacobian与结果路径。
+
+4. **生命周期/权威**：TaskPoseConstraint纯值，由UI对同一发布快照及需求工作集切片后捕获；不存Frame裸指针，不由UI计算FK/IK。坐标真值与名称仍runtime，修订与草稿写路径仍project/requirements；无新命令或缓存。运行时选中TCP沿A-15同一快照偏移。规则参数来源已在需求应用/切片字节内，评估器的sliceId与新契约版本同时绑定结果；不持久化第二套可编辑规则。
+
+5. **线程/确定性**：只在原UI受理线程解析Frame，后台仅读值与不可变快照，无新共享状态。分量序固定x/y/z/roll/pitch/yaw，SI m/rad；角差atan2(sinΔ,cosΔ)，欧拉万向锁采用固定roll=0的确定分支。中心差分按关节序±h，不引入随机源；归一方向/正交基tie顺序、滚转周数和区间投影明确固定。仅新约束分支增加FK次数，不把性能代价藏在旧调用方。
+
+6. **测试矩阵/交付顺序**：已有真实UI红回归先保留。批准后先补纯IK独立解析黄金：六个单分量、组合、非零RPY和旋转参考系、±π跨周/万向锁、自由位置99m不入界限、启用轴100m真失败；方向正/反180°、FramePlaneNormal正/反、PointAt目标与工位不同原点、重合拒绝、工具滚转全范围/窄范围/跨周等价；缺引用/非法数值/全自由零受理。测试数值不得用替身替代FK/IK或数据变换。直接TaskPointIkQuery与BatchTaskPoint两条Evaluator真实消费，约束与版本相等/对账、取消/设施失败、旧nullopt黄金保持；只在允许测试目录同步硬编码版本断言。UI基线辅助夹具显式设置六分量全约束，避免把过去掩码被忽略当合法默认。真实GUI逐位切换掩码、五规则参数与取消不写/一次局部撤销；正式宿主场景Frame和非默认TCP组合数值及三维方向相符。双模式完整构建、相关模型/契约/GUI、既有求解与worker消费者、门禁/文档/scope/commit-lint留痕后独立提交推送。未跑项不得标绿，仍不替代120项总终验。
+
+7. **文档与验收边界**：精确更新上述两张单元卡及任务allowedFiles；不改REQUIREMENTS/ARCHITECTURE，不重定义存储字段。逐行映射R01-09、R09-01~06及相关三维检查。A-16不涵盖区域独立TCP、任意旋转Box载体、mesh三角法向、覆盖渲染或轨迹动力学联合，这些仍单列待收口，不假借本批通过。
+
+8. **方案与设计门**：采用可选值约束保持旧调用方兼容；不通过把所有需求都变成Fixed或只删角误差蒙混规则。不新增跨单元边，不引入新依赖或长期存储机制，无新增长期架构决策。公共头与求解契约变化须所有者审阅，依据`.agents/skills/ird-design-change/SKILL.md`设计门“公共接口（公共头、端口）变化 → 先所有者/架构审阅…再实施”。批准前只保留允许面内的两项失败测试和设计，不修改四个公共头或求解产品代码。
