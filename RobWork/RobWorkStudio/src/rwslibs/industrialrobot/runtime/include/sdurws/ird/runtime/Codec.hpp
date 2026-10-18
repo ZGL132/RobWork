@@ -83,16 +83,19 @@ namespace sdurws::ird::runtime::rtcodec {
 /// 魔数 "IRDCANO"（§4.5 原文）——CanonicalModel canonical 编码家族标识。
 inline constexpr std::array<std::uint8_t, 7> kMagic{'I', 'R', 'D', 'C', 'A', 'N', 'O'};
 
-/// 结构版本 major（结构版本号 canonical-model/1.1——§4.3 结构级约定）。
+/// 结构版本 major（结构版本号 canonical-model/1.2——§4.3 结构级约定）。
 inline constexpr std::uint16_t kVersionMajor = 1;
-/// 结构版本 minor（minor 升版＝向后兼容追加；major 升版＝破坏性变更）。
+/// 结构版本 minor（本协议精确匹配major/minor；任何升版都须重新物化缓存）。
 /// 1.0→1.1（F-618，2026-10-10）：诊断块逐条 DiagnosticRecord 记录尾追加
 /// level 字节（u8 词表值，读入口值域校验）——尾追加不改既有字段位次；旧
 /// minor=0 字节经 parse 头检查（版本不符＝拒绝而非尽力猜测）显式拒绝。
 /// 兼容性口径：全字段编码仅存续于会话内 worker 物化通道（MaterializedPayload
 /// ——§9.5"不是项目持久化格式，不入 .rwdesign"），无跨版本存量字节；诊断块
 /// 不入身份域，contentIdentity 不变。
-inline constexpr std::uint16_t kVersionMinor = 1;
+// A-15（REQ-01/CON-05）：1.2在每工具偏移后追加完整命名TCP目录。
+// 全字段/身份域均包含目录；旧1.1缓存精确版本拒绝，可从原项目对象重新编译。
+// 本编码仍非project持久化格式，旧项目字节和历史证据均不改写。
+inline constexpr std::uint16_t kVersionMinor = 2;
 
 /// 编码头域标志：全字段编码（parse 的唯一输入形态）。
 inline constexpr std::uint16_t kDomainFull = 0;

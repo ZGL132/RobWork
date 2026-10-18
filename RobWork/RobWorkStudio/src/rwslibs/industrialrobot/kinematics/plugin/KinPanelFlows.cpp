@@ -69,14 +69,12 @@ KinTcpResolution resolveSessionTcp(const KinPanelServices& services)
                          + "；请先在建模侧配置工具与默认 TCP";
         return out;
     }
-    // ---- 解析产物：TcpRef{默认工具对象身份, 工具局部名}。tcpKey 显式填
-    // 局部名（canonical TCP 以其所属工具命名——解析规则见 KinTypes.hpp
-    // TcpRef 注；空串语义等价但显式名让请求自描述、不依赖"空＝canonical"
-    // 的隐式约定）。名称可解析性由快照对象索引保证（tcpKey 命中工具内
-    // canonical TCP 身份——KIN-14/I-MDL-9 闭包校验链）。
+    // ---- A-15：默认工具身份仍按defaultTcpIndex，空键唯一明确表达默认偏移。
+    // 实际命名键优先于旧工具名别名；若仍填localName，恰有同名非默认TCP
+    // 时会无意切换偏移。这里不能以名称猜默认，也不改外部显式键的解析规则。
     const runtime::CanonicalTool& tool = tools.at(*defaultIdx);
     out.tcp.toolObject = tool.objectId;
-    out.tcp.tcpKey = tool.localName;
+    out.tcp.tcpKey.clear();
     out.ok = true;
     return out;
 }

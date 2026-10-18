@@ -61,6 +61,7 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <rw/math/InertiaMatrix.hpp>
@@ -218,6 +219,15 @@ struct CanonicalTool {
      * 来源）。旋转须正交非反射、平移有限；平移单位 m。
      */
     rw::math::Transform3D<double> tcpOffset = detail::identityTransform3D();
+    /**
+     * REQ-01/09、MDL-13、KIN-14：工具内原始tcpKey与T_flange_tcp的完整目录。
+     * 平移单位m，旋转无量纲、须正交非反射；键非空且唯一，否则拒绝构建。
+     * 默认空保留旧单TCP调用，空选择键仍使用tcpOffset；非空先精确查本目录，
+     * 再允许工具localName作为旧别名。值由描述/快照持有，无外借指针；
+     * 发布后并发只读。规范构建按UTF-8字节序排序，所有偏移均参与内容身份。
+     */
+    std::vector<std::pair<std::string, rw::math::Transform3D<double>>> namedTcpOffsets;
+
 };
 
 /**

@@ -594,6 +594,11 @@ TEST(CompilerTest, DefaultTcpStaysDescriptionFirstAfterToolSort_F584)
         h.description.tools.push_back(makeTool(tB, "tool_heavy"));
         h.description.tools.push_back(makeTool(tA, "tool_light"));
     }
+    // A-15/REQ-01：真实十段编译不能丢失每个工具的非默认偏移。
+    for (auto& tool : h.description.tools) {
+        tool.namedTcpOffsets = {{"tip", rw::math::Transform3D<double>(
+            rw::math::Vector3D<double>(0.2, 0.3, 0.4), rw::math::Rotation3D<double>::identity())}};
+    }
     const core::ObjectId declaredFirst = h.description.tools.front().objectId;
 
     ScriptedReader reader(h.description);
@@ -607,6 +612,11 @@ TEST(CompilerTest, DefaultTcpStaysDescriptionFirstAfterToolSort_F584)
 
     const CanonicalModel& model = out.snapshot->model();
     ASSERT_EQ(model.tools().size(), 2u);
+    for (const auto& tool : model.tools()) {
+        ASSERT_EQ(tool.namedTcpOffsets.size(), 1U);
+        EXPECT_EQ(tool.namedTcpOffsets[0].first, "tip");
+        EXPECT_DOUBLE_EQ(tool.namedTcpOffsets[0].second.P()[2], 0.4);
+    }
     // 前置自检：排序确实换位（存储首项＝声明次项）——否则断言退化为恒真。
     ASSERT_EQ(model.tools().front().objectId, h.description.tools.at(1).objectId)
         << "夹具应使 ObjectId 排序换位——否则本用例未覆盖 F-584 面";

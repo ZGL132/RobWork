@@ -108,8 +108,8 @@ bool targetAllFinite(const rw::math::Transform3D<double>& t)
 
 /// TCP 未配置/悬空（§9.6 KIN-NO-TCP 两分语义）——消息锚见 resolveTcpOrThrow。
 
-/// 解析 TCP 引用（空键＝canonical TCP；非空精确匹配 localName——违例
- /// FrameUnresolved）。求解器 fail-fast 轨：解析失败以 invalid_argument
+/// 解析 TCP 引用（空键＝默认TCP；非空先命中原tcpKey再允许localName旧别名——违例
+/// FrameUnresolved）。求解器 fail-fast 轨：解析失败以 invalid_argument
 /// 抛出（消息携带 KIN-NO-TCP/FrameUnresolved 语义锚——§5.5 错误组）。
 const runtime::CanonicalTool& resolveTcpOrThrow(const IKinRuntimeView& view,
                                                 const TcpRef& tcp)
@@ -126,7 +126,10 @@ const runtime::CanonicalTool& resolveTcpOrThrow(const IKinRuntimeView& view,
                    "（KIN-NO-TCP 语义锚——§5.5/§9.6；调用方错误 fail-fast）");
     }
     const runtime::CanonicalTool& tool = tools.at(loc->index);
-    if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName) {
+    // A-15：只验证同一快照的键；实际变换由FK和解析界限各自消费，不在UI造真值。
+    const auto named = std::find_if(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+        [&](const auto& entry) { return entry.first == tcp.tcpKey; });
+    if (!tcp.tcpKey.empty() && named == tool.namedTcpOffsets.end() && tcp.tcpKey != tool.localName) {
         failCaller("IkRequest.tcp：tcpKey '" + tcp.tcpKey + "' 不命中工具 '"
                    + tool.localName + "' 的 canonical TCP"
                    "（FrameUnresolved 语义锚——§9.2；调用方错误 fail-fast）");

@@ -840,7 +840,7 @@ bool KinEvaluationExecutor::resolveDefaultTcp(kinematics::TcpRef& out,
                                               std::string& errorText) const
 {
     // ---- KIN-14 默认 TCP 权威解析（模型快照 tools/defaultTcpIndex →
-    // TcpRef{toolObject, localName}）。与 kinematics 面板侧
+    // TcpRef{toolObject, 空键}；空键明确选默认偏移，防实际键与工具名碰撞。与面板侧
     // resolveSessionTcp 同语义——ui 执行器不可消费插件私有头（R-2），
     // 按同一 KIN-14 规则独立落位（两处注释互链；解析规则权威在
     // KinTypes.hpp TcpRef 注，非本执行器私设）。
@@ -854,7 +854,7 @@ bool KinEvaluationExecutor::resolveDefaultTcp(kinematics::TcpRef& out,
     }
     const runtime::CanonicalTool& tool = tools.at(*defaultIdx);
     out.toolObject = tool.objectId;
-    out.tcpKey = tool.localName;  // 显式名——请求自描述（不依赖空串隐式约定）
+    out.tcpKey.clear();  // A-15：查询级默认必须用空键，工具名可能恰为另一个实际TCP键。
     return true;
 }
 
@@ -975,6 +975,27 @@ KinEvaluationExecutor::BatchSlice KinEvaluationExecutor::sliceBatch() const
                               ? kinematics::BatchRequirementLevel::Must
                               : kinematics::BatchRequirementLevel::Should;
         projected.enabled = point.enabled;
+        // A-15/REQ-01：仅投影ObjectId＋原tcpKey，变换真值仍由同一runtime快照提供。
+        // 深度引用校验在受理线程完成，防后台异常被误呈现为“不可达”。
+        if (point.tcpRef && point.tcpRef->kind != requirements::RequirementRefKind::DefaultTcp) {
+            const auto& ref = *point.tcpRef;
+            const auto loc = ref.objectId ? model.findObject(*ref.objectId) : std::nullopt;
+            if (ref.kind != requirements::RequirementRefKind::Tool || !loc
+                || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
+                slice.errorText = "任务点「" + point.name + "」TCP工具引用悬空";
+                return slice;
+            }
+            const auto& tool = model.tools().at(loc->index);
+            const auto named = std::find_if(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+                [&](const auto& entry) { return entry.first == ref.tcpKey; });
+            if (!ref.tcpKey.empty() && named == tool.namedTcpOffsets.end() && ref.tcpKey != tool.localName) {
+                slice.errorText = "任务点「" + point.name + "」TCP键不存在：" + ref.tcpKey;
+                return slice;
+            }
+            kinematics::TcpRef overrideRef;
+            overrideRef.toolObject = *ref.objectId; overrideRef.tcpKey = ref.tcpKey;
+            projected.tcpOverride = std::move(overrideRef);
+        }
         // ---- 点参考系解析（★ KIN-P4：与区域计划共用 projectRefFrameToBase
         // 单点——World 恒等/ModelFrame 解析缝；任务点为完整位姿，
         // 不受区域轴对齐盒的可表示性限制，旋转直接参与位姿链）。

@@ -246,6 +246,23 @@ TEST(DescriptionValidator, CleanFixturePassesWithNoIssues)
 /** 能力缺失≠非法（§5.6 正交关系——RT-CPX-2 与 RT-CPX-3 分域的阴性面）：
  *  物性/限速/摩擦/传动全 NotProvided／空清单→通过（降级归 capability，
  *  S3 不报错）。 */
+/** @brief A-15/MDL-13：S3逐条校验完整目录，不能只校验默认偏移。 */
+TEST(DescriptionValidator, NamedTcpRejectsDuplicateEmptyAndInvalidTransform_REQ01_A15)
+{
+    auto valid = makeValidDescription();
+    valid.tools[0].namedTcpOffsets = {{"tip", makeTransform(0.2, 0.3, 0.4)}};
+    EXPECT_TRUE(validateRobotDesignDescription(valid).ok());
+    auto bad = valid; bad.tools[0].namedTcpOffsets.push_back(bad.tools[0].namedTcpOffsets[0]);
+    EXPECT_FALSE(validateRobotDesignDescription(bad).ok());
+    bad = valid; bad.tools[0].namedTcpOffsets[0].first.clear();
+    EXPECT_FALSE(validateRobotDesignDescription(bad).ok());
+    bad = valid; bad.tools[0].namedTcpOffsets[0].second.P()[0] = kNaN;
+    EXPECT_FALSE(validateRobotDesignDescription(bad).ok());
+    bad = valid; bad.tools[0].namedTcpOffsets[0].second.R() =
+        rw::math::Rotation3D<double>(2,0,0,0,2,0,0,0,2);
+    EXPECT_FALSE(validateRobotDesignDescription(bad).ok());
+}
+
 TEST(DescriptionValidator, MissingCapabilitiesDoNotBlock)
 {
     RobotDesignDescription d = makeValidDescription();

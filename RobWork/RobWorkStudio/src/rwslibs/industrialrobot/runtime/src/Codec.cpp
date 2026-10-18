@@ -815,6 +815,12 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
         writeSourcedVec3(w, t.centerOfMass);
         writeSourcedInertia(w, t.inertia);
         writeTransform(w, t.tcpOffset);
+        // A-15：同一编码函数覆盖全字段与身份域，完整目录不可从身份域排除。
+        w.u32(static_cast<std::uint32_t>(t.namedTcpOffsets.size()));
+        for (const auto& entry : t.namedTcpOffsets) {
+            w.str(entry.first);
+            writeTransform(w, entry.second);
+        }
     }
     w.presence(model.defaultTcpIndex().has_value());
     if (model.defaultTcpIndex()) { w.u32(*model.defaultTcpIndex()); }
@@ -1032,6 +1038,23 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
             if (!readSourcedDouble(r, t.mass) || !readSourcedVec3(r, t.centerOfMass)
                 || !readSourcedInertia(r, t.inertia) || !readTransform(r, t.tcpOffset)) {
                 return failed();
+            }
+            std::uint32_t count = 0;
+            // 每项至少4字节键长＋12个double；相对整包大小的上限是宽松必要条件。
+            // 具体剩余字节由Reader逐项检查，任何截断均返回既有解码失败值。
+            if (!r.u32(count)) { return failed(); }
+            if (count > bytes.size() / (4U + 12U * sizeof(double))) {
+                return Expected<CanonicalModel, RuntimeError>::err(RuntimeError{
+                    RuntimeErrorCode::InputInvalid, "codec/parse：命名TCP条数超过编码字节上限"});
+            }
+            t.namedTcpOffsets.reserve(count);
+            for (std::uint32_t i = 0; i < count; ++i) {
+                // 显式单位变换沿用runtime的零框架链接构造约定；pair默认构造
+                // 会调用框架导出identity符号，破坏独立冒烟模式的链接边界。
+                std::string key;
+                auto offset = detail::identityTransform3D();
+                if (!r.str(key) || !readTransform(r, offset)) { return failed(); }
+                t.namedTcpOffsets.emplace_back(std::move(key), offset);
             }
         }
         bool hasTcp = false;

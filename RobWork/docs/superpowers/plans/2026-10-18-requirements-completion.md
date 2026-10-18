@@ -309,7 +309,7 @@ A-14授权登记：所有者已明确回复“批准按 A-14 精确设计实施�
 
 A-14补充实测与最小接线：正式`batch23-host-selection-red`仅重开共享选择定位失败，根树恢复已通过；宿主补回关闭时退订的建模选择适配器。首轮树恢复截图逐项为“未命名对象”，定位到宿主只装了需求名称前端；在已放行UiPlugin.cpp中组合既有需求名称、建模tryDraftObjectName、同一已发布runtime局部名和无localName对象的既有属性页标题，不增加接口或持久化名称。正式宿主补同ID关节选择、实际表单编辑并解码真实命令负载核对0.177m、HEAD零增长。建模草稿期没有局部撤销栈，未声称新增该能力。新增私有类导致生产装配清单锚行漂移，契约测试真实失败后仅同步两处锚行，不改历史失败证据；重跑通过。
 
-### A-15 每点TCP引用与完整命名TCP求解（待所有者精确审阅，未实施）
+### A-15 每点TCP引用与完整命名TCP求解（所有者2026-10-19已精确批准，实施中）
 
 1. **行为与发现**：REQ-01/09、MDL-13、KIN-14要求tool-definition对象内tcpKey在评估时真实解析。当前ui切片没有给BatchTaskPoint.tcpOverride赋值；modeling桥仅选一个TCP写入runtime.tcpOffset，kinematics非空键仅接受工具localName，真实tcpList键在规范快照中已丢失。目标是同一工具两个不同键和两个不同工具的点分别使用各自法兰→TCP变换，缺键定位回指工位，禁止默用默认TCP。此问题本轮为源码链路发现；新数值失败回归尚未执行，不伪称已经先红。本项只补命名TCP/每点引用，不代替区域TCP、姿态部分约束或mesh验证。
 2. **精确接口和文件面**：申请仅在runtime公共Description.hpp::ToolDescription与CanonicalModel.hpp::CanonicalTool表尾各增加默认空`std::vector<std::pair<std::string, rw::math::Transform3D<double>>> namedTcpOffsets`（pair为原tcpKey、T_flange_tcp），以及Codec.hpp的canonical编码minor由1.1升1.2；kinematics/KinTypes.hpp仅更新TcpRef解析注释，不改结构布局/方法。增加允许文件：modeling/src/CanonicalBridge.cpp、modeling/test/CanonicalBridgeTest.cpp；runtime上述三个公共头、src/DescriptionValidator.cpp、CompilerImpl.cpp、CanonicalModel.cpp、Codec.cpp以及test/DescriptionValidatorTest.cpp、CompilerTest.cpp、CanonicalModelTest.cpp、CodecTest.cpp；kinematics上述KinTypes.hpp、src/Fk.cpp、Ik.cpp以及test/FkTest.cpp、IkTest.cpp、TaskPointsBatchTest.cpp；units/runtime.md、units/kinematics.md。ui/plugin/KinEvaluationChannel.cpp、UiPlugin.cpp、ui/test/**及units/modeling.md已允许。其他公共头、WorkCellCompiler、NameMap、存储格式、依赖边和框架源码均不改。
@@ -321,3 +321,56 @@ A-14补充实测与最小接线：正式`batch23-host-selection-red`仅重开共
 8. **方案比较与决策**：推荐沿既有Description→CanonicalModel→FK/IK链保留完整列表。只在UI替换临时模型会产生未经身份覆盖的第二份真值；把所有键强行改为空键会静默选错TCP；为每个TCP复制工具对象会破坏ObjectId语义，均不采用。仍沿现有runtime权威架构，不另立长期机制；本次新增公共值字段和编码版本需先所有者审阅，批准后再登记契约和实施。
 
 第二十三批最终验证：A-14完整恢复及共享名称/选择/继续编辑已完成；集成1611通过＋1跳过，独立1448通过＋1跳过，正式modeling-tour240条、requirements-tour141条均退出0，双模式完整构建和三条verify-task命令通过。各首轮失败保留，详见BATCH23.md及batch23-verification-summary.json。整任务仍WIP，A-15尚未实施，不以本批结果替代120项最终验收。
+
+
+#### A-15 补充：命名TCP解析界限同源（所有者2026-10-19已精确批准）
+
+1. 行为：真实先红KinIk.NamedTcpRealSolveAndReachBound_REQ01_A15在computeAnalyticReachBound处失败；该私有实现仍拒绝命名键。只修FK/IK入口不足以兑现已批准的命名TCP真实求解，错误的默认偏移半径还会误判长TCP目标不可达。
+2. 精确范围：仅额外放行kinematics/src/Bounds.cpp，不改Bounds.hpp或任何公共接口；测试沿已允许IkTest.cpp，新增文件/依赖均无。
+3. 解析语义：resolveTcp私有返回值改为指向同一不可变快照内所选Transform3D；空键用tcpOffset，实际键先精确匹配，未命中才允许localName旧别名，其他返回既有FrameUnresolved/NoTcp。
+4. 算法：保持原三角不等式、关节origin和行程求和及证明格式，仅tcpOffsetNorm改取已选偏移的平移模长（m）。不复制/重建模型，不引入第二份变换真值。
+5. 生命周期线程：返回指针仅在同步调用栈借用，所有权仍归只读model快照；无缓存、无共享可变状态，零物理Frame修改。
+6. 确定性兼容：空目录/空键旧结果逐位保持；同名键优先次序与FK/IK一致；长TCP纳入真实上界，旧错误拒绝被修正；不改编码版本或project格式。
+7. 验证：已实际执行270项kinematics：267通过、1既有跳过、2新增失败；其中IK失败明确定位界限拒绝命名键。修复后真实两键目标（含2m长偏移）求解、界限数值黄金、缺键拒绝，再跑完整双模式及宿主。
+8. 决策：推荐修改唯一既有界限计算实现；在Ik.cpp复制界限公式或临时替换默认工具均产生重复权威/身份外模型，不采用。根AGENTS.md §6.1规定偏差先登记，故本文件面需所有者补充精确放行；批准前不修改Bounds.cpp，继续其他已授权修复。
+
+
+#### A-15 补充二：评估器装配期命名TCP预检（所有者2026-10-19已精确批准）
+
+1. 行为：修复FK/IK/界限后，真实UI批量回归仍失败：5个目标的结果映射为0项。源码定位到Evaluators.cpp::validateBatchQuery在装配期仍只接受localName，因此命名override被抛出，未进入求解。原失败XML/日志保留于batch24-targeted-green-kin-ui。
+2. 精确文件面：仅额外放行kinematics/src/Evaluators.cpp；本文件五处同类TCP键预检统一增加精确命名目录判断（PoseMetrics构造与工厂、TaskPointIk、TaskPointsBatch、RegionCoverage默认TCP预检）。测试沿已放行的TaskPointsBatchTest.cpp及ui/test/**；不改任何公共头、查询布局或方法签名。
+3. 错误语义：空键默认，非空命名键存在则受理，未命中才接受旧localName别名；坏键仍在装配期invalid_argument。工具缺失/悬空原有各入口错误阶段保持，不借本项统一或扩大语义。
+4. 权威与生命周期：预检只读同一CanonicalTool目录，不计算或复制变换；实际数值仍归FK/IK/Bounds。不新增缓存、物理Frame或模型身份外替代快照。
+5. 线程与确定性：保持原UI受理/后台计算线程边界，无共享可变状态；std::any_of精确字节键匹配，无排序或模糊处理。RegionCoverage只修既有defaultTcp载体的键合法性，不新增区域TCP投影。
+6. 验证：已真实先红UI新增回归（既有314通过、新增1失败），随后再以已修FK/IK版本实际复跑仍因装配预检失败；批准后用两工具四键真实批量数值及坏键拒绝回归，并测试各工厂路径，双模式/worker/正式宿主全回归。
+7. 文档与兼容：更新kinematics单元卡和任务allowedFiles。另在已允许KinEvaluationChannel.cpp将resolveDefaultTcp输出改为空键，避免实际tcpKey与工具名相等时，查询级默认错误命中非默认目录项（A-15已批准的实际键优先语义所需）。旧空目录行为保持。
+8. 决策：推荐修原预检，禁止在UI把命名键强改成工具名/空键以绕过，因为会选错偏移。根AGENTS §6.1要求范围偏差先登记，本文件原未列入A-15精确面，批准前不改Evaluators.cpp；其它已授权验证继续。
+
+
+#### A-15 补充三：面板默认TCP避免实际同名键碰撞（所有者2026-10-19已批准）
+
+1. 行为：全源码检索所有tcpKey与localName比较/赋值后，发现最后一个默认调用方kinematics/plugin/KinPanelFlows.cpp::resolveSessionTcp仍把工具名当选择键。按已批准“实际键优先”规则，当工具内恰有同名非默认键时，面板单点FK/IK将选错偏移；UI后台执行器同类调用已在允许面修正。
+2. 精确文件面：仅额外放行kinematics/plugin/KinPanelFlows.cpp、同目录KinPanelFlows.hpp（私有注释），kinematics/test/KinP4FlowsTest.cpp（默认引用旧断言与新碰撞回归）。不改装配公共头/方法/布局/数值内核或依赖。
+3. 实现：resolveSessionTcp保持defaultTcpIndex选择工具，只把tcpKey设为空，明确请求该工具的tcpOffset。实际显式键引用仍按A-15优先规则，旧localName作为外部显式别名继续有效。
+4. 生命周期权威：仍借用同一只读模型，引用值随既有会话流传递；不复制变换、不改默认实体Frame，不新增状态。
+5. 线程确定性：UI线程原流程不变，空键为确定性值；无缓存、排序、近似或随机源变化。
+6. 验证：当前为已确认源码赋值缺口，尚未新增失败回归，不虚称先红。批准后先在同一工具构建与localName同名且不同偏移的命名TCP，沿真实面板resolve→FK核对默认黄金位置，复现失败后改一处赋值，再跑KinP4Flows/kinematics模型契约GUI及正式宿主。
+7. 兼容文档：KinPanelFlows.hpp只改私有契约注释，原默认引用用例从期望工具名改为期望空键；默认工具ObjectId/位置/姿态均不变，project/编码格式不再扩展。
+8. 决策：推荐显式空键表达默认；改变实际键优先规则会违背已批准设计，重命名工具或TCP会破坏用户身份。根AGENTS §6.1要求偏差登记，该三文件不在当前精确面，批准前不修改；已授权双模式构建继续。
+
+A-15补充三授权登记：所有者已明确回复“批准该精确补充三”，按上述三文件面实施。batch24-green-assembly的UI新数值回归沿用合法配置默认iterationLimit=1，只够旧零位目标；新增非零解析目标须在测试显式设置200次迭代预算，不改变产品配置或把失败期望改绿。原失败日志保留。
+
+#### A-15 补充四：同步默认TCP两处旧断言（所有者2026-10-19已批准汇总）
+
+1. 实测：batch24-final-integrated-remaining运动学271跑，269通过、1既有跳过、1失败。新同名碰撞用例已通过，唯一失败为PluginPanelLinks.LK2_AssembleSessionSolveRequestComplete_KIN_P2仍硬断言默认键为tool.localName。
+2. 范围：仅申请额外放行kinematics/test/PluginPanelTest.cpp，不改产品代码、公共接口或其他测试。
+3. 精确变更：该用例第339行改为EXPECT_TRUE(a.request.tcp.tcpKey.empty())，前两行中文注释改为默认偏移空键，保留工具ObjectId、ObjectKind及后续所有配置/初值断言。
+4. 原因：补充三已批准默认选择空键；旧字符串断言与新契约直接冲突，不能恢复错误别名以迁就旧测试。
+5. 生命周期/线程：仅测试期读取既有值，零存储、零共享状态变化。
+6. 验证：上述真实失败留痕；批准后跑双模式运动学模型/契约/GUI并重跑正式宿主。不可删用例、降断言或跳过。
+7. 文档：只同步精确allowedFiles、授权note和本计划；原失败XML/日志不改。
+8. 决策：仅更新失效表示断言，默认工具身份和真实FK黄金保持；该文件不在补充三三文件精确面内，批准前不改。
+
+补充四范围汇总（尚待批准）：随后串行真实GUI20跑19通过、1失败，同一旧表示断言还在kinematics/gui_test/KinematicsPanelInputGuiTest.cpp第390行。全量检索该单元test/gui_test后，默认产物的旧键断言共两处；其余localName显式别名测试须保留。补充四最终仅申请上述两个测试文件各一处改EXPECT_TRUE(tcpKey.empty())及相邻注释；其他字段断言、产品代码均不变。补充四上一单文件问题被该汇总范围取代，两个真实失败证据保留。
+
+补充四授权登记：所有者已明确回复“批准这两处精确测试修正”，仅修改汇总的两个测试断言及相邻注释，产品不再扩面。

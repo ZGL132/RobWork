@@ -561,6 +561,7 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
         ct.mass = t.mass;
         ct.centerOfMass = t.centerOfMass;
         ct.inertia = t.inertia;
+        ct.namedTcpOffsets = t.namedTcpOffsets; // A-15：完整目录进入同一规范身份，不仅保留默认项。
         ct.tcpOffset = t.tcpOffset;     // T_flange_tcp（KIN-14 权威来源）
         tools.push_back(std::move(ct));
     }

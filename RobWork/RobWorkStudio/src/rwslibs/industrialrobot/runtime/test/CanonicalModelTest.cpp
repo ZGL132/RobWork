@@ -20,6 +20,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cstdint>
 #include <cmath>
 #include <filesystem>
@@ -654,4 +655,36 @@ TEST(CanonicalModelTransientTest, SourceScanNoPersistenceIncludes)
                 << file.filename().string() << " 出现持久化痕迹：" << needle;
         }
     }
+}
+
+/** @brief A-15/CON-05：命名目录排列归一、非默认值进入身份与相等、坏值拒绝。 */
+TEST(CanonicalModelBuilderTest, NamedTcpIdentityOrderAndValidation_REQ01_A15)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "CON-05"}, std::vector<std::string>{"AT-23"});
+    auto a = richFixture();
+    const auto identity = sdurws::ird::runtime::detail::identityTransform3D();
+    const rw::math::Transform3D<double> shifted(rw::math::Vector3D<double>(0.2, 0.3, 0.4), identity.R());
+    a.tools[0].namedTcpOffsets = {{"z", shifted}, {"a", identity}};
+    auto b = a;
+    std::reverse(b.tools[0].namedTcpOffsets.begin(), b.tools[0].namedTcpOffsets.end());
+    const auto first = a.build(), second = b.build();
+    EXPECT_EQ(first, second);
+    EXPECT_EQ(first.contentIdentity(), second.contentIdentity());
+    EXPECT_EQ(first.tools()[0].namedTcpOffsets[0].first, "a");
+    b.tools[0].namedTcpOffsets[0].second.P()[0] += 0.01;
+    const auto changed = b.build();
+    EXPECT_NE(first, changed);
+    EXPECT_NE(first.contentIdentity(), changed.contentIdentity());
+    auto invalid = a;
+    invalid.tools[0].namedTcpOffsets[1].first = "z";
+    EXPECT_ANY_THROW(invalid.build());
+    invalid = a;
+    invalid.tools[0].namedTcpOffsets[0].first.clear();
+    EXPECT_ANY_THROW(invalid.build());
+    invalid = a;
+    invalid.tools[0].namedTcpOffsets[0].second.P()[0] = std::numeric_limits<double>::quiet_NaN();
+    EXPECT_ANY_THROW(invalid.build());
+    invalid = a;
+    invalid.tools[0].namedTcpOffsets[0].second.R() = rw::math::Rotation3D<double>(-1,0,0,0,1,0,0,0,1);
+    EXPECT_ANY_THROW(invalid.build());
 }

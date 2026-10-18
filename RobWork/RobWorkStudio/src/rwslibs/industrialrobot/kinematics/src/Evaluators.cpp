@@ -195,7 +195,10 @@ PoseMetricsEvaluator::PoseMetricsEvaluator(const IKinRuntimeView* view,
         const auto loc = model.findObject(m_query.tcp.toolObject);
         if (loc.has_value() && loc->kind == runtime::CanonicalModel::ObjectKind::Tool) {
             const runtime::CanonicalTool& tool = model.tools().at(loc->index);
-            if (!m_query.tcp.tcpKey.empty() && m_query.tcp.tcpKey != tool.localName) {
+            // A-15：命名键只读同一快照目录；旧工具名别名只在实际键未命中时保留。
+            if (!m_query.tcp.tcpKey.empty() && m_query.tcp.tcpKey != tool.localName
+                && !std::any_of(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+                    [&](const auto& entry) { return entry.first == m_query.tcp.tcpKey; })) {
                 throw std::invalid_argument(
                     "kin.pose-metrics：tcpKey '" + m_query.tcp.tcpKey
                     + "' 不命中工具 '" + tool.localName
@@ -274,7 +277,10 @@ PoseMetricsEvaluatorFactory::PoseMetricsEvaluatorFactory(const IKinRuntimeView* 
         const auto loc = model.findObject(m_query.tcp.toolObject);
         if (loc.has_value() && loc->kind == runtime::CanonicalModel::ObjectKind::Tool) {
             const runtime::CanonicalTool& tool = model.tools().at(loc->index);
-            if (!m_query.tcp.tcpKey.empty() && m_query.tcp.tcpKey != tool.localName) {
+            // A-15：命名键只读同一快照目录；旧工具名别名只在实际键未命中时保留。
+            if (!m_query.tcp.tcpKey.empty() && m_query.tcp.tcpKey != tool.localName
+                && !std::any_of(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+                    [&](const auto& entry) { return entry.first == m_query.tcp.tcpKey; })) {
                 throw std::invalid_argument(
                     "kin.pose-metrics 工厂：tcpKey '" + m_query.tcp.tcpKey
                     + "' 不命中工具 '" + tool.localName
@@ -396,7 +402,10 @@ void validateTaskPointIkQuery(const IKinRuntimeView& view,
         const auto loc = model.findObject(query.tcp.toolObject);
         if (loc.has_value() && loc->kind == runtime::CanonicalModel::ObjectKind::Tool) {
             const runtime::CanonicalTool& tool = model.tools().at(loc->index);
-            if (!query.tcp.tcpKey.empty() && query.tcp.tcpKey != tool.localName) {
+            // A-15：命名键只读同一快照目录；旧工具名别名只在实际键未命中时保留。
+            if (!query.tcp.tcpKey.empty() && query.tcp.tcpKey != tool.localName
+                && !std::any_of(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+                    [&](const auto& entry) { return entry.first == query.tcp.tcpKey; })) {
                 throw std::invalid_argument(
                     "kin.task-point-ik：tcpKey '" + query.tcp.tcpKey
                     + "' 不命中工具 '" + tool.localName
@@ -1122,7 +1131,10 @@ void validateBatchQuery(const IKinRuntimeView& view, const BatchQuery& query)
         const auto loc = model.findObject(tcp.toolObject);
         if (loc.has_value() && loc->kind == runtime::CanonicalModel::ObjectKind::Tool) {
             const runtime::CanonicalTool& tool = model.tools().at(loc->index);
-            if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName) {
+            // A-15：命名键只读同一快照目录；旧工具名别名只在实际键未命中时保留。
+            if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName
+                && !std::any_of(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+                    [&](const auto& entry) { return entry.first == tcp.tcpKey; })) {
                 throw std::invalid_argument(
                     std::string("kin.task-points-batch：") + role + " tcpKey '"
                     + tcp.tcpKey + "' 不命中工具 '" + tool.localName
@@ -2106,7 +2118,10 @@ void validateRegionCoverageQuery(const IKinRuntimeView& view,
         const auto loc = model.findObject(tcp.toolObject);
         if (loc.has_value() && loc->kind == runtime::CanonicalModel::ObjectKind::Tool) {
             const runtime::CanonicalTool& tool = model.tools().at(loc->index);
-            if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName) {
+            // A-15：命名键只读同一快照目录；旧工具名别名只在实际键未命中时保留。
+            if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName
+                && !std::any_of(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+                    [&](const auto& entry) { return entry.first == tcp.tcpKey; })) {
                 throw std::invalid_argument(
                     "kin.region-coverage：defaultTcp tcpKey '" + tcp.tcpKey
                     + "' 不命中工具 '" + tool.localName

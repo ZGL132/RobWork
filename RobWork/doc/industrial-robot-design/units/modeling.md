@@ -1613,3 +1613,8 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 所有对象完整校验后一次采纳，建立clean baseline/应用预览、changes为空；不提交命令、不新增修订、不缓存闭包。无效根/分支/修订身份抛invalid_argument；缺对象、token/嵌入身份错误、坏字节/版本及读取错误返回false并定位，原会话不变。同根/分支/修订幂等保留未应用编辑；不同基线且已有编辑拒绝覆盖。只读允许恢复浏览。宿主先恢复保存基线，再执行既有未应用草稿恢复；关闭仍按原脱离路径清空，切换不串值。
 
 宿主对HEAD根计数，唯一根才恢复；无根的新工程走原空态，多根定位报错。共享树由原provider现取恢复值，根/子身份不重新编号。测试使用真实Codec、真实树/属性provider及正式宿主重开选择/继续编辑；此修复不代表多TCP、方向部分约束、mesh或120项完整终验通过。新增接口和精确文件范围见WP-14-T12契约及需求补齐计划A-14。
+
+
+### WP-14-T12 A-15 完整TCP描述映射增量（2026-10-19，所有者精确批准）
+
+CanonicalBridge将ToolDefinition.tcpList全部原键映射到runtime.namedTcpOffsets，每项按mountInterface·offset计算T_flange_tcp（平移m，旋转无量纲）。原tcpOffset选取仍为默认工具指定键、其余工具首条；完整目录的排序/数值验证/内容身份归runtime，桥不维护第二份真值。RobotDesign/ToolDefinition对象Codec与project格式不变，旧项目可从原对象重新编译为canonical1.2。新增验证沿真实建模Codec闭包及非恒等安装接口，不能以仅字段存在替代下游数值验证。

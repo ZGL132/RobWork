@@ -99,6 +99,9 @@ public:
         , m_tWorldBase(tWorldBase)
     {
     }
+    /** @brief A-15：测试端口持有真实builder模型值，不替代任何FK/IK计算。 */
+    explicit FixtureView(runtime::CanonicalModel model)
+        : m_model(std::move(model)), m_tWorldBase(rw::math::Transform3D<double>::identity()) {}
     const runtime::CanonicalModel& model() const override { return m_model; }
     rw::math::Transform3D<double> worldToBase() const override
     {
@@ -1203,3 +1206,83 @@ TEST(KinEvaluationChannel, BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09
 }
 
 }  // namespace
+
+/** @brief REQ-01/09：两工具四键真实批量IK必须产生各自结果，错键/悬空在受理前定位。 */
+TEST(KinEvaluationChannel, BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "REQ-09"}, std::vector<std::string>{"AT-23"});
+    const auto original = twoLinkModel();
+    auto tools = original.tools();
+    tools[0].namedTcpOffsets = {{"low", trans(0.7, 0, 0.2)}, {"high", trans(0.7, 0, 0.4)}};
+    auto second = tools[0];
+    second.objectId = idFrom<core::ObjectId>("a15-second-tool"); second.localName = "tool_2";
+    second.namedTcpOffsets = {{"low", trans(0.7, 0, 0.6)}, {"high", trans(0.7, 0, 0.8)}};
+    tools.push_back(second);
+    auto header = original.header();
+    auto entry = header.objectRefs.back();
+    entry.objectId = second.objectId; entry.objectTypeToken = "tool-definition";
+    header.objectRefs.push_back(entry);
+    tools[0].namedTcpOffsets.push_back({"tool_1", trans(0.7, 0, 0.9)});
+    const auto model = runtime::CanonicalModelBuilder().setHeader(header).setWorld(original.world())
+        .setChain(original.chain()).setTools(tools).setDefaultTcpIndex(0U).build();
+    auto ws = makeWorksetWithTaskPoint();
+    auto prototype = ws.points.entries.front(); ws.points.entries.clear();
+    unsigned index = 0;
+    for (const auto& tool : tools) {
+        for (const auto& tcp : tool.namedTcpOffsets) {
+            if (tcp.first == "tool_1") { continue; } // 同名键专供默认选择碰撞反例。
+            auto point = prototype;
+            point.objectId = idFrom<core::ObjectId>("a15-point-" + std::to_string(index++));
+            point.name = "TCP工位" + std::to_string(index);
+            req::RequirementReference ref; ref.kind = req::RequirementRefKind::Tool;
+            ref.objectId = tool.objectId; ref.tcpKey = tcp.first; point.tcpRef = ref;
+            // q*=(0.3,−0.5)，z仅来自指定TCP。默认TCP永远z=0，无法解释这些目标。
+            point.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+                rw::math::Vector3D<double>(1.1*std::cos(0.3)+0.7*std::cos(-0.2),
+                                           1.1*std::sin(0.3)+0.7*std::sin(-0.2), tcp.second.P()[2]),
+                core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+            point.pose.orientation.fixedRpy = {0, 0, -0.2};
+            ws.points.entries.push_back(point);
+        }
+    }
+    // 目录有与工具名相同的另一偏移，默认TCP仍必须用空键，而非旧localName别名。
+    // 对照点：同一目标改用默认TCP，必须实际求解失败，防只检查信封字段造成假绿。
+    auto wrong = ws.points.entries.front(); wrong.objectId = idFrom<core::ObjectId>("a15-wrong-default");
+    wrong.tcpRef.reset(); ws.points.entries.push_back(wrong);
+    auto canonical = wrong; canonical.objectId = idFrom<core::ObjectId>("a15-canonical-default");
+    canonical.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(1.1*std::cos(0.3)+0.7*std::cos(-0.2),
+                                   1.1*std::sin(0.3)+0.7*std::sin(-0.2), 0),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    ws.points.entries.push_back(canonical);
+    ScriptedEditor editor(ws);
+    ExecutorHarness h;
+    h.rebuildExecutorWithEditor(&editor);
+    h.executor->attachView(std::make_shared<FixtureView>(model), h.boundId);
+    auto config = makeLegalConfig(); config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    // 非零解析目标需要迭代收敛；合法配置默认1次仅供零位受理测试，不能充当数值预算。
+    config.iterationLimit = 200U;
+    h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request; request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain();
+    const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 6U) << (h.notes.empty() ? "无完成回执" : h.notes.back().summaryText);
+    for (const auto& point : ws.points.entries) {
+        const auto it = results.find(point.objectId); ASSERT_NE(it, results.end());
+        EXPECT_EQ(it->second.outcomeState, point.objectId == wrong.objectId ? "failed" : "completed") << point.name << " " << it->second.outcomeText;
+    }
+    for (const bool danglingTool : {false, true}) {
+        auto bad = ws; bad.points.entries.resize(1);
+        bad.points.entries[0].tcpRef->tcpKey = "missing";
+        if (danglingTool) bad.points.entries[0].tcpRef->objectId = idFrom<core::ObjectId>("a15-ghost");
+        ScriptedEditor badEditor(bad); ExecutorHarness rejected;
+        rejected.rebuildExecutorWithEditor(&badEditor);
+        rejected.executor->attachView(std::make_shared<FixtureView>(model), rejected.boundId);
+        request.snapshotId = rejected.boundId; request.epoch = rejected.executor->epoch();
+        const auto refusal = rejected.executor->submit(request);
+        EXPECT_FALSE(refusal.accepted);
+        EXPECT_NE(refusal.reason.find(bad.points.entries[0].name), std::string::npos);
+        EXPECT_TRUE(rejected.notes.empty());
+    }
+}

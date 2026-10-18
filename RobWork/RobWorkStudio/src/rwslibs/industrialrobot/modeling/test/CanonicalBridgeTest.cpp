@@ -916,6 +916,7 @@ TEST(MdlCanonicalBridge, ToolsMappingDefaultTcpFirstAndTcpCompose_WP13T12_ACC1)
     ToolDefinition a;
     a.objectId = toolA;
     a.localName = "gripperA";
+    a.mountInterface = explicitPose(0.2, 0.3, 0.4, kPi / 2);
     a.tcpList.push_back(TcpEntry{"tipA1", explicitPose(0.0, 0.0, 0.05, 0.0), ""});
     a.tcpList.push_back(TcpEntry{"tipA2", explicitPose(0.0, 0.0, 0.06, 0.0), ""});
     // 工具 B（默认工具——tcpKey "tip2" 指向第二条）。
@@ -932,6 +933,10 @@ TEST(MdlCanonicalBridge, ToolsMappingDefaultTcpFirstAndTcpCompose_WP13T12_ACC1)
 
     auto built = buildFrom(closure);
     ASSERT_TRUE(built.ok()) << built.error().detail;
+    // A-15/REQ-01：完整键目录必须经真实建模对象Codec闭包保留，不能只剩默认项。
+    ASSERT_EQ(built.get().tools.front().namedTcpOffsets.size(), 2u);
+    EXPECT_EQ(built.get().tools.front().namedTcpOffsets[0].first, "tip2");
+    EXPECT_EQ(built.get().tools.front().namedTcpOffsets[1].first, "tip2a");
     ASSERT_EQ(built.get().tools.size(), 2u);
     // 次序：默认工具居首。
     EXPECT_TRUE(built.get().tools[0].objectId == toolB);
@@ -945,8 +950,14 @@ TEST(MdlCanonicalBridge, ToolsMappingDefaultTcpFirstAndTcpCompose_WP13T12_ACC1)
     EXPECT_NEAR(first.tcpOffset.R()(1, 0), std::sin(kPi / 2), 1e-15);
     // 非默认工具 A 取首条 "tipA1"。
     const runtime::ToolDescription& second = built.get().tools[1];
+    ASSERT_EQ(second.namedTcpOffsets.size(), 2U);
+    EXPECT_EQ(second.namedTcpOffsets[1].first, "tipA2");
+    EXPECT_NEAR(second.namedTcpOffsets[1].second.P()[0], 0.2, 1e-12);
+    EXPECT_NEAR(second.namedTcpOffsets[1].second.P()[2], 0.46, 1e-12);
+    EXPECT_NEAR(second.namedTcpOffsets[1].second.R()(1, 0), 1.0, 1e-12);
+
     EXPECT_TRUE(sameVec(second.tcpOffset.P(),
-                        rwmath::Vector3D<double>(0.0, 0.0, 0.05)));
+                        rwmath::Vector3D<double>(0.2, 0.3, 0.45)));
 }
 
 /**

@@ -332,11 +332,11 @@ TEST(PluginPanelLinks, LK2_AssembleSessionSolveRequestComplete_KIN_P2)
     const auto a = assembleSessionSolveRequest(h.services, h.session);
     ASSERT_TRUE(a.ok) << a.statusText;
 
-    // TCP：KIN-14 默认工具解析（objectId 命中快照 Tool 类别＋tcpKey＝
-    // 工具局部名——名称可解析的显式自描述形态，A08 字段①）。
+    // TCP：KIN-14/A-15默认工具解析（objectId命中快照Tool类别，空键明确
+    // 选择默认偏移，不能因同名非默认TCP切换；A08字段①其余身份断言不变）。
     const runtime::CanonicalTool& tool = h.model.tools().front();
     EXPECT_EQ(a.request.tcp.toolObject, tool.objectId);
-    EXPECT_EQ(a.request.tcp.tcpKey, tool.localName);
+    EXPECT_TRUE(a.request.tcp.tcpKey.empty());
     const auto loc = h.model.findObject(a.request.tcp.toolObject);
     ASSERT_TRUE(loc.has_value());
     EXPECT_EQ(loc->kind, runtime::CanonicalModel::ObjectKind::Tool);

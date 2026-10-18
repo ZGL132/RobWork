@@ -61,13 +61,11 @@ namespace sdurws::ird::kinematics {
  *   - toolObject 经快照模型的对象索引（CanonicalModel::findObject）解析到
  *     CanonicalTool——解析失败（无工具/引用悬空/指名对象非工具）＝
  *     KinematicsError{NoTcp}（§9.6 KIN-NO-TCP"TCP 未配置/悬空"两分语义）；
- *   - tcpKey 为 TCP 选择键：**空串＝canonical TCP**（规范模型每工具恰一个
- *     tcpOffset——runtime §4.3.4 单 TCP 面，与 KIN-14 默认 TCP 单值同源）；
- *     非空时必须与该工具的 canonical TCP 身份 token（＝工具 localName——
- *     canonical TCP 以其所属工具命名）精确相等，否则＝
- *     KinematicsError{FrameUnresolved}（§9.2 @错误 行"tcpRef 指名的 TCP 帧
- *     不存在"——多 TCP 工具是 modeling 侧语义扩展，canonical 面就绪前
- *     键不命中即帧未解析，不做前缀/模糊匹配，R-4 禁拼串定位）。
+ *   - tcpKey空串使用tcpOffset；非空先精确命中namedTcpOffsets中的原tcpKey，
+ *     未命中且等于工具localName时保留旧canonical别名，否则FrameUnresolved。
+ *     实际同名键优先于工具别名；不拼前缀/不做模糊匹配（R-4）。
+ *     FK返回既有错误值；IK非法调用沿既有契约fail-fast。命名偏移只来自
+ *     同一不可变快照，坐标为T_flange_tcp，平移m、旋转无量纲。
  *
  * 值语义纯结构；线程安全（并发只读安全）。确定性：同引用同解析结果
  * （解析只依赖快照内容——NFR-COR-01/02）。
@@ -76,7 +74,7 @@ struct TcpRef {
     /// 工具定义对象稳定身份（tool-definition oid——§5.2 输入行；快照内
     /// 引用，跨 snapshot 使用属调用方契约违约——§9.2"非法调用"行）。
     core::ObjectId toolObject;
-    /// TCP 选择键（空串＝canonical TCP；非空须与工具 localName 精确相等
+    /// TCP 选择键（空串＝默认偏移；非空先查原tcpKey，再允许旧localName别名
     /// ——解析规则见结构体注）。单位/量纲：无（身份 token）。
     std::string tcpKey;
 

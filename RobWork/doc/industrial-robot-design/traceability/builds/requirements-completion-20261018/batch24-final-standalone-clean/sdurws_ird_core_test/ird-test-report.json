@@ -1,0 +1,259 @@
+{
+  "schemaVersion": "ird-transcribed-gtest/1",
+  "origin": "transcribed-from-original-gtest-xml",
+  "source": "gtest.xml",
+  "tests": [
+    {
+      "name": "BuildRedLine.SourceTreeReachable_UT_BUILD",
+      "status": "PASS"
+    },
+    {
+      "name": "BuildRedLine.NoQtInclude_NFR_MNT_01_R3",
+      "status": "PASS"
+    },
+    {
+      "name": "BuildRedLine.NoCrossUnitInclude_R1_R2_T1",
+      "status": "PASS"
+    },
+    {
+      "name": "BuildRedLine.PublicHeaderPathLayout_R2",
+      "status": "PASS"
+    },
+    {
+      "name": "IdentityRoundtrip.ParseFormatRoundtrip_UT_ID_T",
+      "status": "PASS"
+    },
+    {
+      "name": "IdentityReserved.ZeroIsInvalid_UT_ID_T",
+      "status": "PASS"
+    },
+    {
+      "name": "IdentityStrictParse.MisuseAndMalformedRejected_UT_ID_T",
+      "status": "PASS"
+    },
+    {
+      "name": "IdentityGenerate.NonZeroAndUnique_UT_ID_T",
+      "status": "PASS"
+    },
+    {
+      "name": "TaskIdentityTuple.FiveFieldSemantics_UT_ID_T",
+      "status": "PASS"
+    },
+    {
+      "name": "IdentityStrongTyping.NoImplicitConversion_UT_ID_T",
+      "status": "PASS"
+    },
+    {
+      "name": "Sha256KnownVectors.EmptyString_UT_ID_D",
+      "status": "PASS"
+    },
+    {
+      "name": "Sha256KnownVectors.Abc_UT_ID_D",
+      "status": "PASS"
+    },
+    {
+      "name": "Sha256KnownVectors.TwoBlock_UT_ID_D",
+      "status": "PASS"
+    },
+    {
+      "name": "Sha256Determinism.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D",
+      "status": "PASS"
+    },
+    {
+      "name": "Sha256Determinism.DifferentBytesDifferentDigest_UT_ID_D",
+      "status": "PASS"
+    },
+    {
+      "name": "Sha256Lifecycle.FinalizeDisallowsFurtherUse_UT_ID_D",
+      "status": "PASS"
+    },
+    {
+      "name": "DigestCanonical.RoundtripAndStrictParse_UT_ID_D",
+      "status": "PASS"
+    },
+    {
+      "name": "ValueSemantics.CopyIndependenceAndHashConsistency_UT_VAL",
+      "status": "PASS"
+    },
+    {
+      "name": "ValueSemantics.MovePreservesValue_UT_VAL",
+      "status": "PASS"
+    },
+    {
+      "name": "ValueSemantics.EqualityHashConsistency_UT_VAL",
+      "status": "PASS"
+    },
+    {
+      "name": "ValueSemantics.ContainerUsability_UT_VAL",
+      "status": "PASS"
+    },
+    {
+      "name": "ConventionSmokePlaceholder.UTSmokeCompilesCoreOwnTypes_UT_VAL",
+      "status": "PASS"
+    },
+    {
+      "name": "ProvenanceMake.ValidConstructions_UT_MISS",
+      "status": "PASS"
+    },
+    {
+      "name": "ProvenanceMake.P1InvariantEnforced_UT_MISS",
+      "status": "PASS"
+    },
+    {
+      "name": "ProvenanceMake.MethodTagSyntax_UT_MISS",
+      "status": "PASS"
+    },
+    {
+      "name": "ProvenanceTokens.Roundtrip_UT_MISS",
+      "status": "PASS"
+    },
+    {
+      "name": "SourcedValueStates.FourStateMatrix_UT_MISS",
+      "status": "PASS"
+    },
+    {
+      "name": "SourcedValueStates.MissingNeverBecomesZero_UT_MISS",
+      "status": "PASS"
+    },
+    {
+      "name": "SourcedValueStates.EmptyRawInputRejected_UT_MISS",
+      "status": "PASS"
+    },
+    {
+      "name": "SourcedValueStates.EqualitySemantics_UT_MISS",
+      "status": "PASS"
+    },
+    {
+      "name": "UnitsConvert.KnownConversions_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "UnitsConvert.DimensionMismatch_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "UnitsConvert.NonFiniteAndOverflow_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "UnitsFind.UnknownSymbol_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "UnitsRegistry.R1TableComplete_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "CompareFormula.C4Basic_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "CompareFormula.NonFiniteInputsFalse_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "AllCloseWithin.ElementWiseNotSummed_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "AllCloseWithin.LengthMismatchThrows_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "ToleranceMake.Validation_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT",
+      "status": "PASS"
+    },
+    {
+      "name": "EvaluationModeTokens.RoundtripAndUnknown_UT_EVAL",
+      "status": "PASS"
+    },
+    {
+      "name": "TaskOutcomeTokens.RoundtripAndUnknown_UT_EVAL",
+      "status": "PASS"
+    },
+    {
+      "name": "EngineeringStatusTokens.RoundtripAndNotApplicablePresence_UT_EVAL",
+      "status": "PASS"
+    },
+    {
+      "name": "TaskStateTokens.NineStatesRoundtrip_UT_EVAL",
+      "status": "PASS"
+    },
+    {
+      "name": "AxisOrthogonality.OutcomeAndStateAreDistinctAxes_UT_EVAL",
+      "status": "PASS"
+    },
+    {
+      "name": "DiagCodeSyntax.ValidForms_UT_DIAG",
+      "status": "PASS"
+    },
+    {
+      "name": "DiagCodeSyntax.InvalidForms_UT_DIAG",
+      "status": "PASS"
+    },
+    {
+      "name": "DiagRecordRequired.RequiredStringsNonEmpty_UT_DIAG",
+      "status": "PASS"
+    },
+    {
+      "name": "ConfirmableFindingC1.ComparisonRequired_UT_DIAG",
+      "status": "PASS"
+    },
+    {
+      "name": "ConfirmableFindingC2.CredentialConsistency_UT_DIAG",
+      "status": "PASS"
+    },
+    {
+      "name": "ComparativeFields.SourcedValueSides_UT_DIAG",
+      "status": "PASS"
+    },
+    {
+      "name": "DiagRecordEquality.FullFieldCompare_UT_DIAG",
+      "status": "PASS"
+    },
+    {
+      "name": "DiagRecordLevel.DefaultErrorAndEquality_F618",
+      "status": "PASS"
+    },
+    {
+      "name": "EventPayload.KindConsistency_UT_EVT",
+      "status": "PASS"
+    },
+    {
+      "name": "EventPayload.AccessorGuardThrows_UT_EVT",
+      "status": "PASS"
+    },
+    {
+      "name": "EventValue.CopyMoveEquality_UT_EVT",
+      "status": "PASS"
+    },
+    {
+      "name": "EventValue.EmittedAtUtcParticipatesInEquality_F794",
+      "status": "PASS"
+    },
+    {
+      "name": "ReferenceBus.FifoDeliveryOrder_UT_EVT",
+      "status": "PASS"
+    },
+    {
+      "name": "ReferenceBus.UnsubscribeStopsDelivery_UT_EVT",
+      "status": "PASS"
+    },
+    {
+      "name": "ReferenceBus.MultipleSubscribersAllReceive_UT_EVT",
+      "status": "PASS"
+    }
+  ]
+}

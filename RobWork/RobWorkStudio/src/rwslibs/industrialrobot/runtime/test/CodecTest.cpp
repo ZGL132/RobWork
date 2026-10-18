@@ -27,6 +27,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstring>  // std::memcmp（F-618 级别字节定位）
@@ -44,6 +45,38 @@ namespace core = sdurws::ird::core;
 // =====================================================================
 // 往返：parse(encode(x))==x（acceptance 2——§4.5"往返"行）。
 // =====================================================================
+
+/** @brief A-15：1.2完整目录往返、命名偏移篡改与旧1.1缓存必须拒绝。 */
+TEST(CodecRoundtripTest, NamedTcpRoundtripTamperAndOldMinor_REQ01_A15)
+{
+    auto f = richFixture();
+    const auto offset = rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.125, 0.25, 0.5),
+                                                     sdurws::ird::runtime::detail::identityTransform3D().R());
+    f.tools[0].namedTcpOffsets = {{"unique_tcp_a15", offset}};
+    const auto model = f.build();
+    auto bytes = rtcodec::encode(model);
+    auto decoded = rtcodec::parse(bytes);
+    ASSERT_TRUE(decoded.ok());
+    ASSERT_EQ(decoded.get().tools()[0].namedTcpOffsets.size(), 1U);
+    EXPECT_EQ(decoded.get(), model);
+    EXPECT_EQ(rtcodec::encode(decoded.get()), bytes);
+    EXPECT_EQ(rtcodec::kVersionMinor, 2U);
+    // 头7字节magic，随后major/minor各2字节大端；伪装为旧1.1精确拒绝。
+    auto old = bytes; old[9] = 0; old[10] = 1;
+    EXPECT_FALSE(rtcodec::parse(old).ok());
+    const std::string key = "unique_tcp_a15";
+    const auto found = std::search(bytes.begin(), bytes.end(), key.begin(), key.end());
+    ASSERT_NE(found, bytes.end());
+    // 工具目录count位于键前8字节（4字节count＋4字节键长）；超限必须先拒绝分配。
+    auto excessive = bytes;
+    const auto keyIndex = static_cast<std::size_t>(std::distance(bytes.begin(), found));
+    ASSERT_GE(keyIndex, 8U);
+    std::fill(excessive.begin() + keyIndex - 8, excessive.begin() + keyIndex - 4, 0xff);
+    EXPECT_FALSE(rtcodec::parse(excessive).ok());
+    // 仅改键字节，结构仍合法；必须因内容身份复核不一致而拒绝。
+    *found = static_cast<std::uint8_t>('v');
+    EXPECT_FALSE(rtcodec::parse(bytes).ok());
+}
 
 /** minimal 夹具往返：全字段 operator== 相等、身份相等、再编码逐字节相等。 */
 TEST(CodecRoundtripTest, MinimalModelRoundtripsExactly)

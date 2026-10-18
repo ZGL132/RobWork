@@ -61,34 +61,41 @@ KinematicsError makeFrameUnresolved(const std::string& tcpKey, const std::string
 }
 
 /**
- * @brief 解析 TCP 引用到工具（KinTypes.hpp 解析规则——空键＝canonical
- *        TCP、非空须与工具 localName 精确相等）。
- *
- * @return 成功＝工具引用；失败＝NoTcp（未配置/悬空两分支）或
+ * @brief 从同一快照解析法兰到所选TCP的变换（m、正交旋转），实际键优先。
+ * @param view [in] 调用方持有的不可变运行时视图，只在本次同步栈借用。
+ * @param tcp [in] 工具身份与原tcpKey；空键默认，非空先查目录再允许旧localName别名。
+ * @return 成功＝快照拥有的变换指针；失败＝NoTcp（未配置/悬空两分支）或
  *         FrameUnresolved（键不命中）
  */
-Expected<const runtime::CanonicalTool*> resolveTcp(const IKinRuntimeView& view,
+Expected<const rw::math::Transform3D<double>*> resolveTcp(const IKinRuntimeView& view,
                                                    const TcpRef& tcp)
 {
     const runtime::CanonicalModel& model = view.model();
     const std::vector<runtime::CanonicalTool>& tools = model.tools();
     if (tools.empty()) {
         // 未配置：快照模型无任何工具（KIN-NO-TCP"TCP 未配置"分支）。
-        return Expected<const runtime::CanonicalTool*>::err(
+        return Expected<const rw::math::Transform3D<double>*>::err(
             makeNoTcp("TCP 未配置：快照模型无工具（KIN-NO-TCP 素材——§9.6）"));
     }
     const auto loc = model.findObject(tcp.toolObject);
     if (!loc.has_value() || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
         // 悬空：指名对象不在快照内、或不是工具定义（"引用悬空"分支）。
-        return Expected<const runtime::CanonicalTool*>::err(
+        return Expected<const rw::math::Transform3D<double>*>::err(
             makeNoTcp("TCP 引用悬空：toolObject 未解析到快照工具（KIN-NO-TCP 素材——§9.6）"));
     }
     const runtime::CanonicalTool& tool = tools.at(loc->index);
+    // A-15补充/KIN-14：与FK同一选择规则，长TCP的上界不能沿用默认偏移，
+    // 否则会把实际可达目标错误证明为不可达。只同步借用快照内变换，无缓存。
+    const auto named = std::find_if(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+        [&](const auto& entry) { return entry.first == tcp.tcpKey; });
+    if (!tcp.tcpKey.empty() && named != tool.namedTcpOffsets.end()) {
+        return Expected<const rw::math::Transform3D<double>*>::ok(&named->second);
+    }
     if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName) {
-        return Expected<const runtime::CanonicalTool*>::err(
+        return Expected<const rw::math::Transform3D<double>*>::err(
             makeFrameUnresolved(tcp.tcpKey, tool.localName));
     }
-    return Expected<const runtime::CanonicalTool*>::ok(&tool);
+    return Expected<const rw::math::Transform3D<double>*>::ok(&tool.tcpOffset);
 }
 
 // =====================================================================
@@ -121,7 +128,7 @@ Expected<AnalyticReachBound> computeAnalyticReachBound(const IKinRuntimeView& vi
     if (joints.empty()) {
         return Expected<AnalyticReachBound>::err(makeNoDevice());
     }
-    const Expected<const runtime::CanonicalTool*> tool = resolveTcp(view, tcp);
+    const Expected<const rw::math::Transform3D<double>*> tool = resolveTcp(view, tcp);
     if (!tool.ok()) {
         return Expected<AnalyticReachBound>::err(tool.error());
     }
@@ -153,10 +160,10 @@ Expected<AnalyticReachBound> computeAnalyticReachBound(const IKinRuntimeView& vi
     }
 
     // 2c. TCP 偏置平移模长（m——法兰→TCP 的 |p|）。
-    const runtime::CanonicalTool& t = *tool.get();
-    const double tx = t.tcpOffset.P()[0];
-    const double ty = t.tcpOffset.P()[1];
-    const double tz = t.tcpOffset.P()[2];
+    const auto& selectedOffset = *tool.get();
+    const double tx = selectedOffset.P()[0];
+    const double ty = selectedOffset.P()[1];
+    const double tz = selectedOffset.P()[2];
     bound.tcpOffsetNorm = std::sqrt(tx * tx + ty * ty + tz * tz);
 
     // 2d. 总上界（m）＝Σorigin＋Σprismatic＋tcp（逐项累加、定序固定——

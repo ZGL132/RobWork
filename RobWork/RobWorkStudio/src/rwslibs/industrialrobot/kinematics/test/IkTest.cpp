@@ -1219,3 +1219,38 @@ TEST(KinIk, SolutionSetViewWorstByAndFiltered_WP15T04_ACC3)
     EXPECT_EQ(reachable[0].sourceInitIndex, 0U);
     EXPECT_EQ(reachable[1].sourceInitIndex, 2U);
 }
+
+/** @brief REQ-01/KIN-14：两个不同命名TCP目标用真实IK回到同一已知非零构型。 */
+TEST(KinIk, NamedTcpRealSolveAndReachBound_REQ01_A15)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "KIN-14"}, std::vector<std::string>{"AT-23"});
+    const auto original = twoLinkModel();
+    auto tools = original.tools();
+    tools[0].namedTcpOffsets = {{"tip", trans(0.2, 0.8, 0)},
+                                {"long", trans(2.0, 0.3, 0)}};
+    const auto model = rt::CanonicalModelBuilder().setHeader(original.header())
+        .setWorld(original.world()).setChain(original.chain()).setTools(tools)
+        .setDefaultTcpIndex(0U).build();
+    TestView view(model);
+    // 独立解析目标：法兰p=(1.1cosq1,1.1sinq1,0)、R=Rz(q1+q2)。
+    const double q1 = 0.3, q2 = -0.5, theta = q1 + q2;
+    for (const auto& row : tools[0].namedTcpOffsets) {
+        const auto p = row.second.P();
+        const rw::math::Transform3D<double> target(
+            rw::math::Vector3D<double>(1.1 * std::cos(q1) + std::cos(theta) * p[0] - std::sin(theta) * p[1],
+                                       1.1 * std::sin(q1) + std::sin(theta) * p[0] + std::cos(theta) * p[1], 0), rotZ(theta));
+        auto req = makeRequest(view, target, {{0.1, -0.2}});
+        req.tcp.tcpKey = row.first;
+        const auto bound = kin::computeAnalyticReachBound(view, req.tcp);
+        ASSERT_TRUE(bound.ok()) << "命名TCP界限必须与FK使用同一变换";
+        EXPECT_NEAR(bound.get().tcpOffsetNorm, std::hypot(p[0], p[1]), 1e-12);
+        const auto out = IkSolver().solve(req);
+        ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound);
+        ASSERT_FALSE(out.solutionSet.solutions.empty());
+        EXPECT_NEAR(out.solutionSet.solutions.front().q[0], q1, 1e-3);
+        EXPECT_NEAR(out.solutionSet.solutions.front().q[1], q2, 1e-3);
+    }
+    auto bad = makeRequest(view, trans(1, 0, 0), {{0, 0}});
+    bad.tcp.tcpKey = "missing";
+    EXPECT_THROW(IkSolver().solve(bad), std::invalid_argument);
+}

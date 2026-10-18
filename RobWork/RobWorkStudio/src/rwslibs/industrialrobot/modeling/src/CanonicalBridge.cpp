@@ -1012,6 +1012,13 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
         const rw::math::Rotation3D<double> r =
             rotMul(tool.mountInterface.R(), chosen->offset.R());
         td.tcpOffset = rw::math::Transform3D<double>(p, r);
+        // A-15/MDL-13：保留每个原始tcpKey，安装接口必须参与所有偏移的复合，
+        // 否则非默认TCP会在编译边界丢失。这里仅做描述映射，排序与身份归runtime。
+        for (const auto& entry : tool.tcpList) {
+            td.namedTcpOffsets.emplace_back(entry.key, rw::math::Transform3D<double>(
+                rotVec(tool.mountInterface.R(), entry.offset.P()) + tool.mountInterface.P(),
+                rotMul(tool.mountInterface.R(), entry.offset.R())));
+        }
         desc.tools.push_back(std::move(td));
     }
 

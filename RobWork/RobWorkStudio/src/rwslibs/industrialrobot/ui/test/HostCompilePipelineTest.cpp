@@ -42,7 +42,11 @@
 #include <sdurws/ird/project/CommandService.hpp>  // project::CompileRequest/ObjectWrite（S5 编排输入）
 #include <sdurws/ird/project/QueryPort.hpp>       // project::IProjectQueryPort（替身契约形状）
 #include <sdurws/ird/runtime/HostPresentationView.hpp>  // createHostPresentationView（真实呈现视图）
+#include <sdurws/ird/kinematics/Fk.hpp>
+#include <sdurws/ird/kinematics/Ik.hpp>
+#include <cmath>
 #include <sdurws/ird/runtime/Snapshot.hpp>
+#include <sdurws/ird/runtime/Codec.hpp>  // A-15：真实worker物化编码，完整命名TCP不可丢失。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 // UI-T78 渲染面用例的框架消费面（被测 TU 同源编入门控块的框架链接面——
@@ -240,6 +244,87 @@ protected:
 
 /// 编译成功面：计划闭包→十段链发布→快照缓存可取（名称映射非空——S8
 /// 产物随快照在位；编译基线对账面回读一致）。
+/**
+ * @brief A-15/REQ-01：真实建模对象字节→宿主十段编译→真实FK/IK的完整目录链。
+ * 查询替身只提供对象字节；Codec、安装复合、内容身份、求解均为产品实现。
+ */
+TEST_F(HostCompilePipelineTest, NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15)
+{
+    IRD_TEST_INFO("REQ-01", {"AT-23"}, std::nullopt);
+    const modeling::RobotDesignCodec codec;
+    const auto decoded = codec.decode(m_designBytes, modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    auto root = std::get<modeling::RobotDesign>(decoded.get());
+    modeling::ToolDefinition tool;
+    tool.objectId = core::ObjectId::generate(); tool.localName = "named-tool";
+    tool.mountInterface = rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.2, 0.3, 0.4),
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1));
+    tool.tcpList = {{"a", rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.5,0,0),
+                        rw::math::Rotation3D<double>::identity()), ""},
+                   {"b", rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0.4,0),
+                        rw::math::Rotation3D<double>::identity()), ""}};
+    root.toolRefs = {tool.objectId}; root.defaultTcp = modeling::TcpRef{tool.objectId, "a"};
+    const auto rootBytes = codec.encode(modeling::ObjectVariant(root), modeling::kCurrentFormatVersion);
+    const auto toolBytes = codec.encode(modeling::ObjectVariant(tool), modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(rootBytes.ok()); ASSERT_TRUE(toolBytes.ok());
+    m_designBytes = rootBytes.get();
+    m_query->addObject(tool.objectId, std::string(modeling::kToolDefinitionObjectType), toolBytes.get());
+    HostModelCompilePort port({m_query.get(), core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType), nullptr});
+    const auto result = port.compileWorkCellAndDwc(makeCompileRequest());
+    ASSERT_TRUE(result.ok);
+    const auto snapshot = port.lastPublishedSnapshot(); ASSERT_TRUE(snapshot);
+    ASSERT_EQ(snapshot->model().tools()[0].namedTcpOffsets.size(), 2U);
+    // 跨进程前置也走真实物化工厂：同一1.2字节必须保留完整目录与身份。
+    // 快照选项直接取原发布值，避免测试自行猜测编译开关造成身份漂移。
+    runtime::snapshotcodec::MaterializedPayload payload;
+    payload.revision.id = snapshot->revision(); payload.revision.seq = snapshot->revisionSeq();
+    payload.revision.branch = snapshot->branch();
+    payload.revision.objectRefs = snapshot->model().header().objectRefs;
+    payload.canonicalModelBytes = runtime::rtcodec::encode(snapshot->model());
+    payload.nameMapBytes = runtime::rtcodec::encodeNameMap(snapshot->nameMap());
+    payload.options = snapshot->compileOptions();
+    payload.compilerContractVersion = snapshot->compilerContractVersion();
+    payload.compilerVersion = snapshot->compilerVersion();
+    payload.expectedModelIdentity = snapshot->modelIdentity();
+    payload.expectedNameMapIdentity = snapshot->nameMapIdentity();
+    const auto materialized = runtime::RuntimeSnapshotFactory().materialize(
+        runtime::snapshotcodec::encode(payload));
+    ASSERT_NE(materialized.snapshot, nullptr);
+    EXPECT_EQ(materialized.snapshot->modelIdentity(), snapshot->modelIdentity());
+    EXPECT_EQ(materialized.snapshot->model(), snapshot->model());
+    // 仅借用已发布不可变快照。适配器是IKinRuntimeView端口，不包含计算替身。
+    struct View final : kinematics::IKinRuntimeView {
+        const runtime::CanonicalModel& value;
+        explicit View(const runtime::CanonicalModel& model) : value(model) {}
+        const runtime::CanonicalModel& model() const override { return value; }
+        rw::math::Transform3D<double> worldToBase() const override { return value.world().T_world_base; }
+    } view(materialized.snapshot->model());
+    const double q = 0.3;
+    for (const auto& row : std::vector<std::pair<std::string, rw::math::Vector3D<double>>>{
+            {"a", {0.2,0.8,0.4}}, {"b", {-0.2,0.3,0.4}}}) {
+        kinematics::TcpRef tcp; tcp.toolObject = tool.objectId; tcp.tcpKey = row.first;
+        const auto fk = kinematics::FkEvaluator().evaluate(view, tcp, {q}); ASSERT_TRUE(fk.ok());
+        const auto p = row.second;
+        const rw::math::Vector3D<double> expected(std::cos(q)*p[0]-std::sin(q)*p[1],
+                                                std::sin(q)*p[0]+std::cos(q)*p[1], p[2]);
+        EXPECT_LT((fk.get().tcpInBase.P() - expected).norm2(), 1e-12);
+        // 安装旋转Rz(π/2)＋关节角q，独立解析，不复用FK输出作为IK目标。
+        const double theta = q + 1.5707963267948966;
+        kinematics::IkRequest request;
+        request.modelView = &view; request.tcp = tcp;
+        request.targetInBase = rw::math::Transform3D<double>(expected,
+            rw::math::Rotation3D<double>(std::cos(theta),-std::sin(theta),0,
+                                         std::sin(theta),std::cos(theta),0,0,0,1));
+        request.initialValues = {{0.1}}; request.referenceQ = {0};
+        request.iterationLimit = 200; request.intervals = kinematics::evaluationIntervals(view);
+        const auto solved = kinematics::IkSolver().solve(request);
+        ASSERT_EQ(solved.outcomeKind, kinematics::IkOutcomeKind::SolutionsFound);
+        ASSERT_FALSE(solved.solutionSet.solutions.empty());
+        EXPECT_NEAR(solved.solutionSet.solutions.front().q[0], q, 1e-3);
+    }
+}
+
 TEST_F(HostCompilePipelineTest, CompilePort_PublishesSnapshotAndCachesIt)
 {
     HostModelCompilePort port(HostModelCompilePort::Deps{

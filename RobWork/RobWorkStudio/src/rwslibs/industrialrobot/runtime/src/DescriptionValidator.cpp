@@ -724,6 +724,18 @@ ValidationReport validateRobotDesignDescription(const RobotDesignDescription& de
 
         // 工具变换（法兰→TCP）——同关节 origin 口径（反射/非正交/非有限）。
         checkTransform(report, tool.tcpOffset, idx + ".tcpOffset");
+        // A-15：键属于工具内命名空间；不能用工具localName字符规则收窄原tcpKey。
+        // 首个重复就登记原下标，所有变换仍逐个复核，保证错误可定位。
+        std::vector<std::string> tcpKeys;
+        for (std::size_t k = 0; k < tool.namedTcpOffsets.size(); ++k) {
+            const auto& entry = tool.namedTcpOffsets[k];
+            const auto field = idx + ".namedTcpOffsets[" + std::to_string(k) + "]";
+            if (entry.first.empty() || std::find(tcpKeys.begin(), tcpKeys.end(), entry.first) != tcpKeys.end()) {
+                addError(report, RuntimeErrorCode::InputInvalid, field, "TCP键为空或重复");
+            }
+            tcpKeys.push_back(entry.first);
+            checkTransform(report, entry.second, field + ".offset");
+        }
 
         // 物性三件套（与连杆同口径——m≤0/非有限/非对称/非正定）。
         const auto mass = tool.mass.tryValue();

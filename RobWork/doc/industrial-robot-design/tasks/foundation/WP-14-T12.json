@@ -5,10 +5,56 @@
   "masterWp": "WP-E",
   "title": "需求模块全功能审计缺陷修复与生产交互验证",
   "status": "ready",
-  "dependsOn": ["WP-14-T11"],
-  "requirements": ["REQ-01", "REQ-02", "REQ-03", "REQ-04", "REQ-05", "REQ-06", "REQ-07", "REQ-08", "REQ-09", "REQ-10", "REQ-11", "REQ-12", "UX-02", "UX-03", "UX-05", "UX-06", "UX-09", "UX-11"],
-  "designRefs": ["units/requirements.md#9.8", "units/requirements.md#7.1", "units/requirements.md#7.2", "units/requirements.md#11", "development-task-breakdown.md#2.15"],
+  "dependsOn": [
+    "WP-14-T11"
+  ],
+  "requirements": [
+    "REQ-01",
+    "REQ-02",
+    "REQ-03",
+    "REQ-04",
+    "REQ-05",
+    "REQ-06",
+    "REQ-07",
+    "REQ-08",
+    "REQ-09",
+    "REQ-10",
+    "REQ-11",
+    "REQ-12",
+    "UX-02",
+    "UX-03",
+    "UX-05",
+    "UX-06",
+    "UX-09",
+    "UX-11"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/requirements.md#7.1",
+    "units/requirements.md#7.2",
+    "units/requirements.md#11",
+    "development-task-breakdown.md#2.15"
+  ],
   "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TaskPointsBatchTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CodecTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CompilerTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Codec.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Description.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CanonicalBridgeTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CanonicalBridge.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPluginAssembly.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.hpp",
@@ -44,18 +90,43 @@
     "RobWork/doc/industrial-robot-design/units/requirements.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
     "RobWork/doc/industrial-robot-design/traceability/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/sdurws/ird/requirements/RequirementsPluginAssembly.hpp"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/sdurws/ird/requirements/RequirementsPluginAssembly.hpp",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Bounds.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Evaluators.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelFlows.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelFlows.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinP4FlowsTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/PluginPanelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/KinematicsPanelInputGuiTest.cpp"
   ],
-  "forbiddenFiles": ["RobWork/RobWork/**", "RobWork/RobWorkSim/**", "RobWork/doc/industrial-robot-design/REQUIREMENTS.md", "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"],
-  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
-  "verify": ["cmake --build build --config Release", "cmake --build build --config Release --target ird_gates", "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "forbiddenFiles": [
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
   "branch": "wp14-t12",
   "interUnit": true,
-  "knownPitfalls": ["O-36"],
+  "knownPitfalls": [
+    "O-36"
+  ],
   "acceptance": [
     "原审计120项逐行执行：生产软件交互、三维呈现及联合前置有真实证据，未执行不得标通过",
     "A-01至A-12逐项失败回归先执行，再修复；取消零写入、只读禁写、批次整体局部撤销",
     "双模式构建、requirements及相关ui测试、ird_gates、scope和文档校验实际执行留痕；通过与跳过分别计数"
   ],
-  "note": "所有者2026-10-18明确授权基于review制定计划并实施，最终所有功能通过验证。实施基点bd55ad59，源代码基点a5ccb4d6与redesign-main一致；两个审计文档提交保留历史。第一阶段限私有UI接线；2026-10-18所有者先后明确批准计划A-04公共参数补齐设计及解除关联原子批次设计：仅放行requirements/include/sdurws/ird/requirements/TemplateArray.hpp的ArrayParams第三方向/层间距/层数/圆法向兼容扩展及EditBatch.updatedPoints默认空值字段，其余公共头仍禁止修改，不新增跨域边。后续若需新增公共端口先按设计门登记。计划见RobWork/docs/superpowers/plans/2026-10-18-requirements-completion.md。 所有者2026-10-19明确批准A-06/A-07精确设计：仅放行RequirementsPluginAssembly.hpp的RequirementsReferenceChoice及RequirementsView3DSeams表尾referenceChoices/referenceWorldPose/editWorldTarget三个默认空回调；其余assembly文件不在允许面，不改存储格式或新建跨域边。 所有者2026-10-19明确批准A-13：仅扩展到project私有CommandServiceImpl.cpp、TxEngine.hpp/.cpp、CommandServiceTest.cpp、TxEngineTest.cpp及units/project.md；私有CommitPlan表尾增加默认空retainedObjects，保留选定分支基线未修改对象，不改公共接口或存储格式。 所有者另明确批准A-13的UndoRedoServiceTest.cpp精确测试修正：仅更新纯元数据保留引用及重放追加OID的注释/断言，不改撤销产品代码。 所有者2026-10-19明确批准A-14精确设计：仅放行建模装配头新增restoreCommittedSession及计划列明的模块/装配实现、两个测试和units/modeling.md；消费既有ObjectClosureView恢复完整已提交基线，不改存储、runtime或kinematics。"
+  "note": "所有者2026-10-18明确授权基于review制定计划并实施，最终所有功能通过验证。实施基点bd55ad59，源代码基点a5ccb4d6与redesign-main一致；两个审计文档提交保留历史。第一阶段限私有UI接线；2026-10-18所有者先后明确批准计划A-04公共参数补齐设计及解除关联原子批次设计：仅放行requirements/include/sdurws/ird/requirements/TemplateArray.hpp的ArrayParams第三方向/层间距/层数/圆法向兼容扩展及EditBatch.updatedPoints默认空值字段，其余公共头仍禁止修改，不新增跨域边。后续若需新增公共端口先按设计门登记。计划见RobWork/docs/superpowers/plans/2026-10-18-requirements-completion.md。 所有者2026-10-19明确批准A-06/A-07精确设计：仅放行RequirementsPluginAssembly.hpp的RequirementsReferenceChoice及RequirementsView3DSeams表尾referenceChoices/referenceWorldPose/editWorldTarget三个默认空回调；其余assembly文件不在允许面，不改存储格式或新建跨域边。 所有者2026-10-19明确批准A-13：仅扩展到project私有CommandServiceImpl.cpp、TxEngine.hpp/.cpp、CommandServiceTest.cpp、TxEngineTest.cpp及units/project.md；私有CommitPlan表尾增加默认空retainedObjects，保留选定分支基线未修改对象，不改公共接口或存储格式。 所有者另明确批准A-13的UndoRedoServiceTest.cpp精确测试修正：仅更新纯元数据保留引用及重放追加OID的注释/断言，不改撤销产品代码。 所有者2026-10-19明确批准A-14精确设计：仅放行建模装配头新增restoreCommittedSession及计划列明的模块/装配实现、两个测试和units/modeling.md；消费既有ObjectClosureView恢复完整已提交基线，不改存储、runtime或kinematics。 所有者2026-10-19明确批准A-15精确设计：ToolDescription/CanonicalTool表尾默认空namedTcpOffsets、canonical编码1.2及KinTypes解析注释，放行计划列明的桥接/runtime/kinematics实现测试与单元卡；其余公共接口、框架、project存储格式不改。 所有者随后明确批准A-15补充：仅额外放行kinematics/src/Bounds.cpp，解析界限消费同一命名TCP偏移，不改公共接口/公式。 所有者另明确批准A-15补充二：仅额外放行kinematics/src/Evaluators.cpp五处既有TCP预检，命名键精确命中优先，空键默认、旧localName别名兼容，不改公共头/算法或新增区域TCP投影。 所有者2026-10-19明确批准A-15补充三：仅额外放行KinPanelFlows.cpp/.hpp与KinP4FlowsTest.cpp，面板默认引用使用空键，并增加真实FK同名TCP碰撞回归；不改公共接口/存储/数值算法。 所有者2026-10-19批准A-15补充四汇总：仅额外放行PluginPanelTest.cpp及KinematicsPanelInputGuiTest.cpp的两处旧默认TCP键断言与相邻注释，改为要求空键，保留其余全部断言，不改产品代码。"
 }
