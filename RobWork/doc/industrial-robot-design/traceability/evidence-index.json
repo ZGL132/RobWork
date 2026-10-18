@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T17:12:43+08:00",
+  "generatedAt": "2026-10-18T17:17:53+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6857,
-    "totalBytes": 222268615,
+    "totalFiles": 6858,
+    "totalBytes": 222270649,
     "byKind": {
-      "pipeline-artifact": 2,
-      "manual-acceptance": 1,
-      "json-data": 7,
-      "benchmark": 8,
+      "markdown-doc": 41,
+      "governance-record": 40,
       "gtest-report": 335,
       "acceptance-record": 515,
-      "governance-record": 40,
+      "manual-acceptance": 1,
       "log": 1,
-      "build-log": 5907,
-      "markdown-doc": 41
+      "benchmark": 8,
+      "build-log": 5908,
+      "pipeline-artifact": 2,
+      "json-data": 7
     },
     "byLifecycle": {
       "historical": 564,
       "superseded": 0,
-      "current": 27,
-      "unverified": 6266
+      "unverified": 6267,
+      "current": 27
     },
     "associated": 596,
-    "unassociated": 6261,
-    "shaComputed": 6839,
+    "unassociated": 6262,
+    "shaComputed": 6840,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 343,
     "duplicateGroupsListed": 100
@@ -10975,6 +10975,14 @@
       "taskIds": [],
       "bytes": 55598,
       "sha256": "e961a32435335b7de755384e82177a51c68db0accfd50bc917d04baf6f0ba68f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-audit-20261018/GOVERNANCE-ADDENDUM.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2034,
+      "sha256": "2c937948247a4bdc9502d4658aab6eaecdc3da2d91a8c4c52a2d9818c3b18114",
       "lifecycle": "unverified"
     },
     {
