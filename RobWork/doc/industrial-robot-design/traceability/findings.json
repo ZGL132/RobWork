@@ -7569,10 +7569,12 @@
       "id": "F-750",
       "source": "audit/round2-20261010（R2-A2 批）；2026-10-12 治理批转登（草案预编号 F-651→F-750，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：TaskPresentation.cpp:394-395 refresh 的 DropRegression 分支注释称『不静默』但无 logDev 调用（pollOnce :330 有）——注释失实",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：TaskPresentation refresh 的 DropRegression 分支补 logDev（对齐 pollOnce :330）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：TaskPresentation refresh 的 DropRegression 分支补 logDev（对齐 pollOnce :330）。",
+      "resolution": "F-750 消账（2026-10-18）：TaskPresentation DropRegression 分支补 logDev 留痕（taskId/回退值/基线），与注释「回退丢弃不静默」及 pollOnce 同口径；ui_test 307/307 通过。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-751",
@@ -7596,10 +7598,12 @@
       "id": "F-753",
       "source": "audit/round2-20261010（R2-A2 批）；2026-10-12 治理批转登（草案预编号 F-654→F-753，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：Logging.cpp:1373 flush 失败文案『累计 N+1 次』未实际递增 writeFailures（预存在，计数展示虚一）",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Logging flush 失败文案与实际递增一致。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Logging flush 失败文案与实际递增一致。",
+      "resolution": "F-753 消账（2026-10-18）：Logging.cpp flush 失败路径改为先 ++writeFailures 再展示（原只做 +1 展示、从不递增，连续失败恒显累计 1 次），与 928/950/980 路径自增口径一致；diagnostics_test 117/117 通过。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-754",
@@ -7806,10 +7810,11 @@
       "id": "F-774",
       "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-675→F-774，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-10",
       "title": "P3：ID.cpp:928-934 死代码有限性预检循环",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ID.cpp 死代码预检删除或启用。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ID.cpp 死代码预检删除或启用。",
+      "closureReason": "B7 第三批（2026-10-18）：当前树不存在 ID.cpp（git ls-files 仅框架 Pyramid.cpp/BeamGeometryCuboid.cpp），审计所指 928-934 死代码循环无法定位（疑旧路径或重构后消失）；按「目标文件不存在」关闭，若复现请附当前路径与行号。"
     },
     {
       "id": "F-775",

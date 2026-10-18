@@ -1369,8 +1369,11 @@ bool LoggingPipeline::flush(std::chrono::milliseconds deadline)
         r.level = LogLevel::Warning;
         r.channel = kChannelLogging;
         r.code = std::string{kCodeLogWriteFailed};
+        // F-753：先递增再取数——原实现只做 writeFailures+1 展示、从不递增，
+        // 连续失败永远显示"累计 1 次"，与 928/950/980 路径的自增口径不一致。
+        const std::uint64_t failures = ++m_impl->writeFailures;
         r.message = "[log-write-failed] flush 文件冲刷失败（累计 "
-                  + std::to_string(m_impl->writeFailures + 1) + " 次）";
+                  + std::to_string(failures) + " 次）";
         m_impl->emitInternal(std::move(r), *cfgPtr);
         return false;
     }

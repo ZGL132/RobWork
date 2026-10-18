@@ -392,7 +392,13 @@ public:
                     row.progress = row.snap.progress;
                 } else {
                     row.progress = existing->progress;  // DropRegression：保留旧值
-                    // Dev 观察面与 pollOnce 同口径（回退丢弃不静默）。
+                    // Dev 观察面与 pollOnce 同口径（F-750：回退丢弃不静默——
+                    // 原注释声称"不静默"但无 logDev 调用，现补齐留痕）。
+                    logDev("进度回退丢弃：taskId="
+                           + row.snap.identity.run.toCanonical()
+                           + " percent=" + std::to_string(row.snap.progress->percent)
+                           + " < 基线 "
+                           + std::to_string(existing->progress->percent));
                 }
             } else if (existing != nullptr && existing->progress.has_value()
                        && existing->snap.attempt == row.snap.attempt) {
