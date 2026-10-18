@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T10:22:51+08:00",
+  "generatedAt": "2026-10-18T10:36:36+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6609,
-    "totalBytes": 207878914,
+    "totalFiles": 6610,
+    "totalBytes": 207879982,
     "byKind": {
-      "json-data": 7,
-      "build-log": 5670,
       "benchmark": 8,
+      "build-log": 5671,
       "gtest-report": 335,
-      "manual-acceptance": 1,
-      "markdown-doc": 41,
       "log": 1,
-      "acceptance-record": 514,
+      "json-data": 7,
       "governance-record": 30,
-      "pipeline-artifact": 2
+      "manual-acceptance": 1,
+      "pipeline-artifact": 2,
+      "markdown-doc": 41,
+      "acceptance-record": 514
     },
     "byLifecycle": {
-      "unverified": 6017,
-      "historical": 522,
+      "superseded": 0,
+      "unverified": 6018,
       "current": 70,
-      "superseded": 0
+      "historical": 522
     },
     "associated": 595,
-    "unassociated": 6014,
-    "shaComputed": 6591,
+    "unassociated": 6015,
+    "shaComputed": 6592,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -47586,6 +47586,14 @@
       "taskIds": [],
       "bytes": 3587,
       "sha256": "009fe64e4d3f50049b455b9dc1cd4a2c92aca019674a75d21471aef9b2b0e7a5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp15-t19/smoke-link-probe-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1068,
+      "sha256": "5a63229ebc0884b526533eb05fbd459aaa646ec7cd4b0dec8a2a07eb326eca91",
       "lifecycle": "unverified"
     },
     {

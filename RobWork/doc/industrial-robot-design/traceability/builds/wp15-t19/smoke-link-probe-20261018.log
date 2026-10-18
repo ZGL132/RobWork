@@ -1,0 +1,15 @@
+# WP-15-T19（F-919）方案勘察证据：显式链接 sdurw_math 在独立冒烟树的实测结果
+# 日期 2026-10-18；树 build/wp15-t19-smoke（-S industrialrobot，toolchain+Qt 前缀两参在位）
+# 背景：owner 行建议「插件目标显式链接 sdurw_math」；本探针在 kinematics/CMakeLists.txt
+#       临时给 sdurws_ird_kinematics PUBLIC 增 sdurw_math 后配置并构建三目标。
+
+-- Building for: Visual Studio 17 2022
+-- Configuring done (15.0s)
+=== configure exit=0 ===
+LINK : fatal error LNK1181: 无法打开输入文件“sdurw_math.lib” [D:\10_Source_Repos\21_robot\RobWork\build\wp15-t19-smoke\kinematics\sdurws_ird_kinematics_test.vcxproj]
+=== build exit=1 ===
+
+## 结论
+configure 成功（独立冒烟无框架目标）；链接期 LNK1181「无法打开输入文件 sdurw_math.lib」——
+独立冒烟树不存在 sdurw_math 库（core 亦仅 if(TARGET sdurw_math) 条件链接），故「显式链接」方案不可行。
+改动已还原（kinematics/CMakeLists.txt 回到无 sdurw_math 原状），未提交产品代码。

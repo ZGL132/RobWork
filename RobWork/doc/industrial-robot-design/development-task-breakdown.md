@@ -2,6 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.90（2026-10-18，WP-15-T19 立卡（blocked）与 F-919 修复方案勘察：§2.16 增 WP-15-T19 行〔运动学独立冒烟树链接缺陷——显式链接 sdurw_math 方案被「冒烟树无框架库」实测证伪（LNK1181），A/B/C 三出路待所有者裁决，契约 task note 载证据〕；T17 为 R2 预留位故取 T19；kinematics.md §11 增行/版本递增同批）。前一版本 v0.89 保留如下。 |
 | 文档版本 | v0.89（2026-10-18，F-927 消账：AGENTS §4.1 与 §5.1 fresh 树行订正 F-907 前置落位表述——`RobWorkStudio.ini.template.static` 必须位于源码树侧 `RobWork/RobWorkStudio/bin/`（configure_file 的 `${RWS_ROOT}/bin/` 解析面），构建树侧 `build/...` 不构成有效前置；F-907 原『复制至构建树源码侧』表述作废）。前一版本 v0.88 保留如下。 |
 | 文档版本 | v0.88（2026-10-18，WP-10-T85 合入收尾：wp10-t85〔afc27ea2..e23d07ec，验收 attempt 2 PASS，记录 traceability/acceptance/UI-T85-20261018-r2.md @ acc/UI-T85/2 500479c2〕--no-ff 并入 redesign-main〔代码 8ee2e057＋记录 12352989〕；契约 UI-T85 翻 done；findings F-921/F-922 status 补翻 fixed＋验收 G-1 登记为 F-931；证据索引再生成）。前一版本 v0.87 保留如下。 |
 | 文档版本 | v0.87（2026-10-18，WP-10-T85 实现落位：wp10-t85 分支——F-917/F-918 所有者裁决落地批〔requirements hexArmor/unhexArmor 对称＋DraftServiceImpl::save schemaVersion 归一化＋project roundtrip 守卫钉＋HostDraftChain 段 B 翻正向 RequirementsDraftFullChainByteEqual_UI_T85_F917＋投影字段改义与三处旧语义注释同步；ui.md v1.110/project.md v0.26/requirements.md v0.19 同批；findings F-917/F-918 翻 fixed；独立冒烟 build/acc-smoke-wp10-t85；XML 留痕 traceability/builds/wp10-t85/；待独立验收与所有者合入〕）。前一版本 v0.86 保留如下。 |
@@ -514,6 +515,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-15-T16 | 实现独立位姿可达性分析（R2/D）——契约已立卡（tasks/foundation/WP-15-T16.json，ready，2026-10-13 同批；分支 wp15-t16；开工前置＝T14 done——依赖诚实） | kinematics | WP-15-T14 | kinematics.md（卡预留） | 位置×方向×滚转采样＋计划预览＋方向覆盖率报告 | KIN-11、AT-26 | 计划预览 IK 目标数；协作取消；覆盖率报告用例通过 | — | M |
 | WP-15-T17 | 实现扩展显示单位（R2） | kinematics | WP-15-T10 | §17.1 子项 | inch/grad/turn 换算 | KIN-12-S1 | 换算正确且不影响 SI 真值 | — | S |
 | WP-15-T18 | 运动学迁移（方案 B.1 迁移链，SA-18 D8/D9/D11；接续 WP-14-T10 串行） | kinematics | WP-14-T10（串行迁移——§5.3 共享 UI 互斥，不并行） | B1-SPEC §2/§5；kinematics.md §9.8（插件界面）；WP-10-T21/T22 注册协议 | 运动学域三接入面（任务点/结果/分析配置入项目树；常用字段入检查器；求解配置入复杂编辑页）＋Jog 面板（会话姿态操作入口，零修订）＋Playback 面板运动学衔接（TimedStatePath 播放驱动会话姿态，零修订）＋本域自持导航 deprecated 标记 | KIN-06（会话姿态零修订）、KIN-12（显示单位纯投影呈现）、AT-04 | Jog/Playback 操作后零修订零失效断言（AT-04 口径）；运动学对象经项目树→检查器→复杂编辑页全链路用例通过；失败点/薄弱区渲染数据投放唯一 RWStudioView3D（D7）；ird_gates 增量登记；留痕 traceability/builds/wp15-t18/ | 修改共享 UI 装配面禁止（§5.3 互斥）；删除未迁移域可用性禁止；插件零计算逻辑红线不变；完整轨迹动画仍归 trajectory 域（未立项，本任务只做 Playback 呈现衔接） | M |
+| WP-15-T19 | 修复独立冒烟树运动学链接缺陷（F-919；**立卡 blocked——显式链接 sdurw_math 方案被冒烟无框架库证伪，A/B/C 三出路待所有者裁决，见契约 note**） | kinematics | —（无技术前置；T12 插件目标已落位） | findings F-919；kinematics.md §3.2/§11；kinematics/CMakeLists.txt 链接面 | 待裁决（候选：Eigen 头文件轴角组合／冒烟树补框架库／冒烟面排除并降级） | NFR-MNT-05、ARC-02（构建链接缺陷无专门需求条目，映射依据见契约 note） | 目标态：独立冒烟树三目标零 LNK＋集成零错误＋测试绿＋ird_gates 零新增；裁决前不实施 | 不改计算逻辑与公共接口；不引业务单元新边；REQUIREMENTS/ARCHITECTURE 零触碰 | S |
 
 ### 2.17 WP-16 trajectory（单元卡待产出；TRJ-01~08）
 
