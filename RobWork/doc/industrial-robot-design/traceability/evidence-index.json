@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-19T05:00:16+08:00",
+  "generatedAt": "2026-10-19T05:54:06+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 9872,
-    "totalBytes": 461960178,
+    "totalFiles": 9898,
+    "totalBytes": 463626913,
     "byKind": {
-      "acceptance-record": 515,
-      "log": 1,
-      "manual-acceptance": 1,
-      "build-log": 8922,
-      "markdown-doc": 41,
+      "pipeline-artifact": 2,
+      "benchmark": 8,
+      "json-data": 7,
+      "build-log": 8948,
       "governance-record": 40,
       "gtest-report": 335,
-      "json-data": 7,
-      "benchmark": 8,
-      "pipeline-artifact": 2
+      "acceptance-record": 515,
+      "log": 1,
+      "markdown-doc": 41,
+      "manual-acceptance": 1
     },
     "byLifecycle": {
-      "unverified": 9281,
       "current": 27,
+      "unverified": 9307,
       "historical": 564,
       "superseded": 0
     },
     "associated": 596,
-    "unassociated": 9276,
-    "shaComputed": 9854,
+    "unassociated": 9302,
+    "shaComputed": 9880,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 498,
     "duplicateGroupsListed": 100
@@ -32096,6 +32096,214 @@
       "taskIds": [],
       "bytes": 2650,
       "sha256": "9fee76c1610fcd4d3fccc7d3785476ec0945f5abf8e9a88483e36dc753b419e8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-a16-ui/sdurws_ird_ui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 823,
+      "sha256": "db3ba3f447cced5370d9b620140e88a70407db65bd152449f36ea15f16890cf8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-a16-ui/sdurws_ird_ui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1012,
+      "sha256": "64da342ca114f8c89b6aad4a71c01a5d55cac0b409824020c117d79699cb27f0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-a16-ui/sdurws_ird_ui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1894,
+      "sha256": "648cfc20851b46c5685085402f0fe3f2bd36bdfedb5146f60a146132ebe1a898",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-contract/sdurws_ird_kinematics_contract_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10396,
+      "sha256": "867d9d41c6969c062eaf4e921204b0345148c8676edc9b87363e33a3f66fa03c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-contract/sdurws_ird_kinematics_contract_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21676,
+      "sha256": "ebf99c033a2dca6cfbc7c703138fff114a66533c74a7fcc3e9cd96f00a07d441",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-contract/sdurws_ird_kinematics_contract_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47279,
+      "sha256": "401b04630388af8029c5fd683c3311181b3947ed2695062286880fd0c1b49e99",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-gui/sdurws_ird_kinematics_gui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3945,
+      "sha256": "1749cd7830161058369c4423076c235da12c65a77b653af147a753b14c4efdca",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-gui/sdurws_ird_kinematics_gui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7789,
+      "sha256": "2a3a8697b506d78aee6631e9936dcbacd24cb2b74551c2e3f63c54c147745912",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-gui/sdurws_ird_kinematics_gui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 16663,
+      "sha256": "aa5313218781e5fbb7e80ae1f7ecd1ec534a4a23e09cce182e4a6a8a566b4540",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-model/sdurws_ird_kinematics_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 45201,
+      "sha256": "d583239f67db9f35a85b3c3c6d2bafc87fb6d9710e7017f0b05c59ae8a6c609a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-model/sdurws_ird_kinematics_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 92858,
+      "sha256": "3e0d877cbb6f1017abd54885cbb1324919c4774da2caaf9f9308fcbb452e1509",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-kin-model/sdurws_ird_kinematics_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 224774,
+      "sha256": "e2f7a0fb9898564e8cc6640546ce89434eade8697689654580c18fb5d9459d7b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-ui-full/sdurws_ird_ui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 56350,
+      "sha256": "219d1176ab7e80c6e09ca067b99f553b3131d1c0f3ddff896985b22b2873d18e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-ui-full/sdurws_ird_ui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 110850,
+      "sha256": "68f6b09ca14c8d4cd299456c7693afc0b9e5bfa53042a4d3a14b6b56156e2544",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-ui-full/sdurws_ird_ui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 256612,
+      "sha256": "073a7011e10f65fd661bc0f1922fcb9c14bd983048dc3998507187daaf54c9e6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-ui-full2/sdurws_ird_ui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 55569,
+      "sha256": "9786d3d9a34e438fb51ae0719c28aad93516a53cd4ba42f398854dc04ada6c02",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-ui-full2/sdurws_ird_ui_test/gtest.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109572,
+      "sha256": "efdbc4859e4ed84aa0a0fe1b343d5846abdbb5e512b2daa184bac020833518fd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch26-ui-full2/sdurws_ird_ui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 256480,
+      "sha256": "be3d582c5ba5e885bc7bec4da2f4c90d737a702ce64c39a39da0eb7fdf22e9c7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch27-a16-kin-contract/kinematics-contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10396,
+      "sha256": "d71cde458b6a014e34e6c59251257b926c90b06879ebe9655a6100b05f4392ca",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch27-a16-kin-contract/kinematics-contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21677,
+      "sha256": "9d9cc7f7e1288f052b51de72d801aedffb98b63de96c9548b3023ca3f7cae903",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch27-a16-kin-gui/kinematics-gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3941,
+      "sha256": "9fae2a85b827c8ec5e12ebcd49cd7ef15eebc3d2f4b7b5bd439dc7461bb1f054",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch27-a16-kin-gui/kinematics-gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7788,
+      "sha256": "1c97df2780bff4deab9f13017e2e789354bf0a7213e0f0f65f0c2846c4844fa1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch27-a16-kin-model/kinematics-model.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 45201,
+      "sha256": "217c7eb5fc4508f4aaf6eb36b7190d56834efb7f4a33b77ec2d34424e82d69c9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch27-a16-kin-model/kinematics-model.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 92860,
+      "sha256": "a001833a65a3a32e0f8b5884669b8a73185938f5e1d803dd4699a5813730cb7a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch27-a16-ui/ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 55565,
+      "sha256": "90368ce4a6a67aab4bb1230bc6dfbc209ff2c0abc1de23ece716a91e88836bc5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch27-a16-ui/ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109564,
+      "sha256": "83f6e3b62f6d27abe31373b65014e96a0c82d69b728712d50fb76b2da0a4d907",
       "lifecycle": "unverified"
     },
     {

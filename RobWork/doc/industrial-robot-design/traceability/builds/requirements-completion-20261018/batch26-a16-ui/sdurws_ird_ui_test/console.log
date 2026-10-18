@@ -1,0 +1,13 @@
+Note: Google Test filter = KinEvaluationChannel.BatchHonorsEveryConstraintMask_REQ01_A16:KinEvaluationChannel.BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinEvaluationChannel
+[ RUN      ] KinEvaluationChannel.BatchHonorsEveryConstraintMask_REQ01_A16
+[       OK ] KinEvaluationChannel.BatchHonorsEveryConstraintMask_REQ01_A16 (26 ms)
+[ RUN      ] KinEvaluationChannel.BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16
+[       OK ] KinEvaluationChannel.BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16 (15 ms)
+[----------] 2 tests from KinEvaluationChannel (41 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (41 ms total)
+[  PASSED  ] 2 tests.

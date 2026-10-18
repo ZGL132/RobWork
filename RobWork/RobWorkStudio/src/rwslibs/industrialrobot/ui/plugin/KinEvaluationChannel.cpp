@@ -1023,6 +1023,12 @@ KinEvaluationExecutor::BatchSlice KinEvaluationExecutor::sliceBatch() const
         // 这里只修复既有完整位姿载体能表达的Fixed/AlignFrame；其余规则
         // 的方向约束/滚转自由与分量掩码仍需消费者能力，不能据此宣称完整支持。
         projected.targetInBase.R() = baseTref.R();
+        kinematics::TaskPoseConstraint taskConstraint;
+        taskConstraint.referenceInBase = baseTref.R();
+        taskConstraint.constrainedDof = {
+            point.pose.constrainedDof.x, point.pose.constrainedDof.y,
+            point.pose.constrainedDof.z, point.pose.constrainedDof.roll,
+            point.pose.constrainedDof.pitch, point.pose.constrainedDof.yaw};
         const auto& rule = point.pose.orientation;
         if (rule.kind == requirements::OrientationRuleKind::Fixed) {
             const auto& rpy = rule.fixedRpy;
@@ -1040,7 +1046,51 @@ KinEvaluationExecutor::BatchSlice KinEvaluationExecutor::sliceBatch() const
                 return slice;
             }
             projected.targetInBase.R() = baseTtarget.R();
+        } else if (rule.kind == requirements::OrientationRuleKind::AlignGeometryNormal
+                   || rule.kind == requirements::OrientationRuleKind::PointAtTarget) {
+            rw::math::Vector3D<double> direction;
+            if (rule.kind == requirements::OrientationRuleKind::AlignGeometryNormal) {
+                if (!rule.feature.has_value()
+                    || *rule.feature != requirements::OrientationFeature::FramePlaneNormal
+                    || !rule.targetSceneObject.has_value()) {
+                    slice.errorText = "任务点「" + point.name + "」法向规则缺少FramePlaneNormal引用";
+                    return slice;
+                }
+                rw::math::Transform3D<double> baseTtarget;
+                if (!projectRefFrameToBase(
+                        requirements::RequirementReference{
+                            requirements::RequirementRefKind::SceneObject,
+                            rule.targetSceneObject}, baseTtarget, slice.errorText)) {
+                    slice.errorText = "任务点「" + point.name + "」几何法向目标不可解析：" + slice.errorText;
+                    return slice;
+                }
+                direction = baseTtarget.R() * rw::math::Vector3D<double>(0.0, 0.0, 1.0);
+                if (rule.invertNormal) direction = -direction;
+            } else {
+                const rw::math::Vector3D<double> targetBase =
+                    baseTref.P() + baseTref.R() * rule.targetPoint;
+                direction = targetBase - projected.targetInBase.P();
+            }
+            const double length = std::sqrt(direction.norm2());
+            if (!std::isfinite(length) || length <= 1e-12) {
+                slice.errorText = "任务点「" + point.name + "」方向目标与任务点重合，无法确定工具轴";
+                return slice;
+            }
+            direction *= (1.0 / length);
+            rw::math::Vector3D<double> refAxis(1.0, 0.0, 0.0);
+            if (std::fabs(refAxis.dot(direction)) > 0.9) refAxis = rw::math::Vector3D<double>(0.0, 1.0, 0.0);
+            rw::math::Vector3D<double> xAxis = refAxis.cross(direction);
+            xAxis *= (1.0 / std::sqrt(xAxis.norm2()));
+            const rw::math::Vector3D<double> yAxis = direction.cross(xAxis);
+            projected.targetInBase.R() = rw::math::Rotation3D<double>(
+                xAxis[0], yAxis[0], direction[0], xAxis[1], yAxis[1], direction[1],
+                xAxis[2], yAxis[2], direction[2]);
         }
+        if (rule.kind == requirements::OrientationRuleKind::ToolRollFree) {
+            taskConstraint.allowToolRoll = true;
+            taskConstraint.rollRange = {rule.rollRange.min, rule.rollRange.max};
+        }
+        projected.taskConstraint = taskConstraint;
         // ---- 容差/要求值直投（I-REQ-5 >0 有限——域校验链保证）。
         projected.positionTolerance = point.tolerance.positionTolerance;    // m
         projected.orientationTolerance = point.tolerance.orientationTolerance; // rad

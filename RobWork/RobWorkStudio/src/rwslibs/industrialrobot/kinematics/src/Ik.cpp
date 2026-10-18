@@ -33,6 +33,7 @@
 #include <Eigen/Cholesky>  // LLT——DLS 正规方程 (JJᵀ＋λ²I) 求解（O-40 Eigen PRIVATE）
 
 #include <cmath>
+#include <algorithm>
 #include <limits>
 #include <optional>
 #include <stdexcept>
@@ -177,6 +178,141 @@ Eigen::Matrix<double, 6, 1> poseError(const rw::math::Transform3D<double>& targe
     e(5) = rotvec(2);
     oriResidualOut = aa.angle() < 0.0 ? -aa.angle() : aa.angle();
     return e;
+}
+
+/**
+ * @brief 按任务参考系和六分量掩码构造真实约束残差。
+ *
+ * 位置残差先由基座系转到referenceInBase系；姿态误差采用该参考系内
+ * Z-Y-X 欧拉分量的最短角差。allowToolRoll允许绕参考系+Z的滚转分量自由，
+ * 避免把规则错误降级为固定姿态。返回的六行仍按x/y/z/roll/pitch/yaw固定排序。
+ */
+Eigen::Matrix<double, 6, 1> constrainedPoseError(
+    const rw::math::Transform3D<double>& target,
+    const rw::math::Transform3D<double>& actual,
+    const TaskPoseConstraint& constraint,
+    double& posResidual,
+    double& oriResidual)
+{
+    const rw::math::Rotation3D<double>& rr = constraint.referenceInBase;
+    const rw::math::Vector3D<double> dp = target.P() - actual.P();
+    rw::math::Vector3D<double> localP;
+    for (int i = 0; i < 3; ++i) {
+        localP[i] = rr(0, i) * dp[0] + rr(1, i) * dp[1] + rr(2, i) * dp[2];
+    }
+    Eigen::Matrix<double, 6, 1> full = poseError(target, actual, posResidual, oriResidual);
+
+    // 需求 REQ-01/REQ-09 的姿态分量不是轴角向量，而是参考系内 Z-Y-X
+    // 欧拉字面（roll/pitch/yaw，单位 rad）。先把目标和实际旋转都变换到
+    // 同一个参考系，再按固定的万向锁分支提取三角，最后逐项做跨周最短差。
+    const auto transpose = [](const rw::math::Rotation3D<double>& r) {
+        return rw::math::Rotation3D<double>(
+            r(0, 0), r(1, 0), r(2, 0),
+            r(0, 1), r(1, 1), r(2, 1),
+            r(0, 2), r(1, 2), r(2, 2));
+    };
+    const auto rpy = [](const rw::math::Rotation3D<double>& r) {
+        constexpr double kGimbalEpsilon = 1e-5;
+        constexpr double kHalfPi = 1.57079632679489661923;
+        const double cosPitch = std::sqrt(r(0, 0) * r(0, 0) + r(1, 0) * r(1, 0));
+        const double sinPitch = -r(2, 0);
+        std::array<double, 3> a{}; // roll(X), pitch(Y), yaw(Z)，单位 rad
+        if (cosPitch < kGimbalEpsilon) {
+            // 万向锁时固定 roll=0，yaw 从剩余矩阵项确定，保证跨平台确定性。
+            a[0] = 0.0;
+            a[1] = sinPitch < 0.0 ? -kHalfPi : kHalfPi;
+            a[2] = sinPitch < 0.0 ? -std::atan2(r(0, 1), r(1, 1))
+                                   : std::atan2(r(0, 1), r(1, 1));
+        } else {
+            a[1] = std::atan2(sinPitch, cosPitch);
+            a[0] = std::atan2(r(2, 1), r(2, 2));
+            a[2] = std::atan2(r(1, 0), r(0, 0));
+        }
+        return a;
+    };
+    const auto wrap = [](double angle) {
+        return std::atan2(std::sin(angle), std::cos(angle));
+    };
+    const rw::math::Rotation3D<double> refTranspose = transpose(rr);
+    const std::array<double, 3> targetRpy = rpy(refTranspose * target.R());
+    const std::array<double, 3> actualRpy = rpy(refTranspose * actual.R());
+    rw::math::Vector3D<double> localR;
+    for (int i = 0; i < 3; ++i) {
+        localR[i] = wrap(targetRpy[static_cast<std::size_t>(i)]
+                         - actualRpy[static_cast<std::size_t>(i)]);
+    }
+    full(0) = localP[0]; full(1) = localP[1]; full(2) = localP[2];
+    full(3) = localR[0]; full(4) = localR[1]; full(5) = localR[2];
+    double p2 = 0.0;
+    double r2 = 0.0;
+    double rollResidual = 0.0;
+    if (constraint.allowToolRoll) {
+        const double span = constraint.rollRange[1] - constraint.rollRange[0];
+        const double wrapped = std::atan2(std::sin(localR[2]), std::cos(localR[2]));
+        if (span < 2.0 * 3.14159265358979323846) {
+            const double clamped = std::max(constraint.rollRange[0],
+                std::min(constraint.rollRange[1], wrapped));
+            rollResidual = wrapped - clamped;
+        }
+    }
+    const bool rollResidualActive = constraint.allowToolRoll && std::fabs(rollResidual) > 0.0;
+    for (int i = 0; i < 3; ++i) {
+        if (constraint.constrainedDof[static_cast<std::size_t>(i)]) p2 += full(i) * full(i);
+        if (constraint.constrainedDof[static_cast<std::size_t>(i + 3)]
+            && !(constraint.allowToolRoll && i == 2 && !rollResidualActive)) {
+            r2 += full(i + 3) * full(i + 3);
+        }
+    }
+    if (constraint.constrainedDof[5]) {
+        r2 += rollResidual * rollResidual;
+    }
+    posResidual = std::sqrt(p2);
+    oriResidual = std::sqrt(r2);
+    for (int i = 0; i < 6; ++i) {
+        const bool enabled = constraint.constrainedDof[static_cast<std::size_t>(i)]
+            && !(constraint.allowToolRoll && i == 5 && !rollResidualActive);
+        if (!enabled) full(i) = 0.0;
+    }
+    if (constraint.allowToolRoll && constraint.rollRange[1] - constraint.rollRange[0]
+            < 2.0 * 3.14159265358979323846) {
+        full(5) = rollResidual;
+    }
+    return full;
+}
+
+/// @brief 用约束行构造DLS步长（Jacobian行仍是基座系，姿态行作小量角速度线性化）。
+Eigen::VectorXd constrainedDampedLeastSquaresStep(
+    const std::vector<double>& jacobianRowMajor, std::size_t dof,
+    const TaskPoseConstraint& constraint, const Eigen::Matrix<double, 6, 1>& e)
+{
+    std::vector<int> rows;
+    for (int i = 0; i < 6; ++i) {
+        if (constraint.constrainedDof[static_cast<std::size_t>(i)]
+            && !(constraint.allowToolRoll && i == 5)) rows.push_back(i);
+    }
+    Eigen::MatrixXd J(static_cast<Eigen::Index>(rows.size()), static_cast<Eigen::Index>(dof));
+    const rw::math::Rotation3D<double>& rr = constraint.referenceInBase;
+    for (std::size_t r = 0; r < rows.size(); ++r) {
+        const int row = rows[r];
+        for (std::size_t c = 0; c < dof; ++c) {
+            double value = 0.0;
+            if (row < 3) {
+                for (int k = 0; k < 3; ++k) value += rr(k, row) * jacobianRowMajor[k * dof + c];
+            } else {
+                const int local = row - 3;
+                for (int k = 0; k < 3; ++k) value += rr(k, local) * jacobianRowMajor[(k + 3) * dof + c];
+            }
+            J(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c)) = value;
+        }
+    }
+    Eigen::MatrixXd A = J * J.transpose();
+    const double lambda2 = kIkDampingLambda * kIkDampingLambda;
+    for (Eigen::Index i = 0; i < A.rows(); ++i) A(i, i) += lambda2;
+    Eigen::VectorXd selected(static_cast<Eigen::Index>(rows.size()));
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+        selected(static_cast<Eigen::Index>(i)) = e(rows[i]);
+    }
+    return J.transpose() * A.llt().solve(selected);
 }
 
 /// 阻尼最小二乘步长 Δq＝Jₜᵀ(JₜJₜᵀ＋λ²I_m)⁻¹eₜ（λ＝kIkDampingLambda——设计
@@ -454,6 +590,30 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
                    + std::to_string(static_cast<unsigned>(request.taskSpace))
                    + "）——调用方错误 fail-fast（NFR-COR-03）");
     }
+    if (request.taskConstraint.has_value()) {
+        const TaskPoseConstraint& c = *request.taskConstraint;
+        bool any = false;
+        for (bool bit : c.constrainedDof) any = any || bit;
+        if (!any) failCaller("IkRequest.taskConstraint：六分量不能全部自由");
+        for (int i = 0; i < 3; ++i) for (int j = 0; j < 3; ++j) {
+            if (!std::isfinite(c.referenceInBase(i, j)))
+                failCaller("IkRequest.taskConstraint.referenceInBase：旋转含非有限分量");
+        }
+        for (int i = 0; i < 3; ++i) {
+            double norm = 0.0;
+            for (int k = 0; k < 3; ++k) norm += c.referenceInBase(k, i) * c.referenceInBase(k, i);
+            if (std::fabs(norm - 1.0) > 1e-9) failCaller("IkRequest.taskConstraint.referenceInBase：旋转非正交");
+            for (int j = i + 1; j < 3; ++j) {
+                double dot = 0.0;
+                for (int k = 0; k < 3; ++k) dot += c.referenceInBase(k, i) * c.referenceInBase(k, j);
+                if (std::fabs(dot) > 1e-9) failCaller("IkRequest.taskConstraint.referenceInBase：旋转非正交");
+            }
+        }
+        if (!std::isfinite(c.rollRange[0]) || !std::isfinite(c.rollRange[1])
+            || c.rollRange[0] >= c.rollRange[1]) {
+            failCaller("IkRequest.taskConstraint.rollRange：区间非法（单位rad）");
+        }
+    }
     // 任务维度（A02 修复核心——目标函数与 Jacobian 子块的维数来源）：
     // 仅位置任务取 3（只位置误差进目标函数）；完整位姿任务取 6（v1
     // 行为逐位保持）。
@@ -537,7 +697,11 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
     outcome.solutionSet.requestIdentity = request.requestIdentity;
     outcome.collisionNotEvaluated = request.collisionSession == nullptr;
 
-    if (targetDistance > bound.get().totalRadius) {
+    const bool fullPositionConstraint = !request.taskConstraint.has_value()
+        || (request.taskConstraint->constrainedDof[0]
+            && request.taskConstraint->constrainedDof[1]
+            && request.taskConstraint->constrainedDof[2]);
+    if (fullPositionConstraint && targetDistance > bound.get().totalRadius) {
         // 结局 5：目标位置超出解析工作半径上界——零迭代，仅产素材
         // （V-10 前半：成立与否归 evidence validateProof）。
         outcome.outcomeKind = IkOutcomeKind::AnalyticBoundExceeded;
@@ -604,12 +768,18 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             // PositionOnly 只查位置残差——A02；FullPose 双残差逐项不变）。
             // e 恒按 6 维产出（姿态残差仍如实计算供记录——PositionOnly
             // 下仅前 taskDim 维进目标函数）。
-            const Eigen::Matrix<double, 6, 1> e =
-                poseError(request.targetInBase, m.get().tcpInBase,
-                          posResidual, oriResidual);
-            if (convergedForTask(request.taskSpace, posResidual, oriResidual,
-                                 request.positionTolerance,
-                                 request.orientationTolerance)) {
+            const Eigen::Matrix<double, 6, 1> e = request.taskConstraint.has_value()
+                ? constrainedPoseError(request.targetInBase, m.get().tcpInBase,
+                                       *request.taskConstraint, posResidual, oriResidual)
+                : poseError(request.targetInBase, m.get().tcpInBase,
+                            posResidual, oriResidual);
+            const bool converged = request.taskConstraint.has_value()
+                ? (posResidual <= request.positionTolerance
+                   && oriResidual <= request.orientationTolerance)
+                : convergedForTask(request.taskSpace, posResidual, oriResidual,
+                                   request.positionTolerance,
+                                   request.orientationTolerance);
+            if (converged) {
                 isConverged = true;
                 break;
             }
@@ -628,8 +798,10 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             }
             // 2d. 阻尼最小二乘更新（Δq＝Jₜᵀ(JₜJₜᵀ＋λ²I)⁻¹eₜ——定序固定；
             // taskDim 决定 e 的有效维与 Jacobian 子块行数——A02）。
-            const Eigen::VectorXd dq = dampedLeastSquaresStep(
-                m.get().jacobian, dof, taskDim, e.head(taskDim));
+            const Eigen::VectorXd dq = request.taskConstraint.has_value()
+                ? constrainedDampedLeastSquaresStep(m.get().jacobian, dof,
+                                                    *request.taskConstraint, e)
+                : dampedLeastSquaresStep(m.get().jacobian, dof, taskDim, e.head(taskDim));
             for (std::size_t i = 0; i < dof; ++i) {
                 q[i] += dq(static_cast<Eigen::Index>(i));
             }
@@ -689,14 +861,23 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
                         + recheck.error().detail);
             }
             // 复验残差（比较型量——覆写当次残差变量，供记录承载）。
-            poseError(request.targetInBase, recheck.get().tcpInBase,
-                      posResidual, oriResidual);
+            if (request.taskConstraint.has_value()) {
+                constrainedPoseError(request.targetInBase, recheck.get().tcpInBase,
+                                     *request.taskConstraint, posResidual, oriResidual);
+            } else {
+                poseError(request.targetInBase, recheck.get().tcpInBase,
+                          posResidual, oriResidual);
+            }
             // 复验收敛判据与迭代内同任务维度（A02——PositionOnly 只查
             // 位置残差；两判据必须同源，防"迭代放行、复验拦截"的判据
             // 漂移——残差复验的本意是独立 FK 复算，不是换一套判据）。
-            if (!convergedForTask(request.taskSpace, posResidual, oriResidual,
-                                  request.positionTolerance,
-                                  request.orientationTolerance)) {
+            const bool recheckConverged = request.taskConstraint.has_value()
+                ? (posResidual <= request.positionTolerance
+                   && oriResidual <= request.orientationTolerance)
+                : convergedForTask(request.taskSpace, posResidual, oriResidual,
+                                   request.positionTolerance,
+                                   request.orientationTolerance);
+            if (!recheckConverged) {
                 filteredRecords.push_back(
                     makeFilteredRecord(s, SolutionFilterReason::ResidualRecheck,
                                        posResidual, oriResidual));

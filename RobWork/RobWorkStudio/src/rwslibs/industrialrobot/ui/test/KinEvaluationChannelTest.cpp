@@ -959,6 +959,9 @@ req::RequirementWorkingSet makeWorksetWithTaskPoint()
         core::SourcedValue<rw::math::Vector3D<double>>::provided(
             rw::math::Vector3D<double>(1.8, 0.0, 0.0),
             core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    // A-16：旧夹具过去依赖下游忽略默认全false掩码；现在明确表达完整位姿，
+    // 让兼容性用例验证真实FullPose而不是非法空约束。
+    point.pose.constrainedDof = {true, true, true, true, true, true};
     ws.points.entries.push_back(point);
 
     req::OperatingCondition condition;

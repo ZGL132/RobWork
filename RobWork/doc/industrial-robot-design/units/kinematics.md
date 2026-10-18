@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.34（2026-10-18，B7 长尾分诊批——卡头「日期」行失同步（F-834：v0.17 起十余跳未落日期行）底案修复：日期行补 2026-10-18（v0.33）现行段；F-834 随批关闭（validate-docs 卡头日期行机检维度诉求拆 F-941 独立追踪）；纯登记零语义。前一版本 v0.33 保留如下。 |
+| 文档版本 | v0.35（2026-10-19，WP-14-T12 A-16 六分量任务约束与五姿态规则真实消费：TaskPoseConstraint 表尾值扩展；IK/批量契约版本升级；空值兼容旧 FullPose） |
 | 文档版本 | v0.33（2026-10-18，kinematics 清理批（F-932/F-933 消账）：§11 T19 行符号归属订正为 `KinPanelRotation::rotationFromRpySi`（实际落位 kinematics/plugin/KinPanelRotation）；kGimbalEpsilon 收敛为头文件 `inline constexpr kGimbalEpsilonDefault` 单一来源；DTB v0.94 同批）。前一版本 v0.32 保留如下。 |
 | 文档版本 | v0.32（2026-10-18，WP-15-T19 按所有者裁决路线 A 实施：§11 T19 行更新——插件 `rotationFromRpySi`（Eigen 头文件轴角组合，Z-Y-X 与 rw::math::RPY 同序）＋集成 `IRD_HAVE_SDURW_MATH` 等价钉；设计偏离登记＝KIN-R2 v0.28『rw 库设施直调零自写三角』改述为『Eigen 头文件轴角组合＋集成等价钉』；DTB v0.91 同批）。前一版本 v0.31 保留如下。 |
 | 文档版本 | v0.31（2026-10-18，WP-15-T19 立卡（**blocked**）与 F-919 方案勘察：§11 增 T19 行——独立冒烟树链接缺陷；owner 行建议的「显式链接 sdurw_math」经实测证伪（冒烟树无框架目标/库，LNK1181），A/B/C 三出路待所有者裁决（详见契约 notes）；DTB v0.90 §2.16 同批；契约 tasks/foundation/WP-15-T19.json status=blocked）。前一版本 v0.30 保留如下。 |
@@ -1050,3 +1050,9 @@ TcpRef布局不变：空键沿用工具tcpOffset；非空先精确查同一Canon
 UI任务点切片按同一快照校验并设置BatchTaskPoint.tcpOverride；悬空工具/缺键在受理前带工位名拒绝。后台持不可变快照和值引用，不从UI构造变换。原无工具/defaultTcp前置不变；本增量不声称覆盖区域TCP、方向/部分约束或网格法向。
 
 A-15补充三（所有者已批准）：resolveSessionTcp三入口以默认工具ObjectId与空tcpKey表达默认偏移；真实键恰等于工具名时，显式键优先仍有效，面板默认不受碰撞影响。真实面板解析→FK先红得到(1.3,0,0.9)m而默认黄金为(1.8,0,0)m，失败证据batch24-panel-red保留。
+
+
+
+### WP-14-T12 A-16：任务位姿约束消费
+
+TaskPoseConstraint 是 kinematics 内部共享的纯值约束：六分量顺序固定为 x/y/z/roll/pitch/yaw，位置残差在 referenceInBase 参考系中计算，姿态单位为 rad。IkRequest、BatchTaskPoint 和 TaskPointIkQuery 的表尾可选值为空时保持旧 FullPose/PositionOnly 调用语义；非空时仅启用的分量进入阻尼最小二乘、收敛和独立 FK 复验。解析界限证明只在 xyz 全受约束时启用，避免用自由坐标错误证明不可达。allowToolRoll 以参考系 +Z 为滚转轴，区间外滚转产生残差；规则解析由 UI 使用同一快照的参考帧和场景帧值完成，求解器不持有 UI 指针。契约版本分别升级为 IK 4、任务点批量 3，旧结果按版本拒绝混用。

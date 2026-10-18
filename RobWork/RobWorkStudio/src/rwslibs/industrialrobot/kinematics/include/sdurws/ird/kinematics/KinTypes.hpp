@@ -37,6 +37,7 @@
 #define IRD_KINEMATICS_KINTYPES_HPP
 
 #include <cstdint>
+#include <array>
 #include <optional>
 #include <string>
 #include <vector>
@@ -49,6 +50,25 @@
 #include <sdurws/ird/runtime/CanonicalModel.hpp>  // runtime::CanonicalModel（只读模型真值）
 
 namespace sdurws::ird::kinematics {
+
+/**
+ * @brief 任务位姿的六分量约束值，供IK和批量评估共享。
+ * 位置单位m，姿态单位rad；referenceInBase表示参考系轴在基座系{B}中的旋转。
+ * 该结构是纯值且并发只读；空约束由调用方表示旧的FullPose行为。
+ */
+struct TaskPoseConstraint {
+    std::array<bool, 6> constrainedDof{{true, true, true, true, true, true}};
+    rw::math::Rotation3D<double> referenceInBase = rw::math::Rotation3D<double>::identity();
+    bool allowToolRoll = false;
+    std::array<double, 2> rollRange{{-3.14159265358979323846, 3.14159265358979323846}};
+
+    bool operator==(const TaskPoseConstraint& o) const
+    {
+        return constrainedDof == o.constrainedDof && referenceInBase == o.referenceInBase
+            && allowToolRoll == o.allowToolRoll && rollRange == o.rollRange;
+    }
+    bool operator!=(const TaskPoseConstraint& o) const { return !(*this == o); }
+};
 
 // =====================================================================
 // TcpRef——TCP 引用（§5.2 输入行"tool-definition oid＋tcpKey→快照解析"）

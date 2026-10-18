@@ -82,7 +82,7 @@ inline constexpr char kTaskPointsBatchEvaluationKey[] = "kin-task-points-batch";
 ///   完整种子混合（kIkSolverContractVersion 2→3 同批）整体改变——同
 ///   (任务点集, 种子) 在 v1/v2 两代下的解集可不同，版本不升级会让两代
 ///   评估产出假借同一 slice 身份比较。
-inline constexpr std::uint32_t kTaskPointsBatchContractVersion = 2U;
+inline constexpr std::uint32_t kTaskPointsBatchContractVersion = 3U;
 
 /// 域载荷登记 token（evidence §7.1 域词表——卡面点形保留；v1 随
 /// canonical 布局 codec 版本演进）。
@@ -202,11 +202,14 @@ struct BatchTaskPoint {
     /// 任务级要求值（碰撞/裕量——与工况要求值合并口径见 BatchDemands 注
     /// 与评估器实现注）。
     BatchDemands demands;
+    /// 可选任务位姿约束；空值保持旧完整位姿批量行为。
+    std::optional<TaskPoseConstraint> taskConstraint;
 
     bool operator==(const BatchTaskPoint& o) const
     {
         return pointOid == o.pointOid && level == o.level && enabled == o.enabled
             && tcpOverride == o.tcpOverride && demands == o.demands
+            && taskConstraint == o.taskConstraint
             && positionTolerance == o.positionTolerance
             && orientationTolerance == o.orientationTolerance;
     }

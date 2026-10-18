@@ -628,6 +628,7 @@ evidence::EvaluationOutput TaskPointIkEvaluator::evaluate(
         return context.cancellationRequested();
     };
     ikRequest.referenceQ = m_query.referenceQ;
+    ikRequest.taskConstraint = m_query.taskConstraint;
     ikRequest.targetRef.pointOid = m_query.pointOid;
     ikRequest.targetRef.conditionId = m_query.conditionId;
     ikRequest.requestIdentity.snapshotId = request.snapshot.snapshotId;
@@ -973,6 +974,7 @@ struct WorkState {
     double orientationTolerance = 1e-6; ///< 姿态容差（rad）
     TcpRef tcp;                       ///< 生效 TCP（override 或查询默认）
     BatchDemands demands;             ///< 合并要求值（点∨工况——合并口径见类注）
+    std::optional<TaskPoseConstraint> taskConstraint; ///< 任务位姿约束（空＝旧FullPose）
 
     // ---- 结果槽（全序写回；初值＝未运行）----
     BatchItemStatus status = BatchItemStatus::NotRun;
@@ -1310,6 +1312,7 @@ void solveItem(WorkState& item, const BatchQuery& query, const IIkSolver& solver
     ikRequest.requestIdentity.mode = mode;
     ikRequest.requestIdentity.seed = query.seed;
     ikRequest.requestIdentity.referenceQ = query.referenceQ;
+    ikRequest.taskConstraint = item.taskConstraint;
 
     const IkOutcome outcome = solver.solve(ikRequest);
     if (outcome.cancelled) {
@@ -1585,6 +1588,7 @@ BatchComputation runBatchComputation(const IKinRuntimeView& view,
             item.orientationTolerance = p->orientationTolerance;
             item.tcp = p->tcpOverride.has_value() ? *p->tcpOverride
                                                   : query.defaultTcp;
+            item.taskConstraint = p->taskConstraint;
             item.demands = mergeDemands(p->demands, condition.demands);
 
             // 预终结判定（优先级：点停用→工况停用→范围 None——显式标记
