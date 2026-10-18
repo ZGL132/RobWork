@@ -127,8 +127,10 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 #     Qt——模型层可测；公共契约头 include/sdurws/ird/ui/
 #     ITaskPresentationModel.hpp 随 §16.7 v1.5 登记，C-8 呈现面端口
 #     IUiTaskPresentationPort 消费面）。
-# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十五个源
-# 文件与私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
+# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持；F-273/F-275/
+# F-291/F-431 家族后本注不再写死源文件计数——TU 数随批次增长，实际数量
+# 以 src/ 目录为准）：源文件与私有头零 Q_OBJECT 声明——壳与占位面板的
+# Qt 交互全部经虚函数覆盖
 # （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
 # 槽声明需求（ui.md §10.1 v0.5 登记；命令面板键盘交互同款——v0.8 复核；
 # 策略摘要卡同款复核——v0.9；参数表面板同款复核——v1.0；UiText/阶段导航

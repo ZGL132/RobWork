@@ -1,0 +1,46 @@
+B7 长尾分诊收官批——验证留痕（2026-10-18）
+================================================================
+批面：open suggestion 全量 329 条逐条分诊；处置＝34 close＋37 翻 fixed
+＋新登 F-940/F-941；260 条确认维持 open（族清单覆盖 260/260 机检零缺漏）。
+
+[1] 修复面（本批触碰）
+  units/project.md        卡头日期行 v0.27 同步＋版本行（F-122 系 14 例底案）
+  units/requirements.md   卡头日期行 v0.20 同步＋版本行（F-369/374）
+  units/kinematics.md     卡头日期行 v0.34 同步＋版本行（F-834）
+  units/trajectory.md     §17.1 SmoothRecheckTest→SmoothTest 勘正＋v0.19 行（F-835）
+  units/selection.md      SelLinearDriveContract 三处 5→6 勘正＋v1.7 行（F-841）
+  ui/CMakeLists.txt       AUTOMOC 注释改不写死计数（F-273 系 4 例）
+  UiPorts.hpp 等 2 头     文件尾换行补齐（尾字节实测 0x50 0x0A）（F-278 系 5 例）
+  reporting 3 文件        §14.4 v0.20→v0.19 注释勘正（F-826）
+  validate-task.ps1       ready 缺字段逃逸修复（F-855）
+  证据落库                build/wp13-t19-wt/_m6-evidence 7 件→builds/wp13-t19/（F-877）
+
+[2] F-855 修复验证
+  探针（ready 缺 allowedFiles/forbiddenFiles/outputs/acceptance 四字段）：
+    修复前逃逸（@($null).Count=1）→ 修复后拒绝（empty or missing field，exit!=0）
+  存量 done 契约抽样回归：5/5 PASS
+
+[3] 构建与测试（受影响目标）
+  sdurws_ird_ui_test        307/307 PASSED（exit 0）
+  sdurws_ird_reporting_test 235/235 PASSED（exit 0）
+  留痕 ui_test.log / reporting_test.log（本目录）
+
+[4] 台账完整性
+  findings.json 解析 OK；条目=928；重复 id=0
+  本批 closed=34（closureReason 在档）＋fixed=37（resolution 尾注＋fixedAt 在档）
+  open：336→267（suggestion 329→260、minor 6、blocking 1）
+
+[5] 分诊报告覆盖机检
+  reviews/b7-longtail-final-20261018.md 族清单 unique=260，对 open suggestion
+  260 条缺漏 0、多余 0（coverage-check 脚本实测）
+
+[6] 过程事故记录（未入库污染）
+  批处理脚本 v1 存在两处缺陷：①PowerShell 变量名大小写不敏感——循环内
+  $m（Match 对象）覆盖清单 $M，第二批起全部走错分支；②字段插入缺前导逗号。
+  首跑产物 JSON 解析失败被当场拦截（写盘前 parse 校验纪律），文件自 git
+  恢复后修复脚本、测试副本全量验证通过方才重放。坏件留存 .zcode/work/
+  findings-broken.json 供审计（不入库）。
+
+[7] validate-docs -DeepEvidence
+（结果见下方追加行）
+validate-docs: PASS (20 units, 12 trace entries, 361 task files, 29 registered assets, 6 notes, 7 skills, 2 packs, 6733 evidence) —— 索引重建后实测（verify-b7-longtail.log 入库基准）；lifecycle current 40→27 为 open 收敛的预期联动（close 条目引用证据转 historical）

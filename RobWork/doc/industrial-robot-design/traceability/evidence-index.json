@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T14:09:43+08:00",
+  "generatedAt": "2026-10-18T14:53:48+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6722,
-    "totalBytes": 213571817,
+    "totalFiles": 6733,
+    "totalBytes": 213915514,
     "byKind": {
-      "pipeline-artifact": 2,
-      "json-data": 7,
-      "acceptance-record": 515,
-      "log": 1,
       "markdown-doc": 41,
+      "log": 1,
+      "acceptance-record": 515,
+      "json-data": 7,
+      "governance-record": 40,
       "benchmark": 8,
-      "governance-record": 39,
-      "build-log": 5773,
+      "gtest-report": 335,
+      "build-log": 5783,
       "manual-acceptance": 1,
-      "gtest-report": 335
+      "pipeline-artifact": 2
     },
     "byLifecycle": {
+      "current": 27,
+      "historical": 564,
       "superseded": 0,
-      "historical": 551,
-      "unverified": 6131,
-      "current": 40
+      "unverified": 6142
     },
     "associated": 596,
-    "unassociated": 6126,
-    "shaComputed": 6704,
+    "unassociated": 6137,
+    "shaComputed": 6715,
     "shaSkippedLarge": 18,
-    "duplicateGroupsTotal": 334,
+    "duplicateGroupsTotal": 337,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -1926,7 +1926,7 @@
       ],
       "bytes": 22258,
       "sha256": "e550e841cf0824ef6be1635234761d667eafd6db88e0a5b7e4d5da43fac51488",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/IO-T02-20260917-r2.md",
@@ -2250,7 +2250,7 @@
       ],
       "bytes": 24964,
       "sha256": "a917750d61eb84322c82921a318398bf3790ba0a43db70201e2a609905a913bd",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/PRJ-T06-20260916.md",
@@ -2260,7 +2260,7 @@
       ],
       "bytes": 22676,
       "sha256": "3b0fdb2c9bdfbc3e45de8e3263e5c0f1b407f91969745c4c382bed5fb856af9c",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/PRJ-T07-20260916.md",
@@ -2270,7 +2270,7 @@
       ],
       "bytes": 15332,
       "sha256": "2a2d7f77d26207a95943581b23ed10340823e8153b18c3885123ad1fbf529487",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/PRJ-T08-20260916.md",
@@ -2320,7 +2320,7 @@
       ],
       "bytes": 19595,
       "sha256": "77bc14f3080fb5a68e0b26717ede85dd49c7ad52cfd8fb83ea8b586e677c5771",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/PRJ-T13-20260916.md",
@@ -2330,7 +2330,7 @@
       ],
       "bytes": 19316,
       "sha256": "84ef26303b80c7db0c54e46de5fc45451d83a104bc5693ca21272338fc3acaa1",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/PRJ-T14-20260917.md",
@@ -2360,7 +2360,7 @@
       ],
       "bytes": 21679,
       "sha256": "bd85331c430fdcd26f8dfd93cf78de6b91b37d8c2409c9013337a9585c1ec8a4",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T01-20260919.md",
@@ -2410,7 +2410,7 @@
       ],
       "bytes": 30426,
       "sha256": "7d1fba69b2a0203a3d26bfe4b777df3a525457a724526c02ababf9892d000254",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T06-20260920.md",
@@ -2450,7 +2450,7 @@
       ],
       "bytes": 33358,
       "sha256": "f1c5abfd85407e5193a6e293b3d6eee1e4c3b92999ec752b8faaa45e4ace97d3",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T10-20260920.md",
@@ -2470,7 +2470,7 @@
       ],
       "bytes": 26700,
       "sha256": "ad5cfefc368a58c1c0393191ff047cd9928d73733c227f7bf91279e8c24c0e14",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T12-20260920-r2.md",
@@ -2480,7 +2480,7 @@
       ],
       "bytes": 23200,
       "sha256": "962bb7985c57376e083026e322d74e308978d862793debb789be287330b862d7",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RPT-T13-20260920.md",
@@ -2534,7 +2534,7 @@
       ],
       "bytes": 17642,
       "sha256": "92a835c752322070a8244f6a6d24291b8a3f8b1fe703bd1f8d74a84dc5a4df93",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RT-T03-20260912.md",
@@ -2544,7 +2544,7 @@
       ],
       "bytes": 18206,
       "sha256": "60c513483ef652005615940da8868e5c7ebeb89aa8ee33cf2687be6705a1bd79",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/RT-T04-20260912.md",
@@ -7540,6 +7540,30 @@
       "taskIds": [],
       "bytes": 150,
       "sha256": "7f08ba5272517eef3a6c1f4eb277b3c92c7d8bc5f76e580b9f558b0598877e2b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/b7-longtail/reporting_test.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41783,
+      "sha256": "6dfdf1ac9ce5de1c011b5bab624ce74f1572a65bcd9f3811b743422ffa020c1c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/b7-longtail/ui_test.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53597,
+      "sha256": "ba825a4cdbd3b1865cce53cda6200ccbf5897de6cbb3ec434bffa28ca0b5aa51",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/b7-longtail/verify-b7-longtail.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2935,
+      "sha256": "1cb9d4a2bf879143e3ef64e4cfcd593729f927fea21f6fd50986a0c73e31f6a5",
       "lifecycle": "unverified"
     },
     {
@@ -42711,6 +42735,62 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t19/build-log-release.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 86885,
+      "sha256": "5d24861e7270370f6d662a9e5d816cc296ec0320a5bca9adba88204a47d9534e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t19/ctest-3of3.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 179,
+      "sha256": "549d9200509700187ab02a6ce87e31ff9a330ac548c06e49b16242163ef40f3c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t19/README-manifest.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1257,
+      "sha256": "a4fedad4c56b2cd50f3fa72f1e836bc82a193c65d6927023216400c508391f42",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t19/sdurws_ird_modeling_contract_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3350,
+      "sha256": "3db395f109fa1ec376e8a62db7302f2e8ee7b569ffbd7607bbe8cc92db803a8d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t19/sdurws_ird_modeling_gui_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13942,
+      "sha256": "67dde267c4761f12e7f15b3726de03f2d5ab680247f688c1cccad1d259c9b8e7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t19/sdurws_ird_modeling_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 108137,
+      "sha256": "aaac9615ff73607ad69d7f30d055e73f225b4df9c870eb4f202ba7e56b590f8f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t19/validate-task-validate-docs.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 95,
+      "sha256": "52f880b882b8bd30f10fd70600e6904ad61c488fc9b8ba37822783754a2433ae",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp13-t20/acc-build-integration-cold-r2.log",
       "kind": "build-log",
       "taskIds": [],
@@ -52450,7 +52530,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1241952,
+      "bytes": 1264696,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -55700,6 +55780,14 @@
       "taskIds": [],
       "bytes": 5147,
       "sha256": "0ffd06f400a33b0b1565d988e05c4daf770dba4a42b769507f4d21235c79f9e3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reviews/b7-longtail-final-20261018.md",
+      "kind": "governance-record",
+      "taskIds": [],
+      "bytes": 8793,
+      "sha256": "b867a42167182d52e83667014a2d1355048aa6d7160fe809f07d7f1f73be150a",
       "lifecycle": "unverified"
     },
     {

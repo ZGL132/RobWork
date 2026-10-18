@@ -363,21 +363,23 @@
       "id": "F-035",
       "source": "traceability/acceptance/RT-T02-20260912.md#4.4/4.9（attempt 1，送验对象 f0a4c0ee，提交 77902413/804224b2/f0a4c0ee 自查行）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-12",
       "title": "RT-T02 三份提交自查行『ird_gates 未执行——门禁未建成（如实标注）』理由失实：门禁已随 WP-01-T01 建成，验收者在全新集成树实测 ird_gates 目标可运行（exit 1＝F-019 两处既有命中 testdata_lint→testkit 边，runtime 面零命中；自测 9 项行为全部符合预期）——F-028『门禁未建成』过时措辞同型再现，且首现于实现类任务：实现类任务按 AGENTS §6.3 本应实际执行门禁并登记真实结论，而非标注未执行；方向为少报、无粉饰",
       "owner": "实施纪律＋门禁所有者（DTB §5.1；与 F-028 同辖域合并处置）",
-      "resolution": "实现类任务一律实际执行 `cmake --build build --config Release --target ird_gates` 并登记真实结论（红＝逐条解码命中归属，区分既有/新增）；AGENTS §6.3『ird_gates 随 WP-01-T01 落地，落地前如实标注门禁未建成』过时注记随下次 AGENTS 修订删除（与 F-028 处置合并执行）。编号顺延自 F-034，合入时由所有者确认。"
+      "resolution": "实现类任务一律实际执行 `cmake --build build --config Release --target ird_gates` 并登记真实结论（红＝逐条解码命中归属，区分既有/新增）；AGENTS §6.3『ird_gates 随 WP-01-T01 落地，落地前如实标注门禁未建成』过时注记随下次 AGENTS 修订删除（与 F-028 处置合并执行）。编号顺延自 F-034，合入时由所有者确认。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-036",
       "source": "traceability/acceptance/RT-T02-20260912.md#4.9（attempt 1，送验对象 f0a4c0ee，提交 f0a4c0ee 验证段＋integration-fullbuild.log）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-12",
       "title": "RT-T02 提交 f0a4c0ee『全树 Release 构建 exit 0 零错误——DoD 第 1 条最强口径』强度表述失准：integration-fullbuild.log 产自主树存量增量树（日志内 RWSimulatorPlugin 等目标为既有产物重链接——F-008 登记的『主树为存量增量产物掩盖』效应），构建本身真实（exit 0、日志完整、验收者抽查零 error），但『最强口径』应为全新树从零构建（全树从零受 F-008 基线缺陷阻挡暂不可达）；验收者已在全新 worktree 完成 sdurws_ird_runtime＋全 ird 测试目标面的从零复现补强（两模式零错误＋189 用例零失败）",
       "owner": "实施纪律（与 F-025 提交信息准确性面同辖域；提交已推送不追溯改写）",
-      "resolution": "提交信息中证据强度表述以实际构建树性质为准（增量树/全新树显式区分，禁止把增量树全量构建表述为『最强口径』）；F-008 闭合前 DoD 第 1 条的表述统一采用『任务目标面全新树从零零错误』口径。编号顺延自 F-035，合入时由所有者确认。"
+      "resolution": "提交信息中证据强度表述以实际构建树性质为准（增量树/全新树显式区分，禁止把增量树全量构建表述为『最强口径』）；F-008 闭合前 DoD 第 1 条的表述统一采用『任务目标面全新树从零零错误』口径。编号顺延自 F-035，合入时由所有者确认。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-037",
@@ -394,11 +396,12 @@
       "id": "F-038",
       "source": "traceability/acceptance/RT-T03-20260912.md#4.9（attempt 1，送验对象 d0fc6e5，提交 dd1a0dc 验证段＋integration-fullbuild.log）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-12",
       "title": "RT-T03 提交 dd1a0dc『全树集成构建日志（cmake --build build --config Release，exit 0——DoD 第 1 条最强口径）』强度表述失准：integration-fullbuild.log 产自主树存量增量树（日志内路径 D:\\...\\RobWork\\build\\）；F-036 对 RT-T02 的同型裁定第 2 次复现——验收者全新 worktree 从零全树构建实测在 F-008（RobWorkSim 插件 min/max 宏污染）失败（73 错误零个涉及 industrialrobot），构建本身真实（日志完整零 error 行）",
       "owner": "实施纪律（与 F-025/F-036 提交信息准确性面同辖域；提交已推送不追溯改写）",
-      "resolution": "同 F-036：增量树/全新树显式区分，F-008 闭合前统一采用『任务目标面全新树从零零错误』口径（本任务该口径已由验收者达成：sdurws_ird_runtime＋runtime_test 两模式从零零错误＋73/73）。编号顺延自 F-037，合入时由所有者确认。"
+      "resolution": "同 F-036：增量树/全新树显式区分，F-008 闭合前统一采用『任务目标面全新树从零零错误』口径（本任务该口径已由验收者达成：sdurws_ird_runtime＋runtime_test 两模式从零零错误＋73/73）。编号顺延自 F-037，合入时由所有者确认。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-039",
@@ -574,11 +577,12 @@
       "id": "F-055",
       "source": "RT-T13 验收段 attempt 1（2026-09-12，traceability/acceptance/RT-T13-20260912.md，送验对象 a2bb6ff6，分支 wp06-t13）：验收者在 ACC §3 规定复现现场（detached worktree @SHA）亲手重跑双模式构建与测试",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-12",
       "title": "实施侧冒烟留痕未声明构建配置：RT-T13 留痕 smoke-build.log 路径显示 \\testkit\\Debug\\（全文 21 处 Debug、0 处 Release、无 --config 参数）＝MSBuild 默认 Debug 配置实跑；ird-test-report.json exitCodes 声明 smokeBuild=0 属实但未声明配置，与集成侧 Release 口径不对称——数值主张（冒烟 176/176）真实（验收者 Release 从零复跑 176/176 绿），无粉饰，仅留痕口径纪律问题（F-054 构建性质标注纪律的同族延伸：配置维度未覆盖）",
       "owner": "实施纪律（DTB §5 会话流程所有者，F-054 同辖域统一处置）",
-      "resolution": "后续留痕提交在 ird-test-report.json／提交信息中显式声明各模式构建配置（Debug/Release）；随下次触及留痕流程的任务顺手统一，不追溯已推送提交"
+      "resolution": "后续留痕提交在 ird-test-report.json／提交信息中显式声明各模式构建配置（Debug/Release）；随下次触及留痕流程的任务顺手统一，不追溯已推送提交",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-056",
@@ -628,11 +632,12 @@
       "id": "F-060",
       "source": "EV-T03 验收段 attempt 1（2026-09-12，traceability/acceptance/EV-T03-20260912.md §4.8，送验对象 f3b8acf20b52ed5b5494e2ba5f8f1accd8b44fe4，分支 wp05-t03）：验收者亲手复跑 ird_gates 逐条解码命中清单并与 findings.json 权威登记比对",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-12",
       "title": "ird-test-report.json（builds/wp05-t03/）irdGates 字段把第 3 处门禁命中（IRD-GATE-SUB：sdurws_ird_runtime_test→sdurws_ird_testkit）归入『F-019 既有基线缺陷』名下——按 findings.json 权威登记该命中实为 F-051（ird_gates 引擎与白名单矛盾：白名单 T-1 段声明允许测试目标→testkit，引擎 SUB 形态一未豁免；该边由 RT-T12 落位），F-019 仅覆盖 testdata_lint 的 T-1/SUB 两处；实质主张（3 处均为既有命中、与 EV-T02 送验时逐字相同、本任务零新增目标/链接边、evidence 面零命中）经验收者全新 worktree 亲手复跑证实成立，退出码 1 系既有命中所致——纯发现编号引用失准（F-025 提交信息/报告准确性面同辖域），方向为多归并非漏报、无粉饰，不构成阻断",
       "owner": "实施纪律（F-025 同辖域统一处置；报告随已推送提交不追溯改写）",
-      "resolution": "后续 ird-test-report.json／提交信息引用门禁命中归属时以 findings.json 权威编号逐条标注（多编号并列写实，如『F-019×2＋F-051×1』），不得合并归并到单一编号名下；可与 F-012 家族模板补救同批在实施者模板补一句提醒。编号顺延自 F-059，合入时由所有者确认与并行 evidence 分支无撞车。"
+      "resolution": "后续 ird-test-report.json／提交信息引用门禁命中归属时以 findings.json 权威编号逐条标注（多编号并列写实，如『F-019×2＋F-051×1』），不得合并归并到单一编号名下；可与 F-012 家族模板补救同批在实施者模板补一句提醒。编号顺延自 F-059，合入时由所有者确认与并行 evidence 分支无撞车。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-061",
@@ -648,11 +653,12 @@
       "id": "F-062",
       "source": "EV-T05 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T05-20260913.md，送验对象 203c29458b4b68bd9ef5197a61fe36edb62b005a，分支 wp05-t05）：验收者在 detached worktree 复现现场时按 AGENTS §4.1 字面命令执行集成模式配置失败，逐项排查环境前置后复现成功",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-13",
       "title": "worktree/全新树的集成模式构建环境前置未成文：AGENTS §4.1 登记的配置命令「cmake -S RobWork -B build -G \"Visual Studio 17 2022\" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON」在非主树执行会失败于两件主树本地状态——①全新缓存缺 -DCMAKE_TOOLCHAIN_FILE（vcpkg 绝对路径）与 -DCMAKE_PREFIX_PATH（Qt 路径），实测失败于 Could NOT find Boost（主仓 build/CMakeCache.txt 实证该两参数为主树实际配置）；②RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static 与 RobWorkStudio.ini.shared.in 为 git 未跟踪的框架本地资源（RWS_USE_STATIC_LINK_PLUGINS=ON 时 configure_file 必需输入），worktree 检出后缺失即 CMake Error（实测）。补齐两件后配置与构建零错误——与 F-004（gate-all.ps1 非主树无法全量运行）同族：验收/复现环境前置依赖主树未登记的本地状态。实施产物无涉（EV-T05 双模式构建本身零错误），纯流程文档/环境缺口。",
       "owner": "流程文档维护者（AGENTS §4.1 / acceptance-protocol §3 补 worktree 复现口径）；框架构建配置所有者（评估将两件 ini 本地资源纳入版本管理或 CMake 生成机制——注意 SA-02 零源码修改红线，若动框架需先登记 patch）",
-      "resolution": "择一：①在 AGENTS §4.1 与/或 ACC §3 增补「worktree 复现口径」小节：等价配置参数（toolchain/Qt 前缀绝对路径）＋本地资源清单（两件 ini 模板需从主树复制或说明生成方式）；②或将两件 ini 模板纳入 git 跟踪/由 CMake 在配置期生成（需评估框架文件属性与 SA-02 登记义务）。编号顺延自 F-061，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "择一：①在 AGENTS §4.1 与/或 ACC §3 增补「worktree 复现口径」小节：等价配置参数（toolchain/Qt 前缀绝对路径）＋本地资源清单（两件 ini 模板需从主树复制或说明生成方式）；②或将两件 ini 模板纳入 git 跟踪/由 CMake 在配置期生成（需评估框架文件属性与 SA-02 登记义务）。编号顺延自 F-061，合入时由所有者确认与并行验收分支无撞车。【2026-10-18 B7 长尾分诊批翻 fixed】AGENTS §4.1 现行文本已登记对应前置口径（F-907 vcpkg toolchain／F-455 Qt 前缀／F-927 ini 模板件＋fresh 树运行时前置），本批对照核实吸收落位。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-063",
@@ -762,11 +768,12 @@
       "id": "F-073",
       "source": "EV-T11 验收段 attempt 1（2026-09-13，traceability/acceptance/EV-T11-20260913.md §4.9/§4.11，送验对象 cef36791c392d7edd091bcb9819eb98b937762ea，分支 wp05-t11）：验收者以 --gtest_list_tests 与 grep 实测对照提交散文计数发现",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-13",
       "title": "EV-T11 提交信息与 ird-test-report.json 散文计数失准四处：①实现提交 88801be9 与报告称 EvaluatorPortSuiteTest.cpp『15 用例』——实测 14 个 TEST；②报告称该文件『EvaluatorPortVerdict 8』——实测 9（EV-VER-1~5/8 各 1＋EV-VER-6 双例 2）；③报告称 _test 目标『既有 190 用例』——实测既有 191（191+14=205）；④实现提交影响面段称『既有 195 用例零修改回归』——按两目标口径应为 196（191+5）。F-041 同型（计数笔误、方向无粉饰）：XML（tests=205/14、failures=0 双模式四份）与报告汇总 total=219/passed=219 及验收者双模式亲测完全一致，差错仅在提交/报告散文层",
       "owner": "evidence 实现所有者（后续任务提交前以 --gtest_list_tests 实测数字回填散文；本送验对象已冻结不追改，随收尾合入保持原样）",
-      "resolution": "计数纪律留档，不改既有交付；不影响 EV-T11 验收（pass——4.9 判定：验证结论本身与留痕一致，无粉饰，唯散文计数笔误降建议级，F-041/F-025 先例同口径）。编号顺延自 F-072（该编号已由实施侧在任务分支 wp05-t11 登记——本条在 redesign-main 侧顺延，收尾合入时由所有者确认两分支 findings.json 增量无撞车）。"
+      "resolution": "计数纪律留档，不改既有交付；不影响 EV-T11 验收（pass——4.9 判定：验证结论本身与留痕一致，无粉饰，唯散文计数笔误降建议级，F-041/F-025 先例同口径）。编号顺延自 F-072（该编号已由实施侧在任务分支 wp05-t11 登记——本条在 redesign-main 侧顺延，收尾合入时由所有者确认两分支 findings.json 增量无撞车）。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-074",
@@ -1038,11 +1045,12 @@
       "id": "F-099",
       "source": "POL-T12 验收段 attempt 4（2026-09-14，traceability/acceptance/POL-T12-20260914-r2.md §4.2 环境口径注记，送验对象 dd3090c4f76115967cd07b794719f3034a051970，分支 wp07-t12）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-14",
       "title": "AGENTS §4.1 集成模式复现口径缺'RobWorkStudio.ini 本地辅助件'记载——静态插件口径（RWS_USE_STATIC_LINK_PLUGINS=ON，主树缓存实值）下 RobWorkStudio/src/CMakeLists.txt:58 configure_file 硬依赖 RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static，而 bin/ 整目录被根 .gitignore 规则 [Bb]in/ 忽略（属 git 未追踪本地构建辅助件），全新 clone/worktree 首次配置即报'CMake Error: File …RobWorkStudio.ini.template.static does not exist'（attempt 4 实证：首配 CONFIGURE_EXIT=1；自主树复制两件 ini 辅助件〔ini.shared.in＋ini.template.static〕后重配 CONFIGURE_EXIT=0）",
       "owner": "AGENTS.md 维护方（构建约定所有者）；F-098 同类文档口径缺口",
-      "resolution": "建议三选一：①AGENTS §4.1 补记'新 worktree/clone 复现集成构建需自主树复制 bin/RobWorkStudio.ini.template.static（静态插件口径必需）'；②两件 ini 辅助件经 .gitignore 白名单例外登记入库；③RobWorkStudio/src/CMakeLists.txt 改容错生成（模板缺失时生成默认 ini）——②③涉框架侧文件，需先走 SA-02 patch 登记。F-098 同型（全新环境按文档口径无法直接复现构建），合并处置可一并消解。不阻断 POL-T12 验收（pass）——验收复现已用复制辅助件方式完成且全量 0 error。"
+      "resolution": "建议三选一：①AGENTS §4.1 补记'新 worktree/clone 复现集成构建需自主树复制 bin/RobWorkStudio.ini.template.static（静态插件口径必需）'；②两件 ini 辅助件经 .gitignore 白名单例外登记入库；③RobWorkStudio/src/CMakeLists.txt 改容错生成（模板缺失时生成默认 ini）——②③涉框架侧文件，需先走 SA-02 patch 登记。F-098 同型（全新环境按文档口径无法直接复现构建），合并处置可一并消解。不阻断 POL-T12 验收（pass）——验收复现已用复制辅助件方式完成且全量 0 error。【2026-10-18 B7 长尾分诊批翻 fixed】AGENTS §4.1 现行文本已登记对应前置口径（F-907 vcpkg toolchain／F-455 Qt 前缀／F-927 ini 模板件＋fresh 树运行时前置），本批对照核实吸收落位。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-100",
@@ -1288,11 +1296,12 @@
       "id": "F-122",
       "source": "traceability/acceptance/PRJ-T01-20260915.md#4.8（attempt 1，送验对象 5de89534c1c88eadce53cc6c8327e1fbd9b542e0，分支 wp04-t01）：验收者逐项核对文档同步时实测卡头日期行与 §15.4 失同步",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-15",
       "title": "units/project.md 卡头『文档版本』行已随 §15.4 v0.3 同步（v0.3＝PRJ-T01 构建落位登记）但『日期』行停留 2026-09-09（§15.4 v0.3 行＝2026-09-15）——F-057 消账时确立的『卡头行与 §15.4 末行一致』纪律的半同步残留形态（版本行同步、日期行漏改；较 F-057 原例减轻）；validate-docs 不校验该维度，机检未红（与 F-057 后半建议同源）。方向为文档内部不一致（少报），v0.3 登记内容本身完整准确",
       "owner": "project 单元卡所有者（卡头归单元卡辖域）；『卡头版本/日期行＝§15.4 末行』机检维度建议归治理脚本所有者（与 F-057 后半合并评估）",
-      "resolution": "随下次触及 units/project.md 的任务（PRJ-T02 领取、或 F-005 家族批量修正批次）把卡头『日期』行推进至 2026-09-15（与 §15.4 v0.3 行一致）；机检维度与 F-057 后半合并处置，不单开任务。编号顺延自 F-121，合入时由所有者确认。"
+      "resolution": "随下次触及 units/project.md 的任务（PRJ-T02 领取、或 F-005 家族批量修正批次）把卡头『日期』行推进至 2026-09-15（与 §15.4 v0.3 行一致）；机检维度与 F-057 后半合并处置，不单开任务。编号顺延自 F-121，合入时由所有者确认。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-123",
@@ -1406,21 +1415,23 @@
       "id": "F-133",
       "source": "traceability/acceptance/PRJ-T05-20260916.md#4.8（attempt 2，送验对象 b6cc2352a5d9b7963198748184365fff1e101e20，分支 wp04-t05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-123（units/project.md 卡头版本/日期行与 §15.4 末行失同步）恶化再现——连续第三次未按处置建议执行：PRJ-T05 触及 units/project.md（§15.4 追加 v0.7 行）但卡头『文档版本』行停留 v0.4（PRJ-T02…）、『日期』行停留 2026-09-09，而 §15.4 末行已为 v0.7（2026-09-16）——F-123 登记时差距 1 个版本（卡头 v0.3 行 vs v0.3 行日期残留），PRJ-T03（v0.5）/PRJ-T04（v0.6）/PRJ-T05（v0.7）连续三次触及该文件均未同步卡头，差距扩大到 3 个版本。方向仍为文档内部不一致（少报），v0.7 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
       "owner": "project 单元卡所有者（卡头归单元卡辖域）；『卡头版本/日期行＝§15.4 末行』机检维度建议归治理脚本所有者（与 F-057/F-123 后半合并评估——三例同源后机检缺失的紧迫度上升）",
-      "resolution": "处置建议＝①随下次触及 units/project.md 的任务（PRJ-T06 领取、或 F-005 家族批量修正批次）把卡头『文档版本』行推进至 v0.7、『日期』行推进至 2026-09-16（与 §15.4 末行一致）；②『随下次触及顺手更正』模式已连续三跳未落地，建议所有者显式指定收口载体（如纳入 F-005 批量修正清单）。编号顺延自 F-132，合入时由所有者确认。"
+      "resolution": "处置建议＝①随下次触及 units/project.md 的任务（PRJ-T06 领取、或 F-005 家族批量修正批次）把卡头『文档版本』行推进至 v0.7、『日期』行推进至 2026-09-16（与 §15.4 末行一致）；②『随下次触及顺手更正』模式已连续三跳未落地，建议所有者显式指定收口载体（如纳入 F-005 批量修正清单）。编号顺延自 F-132，合入时由所有者确认。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-134",
       "source": "traceability/acceptance/PRJ-T06-20260916.md#4.8（attempt 1，送验对象 e70031c8bb8135cd4bee5c3b9e7a6941f44379fc，分支 wp04-t06）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-133 半执行（处置建议①的『日期』半边未落地）：PRJ-T06 触及 units/project.md（§15.4 追加 v0.8 行）且卡头『文档版本』行已同步至 v0.8（超出建议的 v0.7，并如实注明补齐 v0.5～v0.7 漂移——版本半边合格），但卡头『日期』行仍停留 2026-09-09 未推进至 2026-09-16（§15.4 末行 v0.8＝2026-09-16），与 F-133 建议①『两行均推进』不符；且提交 07685765 与单元卡 v0.8 行均未注明 F-133 消账进展（4.8『可随本任务顺手消账的须注明』未满足）。方向仍为文档内部不一致（日期少报），v0.8 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
       "owner": "project 单元卡所有者（卡头归单元卡辖域）；机检维度建议归治理脚本所有者（与 F-057/F-123/F-133 后半合并评估——四例同源）",
-      "resolution": "处置建议＝①随下次触及 units/project.md 的任务把卡头『日期』行推进至与 §15.4 末行一致（版本行已达标，仅剩日期半边）；②该『顺手更正』模式对日期行已连续四跳未落地，强烈建议所有者显式指定收口载体或纳入机检。编号顺延自 F-133，合入时由所有者确认。"
+      "resolution": "处置建议＝①随下次触及 units/project.md 的任务把卡头『日期』行推进至与 §15.4 末行一致（版本行已达标，仅剩日期半边）；②该『顺手更正』模式对日期行已连续四跳未落地，强烈建议所有者显式指定收口载体或纳入机检。编号顺延自 F-133，合入时由所有者确认。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-135",
@@ -1480,11 +1491,12 @@
       "id": "F-140",
       "source": "traceability/acceptance/PRJ-T07-20260916.md#4.8（attempt 1，送验对象 448d2e4f715d58fee7ba3a9183a631c405fc9912，分支 wp04-t07）：验收者核对单元卡卡头与 §15.4 末行时实测",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-134 半执行状态持续（F-123→F-133→F-134 之后第四次再现，F-134 两条建议全部未执行）：PRJ-T07 触及 units/project.md（§15.4 追加 v0.9 行）且卡头『文档版本』行已同步至 v0.9（版本半边合格），但卡头『日期』行仍停留 2026-09-09 未推进至 2026-09-16（§15.4 末行 v0.9＝2026-09-16）；且提交 e61ade92 与 v0.9 行均未注明 F-133/F-134 消账进展（ACC §4.8『可随本任务顺手消账的须注明』未满足）。方向仍为文档内部不一致（日期少报），v0.9 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
       "owner": "实施纪律（触及 units/project.md 的任务应同步卡头版本＋日期两行——F-133 建议①原文）；validate-docs 是否增补该维度机检归治理所有者裁决",
-      "resolution": "处置建议＝①下一触及 units/project.md 的任务同步卡头『日期』行至该版登记日期并注明家族消账；②validate-docs 增补『卡头版本行/日期行与 §15.4 末行一致』机检（F-123 后半建议的再次提出）。编号顺延自 F-139，合入时由所有者确认。"
+      "resolution": "处置建议＝①下一触及 units/project.md 的任务同步卡头『日期』行至该版登记日期并注明家族消账；②validate-docs 增补『卡头版本行/日期行与 §15.4 末行一致』机检（F-123 后半建议的再次提出）。编号顺延自 F-139，合入时由所有者确认。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-141",
@@ -1512,11 +1524,12 @@
       "id": "F-143",
       "source": "traceability/acceptance/PRJ-T08-20260916.md#4.8（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08）：验收者核对单元卡卡头与 §15.4 行序时实测",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-134/F-140 家族第五次再现且新增行序倒置形态：PRJ-T08 触及 units/project.md（§15.4 追加 v0.10 行）且卡头『文档版本』行已同步至 v0.10（版本半边合格），但卡头『日期』行仍停留 2026-09-09 未推进至 2026-09-16（§15.4 v0.10 行＝2026-09-16）；F-140 处置建议①『下一触及任务同步日期行并注明家族消账』未执行且 185c221d/§15.4 v0.10 行均未注明 F-133/F-134/F-140 消账进展。另新增形态：§15.4 变更记录表的新 v0.10 行插在 v0.8 行与 v0.9 行之间（时序倒置——表内呈现 v0.6/v0.7/v0.8/v0.10/v0.9，新行未追加于表尾；内容本身完整准确，按版本号阅读不受阻，但版本链的时序可读性受损）。方向为文档内部不一致（日期少报＋行序错插），v0.10 登记内容完整准确；validate-docs 不校验该两维度，机检未红",
       "owner": "实施纪律（触及 units/project.md 的任务应同步卡头版本＋日期两行并把 §15.4 新行追加于表尾——F-133 建议①扩展）；validate-docs 是否增补『卡头行＝§15.4 末行』与『变更行时序』机检归治理所有者裁决",
-      "resolution": "处置建议＝①下一触及 units/project.md 的任务同步卡头『日期』行并把本条与 F-140 家族一并注明消账（顺带把 v0.10 行移至 v0.9 行之后的正确时序位）；②validate-docs 增补『卡头版本/日期行＝§15.4 末行』机检时一并覆盖变更行时序（F-123/F-140 建议的再次提出）。编号顺延自 F-142，合入时由所有者确认。"
+      "resolution": "处置建议＝①下一触及 units/project.md 的任务同步卡头『日期』行并把本条与 F-140 家族一并注明消账（顺带把 v0.10 行移至 v0.9 行之后的正确时序位）；②validate-docs 增补『卡头版本/日期行＝§15.4 末行』机检时一并覆盖变更行时序（F-123/F-140 建议的再次提出）。编号顺延自 F-142，合入时由所有者确认。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-144",
@@ -1555,11 +1568,12 @@
       "id": "F-147",
       "source": "traceability/acceptance/PRJ-T09-20260916.md#4.8（attempt 1，送验对象 93489c02687e80eb97ba8e8d3267f72f530aff0e，分支 wp04-t09）：验收者核对单元卡卡头与 §15.4 末行时实测",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-122/F-133/F-134/F-140/F-143 家族第六次再现（日期半边连续五跳未落地后本任务再跳）：PRJ-T09 触及 units/project.md（§15.4 追加 v0.11 行）且卡头『文档版本』行已同步至 v0.11（版本半边合格），但卡头『日期』行仍停留 2026-09-09 未推进至 2026-09-16（§15.4 v0.11 行＝2026-09-16）；F-143 处置建议①『同步日期行＋注明 F-140 家族消账＋顺带把 v0.10 行移至 v0.9 之后的正确时序位』三项均未执行且提交 3c0b8bf6 与 v0.11 行均未注明家族消账进展（ACC §4.8『可随本任务顺手消账的须注明』未满足）。部分改善：v0.11 新行追加于表尾（v0.9 之后——新行时序正确，F-143 建议的追加于表尾半边成立；存量 v0.10 行倒置未修）。方向为文档内部不一致（日期少报），v0.11 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
       "owner": "实施纪律（触及 units/project.md 的任务应同步卡头版本＋日期两行——F-133 建议①原文，已连续六跳未落地）；validate-docs 是否增补『卡头版本/日期行＝§15.4 末行』与『变更行时序』机检归治理脚本所有者（F-123/F-140/F-143 建议的再次提出）",
-      "resolution": "处置建议＝①所有者显式指定收口载体（纳入 F-005 家族批量修正清单或专设一次治理微任务）一次性同步日期行并修 v0.10 行时序位——『随下次触及顺手更正』模式已证实连续六跳失效，不宜再作为主要处置；②validate-docs 增补该维度机检。编号顺延自 F-146，合入时由所有者确认。"
+      "resolution": "处置建议＝①所有者显式指定收口载体（纳入 F-005 家族批量修正清单或专设一次治理微任务）一次性同步日期行并修 v0.10 行时序位——『随下次触及顺手更正』模式已证实连续六跳失效，不宜再作为主要处置；②validate-docs 增补该维度机检。编号顺延自 F-146，合入时由所有者确认。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-148",
@@ -1640,11 +1654,12 @@
       "id": "F-155",
       "source": "traceability/acceptance/PRJ-T10-20260916.md#4.8（attempt 1，同 F-152 送验对象）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-122/F-133/F-134/F-140/F-143/F-147 家族第七次再现：PRJ-T10 触及 units/project.md（§15.4 追加 v0.12 行＋卡头文档版本行 v0.11→v0.12 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.12 行日期 2026-09-16 更新——版本半边落地、日期半边连续第七跳未落地（F-134 处置建议两条之一持续被跳过）",
       "owner": "project 详设所有者（units/project.md 辖域；F-133/F-140/F-147 处置建议原文承责）",
-      "resolution": "处置建议＝同 F-147：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单。编号顺延自 F-154，合入时由所有者确认。"
+      "resolution": "处置建议＝同 F-147：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单。编号顺延自 F-154，合入时由所有者确认。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-156",
@@ -1682,11 +1697,12 @@
       "id": "F-159",
       "source": "traceability/acceptance/PRJ-T11-20260916.md#4.8-G-3（attempt 1，送验对象 cdb242646be12eab64678cb93794be9efeef4d51，分支 wp04-t11）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155 家族第八次再现：PRJ-T11 触及 units/project.md（§15.4 追加 v0.13 行＋卡头文档版本行 v0.12→v0.13 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.13 行日期 2026-09-16 更新——版本半边落地、日期半边连续第八跳未落地（F-134 两条处置建议之一持续被跳过）",
       "owner": "project 详设所有者（units/project.md 辖域；F-133/F-140/F-147/F-155 处置建议原文承责）",
-      "resolution": "处置建议＝同 F-147/F-155：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-158，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝同 F-147/F-155：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-158，合入时由所有者确认与并行验收分支无撞车。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-160",
@@ -1702,11 +1718,12 @@
       "id": "F-161",
       "source": "traceability/acceptance/PRJ-T12-20260916.md#4.8-G-1（attempt 1，送验对象 ff39c51deacfa439667c476a6998ea8a8f69387a，分支 wp04-t12）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159 家族第九次再现：PRJ-T12 触及 units/project.md（§15.4 追加 v0.14 行＋卡头文档版本行 v0.13→v0.14 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.14 行日期 2026-09-16 更新——版本半边落地、日期半边连续第九跳未落地（F-134/F-147/F-155/F-159 处置建议持续被跳过）",
       "owner": "project 详设所有者（units/project.md 辖域；F-133/F-140/F-147/F-155/F-159 处置建议原文承责）",
-      "resolution": "处置建议＝同 F-147/F-155/F-159：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-160，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝同 F-147/F-155/F-159：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-160，合入时由所有者确认与并行验收分支无撞车。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-162",
@@ -1723,11 +1740,12 @@
       "id": "F-163",
       "source": "traceability/acceptance/PRJ-T13-20260916.md#4.8-G-1（attempt 1，送验对象 03eb0fe0012b4e7a4318ca7bed812653b279f144，分支 wp04-t13）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161 家族第十次再现：PRJ-T13 触及 units/project.md（§15.4 追加 v0.15 行＋卡头文档版本行 v0.14→v0.15 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.15 行日期 2026-09-16 更新——版本半边落地、日期半边连续第十跳未落地（F-134/F-147/F-155/F-159/F-161 处置建议持续被跳过）",
       "owner": "project 详设所有者（units/project.md 辖域；F-133/F-140/F-147/F-155/F-159/F-161 处置建议原文承责）",
-      "resolution": "处置建议＝同 F-147/F-155/F-159/F-161：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-162，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝同 F-147/F-155/F-159/F-161：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-162，合入时由所有者确认与并行验收分支无撞车。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-164",
@@ -1777,11 +1795,12 @@
       "id": "F-168",
       "source": "traceability/acceptance/PRJ-T14-20260917.md#4.8-G-3（attempt 1，送验对象 bdb01a2f8a2bd20df81d68458e988733f62de9fb，分支 wp04-t14）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163 家族第十一次再现：PRJ-T14 触及 units/project.md（§15.4 追加 v0.16 行＋卡头文档版本行 v0.15→v0.16 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.16 行日期 2026-09-16 更新——版本半边落地、日期半边连续第十一跳未落地（F-134/F-147/F-155/F-159/F-161/F-163 处置建议持续被跳过）；且 v0.16 登记行与提交均未注明家族消账进展（ACC §4.8『可随本任务顺手消账的须注明』未满足）。方向为文档内部不一致（日期少报），v0.16 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
       "owner": "project 详设所有者（units/project.md 辖域；F-163 处置建议原文承责）",
-      "resolution": "处置建议＝同 F-163/F-147：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 机检维度与 F-057 后半同批评估。编号顺延自 F-167，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝同 F-163/F-147：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 机检维度与 F-057 后半同批评估。编号顺延自 F-167，合入时由所有者确认与并行验收分支无撞车。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-169",
@@ -1797,11 +1816,12 @@
       "id": "F-170",
       "source": "traceability/acceptance/PRJ-T15-20260917.md#4.8-G-1（attempt 1，送验对象 a52dbd9388c8241e8a1e92775ef83f2c2eae1fef，分支 wp04-t15）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163/F-168 家族第十二次再现：PRJ-T15 触及 units/project.md（§15.4 追加 v0.17 行＋卡头文档版本行 v0.16→v0.17 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.17 行日期 2026-09-17 更新——版本半边落地、日期半边连续第十二跳未落地（F-168 处置建议再次被跳过，且 v0.17 登记行未注明家族消账进展——ACC §4.8『可随本任务顺手消账的须注明』未满足）。方向为文档内部不一致（日期少报），v0.17 登记内容本身完整准确且经验收者实测逐项吻合",
       "owner": "project 详设所有者（units/project.md 辖域；F-163/F-168 处置建议原文承责）",
-      "resolution": "处置建议＝同 F-168：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 机检维度与 F-057 后半同批评估。编号顺延自 F-169，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝同 F-168：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 机检维度与 F-057 后半同批评估。编号顺延自 F-169，合入时由所有者确认与并行验收分支无撞车。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-171",
@@ -1849,11 +1869,12 @@
       "id": "F-175",
       "source": "traceability/acceptance/PRJ-T16-20260917.md#问题清单-G-1（attempt 1，送验对象 3fe0ee71ace3ab0c82675ddb6771004ba740c34e，分支 wp04-t16）：验收者 4.8 findings 相关性核对发现",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163/F-168/F-170 家族第十三次再现：PRJ-T16 触及 units/project.md（卡头版本行 v0.17→v0.18＋§15.4 追加 v0.18 行＝2026-09-17），卡头『日期』行仍停留 2026-09-09 未同步——版本半边更新、日期半边遗漏的同型微瑕。纯文档任务零行为影响，仅文档头自洽性",
       "owner": "project 实施侧（随下次触及 units/project.md 的任务顺手同步卡头日期行）",
-      "resolution": "处置建议＝随下次触及 units/project.md 的任务顺手将卡头『日期』行同步为最新变更记录行日期；治理级根治（收尾脚本自动核对卡头日期与 §15.4 末行日期）仍归 F-170 所登记的治理任务面。编号顺延自 F-174，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝随下次触及 units/project.md 的任务顺手将卡头『日期』行同步为最新变更记录行日期；治理级根治（收尾脚本自动核对卡头日期与 §15.4 末行日期）仍归 F-170 所登记的治理任务面。编号顺延自 F-174，合入时由所有者确认与并行验收分支无撞车。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-176",
@@ -1870,11 +1891,12 @@
       "id": "F-177",
       "source": "traceability/acceptance/PRJ-T16-20260917.md#问题清单-G-3（attempt 1，送验对象 3fe0ee71ace3ab0c82675ddb6771004ba740c34e，分支 wp04-t16）：验收者 4.9 逐句核对提交正文验证结论与校验器实际扫描面发现",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-17",
       "title": "3fe0ee71 正文验证段『validate-docs PASS（150 task files 扫描含本文件）』表述不精确：validate-docs.ps1 扫描面为 tasks/**/*.json＋traceability/{unit-status,requirements-to-units,phase-one-task-index}.json＋PIPE/ACC 锚点短语，不含 traceability/*.md 新增文档（裁决申请文档不在扫描面）——PASS 结论真实且经验收者复现（计数逐字一致），无结论性失实；同一事实在 exec-record.json 的表述（执行时点在全部文档修改之后）为准确口径。F-172 家族的弱化变体（留痕声明精度）",
       "owner": "project 实施侧（提交正文中引用校验器结论时按其真实扫描面表述）",
-      "resolution": "处置建议＝提交正文引用校验器/门禁结论时写明命令与真实扫描面（或引用 exec-record 的 validation 条目），避免『扫描含本文件』式歧义；可在治理任务面增加 commit 正文与校验器口径的抽查项。编号顺延自 F-176，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝提交正文引用校验器/门禁结论时写明命令与真实扫描面（或引用 exec-record 的 validation 条目），避免『扫描含本文件』式歧义；可在治理任务面增加 commit 正文与校验器口径的抽查项。编号顺延自 F-176，合入时由所有者确认与并行验收分支无撞车。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-178",
@@ -1901,11 +1923,12 @@
       "id": "F-180",
       "source": "traceability/acceptance/IO-T01-20260917.md#4.8（attempt 1，送验对象 d175a4e4b8b1de79dbb12de6a3a1cddcd2742625，分支 wp11-t01）：验收者 findings 未关闭条目相关性核对（F-175 家族排查）发现",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163/F-168/F-170/F-175 家族第十四次再现：IO-T01 触及 units/io.md（卡头版本行 v0.2→v0.3＋§15.5 追加 v0.3 行＝2026-09-17），卡头『日期』行仍停留 2026-09-10 未同步——版本半边更新、日期半边遗漏的同型微瑕。零行为影响，仅文档头自洽性",
       "owner": "io 实施侧（随下次触及 units/io.md 的任务顺手同步卡头日期行）",
-      "resolution": "处置建议＝随下次触及 units/io.md 的任务顺手将卡头『日期』行同步为最新变更记录行日期（2026-09-17）；治理级根治（收尾脚本自动核对卡头日期与变更记录末行日期）仍归 F-170 所登记的治理任务面。编号顺延自 F-179，合入时由所有者确认与并行验收分支无撞车。"
+      "resolution": "处置建议＝随下次触及 units/io.md 的任务顺手将卡头『日期』行同步为最新变更记录行日期（2026-09-17）；治理级根治（收尾脚本自动核对卡头日期与变更记录末行日期）仍归 F-170 所登记的治理任务面。编号顺延自 F-179，合入时由所有者确认与并行验收分支无撞车。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/project.md 卡头『日期』行随 v0.27 版本行同步至现行（本批治理提交），历史各例登记面保留；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-181",
@@ -1965,11 +1988,12 @@
       "id": "F-186",
       "source": "traceability/acceptance/IO-T02-20260917-r2.md §4.8/§4.10（验收 attempt 2，送验对象 8c61896d3a1a6ec5a5eb17f1890de7734f899dd3）：在库留痕与独立实跑对照发现",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-17",
       "title": "门禁留痕载体弱：在库 traceability/builds/wp11-t02/gates-ird-gates-target.log 仅 3 行尾部片段——门禁引擎 GBK 控制台输出被直接捕获进 UTF-8 文件产生乱码，且不含任何 IRD-GATE 命中明细行；ird-test-report.json gates 字段声称『命中集＝基线既有 11 处（…留痕 gates-ird-gates-target.log）』，从该日志本身无法核对命中明细（attempt 2 验收者独立实跑 ird_gates 确认：去重真实命中 11 处全为基线〔SUB×9＋T1×1＋R4×1〕、零 io 命中——结论为真，仅载体不足自证）。同目录 integration-build.log/validate-task.log/verify-task.log 为完整输出无此问题",
       "owner": "io 实施侧（后续任务门禁留痕时截取含命中明细的输出段）；governance（候选：gate-all.ps1/ird_gates 目标输出重定向统一 UTF-8 并保明细行——脚本侧规范化）",
-      "resolution": "处置建议＝门禁留痕至少包含命中明细行与汇总行；可随 ird_gates 自定义目标输出改造一并处置。不构成 IO-T02 返工项（结论经复跑证实）"
+      "resolution": "处置建议＝门禁留痕至少包含命中明细行与汇总行；可随 ird_gates 自定义目标输出改造一并处置。不构成 IO-T02 返工项（结论经复跑证实）",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-187",
@@ -2322,12 +2346,13 @@
     {
       "id": "F-220",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-19",
       "source": "traceability/acceptance/EX-T08-20260919.md#4.4/4.10（attempt 1，送验对象 1cc1c796aa6851624cb20b0fa2fb684b98b45bc2）",
       "title": "ird_gates 命中清单留痕格式跨任务漂移：wp08-t08 的 gates-t08-hits-sorted.txt 自 wp08-t07 的原始日志行排序改为（门禁类×目标）规范化 token（17 原始命中→15 token），ird-test-report.json 的 gates.hitsTotal=15 与门禁原始输出 17 计数口径不一；两份在库清单格式不同致 gates-hit-set-diff.txt（空 diff）无法从提交物字节级复算。验收者亲手重跑 ird_gates（exit 1、命中 17 项与 base 同集）独立证实零新增命中，结论成立，仅留痕可比性受损",
       "owner": "execution 单元所有者（口径统一归 scripts/gate-all.ps1 维护方）",
-      "resolution": "后续任务固定一种清单格式（建议规范化 token 形态）并在 ird-test-report.json 注明计数口径（原始命中数 vs 规范化 token 数）；跨任务比对用同一规范化函数处理两侧。不阻塞合入。编号顺延自 F-219。验收判定不受影响：EX-T08 attempt 1 verdict=pass。"
+      "resolution": "后续任务固定一种清单格式（建议规范化 token 形态）并在 ird-test-report.json 注明计数口径（原始命中数 vs 规范化 token 数）；跨任务比对用同一规范化函数处理两侧。不阻塞合入。编号顺延自 F-219。验收判定不受影响：EX-T08 attempt 1 verdict=pass。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-221",
@@ -2375,11 +2400,12 @@
       "id": "F-225",
       "source": "traceability/acceptance/EX-T09-20260919-r2.md#4.10（attempt 2，送验对象 8a5a05fbb77679c399fa23fd293be59bc3d9911a）——验收者对在库留痕逐件 opens 核对",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-19",
       "title": "在库构建留痕为筛选摘录而非原始输出（载体弱，结论经独立复跑证实为真）：builds/wp08-t09/build-integrated-full.log（3.2KB，仅项目完成行拼接，含三次 MSBuild 调用段，无错误计数/最终退出状态行）、build-smoke-full.log（4KB 同型摘录）、build-smoke-config.log（312B 尾部片段）——「双模式构建零错误」从日志自身不可自证（本验收以全新集成树全量构建 exit 0＋错误模式计数 0 独立证实，零粉饰）。F-186（IO-T02 gates 日志同型）／F-036/F-038（强度表述失准家族）同辖域",
       "owner": "实施纪律（DTB §5 会话流程所有者）＋governance 脚本侧（留痕产出口径规范化候选，与 F-186/F-207/F-220 留痕载体家族同批处置）",
-      "resolution": "后续任务构建留痕保存原始完整输出（或显式标注「摘录：仅项目完成行」并附原始日志路径/行数与错误计数摘要行）；可在 verify-task/gate-all 产物固化步骤统一产出。不阻塞合入。编号顺延自 F-224。验收判定不受影响：EX-T09 attempt 2 verdict=pass。"
+      "resolution": "后续任务构建留痕保存原始完整输出（或显式标注「摘录：仅项目完成行」并附原始日志路径/行数与错误计数摘要行）；可在 verify-task/gate-all 产物固化步骤统一产出。不阻塞合入。编号顺延自 F-224。验收判定不受影响：EX-T09 attempt 2 verdict=pass。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-226",
@@ -2493,11 +2519,12 @@
       "id": "F-236",
       "source": "traceability/acceptance/RPT-T05-20260920.md#4.10／发现的问题-G-1（attempt 1，verdict=pass，2026-09-20；送验对象 d14eab5c595702a41c72815a8ae76b7f299b26c7，分支 wp12-t05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-20",
       "title": "F-041/F-073 同族再现（散文计数失准）：RPT-T05 三处散文测试计数与在库实测不符——提交 6a9aba31 正文与单元卡 v0.8（d24adf7d）均写『test/BuilderTest.cpp 二十三条（ReportBuildSessionTest 五条＋ReviewReportBuilderTest 十八条）』、ird-test-report.json notes 与留痕提交 d14eab5c 正文写『RPT-T05 新增 26 用例』，而验收者实测 grep ^TEST 计 28 条（ReportBuildSessionTest 五条＋ReviewReportBuilderTest 二十三条），XML 顶格 tests=\"78\"＝RPT-T04 交付面 50＋28 自洽（contract 18＝15＋3 一致）。四份 gtest XML 与验收者双模式亲跑（78/78＋18/18 全绿）真实无虚——三处散文计数（23/26）均小于实测 28，新增用例多于声称、无缩水行为，纯计数笔误；同一份产物内执行数据（XML 顶格/report targets.result 段）与散文计数（notes/提交正文/单元卡）不一致",
       "owner": "reporting 单元实施者（后续 RPT-T06+ 提交与报告的散文计数自清点核对）；F-041/F-073 家族可在治理面合并处置（如收尾脚本增加 grep ^TEST 实测与散文计数核对步骤）",
-      "resolution": "随 RPT-T06+ 的报告与提交修正计数习惯：散文计数以 grep '^TEST' 实测为准，或直接引用 XML 顶格数与既有基线差值；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T05 合入（attempt 1 verdict=pass）。编号顺延自 F-235。"
+      "resolution": "随 RPT-T06+ 的报告与提交修正计数习惯：散文计数以 grep '^TEST' 实测为准，或直接引用 XML 顶格数与既有基线差值；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T05 合入（attempt 1 verdict=pass）。编号顺延自 F-235。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-237",
@@ -2569,11 +2596,12 @@
       "id": "F-243",
       "source": "traceability/acceptance/RPT-T09-20260920.md#4.9／发现的问题清单-G-2（attempt 1，verdict=pass，2026-09-20；送验对象 35d2ece4442af8ede6a7f788d8b4112d83cac3cc，分支 wp12-t09）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-20",
       "title": "F-041/F-073/F-235/F-236/F-238 同族再现（散文计数口径失准）：ird-test-report.json（builds/wp12-t09）gates 段『base/branch 各 61 处 IRD-GATE- 命中』的 61 为原始日志行计数（独立命中 27×流式＋摘要两遍重复＋自测提及 7——验收者全新 head 树直跑同构 61/27 复现），独立命中实为 27 项；方向为多报命中数（对交付面不利方向的夸大），命中集实质结论『零新增、reporting 相关命中 0』经验收者三日志归一化比对独立成立——纯计数口径措辞失准，非结论失实；同报告其余散文计数（留痕 7＋11＝18 件、新增 30＋13 用例、单元 150＝120＋30、契约 51＝38＋13）经验收者逐项实测全部准确",
       "owner": "reporting 单元实施者（后续 RPT-T10+ 报告的 gates 计数以『命中 N 项』独立口径为准——日志自身『命中 27 项』即正确表述）；F-041/F-073/F-235/F-236/F-238/F-243 家族可在治理面合并处置",
-      "resolution": "gates 计数统一采用 ird_gates 摘要段的『命中 N 项』独立口径（或标注『原始行 M＝独立 N×2＋自测 K』换算），不以 grep 行数为『命中』基数；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-242。"
+      "resolution": "gates 计数统一采用 ird_gates 摘要段的『命中 N 项』独立口径（或标注『原始行 M＝独立 N×2＋自测 K』换算），不以 grep 行数为『命中』基数；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-242。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-244",
@@ -2590,11 +2618,12 @@
       "id": "F-245",
       "source": "traceability/acceptance/RPT-T09-20260920.md#4.9／发现的问题清单-G-4（attempt 1，verdict=pass，2026-09-20；送验对象 35d2ece4442af8ede6a7f788d8b4112d83cac3cc，分支 wp12-t09）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-20",
       "title": "F-036/F-038 同型再现（全树口径强度表述缺树 scope 标注）：ird-test-report.json（builds/wp12-t09）gates.build 段『集成模式 cmake --build build --config Release 全树零错误（integration-build.log）』未标注构建树——该日志产自主仓库根 build/ 树（日志内产物路径 D:/10_Source_Repos/21_robot/RobWork/build/... 实证；AGENTS §4.1 唯一交付口径树、增量缓存，其中 RWSimulatorPlugin.dll 构建成功），而全新 worktree 树的全树构建被 F-008/F-235 基线缺陷阻断（RPT-T09 验收者复现 73 错——RWSimulatorPlugin 的框架 Math.hpp min/max 宏污染簇＋bt_plugin 的 Eigen Parallelizer.h 同族宏污染；涉事 Math.hpp blob 在 base/head/HEAD 三处同值 7357cd31，零任务触碰，industrialrobot 全目标零错误）。主树口径结论为真，但『全树零错误』可达范围以树而定，报告未区分",
       "owner": "reporting 单元实施者（后续 RPT-T10+ 报告与提交的全树口径标注『主树/全新树』scope）；F-008/F-235 框架基线缺陷归框架所有者（patches 登记面）",
-      "resolution": "全树口径表述统一标注构建树 scope（『主树增量全树零错误』或『全新树全树零错误』）；全新树全树口径在 F-008/F-235 修复前以『不可达（基线缺陷，与任务无关）』如实标注。与 F-036/F-038 家族合并处置。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-244。"
+      "resolution": "全树口径表述统一标注构建树 scope（『主树增量全树零错误』或『全新树全树零错误』）；全新树全树口径在 F-008/F-235 修复前以『不可达（基线缺陷，与任务无关）』如实标注。与 F-036/F-038 家族合并处置。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-244。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-246",
@@ -2666,11 +2695,12 @@
       "id": "F-252",
       "source": "traceability/acceptance/RPT-T11-20260920-r2.md#4.9／发现的问题清单-G-1（attempt 2，verdict=pass，2026-09-20；送验对象 e995689021af7a657e647fb728000a10ed03f64e，分支 wp12-t11）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-20",
       "title": "『ctest 通过』声称与在库留痕证据不对应（F-251 同源面，attempt 2 送验对象内两处）：①提交 ad7e8d1e 正文验证段『ctest 收口通过』——契约 verify 第 3 条 ctest 命令（--test-dir build 根）在尝试 1 与尝试 2 验收者独立复跑中均恒 exit 0＋『No tests were found!!!』（F-251 登记的框架 CTestTestfile 链缺失），在库 19 件留痕中不存在任何 ctest 执行日志；②gates-all-note.txt 收尾句『双目标 ctest 通过（integration/smoke-test-run-*.log）』——所引四件日志实为直接执行双 exe 的 gtest 输出（『Running 196 tests from 31 test suites』形态），非 ctest 运行记录。测试实质执行真实成立（验收者双模式四跑亲证 196＋58 全绿＋叶子目录 ctest 2/2 通过），纯声称-引用标注失准，非执行造假",
       "owner": "reporting 单元实施者（后续 gates-all-note/提交正文措辞以实际执行形态为准）；构建约定所有者（与 F-251 处置②合并——verify 口径修订后此类声称才有落点）",
-      "resolution": "与 F-251 处置合并：verify 第 3 条按『发现并执行非零个测试』口径修订（叶子目录 ctest 或直接执行口径成文）后，正文/留痕的『ctest 通过』声称方有依据；过渡期以『双测试执行（直接运行）通过』如实措辞。不阻塞 RPT-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-251（acc/RPT-T11/1 在册，待随记录分支合并）。"
+      "resolution": "与 F-251 处置合并：verify 第 3 条按『发现并执行非零个测试』口径修订（叶子目录 ctest 或直接执行口径成文）后，正文/留痕的『ctest 通过』声称方有依据；过渡期以『双测试执行（直接运行）通过』如实措辞。不阻塞 RPT-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-251（acc/RPT-T11/1 在册，待随记录分支合并）。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-253",
@@ -2687,11 +2717,12 @@
       "id": "F-254",
       "source": "traceability/acceptance/RPT-T12-20260920.md#4.2／发现的问题清单-G-2（attempt 1，verdict=fail，2026-09-20；送验对象 92db3656d3440ac775047fb7093e1e2c89cc13a1，分支 wp12-t12）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-20",
       "title": "AGENTS §4.1 独立冒烟命令缺 Qt 前缀参数（F-002 同族文档口径滞后第 2 例）：industrialrobot 独立配置在仅有 -DCMAKE_TOOLCHAIN_FILE 时于 testkit/CMakeLists.txt:239 find_package(Qt6 COMPONENTS Core REQUIRED) 处配置失败（『Could not find a package configuration file provided by Qt6』——验收者独立冒烟树首配亲历），补 -DCMAKE_PREFIX_PATH 后 exit 0；根因＝testkit 的 sdurws_ird_testkit_qt INTERFACE 目标（RPT-T11 落地）引入 Qt6 配置期依赖，而 AGENTS §4.1 冒烟命令模板未同步；实施者实际冒烟均带 Qt 前缀（wp12-t07~t12 提交正文口径），仅文档滞后、无实际构建受阻",
       "owner": "构建约定所有者（AGENTS §4.1 辖域）＋testkit 详设所有者（配置期守卫评估——Qt 必要性是否可延后到设施消费任务）",
-      "resolution": "择一：①AGENTS §4.1 冒烟命令补 -DCMAKE_PREFIX_PATH=<Qt> 参数说明（与 F-002 修复同款式）；②testkit/CMakeLists 对 sdurws_ird_testkit_qt 增加找不到 Qt 时的可选降级守卫（warn＋跳过目标——涉配置语义变更随 testkit 卡登记）。不阻塞 RPT-T12 返工。编号顺延自 F-253。"
+      "resolution": "择一：①AGENTS §4.1 冒烟命令补 -DCMAKE_PREFIX_PATH=<Qt> 参数说明（与 F-002 修复同款式）；②testkit/CMakeLists 对 sdurws_ird_testkit_qt 增加找不到 Qt 时的可选降级守卫（warn＋跳过目标——涉配置语义变更随 testkit 卡登记）。不阻塞 RPT-T12 返工。编号顺延自 F-253。【2026-10-18 B7 长尾分诊批翻 fixed】AGENTS §4.1 现行文本已登记对应前置口径（F-907 vcpkg toolchain／F-455 Qt 前缀／F-927 ini 模板件＋fresh 树运行时前置），本批对照核实吸收落位。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-255",
@@ -2707,11 +2738,12 @@
       "id": "F-256",
       "source": "traceability/acceptance/RPT-T12-20260920-r2.md#4.8／发现的问题清单-G-3（attempt 2，verdict=pass，2026-09-20；送验对象 552c66d1ddb39e468899705822b0424da5b0fa70，分支 wp12-t12）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-20",
       "title": "留痕计数口径失准（F-041/F-243 同族新实例）：schema-freeze-note.md §5 与实现提交 36bbac31 正文『本任务新增单测 12＋契约 4』——实际新增契约 TEST 函数为 3 个（ModelSummaryTaskStatusHeaderDiscipline.PublicHeadersZeroOffTreeIncludes_RPT12_ACC3／TaskStatusVocabulary.TerminationTokensMatchCoreTerminalStateTokens_RPT12_ACC3／TaskStatusVocabulary.StateAxisHasNoSecondVocabulary_RPT12_ACC3，TEST( 宽窄匹配双口径清点同值），疑将契约测试文件四组 static_assert 断言面（签名冻结/类型恒等/红线扫描/词表一致性）误计为用例；验收者 attempt 2 以 61 总数中 3 个具名新用例 [ RUN ] 在案复核。实质证据完整、四跑全绿，方向多报 1、无粉饰",
       "owner": "reporting 单元实施者（后续留痕与提交正文的用例计数以 TEST 函数清点为准）",
-      "resolution": "后续 reporting 留痕/提交正文修订用例计数时按 TEST 函数逐一点数（static_assert 编译期自证不计用例数）；本条不要求返工已合入内容。不阻塞 RPT-T12 合入（attempt 2 verdict=pass）。编号顺延自 F-255（acc/RPT-T12/1 在册，待随记录分支合并）。"
+      "resolution": "后续 reporting 留痕/提交正文修订用例计数时按 TEST 函数逐一点数（static_assert 编译期自证不计用例数）；本条不要求返工已合入内容。不阻塞 RPT-T12 合入（attempt 2 verdict=pass）。编号顺延自 F-255（acc/RPT-T12/1 在册，待随记录分支合并）。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-257",
@@ -2878,21 +2910,23 @@
       "id": "F-272",
       "source": "traceability/acceptance/UI-T08-20260921.md §4.6/§4.10（attempt 1，verdict=pass，2026-09-21；送验对象 3bff786a9a02dc72644ac61fcc1b5da88b684269，分支 wp10-t08）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-21",
       "title": "F-220/F-236 家族同型（命中清单留痕格式跨任务漂移＋散文计数失准）：wp10-t08-gate-registrations.md ①称「本任务沿用 wp10-t07 留痕文件形态」且②称「行数 87→89 与门禁退出报告『命中 41 项』〔基线 40〕一致」——实际在库 gates-hit-set.txt 为 82 行（41 命中×2 相位行；wp10-t07 文件 87 行含「[ird_gates] 」行首前缀＋尾部 7 行门禁自测段，本任务文件前缀剥离、自测段略去），两处描述均与在库工件不符；门禁实质结论（基线 40＋恰增 1＝41、新增命中＝ParamTablePanel.cpp R3 头包含面、FormEditCommon.hpp 等其余文件零命中）经验收者脚本模式（cmake -DIRD_ROOT=… -P cmake/ird_gates.cmake）亲跑、去重归一化后与在库文件逐码一致（41/41 IDENTICAL）为真——留痕散文与文件形态描述失准，无实质门禁误差",
       "owner": "ui 单元实施者（后继基线比对以实际文件形态为准）＋门禁留痕治理（F-220 同责任面：命中集归一化口径统一）",
-      "resolution": "与 F-220 一并跟踪格式归一：后继任务比对命中集前先按「去重＋剥前缀」归一化（验收先例：UI-T08 验收 §4.6 归一化 diff 法）；gate-registrations.md 措辞校准可随收尾顺手修订或随 F-220 裁决统一处置；不影响 UI-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-271。"
+      "resolution": "与 F-220 一并跟踪格式归一：后继任务比对命中集前先按「去重＋剥前缀」归一化（验收先例：UI-T08 验收 §4.6 归一化 diff 法）；gate-registrations.md 措辞校准可随收尾顺手修订或随 F-220 裁决统一处置；不影响 UI-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-271。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-273",
       "source": "traceability/acceptance/UI-T08-20260921.md §4.7（attempt 1，verdict=pass，2026-09-21；送验对象 3bff786a9a02dc72644ac61fcc1b5da88b684269，分支 wp10-t08）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-21",
       "title": "CMakeLists 注释枚举计数漂移（偏差先于本任务存在、本任务增量改写时沿袭）：ui/CMakeLists.txt AUTOMOC 复核注释行「十个源文件与私有头零 Q_OBJECT 声明」的源文件计数与 src/ 实际 11 个产品 TU 不符——base（wp10-t07 合入后）同行写「八个源文件」时实际已有 9 TU，本任务 +2 增列时按同口径同步改写（八→十）未校准绝对值；实质性主张「零 Q_OBJECT」经验收者全文件 grep 证实为真，AUTOMOC 关闭决策不受影响，零行为影响（AGENTS §2「注释随代码更新」口径的边缘项）",
       "owner": "ui 单元实施者（后续触碰该注释块时随手校准为实际 TU 数）",
-      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数（或删去具体数字改为「产品源集与私有头」定性表述）；不单独返工，不阻塞 UI-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-272。"
+      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数（或删去具体数字改为「产品源集与私有头」定性表述）；不单独返工，不阻塞 UI-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-272。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：ui/CMakeLists.txt AUTOMOC 复核注释改为不写死源文件计数（F-291 建议方案落地）——计数漂移面根除。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-274",
@@ -2909,11 +2943,12 @@
       "id": "F-275",
       "source": "traceability/acceptance/UI-T09-20260921.md §4.7（attempt 1，verdict=pass，2026-09-21；送验对象 e4b30c7778ed2d000077b95ce12ceea5a09ffba4，分支 wp10-t09）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-21",
       "title": "F-273 复踩（同一注释行第二次沿袭未校准）：ui/CMakeLists.txt AUTOMOC 复核注释行随本任务 +2 增列改写为「十二个源文件与私有头零 Q_OBJECT 声明」，而 src/ 实际 13 个产品 TU（本任务新增 UiText.cpp/StageNavigationModel.cpp 后 11→13，计数沿袭上一次的差一漂移：十 vs 11→十二 vs 13）；实质性主张「零 Q_OBJECT」经验收者全文件 grep 证实为真（两新 TU 零 Qt include、零 Q_OBJECT），AUTOMOC 关闭决策不受影响，零行为影响",
       "owner": "ui 单元实施者（后续触碰该注释块时随手校准为实际 TU 数）",
-      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-274。"
+      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-274。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：ui/CMakeLists.txt AUTOMOC 复核注释改为不写死源文件计数（F-291 建议方案落地）——计数漂移面根除。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-276",
@@ -2941,11 +2976,12 @@
       "id": "F-278",
       "source": "traceability/acceptance/UI-T10-20260921.md §4.8（attempt 1，verdict=pass，2026-09-21；送验对象 afdfae98e14bc6b465d1de08fdf1fc69cbb96127，分支 wp10-t10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-21",
       "title": "ui/include/sdurws/ird/ui/UiPorts.hpp 文件尾换行符在 UI-T10 增量中丢失（diff 实证 \\ No newline at end of file——此前版本有尾换行）：POSIX 文本文件惯例破坏，跨工具链/编辑器后续触碰该文件时产生尾行噪声 diff",
       "owner": "ui 单元实施者（下次触碰 UiPorts.hpp 时恢复文件尾换行）",
-      "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-277。"
+      "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-277。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：UiPorts.hpp／UiSessionController.hpp 文件尾换行补齐（字节级核验尾字节 0x0A 在位），家族五例同源闭合。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-279",
@@ -2962,31 +2998,34 @@
       "id": "F-280",
       "source": "traceability/acceptance/UI-T11-20260921-r2.md §4.7/§4.8（attempt 2，verdict=pass，2026-09-21；送验对象 45baa315ab763cac0395768fd091c12e20fdfb6a，分支 wp10-t11）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-21",
       "title": "F-278 同族新例：UI-T11 新增公共头 ui/include/sdurws/ird/ui/UiSessionController.hpp 文件尾无换行符（验收者实测尾字节 0x50 'P'——#endif 注释行即文件末尾）；且 F-278 在案的 UiPorts.hpp 于本任务增量修改后尾换行仍未恢复（head 尾字节 0x50 与 base 同态）——同族两处在案未闭合，同族既有 UiTypes.hpp/UiProjections.hpp 尾换行正常",
       "owner": "ui 单元实施者（下次触碰两文件时一并恢复尾换行）",
-      "resolution": "UiSessionController.hpp 与 UiPorts.hpp 各一行尾换行修复（可随任一下次 ui 任务顺手完成并同步消账 F-278）；不阻塞 UI-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-279。"
+      "resolution": "UiSessionController.hpp 与 UiPorts.hpp 各一行尾换行修复（可随任一下次 ui 任务顺手完成并同步消账 F-278）；不阻塞 UI-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-279。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：UiPorts.hpp／UiSessionController.hpp 文件尾换行补齐（字节级核验尾字节 0x0A 在位），家族五例同源闭合。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-281",
       "source": "traceability/acceptance/UI-T12-20260921.md §4.7/§4.8（attempt 1，verdict=pass，2026-09-21；送验对象 417cfa5ab3200a28d5d6fdcb19e77c25fd1a7f23，分支 wp10-t12）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-21",
       "title": "F-278 复踩：UiPorts.hpp 于 UI-T12 增量修改（IUiDraftStorePort 首消费冻结增注）后文件尾换行仍未恢复（验收者实测 head 尾字节 0x50 'P'，与 F-278 登记时同态）——POSIX 文本文件惯例持续破坏，后续触碰产生尾行噪声 diff",
       "owner": "ui 单元实施者（下次触碰 UiPorts.hpp 时恢复尾换行）",
-      "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T12 合入（attempt 1 verdict=pass）。编号顺延自 F-280。"
+      "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T12 合入（attempt 1 verdict=pass）。编号顺延自 F-280。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：UiPorts.hpp／UiSessionController.hpp 文件尾换行补齐（字节级核验尾字节 0x0A 在位），家族五例同源闭合。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-282",
       "source": "traceability/acceptance/UI-T12-20260921.md §4.7/§4.8（attempt 1，verdict=pass，2026-09-21；送验对象 417cfa5ab3200a28d5d6fdcb19e77c25fd1a7f23，分支 wp10-t12）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-21",
       "title": "F-280 同族复踩：UiSessionController.hpp 于 UI-T12 增量修改（reportSessionDirty 生产者接线点）后文件尾换行仍未恢复（验收者实测 head 尾字节 0x50 'P'）——同族三处在案未闭合（F-278/F-280/F-282 同文件两处＋同族），本任务新增文件 IDraftController.hpp/DraftController.cpp 尾换行正常（0x0a 实证），同族既有 UiTypes.hpp/UiProjections.hpp 正常",
       "owner": "ui 单元实施者（下次触碰两文件时一并恢复尾换行并同步消账 F-278/F-280）",
-      "resolution": "UiSessionController.hpp 与 UiPorts.hpp 各一行尾换行修复（随任一下次 ui 任务顺手完成）；不阻塞 UI-T12 合入（attempt 1 verdict=pass）。编号顺延自 F-281。"
+      "resolution": "UiSessionController.hpp 与 UiPorts.hpp 各一行尾换行修复（随任一下次 ui 任务顺手完成）；不阻塞 UI-T12 合入（attempt 1 verdict=pass）。编号顺延自 F-281。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：UiPorts.hpp／UiSessionController.hpp 文件尾换行补齐（字节级核验尾字节 0x0A 在位），家族五例同源闭合。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-283",
@@ -3014,11 +3053,12 @@
       "id": "F-285",
       "source": "traceability/acceptance/UI-T13-20260922.md §4.8（attempt 1，verdict=pass，2026-09-22；送验对象 6b7ffbc33e9c5bc597d2d68b252548f386925212，分支 wp10-t13）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-22",
       "title": "F-278/F-280/F-281 家族复踩：UiPorts.hpp 于 UI-T13 增量修改（C-6/C-8/C-9 五端口首消费冻结增注）后文件尾换行仍未恢复（验收者实测 head 尾字节 0x50 'P'，与 F-278/F-280/F-281 登记时同态）——POSIX 文本文件惯例持续破坏，后续触碰产生尾行噪声 diff；本任务 6 个新增文件（三公共头＋三实现 TU）尾换行全部正常（0x0a 实证），既有同族 UiTypes.hpp/UiProjections.hpp 正常",
       "owner": "ui 单元实施者（增量触碰 UiPorts.hpp 时顺手补尾换行——diff 噪声一行且属 allowedFiles 内自愈）",
-      "resolution": "与 F-278 家族同口径：不单独返工、不阻塞 UI-T13 合入（attempt 1 verdict=pass）；随 F-278 家族一次性处置消账。编号顺延自 F-284。"
+      "resolution": "与 F-278 家族同口径：不单独返工、不阻塞 UI-T13 合入（attempt 1 verdict=pass）；随 F-278 家族一次性处置消账。编号顺延自 F-284。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：UiPorts.hpp／UiSessionController.hpp 文件尾换行补齐（字节级核验尾字节 0x0A 在位），家族五例同源闭合。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-286",
@@ -3076,11 +3116,12 @@
       "id": "F-291",
       "source": "traceability/acceptance/WP-10-T15-20260922.md §4.7（attempt 1，verdict=fail，2026-09-22）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-22",
       "title": "F-273 家族第 4 例：ui/CMakeLists.txt AUTOMOC 注释『十五个源文件』与 src/ 实际 19 个 TU 漂移（base 既有漂移，非本任务引入）",
       "owner": "ui 单元实施者（下一增量触碰 ui/CMakeLists.txt 时修正注释计数或改为不写死数字）",
-      "resolution": "注释准确性、非行为缺陷：随下次增量顺手处置。编号顺延自 F-290。"
+      "resolution": "注释准确性、非行为缺陷：随下次增量顺手处置。编号顺延自 F-290。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：ui/CMakeLists.txt AUTOMOC 复核注释改为不写死源文件计数（F-291 建议方案落地）——计数漂移面根除。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-292",
@@ -3360,11 +3401,12 @@
       "id": "F-317",
       "source": "traceability/acceptance/WP-13-T08-20260923.md §4.10（attempt 1，verdict=pass，2026-09-23；验收者对四件 gtest XML 与两件 ird-test-report.json 逐件核对用例数）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-23",
       "title": "traceability/builds/wp13-t08/ird-test-report.json 双模式留痕件不完整：ird-test-report-integration.json summary 仅 1/1（恰为 MdlReadiness.ResultGroupsStableOrderByLayerThenSubject 单条——过滤运行残留物，非全量 139 条）；ird-test-report-smoke.json 仅 5/5（恰为冒烟契约测试 BuildGraph 子集，缺 modeling_test 119 条报告）。同批 gtest XML 四件完整（139/119/9/5、failures=0）且与验收者独立复现逐位一致，故不构成粉饰或证据缺失，但与 AGENTS §4.2『ird-test-report.json』全量留痕口径不符（对照 T07 先例其 integration 件为 119/0 全量）",
       "owner": "实施者侧留痕管线（全量运行后从构建目录分别收取两 exe 的 ird-test-report.json 再入库，勿以过滤运行残留覆盖）",
-      "resolution": "可随返工窗口或下批 modeling 任务顺手以全量运行报告补正本目录两件；记忆点：报告文件按 exe 运行覆写，gtest XML 才是全量权威载体。编号顺延自 F-316。"
+      "resolution": "可随返工窗口或下批 modeling 任务顺手以全量运行报告补正本目录两件；记忆点：报告文件按 exe 运行覆写，gtest XML 才是全量权威载体。编号顺延自 F-316。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-321",
@@ -3471,11 +3513,12 @@
       "id": "F-335",
       "source": "traceability/acceptance/UI-T18-20260924-r2.md §4.8（attempt 2，verdict=pass，2026-09-24；验收者对 acc/UI-T18/1 登记册与送验头返工提交的交叉核对）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-24",
       "title": "F-331~F-334 的返工消账未回写 findings.json 状态翻转：4 条在本分支（acc/UI-T18/1）登记册中仍全部 status=open，而任务分支 wp10-t18 的 findings.json（继承自 redesign-main）不含该 4 条（编号止于 F-330）——结构上实施提交无法翻转状态；产物面已由 r2 验收核实闭环（F-331 越界 XML 已删 @840375b3、F-332 §16.7 口径已修正 @f00fb104、F-333 三文件头已对齐 @f6d1a235、F-334 死包含已删 @f6d1a235）",
       "owner": "流水线收尾会话（按 ACC/PIPE 收尾合并 findings.json 时执行状态翻转）",
-      "resolution": "收尾按 SHA 合并 evidence 分支与任务分支时，findings.json 并集须把 F-331/F-332/F-333/F-334 置 fixed（依据 UI-T18-20260924-r2.md §4.8 逐项核实结论）；登记册属 traceability/**，翻转不涉 allowedFiles 扩大。编号顺延自 F-334。"
+      "resolution": "收尾按 SHA 合并 evidence 分支与任务分支时，findings.json 并集须把 F-331/F-332/F-333/F-334 置 fixed（依据 UI-T18-20260924-r2.md §4.8 逐项核实结论）；登记册属 traceability/**，翻转不涉 allowedFiles 扩大。编号顺延自 F-334。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：F-331~F-334 四条从未合入主线台账（主线 findings.json 无此四条，acc/UI-T18 登记册系任务分支面），翻转对象不存在；修复本体已随 UI-T18 attempt 2 合入（acc/UI-T18-20260924-r2 verdict=pass）——主线账面无悬挂，关闭。"
     },
     {
       "id": "F-336",
@@ -3847,21 +3890,23 @@
       "id": "F-369",
       "source": "traceability/acceptance/WP-14-T06-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "F-123/F-133 家族在 units/requirements.md 再现（卡头『文档版本』行与 §14.6 末行失同步，方向少报）：WP-14-T06 送验提交已向 §14.6 追加 v0.6（2026-09-26）落位登记行且内容完整准确，但卡头『文档版本』行停留 v0.5（2026-09-26，WP-14-T05 落位登记）——T05 验收曾核『卡头 v0.5 与 §14.6 末行同步（F-133 家族无再现）』，本任务触及该文件时未顺手推进卡头行；validate-docs 不校验该维度，机检未红",
       "owner": "requirements 文档所有者（随下次触及 units/requirements.md 的任务把卡头『文档版本』行推进至 v0.6，与 §14.6 末行一致；与 F-133 处置建议②『显式指定收口载体』合并评估机检维度）",
-      "resolution": "编号顺延自 F-368。"
+      "resolution": "编号顺延自 F-368。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/requirements.md 卡头『日期』行随 v0.20 版本行补现行段（本批治理提交）；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-370",
       "source": "traceability/acceptance/WP-14-T06-20260926.md §4.9（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-26",
       "title": "F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343/F-360 散文计数家族新例（一次一例）：WP-14-T06 提交 54bdceeb 正文与留痕 traceability/builds/wp14-t06/README.md 均称 test/OrientationResolutionTest.cpp『5 用例』——验收者实测该文件 6 个 TEST 宏、送验 gtest XML 套件 ReqOrientationResolution tests=\"6\"、ird-test-report-requirements.json 同套件 6 条明细；且 README 自身算术不自洽（5+8+1=14≠123−108=15）。方向为少报、总数 123/123 与全部核心验证结论经验收者独立复现准确，不构成粉饰",
       "owner": "WP-14-T06 实施面（记录性更正即可，不阻塞合入；不追溯改写已推送提交——AGENTS §6.3）；家族根治同 F-041 处置建议",
-      "resolution": "编号顺延自 F-369。"
+      "resolution": "编号顺延自 F-369。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-371",
@@ -3901,11 +3946,12 @@
       "id": "F-374",
       "source": "traceability/acceptance/WP-14-T07-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "F-123/F-133/F-369 同族邻位残留：units/requirements.md 卡头「文档版本」行已随 WP-14-T07 推进 v0.7（F-369 所指缺陷实测已消除）并显式注明补正，但同表头「日期」行（行 8）仍为「2026-09-26（v0.5）；2026-09-22（v0.1）」——日期值 2026-09-26 对 v0.7 仍准确（同日），仅版本括注停留 v0.5 未随 v0.6/v0.7 推进；纯标注滞后、validate-docs 不校验该维度，机检未红",
       "owner": "requirements 文档所有者（随下次触及 units/requirements.md 的任务把「日期」行括注推进至当前版本；与 F-369 一并收口后本族即清零）",
-      "resolution": "编号顺延自 F-373。"
+      "resolution": "编号顺延自 F-373。【2026-10-18 B7 长尾分诊批翻 fixed】家族底案本批修复：units/requirements.md 卡头『日期』行随 v0.20 版本行补现行段（本批治理提交）；后续由卡头版本行纪律承载。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-375",
@@ -3923,11 +3969,12 @@
       "id": "F-376",
       "source": "traceability/acceptance/WP-14-T08-20260926.md §4.9/§4.8（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-26",
       "title": "F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343/F-354/F-360/F-370 散文计数家族新例：WP-14-T08 两个送验提交正文、留痕 traceability/builds/wp14-t08/verification-summary.md §2 表、v22-gui-flow-registration.md（两处）与 units/requirements.md §14.6 v0.8 行均称 test/PluginPanelTest.cpp 为『14 用例』——实测（实现提交 42cce92a 版本即如此；验收者全新集成/冒烟两构建树 gtest XML tests=\"20\" failures=\"0\"＋ird-test-report-unit.json PluginPanel 20 条三者一致）为 20 用例；机器产物全部如实且散文为少报方向（14<20，无粉饰），纯起草期计数未随用例扩充更新。unit 卡 v0.8 行的散文在后续触及该卡时以机器产物为准修正",
       "owner": "requirements 文档所有者（units/requirements.md §14.6 v0.8 行散文修正归下次触及该卡的任务；留痕与提交正文已成历史不改——本条登记即为留证）",
-      "resolution": "编号顺延自 F-375。"
+      "resolution": "编号顺延自 F-375。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-377",
@@ -3944,11 +3991,12 @@
       "id": "F-378",
       "source": "traceability/acceptance/WP-14-T09-20260926.md 门禁专段（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-26",
       "title": "F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343/F-354/F-360/F-370/F-376 散文计数家族近邻：traceability/builds/wp14-t09/ird_gates_base_head_comparison.md 直方图计数（LIB 5/R1 3/R3 20/R4 1/SUB 33/T1 2，合计 64）与同目录归一化附件 ird_gates_head_hits_normalized.txt 行数（144 行/唯一 143）口径不一致且未注明口径（前者为唯一命中处数、后者为引擎原始输出行含汇总行）。零增量结论本身经验收者独立直跑证实成立（命中行口径 base 135=head 135 逐行全等；分布 LIB 10/R1 7/R3 41/R4 3/R5 1/SUB 67/T1 5/T2 1 两侧一致），无方向性粉饰，纯口径未自洽。",
       "owner": "requirements 实施会话（后续任务触及门禁留痕时在 comparison 文档注明计数口径；已成历史附件不改——本条登记即为留证）",
-      "resolution": "编号顺延自 F-377。"
+      "resolution": "编号顺延自 F-377。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-379",
@@ -4212,11 +4260,12 @@
       "id": "F-403",
       "source": "traceability/acceptance/WP-15-T09-20260927.md §4.2/§4.8（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-27",
       "title": "units/kinematics.md §14.6 v0.9 行『冒烟仅 CommandsTest.cpp 两处 C4834 既有警告——T08 遗留非本任务引入』的『仅』字限定与自身留痕 run-smoke-build.log 的 22 处 C4834 不符（验收者全新冒烟树全量构建同值实测 22 处：kinematics 单元 2 处 CommandsTest.cpp:590,5/611,5 属实〔T08 遗留〕，另 20 处在 execution 单元既有测试 RunRegistryAdmissionTest.cpp:1236,26/1258,26、ArchiveFaultContractTest.cpp:718,26 等；零 error 结论与『非本任务引入』归属判断均不受影响）——按全量冒烟构建口径应写『kinematics 单元 2 处＋execution 单元 20 处既有』，属措辞精度建议。",
       "owner": "kinematics 实施会话（下次修订 units/kinematics.md §14.6 相关行时顺手修正措辞；可与 F-384/F-387/F-390/F-394 家族『触及即兑现』纪律合并执行）",
-      "resolution": "编号顺延自 F-402。"
+      "resolution": "编号顺延自 F-402。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-404",
@@ -4266,11 +4315,12 @@
       "id": "F-408",
       "source": "traceability/acceptance/WP-15-T11-20260927.md 三/建议级（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-27",
       "title": "units/kinematics.md 卡头版本行 v0.11/v0.10 登记日期为 2026-09-24、T11 比对附件（traceability/builds/wp15-t11/ird-gates-base-head-compare.md）日期同为 2026-09-24，而两送验提交（f8d27b24/34950b7b）作者日期为 2026-09-27 10:12；同卡 v0.9/v0.8 行却登记 2026-09-27——同版本行内日期倒挂（v0.10/v0.11 早于 v0.9/v0.8），追溯时序困惑（F-342/F-346 登记精度家族的日期面变体；不影响任何交付语义与验证结论，验收者按 git 作者日期对账核实）。",
       "owner": "kinematics 实施会话（下次触及卡头时顺手修正 v0.10/v0.11 行与 T11 附件日期 09-24→09-27，或登记偏差依据）；治理收尾会话（簿记核对）",
-      "resolution": "编号顺延自 F-407。"
+      "resolution": "编号顺延自 F-407。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-409",
@@ -4486,11 +4536,12 @@
       "id": "F-429",
       "source": "UI-T20 验收段冷启复现（acc/UI-T20/1，2026-09-28；实例证据：验收 detached worktree build/ird-t20-acc-wt @3bbe8314 的全新集成树 configure 连败——①不带 toolchain 时 Could NOT find Boost（filesystem/system/thread/program_options/date_time）；②对已配缓存补传 CMAKE_TOOLCHAIN_FILE 被拒（toolchain 只认首配）；③RobWorkStudio configure_file 缺 bin/RobWorkStudio.ini.template.static 即错终止——该件为主树未跟踪环境件（git ls-files 零追踪），被 .gitignore 第 79 行 [Bb]in/ 规则吞掉，worktree 检出天然缺失）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-28",
       "title": "验收/冷启 detached worktree 的全新集成树配置前置在 F-007 口径（vcpkg toolchain＋Qt prefix）之外还有第三件：RobWorkStudio/bin/RobWorkStudio.ini.template.static——未跟踪＋被 ignore 的 configure 模板件，worktree 检出必缺、缺件即 configure_file 报错终止；主树工作区因手工持有该件而掩盖缺口（F-007/F-323 均未覆盖此件）。",
       "owner": "治理/构建约定侧（acceptance-protocol §3 冷启复现清单或 DTB §5.1 增补该模板件的补拷步骤）",
-      "resolution": "建议二选一：①acceptance-protocol §3 冷启复现清单固化『从主树补拷 RobWorkStudio.ini.template.static』步骤（与 F-007 的 toolchain/Qt 前置并列登记）；②评估将该模板件转 git 跟踪（注意其为框架 bin 产物——SA-02 评估归治理侧，倾向清单方案）。"
+      "resolution": "建议二选一：①acceptance-protocol §3 冷启复现清单固化『从主树补拷 RobWorkStudio.ini.template.static』步骤（与 F-007 的 toolchain/Qt 前置并列登记）；②评估将该模板件转 git 跟踪（注意其为框架 bin 产物——SA-02 评估归治理侧，倾向清单方案）。【2026-10-18 B7 长尾分诊批翻 fixed】AGENTS §4.1 现行文本已登记对应前置口径（F-907 vcpkg toolchain／F-455 Qt 前缀／F-927 ini 模板件＋fresh 树运行时前置），本批对照核实吸收落位。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-430",
@@ -4506,11 +4557,12 @@
       "id": "F-431",
       "source": "UI-T22 验收段（acc/UI-T22/1，2026-09-28；证据：ui/CMakeLists.txt AUTOMOC 复核注释块『十五个源文件与私有头零 Q_OBJECT 声明』vs add_library 实际 26 个产品 TU——本任务新增 PropertyInspector.cpp 后 25→26；此前 UI-T19/T20/T21 增列亦未校准）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-28",
       "title": "F-273/F-275/F-277 家族第四次沿袭（同一注释行计数未校准）：ui/CMakeLists.txt AUTOMOC 复核注释行写「十五个源文件与私有头零 Q_OBJECT 声明」，而 add_library 实际 26 个产品 TU；实质性主张「零 Q_OBJECT」经验收者全文件 grep 证实为真（本任务新增 PropertyInspector.cpp 零 Q_OBJECT、零信号槽声明——Qt 交互全经虚函数与 lambda 接线），AUTOMOC 关闭决策不受影响，零行为影响。",
       "owner": "ui（随下一 ui 触碰窗口顺带——F-275 既定 resolution 口径）",
-      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T22 合入（attempt 1 verdict=pass）。编号顺延自 F-430。"
+      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T22 合入（attempt 1 verdict=pass）。编号顺延自 F-430。【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：ui/CMakeLists.txt AUTOMOC 复核注释改为不写死源文件计数（F-291 建议方案落地）——计数漂移面根除。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-432",
@@ -5122,21 +5174,23 @@
       "id": "F-491",
       "source": "UI-T33 实施段（2026-10-04——落分支事故，验收 attempt 1 复核证实零外泄）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-04",
       "title": "实施段落分支事故留痕：git checkout -b ui-t33 因分支已存在（第一批遗留）而失败，实现误落本地 redesign-main 工作树——推送前发现并纠正（提交移至 ui-t33＋主线重置回远程头），origin/redesign-main 全程零污染（验收段漂移检测复核证实 origin 停在 62f21852）。教训：建分支失败（分支已存在等）须立即停手核查工作树状态，不得继续编辑。",
       "owner": "已纠正（零外泄）——本条为教训永久留痕，随记录闭合无需后续动作",
-      "resolution": "验收记录过程声明与 4.1 载明（acc/UI-T33/1）。"
+      "resolution": "验收记录过程声明与 4.1 载明（acc/UI-T33/1）。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：owner/登记自述零后续行动义务（教训永久留痕、已随对应批次消账、登记即处置），按『说明性留档』关闭；原文与依据保留可回溯。"
     },
     {
       "id": "F-492",
       "source": "UI-T52 验收 attempt 1 fail→attempt 2 pass（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-04",
       "title": "契约起草教训留痕（UI-T52 attempt 1 fail B-1 的根因）：acceptance 证据面措辞与可自动化断言层错位——「投影闭包 gui 替身断言」中的投影闭包（UiPlugin lambda）依赖 studio 现取，gui 替身不可达，致该条证据在 attempt 1 无落位面（转换层门面转发零断言）。起草纪律＝acceptance 证据措辞须与可自动化断言层对齐（投影类字段的可断言层＝门面转发用例与网关替身透传断言——本卡返工即按此对齐）。",
       "owner": "已随 attempt 2 对齐（门面转发用例补齐＋acceptance 2 措辞修正载明）——本条为起草纪律教训永久留痕",
-      "resolution": "验收记录 attempt 2 载明（acc/UI-T52/2）。"
+      "resolution": "验收记录 attempt 2 载明（acc/UI-T52/2）。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：owner/登记自述零后续行动义务（教训永久留痕、已随对应批次消账、登记即处置），按『说明性留档』关闭；原文与依据保留可回溯。"
     },
     {
       "id": "F-493",
@@ -5269,10 +5323,11 @@
       "id": "F-506",
       "source": "acc/ui-t53/1@bb0cc913 验收记录 S-4（UI-T53 独立子会话对抗式验收 2026-10-04）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-04",
       "title": "UI-T53 第二提交（任务卡补 acceptance）正文中 requirements 测试行数字错置（test 写 42 实测 201 含 1skip、gui 写 16 实测 42——两数字互错位）；方向一致无失败掩盖、非粉饰（验收 4.9 判定 pass 附本条）。教训：提交正文的套件数字应在发送前对照当次运行输出逐一复核。",
-      "owner": "已随本条登记（错置随已推送提交不可改写——协议 §6.3 禁改写已推送历史；教训条目即处置）"
+      "owner": "已随本条登记（错置随已推送提交不可改写——协议 §6.3 禁改写已推送历史；教训条目即处置）",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：owner/登记自述零后续行动义务（教训永久留痕、已随对应批次消账、登记即处置），按『说明性留档』关闭；原文与依据保留可回溯。"
     },
     {
       "id": "F-507",
@@ -5289,10 +5344,11 @@
       "id": "F-508",
       "source": "acc/ui-t53/1@bb0cc913 验收记录 S-6（UI-T53 独立子会话对抗式验收 2026-10-04）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-04",
       "title": "UI-T53 实施留痕 gtest XML 落盘覆盖面窄于先例（仅 modeling_test/gui 两套件——T48 先例为受影响套件全量落盘；首次落盘时 --gtest_output 相对路径误写致 XML 缺失，补跑仅覆盖两套件）；验收复现已补齐该面。后续任务留痕：受影响套件 XML 全量落盘为留痕完成判据。",
-      "owner": "验收侧已补（acc/ui-t53/1 记录）；本条登记留痕口径教训"
+      "owner": "验收侧已补（acc/ui-t53/1 记录）；本条登记留痕口径教训",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：owner/登记自述零后续行动义务（教训永久留痕、已随对应批次消账、登记即处置），按『说明性留档』关闭；原文与依据保留可回溯。"
     },
     {
       "id": "F-509",
@@ -5308,10 +5364,11 @@
       "id": "F-510",
       "source": "acc/ui-t54/1@d0914bbb 验收记录 S-1（UI-T54 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-05",
       "title": "F-502 折叠用例适配的归属登记口径：isVisibleTo→isHidden 适配代码实为 UI-T53 栈合入（b01e9b0b 并入时）带入 base@5a2245d9，UI-T54 契约 outputs/DTB 行的\"随批落位\"表述指文档登记面落位而非代码首改——验收核实语义正确无缺陷。教训：合并适配类改动的登记应区分\"代码并入批次\"与\"登记落位批次\"。",
-      "owner": "已随本条登记（UI-T54 已合入不追改；后续合并适配类登记沿用本口径）"
+      "owner": "已随本条登记（UI-T54 已合入不追改；后续合并适配类登记沿用本口径）",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：owner/登记自述零后续行动义务（教训永久留痕、已随对应批次消账、登记即处置），按『说明性留档』关闭；原文与依据保留可回溯。"
     },
     {
       "id": "F-511",
@@ -5344,11 +5401,12 @@
       "id": "F-514",
       "source": "acc/ui-t56/1@b3da53be 验收记录 S1（UI-T56 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "modeling.md v0.34 版本行悬挂列（表行缺列致表格渲染断裂——本批新引入；ui.md 侧 v1.67 同型系沿袭既有悬挂）——已随 UI-T56 合入段治理提交修正并复核全文件表格行列数。后续文档编辑：版本行/表行新增后须渲染复核。",
       "owner": "已随 UI-T56 合入段治理提交修正",
-      "resolution": "UI-T56 合入段随批修正（2026-10-05）。"
+      "resolution": "UI-T56 合入段随批修正（2026-10-05）。【2026-10-18 B7 长尾分诊批翻 fixed】修正已随 UI-T56 合入段治理提交落地（2026-10-05），本批复核 modeling.md 版本行表格在位——账面漏翻收口。",
+      "fixedAt": "2026-10-05"
     },
     {
       "id": "F-515",
@@ -5426,10 +5484,11 @@
       "id": "F-523",
       "source": "acc/ui-t63/1@8276c02c 验收记录建议级两条（UI-T63 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-05",
       "title": "UI-T63 验收建议合集：①custom-chain 声明表单仅逐格有限性校验——限位有序（lower<upper）/轴线非零等语义错误提交后才由域拒绝面兜底（行为正确：fresh 丢弃会话不变），建议后续批次加表单侧即时录入辅助校验（缺列定位于域 detail 转译）；②CustomChainJointSpec 十二裸 double 平铺＋手写 ==，与域侧聚合风格（SixAxisJointSpec/JointOriginEditValue）不一致——批次 B 如扩列建议引入子聚合",
-      "owner": "①已随 UI-T66 消账（2026-10-06）：customChainRowSemanticCheck 录入辅助面落位（I-MDL-4 限位有序＋I-MDL-6 轴非零——声明表单 accepted 前置逐行校验定位到行；域拒绝面兜底语义不变；modeling_test 表驱动用例）——domain detail 列转译以表单自带文案承载（同口径语义），登记为等价兑现；②维持 open——批次 B（所有者裁决放开红线后）随扩列重构"
+      "owner": "①已随 UI-T66 消账（2026-10-06）：customChainRowSemanticCheck 录入辅助面落位（I-MDL-4 限位有序＋I-MDL-6 轴非零——声明表单 accepted 前置逐行校验定位到行；域拒绝面兜底语义不变；modeling_test 表驱动用例）——domain detail 列转译以表单自带文案承载（同口径语义），登记为等价兑现；②维持 open——批次 B（所有者裁决放开红线后）随扩列重构",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：①已随 UI-T66 消账（customChainRowSemanticCheck 录入辅助面落位，2026-10-06）；②CustomChainJointSpec 聚合重构建议拆出 F-940 独立追踪（批次 B 扩列触发）——主体消账＋余项拆批，关闭。"
     },
     {
       "id": "F-524",
@@ -8359,10 +8418,11 @@
       "id": "F-826",
       "source": "traceability/acceptance/rpt-t16-20261012.md#G-1（在案于 origin/acc/rpt-t16/1 分支 governance 提交 f847bcf4；2026-10-12 收官治理批转登）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-12",
       "title": "RPT-T16 三处代码注释引用「单元卡 §14.4 v0.20 登记」实为 v0.19 版本号错位：reporting Roundtrip.hpp:43、Roundtrip.cpp:19、reporting/CMakeLists.txt:151（单元卡全文档无 v0.20 行、文档头版本行亦为 v0.19；登记内容本身在 §14.4 v0.19 行真实在案——比对面/不可达三态两项裁定，不构成注释缺失必填项）",
-      "resolution": "留待 reporting 后续批次顺手更正（v0.20 引用改为 v0.19），不改已推送历史"
+      "resolution": "留待 reporting 后续批次顺手更正（v0.20 引用改为 v0.19），不改已推送历史【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：Roundtrip.hpp／Roundtrip.cpp／reporting CMakeLists 三处注释引用 §14.4 版本号 v0.20 勘正为 v0.19（RPT-T16 实际落位行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-827",
@@ -8436,19 +8496,23 @@
       "id": "F-834",
       "source": "traceability/acceptance/WP-15-T14-20261013.md §9/§13（acc/WP-15-T14/1，验收日期 2026-10-13，verdict=pass；记录提交 5f3ad834）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "WP-15-T14 验收建议级：units/kinematics.md 卡头\"日期\"行停留 2026-10-12（v0.16），版本行已 v0.20（2026-10-13）——v0.17~v0.20 四跳未落日期行，与 F-122/F-133/F-134/F-140 家族（版本半边落地、日期半边连续跳）同型，kinematics 卡新例；纯文档内部不一致，validate-docs 不校验该维度",
-      "owner": "kinematics 卡所有者（后续触及该卡的批次顺手补齐）＋validate-docs 家族校验维度诉求沿 open"
+      "owner": "kinematics 卡所有者（后续触及该卡的批次顺手补齐）＋validate-docs 家族校验维度诉求沿 open",
+      "resolution": "【2026-10-18 B7 长尾分诊批翻 fixed】卡头『日期』行随 v0.34 版本行补现行段（v0.17 起各跳一并落，本批治理提交）；validate-docs 卡头日期行机检维度诉求拆 F-941 独立追踪。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-835",
       "source": "traceability/acceptance/wp-16-t07-20261011.md §14 第 1 条（记录内预占编号 F-717——该号已被 wp-16-t11 批占用，落账重编为 F-835；验收日期 2026-10-11，verdict=pass；记录提交 8a6ce828）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "WP-16-T07 验收建议级：units/trajectory.md §17.1 测试文件名登记失准——登记写 test/SmoothRecheckTest.cpp（20 用例），实际落位为 test/SmoothTest.cpp（10）＋test/RecheckTest.cpp（10）两文件（SmoothRecheckTest 是 gtest 套件名非文件名）；用例数 20 正确、追溯链不断；契约测试文件头注 RecheckContractTest.cpp:7 同句亦然；建议下批改两文件实名",
-      "owner": "trajectory 单元卡所有者（随下次卡增量修订更正）"
+      "owner": "trajectory 单元卡所有者（随下次卡增量修订更正）",
+      "resolution": "【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：units/trajectory.md §17.1 测试文件名 SmoothRecheckTest.cpp 勘正为 SmoothTest.cpp（实际落位名）＋卡头 v0.19 版本行登记。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-836",
@@ -8490,38 +8554,43 @@
       "id": "F-840",
       "source": "traceability/acceptance/wp-18-t05-20261011.md 问题清单第 3 条（验收日期 2026-10-11，verdict=pass；记录提交 3fea94f2）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "WP-18-T05 验收建议级：主仓库 traceability/builds/ui-t74/smoke-tour/ 下冒烟导览三件在途残留（与本任务链无关的工作树残留，建议流水线收尾环节统一处置）——登记时已消账：治理批 2026-10-12 提交 dcdb9958 将三件补录入库（本工作树 ls 亲验九件在位），与 F-718 resolution 同一事实",
       "owner": "已消账（流水线编排者责任面已兑现）",
-      "resolution": "本条按转登批口径以 open 登记（翻牌统一归翻牌批核证执行）；消账事实：治理批 2026-10-12 [governance] ui-t74 冒烟留痕补录提交 dcdb9958 将三件补录入库（2026-10-16 落账批亲验：git show dcdb9958 三件在案＋traceability/builds/ui-t74/smoke-tour/ 九件在位），F-717/F-718 先例同型（登记即销案）。"
+      "resolution": "本条按转登批口径以 open 登记（翻牌统一归翻牌批核证执行）；消账事实：治理批 2026-10-12 [governance] ui-t74 冒烟留痕补录提交 dcdb9958 将三件补录入库（2026-10-16 落账批亲验：git show dcdb9958 三件在案＋traceability/builds/ui-t74/smoke-tour/ 九件在位），F-717/F-718 先例同型（登记即销案）。【2026-10-18 B7 长尾分诊批翻 fixed】消账事实复核成立（dcdb9958 三件入库、smoke-tour 九件在位）——翻牌归批执行如 resolution 所述，本批即翻牌批。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-841",
       "source": "traceability/acceptance/wp-19-t12-20261011.md 建议级第 1 条（记录内预占编号 F-717——该号已被 wp-16-t11 批占用，落账重编为 F-841；验收日期 2026-10-11，verdict=pass；记录提交 325eca33）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "WP-19-T12 验收建议级：SelLinearDriveContract 用例数登记文案\"5 用例\"与实际 TEST 数 6 不一致——execution-log.md §3、单元卡 §1.2/§19.5/§21、commit 正文均写 5；实际 contract_test/LinearDriveContractTest.cpp 含 6 个 TEST（T12TokenVocabularyAndDiagCodes 与 LinearDriveKindVocabularyClosed 为两个独立 TEST），XML 实数 64＝基线 58＋6（留痕 XML 准确，仅文字叙述少计 1）；处置：登记文案随下次单元卡/留痕修订更正为 6",
-      "owner": "selection 单元卡/留痕所有者（随下次修订更正数字）"
+      "owner": "selection 单元卡/留痕所有者（随下次修订更正数字）",
+      "resolution": "【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：units/selection.md §1.2/§19.5/§21 三处 SelLinearDriveContract 用例数 5 实测更正为 6（LinearDriveContractTest.cpp 6 个 TEST）＋卡头 v1.7 版本行登记；execution-log 与提交正文为已冻结留痕不回写。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-842",
       "source": "traceability/acceptance/wp-19-t12-20261011.md 建议级第 2 条（记录内预占编号 F-718——已被占用，落账重编为 F-842；验收日期 2026-10-11，verdict=pass；记录提交 325eca33）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-16",
       "title": "WP-19-T12 验收建议级：_test 运行数登记\"282 运行＝281 通过＋1 SKIP\"与 gtest 实际输出/留痕 XML（tests=283＝282 passed＋1 skipped）差 1——execution-log §1/§3 与单元卡 §21 两处；单元卡 §21 同行\"T11 既有 277＋新增 6\"（＝283）自洽面反证 282/281 为笔误；验收者复现 283/282/1 与 XML 一致；处置：随下次留痕修订更正数字",
-      "owner": "selection 留痕所有者（随下次修订更正数字）"
+      "owner": "selection 留痕所有者（随下次修订更正数字）",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-843",
       "source": "traceability/acceptance/asm-panel-20261010.md §9 S-1（验收日期 2026-10-10，verdict=pass；记录提交 c9fc453a）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-16",
       "title": "asm-panel 验收建议级：execution-log §4 表与 commit 信息的 skip 口径\"dynamics/selection/optimization_test 各 3\"与 gtest XML 权威数据（各 1、三域合计 3）不符——用例总数/失败数全部一致（tests=105/277/164，failures=0），测试结论不受影响，属留痕数字口径不精确",
-      "owner": "asm-panel 留痕所有者（随下次留痕修订更正口径）"
+      "owner": "asm-panel 留痕所有者（随下次留痕修订更正口径）",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-844",
@@ -8554,11 +8623,12 @@
       "id": "F-847",
       "source": "traceability/acceptance/rul-tok-20261010.md §十一 S-2（验收日期 2026-10-10，verdict=pass；记录提交 127e0b49）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-16",
       "title": "rul-tok 验收建议级（备忘类，零行动义务）：SelCatalogPanelWidget.cpp 回填按钮标题键由编译期字面改为运行期拼接（\"cmd.\"＋kSelBackfillUiCommandId＋\".title\"）——行为等价（两键均无 UiText 注册、同键名回退），与键族派生单一书写点纪律一致；提示后续装配 selection 文案键（cmd.selection.apply-device-backfill.title）时以该派生式为准，勿再引入第三书写点",
       "owner": "selection 文案装配批次（消费时遵守派生式口径；无独立行动义务）",
-      "resolution": "登记观察（记录原文\"零行动义务，留档即可\"）"
+      "resolution": "登记观察（记录原文\"零行动义务，留档即可\"）",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：owner/登记自述零后续行动义务（教训永久留痕、已随对应批次消账、登记即处置），按『说明性留档』关闭；原文与依据保留可回溯。"
     },
     {
       "id": "F-848",
@@ -8627,10 +8697,12 @@
       "id": "F-855",
       "source": "traceability/acceptance/WP-23-T01-20261013.md §4 S-1（验收日期 2026-10-13，verdict=pass；记录提交 25abce74）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "WP-23-T01 验收建议级 S-1：scripts/industrialrobot/validate-task.ps1:75-76 ready 必备字段空判使用 @($t.$k).Count -eq 0，字段完全缺失时 @($null).Count==1 逃逸检查（失败注入实验亲证）；同脚本 :113 knownPitfalls 检查已做滤空修正（Where-Object null -ne）而 :76 未做——同文件内防御不一致；修法：:76 前置滤空后判空，或改 PSObject.Properties 存在性判断；本任务产物不受影响（字段实际在档）",
-      "owner": "治理脚本所有者（WP-01 侧，随脚本维护批修复）"
+      "owner": "治理脚本所有者（WP-01 侧，随脚本维护批修复）",
+      "resolution": "【2026-10-18 B7 长尾分诊批翻 fixed】本批修复：validate-task.ps1 ready 必备字段判空先显式判字段在位再查空值（缺字段 ready 契约实测被拒——探针命中 empty or missing field；存量 done 契约抽样 5/5 回归 PASS）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-856",
@@ -8831,11 +8903,12 @@
       "id": "F-877",
       "source": "traceability/acceptance/WP-13-T19-20261014.md §三 发现清单 G-2（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 f60f66c9）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-16",
       "title": "WP-13-T19 验收建议级 G-2：gtest XML/构建日志未随分支入库 traceability/（T06/T17/T18 先例均入库）——本工作流红线口径的留痕位＝build/<名>-wt/_m6-evidence/（任务指令明文，合规），落库动作归合入收尾批与本记录同批执行",
       "owner": "合入收尾员（落库动作）",
-      "resolution": "收尾批已闭合（记录 §五收尾段亲证）：实施侧三份 gtest XML 落库 traceability/gtest-reports/wp13-t19/（modeling_test 311／modeling_gui_test 37〔内含 1 SKIP 既有环境机制〕／modeling_contract_test 8，落库前逐份亲验计数与 4.2 实测一致），构建日志以 build/wp13-t19-wt/_m6-evidence/ 路径引用在案——翻牌归后续翻牌批核证执行。"
+      "resolution": "收尾批已闭合（记录 §五收尾段亲证）：实施侧三份 gtest XML 落库 traceability/gtest-reports/wp13-t19/（modeling_test 311／modeling_gui_test 37〔内含 1 SKIP 既有环境机制〕／modeling_contract_test 8，落库前逐份亲验计数与 4.2 实测一致），构建日志以 build/wp13-t19-wt/_m6-evidence/ 路径引用在案——翻牌归后续翻牌批核证执行。【2026-10-18 B7 长尾分诊批翻 fixed】落库动作本批执行：build/wp13-t19-wt/_m6-evidence 七件（README-manifest/build-log/ctest-3of3/三 gtest XML/validate 双验）拷入 traceability/builds/wp13-t19/ 入库。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-878",
@@ -8850,10 +8923,11 @@
       "id": "F-879",
       "source": "traceability/acceptance/WP-21-T07-20261014.md §发现问题清单 G-2（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 15a0f7ab）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-16",
       "title": "WP-21-T07 验收建议级 G-2：be6fe622 提交信息称『PauseResumeProtocol 五用例』，实测 6 用例（CancelWinsOverPendingPause_WP21T07 未计入）——少计非虚报，实现面只多不少，不构成粉饰",
-      "owner": "提交者（已推送提交不追溯改写，留档备查）"
+      "owner": "提交者（已推送提交不追溯改写，留档备查）",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：所指提交/留痕/卡面历史行已推送或冻结（AGENTS §6.3 禁改写已推送历史＋traceability 只增不改），无法回写；处置纪律由现行机制承载（提交前实测自查＋commit-lint 通道、留痕统一 UTF-8 直写口径〔B7 第五批〕），按『历史不可回写』关闭。"
     },
     {
       "id": "F-880",
@@ -8888,11 +8962,12 @@
       "id": "F-883",
       "source": "traceability/acceptance/WP-23-T06-20261014.md §发现问题清单 G-3（随记录转登，验收日期 2026-10-14，verdict=PASS；记录提交 6e424a32）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-16",
       "title": "WP-23-T06 验收建议级 G-3（留痕一致性）：11e0cc69 提交信息正文的『gitCommit=59b3abdb 锚／max 0.000187』系修正前历史态（已被 409fce3e 批以 11e0cc69 锚复跑覆盖，报告 §6.2 如实登记）——提交历史不可改写（PA-2），无需处置，登记供回溯者免混淆",
       "owner": "无独立行动义务（留档观察）",
-      "resolution": "登记观察（记录原文：PA-2 不可改写，维持不处置）。"
+      "resolution": "登记观察（记录原文：PA-2 不可改写，维持不处置）。",
+      "closureReason": "B7 长尾分诊批（2026-10-18）：owner/登记自述零后续行动义务（教训永久留痕、已随对应批次消账、登记即处置），按『说明性留档』关闭；原文与依据保留可回溯。"
     },
     {
       "id": "F-884",
@@ -9467,6 +9542,24 @@
       "registeredAt": "2026-10-18",
       "title": "UiText 休眠未登记键簇（第二文案源债）：ui.session.readonly.banner 等裸中文字面量未入 UiText 词表——与 resolveText 唯一出口纪律并行存在第二文案源；当前休眠（无消费路径触发），一旦启用即绕过键表对账（F-564 审计的 120 登记键 vs 全库调用面对账不覆盖此簇）",
       "owner": "文案解析统一批次（随下次 UiText/文案面触碰批次搭车治理：键入表或删除死字面量二选一；与 F-564 主修复解耦）"
+    },
+    {
+      "id": "F-940",
+      "source": "F-523 ② 拆批（2026-10-18 B7 长尾分诊批——①已随 UI-T66 消账后余项独立追踪）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "CustomChainJointSpec 十二裸 double 平铺＋手写 == 与域侧聚合风格（SixAxisJointSpec/JointOriginEditValue）不一致——批次 B（所有者裁决放开红线后）扩列重构时引入子聚合消除平铺面",
+      "owner": "批次 B 触发式（custom-chain 扩列重构时随批处理；未扩列前维持现状零行为面）"
+    },
+    {
+      "id": "F-941",
+      "source": "B7 长尾分诊批（2026-10-18——project/requirements/kinematics 卡头日期行家族（F-122 系/F-369/F-374/F-834）多例 owner 建议的机检维度归并立条）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "validate-docs 增卡头一致性机检维度：「日期」行应含现行版本（卡头最高文档版本行）的登记日期——本次家族修复前 project 卡日期行滞留 2026-09-09 达 v0.1~v0.26 十七个版本、kinematics 滞留 2026-10-12 达十余跳，机检缺失使漂移只能靠验收者通读发现",
+      "owner": "治理脚本所有者（validate-docs.ps1 维护批——与既有卡头版本行同步类机检建议一并评估）"
     }
   ]
 }

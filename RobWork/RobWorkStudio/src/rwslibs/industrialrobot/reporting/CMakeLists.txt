@@ -148,7 +148,7 @@ find_package(GTest CONFIG REQUIRED)
 #   - src/Roundtrip.cpp——roundtripCheck 编排（resolver 复用 Export.hpp
 #     IReportResolver 注入缝——不新建第二套解析；比对面＝ResultRefSnapshot
 #     中"由 envelope 决定"的字段族，全等值比对无容差；复算不可达＝保守
-#     不判可用＋Warning 注记〔§7.7 未覆盖口径的落位增量，§14.4 v0.20〕）；
+#     不判可用＋Warning 注记〔§7.7 未覆盖口径的落位增量，§14.4 v0.19——F-826 勘正〕）；
 #   - test/RoundtripTest.cpp——RP-ROUND-1 双路（一致/不一致）＋复算不可达
 #     ＋Usage 轨＋历史零修改＋多结果定位（acceptance 1~2）；
 #   - contract_test/RoundtripCrossUnitContractTest.cpp——注入契约跨单元

@@ -73,7 +73,9 @@ foreach ($t in $tasks) {
   # planned 允许保留任务占位，但绝不能因字段名存在而被当作已准备就绪。
   if ($t.status -eq 'ready') {
     foreach ($k in $readyRequired) {
-      if (@($t.$k).Count -eq 0) { throw "ready task has empty field ${k}: $($t.taskId)" }
+      # F-855：字段完全缺失时 $t.$k 为 $null，@($null).Count＝1——仅查 Count
+      # 会放行缺字段的 ready 契约；先显式判字段在位，再查空值（两态都拒绝）。
+      if (-not $t.PSObject.Properties[$k] -or @($t.$k).Count -eq 0) { throw "ready task has empty or missing field ${k}: $($t.taskId)" }
     }
   }
 
