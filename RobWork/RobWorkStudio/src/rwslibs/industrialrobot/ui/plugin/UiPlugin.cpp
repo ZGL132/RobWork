@@ -5153,10 +5153,13 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
             // 关闭走真实状态机（beginClose→resolveCloseDialog Confirmed——
             // 对话框呈现归交互流，此处直投决议值面），同步或 Draining 收口
             // 后重开同一 demo 路径（openViaSessionController 交互同款入口）。
-            // 断言面＝重开成功＋桥重新绑定＋草稿会话在位——修复前脏位/孤
-            // 儿草稿形态下关闭拍 presentContext 重入双 teardown 命中桥"未
-            // 绑定拆绑"logic_error 直穿事件循环（StudioMain 兜底退出＝
-            // 手工验证 A5），修复后本步零异常通过。
+            // 断言面＝重开成功＋桥重新绑定＋草稿会话在位——修复前缺陷链
+            // （F-910 四轮探针实证定案，F-921 消账：本注释为修订后权威叙
+            // 事）：触发面＝关闭不拆绑→同进程重开时桥重复挂接（attach 命
+            // 中已绑 fail-fast，N2 变异实证）；放大面＝关闭收尾期撤销/重
+            // 做可用性谓词（undoRedoDisablement）查询已关上下文抛
+            // StoreError 穿透事件循环（StudioMain 兜底整站退出＝手工验证
+            // A5 本体），修复后本步零异常通过。
             bool step8Ok = false;
             if (m_controller != nullptr && m_controller->hasOpenSession()) {
                 (void)m_controller->beginClose(UiCloseIntent::CloseProject);

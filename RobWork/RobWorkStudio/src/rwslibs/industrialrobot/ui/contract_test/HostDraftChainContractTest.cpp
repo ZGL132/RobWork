@@ -1,49 +1,52 @@
 /**
  * @file   HostDraftChainContractTest.cpp
- * @brief  宿主草稿链契约两段式（UI-T84——F-911 修复批 acceptance 4）。
+ * @brief  宿主草稿链契约两段式（UI-T84 acceptance 4 立段——F-911 修复批；
+ *         UI-T85 acceptance 3 段 B 翻正向——F-917/F-918 裁决落地批）。
  *
  * 设计依据：
- *   - 契约 tasks/foundation/UI-T84.json acceptance 4（修订后两段式口径，
- *     修订依据 DTB §5.4——原"requirements 逐字节全链"文本与下述 F-917/
- *     F-918 事实冲突）；
+ *   - 契约 tasks/foundation/UI-T84.json acceptance 4（两段式口径，修订
+ *     依据 DTB §5.4）＋ tasks/foundation/UI-T85.json acceptance 3（段 B
+ *     翻转即 F-917 关闭验收面）；
  *   - 处置文档 docs/superpowers/2026-10-17-host-assembly-lifecycle-gaps-
- *     disposition.md §4 子批 B（挂接后全链验证：保存→查询→恢复）。
+ *     disposition.md §4 子批 B（挂接后全链验证：保存→查询→恢复）；
+ *   - findings.json F-917/F-918 owner 行（所有者裁决 2026-10-18：
+ *     requirements hex 铠装对称＋project save schemaVersion 归一化）。
  *
- * 背景说明——本批执行中发现两个**草稿链格式级缺陷**（均已登记
- * findings.json，跨域契约归所有者裁决，本任务不私有越权修复）：
+ * 背景说明——本链曾有两个**草稿链格式级缺陷**（UI-T84 批发现登记
+ * findings.json，均已于 UI-T85 批按所有者裁决修复落地，此处保留叙事供
+ * 追溯）：
  *
- *   F-917（载荷内容编码冲突）：requirements 域草稿载荷为二进制帧
- *   （encodeRequirementCommandPayload：magic+u32+长度前缀字节串，
- *   CommandHandlers.cpp），而 project 工程草稿文件格式的 payload 字段经
- *   appendJsonString 强制 UTF-8 校验（Codec.cpp）——二进制帧必被拒绝。
- *   modeling 域载荷同 CommandHandlers 帧（encodeModelCommandPayload），
- *   同款嫌疑。裁决方向：载荷 base64/hex 文本化，或草稿格式二进制安全化。
+ *   F-917（载荷内容编码冲突→hex 铠装）：requirements 域草稿载荷为二进制
+ *   帧（encodeRequirementCommandPayload：magic+u32+长度前缀字节串），而
+ *   project 工程草稿文件格式的 payload 字段经 appendJsonString 强制 UTF-8
+ *   校验——二进制帧保存必被拒。裁决＝域草稿源边界 hexArmor/unhexArmor
+ *   对称（ASCII 过 UTF-8 校验，与 modeling 建模域既有铠装惯例同型；铠装
+ *   仅在域插件边界内侧——CR-02 ui 只搬运不解析不动）。
  *
- *   F-918（schemaVersion 权威倒置）：ui 侧 DraftDocumentProjection 契约
- *   写"草稿格式版本（域组装方填写）"，域侧遂填各自载荷内版本
- *   （requirements=1 / modeling=2）；而 project 草稿文件把该字段按
- *   §8.11 主.次版本编码解释（kSchemaVersionScale=10000，当前支持
- *   10000＝v1.0）——主版本 0（1、2 都落此区间）即 FormatLegacy 拒读。
- *   且 DraftServiceImpl::save 不校验该字段：**每份草稿都"保存成功"落盘
- *   却永远读不回**（list/tryLoad 稳定跳过）。裁决方向：格式版本权威归
- *   project（save 归一化为 kSchemaVersionCurrent 或落盘前校验拒写），
- *   ui 投影字段改义为"域版本仅呈现"。
+ *   F-918（schemaVersion 权威倒置→save 归一化）：ui 域草稿源携带各自
+ *   域内载荷版本（requirements=1/modeling=2），而 project 草稿文件按
+ *   §8.11 主.次版本编码解释该字段（kSchemaVersionScale=10000）——主版
+ *   本 0 区间即 FormatLegacy 拒读，每份草稿"保存成功"却永远读不回。裁决
+ *   ＝DraftServiceImpl::save 落盘前 schemaVersion := kSchemaVersionCurrent
+ *   （格式所有者写自己的版本，调用方值忽略并留 dev 诊断）；ui 投影字段
+ *   改义"域内版本仅呈现/遥测——不落盘"。
  *
- * 因此本文件两段式拆解：
+ * 因此本文件两段式拆解（两段同构——仅载荷内容源不同）：
  *   段 A（F-911 修复面正向证明）——真实工程存储（ProjectStoreFactory 临时
  *     目录）＋生产写半区（StorePortAdapter 双面）＋生产查询适配器
  *     （StoreDraftQueryPortAdapter→DraftService::list）＋端口合规的文本
  *     载荷模块源，跑通 编辑→落盘→"重开"→restoreOnOpen→adopt 的完整
  *     机制链，断言查询行映射与载荷逐字节保真。文本源是 IModuleDraftSource
- *     端口的合规测试替身（端口契约是被测对象）；其 schemaVersion 消费
- *     project 公共常量 kSchemaVersionCurrent（现行事实下唯一可读回的
- *     取值——F-918 裁决后随生产语义同步修订）。
- *   段 B（F-917 事实钉）——生产 RequirementsDraftSource 的二进制载荷在
- *     现行格式下的稳定拒绝（payload 字段 UTF-8 校验 invalid_argument
- *     fail-fast 逃逸），作为缺陷现状的可执行证据；所有者裁决方案落地后
- *     本段应翻转为与段 A 同构的正向全链断言（翻转即 F-917 关闭验收面）。
- * 集成树专属（requirements_plugin 链接面经 if(TARGET sdurws) 门控——
- * PresentationBridge 同因先例）。
+ *     端口的合规测试替身（端口契约是被测对象）；其 schemaVersion 取域内
+ *     版本值（1——UI-T85 起：F-918 归一化后调用方值在 save 被忽略且不
+ *     影响可读回，本替身随之回归生产域源的取值形态，端到端钉住归一化）。
+ *   段 B（F-917 关闭验收面——UI-T85 acceptance 3 翻正向）——生产
+ *     RequirementsDraftSource 的 hex 铠装载荷全链正向：编辑→saveAll 落
+ *     真实工程存储→查询半区可见→重开→restoreOnOpen→adopt 重建工作集，
+ *     恢复侧五对象逐一重编码与原帧槽字节**逐字节一致**（曾经的稳定拒绝
+ *     钉已随裁决移除——翻转本身即 F-917 的关闭证据）。集成树专属
+ *     （requirements_plugin 链接面经 if(TARGET sdurws) 门控——
+ *     PresentationBridge 同因先例）。
  */
 
 #include <gtest/gtest.h>
@@ -62,13 +65,13 @@
 #include <utility>
 
 #include <sdurws/ird/requirements/Codec.hpp>            // RequirementCodec（MapClosure 编码面）
+#include <sdurws/ird/requirements/CommandHandlers.hpp>  // tryDecodeRequirementCommandPayload（段 B 逐字节对照的帧解码——公共契约头）
 #include <sdurws/ird/requirements/Editor.hpp>           // RequirementEditor（域裁决唯一入口）
 #include <sdurws/ird/requirements/ObjectTypes.hpp>      // 五对象 token
 #include <sdurws/ird/requirements/RequirementTypes.hpp>  // 值模型＋sortEntriesByObjectId
 #include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // requirements::kModuleHandle（挂接首参）
 #include "RequirementsUiModule.hpp"  // RequirementsDraftSource（段 B 生产被测源——插件私有头经门控 include 面授权，仅本测试目标）
 #include <sdurws/ird/project/ProjectStore.hpp>          // ProjectStoreFactory（真实工程存储；project 域类型全限定——WP-14-T11 ::project 兜底注）
-#include <sdurws/ird/project/PersistenceFormat.hpp>     // kSchemaVersionCurrent（草稿文件格式版本权威——段 A 消费，F-918 注）
 #include <sdurws/ird/ui/IDraftController.hpp>           // createDraftController/DraftSessionBinding/SaveTrigger/IModuleDraftSource
 #include <sdurws/ird/ui/UiProjections.hpp>              // DraftDocumentProjection/DraftRowProjection（草稿文档/查询行投影）
 #include "app/PortAdapters.hpp"                         // StorePortAdapter（写半区双面）＋StoreDraftQueryPortAdapter（读半区真实适配——F-911 修复面本体）
@@ -96,10 +99,13 @@ namespace app = sdurws::ird::ui::app;
  * 每一环都是生产真实件。中文文本充当逐字节保真探针（多字节序列任何
  * 转码/截断都会破坏全等断言）。
  *
- * schemaVersion 消费 project 公共常量 kSchemaVersionCurrent 而非域内
- * 载荷版本：F-918 登记的现行事实——草稿文件该字段按工程格式主.次版本
- * 解释（10000=1.0），域内版本（1/2）会被 FormatLegacy 拒读；生产域源
- * 修订随 F-918 裁决走，本替身只取"现行格式下唯一可读回"的权威常量。
+ * schemaVersion 取域内版本值 1（UI-T85 起随 F-918 归一化同步）：F-918
+ * 裁决后调用方传入的 schemaVersion 在 DraftServiceImpl::save 落盘前被
+ * 归一化为 kSchemaVersionCurrent（格式所有者写自己的版本——调用方值忽
+ * 略），域内版本不再被 FormatLegacy 拒读——本替身随之回归生产域源
+ * （requirements=1/modeling=2 同形态）的取值形态，段 A 端到端钉住"域内
+ * 版本输入落盘后可读回"的归一化语义（project 单元守卫钉另以字节面直证
+ * ——DraftServiceTest.DomainVersionInputNormalizedReadableBackRoundtripPin）。
  */
 class TextModuleDraftSource final : public ui::IModuleDraftSource {
 public:
@@ -111,13 +117,13 @@ public:
     std::string displayName() const override { return m_displayName; }
 
     /// 组装草稿文档：payload 即当前待保存文本（UTF-8 字节直通——ui 只
-    /// 搬运不解析，CR-02/D-10）。
+    /// 搬运不解析，CR-02/D-10）；schemaVersion＝域内版本值（F-918 归一化
+    /// 后仅呈现不落盘——save 侧忽略）。
     ui::DraftDocumentProjection buildDraftDocument() const override
     {
         ui::DraftDocumentProjection doc;
         doc.moduleId = m_moduleId;
-        doc.schemaVersion =
-            static_cast<std::uint32_t>(project::kSchemaVersionCurrent);
+        doc.schemaVersion = 1;
         doc.payload = m_pending;
         return doc;
     }
@@ -302,8 +308,9 @@ void removeDirBestEffort(const std::filesystem::path& dir)
  *  模块源 编辑→saveAll(Manual) 经生产写半区落真实工程存储→生产查询适配
  *  器 list 行映射断言→新控制器（模拟重开）restoreOnOpen→adopt 载荷与原
  *  稿**逐字节一致**。机制链每一环（存储/双面适配器/查询适配器/控制器编
- *  排）均为生产真实件，仅载荷内容源为端口合规替身（F-917/F-918 变量隔
- *  离——两缺陷的钉在段 B 与 findings 登记）。 */
+ *  排）均为生产真实件，仅载荷内容源为端口合规替身（F-917 变量隔离——
+ *  生产 requirements 载荷链由段 B 正向承接；F-918 归一化已随 UI-T85 落
+ *  地——本段 schemaVersion 即域内版本值，保存可读回）。 */
 TEST(HostDraftChain, TextPayloadSaveReopenRestoreByteEqual_UI_T84_ACC4)
 {
     IRD_TEST_INFO(std::vector<std::string>{"PM-04", "NFR-REL-01"},
@@ -408,30 +415,34 @@ TEST(HostDraftChain, TextPayloadSaveReopenRestoreByteEqual_UI_T84_ACC4)
     removeDirBestEffort(storeDir);
 }
 
-/** 段 B（F-917 事实钉——缺陷现状的可执行证据）：生产 RequirementsDraft
- *  Source 的二进制载荷帧在现行工程草稿格式（payload 字段 UTF-8 校验）下
- *  必被稳定拒绝，且拒绝形态为调用方违约 fail-fast（invalid_argument 经
- *  落盘 future 通道在 saveAll 调用线程重抛——禁吞错语义的线程边界表达）。
- *  所有者裁决编码方案（base64/hex 文本化或草稿格式二进制安全化）落地后，
- *  本测试应翻转为与段 A 同构的正向全链断言——翻转即 F-917 关闭的验收面。 */
-TEST(HostDraftChain, RequirementsBinaryPayloadStableRejection_UI_T84_F917)
+/** 段 B（UI-T85 acceptance 3——F-917 关闭验收面，段 B 翻正向）：生产
+ *  RequirementsDraftSource 的 hex 铠装载荷跑完整草稿链——编辑→saveAll
+ *  落真实工程存储（曾经的 F-917 稳定拒绝点：二进制帧被 payload 字段
+ *  UTF-8 校验 invalid_argument 拒绝；hex 铠装后必过）→生产查询适配器
+ *  list 可见（曾经的 F-918 稳定跳过点：域内版本被 FormatLegacy 拒读；
+ *  save 归一化后必现）→新控制器模拟重开 restoreOnOpen→adopt 重建工作
+ *  集→恢复侧五对象逐一重编码，与原帧槽字节**逐字节一致**（全链内容零
+ *  损——铠装/归一化/存储/适配器/控制器各环端到端确定性）。两处"曾经
+ *  稳定失败"翻转为"必须成功"，翻转本身即 F-917/F-918 的关闭证据。 */
+TEST(HostDraftChain, RequirementsDraftFullChainByteEqual_UI_T85_F917)
 {
     IRD_TEST_INFO(std::vector<std::string>{"PM-04", "NFR-REL-01"},
-                  std::vector<std::string>{"F-917", "UI-T84-ACC4"});
+                  std::vector<std::string>{"UI-T85-ACC3", "F-917", "F-918",
+                                           "draft-full-chain"});
 
     // ---- 真实工程存储（独立临时目录——与段 A 互不污染）----
     const std::filesystem::path storeDir =
-        std::filesystem::temp_directory_path() / "ird-uit84-f917-pin";
+        std::filesystem::temp_directory_path() / "ird-uit85-req-draft-chain";
     removeDirBestEffort(storeDir);  // 幂等清理（上次运行残留——瞬时锁容忍）
     auto created = project::ProjectStoreFactory::createNew(
-        storeDir, "f917-pin-test", nullptr, nullptr);
+        storeDir, "req-draft-chain-test", nullptr, nullptr);
     ASSERT_TRUE(created.store != nullptr) << "测试装配错误：工程存储创建失败";
 
     auto storePort = std::make_shared<app::StorePortAdapter>(std::move(created.store));
     auto queryPort = std::make_shared<app::StoreDraftQueryPortAdapter>(storePort);
     const core::ProjectId storeProjectId = storePort->projectStore().projectId();
 
-    // ---- 生产 requirements 装配（真实编辑器＋真实草稿源，零替身）----
+    // ---- 会话①：生产 requirements 装配＋编辑→saveAll（零替身）----
     MapClosure closure;
     requirements::RequirementEditor editor = [&closure]() {
         requirements::PointSet points;
@@ -455,39 +466,123 @@ TEST(HostDraftChain, RequirementsBinaryPayloadStableRejection_UI_T84_F917)
     controller->bindSession(binding);
     controller->attachModule(requirements::kModuleHandle, source);
 
-    // 编辑（P1→P1-草稿）＋脏位上报——组装出的是 requirements 二进制帧载荷。
+    // 编辑（P1→P1-草稿）＋脏位上报——组装出 hex 铠装载荷（F-917 裁决形
+    // 态：帧字节的小写 hex 文本，纯 ASCII）。
     requirements::TaskPoint renamed = editor.workingSet().points.entries.front();
     renamed.name = "P1-草稿";
     ASSERT_TRUE(editor.applyEdit(renamed).accepted);
     controller->notifySessionDirty(requirements::kModuleHandle);
-    const ui::DraftDocumentProjection doc = source.buildDraftDocument();
-    ASSERT_FALSE(doc.payload.empty()) << "前置：二进制帧载荷必须能组装出来";
+    const ui::DraftDocumentProjection originalDoc = source.buildDraftDocument();
+    ASSERT_FALSE(originalDoc.payload.empty()) << "前置：铠装载荷必须能组装出来";
+    // 铠装形态直证（F-917 的正像——曾经的二进制帧必含非 ASCII 字节）：
+    // payload 全部字符落在小写 hex 词表内（ASCII 文本，必过 UTF-8 校验）。
+    const bool allHex =
+        !originalDoc.payload.empty()
+        && originalDoc.payload.find_first_not_of("0123456789abcdef")
+               == std::string::npos;
+    EXPECT_TRUE(allHex) << "payload 应为小写 hex 铠装文本（F-917 裁决形态），实际前缀: "
+                        << originalDoc.payload.substr(0, 32);
 
-    // 保存必以 fail-fast 异常收场（对端 appendJsonString 对非 UTF-8 载荷
-    // 抛 invalid_argument——调用方违约不吞，经 runSaveBlocking 的 promise
-    // 异常通道原样重抛回调用线程）。消息稳定含 payload 字段 UTF-8 标记
-    // （F-917 钉子——裁决方案落地后此断言随翻转移除）。
-    bool rejected = false;
-    std::string rejectDetail;
-    try {
-        (void)controller->saveAll(ui::SaveTrigger::Manual);
-    } catch (const std::exception& error) {
-        rejected = true;
-        rejectDetail = error.what();
-    }
-    EXPECT_TRUE(rejected)
-        << "二进制载荷应被拒绝（F-917 现状钉）——静默成功意味着钉子失效";
-    EXPECT_NE(rejectDetail.find("无效 UTF-8"), std::string::npos)
-        << "异常应稳定指向 payload 字段 UTF-8 校验，实际：" << rejectDetail;
+    // 保存必成功（F-917 翻转点：曾经此调用稳定抛 invalid_argument——
+    // 对端 appendJsonString 拒绝非 UTF-8 载荷；铠装后为合法 ASCII 文本）。
+    const ui::SaveOutcome saved = controller->saveAll(ui::SaveTrigger::Manual);
+    EXPECT_EQ(saved.failedCount, std::size_t(0))
+        << "全链前置：保存必须零失败（失败=铠装/归一化/适配器装配回归；首错="
+        << (saved.firstError ? saved.firstError->detail : "") << "）";
+    ASSERT_EQ(saved.savedCount, std::size_t(1));
 
-    // 磁盘零半成品：拒绝发生在 codec::dump（写门卫之前）——drafts/ 下不得
-    // 出现该草稿行（失败可恢复 Q2 语义：不留未知状态文档）。
-    EXPECT_TRUE(queryPort->listDrafts().empty())
-        << "被拒绝的载荷不应在磁盘留下草稿行";
+    // 查询半区可见（F-918 翻转点：曾经域内版本 schemaVersion=1 落盘即
+    // FormatLegacy 被稳定跳过、list 返空；save 归一化后草稿行必现）。
+    const std::vector<ui::DraftRowProjection> rows = queryPort->listDrafts();
+    ASSERT_EQ(rows.size(), std::size_t(1))
+        << "归一化草稿必须在查询半区可见（F-918 原缺陷形态＝list 返空）";
+    EXPECT_EQ(rows.front().moduleId, requirements::kModuleHandle);
 
-    controller->unbindSession();
-    binding.drafts.reset();  // 写锁句柄释放链（段 A 同因——见收口注）
+    // ---- 会话②（模拟重开）：新控制器＋新模块/编辑器/源＋同源端口组----
+    controller->unbindSession();  // 会话终结（模块表清空——生产关闭路径同款）
+
+    ui::DraftControllerDeps deps2;
+    auto controller2 = makeController(deps2);
+    controller2->bindSession(binding);
+    // 恢复侧装配（PluginPanelTest DraftSourceRoundtrip_ACC4 同款形态——
+    // 先以空集合闭包载入基线，adopt 再以恢复载荷重建）。
+    MapClosure restoreClosure;
+    fillBaseline(restoreClosure, requirements::PointSet{});
+    requirements::RequirementEditor restoredEditor =
+        makeLoadedEditor(restoreClosure);
+    requirements::RequirementsUiModule restoreModule;
+    restoreModule.attachEditor(&restoredEditor);
+    requirements::RequirementsDraftSource restoreSource(restoreModule,
+                                                        restoredEditor);
+    controller2->attachModule(requirements::kModuleHandle, restoreSource);
+    const ui::RestoreOutcome restored = controller2->restoreOnOpen();
+
+    // 恢复结局断言①：目标模块在恢复名单、无损坏无孤儿（链路完整性——
+    // adopt 的解铠装/帧解码/对象解码/基线重建四步全过）。
+    EXPECT_NE(std::find(restored.restoredModules.begin(),
+                        restored.restoredModules.end(),
+                        requirements::kModuleHandle),
+              restored.restoredModules.end())
+        << "restoreOnOpen 未恢复 requirements 草稿——链路在某环断裂";
+    EXPECT_TRUE(restored.corruptModules.empty());
+    EXPECT_TRUE(restored.orphanModuleIds.empty());
+    // 恢复资格位（adoptRestoredDocument 到达且完成——应用资格随此位）。
+    EXPECT_TRUE(restoreModule.session().restoredDraftPending);
+    // 语义锚（诊断可读性——逐字节断言失败时先看这里定位是哪个对象走样）。
+    ASSERT_EQ(restoredEditor.workingSet().points.entries.size(), std::size_t(1));
+    EXPECT_EQ(restoredEditor.workingSet().points.entries.front().name, "P1-草稿");
+
+    // 数据保真断言②（本测试核心——"内容逐字节一致"全链断言）：恢复侧
+    // 五对象逐一以 RequirementCodec 重编码（确定性编码 NFR-COR-02——同
+    // 内容必得同字节），与原帧对应槽的 canonical 字节全等对照。槽序＝
+    // §4.1 表行序（根/点集/区域集/条件集/计划集——buildDraftDocument
+    // 的确定性槽序）。测试自备 hex 解码作观测仪器（生产铠装私有于域插
+    // 件边界内侧——CR-02：观测不改变被产行为）。
+    auto unhex = [](const std::string& text) -> std::vector<std::uint8_t> {
+        auto nibble = [](char c) -> int {
+            if (c >= '0' && c <= '9') { return c - '0'; }
+            if (c >= 'a' && c <= 'f') { return c - 'a' + 10; }
+            return -1;
+        };
+        std::vector<std::uint8_t> out;
+        out.reserve(text.size() / 2);
+        for (std::size_t i = 0; i + 1 < text.size(); i += 2) {
+            out.push_back(static_cast<std::uint8_t>(
+                (nibble(text[i]) << 4) | nibble(text[i + 1])));
+        }
+        return out;
+    };
+    const auto originalFrame = requirements::tryDecodeRequirementCommandPayload(
+        unhex(originalDoc.payload));
+    ASSERT_TRUE(originalFrame.has_value())
+        << "前置：原稿载荷必须能解铠装解帧（组装面自洽）";
+    ASSERT_EQ(originalFrame->objects.size(), std::size_t(5))
+        << "前置：Apply 载荷＝五对象槽（根＋四集合）";
+    const requirements::RequirementCodec codec;
+    const requirements::RequirementWorkingSet& ws = restoredEditor.workingSet();
+    auto expectSlotByteEqual =
+        [&codec, &originalFrame](std::size_t slot,
+                                 const requirements::RequirementObjectVariant& object,
+                                 const char* what) {
+            const auto encoded =
+                codec.encode(object, requirements::kCurrentRequirementFormatVersion);
+            ASSERT_TRUE(encoded.ok())
+                << "恢复侧重编码失败（" << what << "）——闭包装配缺陷";
+            EXPECT_EQ(encoded.get(), originalFrame->objects[slot].objectBytes)
+                << "恢复内容与原稿槽字节不一致（" << what
+                << "，槽位 " << slot << "）——全链保真断裂";
+        };
+    expectSlotByteEqual(0, requirements::RequirementObjectVariant{ws.root}, "根");
+    expectSlotByteEqual(1, requirements::RequirementObjectVariant{ws.points}, "点集");
+    expectSlotByteEqual(2, requirements::RequirementObjectVariant{ws.regions}, "区域集");
+    expectSlotByteEqual(3, requirements::RequirementObjectVariant{ws.conditions}, "条件集");
+    expectSlotByteEqual(4, requirements::RequirementObjectVariant{ws.plans}, "计划集");
+
+    controller2->unbindSession();
+    // 句柄先于磁盘清理释放（段 A 同因——见其收口注）。
+    binding.drafts.reset();
     binding.store.reset();
+    controller2.reset();
     controller.reset();
     queryPort.reset();
     storePort.reset();

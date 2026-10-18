@@ -385,6 +385,92 @@ TEST_F(DraftServiceTest, SaveThenLoadRoundTripProducesNoRevision)
 }
 
 /**
+ * F-918 归一化守卫钉（tasks/foundation/UI-T85.json acceptance 1——守卫
+ *   钉语义：任何回归到"按调用方值落盘"的重构都会让本用例变红）：
+ *
+ * 背景缺陷（findings F-918，blocking，2026-10-18 所有者裁决 project save
+ *   归一化）：save 原样落盘调用方传入的 schemaVersion，而 ui 域草稿源
+ *   携带各自域内载荷版本（requirements=1/modeling=2）——该值落在工程
+ *   格式主.次编码（kSchemaVersionScale=10000）的主版本 0 区间，读取侧
+ *   checkSchemaVersion 按 FormatLegacy 稳定拒读：**每份草稿都"保存成功"
+ *   落盘却永远读不回**（list/tryLoad 稳定跳过，dev 诊断仅留痕）。
+ *
+ * 本用例钉住裁决语义的四向事实：
+ *   ①落盘值归一化——save 成功后磁盘 schemaVersion 恒为
+ *     kSchemaVersionCurrent（字节面直证＋list/tryLoad 可读回）；
+ *   ②调用方值忽略——传入域内版本（取 1＝requirements
+ *     kRequirementCommandPayloadVersion 同值）不进磁盘、不修改调用方
+ *     对象（值拷贝语义），并留 dev 诊断（观察面留痕）；
+ *   ③roundtrip 守卫钉——save→list→tryLoad 全链钉住：域内版本输入落盘
+ *     后 list 必须看到、tryLoad 必须读回（F-918 原缺陷形态＝list 稳定
+ *     跳过 format-legacy——回归即此断言红）；
+ *   ④读回文档仅 schemaVersion 一个字段与调用方文档不同（＝归一化值），
+ *     其余字段逐字段一致——归一化不得波及其他落盘语义。
+ */
+TEST_F(DraftServiceTest, DomainVersionInputNormalizedReadableBackRoundtripPin)
+{
+    auto opened = createNew();
+    auto& store = *opened.store;
+    auto& drafts = store.drafts();
+    const auto branch = primaryBranch(store);
+    const auto base = headRevisionOnDisk();
+
+    // 域内版本输入：schemaVersion 取 1（＝requirements
+    // kRequirementCommandPayloadVersion 的实际取值——F-918 原缺陷的真实
+    // 输入形态；主版本 0 区间，未经归一化必被 FormatLegacy 拒读）。
+    const std::string payload = "{\"model\":\"f918-pin\"}";
+    DraftDocument doc = makeDraft(store, "modeling", payload,
+                                  DraftOrigin::Autosave, base);
+    doc.schemaVersion = 1;
+
+    // ①保存成功＋调用方对象不受归一化影响（值拷贝语义——const 入参，
+    //   落盘值与调用方文档解耦）。
+    const SaveResult saved = drafts.save(doc);
+    ASSERT_TRUE(saved.ok) << "保存失败: "
+                          << (saved.error ? saved.error->what() : "?");
+    EXPECT_EQ(doc.schemaVersion, 1)
+        << "归一化不得修改调用方文档（值拷贝语义）";
+
+    // ②dev 诊断留痕（传入值≠当前版本——观察面记录调用方传了什么）。
+    EXPECT_TRUE(m_sink->devContains("save schemaVersion normalized"))
+        << "归一化发生时必须留 dev 诊断（F-918 裁决：调用方值忽略并留痕）";
+
+    // ③roundtrip 守卫钉——list 必须看到刚落盘的草稿（F-918 原缺陷形态
+    //   ＝FormatLegacy 稳定跳过、list 返空；本断言红即守卫钉触发）。
+    const std::vector<DraftInfo> listed = drafts.list(branch);
+    ASSERT_EQ(listed.size(), std::size_t(1))
+        << "域内版本输入的草稿保存后 list 必须可见（归一化失效＝回归）";
+    EXPECT_EQ(listed.front().moduleId, "modeling");
+
+    // ④磁盘字节面直证：落盘 JSON 的 schemaVersion 字段恒为
+    //   kSchemaVersionCurrent（§8.11 主.次编码的 10000——不经读取侧，
+    //   排除"读取侧放宽校验"造成的假绿通道）。
+    const std::string diskBytes = readAll(draftFile(branch, "modeling"));
+    EXPECT_NE(diskBytes.find("\"schemaVersion\":"
+                            "10000"),
+              std::string::npos)
+        << "落盘 schemaVersion 必须归一化为 kSchemaVersionCurrent(10000)，"
+           "实际字节: " << diskBytes;
+
+    // ⑤tryLoad 读回：仅 schemaVersion 一个字段＝归一化值，其余全字段与
+    //   调用方文档一致（归一化不波及其他落盘语义——逐字段守卫）。
+    std::vector<core::DiagnosticRecord> diags;
+    const auto loaded = drafts.tryLoad(branch, "modeling", diags);
+    ASSERT_TRUE(loaded.has_value())
+        << "tryLoad 必须读回归一化落盘的草稿（F-918 原缺陷＝稳定返空）";
+    EXPECT_TRUE(diags.empty()) << "归一化草稿的加载不应产出损坏诊断";
+    EXPECT_EQ(loaded->schemaVersion, kSchemaVersionCurrent);
+    EXPECT_EQ(loaded->projectId, doc.projectId);
+    EXPECT_EQ(loaded->branchId, doc.branchId);
+    EXPECT_EQ(loaded->moduleId, doc.moduleId);
+    EXPECT_EQ(loaded->baseRevisionId, doc.baseRevisionId);
+    EXPECT_EQ(loaded->payload, doc.payload);
+    EXPECT_EQ(loaded->savedAtUtc, doc.savedAtUtc);
+    EXPECT_EQ(loaded->origin, doc.origin);
+    EXPECT_TRUE(loaded->externalRefs.empty());
+}
+
+/**
  * acceptance 1 之破坏→重开：current 被截断（JSON 不可解析）后重开项目，
  * tryLoad 产出 draft-corrupt 用户级诊断（PRJ-RECOVERY-ORPHAN-DRAFT——
  * diagnostics.md §8.2 映射行）并自 .bak 恢复上一版（旧草稿保留——§8.4

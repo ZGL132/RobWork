@@ -2,6 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.87（2026-10-18，WP-10-T85 实现落位：wp10-t85 分支——F-917/F-918 所有者裁决落地批〔requirements hexArmor/unhexArmor 对称＋DraftServiceImpl::save schemaVersion 归一化＋project roundtrip 守卫钉＋HostDraftChain 段 B 翻正向 RequirementsDraftFullChainByteEqual_UI_T85_F917＋投影字段改义与三处旧语义注释同步；ui.md v1.110/project.md v0.26/requirements.md v0.19 同批；findings F-917/F-918 翻 fixed；独立冒烟 build/acc-smoke-wp10-t85；XML 留痕 traceability/builds/wp10-t85/；待独立验收与所有者合入〕）。前一版本 v0.86 保留如下。 |
 | 文档版本 | v0.86（2026-10-18，UI-T85 立卡：§2.11 增 WP-10-T85 行〔≙UI-T85 草稿链格式裁决落地——F-917 hex 铠装＋F-918 project save 归一化；所有者裁决 2026-10-18，裁决全文见 findings 两 owner 行；先卡后码，契约 tasks/foundation/UI-T85.json ready 待独立评审放行；ui.md v1.109 §13 同批增行〕）。前一版本 v0.85 保留如下。 |
 | 文档版本 | v0.85（2026-10-18，UI-T84 合入收尾：wp10-t84〔32bfda18..a3df5368〕经验收 attempt 2 PASS〔traceability/acceptance/UI-T84-20261018.md〕--no-ff 并入 redesign-main〔d92902c9〕；契约 UI-T84.json 翻 done；findings F-910/F-911/F-916/F-920 翻 fixed——F-917/F-918〔blocking，所有者裁决〕/F-919〔kinematics 链接面〕/F-921～F-924 保持 open 归后续批）。前一版本 v0.84 保留如下。 |
 | 文档版本 | v0.83（2026-10-17，治理 T2 立卡：§2.11 增 WP-10-T83 行〔≙UI-T83 装配完备性扫描面契约测试——IRD-NOTE-006 裁决落地方案 T2；先卡后码，契约 tasks/foundation/UI-T83.json ready 待独立评审放行；ui.md v1.106 §13 同批增行〕）。前一版本 v0.82 保留如下。 |

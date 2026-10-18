@@ -333,10 +333,34 @@ SaveResult DraftServiceImpl::save(const DraftDocument& doc)
             "落盘）");
     }
 
+    // ---- 版本归一化（F-918 所有者裁决 2026-10-18——草稿链格式版本权威
+    // 面）：落盘 schemaVersion 一律写本格式自己的当前版本
+    // （kSchemaVersionCurrent——§8.11 主.次编码，当前 10000＝v1.0），调用
+    // 方传入值忽略并留开发诊断。为什么归一化而不是拒写：磁盘文件的自述
+    // 版本由格式所有者（本服务）决定，调用方（ui 域草稿源）携带的域内
+    // 载荷版本（如 requirements=1／modeling=2）只是呈现/遥测值——若按
+    // 调用方值落盘，域内版本落在主版本 0 区间（1/2 ÷ 10000 商为 0），读
+    // 取侧 checkSchemaVersion 按 FormatLegacy 稳定拒读（F-918 原缺陷形态
+    // ：每份草稿都"保存成功"却永远读不回）。归一化保证不变量"save 成功
+    // 的草稿 list/tryLoad 必可读回"。值拷贝语义：入参为 const 引用不可
+    // 变，落盘值与调用方对象解耦（调用方文档保持其原值）；传入值≠当前
+    // 版本时经 dev 通道留痕（观察面——记录调用方传了什么版本，便于追踪
+    // 域侧版本漂移），诊断失败不影响业务路径（reportDev 包 try）。
+    DraftDocument persisted = doc;
+    if (persisted.schemaVersion != kSchemaVersionCurrent) {
+        reportDev("project/draft",
+                  "save schemaVersion normalized（F-918） caller="
+                      + std::to_string(doc.schemaVersion) + " persisted="
+                      + std::to_string(kSchemaVersionCurrent) + " module="
+                      + doc.moduleId);
+        persisted.schemaVersion = kSchemaVersionCurrent;
+    }
+
     // ---- 规范化编码（锁外——纯 CPU，缩短 writer 临界区；NFR-COR-02
-    // 确定性字节）。payload 无效 UTF-8 在此抛 invalid_argument（调用方
-    // 错误透传——Codec 契约），不进入落盘序列。
-    const std::string canonical = codec::dump(doc);
+    // 确定性字节）——编码对象是上一步归一化后的落盘值（非调用方原值）。
+    // payload 无效 UTF-8 在此抛 invalid_argument（调用方错误透传——
+    // Codec 契约），不进入落盘序列。
+    const std::string canonical = codec::dump(persisted);
 
     // ---- 写门卫三道（拒绝走返回值轨——ui 定时器安全；诊断已在门卫内
     // 产出）。detail 带 moduleId 便于定位涉事草稿。

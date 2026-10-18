@@ -71,6 +71,65 @@ RequirementObjectVariant decodeSlotObject(const RequirementPayloadSlot& slot,
     return std::move(decoded.get());
 }
 
+// ---- hex 铠装/解铠装（F-917 所有者裁决 2026-10-18——草稿载荷内容编码）。
+//
+// 背景缺陷（findings F-917，blocking）：本域草稿载荷是
+// encodeRequirementCommandPayload 的二进制帧（magic+u32+长度前缀字节串，
+// CommandHandlers.cpp），而 project 工程草稿文件格式的 payload 字段经
+// appendJsonString 强制 UTF-8 校验（Codec.cpp，无效序列抛
+// invalid_argument）——二进制帧保存必被拒，需求域草稿在现行格式下无合法
+// 落盘形态。裁决：域草稿源边界 hex 铠装——payload＝帧字节的小写 hex 文本
+// （纯 ASCII，必过 UTF-8 校验），与 modeling 建模域既有铠装惯例同型
+// （ModelingUiModule::buildDraftDocument 在案先例；备选 base64/格式二进
+// 制安全化/域载荷改 JSON 均已评估否决，理由见 findings F-917 owner 行）。
+//
+// 边界纪律（CR-02/D-10）：铠装仅存在于本域插件边界内侧——ui 控制器与
+// project 存储对 payload 仍只搬运不解析；hex 编解码是纯字节变换（零域
+// 语义、零哈希第二路径），build/adopt 两端对称使用（本文件内唯一消费点
+// ——与 modeling 惯例一致，不抽公共件：两域各自的插件私有实现，跨单元
+// 共享反需新增公共头违反 R-2 最小面）。确定性：小写 hex 表驱动、字节序
+// 原序——同帧必得同文本（NFR-COR-02），roundtrip 逐字节可逆。
+
+/// 帧字节→小写 hex 文本（ASCII，2n 字符——payload 字段的合法 UTF-8 形态）。
+std::string requirementsHexArmor(const std::vector<std::uint8_t>& bytes)
+{
+    static const char* kDigits = "0123456789abcdef";
+    std::string out;
+    out.reserve(bytes.size() * 2);
+    for (const std::uint8_t b : bytes) {
+        out.push_back(kDigits[b >> 4]);
+        out.push_back(kDigits[b & 0xF]);
+    }
+    return out;
+}
+
+/// hex 文本→帧字节（严格判定：长度必须为偶数、字符必须在 hex 词表内——
+/// 任何违约＝nullopt，交调用方按草稿损坏语义处置，不猜测补救）。
+std::optional<std::vector<std::uint8_t>> requirementsHexUnarmor(
+    const std::string& text)
+{
+    if (text.size() % 2 != 0) {
+        return std::nullopt;  // 半字节尾——非本铠装产物
+    }
+    auto nibble = [](char c) -> int {
+        if (c >= '0' && c <= '9') { return c - '0'; }
+        if (c >= 'a' && c <= 'f') { return c - 'a' + 10; }
+        if (c >= 'A' && c <= 'F') { return c - 'A' + 10; }
+        return -1;
+    };
+    std::vector<std::uint8_t> out;
+    out.reserve(text.size() / 2);
+    for (std::size_t i = 0; i < text.size(); i += 2) {
+        const int hi = nibble(text[i]);
+        const int lo = nibble(text[i + 1]);
+        if (hi < 0 || lo < 0) {
+            return std::nullopt;  // 词表外字符——非本铠装产物
+        }
+        out.push_back(static_cast<std::uint8_t>((hi << 4) | lo));
+    }
+    return out;
+}
+
 }  // namespace
 
 void RequirementsUiModule::bindCommandSubmit(CommandSubmitFn submitFn)
@@ -552,29 +611,45 @@ ui::DraftDocumentProjection RequirementsDraftSource::buildDraftDocument() const
     pushSetSlot(kReqPlanSetObjectType, ws.root.planSetRef, RequirementObjectVariant{ws.plans});
 
     // 文档投影装配（ui 只搬运不解析——CR-02/D-10；savedAtUtc 留空＝控制器
-    // 在分派时刻填写，§10.5 契约）。
+    // 在分派时刻填写，§10.5 契约）。payload 经 hex 铠装（F-917 裁决——
+    // 二进制帧文本化为 ASCII，过 project 草稿格式 payload 字段 UTF-8 校验
+    // ；铠装/解铠装对称见文件头匿名区，roundtrip 逐字节可逆）。
     const std::vector<std::uint8_t> payloadBytes = encodeRequirementCommandPayload(payload);
     ui::DraftDocumentProjection doc;
-    doc.schemaVersion = kRequirementCommandPayloadVersion;  // 域组装方填写（0＝未填保留值——不落盘 0）
+    // schemaVersion＝域内载荷版本（kRequirementCommandPayloadVersion=1），
+    // 仅呈现/遥测——不落盘：project save 侧归一化为落盘格式版本
+    // （kSchemaVersionCurrent，F-918 裁决），本值在 save 被忽略。非零是
+    // ui 控制器的装配健全性检查面（DraftController::validateDocument）。
+    doc.schemaVersion = kRequirementCommandPayloadVersion;
     doc.moduleId = kModuleId;
     doc.baseRevisionId =
         core::RevisionId::tryFromCanonical(status.baseRevisionId).value_or(core::RevisionId{});
-    doc.payload.assign(payloadBytes.begin(), payloadBytes.end());
+    doc.payload = requirementsHexArmor(payloadBytes);
     return doc;
 }
 
 void RequirementsDraftSource::adoptRestoredDocument(const ui::DraftDocumentProjection& document)
 {
-    // ①载荷框架解码（try 轨域函数——破损/版本不受理＝nullopt；恢复场景
+    // ①解 hex 铠装（F-917 裁决——build 端 requirementsHexArmor 的对称半区
+    //   ：磁盘 payload 是 build 端铠装后的 ASCII hex 文本）。解铠装失败
+    //   （长度非偶/词表外字符）＝草稿文件级数据缺陷，fail-fast 不吞也不
+    //   猜测（不回退按裸帧解读——同一文件只允许一种编码形态，猜测会让
+    //   损坏静默变形为"可用"错误数据）。
+    const auto frameBytes = requirementsHexUnarmor(document.payload);
+    if (!frameBytes.has_value()) {
+        throw std::runtime_error("requirements 草稿源：恢复载荷 hex 解铠装失败"
+                                 "（非本域铠装形态或已损坏）——不猜测不虚构");
+    }
+
+    // ②载荷框架解码（try 轨域函数——破损/版本不受理＝nullopt；恢复场景
     //   到达即草稿文件级数据缺陷，fail-fast 不吞：不虚构可用工作集）。
-    const std::vector<std::uint8_t> bytes(document.payload.begin(), document.payload.end());
-    const auto payload = tryDecodeRequirementCommandPayload(bytes);
+    const auto payload = tryDecodeRequirementCommandPayload(frameBytes.value());
     if (!payload.has_value()) {
         throw std::runtime_error("requirements 草稿源：恢复载荷破损或版本不受理——"
                                  "不虚构可用工作集");
     }
 
-    // ②逐槽对象解码（RequirementCodec 解码闸口——四步校验链；失败 fail-fast）。
+    // ③逐槽对象解码（RequirementCodec 解码闸口——四步校验链；失败 fail-fast）。
     const RequirementCodec codec;
     RestoredClosureView view;
     std::optional<RequirementSet> root;
@@ -591,7 +666,7 @@ void RequirementsDraftSource::adoptRestoredDocument(const ui::DraftDocumentProje
         throw std::runtime_error("requirements 草稿源：恢复载荷缺少 req-set 根——不虚构基线");
     }
 
-    // ③闭包装配：按 token 登记＋按 oid 登记（oid 来源＝根引用表——集合
+    // ④闭包装配：按 token 登记＋按 oid 登记（oid 来源＝根引用表——集合
     //   oid 的权威，§4.2；未挂载槽的集合对象在闭包内无 oid 入口，编辑器
     //   解引用语义下不可达——按根引用表完整性核对其余四槽）。
     view.byToken.push_back(RequirementClosureObject{std::string(kReqSetObjectType), {}});
@@ -632,7 +707,7 @@ void RequirementsDraftSource::adoptRestoredDocument(const ui::DraftDocumentProje
         }
     }
 
-    // ④以恢复内容重建编辑器基线（loadBaseline——工作集/栈/计数重置为
+    // ⑤以恢复内容重建编辑器基线（loadBaseline——工作集/栈/计数重置为
     //   恢复态；失败＝闭包违约，fail-fast 不吞）。
     const RequirementLoadOutcome load = m_editor.loadBaseline(view);
     if (!load.ok) {
@@ -640,7 +715,7 @@ void RequirementsDraftSource::adoptRestoredDocument(const ui::DraftDocumentProje
                                  + load.error.detail + "）");
     }
 
-    // ⑤应用资格位置位（恢复的工作集即待应用草稿——draft.apply 资格随此
+    // ⑥应用资格位置位（恢复的工作集即待应用草稿——draft.apply 资格随此
     //   位；draft.apply 后由装配层清位）。
     m_module.session().restoredDraftPending = true;
 }

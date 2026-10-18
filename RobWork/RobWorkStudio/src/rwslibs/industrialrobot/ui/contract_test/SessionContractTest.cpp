@@ -587,7 +587,9 @@ TEST(SessionContract, CloseThenReopenDispatchesAttachOrSwitchWithoutEscape_UI_T8
     // 壳层收口镜像（拆绑归 UI 壳层——模型层重开前显式拆绑，生产同序）。
     draftCtl->unbindSession();
 
-    // ---- 同进程重开：桥旧绑已被壳层拆绑→attach 分派（常态路径）----
+    // ---- 同进程重开：attachOrSwitch 分派（switch 半区——F-922 消账：
+    // 上步 unbindSession 只拆草稿控制器，桥仍绑旧项目；openDefault 触发
+    // 的分派走 switch 换绑而非首次挂接，覆盖本身完整——变异证红在案）----
     h.openDefault();
     ASSERT_EQ(h.controller->state(), UiSessionState::OpenWritable)
         << "重开必须零逃逸且回到 Open*";
@@ -596,7 +598,7 @@ TEST(SessionContract, CloseThenReopenDispatchesAttachOrSwitchWithoutEscape_UI_T8
     ASSERT_TRUE(bridge.hasBoundSession());
     ASSERT_TRUE(bridge.boundProject().has_value());
     EXPECT_EQ(*bridge.boundProject(), secondId)
-        << "重开分派后桥绑定＝新项目（attach 常态路径可观测终点）";
+        << "重开分派后桥绑定＝新项目（switch 换绑可观测终点）";
 
     // ---- 分派容错面（switch 半区——壳层拆绑缺失/迟到也不炸）----
     // 直接再触发一次分派（旧绑还在、身份不同）＝重开期重复 presentContext

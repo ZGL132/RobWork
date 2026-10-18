@@ -259,8 +259,11 @@ public:
      *        修订，PRJ-TX-6 的核心断言点）。
      *
      * 落盘协议（§5.4 原文序列，writer 互斥内执行——§9.8 变更性文件操作
-     * 的串行化点）：①规范化编码（codec::dump——canonical 确定性字节，
-     * NFR-COR-02）；②写 <module>.draft.json.new（writeThrough——写穿透
+     * 的串行化点）：①版本归一化（schemaVersion := kSchemaVersionCurrent
+     * ——F-918 所有者裁决 2026-10-18：落盘格式版本的权威归本服务，调用
+     * 方传入值忽略并留开发诊断，保证"保存成功的草稿必可读回"）＋规范化
+     * 编码（codec::dump——canonical 确定性字节，NFR-COR-02）；②写
+     * <module>.draft.json.new（writeThrough——写穿透
      * ＋flush 持久性闸门）；③旧 current 存在则改名 .bak（REPLACE_EXISTING
      * ——.bak 轮换为上一版，任务约束§五.6"D-12 模块粒度单文件＋.bak
      * 轮换"）；④.new 原子就位为 current（读者见旧或新完整内容之一）；
@@ -277,9 +280,12 @@ public:
      * 落盘会成为孤儿草稿——由打开协议⑤步扫描报告，调用方纪律保证只对
      * 活动分支保存；读取侧对未知分支保守标记 stale）。
      *
-     * @param doc [in] 草稿文档（schemaVersion/savedAtUtc/origin 由调用方
-     *            决定——autosave/manual 同一入口，§8.2；projectId 必须与
-     *            本上下文一致，否则 invalid_argument）
+     * @param doc [in] 草稿文档（savedAtUtc/origin 由调用方决定——autosave/
+     *            manual 同一入口，§8.2；schemaVersion 由本服务归一化——
+     *            调用方传入值忽略并留开发诊断，落盘值恒为
+     *            kSchemaVersionCurrent〔F-918 裁决：落盘格式版本权威归
+     *            本服务，调用方携带的域内版本仅呈现/遥测不落盘〕；
+     *            projectId 必须与本上下文一致，否则 invalid_argument）
      * @return 保存结果（ok/error/file 语义见 SaveResult）
      *
      * @throws std::invalid_argument doc.projectId 与本上下文不符／

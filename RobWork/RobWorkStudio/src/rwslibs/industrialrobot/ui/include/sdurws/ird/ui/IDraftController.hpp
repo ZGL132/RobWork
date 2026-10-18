@@ -365,7 +365,11 @@ public:
      * @brief 组装当前草稿文档（§8.2"buildDraftDocument() 触发"——定时/
      *        手动落盘时控制器向域编辑器要文档）。
      * @return 草稿文档投影（moduleId 必须与挂接句柄一致；payload 为域
-     *         canonical 字节——ui 不解析；schemaVersion 由域侧填写）
+     *         自有字节——ui 不解析〔F-917 起域侧可自带铠装等编码，域
+     *         插件边界内侧自治〕；schemaVersion＝域内草稿格式版本，仅
+     *         呈现/遥测——**不落盘**：落盘格式版本由 project save 归一化
+     *         （F-918 裁决，调用方值被忽略），本处仅要求非零〔装配健全
+     *         性检查〕）
      */
     virtual DraftDocumentProjection buildDraftDocument() const = 0;
 
@@ -375,7 +379,13 @@ public:
      *        桩模块以值拷贝承载协议验证）。
      * @param document [in] 恢复的文档值（Loaded＝current 内容；
      *                 RecoveredFromBackup＝.bak 内容——二者对域侧无区别，
-     *                 恢复来源差异由控制器横幅面呈现）
+     *                 恢复来源差异由控制器横幅面呈现。与 build 方向的
+     *                 两向事实〔F-918〕：本处投影的 schemaVersion 回装的
+     *                 是**盘上归一化值**（kSchemaVersionCurrent——落盘时
+     *                 已被 save 归一化），非域 build 侧携带的域内版本；
+     *                 payload 同理是磁盘原文（域侧自行解铠装——F-917
+     *                 对称面），域侧不得假设其与 build 输出按原文逐字节
+     *                 同形以外的任何变换）
      */
     virtual void adoptRestoredDocument(const DraftDocumentProjection& document) = 0;
 

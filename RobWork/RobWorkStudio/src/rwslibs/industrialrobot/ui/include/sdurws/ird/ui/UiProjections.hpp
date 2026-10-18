@@ -1072,17 +1072,22 @@ inline const char* draftOriginToken(DraftOrigin origin) noexcept
  * @brief 草稿文档的 ui 侧投影（C-5 写半区传输面——冻结基准 project.md
  *        §5.4 DraftDocument/§4.4.5 磁盘格式，O-31 值投影）。
  *
- * 字段语义锚点（不改义，与对端 DraftDocument 逐字段对应）：
- *   - schemaVersion＝草稿格式版本（随整体 schemaVersion 联动，§8.11 判定
- *     同源；由域组装方填写——ui 不解释版本语义，只搬运）；
+ * 字段语义锚点（F-917/F-918 裁决后口径——UI-T85 同步）：
+ *   - schemaVersion＝域内草稿格式版本，仅呈现/遥测——**不落盘**（F-918
+ *     所有者裁决 2026-10-18：落盘格式版本由 project save 归一化为
+ *     kSchemaVersionCurrent，本字段值在对端被忽略）。两向事实分别落笔：
+ *     build 方向（域源组装）填域内版本（如 requirements=1/modeling=2）；
+ *     adopt 方向（恢复回装）携带的是**盘上归一化值**（10000）——消费方
+ *     不得假设两向同值；
  *   - projectId/branchId＝归属项目/分支（core 契约类型同一——P-PR-1
  *     先例）；DraftController 强制其与打开会话绑定一致（防跨项目落盘）；
  *   - moduleId＝注册的模块 token（§4.1 命名规则；对端白名单校验——
  *     1~64 个 ASCII 字母/数字/下划线/连字符；DraftController 同口径预检，
  *     违约 fail-fast——磁盘路径拼装面，提前拦截不产生半途副作用）；
  *   - baseRevisionId＝草稿基线修订（≠分支 tip 时应用被拒——PM-04）；
- *   - payload＝域负载（域所有 canonical 字节、UTF-8——ui 只搬运不解析，
- *     CR-02/D-10 对投影同样成立）；
+ *   - payload＝域自有字节（UTF-8——ui 只搬运不解析，CR-02/D-10 对投影
+ *     同样成立；F-917 起域侧可在插件边界内侧自带铠装等编码——hex 文本
+ *     等域自治形态对 ui/project 透明）；
  *   - savedAtUtc＝落盘时间（ISO-8601 UTC 文本；DraftController 在落盘
  *     分派时刻填写——同一次保存的所有模块共用同一时刻值，NFR-COR-02）；
  *   - origin＝草稿来源（§4.4.5 冻结三值；apply-retained 由对端写入，
@@ -1096,7 +1101,11 @@ inline const char* draftOriginToken(DraftOrigin origin) noexcept
  * 值语义；ui 组装后只读使用（落盘后文档归磁盘，ui 不回写——PM-04）。
  */
 struct DraftDocumentProjection {
-    /// 草稿格式版本（域组装方填写；0＝未填写保留值——适配器不得落盘 0）。
+    /// 域内草稿格式版本（仅呈现/遥测——不落盘；落盘格式版本由 project
+    /// save 归一化为 kSchemaVersionCurrent，F-918 裁决。build 侧填域内
+    /// 版本〔如 requirements=1/modeling=2〕，adopt 侧回装盘上归一化值
+    /// 〔10000〕——两向事实见结构体锚点块；0＝未填写保留值，适配器不得
+    /// 落盘 0）。
     std::uint32_t schemaVersion = 0;
     /// 归属项目（core 契约类型同一；控制器强制与会话绑定一致）。
     core::ProjectId projectId{};
