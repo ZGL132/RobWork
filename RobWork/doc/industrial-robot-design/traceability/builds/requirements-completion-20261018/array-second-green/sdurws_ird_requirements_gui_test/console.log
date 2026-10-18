@@ -1,0 +1,23 @@
+Note: Google Test filter = *ArrayCompleteProductionForms*:*DetachAtomicUndo*:*MirrorFrameAndNormalProduction*:*ArrayInvalidAndCancel*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12 (1486 ms)
+[ RUN      ] RequirementsSessionGuiTest.DetachAtomicUndo_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.DetachAtomicUndo_AT24_WP14T12 (79 ms)
+[ RUN      ] RequirementsSessionGuiTest.MirrorFrameAndNormalProduction_AT24_WP14T12
+unknown file: error: C++ exception with description "core/identity/parse: obj- 期望 <tag><32 小写 hex>，实际: "bad-id"（长度 6）" thrown in the test body.
+
+[  FAILED  ] RequirementsSessionGuiTest.MirrorFrameAndNormalProduction_AT24_WP14T12 (142 ms)
+[ RUN      ] RequirementsSessionGuiTest.ArrayInvalidAndCancelProduction_AT24_WP14T12
+[       OK ] RequirementsSessionGuiTest.ArrayInvalidAndCancelProduction_AT24_WP14T12 (325 ms)
+[----------] 4 tests from RequirementsSessionGuiTest (2034 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (2034 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.MirrorFrameAndNormalProduction_AT24_WP14T12
+
+ 1 FAILED TEST

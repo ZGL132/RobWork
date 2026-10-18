@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="1.733" timestamp="2026-10-18T18:56:30.288" name="AllTests">
+  <testsuite name="RequirementsSessionGuiTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="1.733" timestamp="2026-10-18T18:56:30.288">
+    <testcase name="ArrayCompleteProductionForms_AT24_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="946" status="run" result="completed" time="1.733" timestamp="2026-10-18T18:56:30.288" classname="RequirementsSessionGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:991&#x0A;Expected equality of these values:&#x0A;  p[0]&#x0A;    Which is: 2&#x0A;  source.pose.position.value()[0] + 0.5&#x0A;    Which is: 1.5&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:991
+Expected equality of these values:
+  p[0]
+    Which is: 2
+  source.pose.position.value()[0] + 0.5
+    Which is: 1.5
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:991&#x0A;Expected equality of these values:&#x0A;  p[1]&#x0A;    Which is: 2.6000000000000001&#x0A;  source.pose.position.value()[1] + 0.2&#x0A;    Which is: 2.2000000000000002&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:991
+Expected equality of these values:
+  p[1]
+    Which is: 2.6000000000000001
+  source.pose.position.value()[1] + 0.2
+    Which is: 2.2000000000000002
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:992&#x0A;The difference between p[0] and -2.0 is 2.0000000000006213, which exceeds 1e-12, where&#x0A;p[0] evaluates to 6.2135749975034348e-13,&#x0A;-2.0 evaluates to -2, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:992
+The difference between p[0] and -2.0 is 2.0000000000006213, which exceeds 1e-12, where
+p[0] evaluates to 6.2135749975034348e-13,
+-2.0 evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:992&#x0A;The difference between p[1] and 0.0 is 2, which exceeds 1e-12, where&#x0A;p[1] evaluates to -2,&#x0A;0.0 evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:992
+The difference between p[1] and 0.0 is 2, which exceeds 1e-12, where
+p[1] evaluates to -2,
+0.0 evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:993&#x0A;Expected equality of these values:&#x0A;  p[2]&#x0A;    Which is: 1&#x0A;  0.5&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:993
+Expected equality of these values:
+  p[2]
+    Which is: 1
+  0.5
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

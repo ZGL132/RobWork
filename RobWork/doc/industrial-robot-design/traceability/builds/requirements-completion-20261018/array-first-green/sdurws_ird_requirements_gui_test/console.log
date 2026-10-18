@@ -1,0 +1,42 @@
+Note: Google Test filter = *ArrayCompleteProductionForms*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(991): error: Expected equality of these values:
+  p[0]
+    Which is: 2
+  source.pose.position.value()[0] + 0.5
+    Which is: 1.5
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(991): error: Expected equality of these values:
+  p[1]
+    Which is: 2.6000000000000001
+  source.pose.position.value()[1] + 0.2
+    Which is: 2.2000000000000002
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(992): error: The difference between p[0] and -2.0 is 2.0000000000006213, which exceeds 1e-12, where
+p[0] evaluates to 6.2135749975034348e-13,
+-2.0 evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(992): error: The difference between p[1] and 0.0 is 2, which exceeds 1e-12, where
+p[1] evaluates to -2,
+0.0 evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(993): error: Expected equality of these values:
+  p[2]
+    Which is: 1
+  0.5
+
+[  FAILED  ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12 (1733 ms)
+[----------] 1 test from RequirementsSessionGuiTest (1733 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1733 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12
+
+ 1 FAILED TEST

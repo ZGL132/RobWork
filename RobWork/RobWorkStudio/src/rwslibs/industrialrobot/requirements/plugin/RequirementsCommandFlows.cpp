@@ -38,6 +38,8 @@
 #include <array>
 #include <chrono>
 #include <cmath>
+#include <sstream> // 折线文本只解析坐标；弧长与采样仍归TemplateArrayService。
+#include <QScrollArea>
 
 #include "ImportWizardFlow.hpp"        // L-R10 五步向导域侧流（组2）
 #include "PanelEditFlow.hpp"             // submitBatchEdit/IRequirementEditSink
@@ -188,31 +190,131 @@ public:
         return true;
     }
 
-    bool editArrayParams(int& count, double& spacing) override
+    /** @brief REQ-11完整参数表单；每次输入仅试算，确认才覆盖调用方参数。 */
+    bool editArrayDefinition(ArrayKind kind, ArrayParams& params) override
     {
-        QDialog dialog;
-        dialog.setWindowTitle(QString::fromUtf8("批量阵列参数"));
-        auto* form = new QFormLayout(&dialog);
-        auto* countBox = new QSpinBox(&dialog);
-        countBox->setRange(1, 1000);
-        countBox->setValue(count);
-        auto* spacingBox = new QDoubleSpinBox(&dialog);
-        spacingBox->setSuffix(QString::fromUtf8(" m"));
-        spacingBox->setRange(0.001, 100.0);
-        spacingBox->setValue(spacing);
-        form->addRow(QString::fromUtf8("生成数量"), countBox);
-        form->addRow(QString::fromUtf8("间距/半径"), spacingBox);
-        auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                                             Qt::Horizontal, &dialog);
-        form->addRow(buttons);
-        QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-        QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-        if (dialog.exec() != QDialog::Accepted) {
-            return false;
+        QDialog dialog; dialog.setWindowTitle("批量阵列参数（源参考系）"); dialog.resize(680, 720);
+        auto* layout = new QVBoxLayout(&dialog);
+        auto* scroll = new QScrollArea(&dialog); scroll->setWidgetResizable(true);
+        auto* body = new QWidget(scroll); auto* form = new QFormLayout(body);
+        scroll->setWidget(body); layout->addWidget(scroll);
+        // 控件由dialog的Qt父子链拥有；以下闭包仅在exec期间使用，绝不延迟写草稿。
+        const auto scalar = [&](const QString& key, const QString& label, double value, const QString& unit) {
+            auto* field = new QDoubleSpinBox(body); field->setObjectName("array-" + key);
+            field->setDecimals(15); field->setRange(-1000000.0, 1000000.0);
+            field->setSuffix(unit); field->setValue(value); form->addRow(label, field); return field;
+        };
+        const auto count = [&](const QString& key, const QString& label, int value) {
+            auto* field = new QSpinBox(body); field->setObjectName("array-" + key);
+            // 单轴1000是交互保护，乘积仍由服务的资源门统一裁决。
+            field->setRange(1, 1000); field->setValue(value); form->addRow(label, field); return field;
+        };
+        const auto vector = [&](const QString& key, const QString& label, const rw::math::Vector3D<>& value, const QString& unit) {
+            return std::array<QDoubleSpinBox*, 3>{scalar(key + "-x", label + " X", value[0], unit),
+                scalar(key + "-y", label + " Y", value[1], unit), scalar(key + "-z", label + " Z", value[2], unit)};
+        };
+        const auto readVector = [](const std::array<QDoubleSpinBox*, 3>& fields) {
+            return rw::math::Vector3D<>(fields[0]->value(), fields[1]->value(), fields[2]->value());
+        };
+        auto* count1 = count("count", "列数/生成数量", params.count);
+        auto* spacing = scalar("spacing", kind == ArrayKind::Polyline ? "弧长间距" : "列间距", kind == ArrayKind::Polyline ? params.polylineSpacingM : params.spacingM, " m");
+        std::array<QDoubleSpinBox*, 3> direction{}, direction2{}, direction3{}, center{}, normal{};
+        QSpinBox* count2 = nullptr; QSpinBox* count3 = nullptr;
+        QDoubleSpinBox* spacing2 = nullptr; QDoubleSpinBox* spacing3 = nullptr;
+        QDoubleSpinBox* radius = nullptr; QDoubleSpinBox* start = nullptr; QDoubleSpinBox* step = nullptr;
+        QPlainTextEdit* polyline = nullptr;
+        if (kind == ArrayKind::Linear || kind == ArrayKind::Rectangular) { direction = vector("direction", "列方向", params.direction, ""); }
+        if (kind == ArrayKind::Rectangular) {
+            count2 = count("count2", "行数", params.count2); spacing2 = scalar("spacing2", "行间距", params.spacing2M, " m");
+            direction2 = vector("direction2", "行方向", params.direction2, "");
+            count3 = count("count3", "层数", params.count3); spacing3 = scalar("spacing3", "层间距", params.spacing3M, " m");
+            direction3 = vector("direction3", "层方向", params.direction3, "");
+        } else if (kind == ArrayKind::Circular) {
+            spacing->hide(); form->labelForField(spacing)->hide();
+            center = vector("center", "圆心", params.center, " m"); normal = vector("normal", "圆平面法向", params.circleNormal, "");
+            radius = scalar("radius", "半径", params.radiusM, " m");
+            start = scalar("start-angle", "起始角", params.startAngleRad, " rad"); step = scalar("angle-step", "角步长", params.angleStepRad, " rad");
+        } else if (kind == ArrayKind::Polyline) {
+            count1->hide(); form->labelForField(count1)->hide();
+            polyline = new QPlainTextEdit(body); polyline->setObjectName("array-polyline");
+            QStringList lines;
+            for (const auto& p : params.polyline) { lines << QString("%1 %2 %3").arg(p[0], 0, 'g', 17).arg(p[1], 0, 'g', 17).arg(p[2], 0, 'g', 17); }
+            polyline->setPlainText(lines.join('\n')); polyline->setMinimumHeight(120);
+            form->addRow("折线顶点（每行X Y Z，m）", polyline);
         }
-        count = countBox->value();
-        spacing = spacingBox->value();
-        return true;
+        auto* preview = new QLabel(&dialog); preview->setObjectName("array-preview"); preview->setWordWrap(true); layout->addWidget(preview);
+        auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog); layout->addWidget(buttons);
+        buttons->button(QDialogButtonBox::Ok)->setText("确认生成草稿"); buttons->button(QDialogButtonBox::Cancel)->setText("取消");
+        ArrayParams staged = params;
+        const auto refresh = [&] {
+            staged = params; staged.count = count1->value(); staged.spacingM = spacing->value();
+            if (direction[0]) { staged.direction = readVector(direction); }
+            if (count2) {
+                staged.count2 = count2->value(); staged.spacing2M = spacing2->value(); staged.direction2 = readVector(direction2);
+                staged.count3 = count3->value(); staged.spacing3M = spacing3->value(); staged.direction3 = readVector(direction3);
+            }
+            if (radius) { staged.radiusM = radius->value(); staged.center = readVector(center); staged.circleNormal = readVector(normal); staged.startAngleRad = start->value(); staged.angleStepRad = step->value(); }
+            if (polyline) {
+                staged.polyline.clear(); staged.polylineSpacingM = spacing->value();
+                // 文本格式只认三列有限数值；几何退化与弧长合法性由原服务判定。
+                for (const auto& line : polyline->toPlainText().split('\n')) {
+                    if (line.trimmed().isEmpty()) { continue; }
+                    std::istringstream input(line.toStdString()); input.imbue(std::locale::classic());
+                    double x, y, z; std::string extra;
+                    if (!(input >> x >> y >> z) || (input >> extra)) {
+                        preview->setText("顶点格式错误：每行只允许X Y Z三个数，单位m"); buttons->button(QDialogButtonBox::Ok)->setEnabled(false); return;
+                    }
+                    staged.polyline.emplace_back(x, y, z);
+                }
+            }
+            const auto trial = templateService.applyArray(kind, staged);
+            preview->setText(trial.ok ? QString("将生成 %1 个工位；确认后一次整体撤销").arg(trial.newPoints.size()) : QString::fromStdString(trial.error.detail));
+            buttons->button(QDialogButtonBox::Ok)->setEnabled(trial.ok);
+        };
+        for (auto* field : body->findChildren<QDoubleSpinBox*>()) { QObject::connect(field, &QDoubleSpinBox::valueChanged, &dialog, refresh); }
+        for (auto* field : body->findChildren<QSpinBox*>()) { QObject::connect(field, &QSpinBox::valueChanged, &dialog, refresh); }
+        if (polyline) { QObject::connect(polyline, &QPlainTextEdit::textChanged, &dialog, refresh); }
+        refresh();
+        QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept); QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        if (dialog.exec() != QDialog::Accepted) { return false; }
+        params = std::move(staged); return true;
+    }
+
+    /** @brief REQ-11镜面表单：同源服务试算，同参考系反射，不复制跨系变换。 */
+    bool editMirrorPlane(const std::vector<TaskPoint>& sources, MirrorPlaneSpec& plane) override
+    {
+        QDialog dialog; dialog.setWindowTitle("镜像工位（过参考系原点）"); dialog.resize(620, 450);
+        auto* form = new QFormLayout(&dialog);
+        auto* kind = new QComboBox(&dialog); kind->setObjectName("mirror-frame-kind"); kind->addItems({"世界坐标系", "模型Frame", "场景对象"});
+        kind->setCurrentIndex(plane.refFrame.kind == RequirementRefKind::World ? 0 : plane.refFrame.kind == RequirementRefKind::ModelFrame ? 1 : 2);
+        auto* id = new QLineEdit(plane.refFrame.objectId ? QString::fromStdString(plane.refFrame.objectId->toCanonical()) : QString(), &dialog); id->setObjectName("mirror-frame-id");
+        form->addRow("参考系", kind); form->addRow("参考对象标识", id);
+        std::array<QDoubleSpinBox*, 3> normal{};
+        for (int i = 0; i < 3; ++i) {
+            auto* field = new QDoubleSpinBox(&dialog); field->setObjectName(QString("mirror-normal-%1").arg(i)); field->setDecimals(12); field->setRange(-1000000, 1000000); field->setValue(plane.axisNormal[i]); normal[i] = field;
+            form->addRow(QString("镜面法向 %1").arg(QChar::fromLatin1("XYZ"[i])), field);
+        }
+        auto* preview = new QLabel(&dialog); preview->setWordWrap(true); form->addRow(preview);
+        auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog); form->addRow(buttons);
+        MirrorPlaneSpec staged = plane;
+        const auto refresh = [&] {
+            id->setEnabled(kind->currentIndex() != 0);
+            staged.refFrame = {};
+            if (kind->currentIndex() != 0) {
+                staged.refFrame.kind = kind->currentIndex() == 1 ? RequirementRefKind::ModelFrame : RequirementRefKind::SceneObject;
+                // 用户文本不是程序契约违约，必须用core非抛出解析出口，非法值留在表单。
+                staged.refFrame.objectId = core::ObjectId::tryFromCanonical(id->text().trimmed().toStdString());
+                if (!staged.refFrame.objectId || !staged.refFrame.objectId->isValid()) { preview->setText("请输入有效参考对象标识"); buttons->button(QDialogButtonBox::Ok)->setEnabled(false); return; }
+            }
+            staged.axisNormal = {normal[0]->value(), normal[1]->value(), normal[2]->value()};
+            const auto trial = templateService.applyMirror(sources, staged);
+            preview->setText(trial.ok ? QString("将镜像 %1 个工位").arg(trial.newPoints.size()) : QString::fromStdString(trial.error.detail)); buttons->button(QDialogButtonBox::Ok)->setEnabled(trial.ok);
+        };
+        QObject::connect(kind, &QComboBox::currentIndexChanged, &dialog, refresh); QObject::connect(id, &QLineEdit::textChanged, &dialog, refresh);
+        for (auto* field : normal) { QObject::connect(field, &QDoubleSpinBox::valueChanged, &dialog, refresh); }
+        refresh(); QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept); QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        if (dialog.exec() != QDialog::Accepted) { return false; }
+        plane = staged; return true;
     }
 
     bool editImportMapping(const io::RawTable& table, FieldMapping& mapping,
@@ -394,24 +496,16 @@ bool flowMirrorStations(RequirementsPanelWidget& panel, IRequirementEditor& edit
         note(panel, QString::fromUtf8("未应用：镜像需要先选中一个工位条目"));
         return false;
     }
-    const QStringList planes{QString::fromUtf8("YZ 面（X=0）"), QString::fromUtf8("XZ 面（Y=0）"),
-                             QString::fromUtf8("XY 面（Z=0）")};
-    const auto choice = host.chooseItem(QString::fromUtf8("镜像工位"),
-                                        QString::fromUtf8("镜面（过参考系原点）："), planes);
-    if (!choice.has_value()) {
-        return true;
-    }
-    const rw::math::Vector3D<double> normals[3] = {
-        {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
-    MirrorPlaneSpec plane;
-    plane.axisNormal = normals[*choice];
-
     std::vector<TaskPoint> sources;
     for (const TaskPoint& p : editor.workingSet().points.entries) {
         if (p.objectId == selected.value()) {
             sources.push_back(p);
         }
     }
+    // REQ-11：以源参考系预填，允许任意法向；异系由领域拒绝，UI不复制变换。
+    if (sources.empty()) { note(panel, "未应用：源工位已不存在，请重新选择"); return false; }
+    MirrorPlaneSpec plane; plane.refFrame = sources.front().refFrame; plane.axisNormal = {1, 0, 0};
+    if (!host.editMirrorPlane(sources, plane)) { return true; }
     const EditBatch batch = templateService.applyMirror(sources, plane);
     if (!batch.ok) {
         note(panel, QString::fromUtf8("未应用（镜像）：")
@@ -438,12 +532,6 @@ bool flowCreateArray(RequirementsPanelWidget& panel, IRequirementEditor& editor,
     if (!kindChoice.has_value()) {
         return true;
     }
-    int count = 3;
-    double spacing = 0.5;
-    if (!host.editArrayParams(count, spacing)) {
-        return true;
-    }
-
     ArrayParams params;
     for (const TaskPoint& p : editor.workingSet().points.entries) {
         if (p.objectId == selected.value()) {
@@ -451,23 +539,11 @@ bool flowCreateArray(RequirementsPanelWidget& panel, IRequirementEditor& editor,
         }
     }
     const ArrayKind kind = ArrayKind(*kindChoice);
-    if (kind == ArrayKind::Linear) {
-        params.count = count;
-        params.spacingM = spacing;
-    } else if (kind == ArrayKind::Rectangular) {
-        params.count = count;
-        params.spacingM = spacing;
-        params.count2 = count > 1 ? count / 2 : 1;
-        params.spacing2M = spacing;
-    } else if (kind == ArrayKind::Circular) {
-        params.count = count;
-        params.radiusM = spacing;
-        params.angleStepRad = 2.0 * 3.14159265358979323846 / count;
-    } else {
-        params.count = count;
-        params.polyline = {rw::math::Vector3D<double>(0.0, 0.0, 0.0),
-                           rw::math::Vector3D<double>(spacing, 0.0, 0.0)};
-    }
+    // 参数均显式承载，不再由总数推断行数或固定折线/整圆；以下仅为初始建议。
+    params.count = 3; params.spacingM = 0.5; params.count2 = 2; params.spacing2M = 0.5;
+    params.spacing3M = 0.5; params.radiusM = 0.5; params.angleStepRad = 2.0943951023931953;
+    params.polyline = {{0, 0, 0}, {1, 0, 0}, {1, 1, 1}}; params.polylineSpacingM = 0.5;
+    if (!host.editArrayDefinition(kind, params)) { return true; }
     const EditBatch batch = templateService.applyArray(kind, params);
     if (!batch.ok) {
         note(panel, QString::fromUtf8("未应用（阵列参数）：")
@@ -514,18 +590,19 @@ bool flowRegenerateLinked(RequirementsPanelWidget& panel, IRequirementEditor& ed
     }
     default: break;
     }
-    // 解除关联（unlinkGenerator 产出新值——逐条 upsert，撤销逐步回退）。
+    // REQ-11：unlinkGenerator返回全工作集值；只提取本批次的已关联项，保留ID，
+    // 不把未命中的条目也写一遍。编辑器原子更新载荷负责统一校验与一次撤销。
     const std::vector<TaskPoint> unlinked =
         unlinkGenerator(editor.workingSet().points.entries, instanceId);
-    int applied = 0;
+    EditBatch batch; batch.ok = true;
     for (const TaskPoint& p : unlinked) {
-        if (editor.applyEdit(RequirementEdit{p}).accepted) {
-            ++applied;
+        for (const auto& original : editor.workingSet().points.entries) {
+            if (original.objectId == p.objectId && original.generation && original.generation->linked
+                && original.generation->instanceId == instanceId) { batch.updatedPoints.push_back(p); break; }
         }
     }
-    sink.onEditApplied("解除关联：" + std::to_string(applied) + " 个条目转为手工条目");
-    note(panel, QString::fromUtf8("已解除关联 %1 个条目").arg(applied));
-    return applied > 0;
+    batch.summary = "解除关联：" + std::to_string(batch.updatedPoints.size()) + " 个条目转为手工条目";
+    return submitBatchEdit(editor, sink, batch) == EditSubmitOutcome::Applied;
 }
 
 /// 导入产出预览确认＋应用（CSV/JSON 共用——行级错误 AT-02 部分成功）。

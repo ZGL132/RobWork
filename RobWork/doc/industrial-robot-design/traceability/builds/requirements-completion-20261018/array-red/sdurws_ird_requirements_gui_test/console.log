@@ -1,0 +1,34 @@
+Note: Google Test filter = *ArrayCompleteProductionForms*:*DetachAtomicUndo*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(957): error: Failed
+完整阵列参数控件缺失，kind=0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(980): error: Expected equality of these values:
+  points.size()
+    Which is: 1
+  before.points.entries.size() + generatedCount[kind]
+    Which is: 3
+
+[  FAILED  ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12 (631 ms)
+[ RUN      ] RequirementsSessionGuiTest.DetachAtomicUndo_AT24_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1009): error: Expected equality of these values:
+  m_editor.workingSet()
+    Which is: 272-byte object <01-00 00-00 00-00 00-00 E6-BC 94-E7 A4-BA E9-9C 80-E6 B1-82 E9-9B 86-00 0F-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 10-00 00-00 00-00 00-00 00-00 00-00 00-00 00-01 01-20 00-00 00-00 00-00 ... 01-00 00-00 00-00 00-00 30-53 F1-A0 BE-01 00-00 38-54 F1-A0 BE-01 00-00 38-54 F1-A0 BE-01 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00>
+  before
+    Which is: 272-byte object <01-00 00-00 00-00 00-00 E6-BC 94-E7 A4-BA E9-9C 80-E6 B1-82 E9-9B 86-00 0F-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 10-00 00-00 00-00 00-00 00-00 00-00 00-00 00-01 01-20 00-00 00-00 00-00 ... 01-00 00-00 BE-01 00-00 E0-5E F1-A0 BE-01 00-00 E8-5F F1-A0 BE-01 00-00 E8-5F F1-A0 BE-01 00-00 01-00 00-00 FF-7F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00>
+解除关联不能逐条留下半批状态
+
+[  FAILED  ] RequirementsSessionGuiTest.DetachAtomicUndo_AT24_WP14T12 (120 ms)
+[----------] 2 tests from RequirementsSessionGuiTest (752 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (752 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.ArrayCompleteProductionForms_AT24_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.DetachAtomicUndo_AT24_WP14T12
+
+ 2 FAILED TESTS

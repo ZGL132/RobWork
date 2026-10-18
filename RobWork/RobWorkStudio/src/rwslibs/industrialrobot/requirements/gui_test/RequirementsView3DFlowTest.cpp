@@ -155,7 +155,8 @@ struct FakeHost final : CommandDialogHost {
         return chooseItemAnswer;
     }
     bool editTemplateParams(TemplateKind&, TemplateParams&) override { return false; }
-    bool editArrayParams(int&, double&) override { return false; }
+    bool editArrayDefinition(ArrayKind, ArrayParams&) override { return false; }
+    bool editMirrorPlane(const std::vector<TaskPoint>&, MirrorPlaneSpec&) override { return false; }
     bool editImportMapping(const io::RawTable&, FieldMapping&, ImportUnitOptions&) override { return false; }
     bool confirmImport(const QString& summaryText) override
     {

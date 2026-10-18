@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <charconv> // 配方整数要求全串解析；禁止atoi将损坏后缀截成合法数量。
 #include <cstdio>
 #include <cstdlib>
 #include <set>
@@ -417,7 +418,8 @@ bool EditBatch::operator==(const EditBatch& o) const
     return ok == o.ok && newPoints == o.newPoints && provenance == o.provenance
         && replaceNames == o.replaceNames && diagnostics == o.diagnostics
         && summary == o.summary && error.code == o.error.code
-        && error.params == o.error.params && error.detail == o.error.detail;
+        && error.params == o.error.params && error.detail == o.error.detail
+        && updatedPoints == o.updatedPoints;
 }
 
 bool RegenerateOutcome::operator==(const RegenerateOutcome& o) const
@@ -820,6 +822,23 @@ EditBatch TemplateArrayService::applyArray(ArrayKind kind, const ArrayParams& pa
         }
     }
 
+    // WP-14-T12资源门：批次暂存在UI线程，10万条约占百MB级，超限应显式
+    // 请求拆批，不能卡住交互或整数溢出后写入半批。先除后乘，任何int输入均安全。
+    constexpr std::size_t maxBatchPoints = 100000;
+    const auto withinBudget = [&](std::initializer_list<int> counts) {
+        std::size_t total = params.sources.size();
+        if (total > maxBatchPoints) { return false; }
+        for (int count : counts) {
+            if (count < 1 || static_cast<std::size_t>(count) > maxBatchPoints / total) { return false; }
+            total *= static_cast<std::size_t>(count);
+        }
+        return true;
+    };
+    if ((kind == ArrayKind::Rectangular && !withinBudget({params.count, params.count2, params.count3}))
+        || ((kind == ArrayKind::Linear || kind == ArrayKind::Circular) && !withinBudget({params.count}))) {
+        return errorBatch("count", "阵列数量必须为正且整批不超过100000条，请减少数量或分批生成");
+    }
+
     // ---- 批次骨架 ----
     const std::string generatorId = arrayGeneratorId(kind);
     EditBatch out;
@@ -897,7 +916,8 @@ EditBatch TemplateArrayService::applyArray(ArrayKind kind, const ArrayParams& pa
         const auto validDir = [](const rw::math::Vector3D<double>& v) {
             return finiteVec3(v) && !(v[0] == 0.0 && v[1] == 0.0 && v[2] == 0.0);
         };
-        if (!validDir(params.direction) || !validDir(params.direction2)) {
+        if (!validDir(params.direction) || !validDir(params.direction2)
+            || (params.count3 > 1 && !validDir(params.direction3))) {
             return errorBatch("direction", "矩形方向非法（两方向均非零且有限）");
         }
         if (!std::isfinite(params.spacingM) || params.spacingM <= 0.0
@@ -907,39 +927,72 @@ EditBatch TemplateArrayService::applyArray(ArrayKind kind, const ArrayParams& pa
         if (params.count < 1 || params.count2 < 1) {
             return errorBatch("count", "矩形数量非法（count/count2 ≥1）");
         }
+        if (params.count3 > 1 && (!std::isfinite(params.spacing3M) || params.spacing3M <= 0)) {
+            return errorBatch("spacing3-m", "多层阵列层间距必须>0且有限，单位m");
+        }
         out.provenance.parameters.emplace_back("direction", formatVec3(params.direction));
         out.provenance.parameters.emplace_back("spacing-m", formatNumber(params.spacingM));
         out.provenance.parameters.emplace_back("count", std::to_string(params.count));
         out.provenance.parameters.emplace_back("direction2", formatVec3(params.direction2));
         out.provenance.parameters.emplace_back("spacing2-m", formatNumber(params.spacing2M));
         out.provenance.parameters.emplace_back("count2", std::to_string(params.count2));
+        // 只在多层时增键；旧二维配方的键序/字节不变，重生成缺键读默认单层。
+        if (params.count3 > 1) {
+            out.provenance.parameters.emplace_back("direction3", formatVec3(params.direction3));
+            out.provenance.parameters.emplace_back("spacing3-m", formatNumber(params.spacing3M));
+            out.provenance.parameters.emplace_back("count3", std::to_string(params.count3));
+        }
 
         const auto unitize = [](const rw::math::Vector3D<double>& v) {
-            const double n = std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-            return rw::math::Vector3D<double>(v[0] / n, v[1] / n, v[2] / n);
+            // 先按最大绝对分量缩放，避免极小/极大有限方向在平方求和时下溢/上溢。
+            const double scale = std::max({std::abs(v[0]), std::abs(v[1]), std::abs(v[2])});
+            const rw::math::Vector3D<double> scaled = v / scale;
+            return scaled / std::hypot(scaled[0], scaled[1], scaled[2]);
         };
         const rw::math::Vector3D<double> u1 = unitize(params.direction);
         const rw::math::Vector3D<double> u2 = unitize(params.direction2);
+        const rw::math::Vector3D<double> u3 = params.count3 > 1 ? unitize(params.direction3) : rw::math::Vector3D<double>(0, 0, 0);
         // (i,j) 行主序：i=1..count 主向、j=1..count2 第二向——生成序确定。
         for (const auto& src : params.sources) {
             const rw::math::Vector3D<double> p = src.pose.position.value();
             for (int i = 1; i <= params.count; ++i) {
                 for (int j = 1; j <= params.count2; ++j) {
+                    // 第一层k=0保持原二维坐标与名称；多层按源→列→行→层稳定生成。
+                    for (int k = 0; k < params.count3; ++k) {
+                    const auto offset3 = u3 * (params.count3 > 1 ? params.spacing3M * k : 0.0);
                     derive(src,
                            rw::math::Vector3D<double>(
                                p[0] + u1[0] * (params.spacingM * static_cast<double>(i))
-                                    + u2[0] * (params.spacing2M * static_cast<double>(j)),
+                                    + u2[0] * (params.spacing2M * static_cast<double>(j)) + offset3[0],
                                p[1] + u1[1] * (params.spacingM * static_cast<double>(i))
-                                    + u2[1] * (params.spacing2M * static_cast<double>(j)),
+                                    + u2[1] * (params.spacing2M * static_cast<double>(j)) + offset3[1],
                                p[2] + u1[2] * (params.spacingM * static_cast<double>(i))
-                                    + u2[2] * (params.spacing2M * static_cast<double>(j))),
-                           "-A" + std::to_string(i) + "x" + std::to_string(j));
+                                    + u2[2] * (params.spacing2M * static_cast<double>(j)) + offset3[2]),
+                           "-A" + std::to_string(i) + "x" + std::to_string(j)
+                           + (params.count3 > 1 ? "x" + std::to_string(k + 1) : ""));
+                    }
                 }
             }
         }
         break;
     }
     case ArrayKind::Circular: {
+        if (!finiteVec3(params.circleNormal) || (params.circleNormal[0] == 0 && params.circleNormal[1] == 0 && params.circleNormal[2] == 0)) {
+            return errorBatch("circle-normal", "圆平面法向必须非零且有限（源参考系，无量纲）");
+        }
+        // WP-14-T12：以+X投影为零角轴；法向平行X时使用+Y，无随机选轴。
+        // 先缩放再归一化，单位法向n与u构造v=n×u，保持右手性和旧+Z圆方向。
+        const auto normal = params.circleNormal;
+        const double scale = std::max({std::abs(normal[0]), std::abs(normal[1]), std::abs(normal[2])});
+        const auto scaled = normal / scale; const auto n = scaled / std::hypot(scaled[0], scaled[1], scaled[2]);
+        auto u = rw::math::Vector3D<double>(1 - n[0] * n[0], -n[0] * n[1], -n[0] * n[2]);
+        double uNorm = std::hypot(u[0], u[1], u[2]);
+        if (uNorm <= 1e-12) { // 与X轴夹角约1e-12 rad内改用Y，防投影消差失稳。
+            u = rw::math::Vector3D<double>(-n[1] * n[0], 1 - n[1] * n[1], -n[1] * n[2]);
+            uNorm = std::hypot(u[0], u[1], u[2]);
+        }
+        u = u / uNorm;
+        const auto v = rw::math::Vector3D<double>(n[1] * u[2] - n[2] * u[1], n[2] * u[0] - n[0] * u[2], n[0] * u[1] - n[1] * u[0]);
         // 校验：半径 >0 有限、角步距非零有限（0 步距＝全同位点重名，拒绝）、
         // count ≥1、圆心有限。
         if (!finiteVec3(params.center)) {
@@ -962,6 +1015,9 @@ EditBatch TemplateArrayService::applyArray(ArrayKind kind, const ArrayParams& pa
         out.provenance.parameters.emplace_back("angle-step-rad",
                                                formatNumber(params.angleStepRad));
         out.provenance.parameters.emplace_back("count", std::to_string(params.count));
+        if (!(params.circleNormal == rw::math::Vector3D<double>(0, 0, 1))) {
+            out.provenance.parameters.emplace_back("circle-normal", formatVec3(params.circleNormal));
+        }
 
         // 第 i 条位于 refFrame 系 XY 平面圆上（法向 Z——ArrayParams 类注）：
         // θᵢ = start + step·i，位置＝center＋radius·(cosθᵢ, sinθᵢ, 0)。
@@ -971,9 +1027,9 @@ EditBatch TemplateArrayService::applyArray(ArrayKind kind, const ArrayParams& pa
                     params.startAngleRad + params.angleStepRad * static_cast<double>(i);
                 derive(src,
                        rw::math::Vector3D<double>(
-                           params.center[0] + params.radiusM * std::cos(theta),
-                           params.center[1] + params.radiusM * std::sin(theta),
-                           params.center[2]),
+                           params.center[0] + params.radiusM * (u[0] * std::cos(theta) + v[0] * std::sin(theta)),
+                           params.center[1] + params.radiusM * (u[1] * std::cos(theta) + v[1] * std::sin(theta)),
+                           params.center[2] + params.radiusM * (u[2] * std::cos(theta) + v[2] * std::sin(theta))),
                        "-A" + std::to_string(i));
             }
         }
@@ -1042,8 +1098,11 @@ EditBatch TemplateArrayService::applyArray(ArrayKind kind, const ArrayParams& pa
             }
             return params.polyline.back();  // 不可达（s ≤ total 由循环界保证）
         };
-        const long long nPoints =
-            static_cast<long long>(std::floor(total / params.polylineSpacingM));
+        const double countCandidate = std::floor(total / params.polylineSpacingM);
+        if (!std::isfinite(countCandidate) || countCandidate > static_cast<double>(maxBatchPoints / params.sources.size())) {
+            return errorBatch("polyline-spacing", "折线生成数量超出整批100000条资源上限，请增大间距");
+        }
+        const long long nPoints = static_cast<long long>(countCandidate);
         if (nPoints < 1) {
             return errorBatch("polyline-spacing",
                               "折线间距大于总弧长（总弧长 " + formatNumber(total)
@@ -1176,8 +1235,8 @@ std::optional<ArrayParams> arrayParamsOf(ArrayKind kind, const GenerationProvena
         if (!v) {
             return false;
         }
-        out = std::atoi(v->c_str());
-        return true;
+        const auto parsed = std::from_chars(v->data(), v->data() + v->size(), out);
+        return parsed.ec == std::errc{} && parsed.ptr == v->data() + v->size();
     };
     switch (kind) {
     case ArrayKind::Linear:
@@ -1192,6 +1251,10 @@ std::optional<ArrayParams> arrayParamsOf(ArrayKind kind, const GenerationProvena
             || !num("spacing2-m", p.spacing2M) || !integer("count2", p.count2)) {
             return std::nullopt;
         }
+        // 历史二维配方没有这些键；任意一个新增键存在则必须全组可解析。
+        if (paramValue(gen, "count3") || paramValue(gen, "spacing3-m") || paramValue(gen, "direction3")) {
+            if (!integer("count3", p.count3) || !num("spacing3-m", p.spacing3M) || !vec("direction3", p.direction3)) { return std::nullopt; }
+        }
         break;
     case ArrayKind::Circular:
         if (!vec("center", p.center) || !num("radius-m", p.radiusM)
@@ -1199,6 +1262,7 @@ std::optional<ArrayParams> arrayParamsOf(ArrayKind kind, const GenerationProvena
             || !num("angle-step-rad", p.angleStepRad) || !integer("count", p.count)) {
             return std::nullopt;
         }
+        if (paramValue(gen, "circle-normal") && !vec("circle-normal", p.circleNormal)) { return std::nullopt; }
         break;
     case ArrayKind::Polyline: {
         const auto line = paramValue(gen, "polyline");

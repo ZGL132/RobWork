@@ -1,0 +1,13 @@
+Note: Google Test filter = *RectangularLayersAndRecipe*:*CircularPlaneNormal*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from ReqTemplateArray
+[ RUN      ] ReqTemplateArray.RectangularLayersAndRecipe_AT24_WP14T12
+[       OK ] ReqTemplateArray.RectangularLayersAndRecipe_AT24_WP14T12 (0 ms)
+[ RUN      ] ReqTemplateArray.CircularPlaneNormal_AT24_WP14T12
+[       OK ] ReqTemplateArray.CircularPlaneNormal_AT24_WP14T12 (0 ms)
+[----------] 2 tests from ReqTemplateArray (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.

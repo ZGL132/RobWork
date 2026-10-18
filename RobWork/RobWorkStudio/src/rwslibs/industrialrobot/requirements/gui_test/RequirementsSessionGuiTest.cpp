@@ -800,6 +800,8 @@ public:
     std::optional<int> item;                     ///< 条目选择应答
     bool templateOk = true;                      ///< 模板表单确认
     bool arrayOk = true;                         ///< 阵列表单确认
+    bool productionArray = false;                ///< AT-24：驱动生产参数对话框。
+    bool productionMirror = false;               ///< AT-24：驱动生产镜面表单。
     int arrayCount = 3;                          ///< 阵列数量应答
     double arraySpacing = 0.5;                   ///< 阵列间距应答
     bool importConfirmed = true;                 ///< 导入确认应答
@@ -829,11 +831,18 @@ public:
         params.countY = 2;
         return templateOk;
     }
-    bool editArrayParams(int& count, double& spacing) override
+    bool editArrayDefinition(ArrayKind kind, ArrayParams& params) override
     {
-        count = arrayCount;
-        spacing = arraySpacing;
+        if (productionArray) { return qtDialogHost().editArrayDefinition(kind, params); }
+        params.count = arrayCount; params.spacingM = arraySpacing;
         return arrayOk;
+    }
+    bool editMirrorPlane(const std::vector<TaskPoint>& sources, MirrorPlaneSpec& plane) override
+    {
+        if (productionMirror) { return qtDialogHost().editMirrorPlane(sources, plane); }
+        if (!item) { return false; }
+        plane.axisNormal = *item == 0 ? rw::math::Vector3D<>(1, 0, 0) : *item == 1 ? rw::math::Vector3D<>(0, 1, 0) : rw::math::Vector3D<>(0, 0, 1);
+        return true;
     }
     bool editImportMapping(const io::RawTable& table, FieldMapping& mapping, ImportUnitOptions& units) override
     {
@@ -933,6 +942,164 @@ TEST_F(RequirementsSessionGuiTest, CommandFlows_CreateArray_UI_T32)
                                                    m_editor, *m_panel, host);
     ASSERT_TRUE(arrayOk) << m_panel->showCommandFeedbackText().toStdString();
     EXPECT_EQ(m_editor.workingSet().points.entries.size(), preArray + 3);
+}
+
+/** @brief REQ-11/AT-24：四构型完整参数经生产表单生成真实坐标，整批按钮撤销。 */
+TEST_F(RequirementsSessionGuiTest, ArrayCompleteProductionForms_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    const auto source = m_editor.workingSet().points.entries.front();
+    for (int kind = 0; kind < 4; ++kind) {
+        const auto before = m_editor.workingSet();
+        m_panel->refreshPanel(before, m_report); m_panel->focusObject(source.objectId);
+        FakeDialogHost host; host.item = kind; host.productionArray = true;
+        bool visited = false;
+        QTimer::singleShot(0, [&] {
+            auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            if (!dialog) { return; }
+            visited = true;
+            auto* count = dialog->findChild<QSpinBox*>("array-count");
+            auto* spacing = dialog->findChild<QDoubleSpinBox*>("array-spacing");
+            if (!count || !spacing) {
+                ADD_FAILURE() << "完整阵列参数控件缺失，kind=" << kind;
+                dialog->reject(); return;
+            }
+            count->setValue(2); spacing->setValue(0.5);
+            if (kind == 0) {
+                dialog->findChild<QDoubleSpinBox*>("array-direction-x")->setValue(0);
+                dialog->findChild<QDoubleSpinBox*>("array-direction-y")->setValue(1);
+            } else if (kind == 1) {
+                dialog->findChild<QSpinBox*>("array-count2")->setValue(3);
+                dialog->findChild<QDoubleSpinBox*>("array-spacing2")->setValue(0.2);
+                dialog->findChild<QSpinBox*>("array-count3")->setValue(2);
+                dialog->findChild<QDoubleSpinBox*>("array-spacing3")->setValue(0.7);
+            } else if (kind == 2) {
+                dialog->findChild<QDoubleSpinBox*>("array-radius")->setValue(2);
+                dialog->findChild<QDoubleSpinBox*>("array-start-angle")->setValue(1.5707963267948966);
+                dialog->findChild<QDoubleSpinBox*>("array-angle-step")->setValue(1.5707963267948966);
+            } else {
+                dialog->findChild<QPlainTextEdit*>("array-polyline")->setPlainText("0 0 0\n0 0 1\n0 1 1");
+            }
+            dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        });
+        EXPECT_TRUE(executeRequirementCommand("requirements.create-array", *m_panel, m_editor, *m_panel, host));
+        EXPECT_TRUE(visited);
+        const auto& points = m_editor.workingSet().points.entries;
+        const std::size_t generatedCount[] = {2, 12, 2, 4};
+        ASSERT_EQ(points.size(), before.points.entries.size() + generatedCount[kind]);
+        const TaskPoint* generated = nullptr;
+        // 编辑器按随机ObjectId稳定排序，不能把容器首元素误当几何生成第1条。
+        const auto expectedName = source.name + (kind == 1 ? "-A1x1x1" : "-A1");
+        for (const auto& point : points) { if (point.name == expectedName) { generated = &point; break; } }
+        ASSERT_NE(generated, nullptr);
+        const auto p = generated->pose.position.value();
+        if (kind == 0) { EXPECT_DOUBLE_EQ(p[0], source.pose.position.value()[0]); EXPECT_DOUBLE_EQ(p[1], source.pose.position.value()[1] + 0.5); }
+        if (kind == 1) { EXPECT_DOUBLE_EQ(p[0], source.pose.position.value()[0] + 0.5); EXPECT_DOUBLE_EQ(p[1], source.pose.position.value()[1] + 0.2); }
+        if (kind == 2) { EXPECT_NEAR(p[0], -2.0, 1e-12); EXPECT_NEAR(p[1], 0.0, 1e-12); }
+        if (kind == 3) { EXPECT_DOUBLE_EQ(p[0], 0.0); EXPECT_DOUBLE_EQ(p[2], 0.5); }
+        QPushButton* undo = nullptr;
+        for (auto* button : m_panel->findChildren<QPushButton*>()) { if (button->text() == "撤销") { undo = button; } }
+        ASSERT_NE(undo, nullptr); ASSERT_TRUE(undo->isEnabled()); undo->click();
+        EXPECT_EQ(m_editor.workingSet(), before);
+    }
+}
+
+/** @brief REQ-11：解除关联是一次批次；撤销必须恢复全批关联及其他条目。 */
+TEST_F(RequirementsSessionGuiTest, DetachAtomicUndo_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    FakeDialogHost host;
+    ASSERT_TRUE(executeRequirementCommand("requirements.apply-template", *m_panel, m_editor, *m_panel, host));
+    const auto before = m_editor.workingSet();
+    for (const auto& point : before.points.entries) {
+        if (point.generation) { m_panel->focusObject(point.objectId); break; }
+    }
+    host.action = CommandDialogHost::RegenerateAction::Detach;
+    ASSERT_TRUE(executeRequirementCommand("requirements.regenerate-linked", *m_panel, m_editor, *m_panel, host));
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (point.generation) { EXPECT_FALSE(point.generation->linked); }
+        else {
+            const auto original = std::find_if(before.points.entries.begin(), before.points.entries.end(), [&](const TaskPoint& p) { return p.objectId == point.objectId; });
+            ASSERT_NE(original, before.points.entries.end()); EXPECT_EQ(point, *original);
+        }
+    }
+    QPushButton* undo = nullptr; QPushButton* redo = nullptr;
+    for (auto* button : m_panel->findChildren<QPushButton*>()) {
+        if (button->text() == "撤销") { undo = button; }
+        if (button->text() == "重做") { redo = button; }
+    }
+    ASSERT_NE(undo, nullptr); ASSERT_NE(redo, nullptr);
+    ASSERT_TRUE(undo->isEnabled()); undo->click();
+    EXPECT_EQ(m_editor.workingSet(), before) << "解除关联不能逐条留下半批状态";
+    ASSERT_TRUE(redo->isEnabled()); redo->click();
+    for (const auto& point : m_editor.workingSet().points.entries) { if (point.generation) { EXPECT_FALSE(point.generation->linked); } }
+}
+
+/** @brief REQ-11/AT-24：非World镜面、任意法向，同系反射与取消零写。 */
+TEST_F(RequirementsSessionGuiTest, MirrorFrameAndNormalProduction_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    auto source = m_editor.workingSet().points.entries.front();
+    source.refFrame.kind = RequirementRefKind::ModelFrame;
+    source.refFrame.objectId = core::ObjectId::generate();
+    ASSERT_TRUE(m_editor.applyEdit(source).accepted);
+    const auto before = m_editor.workingSet(); m_panel->refreshPanel(before, m_report); m_panel->focusObject(source.objectId);
+    FakeDialogHost host; host.productionMirror = true;
+    bool visited = false;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget()); if (!dialog) { return; }
+        visited = true;
+        auto* kind = dialog->findChild<QComboBox*>("mirror-frame-kind");
+        auto* id = dialog->findChild<QLineEdit*>("mirror-frame-id");
+        ASSERT_NE(kind, nullptr); ASSERT_NE(id, nullptr);
+        EXPECT_EQ(kind->currentIndex(), 1); EXPECT_EQ(id->text().toStdString(), source.refFrame.objectId->toCanonical());
+        auto* ok = dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok);
+        id->setText("bad-id"); EXPECT_FALSE(ok->isEnabled());
+        id->setText(QString::fromStdString(source.refFrame.objectId->toCanonical()));
+        dialog->findChild<QDoubleSpinBox*>("mirror-normal-0")->setValue(0); EXPECT_FALSE(ok->isEnabled());
+        dialog->findChild<QDoubleSpinBox*>("mirror-normal-0")->setValue(1);
+        dialog->findChild<QDoubleSpinBox*>("mirror-normal-1")->setValue(1);
+        ASSERT_TRUE(ok->isEnabled()); ok->click();
+    });
+    ASSERT_TRUE(executeRequirementCommand("requirements.mirror-stations", *m_panel, m_editor, *m_panel, host)); EXPECT_TRUE(visited);
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), before.points.entries.size() + 1);
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (!point.generation) { continue; }
+        EXPECT_EQ(point.refFrame, source.refFrame);
+        EXPECT_NEAR(point.pose.position.value()[0], -source.pose.position.value()[1], 1e-12);
+        EXPECT_NEAR(point.pose.position.value()[1], -source.pose.position.value()[0], 1e-12);
+        EXPECT_NEAR(point.pose.position.value()[2], source.pose.position.value()[2], 1e-12);
+    }
+    MirrorPlaneSpec plane; plane.refFrame = source.refFrame; plane.axisNormal = {1, 0, 0};
+    const auto original = plane;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget()); if (!dialog) { return; }
+        dialog->findChild<QDoubleSpinBox*>("mirror-normal-1")->setValue(1); dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().editMirrorPlane({source}, plane)); EXPECT_EQ(plane.refFrame, original.refFrame); EXPECT_EQ(plane.axisNormal, original.axisNormal);
+}
+
+/** @brief REQ-11：真实阵列表单非法方向/顶点不能确认，取消不改参数。 */
+TEST_F(RequirementsSessionGuiTest, ArrayInvalidAndCancelProduction_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    ArrayParams p; p.sources = m_editor.workingSet().points.entries; p.count = 2; p.spacingM = 0.5;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget()); if (!dialog) { return; }
+        auto* ok = dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok);
+        dialog->findChild<QDoubleSpinBox*>("array-direction-x")->setValue(0); EXPECT_FALSE(ok->isEnabled());
+        dialog->findChild<QDoubleSpinBox*>("array-direction-y")->setValue(1); EXPECT_TRUE(ok->isEnabled()); dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().editArrayDefinition(ArrayKind::Linear, p)); EXPECT_EQ(p.direction, rw::math::Vector3D<>(1, 0, 0));
+    p.polyline = {{0, 0, 0}, {0, 0, 1}}; p.polylineSpacingM = 0.5;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget()); if (!dialog) { return; }
+        auto* text = dialog->findChild<QPlainTextEdit*>("array-polyline"); auto* ok = dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok);
+        text->setPlainText("bad coordinates"); EXPECT_FALSE(ok->isEnabled());
+        text->setPlainText("0 0 0\n0 0 0"); EXPECT_FALSE(ok->isEnabled());
+        text->setPlainText("0 0 0\n0 0 1\n0 1 1"); EXPECT_TRUE(ok->isEnabled()); dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().editArrayDefinition(ArrayKind::Polyline, p)); EXPECT_EQ(p.polyline.size(), 2U);
 }
 
 TEST_F(RequirementsSessionGuiTest, CommandFlows_ExportCopy_UI_T32)

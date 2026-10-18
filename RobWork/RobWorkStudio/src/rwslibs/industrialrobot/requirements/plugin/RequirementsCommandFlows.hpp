@@ -66,9 +66,21 @@ struct CommandDialogHost {
     /// @param params [in,out] 进入＝表单预填（域黄金默认）；确认＝用户改后值。
     virtual bool editTemplateParams(TemplateKind& kind, TemplateParams& params) = 0;
 
-    /// 阵列参数表单（构型选择在 chooseItem——本面承载数值参数）。
-    /// @param count [in,out] 生成数量；@param spacing [in,out] 间距/半径。
-    virtual bool editArrayParams(int& count, double& spacing) = 0;
+    /**
+     * @brief 暂存四构型完整参数，并经领域服务预览数量/错误；取消不改入参。
+     * @param kind [in] 四构型之一；仅呈现该构型使用的字段。
+     * @param params [in,out] 源只读保留；长度m、角度rad、方向在源refFrame系。
+     * @return true确认；false取消。仅UI线程，输出仍经原服务生成一个批次。
+     */
+    virtual bool editArrayDefinition(ArrayKind kind, ArrayParams& params) = 0;
+
+    /**
+     * @brief 暂存参考系镜面与任意非零法向，领域服务负责合法性和反射。
+     * @param sources [in] 源条目值，仅调用期借用，反射必须同参考系表达。
+     * @param plane [in,out] 初始/确认镜面，取消保持原值；法向无量纲。
+     * @return true确认；false取消。仅UI线程，不执行草稿写入。
+     */
+    virtual bool editMirrorPlane(const std::vector<TaskPoint>& sources, MirrorPlaneSpec& plane) = 0;
 
     /**
      * @brief 暂存人工列映射及单位，显示域函数SI换算预览；取消不改入参。

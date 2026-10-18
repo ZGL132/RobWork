@@ -462,7 +462,7 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
     }
     // 空批次（无新条目且无替换）＝无事可做的调用方错误（避免制造
     // "空撤销步"污染撤销栈语义）。
-    if (batch.newPoints.empty() && batch.replaceNames.empty()) {
+    if (batch.newPoints.empty() && batch.replaceNames.empty() && batch.updatedPoints.empty()) {
         out.error = loadFailure("批次为空（无新条目且无替换名——无编辑语义）");
         return out;
     }
@@ -558,24 +558,43 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
         }
     }
 
-    // ---- ③写入（先替换移除、后追加新条目＋排序）——校验全部通过后才
-    //      动工作集（拒绝面不产生部分写入）。
+    // ---- ③完整更新预检：只更新已存在身份，不将调用方拼错ID悄悄当新增。
+    //      解除关联不是删除，仍被工况引用的工位无需解除绑定；与替换/新增重叠则拒绝。
+    std::vector<core::ObjectId> updatedIds;
+    for (const auto& point : batch.updatedPoints) {
+        const auto original = std::find_if(ws_.points.entries.begin(), ws_.points.entries.end(),
+            [&](const TaskPoint& p) { return p.objectId == point.objectId; });
+        if (original == ws_.points.entries.end()
+            || std::find(updatedIds.begin(), updatedIds.end(), point.objectId) != updatedIds.end()
+            || std::find(batch.replaceNames.begin(), batch.replaceNames.end(), original->name) != batch.replaceNames.end()
+            || std::any_of(batch.newPoints.begin(), batch.newPoints.end(), [&](const TaskPoint& p) { return p.objectId == point.objectId; })) {
+            out.error = loadFailure("批次更新目标不存在、重复或与新增/替换重叠，请刷新后重试");
+            return out;
+        }
+        updatedIds.push_back(point.objectId);
+    }
+
+    // ---- ④在候选工作集上写入，沿用单条upsert的不变量/名称校验；所有失败
+    //      直接丢弃候选，权威工作集/撤销栈在最终交换前保持原状（REQ-11）。
+    RequirementWorkingSet candidate = ws_;
     for (const auto& name : batch.replaceNames) {
-        auto& entries = ws_.points.entries;
+        auto& entries = candidate.points.entries;
         entries.erase(std::remove_if(entries.begin(), entries.end(),
                                      [&name](const TaskPoint& p) { return p.name == name; }),
                       entries.end());
     }
     for (const auto& p : batch.newPoints) {
-        ws_.points.entries.push_back(p);
+        candidate.points.entries.push_back(p);
     }
-    sortEntriesByObjectId(ws_.points.entries);
+    for (const auto& point : batch.updatedPoints) {
+        if (!upsertEntry(candidate.points.entries, point, "任务点", out.error, validateTaskPoint)) { return out; }
+    }
+    sortEntriesByObjectId(candidate.points.entries);
 
     // ---- ④跨集合 id 唯一复核（I-REQ-2 跨集合半区——全集视图核对，
     //      与单条 applyEdit 同源；违例回滚快照）。
-    if (auto e = checkCrossSetIdUniqueness(ws_.points.entries, ws_.regions.entries,
-                                           ws_.conditions.entries, ws_.plans.entries)) {
-        ws_ = std::move(snapshot);
+    if (auto e = checkCrossSetIdUniqueness(candidate.points.entries, candidate.regions.entries,
+                                           candidate.conditions.entries, candidate.plans.entries)) {
         out.error = std::move(*e);
         out.error.detail = "requirements/editor: " + out.error.detail
                          + "（I-REQ-2 跨集合半区）";
@@ -588,6 +607,7 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
         batch.summary.empty() ? ("批次应用 " + std::to_string(batch.newPoints.size())
                                + " 条")
                               : batch.summary;
+    ws_ = std::move(candidate);
     undoStack_.push_back(UndoStep{std::move(snapshot), line});
     redoStack_.clear();
     if (!summary_.empty()) {
