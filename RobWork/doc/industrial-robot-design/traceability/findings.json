@@ -6250,10 +6250,12 @@
       "id": "F-619",
       "source": "audit-p0-p1d 合入后全量复验（2026-10-09，acc-audit-merge-verify）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "gate-all 在 fresh 树对 sdurws_ird_ui_test 套件的 ctest 调用挂起（两次独立复现：ctest 进程零 CPU、无子进程、无输出；同一 exe 直跑 255/255 全绿且 1.6~2.2s 完成，工作目录假设已排除）——疑似 ctest×pwsh 管道或该套件在 ctest 环境的启动交互问题",
-      "owner": "testkit/门禁所有者：排查 ctest 对该套件的启动路径（workaround＝直跑 exe，本次复验已用该口径并留痕）"
+      "owner": "testkit/门禁所有者：排查 ctest 对该套件的启动路径（workaround＝直跑 exe，本次复验已用该口径并留痕）",
+      "resolution": "F-619 销案（2026-10-18，机制族批）：gate-all 已由 F-728/F-789 专项防线覆盖——每个测试目标的 ctest 统一收口到 Invoke-GateTest：ctest -V --timeout 600s（挂起被有界终止），超时后自动「同 exe 直跑对照」区分 ctest 上下文缺陷与测试本体缺陷；F-619 记录的 workaround（直跑 exe）已固化为门禁行为，不再无限阻塞整条门禁。本轮复测当前树 ctest ui_test 2.0s 正常（未复现 fresh 树挂起），证据 traceability/builds/gov-f619-629/f619-ctest-ui-repro.log。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-620",
@@ -6353,10 +6355,12 @@
       "id": "F-629",
       "source": "acc/gate-toolchain-param/1 独立子会话对抗式验收复现（2026-10-10，所有者 2026-10-10 指令授权）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "sdurws_ird_testkit_test 计时敏感用例在门禁负载下间歇失败：验收复现三轮 gate-all 中集成段 2 次失败（冷/暖构建各一，ctest 退出码 8），同批冒烟段执行与空闲直跑复测 5 次全 PASS——ProcessRunnerTest 树终止用例孙进程观察窗 3500ms 对延迟 3000ms 仅 500ms 余量（源注释自述余量只计落盘开销），Defender 实时防护对 relink 后首次执行的扫描延迟可吃尽余量；与本批 diff 无关（gate-toolchain-param 零触碰产品代码，testkit 源码与 redesign-main 基线一致），不影响该批 verdict",
-      "owner": "testkit 单元所有者：评估 ProcessRunnerTest 树终止用例观察窗余量（3500-3000=500ms）在防病毒扫描/构建负载下的充分性——加余量或登记门禁重跑口径"
+      "owner": "testkit 单元所有者：评估 ProcessRunnerTest 树终止用例观察窗余量（3500-3000=500ms）在防病毒扫描/构建负载下的充分性——加余量或登记门禁重跑口径",
+      "resolution": "F-629 消账（2026-10-18）：ProcessRunnerTest 树终止观察窗 kTreeObservationWindow 3500ms→8000ms（孙进程延迟仍 3000ms，余量 500ms→5000ms），注释登记 Defender relink 首扫/门禁负载机理与代价边界（仅两处「断言孙进程未存活」用例等满窗口，正常路径无额外等待）。重建后直跑 110/110（22.2s）；在 4 个后台负载进程下重复 3 次 3/3 全绿（18.5s/次）；证据 traceability/builds/gov-f619-629/（含 testkit-under-load/）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-630",

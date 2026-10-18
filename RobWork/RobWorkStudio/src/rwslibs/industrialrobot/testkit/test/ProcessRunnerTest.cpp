@@ -87,11 +87,14 @@ ProcessSpec makeSpec(std::vector<std::string> args,
     return spec;
 }
 
-// 树用例共用的观察参数：孙进程延迟 3 s 写标记；3.5 s 的等待窗口给足"孙进程
-// 若幸存必然完成"的余量（延迟＋落盘开销），marker 不出现即树终止的行为级
-// 证据。两个数字必须满足"等待窗口 > 延迟"——改延迟时同步改窗口。
+// 树用例共用的观察参数：孙进程延迟 3 s 写标记；8 s 的等待窗口给足"孙进程若
+// 幸存必然完成"的余量（延迟＋落盘开销＋外部干扰）。F-629：原窗口 3.5 s 仅比
+// 延迟多 500 ms，Defender 对 relink 后首次执行的实时扫描/门禁负载可吃尽余量，
+// 导致门禁下间歇误报（ctest 退出码 8、空闲直跑 5/5 全绿）；现留 5 s 余量，
+// 代价只落在"断言孙进程未存活"的两个用例（等满窗口才成立），正常路径无额外
+// 等待。两个数字必须满足"等待窗口 > 延迟"——改延迟时同步改窗口。
 constexpr auto kTreeChildDelay = 3000ms;
-constexpr auto kTreeObservationWindow = 3500ms;
+constexpr auto kTreeObservationWindow = 8000ms;
 
 }  // namespace
 

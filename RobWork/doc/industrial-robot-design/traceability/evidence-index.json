@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T12:30:26+08:00",
+  "generatedAt": "2026-10-18T12:34:52+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6646,
-    "totalBytes": 209880015,
+    "totalFiles": 6662,
+    "totalBytes": 210216666,
     "byKind": {
-      "gtest-report": 335,
-      "governance-record": 34,
-      "build-log": 5702,
-      "manual-acceptance": 1,
       "log": 1,
-      "json-data": 7,
+      "governance-record": 35,
+      "markdown-doc": 41,
+      "gtest-report": 335,
       "benchmark": 8,
-      "acceptance-record": 515,
       "pipeline-artifact": 2,
-      "markdown-doc": 41
+      "build-log": 5717,
+      "json-data": 7,
+      "acceptance-record": 515,
+      "manual-acceptance": 1
     },
     "byLifecycle": {
-      "superseded": 0,
-      "unverified": 6055,
+      "unverified": 6071,
       "current": 42,
-      "historical": 549
+      "historical": 549,
+      "superseded": 0
     },
     "associated": 596,
-    "unassociated": 6050,
-    "shaComputed": 6628,
+    "unassociated": 6066,
+    "shaComputed": 6644,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -9108,6 +9108,126 @@
       "taskIds": [],
       "bytes": 5378,
       "sha256": "a292640b5305e048de7701d0bc57b6bc51c1f93481f5fb6b41e7b5706cf56b27",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/f619-ctest-ui-repro.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 337,
+      "sha256": "1fcfa50a4f75333a6c43ca51bf5b8bf06b22db8be920ef8bd8c19de29ddc0121",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 84339,
+      "sha256": "9824b97035cbbd73614e6e5c8e0eb2640e2a088a0f00d98b158e745697317f57",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit_test.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20189,
+      "sha256": "2e62df06c56c6a2537438d6a6a20bb70aa49d547ba4f123bd9310596797bccf1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41658,
+      "sha256": "4a47e3e2e368ea3b52a59a1d35119d2ca89b3296faf0bdf9770e21b9a4a5503b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-build-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1808,
+      "sha256": "b0844b1ff7590106474c7f94292c398102e7717c8eb8ce44ea881c2337927bea",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-001.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 411,
+      "sha256": "4d77dc21f7db6041b14751e53f0123e87f4cbfd8b8ce57cd5dcda94ad7547ba3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-001.stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19722,
+      "sha256": "8d3eb2791a09ee3ec02676d933e2e23f3229c40925622f23b1609a8fbfd5b6ff",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-001.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41676,
+      "sha256": "1195d4232d733c012f473143676e4930440018a0e120e05e7ea2446146d6dbed",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-002.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 411,
+      "sha256": "8777fba9609ff286a9cf5217c0f9cd30a8cc536e1f33746f0f035156381b6b4c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-002.stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19723,
+      "sha256": "192050791d37982537079a683d55331a691dcfcf92fb4f11433ee3458e022878",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-002.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41669,
+      "sha256": "ecf685c8d13bce6fa8559488cf90ea5701ad5c33ef56d8c4ccac955034fe4985",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-003.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 411,
+      "sha256": "a12b94f7f73fbacdd0e595e24538f10ca7aa49a226c1ec795546d58c2441f014",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-003.stdout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19719,
+      "sha256": "0351f3751aa7390da2969cce8d79ca5fad7c33893bac97bf32ebe3b023dc9bf3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/run-003.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41676,
+      "sha256": "45d4fd52e881670a073873c971c0402048a00e4ff49cb4f64cc36458852c5ef3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-f619-629/testkit-under-load/summary.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 547,
+      "sha256": "31a0e26832e63cd0190eb19f399f584492b7d0a7f515a61f7a8905e5979877f0",
       "lifecycle": "unverified"
     },
     {
@@ -51882,7 +52002,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1217549,
+      "bytes": 1218725,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -55164,6 +55284,14 @@
       "taskIds": [],
       "bytes": 3681,
       "sha256": "60f5aded874d921d814488f259bf7ccafc20d32cdd9ed2d6786bb8713fa2168c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reviews/f619-f629-20261018.md",
+      "kind": "governance-record",
+      "taskIds": [],
+      "bytes": 1179,
+      "sha256": "153027e44c3667c699de00e3756f5f854637ddbb34a9734c31b6277e398ed5f7",
       "lifecycle": "unverified"
     },
     {

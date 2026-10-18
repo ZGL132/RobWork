@@ -1,0 +1,4 @@
+ird-tempdir-kept: C:\Users\zgl18\AppData\Local\Temp\ird-test/55304-keep-3c9ec4213504ad63
+ird-tempdir-remove-failed: C:\Users\zgl18\AppData\Local\Temp\ird-test/55304-locked-23da267c53988070: 另一个程序正在使用此文件，进程无法访问。
+[testkit-perf] invalid sample (op=meta-op state=meta-state nth=1): meta: injected failure
+[testkit-perf] invalid sample (op=meta-op state=meta-state nth=2): meta: injected failure
