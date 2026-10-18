@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T13:08:01+08:00",
+  "generatedAt": "2026-10-18T13:44:26+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6716,
-    "totalBytes": 213408928,
+    "totalFiles": 6717,
+    "totalBytes": 213413842,
     "byKind": {
-      "acceptance-record": 515,
-      "manual-acceptance": 1,
       "governance-record": 38,
-      "markdown-doc": 41,
-      "benchmark": 8,
-      "json-data": 7,
-      "build-log": 5768,
       "log": 1,
-      "pipeline-artifact": 2,
-      "gtest-report": 335
+      "acceptance-record": 515,
+      "json-data": 7,
+      "markdown-doc": 41,
+      "gtest-report": 335,
+      "benchmark": 8,
+      "manual-acceptance": 1,
+      "build-log": 5769,
+      "pipeline-artifact": 2
     },
     "byLifecycle": {
-      "current": 40,
-      "unverified": 6125,
+      "unverified": 6126,
       "superseded": 0,
+      "current": 40,
       "historical": 551
     },
     "associated": 596,
-    "unassociated": 6120,
-    "shaComputed": 6698,
+    "unassociated": 6121,
+    "shaComputed": 6699,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -9852,6 +9852,14 @@
       "taskIds": [],
       "bytes": 8449,
       "sha256": "1e6af3b46ada9178689e6a73face6c7a87bab4d067a6bded42c8e7eec66ec0c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-units-escfix/escfix-verify-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2139,
+      "sha256": "238215f1b63bb4adc787da3010c6c7a310d8c35fd585743b4a9f5cb2df5293b2",
       "lifecycle": "unverified"
     },
     {
@@ -52410,7 +52418,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1234225,
+      "bytes": 1237000,
       "sha256": null,
       "lifecycle": "unverified"
     },

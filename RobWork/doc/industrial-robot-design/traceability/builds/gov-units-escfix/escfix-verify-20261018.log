@@ -1,0 +1,41 @@
+F-937 五卡转义损毁补齐批——验证留痕（2026-10-18）
+================================================================
+背景：41fc3b78 声称五卡三模式转义损毁修复，事后逐字节核验发现仅
+ToUpper 模式落上；locked（前缀 0x08 退格符）与 alidate-（前缀 0x0B
+垂直制表符）两模式未替换，且 grep 验证模式被同因阻断成假阴性。
+本批处置：字节级替换 + 双查验证（见 F-937 resolution）。
+
+[1] 替换前损毁计数（grep -cP，units/ 五卡）
+core.md:     0x08 行数=1  0x0B 行数=1
+evidence.md: 0x08 行数=1  0x0B 行数=1
+policy.md:   0x08 行数=1  0x0B 行数=1
+runtime.md:  0x08 行数=1  0x0B 行数=1
+testkit.md:  0x08 行数=1  0x0B 行数=1
+损毁位置：每卡 2 行——「单元任务退出条件」节（标记为 0x08locked。）
+与「AI 执行就绪补充」节门禁行（0x0Balidate-docs.ps1、0x0Balidate-task.ps1）。
+
+[2] 替换操作（perl -i -pe，字节级）
+  s/\x08locked/blocked/g; s/\x0Balidate-/validate-/g
+（本 log 以转写文本记录控制字符为 0x08/0x0B，不内嵌原始字节。）
+
+[3] 替换后双查验证
+3a. 控制字符归零（grep -cP '[\x08\x0b]'，五卡全部 0）：
+core.md:     BS 1->0  VT行 1->0
+evidence.md: BS 1->0  VT行 1->0
+policy.md:   BS 1->0  VT行 1->0
+runtime.md:  BS 1->0  VT行 1->0
+testkit.md:  BS 1->0  VT行 1->0
+3b. 目标文本就位（每卡恰 1 行）：
+  grep -c '标记为 blocked'            = 1 ×5 卡
+  grep -c 'validate-docs.ps1、validate-task.ps1' = 1 ×5 卡
+3c. git diff 核对：五卡各 2 处内容行（+版本登记行后共 3 行/卡），
+    无其他改动。
+
+[4] 台账同步
+findings.json 解析 OK；条目 923->924（新登 F-937，severity=minor，
+status=fixed）；重复 id=0；F-005/F-006/F-058/F-078/F-936 resolution
+补勘误注记（原文保留、尾追加）。
+
+[5] validate-docs -DeepEvidence
+（结果见下方追加行）
+validate-docs: PASS (20 units, 12 trace entries, 361 task files, 29 registered assets, 6 notes, 7 skills, 2 packs, 6717 evidence) —— 索引重建后实测（escfix-verify-20261018.log 入库基准）
