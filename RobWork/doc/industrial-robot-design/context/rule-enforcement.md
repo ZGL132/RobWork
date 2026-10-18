@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.2（2026-10-18：提交信息面升 gate——commit-lint.ps1（前缀/标题/四段，止增不追改历史，F-934）；前一版 v1.1＝三项 behavioral/review 面升级（F-928/F-929/F-930）） |
+| 文档版本 | v1.3（2026-10-18：commit-lint 挂 CI（F-934 消账）——GitHub boundaries job fetch-depth 0＋新增提交范围步骤、GitLab GIT_DEPTH 0＋同款步骤；YAML 语法与命令本地验证，云端首跑待观察；前一版 v1.2＝提交信息面升 gate） |
 | 用途 | 根/分区 AGENTS.md 逐条规则的执法分级：每条规则声明由谁执法（gate / review / behavioral），杜绝"不可执法却假装可执法"的摆设条款 |
 | 维护纪律 | 新规则落文时**必须**同时在本表登记行；规则变更/执法者升级（behavioral→gate）随批同步。第一遍审计只加标注，不批量删规则 |
 
@@ -28,7 +28,7 @@
 | `build-context-pack.ps1` / `validate-context-pack.ps1` | 上下文包生成与新鲜度校验（源文件 git blob SHA-1 重算，STALE=exit 2；表头/状态行/标题身份/契约存在性结构核验）；PIPE 权威红线——包内 state.json 状态字段副本（JSON 形态扫描）即 exit 1 |
 | `index-evidence.ps1` / validate-docs 证据段 | 证据摘要索引生成与一致性（新证据未重跑索引→条目数不符即门禁失败）；未跟踪证据提示（F-929）；索引只存摘要不嵌内容；删除/移动三前置登记于 traceability/README.md §3 |
 | `gate-all.ps1` | 集成＋冒烟一键全量门禁＋第 0.7 步治理文档门禁（validate-docs -DeepEvidence＋validate-context-pack -All，2026-10-17 挂载——审查 P1-1 消账） |
-| CI 双模板（`scripts/industrialrobot/ci/`） | 远端常驻：构建＋测试（`^sdurws_ird_.*_test$` 全目标）＋治理门禁两步（validate-docs -DeepEvidence＋validate-context-pack，2026-10-17 扩面）＋check-boundaries |
+| CI 双模板（`scripts/industrialrobot/ci/`） | 远端常驻：构建＋测试（`^sdurws_ird_.*_test$` 全目标）＋治理门禁两步（validate-docs -DeepEvidence＋validate-context-pack，2026-10-17 扩面）＋check-boundaries；2026-10-18 增 **commit-lint**（GitHub fetch-depth 0／GitLab GIT_DEPTH 0，仅查本次 push/MR 新增提交，F-934） |
 | CMake 目标注册面 | C++17（CXX_STANDARD 17 显式）、gtest 接入（find_package GTest CONFIG REQUIRED）、vcpkg toolchain 解析 |
 
 ## 3. 审计表（按规则来源分组）

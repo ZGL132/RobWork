@@ -9331,10 +9331,12 @@
       "id": "F-934",
       "source": "commit-lint 止增批（2026-10-18）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-18",
       "title": "commit-lint 尚未挂 CI 通道：当前由 AGENTS §6.3 提交前自查＋ird-implement-task Skill 调用，最终防线仍依赖人/会话自觉；CI 挂载需 fetch-depth 0 并区分 push（before..sha）/PR（base.sha..head.sha）范围，属构建通道改动，须在可运行环境验证后落地",
-      "owner": "治理批（CI 可运行环境下挂载；本地/Skill 自检先行）"
+      "owner": "治理批（CI 可运行环境下挂载；本地/Skill 自检先行）",
+      "resolution": "F-934 消账（2026-10-18）：GitHub workflow boundaries job checkout 增 fetch-depth: 0＋commit-lint 步骤（pull_request.base.sha／event.before／全零退化 HEAD~1）；GitLab variables 增 GIT_DEPTH: \"0\"＋boundaries script 同款步骤（MR diff base／CI_COMMIT_BEFORE_SHA／全零退化）。两模板 PyYAML safe_load 解析通过、命令本地模拟两场景 PASS（证据 traceability/builds/gov-commit-lint/commit-lint-ci-wiring-20261018.log）；云端首跑未执行（本地无 runner），首次运行结果待观察。",
+      "fixedAt": "2026-10-18"
     }
   ]
 }

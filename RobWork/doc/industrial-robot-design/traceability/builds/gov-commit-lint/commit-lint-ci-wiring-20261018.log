@@ -1,0 +1,19 @@
+# F-934 commit-lint CI 挂载证据（2026-10-18）
+
+## 1) YAML 语法解析（PyYAML safe_load）
+yaml-ok: both templates parse
+
+## 2) 本地命令模拟——push 场景 base..head（5e47ec0d..abab77b3，含 1 提交）
+  [PASS] abab77b36a0b
+commit-lint: PASS（1 个提交全部合规）
+exit=0
+
+## 3) 本地命令模拟——before 全零（新分支）退化 HEAD~1..HEAD
+  [PASS] abab77b36a0b
+commit-lint: PASS（1 个提交全部合规）
+exit=0
+
+## 4) 说明
+- GitHub：boundaries job checkout 已设 fetch-depth: 0，步骤用 pull_request.base.sha / event.before / 全零退化；
+- GitLab：variables 增 GIT_DEPTH=0，boundaries script 用 merge_request diff base / CI_COMMIT_BEFORE_SHA / 全零退化；
+- 云端 CI 首跑未执行（本地无 runner），语法与命令已本地验证；首次运行结果待观察。

@@ -492,6 +492,19 @@ jobs:
       - ird-industrial-robot-gui-precheck
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # commit-lint 需完整提交历史（F-934；默认深度 1 无法取 base..head）
+      # 提交信息门禁（2026-10-18 F-934 挂载）：只查本次推送/PR 的新增提交——历史
+      # 存量按 F-012 整族豁免（禁止改写已推送历史）；before 为全零（新分支）时退化为
+      # 仅查推送尖端 HEAD~1..HEAD，避免"无可检查范围"被误读为通过。
+      - name: commit-lint（新增提交信息门禁）
+        shell: powershell
+        run: |
+          $base = "${{ github.event.pull_request.base.sha }}"
+          if (-not $base) { $base = "${{ github.event.before }}" }
+          $head = "${{ github.sha }}"
+          if (-not $base -or $base -match '^0+$') { $base = "$head~1" }
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\commit-lint.ps1 -Range "$base..$head"
       - name: "下载上游门禁工件（build 树＋日志，等价 yml needs artifacts: true）"
         uses: actions/download-artifact@v4
         with:

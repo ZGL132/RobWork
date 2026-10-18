@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T12:24:17+08:00",
+  "generatedAt": "2026-10-18T12:27:42+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6629,
-    "totalBytes": 209093360,
+    "totalFiles": 6630,
+    "totalBytes": 209094791,
     "byKind": {
-      "build-log": 5685,
       "acceptance-record": 515,
+      "gtest-report": 335,
+      "build-log": 5686,
       "json-data": 7,
-      "log": 1,
-      "governance-record": 34,
+      "manual-acceptance": 1,
       "markdown-doc": 41,
       "pipeline-artifact": 2,
-      "manual-acceptance": 1,
-      "gtest-report": 335,
+      "log": 1,
+      "governance-record": 34,
       "benchmark": 8
     },
     "byLifecycle": {
-      "current": 42,
       "historical": 549,
-      "unverified": 6038,
-      "superseded": 0
+      "unverified": 6039,
+      "superseded": 0,
+      "current": 42
     },
     "associated": 596,
-    "unassociated": 6033,
-    "shaComputed": 6611,
+    "unassociated": 6034,
+    "shaComputed": 6612,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -9084,6 +9084,14 @@
       "taskIds": [],
       "bytes": 2162,
       "sha256": "88a99a3fc657575a8f4a3244b08a793af5de07ee86f9d12a86ccbc15cd5aaff6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-commit-lint/commit-lint-ci-wiring-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 833,
+      "sha256": "f883a56fd40c45d7c94c2334837daa47912e516431063f7876f967eeeffd8cbe",
       "lifecycle": "unverified"
     },
     {
@@ -51746,7 +51754,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1216262,
+      "bytes": 1216860,
       "sha256": null,
       "lifecycle": "unverified"
     },

@@ -37,6 +37,8 @@ stages:
 
 variables:
   CMAKE_PREFIX_PATH: "$CI_PROJECT_DIR/.cache/industrial-robot/dependencies/vcpkg/installed/x64-windows"
+  # commit-lint 需完整提交历史（F-934）：GitLab 默认浅克隆无法取 base..head
+  GIT_DEPTH: "0"
 
 .industrial-robot-gate-job:
   stage: industrial-robot-gate
@@ -167,6 +169,13 @@ ird-industrial-robot-boundaries:
     - job: ird-industrial-robot-gui-precheck
       artifacts: true
   script:
+    # 提交信息门禁（2026-10-18 F-934 挂载）：MR 用 diff base、push 用 before；
+    # before 为全零（新分支）时退化为 HEAD~1..HEAD（只查尖端，避免空范围误判通过）。
+    - |
+      $base = if ($env:CI_MERGE_REQUEST_DIFF_BASE_SHA) { $env:CI_MERGE_REQUEST_DIFF_BASE_SHA } else { $env:CI_COMMIT_BEFORE_SHA }
+      $head = $env:CI_COMMIT_SHA
+      if (-not $base -or $base -match '^0+$') { $base = "$head~1" }
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\commit-lint.ps1 -Range "$base..$head"
     # governance 门禁（2026-10-17 治理批扩面——脚本行与 GitHub 侧逐字符一致）
     - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-docs.ps1 -DeepEvidence
     - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-context-pack.ps1 -All
