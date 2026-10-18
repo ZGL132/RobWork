@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T11:15:50+08:00",
+  "generatedAt": "2026-10-18T11:23:11+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6619,
-    "totalBytes": 208621977,
+    "totalFiles": 6620,
+    "totalBytes": 208624811,
     "byKind": {
-      "log": 1,
-      "gtest-report": 335,
-      "acceptance-record": 515,
-      "json-data": 7,
+      "build-log": 5680,
       "markdown-doc": 41,
-      "pipeline-artifact": 2,
+      "gtest-report": 335,
       "manual-acceptance": 1,
-      "build-log": 5679,
+      "pipeline-artifact": 2,
+      "json-data": 7,
+      "log": 1,
+      "benchmark": 8,
       "governance-record": 30,
-      "benchmark": 8
+      "acceptance-record": 515
     },
     "byLifecycle": {
-      "current": 70,
-      "unverified": 6026,
-      "historical": 523,
-      "superseded": 0
+      "historical": 524,
+      "current": 69,
+      "superseded": 0,
+      "unverified": 6027
     },
     "associated": 596,
-    "unassociated": 6023,
-    "shaComputed": 6601,
+    "unassociated": 6024,
+    "shaComputed": 6602,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -1410,7 +1410,7 @@
       ],
       "bytes": 17430,
       "sha256": "469af0e7e5b9f14394ba544a5fea60f72165e85ab570ea46d3bb6652c49aa186",
-      "lifecycle": "current"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/DOC-T05-20260911.md",
@@ -9084,6 +9084,14 @@
       "taskIds": [],
       "bytes": 2162,
       "sha256": "88a99a3fc657575a8f4a3244b08a793af5de07ee86f9d12a86ccbc15cd5aaff6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-commit-lint/commit-lint-gate-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1517,
+      "sha256": "e6086d3151341750310f28ac080959adbd11de58824800005b5179c5cf074853",
       "lifecycle": "unverified"
     },
     {
@@ -51698,7 +51706,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1161300,
+      "bytes": 1162617,
       "sha256": null,
       "lifecycle": "unverified"
     },

@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.1（2026-10-18：三项 behavioral/review 面升级为 gate——改动范围（verify-task-scope.ps1，F-928）、证据索引时序（未跟踪证据检测，F-929）、findings 状态一致性（F-930）；前一版 v1.0＝治理 Task 3 首轮审计） |
+| 文档版本 | v1.2（2026-10-18：提交信息面升 gate——commit-lint.ps1（前缀/标题/四段，止增不追改历史，F-934）；前一版 v1.1＝三项 behavioral/review 面升级（F-928/F-929/F-930）） |
 | 用途 | 根/分区 AGENTS.md 逐条规则的执法分级：每条规则声明由谁执法（gate / review / behavioral），杜绝"不可执法却假装可执法"的摆设条款 |
 | 维护纪律 | 新规则落文时**必须**同时在本表登记行；规则变更/执法者升级（behavioral→gate）随批同步。第一遍审计只加标注，不批量删规则 |
 
@@ -24,6 +24,7 @@
 | `validate-state.ps1` | state.json schema、phase 枚举、SHA 冻结链⑩、run 租约、队列可领取性 |
 | `validate-task.ps1` / `verify-task.ps1` | 任务契约字段完备性（ready 必备字段）/ 任务验证命令执行与证据核验 |
 | `verify-task-scope.ps1` | 任务改动范围机器预检：base..head 逐文件 vs 契约 `allowedFiles`/`forbiddenFiles`（ACC §4.1 机器执行面；2026-10-18 落位，F-928） |
+| `commit-lint.ps1` | 提交信息规范：前缀白名单（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）＋标题非空话＋正文四段（改动内容/改动原因/验证/影响面）；`-Range` 只查新增提交，历史存量按 F-012 豁免（2026-10-18 落位，F-934） |
 | `build-context-pack.ps1` / `validate-context-pack.ps1` | 上下文包生成与新鲜度校验（源文件 git blob SHA-1 重算，STALE=exit 2；表头/状态行/标题身份/契约存在性结构核验）；PIPE 权威红线——包内 state.json 状态字段副本（JSON 形态扫描）即 exit 1 |
 | `index-evidence.ps1` / validate-docs 证据段 | 证据摘要索引生成与一致性（新证据未重跑索引→条目数不符即门禁失败）；未跟踪证据提示（F-929）；索引只存摘要不嵌内容；删除/移动三前置登记于 traceability/README.md §3 |
 | `gate-all.ps1` | 集成＋冒烟一键全量门禁＋第 0.7 步治理文档门禁（validate-docs -DeepEvidence＋validate-context-pack -All，2026-10-17 挂载——审查 P1-1 消账） |
@@ -58,10 +59,10 @@
 | 不可变历史 PA-2（§5.7） | review | 单元测试（project 域修订语义用例）＋ACC |
 | 不继承 old/（§5.8） | behavioral | old/ 磁盘不存在（事实性满足）；引入即违 SA-02 面 |
 | 不重定义/收窄/扩大需求语义（§6.1） | review | ACC（需求溯源逐条核对） |
-| 提交前缀体系（§6.2） | behavioral | 升级候选：commit-lint（未建） |
+| 提交前缀体系（§6.2） | gate＋review | `commit-lint.ps1 -Range`（新提交；历史按 F-012 豁免不回写）＋合入批抽查 |
 | 人机同规/署名人负责（§6.2） | behavioral | 升级候选：分支保护/签名策略（仓库设置层，非文档可执法） |
 | 一次修改一次提交＋即时推送（§6.3） | behavioral | 事后审计（合入批次核查提交粒度） |
-| commit 四段正文（§6.3） | behavioral | 升级候选：commit-lint（未建） |
+| commit 四段正文（§6.3） | gate＋review | `commit-lint.ps1`（新提交四段标记缺失即 FAIL；验证段 passed/skipped 口径由 AGENTS §6.3 文本＋review 抽查，F-926） |
 | 实施者不得自行合入（§6.4） | gate | validate-state ⑩ SHA 冻结链：awaiting_merge 必须有结构化 acceptanceRecord，未验收提交无法混入合入 |
 | 中文交流/三态如实汇报（§7） | behavioral＋review | 汇报审计＋ACC 记录核查 |
 
@@ -93,6 +94,7 @@
 
 - **升级候选**（behavioral→gate，待后续批次）：push 目标分支检查、commit-lint（前缀＋四段）、context pack 状态字段检查（Task 6）。
 - **2026-10-18 升级落地（本表 v1.1）**：①改动范围（ACC §4.1）→ `verify-task-scope.ps1` 机器预检（F-928）；②证据索引时序 → validate-docs 未跟踪证据硬失败（F-929，UI-T85 attempt 1 B-1 根因面）；③findings 状态一致性 → validate-docs 台账不变量（F-930，F-921/F-922 状态漂移实例）。三项均在 gate 层，不需要行为自觉。
+- **2026-10-18 升级落地（本表 v1.2）**：④提交信息（前缀＋四段）→ `commit-lint.ps1 -Range`（F-934；止增不追改——历史 99 条标题风格债按 F-012 整族销案，已推送历史不回写）；⑤验证段 passed/skipped 计数口径 → AGENTS §6.3 文本（F-926），机器无法稳定判语义、由 review 抽查。
 - **降级/维持 behavioral**（明示不造摆设门禁）：提交粒度纪律、中文交流规范、阅读路径、人机同规署名责任。
 - **删除项**：无——第一遍审计未发现"完全无执法载体且无保留价值"的条款（各 behavioral 条款均有事后审计或升级路径）。
 - 本表自身为 load-bearing 登记资产：路径存在性由 validate-docs 资产清单门禁保证（自反执法）。

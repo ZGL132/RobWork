@@ -1,0 +1,34 @@
+# commit-lint 止增门禁实测（F-012/F-926/F-934）
+# 日期 2026-10-18；脚本 RobWork/scripts/industrialrobot/commit-lint.ps1
+
+## 正例：WP-15-T19 批次提交范围 87fec2c3..df9fa11e（含 2 个 merge，豁免）
+  [PASS] df9fa11e235c
+  [PASS] 04ea17048e8c
+  [PASS] 10917d0ce1d3
+  [PASS] 775cc37e790f
+  [PASS] b9601d97b8ba
+commit-lint: PASS（5 个提交全部合规）
+exit=0
+
+## 负例 1：无信息量标题「更新文件」（预期 FAIL）
+  [FAIL] message[0]
+         - 标题缺少合法前缀（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）: 更新文件
+         - 标题无信息量（禁用空话）: 更新文件
+         - 正文缺少段标记: 改动内容（What）
+         - 正文缺少段标记: 改动原因（Why）
+         - 正文缺少段标记: 验证（How）
+         - 正文缺少段标记: 影响面
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）
+exit=1
+
+## 负例 2：合法前缀但正文缺四段（预期 FAIL）
+  [FAIL] message[0]
+         - 正文缺少段标记: 改动内容（What）
+         - 正文缺少段标记: 改动原因（Why）
+         - 正文缺少段标记: 验证（How）
+         - 正文缺少段标记: 影响面
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）
+exit=1
+
+## 语法检查：Windows PowerShell 5.1 Parser
+errors=0
