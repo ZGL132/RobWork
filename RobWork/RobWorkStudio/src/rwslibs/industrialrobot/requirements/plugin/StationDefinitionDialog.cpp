@@ -17,8 +17,10 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QStackedWidget>
+#include <QStandardItemModel> // 缺失目录项可显示但不能新选。
 #include <QVBoxLayout>
 #include <cmath>
+#include <algorithm>
 #include <stdexcept>
 
 namespace sdurws::ird::requirements {
@@ -56,9 +58,26 @@ struct ReferenceFields {
     QComboBox* kind = nullptr;
     QLineEdit* target = nullptr;
     QLineEdit* tcp = nullptr;
+    QComboBox* choice = nullptr; ///< 目录索引只关联值副本，不保存跨域对象指针。
+    std::vector<std::optional<RequirementReference>> references; ///< 行号→浅引用值，空行用于未指定。
+    std::vector<bool> available; ///< 与引用行一一对应，新不可用目标在确认层也拒绝。
+    std::optional<RequirementReference> original; ///< 允许原样保留历史缺失引用，不静默修正。
+    bool directoryActive = false; ///< false仅走旧宿主明确降级的兼容输入轨。
+    bool optional = false; ///< 仅可选TCP允许真正清空引用。
     /** @brief 确认时组装浅引用；未指定返回nullopt，非法载荷抛invalid_argument。 */
     std::optional<RequirementReference> value() const
     {
+        if (directoryActive) {
+            const int index = choice->currentIndex();
+            if (index < 0 || static_cast<std::size_t>(index) >= references.size()
+                || (!references[index] && !optional)) {
+                throw std::invalid_argument("请按业务名称选择引用目标");
+            }
+            if (references[index] && !available[index] && references[index] != original) {
+                throw std::invalid_argument("引用当前不可用，请重新选择业务目标");
+            }
+            return references[index];
+        }
         if (kind->currentData().toInt() < 0) { return std::nullopt; }
         RequirementReference result;
         result.kind = static_cast<RequirementRefKind>(kind->currentData().toInt());
@@ -77,13 +96,55 @@ struct ReferenceFields {
  * @param kinds [in] 使用处允许的种类。
  * @param base [in] 原浅引用，不做跨域解析。
  * @param optional [in] true时允许“未指定”，用于清空可选TCP。
+ * @param choices [in] 名称目录快照，nullptr表示旧装配未提供能力；控件只复制值。
+ * @return Qt借用控件束及引用值副本；非法新选在value()确认时抛invalid_argument。
  */
 ReferenceFields referenceFields(QFormLayout* form, const QString& prefix,
     std::initializer_list<RequirementRefKind> kinds,
-    const std::optional<RequirementReference>& base, bool optional)
+    const std::optional<RequirementReference>& base, bool optional,
+    const std::vector<RequirementsReferenceChoice>* choices)
 {
     auto* parent = form->parentWidget();
-    ReferenceFields fields{new QComboBox(parent), new QLineEdit(parent), new QLineEdit(parent)};
+    ReferenceFields fields;
+    fields.kind = new QComboBox(parent); fields.target = new QLineEdit(parent);
+    fields.tcp = new QLineEdit(parent); fields.choice = new QComboBox(parent);
+    fields.optional = optional; fields.original = base; fields.directoryActive = choices != nullptr;
+    fields.choice->setObjectName(prefix + "-choice");
+    auto* hint = new QLabel(parent); hint->setObjectName(prefix + "-directory-hint");
+    hint->setWordWrap(true); form->addRow("业务名称", fields.choice); form->addRow(hint);
+    // 缺省目录不冒充空闭包；旧装配保留原输入兼容轨，正式宿主有目录时隐藏它。
+    if (!choices) {
+        fields.choice->addItem("名称目录未装配"); fields.choice->setEnabled(false);
+        hint->setText("宿主名称目录未装配；以下为兼容输入，不能验证目标当前存在性");
+    } else {
+        fields.choice->addItem(optional ? "未指定" : "请选择目标");
+        fields.references.push_back(std::nullopt); fields.available.push_back(true);
+        int selected = -1;
+        for (const auto& entry : *choices) {
+            if (std::find(kinds.begin(), kinds.end(), entry.reference.kind) == kinds.end()) { continue; }
+            fields.choice->addItem(QString::fromStdString(entry.displayName)
+                + (entry.available ? QString() : QString("（不可用）")));
+            fields.references.push_back(entry.reference); fields.available.push_back(entry.available);
+            const int row = fields.choice->count()-1;
+            fields.choice->setItemData(row, QString::fromStdString(entry.unavailableReason), Qt::ToolTipRole);
+            if (!entry.available) {
+                if (auto* model = qobject_cast<QStandardItemModel*>(fields.choice->model())) {
+                    model->item(row)->setEnabled(false);
+                }
+            }
+            if (base && entry.reference == *base) { selected = row; }
+        }
+        if (base && selected < 0) {
+            // 历史悬空引用仍是原值，打开再确认不得悄悄改成World/首个候选。
+            fields.choice->addItem("当前引用（目录中缺失，保留原值）");
+            fields.references.push_back(base); fields.available.push_back(false); selected = fields.choice->count()-1;
+            if (auto* model = qobject_cast<QStandardItemModel*>(fields.choice->model())) {
+                model->item(selected)->setEnabled(false);
+            }
+        }
+        fields.choice->setCurrentIndex(selected < 0 ? 0 : selected);
+        hint->setText("按业务名称选择；不可用项保留原因，引用变化不自动换算坐标");
+    }
     fields.kind->setObjectName(prefix + "-kind");
     fields.target->setObjectName(prefix + "-object");
     fields.tcp->setObjectName(prefix + "-key");
@@ -105,12 +166,19 @@ ReferenceFields referenceFields(QFormLayout* form, const QString& prefix,
         fields.tcp->setEnabled(kind == static_cast<int>(RequirementRefKind::Tool));
     };
     QObject::connect(fields.kind, &QComboBox::currentIndexChanged, parent, update); update();
+    if (choices) {
+        // 兼容字段仅供旧装配路径使用；正式名称目录不向用户展示内部ObjectId。
+        for (auto* widget : {static_cast<QWidget*>(fields.kind), static_cast<QWidget*>(fields.target), static_cast<QWidget*>(fields.tcp)}) {
+            widget->hide(); if (auto* label=form->labelForField(widget)) { label->hide(); }
+        }
+    }
     return fields;
 }
 }
 
 std::optional<TaskPoint> editStationDefinition(QWidget* parent, const TaskPoint& base,
-                                               const PointSet& points)
+                                               const PointSet& points,
+    const std::vector<RequirementsReferenceChoice>* choices)
 {
     QDialog dialog(parent); dialog.setObjectName("ird_station_definition_dialog");
     dialog.setWindowTitle("编辑工位完整定义"); dialog.resize(600, 720);
@@ -140,9 +208,9 @@ std::optional<TaskPoint> editStationDefinition(QWidget* parent, const TaskPoint&
     auto* position = textField(form, "station-position", "位置x,y,z（m，参考系下）", positionBefore);
     form->addRow(new QLabel("参考坐标系（改变引用不会自动换算数值）", body));
     const auto reference = referenceFields(form, "station-reference", {RequirementRefKind::World,
-        RequirementRefKind::ModelFrame, RequirementRefKind::SceneObject}, base.refFrame, false);
+        RequirementRefKind::ModelFrame, RequirementRefKind::SceneObject}, base.refFrame, false, choices);
     form->addRow(new QLabel("工具/TCP", body));
-    const auto tcp = referenceFields(form, "station-tcp", {RequirementRefKind::DefaultTcp, RequirementRefKind::Tool}, base.tcpRef, true);
+    const auto tcp = referenceFields(form, "station-tcp", {RequirementRefKind::DefaultTcp, RequirementRefKind::Tool}, base.tcpRef, true, choices);
     auto* rule = new QComboBox(body); rule->setObjectName("station-rule-kind");
     for (auto kind : {OrientationRuleKind::Fixed, OrientationRuleKind::AlignFrame,
         OrientationRuleKind::AlignGeometryNormal, OrientationRuleKind::PointAtTarget, OrientationRuleKind::ToolRollFree}) {
@@ -153,10 +221,16 @@ std::optional<TaskPoint> editStationDefinition(QWidget* parent, const TaskPoint&
     for (auto& page : pages) { auto* widget = new QWidget(stack); page = new QFormLayout(widget); stack->addWidget(widget); }
     auto* rpy = textField(pages[0], "station-rpy", "Roll,Pitch,Yaw（rad，参考系下，Rz·Ry·Rx）", vectorText(base.pose.orientation.fixedRpy));
     const auto target = referenceFields(pages[1], "station-target", {RequirementRefKind::ModelFrame,
-        RequirementRefKind::SceneObject}, base.pose.orientation.kind == OrientationRuleKind::AlignFrame
-            ? std::optional<RequirementReference>(base.pose.orientation.targetFrame) : std::nullopt, false);
-    auto* scene = textField(pages[2], "station-scene", "几何场景对象标识", base.pose.orientation.targetSceneObject
-        ? QString::fromStdString(base.pose.orientation.targetSceneObject->toCanonical()) : QString());
+        RequirementRefKind::SceneObject, RequirementRefKind::World}, base.pose.orientation.kind == OrientationRuleKind::AlignFrame
+            ? std::optional<RequirementReference>(base.pose.orientation.targetFrame) : std::nullopt, false, choices);
+    std::optional<RequirementReference> sceneBase;
+    if (base.pose.orientation.targetSceneObject) {
+        sceneBase = RequirementReference{}; sceneBase->kind = RequirementRefKind::SceneObject;
+        sceneBase->objectId = base.pose.orientation.targetSceneObject;
+    }
+    const auto scene = referenceFields(pages[2], "station-geometry",
+        {RequirementRefKind::SceneObject}, sceneBase, false, choices);
+    scene.target->setObjectName("station-scene");
     auto* feature = new QComboBox(body); feature->setObjectName("station-feature"); feature->addItems({"FrameOrigin", "FramePlaneNormal"});
     feature->setCurrentIndex(base.pose.orientation.feature == OrientationFeature::FramePlaneNormal ? 1 : 0);
     pages[2]->addRow("几何特征", feature);
@@ -197,7 +271,7 @@ std::optional<TaskPoint> editStationDefinition(QWidget* parent, const TaskPoint&
             case OrientationRuleKind::Fixed: orientation.fixedRpy = vectorValue(rpy->text()); break;
             case OrientationRuleKind::AlignFrame: orientation.targetFrame = *target.value(); break;
             case OrientationRuleKind::AlignGeometryNormal:
-                orientation.targetSceneObject = objectId(scene->text());
+                orientation.targetSceneObject = scene.value()->objectId;
                 orientation.feature = feature->currentIndex() == 0 ? OrientationFeature::FrameOrigin : OrientationFeature::FramePlaneNormal;
                 orientation.invertNormal = invert->isChecked(); break;
             case OrientationRuleKind::PointAtTarget: orientation.targetPoint = vectorValue(targetPoint->text()); break;

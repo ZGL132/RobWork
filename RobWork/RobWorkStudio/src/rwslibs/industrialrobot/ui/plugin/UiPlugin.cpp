@@ -4296,6 +4296,128 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
         seams.sessionClosureRefs = [this]() -> std::vector<project::ObjectRef> {
             return currentRequirementsCheckContext().closureRefs;
         };
+        /**
+         * @brief REQ-01/08：按既有引用现取权威世界变换；不缓存跨发布Frame。
+         * @param ref [in] 原浅引用，Tool精确到tcpKey；长度m、旋转无量纲。
+         * @return 当前发布场景下的世界变换；缺目标/键/快照返回nullopt。
+         * 仅UI线程交互调用；不在项目writer锁内调用，不触发新编译或草稿写入。
+         */
+        seams.referenceWorldPose = [this, studio](const requirements::RequirementReference& ref)
+            -> std::optional<rw::math::Transform3D<>> {
+            if (!ref.wellFormed()) { return std::nullopt; }
+            const auto adapter = m_lastStoreAdapter;
+            const auto snapshot = m_compilePort ? m_compilePort->lastPublishedSnapshot() : nullptr;
+            const auto cell = studio ? studio->getWorkCell() : nullptr;
+            // 编译快照记录命令的baseRevision，而提交后的HEAD已经前进；二者
+            // 不是同一语义，不能以修订相等判断帧是否可用。这里只接受宿主已挂载
+            // 的同一个WorkCell，防止发布切换期间把旧场景的Frame用于新状态。
+            if (!adapter || adapter->isClosed() || !snapshot || !cell
+                || &snapshot->workCell().workCell() != cell.get()) { return std::nullopt; }
+            if (ref.kind == requirements::RequirementRefKind::World) {
+                return rw::math::Transform3D<>::identity();
+            }
+            auto object = ref.objectId;
+            auto scope = runtime::NameScope::SceneObject;
+            const auto& model = snapshot->model();
+            if (ref.kind == requirements::RequirementRefKind::ModelFrame) {
+                scope = runtime::NameScope::BaseMount;
+            } else if (ref.kind == requirements::RequirementRefKind::Tool
+                || ref.kind == requirements::RequirementRefKind::DefaultTcp) {
+                scope = runtime::NameScope::Tcp;
+                if (ref.kind == requirements::RequirementRefKind::DefaultTcp) {
+                    if (!model.defaultTcpIndex()) { return std::nullopt; }
+                    object = model.tools().at(*model.defaultTcpIndex()).objectId;
+                }
+            }
+            if (!object) { return std::nullopt; }
+            const auto& entries = snapshot->nameMap().entries();
+            const auto entry = std::find_if(entries.begin(), entries.end(), [&](const auto& item) {
+                return item.objectId == *object && item.scope == scope;
+            });
+            auto* frame = entry != entries.end() ? cell->findFrame(entry->fullName) : nullptr;
+            if (!frame) { return std::nullopt; }
+            const auto pose = rw::kinematics::Kinematics::worldTframe(frame, studio->getState());
+            if (ref.kind != requirements::RequirementRefKind::Tool) { return pose; }
+            // runtime目前每工具物化一个规范TCP。其他具名TCP的交互位置由
+            // 同一runtime帧反解法兰，再组合当前闭包公开工具偏置；不另算FK，
+            // 不据此声称运动学评估器已能消费任意tcpKey。
+            const auto tool = std::find_if(model.tools().begin(), model.tools().end(), [&](const auto& item) {
+                return item.objectId == *object;
+            });
+            if (tool == model.tools().end()) { return std::nullopt; }
+            const auto head = adapter->projectStore().query().head();
+            const auto stored = std::find_if(head.objectRefs.begin(), head.objectRefs.end(), [&](const auto& item) {
+                return item.objectId == *object && item.objectTypeToken == modeling::kToolDefinitionObjectType;
+            });
+            if (stored == head.objectRefs.end()) { return std::nullopt; }
+            const auto bytes = adapter->projectStore().query().tryObject(stored->objectId, stored->contentVersion);
+            const modeling::RobotDesignCodec codec;
+            const auto decoded = bytes ? codec.decode(*bytes,modeling::kCurrentFormatVersion)
+                : codec.decode({},modeling::kCurrentFormatVersion);
+            if (!decoded.ok() || !std::holds_alternative<modeling::ToolDefinition>(decoded.get())) { return std::nullopt; }
+            const auto& authored = std::get<modeling::ToolDefinition>(decoded.get());
+            const auto tcp = std::find_if(authored.tcpList.begin(),authored.tcpList.end(),[&](const auto& item) {
+                return item.key == ref.tcpKey;
+            });
+            if (tcp == authored.tcpList.end()) { return std::nullopt; }
+            return pose * rw::math::inverse(tool->tcpOffset) * authored.mountInterface * tcp->offset;
+        };
+        const auto referencePose = seams.referenceWorldPose;
+        /**
+         * @brief REQ-01/09：从当前项目闭包生成按业务名显示的引用目录值快照。
+         * @return 稳定排序的候选；无项目返回空，缺运行时目标保留名称并标不可用。
+         * 仅UI线程现取；不持有跨修订对象，不写草稿，解析失败不杜撰名称。
+         */
+        seams.referenceChoices = [this, referencePose]() -> std::vector<requirements::RequirementsReferenceChoice> {
+            using Ref = requirements::RequirementReference;
+            using Kind = requirements::RequirementRefKind;
+            std::vector<requirements::RequirementsReferenceChoice> result;
+            const auto adapter = m_lastStoreAdapter;
+            if (!adapter || adapter->isClosed()) { return result; }
+            const auto append = [&](Ref ref, const std::string& name) {
+                const bool available = referencePose(ref).has_value();
+                result.push_back({std::move(ref),name,available,
+                    available ? std::string() : "当前修订中缺少可解析的运行时参考帧或TCP"});
+            };
+            append(Ref{},"世界坐标系");
+            Ref defaultTcp; defaultTcp.kind = Kind::DefaultTcp; append(defaultTcp,"默认TCP");
+            const modeling::RobotDesignCodec codec;
+            for (const auto& stored : adapter->projectStore().query().head().objectRefs) {
+                if (stored.objectTypeToken != modeling::kRobotDesignObjectType
+                    && stored.objectTypeToken != modeling::kSceneObjectObjectType
+                    && stored.objectTypeToken != modeling::kToolDefinitionObjectType) { continue; }
+                const auto bytes = adapter->projectStore().query().tryObject(stored.objectId,stored.contentVersion);
+                const auto decoded = bytes ? codec.decode(*bytes,modeling::kCurrentFormatVersion)
+                    : codec.decode({},modeling::kCurrentFormatVersion);
+                if (!decoded.ok()) { continue; } // 数据错误由原就绪诊断承接，不能杜撰业务名。
+                Ref ref; ref.objectId = stored.objectId;
+                if (std::holds_alternative<modeling::RobotDesign>(decoded.get())) {
+                    const auto& model = std::get<modeling::RobotDesign>(decoded.get());
+                    ref.kind = Kind::ModelFrame;
+                    append(ref,"机械臂 / " + (model.displayName.empty() ? std::string("当前模型") : model.displayName));
+                } else if (std::holds_alternative<modeling::SceneObject>(decoded.get())) {
+                    const auto& scene = std::get<modeling::SceneObject>(decoded.get());
+                    ref.kind = Kind::SceneObject;
+                    append(ref,"场景 / " + scene.localName);
+                } else if (std::holds_alternative<modeling::ToolDefinition>(decoded.get())) {
+                    const auto& tool = std::get<modeling::ToolDefinition>(decoded.get());
+                    ref.kind = Kind::Tool;
+                    for (const auto& tcp : tool.tcpList) {
+                        ref.tcpKey = tcp.key;
+                        append(ref,"工具 / " + (tool.displayName.empty() ? tool.localName : tool.displayName) + " / " + tcp.key);
+                    }
+                }
+            }
+            // 目录排序不依赖闭包存储序，重查时可逐值核对，保持同名候选的稳定身份。
+            std::sort(result.begin(),result.end(),[](const auto& left,const auto& right) {
+                const auto key=[](const auto& item) {
+                    return std::make_tuple(int(item.reference.kind),item.displayName,
+                        item.reference.objectId ? item.reference.objectId->toCanonical() : std::string(),item.reference.tcpKey);
+                };
+                return key(left)<key(right);
+            });
+            return result;
+        };
         m_domains->requirements->bindView3DSeams(std::move(seams));
 
         // ---- 会话预览双 sink 投影绑定（UI-T33 收口——acceptance 1/2/3
@@ -7785,6 +7907,46 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                     auto* add = m_requirementsDock->findChild<QPushButton*>("ird_req_add_points");
                     ok(add && add->isEnabled(), "step5.7 target-create-button");
                     if (add) { add->click(); settleEvents(200); }
+                    // REQ-01/09：正式名称目录来自当前项目，不在tour中注入候选替身。
+                    // 用户只选业务名称；确认入一次局部栈，随后撤销恢复后再继续拾取回归。
+                    const auto beforeNamedReference = m_requirementsEditor.workingSet();
+                    auto* definition = m_requirementsDock->findChild<QPushButton*>("ird_station_definition_edit");
+                    ok(definition && definition->isEnabled(),"step5.7 named-reference-definition-entry");
+                    bool directorySeen = false;
+                    QTimer::singleShot(0,this,[&] {
+                        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+                        if (!dialog) { return; }
+                        auto* choice=dialog->findChild<QComboBox*>("station-reference-choice");
+                        const int row=choice ? choice->findText("场景 / requirements-pick-fixture") : -1;
+                        bool modelAvailable=false;
+                        if (choice) {
+                            for (int i=0;i<choice->count();++i) {
+                                if (choice->itemText(i).startsWith("机械臂 / ")) {
+                                    modelAvailable=choice->model()->flags(choice->model()->index(i,0)) & Qt::ItemIsEnabled;
+                                }
+                            }
+                        }
+                        auto* raw=dialog->findChild<QLineEdit*>("station-reference-object");
+                        directorySeen = row>=0 && modelAvailable && raw && raw->isHidden();
+                        ok(directorySeen,"step5.7 real-directory-scene-model-and-hidden-id");
+                        if (directorySeen) {
+                            choice->setCurrentIndex(row);
+                            snapPng(dialog,"mtour-name-directory.png");
+                            if (auto* box=dialog->findChild<QDialogButtonBox*>()) {
+                                box->button(QDialogButtonBox::Ok)->click(); return;
+                            }
+                        }
+                        dialog->reject();
+                    });
+                    if (definition) { definition->click(); settleEvents(150); }
+                    const auto& namedPoints=m_requirementsEditor.workingSet().points.entries;
+                    ok(directorySeen && !namedPoints.empty()
+                        && namedPoints.back().refFrame.kind==requirements::RequirementRefKind::SceneObject
+                        && namedPoints.back().refFrame.objectId==fixtureId,
+                       "step5.7 named-reference-confirm-stores-real-fixture-id");
+                    if (directorySeen) { ok(m_requirementsEditor.undoLocal(),"step5.7 named-reference-one-undo"); }
+                    ok(m_requirementsEditor.workingSet()==beforeNamedReference,"step5.7 named-reference-undo-restores-all");
+                    if (m_domains->requirements) { m_domains->requirements->refreshFromSession(); }
                     const auto beforePick = m_requirementsEditor.workingSet();
                     const auto pickHead=adapter->projectStore().query().head().id;
                     ok(!beforePick.points.entries.empty(), "step5.7 target-point-present");

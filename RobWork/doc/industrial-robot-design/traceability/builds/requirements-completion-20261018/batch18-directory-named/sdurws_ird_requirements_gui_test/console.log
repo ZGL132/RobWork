@@ -1,0 +1,19 @@
+Note: Google Test filter = RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23:RequirementsSessionGuiTest.NamedStationReferencesAtomicAndStale_REQ01_AT23:RequirementsSessionGuiTest.StationDefinition*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12 (725 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12 (357 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionFiveRules_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionFiveRules_AT23_WP14T12 (1278 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23
+[       OK ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23 (296 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedStationReferencesAtomicAndStale_REQ01_AT23
+[       OK ] RequirementsSessionGuiTest.NamedStationReferencesAtomicAndStale_REQ01_AT23 (558 ms)
+[----------] 5 tests from RequirementsSessionGuiTest (3217 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (3217 ms total)
+[  PASSED  ] 5 tests.

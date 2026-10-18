@@ -383,6 +383,14 @@ void RequirementsPanelWidget::setPostEditAction(PostEditAction action)
     m_postEditAction = std::move(action);
 }
 
+void RequirementsPanelWidget::setView3DSeams(RequirementsView3DSeams seams)
+{
+    m_threadGuard.assertOnUiThread();
+    // 装配对象替换视作交互代次变化，嵌套事件循环中的旧确认不得写回新能力。
+    ++m_interactionEpoch;
+    m_view3dSeams = std::move(seams);
+}
+
 std::function<bool()> RequirementsPanelWidget::interactiveWriteGuard(
     const IRequirementEditor* editor) const
 {
@@ -2463,24 +2471,32 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     connect(definition, &QPushButton::clicked, this, [this, base = *point] {
         auto* editor = m_editTarget ? m_editTarget() : nullptr;
         if (!editor || !m_writable) { return; }
-        const auto candidate = editStationDefinition(this, base, editor->workingSet().points);
+        const auto before = editor->workingSet();
+        const auto guard = interactiveWriteGuard(editor);
+        const auto directory = m_view3dSeams.referenceChoices;
+        const auto choices = directory ? directory() : std::vector<RequirementsReferenceChoice>{};
+        const auto candidate = editStationDefinition(this, base, before.points, directory ? &choices : nullptr);
         if (!candidate || *candidate == base) { return; }
-        // 模态嵌套事件循环仍可能切换会话或接收外部修订，确认后重新核对。
-        if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
-        for (const auto& current : editor->workingSet().points.entries) {
-            if (current.objectId != base.objectId) { continue; }
-            if (current != base) { showStatusLine("工位已改变，请重新打开完整定义"); return; }
-            // 排队到发起入口按钮完成发信后；二次守卫防止排队期间改写旧基线。
-            QMetaObject::invokeMethod(this, [this, editor, base, value = *candidate] {
-                if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
-                for (const auto& latest : editor->workingSet().points.entries) {
-                    if (latest.objectId != base.objectId) { continue; }
-                    if (latest != base) { showStatusLine("工位已改变，请重新打开完整定义"); return; }
-                    submitStructuralEdit(RequirementEdit{value}); return;
+        if (!guard()) { return; } // 模态期间父面板可能销毁；此后才能再次访问this。
+        // 完整工作集与引用目录均固定于发起拍，模态期间的切会话/目标删除不覆盖。
+        const auto stillCurrent = [this, editor, before, guard, directory, choices] {
+            if (!guard() || editor->workingSet() != before) { return false; }
+            if (!directory) { return true; } // 旧装配的明确降级输入仍走既有域校验。
+            const auto latest = directory();
+            if (latest.size() != choices.size()) { return false; }
+            for (std::size_t i=0; i<latest.size(); ++i) {
+                if (latest[i].reference != choices[i].reference || latest[i].displayName != choices[i].displayName
+                    || latest[i].available != choices[i].available || latest[i].unavailableReason != choices[i].unavailableReason) {
+                    return false;
                 }
-            }, Qt::QueuedConnection);
-            return;
-        }
+            }
+            return true;
+        };
+        if (!stillCurrent()) { showStatusLine("会话、工位或引用目录已改变，请重新打开完整定义"); return; }
+        QMetaObject::invokeMethod(this, [this, stillCurrent, value = *candidate] {
+            if (!stillCurrent()) { showStatusLine("会话、工位或引用目录已改变，请重新打开完整定义"); return; }
+            submitStructuralEdit(RequirementEdit{value});
+        }, Qt::QueuedConnection);
     });
     m_stationBasicForm->addRow(definition);
 }

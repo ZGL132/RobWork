@@ -3272,3 +3272,171 @@ TEST_F(RequirementsSessionGuiTest, ConditionReferencesAndFourStates_AT02_WP14T12
     ASSERT_TRUE(m_editor.undoLocal());
     EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), actual);
 }
+
+/** @brief REQ-01/09：缺宿主目录时明确显示名称选择能力缺失，取消零写入。 */
+TEST_F(RequirementsSessionGuiTest, ReferenceDirectoryMissingIsExplicit_REQ01_AT23)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const auto before = m_editor.workingSet();
+    m_panel->refreshPanel(before, m_report);
+    m_panel->focusObject(before.points.entries.front().objectId);
+    auto* button = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+    ASSERT_NE(button, nullptr);
+    QTimer::singleShot(0, [this] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog, nullptr);
+        if (!dialog) { return; }
+        auto* choices = dialog->findChild<QComboBox*>("station-reference-choice");
+        EXPECT_NE(choices, nullptr) << "名称目录入口缺失，不可要求产品用户填写内部对象标识";
+        if (choices) { EXPECT_FALSE(choices->isEnabled()); }
+        auto* hint = dialog->findChild<QLabel*>("station-reference-directory-hint");
+        EXPECT_NE(hint, nullptr);
+        if (hint) { EXPECT_TRUE(hint->text().contains("未装配")); }
+        dialog->reject();
+    });
+    button->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(), before) << "取消不得写入任一字段";
+}
+
+/** @brief REQ-01/09：真实名称下拉保存浅引用，取消/过期目录零写入，一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, NamedStationReferencesAtomicAndStale_REQ01_AT23)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const auto before = m_editor.workingSet();
+    RequirementReference world;
+    RequirementReference fixture; fixture.kind=RequirementRefKind::SceneObject;
+    fixture.objectId=core::ObjectId::generate();
+    RequirementReference model; model.kind=RequirementRefKind::ModelFrame;
+    model.objectId=core::ObjectId::generate();
+    RequirementReference tcp; tcp.kind=RequirementRefKind::Tool;
+    tcp.objectId=core::ObjectId::generate(); tcp.tcpKey="offset";
+    std::vector<RequirementsReferenceChoice> choices{
+        {world,"世界坐标系",true,""},{fixture,"夹具 / 工件A",true,""},
+        {model,"机械臂 / 基座",true,""},{tcp,"夹爪 / 偏置TCP",true,""}};
+    RequirementsView3DSeams seams; seams.referenceChoices=[&] { return choices; };
+    m_panel->setView3DSeams(seams);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(before.points.entries.front().objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        for (const auto& item : {std::pair<const char*,const char*>{"station-reference-choice","夹具 / 工件A"},
+                {"station-tcp-choice","夹爪 / 偏置TCP"},{"station-target-choice","机械臂 / 基座"}}) {
+            auto* combo=dialog->findChild<QComboBox*>(item.first); EXPECT_NE(combo,nullptr);
+            if (combo) { const int row=combo->findText(item.second); EXPECT_GE(row,0); combo->setCurrentIndex(row); }
+        }
+        dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(1);
+        EXPECT_TRUE(dialog->findChild<QLineEdit*>("station-reference-object")->isHidden())
+            << "正式目录下不能向产品用户展示内部ObjectId输入";
+        EXPECT_EQ(m_editor.workingSet(),before) << "选择只更新暂存值";
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    const auto after=m_editor.workingSet().points.entries.front();
+    EXPECT_EQ(after.refFrame,fixture); ASSERT_TRUE(after.tcpRef); EXPECT_EQ(*after.tcpRef,tcp);
+    EXPECT_EQ(after.pose.orientation.kind,OrientationRuleKind::AlignFrame);
+    EXPECT_EQ(after.pose.orientation.targetFrame,model);
+    EXPECT_EQ(after.pose.position,before.points.entries.front().pose.position);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(before.points.entries.front().objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        dialog->findChild<QLineEdit*>("station-name")->setText("不允许过期写回");
+        choices.pop_back(); // 宿主目录在嵌套事件循环中发生变化。
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before) << "引用目录过期应拒绝整次编辑";
+}
+
+/** @brief REQ-01/09：悬空历史引用保留，不能静默回落World；新不可用项禁止确认。 */
+TEST_F(RequirementsSessionGuiTest, NamedReferenceMissingPreservedAndUnavailableRejected_REQ09_AT23)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    auto point=m_editor.workingSet().points.entries.front();
+    point.refFrame.kind=RequirementRefKind::SceneObject; point.refFrame.objectId=core::ObjectId::generate();
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{point}).accepted);
+    const auto before=m_editor.workingSet();
+    RequirementReference other=point.refFrame; other.objectId=core::ObjectId::generate();
+    RequirementsView3DSeams seams;
+    seams.referenceChoices=[&] { return std::vector<RequirementsReferenceChoice>{{RequirementReference{},"世界坐标系",true,""},
+        {other,"停用夹具",false,"当前运行时帧缺失"}}; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report); m_panel->focusObject(point.objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        auto* choice=dialog->findChild<QComboBox*>("station-reference-choice");
+        EXPECT_NE(choice,nullptr); if (!choice) { dialog->reject(); return; }
+        EXPECT_TRUE(choice->currentText().contains("缺失"));
+        dialog->findChild<QLineEdit*>("station-name")->setText("保留悬空引用");
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().refFrame,point.refFrame);
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().name,"保留悬空引用");
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(point.objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        auto* choice=dialog->findChild<QComboBox*>("station-reference-choice");
+        const int row=choice->findText("停用夹具（不可用）"); EXPECT_GE(row,0);
+        if (row>=0) {
+            EXPECT_FALSE(choice->model()->flags(choice->model()->index(row,0)) & Qt::ItemIsEnabled);
+            choice->setCurrentIndex(row); // 即使程序输入绕过灰显，确认仍须拒绝。
+        }
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        EXPECT_TRUE(dialog->isVisible());
+        EXPECT_FALSE(dialog->findChild<QLabel*>("station-definition-error")->text().isEmpty());
+        dialog->reject();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-01/09：同一工具多个TCP按精确键选取，几何对象独立选择并可一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, NamedGeometryAndMultiTcpKeepIdentity_REQ09_AT23)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    RequirementReference tcpA; tcpA.kind=RequirementRefKind::Tool;
+    tcpA.objectId=core::ObjectId::generate(); tcpA.tcpKey="tip-a";
+    auto tcpB=tcpA; tcpB.tcpKey="tip-b";
+    auto otherTool=tcpB; otherTool.objectId=core::ObjectId::generate();
+    RequirementReference geometry; geometry.kind=RequirementRefKind::SceneObject;
+    geometry.objectId=core::ObjectId::generate();
+    RequirementsView3DSeams seams;
+    // 仅名称端口提供候选值；表单、校验、草稿与撤销均使用真实实现。
+    seams.referenceChoices=[=] { return std::vector<RequirementsReferenceChoice>{
+        {RequirementReference{},"世界坐标系",true,""},{tcpA,"夹爪A / tip-a",true,""},
+        {tcpB,"夹爪A / tip-b",true,""},{otherTool,"夹爪B / tip-b",true,""},
+        {geometry,"场景 / 支承面",true,""}}; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    m_panel->focusObject(before.points.entries.front().objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        auto* tcp=dialog->findChild<QComboBox*>("station-tcp-choice");
+        auto* scene=dialog->findChild<QComboBox*>("station-geometry-choice");
+        EXPECT_NE(tcp,nullptr); EXPECT_NE(scene,nullptr);
+        if (!tcp || !scene) { dialog->reject(); return; }
+        EXPECT_EQ(tcp->count(),4) << "可选空行和三个具名TCP，不得按工具ID合并";
+        EXPECT_EQ(scene->count(),2) << "几何列表只包含未选提示与场景，不混入工具";
+        tcp->setCurrentIndex(tcp->findText("夹爪A / tip-b"));
+        scene->setCurrentIndex(scene->findText("场景 / 支承面"));
+        dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(2);
+        dialog->findChild<QComboBox*>("station-feature")->setCurrentIndex(1);
+        dialog->findChild<QCheckBox*>("station-invert")->setChecked(true);
+        EXPECT_EQ(m_editor.workingSet(),before) << "预选几何与TCP不能提前写草稿";
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    const auto after=m_editor.workingSet().points.entries.front();
+    ASSERT_TRUE(after.tcpRef); EXPECT_EQ(*after.tcpRef,tcpB);
+    EXPECT_EQ(after.pose.orientation.kind,OrientationRuleKind::AlignGeometryNormal);
+    EXPECT_EQ(after.pose.orientation.targetSceneObject,geometry.objectId);
+    EXPECT_EQ(after.pose.orientation.feature,OrientationFeature::FramePlaneNormal);
+    EXPECT_TRUE(after.pose.orientation.invertNormal);
+    EXPECT_EQ(after.refFrame,before.points.entries.front().refFrame);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+}

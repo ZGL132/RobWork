@@ -435,6 +435,7 @@ void RequirementsUiModule::attachPanel(RequirementsPanelWidget* panel)
     // 又有 setWritable 到达，attachPanel 完成后面板必等于模块缓存态）。
     if (m_panel != nullptr) {
         m_panel->setWritable(m_writable);
+        if (m_view3dSeamsBound) { m_panel->setView3DSeams(m_view3dSeams); }
     }
     wirePanelPostEdit();
 }
@@ -843,6 +844,7 @@ void RequirementsUiModule::bindView3DSeams(RequirementsView3DSeams seams)
     }
     m_view3dSeams = std::move(seams);
     m_view3dSeamsBound = true;
+    if (m_panel) { m_panel->setView3DSeams(m_view3dSeams); }
 }
 
 void RequirementsUiModule::bindStationMarkersSink(

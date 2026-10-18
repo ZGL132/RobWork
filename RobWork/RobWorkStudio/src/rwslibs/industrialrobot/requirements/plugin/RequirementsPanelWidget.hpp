@@ -221,6 +221,12 @@ public:
      *        器基线复位的事实对齐），控件投影收拢为无会话空态（树/表/
      *        卡片清空、生命周期与撤销键全禁、空态提示显现）。零修订。
      */
+    /**
+     * @brief 绑定按次现取的名称/三维交互能力；仅UI线程，不缓存跨域真值。
+     * @param seams [in] 宿主值回调副本；空函数明确降级，环境由宿主持有至面板销毁。
+     * 重新绑定推进交互代次，旧模态确认零写入；本函数不查询或修改项目。
+     */
+    void setView3DSeams(RequirementsView3DSeams seams);
     void resetForSessionDetached();
 
     /**
@@ -489,6 +495,7 @@ private:
     RegionPreviewSink m_regionPreview;        ///< 区域三维预览出口（装配层注入；空＝文本摘要）
     StationMarkersSink m_stationMarkersSink;  ///< 工位标记出口（UI-T33——装配层注入；空＝无投递）
     ConditionWizardFn m_conditionWizard;      ///< 工况向导缝（空＝内建对话框——R2）
+    RequirementsView3DSeams m_view3dSeams; ///< 回调由宿主持有环境；只在UI交互时现取值。
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）
     std::uint64_t m_interactionEpoch = 0;      ///< UI交互代次；会话/基线/写资格变化使旧确认失效。
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）

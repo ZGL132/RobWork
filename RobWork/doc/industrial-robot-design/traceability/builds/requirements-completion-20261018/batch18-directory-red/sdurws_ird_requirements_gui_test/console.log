@@ -1,0 +1,20 @@
+Note: Google Test filter = RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(3290): error: Expected: (choices) != (nullptr), actual: NULL vs (nullptr)
+名称目录入口缺失，不可要求产品用户填写内部对象标识
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(3293): error: Expected: (hint) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23 (830 ms)
+[----------] 1 test from RequirementsSessionGuiTest (830 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (830 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23
+
+ 1 FAILED TEST

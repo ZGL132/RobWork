@@ -107,6 +107,20 @@ struct RequirementsSharedSurfaceHandles {
  */
 
 /**
+ * @brief 当前修订中的引用候选值（REQ-01/04/09），由宿主查询权威闭包后生成。
+ *
+ * 需求面板只按业务名称呈现，不解释建模私有对象。值由调用方复制持有，
+ * 无跨域指针；available只代表当前引用可供选择，不承诺求解可达。
+ * 非线程安全的宿主目录必须在UI线程查询，本结构本身可按值传递。
+ */
+struct RequirementsReferenceChoice {
+    RequirementReference reference;  ///< 既有浅引用；不改变持久化格式或身份语义。
+    std::string displayName;           ///< 可读业务名称；同名目标须由业务上下文区分。
+    bool available = false;            ///< false时呈现原因并禁止新选，不替换原悬空引用。
+    std::string unavailableReason;     ///< 不可选的具体原因；不使用内部ObjectId作为文案。
+};
+
+/**
  * @brief 三维视图缝（UI-T33——捕获 TCP/拾取收口的宿主真数据源；定义于
  *        本门面＝O-45 消费面：宿主装配层构造、bindView3DSeams 注入后经
  *        模块下传命令流。全部缝可空/缺省＝诚实降级形态——命令流对空缝
@@ -133,6 +147,21 @@ struct RequirementsView3DSeams {
     /// objectRefs 核对。空返回/缺省＝空上下文——浅核对如实拒绝〔不虚构
     /// 通过〕；生产绑定＝宿主查询端口 head().objectRefs）。
     std::function<std::vector<project::ObjectRef>()> sessionClosureRefs;
+    /// REQ-01/04/09：UI线程现取当前修订引用目录，返回值由面板持有；
+    /// 空函数表示宿主未装配目录能力，空向量表示当前无候选，二者不得混淆。
+    std::function<std::vector<RequirementsReferenceChoice>()> referenceChoices;
+    /// REQ-08：UI线程按既有浅引用现取世界系变换（平移m、旋转无量纲）。
+    /// 参数仅调用期借用；nullopt表示目标/场景不可用，禁止伪造单位阵。
+    /// 不缓存Frame裸指针；World返回恒等，Tool须精确到tcpKey。
+    std::function<std::optional<rw::math::Transform3D<>>(
+        const RequirementReference&)> referenceWorldPose;
+    /// REQ-08：UI线程同步临时交互；initialWorldPose为有限世界系初值
+    /// （m、正交旋转），creating=true为创建，false为移动。返回确认的
+    /// 世界系值，取消/环境失效返回nullopt；输入非法属契约错误，应fail-fast。
+    /// 宿主负责预览、相机投影和退出清理，不持编辑器或执行草稿写入；
+    /// 可泵嵌套事件，需求域必须在返回后重新核对会话/基线，再一次入栈。
+    std::function<std::optional<rw::math::Transform3D<>>(
+        const rw::math::Transform3D<>& initialWorldPose, bool creating)> editWorldTarget;
 };
 
 struct RequirementsPluginAssembly {

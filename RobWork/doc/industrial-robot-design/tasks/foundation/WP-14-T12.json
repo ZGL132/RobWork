@@ -29,9 +29,10 @@
     "RobWork/doc/industrial-robot-design/tasks/foundation/WP-14-T12.json",
     "RobWork/doc/industrial-robot-design/units/requirements.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
-    "RobWork/doc/industrial-robot-design/traceability/**"
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/sdurws/ird/requirements/RequirementsPluginAssembly.hpp"
   ],
-  "forbiddenFiles": ["RobWork/RobWork/**", "RobWork/RobWorkSim/**", "RobWork/doc/industrial-robot-design/REQUIREMENTS.md", "RobWork/doc/industrial-robot-design/ARCHITECTURE.md", "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**"],
+  "forbiddenFiles": ["RobWork/RobWork/**", "RobWork/RobWorkSim/**", "RobWork/doc/industrial-robot-design/REQUIREMENTS.md", "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"],
   "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
   "verify": ["cmake --build build --config Release", "cmake --build build --config Release --target ird_gates", "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
   "branch": "wp14-t12",
@@ -42,5 +43,5 @@
     "A-01至A-12逐项失败回归先执行，再修复；取消零写入、只读禁写、批次整体局部撤销",
     "双模式构建、requirements及相关ui测试、ird_gates、scope和文档校验实际执行留痕；通过与跳过分别计数"
   ],
-  "note": "所有者2026-10-18明确授权基于review制定计划并实施，最终所有功能通过验证。实施基点bd55ad59，源代码基点a5ccb4d6与redesign-main一致；两个审计文档提交保留历史。第一阶段限私有UI接线；2026-10-18所有者先后明确批准计划A-04公共参数补齐设计及解除关联原子批次设计：仅放行requirements/include/sdurws/ird/requirements/TemplateArray.hpp的ArrayParams第三方向/层间距/层数/圆法向兼容扩展及EditBatch.updatedPoints默认空值字段，其余公共头仍禁止修改，不新增跨域边。后续若需新增公共端口先按设计门登记。计划见RobWork/docs/superpowers/plans/2026-10-18-requirements-completion.md。"
+  "note": "所有者2026-10-18明确授权基于review制定计划并实施，最终所有功能通过验证。实施基点bd55ad59，源代码基点a5ccb4d6与redesign-main一致；两个审计文档提交保留历史。第一阶段限私有UI接线；2026-10-18所有者先后明确批准计划A-04公共参数补齐设计及解除关联原子批次设计：仅放行requirements/include/sdurws/ird/requirements/TemplateArray.hpp的ArrayParams第三方向/层间距/层数/圆法向兼容扩展及EditBatch.updatedPoints默认空值字段，其余公共头仍禁止修改，不新增跨域边。后续若需新增公共端口先按设计门登记。计划见RobWork/docs/superpowers/plans/2026-10-18-requirements-completion.md。 所有者2026-10-19明确批准A-06/A-07精确设计：仅放行RequirementsPluginAssembly.hpp的RequirementsReferenceChoice及RequirementsView3DSeams表尾referenceChoices/referenceWorldPose/editWorldTarget三个默认空回调；其余assembly文件不在允许面，不改存储格式或新建跨域边。"
 }

@@ -1,0 +1,17 @@
+Note: Google Test filter = RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23:RequirementsSessionGuiTest.StationDefinition*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12 (798 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12 (337 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionFiveRules_AT23_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationDefinitionFiveRules_AT23_WP14T12 (1335 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23
+[       OK ] RequirementsSessionGuiTest.ReferenceDirectoryMissingIsExplicit_REQ01_AT23 (274 ms)
+[----------] 4 tests from RequirementsSessionGuiTest (2746 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (2746 ms total)
+[  PASSED  ] 4 tests.
