@@ -221,6 +221,26 @@ TEST(KinExport, FilteredRowsCarryReasonTokenAndCollisionPairs_WP15T09_ACC2)
     EXPECT_EQ(buildFilteredSolutionExportRows(probe)[0].reason, "joint-limit");
 }
 
+/**
+ * F-756：碰撞对象对为奇数长度＝展平契约破坏，导出必须 fail-fast，
+ * 不得用 size()/2 静默截断（与 reporting Render.cpp 同口径）。
+ */
+TEST(KinExport, FilteredRowsOddObjectPairsFailsFast_F756)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-08"},
+                  std::vector<std::string>{});
+
+    IkSolutionSet probe = makeSolutionSet();
+    probe.filteredRecords.clear();
+    FilteredSolutionRecord rec;
+    rec.reason = SolutionFilterReason::Collision;
+    rec.objectIdPairs = {makeOid(0xc)};  // 奇数：1 个元素不成对
+    probe.filteredRecords.push_back(rec);
+
+    EXPECT_THROW((void)buildFilteredSolutionExportRows(probe),
+                 std::invalid_argument);
+}
+
 // ---------------------------------------------------------------------
 // ACC2-2：覆盖行 tally——(regionOid, kind) 分组＋双射守卫
 // ---------------------------------------------------------------------

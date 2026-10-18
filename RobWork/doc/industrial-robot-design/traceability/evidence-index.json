@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T12:58:08+08:00",
+  "generatedAt": "2026-10-18T13:00:09+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6700,
-    "totalBytes": 212270842,
+    "totalFiles": 6704,
+    "totalBytes": 212633394,
     "byKind": {
-      "governance-record": 36,
-      "pipeline-artifact": 2,
-      "benchmark": 8,
-      "manual-acceptance": 1,
       "log": 1,
+      "benchmark": 8,
       "markdown-doc": 41,
+      "build-log": 5758,
+      "manual-acceptance": 1,
       "json-data": 7,
-      "gtest-report": 335,
       "acceptance-record": 515,
-      "build-log": 5754
+      "gtest-report": 335,
+      "pipeline-artifact": 2,
+      "governance-record": 36
     },
     "byLifecycle": {
       "historical": 549,
-      "current": 42,
       "superseded": 0,
-      "unverified": 6109
+      "unverified": 6113,
+      "current": 42
     },
     "associated": 596,
-    "unassociated": 6104,
-    "shaComputed": 6682,
+    "unassociated": 6108,
+    "shaComputed": 6686,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -9732,6 +9732,38 @@
       "taskIds": [],
       "bytes": 62852,
       "sha256": "865e7a6f5b08640220d9e2577c15048d1927ce53715ac843895c2c7204969bdf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-p3-text5/build-20261018.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5630,
+      "sha256": "7e970ce64a952b04e38ba59d73aacfd88492a50d61ae9cf2911a3b2fd6efda62",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-p3-text5/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 222279,
+      "sha256": "9eb05755a8bf4a6d12ffe287e9202596756f72b34d041543a2af148277f52925",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-p3-text5/kinematics_test.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 44781,
+      "sha256": "7e5e404731d7509ff594e56b401547a55428aeb406f02c6f2a406bdb09938f29",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-p3-text5/kinematics_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 89498,
+      "sha256": "1ac972f6dc2a55f472c644defcdd2642a114585af45f3ebc394b4af4aa15390f",
       "lifecycle": "unverified"
     },
     {
@@ -52298,7 +52330,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1225366,
+      "bytes": 1225730,
       "sha256": null,
       "lifecycle": "unverified"
     },

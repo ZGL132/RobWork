@@ -7623,10 +7623,12 @@
       "id": "F-756",
       "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-657→F-756，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：Export 奇数对静默取整",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Export 奇数对显式处理（拒绝或注记，不静默取整）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Export 奇数对显式处理（拒绝或注记，不静默取整）。",
+      "resolution": "F-756 消账（2026-10-18）：kinematics Export.cpp 在 collisionPairCount 计算前增奇数长度校验——objectIdPairs 非成对即抛 std::invalid_argument（原 size()/2 静默截断）；新增用例 KinExport.FilteredRowsOddObjectPairsFailsFast_F756。kinematics_test 267 通过＋1 登记 skip。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-757",

@@ -262,6 +262,12 @@ std::vector<KinFilteredSolutionExportRow> buildFilteredSolutionExportRows(
         // F-588：字段契约（Export.hpp"碰撞对象对数量"）——objectIdPairs 是
         // 成对展平列表（[a1,b1,a2,b2,…]，1 对占 2 元素），计数取一半。原
         // 实现直填展平元素数（=2×对数），JSON/CSV 交付值按契约语义翻倍。
+        // F-756：奇数长度即展平契约破坏——fail-fast 而非 size()/2 静默截断
+        // （与 reporting Render.cpp 同口径）。
+        if ((r.objectIdPairs.size() % 2U) != 0U) {
+            throw std::invalid_argument(
+                "kinematics 导出：collision objectIdPairs 为奇数长度（成对展平契约违约）");
+        }
         row.collisionPairCount = r.objectIdPairs.size() / 2U;
         for (const core::ObjectId& oid : r.objectIdPairs) {
             if (!row.collisionPairs.empty()) {
