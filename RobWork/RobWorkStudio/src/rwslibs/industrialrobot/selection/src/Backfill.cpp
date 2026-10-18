@@ -1165,7 +1165,7 @@ BackfillPlanOutcome DeviceBackfillCommandHandler::planFromEnvelope(
     for (const project::ObjectRef& ref : baseSnapshot.objectRefs) {
         if (ref.objectTypeToken == kBackfillRecordObjectToken) {
             write.objectId = ref.objectId;
-            break;  // 恰一记录对象——多写即基线违约（保守取首个并登记诊断）
+            break;  // 恰一记录对象——多写即基线违约（保守取首个；本函数不登记诊断）
         }
     }
     write.objectTypeToken = std::string(kBackfillRecordObjectToken);

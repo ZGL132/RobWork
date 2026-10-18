@@ -147,6 +147,12 @@ std::vector<ui::RegistrationResult> registerWorkflowCommands(
     results.reserve(descriptors.size());
     for (const ui::CommandDescriptor& descriptor : descriptors) {
         const auto it = handlers.find(descriptor.id);
+        // F-767：两表漂移（冻结描述符有、处理器表无）时 find 返回 end()，
+        // 直接解引用是 UB；装配缺陷必须 fail-fast 点名，不允许静默崩溃。
+        if (it == handlers.end()) {
+            throw WorkflowError("workflow: 命令 \"" + std::string(descriptor.id) +
+                                "\" 无处理器——冻结描述符表与处理器表漂移（装配缺陷）");
+        }
         results.push_back(registry.registerCommand(descriptor, it->second));
     }
     return results;

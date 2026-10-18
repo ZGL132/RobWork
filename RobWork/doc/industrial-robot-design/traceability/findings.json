@@ -7711,10 +7711,12 @@
       "id": "F-765",
       "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-666→F-765，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：CommandHandlers.cpp:248 注释『Invalid 态由解码边界拒绝』与建模解码实现不符（无 Continuous↔workingRange 配对校验）",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：CommandHandlers.cpp :248 注释更正（对齐建模解码实况）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：CommandHandlers.cpp :248 注释更正（对齐建模解码实况）。",
+      "resolution": "复核 CommandHandlers.cpp:240-250 注释已改为「构造/解码边界拒绝的前提被 audit 实测证伪；伪造字节可解码 Invalid 态并静默穿透，下游 evaluateTravelLimits 以 logic_error 崩」——不再声称「Invalid 态由解码边界拒绝」；零编辑翻 fixed（F-746 修复时同步改注）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-766",
@@ -7731,10 +7733,12 @@
       "id": "F-767",
       "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-668→F-767，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：WorkflowCommandCatalog find() 未判 end() 即解引用（两表漂移即 UB 而非 fail-fast）",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：WorkflowCommandCatalog find() 判 end()→fail-fast。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：WorkflowCommandCatalog find() 判 end()→fail-fast。",
+      "resolution": "WorkflowCommandCatalog.cpp 注册循环增 end() 判定：冻结描述符表与处理器表漂移时抛 WorkflowError 点名命令 id（原 it->second 直接解引用为 UB）；workflow_test 196/196 通过。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-768",
@@ -7807,10 +7811,12 @@
       "id": "F-775",
       "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-676→F-775，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：Backfill.cpp 判定 5 注释宣称『多写登记诊断』实际未登记",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Backfill 判定 5 补登记诊断或更正注释。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Backfill 判定 5 补登记诊断或更正注释。",
+      "resolution": "Backfill.cpp 判定 5 注释改为「保守取首个；本函数不登记诊断」，与实际行为一致（原「并登记诊断」无实现）；selection_test 292 通过＋1 登记 skip。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-776",
