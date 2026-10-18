@@ -9441,6 +9441,17 @@
       "owner": "设计区文档维护（单元卡文本卫生）",
       "resolution": "五卡按字节级替换补齐（0x08+locked→blocked、0x0B+alidate-→validate-，每卡 2 行共 10 处；替换前后计数 BS 1→0、VT 1→0×5 卡，留痕 traceability/builds/gov-units-escfix/escfix-verify-20261018.log）；验证口径升级：替换类操作必须输出替换计数，修复证据＝控制字符字节扫描归零＋替换后目标文本就位双查，禁止以「可见文本模式 grep 归零」单独作为修复证据（该口径对本族损毁恒假阴性）；五条前置 resolution 补勘误注记。",
       "fixedAt": "2026-10-18"
+    },
+    {
+      "id": "F-938",
+      "source": "d4d3ab56 提交自检（2026-10-18，五卡补齐批推送链实测）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-18",
+      "title": "commit-lint -Range 模式在中文 Windows 控制台（CP936）恒误报 FAIL：PowerShell 按 [Console]::OutputEncoding（GBK）解码 git 的 UTF-8 输出，四段中文标记乱码致匹配失败；同批附记——调用侧 'pwsh | tail && push' 管道吞掉脚本 exit 1，误报 FAIL 后推送未被拦截",
+      "owner": "治理脚本维护方（门禁脚本编码口径与 F-935 同族纪律）",
+      "resolution": "commit-lint.ps1 param 块后显式 [Console]::OutputEncoding=UTF8（try/catch 包裹，CI 无控制台宿主不阻塞）；修复后 d4d3ab56 合规提交 -Range 复检 PASS、退出码正确传递（留痕 traceability/builds/gov-units-escfix/commit-lint-f938-20261018.log）。教训入账：门禁调用不得经管道后接 &&（管道退出码＝末命令 tail 的退出码）。",
+      "fixedAt": "2026-10-18"
     }
   ]
 }

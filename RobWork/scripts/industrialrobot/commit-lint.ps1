@@ -38,6 +38,14 @@ param(
   [switch]$AllowWip
 )
 
+# ---------- 原生命令输出解码口径（F-938）----------
+# git 输出（提交信息、哈希）恒为 UTF-8 字节，而 PowerShell 按
+# [Console]::OutputEncoding 解码原生命令 stdout——中文 Windows 控制台缺省
+# GBK（CP936），四段中文标记被解码成乱码，-Range 模式恒误报 FAIL
+# （2026-10-18 d4d3ab56 合规提交被误判实测）。此处显式统一为 UTF-8；
+# 无控制台宿主（CI 重定向）下 setter 可能抛错，包裹 try/catch 不阻塞门禁。
+try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
+
 # ---------- 仓库根解析（与其余治理脚本同一套三段逻辑）----------
 $scriptDir = $PSScriptRoot
 if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }

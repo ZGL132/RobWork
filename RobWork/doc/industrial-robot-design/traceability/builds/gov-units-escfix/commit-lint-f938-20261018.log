@@ -1,0 +1,30 @@
+F-938 commit-lint GBK 解码误报——修复留痕（2026-10-18）
+================================================================
+[1] 修复前（commit-lint.ps1 @ d4d3ab56，控制台 CP936）
+  pwsh -File commit-lint.ps1 -Range origin/redesign-main..HEAD
+    [FAIL] d4d3ab56d552
+           - 正文缺少段标记: 改动内容（What）
+           - 正文缺少段标记: 改动原因（Why）
+           - 正文缺少段标记: 验证（How）
+           - 正文缺少段标记: 影响面
+  commit-lint: FAIL —— 1/1 个提交不合规
+  事实核对：d4d3ab56 提交信息四段标记齐全（git log --format=%B 逐行
+  核对在档），误报根因＝[Console]::OutputEncoding(GBK) 解码 git 的
+  UTF-8 输出，中文标记乱码致匹配失败。
+  附记：该 FAIL 后推送仍执行，系调用侧 'pwsh | tail && push' 管道
+  吞掉脚本 exit 1（脚本退出码传递本身正确，教训见 F-938 resolution）。
+
+[2] 修复
+  commit-lint.ps1 param 块后增：
+    try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
+
+[3] 修复后复检（pwsh -File commit-lint.ps1 -Range 04b97223..HEAD）
+    [PASS] d4d3ab56d552
+  commit-lint: PASS（1 个提交全部合规）  exit=0
+
+[4] findings.json
+  F-938 新登（severity=minor，status=fixed）；解析 OK、925 条、重复 id=0。
+
+[5] validate-docs -DeepEvidence
+（结果见下方追加行）
+validate-docs: PASS (20 units, 12 trace entries, 361 task files, 29 registered assets, 6 notes, 7 skills, 2 packs, 6718 evidence) —— 索引重建后实测（commit-lint-f938-20261018.log 入库基准）
