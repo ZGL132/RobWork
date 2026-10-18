@@ -119,12 +119,28 @@ public:
         const auto* p = static_cast<const std::uint8_t*>(data);
         m_bytes.insert(m_bytes.end(), p, p + n);
     }
-    /// u32 定宽（小端——协议字序）。
-    void u32(std::uint32_t v) { raw(&v, sizeof(v)); }
+    /// u32 定宽（显式小端：低位字节在前——跨平台字节序一致，F-777）。
+    void u32(std::uint32_t v)
+    {
+        for (int shift = 0; shift < 32; shift += 8) {
+            const std::uint8_t b = static_cast<std::uint8_t>((v >> shift) & 0xFFu);
+            raw(&b, 1);
+        }
+    }
     /// u8（枚举底值/有无标志）。
     void u8(std::uint8_t v) { raw(&v, sizeof(v)); }
-    /// f64 定宽（小端 IEEE754 位模式；调用方保证有限——编码入口已校验）。
-    void f64(double v) { raw(&v, sizeof(v)); }
+    /// f64 定宽（IEEE754 位模式经 memcpy 取位后显式小端 8 字节；F-777：
+    /// 原 raw(&v) 是主机序，跨端会静默改变 canonical 身份）。
+    void f64(double v)
+    {
+        std::uint64_t bits = 0;
+        static_assert(sizeof(bits) == sizeof(v), "double 必须为 8 字节");
+        std::memcpy(&bits, &v, sizeof(bits));
+        for (int shift = 0; shift < 64; shift += 8) {
+            const std::uint8_t b = static_cast<std::uint8_t>((bits >> shift) & 0xFFu);
+            raw(&b, 1);
+        }
+    }
     /// string＝u32 字节长＋UTF-8 字节。
     void str(const std::string& s)
     {
@@ -202,7 +218,11 @@ public:
     std::uint32_t u32()
     {
         std::uint32_t v = 0;
-        raw(&v, sizeof(v));
+        for (int i = 0; i < 4; ++i) {
+            std::uint8_t b = 0;
+            raw(&b, 1);
+            v |= static_cast<std::uint32_t>(b) << (8 * i);
+        }
         return v;
     }
     std::uint8_t u8()
@@ -211,11 +231,17 @@ public:
         raw(&v, sizeof(v));
         return v;
     }
-    /// f64 读取＋非有限拒绝（对称于编码入口——防旁路字节注入）。
+    /// f64 读取＋非有限拒绝（对称于编码入口——防旁路字节注入；显式小端组装）。
     double f64()
     {
+        std::uint64_t bits = 0;
+        for (int i = 0; i < 8; ++i) {
+            std::uint8_t b = 0;
+            raw(&b, 1);
+            bits |= static_cast<std::uint64_t>(b) << (8 * i);
+        }
         double v = 0;
-        raw(&v, sizeof(v));
+        std::memcpy(&v, &bits, sizeof(v));
         if (!m_failFlag && !isFiniteNumber(v)) {
             fail("非有限 double（NFR-COR-03）");
         }

@@ -7831,10 +7831,12 @@
       "id": "F-777",
       "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-678→F-777，映射 traceability/gov-r2-id-remap.md）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "P3：selection 编解码（Backfill/CombinationCheck ByteWriter）注释称『小端』实为本机序 memcpy——与 dynamics 显式小端纪律不一致，跨平台静默改 canonical 身份",
-      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：selection ByteWriter 注释更正或实现改显式小端（择一，与 dynamics 纪律统一）。"
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：selection ByteWriter 注释更正或实现改显式小端（择一，与 dynamics 纪律统一）。",
+      "resolution": "F-777 消账（2026-10-18）：selection 的 Backfill.cpp/CombinationCheck.cpp ByteWriter/ByteReader 的 u32/f64 改为显式小端——u32 按位移逐字节写 4 字节，f64 经 memcpy 取 IEEE754 位模式后逐字节写 8 字节，读侧对称组装；消除 raw(&v) 主机序 memcpy 在跨端时的 canonical 身份漂移（MSVC x64 上字节流不变）。selection_test 292 通过＋1 登记 skip、selection_contract_test 64/64 通过。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-778",
