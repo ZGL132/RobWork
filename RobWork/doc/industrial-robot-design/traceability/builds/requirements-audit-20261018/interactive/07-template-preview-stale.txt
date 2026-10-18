@@ -1,0 +1,24 @@
+Window: "应用工艺模板（生成工位）", App: sdurws_ird_studio.exe.
+	0 窗口 (settable, string) 应用工艺模板（生成工位） Secondary Actions: Raise ID: QApplication.QDialog
+		1 标题栏 (settable, string) Value: 应用工艺模板（生成工位）
+			2 菜单栏 系统 ID: MenuBar
+				3 菜单项 系统
+			4 按钮 关闭
+		5 组合框 (settable, string) 模板类别 Value: 检测 ID: QApplication.QDialog.QComboBox
+		6 编辑 (settable, string) 名称前缀 Value: palletizing ID: QApplication.QDialog.QLineEdit
+		7 旋转图标 (settable, float) X 向间距 Value: 0.5 ID: QApplication.QDialog.QDoubleSpinBox
+		8 旋转图标 (settable, float) X 向数量 Value: 3 ID: QApplication.QDialog.QSpinBox
+		9 旋转图标 (settable, float) Y 向数量 Value: 1 ID: QApplication.QDialog.QSpinBox
+		10 文本 模板类别 ID: QApplication.QDialog.QLabel
+		11 文本 名称前缀 ID: QApplication.QDialog.QLabel
+		12 文本 X 向间距 ID: QApplication.QDialog.QLabel
+		13 文本 X 向数量 ID: QApplication.QDialog.QLabel
+		14 文本 Y 向数量 ID: QApplication.QDialog.QLabel
+		15 文本 将生成 1 个工位 ID: QApplication.QDialog.QLabel
+		16 组 (settable, string) ID: QApplication.QDialog.QDialogButtonBox
+			17 按钮 (settable, string) 确定 ID: QApplication.QDialog.QDialogButtonBox.QPushButton
+			18 按钮 (settable, string) 取消 ID: QApplication.QDialog.QDialogButtonBox.QPushButton
+
+Document text: ```
+palletizing
+```

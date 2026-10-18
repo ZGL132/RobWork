@@ -1,0 +1,16 @@
+本批关键源代码与证据定位（基线 a5ccb4d6d775789c45ec9c0a9f3b60dcacccd58e）
+- requirements/plugin/RequirementsCommandFlows.cpp:112-180：Qt 模板对话框；类别选择只留在局部控件，未写回 TemplateParams。
+- requirements/plugin/RequirementsCommandFlows.cpp:274-290：flowApplyTemplate 固定调用 TemplateKind::Palletizing。
+- requirements/plugin/RequirementsCommandFlows.cpp:182-210：阵列参数对话框只有数量和间距/半径两个控件。
+- requirements/plugin/RequirementsCommandFlows.cpp:330-381：矩形 count2=count/2，圆形 angleStep=2π/count，折线固定两点(0,0,0)/(spacing,0,0)。
+- requirements/plugin/RequirementsCommandFlows.cpp:441-486：CSV/JSON 统一摘要确认；错误提示只拼 DiagnosticRecord::cause，未呈现 row/column/raw context。
+- requirements/plugin/RequirementsCommandFlows.cpp:489-530：CSV 生产流固定 ImportUnitOptions::defaults()，自动映射后直接 executeMapping，无手动映射/单位预览呈现。
+- requirements/plugin/RequirementsPanelWidget.cpp:约3473-3530：工况编辑提交仅接受 conditionQuantitySpecs 词表键；name 等键会抛 logic_error。
+- requirements/plugin/PanelConditionModel.cpp:125-166：工况负载/事件/节拍/适用范围为投影行；空集合只显示“无”，创建入口未在本批界面发现。
+- requirements/plugin/PanelStationModel.cpp:117-210：工位字段投影；refFrame/tcpRef 未进入表单行，姿态规则引用多为摘要/只读。
+- requirements/plugin/RequirementsPanelWidget.cpp:912-962：可见校验筛选控件；未发现需求参数表批量粘贴接线。
+- requirements/ui/plugin/UiPlugin.cpp:4380-4457：真实评估结果推送依赖 coverage snapshot/epoch；本批没有伪造样本。
+- requirements/gui_test/RequirementsSessionGuiTest.cpp：39 项 Qt 组件/测试缝；不等价真实宿主像素与鼠标链。
+- requirements/gui_test/RequirementsView3DFlowTest.cpp:203-310：TCP/几何拾取以 seams 替身验证；真实 runtime 缺失时不能外推。
+
+证据路径均相对于本目录；正式需求语义仍以 doc/industrial-robot-design/REQUIREMENTS.md 与 units/requirements.md 为准。

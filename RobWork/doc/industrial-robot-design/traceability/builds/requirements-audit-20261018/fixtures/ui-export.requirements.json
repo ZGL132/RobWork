@@ -1,0 +1,40 @@
+{
+  "draft": true,
+  "points": [
+    {
+      "approach_axis": "ToolZ",
+      "enabled": "true",
+      "id": "obj-21300bdba31c6449cf06b634a24e43db",
+      "level": "Must",
+      "name": "GoodPoint",
+      "ori_tol": 0.017453292519943295,
+      "pitch": 0,
+      "pos_tol": 0.001,
+      "process_tag": "Pick",
+      "ref_frame": "World",
+      "roll": 0,
+      "x": 0.1,
+      "y": 0.2,
+      "yaw": 0,
+      "z": 0.3
+    },
+    {
+      "approach_axis": "ToolZ",
+      "enabled": "true",
+      "id": "obj-83212dfbcf2a2aab80d036d622ac4ab5",
+      "level": "Should",
+      "name": "=1+1",
+      "ori_tol": 0.017453292519943295,
+      "pitch": 0,
+      "pos_tol": 0.001,
+      "process_tag": "Inspect",
+      "ref_frame": "World",
+      "roll": 0,
+      "x": 0.4,
+      "y": 0.5,
+      "yaw": 0,
+      "z": 0.6
+    }
+  ],
+  "schemaVersion": 1
+}
