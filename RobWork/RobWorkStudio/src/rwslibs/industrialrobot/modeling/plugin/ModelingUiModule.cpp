@@ -14,6 +14,7 @@
 #include "PolicyNameContexts.hpp"             // RuntimeMapPolicyNameContext（T03b——映射转发形名称上下文，退役草稿桩）
 
 #include <stdexcept>
+#include <type_traits>
 #include <utility>
 
 #include <sdurws/ird/modeling/StructureEdit.hpp>  // addJointAt/structureEditErrorCodeToken（UI-T63 声明补轴——域原语）
@@ -22,6 +23,7 @@
 #include <sdurws/ird/modeling/Package.hpp>    // packageChecklistText（UI-T61——规范包清单预览域面）
 #include <sdurws/ird/modeling/Codec.hpp>       // RobotDesignCodec/kCurrentFormatVersion（根对象确定性编码——§4.8）
 #include <sdurws/ird/modeling/ObjectTypes.hpp> // kRobotDesignObjectType（根对象 token——runtime 单一权威的 using 重导出）
+#include <sdurws/ird/modeling/CanonicalBridge.hpp> // A-14：只读闭包，恢复不从运行时逆推参数。
 
 namespace sdurws::ird::modeling {
 
@@ -659,6 +661,94 @@ void ModelingUiModule::bindSessionAnchor(const core::BranchId& branch,
     m_session.baseRevision = base;
     // 锚定后重算＋重投影（新会话上下文——呈现与信封组装同源）。
     recomputeReadiness();
+}
+
+bool ModelingUiModule::restoreCommittedSession(
+    const ObjectClosureView& closure, const core::ObjectId& rootObjectId,
+    const core::BranchId& branch, const core::RevisionId& revision,
+    std::string& errorText)
+{
+    m_guard.assertOnUiThread();
+    if (!rootObjectId.isValid() || !branch.isValid() || !revision.isValid()) {
+        // 空身份不是磁盘损坏，而是装配调用方没有给出可追溯基线。
+        throw std::invalid_argument("恢复已提交建模会话需要有效根、分支和修订身份");
+    }
+    errorText.clear();
+    if (m_session.branch == branch && m_session.baseRevision == revision
+        && m_session.draft.rootObjectId == rootObjectId
+        && m_session.baselineSnapshot.has_value()) {
+        // 同一上下文反复投影时不能把用户正在编辑的值重新覆盖为保存值。
+        return true;
+    }
+    if (!m_session.draft.changes.empty()
+        || (m_session.baselineSnapshot && m_session.draft != *m_session.baselineSnapshot)) {
+        // 磁盘草稿恢复不携带编辑史，因此还需和已保存基线比较真实值，不能
+        // 仅凭changes为空就认定用户没有尚未应用的内容。
+        errorText = "建模工作集有未应用编辑，请先处置后再切换已提交基线";
+        return false;
+    }
+
+    ModelingWorkingSet candidate;
+    try {
+        // 第一步只读取局部候选。任何缺失、类型或版本错误都在修改会话之前退出；
+        // Codec负责规范格式与业务值校验，这里仅核对闭包槽与嵌入身份的关联。
+        const auto read = [&](const core::ObjectId& id, std::string_view token) -> ObjectVariant {
+            const auto object = closure.tryObject(id);
+            const auto location = std::string(token) + " / " + id.toCanonical();
+            if (!object) { throw std::runtime_error(location + "：对象缺失"); }
+            if (object->objectTypeToken != token) {
+                throw std::runtime_error(location + "：闭包类型不符");
+            }
+            const auto decoded = RobotDesignCodec{}.decode(object->bytes, kCurrentFormatVersion);
+            if (!decoded.ok()) { throw std::runtime_error(location + "：" + decoded.error().detail); }
+            return decoded.get();
+        };
+        const auto root = read(rootObjectId, kRobotDesignObjectType);
+        const auto* design = std::get_if<RobotDesign>(&root);
+        if (!design) { throw std::runtime_error("robot-design：负载类型不符"); }
+        candidate.design = *design;
+        candidate.rootObjectId = rootObjectId;
+        // 根引用顺序就是恢复顺序；SI m/rad、来源信息、对象ID均按原值保留。
+        const auto restorePart = [&](const core::ObjectId& id, std::string_view token, auto& target) {
+            using Part = std::decay_t<decltype(target)>;
+            const auto value = read(id, token);
+            const auto* part = std::get_if<Part>(&value);
+            if (!part || part->objectId != id) {
+                throw std::runtime_error(std::string(token) + " / " + id.toCanonical()
+                                         + "：负载类型或嵌入对象身份不符");
+            }
+            target = *part;
+        };
+        for (const auto& id : design->toolRefs) {
+            ToolDefinition tool;
+            restorePart(id, kToolDefinitionObjectType, tool);
+            candidate.toolObjects.push_back(std::move(tool));
+        }
+        for (const auto& id : design->sceneRefs) {
+            SceneObject scene;
+            restorePart(id, kSceneObjectObjectType, scene);
+            candidate.sceneObjects.push_back(std::move(scene));
+        }
+        if (design->poseSetRef) {
+            PoseSet poses;
+            restorePart(*design->poseSetRef, kNamedPoseSetObjectType, poses);
+            candidate.poseSetObject = std::move(poses);
+        }
+        if (design->drivetrainRef) {
+            DrivetrainDesign drivetrain;
+            restorePart(*design->drivetrainRef, kRobotDrivetrainObjectType, drivetrain);
+            candidate.drivetrainObject = std::move(drivetrain);
+        }
+    } catch (const std::exception& error) {
+        errorText = std::string("恢复已提交建模工作集失败：") + error.what();
+        return false;
+    }
+    // 第二步完整候选一次采纳，再复用应用回执建立clean baseline和预览。
+    // 此入口不提交命令，也不持有闭包引用；关闭仍沿原会话脱离路径清理。
+    m_session.draft = std::move(candidate);
+    m_session.branch = branch;
+    noteAppliedRevision(revision, rootObjectId);
+    return true;
 }
 
 void ModelingUiModule::noteAppliedRevision(

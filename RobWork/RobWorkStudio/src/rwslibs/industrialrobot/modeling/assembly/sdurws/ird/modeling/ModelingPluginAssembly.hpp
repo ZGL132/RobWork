@@ -62,6 +62,7 @@ namespace ird {
 namespace modeling {
 
 class ModelingUiModule;  // 前置声明（内部具体类型——消费方面只见 IPluginUiModule 接口）
+class ObjectClosureView; // A-14：既有公共闭包查询端口，同步恢复时借用。
 
 /// 模块句柄（ModuleDraftHandle 词表——与 descriptor.pluginId 同 token；
 /// 宿主装配层 attachModule 首参取此值）。
@@ -124,6 +125,23 @@ struct ModelingPluginAssembly {
     /// 会话锚绑定（打开成功后——分支＋tip；转发模块内部，T03b-2）。
     void bindSessionAnchor(const sdurws::ird::core::BranchId& branch,
                            const sdurws::ird::core::RevisionId& base);
+
+    /**
+     * @brief A-14／REQ-10：从已接受项目修订恢复完整可编辑建模基线。
+     * @param closure [in] 同一修订只读闭包；调用方持有，仅本次UI线程同步借用。
+     * @param rootObjectId [in] 修订中唯一robot-design的有效身份，不重新分配。
+     * @param branch [in] 已接受上下文的有效活动分支，不得传候选预打开分支。
+     * @param revision [in] 对应闭包的有效修订；恢复不写项目或增加修订。
+     * @param errorText [out] 成功清空；缺对象、坏版本/字节、身份不符或草稿冲突时定位原因。
+     * @return true＝完整基线已采纳，或同根/分支/修订幂等保持；false＝失败且
+     *         原会话不变（模块缺席亦false）。所有SI值及来源保留，changes为空；
+     *         同一会话重复投影保留未应用编辑，不覆盖草稿。只读项目也可恢复浏览。
+     * @throws std::invalid_argument 身份无效，属调用方违约；其它数据/读取错误走false。
+     * 仅UI线程；模块拥有恢复值和基线，调用后不保留closure引用，无新共享状态。
+     */
+    bool restoreCommittedSession(const ObjectClosureView& closure,
+        const core::ObjectId& rootObjectId, const core::BranchId& branch,
+        const core::RevisionId& revision, std::string& errorText);
 
     /// 应用回执回写（submit Committed 后——基线前移＋根身份回填；T03b-2）。
     void noteAppliedRevision(const sdurws::ird::core::RevisionId& newBase,

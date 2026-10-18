@@ -98,6 +98,18 @@ void ModelingPluginAssembly::bindSessionAnchor(
     }
 }
 
+bool ModelingPluginAssembly::restoreCommittedSession(
+    const ObjectClosureView& closure, const core::ObjectId& rootObjectId,
+    const core::BranchId& branch, const core::RevisionId& revision, std::string& errorText)
+{
+    // A-14：装配层只转发同步只读输入，所有恢复校验和会话写入归建模模块。
+    if (m_impl == nullptr) {
+        errorText = "建模模块未装配，无法恢复已提交工作集";
+        return false;
+    }
+    return m_impl->restoreCommittedSession(closure, rootObjectId, branch, revision, errorText);
+}
+
 void ModelingPluginAssembly::noteAppliedRevision(
     const sdurws::ird::core::RevisionId& newBase,
     const std::optional<sdurws::ird::core::ObjectId>& rootObjectId)

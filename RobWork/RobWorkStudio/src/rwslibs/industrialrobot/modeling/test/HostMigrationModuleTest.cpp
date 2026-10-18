@@ -26,6 +26,9 @@
 
 #include "plugin/ModelingUiModule.hpp"             // 被测模块接线面（policy 符号持有者——gating 依据）
 #include <sdurws/ird/ui/IndustrialProjectTree.hpp> // ui::ProjectTreeModel（共享树模型）
+#include <sdurws/ird/modeling/CanonicalBridge.hpp>
+#include <sdurws/ird/modeling/Codec.hpp>
+#include <sdurws/ird/modeling/ObjectTypes.hpp>
 
 // ---- 使用声明（与被测头同一命名空间——用例可读性）--------------------
 using namespace sdurws::ird;
@@ -66,4 +69,50 @@ TEST(HostMigrationModuleWiring, SharedSurfaceProvidersFeedSharedTree)
         EXPECT_EQ(page->title, std::string("关节常用参数"));
         EXPECT_EQ(page->editOutlet, nullptr);  // 无面板＝编辑通道缺位（纯呈现）
     }
+}
+
+namespace {
+/** @brief A-14：单根只读端口输入件；字节由真实Codec生成，用例持有、仅单线程访问。 */
+struct SavedRootClosure final : ObjectClosureView {
+    core::ObjectId id = core::ObjectId::generate();
+    ClosureObject object;
+    /// @brief 按类型或身份查同一保存根；不替换解码及树构建算法。
+    std::optional<ClosureObject> tryObjectByToken(std::string_view token) const override
+    { return token == kRobotDesignObjectType ? std::optional<ClosureObject>{object} : std::nullopt; }
+    /// @brief 身份匹配才返回原字节，缺失为nullopt。
+    std::optional<ClosureObject> tryObject(const core::ObjectId& key) const override
+    { return key == id ? std::optional<ClosureObject>{object} : std::nullopt; }
+};
+} // namespace
+
+/** @brief A-14／REQ-10：重开恢复后的真实树保持根/关节身份，属性问答继续可用。 */
+TEST(HostMigrationModuleWiring, RestoredCommittedTreeAndProperties_REQ10_UX06)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-10", "UX-06"}, std::vector<std::string>{"AT-23"});
+    ModelingUiModule module;
+    module.seedTemplateSession();
+    const auto expected = module.session().draft.design;
+    const auto bytes = RobotDesignCodec{}.encode(ObjectVariant{expected}, kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());
+    SavedRootClosure closure;
+    closure.object = ClosureObject{std::string(kRobotDesignObjectType), bytes.get()};
+    module.onSessionDetached();
+    module.setWritable(false);
+    std::string error;
+    ASSERT_TRUE(module.restoreCommittedSession(closure, closure.id, core::BranchId::generate(),
+        core::RevisionId::generate(), error)) << error;
+    const auto providers = module.sharedSurfaceProviders();
+    ui::ProjectTreeModel tree;
+    tree.addProvider(providers.treeNodes);
+    ASSERT_TRUE(tree.rebuild().ok);
+    EXPECT_TRUE(tree.node(closure.id).has_value()); // 根必须使用保存OID，不能重新取号。
+    for (const auto& joint : expected.joints) {
+        EXPECT_TRUE(tree.node(joint.objectId).has_value());
+        const auto page = providers.propertyPages->commonFieldsPage(joint.objectId);
+        ASSERT_TRUE(page.has_value());
+        EXPECT_EQ(page->title, "关节常用参数");
+        EXPECT_EQ(page->editOutlet, nullptr); // 无面板的只读浏览不伪造编辑出口。
+    }
+    EXPECT_EQ(module.session().draft.design, expected);
+    EXPECT_TRUE(module.session().draft.changes.empty());
 }

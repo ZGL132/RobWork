@@ -28,6 +28,8 @@
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记（testkit §7.3）
 
 #include <vector>
+#include <map>
+#include <sdurws/ird/modeling/CanonicalBridge.hpp>
 
 #include "CommandFixtures.hpp"  // userProvenance/makePolicy（测试夹具——同单元测试面共享）
 
@@ -486,4 +488,194 @@ TEST(PluginRegistrarT03B, CommandIdSyntaxRejectsUppercaseAcceptsHyphen_WP24_T03B
     EXPECT_EQ(registrar->registerPluginUi(assembly.descriptor, *assembly.module),
               ui::RegistrationOutcome::Ok);
     ASSERT_EQ(registrar->assemblyReports().size(), std::size_t{1});
+}
+
+namespace {
+/**
+ * @brief A-14：已提交闭包端口输入件，五对象均经真实Codec编码，不替换恢复算法。
+ * 用例持有、单线程；字节表可注入坏输入以核查恢复原子性，SI值和来源沿原值。
+ */
+struct CommittedModelClosure final : ObjectClosureView {
+    ModelingWorkingSet expected = makeSixAxisDraft();
+    std::map<std::string, ClosureObject> objects;
+    core::BranchId branch = core::BranchId::generate();
+    core::RevisionId revision = core::RevisionId::generate();
+    bool failReads = false; ///< 查询端口异常输入，仅核查失败原子性。
+
+    /// @brief 构造根、工具、旋转场景、位姿集及传动，编码失败为测试前置错误。
+    CommittedModelClosure()
+    {
+        expected.changes.clear();
+        expected.rootObjectId = core::ObjectId::generate();
+        ToolDefinition tool;
+        tool.objectId = core::ObjectId::generate();
+        tool.localName = "restore-gripper";
+        tool.displayName = "恢复夹爪";
+        TcpEntry tcp;
+        tcp.key = "tip";
+        tcp.offset.P() = rw::math::Vector3D<>(0.04, 0.03, 0.2); // 工具系，m。
+        tool.tcpList = {tcp};
+        expected.toolObjects = {tool};
+        expected.design.toolRefs = {tool.objectId};
+        expected.design.defaultTcp = TcpRef{tool.objectId, "tip"};
+        SceneObject scene;
+        scene.objectId = core::ObjectId::generate();
+        scene.localName = "restore-fixture";
+        scene.worldPose = rw::math::Transform3D<>(rw::math::Vector3D<>(1.5, 0.3, 0.2),
+            rw::math::Rotation3D<>(0,-1,0,1,0,0,0,0,1)); // 世界系m，Rz90°。
+        expected.sceneObjects = {scene};
+        expected.design.sceneRefs = {scene.objectId};
+        PoseSet poses;
+        poses.objectId = core::ObjectId::generate();
+        poses.entries = {PoseSetEntry{"homeConfiguration", std::vector<double>(6, 0.1), "恢复参考"}};
+        expected.poseSetObject = poses;
+        expected.design.poseSetRef = poses.objectId;
+        DrivetrainDesign drivetrain;
+        drivetrain.objectId = core::ObjectId::generate();
+        drivetrain.ratioPerJoint.resize(6, core::SourcedValue<double>::provided(101.0, userProvenance()));
+        drivetrain.frictionPerJoint.resize(6);
+        drivetrain.torqueLimitsPerJoint.resize(6);
+        expected.drivetrainObject = drivetrain;
+        expected.design.drivetrainRef = drivetrain.objectId;
+        put(*expected.rootObjectId, kRobotDesignObjectType, ObjectVariant{expected.design});
+        put(tool.objectId, kToolDefinitionObjectType, ObjectVariant{tool});
+        put(scene.objectId, kSceneObjectObjectType, ObjectVariant{scene});
+        put(poses.objectId, kNamedPoseSetObjectType, ObjectVariant{poses});
+        put(drivetrain.objectId, kRobotDrivetrainObjectType, ObjectVariant{drivetrain});
+    }
+
+    /** @brief 编码端口输入；id为稳定身份，token为原类型，非法对象立即抛出。 */
+    void put(const core::ObjectId& id, std::string_view token, const ObjectVariant& object)
+    {
+        const auto bytes = RobotDesignCodec{}.encode(object, kCurrentFormatVersion);
+        if (!bytes.ok()) { throw std::logic_error("恢复夹具编码失败：" + bytes.error().detail); }
+        objects[id.toCanonical()] = ClosureObject{std::string(token), bytes.get()};
+    }
+
+    /// @brief 唯一根的端口查询，仅返回同一闭包字节，不负责业务解析。
+    std::optional<ClosureObject> tryObjectByToken(std::string_view token) const override
+    {
+        if (token != kRobotDesignObjectType) { return std::nullopt; }
+        return tryObject(*expected.rootObjectId);
+    }
+    /// @brief 按身份取本闭包字节；缺失返回nullopt，不借用其它修订内容。
+    std::optional<ClosureObject> tryObject(const core::ObjectId& id) const override
+    {
+        if (failReads) { throw std::runtime_error("测试闭包读取错误"); }
+        const auto it = objects.find(id.toCanonical());
+        return it == objects.end() ? std::nullopt : std::optional<ClosureObject>{it->second};
+    }
+};
+} // namespace
+
+/** @brief A-14／REQ-10：真实五对象恢复为clean baseline，重复投影不抹掉未应用编辑。 */
+TEST(ModelingCommittedRestore, FullClosureAndIdempotentEdits_REQ10_UX06)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-10", "UX-06"}, std::vector<std::string>{"AT-23"});
+    CommittedModelClosure closure;
+    ModelingUiModule module;
+    std::string error;
+    ASSERT_TRUE(module.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+        closure.branch, closure.revision, error)) << error;
+    EXPECT_TRUE(error.empty());
+    EXPECT_EQ(module.session().draft, closure.expected); // 完整值含身份/物性来源/世界变换。
+    ASSERT_TRUE(module.session().baselineSnapshot.has_value());
+    EXPECT_EQ(*module.session().baselineSnapshot, closure.expected);
+    EXPECT_EQ(module.session().baseRevision, closure.revision);
+    EXPECT_FALSE(module.buildDraftCommand("modeling").has_value()); // 读恢复不能产生空修订。
+    module.session().draft.design.displayName = "尚未应用的新名称";
+    module.session().draft.changes.push_back(ModelingChangeRecord{});
+    const auto edited = module.session().draft;
+    EXPECT_TRUE(module.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+        closure.branch, closure.revision, error));
+    EXPECT_EQ(module.session().draft, edited); // 同会话反复呈现必须保留用户编辑。
+    EXPECT_FALSE(module.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+        closure.branch, core::RevisionId::generate(), error));
+    EXPECT_EQ(module.session().draft, edited); // 新基线也不能未经处置覆盖草稿。
+    module.onSessionDetached();
+    ASSERT_TRUE(module.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+        closure.branch, closure.revision, error)) << error;
+    EXPECT_EQ(module.session().draft, closure.expected);
+}
+
+/** @brief A-14：缺对象/token错/坏字节/版本错/身份错在完整候选采纳前拒绝，原会话原样。 */
+TEST(ModelingCommittedRestore, MalformedClosurePreservesWholeSession_REQ10_ARC04)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-10", "ARC-04"}, std::vector<std::string>{"AT-23"});
+    CommittedModelClosure pristine;
+    for (int fault = 0; fault < 7; ++fault) {
+        SCOPED_TRACE(fault);
+        auto closure = pristine;
+        const auto key = closure.expected.toolObjects.front().objectId.toCanonical();
+        if (fault == 0) { closure.objects.erase(key); }
+        if (fault == 1) { closure.objects[key].objectTypeToken = kSceneObjectObjectType; }
+        if (fault == 2) { closure.objects[key].bytes = {0x11, 0x22}; }
+        if (fault == 3) { closure.objects[key].bytes[7] = 99; } // 七字节IRDMDLO之后的主版本，非业务字段。
+        if (fault == 4) {
+            auto different = closure.expected.toolObjects.front();
+            different.objectId = core::ObjectId::generate();
+            closure.put(closure.expected.toolObjects.front().objectId,
+                kToolDefinitionObjectType, ObjectVariant{different});
+        }
+        if (fault == 5) { closure.objects.erase(closure.expected.rootObjectId->toCanonical()); }
+        if (fault == 6) { closure.failReads = true; }
+        ModelingUiModule module;
+        module.seedTemplateSession();
+        module.noteAppliedRevision(core::RevisionId::generate(), core::ObjectId::generate());
+        const auto before = module.session();
+        std::string error;
+        EXPECT_FALSE(module.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+            closure.branch, closure.revision, error));
+        EXPECT_FALSE(error.empty());
+        EXPECT_EQ(module.session().draft, before.draft);
+        EXPECT_EQ(module.session().baseRevision, before.baseRevision);
+        EXPECT_EQ(module.session().branch, before.branch);
+        EXPECT_EQ(module.session().baselineSnapshot, before.baselineSnapshot);
+    }
+    ModelingUiModule module;
+    std::string error;
+    EXPECT_THROW(module.restoreCommittedSession(pristine, core::ObjectId{}, pristine.branch,
+        pristine.revision, error), std::invalid_argument); // 无身份是调用方违约，不能伪造新身份。
+    EXPECT_THROW(module.restoreCommittedSession(pristine, *pristine.expected.rootObjectId,
+        core::BranchId{}, pristine.revision, error), std::invalid_argument);
+    EXPECT_THROW(module.restoreCommittedSession(pristine, *pristine.expected.rootObjectId,
+        pristine.branch, core::RevisionId{}, error), std::invalid_argument);
+}
+
+/** @brief A-14／REQ-10：先恢复保存基线，再接纳磁盘草稿，后续同上下文投影不冲掉草稿。 */
+TEST(ModelingCommittedRestore, SavedBaselineThenDraftAndReadonly_REQ10_UX06)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-10", "UX-06"}, std::vector<std::string>{"AT-23"});
+    CommittedModelClosure closure;
+    ModelingUiModule draftSource;
+    draftSource.session().draft = closure.expected;
+    draftSource.session().draft.design.displayName = "保存基线之后的磁盘草稿";
+    const auto document = draftSource.buildDraftDocument();
+    ModelingUiModule restored;
+    restored.setWritable(false); // 只读可以恢复浏览，恢复本身不走编辑/项目写路径。
+    std::string error;
+    ASSERT_TRUE(restored.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+        closure.branch, closure.revision, error)) << error;
+    EXPECT_EQ(restored.session().draft, closure.expected);
+    EXPECT_FALSE(restored.buildDraftCommand("modeling"));
+    restored.adoptRestoredDocument(document);
+    restored.refreshFromSession();
+    EXPECT_EQ(restored.session().draft.design, draftSource.session().draft.design);
+    EXPECT_EQ(restored.session().baselineSnapshot, std::optional<ModelingWorkingSet>{closure.expected});
+    ASSERT_TRUE(restored.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+        closure.branch, closure.revision, error));
+    EXPECT_EQ(restored.session().draft.design, draftSource.session().draft.design);
+    EXPECT_FALSE(restored.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+        closure.branch, core::RevisionId::generate(), error));
+    EXPECT_EQ(restored.session().draft.design, draftSource.session().draft.design);
+    // 项目切换先脱离，不能让上一个项目的草稿或基线残留到另一个根身份。
+    restored.onSessionDetached();
+    CommittedModelClosure otherProject;
+    ASSERT_TRUE(restored.restoreCommittedSession(otherProject, *otherProject.expected.rootObjectId,
+        otherProject.branch, otherProject.revision, error)) << error;
+    EXPECT_EQ(restored.session().draft, otherProject.expected);
+    auto assembly = createModelingPluginAssembly();
+    ASSERT_TRUE(assembly.restoreCommittedSession(closure, *closure.expected.rootObjectId,
+        closure.branch, closure.revision, error)) << error;
+    EXPECT_FALSE(assembly.module->buildDraftCommand("modeling")); // 真装配转发仍无新修订命令。
 }

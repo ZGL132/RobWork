@@ -1,0 +1,10 @@
+{
+  "origin": "transcribed-from-original-gtest-xml",
+  "source": "gtest.xml",
+  "counts": {
+    "total": 65,
+    "passed": 65,
+    "failed": 0,
+    "skipped": 0
+  }
+}

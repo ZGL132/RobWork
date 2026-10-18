@@ -156,6 +156,22 @@ namespace ui {
 namespace {
 
 /**
+ * @brief 宿主名称组合器：借用现有域/运行时名称端口，补齐共享树显示。
+ * 宿主持有、仅UI线程同步查询；不缓存名称，不生成或剥离运行时前缀。
+ */
+class HostUiNameResolver final : public IUiNameResolver {
+public:
+    /** @brief 保存宿主查询函数；query[in]返回已有权威名称，未知为nullopt。 */
+    explicit HostUiNameResolver(std::function<std::optional<std::string>(core::ObjectId)> query)
+        : m_query(std::move(query)) {}
+    /** @brief 按业务身份现取显示名；id[in]为原ObjectId，不写项目或编辑会话。 */
+    std::optional<std::string> resolveObjectId(core::ObjectId id) const override
+    { return m_query(id); }
+private:
+    std::function<std::optional<std::string>(core::ObjectId)> m_query; ///< 仅宿主面板存活期调用。
+};
+
+/**
  * @brief REQ-08同步临时工具的栈上事件观察器；仅UI线程，无Qt子对象所有权。
  * 析构时QObject自动退订；回调只在交互栈存活期借用宿主，结束恢复默认导航。
  */
@@ -3936,22 +3952,43 @@ void IrdWorkbenchHostPlugin::syncDomainModulesToContext(
         return;  // 域装配未就绪（防御——initialize 序保证先于本钩子，恒真）
     }
     if (context.project.has_value()) {
-        // 项目在位（打开成功/切换 B 段就位）：分支锚＝权威分支表首条 tip
-        // （INV-M3 单默认分支；多分支选择器随收口任务）。锚定即重算就绪
-        // ＋面板刷新——打开路径的"锚定＋刷新"半区在此统一（T03b-2 只在
-        // apply 时锚定的首版形态升级为全路径同步）。UI-T23 扩需求域
-        // （其门面锚语义与建模同构；运动学无锚语义——v1 无草稿域）。
+        // A-14：只有已接受项目上下文才恢复编辑基线；候选预打开不碰活动会话。
+        // 使用当前HEAD而非分支表首项，保证工作集、分支和修订来自同一底本。
         const auto adapter = m_lastStoreAdapter;
         if (adapter != nullptr) {
-            const auto tips = adapter->projectStore().query().branchTips();
-            if (!tips.empty()) {
-                m_domains->modeling.bindSessionAnchor(tips.front().id,
-                                                      tips.front().tip);
-                if (m_domains->requirements.has_value()) {
-                    m_domains->requirements->bindSessionAnchor(
-                        tips.front().id, std::nullopt);
+            const auto& query = adapter->projectStore().query();
+            const auto head = query.head();
+            std::vector<core::ObjectId> roots;
+            for (const auto& object : head.objectRefs) {
+                if (object.objectTypeToken == modeling::kRobotDesignObjectType) {
+                    roots.push_back(object.objectId);
                 }
             }
+            std::string restoreError;
+            if (roots.size() == 1) {
+                HostProjectClosureView closure(query, std::string(modeling::kRobotDesignObjectType), nullptr);
+                m_domains->modeling.restoreCommittedSession(
+                    closure, roots.front(), head.branch, head.id, restoreError);
+            } else if (roots.size() > 1) {
+                restoreError = "已保存修订包含多个建模根，无法确定编辑基线";
+            } else {
+                // 新工程没有建模根，保留原空态与后续模板创建路径。
+                m_domains->modeling.bindSessionAnchor(head.branch, head.id);
+            }
+            if (!restoreError.empty()) {
+                if (m_diag.pipeline) { m_diag.pipeline->logDev(kPluginDevChannel, restoreError); }
+                if (auto* studio = getRobWorkStudio()) {
+                    if (auto* status = studio->statusBar()) {
+                        status->showMessage(QString::fromUtf8(restoreError.c_str()), 8000);
+                    }
+                }
+            }
+            if (m_domains->requirements.has_value()) {
+                m_domains->requirements->bindSessionAnchor(head.branch, std::nullopt);
+            }
+            // A-14：关闭时建模模块退订共享选择，接受新会话后必须对称重订阅。
+            // attach内部先退旧订阅，重复上下文投影不会积累回调。
+            if (m_selection) { m_domains->modeling.attachSelectionService(*m_selection); }
         }
         // 共享面呈现同步（打开后的域数据入树——L1 链路数据侧驱动）。
         refreshSharedSurfaces();
@@ -4119,8 +4156,33 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
         registerDomainSurfaces("kinematics", false, nullptr, nullptr);
     }
 
-    // ③共享面板（工厂——R-2 封闭实现；名称解析端口复用 C-11 桩——显示
-    //    名随名称端口真值装配接续，UX-02 解析失败占位形态如实）。
+    // A-14／UX-02：原前端仅认识需求对象，恢复后的建模树因此全部显示
+    // “未命名对象”。组合现有查询端口：需求名→建模草稿局部名→同一已发布
+    // 运行时的局部名→域属性页类型标题。最后一级用于没有localName的位姿集/
+    // 传动值对象；只是已有类型标题的呈现，不伪造可持久化的对象名称。
+    const auto domainNames = m_nameResolver;
+    m_nameResolver = std::make_shared<HostUiNameResolver>(
+        [this, domainNames](core::ObjectId id) -> std::optional<std::string> {
+            if (domainNames) {
+                if (auto name = domainNames->resolveObjectId(id)) { return name; }
+            }
+            if (!m_domains) { return std::nullopt; }
+            std::string local;
+            if (m_domains->modeling.tryDraftObjectName(id, local)) { return local; }
+            const auto snapshot = m_compilePort ? m_compilePort->lastPublishedSnapshot() : nullptr;
+            auto* studio = getRobWorkStudio();
+            const auto cell = studio ? studio->getWorkCell() : nullptr;
+            if (m_lastStoreAdapter && !m_lastStoreAdapter->isClosed()
+                && snapshot && cell && &snapshot->workCell().workCell() == cell.get()) {
+                const auto name = snapshot->nameMap().resolveObjectId(id);
+                if (name.ok()) { return name.get().localName; }
+            }
+            const auto pages = m_domains->modeling.sharedSurfaceProviders().propertyPages;
+            if (const auto page = pages->commonFieldsPage(id)) { return page->title; }
+            return std::nullopt; // 闭包外身份仍保留原占位，不猜测名称。
+        });
+
+    // ③共享面板：三消费面共享组合后的同一个只读名称端口。
     ui::IndustrialProjectTreePanelDeps treePanelDeps;
     treePanelDeps.model = m_treeModel;
     treePanelDeps.selection = m_selection;
@@ -8648,6 +8710,79 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             const auto scene = getRobWorkStudio()->getWorkCellScene();
             ok(scene && scene->getWorkCell() == newCell && !scene->getDrawables().empty(),
                "step8 scene-update-new-workcell-rendered");
+            // REQ-01/10／UX-06：运行时设备存在不等于可编辑工作集已恢复。
+            // 树必须包含磁盘修订的同一个模型根身份，否则用户重开后无法选择
+            // 模型或继续维护需求引用；不能用运行时缓存/非空分组标题冒充恢复。
+            refreshSharedSurfaces();
+            const auto restoredModelNodes = m_treeModel->nodesInGroup(
+                ui::ProjectTreeGroup::ModelingObjects);
+            bool editableModelRestored = false;
+            for (const auto& ref : afterReopen.objectRefs) {
+                if (ref.objectTypeToken == modeling::kRobotDesignObjectType) {
+                    editableModelRestored = std::find(restoredModelNodes.begin(),
+                        restoredModelNodes.end(), ref.objectId) != restoredModelNodes.end();
+                }
+            }
+            ok(editableModelRestored, "step8 committed-modeling-workset-and-tree-restored");
+            // 重开后必须恢复共享选择订阅：直接选业务身份，域面板应同步定位。
+            // 仅手动点击域树会绕过共享选择通路，不能证明此处的生命周期对称性。
+            HostProjectClosureView closure(m_lastStoreAdapter->projectStore().query(),
+                std::string(modeling::kRobotDesignObjectType), nullptr);
+            const auto rootBytes = closure.tryObjectByToken(modeling::kRobotDesignObjectType);
+            bool jointSelected = false;
+            if (rootBytes) {
+                const auto decoded = modeling::RobotDesignCodec{}.decode(
+                    rootBytes->bytes, modeling::kCurrentFormatVersion);
+                const auto* root = decoded.ok() ? std::get_if<modeling::RobotDesign>(&decoded.get()) : nullptr;
+                if (root && !root->joints.empty()) {
+                    ok(m_nameResolver->resolveObjectId(root->joints.front().objectId)
+                        == std::optional<std::string>{root->joints.front().localName},
+                       "step8 reopened-shared-tree-resolves-real-joint-name");
+                    m_content->showStagePanel(StageId::Modeling);
+                    m_selection->selectBusiness({root->joints.front().objectId}, SelectionSource::ProjectTree);
+                    settleEvents(150);
+                    auto* tree = panel->findChild<QTreeWidget*>("ird_modeling_struct_tree");
+                    jointSelected = tree && tree->currentItem()
+                        && tree->currentItem()->text(1).toStdString()
+                           == root->joints.front().objectId.toCanonical();
+                }
+            }
+            ok(jointSelected, "step8 reopened-shared-selection-focuses-modeling-joint");
+            bool continuedEdit = false;
+            if (jointSelected) {
+                QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+                auto* editHost = panel->findChild<QWidget*>("ird_modeling_edit_host");
+                auto* table = editHost ? editHost->findChild<QTableWidget*>("ird_param_table") : nullptr;
+                auto* apply = editHost ? editHost->findChild<QPushButton*>("ird_param_apply") : nullptr;
+                auto* confirm = editHost ? editHost->findChild<QPushButton*>("ird_param_confirm_yes") : nullptr;
+                bool fieldFound = false;
+                for (int row = 0; table && row < table->rowCount(); ++row) {
+                    if (table->item(row, 0)->data(Qt::UserRole).toString() == "origin-z") {
+                        table->item(row, 1)->setText("0.177"); // parent系Z，m，区别于保存值0.15m。
+                        fieldFound = true;
+                        break;
+                    }
+                }
+                if (fieldFound && apply && confirm) {
+                    apply->click(); settleEvents(100);
+                    confirm->click(); settleEvents(150);
+                    const auto command = m_domains->modeling.module->buildDraftCommand("modeling");
+                    const auto payload = command ? modeling::tryDecodeCommandPayload(command->payloadCanonical) : std::nullopt;
+                    if (payload && payload->objects.size() == 1) {
+                        const auto decoded = modeling::RobotDesignCodec{}.decode(
+                            payload->objects.front().objectBytes, modeling::kCurrentFormatVersion);
+                        const auto* edited = decoded.ok() ? std::get_if<modeling::RobotDesign>(&decoded.get()) : nullptr;
+                        continuedEdit = edited && !edited->joints.empty()
+                            && edited->joints.front().origin.tryValue()
+                            && std::abs(edited->joints.front().origin.tryValue()->d()[2] - 0.177) < 1e-12
+                            && !payload->objects.front().allocateNew
+                            && command->expectedRevision == afterReopen.id;
+                    }
+                }
+            }
+            ok(continuedEdit, "step8 reopened-modeling-form-edits-real-same-root-draft");
+            ok(m_lastStoreAdapter->projectStore().query().head().id == afterReopen.id,
+               "step8 continued-draft-edit-zero-project-revisions");
         }
         snapPng(hostWin, "mtour-8-scene-update-reopened.png");
 

@@ -74,6 +74,7 @@ class QWidget;  // 前置声明：createPanel 返回类型（全局域——插�
 namespace sdurws::ird::modeling {
 
 class ModelingPanelWidget;
+class ObjectClosureView; // 同步借用的只读闭包端口，完整类型仅实现文件消费。
 
 /**
  * @brief 模块会话态（buildDraftCommand 的输入面——装配层在会话建立/草稿
@@ -326,6 +327,20 @@ public:
      */
     void bindSessionAnchor(const core::BranchId& branch,
                            const core::RevisionId& base);
+
+    /**
+     * @brief A-14：完整已提交工作集恢复，参数/失败契约见装配门面同名方法。
+     * @param closure [in] 同修订闭包，仅同步借用；单位沿原SI值。
+     * @param rootObjectId [in] 唯一根有效身份；branch/revision为已接受会话锚。
+     * @param branch [in] 有效活动分支；候选预打开不得调用。
+     * @param revision [in] 有效修订；同根同锚幂等保留编辑。
+     * @param errorText [out] 成功清空，失败定位且会话不变。
+     * @return 完整候选成功采纳/幂等为true；数据或草稿冲突为false。
+     * @throws std::invalid_argument 无效身份。仅UI线程，值归模块所有。
+     */
+    bool restoreCommittedSession(const ObjectClosureView& closure,
+        const core::ObjectId& rootObjectId, const core::BranchId& branch,
+        const core::RevisionId& revision, std::string& errorText);
 
     /**
      * @brief 应用回执回写（submit Committed 后由装配层调用——编辑基线
