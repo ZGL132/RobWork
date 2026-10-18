@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T13:49:48+08:00",
+  "generatedAt": "2026-10-18T14:09:43+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6718,
-    "totalBytes": 213416518,
+    "totalFiles": 6722,
+    "totalBytes": 213571817,
     "byKind": {
-      "gtest-report": 335,
-      "benchmark": 8,
+      "pipeline-artifact": 2,
+      "json-data": 7,
+      "acceptance-record": 515,
       "log": 1,
       "markdown-doc": 41,
-      "pipeline-artifact": 2,
-      "build-log": 5770,
-      "governance-record": 38,
-      "acceptance-record": 515,
+      "benchmark": 8,
+      "governance-record": 39,
+      "build-log": 5773,
       "manual-acceptance": 1,
-      "json-data": 7
+      "gtest-report": 335
     },
     "byLifecycle": {
-      "historical": 551,
-      "current": 40,
       "superseded": 0,
-      "unverified": 6127
+      "historical": 551,
+      "unverified": 6131,
+      "current": 40
     },
     "associated": 596,
-    "unassociated": 6122,
-    "shaComputed": 6700,
+    "unassociated": 6126,
+    "shaComputed": 6704,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -10844,6 +10844,30 @@
       "taskIds": [],
       "bytes": 27218,
       "sha256": "4068751eb9ab9b2089f4e528cf375ff6c806909fdb8e990e1bf4e8796e7aeacd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/minor-triage-20261018/runtime_test.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47753,
+      "sha256": "47906bdac0047b374b60ea826296e1a5036afeecf69e7750f7491969e1e9060d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/minor-triage-20261018/runtime_test.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 98625,
+      "sha256": "149c55c594c7b93106661f1ee3c639d4119fa3b0f79a7fd0d222d120307450d6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/minor-triage-20261018/verify-minor-triage.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2642,
+      "sha256": "529dc3594f4774d0f9f9f057aa495138f09e3fec0e31688d1f63eca75fcc15b6",
       "lifecycle": "unverified"
     },
     {
@@ -52426,7 +52450,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1238073,
+      "bytes": 1241952,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -55732,6 +55756,14 @@
       "taskIds": [],
       "bytes": 1179,
       "sha256": "153027e44c3667c699de00e3756f5f854637ddbb34a9734c31b6277e398ed5f7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reviews/minor-triage-20261018.md",
+      "kind": "governance-record",
+      "taskIds": [],
+      "bytes": 2400,
+      "sha256": "d7288ef96221d8a825e01bba4d6ecc8eabc68d484bd8aaa2d93cd4bedacdc2fb",
       "lifecycle": "unverified"
     },
     {

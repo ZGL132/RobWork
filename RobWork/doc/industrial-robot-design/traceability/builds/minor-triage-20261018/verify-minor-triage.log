@@ -1,0 +1,47 @@
+minor 分诊批——验证留痕（2026-10-18）
+================================================================
+批面：open minor 10 条（F-564~F-569/F-742/F-784/F-923/F-924）逐条
+代码/台账核实；处置＝4 翻 fixed＋5 维持（注记）＋1 拆批新登（F-939）。
+
+[1] F-784 翻牌实证（runtime 集成模式实跑）
+  构建：cmake --build build --config Release --target sdurws_ird_runtime_test
+        → 零错误（sdurws_ird_runtime_test.exe 产出）
+  执行：sdurws_ird_runtime_test.exe
+        287 tests ran：286 PASSED ＋ 1 SKIPPED
+        （ContractSuite.ChildProcessWorker_RT_ID_1——既有环境跳过项）
+  回归钉：CanonicalModelBuilderTest.InertiaOriginalBitsPreserved_F784_AT01
+        → [ OK ]
+  修复源：65bf7c4a（WP-06-T16，2026-10-15 合入）——requireValidInertia
+        相对不对称度 max|Iij−Iji|/‖(I+Iᵀ)/2‖F≤1e-12（附录 D #6）
+  留痕：runtime_test.log / runtime_test.xml（本目录）
+
+[2] UI-T77 修复面代码核实（grep 级，源码事实）
+  F-564：DomainAssemblyShared.hpp standardTextResolver/standardTextResolverUtf8
+        两 resolver 注释（UI-T77（F-564）标记）＋ModelingPanelWidget.cpp:497/:559
+        两处注释——fail-fast 明示在位
+  F-565：UiPlugin.cpp bindRegionPreviewSink 失败分支 logDev 含 geo.summaryText
+        （UI-T77（F-565）标记）
+  F-566：UiPlugin.cpp bindStationMarkersSink 帧名不可解析分支 logDev
+        （UI-T77（F-566）标记）
+  F-567：ModelingUiModule.cpp:606 onSessionDetached 显式调 detachSelectionService
+  F-569：UiPlugin.cpp 析构兜底段注释更正（显式 reset 序为现行保障）
+  验收依据：acc/ui-t77（2026-10-12）verdict=pass
+
+[3] F-742 翻牌前置机器核实
+  F-618 resolution：含 4270=True、含 8448=False（更正已落）
+  F-625/F-626/F-627 status：均 fixed
+  → 处置确已执行，本批提交即收口提交
+
+[4] 台账完整性
+  findings.json 解析 OK；条目=926；重复 id=0
+  minor open：10 → 6（F-565/566/567/568/923/924 维持，含注记）
+  新登 F-939（suggestion/open——F-564 尾注键簇债拆批）
+  open 总数：339 → 336
+
+[5] 纯台账批声明
+  本批零产品源码变更（F-784 修复已在基线 65bf7c4a；其余 UI-T77 修复
+  已在基线并经独立验收）——构建/测试仅为翻牌实证复跑。
+
+[6] validate-docs -DeepEvidence
+（结果见下方追加行）
+validate-docs: PASS (20 units, 12 trace entries, 361 task files, 29 registered assets, 6 notes, 7 skills, 2 packs, 6722 evidence) —— 索引重建后实测（verify-minor-triage.log 入库基准）

@@ -5823,10 +5823,12 @@
       "id": "F-564",
       "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——UiText resolveText 调用面全量对账：120 登记键 vs 全库调用键；F-557 同根误解存活面排查）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "三处「解析失败回退键名原文」死代码/误导注释——resolveText 缺键即抛 invalid_argument（UiText fail-fast 设计）、命中键值恒非空，故 DomainAssembly standardTextResolver（三域共用标题解析绑定）的 text.empty()?key:text 回退永不发生、注释「解析空/失败回退键名原文——呈现面不空洞」与行为相悖；ModelingPanelWidget 构造期 tooltip 循环与 setCommandTitleResolver/refreshCommandEnablement 两处同款死回退＋「解析空回退命令 id 原文」注释。当前生产键全部已登记不触发——任一域新增命令/键漏登记 UiText 即装配期或解析拍异常穿透（建模面板构造在装配链内＝startup 退出）。F-557 修复纠正的正是「以为 resolveText 会回退」这一误解，同误解仍存活于此三处",
-      "owner": "文案解析统一批次（与 F-557 修复口径统一：改真回退〔try/catch 或查询前白名单核对〕或修注释为 fail-fast 明示——两案择一所有者裁决；建议随 UiText 休眠未登记键簇〔ui.session.readonly.banner 等裸中文字面量第二文案源债〕一并治理）；【2026-10-09 修复落地（UI-T77）】选案=修注释为 fail-fast 明示（保留空串回退仅作登记值为空的防御面——改真回退会把键表失同步从解析拍暴露降级为运行期静默键名显示，违背 fail-fast）：standardTextResolver/ModelingPanelWidget 构造期 tooltip/setCommandTitleResolver 三处注释已与 resolveText 行为对齐；休眠未登记键簇治理仍挂账本条尾注"
+      "owner": "文案解析统一批次（与 F-557 修复口径统一：改真回退〔try/catch 或查询前白名单核对〕或修注释为 fail-fast 明示——两案择一所有者裁决；建议随 UiText 休眠未登记键簇〔ui.session.readonly.banner 等裸中文字面量第二文案源债〕一并治理）；【2026-10-09 修复落地（UI-T77）】选案=修注释为 fail-fast 明示（保留空串回退仅作登记值为空的防御面——改真回退会把键表失同步从解析拍暴露降级为运行期静默键名显示，违背 fail-fast）：standardTextResolver/ModelingPanelWidget 构造期 tooltip/setCommandTitleResolver 三处注释已与 resolveText 行为对齐；休眠未登记键簇治理仍挂账本条尾注",
+      "resolution": "【2026-10-18 minor 分诊批翻 fixed】修复随 UI-T77 落地（2026-10-09）并经独立对抗验收 pass（acc/ui-t77，2026-10-12）；本批逐处代码核实在位（DomainAssemblyShared.hpp 两代 resolver 注释＋ModelingPanelWidget tooltip/setCommandTitleResolver 注释）。尾注『休眠未登记键簇』拆出 F-939 独立追踪——本条报告面（死回退/误导注释）闭合。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-565",
@@ -5835,7 +5837,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "RegionPreviewView.summaryText 全链透传后被投影方静默丢弃——域侧 regionPreviewGeometry 产出失败语义摘要（如「格 未定」＝盒退化/采样间距非法）、门面「摘要直投」透传，UiPlugin bindRegionPreviewSink 对该字段零引用（失败可见面另起炉灶写死「区域参考系不可解析」Dev 文本）——契约头注「失败可见面承载——投影方追注」的承诺在投影半区落空：区域盒退化时三维只见框线无格无原因，Dev 通道也拿不到域侧摘要",
-      "owner": "三维预览修复批次（投影方消费 summaryText：随 logDev 追注或经 Dev 通道透传——失败可见面兑现；零三维契约变更）；【2026-10-09 修复落地（UI-T77）】已修复（参考系不可解析分支 logDev 追注域摘要——面板标签呈现面既有〔m_regionPreviewLabel〕不变）；待所有者复验后翻转 fixed"
+      "owner": "三维预览修复批次（投影方消费 summaryText：随 logDev 追注或经 Dev 通道透传——失败可见面兑现；零三维契约变更）；【2026-10-09 修复落地（UI-T77）】已修复（参考系不可解析分支 logDev 追注域摘要——面板标签呈现面既有〔m_regionPreviewLabel〕不变）；待所有者复验后翻转 fixed；【2026-10-18 minor 分诊批注记】代码核实在位（UiPlugin.cpp bindRegionPreviewSink 失败分支 logDev 含 geo.summaryText，UI-T77（F-565）标记）——维持『待所有者宿主 GUI 复验后翻 fixed』口径（与 F-495 同），复验为纯 GUI 查看"
     },
     {
       "id": "F-566",
@@ -5844,7 +5846,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "对象引用系工位标记解析失败被静默跳过无任何可观测面——bindStationMarkersSink 中 resolveFrameName 落空的 marker 直接不进 update.frameMarkers，注释声称「渲染端 unresolved 计数留痕」但后端计数只统计已转发挂帧形态的 findFrame 失败，此处跳过的标记三面（后端计数/Dev 通道/协议摘要）全空；对比区域路径同场景有 logDev。触发：首应用前（NameMap 未发布）或引用对象删除后，对象系工位从三维无声消失，工位总数与标记数不一致不可观测",
-      "owner": "三维预览修复批次（对齐区域路径：解析失败 logDev 留痕〔工位名＋引用〕；UI-T77 已落地的 position 降级路径〔帧不可解析＝position 置空回落挂帧形态〕语义保持）；【2026-10-09 修复落地（UI-T77）】已修复（markers sink 帧名不可解析分支 logDev 留痕〔工位名〕——静默消失变可观测）；待所有者复验后翻转 fixed"
+      "owner": "三维预览修复批次（对齐区域路径：解析失败 logDev 留痕〔工位名＋引用〕；UI-T77 已落地的 position 降级路径〔帧不可解析＝position 置空回落挂帧形态〕语义保持）；【2026-10-09 修复落地（UI-T77）】已修复（markers sink 帧名不可解析分支 logDev 留痕〔工位名〕——静默消失变可观测）；待所有者复验后翻转 fixed；【2026-10-18 minor 分诊批注记】代码核实在位（UiPlugin.cpp bindStationMarkersSink 帧名不可解析分支 logDev，UI-T77（F-566）标记）——维持『待所有者宿主 GUI 复验后翻 fixed』口径（与 F-495 同），复验为纯 GUI 查看"
     },
     {
       "id": "F-567",
@@ -5853,7 +5855,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "modeling 侧选择适配器拆卸拍不退订 SelectionService——requirements 侧 onSessionDetached 显式调 detachSelectionService，modeling 侧 ModelingUiModule::detachSelectionService 与门面转发为生产代码零调用死 API、onSessionDetached 不清订阅：teardown「先退订防重入」序被打破，m_selection->clearSelection() 的空选中广播在拆卸中重入 ModelingSelectionAdapter→面板 focusObject(nullopt)→树清选＋属性重投影恰好发生在拆卸过程内；modeling 面板选中锚只能靠这次意外重入间接清掉（与 requirements 显式 reset 不对称）",
-      "owner": "建模装配批次（modeling onSessionDetached 补调 detachSelectionService——与 requirements 同款显式纪律；死 API 激活或删除二选一随修）；【2026-10-09 修复落地（UI-T77）】已修复（ModelingUiModule::onSessionDetached 开头补调 detachSelectionService——「先退订再清源」序对齐，死 API 激活）；待所有者复验后翻转 fixed"
+      "owner": "建模装配批次（modeling onSessionDetached 补调 detachSelectionService——与 requirements 同款显式纪律；死 API 激活或删除二选一随修）；【2026-10-09 修复落地（UI-T77）】已修复（ModelingUiModule::onSessionDetached 开头补调 detachSelectionService——「先退订再清源」序对齐，死 API 激活）；待所有者复验后翻转 fixed；【2026-10-18 minor 分诊批注记】代码核实在位（ModelingUiModule.cpp:606 detachSelectionService() 显式调用）——维持『待所有者宿主 GUI 复验后翻 fixed』口径（与 F-495 同），复验为纯 GUI 查看"
     },
     {
       "id": "F-568",
@@ -5862,16 +5864,18 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "覆盖评估账面不随需求草稿编辑失效——账面失效仅挂快照换绑（attachView 纪元推进），需求侧编辑区域盒（尺寸/中心/采样计数）零失效路径：三维投影门（snapshotId+epoch 双核对）放行旧账面，格线/框角点来自当前工作集现算几何而着色采样点/tint 来自评估期旧几何——改小盒＝彩色点悬浮框外、改大盒＝旧点阵被误读为新区域结果、框色 tint 按旧计数比。同族潜在：KinChannelCoverageResult.configDigest 对账键声明而未核对（submit 校验只对 snapshotId、setConfiguration 不清账面——配置基线当前冻结无编辑面故不触发，一旦配置可编辑即两屏口径分叉）",
-      "owner": "运动学/需求联合批次（域级核对在先：需求编辑是否应触发 CON-02 结果失效语义——若域已有失效面则本条收窄为三维投影未跟随；configDigest 核对随配置编辑面任务一并落）；【2026-10-09 处置（UI-T77）】本条**不做呈现面小修**——修复前置＝域语义裁决（需求编辑×评估失效的 CON-02 语义归属，涉及 KIN-07 账面失效机制或账面增区域几何摘要，跨域任务）；所有者裁决后按裁决开域任务，呈现面跟随修复随域任务搭车"
+      "owner": "运动学/需求联合批次（域级核对在先：需求编辑是否应触发 CON-02 结果失效语义——若域已有失效面则本条收窄为三维投影未跟随；configDigest 核对随配置编辑面任务一并落）；【2026-10-09 处置（UI-T77）】本条**不做呈现面小修**——修复前置＝域语义裁决（需求编辑×评估失效的 CON-02 语义归属，涉及 KIN-07 账面失效机制或账面增区域几何摘要，跨域任务）；所有者裁决后按裁决开域任务，呈现面跟随修复随域任务搭车；【2026-10-18 minor 分诊批注记】分诊确认维持——域语义裁决（需求编辑×CON-02 失效语义归属）前置未解除，呈现面不单独小修；configDigest 核对随配置编辑面任务一并落"
     },
     {
       "id": "F-569",
       "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——UiPlugin 析构兜底注释与成员声明序逐项核对；「新增成员 teardown 存活期」嫌疑家族复查）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "UiPlugin 析构兜底注释与成员声明序相悖——注释称「编译端口后毁（query 指针随 store 适配器——成员声明逆序保证端口析构时适配器仍在）」，实际 m_compilePort（hpp:395）声明在 m_lastStoreAdapter（hpp:428）之前→逆序销毁是 adapter 先毁，注释描述的保障机制与真实布局相反；现行安全仅因析构体显式 reset 序（bridge→observer→compilePort）抢在成员销毁前执行。HostCompilePort Deps.query 为非 owning 裸指针——后续若删显式 reset 或在端口析构新增 query 解引用即悬垂",
-      "owner": "宿主装配批次（注释更正为显式 reset 序描述；或将 m_lastStoreAdapter 声明移至 m_compilePort 之前使文档假设成立——低风险文档性修正，随下次触碰该文件批次搭车）；【2026-10-09 修复落地（UI-T77）】已修复（析构兜底注释更正——明示显式 reset 序为现行保障、声明序实态与改动前提；声明序迁移未做〔搭车条件未触发〕）"
+      "owner": "宿主装配批次（注释更正为显式 reset 序描述；或将 m_lastStoreAdapter 声明移至 m_compilePort 之前使文档假设成立——低风险文档性修正，随下次触碰该文件批次搭车）；【2026-10-09 修复落地（UI-T77）】已修复（析构兜底注释更正——明示显式 reset 序为现行保障、声明序实态与改动前提；声明序迁移未做〔搭车条件未触发〕）",
+      "resolution": "【2026-10-18 minor 分诊批翻 fixed】注释更正随 UI-T77 落地并经独立对抗验收 pass（acc/ui-t77，2026-10-12）；本批代码核实更正注释在位（UiPlugin.cpp 析构兜底段）。纯注释零行为面，账面登记无复验前置；『声明序迁移』为可选第二案且搭车条件未触发，不构成本条未竟面。",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-570",
@@ -7513,10 +7517,11 @@
       "id": "F-742",
       "source": "audit/round2-20261010（R2-A5 批；主审★8448 实测仍在）；2026-10-12 治理批转登（草案预编号 F-643→F-742，映射 traceability/gov-r2-id-remap.md）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "F-627 整改半完成：README 双计数已更正，但 findings.json F-618 resolution 仍写『集成 8448 用例』（owner 更正点清单漏改；实测基线 40 套件 4270 用例）；61f75b5b 提交信息宣称 F-625/F-626/F-627 清账但三者 status 仍 open，违反『完成状态随实现提交登记』",
-      "resolution": "fix-plan §五.3（治理批）：F-618 resolution 用例数更正（8448→4270，40 套件 2026-10-10 二轮实测）＋F-625/626/627 三条状态处置——本治理批（2026-10-12）转登时已同步执行本条处置（见本批 F-618 更正与 F-625/626/627 翻牌），随收口提交落地即可翻 fixed。"
+      "resolution": "fix-plan §五.3（治理批）：F-618 resolution 用例数更正（8448→4270，40 套件 2026-10-10 二轮实测）＋F-625/626/627 三条状态处置——本治理批（2026-10-12）转登时已同步执行本条处置（见本批 F-618 更正与 F-625/626/627 翻牌），随收口提交落地即可翻 fixed。【2026-10-18 minor 分诊批翻 fixed】前置逐项机器核实：F-618 resolution 含 4270 且无 8448 残留、F-625/F-626/F-627 均 fixed——处置确已执行，本批提交即收口提交。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-743",
@@ -7930,10 +7935,11 @@
       "id": "F-784",
       "source": "audit/round2-20261010（批 A 实施期发现，F-645 同族——audit-r2a 实施代理上报）；2026-10-12 治理批转登（草案预编号 F-685→F-784，映射 traceability/gov-r2-id-remap.md）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "runtime 侧惯量校验为绝对容差，与需求附录 D 第 6 项『相对 1×10⁻ⁿ』口径不一致：CanonicalModelBuilder::requireValidInertia（runtime/src/CanonicalModel.cpp:290-297）用绝对 1e-12；F-645 已把 dynamics 侧改为相对容差 ‖Δ‖∞/‖(I+Iᵀ)/2‖F≤1e-12——两层口径差异需 runtime 侧对齐或如实登记豁免面",
-      "resolution": "修复方向：runtime requireValidInertia 改相对容差对齐附录 D，或与所有者确认两层语义后登记差异。（audit-r2a 验收 §4.8 确认非批 A 范围——归属批次待所有者指派）"
+      "resolution": "修复方向：runtime requireValidInertia 改相对容差对齐附录 D，或与所有者确认两层语义后登记差异。（audit-r2a 验收 §4.8 确认非批 A 范围——归属批次待所有者指派）【2026-10-18 minor 分诊批翻 fixed——账面漏翻收口】修复已由 65bf7c4a（WP-06-T16『修复惯量相对对称与严格 SPD 校验』，2026-10-15 合入 redesign-main）落地：requireValidInertia 第②步改相对不对称度 max|Iij−Iji|/‖(I+Iᵀ)/2‖F≤1e-12（附录 D #6——kSymmetryTolerance，按最大绝对分量缩放防溢出、零范数退化交严格 SPD 拒绝），与 dynamics 侧（F-645）口径一致；回归钉 CanonicalModelBuilderTest.InertiaOriginalBitsPreserved_F784_AT01，本批复跑 runtime 套件实证：287 跑 286 过＋1 环境跳过（证据 traceability/builds/minor-triage-20261018/）。",
+      "fixedAt": "2026-10-15"
     },
     {
       "id": "F-785",
@@ -9286,7 +9292,7 @@
       "status": "open",
       "registeredAt": "2026-10-18",
       "title": "teardown 幂等护栏/重武装零红能力：护栏在 Qt 宿主层（UiPlugin 成员布尔位），单元级钉需要可注入装配面（构造两次 teardown 序断言恰一次＋重开重建后可再 teardown）——现状无门禁报警，未来重构该护栏无测试兜底；适配器 ContextClosed 半区已由 HostDraftChain.ClosedContextListReturnsEmptyTruth 钉住（attempt 2 交付）",
-      "owner": "后续 ui 批（随面板登记表测试收敛一并处置——护栏位可观测面注入）"
+      "owner": "后续 ui 批（随面板登记表测试收敛一并处置——护栏位可观测面注入）；【2026-10-18 minor 分诊批注记】分诊确认维持（登记同日复核）——处置路径不变，随面板登记表测试收敛的后续 ui 批"
     },
     {
       "id": "F-924",
@@ -9295,7 +9301,7 @@
       "status": "open",
       "registeredAt": "2026-10-18",
       "title": "冒烟断言下限锚随漂移钝化：step4（>=3 且逐行 NoDraft）与 step7（>=10）放宽有登记理由（域扩展/命令漂移），但下限锚会随域增长持续失去精确性——应随面板登记表测试收敛回精确计数",
-      "owner": "后续 ui 批（随面板登记表测试收敛处置）"
+      "owner": "后续 ui 批（随面板登记表测试收敛处置）；【2026-10-18 minor 分诊批注记】分诊确认维持（登记同日复核）——处置路径不变，随面板登记表测试收敛的后续 ui 批"
     },
     {
       "id": "F-925",
@@ -9452,6 +9458,15 @@
       "owner": "治理脚本维护方（门禁脚本编码口径与 F-935 同族纪律）",
       "resolution": "commit-lint.ps1 param 块后显式 [Console]::OutputEncoding=UTF8（try/catch 包裹，CI 无控制台宿主不阻塞）；修复后 d4d3ab56 合规提交 -Range 复检 PASS、退出码正确传递（留痕 traceability/builds/gov-units-escfix/commit-lint-f938-20261018.log）。教训入账：门禁调用不得经管道后接 &&（管道退出码＝末命令 tail 的退出码）。",
       "fixedAt": "2026-10-18"
+    },
+    {
+      "id": "F-939",
+      "source": "F-564 尾注拆批（2026-10-18 minor 分诊批——F-564 主体修复翻 fixed 后遗留债独立追踪）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-18",
+      "title": "UiText 休眠未登记键簇（第二文案源债）：ui.session.readonly.banner 等裸中文字面量未入 UiText 词表——与 resolveText 唯一出口纪律并行存在第二文案源；当前休眠（无消费路径触发），一旦启用即绕过键表对账（F-564 审计的 120 登记键 vs 全库调用面对账不覆盖此簇）",
+      "owner": "文案解析统一批次（随下次 UiText/文案面触碰批次搭车治理：键入表或删除死字面量二选一；与 F-564 主修复解耦）"
     }
   ]
 }
