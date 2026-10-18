@@ -1,0 +1,117 @@
+{
+  "integrated": {
+    "total": 846,
+    "passed": 845,
+    "failed": 0,
+    "skipped": 1,
+    "executables": {
+      "sdurws_ird_requirements_contract_test": {
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-requirements-regression/sdurws_ird_requirements_contract_test/gtest.xml"
+      },
+      "sdurws_ird_requirements_gui_test": {
+        "total": 95,
+        "passed": 95,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-requirements-regression/sdurws_ird_requirements_gui_test/gtest.xml"
+      },
+      "sdurws_ird_requirements_test": {
+        "total": 221,
+        "passed": 220,
+        "failed": 0,
+        "skipped": 1,
+        "evidence": "batch21-requirements-regression/sdurws_ird_requirements_test/gtest.xml"
+      },
+      "sdurws_ird_core_test": {
+        "total": 65,
+        "passed": 65,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-ui-core-regression/sdurws_ird_core_test/gtest.xml"
+      },
+      "sdurws_ird_ui_contract_test": {
+        "total": 50,
+        "passed": 50,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-ui-core-regression/sdurws_ird_ui_contract_test/gtest.xml"
+      },
+      "sdurws_ird_ui_gui_test": {
+        "total": 85,
+        "passed": 85,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-ui-core-regression/sdurws_ird_ui_gui_test/gtest.xml"
+      },
+      "sdurws_ird_ui_test": {
+        "total": 314,
+        "passed": 314,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-ui-core-regression/sdurws_ird_ui_test/gtest.xml"
+      }
+    }
+  },
+  "standalone": {
+    "total": 708,
+    "passed": 707,
+    "failed": 0,
+    "skipped": 1,
+    "executables": {
+      "sdurws_ird_requirements_contract_test": {
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-standalone-requirements/sdurws_ird_requirements_contract_test/gtest.xml"
+      },
+      "sdurws_ird_requirements_gui_test": {
+        "total": 95,
+        "passed": 95,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-standalone-requirements/sdurws_ird_requirements_gui_test/gtest.xml"
+      },
+      "sdurws_ird_requirements_test": {
+        "total": 221,
+        "passed": 220,
+        "failed": 0,
+        "skipped": 1,
+        "evidence": "batch21-standalone-requirements/sdurws_ird_requirements_test/gtest.xml"
+      },
+      "sdurws_ird_ui_contract_test": {
+        "total": 34,
+        "passed": 34,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-standalone-ui/sdurws_ird_ui_contract_test/gtest.xml"
+      },
+      "sdurws_ird_ui_gui_test": {
+        "total": 75,
+        "passed": 75,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-standalone-ui/sdurws_ird_ui_gui_test/gtest.xml"
+      },
+      "sdurws_ird_ui_test": {
+        "total": 267,
+        "passed": 267,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch21-standalone-ui/sdurws_ird_ui_test/gtest.xml"
+      }
+    }
+  },
+  "formalHost": {
+    "passed": 227,
+    "failed": 1,
+    "exitCode": 1,
+    "evidence": "batch21-host-model-fixed/stdout.log",
+    "remainingFailure": "scene-only-commit-preserves-model-root",
+    "note": "两轨DataInsufficient仅为装配/降级验证，不证明可达性；A-13范围待批准"
+  }
+}

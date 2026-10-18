@@ -3093,10 +3093,22 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
     auto resolveFrame = [this](const core::ObjectId& objectId)
         -> std::optional<rw::math::Transform3D<>> {
         auto* studio = getRobWorkStudio();
-        if (!studio || !m_nameMapPort) { return std::nullopt; }
+        const auto adapter = m_lastStoreAdapter;
+        const auto snapshot = m_compilePort ? m_compilePort->lastPublishedSnapshot() : nullptr;
+        if (!studio || !adapter || adapter->isClosed() || !snapshot) { return std::nullopt; }
         const auto cell = studio->getWorkCell();
-        const auto name = m_nameMapPort->resolveRuntimeName(objectId);
-        auto* frame = cell && name ? cell->findFrame(*name) : nullptr;
+        // REQ-01/09：机器人根的主身份名称指向Device，并不是可findFrame的帧。
+        // 这里只接受需求既有ModelFrame/SceneObject语义对应的BaseMount/SceneObject
+        // 作用域；复用同一发布快照的完整名称表，禁止拼后缀猜帧名。
+        // 快照可能在发布拍切换，必须与宿主挂载的WorkCell同一实例；不比较
+        // snapshot的命令baseRevision与提交后HEAD（两者语义不同）。
+        if (!cell || &snapshot->workCell().workCell() != cell.get()) { return std::nullopt; }
+        const auto& entries = snapshot->nameMap().entries();
+        const auto entry = std::find_if(entries.begin(),entries.end(),[&](const auto& item) {
+            return item.objectId==objectId && (item.scope==runtime::NameScope::BaseMount
+                || item.scope==runtime::NameScope::SceneObject);
+        });
+        auto* frame = entry!=entries.end() ? cell->findFrame(entry->fullName) : nullptr;
         if (!frame) { return std::nullopt; }
         return rw::kinematics::Kinematics::worldTframe(frame, studio->getState());
     };
@@ -8428,6 +8440,75 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                         }
                         ok(adapter->projectStore().query().head().id==pickHead,
                            "step5.7 pick-local-history-zero-project-revisions");
+                        // REQ-01/03：先在完整闭包上验证模型帧，再在90°夹具更新后验证场景帧。
+                        // 每轨独立撤销，并按本次ack.taskRef等终态，不复用上一轨覆盖缓存。
+                        const auto probeReference=[&](requirements::RequirementRefKind kind) {
+                            const auto beforeFrameProbe = m_requirementsEditor.workingSet();
+                            const auto probeHead=adapter->projectStore().query().head();
+                            const auto modelRef=std::find_if(probeHead.objectRefs.begin(),probeHead.objectRefs.end(),
+                                [](const auto& ref) { return ref.objectTypeToken==modeling::kRobotDesignObjectType; });
+                            if (kind==requirements::RequirementRefKind::ModelFrame) {
+                                ok(modelRef!=probeHead.objectRefs.end(),"step5.7 real-model-reference-exists");
+                                if (modelRef==probeHead.objectRefs.end()) { return; }
+                            }
+                            const std::string probeLabel=kind==requirements::RequirementRefKind::SceneObject ? "scene" : "model";
+                            std::size_t probeEdits = 0;
+                            if (m_kinEvaluation) {
+                                requirements::WorkRegion probe;
+                                probe.objectId = core::ObjectId::generate();
+                                probe.name = "参考系装配验证区域";
+                                probe.refFrame.kind = kind;
+                                probe.refFrame.objectId = kind==requirements::RequirementRefKind::SceneObject ? *fixtureId : modelRef->objectId;
+                                probe.box.size = rw::math::Vector3D<>(0.02,0.02,0.02); // 夹具系m。
+                                probe.demands.collisionFreeRequired = true; // 真实缺检测器降级轨。
+                                const auto regionEdit = m_requirementsEditor.applyEdit(requirements::RequirementEdit{probe});
+                                ok(regionEdit.accepted,"step5.7 scene-frame-probe-region-valid");
+                                probeEdits += regionEdit.accepted ? 1 : 0;
+                                requirements::SamplingPlan plan;
+                                plan.objectId = core::ObjectId::generate();
+                                plan.regionRef = probe.objectId;
+                                const auto planEdit = m_requirementsEditor.applyEdit(requirements::RequirementEdit{plan});
+                                ok(planEdit.accepted,"step5.7 scene-frame-probe-plan-valid");
+                                probeEdits += planEdit.accepted ? 1 : 0;
+                                kinematics::KinChannelBackgroundRequest request;
+                                request.kind = kinematics::KinChannelBackgroundKind::RegionCoverage;
+                                request.snapshotId = m_kinEvaluation->snapshotId();
+                                request.epoch = m_kinEvaluation->epoch();
+                                const auto ack = m_kinEvaluation->submit(request);
+                                ok(ack.accepted,"step5.7 real-"+probeLabel+"-reference-coverage-accepted: " + ack.reason);
+                                if (ack.accepted) {
+                                    const auto completed=[&] {
+                                        const auto rows=m_kinEvaluation->taskRows();
+                                        const auto row=std::find_if(rows.begin(),rows.end(),[&](const auto& value) {
+                                            return value.taskRefText==ack.taskRef;
+                                        });
+                                        return row!=rows.end() && row->stateLabelKey=="task.state.completed";
+                                    };
+                                    for (int beat=0; beat<100 && !completed(); ++beat) {
+                                        settleEvents(50);
+                                    }
+                                    ok(completed(),"step5.7 "+probeLabel+"-own-task-completed");
+                                    const auto outcome=m_kinEvaluation->latestCoverageResult();
+                                    std::cout << "[ird-ui-smoke-mtour] coverage result=" << bool(outcome)
+                                        << " error=" << (outcome ? outcome->errorText : "missing") << std::endl;
+                                    ok(outcome && outcome->ok && outcome->snapshotId==request.snapshotId
+                                        && !outcome->samples.empty(),
+                                       "step5.7 real-"+probeLabel+"-reference-computation-completed");
+                                    if (outcome && outcome->ok) {
+                                        ok(outcome->downgraded && std::all_of(outcome->samples.begin(),outcome->samples.end(),
+                                            [](const auto& sample) { return sample.state==kinematics::KinChannelSampleState::DataInsufficient; }),
+                                           "step5.7 required-collision-unavailable-data-insufficient");
+                                    }
+                                }
+                            }
+                            while (probeEdits>0) {
+                                ok(m_requirementsEditor.undoLocal(),"step5.7 frame-probe-local-undo");
+                                --probeEdits;
+                            }
+                            ok(m_requirementsEditor.workingSet()==beforeFrameProbe,
+                               "step5.7 frame-probe-restores-entire-working-set");
+                        };
+                        probeReference(requirements::RequirementRefKind::ModelFrame);
                         // 空白raycast必须清空最近拾取；命令随后不得复用旧夹具。
                         m_view3dGateway->handleViewDoubleClick(QPoint(vx+2,vy+2));
                         m_domains->requirements->reportView3DPick(pointId);
@@ -8472,54 +8553,11 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                             // 无TCP但未要求碰撞的输入另有上游求解前置缺口，保留失败证据。
                             ok(m_kinEvaluation && m_kinEvaluation->snapshotId().isValid(),
                                "step5.7 kinematics-current-snapshot-bound");
-                            const auto beforeFrameProbe = m_requirementsEditor.workingSet();
-                            std::size_t probeEdits = 0;
-                            if (m_kinEvaluation) {
-                                requirements::WorkRegion probe;
-                                probe.objectId = core::ObjectId::generate();
-                                probe.name = "参考系装配验证区域";
-                                probe.refFrame.kind = requirements::RequirementRefKind::SceneObject;
-                                probe.refFrame.objectId = *fixtureId;
-                                probe.box.size = rw::math::Vector3D<>(0.02,0.02,0.02); // 夹具系m。
-                                probe.demands.collisionFreeRequired = true; // 真实缺检测器降级轨。
-                                const auto regionEdit = m_requirementsEditor.applyEdit(requirements::RequirementEdit{probe});
-                                ok(regionEdit.accepted,"step5.7 scene-frame-probe-region-valid");
-                                probeEdits += regionEdit.accepted ? 1 : 0;
-                                requirements::SamplingPlan plan;
-                                plan.objectId = core::ObjectId::generate();
-                                plan.regionRef = probe.objectId;
-                                const auto planEdit = m_requirementsEditor.applyEdit(requirements::RequirementEdit{plan});
-                                ok(planEdit.accepted,"step5.7 scene-frame-probe-plan-valid");
-                                probeEdits += planEdit.accepted ? 1 : 0;
-                                kinematics::KinChannelBackgroundRequest request;
-                                request.kind = kinematics::KinChannelBackgroundKind::RegionCoverage;
-                                request.snapshotId = m_kinEvaluation->snapshotId();
-                                request.epoch = m_kinEvaluation->epoch();
-                                const auto ack = m_kinEvaluation->submit(request);
-                                ok(ack.accepted,"step5.7 real-scene-reference-coverage-accepted: " + ack.reason);
-                                if (ack.accepted) {
-                                    for (int beat=0; beat<100 && !m_kinEvaluation->latestCoverageResult(); ++beat) {
-                                        settleEvents(50);
-                                    }
-                                    const auto outcome=m_kinEvaluation->latestCoverageResult();
-                                    std::cout << "[ird-ui-smoke-mtour] coverage result=" << bool(outcome)
-                                        << " error=" << (outcome ? outcome->errorText : "missing") << std::endl;
-                                    ok(outcome && outcome->ok && outcome->snapshotId==request.snapshotId
-                                        && !outcome->samples.empty(),
-                                       "step5.7 real-scene-reference-computation-completed");
-                                    if (outcome && outcome->ok) {
-                                        ok(outcome->downgraded && std::all_of(outcome->samples.begin(),outcome->samples.end(),
-                                            [](const auto& sample) { return sample.state==kinematics::KinChannelSampleState::DataInsufficient; }),
-                                           "step5.7 required-collision-unavailable-data-insufficient");
-                                    }
-                                }
-                            }
-                            while (probeEdits>0) {
-                                ok(m_requirementsEditor.undoLocal(),"step5.7 frame-probe-local-undo");
-                                --probeEdits;
-                            }
-                            ok(m_requirementsEditor.workingSet()==beforeFrameProbe,
-                               "step5.7 frame-probe-restores-entire-working-set");
+                            const auto afterSceneHead=adapter->projectStore().query().head();
+                            ok(std::any_of(afterSceneHead.objectRefs.begin(),afterSceneHead.objectRefs.end(),
+                                [](const auto& ref) { return ref.objectTypeToken==modeling::kRobotDesignObjectType; }),
+                               "step5.7 scene-only-commit-preserves-model-root");
+                            probeReference(requirements::RequirementRefKind::SceneObject);
                         }
                     }
                     snapPng(hostWin,"mtour-5.7-scene-picked.png");

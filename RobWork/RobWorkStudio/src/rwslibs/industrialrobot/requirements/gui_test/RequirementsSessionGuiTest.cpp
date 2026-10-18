@@ -3321,6 +3321,15 @@ TEST_F(RequirementsSessionGuiTest, NamedStationReferencesAtomicAndStale_REQ01_AT
     QTimer::singleShot(0,[&] {
         auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
         EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        // REQ-09：位置参考系允许World，但AlignFrame只允许模型/场景；
+        // 不向用户提供一个必定被领域校验拒绝的名称候选。
+        auto* positionRefs=dialog->findChild<QComboBox*>("station-reference-choice");
+        auto* targetRefs=dialog->findChild<QComboBox*>("station-target-choice");
+        ASSERT_NE(positionRefs,nullptr); ASSERT_NE(targetRefs,nullptr);
+        EXPECT_GE(positionRefs->findText("世界坐标系"),0);
+        EXPECT_EQ(targetRefs->findText("世界坐标系"),-1);
+        EXPECT_GE(targetRefs->findText("机械臂 / 基座"),0);
+        EXPECT_GE(targetRefs->findText("夹具 / 工件A"),0);
         for (const auto& item : {std::pair<const char*,const char*>{"station-reference-choice","夹具 / 工件A"},
                 {"station-tcp-choice","夹爪 / 偏置TCP"},{"station-target-choice","机械臂 / 基座"}}) {
             auto* combo=dialog->findChild<QComboBox*>(item.first); EXPECT_NE(combo,nullptr);

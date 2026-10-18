@@ -220,8 +220,10 @@ std::optional<TaskPoint> editStationDefinition(QWidget* parent, const TaskPoint&
     auto* stack = new QStackedWidget(body); QFormLayout* pages[5];
     for (auto& page : pages) { auto* widget = new QWidget(stack); page = new QFormLayout(widget); stack->addWidget(widget); }
     auto* rpy = textField(pages[0], "station-rpy", "Roll,Pitch,Yaw（rad，参考系下，Rz·Ry·Rx）", vectorText(base.pose.orientation.fixedRpy));
+    // REQ-09的AlignFrame契约只接受模型/场景；World仍可作为上方位置参考系，
+    // 但不能出现在此目标列表，否则用户选中后只能得到领域拒绝。
     const auto target = referenceFields(pages[1], "station-target", {RequirementRefKind::ModelFrame,
-        RequirementRefKind::SceneObject, RequirementRefKind::World}, base.pose.orientation.kind == OrientationRuleKind::AlignFrame
+        RequirementRefKind::SceneObject}, base.pose.orientation.kind == OrientationRuleKind::AlignFrame
             ? std::optional<RequirementReference>(base.pose.orientation.targetFrame) : std::nullopt, false, choices);
     std::optional<RequirementReference> sceneBase;
     if (base.pose.orientation.targetSceneObject) {

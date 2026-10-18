@@ -1084,3 +1084,5 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 
 > 自审声明：本文档自审仅覆盖设计一致性、边界与上游对齐，不等同于实现测试通过或正式验收（acceptance-protocol.md 流程另行执行）。
 
+
+- WP-14-T12 第二十一批增量：工位位置参考系仍可选World，AlignFrame目标只列ModelFrame/SceneObject，与既有validateOrientationRule一致，GUI真实先红后绿。正式KIN参考系解析不再把机器人根的Device名称作为Frame名，改取同一发布快照中的BaseMount/SceneObject作用域，并核对宿主挂载同一个WorkCell。正式宿主在夹具更新前独立验证真实模型根，场景更新后验证真实场景对象；每次按ack.taskRef等待终态，逐次局部撤销恢复完整工作集，不能拿latestCoverage旧缓存冒充本次完成。两轨受理/完成已通过，但无碰撞检测器时DataInsufficient仍是诚实降级，不能称可达性通过。新增完整HEAD断言真实发现project把增量写集当完整引用集，scene-only提交丢失未改机器人根；A-13最小跨单元私有修复设计待所有者放行，正式宿主总体验证仍失败，不得将组件全绿替代原120项终验。

@@ -1,0 +1,273 @@
+[ird-ui-plugin] 诊断栈就绪（开发日志目录：C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\ird-ui-plugin-logs）
+[ird-ui-plugin] domain assembly: plugin=modeling ok=1 panels=1 commands=11
+[ird-ui-plugin] domain assembly: plugin=requirements ok=1 panels=1 commands=9
+[ird-ui-plugin] domain assembly: plugin=kinematics ok=1 panels=2 commands=8
+[ird-ui-plugin] domain assembly: plugin=dynamics ok=1 panels=1 commands=5
+[ird-ui-plugin] domain assembly: plugin=selection ok=1 panels=1 commands=1
+[ird-ui-plugin] domain assembly: plugin=optimization ok=1 panels=1 commands=0
+[ird-ui-plugin] shared surface: modeling registered
+[ird-ui-plugin] shared surface: requirements registered
+[ird-ui-plugin] shared surface: kinematics registered
+[ird-ui-plugin] 共享面装配完成（项目树＋检查器＋选择服务；三域 Provider 注册；L1/L3 接线；NameMap 端口＝空映射二态——呈现装配随 WP-24-T08）
+[ird-ui-plugin] 工业项目树装配完成（多 Dock：项目树主 Dock＋属性/任务同级 Dock＋宿主状态栏投影＋Ctrl+Shift+P 命令面板；装载呈现自证在事件循环稍后执行）
+[ird-ui-plugin] 宿主事件桥接线完成（L3 frameSelectedEvent→反解编排；D8 stateChangedEvent→会话姿态桥）
+[ird-ui-plugin] 工业项目树多 Dock 已呈现（项目树主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 615 px，实际 768 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-smoke-mtour] started
+[ird-ui-smoke-mtour] step 1 create-open-project
+[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-mtour-demo-RTRsmW（可写：是）
+[ird-ui-smoke-mtour] pass step1 project-opened
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 615 px，实际 615 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-smoke-mtour] pass step1 modeling-panel-present
+[ird-ui-smoke-mtour] pass step1 modeling-panel-visible (取证前提——非静窗)
+[ird-ui-smoke-mtour] snap mtour-1-panel.png
+[ird-ui-smoke-mtour] step 2 new-from-template-generic6r
+[ird-ui-smoke-mtour] pass step2 template-cmd-present
+[ird-ui-smoke-mtour] pass step2 reseed-generic6r (cur=已从模板重建草稿（generic-6r）——未应用编辑已清空；注意：模板预填的最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）当前不进入建模计算内核，请在传动或策略模块补录)
+[ird-ui-smoke-mtour] snap mtour-2-reseeded.png
+[ird-ui-smoke-mtour] step 3 joint-origin-edit
+[ird-ui-smoke-mtour] pass step3 struct-tree-present
+[ird-ui-smoke-mtour] pass step3 j1-row-found
+[ird-ui-smoke-mtour] pass step3 edit-host-present
+[ird-ui-smoke-mtour] pass step3 edit-table-present
+[ird-ui-smoke-mtour] pass step3 origin-rows-set
+[ird-ui-smoke-mtour] pass step3 apply-confirm-present
+[ird-ui-smoke-mtour] pass step3 origin-applied (cur=已应用：joints[0])
+[ird-ui-smoke-mtour] snap mtour-3-origin-edit.png
+[ird-ui-smoke-mtour] step 3.5 spatial-chain-fixture
+[ird-ui-smoke-mtour] pass step3.5 joint-row-1
+[ird-ui-smoke-mtour] pass step3.5 parameter-fields-1
+[ird-ui-smoke-mtour] pass step3.5 joint-row-2
+[ird-ui-smoke-mtour] pass step3.5 parameter-fields-2
+[ird-ui-smoke-mtour] pass step3.5 joint-row-3
+[ird-ui-smoke-mtour] pass step3.5 parameter-fields-3
+[ird-ui-smoke-mtour] pass step3.5 joint-row-4
+[ird-ui-smoke-mtour] pass step3.5 parameter-fields-4
+[ird-ui-smoke-mtour] pass step3.5 joint-row-5
+[ird-ui-smoke-mtour] pass step3.5 parameter-fields-5
+[ird-ui-smoke-mtour] pass step3.5 joint-row-6
+[ird-ui-smoke-mtour] pass step3.5 parameter-fields-6
+[ird-ui-smoke-mtour] step 4 structure-add-joint
+[ird-ui-smoke-mtour] pass step4 struct-add-present
+[ird-ui-smoke-mtour] pass step4 joint-added (cur=7 before=6)
+[ird-ui-smoke-mtour] snap mtour-4-structure.png
+[ird-ui-smoke-mtour] step 5 modeling-draft-apply
+[ird-ui-smoke-mtour] pass step5 modeling-apply-entry-present
+[ird-ui-smoke-mtour] step5 outcome=1 committed=1 rej=[] rev=[rev-389f9459403b948e215c7b845142a2d9]
+[ird-ui-smoke-mtour] pass step5 modeling-apply (committed=true rej=[])
+[ird-ui-smoke-mtour] pass step5 project-undo-irreversible-first-apply
+[ird-ui-smoke-mtour] snap mtour-5-applied.png
+[ird-ui-smoke-mtour] pass step5 requirements-follows-modeling-revision
+[ird-ui-smoke-mtour] pass step6 export-cmd-present
+[ird-ui-smoke-mtour] pass step6 irdbundle-exists (path=C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\doc\industrial-robot-design\traceability\builds\requirements-completion-20261018\batch21-host-closure-diagnostic/mtour-export.irdbundle)
+[ird-ui-smoke-mtour] snap mtour-6-exported.png
+[ird-ui-smoke-mtour] step 5.5 reopen-saved-runtime
+[ird-ui-smoke-mtour] pass step5.5 close-without-context-error
+[ird-ui-plugin] 已从保存修订恢复机器人运行时：rev-389f9459403b948e215c7b845142a2d9
+[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-mtour-demo-RTRsmW（可写：是）
+[ird-ui-smoke-mtour] pass step5.5 saved-runtime-restored
+[ird-ui-smoke-mtour] pass step5.5 real-open-session
+[ird-ui-smoke-mtour] pass step5.5 host-device-restored
+[ird-ui-smoke-mtour] pass step5.5 host-geometry-restored
+[ird-ui-smoke-mtour] pass step5.5 scene-workcell-matches-host
+[ird-ui-smoke-mtour] pass step5.5 scene-has-drawables
+[ird-ui-smoke-mtour] pass step5.5 spatial-fk-numeric-reference
+[ird-ui-smoke-mtour] pass step5.5 reopen-zero-revisions
+[ird-ui-smoke-mtour] snap mtour-5.5-reopened.png
+[ird-ui-smoke-mtour] step 5.6 real-fk-capture-confirmation
+[ird-ui-smoke-mtour] pass step5.6 capture-command-executable
+[ird-ui-smoke-mtour] pass step5.6 confirmation-button-reachable
+[ird-ui-smoke-mtour] snap mtour-capture-confirm-0.png
+[ird-ui-smoke-mtour] pass step5.6 real-capture-confirmation-seen
+[ird-ui-smoke-mtour] pass step5.6 cancel-zero-write
+[ird-ui-smoke-mtour] pass step5.6 confirmation-button-reachable
+[ird-ui-smoke-mtour] snap mtour-capture-confirm-1.png
+[ird-ui-smoke-mtour] pass step5.6 real-capture-confirmation-seen
+[ird-ui-smoke-mtour] pass step5.6 changed-fk-rejected-zero-write
+[ird-ui-smoke-mtour] pass step5.6 confirmation-button-reachable
+[ird-ui-smoke-mtour] snap mtour-capture-confirm-2.png
+[ird-ui-smoke-mtour] pass step5.6 real-capture-confirmation-seen
+[ird-ui-smoke-mtour] pass step5.6 captured-point-created
+[ird-ui-smoke-mtour] pass step5.6 captured-world-position-equals-real-fk
+[ird-ui-smoke-mtour] pass step5.6 captured-world-rotation-equals-real-fk
+[ird-ui-smoke-mtour] pass step5.6 capture-local-undo-enabled
+[ird-ui-smoke-mtour] pass step5.6 capture-one-undo
+[ird-ui-smoke-mtour] pass step5.6 capture-local-redo-enabled
+[ird-ui-smoke-mtour] pass step5.6 capture-one-redo
+[ird-ui-smoke-mtour] pass step5.6 capture-and-local-history-zero-project-revisions
+[ird-ui-smoke-mtour] snap mtour-capture-restored.png
+[ird-ui-smoke-mtour] step 5.7 real-scene-raycast-and-pick
+[ird-ui-smoke-mtour] pass step5.7 scene-fixture-encoded
+[ird-ui-smoke-mtour] pass step5.7 real-fixture-resource-written
+[ird-ui-smoke-mtour] pass step5.7 fixture-resource-record-root-ready
+[ird-ui-smoke-mtour] scene-submit kind=0 rejection=5 abort=0
+[ird-ui-smoke-mtour] pass step5.7 scene-fixture-real-command-committed
+[ird-ui-smoke-mtour] pass step5.7 fixture-real-runtime-frame
+[ird-ui-smoke-mtour] pass step5.7 fixture-world-transform-preserved
+[ird-ui-smoke-mtour] pass step5.7 real-center-pixel-raycast-hits-fixture
+[ird-ui-smoke-mtour] pass step5.7 real-opengl-input-surface
+[ird-ui-smoke-mtour] pick pixel=367,488 local=358,479 gl=588x781
+[ird-ui-smoke-mtour] pass step5.7 ctrl-double-click-resolves-real-scene-object
+[ird-ui-smoke-mtour] pass step5.7 target-create-button
+[ird-ui-smoke-mtour] pass step5.7 named-reference-definition-entry
+[ird-ui-smoke-mtour] pass step5.7 real-directory-scene-model-and-hidden-id
+[ird-ui-smoke-mtour] snap mtour-name-directory.png
+[ird-ui-smoke-mtour] pass step5.7 named-reference-confirm-stores-real-fixture-id
+[ird-ui-smoke-mtour] pass step5.7 named-reference-one-undo
+[ird-ui-smoke-mtour] pass step5.7 named-reference-undo-restores-all
+[ird-ui-smoke-mtour] pass step5.7 real-region-reference-directory
+[ird-ui-smoke-mtour] pass step5.7 region-selection-zero-write
+[ird-ui-smoke-mtour] pass step5.7 real-region-reference-confirm
+[ird-ui-smoke-mtour] pass step5.7 region-reference-one-undo
+[ird-ui-smoke-mtour] pass step5.7 named-region-creation-undo
+[ird-ui-smoke-mtour] pass step5.7 named-region-restores-all
+[ird-ui-smoke-mtour] pass step5.7 condition-create-real-wizard
+[ird-ui-smoke-mtour] pass step5.7 real-condition-environment-directory
+[ird-ui-smoke-mtour] pass step5.7 environment-selection-zero-write
+[ird-ui-smoke-mtour] pass step5.7 environment-choice-scroll-reachable
+[ird-ui-smoke-mtour] snap mtour-condition-name-directory.png
+[ird-ui-smoke-mtour] snap mtour-environment-name-choice.png
+[ird-ui-smoke-mtour] pass step5.7 real-environment-reference-confirm
+[ird-ui-smoke-mtour] pass step5.7 environment-reference-one-undo
+[ird-ui-smoke-mtour] pass step5.7 named-condition-creation-undo
+[ird-ui-smoke-mtour] pass step5.7 named-condition-restores-all
+[ird-ui-smoke-mtour] pass step5.7 target-pick-accepted-mode-0
+[ird-ui-smoke-mtour] pass step5.7 target-3d-entry-mode-0
+[ird-ui-smoke-mtour] pass step5.7 real-projected-preview-world-position-mode-0
+[ird-ui-smoke-mtour] pass step5.7 continuous-drag-zero-draft-write-mode-0
+[ird-ui-smoke-mtour] pass step5.7 real-target-3d-tool-mode-0
+[ird-ui-smoke-mtour] pass step5.7 target-preview-and-input-filter-restored-mode-0
+[ird-ui-smoke-mtour] pass step5.7 target-cancel-zero-write-mode-0
+[ird-ui-smoke-mtour] pass step5.7 target-history-restored-mode-0
+[ird-ui-smoke-mtour] pass step5.7 target-pick-accepted-mode-1
+[ird-ui-smoke-mtour] pass step5.7 target-3d-entry-mode-1
+[ird-ui-smoke-mtour] pass step5.7 real-projected-preview-world-position-mode-1
+[ird-ui-smoke-mtour] pass step5.7 continuous-drag-zero-draft-write-mode-1
+[ird-ui-smoke-mtour] snap mtour-target-3d-preview.png
+[ird-ui-smoke-mtour] snap mtour-target-3d-tool.png
+[ird-ui-smoke-mtour] pass step5.7 real-target-3d-tool-mode-1
+[ird-ui-smoke-mtour] pass step5.7 target-preview-and-input-filter-restored-mode-1
+[ird-ui-smoke-mtour] pass step5.7 target-created-at-projected-position
+[ird-ui-smoke-mtour] pass step5.7 target-create-one-undo
+[ird-ui-smoke-mtour] pass step5.7 target-history-restored-mode-1
+[ird-ui-smoke-mtour] pass step5.7 target-pick-accepted-mode-2
+[ird-ui-smoke-mtour] pass step5.7 target-3d-entry-mode-2
+[ird-ui-smoke-mtour] pass step5.7 real-projected-preview-world-position-mode-2
+[ird-ui-smoke-mtour] pass step5.7 continuous-drag-zero-draft-write-mode-2
+[ird-ui-smoke-mtour] pass step5.7 real-target-3d-tool-mode-2
+[ird-ui-smoke-mtour] pass step5.7 target-preview-and-input-filter-restored-mode-2
+[ird-ui-smoke-mtour] pass step5.7 target-cancel-zero-write-mode-2
+[ird-ui-smoke-mtour] pass step5.7 target-history-restored-mode-2
+[ird-ui-smoke-mtour] pass step5.7 target-pick-accepted-mode-3
+[ird-ui-smoke-mtour] pass step5.7 target-3d-entry-mode-3
+[ird-ui-smoke-mtour] pass step5.7 real-projected-preview-world-position-mode-3
+[ird-ui-smoke-mtour] pass step5.7 continuous-drag-zero-draft-write-mode-3
+[ird-ui-smoke-mtour] pass step5.7 real-target-3d-tool-mode-3
+[ird-ui-smoke-mtour] pass step5.7 target-preview-and-input-filter-restored-mode-3
+[ird-ui-smoke-mtour] pass step5.7 target-move-keeps-all-other-fields
+[ird-ui-smoke-mtour] pass step5.7 target-move-one-undo
+[ird-ui-smoke-mtour] pass step5.7 target-history-restored-mode-3
+[ird-ui-smoke-mtour] pass step5.7 rotated-scene-target-baseline
+[ird-ui-smoke-mtour] pass step5.7 target-pick-accepted-mode-4
+[ird-ui-smoke-mtour] pass step5.7 target-3d-entry-mode-4
+[ird-ui-smoke-mtour] pass step5.7 real-projected-preview-world-position-mode-4
+[ird-ui-smoke-mtour] pass step5.7 continuous-drag-zero-draft-write-mode-4
+[ird-ui-smoke-mtour] pass step5.7 real-target-3d-tool-mode-4
+[ird-ui-smoke-mtour] pass step5.7 target-preview-and-input-filter-restored-mode-4
+[ird-ui-smoke-mtour] pass step5.7 target-cancel-zero-write-mode-4
+[ird-ui-smoke-mtour] pass step5.7 target-history-restored-mode-4
+[ird-ui-smoke-mtour] pass step5.7 target-pick-accepted-mode-5
+[ird-ui-smoke-mtour] pass step5.7 target-3d-entry-mode-5
+[ird-ui-smoke-mtour] pass step5.7 real-projected-preview-world-position-mode-5
+[ird-ui-smoke-mtour] pass step5.7 continuous-drag-zero-draft-write-mode-5
+[ird-ui-smoke-mtour] pass step5.7 real-target-3d-tool-mode-5
+[ird-ui-smoke-mtour] pass step5.7 target-preview-and-input-filter-restored-mode-5
+[ird-ui-smoke-mtour] pass step5.7 target-move-keeps-all-other-fields
+[ird-ui-smoke-mtour] pass step5.7 target-move-one-undo
+[ird-ui-smoke-mtour] pass step5.7 target-history-restored-mode-5
+[ird-ui-smoke-mtour] pass step5.7 target-pick-accepted-mode-6
+[ird-ui-smoke-mtour] pass step5.7 target-3d-entry-mode-6
+[ird-ui-smoke-mtour] pass step5.7 real-projected-preview-world-position-mode-6
+[ird-ui-smoke-mtour] pass step5.7 continuous-drag-zero-draft-write-mode-6
+[ird-ui-smoke-mtour] pass step5.7 real-target-3d-tool-mode-6
+[ird-ui-smoke-mtour] pass step5.7 target-preview-and-input-filter-restored-mode-6
+[ird-ui-smoke-mtour] pass step5.7 target-cancel-zero-write-mode-6
+[ird-ui-smoke-mtour] pass step5.7 target-history-restored-mode-6
+[ird-ui-smoke-mtour] pass step5.7 target-pick-accepted-mode-7
+[ird-ui-smoke-mtour] pass step5.7 target-3d-entry-mode-7
+[ird-ui-smoke-mtour] pass step5.7 real-projected-preview-world-position-mode-7
+[ird-ui-smoke-mtour] pass step5.7 continuous-drag-zero-draft-write-mode-7
+[ird-ui-smoke-mtour] pass step5.7 real-create-world-yaw-entry
+[ird-ui-smoke-mtour] pass step5.7 create-yaw-preview-three-world-directions
+[ird-ui-smoke-mtour] snap mtour-target-3d-perspective-yaw.png
+[ird-ui-smoke-mtour] pass step5.7 real-target-3d-tool-mode-7
+[ird-ui-smoke-mtour] pass step5.7 target-preview-and-input-filter-restored-mode-7
+[ird-ui-smoke-mtour] pass step5.7 target-created-at-projected-position
+[ird-ui-smoke-mtour] pass step5.7 create-yaw-stored-radians
+[ird-ui-smoke-mtour] pass step5.7 target-create-one-undo
+[ird-ui-smoke-mtour] pass step5.7 target-history-restored-mode-7
+[ird-ui-smoke-mtour] pass step5.7 rotated-scene-baseline-restored
+[ird-ui-smoke-mtour] pass step5.7 target-point-present
+[ird-ui-smoke-mtour] pass step5.7 real-pick-dialogs-mode-0
+[ird-ui-smoke-mtour] pass step5.7 pick-cancel-zero-write
+[ird-ui-smoke-mtour] pass step5.7 real-pick-dialogs-mode-1
+[ird-ui-smoke-mtour] pass step5.7 pick-rule-and-object-id-mode-1
+[ird-ui-smoke-mtour] pass step5.7 pick-local-undo-enabled
+[ird-ui-smoke-mtour] pass step5.7 pick-one-undo
+[ird-ui-smoke-mtour] pass step5.7 pick-local-redo-enabled
+[ird-ui-smoke-mtour] pass step5.7 pick-one-redo
+[ird-ui-smoke-mtour] pass step5.7 real-pick-dialogs-mode-2
+[ird-ui-smoke-mtour] pass step5.7 pick-rule-and-object-id-mode-2
+[ird-ui-smoke-mtour] pass step5.7 pick-local-undo-enabled
+[ird-ui-smoke-mtour] pass step5.7 pick-one-undo
+[ird-ui-smoke-mtour] pass step5.7 pick-local-redo-enabled
+[ird-ui-smoke-mtour] pass step5.7 pick-one-redo
+[ird-ui-smoke-mtour] snap mtour-pick-normal-confirm.png
+[ird-ui-smoke-mtour] pass step5.7 real-pick-dialogs-mode-3
+[ird-ui-smoke-mtour] pass step5.7 pick-rule-and-object-id-mode-3
+[ird-ui-smoke-mtour] pass step5.7 pick-local-undo-enabled
+[ird-ui-smoke-mtour] pass step5.7 pick-one-undo
+[ird-ui-smoke-mtour] pass step5.7 pick-local-redo-enabled
+[ird-ui-smoke-mtour] pass step5.7 pick-one-redo
+[ird-ui-smoke-mtour] pass step5.7 pick-local-history-zero-project-revisions
+[ird-ui-smoke-mtour] pass step5.7 blank-pick-clears-feature-zero-write
+[ird-ui-smoke-mtour] pass step5.7 moved-scene-encoded
+[ird-ui-smoke-mtour] pass step5.7 scene-only-update-real-command-committed
+[ird-ui-smoke-mtour] pass step5.7 recompiled-scene-rejects-old-pick-zero-write
+[ird-ui-smoke-mtour] pass step5.7 scene-only-update-world-position-published
+[ird-ui-smoke-mtour] pass step5.7 kinematics-current-snapshot-bound
+[ird-ui-smoke-mtour] frame-probe-closure obj-cc06db8a65648fa273247d72f7542664 type=ProjectMetadata
+[ird-ui-smoke-mtour] frame-probe-closure obj-b08dd7cf0478212683811b6007e9ba7c type=scene-object
+[ird-ui-smoke-mtour] FAIL step5.7 real-model-reference-exists
+[ird-ui-smoke-mtour] pass step5.7 scene-frame-probe-region-valid
+[ird-ui-smoke-mtour] pass step5.7 scene-frame-probe-plan-valid
+[ird-ui-smoke-mtour] pass step5.7 real-scene-reference-coverage-accepted: 覆盖评估已受理
+[ird-ui-smoke-mtour] pass step5.7 scene-own-task-completed
+[ird-ui-smoke-mtour] coverage result=1 error=
+[ird-ui-smoke-mtour] pass step5.7 real-scene-reference-computation-completed
+[ird-ui-smoke-mtour] pass step5.7 required-collision-unavailable-data-insufficient
+[ird-ui-smoke-mtour] pass step5.7 frame-probe-local-undo
+[ird-ui-smoke-mtour] pass step5.7 frame-probe-local-undo
+[ird-ui-smoke-mtour] pass step5.7 frame-probe-restores-entire-working-set
+[ird-ui-smoke-mtour] snap mtour-5.7-scene-picked.png
+[ird-ui-smoke-mtour] pass step7 real-command-palette
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.import-csv
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.import-csv
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.import-json
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.import-json
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.export-copy
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.export-copy
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.capture-tcp
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.capture-tcp
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.pick-feature
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.pick-feature
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.mirror-stations
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.mirror-stations
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.create-array
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.create-array
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.apply-template
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.apply-template
+[ird-ui-smoke-mtour] pass step7 chinese-title-requirements.regenerate-linked
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.regenerate-linked
+[ird-ui-smoke-mtour] pass step7 all-nine-requirements-commands
+[ird-ui-smoke-mtour] snap mtour-7-chinese-palette.png

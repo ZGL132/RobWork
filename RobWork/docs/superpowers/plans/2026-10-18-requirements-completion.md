@@ -256,3 +256,27 @@
 6. 测试：既有真实IK对齐回归扩展SceneObject（先红）；正式modeling-tour真实夹具移动并转为90°轴置换后，经公开编辑器暂存SceneObject区域和单样本计划、实际覆盖受理并等待后台完成，随后逐次局部撤销恢复完整工作集。区域显式要求碰撞检查，宿主无检测器应诚实DataInsufficient，不能据此宣称可达性或任务点批量求解通过；最初批量探针受无TCP前置阻断、无TCP但无碰撞要求的覆盖探针在上游IkRequest前置抛错的证据均保留。它验证正式装配，不冒充引用下拉的人机交互。
 7. 文档：本计划/单元卡和新批证据；矩阵仍保留未完成的公共目录/三维编辑、方向约束和跨域问题；身份/摘要不变。
 8. 决策：无，补既有宿主回调，零第二套名称权威。
+
+### 第二十一批参考系候选与正式模型帧消费
+
+1. 行为：位置参考系保留World，AlignFrame目标仅列ModelFrame/SceneObject，与既有领域校验一致；正式KIN分别验证真实场景对象和模型根的参考系解析。
+2. 接口：仅StationDefinitionDialog.cpp、既有UiPlugin.cpp私有接线及配套测试，不增加公共头/端口/存储或依赖边。若正式回归确认主名称指向Device而非Frame，则按同一已发布快照的BaseMount/SceneObject作用域取帧，不拼接名称。
+3. 失败：缺宿主/闭包/当前发布快照/同一WorkCell或合法目标帧返回nullopt，沿原执行器拒绝语义定位，不以恒等阵代替缺失引用。
+4. 生命周期：只借用当前发布快照与宿主State，同步返回世界变换值，不缓存跨发布Frame裸指针。
+5. 线程：既有UI受理切片；后台只消费冻结值。无新增共享可变状态或项目写路径。
+6. 验证：真实GUI先红确认World候选错误；正式宿主场景/模型两轨按各自ack.taskRef等待完成，逐轨撤销恢复整个工作集，不能复用上一轮latestCoverage缓存。缺碰撞检测器仍应诚实DataInsufficient，不能计为可达性通过。宿主直接编入UiPlugin.cpp，必须构建sdurws_ird_studio并确认退出0后再运行；单构建插件后的旧宿主结果不用于本批结论。
+7. 文档/确定性：本计划、单元卡和新增批次证据同步，原120项历史不改。名称与世界变换权威仍归runtime；SI m及旋转矩阵，不新增名称派生算法。
+8. 决策：复用已有装配缝和已批准名称语义，无新增长期架构决策；本批不替代多TCP、姿态规则、mesh及120项最终验收。
+
+### A-13 修订完整对象集保留设计（待所有者精确放行）
+
+1. **问题与行为**：正式modeling-tour在真实scene-only更新后，HEAD.objectRefs从元数据＋robot-design＋scene-object变为仅元数据＋scene-object。磁盘前后manifest和两次正式失败已证明；继续应用需求会同样丢失未编辑的模型/工具。CommandPlan.objectWrites是增量，RevisionView.objectRefs按既有project §4.4.2必须是完整状态。新修订应保留活动分支基线中未改的所有非元数据对象；同OID更新替换旧引用，新增追加，新元数据替换旧元数据。历史修订不改。
+2. **精确范围/接口**：申请仅增加project/src/CommandServiceImpl.cpp、project/src/TxEngine.hpp、project/src/TxEngine.cpp、project/test/CommandServiceTest.cpp、project/test/TxEngineTest.cpp及units/project.md至WP-14-T12允许面。仅在私有tx::CommitPlan表尾增加默认空std::vector<ObjectRef> retainedObjects；CommandService用已取得的baseView过滤本次objectWrites覆盖OID和baseView.metadataRef，填入保留引用；TxEngine装配manifest时合并这些引用与本次新对象。不改任何公共头、存储schema、方法签名或依赖边；任务interUnit改true，仍由project唯一写入。
+3. **校验/失败**：保留引用必须有效、唯一，不与newObjects或元数据OID重叠；不重写保留对象字节、不计入introducedObjects。非法计划在事务落盘前fail-fast；原事务失败/回滚/恢复机制不变。CommandPlan未提供对象删除语义，业务删除仍由根引用表更新表达，不创造物理删除/历史清理行为。
+4. **生命周期/权威**：baseView由S2既有受理基线取得，引用按值复制至同步commit；不从旧HEAD猜活动分支底本、不跨线程缓存查询结果；对象和修订仍内容寻址、历史不可变，关闭重开从同一完整manifest恢复。
+5. **线程**：仅既有命令槽和writer互斥内消费，零Qt、零后台UI访问；没有第二套修订或分支真值。
+6. **验证**：现有正式宿主失败及磁盘前后manifest先红；再加真实ProjectStore连续提交两个不同对象、只更新其一、纯元数据提交、关闭重开、历史原样、introducedObjects不含保留版本、非活动分支基线与非法重复引用回归；事务F1~F8、project全量模型/契约、requirements/ui全回归和双模式构建。正式宿主必须核对当前HEAD保留模型根，再继续真实ModelFrame解析探针；不能用运行时缓存掩盖持久化缺陷。
+7. **文档/确定性**：本计划、project单元卡增量、WP-14-T12精确allowedFiles与interUnit及新证据同步。保留项沿baseView稳定顺序，新对象沿计划顺序，metadata仍首项；相同底本/计划得到同一引用顺序。保留所有旧失败与manifest拷贝，不修写既有项目历史、不改变需求或架构语义。
+8. **备选/决策**：推荐在project提交装配层保留引用。让每个业务处理器重写整项目会制造多份闭包规则；把保留对象作为newObjects重写会污染introducedObjects并增加不必要I/O；仅从runtime快照恢复模型引用会绕过project权威。均不采用。此项是兑现既有完整修订契约的跨单元私有修复，需所有者明确扩展当前任务范围后实施。
+
+第二十一批实测：模型探针在夹具更新前的完整HEAD上先红（Device名不可findFrame），改按已发布快照BaseMount/SceneObject作用域取帧后模型和场景两轨受理并完成。正式宿主仍227条通过＋1条失败，失败为scene-only提交丢失机器人根；A-13范围尚待批准，不以runtime缓存绕过。组件集成845通过＋1跳过、独立707通过＋1跳过，不能替代原120项终验。
