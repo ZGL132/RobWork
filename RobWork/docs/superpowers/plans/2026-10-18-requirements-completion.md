@@ -268,7 +268,7 @@
 7. 文档/确定性：本计划、单元卡和新增批次证据同步，原120项历史不改。名称与世界变换权威仍归runtime；SI m及旋转矩阵，不新增名称派生算法。
 8. 决策：复用已有装配缝和已批准名称语义，无新增长期架构决策；本批不替代多TCP、姿态规则、mesh及120项最终验收。
 
-### A-13 修订完整对象集保留设计（待所有者精确放行）
+### A-13 修订完整对象集保留设计（所有者2026-10-19已批准）
 
 1. **问题与行为**：正式modeling-tour在真实scene-only更新后，HEAD.objectRefs从元数据＋robot-design＋scene-object变为仅元数据＋scene-object。磁盘前后manifest和两次正式失败已证明；继续应用需求会同样丢失未编辑的模型/工具。CommandPlan.objectWrites是增量，RevisionView.objectRefs按既有project §4.4.2必须是完整状态。新修订应保留活动分支基线中未改的所有非元数据对象；同OID更新替换旧引用，新增追加，新元数据替换旧元数据。历史修订不改。
 2. **精确范围/接口**：申请仅增加project/src/CommandServiceImpl.cpp、project/src/TxEngine.hpp、project/src/TxEngine.cpp、project/test/CommandServiceTest.cpp、project/test/TxEngineTest.cpp及units/project.md至WP-14-T12允许面。仅在私有tx::CommitPlan表尾增加默认空std::vector<ObjectRef> retainedObjects；CommandService用已取得的baseView过滤本次objectWrites覆盖OID和baseView.metadataRef，填入保留引用；TxEngine装配manifest时合并这些引用与本次新对象。不改任何公共头、存储schema、方法签名或依赖边；任务interUnit改true，仍由project唯一写入。
@@ -280,3 +280,15 @@
 8. **备选/决策**：推荐在project提交装配层保留引用。让每个业务处理器重写整项目会制造多份闭包规则；把保留对象作为newObjects重写会污染introducedObjects并增加不必要I/O；仅从runtime快照恢复模型引用会绕过project权威。均不采用。此项是兑现既有完整修订契约的跨单元私有修复，需所有者明确扩展当前任务范围后实施。
 
 第二十一批实测：模型探针在夹具更新前的完整HEAD上先红（Device名不可findFrame），改按已发布快照BaseMount/SceneObject作用域取帧后模型和场景两轨受理并完成。正式宿主仍227条通过＋1条失败，失败为scene-only提交丢失机器人根；A-13范围尚待批准，不以runtime缓存绕过。组件集成845通过＋1跳过、独立707通过＋1跳过，不能替代原120项终验。
+
+A-13授权登记：所有者已明确回复“批准按A-13设计实施”，本批按上述精确文件面实施；第二十一批待批准描述为当时历史状态，不回写实测证据。
+
+### A-13 额外测试精确修正（所有者2026-10-19已批准）
+
+完整project模型回归实际282跑：281通过、1失败（batch22-integrated-project）。失败定位到 `project/test/UndoRedoServiceTest.cpp::UndoThenRedoRestoresOriginalPayloadAndCommandFamily`：共享AppendUndoHandler只提交空objectWrites，却误断言“移除所有域引用”。公共CommandPlan没有删除字段，纯元数据不等于清空项目，业务真实撤销仍由各域根更新表达。
+
+拟仅增加该测试文件到契约允许面；产品代码、公共接口、存储与共享StubHandlers.hpp均不改。精确修改：将原“撤销后objectRefs.size()==1”改为“size()==2且第二项恰等于v1原业务引用”；重做后增加“size()==3，原业务引用保留，新业务OID不同”，两份载荷仍逐字节等于beta-1。更新本测试的对应中文注释，明确验证的是逆命令重放机制，不能据该输入件宣称真实域删除已验证。新增修正后单跑该测试及双模式全project回归；旧失败日志和XML保留不改。非法保留计划及F1～F8结果不豁免。
+
+A-13正式宿主关闭回归追加：`batch22-host`和`batch22-host-close-diagnostic`真实第二次关闭发生AV；`batch22-host-debug`原生调试事件及符号解析证明确切链为teardown→clearCommandHandler→refreshPosePane→resolveSessionTcp→KinSessionModelView::model空委托（pose-set=1）。ui已有KinSessionPose归项目会话，但解绑snapshot前未清除，首次无姿态关闭未暴露。最小修复限已放行UiPlugin.cpp：无项目投影时先clear会话姿态再解绑快照，注入地址不变、零项目写入。新增正式断言确保关闭前姿态确已设、关闭后清空、重开仍保留完整manifest及机器人/夹具世界变换；不修改kinematics产品文件。原失败与调试取证只增不改。
+
+第二十二批最终核验：A-13及精确UndoRedo测试修正已完成；双模式完整构建退出0，集成1159通过＋1既有跳过，独立1021通过＋1既有跳过，均0失败。正式modeling-tour 235条及requirements-tour 141条断言通过、进程退出0。机器三条verify-task命令重跑通过，首轮证据未暂存的文档门禁失败原样保留。完整记录见BATCH22.md与batch22-verification-summary.json。此结论不覆盖原120项终验、工作集/共享树恢复、多TCP、方向/部分约束、真实mesh或跨域消费。

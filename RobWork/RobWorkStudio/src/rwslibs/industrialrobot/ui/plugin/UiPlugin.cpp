@@ -3985,6 +3985,12 @@ void IrdWorkbenchHostPlugin::syncDomainModulesToContext(
             }
         }
     }
+    // REQ-10／UX-06：会话姿态归当前项目，必须先清姿态，再解绑模型。
+    // 正式拾取/回写后 KinSessionPose 已设置；若先清 snapshot，随后关闭刷新
+    // 位姿页会拿旧 q 解析已解绑的模型（实际栈：refreshPosePane→resolveSessionTcp
+    // →KinSessionModelView::model 空委托）。clear 保持注入地址稳定，只清本项目
+    // 的 rad/m 关节值，不写修订、不猜默认零位；重新打开必须重新建立会话姿态。
+    m_kinSessionPose.clear();
     // kinematics 会话脱离（UI-T64——执行器快照解绑＋面板绑定键同步清空
     // ——拆除拍对称收口：无项目态受理由快照缺位拒绝，不残留旧会话绑定；
     // 私有会话态零解引用——门面 bindSessionFacts）。
@@ -5369,9 +5375,9 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
     //    接续；PlayBack 官方面板的播放状态归宿主框架自持，项目关闭时
     //    宿主 WorkCell 卸载连带失效——框架既有行为，非本插件持有对象）。
 
-    // ⑦会话姿态：Jog 桥的会话守卫在位（m_jogBridgeConnected 保持——
-    //    订阅无会话时 State 变化不再写入域；域侧 KinSessionPose 载体未
-    //    注入〔服务缝诚实边界〕＝无可清理的宿主持有副本）。
+    // ⑦会话姿态：运动学会话姿态已在解绑模型之前清空（上游关闭编排），
+    //    防止位姿页消费旧 q；Jog 桥的会话守卫在位（m_jogBridgeConnected 保持——
+    //    订阅无会话时 State 变化不再写入域，重新绑定后才接收当前项目姿态）。
 
     // ⑧运行中订阅（续）：修订事件订阅保持（总线随 store 关闭排空——
     //    旧项目事件在无绑定态被域模块按分支过滤丢弃，不污染新项目）。
@@ -8596,6 +8602,54 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         ok(checkedCommands == 9, "step7 all-nine-requirements-commands");
         snapPng(hostWin, "mtour-7-chinese-palette.png");
         if (palette) { palette->hide(); }
+
+        // WP-14-T12 A-13／REQ-10：单独更新夹具之后再次真正关闭并重开，
+        // 核对磁盘完整清单及新编译的机器人/夹具变换；禁止只读上一代 runtime 缓存。
+        // 所有跨关闭边界数据仅保存值，旧 adapter、Frame 指针均不能继续使用。
+        step("8 scene-update-close-reopen");
+        const auto beforeReopen = m_lastStoreAdapter->projectStore().query().head();
+        const auto previousCell = getRobWorkStudio()->getWorkCell();
+        ok(m_kinSessionPose.isSet(), "step8 regression-starts-with-real-session-pose");
+        (void)m_controller->beginClose(UiCloseIntent::CloseProject);
+        const auto finalClose = m_controller->resolveCloseDialog(
+            CloseDecision{true, DraftDisposition::Discard, TaskDisposition::Wait});
+        for (int attempt = 0; attempt < 100 && m_controller->hasOpenSession(); ++attempt) {
+            settleEvents(100); // 关闭协议至多等待10s，不并发运行另一宿主。
+        }
+        ok(!m_kinSessionPose.isSet(), "step8 closed-project-clears-session-pose");
+        const bool sceneReopened = finalClose.status == CloseDialogResolution::Status::Confirmed
+            && !m_controller->hasOpenSession() && openViaSessionController(demoPath.toStdString());
+        ok(sceneReopened, "step8 scene-update-real-project-reopened");
+        settleEvents(300);
+        if (sceneReopened) {
+            const auto afterReopen = m_lastStoreAdapter->projectStore().query().head();
+            ok(afterReopen.id == beforeReopen.id && afterReopen.objectRefs == beforeReopen.objectRefs,
+               "step8 reopen-complete-manifest-zero-revisions");
+            const auto newCell = getRobWorkStudio()->getWorkCell();
+            ok(newCell && newCell != previousCell && !newCell->getDevices().empty(),
+               "step8 scene-update-robot-restored-in-new-workcell");
+            bool fixtureRestored = false;
+            for (const auto& ref : afterReopen.objectRefs) {
+                if (ref.objectTypeToken != modeling::kSceneObjectObjectType) { continue; }
+                const auto name = m_nameMapPort->resolveRuntimeName(ref.objectId);
+                auto* frame = name && newCell ? newCell->findFrame(*name) : nullptr;
+                if (!frame) { continue; } // 引用缺名或帧缺失不能构成恢复成功。
+                const auto pose = rw::kinematics::Kinematics::worldTframe(
+                    frame, getRobWorkStudio()->getState());
+                const auto expectedRotation = rw::math::RPY<>(1.5707963267948966,0,0).toRotation3D();
+                bool same = (pose.P() - rw::math::Vector3D<>(1.5,0.3,0.2)).norm2() < 1e-12;
+                for (int row = 0; row < 3; ++row) { for (int col = 0; col < 3; ++col) {
+                    same = same && std::abs(pose.R()(row,col) - expectedRotation(row,col)) < 1e-12;
+                } }
+                fixtureRestored = fixtureRestored || same;
+            }
+            // m 与旋转矩阵均用独立已知输入对照，不能仅用“场景里有东西”作判据。
+            ok(fixtureRestored, "step8 scene-update-fixture-world-transform-restored");
+            const auto scene = getRobWorkStudio()->getWorkCellScene();
+            ok(scene && scene->getWorkCell() == newCell && !scene->getDrawables().empty(),
+               "step8 scene-update-new-workcell-rendered");
+        }
+        snapPng(hostWin, "mtour-8-scene-update-reopened.png");
 
         QCoreApplication::exit(failedCount == 0 ? 0 : 1);
     });

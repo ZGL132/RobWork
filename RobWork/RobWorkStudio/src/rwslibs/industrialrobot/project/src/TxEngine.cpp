@@ -337,6 +337,7 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
             "project/tx-engine: parentRevisionId 携带全零保留值（无父修订"
             "应传 nullopt 而非空身份——§4.4.2）");
     }
+    std::set<std::string> objectIds;  // 完整清单的 OID 唯一性（无单位，按规范文本比较）。
     for (const PlannedObject& obj : plan.newObjects) {
         // 域对象身份与类型 token 的合法性：全零 oid＝保留值不是身份；
         // 空 token 会让修订清单的 objectRefs 违反 §4.4.2 非空约束。
@@ -345,6 +346,32 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
                 "project/tx-engine: newObjects 含无效 oid 或空 "
                 "objectTypeToken（oid 分配归 HandlerContext——§6.5）");
         }
+    }
+
+    // A-13：保留项是既有引用，不应经过新对象写入通道。先验证完整集合，
+    // 避免同一 OID 出现两个版本、旧元数据混入，或无效摘要流入已提交清单。
+    // 此处仅验证引用值，绝不读取/重写保留负载；负载读校验仍归 ObjectStore。
+    for (const PlannedObject& obj : plan.newObjects) {
+        if (!objectIds.insert(obj.oid.toCanonical()).second) {
+            throw std::invalid_argument("project/tx-engine: newObjects 含重复 oid");
+        }
+    }
+    for (const ObjectRef& ref : plan.retainedObjects) {
+        if (!ref.objectId.isValid() || !ref.contentVersion.isValid()
+            || ref.objectTypeToken.empty() || ref.objectTypeToken == kMetadataTypeToken
+            || ref.objectId == authoritativeRef.objectId
+            || ref.digest256 != cvHex(ref.contentVersion)
+            || !objectIds.insert(ref.objectId.toCanonical()).second) {
+            // 摘要必须恰等于合法 CV 的 64 位小写 hex，一并拒绝格式错误与身份不符。
+            // 计划畸形是调用方契约错误，在分配序号和任何磁盘副作用之前 fail-fast。
+            throw std::invalid_argument(
+                "project/tx-engine: retainedObjects 含无效引用、元数据或重复 oid");
+        }
+    }
+    const core::ObjectId metadataOid = core::ObjectId::generate();
+    if (objectIds.count(metadataOid.toCanonical()) != 0) {
+        // 即使随机身份发生极小概率碰撞，也不能发布有歧义的完整清单。
+        throw std::invalid_argument("project/tx-engine: 元数据 oid 与业务对象重叠");
     }
 
     // ---- 第 1 步（内存半边）：tx-id 与序号分配（§7.1 第 1 步"生成 tx-id；
@@ -371,7 +398,6 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
     // ---- 元数据对象身份与编址：oid 由引擎生成（§13.2：对象分配落地点
     //      归 project——元数据对象是 project 自有对象，不经 HandlerContext）；
     //      负载＝候选元数据的 canonical 字节；cv＝CR-02 唯一哈希入口。
-    const core::ObjectId metadataOid = core::ObjectId::generate();
     const std::string metadataPayload = codec::dump(candidate);
     const core::ContentVersion metadataCv =
         codec::contentVersionOf(metadataPayload);
@@ -398,7 +424,7 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
     }
 
     // ---- 修订清单装配（§4.4.2）：objectRefs＝完整引用集（≥1，含元数据
-    //      对象——元数据在前、域对象按计划序）；introducedObjects＝本次新
+    //      对象——元数据在前、保留对象按基线序、新对象按计划序）；introducedObjects＝本次新
     //      就位对象（含元数据——残留识别/浏览辅助，§4.4.2 表）。
     RevisionManifest manifest;
     manifest.revisionId = newRevId;
@@ -416,6 +442,10 @@ CommitResult TxEngine::commit(const CommitPlan& plan,
         manifest.objectRefs.push_back(metaRef);
         manifest.introducedObjects.push_back(metadataCv);
     }
+    // 已就位对象仅将引用复制进全量状态，不进入 staged 与 introducedObjects，
+    // 因此不增加负载 I/O、不污染“本次新引入版本”证据，历史文件亦保持不可变。
+    manifest.objectRefs.insert(manifest.objectRefs.end(),
+                               plan.retainedObjects.begin(), plan.retainedObjects.end());
     for (std::size_t i = 0; i < staged.size(); ++i) {
         const StagedObject& s = staged[i];
         ObjectRef ref;

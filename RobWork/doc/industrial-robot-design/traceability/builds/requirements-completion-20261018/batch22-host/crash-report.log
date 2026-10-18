@@ -1,0 +1,14 @@
+format=ird-crash-report/1
+writtenEpochMs=1792350053985
+pid=67132
+process=sdurws_ird_studio (industrial-robot-studio, x64)
+exceptionType=seh-access-violation
+exceptionMessage=code=[ADDR] address=00007FF61B8E8644
+project=-
+activeTasks=0
+activeFindings=0
+devLogTail=4
+dev[0]=1 1792350033260 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：[USER]\\.codex\\worktrees\\486b\\RobWork\\build\\RobWorkStudio\\bin\\Release\\ird-ui-plugin-logs）
+dev[1]=2 1792350034338 D DEBUG ird.ui.publish-bridge msg=host session attached: [REDACTED:token:1]
+dev[2]=3 1792350041876 D DEBUG diag/ui/session msg=draining entered: in-flight references=0
+dev[3]=4 1792350047140 D DEBUG ird.ui.selection-service msg=selection: L2 no applied counterpart — no 3D action (draft/result-only object)

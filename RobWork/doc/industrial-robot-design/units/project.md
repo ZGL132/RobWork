@@ -307,6 +307,8 @@ PM-11-S1 验收口径按 ARCH §11.3 待同步项 4 执行：projectId/schemaVer
 | `objectRefs[]` | object[] | 是（≥1，含 metadata 对象） | 完整对象引用集：`{objectId, contentVersion, objectTypeToken, digest256}`；全量状态（ARCH §6.3"对象集引用"） |
 | `introducedObjects[]` | string[] | 否 | 本次新就位对象的内容版本列表（残留识别/浏览辅助） |
 
+**WP-14-T12 A-13 实现补充（所有者2026-10-19明确批准）**：命令 `objectWrites` 为增量；命令服务将已受理分支基线中未被本次写入覆盖 OID 的非元数据引用，按基线顺序值拷贝到私有 `tx::CommitPlan.retainedObjects`（表尾默认空）。建支实际 parent 来自另一源分支时，保留底本随该源 tip，不能取当前 HEAD 或活动分支猜测。事务引擎发布顺序为新元数据→保留引用→本次新对象；同 OID 更新替换旧引用。保留项不重写、不进入 `introducedObjects`；非法 ID/CV、空 token、元数据夹带、摘要与 CV 不符、重复或与新对象重叠，均在序号分配/落盘前 fail-fast（`std::invalid_argument`）。不改公共接口、持久化格式或删除语义；业务删除由域根引用更新表达，旧对象仍可被历史修订引用。关闭重开只依赖完整 manifest，不能用内存缓存补齐。
+
 #### 4.4.3 ProjectMetadataRecord（元数据对象负载）
 
 | 字段 | 类型 | 必填 | 约束与语义 |

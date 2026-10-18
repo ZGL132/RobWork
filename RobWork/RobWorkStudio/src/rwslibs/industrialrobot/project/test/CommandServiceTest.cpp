@@ -50,6 +50,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <future>
@@ -89,6 +90,45 @@ public:
     std::unique_ptr<core::IEventSubscription> subscribe(core::IDomainEventSink&) override
     {
         return nullptr;  // 本桩只投递——订阅面不被 D-18 用例消费
+    }
+};
+
+/**
+ * @brief ARC-01 增量写入的命令端口输入件；无目标时提交纯元数据修订。
+ *
+ * 注册表拥有生命周期，仅测试线程设置 target；对象存储、事务与查询均用真实实现。
+ * target 为稳定 OID（无物理单位），写入字节直接取信封，避免模拟被验证的合并逻辑。
+ */
+class ObjectDeltaHandler final : public ICommandHandler {
+public:
+    std::optional<core::ObjectId> target;
+    /// @brief 返回测试命令的稳定 token；无参数，无异常。
+    std::string commandType() const override { return "test-object-delta"; }
+    /// @brief 受理版本 1；无参数，无异常。
+    std::uint32_t currentPayloadVersion() const override { return 1; }
+    /**
+     * @brief 通过命令端口声明增量，存储语义交由真实 project 验证。
+     * @param ctx [in,out] 本次受理上下文，不保存其引用。
+     * @param envelope [in] 版本 1 信封，payload 为原样字节（无单位）。
+     * @param base [in] 冻结的分支基线，不改写。
+     * @param out [out] target 有值时声明单对象更新，否则无对象写入。
+     * @param diagnostics [out] 本输入件无诊断。
+     * @return Planned；不直接访问磁盘，不抛业务异常。
+     */
+    PrepareOutcome prepare(HandlerContext& /*ctx*/, const CommandEnvelope& envelope,
+                           const RevisionView& /*base*/, CommandPlan& out,
+                           std::vector<core::DiagnosticRecord>& /*diagnostics*/) override
+    {
+        if (target.has_value()) {
+            // 只声明改动对象；完整引用集必须由 project 装配，不能由测试预先补齐。
+            ObjectWrite write;
+            write.objectId = target;
+            write.objectTypeToken = "TestData";
+            write.payloadCanonical = envelope.payloadCanonical;
+            out.objectWrites.push_back(std::move(write));
+        }
+        out.summary = "ARC-01 incremental update";
+        return PrepareOutcome::Planned;
     }
 };
 
@@ -449,7 +489,7 @@ TEST(CommandSubmitS6, AppendObject_CommittedExactlyOneRevisionWithEvents)
 }
 
 /// 对象身份双路径（实现口径——两条"project 分配"路径并存）：prepare 期
-/// ctx.objectId() 取号与 S6 装配点补分配的提交都恰好落一个域对象。
+/// ctx.objectId() 取号与 S6 装配点补分配每次各新增一个域对象；完整修订必须保留前次对象（ARC-01）。
 TEST(CommandSubmitS6, ObjectIdAllocation_BothPathsCommit)
 {
     ServiceFixture fx;
@@ -472,6 +512,7 @@ TEST(CommandSubmitS6, ObjectIdAllocation_BothPathsCommit)
     // 对象版本——元数据亦为对象文件，§4.4.3"既是对象负载又是自有格式"）。
     // 每次提交恰一域对象由下方 TestData 引用集断言精确化。
     EXPECT_EQ(fx.objectDirCount(), objectsBefore + 4);
+    std::size_t expectedDomainObjects = 1;
     for (const RevisionId rev : {*r1.newRevision, *r2.newRevision}) {
         const RevisionView view = fx.opened.store->query().revision(rev);
         std::size_t domainObjects = 0;
@@ -480,8 +521,131 @@ TEST(CommandSubmitS6, ObjectIdAllocation_BothPathsCommit)
                 ++domainObjects;
             }
         }
-        EXPECT_EQ(domainObjects, 1u);
+        // ARC-01／project §4.4.2：增量提交不能把上次未编辑对象从新修订清单移除。
+        EXPECT_EQ(domainObjects, expectedDomainObjects++);
     }
+}
+
+/// ARC-01／PM-08／§4.4.2：增量替换、纯元数据、磁盘重开均保持完整状态及历史字节。
+TEST(CommandSubmitS6, CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    auto delta = std::make_unique<ObjectDeltaHandler>();
+    auto* input = delta.get();  // 注册表持有；只在重开前使用。
+    fx.registry().registerHandler(std::move(delta));
+    const auto branch = fx.primaryBranch();
+    const auto first = fx.commands().submit(fx.appendEnvelope("robot-original", branch));
+    ASSERT_TRUE(first.committed());
+    const auto firstView = fx.opened.store->query().revision(*first.newRevision);
+    ASSERT_EQ(firstView.objectRefs.size(), 2u);
+    const auto robot = firstView.objectRefs[1];
+    const auto second = fx.commands().submit(fx.appendEnvelope("fixture-original", branch));
+    ASSERT_TRUE(second.committed());
+    const auto secondView = fx.opened.store->query().revision(*second.newRevision);
+    ASSERT_EQ(secondView.objectRefs.size(), 3u);  // 元数据＋机器人＋夹具，非单个增量。
+    const auto fixture = secondView.objectRefs[2];
+
+    // 直接读磁盘保存基线；后续写入与重开不得改写任何历史 manifest。
+    const auto manifestPath = fx.dir / "revisions" / second.newRevision->toCanonical() / "manifest.json";
+    const auto readManifest = [](const std::filesystem::path& path) {
+        std::ifstream stream(path, std::ios::binary);
+        return std::string(std::istreambuf_iterator<char>(stream), {});
+    };
+    const std::string historyBytes = readManifest(manifestPath);
+    input->target = robot.objectId;
+    auto envelope = fx.appendEnvelope("robot-updated", branch);
+    envelope.commandType = "test-object-delta";
+    const auto updated = fx.commands().submit(envelope);
+    ASSERT_TRUE(updated.committed());
+    const auto updatedView = fx.opened.store->query().head();
+    ASSERT_EQ(updatedView.objectRefs.size(), 3u);
+    EXPECT_EQ(updatedView.objectRefs[1], fixture);  // 保留项按基线顺序排在新写入项之前。
+    const auto robotNew = updatedView.objectRefs[2];
+    EXPECT_EQ(robotNew.objectId, robot.objectId);
+    EXPECT_NE(robotNew.contentVersion, robot.contentVersion);
+    EXPECT_EQ(readManifest(manifestPath), historyBytes);
+    const auto updatedManifest = codec::parseRevisionManifest(readManifest(
+        fx.dir / "revisions" / updated.newRevision->toCanonical() / "manifest.json"));
+    ASSERT_EQ(updatedManifest.introducedObjects.size(), 2u);
+    EXPECT_EQ(std::count(updatedManifest.introducedObjects.begin(),
+                         updatedManifest.introducedObjects.end(), fixture.contentVersion), 0);
+
+    // 零对象写入只产生新元数据，不能把机器人和夹具清空。
+    input->target.reset();
+    const auto metadataOnly = fx.commands().submit(envelope);
+    ASSERT_TRUE(metadataOnly.committed());
+    const auto expected = fx.opened.store->query().head();
+    ASSERT_EQ(expected.objectRefs.size(), 3u);
+    EXPECT_EQ(expected.objectRefs[1], fixture);
+    EXPECT_EQ(expected.objectRefs[2], robotNew);
+    const auto metadataManifest = codec::parseRevisionManifest(readManifest(
+        fx.dir / "revisions" / metadataOnly.newRevision->toCanonical() / "manifest.json"));
+    EXPECT_EQ(metadataManifest.introducedObjects.size(), 1u);
+    const auto objectCount = fx.objectDirCount();
+
+    // 丢弃整个存储实例，强制从磁盘清单恢复，排除内存查询缓存掩盖丢引用。
+    fx.opened.store.reset();
+    OpenStoreRequest request;
+    request.path = fx.dir;
+    request.eventBus = &fx.bus;
+    request.diagnostics = &fx.sink;
+    auto reopened = ProjectStoreFactory::open(request);
+    ASSERT_NE(reopened.store, nullptr);
+    const auto restored = reopened.store->query().head();
+    EXPECT_EQ(restored.objectRefs, expected.objectRefs);
+    EXPECT_EQ(fx.objectDirCount(), objectCount);
+    EXPECT_EQ(readManifest(manifestPath), historyBytes);
+    for (const auto& ref : {fixture, robotNew, robot}) {
+        const auto bytes = reopened.store->query().tryObject(ref.objectId, ref.contentVersion);
+        ASSERT_TRUE(bytes.has_value());
+        const std::string payload(bytes->begin(), bytes->end());
+        EXPECT_EQ(payload, ref == fixture ? "fixture-original"
+                           : ref == robotNew ? "robot-updated" : "robot-original");
+    }
+}
+
+/// ARC-01／PM-04：保留集合来自命令选定的分支/建支源，不得串入当前 HEAD 的其他分支对象。
+TEST(CommandSubmitS6, CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    const auto main = fx.primaryBranch();
+    const auto common = fx.commands().submit(fx.appendEnvelope("common", main));
+    ASSERT_TRUE(common.committed());
+    const auto commonView = fx.opened.store->query().head();
+    ASSERT_EQ(commonView.objectRefs.size(), 2u);
+    CommandEnvelope create;
+    create.branch = main;
+    create.commandType = "test-create-branch";
+    create.payloadFormatVersion = 1;
+    const std::string payload = main.toCanonical() + "\n分支A";
+    create.payloadCanonical.assign(payload.begin(), payload.end());
+    ASSERT_TRUE(fx.commands().submit(create).committed());
+    const auto tips = fx.opened.store->query().branchTips();
+    ASSERT_EQ(tips.size(), 2u);
+    const auto branch = tips[0].id == main ? tips[1].id : tips[0].id;
+    const auto branchWrite = fx.commands().submit(fx.appendEnvelope("branch-only", branch));
+    ASSERT_TRUE(branchWrite.committed());
+    const auto branchView = fx.opened.store->query().head();
+    ASSERT_EQ(branchView.objectRefs.size(), 3u);
+    const auto mainWrite = fx.commands().submit(fx.appendEnvelope("main-only", main));
+    ASSERT_TRUE(mainWrite.committed());
+    const auto mainView = fx.opened.store->query().head();
+    ASSERT_EQ(mainView.objectRefs.size(), 3u);
+    EXPECT_EQ(mainView.objectRefs[1], commonView.objectRefs[1]);
+    EXPECT_NE(mainView.objectRefs[2].objectId, branchView.objectRefs[2].objectId);
+
+    // 活动命令分支为 main，明确以另一分支建支；完整对象集应随实际 parent 取源。
+    const std::string fromOther = branch.toCanonical() + "\n从分支A派生";
+    create.payloadCanonical.assign(fromOther.begin(), fromOther.end());
+    const auto fork = fx.commands().submit(create);
+    ASSERT_TRUE(fork.committed());
+    const auto forkView = fx.opened.store->query().head();
+    EXPECT_EQ(forkView.parent, branchWrite.newRevision);
+    ASSERT_EQ(forkView.objectRefs.size(), 3u);
+    EXPECT_EQ(forkView.objectRefs[1], branchView.objectRefs[1]);
+    EXPECT_EQ(forkView.objectRefs[2], branchView.objectRefs[2]);
 }
 
 /// 事件发布失败不回滚（D-18）：总线抛出 → 提交事实不受影响（Committed＋

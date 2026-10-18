@@ -175,6 +175,11 @@ struct CommitPlan {
     /// 须匹配 ^[a-z0-9-]{3,64}（Codec 解析同级校验——测试样本不含点，
     /// P-PR-9 裁决前口径）。
     CommandRecord command;
+    /// ARC-01／§4.4.2：选定父修订中未被本次增量覆盖的业务对象引用。
+    /// 默认空保持原私有调用兼容；按基线顺序值拷贝，不接管对象字节，
+    /// 不重新发布或计入 introducedObjects。命令槽内装配、事务内消费；
+    /// 必须有效、OID 唯一，且不得与新对象或元数据对象重叠。
+    std::vector<ObjectRef> retainedObjects;
 };
 
 /**
