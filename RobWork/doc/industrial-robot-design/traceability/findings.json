@@ -3126,11 +3126,13 @@
       "id": "F-300",
       "source": "traceability/acceptance/WP-13-T04-20260923.md §4.3（attempt 1，verdict=pass，2026-09-23；F-297 验收环境陷阱家族同族新根因）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-23",
       "title": "契约 verify 清单缺测试目标构建行：tasks/foundation/WP-13-T04.json verify 数组只列 sdurws_ird_modeling 与 sdurws_ird_modeling_test 两构建目标，不含 sdurws_ird_modeling_contract_test——全新构建树按清单逐条字面执行时，ctest（第 3 条）首跑报 contract_test Not Run（Unable to find executable，exe 未被任何清单命令构建），验收者补跑 --target sdurws_ird_modeling_contract_test 后复绿 2/2。实施侧未受影响（其完整构建三目标，留痕为证），仅验收/CI 全新树口径存在清单缺口",
       "owner": "治理/编排（DTB §5.1 与契约模板 verify 数组口径补全：ctest 前先构建单元全部 *_test/_contract_test 目标，或 verify 清单逐目标列全；后续同族单元任务契约同查）",
-      "resolution": "处置建议＝DTB §5.1 增补「ctest 前构建该单元全部测试目标」通用口径（一处修订覆盖既有与后续契约），或按任务在 verify 数组补目标行；验收者实测补建后 ctest 2/2 复绿，无行为影响。编号顺延自 F-299。"
+      "resolution": "处置建议＝DTB §5.1 增补「ctest 前构建该单元全部测试目标」通用口径（一处修订覆盖既有与后续契约），或按任务在 verify 数组补目标行；验收者实测补建后 ctest 2/2 复绿，无行为影响。编号顺延自 F-299。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T04 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-301",
@@ -3167,11 +3169,13 @@
       "id": "F-304",
       "source": "traceability/acceptance/WP-13-T05-20260923.md §4.3（attempt 1，verdict=pass，2026-09-23；F-300 同型 T05 实例）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-23",
       "title": "契约 verify 清单缺测试目标构建行（F-300 同型再现）：tasks/foundation/WP-13-T05.json verify 数组只列 sdurws_ird_modeling 与 sdurws_ird_modeling_test 两构建目标，不含 sdurws_ird_modeling_contract_test——全新构建树按清单逐条字面执行时，ctest（第 3 条）首跑 contract_test 将报 Not Run（exe 未被任何清单命令构建），验收者补跑 --target sdurws_ird_modeling_contract_test（退出码 0）后 ctest 2/2 复绿。实施侧未受影响（留痕表明其完整构建三目标），仅验收/CI 全新树口径存在清单缺口",
       "owner": "治理/编排（DTB §5.1 与契约模板 verify 数组口径补全——与 F-300 同一修正动作覆盖：ctest 前先构建单元全部 *_test/_contract_test 目标，或 verify 清单逐目标列全；后续同族单元任务契约同查）",
-      "resolution": "处置建议＝与 F-300 合并处置（DTB §5.1 一处通用修订覆盖既有与后续契约，或按任务在 verify 数组补目标行）；验收者实测补建后 2/2 复绿，无行为影响。编号顺延自 F-303。"
+      "resolution": "处置建议＝与 F-300 合并处置（DTB §5.1 一处通用修订覆盖既有与后续契约，或按任务在 verify 数组补目标行）；验收者实测补建后 2/2 复绿，无行为影响。编号顺延自 F-303。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T05 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-305",
@@ -3228,11 +3232,13 @@
       "id": "F-310",
       "source": "traceability/acceptance/WP-13-T06-20260923.md §4.3（attempt 1，verdict=pass，2026-09-23；验收者在全新集成树按契约 verify 清单逐条亲手执行时实测）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-23",
       "title": "F-300/F-304 家族第三例：tasks/foundation/WP-13-T06.json verify 数组缺测试目标构建行——只列 sdurws_ird_modeling_test 未列 sdurws_ird_modeling_contract_test，第 3 条 ctest -L \"^ird$\" 需两个测试 exe 均在位；全新树按清单字面执行（第 1/2 条只构建产品目标与单元测试目标）时 ctest 首跑 contract_test 将 Not Run/失败——验收者补跑 --target sdurws_ird_modeling_contract_test（退出码 0）后 ctest 2/2 通过，非实现缺陷（实施留痕表明完整构建三目标）；契约编译先例（T04/T05 已同型登记）未回灌到 T06 契约编译面",
       "owner": "契约编译所有者（CCP——后续任务契约 verify 数组补齐测试目标构建行；已发契约是否回灌由治理侧裁决）",
-      "resolution": "处置建议＝CCP 后续编译任务在 verify 数组 ctest 行之前为每个被测目标补构建行（单元＋契约测试目标各一行）；不单独返工 T06（验收已按完整口径执行并留痕）。编号顺延自 F-309。"
+      "resolution": "处置建议＝CCP 后续编译任务在 verify 数组 ctest 行之前为每个被测目标补构建行（单元＋契约测试目标各一行）；不单独返工 T06（验收已按完整口径执行并留痕）。编号顺延自 F-309。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T06 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-311",
@@ -3269,11 +3275,13 @@
       "id": "F-314",
       "source": "traceability/acceptance/WP-13-T07-20260923.md §4.3（attempt 1，verdict=pass，2026-09-23；验收者逐条执行契约 verify 数组）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-23",
       "title": "F-300/F-304/F-310 家族第四例：tasks/foundation/WP-13-T07.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行——只列 sdurws_ird_modeling 与 sdurws_ird_modeling_test 两个 --target；全新树按清单字面执行时 ctest 首跑 contract_test 将 Not Run（本单元契约测试目标实际存在并交付 5/5，验收者已亲补构建验证——非实现缺陷，属契约编译面口径缺口）",
       "owner": "CCP 契约编译会话（编译 verify 数组时对含 _contract_test 目标的任务统一补该构建行）；存量契约可随收尾批量增补",
-      "resolution": "治理侧统一处置：对本单元后续契约（T08+）编译时补齐 contract_test 构建行，并对存量 ready/done 契约择机批量勘误。编号顺延自 F-313。"
+      "resolution": "治理侧统一处置：对本单元后续契约（T08+）编译时补齐 contract_test 构建行，并对存量 ready/done 契约择机批量勘误。编号顺延自 F-313。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T07 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-315",
@@ -3441,11 +3449,13 @@
       "id": "F-338",
       "source": "traceability/acceptance/WP-13-T09-20260925.md §4.3/§3-G-1（attempt 1，verdict=fail，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "WP-13-T09 契约 verify 数组缺 sdurws_ird_modeling_contract_test 构建行：全新构建树按清单执行到 ctest 条目时 contract_test 可执行文件不存在报 Not Run（1/2），须验收者补建目标方可全量执行——F-300/F-304/F-310/F-314 家族（契约 verify 缺目标构建行）在 T09 契约复发（T08 契约曾自愈列全三目标）",
       "owner": "契约编译/治理侧（契约文件为 CCP 冻结产物，实施者不得自行改动——按 DTB §5.4 走契约修订把 sdurws_ird_modeling_contract_test 构建行补入 verify 数组）",
-      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1/attempt 2 两轮验收均按此口径取得全量结果，attempt 2 复现 ctest 2/2）。编号顺延自 F-337。"
+      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1/attempt 2 两轮验收均按此口径取得全量结果，attempt 2 复现 ctest 2/2）。编号顺延自 F-337。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T09 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-339",
@@ -3504,21 +3514,25 @@
       "id": "F-344",
       "source": "traceability/acceptance/WP-13-T10-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "tasks/foundation/WP-13-T10.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行：全新构建树按清单逐条执行至 ctest 条目（-L \"^ird$\" 含 contract_test）时该可执行文件不存在——F-300/F-304/F-310/F-314/F-338 家族（契约 verify 缺目标构建行）在 T10 契约复发（F-338 为 T09 同款、维持 open 属预期）",
       "owner": "契约编译/治理侧（契约文件为 CCP 冻结产物，实施者不得自行改动——按 DTB §5.4 走契约修订把 sdurws_ird_modeling_contract_test 构建行补入 verify 数组）",
-      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1 按此口径取得全量结果：ctest 2/2、契约 9/9）。编号顺延自 F-343。"
+      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1 按此口径取得全量结果：ctest 2/2、契约 9/9）。编号顺延自 F-343。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T10 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-345",
       "source": "traceability/acceptance/WP-13-T11-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "tasks/foundation/WP-13-T11.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行：全新构建树按清单逐条执行至 ctest 条目（-L \"^ird\" 含 contract_test）时该可执行文件不存在——F-300/F-304/F-310/F-314/F-338/F-344 家族（契约 verify 缺目标构建行）在 T11 契约复发",
       "owner": "契约编译/治理侧（契约文件为 CCP 冻结产物，实施者不得自行改动——按 DTB §5.4 走契约修订把 sdurws_ird_modeling_contract_test 构建行补入 verify 数组）",
-      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1 按此口径取得全量结果：ctest 2/2、契约 9/9）。编号顺延自 F-344。"
+      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1 按此口径取得全量结果：ctest 2/2、契约 9/9）。编号顺延自 F-344。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T11 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-346",
@@ -3564,31 +3578,37 @@
       "id": "F-350",
       "source": "traceability/acceptance/WP-13-T13-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行并核对目标构建行完备性）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "tasks/foundation/WP-13-T13.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行（ctest -L \"^ird$\" 条目含该目标）且缺 sdurws_ird_io_test 构建行（ctest -R sdurws_ird_io_test 条目的前置目标）——F-300/F-304/F-310/F-314/F-338/F-344/F-345 家族（契约 verify 缺目标构建行）在 T13 契约复发；全新构建树按清单逐条执行至 ctest 条目时报目标不存在/Not Run，须验收者补建目标方可全量执行",
       "owner": "契约编译会话（后续契约补齐 contract_test 与对端 io_test 的构建行；T08 契约曾自愈列全三目标，可在下次契约编译批量对齐）",
-      "resolution": "编号顺延自 F-349。"
+      "resolution": "编号顺延自 F-349。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T13 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test；cmake --build build --config Release --target sdurws_ird_io_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-351",
       "source": "traceability/acceptance/WP-13-T14-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行并核对目标构建行完备性）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "tasks/foundation/WP-13-T14.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行（第 3 条 ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\" 的用例集含 contract_test）——F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350 家族（契约 verify 缺目标构建行）在 T14 契约复发；本次验收已在构建命令中显式带上该目标故执行未受阻，属契约编译面口径缺口（建议级，非实现缺陷）",
       "owner": "契约编译会话（后续契约补齐 contract_test 构建行；T08 契约曾自愈列全三目标，可在下次契约编译批量对齐）",
-      "resolution": "编号顺延自 F-350。"
+      "resolution": "编号顺延自 F-350。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T14 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-352",
       "source": "traceability/acceptance/WP-13-T15-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行并核对目标构建行完备性）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "tasks/foundation/WP-13-T15.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行（第 4 条 ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\" 的用例集含 contract_test）——F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351 家族（契约 verify 缺目标构建行）在 T15 契约复发；本次验收已在构建命令中显式带上该目标故执行未受阻，属契约编译面口径缺口（建议级，非实现缺陷）",
       "owner": "契约编译会话（后续契约补齐 contract_test 构建行；T08 契约曾自愈列全三目标，可在下次契约编译批量对齐）",
-      "resolution": "编号顺延自 F-351。"
+      "resolution": "编号顺延自 F-351。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-13-T15 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_modeling_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-353",
@@ -3644,11 +3664,13 @@
       "id": "F-358",
       "source": "traceability/acceptance/WP-14-T02-20260925.md §1/4.3（attempt 1，verdict=pass，2026-09-25；验收者在全新构建树按 verify 清单执行后自行补建 sdurws_ird_requirements_test/_contract_test 并执行 18+5 全过）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-25",
       "title": "tasks/foundation/WP-14-T02.json verify 数组缺测试目标构建行与 ctest 行（F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352 家族新例，首个 requirements 单元实例）：verify 仅列 configure＋sdurws_ird_requirements 构建＋validate-docs 三条，而任务自身 acceptance 3/4 即要求 _test/_contract_test 注册——note ③「本任务尚无测试文件故无 ctest 行」在契约编译时点成立、实现后失实。属契约编译期固有滞后形态：建议治理面在契约模板或收尾段吸收「测试目标构建/ctest 行随实现面回填」规则（同族 11 例共用处置）",
       "owner": "治理会话（WP-01-T03/契约维护面——家族统一处置，非本任务返工项；验收已补执行，结果与送验声称一致）",
-      "resolution": "编号顺延自 F-357（WP-14-T02 验收者取号基准＝worktreeA 检出 findings.json 最大号）。"
+      "resolution": "编号顺延自 F-357（WP-14-T02 验收者取号基准＝worktreeA 检出 findings.json 最大号）。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-14-T02 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test；ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-359",
@@ -3737,21 +3759,25 @@
       "id": "F-367",
       "source": "traceability/acceptance/WP-14-T04-20260926.md §1/4.3（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352/F-358 家族新例：tasks/foundation/WP-14-T04.json verify 数组缺两测试目标（sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test）的显式构建行（仅库名构建＋ctest＋validate-docs 三行）——ctest 行存在故测试二进制有构建口径依赖但无字面构建命令，全新构建树按 verify 清单逐条执行会因测试 exe 未构建而失败；验收者已按家族在案口径在全新构建树自行补建两目标并执行（75/75＋5/5 双模式全绿），属验收者侧正常动作；建议契约模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行",
       "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
-      "resolution": "编号顺延自 F-366。"
+      "resolution": "编号顺延自 F-366。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-14-T04 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-368",
       "source": "traceability/acceptance/WP-14-T05-20260926.md §4.3（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352/F-358/F-367 家族新例：tasks/foundation/WP-14-T05.json verify 数组仅列 sdurws_ird_requirements 一条构建目标行，缺 sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test 两条显式构建行（ctest 行在位，较 F-358 缺口窄）——全新构建树按 verify 清单逐条字面执行时 ctest 将因测试 exe 未被任何清单命令构建而 Not Run；验收者已按家族在案口径在集成/冒烟两条全新构建树自行补建两目标并执行（108/108＋5/5 全绿、ctest 2/2），属验收者侧正常动作；建议契约编译模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行（与 F-367 处置建议合并落地面）",
       "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
-      "resolution": "编号顺延自 F-367。"
+      "resolution": "编号顺延自 F-367。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-14-T05 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-369",
@@ -3777,11 +3803,13 @@
       "id": "F-371",
       "source": "traceability/acceptance/WP-14-T06-20260926.md §4.3（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352/F-358/F-367/F-368 家族新例：tasks/foundation/WP-14-T06.json verify 数组仅 3 行（sdurws_ird_requirements 构建行＋ctest 行＋validate-docs 行），缺 sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test 两条显式构建行——全新构建树按 verify 清单逐条字面执行时 ctest 将因测试 exe 未被任何清单命令构建而 Not Run；验收者已按家族在案口径在集成/冒烟两条全新构建树自行补建两目标并执行（123/123＋5/5 全绿、ctest 2/2），属验收者侧正常动作；建议契约编译模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行（与 F-367/F-368 处置建议合并落地面）",
       "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
-      "resolution": "编号顺延自 F-370。"
+      "resolution": "编号顺延自 F-370。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-14-T06 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-372",
@@ -3797,11 +3825,13 @@
       "id": "F-373",
       "source": "traceability/acceptance/WP-14-T07-20260926.md §4.3（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "F-300/F-358/F-367/F-368/F-371 家族新例：tasks/foundation/WP-14-T07.json verify 数组仅 3 行（sdurws_ird_requirements 构建行＋ctest 行＋validate-docs 行），缺 sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test 两条显式构建行——全新构建树按 verify 清单逐条字面执行时 ctest 将因测试 exe 未被任何清单命令构建而 Not Run；验收者已按家族在案口径在集成/冒烟两条全新构建树自行补建两目标并执行（141/141＋5/5 全绿、ctest 2/2），属验收者侧正常动作；建议契约编译模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行（与 F-367/F-368/F-371 处置建议合并落地面）",
       "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
-      "resolution": "编号顺延自 F-372（WP-14-T07 验收者取号基准＝worktreeA 检出 findings.json 现有最大号）。"
+      "resolution": "编号顺延自 F-372（WP-14-T07 验收者取号基准＝worktreeA 检出 findings.json 现有最大号）。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-14-T07 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-374",
@@ -3817,11 +3847,13 @@
       "id": "F-375",
       "source": "traceability/acceptance/WP-14-T08-20260926.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "F-300/F-358/F-367/F-368/F-371/F-373 家族新例：tasks/foundation/WP-14-T08.json verify 数组仅 3 行（sdurws_ird_requirements_plugin 构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_requirements_test 与 sdurws_ird_requirements_contract_test 两测试目标构建行——ctest 条目虽按名执行两目标但契约未登记其构建动作；验收者已在全新构建树（D:/acc_t08/build-int）自行补建两目标后执行 ctest（验收者侧正常动作，非缺陷回避），结论不受影响",
       "owner": "治理面（与家族既往条目同口径：契约收尾/后续治理任务随 WP-14-T08 翻转时在 verify 数组补两行测试目标构建命令；或按 F-300 家族总处置一次收口）",
-      "resolution": "编号顺延自 F-374。"
+      "resolution": "编号顺延自 F-374。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-14-T08 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-376",
@@ -3878,11 +3910,13 @@
       "id": "F-381",
       "source": "traceability/acceptance/WP-15-T02-20260926.md §4.3（attempt 1，verdict=pass，2026-09-26）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-26",
       "title": "F-300/F-358/F-367/F-368/F-371/F-373/F-375 家族新例：tasks/foundation/WP-15-T02.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ird_gates 构建行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两条显式构建行与 ctest 行——全新构建树按 verify 清单逐条字面执行时测试 exe 不被任何清单命令构建、ctest 亦不在清单。验收者已按家族在案口径在集成/冒烟两棵全新构建树自行补建两目标并执行（12/12＋5/5 全绿、ctest -L \"^ird$\" 2/2 两模式），属验收者侧正常动作；建议契约编译模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」与 ctest 行（与 F-367/F-368/F-371/F-373/F-375 处置建议合并落地面）。",
       "owner": "契约编译/治理维护者（契约模板统一补行时一并处置）；kinematics 实施会话无独立动作",
-      "resolution": "编号顺延自 F-380。"
+      "resolution": "编号顺延自 F-380。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-15-T02 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test；ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-382",
@@ -4040,11 +4074,13 @@
       "id": "F-397",
       "source": "traceability/acceptance/WP-15-T06-20260927.md §4.3（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-27",
       "title": "tasks/foundation/WP-15-T06.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（62/62＋43/43 两模式实测），不构成验收阻断。建议后续契约治理按家族批量修订时补齐本契约两行。",
       "owner": "契约编译/治理会话（家族批量修订时补齐本契约两行）",
-      "resolution": "编号顺延自 F-396。"
+      "resolution": "编号顺延自 F-396。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-15-T06 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-398",
@@ -4060,11 +4096,13 @@
       "id": "F-399",
       "source": "traceability/acceptance/WP-15-T07-20260927.md §4.3（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-27",
       "title": "tasks/foundation/WP-15-T07.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（集成 69/69＋50/50、冒烟 63/63＋50/50 实测），不构成验收阻断。建议后续契约治理按家族批量修订时补齐本契约两行。",
       "owner": "契约编译/治理会话（家族批量修订时补齐本契约两行）",
-      "resolution": "编号顺延自 F-398。"
+      "resolution": "编号顺延自 F-398。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-15-T07 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-400",
@@ -4080,11 +4118,13 @@
       "id": "F-401",
       "source": "traceability/acceptance/WP-15-T08-20260927.md §4.3（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-27",
       "title": "tasks/foundation/WP-15-T08.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397/F-399 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（集成 82/53、冒烟 76/53 两模式实测），不构成验收阻断。建议后续契约治理按家族批量修订时补齐本契约两行。",
       "owner": "契约编译/治理会话（家族批量修订时补齐本契约两行）",
-      "resolution": "编号顺延自 F-400。"
+      "resolution": "编号顺延自 F-400。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-15-T08 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-402",
@@ -4110,11 +4150,13 @@
       "id": "F-404",
       "source": "traceability/acceptance/WP-15-T09-20260927.md §4.3（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-27",
       "title": "tasks/foundation/WP-15-T09.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397/F-399/F-401 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（集成 99/53、冒烟 93/53 两模式实测），不构成验收阻断。建议后续契约治理按家族批量修订时补齐本契约两行。",
       "owner": "契约编译/治理会话（家族批量修订时补齐本契约两行）",
-      "resolution": "编号顺延自 F-403。"
+      "resolution": "编号顺延自 F-403。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-15-T09 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-405",
@@ -4160,11 +4202,13 @@
       "id": "F-409",
       "source": "traceability/acceptance/WP-15-T11-20260927.md 三/建议级（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-27",
       "title": "tasks/foundation/WP-15-T11.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397/F-399/F-401/F-404 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（集成 130/130＋53/53、冒烟 124/124＋53/53 实测），不构成验收阻断。",
       "owner": "契约治理会话（后续按家族批量修订时补齐本契约两行）",
-      "resolution": "编号顺延自 F-408。"
+      "resolution": "编号顺延自 F-408。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-15-T11 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-410",
@@ -4180,11 +4224,13 @@
       "id": "F-411",
       "source": "traceability/acceptance/WP-15-T12-20260927.md 三/建议级（attempt 1，verdict=pass，2026-09-27）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-27",
       "title": "tasks/foundation/WP-15-T12.json verify 数组 4 行（sdurws_ird_kinematics 产品库构建行＋sdurws_ird_kinematics_plugin 插件目标构建行＋ctest -L \"^ird$\" 行＋validate-docs 行）仍缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397/F-399/F-401/F-404/F-409 家族新例（本批 WP-15 任务契约逐单复发形态）；与家族前例的差异＝本契约 verify 数组因 _plugin 落位增为 4 行，但两测试目标构建行仍缺。全新构建树复现 verify 第 3 行（ctest）时测试可执行文件不存在报 2×\"Not Run\"（WP-15-T12 验收者亲历实证），补建两测试目标后 ctest 2/2 通过（集成 148/148＋1 envUnavailable＋57/57、冒烟 142/142＋1 envUnavailable＋57/57 实测），不构成验收阻断。",
       "owner": "契约治理会话（后续按家族批量修订时补齐本契约两行）",
-      "resolution": "编号顺延自 F-410（WP-15-T12 送验分支登记的框架 RobWorkSim 既有错误条目；本条与该条分别随任务分支与验收 evidence 分支合入，合并后全局编号连续）。"
+      "resolution": "编号顺延自 F-410（WP-15-T12 送验分支登记的框架 RobWorkSim 既有错误条目；本条与该条分别随任务分支与验收 evidence 分支合入，合并后全局编号连续）。",
+      "resolution": "契约 verify 补行（2026-10-18 F-300 家族整族回填）：WP-15-T12 的 verify 数组增补测试目标构建行 [cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test]；validate-task PASS。规则来源＝CCP §2 v1.4（含 _test/_contract_test 的任务必须显式登记构建行且先于 ctest 行）。",
+      "fixedAt": "2026-10-18"
     },
     {
       "id": "F-412",

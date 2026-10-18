@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.3（2026-09-27：F-414 口径裁定随附——branch 两种小写句法等价任选，消除"单元任务必须 wp 映射式"歧义；v1.2＝B.1 批次原子放行、manifest 顺序与 WP-24-T03 外部门禁；当前禁止使用子智能体，评审与放行由治理会话顺序执行） |
+| 文档版本 | v1.4（2026-10-18：§2 verify 门槛增补——含 `_test`/`_contract_test` 的任务必须显式登记测试目标构建行且位于 ctest 行之前；F-300 家族 23 条契约回填的模板规则来源。前一版 v1.3＝F-414 branch 句法裁定） |
 | 文档代号 | CCP |
 | 上游 | development-task-breakdown.md §2/§8（任务行登记与契约家族归属）、units/&lt;unit&gt;.md 任务拆分表（编译源）、acceptance-protocol.md §2（评审独立性）、automation-pipeline.md §0（阅读阶梯的前提） |
 | 适用范围 | `tasks/` 与 `tasks/foundation/` 下一切执行契约的 planned→ready 编译，及 ready 契约的后续修订 |
@@ -36,7 +36,7 @@
 | `dependsOn` | 只编码**真实技术前置**（目标存在/公共头可用/CR 门禁未关闭等）；"建议先做"之类的顺序偏好归 queue 严格次序承载，不进 dependsOn。机器校验：引用必须存在（validate-task ①） |
 | `designRefs` | 每条 `path#锚点`：锚点指向卡内任务行所在节＋直接支撑实现的接口/数据模型节；`traceability/**` 等过程留痕文件可整读、不强制锚点。机器校验：设计文档锚点必须真实存在（validate-task ②）——锚点失真＝实施者读错章节＝静默实现偏差 |
 | `allowedFiles` / `forbiddenFiles` | 允许面精确到目录 `/**` 或逐文件；**需要同步的治理文档必须显式列入 allowedFiles**（CORE-T01 教训：allowedFiles 不含文档路径，留痕被迫拆提交）；forbiddenFiles 至少含上游需求/架构正文 |
-| `verify` | 每条可在仓库根独立执行、结论二元可判；脚本调用口径见 DTB §5.1 |
+| `verify` | 每条可在仓库根独立执行、结论二元可判；脚本调用口径见 DTB §5.1。**测试面完备性（v1.4，F-300 家族教训）**：任务含 `_test`/`_contract_test` 目标时，verify 必须显式登记对应目标的构建行（`cmake --build build --config Release --target <目标…>`），且该行须位于任何按名执行该目标的 ctest 行**之前**——否则全新构建树按清单字面执行会在 ctest 处报 Not Run（验收者被迫手工补建）；契约编译评审须逐条核对 ctest 行涉及的可执行目标均有前置构建行 |
 | `branch` | 任务分支名（v1.1 必填，ready 门槛）：小写 `<前缀>-t<序号>` 句法，**两种形态等价任选**——`wp<nn>-t<kk>`（单元任务按 ≙ 映射，如 TK-T01→wp02-t01；既有家族惯例）或 `<单元/族前缀>-t<序号>`（如 UI-T19→ui-t19；治理族 `doc-t<nn>` 同此句法）。同一契约/批次内 manifest、queue、留痕与本字段**同名同值**（唯一来源在此，queue 只携带指针）；跨批次不强制统一两种形态（所有者 2026-09-27 F-414 裁定） |
 | `interUnit` | **必填 bool（v1.1 收紧：缺字段即校验失败，不再容忍省略）**：任务是否消费/产出跨单元公共接口——含构建层建立单元间依赖边（如 T01 落位建立 unit→core 边，T-2 白名单边也算跨单元交互）；纯单单元/纯治理任务为 false。判定依据须能在编译评审中陈述（见 traceability/contract-compile-log.md 补录批次的逐份判定先例） |
 | `acceptance` | **逐条可独立验证**：每条映射卡内 UT 编号/具名测试、可复现命令或可核对产物形态，条目数与卡内任务行"完成条件"对齐；**禁止**"实现本文对应任务行定义的接口和不变量"式泛化文案 |
@@ -78,4 +78,5 @@ DOC-T14 及其 11 份后续契约属于一个不可拆分的治理批次，但�
 | --- | --- | --- |
 | v1.0 | 2026-09-10 | 随流水线 v1.3 审核修复建立：编译角色与时机、逐字段 ready 门槛（含 interUnit/knownPitfalls"陷阱随契约走"）、七步编译与独立评审、编卡任务质量标准、契约缺陷处置路径 |
 | v1.1 | 2026-09-10 | 二轮审查修复（P1-4：门槛此前实际未生效）：①interUnit 由"建议 bool"收紧为 ready/done 必填 bool（validate-task 缺字段即失败——此前 139/139 份契约集体缺失等于守卫被绕空）；②新增 branch 必填字段（PIPE v1.4 结构化 queue 的唯一来源）；③traceability/contract-compile-log.md 建册，既有 10 份 ready/done 契约按补录批次登记（branch/interUnit/knownPitfalls 逐份判定留痕），后续编译不再有补录 |
+| v1.4 | 2026-10-18 | F-300 家族（23 条契约 verify 缺测试目标构建行）整族回填：§2 verify 门槛增补测试面完备性——含 `_test`/`_contract_test` 的任务必须显式登记构建行且先于 ctest 行；机器校验零变化（validate-task 不新增字段检查），属编译评审口径强化 |
 | v1.3 | 2026-09-27 | F-414 口径裁定（所有者 2026-09-27，DOC-T14 独立评审发现随附）：§2 branch 门槛措辞修订——`wp<nn>-t<kk>`（≙ 映射）与 `<单元/族前缀>-t<序号>` 两种小写句法**等价任选**，批内 manifest/queue/契约同名同值即可、跨批不强制统一；消除"单元任务必须 wp 式"的歧义读法，B.1 批次 11 份契约（ui-t19 等）据此免改名。机器校验零变化 |

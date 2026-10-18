@@ -43,6 +43,7 @@
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_kinematics",
     "cmake --build build --config Release --target sdurws_ird_kinematics_plugin",
+    "cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test",
     "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],

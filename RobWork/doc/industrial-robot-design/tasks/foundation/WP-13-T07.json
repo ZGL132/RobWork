@@ -36,6 +36,7 @@
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_modeling",
     "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "cmake --build build --config Release --target sdurws_ird_modeling_contract_test",
     "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
     "cmake --build build --config Release --target ird_gates",
     "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T07.json",

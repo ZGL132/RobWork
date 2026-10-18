@@ -39,6 +39,7 @@
   ],
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_requirements",
+    "cmake --build build --config Release --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test",
     "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-18T11:36:11+08:00",
+  "generatedAt": "2026-10-18T11:45:13+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 6626,
-    "totalBytes": 209057110,
+    "totalFiles": 6627,
+    "totalBytes": 209070573,
     "byKind": {
-      "benchmark": 8,
-      "acceptance-record": 515,
-      "gtest-report": 335,
       "json-data": 7,
+      "pipeline-artifact": 2,
+      "acceptance-record": 515,
       "log": 1,
-      "governance-record": 31,
       "markdown-doc": 41,
       "manual-acceptance": 1,
-      "pipeline-artifact": 2,
-      "build-log": 5685
+      "build-log": 5685,
+      "gtest-report": 335,
+      "benchmark": 8,
+      "governance-record": 32
     },
     "byLifecycle": {
-      "superseded": 0,
-      "historical": 544,
       "current": 49,
-      "unverified": 6033
+      "historical": 544,
+      "superseded": 0,
+      "unverified": 6034
     },
     "associated": 596,
-    "unassociated": 6030,
-    "shaComputed": 6608,
+    "unassociated": 6031,
+    "shaComputed": 6609,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 334,
     "duplicateGroupsListed": 100
@@ -51746,7 +51746,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1191863,
+      "bytes": 1201645,
       "sha256": null,
       "lifecycle": "unverified"
     },
@@ -55004,6 +55004,14 @@
       "taskIds": [],
       "bytes": 13226,
       "sha256": "b0fd9349211860ab1a8b58c0fda368ac496f3267f8010da1d51bf92be02507a9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reviews/contract-verify-backfill-20261018.md",
+      "kind": "governance-record",
+      "taskIds": [],
+      "bytes": 3681,
+      "sha256": "60f5aded874d921d814488f259bf7ccafc20d32cdd9ed2d6786bb8713fa2168c",
       "lifecycle": "unverified"
     },
     {

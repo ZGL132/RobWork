@@ -39,6 +39,8 @@
   "verify": [
     "cmake -S RobWork -B build -G \"Visual Studio 17 2022\" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON",
     "cmake --build build --config Release --target sdurws_ird_requirements",
+    "cmake --build build --config Release --target sdurws_ird_requirements_test sdurws_ird_requirements_contract_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
   "branch": "wp14-t02",
