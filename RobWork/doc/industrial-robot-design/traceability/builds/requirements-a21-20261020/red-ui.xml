@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.017" timestamp="2026-10-20T02:21:12.710" name="AllTests">
+  <testsuite name="KinEvaluationChannel" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.017" timestamp="2026-10-20T02:21:12.710">
+    <testcase name="ProjectPlan_ArbitraryRotatedFrame_REQ03_A21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="858" status="run" result="completed" time="0." timestamp="2026-10-20T02:21:12.710" classname="KinEvaluationChannel">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:903&#x0A;Value of: ack.accepted&#x0A;  Actual: false&#x0A;Expected: true&#x0A;覆盖评估切片失败：区域参考系相对基座存在任意角旋转（盒变换后非轴对齐）——R1 轴对齐盒约束，旋转参考系解析留后续任务&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:903
+Value of: ack.accepted
+  Actual: false
+Expected: true
+覆盖评估切片失败：区域参考系相对基座存在任意角旋转（盒变换后非轴对齐）——R1 轴对齐盒约束，旋转参考系解析留后续任务
+]]></failure>
+    </testcase>
+    <testcase name="RegionNamedTcpAndMissingKey_REQ01_A21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1234" status="run" result="completed" time="0.017" timestamp="2026-10-20T02:21:12.711" classname="KinEvaluationChannel">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1263&#x0A;Expected equality of these values:&#x0A;  result-&gt;position.reached&#x0A;    Which is: 0&#x0A;  1u&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1263
+Expected equality of these values:
+  result->position.reached
+    Which is: 0
+  1u
+    Which is: 1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1264&#x0A;Expected equality of these values:&#x0A;  result-&gt;position.unreachable&#x0A;    Which is: 2&#x0A;  1u&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1264
+Expected equality of these values:
+  result->position.unreachable
+    Which is: 2
+  1u
+    Which is: 1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1268&#x0A;Expected equality of these values:&#x0A;  sample.state&#x0A;    Which is: 1-byte object &lt;01&gt;&#x0A;  sample.regionObjectId == longRegion.objectId ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1268
+Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <01>
+  sample.regionObjectId == longRegion.objectId ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1280&#x0A;Value of: rejected.accepted&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1280
+Value of: rejected.accepted
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1281&#x0A;Expected: (rejected.reason.find(longRegion.name)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615&#x0A;覆盖评估已受理&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1281
+Expected: (rejected.reason.find(longRegion.name)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+覆盖评估已受理
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1280&#x0A;Value of: rejected.accepted&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1280
+Value of: rejected.accepted
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1281&#x0A;Expected: (rejected.reason.find(longRegion.name)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615&#x0A;覆盖评估已受理&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1281
+Expected: (rejected.reason.find(longRegion.name)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+覆盖评估已受理
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

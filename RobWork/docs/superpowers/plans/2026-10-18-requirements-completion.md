@@ -443,7 +443,7 @@ A-15补充三授权登记：所有者已明确回复“批准该精确补充三�
 7. 文档：本计划及requirements单元卡；已有UiPlugin精确范围内，不动公共头、存储或跨域边。
 8. 决策：无新增长期决策，落实既有UX-07，工程策略比较事项的单独确认仍由原ICommandInteraction负责。
 
-### A-21 区域参考系和独立TCP的完整计算消费（待公共设计审阅）
+### A-21 区域参考系和独立TCP的完整计算消费（2026-10-20所有者已批准）
 
 1. **行为与事实**：REQ-01/03、R03-01/02、J-02。当前projectPlan显式拒绝非符号置换旋转（已有ProjectPlan_ArbitraryRotatedFrameStillRejected真实回归），且sliceCoverage只设置模型默认TCP，未投影WorkRegion.tcpRef。三维能画出的倾斜参考系Box，计算不能静默换成包围盒；显式区域TCP不能被默认TCP替代。本项使任意合法正交参考系的同一局部采样点及姿态精确映射到基座系，并逐计划使用指定TCP。
 2. **精确公共面**：只扩展kinematics/include/sdurws/ird/kinematics/Sampling.hpp：RegionBox表尾新增默认显式单位阵orientationInBase（盒局部轴在基座系表达，size按盒局部三轴，center仍基座系m）；SamplingPlan表尾新增默认空optional<TcpRef> tcpOverride（空沿query.defaultTcp；值存在用同一快照精确解析命名键，沿A-15规则）。同头区域覆盖契约2→3、sampleSetIdentity规范编码2→3；相等比较和契约注释同步。不改公共函数签名、project格式、requirements存储或业务域互链。
@@ -464,3 +464,33 @@ A-15补充三授权登记：所有者已明确回复“批准该精确补充三�
 6. 验证：先补部署必须存在的红断言，再建构复制和安装规则；集成GUI验证文件内容、菜单提交和本地URL，独立GUI验证缺失反馈，实际安装树核对文件哈希。
 7. 文档/范围：承接所有者全部问题封闭授权，在契约精确登记ui/CMakeLists.txt、share/user-manual/index.html、units/ui.md；不改框架或依赖边。需求单元卡和新账本记录执行结果。
 8. 决策：无新增长期架构决策，沿现有userManualPath与ARCH部署布局，拒绝只补缺失提示或依赖联网帮助。
+
+### A-21 身份入口补充设计（2026-10-20，所有者已精确批准）
+
+1. 行为：原身份函数仅接受ContentIdentity和预算，无法读取本次批准新增的旋转/TCP；同计划摘要下仅改这两字段必须换样本身份，不能让调用方凭记忆手工补摘要。
+2. 精确公共面：仅在已经放行的Sampling.hpp新增同名重载`sampleSetIdentity(const SamplingPlan&, const RegionSamplingBudget&)`，返回ContentIdentity；原签名保留。旧签名定义为单位阵/空override的兼容入口，与相同默认值的完整计划重载结果一致。不改其他公共头或存储。
+3. 编码/失败：v3在原布局后追加旋转9个f64（行主序、-0规范为+0）、override存在位u32、存在时toolObject原始16字节及tcpKey的u32 UTF-8字节长度和值；非有限/非正交/反射旋转和非法override身份拒绝，阈值沿IK旋转合法性1e-9。旧v2身份不命中v3。中心/尺寸/其他原定义仍由planContentIdentity承诺，新增两字段由重载直接纳入，禁止改写来源计划身份。
+4. 生命周期：纯值只读，不持外部指针；身份权威仍是kinematics本单元，宿主及快照构造者调用同一公开函数，零重复编码器。
+5. 线程：两重载均纯函数、并发安全；不枚举样本，不启动任务；空间时间成本固定加TCP键长度。
+6. 测试：旧签名与默认完整计划等值；仅改旋转/同对象不同TCP键/不同工具均换身份；threadCount不入身份；-0同义；非有限/非正交拒绝；WorkspaceSampler重算对账必须使用完整重载，真实快照旧身份不得假通过。
+7. 文件范围：只补这一个公共重载，实现在原A-21已批准的Sampling.cpp；Evaluators.cpp改调用，测试和单元卡仍在原批准范围。不扩展公开依赖边和其他接口。
+8. 决策：选择公开完整计划重载；拒绝UI私自改写requirements计划摘要（来源身份混淆），拒绝每个宿主复制新增字段编码（身份权威分叉）。这是对A-21身份规则实现入口的遗漏补齐，按公共设计门另行审阅；批准前先推进原批准的数值/投影及回归，不写新重载。
+
+
+### A-23 工程策略真实编辑与按修订解析（设计稿，待所有者审阅）
+
+1. **行为与事实**：OPEN-02、UX-08/ARC-05/MDL-06。正式宿主使用UnloadedPolicySource；摘要卡点击只显示延期提示；modeling处理器固定捕获系统缺省策略对象/空版本，无法随项目策略修订更新。本项让统一“修改策略…”入口编辑实际策略，取消零写，确认由①命令端口产生新内容版本/修订，摘要与模型行程比较消费同一修订的发布策略。不可仅显示已装载或修改本地布尔开关。
+2. **精确公共变化**：仅在modeling/include/sdurws/ird/modeling/CommandHandlers.hpp::HandlerServices表尾增加默认空`std::function<policy::PolicyResolution(const project::RevisionView&)> resolvePolicyForRevision`。空回调保持原policyProvider/policyObject/policyVersion兼容路径；非空时处理器传本次prepare的baseSnapshot，回调只解析该不可变修订的策略，不能读取漂移HEAD代替。原公共方法和项目存储格式不变。UI卡→命令路由使用现有CommandRegistry和私有createPolicySummaryCard回调，不新增UI公共接口。
+3. **失败与持久化**：新项目无项目策略时，编辑表单明确展示系统缺省（行程4π rad、其余未设不发明阈值）；仅首次确认才由project分配策略ObjectId。宿主私有命令处理器经现有PolicyCodec/解析器验证全字段并生成ObjectWrite/inverse，使用既有编码，不创造第二套策略schema；非法值/冲突规则/悬空对象阻止且定位字段，取消、只读、基线改变均零提交。一个修订存在多个候选策略时显式诊断，不擅自挑首项。旧无策略项目继续系统缺省，不能把保留身份伪装成可写项目策略。
+4. **所有权与权威**：私有HostEngineeringPolicy适配器由UiPlugin持有，project负责对象/修订，policy负责解析/规范化/身份，runtime负责名称。按修订构造/持有稳定的PolicyProvider上下文，避免将可变闭包用于其(对象,版本)缓存；模型处理器使用新回调取得已发布纯值。策略摘要和计算读相同发布对象；后台请求捕获不可变策略及内容身份，项目关闭/切换清除旧状态。任何碰撞设施缺失保持DataInsufficient，不以开关为true冒充已检查。
+5. **线程与身份**：编辑与提交在UI/现有命令串行通道；Provider按只读修订使用，不将Qt带入modeling/policy。策略语义身份完全复用PolicyCodec/发布管线的SI归一、排序与舍入，不另计算摘要。旧任务保留提交时身份，策略提交后重绑评估纪元并失效旧显示结果，正式证据当前性仍由evidence权威判定。未应用需求草稿不能改策略或伪造正式证据。
+6. **验证矩阵**：先记录真实宿主摘要未装载/延期入口与固定策略缺陷；模型真实命令用例验证baseline两修订不同阈值、回调空值兼容、非法策略阻断及用户比较确认。GUI逐字段（碰撞域/间距/相邻过滤/必检忽略对及理由、行程开关/阈值、近限位比/条件数、适用范围与来源）验证确认、取消、只读、冲突和一次撤销/重做。正式宿主保存/关闭/重开/分支与跨项目隔离，改阈值使真实MDL-06比较结果变化；下游缺碰撞设施如实不足。双模式、门禁、文档、scope/lint和截图/日志留痕。测试替身只放端口，不替代解析或计算。
+7. **精确文件面**：公共头仅上述一份；实现modeling/src/CommandHandlers.cpp，回归modeling/test/CommandHandlersTest.cpp；UI私有新增plugin/HostEngineeringPolicy.hpp/.cpp，修改plugin/UiPlugin.hpp/.cpp、KinEvaluationChannel.hpp/.cpp、src/PolicySummaryCard.cpp、WorkbenchShell_p.hpp、WorkbenchContent.cpp、ui/CMakeLists.txt及ui/test/**、gui_test/**、contract_test/**中本项用例。同步units/ui.md、modeling.md、policy.md、requirements.md、任务契约、本计划及新增证据。未列出的公共头/业务域实现、框架、存储格式不在本设计范围；轨迹供数、mesh与完整正式证据链仍单列，不借此批准扩面。
+8. **决策/设计门**：采用基线修订解析回调，拒绝可变HEAD代理冒充系统缺省策略、运行期重复注册处理器、UI私存计算阈值。沿既有六端口和PolicyCodec，无新长期存储机制。该公共尾字段及跨单元装配须先按ird-design-change获所有者审阅；本节仅设计，批准前不实施A-23产品代码。
+
+### A-21 实施与真实复验留痕（2026-10-20）
+
+- A-21及身份重载均按所有者批准实施；任意参考旋转、局部采样/完整姿态、逐计划TCP、缺默认素材隔离及v3统一身份均已真实验证。同区域多计划TCP隔离另经先红后绿，前置零样本不偏移计划归属。
+- 最终18套件XML与逐例报告对账：2250项记录，2246通过、0失败、4既有环境登记跳过；集成Release全量构建、独立相关9目标、ird_gates及verify-task通过。最终两个正式宿主tour分别235/245条断言通过、零失败，53张截图；两点各25个真实黄色像素、八角叠合及保存重开通过。
+- 新增不可变证据：`RobWork/doc/industrial-robot-design/traceability/builds/requirements-a21-20261020/`，详见FOLLOWUP.md、OPEN-ISSUES.md及verification-summary.json。原失败和驱动失误保留分类，不混入最终通过统计。
+- OPEN-01与OPEN-06封闭，OPEN-02/03/04/05/07/08继续开放；本批不构成原120项全量终验，不自行合入redesign-main。A-23仍待公共设计审阅，没有实施。

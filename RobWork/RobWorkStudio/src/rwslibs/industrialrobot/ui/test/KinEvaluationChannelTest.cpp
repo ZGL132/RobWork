@@ -709,11 +709,8 @@ TEST(KinEvaluationChannel, ProjectPlan_InvertedBasePreset_KIN_P1)
                          rw::math::Vector3D<double>(0.0, 0.0, 0.3), 1e-12);
 }
 
-/// 侧装安放（Wall 预设 R_y(π/2)，基座世界位 (1,0,0)）＋非立方盒
-/// Grid 2×1×1：钉住轴交换半区——参考系盒经轴交换旋转后**仍然轴对齐**
-/// （预设矩阵为符号置换阵），尺寸随轴置换、中心点精确变换。世界盒 z 边
-/// 0.6 m 转为基座盒 x 边，域体心采样两格落基座 x＝−0.3±0.15——尺寸
-/// 置换与中心变换同时可观测。
+/// A-21/REQ-03：侧装基座下仍沿参考系局部X划分两格，不能把计数改挂到基座X。
+/// World格心(0.6,0,0.3)/(0.7,0,0.3)必须精确映到基座(-0.3,0,-0.4/-0.3)。
 TEST(KinEvaluationChannel, ProjectPlan_WallBasePreset_KIN_P1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-04", "KIN-07", "MDL-22"},
@@ -762,29 +759,21 @@ TEST(KinEvaluationChannel, ProjectPlan_WallBasePreset_KIN_P1)
     const std::vector<rw::math::Vector3D<double>> positions =
         positionKindSamples(*result);
     ASSERT_EQ(positions.size(), 2U);
-    // 投影盒期望（基座系）：中心＝R_y(−π/2)·((0.65,0,0.3)−(1,0,0))
-    // ＝(−0.3,0,−0.35)；尺寸＝(size_z,size_y,size_x)＝(0.6,0.4,0.2)
-    // （轴交换置换——世界盒 z 边 0.6 转为基座盒 x 边）。域 Grid 体心
-    // 采样在**投影后的基座盒**内沿基座 x 取两格：x＝−0.3±0.15。
-    EXPECT_NEAR(positions[0][0], -0.45, 1e-9);
+    // 独立解析：R_y(-π/2)*(worldPoint-(1,0,0))=(-z,y,x-1)。
+    // 局部X两格仍为世界X=0.6/0.7，原测试沿变换后的基座X重新分格会改变任务。
+    EXPECT_NEAR(positions[0][0], -0.3, 1e-9);
     EXPECT_NEAR(positions[0][1], 0.0, 1e-9);
-    EXPECT_NEAR(positions[0][2], -0.35, 1e-9);
-    EXPECT_NEAR(positions[1][0], -0.15, 1e-9);
+    EXPECT_NEAR(positions[0][2], -0.4, 1e-9);
+    EXPECT_NEAR(positions[1][0], -0.3, 1e-9);
     EXPECT_NEAR(positions[1][1], 0.0, 1e-9);
-    EXPECT_NEAR(positions[1][2], -0.35, 1e-9);
-    // 闭环：两样本直乘 T_world_base 回到世界点——
-    //   (−0.45,0,−0.35) → (−0.35,0,0.45)+(1,0,0)＝(0.65,0,0.45)；
-    //   (−0.15,0,−0.35) → (−0.35,0,0.15)+(1,0,0)＝(0.65,0,0.15)。
+    EXPECT_NEAR(positions[1][2], -0.3, 1e-9);
     expectWorldRoundTrip(view->worldToBase(), positions[0],
-                         rw::math::Vector3D<double>(0.65, 0.0, 0.45), 1e-9);
+                         rw::math::Vector3D<double>(0.6, 0.0, 0.3), 1e-9);
     expectWorldRoundTrip(view->worldToBase(), positions[1],
-                         rw::math::Vector3D<double>(0.65, 0.0, 0.15), 1e-9);
+                         rw::math::Vector3D<double>(0.7, 0.0, 0.3), 1e-9);
 }
 
-/// 轴交换旋转的模型参考系（ModelFrame 旋转 R_z(π/2)）精确支持：轴交换
-/// （符号置换）旋转下盒仍轴对齐——解析面按 runtime 反解设施求
-/// T_base_ref 后中心/尺寸精确置换，不拒绝（runtime 设施对任意正交旋转
-/// 均可反解，拒绝面只保留给"盒不可轴对齐表示"的任意角旋转）。
+/// 轴交换旋转参考系仍精确支持，沿原局部轴划格，中心用权威变换投影。
 TEST(KinEvaluationChannel, ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-04", "KIN-07"},
@@ -854,20 +843,20 @@ TEST(KinEvaluationChannel, ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1)
     EXPECT_NEAR(positions[0][2], 0.3, 1e-12);
 }
 
-/// 任意角旋转参考系保持显式拒绝（R1 轴对齐盒约束的诚实拒绝面——KIN-P1
-/// 只把"轴交换/轴翻转"形态纳入精确支持；任意角（如 R_z(π/6)）下盒变换
-/// 后不再轴对齐，保守包络会静默改变覆盖率语义，维持拒绝并如实告知）。
-TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrameStillRejected_KIN_P1)
+/// A-21/REQ-03：局部两点必须精确随30°参考系旋转，不得换成基座系包围盒。
+TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrame_REQ03_A21)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-04", "KIN-07"},
                   std::vector<std::string>{});
-    auto view = std::make_shared<FixtureView>();  // 地面安装（恒等）
+    // 非零世界平移及倾斜基座，参考Frame再绕Z旋转30°；复合后仍须精确还原局部格点。
+    const rw::math::Transform3D<double> worldBase({1,2,3},rw::math::Rotation3D<double>(1,0,0,0,std::cos(0.4),-std::sin(0.4),0,std::sin(0.4),std::cos(0.4)));
+    auto view = std::make_shared<FixtureView>(worldBase);
     ScriptedEditor editor(makeOneRegionOnePlanWorkset(
         rw::math::Vector3D<double>(0.65, 0.0, 0.3),
         rw::math::Vector3D<double>(0.2, 0.2, 0.2),
-        {1U, 1U, 1U}));
-    // 区域参考系改 ModelFrame，解析缝给任意角旋转 R_z(π/6)（非符号置换
-    // ——盒变换后呈 30° 斜置，RegionBox 无法精确表示）。
+        {2U, 1U, 1U}));
+    // 原局部X格心0.6/0.7 m，经Rz(π/6)后Y分别0.3/0.35 m；
+    // 若以包围盒代替有向盒，这两个精确位置就会变化。
     req::RequirementWorkingSet ws = editor.workingSet();
     const core::ObjectId frameOid = core::ObjectId::tryFromCanonical(
         "obj-44444444444444444444444444444444").value_or(core::ObjectId{});
@@ -879,9 +868,9 @@ TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrameStillRejected_KIN_P1
     constexpr double kSin30 = 0.5;                  // sin(π/6)
     KinEvaluationExecutor executor(KinEvaluationExecutor::Deps{
         &frameEditor,
-        [](const core::ObjectId&) {
+        [worldBase](const core::ObjectId&) {
             return std::optional<rw::math::Transform3D<double>>(
-                rw::math::Transform3D<double>(
+                worldBase * rw::math::Transform3D<double>(
                     rw::math::Vector3D<double>(0.0, 0.0, 0.0),
                     rw::math::Rotation3D<double>(
                         kCos30, -kSin30, 0.0,
@@ -889,8 +878,7 @@ TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrameStillRejected_KIN_P1
                         0.0, 0.0, 1.0)));
         },
         QCoreApplication::instance(), {}});
-    // 先绑定快照（拒绝必须来自切片的旋转判定而非"快照缺位"——拒绝原因
-    // 归属精确是本用例断言面的一半）。
+    // 真实发布模型视图；只在参考Frame查询端口注入给定变换，不替代采样/FK/IK。
     const core::ContentIdentity boundId =
         core::ContentIdentity::tryFromCanonical(
             "cid-3333333333333333333333333333333333333333333333333333333333333333")
@@ -903,9 +891,22 @@ TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrameStillRejected_KIN_P1
     request.snapshotId = boundId;
     request.epoch = executor.epoch();
     const KinChannelBackgroundAck ack = executor.submit(request);
-    // 受理拒绝（切片失败——旋转参考系如实拒绝，不静默扩权）。
-    EXPECT_FALSE(ack.accepted);
-    EXPECT_NE(ack.reason.find("旋转"), std::string::npos) << ack.reason;
+    ASSERT_TRUE(ack.accepted) << ack.reason;
+    for (int i = 0; i < 500 && !executor.latestCoverageResult(); ++i) {
+        QCoreApplication::processEvents();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    const auto result = executor.latestCoverageResult();
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(result->ok) << result->errorText;
+    const auto positions = positionKindSamples(*result);
+    ASSERT_EQ(positions.size(), 2u);
+    for (std::size_t i = 0; i < 2; ++i) {
+        const double x = 0.6 + 0.1 * i;
+        EXPECT_NEAR(positions[i][0], kCos30 * x, 1e-12);
+        EXPECT_NEAR(positions[i][1], kSin30 * x, 1e-12);
+        EXPECT_NEAR(positions[i][2], 0.3, 1e-12);
+    }
 }
 
 // =====================================================================
@@ -1216,6 +1217,84 @@ TEST(KinEvaluationChannel, BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09
 }  // namespace
 
 /** @brief REQ-01/09：两工具四键真实批量IK必须产生各自结果，错键/悬空在受理前定位。 */
+/**
+ * @brief A-21/REQ-01/03：同一目标的两个区域必须分别消费自己的TCP。
+ * 单移动轴行程[0,1]m；目标X=2m，默认零偏TCP超界，长TCP偏置2m在q=0可达。
+ * 对照必须来自真实IK和解析界限，不能由脚本求解器指定颜色/状态。
+ */
+TEST(KinEvaluationChannel, RegionNamedTcpAndMissingKey_REQ01_A21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "REQ-03"}, std::vector<std::string>{"AT-03"});
+    const auto original = makeModel({prismatic("a21-x", {1, 0, 0}, 0, 1)}, trans(0, 0, 0));
+    auto tools = original.tools();
+    tools[0].namedTcpOffsets = {{"long", trans(2, 0, 0)}, {tools[0].localName, trans(2, 0, 0)}};
+    auto other=tools[0]; other.objectId=idFrom<core::ObjectId>("a21-other-tool");
+    other.localName="legacy_alias"; other.tcpOffset=trans(2,0,0);
+    other.namedTcpOffsets={{"long",trans(2,0,0)}}; tools.push_back(other);
+    auto header=original.header(); auto ref=header.objectRefs.back();
+    ref.objectId=other.objectId; ref.objectTypeToken="tool-definition"; header.objectRefs.push_back(ref);
+    const auto model = runtime::CanonicalModelBuilder().setHeader(header)
+        .setWorld(original.world()).setChain(original.chain()).setTools(tools)
+        .setDefaultTcpIndex(0U).build();
+    auto ws = makeOneRegionOnePlanWorkset({2, 0, 0}, {0.02, 0.02, 0.02}, {1, 1, 1});
+    auto longRegion = ws.regions.entries.front();
+    longRegion.objectId = idFrom<core::ObjectId>("a21-long-region");
+    longRegion.name = "长TCP区域";
+    req::RequirementReference tcp;
+    tcp.kind = req::RequirementRefKind::Tool; tcp.objectId = tools[0].objectId; tcp.tcpKey = "long";
+    longRegion.tcpRef = tcp;
+    ws.regions.entries.push_back(longRegion);
+    auto longPlan = ws.plans.entries.front();
+    longPlan.objectId = idFrom<core::ObjectId>("a21-long-plan");
+    longPlan.regionRef = longRegion.objectId;
+    ws.plans.entries.push_back(longPlan);
+    // 显式DefaultTcp、真实同名键优先、另一工具的命名键和旧工具名别名，全部真实求解。
+    for (int variant=0; variant<4; ++variant) {
+        auto region=longRegion; region.objectId=idFrom<core::ObjectId>("a21-region-"+std::to_string(variant));
+        region.name="TCP解析对照"+std::to_string(variant);
+        region.tcpRef->objectId=variant<2 ? tools[0].objectId : other.objectId;
+        region.tcpRef->tcpKey=variant==0 ? "" : variant==1 ? tools[0].localName
+                                                               : variant==2 ? "long" : other.localName;
+        if (variant==0) {
+            req::RequirementReference defaultRef; defaultRef.kind=req::RequirementRefKind::DefaultTcp;
+            region.tcpRef=defaultRef; // requirements用DefaultTcp表达默认；内核空键另测。
+        }
+        ws.regions.entries.push_back(region);
+        auto plan=longPlan; plan.objectId=idFrom<core::ObjectId>("a21-plan-"+std::to_string(variant));
+        plan.regionRef=region.objectId; ws.plans.entries.push_back(plan);
+    }
+    ScriptedEditor editor(ws); ExecutorHarness h; h.rebuildExecutorWithEditor(&editor);
+    h.executor->attachView(std::make_shared<FixtureView>(model), h.boundId);
+    KinChannelBackgroundRequest request; request.kind = KinChannelBackgroundKind::RegionCoverage;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain(); const auto result = h.executor->latestCoverageResult(); ASSERT_TRUE(result);
+    ASSERT_TRUE(result->ok) << result->errorText;
+    EXPECT_EQ(result->position.planned, 6u);
+    EXPECT_EQ(result->position.reached, 4u);
+    EXPECT_EQ(result->position.unreachable, 2u);
+    for (const auto& sample : result->samples) {
+        if (sample.kind != KinChannelSampleKind::Position) { continue; }
+        EXPECT_EQ(sample.state, (sample.regionObjectId != ws.regions.entries.front().objectId
+            && sample.regionObjectId != ws.regions.entries[2].objectId)
+            ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable);
+    }
+    // 引用错误必须在受理线程定位到区域，并且零后台派发。
+    for (const bool missingTool : {false, true}) {
+        auto invalid = ws;
+        invalid.regions.entries.back().tcpRef->tcpKey = "missing";
+        if (missingTool) invalid.regions.entries.back().tcpRef->objectId = idFrom<core::ObjectId>("a21-ghost");
+        ScriptedEditor badEditor(invalid); ExecutorHarness bad;
+        bad.rebuildExecutorWithEditor(&badEditor);
+        bad.executor->attachView(std::make_shared<FixtureView>(model), bad.boundId);
+        request.snapshotId = bad.boundId; request.epoch = bad.executor->epoch();
+        const auto rejected = bad.executor->submit(request);
+        EXPECT_FALSE(rejected.accepted);
+        EXPECT_NE(rejected.reason.find(invalid.regions.entries.back().name), std::string::npos) << rejected.reason;
+        EXPECT_TRUE(bad.notes.empty());
+    }
+}
+
 TEST(KinEvaluationChannel, BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15)
 {
     IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "REQ-09"}, std::vector<std::string>{"AT-23"});

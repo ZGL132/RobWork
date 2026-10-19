@@ -1056,3 +1056,12 @@ A-15补充三（所有者已批准）：resolveSessionTcp三入口以默认工�
 ### WP-14-T12 A-16：任务位姿约束消费
 
 TaskPoseConstraint 是 kinematics 内部共享的纯值约束：六分量顺序固定为 x/y/z/roll/pitch/yaw，位置残差在 referenceInBase 参考系中计算，姿态单位为 rad。IkRequest、BatchTaskPoint 和 TaskPointIkQuery 的表尾可选值为空时保持旧 FullPose/PositionOnly 调用语义；非空时仅启用的分量进入阻尼最小二乘、收敛和独立 FK 复验。解析界限证明只在 xyz 全受约束时启用，避免用自由坐标错误证明不可达。allowToolRoll 在目标工具局部 +Z 轴上生成允许旋转族，先按测地距离选取合法最近目标（扭转区间按2π周期投影），再于同一 referenceInBase 参考系提取 canonical ZYX Euler 的目标减实际最短角差；不把六分量掩码替换为轴角掩码，不因自由分量另选Euler表示。非空约束的阻尼步长按真实FK中心差分 J=-de/dq 构造，步长1e-7 rad/m、固定轴序；差分FK设施失败走既有IterationFkEvaluation失败值。180°反向轴仍产生方向残差，不因反对称部分为零当作恒等；空约束保持原几何Jacobian路径。规则解析由 UI 使用同一快照的参考帧和场景帧值完成，求解器不持有 UI 指针。契约版本分别升级为 IK 4、任务点批量 3，旧结果按版本拒绝混用。
+
+
+### WP-14-T12 A-21：有向区域与逐计划TCP（2026-10-20，所有者已批准）
+
+RegionBox表尾orientationInBase是盒局部轴到基座系的有限右手正交旋转（容差1e-9），默认单位阵；center为基座系m，size为局部轴边长m。Grid/Random先沿原局部轴生成，再以center+R*offset变换，完整姿态同样左乘R，分母、格序、种子保持。侧装/倒装也必须保留参考系局部计数，不沿变换后的基座轴重新划格；旧侧装测试的错误黄金同步纠正并保留失败证据。
+
+SamplingPlan表尾tcpOverride缺省沿query.defaultTcp，存在时只消费同一快照的工具ID与键。空键为默认偏移，真实命名键精确匹配优先于旧localName别名；显式引用缺失在装配期拒绝。缺省TCP缺失只将实际依赖它的计划标DataInsufficient，不能拖累独立TCP的合法计划。UI读取runtime权威参考变换及目录，受理前错误带区域名与修复动作，计算库不持Frame指针，不新增跨域依赖。
+
+覆盖契约版本与样本身份codec均2→3。已批准的sampleSetIdentity(SamplingPlan,budget)是完整编码入口：原7字节magic、版本、来源计划规范文本、seed后追加行主序9个小端f64（-0归+0）、u32 override存在位；存在时追加16字节工具ID及u32长度+UTF-8键。旧签名保留并转默认新增字段的同一编码器，threadCount不入身份，WorkspaceSampler使用完整计划重算冻结凭据。旧v2不得复用；项目存储不变。原计划字段仍由来源摘要承诺，不在UI改写requirements摘要。

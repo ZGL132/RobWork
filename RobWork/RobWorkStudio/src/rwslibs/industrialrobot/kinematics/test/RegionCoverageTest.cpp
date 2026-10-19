@@ -40,6 +40,8 @@
 #include <cmath>
 #include <cstdint>
 #include <functional>
+#include <cstring>
+#include <limits>
 #include <mutex>
 #include <stdexcept>
 #include <string>
@@ -134,7 +136,7 @@ evidence::SamplingPlanRef makeRef(const SamplingPlan& plan,
     ref.planContentIdentity = plan.planContentIdentity;
     ref.plannedPositionSamples = kin::plannedPositionSampleCount(plan);
     ref.plannedPoseSamples = kin::plannedPoseSampleCount(plan);
-    ref.sampleSetIdentity = kin::sampleSetIdentity(plan.planContentIdentity, budget);
+    ref.sampleSetIdentity = kin::sampleSetIdentity(plan, budget);
     return ref;
 }
 
@@ -508,15 +510,14 @@ TEST(KinRegionCoverage, SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3)
 
     // 公式黄金复算（测试侧独立组装 canonical 字节——与 Sampling.cpp 布局
     // 注逐字节一致，布局漂移即用例失败）：SHA-256 over ("IRDSSID1" ‖
-    // u32(2) ‖ u32(len) ‖ planContentIdentity 规范文本 ‖ u64 seed)。
-    // codec 版本 2＝KIN-P5/审查 A06（种子派生算法换代的全局升版——同
-    // (计划, seed) 在 v1/v2 两代算法下样本点不同，身份不得跨代假借）。
+    // u32(3) ‖ u32(len) ‖ planContentIdentity规范文本 ‖ u64 seed ‖ 默认旋转/TCP)。
+    // A-21 v3追加旋转/TCP，旧v2摘要必须失配，不能借旧快照证明新输入。
     const std::string planText = planId.toCanonical();
     std::vector<std::uint8_t> canonical;
     const char magic[] = "IRDSSID1";
     canonical.insert(canonical.end(), magic, magic + 7);
     for (int i = 0; i < 4; ++i) {
-        canonical.push_back(static_cast<std::uint8_t>((2U >> (8 * i)) & 0xFFu));
+        canonical.push_back(static_cast<std::uint8_t>((3U >> (8 * i)) & 0xFFu));
     }
     const std::uint32_t len = static_cast<std::uint32_t>(planText.size());
     for (int i = 0; i < 4; ++i) {
@@ -527,6 +528,14 @@ TEST(KinRegionCoverage, SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3)
     for (int i = 0; i < 8; ++i) {
         canonical.push_back(static_cast<std::uint8_t>((seed >> (8 * i)) & 0xFFu));
     }
+    // 默认旋转的IEEE-754位模式（单位阵：1.0=0x3ff0000000000000），
+    // 测试独立编码小端字节，不调用产品编码器。
+    const auto oldV2Bytes = canonical;
+    for (int i=0; i<9; ++i) {
+        const std::uint64_t bits = i % 4 == 0 ? 0x3ff0000000000000ULL : 0ULL;
+        for (int k=0; k<8; ++k) canonical.push_back(static_cast<std::uint8_t>(bits >> (8*k)));
+    }
+    canonical.insert(canonical.end(), 4, 0); // 默认空TCP存在位。
     core::ContentDigester digester;
     digester.update(canonical.data(), canonical.size());
     core::ContentIdentity expected;
@@ -535,6 +544,9 @@ TEST(KinRegionCoverage, SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3)
     // 实现值＝黄金复算值；同输入重算稳定；异种子必异（身份对计划参数
     // 计算而非对枚举列表——evidence §4.1.4）。
     const core::ContentIdentity computed = kin::sampleSetIdentity(planId, budget);
+    auto v2 = oldV2Bytes; v2[7] = 2U;
+    core::ContentDigester oldDigester; oldDigester.update(v2.data(), v2.size());
+    EXPECT_NE(computed.bytes, oldDigester.finalize()) << "旧v2身份不得假借v3结果";
     EXPECT_TRUE(computed == expected);
     EXPECT_TRUE(kin::sampleSetIdentity(planId, budget) == computed);
     EXPECT_FALSE(kin::sampleSetIdentity(planId, makeBudget(8U)) == computed);
@@ -551,6 +563,131 @@ TEST(KinRegionCoverage, SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3)
         EXPECT_TRUE(a.samples[i].position == b.samples[i].position);
         EXPECT_TRUE(a.samples[i].pose == b.samples[i].pose);
     }
+}
+
+/** @brief A-21/REQ-03：局部格序、随机序及完整姿态统一旋转，默认结果逐位保持。 */
+TEST(KinRegionCoverage, OrientedGridRandomAndPose_REQ03_A21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-03", "KIN-04"}, std::vector<std::string>{"AT-03"});
+    auto local = makePlan("oriented", {2, 3, 2}, 5, 3);
+    const double c = std::sqrt(3.0)/2.0;
+    // 独立解析Rz(30°)*Rx(90°)，含三维倾斜，禁止仅绕Z或交换轴的实现假通过。
+    const rw::math::Rotation3D<double> r(c,0,0.5, 0.5,0,-c, 0,1,0);
+    for (const bool random : {false, true}) {
+        local.position.method = random ? kin::PositionSamplingDefinition::Method::Random
+                                       : kin::PositionSamplingDefinition::Method::Grid;
+        local.position.randomCount = 12;
+        auto tilted = local; tilted.box.orientationInBase = r;
+        const auto base = kin::generateSampleSet({local}, makeBudget());
+        const auto actual = kin::generateSampleSet({tilted}, makeBudget());
+        ASSERT_EQ(base.samples.size(), actual.samples.size());
+        EXPECT_EQ(base.plannedPositionSamples, actual.plannedPositionSamples);
+        EXPECT_EQ(base.plannedPoseSamples, actual.plannedPoseSamples);
+        for (std::size_t n=0; n<base.samples.size(); ++n) {
+            SCOPED_TRACE(n);
+            const auto& a=base.samples[n]; const auto& b=actual.samples[n];
+            const auto d=a.position-local.box.center;
+            // 不调用产品变换辅助函数；独立展开矩阵，既核点也核工具Z轴/滚转列。
+            const rw::math::Vector3D<double> expected(local.box.center[0]+c*d[0]+0.5*d[2],
+                local.box.center[1]+0.5*d[0]-c*d[2], local.box.center[2]+d[1]);
+            for (int i=0; i<3; ++i) EXPECT_NEAR(b.position[i], expected[i], 1e-14);
+            EXPECT_EQ(a.sampleIndex,b.sampleIndex); EXPECT_EQ(a.kind,b.kind);
+            if (a.kind == kin::SampleKind::Pose) {
+                for (int j=0; j<3; ++j) {
+                    EXPECT_NEAR(b.pose.R()(0,j), c*a.pose.R()(0,j)+0.5*a.pose.R()(2,j), 1e-14);
+                    EXPECT_NEAR(b.pose.R()(1,j), 0.5*a.pose.R()(0,j)-c*a.pose.R()(2,j), 1e-14);
+                    EXPECT_NEAR(b.pose.R()(2,j), a.pose.R()(1,j), 1e-14);
+                }
+            }
+        }
+        const auto rerun=kin::generateSampleSet({tilted}, makeBudget());
+        for (std::size_t i=0; i<rerun.samples.size(); ++i) {
+            EXPECT_EQ(actual.samples[i].position,rerun.samples[i].position);
+            EXPECT_EQ(actual.samples[i].pose,rerun.samples[i].pose);
+        }
+    }
+}
+
+/** @brief A-21/CON-05：新增字段必须影响身份，非法矩阵在生成及评估入口一致拒绝。 */
+TEST(KinRegionCoverage, FullPlanIdentityAndInvalidRotation_REQ03_A21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-03", "CON-05"}, std::vector<std::string>{"AT-03"});
+    auto plan=makePlan("full-identity", {1,1,1}); const auto budget=makeBudget();
+    const auto identity=kin::sampleSetIdentity(plan,budget);
+    EXPECT_EQ(identity,kin::sampleSetIdentity(plan.planContentIdentity,budget));
+    auto threads=budget; threads.threadCount=8;
+    EXPECT_EQ(identity,kin::sampleSetIdentity(plan,threads));
+    auto negativeZero=plan; negativeZero.box.orientationInBase(0,1)=-0.0;
+    EXPECT_EQ(identity,kin::sampleSetIdentity(negativeZero,budget));
+    auto rotated=plan; rotated.box.orientationInBase=rotZ(kPi/6);
+    EXPECT_NE(identity,kin::sampleSetIdentity(rotated,budget));
+    auto tcp=plan; tcp.tcpOverride=kin::TcpRef{idFrom<core::ObjectId>("kin-tool"),"a"};
+    const auto a=kin::sampleSetIdentity(tcp,budget); EXPECT_NE(identity,a);
+    tcp.tcpOverride->tcpKey="b"; EXPECT_NE(a,kin::sampleSetIdentity(tcp,budget));
+    tcp.tcpOverride->tcpKey="a"; tcp.tcpOverride->toolObject=idFrom<core::ObjectId>("other-tool");
+    EXPECT_NE(a,kin::sampleSetIdentity(tcp,budget));
+    tcp.tcpOverride->toolObject={}; EXPECT_THROW(kin::sampleSetIdentity(tcp,budget),std::invalid_argument);
+    const auto model=twoLinkModel(); TestView view(model);
+    for (int bad=0; bad<3; ++bad) {
+        auto invalid=plan;
+        invalid.box.orientationInBase(0,0)=bad==0 ? std::numeric_limits<double>::quiet_NaN()
+                                               : bad==1 ? 2.0 : -1.0;
+        EXPECT_THROW(kin::sampleSetIdentity(invalid,budget),std::invalid_argument);
+        EXPECT_THROW(kin::generateGridPositions(invalid.box,{1,1,1}),std::invalid_argument);
+        EXPECT_THROW(kin::generateRandomPositions(invalid.box,1,42),std::invalid_argument);
+        auto query=makeQuery({invalid},nullptr);
+        EXPECT_THROW(kin::WorkspaceSampler(&view,query),std::invalid_argument);
+    }
+    // WorkspaceSampler必须消费完整计划重载；旧默认身份不能验证旋转输入。
+    auto query=makeQuery({rotated},nullptr);
+    kin::WorkspaceSampler sampler(&view,query); NoopContext context;
+    auto request=makeRequest({makeRef(rotated,budget)});
+    EXPECT_TRUE(sampler.evaluate(request,context).payload.has_value());
+    request.snapshot.samplingPlans.front().sampleSetIdentity=identity;
+    const auto mismatch=sampler.evaluate(request,context);
+    ASSERT_TRUE(mismatch.diagnostics.size()>0);
+    EXPECT_EQ(mismatch.diagnostics.front().code,std::string(kin::kKinSampleIdentityMismatch));
+}
+
+/** @brief A-21/REQ-01：缺省TCP缺失不能拖累独立TCP，默认空键仍消费默认偏移。 */
+TEST(KinRegionCoverage, PerPlanTcpRealSolverAndMissingDefault_REQ01_A21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "KIN-04"}, std::vector<std::string>{"AT-03"});
+    const auto original=makeModel({prismatic("a21-x",{1,0,0},0,1)},trans(0,0,0));
+    auto tools=original.tools(); tools.front().namedTcpOffsets={{"long",trans(2,0,0)}};
+    const auto model=rt::CanonicalModelBuilder().setHeader(original.header()).setWorld(original.world())
+        .setChain(original.chain()).setTools(tools).setDefaultTcpIndex(0U).build();
+    TestView view(model);
+    auto missing=makePlan("missing-default",{1,1,1}); missing.box.center={2,0,0};
+    auto named=missing; named.regionObjectId=regionId("named");
+    named.planContentIdentity=planIdentityFrom("named"); named.tcpOverride=kin::TcpRef{tools.front().objectId,"long"};
+    auto empty=named; empty.regionObjectId=regionId("empty");
+    empty.planContentIdentity=planIdentityFrom("empty"); empty.tcpOverride->tcpKey.clear();
+    auto query=makeQuery({missing,named,empty},nullptr);
+    query.defaultTcp.toolObject=idFrom<core::ObjectId>("missing-default-tool");
+    query.referenceQ={0}; query.iterationLimit=64;
+    NoopContext context;
+    const auto computed=kin::runRegionCoverageComputation(view,query,makeRequest({}),context);
+    EXPECT_EQ(computed.coverage.position.planned,3U);
+    EXPECT_EQ(computed.coverage.position.reached,1U);
+    EXPECT_EQ(computed.coverage.position.unreachable,1U);
+    EXPECT_EQ(computed.coverage.position.dataInsufficient,1U);
+    // 每个计划先位置后姿态：不让整体缺省工具错误掩盖合法override结果。
+    ASSERT_EQ(computed.results.results.size(),6U);
+    EXPECT_EQ(computed.results.results[0].state,kin::SampleState::DataInsufficient);
+    EXPECT_EQ(computed.results.results[2].state,kin::SampleState::Reached);
+    EXPECT_EQ(computed.results.results[4].state,kin::SampleState::Unreachable);
+    // 同一区域可注入多个计划；TCP必须按计划段消费，不能按regionObjectId取首项。
+    empty.regionObjectId=named.regionObjectId; empty.planContentIdentity=named.planContentIdentity;
+    auto zero=missing; zero.position.gridCounts={0,1,1}; // 空段不得抢占后一计划TCP。
+    auto sameRegion=query; sameRegion.plans={zero,named,empty};
+    const auto separate=kin::runRegionCoverageComputation(view,sameRegion,makeRequest({}),context);
+    EXPECT_EQ(separate.coverage.position.reached,1U);
+    EXPECT_EQ(separate.coverage.position.unreachable,1U);
+    auto invalid=query; invalid.plans[1].tcpOverride->tcpKey="missing";
+    EXPECT_THROW(kin::WorkspaceSampler(&view,invalid),std::invalid_argument);
+    invalid=query; invalid.plans[1].tcpOverride->toolObject=idFrom<core::ObjectId>("ghost-tool");
+    EXPECT_THROW(kin::WorkspaceSampler(&view,invalid),std::invalid_argument);
 }
 
 TEST(KinRegionCoverage, IdentityMismatchDropsEvidence_WP15T06_ACC3)

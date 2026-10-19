@@ -45,6 +45,71 @@ namespace sdurws::ird::kinematics {
 
 namespace {
 
+/**
+ * @brief A-21：拒绝无法表示刚体参考系的旋转，避免畸变盒被当作合法采样。
+ * @param r [in] 盒局部系到基座系的旋转，无量纲；列向量正交、det=+1。
+ * @throws std::invalid_argument 非有限/非正交/左手矩阵（调用方契约违约）。
+ * 1e-9沿用IK参考旋转合法性容差；仅吸收刚体变换舍入，不容许工程形变。
+ */
+void validateBoxOrientation(const rw::math::Rotation3D<double>& r)
+{
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            double dot = 0;
+            for (int k = 0; k < 3; ++k) {
+                if (!std::isfinite(r(k, i))) {
+                    throw std::invalid_argument("区域orientationInBase非有限：请修正参考系旋转");
+                }
+                dot += r(k, i) * r(k, j);
+            }
+            if (std::fabs(dot - (i == j ? 1.0 : 0.0)) > 1e-9) {
+                throw std::invalid_argument("区域orientationInBase非正交：请使用刚体参考系");
+            }
+        }
+    }
+    const double det = r(0,0)*(r(1,1)*r(2,2)-r(1,2)*r(2,1))
+        - r(0,1)*(r(1,0)*r(2,2)-r(1,2)*r(2,0))
+        + r(0,2)*(r(1,0)*r(2,1)-r(1,1)*r(2,0));
+    if (std::fabs(det - 1.0) > 1e-9) {
+        throw std::invalid_argument("区域orientationInBase不是右手旋转：请修正参考系");
+    }
+}
+
+/**
+ * @brief 将原轴对齐格点绕盒中心精确旋转，保留局部格序和原二维/三维分母。
+ * @param box [in] 盒中心在基座系，边长沿盒局部轴，单位m。
+ * @param p [in] 旧规则生成的轴对齐位置，单位m。
+ * @return 基座系中的有向盒采样位置；默认单位阵原样返回，保留旧浮点位模式。
+ * 纯值运算；不持外部资源；合法性由调用入口统一校验。
+ */
+rw::math::Vector3D<double> orientBoxPoint(const RegionBox& box,
+                                         const rw::math::Vector3D<double>& p)
+{
+    const auto& r = box.orientationInBase;
+    if (r == rw::math::Rotation3D<double>(1,0,0,0,1,0,0,0,1)) { return p; }
+    const auto d = p - box.center;
+    return {box.center[0] + r(0,0)*d[0] + r(0,1)*d[1] + r(0,2)*d[2],
+            box.center[1] + r(1,0)*d[0] + r(1,1)*d[1] + r(1,2)*d[2],
+            box.center[2] + r(2,0)*d[0] + r(2,1)*d[1] + r(2,2)*d[2]};
+}
+
+/**
+ * @brief 左乘盒参考旋转，令斐波那契方向和工具轴滚转均沿同一参考系表达。
+ * @param a [in] 盒局部系到基座系旋转（无量纲）。
+ * @param b [in] 旧方向/滚转生成的局部姿态（无量纲）。
+ * @return 基座系姿态；显式三阶乘积避免独立模式引用框架外联乘法符号。
+ * 纯函数、并发安全；入参由采样入口验证，无资源与失败副作用。
+ */
+rw::math::Rotation3D<double> orientSampleRotation(const rw::math::Rotation3D<double>& a,
+                                                 const rw::math::Rotation3D<double>& b)
+{
+    rw::math::Rotation3D<double> result(1,0,0,0,1,0,0,0,1);
+    for (int i=0; i<3; ++i) for (int j=0; j<3; ++j) {
+        result(i,j)=a(i,0)*b(0,j)+a(i,1)*b(1,j)+a(i,2)*b(2,j);
+    }
+    return result;
+}
+
 // =====================================================================
 // 确定性随机原语（与 Ik.cpp 初值生成同算法同形态——§3.4 随机性唯一来源
 // 的两个消费点；算法公开定版、跨平台位级一致）
@@ -163,25 +228,41 @@ void putCoverageTotals(std::vector<std::uint8_t>& out, const CoverageTotals& t)
 core::ContentIdentity sampleSetIdentity(const core::ContentIdentity& planContentIdentity,
                                         const RegionSamplingBudget& budget)
 {
-    // canonical 字节布局（codec 版本 2——布局全文见头文件函数注；登记随
-    // 卡 §14.6 v0.6（v1）与 §14.6 v0.27（v2——KIN-P5/审查 A06），evidence
-    // 冻结时以此为准对齐——P-KIN-3 三方一致义务；冻结前对账面＝快照
-    // SamplingPlanRef 逐字节比对，布局漂移即对账失败显性化，设计上安全）。
-    // ★ v2（KIN-P5/审查 A06）：Random 位置采样与 SeededRandom 初值的
-    // 种子派生算法换 64 位完整混合——同 (计划, seed) 在 v1/v2 两代算法下
-    // 产出**不同的样本点**；codec 版本不升级会让新旧两代样本集假借同一
-    // 身份（审查 A06 明确禁止），故全局升版（Grid 样本几何虽与算法无关，
-    // 其逐样本 IK 评估的初值序列同样随 v3 求解器变化——保守全局升版，
-    // 宁可身份分层多一层，不可跨代假借）。
+    // 兼容旧调用，但不沿用旧版本身份：默认新增字段也进入同一v3编码器。
+    SamplingPlan plan;
+    plan.planContentIdentity = planContentIdentity;
+    return sampleSetIdentity(plan, budget);
+}
+
+core::ContentIdentity sampleSetIdentity(const SamplingPlan& plan,
+                                       const RegionSamplingBudget& budget)
+{
+    // A-21 v3布局与公共头一致：来源摘要和种子后追加旋转/TCP，
+    // 保持唯一编码入口；不枚举样本，线程数不参与样本身份。
     std::vector<std::uint8_t> canonical;
     const char magic[] = "IRDSSID1";
     canonical.insert(canonical.end(), magic, magic + 7);
-    detail::putU32(canonical, 2U);  // codecVersion（演进即新版本，不回退）
+    detail::putU32(canonical, 3U);  // A-21：有向盒/独立TCP进入身份，旧v2拒绝混用。
     // 计划身份取规范文本字节（"cid-<64hex>" ASCII——与 core 规范文本面
     // 同源；长度前缀定界，禁裸拼接的歧义）。
-    const std::string planText = planContentIdentity.toCanonical();
+    const std::string planText = plan.planContentIdentity.toCanonical();
     putString(canonical, planText);
     detail::putU64(canonical, budget.seed);  // 预算/种子参数（threadCount 不入身份）
+
+    // 不改写requirements来源摘要：本单元仅为新增的解析值追加规范字段。
+    validateBoxOrientation(plan.box.orientationInBase);
+    for (int i=0; i<3; ++i) for (int j=0; j<3; ++j) {
+        const double x = plan.box.orientationInBase(i,j);
+        detail::putF64(canonical, x == 0.0 ? 0.0 : x); // -0与+0是同义旋转。
+    }
+    detail::putU32(canonical, plan.tcpOverride ? 1U : 0U);
+    if (plan.tcpOverride) {
+        if (!plan.tcpOverride->toolObject.isValid()) {
+            throw std::invalid_argument("区域tcpOverride工具ID无效：请重新选择工具");
+        }
+        putId128(canonical, plan.tcpOverride->toolObject);
+        putString(canonical, plan.tcpOverride->tcpKey);
+    }
 
     // SHA-256（core ContentDigester——CR-02 摘要算法唯一面）。
     core::ContentDigester digester;
@@ -198,6 +279,7 @@ core::ContentIdentity sampleSetIdentity(const core::ContentIdentity& planContent
 std::vector<rw::math::Vector3D<double>>
 generateGridPositions(const RegionBox& box, const std::array<std::uint32_t, 3>& counts)
 {
+    validateBoxOrientation(box.orientationInBase);
     std::vector<rw::math::Vector3D<double>> out;
     // 零样本判定前置：任一轴计数 0 → 乘积 0（I-REQ-6 零样本场景——空集
     // 合法，评估面判 DataInsufficient；此处不拒）。
@@ -224,7 +306,7 @@ generateGridPositions(const RegionBox& box, const std::array<std::uint32_t, 3>& 
             for (std::uint32_t iz = 0; iz < counts[2]; ++iz) {
                 const double z = minZ + (static_cast<double>(iz) + 0.5)
                     * (box.size[2] / static_cast<double>(counts[2]));
-                out.emplace_back(x, y, z);
+                out.push_back(orientBoxPoint(box, {x, y, z}));
             }
         }
     }
@@ -234,6 +316,7 @@ generateGridPositions(const RegionBox& box, const std::array<std::uint32_t, 3>& 
 std::vector<rw::math::Vector3D<double>>
 generateRandomPositions(const RegionBox& box, std::uint32_t count, std::uint64_t seed)
 {
+    validateBoxOrientation(box.orientationInBase);
     std::vector<rw::math::Vector3D<double>> out;
     out.reserve(count);
     // 种子派生确定性序列（黄金锁定）：第 k 个样本状态＝(seed, k) 完整
@@ -246,9 +329,9 @@ generateRandomPositions(const RegionBox& box, std::uint32_t count, std::uint64_t
         const double u0 = unitFromU64(splitmix64(state));
         const double u1 = unitFromU64(splitmix64(state));
         const double u2 = unitFromU64(splitmix64(state));
-        out.emplace_back(box.center[0] - box.size[0] / 2.0 + u0 * box.size[0],
+        out.push_back(orientBoxPoint(box, {box.center[0] - box.size[0] / 2.0 + u0 * box.size[0],
                          box.center[1] - box.size[1] / 2.0 + u1 * box.size[1],
-                         box.center[2] - box.size[2] / 2.0 + u2 * box.size[2]);
+                         box.center[2] - box.size[2] / 2.0 + u2 * box.size[2]}));
     }
     return out;
 }
@@ -411,7 +494,9 @@ SampleSet generateSampleSet(const std::vector<SamplingPlan>& plans,
                     rec.planContentIdentity = plan.planContentIdentity;
                     rec.kind = SampleKind::Pose;
                     rec.position = p;
-                    rec.pose = poseFromDirectionRoll(d, roll, p);
+                    const auto local = poseFromDirectionRoll(d, roll, p);
+                    rec.pose = rw::math::Transform3D<double>(p,
+                        orientSampleRotation(plan.box.orientationInBase, local.R()));
                     out.samples.push_back(std::move(rec));
                 }
             }

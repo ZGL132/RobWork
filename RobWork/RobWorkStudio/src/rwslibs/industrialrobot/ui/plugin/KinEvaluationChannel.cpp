@@ -246,65 +246,11 @@ bool KinEvaluationExecutor::projectPlan(const requirements::SamplingPlan& plan,
         return false;
     }
 
-    // ---- 第三步：盒可表示性判定（R1 轴对齐盒约束——按 runtime 设施真实
-    // 能力划定支持面，KIN-P1 A01 修复半区）。
-    // kinematics RegionBox 是基座系**轴对齐**盒；refFrame 相对基座的旋转
-    // 只有在盒映射后仍轴对齐时才能精确投影——即 R_base_ref 为**符号置换
-    // 阵**（轴交换/轴翻转：每行每列恰一个 ±1，恒等为其特例）。runtime
-    // 反解设施对任意正交旋转均可反解（纯函数无姿态限制），故判定不看
-    // "有无旋转"而看"盒可否精确表示"：安装三预设（Ground 恒等/Inverted
-    // R_x(π)/Wall R_y(π/2)——P-RT-4 冻结矩阵均为符号置换阵）与轴交换的
-    // 模型帧自此精确支持（KIN-P1 验收"平移/侧装/倒装基座安放下世界→基座
-    // 转换全部正确"；修复前旋转检测把倒装/侧装安放下的一切区域——含
-    // World 参考系——整体误拒）；任意角旋转下盒呈斜置，取保守包络会静默
-    // 放大区域、改变覆盖率语义——维持显式拒绝（审查报告 §3 A01 注"旋转
-    // 参考系……平移反例不能当作任意旋转都已实测"的保留半区），不静默
-    // 扩权。判定容差 1e-9＝装配投影的数值零（沿用原恒等检测口径：仅吸收
-    // 恒等/预设矩阵的浮点表示误差，预设矩阵元素精确 ∈{0,±1}，正交组合
-    // 不引入舍入放大）。
-    const rw::math::Rotation3D<double>& r = baseTref.R();
-    bool signedPermutation = true;
-    for (int i = 0; i < 3 && signedPermutation; ++i) {
-        int dominantCol = -1;  // 该行主导元素（|r|≈1）列号——符号置换每行恰一
-        for (int j = 0; j < 3; ++j) {
-            const double magnitude = std::fabs(r(i, j));
-            if (magnitude > 1.0 - 1e-9) {
-                if (dominantCol >= 0) {
-                    signedPermutation = false;  // 一行两主导——非置换（任意角）
-                    break;
-                }
-                dominantCol = j;
-            } else if (magnitude > 1e-9) {
-                signedPermutation = false;  // 非主导非零元素——任意角形态
-                break;
-            }
-        }
-        if (dominantCol < 0) {
-            signedPermutation = false;  // 全零行——非正交（非法旋转，拒绝）
-        }
-    }
-    if (!signedPermutation) {
-        errorText = "区域参考系相对基座存在任意角旋转（盒变换后非轴对齐）——"
-                    "R1 轴对齐盒约束，旋转参考系解析留后续任务";
-        return false;
-    }
-
-    // ---- 第四步：盒中心/尺寸精确投影（旋转已限定恒等或符号置换）。
-    // 中心：基座系中心＝T_base_ref·(参考系中心)＝P＋R·c——恒等时退化为
-    // 原平移直投（既有行为不变）；符号置换时轴交换/翻转下的精确点变换。
-    // 尺寸：|R|·size 逐行求和——符号置换每行恰一个 ±1，即取被换到该轴的
-    // 原边长（轴翻转不改边长）。这是 RegionBox（轴对齐盒）的表示换算，
-    // 非第二套变换真值——变换值全部来自 runtime 反解设施。
-    rw::math::Vector3D<double> projectedSize;
-    for (int i = 0; i < 3; ++i) {
-        double sum = 0.0;
-        for (int j = 0; j < 3; ++j) {
-            sum += std::fabs(r(i, j)) * region.box.size[j];
-        }
-        projectedSize[i] = sum;  // 单位 m（符号置换下＝被置换的原边长）
-    }
+    // A-21/REQ-03：盒局部边长保持原值，参考系旋转作为纯值进入采样内核。
+    // 任意合法刚体旋转均精确消费；包围盒会改变样本位置和覆盖率，禁止替代。
     out.box.center = baseTref.P() + baseTref.R() * region.box.center;
-    out.box.size = projectedSize;
+    out.box.size = region.box.size;
+    out.box.orientationInBase = baseTref.R();
 
     // ---- 第五步：采样定义投影（域值→域投影型——字段搬运零换算）。
     // 位置侧：工作集计划条目恒为规范化 Grid 形态（D-REQ-2——计划构建
@@ -343,9 +289,37 @@ bool KinEvaluationExecutor::projectPlan(const requirements::SamplingPlan& plan,
 
     // ---- 锚与要求值（区域锚/区域级碰撞要求——KIN-05 承接面直投；
     // 镜像溯源不入评估——域注"生成不消费"，保持缺省形态）。
+    // A-21/REQ-01：区域独立TCP与工位使用同一解析权威，只传工具ID和键。
+    // 在受理线程拒绝悬空/未知键并定位区域；后台不会静默换成默认TCP。
+    if (region.tcpRef && region.tcpRef->kind != requirements::RequirementRefKind::DefaultTcp) {
+        const auto& ref = *region.tcpRef;
+        if (!ref.wellFormed() || ref.kind != requirements::RequirementRefKind::Tool || !ref.objectId) {
+            errorText = "区域“" + region.name + "”的TCP引用非法，请重新选择工具和TCP";
+            return false;
+        }
+        const auto& tools = m_snapshot->model().tools();
+        const auto tool = std::find_if(tools.begin(), tools.end(), [&](const auto& item) {
+            return item.objectId == *ref.objectId;
+        });
+        if (tool == tools.end() || (!ref.tcpKey.empty() && ref.tcpKey != tool->localName
+            && !std::any_of(tool->namedTcpOffsets.begin(), tool->namedTcpOffsets.end(),
+                [&](const auto& entry) { return entry.first == ref.tcpKey; }))) {
+            errorText = "区域“" + region.name + "”的工具/TCP未在当前模型解析，请重新选择TCP";
+            return false;
+        }
+        out.tcpOverride = kinematics::TcpRef{*ref.objectId, ref.tcpKey};
+    }
     out.regionObjectId = region.objectId;
     out.demands.collisionFreeRequired = region.demands.collisionFreeRequired;
     out.demands.minimumJointMargin = region.demands.minimumJointMargin;
+    try {
+        // 受理前统一核对完整计划新增字段；错误必须带业务名、原因与建议动作。
+        (void)kinematics::sampleSetIdentity(out, m_config.regionBudget);
+    } catch (const std::invalid_argument& e) {
+        errorText = "区域“" + region.name + "”参考系/TCP非法：" + e.what()
+            + "；请修正该区域引用后重试";
+        return false;
+    }
     return true;
 }
 

@@ -9079,7 +9079,9 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                                 probe.name = "参考系装配验证区域";
                                 probe.refFrame.kind = kind;
                                 probe.refFrame.objectId = kind==requirements::RequirementRefKind::SceneObject ? *fixtureId : modelRef->objectId;
-                                probe.box.size = rw::math::Vector3D<>(0.02,0.02,0.02); // 夹具系m。
+                                // A-21：非中心两格使旋转错误可观测；场景参考系是已编译真值。
+                                probe.box.center={0.08,0.03,0.02}; probe.box.size={0.04,0.02,0.02}; // 局部m。
+                                probe.positionSampling.counts={2,1,1};
                                 probe.demands.collisionFreeRequired = true; // 真实缺检测器降级轨。
                                 const auto regionEdit = m_requirementsEditor.applyEdit(requirements::RequirementEdit{probe});
                                 ok(regionEdit.accepted,"step5.7 scene-frame-probe-region-valid");
@@ -9087,6 +9089,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                                 requirements::SamplingPlan plan;
                                 plan.objectId = core::ObjectId::generate();
                                 plan.regionRef = probe.objectId;
+                                plan.positionSampling=probe.positionSampling;
+                                plan.orientationSampling=probe.orientationSampling;
                                 const auto planEdit = m_requirementsEditor.applyEdit(requirements::RequirementEdit{plan});
                                 ok(planEdit.accepted,"step5.7 scene-frame-probe-plan-valid");
                                 probeEdits += planEdit.accepted ? 1 : 0;
@@ -9118,6 +9122,74 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                                         ok(outcome->downgraded && std::all_of(outcome->samples.begin(),outcome->samples.end(),
                                             [](const auto& sample) { return sample.state==kinematics::KinChannelSampleState::DataInsufficient; }),
                                            "step5.7 required-collision-unavailable-data-insufficient");
+                                        if (kind==requirements::RequirementRefKind::SceneObject) {
+                                            // 独立从正式WorkCell取世界变换，再与计算基座点及域显示世界点交叉核对。
+                                            const auto wc=studio->getWorkCell();
+                                            auto* sceneFrame=wc && name ? wc->findFrame(*name) : nullptr;
+                                            ok(sceneFrame && !wc->getDevices().empty(),"step5.7 a21-live-scene-and-base");
+                                            if (sceneFrame && !wc->getDevices().empty()) {
+                                                const auto worldRef=rw::kinematics::Kinematics::worldTframe(sceneFrame,studio->getState());
+                                                const auto worldBase=rw::kinematics::Kinematics::worldTframe(wc->getDevices().front()->getBase(),studio->getState());
+                                                std::vector<rw::math::Vector3D<>> expectedWorld;
+                                                for (double x : {0.07,0.09}) expectedWorld.push_back(worldRef*rw::math::Vector3D<>(x,0.03,0.02));
+                                                std::size_t count=0; bool computationMatches=true;
+                                                for (const auto& sample:outcome->samples) {
+                                                    if (sample.regionObjectId!=probe.objectId || sample.kind!=kinematics::KinChannelSampleKind::Position) continue;
+                                                    if (count>=expectedWorld.size() || (worldBase*sample.position-expectedWorld[count]).norm2()>1e-11) computationMatches=false;
+                                                    ++count;
+                                                }
+                                                ok(count==2 && computationMatches,"step5.7 a21-world-base-sample-exact");
+                                                m_domains->requirements->refreshFromSession();
+                                                auto* regions=m_requirementsDock->findChild<QTreeWidget*>("ird_req_region_table");
+                                                if (regions) for (int i=0;i<regions->topLevelItemCount();++i) {
+                                                    auto* row=regions->topLevelItem(i);
+                                                    if (row->text(regions->columnCount()-1).toStdString()==probe.objectId.toCanonical()) {
+                                                        regions->setCurrentItem(row); break;
+                                                    }
+                                                }
+                                                settleEvents(150);
+                                                // 生产预览透传位置和位姿两类样本，不能错误要求只有两条位置行。
+                                                std::size_t expectedCount=0;
+                                                for (const auto& sample:outcome->samples) if(sample.regionObjectId==probe.objectId) ++expectedCount;
+                                                bool displayMatches=m_reqGrid && m_reqGrid->samples.size()==expectedCount && expectedCount>=2 && m_reqBox;
+                                                if (displayMatches) for (const auto& p:m_reqGrid->samples) {
+                                                    displayMatches=displayMatches && std::any_of(expectedWorld.begin(),expectedWorld.end(),
+                                                        [&](const auto& expected) {return (p-expected).norm2()<1e-11;});
+                                                }
+                                                // 八角同样按独立局部边界核对，避免只证明点正确而盒轮廓仍错位。
+                                                if (displayMatches) for (const auto& p:m_reqBox->corners) {
+                                                    bool found=false;
+                                                    for(double x:{0.06,0.10}) for(double y:{0.02,0.04}) for(double z:{0.01,0.03})
+                                                        found=found || (p-worldRef*rw::math::Vector3D<>(x,y,z)).norm2()<1e-11;
+                                                    displayMatches=displayMatches && found;
+                                                }
+                                                ok(displayMatches,"step5.7 a21-domain-preview-matches-computation");
+                                                // 正式GL相机沿区域局部+Z看向两点，独立正交投影给出两个像素落点。
+                                                const auto savedCamera=viewer->getTransform();
+                                                const auto savedProjection=viewer->getViewCamera()->getProjectionMatrix();
+                                                const double aspect=double(glWidget->width())/glWidget->height();
+                                                rw::math::ProjectionMatrix ortho; ortho.setOrtho(-0.06*aspect,0.06*aspect,-0.06,0.06,0.001,2.0);
+                                                viewer->getViewCamera()->setProjectionMatrix(ortho);
+                                                viewer->setTransform(rw::math::Transform3D<>(worldRef*rw::math::Vector3D<>(0.08,0.03,0.32),worldRef.R()));
+                                                view->update(); settleEvents(250);
+                                                const auto pixels=glWidget->grab().toImage().convertToFormat(QImage::Format_RGB32);
+                                                // 缺碰撞设施是真实DataInsufficient，正式域投影应为黄色；不得注入显示夹具。
+                                                const auto* color=ui::palette::kSampleWeakGl;
+                                                for (int point=0;point<2;++point) {
+                                                    const int px=int((0.5+(point==0 ? -0.01 : 0.01)/(0.12*aspect))*pixels.width());
+                                                    const int py=pixels.height()/2; int hits=0;
+                                                    for (int y=std::max(0,py-9);y<std::min(pixels.height(),py+10);++y)
+                                                        for (int x=std::max(0,px-9);x<std::min(pixels.width(),px+10);++x) {
+                                                            const auto rgb=pixels.pixel(x,y);
+                                                            if (std::abs(qRed(rgb)-int(color[0]*255))<=8 && std::abs(qGreen(rgb)-int(color[1]*255))<=8
+                                                                && std::abs(qBlue(rgb)-int(color[2]*255))<=8) ++hits;
+                                                        }
+                                                    ok(hits>=9,"step5.7 a21-real-sample-pixel-"+std::to_string(point)+"="+std::to_string(hits));
+                                                }
+                                                snapPng(glWidget,"mtour-a21-oriented-samples.png");
+                                                viewer->setTransform(savedCamera); viewer->getViewCamera()->setProjectionMatrix(savedProjection);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -9140,8 +9212,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                         m_view3dGateway->handleViewDoubleClick(pixel);
                         modeling::SceneObject moved=fixture; moved.objectId=*fixtureId;
                         moved.worldPose.P()[0]+=0.1; // 世界系已知位移，m。
-                        // 区域消费者现有载体只支持轴对齐盒；90°旋转仍可精确表示。
-                        moved.worldPose.R()=rw::math::RPY<>(1.5707963267948966,0,0).toRotation3D();
+                        // A-21：30°偏航+25°横滚的真实已发布场景，覆盖任意角和三维倾斜。
+                        moved.worldPose.R()=rw::math::RPY<>(0.4363323129985824,0,0.5235987755982988).toRotation3D();
                         const auto movedBytes=codec.encode(modeling::ObjectVariant(moved),modeling::kCurrentFormatVersion);
                         ok(movedBytes.ok(),"step5.7 moved-scene-encoded");
                         if(movedBytes.ok()){
@@ -9250,7 +9322,7 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 if (!frame) { continue; } // 引用缺名或帧缺失不能构成恢复成功。
                 const auto pose = rw::kinematics::Kinematics::worldTframe(
                     frame, getRobWorkStudio()->getState());
-                const auto expectedRotation = rw::math::RPY<>(1.5707963267948966,0,0).toRotation3D();
+                const auto expectedRotation = rw::math::RPY<>(0.4363323129985824,0,0.5235987755982988).toRotation3D();
                 bool same = (pose.P() - rw::math::Vector3D<>(1.5,0.3,0.2)).norm2() < 1e-12;
                 for (int row = 0; row < 3; ++row) { for (int col = 0; col < 3; ++col) {
                     same = same && std::abs(pose.R()(row,col) - expectedRotation(row,col)) < 1e-12;

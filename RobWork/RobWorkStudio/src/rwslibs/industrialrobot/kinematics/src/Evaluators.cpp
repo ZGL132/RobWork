@@ -2114,25 +2114,29 @@ void validateRegionCoverageQuery(const IKinRuntimeView& view,
         }
     }
 
-    // TCP 键预检（defaultTcp——工具可解析时键不命中即装配违约；工具侧
-    // 缺失保留到评估期＝批量级 KIN-NO-TCP 零素材轨，T04/T05 两分口径）。
-    const runtime::CanonicalModel& model = view.model();
-    const TcpRef& tcp = query.defaultTcp;
-    if (!model.tools().empty()) {
+    // A-21：按每个计划实际选择的TCP预检。显式override引用错误是调用方
+    // 违约；缺省TCP缺失保留原KIN-NO-TCP素材语义，不能拖累其他合法计划。
+    const auto& model = view.model();
+    const auto precheck = [&](const TcpRef& tcp, bool explicitOverride) {
         const auto loc = model.findObject(tcp.toolObject);
-        if (loc.has_value() && loc->kind == runtime::CanonicalModel::ObjectKind::Tool) {
-            const runtime::CanonicalTool& tool = model.tools().at(loc->index);
-            // A-15：命名键只读同一快照目录；旧工具名别名只在实际键未命中时保留。
-            if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName
-                && !std::any_of(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
-                    [&](const auto& entry) { return entry.first == tcp.tcpKey; })) {
-                throw std::invalid_argument(
-                    "kin.region-coverage：defaultTcp tcpKey '" + tcp.tcpKey
-                    + "' 不命中工具 '" + tool.localName
-                    + "' 的 canonical TCP（帧未解析——装配期 fail-fast）");
-            }
+        if (!loc || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
+            if (explicitOverride) throw std::invalid_argument("区域tcpOverride工具未解析，请重新选择工具");
+            return;
         }
+        const auto& tool = model.tools().at(loc->index);
+        if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName
+            && !std::any_of(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+                [&](const auto& entry) { return entry.first == tcp.tcpKey; })) {
+            throw std::invalid_argument("区域TCP键“" + tcp.tcpKey + "”未在工具“" + tool.localName + "”解析");
+        }
+    };
+    for (const auto& plan : query.plans) {
+        // 单一身份入口同时验证新增旋转/引用纯值，不在评估器复制矩阵判定。
+        (void)sampleSetIdentity(plan, query.budget);
+        precheck(plan.tcpOverride.value_or(query.defaultTcp), plan.tcpOverride.has_value());
     }
+    if (query.plans.empty()) { precheck(query.defaultTcp, false); }
+
 }
 
 // ---------------------------------------------------------------------
@@ -2185,13 +2189,15 @@ WorkspaceSampler::WorkspaceSampler(const IKinRuntimeView* view,
 
     // 工具侧缺失（未配置/悬空）保留到评估期＝批量级 KIN-NO-TCP 零素材
     // （T05 两分口径同源——键不命中已在 validateRegionCoverageQuery 拒绝）。
+    const bool allUseDefault = std::none_of(m_query.plans.begin(), m_query.plans.end(),
+        [](const auto& plan) { return plan.tcpOverride.has_value(); });
     const runtime::CanonicalModel& model = m_view->model();
-    if (model.tools().empty()) {
+    if (allUseDefault && model.tools().empty()) {
         KinematicsError err;
         err.code = KinematicsErrorCode::NoTcp;
         err.detail = "TCP 未配置：快照模型无工具（KIN-NO-TCP 素材——§9.6）";
         m_setupError = std::move(err);
-    } else {
+    } else if (allUseDefault) {
         const auto loc = model.findObject(m_query.defaultTcp.toolObject);
         if (!loc.has_value()
             || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
@@ -2266,7 +2272,7 @@ evidence::EvaluationOutput WorkspaceSampler::evaluate(
         check.plannedPositionSamples = plannedPositionSampleCount(plan);
         check.plannedPoseSamples = plannedPoseSampleCount(plan);
         check.computedIdentity =
-            sampleSetIdentity(plan.planContentIdentity, m_query.budget);
+            sampleSetIdentity(plan, m_query.budget);
 
         // 快照冻结凭据核对（evidence §4.1.4——SamplingPlanRef 五字段中
         // 本单元可核对的三元：身份＋分母两值；regionObjectId 为对账键）。
@@ -2437,20 +2443,18 @@ RegionCoverageComputation runRegionCoverageComputation(
     // 观测）。与上方装配校验的分工：工具**存在**而 tcpKey 不命中＝装配
     // 违约仍 fail-fast（validateRegionCoverageQuery TCP 键预检）；工具
     // **缺失/悬空**＝素材面，走本轨。
-    std::optional<std::string> tcpSetupDeficiency;
-    {
-        const runtime::CanonicalModel& model = view.model();
-        if (model.tools().empty()) {
-            tcpSetupDeficiency =
-                "TCP 未配置：快照模型无工具（KIN-NO-TCP 素材——§9.6）";
+    // A-21：同一区域允许多个计划，按注入顺序保存TCP，不能用区域ID取首项。
+    // 缺省引用缺失只影响使用它的计划；显式override已在入口严格预检。
+    std::vector<TcpRef> planTcps;
+    std::vector<std::optional<std::string>> tcpDeficiencies;
+    for (const auto& plan : query.plans) {
+        const auto tcp = plan.tcpOverride.value_or(query.defaultTcp);
+        planTcps.push_back(tcp);
+        const auto loc = view.model().findObject(tcp.toolObject);
+        if (!loc || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
+            tcpDeficiencies.emplace_back("TCP未配置或工具引用悬空（KIN-NO-TCP素材）：请配置该区域的TCP");
         } else {
-            const auto loc = model.findObject(query.defaultTcp.toolObject);
-            if (!loc.has_value()
-                || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
-                tcpSetupDeficiency =
-                    "TCP 引用悬空：toolObject 未解析到快照工具（KIN-NO-TCP "
-                    "素材——§9.6）";
-            }
+            tcpDeficiencies.emplace_back(std::nullopt);
         }
     }
 
@@ -2466,6 +2470,23 @@ RegionCoverageComputation runRegionCoverageComputation(
     // ---- 步骤 2：确定性采样（D-KIN-6——同 (plans,budget) 同样本集同序；
     // 复评不得增删更换样本的结构保证；生成核自检违例 logic_error）。----
     out.samples = generateSampleSet(query.plans, query.budget);
+
+    // 生成核按计划依次写入位置段和姿态段；只读段尾索引给并发求解定位TCP。
+    // upper_bound跳过零样本计划，O(log计划数)，无需为每个样本复制TCP字符串。
+    std::vector<std::size_t> planEnds;
+    std::size_t end=0;
+    for (const auto& plan : query.plans) {
+        const auto positions=plannedPositionSampleCount(plan), poses=plannedPoseSampleCount(plan);
+        const auto remaining=out.samples.samples.size()-end;
+        if (positions>remaining || poses>remaining-positions) {
+            throw std::logic_error("区域计划分段计数与实际样本不一致（内部生成契约违约）");
+        }
+        end+=static_cast<std::size_t>(positions+poses); planEnds.push_back(end);
+    }
+    if (end!=out.samples.samples.size()) {
+        throw std::logic_error("区域计划分段未覆盖全部样本（内部生成契约违约）");
+    }
+
 
     // ---- 零样本早退（无样本可评估——空双射合法，覆盖率全轴不定义；
     // 诊断面在评估器组装步产出）。----
@@ -2522,14 +2543,12 @@ RegionCoverageComputation runRegionCoverageComputation(
         SampleResultRecord result;
         result.sampleIndex = sample.sampleIndex;
 
-        // 批量级零素材轨（上方 tcpSetupDeficiency 预检——T05 两分口径）：
-        // 无工具/引用悬空＝全部样本证据缺失，跳过求解直落 DataInsufficient
-        // （置槽即返回——绝不调用求解器，其调用方错误 fail-fast 语义锚不
-        // 应被素材缺失触发）。
-        if (tcpSetupDeficiency.has_value()) {
+        // 依生成段定位本样本的计划；缺省TCP不足只降级该段，不能污染独立TCP。
+        const auto planIndex=static_cast<std::size_t>(std::upper_bound(planEnds.begin(),planEnds.end(),slot)-planEnds.begin());
+        if (tcpDeficiencies.at(planIndex)) {
             result.state = SampleState::DataInsufficient;
-            result.reason = *tcpSetupDeficiency
-                            + "——该样本证据缺失（批量级零素材轨，非任务级结论）";
+            result.reason = *tcpDeficiencies[planIndex]
+                            + "——该样本证据缺失（非任务级结论）";
             out.results.results[slot] = std::move(result);
             return;
         }
@@ -2570,7 +2589,7 @@ RegionCoverageComputation runRegionCoverageComputation(
         }
         ikRequest.positionTolerance = query.positionTolerance;
         ikRequest.modelView = &view;
-        ikRequest.tcp = query.defaultTcp;
+        ikRequest.tcp = planTcps.at(planIndex);
         ikRequest.initialValues = initialValues;
         ikRequest.iterationLimit = query.iterationLimit;
         ikRequest.intervals = intervals;

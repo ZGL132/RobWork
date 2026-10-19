@@ -1,0 +1,55 @@
+Note: Google Test filter = *ArbitraryRotatedFrame*:*RegionNamedTcp*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinEvaluationChannel
+[ RUN      ] KinEvaluationChannel.ProjectPlan_ArbitraryRotatedFrame_REQ03_A21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(903): error: Value of: ack.accepted
+  Actual: false
+Expected: true
+覆盖评估切片失败：区域参考系相对基座存在任意角旋转（盒变换后非轴对齐）——R1 轴对齐盒约束，旋转参考系解析留后续任务
+
+[  FAILED  ] KinEvaluationChannel.ProjectPlan_ArbitraryRotatedFrame_REQ03_A21 (0 ms)
+[ RUN      ] KinEvaluationChannel.RegionNamedTcpAndMissingKey_REQ01_A21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1263): error: Expected equality of these values:
+  result->position.reached
+    Which is: 0
+  1u
+    Which is: 1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1264): error: Expected equality of these values:
+  result->position.unreachable
+    Which is: 2
+  1u
+    Which is: 1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1268): error: Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <01>
+  sample.regionObjectId == longRegion.objectId ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1280): error: Value of: rejected.accepted
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1281): error: Expected: (rejected.reason.find(longRegion.name)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+覆盖评估已受理
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1280): error: Value of: rejected.accepted
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1281): error: Expected: (rejected.reason.find(longRegion.name)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+覆盖评估已受理
+
+[  FAILED  ] KinEvaluationChannel.RegionNamedTcpAndMissingKey_REQ01_A21 (17 ms)
+[----------] 2 tests from KinEvaluationChannel (17 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (17 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] KinEvaluationChannel.ProjectPlan_ArbitraryRotatedFrame_REQ03_A21
+[  FAILED  ] KinEvaluationChannel.RegionNamedTcpAndMissingKey_REQ01_A21
+
+ 2 FAILED TESTS
