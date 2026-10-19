@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-19T06:36:32.601" name="AllTests">
+  <testsuite name="View3DContract" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-19T06:36:32.601">
+    <testcase name="ManifestFreezesNineItemsInRequirementOrder_UX11" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\View3DContractTest.cpp" line="75" status="run" result="completed" time="0." timestamp="2026-10-19T06:36:32.601" classname="View3DContract" />
+    <testcase name="ManifestIdsWellFormedAndUnique_UX11" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\View3DContractTest.cpp" line="100" status="run" result="completed" time="0." timestamp="2026-10-19T06:36:32.601" classname="View3DContract" />
+    <testcase name="SessionPoseContractPinned_KIN06_AT04" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\View3DContractTest.cpp" line="133" status="run" result="completed" time="0." timestamp="2026-10-19T06:36:32.601" classname="View3DContract" />
+  </testsuite>
+  <testsuite name="View3DPreviewMarkerPosition" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-19T06:36:32.601">
+    <testcase name="FrameMarkerPositionAppendOnly_UI_T77" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\View3DPreviewMarkerPositionTest.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-19T06:36:32.601" classname="View3DPreviewMarkerPosition" />
+  </testsuite>
+</testsuites>

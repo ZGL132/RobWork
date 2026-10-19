@@ -1,0 +1,11 @@
+Note: Google Test filter = RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12 (458 ms)
+[----------] 1 test from RequirementsSessionGuiTest (459 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (461 ms total)
+[  PASSED  ] 1 test.

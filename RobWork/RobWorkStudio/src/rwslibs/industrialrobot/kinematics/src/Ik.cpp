@@ -233,9 +233,26 @@ Eigen::Matrix<double, 6, 1> constrainedPoseError(
     const auto wrap = [](double angle) {
         return std::atan2(std::sin(angle), std::cos(angle));
     };
+    // 冒烟纪律（DTB §5.1 独立冒烟口径）：Rotation3D::operator* 委托库内
+    // Rotation3D::multiply 外联符号，独立冒烟树不链 sdurw_math 即 LNK2019
+    // （A-16 冻结终验实测）——旋转合成按逐元素内联实现，行主序 3×3 乘法
+    // 与 operator* 数学语义完全一致（out = a·b）。
+    const auto compose = [](const rw::math::Rotation3D<double>& a,
+                            const rw::math::Rotation3D<double>& b) {
+        return rw::math::Rotation3D<double>(
+            a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0),
+            a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1) + a(0, 2) * b(2, 1),
+            a(0, 0) * b(0, 2) + a(0, 1) * b(1, 2) + a(0, 2) * b(2, 2),
+            a(1, 0) * b(0, 0) + a(1, 1) * b(1, 0) + a(1, 2) * b(2, 0),
+            a(1, 0) * b(0, 1) + a(1, 1) * b(1, 1) + a(1, 2) * b(2, 1),
+            a(1, 0) * b(0, 2) + a(1, 1) * b(1, 2) + a(1, 2) * b(2, 2),
+            a(2, 0) * b(0, 0) + a(2, 1) * b(1, 0) + a(2, 2) * b(2, 0),
+            a(2, 0) * b(0, 1) + a(2, 1) * b(1, 1) + a(2, 2) * b(2, 1),
+            a(2, 0) * b(0, 2) + a(2, 1) * b(1, 2) + a(2, 2) * b(2, 2));
+    };
     const rw::math::Rotation3D<double> refTranspose = transpose(rr);
-    const std::array<double, 3> targetRpy = rpy(refTranspose * target.R());
-    const std::array<double, 3> actualRpy = rpy(refTranspose * actual.R());
+    const std::array<double, 3> targetRpy = rpy(compose(refTranspose, target.R()));
+    const std::array<double, 3> actualRpy = rpy(compose(refTranspose, actual.R()));
     rw::math::Vector3D<double> localR;
     for (int i = 0; i < 3; ++i) {
         localR[i] = wrap(targetRpy[static_cast<std::size_t>(i)]

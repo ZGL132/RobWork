@@ -1,0 +1,11 @@
+Note: Google Test filter = RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12 (424 ms)
+[----------] 1 test from RequirementsSessionGuiTest (426 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (428 ms total)
+[  PASSED  ] 1 test.
