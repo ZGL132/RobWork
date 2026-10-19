@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "ird-gtest-xml-derived/1",
+  "reportOrigin": "derived-from-gtest-xml",
+  "note": "目标沿用GTest::gtest_main，不原生输出ird-test-report；本伴随报告仅转写真实XML，traceMetadata不可恢复，不冒充原生listener报告。",
+  "sourceXml": "core.xml",
+  "sourceSha256": "d110c94509f8d8d4239fd33be5b6a3fad5acdafb281a3b53c1c2f5f22a8eb004",
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "total": 4,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": [
+    {
+      "testId": "BuildRedLine.SourceTreeReachable_UT_BUILD",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 1.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "109",
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.NoQtInclude_NFR_MNT_01_R3",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 4.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "129",
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.NoCrossUnitInclude_R1_R2_T1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 3.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "163",
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.PublicHeaderPathLayout_R2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 1.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "216",
+      "traceMetadata": null
+    }
+  ]
+}

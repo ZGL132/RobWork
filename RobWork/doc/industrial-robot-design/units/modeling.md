@@ -1623,3 +1623,11 @@ CanonicalBridge将ToolDefinition.tcpList全部原键映射到runtime.namedTcpOff
 ### A-23 按prepare基线修订解析策略（2026-10-20，WP-14-T12）
 
 HandlerServices表尾增加默认空resolvePolicyForRevision(const project::RevisionView&)；非空时以本次prepare的baseSnapshot解析，不能读取HEAD替代；空回调保持原policyProvider/policyObject/policyVersion兼容。失败空策略阻断命令，不回退默认。宿主bindPolicyProvider面板预检与命令prepare同时消费同一已发布策略；原不可变修订、项目存储及六端口依赖不变。CommandHandlersTest的A23真实基线两修订回归核对低/高阈值、HEAD漂移及空解析失败。
+
+### WP-13-T24 B1：建模验收缺陷修复（2026-10-20）
+
+- 来源：601ffa0e审计F02/F03/F05，原始47项矩阵只读；当前工作基线84f1cfc7。
+- 私有导入装配补齐Xacro include安全读取、用户参数、展开后显式选链；映射报告逐项展示对象/字段/前后值/原因，取消或错误不替换草稿。
+- 不改公共接口/存储格式，不增加依赖；io负责安全读取与预算，modeling负责展开/映射。完整八节与逐批账本见`../../docs/superpowers/plans/2026-10-20-modeling-completion.md`。
+- B1实现验证通过：集成全量Release、独立12目标构建、ird_gates零命中及verify-task三条命令；10套件1316项通过、0失败、0跳过。来源include按既有Recorded资源格式保存真实摘要与路径，编码往返保真；共享深度预算及堆缓冲避免Windows递归栈溢出。
+- 真实Qt参数表/错误提示/长报告3张图已复核；证据见`../traceability/builds/modeling-completion-20261020-b1/verification-summary.json`及FOLLOWUP.md。只到导入批次实现验证，不宣称47项及真实三维整体交付；后续B2～B5仍按计划推进。

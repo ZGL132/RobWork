@@ -120,6 +120,17 @@ struct ModelingDialogHost {
     virtual bool confirmProceed(const QString& title, const QString& text) = 0;
     /// 导入报告确认（计数摘要＋行级清单——确认＝草稿落盘）。
     virtual bool confirmImport(const QString& summaryText) = 0;
+    /**
+     * @brief MDL-19参数编辑应答；[in] defaults为冻结源参数名/默认原文。
+     * @return nullopt=取消；空表=沿用全部源默认值；非空=用户显式替换文本。
+     * 仅UI线程；默认实现保持旧测试宿主兼容，真实Qt宿主必须提供参数编辑页。
+     */
+    virtual std::optional<std::vector<std::pair<std::string, std::string>>>
+        editXacroParameters(const std::vector<std::pair<std::string, std::string>>& defaults)
+    {
+        (void)defaults;
+        return std::vector<std::pair<std::string, std::string>>{};
+    }
     /// 结论呈现（权威切换判定报告/diff 报告——纯知会，仅"确定"钮）。
     virtual void showInfo(const QString& title, const QString& text) = 0;
 

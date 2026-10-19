@@ -1,12 +1,11 @@
-/**
+﻿/**
  * @file   ModelingCommandFlows.cpp
  * @brief  建模域命令 UI 流程实现（UI-T41 批次 A——八命令真实链＋两条
  *         诚实缺席，见头注批次边界）。
  *
- * 实现纪律：域判定零入（全部经内核实现类）。文件读取通道现状（UI-T48
- * 登记）：URDF/Xacro 导入仍为标准库 fstream（其升级＝导入向导任务范围，
- * UI-T41 note⑧ 挂账面如实收窄——本卡只兑现几何资源选择流的 io 真装，
- * 见 GeometryResourceFlow.cpp；导入流换轨另行任务，不在本卡）。
+ * 实现纪律：域判定零入（全部经内核实现类）。WP-13-T24补齐导入：
+ * URDF经io单文件预检及累计字节预算；Xacro由私有桥安全冻结离线依赖，
+ * 再经参数页与同一映射/显式选链流程。报告逐项展示，确认前零草稿替换。
  */
 
 #include "ModelingCommandFlows.hpp"
@@ -20,6 +19,10 @@
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QTableWidget>
+#include <QPlainTextEdit>
+#include <QPushButton>
+#include <QHeaderView>
+#include <QRegularExpression>
 
 #include <algorithm>
 #include <charconv>                               // std::to_chars（UI-T63 声明表单预填文本）
@@ -27,7 +30,7 @@
 #include <cctype>
 #include <filesystem>
 #include <set>
-#include <fstream>
+#include <array>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
@@ -36,6 +39,7 @@
 #include "ModelingFlowsInternal.hpp"          // 域内拆分接口（权威切换流——DhConvert 独立 TU）
 
 #include <sdurws/ird/core/Digest.hpp>            // core::ContentDigester（快照摘要——io 快照同源口径）
+#include <sdurws/ird/io/IoDiagnostics.hpp>
 #include <sdurws/ird/io/ResourceIo.hpp>          // io 资源读取服务（F-473——导入依赖树装配半区）
 #include <sdurws/ird/modeling/Codec.hpp>         // RobotDesignCodec/ObjectVariant（闭包字节编码）
 #include <sdurws/ird/modeling/Import.hpp>        // ModelImportMapper（URDF/Xacro 映射）
@@ -105,8 +109,81 @@ public:
 
     bool confirmImport(const QString& summaryText) override
     {
-        return QMessageBox::question(nullptr, QStringLiteral("导入确认"), summaryText)
-               == QMessageBox::Yes;
+        // MDL-11：报告必须可滚动、可复制，长模型不能挤出屏幕或只剩计数。
+        QDialog dialog;
+        dialog.setObjectName("ird_modeling_import_report");
+        dialog.setWindowTitle(QStringLiteral("导入确认：逐项映射报告"));
+        dialog.resize(800,580);
+        auto* layout=new QVBoxLayout(&dialog);
+        auto* report=new QPlainTextEdit(&dialog);
+        report->setObjectName("ird_modeling_import_report_text");
+        report->setReadOnly(true);report->setPlainText(summaryText);
+        layout->addWidget(report);
+        auto* buttons=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dialog);
+        buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确认导入草稿"));
+        buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+        QObject::connect(buttons,&QDialogButtonBox::accepted,&dialog,&QDialog::accept);
+        QObject::connect(buttons,&QDialogButtonBox::rejected,&dialog,&QDialog::reject);
+        layout->addWidget(buttons);
+        return dialog.exec()==QDialog::Accepted;
+    }
+
+    std::optional<std::vector<std::pair<std::string,std::string>>> editXacroParameters(
+        const std::vector<std::pair<std::string,std::string>>& defaults) override
+    {
+        // 参数只作字面替换；原文默认值未经求值，未修改行不能错误覆盖属性依赖。
+        QDialog dialog;
+        dialog.setObjectName("ird_modeling_xacro_parameters");
+        dialog.setWindowTitle(QStringLiteral("Xacro 参数与离线展开"));dialog.resize(720,440);
+        auto* layout=new QVBoxLayout(&dialog);
+        auto* note=new QLabel(QStringLiteral("保留原值使用源文件默认；修改或新增行作为显式替换。"
+            "仅作字面替换，不执行表达式、环境变量或外部程序；include已在导入根内冻结。"),&dialog);
+        note->setWordWrap(true);layout->addWidget(note);
+        auto* table=new QTableWidget(static_cast<int>(defaults.size()),2,&dialog);
+        table->setObjectName("ird_modeling_xacro_parameter_table");
+        table->setHorizontalHeaderLabels({QStringLiteral("参数名"),QStringLiteral("值（原文本，保留单位）")});
+        table->horizontalHeader()->setStretchLastSection(true);
+        for(int row=0;row<table->rowCount();++row){
+            table->setItem(row,0,new QTableWidgetItem(QString::fromStdString(defaults[row].first)));
+            table->setItem(row,1,new QTableWidgetItem(QString::fromStdString(defaults[row].second)));
+        }
+        layout->addWidget(table);
+        auto* add=new QPushButton(QStringLiteral("添加参数"),&dialog);
+        add->setObjectName("ird_modeling_xacro_add_parameter");
+        QObject::connect(add,&QPushButton::clicked,&dialog,[table]{
+            const int row=table->rowCount();table->insertRow(row);
+            table->setItem(row,0,new QTableWidgetItem());table->setItem(row,1,new QTableWidgetItem());
+            table->setCurrentCell(row,0);table->editItem(table->item(row,0));
+        });layout->addWidget(add);
+        auto* error=new QLabel(&dialog);error->setWordWrap(true);
+        error->setObjectName("ird_modeling_xacro_parameter_error");layout->addWidget(error);
+        auto* buttons=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dialog);
+        buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("展开并继续"));
+        buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+        layout->addWidget(buttons);
+        std::vector<std::pair<std::string,std::string>> answer;
+        QObject::connect(buttons,&QDialogButtonBox::rejected,&dialog,&QDialog::reject);
+        QObject::connect(buttons,&QDialogButtonBox::accepted,&dialog,[&]{
+            std::set<std::string> names;
+            std::vector<std::pair<std::string,std::string>> proposed;
+            const QRegularExpression identifier(QStringLiteral("^[A-Za-z_][A-Za-z0-9_]*$"));
+            for(int row=0;row<table->rowCount();++row){
+                const auto key=table->item(row,0)?table->item(row,0)->text().trimmed():QString();
+                const auto value=table->item(row,1)?table->item(row,1)->text():QString();
+                if(key.isEmpty()&&value.isEmpty()){continue;}
+                if(!identifier.match(key).hasMatch()||!names.insert(key.toStdString()).second){
+                    error->setText(QStringLiteral("第%1行参数名无效或重复；使用字母、数字、下划线，不能以数字开头。").arg(row+1));
+                    table->setCurrentCell(row,0);return;
+                }
+                const auto original=std::find_if(defaults.begin(),defaults.end(),[&](const auto& d){return d.first==key.toStdString();});
+                if(original==defaults.end()||original->second!=value.toStdString()){
+                    proposed.emplace_back(key.toStdString(),value.toStdString());
+                }
+            }
+            answer=std::move(proposed);dialog.accept();
+        });
+        if(dialog.exec()!=QDialog::Accepted){return std::nullopt;}
+        return answer;
     }
 
     void showInfo(const QString& title, const QString& text) override
@@ -286,22 +363,37 @@ namespace {
 // 流程内部辅助（纯函数/小工具——全部 UI 线程调用）
 // =====================================================================
 
-/// 读取本地文件全部字节（二进制；用户对话框自选路径——见文件头注）。
-std::optional<std::vector<std::uint8_t>> readFileBytes(const QString& path,
-                                                       std::string& error)
+/**
+ * @brief URDF入口读取；[in] path为用户自选绝对路径，[out] error为稳定io码或空文件原因。
+ * @return 预算内真实字节；读前单文件预检、逐块总字节累计，失败无部分产物。
+ * 仅UI线程调用；io句柄/预算由本轮局部对象持有，不写文件或项目。
+ */
+std::optional<std::vector<std::uint8_t>> readFileBytes(const QString& path,std::string& error)
 {
-    std::ifstream in(path.toStdWString(), std::ios::binary);
-    if (!in.is_open()) {
-        error = "无法打开文件（不存在或无读取权限）";
-        return std::nullopt;
-    }
-    std::vector<std::uint8_t> bytes{std::istreambuf_iterator<char>(in),
-                                    std::istreambuf_iterator<char>()};
-    if (bytes.empty()) {
-        error = "文件为空（0 字节）——不是可导入的模型文档";
-        return std::nullopt;
-    }
-    return bytes;
+    const auto reader=io::makeResourceReader();
+    const auto budget=io::makeBudgetGuard();
+    const auto opened=budget->openScope(io::BudgetSpec::productDefault());
+    if(!opened){error=std::string(io::errorCodeToken(opened.error.code));return std::nullopt;}
+    const auto read=[&]() -> std::optional<std::vector<std::uint8_t>> {
+        auto stream=reader->open(std::filesystem::path(path.toStdWString()),{},nullptr,nullptr);
+        if(!stream){error=std::string(io::errorCodeToken(stream.error.code));return std::nullopt;}
+        std::vector<std::uint8_t> bytes;
+        std::array<std::uint8_t,io::kResourceReadBlockBytes> buffer{};
+        for(;;){
+            const auto chunk=stream.value.read(buffer.data(),buffer.size());
+            if(!chunk){error=std::string(io::errorCodeToken(chunk.error.code));return std::nullopt;}
+            if(!chunk.value){break;}
+            const auto charged=budget->charge(opened.value,io::BudgetDimension::TotalBytes,chunk.value);
+            if(!charged){error=std::string(io::errorCodeToken(charged.error.code));return std::nullopt;}
+            bytes.insert(bytes.end(),buffer.begin(),buffer.begin()+chunk.value);
+        }
+        if(bytes.empty()){error="文件为空（0字节）——不是可导入模型";return std::nullopt;}
+        return bytes;
+    };
+    auto result=read();
+    const auto closed=budget->closeScope(opened.value);
+    if(!closed){error=std::string(io::errorCodeToken(closed.error.code));return std::nullopt;}
+    return result;
 }
 
 /// 构造入口资源快照（digest＝SHA-256 权威判据——io ResourceSnapshot 同源）。
@@ -452,6 +544,22 @@ QString importSummaryText(const ImportReport& report)
                        .arg(qulonglong(report.unsupported.size()))
                        .arg(qulonglong(report.pendingConfirms.size()))
                        .arg(qulonglong(report.errors.size()));
+    // 逐清单保持领域报告的稳定顺序；对象/字段/工程值与理由均保留，不能另造映射。
+    const auto add=[&](const QString& category,const std::string& object,const std::string& detail,
+                       const ImportSourceSpan& span){
+        text+=QStringLiteral("\n[%1] %2：%3").arg(category,QString::fromStdString(object),QString::fromStdString(detail));
+        if(span.line){text+=QStringLiteral(" （%1:%2:%3）").arg(QString::fromStdString(span.relFile)).arg(span.line).arg(span.column);}
+    };
+    for(const auto& item:report.mapped){add(QStringLiteral("映射"),item.sourcePath,item.targetField+" = "+item.valueText+"；"+item.note,item.span);}
+    for(const auto& item:report.defaults){add(QStringLiteral("默认"),item.field,item.appliedValue+"；"+item.reason,item.span);}
+    for(const auto& item:report.ignored){add(QStringLiteral("忽略"),item.element,item.reason,item.span);}
+    for(const auto& item:report.unsupported){add(QStringLiteral("不支持"),item.subject,item.kind+"；"+item.reason+"；"+item.guidance,item.span);}
+    for(const auto& item:report.pendingConfirms){add(QStringLiteral("待确认"),item.subject,item.kind+"；"+item.question,item.span);}
+    for(const auto& item:report.errors){add(QStringLiteral("错误"),item.subject,item.kind+"；"+item.detail,item.span);}
+    for(const auto& item:report.jointStatuses){add(QStringLiteral("关节状态"),item.jointName,item.status+"；"+item.reason,item.span);}
+    for(const auto& item:report.resources){add(QStringLiteral("资源"),item.relPath,item.state+"；"+item.digestHex,item.span);}
+    for(const auto& item:report.selfCollisionCandidates){add(QStringLiteral("自碰撞候选"),item.link1,item.link2,item.span);}
+    for(const auto& item:report.drivetrainCandidates){add(QStringLiteral("传动候选"),item.jointName,item.valueText+" → Peak，需确认",item.span);}
     if (!report.branches.empty()) {
         text += QStringLiteral("\n\n检测到分支链 %1 条：").arg(report.branches.size());
         for (const ImportBranchItem& b : report.branches) {
@@ -738,10 +846,10 @@ bool executeModelingCommand(const std::string& commandId,
         if (path.isEmpty()) { return false; }  // 用户取消
 
         std::string error;
-        const auto bytes = readFileBytes(path, error);
-        if (!bytes.has_value()) {
-            summary = "导入中止：" + error;
-            return false;
+        std::optional<std::vector<std::uint8_t>> bytes;
+        if(!isXacro){
+            bytes=readFileBytes(path,error);
+            if(!bytes){summary="导入中止："+error;return false;}
         }
 
         std::vector<core::DiagnosticRecord> diags;
@@ -754,9 +862,8 @@ bool executeModelingCommand(const std::string& commandId,
         // （无部分产物）——两契约夹缝使含 mesh 的模型此前经本流恒被拒。
         // 按黄金测试（GoldenImportTest V-06/V-08）装配纪律在流半区补树，
         // 装配语义见 assembleImportDependencyTree 头注。Xacro 树自展开产物
-        // 提取、基目录＝入口文档目录：单文件 xacro 精确；include 子目录内
-        // 的 mesh 引用可能标缺失（V-08 警告可见）——多文件精确解析随导入
-        // 向导任务（与选链重映射同批）。
+        // 提取，遵循URDF相对入口目录的几何引用语义；不猜测替换为include目录。
+        // include本身已由私有桥独立验证，缺mesh维持V-08可编辑警告。
         const std::filesystem::path fsPath(path.toStdWString());
         const std::string rootRel =
             foldResourceKey(fsPath.filename().u8string());
@@ -772,57 +879,74 @@ bool executeModelingCommand(const std::string& commandId,
                 return source;
             };
 
-        ImportOutcome outcome;
+        ValidatedSource source;
+        XacroProvenance provenance;
+        std::vector<io::ResourceNode> xacroSources;
         if (isXacro) {
-            // Xacro 受控展开（P-MDL-4——护栏归 io/语义归 modeling）：展开经
-            // ModelingXacroBridge（独立 TU——XacroExpand/DhConvert 同名值类型
-            // 不可共 TU）；无用户参数代入（替换表空），产物走与 URDF 同映射。
-            const ModelXacroExpandResult expanded = expandXacroBytes(*bytes, path);
-            if (!expanded.ok) {
-                summary = "Xacro 展开失败：" + expanded.errorDetail;
-                return false;
+            // 冻结源与依赖后让用户填写参数；只展开这份内存输入一次。
+            const auto input=loadXacroInput(path);
+            if(!input.ok){summary="Xacro读取失败："+input.errorDetail;return false;}
+            const auto parameters=host.editXacroParameters(input.parameterDefaults);
+            if(!parameters){return false;}
+            const auto expanded=expandXacroInput(input,*parameters);
+            if(!expanded.ok){summary="Xacro展开失败："+expanded.errorDetail;return false;}
+            source=assembleSource(expanded.expandedBytes,
+                std::string(expanded.expandedBytes.begin(),expanded.expandedBytes.end()),
+                expanded.entrySnapshot);
+            provenance.sourceDigest=expanded.sourceDigest;
+            provenance.sourceAbsPath=path.toStdString();
+            provenance.substitutions=expanded.substitutions;
+            for(const auto& node:input.dependencyTree.nodes){
+                if(node.relPath!=input.dependencyTree.rootRel){xacroSources.push_back(node);}
             }
-            ValidatedSource expandedSource = assembleSource(
-                expanded.expandedBytes,
-                std::string(expanded.expandedBytes.begin(),
-                            expanded.expandedBytes.end()),
-                expanded.entrySnapshot);  // 来源身份保持
-            XacroProvenance provenance;
-            provenance.sourceDigest = expanded.sourceDigest;
-            provenance.sourceAbsPath = path.toStdString();
-            outcome = mapper.mapXacroExpanded(expandedSource, provenance, options, diags);
         } else {
-            const auto source = assembleSource(
-                *bytes, std::string(bytes->begin(), bytes->end()),
-                makeEntrySnapshot(path, *bytes));
-            outcome = mapper.mapUrdf(source, options, diags);
+            source=assembleSource(*bytes,std::string(bytes->begin(),bytes->end()),makeEntrySnapshot(path,*bytes));
         }
-
-        // 多可动分支：报告分支清单——用户显式选链后重映射一层（§6.4 维度一；
-        // 每次调用解析一层分裂——选中分支内部再分裂经下一轮循环处理）。
-        // Xacro 路径的选链重映射随导入向导任务补全（展开产物单次有效——诚实缺席）。
-        if (isXacro && outcome.draft.has_value() == false
-            && !outcome.report.branches.empty()) {
-            summary = "Xacro 文件含多条可动分支链——显式选链映射随导入向导任务补全";
-            return false;
-        }
-        if (!isXacro && outcome.draft.has_value() == false
-            && !outcome.report.branches.empty()) {
-            QStringList candidates;
-            for (const ImportBranchItem& b : outcome.report.branches) {
-                candidates << QString::fromStdString(b.branchRoot);
-            }
-            const auto picked = host.chooseItem(
-                QStringLiteral("选择主链"),
-                QStringLiteral("该文件含多条可动分支链——请选择建模主链（每次解析一层分裂）："),
-                candidates);
-            if (!picked.has_value()) { return false; }
-            options.selectedMainBranch = outcome.report.branches[*picked].branchRoot;
+        const auto mapFrozen=[&]{
             diags.clear();
-            const auto source = assembleSource(
-                *bytes, std::string(bytes->begin(), bytes->end()),
-                makeEntrySnapshot(path, *bytes));
-            outcome = mapper.mapUrdf(source, options, diags);
+            auto mapped=isXacro?mapper.mapXacroExpanded(source,provenance,options,diags)
+                               :mapper.mapUrdf(source,options,diags);
+            // MDL-19离线交付：include与入口同为来源资源。复用已有Recorded
+            // 资源格式，让项目统一检测缺失/变化并执行固化，不私建第二套存储。
+            // 按冻结树的相对键排序追加，选链重映射也只消费同一份快照。
+            if(mapped.draft){
+                for(const auto& node:xacroSources){
+                    const auto key="xacro-include/"+node.relPath;
+                    const auto& manifest=mapped.draft->resourceManifest;
+                    if(!node.exists||!node.snapshot||std::any_of(manifest.begin(),manifest.end(),[&](const auto& ref){return ref.resourceId==key;})){
+                        mapped.draft.reset();
+                        mapped.report.submittable=false;
+                        mapped.error=ImportError{ImportErrorCode::SourceInconsistent,{},"Xacro来源缺少快照或资源键冲突："+key};
+                        break;
+                    }
+                    ResourceRef ref;ref.resourceId=key;ref.state=ResourceState::Recorded;
+                    const auto& snapshot=*node.snapshot;
+                    ref.contentDigest=snapshot.contentDigest;
+                    ref.externalRecord=ExternalResourceRecord{
+                        std::filesystem::path(snapshot.finalPath).u8string(),ref.contentDigest};
+                    mapped.draft->resourceManifest.push_back(std::move(ref));
+                    ImportResourceItem row;row.resourceId=key;row.relPath=node.relPath;
+                    row.state="recorded";
+                    row.digestHex=QByteArray(reinterpret_cast<const char*>(snapshot.contentDigest.data()),
+                        static_cast<int>(snapshot.contentDigest.size())).toHex().toStdString();
+                    row.span=ImportSourceSpan{node.relPath,0,0};
+                    mapped.report.resources.push_back(std::move(row));
+                }
+            }
+            return mapped;
+        };
+        ImportOutcome outcome=mapFrozen();
+        if(!outcome.draft&&!outcome.report.branches.empty()){
+            QStringList candidates;
+            for(const auto& branch:outcome.report.branches){candidates<<QString::fromStdString(branch.branchRoot);}
+            const auto picked=host.chooseItem(QStringLiteral("选择主链"),
+                QStringLiteral("检测到多条可动分支链，请显式选择主链："),candidates);
+            if(!picked){return false;}
+            if(*picked<0||*picked>=candidates.size()){
+                summary="导入取消：主链选择索引无效";return false;
+            }
+            options.selectedMainBranch=outcome.report.branches[*picked].branchRoot;
+            outcome=mapFrozen();
         }
 
         if (outcome.error.has_value() && !outcome.draft.has_value()) {
@@ -836,7 +960,7 @@ bool executeModelingCommand(const std::string& commandId,
             return false;
         }
 
-        // 报告确认（四清单计数摘要——确认后草稿落盘）。
+        // 逐项报告确认；明确确认后才替换内存草稿（尚不写项目修订）。
         if (!host.confirmImport(importSummaryText(outcome.report))) {
             return false;
         }

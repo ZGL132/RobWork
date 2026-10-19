@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file   ModelingCommandFlowsTest.cpp
  * @brief  建模域命令流测试（UI-T41 批次C——estimate-properties 与
  *         generate-placeholder-geometry 两流程的替身应答驱动验证；
@@ -27,8 +27,10 @@
 #include <sdurws/ird/core/Provenance.hpp>       // SourcedValue/ValueProvenance（写回断言）
 #include <sdurws/ird/modeling/RobotDesign.hpp>  // GeometryKind/JointPose（注入夹具）
 #include <sdurws/ird/modeling/Template.hpp>     // RobotDesignTemplateFactory（六轴草稿夹具）
+#include <sdurws/ird/modeling/Codec.hpp>        // AT-31来源资源随对象编码往返保真。
 #include "plugin/ModelingCommandFlows.hpp"      // executeModelingCommand（被测流）
 #include "plugin/ModelingUiModule.hpp"          // ModuleSessionState（会话态入参）
+#include "plugin/ModelingXacroBridge.hpp"       // WP-13-T24：真实生产展开桥，不能只测内核。
 
 using namespace sdurws::ird;
 using namespace sdurws::ird::modeling;
@@ -58,6 +60,15 @@ struct FakeHost final : ModelingDialogHost {
     std::optional<std::vector<CustomChainJointSpec>> declareAnswer;
     int declareCalls = 0;
     QString lastConfirmText;                    ///< confirmProceed 文本留痕（D1 清单断言）
+    std::optional<std::vector<std::pair<std::string,std::string>>> parameterAnswer =
+        std::vector<std::pair<std::string,std::string>>{}; ///< 参数应答；nullopt取消。
+    std::vector<std::pair<std::string,std::string>> capturedDefaults; ///< 真实源参数默认值。
+    std::optional<std::vector<std::pair<std::string,std::string>>> editXacroParameters(
+        const std::vector<std::pair<std::string,std::string>>& defaults) override
+    {
+        capturedDefaults=defaults;
+        return parameterAnswer;
+    }
     int showInfoCount = 0;                      ///< showInfo 调用计数
     QStringList showInfoTexts;                  ///< showInfo 文本留痕
 
@@ -80,7 +91,11 @@ struct FakeHost final : ModelingDialogHost {
         lastConfirmText = text;
         return confirmProceedAnswer;
     }
-    bool confirmImport(const QString&) override { return confirmImportAnswer; }
+    bool confirmImport(const QString& text) override
+    {
+        lastConfirmText = text;
+        return confirmImportAnswer;
+    }
     void showInfo(const QString&, const QString& text) override
     {
         ++showInfoCount;
@@ -784,4 +799,233 @@ TEST(ModelingCommandFlows, NewFromTemplateGeneric6RKept_UI_T63)
     EXPECT_TRUE(reseeded);
     EXPECT_EQ(fx.host.declareCalls, 0) << "generic-6r 路径不进声明表单";
     EXPECT_NE(summary.find("generic-6r"), std::string::npos);
+}
+
+
+namespace {
+/**
+ * @brief 写入真实离线Xacro夹具；[in] path为临时目录绝对路径，bytes为UTF-8。
+ * 仅测试调用线程使用；打开/写入失败立即使测试失败，不把环境错误当产品红例。
+ */
+void writeXacroFixture(const QString& path, const QByteArray& bytes)
+{
+    QFile file(path);
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly)) << path.toStdString();
+    ASSERT_EQ(file.write(bytes), bytes.size());
+}
+} // namespace
+
+TEST(ModelingCommandFlows, ExistingNestedXacroIncludeUsesProductionBridge_MDL19_AT31)
+{
+    IRD_TEST_INFO("MDL-19", {"AT-31"}, std::nullopt);
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    ASSERT_TRUE(QDir(dir.path()).mkpath("parts"));
+    writeXacroFixture(dir.filePath("parts/definition.xacro"),
+        "<robot xmlns:xacro=\"http://www.ros.org/wiki/xacro\"><xacro:macro name=\"make_link\" params=\"name\"><link name=\"${name}\"/></xacro:macro></robot>");
+    writeXacroFixture(dir.filePath("parts/entry.xacro"),
+        "<robot xmlns:xacro=\"http://www.ros.org/wiki/xacro\"><xacro:include filename=\"definition.xacro\"/></robot>");
+    const QByteArray entry = "<robot name=\"nested\" xmlns:xacro=\"http://www.ros.org/wiki/xacro\"><xacro:include filename=\"parts/entry.xacro\"/><xacro:make_link name=\"from_include\"/></robot>";
+    const QString path = dir.filePath("robot.xacro");
+    writeXacroFixture(path, entry);
+    const auto expanded = expandXacroBytes(
+        std::vector<std::uint8_t>(entry.begin(), entry.end()), path);
+    // F05：磁盘文件确实存在，生产装配必须把嵌套include交给真实展开服务。
+    ASSERT_TRUE(expanded.ok) << expanded.errorDetail;
+    const std::string text(expanded.expandedBytes.begin(), expanded.expandedBytes.end());
+    EXPECT_NE(text.find("from_include"), std::string::npos);
+    EXPECT_EQ(text.find("xacro:make_link"), std::string::npos);
+}
+
+TEST(ModelingCommandFlows, XacroBranchesUseSameExplicitSelectionAsUrdf_MDL12_AT17)
+{
+    IRD_TEST_INFO("MDL-12", {"AT-17"}, std::nullopt);
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const auto path=dir.filePath("branched.xacro");
+    writeXacroFixture(path,
+        "<robot name=\"branches\" xmlns:xacro=\"http://www.ros.org/wiki/xacro\">"
+        "<link name=\"base\"/><link name=\"left\"/><link name=\"right\"/>"
+        "<joint name=\"left_axis\" type=\"revolute\"><parent link=\"base\"/><child link=\"left\"/><axis xyz=\"0 0 1\"/><limit lower=\"-1\" upper=\"1\"/></joint>"
+        "<joint name=\"right_axis\" type=\"revolute\"><parent link=\"base\"/><child link=\"right\"/><axis xyz=\"0 1 0\"/><limit lower=\"-2\" upper=\"2\"/></joint></robot>");
+    FlowHarness fx;
+    fx.session.draft=makeSixAxisDraft();
+    fx.host.openPathAnswer=path;
+    fx.host.chooseItemAnswer=1;
+    std::string summary;
+    ASSERT_TRUE(executeModelingCommand("modeling.import-xacro", fx.session,
+        fx.deps(), fx.host, summary)) << summary;
+    ASSERT_EQ(fx.session.draft.design.joints.size(), 1u);
+    EXPECT_EQ(fx.session.draft.design.joints.front().localName, "right_axis");
+    const auto accepted=fx.session.draft.design;
+    // 选链取消/非法应答均不能用不完整候选覆盖已经接受的草稿。
+    for(const std::optional<int> choice:{std::optional<int>{},std::optional<int>{-1},std::optional<int>{99}}){
+        fx.host.chooseItemAnswer=choice;
+        EXPECT_FALSE(executeModelingCommand("modeling.import-xacro",fx.session,fx.deps(),fx.host,summary));
+        EXPECT_EQ(fx.session.draft.design,accepted);
+    }
+}
+
+TEST(ModelingCommandFlows, ImportConfirmationShowsObjectFieldsValuesAndReasons_MDL11_AT15)
+{
+    IRD_TEST_INFO("MDL-11", {"AT-15"}, std::nullopt);
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    FlowHarness fx;
+    fx.session.draft=makeSixAxisDraft();
+    fx.host.openPathAnswer=writeUrdf(dir, false);
+    std::string summary;
+    ASSERT_TRUE(executeModelingCommand("modeling.import-urdf", fx.session,
+        fx.deps(), fx.host, summary)) << summary;
+    // F02：必须出现实际对象/字段与工程值；统计数字不能替代可审阅映射清单。
+    EXPECT_TRUE(fx.host.lastConfirmText.contains("j1"));
+    EXPECT_TRUE(fx.host.lastConfirmText.contains("bounds"));
+    EXPECT_TRUE(fx.host.lastConfirmText.contains("-1.57"));
+    EXPECT_TRUE(fx.host.lastConfirmText.contains("axis"));
+}
+
+
+TEST(ModelingCommandFlows, XacroParametersReachMappingAndProvenance_MDL19_AT31)
+{
+    IRD_TEST_INFO("MDL-19", {"AT-31"}, std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());
+    const auto path=dir.filePath("parameters.xacro");
+    writeXacroFixture(path,
+        "<robot name=\"params\" xmlns:xacro=\"http://www.ros.org/wiki/xacro\">"
+        "<xacro:property name=\"travel\" value=\"1.25\"/><link name=\"base\"/><link name=\"tip\"/>"
+        "<joint name=\"axis\" type=\"revolute\"><parent link=\"base\"/><child link=\"tip\"/>"
+        "<axis xyz=\"0 0 1\"/><limit lower=\"-1\" upper=\"${travel}\"/></joint></robot>");
+    FlowHarness fx;fx.session.draft=makeSixAxisDraft();fx.host.openPathAnswer=path;
+    fx.host.parameterAnswer=std::vector<std::pair<std::string,std::string>>{{"travel","2.75"}};
+    std::string summary;
+    ASSERT_TRUE(executeModelingCommand("modeling.import-xacro",fx.session,fx.deps(),fx.host,summary))<<summary;
+    ASSERT_EQ(fx.host.capturedDefaults.size(),1u);
+    EXPECT_EQ(fx.host.capturedDefaults.front().first,"travel");
+    EXPECT_EQ(fx.host.capturedDefaults.front().second,"1.25");
+    ASSERT_EQ(fx.session.draft.design.joints.size(),1u);
+    ASSERT_TRUE(fx.session.draft.design.joints.front().bounds.tryValue().has_value());
+    EXPECT_DOUBLE_EQ(fx.session.draft.design.joints.front().bounds.tryValue()->second,2.75);
+    EXPECT_TRUE(fx.host.lastConfirmText.contains("xacro-substitution/travel"));
+    EXPECT_TRUE(fx.host.lastConfirmText.contains("2.75"));
+}
+
+TEST(ModelingCommandFlows, XacroParameterCancelKeepsOriginalDraft_MDL19_AT31)
+{
+    IRD_TEST_INFO("MDL-19", {"AT-31"}, std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());
+    const auto path=dir.filePath("cancel.xacro");
+    writeXacroFixture(path,"<robot name=\"cancel\" xmlns:xacro=\"http://www.ros.org/wiki/xacro\"><link name=\"base\"/></robot>");
+    FlowHarness fx;fx.session.draft=makeSixAxisDraft();fx.host.openPathAnswer=path;
+    const auto before=fx.session.draft.design;fx.host.parameterAnswer=std::nullopt;
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand("modeling.import-xacro",fx.session,fx.deps(),fx.host,summary));
+    EXPECT_EQ(fx.session.draft.design,before);EXPECT_EQ(fx.recomputeCalls,0);
+}
+
+TEST(ModelingCommandFlows, XacroIncludeIdentitySurvivesImport_MDL19_AT31)
+{
+    IRD_TEST_INFO("MDL-19",{"AT-31"},std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());
+    const QByteArray dependency="<robot><link name=\"base\"/><link name=\"tip\"/>"
+        "<joint name=\"axis\" type=\"revolute\"><parent link=\"base\"/><child link=\"tip\"/>"
+        "<axis xyz=\"0 0 1\"/><limit lower=\"-1\" upper=\"1\"/></joint></robot>";
+    writeXacroFixture(dir.filePath("included.xacro"),dependency);
+    const auto path=dir.filePath("main.xacro");
+    writeXacroFixture(path,"<robot name=\"provenance\" xmlns:xacro=\"http://www.ros.org/wiki/xacro\">"
+        "<xacro:include filename=\"included.xacro\"/></robot>");
+    FlowHarness fx;fx.session.draft=makeSixAxisDraft();fx.host.openPathAnswer=path;
+    std::string summary;
+    ASSERT_TRUE(executeModelingCommand("modeling.import-xacro",fx.session,fx.deps(),fx.host,summary))<<summary;
+    // AT-31离线来源必须覆盖实际消费的include，不能仅保留入口文件哈希。
+    const auto& resources=fx.session.draft.design.resourceManifest;
+    const auto found=std::find_if(resources.begin(),resources.end(),[](const auto& resource){
+        return resource.resourceId=="xacro-include/included.xacro";
+    });
+    ASSERT_NE(found,resources.end());
+    core::ContentDigester digest;digest.update(dependency.constData(),dependency.size());
+    EXPECT_EQ(found->contentDigest,digest.finalize());
+    EXPECT_EQ(found->state,ResourceState::Recorded);
+    ASSERT_TRUE(found->externalRecord.has_value());
+    EXPECT_EQ(found->externalRecord->recordedDigest,found->contentDigest);
+    EXPECT_TRUE(fx.host.lastConfirmText.contains("included.xacro"));
+    EXPECT_TRUE(QString::fromStdString(found->externalRecord->absPath).contains("included.xacro"));
+    const RobotDesignCodec codec;
+    const auto encoded=codec.encode(ObjectVariant{fx.session.draft.design},kCurrentFormatVersion);
+    ASSERT_TRUE(encoded.ok());
+    const auto decoded=codec.decode(encoded.get(),kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    // canonical按resourceId规范排序；比较完整字段，不能把输入构造序当持久化契约。
+    auto canonicalResources=resources;
+    std::sort(canonicalResources.begin(),canonicalResources.end(),[](const auto& a,const auto& b){
+        return a.resourceId<b.resourceId;
+    });
+    EXPECT_EQ(std::get<RobotDesign>(decoded.get()).resourceManifest,canonicalResources);
+}
+
+TEST(ModelingCommandFlows, XacroIncludeMissingCycleEscapeAndMalformedXmlFailClosed_MDL19_AT31)
+{
+    IRD_TEST_INFO("MDL-19", {"AT-31"}, std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());
+    ASSERT_TRUE(QDir(dir.path()).mkpath("root"));
+    writeXacroFixture(dir.filePath("outside.xacro"),"<robot name=\"outside\"/>");
+    const auto path=dir.filePath("root/main.xacro");
+    // F05反例：缺文件、自环、越界和坏XML不能借生产装配绕开io/展开安全边界。
+    for(const QByteArray target:{QByteArray("missing.xacro"),QByteArray("main.xacro"),QByteArray("../outside.xacro")}){
+        const QByteArray entry="<robot name=\"bad\" xmlns:xacro=\"http://www.ros.org/wiki/xacro\"><xacro:include filename=\""+target+"\"/></robot>";
+        writeXacroFixture(path,entry);
+        const auto input=loadXacroInput(std::vector<std::uint8_t>(entry.begin(),entry.end()),path);
+        EXPECT_FALSE(input.ok)<<target.constData();EXPECT_FALSE(input.errorDetail.empty());
+    }
+    const QByteArray dtd="<robot name=\"broken\"><unclosed></robot>";
+    writeXacroFixture(path,dtd);
+    EXPECT_FALSE(loadXacroInput(std::vector<std::uint8_t>(dtd.begin(),dtd.end()),path).ok);
+}
+
+TEST(ModelingCommandFlows, FrozenXacroInputDoesNotRereadAndMissingMeshRemainsEditable_MDL19_AT31)
+{
+    IRD_TEST_INFO("MDL-19", {"AT-31"}, std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());
+    const auto path=dir.filePath("frozen.xacro");
+    const QByteArray entry="<robot name=\"frozen\" xmlns:xacro=\"http://www.ros.org/wiki/xacro\"><link name=\"base\"><visual><geometry><mesh filename=\"missing.stl\"/></geometry></visual></link><link name=\"tip\"/><joint name=\"axis\" type=\"revolute\"><parent link=\"base\"/><child link=\"tip\"/><axis xyz=\"0 0 1\"/><limit lower=\"-1\" upper=\"1\"/></joint></robot>";
+    writeXacroFixture(path,entry);
+    const auto input=loadXacroInput(std::vector<std::uint8_t>(entry.begin(),entry.end()),path);
+    ASSERT_TRUE(input.ok)<<input.errorDetail;
+    writeXacroFixture(path,"<robot name=\"changed_after_dialog\"/>");
+    const auto expanded=expandXacroInput(input,{});
+    EXPECT_TRUE(expanded.ok)<<expanded.errorDetail;
+    // 重读路径显式检测变化；冻结路径按已展示输入继续，不读取后来替换的内容。
+    EXPECT_FALSE(loadXacroInput(std::vector<std::uint8_t>(entry.begin(),entry.end()),path).ok);
+    writeXacroFixture(path,entry);
+    FlowHarness fx;fx.session.draft=makeSixAxisDraft();fx.host.openPathAnswer=path;
+    std::string summary;
+    ASSERT_TRUE(executeModelingCommand("modeling.import-xacro",fx.session,fx.deps(),fx.host,summary))<<summary;
+    EXPECT_EQ(fx.session.draft.design.displayName,"frozen");
+    EXPECT_TRUE(fx.host.lastConfirmText.contains("missing.stl"));
+}
+
+
+TEST(ModelingCommandFlows, XacroIncludeBudgetMeasuresDepthNotBranchWidth_MDL19_AT31)
+{
+    IRD_TEST_INFO("MDL-19",{"AT-31"},std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());
+    QByteArray entry="<robot name=\"wide\" xmlns:xacro=\"http://www.ros.org/wiki/xacro\">";
+    for(int i=0;i<20;++i){
+        const QString name=QString("leaf%1.xacro").arg(i);
+        writeXacroFixture(dir.filePath(name),"<robot xmlns:xacro=\"http://www.ros.org/wiki/xacro\"/>");
+        entry+="<xacro:include filename=\""+name.toUtf8()+"\"/>";
+    }
+    entry+="</robot>";
+    const auto path=dir.filePath("wide.xacro");writeXacroFixture(path,entry);
+    const auto wide=loadXacroInput(std::vector<std::uint8_t>(entry.begin(),entry.end()),path);
+    ASSERT_TRUE(wide.ok)<<wide.errorDetail;
+    EXPECT_EQ(wide.includeBytes.size(),20u);
+    for(int i=0;i<17;++i){
+        const QByteArray next=i==16?QByteArray():"<xacro:include filename=\"deep"+QByteArray::number(i+1)+".xacro\"/>";
+        const QByteArray text="<robot xmlns:xacro=\"http://www.ros.org/wiki/xacro\">"+next+"</robot>";
+        writeXacroFixture(dir.filePath(QString("deep%1.xacro").arg(i)),text);
+    }
+    QFile first(dir.filePath("deep0.xacro"));ASSERT_TRUE(first.open(QIODevice::ReadOnly));
+    const auto raw=first.readAll();
+    const auto deep=loadXacroInput(std::vector<std::uint8_t>(raw.begin(),raw.end()),first.fileName());
+    EXPECT_FALSE(deep.ok);EXPECT_NE(deep.errorDetail.find("IO-SEC-BUDGET-INCLUDE"),std::string::npos);
 }

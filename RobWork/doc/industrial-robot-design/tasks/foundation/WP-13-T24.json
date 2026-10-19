@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T24",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "建模全功能验收缺陷修复及真实交互验证",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T06",
+    "WP-13-T21"
+  ],
+  "requirements": [
+    "MDL-03",
+    "MDL-11",
+    "MDL-12",
+    "MDL-19",
+    "UX-03"
+  ],
+  "designRefs": [
+    "units/modeling.md#6.5",
+    "units/modeling.md#9.7",
+    "development-task-breakdown.md#2.14"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T24.json",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/docs/superpowers/plans/2026-10-20-modeling-completion.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t24",
+  "interUnit": false,
+  "knownPitfalls": [
+    "P-MDL-4",
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "B1导入真实include、参数、选链与完整报告；取消/依赖错误零草稿修改；真实io安全/预算边界不放松",
+    "完整目标与五批计划见docs/superpowers/plans/2026-10-20-modeling-completion.md；本卡当前精确允许面只含B1私有实现；后续公共面先八节设计登记",
+    "先红后绿，双模式构建、门禁、XML和ird报告、真实窗口留痕；不以组件通过宣称47项全功能终验"
+  ],
+  "note": "2026-10-20所有者要求开始修复601ffa0e建模验收17项问题；授权常规方案自动采用推荐选择，不再弹出选项。按所有者此前指令不使用子代理、不推送、不自行合入。先登记B1精确范围，后续批次实施前逐项补设计与契约。当前status=ready仅表示获准实施，不代表验收通过。"
+}

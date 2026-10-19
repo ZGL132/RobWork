@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.022" timestamp="2026-10-20T05:36:49.849" name="AllTests">
+  <testsuite name="ModelingCommandFlows" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.021" timestamp="2026-10-20T05:36:49.849">
+    <testcase name="ExistingNestedXacroIncludeUsesProductionBridge_MDL19_AT31" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="808" status="run" result="completed" time="0.003" timestamp="2026-10-20T05:36:49.849" classname="ModelingCommandFlows">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:824&#x0A;Value of: expanded.ok&#x0A;  Actual: false&#x0A;Expected: true&#x0A;ValidatedXacroSource 契约违约：入口字节/树根键/来源摘要/来源路径缺一不可（io 产物装配面）&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:824
+Value of: expanded.ok
+  Actual: false
+Expected: true
+ValidatedXacroSource 契约违约：入口字节/树根键/来源摘要/来源路径缺一不可（io 产物装配面）
+]]></failure>
+    </testcase>
+    <testcase name="XacroBranchesUseSameExplicitSelectionAsUrdf_MDL12_AT17" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="830" status="run" result="completed" time="0.014" timestamp="2026-10-20T05:36:49.852" classname="ModelingCommandFlows">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:847&#x0A;Value of: executeModelingCommand(&quot;modeling.import-xacro&quot;, fx.session, fx.deps(), fx.host, summary)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Xacro 展开失败：ValidatedXacroSource 契约违约：入口字节/树根键/来源摘要/来源路径缺一不可（io 产物装配面）&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:847
+Value of: executeModelingCommand("modeling.import-xacro", fx.session, fx.deps(), fx.host, summary)
+  Actual: false
+Expected: true
+Xacro 展开失败：ValidatedXacroSource 契约违约：入口字节/树根键/来源摘要/来源路径缺一不可（io 产物装配面）
+]]></failure>
+    </testcase>
+    <testcase name="ImportConfirmationShowsObjectFieldsValuesAndReasons_MDL11_AT15" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="852" status="run" result="completed" time="0.004" timestamp="2026-10-20T05:36:49.866" classname="ModelingCommandFlows">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:864&#x0A;Value of: fx.host.lastConfirmText.contains(&quot;j1&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:864
+Value of: fx.host.lastConfirmText.contains("j1")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:865&#x0A;Value of: fx.host.lastConfirmText.contains(&quot;lower&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:865
+Value of: fx.host.lastConfirmText.contains("lower")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:866&#x0A;Value of: fx.host.lastConfirmText.contains(&quot;-1.57&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:866
+Value of: fx.host.lastConfirmText.contains("-1.57")
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:867&#x0A;Value of: fx.host.lastConfirmText.contains(&quot;axis&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:867
+Value of: fx.host.lastConfirmText.contains("axis")
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

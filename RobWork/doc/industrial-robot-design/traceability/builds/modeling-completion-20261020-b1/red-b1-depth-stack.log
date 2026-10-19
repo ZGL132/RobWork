@@ -1,0 +1,55 @@
+Note: Google Test filter = ModelingCommandFlows.*
+[==========] Running 26 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 26 tests from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.EstimateProperties_WritesBackWithEstimateBadge_UI_T41C
+[       OK ] ModelingCommandFlows.EstimateProperties_WritesBackWithEstimateBadge_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.EstimateProperties_NoSelection_HonestRefusal_UI_T41C
+[       OK ] ModelingCommandFlows.EstimateProperties_NoSelection_HonestRefusal_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.EstimateProperties_OverwriteUserValuesNeedsConfirm_UI_T41C
+[       OK ] ModelingCommandFlows.EstimateProperties_OverwriteUserValuesNeedsConfirm_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.PlaceholderGeometry_WritesVisualRef_UI_T41C
+[       OK ] ModelingCommandFlows.PlaceholderGeometry_WritesVisualRef_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.PlaceholderGeometry_FlangeLink_Refused_UI_T41C
+[       OK ] ModelingCommandFlows.PlaceholderGeometry_FlangeLink_Refused_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.EstimateProperties_ZeroLengthSegment_Refused_UI_T41C
+[       OK ] ModelingCommandFlows.EstimateProperties_ZeroLengthSegment_Refused_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D
+[       OK ] ModelingCommandFlows.ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D (9 ms)
+[ RUN      ] ModelingCommandFlows.ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D
+[       OK ] ModelingCommandFlows.ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D (0 ms)
+[ RUN      ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1
+[       OK ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1 (7 ms)
+[ RUN      ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466
+[       OK ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466 (0 ms)
+[ RUN      ] ModelingCommandFlows.ImportUrdf_WithMeshAndMissingResource_ProducesDraft_WP13_T21
+[       OK ] ModelingCommandFlows.ImportUrdf_WithMeshAndMissingResource_ProducesDraft_WP13_T21 (24 ms)
+[ RUN      ] ModelingCommandFlows.ImportUrdf_PlainNoMesh_ProducesDraft_WP13_T21
+[       OK ] ModelingCommandFlows.ImportUrdf_PlainNoMesh_ProducesDraft_WP13_T21 (2 ms)
+[ RUN      ] ModelingCommandFlows.ImportUrdf_ConfirmRejected_KeepsSessionDraft_WP13_T21
+[       OK ] ModelingCommandFlows.ImportUrdf_ConfirmRejected_KeepsSessionDraft_WP13_T21 (3 ms)
+[ RUN      ] ModelingCommandFlows.ExportWorkCellXml_HappyPath_UI_T56
+[       OK ] ModelingCommandFlows.ExportWorkCellXml_HappyPath_UI_T56 (0 ms)
+[ RUN      ] ModelingCommandFlows.ExportWorkCellXml_SnapshotMissingAndNotWired_UI_T56
+[       OK ] ModelingCommandFlows.ExportWorkCellXml_SnapshotMissingAndNotWired_UI_T56 (0 ms)
+[ RUN      ] ModelingCommandFlows.ExportWorkCellXml_CancelAndOverwriteConfirm_UI_T56
+[       OK ] ModelingCommandFlows.ExportWorkCellXml_CancelAndOverwriteConfirm_UI_T56 (1 ms)
+[ RUN      ] ModelingCommandFlows.NewFromTemplateCustomChain_UI_T63
+[       OK ] ModelingCommandFlows.NewFromTemplateCustomChain_UI_T63 (0 ms)
+[ RUN      ] ModelingCommandFlows.NewFromTemplateGeneric6RKept_UI_T63
+[       OK ] ModelingCommandFlows.NewFromTemplateGeneric6RKept_UI_T63 (0 ms)
+[ RUN      ] ModelingCommandFlows.ExistingNestedXacroIncludeUsesProductionBridge_MDL19_AT31
+[       OK ] ModelingCommandFlows.ExistingNestedXacroIncludeUsesProductionBridge_MDL19_AT31 (4 ms)
+[ RUN      ] ModelingCommandFlows.XacroBranchesUseSameExplicitSelectionAsUrdf_MDL12_AT17
+[       OK ] ModelingCommandFlows.XacroBranchesUseSameExplicitSelectionAsUrdf_MDL12_AT17 (2 ms)
+[ RUN      ] ModelingCommandFlows.ImportConfirmationShowsObjectFieldsValuesAndReasons_MDL11_AT15
+[       OK ] ModelingCommandFlows.ImportConfirmationShowsObjectFieldsValuesAndReasons_MDL11_AT15 (2 ms)
+[ RUN      ] ModelingCommandFlows.XacroParametersReachMappingAndProvenance_MDL19_AT31
+[       OK ] ModelingCommandFlows.XacroParametersReachMappingAndProvenance_MDL19_AT31 (7 ms)
+[ RUN      ] ModelingCommandFlows.XacroParameterAndBranchCancelKeepOriginalDraft_MDL19_AT31
+[       OK ] ModelingCommandFlows.XacroParameterAndBranchCancelKeepOriginalDraft_MDL19_AT31 (6 ms)
+[ RUN      ] ModelingCommandFlows.XacroIncludeMissingCycleEscapeAndMalformedXmlFailClosed_MDL19_AT31
+[       OK ] ModelingCommandFlows.XacroIncludeMissingCycleEscapeAndMalformedXmlFailClosed_MDL19_AT31 (11 ms)
+[ RUN      ] ModelingCommandFlows.FrozenXacroInputDoesNotRereadAndMissingMeshRemainsEditable_MDL19_AT31
+[       OK ] ModelingCommandFlows.FrozenXacroInputDoesNotRereadAndMissingMeshRemainsEditable_MDL19_AT31 (42 ms)
+[ RUN      ] ModelingCommandFlows.XacroIncludeBudgetMeasuresDepthNotBranchWidth_MDL19_AT31

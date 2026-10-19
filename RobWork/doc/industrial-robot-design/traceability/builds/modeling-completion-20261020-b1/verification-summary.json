@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "modeling-completion-b1/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "84f1cfc7645814ccf01742815129273e783eaedf",
+  "scope": "B1：F02导入报告、F03展开后选链、F05生产Xacro；不构成47项全功能终验",
+  "environment": {
+    "os": "Windows",
+    "toolchain": "Visual Studio 2022 x64",
+    "qtPlatform": "windows",
+    "guiExecutables": "绝对路径、单进程串行"
+  },
+  "builds": {
+    "integration": "PASS，全量Release",
+    "standalone": "PASS，12个相关目标",
+    "gates": "PASS，零命中",
+    "verifyTask": "PASS，3条机器命令"
+  },
+  "totals": {
+    "total": 1316,
+    "passed": 1316,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 400,
+      "passed": 400,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "modeling_gui",
+      "total": 48,
+      "passed": 48,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "ui",
+      "total": 324,
+      "passed": 324,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 325,
+      "passed": 325,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 43,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener",
+      "skippedTests": []
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "derived-from-gtest-xml",
+      "skippedTests": []
+    }
+  ],
+  "implementationVerified": [
+    "F02",
+    "F03",
+    "F05"
+  ],
+  "remainingImplementation": [
+    "F01",
+    "F04",
+    "F06",
+    "F07",
+    "F08",
+    "F09",
+    "F10",
+    "F12",
+    "F13",
+    "F14",
+    "F15",
+    "F16",
+    "F17"
+  ],
+  "pendingReverification": [
+    "F11（A-23已实现，建模侧复验待完成）",
+    "47项完整用户路径与真实三维"
+  ],
+  "limitations": [
+    "core伴随报告由真实gtest XML派生，不冒充原生IRD listener",
+    "独立模式不编入集成专属命令流/宿主接线用例，差异在suite计数中保留",
+    "三张图为真实生产Qt模态窗口内容；不证明正式宿主端到端文件导入或三维结果",
+    "不禁用既有io允许的内部DTD；坏XML、路径逃逸和预算拒绝另有真实测试"
+  ]
+}

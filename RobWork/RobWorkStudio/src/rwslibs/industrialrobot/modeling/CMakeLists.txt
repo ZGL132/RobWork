@@ -676,7 +676,9 @@ ird_add_gtest(sdurws_ird_modeling_test)
 # 对运行方环境变量的隐式依赖）。
 add_executable(sdurws_ird_modeling_gui_test
     gui_test/TestMainReport.cpp
-    gui_test/ModelingPanelGuiTest.cpp)
+    gui_test/ModelingPanelGuiTest.cpp
+    # WP-13-T24：真实生产导入对话框，验证参数编辑/报告可读性及取消原子性。
+    gui_test/ModelingImportGuiTest.cpp)
 
 # UI-T43 模块级接线用例（ModelingUiModule 被测面——生产装配序文案解析
 # 回归＋setWritable 暂存/即时双形态链路）：被测类型构造期持 policy 行程
