@@ -1,0 +1,45 @@
+[==========] Running 4 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from CancelTimingBenchmark
+[ RUN      ] CancelTimingBenchmark.NormalCancelSettleRealWorkerThresholds_WP23T03_B02
+[perf-b02] 预热腿实测 d1=10.648400 ms, d2b=25.022700 ms（剔除）
+[       OK ] CancelTimingBenchmark.NormalCancelSettleRealWorkerThresholds_WP23T03_B02 (2812 ms)
+[ RUN      ] CancelTimingBenchmark.TimeoutForceKillRetainsCheckpoint_WP23T03_B02
+[perf-b02] 场景#1: d1=11.245900ms, 强杀完成=10006.268400ms（自入 Canceling 起，含 10 s 窗，超出窗部分 6.268400ms）, workerPid=48140, 检查点留存=已核对
+[perf-b02] 场景#1: d1=11.245900ms, 强杀完成=10006.268400ms（自入 Canceling 起，含 10 s 窗，超出窗部分 6.268400ms）, workerPid=48140, 检查点留存=已核对
+场景#2: d1=20.380400ms, 强杀完成=10002.791300ms（自入 Canceling 起，含 10 s 窗，超出窗部分 2.791300ms）, workerPid=55820, 检查点留存=已核对
+[perf-b02] 场景#1: d1=11.245900ms, 强杀完成=10006.268400ms（自入 Canceling 起，含 10 s 窗，超出窗部分 6.268400ms）, workerPid=48140, 检查点留存=已核对
+场景#2: d1=20.380400ms, 强杀完成=10002.791300ms（自入 Canceling 起，含 10 s 窗，超出窗部分 2.791300ms）, workerPid=55820, 检查点留存=已核对
+场景#3: d1=11.050000ms, 强杀完成=10007.895300ms（自入 Canceling 起，含 10 s 窗，超出窗部分 7.895300ms）, workerPid=30708, 检查点留存=已核对
+[       OK ] CancelTimingBenchmark.TimeoutForceKillRetainsCheckpoint_WP23T03_B02 (30694 ms)
+[----------] 2 tests from CancelTimingBenchmark (33507 ms total)
+
+[----------] 1 test from LargeTaskMemoryBenchmark
+[ RUN      ] LargeTaskMemoryBenchmark.LargeTaskBatchStreamCheckpointPeak_WP23T06_B05
+[perf-b05] 预热腿实测 peakRatio=0.000182（剔除）
+[perf-b05] sample#1: main=10.5MB worker=1.3MB agg=11.9MB total=63.5GB ratio=0.000182 readings=15 level=0
+[perf-b05] sample#2: main=11.1MB worker=1.3MB agg=12.4MB total=63.5GB ratio=0.000191 readings=10 level=0
+[perf-b05] sample#3: main=11.5MB worker=1.3MB agg=12.8MB total=63.5GB ratio=0.000197 readings=10 level=0
+[perf-b05] sample#4: main=11.5MB worker=1.3MB agg=12.8MB total=63.5GB ratio=0.000197 readings=11 level=0
+[perf-b05] sample#5: main=11.5MB worker=1.3MB agg=12.8MB total=63.5GB ratio=0.000196 readings=11 level=0
+[perf-b05] sample#6: main=11.1MB worker=1.3MB agg=12.4MB total=63.5GB ratio=0.000190 readings=10 level=0
+[perf-b05] sample#7: main=11.4MB worker=1.3MB agg=12.7MB total=63.5GB ratio=0.000195 readings=10 level=0
+[perf-b05] sample#8: main=11.6MB worker=1.3MB agg=12.9MB total=63.5GB ratio=0.000198 readings=11 level=0
+[perf-b05] sample#9: main=11.4MB worker=1.3MB agg=12.7MB total=63.5GB ratio=0.000196 readings=10 level=0
+[perf-b05] sample#10: main=11.4MB worker=1.3MB agg=12.7MB total=63.5GB ratio=0.000196 readings=10 level=0
+[perf-b05] sample#11: main=11.3MB worker=1.3MB agg=12.6MB total=63.5GB ratio=0.000193 readings=10 level=0
+[perf-b05] sample#12: main=11.5MB worker=1.3MB agg=12.8MB total=63.5GB ratio=0.000196 readings=10 level=0
+[perf-b05] sample#13: main=11.4MB worker=1.3MB agg=12.7MB total=63.5GB ratio=0.000195 readings=11 level=0
+[perf-b05] sample#14: main=11.6MB worker=1.3MB agg=12.9MB total=63.5GB ratio=0.000198 readings=15 level=0
+[perf-b05] sample#15: main=11.6MB worker=1.3MB agg=13.0MB total=63.5GB ratio=0.000199 readings=11 level=0
+[       OK ] LargeTaskMemoryBenchmark.LargeTaskBatchStreamCheckpointPeak_WP23T06_B05 (5646 ms)
+[----------] 1 test from LargeTaskMemoryBenchmark (5646 ms total)
+
+[----------] 1 test from ResourceThrottleOrderingBenchmark
+[ RUN      ] ResourceThrottleOrderingBenchmark.ThrottleBeforeDiagnosticSequence_WP23T06_B05
+[       OK ] ResourceThrottleOrderingBenchmark.ThrottleBeforeDiagnosticSequence_WP23T06_B05 (0 ms)
+[----------] 1 test from ResourceThrottleOrderingBenchmark (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 3 test suites ran. (39154 ms total)
+[  PASSED  ] 4 tests.

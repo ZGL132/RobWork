@@ -1,0 +1,39 @@
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from GoldenProjectOpen
+[ RUN      ] GoldenProjectOpen.HotStartP95_Within3s_DT_PM16
+[b04-golden] disk-facts headRefs=1001 history=101 oidDirs=1101
+[b04-hot] sample (excluded=1 valid=1): 7094.621 ms
+[b04-hot] sample (excluded=0 valid=1): 7100.313 ms
+[b04-hot] sample (excluded=0 valid=1): 7173.803 ms
+[b04-hot] sample (excluded=0 valid=1): 7131.045 ms
+[b04-hot] sample (excluded=0 valid=1): 7215.889 ms
+[b04-hot] sample (excluded=0 valid=1): 7094.771 ms
+[b04-hot] sample (excluded=0 valid=1): 7134.574 ms
+[b04-hot] sample (excluded=0 valid=1): 7131.083 ms
+[b04-hot] sample (excluded=0 valid=1): 7046.592 ms
+[b04-hot] sample (excluded=0 valid=1): 7140.180 ms
+[b04-hot] sample (excluded=0 valid=1): 7120.966 ms
+[b04-hot] sample (excluded=0 valid=1): 6989.558 ms
+[b04-hot] sample (excluded=0 valid=1): 7136.711 ms
+[b04-hot] sample (excluded=0 valid=1): 7095.237 ms
+[b04-hot] sample (excluded=0 valid=1): 6830.578 ms
+[b04-hot] sample (excluded=0 valid=1): 6967.583 ms
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\perf_test\GoldenProjectBenchmarkTest.cpp(666): error: Value of: verdict.pass
+  Actual: false
+Expected: true
+热启动 P95 超门禁：实测 7186.4290999999994 ms > 3,000 ms（PM-16 原文口径——原始样本序列见报告）
+
+[  FAILED  ] GoldenProjectOpen.HotStartP95_Within3s_DT_PM16 (132161 ms)
+[ RUN      ] GoldenProjectOpen.ColdStartP95_SoftTarget_ReportOnly_DT_PM16
+[b04-golden] disk-facts headRefs=1001 history=101 oidDirs=1101
+[       OK ] GoldenProjectOpen.ColdStartP95_SoftTarget_ReportOnly_DT_PM16 (76871 ms)
+[----------] 2 tests from GoldenProjectOpen (209033 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (209033 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] GoldenProjectOpen.HotStartP95_Within3s_DT_PM16
+
+ 1 FAILED TEST

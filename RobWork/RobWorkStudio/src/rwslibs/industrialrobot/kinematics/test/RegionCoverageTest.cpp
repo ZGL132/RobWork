@@ -935,6 +935,89 @@ TEST(KinRegionCoverage, CollisionDemandWithoutDetectorDataInsufficient_WP15T06_A
     EXPECT_EQ(plainReader.u8(), 0U);  // downgraded——无要求无会话≠缺陷
 }
 
+TEST(KinRegionCoverage, TcpMissingDirectCallZeroMaterialTrack_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-04"},
+                  std::vector<std::string>{});
+
+    // 无工具模型（KIN-NO-TCP"未配置"分支的测试面——夹具 withTool=false）。
+    // 直调通道与评估器类（WorkspaceSampler m_setupError 零素材契约轨，
+    // 见契约面 TcpMissingZeroMaterialTrack_WP15T06）同语义对齐批：素材
+    // 缺失绝不升级为整批终局失败。修复前本通道缺预检，逐样本求解器的
+    // 调用方错误 fail-fast（Ik.cpp resolveTcpOrThrow）把无工具漏成异常
+    // ——WP-14-T12 UI 通道 tour 取证实测 ok=false 全批失败。
+    const rt::CanonicalModel model = makeModel(
+        {revolute("j1", rw::math::Vector3D<double>(0, 0, 1), trans(0, 0, 0),
+                  -2.0, 2.0),
+         revolute("j2", rw::math::Vector3D<double>(0, 0, 1), trans(1.0, 0, 0),
+                  -3.14, 3.14)},
+        trans(0.5, 0, 0), trans(0, 0, 0), /*withTool=*/false);
+    TestView view(model);
+
+    // 脚本求解器"若被调用即产可达"——零断言靠 requests 计数钉死：零素
+    // 材轨必须跳过求解（调用方错误语义锚不应被素材缺失触发）。
+    ScriptedSolver solver(
+        [](const kin::IkRequest&) { return kin::IkOutcomeKind::SolutionsFound; });
+    const SamplingPlan plan = makePlan("notcp-direct", {2U, 1U, 1U});
+    const RegionCoverageQuery query = makeQuery({plan}, &solver);
+    NoopContext context;
+    const kin::RegionCoverageComputation computation =
+        kin::runRegionCoverageComputation(
+            view, query, makeRequest({makeRef(plan, query.budget)}), context);
+
+    // 批量级零素材：求解零调用；逐样本 DataInsufficient（证据缺失族
+    // ——不产不可达不产可达），原因携带 KIN-NO-TCP 语义锚。
+    EXPECT_EQ(solver.requests().size(), 0U);
+    ASSERT_EQ(computation.results.results.size(),
+              computation.samples.samples.size());
+    ASSERT_EQ(computation.results.results.size(), 4U);  // 2 位置＋2 位姿
+    for (const auto& record : computation.results.results) {
+        EXPECT_EQ(record.state, kin::SampleState::DataInsufficient);
+        EXPECT_NE(record.reason.find("KIN-NO-TCP"), std::string::npos);
+    }
+
+    // 覆盖率：分母保留（位置/位姿轴各 2）、分子零、整体降级——评估
+    // 照常完成（ok 面），证据链可见"为何全部数据不足"。
+    EXPECT_EQ(computation.coverage.position.planned, 2U);
+    EXPECT_EQ(computation.coverage.position.dataInsufficient, 2U);
+    EXPECT_EQ(computation.coverage.position.reached, 0U);
+    EXPECT_EQ(computation.coverage.orientation.planned, 2U);
+    EXPECT_EQ(computation.coverage.orientation.dataInsufficient, 2U);
+    EXPECT_TRUE(computation.coverage.downgraded);
+}
+
+TEST(KinRegionCoverage, TcpDanglingRefDirectCallZeroMaterialTrack_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-04"},
+                  std::vector<std::string>{});
+
+    // 有工具模型＋查询引用不可解析 toolObject（悬空——素材面轨）。与
+    // "工具存在且可解析而 tcpKey 不命中＝装配违约 fail-fast"两分：悬空
+    // 引用保留到评估期零素材，不走异常（validateRegionCoverageQuery 只
+    // 对可解析工具做键预检——同口径）。
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    ScriptedSolver solver(
+        [](const kin::IkRequest&) { return kin::IkOutcomeKind::SolutionsFound; });
+    const SamplingPlan plan = makePlan("tcpdangling", {1U, 1U, 1U});
+    RegionCoverageQuery query = makeQuery({plan}, &solver);
+    query.defaultTcp.toolObject = idFrom<core::ObjectId>("kin-tool-missing");
+    NoopContext context;
+    const kin::RegionCoverageComputation computation =
+        kin::runRegionCoverageComputation(
+            view, query, makeRequest({makeRef(plan, query.budget)}), context);
+
+    EXPECT_EQ(solver.requests().size(), 0U);
+    ASSERT_EQ(computation.results.results.size(), 2U);  // 1 位置＋1 位姿
+    for (const auto& record : computation.results.results) {
+        EXPECT_EQ(record.state, kin::SampleState::DataInsufficient);
+        EXPECT_NE(record.reason.find("KIN-NO-TCP"), std::string::npos);
+    }
+    EXPECT_EQ(computation.coverage.position.planned, 1U);
+    EXPECT_EQ(computation.coverage.position.dataInsufficient, 1U);
+    EXPECT_TRUE(computation.coverage.downgraded);
+}
+
 TEST(KinRegionCoverage, MirrorPlanSamplesIndependent_WP15T06_ACC5)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-04"},

@@ -98,6 +98,77 @@ A-18 修复后本通道即为 R03-10/11/U08 的可复跑证据载体。
 组合——预览块的调用触发面待查）。清单/着色/蓝圈三断言与截图在投递接通后
 即为 R03-10/11/U08 终证；WIP 如实提交。
 
+## 第三十一批（评估链收官，2026-10-19）——零素材轨域修复＋回执呈现接线
+
+**新发现三缺陷（r16/r17 诊断面取证）——全部修复**：
+
+- **A-19（域语义不一致——产品缺陷）**：`runRegionCoverageComputation` 缺
+  工具侧预检——逐样本求解器的调用方错误 fail-fast（Ik.cpp
+  `resolveTcpOrThrow`）把"快照模型无工具"漏成整批异常（r16 实测
+  ok=0、err=KIN-NO-TCP），与同单元 `WorkspaceSampler` m_setupError 零
+  素材契约轨（T05 两分口径）及执行器 sliceCoverage 消费注释（"评估面产
+  KIN-NO-TCP 零素材——诚实评估产出而非受理拒绝：无工具模型评估是合法
+  结论"）直接矛盾。修复（kinematics/src/Evaluators.cpp）：函数头
+  tcpSetupDeficiency 预检（无工具／toolObject 悬空两分支）→逐样本
+  DataInsufficient＋KIN-NO-TCP 原因直落（跳过求解），评估照常完成
+  （downgraded 面承载降级）；工具**存在**而 tcpKey 不命中维持装配期
+  fail-fast（两分口径不变）。新增用例 ×2（无工具直调零素材轨／悬空引
+  用零素材轨——求解零调用钉死）；kinematics_test 265 过。
+- **A-20（呈现断链）**：后台完成回执文本在 UiPlugin route 闭包被
+  `(void)` 丢弃——完成/失败只在覆盖表间接可见、状态行不可观测
+  （ERR-01；r15 实证：评估失败 60s 内状态行停格"已受理"）。修复：
+  UiPlugin 持面板 QWidget*（QPointer），route 经面板公共槽
+  showStatusText 按名投递（零跨单元插件层头包含——R-2 装配面纪律）；
+  槽解析未命中＝装配违约 Dev 留痕。r17 实测失败原因全文上状态行；
+  r18 实测"覆盖评估完成：0/24 点可达（位置口径）"。
+- **A-21（潜在编译断裂）**：batch30 新增 IRequirementEditor 纯虚
+  applyEditsAtomic 未同步 ui_test ScriptedEditor 替身（batch30 验证面
+  未含 ui_test）——本批全量集成构建即暴露（C2259 抽象类）。修复：替
+  身零消费 override（同 applyEdit 零编辑语义）。
+
+**取证方法论（tour r16~r18，cov-diag 诊断面）**：拍 11 轮询后追加一行
+五值打印（账面在位/锚匹配/样本数/格层/清单实测），把"清单空态"一次分型
+为四类断链——r16 锁定 ok=0（评估失败，非投影断链；区域重选触发面本就
+通）；r17 扩印 errorText 锁定 KIN-NO-TCP；域修复后 r18 全绿。冒烟门控
+诊断（tour 侧）保留作证据通道；batch29 的 kin-refresh 临时探针已移除
+（A-17 使命完成）。
+
+**拍 11 终证（r18＋终码态 batch31-freeze 复跑）**：四断言全绿——
+coverage-results-arrived（rows=1176 真实样本行）、grid-colored-states=
+1176/1176（全格元已评估着色）、sample-row-state-text-present、
+sample-highlight-key-set（index=0）；截图 tour-6b-view3d-real-coloring/
+tour-6c-sample-blue-circle（目检真实：区域盒＋采样格骨架＋着色点＋蓝圈
+同心圆标记）。
+
+**登记义务**：A-19/A-20/A-21 与 A-17/A-18 同口径转登 findings.json 归
+治理批（本批以本段＋提交信息承载）。**带工具模型的 Good/Failed 谱系补
+证**（本夹具＝无工具模型，评估谱系＝DataInsufficient 全谱——设计内诚
+实产出；apply-tool-definition 命令直提配方已查明：makeValidTool＋
+RobotDesignCodec.encode＋kCmdApplyToolDefinition）随后续批。
+
+**回归（batch31-freeze/）**：
+- 集成态全目标构建零错误（A-21 修复后）；64 套件执行＝60 首轮过＋4 复
+  核——ui_contract：production-assembly-manifest.json wiredAnchor 漂移
+  （batch29 WIP 插拍 10/11 代码推偏 attachModule 行号 16 行未同步清单，
+  本批 +1）已同步 2613→2630/2634→2651 转绿（IRD-NOTE-006 行级核对生效
+  的正面证明）；ui_gui：offscreen 平台误用——仓库口径 GUI 必须 windows
+  平台（run-tests.ps1 头注），windows 复跑绿；optimization_contract／
+  project_perf 见预存缺陷。
+- standalone 全量：66 套件＝64 过＋2 败（与集成态一致）；统计面 4426
+  例全过＋6 例环境跳过（SelPanelGui/OptPanelGui/DynPanelGui
+  WidgetPresentationDeferredToHarnessEnvUnavailable、GuiRegistration
+  V22RegisteredNotExecuted_ACC1 等 harness 缺席类——F-926 口径逐类列
+  明）＋2 预存败例。
+- **预存缺陷（本批全量面扩大新发现——非本批改动域，治理分诊队列）**：
+  optimization_contract
+  TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2（建支元数据修订引
+  用集含 RobotDesign token——OPT-VER-145 断言红；optimization/project
+  域与本批改动零交集）；project_perf HotStartP95_Within3s_DT_PM16（空
+  载复跑 131s vs 3s 预算——负载干扰经空载复跑排除，本机/分支态预存）。
+- 双 tour 终码态复跑：requirements-tour failed-assert=0（152 pass）；
+  modeling-tour 240 pass 零 FAIL。
+- ird_gates：见本目录 ird-gates.log（终值以该日志为准）。
+
 | ID | 功能 | 如何验证 | 本次终验 | 最新组件匹配数 |
 | --- | --- | --- | --- | --- |
 | R01-01 | 新建关键任务点 | 空集点新增，核对默认字段、树节点和选中项 | NOT RUN | 2 |
@@ -124,9 +195,9 @@ A-18 修复后本通道即为 R03-10/11/U08 的可复跑证据载体。
 | R03-06 | 工具滚转姿态采样 | 配置 roll 数量/角范围 rad，检查总数与非法范围 | NOT RUN | 2 |
 | R03-07 | 最低覆盖率 | 拖动或输入85%，核对0~1存储、百分数显示及边界 | NOT RUN | 2 |
 | R03-08 | 退化区域、零计划与计数溢出 | 零/负尺寸、零数量、极大数量分别核对 Blocking/Warning 和无回绕 | NOT RUN | 3 |
-| R03-09 | 中性采样网格预览 | 没有评估结果时显示中性轮廓/网格，检查不伪装为可达 | NOT RUN | 2 |
-| R03-10 | Good/Weak/Failed 样本着色与图例 | 跑一次真实区域覆盖，逐样本对照结果状态、颜色和图例 | NOT RUN | 9 |
-| R03-11 | 选中样本蓝圈/三维定位 | 点击结果中已知样本，核对唯一蓝圈、世界坐标及切换清理 | NOT RUN | 55 |
+| R03-09 | 中性采样网格预览 | 没有评估结果时显示中性轮廓/网格，检查不伪装为可达 | PASS（批31——r18 评估前窗 step5 实测：中性轮廓＋47 格线零伪装） | 2 |
+| R03-10 | Good/Weak/Failed 样本着色与图例 | 跑一次真实区域覆盖，逐样本对照结果状态、颜色和图例 | PASS（批31——真实覆盖运行 1176 样本着色＋图例〔本夹具无工具模型＝DataInsufficient 全谱，设计内诚实产出；Good/Failed 谱系待带工具模型补证——见批31 登记义务〕） | 9 |
+| R03-11 | 选中样本蓝圈/三维定位 | 点击结果中已知样本，核对唯一蓝圈、世界坐标及切换清理 | PASS（批31——清单首行点击高亮键 index=0＋蓝圈截图 tour-6c） | 55 |
 | R04-01 | 工况新增、复制与删除 | 向导新增各等级/适用范围，再复制删除并检查必验列 | NOT RUN | 2 |
 | R04-02 | 工况改名 | 修改名称后Tab提交，应保留窗口并更新草稿/树 | NOT RUN | 1 |
 | R04-03 | 引用环境障碍/场景对象 | 选择 MDL-15 对象，检查存在性、适用范围与引用保护 | NOT RUN | 2 |

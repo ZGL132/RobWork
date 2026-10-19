@@ -1,0 +1,396 @@
+[==========] Running 85 tests from 13 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from UiGuiPlacement
+[ RUN      ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD
+[       OK ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD (0 ms)
+[----------] 1 test from UiGuiPlacement (0 ms total)
+
+[----------] 6 tests from WorkbenchShellGuiTest
+[ RUN      ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1
+QFontDatabase: Cannot find font directory D:/software/QT/6.11.1/msvc2022_64/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support raise()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support raise()
+This plugin does not support propagateSizeHints()
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(257): error: Value of: restored->regionVisible(WorkbenchRegion::Bottom)
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(266): error: Expected: (std::abs(window2->size().width() - geometryBefore.width())) <= (8), actual: 722 vs 8
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(267): error: Expected: (std::abs(window2->size().height() - geometryBefore.height())) <= (8), actual: 86 vs 8
+
+[  FAILED  ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1 (40 ms)
+[ RUN      ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support raise()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(323): error: Value of: shell->regionVisible(WorkbenchRegion::Left)
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(324): error: Value of: shell->regionVisible(WorkbenchRegion::Right)
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(325): error: Value of: shell->regionVisible(WorkbenchRegion::Bottom)
+  Actual: false
+Expected: true
+
+[  FAILED  ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2 (20 ms)
+[ RUN      ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3
+This plugin does not support propagateSizeHints()
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(365): error: Value of: shell->regionVisible(WorkbenchRegion::Left)
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(366): error: Value of: shell->regionVisible(WorkbenchRegion::Right)
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp(367): error: Value of: shell->regionVisible(WorkbenchRegion::Bottom)
+  Actual: false
+Expected: true
+
+[  FAILED  ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3 (28 ms)
+[ RUN      ] WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1 (22 ms)
+[ RUN      ] WorkbenchShellGuiTest.RecentProjects_CapDedupPersist_PM_10_PM_14
+[       OK ] WorkbenchShellGuiTest.RecentProjects_CapDedupPersist_PM_10_PM_14 (29 ms)
+[ RUN      ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06 (22 ms)
+[----------] 6 tests from WorkbenchShellGuiTest (165 ms total)
+
+[----------] 18 tests from WorkbenchContentGuiTest
+[ RUN      ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT (6 ms)
+[ RUN      ] WorkbenchContentGuiTest.BuildValidationRejectsIncompleteDeps_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.BuildValidationRejectsIncompleteDeps_UI_SPLIT (0 ms)
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedMemoryFlagsOnlyBoundary_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.EmbeddedMemoryFlagsOnlyBoundary_UI_SPLIT (18 ms)
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_UI_SPLIT (13 ms)
+[ RUN      ] WorkbenchContentGuiTest.SessionEntryOverrideRoutesShellEntries_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.SessionEntryOverrideRoutesShellEntries_UI_SPLIT (6 ms)
+[ RUN      ] WorkbenchContentGuiTest.SaveCloseEntryOverrideRoutesShellEntries_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.SaveCloseEntryOverrideRoutesShellEntries_UI_SPLIT (6 ms)
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedCentralYieldPage_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.EmbeddedCentralYieldPage_UI_SPLIT (6 ms)
+[ RUN      ] WorkbenchContentGuiTest.ContentCommandRegistryAccessorServesLiveRegistry_B1_UI_T19
+[       OK ] WorkbenchContentGuiTest.ContentCommandRegistryAccessorServesLiveRegistry_B1_UI_T19 (5 ms)
+[ RUN      ] WorkbenchContentGuiTest.StagePanelPageHostingAndSwitching_WP24_T03B
+[       OK ] WorkbenchContentGuiTest.StagePanelPageHostingAndSwitching_WP24_T03B (5 ms)
+[ RUN      ] WorkbenchContentGuiTest.DomainCommandRegistrationAndHonestFeedback_WP24_T03B
+[       OK ] WorkbenchContentGuiTest.DomainCommandRegistrationAndHonestFeedback_WP24_T03B (5 ms)
+[ RUN      ] WorkbenchContentGuiTest.DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B
+[       OK ] WorkbenchContentGuiTest.DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B (17 ms)
+[ RUN      ] WorkbenchContentGuiTest.DomainCommandGatingNoProjectAndReadonly_WP24_T03B
+[       OK ] WorkbenchContentGuiTest.DomainCommandGatingNoProjectAndReadonly_WP24_T03B (5 ms)
+[ RUN      ] WorkbenchContentGuiTest.AdviceGuideAndPlaceholderConvergence_UX02_UI_T25
+[       OK ] WorkbenchContentGuiTest.AdviceGuideAndPlaceholderConvergence_UX02_UI_T25 (5 ms)
+[ RUN      ] WorkbenchContentGuiTest.TopContextBarPresentation_UX02_UI_T26
+[       OK ] WorkbenchContentGuiTest.TopContextBarPresentation_UX02_UI_T26 (5 ms)
+[ RUN      ] WorkbenchContentGuiTest.TopContextBarSelectionResolved_UI_T26
+[       OK ] WorkbenchContentGuiTest.TopContextBarSelectionResolved_UI_T26 (5 ms)
+[ RUN      ] WorkbenchContentGuiTest.DomainCommandAssembledFalse_RegisteredDisabledWithReason_UI_T27
+[       OK ] WorkbenchContentGuiTest.DomainCommandAssembledFalse_RegisteredDisabledWithReason_UI_T27 (1 ms)
+[ RUN      ] WorkbenchContentGuiTest.HandlerRejectionEmptyDisableKey_HonestFeedbackNoCrash_F557
+[       OK ] WorkbenchContentGuiTest.HandlerRejectionEmptyDisableKey_HonestFeedbackNoCrash_F557 (6 ms)
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82
+[       OK ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82 (6 ms)
+[----------] 18 tests from WorkbenchContentGuiTest (130 ms total)
+
+[----------] 1 test from DockWorkspaceGuiTest
+[ RUN      ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82
+This plugin does not support propagateSizeHints()
+[       OK ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82 (280 ms)
+[----------] 1 test from DockWorkspaceGuiTest (280 ms total)
+
+[----------] 5 tests from CommandPaletteGuiTest
+[ RUN      ] CommandPaletteGuiTest.PaletteOpensViaDefaultShortcut_UI_PALETTE_1
+This plugin does not support propagateSizeHints()
+[       OK ] CommandPaletteGuiTest.PaletteOpensViaDefaultShortcut_UI_PALETTE_1 (25 ms)
+[ RUN      ] CommandPaletteGuiTest.RequirementsChineseFilterAndEnter_UX02_UX13
+[       OK ] CommandPaletteGuiTest.RequirementsChineseFilterAndEnter_UX02_UX13 (2 ms)
+[ RUN      ] CommandPaletteGuiTest.PaletteFilterNavigateExecute_UI_PALETTE_2
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(322): error: Value of: shell->regionVisible(sdurws::ird::ui::WorkbenchRegion::Left)
+  Actual: false
+Expected: true
+Enter 必须经 registry.submit 派发 view.resetLayout（统一提交路径）
+
+[  FAILED  ] CommandPaletteGuiTest.PaletteFilterNavigateExecute_UI_PALETTE_2 (20 ms)
+[ RUN      ] CommandPaletteGuiTest.UserRebindPersistsAcrossSessions_UI_PALETTE_3
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] CommandPaletteGuiTest.UserRebindPersistsAcrossSessions_UI_PALETTE_3 (34 ms)
+[ RUN      ] CommandPaletteGuiTest.FilterTabCompletesCategoryAndToggles_F821
+This plugin does not support propagateSizeHints()
+[       OK ] CommandPaletteGuiTest.FilterTabCompletesCategoryAndToggles_F821 (12 ms)
+[----------] 5 tests from CommandPaletteGuiTest (95 ms total)
+
+[----------] 5 tests from PolicySummaryCardGuiTest
+[ RUN      ] PolicySummaryCardGuiTest.LoadedProjection_RendersModelRows_UI_T07_ACC1_ACC3
+This plugin does not support propagateSizeHints()
+[       OK ] PolicySummaryCardGuiTest.LoadedProjection_RendersModelRows_UI_T07_ACC1_ACC3 (10 ms)
+[ RUN      ] PolicySummaryCardGuiTest.Unloaded_RendersPlaceholder_UI_T07_ACC1
+This plugin does not support propagateSizeHints()
+[       OK ] PolicySummaryCardGuiTest.Unloaded_RendersPlaceholder_UI_T07_ACC1 (8 ms)
+[ RUN      ] PolicySummaryCardGuiTest.CardIsReadOnly_NoEditableControls_UI_T07_ACC1
+This plugin does not support propagateSizeHints()
+[       OK ] PolicySummaryCardGuiTest.CardIsReadOnly_NoEditableControls_UI_T07_ACC1 (9 ms)
+[ RUN      ] PolicySummaryCardGuiTest.EditEntry_ShowsDeferredNotice_UI_T07_ACC2
+This plugin does not support propagateSizeHints()
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\PolicySummaryCardGuiTest.cpp(377): error: Value of: notice->isVisible()
+  Actual: false
+Expected: true
+
+[  FAILED  ] PolicySummaryCardGuiTest.EditEntry_ShowsDeferredNotice_UI_T07_ACC2 (10 ms)
+[ RUN      ] PolicySummaryCardGuiTest.RefreshOnContextInjection_UI_T07_ACC3
+This plugin does not support propagateSizeHints()
+[       OK ] PolicySummaryCardGuiTest.RefreshOnContextInjection_UI_T07_ACC3 (9 ms)
+[----------] 5 tests from PolicySummaryCardGuiTest (47 ms total)
+
+[----------] 10 tests from ParamTablePanelGuiTest
+[ RUN      ] ParamTablePanelGuiTest.StructureAndValueUnitColumns_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.StructureAndValueUnitColumns_UI_T08_ACC1 (1 ms)
+[ RUN      ] ParamTablePanelGuiTest.InPlaceErrorKeepsValue_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.InPlaceErrorKeepsValue_UI_T08_ACC1 (1 ms)
+[ RUN      ] ParamTablePanelGuiTest.ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1 (2 ms)
+[ RUN      ] ParamTablePanelGuiTest.ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1 (2 ms)
+[ RUN      ] ParamTablePanelGuiTest.CancelRestore_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.CancelRestore_UI_T08_ACC1 (1 ms)
+[ RUN      ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1 (1 ms)
+[ RUN      ] ParamTablePanelGuiTest.NoOutletDisablesApply_UI_T08_ACC2
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.NoOutletDisablesApply_UI_T08_ACC2 (1 ms)
+[ RUN      ] ParamTablePanelGuiTest.DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1 (1 ms)
+[ RUN      ] ParamTablePanelGuiTest.UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1 (3 ms)
+[ RUN      ] ParamTablePanelGuiTest.FilterRowsByKeySubstring_UI_T08_ACC1
+This plugin does not support propagateSizeHints()
+[       OK ] ParamTablePanelGuiTest.FilterRowsByKeySubstring_UI_T08_ACC1 (1 ms)
+[----------] 10 tests from ParamTablePanelGuiTest (19 ms total)
+
+[----------] 3 tests from AboutDialogGuiTest
+[ RUN      ] AboutDialogGuiTest.AboutDialogShowsBaselineAndListSameSource_UI_PLG_2_UI_T10_ACC1
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] AboutDialogGuiTest.AboutDialogShowsBaselineAndListSameSource_UI_PLG_2_UI_T10_ACC1 (16 ms)
+[ RUN      ] AboutDialogGuiTest.AboutDialogWithoutSourceShowsPlaceholders_UI_PLG_2_UI_T10
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] AboutDialogGuiTest.AboutDialogWithoutSourceShowsPlaceholders_UI_PLG_2_UI_T10 (27 ms)
+[ RUN      ] AboutDialogGuiTest.HelpContentsMissingManualGivesVisibleFeedback_UX14_UI_T10
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] AboutDialogGuiTest.HelpContentsMissingManualGivesVisibleFeedback_UX14_UI_T10 (17 ms)
+[----------] 3 tests from AboutDialogGuiTest (61 ms total)
+
+[----------] 7 tests from IndustrialProjectTreeGuiTest
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_6_PanelShowsFiveFixedGroupRows
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_6_PanelShowsFiveFixedGroupRows (0 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_6_NodeSelectionWritesService
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_6_NodeSelectionWritesService (0 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_6_DisplayNameResolvedViaNamePort
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_6_DisplayNameResolvedViaNamePort (0 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_7_L3_ReverseSuccessLocatesAndSelectsRow
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_7_L3_ReverseSuccessLocatesAndSelectsRow (0 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_7_L3_ReverseFailKeepsTreeUntouched
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_7_L3_ReverseFailKeepsTreeUntouched (0 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_8_FactoryRejectsIncompleteDeps
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_8_FactoryRejectsIncompleteDeps (0 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.SearchAndGroupFilter_UI_T26
+[       OK ] IndustrialProjectTreeGuiTest.SearchAndGroupFilter_UI_T26 (0 ms)
+[----------] 7 tests from IndustrialProjectTreeGuiTest (2 ms total)
+
+[----------] 14 tests from PropertyInspectorGuiTest
+[ RUN      ] PropertyInspectorGuiTest.EmptySelectionShowsNoSelectionPlaceholder
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.EmptySelectionShowsNoSelectionPlaceholder (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.MultiSelectionShowsNarrowHintPlaceholder
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.MultiSelectionShowsNarrowHintPlaceholder (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.RuntimeOnlyFromEmptyShowsRuntimePlaceholder
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.RuntimeOnlyFromEmptyShowsRuntimePlaceholder (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.UnansweredObjectShowsHonestPlaceholder
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.UnansweredObjectShowsHonestPlaceholder (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.SelectionShowsResolvedTitleAndEmbeddedParamTable
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.SelectionShowsResolvedTitleAndEmbeddedParamTable (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.UnresolvableObjectShowsUnnamedTitlePlaceholder
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.UnresolvableObjectShowsUnnamedTitlePlaceholder (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.ReadOnlyPageShowsReadOnlyBadge
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.ReadOnlyPageShowsReadOnlyBadge (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.ComplexEntriesRenderedAsButtonsWithTitles
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.ComplexEntriesRenderedAsButtonsWithTitles (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.HostedEntryClickMountsWidgetIntoHostArea
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.HostedEntryClickMountsWidgetIntoHostArea (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.ExternalEntryClickLeavesHostAreaHidden
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.ExternalEntryClickLeavesHostAreaHidden (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.ExternalActivationReturningWidgetRejectedAsProviderBreach
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.ExternalActivationReturningWidgetRejectedAsProviderBreach (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.RejectedPageShowsDefensivePlaceholderAndKeepsEntries
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.RejectedPageShowsDefensivePlaceholderAndKeepsEntries (0 ms)
+[ RUN      ] PropertyInspectorGuiTest.SelectionSwitchClearsStaleHostedPage
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+[       OK ] PropertyInspectorGuiTest.SelectionSwitchClearsStaleHostedPage (1 ms)
+[ RUN      ] PropertyInspectorGuiTest.FactoryRejectsEmptyDeps_FailFast
+[       OK ] PropertyInspectorGuiTest.FactoryRejectsEmptyDeps_FailFast (0 ms)
+[----------] 14 tests from PropertyInspectorGuiTest (6 ms total)
+
+[----------] 3 tests from DomainReadinessSummaryCard
+[ RUN      ] DomainReadinessSummaryCard.VerdictMapping_CoversFourStatuses_UX02_UI_T44
+[       OK ] DomainReadinessSummaryCard.VerdictMapping_CoversFourStatuses_UX02_UI_T44 (0 ms)
+[ RUN      ] DomainReadinessSummaryCard.SetRows_RendersDomainVerdictLines_UI_T44
+[       OK ] DomainReadinessSummaryCard.SetRows_RendersDomainVerdictLines_UI_T44 (0 ms)
+[ RUN      ] DomainReadinessSummaryCard.SetRows_EmptyRows_HonestEmptyState_ERR01_UI_T44
+[       OK ] DomainReadinessSummaryCard.SetRows_EmptyRows_HonestEmptyState_ERR01_UI_T44 (0 ms)
+[----------] 3 tests from DomainReadinessSummaryCard (0 ms total)
+
+[----------] 2 tests from HostIntegrationGuiTest
+[ RUN      ] HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder_RendersAndNotSelectable
+[       OK ] HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder_RendersAndNotSelectable (0 ms)
+[ RUN      ] HostIntegrationGuiTest.ProjectCloseTeardown_InspectorHostedPageCleared
+[       OK ] HostIntegrationGuiTest.ProjectCloseTeardown_InspectorHostedPageCleared (0 ms)
+[----------] 2 tests from HostIntegrationGuiTest (0 ms total)
+
+[----------] 10 tests from HostView3DGateway
+[ RUN      ] HostView3DGateway.UpstreamPick_ResolvesSelectsAndDispatches_UI_T45
+[       OK ] HostView3DGateway.UpstreamPick_ResolvesSelectsAndDispatches_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45
+[       OK ] HostView3DGateway.UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PresentationOutlet_TransactionSemantics_UI_T45
+[       OK ] HostView3DGateway.PresentationOutlet_TransactionSemantics_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PresentationOutlet_IncompleteView_FailsCleanly_UI_T45
+[       OK ] HostView3DGateway.PresentationOutlet_IncompleteView_FailsCleanly_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45
+[       OK ] HostView3DGateway.TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.Constructor_MissingRequiredSeams_Throws_UI_T45
+[       OK ] HostView3DGateway.Constructor_MissingRequiredSeams_Throws_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PreviewOutlet_DegradedApplyAndClear_UI_T33
+[       OK ] HostView3DGateway.PreviewOutlet_DegradedApplyAndClear_UI_T33 (0 ms)
+[ RUN      ] HostView3DGateway.PreviewOutlet_DrawFailureKeepsOld_UI_T33
+[       OK ] HostView3DGateway.PreviewOutlet_DrawFailureKeepsOld_UI_T33 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78
+[       OK ] HostView3DGateway.UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78
+[       OK ] HostView3DGateway.UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78 (0 ms)
+[----------] 10 tests from HostView3DGateway (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 85 tests from 13 test suites ran. (811 ms total)
+[  PASSED  ] 80 tests.
+[  FAILED  ] 5 tests, listed below:
+[  FAILED  ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1
+[  FAILED  ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2
+[  FAILED  ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3
+[  FAILED  ] CommandPaletteGuiTest.PaletteFilterNavigateExecute_UI_PALETTE_2
+[  FAILED  ] PolicySummaryCardGuiTest.EditEntry_ShowsDeferredNotice_UI_T07_ACC2
+
+ 5 FAILED TESTS

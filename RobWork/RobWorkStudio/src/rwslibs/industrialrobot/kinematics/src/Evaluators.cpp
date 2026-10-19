@@ -2425,6 +2425,35 @@ RegionCoverageComputation runRegionCoverageComputation(
     // 构造器；NFR-COR-03）。
     validateRegionCoverageQuery(view, query);
 
+    // ---- 工具侧缺失预检（T05 两分口径——WorkspaceSampler m_setupError
+    // 同语义对齐批）：快照模型无工具/工具引用悬空＝评估期素材面，走
+    // 批量级 KIN-NO-TCP 零素材轨——逐样本 DataInsufficient（证据缺失族
+    // ——绝不输出不可行也绝不终局失败，KIN-05/C5/C8 同哲学），评估照常
+    // 完成（降级面由 computeCoverage 的 downgraded 判定承载）。此前本
+    // 函数缺此预检，逐样本求解器的调用方错误 fail-fast（Ik.cpp
+    // resolveTcpOrThrow）把装配级素材缺失漏成整批异常——与同单元两个
+    // 评估器类的登记语义不一致（WP-14-T12 UI 通道 tour 取证实测：无工
+    // 具模型点覆盖运行＝ok=false 全批失败、样本清单空态、状态行不可
+    // 观测）。与上方装配校验的分工：工具**存在**而 tcpKey 不命中＝装配
+    // 违约仍 fail-fast（validateRegionCoverageQuery TCP 键预检）；工具
+    // **缺失/悬空**＝素材面，走本轨。
+    std::optional<std::string> tcpSetupDeficiency;
+    {
+        const runtime::CanonicalModel& model = view.model();
+        if (model.tools().empty()) {
+            tcpSetupDeficiency =
+                "TCP 未配置：快照模型无工具（KIN-NO-TCP 素材——§9.6）";
+        } else {
+            const auto loc = model.findObject(query.defaultTcp.toolObject);
+            if (!loc.has_value()
+                || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
+                tcpSetupDeficiency =
+                    "TCP 引用悬空：toolObject 未解析到快照工具（KIN-NO-TCP "
+                    "素材——§9.6）";
+            }
+        }
+    }
+
     RegionCoverageComputation out;
     out.snapshotId = request.snapshot.snapshotId;
     out.sliceId = request.slice.sliceId;
@@ -2492,6 +2521,18 @@ RegionCoverageComputation runRegionCoverageComputation(
         const SampleRecord& sample = out.samples.samples[slot];
         SampleResultRecord result;
         result.sampleIndex = sample.sampleIndex;
+
+        // 批量级零素材轨（上方 tcpSetupDeficiency 预检——T05 两分口径）：
+        // 无工具/引用悬空＝全部样本证据缺失，跳过求解直落 DataInsufficient
+        // （置槽即返回——绝不调用求解器，其调用方错误 fail-fast 语义锚不
+        // 应被素材缺失触发）。
+        if (tcpSetupDeficiency.has_value()) {
+            result.state = SampleState::DataInsufficient;
+            result.reason = *tcpSetupDeficiency
+                            + "——该样本证据缺失（批量级零素材轨，非任务级结论）";
+            out.results.results[slot] = std::move(result);
+            return;
+        }
 
         // 缺检测器轨（KIN-05 语义承接，acceptance 5）：碰撞要求在场而
         // 会话为空 → 该样本 DataInsufficient——绝不视为无碰撞；稳定诊断

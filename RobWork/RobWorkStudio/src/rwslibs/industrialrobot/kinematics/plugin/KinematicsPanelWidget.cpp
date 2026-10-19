@@ -20,7 +20,6 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include <iostream>  // 宿主遍历诊断（IRD_UI_PLUGIN_SMOKE 门控——A-17 排障观测面）
 
 #include <sdurws/ird/core/Units.hpp>               // UnitToken::find（字段量纲锚）
 #include <sdurws/ird/ui/FormEditCommon.hpp>        // 表单公共件（UI-T08 对端——参数表面板）
@@ -446,21 +445,8 @@ void KinematicsPanelWidget::refreshAll()
     const auto commandEnabled = [this](const std::string& id, bool local) {
         return local && (!m_commandAvailability || m_commandAvailability(id).enabled);
     };
-    // 宿主遍历诊断（IRD_UI_PLUGIN_SMOKE 在场时输出三条件现值——A-17 排障
-    // 观测面；无冒烟环境零输出零成本）。
-    if (!qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE").isEmpty()) {
-        const bool bgWired = static_cast<bool>(m_services.backgroundSubmit);
-        const bool availEnabled = !m_commandAvailability
-            || m_commandAvailability("kinematics.evaluate-coverage").enabled;
-        std::cout << "[ird-ui-smoke-tour] kin-refresh writable="
-                  << writable << " bgWired=" << bgWired
-                  << " availEnabled=" << availEnabled
-                  << " hasAvailabilityFn="
-                  << (m_commandAvailability != nullptr)
-                  << std::endl;
-    }
     m_batchButton->setEnabled(commandEnabled("kinematics.validate-task-points",
-                                            writable && static_cast<bool>(m_services.backgroundSubmit)));
+                                             writable && static_cast<bool>(m_services.backgroundSubmit)));
     m_coverageRunButton->setEnabled(commandEnabled("kinematics.evaluate-coverage",
                                                    writable && static_cast<bool>(m_services.backgroundSubmit)));
     m_setTcpButton->setEnabled(commandEnabled("kinematics.set-default-tcp",

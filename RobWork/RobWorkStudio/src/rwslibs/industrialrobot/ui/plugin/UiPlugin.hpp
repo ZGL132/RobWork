@@ -508,6 +508,11 @@ private:
     QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
     QDockWidget* m_requirementsDock = nullptr;   ///< "IRD 需求"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
     QDockWidget* m_kinematicsDock = nullptr;     ///< "IRD 运动学"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
+    /// 运动学面板体（无类型 QWidget*——后台完成回执经面板公共槽
+    /// showStatusText 按名投递，宿主侧零 kinematics 插件层头依赖；
+    /// QPointer 防面板先于迟到回执析构的悬垂）。此前回执文本在 route
+    /// 闭包被 (void) 丢弃＝完成/失败只进账面与覆盖表、状态行不可观测。
+    QPointer<QWidget> m_kinematicsPanel;
     QDockWidget* m_kinematicsAdvancedDock = nullptr; ///< "IRD 运动学（求解配置）"Dock（Right 区高级面板位——UX-04）
     // 三新域面板 Dock（ASM-PANEL 收口批 2026-10-10——六域面板全部可见；
     // Left 区宿主侧承载＝ui.md §16.7 v1.15 WP-24-T03 首版登记④"中央区

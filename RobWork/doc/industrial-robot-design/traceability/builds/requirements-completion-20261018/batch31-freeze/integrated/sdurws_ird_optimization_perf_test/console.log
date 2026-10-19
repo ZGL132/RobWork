@@ -1,0 +1,35 @@
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from OptParallelThroughput
+[ RUN      ] OptParallelThroughput.FixedCandidateMedianThroughputRatio_WP23T07_B06
+[perf-b06] 固定候选集：candidates=128 verified=4 seed=7 workIter=400000
+[perf-b06] 单线程：n=15 中位吞吐=236.72 candidates/s
+[perf-b06] 8 线程：n=15 中位吞吐=1478.41 candidates/s
+[perf-b06] 中位吞吐比=6.245（阈值 ≥4.0——NFR-PERF-05）
+[perf-b06] 归约等价：records=1980 metrics=15840 maxRelDiff=0.000e+00 bitwise=true
+[       OK ] OptParallelThroughput.FixedCandidateMedianThroughputRatio_WP23T07_B06 (9882 ms)
+[----------] 1 test from OptParallelThroughput (9882 ms total)
+
+[----------] 2 tests from OptRunTimeBenchmark
+[ RUN      ] OptRunTimeBenchmark.StandardRunTimeLimitAndInteractionDuringRun_WP23T08_B07
+[perf-b07] 标准运行：quick=10000 verified=100 seed=7 threadCount=8 workIter=400000
+[perf-b07] 时限腿：n=15 最大有效墙钟=11900.3 ms（时限 28800000 ms＝8 小时） P95=11837.9 ms
+[perf-b07] 运行期交互抽查（state=during-run）：
+[perf-b07]   nav        n=3307 P95=  0.024 ms max=  0.340 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07]   select     n=3307 P95=  0.018 ms max=  0.249 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07]   filter     n=3307 P95=  0.418 ms max=  2.398 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07]   edit       n=3307 P95=  0.035 ms max=  0.325 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07]   viewswitch n=3307 P95=  0.014 ms max=  0.153 ms (limit P95<=200 ms, window<2000 ms)
+[perf-b07] 交互样本合计=16535 窗外丢弃=75 选择广播=3323 编辑移交=3323
+[       OK ] OptRunTimeBenchmark.StandardRunTimeLimitAndInteractionDuringRun_WP23T08_B07 (188267 ms)
+[ RUN      ] OptRunTimeBenchmark.SameVersionCheckpointRecovery_WP23T08_B07
+[perf-b07] 启动段：参照全量运行 Completed——quick=10000 verified=100 批=2525/2525 检查点产出=2525 工作汇增量=5457410620696191368
+[perf-b07] 中断腿：查询计数 31000 后 Canceled——检查点 phase=Quick completedUnits=1245/2500 完成批=1245 审计基点 quick=4980
+[perf-b07] 检查点段：真协调器 Published（seq=1，磁盘三文件，magic=IRDOPTC1 codecVersion=1）
+[perf-b07] 恢复段：Restored（同版本 contractVersion=1）→ 续跑 AttemptId=2 Completed——resumedBatchesSkipped=1245 审计＝参照全量 （AT-35）结论面 records=10100 metrics=80800 maxRelDiff=0.000e+00 bitwise=true 工作汇增量=5457410620696191368＝参照
+[       OK ] OptRunTimeBenchmark.SameVersionCheckpointRecovery_WP23T08_B07 (26758 ms)
+[----------] 2 tests from OptRunTimeBenchmark (215025 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (224918 ms total)
+[  PASSED  ] 3 tests.

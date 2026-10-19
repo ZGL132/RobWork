@@ -134,6 +134,11 @@ public:
         return {};  // 同上——零编辑消费
     }
     req::EditOutcome applyEdit(const req::EditBatch&) override { return {}; }
+    req::EditOutcome applyEditsAtomic(
+        const std::vector<req::RequirementEdit>&) override
+    {
+        return {};  // 原子批量（A-18 接口增列）——替身零编辑消费同语义
+    }
     bool undoLocal() noexcept override { return false; }
     bool redoLocal() noexcept override { return false; }
     std::string buildChangeSummary() const override { return {}; }

@@ -1546,6 +1546,7 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
         }
         QWidget* kinematicsPanel = kinematicsPanelWidget(*m_domains);
         if (kinematicsPanel != nullptr) {
+            m_kinematicsPanel = kinematicsPanel;  // 回执投递锚（成员注）
             m_kinematicsDock = new QDockWidget(
                 QString::fromUtf8(kKinematicsDockTitle), this);
             m_kinematicsDock->setObjectName("ird_kinematics_dock");
@@ -3058,8 +3059,27 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
     // ---- 投递槽闭包（UI 线程——执行器侧 invokeMethod 已保证回投；槽
     // 体经门面消费＝迟到判定/中断如实的权威面，本闭包零判定逻辑）。
     auto route = [this](const kinematics::KinChannelBackgroundResultNote& note) {
+        std::string feedback;
         if (m_domains != nullptr && m_domains->kinematics.has_value()) {
-            (void)m_domains->kinematics->noteAssemblyBackgroundResult(note);
+            feedback = m_domains->kinematics->noteAssemblyBackgroundResult(note);
+        }
+        // 完成回执呈现（返回文本→面板状态行）：showStatusText 公共槽即
+        // 「编排函数返回值/宿主反馈的统一呈现入口」——受理/完成/失败三态
+        // 同面可见。此前返回文本被 (void) 丢弃，完成态只在覆盖表间接可
+        // 见、失败原因完全不可观测（ERR-01 断链——本批 tour 取证即受害
+        // 实证：评估失败 60s 内状态行停格"已受理"）。按槽名动态调用＝
+        // 宿主侧零 kinematics 插件层头包含（R-2 装配面纪律）；槽解析未
+        // 命中＝装配违约，Dev 留痕不静默。
+        if (m_kinematicsPanel != nullptr && !feedback.empty()) {
+            if (!QMetaObject::invokeMethod(
+                    m_kinematicsPanel, "showStatusText",
+                    Q_ARG(QString, QString::fromStdString(feedback))) &&
+                m_diag.pipeline != nullptr) {
+                m_diag.pipeline->logDev(
+                    kPluginDevChannel,
+                    "kinematics：后台完成回执状态行投递失败（showStatusText "
+                        "槽解析未命中——装配违约）：" + feedback);
+            }
         }
     };
 
@@ -7746,6 +7766,41 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
                               << t->rowCount() << " cols=" << t->columnCount()
                               << std::endl;
                 }
+            }
+        }
+        // 诊断面（r16 取证用——清单未达时区分"账面缺位/对账失效/区域切片
+        // 不匹配/闭包未触发"四类断链；随批次收尾评估去留）。
+        {
+            const auto covDiag = m_kinEvaluation != nullptr
+                                     ? m_kinEvaluation->latestCoverageResult()
+                                     : std::nullopt;
+            std::cout << "[ird-ui-smoke-tour] step11 cov-diag"
+                      << " has=" << covDiag.has_value()
+                      << " ok=" << (covDiag && covDiag->ok)
+                      << " snapMatch=" << (covDiag && m_kinEvaluation != nullptr
+                                           && covDiag->snapshotId
+                                                  == m_kinEvaluation->snapshotId())
+                      << " epochMatch=" << (covDiag && m_kinEvaluation != nullptr
+                                            && covDiag->epoch == m_kinEvaluation->epoch())
+                      << " ledgerSamples=" << (covDiag ? covDiag->samples.size() : 0);
+            if (covDiag && !covDiag->ok) {
+                std::cout << " err=[" << covDiag->errorText << "]";
+            }
+            std::cout << " gridHas=" << m_reqGrid.has_value()
+                      << " gridLines=" << (m_reqGrid ? m_reqGrid->gridLines.size() : 0)
+                      << " gridSamples=" << (m_reqGrid ? m_reqGrid->samples.size() : 0)
+                      << " boxHas=" << m_reqBox.has_value()
+                      << " listed=" << (evalSampleList ? evalSampleList->topLevelItemCount() : 0)
+                      << std::endl;
+            if (covDiag && !covDiag->samples.empty()) {
+                std::cout << "[ird-ui-smoke-tour] step11 cov-diag firstRegion=["
+                          << covDiag->samples.front().regionObjectId.toCanonical()
+                          << "]";
+                if (evalRegionId.has_value()) {
+                    std::cout << " evalRegion=["
+                              << evalRegionId->toCanonical() << "]";
+                }
+                std::cout << std::endl;
             }
         }
         ok(samplesArrived,
