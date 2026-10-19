@@ -1201,6 +1201,23 @@ void IrdWorkbenchHostPlugin::initialize()
             [this](const ui::CommandId& id) {
                 return m_content->commandRegistry().availability(id);
             });
+        // MDL-17/AT-04：恢复命名姿态只更新真实宿主State；模型/项目历史不写。
+        // 每次现取同一已发布快照，先在私有State副本完整校验，成功才一次提交
+        // 给宿主；既有D8 stateChangedEvent桥同步运动学会话态与三维，不另建姿态缓存。
+        m_domains->modeling.bindSessionPoseWriter(
+            [this](const modeling::ModelingSessionPoseRequest& request,std::string& reason){
+                auto* studio=getRobWorkStudio();
+                const auto snapshot=m_compilePort?m_compilePort->lastPublishedSnapshot():nullptr;
+                if(!m_controller||!m_controller->hasOpenSession()||!studio||!snapshot){
+                    reason="尚无打开项目的已应用三维模型——未恢复姿态";return false;
+                }
+                const auto cell=studio->getWorkCell();
+                if(cell.isNull()){reason="宿主WorkCell缺失——未恢复姿态";return false;}
+                auto candidate=studio->getState();
+                if(!ui::stageModelingSessionPose(request,*snapshot,*cell,candidate,reason)){return false;}
+                studio->setState(candidate);
+                return true;
+            });
         // WC/DWC XML 外供导出接源（UI-T56——export-workcell-xml 落点）：
         // 快照现取 m_compilePort->lastPublishedSnapshot（已应用修订的编译
         // 产物——零第二编译路径，PackageWorkCell §6.8 契约）；缺席＝诚实
@@ -8644,6 +8661,74 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                "step5.5 reopen-zero-revisions");
         }
         snapPng(hostWin, "mtour-5.5-reopened.png");
+
+        // WP-13-T24/F13：从可见命名位姿入口创建、编辑保存，再经生产恢复按钮
+        // 改变真实宿主State。数据准备也是实际控件链，零直接注入模块工作集。
+        step("5.55 named-pose-session-restore");
+        if(restoredCell&&!restoredCell->getDevices().empty()){
+            // isVisible仅代表控件未隐藏，不能证明未被滚动视口裁剪。先沿内到外
+            // 滚入实际视口再检查中心点，截图须呈现用户正在操作的真实入口。
+            const auto revealPoseControl=[&](QWidget* target){
+                if(!target){return false;}
+                for(auto* parent=target->parentWidget();parent;parent=parent->parentWidget()){
+                    if(auto* scroll=qobject_cast<QScrollArea*>(parent)){
+                        scroll->ensureWidgetVisible(target);settleEvents(80);
+                    }
+                }
+                if(!target->isVisible()){return false;}
+                for(auto* parent=target->parentWidget();parent;parent=parent->parentWidget()){
+                    if(!parent->rect().contains(target->mapTo(parent,target->rect().center()))){return false;}
+                }
+                return true;
+            };
+            auto* studio=getRobWorkStudio();const auto device=restoredCell->getDevices().front();
+            const auto oldState=studio->getState();const auto oldQ=device->getQ(oldState);
+            const auto beforeEnd=rw::kinematics::Kinematics::worldTframe(device->getEnd(),oldState);
+            const auto poseHead=m_lastStoreAdapter->projectStore().query().head().id;
+            const auto poseIdentity=m_compilePort->lastPublishedSnapshot()->modelIdentity();
+            if(auto* tabs=panel->findChild<QTabWidget*>()){tabs->setCurrentIndex(0);}
+            auto* mode=panel->findChild<QPushButton*>("ird_modeling_edit_pose_mode");
+            auto* add=panel->findChild<QPushButton*>("ird_modeling_pose_add");
+            ok(revealPoseControl(mode),"b2b named-pose-mode-visible-without-object");
+            if(mode){mode->click();}settleEvents(80);
+            ok(revealPoseControl(add),"b2b add-first-pose-visible");
+            if(add){add->click();}settleEvents(100);
+            auto* area=panel->findChild<QWidget*>("ird_modeling_pose_area");
+            auto* key=panel->findChild<QLineEdit*>("ird_modeling_pose_key");
+            auto* table=area?area->findChild<QTableWidget*>("ird_param_table"):nullptr;
+            ok(area&&area->isVisible()&&key&&table,"b2b first-pose-keeps-management-page");
+            if(key){key->setText(QStringLiteral("inspection-b2b"));}
+            bool staged=false;
+            if(table){for(int row=0;row<table->rowCount();++row){
+                if(table->item(row,0)->data(Qt::UserRole).toString()=="pose-config-0"){
+                    table->item(row,1)->setText("0.45");staged=true;break;
+                }
+            }}
+            ok(staged,"b2b real-pose-q0-staged");settleEvents(80);
+            if(auto* save=panel->findChild<QPushButton*>("ird_modeling_pose_apply")){save->click();}
+            settleEvents(100);
+            auto* restore=panel->findChild<QPushButton*>("ird_modeling_pose_restore");
+            ok(revealPoseControl(restore)&&restore->isEnabled(),"b2b real-restore-entry-available");
+            snapPng(hostWin,"mtour-b2b-before-restore.png");
+            if(restore){restore->click();}settleEvents(200);
+            const auto afterQ=device->getQ(studio->getState());
+            ok(afterQ.size()==oldQ.size()&&afterQ.size()>0&&std::abs(afterQ[0]-0.45)<1e-12,
+               "b2b restore-writes-real-device-q");
+            const auto afterEnd=rw::kinematics::Kinematics::worldTframe(device->getEnd(),studio->getState());
+            ok((afterEnd.P()-beforeEnd.P()).norm2()>1e-4,"b2b restored-real-fk-position-changed");
+            ok(m_kinSessionPose.isSet()&&!m_kinSessionPose.jointConfiguration().empty()
+               &&std::abs(m_kinSessionPose.jointConfiguration()[0]-0.45)<1e-12,
+               "b2b real-state-event-updates-kin-session");
+            ok(m_lastStoreAdapter->projectStore().query().head().id==poseHead,
+               "b2b saved-pose-and-restore-zero-project-revisions");
+            ok(m_compilePort->lastPublishedSnapshot()->modelIdentity()==poseIdentity,
+               "b2b restore-keeps-model-identity");
+            snapPng(hostWin,"mtour-b2b-after-restore.png");
+            // 本拍之后仍使用原遍历参照，撤回两次未应用编辑并恢复原会话State。
+            auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");
+            for(int i=0;i<2;++i){ok(undo&&undo->isEnabled(),"b2b local-cleanup-history-available");if(undo){undo->click();}}
+            studio->setState(oldState);settleEvents(100);
+        }
 
         // WP-14-T12/REQ-08/10：在真正恢复的六轴机器人上走生产命令与确认框。
         // 独立FK取权威State做数值对照；取消、确认期间关节改变均零草稿写入。

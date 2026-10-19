@@ -370,6 +370,10 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
         "基座安装姿态编辑（预设/位置/自定义 EAA——MDL-22，整体替换语义）"));
     modeRow->addWidget(jointModeBtn);
     modeRow->addWidget(baseModeBtn);
+    // MDL-17：首个命名位姿创建前没有树锚，因此必须有独立可见入口。
+    auto* poseModeBtn=new QPushButton(QStringLiteral("命名位姿"),editPage);
+    poseModeBtn->setObjectName(QStringLiteral("ird_modeling_edit_pose_mode"));
+    modeRow->addWidget(poseModeBtn);
     modeRow->addStretch(1);
     editLay->addLayout(modeRow);
     m_editStack = new QStackedWidget(editPage);
@@ -406,6 +410,9 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     connect(jointModeBtn, &QPushButton::clicked, this, [this] {
         m_editStack->setCurrentIndex(0);
         refreshJointEditPane();  // 回关节模式——树选中锚照常驱动
+    });
+    connect(poseModeBtn,&QPushButton::clicked,this,[this]{
+        refreshPoseSetPane();m_editStack->setCurrentWidget(m_poseSetArea);
     });
     buildToolsPane(new QVBoxLayout(toolsPage));        // 区③域工具区（StageId=modeling）
     buildReadinessPane(new QVBoxLayout(readinessPage));// 区④就绪与诊断条
@@ -569,6 +576,15 @@ void ModelingPanelWidget::setCommandAvailability(CommandAvailabilityFn availabil
 void ModelingPanelWidget::setPostEditAction(PostEditAction action)
 {
     m_postEditAction = std::move(action);
+}
+
+void ModelingPanelWidget::setPoseRestoreAction(
+    std::function<bool(const std::string&,std::string&)> action)
+{
+    m_threadGuard.assertOnUiThread();m_poseRestoreAction=std::move(action);
+    if(m_poseSetRestoreBtn){
+        m_poseSetRestoreBtn->setEnabled(static_cast<bool>(m_poseRestoreAction)&&!m_poseSetSelectedKey.isEmpty());
+    }
 }
 
 void ModelingPanelWidget::setDraftHistoryActions(PostEditAction undo,PostEditAction redo)
@@ -2635,6 +2651,17 @@ void ModelingPanelWidget::buildPoseSetPane()
     entryRow->addWidget(m_poseSetAddBtn);
     entryRow->addWidget(m_poseSetRemoveBtn);
     entryRow->addWidget(m_poseSetApplyBtn);
+    m_poseSetRestoreBtn=new QPushButton(QStringLiteral("恢复到已应用模型"),area);
+    m_poseSetRestoreBtn->setObjectName(QStringLiteral("ird_modeling_pose_restore"));
+    m_poseSetRestoreBtn->setToolTip(QStringLiteral("恢复保存条目的姿态；未确认输入不参与，仅改变会话，不产生项目修订"));
+    m_poseSetRestoreBtn->setEnabled(false);
+    entryRow->addWidget(m_poseSetRestoreBtn);
+    connect(m_poseSetRestoreBtn,&QPushButton::clicked,this,[this]{
+        if(!m_poseRestoreAction||m_poseSetSelectedKey.isEmpty()){return;}
+        std::string summary;
+        const bool restored=m_poseRestoreAction(m_poseSetSelectedKey.toStdString(),summary);
+        setOutcomeMessage(QString::fromStdString(summary),restored?OutcomeSeverity::Info:OutcomeSeverity::Warning);
+    });
     lay->addLayout(entryRow);
 
     auto* keyNoteForm = new QHBoxLayout();
@@ -2669,22 +2696,26 @@ void ModelingPanelWidget::buildPoseSetPane()
 
 void ModelingPanelWidget::rebuildPoseSetConfigModel()
 {
+    if (m_poseSetConfigPanel != nullptr) {
+        // MDL-17重开回归：参数表的itemChanged会排队执行。旧窗口延迟删除时，
+        // 它借用的模型/出口也必须活到destroyed；否则旧表格事件访问已释放模型。
+        // 先隐藏并移出控件树，确保用户和当前页的查询均只看到新表单。
+        auto* retiredPanel=m_poseSetConfigPanel;
+        auto retiredModel=std::shared_ptr<ui::ParamEditModel>(std::move(m_poseSetConfigModel));
+        auto retiredOutlet=std::shared_ptr<ui::IFormEditOutlet>(std::move(m_poseSetOutlet));
+        retiredPanel->hide();
+        retiredPanel->setParent(nullptr);
+        QObject::connect(retiredPanel,&QObject::destroyed,
+                         [retiredModel,retiredOutlet]{});
+        retiredPanel->deleteLater();
+        m_poseSetConfigPanel=nullptr;
+    }
     // 零关节守卫（构造期无编辑目标——ParamEditModel 空字段集 fail-fast，
     // 行集延迟到刷新期有目标时重建）。
     ModelingWorkingSet* wsProbe = m_editTarget ? m_editTarget() : nullptr;
     if (wsProbe == nullptr || wsProbe->design.joints.empty()) {
-        if (m_poseSetConfigPanel != nullptr) {
-            m_poseSetConfigPanel->deleteLater();
-            m_poseSetConfigPanel = nullptr;
-        }
         m_poseSetConfigJointCount = 0;
         return;
-    }
-    // 旧行随 Qt 父子析构（deleteLater——刷新路径内延迟删除防重入；
-    // UI-T55 实测教训同款防悬空纪律）。
-    if (m_poseSetConfigPanel != nullptr) {
-        m_poseSetConfigPanel->deleteLater();
-        m_poseSetConfigPanel = nullptr;
     }
     m_poseSetOutlet = std::make_unique<PoseSetEditOutlet>(*this);
     const core::UnitToken m = core::UnitToken::find("m").value();
@@ -2741,6 +2772,7 @@ void ModelingPanelWidget::refreshPoseSetPane()
                                                        : (m_poseSetCombo->count() > 0 ? 0 : -1));
     }
     m_poseSetSelectedKey = m_poseSetCombo->currentText();
+    m_poseSetRestoreBtn->setEnabled(static_cast<bool>(m_poseRestoreAction)&&!m_poseSetSelectedKey.isEmpty());
     m_poseSetAddBtn->setEnabled(writable);
     m_poseSetRemoveBtn->setEnabled(writable && !m_poseSetSelectedKey.isEmpty());
     m_poseSetApplyBtn->setEnabled(writable);
@@ -2808,7 +2840,10 @@ void ModelingPanelWidget::onPoseSetAddClicked()
     if (!err.has_value()) {
         onEditApplied("poseSet.entries");
         m_poseSetSelectedKey = QString::fromStdString(key);  // 新键即选中
-        refreshPropertiesFromLastWorkingSet();
+        // 创建首个对象后将结构树焦点一并移入位姿集，否则通用刷新会回到
+        // 旧关节页，用户刚打开的管理页在新增后消失（MDL-17连续编辑路径）。
+        if(ws->poseSetObject){focusObject(ws->poseSetObject->objectId);}
+        else{refreshPropertiesFromLastWorkingSet();}
         return;
     }
     EditRejection rejection;

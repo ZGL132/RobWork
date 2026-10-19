@@ -71,6 +71,7 @@ struct FakeHost final : ModelingDialogHost {
     }
     int showInfoCount = 0;                      ///< showInfo 调用计数
     QStringList showInfoTexts;                  ///< showInfo 文本留痕
+    QStringList chosenItems;                    ///< F13：核对真实权威保留键选择，不接受旧别名。
 
     std::optional<QString> openFilePath(const QString&, const QString&) override
     {
@@ -82,8 +83,9 @@ struct FakeHost final : ModelingDialogHost {
         return savePathAnswer;
     }
     std::optional<int> chooseItem(const QString&, const QString&,
-                                  const QStringList&) override
+                                  const QStringList& items) override
     {
+        chosenItems=items;
         return chooseItemAnswer;
     }
     bool confirmProceed(const QString&, const QString& text) override
@@ -1028,4 +1030,49 @@ TEST(ModelingCommandFlows, XacroIncludeBudgetMeasuresDepthNotBranchWidth_MDL19_A
     const auto raw=first.readAll();
     const auto deep=loadXacroInput(std::vector<std::uint8_t>(raw.begin(),raw.end()),first.fileName());
     EXPECT_FALSE(deep.ok);EXPECT_NE(deep.errorDetail.find("IO-SEC-BUDGET-INCLUDE"),std::string::npos);
+}
+
+/** @brief F13/MDL-17：无真实会话写入出口时不得用showInfo报告复位成功。 */
+TEST(ModelingCommandFlows, HomeZeroWithoutWriterRejectsInsteadOfInfo_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    ModuleSessionState session;session.draft=makeSixAxisDraft();
+    PoseSet set;set.objectId=core::ObjectId::generate();
+    set.entries.push_back(PoseSetEntry{"homeConfiguration",std::vector<double>(6,0.3),""});
+    set.entries.push_back(PoseSetEntry{"zeroConfiguration",std::vector<double>(6,0.0),""});
+    session.draft.poseSetObject=set;const auto before=session.draft;
+    FakeHost host;host.chooseItemAnswer=0;std::string summary;
+    EXPECT_FALSE(executeModelingCommand("modeling.reset-home-zero",session,{},host,summary));
+    EXPECT_EQ(host.showInfoCount,0)<<"恢复必须改变真实会话或明确拒绝，信息弹窗不算完成";
+    EXPECT_EQ(session.draft,before);
+}
+
+/** @brief MDL-17：权威保留键选择/取消/非法下标，零草稿改写。 */
+TEST(ModelingCommandFlows, HomeZeroChoosesExactReservedKeyAndCancelsAtomically_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    ModuleSessionState session;session.draft=makeSixAxisDraft();
+    PoseSet set;set.objectId=core::ObjectId::generate();
+    for(const auto* key:{"zero","home","zeroConfiguration","homeConfiguration"}){
+        set.entries.push_back(PoseSetEntry{key,std::vector<double>(6,0.0),""});
+    }
+    session.draft.poseSetObject=set;const auto before=session.draft;
+    FakeHost host;ModelingFlowDeps deps;std::string chosen,summary;int called=0;
+    deps.restoreNamedPose=[&](const std::string& key,std::string& why){++called;chosen=key;why="已恢复";return true;};
+    host.chooseItemAnswer=0;
+    EXPECT_TRUE(executeModelingCommand("modeling.reset-home-zero",session,deps,host,summary));
+    EXPECT_EQ(chosen,"homeConfiguration");
+    EXPECT_EQ(host.chosenItems,(QStringList{"homeConfiguration","zeroConfiguration"}));
+    host.chooseItemAnswer=1;
+    EXPECT_TRUE(executeModelingCommand("modeling.reset-home-zero",session,deps,host,summary));
+    EXPECT_EQ(chosen,"zeroConfiguration");
+    host.chooseItemAnswer=99;
+    EXPECT_FALSE(executeModelingCommand("modeling.reset-home-zero",session,deps,host,summary));
+    host.chooseItemAnswer.reset();
+    EXPECT_FALSE(executeModelingCommand("modeling.reset-home-zero",session,deps,host,summary));
+    EXPECT_TRUE(summary.empty());EXPECT_EQ(called,2);EXPECT_EQ(session.draft,before);
+    session.draft.poseSetObject->entries.resize(2); // 只有旧home/zero，必须拒绝而非当别名。
+    host.chooseItemAnswer=0;
+    EXPECT_FALSE(executeModelingCommand("modeling.reset-home-zero",session,deps,host,summary));
+    EXPECT_EQ(called,2);EXPECT_EQ(host.showInfoCount,0);
 }

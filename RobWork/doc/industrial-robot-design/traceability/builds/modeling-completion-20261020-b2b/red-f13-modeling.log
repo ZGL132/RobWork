@@ -1,0 +1,25 @@
+Note: Google Test filter = *HomeZeroWithoutWriter*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.HomeZeroWithoutWriterRejectsInsteadOfInfo_MDL17_AT04
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(1045): error: Value of: executeModelingCommand("modeling.reset-home-zero",session,{},host,summary)
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(1046): error: Expected equality of these values:
+  host.showInfoCount
+    Which is: 1
+  0
+恢复必须改变真实会话或明确拒绝，信息弹窗不算完成
+
+[  FAILED  ] ModelingCommandFlows.HomeZeroWithoutWriterRejectsInsteadOfInfo_MDL17_AT04 (0 ms)
+[----------] 1 test from ModelingCommandFlows (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingCommandFlows.HomeZeroWithoutWriterRejectsInsteadOfInfo_MDL17_AT04
+
+ 1 FAILED TEST

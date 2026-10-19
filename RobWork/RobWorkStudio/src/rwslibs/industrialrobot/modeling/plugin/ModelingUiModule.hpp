@@ -75,6 +75,7 @@ namespace sdurws::ird::modeling {
 
 class ModelingPanelWidget;
 class ObjectClosureView; // 同步借用的只读闭包端口，完整类型仅实现文件消费。
+struct ModelingSessionPoseRequest; // 装配纯值请求，完整定义归公共装配头。
 
 /**
  * @brief 模块会话态（buildDraftCommand 的输入面——装配层在会话建立/草稿
@@ -228,6 +229,9 @@ public:
      *        面板创建时应用。不绑定＝按钮呈现键名原文——不虚构文案）。
      */
     void bindTextResolver(std::function<QString(const std::string&)> resolve);
+    /** @brief MDL-17：绑定仅UI线程同步会话姿态出口；空回调使恢复入口禁用。 */
+    void bindSessionPoseWriter(std::function<bool(const ModelingSessionPoseRequest&,
+                                                 std::string&)> writer);
 
     /**
      * @brief 绑定 WC/DWC XML 外供导出回调（UI-T56——export-workcell-xml
@@ -478,6 +482,11 @@ public:
     void recomputeReadiness();
 
 private:
+    /** @brief 恢复保存的精确命名条目；[in] key为权威键，[out] summary为中文原因。
+     * @return 成功表示真实宿主State已更新；缺基线/条目/出口、非法数值均false且草稿不变。仅UI线程。
+     */
+    bool restoreNamedPose(const std::string& key,std::string& summary);
+    std::function<bool(const ModelingSessionPoseRequest&,std::string&)> m_sessionPoseWriter; ///< 同步宿主出口；UI线程持闭包。
     /** @brief L-5：记录一次被接受的完整草稿版本；相等重算不入栈，新编辑清重做。仅UI线程。 */
     void rememberDraftHistory();
     /** @brief 清理局部历史；[in] retainCurrent=true以当前草稿建新起点，false用于关闭后空会话。 */

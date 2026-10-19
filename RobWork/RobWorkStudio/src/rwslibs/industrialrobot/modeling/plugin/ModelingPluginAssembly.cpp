@@ -49,6 +49,12 @@ void ModelingPluginAssembly::bindTextResolver(
     }
 }
 
+void ModelingPluginAssembly::bindSessionPoseWriter(
+    std::function<bool(const ModelingSessionPoseRequest&,std::string&)> writer)
+{
+    if(m_impl){m_impl->bindSessionPoseWriter(std::move(writer));}
+}
+
 void ModelingPluginAssembly::bindWorkCellExport(
     std::function<bool(const std::string& targetPath, std::string& summary)> exportFn)
 {

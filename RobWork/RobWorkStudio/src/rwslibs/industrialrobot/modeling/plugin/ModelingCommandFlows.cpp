@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file   ModelingCommandFlows.cpp
  * @brief  建模域命令 UI 流程实现（UI-T41 批次 A——八命令真实链＋两条
  *         诚实缺席，见头注批次边界）。
@@ -1247,27 +1247,23 @@ bool executeModelingCommand(const std::string& commandId,
 
     // ---- modeling.reset-home-zero（会话命令——零修订；MDL-17/§4.6）-------
     if (commandId == "modeling.reset-home-zero") {
-        // 复位目标参考＝位姿集保留键（homeConfiguration/zeroConfiguration——
-        // §4.6 行 386）；三维会话姿态承载面随 View3D 阶段 B（UI-T33）落位，
-        // 本命令当前呈现参考数据（V-27：位姿集参考数据读取不产生写）。
-        if (!session.draft.poseSetObject.has_value()) {
-            summary = "无位姿集参考数据（草稿未含命名位姿集）——无可复位的会话姿态";
-            return false;
-        }
-        QString text = QStringLiteral("复位 Home/Zero（会话姿态参考）\n");
-        for (const auto& entry : session.draft.poseSetObject->entries) {
-            if (entry.key == "zero" || entry.key == "home") {
-                QString q;
-                for (double v : entry.jointConfiguration) {
-                    q += QStringLiteral("%1 ").arg(v, 0, 'g', 6);
-                }
-                text += QStringLiteral("\n%1：[%2]").arg(
-                    QString::fromStdString(entry.key), q);
+        // MDL-17：只显示权威保留键；旧home/zero不是别名，不得静默选中。
+        // 保存条目由模块装配出口恢复到真实宿主，取消/缺出口不写任何会话态。
+        if(!deps.restoreNamedPose){summary="会话姿态恢复未装配——未写入";return false;}
+        if(!session.draft.poseSetObject){summary="命名位姿集缺失——无可恢复的Home/Zero";return false;}
+        QStringList choices;
+        for(const auto key:{kHomeConfigurationPoseKey,kZeroConfigurationPoseKey}){
+            if(std::any_of(session.draft.poseSetObject->entries.begin(),session.draft.poseSetObject->entries.end(),
+                [&](const auto& e){return e.key==key;})){
+                choices.push_back(QString::fromStdString(std::string(key)));
             }
         }
-        host.showInfo(QStringLiteral("复位 Home/Zero"), text);
-        summary = "Home/Zero 参考数据已呈现（会话命令——零修订；姿态承载面随三维视图落位）";
-        return true;
+        if(choices.empty()){summary="未定义homeConfiguration/zeroConfiguration——未写入";return false;}
+        const auto selected=host.chooseItem(QStringLiteral("恢复Home/Zero"),
+            QStringLiteral("选择保存的姿态（仅改变已应用模型的会话姿态）"),choices);
+        if(!selected){summary.clear();return false;}
+        if(*selected<0||*selected>=choices.size()){summary="姿态选择下标无效——未写入";return false;}
+        return deps.restoreNamedPose(choices[*selected].toStdString(),summary);
     }
 
     // 未知命令 id＝调用方违约（PA-1 路由面——fail-fast，不静默吞）。

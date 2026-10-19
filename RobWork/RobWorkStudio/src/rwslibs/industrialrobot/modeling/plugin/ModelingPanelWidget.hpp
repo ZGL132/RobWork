@@ -94,6 +94,8 @@ public:
      *        不注入＝无后置动作，行为同前）。
      */
     void setPostEditAction(PostEditAction action);
+    /** @brief MDL-17：绑定保存条目恢复出口；空＝未装配禁用；回调同步返回结果和原因，零草稿编辑。 */
+    void setPoseRestoreAction(std::function<bool(const std::string&,std::string&)> action);
 
     /** @brief 绑定编辑器局部历史动作；[in] undo/redo仅UI线程调用，模块拥有历史，空则禁用。 */
     void setDraftHistoryActions(PostEditAction undo, PostEditAction redo);
@@ -443,6 +445,8 @@ private:
     QPushButton* m_poseSetAddBtn = nullptr;       ///< 新增条目（pose-N 零位姿种子）
     QPushButton* m_poseSetRemoveBtn = nullptr;    ///< 删除条目
     QPushButton* m_poseSetApplyBtn = nullptr;     ///< 应用条目（key/note/config 组装）
+    QPushButton* m_poseSetRestoreBtn = nullptr;   ///< 恢复保存条目到真实宿主会话，只读也允许。
+    std::function<bool(const std::string&,std::string&)> m_poseRestoreAction; ///< UI线程同步回调，不保留条目引用。
     QLineEdit* m_poseSetKeyEdit = nullptr;        ///< 条目键行编辑
     QLineEdit* m_poseSetNoteEdit = nullptr;       ///< 条目备注行编辑
     QWidget* m_poseSetConfigPanel = nullptr;      ///< 关节构型数值表（行随关节表）

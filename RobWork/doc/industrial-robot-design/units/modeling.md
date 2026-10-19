@@ -1635,3 +1635,9 @@ HandlerServices表尾增加默认空resolvePolicyForRevision(const project::Revi
 ### WP-13-T24 B2a：草稿编辑器局部历史（2026-10-20）
 
 按§9.3/§9.7.2 L-5补齐UI编辑器内完整工作集版本栈，常驻两钮明确区分草稿与项目历史。沿既有编辑接受→就绪重算入口记录，纯重算/拒绝/取消不入栈；新编辑清重做，应用成功/跨基线/恢复/关闭清栈。完整值含根身份、全部部件、资源及变更摘要，历史不入值模型或磁盘，不改公共接口。恢复前取消当前六个有效表单的未确认输入及确认区（不遍历deleteLater旧表单），后重算就绪与树/属性/脏态。实现验证十套件1319通过、0失败、0跳过，双模式构建与门禁通过；证据traceability/builds/modeling-completion-20261020-b2a/。完整47项及正式宿主三维仍待后续批次，不据此宣称终验。
+
+### WP-13-T24 B2b：命名姿态真实宿主恢复（2026-10-20）
+
+F13恢复入口遵循MDL-17/KIN-06，仅改变已应用模型的会话State。公共装配面追加ModelingSessionPoseRequest及bindSessionPoseWriter；字段为分支/根/逐关节身份与RobWork增量q（含Fixed槽位，rad/m；模块按已应用baseline的原始zeroOffset换算，不能用已折叠的canonical零偏代替）。Home/Zero只用权威保留键，命名页恢复保存条目不消费暂存。宿主同步核对同快照WorkCell、分支/根/关节序及限位，按q_rw+CanonicalJoint.zeroOffset核查限位后，在State副本直接写入q_rw；缺能力明确拒绝，取消/失败旧态不变，零项目命令或修订。精确八节/范围见原计划B2b，实施验证完成前不标封闭。
+
+B2b实现验证：1329通过、0失败、0跳过，双模式构建/门禁通过；正式宿主274条检查通过（含其他域）。真实恢复、窗口视口及数值/像素证据见traceability/builds/modeling-completion-20261020-b2b/FOLLOWUP.md。Home/Zero完整正式窗口路径和全部47项/三维矩阵仍待后续，不标最终封闭。

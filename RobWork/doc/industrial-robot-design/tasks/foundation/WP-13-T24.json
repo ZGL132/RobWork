@@ -15,7 +15,10 @@
     "MDL-12",
     "MDL-19",
     "UX-03",
-    "PM-18"
+    "PM-18",
+    "MDL-17",
+    "KIN-06",
+    "UX-13"
   ],
   "designRefs": [
     "units/modeling.md#6.5",
@@ -31,7 +34,13 @@
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
     "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T24.json",
     "RobWork/doc/industrial-robot-design/traceability/**",
-    "RobWork/docs/superpowers/plans/2026-10-20-modeling-completion.md"
+    "RobWork/docs/superpowers/plans/2026-10-20-modeling-completion.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/ui.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -53,7 +62,7 @@
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
   "branch": "wp13-t24",
-  "interUnit": false,
+  "interUnit": true,
   "knownPitfalls": [
     "P-MDL-4",
     "P-MDL-8"
@@ -62,7 +71,8 @@
     "B1导入真实include、参数、选链与完整报告；取消/依赖错误零草稿修改；真实io安全/预算边界不放松",
     "完整目标与五批计划见docs/superpowers/plans/2026-10-20-modeling-completion.md；本卡当前精确允许面含B1及B2a私有实现；后续公共面先八节设计登记",
     "先红后绿，双模式构建、门禁、XML和ird报告、真实窗口留痕；不以组件通过宣称47项全功能终验",
-    "B2a编辑器完整工作集局部历史：字段/结构/部件原子撤销重做；只读/空栈/拒绝/分叉/修订边界；零命令提交零修订零落盘；仍在既有私有允许面"
+    "B2a编辑器完整工作集局部历史：字段/结构/部件原子撤销重做；只读/空栈/拒绝/分叉/修订边界；零命令提交零修订零落盘；仍在既有私有允许面",
+    "B2b精确设计先登记：权威Home/Zero和命名条目恢复真实宿主State，身份/维度/有限/限位核查，取消失败原子拒绝、只读会话可用、零项目修订；只允许新增精确装配回调及已列私有适配文件"
   ],
-  "note": "2026-10-20所有者要求开始修复601ffa0e建模验收17项问题；授权常规方案自动采用推荐选择，不再弹出选项。按所有者此前指令不使用子代理、不推送、不自行合入。B1已提交aa7186d8；登记B2a编辑器局部历史精确设计，范围仍仅原私有模块/面板/测试；先登记B1精确范围，后续批次实施前逐项补设计与契约。当前status=ready仅表示获准实施，不代表验收通过。"
+  "note": "2026-10-20所有者要求开始修复601ffa0e建模验收17项问题；授权常规方案自动采用推荐选择，不再弹出选项。按所有者此前指令不使用子代理、不推送、不自行合入。B1已提交aa7186d8；登记B2a编辑器局部历史精确设计，范围仍仅原私有模块/面板/测试；先登记B1精确范围，后续批次实施前逐项补设计与契约。当前status=ready仅表示获准实施，不代表验收通过。 B2a已本地提交a77feaee；所有者自动采用推荐方案授权下，登记B2b公共装配请求/回调与精确宿主适配范围，不新增业务依赖或存储格式。"
 }

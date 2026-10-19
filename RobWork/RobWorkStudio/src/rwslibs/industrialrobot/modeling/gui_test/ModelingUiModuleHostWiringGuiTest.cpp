@@ -33,6 +33,7 @@
 #include <QPixmap>
 #include <QTableWidget>
 #include <memory>
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
@@ -507,4 +508,93 @@ TEST(ModelingUiModuleHostWiring, ReseedCustomChainComposition_UI_T63)
     // 基线/已应用预览失效（D-MDL-10——预览页回落空态）。
     EXPECT_FALSE(module.session().baselineSnapshot.has_value());
     EXPECT_FALSE(module.session().appliedPreview.has_value());
+}
+
+/** @brief F13/MDL-17：命名位姿页必须提供独立的会话恢复入口，未装配时禁用。 */
+TEST(ModelingUiModuleHostWiring, NamedPoseRestoreEntryIsPresent_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* restore=widget->findChild<QPushButton*>("ird_modeling_pose_restore");
+    ASSERT_NE(restore,nullptr)<<"F13：命名位姿恢复入口缺失";
+    EXPECT_FALSE(restore->isEnabled());
+}
+
+/** @brief MDL-17/AT-04：真实恢复按钮取保存条目，使用已应用零偏，且只读也可恢复会话。 */
+TEST(ModelingUiModuleHostWiring, NamedPoseRestoreUsesAppliedOffsetsAndIgnoresStaging_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto rev=core::RevisionId::generate();
+    module.bindSessionAnchor(branch,rev);
+    module.session().draft.design.joints[0].zeroOffset=0.2; // rad，已应用基线原始零偏。
+    PoseSet poses;poses.objectId=core::ObjectId::generate();
+    poses.entries.push_back(PoseSetEntry{"inspection",std::vector<double>(6,0.5),"检查姿态"});
+    module.session().draft.poseSetObject=poses;
+    module.session().draft.design.poseSetRef=poses.objectId;
+    module.noteAppliedRevision(rev,core::ObjectId::generate());
+    int restored=0;ModelingSessionPoseRequest captured;
+    module.bindSessionPoseWriter([&](const ModelingSessionPoseRequest& request,std::string&){++restored;captured=request;return true;});
+    std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());ASSERT_NE(panel,nullptr);
+    panel->focusObject(poses.objectId);
+    auto* restore=widget->findChild<QPushButton*>("ird_modeling_pose_restore");ASSERT_NE(restore,nullptr);
+    ASSERT_TRUE(restore->isEnabled());
+    // 当前草稿零偏已改，尚未应用；会话恢复只能按冻结基线的0.2换算。
+    EXPECT_EQ(submitJointFieldEdit(module.session().draft,*panel,0,JointEditField::ZeroOffset,
+              JointEditValue{0.8}),EditSubmitOutcome::Applied);
+    panel->focusObject(poses.objectId);
+    auto* poseArea=widget->findChild<QWidget*>("ird_modeling_pose_area");ASSERT_NE(poseArea,nullptr);
+    auto* table=poseArea->findChild<QTableWidget*>("ird_param_table");ASSERT_NE(table,nullptr);
+    for(int row=0;row<table->rowCount();++row){
+            if(table->item(row,0)->data(Qt::UserRole).toString()=="pose-config-0"){
+                table->item(row,1)->setText("0.9"); // 未确认，不能改变本次恢复目标。
+            }
+    }
+    QApplication::processEvents();const auto before=module.session().draft;
+    module.setWritable(false);EXPECT_TRUE(restore->isEnabled());restore->click();
+    ASSERT_EQ(restored,1);ASSERT_EQ(captured.jointConfiguration.size(),6U);
+    EXPECT_NEAR(captured.jointConfiguration[0],0.3,1e-15);
+    EXPECT_EQ(captured.branch,branch);EXPECT_EQ(captured.rootObjectId,*before.rootObjectId);
+    EXPECT_EQ(module.session().draft,before);EXPECT_EQ(module.session().baseRevision,rev);
+    module.session().draft.poseSetObject->entries[0].jointConfiguration.pop_back();
+    restore->click();EXPECT_EQ(restored,1)<<"维度失配不能调用宿主写入";
+    module.bindSessionPoseWriter({});EXPECT_FALSE(restore->isEnabled());
+}
+
+/** @brief MDL-17：空位姿集也能从可见模式入口进入管理页，不依赖已存在对象。 */
+TEST(ModelingUiModuleHostWiring, NamedPosePageReachableWithoutExistingObject_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    std::unique_ptr<QWidget> widget(module.createPanel());widget->show();QApplication::processEvents();
+    auto* mode=widget->findChild<QPushButton*>("ird_modeling_edit_pose_mode");
+    ASSERT_NE(mode,nullptr)<<"空位姿集没有树锚，必须有可见入口创建首个命名姿态";
+    ASSERT_TRUE(mode->isVisible());mode->click();
+    auto* add=widget->findChild<QPushButton*>("ird_modeling_pose_add");ASSERT_NE(add,nullptr);
+    EXPECT_TRUE(add->isVisible());add->click();
+    ASSERT_TRUE(module.session().draft.poseSetObject.has_value());
+    EXPECT_EQ(module.session().draft.poseSetObject->entries.size(),1U);
+}
+
+/** @brief MDL-17：关闭重开后经当前可见表格保存首个姿态，不访问旧表单模型。 */
+TEST(ModelingUiModuleHostWiring, NamedPoseCanSaveAfterSessionReopen_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    std::unique_ptr<QWidget> widget(module.createPanel());widget->show();QApplication::processEvents();
+    module.onSessionDetached();module.seedTemplateSession();QApplication::processEvents();
+    auto* mode=widget->findChild<QPushButton*>("ird_modeling_edit_pose_mode");ASSERT_NE(mode,nullptr);
+    mode->click();widget->findChild<QPushButton*>("ird_modeling_pose_add")->click();
+    QApplication::processEvents();
+    auto* area=widget->findChild<QWidget*>("ird_modeling_pose_area");ASSERT_NE(area,nullptr);
+    auto* table=area->findChild<QTableWidget*>("ird_param_table");ASSERT_NE(table,nullptr);
+    widget->findChild<QLineEdit*>("ird_modeling_pose_key")->setText("reopened-inspection");
+    ASSERT_NO_THROW(table->item(0,1)->setText("0.45"));
+    QApplication::processEvents();
+    ASSERT_NO_THROW(widget->findChild<QPushButton*>("ird_modeling_pose_apply")->click());
+    const auto& entries=module.session().draft.poseSetObject->entries;
+    const auto saved=std::find_if(entries.begin(),entries.end(),[](const auto& e){return e.key=="reopened-inspection";});
+    ASSERT_NE(saved,entries.end());EXPECT_DOUBLE_EQ(saved->jointConfiguration[0],0.45);
 }

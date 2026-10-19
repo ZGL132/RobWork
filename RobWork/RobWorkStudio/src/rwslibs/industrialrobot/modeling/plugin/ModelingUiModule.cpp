@@ -16,6 +16,8 @@
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
+#include <cmath>
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp> // F13：公共纯值请求，不引入运动学业务依赖。
 
 #include <sdurws/ird/modeling/StructureEdit.hpp>  // addJointAt/structureEditErrorCodeToken（UI-T63 声明补轴——域原语）
 #include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory/applyJointFieldEdit（首版种子＋UI-T63 声明驱动——真实域路径）
@@ -310,6 +312,10 @@ void ModelingUiModule::attachPanelWiring()
     m_panel->setDraftHistoryActions([this]{restoreDraftHistory(false);},
                                   [this]{restoreDraftHistory(true);});
     m_panel->setPostEditAction([this]{recomputeReadiness();});
+    m_panel->setPoseRestoreAction(m_sessionPoseWriter
+        ? std::function<bool(const std::string&,std::string&)>(
+            [this](const std::string& key,std::string& why){return restoreNamedPose(key,why);})
+        : std::function<bool(const std::string&,std::string&)>{});
     refreshDraftHistoryState();
     // XML 类预览供给适配（宿主回调已绑定时转发——不绑定＝面板 fail-closed
     // 诚实呈现"未接线"；适配闭包零 runtime 类型——纯字符串搬运）。
@@ -564,6 +570,9 @@ bool ModelingUiModule::executeDomainCommand(const std::string& commandId)
         return m_panel != nullptr ? m_panel->selectedAnchor() : std::nullopt;
     };
     deps.exportWorkCellXml = m_workCellExport;
+    if(m_sessionPoseWriter){
+        deps.restoreNamedPose=[this](const std::string& key,std::string& why){return restoreNamedPose(key,why);};
+    }
     std::string summary;
     const bool executed = executeModelingCommand(commandId, m_session, deps,
                                                  qtModelingDialogHost(), summary);
@@ -910,6 +919,60 @@ void ModelingUiModule::rebuildOnRevision(const std::string& tipRevisionCanonical
         m_session.baseRevision = *tip;
         clearDraftHistory(); // 用户选择重新编辑即建立新的基线边界。
     }
+}
+
+void ModelingUiModule::bindSessionPoseWriter(
+    std::function<bool(const ModelingSessionPoseRequest&,std::string&)> writer)
+{
+    m_guard.assertOnUiThread();
+    m_sessionPoseWriter=std::move(writer);
+    attachPanelWiring();
+}
+
+bool ModelingUiModule::restoreNamedPose(const std::string& key,std::string& summary)
+{
+    m_guard.assertOnUiThread();summary.clear();
+    const auto& ws=m_session.draft;
+    if(!m_sessionPoseWriter){summary="会话姿态恢复未装配——未写入";return false;}
+    if(!m_session.baselineSnapshot||!ws.rootObjectId||m_session.branch==core::BranchId{}){
+        summary="尚无已应用模型基线——请先应用模型，再恢复保存的姿态";return false;
+    }
+    if(!ws.poseSetObject){summary="命名位姿集缺失——未写入";return false;}
+    const PoseSetEntry* target=nullptr;
+    for(const auto& entry:ws.poseSetObject->entries){
+        if(entry.key==key){
+            if(target){summary="命名位姿键重复："+key+"——未写入";return false;}
+            target=&entry;
+        }
+    }
+    if(!target){summary="命名位姿不存在："+key+"——未写入";return false;}
+    const auto& baseline=*m_session.baselineSnapshot;
+    if(baseline.rootObjectId!=ws.rootObjectId||baseline.design.joints.size()!=ws.design.joints.size()
+       ||target->jointConfiguration.size()!=baseline.design.joints.size()){
+        summary="位姿维度或模型身份与已应用基线不匹配——未写入";return false;
+    }
+    ModelingSessionPoseRequest request;
+    request.branch=m_session.branch;request.rootObjectId=*ws.rootObjectId;
+    for(std::size_t i=0;i<baseline.design.joints.size();++i){
+        const auto& joint=baseline.design.joints[i];
+        if(joint.objectId!=ws.design.joints[i].objectId||joint.type!=ws.design.joints[i].type){
+            summary="关节序或类型已改变——请先应用模型，未恢复姿态";return false;
+        }
+        const double modelQ=target->jointConfiguration[i];
+        // CanonicalBridge已把该原始零偏折叠进origin/限位，不能再从canonical
+        // 中取通常为0的zeroOffset反推。只用冻结基线，未应用编辑不影响会话。
+        const double rawQ=joint.type==JointType::Fixed?0.0:modelQ-joint.zeroOffset;
+        if(!std::isfinite(modelQ)||!std::isfinite(rawQ)){
+            summary="姿态含非有限分量，关节序号 "+std::to_string(i+1)+"——未写入";return false;
+        }
+        request.jointIds.push_back(joint.objectId);request.jointConfiguration.push_back(rawQ);
+    }
+    if(!m_sessionPoseWriter(request,summary)){
+        if(summary.empty()){summary="宿主拒绝恢复姿态——未写入";}
+        return false;
+    }
+    summary="已恢复保存姿态 "+key+" 到已应用模型（仅会话姿态，未产生项目修订）";
+    return true;
 }
 
 void ModelingUiModule::refreshDraftHistoryState()

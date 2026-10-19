@@ -2047,3 +2047,7 @@ public:
 - 新集成测试：HostEngineeringPolicyTest、HostEngineeringPolicyGuiTest、KinEvaluationChannel的A-23回归；正式modeling-tour新增真实策略入口与截图。完整验证结果以本批traceability证据为准，未完成检查不得记为通过。
 
 - 测试依赖仅新增ui_gui_test→modeling_plugin，所有者2026-10-20批准A-23补充一；DTB §4.5和IRD_TEST_TARGET_EDGES精确登记，project/policy沿既有PUBLIC边传递。装配清单仅同步源码行号，不改变域集合。
+
+### WP-13-T24 B2b：建模命名姿态宿主装配增量（2026-10-20）
+
+经ModelingPluginAssembly::bindSessionPoseWriter消费纯值请求。HostPresentationAdapters校验同快照WorkCell、分支/根/关节序、有限性及限位，Fixed不消耗q；模块以已应用baseline的原始零偏换算q_rw（不消费未应用零偏），宿主用q_rw+CanonicalJoint.zeroOffset核查canonical限位并直接写入q_rw；先在State副本整批处理，UiPlugin再一次setState触发既有D8桥。只读允许会话姿态变化，禁止项目命令写入。无新链接边/目标，精确设计与当前状态见WP-13-T24原计划B2b。

@@ -45,6 +45,10 @@
 #include <sdurws/ird/kinematics/Fk.hpp>
 #include <sdurws/ird/kinematics/Ik.hpp>
 #include <cmath>
+#include <limits>
+#include <rw/kinematics/Kinematics.hpp>
+#include <rw/models/Device.hpp>
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>
 #include <sdurws/ird/runtime/Snapshot.hpp>
 #include <sdurws/ird/runtime/Codec.hpp>  // A-15：真实worker物化编码，完整命名TCP不可丢失。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
@@ -872,3 +876,98 @@ TEST_F(HostCompilePipelineTest,
 
 }  // namespace
 }  // namespace sdurws::ird::ui::test
+
+namespace sdurws::ird::ui::test {
+namespace {
+/** @brief MDL-17/AT-04：真实编译WC上恢复关节，独立核对末端矩阵；非法请求不改State。 */
+TEST_F(HostCompilePipelineTest, NamedPoseStagesRealStateAndRejectsAtomically_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    HostModelCompilePort port(HostModelCompilePort::Deps{m_query.get(),core::ProjectId::generate(),std::string(modeling::kRobotDesignObjectType),nullptr});
+    ASSERT_TRUE(port.compileWorkCellAndDwc(makeCompileRequest()).ok);
+    const auto snapshot=port.lastPublishedSnapshot();ASSERT_NE(snapshot,nullptr);
+    auto view=runtime::createHostPresentationView(snapshot,m_query->view.id);
+    auto cell=view->hostPresentationWorkCell();
+    const auto device=cell->findDevice(snapshot->model().chain().deviceName);
+    ASSERT_FALSE(device.isNull());
+    auto state=cell->getDefaultState();
+    modeling::ModelingSessionPoseRequest request;
+    request.branch=snapshot->branch();request.rootObjectId=m_rootId;
+    for(const auto& joint:snapshot->model().chain().joints){request.jointIds.push_back(joint.objectId);}
+    request.jointConfiguration={0.5};std::string reason;
+    ASSERT_TRUE(stageModelingSessionPose(request,*snapshot,*cell,state,reason))<<reason;
+    EXPECT_DOUBLE_EQ(device->getQ(state)[0],0.5);
+    const auto end=rw::kinematics::Kinematics::worldTframe(device->getEnd(),state);
+    EXPECT_NEAR(end.R()(0,0),std::cos(0.5),1e-12);
+    EXPECT_NEAR(end.R()(1,0),std::sin(0.5),1e-12);
+    const auto accepted=device->getQ(state);
+    for(int mode=0;mode<5;++mode){
+        auto invalid=request;
+        if(mode==0){invalid.branch=core::BranchId::generate();}
+        if(mode==1){invalid.rootObjectId=core::ObjectId::generate();}
+        if(mode==2){invalid.jointIds[0]=core::ObjectId::generate();}
+        if(mode==3){invalid.jointConfiguration[0]=2.0;} // 原夹具限位[0,1] rad。
+        if(mode==4){invalid.jointConfiguration[0]=std::numeric_limits<double>::quiet_NaN();}
+        EXPECT_FALSE(stageModelingSessionPose(invalid,*snapshot,*cell,state,reason))<<mode;
+        EXPECT_FALSE(reason.empty());EXPECT_EQ(device->getQ(state),accepted);
+    }
+}
+
+} // namespace
+} // namespace sdurws::ird::ui::test
+
+namespace sdurws::ird::ui::test {
+namespace {
+/** @brief MDL-17：零偏已折叠、Fixed不占q、移动轴m单位，独立几何参照核对。 */
+TEST_F(HostCompilePipelineTest, NamedPoseMixedChainKeepsZeroOffsetAndFixedSemantics_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    modeling::RobotDesignCodec codec;
+    const auto decoded=codec.decode(m_designBytes,modeling::kCurrentFormatVersion);ASSERT_TRUE(decoded.ok());
+    auto design=std::get<modeling::RobotDesign>(decoded.get());
+    design.joints[0].zeroOffset=0.2; // rad，编译桥折叠入origin，恢复q_rw需为0.6-0.2。
+    const auto provided=core::ValueProvenance::make(core::ProvenanceKind::UserProvided);
+    auto fixed=design.joints[0];fixed.objectId=core::ObjectId::generate();fixed.localName="fixed";
+    fixed.type=modeling::JointType::Fixed;fixed.zeroOffset=0;
+    fixed.bounds=core::SourcedValue<modeling::JointLimits>::notProvided();
+    modeling::JointPose fixedPose(rw::math::Transform3D<>(rw::math::Vector3D<>(0,0,0.2),rw::math::Rotation3D<>::identity()));
+    fixed.origin=core::SourcedValue<modeling::JointPose>::provided(fixedPose,provided);
+    auto slide=design.joints[0];slide.objectId=core::ObjectId::generate();slide.localName="slide";
+    slide.type=modeling::JointType::Prismatic;slide.zeroOffset=0;
+    slide.axis=core::SourcedValue<rw::math::Vector3D<>>::provided({1,0,0},provided);
+    slide.bounds=core::SourcedValue<modeling::JointLimits>::provided({-0.5,0.5},provided);
+    design.joints.push_back(fixed);design.joints.push_back(slide);
+    for(const auto* name:{"fixed-link","slide-link"}){
+        auto link=design.links.back();link.objectId=core::ObjectId::generate();link.localName=name;
+        design.links.push_back(link);
+    }
+    const auto encoded=codec.encode(modeling::ObjectVariant{design},modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(encoded.ok());m_designBytes=encoded.get();
+    HostModelCompilePort port({m_query.get(),core::ProjectId::generate(),std::string(modeling::kRobotDesignObjectType),nullptr});
+    ASSERT_TRUE(port.compileWorkCellAndDwc(makeCompileRequest()).ok);
+    const auto snapshot=port.lastPublishedSnapshot();
+    const auto view=runtime::createHostPresentationView(snapshot,m_query->view.id);
+    const auto cell=view->hostPresentationWorkCell();auto state=cell->getDefaultState();
+    const auto device=cell->findDevice(snapshot->model().chain().deviceName);
+    modeling::ModelingSessionPoseRequest request;
+    request.branch=snapshot->branch();request.rootObjectId=m_rootId;
+    for(const auto& joint:design.joints){request.jointIds.push_back(joint.objectId);}
+    request.jointConfiguration={0.4,0.0,0.1};std::string reason;
+    ASSERT_TRUE(stageModelingSessionPose(request,*snapshot,*cell,state,reason))<<reason;
+    ASSERT_EQ(device->getQ(state).size(),2U);
+    const auto end=rw::kinematics::Kinematics::worldTframe(device->getEnd(),state);
+    EXPECT_NEAR(end.P()[0],0.1*std::cos(0.6),1e-12);
+    EXPECT_NEAR(end.P()[1],0.1*std::sin(0.6),1e-12);EXPECT_NEAR(end.P()[2],0.2,1e-12);
+    const auto previous=device->getQ(state);
+    request.jointConfiguration[2]=0.8;
+    EXPECT_FALSE(stageModelingSessionPose(request,*snapshot,*cell,state,reason));
+    EXPECT_EQ(device->getQ(state),previous);
+    request.jointConfiguration.pop_back();
+    EXPECT_FALSE(stageModelingSessionPose(request,*snapshot,*cell,state,reason));
+    EXPECT_EQ(device->getQ(state),previous);
+    rw::models::WorkCell other("other");
+    EXPECT_FALSE(stageModelingSessionPose(request,*snapshot,other,state,reason));
+    EXPECT_EQ(device->getQ(state),previous);
+}
+} // namespace
+} // namespace sdurws::ird::ui::test

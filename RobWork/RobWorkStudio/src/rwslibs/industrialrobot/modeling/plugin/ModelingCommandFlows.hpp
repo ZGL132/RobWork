@@ -14,7 +14,7 @@
  *     的唯一路由（PA-1——本文件是被调用端，requirements 域
  *     RequirementsCommandFlows 同构先例）。
  *
- * 批次边界（诚实声明）：本层是"最小真实链路"——导入不经完整向导报告页
+ * 批次边界（历史首版说明，WP-13-T24/B1已补逐项报告）：首版导入不经完整向导报告页
  * （L-10 完整形态归后续任务），以确认对话框呈现映射报告摘要；规范包导出
  * 自当前会话草稿闭包（ObjectClosureView 值源），不触项目存储读取路径。
  * 偏差登记于 DTB §5.4（UI-T41 行）。
@@ -192,6 +192,8 @@ struct ModelingFlowDeps {
     /// ＝false＋原因入 summary（诚实缺席不虚构产物）；目标路径来自
     /// saveFilePath 替身/真身。
     std::function<bool(const std::string& targetPath, std::string& summary)> exportWorkCellXml;
+    /// MDL-17：精确键恢复到真实宿主；空/失败诚实拒绝，恢复不产生项目修订。
+    std::function<bool(const std::string& key,std::string& summary)> restoreNamedPose;
 };
 
 /**
@@ -204,7 +206,7 @@ struct ModelingFlowDeps {
  * generate-placeholder-geometry＝相邻关节原点占位圆柱批量生成；
  * diff-baseline＝与最近应用基线的 ModelDiff 查看（只读）；
  * export-package/import-package＝MDL-20 规范包导出/导入；reset-home-zero
- * ＝位姿集参考数据读取呈报（会话命令零修订——MDL-17/§4.6 行 386）。
+ * ＝选择权威保留键并恢复真实宿主State（会话命令零修订——MDL-17/§4.6）。
  *
  * @param commandId [in] 域命令 id（点分小写——未知 id＝调用方违约 fail-fast）
  * @param session   [in,out] 会话权威态（草稿编辑落点——仅 UI 线程）

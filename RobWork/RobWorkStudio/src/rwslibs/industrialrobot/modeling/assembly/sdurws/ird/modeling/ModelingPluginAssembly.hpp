@@ -27,6 +27,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include <QString>                                 // 文案解析返回值（bindTextResolver）
 #include <sdurws/ird/core/Identity.hpp>            // core::BranchId/RevisionId/ObjectId（会话锚/回执值面）
@@ -64,6 +65,21 @@ namespace modeling {
 class ModelingUiModule;  // 前置声明（内部具体类型——消费方面只见 IPluginUiModule 接口）
 class ObjectClosureView; // A-14：既有公共闭包查询端口，同步恢复时借用。
 
+/**
+ * @brief MDL-17/AT-04：恢复已应用机器人会话姿态的纯值请求，不属于项目命令。
+ *
+ * 值由UI模块拥有；回调同步借用、不保留引用，仅UI线程使用。jointIds与
+ * jointConfiguration按根对象关节序一一对应，含Fixed占位。q为RobWork增量
+ * 坐标（旋转rad、移动m）：模块用已应用baseline的原始zeroOffset从命名条目
+ * 权威q换算，未应用的零偏不参与；宿主仍须对账当前快照/模型身份与限位。
+ */
+struct ModelingSessionPoseRequest {
+    core::BranchId branch;                 ///< 当前已应用分支；无效身份不得提交。
+    core::ObjectId rootObjectId;           ///< 当前已应用机器人根身份。
+    std::vector<core::ObjectId> jointIds;   ///< 全部关节身份，按基座到末端排列。
+    std::vector<double> jointConfiguration;///< 逐关节q_rw（rad/m）；有限，Fixed槽不产生运动。
+};
+
 /// 模块句柄（ModuleDraftHandle 词表——与 descriptor.pluginId 同 token；
 /// 宿主装配层 attachModule 首参取此值）。
 inline constexpr char kModuleHandle[] = "modeling";
@@ -93,6 +109,16 @@ struct ModelingPluginAssembly {
 
     /// 文案解析绑定（titleKey→工程用语；转发模块内部）。
     void bindTextResolver(std::function<QString(const std::string& titleKey)> resolve);
+
+    /**
+     * @brief 绑定真实宿主会话姿态写入出口（MDL-17），不触项目历史。
+     * @param writer [in] UI线程同步回调；空＝未装配，恢复诚实拒绝。模块持有
+     *        闭包，宿主保证目标存活至模块拆除；不得缓存请求/帧的借用引用。
+     * @return 无返回；writer返回true表示已一次更新宿主State，false必须给出
+     *         可定位原因且旧State不变。只读项目允许会话更新，禁止提交项目命令。
+     */
+    void bindSessionPoseWriter(std::function<bool(const ModelingSessionPoseRequest&,
+                                                 std::string&)> writer);
 
     /// WC/DWC XML 外供导出回调绑定（UI-T56——转发模块内部；m_impl 缺位＝
     /// 静默零操作。UI-T59 补登：本转发器在 UI-T56 落位时漏登装配面——
