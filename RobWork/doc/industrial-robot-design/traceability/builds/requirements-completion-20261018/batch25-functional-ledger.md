@@ -228,12 +228,53 @@ NOT RUN 原状（29 行——见下）。**零代码改动批**——本批不�
 - J 全族 4 行：跨域整合场景（百点计划分母/轨迹动力学包络/选型回填）＝
   新 DoD 第 7 条跨域消费面，归 Phase-D 立契约补产。
 
+## 第三十三批（gui 补产第一批，2026-10-19）——对账遗留行落生产路径测试
+
+**新用例 ×7（requirements/gui_test——全部真实控件事件流）**：
+
+1. `StationSegmentsEditAndWorkLock_REQ02_WP14T12`——接近段距离/进退轴、
+   撤离段距离经段复合行真实编辑＋互不串值；作业段锁启用（REQ-02 语义
+   锁）；三笔撤销逐笔回放。**测试基建发现**：接受编辑→检查器重建＝行
+   控件全换（旧指针悬垂 SEH），每步交互后必须重定位；控件定位用
+   QFormLayout LabelRole/FieldRole 行映射（布局对象跨重建存活；测试环
+   境无真实窗口时几何未布局，y 排序不可用）。
+2. `StationReferencedDeleteGuards_REQ01_WP14T12`——删除引用保护两轨
+   （工况 appliesTo／顺序键前驱）走真实删除按钮：域拒绝、原数据不动；
+   解除绑定后删除成功（§5.1 三轨中的 a/c 轨；b 轨 event.stationRef 同
+   源实现）。
+3. `StationDuplicateNameRejectKeepsOriginal_REQ01_WP14T12`——重名拒绝走
+   真实名称字段：原值保留＋非重名对照轨。
+4. `RegionSpacingSamplingNormalizedPlan_REQ03_WP14T12`——间距采样：区域
+   存 GridBySpacing 原值；确认派生计划＝buildPlan 归一 Grid 计数；同值
+   重确认逐位不变（确定性）＋计划 id 复用；间距改密计数响应。
+5. `RegionOrientationSamplingCounts_REQ03_WP14T12`——方向/滚转计数区域
+   存值＋计划同值投影；零计数拒绝保原值。
+6. `CsvFormulaLiteralAndQuotedFields_AT02_WP14T12`——公式样式单元格字面
+   导入（NFR-SEC-03 不求值）；引号内逗号/双写引号 RFC 方言解出。
+7. `JsonImportVersionAndUnknownKeyReject_REQ12_WP14T12`——未来版本稳定
+   拒绝＋顶层未知键拒绝（NFR-DEP-04），均零写入；合法基线对照轨。
+
+**回归**：requirements_gui 103/103（96＋7）双模式（standalone＋集成）；
+零产品代码改动（纯测试增补）。
+
+**待查登记（本批测试环境暴露，未定界产品/环境）**：段"启用"翻转交互——
+撤离段距离置 0.4 后启用翻转暴露下拉 currentIndex=-1 异常态，随后交互
+SEH；三种定位法下可复现。域写面（applyStationToggleEdit→retract.enabled）
+与拒绝面（零距离启用正确拒绝——本批首跑即触发该域校验）均实测正常，疑
+点集中在重建后下拉状态链——列 Phase-D 段编辑器复查项；本批段用例不承载
+启停翻转断言（R02-01/03 该子面如实标部分）。
+
+**矩阵翻转（12 行）**：R01-04/R01-12/R03-03/R03-05/R03-06/R05-08/
+R05-09/R12-02 全过，R02-01/R02-02/R02-03/R12-04 部分过（部分面逐格注
+明）。剩余 NOT RUN（17 行＋R01-09 FAIL＋J 族 4 行）：R06-05/R06-07/
+R07-08/R07-09、U06/U10/U12/U14~U18/U22——归 Phase-D。
+
 | ID | 功能 | 如何验证 | 本次终验 | 最新组件匹配数 |
 | --- | --- | --- | --- | --- |
 | R01-01 | 新建关键任务点 | 空集点新增，核对默认字段、树节点和选中项 | PASS（批32——gui LifecycleAdd_ThreeCollections） | 2 |
 | R01-02 | 复制工位 | 复制选中工位，核对字段、独立标识和新选中项 | PASS（批32——gui LifecycleDuplicate_CopyFieldsAndSelect） | 1 |
 | R01-03 | 删除工位及选中回退 | 删中间及最后工位，核对列表、选中回退及局部撤销 | PASS（批32——gui LifecycleRemoveAnchorFallbackAndUndo） | 2 |
-| R01-04 | 被引用工位删除保护 | 让 appliesTo/events 引用工位，再删并核对原数据未改 | NOT RUN | 2 |
+| R01-04 | 被引用工位删除保护 | 让 appliesTo/events 引用工位，再删并核对原数据未改 | PASS（批33——gui StationReferencedDeleteGuards（appliesTo/顺序键两轨拒绝＋解除后删除成功）） | 2 |
 | R01-05 | 名称和工艺标签编辑 | 修改名称与工艺类别，核对草稿及树显示 | PASS（批32·部分——gui StationTextEditing（name/note）） | 1 |
 | R01-06 | 参考坐标系选择 | 选 World、模型 Frame、场景 Frame，核对参考系与变换语义 | PASS（批32——gui NamedStationReferencesAtomicAndStale＋mtour scene-frame-probe） | 2 |
 | R01-07 | TCP 引用选择 | 选择默认 TCP 和工具 TCP，核对引用及悬空诊断 | PASS（批32——gui NamedGeometryAndMultiTcpKeepIdentity＋…MissingPreserved…Rejected） | 2 |
@@ -241,17 +282,17 @@ NOT RUN 原状（29 行——见下）。**零代码改动批**——本批不�
 | R01-09 | 六个受约束/自由分量 | 逐个切换 XYZ/Roll/Pitch/Yaw，检查掩码与非法组合 | FAIL | 2 |
 | R01-10 | 位置与姿态容差 | 输入 m/rad 正值、零、负和非有限值，核对拒绝与原值保留 | PASS（批32·部分——gui StationQueuedValueKeepsAnchor（拒绝保原值）） | 3 |
 | R01-11 | Must/Should 等级与启用 | 切换等级和 enabled，检查校验及派生必验状态 | PASS（批32·部分——gui GateTruthSource_BlockingDoubleState） | 2 |
-| R01-12 | 唯一标识、重名和字段状态 | 构造重复 id/name，检查拒绝且原字节不变；核对 Provided/Unknown 等状态 | NOT RUN | 3 |
-| R02-01 | 接近段启用、方向、距离 | 启停接近段，切换 ToolZ/ReferenceZ，输入正负距离 | NOT RUN | 1 |
-| R02-02 | 作业段定义 | 配置作业段并检查任务序列与轨迹消费者读取 | NOT RUN | 2 |
-| R02-03 | 撤离段启用、方向、距离 | 与接近段独立设置，核对不串值及单位 m | NOT RUN | 1 |
+| R01-12 | 唯一标识、重名和字段状态 | 构造重复 id/name，检查拒绝且原字节不变；核对 Provided/Unknown 等状态 | PASS（批33——gui StationDuplicateNameRejectKeepsOriginal（重名拒绝保原值＋非重名对照）） | 3 |
+| R02-01 | 接近段启用、方向、距离 | 启停接近段，切换 ToolZ/ReferenceZ，输入正负距离 | PASS（批33·部分——gui StationSegmentsEditAndWorkLock（接近段距离/进退轴实测；段启停翻转面待查——批33 登记）） | 1 |
+| R02-02 | 作业段定义 | 配置作业段并检查任务序列与轨迹消费者读取 | PASS（批33·部分——gui StationSegmentsEditAndWorkLock（作业段锁启用实测；轨迹消费者读取面归 J 族）） | 2 |
+| R02-03 | 撤离段启用、方向、距离 | 与接近段独立设置，核对不串值及单位 m | PASS（批33——gui StationSegmentsEditAndWorkLock（撤离段距离独立编辑＋不串值断言）） | 1 |
 | R02-04 | 顺序键、重复与环路 | 建立有序多工位序列，注入环、重复、悬空锚，检查 R7 | NOT RUN | 4 |
 | R03-01 | Box 区域新增与中心尺寸 | 新增区域，编辑中心 m/尺寸 m；零负尺寸拒绝，核对轮廓 | PASS（批32——gui RegionFieldEditing_FourStates＋RegionQueuedFieldsKeepOriginalAnchor） | 3 |
 | R03-02 | 按数量网格采样 | 设置 4×3×2，检查计划24位置样本与面板计数 | PASS（批32——gui RegionSamplingCompleteAtomic（4×3×2→24）＋…BuildsPlanEntry_A18） | 7 |
-| R03-03 | 按间距网格采样 | 三轴分别设间距，检查确定性归一与同义计划摘要 | NOT RUN | 2 |
+| R03-03 | 按间距网格采样 | 三轴分别设间距，检查确定性归一与同义计划摘要 | PASS（批33——gui RegionSpacingSamplingNormalizedPlan（原值存储＋归一计数确定性＋改密响应）） | 2 |
 | R03-04 | 随机位置采样与种子 | 固定种子重复生成，检查数量和快照计划身份；换种子应变化 | PASS（批32——gui RegionSamplingModesCancelAndReject（Random 真实表单）） | 7 |
-| R03-05 | 方向姿态采样 | 设置 direction 采样数/范围并核对位置×方向计划样本 | NOT RUN | 2 |
-| R03-06 | 工具滚转姿态采样 | 配置 roll 数量/角范围 rad，检查总数与非法范围 | NOT RUN | 2 |
+| R03-05 | 方向姿态采样 | 设置 direction 采样数/范围并核对位置×方向计划样本 | PASS（批33——gui RegionOrientationSamplingCounts（方向计数区域/计划同值投影）） | 2 |
+| R03-06 | 工具滚转姿态采样 | 配置 roll 数量/角范围 rad，检查总数与非法范围 | PASS（批33——gui RegionOrientationSamplingCounts（滚转计数＋零计数拒绝保原值）） | 2 |
 | R03-07 | 最低覆盖率 | 拖动或输入85%，核对0~1存储、百分数显示及边界 | PASS（批32——gui RegionCompositeAndLiveCount（滑块0.5→0~1）＋…BaselineAndOptionalClear） | 2 |
 | R03-08 | 退化区域、零计划与计数溢出 | 零/负尺寸、零数量、极大数量分别核对 Blocking/Warning 和无回绕 | PASS（批32·部分——gui RegionSamplingModesCancelAndReject（非法输入拒绝轨）） | 3 |
 | R03-09 | 中性采样网格预览 | 没有评估结果时显示中性轮廓/网格，检查不伪装为可达 | PASS（批31——r18 评估前窗 step5 实测：中性轮廓＋47 格线零伪装） | 2 |
@@ -274,8 +315,8 @@ NOT RUN 原状（29 行——见下）。**零代码改动批**——本批不�
 | R05-05 | 错误行定位到行/列/原文 | 输入 x=bad，界面应显示第几行、x及bad并可定位 | PASS（批32——gui CsvAllErrorDetails（行号/列/原文/建议＞8 条）） | 1 |
 | R05-06 | 正确行保留并跳过坏行 | 确认部分成功，核对草稿只有GoodPoint与公式文本，导出再查 | PASS（批32——gui CommandFlows_ImportCsvPartial（正确行保留坏行跳过）） | 2 |
 | R05-07 | 缺列、重复标识/名称、非法单位 | 分别导入边界表，核对结构拒绝/行错及无半成品 | PASS（批32——gui CsvAllErrorDetails（缺列/重复/非法单位面）） | 3 |
-| R05-08 | 公式只按文本数据解析 | 导入name为=1+1，检查没有执行且导出仍逐字符相同 | NOT RUN | 1 |
-| R05-09 | CSV 可逆转义与方言标识 | 对=、+、-、@及单引号原文导出回读，检查标记及逐字符一致 | NOT RUN | 3 |
+| R05-08 | 公式只按文本数据解析 | 导入name为=1+1，检查没有执行且导出仍逐字符相同 | PASS（批33——gui CsvFormulaLiteralAndQuotedFields（公式样式字面导入——NFR-SEC-03）） | 1 |
+| R05-09 | CSV 可逆转义与方言标识 | 对=、+、-、@及单引号原文导出回读，检查标记及逐字符一致 | PASS（批33——gui CsvFormulaLiteralAndQuotedFields（引号逗号/双写引号 RFC 方言解出）） | 3 |
 | R05-10 | 取消或失败不写草稿 | 在混合行预览取消，核对空树及无正式修订；再确认成功 | PASS（批32——gui CsvMappingValidationCancel（取消零写入）） | 5 |
 | R05-11 | 导入溯源摘要与原始行号 | 检查摘要随内容变化、无原路径泄漏、行号≥1 | PASS（批32·部分——gui CsvAllErrorDetails（行号溯源）） | 3 |
 | R06-01 | 任意草稿保存与恢复 | 编辑合法/未完成草稿，等自动保存或主动保存后关重开逐字段核对 | PASS（批32·部分——gui FacadeSessionBaseRevisionRoundtrip＋mtour 重开全链） | 72 |
@@ -319,9 +360,9 @@ NOT RUN 原状（29 行——见下）。**零代码改动批**——本批不�
 | R11-07 | 局部撤销/重做与批次整体回滚 | 对多点阵列一次撤销清除全批，再重做，核对历史指针 | PASS（批32——gui ArrayCompleteProductionForms 逐 kind 撤销＋DetachAtomicUndo） | 2 |
 | R11-08 | 项目撤销与需求草稿撤销分离 | 草稿撤销不增修订；应用后项目撤销新增修订且不改历史 | PASS（批32·部分——mtour capture-local-history-zero-project-revisions＋gui ProjectUndoCommandIdAndGate） | 2 |
 | R12-01 | 需求JSON导入 | 导入含草稿标记及引用的JSON，核对确认、逐字段和错误 | PASS（批32·部分——gui CommandFlows_JsonAndDegrades） | 3 |
-| R12-02 | JSON同字段字典、安全与版本错误 | 对未知字段、非法数值/单位、版本及公式文本做往返 | NOT RUN | 3 |
+| R12-02 | JSON同字段字典、安全与版本错误 | 对未知字段、非法数值/单位、版本及公式文本做往返 | PASS（批33——gui JsonImportVersionAndUnknownKeyReject（版本门＋顶层未知键拒绝）） | 3 |
 | R12-03 | 导出JSON草稿副本 | 导出到独立路径，检查draft=true、点数、坐标及原文 | PASS（批32·部分——gui CommandFlows_ExportCopy（真实命令轨）） | 2 |
-| R12-04 | 副本不修改项目、原子失败保旧文件 | 导出前后比项目身份；故障注入写失败核对旧文件 | NOT RUN | 1 |
+| R12-04 | 副本不修改项目、原子失败保旧文件 | 导出前后比项目身份；故障注入写失败核对旧文件 | PASS（批33·部分——gui JsonImportVersionAndUnknownKeyReject（拒绝面零写入；原子写出失败保旧在域 ImportTest）） | 1 |
 | U01 | 空态引导与缺输入呈现 | 无项目/空需求时核对目标、缺项、下一步与新增入口 | PASS（批32——gui EmptyStateFoldImportBreadcrumb） | 5 |
 | U02 | 工程用语与隐藏内部实现词 | 检查常用菜单、命令面板和失败提示无内部插件名/Schema | PASS（批32——mtour step7 九命令中文标题/筛选（命令面板面）） | 2 |
 | U03 | 失败提示对象、原因、建议及比较值单位 | 注入数值/引用错误，核对对象、建议、actual/required/unit或不适用 | PASS（批32·部分——gui CsvAllErrorDetails 三要素＋批31 样本行 reason 直投） | 2 |

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-19T15:57:54+08:00",
+  "generatedAt": "2026-10-19T17:13:09+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -11,24 +11,24 @@
   },
   "summary": {
     "totalFiles": 10643,
-    "totalBytes": 557801520,
+    "totalBytes": 557805677,
     "byKind": {
-      "governance-record": 40,
-      "benchmark": 8,
-      "log": 1,
-      "pipeline-artifact": 2,
-      "json-data": 7,
+      "manual-acceptance": 1,
       "acceptance-record": 515,
       "gtest-report": 335,
+      "json-data": 7,
+      "benchmark": 8,
+      "build-log": 9693,
+      "log": 1,
       "markdown-doc": 41,
-      "manual-acceptance": 1,
-      "build-log": 9693
+      "pipeline-artifact": 2,
+      "governance-record": 40
     },
     "byLifecycle": {
-      "unverified": 10052,
-      "historical": 564,
+      "superseded": 0,
       "current": 27,
-      "superseded": 0
+      "unverified": 10052,
+      "historical": 564
     },
     "associated": 596,
     "unassociated": 10047,
@@ -32111,8 +32111,8 @@
       "path": "builds/requirements-completion-20261018/batch25-functional-ledger.md",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 39483,
-      "sha256": "b70b3ee68dbf7e4b14ba59794224f175102c9e49f4e83076c39b515f4d583893",
+      "bytes": 43640,
+      "sha256": "54f41e521f4f581a90fefb21a0668c26fc0571a69bf67dff80fc8d66e5461659",
       "lifecycle": "unverified"
     },
     {

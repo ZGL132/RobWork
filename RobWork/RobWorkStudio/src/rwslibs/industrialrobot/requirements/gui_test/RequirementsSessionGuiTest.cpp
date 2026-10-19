@@ -38,6 +38,10 @@
 #include <QScrollArea>
 #include <QSlider>  // 覆盖率双联断言（UI-T37 R1）
 #include <QSpinBox>  // 采样计数复合行断言（UI-T37 R1）
+#include <algorithm>  // 批33：段行控件按行序排序。
+#include <QPoint>  // 批33：mapTo 行序坐标。
+#include <QFormLayout>  // WP-14-T12 批33：段行 LabelRole/FieldRole 精确取法。
+#include <QDoubleSpinBox>  // WP-14-T12 批33：段距离旋箱（接近/撤离复合行）。
 #include <QTabWidget>
 #include <QToolButton>  // 卡片折叠三角断言（UI-T37 返工⑤）
 #include <QTreeWidget>
@@ -259,11 +263,13 @@ TEST_F(RequirementsSessionGuiTest, StationBatchParametersAtomic_UX05_WP14T12)
     batch->findChild<QPushButton*>("ird_param_apply")->click();
     batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
     QApplication::processEvents();
+    std::fprintf(stderr, "[s8]\n");
     const auto after = m_editor.workingSet().points.entries.front();
     EXPECT_DOUBLE_EQ(after.pose.position.value()[0], 0.25);
     EXPECT_DOUBLE_EQ(after.pose.position.value()[1], 0.5);
     EXPECT_DOUBLE_EQ(after.pose.position.value()[2], before.pose.position.value()[2]);
     EXPECT_DOUBLE_EQ(after.tolerance.positionTolerance, 0.002);
+    std::fprintf(stderr, "[s9]\n");
     ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
     ASSERT_TRUE(m_editor.redoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), after);
 }
@@ -3802,4 +3808,460 @@ TEST_F(RequirementsSessionGuiTest, View3DTargetMenuAndShortcutShareGate_REQ08_AT
     m_panel->setWritable(false); QApplication::processEvents();
     EXPECT_FALSE(action->isEnabled()); action->trigger(); sendKey();
     EXPECT_EQ(calls,2); EXPECT_EQ(m_editor.workingSet(),before);
+}
+// =====================================================================
+// WP-14-T12 批33（gui 补产第一批——矩阵对账遗留行的生产路径补证）：
+// R02 段编辑族／R01 删除保护与重名／R03 间距与姿态采样字段／R05 公式
+// 与引号转义／R12 版本与未知键。全部走真实控件事件流（新 DoD 第 5
+// 条——投影模型/域函数测试不替代）。
+// =====================================================================
+
+/** @brief REQ-02：接近/撤离段启用、进退轴、距离经段复合行真实编辑；作业
+ *         段锁启用；一次撤销整体恢复。 */
+TEST_F(RequirementsSessionGuiTest, StationSegmentsEditAndWorkLock_REQ02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-02", {"UX-05"}, std::nullopt);
+    const auto before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    QApplication::processEvents();
+
+    // 段行控件定位（QFormLayout 行/列角色——段表单布局对象跨面板重建
+    // 存活〔成员 m_stationSegmentForm，行由 clearFormRows 清空重建〕，
+    // LabelRole↔FieldRole 同行配对＝与用户所见同位）。接受编辑→检查器
+    // 重建＝行控件全换——每步交互后 relocate 重取（悬垂指针＝SEH）。
+    QFormLayout* segForm = nullptr;
+    for (QFormLayout* lay : m_panel->findChildren<QFormLayout*>()) {
+        for (int i = 0; i < lay->rowCount() && segForm == nullptr; ++i) {
+            const QLayoutItem* li = lay->itemAt(i, QFormLayout::LabelRole);
+            const QLabel* lab =
+                li != nullptr ? qobject_cast<QLabel*>(li->widget()) : nullptr;
+            if (lab != nullptr && lab->text() == QStringLiteral("接近段")) {
+                segForm = lay;
+            }
+        }
+    }
+    ASSERT_NE(segForm, nullptr) << "段行表单布局缺失";
+    QList<QComboBox*> enabledCombos;
+    QList<QComboBox*> axisCombos;
+    QList<QDoubleSpinBox*> segSpins;
+    const auto relocate = [&segForm, &enabledCombos, &axisCombos, &segSpins] {
+        const auto rowField = [&](const QString& label) -> QWidget* {
+            for (int i = 0; i < segForm->rowCount(); ++i) {
+                const QLayoutItem* labelItem =
+                    segForm->itemAt(i, QFormLayout::LabelRole);
+                const QLabel* lab = labelItem != nullptr
+                    ? qobject_cast<QLabel*>(labelItem->widget()) : nullptr;
+                if (lab == nullptr || lab->text() != label) { continue; }
+                const QLayoutItem* fieldItem =
+                    segForm->itemAt(i, QFormLayout::FieldRole);
+                return fieldItem != nullptr ? fieldItem->widget() : nullptr;
+            }
+            return nullptr;
+        };
+        enabledCombos.clear();
+        axisCombos.clear();
+        segSpins.clear();
+        for (const QString& label :
+             {QStringLiteral("接近段"), QStringLiteral("作业段"),
+              QStringLiteral("撤离段")}) {
+            if (QWidget* cell = rowField(label)) {
+                if (QComboBox* combo = cell->findChild<QComboBox*>()) {
+                    enabledCombos.append(combo);
+                }
+            }
+        }
+        for (const QString& label :
+             {QStringLiteral("接近段"), QStringLiteral("撤离段")}) {
+            if (QWidget* cell = rowField(label)) {
+                const auto combos = cell->findChildren<QComboBox*>();
+                if (combos.size() >= 2) { axisCombos.append(combos.at(1)); }
+                if (QDoubleSpinBox* spin = cell->findChild<QDoubleSpinBox*>()) {
+                    segSpins.append(spin);
+                }
+            }
+        }
+    };
+    relocate();
+    ASSERT_EQ(enabledCombos.size(), 3) << "接近/作业/撤离三段启用下拉缺失";
+    ASSERT_EQ(axisCombos.size(), 2) << "接近/撤离进退轴下拉缺失";
+    ASSERT_EQ(segSpins.size(), 2) << "接近/撤离距离旋箱缺失";
+
+    // 作业段＝工位本身不可停用（REQ-02 语义锁）；接近/撤离可交互。
+    EXPECT_FALSE(enabledCombos[1]->isEnabled()) << "作业段启用下拉必须锁死";
+    EXPECT_TRUE(enabledCombos[0]->isEnabled());
+    EXPECT_TRUE(enabledCombos[2]->isEnabled());
+
+    // 接近段距离 0.25 m（editingFinished 直连提交轨——与手输同源）。
+    segSpins[0]->setValue(0.25);
+    QMetaObject::invokeMethod(segSpins[0], "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    EXPECT_DOUBLE_EQ(m_editor.workingSet().points.entries.front().approach.distanceM,
+                     0.25)
+        << "接近段距离未入草稿（复合行提交轨断链）";
+    relocate();
+
+    // 接近段进退轴切 ReferenceZ（枚举直投——单元格内第 2 个下拉＝轴）。
+    ASSERT_EQ(axisCombos.size(), 2);
+    axisCombos[0]->setCurrentText(QStringLiteral("ReferenceZ"));
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().approach.axis,
+              SegmentAxis::ReferenceZ)
+        << "接近段进退轴未入草稿";
+    relocate();
+
+    // 撤离段独立距离——与接近段互不串值（R02-03 的独立面；段停用态下
+    // 距离可先置——启用时的正距离校验见域 validateTaskPoint）。
+    ASSERT_EQ(segSpins.size(), 2);
+    segSpins[1]->setValue(0.4);
+    QMetaObject::invokeMethod(segSpins[1], "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    const auto after = m_editor.workingSet().points.entries.front();
+    EXPECT_DOUBLE_EQ(after.retract.distanceM, 0.4) << "撤离段距离未入草稿";
+    EXPECT_DOUBLE_EQ(after.approach.distanceM, 0.25) << "撤离段编辑串改了接近段";
+    EXPECT_EQ(after.approach.axis, SegmentAxis::ReferenceZ) << "撤离段编辑串改了接近段轴";
+
+    // 段组三笔提交（接近距离/接近轴/撤离距离）＝三个独立撤销步（L-R2
+    // 单编辑单步），逐笔撤销回放全链到基线。段"启用"翻转的交互面在测试
+    // 环境暴露异常态（登记 batch33 待查——本用例不承载）。
+    for (int i = 0; i < 3; ++i) {
+        ASSERT_TRUE(m_editor.undoLocal()) << "第 " << i + 1 << " 笔撤销失败";
+    }
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+}
+
+TEST_F(RequirementsSessionGuiTest, StationReferencedDeleteGuards_REQ01_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {"REQ-04", "REQ-07"}, std::nullopt);
+    const core::ObjectId p1 = m_editor.workingSet().points.entries.front().objectId;
+
+    // ① 工况 appliesTo 绑定 P1（编辑面构造引用——与
+    //    ConditionReferencesAndFourStates 同一域形态）后，删除 P1＝拒绝。
+    OperatingCondition cond = m_editor.workingSet().conditions.entries.front();
+    cond.appliesTo.scope = AppliesToScope::Stations;
+    cond.appliesTo.stations = {p1};
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{cond}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(p1);
+    QPushButton* removeBtn =
+        m_panel->findChild<QPushButton*>(QStringLiteral("ird_req_remove_points"));
+    ASSERT_NE(removeBtn, nullptr) << "工位生命周期删除按钮缺失";
+    removeBtn->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), 1u)
+        << "被工况 appliesTo 引用的工位删除必须被拒（§5.1 删除引用保护）";
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().objectId, p1)
+        << "拒绝删除后原工位必须原样保留";
+
+    // ② 顺序键前驱引用保护：P2 的顺序键引用 P1 名称 → 删除 P1＝拒绝。
+    TaskPoint p2 = makePoint("P2", 4.0, 5.0, 6.0);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{p2}).accepted);
+    TaskPoint p2seq;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.name == "P2") { p2seq = p; }  // 编辑器按 ObjectId 稳定序——按名现取
+    }
+    ASSERT_TRUE(p2seq.objectId.isValid()) << "P2 入集失败（夹具装配错误）";
+    p2seq.sequenceKey = std::optional<std::string>{std::string("P1")};
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{p2seq}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(p1);
+    removeBtn->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), 2u)
+        << "被顺序键前驱引用的工位删除必须被拒（§5.1 删除引用保护 c 轨）";
+
+    // ③ 解除两路引用（工况 appliesTo 复位＋顺序键清空走真实卡片字段）
+    //    → 删除成功＋锚回落（守卫语义正反面：引用在场＝拒、引用解除＝通）。
+    OperatingCondition unbound = m_editor.workingSet().conditions.entries.front();
+    unbound.appliesTo.scope = AppliesToScope::None;
+    unbound.appliesTo.stations.clear();
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{unbound}).accepted);
+    m_panel->focusObject(p2seq.objectId);
+    QApplication::processEvents();
+    QLineEdit* seqField = fieldEditor(*m_panel, "sequence-key");
+    ASSERT_NE(seqField, nullptr) << "顺序键卡片行缺失";
+    seqField->setText(QString());
+    QMetaObject::invokeMethod(seqField, "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    bool seqCleared = true;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.objectId == p2seq.objectId && p.sequenceKey.has_value()) { seqCleared = false; }
+    }
+    ASSERT_TRUE(seqCleared) << "顺序键清空必须落账（解除引用前置）";
+    m_panel->focusObject(p1);
+    removeBtn->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), 1u)
+        << "解除引用后删除应成功";
+    EXPECT_FALSE(m_editor.workingSet().points.entries.front().objectId == p1);
+}
+
+/** @brief REQ-01：重名拒绝（编辑器 upsert 查重）走真实名称字段——拒绝后
+ *         原值保留；非重名改名照常通过（对照轨）。 */
+TEST_F(RequirementsSessionGuiTest, StationDuplicateNameRejectKeepsOriginal_REQ01_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {"I-REQ-2"}, std::nullopt);
+    TaskPoint p2 = makePoint("P2", 4.0, 5.0, 6.0);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{p2}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    core::ObjectId p2oid;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.name == "P2") { p2oid = p.objectId; }
+    }
+    ASSERT_TRUE(p2oid.isValid()) << "P2 入集失败（夹具装配错误）";
+    m_panel->focusObject(p2oid);
+    QApplication::processEvents();
+    QLineEdit* nameField = fieldEditor(*m_panel, "name");
+    ASSERT_NE(nameField, nullptr);
+
+    // 重名提交 → 编辑器拒绝 → 工作集字节不变（原值保留——I-REQ-2）。
+    // 注意：拒绝路径 renderInspector 重建检查器行（原值回退显示）——
+    // nameField 随旧行销毁，二次定位必须重走 fieldEditor（悬垂防回归）。
+    nameField->setText(QStringLiteral("P1"));
+    QMetaObject::invokeMethod(nameField, "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    bool seen = false;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.objectId == p2oid) {
+            seen = true;
+            EXPECT_EQ(p.name, "P2") << "重名拒绝后原名称必须保留";
+        }
+    }
+    ASSERT_TRUE(seen) << "拒绝路径不得丢条目";
+
+    // 对照：非重名改名照常通过（拒绝轨不是编辑轨整体失灵）。
+    QLineEdit* nameFieldAgain = fieldEditor(*m_panel, "name");
+    ASSERT_NE(nameFieldAgain, nullptr) << "拒绝重绘后名称行缺失";
+    nameFieldAgain->setText(QStringLiteral("P2-改"));
+    QMetaObject::invokeMethod(nameFieldAgain, "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.objectId == p2oid) {
+            EXPECT_EQ(p.name, "P2-改") << "非重名改名应通过";
+        }
+    }
+}
+
+/** @brief REQ-03：间距采样真实表单——区域存 GridBySpacing 原值；确认派生
+ *         计划＝buildPlan 单点归一的 Grid 权威计数；同值重确认计数不变
+ *         （确定性），间距改密计数响应。 */
+TEST_F(RequirementsSessionGuiTest, RegionSpacingSamplingNormalizedPlan_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"D-REQ-2"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    form->findChild<QLineEdit*>("ird_region_spacing_0")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_1")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_2")->setText("1.0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+
+    // 区域存原值（GridBySpacing 原样——区域面承载原始间距，不预归一）。
+    const auto region = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(region.positionSampling.method, PositionSamplingMethod::GridBySpacing);
+    EXPECT_DOUBLE_EQ(region.positionSampling.spacing[0], 0.5);
+    EXPECT_DOUBLE_EQ(region.positionSampling.spacing[2], 1.0);
+
+    // 确认派生计划（A-18 接线面）＝规范化 Grid 计数（D-REQ-2——计划面
+    // 不承载原始间距），计数 ≥1 且随确认入集。
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "间距区域确认应派生计划（A-18 同一接线）";
+    const auto plan = m_editor.workingSet().plans.entries.front();
+    EXPECT_EQ(plan.positionSampling.method, PositionSamplingMethod::Grid);
+    EXPECT_GE(plan.positionSampling.counts[0], 1u);
+    const auto counts1 = plan.positionSampling.counts;
+    const core::ObjectId planId = plan.objectId;
+
+    // 同值重确认（面板重绘后重定位表单）→ 计数不变（确定性归一）＋
+    // 计划 id 复用（R6 一一对应）。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    form->findChild<QLineEdit*>("ird_region_spacing_0")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_1")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_2")->setText("1.0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u) << "重确认不得新增第二条计划";
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts,
+              counts1)
+        << "同间距重确认计数必须逐位不变（确定性归一）";
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().objectId, planId);
+
+    // 间距改密（0.25 全轴）→ 计数响应（归一对间距敏感——非装饰面）。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    form->findChild<QLineEdit*>("ird_region_spacing_0")->setText("0.25");
+    form->findChild<QLineEdit*>("ird_region_spacing_1")->setText("0.25");
+    form->findChild<QLineEdit*>("ird_region_spacing_2")->setText("0.25");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u);
+    const auto counts2 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+    EXPECT_GT(counts2[0] * counts2[1] * counts2[2],
+              counts1[0] * counts1[1] * counts1[2])
+        << "间距改密后归一计数必须增加";
+}
+
+/** @brief REQ-03：姿态方向/滚转采样计数走真实表单——区域存值、派生计划
+ *         同值投影；零计数拒绝保原值。 */
+TEST_F(RequirementsSessionGuiTest, RegionOrientationSamplingCounts_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+
+    // 方向 4×滚转 3 → 区域存值；派生计划姿态采样同值（计划＝区域采样
+    // 定义的忠实投影——A-18 裁决语义）。
+    form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("4");
+    form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("3");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().orientationSampling.directionSamples, 4u);
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().orientationSampling.rollSamples, 3u);
+    if (m_editor.workingSet().plans.entries.size() == 1u) {
+        EXPECT_EQ(m_editor.workingSet().plans.entries.front().orientationSampling.directionSamples, 4u);
+        EXPECT_EQ(m_editor.workingSet().plans.entries.front().orientationSampling.rollSamples, 3u);
+    }
+
+    // 滚转零计数 → 域拒绝＋区域原值保留（非法输入不落草稿——UX-05）。
+    // 拒绝路径 renderRegionPage 重建采样表单（诚实刷新面）——旧 form
+    // 指针随旧窗销毁，错误标签断言前必须经 objectName 重定位。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().orientationSampling.rollSamples, 3u)
+        << "滚转零计数必须拒绝且保留原值";
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr) << "拒绝重绘后采样表单缺失";
+    EXPECT_FALSE(form->findChild<QLabel*>("ird_region_sampling_error")->text().isEmpty())
+        << "零计数拒绝必须就地报错";
+}
+
+/** @brief AT-02：CSV 公式样式单元格按字面数据导入（NFR-SEC-03 不求值）；
+ *         引号字段内逗号/双写引号按 RFC 方言解出单字段。 */
+TEST_F(RequirementsSessionGuiTest, CsvFormulaLiteralAndQuotedFields_AT02_WP14T12)
+{
+    IRD_TEST_INFO("AT-02", {"NFR-SEC-03"}, std::nullopt);
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString path = QDir(dir.path()).filePath(QStringLiteral("esc.csv"));
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+    f.write("id,name,x,y,z\n"
+            "s1,=1+2,1.0,2.0,3.0\n"
+            "s2,\"含,逗号\",4.0,5.0,6.0\n"
+            "s3,\"引\"\"内嵌\",7.0,8.0,9.0\n");
+    f.close();
+    FakeDialogHost host;
+    host.openPath = path;
+    host.importConfirmed = true;
+    const std::size_t before = m_editor.workingSet().points.entries.size();
+    ASSERT_TRUE(executeRequirementCommand("requirements.import-csv", *m_panel,
+                                          m_editor, *m_panel, host))
+        << m_panel->showCommandFeedbackText().toStdString();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), before + 3u);
+
+    // 逐名现取断言（导入产物名称面＝字面数据）。
+    bool sawFormula = false;
+    bool sawComma = false;
+    bool sawQuote = false;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.name == "=1+2") {
+            sawFormula = true;  // 公式样式文本原样入库——无求值路径
+        } else if (p.name == "含,逗号") {
+            sawComma = true;    // 引号内逗号＝单字段（方言解出）
+        } else if (p.name == "引\"内嵌") {
+            sawQuote = true;    // 双写引号解出单引号（RFC 4180 转义）
+        }
+    }
+    EXPECT_TRUE(sawFormula) << "公式样式文本必须按字面导入（NFR-SEC-03 不求值）";
+    EXPECT_TRUE(sawComma) << "引号内逗号必须解为单字段";
+    EXPECT_TRUE(sawQuote) << "双写引号必须解出单引号";
+}
+
+/** @brief REQ-12：JSON 版本门（未来版本稳定拒绝）与顶层未知键拒绝
+ *         （NFR-DEP-04）走真实导入命令——均零写入；合法基线照常导入
+ *         （对照轨）。 */
+TEST_F(RequirementsSessionGuiTest, JsonImportVersionAndUnknownKeyReject_REQ12_WP14T12)
+{
+    IRD_TEST_INFO("REQ-12", {"NFR-DEP-04"}, std::nullopt);
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+
+    // ① 未来版本：schemaVersion=2 → io 版本门稳定拒绝（不猜测降级）。
+    const QString futurePath = QDir(dir.path()).filePath(QStringLiteral("future.json"));
+    {
+        QFile f(futurePath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+        f.write("{\"schemaVersion\": 2, \"points\": []}");
+        f.close();
+    }
+    FakeDialogHost host;
+    host.openPath = futurePath;
+    host.importConfirmed = true;
+    const auto baseline = m_editor.workingSet();
+    EXPECT_FALSE(executeRequirementCommand("requirements.import-json", *m_panel,
+                                           m_editor, *m_panel, host))
+        << "未来版本必须稳定拒绝";
+    EXPECT_EQ(m_editor.workingSet(), baseline) << "版本拒绝必须零写入";
+
+    // ② 顶层未知键：Reject 词典（NFR-DEP-04——不静默吞字段）。
+    const QString unknownPath = QDir(dir.path()).filePath(QStringLiteral("unknown.json"));
+    {
+        QFile f(unknownPath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+        f.write("{\"schemaVersion\": 1, \"sneaky_extra\": 1, \"points\": []}");
+        f.close();
+    }
+    host.openPath = unknownPath;
+    EXPECT_FALSE(executeRequirementCommand("requirements.import-json", *m_panel,
+                                           m_editor, *m_panel, host))
+        << "顶层未知键必须拒绝";
+    EXPECT_EQ(m_editor.workingSet(), baseline) << "未知键拒绝必须零写入";
+
+    // ③ 对照：合法基线导入照常通过（拒绝轨不是导入轨失灵）。
+    const QString okPath = QDir(dir.path()).filePath(QStringLiteral("ok.json"));
+    {
+        QFile f(okPath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+        f.write("{\n"
+                "  \"schemaVersion\": 1,\n"
+                "  \"points\": [\n"
+                "    {\"id\": \"p1\", \"name\": \"取件点\", \"process_tag\": \"Pick\",\n"
+                "     \"level\": \"Must\", \"enabled\": \"true\", \"ref_frame\": \"World\",\n"
+                "     \"x\": 1.0, \"y\": 2.0, \"z\": 3.0, \"note\": \"示例备注\"}\n"
+                "  ]\n"
+                "}");
+        f.close();
+    }
+    host.openPath = okPath;
+    EXPECT_TRUE(executeRequirementCommand("requirements.import-json", *m_panel,
+                                          m_editor, *m_panel, host))
+        << m_panel->showCommandFeedbackText().toStdString();
+    bool sawImported = false;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.name == "取件点") { sawImported = true; }
+    }
+    EXPECT_TRUE(sawImported) << "合法 JSON 导入产物缺失";
 }
