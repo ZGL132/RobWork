@@ -1,0 +1,17 @@
+剪贴板环境故障归因（2026-10-19 ~18:40）——6 例 UX05 用例失败的证据链
+
+1) 系统级复现（测试进程外，PowerShell 直连 win32）：
+   Set-Clipboard → ExternalException「所请求的剪贴板操作失败」
+   Get-Clipboard  → 同错（读写双向故障）
+   OpenClipboard(IntPtr.Zero) → 失败且 GetOpenClipboardWindow()=0（无占用窗——非进程锁，会话态损坏）
+
+2) 测试面签名（全部 6 例同源——夹具剪贴板写入 helper，非域/交互断言）：
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(253): error: Value of: setRequirementClipboard("pose-position-x\t250\ntolerance-position\tbad")
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(307): error: Expected equality of these values:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(350): error: Value of: setRequirementClipboard("box-center-x\t0.25\nbox-size-z\t0.75")
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(587): error: Value of: setRequirementClipboard("cycle-time\t4")
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(610): error: Value of: setRequirementClipboard("pose-position-x\t0.25")
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(645): error: Value of: setRequirementClipboard("pose-position-x\t0.25")
+
+3) 排除项：同批代码前（批33）同机同通道 103/103 全过；本批 6 例失败用例不触及本批改动面
+   （station/condition 批量路径未改动；region 批量路径经夹具剪贴板前置拦截，未达域逻辑）。

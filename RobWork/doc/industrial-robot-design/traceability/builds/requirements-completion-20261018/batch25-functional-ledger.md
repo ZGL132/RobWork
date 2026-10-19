@@ -269,6 +269,68 @@ R05-09/R12-02 全过，R02-01/R02-02/R02-03/R12-04 部分过（部分面逐格�
 明）。剩余 NOT RUN（17 行＋R01-09 FAIL＋J 族 4 行）：R06-05/R06-07/
 R07-08/R07-09、U06/U10/U12/U14~U18/U22——归 Phase-D。
 
+## 第三十四批（验收意见修复批，2026-10-19）——评审 7 类问题全量修复
+
+**验收方 9c7a38b7 复审意见（7 类已复现问题）逐类修复＋反例回归钉**：
+
+1. **F1 滚转区间误收/误拒**（Ik.cpp constrainedPoseError）：区间原套在
+   yaw **误差值**上——误差 0 恒判界内＝绝对滚转越界解误收、界内解误
+   罚。重写为作用于**实际绝对滚转**（参考系 actualRpy[2]，跨周 wrap）：
+   界内零残差（yaw 行置零不驱动）、出界拉回最近界。反例钉
+   `ToolRollRangeScreensAbsoluteRoll_WP14T12`（双肘分支同杆尖：出界分支
+   必被筛、界内分支必收敛）。
+2. **F2 Euler 残差与 Jacobian 失配**（Ik.cpp constrainedDampedLeast-
+   SquaresStep）：姿态行原为参考系角速度行，与欧拉角差残差不同构。重建
+   为 ZYX 欧拉率映射行（roll 行＝(cψ/cθ)ωx+(sψ/cθ)ωy；pitch 行＝
+   −sψωx+cψωy；yaw 行＝tθ(cψωx+sψωy)+ωz；评位点＝实际姿态与残差同一
+   提取函数）；万向锁邻域与残差同步回退角速度行。
+3. **F3 万向锁 +90° 分支 yaw 符号错误**（Ik.cpp zyxEulerAngles，提升为
+   文件级共用）：ZYX 提取在 cp=0 时 r(0,1)/r(1,1)=sin/cos(r∓y)，roll 钉
+   0 后 ±90° 两分支 yaw 同为 −atan2(r(0,1), r(1,1))——旧实现按
+   sinPitch 翻号使 +90° 分支反号。反例钉
+   `GimbalPlus90PitchConverges_WP14T12`（三初值全收敛至 q*）。
+4. **F4 方向规则额外固定工具滚转**（KinEvaluationChannel.cpp 方向规则
+   投影）：构造正交基的参考轴选取是实现细节，当作约束目标＝把规则未定
+   义的滚转钉死。改放全周自由（allowToolRoll＋span=2π——求解器语义
+   "全周＝无区间残差"）。反例钉
+   `BatchDirectionRulesFreeToolRoll_WP14T12`（平面臂"指向正上方"旧
+   failed→新 completed；集成态专属门控套件）。
+5. **F5 区域尺寸变更计划未同步**（RequirementsPanelWidget
+   queueRegionEdit）：计划是区域采样定义的派生事实（A-18 裁决语义的同
+   步半区）——有计划区域编辑＝区域＋计划 upsert 原子应用（恰一次撤
+   销）；无计划＝原单编辑轨；构建拒绝＝整个编辑拒绝（不留悬空）。反例钉
+   `RegionSizeEditSyncsDerivedPlan_REQ03_WP14T12`（尺寸字段真实编辑→计
+   数随动＋单撤销双回）。
+6. **F6 直接确认不建缺失计划**（RegionSamplingForm.apply 的 no-op 门禁
+   移入面板回调幂等承载）：表单有效确认恒达派生面；面板侧零变化＋派生
+   同值＝零动作零撤销（幂等纪律保持）、零变化计划缺失＝只提交计划编
+   辑。反例钉 `RegionConfirmWithoutChangeBuildsMissingPlan_REQ03_WP14T12`
+   （零变化确认→计划补建；再确认工作集字节不变）。
+7. **F7 Random 计划分母按 Grid 乘积**（Sampling.cpp digest）：A-18 放行
+   Random 形态后 counts 可能是过期/零载荷——分母改按方法取值
+   （Random→randomCount；Grid→饱和乘积）。反例钉
+   `RandomPlanDenominatorUsesRandomCount_WP14T12`（count=24、counts={0,
+   0,0}→分母 24）。
+
+**连带鲁棒性（F2/F3 修复的收敛面）**：万向锁邻域（任一侧 cp<1e-5）欧
+拉参数化失去正则性——残差回退轴角（SO(3) 连续，姿态行 rr 转置到参考
+系）＋DLS 姿态行同步回退角速度行＋约束步长上限 0.35 rad（调试实测跨
+分支巨步 29 rad 互激发散）。欧拉率行的 1/cθ 钳制下限 0.05。
+
+**回归**：kinematics_test 267 过＋1 占位（standalone）/274 过＋1 占位
+（集成）；requirements_test 221 过＋1 占位（双模式）；requirements_gui
+99 过（standalone/集成各一轮——**6 例 UX05 环境故障见下**）；ui_test
+267 过（standalone）/319 过（集成——F4 套件为集成树专属门控
+`if(TARGET sdurws)`）。
+
+**环境故障归因（非本批回归，证据
+batch34-review-fixes/clipboard-env-attribution.txt）**：6 例 UX05 批量
+粘贴用例失败＝Windows 剪贴板系统级故障——测试进程外 PowerShell 复现
+（Set/Get-Clipboard 双向 ExternalException；OpenClipboard 失败且无占用
+窗＝会话态损坏，非进程锁）；6 例全部卡在夹具剪贴板写入 helper（未达域
+/交互逻辑），批33 同机同通道曾 103/103 全过。剪贴板恢复后须复跑（登记
+义务）。
+
 | ID | 功能 | 如何验证 | 本次终验 | 最新组件匹配数 |
 | --- | --- | --- | --- | --- |
 | R01-01 | 新建关键任务点 | 空集点新增，核对默认字段、树节点和选中项 | PASS（批32——gui LifecycleAdd_ThreeCollections） | 2 |

@@ -194,6 +194,9 @@ void RegionSamplingForm::apply()
         m_error->setText(QStringLiteral("区域输入无效：") + QString::fromUtf8(error.what())); return;
     }
     m_error->clear();
-    if (candidate != m_base && m_submit) { m_submit(std::move(candidate)); }
+    // ★ 批34（评审 F6）：零变化确认不再被表单门禁拦截——"直接确认默认采
+    //   样"必须到达面板派生面（缺失计划补建）；幂等（零变化＋计划同值＝
+    //   零动作零撤销）由面板回调承载（呈现层不知计划存在性，不越权判定）。
+    if (m_submit) { m_submit(std::move(candidate)); }
 }
 }

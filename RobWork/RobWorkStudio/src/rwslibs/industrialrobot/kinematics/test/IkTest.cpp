@@ -1254,3 +1254,108 @@ TEST(KinIk, NamedTcpRealSolveAndReachBound_REQ01_A15)
     bad.tcp.tcpKey = "missing";
     EXPECT_THROW(IkSolver().solve(bad), std::invalid_argument);
 }
+// =====================================================================
+// WP-14-T12 批34（验收反例修复——评审 F1/F2/F3 的求解器级回归钉）
+// =====================================================================
+
+/** @brief 批34 评审 F1：工具滚转区间作用于**实际绝对滚转**——出界解必须
+ *         被拒、界内解必须可收（旧实现把区间套在 yaw 误差上＝误收出界
+ *         解、误罚界内解的双向反例）。 */
+TEST(KinIk, ToolRollRangeScreensAbsoluteRoll_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "REQ-09"}, std::vector<std::string>{});
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+
+    // 平面二连杆两肘分支同杆尖位置：q_A 工具yaw≈2.23（出界）、q_B≈−0.06
+    // （界内）——target 取 q_A 的 FK：旧实现在 q_A 处误差为零恒判界内
+    // ＝误收（红）；修复后 q_A 被区间筛掉、q_B 收敛（绿）。
+    const auto branches = twoLinkClosedForm(1.1, 0.7, 0.55, 1.05);
+    ASSERT_EQ(branches.size(), 2U);
+    const auto yawOf = [](const std::vector<double>& q) { return q[0] + q[1]; };
+    const std::vector<double>* outRange = nullptr;
+    const std::vector<double>* inRange = nullptr;
+    for (const auto& q : branches) {
+        if (yawOf(q) > 0.2) { outRange = &q; }
+        if (yawOf(q) > -0.2 && yawOf(q) < 0.2) { inRange = &q; }
+    }
+    ASSERT_NE(outRange, nullptr) << "夹具应含出界分支（yaw>0.2）";
+    ASSERT_NE(inRange, nullptr) << "夹具应含界内分支（|yaw|<0.2）";
+
+    const rw::math::Transform3D<double> target =
+        transformOf(referenceFk(model, *outRange).tcp);
+    IkRequest req = makeRequest(view, target, {*outRange, *inRange});
+    // 聚合初始化（显式全字段——跳过 referenceInBase 默认成员初始化器的
+    // Rotation3D::identity() 外联符号引用，独立冒烟树不链 sdurw_math——
+    // A-16 冒烟纪律同款）。
+    kin::TaskPoseConstraint constraint{
+        {true, true, true, true, true, true},
+        rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1),
+        true,
+        {-0.2, 0.2}};
+    req.taskConstraint = constraint;
+
+    const IkOutcome out = IkSolver().solve(req);
+    ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound)
+        << "界内分支存在时必须给出解";
+    ASSERT_FALSE(out.solutionSet.solutions.empty());
+    const auto wrap = [](double a) {
+        return std::atan2(std::sin(a), std::cos(a));
+    };
+    for (const auto& s : out.solutionSet.solutions) {
+        const double toolYaw = wrap(s.q[0] + s.q[1]);
+        EXPECT_GE(toolYaw, -0.2 - 1e-2) << "解的绝对工具滚转出下界（误收）";
+        EXPECT_LE(toolYaw, 0.2 + 1e-2) << "解的绝对工具滚转出上界（误收）";
+    }
+}
+
+/** @brief 批34 评审 F2/F3：+90° 俯仰目标的万向锁 yaw 提取同号＋欧拉率
+ *         Jacobian——旧实现 yaw 反号且角速度行与欧拉残差失配，三初值全
+ *         不收敛（红）；修复后逐初值收敛到 q*（绿）。 */
+TEST(KinIk, GimbalPlus90PitchConverges_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{});
+
+    // Z-Y-Z 三轴模型（j2 俯仰 ±90°；TCP 在末轴线上——姿态可达、位置随
+    // 姿态确定，q* 精确可达）。
+    std::vector<rt::CanonicalJoint> joints;
+    joints.push_back(revolute("j1", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0), -3.14159265358979323846,
+                              3.14159265358979323846));
+    // 限位放宽到 ±1.65 rad——目标俯仰 π/2 须为行程内点（端点边界会卡
+    // 步进收敛，测试的是万向锁/欧拉率修复面而非限位推进面）。
+    joints.push_back(revolute("j2", rw::math::Vector3D<double>(0, 1, 0),
+                              trans(0, 0, 0), -1.65, 1.65));
+    joints.push_back(revolute("j3", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0.6), -3.14159265358979323846,
+                              3.14159265358979323846));
+    const rt::CanonicalModel model = makeModel(joints, trans(0, 0, 0.3));
+    TestView view(model);
+    const std::vector<double> qStar = {0.3, 1.57079632679489661923, 0.0};
+    const rw::math::Transform3D<double> target =
+        transformOf(referenceFk(model, qStar).tcp);
+
+    // 聚合初始化（同上——identity() 外联符号规避，A-16 冒烟纪律）。
+    kin::TaskPoseConstraint constraint{
+        {true, true, true, true, true, true},
+        rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1),
+        false,
+        {-3.14159265358979323846, 3.14159265358979323846}};
+    const auto wrap = [](double a) {
+        return std::atan2(std::sin(a), std::cos(a));
+    };
+    for (const auto& initial : std::vector<std::vector<double>>{
+             {0.3, 1.4, 0.0}, {0.0, 0.0, 0.0}, {0.1, 0.8, -0.1}}) {
+        IkRequest req = makeRequest(view, target, {initial});
+        req.taskConstraint = constraint;
+        const IkOutcome out = IkSolver().solve(req);
+        ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound)
+            << "初值 {" << initial[0] << "," << initial[1] << "," << initial[2]
+            << "} 未收敛（+90°俯仰分支/欧拉率 Jacobian 修复面）";
+        ASSERT_FALSE(out.solutionSet.solutions.empty());
+        const auto& s = out.solutionSet.solutions.front();
+        EXPECT_LE(std::fabs(wrap(s.q[0] - qStar[0])), 1e-3);
+        EXPECT_LE(std::fabs(s.q[1] - qStar[1]), 1e-3);
+        EXPECT_LE(std::fabs(wrap(s.q[2] - qStar[2])), 1e-3);
+    }
+}

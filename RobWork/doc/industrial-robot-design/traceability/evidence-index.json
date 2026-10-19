@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-19T17:13:09+08:00",
+  "generatedAt": "2026-10-19T18:35:00+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 10643,
-    "totalBytes": 557805677,
+    "totalFiles": 10656,
+    "totalBytes": 558898146,
     "byKind": {
-      "manual-acceptance": 1,
+      "build-log": 9706,
       "acceptance-record": 515,
       "gtest-report": 335,
-      "json-data": 7,
       "benchmark": 8,
-      "build-log": 9693,
-      "log": 1,
+      "json-data": 7,
       "markdown-doc": 41,
+      "manual-acceptance": 1,
       "pipeline-artifact": 2,
+      "log": 1,
       "governance-record": 40
     },
     "byLifecycle": {
       "superseded": 0,
       "current": 27,
-      "unverified": 10052,
-      "historical": 564
+      "historical": 564,
+      "unverified": 10065
     },
     "associated": 596,
-    "unassociated": 10047,
-    "shaComputed": 10625,
+    "unassociated": 10060,
+    "shaComputed": 10638,
     "shaSkippedLarge": 18,
     "duplicateGroupsTotal": 546,
     "duplicateGroupsListed": 100
@@ -32111,8 +32111,8 @@
       "path": "builds/requirements-completion-20261018/batch25-functional-ledger.md",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 43640,
-      "sha256": "54f41e521f4f581a90fefb21a0668c26fc0571a69bf67dff80fc8d66e5461659",
+      "bytes": 48096,
+      "sha256": "5ba7fa3c6694a9ca6f8083aa4c6dd6ee5ee7eae44d44da563630cdb8f93b0d7a",
       "lifecycle": "unverified"
     },
     {
@@ -38113,6 +38113,110 @@
       "taskIds": [],
       "bytes": 159320,
       "sha256": "ed2fbf5af5c3be2f01a883724422c8f4ad9d1c80128827b94f5d3d1a1b53d41c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/clipboard-env-attribution.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2094,
+      "sha256": "e3164e2fec5dd8627d20eab43824769d5d220d9d1c3961b164f5497ddff985fb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/integrated-sdurws_ird_kinematics_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 45778,
+      "sha256": "549c51b1540da624e753f5b111bb065d1e56c91de3329324e75ac7684abd79eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/integrated-sdurws_ird_kinematics_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 227970,
+      "sha256": "8cf9d92c8b426ece1a7c7104aa8644861a4f436a7eab9da4e0704793621bf5c2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/integrated-sdurws_ird_requirements_gui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 31801,
+      "sha256": "8a5d38d0c84c14b4e0abf56924586823b6e20face43d164de045efebc9b65b91",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/integrated-sdurws_ird_requirements_gui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 86131,
+      "sha256": "8b262b1a354fe413f477980699e4dfeb3f12871def27f5c9d459a9655065bbe0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/integrated-sdurws_ird_requirements_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36161,
+      "sha256": "d86efab3ce2dc6d2712b6d436e89c582691712bad685fa9cca0f34008c0384e2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/integrated-sdurws_ird_requirements_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 186308,
+      "sha256": "60798558c9e345fc7677f34f9119fde73f569df5d538316682dcfd0c67ac4132",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/integrated-sdurws_ird_ui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 55723,
+      "sha256": "6ecb4042108fee20396df4e0da081e7ee71e4b657f7c0652c1a47b23398eb600",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/integrated-sdurws_ird_ui_test/ird-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 257280,
+      "sha256": "f61f64eff2a61eb9a39f97ae1c87528a1f456112c72024261ed28dff1d212d0a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/standalone-sdurws_ird_kinematics_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 44437,
+      "sha256": "9a450ef815a2bf5c12e5b1b8e431c3584f68c29980cae4297f578f201c1de31b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/standalone-sdurws_ird_requirements_gui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 31801,
+      "sha256": "cb4da0a1f371328c301a4a7c5e8f136f33ff27e2de7ac7e30dbefc3a0be05d85",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/standalone-sdurws_ird_requirements_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36160,
+      "sha256": "2c98b108bc306c8b7cf2e79bfc5f95ce8735ae192a75c00532c6020ef413e4cb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-completion-20261018/batch34-review-fixes/standalone-sdurws_ird_ui_test/console.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 46369,
+      "sha256": "7d67d3c58ba9a8df5db2f95f2b96838dd5f7b5b84c7e7906b269dcb6dd287448",
       "lifecycle": "unverified"
     },
     {

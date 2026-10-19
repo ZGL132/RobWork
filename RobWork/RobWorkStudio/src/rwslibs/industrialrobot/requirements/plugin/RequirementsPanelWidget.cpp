@@ -2842,7 +2842,31 @@ void RequirementsPanelWidget::queueRegionEdit(std::function<WorkRegion(const Wor
                 try {
                     const WorkRegion candidate = transform(base);
                     if (candidate == base) { return; } // 重复失焦信号不制造空撤销记录。
-                    if (submitEntryEdit(*editor, *this, candidate) == EditSubmitOutcome::Applied) {
+                    // ★ 批34（评审 F5）：区域有派生计划＝计划是区域采样定义
+                    //   的忠实投影（A-18 裁决语义的同步半区）——区域几何/采
+                    //   样编辑后计划必须随动（间距归一计数随盒尺寸变化，
+                    //   R03-03 响应面）；有计划＝区域编辑＋计划 upsert 原子
+                    //   应用（恰一次撤销）；无计划＝原单编辑轨（计划创建仍
+                    //   归采样表单确认面）。构建拒绝（更新后区域不可重建计
+                    //   划）＝整个编辑拒绝——区域与计划保持一致，不留悬空。
+                    const SamplingPlan* existingPlan = nullptr;
+                    for (const auto& plan : editor->workingSet().plans.entries) {
+                        if (plan.regionRef == candidate.objectId) {
+                            existingPlan = &plan;
+                            break;
+                        }
+                    }
+                    if (existingPlan == nullptr) {
+                        if (submitEntryEdit(*editor, *this, candidate)
+                            == EditSubmitOutcome::Applied) {
+                            m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                        }
+                        return;
+                    }
+                    const auto planEdit = buildRegionPlanEdit(*editor, candidate);
+                    if (!planEdit.has_value()) { return; } // 构建拒绝——就地错误已呈现。
+                    if (submitStructuralEditsAtomic(std::vector<RequirementEdit>{
+                            candidate, *planEdit}) ) {
                         m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
                     }
                 } catch (const std::invalid_argument& failure) {
@@ -3003,8 +3027,35 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
                         if (latest != base) { showStatusLine("区域已改变，请刷新采样表后重试"); return; }
                         // A-18：整块采样确认＝区域编辑＋派生计划 upsert 原子
                         // 应用（恰一次撤销——"一次提交/撤销"契约保持）。
+                        // ★ 批34（评审 F6）：直接确认（零变化）也必须补建缺
+                        //   失计划——表单侧 no-op 门禁移入本回调（幂等半区）：
+                        //   区域无变化且派生计划与既有同值＝零动作零撤销（不
+                        //   制造空撤销步的既有纪律保持）；区域无变化但计划缺
+                        //   失＝只提交计划编辑；区域有变化＝原子对。
+                        const SamplingPlan* existingPlan = nullptr;
+                        for (const auto& plan : editor->workingSet().plans.entries) {
+                            if (plan.regionRef == candidate.objectId) {
+                                existingPlan = &plan;
+                                break;
+                            }
+                        }
                         const auto planEdit = buildRegionPlanEdit(*editor, candidate);
                         if (!planEdit.has_value()) { return; } // 构建拒绝——就地错误已呈现。
+                        const bool regionChanged = !(candidate == latest);
+                        bool planChanged = true;
+                        if (existingPlan != nullptr) {
+                            const auto& derived = std::get<SamplingPlan>(*planEdit);
+                            planChanged = !(derived == *existingPlan);
+                        }
+                        if (!regionChanged && !planChanged) { return; }
+                        if (!regionChanged) {
+                            if (submitEntryEditsAtomic(*editor, *this,
+                                    std::vector<RequirementEdit>{*planEdit})
+                                == EditSubmitOutcome::Applied) {
+                                m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                            }
+                            return;
+                        }
                         if (submitEntryEditsAtomic(*editor, *this,
                                 std::vector<RequirementEdit>{candidate, *planEdit})
                             == EditSubmitOutcome::Applied) {

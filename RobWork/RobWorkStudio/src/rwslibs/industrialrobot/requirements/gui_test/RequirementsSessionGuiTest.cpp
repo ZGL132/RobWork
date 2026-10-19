@@ -4265,3 +4265,76 @@ TEST_F(RequirementsSessionGuiTest, JsonImportVersionAndUnknownKeyReject_REQ12_WP
     }
     EXPECT_TRUE(sawImported) << "合法 JSON 导入产物缺失";
 }
+/** @brief 批34 评审 F5：区域有派生计划＝计划随区域几何同步（间距归一计
+ *         数随盒尺寸变化）——真实尺寸字段编辑后计划原子更新，一次撤销
+ *         区域与计划双回。 */
+TEST_F(RequirementsSessionGuiTest, RegionSizeEditSyncsDerivedPlan_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"D-REQ-2"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+
+    // 间距采样确认 → 派生计划（批33 用例同款流程）。
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    form->findChild<QLineEdit*>("ird_region_spacing_0")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_1")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_2")->setText("0.5");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u);
+    const auto counts1 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+
+    // 真实尺寸字段改盒 X 尺寸 2.0→2.5 → 计划原子同步（归一计数随尺寸变）。
+    QLineEdit* sizeX = fieldEditor(*m_panel, "box-size-x");
+    ASSERT_NE(sizeX, nullptr) << "盒尺寸 X 字段缺失";
+    sizeX->setText("2.5");
+    QMetaObject::invokeMethod(sizeX, "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    const auto afterRegion = m_editor.workingSet().regions.entries.front();
+    EXPECT_DOUBLE_EQ(afterRegion.box.size[0], 2.5) << "尺寸编辑未入草稿";
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "尺寸编辑不得增删计划条目（upsert 同步）";
+    const auto counts2 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+    EXPECT_NE(counts2, counts1) << "尺寸变更后计划计数必须同步（F5 断链面）";
+
+    // 一次撤销＝区域与计划双回（原子批）。
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().box.size[0], 2.0);
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts,
+              counts1);
+}
+
+/** @brief 批34 评审 F6：直接确认默认采样（零变化）必须补建缺失计划；
+ *         计划已存在且派生同值＝幂等零动作（工作集字节不变）。 */
+TEST_F(RequirementsSessionGuiTest, RegionConfirmWithoutChangeBuildsMissingPlan_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {}, std::nullopt);
+    const auto region = m_editor.workingSet().regions.entries.front();
+    ASSERT_TRUE(m_editor.workingSet().plans.entries.empty())
+        << "夹具基线应无计划条目";
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(region.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "直接确认默认采样应派生计划（F6 断链面）";
+    const auto derived = m_editor.workingSet().plans.entries.front();
+    const auto wsAfterFirst = m_editor.workingSet();
+
+    // 幂等半区：零变化再确认＝零动作（工作集字节不变、不重复入栈）。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(region.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u) << "幂等再确认不得新增计划";
+    EXPECT_EQ(m_editor.workingSet(), wsAfterFirst) << "幂等再确认工作集字节必须不变";
+}

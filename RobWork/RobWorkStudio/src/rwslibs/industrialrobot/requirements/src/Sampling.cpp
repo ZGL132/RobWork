@@ -93,18 +93,24 @@ Expected<PlanDigest> SamplingPlanBuilder::digest(const SamplingPlan& plan,
     }
     PlanDigest d;
     // 分母面（KIN-04 判定的分母来源——evidence SamplingPlanRef 核对）：
-    // 位置＝counts 乘积（0 合法——V-02 零样本由评估判定）；姿态＝方向×
-    // 滚转（≥1）。uint64 乘积（uint32 三因子最大约 2^96——超出即饱和到
-    // UINT64_MAX 并如实承载；黄金数据集内不触）。
-    const std::uint64_t cx = plan.positionSampling.counts[0];
-    const std::uint64_t cy = plan.positionSampling.counts[1];
-    const std::uint64_t cz = plan.positionSampling.counts[2];
+    // 位置按方法取值（★ 批34 评审 F7：Random 计划的分母＝randomCount，
+    // 不得按 Grid counts 乘积——A-18 放行 Random 计划形态后 counts 可能
+    // 是过期/零载荷，按乘积算即分母归零）；姿态＝方向×滚转（≥1）。
+    // uint64 乘积（uint32 三因子最大约 2^96——超出即饱和到 UINT64_MAX
+    // 并如实承载；黄金数据集内不触）。
     const std::uint64_t maxU64 = 0xFFFFFFFFFFFFFFFFull;
     auto satMul = [maxU64](std::uint64_t a, std::uint64_t b) {
         if (a != 0 && b > maxU64 / a) { return maxU64; }
         return a * b;
     };
-    d.positionSamples = satMul(satMul(cx, cy), cz);
+    if (plan.positionSampling.method == PositionSamplingMethod::Random) {
+        d.positionSamples = static_cast<std::uint64_t>(plan.positionSampling.count);
+    } else {
+        const std::uint64_t cx = plan.positionSampling.counts[0];
+        const std::uint64_t cy = plan.positionSampling.counts[1];
+        const std::uint64_t cz = plan.positionSampling.counts[2];
+        d.positionSamples = satMul(satMul(cx, cy), cz);
+    }
     d.orientationSamples = static_cast<std::uint64_t>(plan.orientationSampling.directionSamples)
                          * static_cast<std::uint64_t>(plan.orientationSampling.rollSamples);
     // canonical 摘要：计划条目编码字节（RequirementCodec——确定性字节）

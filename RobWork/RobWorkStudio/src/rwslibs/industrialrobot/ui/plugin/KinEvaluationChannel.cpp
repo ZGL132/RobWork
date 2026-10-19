@@ -1085,6 +1085,14 @@ KinEvaluationExecutor::BatchSlice KinEvaluationExecutor::sliceBatch() const
             projected.targetInBase.R() = rw::math::Rotation3D<double>(
                 xAxis[0], yAxis[0], direction[0], xAxis[1], yAxis[1], direction[1],
                 xAxis[2], yAxis[2], direction[2]);
+            // ★ 批34（评审 F4）：方向规则只约束工具轴指向——绕轴滚转是
+            //   规则未定义面。上面 targetInBase.R() 的参考轴选取（X 优先、
+            //  近平行换 Y）只是构造任意正交基的实现细节，把它当约束目标＝
+            //   额外固定了工具滚转（评审反例）。放开为全周自由
+            //   （allowToolRoll＋span=2π——求解器语义"全周＝无区间残差"，
+            //   残差侧 yaw 行按 rollResidualActive=0 置零不驱动）。
+            taskConstraint.allowToolRoll = true;
+            taskConstraint.rollRange = {-3.14159265358979323846, 3.14159265358979323846};
         }
         if (rule.kind == requirements::OrientationRuleKind::ToolRollFree) {
             taskConstraint.allowToolRoll = true;

@@ -1389,3 +1389,41 @@ TEST(KinEvaluationChannel, BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16)
             << point.name << " " << it->second.outcomeText;
     }
 }
+/** @brief 批34 评审 F4：方向规则只约束工具轴指向——绕轴滚转是规则未定义
+ *         面，不得额外固定任意参考系滚转。反例：平面二连杆工具 +Z 天然
+ *         竖直，"指向正上方"的方向规则在旧实现（固定构造基的滚转）下
+ *         误判 failed；修复后（全周自由）应 completed。 */
+TEST(KinEvaluationChannel, BatchDirectionRulesFreeToolRoll_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-09"}, std::vector<std::string>{});
+    auto ws = makeWorksetWithTaskPoint();
+    auto prototype = ws.points.entries.front(); ws.points.entries.clear();
+    prototype.pose.constrainedDof = {true, true, true, true, true, true};
+    auto pointing = prototype;
+    pointing.pose.orientation.kind = req::OrientationRuleKind::PointAtTarget;
+    const double px = 1.1 * std::cos(0.3) + 0.7 * std::cos(-0.2);
+    const double py = 1.1 * std::sin(0.3) + 0.7 * std::sin(-0.2);
+    pointing.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(px, py, 0),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    pointing.pose.orientation.targetPoint = {px, py, 1.0};  // 正上方——方向＝+Z
+    ws.points.entries = {pointing};
+    ScriptedEditor editor(ws); ExecutorHarness h;
+    h.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor, [=](const core::ObjectId&) -> std::optional<rw::math::Transform3D<double>> {
+            return std::nullopt;
+        }, QCoreApplication::instance(),
+        [&h](const KinChannelBackgroundResultNote& note) { h.notes.push_back(note); }});
+    h.executor->attachView(h.view, h.boundId);
+    auto config = makeLegalConfig(); config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    config.iterationLimit = 200; h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request;
+    request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain();
+    const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 1U);
+    const auto& outcome = results.begin()->second;
+    EXPECT_EQ(outcome.outcomeState, "completed")
+        << outcome.outcomeText << "（方向规则不得额外固定工具滚转）";
+}
