@@ -281,7 +281,7 @@ private:
 
     /// 基座安装编辑页内容构建（构造期一次——表单挂 m_basePage 布局）。
     void buildBasePlacementPane();
-    /// 权威值→基座表单回填（ws 现取；预设组合框/位置/EAA 三组；进页与
+    /// 权威值→基座表单回填（ws 现取；预设/世界位置/欧拉和EAA；进页与
     /// 应用后调用——不在全局刷新中回填，避免踩踏未应用输入）。
     void refreshBasePlacementPane();
     /// 应用槽（整体替换语义→applyBasePlacementEdit 域原语；接受走 L-2
@@ -401,6 +401,10 @@ private:
     QStackedWidget* m_editStack = nullptr;      ///< 编辑页签模态堆栈（0＝关节区，1＝基座安装页）
     QWidget* m_basePage = nullptr;              ///< 基座安装编辑页（stacked 第 2 页）
     QComboBox* m_basePreset = nullptr;          ///< 安装预设（四值词表——runtime 单一权威的呈现映射）
+    QComboBox* m_baseRotationMode = nullptr;    ///< 旋转输入表示：默认ZYX欧拉、高级EAA；仅会话呈现态。
+    QDoubleSpinBox* m_baseRoll = nullptr;       ///< 基座相对世界旋转roll，rad，Rz(yaw)Ry(pitch)Rx(roll)。
+    QDoubleSpinBox* m_basePitch = nullptr;      ///< 同一ZYX约定pitch，rad；仅Custom可写。
+    QDoubleSpinBox* m_baseYaw = nullptr;        ///< 同一ZYX约定yaw，rad；Qt父子树拥有这些控件，仅UI线程。
     QDoubleSpinBox* m_basePosX = nullptr;       ///< 基座原点位置 X，单位 m（世界坐标系下表示）
     QDoubleSpinBox* m_basePosY = nullptr;       ///< 基座原点位置 Y，单位 m（世界坐标系下表示）
     QDoubleSpinBox* m_basePosZ = nullptr;       ///< 基座原点位置 Z，单位 m（世界坐标系下表示）

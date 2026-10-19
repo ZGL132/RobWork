@@ -36,6 +36,7 @@
 #include <string>
 
 #include <sdurws/ird/modeling/Package.hpp>  // previewExportKindToken（UI-T59——预览类型词表单一来源）
+#include <sdurws/ird/runtime/BaseWorldTransform.hpp> // MDL-22：只消费权威变换作欧拉显示，不另建安装变换。
 #include <sdurws/ird/ui/UiText.hpp>   // 文案键解析（UI-T25——迁移标记标签挂键；
                                       // 构造期命令标题 resolver 尚未注入，此处直读
                                       // UiText 静态表，requirements 面板先例同款）
@@ -55,6 +56,15 @@ namespace {
 constexpr int kAnchorColumn = 1;  // 锚列（树第 2 列——UI-T47 gui 定位复用）
 /// 树标签列（呈现列——localName＋工程用语标签，UX-02）。
 constexpr int kLabelColumn = 0;
+
+/** @brief MDL-22：基座输入页的统一坐标/角度说明；关闭重开后也恢复同一文案。 */
+QString basePlacementInputHint()
+{
+    return QStringLiteral("基座相对世界坐标系：R_world_base=Rz(yaw)·Ry(pitch)·Rx(roll)，"
+        "欧拉角roll/pitch/yaw均为rad；位置为世界系m。地面0°、倒挂180°、壁装90°。"
+        "自定义可选欧拉角或高级EAA（轴×角，rad），仅应用当前表示；切换不写草稿。"
+        "『应用』整体写入草稿，顶栏『应用草稿』才产生项目修订。");
+}
 
 /// 将模型层稳定状态词转换为工程师可直接理解的中文标签；状态词本身仍
 /// 保留在 PanelModel 中，避免 UI 文案反向参与就绪判定。
@@ -1170,7 +1180,7 @@ void ModelingPanelWidget::setWritable(bool writable)
     // L-7 基座页半区（UI-T54）：应用钮同步禁用（EAA 行使能在
     // refreshBasePlacementPane 按 writable 复合判定，进页/应用后刷新）。
     if (m_baseApplyBtn != nullptr) {
-        m_baseApplyBtn->setEnabled(m_writable);
+        refreshBasePlacementPane(); // 只读切换同步禁用全部输入，不能靠预设切换复活旋转控件。
     }
     // L-7 工具/场景页半区（UI-T55）：面板整体禁用（刷新入口按 writable
     // 复合，此处即时同步不等待下次选中事件）。
@@ -1947,11 +1957,7 @@ void ModelingPanelWidget::buildBasePlacementPane()
     m_baseHint->setWordWrap(true);
     m_baseHint->setStyleSheet(
         QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
-    m_baseHint->setText(QStringLiteral(
-        "基座安装姿态＝基座坐标系相对世界坐标系（MDL-22/M-11）：预设给出安装"
-        "旋转（地面 0°／倒挂 180°／壁装 90°），自定义预设须给 EAA 旋转矢量"
-        "（轴×角，rad）；位置为基座原点世界系坐标（m）。提交＝整体替换"
-        "（落草稿，经顶栏『应用草稿』产生修订）。"));
+    m_baseHint->setText(basePlacementInputHint());
     lay->addWidget(m_baseHint);
 
     auto* form = new QFormLayout();
@@ -1980,22 +1986,40 @@ void ModelingPanelWidget::buildBasePlacementPane()
     m_baseEaaX = makeSpin("ird_modeling_base_eaa_x", -6.283185307179586, 6.283185307179586, 0.01);
     m_baseEaaY = makeSpin("ird_modeling_base_eaa_y", -6.283185307179586, 6.283185307179586, 0.01);
     m_baseEaaZ = makeSpin("ird_modeling_base_eaa_z", -6.283185307179586, 6.283185307179586, 0.01);
+    m_baseRoll = makeSpin("ird_modeling_base_roll", -6.283185307179586, 6.283185307179586, 0.01);
+    m_basePitch = makeSpin("ird_modeling_base_pitch", -6.283185307179586, 6.283185307179586, 0.01);
+    m_baseYaw = makeSpin("ird_modeling_base_yaw", -6.283185307179586, 6.283185307179586, 0.01);
     // EAA 用 6 位小数（rad 的呈现精度——0.000001 rad ≈ 0.00006°，位置 4 位
     // ＝0.1 mm 已足；两者均为呈现精度，域接受任意有限 double）。
     for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) { spin->setDecimals(6); }
+    // 欧拉与轴角同精度，±2pi是输入控件的呈现范围；域仍接收任意有限rad。
+    for(auto* spin:{m_baseRoll,m_basePitch,m_baseYaw}){spin->setDecimals(6);}
     form->addRow(QStringLiteral("位置 X（m）"), m_basePosX);
     form->addRow(QStringLiteral("位置 Y（m）"), m_basePosY);
     form->addRow(QStringLiteral("位置 Z（m）"), m_basePosZ);
+    m_baseRotationMode=new QComboBox(m_basePage);
+    m_baseRotationMode->setObjectName(QStringLiteral("ird_modeling_base_rotation_mode"));
+    m_baseRotationMode->addItems({QStringLiteral("ZYX欧拉角（rad）"),QStringLiteral("高级EAA轴角（rad）")});
+    form->addRow(QStringLiteral("自定义旋转表示"),m_baseRotationMode);
+    form->addRow(QStringLiteral("roll 绕X（rad）"),m_baseRoll);
+    form->addRow(QStringLiteral("pitch 绕Y（rad）"),m_basePitch);
+    form->addRow(QStringLiteral("yaw 绕Z（rad）"),m_baseYaw);
     form->addRow(QStringLiteral("自定义 EAA X（rad）"), m_baseEaaX);
     form->addRow(QStringLiteral("自定义 EAA Y（rad）"), m_baseEaaY);
     form->addRow(QStringLiteral("自定义 EAA Z（rad）"), m_baseEaaZ);
+    const auto showRotationMode=[this,form](int mode){
+        for(auto* spin:{m_baseRoll,m_basePitch,m_baseYaw}){form->setRowVisible(spin,mode==0);}
+        for(auto* spin:{m_baseEaaX,m_baseEaaY,m_baseEaaZ}){form->setRowVisible(spin,mode==1);}
+    };
+    connect(m_baseRotationMode,&QComboBox::currentIndexChanged,this,showRotationMode);
+    showRotationMode(0); // 默认欧拉满足MDL-22；高级EAA仍显式可选，不改变既有存储。
     lay->addLayout(form);
 
     auto* btnRow = new QHBoxLayout();
     m_baseApplyBtn = new QPushButton(QStringLiteral("应用"), m_basePage);
     m_baseApplyBtn->setObjectName(QStringLiteral("ird_modeling_base_apply"));
     m_baseApplyBtn->setToolTip(QStringLiteral(
-        "整体替换基座安装姿态（预设/自定义 EAA/位置）——落草稿，拒绝原因就地呈现"));
+        "整体替换基座安装姿态（预设/当前旋转表示/世界位置）——落草稿，拒绝原因就地呈现"));
     auto* restoreBtn = new QPushButton(QStringLiteral("还原"), m_basePage);
     restoreBtn->setObjectName(QStringLiteral("ird_modeling_base_restore"));
     restoreBtn->setToolTip(QStringLiteral("放弃未应用输入，回填当前权威值（零脏化）"));
@@ -2008,8 +2032,8 @@ void ModelingPanelWidget::buildBasePlacementPane()
     // 预设切换→EAA 行使能跟随（仅 Custom 有语义——I-MDL-7；非 Custom 携带
     // EAA 是域原语 fail-fast 面，UI 侧先行禁用即呈现层同口径）。
     connect(m_basePreset, &QComboBox::currentIndexChanged, this, [this](int index) {
-        const bool custom = index == 3;
-        for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) {
+        const bool custom = index == 3 && m_writable;
+        for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ,m_baseRoll,m_basePitch,m_baseYaw}) {
             spin->setEnabled(custom);
         }
     });
@@ -2025,11 +2049,18 @@ void ModelingPanelWidget::refreshBasePlacementPane()
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
     const bool usable = ws != nullptr && m_writable;
     m_baseApplyBtn->setEnabled(usable);  // L-7 页级门控（无会话/只读＝禁用）
+    m_basePreset->setEnabled(usable);
+    m_baseRotationMode->setEnabled(ws!=nullptr); // 只读仍可切换表示检查姿态，不写权威。
+    for(auto* spin:{m_basePosX,m_basePosY,m_basePosZ}){spin->setEnabled(usable);}
+    for(auto* spin:{m_baseEaaX,m_baseEaaY,m_baseEaaZ,m_baseRoll,m_basePitch,m_baseYaw}){
+        spin->setEnabled(usable && m_basePreset->currentIndex()==3);
+    }
     if (ws == nullptr) {
         m_baseHint->setText(QStringLiteral(
             "基座安装编辑需已打开项目（草稿会话）。"));
         return;
     }
+    m_baseHint->setText(basePlacementInputHint());
     const auto& bp = ws->design.basePlacement;
     // 预设回填（枚举→组合框序——构建期固定映射的逆）。
     int index = 0;
@@ -2041,7 +2072,7 @@ void ModelingPanelWidget::refreshBasePlacementPane()
     }
     m_basePreset->setCurrentIndex(index);
     const bool custom = index == 3;
-    for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) {
+    for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ,m_baseRoll,m_basePitch,m_baseYaw}) {
         spin->setEnabled(custom && m_writable);
     }
     // 位置回填（未提供＝0 占位——模板/导入缺省即地面零位，不伪造"已设"徽标）。
@@ -2054,6 +2085,14 @@ void ModelingPanelWidget::refreshBasePlacementPane()
     m_baseEaaX->setValue(custom && eaa.has_value() ? (*eaa)[0] : 0.0);
     m_baseEaaY->setValue(custom && eaa.has_value() ? (*eaa)[1] : 0.0);
     m_baseEaaZ->setValue(custom && eaa.has_value() ? (*eaa)[2] : 0.0);
+    // 只读显示复用runtime权威旋转，再用现有呈现反解；UI不定义第二安装变换。
+    // 缺失自定义值时仅用地面预设占位；不调用框架外联identity()，保持独立构建边界。
+    const auto rotation=custom
+        ? (eaa?runtime::rotationFromCustomEaa(*eaa)
+              :runtime::installationPresetRotation(runtime::InstallationPresetToken::Ground))
+        : runtime::installationPresetRotation(bp.preset);
+    const auto rpy=rpyview::rotationToRpy(rotation);
+    m_baseRoll->setValue(rpy[0]);m_basePitch->setValue(rpy[1]);m_baseYaw->setValue(rpy[2]);
 }
 
 void ModelingPanelWidget::onBasePlacementApplyClicked()
@@ -2062,7 +2101,7 @@ void ModelingPanelWidget::onBasePlacementApplyClicked()
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
     if (ws == nullptr || !m_writable) { return; }  // 无会话/只读——编辑禁用（L-7）
 
-    // 表单→编辑值（整体替换语义；非 Custom 不携 customEaa——携带即域原语
+    // 表单→编辑值（整体替换语义；非 Custom 不携自定义旋转——携带即域原语
     // fail-fast 契约违约，UI 侧按预设分流避免）。
     BasePlacementEditValue edit;
     switch (m_basePreset->currentIndex()) {
@@ -2072,8 +2111,12 @@ void ModelingPanelWidget::onBasePlacementApplyClicked()
     default: edit.preset = runtime::InstallationPresetToken::Ground; break;
     }
     if (edit.preset == runtime::InstallationPresetToken::Custom) {
-        edit.customEaa = rw::math::Vector3D<double>(
-            m_baseEaaX->value(), m_baseEaaY->value(), m_baseEaaZ->value());
+        if(m_baseRotationMode->currentIndex()==0){
+            edit.customRpy=rw::math::Vector3D<double>(m_baseRoll->value(),m_basePitch->value(),m_baseYaw->value());
+        }else{
+            edit.customEaa = rw::math::Vector3D<double>(
+                m_baseEaaX->value(), m_baseEaaY->value(), m_baseEaaZ->value());
+        }
     }
     edit.basePosition = rw::math::Vector3D<double>(
         m_basePosX->value(), m_basePosY->value(), m_basePosZ->value());

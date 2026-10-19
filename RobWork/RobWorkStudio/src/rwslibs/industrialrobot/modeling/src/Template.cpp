@@ -744,21 +744,34 @@ std::optional<BasePlacementEditError> applyBasePlacementEdit(
     ModelingWorkingSet& ws,
     const BasePlacementEditValue& edit)
 {
-    // ① 契约违约面：非 Custom 预设携带 customEaa——EAA 字段仅对 Custom 有
-    //    语义，静默忽略会掩盖面板状态错误（调用方契约违约 fail-fast，
+    // ① 契约违约面：非 Custom 携带自定义旋转，或两种表示同时携带，均无
+    //    唯一语义，静默忽略会掩盖面板状态错误（调用方契约违约 fail-fast，
     //    AGENTS 错误语义）。
-    if (edit.preset != runtime::InstallationPresetToken::Custom
-        && edit.customEaa.has_value()) {
+    if ((edit.preset != runtime::InstallationPresetToken::Custom
+         && (edit.customEaa.has_value()||edit.customRpy.has_value()))
+        || (edit.customEaa.has_value()&&edit.customRpy.has_value())) {
         throw std::invalid_argument(
-            "modeling/template/base-placement-edit: preset≠Custom 不允许携带"
-            " customEaa（EAA 仅 Custom 有语义——I-MDL-7）");
+            "modeling/template/base-placement-edit: 自定义旋转仅Custom允许，"
+            "customEaa与customRpy必须恰选一（I-MDL-7/MDL-22）");
     }
 
-    // ② 有限性（I-MDL-3）：customEaa（Custom 时）与 basePosition 逐分量
+    // MDL-22欧拉输入是编辑表示；在域入口统一换算，后续复用原EAA校验、
+    // 来源及存储路径。不得由UI或各下游重复实现安装姿态换算。
+    auto effectiveEaa=edit.customEaa;
+    if(edit.customRpy){
+        const auto& rpy=*edit.customRpy;
+        if(!std::isfinite(rpy[0])||!std::isfinite(rpy[1])||!std::isfinite(rpy[2])){
+            return BasePlacementEditError{BasePlacementEditErrorCode::ValueNotFinite,
+                "basePlacement.customRpy：欧拉角含非有限分量（roll/pitch/yaw，rad）"};
+        }
+        effectiveEaa=rpymath::rpyToEaa(rpy);
+    }
+
+    // ② 有限性（I-MDL-3）：有效EAA（含RPY转换）与 basePosition 逐分量
     //    检查——NaN/Inf 非法，不静默置 0、不静默丢弃分量（NFR-COR-03）。
     //    单位：EAA 分量 rad、位置分量 m（世界系）。
-    if (edit.customEaa.has_value()) {
-        const rw::math::Vector3D<double>& eaa = *edit.customEaa;
+    if (effectiveEaa.has_value()) {
+        const rw::math::Vector3D<double>& eaa = *effectiveEaa;
         if (!std::isfinite(eaa[0]) || !std::isfinite(eaa[1])
             || !std::isfinite(eaa[2])) {
             return BasePlacementEditError{
@@ -773,14 +786,14 @@ std::optional<BasePlacementEditError> applyBasePlacementEdit(
             "basePlacement.basePosition：含非有限分量（NaN/Inf）——单位 m"};
     }
 
-    // ③ I-MDL-7 前半：Custom 无预设矩阵，customEaa 缺失即非法（runtime
+    // ③ I-MDL-7 前半：Custom 无预设矩阵，两种旋转输入均缺失即非法（runtime
     //    §4.2"Custom 时必填"同口径；fail-fast 属调用方错误、这里是用户
     //    可输入面——走值面拒绝，编辑器就地提示）。
     if (edit.preset == runtime::InstallationPresetToken::Custom
-        && !edit.customEaa.has_value()) {
+        && !effectiveEaa.has_value()) {
         return BasePlacementEditError{
             BasePlacementEditErrorCode::CustomEaaMissing,
-            "basePlacement.customEaa：custom 预设必填旋转矢量（单位 rad）"
+            "basePlacement：custom 预设必填欧拉角或旋转矢量（单位 rad）"
             "——I-MDL-7 前半"};
     }
 
@@ -795,8 +808,7 @@ std::optional<BasePlacementEditError> applyBasePlacementEdit(
     //    modeling 只存参数不存矩阵）。
     if (edit.preset == runtime::InstallationPresetToken::Custom) {
         const rw::math::Rotation3D<double> rotation = runtime::rotationFromCustomEaa(
-            rw::math::Vector3D<double>((*edit.customEaa)[0], (*edit.customEaa)[1],
-                                       (*edit.customEaa)[2]));
+            *effectiveEaa);
         // 恒等判定：逐元素与 I 偏差 ≤1×10⁻¹² 即视为恒等——容差与值模型
         // I-MDL-7 正交容差同源同尺度（§4.10 行；非自设魔数）。
         constexpr double kIdentityTol = 1e-12;  // 无量纲（旋转矩阵元素）
@@ -826,7 +838,7 @@ std::optional<BasePlacementEditError> applyBasePlacementEdit(
     if (edit.preset == runtime::InstallationPresetToken::Custom) {
         candidateValue.customEaa =
             core::SourcedValue<rw::math::Vector3D<double>>::provided(
-                *edit.customEaa,
+                *effectiveEaa,
                 core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
     }
     candidateValue.basePosition =

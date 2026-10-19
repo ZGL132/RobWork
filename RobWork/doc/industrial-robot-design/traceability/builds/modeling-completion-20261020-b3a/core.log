@@ -1,0 +1,18 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = BuildRedLine.*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from BuildRedLine
+[ RUN      ] BuildRedLine.SourceTreeReachable_UT_BUILD
+[       OK ] BuildRedLine.SourceTreeReachable_UT_BUILD (1 ms)
+[ RUN      ] BuildRedLine.NoQtInclude_NFR_MNT_01_R3
+[       OK ] BuildRedLine.NoQtInclude_NFR_MNT_01_R3 (5 ms)
+[ RUN      ] BuildRedLine.NoCrossUnitInclude_R1_R2_T1
+[       OK ] BuildRedLine.NoCrossUnitInclude_R1_R2_T1 (6 ms)
+[ RUN      ] BuildRedLine.PublicHeaderPathLayout_R2
+[       OK ] BuildRedLine.PublicHeaderPathLayout_R2 (0 ms)
+[----------] 4 tests from BuildRedLine (13 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (13 ms total)
+[  PASSED  ] 4 tests.

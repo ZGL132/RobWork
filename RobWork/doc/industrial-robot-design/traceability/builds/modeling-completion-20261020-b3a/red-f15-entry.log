@@ -1,0 +1,18 @@
+Note: Google Test filter = *BaseEuler*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.BaseEulerEntryAndAtomicApply_MDL22_AT37
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(626): error: Expected: (mode) != (nullptr), actual: NULL vs (nullptr)
+F15：基座页缺少欧拉角表示选择
+
+[  FAILED  ] ModelingPanelGuiTest.BaseEulerEntryAndAtomicApply_MDL22_AT37 (215 ms)
+[----------] 1 test from ModelingPanelGuiTest (216 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (216 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingPanelGuiTest.BaseEulerEntryAndAtomicApply_MDL22_AT37
+
+ 1 FAILED TEST

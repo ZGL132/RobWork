@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QDir> // MDL-22真实窗口截图证据，仅写测试指定输出目录。
 #include <QClipboard>   // 复制钮断言（UI-T59 剪贴板＝预览全文）
 #include <QMap>
 #include <cstdio>
@@ -582,6 +583,8 @@ TEST_F(ModelingPanelGuiTest, BasePlacementEdit_WholeReplacementChain_UI_T54)
     // 自定义预设→EAA 行随启（I-MDL-7：仅 Custom 有语义——非 Custom 携带即
     // 域原语 fail-fast 面，UI 侧先行禁用同口径）。
     preset->setCurrentIndex(3);
+    // F15默认改为欧拉输入；本既有用例仍完整验证显式选择高级EAA的兼容路径。
+    m_panel->findChild<QComboBox*>("ird_modeling_base_rotation_mode")->setCurrentIndex(1);
     QDoubleSpinBox* eaaY = m_panel->findChild<QDoubleSpinBox*>(QStringLiteral("ird_modeling_base_eaa_y"));
     ASSERT_NE(eaaY, nullptr);
     EXPECT_TRUE(eaaY->isEnabled()) << "自定义预设下 EAA 行应启用";
@@ -612,6 +615,47 @@ TEST_F(ModelingPanelGuiTest, BasePlacementEdit_WholeReplacementChain_UI_T54)
     ASSERT_NE(restoreBtn, nullptr);
     restoreBtn->click();
     ASSERT_EQ(m_ws.changes.size(), std::size_t{1}) << "还原不得产生域调用";
+}
+
+/** @brief MDL-22/AT-37：用户可经明确ZYX欧拉角输入任意安装姿态，确认前不写草稿。 */
+TEST_F(ModelingPanelGuiTest, BaseEulerEntryAndAtomicApply_MDL22_AT37)
+{
+    IRD_TEST_INFO("MDL-22",{},std::nullopt);
+    m_panel->resize(1280,900);m_panel->show();QApplication::processEvents();
+    enterBaseMode(*m_panel);
+    auto* mode=m_panel->findChild<QComboBox*>("ird_modeling_base_rotation_mode");
+    auto* roll=m_panel->findChild<QDoubleSpinBox*>("ird_modeling_base_roll");
+    auto* pitch=m_panel->findChild<QDoubleSpinBox*>("ird_modeling_base_pitch");
+    auto* yaw=m_panel->findChild<QDoubleSpinBox*>("ird_modeling_base_yaw");
+    ASSERT_NE(mode,nullptr)<<"F15：基座页缺少欧拉角表示选择";
+    ASSERT_NE(roll,nullptr);ASSERT_NE(pitch,nullptr);ASSERT_NE(yaw,nullptr);
+    EXPECT_EQ(mode->currentIndex(),0);
+    m_panel->findChild<QComboBox*>("ird_modeling_base_preset")->setCurrentIndex(3);
+    ASSERT_TRUE(roll->isVisible());ASSERT_TRUE(pitch->isVisible());ASSERT_TRUE(yaw->isVisible());
+    const auto before=m_ws;
+    roll->setValue(0.3);pitch->setValue(-0.4);yaw->setValue(0.7);
+    EXPECT_EQ(m_ws,before)<<"输入和显示切换不能写入草稿";
+    m_panel->findChild<QPushButton*>("ird_modeling_base_apply")->click();
+    EXPECT_EQ(m_ws.design.basePlacement.preset,runtime::InstallationPresetToken::Custom);
+    ASSERT_TRUE(m_ws.design.basePlacement.customEaa.tryValue().has_value());
+    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1);
+    // 还原由权威姿态反解，而不是保留上次未应用输入。
+    yaw->setValue(1.1);m_panel->findChild<QPushButton*>("ird_modeling_base_restore")->click();
+    EXPECT_NEAR(roll->value(),0.3,1e-6);EXPECT_NEAR(pitch->value(),-0.4,1e-6);EXPECT_NEAR(yaw->value(),0.7,1e-6);
+    const auto accepted=m_ws;
+    mode->setCurrentIndex(1);mode->setCurrentIndex(0);EXPECT_EQ(m_ws,accepted);
+    // 用实际Qt窗口内容留痕；这里只证明编辑页，不冒充正式宿主完整三维验收。
+    const auto evidence=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!evidence.isEmpty()){
+        QDir().mkpath(evidence);QApplication::processEvents();
+        EXPECT_TRUE(m_panel->grab().save(evidence+"/base-euler.png"));
+    }
+    m_panel->setWritable(false);
+    EXPECT_FALSE(roll->isEnabled());EXPECT_FALSE(pitch->isEnabled());EXPECT_FALSE(yaw->isEnabled());
+    auto* preset=m_panel->findChild<QComboBox*>("ird_modeling_base_preset");
+    preset->setCurrentIndex(0);preset->setCurrentIndex(3);
+    EXPECT_FALSE(roll->isEnabled())<<"只读预设切换不能复活输入";
+    EXPECT_EQ(m_ws,accepted);
 }
 
 /**

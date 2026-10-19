@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.216" timestamp="2026-10-20T07:00:30.218" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.216" timestamp="2026-10-20T07:00:30.218">
+    <testcase name="BaseEulerEntryAndAtomicApply_MDL22_AT37" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="618" status="run" result="completed" time="0.215" timestamp="2026-10-20T07:00:30.218" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:626&#x0A;Expected: (mode) != (nullptr), actual: NULL vs (nullptr)&#x0A;F15：基座页缺少欧拉角表示选择&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:626
+Expected: (mode) != (nullptr), actual: NULL vs (nullptr)
+F15：基座页缺少欧拉角表示选择
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
