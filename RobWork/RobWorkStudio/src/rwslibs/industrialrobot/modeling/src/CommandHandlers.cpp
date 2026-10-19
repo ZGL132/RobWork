@@ -1209,10 +1209,14 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
     // 静默跳过行程校验。
     std::vector<core::ConfirmableFinding> confirmables;
     if (dec.travelRelevant && hasTravelRelevantJoints(dec.candidate.design)) {
-        if (m_services.policyProvider == nullptr) {
+        if (!m_services.resolvePolicyForRevision && m_services.policyProvider == nullptr) {
             throw std::logic_error("mdl: ④策略端口未装配（装配缺陷）");
         }
-        const policy::PolicyResolution resolution = m_services.policyProvider->resolvePolicy(
+        // A-23：命令以baseSnapshot为事务基线，策略必须来自同一不可变闭包。
+        // 旧调用方未装配回调时保留固定提供器路径，避免破坏既有端口契约。
+        const policy::PolicyResolution resolution = m_services.resolvePolicyForRevision
+            ? m_services.resolvePolicyForRevision(baseSnapshot)
+            : m_services.policyProvider->resolvePolicy(
             policy::PolicyResolutionRequest{m_services.policyObject,
                                             m_services.policyVersion});
         if (!resolution.policy.has_value()) {

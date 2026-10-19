@@ -605,6 +605,8 @@ endif()
 if(TARGET sdurws)
     target_sources(sdurws_ird_ui_contract_test PRIVATE
         contract_test/HostIntegrationContractTest.cpp
+        contract_test/HostEngineeringPolicyTest.cpp  # A-23：真实项目修订策略，不替代解析计算。
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostEngineeringPolicy.cpp
         contract_test/HostDraftChainContractTest.cpp  # UI-T84——F-911 全链保真（真实工程存储＋生产查询适配器→restoreOnOpen→adopt 逐字节一致；requirements_plugin 链接面经本门控块——集成树专属，PresentationBridge 同因先例）
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainModuleRunner.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainAssembly.cpp  # ASM-STUDIO——bundle 符号面（析构/statusOf out-of-line）；本 TU 内 assembleDomainPlugins 不被调用（QDockWidget 依赖），仅链接承载
@@ -775,11 +777,14 @@ target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE
 if(TARGET sdurws)
     target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE IRD_UI_HAS_PRODUCT_HOST=1)
     target_sources(sdurws_ird_ui_gui_test PRIVATE
+        gui_test/HostEngineeringPolicyGuiTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostEngineeringPolicy.cpp
         gui_test/HostView3DGatewayGuiTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostView3DGateway.cpp)
     target_include_directories(sdurws_ird_ui_gui_test PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(sdurws_ird_ui_gui_test PRIVATE
+        sdurws_ird_modeling_plugin  # A-23：测试仅复用已装配插件传递的project/policy，不新增产品库边。
         sdurw_kinematics
         sdurw_math)
 endif()
@@ -911,6 +916,7 @@ add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
 if(TARGET sdurws)
     add_library(sdurws_ird_ui_plugin MODULE
         plugin/UiPlugin.cpp
+        plugin/HostEngineeringPolicy.cpp
         studio/CrashCapture.cpp  # WP-24-T02——崩溃捕获设施（UiPlugin 快照源接线消费——同单元共享 TU 随宿主装配面编入）
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
         plugin/ExtraDomainAssembly.cpp  # ASM-UI——dynamics/selection/optimization 三新域承接（ASM-STUDIO 批起本目标与 studio 两同源目标均编入——studio 三条 unit 级边已随该批增登）
@@ -1039,6 +1045,7 @@ if(TARGET sdurws)
         studio/CrashCapture.cpp  # WP-24-T02——OS 级崩溃捕获装配（零 Qt——捕获路径纪律；同单元私有装配面 TU）
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
+        plugin/HostEngineeringPolicy.cpp  # A-23：正式宿主与动态插件同源，避免只验证插件。
         plugin/ExtraDomainAssembly.cpp  # ASM-STUDIO——三新域承接（studio→三域 unit 级边本批增登后编入；与插件目标同源，IRD_UI_PLUGIN_EXTRA_DOMAINS 定义区分段生效）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历（与插件目标同源）
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（与插件目标同源）

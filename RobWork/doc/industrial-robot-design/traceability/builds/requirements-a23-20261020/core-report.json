@@ -1,0 +1,604 @@
+{
+  "schemaVersion": "ird-gtest-xml-derived/1",
+  "reportOrigin": "derived-from-gtest-xml",
+  "note": "目标沿用GTest::gtest_main，不原生输出ird-test-report；本伴随报告仅转写真实XML，traceMetadata不可恢复，不冒充原生listener报告。",
+  "sourceXml": "core.xml",
+  "sourceSha256": "1cd260dec884c3e1ebfca267159d36a6606a201dbd58bb7f7e1e66600712033f",
+  "summary": {
+    "passed": 65,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "total": 65,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": [
+    {
+      "testId": "BuildRedLine.SourceTreeReachable_UT_BUILD",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "109",
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.NoQtInclude_NFR_MNT_01_R3",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 3.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "129",
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.NoCrossUnitInclude_R1_R2_T1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 4.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "163",
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.PublicHeaderPathLayout_R2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 1.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "216",
+      "traceMetadata": null
+    },
+    {
+      "testId": "IdentityRoundtrip.ParseFormatRoundtrip_UT_ID_T",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\IdentityTest.cpp",
+      "sourceLine": "28",
+      "traceMetadata": null
+    },
+    {
+      "testId": "IdentityReserved.ZeroIsInvalid_UT_ID_T",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\IdentityTest.cpp",
+      "sourceLine": "50",
+      "traceMetadata": null
+    },
+    {
+      "testId": "IdentityStrictParse.MisuseAndMalformedRejected_UT_ID_T",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\IdentityTest.cpp",
+      "sourceLine": "68",
+      "traceMetadata": null
+    },
+    {
+      "testId": "IdentityGenerate.NonZeroAndUnique_UT_ID_T",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 253.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\IdentityTest.cpp",
+      "sourceLine": "95",
+      "traceMetadata": null
+    },
+    {
+      "testId": "TaskIdentityTuple.FiveFieldSemantics_UT_ID_T",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\IdentityTest.cpp",
+      "sourceLine": "114",
+      "traceMetadata": null
+    },
+    {
+      "testId": "IdentityStrongTyping.NoImplicitConversion_UT_ID_T",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\IdentityTest.cpp",
+      "sourceLine": "147",
+      "traceMetadata": null
+    },
+    {
+      "testId": "Sha256KnownVectors.EmptyString_UT_ID_D",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DigestTest.cpp",
+      "sourceLine": "40",
+      "traceMetadata": null
+    },
+    {
+      "testId": "Sha256KnownVectors.Abc_UT_ID_D",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DigestTest.cpp",
+      "sourceLine": "50",
+      "traceMetadata": null
+    },
+    {
+      "testId": "Sha256KnownVectors.TwoBlock_UT_ID_D",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DigestTest.cpp",
+      "sourceLine": "60",
+      "traceMetadata": null
+    },
+    {
+      "testId": "Sha256Determinism.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DigestTest.cpp",
+      "sourceLine": "70",
+      "traceMetadata": null
+    },
+    {
+      "testId": "Sha256Determinism.DifferentBytesDifferentDigest_UT_ID_D",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DigestTest.cpp",
+      "sourceLine": "91",
+      "traceMetadata": null
+    },
+    {
+      "testId": "Sha256Lifecycle.FinalizeDisallowsFurtherUse_UT_ID_D",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DigestTest.cpp",
+      "sourceLine": "103",
+      "traceMetadata": null
+    },
+    {
+      "testId": "DigestCanonical.RoundtripAndStrictParse_UT_ID_D",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DigestTest.cpp",
+      "sourceLine": "126",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ValueSemantics.CopyIndependenceAndHashConsistency_UT_VAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ConventionValueSemanticsTest.cpp",
+      "sourceLine": "54",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ValueSemantics.MovePreservesValue_UT_VAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ConventionValueSemanticsTest.cpp",
+      "sourceLine": "79",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ValueSemantics.EqualityHashConsistency_UT_VAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ConventionValueSemanticsTest.cpp",
+      "sourceLine": "95",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ValueSemantics.ContainerUsability_UT_VAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ConventionValueSemanticsTest.cpp",
+      "sourceLine": "114",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ConventionPose.RotateZ90MapsXToY_UT_CONV",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ConventionValueSemanticsTest.cpp",
+      "sourceLine": "164",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ConventionPose.CompositionOrderAndInverse_UT_CONV",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ConventionValueSemanticsTest.cpp",
+      "sourceLine": "184",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ProvenanceMake.ValidConstructions_UT_MISS",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ProvenanceTest.cpp",
+      "sourceLine": "22",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ProvenanceMake.P1InvariantEnforced_UT_MISS",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ProvenanceTest.cpp",
+      "sourceLine": "39",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ProvenanceMake.MethodTagSyntax_UT_MISS",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ProvenanceTest.cpp",
+      "sourceLine": "60",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ProvenanceTokens.Roundtrip_UT_MISS",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ProvenanceTest.cpp",
+      "sourceLine": "80",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SourcedValueStates.FourStateMatrix_UT_MISS",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ProvenanceTest.cpp",
+      "sourceLine": "96",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SourcedValueStates.MissingNeverBecomesZero_UT_MISS",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ProvenanceTest.cpp",
+      "sourceLine": "130",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SourcedValueStates.EmptyRawInputRejected_UT_MISS",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ProvenanceTest.cpp",
+      "sourceLine": "149",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SourcedValueStates.EqualitySemantics_UT_MISS",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\ProvenanceTest.cpp",
+      "sourceLine": "161",
+      "traceMetadata": null
+    },
+    {
+      "testId": "UnitsConvert.KnownConversions_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "36",
+      "traceMetadata": null
+    },
+    {
+      "testId": "UnitsConvert.DimensionMismatch_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "56",
+      "traceMetadata": null
+    },
+    {
+      "testId": "UnitsConvert.NonFiniteAndOverflow_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "73",
+      "traceMetadata": null
+    },
+    {
+      "testId": "UnitsFind.UnknownSymbol_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "91",
+      "traceMetadata": null
+    },
+    {
+      "testId": "UnitsRegistry.R1TableComplete_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "103",
+      "traceMetadata": null
+    },
+    {
+      "testId": "QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+      "sourceLine": "129",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CompareFormula.C4Basic_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "29",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "41",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CompareFormula.NonFiniteInputsFalse_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "53",
+      "traceMetadata": null
+    },
+    {
+      "testId": "AllCloseWithin.ElementWiseNotSummed_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "64",
+      "traceMetadata": null
+    },
+    {
+      "testId": "AllCloseWithin.LengthMismatchThrows_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "77",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ToleranceMake.Validation_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "92",
+      "traceMetadata": null
+    },
+    {
+      "testId": "RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "108",
+      "traceMetadata": null
+    },
+    {
+      "testId": "AllCloseWithinQ.QOverloadSemantics_UT_UNIT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+      "sourceLine": "139",
+      "traceMetadata": null
+    },
+    {
+      "testId": "EvaluationModeTokens.RoundtripAndUnknown_UT_EVAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EvaluationTest.cpp",
+      "sourceLine": "21",
+      "traceMetadata": null
+    },
+    {
+      "testId": "TaskOutcomeTokens.RoundtripAndUnknown_UT_EVAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EvaluationTest.cpp",
+      "sourceLine": "36",
+      "traceMetadata": null
+    },
+    {
+      "testId": "EngineeringStatusTokens.RoundtripAndNotApplicablePresence_UT_EVAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EvaluationTest.cpp",
+      "sourceLine": "51",
+      "traceMetadata": null
+    },
+    {
+      "testId": "TaskStateTokens.NineStatesRoundtrip_UT_EVAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EvaluationTest.cpp",
+      "sourceLine": "69",
+      "traceMetadata": null
+    },
+    {
+      "testId": "AxisOrthogonality.OutcomeAndStateAreDistinctAxes_UT_EVAL",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EvaluationTest.cpp",
+      "sourceLine": "91",
+      "traceMetadata": null
+    },
+    {
+      "testId": "DiagCodeSyntax.ValidForms_UT_DIAG",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DiagDataTest.cpp",
+      "sourceLine": "48",
+      "traceMetadata": null
+    },
+    {
+      "testId": "DiagCodeSyntax.InvalidForms_UT_DIAG",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DiagDataTest.cpp",
+      "sourceLine": "61",
+      "traceMetadata": null
+    },
+    {
+      "testId": "DiagRecordRequired.RequiredStringsNonEmpty_UT_DIAG",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DiagDataTest.cpp",
+      "sourceLine": "88",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ConfirmableFindingC1.ComparisonRequired_UT_DIAG",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DiagDataTest.cpp",
+      "sourceLine": "102",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ConfirmableFindingC2.CredentialConsistency_UT_DIAG",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DiagDataTest.cpp",
+      "sourceLine": "120",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ComparativeFields.SourcedValueSides_UT_DIAG",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DiagDataTest.cpp",
+      "sourceLine": "147",
+      "traceMetadata": null
+    },
+    {
+      "testId": "DiagRecordEquality.FullFieldCompare_UT_DIAG",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DiagDataTest.cpp",
+      "sourceLine": "164",
+      "traceMetadata": null
+    },
+    {
+      "testId": "DiagRecordLevel.DefaultErrorAndEquality_F618",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\DiagDataTest.cpp",
+      "sourceLine": "182",
+      "traceMetadata": null
+    },
+    {
+      "testId": "EventPayload.KindConsistency_UT_EVT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EventsTest.cpp",
+      "sourceLine": "46",
+      "traceMetadata": null
+    },
+    {
+      "testId": "EventPayload.AccessorGuardThrows_UT_EVT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EventsTest.cpp",
+      "sourceLine": "80",
+      "traceMetadata": null
+    },
+    {
+      "testId": "EventValue.CopyMoveEquality_UT_EVT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EventsTest.cpp",
+      "sourceLine": "95",
+      "traceMetadata": null
+    },
+    {
+      "testId": "EventValue.EmittedAtUtcParticipatesInEquality_F794",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EventsTest.cpp",
+      "sourceLine": "116",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ReferenceBus.FifoDeliveryOrder_UT_EVT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EventsTest.cpp",
+      "sourceLine": "128",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ReferenceBus.UnsubscribeStopsDelivery_UT_EVT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EventsTest.cpp",
+      "sourceLine": "149",
+      "traceMetadata": null
+    },
+    {
+      "testId": "ReferenceBus.MultipleSubscribersAllReceive_UT_EVT",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\EventsTest.cpp",
+      "sourceLine": "170",
+      "traceMetadata": null
+    }
+  ]
+}

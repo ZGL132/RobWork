@@ -477,7 +477,7 @@ A-15补充三授权登记：所有者已明确回复“批准该精确补充三�
 8. 决策：选择公开完整计划重载；拒绝UI私自改写requirements计划摘要（来源身份混淆），拒绝每个宿主复制新增字段编码（身份权威分叉）。这是对A-21身份规则实现入口的遗漏补齐，按公共设计门另行审阅；批准前先推进原批准的数值/投影及回归，不写新重载。
 
 
-### A-23 工程策略真实编辑与按修订解析（设计稿，待所有者审阅）
+### A-23 工程策略真实编辑与按修订解析（2026-10-20所有者已精确批准）
 
 1. **行为与事实**：OPEN-02、UX-08/ARC-05/MDL-06。正式宿主使用UnloadedPolicySource；摘要卡点击只显示延期提示；modeling处理器固定捕获系统缺省策略对象/空版本，无法随项目策略修订更新。本项让统一“修改策略…”入口编辑实际策略，取消零写，确认由①命令端口产生新内容版本/修订，摘要与模型行程比较消费同一修订的发布策略。不可仅显示已装载或修改本地布尔开关。
 2. **精确公共变化**：仅在modeling/include/sdurws/ird/modeling/CommandHandlers.hpp::HandlerServices表尾增加默认空`std::function<policy::PolicyResolution(const project::RevisionView&)> resolvePolicyForRevision`。空回调保持原policyProvider/policyObject/policyVersion兼容路径；非空时处理器传本次prepare的baseSnapshot，回调只解析该不可变修订的策略，不能读取漂移HEAD代替。原公共方法和项目存储格式不变。UI卡→命令路由使用现有CommandRegistry和私有createPolicySummaryCard回调，不新增UI公共接口。
@@ -494,3 +494,25 @@ A-15补充三授权登记：所有者已明确回复“批准该精确补充三�
 - 最终18套件XML与逐例报告对账：2250项记录，2246通过、0失败、4既有环境登记跳过；集成Release全量构建、独立相关9目标、ird_gates及verify-task通过。最终两个正式宿主tour分别235/245条断言通过、零失败，53张截图；两点各25个真实黄色像素、八角叠合及保存重开通过。
 - 新增不可变证据：`RobWork/doc/industrial-robot-design/traceability/builds/requirements-a21-20261020/`，详见FOLLOWUP.md、OPEN-ISSUES.md及verification-summary.json。原失败和驱动失误保留分类，不混入最终通过统计。
 - OPEN-01与OPEN-06封闭，OPEN-02/03/04/05/07/08继续开放；本批不构成原120项全量终验，不自行合入redesign-main。A-23仍待公共设计审阅，没有实施。
+
+A-23执行授权补充：所有者已批准上述精确设计，并明确授权本次继续实施；当前远程TLS不可达，待所有者通知恢复后再推送。A-21本地提交b3ae9582保留，不改写历史。
+
+
+### A-23 补充一：真实GUI测试依赖登记（2026-10-20所有者已批准）
+
+1. **问题实证**：真实策略GUI三用例已通过，但ird_gates真实拒绝新测试目标链接（日志build/requirements-a23-20261020/gates.log）。原GUI目标仅链ui，不能调用真实project/policy；用替身绕过会失去本次验收目的。
+2. **精确变化**：将测试链接最小化为仅一条`sdurws_ird_ui_gui_test -> sdurws_ird_modeling_plugin`；project/policy经该插件已有PUBLIC依赖传递。仅增登cmake/ird_gates_whitelist.cmake的IRD_TEST_TARGET_EDGES该行，不放宽通配规则，不新增产品依赖/公共接口。
+3. **文件面**：在原A-23范围外仅额外放行industrialrobot/cmake/ird_gates_whitelist.cmake和doc/industrial-robot-design/development-task-breakdown.md的§4.5对应测试边登记；任务契约及units/ui.md同步已在范围内。
+4. **所有权**：GUI仍为ui测试，真实策略语义归policy、对象修订归project；同源HostEngineeringPolicy.cpp，不复制算法或存储。
+5. **兼容性**：无产品二进制/存储变化；独立模式不编入该集成GUI用例，不改变旧测试的运行平台约束。
+6. **失败语义**：未登记时门禁继续拒绝，禁止把该次门禁写为通过；GUI数据错误原位阻断，零写入。
+7. **验证**：登记后重新运行ird_gates、集成GUI、独立构建和scope；GUI必须windows平台逐个exe串行执行并留图。
+8. **审阅门**：仅因两文件超出A-23精确面，且根AGENTS §6.1要求偏差登记、门禁要求DTB §4.5登记，申请这一条测试边；其余已批准实现继续。
+
+### A-23 实施与真实复验留痕（2026-10-20）
+
+- 所有者已批准A-23与补充一，且明确本次继续、待通知恢复网络后推送；本批不推送、不自行合入redesign-main。
+- 已实施真实工程策略编辑/命令事务/撤销重做/按冻结修订解析，以及建模基线消费与运动学会话策略捕获。低阈值1 rad在正式宿主要求确认且零写；恢复24 rad后同草稿应用成功，关闭重开保留24 rad。坏策略/多候选不默认回退，缺碰撞设施保持数据不足。
+- 27套件XML与逐例报告对账：3639项记录，3635通过、0失败、4项既有登记跳过。正式modeling-tour为262条断言/25张截图，requirements-tour为235条断言/31张截图，均零失败。
+- 本批新增不可变证据目录：traceability/builds/requirements-a23-20261020/；FOLLOWUP与OPEN-ISSUES记录红绿回归、测试夹具错误、剪贴板首次偶发失败及完整复跑结果。装配清单只同步源码行号，未变更必需域集合。
+- OPEN-02本批封闭；OPEN-03/04/05/07/08仍开放，原120项功能账本不改为全绿。前文A-21小节中的“A-23待审未实施”为当时历史状态，以本节最新实施证据为准。

@@ -28,6 +28,8 @@
 
 #include <stdexcept>
 #include <string>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 using namespace sdurws::ird::modeling::testfixture;
@@ -581,6 +583,61 @@ TEST(MdlCommandPrepare, TravelExceededProducesConfirmableViaPolicyPort)
     EXPECT_EQ(f.provider.resolveCalls, 1);  // ④端口被消费（阈值唯一来源通道）
     // 摘要含确认留痕段（§9.3"确认留痕"）。
     EXPECT_NE(plan.summary.find("行程上限待确认"), std::string::npos);
+}
+
+namespace {
+/** @brief A-23红回归兼容旧公共头：缺装配缝时运行失败，不能用编译失败代替行为证据。 */
+template<class T, class = void> struct HasRevisionPolicyResolver : std::false_type {};
+template<class T> struct HasRevisionPolicyResolver<T, std::void_t<decltype(
+    std::declval<T&>().resolvePolicyForRevision)>> : std::true_type {};
+
+/** @brief 仅在新装配缝存在时绑定真实阈值；回调为④策略端口边界，行程判定仍用真实评估器。 */
+template<class T, class F> bool bindRevisionResolver(T& services, F resolver)
+{
+    if constexpr (HasRevisionPolicyResolver<T>::value) {
+        services.resolvePolicyForRevision = std::move(resolver);
+        return true;
+    }
+    return false;
+}
+}
+
+/**
+ * @brief A-23/MDL-06：同一处理器必须读prepare基线的策略，不能读取漂移HEAD或固定缺省。
+ * 两修订分别给4π/20π rad，设计行程12π rad，应仅前者产生待确认；空策略须阻断。
+ */
+TEST(MdlCommandPrepare, RevisionPolicyResolverUsesExactBaseline_MDL06_A23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "UX-08"}, std::vector<std::string>{"AT-01"});
+    HandlerFixture f;
+    f.provider.policyToReturn.emplace(makePolicy(4.0 * kPi));
+    const auto first=makeBaselineView(core::RevisionId::generate());
+    const auto second=makeBaselineView(core::RevisionId::generate());
+    std::vector<core::RevisionId> resolved;
+    bool missing=false;
+    ASSERT_TRUE(bindRevisionResolver(f.services, [&](const project::RevisionView& base) {
+        resolved.push_back(base.id);
+        policy::PolicyResolution r;
+        if (!missing) r.policy.emplace(makePolicy(base.id==first.id ? 4*kPi : 20*kPi));
+        return r;
+    })) << "尚未装配按基线修订解析策略的公共回调";
+    ApplyRobotDesignHandler handler(f.services);
+    const auto design=makeSingleJointDesign(-6*kPi,6*kPi); f.bindNames(design);
+    CommandPayload payload; payload.objects.push_back(newSlot(std::string(kRobotDesignObjectType),design));
+    project::HandlerContext ctx(f.query,&f.compile,nullptr);
+    for (const auto& base : {first,second}) {
+        f.query.view=second; // 查询端口HEAD故意漂移；被测回调仍须取得显式base。
+        project::CommandPlan plan; std::vector<core::DiagnosticRecord> diags;
+        ASSERT_EQ(handler.prepare(ctx,makeEnvelope(base,std::string(kCmdApplyRobotDesign),payload),base,plan,diags),
+                  project::PrepareOutcome::Planned);
+        EXPECT_EQ(plan.confirmableFindings.size(),base.id==first.id ? 1u : 0u);
+    }
+    ASSERT_EQ(resolved.size(),2u); EXPECT_EQ(resolved[0],first.id); EXPECT_EQ(resolved[1],second.id);
+    EXPECT_EQ(f.provider.resolveCalls,0); // 新回调为权威；不混用旧固定源。
+    missing=true; project::CommandPlan plan; std::vector<core::DiagnosticRecord> diags;
+    EXPECT_EQ(handler.prepare(ctx,makeEnvelope(first,std::string(kCmdApplyRobotDesign),payload),first,plan,diags),
+              project::PrepareOutcome::RejectedHardAssert);
+    EXPECT_TRUE(plan.objectWrites.empty());
 }
 
 /**

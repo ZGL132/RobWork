@@ -40,6 +40,9 @@
 #include <vector>
 
 #include <sdurws/ird/core/Digest.hpp>
+#include <sdurws/ird/policy/PolicyInput.hpp>
+#include <sdurws/ird/policy/PolicyParsing.hpp>
+#include <sdurws/ird/policy/SystemDefaultPolicy.hpp>
 #include <sdurws/ird/core/Identity.hpp>
 #include <sdurws/ird/kinematics/KinematicsPanelChannels.hpp>  // 通道值面
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>           // 合法配置基线
@@ -1590,4 +1593,44 @@ TEST(KinEvaluationChannel, BatchDirectionRulesFreeToolRoll_WP14T12)
     const auto& outcome = results.begin()->second;
     EXPECT_EQ(outcome.outcomeState, "completed")
         << outcome.outcomeText << "（方向规则不得额外固定工具滚转）";
+}
+
+/** @brief A-23：完成后换绑同模型的新策略也必须清除单点结果，不能保留旧结论。 */
+TEST(KinEvaluationChannel, PolicyRebindClearsFinishedSolve_ARC05_A23)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"ARC-05","CON-06"}), (std::vector<std::string>{"AT-01"}));
+    ExecutorHarness h;KinChannelBackgroundRequest request;
+    request.kind=KinChannelBackgroundKind::SessionSolve;request.snapshotId=h.boundId;request.epoch=h.executor->epoch();
+    request.solveTargetInBase=rw::math::Transform3D<double>(rw::math::Vector3D<double>(1.8,0,0));
+    ASSERT_TRUE(h.executor->submit(request).accepted);h.drain();ASSERT_TRUE(h.executor->latestSolveResult());
+    h.executor->setPolicy(std::make_shared<const policy::EngineeringPolicySet>(policy::makeSystemDefaultPolicySet()));
+    h.executor->attachView(h.view,h.boundId);
+    EXPECT_FALSE(h.executor->latestSolveResult());EXPECT_FALSE(h.executor->latestCoverageResult());
+    EXPECT_TRUE(h.executor->latestBatchOutcomes().empty());
+}
+
+/** @brief A-23：启用碰撞策略却无设施时，真实IK不得给出“未碰撞”的绿色结论。 */
+TEST(KinEvaluationChannel, EnabledCollisionWithoutFacilityRemainsInsufficient_ARC05_A23)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"ARC-05","KIN-05"}), (std::vector<std::string>{"AT-01"}));
+    class Context final:public policy::IPolicyValidationContext {
+    public:
+        bool objectExists(core::ObjectId)const override{return false;}
+        std::optional<std::string> objectRole(core::ObjectId)const override{return std::nullopt;}
+        bool groupDefined(std::string_view)const override{return false;}
+    } context;
+    policy::RawPolicyInput raw;raw.policyObject=policy::systemDefaultPolicyObjectId();
+    raw.collision.enabled=true;raw.collision.enabledDomains={policy::CollisionDomain::Self};
+    raw.collision.safetyClearance=policy::RawThresholdInput{0.01,"m"};
+    const auto policy=policy::resolvePolicy(raw,context);ASSERT_TRUE(policy.policy);
+    ExecutorHarness h;h.executor->setPolicy(std::make_shared<const sdurws::ird::policy::EngineeringPolicySet>(*policy.policy));
+    KinChannelBackgroundRequest request;request.kind=KinChannelBackgroundKind::SessionSolve;
+    request.snapshotId=h.boundId;request.epoch=h.executor->epoch();
+    request.solveTargetInBase=rw::math::Transform3D<double>(rw::math::Vector3D<double>(1.8,0,0));
+    ASSERT_TRUE(h.executor->submit(request).accepted);h.drain();
+    const auto result=h.executor->latestSolveResult();ASSERT_TRUE(result);ASSERT_TRUE(result->solutionSet);
+    EXPECT_FALSE(result->ok);
+    EXPECT_NE(result->errorText.find("数据不足"),std::string::npos);
+    // 域契约保留几何解作为诊断，但逐解未评价且整体不可走绿色完成通道。
+    for(const auto& solution:result->solutionSet->solutions)EXPECT_FALSE(solution.collisionStatus.evaluated);
 }

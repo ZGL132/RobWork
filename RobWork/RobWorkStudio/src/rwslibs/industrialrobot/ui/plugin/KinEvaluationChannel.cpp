@@ -8,6 +8,7 @@
  */
 
 #include "KinEvaluationChannel.hpp"
+#include <sdurws/ird/policy/SystemDefaultPolicy.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -74,7 +75,8 @@ private:
 // =====================================================================
 
 KinEvaluationExecutor::KinEvaluationExecutor(Deps deps)
-    : m_deps(std::move(deps))
+    : m_policy(std::make_shared<const policy::EngineeringPolicySet>(policy::makeSystemDefaultPolicySet())),
+      m_deps(std::move(deps))
 {
 }
 
@@ -106,6 +108,7 @@ void KinEvaluationExecutor::attachView(
     m_snapshotId = snapshotId;
     ++m_epoch;
     m_latestCoverage.reset();
+    m_latestSolve.reset(); // A-23：求解结果与覆盖/批量一致，策略/快照换绑必须同拍清账。
     // ★ KIN-P4：批量账面同拍清空（与覆盖账面同一换绑纪律）＋在途任务
     // 协作取消置位（真实取消路径——SessionSolve 求解探针/批量批间查询
     // 消费后早停返回取消态，非结局如实呈现；替换全部标志为新代——
@@ -548,6 +551,47 @@ kinematics::KinChannelBackgroundAck KinEvaluationExecutor::submit(
 // 取消标志随闭包只读消费；回投经 QMetaObject 回 UI 线程）
 // =====================================================================
 
+namespace {
+/** @brief 缺失碰撞设施的端口应答；不是碰撞算法，任何构型均保持证据不足。 */
+class MissingPolicyCollisionSession final : public kinematics::IKinCollisionSession {
+public:
+    /** @brief q[in]为rad/m构型；设施未装配返回EvidenceMissing，不给无碰撞结论。 */
+    kinematics::IkCollisionVerdict evaluate(const std::vector<double>&) const override
+    {
+        kinematics::IkCollisionVerdict result;
+        result.state=kinematics::IkCollisionEvaluationState::EvidenceMissing;
+        result.statusDetail="当前策略要求碰撞检查，但宿主碰撞设施未装配";
+        return result;
+    }
+};
+}
+
+namespace {
+/** @brief 同步/后台使用相同碰撞不足语义的L5求解适配器；宿主持有，仅UI线程调用。 */
+class PolicyAwareIkSolver final : public kinematics::IIkSolver {
+public:
+    /** @brief source[in]返回已发布策略值；不拥有project，不回查存储。 */
+    explicit PolicyAwareIkSolver(std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source)
+        : m_source(std::move(source)) {}
+    /** @brief request[in]原请求不改；缺设施经端口返回EvidenceMissing后交真实求解器消费。 */
+    kinematics::IkOutcome solve(const kinematics::IkRequest& request) const override
+    {
+        const auto policy=m_source();
+        auto bound=request;
+        MissingPolicyCollisionSession missing;
+        if (!policy || policy->collision.enabled) { bound.collisionSession=&missing; }
+        return kinematics::IkSolver{}.solve(bound);
+    }
+private:
+    std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> m_source; ///< 宿主存活期内调用。
+};
+}
+std::unique_ptr<kinematics::IIkSolver> makePolicyAwareIkSolver(
+    std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source)
+{
+    return std::make_unique<PolicyAwareIkSolver>(std::move(source));
+}
+
 void KinEvaluationExecutor::launchCoverageTask(
     const std::string& taskRef, std::uint64_t epoch,
     const core::ContentIdentity& snapshotIdAtSubmit,
@@ -557,11 +601,12 @@ void KinEvaluationExecutor::launchCoverageTask(
     const std::shared_ptr<std::atomic_bool>& cancelFlag)
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+    const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
     QObject* routeContext = m_deps.routeContext;
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
                     snapshotIdAtSubmit, configDigestAtSubmit,
                     query = std::move(query),
                     request = std::move(request)]() mutable {
@@ -581,6 +626,9 @@ void KinEvaluationExecutor::launchCoverageTask(
                 Qt::QueuedConnection);
             return;
         }
+        MissingPolicyCollisionSession missingCollision;
+        if (policyAtSubmit && policyAtSubmit->collision.enabled) { query.collisionSession=&missingCollision; }
+        if (!policyAtSubmit) { query.collisionSession=&missingCollision; }
         NullEvaluationContext context;
         kinematics::KinChannelCoverageResult result;
         try {
@@ -673,6 +721,7 @@ void KinEvaluationExecutor::launchSolveTask(
     const std::shared_ptr<std::atomic_bool>& cancelFlag)
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+    const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
     QObject* routeContext = m_deps.routeContext;
     // 求解器（Deps 注入可空——空＝内置 IkSolver 生产实例；无状态可共享，
     // 静态存储期——后台线程安全消费）。
@@ -682,7 +731,7 @@ void KinEvaluationExecutor::launchSolveTask(
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
                     snapshotIdAtSubmit, configDigestAtSubmit, solver,
                     request]() mutable {
         kinematics::KinChannelSolveResult result;
@@ -700,6 +749,8 @@ void KinEvaluationExecutor::launchSolveTask(
         } else {
             kinematics::IkRequest bound = request;
             bound.modelView = view.get();
+            MissingPolicyCollisionSession missingCollision;
+            if (!policyAtSubmit || policyAtSubmit->collision.enabled) { bound.collisionSession=&missingCollision; }
             bound.cancellationProbe = [cancelFlag] {
                 return cancelFlag->load(std::memory_order_acquire);
             };
@@ -717,6 +768,12 @@ void KinEvaluationExecutor::launchSolveTask(
                 result.errorText = "求解设施失败（非结局——求解中途 FK "
                                    "复算失败，详见评估诊断）";
                 result.summaryText = result.errorText;
+            } else if (outcome.collisionEvidenceMissing) {
+                // 几何解允许保留诊断，但缺碰撞证据不能通过ok通道进入会话可行结果。
+                result.ok = false;
+                result.errorText = "数据不足：当前策略要求碰撞检查，但碰撞证据/设施缺失";
+                result.summaryText = result.errorText;
+                result.solutionSet = std::make_shared<const kinematics::IkSolutionSet>(outcome.solutionSet);
             } else {
                 result.ok = true;
                 // ---- 解集原值随结果投递（shared_ptr 值转移——宿主闭包
@@ -751,11 +808,12 @@ void KinEvaluationExecutor::launchBatchTask(
     const std::shared_ptr<std::atomic_bool>& cancelFlag)
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+    const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
     QObject* routeContext = m_deps.routeContext;
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
                     snapshotIdAtSubmit, query = std::move(query),
                     request = std::move(request)]() mutable {
         // ---- 视图空＝受理后解绑的竞态残留——中止回投（与覆盖通道同轨）。
@@ -771,6 +829,8 @@ void KinEvaluationExecutor::launchBatchTask(
         }
         // ---- 可取消上下文（★ KIN-P4——任务级取消标志接批间查询与逐项
         // 求解探针：换绑/解绑置位后批量早停，未派发项如实 NotRun）。
+        MissingPolicyCollisionSession missingCollision;
+        if (!policyAtSubmit || policyAtSubmit->collision.enabled) { query.collisionSession=&missingCollision; }
         CancelableEvaluationContext context(cancelFlag);
         std::optional<kinematics::BatchComputation> computation;
         std::string errorText;

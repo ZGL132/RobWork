@@ -1618,3 +1618,8 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 ### WP-14-T12 A-15 完整TCP描述映射增量（2026-10-19，所有者精确批准）
 
 CanonicalBridge将ToolDefinition.tcpList全部原键映射到runtime.namedTcpOffsets，每项按mountInterface·offset计算T_flange_tcp（平移m，旋转无量纲）。原tcpOffset选取仍为默认工具指定键、其余工具首条；完整目录的排序/数值验证/内容身份归runtime，桥不维护第二份真值。RobotDesign/ToolDefinition对象Codec与project格式不变，旧项目可从原对象重新编译为canonical1.2。新增验证沿真实建模Codec闭包及非恒等安装接口，不能以仅字段存在替代下游数值验证。
+
+
+### A-23 按prepare基线修订解析策略（2026-10-20，WP-14-T12）
+
+HandlerServices表尾增加默认空resolvePolicyForRevision(const project::RevisionView&)；非空时以本次prepare的baseSnapshot解析，不能读取HEAD替代；空回调保持原policyProvider/policyObject/policyVersion兼容。失败空策略阻断命令，不回退默认。宿主bindPolicyProvider面板预检与命令prepare同时消费同一已发布策略；原不可变修订、项目存储及六端口依赖不变。CommandHandlersTest的A23真实基线两修订回归核对低/高阈值、HEAD漂移及空解析失败。

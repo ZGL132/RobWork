@@ -512,6 +512,9 @@ set(IRD_TEST_TARGET_EDGES
     "sdurws_ird_ui_contract_test->sdurws_ird_diagnostics"
     "sdurws_ird_ui_contract_test->sdurws_ird_runtime"
     "sdurws_ird_ui_contract_test->sdurws_ird_modeling_plugin"
+    # A-23（所有者2026-10-20批准，DTB §4.5）：真实策略编辑窗口复用
+    # 建模插件既有公共project/policy依赖；仅放行此GUI测试目标，不扩产品边。
+    "sdurws_ird_ui_gui_test->sdurws_ird_modeling_plugin"
     "sdurws_ird_ui_contract_test->sdurws_ird_kinematics_plugin"
     "sdurws_ird_ui_contract_test->sdurws_ird_requirements_plugin"
     "sdurws_ird_ui_test->sdurws_ird_requirements"

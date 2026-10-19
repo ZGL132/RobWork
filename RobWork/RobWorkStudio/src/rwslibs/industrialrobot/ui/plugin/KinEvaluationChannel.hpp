@@ -42,6 +42,7 @@
 #define IRD_UI_PLUGIN_KINEVALUATIONCHANNEL_HPP
 
 #include <atomic>
+#include <sdurws/ird/policy/PolicySet.hpp>
 #include <cstdint>
 #include <future>
 #include <map>
@@ -68,6 +69,13 @@
 namespace sdurws {
 namespace ird {
 namespace ui {
+
+/**
+ * @brief 创建UI同步求解的策略装配器；source[in]仅UI线程取当前已发布纯值，空值视为缺证。
+ * @return 宿主独占拥有的IIkSolver；内部调用真实IkSolver，不另实现数值算法。
+ */
+std::unique_ptr<kinematics::IIkSolver> makePolicyAwareIkSolver(
+    std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source);
 
 // =====================================================================
 // KinSessionModelView——地址稳定的可换绑模型视图（缝注入值）
@@ -384,6 +392,9 @@ public:
      */
     void setConfiguration(const kinematics::AnalysisConfiguration& config);
 
+    /** @brief 同拍绑定当前修订策略；policy[in]共享纯值，空表示解析失败，零HEAD读取。 */
+    void setPolicy(std::shared_ptr<const policy::EngineeringPolicySet> policy) { m_policy = std::move(policy); }
+
     /// 会话级长命视图（缝地址的持有本体——rebind 随 attachView 同拍）。
     KinSessionModelView m_sessionView;
 
@@ -626,6 +637,7 @@ private:
     void onViewDetached(const std::string& taskRef, std::uint64_t epoch,
                         const std::string& reason);
 
+    std::shared_ptr<const policy::EngineeringPolicySet> m_policy; ///< UI发布并由任务闭包捕获；不随HEAD漂移。
     Deps m_deps;  ///< 依赖（editor/resolveFrame/routeContext/resultRoute）
 
     std::shared_ptr<const kinematics::IKinRuntimeView> m_snapshot;  ///< 当前模型视图（空＝未绑定；产品路径＝快照包裹器，测试路径＝替身）

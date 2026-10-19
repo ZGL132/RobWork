@@ -24,6 +24,7 @@
  */
 
 #include "UiPlugin.hpp"
+#include "HostEngineeringPolicy.hpp"
 #include "../src/DockWorkspace_p.hpp"
 
 #include <QAction>
@@ -138,10 +139,13 @@
 #include <sdurws/ird/modeling/Parts.hpp>         // ★ KIN-P4——PoseSet/PoseSetEntry/kHomeConfigurationPoseKey（Home 来源闭包）
 #include <sdurws/ird/policy/JointLimits.hpp>     // makeJointLimitEvaluator（UI-T46——HandlerServices 评估器装配）
 #include <sdurws/ird/policy/Contexts.hpp>        // policy::IPolicyNameContext（UI-T46——行程评估名称上下文适配基类）
+#include <sdurws/ird/policy/PolicyInput.hpp>     // A-23 策略编辑命令的唯一编解码入口
+#include <sdurws/ird/policy/PolicyParsing.hpp>   // A-23 prepare 阶段只读校验
 #include <sdurws/ird/ui/RuntimePublishBridge.hpp>  // RuntimePublishBridge/观察者（UI-T46——呈现刷新事务装配）
 
 #include <filesystem>
 #include <cstdio>                        // 采样清单行位置摘要格式化（std::snprintf——FIX-T2）
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -660,7 +664,10 @@ void IrdWorkbenchHostPlugin::initialize()
     // 会话生命周期端口形态与 harness 逐一同型：策略未装载（C-10）、名称
     // 不可解析（C-11）——零虚构语义。关于框数据源收口起为装配报告实装
     // （bundleAboutSource——§11.4，HarnessAboutSource 占位退役）。
-    m_policySource = std::make_shared<app::UnloadedPolicySource>();
+    m_policySource = std::make_shared<ui::HostEngineeringPolicy>([this] {
+        // 策略卡只负责触发命令；原始草稿、校验和事务全部由同源私有适配器处理。
+        m_policySource->edit(m_hostStatusBar);
+    });
     m_nameResolver = std::make_shared<app::NullUiNameResolver>();
     m_bridge = std::make_shared<app::ProjectDiagnosticsBridge>(
         m_diag.catalog, m_diag.factory, m_diag.pipeline);
@@ -686,7 +693,12 @@ void IrdWorkbenchHostPlugin::initialize()
             // 应用实证暴露）。modeling 域处理器依赖 HandlerServices 服务集
             // 装配（断言端口/策略锚——建模域任务范围），随 findings 登记。
             if (kept != nullptr) {
+                // A-23：摘要卡与建模处理器绑定同一项目修订解析源。
+                m_policySource->bindProjectStore(
+                    std::shared_ptr<project::ProjectStore>(kept, &kept->projectStore()));
                 requirements::registerRequirementCommandHandlers(
+                    kept->projectStore().handlerRegistry());
+                HostEngineeringPolicy::registerCommandHandler(
                     kept->projectStore().handlerRegistry());
                 if (m_diag.pipeline) {
                     m_diag.pipeline->logDev(
@@ -772,6 +784,37 @@ void IrdWorkbenchHostPlugin::initialize()
                         if (adapter && adapter == source && !adapter->isClosed()
                             && adapter->projectStore().projectId() == payload.project) {
                             try {
+                                const auto head=adapter->projectStore().query().head();
+                                if (head.id==payload.revision && head.inverse
+                                    && head.inverse->commandType=="edit-engineering-policy" && head.parent) {
+                                    const auto previous=adapter->projectStore().query().tryRevision(*head.parent);
+                                    auto businessRefs=[](const project::RevisionView& revision) {
+                                        std::vector<project::ObjectRef> refs;
+                                        for(const auto& ref:revision.objectRefs) {
+                                            if(ref.objectTypeToken!="EngineeringPolicy" && ref.objectId!=revision.metadataRef.objectId)refs.push_back(ref);
+                                        }
+                                        // 闭包本身不承诺输入顺序；按稳定身份排序后比较完整引用值。
+                                        std::sort(refs.begin(),refs.end(),[](const auto& a,const auto& b) { return a.objectId<b.objectId; });
+                                        return refs;
+                                    };
+                                    // 只有策略变化且其余业务对象逐项相同时，才安全前移建模草稿基线；
+                                    // 不把同时发生的模型编辑/分支变化静默重基，防止旧草稿覆盖新模型。
+                                    if (previous && businessRefs(*previous)==businessRefs(head) && host->m_domains
+                                        && host->m_domains->modeling.module) {
+                                        const auto draft=host->m_domains->modeling.module->buildDraftCommand("modeling");
+                                        // 已过期或属于其它分支的草稿仍应被project拒绝；策略提交不能
+                                        // 越过此前模型修订，只有恰好基于父修订的草稿才可安全前移。
+                                        if (!draft || (draft->branch==head.branch && draft->expectedRevision==previous->id)) {
+                                            host->m_domains->modeling.bindSessionAnchor(head.branch,head.id);
+                                        }
+                                    }
+                                }
+                                host->m_policySource->refreshPublishedPolicy();
+                                // 策略修订即使不编译模型也必须推进评估纪元；旧任务晚到不入新账。
+                                host->syncKinematicsSessionFacts();
+                                if (host->m_content && host->m_lastContextProjection) {
+                                    host->m_content->presentProjectContext(*host->m_lastContextProjection);
+                                }
                                 host->onRequirementExternalRevision(payload.revision);
                             } catch (const std::exception& error) {
                                 // 队列任务已离开事件总线的异常边界，必须在本操作边界
@@ -3300,7 +3343,10 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
     // ---- ★ KIN-P4 七缝（真实求解器/评估器/会话姿态/命令门面/导出/
     // 配置保存/具名 Home——命令门面在项目打开拍装配（installKinematics-
     // CommandHandler），此处仅注入现值——无项目态为空＝按钮禁用诚实）。
-    channels.ikSolver = &m_kinIkSolver;
+    if (!m_kinPolicyIkSolver) {
+        m_kinPolicyIkSolver=makePolicyAwareIkSolver([this] { return m_policySource->publishedPolicy(); });
+    }
+    channels.ikSolver = m_kinPolicyIkSolver.get();
     channels.fkEvaluator = &m_kinFkEvaluator;
     channels.sessionPose = &m_kinSessionPose;
     channels.commandHandler = m_kinCommandHandler.get();
@@ -3363,6 +3409,7 @@ void IrdWorkbenchHostPlugin::syncKinematicsSessionFacts()
                                  : nullptr;
     const core::ContentIdentity identity =
         snapshot != nullptr ? snapshot->modelIdentity() : core::ContentIdentity{};
+    m_kinEvaluation->setPolicy(m_policySource ? m_policySource->publishedPolicy() : nullptr);
     m_kinEvaluation->attachSnapshot(std::move(snapshot), identity);
     // ---- 模块会话态整体写（面板绑定面与执行器受理面的一致性键同源——
     // 提交流构造请求携带的 snapshotId/epoch 即本处写入值；私有会话态
@@ -5097,9 +5144,8 @@ void IrdWorkbenchHostPlugin::assemblePresentationPipeline()
     }
     rws::RobWorkStudio* studio = getRobWorkStudio();
 
-    // ---- 建模命令处理器服务集（F-461 modeling 半区——所有权锚成员持有，
-    // 策略端口＝系统缺省源（UI-T73/O-46 裁决出路②——附录 D 冻结默认 4π；
-    // 工程内策略对象生命周期落地后可换装存储背书 PolicyProvider）。
+    // ---- 建模命令处理器服务集（F-461 modeling 半区——所有权锚成员持有；
+    // A-23已接项目存储背书的按修订策略，系统缺省仅用于无策略对象的修订）。
     m_jointLimitEvaluator = policy::makeJointLimitEvaluator();
     m_dhConverter = std::make_unique<modeling::DhExplicitConverter>();
     m_compileProbe = std::make_unique<HostCompileProbe>(HostCompileProbe::Deps{
@@ -5231,18 +5277,18 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
     const modeling::HandlerServices services{
         modeling::AssertionSuite::Ports{m_jointLimitEvaluator.get(),
                                         m_draftAwareNameContext.get()},
-        // F-536/O-46 裁决出路②（UI-T73）：④端口装配系统缺省策略源——附录
-        // D 唯一冻结默认（4π 行程上限，DefaultAppendixD）的解析半区供给器；
-        // 工程内真实策略对象生命周期落地后可换装存储背书 PolicyProvider
-        // （O-46 登记的后续面）。policyObject＝系统缺省保留身份（非项目对
-        // 象，不入 project 存储）；policyVersion 传 nullopt＝系统缺省集为
-        // 编译期常量、无存储版本演进（供给器契约不消费期望版本——
-        // SystemDefaultPolicy.hpp 差异面登记）。
+        // A-23：下面三个旧字段保留为兼容装配值；非空的修订解析回调优先，
+        // 消费本次prepare冻结基线。仅该修订没有项目策略对象时才回退附录D
+        // 系统缺省，解析失败不回退；不再以固定默认掩盖真实项目策略。
         &m_systemDefaultPolicyProvider,  // policyProvider＝系统缺省源（④端口装配）
         policy::systemDefaultPolicyObjectId(),  // policyObject＝保留身份
         std::nullopt,            // policyVersion＝不适用（系统缺省集无版本演进）
         m_dhConverter.get(),     // DH 转换器（权威切换变体）
         m_compileProbe.get(),    // 编译分段探针（等价验证）
+        modeling::CouplingStage::R1Locked,
+        [this](const project::RevisionView& revision) {
+            return m_policySource->resolvePolicyForRevision(revision);
+        },                       // A-23：严格消费 prepare 基线修订
     };
     modeling::registerModelingCommandHandlers(store.handlerRegistry(), services);
     if (m_diag.pipeline) {
@@ -5320,6 +5366,10 @@ void IrdWorkbenchHostPlugin::refreshPresentationAfterCommit()
     }
     // kinematics 会话事实同步（UI-T64——发布消费点：快照换绑＋纪元推进
     // ＋面板绑定键同步；在途评估回执按旧纪元比对即迟到丢弃，L-K12）。
+    m_policySource->refreshPublishedPolicy();
+    m_domains->modeling.bindPolicyProvider([this]() -> const policy::EngineeringPolicySet* {
+        return m_policySource->publishedPolicy().get();
+    });
     syncKinematicsSessionFacts();
     // 新 tip（发布归属修订——对账基准；权威分支表首条，apply 编排同源）。
     const auto tips = m_lastStoreAdapter->projectStore().query().branchTips();
@@ -5426,6 +5476,7 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
         return;
     }
     m_sharedSurfacesTornDown = true;
+    if (m_policySource) { m_policySource->bindProjectStore(static_cast<project::ProjectStore*>(nullptr)); }
     // 周期落盘驱动随会话停止（V-13 触发半区只服务在位会话——无项目态
     // tickAutosave 分派无意义）。
     if (m_draftAutosaveTimer != nullptr) {
@@ -8171,6 +8222,43 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         }
         snapPng(hostWin, "mtour-1-panel.png");
 
+        // A-23：正式宿主统一命令入口→真实模态编辑→project新修订→摘要/评估纪元。
+        // 此拍使用真实项目和策略解析，未通过时不能以GUI独立用例代替宿主接线。
+        step("1.5 real-engineering-policy");
+        const auto policyEpoch=m_kinEvaluation->epoch();
+        const auto policyBase=m_lastStoreAdapter->projectStore().query().head();
+        bool policyDialogSeen=false;
+        QTimer::singleShot(60,this,[&] {
+            auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            policyDialogSeen=dialog && dialog->objectName()=="ird_policy_editor";
+            ok(policyDialogSeen,"a23 real-policy-dialog-visible");
+            if(!dialog)return;
+            auto* travel=dialog->findChild<QLineEdit*>("policy_travel");
+            ok(travel!=nullptr,"a23 travel-input-present");if(travel)travel->setText("24");
+            auto* note=dialog->findChild<QLineEdit*>("policy_note");if(note)note->setText(QStringLiteral("正式宿主策略回归"));
+            snapPng(dialog,"mtour-a23-policy-editor.png");
+            if(auto* buttons=dialog->findChild<QDialogButtonBox*>())buttons->button(QDialogButtonBox::Ok)->click();
+            if(dialog->isVisible())dialog->reject(); // 失败仍退出取证，防止无人值守死等。
+        });
+        m_content->submitCommand("policy.edit");settleEvents(180);
+        ok(policyDialogSeen,"a23 command-registry-opens-editor");
+        auto& policyStore=m_lastStoreAdapter->projectStore();
+        const auto policyHead=policyStore.query().head();
+        ok(policyHead.id!=policyBase.id,"a23 policy-confirm-creates-revision");
+        const auto policyValue=m_policySource->publishedPolicy();
+        ok(policyValue && policyValue->jointThresholds.finiteRotationTravelLimit.siValue()==24.0,
+           "a23 published-policy-consumes-current-revision");
+        ok(m_policySource->summary().available && m_policySource->summary().travelLimit.siValue==24.0,
+           "a23 summary-current-value");
+        ok(m_kinEvaluation->epoch()>policyEpoch,"a23 policy-change-invalidates-evaluation-epoch");
+        ok(policyStore.undoRedo().undo(policyHead.branch).committed(),"a23 first-policy-undo");settleEvents(100);
+        ok(m_policySource->publishedPolicy() && m_policySource->publishedPolicy()->contentIdentity
+           ==policy::makeSystemDefaultPolicySet().contentIdentity,"a23 undo-restores-default-semantics");
+        ok(policyStore.undoRedo().redo(policyHead.branch).committed(),"a23 first-policy-redo");settleEvents(100);
+        ok(m_policySource->publishedPolicy() && m_policySource->publishedPolicy()->jointThresholds.finiteRotationTravelLimit.siValue()==24.0,
+           "a23 redo-restores-edited-policy");
+        snapPng(hostWin,"mtour-a23-policy-summary.png");
+
         // ---- 拍 2：new-from-template generic-6r 重种子（模态选单自动应答）--
         step("2 new-from-template-generic6r");
         QPushButton* tmplBtn = panel->findChild<QPushButton*>(
@@ -8371,6 +8459,37 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             }
         }
         ok(!modelingOnly.empty(), "step5 modeling-apply-entry-present");
+        // A-23/MDL-06：同一份真实草稿先用1 rad阈值触发行程比较，用户未
+        // 确认必须零提交；再经同一真实窗口恢复24 rad，下面原应用必须成功。
+        // 这同时检验策略修订后的安全基线前移，不能只断言摘要文本改变。
+        auto editTourTravel=[&](const QString& value) {
+            QTimer::singleShot(60,this,[&,value] {
+                auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+                ok(dialog && dialog->objectName()=="ird_policy_editor","a23 threshold-dialog-visible");
+                if(!dialog)return;
+                if(auto* field=dialog->findChild<QLineEdit*>("policy_travel"))field->setText(value);
+                if(auto* buttons=dialog->findChild<QDialogButtonBox*>())buttons->button(QDialogButtonBox::Ok)->click();
+                if(dialog->isVisible())dialog->reject();
+            });
+            m_content->submitCommand("policy.edit");settleEvents(180);
+        };
+        editTourTravel(QStringLiteral("1"));
+        const auto lowBase=m_lastStoreAdapter->projectStore().query().head();
+        ok(m_policySource->publishedPolicy() && m_policySource->publishedPolicy()->jointThresholds.finiteRotationTravelLimit.siValue()==1.0,
+           "a23 low-policy-published");
+        const auto lowReport=runDomainApply(modelingOnly,std::nullopt,
+            [this](project::CommandEnvelope envelope,project::ICommandInteraction* interaction) {
+                return m_lastStoreAdapter->projectStore().commands().submit(std::move(envelope),interaction);
+            },nullptr,[](const std::string& message) { std::cout<<"[a23-low-policy] "<<message<<std::endl; });
+        bool lowBlocked=false;
+        for(const auto& entry:lowReport.entries)if(entry.moduleId=="modeling") {
+            lowBlocked=!entry.committed && entry.rejectionReason=="confirmations-unresolved";
+            std::cout<<"[a23-low-policy] rejected="<<entry.rejectionReason<<std::endl;
+        }
+        ok(lowBlocked,"a23 real-mdl06-comparison-requires-confirmation");
+        ok(m_lastStoreAdapter->projectStore().query().head().id==lowBase.id,"a23 unconfirmed-comparison-zero-write");
+        snapPng(hostWin,"mtour-a23-low-policy-comparison.png");
+        editTourTravel(QStringLiteral("24"));
         const DomainApplyReport applyReport = runDomainApply(
             modelingOnly,
             std::nullopt,
@@ -8393,8 +8512,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 modelingCommitted = true;
             }
         }
-        // F-536/O-46 裁决出路②（UI-T73）：④端口已装配系统缺省策略源——
-        // apply 走通（行程校验按附录 D 4π 冻结默认评估）。原 known-gap 断
+        // F-536/O-46 裁决出路②（UI-T73）：④端口已装配真实策略源——
+        // A-23此拍按项目24 rad阈值评估；原 known-gap 断
         // 言（policyPortGap/undo-unavailable-under-known-gap）随翻转退役，
         // 断言名沿用旧号 F-524 的历史行一并更正（F-543 传证）。
         std::string modelingRej;
@@ -8408,8 +8527,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             }
         }
         // F-546 出路①（UI-T74）：草稿名感知装饰装配——首应用行程校验可执
-        // 行，apply 提交（UI-T73 诚实中间态断言兑现翻转；行程按附录 D 4π
-        // 冻结默认评估，超限项经 Confirmable 确认编排呈现）。
+        // 行，apply 提交（UI-T73 诚实中间态断言兑现翻转；A-23先验证1 rad
+        // 超限必须确认，再验证24 rad不超限可提交）。
         ok(modelingCommitted,
            "step5 modeling-apply (committed=" +
                std::string(modelingCommitted ? "true" : "false") +
@@ -8501,6 +8620,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         settleEvents(300); // 编译快照在位不等于宿主已完成呈现挂接，额外断言实际场景。
         const auto restoredCell = getRobWorkStudio()->getWorkCell();
         ok(reopened && m_controller->hasOpenSession(), "step5.5 real-open-session");
+        ok(m_policySource->publishedPolicy() && m_policySource->publishedPolicy()->jointThresholds.finiteRotationTravelLimit.siValue()==24.0,
+           "a23 saved-policy-restored-after-real-reopen");
         ok(restoredCell && !restoredCell->getDevices().empty(), "step5.5 host-device-restored");
         ok(restoredCell && !restoredCell->getObjects().empty(), "step5.5 host-geometry-restored");
         const auto restoredScene = getRobWorkStudio()->getWorkCellScene();

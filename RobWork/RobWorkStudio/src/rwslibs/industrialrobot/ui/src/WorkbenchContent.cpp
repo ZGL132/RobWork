@@ -819,8 +819,14 @@ void WorkbenchContentImpl::buildSideContents()
     rightContent->setObjectName("ird_right_content");
     rightContent->setMinimumWidth(kRightDockMinWidth);
     auto* rightLayout = new QVBoxLayout(rightContent);
+    // 只为装配了编辑适配器的宿主提供注册表入口；纯只读摘要源仍由卡片
+    // 展示既有反馈，不能给不存在的命令发送后悄悄无响应（A-23兼容路径）。
+    std::function<void()> editPolicy;
+    if (dynamic_cast<IPolicySummaryEditSource*>(m_deps.wiring.policySource.get())) {
+        editPolicy=[this] { submitCommand("policy.edit"); };
+    }
     rightLayout->addWidget(createPolicySummaryCard(*m_deps.wiring.policySource,
-                                                   &m_refreshPolicyCard, rightContent));
+                                                   &m_refreshPolicyCard, rightContent, editPolicy));
     rightLayout->addStretch(1);
     m_regionWidgets[static_cast<std::size_t>(WorkbenchRegion::Right)] = rightContent;
 }
@@ -1276,6 +1282,17 @@ void WorkbenchContentImpl::assembleCommandSystem()
                     entry.descriptor.id + " result=" +
                     std::to_string(static_cast<int>(result)));
         }
+    }
+
+    // A-23：策略卡、命令面板共享注册表的项目/只读门控，避免卡片绕过命令入口。
+    if (auto* source = dynamic_cast<IPolicySummaryEditSource*>(m_deps.wiring.policySource.get())) {
+        CommandDescriptor desc;
+        desc.id = "policy.edit"; desc.ownerUnit = "ui";
+        desc.titleKey = u8"修改工程策略"; desc.category = CommandCategory::Edit;
+        desc.scope = ShellCommandScope::Project; desc.readOnlyAllowed = false;
+        m_commands->registerCommand(desc, [source](const std::vector<CommandParameter>&) {
+            source->requestPolicyEdit(); CommandOutcome result; result.accepted = true; return result;
+        });
     }
 
     // 装配收口（§7.2——运行期只读；此后 registerCommand 拒绝）。

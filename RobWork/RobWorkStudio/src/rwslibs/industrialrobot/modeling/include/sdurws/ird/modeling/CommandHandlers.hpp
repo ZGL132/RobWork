@@ -629,6 +629,16 @@ struct HandlerServices {
     /// （I-MDL-11 重算复核），mimic/planar/floating/闭环阻断不随动（M-6，
     /// 阻断判定在导入域固定、不消费本能力位）。单元卡 §15 v0.45 登记）。
     CouplingStage couplingStage = CouplingStage::R1Locked;
+
+    /**
+     * @brief A-23/MDL-06：按prepare的不可变基线修订解析实际工程策略。
+     * @param base [in] 本次命令基线的完整对象引用集；不得用可变HEAD替代。
+     * @return 已发布策略或空策略及定位诊断；空策略使行程断言就地阻断。
+     * 默认空回调兼容既有policyProvider/object/version；非空时此回调为唯一来源。
+     * 由宿主持有并保证闭包生命周期覆盖处理器；仅命令执行线程调用，不得修改修订。
+     * 异常仅用于装配契约违约；数据/环境错误沿PolicyResolution诊断返回。
+     */
+    std::function<policy::PolicyResolution(const project::RevisionView&)> resolvePolicyForRevision;
 };
 
 /**
