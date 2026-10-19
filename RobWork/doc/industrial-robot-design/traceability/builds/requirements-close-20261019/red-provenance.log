@@ -1,0 +1,127 @@
+Note: Google Test filter = *GenerationProvenanceAndConflict*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.GenerationProvenanceAndConflict_AT24_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1501): error: Value of: source->toolTip().contains(QString::fromStdString(selected.generation->instanceId))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1502): error: Value of: source->toolTip().contains(QString::fromStdString(selected.generation->generatorId))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1504): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.first))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(1505): error: Value of: source->toolTip().contains(QString::fromStdString(parameter.second))
+  Actual: false
+Expected: true
+
+[  FAILED  ] RequirementsSessionGuiTest.GenerationProvenanceAndConflict_AT24_WP14T12 (137 ms)
+[----------] 1 test from RequirementsSessionGuiTest (137 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (137 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.GenerationProvenanceAndConflict_AT24_WP14T12
+
+ 1 FAILED TEST

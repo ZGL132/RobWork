@@ -1,0 +1,5 @@
+<string>:1: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+Traceback (most recent call last):
+REQ-03/UX-06 14px blue core expected>=100, actual=32
+  File "<string>", line 1, in <module>
+AssertionError

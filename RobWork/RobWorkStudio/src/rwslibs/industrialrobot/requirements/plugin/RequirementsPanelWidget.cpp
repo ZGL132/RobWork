@@ -2318,6 +2318,24 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
                               && (specDriven(r.fieldKey) || textField) && m_writable;
         edit->setReadOnly(!editable);
         edit->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
+        if (r.fieldKey == "source" && point->generation.has_value()) {
+            // REQ-07/11、AT-24：短徽标保持列表易读，悬停详情提供实际批次
+            // 和重生成采用的参数快照。这里只投影域内既有溯源，不另建可
+            // 编辑副本，也不触发草稿写入；参数保持生产者的确定性顺序。
+            const auto& provenance = *point->generation;
+            QString details = QStringLiteral("生成器：%1\n生成批次：%2\n关联：%3")
+                .arg(QString::fromStdString(provenance.generatorId),
+                     QString::fromStdString(provenance.instanceId),
+                     provenance.linked ? QStringLiteral("已关联") : QStringLiteral("已解除"));
+            for (const auto& parameter : provenance.parameters) {
+                details += QStringLiteral("\n%1 = %2")
+                    .arg(QString::fromStdString(parameter.first),
+                         QString::fromStdString(parameter.second));
+            }
+            // 参数可能来自导入文本，显式转义避免被Qt当成富文本标签执行。
+            edit->setToolTip(QStringLiteral("<qt><pre>%1</pre></qt>").arg(details.toHtmlEscaped()));
+            edit->setAccessibleDescription(details);
+        }
         // 权威文本（幻影脏化短路基准——提交/刷新双轨同源）。
         edit->setProperty("irdAuthoritativeValue",
                           QString::fromStdString(

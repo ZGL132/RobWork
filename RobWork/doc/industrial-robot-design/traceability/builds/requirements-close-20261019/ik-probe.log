@@ -1,0 +1,21 @@
+narrow_roll_need_iteration known_valid_q=0 solutions=1 solved_q=0.2 outcome=1
+positive_roll_valid_seed known_valid_q=0.15 solutions=1 solved_q=0.15 outcome=1
+positive_roll_invalid_seed known_valid_q=0.15 solutions=1 solved_q=0.0999997 outcome=1
+tilted_tool_free_roll known_valid_q=0.4 solutions=1 solved_q=0.4 outcome=1
+euler_nonzero_pitch known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+euler_control_no_constraint known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+gimbal_positive_pitch known_valid_q=0.3 solutions=1 solved_q=0.3 outcome=1
+gimbal_control_no_constraint known_valid_q=0.3 solutions=1 solved_q=0.3 outcome=1
+pitch=1.4 euler_scan known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=1.4 euler_scan_control known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=1.55 euler_scan known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=1.55 euler_scan_control known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=1.7 euler_scan known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=1.7 euler_scan_control known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=2 euler_scan known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=2 euler_scan_control known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=2.8 euler_scan known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch=2.8 euler_scan_control known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch_under_nonzero_yaw known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+pitch_under_nonzero_yaw_control known_valid_q=0.13 solutions=1 solved_q=0.13 outcome=1
+gimbal_yaw_only_already_satisfied known_valid_q=0 solutions=1 solved_q=0 outcome=1

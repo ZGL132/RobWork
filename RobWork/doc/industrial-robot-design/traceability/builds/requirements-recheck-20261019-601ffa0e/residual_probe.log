@@ -1,0 +1,37 @@
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from RequirementsResidualReview
+[ RUN      ] RequirementsResidualReview.NarrowRollOutsideSeedMustConverge_REQ09
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp(34): error: Value of: out.solutionSet.solutions.empty()
+  Actual: true
+Expected: false
+q=0为已知合法解；唯一初值0.5应由姿态残差拉回，而非依赖TCP偏置的位置项
+
+[  FAILED  ] RequirementsResidualReview.NarrowRollOutsideSeedMustConverge_REQ09 (0 ms)
+[ RUN      ] RequirementsResidualReview.OppositeToolAxisMustBeRejected_REQ09
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp(42): error: Value of: out.solutionSet.solutions.empty()
+  Actual: false
+Expected: true
+方向相反180度不得判为零姿态残差；返回解数=1
+
+[  FAILED  ] RequirementsResidualReview.OppositeToolAxisMustBeRejected_REQ09 (0 ms)
+[ RUN      ] RequirementsResidualReview.OppositeToolAxisFullPoseControl_REQ09
+[       OK ] RequirementsResidualReview.OppositeToolAxisFullPoseControl_REQ09 (0 ms)
+[ RUN      ] RequirementsResidualReview.TiltedDirectionNeedsActualCorrection_REQ09
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp(55): error: Value of: out.solutionSet.solutions.empty()
+  Actual: true
+Expected: false
+允许滚转的方向任务仍需从不满足的初值纠正倾斜方向
+
+[  FAILED  ] RequirementsResidualReview.TiltedDirectionNeedsActualCorrection_REQ09 (0 ms)
+[----------] 4 tests from RequirementsResidualReview (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] RequirementsResidualReview.NarrowRollOutsideSeedMustConverge_REQ09
+[  FAILED  ] RequirementsResidualReview.OppositeToolAxisMustBeRejected_REQ09
+[  FAILED  ] RequirementsResidualReview.TiltedDirectionNeedsActualCorrection_REQ09
+
+ 3 FAILED TESTS

@@ -58,7 +58,9 @@ namespace sdurws::ird::kinematics {
  */
 struct TaskPoseConstraint {
     std::array<bool, 6> constrainedDof{{true, true, true, true, true, true}};
-    rw::math::Rotation3D<double> referenceInBase = rw::math::Rotation3D<double>::identity();
+    // 默认世界/基座轴，显式值构造避免纯值契约的默认构造隐式要求框架外联库。
+    // 独立模式的调用方同样可以直接TaskPoseConstraint{}，语义仍为单位旋转。
+    rw::math::Rotation3D<double> referenceInBase{1,0,0,0,1,0,0,0,1};
     bool allowToolRoll = false;
     std::array<double, 2> rollRange{{-3.14159265358979323846, 3.14159265358979323846}};
 

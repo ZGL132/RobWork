@@ -40,6 +40,7 @@
 #include <QGridLayout>
 #include <QDockWidget>
 #include <QIcon>
+#include <QImage> // 验收读取真实窗口像素；不以投影状态代替实际颜色。
 #include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -52,6 +53,8 @@
 #include <QKeyEvent> // 临时三维工具在视图获得焦点时也接受Esc取消。
 #include <QFormLayout> // 临时目标的位置/姿态检查，确认前仅保存界面值。
 #include <rw/graphics/SceneViewer.hpp> // REQ-10正式验证使用真实相机/视口，不替换raycast。
+#include <rw/graphics/SceneCamera.hpp> // 标准视图验收读取真实相机投影。
+#include <sdurws/ird/ui/UiTheme.hpp> // 验收色值与产品图例共用词表。
 #include <rw/math/RPY.hpp> // 三维创建的世界系RPY输入；构造参数按Z/Y/X轴排列。
 #include <QPushButton>
 #include <QRadioButton>
@@ -3496,6 +3499,33 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
     }
     out.accepted = true;
     auto& store = adapter->projectStore();
+
+    // UX-07：表单级应用是把草稿变成项目修订，普通合法输入也必须先征求
+    // 用户确认，不能只在工程策略产生ConfirmableFinding时才弹窗。
+    // 无待应用修改不打扰；此门放在任何域组装/提交之前，取消既不写项目，
+    // 也不清除或另存草稿。显示命令不经过本入口，因此不会弹保存提示。
+    const bool hasUnapplied = (m_draft && m_draft->hasSession()
+                               && m_draft->anyUnappliedChanges())
+                              || m_requirementsEditor.draftStatus().dirty;
+    if (hasUnapplied) {
+        const auto confirmedHead = store.query().head().id;
+        const auto answer = QMessageBox::question(
+            m_dockBody.data(), QStringLiteral("应用草稿"),
+            QStringLiteral("将当前设计和需求修改应用到项目。是否继续？\n取消后草稿将保留。"),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        if (answer != QMessageBox::Yes) {
+            if (m_hostStatusBar) { m_hostStatusBar->showMessage(QStringLiteral("已取消应用，草稿已保留"), 4000); }
+            return out; // 正常取消不产生错误诊断，也不调用任何域提交出口。
+        }
+        // 模态事件循环期间可能发生项目关闭/切换或外部修订；旧确认不得
+        // 作用到另一个项目或新基线。共享adapter仅保证生命周期，不代表
+        // 会话仍有效；确认后必须同时复核会话和权威HEAD再读提交锚。
+        if (m_lastStoreAdapter != adapter || !m_controller || !m_controller->hasOpenSession()
+            || store.query().head().id != confirmedHead) {
+            if (m_hostStatusBar) { m_hostStatusBar->showMessage(QStringLiteral("项目已变化，请检查草稿后重新应用"), 5000); }
+            return out;
+        }
+    }
 
     // 权威分支表首条 tip（INV-M3 单默认分支）——遍历的会话锚输入。
     std::optional<std::pair<core::BranchId, core::RevisionId>> anchor;
@@ -7398,39 +7428,45 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
 
         // ---- 拍 9：draft.apply（需求域真实修订）＋项目级撤销使能----------
         step("9 apply-and-project-undo");
-        const DomainApplyReport applyReport = runDomainApply(
-            m_domains ? m_domains->applyEntries
-                      : std::vector<ui::DomainModuleEntry>{},
-            std::nullopt,
-            [this](project::CommandEnvelope envelope,
-                   project::ICommandInteraction* cmdInteraction) {
-                const auto adapter = m_lastStoreAdapter;
-                if (adapter == nullptr) {
-                    return project::CommandResult{};
-                }
-                return adapter->projectStore().commands().submit(
-                    std::move(envelope), cmdInteraction);
-            },
-            nullptr,
-            [this](const std::string& message) {
-                if (m_diag.pipeline) {
-                    m_diag.pipeline->logDev(kPluginDevChannel, message);
-                }
-            });
-        bool requirementsApplied = false;
-        for (const auto& entry : applyReport.entries) {
-            if (entry.outcome == ui::DomainApplyEntryReport::Outcome::Submitted) {
-                requirementsApplied = true;
+        // UX-07：走真实命令入口验证取消，而非给runDomainApply注入空交互
+        // 后把提交成功误当作确认流程已验证。定时器只回答实际产品确认框。
+        const auto beforeCancelApply = m_requirementsEditor.workingSet();
+        const auto headBeforeCancelApply = m_lastStoreAdapter->projectStore().query().head().id;
+        bool sawApplyConfirmation = false;
+        QTimer cancelApply;
+        cancelApply.setSingleShot(true);
+        QObject::connect(&cancelApply, &QTimer::timeout, this, [&] {
+            auto* box = qobject_cast<QMessageBox*>(QApplication::activeModalWidget());
+            if (box && box->windowTitle() == QStringLiteral("应用草稿")) {
+                sawApplyConfirmation = true;
+                snapPng(box, "tour-apply-confirmation.png");
+                box->button(QMessageBox::No)->click();
             }
-        }
-        ok(requirementsApplied, "step9 requirements-draft-applied (entries="
-                                    + std::to_string(applyReport.entries.size())
-                                    + ")");
-        // 遍历直调 runDomainApply＝绕过 draft.apply 编排的测试捷径——补
-        // 编排同款的提交收口（UI-T39：committed 后需求面板刷新，项目级
-        // 撤销键随新 tip 的 inverse 事实点亮；真实用户路径该刷新由
-        // orchestrateApplyDraft 的 committed 分支承担）。
-        refreshRequirementsFromSession();
+        });
+        cancelApply.start(250);
+        m_content->submitCommand("draft.apply");
+        cancelApply.stop(); settleEvents(200);
+        ok(sawApplyConfirmation, "step9 actual-apply-confirmation-seen");
+        ok(m_requirementsEditor.workingSet() == beforeCancelApply, "step9 cancel-apply-keeps-draft");
+        ok(m_lastStoreAdapter->projectStore().query().head().id == headBeforeCancelApply,
+           "step9 cancel-apply-zero-project-revision");
+        bool confirmedApply = false;
+        QTimer acceptApply;
+        acceptApply.setSingleShot(true);
+        QObject::connect(&acceptApply, &QTimer::timeout, this, [&] {
+            auto* box = qobject_cast<QMessageBox*>(QApplication::activeModalWidget());
+            if (box && box->windowTitle() == QStringLiteral("应用草稿")) {
+                confirmedApply = true;
+                box->button(QMessageBox::Yes)->click();
+            }
+        });
+        acceptApply.start(250);
+        m_content->submitCommand("draft.apply");
+        acceptApply.stop();
+        ok(confirmedApply, "step9 actual-apply-confirmed");
+        ok(m_lastStoreAdapter->projectStore().query().head().id != headBeforeCancelApply,
+           "step9 requirements-draft-applied");
+        // 由真实编排完成提交后的刷新，随后验证回执和撤销的呈现事实。
         settleEvents(300);
         QPushButton* projectUndo = nullptr;
         for (QPushButton* b : panel->findChildren<QPushButton*>()) {
@@ -7452,17 +7488,8 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
         ok(projectUndo != nullptr
                && projectUndo->toolTip().contains(QStringLiteral("没有可撤销")),
            "step9 project-undo-reason-shown");
-        // 二连应用探针（UI-T39——验证面：首次应用后的会话基线演进）。
-        // 实测行为：第二次提交被 S3 以 invalid-payload 拒绝（域内无诊断）
-        // ——根因＝首次应用回执只回填了根对象身份，编辑器工作集根引用表
-        // 的四集合挂载态仍停留在首应用前（refs 空→集合槽按 allocateNew
-        // 组装），与存储端已挂载的集合身份失配（prepare 挂载失配拒绝面）。
-        // 这是域会话接线的下一层缺口（UI-T35 P1-2 只回填根身份的延续），
-        // 完整修复＝自身回执后以新 HEAD 闭包重导线＋未应用编辑保序重演
-        // （§4.6 三态语义——RequirementsRefreshCoordinator 既有机制接线），
-        // 归 UI-T40 序列登记 findings。本拍如实断言当前拒绝行为（诚实面
-        // ——不虚构二连应用成功），撤销回路验证在缺口修复前由 project
-        // 单测（UndoRedo 全链 254 例）与 gui 域侧用例承载。
+        // 第二次编辑并应用必须提交成功，证明首应用已重建基线集合身份；
+        // 随后真实点击项目撤销，检查新修订和可重做事实，拒绝不得计通过。
         {
             QPushButton* addStation = nullptr;
             for (QPushButton* b : panel->findChildren<QPushButton*>()) {
@@ -7513,9 +7540,7 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
                     }
                 }
             }
-            // 诚实双态断言：committed＝缺口已修（二连应用工作——撤销回路
-            // 继续走点击验证）；未 committed＝缺口在位（F-460——当前拒绝
-            // 行为即预期，撤销回路的宿主级点击验证随缺口修复回补）。
+            // 回执必须真的提交；失败保留拒绝原因供定位，不豁免撤销链。
             if (secondCommitted) {
                 ok(true, "step9 second-apply-committed");
                 refreshRequirementsFromSession();
@@ -7535,7 +7560,7 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
                     ok(redoLit, "step9 project-undo-committed (redo-stack-lit)");
                 }
             } else {
-                ok(true, "step9 second-apply-rejected-as-known-gap (rej="
+                ok(false, "step9 second-apply-unexpectedly-rejected (rej="
                              + secondDetail + ")");
             }
         }
@@ -7858,6 +7883,178 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             snapPng(m_view3d, "tour-6c-sample-blue-circle.png");
         }
 
+
+        // ---- 拍12：真实窗口视图动作及渲染像素（UX-11/UX-06）----------
+        // 仅开发期tour启用。下面的四态值是明确的显示夹具，不写覆盖台账，
+        // 不计为算法成功证据；与拍11真实评估各自验证上下游，结束恢复原预览。
+        step("12 view-actions-and-real-pixels");
+        auto rwView = getRobWorkStudio()->getView();
+        if (!rwView.isNull() && m_view3dGateway != nullptr) {
+            const auto beforeDisplay = m_requirementsEditor.workingSet();
+            const auto revisionBeforeDisplay = m_lastStoreAdapter->projectStore().query().head().id;
+            const auto viewer = rwView->getSceneViewer();
+            const auto savedCamera = viewer->getTransform();
+            const auto savedProjection = viewer->getViewCamera()->getProjectionMatrix();
+            const int savedMask = rwView->getSceneViewer()->getViewCamera()->getDrawMask();
+            auto actionFor = [&](const char* text) -> QAction* {
+                for (auto* action : rwView->findChildren<QAction*>()) {
+                    if (action->text().remove('&') == QString::fromLatin1(text)) return action;
+                }
+                return nullptr;
+            };
+            auto triggerView = [&](const char* text) {
+                auto* action = actionFor(text);
+                ok(action != nullptr, std::string("step12 action-present ") + text);
+                if (action != nullptr) { action->trigger(); settleEvents(150); }
+            };
+            const char* standardViews[] = {"Top (Ctrl + T)", "Front (Ctrl + F)",
+                "Right (Ctrl + R)", "Axiometric (Ctrl + A)"};
+            for (int index=0;index<4;++index) {
+                triggerView(standardViews[index]);
+                const auto camera=viewer->getTransform();
+                const auto p=camera.P();
+                // 框架标准视图朝向原点；独立坐标比较避免只检查action被触发。
+                if(index==0) ok(std::fabs(p[0])+std::fabs(p[1])<1e-8 && p[2]>0,"step12 top-camera-axis");
+                if(index==1) ok(p[0]>0 && std::fabs(p[1])+std::fabs(p[2])<1e-8,"step12 front-camera-axis");
+                if(index==2) ok(p[1]>0 && std::fabs(p[0])+std::fabs(p[2])<1e-8,"step12 right-camera-axis");
+                if(index==3) ok(std::fabs(p[0]-p[1])+std::fabs(p[1]-p[2])<1e-8,"step12 axonometric-camera-axis");
+                snapPng(m_view3d,("tour-7-view-"+std::to_string(index)+".png").c_str());
+            }
+            triggerView("Orthographic view");
+            ok(viewer->getViewCamera()->getProjectionMatrix().isOrtographicProjection(),"step12 orthographic-matrix");
+            triggerView("Perspective view");
+            auto perspective=viewer->getViewCamera()->getProjectionMatrix();
+            double projectionEntries[16]; perspective.toOpenGLMatrix(projectionEntries);
+            ok(std::fabs(projectionEntries[11]+1.0)<1e-12 && std::fabs(projectionEntries[15])<1e-12,"step12 perspective-matrix");
+            const auto zoomBefore=viewer->getTransform().P().norm2();
+            triggerView("Zoom in (Ctrl + +)");
+            ok(viewer->getTransform().P().norm2()<zoomBefore,"step12 zoom-in-camera-distance");
+            triggerView("Zoom out (Ctrl + -)");
+            triggerView("Autozoom (Ctrl + *)");
+            triggerView("Home view");
+            // 相机旋转走真实键盘事件，坐标轴方向发生变化但需求坐标不得改变。
+            const auto beforeRotate=viewer->getTransform();
+            QKeyEvent rotate(QEvent::KeyPress,Qt::Key_W,Qt::NoModifier);
+            QApplication::sendEvent(rwView.get(),&rotate); settleEvents(150);
+            ok(viewer->getTransform()!=beforeRotate,"step12 keyboard-orbit-camera-changed");
+            for(const char* text:{"Wire","Outline","Solid"}) triggerView(text);
+            auto* transparent=actionFor("Transparent");
+            ok(transparent!=nullptr,"step12 transparency-action-present");
+            if(transparent) {const bool original=transparent->isChecked();triggerView("Transparent");
+                ok(transparent->isChecked()!=original,"step12 transparency-toggle");triggerView("Transparent");}
+            const char* groups[]={"Physical group","Virtual group","Drawable group","Collision group",
+                "User1 group","User2 group","User3 group","User4 group"};
+            const int bits[]={rw::graphics::DrawableNode::Physical,rw::graphics::DrawableNode::Virtual,
+                rw::graphics::DrawableNode::DrawableObject,rw::graphics::DrawableNode::CollisionObject,
+                rw::graphics::DrawableNode::User1,rw::graphics::DrawableNode::User2,
+                rw::graphics::DrawableNode::User3,rw::graphics::DrawableNode::User4};
+            for(int index=0;index<8;++index) {
+                const int before=rwView->getSceneViewer()->getViewCamera()->getDrawMask(); triggerView(groups[index]);
+                ok(rwView->getSceneViewer()->getViewCamera()->getDrawMask()==(before^bits[index]),std::string("step12 mask-bit ")+groups[index]);
+                triggerView(groups[index]);
+                ok(rwView->getSceneViewer()->getViewCamera()->getDrawMask()==before,"step12 mask-restored");
+            }
+            // 四个相互分开的世界系点(m)，相机直接位于+Z，独立像素断言能发现
+            // GL灯光/纹理继承污染；不能用cellStates非空替代真实绿黄红灰可见。
+            triggerView("Top (Ctrl + T)");
+            ui::View3DSampleGrid fixture;
+            fixture.samples={{-1,-1,0.2},{-1,1,0.2},{1,-1,0.2},{1,1,0.2}};
+            fixture.cellStates={ui::View3DCellState::Good,ui::View3DCellState::Weak,
+                ui::View3DCellState::Failed,ui::View3DCellState::NotSampled};
+            fixture.sampleIndices={10,20,30,40};
+            ui::View3DPreviewUpdate colorFixture; colorFixture.sampleGrid=fixture;
+            ok(m_view3dGateway->applyPreview(colorFixture),"step12 render-fixture-applied");
+            settleEvents(250);
+            const auto pixels=m_view3d->grab().toImage().convertToFormat(QImage::Format_RGB32);
+            const float* colors[]={ui::palette::kSampleGoodGl,ui::palette::kSampleWeakGl,
+                ui::palette::kSampleFailedGl,ui::palette::kSampleNotSampledGl};
+            std::array<int,4> counts{};
+            for(int y=0;y<pixels.height();++y) for(int x=0;x<pixels.width();++x) {
+                const auto rgb=pixels.pixel(x,y);
+                for(int c=0;c<4;++c) if(std::abs(qRed(rgb)-int(colors[c][0]*255))<=8
+                    && std::abs(qGreen(rgb)-int(colors[c][1]*255))<=8
+                    && std::abs(qBlue(rgb)-int(colors[c][2]*255))<=8) ++counts[c];
+            }
+            for(int c=0;c<4;++c) ok(counts[c]>=9,
+                "step12 actual-palette-pixels-"+std::to_string(c)+"="+std::to_string(counts[c]));
+            snapPng(m_view3d,"tour-8-real-four-state-palette.png");
+            fixture.highlightedSampleIndex=20; colorFixture.sampleGrid=fixture;
+            ok(m_view3dGateway->applyPreview(colorFixture),"step12 selected-fixture-applied");
+            settleEvents(250);
+            const auto selected=m_view3d->grab().toImage().convertToFormat(QImage::Format_RGB32);
+            int changedPixels=0;
+            int bluePixels=0;
+            for(int y=0;y<pixels.height();++y) for(int x=0;x<pixels.width();++x)
+                if(selected.pixel(x,y)!=pixels.pixel(x,y)) {
+                    ++changedPixels;
+                    const auto rgb=selected.pixel(x,y);
+                    if(std::abs(qRed(rgb)-64)<=8 && std::abs(qGreen(rgb)-115)<=8
+                        && std::abs(qBlue(rgb)-255)<=8) ++bluePixels;
+                }
+            ok(changedPixels>=40,"step12 selected-ring-changes-real-pixels="+std::to_string(changedPixels));
+            // 14px蓝点芯应提供约196px；仅32px环线不能掩盖点芯alpha越界读取。
+            ok(bluePixels>=100,"step12 selected-blue-core-pixels="+std::to_string(bluePixels));
+            snapPng(m_view3d,"tour-8b-real-selected-ring.png");
+            // 产品PNG导出走真实视图API，文件可解码；不把QWidget抓图冒充该能力。
+            const auto exported=outDir+"/tour-8c-product-export.png";
+            rwView->saveBufferToFile(exported);
+            ok(!QImage(exported).isNull(),"step12 product-png-export-decodes");
+            ui::View3DPreviewUpdate restored; restored.frameMarkers=m_reqMarkers;
+            restored.boxOutline=m_reqBox; restored.sampleGrid=m_reqGrid;
+            ok(m_view3dGateway->applyPreview(restored),"step12 production-preview-restored");
+            viewer->setTransform(savedCamera);
+            viewer->getViewCamera()->setProjectionMatrix(savedProjection);
+            ok(rwView->getSceneViewer()->getViewCamera()->getDrawMask()==savedMask,"step12 display-mask-unchanged");
+            ok(m_requirementsEditor.workingSet()==beforeDisplay,"step12 display-zero-draft-write");
+            ok(m_lastStoreAdapter->projectStore().query().head().id==revisionBeforeDisplay,
+                "step12 display-zero-project-revision");
+        } else { ok(false,"step12 real-view-missing"); }
+
+
+        // UX-05/09：已加载真实草稿的窄Dock也必须可操作。空项目布局截图
+        // 无法验证属性表单，因此在本tour末尾补充上下滚动和真实按钮可达。
+        step("13 populated-dock-layout");
+        const auto layoutDraft = m_requirementsEditor.workingSet();
+        const auto layoutHead = m_lastStoreAdapter->projectStore().query().head().id;
+        const auto savedLayout = hostWin->saveState();
+        const auto savedSize = hostWin->size();
+        m_content->showStagePanel(StageId::Requirements);
+        if (m_requirementsDock) { m_requirementsDock->show(); m_requirementsDock->raise(); }
+        for (int pass=0;pass<2;++pass) {
+            hostWin->showNormal();
+            hostWin->resize(pass==0 ? QSize(1920,1152) : QSize(1024,790));
+            hostWin->resizeDocks({m_requirementsDock},{pass==0 ? 520 : 396},Qt::Horizontal);
+            settleEvents(250);
+            for (auto* tabs : panel->findChildren<QTabWidget*>()) {
+                for (int tab=0;tab<tabs->count();++tab) {
+                    if (tabs->tabText(tab)==QStringLiteral("工位")) { tabs->setCurrentIndex(tab); break; }
+                }
+            }
+            // Dock根节点本身就是外层滚动区；findChildren不含自身，漏掉它会
+            // 让上一拍的滚动位置遮住顶部新增入口，误报控件不可达。
+            auto layoutScrolls = panel->findChildren<QScrollArea*>();
+            if (auto* rootScroll = qobject_cast<QScrollArea*>(panel)) {
+                layoutScrolls.prepend(rootScroll);
+            }
+            for (auto* scroll : layoutScrolls) {
+                if (scroll->isVisible()) { scroll->verticalScrollBar()->setValue(0); }
+            }
+            settleEvents(150);
+            auto* add = panel->findChild<QPushButton*>("ird_req_add_points");
+            ok(add && add->isEnabled() && !add->visibleRegion().isEmpty(),
+               "step13 populated-add-reachable-"+std::to_string(pass));
+            snapPng(hostWin,("tour-9-populated-top-"+std::to_string(pass)+".png").c_str());
+            for (auto* scroll : layoutScrolls) {
+                if (!scroll->isVisible()) { continue; }
+                auto* bar=scroll->verticalScrollBar();
+                bar->setValue(bar->maximum()); settleEvents(100);
+                ok(bar->value()==bar->maximum(),"step13 populated-scroll-bottom-reachable");
+            }
+            snapPng(m_requirementsDock,("tour-9-populated-bottom-"+std::to_string(pass)+".png").c_str());
+        }
+        hostWin->resize(savedSize); hostWin->restoreState(savedLayout); settleEvents(150);
+        ok(m_requirementsEditor.workingSet()==layoutDraft,"step13 layout-zero-draft-write");
+        ok(m_lastStoreAdapter->projectStore().query().head().id==layoutHead,"step13 layout-zero-revision");
         snapPng(hostWin, "tour-5-final-state.png");
 
         std::cout << "[ird-ui-smoke-tour] " << (failedCount == 0 ? "DONE" : "FAILED")

@@ -1,0 +1,122 @@
+[==========] Running 12 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 12 tests from ModelingAcceptanceProbe
+[ RUN      ] ModelingAcceptanceProbe.JointVelocityAccelerationEditable_MDL01
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(78): error: Value of: rows.contains("velocity",Qt::CaseInsensitive)
+  Actual: false
+Expected: true
+缺少关节最大速度编辑字段；实际键见joint.txt
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(79): error: Value of: rows.contains("acceleration",Qt::CaseInsensitive)
+  Actual: false
+Expected: true
+缺少关节最大加速度编辑字段
+
+[  FAILED  ] ModelingAcceptanceProbe.JointVelocityAccelerationEditable_MDL01 (745 ms)
+[ RUN      ] ModelingAcceptanceProbe.ContinuousWorkingRangeEditable_MDL12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(85): error: Value of: keys().contains("working-range",Qt::CaseInsensitive)
+  Actual: false
+Expected: true
+continuous仅展示既有范围，缺少确认有限工程工作范围的编辑字段
+
+[  FAILED  ] ModelingAcceptanceProbe.ContinuousWorkingRangeEditable_MDL12 (313 ms)
+[ RUN      ] ModelingAcceptanceProbe.LinkPhysicalOverrideEditable_MDL05
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(94): error: Value of: editable
+  Actual: false
+Expected: true
+选中连杆后物性字段均只读，未提供质量/质心/惯量手工覆盖入口
+
+[  FAILED  ] ModelingAcceptanceProbe.LinkPhysicalOverrideEditable_MDL05 (326 ms)
+[ RUN      ] ModelingAcceptanceProbe.CouplingMatrixEditable_MDL21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(101): error: Value of: entry
+  Actual: false
+Expected: true
+耦合矩阵已有schema和消费者，但无表单字段或注册编辑命令
+
+[  FAILED  ] ModelingAcceptanceProbe.CouplingMatrixEditable_MDL21 (254 ms)
+[ RUN      ] ModelingAcceptanceProbe.WorkCellImportEntry_MDL18
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(107): error: Value of: entry
+  Actual: false
+Expected: true
+命令目录仅含URDF/Xacro/规范包导入，缺少外部WorkCell导入通道
+
+[  FAILED  ] ModelingAcceptanceProbe.WorkCellImportEntry_MDL18 (191 ms)
+[ RUN      ] ModelingAcceptanceProbe.NamedPoseRestoreEntry_MDL17
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(115): error: Value of: entry
+  Actual: false
+Expected: true
+命名位姿只有新增/删除/保存，不能恢复到会话三维姿态
+
+[  FAILED  ] ModelingAcceptanceProbe.NamedPoseRestoreEntry_MDL17 (274 ms)
+[ RUN      ] ModelingAcceptanceProbe.LocalUndoRedoEntries_L5
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(124): error: Value of: undo && redo
+  Actual: false
+Expected: true
+单元卡L-5承诺的建模本地撤销/重做入口均缺席；项目级逆命令不等价于草稿编辑撤销
+
+[  FAILED  ] ModelingAcceptanceProbe.LocalUndoRedoEntries_L5 (196 ms)
+[ RUN      ] ModelingAcceptanceProbe.ToolAndSceneCreationEntries_MDL13_MDL15
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(137): error: Value of: tool
+  Actual: false
+Expected: true
+空白/模板模型无工具时无法从建模面板新建工具
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(138): error: Value of: scene
+  Actual: false
+Expected: true
+空白/模板模型无场景对象时无法从建模面板新建障碍物
+
+[  FAILED  ] ModelingAcceptanceProbe.ToolAndSceneCreationEntries_MDL13_MDL15 (209 ms)
+[ RUN      ] ModelingAcceptanceProbe.BaseEulerEditing_MDL22
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(146): error: Value of: euler
+  Actual: false
+Expected: true
+MDL-22要求任意欧拉角编辑，但安装页仅提供EAA旋转矢量，二者输入语义不同
+
+[  FAILED  ] ModelingAcceptanceProbe.BaseEulerEditing_MDL22 (272 ms)
+[ RUN      ] ModelingAcceptanceProbe.HomeZeroUsesAuthoritativeReservedKeys_MDL04_MDL17
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(155): error: Value of: host.text.contains("0.42")
+  Actual: false
+Expected: true
+真实命令连权威homeConfiguration的数据都未读取；实际文本=复位 Home/Zero（会话姿态参考）
+
+
+[  FAILED  ] ModelingAcceptanceProbe.HomeZeroUsesAuthoritativeReservedKeys_MDL04_MDL17 (222 ms)
+[ RUN      ] ModelingAcceptanceProbe.ModelDiffShowsObjectAndChangedValues_MDL08_UX13
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(163): error: Value of: host.text.contains("j1") && host.text.contains("0.25")
+  Actual: false
+Expected: true
+差异只呈现分类条数，未显示变化对象/前后值，无法点击定位；实际文本=与基线修订的差异（Model Diff）
+
+结构组：0 条
+参数组：1 条
+物性组：0 条
+
+[  FAILED  ] ModelingAcceptanceProbe.ModelDiffShowsObjectAndChangedValues_MDL08_UX13 (195 ms)
+[ RUN      ] ModelingAcceptanceProbe.ExistingXacroIncludeConsumedByProductionBridge_MDL19
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\probe.cpp(173): error: Value of: expanded.ok
+  Actual: false
+Expected: true
+真实磁盘include存在，但生产桥传入空依赖树导致失败：ValidatedXacroSource 契约违约：入口字节/树根键/来源摘要/来源路径缺一不可（io 产物装配面）
+
+[  FAILED  ] ModelingAcceptanceProbe.ExistingXacroIncludeConsumedByProductionBridge_MDL19 (208 ms)
+[----------] 12 tests from ModelingAcceptanceProbe (3413 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 1 test suite ran. (3413 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 12 tests, listed below:
+[  FAILED  ] ModelingAcceptanceProbe.JointVelocityAccelerationEditable_MDL01
+[  FAILED  ] ModelingAcceptanceProbe.ContinuousWorkingRangeEditable_MDL12
+[  FAILED  ] ModelingAcceptanceProbe.LinkPhysicalOverrideEditable_MDL05
+[  FAILED  ] ModelingAcceptanceProbe.CouplingMatrixEditable_MDL21
+[  FAILED  ] ModelingAcceptanceProbe.WorkCellImportEntry_MDL18
+[  FAILED  ] ModelingAcceptanceProbe.NamedPoseRestoreEntry_MDL17
+[  FAILED  ] ModelingAcceptanceProbe.LocalUndoRedoEntries_L5
+[  FAILED  ] ModelingAcceptanceProbe.ToolAndSceneCreationEntries_MDL13_MDL15
+[  FAILED  ] ModelingAcceptanceProbe.BaseEulerEditing_MDL22
+[  FAILED  ] ModelingAcceptanceProbe.HomeZeroUsesAuthoritativeReservedKeys_MDL04_MDL17
+[  FAILED  ] ModelingAcceptanceProbe.ModelDiffShowsObjectAndChangedValues_MDL08_UX13
+[  FAILED  ] ModelingAcceptanceProbe.ExistingXacroIncludeConsumedByProductionBridge_MDL19
+
+12 FAILED TESTS

@@ -1,0 +1,72 @@
+[
+  {
+    "name": "requirements",
+    "total": 222,
+    "passed": 221,
+    "failed": 0,
+    "skipped": 1,
+    "failedTests": []
+  },
+  {
+    "name": "requirements_contract",
+    "total": 16,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "failedTests": []
+  },
+  {
+    "name": "requirements_gui",
+    "total": 106,
+    "passed": 106,
+    "failed": 0,
+    "skipped": 0,
+    "failedTests": []
+  },
+  {
+    "name": "kinematics",
+    "total": 279,
+    "passed": 278,
+    "failed": 0,
+    "skipped": 1,
+    "failedTests": []
+  },
+  {
+    "name": "ui",
+    "total": 319,
+    "passed": 319,
+    "failed": 0,
+    "skipped": 0,
+    "failedTests": []
+  },
+  {
+    "name": "gui_probe",
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "failedTests": []
+  },
+  {
+    "name": "ui_probe",
+    "total": 4,
+    "passed": 3,
+    "failed": 1,
+    "skipped": 0,
+    "failedTests": [
+      "KinEvaluationChannel.ReviewOppositeDirectionMustFail"
+    ]
+  },
+  {
+    "name": "residual_probe",
+    "total": 4,
+    "passed": 1,
+    "failed": 3,
+    "skipped": 0,
+    "failedTests": [
+      "RequirementsResidualReview.NarrowRollOutsideSeedMustConverge_REQ09",
+      "RequirementsResidualReview.OppositeToolAxisMustBeRejected_REQ09",
+      "RequirementsResidualReview.TiltedDirectionNeedsActualCorrection_REQ09"
+    ]
+  }
+]

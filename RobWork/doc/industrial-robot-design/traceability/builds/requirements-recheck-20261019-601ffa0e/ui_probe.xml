@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="1" disabled="0" errors="0" time="0.029" timestamp="2026-10-19T22:21:46.495" name="AllTests">
+  <testsuite name="KinEvaluationChannel" tests="4" failures="1" disabled="0" skipped="0" errors="0" time="0.029" timestamp="2026-10-19T22:21:46.495">
+    <testcase name="ReviewDirectionPositiveCases" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp" line="2" status="run" result="completed" time="0.011" timestamp="2026-10-19T22:21:46.495" classname="KinEvaluationChannel" />
+    <testcase name="ReviewTiltedDirectionPositiveCases" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp" line="30" status="run" result="completed" time="0.015" timestamp="2026-10-19T22:21:46.507" classname="KinEvaluationChannel" />
+    <testcase name="ReviewOppositeDirectionMustFail" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp" line="88" status="run" result="completed" time="0.001" timestamp="2026-10-19T22:21:46.522" classname="KinEvaluationChannel">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp:86&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;completed&quot;&#x0A;  opposite?&quot;failed&quot;:&quot;completed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;boundary-pointing&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp:86
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "completed"
+  opposite?"failed":"completed"
+    Which is: "failed"
+boundary-pointing
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp:86&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;completed&quot;&#x0A;  opposite?&quot;failed&quot;:&quot;completed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;boundary-normal&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp:86
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "completed"
+  opposite?"failed":"completed"
+    Which is: "failed"
+boundary-normal
+]]></failure>
+    </testcase>
+    <testcase name="ReviewDirectionCorrectionMustConverge" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp" line="89" status="run" result="completed" time="0." timestamp="2026-10-19T22:21:46.524" classname="KinEvaluationChannel" />
+  </testsuite>
+</testsuites>

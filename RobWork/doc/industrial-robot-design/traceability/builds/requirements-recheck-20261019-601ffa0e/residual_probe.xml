@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="3" disabled="0" errors="0" time="0.001" timestamp="2026-10-19T22:20:43.001" name="AllTests">
+  <testsuite name="RequirementsResidualReview" tests="4" failures="3" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-19T22:20:43.001">
+    <testcase name="NarrowRollOutsideSeedMustConverge_REQ09" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp" line="29" status="run" result="completed" time="0." timestamp="2026-10-19T22:20:43.001" classname="RequirementsResidualReview">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp:34&#x0A;Value of: out.solutionSet.solutions.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;q=0为已知合法解；唯一初值0.5应由姿态残差拉回，而非依赖TCP偏置的位置项&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp:34
+Value of: out.solutionSet.solutions.empty()
+  Actual: true
+Expected: false
+q=0为已知合法解；唯一初值0.5应由姿态残差拉回，而非依赖TCP偏置的位置项
+]]></failure>
+    </testcase>
+    <testcase name="OppositeToolAxisMustBeRejected_REQ09" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp" line="37" status="run" result="completed" time="0." timestamp="2026-10-19T22:20:43.002" classname="RequirementsResidualReview">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp:42&#x0A;Value of: out.solutionSet.solutions.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;方向相反180度不得判为零姿态残差；返回解数=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp:42
+Value of: out.solutionSet.solutions.empty()
+  Actual: false
+Expected: true
+方向相反180度不得判为零姿态残差；返回解数=1
+]]></failure>
+    </testcase>
+    <testcase name="OppositeToolAxisFullPoseControl_REQ09" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp" line="44" status="run" result="completed" time="0." timestamp="2026-10-19T22:20:43.002" classname="RequirementsResidualReview" />
+    <testcase name="TiltedDirectionNeedsActualCorrection_REQ09" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp" line="50" status="run" result="completed" time="0." timestamp="2026-10-19T22:20:43.002" classname="RequirementsResidualReview">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp:55&#x0A;Value of: out.solutionSet.solutions.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;允许滚转的方向任务仍需从不满足的初值纠正倾斜方向&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\residual_probe.cpp:55
+Value of: out.solutionSet.solutions.empty()
+  Actual: true
+Expected: false
+允许滚转的方向任务仍需从不满足的初值纠正倾斜方向
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

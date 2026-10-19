@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" time="1.929" timestamp="2026-10-19T23:31:39.030" name="AllTests">
+  <testsuite name="RequirementsSessionGuiTest" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="1.928" timestamp="2026-10-19T23:31:39.030">
+    <testcase name="ReviewConfirmUnchangedRegionCreatesPlan" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\gui_probe.cpp" line="3" status="run" result="completed" time="0.922" timestamp="2026-10-19T23:31:39.030" classname="RequirementsSessionGuiTest" />
+    <testcase name="ReviewRandomDigest" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\gui_probe.cpp" line="12" status="run" result="completed" time="0.012" timestamp="2026-10-19T23:31:39.953" classname="RequirementsSessionGuiTest" />
+    <testcase name="ReviewRegionSpacingThenResize" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\gui_probe.cpp" line="21" status="run" result="completed" time="0.158" timestamp="2026-10-19T23:31:39.965" classname="RequirementsSessionGuiTest" />
+    <testcase name="ReviewRegionBatchResizeSyncsPlan" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\gui_probe.cpp" line="42" status="run" result="completed" time="0.168" timestamp="2026-10-19T23:31:40.124" classname="RequirementsSessionGuiTest" />
+    <testcase name="ReviewSegmentEnableToggle" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\gui_probe.cpp" line="67" status="run" result="completed" time="0.666" timestamp="2026-10-19T23:31:40.293" classname="RequirementsSessionGuiTest" />
+  </testsuite>
+</testsuites>

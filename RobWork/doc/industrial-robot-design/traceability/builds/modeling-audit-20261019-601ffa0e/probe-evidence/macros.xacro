@@ -1,0 +1,1 @@
+<robot name="macros"><xacro:macro name="joint_def" params="name parent child"><joint name="${name}" type="revolute"><parent link="${parent}"/><child link="${child}"/><axis xyz="0 0 1"/></joint></xacro:macro></robot>

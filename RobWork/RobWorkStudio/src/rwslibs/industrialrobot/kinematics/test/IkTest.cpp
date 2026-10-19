@@ -1479,6 +1479,95 @@ TEST(KinIk, TiltedToolTwistFreeDirection_WP14T12)
         << "倾斜工具的方向规则（滚转全周自由）零位已满足必须收敛（P1-4）";
 }
 
+/**
+ * @brief REQ-09/A-16：TCP在轴心时，唯一驱动力只能来自滚转区间残差。
+ * 产品旧用例TCP偏置1m，会由位置项掩盖姿态残差符号错误；本例隔离该混淆。
+ */
+TEST(KinIk, ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    TestView view(makeModel({revolute("z", {0,0,1}, trans(0,0,0), -3,3)}, trans(0,0,0)));
+    for (const double seed : {0.5, -0.5}) {
+        IkRequest req=makeRequest(view, trans(0,0,0), {{seed}});
+        req.taskConstraint=kin::TaskPoseConstraint{};
+        req.taskConstraint->allowToolRoll=true;
+        req.taskConstraint->rollRange={-0.2,0.2};
+        const auto out=IkSolver().solve(req);
+        ASSERT_FALSE(out.solutionSet.solutions.empty()) << "轴心唯一初值 " << seed;
+        EXPECT_LE(std::fabs(out.solutionSet.solutions.front().q[0]),0.2+1e-5);
+    }
+}
+/** @brief REQ-09：180°反向工具轴不能被反对称矩阵的零值误当作恒等。 */
+TEST(KinIk, ToolRollOppositeAxisRejected_REQ09_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    TestView view(makeModel({revolute("z", {0,0,1}, trans(0,0,0), -0.01,0.01)}, trans(0,0,0)));
+    for(const double angle : {3.14159265358979323846,3.14159265358979323846-1e-7}) {
+        const auto target=rw::math::Transform3D<double>({0,0,0},rpyRotationZYX(angle,0,0));
+        IkRequest req=makeRequest(view,target,{{0}});
+        req.taskConstraint=kin::TaskPoseConstraint{};
+        req.taskConstraint->allowToolRoll=true;
+        EXPECT_TRUE(IkSolver().solve(req).solutionSet.solutions.empty()) << "反向角 rad="<<angle;
+    }
+}
+/** @brief REQ-09：从尚未满足的方向初值真正迭代，并以独立FK核对工具+Z。 */
+TEST(KinIk, ToolRollDirectionCorrectionRealFk_REQ09_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    TestView view(makeModel({revolute("x", {1,0,0}, trans(0,0,0), -1,1)}, trans(0,0,0)));
+    const auto target=rw::math::Transform3D<double>({0,0,0},rpyRotationZYX(0.2,0,0));
+    IkRequest req=makeRequest(view,target,{{0}});
+    req.taskConstraint=kin::TaskPoseConstraint{};
+    req.taskConstraint->allowToolRoll=true;
+    const auto out=IkSolver().solve(req);
+    ASSERT_FALSE(out.solutionSet.solutions.empty());
+    const auto q=out.solutionSet.solutions.front().q;
+    EXPECT_NEAR(q[0],0.2,1e-3);
+    // 单X轴解析FK的工具Z=(0,-sin(q),cos(q))，与目标直接比较，不复用残差算法。
+    EXPECT_NEAR(-std::sin(q[0]),-std::sin(0.2),1e-4);
+    EXPECT_NEAR(std::cos(q[0]),std::cos(0.2),1e-4);
+}
+
+
+/** @brief REQ-09：跨±pi与非零整周滚转区间必须按旋转等价类判定。 */
+TEST(KinIk, ToolRollPeriodicIntervals_REQ09_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    constexpr double pi=3.14159265358979323846;
+    TestView view(makeModel({revolute("z",{0,0,1},trans(0,0,0),-7,7)},trans(0,0,0)));
+    for(const auto& range : {std::array<double,2>{3.0,3.4},
+                            std::array<double,2>{2*pi-0.2,2*pi+0.2}}) {
+        const double seed=range[0]>4?0.5:-3.0;
+        IkRequest req=makeRequest(view,trans(0,0,0),{{seed}});
+        req.taskConstraint=kin::TaskPoseConstraint{{true,true,true,true,true,true},
+            rw::math::Rotation3D<double>(1,0,0,0,1,0,0,0,1),true,range};
+        const auto out=IkSolver().solve(req);
+        ASSERT_FALSE(out.solutionSet.solutions.empty());
+        const double actual=out.solutionSet.solutions.front().q[0];
+        // 将解析单Z轴FK角度加整周，与用户原区间比较；不调用产品投影函数。
+        bool inside=false;
+        for(int turn=-2;turn<=2;++turn)
+            inside=inside || (actual+turn*2*pi>=range[0]-1e-4
+                           && actual+turn*2*pi<=range[1]+1e-4);
+        EXPECT_TRUE(inside) << actual;
+    }
+}
+
+/** @brief REQ-01：旋转参考系只约束参考X，世界Y应迭代，世界X仍自由。 */
+TEST(KinIk, RotatedReferenceMaskConverges_REQ01_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    TestView view(makeModel({prismatic("y",{0,1,0},-2,2)},trans(0,0,0)));
+    IkRequest req=makeRequest(view,trans(100,0.4,0),{{0}});
+    // 参考X=世界Y、参考Y=-世界X；世界X的100m不能参与残差或解析不可达证明。
+    req.taskConstraint=kin::TaskPoseConstraint{{true,false,false,false,false,false},
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1),false,{-3.14,3.14}};
+    const auto out=IkSolver().solve(req);
+    ASSERT_FALSE(out.solutionSet.solutions.empty());
+    EXPECT_NEAR(out.solutionSet.solutions.front().q[0],0.4,1e-4);
+}
+
+
 TEST(KinIk, GimbalPlus90PitchConverges_WP14T12)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{});

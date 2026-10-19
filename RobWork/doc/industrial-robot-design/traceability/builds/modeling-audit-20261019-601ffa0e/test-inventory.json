@@ -1,0 +1,349 @@
+[
+  {
+    "name": "modeling",
+    "group": "integration",
+    "total": 390,
+    "passed": 390,
+    "failed": 0,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 390,
+      "passed": 390,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": []
+  },
+  {
+    "name": "modeling_contract",
+    "group": "integration",
+    "total": 17,
+    "passed": 17,
+    "failed": 0,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": []
+  },
+  {
+    "name": "modeling_gui",
+    "group": "integration",
+    "total": 45,
+    "passed": 44,
+    "failed": 0,
+    "skippedXml": 1,
+    "jsonSummary": {
+      "total": 45,
+      "passed": 44,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [
+      "ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59"
+    ],
+    "failedTests": []
+  },
+  {
+    "name": "ui_gui",
+    "group": "integration",
+    "total": 85,
+    "passed": 84,
+    "failed": 0,
+    "skippedXml": 1,
+    "jsonSummary": {
+      "total": 85,
+      "passed": 84,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [
+      "ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1"
+    ],
+    "failedTests": []
+  },
+  {
+    "name": "ui",
+    "group": "integration",
+    "total": 319,
+    "passed": 319,
+    "failed": 0,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 319,
+      "passed": 319,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": []
+  },
+  {
+    "name": "runtime",
+    "group": "integration",
+    "total": 290,
+    "passed": 289,
+    "failed": 0,
+    "skippedXml": 1,
+    "jsonSummary": {
+      "total": 290,
+      "passed": 289,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [
+      "ContractSuite.ChildProcessWorker_RT_ID_1"
+    ],
+    "failedTests": []
+  },
+  {
+    "name": "dynamics",
+    "group": "integration",
+    "total": 113,
+    "passed": 112,
+    "failed": 0,
+    "skippedXml": 1,
+    "jsonSummary": {
+      "total": 113,
+      "passed": 112,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [
+      "DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable"
+    ],
+    "failedTests": []
+  },
+  {
+    "name": "drivetrain",
+    "group": "integration",
+    "total": 38,
+    "passed": 38,
+    "failed": 0,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 38,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": []
+  },
+  {
+    "name": "kinematics",
+    "group": "integration",
+    "total": 279,
+    "passed": 278,
+    "failed": 0,
+    "skippedXml": 1,
+    "jsonSummary": {
+      "total": 279,
+      "passed": 278,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 1,
+      "datasetInvalid": 0,
+      "decisive": false
+    },
+    "skippedTests": [
+      "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1"
+    ],
+    "failedTests": []
+  },
+  {
+    "name": "trajectory",
+    "group": "integration",
+    "total": 182,
+    "passed": 182,
+    "failed": 0,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 182,
+      "passed": 182,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": []
+  },
+  {
+    "name": "selection",
+    "group": "integration",
+    "total": 293,
+    "passed": 292,
+    "failed": 0,
+    "skippedXml": 1,
+    "jsonSummary": {
+      "total": 293,
+      "passed": 292,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [
+      "SelPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable"
+    ],
+    "failedTests": []
+  },
+  {
+    "name": "reporting",
+    "group": "integration",
+    "total": 235,
+    "passed": 235,
+    "failed": 0,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 235,
+      "passed": 235,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": []
+  },
+  {
+    "name": "standalone_modeling",
+    "group": "standalone",
+    "total": 316,
+    "passed": 316,
+    "failed": 0,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 316,
+      "passed": 316,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": []
+  },
+  {
+    "name": "standalone_contract",
+    "group": "standalone",
+    "total": 8,
+    "passed": 8,
+    "failed": 0,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": []
+  },
+  {
+    "name": "standalone_gui",
+    "group": "standalone",
+    "total": 40,
+    "passed": 39,
+    "failed": 0,
+    "skippedXml": 1,
+    "jsonSummary": {
+      "total": 40,
+      "passed": 39,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [
+      "ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59"
+    ],
+    "failedTests": []
+  },
+  {
+    "name": "acceptance_probe_complete",
+    "group": "adversarial-probe",
+    "total": 12,
+    "passed": 0,
+    "failed": 12,
+    "skippedXml": 0,
+    "jsonSummary": {
+      "total": 12,
+      "passed": 0,
+      "failed": 12,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "skippedTests": [],
+    "failedTests": [
+      "ModelingAcceptanceProbe.JointVelocityAccelerationEditable_MDL01",
+      "ModelingAcceptanceProbe.ContinuousWorkingRangeEditable_MDL12",
+      "ModelingAcceptanceProbe.LinkPhysicalOverrideEditable_MDL05",
+      "ModelingAcceptanceProbe.CouplingMatrixEditable_MDL21",
+      "ModelingAcceptanceProbe.WorkCellImportEntry_MDL18",
+      "ModelingAcceptanceProbe.NamedPoseRestoreEntry_MDL17",
+      "ModelingAcceptanceProbe.LocalUndoRedoEntries_L5",
+      "ModelingAcceptanceProbe.ToolAndSceneCreationEntries_MDL13_MDL15",
+      "ModelingAcceptanceProbe.BaseEulerEditing_MDL22",
+      "ModelingAcceptanceProbe.HomeZeroUsesAuthoritativeReservedKeys_MDL04_MDL17",
+      "ModelingAcceptanceProbe.ModelDiffShowsObjectAndChangedValues_MDL08_UX13",
+      "ModelingAcceptanceProbe.ExistingXacroIncludeConsumedByProductionBridge_MDL19"
+    ]
+  }
+]

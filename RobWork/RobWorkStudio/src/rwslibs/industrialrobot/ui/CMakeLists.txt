@@ -751,7 +751,8 @@ target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF)
+    CXX_EXTENSIONS OFF
+    AUTOMOC ON) # UX-14：系统URL服务边界记录器需要元对象，两种模式显式一致。
 if(MSVC)
     target_compile_options(sdurws_ird_ui_gui_test PRIVATE /utf-8)
 endif()
@@ -772,6 +773,7 @@ target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE
 # "首个 target_link_libraries(<目标> "命中，本门控块若在前即被误取为主
 # 块（testkit/testkit_qt 断言翻红——UI-T45 实施期实证）。
 if(TARGET sdurws)
+    target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE IRD_UI_HAS_PRODUCT_HOST=1)
     target_sources(sdurws_ird_ui_gui_test PRIVATE
         gui_test/HostView3DGatewayGuiTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostView3DGateway.cpp)
@@ -1108,6 +1110,32 @@ if(TARGET sdurws)
         Qt6::Gui
         Qt6::Widgets)
 
+    # UX-14/WP-14-T12：帮助入口已有固定相对路径，构建与安装必须提供
+    # 同一份离线手册。独立资源目标每次构建核对复制，兼容VS多配置生成器；
+    # LINK_DEPENDS仅Make/Ninja有效，不能用它声称VS中的HTML会自动更新。
+    # 直接读取studio创建时的输出目录，不用TARGET_FILE_DIR生成表达式，
+    # 避免旧CMake策略在资源目标与exe之间制造隐式反向构建依赖。
+    get_target_property(_ird_studio_runtime_dir sdurws_ird_studio RUNTIME_OUTPUT_DIRECTORY)
+    if(NOT _ird_studio_runtime_dir)
+        message(FATAL_ERROR "studio runtime output directory missing for manual deployment")
+    endif()
+    if(CMAKE_CONFIGURATION_TYPES)
+        # VS在输出目录后添加Release/Debug，userManualPath的../正好回到该目录。
+        set(_ird_manual_output_dir "${_ird_studio_runtime_dir}/share/ird/user-manual")
+    else()
+        set(_ird_manual_output_dir "${_ird_studio_runtime_dir}/../share/ird/user-manual")
+    endif()
+    add_custom_target(sdurws_ird_ui_manual
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+                "${_ird_manual_output_dir}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_CURRENT_SOURCE_DIR}/../share/user-manual/index.html"
+                "${_ird_manual_output_dir}/index.html"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../share/user-manual/index.html")
+    add_dependencies(sdurws_ird_studio sdurws_ird_ui_manual)
+    # 集成GUI即使只构建该目标也具备真实部署前置；独立模式仍验证缺失反馈。
+    add_dependencies(sdurws_ird_ui_gui_test sdurws_ird_ui_manual)
+
     # 框架运行时 DLL 就位（框架 RobWorkStudio 目标同款——RobWork 共享库
     # 面 build/RobWork/bin 复制到 exe 旁；Qt 运行时经 TARGET_RUNTIME_DLLS
     # 复制（_app 同款）；qt.conf 前缀钉回真实 Qt 安装（UI-T15 修复口径）。
@@ -1241,6 +1269,10 @@ if(TARGET sdurws)
     # WP-24-T01"基线变更走设计变更评审"）。
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../share/baseline.md"
             DESTINATION share
+            COMPONENT IRD_PRODUCT)
+    # 与userManualPath一致的安装布局，不能仅在开发机构建树补文件。
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../share/user-manual/"
+            DESTINATION share/ird/user-manual
             COMPONENT IRD_PRODUCT)
 else()
     # 独立冒烟模式：无框架目标——产品目标不注册（集成树专属；冒烟模式

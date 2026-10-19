@@ -1,0 +1,1 @@
+<robot name="x"><xacro:include filename="macros.xacro"/><xacro:joint_def name="j1" parent="base" child="l1"/></robot>

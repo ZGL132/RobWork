@@ -28,6 +28,7 @@
 #include <QKeyEvent> // REQ-08：向真实窗口派发快捷键，覆盖按钮以外的用户入口。
 #include <QEventLoop>
 #include <QTimer>
+#include <set> // 生成批次逐条身份必须唯一，不能仅用条目数量代替。
 #include <QCheckBox>  // 启用 Switch 断言（UI-T37 R1）
 #include <QGroupBox>  // 卡片分组定位（UI-T37 返工——QGroupBox 形态）
 #include <QLabel>
@@ -1471,6 +1472,142 @@ TEST_F(RequirementsSessionGuiTest, ArrayCompleteProductionForms_AT24_WP14T12)
         EXPECT_EQ(m_editor.workingSet(), before);
     }
 }
+
+
+/** @brief REQ-07/11：生产命令的生成来源可见，重生成保留手改并整体撤销。 */
+TEST_F(RequirementsSessionGuiTest, GenerationProvenanceAndConflict_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-07", {"AT-24"}, std::nullopt);
+    FakeDialogHost host;
+    ASSERT_TRUE(executeRequirementCommand("requirements.apply-template",*m_panel,m_editor,*m_panel,host));
+    const auto generated=m_editor.workingSet();
+    const auto it=std::find_if(generated.points.entries.begin(),generated.points.entries.end(),
+        [](const TaskPoint& p){return p.generation.has_value();});
+    ASSERT_NE(it,generated.points.entries.end());
+    const auto selected=*it;
+    std::set<std::string> ids;
+    for(const auto& p:generated.points.entries) {
+        EXPECT_TRUE(ids.insert(p.objectId.toCanonical()).second) << "批次条目必须有独立身份";
+        if(p.generation) {
+            EXPECT_EQ(p.generation->instanceId,selected.generation->instanceId);
+            EXPECT_FALSE(p.generation->generatorId.empty());
+        }
+    }
+    m_panel->refreshPanel(generated,m_report);m_panel->focusObject(selected.objectId);
+    auto* source=fieldEditor(*m_panel,"source");ASSERT_NE(source,nullptr);
+    EXPECT_EQ(source->text(),QStringLiteral("模板"));EXPECT_TRUE(source->isReadOnly());
+    // REQ-07/AT-24：徽标之外必须能追溯同一生成批次及参数快照，
+    // 否则使用者无法区分两次模板生成，也无法核对重生成将采用的输入。
+    EXPECT_TRUE(source->toolTip().contains(QString::fromStdString(selected.generation->instanceId)));
+    EXPECT_TRUE(source->toolTip().contains(QString::fromStdString(selected.generation->generatorId)));
+    for (const auto& parameter : selected.generation->parameters) {
+        EXPECT_TRUE(source->toolTip().contains(QString::fromStdString(parameter.first)));
+        EXPECT_TRUE(source->toolTip().contains(QString::fromStdString(parameter.second)));
+    }
+    auto changed=selected;changed.tolerance.positionTolerance=0.005;
+    ASSERT_TRUE(m_editor.applyEdit(changed).accepted);
+    const auto beforeRegenerate=m_editor.workingSet();
+    m_panel->refreshPanel(beforeRegenerate,m_report);m_panel->focusObject(changed.objectId);
+    host.action=CommandDialogHost::RegenerateAction::Regenerate;
+    ASSERT_TRUE(executeRequirementCommand("requirements.regenerate-linked",*m_panel,m_editor,*m_panel,host));
+    const auto& after=m_editor.workingSet().points.entries;
+    const auto victim=std::find_if(after.begin(),after.end(),
+        [&](const TaskPoint& p){return p.objectId==changed.objectId;});
+    ASSERT_NE(victim,after.end());EXPECT_EQ(*victim,changed) << "手改不能被重生成静默覆盖";
+    EXPECT_EQ(after.size(),beforeRegenerate.points.entries.size());
+    EXPECT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet(),beforeRegenerate) << "一次撤销必须完整恢复重生成前的批次";
+}
+
+/** @brief REQ-06：混合未完成草稿中的有效区域仍可纯呈现预览，不写草稿。 */
+TEST_F(RequirementsSessionGuiTest, MixedDraftValidRegionPreview_REQ06_WP14T12)
+{
+    IRD_TEST_INFO("REQ-06", {}, std::nullopt);
+    // 不完整点和有效区域共存：正式就绪应阻断，但区域的呈现预览仍可用。
+    // 预览输出是纯几何，不能把它当成覆盖计算或正式证据。
+    auto mixed = m_editor.workingSet();
+    mixed.points.entries.front().pose.position = {};
+    const auto report = m_checker.check(mixed, CheckContext{});
+    ASSERT_TRUE(report.hasBlocking());
+    const auto before = m_editor.workingSet();
+    const auto status = m_editor.draftStatus();
+    std::optional<RegionPreviewGeometry> shown;
+    m_panel->setRegionPreviewSink([&](const std::optional<RegionPreviewGeometry>& value) {
+        shown = value;
+    });
+    m_panel->refreshPanel(mixed, report);
+    m_panel->focusObject(mixed.regions.entries.front().objectId);
+    QApplication::processEvents();
+    ASSERT_TRUE(shown.has_value());
+    EXPECT_EQ(shown->regionObjectId, mixed.regions.entries.front().objectId);
+    EXPECT_FALSE(shown->gridLines.empty());
+    EXPECT_EQ(m_editor.workingSet(), before);
+    EXPECT_EQ(m_editor.draftStatus().dirty, status.dirty);
+    EXPECT_EQ(m_editor.draftStatus().edits, status.edits);
+}
+
+/** @brief REQ-02/06：顺序键真实编辑后，域单点识别环、重复和悬空前驱。 */
+TEST_F(RequirementsSessionGuiTest, SequenceEditingRejectsInvalidTopology_REQ02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-02", {"REQ-06"}, std::nullopt);
+    const auto p1 = m_editor.workingSet().points.entries.front();
+    const auto p2 = makePoint("P2", 2.0, 3.0, 4.0);
+    const auto p3 = makePoint("P3", 3.0, 4.0, 5.0);
+    ASSERT_TRUE(m_editor.applyEdit(p2).accepted);
+    ASSERT_TRUE(m_editor.applyEdit(p3).accepted);
+    const auto before = m_editor.workingSet();
+    // 文本字段经同一editingFinished队列提交；每笔重绘后重新定位，
+    // 值面允许暂存未完成顺序，正式就绪由R7复用的checkSequence裁决。
+    const auto editKey = [&](const core::ObjectId& id, const QString& key) {
+        m_panel->refreshPanel(m_editor.workingSet(), m_report);
+        m_panel->focusObject(id);
+        auto* field = fieldEditor(*m_panel, "sequence-key");
+        if (field == nullptr) { ADD_FAILURE() << "顺序键字段缺失"; return; }
+        field->setText(key);
+        QMetaObject::invokeMethod(field, "editingFinished", Qt::DirectConnection);
+        QApplication::processEvents();
+    };
+    const TaskPointService service;
+    editKey(p2.objectId, QStringLiteral("P1"));
+    editKey(p3.objectId, QStringLiteral("P2"));
+    EXPECT_TRUE(service.checkSequence(m_editor.workingSet().points.entries).acyclic);
+    editKey(p1.objectId, QStringLiteral("P3"));
+    const auto cycle = service.checkSequence(m_editor.workingSet().points.entries);
+    EXPECT_FALSE(cycle.acyclic); EXPECT_EQ(cycle.cycleNodes.size(), 3u);
+    ASSERT_TRUE(m_editor.undoLocal());
+    editKey(p3.objectId, QStringLiteral("P1"));
+    const auto duplicate = service.checkSequence(m_editor.workingSet().points.entries);
+    EXPECT_FALSE(duplicate.acyclic);
+    EXPECT_EQ(duplicate.duplicateKeys, std::vector<std::string>{"P1"});
+    ASSERT_TRUE(m_editor.undoLocal());
+    editKey(p3.objectId, QStringLiteral("不存在的工位"));
+    const auto dangling = service.checkSequence(m_editor.workingSet().points.entries);
+    EXPECT_FALSE(dangling.acyclic);
+    EXPECT_EQ(dangling.danglingKeys, std::vector<std::string>{"不存在的工位"});
+    // 撤回悬空和最初两笔合法边，恢复三个独立点，不影响新增历史。
+    for (int i = 0; i < 3; ++i) { ASSERT_TRUE(m_editor.undoLocal()); }
+    EXPECT_EQ(m_editor.workingSet(), before);
+}
+
+/** @brief UX-05：显示单位切换只投影，不改变SI值、就绪或局部撤销历史。 */
+TEST_F(RequirementsSessionGuiTest, DisplayUnitSwitchZeroDraftWrite_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    const auto status=m_editor.draftStatus();
+    m_panel->refreshPanel(before,m_report);m_panel->focusObject(before.points.entries.front().objectId);
+    auto* batch=m_panel->findChild<QWidget*>("ird_req_batch_station");ASSERT_NE(batch,nullptr);
+    auto* units=batch->findChild<QComboBox*>("ird_param_unit_switch");ASSERT_NE(units,nullptr);
+    for(const QString& label:{QStringLiteral("长度：mm"),QStringLiteral("长度：m"),
+                              QStringLiteral("角度：deg"),QStringLiteral("角度：rad")}) {
+        const int index=units->findText(label);ASSERT_GE(index,0);
+        units->setCurrentIndex(index);units->activated(index);QApplication::processEvents();
+        EXPECT_EQ(m_editor.workingSet(),before) << label.toStdString();
+        EXPECT_EQ(m_editor.draftStatus().dirty,status.dirty);
+        EXPECT_EQ(m_editor.draftStatus().edits,status.edits);
+    }
+}
+
 
 /** @brief REQ-11：解除关联是一次批次；撤销必须恢复全批关联及其他条目。 */
 TEST_F(RequirementsSessionGuiTest, DetachAtomicUndo_AT24_WP14T12)
@@ -3921,10 +4058,22 @@ TEST_F(RequirementsSessionGuiTest, StationSegmentsEditAndWorkLock_REQ02_WP14T12)
     EXPECT_DOUBLE_EQ(after.approach.distanceM, 0.25) << "撤离段编辑串改了接近段";
     EXPECT_EQ(after.approach.axis, SegmentAxis::ReferenceZ) << "撤离段编辑串改了接近段轴";
 
-    // 段组三笔提交（接近距离/接近轴/撤离距离）＝三个独立撤销步（L-R2
-    // 单编辑单步），逐笔撤销回放全链到基线。段"启用"翻转的交互面在测试
-    // 环境暴露异常态（登记 batch33 待查——本用例不承载）。
-    for (int i = 0; i < 3; ++i) {
+    // REQ-02：在距离已合法时通过真实下拉启停两段；每次提交会重绘，
+    // 必须重新定位控件，不能对已销毁的旧控件继续发信号。
+    for (const int segment : {0, 2}) {
+        relocate();
+        enabledCombos[segment]->setCurrentIndex(0);
+        QApplication::processEvents();
+        const auto& enabled = m_editor.workingSet().points.entries.front();
+        EXPECT_TRUE(segment == 0 ? enabled.approach.enabled : enabled.retract.enabled);
+        relocate();
+        enabledCombos[segment]->setCurrentIndex(1);
+        QApplication::processEvents();
+        const auto& disabled = m_editor.workingSet().points.entries.front();
+        EXPECT_FALSE(segment == 0 ? disabled.approach.enabled : disabled.retract.enabled);
+    }
+    // 三笔参数编辑及四笔启停各占一个撤销步；一次一步完整回到基线。
+    for (int i = 0; i < 7; ++i) {
         ASSERT_TRUE(m_editor.undoLocal()) << "第 " << i + 1 << " 笔撤销失败";
     }
     EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);

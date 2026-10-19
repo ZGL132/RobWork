@@ -1,0 +1,43 @@
+{
+  "baseline": "601ffa0ed8b4f7887576dfb9a560acffea86b757",
+  "branch": "wp14-t12",
+  "date": "2026-10-19",
+  "scope": "modeling-full-functional-audit",
+  "auditConclusion": "FAIL",
+  "matrix": {
+    "NOT RUN": 18,
+    "SKIP": 2,
+    "PASS": 10,
+    "FAIL": 17
+  },
+  "integration": {
+    "total": 2286,
+    "passed": 2280,
+    "failed": 0,
+    "skippedXml": 6,
+    "envUnavailableIncludedInXmlSkip": 1
+  },
+  "standalone": {
+    "total": 364,
+    "passed": 363,
+    "failed": 0,
+    "skippedXml": 1
+  },
+  "adversarialProbe": {
+    "total": 12,
+    "passed": 0,
+    "failed": 12,
+    "skipped": 0
+  },
+  "tour": {
+    "checksPassed": 240,
+    "checksFailed": 0,
+    "includesOtherDomains": true,
+    "completeModelingAcceptance": false
+  },
+  "productModified": false,
+  "subagentsUsed": false,
+  "fullVisualAcceptance": "NOT RUN",
+  "issueCount": 17,
+  "formalMergeAcceptance": false
+}

@@ -1055,4 +1055,4 @@ A-15补充三（所有者已批准）：resolveSessionTcp三入口以默认工�
 
 ### WP-14-T12 A-16：任务位姿约束消费
 
-TaskPoseConstraint 是 kinematics 内部共享的纯值约束：六分量顺序固定为 x/y/z/roll/pitch/yaw，位置残差在 referenceInBase 参考系中计算，姿态单位为 rad。IkRequest、BatchTaskPoint 和 TaskPointIkQuery 的表尾可选值为空时保持旧 FullPose/PositionOnly 调用语义；非空时仅启用的分量进入阻尼最小二乘、收敛和独立 FK 复验。解析界限证明只在 xyz 全受约束时启用，避免用自由坐标错误证明不可达。allowToolRoll 以参考系 +Z 为滚转轴，区间外滚转产生残差；规则解析由 UI 使用同一快照的参考帧和场景帧值完成，求解器不持有 UI 指针。契约版本分别升级为 IK 4、任务点批量 3，旧结果按版本拒绝混用。
+TaskPoseConstraint 是 kinematics 内部共享的纯值约束：六分量顺序固定为 x/y/z/roll/pitch/yaw，位置残差在 referenceInBase 参考系中计算，姿态单位为 rad。IkRequest、BatchTaskPoint 和 TaskPointIkQuery 的表尾可选值为空时保持旧 FullPose/PositionOnly 调用语义；非空时仅启用的分量进入阻尼最小二乘、收敛和独立 FK 复验。解析界限证明只在 xyz 全受约束时启用，避免用自由坐标错误证明不可达。allowToolRoll 在目标工具局部 +Z 轴上生成允许旋转族，先按测地距离选取合法最近目标（扭转区间按2π周期投影），再于同一 referenceInBase 参考系提取 canonical ZYX Euler 的目标减实际最短角差；不把六分量掩码替换为轴角掩码，不因自由分量另选Euler表示。非空约束的阻尼步长按真实FK中心差分 J=-de/dq 构造，步长1e-7 rad/m、固定轴序；差分FK设施失败走既有IterationFkEvaluation失败值。180°反向轴仍产生方向残差，不因反对称部分为零当作恒等；空约束保持原几何Jacobian路径。规则解析由 UI 使用同一快照的参考帧和场景帧值完成，求解器不持有 UI 指针。契约版本分别升级为 IK 4、任务点批量 3，旧结果按版本拒绝混用。

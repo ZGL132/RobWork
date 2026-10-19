@@ -1388,19 +1388,92 @@ TEST(KinEvaluationChannel, BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16)
     // 为诚实几何结果（可达正例由 IkTest.TiltedToolTwistFreeDirection 与
     // BatchDirectionRulesFreeToolRoll 两钉承载；Fixed 对照在可达位姿上
     // 因姿态不可满足而 failed——同为诚实几何结果）。
-    // 批35（评审 P1-4）：期望按当前几何逐点如实——rollFree/法向（法向
-    // 规则的扭转族残差可达）＝completed；Fixed 对照（该位姿姿态不可满
-    // 足）与 +Y 指向（工具轴不可达）＝failed 诚实几何结果。可达性正例
-    // 另由 IkTest.TiltedToolTwistFreeDirection 与
-    // BatchDirectionRulesFreeToolRoll 两钉承载。
+    // 后续闭环：绕工具Z滚转不会改变Z方向。法向为-Y，而实际工具恒+Z，
+    // 两者点积恒0，因此法向也必须失败。批35把错误成功登记为期望成功，
+    // 与上面的独立几何事实相矛盾；此处恢复几何断言，不迁就求解器结果。
     for (const auto& point : ws.points.entries) {
         const auto it = results.find(point.objectId); ASSERT_NE(it, results.end());
-        const bool expectCompleted = point.objectId == rollFree.objectId
-            || point.objectId == normal.objectId;
+        const bool expectCompleted = point.objectId == rollFree.objectId;
         EXPECT_EQ(it->second.outcomeState, expectCompleted ? "completed" : "failed")
             << point.name << " " << it->second.outcomeText;
     }
 }
+/**
+ * @brief REQ-09/AT-23：在需求生产批量通道核对反向轴拒绝与真实方向纠正。
+ * @param opposite [in] true为受限Z轴与反向目标（必失败）；false为X轴0.2rad可达目标。
+ *
+ * fixture只提供CanonicalModel与权威Frame值，求解与规则投影均为产品实现；
+ * 生命周期限本测试主线程，后台由ExecutorHarness::drain等待完成。
+ */
+void verifyRequirementDirectionBoundary(bool opposite)
+{
+    const double angle=opposite?3.14159265358979323846:0.2;
+    const rw::math::Rotation3D<double> targetR(
+        1,0,0,0,std::cos(angle),-std::sin(angle),0,std::sin(angle),std::cos(angle));
+    const auto model=opposite
+        ?makeModel({revolute("boundary-z",{0,0,1},trans(0,0,0),-0.01,0.01)},trans(0,0,0))
+        :makeModel({revolute("boundary-x",{1,0,0},trans(0,0,0),-1,1)},trans(0,0,0));
+    auto ws=makeWorksetWithTaskPoint();
+    auto prototype=ws.points.entries.front();
+    ws.points.entries.clear();
+    prototype.pose.constrainedDof={true,true,true,true,true,true};
+    prototype.pose.position=core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        {0,0,0},core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    auto pointing=prototype;
+    pointing.name="方向边界指向";pointing.objectId=idFrom<core::ObjectId>("boundary-pointing");
+    pointing.pose.orientation.kind=req::OrientationRuleKind::PointAtTarget;
+    // 单位长度目标，位置单位m；实际工具Z应等于Rx(angle)的第三列。
+    pointing.pose.orientation.targetPoint={0,-std::sin(angle),std::cos(angle)};
+    ws.points.entries.push_back(pointing);
+    const auto frame=idFrom<core::ObjectId>("boundary-frame");
+    auto normal=prototype;
+    normal.name="方向边界法向";normal.objectId=idFrom<core::ObjectId>("boundary-normal");
+    normal.pose.orientation.kind=req::OrientationRuleKind::AlignGeometryNormal;
+    normal.pose.orientation.targetSceneObject=frame;
+    normal.pose.orientation.feature=req::OrientationFeature::FramePlaneNormal;
+    ws.points.entries.push_back(normal);
+    ScriptedEditor editor(ws);
+    ExecutorHarness h;
+    h.view=std::make_shared<FixtureView>(model);
+    h.executor=std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor,[=](const core::ObjectId& id)->std::optional<rw::math::Transform3D<double>>{
+            if(id!=frame) return std::nullopt;
+            return rw::math::Transform3D<double>({0,0,0},targetR);
+        },QCoreApplication::instance(),
+        [&h](const KinChannelBackgroundResultNote& note){h.notes.push_back(note);}});
+    h.executor->attachView(h.view,h.boundId);
+    auto config=makeLegalConfig();
+    config.initialStrategy=InitialValueStrategy::ReferenceQ;
+    config.iterationLimit=200;
+    h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request;
+    request.kind=KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId=h.boundId;request.epoch=h.executor->epoch();
+    const auto ack=h.executor->submit(request);
+    ASSERT_TRUE(ack.accepted)<<ack.reason;
+    h.drain();
+    const auto outcomes=h.executor->latestBatchOutcomes();
+    ASSERT_EQ(outcomes.size(),2u);
+    for(const auto& point:ws.points.entries) {
+        const auto it=outcomes.find(point.objectId);
+        ASSERT_NE(it,outcomes.end());
+        EXPECT_EQ(it->second.outcomeState,opposite?"failed":"completed")
+            <<point.name<<" "<<it->second.outcomeText;
+    }
+}
+/** @brief REQ-09/AT-23：相反180度不能输出“解1个”，防止错误结果进入需求清单。 */
+TEST(KinEvaluationChannel, OppositeDirectionRejected_REQ09_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {"AT-23"}, std::nullopt);
+    verifyRequirementDirectionBoundary(true);
+}
+/** @brief REQ-09/AT-23：从零初值纠正倾斜方向，两种规则均进入真实IK。 */
+TEST(KinEvaluationChannel, DirectionCorrectionFromZero_REQ09_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {"AT-23"}, std::nullopt);
+    verifyRequirementDirectionBoundary(false);
+}
+
 /** @brief 批34 评审 F4：方向规则只约束工具轴指向——绕轴滚转是规则未定义
  *         面，不得额外固定任意参考系滚转。反例：平面二连杆工具 +Z 天然
  *         竖直，"指向正上方"的方向规则在旧实现（固定构造基的滚转）下

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-10-19T23:17:59.749" name="AllTests">
+  <testsuite name="RequirementsResidualReview" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-19T23:17:59.749">
+    <testcase name="NarrowRollOutsideSeedMustConverge_REQ09" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\residual_probe.cpp" line="29" status="run" result="completed" time="0." timestamp="2026-10-19T23:17:59.749" classname="RequirementsResidualReview" />
+    <testcase name="OppositeToolAxisMustBeRejected_REQ09" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\residual_probe.cpp" line="37" status="run" result="completed" time="0." timestamp="2026-10-19T23:17:59.749" classname="RequirementsResidualReview" />
+    <testcase name="OppositeToolAxisFullPoseControl_REQ09" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\residual_probe.cpp" line="44" status="run" result="completed" time="0." timestamp="2026-10-19T23:17:59.750" classname="RequirementsResidualReview" />
+    <testcase name="TiltedDirectionNeedsActualCorrection_REQ09" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\residual_probe.cpp" line="50" status="run" result="completed" time="0." timestamp="2026-10-19T23:17:59.750" classname="RequirementsResidualReview" />
+  </testsuite>
+</testsuites>
