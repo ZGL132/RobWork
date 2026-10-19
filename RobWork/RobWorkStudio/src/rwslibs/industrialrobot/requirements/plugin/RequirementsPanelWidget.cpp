@@ -1550,11 +1550,22 @@ QWidget* RequirementsPanelWidget::makeBatchParameterTable(const RequirementEdit&
                                 else if constexpr (std::is_same_v<Entry, WorkRegion>) { return applyRegionEditSet(base, edits, known); }
                                 else { return applyConditionEditSet(base, edits, known); }
                             }();
-                            if (candidate != base && !submitStructuralEdit(RequirementEdit{candidate})) {
-                                // 公共表已经完成移交；域拒绝后重投权威基线，避免其本地新值冒充已应用。
-                                renderInspector(editor->workingSet());
-                                renderRegionPage(editor->workingSet());
-                                renderConditionPage(editor->workingSet());
+                            if (candidate != base) {
+                                // ★ 批35（评审 P1-5）：区域批量参数表与单字段
+                                // 轨同入计划同步入口（批量改盒长后派生计数随
+                                // 动——独立复现反例的原断链面）。
+                                bool applied = false;
+                                if constexpr (std::is_same_v<Entry, WorkRegion>) {
+                                    applied = submitRegionEditWithPlanSync(*editor, candidate);
+                                } else {
+                                    applied = submitStructuralEdit(RequirementEdit{candidate});
+                                }
+                                if (!applied) {
+                                    // 公共表已经完成移交；域拒绝后重投权威基线，避免其本地新值冒充已应用。
+                                    renderInspector(editor->workingSet());
+                                    renderRegionPage(editor->workingSet());
+                                    renderConditionPage(editor->workingSet());
+                                }
                             }
                         } catch (const std::invalid_argument& error) {
                             showStatusLine(QString::fromUtf8(error.what()));
@@ -2801,6 +2812,25 @@ void RequirementsPanelWidget::submitStationEnumValue(const std::string& key, con
 // （D-REQ-2 规范化唯一实现，本单元零第二份）；同区域复用既有计划 id
 // （R6 计划-区域一一对应，重确认＝更新非重复）；新计划句柄＝generate()
 // （O-36 编辑期临时身份惯例，与生命周期新增同款）。
+bool RequirementsPanelWidget::submitRegionEditWithPlanSync(
+    IRequirementEditor& editor, const WorkRegion& candidate)
+{
+    // ★ 批35（评审 P1-5）：区域写入的统一入口——有派生计划＝区域编辑＋
+    // 计划 upsert 原子批（恰一次撤销；计划随几何/采样同步——派生事实半
+    // 区）；无计划＝原单编辑轨；构建拒绝＝整个编辑拒绝（区域与计划保持
+    // 一致，不留悬空）。单字段轨与批量参数表轨都经此处（P1-5：批量入口
+    // 原绕过同步）。
+    for (const auto& plan : editor.workingSet().plans.entries) {
+        if (plan.regionRef == candidate.objectId) {
+            const auto planEdit = buildRegionPlanEdit(editor, candidate);
+            if (!planEdit.has_value()) { return false; }  // 构建拒绝——就地错误已呈现。
+            return submitStructuralEditsAtomic(
+                std::vector<RequirementEdit>{candidate, *planEdit});
+        }
+    }
+    return submitEntryEdit(editor, *this, candidate) == EditSubmitOutcome::Applied;
+}
+
 std::optional<RequirementEdit> RequirementsPanelWidget::buildRegionPlanEdit(
     IRequirementEditor& editor, const WorkRegion& region)
 {
@@ -2849,24 +2879,7 @@ void RequirementsPanelWidget::queueRegionEdit(std::function<WorkRegion(const Wor
                     //   应用（恰一次撤销）；无计划＝原单编辑轨（计划创建仍
                     //   归采样表单确认面）。构建拒绝（更新后区域不可重建计
                     //   划）＝整个编辑拒绝——区域与计划保持一致，不留悬空。
-                    const SamplingPlan* existingPlan = nullptr;
-                    for (const auto& plan : editor->workingSet().plans.entries) {
-                        if (plan.regionRef == candidate.objectId) {
-                            existingPlan = &plan;
-                            break;
-                        }
-                    }
-                    if (existingPlan == nullptr) {
-                        if (submitEntryEdit(*editor, *this, candidate)
-                            == EditSubmitOutcome::Applied) {
-                            m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
-                        }
-                        return;
-                    }
-                    const auto planEdit = buildRegionPlanEdit(*editor, candidate);
-                    if (!planEdit.has_value()) { return; } // 构建拒绝——就地错误已呈现。
-                    if (submitStructuralEditsAtomic(std::vector<RequirementEdit>{
-                            candidate, *planEdit}) ) {
+                    if (submitRegionEditWithPlanSync(*editor, candidate)) {
                         m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
                     }
                 } catch (const std::invalid_argument& failure) {

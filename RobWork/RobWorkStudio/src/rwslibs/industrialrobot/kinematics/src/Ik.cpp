@@ -209,6 +209,27 @@ std::array<double, 3> zyxEulerAngles(const rw::math::Rotation3D<double>& r)
     return a;
 }
 
+/// Z-Y-Z 欧拉提取（R＝Rz(α)Ry(β)Rz(γ)，β∈[0,π]——工具扭转族分解专用；
+/// 批35 P1-1/P1-4：γ＝绕目标 z 的工具扭转角，β≈0 简并时 γ≡α+γ 取和）。
+std::array<double, 3> zyzEulerAngles(const rw::math::Rotation3D<double>& R)
+{
+    constexpr double kSingularEpsilon = 1e-10;
+    const double sinBeta = std::sqrt(R(0, 2) * R(0, 2) + R(1, 2) * R(1, 2));
+    const double cosBeta = R(2, 2);
+    std::array<double, 3> a{};  // (α, β, γ)
+    if (sinBeta < kSingularEpsilon) {
+        // β≈0 简并：仅 α+γ 可观（R10/R00＝sin/cos(α+γ)）——扭转语义不变。
+        a[0] = 0.0;
+        a[1] = cosBeta >= 0.0 ? 0.0 : 3.14159265358979323846;
+        a[2] = std::atan2(R(1, 0), R(0, 0));
+    } else {
+        a[0] = std::atan2(R(1, 2), R(0, 2));
+        a[1] = std::atan2(sinBeta, cosBeta);
+        a[2] = std::atan2(R(2, 1), -R(2, 0));
+    }
+    return a;
+}
+
 /// 跨周最短角差（wrap 到 (−π,π]——残差与区间偏移共用）。
 double wrapAngle(double angle)
 {
@@ -247,6 +268,52 @@ rw::math::Rotation3D<double> composeOf(const rw::math::Rotation3D<double>& a,
  * Z-Y-X 欧拉分量的最短角差。allowToolRoll允许绕参考系+Z的滚转分量自由，
  * 避免把规则错误降级为固定姿态。返回的六行仍按x/y/z/roll/pitch/yaw固定排序。
  */
+namespace {
+
+/// 参考系姿态误差统一出口：target 系轴角向量 → 参考系（R_ref_target =
+/// rrᵀ·R_target——与 DLS 角速度行同系，批35 P1-1/P1-4 的目标族残差与测
+/// 地迭代误差共用此映射）。
+Eigen::Matrix<double, 6, 1> attitudeErrorInReference(
+    const rw::math::Rotation3D<double>& rr,
+    const rw::math::Rotation3D<double>& targetR,
+    const rw::math::Rotation3D<double>& residualRot)
+{
+    const rw::math::Rotation3D<double> rRefTarget = composeOf(transposeOf(rr), targetR);
+    const double tr = residualRot(0, 0) + residualRot(1, 1) + residualRot(2, 2);
+    const double angle = std::acos(std::max(-1.0, std::min(1.0, (tr - 1.0) / 2.0)));
+    rw::math::Vector3D<double> axisT(residualRot(2, 1) - residualRot(1, 2),
+                                     residualRot(0, 2) - residualRot(2, 0),
+                                     residualRot(1, 0) - residualRot(0, 1));
+    const double axisNorm = std::sqrt(axisT.norm2());
+    if (axisNorm > 1e-12) {
+        axisT *= (angle / axisNorm);
+    } else {
+        axisT = rw::math::Vector3D<double>(0.0, 0.0, 0.0);  // 近恒等——零残差
+    }
+    Eigen::Matrix<double, 6, 1> out;
+    out(3) = out(4) = out(5) = 0.0;
+    for (int k = 0; k < 3; ++k) {
+        double refRow = 0.0;
+        for (int j = 0; j < 3; ++j) {
+            refRow += rRefTarget(j, k) * axisT[j];
+        }
+        out(3 + k) = refRow;
+    }
+    return out;
+}
+
+}  // namespace
+
+/**
+ * @brief 验收残差（契约面）——收敛判据与解记录的残差口径。
+ *
+ * allowToolRoll=false：参考系内 ZYX 欧拉字面逐项最短角差（REQ-01/09 契
+ * 约；双侧各自按 zyxEulerAngles 提取，万向锁分支 roll 钉 0——批35 P1-3：
+ * 不做任何参数化替换，掩码语义逐分量保持）。
+ * allowToolRoll=true：目标族 {R_target·Rz(θ)} 的最近元轴角残差（批35
+ * P1-1/P1-4——绕目标 z＝工具轴的扭转 θ 投影到区间，界内全吸收、界外拉
+ * 回最近界；倾斜工具的扭转不再误用参考系 Euler yaw 承载）。
+ */
 Eigen::Matrix<double, 6, 1> constrainedPoseError(
     const rw::math::Transform3D<double>& target,
     const rw::math::Transform3D<double>& actual,
@@ -262,123 +329,143 @@ Eigen::Matrix<double, 6, 1> constrainedPoseError(
     }
     Eigen::Matrix<double, 6, 1> full = poseError(target, actual, posResidual, oriResidual);
 
-    // 需求 REQ-01/REQ-09 的姿态分量不是轴角向量，而是参考系内 Z-Y-X
-    // 欧拉字面（roll/pitch/yaw，单位 rad）。先把目标和实际旋转都变换到
-    // 同一个参考系，再按固定的万向锁分支提取三角，最后逐项做跨周最短差。
-    // ★ 批34：万向锁邻域护栏——任一侧 cp<1e-5 时 ZYX 欧拉参数化失去正
-    //   则性（分支边界残差跳变，逐分量欧拉差无法收敛——调试实测振荡周
-    //   期跳变），回退轴角残差（SO(3) 连续，姿态行经 rr 转置到参考系，
-    //   与 DLS 侧角速度行线性化同构）；双侧远离锁时走欧拉差（F2 欧拉率
-    //   Jacobian 与之匹配）。
-    const rw::math::Rotation3D<double> refTranspose = transposeOf(rr);
-    const rw::math::Rotation3D<double> targetRef = composeOf(refTranspose, target.R());
-    const rw::math::Rotation3D<double> actualRef = composeOf(refTranspose, actual.R());
-    constexpr double kGimbalGuardEpsilon = 1e-5;  // 与 zyxEulerAngles 分支门限同源
-    const double cpTarget = std::sqrt(targetRef(0, 0) * targetRef(0, 0)
-                                      + targetRef(1, 0) * targetRef(1, 0));
-    const double cpActual = std::sqrt(actualRef(0, 0) * actualRef(0, 0)
-                                      + actualRef(1, 0) * actualRef(1, 0));
-    std::array<double, 3> targetRpy = zyxEulerAngles(targetRef);
-    std::array<double, 3> actualRpy = zyxEulerAngles(actualRef);
-    if (cpTarget < kGimbalGuardEpsilon || cpActual < kGimbalGuardEpsilon) {
+    const rw::math::Rotation3D<double> refT = transposeOf(rr);
+    const rw::math::Rotation3D<double> targetRef = composeOf(refT, target.R());
+    const rw::math::Rotation3D<double> actualRef = composeOf(refT, actual.R());
+    if (!constraint.allowToolRoll) {
+        // ---- 欧拉残差（REQ-01/REQ-09 契约面——批35 P1-3：不做参数化替
+        // 换，掩码各分量语义保持；跨极连续性由最近等价表示承载——同一旋
+        // 转的 ZYX 双支 (r,p,y)≡(r+π, π−p, y+π)，取离目标最近者，残差跨
+        // 万向锁连续且残差/导数同分支）。
+        const std::array<double, 3> targetRpy = zyxEulerAngles(targetRef);
+        std::array<double, 3> actualRpy = zyxEulerAngles(actualRef);
+        const auto distTo = [&targetRpy](const std::array<double, 3>& c) {
+            double d = 0.0;
+            for (int i = 0; i < 3; ++i) {
+                const double e = wrapAngle(targetRpy[static_cast<std::size_t>(i)]
+                                           - c[static_cast<std::size_t>(i)]);
+                d += e * e;
+            }
+            return d;
+        };
+        std::array<double, 3> alt = {wrapAngle(actualRpy[0] + 3.14159265358979323846),
+                                     wrapAngle(3.14159265358979323846 - actualRpy[1]),
+                                     wrapAngle(actualRpy[2] + 3.14159265358979323846)};
+        if (distTo(alt) < distTo(actualRpy)) { actualRpy = alt; }
+        for (int i = 0; i < 3; ++i) {
+            full(3 + i) = wrapAngle(targetRpy[static_cast<std::size_t>(i)]
+                                    - actualRpy[static_cast<std::size_t>(i)]);
+        }
+    } else {
+        // ---- 目标族残差（批35 P1-1/P1-4）：滚转自由＝绕**目标 z（工具
+        // 轴）**的扭转 θ，合法集＝{R_target·Rz(θ), θ∈区间}。残差＝实际到
+        // 族内最近元（θ 投影到区间）的旋转的轴角向量（target 系→参考系）：
+        // 扭转界内被吸收（工具轴方向自由）、界外携带拉回最近界的分量参与
+        // 迭代——残差/区间投影/DLS 角速度行三者同一分支（评审 P1-1"统一"
+        // 要求；倾斜工具的扭转不再误用参考系 Euler yaw 承载——P1-4）。
+        const rw::math::Rotation3D<double> eRot =
+            composeOf(transposeOf(target.R()), actual.R());
+        const std::array<double, 3> twist = zyzEulerAngles(eRot);  // (α,β,γ)
+        double gammaC = twist[2];
+        const double span = constraint.rollRange[1] - constraint.rollRange[0];
+        if (span < 2.0 * 3.14159265358979323846) {
+            const double offset = wrapAngle(gammaC - constraint.rollRange[0]);
+            if (offset < 0.0) {
+                gammaC = constraint.rollRange[0];          // 界下侧——吸收到 min
+            } else if (offset > span) {
+                gammaC = constraint.rollRange[0] + span;   // 界上侧——吸收到 max
+            }
+        }
+        // 剩余旋转＝E·Rz(γc)⁻¹（吸收钳制扭转后）＝Rz(α)Ry(β)Rz(γ−γc)。
+        const double cg = std::cos(gammaC);
+        const double sg = std::sin(gammaC);
+        const rw::math::Rotation3D<double> minusRz(cg, sg, 0, -sg, cg, 0, 0, 0, 1);
+        const rw::math::Rotation3D<double> residualRot = composeOf(eRot, minusRz);
+        // 轴角向量（target 系）→参考系（R_ref_target = rrᵀ·R_target）。
+        const rw::math::Rotation3D<double> rRefTarget = composeOf(refT, target.R());
+        const double tr = residualRot(0, 0) + residualRot(1, 1) + residualRot(2, 2);
+        const double angle =
+            std::acos(std::max(-1.0, std::min(1.0, (tr - 1.0) / 2.0)));
+        rw::math::Vector3D<double> axisT(residualRot(2, 1) - residualRot(1, 2),
+                                         residualRot(0, 2) - residualRot(2, 0),
+                                         residualRot(1, 0) - residualRot(0, 1));
+        const double axisNorm = std::sqrt(axisT.norm2());
+        if (axisNorm > 1e-12) {
+            axisT *= (angle / axisNorm);
+        } else {
+            axisT = rw::math::Vector3D<double>(0.0, 0.0, 0.0);  // 近恒等——零残差
+        }
         for (int k = 0; k < 3; ++k) {
             double refRow = 0.0;
             for (int j = 0; j < 3; ++j) {
-                refRow += rr(j, k) * full(3 + j);  // 轴角姿态行 base→参考系
+                refRow += rRefTarget(j, k) * axisT[j];
             }
             full(3 + k) = refRow;
         }
-    } else {
-        rw::math::Vector3D<double> localR;
-        for (int i = 0; i < 3; ++i) {
-            localR[i] = wrapAngle(targetRpy[static_cast<std::size_t>(i)]
-                                  - actualRpy[static_cast<std::size_t>(i)]);
-        }
-        full(3) = localR[0]; full(4) = localR[1]; full(5) = localR[2];
     }
     full(0) = localP[0]; full(1) = localP[1]; full(2) = localP[2];
     double p2 = 0.0;
     double r2 = 0.0;
-    double rollResidual = 0.0;
-    if (constraint.allowToolRoll) {
-        // ★ 批34（评审 F1）：滚转区间作用于**实际绝对滚转**（参考系内
-        //   actualRpy[2]，wrap 到 (−π,π]），不是 yaw 误差值。旧实现把区间
-        //   套在 wrap(target−actual) 上——误差为 0（actual＝target）恒在
-        //   区间内＝绝对滚转越界的解被误收；误差越界而绝对滚转在界的合法
-        //   解被误罚。正确语义：滚转自由但不得出界——界内零残差（yaw 行
-        //   置零＝不驱动），出界残差＝拉回最近界（跨周 wrap 连续）。
-        const double span = constraint.rollRange[1] - constraint.rollRange[0];
-        if (span < 2.0 * 3.14159265358979323846) {
-            const double actualRoll = wrapAngle(actualRpy[2]);
-            const double offset =
-                wrapAngle(actualRoll - constraint.rollRange[0]);
-            if (offset < 0.0) {
-                rollResidual = -offset;              // 界下侧——正向拉回 min
-            } else if (offset > span) {
-                rollResidual = span - offset;        // 界上侧——负向拉回 max
-            }
-        }
-    }
-    const bool rollResidualActive = constraint.allowToolRoll && std::fabs(rollResidual) > 0.0;
+    // 残差范数按掩码逐行（批35 P1-1：allowToolRoll 的扭转界外拉回分量
+    // 已在 full(5) 参与迭代，不再无条件扣行）。
     for (int i = 0; i < 3; ++i) {
-        if (constraint.constrainedDof[static_cast<std::size_t>(i)]) p2 += full(i) * full(i);
-        if (constraint.constrainedDof[static_cast<std::size_t>(i + 3)]
-            && !(constraint.allowToolRoll && i == 2 && !rollResidualActive)) {
+        if (constraint.constrainedDof[static_cast<std::size_t>(i)]) {
+            p2 += full(i) * full(i);
+        }
+        if (constraint.constrainedDof[static_cast<std::size_t>(i + 3)]) {
             r2 += full(i + 3) * full(i + 3);
         }
-    }
-    if (constraint.constrainedDof[5]) {
-        r2 += rollResidual * rollResidual;
     }
     posResidual = std::sqrt(p2);
     oriResidual = std::sqrt(r2);
     for (int i = 0; i < 6; ++i) {
-        const bool enabled = constraint.constrainedDof[static_cast<std::size_t>(i)]
-            && !(constraint.allowToolRoll && i == 5 && !rollResidualActive);
-        if (!enabled) full(i) = 0.0;
-    }
-    if (constraint.allowToolRoll && constraint.rollRange[1] - constraint.rollRange[0]
-            < 2.0 * 3.14159265358979323846) {
-        full(5) = rollResidual;
+        if (!constraint.constrainedDof[static_cast<std::size_t>(i)]) full(i) = 0.0;
     }
     return full;
 }
 
-/// @brief 用约束行构造DLS步长。
-/// ★ 批34（评审 F2）：姿态残差是参考系内 ZYX 欧拉角差，而姿态 Jacobian
-/// 行原是参考系角速度行——角速度≠欧拉率，两者不匹配使大俯仰目标收敛
-/// 失效。现按 ZYX 欧拉率映射 ω_ref→θ̇ 重建三行：roll 行＝(cψ/cθ)ωx+
-/// (sψ/cθ)ωy；pitch 行＝−sψ·ωx+cψ·ωy；yaw 行＝tθ·(cψ·ωx+sψ·ωy)+ωz。
-/// 其中 (φ,θ,ψ)＝实际姿态在参考系内的 ZYX 提取（与残差同一提取函数）；
-/// ω 为参考系角速度行（rr 转置映射）。cθ 以 1e-6 护栏钳制（万向锁附近
-/// roll/yaw 行放大——残差侧 roll 已钉 0，DLS 阻尼吸收余量）。
+/// @brief 约束 DLS 步长（批35 P1-1/P1-2/P1-3 终版）。
+/// 行选择＝掩码直取（扭转界外拉回行参与迭代——P1-1）；姿态行按残差分
+/// 支二分：allowToolRoll（目标族轴角残差，target 系→参考系）＝角速度行
+/// （同一分支）；其余（欧拉差残差）＝ZYX 欧拉率映射行，映射评位点用与
+/// 残差同一的最近等价表示，ωx/ωy/ωz 逐项显式组合（批34 的分量拾取错
+/// 误随重写消除——P1-2）。cθ 钳制 0.05（万向锁附近限幅，DLS 阻尼吸收）。
 Eigen::VectorXd constrainedDampedLeastSquaresStep(
     const std::vector<double>& jacobianRowMajor, std::size_t dof,
     const TaskPoseConstraint& constraint,
-    const rw::math::Rotation3D<double>& actualInBase,
+    const rw::math::Transform3D<double>& actualInBase,
+    const rw::math::Transform3D<double>& targetInBase,
     const Eigen::Matrix<double, 6, 1>& e)
 {
     std::vector<int> rows;
     for (int i = 0; i < 6; ++i) {
-        if (constraint.constrainedDof[static_cast<std::size_t>(i)]
-            && !(constraint.allowToolRoll && i == 5)) rows.push_back(i);
+        if (constraint.constrainedDof[static_cast<std::size_t>(i)]) rows.push_back(i);
     }
-    // 实际姿态参考系内 ZYX 提取（欧拉率映射的评位点——与残差同源函数）。
     const rw::math::Rotation3D<double> refT = transposeOf(constraint.referenceInBase);
-    const std::array<double, 3> actualRpy =
-        zyxEulerAngles(composeOf(refT, actualInBase));
-    const double sRoll = std::sin(actualRpy[0]);
-    const double cRoll = std::cos(actualRpy[0]);
+    const rw::math::Rotation3D<double> targetRef = composeOf(refT, targetInBase.R());
+    const rw::math::Rotation3D<double> actualRef = composeOf(refT, actualInBase.R());
+    const std::array<double, 3> targetRpy = zyxEulerAngles(targetRef);
+    std::array<double, 3> actualRpy = zyxEulerAngles(actualRef);
+    if (!constraint.allowToolRoll) {
+        // 与残差同一最近等价表示（残差/导数同分支——P1-3）。
+        const auto distTo = [&targetRpy](const std::array<double, 3>& c) {
+            double d = 0.0;
+            for (int i = 0; i < 3; ++i) {
+                const double e = wrapAngle(targetRpy[static_cast<std::size_t>(i)]
+                                           - c[static_cast<std::size_t>(i)]);
+                d += e * e;
+            }
+            return d;
+        };
+        std::array<double, 3> alt = {wrapAngle(actualRpy[0] + 3.14159265358979323846),
+                                     wrapAngle(3.14159265358979323846 - actualRpy[1]),
+                                     wrapAngle(actualRpy[2] + 3.14159265358979323846)};
+        if (distTo(alt) < distTo(actualRpy)) { actualRpy = alt; }
+    }
     const double sPitch = std::sin(actualRpy[1]);
-    // cθ 钳制下限 0.05（放大系数 ≤20×）：1/cp 项在万向锁附近无限放大步
-    // 长，跨奇异分支时残差跳变＋巨步互激（调试实测 it=2 起 ori 4.4、
-    // |dq| 6.6 发散）；钳制后 DLS 阻尼足以在分支边界附近稳定收敛。
     const double cPitch = std::max(std::fabs(std::cos(actualRpy[1])), 0.05);
     const double sYaw = std::sin(actualRpy[2]);
     const double cYaw = std::cos(actualRpy[2]);
-    // 万向锁邻域门（与残差回退同门限语义）：残差已回退轴角（连续）——
-    // 姿态行回归角速度行（欧拉率映射在 cp→0 失去正则性，钳制只是限幅）。
-    const bool gimbalFallback = std::fabs(std::cos(actualRpy[1])) < 1e-5;
 
     Eigen::MatrixXd J(static_cast<Eigen::Index>(rows.size()), static_cast<Eigen::Index>(dof));
     const rw::math::Rotation3D<double>& rr = constraint.referenceInBase;
@@ -387,42 +474,31 @@ Eigen::VectorXd constrainedDampedLeastSquaresStep(
         for (std::size_t c = 0; c < dof; ++c) {
             double value = 0.0;
             if (row < 3) {
-                for (int k = 0; k < 3; ++k) value += rr(k, row) * jacobianRowMajor[k * dof + c];
-            } else {
-                const int local = row - 3;
-                // 参考系角速度行（ωx/ωy/ωz 之一——旧实现同式）。
-                double omegaRow = 0.0;
                 for (int k = 0; k < 3; ++k) {
-                    omegaRow += rr(k, local) * jacobianRowMajor[(k + 3) * dof + c];
+                    value += rr(k, row) * jacobianRowMajor[k * dof + c];
                 }
-                if (gimbalFallback) {
-                    value = omegaRow;  // 残差已回退轴角——行同归角速度（批34）
-                } else if (local == 0) {
-                    // roll 行：(cψ/cθ)·ωx + (sψ/cθ)·ωy
-                    value = (cYaw / cPitch) * omegaRow;
-                    double second = 0.0;
-                    for (int k = 0; k < 3; ++k) {
-                        second += rr(k, 1) * jacobianRowMajor[(k + 3) * dof + c];
-                    }
-                    value += (sYaw / cPitch) * second;
-                } else if (local == 1) {
-                    // pitch 行：−sψ·ωx + cψ·ωy
-                    value = -sYaw * omegaRow;
-                    double second = 0.0;
-                    for (int k = 0; k < 3; ++k) {
-                        second += rr(k, 1) * jacobianRowMajor[(k + 3) * dof + c];
-                    }
-                    value += cYaw * second;
+            } else if (constraint.allowToolRoll) {
+                // 目标族轴角残差（参考系）——角速度行线性化（同分支）。
+                const int local = row - 3;
+                for (int k = 0; k < 3; ++k) {
+                    value += rr(k, local) * jacobianRowMajor[(k + 3) * dof + c];
+                }
+            } else {
+                // 欧拉率映射行（P1-2：ωx/ωy/ωz 逐项显式，分量不拾取错）。
+                double wx = 0.0;
+                double wy = 0.0;
+                double wz = 0.0;
+                for (int k = 0; k < 3; ++k) {
+                    wx += rr(k, 0) * jacobianRowMajor[(k + 3) * dof + c];
+                    wy += rr(k, 1) * jacobianRowMajor[(k + 3) * dof + c];
+                    wz += rr(k, 2) * jacobianRowMajor[(k + 3) * dof + c];
+                }
+                if (row == 3) {
+                    value = (cYaw * wx + sYaw * wy) / cPitch;          // roll 行
+                } else if (row == 4) {
+                    value = -sYaw * wx + cYaw * wy;                    // pitch 行
                 } else {
-                    // yaw 行：tθ·(cψ·ωx + sψ·ωy) + ωz
-                    value = omegaRow;
-                    double wx = 0.0;
-                    double wy = 0.0;
-                    for (int k = 0; k < 3; ++k) {
-                        wx += rr(k, 0) * jacobianRowMajor[(k + 3) * dof + c];
-                        wy += rr(k, 1) * jacobianRowMajor[(k + 3) * dof + c];
-                    }
-                    value += (sPitch / cPitch) * (cYaw * wx + sYaw * wy);
+                    value = wz + (sPitch / cPitch) * (cYaw * wx + sYaw * wy);  // yaw 行
                 }
             }
             J(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c)) = value;
@@ -891,11 +967,15 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             // PositionOnly 只查位置残差——A02；FullPose 双残差逐项不变）。
             // e 恒按 6 维产出（姿态残差仍如实计算供记录——PositionOnly
             // 下仅前 taskDim 维进目标函数）。
-            const Eigen::Matrix<double, 6, 1> e = request.taskConstraint.has_value()
-                ? constrainedPoseError(request.targetInBase, m.get().tcpInBase,
-                                       *request.taskConstraint, posResidual, oriResidual)
-                : poseError(request.targetInBase, m.get().tcpInBase,
-                            posResidual, oriResidual);
+            // 验收残差（契约面——欧拉/目标族）供收敛判据与解记录；迭代
+            // 残差（测地——批35 P1-3 迭代/验收分离）供 DLS 步进。
+            const Eigen::Matrix<double, 6, 1> e =
+                request.taskConstraint.has_value()
+                    ? constrainedPoseError(request.targetInBase, m.get().tcpInBase,
+                                           *request.taskConstraint, posResidual,
+                                           oriResidual)
+                    : poseError(request.targetInBase, m.get().tcpInBase,
+                                posResidual, oriResidual);
             const bool converged = request.taskConstraint.has_value()
                 ? (posResidual <= request.positionTolerance
                    && oriResidual <= request.orientationTolerance)
@@ -924,7 +1004,8 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             Eigen::VectorXd dq = request.taskConstraint.has_value()
                 ? constrainedDampedLeastSquaresStep(m.get().jacobian, dof,
                                                     *request.taskConstraint,
-                                                    m.get().tcpInBase.R(), e)
+                                                    m.get().tcpInBase,
+                                                    request.targetInBase, e)
                 : dampedLeastSquaresStep(m.get().jacobian, dof, taskDim, e.head(taskDim));
             // ★ 批34：约束求解步长上限（调试实测跨欧拉分支时巨步 29 rad
             //   ——欧拉提取在 ±90° 分支边界残差跳变，巨步与跳变互激发散；

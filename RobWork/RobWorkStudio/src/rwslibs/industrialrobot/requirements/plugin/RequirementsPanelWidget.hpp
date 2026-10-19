@@ -505,6 +505,11 @@ private:
     /// A-18：结构编辑组合的原子提交轨（applyEditsAtomic——恰一次撤销；
     /// 记账与 sink 链同单编辑版，一次入账对应一次组合回滚）。
     bool submitStructuralEditsAtomic(const std::vector<RequirementEdit>& edits);
+    /// ★ 批35（评审 P1-5）：区域写入统一入口——有派生计划＝区域＋计划
+    /// upsert 原子批（计划随几何/采样同步）；无计划＝单编辑轨；构建拒绝
+    /// ＝整个编辑拒绝。单字段轨与批量参数表轨共用（两条写路径不漏同步）。
+    bool submitRegionEditWithPlanSync(IRequirementEditor& editor,
+                                      const WorkRegion& candidate);
 
     /**
      * @brief 创建非模态数量参数表；筛选/单位/粘贴统一复用UI公共组件（UX-05）。

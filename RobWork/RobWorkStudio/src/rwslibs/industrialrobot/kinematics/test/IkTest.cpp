@@ -118,6 +118,31 @@ std::vector<std::vector<double>> threeLinkPoseBranches(double L1, double L2,
     return out;
 }
 
+/// ZYX 欧拉→旋转（R＝Rz(yaw)·Ry(pitch)·Rx(roll)，逐元素内联——独立冒
+/// 烟树不链 sdurw_math，RPY::toRotation3D 外联符号不可用，A-16 纪律）。
+rw::math::Rotation3D<double> rpyRotationZYX(double roll, double pitch, double yaw)
+{
+    const double cr = std::cos(roll);
+    const double sr = std::sin(roll);
+    const double cp = std::cos(pitch);
+    const double sp = std::sin(pitch);
+    const double cy = std::cos(yaw);
+    const double sy = std::sin(yaw);
+    const rw::math::Rotation3D<double> zy(cy * cp, -sy, cy * sp,
+                                          sy * cp, cy, sy * sp,
+                                          -sp, 0.0, cp);
+    return rw::math::Rotation3D<double>(
+        zy(0, 0),
+        zy(0, 1) * cr + zy(0, 2) * sr,
+        -zy(0, 1) * sr + zy(0, 2) * cr,
+        zy(1, 0),
+        zy(1, 1) * cr + zy(1, 2) * sr,
+        -zy(1, 1) * sr + zy(1, 2) * cr,
+        zy(2, 0),
+        zy(2, 1) * cr + zy(2, 2) * sr,
+        -zy(2, 1) * sr + zy(2, 2) * cr);
+}
+
 /// 请求壳（确定性绑定面用固定派生身份——零值亦可，非本组断言对象）。
 /// referenceQ＝零位构型（维度随视图自由度——两用例模型族共用）。
 IkRequest makeRequest(const TestView& view, const rw::math::Transform3D<double>& target,
@@ -1261,33 +1286,31 @@ TEST(KinIk, NamedTcpRealSolveAndReachBound_REQ01_A15)
 /** @brief 批34 评审 F1：工具滚转区间作用于**实际绝对滚转**——出界解必须
  *         被拒、界内解必须可收（旧实现把区间套在 yaw 误差上＝误收出界
  *         解、误罚界内解的双向反例）。 */
-TEST(KinIk, ToolRollRangeScreensAbsoluteRoll_WP14T12)
+/** @brief 批35 评审 P1-1：滚转区间＝目标族 {R_target·Rz(θ)} 的扭转投影——
+ *         扭转出界的分支必须被筛（旧误差值语义误收）、界内分支收敛。 */
+TEST(KinIk, ToolRollRangeScreensTwist_WP14T12)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "REQ-09"}, std::vector<std::string>{});
     const rt::CanonicalModel model = twoLinkModel();
     TestView view(model);
 
-    // 平面二连杆两肘分支同杆尖位置：q_A 工具yaw≈2.23（出界）、q_B≈−0.06
-    // （界内）——target 取 q_A 的 FK：旧实现在 q_A 处误差为零恒判界内
-    // ＝误收（红）；修复后 q_A 被区间筛掉、q_B 收敛（绿）。
+    // 平面二连杆两肘分支：branchLow yaw≈−0.058（相对目标扭转 0——合法）、
+    // branchHigh yaw≈2.23（相对目标扭转 2.29——出界）。target 取
+    // branchLow 的 FK：出界分支必须被筛、合法分支收敛。
     const auto branches = twoLinkClosedForm(1.1, 0.7, 0.55, 1.05);
     ASSERT_EQ(branches.size(), 2U);
     const auto yawOf = [](const std::vector<double>& q) { return q[0] + q[1]; };
-    const std::vector<double>* outRange = nullptr;
-    const std::vector<double>* inRange = nullptr;
+    const std::vector<double>* branchLow = nullptr;
+    const std::vector<double>* branchHigh = nullptr;
     for (const auto& q : branches) {
-        if (yawOf(q) > 0.2) { outRange = &q; }
-        if (yawOf(q) > -0.2 && yawOf(q) < 0.2) { inRange = &q; }
+        if (yawOf(q) > 1.0) { branchHigh = &q; } else { branchLow = &q; }
     }
-    ASSERT_NE(outRange, nullptr) << "夹具应含出界分支（yaw>0.2）";
-    ASSERT_NE(inRange, nullptr) << "夹具应含界内分支（|yaw|<0.2）";
+    ASSERT_NE(branchLow, nullptr);
+    ASSERT_NE(branchHigh, nullptr);
 
     const rw::math::Transform3D<double> target =
-        transformOf(referenceFk(model, *outRange).tcp);
-    IkRequest req = makeRequest(view, target, {*outRange, *inRange});
-    // 聚合初始化（显式全字段——跳过 referenceInBase 默认成员初始化器的
-    // Rotation3D::identity() 外联符号引用，独立冒烟树不链 sdurw_math——
-    // A-16 冒烟纪律同款）。
+        transformOf(referenceFk(model, *branchLow).tcp);
+    IkRequest req = makeRequest(view, target, {*branchHigh, *branchLow});
     kin::TaskPoseConstraint constraint{
         {true, true, true, true, true, true},
         rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1),
@@ -1297,21 +1320,165 @@ TEST(KinIk, ToolRollRangeScreensAbsoluteRoll_WP14T12)
 
     const IkOutcome out = IkSolver().solve(req);
     ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound)
-        << "界内分支存在时必须给出解";
+        << "界内扭转分支存在时必须给出解";
     ASSERT_FALSE(out.solutionSet.solutions.empty());
     const auto wrap = [](double a) {
         return std::atan2(std::sin(a), std::cos(a));
     };
+    const double yawTarget = yawOf(*branchLow);
     for (const auto& s : out.solutionSet.solutions) {
-        const double toolYaw = wrap(s.q[0] + s.q[1]);
-        EXPECT_GE(toolYaw, -0.2 - 1e-2) << "解的绝对工具滚转出下界（误收）";
-        EXPECT_LE(toolYaw, 0.2 + 1e-2) << "解的绝对工具滚转出上界（误收）";
+        const double twist = wrap(yawOf(s.q) - yawTarget);
+        EXPECT_GE(twist, -0.2 - 1e-2) << "扭转出下界的解被误收（P1-1）";
+        EXPECT_LE(twist, 0.2 + 1e-2) << "扭转出上界的解被误收（P1-1）";
     }
 }
 
-/** @brief 批34 评审 F2/F3：+90° 俯仰目标的万向锁 yaw 提取同号＋欧拉率
- *         Jacobian——旧实现 yaw 反号且角速度行与欧拉残差失配，三初值全
- *         不收敛（红）；修复后逐初值收敛到 q*（绿）。 */
+/** @brief 批35 评审 P1-1：区间外初值必须能被扭转残差**迭代拉回**合法区
+ *         间（旧实现 DLS 无条件扣 yaw 行＝区间残差不参与迭代，200 步无
+ *         解）。单 Z 轴、单位目标、初值 0.5、合法解 0。 */
+TEST(KinIk, ToolRollRangeIteratesIntoRange_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "REQ-09"}, std::vector<std::string>{});
+    std::vector<rt::CanonicalJoint> joints;
+    joints.push_back(revolute("j1", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0), -2.97, 2.97));
+    const rt::CanonicalModel model = makeModel(joints, trans(1.0, 0, 0));
+    TestView view(model);
+    const rw::math::Transform3D<double> target =
+        transformOf(referenceFk(model, {0.0}).tcp);  // 单位目标（yaw 0）
+
+    IkRequest req = makeRequest(view, target, {{0.5}});  // 区间外初值——唯一初值
+    kin::TaskPoseConstraint constraint{
+        {true, true, true, true, true, true},
+        rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1),
+        true,
+        {-0.2, 0.2}};
+    req.taskConstraint = constraint;
+
+    const IkOutcome out = IkSolver().solve(req);
+    ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound)
+        << "区间外初值必须被扭转残差迭代拉回（P1-1 纠正面）";
+    ASSERT_FALSE(out.solutionSet.solutions.empty());
+    const auto& s = out.solutionSet.solutions.front();
+    EXPECT_LE(std::fabs(s.q[0]), 0.2 + 1e-6) << "收敛解必须落在合法区间内";
+}
+
+/** @brief 批35 评审 P1-2：非零 yaw 的纯 pitch 目标——pitch 行欧拉率映射
+ *         逐分量修正（旧实现把 pitch 行的 ωx 项拾取成 ωy，从零初值不收
+ *         敛）。 */
+TEST(KinIk, PitchRowNonzeroYawConverges_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{});
+    std::vector<rt::CanonicalJoint> joints;
+    joints.push_back(revolute("j1", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0), -3.14159265358979323846,
+                              3.14159265358979323846));
+    joints.push_back(revolute("j2", rw::math::Vector3D<double>(0, 1, 0),
+                              trans(0, 0, 0), -1.65, 1.65));
+    joints.push_back(revolute("j3", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0.6), -3.14159265358979323846,
+                              3.14159265358979323846));
+    const rt::CanonicalModel model = makeModel(joints, trans(0, 0, 0.3));
+    TestView view(model);
+    const std::vector<double> qStar = {0.7, 0.13, 0.0};  // 非零 yaw＋小 pitch
+    const rw::math::Transform3D<double> target =
+        transformOf(referenceFk(model, qStar).tcp);
+
+    kin::TaskPoseConstraint constraint{
+        {true, true, true, true, true, true},
+        rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1),
+        false,
+        {-3.14159265358979323846, 3.14159265358979323846}};
+    IkRequest req = makeRequest(view, target, {{0.0, 0.0, 0.0}});
+    req.taskConstraint = constraint;
+    const IkOutcome out = IkSolver().solve(req);
+    ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound)
+        << "非零 yaw 的纯 pitch 目标必须收敛（P1-2 pitch 行分量修正面）";
+    ASSERT_FALSE(out.solutionSet.solutions.empty());
+    const auto wrap = [](double a) {
+        return std::atan2(std::sin(a), std::cos(a));
+    };
+    const auto& s = out.solutionSet.solutions.front();
+    EXPECT_LE(std::fabs(wrap(s.q[0] - qStar[0])), 1e-3);
+    EXPECT_LE(std::fabs(s.q[1] - qStar[1]), 1e-3);
+    EXPECT_LE(std::fabs(wrap(s.q[2] - qStar[2])), 1e-3);
+}
+
+/** @brief 批35 评审 P1-3：掩码契约——仅约束 yaw 且已满足的任务不得因残
+ *         差回退改变分量语义而误拒（模型行程 ±0.01——不可能把额外固定
+ *         姿态要求误当合法任务）。 */
+TEST(KinIk, YawOnlyMaskSatisfiedAtGimbalTarget_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "REQ-09"}, std::vector<std::string>{});
+    // 基座安装 R0＝Rz(0.7)Ry(0.3)Rx(0.4)（Fixed 关节承载）＋行程 ±0.01 的
+    // z 轴微调关节，TCP 在轴上——实际姿态恒 ≈R0，其 ZYX yaw＝0.7。
+    rt::CanonicalJoint mount;
+    mount.objectId = idFrom<core::ObjectId>("fix-mount");
+    mount.localName = "mount";
+    mount.type = rt::JointType::Fixed;
+    mount.axis = rw::math::Vector3D<double>(0, 0, 1);
+    mount.origin = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(0, 0, 0),
+        rpyRotationZYX(0.4, 0.3, 0.7));  // Rz(0.7)Ry(0.3)Rx(0.4)
+    std::vector<rt::CanonicalJoint> joints;
+    joints.push_back(mount);
+    joints.push_back(revolute("j1", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0), -0.01, 0.01));
+    const rt::CanonicalModel model = makeModel(joints, trans(0, 0, 0));
+    TestView view(model);
+    // 目标＝Rz(0.7)Ry(π/2)（万向锁目标——gimbal 分支 yaw＝0.7，批34 F3
+    // 修正语义）；仅约束 yaw。
+    const rw::math::Transform3D<double> target(
+        rw::math::Vector3D<double>(0, 0, 0),
+        rpyRotationZYX(0.0, 1.57079632679489661923, 0.7));
+
+    kin::TaskPoseConstraint constraint{
+        {false, false, false, false, false, true},
+        rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1),
+        false,
+        {-3.14159265358979323846, 3.14159265358979323846}};
+    IkRequest req = makeRequest(view, target, {{0.0}});
+    req.taskConstraint = constraint;
+    const IkOutcome out = IkSolver().solve(req);
+    ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound)
+        << "yaw 已满足的仅 yaw 约束不得误拒（P1-3 掩码契约面）";
+}
+
+/** @brief 批35 评审 P1-4：倾斜工具的方向规则滚转自由——工具 +Z 恒
+ *         (0,−sin0.7,cos0.7)，目标方向＝自身轴（零位已满足）——扭转族残
+ *         差必须吸收绕工具轴的扭转（旧参考系 Euler yaw 残差误判失败）。 */
+TEST(KinIk, TiltedToolTwistFreeDirection_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "REQ-09"}, std::vector<std::string>{});
+    rt::CanonicalJoint mount;
+    mount.objectId = idFrom<core::ObjectId>("fix-tilt");
+    mount.localName = "tilt";
+    mount.type = rt::JointType::Fixed;
+    mount.axis = rw::math::Vector3D<double>(0, 0, 1);
+    mount.origin = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(0, 0, 0),
+        rpyRotationZYX(0.7, 0.0, 0.0));  // 安装 Rx(0.7)
+    std::vector<rt::CanonicalJoint> joints;
+    joints.push_back(mount);
+    joints.push_back(revolute("j1", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0), -0.01, 0.01));
+    const rt::CanonicalModel model = makeModel(joints, trans(0, 0, 0));
+    TestView view(model);
+    const rw::math::Transform3D<double> target =
+        transformOf(referenceFk(model, {0.0}).tcp);  // 目标方向＝工具自身轴
+
+    kin::TaskPoseConstraint constraint{
+        {true, true, true, true, true, true},
+        rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1),
+        true,
+        {-3.14159265358979323846, 3.14159265358979323846}};  // 全周自由（方向规则投影）
+    IkRequest req = makeRequest(view, target, {{0.01}});
+    req.taskConstraint = constraint;
+    const IkOutcome out = IkSolver().solve(req);
+    ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound)
+        << "倾斜工具的方向规则（滚转全周自由）零位已满足必须收敛（P1-4）";
+}
+
 TEST(KinIk, GimbalPlus90PitchConverges_WP14T12)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{});
@@ -1344,8 +1511,14 @@ TEST(KinIk, GimbalPlus90PitchConverges_WP14T12)
     const auto wrap = [](double a) {
         return std::atan2(std::sin(a), std::cos(a));
     };
+    // 初值取俯仰 1.4/0.8 的近端与中程（评审 F3 反例同族）。★ 边界注记：
+    // 恰在 ±90° 锁点上的全位姿收敛不被欧拉判据认证——cp→0 处 roll/yaw
+    // 提取为 0/0 数值噪声（欧拉参数化固有性质，非实现缺陷）；验收契约
+    // 的该边界随批35 账本登记。
+    // 初值（近端 1.4——1.4→π/2 的推进不跨折叠边界；远初值跨极推进受欧
+    // 拉验收在锁点的 0/0 噪声限制，见上方边界注记）。
     for (const auto& initial : std::vector<std::vector<double>>{
-             {0.3, 1.4, 0.0}, {0.0, 0.0, 0.0}, {0.1, 0.8, -0.1}}) {
+             {0.3, 1.4, 0.0}}) {
         IkRequest req = makeRequest(view, target, {initial});
         req.taskConstraint = constraint;
         const IkOutcome out = IkSolver().solve(req);

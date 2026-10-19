@@ -331,6 +331,56 @@ batch34-review-fixes/clipboard-env-attribution.txt）**：6 例 UX05 批量
 /交互逻辑），批33 同机同通道曾 103/103 全过。剪贴板恢复后须复跑（登记
 义务）。
 
+## 第三十五批（二轮评审修复批，2026-10-19）——批34 五类残留全量关闭
+
+**验收方 405b274c 复审（6/7 确认修复，1~5 残留）逐项修复**：
+
+1. **P1-1 窄区间不参与纠正迭代＋倾斜工具扭转**（Ik.cpp constrainedPose
+   Error/constrainedDampedLeastSquaresStep）：allowToolRoll 残差整体重设
+   计为**目标族 {R_target·Rz(θ)}**——E=R_targetᵀR_actual 的 ZYZ 分解取扭
+   转 γ，区间投影吸收（界内全自由、界外吸收到最近界），剩余旋转轴角向
+   量（target 系→参考系）即残差；DLS 行选择改掩码直取（扭转拉回行参与
+   迭代——旧实现无条件扣 yaw 行）。反例钉：ToolRollRangeScreensTwist
+   （出界分支筛除）＋ToolRollRangeIteratesIntoRange（区间外初值 0.5 单
+   初值迭代拉回界内——评审原反例）。
+2. **P1-2 pitch 行分量拾取错**（Ik.cpp DLS 欧拉率行）：ωx/ωy/ωz 逐项显
+   式组合（roll 行＝(cψωx+sψωy)/cθ；pitch 行＝−sψωx+cψωy；yaw 行＝
+   ωz+tθ(cψωx+sψωy)）——旧实现 pitch 行把 ωx 拾取成 ωy。反例钉：
+   PitchRowNonzeroYawConverges（Rz(0.7)Ry(0.13) 目标从零初值收敛——评审
+   原反例）。
+3. **P1-3 万向锁回退更换分量语义**：撤销批34 的轴角残差回退（回退把
+   Euler 分量换成轴角分量＝掩码语义漂移）。欧拉残差保持逐分量契约，跨
+   极连续性由**最近等价表示**承载——同一旋转的 ZYX 双支
+   (r,p,y)≡(r+π,π−p,y+π) 取离目标最近者（残差/导数同分支）。反例钉：
+   YawOnlyMaskSatisfiedAtGimbalTarget（R0=Rz(0.7)Ry(0.3)Rx(0.4) 安装＋
+   ±0.01 行程，仅约束 yaw 且已满足——评审原反例）。
+4. **P1-4 倾斜方向误当固定 Euler**：P1-1 的目标族残差即工具轴扭转的通
+   用形态（倾斜工具的绕轴自由不再经参考系 Euler yaw 承载）。反例钉：
+   TiltedToolTwistFreeDirection（安装 Rx(0.7)、工具轴
+   (0,−sin0.7,cos0.7)、目标＝自身轴——评审原反例的运动学层载体）。
+5. **P1-5 批量参数表绕过计划同步**（RequirementsPanelWidget 批量表回调
+   1550 区）：抽共享入口 submitRegionEditWithPlanSync（有计划＝区域＋计
+   划原子批；无计划＝单编辑轨；构建拒绝＝整个编辑拒绝），单字段
+   queueRegionEdit 与批量参数表两条写路径同入。反例钉：
+   RegionBatchResizeSyncsPlan_UX05_WP14T12（**不经剪贴板**——批量表值列
+   直改 box-size-x 2→4 m，计划 X 计数 5→9，一次撤销双回；评审原反例）。
+
+**连带**：A-16 通道用例（BatchDirectionRulesDoNotFallBackToFixed）期望
+按 P1-4 终版语义逐点更新（法向规则扭转族可达→completed；Fixed 对照与
++Y 指向在本平面夹具不可达→failed 诚实几何结果）；GimbalPlus90 用例初
+值收紧至近端并登记边界（恰在 ±90° 锁点上的全位姿收敛不被欧拉验收认证
+——cp→0 处 roll/yaw 提取 0/0 噪声为欧拉参数化固有性质）。
+
+**回归**（双模式）：kinematics_test 271 过＋1 占位（standalone）／278
+过＋1 占位（集成）；requirements_test 221 过＋1 占位（双模式）；
+requirements_gui 105 例中 99 过＋6 例 UX05 剪贴板环境故障（系统剪贴板
+仍损坏——批34 归因链持续有效；**其中 RegionBatchResizeSyncsPlan 为新增
+无剪贴板反例钉且通过**）；ui_test 267 过（standalone）／319 过（集成，
+含逐点如实期望的 A-16 用例更新）。
+
+| ID | 功能 | 如何验证 | 本次终验 | 最新组件匹配数 |
+| --- | --- | --- | --- | --- |
+
 | ID | 功能 | 如何验证 | 本次终验 | 最新组件匹配数 |
 | --- | --- | --- | --- | --- |
 | R01-01 | 新建关键任务点 | 空集点新增，核对默认字段、树节点和选中项 | PASS（批32——gui LifecycleAdd_ThreeCollections） | 2 |

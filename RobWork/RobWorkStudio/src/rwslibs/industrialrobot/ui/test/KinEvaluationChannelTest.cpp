@@ -1338,7 +1338,7 @@ TEST(KinEvaluationChannel, BatchHonorsEveryConstraintMask_REQ01_A16)
     }
 }
 
-/** @brief A-16/REQ-09：方向/滚转规则不可静默按Fixed求解，数值反例须与规则一致。 */
+/** @brief A-16/REQ-09：方向/滚转规则不可静默按Fixed求解（批35 P1-4 起方向规则为扭转自由族，倾斜正例语义见批35 注）。 */
 TEST(KinEvaluationChannel, BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16)
 {
     IRD_TEST_INFO(std::vector<std::string>{"REQ-09"}, std::vector<std::string>{"AT-23"});
@@ -1383,9 +1383,21 @@ TEST(KinEvaluationChannel, BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16)
     request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
     const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
     h.drain(); const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 4U);
+    // 批35（评审 P1-4）：方向规则自扭转自由起按 {R_target·Rz(θ)} 族求解
+    // ——本平面夹具下 +Y 水平方向对竖直工具轴不可达，"failed＋解 0 个"
+    // 为诚实几何结果（可达正例由 IkTest.TiltedToolTwistFreeDirection 与
+    // BatchDirectionRulesFreeToolRoll 两钉承载；Fixed 对照在可达位姿上
+    // 因姿态不可满足而 failed——同为诚实几何结果）。
+    // 批35（评审 P1-4）：期望按当前几何逐点如实——rollFree/法向（法向
+    // 规则的扭转族残差可达）＝completed；Fixed 对照（该位姿姿态不可满
+    // 足）与 +Y 指向（工具轴不可达）＝failed 诚实几何结果。可达性正例
+    // 另由 IkTest.TiltedToolTwistFreeDirection 与
+    // BatchDirectionRulesFreeToolRoll 两钉承载。
     for (const auto& point : ws.points.entries) {
         const auto it = results.find(point.objectId); ASSERT_NE(it, results.end());
-        EXPECT_EQ(it->second.outcomeState, point.objectId == rollFree.objectId ? "completed" : "failed")
+        const bool expectCompleted = point.objectId == rollFree.objectId
+            || point.objectId == normal.objectId;
+        EXPECT_EQ(it->second.outcomeState, expectCompleted ? "completed" : "failed")
             << point.name << " " << it->second.outcomeText;
     }
 }

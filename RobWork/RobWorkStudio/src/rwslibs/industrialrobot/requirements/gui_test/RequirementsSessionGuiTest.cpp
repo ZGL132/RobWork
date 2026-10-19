@@ -4338,3 +4338,70 @@ TEST_F(RequirementsSessionGuiTest, RegionConfirmWithoutChangeBuildsMissingPlan_R
     ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u) << "幂等再确认不得新增计划";
     EXPECT_EQ(m_editor.workingSet(), wsAfterFirst) << "幂等再确认工作集字节必须不变";
 }
+
+/** @brief 批35 评审 P1-5：区域批量参数表与单字段轨同入计划同步——盒长
+ *         2→4 m（0.5 m 间距）派生计数 5→9，不经剪贴板（直改表格值列）。 */
+TEST_F(RequirementsSessionGuiTest, RegionBatchResizeSyncsPlan_UX05_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+
+    // 先经采样表单确认派生计划（0.5 m 间距——盒长 2.0 m → X 计数 5）。
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    for (int axis = 0; axis < 3; ++axis) {
+        form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))
+            ->setText("0.5");
+    }
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u);
+    ASSERT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts[0], 5U)
+        << "夹具基线：盒长 2.0/间距 0.5 → X 计数 5";
+    const auto counts1 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+
+    // 批量参数表直改值列（kValueColumn=1；键在列 0 的 UserRole）——不经
+    // 剪贴板。box-size-x 2.0→4.0。
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_region");
+    ASSERT_NE(batch, nullptr);
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table");
+    ASSERT_NE(table, nullptr);
+    int sizeRow = -1;
+    for (int r = 0; r < table->rowCount(); ++r) {
+        const QTableWidgetItem* keyItem = table->item(r, 0);
+        if (keyItem != nullptr
+            && keyItem->data(Qt::UserRole).toString() == QStringLiteral("box-size-x")) {
+            sizeRow = r;
+            break;
+        }
+    }
+    ASSERT_GE(sizeRow, 0) << "批量表缺 box-size-x 行";
+    QTableWidgetItem* valueItem = table->item(sizeRow, 1);
+    ASSERT_NE(valueItem, nullptr) << "批量表值列缺失";
+    valueItem->setText(QStringLiteral("4"));
+    QApplication::processEvents();
+    QApplication::processEvents();  // singleShot 暂存排空
+
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    QApplication::processEvents();
+
+    // 区域尺寸写入＋计划同步（X 计数 5→9——4/0.5+1）。
+    EXPECT_DOUBLE_EQ(m_editor.workingSet().regions.entries.front().box.size[0], 4.0)
+        << "批量表尺寸写入未落账";
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u) << "同步应 upsert 不新增";
+    const auto counts2 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+    EXPECT_EQ(counts2[0], 9U) << "盒长 4 m/间距 0.5 m → X 计数 9（P1-5 同步面）";
+    EXPECT_NE(counts2, counts1);
+
+    // 一次撤销＝区域与计划双回（原子批）。
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().box.size[0], 2.0);
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts,
+              counts1);
+}
