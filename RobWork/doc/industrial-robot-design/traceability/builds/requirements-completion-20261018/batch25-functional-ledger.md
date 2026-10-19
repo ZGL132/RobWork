@@ -38,6 +38,37 @@ R10-03（捕获 TCP——需真实机器人场景）、J-02/03/04（TRJ/DYN/选�
 U08/U18（评估状态着色/碰撞高亮）——共约 12 行；其余行由 95 例生产路径 GUI 测试、
 两遍历合计约 380 条宿主断言及单元/契约套件覆盖组件与宿主面。
 
+## 第二十九批（交互补证通道，2026-10-19）——评估链自动化贯通与新缺陷 A-17/A-18
+
+**tour 扩展（requirements-tour 拍 10/11——本批新落）**：拍 10 建模模板应用（Dock
+召唤＋重种子＋结构编辑使 changes 非空＋runDomainApply＋发布收口），拍 11 真实覆盖
+评估运行（覆盖按钮点击→执行通道→切片→样本清单/三维着色/蓝圈断言与截图）。
+调试迭代 r1~r11 逐层剥出三个真实缺口：
+
+1. **A-17（已修复）**：kinematics.* 命令可用性被"同形态转发"接线到宿主注册表，
+   而注册表条目系域目录泛型登记、使能谓词恒报 `cmd.flow-not-assembled.reason`
+   ——evaluate-coverage/validate-task-points 等写命令按钮在正式宿主**永久禁用**
+   （评估链不可达）。修复＝宿主 bindCommandAvailability 对 kinematics.* 恒放行，
+   可用性权威归面板会话门（kinCommandEnabledInSession＋writable＋backgroundSubmit
+   ——§7.5 界面使能态≠业务判定）；修复后 coverage-enabled=1 实测（r9）。
+2. **发布收口缺口（已修复，tour 侧）**：runDomainApply 绕过 draft.apply 编排，
+   缺编排 committed 分支的 refreshPresentationAfterCommit（快照换绑＋kinematics
+   会话事实同步）——评估提交被拒"结果绑定快照缺位"（r10 实测）。tour 拍 10 已补
+   调；此缺口同时提示**真实用户路径需复核**（面板按钮 draft.apply 走编排应无此缺）。
+3. **A-18（新登，未修复）**：**采样计划条目无 UI 创建路径**——区域页采样编辑只改
+   区域定义（applyRegionSamplingCountsEdit），编辑器支持计划条目增删
+   （Editor.cpp:249-266 push/erase），但无任何 UI 流构造/提交 SamplingPlan 编辑
+   →应用修订 req-plan-set 恒空→覆盖评估切片必拒"工作集无采样计划"（r11 实测，
+   此前快照已换绑成功）。**评估链对用户创建内容不可达**——修复需计划创建 UX
+   设计（区域采样确认时经 ISamplingPlanBuilder 落计划条目？）归所有者裁决。
+
+**本批产物**：tour 拍 10/11 代码＋smoke 门控诊断（kin-refresh/kin-status/状态行
+锚 ird_kin_status_line）＋A-17 修复；r1~r11 逐轮日志在 batch29-interactive/。
+**当前 tour 状态**：拍 11 四断言 FAIL（A-18 前置）——WIP 如实提交，不冒充通过；
+A-18 修复后本通道即为 R03-10/11/U08 的可复跑证据载体。
+
+**登记义务**：A-17/A-18 转登 findings.json 归治理批（本批先以本段＋提交信息承载）。
+
 | ID | 功能 | 如何验证 | 本次终验 | 最新组件匹配数 |
 | --- | --- | --- | --- | --- |
 | R01-01 | 新建关键任务点 | 空集点新增，核对默认字段、树节点和选中项 | NOT RUN | 2 |

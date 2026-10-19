@@ -1271,7 +1271,23 @@ void IrdWorkbenchHostPlugin::initialize()
                 });
             m_domains->kinematics->bindCommandAvailability(
                 [this](const std::string& id) {
-                    return m_content->commandRegistry().availability(id);
+                    // A-17（Phase-A 冻结终验实测）：kinematics.* 为面板本地
+                    // 按钮命令——点击直达 KinPanelFlows 域流，不经宿主注册
+                    // 表派发；注册表中的同名条目来自域目录泛型登记，其使能
+                    // 谓词恒报"执行流未装配"（cmd.flow-not-assembled.reason
+                    // ——实测 enabled=0），原"同形态转发"接线以该谓词二次
+                    // 否定面板会话门，使 evaluate-coverage/validate-task-
+                    // points 等写命令按钮在正式宿主**永久禁用**（评估链不
+                    // 可达）。可用性权威归面板会话门（kinCommandEnabled-
+                    // InSession＋writable＋backgroundSubmit——§7.5 界面使
+                    // 能态≠业务判定），此处恒放行、不二次否定。
+                    (void)this;
+                    (void)id;
+                    ui::CommandAvailability deferToPanel;
+                    deferToPanel.registered = true;
+                    deferToPanel.visible = true;
+                    deferToPanel.enabled = true;
+                    return deferToPanel;
                 });
             // 覆盖评估执行通道接线（UI-T64——F-490① 上游批：服务缝经
             // 公共通道值面注入，面板覆盖评估按钮点亮；会话事实随发布拍
@@ -7503,6 +7519,252 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
                              + secondDetail + ")");
             }
         }
+        // ---- 拍 10：建模模板应用（覆盖评估前置——coverage 消费
+        //      robot-design；需求 tour 项目此前只含 req-* 对象。mtour
+        //      拍 1/2/5 同款模式：Dock 召唤→模态选单自动应答→
+        //      runDomainApply 建模域）--
+        step("10 model-apply-for-eval");
+        // 建模 Dock 召唤（mtour 拍 1 同款——会话绑定/命令可用性以面板
+        // 在场为前提；首跑实测缺此步时模板种子落空→apply 空 rejected）。
+        if (m_modelingDock != nullptr) {
+            m_modelingDock->show();
+            m_modelingDock->raise();
+            settleEvents(300);
+        }
+        QPushButton* evalTmplBtn = hostWin->findChild<QPushButton*>(
+            QStringLiteral("ird_modeling_cmd_modeling.new-from-template"));
+        ok(evalTmplBtn != nullptr, "step10 template-cmd-present");
+        if (evalTmplBtn != nullptr) {
+            // 预排队定时器：模态选单（QInputDialog::getItem）选首项
+            // （generic-6r）＋OK——mtour 拍 2 同款。
+            QTimer::singleShot(300, this, [] {
+                QWidget* modal = QApplication::activeModalWidget();
+                if (modal == nullptr) {
+                    std::cout << "[ird-ui-smoke-tour] FAIL step10 "
+                                 "item-modal-missing" << std::endl;
+                    return;
+                }
+                if (QComboBox* combo = modal->findChild<QComboBox*>()) {
+                    combo->setCurrentIndex(0);
+                }
+                if (QDialog* dlg = qobject_cast<QDialog*>(modal)) {
+                    if (QDialogButtonBox* box =
+                            modal->findChild<QDialogButtonBox*>()) {
+                        box->button(QDialogButtonBox::Ok)->click();
+                        (void)dlg;
+                    }
+                }
+            });
+            evalTmplBtn->click();
+            settleEvents(500);
+        }
+        // 重种子断言（mtour 拍 2 同款——失败定位到"模板未落草稿"而非
+        // 笼统的 apply 未提交）。
+        QWidget* evalModelingPanel =
+            m_modelingDock != nullptr ? m_modelingDock->widget() : nullptr;
+        QLabel* evalStatusLine =
+            evalModelingPanel != nullptr
+                ? evalModelingPanel->findChild<QLabel*>(
+                      QStringLiteral("ird_modeling_status_line"))
+                : nullptr;
+        ok(evalStatusLine != nullptr
+               && evalStatusLine->text().contains(QStringLiteral("generic-6r")),
+           "step10 reseed-generic6r (cur="
+               + (evalStatusLine != nullptr
+                      ? evalStatusLine->text().toStdString()
+                      : std::string("?"))
+               + ")");
+        // 模板重种子语义＝"未应用编辑已清空"（changes 清零），而
+        // buildDraftCommand 以 changes 非空为可应用判据（NoDraft 合法跳过
+        // ——首跑二连实测 rej=[] outcome=NoDraft 根因）。mtour 拍 3/4 先
+        // 编辑后应用同因；此处追加一个真实结构编辑（struct-add 关节
+        // 6→7，mtour 拍 4 同款）使草稿可应用。
+        QPushButton* evalStructAdd =
+            evalModelingPanel != nullptr
+                ? evalModelingPanel->findChild<QPushButton*>(
+                      QStringLiteral("ird_modeling_struct_add"))
+                : nullptr;
+        ok(evalStructAdd != nullptr, "step10 struct-add-present");
+        if (evalStructAdd != nullptr) {
+            evalStructAdd->click();
+            settleEvents(400);
+        }
+        std::vector<ui::DomainModuleEntry> modelingOnlyForEval;
+        if (m_domains != nullptr) {
+            for (const auto& entry : m_domains->applyEntries) {
+                if (entry.moduleId == "modeling") {
+                    modelingOnlyForEval.push_back(entry);
+                }
+            }
+        }
+        ok(!modelingOnlyForEval.empty(), "step10 modeling-apply-entry-present");
+        if (!modelingOnlyForEval.empty()) {
+            const DomainApplyReport modelApplyReport = runDomainApply(
+                modelingOnlyForEval,
+                std::nullopt,
+                [this](project::CommandEnvelope envelope,
+                       project::ICommandInteraction* cmdInteraction) {
+                    const auto adapter = m_lastStoreAdapter;
+                    if (adapter == nullptr) { return project::CommandResult{}; }
+                    return adapter->projectStore().commands().submit(
+                        std::move(envelope), cmdInteraction);
+                },
+                nullptr,
+                [this](const std::string& message) {
+                    if (m_diag.pipeline) {
+                        m_diag.pipeline->logDev(kPluginDevChannel, message);
+                    }
+                });
+            bool modelCommitted = false;
+            std::string modelRej;
+            for (const auto& entry : modelApplyReport.entries) {
+                std::cout << "[ird-ui-smoke-tour] step10 entry module="
+                          << entry.moduleId
+                          << " outcome=" << static_cast<int>(entry.outcome)
+                          << " committed=" << entry.committed
+                          << " rej=[" << entry.rejectionReason
+                          << "] rev=[" << entry.revision << "]" << std::endl;
+                if (entry.moduleId == "modeling") {
+                    if (entry.committed) { modelCommitted = true; }
+                    else { modelRej = entry.rejectionReason; }
+                }
+            }
+            ok(modelCommitted,
+               "step10 modeling-apply-committed (rej=[" + modelRej + "])");
+            // runDomainApply 绕过 draft.apply 编排（拍 9 同款捷径）——补
+            // 编排 committed 分支同款的发布收口：refreshPresentationAfter
+            // Commit（编译发布消费拍——快照换绑＋运动学会话事实同步）。
+            // 缺此步评估通道 m_snapshot 缺位→覆盖评估提交被拒（r10 实测
+            // "结果绑定快照缺位"）；mtour 拍 5.5 靠重开项目间接触发同链。
+            if (modelCommitted) {
+                refreshPresentationAfterCommit();
+                settleEvents(500);
+            }
+            refreshRequirementsFromSession();
+            settleEvents(300);
+        }
+
+        // ---- 拍 11：真实覆盖评估运行（R03-10/11——F-495 评估执行联动。
+        //      tour 7.5 登记的"三态全谱归宿主手动/评估执行联动通道"由本拍
+        //      兑现：点击运动学面板覆盖运行按钮（与手点同源 clicked 轨）→
+        //      执行通道异步评估→coverage 台账→预览投影翻译→区域页样本
+        //      清单与三维格层着色同拍）--------------------------------
+        step("11 coverage-evaluate-and-coloring");
+        // 运动学 Dock 召唤（拍 10 建模 Dock 同因——面板在场才会话/可用性
+        // 刷新到位；首跑实测建模应用提交后按钮仍禁用＝刷新未达）。
+        if (m_kinematicsDock != nullptr) {
+            m_kinematicsDock->show();
+            m_kinematicsDock->raise();
+        }
+        settleEvents(800);
+        QPushButton* coverageBtn = nullptr;
+        for (QPushButton* b : hostWin->findChildren<QPushButton*>()) {
+            if (b->text() == QStringLiteral("运行覆盖评估（后台）")) {
+                coverageBtn = b;  // 无 objectName——文案锚（域面板唯一）
+            }
+        }
+        ok(coverageBtn != nullptr, "step11 coverage-cmd-present");
+        if (coverageBtn != nullptr) {
+            // 二次等待窗口（事件驱动 refreshAll 可能晚于提交回执到达）；
+            // 仍禁用则打印 tooltip 带出禁用原因（applyReadOnlyGate 语义）。
+            for (int i = 0; i < 10 && !coverageBtn->isEnabled(); ++i) {
+                settleEvents(500);
+            }
+            std::cout << "[ird-ui-smoke-tour] step11 coverage-enabled="
+                      << coverageBtn->isEnabled()
+                      << " tooltip=["
+                      << coverageBtn->toolTip().toStdString() << "]"
+                      << std::endl;
+            coverageBtn->click();  // 后台受理——结果经执行通道异步回投
+        }
+        // 轮询区域页样本清单（ird_req_region_samples）非空＝评估→清单
+        // 翻译全链贯通（异步任务由事件循环驱动；30s 上限防挂——超时按
+        // FAIL 如实登记，不计为通过）。
+        QTreeWidget* evalSampleList = panel->findChild<QTreeWidget*>(
+            QStringLiteral("ird_req_region_samples"));
+        ok(evalSampleList != nullptr, "step11 sample-list-present");
+        // 真实样本行判别——诚实空态行（「尚未执行覆盖评估」，Enabled 但
+        // 不可选）也是 topLevelItem，首跑实测它使"计数>0"轮询假阳性。
+        auto isRealSampleRow = [](QTreeWidgetItem* it) {
+            return it != nullptr && (it->flags() & Qt::ItemIsSelectable)
+                && it->text(0) != QStringLiteral("尚未执行覆盖评估");
+        };
+        bool samplesArrived = false;
+        QString kinStatus;
+        QWidget* kinPanelForStatus =
+            m_kinematicsDock != nullptr ? m_kinematicsDock->widget() : nullptr;
+        QLabel* kinStatusLabel =
+            kinPanelForStatus != nullptr
+                ? kinPanelForStatus->findChild<QLabel*>(
+                      QStringLiteral("ird_kin_status_line"))
+                : nullptr;
+        for (int i = 0; i < 150 && !samplesArrived; ++i) {
+            settleEvents(200);
+            samplesArrived = evalSampleList != nullptr
+                && evalSampleList->topLevelItemCount() > 0
+                && isRealSampleRow(evalSampleList->topLevelItem(0));
+            if (i % 10 == 5 && kinStatusLabel != nullptr
+                && kinStatusLabel->text() != kinStatus) {
+                kinStatus = kinStatusLabel->text();
+                std::cout << "[ird-ui-smoke-tour] step11 kin-status="
+                          << kinStatus.toStdString() << std::endl;
+            }
+        }
+        ok(samplesArrived,
+           "step11 coverage-results-arrived (rows="
+               + std::to_string(evalSampleList != nullptr
+                                    ? evalSampleList->topLevelItemCount() : 0)
+               + ")");
+        // R03-10——三态全谱：格层非中性态（NotSampled）计数＞0＝真实
+        // 评估产出的着色事实色（Good/Weak/Failed/DataInsufficient 均为
+        // "已评估"——不预设可达率，判定权威归域）。
+        std::size_t evalColored = 0;
+        if (m_reqGrid.has_value()) {
+            for (auto st : m_reqGrid->cellStates) {
+                if (st != ui::View3DCellState::NotSampled) { ++evalColored; }
+            }
+        }
+        ok(evalColored > 0,
+           "step11 grid-colored-states=" + std::to_string(evalColored)
+               + "/"
+               + std::to_string(m_reqGrid.has_value()
+                                    ? m_reqGrid->cellStates.size() : 0));
+        // U08 半区——清单行状态词与格层同源投影（首真实行状态词非空；词
+        // 表权威＝域 sampleStateText）。
+        QTreeWidgetItem* realSampleRow = nullptr;
+        if (evalSampleList != nullptr) {
+            for (int i = 0; i < evalSampleList->topLevelItemCount(); ++i) {
+                if (isRealSampleRow(evalSampleList->topLevelItem(i))) {
+                    realSampleRow = evalSampleList->topLevelItem(i);
+                    break;
+                }
+            }
+        }
+        ok(realSampleRow != nullptr && realSampleRow->text(1).size() > 0,
+           "step11 sample-row-state-text-present");
+        if (m_view3d != nullptr) {
+            snapPng(m_view3d, "tour-6b-view3d-real-coloring.png");
+        }
+        // R03-11——样本级定位：清单首真实行点击（itemClicked emit＝与手点
+        // 同源信号轨，7.5 校验行点击同款）→高亮键置位→三维蓝圈随格层
+        // 刷新上屏（截图人工复核渲染）。
+        if (realSampleRow != nullptr) {
+            evalSampleList->setCurrentItem(realSampleRow);
+            settleEvents(100);
+            Q_EMIT evalSampleList->itemClicked(realSampleRow, 0);
+            settleEvents(300);
+        }
+        ok(m_reqHighlightedSample.has_value(),
+           "step11 sample-highlight-key-set (index="
+               + std::to_string(m_reqHighlightedSample.has_value()
+                                    ? static_cast<unsigned long long>(
+                                          *m_reqHighlightedSample)
+                                    : 0ULL)
+               + ")");
+        if (m_view3d != nullptr) {
+            snapPng(m_view3d, "tour-6c-sample-blue-circle.png");
+        }
+
         snapPng(hostWin, "tour-5-final-state.png");
 
         std::cout << "[ird-ui-smoke-tour] " << (failedCount == 0 ? "DONE" : "FAILED")
