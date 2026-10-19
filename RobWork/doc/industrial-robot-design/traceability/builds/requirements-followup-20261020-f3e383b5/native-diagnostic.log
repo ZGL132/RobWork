@@ -1,0 +1,9 @@
+SessionId=2
+WindowStation=WinSta0
+ThreadDesktop=Default
+InputDesktopHandle=2152 Win32Error=0
+InputDesktop=Default
+OpenClipboard=False Win32Error=5
+IsProcessInJobQuery=True InJob=True Error=0
+QueryBasicUiRestrictions=True Flags=0 Error=0
+ReadClipboardRestricted=False WriteClipboardRestricted=False

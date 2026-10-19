@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-20T00:03:24+08:00",
+  "generatedAt": "2026-10-20T00:14:55+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 11077,
-    "totalBytes": 592150399,
+    "totalFiles": 11088,
+    "totalBytes": 592177542,
     "byKind": {
       "gtest-report": 335,
-      "governance-record": 40,
-      "pipeline-artifact": 2,
-      "markdown-doc": 41,
-      "benchmark": 8,
       "json-data": 7,
-      "manual-acceptance": 1,
       "log": 1,
-      "build-log": 10127,
-      "acceptance-record": 515
+      "markdown-doc": 41,
+      "pipeline-artifact": 2,
+      "manual-acceptance": 1,
+      "benchmark": 8,
+      "acceptance-record": 515,
+      "governance-record": 40,
+      "build-log": 10138
     },
     "byLifecycle": {
+      "historical": 564,
       "superseded": 0,
       "current": 27,
-      "historical": 564,
-      "unverified": 10486
+      "unverified": 10497
     },
     "associated": 596,
-    "unassociated": 10481,
-    "shaComputed": 11058,
+    "unassociated": 10492,
+    "shaComputed": 11069,
     "shaSkippedLarge": 19,
     "duplicateGroupsTotal": 594,
     "duplicateGroupsListed": 100
@@ -45230,6 +45230,94 @@
       "taskIds": [],
       "bytes": 2169,
       "sha256": "bee341b7cc0408af001eb1f215e4c542d5af0710ff656ab7ef24027163e113a9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 16,
+      "sha256": "f7f1db9897ba0b3652ca1d8377ebf314ee49ee3edb0076a4c30325991e26913d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/FOLLOWUP.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4163,
+      "sha256": "342ea133195894ab4eadc4c2d30b8d2dfa95c16de97084c399619a2a3f5e3b59",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/mixed_probe.cpp",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4490,
+      "sha256": "c130a871d280931b51e09f10eb5bfe6640da36767eb7973a515793deac2142fd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/mixed_probe.rsp",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9151,
+      "sha256": "b0e6ffa6cc5b4edaf68fcc8e40cb9572b74a672774e45b7493dfbf5ef2ea5bd3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/mixed-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1108,
+      "sha256": "c259c9adb0b04066d4a14c23815b6d48d02e65a1ee88b894d255f3724dcacdcd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/mixed.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 639,
+      "sha256": "1cdc56fa1feb9355093721b6865791b796e3d0acebb4feae0ef443d9b461935b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/mixed.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 662,
+      "sha256": "28fea5e6d7c0da8bcab116dd1b4bdd8a0030deef765581693a1c296d146a904a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/native-diagnostic.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 298,
+      "sha256": "a9d945efcfd27b7806bcdb84f4a6e35f819a6512a64a6ae70db7d708737d6704",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/native-diagnostic.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3116,
+      "sha256": "6624876ee99c78e15059953f13066ec40b6d2e8a56ad7f0dc2f7b9ba272726a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/run.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2303,
+      "sha256": "3f4f3d8c9b118ed115d754dfbee591b64040afc430a3e48a3cb33b25d64aba16",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/requirements-followup-20261020-f3e383b5/sha256.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1197,
+      "sha256": "cc43c974ca2b7236b1a24c23241b8f3c65541a36fa615a31f71578c6cd1257c9",
       "lifecycle": "unverified"
     },
     {

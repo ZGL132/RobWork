@@ -1,0 +1,12 @@
+Note: Google Test filter = RequirementsClosureFollowup.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RequirementsClosureFollowup
+[ RUN      ] RequirementsClosureFollowup.RealMixedHundredAndSnapshotRebind_REQ03_KIN04
+REAL_100 planned=100 reached=6 unreachable=47 insufficient=47
+[       OK ] RequirementsClosureFollowup.RealMixedHundredAndSnapshotRebind_REQ03_KIN04 (38 ms)
+[----------] 1 test from RequirementsClosureFollowup (38 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (38 ms total)
+[  PASSED  ] 1 test.
