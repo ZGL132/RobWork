@@ -1,0 +1,18 @@
+Note: Google Test filter = *ContinuousRangeConfirmCancelAndReadOnly*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(392): error: Expected: (lo) >= (0), actual: -1 vs 0
+continuous工程范围下限入口缺失
+
+[  FAILED  ] ModelingPanelGuiTest.ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17 (1421 ms)
+[----------] 1 test from ModelingPanelGuiTest (1421 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1421 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingPanelGuiTest.ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17
+
+ 1 FAILED TEST

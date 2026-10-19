@@ -245,6 +245,27 @@ std::optional<JointEditError> editJointFieldImpl(RobotDesign& design,
                 core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
         return std::nullopt;
     }
+    case JointEditField::WorkingRange: {
+        // MDL-12：工程范围是分析属性，绝不能通过修改bounds或类型来伪装。
+        // 所有检查先于唯一写入，避免用户拒绝后丢掉先前已确认的多圈范围。
+        const auto& range = std::get<JointLimits>(value);
+        if (current.type != JointType::Continuous) {
+            return JointEditError{JointEditErrorCode::TypeBoundsConflict,
+                subject + ".workingRange：仅Continuous可确认工程工作范围（rad）"};
+        }
+        if (!std::isfinite(range.first) || !std::isfinite(range.second)) {
+            return JointEditError{JointEditErrorCode::ValueNotFinite,
+                subject + ".workingRange：工程范围端点必须有限（rad）"};
+        }
+        if (!(range.first < range.second)) {
+            return JointEditError{JointEditErrorCode::LimitIntervalInvalid,
+                subject + ".workingRange：必须qmin'＜qmax'（rad）"};
+        }
+        // 用户经表单确认即是范围来源；不钳制、不取模，跨周边界按实数区间消费。
+        design.joints[jointIndex].workingRange = core::SourcedValue<JointLimits>::provided(
+            range, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        return std::nullopt;
+    }
     case JointEditField::Type: {
         // ⑥ 类型：与既有 bound/workingRange 的非法组合拒绝（§7.3 组合族
         // ——不静默清除既有值，NFR-COR-03；转换后的限位缺失面归就绪校验
@@ -341,6 +362,9 @@ void appendChangeRecord(ModelingWorkingSet& ws, std::size_t jointIndex,
     case JointEditField::Origin:
         record.summary = "修改关节原点位姿（父连杆系——Explicit 权威一等字段；"
                          "改原点属设计变更，下游需重算）";
+        break;
+    case JointEditField::WorkingRange:
+        record.summary = "确认Continuous工程工作范围（rad；跨周不取模、类型与限位不变）";
         break;
     }
     ws.changes.push_back(std::move(record));
@@ -609,6 +633,7 @@ std::string_view jointEditFieldToken(JointEditField field) noexcept
     case JointEditField::ZeroOffset: return "zeroOffset";
     case JointEditField::Bounds: return "bounds";
     case JointEditField::Origin: return "origin";
+    case JointEditField::WorkingRange: return "workingRange";
     }
     return "type";  // 全枚举已覆盖，不达此处（无 default——漏项编译器告警）
 }
@@ -636,9 +661,7 @@ std::optional<JointEditError> applyJointFieldEdit(ModelingWorkingSet& ws,
             "modeling/template/edit-index: 关节下标越界: joints["
             + std::to_string(jointIndex) + "]");
     }
-    // ② field 与 value 备择匹配检查（variant 备择序＝枚举声明序——Type/
-    //    Axis/ZeroOffset/Bounds/Origin 对 JointType/V3/double/JointLimits/
-    //    JointOriginEditValue）。
+    // ②字段/载荷核对；WorkingRange复用JointLimits备择，不能按枚举下标取variant。
     const bool matched =
         (field == JointEditField::Type
          && std::holds_alternative<JointType>(value))
@@ -647,6 +670,8 @@ std::optional<JointEditError> applyJointFieldEdit(ModelingWorkingSet& ws,
         || (field == JointEditField::ZeroOffset
             && std::holds_alternative<double>(value))
         || (field == JointEditField::Bounds
+            && std::holds_alternative<JointLimits>(value))
+        || (field == JointEditField::WorkingRange
             && std::holds_alternative<JointLimits>(value))
         || (field == JointEditField::Origin
             && std::holds_alternative<JointOriginEditValue>(value));
@@ -685,6 +710,8 @@ JointBatchEditOutcome applyJointFieldEditBatch(ModelingWorkingSet& ws,
             || (field == JointEditField::ZeroOffset
                 && std::holds_alternative<double>(item.value))
             || (field == JointEditField::Bounds
+                && std::holds_alternative<JointLimits>(item.value))
+            || (field == JointEditField::WorkingRange
                 && std::holds_alternative<JointLimits>(item.value))
             || (field == JointEditField::Origin
                 && std::holds_alternative<JointOriginEditValue>(item.value));

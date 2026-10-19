@@ -142,6 +142,31 @@ TEST(ModelingUiModuleHostWiring, DraftHistoryRestoresFieldsAndStructureWithoutRe
     }
 }
 
+/** @brief MDL-12/PM-18：工程范围确认参与草稿局部历史，不产生项目命令或修订。 */
+TEST(ModelingUiModuleHostWiring, ContinuousRangeDraftHistory_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","PM-18"},std::vector<std::string>{"AT-17"});
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto branch=core::BranchId::generate();
+    const auto revision=core::RevisionId::generate();
+    module.bindSessionAnchor(branch,revision);
+    auto& joint=module.session().draft.design.joints[0];joint.type=JointType::Continuous;
+    joint.bounds=core::SourcedValue<JointLimits>::notApplicable();
+    joint.workingRange=core::SourcedValue<JointLimits>::notProvided();
+    module.recomputeReadiness(); // 将导入形态设为局部历史起点，不把测试准备当用户编辑。
+    module.noteAppliedRevision(revision,core::ObjectId::generate());
+    int commands=0;module.bindCommandSubmit([&](const ui::CommandId&){++commands;});
+    std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());ASSERT_NE(panel,nullptr);
+    const auto before=module.session().draft;
+    EXPECT_EQ(submitJointFieldEdit(module.session().draft,*panel,0,JointEditField::WorkingRange,
+        JointEditValue{JointLimits{-8,10}}),EditSubmitOutcome::Applied);
+    const auto confirmed=module.session().draft;
+    widget->findChild<QPushButton*>("ird_modeling_draft_undo")->click();EXPECT_EQ(module.session().draft,before);
+    widget->findChild<QPushButton*>("ird_modeling_draft_redo")->click();EXPECT_EQ(module.session().draft,confirmed);
+    EXPECT_EQ(module.session().baseRevision,revision);EXPECT_EQ(module.session().branch,branch);EXPECT_EQ(commands,0);
+}
+
 TEST(ModelingUiModuleHostWiring, DraftHistoryClearsOnDetachAndRejectDoesNotEnter_PM18_L5)
 {
     IRD_TEST_INFO("PM-18",{},std::nullopt);

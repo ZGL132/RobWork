@@ -373,6 +373,95 @@ int jointEditRowOf(const QTableWidget& table, const char* fieldKey)
 }
 
 /**
+ * @brief MDL-12/AT-17：continuous工程范围必须经真实表单两步确认，不能冒充限位。
+ * 验证多圈rad输入不取模、取消零修改、范围整体更新及只读门控；仅UI线程运行。
+ */
+TEST_F(ModelingPanelGuiTest, ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","MDL-06"},std::vector<std::string>{"AT-17"});
+    // 复现导入后未确认continuous状态：保留类型，bounds不适用，工程范围缺失。
+    auto& joint=m_ws.design.joints[0];joint.type=JointType::Continuous;
+    joint.bounds=core::SourcedValue<JointLimits>::notApplicable();
+    joint.workingRange=core::SourcedValue<JointLimits>::notProvided();
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    m_panel->focusObject(joint.objectId);
+    m_panel->resize(1280,900);m_panel->show();QApplication::processEvents();
+    auto* table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
+    const int lo=jointEditRowOf(*table,"working-range-min");
+    const int hi=jointEditRowOf(*table,"working-range-max");
+    ASSERT_GE(lo,0)<<"continuous工程范围下限入口缺失";
+    ASSERT_GE(hi,0)<<"continuous工程范围上限入口缺失";
+    EXPECT_LT(jointEditRowOf(*table,"bounds-min"),0)<<"工程范围不得冒充限位";
+    auto* host=m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    const auto before=m_ws;
+    const QString initialLower=table->item(lo,1)->text();
+    // 首次仅填写一端不能凭空补齐另一端；该失败亦不得推进权威来源/历史。
+    table->item(lo,1)->setText(QStringLiteral("-8"));QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    EXPECT_EQ(m_ws,before)<<"缺一端必须拒绝，不能伪造默认范围";
+    EXPECT_EQ(table->item(lo,1)->text(),initialLower)<<"拒绝后显示须回到未确认值，不能显示已接受-8";
+    table->item(lo,1)->setText(QStringLiteral("-8"));table->item(hi,1)->setText(QStringLiteral("10"));
+    QApplication::processEvents();EXPECT_EQ(m_ws,before)<<"输入不能提前确认工程范围";
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_cancel"))->click();
+    EXPECT_EQ(m_ws,before)<<"取消必须零写入";
+    table->item(lo,1)->setText(QStringLiteral("-8"));table->item(hi,1)->setText(QStringLiteral("10"));
+    QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    EXPECT_EQ(m_ws,before)<<"展示确认区仍不能写入";
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    ASSERT_TRUE(joint.workingRange.tryValue().has_value());
+    EXPECT_EQ(joint.workingRange.value(),(JointLimits{-8,10}));
+    EXPECT_EQ(joint.workingRange.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_EQ(joint.type,JointType::Continuous);EXPECT_EQ(joint.bounds.state(),core::FieldState::NotApplicable);
+    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1)<<"一对端点只记一次变更";
+    // 让工程范围两行真正进入表格视口，再断言裁剪几何并留图；创建了控件不等于可见。
+    table->scrollToItem(table->item(hi,0),QAbstractItemView::PositionAtBottom);
+    QApplication::processEvents();
+    EXPECT_TRUE(table->viewport()->rect().contains(table->visualItemRect(table->item(lo,0))));
+    EXPECT_TRUE(table->viewport()->rect().contains(table->visualItemRect(table->item(hi,0))));
+    const QString evidence=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!evidence.isEmpty()){QDir().mkpath(evidence);EXPECT_TRUE(m_panel->grab().save(evidence+"/continuous-range.png"));}
+    // 反向区间通过真实编辑链提交，域必须拒绝并回填原权威范围。
+    const auto accepted=m_ws;
+    table->item(lo,1)->setText(QStringLiteral("11"));QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    EXPECT_EQ(m_ws,accepted);
+    EXPECT_EQ(table->item(lo,1)->text(),QStringLiteral("-8"))<<"领域拒绝后表单不得保留11为已应用基线";
+    EXPECT_EQ(table->item(hi,1)->text(),QStringLiteral("10"));
+    table->scrollToItem(table->item(hi,0),QAbstractItemView::PositionAtBottom);QApplication::processEvents();
+    if(!evidence.isEmpty()){EXPECT_TRUE(m_panel->grab().save(evidence+"/continuous-range-rejected.png"));}
+    m_panel->setWritable(false);
+    EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_table_panel"))->isEnabled());
+}
+
+/** @brief MDL-12/UX-05：同关节类型更新须重建schema，排队旧字段不写新模型。 */
+TEST_F(ModelingPanelGuiTest, ContinuousRangeSchemaRebuildKeepsQueuedModelAlive_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","UX-05"},std::vector<std::string>{"AT-17"});
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    auto* oldTable=jointEditTable(*m_panel);ASSERT_NE(oldTable,nullptr);
+    // itemChanged故意留在事件队列；同索引换schema时不能解引用已销毁模型。
+    oldTable->item(jointEditRowOf(*oldTable,"bounds-min"),1)->setText(QStringLiteral("-7"));
+    m_ws.design.joints[0].type=JointType::Continuous;
+    m_ws.design.joints[0].bounds=core::SourcedValue<JointLimits>::notApplicable();
+    m_ws.design.joints[0].workingRange=core::SourcedValue<JointLimits>::notProvided();
+    const auto before=m_ws;
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    QApplication::processEvents();QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+    auto* table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
+    EXPECT_GE(jointEditRowOf(*table,"working-range-min"),0);
+    EXPECT_LT(jointEditRowOf(*table,"bounds-min"),0);EXPECT_EQ(m_ws,before);
+    // 再切非continuous，证明工程范围行不泄露给移动关节，单位随schema重建。
+    m_ws.design.joints[0].type=JointType::Prismatic;
+    m_ws.design.joints[0].workingRange=core::SourcedValue<JointLimits>::notApplicable();
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});QApplication::processEvents();
+    table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
+    EXPECT_GE(jointEditRowOf(*table,"bounds-min"),0);EXPECT_LT(jointEditRowOf(*table,"working-range-min"),0);
+}
+
+/**
  * 编辑页空态→选中建页链（UI-T53——B.1"结构树选择→详细编辑页"主入口）：
  * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝12 行数值表装配
  * （轴向 3＋原点 6＋零位 1＋限位 2）；切到连杆＝面板收起回空态（编辑页

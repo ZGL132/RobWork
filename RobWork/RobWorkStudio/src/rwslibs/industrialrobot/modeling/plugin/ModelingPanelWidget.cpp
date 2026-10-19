@@ -100,6 +100,8 @@ constexpr const char* kJointOriginYawKey = "origin-yaw";
 constexpr const char* kJointZeroOffsetKey = "zero-offset";
 constexpr const char* kJointBoundsMinKey = "bounds-min";
 constexpr const char* kJointBoundsMaxKey = "bounds-max";
+constexpr const char* kJointRangeMinKey = "working-range-min";
+constexpr const char* kJointRangeMaxKey = "working-range-max";
 
 // ---- UI-T55 工具/场景位姿编辑页字段键（各 6 行——出口分组装配与基线
 //      回填的寻址锚；小写连字符词法同上）---------------------------
@@ -1607,7 +1609,9 @@ void ModelingPanelWidget::buildJointEditPane(QVBoxLayout* bottom)
     caption->setText(QStringLiteral(
         "原点：父连杆系（位置 m／姿态 rad；ZYX 约定 R＝Rz(yaw)·Ry(pitch)·"
         "Rx(roll)）；轴向：连杆系单位向量。Explicit 权威下轴向/原点可编辑，"
-        "StandardDH 权威下为派生只读（提交被域守卫拒绝）。"));
+        "StandardDH 权威下为派生只读（提交被域守卫拒绝）。"
+        "Continuous工程范围单位rad，仅供分析，跨周不取模、不设行程上限；"
+        "经应用/确认后写入草稿，关节类型与限位不变。"));
     caption->setStyleSheet(
         QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
     bottom->addWidget(caption);
@@ -1686,6 +1690,7 @@ void ModelingPanelWidget::refreshJointEditPane()
     // 构造后字段集不可变——ParamEditModel 契约）。
     const bool sameTarget = m_jointEditTarget.has_value()
                             && *m_jointEditTarget == *jointIndex
+                            && m_jointEditSchemaType == joint.type
                             && m_jointEditPanel != nullptr;
     if (!sameTarget) {
         rebuildJointEditModel(joint);
@@ -1721,8 +1726,8 @@ void ModelingPanelWidget::refreshJointEditPane()
 
 void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
 {
-    // 12 行字段装配（行序＝登记序——表单呈现与确认区明细的稳定序）：
-    // 轴向 3（无量纲）→原点 6（m＋rad）→零位偏置 1→限位 2（量纲随类型）。
+    // 12行稳定序：轴向3、原点6、零偏1，最后两行随类型为限位或工程范围。
+    // continuous工程范围是分析属性，必须显式区分不可用的权威限位（MDL-12）。
     const core::QuantityKind qk = jointEditQuantityKind(joint.type);
     const core::UnitToken jointUnit = jointEditUnitToken(qk);
     const core::UnitToken dimensionless = core::UnitToken::find("1").value();
@@ -1758,23 +1763,61 @@ void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
         core::UnitToken::find("rad").value(), core::UnitToken::find("rad").value()));
     specs.push_back(ui::makeQuantityFieldSpec(
         kJointZeroOffsetKey, "零位偏置", qk, jointUnit, jointUnit));
+    const bool continuous = joint.type == JointType::Continuous;
     specs.push_back(ui::makeQuantityFieldSpec(
-        kJointBoundsMinKey, "限位下限", qk, jointUnit, jointUnit));
+        continuous ? kJointRangeMinKey : kJointBoundsMinKey,
+        continuous ? "工程范围下限" : "限位下限", qk, jointUnit, jointUnit));
     specs.push_back(ui::makeQuantityFieldSpec(
-        kJointBoundsMaxKey, "限位上限", qk, jointUnit, jointUnit));
+        continuous ? kJointRangeMaxKey : kJointBoundsMaxKey,
+        continuous ? "工程范围上限" : "限位上限", qk, jointUnit, jointUnit));
 
-    // 换目标重建：旧面板随 Qt 父子析构（deleteLater——重建处于刷新路径内，
-    // 延迟删除避免重入）；模型随之重建（字段集不可变契约）。
+    // 换目标/类型时重建；延迟删除避免重入，旧表单的依赖延寿见下。
     if (m_jointEditPanel != nullptr) {
-        m_jointEditPanel->deleteLater();
+        // 旧表格itemChanged会排队；类型变更/换对象重建时，借用模型和出口
+        // 必须活到旧表单销毁。移出当前控件树也防止后续findChild误命中旧字段。
+        auto* retiredPanel = m_jointEditPanel;
+        auto retiredModel = std::shared_ptr<ui::ParamEditModel>(std::move(m_jointEditModel));
+        auto retiredOutlet = std::shared_ptr<ui::IFormEditOutlet>(std::move(m_jointEditOutlet));
+        retiredPanel->hide();
+        retiredPanel->setParent(nullptr);
+        QObject::connect(retiredPanel, &QObject::destroyed, [retiredModel, retiredOutlet] {});
+        retiredPanel->deleteLater();
         m_jointEditPanel = nullptr;
     }
+    m_jointEditOutlet = std::make_unique<JointDetailEditOutlet>(*this);
     m_jointEditModel = std::make_unique<ui::ParamEditModel>(std::move(specs));
+    m_jointEditSchemaType = joint.type;
     // 出口为空＝只读呈现（"应用…"禁用＋kNoOutletTooltip——不虚构可达性；
     // 本面板构造期即建出口，此为防御面）。
     m_jointEditPanel = ui::createParamTablePanel(
         *m_jointEditModel, m_jointEditOutlet.get(), {}, m_jointEditHost);
     static_cast<QVBoxLayout*>(m_jointEditHost->layout())->addWidget(m_jointEditPanel);
+
+    // F04真实拒绝截图：公共件confirmApply在void出口返回后才推进乐观基线，
+    // 所以出口内的权威回填会被覆盖。Qt同线程槽按连接注册顺序同步执行；
+    // 在公共件既有确认槽之后追加回执，确保最终显示来自真实草稿、而非输入值。
+    // 连接随当前表单销毁，且核对页身份，旧表单的排队信号不能刷新新页。
+    const QPointer<QWidget> form = m_jointEditPanel;
+    auto* confirm = form->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"));
+    connect(confirm, &QPushButton::clicked, form, [this, form] {
+        if (!form || form != m_jointEditPanel || !m_jointEditModel
+            || m_jointEditModel->hasErrors() || !m_jointEditModel->pendingChanges().empty()) {
+            return; // 表单解析拒绝/仍有暂存时不覆盖用户待纠正输入。
+        }
+        auto* ws = m_editTarget ? m_editTarget() : nullptr;
+        if (!ws || !m_jointEditTarget || *m_jointEditTarget >= ws->design.joints.size()) {
+            return; // 会话已关闭/选中失效，不能把其它对象当作回执源。
+        }
+        const auto& current = ws->design.joints[*m_jointEditTarget];
+        if (m_jointEditSchemaType != current.type) { return; }
+        pushJointEditBaselines(current);
+        ui::refreshParamTablePanel(form);
+        // void出口只承诺移交；这里明确显示已按实际草稿回填，接受/拒绝原因
+        // 仍使用原域结果行，不把领域拒绝误报成“已应用修改”。
+        if (auto* impact = form->findChild<QLabel*>(QStringLiteral("ird_param_impact"))) {
+            impact->setText(QStringLiteral("已按当前草稿回填；接受结果与拒绝原因见下方。"));
+        }
+    });
 }
 
 void ModelingPanelWidget::pushJointEditBaselines(const JointEntry& joint)
@@ -1814,13 +1857,17 @@ void ModelingPanelWidget::pushJointEditBaselines(const JointEntry& joint)
     }
     // 零位偏置非 SourcedValue（恒有值）。
     set(kJointZeroOffsetKey, joint.zeroOffset);
-    // 限位：Continuous＝NotApplicable（I-MDL-4）→ nullopt 基线。
-    if (const auto bounds = joint.bounds.tryValue()) {
-        set(kJointBoundsMinKey, bounds->first);
-        set(kJointBoundsMaxKey, bounds->second);
+    // 未确认工程范围保持“未设”，不借用bounds或虚构默认范围。其它类型仍读限位。
+    const bool continuous = joint.type == JointType::Continuous;
+    const auto interval = continuous ? joint.workingRange.tryValue() : joint.bounds.tryValue();
+    const auto* lowerKey = continuous ? kJointRangeMinKey : kJointBoundsMinKey;
+    const auto* upperKey = continuous ? kJointRangeMaxKey : kJointBoundsMaxKey;
+    if (interval) {
+        set(lowerKey, interval->first);
+        set(upperKey, interval->second);
     } else {
-        set(kJointBoundsMinKey, std::nullopt);
-        set(kJointBoundsMaxKey, std::nullopt);
+        set(lowerKey, std::nullopt);
+        set(upperKey, std::nullopt);
     }
 }
 
@@ -1929,6 +1976,18 @@ void ModelingPanelWidget::applyJointDetailEdits(const ui::ParamEditSet& editSet)
             if (const auto it = staged.find(kJointBoundsMaxKey);
                 it != staged.end()) { updated.second = it->second; }
             submit(JointEditField::Bounds, JointEditValue{updated});
+        }
+    }
+
+    // MDL-12：首次确认必须给齐两端；修改单端时另一端取已确认基线。
+    // 整对只提交一次，与通用表单两步确认及局部草稿历史保持同一接受边界。
+    if (staged.count(kJointRangeMinKey) || staged.count(kJointRangeMaxKey)) {
+        const auto lower = component(kJointRangeMinKey);
+        const auto upper = component(kJointRangeMaxKey);
+        if (lower && upper) {
+            submit(JointEditField::WorkingRange, JointEditValue{JointLimits{*lower, *upper}});
+        } else {
+            rejectAssembly("工程工作范围尚未确认：请填写上下两端（rad），不使用默认限位代替");
         }
     }
 

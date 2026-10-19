@@ -1,0 +1,29 @@
+Note: Google Test filter = *ContinuousRangeConfirmCancelAndReadOnly*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(403): error: Expected equality of these values:
+  table->item(lo,1)->text()
+    Which is: { 2-byte object <2D-00>, 2-byte object <38-00> }
+  initialLower
+    Which is: { 2-byte object <2A-67>, 2-byte object <BE-8B> }
+拒绝后显示须回到未确认值，不能显示已接受-8
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(431): error: Expected equality of these values:
+  table->item(lo,1)->text()
+    Which is: { 2-byte object <31-00>, 2-byte object <31-00> }
+  (QString(QtPrivate::qMakeStringPrivate(u"" "-8")))
+    Which is: { 2-byte object <2D-00>, 2-byte object <38-00> }
+领域拒绝后表单不得保留11为已应用基线
+
+[  FAILED  ] ModelingPanelGuiTest.ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17 (1303 ms)
+[----------] 1 test from ModelingPanelGuiTest (1303 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1303 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingPanelGuiTest.ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17
+
+ 1 FAILED TEST

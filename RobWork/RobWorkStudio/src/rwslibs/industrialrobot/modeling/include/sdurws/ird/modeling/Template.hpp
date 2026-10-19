@@ -468,10 +468,13 @@ enum class JointEditField {
     /// 表尾追加并走单元卡增量修订——本枚举注同款口径）；RPY 约定＝ZYX
     /// （R＝Rz(yaw)·Ry(pitch)·Rx(roll)——与面板呈现反解同一约定）。
     Origin,
+    /// MDL-12/AT-17：Continuous专用工程工作范围{qmin',qmax'}，rad；
+    /// 复用JointLimits载荷，不改类型/bounds、不取模、不限制多圈行程。
+    WorkingRange,
 };
 
 /**
- * @brief 编辑字段稳定 token（"type"/"axis"/"zeroOffset"/"bounds"——变更
+ * @brief 编辑字段稳定 token（含"origin"/"workingRange"——变更
  *        摘要与 UT 判别串）。纯函数；确定性。
  */
 std::string_view jointEditFieldToken(JointEditField field) noexcept;
@@ -493,7 +496,8 @@ enum class JointEditErrorCode {
     /// "limit-interval-invalid"——qmin≥qmax（I-MDL-4 前半；rad/m 随类型）
     LimitIntervalInvalid,
     /// "type-bounds-conflict"——Continuous 与已提供 bounds 并存（I-MDL-4
-    /// 后半：Continuous＝bounds NotApplicable；不静默清除已有值——NFR-COR-03）
+    /// 后半：Continuous＝bounds NotApplicable、workingRange仅Continuous；
+    /// 不静默清除已有值——NFR-COR-03）
     TypeBoundsConflict,
 };
 
@@ -555,8 +559,7 @@ struct JointOriginEditValue {
 };
 
 /**
- * @brief 字段编辑的值载荷（与 JointEditField 一一对应的 variant——可编辑
- *        字段各一备择；备择序＝枚举声明序）。
+ * @brief 字段编辑的值载荷；旧备择序保持不变，WorkingRange复用JointLimits。
  *
  * Axis 备择不预先归一化（不静默改写输入——NFR-COR-03；I-MDL-6 只要求
  * 非零/有限/可归一化，单位向量语义在消费侧解读）。Origin 备择携带六个
@@ -586,6 +589,10 @@ using JointEditValue =
  *     六分量有限性（ValueNotFinite），接受时旋转矩阵由域内核按 ZYX 约定
  *     组合（R＝Rz·Ry·Rx——JointOriginEditValue 类型注；F-480 外联符号
  *     纪律：不调 rw::math::RPY 构造）。
+ *   ⑧WorkingRange：仅Continuous，JointLimits载荷单位rad；两端有限且
+ *     严格递增后写既有workingRange/UserProvided，零修改type/bounds，
+ *     不取模、不施加行程阈值；非Continuous→TypeBoundsConflict，非有限
+ *     →ValueNotFinite，无序→LimitIntervalInvalid。
  *
  * 接受后：design 对应字段更新（axis/bounds 以 UserProvided 来源写入——
  * 用户输入覆盖保留来源标记，§5.3 规则 1 同款语义）＋追加**一条**变更摘要

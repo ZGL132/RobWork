@@ -396,6 +396,7 @@ private:
     QWidget* m_jointEditPanel = nullptr;      ///< createParamTablePanel 产物（换选中目标时重建）
     std::unique_ptr<ui::ParamEditModel> m_jointEditModel;  ///< 编辑会话模型（基线/暂存/就地错误三层——ui 公共件）
     std::optional<std::size_t> m_jointEditTarget;  ///< 页当前绑定关节下标（nullopt＝未绑定——重建/推基线分路锚）
+    std::optional<JointType> m_jointEditSchemaType; ///< 字段集/单位随类型；同索引换类型仍须重建。
 
     // ---- UI-T54 基座安装姿态编辑页（raw 指针＝Qt 父子所有权）----
     QStackedWidget* m_editStack = nullptr;      ///< 编辑页签模态堆栈（0＝关节区，1＝基座安装页）

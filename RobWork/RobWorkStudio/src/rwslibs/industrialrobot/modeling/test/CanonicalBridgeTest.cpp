@@ -49,6 +49,7 @@
 #include <sdurws/ird/modeling/ObjectTypes.hpp>
 #include <sdurws/ird/modeling/Parts.hpp>
 #include <sdurws/ird/modeling/RobotDesign.hpp>
+#include <sdurws/ird/modeling/Template.hpp> // MDL-12：确认后的工程范围必须真实进入编译输入。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 #include <gtest/gtest.h>
@@ -1771,4 +1772,26 @@ TEST(MdlCanonicalBridge, DrivetrainCouplingR2Mapping_WP13T18)
     EXPECT_EQ(cm.jointRange.count, 3u);
     EXPECT_DOUBLE_EQ(cm.conditionNumber.value_or(0.0), 3.0)
         << "申报条件数透传（编译校验器一律重算为准——Description.hpp 注）";
+}
+
+/** @brief MDL-12/AT-17：编辑后的跨周范围按零偏平移，Continuous类型和权威值不改。 */
+TEST(MdlCanonicalBridge, EditedContinuousRangeFeedsRuntime_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},std::vector<std::string>{"AT-17"});
+    modeling::ModelingWorkingSet ws;ws.design.displayName="spin";
+    auto joint=makeRevoluteJoint(makeOid(),"Jspin",-1,1,0.5);
+    joint.type=modeling::JointType::Continuous;
+    joint.bounds=core::SourcedValue<modeling::JointLimits>::notApplicable();
+    ws.design.joints.push_back(joint);
+    ws.design.links.push_back(makeLink(makeOid(),"base"));ws.design.links.push_back(makeLink(makeOid(),"link1"));
+    ASSERT_FALSE(modeling::applyJointFieldEdit(ws,0,modeling::JointEditField::WorkingRange,modeling::JointLimits{-8,10}).has_value());
+    BridgeClosure closure;putRoot(closure,ws.design);const auto built=buildFrom(closure);
+    ASSERT_TRUE(built.ok())<<built.error().detail;
+    const auto& compiled=built.get().joints.at(0);
+    EXPECT_EQ(compiled.type,runtime::JointType::Continuous);
+    ASSERT_TRUE(compiled.workingRange.has_value());
+    EXPECT_DOUBLE_EQ(compiled.workingRange->lower,-8.5);EXPECT_DOUBLE_EQ(compiled.workingRange->upper,9.5);
+    EXPECT_EQ(ws.design.joints[0].workingRange.value(),(modeling::JointLimits{-8,10}));
+    EXPECT_EQ(ws.design.joints[0].type,modeling::JointType::Continuous);
+    EXPECT_EQ(ws.design.joints[0].bounds.state(),core::FieldState::NotApplicable);
 }

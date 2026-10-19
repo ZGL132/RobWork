@@ -1645,3 +1645,11 @@ B2b实现验证：1329通过、0失败、0跳过，双模式构建/门禁通过�
 ### WP-13-T24 B3a：基座欧拉输入精确增量
 
 F15按MDL-22增加ZYX欧拉输入（roll/pitch/yaw rad，R_world_base=RzRyRx），BasePlacementEditValue表尾customRpy默认空，与customEaa互斥。域内转换既有EAA后复用原校验/存储/编译路径；不新增权威矩阵。完整八节设计与实施顺序见原计划B3a，未验证前不标完成。
+
+### WP-13-T24 B3b：continuous工程工作范围精确增量
+
+F04按MDL-12/MDL-06/AT-17补齐可确认范围。JointEditField表尾WorkingRange复用JointLimits载荷（rad），仅Continuous允许、端点有限且严格有序；与bounds独立，不取模、不设有限旋转行程阈值。接受写既有workingRange为UserProvided，保留type/bounds/来源其余字段；拒绝零修改。详细表单两步确认/取消沿现有公共件，类型变化重建schema并延寿deleteLater旧模型。既有Codec、CanonicalBridge及断言消费不另改语义。八节设计、范围和先红后绿顺序见原计划B3b，验证前不标完成。
+
+B3b实现验证：1344通过、0失败、3项剪贴板环境跳过（新增12项回归全部通过）；双模式构建/门禁与正式宿主274条既有综合检查通过。真实输入/确认、拒绝、范围持久化与减零偏消费、局部历史及表单生命周期证据见traceability/builds/modeling-completion-20261020-b3b/。剪贴板待环境恢复补验，正式项目/三维跨周及47项终验未完成。
+
+B3b显示补正：初轮截图发现领域拒绝后表格保留输入值，新增显示断言真实失败后，私有关节表按当前草稿后置回填，保留拒绝原因。最终1347通过、0失败、0跳过，原三项剪贴板跳过均已实际通过；双模式/全量Release/门禁/verify-task及宿主274条回归通过，截图已查看。最终证据traceability/builds/modeling-completion-20261020-b3b-display/取代初轮显示结论，初轮冻结不改；完整三维仍待B5。

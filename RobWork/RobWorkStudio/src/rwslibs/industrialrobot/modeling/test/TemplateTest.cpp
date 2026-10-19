@@ -31,11 +31,13 @@
 #include <sdurws/ird/modeling/PropertyEstimation.hpp>  // defaultMaterialDensity（材料密度单源对账）
 #include <sdurws/ird/modeling/RobotDesign.hpp>    // checkInvariants（I-MDL-1~12 静态断言层）
 #include <sdurws/ird/modeling/Template.hpp>       // 被测主面（工厂/编辑流/几何辅助）
+#include <sdurws/ird/modeling/Codec.hpp>          // MDL-12：旧工程范围存储往返。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <limits>
 #include <cstdint>
 #include <optional>
 #include <stdexcept>
@@ -1012,4 +1014,50 @@ TEST(MdlTemplate, CopyVisualToCollision_SameResourceRef_WP13T07_ACC5)
     EXPECT_EQ(collision.provenance.kind, ProvenanceKind::GeometricEstimate);
     ASSERT_TRUE(collision.provenance.methodTag.has_value());
     EXPECT_EQ(*collision.provenance.methodTag, "collision-copy");
+}
+
+/** @brief MDL-12/AT-17：有限多圈工程范围只写独立属性，旧Codec保真往返。 */
+TEST(MdlTemplate, ContinuousWorkingRangeEditAndCodec_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},std::vector<std::string>{"AT-17"});
+    auto ws=makeSixAxisDraft();
+    auto& joint=ws.design.joints[0];joint.type=JointType::Continuous;
+    joint.bounds=sdurws::ird::core::SourcedValue<JointLimits>::notApplicable();
+    joint.workingRange=sdurws::ird::core::SourcedValue<JointLimits>::notProvided();
+    const auto before=ws;
+    ASSERT_FALSE(applyJointFieldEdit(ws,0,JointEditField::WorkingRange,JointLimits{-8,10}).has_value());
+    EXPECT_EQ(joint.workingRange.value(),(JointLimits{-8,10}));
+    EXPECT_EQ(joint.workingRange.provenance().kind,ProvenanceKind::UserProvided);
+    auto expected=before.design;expected.joints[0].workingRange=joint.workingRange;
+    EXPECT_EQ(ws.design,expected)<<"只允许范围属性变化，类型/来源/限位不改";
+    EXPECT_EQ(ws.changes.size(),before.changes.size()+1);
+    sdurws::ird::modeling::RobotDesignCodec codec;
+    const auto bytes=codec.encode(sdurws::ird::modeling::ObjectVariant{ws.design},sdurws::ird::modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());const auto decoded=codec.decode(bytes.get(),sdurws::ird::modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());EXPECT_EQ(std::get<sdurws::ird::modeling::RobotDesign>(decoded.get()),ws.design);
+    EXPECT_EQ(sdurws::ird::modeling::jointEditFieldToken(JointEditField::WorkingRange),"workingRange");
+}
+
+/** @brief MDL-12/MDL-06：非法范围原子拒绝，批量仅接受合法continuous行。 */
+TEST(MdlTemplate, ContinuousWorkingRangeRejectAndBatch_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","MDL-06"},std::vector<std::string>{"AT-17"});
+    auto ws=makeSixAxisDraft();ws.design.joints[0].type=JointType::Continuous;
+    ws.design.joints[0].bounds=sdurws::ird::core::SourcedValue<JointLimits>::notApplicable();
+    const auto before=ws;
+    for(const auto range:std::vector<JointLimits>{{1,1},{2,1},{0,std::numeric_limits<double>::infinity()},
+            {std::numeric_limits<double>::quiet_NaN(),1}}){
+        const auto error=applyJointFieldEdit(ws,0,JointEditField::WorkingRange,range);
+        ASSERT_TRUE(error.has_value());EXPECT_EQ(ws,before);
+    }
+    const auto wrongType=applyJointFieldEdit(ws,1,JointEditField::WorkingRange,JointLimits{-1,1});
+    ASSERT_TRUE(wrongType.has_value());EXPECT_EQ(wrongType->code,JointEditErrorCode::TypeBoundsConflict);EXPECT_EQ(ws,before);
+    EXPECT_THROW(applyJointFieldEdit(ws,0,JointEditField::WorkingRange,0.1),std::invalid_argument);
+    EXPECT_EQ(ws,before);
+    const auto result=applyJointFieldEditBatch(ws,JointEditField::WorkingRange,
+        {{0,JointLimits{-20,20}},{1,JointLimits{-2,2}}});
+    EXPECT_EQ(result.appliedCount,1u);EXPECT_EQ(result.rejectedRows,(std::vector<std::size_t>{1}));
+    EXPECT_EQ(ws.changes.size(),before.changes.size()+1);
+    EXPECT_EQ(ws.design.joints[0].workingRange.value(),(JointLimits{-20,20}));
+    EXPECT_EQ(ws.design.joints[1],before.design.joints[1]);
 }

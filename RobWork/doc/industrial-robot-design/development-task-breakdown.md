@@ -1006,3 +1006,5 @@ AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子�
 | WP-10-T51 | 工位位置编辑轨〔≙UI-T51；分支 ui-t51 基点 26237d5b；**实施落位，status=ready 待独立验收**〕："空间与公差"卡三轴坐标输入解锁（UI-T37 返工③登记兑现——所有者 2026-10-03 使用反馈承接）：applyStationEditSet 增 pose-position-x/y/z 三键（三维整体量语义＋NotProvided 基线 fail-fast——四态语义零变化）＋renderPoseRow 三轴 SpinBox 条件可编辑（submitStationValue 队列化提交——幻影短路同卡先例）＋具名用例（只读退役/幻影短路/单轴接受未编辑轴保持/undoLocal 回滚）＋ACC2 封闭性断言随批（12→15）；requirements_test 200/200＋requirements_gui 40/40；留痕 traceability/builds/ui-t51/；详见 ui.md §13 UI-T51 行 | 2026-10-03 | — |
 
 WP-13-T24 B3a精确登记：MDL-22欧拉输入及域内RPY→EAA转换，Template.hpp::BasePlacementEditValue表尾customRpy默认空；实现/验证/范围按2026-10-20-modeling-completion计划B3a，不改runtime或存储格式。
+
+WP-13-T24 B3b精确登记：MDL-12/MDL-06工程工作范围确认，Template.hpp::JointEditField表尾WorkingRange复用JointLimits；已放行Template.cpp、私有面板与原测试/单元卡范围内实施。原计划B3b八节为边界，不改存储、runtime或依赖边，完整47项终验仍开放。

@@ -25,6 +25,7 @@
 
 #include <sdurws/ird/modeling/DiagCodes.hpp>   // 码常量同源对账
 #include <sdurws/ird/modeling/Readiness.hpp>
+#include <sdurws/ird/modeling/Template.hpp> // MDL-12：真实用户确认必须解除范围阻断。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯
 
 #include <gtest/gtest.h>
@@ -443,6 +444,22 @@ TEST(MdlReadinessAssertionDomains, MissingPhysicsWithConfirmedContinuousApplicab
     EXPECT_TRUE(report.blockers.empty());
     EXPECT_FALSE(report.warnings.empty());  // 缺失预告在（DataInsufficient 面）
     EXPECT_TRUE(report.confirmables.empty());  // continuous 行程豁免
+}
+
+/** @brief MDL-12/AT-17：未确认先阻断，真实范围编辑解除阻断，不引入行程确认。 */
+TEST(MdlReadinessAssertionDomains, RangeEditorUnblocksContinuous_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","MDL-06"},std::vector<std::string>{"AT-17"});
+    ReadinessFixture f;RobotDesign design;
+    design.joints.push_back(makeContinuousJoint(makeOid(),"Jspin",false));
+    design.links.push_back(makeLink(makeOid(),"base"));design.links.push_back(makeLink(makeOid(),"link1"));
+    f.bindNames(design);ModelingWorkingSet ws{design,{},makeOid(),{},{},{},{}};
+    const auto pending=f.checker.check(ws,CheckContext{});
+    EXPECT_FALSE(pending.blockers.empty());
+    ASSERT_FALSE(applyJointFieldEdit(ws,0,JointEditField::WorkingRange,JointLimits{-20,20}).has_value());
+    const auto confirmed=f.checker.check(ws,CheckContext{});
+    EXPECT_TRUE(confirmed.blockers.empty());EXPECT_TRUE(confirmed.confirmables.empty());
+    EXPECT_EQ(readinessStatusToken(confirmed.status),"ReadyWithNotes");
 }
 
 /**

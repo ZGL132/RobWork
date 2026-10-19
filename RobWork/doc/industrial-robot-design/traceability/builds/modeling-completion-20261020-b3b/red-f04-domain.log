@@ -1,0 +1,22 @@
+Note: Google Test filter = *ContinuousWorkingRange*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from MdlTemplate
+[ RUN      ] MdlTemplate.ContinuousWorkingRangeEditAndCodec_MDL12_AT17
+unknown file: error: C++ exception with description "modeling/template/edit-variant: value 备择与 field 不匹配: type" thrown in the test body.
+
+[  FAILED  ] MdlTemplate.ContinuousWorkingRangeEditAndCodec_MDL12_AT17 (0 ms)
+[ RUN      ] MdlTemplate.ContinuousWorkingRangeRejectAndBatch_MDL12_AT17
+unknown file: error: C++ exception with description "modeling/template/edit-variant: value 备择与 field 不匹配: type" thrown in the test body.
+
+[  FAILED  ] MdlTemplate.ContinuousWorkingRangeRejectAndBatch_MDL12_AT17 (0 ms)
+[----------] 2 tests from MdlTemplate (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] MdlTemplate.ContinuousWorkingRangeEditAndCodec_MDL12_AT17
+[  FAILED  ] MdlTemplate.ContinuousWorkingRangeRejectAndBatch_MDL12_AT17
+
+ 2 FAILED TESTS
