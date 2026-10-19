@@ -7691,6 +7691,20 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
         };
         bool samplesArrived = false;
         QString kinStatus;
+        // 选中区域锚（样本清单/格层投影跟随选区——评估结果到达后须经
+        // 预览重投影才达清单；轮询中周期重聚焦触发）。
+        std::optional<core::ObjectId> evalRegionId;
+        {
+            QTreeWidget* regionTable = panel->findChild<QTreeWidget*>(
+                QStringLiteral("ird_req_region_table"));
+            if (regionTable != nullptr && regionTable->currentItem() != nullptr) {
+                const QString anchorText = regionTable->currentItem()->text(
+                    regionTable->columnCount() - 1);
+                const auto parsed = core::ObjectId::tryFromCanonical(
+                    anchorText.toStdString());
+                if (parsed.has_value()) { evalRegionId = *parsed; }
+            }
+        }
         QWidget* kinPanelForStatus =
             m_kinematicsDock != nullptr ? m_kinematicsDock->widget() : nullptr;
         QLabel* kinStatusLabel =
@@ -7698,16 +7712,40 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
                 ? kinPanelForStatus->findChild<QLabel*>(
                       QStringLiteral("ird_kin_status_line"))
                 : nullptr;
-        for (int i = 0; i < 150 && !samplesArrived; ++i) {
+        for (int i = 0; i < 300 && !samplesArrived; ++i) {
             settleEvents(200);
             samplesArrived = evalSampleList != nullptr
                 && evalSampleList->topLevelItemCount() > 0
                 && isRealSampleRow(evalSampleList->topLevelItem(0));
-            if (i % 10 == 5 && kinStatusLabel != nullptr
+            if (kinStatusLabel != nullptr
                 && kinStatusLabel->text() != kinStatus) {
                 kinStatus = kinStatusLabel->text();
                 std::cout << "[ird-ui-smoke-tour] step11 kin-status="
                           << kinStatus.toStdString() << std::endl;
+            }
+            // 周期重选区域行（约 3s 间隔——评估完成事件若未驱动预览重投
+            // 影，选区重选为确定性触发面；R-2 纪律：纯 Qt 公共面操作，
+            // 清选→重选＝真实重选轨）。
+            if (!samplesArrived && i % 15 == 7) {
+                QTreeWidget* rt = panel->findChild<QTreeWidget*>(
+                    QStringLiteral("ird_req_region_table"));
+                if (rt != nullptr && rt->currentItem() != nullptr) {
+                    QTreeWidgetItem* cur = rt->currentItem();
+                    rt->setCurrentItem(nullptr);
+                    settleEvents(100);
+                    rt->setCurrentItem(cur);
+                }
+            }
+            if (i == 149 && kinPanelForStatus != nullptr) {
+                // 30s 窗口末观测面：覆盖表行数（区分"评估未完成"与"投递
+                // 断链"——表空＝评估仍在跑/挂，非空＝结果已达面板层）。
+                const auto tables =
+                    kinPanelForStatus->findChildren<QTableWidget*>();
+                for (const QTableWidget* t : tables) {
+                    std::cout << "[ird-ui-smoke-tour] step11 cov-table rows="
+                              << t->rowCount() << " cols=" << t->columnCount()
+                              << std::endl;
+                }
             }
         }
         ok(samplesArrived,

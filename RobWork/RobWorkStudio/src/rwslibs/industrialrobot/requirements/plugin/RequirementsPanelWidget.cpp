@@ -11,6 +11,7 @@
 #include "RequirementsPanelWidget.hpp"
 #include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次＋UI-T33 三维缝重载）
 #include "RegionSamplingForm.hpp"  // REQ-03：采样定义暂存，不生成样本。
+#include <sdurws/ird/requirements/Sampling.hpp>  // A-18：计划构建单点（ISamplingPlanBuilder——D-REQ-2 规范化唯一实现）
 #include "ConditionStructureForm.hpp"  // WP-14-T12：负载/事件结构暂存，确认后原子写草稿。
 #include "StationDefinitionDialog.hpp" // WP-14-T12：完整引用与姿态载荷一次确认。
 #include <QPointer> // 模态嵌套循环可能拆除面板；确认守卫不得解引用已销毁控件。
@@ -1443,6 +1444,28 @@ bool RequirementsPanelWidget::submitStructuralEdit(const RequirementEdit& edit)
     return true;
 }
 
+bool RequirementsPanelWidget::submitStructuralEditsAtomic(
+    const std::vector<RequirementEdit>& edits)
+{
+    // A-18：结构编辑组合的原子提交（applyEditsAtomic——恰一次撤销入栈；
+    // 记账与 sink 链同 submitStructuralEdit，一次入账对应一次组合回滚）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr) {
+        showStatusLine(QStringLiteral("未应用：未打开需求会话（不可编辑）"));
+        return false;
+    }
+    const EditOutcome out = editor->applyEditsAtomic(edits);
+    if (!out.accepted) {
+        showStatusLine(QString::fromStdString(
+            "未应用（" + out.error.detail + "）"));
+        return false;
+    }
+    m_undoTracker.recordAppliedEdit();
+    onEditApplied(out.changeSummary);
+    return true;
+}
+
 QWidget* RequirementsPanelWidget::makeBatchParameterTable(const RequirementEdit& edit)
 {
     // 三类条目共享UI参数规则；仅字段映射留在需求域，不复制解析、单位或筛选逻辑。
@@ -1742,7 +1765,22 @@ void RequirementsPanelWidget::onRemoveEntry(WorkingSetMember member)
             }
         }
     }
-    if (!submitStructuralEdit(removeEdit(m_lastSelected.value(), member))) {
+    // A-18：有计划的区域＝计划先删＋区域后删**原子**应用（删除保护④
+    // "被采样计划引用的区域"拒绝区域先删——组合内依序自然满足；恰一次
+    // 撤销＝"删除区域"单动作单回滚）。无计划区域与其它集合走原单编辑轨。
+    if (member == WorkingSetMember::Regions) {
+        std::vector<RequirementEdit> atomicEdits;
+        for (const auto& plan : editor->workingSet().plans.entries) {
+            if (plan.regionRef == m_lastSelected.value()) {
+                atomicEdits.push_back(RequirementEdit{std::make_pair(
+                    plan.objectId, static_cast<int>(WorkingSetMember::Plans))});
+            }
+        }
+        atomicEdits.push_back(removeEdit(m_lastSelected.value(), member));
+        if (!submitStructuralEditsAtomic(atomicEdits)) {
+            return;  // 拒绝（域拒绝面）——就地错误已呈现
+        }
+    } else if (!submitStructuralEdit(removeEdit(m_lastSelected.value(), member))) {
         return;  // 拒绝（如必验引用等域拒绝面）——就地错误已呈现
     }
     // 锚回落：删除后同集合取同位次（越界取末条）条目；空集合＝清空选中。
@@ -2756,6 +2794,37 @@ void RequirementsPanelWidget::submitStationEnumValue(const std::string& key, con
  * UI线程；原编辑器为非拥有身份标记，先与当前提供器比对才允许读取。
  * 外部修改/删除/会话切换拒绝过期输入，防止排队期间把旧行数据写到新行。
  */
+// A-18（Phase-A 冻结终验；"无独立计划页"所有者裁决 2026-10-19）：采样
+// 计划条目随区域采样确认自动构建——计划是区域采样定义的派生事实
+// （req-plan-set 为评估切片消费面，UI 缺创建路径＝评估链对用户内容不可
+// 达，r11 实测"工作集无采样计划"）。构建单点＝ISamplingPlanBuilder
+// （D-REQ-2 规范化唯一实现，本单元零第二份）；同区域复用既有计划 id
+// （R6 计划-区域一一对应，重确认＝更新非重复）；新计划句柄＝generate()
+// （O-36 编辑期临时身份惯例，与生命周期新增同款）。
+std::optional<RequirementEdit> RequirementsPanelWidget::buildRegionPlanEdit(
+    IRequirementEditor& editor, const WorkRegion& region)
+{
+    const SamplingPlan* existing = nullptr;
+    for (const auto& plan : editor.workingSet().plans.entries) {
+        if (plan.regionRef == region.objectId) { existing = &plan; break; }
+    }
+    SamplingPlanSpec spec;
+    if (existing != nullptr) { spec.planObjectId = existing->objectId; }
+    spec.positionSampling = region.positionSampling;
+    spec.orientationSampling = region.orientationSampling;
+    spec.note = region.note;
+    SamplingPlanBuilder builder;
+    std::vector<core::DiagnosticRecord> buildDiags;
+    const PlanOutcome outcome = builder.buildPlan(region, spec, buildDiags);
+    if (!outcome.ok) {
+        // 构建拒绝（退化区域/非法采样）＝域裁决面——就地呈现，不静默、
+        // 不伪造计划（NFR-COR-03 第一戒律）。
+        showStatusLine(QString::fromUtf8(outcome.error.detail));
+        return std::nullopt;
+    }
+    return RequirementEdit{outcome.plan};
+}
+
 void RequirementsPanelWidget::queueRegionEdit(std::function<WorkRegion(const WorkRegion&)> transform)
 {
     auto* editor = m_editTarget ? m_editTarget() : nullptr;
@@ -2932,7 +3001,13 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
                     for (const auto& latest : editor->workingSet().regions.entries) {
                         if (latest.objectId != base.objectId) { continue; }
                         if (latest != base) { showStatusLine("区域已改变，请刷新采样表后重试"); return; }
-                        if (submitEntryEdit(*editor, *this, RequirementEdit{candidate}) == EditSubmitOutcome::Applied) {
+                        // A-18：整块采样确认＝区域编辑＋派生计划 upsert 原子
+                        // 应用（恰一次撤销——"一次提交/撤销"契约保持）。
+                        const auto planEdit = buildRegionPlanEdit(*editor, candidate);
+                        if (!planEdit.has_value()) { return; } // 构建拒绝——就地错误已呈现。
+                        if (submitEntryEditsAtomic(*editor, *this,
+                                std::vector<RequirementEdit>{candidate, *planEdit})
+                            == EditSubmitOutcome::Applied) {
                             m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
                         }
                         return;
@@ -3769,10 +3844,41 @@ void RequirementsPanelWidget::submitRegionToggle(const std::string& key, bool on
 
 void RequirementsPanelWidget::submitRegionCounts(const std::array<std::uint32_t, 3>& counts)
 {
-    queueRegionEdit([counts](const WorkRegion& base) {
-        std::vector<std::string> known;
-        return applyRegionSamplingCountsEdit(base, counts, known);
-    });
+    // A-18：采样计数提交＝区域编辑＋派生计划 upsert 原子应用（恰一次撤
+    // 销——发起时固定身份，排队期间切换行不得写入新选中行）。
+    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || !m_regionTable->currentItem()) { return; }
+    const auto selected = nodeAnchor(m_regionTable->currentItem());
+    if (!selected) { return; }
+    for (const auto& region : editor->workingSet().regions.entries) {
+        if (region.objectId != *selected) { continue; }
+        QMetaObject::invokeMethod(this, [this, editor, base = region, counts] {
+            m_threadGuard.assertOnUiThread();
+            if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
+            for (const auto& latest : editor->workingSet().regions.entries) {
+                if (latest.objectId != base.objectId) { continue; }
+                if (latest != base) { showStatusLine("区域已改变，请重新输入"); return; }
+                try {
+                    std::vector<std::string> knownKeys;
+                    const WorkRegion candidate =
+                        applyRegionSamplingCountsEdit(base, counts, knownKeys);
+                    if (candidate == base) { return; } // 重复失焦信号不制造空撤销记录。
+                    const auto planEdit = buildRegionPlanEdit(*editor, candidate);
+                    if (!planEdit.has_value()) { return; } // 构建拒绝——就地错误已呈现。
+                    if (submitEntryEditsAtomic(*editor, *this,
+                            std::vector<RequirementEdit>{candidate, *planEdit})
+                        == EditSubmitOutcome::Applied) {
+                        m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                    }
+                } catch (const std::invalid_argument& failure) {
+                    showStatusLine(QString::fromUtf8(failure.what()));
+                    renderRegionPage(editor->workingSet());
+                }
+                return;
+            }
+        }, Qt::QueuedConnection);
+        return;
+    }
 }
 
 void RequirementsPanelWidget::onConditionFieldEditingFinished()

@@ -382,6 +382,66 @@ TEST_F(RequirementsSessionGuiTest, RegionSamplingCompleteAtomic_REQ03_WP14T12)
     ASSERT_TRUE(m_editor.redoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), after);
 }
 
+/** @brief A-18：区域采样确认自动构建/upsert 采样计划条目；区域删除随删。
+ *
+ * 生产路径全链（真实表单确认→面板派生钩→ISamplingPlanBuilder→编辑器
+ * upsert）——覆盖评估切片消费 req-plan-set，UI 缺计划创建路径即评估链
+ * 对用户内容不可达（A-18 根因面，r11 宿主实测）。用例名带缺陷号。
+ */
+TEST_F(RequirementsSessionGuiTest, RegionSamplingBuildsPlanEntry_A18_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05"}, std::nullopt);
+    const WorkRegion region = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(region.objectId);
+    ASSERT_TRUE(m_editor.workingSet().plans.entries.empty())
+        << "夹具基线应无计划条目（A-18 前提）";
+
+    // 生产入口：完整采样表单确认（Grid 计数 3×2×2——与基线 {2,2,2} 不同
+    // 值，upsert 更新可观测）。
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr) << "生产区域检查器缺完整采样编辑入口";
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::Grid)));
+    form->findChild<QLineEdit*>("ird_region_grid_count_0")->setText("3");
+    form->findChild<QLineEdit*>("ird_region_grid_count_1")->setText("2");
+    form->findChild<QLineEdit*>("ird_region_grid_count_2")->setText("2");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+
+    // A-18 核心：采样确认 Applied 后计划条目自动派生（恰一条、同区域）。
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "采样确认后应派生计划条目（A-18——评估切片消费面）";
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().regionRef,
+              region.objectId);
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts,
+              (std::array<std::uint32_t, 3>{3u, 2u, 2u}));
+
+    // 重确认＝更新非重复（R6 计划-区域一一对应）。首次确认后面板重绘
+    // 重建采样表单（诚实刷新面）——旧指针随旧窗销毁，测试经 objectName
+    // 从当前控件树重定位。
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    form->findChild<QLineEdit*>("ird_region_grid_count_0")->setText("4");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "重确认应复用既有计划 id（R6），不得新增第二条";
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts[0], 4u);
+
+    // 区域删除随删计划（悬空计划预防）——真实删除按钮（与用户点击同槽
+    // 轨；onRemoveEntry 为 private，按钮 objectName＝生命周期锚惯例）。
+    QPushButton* removeBtn = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_req_remove_regions"));
+    ASSERT_NE(removeBtn, nullptr) << "区域生命周期删除按钮缺失";
+    removeBtn->click();
+    QApplication::processEvents();
+    EXPECT_TRUE(m_editor.workingSet().regions.entries.empty());
+    EXPECT_TRUE(m_editor.workingSet().plans.entries.empty())
+        << "区域删除应随删其采样计划（R6 悬空预防）";
+}
+
 /** @brief REQ-03：随机/零网格、可选覆盖率清除、取消及非法输入都走真实表单。 */
 TEST_F(RequirementsSessionGuiTest, RegionSamplingModesCancelAndReject_REQ03_WP14T12)
 {

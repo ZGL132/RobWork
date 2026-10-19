@@ -33,6 +33,23 @@ EditSubmitOutcome submitEntryEdit(IRequirementEditor& editor, IRequirementEditSi
     return EditSubmitOutcome::Rejected;
 }
 
+EditSubmitOutcome submitEntryEditsAtomic(IRequirementEditor& editor, IRequirementEditSink& sink,
+                                         const std::vector<RequirementEdit>& edits)
+{
+    // A-18：组合原子应用（applyEditsAtomic——任一拒绝＝工作集与栈全部
+    // 不变，恰一次撤销入栈；域裁决唯一入口，本函数零判定）。
+    const EditOutcome outcome = editor.applyEditsAtomic(edits);
+    if (outcome.accepted) {
+        sink.onEditApplied(outcome.changeSummary);
+        sink.notifySessionDirty();
+        return EditSubmitOutcome::Applied;
+    }
+    sink.onEditRejected(
+        EditRejection{std::string(requirementErrorCodeToken(outcome.error.code)),
+                      outcome.error.detail});
+    return EditSubmitOutcome::Rejected;
+}
+
 EditSubmitOutcome submitBatchEdit(IRequirementEditor& editor, IRequirementEditSink& sink,
                                   const EditBatch& batch)
 {

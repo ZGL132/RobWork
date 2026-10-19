@@ -657,16 +657,21 @@ std::optional<RequirementError> validateOperatingCondition(const OperatingCondit
 
 std::optional<RequirementError> validateSamplingPlan(const SamplingPlan& plan)
 {
-    // 计划条目恒为规范化形态（Grid 权威计数——D-REQ-2）：GridBySpacing
-    // 在字节面/计划面出现＝绕过 buildPlan 的违约（buildPlan 是唯一规范
-    // 化入口，§5.2）。
-    if (plan.positionSampling.method != PositionSamplingMethod::Grid) {
+    // 计划条目位置采样两合法形态（A-18 扩展——计划是区域采样定义的忠实
+    // 投影，WP-14-T12"无独立计划页"裁决的派生面）：Grid＝规范化权威计数
+    // （D-REQ-2——GridBySpacing 在 buildPlan 规范化，计划面不承载原始间
+    // 距）；Random＝原样 planned count（normalizeSampling 对 Random 恒透
+    // 传——KIN-04 分母＝planned count）。其余形态（含未规范化的
+    // GridBySpacing）＝绕过 buildPlan 的违约（buildPlan 是唯一规范化入口，
+    // §5.2）。
+    if (plan.positionSampling.method != PositionSamplingMethod::Grid
+        && plan.positionSampling.method != PositionSamplingMethod::Random) {
         RequirementError e;
         e.code = RequirementErrorCode::MalformedPayload;
         e.params.emplace_back("field", "positionSampling.method");
-        e.detail = "requirements/types: 计划条目位置采样须为规范化 Grid 形态"
-                   "（D-REQ-2——GridBySpacing 在 buildPlan 规范化，计划面不"
-                   "承载原始间距）";
+        e.detail = "requirements/types: 计划条目位置采样须为规范化 Grid 或"
+                   " Random 原样形态（A-18——GridBySpacing 在 buildPlan 规"
+                   "范化，计划面不承载原始间距）";
         return e;
     }
     // 姿态采样 ≥1（同区域侧口径——§5.2）。

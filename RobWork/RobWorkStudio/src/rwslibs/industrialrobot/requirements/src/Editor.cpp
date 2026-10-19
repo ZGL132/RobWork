@@ -622,6 +622,71 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
 }
 
 // =====================================================================
+// A-18：任意编辑组合的原子应用（接口 A-18 增列的落位——区域采样确认
+// ＝区域＋派生计划两编辑一撤销；区域删除＝计划随删＋区域移除同款）
+// =====================================================================
+
+EditOutcome RequirementEditor::applyEditsAtomic(
+    const std::vector<RequirementEdit>& edits)
+{
+    EditOutcome out;
+    if (!loaded_) {
+        out.error = loadFailure("编辑器未载入基线（loadBaseline 前置违约——调用方错误）");
+        return out;
+    }
+    if (edits.empty()) {
+        out.error = loadFailure("applyEditsAtomic：空编辑序列（调用方错误——不虚构空修订）");
+        return out;
+    }
+    // 原子前快照（中段拒绝的整体回滚锚——单编辑 applyEdit 的拒绝路径
+    // 只自回滚"该条编辑前"状态，多编辑组合须回滚到组合前状态）。
+    const RequirementWorkingSet atomicSnapshot = ws_;
+    const std::size_t undoDepthBefore = undoStack_.size();
+    // 中段接受的编辑会清重做栈＋推进摘要/计数——拒绝面须全数恢复
+    // （@post"工作集/栈全部不变"的完整语义）。
+    std::vector<UndoStep> redoSnapshot = redoStack_;
+    std::string summaryBefore = summary_;
+    std::size_t editCountBefore = editCount_;
+    std::string combined;
+    for (const auto& edit : edits) {
+        // 逐条复用单编辑 applyEdit（校验链同源——NFR-MNT-04 零第二份）；
+        // 其接受面会各推一条撤销快照，接受聚合后合并（见下）。
+        EditOutcome one = applyEdit(edit);
+        if (!one.accepted) {
+            ws_ = atomicSnapshot;  // 原子回滚：工作集回到组合前状态
+            while (undoStack_.size() > undoDepthBefore) {
+                undoStack_.pop_back();  // 弹出中段已推快照（栈面同回滚）
+            }
+            redoStack_ = std::move(redoSnapshot);
+            summary_ = std::move(summaryBefore);
+            editCount_ = editCountBefore;
+            out.error = std::move(one.error);
+            out.diagnostics.clear();  // 拒绝＝零产出（单条警告面随编辑作废）
+            return out;
+        }
+        if (!combined.empty()) { combined += "\n"; }
+        combined += one.changeSummary;
+    }
+    // 全部接受——撤销合并：弹出本组合推入的 N 条快照，保留**第一条编辑
+    // 前**快照（＝原子前状态，栈底方向的那条）以合并摘要重新入栈——
+    // undoLocal 一次即整体回滚（恰一次撤销入栈的 @post）。
+    if (edits.size() >= 2) {
+        std::vector<UndoStep> pushed;
+        pushed.reserve(edits.size());
+        for (std::size_t i = 0; i < edits.size() && !undoStack_.empty(); ++i) {
+            pushed.push_back(std::move(undoStack_.back()));
+            undoStack_.pop_back();
+        }
+        // pushed 逆序（back 先出）——组合前快照在 pushed 尾部。
+        UndoStep merged{std::move(pushed.back().snapshot), combined};
+        undoStack_.push_back(std::move(merged));
+    }
+    out.accepted = true;
+    out.changeSummary = combined;
+    return out;
+}
+
+// =====================================================================
 // 局部撤销/重做（§9.3 undoLocal/redoLocal——零修订）
 // =====================================================================
 

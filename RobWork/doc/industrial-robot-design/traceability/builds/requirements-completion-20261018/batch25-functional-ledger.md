@@ -69,6 +69,35 @@ A-18 修复后本通道即为 R03-10/11/U08 的可复跑证据载体。
 
 **登记义务**：A-17/A-18 转登 findings.json 归治理批（本批先以本段＋提交信息承载）。
 
+## 第三十批（A-18 修复，2026-10-19）——计划派生落地与评估链推进
+
+**A-18 已修复（"无独立计划页"所有者裁决兑现）**：
+
+1. **编辑器原子接口增列**（Editor.hpp/cpp 表尾——加法扩展，单编辑/EditBatch
+   语义零变化）：`applyEditsAtomic(vector<RequirementEdit>)`——依序应用于
+   候选工作集，全部接受＝恰一次撤销入栈（N≥2 时合并中段快照）；任一拒绝＝
+   工作集/撤销栈/重做栈/摘要/计数全数回滚（@post 完整语义）。
+2. **面板派生接线三处**：区域完整采样表单确认与计数快轨＝区域编辑＋
+   `buildRegionPlanEdit`（ISamplingPlanBuilder 单点构建，同区域复用既有
+   计划 id）经 `submitEntryEditsAtomic`（PanelEditFlow 组合泛化）原子提交；
+   区域删除＝计划先删＋区域后删原子对（删除保护④"被计划引用的区域"要求
+   计划先行——组合内依序自然满足）。
+3. **validateSamplingPlan 语义扩展**（RequirementTypes.cpp）：计划条目位置
+   采样合法形态＝Grid（规范化权威计数）∨ Random（原样 planned count——
+   normalizeSampling 对 Random 恒透传，KIN-04 分母语义）；仍未规范化化的
+   GridBySpacing 保持拒绝。
+4. **回归**：requirements_gui 96/96（新增
+   `RegionSamplingBuildsPlanEntry_A18_WP14T12`——表单确认→计划派生→
+   重确认 upsert 不重复→区域删除随删，全真实控件轨）；requirements_test
+   221＝220＋1 既有占位、contract 16/16。
+
+**评估链推进（tour 拍 11，r12~r15）**：评估从"不可提交"推进到"已受理并
+完成"——kin-status=覆盖评估已受理（kin-cov-2-1）、覆盖表面板 2 行（位置/
+姿态轴计数比）实测到达。**剩余一环（新登记）**：结果到样本清单/三维格层
+的预览投影未触发（`latestCoverageResult()` 已入账，区域重选未驱动预览重
+组合——预览块的调用触发面待查）。清单/着色/蓝圈三断言与截图在投递接通后
+即为 R03-10/11/U08 终证；WIP 如实提交。
+
 | ID | 功能 | 如何验证 | 本次终验 | 最新组件匹配数 |
 | --- | --- | --- | --- | --- |
 | R01-01 | 新建关键任务点 | 空集点新增，核对默认字段、树节点和选中项 | NOT RUN | 2 |

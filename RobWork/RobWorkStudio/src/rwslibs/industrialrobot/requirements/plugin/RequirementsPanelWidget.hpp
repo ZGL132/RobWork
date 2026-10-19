@@ -488,6 +488,13 @@ private:
     /// 删除槽：选中条目 removeEdit → 接受后锚回落（同集合规范序次条，
     /// 空集合＝清空选中）；拒绝（含被必验引用等域拒绝面）＝就地错误。
     void onRemoveEntry(WorkingSetMember member);
+    /// A-18：构建区域采样计划条目的 upsert 编辑值（"无独立计划页"所有
+    /// 者裁决 2026-10-19——计划随区域采样定义派生，构建单点＝
+    /// ISamplingPlanBuilder（D-REQ-2 规范化唯一实现）；同区域复用既有
+    /// 计划 id（R6 一一对应）；构建拒绝＝就地呈现并返回 nullopt）。
+    /// 调用方经 applyEditsAtomic 与区域编辑原子提交（恰一次撤销）。
+    std::optional<RequirementEdit> buildRegionPlanEdit(
+        IRequirementEditor& editor, const WorkRegion& region);
     /// 集合内未占用的条目名（base 后缀递增——I-REQ-3 拒绝面前的第一道
     /// 防线；撞名仍由域侧裁决，双保险）。
     std::string uniqueEntryName(const RequirementWorkingSet& ws,
@@ -495,6 +502,9 @@ private:
     /// 结构编辑统一提交轨（applyEdit → 接受走 onEditApplied sink 链——
     /// UI-T29 组合子随之触发就绪重估；拒绝就地报错。返回接受与否）。
     bool submitStructuralEdit(const RequirementEdit& edit);
+    /// A-18：结构编辑组合的原子提交轨（applyEditsAtomic——恰一次撤销；
+    /// 记账与 sink 链同单编辑版，一次入账对应一次组合回滚）。
+    bool submitStructuralEditsAtomic(const std::vector<RequirementEdit>& edits);
 
     /**
      * @brief 创建非模态数量参数表；筛选/单位/粘贴统一复用UI公共组件（UX-05）。

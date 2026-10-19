@@ -150,6 +150,27 @@ enum class EditSubmitOutcome {
 EditSubmitOutcome submitEntryEdit(IRequirementEditor& editor, IRequirementEditSink& sink,
                                   const RequirementEdit& edit);
 
+/**
+ * @brief A-18：任意编辑组合的原子提交流（submitEntryEdit 的组合泛化——
+ *        编排 editor.applyEditsAtomic；恰一次撤销入栈/整体回滚的裁决与
+ *        记账在编辑器域内，本函数零判定）。
+ *
+ * 编排序（零判定——全部裁决在编辑器域校验链内）：
+ *   ① 调 editor.applyEditsAtomic（任一拒绝＝工作集与栈全部不变）；
+ *   ② accepted==true：sink.onEditApplied（合并摘要）→
+ *      sink.notifySessionDirty；
+ *   ③ accepted==false：sink.onEditRejected（就地呈现；无任何模态路径）。
+ *
+ * @param editor [in,out] 目标编辑器（接受时工作集已更新——仅 UI 线程）
+ * @param sink   [in] 编辑流出口（调用期存活——非 owning）
+ * @param edits  [in] 编辑序列（值语义——依序原子应用）
+ * @return 分流结果（Applied/Rejected——与 sink 回调一一对应）
+ *
+ * 非 UI 线程调用＝契约违约（§3.4）。
+ */
+EditSubmitOutcome submitEntryEditsAtomic(IRequirementEditor& editor, IRequirementEditSink& sink,
+                                         const std::vector<RequirementEdit>& edits);
+
 // =====================================================================
 // L-R9 批次编辑流（镜像/阵列/模板——REQ-11 批量整体撤销）
 // =====================================================================
