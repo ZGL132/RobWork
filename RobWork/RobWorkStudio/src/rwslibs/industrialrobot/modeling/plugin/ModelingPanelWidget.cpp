@@ -306,7 +306,8 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
 {
     // 区位总布局：左右分栏（树｜属性）＋下部叠放（工具/就绪/预览——
     // 页签承载三区，对应 UX-09 五区布局的建模域投影）。
-    auto* mainLayout = new QHBoxLayout(this);
+    // 局部历史工具条在整栏上方；左右分栏仍由下面唯一splitter承载。
+    auto* mainLayout = new QVBoxLayout(this);
     // 左右栏使用可拖动分隔器：结构树需要保持可读宽度，右侧参数表在窄窗
     // 中则应优先获得空间。分隔位置属于会话呈现设置，不改变模型数据。
     auto* splitter = new QSplitter(Qt::Horizontal, this);
@@ -322,6 +323,24 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     splitter->setStretchFactor(0, 5);
     splitter->setStretchFactor(1, 4);
     splitter->setSizes({520, 420});
+    // L-5：草稿历史入口常驻，明确区别于宿主项目撤销（后者产生逆命令修订）。
+    // 本行只调用UI编辑器回调，不借全局命令注册表改变项目历史。
+    auto* draftHistoryRow = new QHBoxLayout();
+    m_draftUndoButton = new QPushButton(QStringLiteral("撤销草稿编辑"),this);
+    m_draftRedoButton = new QPushButton(QStringLiteral("重做草稿编辑"),this);
+    m_draftUndoButton->setObjectName("ird_modeling_draft_undo");
+    m_draftRedoButton->setObjectName("ird_modeling_draft_redo");
+    m_draftUndoButton->setToolTip(QStringLiteral("撤回尚未应用的一次草稿编辑；不产生项目修订"));
+    m_draftRedoButton->setToolTip(QStringLiteral("恢复被撤销的草稿编辑；新编辑会清除重做记录"));
+    m_draftUndoButton->setEnabled(false);m_draftRedoButton->setEnabled(false);
+    connect(m_draftUndoButton,&QPushButton::clicked,this,[this]{
+        if(m_writable&&m_canUndoDraft&&m_draftUndoAction){m_draftUndoAction();}
+    });
+    connect(m_draftRedoButton,&QPushButton::clicked,this,[this]{
+        if(m_writable&&m_canRedoDraft&&m_draftRedoAction){m_draftRedoAction();}
+    });
+    draftHistoryRow->addWidget(m_draftUndoButton);draftHistoryRow->addWidget(m_draftRedoButton);
+    draftHistoryRow->addStretch(1);mainLayout->addLayout(draftHistoryRow);
     mainLayout->addWidget(splitter, 1);
     buildStructureTreePane(left);   // 区①建模结构树（左栏）
     buildPropertyPane(right);       // 区②属性编辑区（右栏）
@@ -550,6 +569,41 @@ void ModelingPanelWidget::setCommandAvailability(CommandAvailabilityFn availabil
 void ModelingPanelWidget::setPostEditAction(PostEditAction action)
 {
     m_postEditAction = std::move(action);
+}
+
+void ModelingPanelWidget::setDraftHistoryActions(PostEditAction undo,PostEditAction redo)
+{
+    m_threadGuard.assertOnUiThread();
+    m_draftUndoAction=std::move(undo);m_draftRedoAction=std::move(redo);
+    refreshCommandEnablement();
+}
+
+void ModelingPanelWidget::setDraftHistoryState(bool canUndo,bool canRedo)
+{
+    m_threadGuard.assertOnUiThread();
+    m_canUndoDraft=canUndo;m_canRedoDraft=canRedo;
+    refreshCommandEnablement();
+}
+
+void ModelingPanelWidget::cancelPendingForHistoryRestore()
+{
+    m_threadGuard.assertOnUiThread();
+    // 普通后台刷新按UI-T79保留暂存；明确撤销/重做则必须取消暂存，再由
+    // 后续refreshPanel推入恢复值。模型取消只清数据；还须走表单既有取消
+    // 动作隐藏确认区，避免旧确认明细在恢复后仍可见、误导用户再次确认。
+    for(auto* model:{m_jointEditModel.get(),m_toolEditModel.get(),m_sceneEditModel.get(),
+                    m_tcpOffsetModel.get(),m_poseSetConfigModel.get(),m_drivetrainModel.get()}){
+        if(model){model->cancelRestore();}
+    }
+    // 只操作当前六个表单：结构变化会deleteLater旧表单，控件树中仍可能有
+    // 已失去模型的旧节点；遍历全部后代并点击会在事件队列清理前解引用悬空模型。
+    for(auto* form:{m_jointEditPanel,m_toolEditPanel,m_sceneEditPanel,m_tcpOffsetPanel,
+                    m_poseSetConfigPanel,m_drivetrainPanel}){
+        if(!form){continue;}
+        if(auto* cancel=form->findChild<QPushButton*>(QStringLiteral("ird_param_cancel"))){
+            cancel->click();
+        }
+    }
 }
 
 void ModelingPanelWidget::setCommandTitleResolver(CommandTitleResolver resolver)
@@ -946,7 +1000,7 @@ void ModelingPanelWidget::onStructureOpClicked(int opIndex)
     // 对话承载知情（域原语纯执行不内嵌确认——UI 层职责面）。
     // F-502（宿主审核 P2）分段知情文案：逐项列出将被替换/清空的对象面＋
     // 明确项目历史语义（草稿级操作不立即产生修订；应用后修订不可变——
-    // PA-2；草稿期无撤销栈，如实告知），默认按钮保持"否"。
+    // PA-2；应用前可经局部历史撤回），默认按钮保持"否"。
     if (opIndex == 4) {
         const QMessageBox::StandardButton confirmed = QMessageBox::question(
             this, QStringLiteral("六轴重置"),
@@ -957,8 +1011,8 @@ void ModelingPanelWidget::onStructureOpClicked(int opIndex)
                            "・物性与几何引用随连杆重建一并清空\n\n"
                            "项目历史：本操作只改当前草稿，不会立即产生修订；"
                            "点『应用草稿』后才生成新修订——修订不可变（历史只"
-                           "增不改，项目级撤销＝以新修订对冲），草稿期亦无撤"
-                           "销栈，请确认后执行。\n\n"
+                           "增不改，项目级撤销＝以新修订对冲）；应用前可经"
+                           "『撤销草稿编辑』撤回，请确认后执行。\n\n"
                            "确认重置？")
                 .arg(QString::number(m_editTarget && m_editTarget()
                                          ? m_editTarget()->design.joints.size()
@@ -1007,6 +1061,11 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
                                        const ModelReadinessReport& report)
 {
     m_threadGuard.assertOnUiThread();  // §3.4——刷新触点同样是编辑面
+
+    // 脏态与完整工作集的编辑记录同源；撤销回干净基线/应用成功后不能
+    // 保留旧true，否则标题和关闭提醒会与当前草稿内容不一致（PM-04）。
+    const bool dirty=!ws.changes.empty();
+    if(m_dirty!=dirty){m_dirty=dirty;Q_EMIT sessionDirtyChanged(dirty);}
 
     // ---- 区①结构树：全量重建（UI-T47 抽出 refreshStructureTree——与
     //      结构操作按钮槽共用同一树投影，零第二实现）----
@@ -1133,6 +1192,9 @@ void ModelingPanelWidget::setWritable(bool writable)
 
 void ModelingPanelWidget::refreshCommandEnablement()
 {
+    // 局部历史无需项目命令提交出口；只读、空栈与未装配各自均禁用。
+    m_draftUndoButton->setEnabled(m_writable&&m_canUndoDraft&&static_cast<bool>(m_draftUndoAction));
+    m_draftRedoButton->setEnabled(m_writable&&m_canRedoDraft&&static_cast<bool>(m_draftRedoAction));
     // UI-T43 统一收口（四个触发点共用——判定面唯一，语义见头注）。循环内
     // 合取顺序：提交出口→只读门控（§7.6/L-7 面板半区）→可用性快照；
     // 任一不满足＝禁用，不虚构可达性。

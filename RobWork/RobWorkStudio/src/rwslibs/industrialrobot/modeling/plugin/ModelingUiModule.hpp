@@ -478,6 +478,19 @@ public:
     void recomputeReadiness();
 
 private:
+    /** @brief L-5：记录一次被接受的完整草稿版本；相等重算不入栈，新编辑清重做。仅UI线程。 */
+    void rememberDraftHistory();
+    /** @brief 清理局部历史；[in] retainCurrent=true以当前草稿建新起点，false用于关闭后空会话。 */
+    void clearDraftHistory(bool retainCurrent = true);
+    /** @brief 恢复局部历史；[in] redo=true重做、false撤销；空栈/只读返回false，零项目写入。 */
+    bool restoreDraftHistory(bool redo);
+    /** @brief 把局部历史可用态推入面板；只读门控仍由面板合取，未建面板时零操作。 */
+    void refreshDraftHistoryState();
+
+    // 历史是UI编辑器内部态（L-5），不放进ModelingWorkingSet或项目修订。
+    // 值快照覆盖全部部件/资源/摘要，避免字段栈漏掉结构与引用变化；仅UI线程持有。
+    std::optional<ModelingWorkingSet> m_historyCurrent;
+    std::vector<ModelingWorkingSet> m_draftUndo, m_draftRedo;
     PanelUiThreadGuard m_guard;              ///< §3.4 UI 线程守卫（构造线程绑定）
     ModuleSessionState m_session;            ///< 会话权威态（工作集唯一载体——装配层更新）
     ModelingPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）

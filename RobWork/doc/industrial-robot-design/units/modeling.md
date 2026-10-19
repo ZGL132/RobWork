@@ -1631,3 +1631,7 @@ HandlerServices表尾增加默认空resolvePolicyForRevision(const project::Revi
 - 不改公共接口/存储格式，不增加依赖；io负责安全读取与预算，modeling负责展开/映射。完整八节与逐批账本见`../../docs/superpowers/plans/2026-10-20-modeling-completion.md`。
 - B1实现验证通过：集成全量Release、独立12目标构建、ird_gates零命中及verify-task三条命令；10套件1316项通过、0失败、0跳过。来源include按既有Recorded资源格式保存真实摘要与路径，编码往返保真；共享深度预算及堆缓冲避免Windows递归栈溢出。
 - 真实Qt参数表/错误提示/长报告3张图已复核；证据见`../traceability/builds/modeling-completion-20261020-b1/verification-summary.json`及FOLLOWUP.md。只到导入批次实现验证，不宣称47项及真实三维整体交付；后续B2～B5仍按计划推进。
+
+### WP-13-T24 B2a：草稿编辑器局部历史（2026-10-20）
+
+按§9.3/§9.7.2 L-5补齐UI编辑器内完整工作集版本栈，常驻两钮明确区分草稿与项目历史。沿既有编辑接受→就绪重算入口记录，纯重算/拒绝/取消不入栈；新编辑清重做，应用成功/跨基线/恢复/关闭清栈。完整值含根身份、全部部件、资源及变更摘要，历史不入值模型或磁盘，不改公共接口。恢复前取消当前六个有效表单的未确认输入及确认区（不遍历deleteLater旧表单），后重算就绪与树/属性/脏态。实现验证十套件1319通过、0失败、0跳过，双模式构建与门禁通过；证据traceability/builds/modeling-completion-20261020-b2a/。完整47项及正式宿主三维仍待后续批次，不据此宣称终验。

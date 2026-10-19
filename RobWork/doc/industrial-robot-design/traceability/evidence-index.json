@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-20T06:04:54+08:00",
+  "generatedAt": "2026-10-20T06:25:12+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 11469,
-    "totalBytes": 618654243,
+    "totalFiles": 11526,
+    "totalBytes": 620756773,
     "byKind": {
-      "pipeline-artifact": 2,
-      "log": 1,
-      "acceptance-record": 515,
-      "manual-acceptance": 1,
       "markdown-doc": 41,
-      "gtest-report": 335,
-      "benchmark": 8,
       "json-data": 7,
-      "governance-record": 40,
-      "build-log": 10519
+      "benchmark": 8,
+      "manual-acceptance": 1,
+      "gtest-report": 335,
+      "acceptance-record": 515,
+      "pipeline-artifact": 2,
+      "build-log": 10576,
+      "log": 1,
+      "governance-record": 40
     },
     "byLifecycle": {
-      "unverified": 10878,
-      "superseded": 0,
+      "unverified": 10935,
       "historical": 564,
+      "superseded": 0,
       "current": 27
     },
     "associated": 596,
-    "unassociated": 10873,
-    "shaComputed": 11450,
+    "unassociated": 10930,
+    "shaComputed": 11507,
     "shaSkippedLarge": 19,
-    "duplicateGroupsTotal": 620,
+    "duplicateGroupsTotal": 625,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -1184,6 +1184,13 @@
       ]
     },
     {
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "paths": [
+        "builds/modeling-completion-20261020-b1/.gitattributes",
+        "builds/modeling-completion-20261020-b2a/.gitattributes"
+      ]
+    },
+    {
       "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
       "paths": [
         "builds/modeling-completion-20261020-b1/gates.log",
@@ -1210,6 +1217,34 @@
         "builds/requirements-completion-20261018/batch7-build/ird-gates.log",
         "builds/requirements-completion-20261018/batch8-build/ird-gates.log",
         "builds/requirements-completion-20261018/batch9-build/ird-gates.log"
+      ]
+    },
+    {
+      "sha256": "476e1a341bc6fca581479f0d3eb02accf715440fa0806b3c284ca60348508c67",
+      "paths": [
+        "builds/modeling-completion-20261020-b1/gui/import-report.png",
+        "builds/modeling-completion-20261020-b2a/gui/import-report.png"
+      ]
+    },
+    {
+      "sha256": "06a0bf603b773de137c4c9c95a08a24cabde1c95c82e05cb6a749cfcf2d1f44c",
+      "paths": [
+        "builds/modeling-completion-20261020-b1/gui/xacro-duplicate-error.png",
+        "builds/modeling-completion-20261020-b2a/gui/xacro-duplicate-error.png"
+      ]
+    },
+    {
+      "sha256": "4c30a96e9cb1539b95ec2d03e0f1b034f1db6d224a32197a989d7f286b8688cb",
+      "paths": [
+        "builds/modeling-completion-20261020-b1/gui/xacro-parameters.png",
+        "builds/modeling-completion-20261020-b2a/gui/xacro-parameters.png"
+      ]
+    },
+    {
+      "sha256": "d25e370f14d08501dba10b198c97c78c0ce755ab479939a83df11ea4d5c7df34",
+      "paths": [
+        "builds/modeling-completion-20261020-b2a/modeling_contract-report.json",
+        "builds/requirements-a23-20261020/modeling_contract-report.json"
       ]
     },
     {
@@ -1479,41 +1514,6 @@
       "paths": [
         "builds/requirements-a21-20261020/requirements-tour/tour-7-view-0.png",
         "builds/requirements-a23-20261020/requirements-tour/tour-7-view-0.png"
-      ]
-    },
-    {
-      "sha256": "77dab5d9ab50eb9da75cf4664603e7e37d5f4f8783e8c467f3d1c53098c3101c",
-      "paths": [
-        "builds/requirements-a21-20261020/requirements-tour/tour-7-view-1.png",
-        "builds/requirements-a23-20261020/requirements-tour/tour-7-view-1.png"
-      ]
-    },
-    {
-      "sha256": "debd61ae725109dc6b36a1c0b83e5ddced081e478aa2b3a1e0b7e474fabfc5c9",
-      "paths": [
-        "builds/requirements-a21-20261020/requirements-tour/tour-7-view-2.png",
-        "builds/requirements-a23-20261020/requirements-tour/tour-7-view-2.png"
-      ]
-    },
-    {
-      "sha256": "d61b8bf1963c614f05cd14fc591f684c1130d400f12adea43b3313ae3f65e08c",
-      "paths": [
-        "builds/requirements-a21-20261020/requirements-tour/tour-8-real-four-state-palette.png",
-        "builds/requirements-a23-20261020/requirements-tour/tour-8-real-four-state-palette.png"
-      ]
-    },
-    {
-      "sha256": "a1e9b4a907f7eb3314f124b863b83fa107655dfc06d4a60a46d312fa54364cbc",
-      "paths": [
-        "builds/requirements-a21-20261020/requirements-tour/tour-8b-real-selected-ring.png",
-        "builds/requirements-a23-20261020/requirements-tour/tour-8b-real-selected-ring.png"
-      ]
-    },
-    {
-      "sha256": "0ec21afb0c9961221fd60f8d7cbe3509cdc4f7ef986b4f4100ac299e8d7c417e",
-      "paths": [
-        "builds/requirements-a21-20261020/requirements-tour/tour-8c-product-export.png",
-        "builds/requirements-a23-20261020/requirements-tour/tour-8c-product-export.png"
       ]
     }
   ],
@@ -12588,6 +12588,462 @@
       "taskIds": [],
       "bytes": 2047,
       "sha256": "7148742c51c98d9e672f90bce95fae4a2a0d9f2008b50261ba579bde04aede1f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/.gitattributes",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20294,
+      "sha256": "ef80025028b6183070ed3a11e81fc90224a1aa2be620a7cdab463f364df77771",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/core-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2023,
+      "sha256": "018f8db8b5ecf57bfd4a43c81c913de6e57a032c0a6763ba9d4c7ad9d23fee86",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/core.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 943,
+      "sha256": "0b62ba3294638a5407078fc76c37ac9a5805b3184dd4cb028cd9d3ce878277aa",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/core.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1534,
+      "sha256": "9430a2cae4d9e1b5ed59bbb9979e040a558a6aae64eada7e4ed62456abca8a24",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/FOLLOWUP.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1336,
+      "sha256": "bcb66bb485883dfe37aa9fde79869e51bc3e46a5b2e29224e4a410146078865d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/freeze-evidence.py",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3655,
+      "sha256": "4631fcc948c5c08a332ef0cb348b96b224b8215a482bee1d8b8a8bf30e4a8b3a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/full-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29096,
+      "sha256": "67d9dfcfe535fc8999e5bfbb996269dd3e9b3437c1efb00b98841364021fc107",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/gui/draft-history.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 84652,
+      "sha256": "307ee35f744a746d0825754650dec3b7cb32079227282f837f9fc23127a2c7cb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/gui/import-report.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66202,
+      "sha256": "476e1a341bc6fca581479f0d3eb02accf715440fa0806b3c284ca60348508c67",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/gui/xacro-duplicate-error.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19450,
+      "sha256": "06a0bf603b773de137c4c9c95a08a24cabde1c95c82e05cb6a749cfcf2d1f44c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/gui/xacro-parameters.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19484,
+      "sha256": "4c30a96e9cb1539b95ec2d03e0f1b034f1db6d224a32197a989d7f286b8688cb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/HANDOFF.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 558,
+      "sha256": "a42b6976dd8a90dae2ab9269e4423e4428899b29a3f552868fda84e8a52c1c08",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14430,
+      "sha256": "d25e370f14d08501dba10b198c97c78c0ce755ab479939a83df11ea4d5c7df34",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3660,
+      "sha256": "72be157dda2d49d2b4a04d757031ea222e57ff371032436194370237582f4e2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6930,
+      "sha256": "6d59411eb641e9b55c798bb246e7cfb952b002af9e49de45990bc3462e690ac3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41528,
+      "sha256": "3e466da608d4fad01edad704256d3bdd25994458dc263fe7855a1e661d5e848d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9482,
+      "sha256": "5e32145e50a7b8a087ff30e61617fd3d48834c1a052dae5c76b243b07e56bb8f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18301,
+      "sha256": "b91e9793382eb44d9487b4150b99cc5245836f752fdac7cbdbe18036cca898b5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 328699,
+      "sha256": "2b41204450d7ac3570ae8ac100defa515b63952897f8a3a8c77d201b6f2f5a80",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 68038,
+      "sha256": "024a056ce97d531e3d4211498cb7378731b201e2c2581f03a6319bd1f07f1d20",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 137206,
+      "sha256": "41b02830643b97fb809d811424cd8e88265e30653aa1d3674f276720f1847518",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-b2a-modeling-gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2017,
+      "sha256": "cc5ae4554488ee1dd72e11553059f728f3f31b83c05c4a7c7e8cf403d3bbe0f7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-b2a-modeling-gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1559,
+      "sha256": "05f3ef24433b0881c530f2ac3c1a3eaec3dac90cef07a0533cd95e853aab1198",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-b2a-modeling-gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2183,
+      "sha256": "c02ea76c0224e0b223105d6c8bc10190f8290a30329c8374ba2aab9c73bd5daf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-pending-modeling-gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2777,
+      "sha256": "fdf892a95f5352133e5fff9397715c3b3c17b41a14feb5da7e9fca138c960937",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-pending-modeling-gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1447,
+      "sha256": "449be0ab24b3b81f7d6b346be1cd94371349a10a8cc870fcf9cc341f2da78a4f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-pending-modeling-gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2100,
+      "sha256": "2cfeef21b0f73ca97323af086189cf3640d8c4df2a9785b3bb9e1d0d14e52afe",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-stale-form-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1127,
+      "sha256": "7d717361a5d002a04b78583a395bb0bce6cbab5bd697b28d7f83ea6ff1f14f03",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-stale-form.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 880,
+      "sha256": "47af5bba33a311e70513822a5bb23d3bb3783ba8980e795a86e32d6aa30e9c2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/red-stale-form.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 958,
+      "sha256": "6d73f42e1c76f1cc52be2c69a7ddb77c94da3c7de0775d36a196c58f98712b39",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/regression-before-fix.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12074,
+      "sha256": "58806b5fc399ded02c829a96a74cee030c7e68d1851e2d698744587803c5250d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/run.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4700,
+      "sha256": "ddbce48213b50a71f58d93c1ac0e69157e5671e6562e76743e331bc761dbc45e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/sha256.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5289,
+      "sha256": "6dadc5d0e61cf82cfdab781fe89e1694b9b988119e1b983b9092009c7894705b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6709,
+      "sha256": "edd8b603d925fc03f23c989964206ad51ba1820bfba9c1c5f74c63f2714f2527",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1748,
+      "sha256": "e2803d3f3c5260a93b6e7bc43b43f318df877de07215b0159bb92ce02ee81c5e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3275,
+      "sha256": "36dd7fb5e38928914e9f4ba9c803093d62e503eaaad4a95ccc43d24c2d95b517",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34994,
+      "sha256": "bdff2baae077b03b81f2e9190ebe14eaa742d726ac0ea7eaa71801aa0bcdb700",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7856,
+      "sha256": "64f4cddab88eaaff93ba2123bf6167870f4d0cd3d22e8dbc9c23c4a934aedcce",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 15236,
+      "sha256": "65a01e437b3e7766b6cdf55742785910b7f7d6cf85f1acd3243851790f064867",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 266210,
+      "sha256": "e6042e7bcc363a4ae5b6a180d4e7c7e84b9d734783021963cb2725f461b6625a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 54377,
+      "sha256": "0dc0c1a6a525c1002c66e5ddfdb5503b6f0e106bc84a01dfac32941ea8ff0f40",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone_modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 110144,
+      "sha256": "30f3419c4986d265435c50ba151eba7ad4cbd21656d10c5df8daa61a55165ac2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19269,
+      "sha256": "969f54b8db469713a941970945c43e2b10e4f37a8a246e676a337e119e9868b8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 46910,
+      "sha256": "fd4f4346658a833aec177954e10ec31b56422d3d8b7004598e2ca67029d84054",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10865,
+      "sha256": "d867fb08893b98d23d1db6fb6276433e69f917786ac878a8acc5b16874cb3abd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21584,
+      "sha256": "422a6de563365c113a80b51d343df07badc94395685b2c8f5ee40eb4dee868e9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 73248,
+      "sha256": "35fb7b1af4a2e4b6f4d0376e9c386959e28818d445e64a46e9e90a5067ec8e68",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17184,
+      "sha256": "e82a0cef2fc3462733dadc35bcc057b212348be5bca3851fada0b805e581809c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32949,
+      "sha256": "70b6684c71fa3852f6b3c0111a7a618250af2288b1c475666a6af9d04ee31ec1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 261468,
+      "sha256": "136c81910aafd416800ba88d915993f7ee3c9e08ab380c9730b413ded948b3ab",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 56530,
+      "sha256": "ff85ff62c7923737fdca13ece5d1a634de38e11e298d1bbb7c2c6748cbfb1001",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 111557,
+      "sha256": "9f136d568fe913fb322d29cabc49cac9d2e0069a820baa3301bd7157db6d4736",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/validate-docs-before-freeze.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 131,
+      "sha256": "4fb49554c9105411ace36e04d48d3b47d6a997b04995b7c13591870f4e362594",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/verification-summary.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3335,
+      "sha256": "f81c61a46ab008f369e20ef7bcd04de6f3e2e02c1871dabf4e02881280467810",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/verify-task.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 30280,
+      "sha256": "04e61127ab1a5849954cce52dd034bce446df774dece931ccf2aee023905fd74",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b2a/xml-companion-reports.py",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2051,
+      "sha256": "6f58ac27baf5df6c0862420b794bc11c43327d547737e07da34403386c136b1a",
       "lifecycle": "unverified"
     },
     {

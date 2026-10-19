@@ -305,6 +305,12 @@ void ModelingUiModule::pushAppliedPreviewToPanel()
 void ModelingUiModule::attachPanelWiring()
 {
     if (m_panel == nullptr) { return; }
+    // L-5：编辑器局部历史只在本模块内恢复工作集，不提交项目命令。
+    // 与预览接线同入口，晚建/外部接入面板也具备相同历史能力。
+    m_panel->setDraftHistoryActions([this]{restoreDraftHistory(false);},
+                                  [this]{restoreDraftHistory(true);});
+    m_panel->setPostEditAction([this]{recomputeReadiness();});
+    refreshDraftHistoryState();
     // XML 类预览供给适配（宿主回调已绑定时转发——不绑定＝面板 fail-closed
     // 诚实呈现"未接线"；适配闭包零 runtime 类型——纯字符串搬运）。
     if (m_workCellPreview) {
@@ -571,6 +577,9 @@ bool ModelingUiModule::executeDomainCommand(const std::string& commandId)
 void ModelingUiModule::recomputeReadiness()
 {
     m_guard.assertOnUiThread();
+    // 所有已接受字段、结构、部件及命令流最终经过这里；比较完整值，
+    // 因策略/名称/显示刷新而触发的纯重算不产生额外撤销步（L-5）。
+    rememberDraftHistory();
     // 真判定（T03b-2b 起，T03b 收口全量化）：真实 ModelReadinessChecker＋
     // policy 行程评估器。套件/检查器须为具名局部量（checker 持套件指针——
     // 临时量悬挂风险）。
@@ -613,6 +622,7 @@ void ModelingUiModule::onSessionDetached()
     m_session.branch = core::BranchId{};
     m_session.baseRevision.reset();
     m_session.draft = ModelingWorkingSet{};
+    clearDraftHistory(false); // 关闭后的空态不是可撤销版本，禁止跨项目恢复。
     m_session.readiness.reset();
     m_session.baselineSnapshot.reset();   // 应用侧快照随会话作废（UI-T41）
     m_session.appliedPreview.reset();
@@ -641,6 +651,7 @@ void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
     // 编辑记录不清零（撤销/重做消费的是修订历史，未应用的域编辑仍归
     // 用户处置——草稿继续以新基线编辑，再应用不误报 Stale）。
     m_session.baseRevision = newTip;
+    clearDraftHistory(); // 项目修订边界与草稿局部历史正交，不跨已提交修订回放。
     // 应用侧快照失效（UI-T41——撤销/重做后的修订内容本模块未知：预览页/
     // diff 基线以空态诚实呈现，不虚构内容；再次应用即重新定格）。
     m_session.baselineSnapshot.reset();
@@ -657,8 +668,10 @@ void ModelingUiModule::bindSessionAnchor(const core::BranchId& branch,
                                          const core::RevisionId& base)
 {
     m_guard.assertOnUiThread();
+    const bool changed=!(m_session.branch==branch)||m_session.baseRevision!=base;
     m_session.branch = branch;
     m_session.baseRevision = base;
+    if(changed){clearDraftHistory();} // 新分支/新基线不能沿用另一会话的回退点。
     // 锚定后重算＋重投影（新会话上下文——呈现与信封组装同源）。
     recomputeReadiness();
 }
@@ -780,6 +793,7 @@ void ModelingUiModule::noteAppliedRevision(
     }
     pushAppliedPreviewToPanel();  // 定格即推送（UI-T59 接线缺口修复——此前
                                   // 仅存会话未达面板，预览页恒空态）
+    clearDraftHistory(); // 应用成功消费全部未应用编辑，本地撤销不得越过该边界。
     recomputeReadiness();  // 应用后基线前移——就绪状态同步刷新
 }
 
@@ -878,6 +892,7 @@ void ModelingUiModule::adoptRestoredDocument(
         }
         m_session.draft.design = *design;
         m_session.draft.changes.clear();  // 恢复的草稿不带编辑史（§8.6 表处置）
+        clearDraftHistory(); // 重开恢复建立新起点，旧会话历史不进入磁盘载荷。
     } catch (const std::exception&) {
         // 解码失败＝保持现状（文件头诚实边界；打开协议不因域负载损坏中断）
     }
@@ -893,7 +908,53 @@ void ModelingUiModule::rebuildOnRevision(const std::string& tipRevisionCanonical
         core::RevisionId::tryFromCanonical(tipRevisionCanonical);
     if (tip.has_value()) {
         m_session.baseRevision = *tip;
+        clearDraftHistory(); // 用户选择重新编辑即建立新的基线边界。
     }
+}
+
+void ModelingUiModule::refreshDraftHistoryState()
+{
+    if(m_panel){m_panel->setDraftHistoryState(!m_draftUndo.empty(),!m_draftRedo.empty());}
+}
+
+void ModelingUiModule::clearDraftHistory(bool retainCurrent)
+{
+    m_guard.assertOnUiThread();
+    m_draftUndo.clear();m_draftRedo.clear();
+    if(retainCurrent){m_historyCurrent=m_session.draft;}
+    else{m_historyCurrent.reset();}
+    refreshDraftHistoryState();
+}
+
+void ModelingUiModule::rememberDraftHistory()
+{
+    m_guard.assertOnUiThread();
+    if(!m_historyCurrent){m_historyCurrent=m_session.draft;}
+    else if(*m_historyCurrent!=m_session.draft){
+        // 先保存上个接受版本，再采纳新版本；一次表单/批量操作只触发一次。
+        // 根身份、来源徽标、全部资源和部件与changes共同回退，不重算或猜测旧值。
+        m_draftUndo.push_back(*m_historyCurrent);
+        m_historyCurrent=m_session.draft;m_draftRedo.clear();
+    }
+    refreshDraftHistoryState();
+}
+
+bool ModelingUiModule::restoreDraftHistory(bool redo)
+{
+    m_guard.assertOnUiThread();
+    auto& from=redo?m_draftRedo:m_draftUndo;
+    auto& to=redo?m_draftUndo:m_draftRedo;
+    if(!m_writable||from.empty()){return false;} // 空栈/只读由执行端再次防御。
+    to.push_back(m_session.draft);
+    m_session.draft=std::move(from.back());from.pop_back();
+    m_historyCurrent=m_session.draft; // 下面的就绪重算不得将恢复本身再作为新编辑入栈。
+    if(m_panel){m_panel->cancelPendingForHistoryRestore();}
+    recomputeReadiness();
+    if(m_panel){
+        m_panel->setOutcomeMessage(redo?QStringLiteral("已重做草稿编辑（未产生项目修订）")
+                                     :QStringLiteral("已撤销草稿编辑（未产生项目修订）"));
+    }
+    return true;
 }
 
 }  // namespace sdurws::ird::modeling

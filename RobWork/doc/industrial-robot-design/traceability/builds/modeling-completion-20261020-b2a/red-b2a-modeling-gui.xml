@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.056" timestamp="2026-10-20T06:11:56.708" name="AllTests">
+  <testsuite name="ModelingUiModuleHostWiring" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.056" timestamp="2026-10-20T06:11:56.708">
+    <testcase name="DraftHistoryRestoresFieldsAndStructureWithoutRevision_REQ11_L5" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="93" status="run" result="completed" time="0.035" timestamp="2026-10-20T06:11:56.708" classname="ModelingUiModuleHostWiring">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:105&#x0A;Expected: (undo) != (nullptr), actual: NULL vs (nullptr)&#x0A;F17：草稿局部撤销入口缺失&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:105
+Expected: (undo) != (nullptr), actual: NULL vs (nullptr)
+F17：草稿局部撤销入口缺失
+]]></failure>
+    </testcase>
+    <testcase name="DraftHistoryClearsOnDetachAndRejectDoesNotEnter_REQ11_L5" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="143" status="run" result="completed" time="0.021" timestamp="2026-10-20T06:11:56.744" classname="ModelingUiModuleHostWiring">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:151&#x0A;Expected: (undo) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:151
+Expected: (undo) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

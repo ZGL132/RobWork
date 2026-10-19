@@ -1,0 +1,23 @@
+Note: Google Test filter = ModelingUiModuleHostWiring.DraftHistory*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.DraftHistoryRestoresFieldsAndStructureWithoutRevision_REQ11_L5
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(105): error: Expected: (undo) != (nullptr), actual: NULL vs (nullptr)
+F17：草稿局部撤销入口缺失
+
+[  FAILED  ] ModelingUiModuleHostWiring.DraftHistoryRestoresFieldsAndStructureWithoutRevision_REQ11_L5 (35 ms)
+[ RUN      ] ModelingUiModuleHostWiring.DraftHistoryClearsOnDetachAndRejectDoesNotEnter_REQ11_L5
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(151): error: Expected: (undo) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] ModelingUiModuleHostWiring.DraftHistoryClearsOnDetachAndRejectDoesNotEnter_REQ11_L5 (21 ms)
+[----------] 2 tests from ModelingUiModuleHostWiring (56 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (56 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.DraftHistoryRestoresFieldsAndStructureWithoutRevision_REQ11_L5
+[  FAILED  ] ModelingUiModuleHostWiring.DraftHistoryClearsOnDetachAndRejectDoesNotEnter_REQ11_L5
+
+ 2 FAILED TESTS

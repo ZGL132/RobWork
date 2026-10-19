@@ -95,6 +95,13 @@ public:
      */
     void setPostEditAction(PostEditAction action);
 
+    /** @brief 绑定编辑器局部历史动作；[in] undo/redo仅UI线程调用，模块拥有历史，空则禁用。 */
+    void setDraftHistoryActions(PostEditAction undo, PostEditAction redo);
+    /** @brief 接收栈可用态；[in] canUndo/canRedo不含只读门控，面板与m_writable合取。 */
+    void setDraftHistoryState(bool canUndo, bool canRedo);
+    /** @brief 局部历史恢复前丢弃未确认表单输入，防旧暂存覆盖恢复后的权威值。零草稿写入。 */
+    void cancelPendingForHistoryRestore();
+
     /// 命令标题文案解析器形态（titleKey→工程用语——宿主接 ui::resolveText）。
     using CommandTitleResolver = std::function<QString(const std::string& titleKey)>;
 
@@ -356,6 +363,10 @@ private:
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询（空＝仅提交出口门控）
     CommandTitleResolver m_titleResolver;     ///< 标题文案解析器（WP-24-T03；空＝呈现键名原文）
     PostEditAction m_postEditAction;          ///< 编辑后动作（T03b-2b 就绪重算钩子；可空）
+    PostEditAction m_draftUndoAction, m_draftRedoAction; ///< UI模块持有历史，面板只转发交互。
+    QPushButton* m_draftUndoButton = nullptr; ///< Qt父子所有权，仅UI线程访问。
+    QPushButton* m_draftRedoButton = nullptr; ///< Qt父子所有权，不进入项目命令目录。
+    bool m_canUndoDraft = false, m_canRedoDraft = false; ///< 栈状态快照，结合只读态刷新按钮。
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     bool m_writable = true;                   ///< 会话可写性（L-7 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）

@@ -713,6 +713,8 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     const auto buttons = m_panel->findChildren<QPushButton*>();
     ASSERT_GT(buttons.size(), std::size_t{0}) << "命令按钮未构建（区③空）";
     for (const QPushButton* btn : buttons) {
+        // L-5局部历史独立于项目命令可用性，空栈不能被全放行快照启用。
+        if (btn->objectName().startsWith(QStringLiteral("ird_modeling_draft_"))) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; } // 历史钮不入禁用对账
         if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; } // 折叠开关不入对账（F-502 呈现件——非命令目录按钮）
         if (btn->objectName() == QString::fromUtf8("ird_modeling_preview_copy")) { continue; } // 预览复制钮不入对账（UI-T59 呈现件——非命令目录按钮）
@@ -732,6 +734,7 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
         return ui::CommandAvailability{true, true, true, ui::DisableReason{}};
     });
     for (const QPushButton* btn : buttons) {
+        if (btn->objectName().startsWith(QStringLiteral("ird_modeling_draft_"))) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_preview_copy")) { continue; }

@@ -29,6 +29,10 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QWidget>
+#include <QDir>
+#include <QPixmap>
+#include <QTableWidget>
+#include <memory>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
@@ -86,6 +90,126 @@ QList<QPushButton*> commandButtonsOf(
 }
 
 }  // namespace
+
+TEST(ModelingUiModuleHostWiring, DraftHistoryRestoresFieldsAndStructureWithoutRevision_PM18_L5)
+{
+    IRD_TEST_INFO("PM-18",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto revision=core::RevisionId::generate();
+    module.bindSessionAnchor(branch,revision);
+    module.noteAppliedRevision(revision,core::ObjectId::generate());
+    int submitted=0;module.bindCommandSubmit([&](const ui::CommandId&){++submitted;});
+    std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());ASSERT_NE(panel,nullptr);
+    auto* undo=widget->findChild<QPushButton*>("ird_modeling_draft_undo");
+    auto* redo=widget->findChild<QPushButton*>("ird_modeling_draft_redo");
+    ASSERT_NE(undo,nullptr)<<"F17：草稿局部撤销入口缺失";
+    ASSERT_NE(redo,nullptr)<<"F17：草稿局部重做入口缺失";
+    EXPECT_FALSE(undo->isEnabled());EXPECT_FALSE(redo->isEnabled());
+    const auto original=module.session().draft;
+    // 使用真实接受流（同生产数值编辑出口），并点击真实结构与历史按钮。
+    EXPECT_EQ(submitJointFieldEdit(module.session().draft,*panel,0,JointEditField::ZeroOffset,
+        JointEditValue{0.25}),EditSubmitOutcome::Applied);
+    const auto first=module.session().draft;EXPECT_TRUE(undo->isEnabled());
+    panel->focusObject(first.design.joints.front().objectId);
+    auto* add=widget->findChild<QPushButton*>("ird_modeling_struct_add");ASSERT_NE(add,nullptr);
+    add->click();const auto second=module.session().draft;
+    ASSERT_EQ(second.design.joints.size(),original.design.joints.size()+1);
+    module.recomputeReadiness(); // 纯重算不得制造额外撤销步。
+    undo->click();EXPECT_EQ(module.session().draft,first);
+    undo->click();EXPECT_EQ(module.session().draft,original);
+    EXPECT_FALSE(undo->isEnabled());EXPECT_TRUE(redo->isEnabled());
+    redo->click();EXPECT_EQ(module.session().draft,first);
+    redo->click();EXPECT_EQ(module.session().draft,second);
+    EXPECT_FALSE(redo->isEnabled());
+    module.setWritable(false);EXPECT_FALSE(undo->isEnabled());
+    undo->click();EXPECT_EQ(module.session().draft,second);
+    module.setWritable(true);undo->click();EXPECT_EQ(module.session().draft,first);
+    EXPECT_EQ(submitJointFieldEdit(module.session().draft,*panel,0,JointEditField::ZeroOffset,
+        JointEditValue{0.5}),EditSubmitOutcome::Applied);
+    EXPECT_FALSE(redo->isEnabled())<<"分叉编辑必须清除旧重做";
+    undo->click();EXPECT_EQ(module.session().draft,first);
+    EXPECT_EQ(module.session().branch,branch);EXPECT_EQ(module.session().baseRevision,revision);
+    EXPECT_EQ(submitted,0)<<"局部撤销不得走项目命令通道";
+    module.noteAppliedRevision(core::RevisionId::generate(),original.rootObjectId);
+    EXPECT_FALSE(undo->isEnabled());EXPECT_FALSE(redo->isEnabled());
+    widget->resize(1100,850);widget->show();QApplication::processEvents();
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!out.isEmpty()){
+        ASSERT_TRUE(QDir().mkpath(out));
+        ASSERT_TRUE(widget->grab().save(QDir(out).filePath("draft-history.png")));
+    }
+}
+
+TEST(ModelingUiModuleHostWiring, DraftHistoryClearsOnDetachAndRejectDoesNotEnter_PM18_L5)
+{
+    IRD_TEST_INFO("PM-18",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());ASSERT_NE(panel,nullptr);
+    auto* undo=widget->findChild<QPushButton*>("ird_modeling_draft_undo");
+    auto* redo=widget->findChild<QPushButton*>("ird_modeling_draft_redo");
+    ASSERT_NE(undo,nullptr);ASSERT_NE(redo,nullptr);
+    const auto original=module.session().draft;
+    EXPECT_EQ(submitJointFieldEdit(module.session().draft,*panel,0,JointEditField::ZeroOffset,
+        JointEditValue{0.25}),EditSubmitOutcome::Applied);
+    const auto accepted=module.session().draft;
+    EXPECT_EQ(submitJointFieldEdit(module.session().draft,*panel,0,JointEditField::Bounds,
+        JointEditValue{std::pair<double,double>{2.0,-2.0}}),EditSubmitOutcome::Rejected);
+    EXPECT_EQ(module.session().draft,accepted);
+    undo->click();EXPECT_EQ(module.session().draft,original);
+    EXPECT_FALSE(undo->isEnabled());EXPECT_TRUE(redo->isEnabled());
+    module.onSessionDetached();
+    EXPECT_FALSE(undo->isEnabled());EXPECT_FALSE(redo->isEnabled());
+    module.seedTemplateSession();
+    EXPECT_FALSE(undo->isEnabled());EXPECT_FALSE(redo->isEnabled());
+}
+
+/** @brief L-5：部件与根引用必须一起回退，未确认表单不能覆盖恢复后的工作集。 */
+TEST(ModelingUiModuleHostWiring, DraftHistoryRestoresComponentAndCancelsPending_PM18_L5)
+{
+    IRD_TEST_INFO("PM-18",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());ASSERT_NE(panel,nullptr);
+    bool dirty=false;
+    QObject::connect(panel,&ModelingPanelWidget::sessionDirtyChanged,widget.get(),
+                     [&](bool value){dirty=value;});
+    auto* undo=widget->findChild<QPushButton*>("ird_modeling_draft_undo");
+    auto* redo=widget->findChild<QPushButton*>("ird_modeling_draft_redo");
+    ASSERT_NE(undo,nullptr);ASSERT_NE(redo,nullptr);
+    const auto original=module.session().draft;
+    // 真实传动表单接受链同时新建部件和根引用，不能只撤销表格里的数值。
+    QWidget* host=nullptr;QTableWidget* table=nullptr;int row=-1;
+    for(auto* candidate:widget->findChildren<QWidget*>("ird_param_table_panel")){
+        auto* t=candidate->findChild<QTableWidget*>("ird_param_table");
+        if(!t){continue;}
+        for(int r=0;r<t->rowCount();++r){
+            if(t->item(r,0)->data(Qt::UserRole).toString()=="dt-ratio-0"){
+                host=candidate;table=t;row=r;break;
+            }
+        }
+        if(host){break;}
+    }
+    ASSERT_NE(host,nullptr);ASSERT_NE(table,nullptr);ASSERT_GE(row,0);
+    table->item(row,1)->setText("100");QApplication::processEvents();
+    host->findChild<QPushButton*>("ird_param_apply")->click();
+    host->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    const auto accepted=module.session().draft;
+    ASSERT_TRUE(accepted.drivetrainObject.has_value());
+    ASSERT_TRUE(accepted.design.drivetrainRef.has_value());
+    EXPECT_TRUE(dirty);
+    // 编辑但不确认，再撤销：清除暂存和确认区，避免重做/后续确认写回旧输入。
+    table->item(row,1)->setText("200");QApplication::processEvents();
+    host->findChild<QPushButton*>("ird_param_apply")->click();
+    ASSERT_FALSE(host->findChild<QWidget*>("ird_param_confirm_region")->isHidden());
+    undo->click();EXPECT_EQ(module.session().draft,original);
+    EXPECT_FALSE(dirty);
+    EXPECT_TRUE(host->findChild<QWidget*>("ird_param_confirm_region")->isHidden());
+    redo->click();EXPECT_EQ(module.session().draft,accepted);
+    EXPECT_DOUBLE_EQ(table->item(row,1)->text().toDouble(),100.0);
+    EXPECT_TRUE(dirty);
+}
 
 // =====================================================================
 // UI-T43：生产装配序下的文案解析回归（审核建议 4 的实质面——
