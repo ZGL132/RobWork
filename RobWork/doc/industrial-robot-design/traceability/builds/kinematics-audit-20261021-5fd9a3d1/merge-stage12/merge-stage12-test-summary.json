@@ -1,0 +1,44 @@
+[
+  {
+    "file": "kinematics-merge-stage12.xml",
+    "tests": 288,
+    "failed": 0,
+    "skipped": 1,
+    "passed": 287
+  },
+  {
+    "file": "kinematics_contract-merge-stage12.xml",
+    "tests": 57,
+    "failed": 0,
+    "skipped": 0,
+    "passed": 57
+  },
+  {
+    "file": "kinematics_gui-merge-stage12.xml",
+    "tests": 35,
+    "failed": 0,
+    "skipped": 0,
+    "passed": 35
+  },
+  {
+    "file": "standalone_kinematics-merge-stage12.xml",
+    "tests": 280,
+    "failed": 0,
+    "skipped": 1,
+    "passed": 279
+  },
+  {
+    "file": "standalone_kinematics_contract-merge-stage12.xml",
+    "tests": 57,
+    "failed": 0,
+    "skipped": 0,
+    "passed": 57
+  },
+  {
+    "file": "standalone_kinematics_gui-merge-stage12.xml",
+    "tests": 35,
+    "failed": 0,
+    "skipped": 0,
+    "passed": 35
+  }
+]

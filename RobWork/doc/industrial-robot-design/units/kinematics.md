@@ -1066,6 +1066,14 @@ SamplingPlan表尾tcpOverride缺省沿query.defaultTcp，存在时只消费同�
 
 覆盖契约版本与样本身份codec均2→3。已批准的sampleSetIdentity(SamplingPlan,budget)是完整编码入口：原7字节magic、版本、来源计划规范文本、seed后追加行主序9个小端f64（-0归+0）、u32 override存在位；存在时追加16字节工具ID及u32长度+UTF-8键。旧签名保留并转默认新增字段的同一编码器，threadCount不入身份，WorkspaceSampler使用完整计划重算冻结凭据。旧v2不得复用；项目存储不变。原计划字段仍由来源摘要承诺，不在UI改写requirements摘要。
 
+### WP-15-T20：全功能审核修复立项（2026-10-21）
+
+所有者要求沿用需求/建模逐功能验收方式审核并修复运动学，新增任务 WP-15-T20（分支 wp15-t20，前置 T19 已 done）。需求语义不变；KIN-01～14 与相关交互/三维拆为70项，方法矩阵在 `traceability/builds/kinematics-audit-20261021-5fd9a3d1/MATRIX.md`，八节设计与执行计划在 `docs/superpowers/plans/2026-10-21-kinematics-completion.md`。计算、Windows真实窗口、正式宿主三维分别四态记录；已有算法通过不代表缺操作入口/缺真实三维证据的条目通过。首批仅私有实现和测试/宿主精确装配面，公共头与业务域协作边保持冻结，有新增必要时先登记精确设计与契约。实施者不自签独立验收或合入。
+
+首批F01～F03：合法区域盒的每分量解析显式回写成功标志，SI换算仍检查有限；目标XYZ/RPY和区域中心/边长切换制式时经core单位设施旧制式→SI→新制式重投影，以double往返精度保物理量，空/非法原文保留，换算溢出整次不应用；四页使用Qt持有的滚动容器，普通小窗口可到达底部。6项新增真实算法/Windows控件回归已执行红绿。完整Jacobian、配置策略、选择入口、正式归档及宿主三维等仍开放，任务不标done；首批报告见同证据目录的REPORT-stage1.md。
+
+第二批F04（私有面增量）：配置面板沿用ui公共参数模型的解析、显示单位、筛选和粘贴；整体确认同时包含初值策略0/1/2与数值字段。确认区显示同单位old→new，确认后草稿或savedConfig发生变化即拒绝并要求重新确认；取消恢复整个草稿。用户级configPersist返回成功才前移savedConfig和表单基线，缺通道/拒绝/存储std::exception返回失败与原因，草稿完整保留供重试，不再声称“仅在会话生效”。初次注入基线后刷新参数表，缺保存通道时禁用保存并说明原因。无公共头、跨域边或存储格式变更，不改建模与共享UiPlugin。新增9项Windows控件/编排回归真实执行为修复前1通过、8失败，修复后9通过；全量与双模式执行结果及范围见后续REPORT-stage2.md。正式宿主用户级配置装配/项目切换重开尚待验证，F04仅此私有面封闭，70项终验与正式三维不因此转为通过。
+
 ### WP-13-T24 B3g：场景几何事实投影补齐
 
 MDL-15/AT-28：runtime场景几何可选，assembleCollisionScene从同快照geometry.has_value投影hasCollisionGeometry；固定帧仍保留身份/角色/名称，不将显示标记当碰撞几何。原policy消费/算法/公共签名不改。八节范围及真实装配反例见2026-10-20-modeling-completion.md B3g；未验证不标通过。

@@ -1,0 +1,244 @@
+/**
+ * @file KinematicsAcceptanceGuiTest.cpp
+ * @brief WP-15-T20 对抗式窗口回归：实际控件事件、真实求解及失效状态。
+ *
+ * 设计依据：KIN-02/09/12、UX-03/05、AT-03/27。旧测试分别设置单位后再
+ * 填值，未覆盖“用户已填目标，再切单位”；旧采样测试仅运行关节随机，
+ * 未覆盖默认区域盒运行。此处使用真实 FK/IK/采样设施，避免替身给出假绿。
+ * 生命周期：夹具拥有模型、会话与控件，控件先销毁；全部只在 UI 线程运行。
+ */
+#include <gtest/gtest.h>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+#include <sdurws/ird/kinematics/Fk.hpp>
+#include <sdurws/ird/kinematics/Ik.hpp>
+#include <QApplication>
+#include <QDir>
+#include <QLineEdit>
+#include <QMouseEvent>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QTabWidget>
+#include <QTableWidget>
+#include <cmath>
+#include <memory>
+#include "KinFkFixture.hpp"
+#include "plugin/KinematicsPanelWidget.hpp"
+
+using namespace sdurws::ird;
+using namespace sdurws::ird::kinematics;
+using namespace sdurws::ird::kinematics::testfixture;
+
+namespace {
+/**
+ * @brief 拥有窗口与真实算法的两连杆夹具；线程不安全，仅测试 UI 线程使用。
+ *
+ * 模型仅用于独立几何金标（L1=1.1 m、L2=0.7 m），不冒充正式宿主真实网格。
+ */
+struct AcceptanceWindow {
+    TestView view{twoLinkModel()};
+    IkSolver solver;
+    FkEvaluator fk;
+    KinSessionPose pose;
+    KinPanelServices services;
+    KinModuleSessionState state;
+    std::unique_ptr<KinematicsPanelWidget> panel;
+
+    /** @brief 装配真求解器，配置足够的小预算；构造不产生项目写入。 */
+    AcceptanceWindow()
+    {
+        services.modelView = &view;
+        services.ikSolver = &solver;
+        services.fkEvaluator = &fk;
+        services.sessionPose = &pose;
+        state.savedConfig.seed = 7;
+        state.savedConfig.regionBudget.seed = 7;
+        state.savedConfig.initialValuesCount = 4;
+        state.savedConfig.iterationLimit = 256;
+        panel = std::make_unique<KinematicsPanelWidget>(services, state);
+        panel->resize(1400, 1000);
+        panel->show();
+        QApplication::processEvents();
+    }
+
+    /**
+     * @brief 按稳定对象名查编辑框，仅UI线程调用。
+     * @param name [in] UTF-8对象名，无物理单位；不可为空指针。
+     * @return 面板持有的借用指针，缺件返回空，不转移所有权。
+     */
+    QLineEdit* edit(const char* name) const
+    { return panel->findChild<QLineEdit*>(QString::fromUtf8(name)); }
+
+    /**
+     * @brief 按工程用语定位按钮，仅UI线程调用。
+     * @param text [in] 按钮完整文案，无单位；空串仅匹配空标题。
+     * @return 面板持有的借用指针，缺件返回空，不转移所有权。
+     */
+    QPushButton* button(const QString& text) const
+    {
+        for (auto* candidate : panel->findChildren<QPushButton*>()) {
+            if (candidate->text() == text) { return candidate; }
+        }
+        return nullptr;
+    }
+
+    /** @brief 将位置目标填为已知 q=(0.3,-0.3) 的独立解析结果，长度单位 m。 */
+    void fillReachableTarget()
+    {
+        edit("target-x")->setText(QString::number(1.1 * std::cos(0.3) + 0.7, 'g', 17));
+        edit("target-y")->setText(QString::number(1.1 * std::sin(0.3), 'g', 17));
+        edit("target-z")->setText("0");
+        edit("target-roll")->setText("0");
+        edit("target-pitch")->setText("0");
+        edit("target-yaw")->setText("0");
+    }
+
+    /**
+     * @brief 对真实按钮发送鼠标按下/释放事件，走事件分发和信号槽完整路径。
+     * @param target [in,out] 窗口持有的按钮；不可为空，测试前置断言负责检查。
+     */
+    void click(QPushButton* target)
+    {
+        const QPointF local(target->rect().center());
+        const QPointF global(target->mapToGlobal(local.toPoint()));
+        QMouseEvent press(QEvent::MouseButtonPress, local, global,
+                          Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QApplication::sendEvent(target, &press);
+        QMouseEvent release(QEvent::MouseButtonRelease, local, global,
+                            Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+        QApplication::sendEvent(target, &release);
+        QApplication::processEvents();
+    }
+
+    /**
+     * @brief 保存当前窗口像素，仅UI线程调用；写失败即测试失败。
+     * @param name [in] 无扩展名的固定测试文件名，无物理单位。
+     * 未设置证据目录时不写文件；截图只证明当前面板，不证明宿主真实网格。
+     */
+    void capture(const QString& name)
+    {
+        const QString out = qEnvironmentVariable("IRD_KIN_GUI_EVIDENCE_OUT");
+        if (!out.isEmpty()) {
+            ASSERT_TRUE(QDir().mkpath(out));
+            ASSERT_TRUE(panel->grab().save(out + '/' + name + ".png"));
+        }
+    }
+};
+} // namespace
+
+/// K07/AT-27：用户已输入物理目标，再切制式，真实IK仍应解原目标。
+TEST(KinematicsAcceptance, FilledTargetSurvivesUnitSwitch_AT27)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-12"},
+                  std::vector<std::string>{"AT-27"});
+    AcceptanceWindow h;
+    h.fillReachableTarget();
+    h.panel->setDisplayUnits(DisplayUnitProjection::tryFind("mm", "deg"));
+    h.capture("filled-target-mm");
+    ASSERT_NE(h.button(QStringLiteral("求解 IK")), nullptr);
+    h.click(h.button(QStringLiteral("求解 IK")));
+    ASSERT_NE(h.state.lastSessionSolutionSet, nullptr);
+    ASSERT_FALSE(h.state.lastSessionSolutionSet->solutions.empty())
+        << h.panel->lastStatusText().toStdString();
+    // 断言实际解的FK等于独立解析的原目标，不能只检查标签或格式化后的数值。
+    const auto& q = h.state.lastSessionSolutionSet->solutions.front().q;
+    const auto result = h.fk.evaluate(h.view, TcpRef{
+        h.view.model().tools().front().objectId, ""}, q);
+    ASSERT_TRUE(result.ok());
+    EXPECT_NEAR(result.get().tcpInBase.P()[0], 1.1 * std::cos(0.3) + 0.7, 1e-6);
+    EXPECT_NEAR(result.get().tcpInBase.P()[1], 1.1 * std::sin(0.3), 1e-6);
+}
+
+/// K40：默认区域盒模式必须真正生成样本，合法字段不能被统一误报为非法。
+TEST(KinematicsAcceptance, CartesianBoxRunsThroughVisibleButton_KIN09)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09"},
+                  std::vector<std::string>{"AT-25"});
+    AcceptanceWindow h;
+    auto* tabs = h.panel->findChild<QTabWidget*>();
+    ASSERT_NE(tabs, nullptr);
+    tabs->setCurrentIndex(3);
+    QApplication::processEvents();
+    ASSERT_NE(h.edit("ws-region-random"), nullptr);
+    h.edit("ws-region-random")->setText("2");
+    ASSERT_NE(h.button(QStringLiteral("运行采样")), nullptr);
+    h.click(h.button(QStringLiteral("运行采样")));
+    h.capture("cartesian-box-run");
+    ASSERT_NE(h.state.lastWorkspaceRun, nullptr)
+        << h.panel->lastStatusText().toStdString();
+}
+
+/// K07/UX-05：非法原文在切单位时必须保留，不能变成0或丢失错误定位依据。
+TEST(KinematicsAcceptance, InvalidTargetTextPreservedOnUnitSwitch_AT27)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-12", "UX-05"},
+                  std::vector<std::string>{"AT-27"});
+    AcceptanceWindow h;
+    h.fillReachableTarget();
+    h.edit("target-y")->setText(QStringLiteral("invalid-value"));
+    h.panel->setDisplayUnits(DisplayUnitProjection::tryFind("mm", "deg"));
+    EXPECT_EQ(h.edit("target-y")->text(), QStringLiteral("invalid-value"));
+    EXPECT_NEAR(h.edit("target-x")->text().toDouble(),
+                (1.1 * std::cos(0.3) + 0.7) * 1000.0, 1e-9);
+    h.click(h.button(QStringLiteral("求解 IK")));
+    EXPECT_EQ(h.state.lastSessionSolutionSet, nullptr);
+}
+
+/// K07/K22：姿态角和区域长度同样保物理量，往返不能用显示6位精度量化。
+TEST(KinematicsAcceptance, AllPhysicalEditorsRoundtripUnits_AT27)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-12", "KIN-09"},
+                  std::vector<std::string>{"AT-27"});
+    AcceptanceWindow h;
+    h.fillReachableTarget();
+    h.edit("target-roll")->setText("0.123456789012345");
+    h.edit("ws-region-cx")->setText("0.4321987654321");
+    h.edit("ws-region-sx")->setText("0.1234567898765");
+    for (int round = 0; round < 10; ++round) {
+        h.panel->setDisplayUnits(DisplayUnitProjection::tryFind("mm", "deg"));
+        EXPECT_NEAR(h.edit("target-roll")->text().toDouble(),
+                    0.123456789012345 * 180.0 / std::acos(-1.0), 1e-12);
+        EXPECT_NEAR(h.edit("ws-region-cx")->text().toDouble(), 432.1987654321, 1e-10);
+        h.panel->setDisplayUnits(std::nullopt);
+    }
+    EXPECT_NEAR(h.edit("target-roll")->text().toDouble(), 0.123456789012345, 1e-14);
+    EXPECT_NEAR(h.edit("ws-region-sx")->text().toDouble(), 0.1234567898765, 1e-14);
+}
+
+/// F02失败原子性：换算溢出时不能半换单位/半改文本，更不能抛异常穿过UI。
+TEST(KinematicsAcceptance, UnitProjectionOverflowPreservesAllInputs_AT27)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-12", "NFR-COR-03"},
+                  std::vector<std::string>{"AT-27"});
+    AcceptanceWindow h;
+    h.fillReachableTarget();
+    const QString originalX = h.edit("target-x")->text();
+    h.edit("target-y")->setText("1.7e308");
+    EXPECT_NO_THROW(h.panel->setDisplayUnits(DisplayUnitProjection::tryFind("mm", "deg")));
+    EXPECT_FALSE(h.state.displayUnits.has_value());
+    EXPECT_EQ(h.edit("target-x")->text(), originalX);
+    EXPECT_EQ(h.edit("target-y")->text(), QStringLiteral("1.7e308"));
+}
+
+/// K66：最重结果页须在普通工作台尺寸内滚动，底部操作仍能实际到达。
+TEST(KinematicsAcceptance, ResultsPageFitsAndBottomActionsRemainReachable_UX09)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-09", "UX-05"},
+                  std::vector<std::string>{});
+    AcceptanceWindow h;
+    auto* tabs = h.panel->findChild<QTabWidget*>();
+    ASSERT_NE(tabs, nullptr);
+    tabs->setCurrentIndex(3);
+    h.panel->resize(960, 720);
+    QApplication::processEvents();
+    EXPECT_LE(h.panel->height(), 720);
+    EXPECT_LE(h.panel->width(), 960);
+    auto* scroll = qobject_cast<QScrollArea*>(tabs->currentWidget());
+    ASSERT_NE(scroll, nullptr) << "长页须可滚动，不能扩大主窗口最低尺寸";
+    auto* action = h.button(QStringLiteral("设默认 TCP"));
+    ASSERT_NE(action, nullptr);
+    scroll->ensureWidgetVisible(action);
+    QApplication::processEvents();
+    const QRect actionRect(action->mapTo(scroll->viewport(), QPoint()), action->size());
+    EXPECT_TRUE(scroll->viewport()->rect().intersects(actionRect));
+    h.capture("results-small-window-bottom");
+}

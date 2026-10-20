@@ -1,0 +1,153 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] KinCollisionPort.FixedFrameProjectionHasNoCollisionGeometry_MDL15_AT28 (0 ms)
+[ RUN      ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2
+[       OK ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2 (0 ms)
+[ RUN      ] KinCollisionPort.RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3
+[       OK ] KinCollisionPort.RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3 (0 ms)
+[ RUN      ] KinCollisionPort.AdapterForwardsEveryQueryNoCache_WP15T07_ACC3
+[       OK ] KinCollisionPort.AdapterForwardsEveryQueryNoCache_WP15T07_ACC3 (0 ms)
+[ RUN      ] KinCollisionPort.FacilityFailureMapsToFacilityFailed_WP15T07_ACC2
+[       OK ] KinCollisionPort.FacilityFailureMapsToFacilityFailed_WP15T07_ACC2 (0 ms)
+[ RUN      ] KinCollisionPort.DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2
+[       OK ] KinCollisionPort.DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2 (0 ms)
+[----------] 7 tests from KinCollisionPort (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 288 tests from 32 test suites ran. (9513 ms total)
+[  PASSED  ] 287 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3
+[       OK ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3 (7 ms)
+[----------] 3 tests from KinCommandsContract (7 ms total)
+
+[----------] 4 tests from KinPluginGraph
+[ RUN      ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4
+[       OK ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4 (0 ms)
+[ RUN      ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2
+[       OK ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2 (6 ms)
+[ RUN      ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2
+[       OK ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2 (0 ms)
+[ RUN      ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4
+[       OK ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4 (0 ms)
+[----------] 4 tests from KinPluginGraph (8 ms total)
+
+[----------] Global test environment tear-down
+[==========] 57 tests from 8 test suites ran. (67 ms total)
+[  PASSED  ] 57 tests.
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27 (180 ms)
+[ RUN      ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27
+[       OK ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27 (143 ms)
+[ RUN      ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27
+[       OK ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27 (169 ms)
+[ RUN      ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07
+[       OK ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07 (169 ms)
+[ RUN      ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13
+[       OK ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13 (130 ms)
+[ RUN      ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27
+[       OK ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27 (143 ms)
+[ RUN      ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27
+[       OK ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27 (146 ms)
+[----------] 9 tests from KinConfigAcceptance (1375 ms total)
+
+[----------] Global test environment tear-down
+[==========] 35 tests from 6 test suites ran. (2809 ms total)
+[  PASSED  ] 35 tests.
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] HostMigration.HostJointState_AppliesWithZeroRevision_ACC2 (0 ms)
+[ RUN      ] HostMigration.HostJointState_PlaybackFramesDriveSameSeam_ACC3
+[       OK ] HostMigration.HostJointState_PlaybackFramesDriveSameSeam_ACC3 (0 ms)
+[ RUN      ] HostMigration.HostJointState_NonFiniteFailsFast_ACC2
+[       OK ] HostMigration.HostJointState_NonFiniteFailsFast_ACC2 (0 ms)
+[ RUN      ] HostMigration.HostJointState_MissingSeamHonestDegradation_ACC2
+[       OK ] HostMigration.HostJointState_MissingSeamHonestDegradation_ACC2 (0 ms)
+[ RUN      ] HostMigration.SessionPoseContractBitsFrozen_ACC2
+[       OK ] HostMigration.SessionPoseContractBitsFrozen_ACC2 (0 ms)
+[ RUN      ] HostMigration.Facade_ForwardsHostJointStateAndHandles_ACC2
+[       OK ] HostMigration.Facade_ForwardsHostJointStateAndHandles_ACC2 (0 ms)
+[----------] 16 tests from HostMigration (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 280 tests from 30 test suites ran. (9574 ms total)
+[  PASSED  ] 279 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3
+[       OK ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3 (6 ms)
+[----------] 3 tests from KinCommandsContract (7 ms total)
+
+[----------] 4 tests from KinPluginGraph
+[ RUN      ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4
+[       OK ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4 (0 ms)
+[ RUN      ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2
+[       OK ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2 (4 ms)
+[ RUN      ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2
+[       OK ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2 (0 ms)
+[ RUN      ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4
+[       OK ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4 (0 ms)
+[----------] 4 tests from KinPluginGraph (6 ms total)
+
+[----------] Global test environment tear-down
+[==========] 57 tests from 8 test suites ran. (65 ms total)
+[  PASSED  ] 57 tests.
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27 (147 ms)
+[ RUN      ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27
+[       OK ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27 (177 ms)
+[ RUN      ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27
+[       OK ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27 (155 ms)
+[ RUN      ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07
+[       OK ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07 (151 ms)
+[ RUN      ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13
+[       OK ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13 (109 ms)
+[ RUN      ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27
+[       OK ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27 (196 ms)
+[ RUN      ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27
+[       OK ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27 (123 ms)
+[----------] 9 tests from KinConfigAcceptance (1402 ms total)
+
+[----------] Global test environment tear-down
+[==========] 35 tests from 6 test suites ran. (2603 ms total)
+[  PASSED  ] 35 tests.
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
+  [ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_targets锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_registered_edge锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_openbench_worker锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_perf_unregistered锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_openbench_testkit锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_perf_lookalike锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4cliff锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r4cliff锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細C:/Users/zgl18/.codex/worktrees/3582/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
