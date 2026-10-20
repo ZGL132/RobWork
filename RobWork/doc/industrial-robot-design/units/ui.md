@@ -2077,3 +2077,5 @@ WP-13-T24 B4c-3b-3b：正式建模Stale回执后经ApplyRetained先保存原完�
 WP-13-T24 B4c-3c生命周期纠正：Committed经完整权威回读后，DraftController必须先经既有C-5 discardDraft调用project唯一草稿服务消费本模块磁盘稿，再清会话脏标记/冲突/局部历史；不能只清标记后让旧稿在下次打开覆盖新基线。后台FIFO保证已排队autosave先于删除，迟到保存回执不得恢复过期保存轨迹。失败不清原状态，由runner保留Committed修订事实、标commit-receipt-failed并继续其余域；关闭放弃会话编辑仍不删除未消费磁盘稿。仅原接口实现/契约注释，无新公共面/存储/依赖，八节和红绿实证见原计划。
 
 WP-13-T24 B4c-3c干净结算补充：ModelingPluginAssembly.hasPendingDraft纯查询复用域完整规范比较，不能按摘要或命令可提交性猜测干净；IDraftController.notifySessionClean默认not-supported，真实实现经C-5后台FIFO消费磁盘稿，成功仅清脏代次/保存来源/时刻，保留冲突与局部undo/redo。宿主完整变更回调按实际pending分流，失败保留状态并提示；重做重新置脏，终身代次防旧autosave误清。精确八节/真实红绿证据见原计划，不外推47项交付。
+
+WP-13-T24 B4c-3d装配增量：正式建模RevisionCommitted回调仅复制值并排入宿主UI队列；事务返回后按来源adapter实例/关闭/project身份守卫调用完整固定修订读取，避免同步重入project写锁。域脏稿/分支/重复修订过滤不变，零公共签名和存储变化；真实外部场景创建及更新即时完整字节断言先红后验，详见原计划。

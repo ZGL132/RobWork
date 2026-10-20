@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "modeling-b4c3d-checkpoint/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "7fcd854549be52d96709411586e377a47acfc086",
+  "completed": false,
+  "totals": {
+    "total": 1520,
+    "passed": 1520,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 447,
+      "passed": 447,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 339,
+      "passed": 339,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 348,
+      "passed": 348,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 84,
+      "passed": 84,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 94,
+      "passed": 94,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 55,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "formalHost": {
+    "status": "PASS",
+    "checksPassed": 361,
+    "checksFailed": 0,
+    "scope": "外部场景创建及修改后即时完整编辑器刷新；原冲突/重建/应用/两次重开/继续编辑及FK/需求三维交互"
+  },
+  "notRun": [
+    "47项全部功能最终验收",
+    "真实网格及全部安装姿态/TCP/导航/透明线框/遮挡高亮",
+    "F01/F14剩余入口及正式R2完整装配",
+    "全新上下文独立验收"
+  ],
+  "notes": [
+    "套件与正式宿主检查分开计数，重复专项不累计",
+    "Qt真实窗口已查看，代理图元不冒称真实mesh",
+    "正式同步revision事件在事务writer锁内重入查询，改为UI队列及来源adapter/关闭/project身份守卫，两个即时完整字节断言真实红后绿",
+    "冲突未决时宿主保留旧完整磁盘稿；显式重建不自动提交",
+    "无子代理、不推送、不合入；F06/F07留另一智能体",
+    "clean-refresh-red为模块红证；previous-modeling-tour目录归档原正式红轮及诊断红轮，原日志PNG未覆盖"
+  ]
+}

@@ -856,7 +856,7 @@ TEST(ModelingDraftAnchor, ContentDifferenceWithoutSummaryKeepsBase_PM04_AT29)
     EXPECT_EQ(module.buildDraftDocument().payload,original.payload);
 }
 
-/** @brief PM-04：首次绑定和干净会话可推进；规范集合重排不得误判有编辑。 */
+/** @brief PM-04：首次绑定可保留种子；已有干净会话只在完整读取成功后推进。 */
 TEST(ModelingDraftAnchor, CleanAndInitiallyUnboundSessionsCanAdvance_PM04_AT29)
 {
     IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
@@ -869,6 +869,12 @@ TEST(ModelingDraftAnchor, CleanAndInitiallyUnboundSessionsCanAdvance_PM04_AT29)
     module.onRevisionCommitted(branch,base);
     EXPECT_EQ(module.session().baselineSnapshot,applied)<<"自身提交事件不能作废同步回执";
     const auto newer=core::RevisionId::generate();
+    const auto authoritative=module.buildDraftDocument();
+    module.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r)
+        ->std::optional<ui::DraftDocumentProjection>{
+        // 端口夹具明确声明两目标修订的合法完整值相同；模块仍须实际读一次。
+        auto document=authoritative;document.branchId=b;document.baseRevisionId=r;return document;
+    });
     module.onRevisionCommitted(branch,newer);
     EXPECT_EQ(module.session().baseRevision,newer);
     EXPECT_TRUE(module.session().draft.changes.empty());
@@ -951,4 +957,87 @@ TEST(ModelingCompleteApply, FailedReceiptKeepsWholeDirtySession_PM04_AT21)
         EXPECT_EQ(module.session().baseRevision,before.baseRevision);
         EXPECT_EQ(module.session().branch,before.branch);
     }
+}
+
+/** @brief PM-04/AT-21：干净外部修订必须完整读取新根及所有部件，不能仅将旧值挂到新锚。 */
+TEST(ModelingDraftAnchor, CleanEventReadsCompleteRevisionBeforeAdvancing_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    CommittedModelClosure closure;ModelingUiModule module;std::string error;
+    ASSERT_TRUE(module.restoreCommittedSession(closure,*closure.expected.rootObjectId,
+        closure.branch,closure.revision,error));
+    const auto newer=core::RevisionId::generate();ModelingUiModule authoritative;
+    authoritative.session().draft=closure.expected;
+    authoritative.session().draft.design.displayName="外部新修订根";
+    authoritative.session().draft.toolObjects.front().displayName="外部新工具";
+    authoritative.session().draft.sceneObjects.front().worldPose.P()[2]=0.725; // 世界系m。
+    authoritative.bindSessionAnchor(closure.branch,newer);
+    authoritative.noteAppliedRevision(newer,closure.expected.rootObjectId);
+    const auto expected=authoritative.buildDraftDocument();int reads=0;
+    module.bindRevisionDraftReader([&](const core::BranchId& branch,const core::RevisionId& revision)
+        ->std::optional<ui::DraftDocumentProjection>{++reads;EXPECT_EQ(branch,closure.branch);EXPECT_EQ(revision,newer);return expected;});
+    module.onRevisionCommitted(core::BranchId::generate(),newer);
+    module.onRevisionCommitted(closure.branch,closure.revision);EXPECT_EQ(reads,0);
+    module.onRevisionCommitted(closure.branch,newer);EXPECT_EQ(reads,1);
+    EXPECT_EQ(module.buildDraftDocument().payload,expected.payload);
+    EXPECT_EQ(module.session().baseRevision,newer);EXPECT_EQ(module.session().draft,authoritative.session().draft);
+    ASSERT_TRUE(module.session().baselineSnapshot);EXPECT_EQ(*module.session().baselineSnapshot,module.session().draft);
+    EXPECT_FALSE(module.hasPendingDraft());EXPECT_FALSE(module.retainedConflictDraft());
+    module.onRevisionCommitted(closure.branch,newer);EXPECT_EQ(reads,1)<<"重复事件不能再次读取或清局部历史";
+    // 无摘要真实差异也须保持旧锚，不能被下一修订覆盖。
+    module.session().draft.toolObjects.front().displayName="尚未确认应用的新编辑";
+    module.onRevisionCommitted(closure.branch,core::RevisionId::generate());EXPECT_EQ(reads,1);
+    EXPECT_EQ(module.session().baseRevision,newer);
+    EXPECT_EQ(module.session().draft.toolObjects.front().displayName,"尚未确认应用的新编辑");
+}
+
+/** @brief PM-04/AT-29：干净绑定读错时旧锚/工作集/基线保持；无读取器不能无声换锚。 */
+TEST(ModelingDraftAnchor, CleanBindingFailureNeverReanchorsOldContents_PM04_AT29)
+{
+    IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
+    CommittedModelClosure closure;ModelingUiModule module;std::string error;
+    ASSERT_TRUE(module.restoreCommittedSession(closure,*closure.expected.rootObjectId,
+        closure.branch,closure.revision,error));
+    const auto before=module.buildDraftDocument();const auto baseline=module.session().baselineSnapshot;
+    const auto newer=core::RevisionId::generate();
+    EXPECT_THROW(module.bindSessionAnchor(closure.branch,newer),std::runtime_error);
+    EXPECT_EQ(module.session().baseRevision,closure.revision);EXPECT_EQ(module.buildDraftDocument().payload,before.payload);
+    for(int fault=0;fault<6;++fault){
+        SCOPED_TRACE(fault);
+        module.bindRevisionDraftReader([&,fault](const core::BranchId&,const core::RevisionId&)
+            ->std::optional<ui::DraftDocumentProjection>{
+            if(fault==0){throw std::runtime_error("固定修订读取失败");}
+            auto document=before;document.baseRevisionId=newer;
+            if(fault==1){document.moduleId="requirements";}
+            if(fault==2){document.baseRevisionId=core::RevisionId::generate();}
+            if(fault==3){document.branchId=core::BranchId::generate();}
+            if(fault==4){document.payload="broken-frame";}
+            if(fault==5){ModelingUiModule dirty;dirty.session().draft=closure.expected;
+                dirty.session().draft.changes.push_back({"field","尚未应用"});
+                dirty.bindSessionAnchor(closure.branch,newer);document=dirty.buildDraftDocument();}
+            return document;
+        });
+        EXPECT_THROW(module.bindSessionAnchor(closure.branch,newer),std::runtime_error);
+        EXPECT_NO_THROW(module.onRevisionCommitted(closure.branch,newer));
+        EXPECT_EQ(module.session().baseRevision,closure.revision);EXPECT_EQ(module.session().branch,closure.branch);
+        EXPECT_EQ(module.buildDraftDocument().payload,before.payload);EXPECT_EQ(module.session().baselineSnapshot,baseline);
+        EXPECT_FALSE(module.retainedConflictDraft());
+    }
+}
+
+/** @brief PM-04/AT-21：固定修订明确无根才可采纳空态，不保留旧模型冒充新修订。 */
+TEST(ModelingDraftAnchor, CleanBindingExplicitEmptyRevisionClearsWholeWorkset_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    CommittedModelClosure closure;ModelingUiModule module;std::string error;
+    ASSERT_TRUE(module.restoreCommittedSession(closure,*closure.expected.rootObjectId,
+        closure.branch,closure.revision,error));
+    const auto other=core::BranchId::generate();const auto newer=core::RevisionId::generate();int reads=0;
+    module.bindRevisionDraftReader([&](const core::BranchId& branch,const core::RevisionId& revision)
+        ->std::optional<ui::DraftDocumentProjection>{++reads;EXPECT_EQ(branch,other);EXPECT_EQ(revision,newer);return std::nullopt;});
+    module.bindSessionAnchor(other,newer);EXPECT_EQ(reads,1);
+    EXPECT_EQ(module.session().branch,other);EXPECT_EQ(module.session().baseRevision,newer);
+    EXPECT_FALSE(module.session().draft.rootObjectId);EXPECT_TRUE(module.session().draft.toolObjects.empty());
+    EXPECT_TRUE(module.session().draft.sceneObjects.empty());EXPECT_TRUE(module.session().draft.design.joints.empty());
+    EXPECT_FALSE(module.hasPendingDraft());EXPECT_FALSE(module.retainedConflictDraft());
 }

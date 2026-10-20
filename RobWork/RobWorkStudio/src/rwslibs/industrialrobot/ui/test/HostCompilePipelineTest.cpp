@@ -1356,6 +1356,28 @@ TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
     HostRevisionClosureView finalClosure(store->query(),finalHead);std::string receiptError;
     const auto finalRoot=core::ObjectId::tryFromCanonical(savedDoc()["rootId"].toString().toStdString());ASSERT_TRUE(finalRoot);
     ASSERT_TRUE(domain.acceptAppliedSession(finalClosure,*finalRoot,finalHead.branch,finalHead.id,receiptError))<<receiptError;
+    // PM-04/B4c-3d：另一个编辑入口真实更新场景，域不能依赖本次onCommitted
+    // 回执。只收到项目修订事件时也须通过已装配reader读完整根/活动闭包。
+    {
+        const auto before=domain.modelingDraftSource().buildDraftDocument();
+        const auto parts=savedDoc()["scenes"].toArray();ASSERT_FALSE(parts.isEmpty());
+        auto changed=std::get<modeling::SceneObject>(decode(parts.at(0)));
+        changed.worldPose.P()[2]=0.628; // 世界系m，刻意区别已有修订。
+        const auto bytes=codec.encode(modeling::ObjectVariant{changed},modeling::kCurrentFormatVersion);ASSERT_TRUE(bytes.ok());
+        modeling::CommandPayload update;update.objects.push_back({false,changed.objectId,
+            std::string(modeling::kSceneObjectObjectType),bytes.get()});
+        auto request=validEnvelope;request.branch=finalHead.branch;request.expectedRevision=finalHead.id;
+        request.commandType=std::string(modeling::kCmdApplySceneObjects);
+        request.payloadCanonical=modeling::encodeCommandPayload(update);
+        const auto result=store->commands().submit(request);ASSERT_TRUE(result.committed());
+        const auto tip=store->query().head();
+        const auto expected=readModelingRevisionDraft(store->query(),tip.branch,tip.id);ASSERT_TRUE(expected);
+        EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().payload,before.payload);
+        domain.onRevisionCommitted(tip.branch,tip.id);
+        EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().payload,expected->payload);
+        EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().baseRevisionId,tip.id);
+        EXPECT_FALSE(domain.hasPendingDraft());EXPECT_EQ(store->query().head().id,tip.id);
+    }
     const auto finalFrame=domain.modelingDraftSource().buildDraftDocument().payload;
     const auto path=store->canonicalPath();const auto finalRevision=store->query().head();
     EXPECT_EQ(store->requestClose(),0U);compile.reset();store.reset();

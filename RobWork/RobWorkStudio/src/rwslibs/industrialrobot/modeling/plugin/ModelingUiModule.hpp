@@ -333,6 +333,8 @@ public:
      * @param branch [in] 待绑定分支，初始绑定由宿主提供有效身份。
      * @param base [in] 当前tip；不能作为已完成草稿重放的证明。
      * @return 无返回；干净/首次绑定才改变锚，仅UI线程调用。
+     * @throws std::runtime_error 已有干净锚改变时完整读取失败；原内容/锚/基线不变。
+     * 已锚干净会话须读取整个目标修订，不允许旧值仅换base；首次无锚种子兼容保留。
      */
     void bindSessionAnchor(const core::BranchId& branch,
                            const core::RevisionId& base);
@@ -407,12 +409,14 @@ public:
 
     /**
      * @brief 修订提交事件：当前分支的脏草稿保留旧锚/基线/局部历史，
-     *        让project拒绝过期应用；干净会话前移并使未知预览失效。
+     *        让project拒绝过期应用；干净会话完整读取指定修订后再前移。
      *        与当前锚同修订的事件幂等，保留成功同步回执已建立的基线。
      *
      * @param branch [in] 提交所在分支（非当前锚定分支的事件忽略——跨分支
      *                修订不触碰编辑基线，§6.2 纪元过滤的模块对位）
      * @param newTip [in] 新 tip 修订
+     * 读取失败保留旧锚/工作集/基线/局部历史，清应用预览并在面板提示；
+     * 不把异常抛入事件分发，也不以旧内容冒充新修订。仅UI线程，无项目写入。
      */
     void onRevisionCommitted(const core::BranchId& branch,
                              const core::RevisionId& newTip);
@@ -555,6 +559,25 @@ private:
     void refreshDraftHistoryState();
     /** @brief PM-04/MDL-08：以值副本展示当前工作集与保留旧稿，不覆盖或提交；坏帧就地报错。仅UI线程。 */
     void showRetainedConflictReview();
+
+    /**
+     * @brief 完整读取指定不可变修订为局部候选，显式重建与干净刷新共用。
+     * @param branch [in] 有效分支；revision [in] 有效固定修订，均须与响应精确相同。
+     * @return 完整干净工作集；reader明确nullopt返回合法空工作集。
+     * @throws std::runtime_error 未装配、读取失败、身份不符、坏帧或非干净基线。
+     * 仅UI线程、无状态写入，不保留reader响应引用；数值/排序沿唯一Codec。
+     */
+    ModelingWorkingSet readRevisionWorkingSet(const core::BranchId& branch,
+        const core::RevisionId& revision) const;
+
+    /**
+     * @brief 为已确认干净会话完整刷新指定修订，成功才一起采纳锚及工作集。
+     * @param branch [in] 目标分支；revision [in] 不可变目标修订。
+     * @throws std::runtime_error 完整读取失败，原工作集/锚/基线/历史均不变。
+     * UI线程同步；成功清跨修订局部历史、取消过期未确认表单并刷新呈现，
+     * 不创建或覆盖用户保留的冲突旧稿，不写项目/不产生修订。
+     */
+    void refreshCleanRevision(const core::BranchId& branch,const core::RevisionId& revision);
 
     // 历史是UI编辑器内部态（L-5），不放进ModelingWorkingSet或项目修订。
     // 值快照覆盖全部部件/资源/摘要，避免字段栈漏掉结构与引用变化；仅UI线程持有。

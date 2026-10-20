@@ -1278,6 +1278,39 @@ TEST(ModelingUiModuleHostWiring, CompletePendingStateTracksUndoRedo_PM04_AT21)
     propertySnapshot(*panel,"draft-undo-clean-redo-retained");
 }
 
+/** @brief PM-04/AT-21：干净会话收到完整新修订后立即刷新树及编辑表单，无需关闭重开。 */
+TEST(ModelingUiModuleHostWiring, CleanRevisionRefreshesRealTreeAndForms_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();const auto branch=core::BranchId::generate();
+    const auto old=core::RevisionId::generate();module.bindSessionAnchor(branch,old);
+    module.noteAppliedRevision(old,core::ObjectId::generate());
+    std::unique_ptr<QWidget> panel(module.createPanel());panel->resize(1140,840);panel->show();QApplication::processEvents();
+    panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode")->click();
+    auto* pending=panel->findChild<QLineEdit*>("ird_tool_name");ASSERT_NE(pending,nullptr);pending->setText("unconfirmed-old-input");
+    ModelingUiModule authoritative;authoritative.seedTemplateSession();
+    authoritative.session().draft.design.displayName="外部修订完整模型";
+    ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="live-external-tool";
+    tool.tcpList={{"tcp",rw::math::Transform3D<double>::identity(),""}};
+    authoritative.session().draft.toolObjects={tool};authoritative.session().draft.design.toolRefs={tool.objectId};
+    const auto revision=core::RevisionId::generate();authoritative.bindSessionAnchor(branch,revision);
+    authoritative.noteAppliedRevision(revision,module.session().draft.rootObjectId);
+    const auto document=authoritative.buildDraftDocument();
+    module.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r)
+        ->std::optional<ui::DraftDocumentProjection>{EXPECT_EQ(b,branch);EXPECT_EQ(r,revision);return document;});
+    module.onRevisionCommitted(branch,revision);QApplication::processEvents();
+    EXPECT_EQ(module.buildDraftDocument().payload,document.payload);EXPECT_FALSE(module.hasPendingDraft());
+    EXPECT_FALSE(module.retainedConflictDraft());
+    auto* view=qobject_cast<ModelingPanelWidget*>(panel.get());ASSERT_NE(view,nullptr);view->focusObject(tool.objectId);
+    panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode")->click();QApplication::processEvents();
+    auto* name=panel->findChild<QLineEdit*>("ird_tool_name");ASSERT_NE(name,nullptr);EXPECT_EQ(name->text(),"live-external-tool");
+    bool found=false;for(auto* tree:panel->findChildren<QTreeWidget*>()){
+        QTreeWidgetItemIterator it(tree);for(;*it;++it){found|=(*it)->text(0).contains("live-external-tool");}
+    }
+    EXPECT_TRUE(found);EXPECT_FALSE(panel->findChild<QPushButton*>("ird_modeling_draft_undo")->isEnabled());
+    propertySnapshot(*panel,"clean-revision-live-tree-and-form");
+}
+
 /** @brief PM-04/AT-21：真实面板重建完整当前基线，并清除旧未确认表单和局部历史。 */
 TEST(ModelingUiModuleHostWiring, ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21)
 {

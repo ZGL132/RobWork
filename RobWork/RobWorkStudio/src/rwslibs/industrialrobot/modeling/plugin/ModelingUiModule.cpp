@@ -758,15 +758,18 @@ void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
         }
         return;
     }
-    // 干净会话无待重放内容，沿原路径推进并使未知的新修订预览失效。
-    m_session.baseRevision = newTip;
-    clearDraftHistory(); // 项目修订边界与草稿局部历史正交，不跨已提交修订回放。
-    // 应用侧快照失效（UI-T41——撤销/重做后的修订内容本模块未知：预览页/
-    // diff 基线以空态诚实呈现，不虚构内容；再次应用即重新定格）。
-    m_session.baselineSnapshot.reset();
-    m_session.appliedPreview.reset();
-    pushAppliedPreviewToPanel();  // 预览态变迁推送（UI-T59 接线缺口修复）
-    recomputeReadiness();
+    try {
+        // PM-04：干净只说明没有待迁移编辑，不证明旧值就是新修订内容。
+        // 完整读取成功后才推进，避免后续用户编辑把他域的新场景/工具覆盖掉。
+        refreshCleanRevision(branch,newTip);
+    } catch (const std::exception& error) {
+        // 事件分发不能抛入Qt。旧锚/完整基线保留供Stale保护，未知新内容的
+        // 预览诚实缺席；失败绝不能把旧payload重新标上新base。
+        m_session.appliedPreview.reset();pushAppliedPreviewToPanel();
+        qWarning().noquote()<<QString::fromStdString("建模新修订完整读取失败："+std::string(error.what()));
+        if(m_panel){m_panel->setOutcomeMessage(QString::fromUtf8(
+            "项目已有新修订，但完整建模数据读取失败；原工作集及修订锚已保留，请重试。"));}
+    }
 }
 
 // =====================================================================
@@ -797,6 +800,11 @@ void ModelingUiModule::bindSessionAnchor(const core::BranchId& branch,
         }
         // 同分支的新tip不等于成功重放，保留旧expectedRevision及局部撤销栈。
         return;
+    }
+    if(changed&&m_session.branch.isValid()&&m_session.baseRevision){
+        // 提交前重复绑定同样不能成为旧内容换锚的后门；显式入口读错抛错，
+        // 由宿主PreparationFailed收口。首次无锚种子仍沿下面原绑定路径。
+        refreshCleanRevision(branch,base);return;
     }
     m_session.branch = branch;
     m_session.baseRevision = base;
@@ -1009,22 +1017,7 @@ void ModelingUiModule::rebuildOnRevision(const std::string& tipRevisionCanonical
     if(!tip||!m_session.branch.isValid()){
         throw std::invalid_argument("重新编辑需要有效分支及修订身份");
     }
-    if(!m_revisionDraftReader){throw std::runtime_error("建模固定修订读取未装配，原草稿已保留");}
-    // 第一步完整读取到局部值。旧草稿/历史/锚都不能在读错或类型错时先行清除。
-    // nullopt由宿主明确表达无根；此时新基线是空项目，不能用旧模板伪造新权威值。
-    const auto document=m_revisionDraftReader(m_session.branch,*tip);
-    ModelingWorkingSet candidate;
-    if(document){
-        if(document->moduleId!=kModuleHandle||document->baseRevisionId!=*tip){
-            throw std::runtime_error("建模固定修订读取的模块或修订不匹配");
-        }
-        std::string error;
-        const auto decoded=decodeModelingDraft(document->payload,ModelingWorkingSet{},error);
-        if(!decoded||!decoded->rootObjectId||!decoded->changes.empty()){
-            throw std::runtime_error("建模固定修订读取不是完整干净基线："+error);
-        }
-        candidate=*decoded;
-    }
+    auto candidate=readRevisionWorkingSet(m_session.branch,*tip);
     const auto previous=buildDraftDocument(); // 保留完整旧值和原base，绝不重标锚后保存。
     // 第二步一次采纳。控制器在本方法成功返回后才清冲突/会话脏标记；这里
     // 不重试提交，用户必须基于新的完整值逐项迁移旧修改。
@@ -1034,6 +1027,42 @@ void ModelingUiModule::rebuildOnRevision(const std::string& tipRevisionCanonical
     noteAppliedRevision(*tip,m_session.draft.rootObjectId);
     if(m_panel){m_panel->setOutcomeMessage(QString::fromUtf8(
         "已读取当前修订的完整基线；旧草稿已保留，请核对并迁移未应用修改。"));}
+}
+
+ModelingWorkingSet ModelingUiModule::readRevisionWorkingSet(
+    const core::BranchId& branch,const core::RevisionId& revision) const
+{
+    m_guard.assertOnUiThread();
+    if(!m_revisionDraftReader){throw std::runtime_error("建模固定修订读取未装配，原草稿已保留");}
+    // 第一步完整读取到局部值。旧草稿/历史/锚都不能在读错或类型错时先行清除。
+    // nullopt由宿主明确表达无根；此时新基线是空项目，不能用旧模板伪造新权威值。
+    const auto document=m_revisionDraftReader(branch,revision);
+    ModelingWorkingSet candidate;
+    if(document){
+        if(document->moduleId!=kModuleHandle||document->baseRevisionId!=revision
+            ||document->branchId!=branch){
+            throw std::runtime_error("建模固定修订读取的模块、分支或修订不匹配");
+        }
+        std::string error;
+        const auto decoded=decodeModelingDraft(document->payload,ModelingWorkingSet{},error);
+        if(!decoded||!decoded->rootObjectId||!decoded->changes.empty()){
+            throw std::runtime_error("建模固定修订读取不是完整干净基线："+error);
+        }
+        candidate=*decoded;
+    }
+    return candidate;
+}
+
+void ModelingUiModule::refreshCleanRevision(const core::BranchId& branch,const core::RevisionId& revision)
+{
+    auto candidate=readRevisionWorkingSet(branch,revision);
+    // 完整候选已验证才允许替换；这里没有用户旧编辑，不产生“冲突迁移”素材。
+    if(m_panel){m_panel->cancelPendingForHistoryRestore();}
+    m_session.branch=branch;
+    m_session.draft=std::move(candidate);
+    noteAppliedRevision(revision,m_session.draft.rootObjectId);
+    if(m_panel){m_panel->setOutcomeMessage(QString::fromUtf8(
+        "已完整读取项目新修订的建模工作集；未确认表单已刷新，当前无未应用编辑。"));}
 }
 
 void ModelingUiModule::bindRevisionDraftReader(

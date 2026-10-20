@@ -229,45 +229,34 @@ bool isAssembledRequirementCommand(const std::string& id)
 }
 
 /**
- * @brief 修订事件桥（WP-24-T03b——§5.2/§6.2 会话事件全同步的宿主半区）。
+ * @brief 修订事件值桥——只转发载荷，禁止在事务发布栈内查询存储。
  *
- * store 对端在修订提交时向总线 publish RevisionCommitted（撤销/重做/其他
- * 会话入口与 draft.apply 同源）；本桥把事件转达建模模块（基线前移＋就绪
- * 重算）。分支过滤在模块侧（非目标分支的事件不触碰锚——跨分支修订不
- * 污染编辑基线）。publish 发生在命令提交线程（开发通道＝UI 线程），模块
- * 的 UI 线程断言因此成立；其他线程来源出现时须经 postToUiThread marshal
- * （登记 ui.md §16.7 收口行的并发边界注）。
+ * PM-04/AT-21：project提交时仍持writer锁，直接回查修订会重入非递归锁。
+ * 宿主回调负责复制载荷并排入UI队列，提交返回后才完整读取；本桥不持域
+ * 或store裸指针。插件拥有本桥，订阅期不超过插件生命周期；非线程安全，
+ * 沿当前宿主UI线程提交和订阅纪律使用。
  */
 class DomainRevisionEventBridge final : public core::IDomainEventSink {
 public:
-    /// @param domains [in] 建模装配门面（非 owning——插件存活期覆盖）
-    /// @param devLog [in] Dev 出线通道（可空＝静默）
-    explicit DomainRevisionEventBridge(modeling::ModelingPluginAssembly* domains,
-                                       std::function<void(const std::string&)> devLog)
-        : m_domains(domains)
-        , m_devLog(std::move(devLog))
-    {
-    }
+    /** @brief 绑定只排队、不查询的宿主回调。
+     * @param forward [in] 借用值载荷的回调；可空表示不消费，不得保存参数引用。
+     */
+    explicit DomainRevisionEventBridge(
+        std::function<void(const core::RevisionCommittedPayload&)> forward)
+        : m_forward(std::move(forward)) {}
 
+    /** @brief 仅转发修订提交事件，其他事件没有建模同步语义。
+     * @param event [in] 总线同步借用的值事件，不接管所有权。
+     */
     void onEvent(const core::DomainEvent& event) override
     {
-        if (event.kind != core::DomainEventKind::RevisionCommitted) {
-            return;  // 只消费修订提交事件（其余三类无模块同步语义）
-        }
-        const core::RevisionCommittedPayload& payload = event.asRevisionCommitted();
-        if (m_domains != nullptr) {
-            m_domains->onRevisionCommitted(payload.branch, payload.revision);
-        }
-        if (m_devLog) {
-            m_devLog("revision-committed -> modeling event delivered: branch="
-                     + payload.branch.toCanonical()
-                     + " rev=" + payload.revision.toCanonical());
+        if(event.kind==core::DomainEventKind::RevisionCommitted && m_forward){
+            m_forward(event.asRevisionCommitted());
         }
     }
 
 private:
-    modeling::ModelingPluginAssembly* m_domains;  ///< 建模门面（非 owning）
-    std::function<void(const std::string&)> m_devLog;  ///< Dev 出线（可空）
+    std::function<void(const core::RevisionCommittedPayload&)> m_forward; ///< 插件拥有的值转发器。
 };
 
 /// Dev 日志通道 token（diagnostics.md §7.2 LogChannel ≤48 字符；对齐
@@ -747,14 +736,29 @@ void IrdWorkbenchHostPlugin::initialize()
                 m_diag.pipeline->logDev(kPluginDevChannel, line);
             }
         }
-        // 修订事件订阅（桥持建模门面指针——插件存活期覆盖订阅期）。
+        // PM-04：事务发布栈内只排队；固定修订查询必须在writer锁释放后执行。
         if (m_domains != nullptr) {
             m_revisionSink = std::make_unique<DomainRevisionEventBridge>(
-                &m_domains->modeling,
-                [this](const std::string& message) {
-                    if (m_diag.pipeline) {
-                        m_diag.pipeline->logDev(kPluginDevChannel, message);
-                    }
+                [this](const core::RevisionCommittedPayload& event) {
+                    const auto payload=event;
+                    const auto source=m_lastStoreAdapter;
+                    QTimer::singleShot(0,this,[this,payload,source] {
+                        const auto adapter=m_lastStoreAdapter;
+                        // 同路径重新打开也是不同会话；迟到事件不得读取或改变新项目。
+                        if(!adapter||adapter!=source||adapter->isClosed()||!m_domains){return;}
+                        try {
+                            if(adapter->projectStore().projectId()!=payload.project){return;}
+                            m_domains->modeling.onRevisionCommitted(payload.branch,payload.revision);
+                            if(m_diag.pipeline){m_diag.pipeline->logDev(kPluginDevChannel,
+                                "revision-committed -> modeling event delivered after commit: branch="
+                                +payload.branch.toCanonical()+" rev="+payload.revision.toCanonical());}
+                        } catch(const std::exception& error) {
+                            // 已离开总线的异常边界：日志定位环境失败，不让异常穿透Qt。
+                            reportLine(std::string("建模修订同步失败：")+error.what());
+                            if(m_hostStatusBar){m_hostStatusBar->showMessage(QStringLiteral(
+                                "建模修订同步失败，原工作集已保留；请重新打开项目，详情见日志"),8000);}
+                        }
+                    });
                 });
             m_revisionSubscription = m_eventBus->subscribe(*m_revisionSink);
 
@@ -9196,6 +9200,16 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 // 同款发布拍；submit本身不拥有宿主呈现，不能把旧场景误判为编译失败。
                 if (submitted.committed()) { refreshPresentationAfterCommit(); }
                 settleEvents(500);
+                // B4c-3d：他域公开命令已推进修订，当前干净编辑器必须即时读到
+                // 完整根/场景，不能等关闭重开才修正，更不能仅换base保留旧值。
+                {
+                    const auto current=adapter->projectStore().query().head();
+                    const auto expected=readModelingRevisionDraft(adapter->projectStore().query(),current.branch,current.id);
+                    const auto actual=modelingDraftSource(*m_domains).buildDraftDocument();
+                    std::cout << "[ird-ui-smoke-mtour] clean-refresh actual=" << actual.baseRevisionId.toCanonical() << " expected=" << current.id.toCanonical() << " payload-equal=" << (expected&&actual.payload==expected->payload) << " pending=" << m_domains->modeling.hasPendingDraft() << std::endl;
+                    ok(expected&&actual.baseRevisionId==current.id&&actual.payload==expected->payload
+                        &&!m_domains->modeling.hasPendingDraft(),"b4c3d external-scene-create-refreshes-complete-editor-live");
+                }
                 std::optional<core::ObjectId> fixtureId;
                 for (const auto& ref : adapter->projectStore().query().head().objectRefs) {
                     if (ref.objectTypeToken != modeling::kSceneObjectObjectType) { continue; }
@@ -9736,6 +9750,14 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                             ok(movedResult.committed(),"step5.7 scene-only-update-real-command-committed");
                             if(movedResult.committed()){refreshPresentationAfterCommit();}
                             settleEvents(200);
+                            {
+                                const auto current=adapter->projectStore().query().head();
+                                const auto expected=readModelingRevisionDraft(adapter->projectStore().query(),current.branch,current.id);
+                                const auto actual=modelingDraftSource(*m_domains).buildDraftDocument();
+                    std::cout << "[ird-ui-smoke-mtour] clean-refresh actual=" << actual.baseRevisionId.toCanonical() << " expected=" << current.id.toCanonical() << " payload-equal=" << (expected&&actual.payload==expected->payload) << " pending=" << m_domains->modeling.hasPendingDraft() << std::endl;
+                                ok(expected&&actual.baseRevisionId==current.id&&actual.payload==expected->payload
+                                    &&!m_domains->modeling.hasPendingDraft(),"b4c3d external-scene-edit-refreshes-complete-editor-live");
+                            }
                             const auto afterMove=m_requirementsEditor.workingSet();
                             m_domains->requirements->reportView3DPick(pointId);
                             m_content->submitCommand("requirements.pick-feature");settleEvents(100);

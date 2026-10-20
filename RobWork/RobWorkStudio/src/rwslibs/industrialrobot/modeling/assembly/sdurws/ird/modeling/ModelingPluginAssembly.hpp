@@ -151,7 +151,8 @@ struct ModelingPluginAssembly {
 
     /// 会话锚绑定（打开成功后——分支＋tip；仅UI线程）。已有脏草稿同分支
     /// 保留旧锚接受project的Stale裁决；跨分支未处置抛std::runtime_error且原值不变。
-    /// 首次/干净绑定沿原路径推进，绑定本身不代表基线重放或用户确认。
+    /// 首次无锚种子保留；已有干净锚改变时须完整读取固定修订再一起采纳，
+    /// 无reader或读错抛std::runtime_error，原值/锚/基线不变，不伪造用户确认。
     void bindSessionAnchor(const sdurws::ird::core::BranchId& branch,
                            const sdurws::ird::core::RevisionId& base);
 
@@ -261,8 +262,9 @@ struct ModelingPluginAssembly {
     void onSessionDetached();
 
     /// 修订提交事件（撤销/重做等非 apply 路径——非锚定分支的事件忽略；
-    /// 基线前移到新 tip＋就绪重算；编辑记录不清零，与 noteAppliedRevision
-    /// 语义区分）。
+    /// 脏草稿保持旧锚/内容/历史；干净会话完整读取固定修订成功才采纳，
+    /// 失败保留旧锚/内容/基线/历史并令未知预览缺席，面板提示且不抛入Qt。
+    /// 重复同修订/其他分支事件零读取；无项目写入或修订增长，仅UI线程）。
     void onRevisionCommitted(const sdurws::ird::core::BranchId& branch,
                              const sdurws::ird::core::RevisionId& newTip);
 

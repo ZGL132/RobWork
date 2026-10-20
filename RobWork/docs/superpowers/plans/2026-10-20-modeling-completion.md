@@ -467,3 +467,30 @@ B4c-3c测试前置纠错：新真实磁盘消费用例直接构造StorePortAdapt
 B4c-3c干净结算实施结果：控制器新增3项反例已真实失败（默认not-supported），修复后UI339通过。首轮正式tour在冲突显式重建时发现干净通知会提前消费ApplyRetained旧稿，保留规则必须优先：宿主在控制器Stale未决期间仍通知dirty，直到控制器明确重建完成；旧完整稿在域保留并继续在磁盘可读。两项磁盘强断言先失败，修复后完整tour退出0；该首轮日志被后续同名运行覆盖，只保留工具输出与此登记，不虚称已冻结原始红日志。后续局部undo回应用基线已消费旧稿，第二次重开Missing，精确根/场景身份和原字节全部通过。新增域GUI检查真实add/undo/redo状态及无摘要字段/部件差异；全量UI契约初轮62通过1失败为装配清单行锚漂移2755→2770，原失败归档manifest-anchor-drift后只同步现行清单，重跑63通过，不作为产品缺陷。所有最终结果仍须核对完整套件/双模式/门禁，不外推真实mesh或47项交付。
 
 B4c-3c检查点实证：十套件1516通过、0失败、0跳过；Windows GUI232通过。正式完整tour359项检查通过、0失败，真实冲突/手工迁移/两次重开/完整根部件继续编辑闭合。集成全量、独立三目标、verify-task三条通过。新证据冻结b4c3c-checkpoint；仅本地WIP、不推送/合入。干净外部修订完整实时刷新及F01/F14、完整部件持久化矩阵、47项真mesh/全部三维仍开放。
+
+## B4c-3d 精确设计：干净会话的新修订必须完整读取
+
+1. 行为（PM-04/18、MDL-08、AT-21/29）：干净编辑器收到同分支新修订或提交前绑定不同tip，不能只换base。沿既有固定修订reader完整读根/全部活动部件后一次采纳为新clean基线、刷新树/表单/预览、清跨修订局部历史；没有root的明确nullopt为合法空态。脏草稿仍保留旧值/基线/历史/expectedRevision，不能自动重放。重复同修订及非当前分支事件幂等零读取。
+2. 接口：不增加公开签名/字段/格式。仅更新现有bindSessionAnchor/onRevisionCommitted注释；私有共用readRevisionWorkingSet负责已有reader的完整响应校验与唯一decode，重建复用它；私有adoptCleanRevision只提交局部候选，且不创建/覆盖retainedConflictDraft。读响应须module/base/branch精确匹配、完整帧有root且changes空；nullopt只表达明确无根，不能由坏帧推导。
+3. 失败：无reader/读异常/响应身份错/坏帧/非干净完整帧均不改草稿、base、branch、baseline、局部历史、保留旧稿。显式bind抛定位runtime_error，由原runner PreparationFailed收口；事件不得抛入Qt，清旧应用预览以诚实缺席并显示读取失败，保留原锚接受后续Stale。首次无锚种子仍可绑定，不当成跨修订刷新；绑定有效身份要求沿原宿主契约。
+4. 生命周期：UI线程同步读取固定不可变修订，不读可变HEAD、不缓存closure。候选完整解析后才取消已过期未确认表单并一次采纳；成功状态行说明已刷新，失败不清已输入/已确认内容。旧保留冲突素材仍由显式重建/关闭生命周期管理。
+5. 线程/确定性：沿原reader、完整域Codec及SI/ID集合规则，零项目写/零新修订/零新依赖；域变更通知使用本批已验证clean结算，冲突未决仍保留ApplyRetained旧稿。不能把同名对象当同ID，也不能把只有根成功当完整。
+6. 验证：先真实模块新反例：外部完整root/tool/scene改动后新base必须携带新字节、失败不换锚、nullopt无根清空、脏稿/其他分支/重复事件零读取；原无reader预览测试继续如实缺席但保留旧锚。HostCompilePipeline固定修订适配读取真实对象，及正式tour外部场景更新后不关项目即在当前编辑器精确看到同ID同字节。双模式/十套件/Windows GUI与门禁。
+7. 范围：原已允许ModelingUiModule.hpp/.cpp、ModelingPluginAssembly.hpp纯契约注释、PluginModuleT03BTest、ModelingUiModuleHostWiringGuiTest、HostCompilePipelineTest、UiPlugin.cpp测试通道、现行装配锚与原文档/契约/新b4c3d证据。F06/F07不改/不集成；上批7fcd8545后校验随新批，不回写冻结证据。不弹选项、不使用代理、不推送/合入。
+8. 决策：复用既有唯一固定修订完整reader，禁止旧payload换锚；不使用rebuildOnRevision冒充自动干净刷新（会误创建保留旧稿和用户迁移语义）。无新增长期架构决策，完整47项仍另验。
+
+
+### B4c-3d 装配补充八节：事务事件延后读取
+
+1. 事实与行为：正式tour两次真实外部场景提交均收到revision事件，actual仍旧锚、payload不等且pending=0。TxEngine在ProjectStoreImpl writerGuard内同步publish；QueryPortImpl::tryRevision再取同一非递归writerMutex，不能在事件回调重入查询。提交返回后UI队列读取完整固定修订，保留原强断言，不修改project事务。
+2. 接口：仅UiPlugin.cpp私有事件桥改为值载荷转发回调；装配回调复制payload和当前受控adapter，经QTimer单次队列调用原onRevisionCommitted。零公共签名、格式、依赖变化。
+3. 失败：队列执行前adapter须仍为来源、未关闭且project身份匹配；否则零读取。异常在UI队列边界记日志并提示，不穿透Qt；域读取失败仍保留旧锚与值。无会话丢弃事件，不猜测成功。
+4. 生命周期：QObject宿主上下文销毁自动取消排队；来源shared_ptr只保留到该拍，不持旧store裸指针。关闭再打开同一路径也因adapter实例不同隔离。域自身继续过滤branch/重复revision与脏稿。
+5. 线程与确定性：总线回调只复制值排队，现有提交来源为UI线程；查询、域刷新和控件变更仅UI线程。按事件到达顺序消费固定修订，不从可变HEAD伪造事件；自身提交回执已采纳的重复revision零读取。
+6. 验证：已保留两轮正式红证及诊断值，两个完整字节强断言必须全绿；完整tour包含应用、冲突、重建、关闭重开和后续编辑，GUI真实树/表单84项与UI94项继续回归；双模式/门禁与完整相关套件。
+7. 文档：原允许UiPlugin.cpp、units/ui.md、modeling.md、DTB、契约与计划增量；无扩大F06/F07或project实现面。按用户自动执行授权登记后实施，不弹选项、不派代理、不推送合入。
+8. 决策：复用需求事件桥已有Qt队列模式；无新增长期架构决策。禁止用手动调用域、重开项目或放宽payload比较替代正式事件成功。
+
+B4c-3d现行装配清单仅同步UiPlugin新增接线后的行锚：建模2696→2700、需求2770→2774；不改冻结证据和装配必需语义。
+
+B4c-3d检查点实证：十套件1520通过、0失败、0跳过（Windows GUI233），正式完整tour361检查通过、0失败。完整外部场景即时字节比较真实先红后绿；3项模块反例、1项真实树/表单GUI及真实ProjectStore链扩展通过。集成全量、独立三目标及最终串行verify-task三条通过，含门禁零命中；收尾一次误并行构建争用日志另存，未计通过。已查看新树/工具表单及正式重开窗口，未冒称真实mesh。证据冻结b4c3d-checkpoint，只本地WIP。剩余F01/F14、完整部件矩阵、47项真实三维、显式重建后又来新修订的旧稿延续保护专项及独立验收仍开放。
