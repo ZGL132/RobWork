@@ -116,6 +116,14 @@ bool ModelingPluginAssembly::restoreCommittedSession(
     return m_impl->restoreCommittedSession(closure, rootObjectId, branch, revision, errorText);
 }
 
+bool ModelingPluginAssembly::acceptAppliedSession(
+    const ObjectClosureView& closure, const core::ObjectId& rootObjectId,
+    const core::BranchId& branch, const core::RevisionId& revision, std::string& errorText)
+{
+    if (!m_impl) { errorText="建模模块未装配，无法读取应用回执"; return false; }
+    return m_impl->acceptAppliedSession(closure, rootObjectId, branch, revision, errorText);
+}
+
 void ModelingPluginAssembly::noteAppliedRevision(
     const sdurws::ird::core::RevisionId& newBase,
     const std::optional<sdurws::ird::core::ObjectId>& rootObjectId)

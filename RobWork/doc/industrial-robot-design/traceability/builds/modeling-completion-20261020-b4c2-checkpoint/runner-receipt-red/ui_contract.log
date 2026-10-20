@@ -1,0 +1,18 @@
+Note: Google Test filter = *CommitReceiptException*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from HostIntegrationContractTest
+[ RUN      ] HostIntegrationContractTest.CommitReceiptExceptionKeepsCommitFactAndContinues_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1191): error: Expected: report=ui::runDomainApply({a,b},std::nullopt, [this](project::CommandEnvelope,project::ICommandInteraction*){return makeCommitted();},nullptr) doesn't throw an exception.
+  Actual: it throws std::runtime_error with description "固定修订闭包缺失".
+
+[  FAILED  ] HostIntegrationContractTest.CommitReceiptExceptionKeepsCommitFactAndContinues_PM04_AT21 (0 ms)
+[----------] 1 test from HostIntegrationContractTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] HostIntegrationContractTest.CommitReceiptExceptionKeepsCommitFactAndContinues_PM04_AT21
+
+ 1 FAILED TEST

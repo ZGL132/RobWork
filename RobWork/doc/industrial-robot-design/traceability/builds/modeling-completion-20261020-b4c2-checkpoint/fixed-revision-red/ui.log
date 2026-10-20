@@ -1,0 +1,25 @@
+Note: Google Test filter = *CommittedClosureStaysOnExactRevision*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from HostCompilePipelineTest
+[ RUN      ] HostCompilePipelineTest.CommittedClosureStaysOnExactRevision_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(986): error: Expected equality of these values:
+  old->bytes
+    Which is: { '\t' (9), '\b' (8), '\a' (7) }
+  m_designBytes
+    Which is: { 'I' (73, 0x49), 'R' (82, 0x52), 'D' (68, 0x44), 'M' (77, 0x4D), 'D' (68, 0x44), 'L' (76, 0x4C), 'O' (79, 0x4F), '\x1' (1), '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\f' (12, 0xC), '\0', '\0', '\0', 'r' (114, 0x72), 'o' (111, 0x6F), 'b' (98, 0x62), 'o' (111, 0x6F), 't' (116, 0x74), '-' (45, 0x2D), 'd' (100, 0x64), 'e' (101, 0x65), 's' (115, 0x73), 'i' (105, 0x69), 'g' (103, 0x67), 'n' (110, 0x6E), '\x1' (1), ... }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(989): error: Value of: byToken
+  Actual: false
+Expected: true
+
+[  FAILED  ] HostCompilePipelineTest.CommittedClosureStaysOnExactRevision_PM04_AT21 (0 ms)
+[----------] 1 test from HostCompilePipelineTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] HostCompilePipelineTest.CommittedClosureStaysOnExactRevision_PM04_AT21
+
+ 1 FAILED TEST

@@ -18,6 +18,7 @@
 #include <stdexcept>
 #include <algorithm> // B4b比较ID集合的规范内容，不依赖传递包含。
 #include <type_traits>
+#include <set> // B4c-2保存基线中已分配部件身份，临时ID不得被当作既有对象。
 #include <utility>
 #include <cmath>
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp> // F13：公共纯值请求，不引入运动学业务依赖。
@@ -105,7 +106,7 @@ std::optional<project::CommandEnvelope> ModelingUiModule::buildDraftCommand(
     project::CommandEnvelope envelope;
     envelope.branch = m_session.branch;
     envelope.expectedRevision = m_session.baseRevision;
-    envelope.commandType = std::string(kCmdApplyRobotDesign);  // project 词表 token（无点——两套命名空间纪律）
+    envelope.commandType = std::string(kCmdApplyModelingWorkingSet);  // project 词表 token（无点——两套命名空间纪律）
     envelope.payloadFormatVersion = kCommandPayloadVersion;    // 处理器自有版本戳（v2）
 
     // ⑤根对象槽：allocateNew＝根身份未回填（模板初始草稿——prepare 取号
@@ -117,8 +118,33 @@ std::optional<project::CommandEnvelope> ModelingUiModule::buildDraftCommand(
     slot.objectId = m_session.draft.rootObjectId.value_or(core::ObjectId{});
     slot.objectTypeToken = std::string(kRobotDesignObjectType);  // 根对象 token（runtime 单一权威）
     slot.objectBytes = encoded.get();
-    envelope.payloadCanonical = encodeCommandPayload(CommandPayload{
-        CommandPayload::Mode::Apply, {std::move(slot)}, {}});
+    CommandPayload payload;payload.objects.push_back(std::move(slot));
+    std::set<std::string> persisted;
+    if(m_session.baselineSnapshot){
+        const auto& saved=*m_session.baselineSnapshot;
+        for(const auto& tool:saved.toolObjects){persisted.insert(tool.objectId.toCanonical());}
+        for(const auto& scene:saved.sceneObjects){persisted.insert(scene.objectId.toCanonical());}
+        if(saved.poseSetObject){persisted.insert(saved.poseSetObject->objectId.toCanonical());}
+        if(saved.drivetrainObject){persisted.insert(saved.drivetrainObject->objectId.toCanonical());}
+    }
+    // 完整部件槽按类别、ObjectId定序；临时ID留在请求中连接根引用，
+    // project处理器负责一次取号并回填，模块不分配持久ID、不拆成多个修订。
+    const auto append=[&](const auto& value,std::string_view token){
+        const auto bytes=codec.encode(ObjectVariant{value},kCurrentFormatVersion);
+        if(!bytes.ok()){throw std::runtime_error("完整建模部件编码失败："+bytes.error().detail);}
+        PayloadObjectSlot part;part.objectId=value.objectId;
+        part.allocateNew=persisted.count(value.objectId.toCanonical())==0;
+        part.objectTypeToken=std::string(token);part.objectBytes=bytes.get();
+        payload.objects.push_back(std::move(part));
+    };
+    auto tools=m_session.draft.toolObjects;auto scenes=m_session.draft.sceneObjects;
+    const auto less=[](const auto& a,const auto& b){return a.objectId.toCanonical()<b.objectId.toCanonical();};
+    std::sort(tools.begin(),tools.end(),less);std::sort(scenes.begin(),scenes.end(),less);
+    for(const auto& value:tools){append(value,kToolDefinitionObjectType);}
+    for(const auto& value:scenes){append(value,kSceneObjectObjectType);}
+    if(m_session.draft.poseSetObject){append(*m_session.draft.poseSetObject,kNamedPoseSetObjectType);}
+    if(m_session.draft.drivetrainObject){append(*m_session.draft.drivetrainObject,kRobotDrivetrainObjectType);}
+    envelope.payloadCanonical=encodeCommandPayload(payload);
 
     // ⑥面板引用消费说明：组装路径不触面板（面板是呈现半区——命令组装的
     //   权威输入只有会话态；m_panel 仅供 readonlyProjections 的联动刷新，
@@ -767,23 +793,29 @@ bool ModelingUiModule::restoreCommittedSession(
     const core::BranchId& branch, const core::RevisionId& revision,
     std::string& errorText)
 {
+    return readCommittedSession(closure,rootObjectId,branch,revision,errorText,false);
+}
+
+bool ModelingUiModule::readCommittedSession(
+    const ObjectClosureView& closure, const core::ObjectId& rootObjectId,
+    const core::BranchId& branch, const core::RevisionId& revision,
+    std::string& errorText, bool applicationReceipt)
+{
     m_guard.assertOnUiThread();
     if (!rootObjectId.isValid() || !branch.isValid() || !revision.isValid()) {
         // 空身份不是磁盘损坏，而是装配调用方没有给出可追溯基线。
         throw std::invalid_argument("恢复已提交建模会话需要有效根、分支和修订身份");
     }
     errorText.clear();
-    if (m_session.branch == branch && m_session.baseRevision == revision
+    if (!applicationReceipt && m_session.branch == branch && m_session.baseRevision == revision
         && m_session.draft.rootObjectId == rootObjectId
         && m_session.baselineSnapshot.has_value()) {
         // 同一上下文反复投影时不能把用户正在编辑的值重新覆盖为保存值。
         return true;
     }
-    if (!m_session.draft.changes.empty()
-        || (m_session.baselineSnapshot
-            && canonicalDraftContents(m_session.draft)!=canonicalDraftContents(*m_session.baselineSnapshot))) {
-        // 兼容旧磁盘草稿可能不携带编辑史，因此还需和已保存基线比较真实值，不能
-        // 仅凭changes为空就认定用户没有尚未应用的内容。
+    if (!applicationReceipt && hasPendingDraft()) {
+        // 普通重开不能覆盖尚未处置的编辑；已成功提交的回执则必须读取完整
+        // 持久身份，不能沿普通恢复的脏保护/幂等短路只留下临时部件ID。
         errorText = "建模工作集有未应用编辑，请先处置后再切换已提交基线";
         return false;
     }
@@ -849,6 +881,13 @@ bool ModelingUiModule::restoreCommittedSession(
     m_session.branch = branch;
     noteAppliedRevision(revision, rootObjectId);
     return true;
+}
+
+bool ModelingUiModule::acceptAppliedSession(
+    const ObjectClosureView& closure, const core::ObjectId& rootObjectId,
+    const core::BranchId& branch, const core::RevisionId& revision, std::string& errorText)
+{
+    return readCommittedSession(closure, rootObjectId, branch, revision, errorText, true);
 }
 
 void ModelingUiModule::noteAppliedRevision(

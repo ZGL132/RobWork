@@ -1,0 +1,41 @@
+Note: Google Test filter = MdlCompleteWorkingSet.*:MdlDhCommand.CompleteWorkingSet*
+[==========] Running 5 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from MdlCompleteWorkingSet
+[ RUN      ] MdlCompleteWorkingSet.AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21
+[       OK ] MdlCompleteWorkingSet.AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21 (0 ms)
+[ RUN      ] MdlCompleteWorkingSet.RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21
+[       OK ] MdlCompleteWorkingSet.RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21 (0 ms)
+[ RUN      ] MdlCompleteWorkingSet.NewPartCannotReuseRetainedOrStructuralIdentity_PM04_AT21
+unknown file: error: C++ exception with description "mdl: 基线对象解码失败（数据损坏面）: obj-45cd0db86568ff4f49b1908fbdd7220e — modeling/codec: 解码产物违反不变量 I-MDL-13（subject=tcpList.empty）——字节绕过构造边界被拒（NFR-COR-03）" thrown in the test body.
+
+[  FAILED  ] MdlCompleteWorkingSet.NewPartCannotReuseRetainedOrStructuralIdentity_PM04_AT21 (0 ms)
+[ RUN      ] MdlCompleteWorkingSet.ExistingPartsAndDefaultTransferRestoreFromHistory_PM18_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(883): error: Expected equality of these values:
+  restoredRoot.toolRefs.front()
+    Which is: 16-byte object <47-7B F7-CC DC-A1 94-BF 02-55 B7-64 B5-6C 67-C7>
+  oldTool
+    Which is: 16-byte object <E2-7E AC-CB B8-60 B6-95 9C-BE FF-AF 1F-D3 C4-1B>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(883): error: Expected equality of these values:
+  restoredRoot.toolRefs.back()
+    Which is: 16-byte object <E2-7E AC-CB B8-60 B6-95 9C-BE FF-AF 1F-D3 C4-1B>
+  other.objectId
+    Which is: 16-byte object <47-7B F7-CC DC-A1 94-BF 02-55 B7-64 B5-6C 67-C7>
+
+[  FAILED  ] MdlCompleteWorkingSet.ExistingPartsAndDefaultTransferRestoreFromHistory_PM18_AT21 (0 ms)
+[----------] 4 tests from MdlCompleteWorkingSet (1 ms total)
+
+[----------] 1 test from MdlDhCommand
+[ RUN      ] MdlDhCommand.CompleteWorkingSetSwitchAllowsOnlyUnchangedParts_MDL02_AT16
+[       OK ] MdlDhCommand.CompleteWorkingSetSwitchAllowsOnlyUnchangedParts_MDL02_AT16 (1 ms)
+[----------] 1 test from MdlDhCommand (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test suites ran. (3 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] MdlCompleteWorkingSet.NewPartCannotReuseRetainedOrStructuralIdentity_PM04_AT21
+[  FAILED  ] MdlCompleteWorkingSet.ExistingPartsAndDefaultTransferRestoreFromHistory_PM18_AT21
+
+ 2 FAILED TESTS

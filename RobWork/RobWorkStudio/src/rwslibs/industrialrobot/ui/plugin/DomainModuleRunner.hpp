@@ -75,7 +75,8 @@ struct DomainModuleEntry {
     /// 语义域，跳过）；std::exception使本域记PreparationFailed，零组装/提交。
     std::function<void(const core::BranchId&, const core::RevisionId&)> bindAnchor;
     /// Committed 回执的域处理（锚前移/根身份回填等域特定语义——入参＝
-    /// 对端命令结果原值。空＝无回执处理域）。
+    /// 对端命令结果原值。空＝无回执处理域）。异常隔离为commit-receipt-failed，
+    /// 保留真实Committed修订并跳过onResult清脏通知，其余域继续。
     std::function<void(const project::CommandResult&)> onCommitted;
     /// 回执投影回写（DraftController onCommandResult——脏标记清零/撤销栈
     /// 清理/Stale 冲突暂存。空＝无草稿源挂接〔保存清单不含本模块〕，如实
@@ -98,7 +99,7 @@ struct DomainApplyEntryReport {
     Outcome outcome = Outcome::NoDraft;
     bool committed = false;     ///< 仅 Submitted 时有意义——对端 Committed
     std::string revision;       ///< 新修订 canonical 文本（committed 时非空）
-    std::string rejectionReason;///< 拒绝/中止/失败原因 token（未 committed 时）
+    std::string rejectionReason;///< 拒绝/中止/失败原因；committed时非空表示回读失败，提交事实仍保留。
 };
 
 /**

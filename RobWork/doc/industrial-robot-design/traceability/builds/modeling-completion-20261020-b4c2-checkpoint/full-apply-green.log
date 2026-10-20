@@ -1,0 +1,18 @@
+Note: Google Test filter = ModelingCompleteApply.*:MdlCompleteWorkingSet.*
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingCompleteApply
+[ RUN      ] ModelingCompleteApply.EmitsAllPartSlotsAndStableTemporaryReferences_PM04_AT21
+[       OK ] ModelingCompleteApply.EmitsAllPartSlotsAndStableTemporaryReferences_PM04_AT21 (0 ms)
+[----------] 1 test from ModelingCompleteApply (0 ms total)
+
+[----------] 2 tests from MdlCompleteWorkingSet
+[ RUN      ] MdlCompleteWorkingSet.AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21
+[       OK ] MdlCompleteWorkingSet.AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21 (0 ms)
+[ RUN      ] MdlCompleteWorkingSet.RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21
+[       OK ] MdlCompleteWorkingSet.RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21 (0 ms)
+[----------] 2 tests from MdlCompleteWorkingSet (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (1 ms total)
+[  PASSED  ] 3 tests.

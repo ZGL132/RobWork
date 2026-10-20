@@ -171,6 +171,23 @@ struct ModelingPluginAssembly {
         const core::ObjectId& rootObjectId, const core::BranchId& branch,
         const core::RevisionId& revision, std::string& errorText);
 
+    /**
+     * @brief PM-04/AT-21：成功提交后从该不可变修订完整采纳正式身份和部件值。
+     * @param closure [in] 本次CommandResult.newRevision的只读闭包，同步借用。
+     * @param rootObjectId [in] 该修订唯一根的有效持久ID。
+     * @param branch [in] 已提交命令的有效分支；不得用其他会话冒充回执。
+     * @param revision [in] 成功结果的有效修订；无量纲身份，不读取可变HEAD。
+     * @param errorText [out] 成功清空，失败给出定位信息。
+     * @return true时完整工作集替换并建立干净基线；false时草稿、基线和锚均不变。
+     * 与普通重开不同，此入口允许消费本次已提交的脏草稿；不得在拒绝/取消时调用。
+     * @throws std::invalid_argument 任一身份无效，属装配契约违约。
+     * 仅UI线程；模块拥有解码值，不保留closure引用，所有物理量沿Codec的SI单位。
+     */
+    bool acceptAppliedSession(const ObjectClosureView& closure,
+        const core::ObjectId& rootObjectId, const core::BranchId& branch,
+        const core::RevisionId& revision, std::string& errorText);
+
+
     /// 应用回执回写（submit Committed 后——基线前移＋根身份回填；T03b-2）。
     void noteAppliedRevision(const sdurws::ird::core::RevisionId& newBase,
                              const std::optional<sdurws::ird::core::ObjectId>& rootObjectId);

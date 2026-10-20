@@ -27,6 +27,7 @@
 #include <variant>
 
 #include <sdurws/ird/modeling/Codec.hpp>       // RobotDesignCodec（对象字节解码门/写入编码）
+#include "WorkingSetCommand.hpp" // B4c-2私有活动闭包投影/注册，不改变旧五命令槽协议。
 #include "InertiaMath.hpp"  // 单元私有：惯量 SPD＋三角不等式特征值单一实现（I-MDL-5——R-2 src/ 私有头）
 
 namespace sdurws::ird::modeling {
@@ -914,16 +915,20 @@ BaselineSnapshot rebuildBaseline(project::HandlerContext& ctx,
                     snap.ws.rootObjectId = ref.objectId;
                     snap.ws.design = typed;
                 } else if constexpr (std::is_same_v<T, ToolDefinition>) {
+                    if(envelope.commandType==kCmdApplyModelingWorkingSet){return;}
                     snap.ws.toolObjects.push_back(typed);
                 } else if constexpr (std::is_same_v<T, SceneObject>) {
+                    if(envelope.commandType==kCmdApplyModelingWorkingSet){return;}
                     snap.ws.sceneObjects.push_back(typed);
                 } else if constexpr (std::is_same_v<T, PoseSet>) {
+                    if(envelope.commandType==kCmdApplyModelingWorkingSet){return;}
                     if (snap.ws.poseSetObject.has_value()) {
                         throw std::logic_error("mdl: 基线闭包含多个位姿集（存储违约）");
                     }
                     snap.ws.poseSetObject = typed;
                 } else {
                     static_assert(std::is_same_v<T, DrivetrainDesign>, "五变体全覆盖");
+                    if(envelope.commandType==kCmdApplyModelingWorkingSet){return;}
                     if (snap.ws.drivetrainObject.has_value()) {
                         throw std::logic_error("mdl: 基线闭包含多个传动对象（存储违约）");
                     }
@@ -931,6 +936,14 @@ BaselineSnapshot rebuildBaseline(project::HandlerContext& ctx,
                 }
             },
             value);
+    }
+    if(envelope.commandType==kCmdApplyModelingWorkingSet&&snap.ws.rootObjectId){
+        // project保留所有未改对象，已解除根引用的部件仍是合法历史素材。
+        // 新完整命令只把根实际引用的部件装入活动工作集，entries仍保留全部原字节。
+        const auto active=readReferencedWorkingSet(ctx.query(),baseSnapshot,
+            snap.ws.design,*snap.ws.rootObjectId,{});
+        if(!active){throw std::logic_error("完整命令基线活动闭包损坏：根引用无法精确恢复");}
+        snap.ws=*active;
     }
     return snap;
 }
@@ -1015,6 +1028,7 @@ std::vector<PayloadObjectSlot> buildInverseSlots(const BaselineSnapshot& baselin
 /// 命令 token→中文摘要标题（§9.3"中文命令摘要"——人读面的固定词表）。
 std::string_view commandTitle(std::string_view token)
 {
+    if (token == kCmdApplyModelingWorkingSet) { return "应用完整建模工作集"; }
     if (token == kCmdApplyRobotDesign) { return "应用机器人设计"; }
     if (token == kCmdApplyToolDefinition) { return "应用工具定义"; }
     if (token == kCmdApplySceneObjects) { return "应用场景对象"; }
@@ -1102,7 +1116,17 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
         && dec.candidate.design.authority == AuthorityMode::StandardDH) {
         // C-6 命令面投影①：切换为独立命令（摘要单独留痕）——载荷只允许
         // 恰一个根槽；混入部件槽＝既有编辑未决断（先提交或撤销）。
-        if (payload->objects.size() != 1) {
+        bool mixedParts=payload->objects.size()!=1;
+        if(envelope.commandType==kCmdApplyModelingWorkingSet){
+            // 完整槽中未变的部件不是混合编辑；仅新增/真实变更部件才违反C-6。
+            mixedParts=false;
+            for(const auto& write:out.objectWrites){
+                if(write.objectTypeToken==kRobotDesignObjectType){continue;}
+                const auto* previous=write.objectId?findBaselineEntry(baseline,*write.objectId):nullptr;
+                if(!previous||previous->bytes!=write.payloadCanonical){mixedParts=true;break;}
+            }
+        }
+        if (mixedParts) {
             out.objectWrites.clear();
             return project::PrepareOutcome::RejectedInvalidInput;
         }
@@ -1174,8 +1198,10 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
     // 诊断，不与候选闭包断言的派生违例混报：被拒候选不进入后续断言域）。
     if (!dec.removedRefs.empty()) {
         std::vector<core::DiagnosticRecord> protectionBlockers;
-        m_suite.assertReferenceProtection(baseline.ws.design, dec.removedRefs,
-                                          protectionBlockers);
+        // 新完整事务可显式转移/清空默认TCP后解除旧工具；旧五命令保持原保护语义。
+        const auto& protectedRoot=envelope.commandType==kCmdApplyModelingWorkingSet
+            ?dec.candidate.design:baseline.ws.design;
+        m_suite.assertReferenceProtection(protectedRoot, dec.removedRefs, protectionBlockers);
         if (!protectionBlockers.empty()) {
             out.objectWrites.clear();  // 拒绝态计划不可消费（project 不消费）
             diags.insert(diags.end(), protectionBlockers.begin(),
@@ -1925,13 +1951,14 @@ DecodeOutcome ApplyDrivetrainDesignHandler::decodeAndPlan(project::HandlerContex
 void registerModelingCommandHandlers(project::HandlerRegistry& registry,
                                      const HandlerServices& services)
 {
-    // 五处理器共享同一服务集（无状态子类——共享安全）；重复 token 注册由
+    // 旧五处理器及完整工作集处理器共享同一服务集（无会话可变态）；重复token由
     // 注册表边界拒绝（fail-fast——装配错误尽早暴露）。
     registry.registerHandler(std::make_unique<ApplyRobotDesignHandler>(services));
     registry.registerHandler(std::make_unique<ApplyToolDefinitionHandler>(services));
     registry.registerHandler(std::make_unique<ApplySceneObjectsHandler>(services));
     registry.registerHandler(std::make_unique<ApplyNamedPosesHandler>(services));
     registry.registerHandler(std::make_unique<ApplyDrivetrainDesignHandler>(services));
+    registry.registerHandler(makeWorkingSetCommandHandler(services)); // 复用v2帧的完整原子应用。
 }
 
 }  // namespace sdurws::ird::modeling

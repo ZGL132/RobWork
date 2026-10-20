@@ -307,3 +307,38 @@ B4c-1本批模型验证结果：集成modeling432、modeling_contract17、ui326�
 B4c-2自审发现的后续必验项（尚未实施）：当前rebuildBaseline将保留但根未引用的全部建模对象装入工作集，PoseSet/Drivetrain有第二个保留对象即抛；完整apply必须按根引用选择活动候选、同时保留全部原字节作inverse/身份防碰撞素材。新命令Restore须按本次固定基线/逆写入重建完整闭包，不能沿可变HEAD取数或丢掉已解除引用的旧部件。C-6权威切换独立性应按真实部件内容判定，新token携带未变的完整部件槽不代表混合编辑；原五命令槽语义保留。rebuildOnRevision目前只重标锚，真正“基于当前版本重新编辑”的完整基线读取仍需下一批一并核实，不能凭B4c-1安全拒绝宣称冲突交互已全闭合。
 
 B4c-1冻结检查点：traceability/builds/modeling-completion-20261020-b4c1-checkpoint；verify-task三条已真实通过、1194通过且无失败跳过。最终GUI/正式宿主仍NOT RUN，本地WIP，不推送/合入。冻结后的索引、文档、格式和范围日志随后续批次新增保存。
+
+## B4c-2精确实施补充：完整应用、保留对象与权威回执
+
+沿前述B4c八节行为/失败矩阵，本批公共面只增CommandHandlers.hpp新token常量和装配门面acceptAppliedSession，旧五命令/v2帧/对象存储不变。新私有WorkingSetCommand.hpp/.cpp提供注册工厂及完整规划；新处理器每次prepare在栈上构建共用断言管线适配器，借用本次不可变RevisionView交给规划器，避免可变HEAD和公共final钩子改签名，注册产物保持无会话可变态。共享prepare仅对新token按根引用投影活动部件，全部原字节仍保留于inverse素材；旧五token不改变基线/槽形状。新token引用保护以最终候选defaultTCP判定；C-6完整部件槽只有真实有变才算混合编辑。Restore按固定修订+本批逆写入重建引用对象，历史保留部件可恢复，根移除事实由根差值计算。
+
+宿主新增私有HostRevisionClosureView，只借用query并持有固定RevisionView；onCommitted按result.newRevision取闭包，经新装配方法完整解码后一次采纳。失败保留草稿并明确错误，不把未提交临时ID记为clean。ordinary restore仍保护未应用编辑；内部读取共用实现且成功回执不得幂等短路。UiPlugin正式应用调用处替换建模条目的成功回执，其他域保持原路由；生产tour直接调用旧条目的测试路径需同步复用同一装配，不能另造算法。
+
+精确文件：前述B4c登记的modeling公共token头、私有src两新文件/CommandHandlers.cpp、原plugin/assembly/test/gui/contract/CMake；ui只HostCompilePort.hpp/.cpp、UiPlugin.cpp、test/HostCompilePipelineTest.cpp；runner现已在B4c-1完成，不在本批扩大。单元卡/DTB/原契约/本计划与新b4c2证据同步。不触框架、F06/F07、requirements/kinematics/存储。按所有者自动采用推荐方案授权先登记再红绿实施。新token沿既有命令族/版本纪律，无新分层、端口类别或长期架构规则，无新Note。
+
+验证顺序：先真实模块五槽及注册处理器缺失红证；完整纯值规划与身份映射/拒绝/历史恢复反例；再真实ProjectStore+HostModelCompilePort贯通完整应用/修改/删除/再次新增/undo-redo/固定修订回执及失败原子性。最后双模式/完整相关回归/门禁；GUI/正式宿主待用户通知，未执行不标通过。B4c-1提交1b7ac601及post-scope55路径/post-lint通过日志随本批新增保存。
+
+
+B4c-2回执隔离补充（实施前登记，沿原八节）：生产回读可能因存储异常失败，实际项目提交已发生，不能把它计为未提交或让异常中止其余域。runner只在既有onCommitted边界捕获std::exception，保留committed/revision事实，以commit-receipt-failed原因报告；状态行单列“已提交但回读失败”，并保留域草稿，不冒称应用闭环。回执投影延后至完整回执成功后再交DraftController，失败不清脏标记；其余域继续。无公共接口、存储、依赖或新诊断码变化，借用生命周期和UI线程沿原纪律；先补真实编排失败回归、重跑完整契约与构建，GUI仍NOT RUN。精确范围追加既有DomainModuleRunner.hpp/.cpp及HostIntegrationContractTest.cpp，均在本卡allowedFiles内；同步单元卡说明，不改变原命令成功事实。
+
+B4c-2测试前置勘误：工具空TCP夹具经真实Codec拒绝，已补合法tip；根toolRefs/sceneRefs是集合，权威Codec按ObjectId规范排序，不能断言输入向量首末语义。测试改为完整成员及inverse原字节一致，未放宽默认TCP精确身份断言。前述“根引用语义顺序保留”仅指映射不按位置猜身份，持久集合顺序仍唯一Codec；对象的其他业务顺序不变。错误轮次单独保存，不列为产品红证。
+
+
+## B4c-3 待实施设计：旧命令与历史保留部件互操作、冲突真正重建
+
+本段仅登记后续发现，不把B4c-2当前验证外推为全部闭合。自审发现旧五命令仍从全部保留对象重建活动基线；完整命令删除后再创建第二个PoseSet/Drivetrain时，旧路径可能误报多个活动对象。旧Restore也只替换当前活动部件，不能保证重新挂接保留部件；须先真实复现，不能只凭新token的undo/redo通过宣称兼容。另rebuildOnRevision仍只重标锚，不能当作已在新修订真正重建。
+
+1. 行为：PM-04/18、MDL-06/13/15。对有根的修订，活动工作集统一以根引用为准；全部原字节保留为inverse和历史身份素材。旧五token/版本/载荷形状继续受理，旧历史逆命令在新完整应用之后仍可按固定修订读取保留对象。冲突“基于当前版本重新编辑”必须完整读取当前权威基线，不能直接给旧内容换锚；迁移未应用内容的明确交互语义再按ui单元卡§8.5核对，未落实前不冒称完成。
+2. 接口：旧命令兼容部分优先仅私有读取/Restore规划，不改公共钩子或存储。冲突读取装配是否需要新增门面回调另起精确设计，在实际核对前不先写代码。
+3. 失败：坏引用/字节/类型不猜测，Restore非法槽拒绝零计划；存储异常沿既有轨。冲突读取失败保留草稿/锚/控制器未决冲突，不虚报已重建。
+4. 生命周期：固定RevisionView与query仅同步借用，project保有唯一修订和取号权；域只在完整候选成功后一次替换。
+5. 线程/确定性：现有命令/UI线程纪律；唯一Codec/SI规范化，按精确ID和cv读，不随HEAD漂移或按名称拼接。
+6. 测试：旧五命令在含两个历史位姿/传动的根闭包中仍可执行；旧根/工具/场景/位姿/传动inverse经真实ProjectStore恢复保留对象，交错新旧命令并撤销重做直到首个旧修订；错误型/重复/身份错/不存在反例。冲突真实DraftController+模块+存储按用户决议重建，失败仍可重试。双模式与相关完整套件；GUI待通知。
+7. 精确范围：旧命令部分暂限本卡已允许的modeling/src/CommandHandlers.cpp、WorkingSetCommand.hpp/.cpp、现有test与ui/test/HostCompilePipelineTest.cpp，单元卡/总计划/契约/新证据；不碰F06/F07、项目存储/框架/业务互链。B4c-2先独立封存WIP，本段实施证据另建，不改冻结历史。
+8. 决策：无新长期架构决策；活动引用和历史保留对象的区分是既有PA-1/PA-2语义的正确消费。若冲突需新公共回调，按自动推荐授权仍须先登记完整公共契约再实施。
+
+B4c-2摘要补充：真实summary-red复现新增token直接显示英文机器词的缺口。沿原commandTitle唯一词表增加“应用完整建模工作集”，不在UI复制词表；同步注册方法注释为六处理器。真实负向链通过：不完整槽、缺continuous工作范围、拒绝确认、Recorded资源缺失导致实际io/编译失败、Stale和只读均不产生修订且草稿保留。测试前置Continuous有限bounds错误轮次单独保留，stage必须核对真实采纳的完整五对象后才可提交，不将其当产品红证。
+
+B4c-2检查点实际结果：非GUI七套件1205通过、0失败、0跳过；用户通知GUI恢复后串行执行三套Windows真实窗口测试（集成modeling_gui80、ui_gui90、独立modeling_gui55）共225通过、0失败、0跳过。合计十套件1430通过，XML与ird逐项对账；core报告明确由XML派生。集成全量Release、独立三目标构建与verify-task机器三条通过，保留既有编译警告。已检查工具/完整草稿恢复、物性、continuous、差异窗口截图。
+
+正式modeling-tour真实FAIL：策略修订推进后旧建模草稿正确保留原锚并被Stale拒绝，旧tour仍假设自动迁移；后续无模型快照却继续解引用，退出-1073741819。原始失败日志/截图完整保留；不把1430绿套件外推为宿主或47项通过。B4c-3继续真正重建/旧历史兼容并加固tour失败出口，新增完整工作集窗口应用仍需专项。证据modeling-completion-20261020-b4c2-checkpoint，仅本地WIP，不推送不合入、不使用子代理。

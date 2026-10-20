@@ -2059,3 +2059,11 @@ public:
 ### WP-13-T24 B4c-1：应用前锚失败隔离
 
 runDomainApply在每域build前捕获bindAnchor的std::exception，记录anchor-bind-failed、零build/submit并继续其余域；私有Outcome追加PreparationFailed，实际提交计数排除准备失败，宿主状态行明确部分失败。真实门面/ProjectStore Stale与跨分支反例见HostIntegrationContractTest，完整回执与窗口验收仍后续。
+
+### WP-13-T24 B4c-2：成功应用的固定修订回执
+
+私有HostRevisionClosureView按固定RevisionView的(oid,cv)读取，UiPlugin建模应用成功后完整权威回读；回读失败保留草稿并明确诊断，不从可变HEAD或临时工作集建立clean。精确设计见总计划B4c-2，GUI仍待通知。
+
+WP-13-T24 B4c-2 回执隔离：完整建模回读失败保留实际Committed修订与草稿；runner记commit-receipt-failed并继续后域，状态行单列已提交但未回读，不向DraftController伪造已完成回执。无公共/存储/依赖变化，GUI未执行边界按总计划登记。
+
+B4c-2检查点实证：十套件1430通过（非GUI1205、Windows GUI225）、0失败、0跳过；双模式及verify-task通过。正式宿主另列FAIL：策略推进后的Stale安全门正确，旧tour误期待直接提交，缺真正重建且后续无快照防护，退出-1073741819。证据modeling-completion-20261020-b4c2-checkpoint；继续B4c-3，不能将套件通过代替宿主/47项终验。

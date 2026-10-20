@@ -62,6 +62,7 @@
 
 #include <sdurws/ird/core/Identity.hpp>             // ProjectId/RevisionId/ObjectId/ContentVersion
 #include <sdurws/ird/modeling/CanonicalBridge.hpp>  // modeling::ObjectClosureView（闭包域字节源——R-1 经公共头）
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp> // 完整成功回执装配门面，零私有头。
 #include <sdurws/ird/modeling/DhConvert.hpp>        // modeling::CompileProbe（等价验证分段探针抽象）/RobotDesignDescription
 #include <sdurws/ird/policy/Contexts.hpp>           // policy::IPolicyNameContext（行程评估名称上下文抽象）
 #include <sdurws/ird/project/CommandService.hpp>    // project::IModelCompilePort/CompileRequest/CompileResult
@@ -187,6 +188,39 @@ private:
     std::string m_designToken;                   ///< 根对象 token（路由键）
     const std::vector<project::ObjectWrite>* m_plannedWrites; ///< 完整计划槽；调用方持有，同步编译期间借用。
 };
+
+/**
+ * @brief PM-04：成功回执的固定修订闭包；拥有RevisionView值，查询端口仅借用。
+ * 仅UI线程同步读取；不访问HEAD，因此后续修订不能改变本回执的(oid,cv)。
+ */
+class HostRevisionClosureView final : public modeling::ObjectClosureView {
+public:
+    /**
+     * @brief 冻结读取引用集；不立即读取对象字节。
+     * @param query [in] 调用方持有的存储端口，须覆盖视图同步使用期。
+     * @param revision [in] 完整不可变修订投影，值拷贝持有；身份有效。
+     * @throws std::invalid_argument 修订或分支身份无效，属装配违约。
+     */
+    HostRevisionClosureView(const project::IProjectQueryPort& query, project::RevisionView revision);
+    /** @brief [in] token精确匹配且仅有一个对象才返回；缺失/歧义/读失败为空。 */
+    std::optional<modeling::ClosureObject> tryObjectByToken(std::string_view token) const override;
+    /** @brief [in] id仅按冻结引用的精确cv读取；缺失/重复/读失败为空，不猜HEAD。 */
+    std::optional<modeling::ClosureObject> tryObject(const core::ObjectId& id) const override;
+private:
+    const project::IProjectQueryPort* m_query; ///< 调用方拥有，同步借用，不延长存储生命周期。
+    project::RevisionView m_revision; ///< 固定引用值；物理单位在原对象Codec中。
+};
+
+/**
+ * @brief 成功提交的建模回执唯一装配：冻结newRevision并完整采纳，失败抛异常供runner隔离。
+ * @param domain [in,out] 本会话建模门面，失败不改变其草稿/锚/基线。
+ * @param query [in] 本会话存储只读口，仅本次同步借用。
+ * @param result [in] 已Committed且携newRevision的真实命令结果。
+ * @throws std::invalid_argument 未成功或无修订（装配违约）；std::runtime_error根缺失/歧义/读回失败。
+ * 仅UI线程；不新增修订、不持有依赖，不用可变HEAD代替成功修订。
+ */
+void acceptModelingCommittedSession(modeling::ModelingPluginAssembly& domain,
+    const project::IProjectQueryPort& query,const project::CommandResult& result);
 
 // =====================================================================
 // HostModelCompilePort——project IModelCompilePort 的 runtime 十段链适配

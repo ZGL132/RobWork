@@ -1174,3 +1174,25 @@ TEST_F(HostIntegrationContractTest, PendingModelBranchChangeIsIsolatedBeforeSubm
 }
 
 }  // namespace
+
+/** @brief PM-04：真实遍历在成功提交后的回读异常上隔离；不得清脏标记或跳过后域。 */
+TEST_F(HostIntegrationContractTest, CommitReceiptExceptionKeepsCommitFactAndContinues_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    FakeDomainModule broken,healthy;broken.nextEnvelope=makeEnvelope();healthy.nextEnvelope=makeEnvelope();
+    int resultCalls=0,healthyReceipts=0;
+    ui::DomainModuleEntry a;a.moduleId="broken";a.module=&broken;
+    a.onCommitted=[](const project::CommandResult&){throw std::runtime_error("固定修订闭包缺失");};
+    a.onResult=[&](const ui::CommandResultProjection&){++resultCalls;};
+    ui::DomainModuleEntry b;b.moduleId="healthy";b.module=&healthy;
+    b.onCommitted=[&](const project::CommandResult&){++healthyReceipts;};
+    ui::DomainApplyReport report;
+    ASSERT_NO_THROW(report=ui::runDomainApply({a,b},std::nullopt,
+        [this](project::CommandEnvelope,project::ICommandInteraction*){return makeCommitted();},nullptr));
+    ASSERT_EQ(report.entries.size(),2U);
+    EXPECT_EQ(report.submittedCount(),2U);EXPECT_EQ(report.committedCount(),2U);
+    EXPECT_TRUE(report.entries[0].committed);EXPECT_FALSE(report.entries[0].revision.empty());
+    EXPECT_NE(report.entries[0].rejectionReason.find("commit-receipt-failed"),std::string::npos);
+    EXPECT_EQ(resultCalls,0)<<"回读失败不得清掉DraftController的未消费草稿标记";
+    EXPECT_EQ(healthyReceipts,1);EXPECT_TRUE(report.entries[1].rejectionReason.empty());
+}

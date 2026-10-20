@@ -167,6 +167,7 @@ add_library(sdurws_ird_modeling STATIC
     src/GeometryLinkEdit.cpp  # UI-T48——几何资源引用编辑原语（§6.7 登记面＋挂换摘）
     src/Readiness.cpp
     src/CommandHandlers.cpp
+    src/WorkingSetCommand.cpp # B4c-2：完整工作集规划复用断言管线，内核零Qt。
     src/DhConvert.cpp
     src/CanonicalBridge.cpp
     src/Package.cpp

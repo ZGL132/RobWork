@@ -3621,7 +3621,19 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
     // 部分成功时仍报告失败域数，不能因另一域成功而掩盖跨分支/组装拒绝。
     if (m_hostStatusBar != nullptr) {
         const auto failed = report.entries.size() - report.noDraftCount() - report.committedCount();
-        if (failed != 0) {
+        const auto receiptFailed=static_cast<std::size_t>(std::count_if(
+            report.entries.begin(),report.entries.end(),[](const DomainApplyEntryReport& row){
+                return row.committed&&!row.rejectionReason.empty();
+            }));
+        if(receiptFailed!=0){
+            // 项目修订已成功，回读/呈现尚未完成；不能冒称“全部应用完成”，
+            // 更不能自动重提同一草稿制造重复部件，须显示诊断并保留原草稿。
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("草稿应用：%1 个域已提交但回读失败（草稿已保留），%2 个域完整应用，%3 个域未应用；详情见诊断")
+                    .arg(static_cast<int>(receiptFailed))
+                    .arg(static_cast<int>(report.committedCount()-receiptFailed))
+                    .arg(static_cast<int>(failed)),10000);
+        } else if (failed != 0) {
             m_hostStatusBar->showMessage(
                 QString::fromUtf8("草稿应用：%1 个域已应用，%2 个域未应用（详情见诊断），%3 个域无变更")
                     .arg(static_cast<int>(report.committedCount()))
@@ -5309,9 +5321,24 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
         },                       // A-23：严格消费 prepare 基线修订
     };
     modeling::registerModelingCommandHandlers(store.handlerRegistry(), services);
+    if(m_domains){
+        for(auto& entry:m_domains->applyEntries){
+            if(entry.moduleId!=modeling::kModuleHandle){continue;}
+            // 全部正式应用路径（含宿主tour直接遍历）共享此完整回执；不捕获
+            // 当前store裸引用，避免关闭/换项目后旧回调访问已释放存储。
+            entry.onCommitted=[this](const project::CommandResult& result){
+                if(!m_lastStoreAdapter||!m_domains){
+                    throw std::runtime_error("建模应用回执缺少已接受的项目会话");
+                }
+                acceptModelingCommittedSession(m_domains->modeling,
+                    m_lastStoreAdapter->projectStore().query(),result);
+            };
+        }
+    }
+
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
-                                "建模域命令处理器已注册（apply-robot-design 族五 token——§5.3.5 装配期；"
+                                "建模域命令处理器已注册（完整工作集及旧五命令共六 token——§5.3.5 装配期；"
                                 "F-461 modeling 半区收口）");
     }
 

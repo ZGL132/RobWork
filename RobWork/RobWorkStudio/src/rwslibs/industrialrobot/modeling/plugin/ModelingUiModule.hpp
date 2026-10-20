@@ -351,6 +351,23 @@ public:
         const core::RevisionId& revision, std::string& errorText);
 
     /**
+     * @brief PM-04/AT-21：成功提交后从该不可变修订完整采纳正式身份和部件值。
+     * @param closure [in] 本次CommandResult.newRevision的只读闭包，同步借用。
+     * @param rootObjectId [in] 该修订唯一根的有效持久ID。
+     * @param branch [in] 已提交命令的有效分支；不得用其他会话冒充回执。
+     * @param revision [in] 成功结果的有效修订；无量纲身份，不读取可变HEAD。
+     * @param errorText [out] 成功清空，失败给出定位信息。
+     * @return true时完整工作集替换并建立干净基线；false时草稿、基线和锚均不变。
+     * 与普通重开不同，此入口允许消费本次已提交的脏草稿；不得在拒绝/取消时调用。
+     * @throws std::invalid_argument 任一身份无效，属装配契约违约。
+     * 仅UI线程；模块拥有解码值，不保留closure引用，所有物理量沿Codec的SI单位。
+     */
+    bool acceptAppliedSession(const ObjectClosureView& closure,
+        const core::ObjectId& rootObjectId, const core::BranchId& branch,
+        const core::RevisionId& revision, std::string& errorText);
+
+
+    /**
      * @brief 应用回执回写（submit Committed 后由装配层调用——编辑基线
      *        前移到新修订；根对象身份按提交结果回填（替换 allocateNew
      *        语义——重复应用不再二次分配）；已应用编辑记录清零）。
@@ -497,6 +514,22 @@ private:
      * 仅UI线程调用，仅读取模块拥有的工作集；SI/集合规范沿唯一Codec。
      */
     bool hasPendingDraft() const;
+
+    /**
+     * @brief 共用完整读取器：普通恢复保护编辑，成功回执消费本次已提交工作集。
+     * @param closure [in] 固定修订只读源；rootObjectId/branch/revision沿公开恢复契约。
+     * @param rootObjectId [in] 唯一根有效ID；不重新取号。
+     * @param branch [in] 有效活动分支；revision为对应的不可变修订。
+     * @param revision [in] 同closure修订身份；不访问HEAD。
+     * @param errorText [out] 成功空，失败定位；失败不改变任何会话值。
+     * @param applicationReceipt [in] true仅用于成功提交回执，允许消费脏草稿。
+     * @return 完整候选采纳/普通幂等为true，读取/数据/冲突失败为false。
+     * @throws std::invalid_argument 无效身份。仅UI线程，closure仅同步借用。
+     */
+    bool readCommittedSession(const ObjectClosureView& closure,
+        const core::ObjectId& rootObjectId, const core::BranchId& branch,
+        const core::RevisionId& revision, std::string& errorText, bool applicationReceipt);
+
 
     /** @brief L-5：记录一次被接受的完整草稿版本；相等重算不入栈，新编辑清重做。仅UI线程。 */
     void rememberDraftHistory();

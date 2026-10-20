@@ -182,9 +182,6 @@ DomainApplyReport runDomainApply(
             // ④回执（投影映射→DraftController〔可空跳过〕；Committed→域
             //   回执处理〔锚前移/根回填——可空跳过〕）。
             const CommandResultProjection projection = projectCommandResult(result);
-            if (entry.onResult) {
-                entry.onResult(projection);
-            }
             row.committed = result.committed();
             if (row.committed && result.newRevision.has_value()) {
                 row.revision = result.newRevision->toCanonical();
@@ -195,15 +192,25 @@ DomainApplyReport runDomainApply(
             } else if (projection.status == CommandResultProjection::Status::Failed) {
                 row.rejectionReason = "failed";
             }
+            bool receiptFailed=false;
             if (row.committed && entry.onCommitted) {
-                entry.onCommitted(result);
+                try {
+                    entry.onCommitted(result);
+                } catch (const std::exception& error) {
+                    // PM-04：提交事实已发生，回读失败不能伪装成未提交或清掉
+                    // 未消费草稿；只隔离回执，后续域仍照常执行。
+                    receiptFailed=true;
+                    row.rejectionReason=std::string("commit-receipt-failed: ")+error.what();
+                }
             }
+            // 只有完整回执成功才通知草稿控制器消费脏标记；拒绝/中止仍原样通知。
+            if (!receiptFailed && entry.onResult) { entry.onResult(projection); }
         }
         if (devLog) {
             devLog("draft.apply[" + entry.moduleId + "]: committed="
                    + (row.committed ? "1" : "0")
-                   + (row.committed ? " rev=" + row.revision
-                                    : " reason=" + row.rejectionReason));
+                   + (row.committed ? " rev=" + row.revision : "")
+                   + (row.rejectionReason.empty() ? "" : " reason=" + row.rejectionReason));
         }
         report.entries.push_back(std::move(row));
     }

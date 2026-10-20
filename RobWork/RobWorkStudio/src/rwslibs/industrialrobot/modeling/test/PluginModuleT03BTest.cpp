@@ -877,3 +877,78 @@ TEST(ModelingDraftAnchor, CleanAndInitiallyUnboundSessionsCanAdvance_PM04_AT29)
     EXPECT_EQ(module.session().branch,other);
     EXPECT_EQ(module.session().baseRevision,base);
 }
+
+/** @brief MDL-13/15、PM-04：完整草稿必须一次组装五对象，保留新增部件的关联临时ID。 */
+TEST(ModelingCompleteApply, EmitsAllPartSlotsAndStableTemporaryReferences_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    CommittedModelClosure closure;ModelingUiModule module;
+    module.session().draft=closure.expected;module.session().draft.rootObjectId.reset();
+    module.session().draft.changes.push_back({"parts","完整未保存工作集"});
+    module.bindSessionAnchor(closure.branch,closure.revision);
+    const auto envelope=module.buildDraftCommand("modeling");ASSERT_TRUE(envelope);
+    EXPECT_EQ(envelope->commandType,"apply-modeling-working-set");
+    const auto payload=tryDecodeCommandPayload(envelope->payloadCanonical);ASSERT_TRUE(payload);
+    ASSERT_EQ(payload->objects.size(),5U)<<"只提交根会丢掉部件修改和新建对象";
+    EXPECT_TRUE(payload->objects.front().allocateNew);EXPECT_FALSE(payload->objects.front().objectId.isValid());
+    for(std::size_t i=1;i<payload->objects.size();++i){
+        EXPECT_TRUE(payload->objects[i].allocateNew);EXPECT_TRUE(payload->objects[i].objectId.isValid());
+    }
+    EXPECT_EQ(module.buildDraftCommand("modeling")->payloadCanonical,envelope->payloadCanonical);
+    // 保存基线中的部件应保持原身份，完整帧不能把每次编辑都当成新增。
+    ModelingUiModule existing;std::string error;
+    ASSERT_TRUE(existing.restoreCommittedSession(closure,*closure.expected.rootObjectId,
+        closure.branch,closure.revision,error));
+    existing.session().draft.toolObjects.front().displayName="保存后的修改";
+    existing.session().draft.changes.push_back({"tool","修改已有工具"});
+    const auto updated=tryDecodeCommandPayload(existing.buildDraftCommand("modeling")->payloadCanonical);
+    ASSERT_TRUE(updated);ASSERT_EQ(updated->objects.size(),5U);
+    for(const auto& slot:updated->objects){EXPECT_FALSE(slot.allocateNew);}
+}
+
+/** @brief PM-04：完整回执消费脏草稿并采纳正式部件ID；同锚也必须读取，不得只清摘要。 */
+TEST(ModelingCompleteApply, ReceiptReplacesTemporaryPartsEvenAtSameAnchor_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    CommittedModelClosure closure;ModelingUiModule module;
+    module.session().draft=makeSixAxisDraft();
+    module.session().draft.changes.push_back({"tool.add","新增临时工具"});
+    module.bindSessionAnchor(closure.branch,closure.revision);
+    std::string error;
+    ASSERT_TRUE(module.acceptAppliedSession(closure,*closure.expected.rootObjectId,
+        closure.branch,closure.revision,error))<<error;
+    EXPECT_EQ(module.session().draft,closure.expected);
+    ASSERT_TRUE(module.session().baselineSnapshot);
+    EXPECT_EQ(*module.session().baselineSnapshot,closure.expected);
+    EXPECT_FALSE(module.buildDraftCommand("modeling"));
+    // 同修订的普通恢复幂等；成功回执必须真正读回权威内容并消费已提交的编辑。
+    module.session().draft.toolObjects.front().displayName="已提交的下一次编辑";
+    module.session().draft.changes.push_back({"tool.name","修改工具"});
+    ASSERT_TRUE(module.acceptAppliedSession(closure,*closure.expected.rootObjectId,
+        closure.branch,closure.revision,error))<<error;
+    EXPECT_EQ(module.session().draft,closure.expected);
+}
+
+/** @brief PM-04：回读缺对象和存储异常都不得清掉草稿、基线或旧锚。 */
+TEST(ModelingCompleteApply, FailedReceiptKeepsWholeDirtySession_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    CommittedModelClosure closure;ModelingUiModule module;std::string error;
+    ASSERT_TRUE(module.restoreCommittedSession(closure,*closure.expected.rootObjectId,
+        closure.branch,closure.revision,error));
+    module.session().draft.design.displayName="尚未消费的完整草稿";
+    module.session().draft.changes.push_back({"name","修改名称"});
+    const auto before=module.session();
+    for(int fault=0;fault<2;++fault){
+        auto broken=closure;
+        if(fault==0){broken.objects.erase(closure.expected.toolObjects.front().objectId.toCanonical());}
+        else{broken.failReads=true;}
+        EXPECT_FALSE(module.acceptAppliedSession(broken,*closure.expected.rootObjectId,
+            closure.branch,core::RevisionId::generate(),error));
+        EXPECT_FALSE(error.empty());
+        EXPECT_EQ(module.session().draft,before.draft);
+        EXPECT_EQ(module.session().baselineSnapshot,before.baselineSnapshot);
+        EXPECT_EQ(module.session().baseRevision,before.baseRevision);
+        EXPECT_EQ(module.session().branch,before.branch);
+    }
+}

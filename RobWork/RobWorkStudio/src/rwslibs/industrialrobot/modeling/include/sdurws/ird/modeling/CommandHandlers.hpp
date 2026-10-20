@@ -130,6 +130,8 @@ namespace sdurws::ird::modeling {
 /// @brief apply-robot-design——写入 robot-design 根对象（＋新增部件对象）；
 ///        requiresDualCompile=true（§9.3 表行 1——权威参数化对象入 WC/DWC）。
 inline constexpr std::string_view kCmdApplyRobotDesign = "apply-robot-design";
+/// PM-04/B4c-2：一次应用完整工作集。v2根首槽+完整部件槽，旧五token语义不变。
+inline constexpr std::string_view kCmdApplyModelingWorkingSet = "apply-modeling-working-set";
 
 /// @brief apply-tool-definition——写入 tool-definition（＋根引用表增量）；
 ///        requiresDualCompile=true（工具几何/物性入 WC/DWC——§9.3 表行 2）。
@@ -480,6 +482,10 @@ inline constexpr std::uint32_t kCommandPayloadVersion = 2;
  * 身份语义（与 ModelingWorkingSet 的临时句柄纪律衔接——Template.hpp 注）：
  *   - allocateNew=true：新对象——objectId 须为全零保留值（未分配标记），
  *     prepare 经 ctx.objectId() 取号回填（PA-1：身份分配唯一归 project）；
+ *     仅apply-modeling-working-set的新部件槽例外：必须携有效请求内临时ID，
+ *     与内嵌ID相等且不在基线已知身份中，用于根引用精确关联；持久写入前重新取号。
+ *     该新token的根新增槽仍为全零，其完整部件槽与根引用必须一一对应。
+ *     Restore只接受已有持久ID，旧五命令仍按全零新增槽契约受理。
  *   - allocateNew=false：既有对象替换——objectId 须有效且存在于基线闭包
  *     （写不存在的身份＝无效输入）。
  *
@@ -919,12 +925,12 @@ protected:
 };
 
 /**
- * @brief 五命令处理器族装配注册（project.md §6.5——L5 应用壳装配期一
+ * @brief 旧五命令及完整工作集命令装配注册（project.md §6.5——L5 装配期一
  *        次性；注册表所有权接收 unique_ptr，重复 token 注册边界拒绝）。
  *
  * @param registry       [in,out] 目标注册表（调用方持有——本函数不接管）
  * @param services       [in] 全族共享的装配服务集（AssertionSuite 端口＋
- *                       ④端口锚定——五处理器持同一服务集；处理器无状态
+ *                       ④端口锚定——六处理器持同一服务集；无会话可变态
  *                       ——共享安全）
  * @throws std::invalid_argument 注册表拒绝（token 重复——同族二次装配即
  *         装配错误，fail-fast）

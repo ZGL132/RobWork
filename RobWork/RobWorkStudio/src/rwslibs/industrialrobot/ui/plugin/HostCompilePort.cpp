@@ -360,6 +360,60 @@ std::optional<modeling::ClosureObject>
     return std::nullopt;
 }
 
+HostRevisionClosureView::HostRevisionClosureView(
+    const project::IProjectQueryPort& query,project::RevisionView revision)
+    :m_query(&query),m_revision(std::move(revision))
+{
+    if(!m_revision.id.isValid()||!m_revision.branch.isValid()){
+        throw std::invalid_argument("固定回执闭包需要有效修订和分支");
+    }
+}
+
+std::optional<modeling::ClosureObject> HostRevisionClosureView::tryObjectByToken(std::string_view token)const
+{
+    const project::ObjectRef* unique=nullptr;
+    for(const auto& ref:m_revision.objectRefs){
+        if(ref.objectTypeToken!=token){continue;}
+        if(unique){return std::nullopt;} // 多根等歧义必须显式拒绝，不能取第一条猜结果。
+        unique=&ref;
+    }
+    return unique?tryObject(unique->objectId):std::nullopt;
+}
+
+std::optional<modeling::ClosureObject> HostRevisionClosureView::tryObject(const core::ObjectId& id)const
+{
+    const project::ObjectRef* unique=nullptr;
+    for(const auto& ref:m_revision.objectRefs){
+        if(ref.objectId!=id){continue;}
+        if(unique){return std::nullopt;} // 重复身份不是合法闭包，避免引用序影响结果。
+        unique=&ref;
+    }
+    if(!unique){return std::nullopt;}
+    const auto bytes=m_query->tryObject(unique->objectId,unique->contentVersion);
+    if(!bytes){return std::nullopt;} // 原读取失败由模块附对象定位，不回落到新版本。
+    return modeling::ClosureObject{unique->objectTypeToken,*bytes};
+}
+
+void acceptModelingCommittedSession(modeling::ModelingPluginAssembly& domain,
+    const project::IProjectQueryPort& query,const project::CommandResult& result)
+{
+    if(!result.committed()||!result.newRevision){
+        throw std::invalid_argument("建模完整回执只接受成功提交及其修订");
+    }
+    const auto revision=query.revision(*result.newRevision);
+    std::optional<core::ObjectId> root;
+    for(const auto& ref:revision.objectRefs){
+        if(ref.objectTypeToken!=modeling::kRobotDesignObjectType){continue;}
+        if(root){throw std::runtime_error("建模应用回执存在多个根对象");}
+        root=ref.objectId;
+    }
+    if(!root){throw std::runtime_error("建模应用回执缺少根对象");}
+    HostRevisionClosureView closure(query,revision);std::string error;
+    if(!domain.acceptAppliedSession(closure,*root,revision.branch,revision.id,error)){
+        throw std::runtime_error(error); // 模块保证失败原子性；runner保留Committed事实及脏标记。
+    }
+}
+
 // =====================================================================
 // HostModelCompilePort
 // =====================================================================
