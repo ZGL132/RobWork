@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="8" failures="0" disabled="0" errors="0" time="0.027" timestamp="2026-10-20T11:34:58.952" name="AllTests">
+  <testsuite name="ModelingSceneTransactions" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.018" timestamp="2026-10-20T11:34:58.952">
+    <testcase name="CreateUpdateRemoveAndCodec_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1382" status="run" result="completed" time="0." timestamp="2026-10-20T11:34:58.952" classname="ModelingSceneTransactions" />
+    <testcase name="RejectAndSharedResource_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1416" status="run" result="completed" time="0." timestamp="2026-10-20T11:34:58.953" classname="ModelingSceneTransactions" />
+    <testcase name="ExternalDiskGeometryAndFailureAtomicity_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1449" status="run" result="completed" time="0.018" timestamp="2026-10-20T11:34:58.953" classname="ModelingSceneTransactions" />
+    <testcase name="RejectIllegalNameAndSourceKinds_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1478" status="run" result="completed" time="0." timestamp="2026-10-20T11:34:58.971" classname="ModelingSceneTransactions" />
+  </testsuite>
+  <testsuite name="ModelingToolTransactions" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.008" timestamp="2026-10-20T11:34:58.971">
+    <testcase name="CrudDefaultAndPreserve_MDL13_AT01" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1500" status="run" result="completed" time="0." timestamp="2026-10-20T11:34:58.971" classname="ModelingToolTransactions" />
+    <testcase name="MultiToolDefaultProtection_MDL13_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1525" status="run" result="completed" time="0." timestamp="2026-10-20T11:34:58.971" classname="ModelingToolTransactions" />
+    <testcase name="InvalidIdentityNamesReferencesAndResources_MDL13_AT01" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1542" status="run" result="completed" time="0." timestamp="2026-10-20T11:34:58.971" classname="ModelingToolTransactions" />
+    <testcase name="RealDiskResourceAndCodec_MDL13_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1563" status="run" result="completed" time="0.008" timestamp="2026-10-20T11:34:58.971" classname="ModelingToolTransactions" />
+  </testsuite>
+</testsuites>

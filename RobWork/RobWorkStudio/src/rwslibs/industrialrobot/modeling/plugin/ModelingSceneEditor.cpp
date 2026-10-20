@@ -21,30 +21,6 @@
 #include <filesystem>
 #include <cctype>
 namespace sdurws::ird::modeling {
-namespace {
-/**
- * @brief 从已有几何引用或Recorded网格文件确定类别，排除来源XML等非几何资源。
- * @param ws [in] 本次只读基线；不读取文件/不产生新摘要。
- * @param key [in] 清单中的唯一资源键。
- * @return 几何类别；非几何返回nullopt。纯输入分类，不替代io格式/预算检查。
- */
-std::optional<GeometryKind> existingGeometryKind(const ModelingWorkingSet& ws,const std::string& key)
-{
-    std::optional<GeometryKind> kind;
-    const auto take=[&](const std::optional<GeometryRef>& ref){if(ref&&ref->resourceRefId==key){kind=ref->kind;}};
-    for(const auto& link:ws.design.links){take(link.visual);take(link.collision);}
-    for(const auto& tool:ws.toolObjects){take(tool.geometry);}
-    for(const auto& scene:ws.sceneObjects){take(scene.geometry);}
-    if(kind){return kind;}
-    for(const auto& resource:ws.design.resourceManifest){
-        if(resource.resourceId!=key||!resource.externalRecord){continue;}
-        auto extension=std::filesystem::u8path(resource.externalRecord->absPath).extension().u8string();
-        std::transform(extension.begin(),extension.end(),extension.begin(),[](unsigned char c){return static_cast<char>(std::tolower(c));});
-        if(extension==".stl"||extension==".obj"||extension==".dae"){return GeometryKind::Mesh;}
-    }
-    return std::nullopt;
-}
-}
 std::optional<ModelingWorkingSet> evaluateSceneEdit(const ModelingWorkingSet& before,
     const SceneEditRequest& request,const ResourceProbeFn& probe,std::string& error)
 {
@@ -104,44 +80,10 @@ std::optional<ModelingWorkingSet> evaluateSceneEdit(const ModelingWorkingSet& be
     }
     SceneObject object=creating?SceneObject{}:*found;
     object.objectId=request.target;object.localName=request.localName;object.role=request.role;
-    if(request.source==SceneGeometrySource::None){object.geometry.reset();}
-    else {
-        std::string resourceId=request.resourceOrPath;
-        if(request.source==SceneGeometrySource::External){
-            if(!probe){return reject("几何读取服务尚未连接，请重新打开建模页。");}
-            std::string why;const auto result=probe(request.resourceOrPath,why);
-            if(!result){return reject("几何读取被拒绝："+why);}
-            if(!result->isMeshFamily){return reject("请选择受支持的STL、OBJ或DAE几何文件。");}
-            // 同一冻结内容及实体路径复用已有Recorded条目，防重复确认制造伪变更。
-            const auto existing=std::find_if(candidate.design.resourceManifest.begin(),candidate.design.resourceManifest.end(),
-                [&](const ResourceRef& ref){return ref.state==ResourceState::Recorded&&ref.externalRecord
-                    &&ref.contentDigest==result->contentDigest&&ref.externalRecord->absPath==result->absPath
-                    &&ref.externalRecord->recordedDigest==result->contentDigest;});
-            if(existing!=candidate.design.resourceManifest.end()){resourceId=existing->resourceId;}
-            else {
-                for(std::size_t n=1;;++n){
-                    resourceId="res-"+std::to_string(n);
-                    if(std::none_of(candidate.design.resourceManifest.begin(),candidate.design.resourceManifest.end(),
-                        [&](const ResourceRef& ref){return ref.resourceId==resourceId;})){break;}
-                }
-                ResourceRef ref;ref.resourceId=resourceId;ref.contentDigest=result->contentDigest;
-                ref.externalRecord=ExternalResourceRecord{result->absPath,result->contentDigest};
-                candidate.design.resourceManifest.push_back(std::move(ref));
-            }
-        }
-        if(std::count_if(candidate.design.resourceManifest.begin(),candidate.design.resourceManifest.end(),
-            [&](const ResourceRef& ref){return ref.resourceId==resourceId;})!=1){
-            return reject("选中的几何资源已不存在或不唯一，请重新选择。");
-        }
-        const auto kind=request.source==SceneGeometrySource::External
-            ?std::optional<GeometryKind>(GeometryKind::Mesh):existingGeometryKind(before,resourceId);
-        if(!kind){return reject("所选资源不是几何；请选择网格资源，不能使用来源XML等文件。");}
-        // 替换来源不改变几何局部姿态；世界位姿始终保留，不能叠加基座安装变换。
-        auto geometry=object.geometry.value_or(GeometryRef{});
-        geometry.resourceRefId=resourceId;
-        geometry.kind=*kind;
-        object.geometry=std::move(geometry);
-    }
+    const auto withGeometry=evaluateManagedGeometry(candidate,object.geometry,request.source,
+        request.resourceOrPath,probe,error);
+    if(!withGeometry){return std::nullopt;}
+    candidate=*withGeometry;
     if(creating){candidate.sceneObjects.push_back(object);candidate.design.sceneRefs.push_back(request.target);}
     else {candidate.sceneObjects[static_cast<std::size_t>(found-before.sceneObjects.begin())]=object;}
     if(candidate==before){return candidate;} // 恒等确认不制造编辑摘要和局部历史。

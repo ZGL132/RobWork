@@ -125,7 +125,8 @@ bool inJointEditPane(const QWidget& panel, const QObject* widget)
             || name == QStringLiteral("ird_modeling_pose_area")
             || name == QStringLiteral("ird_modeling_drivetrain_area")
             || name == QStringLiteral("ird_modeling_body_editor")
-            || name == QStringLiteral("ird_modeling_scene_editor")) {
+            || name == QStringLiteral("ird_modeling_scene_editor")
+            || name == QStringLiteral("ird_modeling_tool_editor")) {
             return true;
         }
     }
@@ -2199,4 +2200,32 @@ TEST_F(ModelingPanelGuiTest, SceneManagerPendingSelectionAndReadOnly_MDL15_AT28)
     m_panel->setWritable(false);const auto readOnly=m_ws;EXPECT_FALSE(apply->isEnabled());
     ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));EXPECT_EQ(m_ws,readOnly);EXPECT_EQ(accepted,2);
     m_panel->setEditTargetProvider({});entry->click();EXPECT_FALSE(apply->isEnabled());
+}
+/** @brief F08：两个构建模式都运行真实工具页，暂存/选择/只读/物性基线均守卫。 */
+TEST_F(ModelingPanelGuiTest, ToolManagerPendingSelectionReadOnly_MDL13_AT01)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-01"},std::nullopt);
+    int edits=0;m_panel->setPostEditAction([&]{++edits;});m_panel->resize(1140,840);m_panel->show();QApplication::processEvents();
+    auto* entry=m_panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode");ASSERT_NE(entry,nullptr);entry->click();
+    auto* editor=m_panel->findChild<QWidget*>("ird_modeling_tool_editor");ASSERT_NE(editor,nullptr);
+    auto* name=editor->findChild<QLineEdit*>("ird_tool_name");auto* apply=editor->findChild<QPushButton*>("ird_tool_apply");
+    auto* def=editor->findChild<QCheckBox*>("ird_tool_default");auto* feedback=editor->findChild<QLabel*>("ird_tool_feedback");
+    name->setText("gripper");const auto before=m_ws;m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    EXPECT_EQ(name->text(),"gripper");apply->click();EXPECT_EQ(m_ws,before);EXPECT_EQ(edits,0);
+    EXPECT_TRUE(feedback->text().contains(QStringLiteral("默认")));def->setChecked(true);apply->click();
+    ASSERT_EQ(m_ws.toolObjects.size(),1U);EXPECT_EQ(edits,1);const auto first=m_ws;
+    name->setText("discard");editor->findChild<QPushButton*>("ird_tool_cancel")->click();EXPECT_EQ(name->text(),"gripper");EXPECT_EQ(m_ws,first);
+    auto* objects=editor->findChild<QComboBox*>("ird_tool_objects");objects->setCurrentIndex(0);name->setText("second");apply->click();
+    ASSERT_EQ(m_ws.toolObjects.size(),2U);EXPECT_EQ(edits,2);EXPECT_EQ(m_ws.design.defaultTcp->toolOid,first.toolObjects.front().objectId);
+    name->setText("discard_again");objects->setCurrentIndex(1);EXPECT_EQ(name->text(),"gripper");
+    // 未广播刷新时的真实基线漂移也必须由确认出口拒绝，不能只测重绑后的正常回填。
+    name->setText("stale");m_ws.toolObjects.front().localName="external";const auto changed=m_ws;
+    apply->click();EXPECT_EQ(m_ws,changed);EXPECT_TRUE(feedback->text().contains(QStringLiteral("基线")));
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    EXPECT_EQ(name->text(),"external");m_panel->setWritable(false);const auto readOnly=m_ws;
+    EXPECT_FALSE(apply->isEnabled());EXPECT_FALSE(editor->findChild<QWidget*>("ird_tool_body_editor")->isEnabled());
+    ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));EXPECT_EQ(m_ws,readOnly);
+    m_panel->setWritable(true);EXPECT_TRUE(apply->isEnabled());
+    const auto folder=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!folder.isEmpty()){QDir().mkpath(folder);ASSERT_TRUE(m_panel->grab().save(folder+"/tool-manager-top.png"));}
 }

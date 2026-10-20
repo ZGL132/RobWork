@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="6.336" timestamp="2026-10-20T11:35:13.507" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="1.835" timestamp="2026-10-20T11:35:13.508">
+    <testcase name="ToolManagerPendingSelectionReadOnly_MDL13_AT01" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="2205" status="run" result="completed" time="1.835" timestamp="2026-10-20T11:35:13.508" classname="ModelingPanelGuiTest" />
+  </testsuite>
+  <testsuite name="ModelingUiModuleHostWiring" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="4.5" timestamp="2026-10-20T11:35:15.343">
+    <testcase name="EmptyToolManagerEntry_MDL13_AT01" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="967" status="run" result="completed" time="0.985" timestamp="2026-10-20T11:35:15.343" classname="ModelingUiModuleHostWiring" />
+    <testcase name="ToolManagerHistoryBodyAndNavigation_MDL13_AT01" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="1060" status="run" result="completed" time="1.06" timestamp="2026-10-20T11:35:16.329" classname="ModelingUiModuleHostWiring" />
+    <testcase name="ToolRealFileDialogAndStaleGuard_MDL13_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="1092" status="run" result="completed" time="2.455" timestamp="2026-10-20T11:35:17.389" classname="ModelingUiModuleHostWiring" />
+  </testsuite>
+</testsuites>

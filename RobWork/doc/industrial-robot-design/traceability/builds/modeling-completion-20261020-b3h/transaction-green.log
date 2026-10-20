@@ -1,0 +1,28 @@
+Note: Google Test filter = ModelingToolTransactions.*:ModelingSceneTransactions.*
+[==========] Running 8 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from ModelingSceneTransactions
+[ RUN      ] ModelingSceneTransactions.CreateUpdateRemoveAndCodec_MDL15_AT28
+[       OK ] ModelingSceneTransactions.CreateUpdateRemoveAndCodec_MDL15_AT28 (0 ms)
+[ RUN      ] ModelingSceneTransactions.RejectAndSharedResource_MDL15_AT28
+[       OK ] ModelingSceneTransactions.RejectAndSharedResource_MDL15_AT28 (0 ms)
+[ RUN      ] ModelingSceneTransactions.ExternalDiskGeometryAndFailureAtomicity_MDL15_AT28
+[       OK ] ModelingSceneTransactions.ExternalDiskGeometryAndFailureAtomicity_MDL15_AT28 (18 ms)
+[ RUN      ] ModelingSceneTransactions.RejectIllegalNameAndSourceKinds_MDL15_AT28
+[       OK ] ModelingSceneTransactions.RejectIllegalNameAndSourceKinds_MDL15_AT28 (0 ms)
+[----------] 4 tests from ModelingSceneTransactions (18 ms total)
+
+[----------] 4 tests from ModelingToolTransactions
+[ RUN      ] ModelingToolTransactions.CrudDefaultAndPreserve_MDL13_AT01
+[       OK ] ModelingToolTransactions.CrudDefaultAndPreserve_MDL13_AT01 (0 ms)
+[ RUN      ] ModelingToolTransactions.MultiToolDefaultProtection_MDL13_AT28
+[       OK ] ModelingToolTransactions.MultiToolDefaultProtection_MDL13_AT28 (0 ms)
+[ RUN      ] ModelingToolTransactions.InvalidIdentityNamesReferencesAndResources_MDL13_AT01
+[       OK ] ModelingToolTransactions.InvalidIdentityNamesReferencesAndResources_MDL13_AT01 (0 ms)
+[ RUN      ] ModelingToolTransactions.RealDiskResourceAndCodec_MDL13_AT28
+[       OK ] ModelingToolTransactions.RealDiskResourceAndCodec_MDL13_AT28 (8 ms)
+[----------] 4 tests from ModelingToolTransactions (8 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 2 test suites ran. (27 ms total)
+[  PASSED  ] 8 tests.

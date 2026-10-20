@@ -7,7 +7,7 @@
  */
 #ifndef IRD_MODELING_PLUGIN_MODELINGSCENEEDITOR_HPP
 #define IRD_MODELING_PLUGIN_MODELINGSCENEEDITOR_HPP
-#include <sdurws/ird/modeling/GeometryLinkEdit.hpp>
+#include "GeometryResourceFlow.hpp"
 #include <QWidget>
 #include <functional>
 #include <cstdint>
@@ -20,7 +20,7 @@ namespace sdurws::ird::modeling {
 /** @brief 单次场景事务的动作；删除仅解除当前草稿引用，历史由project持有。 */
 enum class SceneEditAction { Create, Update, Remove };
 /** @brief 几何来源；None表示固定帧，Existing引用清单，External经io探测后登记。 */
-enum class SceneGeometrySource { None, Existing, External };
+using SceneGeometrySource=ManagedGeometrySource;
 /** @brief 已显式确认的事务值；调用方拥有，纯值求值期间只读，全部位姿保持原世界系值。 */
 struct SceneEditRequest {
     SceneEditAction action=SceneEditAction::Create;

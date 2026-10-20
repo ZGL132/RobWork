@@ -30,7 +30,7 @@ std::optional<ManualBodyResult> evaluateManualBodyEdit(
     }
     if(edit.centerOfMass){
         for(int i=0;i<3;++i){if(!std::isfinite((*edit.centerOfMass)[i])){
-            error="质心三个分量须为有限数值（连杆系，m）。";return std::nullopt;
+            error="质心三个分量须为有限数值（物体局部坐标系，m）。";return std::nullopt;
         }}
     }
     const bool changedCom=edit.centerOfMass
@@ -79,7 +79,7 @@ ModelingBodyEditor::ModelingBodyEditor(QWidget* parent,Accept accept)
     setObjectName("ird_modeling_body_editor");
     auto* layout=new QVBoxLayout(this);m_title=new QLabel(this);layout->addWidget(m_title);
     auto* note=new QLabel(QStringLiteral("勾选要修改的项目；未勾选保留原值与来源。"
-        "质心为连杆坐标系m；惯量在质心、姿态与连杆系一致，kg·m²。"
+        "质心为物体局部坐标系m；惯量在质心、姿态与物体局部坐标系一致，kg·m²。"
         "改变质心必须明确选择迁移或完整覆盖；确认只写草稿。"),this);
     note->setWordWrap(true);layout->addWidget(note);
     m_mass=new QCheckBox(QStringLiteral("修改质量 (kg)"),this);m_mass->setObjectName("ird_body_mass_edit");
@@ -118,11 +118,11 @@ ModelingBodyEditor::ModelingBodyEditor(QWidget* parent,Accept accept)
 }
 
 void ModelingBodyEditor::bindTarget(std::optional<core::ObjectId> id,const BodyData& body,
-    const std::string& name,bool writable)
+    const std::string& name,bool writable,const std::string& objectKind)
 {
     const bool changed=m_id!=id||m_before!=body;
     m_id=id;m_before=body;m_writable=writable;setEnabled(id.has_value()&&writable);
-    m_title->setText(QStringLiteral("连杆物性：")+QString::fromStdString(name)
+    m_title->setText(QString::fromStdString(objectKind)+QStringLiteral("物性：")+QString::fromStdString(name)
         +(writable?QString():QStringLiteral("（只读）")));
     if(changed){cancelPending();}
 }

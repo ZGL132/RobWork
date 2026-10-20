@@ -12,6 +12,7 @@
 #include "ModelingPanelWidget.hpp"
 #include "ModelingBodyEditor.hpp"
 #include "ModelingSceneEditor.hpp"
+#include "ModelingToolEditor.hpp"
 #include <QScrollArea>
 
 #include <QApplication>                           // clipboard（UI-T59 预览复制钮）
@@ -392,6 +393,8 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     auto* sceneModeBtn=new QPushButton(QStringLiteral("场景管理"),editPage);
     sceneModeBtn->setObjectName(QStringLiteral("ird_modeling_edit_scene_mode"));
     modeRow->addWidget(sceneModeBtn);
+    auto* toolModeBtn=new QPushButton(QStringLiteral("工具管理"),editPage);
+    toolModeBtn->setObjectName("ird_modeling_edit_tool_mode");modeRow->addWidget(toolModeBtn);
     modeRow->addStretch(1);
     editLay->addLayout(modeRow);
     m_editStack = new QStackedWidget(editPage);
@@ -470,6 +473,35 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     sceneScroll->setWidget(m_sceneManager);m_editStack->addWidget(sceneScroll);
     connect(m_sceneManager->findChild<QPushButton*>("ird_scene_pose"),&QPushButton::clicked,this,[this]{
         refreshScenePosePane();m_editStack->setCurrentWidget(m_sceneArea);
+    });
+    // MDL-13：空工具没有树锚，管理页独立可达；安装/TCP仍跳转已有完整页。
+    auto* toolScroll=new QScrollArea(m_editStack);toolScroll->setWidgetResizable(true);
+    m_toolManagerArea=toolScroll;
+    m_toolManager=new ModelingToolEditor(toolScroll,
+        [this](const ModelingWorkingSet& before,const ModelingWorkingSet& after,
+            std::optional<core::ObjectId> selected,std::string& error){
+            m_threadGuard.assertOnUiThread();auto* current=m_editTarget?m_editTarget():nullptr;
+            if(!m_writable||!current||*current!=before){error="草稿基线已改变或项目只读，请刷新后重新确认。";return false;}
+            *current=after;onEditApplied("工具对象");
+            // 接受回调可能同步刷新，之后必须现取，不能复用旧工作集引用。
+            current=m_editTarget?m_editTarget():nullptr;if(!current){return true;}
+            refreshStructureTree(*current);focusObject(selected);
+            m_toolManager->bindTarget(current,selected,m_writable);m_editStack->setCurrentWidget(m_toolManagerArea);
+            return true;
+        },[this](std::optional<core::ObjectId> selected){
+            focusObject(selected);auto* current=m_editTarget?m_editTarget():nullptr;
+            m_toolManager->bindTarget(current,selected,m_writable);m_editStack->setCurrentWidget(m_toolManagerArea);
+        });
+    toolScroll->setWidget(m_toolManager);m_editStack->addWidget(toolScroll);
+    connect(m_toolManager->findChild<QPushButton*>("ird_tool_pose"),&QPushButton::clicked,this,[this]{
+        refreshToolMountPane();refreshTcpPane();m_editStack->setCurrentWidget(m_toolArea);
+    });
+    connect(toolModeBtn,&QPushButton::clicked,this,[this]{
+        auto* current=m_editTarget?m_editTarget():nullptr;std::optional<core::ObjectId> selected;
+        if(current&&m_lastSelected){const auto target=resolveSelection(*current,*m_lastSelected);
+            if(target&&target->kind==SelectedTarget::Kind::Tool){selected=m_lastSelected;}}
+        focusObject(selected);current=m_editTarget?m_editTarget():nullptr;
+        m_toolManager->bindTarget(current,selected,m_writable);m_editStack->setCurrentWidget(m_toolManagerArea);
     });
     editLay->addWidget(m_editStack, 1);
     connect(baseModeBtn, &QPushButton::clicked, this, [this] {
@@ -685,6 +717,7 @@ void ModelingPanelWidget::cancelPendingForHistoryRestore()
     m_threadGuard.assertOnUiThread();
     if(m_bodyEditor){m_bodyEditor->cancelPending();}
     if(m_sceneManager){m_sceneManager->cancelPending();}
+    if(m_toolManager){m_toolManager->cancelPending();}
     // 普通后台刷新按UI-T79保留暂存；明确撤销/重做则必须取消暂存，再由
     // 后续refreshPanel推入恢复值。模型取消只清数据；还须走表单既有取消
     // 动作隐藏确认区，避免旧确认明细在恢复后仍可见、误导用户再次确认。
@@ -3356,6 +3389,12 @@ void ModelingPanelWidget::refreshEditPages()
             if(target&&target->kind==SelectedTarget::Kind::Scene){selected=m_lastSelected;}}
         m_sceneManager->bindTarget(ws,selected,m_writable);
     }
+    if(m_toolManager){
+        std::optional<core::ObjectId> selected;
+        if(ws&&m_lastSelected){const auto target=resolveSelection(*ws,*m_lastSelected);
+            if(target&&target->kind==SelectedTarget::Kind::Tool){selected=m_lastSelected;}}
+        m_toolManager->bindTarget(ws,selected,m_writable);
+    }
     SelectedTarget::Kind kind = SelectedTarget::Kind::Joint;
     bool resolved = false;
     if (ws != nullptr && m_lastSelected.has_value()) {
@@ -3378,7 +3417,7 @@ void ModelingPanelWidget::refreshEditPages()
     if (resolved && kind == SelectedTarget::Kind::Tool) {
         refreshToolMountPane();
         refreshTcpPane();  // UI-T57——TCP 段随工具页同刷（combo/基线/使能）
-        m_editStack->setCurrentWidget(m_toolArea);
+        if(m_editStack->currentWidget()!=m_toolManagerArea){m_editStack->setCurrentWidget(m_toolArea);}
         return;
     }
     if (resolved && kind == SelectedTarget::Kind::Scene) {

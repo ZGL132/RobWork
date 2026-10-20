@@ -35,9 +35,13 @@
 #include <QTableWidget>
 #include <QDialog>
 #include <QScrollBar>
+#include <QScrollArea> // F08确认完整物性在真实滚动窗口中可达。
+#include <QMouseEvent> // 使用既有Widgets事件链检查可见按钮，无新增Qt Test依赖。
 #include <QTimer>
 #include <QTemporaryDir>
 #include <QFile>
+#include <QFileInfo> // F08真实中文网格文件选择，路径始终沿Qt UTF-8转换。
+#include <functional> // 文件对话嵌套事件的边界动作，不替代域逻辑。
 #include <QFileDialog>
 #include <QTreeWidget>
 #include <sdurws/ird/modeling/StructureEdit.hpp>
@@ -897,9 +901,12 @@ TEST(ModelingUiModuleHostWiring, ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17)
     view->focusObject(module.session().draft.design.links.back().objectId);
     int submits=0;module.bindCommandSubmit([&](const ui::CommandId&){++submits;});
     const auto before=module.session().draft;
-    auto* mass=panel->findChild<QCheckBox*>("ird_body_mass_edit");ASSERT_NE(mass,nullptr);
-    auto* field=panel->findChild<QLineEdit*>("ird_body_value_0");ASSERT_NE(field,nullptr);
-    auto* apply=panel->findChild<QPushButton*>("ird_body_apply");ASSERT_NE(apply,nullptr);
+    // 工具复用相同物性子控件名，必须先定位连杆页；全窗口递归查找会命中
+    // 另一页的禁用控件，把测试定位错误误报为连杆编辑产品故障。
+    auto* body=panel->findChild<QWidget*>("ird_modeling_body_editor");ASSERT_NE(body,nullptr);
+    auto* mass=body->findChild<QCheckBox*>("ird_body_mass_edit");ASSERT_NE(mass,nullptr);
+    auto* field=body->findChild<QLineEdit*>("ird_body_value_0");ASSERT_NE(field,nullptr);
+    auto* apply=body->findChild<QPushButton*>("ird_body_apply");ASSERT_NE(apply,nullptr);
     mass->setChecked(true);field->setText("4.5");apply->click();
     const auto after=module.session().draft;
     EXPECT_EQ(after.changes.size(),before.changes.size()+1);
@@ -961,6 +968,21 @@ TEST(ModelingUiModuleHostWiring, SceneCrudLocalHistoryAndWorldPose_MDL15_AT28)
     ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));
     ASSERT_TRUE(QMetaObject::invokeMethod(remove,"clicked",Qt::DirectConnection));
     EXPECT_EQ(module.session().draft,readOnly);EXPECT_EQ(submits,0);EXPECT_EQ(module.session().baseRevision,revision);
+}
+
+/** @brief F08/MDL-13：空模板须可进入工具管理，不能依赖预先存在的工具树锚。 */
+TEST(ModelingUiModuleHostWiring, EmptyToolManagerEntry_MDL13_AT01)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-01"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    ASSERT_TRUE(module.session().draft.toolObjects.empty());
+    std::unique_ptr<QWidget> panel(module.createPanel());panel->resize(1120,800);panel->show();
+    QApplication::processEvents();
+    auto* entry=panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode");
+    ASSERT_NE(entry,nullptr)<<"空工具集缺少管理入口";
+    entry->click();QApplication::processEvents();
+    auto* editor=panel->findChild<QWidget*>("ird_modeling_tool_editor");
+    ASSERT_NE(editor,nullptr);EXPECT_TRUE(editor->isVisible());
 }
 
 /** @brief F12/MDL-15：真实Windows文件选择/外部网格来源、确认前零写入与资源摘要。 */
@@ -1039,5 +1061,119 @@ TEST(ModelingUiModuleHostWiring, SceneExternalGeometryFileDialog_MDL15_AT28)
         EXPECT_TRUE(panel->findChild<QLineEdit*>("ird_scene_path")->text().isEmpty());
         EXPECT_TRUE(panel->findChild<QLabel*>("ird_scene_feedback")->text().contains(QStringLiteral("丢弃")));
         EXPECT_EQ(module.session().draft,stable);
+    }
+}
+/** @brief F08：真实模块控件驱动工具CRUD、物性、安装TCP页及完整局部历史，项目零修订。 */
+TEST(ModelingUiModuleHostWiring, ToolManagerHistoryBodyAndNavigation_MDL13_AT01)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-01"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();const auto before=module.session().draft;
+    const auto revision=module.session().baseRevision;std::unique_ptr<QWidget> panel(module.createPanel());
+    int submits=0;module.bindCommandSubmit([&](const ui::CommandId&){++submits;});
+    panel->resize(1140,840);panel->show();QApplication::processEvents();
+    auto* entry=panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode");ASSERT_NE(entry,nullptr);entry->click();
+    auto* editor=panel->findChild<QWidget*>("ird_modeling_tool_editor");ASSERT_NE(editor,nullptr);
+    auto* name=editor->findChild<QLineEdit*>("ird_tool_name");auto* apply=editor->findChild<QPushButton*>("ird_tool_apply");
+    auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");
+    auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");ASSERT_NE(undo,nullptr);ASSERT_NE(redo,nullptr);
+    name->setText("gripper");editor->findChild<QCheckBox*>("ird_tool_default")->setChecked(true);apply->click();
+    const auto added=module.session().draft;ASSERT_EQ(added.toolObjects.size(),1U);ASSERT_TRUE(added.design.defaultTcp);
+    undo->click();EXPECT_EQ(module.session().draft,before);redo->click();EXPECT_EQ(module.session().draft,added);
+    entry->click();auto* body=editor->findChild<QWidget*>("ird_tool_body_editor");ASSERT_NE(body,nullptr);EXPECT_TRUE(body->isEnabled());
+    body->findChild<QCheckBox*>("ird_body_mass_edit")->setChecked(true);
+    body->findChild<QLineEdit*>("ird_body_value_0")->setText("2.5");
+    EXPECT_EQ(module.session().draft,added);body->findChild<QPushButton*>("ird_body_apply")->click();
+    const auto weighted=module.session().draft;EXPECT_DOUBLE_EQ(weighted.toolObjects.front().body.mass.value(),2.5);
+    EXPECT_EQ(weighted.toolObjects.front().body.mass.provenance().kind,core::ProvenanceKind::UserProvided);
+    undo->click();EXPECT_EQ(module.session().draft,added);redo->click();EXPECT_EQ(module.session().draft,weighted);
+    // 工具局部系也必须显式选择质心处置；完整覆盖后再迁移，独立数值核对真实写回对象。
+    const auto field=[&](int i){return body->findChild<QLineEdit*>(QStringLiteral("ird_body_value_%1").arg(i));};
+    auto* com=body->findChild<QCheckBox*>("ird_body_com_edit");
+    auto* choice=body->findChild<QComboBox*>("ird_body_centroid_resolution");
+    com->setChecked(true);for(int i=1;i<4;++i){field(i)->setText("0");}
+    body->findChild<QPushButton*>("ird_body_apply")->click();EXPECT_EQ(module.session().draft,weighted);
+    choice->setCurrentIndex(2);for(int i=4;i<10;++i){field(i)->setText(i<7?"1":"0");}
+    body->findChild<QPushButton*>("ird_body_apply")->click();const auto tensor=module.session().draft;
+    ASSERT_TRUE(tensor.toolObjects.front().body.inertia.tryValue());
+    EXPECT_DOUBLE_EQ(tensor.toolObjects.front().body.inertia.value().iyy,1);
+    com->setChecked(true);field(1)->setText("0.1");choice->setCurrentIndex(1);
+    body->findChild<QPushButton*>("ird_body_apply")->click();const auto migrated=module.session().draft;
+    const auto& inertia=migrated.toolObjects.front().body.inertia.value();
+    EXPECT_DOUBLE_EQ(inertia.ixx,1);EXPECT_DOUBLE_EQ(inertia.iyy,1.025);EXPECT_DOUBLE_EQ(inertia.izz,1.025);
+    undo->click();EXPECT_EQ(module.session().draft,tensor);redo->click();EXPECT_EQ(module.session().draft,migrated);
+    // 禁用父控件仍必须由子页执行端拒绝直接信号，不能只靠灰显测试空转。
+    module.setWritable(false);body->findChild<QCheckBox*>("ird_body_mass_edit")->setChecked(true);field(0)->setText("99");
+    ASSERT_TRUE(QMetaObject::invokeMethod(body->findChild<QPushButton*>("ird_body_apply"),"clicked",Qt::DirectConnection));
+    EXPECT_EQ(module.session().draft,migrated);module.setWritable(true);
+    entry->click();name->setText("gripper_renamed");apply->click();const auto renamed=module.session().draft;
+    EXPECT_EQ(renamed.toolObjects.front().localName,"gripper_renamed");EXPECT_EQ(renamed.toolObjects.front().objectId,added.toolObjects.front().objectId);
+    editor->findChild<QPushButton*>("ird_tool_pose")->click();EXPECT_TRUE(panel->findChild<QWidget*>("ird_modeling_tool_area")->isVisible());
+    entry->click();propertySnapshot(*panel,"tool-manager-body");
+    // 模拟用户把滚动条移到底端，再核对可见性与真实鼠标命中；不能用
+    // ensureWidgetVisible的程序化滚动结果推断用户是否能操作嵌套子页。
+    auto* ancestor=editor->parentWidget();QScrollArea* scroll=nullptr;
+    while(ancestor&&!scroll){scroll=qobject_cast<QScrollArea*>(ancestor);ancestor=ancestor->parentWidget();}
+    ASSERT_NE(scroll,nullptr);auto* bodyApply=body->findChild<QPushButton*>("ird_body_apply");
+    QApplication::processEvents();
+    scroll->verticalScrollBar()->triggerAction(QAbstractSlider::SliderToMaximum);
+    QApplication::processEvents();
+    EXPECT_EQ(scroll->verticalScrollBar()->value(),scroll->verticalScrollBar()->maximum());
+    EXPECT_TRUE(scroll->viewport()->rect().contains(bodyApply->mapTo(scroll->viewport(),bodyApply->rect().center())));
+    EXPECT_EQ(body->childAt(bodyApply->mapTo(body,bodyApply->rect().center())),bodyApply);
+    const auto local=QPointF(bodyApply->rect().center());
+    const auto global=QPointF(bodyApply->mapToGlobal(bodyApply->rect().center()));
+    QMouseEvent press(QEvent::MouseButtonPress,local,global,Qt::LeftButton,Qt::LeftButton,Qt::NoModifier);
+    QMouseEvent release(QEvent::MouseButtonRelease,local,global,Qt::LeftButton,Qt::NoButton,Qt::NoModifier);
+    QApplication::sendEvent(bodyApply,&press);QApplication::sendEvent(bodyApply,&release);
+    EXPECT_EQ(module.session().draft,renamed);
+    propertySnapshot(*panel,"tool-manager-body-bottom");
+    editor->findChild<QPushButton*>("ird_tool_remove")->click();EXPECT_EQ(module.session().draft,renamed);
+    editor->findChild<QCheckBox*>("ird_tool_confirm_remove")->setChecked(true);editor->findChild<QPushButton*>("ird_tool_remove")->click();
+    EXPECT_TRUE(module.session().draft.toolObjects.empty());EXPECT_FALSE(module.session().draft.design.defaultTcp);
+    undo->click();EXPECT_EQ(module.session().draft,renamed);redo->click();EXPECT_TRUE(module.session().draft.toolObjects.empty());
+    EXPECT_EQ(module.session().baseRevision,revision)<<"工具管理不能越过项目应用入口写修订";
+    EXPECT_EQ(submits,0);
+}
+/** @brief F08：真实Windows文件窗口的正常选择及嵌套切草稿/只读/取消均不能污染新目标。 */
+TEST(ModelingUiModuleHostWiring, ToolRealFileDialogAndStaleGuard_MDL13_AT28)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-28"},std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());const auto path=dir.filePath(QStringLiteral("工具网格.stl"));
+    QFile file(path);ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    ASSERT_GT(file.write("solid tool\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid tool\n"),0);file.close();
+    ModelingUiModule module;module.seedTemplateSession();std::unique_ptr<QWidget> panel(module.createPanel());
+    panel->resize(1140,840);panel->show();QApplication::processEvents();panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode")->click();
+    auto* editor=panel->findChild<QWidget*>("ird_modeling_tool_editor");ASSERT_NE(editor,nullptr);
+    auto* source=editor->findChild<QComboBox*>("ird_tool_source");auto* browse=editor->findChild<QPushButton*>("ird_tool_browse");
+    struct DialogModeRestore {
+        bool old=QApplication::testAttribute(Qt::AA_DontUseNativeDialogs);
+        DialogModeRestore(){QApplication::setAttribute(Qt::AA_DontUseNativeDialogs,true);}
+        ~DialogModeRestore(){QApplication::setAttribute(Qt::AA_DontUseNativeDialogs,old);}
+    } restore;
+    // 模拟操作仅位于文件对话边界；资源读取/摘要、页面代际和模块基线均真实执行。
+    const auto choose=[&](const std::function<void()>& during){
+        bool seen=false;QTimer select;select.setInterval(150);QTimer watchdog;watchdog.setSingleShot(true);
+        QObject::connect(&select,&QTimer::timeout,[&]{
+            auto* dialog=qobject_cast<QFileDialog*>(QApplication::activeModalWidget());if(!dialog){return;}
+            if(!seen){seen=true;if(during){during();}dialog->setDirectory(dir.path());dialog->selectFile(QFileInfo(path).fileName());return;}
+            if(auto* input=dialog->findChild<QLineEdit*>("fileNameEdit")){input->setText(QFileInfo(path).fileName());}
+            EXPECT_TRUE(QMetaObject::invokeMethod(dialog,"accept",Qt::DirectConnection));
+        });
+        QObject::connect(&watchdog,&QTimer::timeout,[]{ADD_FAILURE()<<"工具文件对话未响应";
+            if(auto* d=qobject_cast<QDialog*>(QApplication::activeModalWidget())){d->reject();}});
+        select.start();watchdog.start(5000);browse->click();select.stop();watchdog.stop();EXPECT_TRUE(seen);
+    };
+    const auto before=module.session().draft;source->setCurrentIndex(2);choose({});
+    EXPECT_EQ(editor->findChild<QLineEdit*>("ird_tool_path")->text(),path);EXPECT_EQ(module.session().draft,before);
+    editor->findChild<QLineEdit*>("ird_tool_name")->setText("welder");editor->findChild<QCheckBox*>("ird_tool_default")->setChecked(true);
+    editor->findChild<QPushButton*>("ird_tool_apply")->click();ASSERT_EQ(module.session().draft.toolObjects.size(),1U);
+    ASSERT_TRUE(module.session().draft.toolObjects.front().geometry);propertySnapshot(*panel,"tool-manager-external");
+    source->setCurrentIndex(2);choose([&]{module.seedTemplateSession();});
+    EXPECT_TRUE(editor->findChild<QLineEdit*>("ird_tool_path")->text().isEmpty());EXPECT_TRUE(module.session().draft.toolObjects.empty());
+    for(const bool readOnly:{true,false}){
+        module.setWritable(true);source->setCurrentIndex(2);const auto stable=module.session().draft;
+        choose([&]{if(readOnly){module.setWritable(false);}else{editor->findChild<QPushButton*>("ird_tool_cancel")->click();}});
+        EXPECT_TRUE(editor->findChild<QLineEdit*>("ird_tool_path")->text().isEmpty());EXPECT_EQ(module.session().draft,stable);
+        EXPECT_TRUE(editor->findChild<QLabel*>("ird_tool_feedback")->text().contains(QStringLiteral("丢弃")));
     }
 }

@@ -50,8 +50,8 @@ public:
     using Accept = std::function<bool(const core::ObjectId&,const BodyData&,const ManualBodyResult&,std::string&)>;
     /** @brief 创建内联控件；[in] parent负责释放，[in] accept同步使用且不保留参数引用。 */
     explicit ModelingBodyEditor(QWidget* parent,Accept accept);
-    /** @brief 绑定当前连杆值；[in] id空则禁用，[in] body为SI基线，[in] name为显示名，[in] writable为项目可写性。 */
-    void bindTarget(std::optional<core::ObjectId> id,const BodyData& body,const std::string& name,bool writable);
+    /** @brief 绑定当前连杆值；[in] id空则禁用，[in] body为SI基线，[in] name为显示名，[in] writable为项目可写性，[in] objectKind默认连杆，工具页传工具（纯显示分类）。 */
+    void bindTarget(std::optional<core::ObjectId> id,const BodyData& body,const std::string& name,bool writable,const std::string& objectKind="连杆");
     /** @brief 丢弃全部未确认输入并恢复当前基线；不写工作集，不增加局部历史。 */
     void cancelPending();
 private:

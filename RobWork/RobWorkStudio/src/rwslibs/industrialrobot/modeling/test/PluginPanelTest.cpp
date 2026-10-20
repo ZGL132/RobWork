@@ -48,6 +48,7 @@
 #include <sdurws/ird/modeling/Codec.hpp>
 #include "plugin/ModelingBodyEditor.hpp" // F10纯值编排，真实迁移与完整张量判定。
 #include "plugin/ModelingSceneEditor.hpp" // F12纯值事务，错误时完整基线保持不变。
+#include "plugin/ModelingToolEditor.hpp" // F08工具/默认TCP/几何候选完整事务。
 #include "plugin/ModelingCommandFlows.hpp"  // customChainRowSemanticCheck（UI-T66——F-523① 录入辅助面）
 #include <sdurws/ird/ui/CommandInteractionBridge.hpp>          // ui 确认交互桥（L-3——UI-T13 落位面）
 
@@ -1494,4 +1495,91 @@ TEST(ModelingSceneTransactions, RejectIllegalNameAndSourceKinds_MDL15_AT28)
     before.design.sceneRefs.push_back(robotPart.objectId);
     request.action=SceneEditAction::Remove;request.confirmRemove=true;
     EXPECT_FALSE(evaluateSceneEdit(before,request,{},error))<<"删除也须遵循环境/工件角色边界";
+}
+/** @brief F08/MDL-13：新增/改名/删除的根引用和默认TCP必须原子一致，更新保留安装/TCP/物性。 */
+TEST(ModelingToolTransactions, CrudDefaultAndPreserve_MDL13_AT01)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-01"},std::nullopt);
+    const auto before=makeSixAxisDraft();ToolEditRequest r;r.target=core::ObjectId::generate();r.localName="gripper";
+    std::string error;EXPECT_FALSE(evaluateToolEdit(before,r,{},error))<<"首工具必须显式选择默认";
+    r.makeDefault=true;const auto created=evaluateToolEdit(before,r,{},error);ASSERT_TRUE(created)<<error;
+    ASSERT_EQ(created->toolObjects.size(),1U);ASSERT_TRUE(created->design.defaultTcp);
+    EXPECT_EQ(created->design.toolRefs,std::vector<core::ObjectId>{r.target});
+    EXPECT_EQ(created->design.defaultTcp->toolOid,r.target);EXPECT_EQ(created->design.defaultTcp->tcpKey,"tcp");
+    auto baseline=*created;auto& tool=baseline.toolObjects.front();tool.mountInterface.P()[0]=0.125;
+    tool.tcpList.front().offset.P()[2]=0.3;TcpEntry extra;extra.key="probe";extra.offset.P()[1]=0.2;tool.tcpList.push_back(extra);
+    tool.body.mass=core::SourcedValue<double>::provided(2,core::ValueProvenance::make(core::ProvenanceKind::ImportMapped));
+    r.action=ToolEditAction::Update;r.localName="gripper_renamed";r.displayName="焊接夹具";
+    const auto updated=evaluateToolEdit(baseline,r,{},error);ASSERT_TRUE(updated)<<error;
+    auto expected=baseline.toolObjects.front();expected.localName=r.localName;expected.displayName=r.displayName;
+    EXPECT_EQ(updated->toolObjects.front(),expected);
+    const auto same=evaluateToolEdit(*updated,r,{},error);ASSERT_TRUE(same);EXPECT_EQ(*same,*updated);
+    r.makeDefault=false;EXPECT_FALSE(evaluateToolEdit(*updated,r,{},error));
+    r.action=ToolEditAction::Remove;EXPECT_FALSE(evaluateToolEdit(*updated,r,{},error));
+    r.confirmRemove=true;const auto removed=evaluateToolEdit(*updated,r,{},error);ASSERT_TRUE(removed)<<error;
+    EXPECT_TRUE(removed->toolObjects.empty());EXPECT_TRUE(removed->design.toolRefs.empty());EXPECT_FALSE(removed->design.defaultTcp);
+    EXPECT_TRUE(before.toolObjects.empty())<<"输入完整基线从未被修改";
+}
+
+/** @brief F08：默认工具有其他候选时禁止猜测替代，显式改默认后才允许删除旧工具。 */
+TEST(ModelingToolTransactions, MultiToolDefaultProtection_MDL13_AT28)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-28"},std::nullopt);
+    ToolEditRequest r;r.target=core::ObjectId::generate();r.localName="first";r.makeDefault=true;std::string error;
+    const auto first=evaluateToolEdit(makeSixAxisDraft(),r,{},error);ASSERT_TRUE(first);
+    const auto firstId=r.target;r.target=core::ObjectId::generate();r.localName="second";r.makeDefault=false;
+    const auto two=evaluateToolEdit(*first,r,{},error);ASSERT_TRUE(two)<<error;
+    EXPECT_EQ(two->design.defaultTcp->toolOid,firstId);
+    ToolEditRequest remove;remove.action=ToolEditAction::Remove;remove.target=firstId;remove.confirmRemove=true;
+    EXPECT_FALSE(evaluateToolEdit(*two,remove,{},error));EXPECT_TRUE(error.find("默认TCP")!=std::string::npos);
+    r.action=ToolEditAction::Update;r.makeDefault=true;const auto newDefault=evaluateToolEdit(*two,r,{},error);ASSERT_TRUE(newDefault);
+    EXPECT_EQ(newDefault->design.defaultTcp->toolOid,r.target);
+    const auto removed=evaluateToolEdit(*newDefault,remove,{},error);ASSERT_TRUE(removed)<<error;
+    ASSERT_EQ(removed->toolObjects.size(),1U);EXPECT_EQ(removed->toolObjects.front().objectId,r.target);
+}
+
+/** @brief F08：非法名称、重复身份、失效引用及错误资源均拒绝，不把来源XML当网格。 */
+TEST(ModelingToolTransactions, InvalidIdentityNamesReferencesAndResources_MDL13_AT01)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-01"},std::nullopt);
+    auto before=makeSixAxisDraft();ToolEditRequest r;r.localName="tool";r.makeDefault=true;std::string error;
+    EXPECT_FALSE(evaluateToolEdit(before,r,{},error));r.target=before.design.joints.front().objectId;
+    EXPECT_FALSE(evaluateToolEdit(before,r,{},error));r.target=core::ObjectId::generate();
+    for(const auto& name:std::vector<std::string>{"","with space","a/b",before.design.joints.front().localName}){
+        r.localName=name;EXPECT_FALSE(evaluateToolEdit(before,r,{},error))<<name;
+    }
+    r.localName="valid";r.source=ManagedGeometrySource::Existing;r.resourceOrPath="missing";
+    EXPECT_FALSE(evaluateToolEdit(before,r,{},error));
+    ResourceRef source;source.resourceId="source";source.externalRecord=ExternalResourceRecord{"C:/source.urdf",source.contentDigest};
+    before.design.resourceManifest.push_back(source);r.resourceOrPath="source";EXPECT_FALSE(evaluateToolEdit(before,r,{},error));
+    r.source=ManagedGeometrySource::External;r.resourceOrPath="C:/missing.stl";
+    EXPECT_FALSE(evaluateToolEdit(before,r,{},error));
+    r.source=ManagedGeometrySource::None;const auto added=evaluateToolEdit(before,r,{},error);ASSERT_TRUE(added);
+    auto broken=*added;broken.design.toolRefs.push_back(r.target);r.action=ToolEditAction::Update;
+    EXPECT_FALSE(evaluateToolEdit(broken,r,{},error));
+}
+
+/** @brief F08：真实中文磁盘网格沿io冻结摘要，替换保留局部位姿，删除保留共享资源，Codec完整往返。 */
+TEST(ModelingToolTransactions, RealDiskResourceAndCodec_MDL13_AT28)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-28"},std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());QFile file(dir.filePath(QStringLiteral("夹具.stl")));
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    ASSERT_GT(file.write("solid tool\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid tool\n"),0);file.close();
+    ToolEditRequest r;r.target=core::ObjectId::generate();r.localName="gripper";r.makeDefault=true;
+    r.source=ManagedGeometrySource::External;r.resourceOrPath=file.fileName().toStdString();std::string error;const auto probe=makeIoResourceProbe();
+    const auto added=evaluateToolEdit(makeSixAxisDraft(),r,probe,error);ASSERT_TRUE(added)<<error;
+    ASSERT_TRUE(added->toolObjects.front().geometry);ASSERT_FALSE(added->design.resourceManifest.empty());
+    const auto& resource=added->design.resourceManifest.back();EXPECT_NE(resource.contentDigest,core::Digest256{});
+    ASSERT_TRUE(resource.externalRecord);EXPECT_EQ(resource.contentDigest,resource.externalRecord->recordedDigest);
+    auto baseline=*added;baseline.toolObjects.front().geometry->localTransform.P()[0]=0.12;
+    r.action=ToolEditAction::Update;const auto same=evaluateToolEdit(baseline,r,probe,error);ASSERT_TRUE(same)<<error;EXPECT_EQ(*same,baseline);
+    r.source=ManagedGeometrySource::Existing;r.resourceOrPath=resource.resourceId;
+    const auto existing=evaluateToolEdit(baseline,r,{},error);ASSERT_TRUE(existing);EXPECT_EQ(*existing,baseline);
+    for(const auto& value:std::vector<ObjectVariant>{ObjectVariant(baseline.design),ObjectVariant(baseline.toolObjects.front())}){
+        const RobotDesignCodec codec;const auto bytes=codec.encode(value,kCurrentFormatVersion);ASSERT_TRUE(bytes.ok());
+        const auto decoded=codec.decode(bytes.get(),kCurrentFormatVersion);ASSERT_TRUE(decoded.ok());EXPECT_EQ(decoded.get(),value);
+    }
+    r.action=ToolEditAction::Remove;r.confirmRemove=true;const auto removed=evaluateToolEdit(baseline,r,{},error);ASSERT_TRUE(removed);
+    EXPECT_EQ(removed->design.resourceManifest,baseline.design.resourceManifest);
 }
