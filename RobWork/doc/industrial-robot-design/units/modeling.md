@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.57（2026-10-20，WP-13-T25/F07 批次落位——导入自碰撞候选→策略草稿移交半区（P-MDL-3；policy 已冻结，"待冻结"前置解除）：①§6.3 disable_collisions 行移交语义落位登记——导入确认后候选入 `ModuleSessionState.importedSelfCollisionCandidates`（每次导入确认整体替换、取消不携带），装配门面新增只读取值器（值拷贝、不泄模块私有类型——R-2）；②宿主策略编辑器（A-23 模态）预填半区：连杆名→ObjectId 解析数据源＝当前修订 robot-design 根对象字节（modeling 公共 Codec 解码；名称作用域＝建模根内 localName，无前缀拼接/剥离——R-4），预填忽略对象对（来源注明"导入候选"、同对去重）；未解析名（模型未应用/不在修订）警示行列出不静默丢弃；预填仅进表单——经用户显式确认才随 submit 产生策略修订，取消零写入（policy 权威/存储格式零改动）；③遗留登记：候选"已解析预填→确认→评估器复算"的端到端数值链与三维覆盖层对照归统一验收批（B5 口径）；"Manual/Auto/Imported 来源标记"入 policy schema（per-pair provenance 词表）与"基座首段/静态排除"开关语义仍属 policy 卡演化面，待所有者裁决。前一版本 v0.56 保留如下。 |
 | 文档版本 | v0.56（2026-10-20，WP-13-T25/F01 批次落位——逐关节最大速度/最大加速度 schema 落位（MDL-01"逐轴定义关节（类型、轴线、零位、限位、速度/加速度限制）"——审计 M05 缺口闭合）：①**§4.3-A 表尾追加 maxVelocity/maxAcceleration 两行**（SourcedValue<double>，转动 rad/s、rad/s²｜移动 m/s、m/s²；两权威模式均权威；Provided 须有限且 ≥0〔零＝真实零速非缺失〕；Fixed＝NotApplicable）；②**编码格式 {1,0}→{1,1}**（表尾追加纪律——旧 {1,0} 字节兼容读为 NotProvided，无升级器语义不变）；③CanonicalBridge 硬写 NotProvided 改 Provided 透传（SI 真值门＋provenance 原样——runtime JointDescription 既有字段真实消费）；④模板种子/URDF velocity/WorkCell VelLimit·AccLimit 三入口真实映射（报告由"无落点不支持"转映射行——§6.3/§6.6 同步；joint-velocity-limit/joint-acceleration-limit 两 kind 生产面退役、词表值保留在册）；⑤面板＝属性行 max-velocity/max-acceleration 两行＋编辑页 12→14 行＋applyJointFieldEdit 域规则（负值/非有限/Fixed 拒绝、拒绝原子性）；⑥就绪 L9 注记条件化（存在可动关节缺值才登记——全值齐备零登记，§8.2 v0.53 口径的 F01 注记面更新）；⑦黄金数据集 mdl-urdf-import 期望面随契约演化更新（unsupported 8→3＋mappedVelocityCount=5 计数锚——manifest 摘要/历史登记，非对账失败掩盖）。前一版本 v0.55 保留如下。 |
 | 文档版本 | v0.55（2026-10-20，WP-13-T25/F06 批次落位——外部 WorkCell 反向导入正式命令入口：§9.7.3 表尾追加第十二号 `modeling.import-workcell`〔Stage/Project、readOnlyAllowed=false——写路径〕；命令流装配纪律＝io openGenericXml 良构校验（io.md §9.6 冻结读取面）＋readFileBytes 真实字节＋两读取窗口 SHA-256 摘要对账（ResChanged 诚实拒绝）＋Polytope 缺失容忍依赖树（存在＝io 真实快照、缺失＝exists=false 叶——引擎按 V-08 转 Recorded＋IO-RES-MISSING 事实）→§6.6 提取引擎→多设备分支显式选链（§6.4 同机制，不默认选第一个）→逐项提取报告确认（AT-33）→确认才替换草稿〔恰一根不变量 R1 同 URDF/Xacro 导入〕；取消选文件/取消选链/取消报告/根检查失败/摘要失配零工作集修改零修订；"从 WorkCell XML 新建项目来源"维持明确不做。审计 20261019-601ffa0e M14/MDL-18 复验口径＝正式窗口选文件→选设备→完整报告→确认→树/属性可编辑。前一版本 v0.54 保留如下。 |
 | 文档版本 | v0.54（2026-10-18，B7 文本勘误批：§14.6 v0.8「新增 13→15 条 MdlTemplate」、v0.12「MdlPartObjectCommands 12→14 条」、v0.17 冒烟「246/246＋14/14→200/200＋8/8」与分组「ACC2 六→七/ACC3 五→六」；findings F-312/F-343/F-353/F-354 消账）。前一版本 v0.53 保留如下。 |
@@ -616,7 +617,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 | `<mimic>` | 不映射 | 识别＋报告＋阻断（MDL-12；MDL-21 启用后仅线性耦合放开） |
 | `<transmission>` | 不映射（线性耦合候选提示，R2） | 报告"不支持项" |
 | `<gazebo>` 等外来扩展 | 忽略项清单 | 报告不解释 |
-| `<disable_collisions>`（自碰撞配置） | SelfCollisionHints（临时）→导入报告"策略草稿候选输入" | **不写策略对象**（policy 权威）；交接 API 待 policy 冻结（P-MDL-3） |
+| `<disable_collisions>`（自碰撞配置） | SelfCollisionHints（临时）→导入报告"策略草稿候选输入" | **不写策略对象**（policy 权威）；**移交半区已落位（WP-13-T25/F07——P-MDL-3）**：导入确认后候选入会话承载（`ModuleSessionState.importedSelfCollisionCandidates`，门面只读取值器），宿主策略编辑器（A-23 模态）经当前修订 robot-design 解码解析连杆名→ObjectId 预填忽略对象对（来源注明"导入候选"；未解析名警示不静默），经用户显式确认才产生策略修订——取消零写入 |
 | （无安装语义） | basePlacement＝ground（来源 ImportMapped＋"默认补全"清单） | MDL-22 V15-04：未显式配置默认地面 |
 
 ### 6.4 链型判定（§2.1 两维度；MDL-12）

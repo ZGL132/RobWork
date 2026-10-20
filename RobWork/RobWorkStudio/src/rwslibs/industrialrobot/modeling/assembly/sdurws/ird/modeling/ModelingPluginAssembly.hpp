@@ -238,6 +238,16 @@ struct ModelingPluginAssembly {
     /// @brief 订阅选择服务（下行"树选→面板高亮"启用——转发模块）。
     void attachSelectionService(ui::SelectionService& service);
 
+    /**
+     * @brief 导入自碰撞排除候选读取（WP-13-T25/F07——P-MDL-3 移交链）：
+     *        最近一次导入确认产生的连杆名对（值拷贝；未装配/无导入＝空）。
+     *
+     * 消费面＝宿主策略编辑器预填（经用户显式确认才写入策略修订——policy
+     * 权威不变）；只读、仅 UI 线程（会话态 §3.4）。
+     */
+    std::vector<std::pair<std::string, std::string>>
+    importedSelfCollisionCandidates() const;
+
     /// @brief 显式退订选择服务（幂等——转发模块）。
     void detachSelectionService();
 

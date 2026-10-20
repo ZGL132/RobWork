@@ -1097,6 +1097,13 @@ bool executeModelingCommand(const std::string& commandId,
         if (!host.confirmImport(importSummaryText(outcome.report))) {
             return false;
         }
+        // F07/P-MDL-3 移交半区：自碰撞排除候选随确认进入会话承载（策略
+        // 编辑器预填输入——用户在策略编辑中显式确认才产生策略修订；取消
+        // 路径上方已 return，候选不携带）。每次导入确认整体替换。
+        session.importedSelfCollisionCandidates.clear();
+        for (const ImportSelfCollisionItem& c : outcome.report.selfCollisionCandidates) {
+            session.importedSelfCollisionCandidates.emplace_back(c.link1, c.link2);
+        }
         // 审核修正（UI-T41 批次D R1——恰一根不变量）：导入＝**替换既有模型
         // 内容**——已回填的项目根身份必须保留，否则下次 draft.apply 按
         // allocateNew 重复建根（requirements 域 UI-T35 P1-2 同型缺陷 F-461

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-20T12:03:41+08:00",
+  "generatedAt": "2026-10-20T12:45:58+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 11916,
-    "totalBytes": 644346634,
+    "totalFiles": 11932,
+    "totalBytes": 644973435,
     "byKind": {
       "gtest-report": 335,
-      "acceptance-record": 515,
-      "build-log": 10966,
-      "log": 1,
-      "pipeline-artifact": 2,
-      "json-data": 7,
-      "markdown-doc": 41,
       "governance-record": 40,
+      "pipeline-artifact": 2,
+      "build-log": 10982,
+      "markdown-doc": 41,
       "benchmark": 8,
-      "manual-acceptance": 1
+      "acceptance-record": 515,
+      "manual-acceptance": 1,
+      "log": 1,
+      "json-data": 7
     },
     "byLifecycle": {
       "current": 27,
-      "unverified": 11325,
+      "historical": 564,
       "superseded": 0,
-      "historical": 564
+      "unverified": 11341
     },
     "associated": 596,
-    "unassociated": 11320,
-    "shaComputed": 11897,
+    "unassociated": 11336,
+    "shaComputed": 11913,
     "shaSkippedLarge": 19,
     "duplicateGroupsTotal": 657,
     "duplicateGroupsListed": 100
@@ -85023,6 +85023,134 @@
       "taskIds": [],
       "bytes": 2332,
       "sha256": "c8e2cdab07f1c6eebae5cb12505f4fdfe950eb08a6367ca6a9d271d04c639429",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-integration-modeling-gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11576,
+      "sha256": "5aaf682d3ad96fc5b9fd24c2df1280bdfa41d68167e4cf41a3ff684ba00d7ec3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-integration-modeling-gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20729,
+      "sha256": "9fc7c741c99c05b1c6818e0392efc1b3be4d02630e671883bb50c31d182c42fd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-integration-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 71728,
+      "sha256": "771da346dc504c1ec2ba0fba1838f212e746b95be970076ab350c93c1455251b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-integration-modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 134272,
+      "sha256": "645d3d8431c56e235fb8fcd9366289711df788f93dd231d5b6a93b636df28271",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-standalone-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57750,
+      "sha256": "65dcfc9e6eff123313bac912291b64dab7ac12f5e36844de481e16a8f29817bf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-standalone-modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 108421,
+      "sha256": "c0d5d26c9dba3341d8127fc83941312a0bd17520a4088863c6a79fa3e7cbaf1c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-ui-gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17758,
+      "sha256": "3f4fbdcc67d7629b5b4ee492cfdcce800fcdac108528284dd4e03da111b56ec8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-ui-gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 31136,
+      "sha256": "b9d65e4717743edf2d8394c2af4ff5754fc2d34c1457c7c060e909241e6b65df",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-ui-policy-gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1415,
+      "sha256": "2a2354748a97ccac8bf73796cbe146985c7b62263f62ddfbc10add79b26b1545",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-ui-policy-gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2260,
+      "sha256": "37cf5cb9cab0ffbcb8cee7a8f1ef72259109b85ec65915f40f4354a525a54a92",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 56933,
+      "sha256": "7700aeb524fc73ff60866ad57923ca397c3f4b89f8ba37a468b1822a4ef4819e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/green-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 104428,
+      "sha256": "ee02929ddde2f15dfd7a90d03fb79b983ebec6c1ad1e28f40922070c39100320",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/README.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4767,
+      "sha256": "dc5b80bd007500212b74c833c631363e96a679b651ec0cb4697d6ca77f48c47f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/red-session-candidates.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 987,
+      "sha256": "b0fb10cf6b139ff30c74feec8e1313da9754c841f265e364622fb1a4d7fd77ef",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/red-session-candidates.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1287,
+      "sha256": "31baefed594d2e6e168073137d7ff4580c88eb930923db0f2002ad648b3dfaf4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t25-f07/SHA256SUMS.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1354,
+      "sha256": "e279ba5513fcfb66de1b3e94ed7c259dc8188d00e97251da09e3b83e70b3b6f3",
       "lifecycle": "unverified"
     },
     {

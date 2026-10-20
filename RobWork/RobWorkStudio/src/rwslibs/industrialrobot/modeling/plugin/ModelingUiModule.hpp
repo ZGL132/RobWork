@@ -97,6 +97,13 @@ struct ModuleSessionState {
     /// 已应用修订预览视图（UI-T41 A3——AppliedRevisionView 定格于应用时刻；
     /// nullopt＝无已应用修订——预览页空态。撤销/重做事件即失效——内容未知）。
     std::optional<AppliedRevisionView> appliedPreview;
+
+    /// 导入自碰撞排除候选（WP-13-T25/F07——P-MDL-3 移交链的会话承载）：
+    /// 最近一次导入确认（URDF disable_collisions 等）产生的连杆名对；供
+    /// 策略编辑器预填（呈现"导入候选"，经用户显式确认才写入策略修订
+    /// ——policy 权威不变）。每次导入确认整体替换；不经确认零策略写入。
+    /// 仅 UI 线程访问（§3.4）。
+    std::vector<std::pair<std::string, std::string>> importedSelfCollisionCandidates;
 };
 
 // UI-T63 从零创建面（CustomChainJointSpec/CustomChainDeclaration——完整型

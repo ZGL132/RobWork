@@ -42,6 +42,12 @@ Worktree：`C:/zcode-wt/wp13-t25`（独立 Git 索引）；构建树：`C:/zcode
 
 固定顺序 F06→F01→F07→F14（F01 后复跑 F06 映射/报告）。每项一个完整提交（代码+测试+文档+证据），提交前双模式构建＋受影响测试＋ird_gates＋BuildRedLine＋validate-docs/task＋verify-task＋范围检查。证据目录：`traceability/builds/wp13-t25-f06/`、`-f01/`、`-f07/`、`-f14/`（只增不改）。
 
+### F07 状态：已实现验证（2026-10-20）
+
+- 链路核实：审计 M17 主体缺口已由 WP-14-T12（A-23，基线内）闭合——入口/编辑/提交/按修订解析/评估器接线全链在案（A-23 套件复跑 6/6）。
+- 本批实现：P-MDL-3 移交半区（policy 已冻结）——导入候选→会话承载→门面取值器→策略编辑预填（名→ObjectId 按修订 robot-design 解码）＋未解析警示；红证 1＋流/GUI 绿证；ird_gates/validate-* PASS。
+- 遗留：per-pair 来源标记与基座首段/静态开关＝policy 卡演化面待所有者；三入口数值对照与覆盖层＝B5 统一验收。
+
 ### F01 状态：已实现验证（G1～G4 闭环，2026-10-20）
 
 - G1 红证：4 例红（桥 NotProvided／URDF 谎报无落点／面板行缺失／就绪无条件注记）——red-*.{xml,log}。

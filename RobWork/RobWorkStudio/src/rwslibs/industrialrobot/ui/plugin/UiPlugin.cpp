@@ -666,7 +666,14 @@ void IrdWorkbenchHostPlugin::initialize()
     // （bundleAboutSource——§11.4，HarnessAboutSource 占位退役）。
     m_policySource = std::make_shared<ui::HostEngineeringPolicy>([this] {
         // 策略卡只负责触发命令；原始草稿、校验和事务全部由同源私有适配器处理。
-        m_policySource->edit(m_hostStatusBar);
+        // F07/P-MDL-3 移交链：携带建模会话的导入自碰撞排除候选（最近一次
+        // 导入确认产生；名称→ObjectId 解析在编辑器内按当前修订完成，未解析
+        // 名如实警示——不静默丢弃）。模型未应用/名称不在修订＝候选不预填。
+        m_policySource->edit(
+            m_hostStatusBar,
+            m_domains != nullptr
+                ? m_domains->modeling.importedSelfCollisionCandidates()
+                : std::vector<std::pair<std::string, std::string>>{});
     });
     m_nameResolver = std::make_shared<app::NullUiNameResolver>();
     m_bridge = std::make_shared<app::ProjectDiagnosticsBridge>(

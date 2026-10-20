@@ -37,6 +37,7 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostEngineeringPolicy.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostEngineeringPolicy.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostEngineeringPolicyGuiTest.cpp",
     "RobWork/doc/industrial-robot-design/units/modeling.md",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/units/policy.md",

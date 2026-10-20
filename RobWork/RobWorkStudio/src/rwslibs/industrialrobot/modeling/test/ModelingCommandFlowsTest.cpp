@@ -1342,3 +1342,67 @@ TEST(ModelingCommandFlows, ImportUrdfVelocityNotReportedUnsupported_MDL01_WP13T2
     EXPECT_EQ(reportText.find("joint-velocity-limit"), std::string::npos)
         << "velocity 已有 schema 落点——不得再报无落点不支持项（F01）";
 }
+
+/// F07/MDL-04/P-MDL-3：URDF disable_collisions 候选在导入确认后进入会话
+/// 承载（importedSelfCollisionCandidates——策略编辑器预填的移交半区）；
+/// 取消确认不携带。修复前（红）：候选只进报告、会话承载恒空＝导入提示
+/// 死端（审计 M17 复验口径"能显示导入提示"≠"能进入策略编辑"）。
+TEST(ModelingCommandFlows, ImportUrdfSeedsSelfCollisionCandidatesToSession_MDL04_WP13T25)
+{
+    IRD_TEST_INFO("MDL-04",{"AT-19"},std::nullopt);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    // URDF 带两条 disable_collisions（base↔l1、l1↔l2——PR2 风格自碰撞排除）。
+    const QString urdfPath = dir.filePath(QStringLiteral("pairs.urdf"));
+    {
+        QFile f(urdfPath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+        f.write(QStringLiteral(
+            "<?xml version=\"1.0\"?>\n"
+            "<robot name=\"pair arm\">\n"
+            "  <disable_collisions link1=\"base\" link2=\"l1\"/>\n"
+            "  <disable_collisions link1=\"l1\" link2=\"l2\"/>\n"
+            "  <link name=\"base\"/>\n"
+            "  <link name=\"l1\"/>\n"
+            "  <link name=\"l2\"/>\n"
+            "  <joint name=\"j1\" type=\"revolute\">\n"
+            "    <parent link=\"base\"/><child link=\"l1\"/>\n"
+            "    <origin xyz=\"0 0 0.2\"/><axis xyz=\"0 1 0\"/>\n"
+            "    <limit lower=\"-1.57\" upper=\"1.57\" effort=\"50\" velocity=\"1.0\"/>\n"
+            "  </joint>\n"
+            "  <joint name=\"j2\" type=\"revolute\">\n"
+            "    <parent link=\"l1\"/><child link=\"l2\"/>\n"
+            "    <origin xyz=\"0.1 0 0\"/><axis xyz=\"0 0 1\"/>\n"
+            "    <limit lower=\"-3.14\" upper=\"3.14\" effort=\"40\" velocity=\"2.0\"/>\n"
+            "  </joint>\n"
+            "</robot>\n").toUtf8());
+    }
+
+    // 取消面：确认前取消→候选不得入会话（不经确认零移交）。
+    {
+        FlowHarness fx;
+        fx.host.openPathAnswer = urdfPath;
+        fx.host.confirmImportAnswer = false;
+        std::string summary;
+        EXPECT_FALSE(executeModelingCommand(
+            "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary));
+        EXPECT_TRUE(fx.session.importedSelfCollisionCandidates.empty())
+            << "取消确认后候选不得入会话承载";
+    }
+    // 确认面：两对候选按报告序入会话（链路＝策略编辑器预填输入）。
+    {
+        FlowHarness fx;
+        fx.host.openPathAnswer = urdfPath;
+        fx.host.confirmImportAnswer = true;
+        std::string summary;
+        EXPECT_TRUE(executeModelingCommand(
+            "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary))
+            << "summary=" << summary;
+        ASSERT_EQ(fx.session.importedSelfCollisionCandidates.size(), std::size_t{2});
+        EXPECT_EQ(fx.session.importedSelfCollisionCandidates[0].first, "base");
+        EXPECT_EQ(fx.session.importedSelfCollisionCandidates[0].second, "l1");
+        EXPECT_EQ(fx.session.importedSelfCollisionCandidates[1].first, "l1");
+        EXPECT_EQ(fx.session.importedSelfCollisionCandidates[1].second, "l2");
+    }
+}

@@ -1,0 +1,21 @@
+Note: Google Test filter = HostPolicyGuiTest.*
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from HostPolicyGuiTest
+[ RUN      ] HostPolicyGuiTest.CancelAndProtectedFieldsNeverWrite_UX08_A23
+[       OK ] HostPolicyGuiTest.CancelAndProtectedFieldsNeverWrite_UX08_A23 (364 ms)
+[ RUN      ] HostPolicyGuiTest.AllThresholdsUnitsScopeAndSourceCommit_UX08_A23
+[       OK ] HostPolicyGuiTest.AllThresholdsUnitsScopeAndSourceCommit_UX08_A23 (326 ms)
+[ RUN      ] HostPolicyGuiTest.InvalidRuleConflictAndStaleStayOpenWithZeroWrites_UX08_A23
+[       OK ] HostPolicyGuiTest.InvalidRuleConflictAndStaleStayOpenWithZeroWrites_UX08_A23 (202 ms)
+[ RUN      ] HostPolicyGuiTest.RulesScopeAndSourceReopenWithoutLoss_UX08_A23
+[       OK ] HostPolicyGuiTest.RulesScopeAndSourceReopenWithoutLoss_UX08_A23 (358 ms)
+[ RUN      ] HostPolicyGuiTest.ReadOnlyAndUnboundNeverOpenWritableEditor_UX11_A23
+[       OK ] HostPolicyGuiTest.ReadOnlyAndUnboundNeverOpenWritableEditor_UX11_A23 (44 ms)
+[ RUN      ] HostPolicyGuiTest.ImportedCandidatesUnresolvedListedNeverSilent_MDL04_WP13T25
+[       OK ] HostPolicyGuiTest.ImportedCandidatesUnresolvedListedNeverSilent_MDL04_WP13T25 (234 ms)
+[----------] 6 tests from HostPolicyGuiTest (1531 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (1531 ms total)
+[  PASSED  ] 6 tests.
