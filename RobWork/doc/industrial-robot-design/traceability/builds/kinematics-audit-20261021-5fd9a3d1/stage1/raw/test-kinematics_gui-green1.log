@@ -1,0 +1,21 @@
+Note: Google Test filter = KinematicsAcceptance.*
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from KinematicsAcceptance
+[ RUN      ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27
+[       OK ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27 (205 ms)
+[ RUN      ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09
+[       OK ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09 (218 ms)
+[ RUN      ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27
+[       OK ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27 (193 ms)
+[ RUN      ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27
+[       OK ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27 (172 ms)
+[ RUN      ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27
+[       OK ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27 (100 ms)
+[ RUN      ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09
+[       OK ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09 (194 ms)
+[----------] 6 tests from KinematicsAcceptance (1090 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (1092 ms total)
+[  PASSED  ] 6 tests.

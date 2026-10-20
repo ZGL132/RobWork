@@ -1,0 +1,25 @@
+Note: Google Test filter = *_MA03
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from HostCompilePipelineTest
+[ RUN      ] HostCompilePipelineTest.DetachViewReleasesCollisionSnapshot_MA03
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(283): error: Value of: lease.expired()
+  Actual: false
+Expected: true
+解绑后仍残留旧碰撞场景，可能跨项目消费
+
+[  FAILED  ] HostCompilePipelineTest.DetachViewReleasesCollisionSnapshot_MA03 (1 ms)
+[----------] 1 test from HostCompilePipelineTest (1 ms total)
+
+[----------] 1 test from KinEvaluationChannel
+[ RUN      ] KinEvaluationChannel.CoverageProgressAndDetachStopRealComputation_MA03
+[       OK ] KinEvaluationChannel.CoverageProgressAndDetachStopRealComputation_MA03 (23926 ms)
+[----------] 1 test from KinEvaluationChannel (23926 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (23928 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] HostCompilePipelineTest.DetachViewReleasesCollisionSnapshot_MA03
+
+ 1 FAILED TEST

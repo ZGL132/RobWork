@@ -1,0 +1,152 @@
+Note: Google Test filter = KinematicsAcceptance.*
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from KinematicsAcceptance
+[ RUN      ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(128): error: Value of: h.state.lastSessionSolutionSet->solutions.empty()
+  Actual: true
+Expected: false
+内联完成（2 ms），解 0 个
+
+[  FAILED  ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27 (193 ms)
+[ RUN      ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(154): error: Expected: (h.state.lastWorkspaceRun) != (nullptr), actual: (nullptr) vs (nullptr)
+采样参数非法（区域盒含不可解析或非有限数值）——原值保留
+
+[  FAILED  ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09 (213 ms)
+[ RUN      ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(169): error: The difference between h.edit("target-x")->text().toDouble() and (1.1 * std::cos(0.3) + 0.7) * 1000.0 is 1749.1192679001285, which exceeds 1e-9, where
+h.edit("target-x")->text().toDouble() evaluates to 1.7508701380381666,
+(1.1 * std::cos(0.3) + 0.7) * 1000.0 evaluates to 1750.8701380381667, and
+1e-9 evaluates to 1.0000000000000001e-09.
+
+[  FAILED  ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27 (213 ms)
+[ RUN      ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(187): error: The difference between h.edit("target-roll")->text().toDouble() and 0.123456789012345 * 180.0 / std::acos(-1.0) is 6.9500961736320974, which exceeds 1e-12, where
+h.edit("target-roll")->text().toDouble() evaluates to 0.123456789012345,
+0.123456789012345 * 180.0 / std::acos(-1.0) evaluates to 7.0735529626444427, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(188): error: The difference between h.edit("ws-region-cx")->text().toDouble() and 432.1987654321 is 431.76656666666793, which exceeds 1e-10, where
+h.edit("ws-region-cx")->text().toDouble() evaluates to 0.43219876543210001,
+432.1987654321 evaluates to 432.1987654321, and
+1e-10 evaluates to 1e-10.
+
+[  FAILED  ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27 (182 ms)
+[ RUN      ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(205): error: Value of: h.state.displayUnits.has_value()
+  Actual: true
+Expected: false
+
+[  FAILED  ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27 (134 ms)
+[ RUN      ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(221): error: Expected: (h.panel->height()) <= (720), actual: 1205 vs 720
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp(224): error: Expected: (scroll) != (nullptr), actual: NULL vs (nullptr)
+长页须可滚动，不能扩大主窗口最低尺寸
+
+[  FAILED  ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09 (181 ms)
+[----------] 6 tests from KinematicsAcceptance (1122 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (1124 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 6 tests, listed below:
+[  FAILED  ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27
+[  FAILED  ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09
+[  FAILED  ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27
+[  FAILED  ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27
+[  FAILED  ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27
+[  FAILED  ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09
+
+ 6 FAILED TESTS

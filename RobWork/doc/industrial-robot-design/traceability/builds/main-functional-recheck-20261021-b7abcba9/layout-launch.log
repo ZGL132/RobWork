@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.pick-feature=reason.no-project
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.mirror-stations=reason.no-project
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.create-array=reason.no-project
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.apply-template=reason.no-project
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.regenerate-linked=reason.no-project
+[ird-ui-smoke-layout] pass requirements-assembled-split=9/0 (cur=9/0)
+[ird-ui-smoke-layout] pass import-dropdown-widget-disabled-no-project
+[ird-ui-smoke-layout] pass buttons-no-overlap (cur=0)
+[ird-ui-smoke-layout] snap 5-requirements-narrow.png
+[ird-ui-smoke-layout] pass buttons-no-overlap-narrow (cur=0)
+[ird-ui-smoke-layout] pass domain.modeling-toggle-present
+[ird-ui-smoke-layout] pass domain.modeling-summoned-visible
+[ird-ui-smoke-layout] snap 8-modeling-panel.png
+[ird-ui-smoke-layout] pass domain.kinematics-toggle-present
+[ird-ui-smoke-layout] pass domain.kinematics-summoned-visible
+[ird-ui-smoke-layout] snap 9-kinematics-panel.png
+[ird-ui-smoke-layout] pass tasks-region-toggle-present
+[ird-ui-smoke-layout] pass tasks-summoned-visible
+[ird-ui-smoke-layout] snap 10-tasks-dock-summoned.png
+[ird-ui-smoke-layout] pass tasks-restored-hidden
+[ird-ui-smoke-layout] pass central-guard-at-min-window (cur=452px)
+[ird-ui-smoke-layout] snap 6-min-window.png
+[ird-ui-smoke-layout] report=C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\re-audit-20261021-b7abcba9/layout/geometry-report.txt
+[ird-ui-smoke-layout] DONE
+Exit=0

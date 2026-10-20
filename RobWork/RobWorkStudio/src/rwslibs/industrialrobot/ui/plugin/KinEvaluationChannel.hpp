@@ -612,12 +612,6 @@ private:
     /// 完成处理（后台线程经 invokeMethod 回 UI 线程后执行——账面写点
     /// ＋结果入账＋note 投递，全部在本方法内完成。绑定键取**提交时**
     /// 快照/配置值——迟到任务的产物按提交锚丢弃，绝不打上新锚）。
-    /// MA-02：真实碰撞会话装配（按提交拍——规则随提交时策略投影）。
-    /// 返回 null＝设施不可用（快照缺位/无设备/规则拒收——调用方回落
-    /// EvidenceMissing 桩，KIN-05 诚实降级语义保持）。
-    std::shared_ptr<kinematics::IKinCollisionSession> makeRealCollisionSessionIfAvailable(
-        const std::shared_ptr<const policy::EngineeringPolicySet>& policy);
-
     void onCoverageFinished(const std::string& taskRef,
                             const core::ContentIdentity& snapshotIdAtSubmit,
                             const core::ContentIdentity& configDigestAtSubmit,

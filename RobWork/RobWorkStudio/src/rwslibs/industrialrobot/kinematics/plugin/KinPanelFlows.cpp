@@ -456,7 +456,7 @@ KinConfigEditResult applyConfigurationEdit(
     AnalysisConfiguration draft = savedBefore;
     for (const auto& [key, value] : changes) {
         if (key == kKeyInitialStrategy) {
-            // 枚举编码 1/2/3（ReferenceQ/SeededRandom/JointGrid）——域外
+            // 枚举编码 0/1/2（ReferenceQ/SeededRandom/JointGrid）——域外
             // 数值（越界/非整数）由 validate 步骤拦截（枚举值域校验）。
             draft.initialStrategy = static_cast<InitialValueStrategy>(
                 static_cast<int>(value));
@@ -505,22 +505,28 @@ KinConfigEditResult applyConfigurationEdit(
         analyzeConfigurationChange(savedBefore, draft);
     result.hintRows = configChangeHintRows(hint);
 
-    // ---- 步骤 4：保存（用户级 PM-14 通道投影——缝未装配＝仅会话生效
-    //      并如实说明；P-KIN-4：存储载体归 ui 侧，接口待冻结）。
-    if (persist) {
-        if (persist(draft)) {
-            session.savedConfig = draft;  // 保存成功——基线前移
-            result.statusText = "配置已保存（用户级）"
-                                + std::string(hint.configChanged
-                                                  ? "；受影响结果需重算（见提示）"
-                                                  : "");
-        } else {
-            result.statusText = "配置保存失败（用户级通道拒绝）——编辑仅在会话生效";
-        }
+    // F04/AT-27：持久化是基线前移的前提。拒绝、缺通道或存储异常都
+    // 返回失败且零会话更新；异常仅在副作用端口边界转换，未知键仍fail-fast。
+    if (!persist) {
+        result.reason = "用户级持久化通道未装配——原配置保持不变，请装配后重试";
     } else {
-        result.statusText = "用户级持久化通道未装配——编辑仅在会话生效";
+        try {
+            if (!persist(draft)) {
+                result.reason = "配置保存失败（用户级通道拒绝）——原配置保持不变，可重试";
+            }
+        } catch (const std::exception& error) {
+            result.reason = "配置保存失败（用户级存储异常）：" + std::string(error.what())
+                            + "——原配置保持不变，可重试";
+        }
     }
+    if (!result.reason.empty()) {
+        result.statusText = result.reason;
+        return result;
+    }
+    session.savedConfig = draft;
     result.ok = true;
+    result.statusText = "配置已保存（用户级）" + std::string(hint.configChanged
+        ? "；受影响结果需重算（见提示）" : "");
     return result;
 }
 

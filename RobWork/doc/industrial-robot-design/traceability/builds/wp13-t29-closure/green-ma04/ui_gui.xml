@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="0.896" timestamp="2026-10-21T06:29:42.695" name="AllTests">
+  <testsuite name="DockWorkspaceGuiTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.893" timestamp="2026-10-21T06:29:42.698">
+    <testcase name="DynamicFormTailRemainsClickable_MA04" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp" line="1342" status="run" result="completed" time="0.881" timestamp="2026-10-21T06:29:42.698" classname="DockWorkspaceGuiTest" />
+  </testsuite>
+</testsuites>

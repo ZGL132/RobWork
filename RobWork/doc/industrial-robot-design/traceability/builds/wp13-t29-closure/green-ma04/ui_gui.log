@@ -1,0 +1,11 @@
+Note: Google Test filter = *DynamicFormTail*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DockWorkspaceGuiTest
+[ RUN      ] DockWorkspaceGuiTest.DynamicFormTailRemainsClickable_MA04
+[       OK ] DockWorkspaceGuiTest.DynamicFormTailRemainsClickable_MA04 (881 ms)
+[----------] 1 test from DockWorkspaceGuiTest (893 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (896 ms total)
+[  PASSED  ] 1 test.

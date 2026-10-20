@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\audit-closure-20261021\validate_reports.py", line 21, in <module>
+    assert len(cases) == len(expected) == len(native['tests']), name + ': duplicate/missing cases'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: runtime: duplicate/missing cases

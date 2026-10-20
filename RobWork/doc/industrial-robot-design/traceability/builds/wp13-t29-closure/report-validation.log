@@ -1,0 +1,361 @@
+{
+  "suites": [
+    {
+      "name": "evidence",
+      "total": 205,
+      "passed": 205,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 205,
+        "passed": 205,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "evidence_contract",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "policy",
+      "total": 211,
+      "passed": 211,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 211,
+        "passed": 211,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "policy_contract",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 23,
+        "passed": 23,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "runtime",
+      "total": 300,
+      "passed": 299,
+      "failed": 0,
+      "skipped": 1,
+      "nativeCounts": {
+        "total": 300,
+        "passed": 299,
+        "failed": 0,
+        "skipped": 1,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "optimization_contract",
+      "total": 52,
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 52,
+        "passed": 52,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "core",
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 65,
+        "passed": 65,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "requirements",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1,
+      "nativeCounts": {
+        "total": 222,
+        "passed": 221,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 1,
+        "datasetInvalid": 0
+      },
+      "decisive": false,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "requirements_contract",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "modeling",
+      "total": 462,
+      "passed": 462,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 462,
+        "passed": 462,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 17,
+        "passed": 17,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "ui",
+      "total": 341,
+      "passed": 341,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 341,
+        "passed": 341,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "ui_contract",
+      "total": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 63,
+        "passed": 63,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "kinematics",
+      "total": 288,
+      "passed": 287,
+      "failed": 0,
+      "skipped": 1,
+      "nativeCounts": {
+        "total": 288,
+        "passed": 287,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 1,
+        "datasetInvalid": 0
+      },
+      "decisive": false,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "kinematics_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 57,
+        "passed": 57,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "requirements_gui",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 110,
+        "passed": 110,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "modeling_gui",
+      "total": 91,
+      "passed": 91,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 91,
+        "passed": 91,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "ui_gui",
+      "total": 96,
+      "passed": 96,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 96,
+        "passed": 96,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "kinematics_gui",
+      "total": 35,
+      "passed": 35,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 35,
+        "passed": 35,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    }
+  ],
+  "totals": {
+    "total": 2668,
+    "passed": 2665,
+    "failed": 0,
+    "skipped": 3
+  },
+  "nativeTotals": {
+    "total": 2668,
+    "passed": 2665,
+    "failed": 0,
+    "skipped": 1,
+    "notRun": 0,
+    "envUnavailable": 2,
+    "datasetInvalid": 0
+  }
+}

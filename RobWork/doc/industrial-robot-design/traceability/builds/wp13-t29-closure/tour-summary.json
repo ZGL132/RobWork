@@ -1,0 +1,42 @@
+{
+  "requirements-tour": {
+    "assertionsPassed": 237,
+    "png": 31,
+    "doneMarkerPresent": true,
+    "failures": [],
+    "tail": [
+      "[ird-ui-smoke-tour] snap tour-5-final-state.png",
+      "[ird-ui-smoke-tour] DONE (failed-assert=0)"
+    ]
+  },
+  "modeling-tour": {
+    "assertionsPassed": 361,
+    "png": 31,
+    "doneMarkerPresent": false,
+    "failures": [],
+    "tail": [
+      "[ird-ui-smoke-mtour] pass step8 continued-draft-edit-zero-project-revisions",
+      "[ird-ui-smoke-mtour] snap mtour-8-scene-update-reopened.png"
+    ]
+  },
+  "layout": {
+    "assertionsPassed": 67,
+    "png": 9,
+    "doneMarkerPresent": true,
+    "failures": [],
+    "tail": [
+      "[ird-ui-smoke-layout] report=C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\build\\audit-closure-20261021/layout/geometry-report.txt",
+      "[ird-ui-smoke-layout] DONE"
+    ]
+  },
+  "auto": {
+    "assertionsPassed": 0,
+    "png": 0,
+    "doneMarkerPresent": true,
+    "failures": [],
+    "tail": [
+      "[ird-ui-smoke] step8 close-reopen=ok closed=ok reopened=ok",
+      "[ird-ui-smoke] DONE"
+    ]
+  }
+}

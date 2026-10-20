@@ -1,0 +1,92 @@
+[
+  {
+    "original": "d57d7b3c",
+    "mainReplacement": "b7a82b13",
+    "originalProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/FormEditCommon.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp"
+    ],
+    "differingProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp"
+    ]
+  },
+  {
+    "original": "912d3100",
+    "mainReplacement": "a081ecb7",
+    "originalProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/CommandsBoundaryContractTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Commands.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Export.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Playback.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Commands.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Export.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Playback.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlaybackExportTest.cpp"
+    ],
+    "differingProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt"
+    ]
+  },
+  {
+    "original": "97b32b69",
+    "mainReplacement": "bb452e1d",
+    "originalProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/EvaluationDimsContractTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/DiagCodes.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/EvaluationDims.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/PlanConfig.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/TimeParam.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/PlanConfig.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/EvaluationDimsTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/FailureLocateTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlanConfigTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TimeParamTest.cpp"
+    ],
+    "differingProductPaths": []
+  },
+  {
+    "original": "151b1f11",
+    "mainReplacement": "ecf04bac",
+    "originalProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/expected/trj-at06-expected.json",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/generate/make_trj_at06_golden.mjs",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/inputs/trj-at06-inputs.json",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/manifest.json",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/tolerance/trj-at06/v1.0.0.json",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/At06GoldenContractTest.cpp"
+    ],
+    "differingProductPaths": []
+  },
+  {
+    "original": "c513f366",
+    "mainReplacement": "afcf0255",
+    "originalProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/inputs/trj-at06-inputs.json",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/manifest.json",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/At06GoldenContractTest.cpp"
+    ],
+    "differingProductPaths": []
+  },
+  {
+    "original": "5641e221",
+    "mainReplacement": "9fb2bdb2",
+    "originalProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/EvaluationDimsContractTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ProcessSpeedContractTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/EvaluationDims.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/ProcessSpeed.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/ProcessSpeed.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/EvaluationDimsTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/ProcessSpeedTest.cpp"
+    ],
+    "differingProductPaths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt"
+    ]
+  }
+]

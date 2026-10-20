@@ -1,0 +1,93 @@
+[==========] Running 35 tests from 6 test suites.
+[----------] Global test environment set-up.
+[----------] 9 tests from KinematicsPanelInput
+[ RUN      ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1
+[       OK ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1 (214 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_ConsistentSiAcrossUnitSystems_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_ConsistentSiAcrossUnitSystems_KIN_P1 (28 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_mmInput01IsTenthMillimetre_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_mmInput01IsTenthMillimetre_KIN_P1 (11 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteInput_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteInput_KIN_P1 (5 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_CarriesCompleteAssembledRequest_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_CarriesCompleteAssembledRequest_KIN_P2 (6 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_CompletesRealSolveThroughAssembler_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_CompletesRealSolveThroughAssembler_KIN_P2 (12 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2 (10 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2
+[       OK ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2 (5 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteAttitude_KIN_R2
+[       OK ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteAttitude_KIN_R2 (7 ms)
+[----------] 9 tests from KinematicsPanelInput (310 ms total)
+
+[----------] 6 tests from KinematicsPanelSession
+[ RUN      ] KinematicsPanelSession.SolutionColumn_PerAxisUnitsMixedChain_KIN_P3
+[       OK ] KinematicsPanelSession.SolutionColumn_PerAxisUnitsMixedChain_KIN_P3 (8 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_UsesNamedSource_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_UsesNamedSource_KIN_P3 (7 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_MissingSourceDisablesButton_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_MissingSourceDisablesButton_KIN_P3 (13 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3 (5 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_DefinedSourceEnablesButton_KIN_R2
+[       OK ] KinematicsPanelSession.ResetHome_DefinedSourceEnablesButton_KIN_R2 (8 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_DimensionMismatchExplicitHint_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_DimensionMismatchExplicitHint_KIN_P3 (12 ms)
+[----------] 6 tests from KinematicsPanelSession (58 ms total)
+
+[----------] 2 tests from KinHostLoop
+[ RUN      ] KinHostLoop.SixAxisVariantClosedLoop_KIN_P4
+[       OK ] KinHostLoop.SixAxisVariantClosedLoop_KIN_P4 (48 ms)
+[ RUN      ] KinHostLoop.PanelPresentation_RealExecution_KIN_P4
+[       OK ] KinHostLoop.PanelPresentation_RealExecution_KIN_P4 (6 ms)
+[----------] 2 tests from KinHostLoop (55 ms total)
+
+[----------] 3 tests from KinematicsPanelSampling
+[ RUN      ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2
+[       OK ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2 (5 ms)
+[ RUN      ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2
+[       OK ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2 (11 ms)
+[ RUN      ] KinematicsPanelSampling.ProjectionCanvasAndPngExport_KIN_R2
+[       OK ] KinematicsPanelSampling.ProjectionCanvasAndPngExport_KIN_R2 (11 ms)
+[----------] 3 tests from KinematicsPanelSampling (29 ms total)
+
+[----------] 6 tests from KinematicsAcceptance
+[ RUN      ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27
+[       OK ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27 (134 ms)
+[ RUN      ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09
+[       OK ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09 (188 ms)
+[ RUN      ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27
+[       OK ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27 (202 ms)
+[ RUN      ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27
+[       OK ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27 (184 ms)
+[ RUN      ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27
+[       OK ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27 (166 ms)
+[ RUN      ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09
+[       OK ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09 (206 ms)
+[----------] 6 tests from KinematicsAcceptance (1087 ms total)
+
+[----------] 9 tests from KinConfigAcceptance
+[ RUN      ] KinConfigAcceptance.InitialFieldsShowSavedBaseline_KIN13
+[       OK ] KinConfigAcceptance.InitialFieldsShowSavedBaseline_KIN13 (152 ms)
+[ RUN      ] KinConfigAcceptance.StrategyOnlySavesAndReopens_AT27
+[       OK ] KinConfigAcceptance.StrategyOnlySavesAndReopens_AT27 (201 ms)
+[ RUN      ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27
+[       OK ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27 (199 ms)
+[ RUN      ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27
+[       OK ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27 (184 ms)
+[ RUN      ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27
+[       OK ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27 (216 ms)
+[ RUN      ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07
+[       OK ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07 (169 ms)
+[ RUN      ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13
+[       OK ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13 (106 ms)
+[ RUN      ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27
+[       OK ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27 (178 ms)
+[ RUN      ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27
+[       OK ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27 (144 ms)
+[----------] 9 tests from KinConfigAcceptance (1557 ms total)
+
+[----------] Global test environment tear-down
+[==========] 35 tests from 6 test suites ran. (3103 ms total)
+[  PASSED  ] 35 tests.

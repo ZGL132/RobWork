@@ -1,0 +1,232 @@
+verify-task: RepoRoot=C:\Users\zgl18\.codex\worktrees\3582\RobWork
+validate-task: PASS (1 tasks)
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode build
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+  sdurws_ird_requirements.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  sdurws_ird_requirements_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_selection_plugin
+  sdurws_ird_selection_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_selection_plugin.lib
+  Automatic MOC for target sdurws_jog
+  sdurws_jog.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\libs\Release\sdurws_jog.lib
+  Automatic MOC for target sdurws_log
+  sdurws_log.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\libs\Release\sdurws_log.lib
+  Automatic MOC for target sdurws_playback
+  sdurws_playback.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\libs\Release\sdurws_playback.lib
+  Automatic MOC for target sdurws_treeview
+  sdurws_treeview.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\libs\Release\sdurws_treeview.lib
+  Automatic MOC for target sdurws_ird_studio
+    正在创建库 C:/Users/zgl18/.codex/worktrees/3582/RobWork/build/RobWorkStudio/libs/Release/sdurws_ird_studio.lib 和对象 C:/Users/zgl18/.codex/worktrees/3582/RobWork/build/RobWorkStudio/libs/Release/sdurws_ird_studio.exp
+  sdurws_ird_studio.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_studio.exe
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode standalone-configure
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_ui_plugin not registered (framework-hosted plugin target, integrated tree only; ui.md §13 UI-T16)
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_studio not registered (framework-hosted product target, integrated tree only; WP-24-T08 / B1-SPEC §2.1)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (3.6s)
+-- Generating done (5.8s)
+-- Build files have been written to: C:/Users/zgl18/.codex/worktrees/3582/RobWork/build/kinematics-audit-20261021/standalone
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode standalone-build
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+  sdurws_ird_kinematics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\kinematics\Release\sdurws_ird_kinematics_plugin.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_kinematics_contract_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\kinematics\Release\sdurws_ird_kinematics_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\kinematics\Release\sdurws_ird_kinematics.lib
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\kinematics\Release\sdurws_ird_kinematics_plugin.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_kinematics_gui_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\3582\RobWork\build\kinematics-audit-20261021\standalone\kinematics\Release\sdurws_ird_kinematics_gui_test.exe
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name kinematics
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] KinCollisionPort.FixedFrameProjectionHasNoCollisionGeometry_MDL15_AT28 (0 ms)
+[ RUN      ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2
+[       OK ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2 (0 ms)
+[ RUN      ] KinCollisionPort.RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3
+[       OK ] KinCollisionPort.RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3 (0 ms)
+[ RUN      ] KinCollisionPort.AdapterForwardsEveryQueryNoCache_WP15T07_ACC3
+[       OK ] KinCollisionPort.AdapterForwardsEveryQueryNoCache_WP15T07_ACC3 (0 ms)
+[ RUN      ] KinCollisionPort.FacilityFailureMapsToFacilityFailed_WP15T07_ACC2
+[       OK ] KinCollisionPort.FacilityFailureMapsToFacilityFailed_WP15T07_ACC2 (0 ms)
+[ RUN      ] KinCollisionPort.DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2
+[       OK ] KinCollisionPort.DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2 (0 ms)
+[----------] 7 tests from KinCollisionPort (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 288 tests from 32 test suites ran. (10483 ms total)
+[  PASSED  ] 287 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name kinematics_contract
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3
+[       OK ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3 (8 ms)
+[----------] 3 tests from KinCommandsContract (8 ms total)
+
+[----------] 4 tests from KinPluginGraph
+[ RUN      ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4
+[       OK ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4 (0 ms)
+[ RUN      ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2
+[       OK ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2 (56 ms)
+[ RUN      ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2
+[       OK ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2 (0 ms)
+[ RUN      ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4
+[       OK ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4 (0 ms)
+[----------] 4 tests from KinPluginGraph (58 ms total)
+
+[----------] Global test environment tear-down
+[==========] 57 tests from 8 test suites ran. (123 ms total)
+[  PASSED  ] 57 tests.
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name kinematics_gui
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27 (172 ms)
+[ RUN      ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27
+[       OK ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27 (144 ms)
+[ RUN      ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27
+[       OK ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27 (178 ms)
+[ RUN      ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07
+[       OK ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07 (181 ms)
+[ RUN      ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13
+[       OK ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13 (137 ms)
+[ RUN      ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27
+[       OK ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27 (196 ms)
+[ RUN      ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27
+[       OK ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27 (177 ms)
+[----------] 9 tests from KinConfigAcceptance (1511 ms total)
+
+[----------] Global test environment tear-down
+[==========] 35 tests from 6 test suites ran. (2813 ms total)
+[  PASSED  ] 35 tests.
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name standalone_kinematics
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] HostMigration.HostJointState_AppliesWithZeroRevision_ACC2 (0 ms)
+[ RUN      ] HostMigration.HostJointState_PlaybackFramesDriveSameSeam_ACC3
+[       OK ] HostMigration.HostJointState_PlaybackFramesDriveSameSeam_ACC3 (0 ms)
+[ RUN      ] HostMigration.HostJointState_NonFiniteFailsFast_ACC2
+[       OK ] HostMigration.HostJointState_NonFiniteFailsFast_ACC2 (0 ms)
+[ RUN      ] HostMigration.HostJointState_MissingSeamHonestDegradation_ACC2
+[       OK ] HostMigration.HostJointState_MissingSeamHonestDegradation_ACC2 (0 ms)
+[ RUN      ] HostMigration.SessionPoseContractBitsFrozen_ACC2
+[       OK ] HostMigration.SessionPoseContractBitsFrozen_ACC2 (0 ms)
+[ RUN      ] HostMigration.Facade_ForwardsHostJointStateAndHandles_ACC2
+[       OK ] HostMigration.Facade_ForwardsHostJointStateAndHandles_ACC2 (0 ms)
+[----------] 16 tests from HostMigration (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 280 tests from 30 test suites ran. (9728 ms total)
+[  PASSED  ] 279 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name standalone_kinematics_contract
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3
+[       OK ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3 (6 ms)
+[----------] 3 tests from KinCommandsContract (6 ms total)
+
+[----------] 4 tests from KinPluginGraph
+[ RUN      ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4
+[       OK ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4 (0 ms)
+[ RUN      ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2
+[       OK ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2 (6 ms)
+[ RUN      ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2
+[       OK ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2 (0 ms)
+[ RUN      ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4
+[       OK ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4 (0 ms)
+[----------] 4 tests from KinPluginGraph (8 ms total)
+
+[----------] Global test environment tear-down
+[==========] 57 tests from 8 test suites ran. (72 ms total)
+[  PASSED  ] 57 tests.
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name standalone_kinematics_gui
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27 (146 ms)
+[ RUN      ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27
+[       OK ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27 (153 ms)
+[ RUN      ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27
+[       OK ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27 (147 ms)
+[ RUN      ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07
+[       OK ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07 (174 ms)
+[ RUN      ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13
+[       OK ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13 (101 ms)
+[ RUN      ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27
+[       OK ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27 (139 ms)
+[ RUN      ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27
+[       OK ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27 (131 ms)
+[----------] 9 tests from KinConfigAcceptance (1270 ms total)
+
+[----------] Global test environment tear-down
+[==========] 35 tests from 6 test suites ran. (2418 ms total)
+[  PASSED  ] 35 tests.
+> pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode gates
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
+  [ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_targets锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_registered_edge锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_openbench_worker锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_perf_unregistered锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_openbench_testkit锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_perf_lookalike锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4cliff锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r4cliff锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細C:/Users/zgl18/.codex/worktrees/3582/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+> pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
+validate-docs: PASS (20 units, 12 trace entries, 367 task files, 29 registered assets, 6 notes, 7 skills, 2 packs, 14239 evidence)
+verify-task: PASS WP-15-T20（机器可执行 11 条全部通过；散文人工核对 0 条）

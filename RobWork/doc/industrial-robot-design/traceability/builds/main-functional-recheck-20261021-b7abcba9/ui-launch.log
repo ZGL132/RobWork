@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+
+[----------] 1 test from View3DPreviewMarkerPosition
+[ RUN      ] View3DPreviewMarkerPosition.FrameMarkerPositionAppendOnly_UI_T77
+[       OK ] View3DPreviewMarkerPosition.FrameMarkerPositionAppendOnly_UI_T77 (0 ms)
+[----------] 1 test from View3DPreviewMarkerPosition (0 ms total)
+
+[----------] 6 tests from SampleHighlight
+[ RUN      ] SampleHighlight.ResolveHitsViaAlignmentTable_FIX_T2
+[       OK ] SampleHighlight.ResolveHitsViaAlignmentTable_FIX_T2 (0 ms)
+[ RUN      ] SampleHighlight.ResolveMissYieldsNullopt_FIX_T2
+[       OK ] SampleHighlight.ResolveMissYieldsNullopt_FIX_T2 (0 ms)
+[ RUN      ] SampleHighlight.EmptyAlignmentTableDegradesHonestly_FIX_T2
+[       OK ] SampleHighlight.EmptyAlignmentTableDegradesHonestly_FIX_T2 (0 ms)
+[ RUN      ] SampleHighlight.NoKeyYieldsNullopt_FIX_T2
+[       OK ] SampleHighlight.NoKeyYieldsNullopt_FIX_T2 (0 ms)
+[ RUN      ] SampleHighlight.SampleGridEqualityIncludesNewFields_FIX_T2
+[       OK ] SampleHighlight.SampleGridEqualityIncludesNewFields_FIX_T2 (0 ms)
+[ RUN      ] SampleHighlight.DefaultFieldsPreserveLegacyEquality_FIX_T2
+[       OK ] SampleHighlight.DefaultFieldsPreserveLegacyEquality_FIX_T2 (0 ms)
+[----------] 6 tests from SampleHighlight (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 339 tests from 31 test suites ran. (3525 ms total)
+[  PASSED  ] 339 tests.
+Exit=0

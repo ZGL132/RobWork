@@ -22,6 +22,7 @@
 #include <gtest/gtest.h>
 
 #include <QAction>
+#include <QApplication>
 #include <QDir>
 #include <QLabel>
 #include <QPushButton>
@@ -1331,6 +1332,81 @@ TEST(DockWorkspaceGuiTest, LongFormsTabsAndReopenKeepState_UI_T82)
     EXPECT_EQ(scroll->widget(), original) << "关闭重开不可重新构造或清空草稿";
     EXPECT_EQ(original->findChild<QLineEdit*>()->text(), QStringLiteral("未提交的工程参数"));
     EXPECT_EQ(host.tabifiedDockWidgets(domains.front()).size(), 5);
+}
+
+/**
+ * @brief MA-04/UX-09：动态表单展开后末端输入与按钮必须真的可操作。
+ * 旧测试仅检查滚动条存在，无法发现maximumHeight被旧高度锁死后的裁剪。
+ * 本用例重复展开/收起并改变窗口尺寸，分别核对末端命中和尾部空白。
+ */
+TEST(DockWorkspaceGuiTest, DynamicFormTailRemainsClickable_MA04)
+{
+    IRD_TEST_INFO("UX-09", {}, std::nullopt);
+    QMainWindow host;
+    host.setCentralWidget(new QWidget(&host));
+    auto* dock = new QDockWidget(QStringLiteral("动态业务表单"), &host);
+    dock->setObjectName(QStringLiteral("dynamic_form"));
+    auto* form = new QWidget;
+    auto* layout = new QVBoxLayout(form);
+    auto* toggle = new QPushButton(QStringLiteral("展开参数"), form);
+    layout->addWidget(toggle);
+    auto* fields = new QWidget(form);
+    auto* rows = new QVBoxLayout(fields);
+    for (int i = 0; i < 32; ++i) {
+        rows->addWidget(new QLineEdit(QString::number(i), fields));
+    }
+    auto* tail = new QLineEdit(QStringLiteral("末端参数"), fields);
+    auto* apply = new QPushButton(QStringLiteral("应用末端参数"), fields);
+    rows->addWidget(tail);
+    rows->addWidget(apply);
+    layout->addWidget(fields);
+    fields->hide();
+    QObject::connect(toggle, &QPushButton::clicked, fields, [fields] {
+        fields->setVisible(fields->isHidden());
+    });
+    int clicks = 0;
+    QObject::connect(apply, &QPushButton::clicked, &host, [&clicks] { ++clicks; });
+    ui::detail::installDockViewport(*dock, form);
+    host.addDockWidget(Qt::LeftDockWidgetArea, dock);
+    auto* scroll = qobject_cast<QScrollArea*>(dock->widget());
+    ASSERT_NE(scroll, nullptr);
+    host.resize(1000, 680);
+    host.show();
+    QTest::qWait(80);
+    host.activateWindow();
+    ASSERT_TRUE(QTest::qWaitForWindowActive(&host, 3000));
+    for (int pass = 0; pass < 2; ++pass) {
+        SCOPED_TRACE(pass);
+        scroll->verticalScrollBar()->setValue(0);
+        QTest::mouseClick(toggle, Qt::LeftButton);
+        QTest::qWait(80);
+        EXPECT_GT(scroll->verticalScrollBar()->maximum(), 0);
+        scroll->verticalScrollBar()->setValue(scroll->verticalScrollBar()->maximum());
+        QTest::qWait(40);
+        const auto inViewport = [scroll](QWidget* item) {
+            return scroll->viewport()->rect().contains(
+                item->mapTo(scroll->viewport(), item->rect().center()));
+        };
+        ASSERT_TRUE(inViewport(tail)) << "末端输入必须出现在真实视口";
+        ASSERT_TRUE(inViewport(apply)) << "末端按钮必须出现在真实视口";
+        // 在窗口坐标点击并键入，防直接调用setText掩盖鼠标命中或遮挡问题。
+        QTest::mouseClick(host.windowHandle(), Qt::LeftButton, Qt::NoModifier,
+                         tail->mapTo(&host, tail->rect().center()));
+        ASSERT_EQ(QApplication::focusWidget(), tail) << "真实窗口点击应命中末端输入";
+        QTest::keyClick(QApplication::focusWidget(), Qt::Key_A, Qt::ControlModifier);
+        QTest::keyClicks(QApplication::focusWidget(), "42");
+        EXPECT_EQ(tail->text(), QStringLiteral("42"));
+        QTest::mouseClick(host.windowHandle(), Qt::LeftButton, Qt::NoModifier,
+                         apply->mapTo(&host, apply->rect().center()));
+        EXPECT_EQ(clicks, pass + 1);
+        scroll->verticalScrollBar()->setValue(0);
+        QTest::mouseClick(toggle, Qt::LeftButton);
+        QTest::qWait(80);
+        EXPECT_EQ(scroll->verticalScrollBar()->maximum(), 0)
+            << "折叠后不能保留旧展开高度造成空白尾区";
+        host.resize(900, 520);
+        QTest::qWait(40);
+    }
 }
 
 }  // namespace

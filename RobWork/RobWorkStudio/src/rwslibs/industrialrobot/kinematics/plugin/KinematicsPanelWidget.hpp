@@ -268,8 +268,10 @@ private:
  *
  * 数值字段编辑复用 ui 表单公共件（ParamEditModel＋createParamTablePanel
  * ——UI-T08 对端消费面）；初值策略为域枚举（QComboBox 自渲染——表单
- * 公共件只承载数值字段的宿主规则）；确认应用流＝applyConfigurationEdit
- * （L-K7——校验/提示/保存，零自动重算）。
+ * 公共件只承载数值字段的宿主规则）；整体确认覆盖数值和策略，确认快照
+ * 过期则零写入；applyConfigurationEdit保存成功后才前移基线，失败保留
+ * 草稿供重试（WP-15-T20 F04）。面板及控件由Qt父子链持有，session由
+ * 宿主拥有且须比面板长寿；非线程安全，仅UI线程访问，零自动重算。
  */
 class KinematicsConfigPanel final : public QWidget {
     Q_OBJECT
@@ -287,7 +289,7 @@ public:
                           QWidget* parent = nullptr);
 
     /**
-     * @brief 析构（cpp 定义——m_paramModel/m_outlet 的 unique_ptr 成员
+     * @brief 析构（cpp 定义——m_paramModel 的 unique_ptr 成员
      *        析构需要完整类型；头内仅前向声明即断环）。
      */
     ~KinematicsConfigPanel() override;
@@ -305,13 +307,18 @@ public Q_SLOTS:
 private Q_SLOTS:
     /// 初值策略切换（域枚举字段——表单公共件数值半区之外的域自渲染）。
     void onStrategyChanged(int index);
-    /// 提示行刷新（确认应用后由 outlet 回调驱动）。
-    void onApplyResult(const QString& statusText);
+    /// @brief 准备整个配置的非模态确认；非法输入零保存并定位首错。
+    void prepareConfigurationSave();
+    /// @brief 确认冻结的修改集；草稿或权威基线变化即拒绝，保存失败保留草稿。
+    void confirmConfigurationSave();
 
 private:
-    /// 域编辑出口（ui IFormEditOutlet 实现——ParamEditModel 确认移交面）。
-    class ConfigEditOutlet;
-    std::unique_ptr<ConfigEditOutlet> m_outlet;  ///< 编辑出口（确认应用→域半区）
+    /**
+     * @brief 读取数值和策略的完整修改集；数值为SI（m/rad/无量纲）。
+     * @return 注册序数值字段后接策略0/1/2；未修改返回空，不更新任何基线。
+     * 仅UI线程；错误状态由调用者先行检查，不把错误输入降级为旧合法值保存。
+     */
+    std::vector<std::pair<std::string, double>> configurationChanges() const;
 
     KinPanelServices m_services;       ///< 服务缝
     KinModuleSessionState& m_session;  ///< 会话态引用
@@ -321,6 +328,11 @@ private:
     QTableWidget* m_hintTable = nullptr;  ///< 依赖提示行（L-K7——纯提示）
     QTableWidget* m_policyTable = nullptr; ///< 策略只读摘要（无开关/无阈值——UX-08）
     QLabel* m_statusLine = nullptr;       ///< 状态行
+    QWidget* m_confirmRegion = nullptr; ///< 整体确认区，Qt父子链持有
+    QLabel* m_confirmText = nullptr; ///< 同一显示单位下的old→new明细
+    /// 待确认内容仅为一次交互快照，不是配置权威；保存成功才前移session基线。
+    std::optional<AnalysisConfiguration> m_confirmationBaseline;
+    std::vector<std::pair<std::string, double>> m_confirmationChanges;
 
     /// 编辑会话模型（ui 表单公共件——字段注册/基线/暂存/确认规则承载；
     /// unique_ptr 成员——完整类型在 cpp 消费，头内前置声明）。

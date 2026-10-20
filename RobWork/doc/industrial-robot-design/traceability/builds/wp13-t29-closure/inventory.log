@@ -1,0 +1,101 @@
+{
+  "branchRefs": 644,
+  "worktrees": 97,
+  "trackedDirtyWorktrees": [
+    {
+      "path": "C:/Users/zgl18/.codex/worktrees/486b/RobWork",
+      "count": 522
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/build/e2-rpt-f815-6-wt",
+      "count": 1
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/build/wp13-t19-acc-wt",
+      "count": 1
+    }
+  ],
+  "keyBranches": [
+    {
+      "name": "wp14-t12",
+      "merged": true,
+      "divergence": [
+        "41",
+        "0"
+      ]
+    },
+    {
+      "name": "wp13-t24",
+      "merged": true,
+      "divergence": [
+        "20",
+        "0"
+      ]
+    },
+    {
+      "name": "wp13-t25",
+      "merged": true,
+      "divergence": [
+        "32",
+        "0"
+      ]
+    },
+    {
+      "name": "wp13-t26",
+      "merged": true,
+      "divergence": [
+        "8",
+        "0"
+      ]
+    },
+    {
+      "name": "wp13-t27",
+      "merged": false,
+      "divergence": [
+        "4",
+        "1"
+      ]
+    },
+    {
+      "name": "wp13-t28",
+      "merged": false,
+      "divergence": [
+        "4",
+        "2"
+      ]
+    },
+    {
+      "name": "wp13-t29",
+      "merged": false,
+      "divergence": [
+        "4",
+        "2"
+      ]
+    },
+    {
+      "name": "wp15-t20",
+      "merged": true,
+      "divergence": [
+        "3",
+        "0"
+      ]
+    },
+    {
+      "name": "codex/requirements-audit-20261018",
+      "merged": true,
+      "divergence": [
+        "80",
+        "0"
+      ]
+    },
+    {
+      "name": "codex/governance-validation-fixes",
+      "merged": true,
+      "divergence": [
+        "158",
+        "0"
+      ]
+    }
+  ]
+}
+{"nonAncestorRefs": 295, "uniqueHeads": 149, "productCandidateHeads": 8}

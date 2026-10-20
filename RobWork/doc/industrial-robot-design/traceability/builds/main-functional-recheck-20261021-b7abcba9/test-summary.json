@@ -1,0 +1,835 @@
+{
+  "suites": [
+    {
+      "suite": "drivetrain",
+      "total": 38,
+      "passed": 38,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 38,
+          "passed": 38,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 38,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "drivetrain_contract",
+      "total": 15,
+      "passed": 15,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 15,
+          "passed": 15,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 15,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "dynamics",
+      "total": 113,
+      "passed": 112,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 1,
+      "failedIds": [],
+      "skippedIds": [
+        "DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable"
+      ],
+      "nativeReport": {
+        "summary": {
+          "total": 113,
+          "passed": 112,
+          "failed": 0,
+          "skipped": 1,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 113,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "dynamics_contract",
+      "total": 30,
+      "passed": 30,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 30,
+          "passed": 30,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 30,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "evidence",
+      "total": 205,
+      "passed": 205,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": null
+    },
+    {
+      "suite": "evidence_contract",
+      "total": 14,
+      "passed": 14,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": null
+    },
+    {
+      "suite": "io",
+      "total": 130,
+      "passed": 130,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 130,
+          "passed": 130,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 130,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "io_contract",
+      "total": 9,
+      "passed": 9,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 9,
+          "passed": 9,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 9,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "kinematics",
+      "total": 288,
+      "passed": 287,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 1,
+      "failedIds": [],
+      "skippedIds": [
+        "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1"
+      ],
+      "nativeReport": {
+        "summary": {
+          "total": 288,
+          "passed": 287,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 1,
+          "datasetInvalid": 0,
+          "decisive": false
+        },
+        "records": 288,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "kinematics_contract",
+      "total": 57,
+      "passed": 57,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 57,
+          "passed": 57,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 57,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "kinematics_gui",
+      "total": 35,
+      "passed": 35,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 35,
+          "passed": 35,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 35,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "modeling",
+      "total": 462,
+      "passed": 462,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 462,
+          "passed": 462,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 462,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 17,
+          "passed": 17,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 17,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "modeling_gui",
+      "total": 91,
+      "passed": 91,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 91,
+          "passed": 91,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 91,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "optimization",
+      "total": 215,
+      "passed": 214,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 1,
+      "failedIds": [],
+      "skippedIds": [
+        "OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable"
+      ],
+      "nativeReport": {
+        "summary": {
+          "total": 215,
+          "passed": 214,
+          "failed": 0,
+          "skipped": 1,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 215,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "optimization_contract",
+      "total": 52,
+      "passed": 51,
+      "notRun": 0,
+      "failed": 1,
+      "skipped": 0,
+      "failedIds": [
+        "ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2"
+      ],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 52,
+          "passed": 51,
+          "failed": 1,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 52,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "policy",
+      "total": 211,
+      "passed": 211,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": null
+    },
+    {
+      "suite": "policy_contract",
+      "total": 23,
+      "passed": 23,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": null
+    },
+    {
+      "suite": "project",
+      "total": 282,
+      "passed": 282,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 282,
+          "passed": 282,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 282,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "project_contract",
+      "total": 32,
+      "passed": 32,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 32,
+          "passed": 32,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 32,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "reporting",
+      "total": 235,
+      "passed": 235,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 235,
+          "passed": 235,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 235,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "reporting_contract",
+      "total": 65,
+      "passed": 65,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 65,
+          "passed": 65,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 65,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "requirements",
+      "total": 222,
+      "passed": 221,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 1,
+      "failedIds": [],
+      "skippedIds": [
+        "GuiRegistration.V22RegisteredNotExecuted_ACC1"
+      ],
+      "nativeReport": {
+        "summary": {
+          "total": 222,
+          "passed": 221,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 1,
+          "datasetInvalid": 0,
+          "decisive": false
+        },
+        "records": 222,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "requirements_contract",
+      "total": 16,
+      "passed": 16,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 16,
+          "passed": 16,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 16,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "requirements_gui",
+      "total": 110,
+      "passed": 110,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 110,
+          "passed": 110,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 110,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "runtime",
+      "total": 294,
+      "passed": 293,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 1,
+      "failedIds": [],
+      "skippedIds": [
+        "ContractSuite.ChildProcessWorker_RT_ID_1"
+      ],
+      "nativeReport": null
+    },
+    {
+      "suite": "selection",
+      "total": 293,
+      "passed": 292,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 1,
+      "failedIds": [],
+      "skippedIds": [
+        "SelPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable"
+      ],
+      "nativeReport": {
+        "summary": {
+          "total": 293,
+          "passed": 292,
+          "failed": 0,
+          "skipped": 1,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 293,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "selection_contract",
+      "total": 64,
+      "passed": 64,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 64,
+          "passed": 64,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 64,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "trajectory",
+      "total": 182,
+      "passed": 182,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 182,
+          "passed": 182,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 182,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "trajectory_contract",
+      "total": 69,
+      "passed": 69,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 69,
+          "passed": 69,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 69,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "ui",
+      "total": 339,
+      "passed": 339,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 339,
+          "passed": 339,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 339,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "ui_contract",
+      "total": 63,
+      "passed": 63,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 63,
+          "passed": 63,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 63,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "ui_gui",
+      "total": 95,
+      "passed": 95,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 95,
+          "passed": 95,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 95,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "workflow",
+      "total": 197,
+      "passed": 197,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 197,
+          "passed": 197,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 197,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    },
+    {
+      "suite": "workflow_contract",
+      "total": 77,
+      "passed": 77,
+      "notRun": 0,
+      "failed": 0,
+      "skipped": 0,
+      "failedIds": [],
+      "skippedIds": [],
+      "nativeReport": {
+        "summary": {
+          "total": 77,
+          "passed": 77,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        },
+        "records": 77,
+        "idSetMatchesXml": true,
+        "zeroRecords": false
+      }
+    }
+  ],
+  "total": 4640,
+  "passed": 4633,
+  "failed": 1,
+  "skipped": 6,
+  "notRun": 0,
+  "missingNativeReports": [
+    "evidence",
+    "evidence_contract",
+    "policy",
+    "policy_contract",
+    "runtime"
+  ]
+}

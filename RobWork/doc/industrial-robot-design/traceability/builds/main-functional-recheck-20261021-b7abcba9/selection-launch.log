@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+
+[----------] 3 tests from SelLinearCatalog
+[ RUN      ] SelLinearCatalog.LinearCatalogAssemblesGolden_WP19T12_ACC1
+[       OK ] SelLinearCatalog.LinearCatalogAssemblesGolden_WP19T12_ACC1 (211 ms)
+[ RUN      ] SelLinearCatalog.LinearCatalogInvalidCasesReportGolden_WP19T12_ACC1
+[       OK ] SelLinearCatalog.LinearCatalogInvalidCasesReportGolden_WP19T12_ACC1 (6 ms)
+[ RUN      ] SelLinearCatalog.V1FaceUnchangedAndVersionDispatch_WP19T12_ACC3
+[       OK ] SelLinearCatalog.V1FaceUnchangedAndVersionDispatch_WP19T12_ACC3 (4 ms)
+[----------] 3 tests from SelLinearCatalog (222 ms total)
+
+[----------] 3 tests from SelLinearScreening
+[ RUN      ] SelLinearScreening.LinearScreeningGolden_WP19T12_ACC1
+[       OK ] SelLinearScreening.LinearScreeningGolden_WP19T12_ACC1 (2 ms)
+[ RUN      ] SelLinearScreening.LinearScreeningDeterministic_WP19T12_ACC2
+[       OK ] SelLinearScreening.LinearScreeningDeterministic_WP19T12_ACC2 (2 ms)
+[ RUN      ] SelLinearScreening.RotationChainUnchangedByLinearCatalog_WP19T12_ACC3
+[       OK ] SelLinearScreening.RotationChainUnchangedByLinearCatalog_WP19T12_ACC3 (1 ms)
+[----------] 3 tests from SelLinearScreening (7 ms total)
+
+[----------] Global test environment tear-down
+[==========] 293 tests from 32 test suites ran. (627 ms total)
+[  PASSED  ] 292 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] SelPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable
+Exit=0

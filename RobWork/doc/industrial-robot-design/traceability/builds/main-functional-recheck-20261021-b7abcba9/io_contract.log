@@ -1,0 +1,26 @@
+[==========] Running 9 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 9 tests from IoPackContractTest
+[ RUN      ] IoPackContractTest.ExportConcurrentWriteRereadsStableVersion
+[       OK ] IoPackContractTest.ExportConcurrentWriteRereadsStableVersion (37 ms)
+[ RUN      ] IoPackContractTest.ExportConcurrentWritePersistentFailureLeavesNoTarget
+[       OK ] IoPackContractTest.ExportConcurrentWritePersistentFailureLeavesNoTarget (2 ms)
+[ RUN      ] IoPackContractTest.DiskFullReportsRequiredAvailableAndCleansUp
+[       OK ] IoPackContractTest.DiskFullReportsRequiredAvailableAndCleansUp (9 ms)
+[ RUN      ] IoPackContractTest.CleanupFailedListsResiduesAndRetrySucceeds
+[       OK ] IoPackContractTest.CleanupFailedListsResiduesAndRetrySucceeds (22 ms)
+[ RUN      ] IoPackContractTest.ExportCommitFailureLeavesNoTargetFile
+[       OK ] IoPackContractTest.ExportCommitFailureLeavesNoTargetFile (27 ms)
+[ RUN      ] IoPackContractTest.ExportFailurePreservesPreviousCompletePack
+[       OK ] IoPackContractTest.ExportFailurePreservesPreviousCompletePack (36 ms)
+[ RUN      ] IoPackContractTest.BackgroundImportKeepsUiThreadResponsive
+[       OK ] IoPackContractTest.BackgroundImportKeepsUiThreadResponsive (275 ms)
+[ RUN      ] IoPackContractTest.CommittedVsStagedOnlySnapshotEntriesPacked
+[       OK ] IoPackContractTest.CommittedVsStagedOnlySnapshotEntriesPacked (55 ms)
+[ RUN      ] IoPackContractTest.FailureScenariosNeverCreateTargetDirectory
+[       OK ] IoPackContractTest.FailureScenariosNeverCreateTargetDirectory (98 ms)
+[----------] 9 tests from IoPackContractTest (566 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 1 test suite ran. (566 ms total)
+[  PASSED  ] 9 tests.

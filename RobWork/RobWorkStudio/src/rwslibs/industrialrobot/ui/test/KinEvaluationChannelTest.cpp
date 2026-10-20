@@ -29,6 +29,7 @@
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯
 
 #include <array>
+#include <atomic>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -943,6 +944,78 @@ TEST(KinEvaluationChannel, Rebind_ClearsAccountAndDropsLateResult_UI_T64)
     ASSERT_EQ(rows.size(), 1U);
     EXPECT_EQ(rows[0].taskRefText, ack.taskRef);
     EXPECT_FALSE(rows[0].stateLabelKey.empty());
+}
+
+/**
+ * @brief MA-03：真实区域算法的中间进度、解绑早停及旧结果隔离。
+ * 仅在运行时视图端口延迟供数以获得稳定观察窗口，FK/IK/采样全部执行
+ * 产品算法；不以慢求解器伪造取消。计数用来区分计算早停与仅丢弃迟到结果。
+ */
+TEST(KinEvaluationChannel, CoverageProgressAndDetachStopRealComputation_MA03)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"KIN-07", "CON-06"}), {});
+    class ObservedView final : public IKinRuntimeView {
+    public:
+        /// @brief 只读端口返回黄金模型；200微秒供数延迟仅控制测试调度。
+        const runtime::CanonicalModel& model() const override
+        {
+            calls.fetch_add(1, std::memory_order_relaxed);
+            std::this_thread::sleep_for(std::chrono::microseconds(200));
+            return data;
+        }
+        /// @brief 世界系与基座系重合；不替代任何数学变换。
+        rw::math::Transform3D<double> worldToBase() const override
+        { return rw::math::Transform3D<double>::identity(); }
+        runtime::CanonicalModel data = twoLinkModel(); ///< 夹具持有，不可变。
+        mutable std::atomic_uint calls{0}; ///< 唯一跨线程观察量。
+    };
+    auto workset = makeOneRegionOnePlanWorkset();
+    // 512位置＋512位姿、默认每批256：至少四个进度里程碑，防只观测到100%。
+    workset.regions.entries.front().positionSampling.counts = {512U, 1U, 1U};
+    workset.plans.entries.front().positionSampling =
+        workset.regions.entries.front().positionSampling;
+    ScriptedEditor editor(std::move(workset));
+    ExecutorHarness h;
+    auto observed = std::make_shared<ObservedView>();
+    h.rebuildExecutorWithEditor(&editor);
+    h.executor->attachView(observed, h.boundId);
+    auto config = makeLegalConfig();
+    config.iterationLimit = 1; // 仅限制计算量，仍由真实求解器判断结果。
+    h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request;
+    request.kind = KinChannelBackgroundKind::RegionCoverage;
+    request.snapshotId = h.boundId;
+    request.configDigest = analysisConfigurationDigest(config);
+    request.epoch = h.executor->epoch();
+    ASSERT_TRUE(h.executor->submit(request).accepted);
+    bool sawIntermediate = false;
+    int previous = 0;
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(30);
+    while (std::chrono::steady_clock::now() < deadline && h.notes.empty()) {
+        QCoreApplication::processEvents();
+        const auto rows = h.executor->taskRows();
+        if (!rows.empty() && rows.front().percent) {
+            const int percent = *rows.front().percent;
+            EXPECT_GE(percent, previous) << "进度不得倒退";
+            previous = percent;
+            if (percent > 0 && percent < 100) { sawIntermediate = true; break; }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
+    // 无论观察失败与否都先取消并收割，避免断言退出时遗留工作线程。
+    const unsigned callsAtCancel = observed->calls.load();
+    h.executor->attachView(nullptr, core::ContentIdentity{});
+    h.drain();
+    EXPECT_TRUE(sawIntermediate) << "必须显示真实中间进度，不能只有0或100";
+    EXPECT_LT(observed->calls.load() - callsAtCancel, 32U)
+        << "取消后仍大量调用模型端口：可能只挡迟到结果，计算并未早停";
+    ASSERT_EQ(h.notes.size(), 1U);
+    EXPECT_TRUE(h.notes.front().interrupted);
+    EXPECT_FALSE(h.executor->latestCoverageResult());
+    const auto rows = h.executor->taskRows();
+    ASSERT_EQ(rows.size(), 1U);
+    EXPECT_TRUE(rows.front().interrupted);
+    EXPECT_EQ(rows.front().stateLabelKey, "task.state.interrupted");
 }
 
 // =====================================================================

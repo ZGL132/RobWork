@@ -1606,3 +1606,11 @@ RT-Codec由1.1升1.2：每工具默认偏移后追加count、逐键与变换，�
 MDL-15/AT-28：SceneObjectDescription及CanonicalSceneObject.geometry改为optional，nullopt表示合法世界系固定帧；几何存在时沿原清单/摘要约束。canonical编码1.3明确presence，旧物化缓存精确版本拒绝，项目schema不改。hasScene按对象存在、hasCollisionGeometry仅按实际引用；名称保留SceneObject映射，空几何不生成Geometry映射。真实WorkCell仍建世界固连FixedFrame，不预乘安装姿态。八节设计及精确范围见2026-10-20-modeling-completion.md B3g；未验证不标通过。
 
 B3g实施验证：18套件2599通过、0失败、3既有占位跳过，双模式/全量Release及verify-task三条机器检查通过；证据traceability/builds/modeling-completion-20261020-b3g/，详细分类见FOLLOWUP与XML。真实网格及新入口端到端磁盘/三维尚未封闭，不将本批编译消费绿色外推到47项终验。
+
+### WP-13-T29 / MA-09 报告修正（2026-10-21）
+
+T27改为自有main后，DescriptionValidatorTest.cpp的RT-T16旧环境仍注册第二个监听器。
+本轮真实执行300例（299通过、1登记跳过）而指定报告为0，XML/JSON对账实际失败。
+现移除旧环境，仅由TestMainReport.cpp统一安装；不改领域测试/产品/公共接口。
+修复后集成299通过、1显式跳过，独立195通过、0跳过，均0失败；双模式非零报告与XML逐例一致。
+本轮报告缺口已封闭，证据见wp13-t29-closure，不回写旧空报告；不因此外推真实网格/碰撞全功能完成。

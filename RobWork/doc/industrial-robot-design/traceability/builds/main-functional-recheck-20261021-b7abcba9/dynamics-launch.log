@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+
+[  SKIPPED ] DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable (0 ms)
+[----------] 1 test from DynPanelGui (0 ms total)
+
+[----------] 6 tests from DynGolden
+[ RUN      ] DynGolden.DatasetRegistrationFace_WP17T10_ACC2
+[       OK ] DynGolden.DatasetRegistrationFace_WP17T10_ACC2 (66 ms)
+[ RUN      ] DynGolden.StaticGroundAnalyticGolden_WP17T10_ACC2
+[       OK ] DynGolden.StaticGroundAnalyticGolden_WP17T10_ACC2 (2 ms)
+[ RUN      ] DynGolden.StaticInvertedGoldenAt37_WP17T10_ACC2
+[       OK ] DynGolden.StaticInvertedGoldenAt37_WP17T10_ACC2 (2 ms)
+[ RUN      ] DynGolden.MotionDwellFullCycleGolden_WP17T10_ACC1
+[       OK ] DynGolden.MotionDwellFullCycleGolden_WP17T10_ACC1 (2 ms)
+[ RUN      ] DynGolden.EnvelopeMergeGolden_WP17T10_ACC1
+[       OK ] DynGolden.EnvelopeMergeGolden_WP17T10_ACC1 (2 ms)
+[ RUN      ] DynGolden.ConditionIdDerivationMatchesGenerator_WP17T10_ACC2
+[       OK ] DynGolden.ConditionIdDerivationMatchesGenerator_WP17T10_ACC2 (2 ms)
+[----------] 6 tests from DynGolden (79 ms total)
+
+[----------] Global test environment tear-down
+[==========] 113 tests from 24 test suites ran. (205 ms total)
+[  PASSED  ] 112 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable
+Exit=0

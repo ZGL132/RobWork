@@ -1,0 +1,163 @@
+host-window cur=1024x800
+[PASS] default-hidden:modeling
+[PASS] default-hidden:requirements
+[PASS] default-hidden:kinematics
+[PASS] default-hidden:kinematics-advanced
+[PASS] default-hidden:dynamics
+[PASS] default-hidden:selection
+[PASS] default-hidden:optimization
+[PASS] default-hidden:tasks
+[PASS] default-visible:main-dock
+[PASS] default-visible:props-dock
+central cur=320x710
+[PASS] central-view-nonzero (cur=320px)
+[PASS] view-menu-aux-toggles=7 (cur=7)
+[PASS] aux-toggle-enabled:domain.modeling
+[PASS] aux-toggle-enabled:domain.requirements
+[PASS] aux-toggle-enabled:domain.kinematics
+[PASS] aux-toggle-enabled:domain.kinematicsAdvanced
+[PASS] aux-toggle-enabled:domain.dynamics
+[PASS] aux-toggle-enabled:domain.selection
+[PASS] aux-toggle-enabled:domain.optimization
+[SNAP] 1-default-layout.png
+[PASS] view-menu-present
+[SNAP] 2-view-menu.png
+[PASS] requirements-toggle-present
+[PASS] requirements-summoned-visible
+[PASS] requirements-memory-on
+[SNAP] 3-domain-panel-summoned.png
+[SNAP] 4-requirements-buttons.png
+[PASS] requirements-command-bar-present
+[PASS] registry-requirements-commands=9 (cur=9)
+[PASS] import-dropdown-present (返工⑤——导入整合面)
+[PASS] more-actions-dropdown-present (UI-T39 分组面)
+[PASS] menu-action-via-uitext:requirements.import-csv
+[PASS] menu-action-disabled-no-project:requirements.import-csv
+[PASS] menu-action-via-uitext:requirements.import-json
+[PASS] menu-action-disabled-no-project:requirements.import-json
+[PASS] button-title-via-uitext:requirements.export-copy
+[PASS] more-action-via-uitext:requirements.capture-tcp
+[PASS] more-action-disabled-no-project:requirements.capture-tcp
+[PASS] more-action-via-uitext:requirements.pick-feature
+[PASS] more-action-disabled-no-project:requirements.pick-feature
+[PASS] more-action-via-uitext:requirements.mirror-stations
+[PASS] more-action-disabled-no-project:requirements.mirror-stations
+[PASS] more-action-via-uitext:requirements.create-array
+[PASS] more-action-disabled-no-project:requirements.create-array
+[PASS] more-action-via-uitext:requirements.apply-template
+[PASS] more-action-disabled-no-project:requirements.apply-template
+[PASS] more-action-via-uitext:requirements.regenerate-linked
+[PASS] more-action-disabled-no-project:requirements.regenerate-linked
+[PASS] command-buttons-count=9 (cur=9)
+[PASS] button-disable-reason-default:requirements.import-csv=reason.no-project
+[PASS] button-disable-reason-default:requirements.import-json=reason.no-project
+[PASS] button-disable-reason-default:requirements.export-copy=reason.no-project
+[PASS] button-widget-disabled-no-project:requirements.export-copy
+[PASS] button-disable-reason-default:requirements.capture-tcp=reason.no-project
+[PASS] button-disable-reason-default:requirements.pick-feature=reason.no-project
+[PASS] button-disable-reason-default:requirements.mirror-stations=reason.no-project
+[PASS] button-disable-reason-default:requirements.create-array=reason.no-project
+[PASS] button-disable-reason-default:requirements.apply-template=reason.no-project
+[PASS] button-disable-reason-default:requirements.regenerate-linked=reason.no-project
+[PASS] requirements-assembled-split=9/0 (cur=9/0)
+[PASS] import-dropdown-widget-disabled-no-project
+[PASS] buttons-no-overlap (cur=0)
+[SNAP] 5-requirements-narrow.png
+[PASS] buttons-no-overlap-narrow (cur=0)
+[PASS] domain.modeling-toggle-present
+[PASS] domain.modeling-summoned-visible
+[SNAP] 8-modeling-panel.png
+[PASS] domain.kinematics-toggle-present
+[PASS] domain.kinematics-summoned-visible
+[SNAP] 9-kinematics-panel.png
+[PASS] tasks-region-toggle-present
+[PASS] tasks-summoned-visible
+[SNAP] 10-tasks-dock-summoned.png
+[PASS] tasks-restored-hidden
+central@min-window cur=452x630
+[PASS] central-guard-at-min-window (cur=452px)
+[SNAP] 6-min-window.png
+=== main-dock visible=1 cur=520 minHint=171x109
+  ird_plugin_dock_body [QWidget] cur=520x333 minHint=171x86
+    QWidget [QWidget] cur=520x333 minHint=171x86
+      QTreeWidget [QTreeWidget] cur=520x305 minHint=58x58
+        qt_scrollarea_viewport [QWidget] cur=504x301 minHint=-1x-1
+        QHeaderView [QHeaderView] cur=504x0 minHint=54x54
+        qt_scrollarea_hcontainer [QWidget] cur=241x12 minHint=42x12
+        qt_scrollarea_vcontainer [QWidget] cur=12x301 minHint=12x42
+      ird_tree_search [QLineEdit] cur=373x25 minHint=24x25
+        QLineEditIconButton [QLineEditIconButton] cur=22x18 minHint=26x24
+      ird_tree_group_filter [QComboBox] cur=143x26 minHint=143x26
+        QComboBoxPrivateContainer [QComboBoxPrivateContainer] cur=100x30 minHint=4x4
+=== props-dock visible=1 cur=300 minHint=280x143
+  ird_props_dock_scroll [QScrollArea] cur=300x607 minHint=54x54
+    qt_scrollarea_viewport [QWidget] cur=300x607 minHint=-1x-1
+      QWidget [QWidget] cur=300x607 minHint=280x377
+        ird_property_inspector [QWidget] cur=300x188 minHint=28x38
+        QWidget [QWidget] cur=300x41 minHint=84x41
+        ird_right_content [QWidget] cur=300x374 minHint=107x294
+    qt_scrollarea_hcontainer [QWidget] cur=268x12 minHint=42x12
+      QScrollBar [QScrollBar] cur=268x12 minHint=-1x-1
+    qt_scrollarea_vcontainer [QWidget] cur=12x108 minHint=12x42
+      QScrollBar [QScrollBar] cur=12x108 minHint=-1x-1
+=== tasks-dock visible=0 cur=1024 minHint=240x183
+  ird_tasks_dock_scroll [QScrollArea] cur=1024x177 minHint=54x54
+    qt_scrollarea_viewport [QWidget] cur=1024x177 minHint=-1x-1
+      ird_bottom_tabs [QTabWidget] cur=1024x177 minHint=138x149
+        qt_tabwidget_stackedwidget [QStackedWidget] cur=1018x148 minHint=132x120
+        qt_tabwidget_tabbar [QTabBar] cur=300x23 minHint=127x23
+    qt_scrollarea_hcontainer [QWidget] cur=100x12 minHint=42x12
+      QScrollBar [QScrollBar] cur=100x12 minHint=-1x-1
+    qt_scrollarea_vcontainer [QWidget] cur=12x30 minHint=12x42
+      QScrollBar [QScrollBar] cur=12x30 minHint=-1x-1
+=== modeling-dock visible=0 cur=384 minHint=240x143
+  ird_modeling_dock_scroll [QScrollArea] cur=384x259 minHint=54x54
+    qt_scrollarea_viewport [QWidget] cur=372x247 minHint=-1x-1
+      sdurws::ird::modeling::ModelingPanelWidget [sdurws::ird::modeling::ModelingPanelWidget] cur=952x642 minHint=952x642
+        ird_modeling_main_splitter [QSplitter] cur=934x592 minHint=934x592
+        ird_modeling_draft_undo [QPushButton] cur=88x26 minHint=88x26
+        ird_modeling_draft_redo [QPushButton] cur=88x26 minHint=88x26
+        ird_modeling_retained_review [QPushButton] cur=112x26 minHint=112x26
+    qt_scrollarea_hcontainer [QWidget] cur=372x12 minHint=42x12
+      QScrollBar [QScrollBar] cur=372x12 minHint=-1x-1
+    qt_scrollarea_vcontainer [QWidget] cur=12x247 minHint=12x42
+      QScrollBar [QScrollBar] cur=12x247 minHint=-1x-1
+=== requirements-dock visible=1 cur=520 minHint=240x143
+  ird_requirements_dock_scroll [QScrollArea] cur=520x247 minHint=54x54
+    qt_scrollarea_viewport [QWidget] cur=508x247 minHint=-1x-1
+      sdurws::ird::requirements::RequirementsPanelWidget [sdurws::ird::requirements::RequirementsPanelWidget] cur=508x727 minHint=427x415
+        QWidget [QWidget] cur=490x71 minHint=89x43
+        ird_req_draft_hint [QLabel] cur=490x34 minHint=32x18
+        QWidget [QWidget] cur=157x592 minHint=76x76
+        QWidget [QWidget] cur=327x592 minHint=327x324
+    qt_scrollarea_hcontainer [QWidget] cur=508x12 minHint=42x12
+      QScrollBar [QScrollBar] cur=508x12 minHint=-1x-1
+    qt_scrollarea_vcontainer [QWidget] cur=12x247 minHint=12x42
+      QScrollBar [QScrollBar] cur=12x247 minHint=-1x-1
+=== kinematics-dock visible=0 cur=384 minHint=240x143
+  ird_kinematics_dock_scroll [QScrollArea] cur=384x259 minHint=54x54
+    qt_scrollarea_viewport [QWidget] cur=372x259 minHint=-1x-1
+      sdurws::ird::kinematics::KinematicsPanelWidget [sdurws::ird::kinematics::KinematicsPanelWidget] cur=372x429 minHint=151x123
+        QTabWidget [QTabWidget] cur=354x389 minHint=133x83
+        ird_kin_status_line [QLabel] cur=354x16 minHint=12x16
+    qt_scrollarea_hcontainer [QWidget] cur=228x12 minHint=42x12
+      QScrollBar [QScrollBar] cur=228x12 minHint=-1x-1
+    qt_scrollarea_vcontainer [QWidget] cur=12x259 minHint=12x42
+      QScrollBar [QScrollBar] cur=12x259 minHint=-1x-1
+=== kinematics-advanced-dock visible=0 cur=280 minHint=280x143
+  ird_kinematics_advanced_dock_scroll [QScrollArea] cur=280x120 minHint=54x54
+    qt_scrollarea_viewport [QWidget] cur=268x120 minHint=-1x-1
+      sdurws::ird::kinematics::KinematicsConfigPanel [sdurws::ird::kinematics::KinematicsConfigPanel] cur=268x405 minHint=244x405
+        QComboBox [QComboBox] cur=250x26 minHint=202x26
+        QLabel [QLabel] cur=250x16 minHint=48x16
+        ird_param_table_panel [QWidget] cur=250x151 minHint=226x151
+        ird_param_confirm_region [QWidget] cur=100x30 minHint=99x97
+        ird_param_apply [QPushButton] cur=122x26 minHint=81x26
+        ird_param_cancel [QPushButton] cur=122x26 minHint=81x26
+        QTableWidget [QTableWidget] cur=250x58 minHint=58x58
+        QTableWidget [QTableWidget] cur=250x58 minHint=58x58
+        QLabel [QLabel] cur=250x16 minHint=72x16
+    qt_scrollarea_hcontainer [QWidget] cur=268x12 minHint=42x12
+      QScrollBar [QScrollBar] cur=268x12 minHint=-1x-1
+    qt_scrollarea_vcontainer [QWidget] cur=12x120 minHint=12x42
+      QScrollBar [QScrollBar] cur=12x120 minHint=-1x-1

@@ -1,0 +1,44 @@
+[
+  {
+    "file": "kinematics_contract-20261021-025806-030.xml",
+    "tests": 57,
+    "passed": 57,
+    "failures": 0,
+    "skipped": 0
+  },
+  {
+    "file": "kinematics_gui-20261021-025811-500.xml",
+    "tests": 35,
+    "passed": 35,
+    "failures": 0,
+    "skipped": 0
+  },
+  {
+    "file": "kinematics-20261021-025750-310.xml",
+    "tests": 288,
+    "passed": 287,
+    "failures": 0,
+    "skipped": 1
+  },
+  {
+    "file": "standalone_kinematics_contract-20261021-025834-262.xml",
+    "tests": 57,
+    "passed": 57,
+    "failures": 0,
+    "skipped": 0
+  },
+  {
+    "file": "standalone_kinematics_gui-20261021-025840-509.xml",
+    "tests": 35,
+    "passed": 35,
+    "failures": 0,
+    "skipped": 0
+  },
+  {
+    "file": "standalone_kinematics-20261021-025819-692.xml",
+    "tests": 280,
+    "passed": 279,
+    "failures": 0,
+    "skipped": 1
+  }
+]

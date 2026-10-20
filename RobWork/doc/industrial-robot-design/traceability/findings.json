@@ -9586,16 +9586,16 @@
       "status": "fixed",
       "registeredAt": "2026-10-21",
       "title": "优化采用契约旧断言把修订中保留RobotDesign引用等同对象复制：主线完整回归52条中该用例失败，独立单跑稳定复现；与A-13新修订保留完整基线OID/CV语义冲突，需修正断言及单元卡并验证无新增设计对象，不能回退完整引用集修复",
-      "owner": "wp13-t27 修复批闭环（2026-10-21）：断言按 A-13 权威完整引用集语义修正为强断言三件（恰一根 RobotDesign 引用＋原 oid＋原 cv＋基线字节原样可取，ApplierContractTest.cpp 含语义修正注记）——optimization_contract 52/52 全绿，16 套件回归绿；证据 builds/wp13-t27-audit-fixes/；原登记处置：optimization/project契约所有者；MA-05"
+      "owner": "optimization/project契约所有者；MA-05。T29继承T27修正并复验：optimization_contract双模式各52通过、0失败0跳过；恰一原RobotDesign引用、原OID/CV和基线负载保持不变。有效证据builds/wp13-t29-closure/REPORT.md及两模式原生JSON/XML；任务分支验证通过不等于主线已交付。"
     },
     {
       "id": "F-950",
       "source": "2026-10-21 合入后主线5fd9a3d1需求/建模复核；traceability/builds/main-functional-audit-20261021-5fd9a3d1/REPORT.md",
       "severity": "minor",
-      "status": "fixed",
+      "status": "open",
       "registeredAt": "2026-10-21",
       "title": "正式需求tour两种窗口尺寸滚动到底均取得近乎全空白Dock截图，独立复跑稳定重现但235项断言仍全绿：step13只检查滚动条value==maximum，未验证最后业务字段/按钮可见可点击；尚待区分布局与抓图绘制时机，不推导数据丢失",
-      "owner": "wp13-t27 修复批闭环（2026-10-21）：ui 侧 DockContentResizeFilter（installDockViewport）LayoutRequest/Paint 拍重申内容高不变式＋maximumHeight 同拍夹紧（事件取证：最小高回落 455 后零事件到达、917↔455 拉锯，纯事件钩子无效——maximumHeight 为 Qt 硬约束）；requirements 面板 currentChanged 收缩配合；tour 补『滚到底可视交互控件≥1』真实断言＋几何留痕——修复后 content 889→560、可视控件 0→7/5，requirements-tour 全绿实拍在案；ui.md v1.111/requirements.md v0.22 登记；原登记处置：ui/requirements界面与验收所有者；MA-04"
+      "owner": "ui/requirements界面与验收所有者；MA-04。T29校正T27过度封闭：动态长表单末端QWindow点击、键入和应用及两尺寸宿主底部局部改善已实测通过，但截图卡片仍折叠/未选中，全部业务页展开字段与按钮完整视觉尚未验齐。保留open，详见builds/wp13-t29-closure/REPORT.md和OPEN-ISSUES.md；不回写T27历史证据。"
     },
     {
       "id": "F-951",
@@ -9604,7 +9604,7 @@
       "status": "fixed",
       "registeredAt": "2026-10-21",
       "title": "区域覆盖后台捕获任务cancelFlag却仍使用NullEvaluationContext（KinEvaluationChannel.cpp:632），取消恒false且进度被丢弃；单点/批量取消及迟到结果隔离通过不能证明coverage真实早停；源码接线已确认，大型采样取消延迟尚未实测",
-      "owner": "wp13-t27 修复批闭环（2026-10-21）：launchCoverageTask 接 CancelableEvaluationContext（取消探针生效，取消按 interrupted 轨入账）＋进度原子（reportProgress 单调取大）经 TaskEntry.progress 投影任务行真实百分比——kinematics/ui/ui_contract/KinEvaluationChannel 27 用例全绿；kinematics.md v0.36 登记；原登记处置：ui区域覆盖执行通道所有者；MA-03"
+      "owner": "ui区域覆盖执行通道所有者；MA-03。T29继承T27可取消上下文，新增真实采样/FK/IK中间进度与解绑后早停回归通过，结果中断且不入成功账；另修复attachView遗留碰撞快照，三个后台入口捕获提交拍同源快照，真实编译快照弱引用红绿证据在案。集成ui341通过、独立ui275通过，均0失败0跳过。证据builds/wp13-t29-closure/；应用整体析构压力未单独验证，不外推该场景或主线交付。"
     },
     {
       "id": "F-952",
@@ -9613,7 +9613,7 @@
       "status": "fixed",
       "registeredAt": "2026-10-21",
       "title": "主线扩展复验41个exe均有XML/stdout，显式传--ird_report仍仅产36份报告：evidence/evidence_contract/policy/policy_contract/runtime缺原生ird报告；需补接报告入口或登记明确豁免，不能以伪造转换报告补齐三件套",
-      "owner": "wp13-t27 修复批闭环（2026-10-21）：五目标接入自有 TestMainReport.cpp（testkit TestRecordListener；L2 零 Qt 保持——纯 gtest 入口不构造 QCoreApplication）＋gtest_main→gtest——runtime 实跑产出 ird 报告在案（ma09-runtime-ird-report.json），五目标构建零错误；runtime.md v0.27 登记；原登记处置：testkit及相关目标所有者；MA-09"
+      "owner": "testkit及相关目标所有者；MA-09。T29纠正T27零报告假绿：删除runtime旧RT-T16环境与新main的重复监听，补扫core自有入口；原五目标及core共六目标双模式非零JSON/XML逐例ID、投影状态及原生六类计数对账通过。runtime集成299通过加1显式跳过，独立195通过；core集成65通过、独立63通过。证据builds/wp13-t29-closure/verified-test-summary*.json、red-ma09和red-ma09-core；旧零报告不回填，任务分支验证不等于主线交付。"
     }
   ]
 }

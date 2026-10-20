@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.975" timestamp="2026-10-21T00:56:56.790" name="AllTests">
+  <testsuite name="KinematicsAcceptance" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.972" timestamp="2026-10-21T00:56:56.793">
+    <testcase name="FilledTargetSurvivesUnitSwitch_AT27" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp" line="116" status="run" result="completed" time="0.539" timestamp="2026-10-21T00:56:56.794" classname="KinematicsAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp:127&#x0A;Value of: h.state.lastSessionSolutionSet-&gt;solutions.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;内联完成（2 ms），解 0 个&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp:127
+Value of: h.state.lastSessionSolutionSet->solutions.empty()
+  Actual: true
+Expected: false
+内联完成（2 ms），解 0 个
+]]></failure>
+    </testcase>
+    <testcase name="CartesianBoxRunsThroughVisibleButton_KIN09" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp" line="139" status="run" result="completed" time="0.261" timestamp="2026-10-21T00:56:57.334" classname="KinematicsAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp:153&#x0A;Expected: (h.state.lastWorkspaceRun) != (nullptr), actual: (nullptr) vs (nullptr)&#x0A;采样参数非法（区域盒含不可解析或非有限数值）——原值保留&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp:153
+Expected: (h.state.lastWorkspaceRun) != (nullptr), actual: (nullptr) vs (nullptr)
+采样参数非法（区域盒含不可解析或非有限数值）——原值保留
+]]></failure>
+    </testcase>
+    <testcase name="InvalidTargetTextPreservedOnUnitSwitch_AT27" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp" line="158" status="run" result="completed" time="0.168" timestamp="2026-10-21T00:56:57.596" classname="KinematicsAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp:168&#x0A;The difference between h.edit(&quot;target-x&quot;)-&gt;text().toDouble() and (1.1 * std::cos(0.3) + 0.7) * 1000.0 is 1749.1192679001285, which exceeds 1e-9, where&#x0A;h.edit(&quot;target-x&quot;)-&gt;text().toDouble() evaluates to 1.7508701380381666,&#x0A;(1.1 * std::cos(0.3) + 0.7) * 1000.0 evaluates to 1750.8701380381667, and&#x0A;1e-9 evaluates to 1.0000000000000001e-09.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp:168
+The difference between h.edit("target-x")->text().toDouble() and (1.1 * std::cos(0.3) + 0.7) * 1000.0 is 1749.1192679001285, which exceeds 1e-9, where
+h.edit("target-x")->text().toDouble() evaluates to 1.7508701380381666,
+(1.1 * std::cos(0.3) + 0.7) * 1000.0 evaluates to 1750.8701380381667, and
+1e-9 evaluates to 1.0000000000000001e-09.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

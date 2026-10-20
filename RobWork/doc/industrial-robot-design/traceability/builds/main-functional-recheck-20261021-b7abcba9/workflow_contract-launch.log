@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] InFlightArchiveContract.WF_VER_210_EndToEndInFlightArchiveWaitedBeforeClose (20 ms)
+[ RUN      ] InFlightArchiveContract.WF_VER_211_EndToEndCooperativeCancelReachesClosed
+[       OK ] InFlightArchiveContract.WF_VER_211_EndToEndCooperativeCancelReachesClosed (23 ms)
+[----------] 2 tests from InFlightArchiveContract (44 ms total)
+
+[----------] 1 test from LifeCycleMainlineContract
+[ RUN      ] LifeCycleMainlineContract.WF_VER_227_FullMainlineNewEditApplyUndoRedoPackageSaveAs
+[       OK ] LifeCycleMainlineContract.WF_VER_227_FullMainlineNewEditApplyUndoRedoPackageSaveAs (527 ms)
+[----------] 1 test from LifeCycleMainlineContract (527 ms total)
+
+[----------] 4 tests from HostAssemblyContract
+[ RUN      ] HostAssemblyContract.AssembledControllerClosesRealStoreThroughInterface
+[       OK ] HostAssemblyContract.AssembledControllerClosesRealStoreThroughInterface (30 ms)
+[ RUN      ] HostAssemblyContract.BackfillTranslateSubmitsAuthoritativeWriteViaCommandPort
+[       OK ] HostAssemblyContract.BackfillTranslateSubmitsAuthoritativeWriteViaCommandPort (93 ms)
+[ RUN      ] HostAssemblyContract.CloseSupervisorForcesAbandonBoundedAndStoreCloses
+[       OK ] HostAssemblyContract.CloseSupervisorForcesAbandonBoundedAndStoreCloses (646 ms)
+[ RUN      ] HostAssemblyContract.StoreRecoveryFactAdapterFoldsRealCatalog
+[       OK ] HostAssemblyContract.StoreRecoveryFactAdapterFoldsRealCatalog (55 ms)
+[----------] 4 tests from HostAssemblyContract (826 ms total)
+
+[----------] Global test environment tear-down
+[==========] 77 tests from 16 test suites ran. (3990 ms total)
+[  PASSED  ] 77 tests.
+Exit=0

@@ -34,7 +34,6 @@
 
 #include <gtest/gtest.h>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
-#include <sdurws/ird/testkit/gtest/RecordListener.hpp>
 
 #include <cmath>
 #include <cstdint>
@@ -51,26 +50,10 @@ namespace core = sdurws::ird::core;
 const double kNaN = std::numeric_limits<double>::quiet_NaN();
 const double kInf = std::numeric_limits<double>::infinity();
 
-/**
- * @brief RT-T16 两模式原生报告环境；仅由 gtest 主线程使用，无产品共享状态。
- * runtime 使用 gtest_main，故在首个用例前安装记录器；静态监听器生命期覆盖
- * 整个测试进程，gtest listeners 只借用其地址。报告由原生 TestRecord 产生，不从 XML 伪造。
- */
-class InertiaReportEnvironment final : public ::testing::Environment {
-public:
-    /** @brief 安装一个记录器，报告写入 ctest 工作目录；写盘失败由记录器告警。 */
-    void SetUp() override
-    {
-        // testkit 契约规定监听器由调用方持有；静态对象覆盖整个测试进程，
-        // 单测试可执行文件中该环境只注册一次，因此不会重复追加监听器。
-        static sdurws::ird::testkit::TestRecordListener listener("ird-test-report.json");
-        ::testing::UnitTest::GetInstance()->listeners().Append(&listener);
-    }
-};
-
-// 本翻译单元在两模式都注册；所有权交给 gtest，无须新增测试 main 或改 CMake。
-[[maybe_unused]] const auto* const kInertiaReportEnvironment =
-    ::testing::AddGlobalTestEnvironment(new InertiaReportEnvironment);
+// MA-09：T27已把两模式入口统一为TestMainReport.cpp，报告监听器必须只在
+// main安装一次。旧RT-T16环境再次注册会嵌套记录，并由两个ProgramEnd回调
+// 争相takeAll：指定路径报告因此变成零用例，尽管XML实际执行了300例。
+// 本文件只保留领域测试，记录器安装及--ird_report参数归入口唯一管理。
 
 // =====================================================================
 // 夹具工具。

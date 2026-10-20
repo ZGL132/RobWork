@@ -1029,3 +1029,10 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | 测试 | 单元测试覆盖本文列出的正例、反例和不变量 |
 | 追踪 | 每个任务至少关联一个需求和一个验证目标 |
 | 门禁 | validate-docs.ps1、validate-task.ps1 和单元验证命令通过 |
+
+### WP-13-T29 / MA-09 原生报告入口补齐（2026-10-21）
+
+本轮补扫实际执行core的65条测试，但目标仍链接gtest_main，未生成指定原生JSON。
+只在core测试目标加入TestMainReport.cpp并链接testkit/gTest，监听器由testkit统一管理；
+core产品库与公共头零变化。本轮集成65通过、独立63通过，均0失败0跳过，原生JSON/XML逐例一致；
+框架集成注册面差异如实分列，旧缺失证据不回填。留痕见wp13-t29-closure。

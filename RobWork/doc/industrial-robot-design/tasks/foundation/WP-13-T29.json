@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T29",
+  "unit": "ui",
+  "masterWp": "WP-E",
+  "title": "主线审核可封闭项修复与顽固问题留痕",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T26"
+  ],
+  "requirements": [
+    "CON-06",
+    "KIN-07",
+    "UX-09"
+  ],
+  "designRefs": [
+    "units/ui.md#4.4",
+    "development-task-breakdown.md#2.14"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ApplierContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CollisionSession.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Snapshot.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CollisionSession.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CollisionSessionTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/WorkbenchContentGuiTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DockWorkspace_p.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T29.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/diag-event-trace-stale-negotiation.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-fix-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-full-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-host-tour-auto.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-host-tour-layout.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-host-tour-modeling.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-optimization-contract-52.xml",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-req-tour-after-fix.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/ma09-runtime-ird-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/ma09-targets-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/red-req-tour-blank-tail-stale-assertions.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/req-tour-fixed-shots/tour-9-populated-bottom-0.png",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/req-tour-fixed-shots/tour-9-populated-bottom-1.png",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-full-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-host-tour-auto.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-host-tour-requirements.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-runtime-geo7-collision.xml",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-standalone-runtime-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/**",
+    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/docs/superpowers/plans/2026-10-21-audit-closure.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t29",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-3",
+    "P-MDL-4",
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "覆盖真实算法中间进度可见，取消/换绑早停且迟到结果不入新账；后台只使用提交快照。",
+    "动态长表单末端可操作，折叠/重开/切页无旧高度空白；Windows真实窗口串行。",
+    "优化契约全量通过；原五目标及core共六份非零原生报告与XML逐例对应，保留原生六值分类，缺失或零例不得通过。",
+    "双模式与门禁真实执行；无法封闭的逐项记录尝试、阻碍、剩余条件，不自动合入主线。"
+  ],
+  "note": "所有者2026-10-21授权可封闭项修复并记录顽固项；已有隔离工作树内执行，不用子代理。范围以402e5992为主线基线，包含继承T27/T28的精确路径，本批不新增公共接口；历史证据只读。新增证据归wp13-t29-closure；任务分支验证不等于独立验收或主线交付。"
+}

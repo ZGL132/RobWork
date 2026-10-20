@@ -1,0 +1,2428 @@
+[
+  {
+    "ref": "refs/heads/acc/E2-UI-B/attempt1",
+    "sha": "6256b390e814874b1c618160ffc6ab4d8656d0c1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/E2-UI-C/attempt1",
+    "sha": "90699831a01419e8e1ec053d34d9744ea23ba2b4",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/EX-T01/1",
+    "sha": "d27833a31c34079909c8722afdab50272e71a86f",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/EX-T09/1",
+    "sha": "93819ac0e129b9831401a8358e180ddafd47b549",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/IO-T02/1",
+    "sha": "c356e9638d9d3a1cbdc67974ce02d85339107e58",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/IO-T03/1",
+    "sha": "3bf11e04408819599b9523434de4fadcd6fcc6fb",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/IO-T06/1",
+    "sha": "a0a212b08bcba8b704be3b0df9b01df7b8900c96",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/UI-T03/1",
+    "sha": "e5f27bf37708334f7e3037e828c3fdf850069e56",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/UI-T11/1",
+    "sha": "e328d07ad9db73d83c0215cdc360ac3b2e4f2f76",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/UI-T16/1",
+    "sha": "2558984de63b195ecb5a8bae018705314c96c10d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/UI-T17/1",
+    "sha": "c216d6c89f92d5a895d05d46656ed6e11dc70ee1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/UI-T18/1",
+    "sha": "d3ee81672fd7ec838980af6694ce8decc1913fda",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/UI-T27/1",
+    "sha": "74ba3c9ab5dda51696bf020a9cfd11dfc05735c9",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/UI-T79/1",
+    "sha": "cbc129e2f5f05978e77e3ab9397a95bfce81a36a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/UI-T85/1",
+    "sha": "55981b27081a3374dd8be8de892d512ec1a73656",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/WP-10-T15/1",
+    "sha": "7ccc1fad4d610fe74d00746e7415b1eae97a86b9",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/WP-13-T09/1",
+    "sha": "05b0265551b22ee77a8adbd59bdecc98d154565d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/WP-13-T20/1",
+    "sha": "e22bac97408cf44335abb99db4c1d66011885b31",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/WP-13-T26/1",
+    "sha": "ce7fa78779a13c6992a7f81e51be2dd81269dc51",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/WP-13-T26/2",
+    "sha": "734348e960d3ecbfdb3e943f3f9473e00f545769",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/WP-15-T14/1",
+    "sha": "457f890f17de014b2809c86cad633f5f5ac1abc1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/WP-16-T01/1",
+    "sha": "6591ee99f43bff72e5b909c14b79cd3f8571e014",
+    "nonEquivalent": 1,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/asm-panel/1",
+    "sha": "42e309c947f38ec9d28cdc40a6468702b939432d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/asm-plug/1",
+    "sha": "4417260b3a5141a168c067a21fb82951dea3161d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/asm-ui/1",
+    "sha": "3c5535c769bb514b73c944addfda39f60fb0d525",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/asm-wf/1",
+    "sha": "ac9169473622f8fa5c7cf8fd5610fa57ccfcf3f3",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/fix-panel/1",
+    "sha": "f85ce64d361d1fe80e3da7c64376350a0a6a3fe7",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/fix-panel/2",
+    "sha": "ceb872c2f199ac2c074acf87d27d04d08ce70426",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/freeze-p06/1",
+    "sha": "b671629040b5139a7aa026782c2fd43efd92d191",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/gov-doc/1",
+    "sha": "538831b9e24b06a22d9d4deb93c3b73cb51b77d3",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/gov-find/1",
+    "sha": "ce70b787da2afcb8f62aa73668cf46bbaa3159c2",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/gov-gate/1",
+    "sha": "cd42e3566ff9aaefaa9d5c9fcd40d444641528f3",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/gov-unfrozen/1",
+    "sha": "4232d7bcf3a361c91e36452b3b851696f196345d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/rpt-t14/1",
+    "sha": "260fc3489c8f652ffa942d2315cfce0a1d9e49bb",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/rpt-t15/1",
+    "sha": "97a320ddee98d670bf99d902a2234f41aae0aadf",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/rpt-t16/1",
+    "sha": "f847bcf4f7dcc1c843471ff6d223e067e2c6d663",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/rt-t15/1",
+    "sha": "4398244a6d5ed8e19cbcc5067207413e72cff355",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/rul-tok/1",
+    "sha": "802b3a16216f505202bbb076c87cac847d8c778c",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t36/1",
+    "sha": "a0fdc2b4b825ffd7dc89a194c7144141c473998b",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t36/2",
+    "sha": "cf1b2fa356274624b5a9f2ea44c60dffb08d6bc1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t37/1",
+    "sha": "55266f3e39795d951e2b5d9a672731217ebc2b66",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t37/2",
+    "sha": "d7dede4132ad1e819a1df409086700d0f05519b7",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t37/3",
+    "sha": "19659f0cfacdb2dbf4d6d6e7951dcef4c768da87",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t37/4",
+    "sha": "4d92e57c661dbf17417baf1fb8045f888c4c6685",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t37/5",
+    "sha": "cd0f267649da05f92adfd7e130b04bd2be5e6874",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t77/1",
+    "sha": "b0b9a5f7525993aa5dcb687b3ed7e6c22a6cb390",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/ui-t78/1",
+    "sha": "5944ec8f813fbb25c601eaa80d56ca3729e54496",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-13-t17/1",
+    "sha": "1bc993a71561c9a613088a5e93b16d0123c5ed1e",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-13-t18/1",
+    "sha": "b947378760072b050a257e557931e5b064e67c55",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t03/1",
+    "sha": "b639af77236715de281f39f0d45657b00ed58827",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t04/1",
+    "sha": "284b1ad11f585664c9177d79805a5d167c32a218",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t05/1",
+    "sha": "0bf871c7b932f729776c1a67ccec253d3ee57e92",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t06/1",
+    "sha": "8bd10e85b50e2b2f4cd848d0a51ee9e5eb07bf77",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t07/1",
+    "sha": "66d8f6a30f15c15d7c87b4019ae79ffba80c83d4",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t08/1",
+    "sha": "6beb921bb8cf340eff0004bc9fb4aa3ee4973101",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t08/2",
+    "sha": "7a53b3767d89174cf1ad34c89bcbc6951e5fcc97",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t09/1",
+    "sha": "6dbe4af9128aefccd17c189e238a6bf94243dffd",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t10/1",
+    "sha": "9ccf49fe545e91b57678455ad25e7befccddad45",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t11/1",
+    "sha": "739e843ab7e5c6481a2c0c0a39646398018d439c",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t12/1",
+    "sha": "ee918b67ab650926ce0eb912e4778a555dc6638c",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t13/1",
+    "sha": "38ce83516b1c8c062390dcac8b59fdd097c3ef25",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t13/2",
+    "sha": "e17df17e2b5492c7587e393799ed1b90b8b52175",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t14/1",
+    "sha": "bae7d2975f74653df3643748968d1aa282295f7a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t15/1",
+    "sha": "10ac1409424518dc4fc4eeda4051d36430a3b27a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-16-t16/1",
+    "sha": "4e426de379f5201d18cec319d9d0727ae4959829",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t02/1",
+    "sha": "377664e622ec4a204ee1cf522b29b75d63287ee9",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t03/1",
+    "sha": "2ea29be8108f183e445e8d59cfd5df324d31993f",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t04/1",
+    "sha": "b4fd4809aaae51b58c3213d155a456b868e3f510",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t05/1",
+    "sha": "6bd5ea7e3b740fef426b07741730678d253f731a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t06/1",
+    "sha": "77570365daf49f9c4e45427af1f3d708c686a522",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t07/1",
+    "sha": "45450be9f95d725efde41c9712cea8cb69c7f6fc",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t08/1",
+    "sha": "5364b81373dcfa135b52ea2ffa1dc103aa36763d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t09/1",
+    "sha": "f42716bbdf3a14be3f0e58d77f7377275279260c",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-17-t10/1",
+    "sha": "a5b95be4b7e793ea5bb2f75c987d307ff26bdb69",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-18-t02/1",
+    "sha": "666f91c3e90a66d29c258e2c42d6ee2dc2b3455d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-18-t03/1",
+    "sha": "f39d6baf9e58f369eb972915222840dd4e660d3a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-18-t03/2",
+    "sha": "d22e6c817c7d7d0d6a7f13a0d7debbbdfbd7588a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-18-t04/1",
+    "sha": "93a5463d9d57be29fa9d158f859e25e40d5ecf74",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-18-t05/1",
+    "sha": "738bf334bd47c908f577908208a0515c9fcb16b0",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t02/1",
+    "sha": "2c798c2a73b682bf9196e893961ab539d9aeef6a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t03/1",
+    "sha": "49f03ade9cc82c3e97e85c994edb8be69ec33a7d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t04/1",
+    "sha": "2c275afb42dd814cad258df98e9e8723715b5518",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t05/1",
+    "sha": "0fe04fa6d70a77068af2c0fe025d0c7c58250306",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t06/1",
+    "sha": "72079a4d46328fd60dd200d7845e964e16133829",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t07/1",
+    "sha": "d60b21a2d4256f7c76cb5ab9bcf349835b757761",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t08/1",
+    "sha": "8e0cdc67f4b051d5fd8b6479e01489172cde794e",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t09/1",
+    "sha": "5a0d53ef475525521b5f98214bbfa71eb0397446",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t10/1",
+    "sha": "760ed9b948b108b075f88155d69a408f54bbb624",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t11/1",
+    "sha": "264894d269899b276def9f3a150cc9b8cca3a364",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t11/2",
+    "sha": "c86a7e6dae59f6e33c308cc3aeea8dd615b30de6",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-19-t12/1",
+    "sha": "e1fd4bdeab25e0a5157bce10654b9f89554c18c2",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t02/1",
+    "sha": "1bc16469a189d59266a1e75515a203edd8f453be",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t03/1",
+    "sha": "9c9b67a7719a809e9339afad0311f263c69fd972",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t03/2",
+    "sha": "40d39370eedb3ea74f5dc50aae993af740f28c89",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t04/1",
+    "sha": "22fd06c67d8f4130c30fe8bf488778a062629ba5",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t05/1",
+    "sha": "6955298159a1168a51f110f7acb929cddce77982",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t06/1",
+    "sha": "1b841e55694535029c1b2612006c3805a9eb0c4a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t07/1",
+    "sha": "260966009cc2e44b352688204c587ddd633be5e1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t08/1",
+    "sha": "5076018acfdc242cc83db3c21d191066e862d0ed",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t09/1",
+    "sha": "60738f4826dbfad6527d7d8f6be302d6646ad82e",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t10/1",
+    "sha": "e2b52662d7e8a239c5e65973d311a5600bab2901",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t10/2",
+    "sha": "9ca42d3cee7f0b3247c42dbc8be7ff0718ea49c6",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-20-t11/1",
+    "sha": "84178e42a5f78c0b3a180e45857ea24f76a0e229",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t02/1",
+    "sha": "30de2684634ed5f7305e4e26f036fbb8ca465b6c",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t03/1",
+    "sha": "f6de22713d7940a262476f201cf4b7b81e967fdc",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t04/1",
+    "sha": "af3b581c133517f9e19ae67b70a0d8d76f4d2abf",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t05/1",
+    "sha": "e9825919cd647b0527b2ff76776ad203a16951e4",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t06/1",
+    "sha": "7ea0cb83993113e07e0012ebfc1e6439061d8ee1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t07/1",
+    "sha": "6bff5f257e03495f4d12da7aca861e287a391ffa",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t08/1",
+    "sha": "2a5117173596c0094bca4f8ebb08cc9ca0806306",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t09/1",
+    "sha": "fe71e663df4eeff270fa23d962c97b4501334b59",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t11/1",
+    "sha": "083eb3ca298af43e46623ba46405d9971001357d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t12/1",
+    "sha": "8c1fcecab284e7ef5fc6b4b55c0382a0e9f95339",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/acc/wp-22-t13/1",
+    "sha": "d7e44ac04c380f711789d49439dee6718d13ecd8",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/asm-plug",
+    "sha": "c77871fde64c895f9e9c769f73bd6af5bfeb7a81",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/gov-gate",
+    "sha": "41ed65833427afe24f36f2d1dad1c5664b8461e2",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/gov-m6-parallel-debts",
+    "sha": "aae927b3ab854aeeba6eddb1f0a065017f05daee",
+    "nonEquivalent": 3,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/governance/pol-t12-registry",
+    "sha": "94fe223c09dfd325a1bd52ab612769f1958a8081",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/kin-r2-ui",
+    "sha": "60f2f9ad27cd65953efdeaea3ce2787628592f47",
+    "nonEquivalent": 0,
+    "equivalent": 5,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/rul-tok",
+    "sha": "d4f304b07c7761a81d16085b908493302cad9a28",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/ui-t39",
+    "sha": "8d381565048452744f0d0098e6ae1a6c96bc07d1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp10-t79",
+    "sha": "d57d7b3c8415b56028ba39009bba8dfc7ad8e7ba",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "d57d7b3c8415b56028ba39009bba8dfc7ad8e7ba",
+        "subject": "[WP-10-T79] 修复建模编辑回填并保护暂存输入",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/FormEditCommon.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/heads/wp12-t14",
+    "sha": "e22a6d0698645ac0fa811ba296b4e2c259b524ee",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp12-t15",
+    "sha": "adbb3a40d3fe30b4b916d94df3e8c258fac6537d",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp13-t17",
+    "sha": "80bab176f8a1109f54fe93d84e3c05e8d440f622",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp13-t27",
+    "sha": "648c95099b4313a8bb69d330ea5e0b3d82805bcd",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "648c95099b4313a8bb69d330ea5e0b3d82805bcd",
+        "subject": "[WP-13-T27] 修复主线功能审计四项：MA-05/MA-04/MA-03/MA-09",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ApplierContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DockWorkspace_p.hpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/heads/wp13-t28",
+    "sha": "059236f22c21250ee787c8e6d0dacfccdf29af44",
+    "nonEquivalent": 2,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "648c95099b4313a8bb69d330ea5e0b3d82805bcd",
+        "subject": "[WP-13-T27] 修复主线功能审计四项：MA-05/MA-04/MA-03/MA-09",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ApplierContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DockWorkspace_p.hpp"
+        ]
+      },
+      {
+        "commit": "059236f22c21250ee787c8e6d0dacfccdf29af44",
+        "subject": "[WP-13-T28] 实施MA-01真实网格加载与MA-02真实碰撞设施",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CollisionSession.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Snapshot.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CollisionSession.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CollisionSessionTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/heads/wp13-t29",
+    "sha": "059236f22c21250ee787c8e6d0dacfccdf29af44",
+    "nonEquivalent": 2,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "648c95099b4313a8bb69d330ea5e0b3d82805bcd",
+        "subject": "[WP-13-T27] 修复主线功能审计四项：MA-05/MA-04/MA-03/MA-09",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ApplierContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DockWorkspace_p.hpp"
+        ]
+      },
+      {
+        "commit": "059236f22c21250ee787c8e6d0dacfccdf29af44",
+        "subject": "[WP-13-T28] 实施MA-01真实网格加载与MA-02真实碰撞设施",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CollisionSession.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Snapshot.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CollisionSession.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CollisionSessionTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/heads/wp16-t01",
+    "sha": "7a8f72441f9a3f7058273a4c6305f5b9e8f754c0",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp16-t04",
+    "sha": "e8979d7a5e6cc71968161dbf30651182adf1d670",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp16-t07",
+    "sha": "259c1e9495bad20f565af3088514e9787db2bb23",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp16-t08",
+    "sha": "95670347eea43254dfb30d5445b59cf30cc9a27a",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp16-t09",
+    "sha": "b33ee7bf01d6e0d4e399a280518a8900af095db6",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp16-t10",
+    "sha": "912d310050261d75f318bdc7128826d59139367d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "912d310050261d75f318bdc7128826d59139367d",
+        "subject": "[WP-16-T10] 实现轨迹动画/曲线/局部重规划与标准导出（TRJ-07）",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/CommandsBoundaryContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Commands.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Export.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Playback.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Commands.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Export.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Playback.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlaybackExportTest.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/heads/wp16-t13",
+    "sha": "c513f3664d3875c1254c656736462e1291142c9c",
+    "nonEquivalent": 2,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "151b1f11d9d413729cccb0cf2407227e65046ee5",
+        "subject": "[WP-16-T13] 实现契约测试与轨迹黄金数据集——AT-06 四反例解析对照与 trj-* 数据集登记",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/expected/trj-at06-expected.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/generate/make_trj_at06_golden.mjs",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/inputs/trj-at06-inputs.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/manifest.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/tolerance/trj-at06/v1.0.0.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/At06GoldenContractTest.cpp"
+        ]
+      },
+      {
+        "commit": "c513f3664d3875c1254c656736462e1291142c9c",
+        "subject": "[WP-16-T13] 返工——B-1 消账：P-06 冻结表八值物化对照补齐为真",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/inputs/trj-at06-inputs.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/manifest.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/At06GoldenContractTest.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/heads/wp16-t14",
+    "sha": "97b32b69a975d4100f9e06d004e29ef2559c12a9",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "97b32b69a975d4100f9e06d004e29ef2559c12a9",
+        "subject": "[WP-16-T14] 实现 jerk 上限约束——TRJ-08-S1 领域实现（septic 运动律＋限值消费＋payload v2）",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/EvaluationDimsContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/DiagCodes.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/EvaluationDims.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/PlanConfig.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/TimeParam.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/PlanConfig.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/EvaluationDimsTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/FailureLocateTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlanConfigTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TimeParamTest.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/heads/wp16-t15",
+    "sha": "5641e22107645c01dc1f31c32dc13825ed5f5a3a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "5641e22107645c01dc1f31c32dc13825ed5f5a3a",
+        "subject": "[WP-16-T15] 实现工艺速度约束——TRJ-08-S2 领域实现（段约束扩展版本＋校验面＋payload v3）",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/EvaluationDimsContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ProcessSpeedContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/EvaluationDims.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/ProcessSpeed.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/ProcessSpeed.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/EvaluationDimsTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/ProcessSpeedTest.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/heads/wp17-t06",
+    "sha": "39388ed507ef463391b4bc1b96b2c5d156283877",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp18-t04",
+    "sha": "da17b1786c2d4a3aa8484c2490057110523e3c4b",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp19-t11",
+    "sha": "0827b87ea4820c4178d1dc1eae05244430a80eb6",
+    "nonEquivalent": 1,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp19-t12",
+    "sha": "c2a7678d583fdd27ea1f45ee99cf3e9b1641c75b",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp20-t03",
+    "sha": "6ff2e9a9c6c6b0b7506ee384bfecca71351eb938",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp22-t07",
+    "sha": "549afe446dc0aab54c23273e42e7cc9b07f41ed5",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp22-t11",
+    "sha": "be5004094870882b1fa34505fa783f323daa6f33",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/heads/wp22-t13",
+    "sha": "1685a47c6714268f8f16c4b7a1b09655b9d00179",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/E2-UI-B/attempt1",
+    "sha": "6256b390e814874b1c618160ffc6ab4d8656d0c1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/E2-UI-C/attempt1",
+    "sha": "90699831a01419e8e1ec053d34d9744ea23ba2b4",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/EX-T01/1",
+    "sha": "d27833a31c34079909c8722afdab50272e71a86f",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/EX-T09/1",
+    "sha": "93819ac0e129b9831401a8358e180ddafd47b549",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/IO-T02/1",
+    "sha": "c356e9638d9d3a1cbdc67974ce02d85339107e58",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/IO-T03/1",
+    "sha": "3bf11e04408819599b9523434de4fadcd6fcc6fb",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/IO-T06/1",
+    "sha": "a0a212b08bcba8b704be3b0df9b01df7b8900c96",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/UI-T03/1",
+    "sha": "e5f27bf37708334f7e3037e828c3fdf850069e56",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/UI-T11/1",
+    "sha": "e328d07ad9db73d83c0215cdc360ac3b2e4f2f76",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/UI-T16/1",
+    "sha": "2558984de63b195ecb5a8bae018705314c96c10d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/UI-T17/1",
+    "sha": "c216d6c89f92d5a895d05d46656ed6e11dc70ee1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/UI-T18/1",
+    "sha": "d3ee81672fd7ec838980af6694ce8decc1913fda",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/UI-T27/1",
+    "sha": "74ba3c9ab5dda51696bf020a9cfd11dfc05735c9",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/UI-T79/1",
+    "sha": "cbc129e2f5f05978e77e3ab9397a95bfce81a36a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/UI-T85/1",
+    "sha": "55981b27081a3374dd8be8de892d512ec1a73656",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/WP-10-T15/1",
+    "sha": "7ccc1fad4d610fe74d00746e7415b1eae97a86b9",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/WP-13-T09/1",
+    "sha": "05b0265551b22ee77a8adbd59bdecc98d154565d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/WP-13-T20/1",
+    "sha": "e22bac97408cf44335abb99db4c1d66011885b31",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/WP-13-T26/1",
+    "sha": "ce7fa78779a13c6992a7f81e51be2dd81269dc51",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/WP-13-T26/2",
+    "sha": "734348e960d3ecbfdb3e943f3f9473e00f545769",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/WP-15-T14/1",
+    "sha": "457f890f17de014b2809c86cad633f5f5ac1abc1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/WP-16-T01/1",
+    "sha": "6591ee99f43bff72e5b909c14b79cd3f8571e014",
+    "nonEquivalent": 1,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/asm-panel/1",
+    "sha": "42e309c947f38ec9d28cdc40a6468702b939432d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/asm-plug/1",
+    "sha": "4417260b3a5141a168c067a21fb82951dea3161d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/asm-ui/1",
+    "sha": "3c5535c769bb514b73c944addfda39f60fb0d525",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/asm-wf/1",
+    "sha": "ac9169473622f8fa5c7cf8fd5610fa57ccfcf3f3",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/audit-r2d/1",
+    "sha": "6977584769d94e3ab1919e73103644ebdda6998b",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/fix-panel/1",
+    "sha": "f85ce64d361d1fe80e3da7c64376350a0a6a3fe7",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/fix-panel/2",
+    "sha": "ceb872c2f199ac2c074acf87d27d04d08ce70426",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/freeze-p06/1",
+    "sha": "b671629040b5139a7aa026782c2fd43efd92d191",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/gov-doc/1",
+    "sha": "538831b9e24b06a22d9d4deb93c3b73cb51b77d3",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/gov-find/1",
+    "sha": "ce70b787da2afcb8f62aa73668cf46bbaa3159c2",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/gov-gate/1",
+    "sha": "cd42e3566ff9aaefaa9d5c9fcd40d444641528f3",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/gov-unfrozen/1",
+    "sha": "4232d7bcf3a361c91e36452b3b851696f196345d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/rpt-t14/1",
+    "sha": "260fc3489c8f652ffa942d2315cfce0a1d9e49bb",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/rpt-t15/1",
+    "sha": "97a320ddee98d670bf99d902a2234f41aae0aadf",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/rpt-t16/1",
+    "sha": "f847bcf4f7dcc1c843471ff6d223e067e2c6d663",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/rt-t15/1",
+    "sha": "4398244a6d5ed8e19cbcc5067207413e72cff355",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/rul-tok/1",
+    "sha": "802b3a16216f505202bbb076c87cac847d8c778c",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t36/1",
+    "sha": "a0fdc2b4b825ffd7dc89a194c7144141c473998b",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t36/2",
+    "sha": "cf1b2fa356274624b5a9f2ea44c60dffb08d6bc1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t37/1",
+    "sha": "55266f3e39795d951e2b5d9a672731217ebc2b66",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t37/2",
+    "sha": "d7dede4132ad1e819a1df409086700d0f05519b7",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t37/3",
+    "sha": "19659f0cfacdb2dbf4d6d6e7951dcef4c768da87",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t37/4",
+    "sha": "4d92e57c661dbf17417baf1fb8045f888c4c6685",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t37/5",
+    "sha": "cd0f267649da05f92adfd7e130b04bd2be5e6874",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t77/1",
+    "sha": "b0b9a5f7525993aa5dcb687b3ed7e6c22a6cb390",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/ui-t78/1",
+    "sha": "5944ec8f813fbb25c601eaa80d56ca3729e54496",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-13-t17/1",
+    "sha": "1bc993a71561c9a613088a5e93b16d0123c5ed1e",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-13-t18/1",
+    "sha": "b947378760072b050a257e557931e5b064e67c55",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t03/1",
+    "sha": "b639af77236715de281f39f0d45657b00ed58827",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t04/1",
+    "sha": "284b1ad11f585664c9177d79805a5d167c32a218",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t05/1",
+    "sha": "0bf871c7b932f729776c1a67ccec253d3ee57e92",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t06/1",
+    "sha": "8bd10e85b50e2b2f4cd848d0a51ee9e5eb07bf77",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t07/1",
+    "sha": "66d8f6a30f15c15d7c87b4019ae79ffba80c83d4",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t08/1",
+    "sha": "6beb921bb8cf340eff0004bc9fb4aa3ee4973101",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t08/2",
+    "sha": "7a53b3767d89174cf1ad34c89bcbc6951e5fcc97",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t09/1",
+    "sha": "6dbe4af9128aefccd17c189e238a6bf94243dffd",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t10/1",
+    "sha": "9ccf49fe545e91b57678455ad25e7befccddad45",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t11/1",
+    "sha": "739e843ab7e5c6481a2c0c0a39646398018d439c",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t12/1",
+    "sha": "ee918b67ab650926ce0eb912e4778a555dc6638c",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t13/1",
+    "sha": "38ce83516b1c8c062390dcac8b59fdd097c3ef25",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t13/2",
+    "sha": "e17df17e2b5492c7587e393799ed1b90b8b52175",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t14/1",
+    "sha": "bae7d2975f74653df3643748968d1aa282295f7a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t15/1",
+    "sha": "10ac1409424518dc4fc4eeda4051d36430a3b27a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-16-t16/1",
+    "sha": "4e426de379f5201d18cec319d9d0727ae4959829",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t02/1",
+    "sha": "377664e622ec4a204ee1cf522b29b75d63287ee9",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t03/1",
+    "sha": "2ea29be8108f183e445e8d59cfd5df324d31993f",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t04/1",
+    "sha": "b4fd4809aaae51b58c3213d155a456b868e3f510",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t05/1",
+    "sha": "6bd5ea7e3b740fef426b07741730678d253f731a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t06/1",
+    "sha": "77570365daf49f9c4e45427af1f3d708c686a522",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t07/1",
+    "sha": "45450be9f95d725efde41c9712cea8cb69c7f6fc",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t08/1",
+    "sha": "5364b81373dcfa135b52ea2ffa1dc103aa36763d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t09/1",
+    "sha": "f42716bbdf3a14be3f0e58d77f7377275279260c",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-17-t10/1",
+    "sha": "a5b95be4b7e793ea5bb2f75c987d307ff26bdb69",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-18-t02/1",
+    "sha": "666f91c3e90a66d29c258e2c42d6ee2dc2b3455d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-18-t03/1",
+    "sha": "f39d6baf9e58f369eb972915222840dd4e660d3a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-18-t03/2",
+    "sha": "d22e6c817c7d7d0d6a7f13a0d7debbbdfbd7588a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-18-t04/1",
+    "sha": "93a5463d9d57be29fa9d158f859e25e40d5ecf74",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-18-t05/1",
+    "sha": "738bf334bd47c908f577908208a0515c9fcb16b0",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t02/1",
+    "sha": "2c798c2a73b682bf9196e893961ab539d9aeef6a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t03/1",
+    "sha": "49f03ade9cc82c3e97e85c994edb8be69ec33a7d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t04/1",
+    "sha": "2c275afb42dd814cad258df98e9e8723715b5518",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t05/1",
+    "sha": "0fe04fa6d70a77068af2c0fe025d0c7c58250306",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t06/1",
+    "sha": "72079a4d46328fd60dd200d7845e964e16133829",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t07/1",
+    "sha": "d60b21a2d4256f7c76cb5ab9bcf349835b757761",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t08/1",
+    "sha": "8e0cdc67f4b051d5fd8b6479e01489172cde794e",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t09/1",
+    "sha": "5a0d53ef475525521b5f98214bbfa71eb0397446",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t10/1",
+    "sha": "760ed9b948b108b075f88155d69a408f54bbb624",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t11/1",
+    "sha": "264894d269899b276def9f3a150cc9b8cca3a364",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t11/2",
+    "sha": "c86a7e6dae59f6e33c308cc3aeea8dd615b30de6",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-19-t12/1",
+    "sha": "e1fd4bdeab25e0a5157bce10654b9f89554c18c2",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t02/1",
+    "sha": "1bc16469a189d59266a1e75515a203edd8f453be",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t03/1",
+    "sha": "9c9b67a7719a809e9339afad0311f263c69fd972",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t03/2",
+    "sha": "40d39370eedb3ea74f5dc50aae993af740f28c89",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t04/1",
+    "sha": "22fd06c67d8f4130c30fe8bf488778a062629ba5",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t05/1",
+    "sha": "6955298159a1168a51f110f7acb929cddce77982",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t06/1",
+    "sha": "1b841e55694535029c1b2612006c3805a9eb0c4a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t07/1",
+    "sha": "260966009cc2e44b352688204c587ddd633be5e1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t08/1",
+    "sha": "5076018acfdc242cc83db3c21d191066e862d0ed",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t09/1",
+    "sha": "60738f4826dbfad6527d7d8f6be302d6646ad82e",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t10/1",
+    "sha": "e2b52662d7e8a239c5e65973d311a5600bab2901",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t10/2",
+    "sha": "9ca42d3cee7f0b3247c42dbc8be7ff0718ea49c6",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-20-t11/1",
+    "sha": "84178e42a5f78c0b3a180e45857ea24f76a0e229",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t02/1",
+    "sha": "30de2684634ed5f7305e4e26f036fbb8ca465b6c",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t03/1",
+    "sha": "f6de22713d7940a262476f201cf4b7b81e967fdc",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t04/1",
+    "sha": "af3b581c133517f9e19ae67b70a0d8d76f4d2abf",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t05/1",
+    "sha": "e9825919cd647b0527b2ff76776ad203a16951e4",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t06/1",
+    "sha": "7ea0cb83993113e07e0012ebfc1e6439061d8ee1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t07/1",
+    "sha": "6bff5f257e03495f4d12da7aca861e287a391ffa",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t08/1",
+    "sha": "2a5117173596c0094bca4f8ebb08cc9ca0806306",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t09/1",
+    "sha": "fe71e663df4eeff270fa23d962c97b4501334b59",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t10/1",
+    "sha": "c350b3fd1a80664e74ef6681965aec92e974a42e",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t11/1",
+    "sha": "083eb3ca298af43e46623ba46405d9971001357d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t12/1",
+    "sha": "8c1fcecab284e7ef5fc6b4b55c0382a0e9f95339",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/acc/wp-22-t13/1",
+    "sha": "d7e44ac04c380f711789d49439dee6718d13ecd8",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/asm-plug",
+    "sha": "c77871fde64c895f9e9c769f73bd6af5bfeb7a81",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/codex/robot-model-builder",
+    "sha": "2798645a1eea7ec9cfd5c5925ed02994fb089d43",
+    "nonEquivalent": 86,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/codex/wp-01-t04-gitlab-gate-r2",
+    "sha": "eb777e2b535b7378fdda8da10c1b0b5b629ad71a",
+    "nonEquivalent": 450,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "2443d996b246192b3869c97d1ceffa5471c74d70",
+        "subject": "WP-01-T02: 建立目标骨架",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/IndustrialRobotTargets.cmake",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/core_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/core_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/diagnostics_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/diagnostics_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/evidence_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/evidence_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/execution_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/execution_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/include/sdurws/ird/io/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/io_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/io_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/policy_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/policy_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/project_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/project_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/include/sdurws/ird/reporting/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/reporting_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/reporting_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/runtime_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/runtime_smoke.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/.gitkeep",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ui_anchor.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/ui_smoke.cpp"
+        ]
+      },
+      {
+        "commit": "2287b55a0974cb6d8eab82efb4140346a7f69c16",
+        "subject": "build: 治理授权使 IRD 目标脱离 WITH_RWS 门控",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/feat/chinese-docs",
+    "sha": "d031d0ccb150aa77af41384bdcb8029ad96857b4",
+    "nonEquivalent": 140,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/feat/workspace-optimization",
+    "sha": "d031d0ccb150aa77af41384bdcb8029ad96857b4",
+    "nonEquivalent": 140,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/gov-gate",
+    "sha": "41ed65833427afe24f36f2d1dad1c5664b8461e2",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/gov-m6-parallel-debts",
+    "sha": "aae927b3ab854aeeba6eddb1f0a065017f05daee",
+    "nonEquivalent": 3,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/governance/pol-t12-registry",
+    "sha": "94fe223c09dfd325a1bd52ab612769f1958a8081",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/kin-r2-ui",
+    "sha": "60f2f9ad27cd65953efdeaea3ce2787628592f47",
+    "nonEquivalent": 0,
+    "equivalent": 5,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/rul-tok",
+    "sha": "d4f304b07c7761a81d16085b908493302cad9a28",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/ui-t39",
+    "sha": "8d381565048452744f0d0098e6ae1a6c96bc07d1",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp10-t79",
+    "sha": "d57d7b3c8415b56028ba39009bba8dfc7ad8e7ba",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "d57d7b3c8415b56028ba39009bba8dfc7ad8e7ba",
+        "subject": "[WP-10-T79] 修复建模编辑回填并保护暂存输入",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/FormEditCommon.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/wp12-t14",
+    "sha": "e22a6d0698645ac0fa811ba296b4e2c259b524ee",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp12-t15",
+    "sha": "adbb3a40d3fe30b4b916d94df3e8c258fac6537d",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp13-t17",
+    "sha": "80bab176f8a1109f54fe93d84e3c05e8d440f622",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp13-t27",
+    "sha": "648c95099b4313a8bb69d330ea5e0b3d82805bcd",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "648c95099b4313a8bb69d330ea5e0b3d82805bcd",
+        "subject": "[WP-13-T27] 修复主线功能审计四项：MA-05/MA-04/MA-03/MA-09",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ApplierContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DockWorkspace_p.hpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/wp13-t28",
+    "sha": "059236f22c21250ee787c8e6d0dacfccdf29af44",
+    "nonEquivalent": 2,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "648c95099b4313a8bb69d330ea5e0b3d82805bcd",
+        "subject": "[WP-13-T27] 修复主线功能审计四项：MA-05/MA-04/MA-03/MA-09",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ApplierContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DockWorkspace_p.hpp"
+        ]
+      },
+      {
+        "commit": "059236f22c21250ee787c8e6d0dacfccdf29af44",
+        "subject": "[WP-13-T28] 实施MA-01真实网格加载与MA-02真实碰撞设施",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CollisionSession.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Snapshot.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CollisionSession.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CollisionSessionTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t01",
+    "sha": "7a8f72441f9a3f7058273a4c6305f5b9e8f754c0",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t04",
+    "sha": "e8979d7a5e6cc71968161dbf30651182adf1d670",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t07",
+    "sha": "259c1e9495bad20f565af3088514e9787db2bb23",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t08",
+    "sha": "95670347eea43254dfb30d5445b59cf30cc9a27a",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t09",
+    "sha": "b33ee7bf01d6e0d4e399a280518a8900af095db6",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t10",
+    "sha": "912d310050261d75f318bdc7128826d59139367d",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "912d310050261d75f318bdc7128826d59139367d",
+        "subject": "[WP-16-T10] 实现轨迹动画/曲线/局部重规划与标准导出（TRJ-07）",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/CommandsBoundaryContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Commands.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Export.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Playback.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Commands.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Export.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Playback.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlaybackExportTest.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t13",
+    "sha": "c513f3664d3875c1254c656736462e1291142c9c",
+    "nonEquivalent": 2,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "151b1f11d9d413729cccb0cf2407227e65046ee5",
+        "subject": "[WP-16-T13] 实现契约测试与轨迹黄金数据集——AT-06 四反例解析对照与 trj-* 数据集登记",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/expected/trj-at06-expected.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/generate/make_trj_at06_golden.mjs",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/inputs/trj-at06-inputs.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/manifest.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/tolerance/trj-at06/v1.0.0.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/At06GoldenContractTest.cpp"
+        ]
+      },
+      {
+        "commit": "c513f3664d3875c1254c656736462e1291142c9c",
+        "subject": "[WP-16-T13] 返工——B-1 消账：P-06 冻结表八值物化对照补齐为真",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/inputs/trj-at06-inputs.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/manifest.json",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/At06GoldenContractTest.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t14",
+    "sha": "97b32b69a975d4100f9e06d004e29ef2559c12a9",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "97b32b69a975d4100f9e06d004e29ef2559c12a9",
+        "subject": "[WP-16-T14] 实现 jerk 上限约束——TRJ-08-S1 领域实现（septic 运动律＋限值消费＋payload v2）",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/EvaluationDimsContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/DiagCodes.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/EvaluationDims.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/PlanConfig.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/TimeParam.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/PlanConfig.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/EvaluationDimsTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/FailureLocateTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlanConfigTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TimeParamTest.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/wp16-t15",
+    "sha": "5641e22107645c01dc1f31c32dc13825ed5f5a3a",
+    "nonEquivalent": 1,
+    "equivalent": 0,
+    "productCommits": [
+      {
+        "commit": "5641e22107645c01dc1f31c32dc13825ed5f5a3a",
+        "subject": "[WP-16-T15] 实现工艺速度约束——TRJ-08-S2 领域实现（段约束扩展版本＋校验面＋payload v3）",
+        "paths": [
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/EvaluationDimsContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ProcessSpeedContractTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/EvaluationDims.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/ProcessSpeed.hpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/ProcessSpeed.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/EvaluationDimsTest.cpp",
+          "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/ProcessSpeedTest.cpp"
+        ]
+      }
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/wp17-t06",
+    "sha": "39388ed507ef463391b4bc1b96b2c5d156283877",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp18-t04",
+    "sha": "da17b1786c2d4a3aa8484c2490057110523e3c4b",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp19-t11",
+    "sha": "0827b87ea4820c4178d1dc1eae05244430a80eb6",
+    "nonEquivalent": 1,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp19-t12",
+    "sha": "c2a7678d583fdd27ea1f45ee99cf3e9b1641c75b",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp20-t03",
+    "sha": "6ff2e9a9c6c6b0b7506ee384bfecca71351eb938",
+    "nonEquivalent": 0,
+    "equivalent": 2,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp22-t07",
+    "sha": "549afe446dc0aab54c23273e42e7cc9b07f41ed5",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp22-t11",
+    "sha": "be5004094870882b1fa34505fa783f323daa6f33",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  },
+  {
+    "ref": "refs/remotes/origin/wp22-t13",
+    "sha": "1685a47c6714268f8f16c4b7a1b09655b9d00179",
+    "nonEquivalent": 0,
+    "equivalent": 1,
+    "productCommits": []
+  }
+]

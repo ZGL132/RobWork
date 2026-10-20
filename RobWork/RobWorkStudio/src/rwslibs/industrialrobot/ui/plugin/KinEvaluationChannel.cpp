@@ -92,24 +92,17 @@ void KinEvaluationExecutor::attachSnapshot(
 {
     // MA-02：同拍保留副本（真实碰撞设施源——与下方视图包同源同值；
     // 空快照＝解绑态，碰撞设施随之不可用）。
-    m_runtimeSnapshot = snapshot;
     // 产品路径：快照包进视图接口（每次换绑新包裹实例——"每请求构建"
     // 语义的载体；旧实例随在途任务 shared_ptr 存活到任务结束）。
     std::shared_ptr<const kinematics::IKinRuntimeView> view =
         snapshot != nullptr
             ? std::shared_ptr<const kinematics::IKinRuntimeView>(
-                std::make_shared<SnapshotViewAdapter>(std::move(snapshot)))
+                std::make_shared<SnapshotViewAdapter>(snapshot))
             : nullptr;
     attachView(std::move(view), std::move(snapshotId));
-}
-
-std::shared_ptr<kinematics::IKinCollisionSession>
-KinEvaluationExecutor::makeRealCollisionSessionIfAvailable(
-    const std::shared_ptr<const policy::EngineeringPolicySet>& policy)
-{
-    // MA-02：单一翻译点——换绑拍快照副本＋提交拍策略→真实碰撞会话；
-    // 装配不可用返回 null（调用方回落 EvidenceMissing 桩）。
-    return makeRuntimeCollisionSession(m_runtimeSnapshot, policy);
+    // attachView也供仅有数值视图的入口调用，必须先清旧碰撞场景；只有
+    // 本完整快照入口才在同一UI拍补回同源场景。禁止新视图借用旧项目几何。
+    m_runtimeSnapshot = std::move(snapshot);
 }
 
 void KinEvaluationExecutor::attachView(
@@ -122,6 +115,7 @@ void KinEvaluationExecutor::attachView(
     // 投影（PA 权威纪律的呈现侧镜像——非第二状态源）。缝地址稳定的
     // 长命视图（m_sessionView）同拍 rebind——面板 modelView 缝消费。
     m_snapshot = view;
+    m_runtimeSnapshot.reset(); // MA-03/CON-06：数值视图换绑时不能保留旧碰撞场景。
     m_sessionView.rebind(std::move(view));
     m_snapshotId = snapshotId;
     ++m_epoch;
@@ -741,11 +735,13 @@ void KinEvaluationExecutor::launchCoverageTask(
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
     const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
+    // MA-03：与数值视图同拍捕获；后台不得解引用UI换绑中的成员shared_ptr。
+    const auto runtimeSnapshotAtSubmit = m_runtimeSnapshot;
     QObject* routeContext = m_deps.routeContext;
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, runtimeSnapshotAtSubmit, epoch, taskRef, cancelFlag,
                     progressFlag,
                     snapshotIdAtSubmit, configDigestAtSubmit,
                     query = std::move(query),
@@ -771,7 +767,7 @@ void KinEvaluationExecutor::launchCoverageTask(
         // 存活至本 lambda 结束＝覆盖后台评估全程）；不可用回落桩（KIN-05）。
         std::shared_ptr<kinematics::IKinCollisionSession> realCollision =
             (policyAtSubmit && policyAtSubmit->collision.enabled)
-                ? self->makeRealCollisionSessionIfAvailable(policyAtSubmit)
+                ? makeRuntimeCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
                 : nullptr;
         kinematics::IKinCollisionSession* collisionSession =
             realCollision ? realCollision.get() : &missingCollision;
@@ -879,6 +875,8 @@ void KinEvaluationExecutor::launchSolveTask(
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
     const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
+    // MA-03：与数值视图同拍捕获；后台不得解引用UI换绑中的成员shared_ptr。
+    const auto runtimeSnapshotAtSubmit = m_runtimeSnapshot;
     QObject* routeContext = m_deps.routeContext;
     // 求解器（Deps 注入可空——空＝内置 IkSolver 生产实例；无状态可共享，
     // 静态存储期——后台线程安全消费）。
@@ -888,7 +886,7 @@ void KinEvaluationExecutor::launchSolveTask(
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, runtimeSnapshotAtSubmit, epoch, taskRef, cancelFlag,
                     snapshotIdAtSubmit, configDigestAtSubmit, solver,
                     request]() mutable {
         kinematics::KinChannelSolveResult result;
@@ -910,7 +908,7 @@ void KinEvaluationExecutor::launchSolveTask(
             // MA-02：真实设施优先（同覆盖位语义——适配器存活至 solve 返回）。
             std::shared_ptr<kinematics::IKinCollisionSession> realCollision =
                 (policyAtSubmit && policyAtSubmit->collision.enabled)
-                    ? self->makeRealCollisionSessionIfAvailable(policyAtSubmit)
+                    ? makeRuntimeCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
                     : nullptr;
             kinematics::IKinCollisionSession* collisionSession =
                 realCollision ? realCollision.get() : &missingCollision;
@@ -973,11 +971,13 @@ void KinEvaluationExecutor::launchBatchTask(
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
     const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
+    // MA-03：与数值视图同拍捕获；后台不得解引用UI换绑中的成员shared_ptr。
+    const auto runtimeSnapshotAtSubmit = m_runtimeSnapshot;
     QObject* routeContext = m_deps.routeContext;
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, runtimeSnapshotAtSubmit, epoch, taskRef, cancelFlag,
                     snapshotIdAtSubmit, query = std::move(query),
                     request = std::move(request)]() mutable {
         // ---- 视图空＝受理后解绑的竞态残留——中止回投（与覆盖通道同轨）。
@@ -997,7 +997,7 @@ void KinEvaluationExecutor::launchBatchTask(
         // MA-02：真实设施优先（同覆盖位语义——适配器存活至批量计算返回）。
         std::shared_ptr<kinematics::IKinCollisionSession> realCollision =
             (!policyAtSubmit || policyAtSubmit->collision.enabled)
-                ? self->makeRealCollisionSessionIfAvailable(policyAtSubmit)
+                ? makeRuntimeCollisionSession(runtimeSnapshotAtSubmit, policyAtSubmit)
                 : nullptr;
         kinematics::IKinCollisionSession* collisionSession =
             realCollision ? realCollision.get() : &missingCollision;

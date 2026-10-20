@@ -1,0 +1,17 @@
+{
+  "branch": "wp13-t29",
+  "parent": "059236f22c21250ee787c8e6d0dacfccdf29af44",
+  "mergeParent": "402e5992ad5fd204148f4844c6bf27b65d785d7d",
+  "main": "402e5992ad5fd204148f4844c6bf27b65d785d7d",
+  "remoteMain": "b7abcba9f6c4b32aa1bc0404b44ed1aad22a30a5",
+  "frozenMain": "49a9e819c24c7ef15dff24366a4a551068c2d269",
+  "caches": {
+    "integration": [
+      "RWS_BUILD_INDUSTRIALROBOT:BOOL=ON",
+      "CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork"
+    ],
+    "standalone": [
+      "CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot"
+    ]
+  }
+}

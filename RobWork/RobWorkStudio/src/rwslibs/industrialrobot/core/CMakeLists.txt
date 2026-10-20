@@ -78,6 +78,7 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_core_test
+    test/TestMainReport.cpp # MA-09补扫：固定gtest_main无法生成原生报告，统一入口只安装一次。
     test/BuildRedLineTest.cpp
     test/IdentityTest.cpp
     test/DigestTest.cpp
@@ -100,11 +101,12 @@ if(MSVC)
     target_compile_options(sdurws_ird_core_test PRIVATE /utf-8)
 endif()
 
-# 测试 main 自持（DTB §5.5）：GTest::gtest_main 提供入口；测试链接产品库
+# 测试main自持（AGENTS §4.2/DTB §5.5）：与XML并存的原生报告由testkit统一记录。
 # sdurws_ird_core 同时验证"公共头可被正常 include＋库可链接"。
 target_link_libraries(sdurws_ird_core_test PRIVATE
     sdurws_ird_core
-    GTest::gtest_main)
+    sdurws_ird_testkit
+    GTest::gtest)
 
 # 源码树位置注入：UT-BUILD 用例在运行期扫描 core 源码核对红线（core.md §8）。
 # 经编译定义传绝对路径，避免测试对工作目录的依赖。

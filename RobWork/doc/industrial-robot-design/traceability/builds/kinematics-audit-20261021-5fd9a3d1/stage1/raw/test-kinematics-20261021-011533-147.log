@@ -1,0 +1,682 @@
+[==========] Running 288 tests from 32 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from KinGoldenFk
+[ RUN      ] KinGoldenFk.V01_AnalyticCasesCloseWithinProfile_WP15T13_ACC1
+[       OK ] KinGoldenFk.V01_AnalyticCasesCloseWithinProfile_WP15T13_ACC1 (3 ms)
+[ RUN      ] KinGoldenFk.V01_ForwardInverseClosedLoop_WP15T13_ACC1
+[       OK ] KinGoldenFk.V01_ForwardInverseClosedLoop_WP15T13_ACC1 (2 ms)
+[ RUN      ] KinGoldenFk.V01_EdgeCaseCarriersZeroNearCancellation_WP15T13_ACC1
+[       OK ] KinGoldenFk.V01_EdgeCaseCarriersZeroNearCancellation_WP15T13_ACC1 (1 ms)
+[ RUN      ] KinGoldenFk.ACC5_RepeatEvaluateCanonicalBitwise_WP15T13_ACC5
+[       OK ] KinGoldenFk.ACC5_RepeatEvaluateCanonicalBitwise_WP15T13_ACC5 (1 ms)
+[----------] 4 tests from KinGoldenFk (10 ms total)
+
+[----------] 3 tests from KinGoldenIkDedup
+[ RUN      ] KinGoldenIkDedup.V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1
+[       OK ] KinGoldenIkDedup.V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1 (1 ms)
+[ RUN      ] KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1
+[       OK ] KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1 (1 ms)
+[ RUN      ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5
+[       OK ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5 (1 ms)
+[----------] 3 tests from KinGoldenIkDedup (4 ms total)
+
+[----------] 4 tests from KinGoldenOutcomes
+[ RUN      ] KinGoldenOutcomes.V05_V06_FoundAndNoConvergence_WP15T13_ACC2
+[       OK ] KinGoldenOutcomes.V05_V06_FoundAndNoConvergence_WP15T13_ACC2 (2 ms)
+[ RUN      ] KinGoldenOutcomes.V08_V09_CollisionScriptOutcomes_WP15T13_ACC2
+[       OK ] KinGoldenOutcomes.V08_V09_CollisionScriptOutcomes_WP15T13_ACC2 (1 ms)
+[ RUN      ] KinGoldenOutcomes.V04Group_AnalyticBoundOutcome_WP15T13_ACC2
+[       OK ] KinGoldenOutcomes.V04Group_AnalyticBoundOutcome_WP15T13_ACC2 (1 ms)
+[ RUN      ] KinGoldenOutcomes.V07_RestartFlipGoldenPair_WP15T13_ACC2
+[       OK ] KinGoldenOutcomes.V07_RestartFlipGoldenPair_WP15T13_ACC2 (1 ms)
+[----------] 4 tests from KinGoldenOutcomes (8 ms total)
+
+[----------] 5 tests from KinGoldenCoverage
+[ RUN      ] KinGoldenCoverage.V14_FixedCount100of60_WP15T13_ACC1
+[       OK ] KinGoldenCoverage.V14_FixedCount100of60_WP15T13_ACC1 (1726 ms)
+[ RUN      ] KinGoldenCoverage.V14_InsufficientKeepsDenominator_WP15T13_ACC1
+[       OK ] KinGoldenCoverage.V14_InsufficientKeepsDenominator_WP15T13_ACC1 (1680 ms)
+[ RUN      ] KinGoldenCoverage.V13_ZeroSamplePlanDowngraded_WP15T13_ACC1
+[       OK ] KinGoldenCoverage.V13_ZeroSamplePlanDowngraded_WP15T13_ACC1 (1 ms)
+[ RUN      ] KinGoldenCoverage.ACC1_SampleSetMatchesGoldenCenters_WP15T13_ACC1
+[       OK ] KinGoldenCoverage.ACC1_SampleSetMatchesGoldenCenters_WP15T13_ACC1 (1658 ms)
+[ RUN      ] KinGoldenCoverage.ACC5_Thread1vs8EquivalentSetAndStableOrder_WP15T13_ACC5
+[       OK ] KinGoldenCoverage.ACC5_Thread1vs8EquivalentSetAndStableOrder_WP15T13_ACC5 (3307 ms)
+[----------] 5 tests from KinGoldenCoverage (8379 ms total)
+
+[----------] 3 tests from KinErrors
+[ RUN      ] KinErrors.ErrorCodeTokensMatchSection92Row_WP15T02_ACC4
+[       OK ] KinErrors.ErrorCodeTokensMatchSection92Row_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinErrors.ErrorValueSemanticsOrderedParams_WP15T02_ACC4
+[       OK ] KinErrors.ErrorValueSemanticsOrderedParams_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinErrors.DiagCodeMappingRowsStagedWithConsumers_WP15T02ACC4_WP15T03
+[       OK ] KinErrors.DiagCodeMappingRowsStagedWithConsumers_WP15T02ACC4_WP15T03 (0 ms)
+[----------] 3 tests from KinErrors (0 ms total)
+
+[----------] 5 tests from KinDiagCodes
+[ RUN      ] KinDiagCodes.FactoryScopeIsFullTable96_WP15T02_ACC4
+[       OK ] KinDiagCodes.FactoryScopeIsFullTable96_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinDiagCodes.DescriptorFieldsMatchSection96Rows_WP15T02_ACC4
+[       OK ] KinDiagCodes.DescriptorFieldsMatchSection96Rows_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP15T02_ACC4
+[       OK ] KinDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinDiagCodes.RegistersIntoStableCodeRegistry_WP15T02_ACC4
+[       OK ] KinDiagCodes.RegistersIntoStableCodeRegistry_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinDiagCodes.DuplicateRegistrationRejected_WP15T02_ACC4
+[       OK ] KinDiagCodes.DuplicateRegistrationRejected_WP15T02_ACC4 (0 ms)
+[----------] 5 tests from KinDiagCodes (0 ms total)
+
+[----------] 4 tests from KinBuildRedLine
+[ RUN      ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1
+[       OK ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1 (15 ms)
+[ RUN      ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5
+[       OK ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5 (16 ms)
+[ RUN      ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5
+[       OK ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5 (13 ms)
+[ RUN      ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1
+[       OK ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1 (10 ms)
+[----------] 4 tests from KinBuildRedLine (57 ms total)
+
+[----------] 16 tests from KinFk
+[ RUN      ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1
+[       OK ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1
+[       OK ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1
+[       OK ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.RevPrismSingularValuesAnalytic_WP15T03_ACC1
+[       OK ] KinFk.RevPrismSingularValuesAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1
+[       OK ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.AllFixedChainDegenerateMetrics_WP15T03_ACC1
+[       OK ] KinFk.AllFixedChainDegenerateMetrics_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.BaseWorldInvertedMount_V02_WP15T03_ACC2
+[       OK ] KinFk.BaseWorldInvertedMount_V02_WP15T03_ACC2 (0 ms)
+[ RUN      ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2
+[       OK ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2 (0 ms)
+[ RUN      ] KinFk.IllegalQDimensionRejected_WP15T03_ACC3
+[       OK ] KinFk.IllegalQDimensionRejected_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.IllegalQNonFiniteRejected_WP15T03_ACC3
+[       OK ] KinFk.IllegalQNonFiniteRejected_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.NoTcpTwoBranches_WP15T03_ACC3
+[       OK ] KinFk.NoTcpTwoBranches_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.OverLimitQComputableWithNegativeMargin_WP15T03_ACC3
+[       OK ] KinFk.OverLimitQComputableWithNegativeMargin_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.MarginNormalization_WP15T03_ACC1
+[       OK ] KinFk.MarginNormalization_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3
+[       OK ] KinFk.NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.DeterministicByteOutput_WP15T03_ACC1
+[       OK ] KinFk.DeterministicByteOutput_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15
+[       OK ] KinFk.NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15 (0 ms)
+[----------] 16 tests from KinFk (3 ms total)
+
+[----------] 34 tests from KinIk
+[ RUN      ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2
+[       OK ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.FkFacilityFailureYieldsValueFormNotThrow_F746_3
+[       OK ] KinIk.FkFacilityFailureYieldsValueFormNotThrow_F746_3 (0 ms)
+[ RUN      ] KinIk.PositionOnlyTaskIndependentDimension_KIN_P2
+[       OK ] KinIk.PositionOnlyTaskIndependentDimension_KIN_P2 (0 ms)
+[ RUN      ] KinIk.TaskSpaceOutOfRangeFailsFast_KIN_P2
+[       OK ] KinIk.TaskSpaceOutOfRangeFailsFast_KIN_P2 (0 ms)
+[ RUN      ] KinIk.SamePoseDistinctConfigurationsRetained_WP15T04_ACC1
+[       OK ] KinIk.SamePoseDistinctConfigurationsRetained_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.MultiInitNoConvergenceCarriesSearchRecord_WP15T04_ACC2
+[       OK ] KinIk.MultiInitNoConvergenceCarriesSearchRecord_WP15T04_ACC2 (1 ms)
+[ RUN      ] KinIk.IllegalRequestFailsFast_WP15T04_ACC4
+[       OK ] KinIk.IllegalRequestFailsFast_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinIk.AnalyticBoundExceededMaterialValidatable_WP15T04_ACC4
+[       OK ] KinIk.AnalyticBoundExceededMaterialValidatable_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinIk.InitialValueStrategiesDeterministic_WP15T04_ACC2
+[       OK ] KinIk.InitialValueStrategiesDeterministic_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.SeededRandomFull64BitSeedSensitivity_A06_KIN_P5
+[       OK ] KinIk.SeededRandomFull64BitSeedSensitivity_A06_KIN_P5 (0 ms)
+[ RUN      ] KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2
+[       OK ] KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3
+[       OK ] KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1
+[       OK ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3
+[       OK ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1
+[       OK ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.ExpandedInitialValuesFlipOutcome_WP15T04_ACC2
+[       OK ] KinIk.ExpandedInitialValuesFlipOutcome_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2
+[       OK ] KinIk.CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2
+[       OK ] KinIk.AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1
+[       OK ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3
+[       OK ] KinIk.ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3
+[       OK ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3
+[       OK ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.NamedTcpRealSolveAndReachBound_REQ01_A15
+[       OK ] KinIk.NamedTcpRealSolveAndReachBound_REQ01_A15 (0 ms)
+[ RUN      ] KinIk.ToolRollRangeScreensTwist_WP14T12
+[       OK ] KinIk.ToolRollRangeScreensTwist_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollRangeIteratesIntoRange_WP14T12
+[       OK ] KinIk.ToolRollRangeIteratesIntoRange_WP14T12 (0 ms)
+[ RUN      ] KinIk.PitchRowNonzeroYawConverges_WP14T12
+[       OK ] KinIk.PitchRowNonzeroYawConverges_WP14T12 (0 ms)
+[ RUN      ] KinIk.YawOnlyMaskSatisfiedAtGimbalTarget_WP14T12
+[       OK ] KinIk.YawOnlyMaskSatisfiedAtGimbalTarget_WP14T12 (0 ms)
+[ RUN      ] KinIk.TiltedToolTwistFreeDirection_WP14T12
+[       OK ] KinIk.TiltedToolTwistFreeDirection_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12
+[       OK ] KinIk.ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollOppositeAxisRejected_REQ09_WP14T12
+[       OK ] KinIk.ToolRollOppositeAxisRejected_REQ09_WP14T12 (1 ms)
+[ RUN      ] KinIk.ToolRollDirectionCorrectionRealFk_REQ09_WP14T12
+[       OK ] KinIk.ToolRollDirectionCorrectionRealFk_REQ09_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollPeriodicIntervals_REQ09_WP14T12
+[       OK ] KinIk.ToolRollPeriodicIntervals_REQ09_WP14T12 (0 ms)
+[ RUN      ] KinIk.RotatedReferenceMaskConverges_REQ01_WP14T12
+[       OK ] KinIk.RotatedReferenceMaskConverges_REQ01_WP14T12 (0 ms)
+[ RUN      ] KinIk.GimbalPlus90PitchConverges_WP14T12
+[       OK ] KinIk.GimbalPlus90PitchConverges_WP14T12 (0 ms)
+[----------] 34 tests from KinIk (12 ms total)
+
+[----------] 5 tests from KinTaskPointsBatch
+[ RUN      ] KinTaskPointsBatch.RealSolverOutcomeMapping_WP15T05_ACC1
+[       OK ] KinTaskPointsBatch.RealSolverOutcomeMapping_WP15T05_ACC1 (2 ms)
+[ RUN      ] KinTaskPointsBatch.DemandChecksMaterial_WP15T05_ACC1
+[       OK ] KinTaskPointsBatch.DemandChecksMaterial_WP15T05_ACC1 (0 ms)
+[ RUN      ] KinTaskPointsBatch.IncompleteBatchDeliversResultIncompleteDiag_WP15T05_ACC2
+[       OK ] KinTaskPointsBatch.IncompleteBatchDeliversResultIncompleteDiag_WP15T05_ACC2 (0 ms)
+[ RUN      ] KinTaskPointsBatch.PayloadHeaderBindingLayout_WP15T05_ACC3
+[       OK ] KinTaskPointsBatch.PayloadHeaderBindingLayout_WP15T05_ACC3 (0 ms)
+[ RUN      ] KinTaskPointsBatch.ZeroApplicableCaseMarksNotApplicable_WP15T05_ACC2
+[       OK ] KinTaskPointsBatch.ZeroApplicableCaseMarksNotApplicable_WP15T05_ACC2 (0 ms)
+[----------] 5 tests from KinTaskPointsBatch (3 ms total)
+
+[----------] 1 test from KinReproBenchmark
+[ RUN      ] KinReproBenchmark.Batch1vs8ThreadEquivalentSetAndOrder_WP23T09_ACC1
+[       OK ] KinReproBenchmark.Batch1vs8ThreadEquivalentSetAndOrder_WP23T09_ACC1 (10 ms)
+[----------] 1 test from KinReproBenchmark (10 ms total)
+
+[----------] 19 tests from KinRegionCoverage
+[ RUN      ] KinRegionCoverage.FixedCountGoldenReach60_WP15T06_ACC1
+[       OK ] KinRegionCoverage.FixedCountGoldenReach60_WP15T06_ACC1 (0 ms)
+[ RUN      ] KinRegionCoverage.PositionExistenceVsPoseGlobal_WP15T06_ACC1
+[       OK ] KinRegionCoverage.PositionExistenceVsPoseGlobal_WP15T06_ACC1 (0 ms)
+[ RUN      ] KinRegionCoverage.DataInsufficientKeepsDenominatorDowngrades_WP15T06_ACC2
+[       OK ] KinRegionCoverage.DataInsufficientKeepsDenominatorDowngrades_WP15T06_ACC2 (0 ms)
+[ RUN      ] KinRegionCoverage.ZeroSampleEvaluateDiagAndMaterial_WP15T06_ACC2
+[       OK ] KinRegionCoverage.ZeroSampleEvaluateDiagAndMaterial_WP15T06_ACC2 (0 ms)
+[ RUN      ] KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3
+[       OK ] KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3 (0 ms)
+[ RUN      ] KinRegionCoverage.OrientedGridRandomAndPose_REQ03_A21
+[       OK ] KinRegionCoverage.OrientedGridRandomAndPose_REQ03_A21 (0 ms)
+[ RUN      ] KinRegionCoverage.FullPlanIdentityAndInvalidRotation_REQ03_A21
+[       OK ] KinRegionCoverage.FullPlanIdentityAndInvalidRotation_REQ03_A21 (0 ms)
+[ RUN      ] KinRegionCoverage.PerPlanTcpRealSolverAndMissingDefault_REQ01_A21
+[       OK ] KinRegionCoverage.PerPlanTcpRealSolverAndMissingDefault_REQ01_A21 (0 ms)
+[ RUN      ] KinRegionCoverage.IdentityMismatchDropsEvidence_WP15T06_ACC3
+[       OK ] KinRegionCoverage.IdentityMismatchDropsEvidence_WP15T06_ACC3 (0 ms)
+[ RUN      ] KinRegionCoverage.GoldenGeneratorsAndSameOrderRerun_WP15T06_ACC4
+[       OK ] KinRegionCoverage.GoldenGeneratorsAndSameOrderRerun_WP15T06_ACC4 (0 ms)
+[ RUN      ] KinRegionCoverage.SampleIndexAlignsDenominatorBijection_WP15T06_ACC4
+[       OK ] KinRegionCoverage.SampleIndexAlignsDenominatorBijection_WP15T06_ACC4 (0 ms)
+[ RUN      ] KinRegionCoverage.CancellationPartialNotRunRerunSameSet_WP15T06_ACC4
+[       OK ] KinRegionCoverage.CancellationPartialNotRunRerunSameSet_WP15T06_ACC4 (0 ms)
+[ RUN      ] KinRegionCoverage.PerSampleIkWiringPositionVsPose_WP15T06_ACC5
+[       OK ] KinRegionCoverage.PerSampleIkWiringPositionVsPose_WP15T06_ACC5 (0 ms)
+[ RUN      ] KinRegionCoverage.PositionSampleRealSolverDegenerateChain_KIN_P2
+[       OK ] KinRegionCoverage.PositionSampleRealSolverDegenerateChain_KIN_P2 (2 ms)
+[ RUN      ] KinRegionCoverage.CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5
+[       OK ] KinRegionCoverage.CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5 (0 ms)
+[ RUN      ] KinRegionCoverage.TcpMissingDirectCallZeroMaterialTrack_WP14T12
+[       OK ] KinRegionCoverage.TcpMissingDirectCallZeroMaterialTrack_WP14T12 (0 ms)
+[ RUN      ] KinRegionCoverage.TcpDanglingRefDirectCallZeroMaterialTrack_WP14T12
+[       OK ] KinRegionCoverage.TcpDanglingRefDirectCallZeroMaterialTrack_WP14T12 (0 ms)
+[ RUN      ] KinRegionCoverage.MirrorPlanSamplesIndependent_WP15T06_ACC5
+[       OK ] KinRegionCoverage.MirrorPlanSamplesIndependent_WP15T06_ACC5 (0 ms)
+[ RUN      ] KinRegionCoverage.CollisionFacilityFailureSampleInsufficient_WP15T07_ACC2
+[       OK ] KinRegionCoverage.CollisionFacilityFailureSampleInsufficient_WP15T07_ACC2 (0 ms)
+[----------] 19 tests from KinRegionCoverage (7 ms total)
+
+[----------] 5 tests from KinSessionPose
+[ RUN      ] KinSessionPose.SetGetRoundtripAndClear_WP15T08_ACC1
+[       OK ] KinSessionPose.SetGetRoundtripAndClear_WP15T08_ACC1 (0 ms)
+[ RUN      ] KinSessionPose.ResetToHomeWritesSuppliedHome_WP15T08_ACC1
+[       OK ] KinSessionPose.ResetToHomeWritesSuppliedHome_WP15T08_ACC1 (0 ms)
+[ RUN      ] KinSessionPose.NonFiniteQFailsFast_WP15T08_ACC1
+[       OK ] KinSessionPose.NonFiniteQFailsFast_WP15T08_ACC1 (0 ms)
+[ RUN      ] KinSessionPose.SessionOpsProduceZeroGatewayTraffic_WP15T08_ACC1
+[       OK ] KinSessionPose.SessionOpsProduceZeroGatewayTraffic_WP15T08_ACC1 (0 ms)
+[ RUN      ] KinSessionPose.SessionPoseNotInRequestIdentity_WP15T08_ACC1
+[       OK ] KinSessionPose.SessionPoseNotInRequestIdentity_WP15T08_ACC1 (0 ms)
+[----------] 5 tests from KinSessionPose (0 ms total)
+
+[----------] 8 tests from KinCommands
+[ RUN      ] KinCommands.SetDefaultTcpAssemblesApplyRobotDesignEnvelope_WP15T08_ACC2
+[       OK ] KinCommands.SetDefaultTcpAssemblesApplyRobotDesignEnvelope_WP15T08_ACC2 (0 ms)
+[ RUN      ] KinCommands.EncodeDeterministicBytes_WP15T08_ACC2
+[       OK ] KinCommands.EncodeDeterministicBytes_WP15T08_ACC2 (0 ms)
+[ RUN      ] KinCommands.SetDefaultTcpPatcherFailureZeroRevisionZeroSubmit_WP15T08_ACC2
+[       OK ] KinCommands.SetDefaultTcpPatcherFailureZeroRevisionZeroSubmit_WP15T08_ACC2 (0 ms)
+[ RUN      ] KinCommands.SetDefaultTcpNoDeviceRootZeroSubmit_WP15T08_ACC2
+[       OK ] KinCommands.SetDefaultTcpNoDeviceRootZeroSubmit_WP15T08_ACC2 (0 ms)
+[ RUN      ] KinCommands.SetDefaultDeviceWritesRootDesignation_WP15T08_ACC2
+[       OK ] KinCommands.SetDefaultDeviceWritesRootDesignation_WP15T08_ACC2 (0 ms)
+[ RUN      ] KinCommands.SetDefaultDeviceForeignOidFailsFast_WP15T08_ACC2
+[       OK ] KinCommands.SetDefaultDeviceForeignOidFailsFast_WP15T08_ACC2 (0 ms)
+[ RUN      ] KinCommands.MissingPatcherFailsFastOnlyOnTcpPath_WP15T08_ACC2
+[       OK ] KinCommands.MissingPatcherFailsFastOnlyOnTcpPath_WP15T08_ACC2 (0 ms)
+[ RUN      ] KinCommands.ReadOnlySessionRejectionPassthrough_WP15T08_ACC3
+[       OK ] KinCommands.ReadOnlySessionRejectionPassthrough_WP15T08_ACC3 (0 ms)
+[----------] 8 tests from KinCommands (1 ms total)
+
+[----------] 5 tests from KinSolutionSetView
+[ RUN      ] KinSolutionSetView.UsablePredicateSelectsConfirmedCollisionFree_WP15T09_ACC1
+[       OK ] KinSolutionSetView.UsablePredicateSelectsConfirmedCollisionFree_WP15T09_ACC1 (0 ms)
+[ RUN      ] KinSolutionSetView.CollisionDiagnosticPredicateSelectsMarked_WP15T09_ACC1
+[       OK ] KinSolutionSetView.CollisionDiagnosticPredicateSelectsMarked_WP15T09_ACC1 (0 ms)
+[ RUN      ] KinSolutionSetView.SortedIdempotentAndReusesSortSurface_WP15T09_ACC1
+[       OK ] KinSolutionSetView.SortedIdempotentAndReusesSortSurface_WP15T09_ACC1 (0 ms)
+[ RUN      ] KinSolutionSetView.FilteredIdempotentWithNullPredicateContract_WP15T09_ACC1
+[       OK ] KinSolutionSetView.FilteredIdempotentWithNullPredicateContract_WP15T09_ACC1 (0 ms)
+[ RUN      ] KinSolutionSetView.ConcurrentReadOnlyAccessAgrees_WP15T09_ACC1
+[       OK ] KinSolutionSetView.ConcurrentReadOnlyAccessAgrees_WP15T09_ACC1 (0 ms)
+[----------] 5 tests from KinSolutionSetView (1 ms total)
+
+[----------] 9 tests from KinExport
+[ RUN      ] KinExport.SolutionRowsCarryIdentityAndObjectRefs_WP15T09_ACC2
+[       OK ] KinExport.SolutionRowsCarryIdentityAndObjectRefs_WP15T09_ACC2 (0 ms)
+[ RUN      ] KinExport.FilteredRowsCarryReasonTokenAndCollisionPairs_WP15T09_ACC2
+[       OK ] KinExport.FilteredRowsCarryReasonTokenAndCollisionPairs_WP15T09_ACC2 (0 ms)
+[ RUN      ] KinExport.FilteredRowsOddObjectPairsFailsFast_F756
+[       OK ] KinExport.FilteredRowsOddObjectPairsFailsFast_F756 (0 ms)
+[ RUN      ] KinExport.CoverageRowsTallyByRegionAndKind_WP15T09_ACC2
+[       OK ] KinExport.CoverageRowsTallyByRegionAndKind_WP15T09_ACC2 (0 ms)
+[ RUN      ] KinExport.CoverageRowsBijectionViolationFailsFast_WP15T09_ACC2
+[       OK ] KinExport.CoverageRowsBijectionViolationFailsFast_WP15T09_ACC2 (0 ms)
+[ RUN      ] KinExport.HeaderSourceDisciplineFailsFast_WP15T09_ACC2
+[       OK ] KinExport.HeaderSourceDisciplineFailsFast_WP15T09_ACC2 (0 ms)
+[ RUN      ] KinExport.JsonEncodeDeclaresSourceAndIsDeterministic_WP15T09_ACC2
+[       OK ] KinExport.JsonEncodeDeclaresSourceAndIsDeterministic_WP15T09_ACC2 (0 ms)
+[ RUN      ] KinExport.CsvEncodeHeaderSectionsAndEscaping_WP15T09_ACC2
+[       OK ] KinExport.CsvEncodeHeaderSectionsAndEscaping_WP15T09_ACC2 (0 ms)
+[ RUN      ] KinExport.SessionMemoryHeaderOmitsRunIdLine_WP15T09_ACC2
+[       OK ] KinExport.SessionMemoryHeaderOmitsRunIdLine_WP15T09_ACC2 (0 ms)
+[----------] 9 tests from KinExport (1 ms total)
+
+[----------] 4 tests from KinRecompute
+[ RUN      ] KinRecompute.CarriesOriginalTaskDefinition_WP15T09_ACC3
+[       OK ] KinRecompute.CarriesOriginalTaskDefinition_WP15T09_ACC3 (0 ms)
+[ RUN      ] KinRecompute.BindsCallerSuppliedCurrentSnapshot_WP15T09_ACC3
+[       OK ] KinRecompute.BindsCallerSuppliedCurrentSnapshot_WP15T09_ACC3 (0 ms)
+[ RUN      ] KinRecompute.DeterministicAndFreeOfResidue_WP15T09_ACC3
+[       OK ] KinRecompute.DeterministicAndFreeOfResidue_WP15T09_ACC3 (0 ms)
+[ RUN      ] KinRecompute.FailsFastOnEmptyKeyOrZeroSnapshot_WP15T09_ACC3
+[       OK ] KinRecompute.FailsFastOnEmptyKeyOrZeroSnapshot_WP15T09_ACC3 (0 ms)
+[----------] 4 tests from KinRecompute (0 ms total)
+
+[----------] 9 tests from KinAnalysisConfig
+[ RUN      ] KinAnalysisConfig.CanonicalRoundTripAndDeterminism_WP15T10_ACC2
+[       OK ] KinAnalysisConfig.CanonicalRoundTripAndDeterminism_WP15T10_ACC2 (0 ms)
+[ RUN      ] KinAnalysisConfig.DigestIsSha256OverCanonicalBytes_WP15T10_ACC2
+[       OK ] KinAnalysisConfig.DigestIsSha256OverCanonicalBytes_WP15T10_ACC2 (0 ms)
+[ RUN      ] KinAnalysisConfig.ConfigurationRefEntersSnapshotIdentity_WP15T10_ACC2
+[       OK ] KinAnalysisConfig.ConfigurationRefEntersSnapshotIdentity_WP15T10_ACC2 (0 ms)
+[ RUN      ] KinAnalysisConfig.ConfigDigestEntersSliceIdNotBaseline_WP15T10_ACC2
+[       OK ] KinAnalysisConfig.ConfigDigestEntersSliceIdNotBaseline_WP15T10_ACC2 (0 ms)
+[ RUN      ] KinAnalysisConfig.IllegalConfigurationFailFast_WP15T10_ACC2
+[       OK ] KinAnalysisConfig.IllegalConfigurationFailFast_WP15T10_ACC2 (0 ms)
+[ RUN      ] KinAnalysisConfig.DecodeRejectsStructuralAndIllegalBytes_WP15T10_ACC2
+[       OK ] KinAnalysisConfig.DecodeRejectsStructuralAndIllegalBytes_WP15T10_ACC2 (0 ms)
+[ RUN      ] KinAnalysisConfig.ConfigurationIllegalDiagnosticCarriesRegisteredCode_WP15T10_ACC2
+[       OK ] KinAnalysisConfig.ConfigurationIllegalDiagnosticCarriesRegisteredCode_WP15T10_ACC2 (0 ms)
+[ RUN      ] KinAnalysisConfig.ClosedLayoutPinsNegativeSchema_WP15T10_ACC4
+[       OK ] KinAnalysisConfig.ClosedLayoutPinsNegativeSchema_WP15T10_ACC4 (0 ms)
+[ RUN      ] KinAnalysisConfig.UserLevelStoreRoundTripOutlet_WP15T10_ACC5
+[       OK ] KinAnalysisConfig.UserLevelStoreRoundTripOutlet_WP15T10_ACC5 (0 ms)
+[----------] 9 tests from KinAnalysisConfig (1 ms total)
+
+[----------] 4 tests from KinConfigChangeHint
+[ RUN      ] KinConfigChangeHint.SameConfigYieldsEmptyHint_WP15T10_ACC3
+[       OK ] KinConfigChangeHint.SameConfigYieldsEmptyHint_WP15T10_ACC3 (0 ms)
+[ RUN      ] KinConfigChangeHint.ConfigChangeAffectsAllFourChannels_WP15T10_ACC3
+[       OK ] KinConfigChangeHint.ConfigChangeAffectsAllFourChannels_WP15T10_ACC3 (0 ms)
+[ RUN      ] KinConfigChangeHint.SeedChangeMovesIdentityAndSampleBaseline_WP15T10_ACC3
+[       OK ] KinConfigChangeHint.SeedChangeMovesIdentityAndSampleBaseline_WP15T10_ACC3 (0 ms)
+[ RUN      ] KinConfigChangeHint.ThreadCountEntersIdentityNotSampleBaseline_WP15T10_ACC3
+[       OK ] KinConfigChangeHint.ThreadCountEntersIdentityNotSampleBaseline_WP15T10_ACC3 (0 ms)
+[----------] 4 tests from KinConfigChangeHint (0 ms total)
+
+[----------] 2 tests from KinDisplayUnits
+[ RUN      ] KinDisplayUnits.DisplayProjectionConvertsViaCoreUnits_WP15T10_ACC1
+[       OK ] KinDisplayUnits.DisplayProjectionConvertsViaCoreUnits_WP15T10_ACC1 (0 ms)
+[ RUN      ] KinDisplayUnits.DisplaySwitchMovesNothingInIdentity_WP15T10_ACC1
+[       OK ] KinDisplayUnits.DisplaySwitchMovesNothingInIdentity_WP15T10_ACC1 (0 ms)
+[----------] 2 tests from KinDisplayUnits (0 ms total)
+
+[----------] 16 tests from KinRender
+[ RUN      ] KinRender.BatchFailurePointsCoverFourKindsAndConserveCounts_WP15T11_ACC1
+[       OK ] KinRender.BatchFailurePointsCoverFourKindsAndConserveCounts_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.FailurePointPositionLookupAndDanglingFallback_WP15T11_ACC1
+[       OK ] KinRender.FailurePointPositionLookupAndDanglingFallback_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.WeakZonesNearLimitReadsPolicyStrictBoundary_WP15T11_ACC1
+[       OK ] KinRender.WeakZonesNearLimitReadsPolicyStrictBoundary_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.WeakZonesNearSingularReadsPolicyStrictBoundary_WP15T11_ACC1
+[       OK ] KinRender.WeakZonesNearSingularReadsPolicyStrictBoundary_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.WeakZonesPolicyUnsetIsExplicitNotApplicable_WP15T11_ACC1
+[       OK ] KinRender.WeakZonesPolicyUnsetIsExplicitNotApplicable_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.CollisionPairsFromBestSolutionsAndFilteredRecords_WP15T11_ACC1
+[       OK ] KinRender.CollisionPairsFromBestSolutionsAndFilteredRecords_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.WorstMarginSourcedFromViewWorstByNotOwnSort_WP15T11_ACC1
+[       OK ] KinRender.WorstMarginSourcedFromViewWorstByNotOwnSort_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.SolutionSetViewExposesFilteredRecordsOrder_WP15T11_ACC1
+[       OK ] KinRender.SolutionSetViewExposesFilteredRecordsOrder_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.AssemblyIsDeterministicAndObjectAnnotated_WP15T11_ACC1
+[       OK ] KinRender.AssemblyIsDeterministicAndObjectAnnotated_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.ContractViolationsFailFast_WP15T11_ACC1
+[       OK ] KinRender.ContractViolationsFailFast_WP15T11_ACC1 (0 ms)
+[ RUN      ] KinRender.StateProjectionUsesCoreVocabularyTokens_WP15T11_ACC2
+[       OK ] KinRender.StateProjectionUsesCoreVocabularyTokens_WP15T11_ACC2 (0 ms)
+[ RUN      ] KinRender.BatchItemOutcomeProjectionTable_WP15T11_ACC2
+[       OK ] KinRender.BatchItemOutcomeProjectionTable_WP15T11_ACC2 (0 ms)
+[ RUN      ] KinRender.WritebackTargetsSessionPoseOnly_WP15T11_ACC3
+[       OK ] KinRender.WritebackTargetsSessionPoseOnly_WP15T11_ACC3 (0 ms)
+[ RUN      ] KinRender.NotApplicableAndNotRunNotRenderedAsFailure_WP15T11_ACC3
+[       OK ] KinRender.NotApplicableAndNotRunNotRenderedAsFailure_WP15T11_ACC3 (0 ms)
+[ RUN      ] KinRender.FailurePointSelectionLinkage_WP15T11_ACC4
+[       OK ] KinRender.FailurePointSelectionLinkage_WP15T11_ACC4 (0 ms)
+[ RUN      ] KinRender.SolutionSelectionLinkageAndSessionWriteback_WP15T11_ACC4
+[       OK ] KinRender.SolutionSelectionLinkageAndSessionWriteback_WP15T11_ACC4 (0 ms)
+[----------] 16 tests from KinRender (2 ms total)
+
+[----------] 22 tests from KinWorkspace
+[ RUN      ] KinWorkspace.GridSameSeedRerunIdentical_WP15T14_ACC1
+[       OK ] KinWorkspace.GridSameSeedRerunIdentical_WP15T14_ACC1 (0 ms)
+[ RUN      ] KinWorkspace.RandomSameSeedRerunIdenticalAndSeedSensitive_WP15T14_ACC1
+[       OK ] KinWorkspace.RandomSameSeedRerunIdenticalAndSeedSensitive_WP15T14_ACC1 (0 ms)
+[ RUN      ] KinWorkspace.GridSpacingToCounts_WP15T14_ACC1
+[       OK ] KinWorkspace.GridSpacingToCounts_WP15T14_ACC1 (0 ms)
+[ RUN      ] KinWorkspace.SeedZeroRejectedNotSilentlyReplaced_WP15T14_ACC1
+[       OK ] KinWorkspace.SeedZeroRejectedNotSilentlyReplaced_WP15T14_ACC1 (0 ms)
+[ RUN      ] KinWorkspace.QueryValidationFailFast_WP15T14
+[       OK ] KinWorkspace.QueryValidationFailFast_WP15T14 (0 ms)
+[ RUN      ] KinWorkspace.CancelMidRunPartialNotRun_WP15T14_ACC2
+[       OK ] KinWorkspace.CancelMidRunPartialNotRun_WP15T14_ACC2 (0 ms)
+[ RUN      ] KinWorkspace.ProgressAndCheckpointSequence_WP15T14_ACC2
+[       OK ] KinWorkspace.ProgressAndCheckpointSequence_WP15T14_ACC2 (0 ms)
+[ RUN      ] KinWorkspace.FacilityFailureSampleDataInsufficient_WP15T14
+[       OK ] KinWorkspace.FacilityFailureSampleDataInsufficient_WP15T14 (0 ms)
+[ RUN      ] KinWorkspace.PositionSampleRealSolverDegenerateChain_KIN_P2
+[       OK ] KinWorkspace.PositionSampleRealSolverDegenerateChain_KIN_P2 (0 ms)
+[ RUN      ] KinWorkspace.PointCloudStatesAndScalars_WP15T14_ACC3
+[       OK ] KinWorkspace.PointCloudStatesAndScalars_WP15T14_ACC3 (0 ms)
+[ RUN      ] KinWorkspace.ProjectionsXY_XZ_YZ_WP15T14_ACC3
+[       OK ] KinWorkspace.ProjectionsXY_XZ_YZ_WP15T14_ACC3 (0 ms)
+[ RUN      ] KinWorkspace.LegendsStateCollisionAndScalarRange_WP15T14_ACC3
+[       OK ] KinWorkspace.LegendsStateCollisionAndScalarRange_WP15T14_ACC3 (0 ms)
+[ RUN      ] KinWorkspace.ExportCsvDeterministic_WP15T14_ACC3
+[       OK ] KinWorkspace.ExportCsvDeterministic_WP15T14_ACC3 (0 ms)
+[ RUN      ] KinWorkspace.RenderVocabularyTokens_WP15T14_ACC3
+[       OK ] KinWorkspace.RenderVocabularyTokens_WP15T14_ACC3 (0 ms)
+[ RUN      ] KinWorkspace.PointWritebackSessionPoseOnly_WP15T14_ACC4
+[       OK ] KinWorkspace.PointWritebackSessionPoseOnly_WP15T14_ACC4 (0 ms)
+[ RUN      ] KinWorkspace.PlanIdentityDeterministicAndSeedLayered_WP15T14_ACC5
+[       OK ] KinWorkspace.PlanIdentityDeterministicAndSeedLayered_WP15T14_ACC5 (0 ms)
+[ RUN      ] KinWorkspace.CollisionViaPolicySessionNotBoolean_WP15T14_ACC5
+[       OK ] KinWorkspace.CollisionViaPolicySessionNotBoolean_WP15T14_ACC5 (0 ms)
+[ RUN      ] KinWorkspace.PointCloudCollisionDispatchByEvaluationCredential_R3_A7
+[       OK ] KinWorkspace.PointCloudCollisionDispatchByEvaluationCredential_R3_A7 (0 ms)
+[ RUN      ] KinWorkspace.RerunAfterCancelSameSampleSet_WP15T14_ACC2
+[       OK ] KinWorkspace.RerunAfterCancelSameSampleSet_WP15T14_ACC2 (0 ms)
+[ RUN      ] KinWorkspace.JointSpaceGridFkPointCloudAnalytic_KIN_P5
+[       OK ] KinWorkspace.JointSpaceGridFkPointCloudAnalytic_KIN_P5 (0 ms)
+[ RUN      ] KinWorkspace.JointSpaceRandomDeterministicAndSeedSensitive_KIN_P5
+[       OK ] KinWorkspace.JointSpaceRandomDeterministicAndSeedSensitive_KIN_P5 (0 ms)
+[ RUN      ] KinWorkspace.JointSpaceQueryValidationAndFkErrorFace_KIN_P5
+[       OK ] KinWorkspace.JointSpaceQueryValidationAndFkErrorFace_KIN_P5 (0 ms)
+[----------] 22 tests from KinWorkspace (7 ms total)
+
+[----------] 15 tests from KinEnvelope
+[ RUN      ] KinEnvelope.Acc1_RayBoundaryDefault180SphericalShell_WP15T15
+[       OK ] KinEnvelope.Acc1_RayBoundaryDefault180SphericalShell_WP15T15 (913 ms)
+[ RUN      ] KinEnvelope.Acc1_CancellableMidRun_WP15T15
+[       OK ] KinEnvelope.Acc1_CancellableMidRun_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.Acc1_CancellableAtEntry_WP15T15
+[       OK ] KinEnvelope.Acc1_CancellableAtEntry_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.Acc1_CancelPropagatedFromSolver_WP15T15
+[       OK ] KinEnvelope.Acc1_CancelPropagatedFromSolver_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.Acc2_ApproximationMarking_WP15T15
+[       OK ] KinEnvelope.Acc2_ApproximationMarking_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.Acc3_DirectionSetGoldenAndRerunDeterminism_WP15T15
+[       OK ] KinEnvelope.Acc3_DirectionSetGoldenAndRerunDeterminism_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15
+[       OK ] KinEnvelope.ProbeWiring_ExistenceCriterionAndBudgetConservation_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.PositionProbeUsesTaskSpaceSemantics_KIN_P2
+[       OK ] KinEnvelope.PositionProbeUsesTaskSpaceSemantics_KIN_P2 (0 ms)
+[ RUN      ] KinEnvelope.FacilityFailureNonTerminalStopsAll_WP15T15
+[       OK ] KinEnvelope.FacilityFailureNonTerminalStopsAll_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.NoSampleFoundLowConfidenceState_KIN_P5
+[       OK ] KinEnvelope.NoSampleFoundLowConfidenceState_KIN_P5 (0 ms)
+[ RUN      ] KinEnvelope.DegenerateChainUpperBoundProbeFirst_KIN_P5
+[       OK ] KinEnvelope.DegenerateChainUpperBoundProbeFirst_KIN_P5 (0 ms)
+[ RUN      ] KinEnvelope.NarrowBandAwayFromUpperBoundFound_KIN_P5
+[       OK ] KinEnvelope.NarrowBandAwayFromUpperBoundFound_KIN_P5 (30 ms)
+[ RUN      ] KinEnvelope.ProbeSeedFull64BitSensitivity_A06_KIN_P5
+[       OK ] KinEnvelope.ProbeSeedFull64BitSensitivity_A06_KIN_P5 (0 ms)
+[ RUN      ] KinEnvelope.FailFastValidationMatrix_WP15T15
+[       OK ] KinEnvelope.FailFastValidationMatrix_WP15T15 (0 ms)
+[ RUN      ] KinEnvelope.NoTcpErrorFace_WP15T15
+[       OK ] KinEnvelope.NoTcpErrorFace_WP15T15 (0 ms)
+[----------] 15 tests from KinEnvelope (952 ms total)
+
+[----------] 17 tests from KinPoseReachability
+[ RUN      ] KinPoseReachability.PlanPreviewTargetCount_WP15T16_ACC1_AT26
+[       OK ] KinPoseReachability.PlanPreviewTargetCount_WP15T16_ACC1_AT26 (0 ms)
+[ RUN      ] KinPoseReachability.PlanPreviewMatchesGeneration_WP15T16_ACC1_KIN11
+[       OK ] KinPoseReachability.PlanPreviewMatchesGeneration_WP15T16_ACC1_KIN11 (0 ms)
+[ RUN      ] KinPoseReachability.PlanPreviewRejectsInvalidQuery_WP15T16_KIN11_NFRCOR03
+[       OK ] KinPoseReachability.PlanPreviewRejectsInvalidQuery_WP15T16_KIN11_NFRCOR03 (0 ms)
+[ RUN      ] KinPoseReachability.ExecutionRejectsViewCoupledViolations_WP15T16_DKIN4
+[       OK ] KinPoseReachability.ExecutionRejectsViewCoupledViolations_WP15T16_DKIN4 (0 ms)
+[ RUN      ] KinPoseReachability.TargetGenerationGoldenFacility_WP15T16_ACC4_KIN11
+[       OK ] KinPoseReachability.TargetGenerationGoldenFacility_WP15T16_ACC4_KIN11 (0 ms)
+[ RUN      ] KinPoseReachability.DeterministicRerunIdentical_WP15T16_ACC4_NFRCOR01
+[       OK ] KinPoseReachability.DeterministicRerunIdentical_WP15T16_ACC4_NFRCOR01 (0 ms)
+[ RUN      ] KinPoseReachability.DirectionCoverageReport_WP15T16_ACC3_AT26
+[       OK ] KinPoseReachability.DirectionCoverageReport_WP15T16_ACC3_AT26 (0 ms)
+[ RUN      ] KinPoseReachability.DirectionAggregateConservative_WP15T16_ACC3_KIN11
+[       OK ] KinPoseReachability.DirectionAggregateConservative_WP15T16_ACC3_KIN11 (0 ms)
+[ RUN      ] KinPoseReachability.TargetPoseWiring_WP15T16_KIN11
+[       OK ] KinPoseReachability.TargetPoseWiring_WP15T16_KIN11 (0 ms)
+[ RUN      ] KinPoseReachability.CancellationPartialNotRun_WP15T16_ACC2_EXT03
+[       OK ] KinPoseReachability.CancellationPartialNotRun_WP15T16_ACC2_EXT03 (0 ms)
+[ RUN      ] KinPoseReachability.ProgressBatchGranularity_WP15T16_ACC2_EXT05
+[       OK ] KinPoseReachability.ProgressBatchGranularity_WP15T16_ACC2_EXT05 (0 ms)
+[ RUN      ] KinPoseReachability.EvaluatePayloadNoEvidenceRow_WP15T16_KIN11
+[       OK ] KinPoseReachability.EvaluatePayloadNoEvidenceRow_WP15T16_KIN11 (0 ms)
+[ RUN      ] KinPoseReachability.EvaluateNoTcpZeroMaterial_WP15T16_KIN05
+[       OK ] KinPoseReachability.EvaluateNoTcpZeroMaterial_WP15T16_KIN05 (0 ms)
+[ RUN      ] KinPoseReachability.EvaluateIncompleteDiagnostic_WP15T16_EXT03
+[       OK ] KinPoseReachability.EvaluateIncompleteDiagnostic_WP15T16_EXT03 (0 ms)
+[ RUN      ] KinPoseReachability.PayloadCanonicalDeterministic_WP15T16_NFRCOR01
+[       OK ] KinPoseReachability.PayloadCanonicalDeterministic_WP15T16_NFRCOR01 (0 ms)
+[ RUN      ] KinPoseReachability.DescriptorShape_WP15T16_KIN11
+[       OK ] KinPoseReachability.DescriptorShape_WP15T16_KIN11 (0 ms)
+[ RUN      ] KinPoseReachability.FactoryClosureInjection_WP15T16_O37
+[       OK ] KinPoseReachability.FactoryClosureInjection_WP15T16_O37 (0 ms)
+[----------] 17 tests from KinPoseReachability (4 ms total)
+
+[----------] 31 tests from PluginPanelLinks
+[ RUN      ] PluginPanelLinks.LK1_SolutionSelectionInspectorLink_ACC1
+[       OK ] PluginPanelLinks.LK1_SolutionSelectionInspectorLink_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK2_SinglePointSolveInline_ACC1
+[       OK ] PluginPanelLinks.LK2_SinglePointSolveInline_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK2_InlineBudgetExceededDefersToBackground_ACC1
+[       OK ] PluginPanelLinks.LK2_InlineBudgetExceededDefersToBackground_ACC1 (20 ms)
+[ RUN      ] PluginPanelLinks.LK2_AssembleSessionSolveRequestComplete_KIN_P2
+[       OK ] PluginPanelLinks.LK2_AssembleSessionSolveRequestComplete_KIN_P2 (0 ms)
+[ RUN      ] PluginPanelLinks.LK2_AssembleSessionSolveRequestFailures_KIN_P2
+[       OK ] PluginPanelLinks.LK2_AssembleSessionSolveRequestFailures_KIN_P2 (0 ms)
+[ RUN      ] PluginPanelLinks.LK3_BatchSubmitAndTaskProjection_ACC1
+[       OK ] PluginPanelLinks.LK3_BatchSubmitAndTaskProjection_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK6_CoverageRunAndCoverageRows_ACC1
+[       OK ] PluginPanelLinks.LK6_CoverageRunAndCoverageRows_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK4_SessionPoseWritebackZeroRevision_ACC1
+[       OK ] PluginPanelLinks.LK4_SessionPoseWritebackZeroRevision_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK5_TcpBackfillFromSession_ACC1
+[       OK ] PluginPanelLinks.LK5_TcpBackfillFromSession_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK7_ConfigEditHintNoAutoRecompute_ACC1
+[       OK ] PluginPanelLinks.LK7_ConfigEditHintNoAutoRecompute_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK8_UnitSwitchReprojectionNoRecompute_ACC1
+[       OK ] PluginPanelLinks.LK8_UnitSwitchReprojectionNoRecompute_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.DisplayToSi_ConsistentSiAcrossUnitSystems_KIN_P1
+[       OK ] PluginPanelLinks.DisplayToSi_ConsistentSiAcrossUnitSystems_KIN_P1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK9_SetDefaultViaGateway_ACC1
+[       OK ] PluginPanelLinks.LK9_SetDefaultViaGateway_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK10_ExportJsonCsvNoRevision_ACC1
+[       OK ] PluginPanelLinks.LK10_ExportJsonCsvNoRevision_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK11_ReadOnlyRejectsWriteCommands_ACC1
+[       OK ] PluginPanelLinks.LK11_ReadOnlyRejectsWriteCommands_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.LK12_TaskStatusProjectionAndStaleDrop_ACC1
+[       OK ] PluginPanelLinks.LK12_TaskStatusProjectionAndStaleDrop_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\PluginPanelTest.cpp(836): Skipped
+GUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）
+
+[  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1 (0 ms)
+[ RUN      ] PluginPanelLinks.KinNonFiniteDisplay_SingularConditionNumberRow_KIN_P3
+[       OK ] PluginPanelLinks.KinNonFiniteDisplay_SingularConditionNumberRow_KIN_P3 (0 ms)
+[ RUN      ] PluginPanelLinks.KinNonFiniteDisplay_UnboundedMarginAndIllegalNaN_KIN_P3
+[       OK ] PluginPanelLinks.KinNonFiniteDisplay_UnboundedMarginAndIllegalNaN_KIN_P3 (0 ms)
+[ RUN      ] PluginPanelLinks.KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3
+[       OK ] PluginPanelLinks.KinNonFiniteDisplay_SolutionRowsInfiniteMetrics_KIN_P3 (0 ms)
+[ RUN      ] PluginPanelLinks.KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902
+[       OK ] PluginPanelLinks.KinNonFiniteDisplay_OutOfDomainInfinityMarker_F902 (0 ms)
+[ RUN      ] PluginPanelLinks.MixedChainProjection_PerAxisUnitSelection_KIN_P3
+[       OK ] PluginPanelLinks.MixedChainProjection_PerAxisUnitSelection_KIN_P3 (0 ms)
+[ RUN      ] PluginPanelLinks.MixedChainProjection_JointAxisTextAndDofExtraction_KIN_P3
+[       OK ] PluginPanelLinks.MixedChainProjection_JointAxisTextAndDofExtraction_KIN_P3 (0 ms)
+[ RUN      ] PluginPanelLinks.ResetHome_NamedSourceFlowGatesAndWrites_KIN_P3
+[       OK ] PluginPanelLinks.ResetHome_NamedSourceFlowGatesAndWrites_KIN_P3 (0 ms)
+[ RUN      ] PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903
+[       OK ] PluginPanelLinks.ResetHome_NonFiniteSourceExplicitHintTrack_F903 (0 ms)
+[ RUN      ] PluginPanelLinks.WorkspaceSampling_JointRandomFlow_KIN_R2
+[       OK ] PluginPanelLinks.WorkspaceSampling_JointRandomFlow_KIN_R2 (0 ms)
+[ RUN      ] PluginPanelLinks.WorkspaceSampling_CartesianRegionFlow_KIN_R2
+[       OK ] PluginPanelLinks.WorkspaceSampling_CartesianRegionFlow_KIN_R2 (0 ms)
+[ RUN      ] PluginPanelLinks.WorkspaceSampling_InvalidQueryExplicitReject_KIN_R2
+[       OK ] PluginPanelLinks.WorkspaceSampling_InvalidQueryExplicitReject_KIN_R2 (0 ms)
+[ RUN      ] PluginPanelLinks.WorkspaceSampling_PointCloudCsvExportV2_F905
+[       OK ] PluginPanelLinks.WorkspaceSampling_PointCloudCsvExportV2_F905 (0 ms)
+[ RUN      ] PluginPanelLinks.WorkspaceSampling_PointWritebackAndGuards_KIN_R2
+[       OK ] PluginPanelLinks.WorkspaceSampling_PointWritebackAndGuards_KIN_R2 (0 ms)
+[ RUN      ] PluginPanelLinks.WorkspaceSampling_ProjectionPngExportGuards_KIN_R2
+[       OK ] PluginPanelLinks.WorkspaceSampling_ProjectionPngExportGuards_KIN_R2 (0 ms)
+[----------] 31 tests from PluginPanelLinks (27 ms total)
+
+[----------] 3 tests from KinCommandCatalog
+[ RUN      ] KinCommandCatalog.DomainCommandsMatchSection98Table_ACC3
+[       OK ] KinCommandCatalog.DomainCommandsMatchSection98Table_ACC3 (0 ms)
+[ RUN      ] KinCommandCatalog.CommandIdAndProjectTokenNamespacesDisjoint_ACC3
+[       OK ] KinCommandCatalog.CommandIdAndProjectTokenNamespacesDisjoint_ACC3 (0 ms)
+[ RUN      ] KinCommandCatalog.WriteCommandPredicateMatchesReadOnlyAllowed_ACC3
+[       OK ] KinCommandCatalog.WriteCommandPredicateMatchesReadOnlyAllowed_ACC3 (0 ms)
+[----------] 3 tests from KinCommandCatalog (0 ms total)
+
+[----------] 2 tests from KinPluginAssembly
+[ RUN      ] KinPluginAssembly.DescriptorShapeAndPanelPlacement_ACC1
+[       OK ] KinPluginAssembly.DescriptorShapeAndPanelPlacement_ACC1 (0 ms)
+[ RUN      ] KinPluginAssembly.ReadinessProjectionDefaultsAndActiveTask_ACC3
+[       OK ] KinPluginAssembly.ReadinessProjectionDefaultsAndActiveTask_ACC3 (0 ms)
+[----------] 2 tests from KinPluginAssembly (0 ms total)
+
+[----------] 2 tests from KinAssemblyChannels
+[ RUN      ] KinAssemblyChannels.TranslationRoundTripFieldByField_UI_T64
+[       OK ] KinAssemblyChannels.TranslationRoundTripFieldByField_UI_T64 (0 ms)
+[ RUN      ] KinAssemblyChannels.InstallChannelsAndNoteRoute_UI_T64
+[       OK ] KinAssemblyChannels.InstallChannelsAndNoteRoute_UI_T64 (0 ms)
+[----------] 2 tests from KinAssemblyChannels (0 ms total)
+
+[----------] 7 tests from KinP4Flows
+[ RUN      ] KinP4Flows.ResolveSessionTcp_ResolvesDefaultTool_KIN_P4
+[       OK ] KinP4Flows.ResolveSessionTcp_ResolvesDefaultTool_KIN_P4 (0 ms)
+[ RUN      ] KinP4Flows.DefaultTcpIgnoresNamedKeyCollision_REQ01_A15
+[       OK ] KinP4Flows.DefaultTcpIgnoresNamedKeyCollision_REQ01_A15 (0 ms)
+[ RUN      ] KinP4Flows.ResolveSessionTcp_NoToolExplicitReject_KIN_P4
+[       OK ] KinP4Flows.ResolveSessionTcp_NoToolExplicitReject_KIN_P4 (0 ms)
+[ RUN      ] KinP4Flows.AssembleSessionSolveRequest_UsesSameTcpResolution_KIN_P4
+[       OK ] KinP4Flows.AssembleSessionSolveRequest_UsesSameTcpResolution_KIN_P4 (0 ms)
+[ RUN      ] KinP4Flows.RunSinglePointSolve_DeferredCarriesTarget_KIN_P4
+[       OK ] KinP4Flows.RunSinglePointSolve_DeferredCarriesTarget_KIN_P4 (37 ms)
+[ RUN      ] KinP4Flows.RecomputeSession_RebindsIdentityToCurrentSnapshot_KIN_P4
+[       OK ] KinP4Flows.RecomputeSession_RebindsIdentityToCurrentSnapshot_KIN_P4 (0 ms)
+[ RUN      ] KinP4Flows.RecomputeSession_ExplicitRejectStates_KIN_P4
+[       OK ] KinP4Flows.RecomputeSession_ExplicitRejectStates_KIN_P4 (0 ms)
+[----------] 7 tests from KinP4Flows (39 ms total)
+
+[----------] 1 test from KinPanelRotation
+[ RUN      ] KinPanelRotation.MatchesRwMathBothDirections_KIN_F919
+[       OK ] KinPanelRotation.MatchesRwMathBothDirections_KIN_F919 (0 ms)
+[----------] 1 test from KinPanelRotation (0 ms total)
+
+[----------] 16 tests from HostMigration
+[ RUN      ] HostMigration.TreeProvider_DomainKeyAndHonestEmptySupply_ACC1
+[       OK ] HostMigration.TreeProvider_DomainKeyAndHonestEmptySupply_ACC1 (0 ms)
+[ RUN      ] HostMigration.TreeProvider_EmptySupplyPassesSharedRebuild_ACC1
+[       OK ] HostMigration.TreeProvider_EmptySupplyPassesSharedRebuild_ACC1 (0 ms)
+[ RUN      ] HostMigration.TreeProvider_CoexistsWithForeignProvider_ACC1
+[       OK ] HostMigration.TreeProvider_CoexistsWithForeignProvider_ACC1 (0 ms)
+[ RUN      ] HostMigration.PagesProvider_NoAnswerSurface_ACC1
+[       OK ] HostMigration.PagesProvider_NoAnswerSurface_ACC1 (0 ms)
+[ RUN      ] HostMigration.PagesProvider_InspectorShowsHonestNoProviderAnswer_ACC1
+[       OK ] HostMigration.PagesProvider_InspectorShowsHonestNoProviderAnswer_ACC1 (0 ms)
+[ RUN      ] HostMigration.Adapter_DownlinkSingleSelectionHighlights_ACC4
+[       OK ] HostMigration.Adapter_DownlinkSingleSelectionHighlights_ACC4 (0 ms)
+[ RUN      ] HostMigration.Adapter_DownlinkClearAndMultiSymmetric_ACC4
+[       OK ] HostMigration.Adapter_DownlinkClearAndMultiSymmetric_ACC4 (0 ms)
+[ RUN      ] HostMigration.Adapter_RuntimeOnlySelectionLeavesHighlightUntouched_ACC4
+[       OK ] HostMigration.Adapter_RuntimeOnlySelectionLeavesHighlightUntouched_ACC4 (0 ms)
+[ RUN      ] HostMigration.Adapter_UplinkView3DPickHonestNoReport_ACC1
+[       OK ] HostMigration.Adapter_UplinkView3DPickHonestNoReport_ACC1 (0 ms)
+[ RUN      ] HostMigration.Module_SharedSurfaceHandlesStableAndWired_ACC1
+[       OK ] HostMigration.Module_SharedSurfaceHandlesStableAndWired_ACC1 (0 ms)
+[ RUN      ] HostMigration.HostJointState_AppliesWithZeroRevision_ACC2
+[       OK ] HostMigration.HostJointState_AppliesWithZeroRevision_ACC2 (0 ms)
+[ RUN      ] HostMigration.HostJointState_PlaybackFramesDriveSameSeam_ACC3
+[       OK ] HostMigration.HostJointState_PlaybackFramesDriveSameSeam_ACC3 (0 ms)
+[ RUN      ] HostMigration.HostJointState_NonFiniteFailsFast_ACC2
+[       OK ] HostMigration.HostJointState_NonFiniteFailsFast_ACC2 (0 ms)
+[ RUN      ] HostMigration.HostJointState_MissingSeamHonestDegradation_ACC2
+[       OK ] HostMigration.HostJointState_MissingSeamHonestDegradation_ACC2 (0 ms)
+[ RUN      ] HostMigration.SessionPoseContractBitsFrozen_ACC2
+[       OK ] HostMigration.SessionPoseContractBitsFrozen_ACC2 (0 ms)
+[ RUN      ] HostMigration.Facade_ForwardsHostJointStateAndHandles_ACC2
+[       OK ] HostMigration.Facade_ForwardsHostJointStateAndHandles_ACC2 (0 ms)
+[----------] 16 tests from HostMigration (1 ms total)
+
+[----------] 7 tests from KinCollisionPort
+[ RUN      ] KinCollisionPort.AssembleSceneFromSnapshotFacts_WP15T07_ACC1
+[       OK ] KinCollisionPort.AssembleSceneFromSnapshotFacts_WP15T07_ACC1 (0 ms)
+[ RUN      ] KinCollisionPort.FixedFrameProjectionHasNoCollisionGeometry_MDL15_AT28
+[       OK ] KinCollisionPort.FixedFrameProjectionHasNoCollisionGeometry_MDL15_AT28 (0 ms)
+[ RUN      ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2
+[       OK ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2 (0 ms)
+[ RUN      ] KinCollisionPort.RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3
+[       OK ] KinCollisionPort.RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3 (0 ms)
+[ RUN      ] KinCollisionPort.AdapterForwardsEveryQueryNoCache_WP15T07_ACC3
+[       OK ] KinCollisionPort.AdapterForwardsEveryQueryNoCache_WP15T07_ACC3 (0 ms)
+[ RUN      ] KinCollisionPort.FacilityFailureMapsToFacilityFailed_WP15T07_ACC2
+[       OK ] KinCollisionPort.FacilityFailureMapsToFacilityFailed_WP15T07_ACC2 (0 ms)
+[ RUN      ] KinCollisionPort.DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2
+[       OK ] KinCollisionPort.DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2 (0 ms)
+[----------] 7 tests from KinCollisionPort (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 288 tests from 32 test suites ran. (9554 ms total)
+[  PASSED  ] 287 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1

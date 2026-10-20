@@ -1,0 +1,72 @@
+[==========] Running 26 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 9 tests from KinematicsPanelInput
+[ RUN      ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1
+[       OK ] KinematicsPanelInput.TargetLabels_FollowDisplayUnitSystem_KIN_P1 (17 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_ConsistentSiAcrossUnitSystems_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_ConsistentSiAcrossUnitSystems_KIN_P1 (13 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_mmInput01IsTenthMillimetre_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_mmInput01IsTenthMillimetre_KIN_P1 (5 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteInput_KIN_P1
+[       OK ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteInput_KIN_P1 (4 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_CarriesCompleteAssembledRequest_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_CarriesCompleteAssembledRequest_KIN_P2 (4 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_CompletesRealSolveThroughAssembler_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_CompletesRealSolveThroughAssembler_KIN_P2 (9 ms)
+[ RUN      ] KinematicsPanelInput.SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2
+[       OK ] KinematicsPanelInput.SolveButton_UnresolvedTcpShowsDiagnostic_KIN_P2 (7 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2
+[       OK ] KinematicsPanelInput.TargetSubmit_RpyAttitudeRoundtrip_KIN_R2 (4 ms)
+[ RUN      ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteAttitude_KIN_R2
+[       OK ] KinematicsPanelInput.TargetSubmit_RejectsNonFiniteAttitude_KIN_R2 (4 ms)
+[----------] 9 tests from KinematicsPanelInput (74 ms total)
+
+[----------] 6 tests from KinematicsPanelSession
+[ RUN      ] KinematicsPanelSession.SolutionColumn_PerAxisUnitsMixedChain_KIN_P3
+[       OK ] KinematicsPanelSession.SolutionColumn_PerAxisUnitsMixedChain_KIN_P3 (5 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_UsesNamedSource_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_UsesNamedSource_KIN_P3 (4 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_MissingSourceDisablesButton_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_MissingSourceDisablesButton_KIN_P3 (8 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_SourceAbsentExplicitHintNoWriteback_KIN_P3 (3 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_DefinedSourceEnablesButton_KIN_R2
+[       OK ] KinematicsPanelSession.ResetHome_DefinedSourceEnablesButton_KIN_R2 (4 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_DimensionMismatchExplicitHint_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_DimensionMismatchExplicitHint_KIN_P3 (4 ms)
+[----------] 6 tests from KinematicsPanelSession (31 ms total)
+
+[----------] 2 tests from KinHostLoop
+[ RUN      ] KinHostLoop.SixAxisVariantClosedLoop_KIN_P4
+[       OK ] KinHostLoop.SixAxisVariantClosedLoop_KIN_P4 (20 ms)
+[ RUN      ] KinHostLoop.PanelPresentation_RealExecution_KIN_P4
+[       OK ] KinHostLoop.PanelPresentation_RealExecution_KIN_P4 (5 ms)
+[----------] 2 tests from KinHostLoop (26 ms total)
+
+[----------] 3 tests from KinematicsPanelSampling
+[ RUN      ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2
+[       OK ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2 (4 ms)
+[ RUN      ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2
+[       OK ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2 (9 ms)
+[ RUN      ] KinematicsPanelSampling.ProjectionCanvasAndPngExport_KIN_R2
+[       OK ] KinematicsPanelSampling.ProjectionCanvasAndPngExport_KIN_R2 (9 ms)
+[----------] 3 tests from KinematicsPanelSampling (23 ms total)
+
+[----------] 6 tests from KinematicsAcceptance
+[ RUN      ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27
+[       OK ] KinematicsAcceptance.FilledTargetSurvivesUnitSwitch_AT27 (181 ms)
+[ RUN      ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09
+[       OK ] KinematicsAcceptance.CartesianBoxRunsThroughVisibleButton_KIN09 (209 ms)
+[ RUN      ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27
+[       OK ] KinematicsAcceptance.InvalidTargetTextPreservedOnUnitSwitch_AT27 (249 ms)
+[ RUN      ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27
+[       OK ] KinematicsAcceptance.AllPhysicalEditorsRoundtripUnits_AT27 (194 ms)
+[ RUN      ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27
+[       OK ] KinematicsAcceptance.UnitProjectionOverflowPreservesAllInputs_AT27 (124 ms)
+[ RUN      ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09
+[       OK ] KinematicsAcceptance.ResultsPageFitsAndBottomActionsRemainReachable_UX09 (186 ms)
+[----------] 6 tests from KinematicsAcceptance (1148 ms total)
+
+[----------] Global test environment tear-down
+[==========] 26 tests from 5 test suites ran. (1307 ms total)
+[  PASSED  ] 26 tests.

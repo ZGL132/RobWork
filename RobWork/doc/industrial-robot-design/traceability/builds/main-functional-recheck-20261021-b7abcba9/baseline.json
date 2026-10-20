@@ -1,0 +1,73 @@
+{
+  "time": "2026-10-20T21:21:39.303118+00:00",
+  "head": {
+    "exit": 0,
+    "stdout": "b7abcba9f6c4b32aa1bc0404b44ed1aad22a30a5",
+    "stderr": ""
+  },
+  "branch": {
+    "exit": 0,
+    "stdout": "redesign-main",
+    "stderr": ""
+  },
+  "initialStatus": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "originTrackingRef": {
+    "exit": 0,
+    "stdout": "b7abcba9f6c4b32aa1bc0404b44ed1aad22a30a5",
+    "stderr": ""
+  },
+  "frozenMain": {
+    "exit": 0,
+    "stdout": "49a9e819c24c7ef15dff24366a4a551068c2d269",
+    "stderr": ""
+  },
+  "t27": {
+    "exit": 0,
+    "stdout": "648c95099b4313a8bb69d330ea5e0b3d82805bcd",
+    "stderr": ""
+  },
+  "t27InMain": {
+    "exit": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "productScopeDiff": {
+    "runtime": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "requirements": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "modeling": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "ui": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "optimization": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "productChangedSincePrevious": {
+    "exit": 0,
+    "stdout": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/KinematicsAcceptanceGuiTest.cpp\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/KinematicsConfigAcceptanceGuiTest.cpp\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelFlows.cpp\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelFlows.hpp\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.hpp",
+    "stderr": ""
+  },
+  "onlineLatestConfirmed": false,
+  "remoteFailure": "fetch GitHub direct failed to connect port 443 after 21144 ms; retained tracking ref only",
+  "excludedWorktree": "486b has uncommitted runtime and ui collision work; not built or included"
+}

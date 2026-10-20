@@ -76,6 +76,7 @@
 
 #include "plugin/HostCompilePort.hpp"            // 被测：编译端口/名称上下文（同源编入）
 #include "plugin/HostPresentationAdapters.hpp"   // 被测：映射真值端口/呈现源/挂接对象
+#include "plugin/KinEvaluationChannel.hpp"      // MA-03：快照与计算视图同拍换绑。
 
 namespace sdurws::ird::ui::test {
 namespace {
@@ -256,6 +257,31 @@ protected:
 // =====================================================================
 // ACC1——编译端口端到端（Published 快照缓存／Failed 诊断透传）
 // =====================================================================
+
+/**
+ * @brief MA-03/CON-06：直接解绑视图也必须释放旧碰撞快照。
+ * 生产编译器生成真实快照，局部编译端口先析构，弱引用准确观察执行器持有；
+ * 没有在途任务时解绑必须释放，而不能给后续新视图复用旧场景。
+ */
+TEST_F(HostCompilePipelineTest, DetachViewReleasesCollisionSnapshot_MA03)
+{
+    IRD_TEST_INFO("CON-06", {}, std::nullopt);
+    auto snapshot = [this] {
+        HostModelCompilePort port({m_query.get(), core::ProjectId::generate(),
+            std::string(modeling::kRobotDesignObjectType), nullptr});
+        const auto result = port.compileWorkCellAndDwc(makeCompileRequest());
+        EXPECT_TRUE(result.ok);
+        return port.lastPublishedSnapshot();
+    }();
+    ASSERT_TRUE(snapshot);
+    std::weak_ptr<const runtime::RuntimeSnapshot> lease = snapshot;
+    KinEvaluationExecutor executor(KinEvaluationExecutor::Deps{});
+    executor.attachSnapshot(snapshot, snapshot->snapshotIdentity());
+    snapshot.reset();
+    EXPECT_FALSE(lease.expired()) << "已绑定时计算视图与碰撞设施共同持有快照";
+    executor.attachView(nullptr, core::ContentIdentity{});
+    EXPECT_TRUE(lease.expired()) << "解绑后仍残留旧碰撞场景，可能跨项目消费";
+}
 
 /// 编译成功面：计划闭包→十段链发布→快照缓存可取（名称映射非空——S8
 /// 产物随快照在位；编译基线对账面回读一致）。

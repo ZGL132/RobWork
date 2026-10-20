@@ -1,0 +1,195 @@
+冻结主线源码取证：b7abcba9；以下内容经git show读取已提交对象，不读取486b未提交工作。
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp
+190: /**
+191:  * @brief mesh 资源通道接线预留位（RT-T15——**有意的诚实跳过空实现**）。
+192:  *
+193:  * 为什么是空实现（卡面 RT-T15 明确登记，不私裁）：真实 visual/collision
+194:  * mesh 渲染＝保真度升级项，涉及三段缺口——①io 侧 mesh 解析加载器、
+195:  * ②GeometryRef.localTransform 编译域透传、④IRuntimeResourceProvider 资源
+196:  * 字节消费（findings F-550 登记）——**待所有者裁决**后随 io 阶段 B 落位。
+197:  * 本批只把 provider 句柄经编译链接线到 S6（compileWorkCell 第二参数——
+198:  * 未来实现的依赖位），不消费资源字节、不虚构几何、不产错误级诊断、不
+199:  * 阻塞编译（§8.6 诚实跳过语义；RT-GEO 诚实跳过面用例断言 provider 零调用）。
+200:  *
+201:  * 未来形态（登记供裁决参考，非本批实现）：对 CanonicalLink.visual/collision、
+202:  * CanonicalTool.geometry、CanonicalSceneObject.geometry 逐引用经 provider
+203:  * 取已验证字节→io 解析为基线 TriMesh→以 Geometry 载体挂接（localTransform
+204:  * 透传为帧内位姿）——图元是否降级为网格缺失时的 fallback 亦属裁决范围。
+205:  *
+206:  * @param model            [in] 规范模型（resourceManifest/引用清单来源）
+207:  * @param resourceProvider [in] 资源提供者（可空＝缺位；本批恒不消费）
+208:  */
+209: void attachResourceMeshGeometry(const CanonicalModel& model,
+210:                                 const IRuntimeResourceProvider* resourceProvider)
+211: {
+212:     // 有意不消费（见上注）：参数保留＝接口位本体；显式 void 化防未用告警，
+213:     // 也表明"未使用"是设计事实而非遗漏。
+214:     (void)model;
+215:     (void)resourceProvider;
+216: }
+217: 
+218: /**
+219:  * @brief 构造把局部 Z 轴 (0,0,1) 旋转到权威关节轴 axis 的对齐旋转矩阵
+220:  *        （确定性纯函数——同 axis 同矩阵，无环境依赖）。
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp
+552: // =====================================================================
+553: 
+554: namespace {
+555: /** @brief 缺失碰撞设施的端口应答；不是碰撞算法，任何构型均保持证据不足。 */
+556: class MissingPolicyCollisionSession final : public kinematics::IKinCollisionSession {
+557: public:
+558:     /** @brief q[in]为rad/m构型；设施未装配返回EvidenceMissing，不给无碰撞结论。 */
+559:     kinematics::IkCollisionVerdict evaluate(const std::vector<double>&) const override
+560:     {
+561:         kinematics::IkCollisionVerdict result;
+562:         result.state=kinematics::IkCollisionEvaluationState::EvidenceMissing;
+563:         result.statusDetail="当前策略要求碰撞检查，但宿主碰撞设施未装配";
+564:         return result;
+565:     }
+566: };
+567: }
+568: 
+569: namespace {
+570: /** @brief 同步/后台使用相同碰撞不足语义的L5求解适配器；宿主持有，仅UI线程调用。 */
+571: class PolicyAwareIkSolver final : public kinematics::IIkSolver {
+572: public:
+573:     /** @brief source[in]返回已发布策略值；不拥有project，不回查存储。 */
+574:     explicit PolicyAwareIkSolver(std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source)
+575:         : m_source(std::move(source)) {}
+576:     /** @brief request[in]原请求不改；缺设施经端口返回EvidenceMissing后交真实求解器消费。 */
+577:     kinematics::IkOutcome solve(const kinematics::IkRequest& request) const override
+578:     {
+579:         const auto policy=m_source();
+580:         auto bound=request;
+581:         MissingPolicyCollisionSession missing;
+582:         if (!policy || policy->collision.enabled) { bound.collisionSession=&missing; }
+583:         return kinematics::IkSolver{}.solve(bound);
+584:     }
+585: private:
+586:     std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> m_source; ///< 宿主存活期内调用。
+587: };
+588: }
+589: std::unique_ptr<kinematics::IIkSolver> makePolicyAwareIkSolver(
+590:     std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source)
+591: {
+592:     return std::make_unique<PolicyAwareIkSolver>(std::move(source));
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp
+623:                 [self, taskRef, epoch, orphan]() {
+624:                     self->onViewDetached(taskRef, epoch, orphan.summaryText);
+625:                 },
+626:                 Qt::QueuedConnection);
+627:             return;
+628:         }
+629:         MissingPolicyCollisionSession missingCollision;
+630:         if (policyAtSubmit && policyAtSubmit->collision.enabled) { query.collisionSession=&missingCollision; }
+631:         if (!policyAtSubmit) { query.collisionSession=&missingCollision; }
+632:         NullEvaluationContext context;
+633:         kinematics::KinChannelCoverageResult result;
+634:         try {
+635:             const kinematics::RegionCoverageComputation computation =
+636:                 kinematics::runRegionCoverageComputation(*view, query, request,
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp
+8295:                 if (scroll->isVisible()) { scroll->verticalScrollBar()->setValue(0); }
+8296:             }
+8297:             settleEvents(150);
+8298:             auto* add = panel->findChild<QPushButton*>("ird_req_add_points");
+8299:             ok(add && add->isEnabled() && !add->visibleRegion().isEmpty(),
+8300:                "step13 populated-add-reachable-"+std::to_string(pass));
+8301:             snapPng(hostWin,("tour-9-populated-top-"+std::to_string(pass)+".png").c_str());
+8302:             for (auto* scroll : layoutScrolls) {
+8303:                 if (!scroll->isVisible()) { continue; }
+8304:                 auto* bar=scroll->verticalScrollBar();
+8305:                 bar->setValue(bar->maximum()); settleEvents(100);
+8306:                 ok(bar->value()==bar->maximum(),"step13 populated-scroll-bottom-reachable");
+8307:             }
+8308:             snapPng(m_requirementsDock,("tour-9-populated-bottom-"+std::to_string(pass)+".png").c_str());
+8309:         }
+8310:         hostWin->resize(savedSize); hostWin->restoreState(savedLayout); settleEvents(150);
+8311:         ok(m_requirementsEditor.workingSet()==layoutDraft,"step13 layout-zero-draft-write");
+8312:         ok(m_lastStoreAdapter->projectStore().query().head().id==layoutHead,"step13 layout-zero-revision");
+8313:         snapPng(hostWin, "tour-5-final-state.png");
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.cpp
+990:     ui::DraftDocumentProjection document;
+991:     document.schemaVersion = 1; // 私有域帧版本，仅遥测；project写自己的文件版本。
+992:     document.moduleId = kModuleHandle;
+993:     // 冲突详情须按草稿所属分支读取；这里已有权威会话分支，不让宿主从HEAD猜。
+994:     // projectId及保存时刻仍由控制器按绑定填充，保存分支亦由该绑定覆盖。
+995:     document.branchId = m_session.branch;
+996:     document.baseRevisionId = m_session.baseRevision.value_or(core::RevisionId{});
+997:     document.payload = encodeModelingDraft(m_session.draft);
+998:     return document;
+999: }
+1000: 
+1001: void ModelingUiModule::adoptRestoredDocument(
+1002:     const ui::DraftDocumentProjection& document)
+1003: {
+1004:     m_guard.assertOnUiThread();
+1005:     // 先完整解析到局部候选。坏数据不能部分覆盖根后留下旧部件；只读允许
+1006:     // 浏览恢复内容，真正编辑/项目提交的权限仍由现有执行端防御。
+1007:     std::string error;
+1008:     auto candidate=document.moduleId==kModuleHandle
+1009:         ?decodeModelingDraft(document.payload,m_session.draft,error):std::nullopt;
+1010:     if(document.moduleId!=kModuleHandle){error="草稿模块不匹配，未恢复建模工作集。";}
+1011:     if(candidate&&m_session.baselineSnapshot&&m_session.baselineSnapshot->rootObjectId
+1012:        &&candidate->rootObjectId!=m_session.baselineSnapshot->rootObjectId){
+1013:         error="草稿根身份与当前已保存模型不匹配，未恢复。";candidate.reset();
+1014:     }
+1015:     if(!candidate){
+1016:         // void端口不能回传恢复失败；保留当前值并显式显示原因，不伪造草稿写入。
+1017:         qWarning().noquote()<<QString::fromStdString("建模草稿恢复拒绝："+error);
+1018:         if(m_panel){m_panel->setOutcomeMessage(QString::fromStdString("草稿恢复失败："+error));}
+1019:         return;
+1020:     }
+1021:     // 兼容没有摘要的既有调用方：内容差异才是未应用事实。不能因空摘要
+1022:     // 把已恢复的新部件误判为NoDraft；相同基线仍不制造空项目修订。
+1023:     const auto& saved=m_session.baselineSnapshot?*m_session.baselineSnapshot:m_session.draft;
+1024:     if(candidate->changes.empty()&&canonicalDraftContents(*candidate)!=canonicalDraftContents(saved)){
+1025:         candidate->changes.push_back({"draft.restore","恢复未应用建模工作集"});
+1026:     }
+1027:     m_session.draft=std::move(*candidate);
+1028:     m_session.importedSelfCollisionCandidates.clear(); // 磁盘帧未存导入报告，不能借用恢复前的候选。
+1029:     // 保留磁盘草稿的旧基线，让项目命令服务真实判断Stale；不能用当前tip
+1030:     // 偷换原基线。旧载荷无基线时保持已有锚，未知身份不猜测。
+1031:     if(document.baseRevisionId.isValid()){m_session.baseRevision=document.baseRevisionId;}
+1032:     if(m_panel){m_panel->cancelPendingForHistoryRestore();}
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ApplierContractTest.cpp
+485:     EXPECT_EQ(out.branchAfterCreate.tip, run.revision)
+486:         << "建支不产生设计变更——tip＝基（step1 后观测窗）";
+487:     EXPECT_FALSE(out.branchAfterCreate.label.empty());
+488: 
+489:     // OPT-VER-145（半区二）：不复制对象——建支是纯元数据命令（分支表随
+490:     // ProjectMetadata 提交，§10.2）：其修订引用集**零设计对象写入**（无
+491:     // RobotDesign token 的引用条目——设计对象库字节面零新增，仅元数据
+492:     // 对象前进），基线根对象的 (oid, cv) 引用保持指向既有对象。
+493:     const project::RevisionView metaRev
+494:         = opened->store->query().revision(*out.step1.newRevision);
+495:     for (const project::ObjectRef& ref : metaRev.objectRefs) {
+496:         EXPECT_NE(ref.objectTypeToken, "RobotDesign")
+497:             << "建支修订不得写入任何设计对象（不复制对象——OPT-VER-145）";
+498:     }
+499:     // 元数据对象前进：建支修订携带有效的元数据引用（分支表增量——
+500:     // ProjectMetadata 新版本随修订发布）。
+501:     EXPECT_TRUE(metaRev.metadataRef.objectId.isValid());
+502: 
+
+T27提交对象的原生runtime报告（历史证据只读核对，不算本轮执行）：
+{
+  "schemaVersion": "ird-test-report/1",
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": []
+}

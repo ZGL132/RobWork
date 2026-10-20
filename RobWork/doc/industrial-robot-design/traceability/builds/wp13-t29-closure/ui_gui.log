@@ -1,0 +1,242 @@
+[==========] Running 96 tests from 15 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from UiGuiPlacement
+[ RUN      ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD
+[       OK ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD (1 ms)
+[----------] 1 test from UiGuiPlacement (1 ms total)
+
+[----------] 6 tests from WorkbenchShellGuiTest
+[ RUN      ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1
+[       OK ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1 (689 ms)
+[ RUN      ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2
+[       OK ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2 (248 ms)
+[ RUN      ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3
+[       OK ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3 (208 ms)
+[ RUN      ] WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1
+[       OK ] WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1 (200 ms)
+[ RUN      ] WorkbenchShellGuiTest.RecentProjects_CapDedupPersist_PM_10_PM_14
+[       OK ] WorkbenchShellGuiTest.RecentProjects_CapDedupPersist_PM_10_PM_14 (85 ms)
+[ RUN      ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06
+[       OK ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06 (211 ms)
+[----------] 6 tests from WorkbenchShellGuiTest (1649 ms total)
+
+[----------] 18 tests from WorkbenchContentGuiTest
+[ RUN      ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT (23 ms)
+[ RUN      ] WorkbenchContentGuiTest.BuildValidationRejectsIncompleteDeps_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.BuildValidationRejectsIncompleteDeps_UI_SPLIT (2 ms)
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedMemoryFlagsOnlyBoundary_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.EmbeddedMemoryFlagsOnlyBoundary_UI_SPLIT (61 ms)
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_UI_SPLIT (44 ms)
+[ RUN      ] WorkbenchContentGuiTest.SessionEntryOverrideRoutesShellEntries_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.SessionEntryOverrideRoutesShellEntries_UI_SPLIT (17 ms)
+[ RUN      ] WorkbenchContentGuiTest.SaveCloseEntryOverrideRoutesShellEntries_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.SaveCloseEntryOverrideRoutesShellEntries_UI_SPLIT (15 ms)
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedCentralYieldPage_UI_SPLIT
+[       OK ] WorkbenchContentGuiTest.EmbeddedCentralYieldPage_UI_SPLIT (14 ms)
+[ RUN      ] WorkbenchContentGuiTest.ContentCommandRegistryAccessorServesLiveRegistry_B1_UI_T19
+[       OK ] WorkbenchContentGuiTest.ContentCommandRegistryAccessorServesLiveRegistry_B1_UI_T19 (16 ms)
+[ RUN      ] WorkbenchContentGuiTest.StagePanelPageHostingAndSwitching_WP24_T03B
+[       OK ] WorkbenchContentGuiTest.StagePanelPageHostingAndSwitching_WP24_T03B (13 ms)
+[ RUN      ] WorkbenchContentGuiTest.DomainCommandRegistrationAndHonestFeedback_WP24_T03B
+[       OK ] WorkbenchContentGuiTest.DomainCommandRegistrationAndHonestFeedback_WP24_T03B (11 ms)
+[ RUN      ] WorkbenchContentGuiTest.DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B
+[       OK ] WorkbenchContentGuiTest.DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B (25 ms)
+[ RUN      ] WorkbenchContentGuiTest.DomainCommandGatingNoProjectAndReadonly_WP24_T03B
+[       OK ] WorkbenchContentGuiTest.DomainCommandGatingNoProjectAndReadonly_WP24_T03B (10 ms)
+[ RUN      ] WorkbenchContentGuiTest.AdviceGuideAndPlaceholderConvergence_UX02_UI_T25
+[       OK ] WorkbenchContentGuiTest.AdviceGuideAndPlaceholderConvergence_UX02_UI_T25 (12 ms)
+[ RUN      ] WorkbenchContentGuiTest.TopContextBarPresentation_UX02_UI_T26
+[       OK ] WorkbenchContentGuiTest.TopContextBarPresentation_UX02_UI_T26 (20 ms)
+[ RUN      ] WorkbenchContentGuiTest.TopContextBarSelectionResolved_UI_T26
+[       OK ] WorkbenchContentGuiTest.TopContextBarSelectionResolved_UI_T26 (13 ms)
+[ RUN      ] WorkbenchContentGuiTest.DomainCommandAssembledFalse_RegisteredDisabledWithReason_UI_T27
+[       OK ] WorkbenchContentGuiTest.DomainCommandAssembledFalse_RegisteredDisabledWithReason_UI_T27 (4 ms)
+[ RUN      ] WorkbenchContentGuiTest.HandlerRejectionEmptyDisableKey_HonestFeedbackNoCrash_F557
+[       OK ] WorkbenchContentGuiTest.HandlerRejectionEmptyDisableKey_HonestFeedbackNoCrash_F557 (15 ms)
+[ RUN      ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82
+[       OK ] WorkbenchContentGuiTest.EmbeddedFactoryResetHookOnly_UI_T82 (17 ms)
+[----------] 18 tests from WorkbenchContentGuiTest (353 ms total)
+
+[----------] 2 tests from DockWorkspaceGuiTest
+[ RUN      ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82
+[       OK ] DockWorkspaceGuiTest.LongFormsTabsAndReopenKeepState_UI_T82 (377 ms)
+[ RUN      ] DockWorkspaceGuiTest.DynamicFormTailRemainsClickable_MA04
+[       OK ] DockWorkspaceGuiTest.DynamicFormTailRemainsClickable_MA04 (820 ms)
+[----------] 2 tests from DockWorkspaceGuiTest (1199 ms total)
+
+[----------] 5 tests from CommandPaletteGuiTest
+[ RUN      ] CommandPaletteGuiTest.PaletteOpensViaDefaultShortcut_UI_PALETTE_1
+[       OK ] CommandPaletteGuiTest.PaletteOpensViaDefaultShortcut_UI_PALETTE_1 (202 ms)
+[ RUN      ] CommandPaletteGuiTest.RequirementsChineseFilterAndEnter_UX02_UX13
+[       OK ] CommandPaletteGuiTest.RequirementsChineseFilterAndEnter_UX02_UX13 (145 ms)
+[ RUN      ] CommandPaletteGuiTest.PaletteFilterNavigateExecute_UI_PALETTE_2
+[       OK ] CommandPaletteGuiTest.PaletteFilterNavigateExecute_UI_PALETTE_2 (206 ms)
+[ RUN      ] CommandPaletteGuiTest.UserRebindPersistsAcrossSessions_UI_PALETTE_3
+[       OK ] CommandPaletteGuiTest.UserRebindPersistsAcrossSessions_UI_PALETTE_3 (337 ms)
+[ RUN      ] CommandPaletteGuiTest.FilterTabCompletesCategoryAndToggles_F821
+[       OK ] CommandPaletteGuiTest.FilterTabCompletesCategoryAndToggles_F821 (169 ms)
+[----------] 5 tests from CommandPaletteGuiTest (1065 ms total)
+
+[----------] 5 tests from PolicySummaryCardGuiTest
+[ RUN      ] PolicySummaryCardGuiTest.LoadedProjection_RendersModelRows_UI_T07_ACC1_ACC3
+[       OK ] PolicySummaryCardGuiTest.LoadedProjection_RendersModelRows_UI_T07_ACC1_ACC3 (158 ms)
+[ RUN      ] PolicySummaryCardGuiTest.Unloaded_RendersPlaceholder_UI_T07_ACC1
+[       OK ] PolicySummaryCardGuiTest.Unloaded_RendersPlaceholder_UI_T07_ACC1 (167 ms)
+[ RUN      ] PolicySummaryCardGuiTest.CardIsReadOnly_NoEditableControls_UI_T07_ACC1
+[       OK ] PolicySummaryCardGuiTest.CardIsReadOnly_NoEditableControls_UI_T07_ACC1 (202 ms)
+[ RUN      ] PolicySummaryCardGuiTest.EditEntry_ShowsDeferredNotice_UI_T07_ACC2
+[       OK ] PolicySummaryCardGuiTest.EditEntry_ShowsDeferredNotice_UI_T07_ACC2 (197 ms)
+[ RUN      ] PolicySummaryCardGuiTest.RefreshOnContextInjection_UI_T07_ACC3
+[       OK ] PolicySummaryCardGuiTest.RefreshOnContextInjection_UI_T07_ACC3 (177 ms)
+[----------] 5 tests from PolicySummaryCardGuiTest (905 ms total)
+
+[----------] 10 tests from ParamTablePanelGuiTest
+[ RUN      ] ParamTablePanelGuiTest.StructureAndValueUnitColumns_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.StructureAndValueUnitColumns_UI_T08_ACC1 (125 ms)
+[ RUN      ] ParamTablePanelGuiTest.InPlaceErrorKeepsValue_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.InPlaceErrorKeepsValue_UI_T08_ACC1 (117 ms)
+[ RUN      ] ParamTablePanelGuiTest.ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1 (104 ms)
+[ RUN      ] ParamTablePanelGuiTest.ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1 (102 ms)
+[ RUN      ] ParamTablePanelGuiTest.CancelRestore_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.CancelRestore_UI_T08_ACC1 (118 ms)
+[ RUN      ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1 (162 ms)
+[ RUN      ] ParamTablePanelGuiTest.NoOutletDisablesApply_UI_T08_ACC2
+[       OK ] ParamTablePanelGuiTest.NoOutletDisablesApply_UI_T08_ACC2 (137 ms)
+[ RUN      ] ParamTablePanelGuiTest.DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1 (143 ms)
+[ RUN      ] ParamTablePanelGuiTest.UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1 (149 ms)
+[ RUN      ] ParamTablePanelGuiTest.FilterRowsByKeySubstring_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.FilterRowsByKeySubstring_UI_T08_ACC1 (130 ms)
+[----------] 10 tests from ParamTablePanelGuiTest (1297 ms total)
+
+[----------] 3 tests from AboutDialogGuiTest
+[ RUN      ] AboutDialogGuiTest.AboutDialogShowsBaselineAndListSameSource_UI_PLG_2_UI_T10_ACC1
+[       OK ] AboutDialogGuiTest.AboutDialogShowsBaselineAndListSameSource_UI_PLG_2_UI_T10_ACC1 (237 ms)
+[ RUN      ] AboutDialogGuiTest.AboutDialogWithoutSourceShowsPlaceholders_UI_PLG_2_UI_T10
+[       OK ] AboutDialogGuiTest.AboutDialogWithoutSourceShowsPlaceholders_UI_PLG_2_UI_T10 (231 ms)
+[ RUN      ] AboutDialogGuiTest.HelpContentsDeploymentAndFeedback_UX14_WP14T12
+[       OK ] AboutDialogGuiTest.HelpContentsDeploymentAndFeedback_UX14_WP14T12 (176 ms)
+[----------] 3 tests from AboutDialogGuiTest (646 ms total)
+
+[----------] 7 tests from IndustrialProjectTreeGuiTest
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_6_PanelShowsFiveFixedGroupRows
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_6_PanelShowsFiveFixedGroupRows (1 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_6_NodeSelectionWritesService
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_6_NodeSelectionWritesService (1 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_6_DisplayNameResolvedViaNamePort
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_6_DisplayNameResolvedViaNamePort (0 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_7_L3_ReverseSuccessLocatesAndSelectsRow
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_7_L3_ReverseSuccessLocatesAndSelectsRow (1 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_7_L3_ReverseFailKeepsTreeUntouched
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_7_L3_ReverseFailKeepsTreeUntouched (1 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.UI_TRE_8_FactoryRejectsIncompleteDeps
+[       OK ] IndustrialProjectTreeGuiTest.UI_TRE_8_FactoryRejectsIncompleteDeps (0 ms)
+[ RUN      ] IndustrialProjectTreeGuiTest.SearchAndGroupFilter_UI_T26
+[       OK ] IndustrialProjectTreeGuiTest.SearchAndGroupFilter_UI_T26 (3 ms)
+[----------] 7 tests from IndustrialProjectTreeGuiTest (13 ms total)
+
+[----------] 14 tests from PropertyInspectorGuiTest
+[ RUN      ] PropertyInspectorGuiTest.EmptySelectionShowsNoSelectionPlaceholder
+[       OK ] PropertyInspectorGuiTest.EmptySelectionShowsNoSelectionPlaceholder (79 ms)
+[ RUN      ] PropertyInspectorGuiTest.MultiSelectionShowsNarrowHintPlaceholder
+[       OK ] PropertyInspectorGuiTest.MultiSelectionShowsNarrowHintPlaceholder (49 ms)
+[ RUN      ] PropertyInspectorGuiTest.RuntimeOnlyFromEmptyShowsRuntimePlaceholder
+[       OK ] PropertyInspectorGuiTest.RuntimeOnlyFromEmptyShowsRuntimePlaceholder (44 ms)
+[ RUN      ] PropertyInspectorGuiTest.UnansweredObjectShowsHonestPlaceholder
+[       OK ] PropertyInspectorGuiTest.UnansweredObjectShowsHonestPlaceholder (48 ms)
+[ RUN      ] PropertyInspectorGuiTest.SelectionShowsResolvedTitleAndEmbeddedParamTable
+[       OK ] PropertyInspectorGuiTest.SelectionShowsResolvedTitleAndEmbeddedParamTable (42 ms)
+[ RUN      ] PropertyInspectorGuiTest.UnresolvableObjectShowsUnnamedTitlePlaceholder
+[       OK ] PropertyInspectorGuiTest.UnresolvableObjectShowsUnnamedTitlePlaceholder (47 ms)
+[ RUN      ] PropertyInspectorGuiTest.ReadOnlyPageShowsReadOnlyBadge
+[       OK ] PropertyInspectorGuiTest.ReadOnlyPageShowsReadOnlyBadge (42 ms)
+[ RUN      ] PropertyInspectorGuiTest.ComplexEntriesRenderedAsButtonsWithTitles
+[       OK ] PropertyInspectorGuiTest.ComplexEntriesRenderedAsButtonsWithTitles (57 ms)
+[ RUN      ] PropertyInspectorGuiTest.HostedEntryClickMountsWidgetIntoHostArea
+[       OK ] PropertyInspectorGuiTest.HostedEntryClickMountsWidgetIntoHostArea (53 ms)
+[ RUN      ] PropertyInspectorGuiTest.ExternalEntryClickLeavesHostAreaHidden
+[       OK ] PropertyInspectorGuiTest.ExternalEntryClickLeavesHostAreaHidden (51 ms)
+[ RUN      ] PropertyInspectorGuiTest.ExternalActivationReturningWidgetRejectedAsProviderBreach
+[       OK ] PropertyInspectorGuiTest.ExternalActivationReturningWidgetRejectedAsProviderBreach (57 ms)
+[ RUN      ] PropertyInspectorGuiTest.RejectedPageShowsDefensivePlaceholderAndKeepsEntries
+[       OK ] PropertyInspectorGuiTest.RejectedPageShowsDefensivePlaceholderAndKeepsEntries (44 ms)
+[ RUN      ] PropertyInspectorGuiTest.SelectionSwitchClearsStaleHostedPage
+[       OK ] PropertyInspectorGuiTest.SelectionSwitchClearsStaleHostedPage (67 ms)
+[ RUN      ] PropertyInspectorGuiTest.FactoryRejectsEmptyDeps_FailFast
+[       OK ] PropertyInspectorGuiTest.FactoryRejectsEmptyDeps_FailFast (0 ms)
+[----------] 14 tests from PropertyInspectorGuiTest (692 ms total)
+
+[----------] 3 tests from DomainReadinessSummaryCard
+[ RUN      ] DomainReadinessSummaryCard.VerdictMapping_CoversFourStatuses_UX02_UI_T44
+[       OK ] DomainReadinessSummaryCard.VerdictMapping_CoversFourStatuses_UX02_UI_T44 (0 ms)
+[ RUN      ] DomainReadinessSummaryCard.SetRows_RendersDomainVerdictLines_UI_T44
+[       OK ] DomainReadinessSummaryCard.SetRows_RendersDomainVerdictLines_UI_T44 (0 ms)
+[ RUN      ] DomainReadinessSummaryCard.SetRows_EmptyRows_HonestEmptyState_ERR01_UI_T44
+[       OK ] DomainReadinessSummaryCard.SetRows_EmptyRows_HonestEmptyState_ERR01_UI_T44 (0 ms)
+[----------] 3 tests from DomainReadinessSummaryCard (2 ms total)
+
+[----------] 2 tests from HostIntegrationGuiTest
+[ RUN      ] HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder_RendersAndNotSelectable
+[       OK ] HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder_RendersAndNotSelectable (0 ms)
+[ RUN      ] HostIntegrationGuiTest.ProjectCloseTeardown_InspectorHostedPageCleared
+[       OK ] HostIntegrationGuiTest.ProjectCloseTeardown_InspectorHostedPageCleared (0 ms)
+[----------] 2 tests from HostIntegrationGuiTest (1 ms total)
+
+[----------] 4 tests from DraftConflictGui
+[ RUN      ] DraftConflictGui.ViewThenCancelRetainsOriginal_PM04_AT29
+[       OK ] DraftConflictGui.ViewThenCancelRetainsOriginal_PM04_AT29 (155 ms)
+[ RUN      ] DraftConflictGui.ExplicitRebuildConsumesFixedTip_PM04_AT21
+[       OK ] DraftConflictGui.ExplicitRebuildConsumesFixedTip_PM04_AT21 (83 ms)
+[ RUN      ] DraftConflictGui.SaveFailureDisablesRebuild_PM08_AT29
+[       OK ] DraftConflictGui.SaveFailureDisablesRebuild_PM08_AT29 (93 ms)
+[ RUN      ] DraftConflictGui.ChangedSessionOrReaderFailureKeepsDraft_PM04_AT29
+[       OK ] DraftConflictGui.ChangedSessionOrReaderFailureKeepsDraft_PM04_AT29 (557 ms)
+[----------] 4 tests from DraftConflictGui (892 ms total)
+
+[----------] 6 tests from HostPolicyGuiTest
+[ RUN      ] HostPolicyGuiTest.CancelAndProtectedFieldsNeverWrite_UX08_A23
+[       OK ] HostPolicyGuiTest.CancelAndProtectedFieldsNeverWrite_UX08_A23 (96 ms)
+[ RUN      ] HostPolicyGuiTest.AllThresholdsUnitsScopeAndSourceCommit_UX08_A23
+[       OK ] HostPolicyGuiTest.AllThresholdsUnitsScopeAndSourceCommit_UX08_A23 (196 ms)
+[ RUN      ] HostPolicyGuiTest.InvalidRuleConflictAndStaleStayOpenWithZeroWrites_UX08_A23
+[       OK ] HostPolicyGuiTest.InvalidRuleConflictAndStaleStayOpenWithZeroWrites_UX08_A23 (153 ms)
+[ RUN      ] HostPolicyGuiTest.RulesScopeAndSourceReopenWithoutLoss_UX08_A23
+[       OK ] HostPolicyGuiTest.RulesScopeAndSourceReopenWithoutLoss_UX08_A23 (260 ms)
+[ RUN      ] HostPolicyGuiTest.ReadOnlyAndUnboundNeverOpenWritableEditor_UX11_A23
+[       OK ] HostPolicyGuiTest.ReadOnlyAndUnboundNeverOpenWritableEditor_UX11_A23 (34 ms)
+[ RUN      ] HostPolicyGuiTest.ImportedCandidatesUnresolvedListedNeverSilent_MDL04_WP13T25
+[       OK ] HostPolicyGuiTest.ImportedCandidatesUnresolvedListedNeverSilent_MDL04_WP13T25 (284 ms)
+[----------] 6 tests from HostPolicyGuiTest (1028 ms total)
+
+[----------] 10 tests from HostView3DGateway
+[ RUN      ] HostView3DGateway.UpstreamPick_ResolvesSelectsAndDispatches_UI_T45
+[       OK ] HostView3DGateway.UpstreamPick_ResolvesSelectsAndDispatches_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45
+[       OK ] HostView3DGateway.UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PresentationOutlet_TransactionSemantics_UI_T45
+[       OK ] HostView3DGateway.PresentationOutlet_TransactionSemantics_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PresentationOutlet_IncompleteView_FailsCleanly_UI_T45
+[       OK ] HostView3DGateway.PresentationOutlet_IncompleteView_FailsCleanly_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45
+[       OK ] HostView3DGateway.TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.Constructor_MissingRequiredSeams_Throws_UI_T45
+[       OK ] HostView3DGateway.Constructor_MissingRequiredSeams_Throws_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PreviewOutlet_DegradedApplyAndClear_UI_T33
+[       OK ] HostView3DGateway.PreviewOutlet_DegradedApplyAndClear_UI_T33 (0 ms)
+[ RUN      ] HostView3DGateway.PreviewOutlet_DrawFailureKeepsOld_UI_T33
+[       OK ] HostView3DGateway.PreviewOutlet_DrawFailureKeepsOld_UI_T33 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78
+[       OK ] HostView3DGateway.UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78
+[       OK ] HostView3DGateway.UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78 (0 ms)
+[----------] 10 tests from HostView3DGateway (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 96 tests from 15 test suites ran. (9763 ms total)
+[  PASSED  ] 96 tests.

@@ -1,0 +1,289 @@
+{
+  "suites": [
+    {
+      "name": "standalone_evidence",
+      "total": 205,
+      "passed": 205,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 205,
+        "passed": 205,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_evidence_contract",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_policy",
+      "total": 141,
+      "passed": 141,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 141,
+        "passed": 141,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_policy_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_runtime",
+      "total": 195,
+      "passed": 195,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 195,
+        "passed": 195,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_optimization_contract",
+      "total": 52,
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 52,
+        "passed": 52,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_core",
+      "total": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 63,
+        "passed": 63,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_requirements",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1,
+      "nativeCounts": {
+        "total": 222,
+        "passed": 221,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 1,
+        "datasetInvalid": 0
+      },
+      "decisive": false,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_requirements_contract",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 360,
+      "passed": 360,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 360,
+        "passed": 360,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_ui",
+      "total": 275,
+      "passed": 275,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 275,
+        "passed": 275,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_requirements_gui",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 110,
+        "passed": 110,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 60,
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 60,
+        "passed": 60,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_ui_gui",
+      "total": 76,
+      "passed": 76,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 76,
+        "passed": 76,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    }
+  ],
+  "totals": {
+    "total": 1805,
+    "passed": 1804,
+    "failed": 0,
+    "skipped": 1
+  },
+  "nativeTotals": {
+    "total": 1805,
+    "passed": 1804,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 1,
+    "datasetInvalid": 0
+  }
+}
