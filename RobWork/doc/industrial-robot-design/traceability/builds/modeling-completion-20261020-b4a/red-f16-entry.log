@@ -1,0 +1,24 @@
+Note: Google Test filter = *FullDiffFromProductionCommand*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingImportGui
+[ RUN      ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingImportGuiTest.cpp(72): error: Expected equality of these values:
+  dialog->objectName()
+    Which is: {}
+  "ird_modeling_diff"
+    Which is: 00007FF73434A098
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingImportGuiTest.cpp(74): error: Expected: (table) != (nullptr), actual: NULL vs (nullptr)
+F16：生产页只有数量，缺逐项分组、前后值与定位
+
+[  FAILED  ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12 (358 ms)
+[----------] 1 test from ModelingImportGui (358 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (358 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12
+
+ 1 FAILED TEST

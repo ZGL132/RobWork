@@ -26,6 +26,7 @@
 #include <sdurws/ird/modeling/Codec.hpp>       // RobotDesignCodec/kCurrentFormatVersion（根对象确定性编码——§4.8）
 #include <sdurws/ird/modeling/ObjectTypes.hpp> // kRobotDesignObjectType（根对象 token——runtime 单一权威的 using 重导出）
 #include <sdurws/ird/modeling/CanonicalBridge.hpp> // A-14：只读闭包，恢复不从运行时逆推参数。
+#include <sdurws/ird/modeling/ModelDiff.hpp> // F16：只消费定位锚，不在模块重算差异。
 
 namespace sdurws::ird::modeling {
 
@@ -570,6 +571,30 @@ bool ModelingUiModule::executeDomainCommand(const std::string& commandId)
         return m_panel != nullptr ? m_panel->selectedAnchor() : std::nullopt;
     };
     deps.exportWorkCellXml = m_workCellExport;
+    deps.locateDiffObject=[this](const ModelDiffEntry& entry)->std::string {
+        // 差异的数组下标属于报告生成时刻；定位必须现查身份，避免删除/重排
+        // 后跳到另一个对象。字段删除但对象还在仍允许定位；资源无树节点拒绝。
+        if(entry.field=="resource"){
+            return "无法定位：资源清单条目没有独立的结构树节点。";
+        }
+        const auto target=entry.objectId.isValid()?std::optional<core::ObjectId>(entry.objectId):
+            m_session.draft.rootObjectId;
+        if(!m_panel){return "无法定位：建模面板尚未打开。";}
+        if(!target||!resolveSelection(m_session.draft,*target)){
+            return "无法定位：对象已不在当前草稿中，或该引用/资源没有可定位树节点。";
+        }
+        // 正式宿主必须先写共享选择，再由既有订阅链同步域树/属性和三维。
+        // 退订说明宿主正在关闭/重装配，诚实拒绝，不能假报本地定位成功。
+        // 从未装配共享服务的独立面板保留原本的本地定位能力。
+        if (m_adapter) {
+            if (!m_adapter->reportCommandSelection(*target)) {
+                return "无法定位：共享选择服务尚未连接，原选中保持不变。";
+            }
+        } else {
+            m_panel->focusObject(target);
+        }
+        return "已定位到当前草稿中的对象；结构树与属性区已同步。";
+    };
     if(m_sessionPoseWriter){
         deps.restoreNamedPose=[this](const std::string& key,std::string& why){return restoreNamedPose(key,why);};
     }

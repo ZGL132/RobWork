@@ -28,6 +28,7 @@
 #include <sdurws/ird/modeling/RobotDesign.hpp>  // GeometryKind/JointPose（注入夹具）
 #include <sdurws/ird/modeling/Template.hpp>     // RobotDesignTemplateFactory（六轴草稿夹具）
 #include <sdurws/ird/modeling/Codec.hpp>        // AT-31来源资源随对象编码往返保真。
+#include <sdurws/ird/modeling/ModelDiff.hpp>    // F16：真实服务与呈现边界逐项对账。
 #include "plugin/ModelingCommandFlows.hpp"      // executeModelingCommand（被测流）
 #include "plugin/ModelingUiModule.hpp"          // ModuleSessionState（会话态入参）
 #include "plugin/ModelingXacroBridge.hpp"       // WP-13-T24：真实生产展开桥，不能只测内核。
@@ -72,6 +73,12 @@ struct FakeHost final : ModelingDialogHost {
     int showInfoCount = 0;                      ///< showInfo 调用计数
     QStringList showInfoTexts;                  ///< showInfo 文本留痕
     QStringList chosenItems;                    ///< F13：核对真实权威保留键选择，不接受旧别名。
+    std::optional<ModelDiffReport> shownDiff;   ///< F16：只替代呈现边界，算法仍真实执行。
+    void showModelDiff(const ModelDiffReport& report,const ModelingWorkingSet&,
+        const ModelingWorkingSet&,const ModelingDiffLocator&) override
+    {
+        shownDiff=report;
+    }
 
     std::optional<QString> openFilePath(const QString&, const QString&) override
     {
@@ -1075,4 +1082,26 @@ TEST(ModelingCommandFlows, HomeZeroChoosesExactReservedKeyAndCancelsAtomically_M
     host.chooseItemAnswer=0;
     EXPECT_FALSE(executeModelingCommand("modeling.reset-home-zero",session,deps,host,summary));
     EXPECT_EQ(called,2);EXPECT_EQ(host.showInfoCount,0);
+}
+/** @brief MDL-08/UX-13/AT-12：流程把真实完整报告交给呈现边界，比较零编辑。 */
+TEST(ModelingCommandFlows, DiffPassesCompleteReportWithoutEditing_MDL08_AT12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-08","UX-13"},{"AT-12"},std::nullopt);
+    FlowHarness h;h.session.draft=makeSixAxisDraft();
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand("modeling.diff-baseline",h.session,h.deps(),h.host,summary));
+    EXPECT_FALSE(h.host.shownDiff); // 无基线不伪造比较。
+    h.session.baselineSnapshot=h.session.draft;
+    const auto baseline=*h.session.baselineSnapshot;
+    h.session.draft.design.displayName="changed";
+    ASSERT_FALSE(applyJointFieldEdit(h.session.draft,0,JointEditField::ZeroOffset,JointEditValue{0.4}));
+    h.session.draft.design.links[0].body.mass=core::SourcedValue<double>::provided(
+        2.5,core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    const auto before=h.session.draft;
+    const auto expected=ModelDiffService{}.diff(baseline,before);
+    EXPECT_TRUE(executeModelingCommand("modeling.diff-baseline",h.session,h.deps(),h.host,summary));
+    ASSERT_TRUE(h.host.shownDiff);EXPECT_EQ(*h.host.shownDiff,expected);
+    EXPECT_FALSE(h.host.shownDiff->structure.empty());EXPECT_FALSE(h.host.shownDiff->parameters.empty());
+    EXPECT_FALSE(h.host.shownDiff->properties.empty());EXPECT_EQ(h.host.showInfoCount,0);
+    EXPECT_EQ(h.session.draft,before);EXPECT_EQ(*h.session.baselineSnapshot,baseline);EXPECT_EQ(h.recomputeCalls,0);
 }

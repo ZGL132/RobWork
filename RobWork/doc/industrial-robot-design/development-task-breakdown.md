@@ -1008,3 +1008,5 @@ AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子�
 WP-13-T24 B3a精确登记：MDL-22欧拉输入及域内RPY→EAA转换，Template.hpp::BasePlacementEditValue表尾customRpy默认空；实现/验证/范围按2026-10-20-modeling-completion计划B3a，不改runtime或存储格式。
 
 WP-13-T24 B3b精确登记：MDL-12/MDL-06工程工作范围确认，Template.hpp::JointEditField表尾WorkingRange复用JointLimits；已放行Template.cpp、私有面板与原测试/单元卡范围内实施。原计划B3b八节为边界，不改存储、runtime或依赖边，完整47项终验仍开放。
+
+WP-13-T24 B4a精确登记：MDL-08/UX-13/AT-12完整差异表和现对象身份定位；仅建模私有流程/新窗口/模块、原测试及既有plugin目标新增源。ui/plugin/UiPlugin.cpp只扩既有modeling-tour真实交互补证，不改装配。无公共接口、存储或新边，精确失败矩阵见原计划B4a；全功能终验仍开放。

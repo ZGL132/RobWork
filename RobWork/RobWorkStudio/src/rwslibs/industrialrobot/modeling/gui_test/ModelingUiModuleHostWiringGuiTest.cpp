@@ -32,6 +32,11 @@
 #include <QDir>
 #include <QPixmap>
 #include <QTableWidget>
+#include <QDialog>
+#include <QTimer>
+#include <QTreeWidget>
+#include <sdurws/ird/modeling/StructureEdit.hpp>
+#include <sdurws/ird/ui/SelectionService.hpp>
 #include <memory>
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>
 
@@ -48,6 +53,17 @@ using namespace sdurws::ird;
 using namespace sdurws::ird::modeling;
 
 namespace {
+
+/**
+ * @brief 差异定位测试的名称端口边界：纯草稿尚未发布，无运行时名可映射。
+ * SelectionService本身、模块适配器和面板均真实执行；不替换其选中算法。
+ */
+struct DiffDraftNameMap final : ui::IUiRuntimeNameMapPort {
+    std::optional<core::ObjectId> resolveObjectIdFromRuntimeName(const std::string&) const override
+    {return std::nullopt;}
+    std::optional<std::string> resolveRuntimeName(const core::ObjectId&) const override
+    {return std::nullopt;}
+};
 
 /// 命令按钮全集（构造序＝目录序——Qt 子对象按挂树序枚举；诊断历史折叠
 /// 钮非命令按钮，按 objectName 剔除）。与 ModelingPanelGuiTest 同款辅助
@@ -91,6 +107,101 @@ QList<QPushButton*> commandButtonsOf(
 }
 
 }  // namespace
+
+/**
+ * @brief MDL-08/UX-13/AT-12：真实命令/模态窗口/面板树定位接线。
+ * 只读也能查看；使用真实编辑原语删除末关节，证明不能按旧下标误定位。
+ */
+TEST(ModelingUiModuleHostWiring, DiffLocatesLiveObjectsAndRefusesDeleted_UX13_AT12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-08","UX-13"},{"AT-12"},std::nullopt);
+    ui::SelectionService::Deps selectionDeps;
+    selectionDeps.nameMap=std::make_shared<DiffDraftNameMap>();
+    selectionDeps.treeLocator=[](const core::ObjectId&){return false;}; // 未装配共享树，仅观测共享选中真状态。
+    ui::SelectionService selection(selectionDeps); // 先于模块构造，确保订阅销毁时服务仍存活。
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto revision=core::RevisionId::generate();
+    module.bindSessionAnchor(branch,revision);
+    module.noteAppliedRevision(revision,core::ObjectId::generate());
+    const auto baseline=*module.session().baselineSnapshot;
+    ASSERT_FALSE(applyJointFieldEdit(module.session().draft,0,JointEditField::ZeroOffset,JointEditValue{0.25}));
+    ASSERT_FALSE(removeJointAt(module.session().draft,5));
+    module.session().draft.design.displayName="diff-current";
+    ResourceRef resource;resource.resourceId="resource-without-node";
+    module.session().draft.design.resourceManifest.push_back(resource);
+    module.recomputeReadiness();
+    const auto before=module.session().draft;
+    int commands=0,selections=0;module.bindCommandSubmit([&](const ui::CommandId&){++commands;});
+    std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());ASSERT_NE(panel,nullptr);
+    module.attachSelectionService(selection);
+    QObject::connect(panel,&ModelingPanelWidget::selectionChanged,panel,[&](const QString&){++selections;});
+    widget->resize(1400,900);widget->show();QApplication::processEvents();
+    module.setWritable(false);
+    auto* command=widget->findChild<QPushButton*>("ird_modeling_cmd_modeling.diff-baseline");
+    ASSERT_NE(command,nullptr);EXPECT_TRUE(command->isEnabled());
+    QTimer watchdog;
+    QObject::connect(&watchdog,&QTimer::timeout,[]{
+        ADD_FAILURE()<<"完整差异窗口未按预期关闭";
+        if(auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget())){dialog->reject();}
+    });watchdog.setSingleShot(true);watchdog.start(5000);
+    QTimer::singleShot(0,[&]{
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());ASSERT_NE(dialog,nullptr);
+        auto* table=dialog->findChild<QTableWidget*>("ird_modeling_diff_table");ASSERT_NE(table,nullptr);
+        auto* jump=dialog->findChild<QPushButton*>("ird_modeling_diff_locate");ASSERT_NE(jump,nullptr);
+        auto* feedback=dialog->findChild<QLabel*>("ird_modeling_diff_feedback");ASSERT_NE(feedback,nullptr);
+        int root=-1,live=-1,removed=-1,res=-1;
+        for(int row=0;row<table->rowCount();++row){
+            const auto path=table->item(row,2)->text();
+            if(path=="displayName"){root=row;}
+            if(path=="joints[0].zeroOffset"){live=row;}
+            if(path=="joints[5]"){removed=row;}
+            if(path.startsWith("resourceManifest[")){res=row;}
+        }
+        ASSERT_GE(root,0);ASSERT_GE(live,0);ASSERT_GE(removed,0);ASSERT_GE(res,0);
+        table->setCurrentCell(root,0);jump->click();
+        EXPECT_EQ(panel->selectedAnchor(),module.session().draft.rootObjectId);
+        EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{*module.session().draft.rootObjectId});
+        EXPECT_EQ(selection.selectionSource(),ui::SelectionSource::Command);
+        table->setCurrentCell(live,0);
+        // 双击与按钮均经过生产连接；直接发出控件信号，不绕过定位回调。
+        Q_EMIT table->cellDoubleClicked(live,0);
+        const auto selected=std::optional<core::ObjectId>(before.design.joints.front().objectId);
+        EXPECT_EQ(panel->selectedAnchor(),selected);EXPECT_GE(selections,2);
+        EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{*selected});
+        EXPECT_EQ(selection.selectionSource(),ui::SelectionSource::Command);
+        auto* tree=widget->findChild<QTreeWidget*>("ird_modeling_struct_tree");ASSERT_NE(tree,nullptr);
+        ASSERT_NE(tree->currentItem(),nullptr);EXPECT_TRUE(tree->currentItem()->text(0).contains("j1"));
+        EXPECT_TRUE(feedback->text().contains(QStringLiteral("已定位")));
+        // 相同命令选中被服务幂等省略广播时，重复定位仍恢复域面板，不能假成功。
+        panel->focusObject(module.session().draft.rootObjectId);
+        jump->click();EXPECT_EQ(panel->selectedAnchor(),selected);
+        table->setCurrentCell(removed,0);jump->click();
+        EXPECT_EQ(panel->selectedAnchor(),selected);
+        EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{*selected});
+        EXPECT_TRUE(feedback->text().contains(QStringLiteral("无法定位")));
+        table->setCurrentCell(res,0);jump->click();
+        EXPECT_EQ(panel->selectedAnchor(),selected);
+        EXPECT_TRUE(feedback->text().contains(QStringLiteral("没有独立")));
+        const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+        if(!out.isEmpty()){
+            ASSERT_TRUE(QDir().mkpath(out));
+            ASSERT_TRUE(dialog->grab().save(QDir(out).filePath("diff-deleted-refused.png")));
+        }
+        // 已装配后退订是关闭/重装配边界，必须拒绝并保持两份既有状态。
+        module.detachSelectionService();table->setCurrentCell(root,0);jump->click();
+        EXPECT_EQ(panel->selectedAnchor(),selected);
+        EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{*selected});
+        EXPECT_TRUE(feedback->text().contains(QStringLiteral("尚未连接")));
+        dialog->reject();
+    });
+    // 正式按钮在本夹具只发往宿主命令端；直接驱动生产模块落点保持同一路由。
+    EXPECT_TRUE(module.executeDomainCommand("modeling.diff-baseline"));
+    EXPECT_EQ(module.session().draft,before);EXPECT_EQ(*module.session().baselineSnapshot,baseline);
+    EXPECT_EQ(module.session().branch,branch);EXPECT_EQ(module.session().baseRevision,revision);
+    EXPECT_EQ(commands,0);
+    module.detachSelectionService();
+}
 
 TEST(ModelingUiModuleHostWiring, DraftHistoryRestoresFieldsAndStructureWithoutRevision_PM18_L5)
 {

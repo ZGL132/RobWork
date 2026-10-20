@@ -8730,6 +8730,66 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             studio->setState(oldState);settleEvents(100);
         }
 
+        // WP-13-T24/F16：正式宿主经真实关节表产生单次草稿差异，生产比较
+        // 按钮必须打开完整表并接通共享选中；关闭后局部撤销恢复干净基线。
+        // 本段只驱动窗口，不绕过命令目录/内核，也不改变运行时会话姿态。
+        step("b4a real-model-diff");
+        {
+            const auto diffHead=m_lastStoreAdapter->projectStore().query().head().id;
+            const auto diffIdentity=m_compilePort->lastPublishedSnapshot()->modelIdentity();
+            auto* tree=panel->findChild<QTreeWidget*>("ird_modeling_struct_tree");
+            QTreeWidgetItem* joint=nullptr;
+            if(tree){for(QTreeWidgetItemIterator it(tree);*it;++it){
+                if((*it)->text(0).contains(QStringLiteral("j1"))){joint=*it;break;}
+            }
+            }
+            ok(joint!=nullptr,"b4a actual-joint-tree-entry");
+            if(joint){tree->setCurrentItem(joint);}settleEvents(100);
+            QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+            auto* area=panel->findChild<QWidget*>("ird_modeling_edit_host");
+            auto* table=area?area->findChild<QTableWidget*>("ird_param_table"):nullptr;
+            auto* apply=area?area->findChild<QPushButton*>("ird_param_apply"):nullptr;
+            auto* confirm=area?area->findChild<QPushButton*>("ird_param_confirm_yes"):nullptr;
+            bool staged=false;
+            for(int row=0;table&&row<table->rowCount();++row){
+                if(table->item(row,0)->data(Qt::UserRole).toString()=="zero-offset"){
+                    table->item(row,1)->setText("0.375");staged=true;break;
+                }
+            }
+            ok(staged&&apply&&confirm,"b4a real-diff-edit-controls");
+            if(staged&&apply&&confirm){apply->click();settleEvents(50);confirm->click();settleEvents(100);}
+            auto* compare=panel->findChild<QPushButton*>("ird_modeling_cmd_modeling.diff-baseline");
+            ok(compare&&compare->isEnabled(),"b4a production-compare-command-available");
+            bool seen=false;
+            QTimer answer;answer.setSingleShot(true);
+            QObject::connect(&answer,&QTimer::timeout,this,[&]{
+                auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+                ok(dialog&&dialog->objectName()=="ird_modeling_diff","b4a full-diff-dialog-in-host");
+                if(!dialog){return;}seen=true;
+                auto* rows=dialog->findChild<QTableWidget*>("ird_modeling_diff_table");
+                ok(rows&&rows->rowCount()==1,"b4a exactly-one-real-difference");
+                if(rows&&rows->rowCount()==1){
+                    ok(rows->item(0,2)->text()=="joints[0].zeroOffset"
+                        &&rows->item(0,4)->text()=="rad"
+                        &&rows->item(0,6)->text().contains("0.375"),"b4a exact-field-unit-and-after-value");
+                    if(auto* jump=dialog->findChild<QPushButton*>("ird_modeling_diff_locate")){jump->click();}
+                    auto* feedback=dialog->findChild<QLabel*>("ird_modeling_diff_feedback");
+                    ok(feedback&&feedback->text().contains(QStringLiteral("已定位")),"b4a actual-object-location-accepted");
+                    ok(m_selection->selectedObjectIds().size()==1&&tree&&tree->currentItem()
+                        &&tree->currentItem()->text(0).contains("j1"),"b4a shared-selection-and-tree-agree");
+                }
+                snapPng(dialog,"mtour-b4a-diff.png");dialog->reject();
+            });
+            answer.start(150);if(compare){compare->click();}answer.stop();settleEvents(80);
+            ok(seen,"b4a formal-command-dispatched-to-modeling");
+            auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");
+            ok(undo&&undo->isEnabled(),"b4a single-draft-step-cleanup-available");
+            if(undo){undo->click();}settleEvents(100);
+            ok(m_lastStoreAdapter->projectStore().query().head().id==diffHead
+                &&m_compilePort->lastPublishedSnapshot()->modelIdentity()==diffIdentity,
+                "b4a view-location-and-undo-zero-project-write");
+        }
+
         // WP-14-T12/REQ-08/10：在真正恢复的六轴机器人上走生产命令与确认框。
         // 独立FK取权威State做数值对照；取消、确认期间关节改变均零草稿写入。
         step("5.6 real-fk-capture-confirmation");

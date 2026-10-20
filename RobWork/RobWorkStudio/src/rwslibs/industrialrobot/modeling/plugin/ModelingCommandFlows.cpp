@@ -50,6 +50,7 @@
 #include <sdurws/ird/ui/UiTheme.hpp>             // ui::palette（声明表单警示色——主题词表单点）
 #include <sdurws/ird/modeling/Package.hpp>       // ModelPackagePort（MDL-20 导出/导入）
 #include "ModelingXacroBridge.hpp"            // 受控展开桥（独立 TU——XacroExpand 不可与 DhConvert 共 TU）
+#include "ModelingDiffDialog.hpp"             // F16：完整只读报告，原服务唯一判定。
 #include <sdurws/ird/ui/UiText.hpp>              // resolveText（按钮文案同源的呈现值）
 
 namespace sdurws::ird::modeling {
@@ -191,6 +192,12 @@ public:
         QMessageBox::information(nullptr, title, text);
     }
 
+    void showModelDiff(const ModelDiffReport& report,const ModelingWorkingSet& baseline,
+        const ModelingWorkingSet& candidate,const ModelingDiffLocator& locate) override
+    {
+        showModelingDiffDialog(report,baseline,candidate,locate);
+    }
+
     std::optional<std::vector<CustomChainJointSpec>> declareCustomChain(
         const QString& title, const CustomChainJointSpec& seedDefaults) override
     {
@@ -320,6 +327,13 @@ std::optional<std::string> customChainRowSemanticCheck(double axisX, double axis
         return "轴向为零向量（I-MDL-6：轴须非零可归一化）——请补全轴线分量";
     }
     return std::nullopt;
+}
+
+void ModelingDialogHost::showModelDiff(const ModelDiffReport&,const ModelingWorkingSet&,
+    const ModelingWorkingSet&,const ModelingDiffLocator&)
+{
+    // 私有测试/宿主未实现完整页是装配违约，不能静默退回已知缺陷的计数页。
+    throw std::logic_error("modeling/dialog/diff-unwired: 完整差异呈现未装配");
 }
 
 ModelingDialogHost& qtModelingDialogHost()
@@ -1139,16 +1153,7 @@ bool executeModelingCommand(const std::string& commandId,
         const ModelDiffService service;
         const ModelDiffReport report =
             service.diff(*session.baselineSnapshot, session.draft);
-        QString text = QStringLiteral("与基线修订的差异（Model Diff）\n\n"
-                                      "结构组：%1 条\n参数组：%2 条\n物性组：%3 条")
-                           .arg(report.structure.size())
-                           .arg(report.parameters.size())
-                           .arg(report.properties.size());
-        if (report.structure.empty() && report.parameters.empty()
-            && report.properties.empty()) {
-            text += QStringLiteral("\n\n两工作集逐字段全等——无差异。");
-        }
-        host.showInfo(QStringLiteral("与基线比较"), text);
+        host.showModelDiff(report,*session.baselineSnapshot,session.draft,deps.locateDiffObject);
         summary = "与基线比较完成：结构 " + std::to_string(report.structure.size())
                   + "／参数 " + std::to_string(report.parameters.size())
                   + "／物性 " + std::to_string(report.properties.size()) + " 条差异";

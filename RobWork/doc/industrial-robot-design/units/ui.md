@@ -2051,3 +2051,7 @@ public:
 ### WP-13-T24 B2b：建模命名姿态宿主装配增量（2026-10-20）
 
 经ModelingPluginAssembly::bindSessionPoseWriter消费纯值请求。HostPresentationAdapters校验同快照WorkCell、分支/根/关节序、有限性及限位，Fixed不消耗q；模块以已应用baseline的原始零偏换算q_rw（不消费未应用零偏），宿主用q_rw+CanonicalJoint.zeroOffset核查canonical限位并直接写入q_rw；先在State副本整批处理，UiPlugin再一次setState触发既有D8桥。只读允许会话姿态变化，禁止项目命令写入。无新链接边/目标，精确设计与当前状态见WP-13-T24原计划B2b。
+
+### WP-13-T24 B4a：正式宿主差异交互补证
+
+仅在UiPlugin既有modeling-tour自动化段新增真实关节表暂存/确认、正式比较按钮、完整差异行/单位/值与共享选中定位、关闭及草稿局部撤销清理检查；项目修订和编译身份保持不变。差异产品实现仍在modeling私有层，无ui装配、公共面或链接边变化。精确设计与实际结果见WP-13-T24原计划B4a，不以此替代B5完整三维终验。

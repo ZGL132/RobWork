@@ -38,12 +38,18 @@
 namespace sdurws {
 namespace ird {
 namespace core {
-class ObjectId;  // 前向声明（选中锚入参——完整类型经 Identity.hpp 随 cpp）
+struct ObjectId;  // 前向声明与core真实struct一致，避免跨TU类键不一致告警。
 }  // namespace core
 }  // namespace ird
 }  // namespace sdurws
 
 namespace sdurws::ird::modeling {
+
+struct ModelDiffReport;
+struct ModelDiffEntry;
+struct ModelingWorkingSet;
+/// F16：只借用本轮条目，返回人读定位结果；仅UI线程、零业务写入。
+using ModelingDiffLocator = std::function<std::string(const ModelDiffEntry&)>;
 
 /**
  * @brief 命令对话框宿主（测试缝——requirements CommandDialogHost 同案）。
@@ -135,6 +141,17 @@ struct ModelingDialogHost {
     virtual void showInfo(const QString& title, const QString& text) = 0;
 
     /**
+     * @brief 展示MDL-08/UX-13完整只读差异表，关闭只结束查看。
+     * @param report [in] 唯一差异服务结果，保持三组/原行序，不在呈现层重算。
+     * @param baseline/candidate [in] 同一轮工作集借用值，仅解析名称和物理单位。
+     * @param locate [in] 可空定位回调，只在本方法同步调用期间有效；返回中文回执。
+     * 仅UI线程；默认实现抛logic_error，未装配不得退化成计数页并虚报完成。
+     */
+    virtual void showModelDiff(const ModelDiffReport& report,
+        const ModelingWorkingSet& baseline, const ModelingWorkingSet& candidate,
+        const ModelingDiffLocator& locate);
+
+    /**
      * @brief custom-chain 六轴声明表单（UI-T63——从零创建面；nullopt＝取消）。
      *
      * 生产＝Qt 模态表单（六行×[类型锁 Revolute｜轴线 xyz｜零位｜限位下/上限｜
@@ -194,6 +211,8 @@ struct ModelingFlowDeps {
     std::function<bool(const std::string& targetPath, std::string& summary)> exportWorkCellXml;
     /// MDL-17：精确键恢复到真实宿主；空/失败诚实拒绝，恢复不产生项目修订。
     std::function<bool(const std::string& key,std::string& summary)> restoreNamedPose;
+    /// F16：按真实条目身份定位现工作集对象；未装配/已删必须诚实说明。
+    ModelingDiffLocator locateDiffObject;
 };
 
 /**

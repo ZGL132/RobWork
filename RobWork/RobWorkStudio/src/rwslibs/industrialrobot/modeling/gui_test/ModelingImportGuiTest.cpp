@@ -20,6 +20,9 @@
 #include <QTimer>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 #include "plugin/ModelingCommandFlows.hpp"
+#include "plugin/ModelingUiModule.hpp"
+#include <sdurws/ird/modeling/Template.hpp>
+#include <sdurws/ird/modeling/ModelDiff.hpp>
 
 using namespace sdurws::ird::modeling;
 namespace {
@@ -48,6 +51,156 @@ void snapshot(QDialog& dialog,const QString& name)
     ASSERT_TRUE(QDir().mkpath(out));
     ASSERT_TRUE(dialog.grab().save(QDir(out).filePath(name+".png")));
 }
+}
+
+/** @brief MDL-08/UX-13：正式命令必须显示逐项差异，而非只有计数的消息框。 */
+TEST(ModelingImportGui, FullDiffFromProductionCommand_MDL08_UX13_AT12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-08","UX-13"},{"AT-12"},std::nullopt);
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    ModuleSessionState session;
+    session.draft=RobotDesignTemplateFactory{}.createDraft(TemplateId{kTemplateIdGeneric6R},
+        sdurws::ird::runtime::InstallationPresetToken::Ground,"diff-demo",diags).get();
+    using namespace sdurws::ird;
+    session.draft.design.links[0].body.mass=core::SourcedValue<double>::provided(
+        1.5,core::ValueProvenance::make(core::ProvenanceKind::UserProvided,
+            session.draft.design.joints[0].objectId));
+    session.draft.design.links[1].body.mass=core::SourcedValue<double>::provided(
+        3.5,core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    session.baselineSnapshot=session.draft;
+    const auto baseline=*session.baselineSnapshot;
+    session.draft.design.displayName="changed-name";
+    ASSERT_FALSE(applyJointFieldEdit(session.draft,0,JointEditField::ZeroOffset,JointEditValue{0.25}));
+    session.draft.design.links[0].body.mass=core::SourcedValue<double>::provided(
+        2.5,core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    session.draft.design.links[1].body.mass=core::SourcedValue<double>::provided(
+        3.5,core::ValueProvenance::make(core::ProvenanceKind::ImportMapped));
+    const auto before=session.draft;
+    ModalWatchdog watchdog;
+    QTimer::singleShot(0,[]{
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog,nullptr);
+        EXPECT_EQ(dialog->objectName(),"ird_modeling_diff");
+        auto* table=dialog->findChild<QTableWidget*>("ird_modeling_diff_table");
+        EXPECT_NE(table,nullptr)<<"F16：生产页只有数量，缺逐项分组、前后值与定位";
+        if(table){
+            ASSERT_EQ(table->rowCount(),4);ASSERT_EQ(table->columnCount(),9);
+            EXPECT_EQ(table->editTriggers(),QAbstractItemView::NoEditTriggers);
+            bool structure=false,parameter=false,property=false,sourceOnly=false;
+            for(int row=0;row<table->rowCount();++row){
+                const auto field=table->item(row,2)->text();
+                if(field=="displayName"){
+                    structure=true;EXPECT_EQ(table->item(row,0)->text(),QStringLiteral("结构"));
+                    EXPECT_EQ(table->item(row,5)->text(),"diff-demo");
+                    EXPECT_EQ(table->item(row,6)->text(),"changed-name");
+                }
+                if(field=="joints[0].zeroOffset"){
+                    parameter=true;EXPECT_EQ(table->item(row,0)->text(),QStringLiteral("参数"));
+                    EXPECT_EQ(table->item(row,4)->text(),"rad");
+                    EXPECT_TRUE(table->item(row,6)->text().contains("0.25"));
+                }
+                if(field=="links[0].body.mass"){
+                    property=true;EXPECT_EQ(table->item(row,0)->text(),QStringLiteral("物性"));
+                    EXPECT_EQ(table->item(row,4)->text(),"kg");
+                    EXPECT_TRUE(table->item(row,5)->text().contains("1.5"));
+                    EXPECT_TRUE(table->item(row,5)->text().contains(QStringLiteral("关节 j1")));
+                    EXPECT_FALSE(table->item(row,5)->text().contains("obj-"));
+                    EXPECT_TRUE(table->item(row,6)->text().contains("2.5"));
+                }
+                if(field=="links[1].body.mass"){
+                    sourceOnly=true;EXPECT_EQ(table->item(row,7)->text(),QStringLiteral("否"));
+                    EXPECT_EQ(table->item(row,8)->text(),QStringLiteral("是"));
+                }
+            }
+            EXPECT_TRUE(structure&&parameter&&property&&sourceOnly);
+            snapshot(*dialog,"diff-three-groups");
+        }
+        dialog->reject();
+    });
+    std::string summary;
+    EXPECT_TRUE(executeModelingCommand("modeling.diff-baseline",session,{},qtModelingDialogHost(),summary));
+    EXPECT_EQ(session.draft,before);
+    EXPECT_EQ(*session.baselineSnapshot,baseline)<<"比较不允许覆盖基线";
+}
+
+/** @brief UX-13/AT-12：同一身份由旋转改为移动，前后值必须各带正确rad/m单位。 */
+TEST(ModelingImportGui, DiffUnitsFollowBothJointTypes_UX13_AT12)
+{
+    IRD_TEST_INFO("UX-13",{"AT-12"},std::nullopt);
+    using namespace sdurws::ird;
+    std::vector<core::DiagnosticRecord> diags;
+    const auto base=RobotDesignTemplateFactory{}.createDraft(TemplateId{kTemplateIdGeneric6R},
+        runtime::InstallationPresetToken::Ground,"unit-diff",diags).get();
+    auto candidate=base;candidate.design.joints[0].type=JointType::Prismatic;
+    candidate.design.joints[0].zeroOffset=0.125;
+    ModalWatchdog watchdog;
+    QTimer::singleShot(0,[]{
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());ASSERT_NE(dialog,nullptr);
+        auto* table=dialog->findChild<QTableWidget*>("ird_modeling_diff_table");ASSERT_NE(table,nullptr);
+        bool found=false;
+        for(int row=0;row<table->rowCount();++row){
+            if(table->item(row,2)->text()=="joints[0].zeroOffset"){
+                found=true;EXPECT_EQ(table->item(row,4)->text(),QStringLiteral("基线 rad；草稿 m"));
+            }
+        }
+        EXPECT_TRUE(found);dialog->reject();
+    });
+    qtModelingDialogHost().showModelDiff(ModelDiffService{}.diff(base,candidate),base,candidate,{});
+}
+
+/** @brief UX-13/AT-12：原服务长报告、空表和无定位回调均诚实呈现，不截掉详情。 */
+TEST(ModelingImportGui, DiffLongValuesEmptyAndUnwiredLocation_UX13_AT12)
+{
+    IRD_TEST_INFO("UX-13",{"AT-12"},std::nullopt);
+    using namespace sdurws::ird;
+    std::vector<core::DiagnosticRecord> diags;
+    const auto base=RobotDesignTemplateFactory{}.createDraft(TemplateId{kTemplateIdGeneric6R},
+        runtime::InstallationPresetToken::Ground,"long-diff",diags).get();
+    auto candidate=base;
+    candidate.design.notes=std::string(12000,'Z');
+    // 使用真实服务长输出而非手造报告；内容摘要不允许作为用户参数显示。
+    ResourceRef resource;resource.resourceId="new-resource";resource.contentDigest.fill(0xaa);
+    candidate.design.resourceManifest.push_back(resource);
+    const auto report=ModelDiffService{}.diff(base,candidate);
+    ModalWatchdog watchdog;
+    QTimer::singleShot(0,[]{
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());ASSERT_NE(dialog,nullptr);
+        auto* table=dialog->findChild<QTableWidget*>("ird_modeling_diff_table");ASSERT_NE(table,nullptr);
+        auto* detail=dialog->findChild<QPlainTextEdit*>("ird_modeling_diff_detail");ASSERT_NE(detail,nullptr);
+        EXPECT_TRUE(detail->isReadOnly());
+        dialog->resize(780,650);QApplication::processEvents(); // 真窄窗口必须可横向浏览全部列。
+        EXPECT_GT(table->horizontalScrollBar()->maximum(),0);
+        for(int row=0;row<table->rowCount();++row){
+            if(table->item(row,2)->text()=="notes"){
+                // 原字段存在但文本为空，与“新增条目在基线不存在”必须区分。
+                EXPECT_EQ(table->item(row,5)->text(),QStringLiteral("（空）"));
+                table->setCurrentCell(row,0);
+                EXPECT_TRUE(detail->toPlainText().contains(QString(12000,'Z')));
+                detail->selectAll();EXPECT_FALSE(detail->textCursor().selectedText().isEmpty());
+                EXPECT_TRUE(detail->textInteractionFlags().testFlag(Qt::TextSelectableByMouse));
+            }
+            if(table->item(row,2)->text().startsWith("resourceManifest[")){
+                EXPECT_EQ(table->item(row,5)->text(),QStringLiteral("（不存在）"));
+            }
+            for(int col=0;col<table->columnCount();++col){
+                EXPECT_FALSE(table->item(row,col)->text().contains(QString(64,'a')));
+            }
+        }
+        auto* jump=dialog->findChild<QPushButton*>("ird_modeling_diff_locate");ASSERT_NE(jump,nullptr);jump->click();
+        auto* feedback=dialog->findChild<QLabel*>("ird_modeling_diff_feedback");ASSERT_NE(feedback,nullptr);
+        EXPECT_TRUE(feedback->text().contains(QStringLiteral("未装配")));
+        snapshot(*dialog,"diff-long-values");dialog->reject();
+    });
+    qtModelingDialogHost().showModelDiff(report,base,candidate,{});
+    QTimer::singleShot(0,[]{
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());ASSERT_NE(dialog,nullptr);
+        auto* table=dialog->findChild<QTableWidget*>("ird_modeling_diff_table");ASSERT_NE(table,nullptr);
+        EXPECT_EQ(table->rowCount(),0);
+        EXPECT_FALSE(dialog->findChild<QPushButton*>("ird_modeling_diff_locate")->isEnabled());
+        EXPECT_TRUE(dialog->findChild<QLabel*>("ird_modeling_diff_feedback")->text().contains(QStringLiteral("无差异")));
+        snapshot(*dialog,"diff-empty");dialog->reject();
+    });
+    qtModelingDialogHost().showModelDiff(ModelDiffService{}.diff(base,base),base,base,{});
 }
 
 TEST(ModelingImportGui, ParametersRejectDuplicateThenApplyLiteralOverride_MDL19_AT31)

@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "modeling-completion-b4a/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "f873984b4f7e",
+  "scope": "F16完整差异表与共享Command来源定位实现验证；整体47项及完整三维终验仍待B5",
+  "totals": {
+    "total": 1356,
+    "passed": 1354,
+    "failed": 0,
+    "skipped": 2
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 409,
+      "passed": 409,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 63,
+      "passed": 62,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 333,
+      "passed": 333,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 49,
+      "passed": 48,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "tour": {
+    "passed": 285,
+    "failed": 0,
+    "scope": "正式宿主综合流程，含其他域，不等同建模功能数量"
+  },
+  "environment": {
+    "os": "Windows",
+    "toolchain": "VS2022 x64",
+    "qtPlatform": "windows",
+    "guiExecution": "绝对路径、单exe串行"
+  },
+  "builds": {
+    "integration": "PASS，全量Release",
+    "standalone": "PASS，12目标",
+    "gates": "PASS，零命中",
+    "verifyTask": "PASS，三条机器命令"
+  },
+  "limitations": [
+    "未执行全新上下文独立验收",
+    "core伴随报告派生自真实XML",
+    "集成/独立预览剪贴板各1项环境跳过；原生OpenClipboard真实返回错误5，不能据此声称复制通过",
+    "保留初轮计数页、共享服务和空值误显示真实红证；先前绿色不替代最新修复后的执行",
+    "全量构建初次因测试exe被本会话运行占用而失败，已分阶段重跑；失败日志不删除",
+    "截图及共享选中不能替代B5全部真实mesh、安装姿态、TCP、导航和碰撞验收",
+    "未推送、未自行合入主线"
+  ]
+}
