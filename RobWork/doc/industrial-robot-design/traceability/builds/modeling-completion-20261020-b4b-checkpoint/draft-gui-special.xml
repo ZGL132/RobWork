@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="2.812" timestamp="2026-10-20T12:22:39.030" name="AllTests">
+  <testsuite name="ModelingUiModuleHostWiring" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="2.812" timestamp="2026-10-20T12:22:39.030">
+    <testcase name="CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="1138" status="run" result="completed" time="2.812" timestamp="2026-10-20T12:22:39.030" classname="ModelingUiModuleHostWiring" />
+  </testsuite>
+</testsuites>

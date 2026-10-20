@@ -1134,6 +1134,46 @@ TEST(ModelingUiModuleHostWiring, ToolManagerHistoryBodyAndNavigation_MDL13_AT01)
     EXPECT_EQ(module.session().baseRevision,revision)<<"工具管理不能越过项目应用入口写修订";
     EXPECT_EQ(submits,0);
 }
+/** @brief B4b：真实管理控件产生完整草稿，恢复后的树/物性/选择和新局部历史均可继续操作。 */
+TEST(ModelingUiModuleHostWiring, CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    ModelingUiModule source;source.seedTemplateSession();std::unique_ptr<QWidget> first(source.createPanel());
+    first->resize(1140,840);first->show();QApplication::processEvents();
+    first->findChild<QPushButton*>("ird_modeling_edit_tool_mode")->click();
+    auto* tool=first->findChild<QWidget*>("ird_modeling_tool_editor");ASSERT_NE(tool,nullptr);
+    tool->findChild<QLineEdit*>("ird_tool_name")->setText("restored-gripper");
+    tool->findChild<QCheckBox*>("ird_tool_default")->setChecked(true);tool->findChild<QPushButton*>("ird_tool_apply")->click();
+    auto* body=tool->findChild<QWidget*>("ird_tool_body_editor");
+    body->findChild<QCheckBox*>("ird_body_mass_edit")->setChecked(true);body->findChild<QLineEdit*>("ird_body_value_0")->setText("3.75");
+    body->findChild<QPushButton*>("ird_body_apply")->click();
+    first->findChild<QPushButton*>("ird_modeling_edit_scene_mode")->click();
+    auto* scene=first->findChild<QWidget*>("ird_modeling_scene_editor");ASSERT_NE(scene,nullptr);
+    scene->findChild<QLineEdit*>("ird_scene_name")->setText("restored-fixture");scene->findChild<QPushButton*>("ird_scene_apply")->click();
+    ASSERT_EQ(source.session().draft.toolObjects.size(),1U);ASSERT_EQ(source.session().draft.sceneObjects.size(),1U);
+    const auto expected=source.session().draft;const auto document=source.buildDraftDocument();first.reset();
+    ModelingUiModule target;target.seedTemplateSession();std::unique_ptr<QWidget> panel(target.createPanel());
+    panel->resize(1140,840);panel->show();target.adoptRestoredDocument(document);QApplication::processEvents();
+    ASSERT_EQ(target.session().draft,expected);EXPECT_FALSE(target.session().baseRevision);
+    auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");ASSERT_NE(undo,nullptr);
+    EXPECT_FALSE(undo->isEnabled())<<"恢复只建立新起点，不能回退到上次进程的草稿";
+    auto* view=qobject_cast<ModelingPanelWidget*>(panel.get());ASSERT_NE(view,nullptr);
+    view->focusObject(expected.toolObjects.front().objectId);panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode")->click();
+    auto* editor=panel->findChild<QWidget*>("ird_modeling_tool_editor");
+    EXPECT_EQ(editor->findChild<QLineEdit*>("ird_tool_name")->text(),"restored-gripper");
+    auto* mass=editor->findChild<QWidget*>("ird_tool_body_editor")->findChild<QLineEdit*>("ird_body_value_0");
+    ASSERT_NE(mass,nullptr);EXPECT_EQ(mass->text(),"3.75");
+    // 面板还有就绪明细树，须按既有导航锚定位，避免把首个递归子控件当结构树。
+    auto* tree=panel->findChild<QTreeWidget*>("ird_modeling_struct_tree");ASSERT_NE(tree,nullptr);
+    EXPECT_FALSE(tree->findItems("restored-fixture",Qt::MatchContains|Qt::MatchRecursive).isEmpty());
+    propertySnapshot(*panel,"full-draft-restored-tool");
+    editor->findChild<QLineEdit*>("ird_tool_name")->setText("continued-gripper");editor->findChild<QPushButton*>("ird_tool_apply")->click();
+    EXPECT_TRUE(undo->isEnabled());undo->click();EXPECT_EQ(target.session().draft,expected);
+    auto bad=document;bad.payload="{broken";const auto stable=target.session().draft;target.adoptRestoredDocument(bad);
+    EXPECT_EQ(target.session().draft,stable);EXPECT_TRUE(target.buildDraftCommand("modeling"));
+    target.setWritable(false);target.adoptRestoredDocument(document);EXPECT_EQ(target.session().draft,expected);
+}
+
 /** @brief F08：真实Windows文件窗口的正常选择及嵌套切草稿/只读/取消均不能污染新目标。 */
 TEST(ModelingUiModuleHostWiring, ToolRealFileDialogAndStaleGuard_MDL13_AT28)
 {

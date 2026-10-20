@@ -11,9 +11,12 @@
 
 #include "ModelingCommandFlows.hpp"           // executeModelingCommand（UI-T41 A2——域命令 UI 流）
 #include "ModelingPanelWidget.hpp"
+#include "ModelingDraftCodec.hpp" // B4b完整工作集域帧，不再只存根。
+#include <QDebug>
 #include "PolicyNameContexts.hpp"             // RuntimeMapPolicyNameContext（T03b——映射转发形名称上下文，退役草稿桩）
 
 #include <stdexcept>
+#include <algorithm> // B4b比较ID集合的规范内容，不依赖传递包含。
 #include <type_traits>
 #include <utility>
 #include <cmath>
@@ -29,6 +32,25 @@
 #include <sdurws/ird/modeling/ModelDiff.hpp> // F16：只消费定位锚，不在模块重算差异。
 
 namespace sdurws::ird::modeling {
+namespace {
+/**
+ * @brief 提取草稿持久内容的规范比较值，避免磁盘往返的集合定序被误判为工程编辑。
+ * @param value [in] 完整工作集副本；清摘要、按ObjectId规范工具/场景顺序，原值不变。
+ * @return 原Codec规范对象字节封装；SI物理量/来源/根身份仍参与比较，派生缓存沿Codec省略。
+ * @throws std::runtime_error 对象编码失败（内部工作集违约），不把失败当相等。
+ * 纯值、无共享状态/IO；仅模块UI线程消费。摘要本身由调用方单独检查。
+ */
+std::string canonicalDraftContents(ModelingWorkingSet value)
+{
+    value.changes.clear();
+    // 外层按身份引用的对象集合不携带编辑顺序语义；对象内部TCP键等集合
+    // 完全交给唯一RobotDesignCodec，不能在这里复制物性或位姿编码。
+    const auto less=[](const auto& a,const auto& b){return a.objectId.toCanonical()<b.objectId.toCanonical();};
+    std::sort(value.toolObjects.begin(),value.toolObjects.end(),less);
+    std::sort(value.sceneObjects.begin(),value.sceneObjects.end(),less);
+    return encodeModelingDraft(value);
+}
+}
 
 // =====================================================================
 // ui::IUiDomainReadinessSource——域就绪汇聚源（T03b 收口；§6.5 端口半区）
@@ -730,8 +752,9 @@ bool ModelingUiModule::restoreCommittedSession(
         return true;
     }
     if (!m_session.draft.changes.empty()
-        || (m_session.baselineSnapshot && m_session.draft != *m_session.baselineSnapshot)) {
-        // 磁盘草稿恢复不携带编辑史，因此还需和已保存基线比较真实值，不能
+        || (m_session.baselineSnapshot
+            && canonicalDraftContents(m_session.draft)!=canonicalDraftContents(*m_session.baselineSnapshot))) {
+        // 兼容旧磁盘草稿可能不携带编辑史，因此还需和已保存基线比较真实值，不能
         // 仅凭changes为空就认定用户没有尚未应用的内容。
         errorText = "建模工作集有未应用编辑，请先处置后再切换已提交基线";
         return false;
@@ -834,49 +857,6 @@ void ModelingUiModule::noteAppliedRevision(
 }
 
 // =====================================================================
-// 草稿负载 ASCII 铠装（T03b-1——DraftDocument.payload 契约要求 UTF-8；
-// RobotDesign canonical 字节为二进制，hex 编码满足文本承载。与 demo 工具
-// Demo6R.cpp 使用同一算法——两端一致性由恢复链路互测保证；如需更换铠
-// 装，两处同步修改）。
-// =====================================================================
-
-std::string modelingHexEncode(const modeling::Bytes& bytes)
-{
-    static const char* kDigits = "0123456789abcdef";
-    std::string out;
-    out.reserve(bytes.size() * 2);
-    for (const std::uint8_t b : bytes) {
-        out.push_back(kDigits[b >> 4]);
-        out.push_back(kDigits[b & 0xF]);
-    }
-    return out;
-}
-
-std::optional<modeling::Bytes> modelingHexDecode(const std::string& text)
-{
-    if (text.size() % 2 != 0) {
-        return std::nullopt;
-    }
-    modeling::Bytes out;
-    out.reserve(text.size() / 2);
-    auto nibble = [](char c) -> int {
-        if (c >= '0' && c <= '9') { return c - '0'; }
-        if (c >= 'a' && c <= 'f') { return c - 'a' + 10; }
-        if (c >= 'A' && c <= 'F') { return c - 'A' + 10; }
-        return -1;
-    };
-    for (std::size_t i = 0; i < text.size(); i += 2) {
-        const int hi = nibble(text[i]);
-        const int lo = nibble(text[i + 1]);
-        if (hi < 0 || lo < 0) {
-            return std::nullopt;
-        }
-        out.push_back(static_cast<std::uint8_t>((hi << 4) | lo));
-    }
-    return out;
-}
-
-// =====================================================================
 // 模块草稿源（T03b-1——ui::IModuleDraftSource 四方法；§10.5）
 // =====================================================================
 
@@ -891,20 +871,12 @@ std::string ModelingUiModule::displayName() const
 ui::DraftDocumentProjection ModelingUiModule::buildDraftDocument() const
 {
     m_guard.assertOnUiThread();
-    // 域负载＝根对象 canonical 字节（与命令 payload 同源同编码——Codec 单
-    // 一权威；归属三元组 projectId/branchId/时刻/origin 由控制器在落盘
-    // 分派时刻补齐，§8.1 分工红线：域侧只产域负载）。
+    // 域payload是完整工作集封装；project外层格式/归属元数据仍由控制器负责。
     ui::DraftDocumentProjection document;
-    document.schemaVersion = kCommandPayloadVersion;
+    document.schemaVersion = 1; // 私有域帧版本，仅遥测；project写自己的文件版本。
     document.moduleId = kModuleHandle;
     document.baseRevisionId = m_session.baseRevision.value_or(core::RevisionId{});
-    RobotDesignCodec codec;
-    const auto encoded =
-        codec.encode(ObjectVariant{m_session.draft.design}, kCurrentFormatVersion);
-    // 编码失败＝工作集状态违约（合法草稿必可编码——CodecTest 已钉）；取值
-    // 违约抛 logic_error fail-fast，不落半截负载。
-    const auto& bytes = encoded.get();
-    document.payload = modelingHexEncode(bytes);  // ASCII 铠装（payload 契约 UTF-8）
+    document.payload = encodeModelingDraft(m_session.draft);
     return document;
 }
 
@@ -912,26 +884,35 @@ void ModelingUiModule::adoptRestoredDocument(
     const ui::DraftDocumentProjection& document)
 {
     m_guard.assertOnUiThread();
-    // 恢复语义（§8.3-5）：磁盘草稿内容交回域侧。先解 hex 铠装再解 canonical；
-    // 解码失败（版本不符/字节损坏）＝保持当前草稿不中断打开——诚实降级，
-    // 不渲染半解析状态；恢复结果的完整可用性随收口任务的就绪重估呈现。
-    const auto bytes = modelingHexDecode(document.payload);
-    if (!bytes.has_value() || bytes->empty()) {
-        return;  // 非本铠装形态（空/损坏）——保持现状
+    // 先完整解析到局部候选。坏数据不能部分覆盖根后留下旧部件；只读允许
+    // 浏览恢复内容，真正编辑/项目提交的权限仍由现有执行端防御。
+    std::string error;
+    auto candidate=document.moduleId==kModuleHandle
+        ?decodeModelingDraft(document.payload,m_session.draft,error):std::nullopt;
+    if(document.moduleId!=kModuleHandle){error="草稿模块不匹配，未恢复建模工作集。";}
+    if(candidate&&m_session.baselineSnapshot&&m_session.baselineSnapshot->rootObjectId
+       &&candidate->rootObjectId!=m_session.baselineSnapshot->rootObjectId){
+        error="草稿根身份与当前已保存模型不匹配，未恢复。";candidate.reset();
     }
-    try {
-        const RobotDesignCodec codec;
-        const auto decoded = codec.decode(*bytes, kCurrentFormatVersion);
-        const auto* design = std::get_if<RobotDesign>(&decoded.get());
-        if (design == nullptr) {
-            return;  // 非根对象负载——恢复面约定外，保持现状
-        }
-        m_session.draft.design = *design;
-        m_session.draft.changes.clear();  // 恢复的草稿不带编辑史（§8.6 表处置）
-        clearDraftHistory(); // 重开恢复建立新起点，旧会话历史不进入磁盘载荷。
-    } catch (const std::exception&) {
-        // 解码失败＝保持现状（文件头诚实边界；打开协议不因域负载损坏中断）
+    if(!candidate){
+        // void端口不能回传恢复失败；保留当前值并显式显示原因，不伪造草稿写入。
+        qWarning().noquote()<<QString::fromStdString("建模草稿恢复拒绝："+error);
+        if(m_panel){m_panel->setOutcomeMessage(QString::fromStdString("草稿恢复失败："+error));}
+        return;
     }
+    // 兼容没有摘要的既有调用方：内容差异才是未应用事实。不能因空摘要
+    // 把已恢复的新部件误判为NoDraft；相同基线仍不制造空项目修订。
+    const auto& saved=m_session.baselineSnapshot?*m_session.baselineSnapshot:m_session.draft;
+    if(candidate->changes.empty()&&canonicalDraftContents(*candidate)!=canonicalDraftContents(saved)){
+        candidate->changes.push_back({"draft.restore","恢复未应用建模工作集"});
+    }
+    m_session.draft=std::move(*candidate);
+    // 保留磁盘草稿的旧基线，让项目命令服务真实判断Stale；不能用当前tip
+    // 偷换原基线。旧载荷无基线时保持已有锚，未知身份不猜测。
+    if(document.baseRevisionId.isValid()){m_session.baseRevision=document.baseRevisionId;}
+    if(m_panel){m_panel->cancelPendingForHistoryRestore();}
+    clearDraftHistory(); // 只清局部栈；未应用changes随完整帧原样保留。
+    recomputeReadiness();
 }
 
 void ModelingUiModule::rebuildOnRevision(const std::string& tipRevisionCanonical)

@@ -1,0 +1,11 @@
+Note: Google Test filter = *CompleteDraftRestores*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21 (2812 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (2812 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2812 ms total)
+[  PASSED  ] 1 test.

@@ -455,12 +455,12 @@ public:
     /// 显示名（UX-02 工程用语——草稿表/横幅/冲突对话框呈现值源）。
     std::string displayName() const override;
 
-    /// 组装当前草稿文档（落盘分派时控制器取值——payload＝根对象 canonical
-    /// 字节，与命令 payload 同源编码；归属三元组/时刻/origin 由控制器补齐）。
+    /// 组装当前完整工作集草稿文档（B4b私有域帧，五对象原Codec字节及未应用摘要；
+    /// 归属三元组/时刻/origin由控制器补齐，项目外层格式保持不变）。
     ui::DraftDocumentProjection buildDraftDocument() const override;
 
     /// 承接恢复的草稿文档（打开期 restoreOnOpen——payload 解码回写工作集
-    /// design；解码失败保持现状不中断打开，诚实边界登记于 §15）。
+    /// 全部五对象及changes；完整候选失败保持现状，基线快照不改、旧base保留）。
     void adoptRestoredDocument(const ui::DraftDocumentProjection& document) override;
 
     /// 以指定修订重建编辑基线（§8.5[基于当前版本重新编辑]——Stale 冲突

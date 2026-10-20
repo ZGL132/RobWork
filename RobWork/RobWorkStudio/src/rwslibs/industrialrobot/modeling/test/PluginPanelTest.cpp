@@ -25,6 +25,10 @@
 #include <QTemporaryDir>
 #include <QFile>
 #include "plugin/GeometryResourceFlow.hpp"
+#include "plugin/ModelingDraftCodec.hpp" // B4b域帧须在独立/集成两模式都能真实往返。
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记（testkit §7.3）
 
@@ -1582,4 +1586,60 @@ TEST(ModelingToolTransactions, RealDiskResourceAndCodec_MDL13_AT28)
     }
     r.action=ToolEditAction::Remove;r.confirmRemove=true;const auto removed=evaluateToolEdit(baseline,r,{},error);ASSERT_TRUE(removed);
     EXPECT_EQ(removed->design.resourceManifest,baseline.design.resourceManifest);
+}
+
+/** @brief B4b/AT-21：真实中文磁盘UTF-8往返、完整工具/场景值及封装确定性。 */
+TEST(ModelingDraftCodec, DiskRoundTripAndLegacyExactReferences_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto ws=makeSixAxisDraft();ws.rootObjectId=core::ObjectId::generate();
+    ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="draft-tool";
+    TcpEntry tcp;tcp.key="tip";tcp.offset.P()[2]=0.234;tool.tcpList={tcp};
+    ws.toolObjects={tool};ws.design.toolRefs={tool.objectId};ws.design.defaultTcp=TcpRef{tool.objectId,"tip"};
+    SceneObject scene;scene.objectId=core::ObjectId::generate();scene.localName="draft-fixture";
+    scene.worldPose.P()[0]=1.25;ws.sceneObjects={scene};ws.design.sceneRefs={scene.objectId};
+    ws.changes.push_back({"tools","完整工具/场景未应用中文摘要"});const auto before=ws;
+    const auto payload=encodeModelingDraft(ws);EXPECT_EQ(payload,encodeModelingDraft(ws));
+    EXPECT_EQ(ws,before)<<"保存不得消费未应用草稿";
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());QFile file(dir.filePath(QStringLiteral("完整建模草稿.json")));
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly));ASSERT_EQ(file.write(payload.data(),static_cast<qint64>(payload.size())),static_cast<qint64>(payload.size()));file.close();
+    ASSERT_TRUE(file.open(QIODevice::ReadOnly));const auto bytes=file.readAll();file.close();
+    std::string error;const auto decoded=decodeModelingDraft(bytes.toStdString(),ModelingWorkingSet{},error);
+    ASSERT_TRUE(decoded)<<error;EXPECT_EQ(*decoded,ws);
+    const auto doc=QJsonDocument::fromJson(QByteArray::fromStdString(payload)).object();
+    const auto legacy=doc.value("root").toString().toStdString();
+    auto baseline=ws;baseline.changes.clear();baseline.design.displayName="旧基线";
+    const auto old=decodeModelingDraft(legacy,baseline,error);ASSERT_TRUE(old)<<error;
+    EXPECT_EQ(old->design,ws.design);EXPECT_EQ(old->toolObjects,ws.toolObjects);EXPECT_EQ(old->sceneObjects,ws.sceneObjects);
+    EXPECT_FALSE(old->changes.empty())<<"旧格式内容不同仍须保留未应用事实";
+    EXPECT_FALSE(decodeModelingDraft(legacy,ModelingWorkingSet{},error))<<"旧根缺部件不能猜造";
+}
+
+/** @brief B4b/AT-21：完整帧类型/版本/重复/缺引用/身份错位均原子拒绝，输入零变更。 */
+TEST(ModelingDraftCodec, MalformedFramesRejectWithoutPartialValues_PM08_AT21)
+{
+    IRD_TEST_INFO("PM-08",{"AT-21"},std::nullopt);
+    auto ws=makeSixAxisDraft();ToolEditRequest request;request.target=core::ObjectId::generate();
+    request.localName="draft-tool";request.makeDefault=true;std::string error;
+    const auto full=evaluateToolEdit(ws,request,{},error);ASSERT_TRUE(full)<<error;ws=*full;
+    const auto payload=encodeModelingDraft(ws);const auto original=QJsonDocument::fromJson(QByteArray::fromStdString(payload)).object();
+    for(int fault=0;fault<11;++fault){
+        auto doc=original;
+        if(fault==0){doc["version"]=2;}
+        if(fault==1){doc["rootId"]="bad-id";}
+        if(fault==2){auto values=doc["tools"].toArray();values.append(values.first());doc["tools"]=values;}
+        if(fault==3){doc["tools"]=QJsonArray{};}
+        if(fault==4){doc["root"]=doc["tools"].toArray().first();}
+        if(fault==5){doc["poses"]="x0";}
+        if(fault==6){doc.remove("changes");}
+        if(fault==7){doc["rootId"]=QString::fromStdString(ws.toolObjects.front().objectId.toCanonical());}
+        if(fault==8){doc["scenes"]=QJsonValue::Null;}
+        if(fault==9){doc["changes"]=QJsonArray{QJsonObject{{"subject",true},{"summary","bad"}}};}
+        auto input=QJsonDocument(doc).toJson(QJsonDocument::Compact).toStdString();
+        if(fault==10){input+="trailing";}
+        EXPECT_FALSE(decodeModelingDraft(input,ws,error))<<"fault="<<fault;EXPECT_FALSE(error.empty());EXPECT_EQ(ws,*full);
+    }
+    for(const std::string bad:{std::string{},std::string{"{"},std::string{"xx"},std::string{"0"}}){
+        EXPECT_FALSE(decodeModelingDraft(bad,ws,error));EXPECT_FALSE(error.empty());
+    }
 }

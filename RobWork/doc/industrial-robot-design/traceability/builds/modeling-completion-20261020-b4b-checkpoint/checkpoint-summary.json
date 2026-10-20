@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "modeling-b4b-checkpoint/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "e2615b825d76da8168cc8c5186ae768cb7b2f9f3",
+  "completed": false,
+  "totals": {
+    "total": 1189,
+    "passed": 1189,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 429,
+      "passed": 429,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 348,
+      "passed": 348,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "notRun": [
+    "最终集成modeling_gui复验",
+    "最终集成ui_gui复验",
+    "最终独立modeling_gui复验",
+    "正式宿主modeling-tour"
+  ],
+  "invalid": [
+    "modeling-gui-concurrent-invalid.*",
+    "ui-gui-concurrent-invalid.*"
+  ],
+  "notes": [
+    "用户要求桌面GUI待另一工作树结束并通知后再执行，期间转其他非GUI工作",
+    "较早GUI专项已通过并查看截图，但不代替最新完整窗口复验",
+    "早期失败和通过日志完整保留；只统计最终非GUI轮次，不重复累计",
+    "双模式构建、verify-task三条已通过，冻结后的索引与文档校验随下一批只增记录",
+    "本地WIP检查点，不推送、不合入、不标B4b或47项全部完成",
+    "F06由另一智能体负责，未修改/集成"
+  ]
+}
