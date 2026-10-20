@@ -4,12 +4,13 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.21（2026-10-19，DOC-T16 测试策略修订批——GUI 口径翻转：§1.4 非目标行/§10.1 总则/V-22 行/§13 REQ-08 行的"仅登记不启动"废止，按 DTB §5.2 DoD 第 5~7 条（DTB v0.97 同批）常态化执行——人工点验＋关键交互链固化为 Widgets 级生产路径测试进常驻回归＋入口/布局冒烟＋宿主遍历；依据＝需求模块全功能审计〔分支 codex/requirements-audit-20261018，报告 traceability/builds/requirements-audit-20261018/REPORT.md，随 wp14-t12 合入主线〕A-01~A-12 全部位于无自动化覆盖的生产接线/呈现层＋修复批新登 A-13~A-16 跨域消费链；纯登记零语义零代码；§14.6 v0.21 行；acceptance-protocol v1.10/modeling v0.55/DTB v0.97 同批。前一版本 v0.20 保留如下。 |
 | 文档版本 | v0.20（2026-10-18，B7 长尾分诊批——卡头「日期」行失同步家族（F-369/F-374）底案修复：日期行补 2026-10-18（v0.19）现行段；家族两条随批关闭；纯登记零语义。前一版本 v0.19 保留如下。 |
 | 文档版本 | v0.19（2026-10-18，UI-T85（≙WP-10-T85）F-917 hex 铠装对称落位登记——草稿链格式裁决跨域批（findings F-917/F-918 所有者裁决 2026-10-18 落地；requirements 侧半区）：RequirementsDraftSource build/adopt 两端 hexArmor/unhexArmor 对称〔F-917 裁决——payload＝帧字节小写 hex 文本过 project 草稿格式 UTF-8 校验，与 modeling 既有铠装惯例同型；解铠装失败＝草稿损坏 fail-fast 不猜测；铠装仅在域插件边界内侧，CR-02 ui 只搬运不解析不动〕＋schemaVersion 改义注记〔域内载荷版本仅呈现/遥测不落盘——project save 归一化，F-918〕；§14.6 v0.19 行；ui.md v1.110/project.md v0.26/DTB v0.87 同批；需求语义零变化。前一版本 v0.18（2026-10-12，FIX-T2 采样点着色功能批 requirements 面板面落位——完整描述见下行）|
 | 文档版本 | v0.18（2026-10-12，FIX-T2 采样点着色功能批 requirements 面板面落位——§9.8 区域面板行追加采样结果清单（F-495 样本级定位入口：行卡点击→三维高亮，零 Readiness 语义）＋§14.6 v0.18 行；ui.md v1.99/DTB v0.65 同批；需求语义零变化。前一版本 v0.17（2026-10-12 治理批台账滞后修正——完整描述见下行）|
 | 文档版本 | v0.17（2026-10-12，治理批台账滞后修正——§11 UI 侧装配批次段状态词同步：UI-T29~T34 六契约均 status=done、六验收记录均 pass，本段 ready/planned 词面为 2026-09-30 立项时点口径随批订正＋§14.6 v0.17 行；纯登记零语义；前一版 v0.16＝2026-10-04 宿主审核 P2 呈现批次①——F-499 双树职责标识自持面：面板顶部草稿提示条＋树名标注"需求树（当前草稿）"；F-501 应用语义文案：宿主菜单"应用修改"→"应用草稿"＋预检/修订不可变/两级撤销分层 tooltip＋域面板过期"顶栏"指引修正；gui 44/44 含新增 1 例） |
 | 文档版本 | v0.15（2026-10-02，UI-T37 返工④增量修订——§9.8 面板组成表第 4 行工况面板呈现面改写：原独立"必验清单预览（RequirementProfile 投影）"表并入工况表『是否必验』列（必验＝enabled∧Must 派生事实，resolveRequiredCases P-EV-9 单点不变），腾出下半部改『工况详情与节拍配置』检查器卡；面板模型 mustListPreview/MustListEntryRow 投影随批撤销（纯呈现投影，域函数零变化）；ui.md v1.43/DTB v0.50 同批；需求语义零变化）；前一版 v0.14（2026-09-30，需求界面功能对照批次立项登记——§11 增 UI 侧装配批次段〔UI-T29~T34 ≙ WP-10-T29~T34，六批次：会话接线＋最小校验／对象生命周期 B1／字段编辑 B2／九命令流程 C／三维呈现与拾取 D／校验体验收口 E；DTB v0.34/ui.md v1.31 同批；契约 tasks/foundation/UI-T29.json ready、UI-T30~T34.json planned 待独立评审放行〕＋§14.6 v0.14 行＋O-46/O-47 待裁决登记〔DTB §4.2 同批〕；v0.13 头行漏更本批补记〔WP-14-T11 落位登记〕；需求语义零变化）；前一版 v0.13（2026-09-29，WP-14-T11 落位登记——§14.6 v0.13 行；头行漏更）；v0.12（2026-09-29，O-45 裁决立项登记——§11 新增 WP-14-T11 行〔需求域装配门面补建，O-45 裁决／B.1 批次序 10 插入〕＋§14.6 v0.12 行；需求语义零变化）；v0.11（2026-09-29，WP-14-T10 落位登记——§14.6 v0.11 行；头行漏更本批补记）；v0.10（2026-09-27，DOC-T14 方案 B.1 迁移链立项登记——§11 新增 WP-14-T10 行〔需求迁移：TreeNodesProvider/PropertyPagesProvider/SelectionAdapter 三接入面，接 UI-T21/T22 注册协议；ARCH v0.13 SA-18/DTB v0.22/PIPE v1.15 同批；设计规格 B1-SPEC §5；契约 tasks/foundation/WP-14-T10.json 起草为 planned 待独立评审放行〕＋§14.6 v0.10 行；需求语义零变化；v0.9（2026-09-26，WP-14-T09 落位登记——§14.6；v0.8 2026-09-26 WP-14-T08 落位登记；v0.1 首版草案 2026-09-22，WP-14-T01 交付物） |
-| 日期 | 2026-10-18（v0.20 卡头同步）；2026-09-26（v0.9/v0.8）；2026-09-22（v0.1） |
+| 日期 | 2026-10-19（v0.21 卡头同步）；2026-10-18（v0.20 卡头同步）；2026-09-26（v0.9/v0.8）；2026-09-22（v0.1） |
 | 状态 | **`Draft`**（待评审；DETAILED-DESIGN.md 单元状态表中的"requirements｜待产出"以本卡落盘为准，索引行同步由治理侧执行，本卡不代改） |
 | 文档代号 | UNIT-REQ |
 | 单元 | requirements（业务域单元，ARCHITECTURE §3.1：任务点/区域/工况定义、CSV/JSON 导入、姿态规则、镜像阵列、就绪校验；ARCHITECTURE §3.3 二分结构：零 Qt 计算库＋Qt Widgets 插件） |
@@ -98,7 +99,7 @@ requirements 是七阶段工作流的第二阶段（StageId 序列 `modeling →
 - 不实现快照/切片/证据 Profile/当前性（evidence）；不实现 CSV/JSON 底层解析（io）；不实现项目目录写入/事务/锁（project）；
 - 不引入新证据等级、判定阈值权威、工况覆盖规则、当前性状态（分属 evidence/policy/KIN-13）；
 - 不实现报告渲染；不提前接入阶段 C/D 真实轨迹/动力/选型/优化流程；
-- 本次不启动任何 GUI 程序（§10 仅设计测试流程）。
+- GUI 程序启动不属本卡设计交付范围（§10 仅设计测试流程）；执行口径已修订（v0.21，DOC-T16）——GUI 用例按 DTB §5.2 DoD 第 5~7 条常态化执行（生产路径测试＋入口/布局冒烟＋宿主遍历），不再"仅登记不启动"。
 
 ---
 
@@ -863,7 +864,7 @@ public:
 
 ### 10.1 总则
 
-四组：**V-P 任务点/区域/姿态**、**V-C 工况/必验/计划**、**V-I 导入/派生**、**V-S 状态/失效/契约**。**未执行的测试不得标注通过**（AGENTS §4.2）；用例随 WP-14-T04~T09 执行留痕（gtest XML＋`ird-test-report.json`＋构建日志）。GUI 用例仅登记流程（AGENTS Windows 规程），本次不启动。黄金数据集（WP-14-T09，DTB 指定四套）：`req-transport-task/`（搬运任务）、`req-partial-pose/`（部分位姿约束）、`req-region-sampling/`（区域与采样定义）、`req-payload-events/`（负载事件）——`ird-golden-manifest/1` 契约＋容差档案 `tolerance/req-*`（锚附录 D 通用比较公式）＋零值/近零/正负抵消边角样例。
+四组：**V-P 任务点/区域/姿态**、**V-C 工况/必验/计划**、**V-I 导入/派生**、**V-S 状态/失效/契约**。**未执行的测试不得标注通过**（AGENTS §4.2）；用例随 WP-14-T04~T09 执行留痕（gtest XML＋`ird-test-report.json`＋构建日志）。GUI 用例执行口径（v0.21 修订，DOC-T16）：按 DTB §5.2 DoD 第 5~7 条执行——人工点验＋关键交互链固化为 Widgets 级生产路径测试进常驻回归（真实控件事件流：对话框回传值/字段提交路径/批次撤销记账；投影模型/领域函数测试不得替代）＋入口存在性与 1920×1080 布局可见性冒烟＋宿主遍历（AGENTS Windows 规程：VS x64＋`QT_QPA_PLATFORM=windows`、逐个绝对路径启动）；历史批次"仅登记不启动"口径废止（V-22 同批翻转）。黄金数据集（WP-14-T09，DTB 指定四套）：`req-transport-task/`（搬运任务）、`req-partial-pose/`（部分位姿约束）、`req-region-sampling/`（区域与采样定义）、`req-payload-events/`（负载事件）——`ird-golden-manifest/1` 契约＋容差档案 `tolerance/req-*`（锚附录 D 通用比较公式）＋零值/近零/正负抵消边角样例。
 
 ### 10.2 故障注入矩阵
 
@@ -890,7 +891,7 @@ public:
 | V-19 | C | 与 kinematics/evidence 契约 | §8.2/§8.4、AT-03 联合 | 黄金需求集 | 评估组装→点/区域/工况消费 | 采样计划→plannedXxxSamples 分母一致；角色键声明齐备；必验集与冻结解析一致 | SamplingPlanRef/RequiredCaseSet 对端断言（联合） |
 | V-20 | S | AT-04 预览无修订 | EVI-01、AT-04 | 编辑/导入预览 | 预览/即时校验/区域三维预览 | 零修订、零正式证据；预览输入无内容身份承诺 | 修订计数；evidence 无对象（联合） |
 | V-21 | S | AT-30 联合观测（回填影响面） | SEL-10、AT-30 | 需求集＋工具引用 | selection 回填工具对象（阶段 C 联合） | 需求侧 tcpRef 浅引用不变；下游复算提示由工具对象 cv 变化经建模/运动学依赖完成（本单元零动作） | req 对象 cv 不变；联合观测 |
-| V-22 | G | GUI 主流程（设计登记） | UX-05/06、§9.8 | Windows GUI 环境 | 工位表批量粘贴→姿态规则切换→拾取确认→导入向导 | 就地错误保留原值；写回前确认；五规则表单联动；确认对话三要素 | 面板截图＋诊断呈现（本次不启动） |
+| V-22 | G | GUI 主流程（必执行——v0.21 DOC-T16） | UX-05/06、§9.8 | Windows GUI 环境 | 工位表批量粘贴→姿态规则切换→拾取确认→导入向导 | 就地错误保留原值；写回前确认；五规则表单联动；确认对话三要素 | 面板截图＋诊断呈现＋生产路径测试留痕（必执行；豁免须所有者确认） |
 
 **AT 承接声明**：AT-02（V-08/09）、AT-04（V-20）、AT-05（V-16 联合）、AT-09（V-19/需求基准面联合）、AT-10（V-15 联合）、AT-23（V-03/拾取捕获 L-R6/L-R7）、AT-24（V-06/07/10/需求集撤销 L-R4）、AT-27（V-17）、AT-30（V-21 联合）。"联合观测"行本卡只负责 requirements 侧输入/输出面——不把未执行测试写为通过。
 
@@ -971,7 +972,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 | REQ-05 | §7.3 | V-08/09 | T04 |
 | REQ-06 | §7.5、§8 | V-11/12/20 | T05 |
 | REQ-07 | §7.1 | V-06/07 | T07 |
-| REQ-08 | §9.8 L-R6 | V-22（GUI 登记） | T06 |
+| REQ-08 | §9.8 L-R6 | V-22（必执行） | T06 |
 | REQ-09 | §5.3 | V-03 | T06 |
 | REQ-10 | §9.8 L-R6/L-R7 | V-22＋L-R7 单元面 | T06 |
 | REQ-11 | §7.2、§9.3 | V-06/07 | T07 |
@@ -1062,6 +1063,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v0.21 | 2026-10-19 | DOC-T16 测试策略修订批（纯登记零代码零语义；先卡后码——契约 tasks/DOC-T16.json，DTB v0.97/modeling v0.55/acceptance-protocol v1.10 同批）：①§1.4 非目标行＋§10.1 总则 GUI 执行口径句改写——"GUI 用例仅登记流程，本次不启动"废止，改为按 DTB §5.2 DoD 第 5~7 条执行（人工点验＋关键交互链固化为 Widgets 级生产路径测试〔真实控件事件流：对话框回传值/字段提交路径/批次撤销记账〕进常驻回归＋入口存在性与 1920×1080 布局可见性冒烟＋宿主遍历；投影模型/领域函数测试不得替代；豁免须所有者确认）；②V-22 行与 §13 REQ-08 行"（设计登记）/（GUI 登记）"翻转"（必执行）"；③依据＝需求模块全功能审计（分支 codex/requirements-audit-20261018，报告随 wp14-t12 合入主线）A-01~A-12 十二项缺陷全部位于无自动化覆盖的生产接线/呈现层（领域算法层零缺陷）＋wp14-t12 修复批新登 A-13~A-16（跨域消费链）；④效力自下一批授权契约生效，不追溯 wp14-t12（其验收口径已由契约冻结为 120 项逐行终验）。验证＝validate-docs PASS＋validate-task PASS（DOC-T16）＋commit-lint PASS |
 | v0.13 | 2026-09-29 | WP-14-T11 落位登记（需求域装配门面补建——O-45 裁决出路①，kinematics/modeling 双先例同构；**只出线不重写，零行为变化**）：①新增 `assembly/sdurws/ird/requirements/RequirementsPluginAssembly.hpp`（插件目标 PUBLIC include 面——宿主装配层消费 requirements 插件的唯一公共入口）＋`plugin/RequirementsPluginAssembly.cpp`（编入 sdurws_ird_requirements_plugin）——出线面＝createRequirementsPluginAssembly（module＝IPluginUiModule 接口面＋descriptor 直通 requirementsPanelRegistration/requirementsDomainCommands 登记数据，五面板区合一主面板一条登记记录 advanced=false，面板工厂闭包内部完成 RequirementsPanelWidget 创建/编辑目标提供器惰性接线/attachPanel 移交——宿主零插件私有头，O-31 单行适配面）＋RequirementsSharedSurfaceHandles（sharedSurfaceProviders 三接入面句柄/attachSelectionService/detachSelectionService/reportView3DPick——WP-14-T10 已验收面逐字段转发）＋会话接线五方法（attachEditor/bindSessionAnchor/noteAppliedRevision/bindReadiness/onSessionDetached——RequirementsModuleSessionState 既有字段语义的具名化，modeling 门面 T03b-2 同名方法语义同构）；②`RequirementsUiModule` P-REQ-8 消账：同形暂持→**真实继承** ui::IPluginUiModule（三方法签名与冻结接口逐一同形，仅加 override——语义零变化，头注预设路径兑现，R-REQ-1 增量同步）；③CMake：plugin 源列表增列＋assembly/ PUBLIC include 面（kinematics CMake 同款形态）＋契约测试增列 contract_test/PluginGraphContractTest.cpp（五用例文本扫描——门面落位/零私有头隔离/出线面词表/继承切换钉住/链接面零变化）；④ird_gates 零增量（门面在 requirements 单元内自洽、新增零跨单元边——宿主消费边 requirements->ui 既有，归 UI-T23 随其命中集增量登记）。无语义偏差 |
 | v0.14 | 2026-09-30 | 需求界面功能对照批次立项登记（所有者 2026-09-30 需求界面功能对照会话——对照 main 分支 engineeringrequirements 冻结参考实现全功能清单〔仅作功能范围对照，实现口径从头构建不变〕；纯登记零代码）：①§11 增 UI 侧装配批次段——UI-T29~T34 ≙ WP-10-T29~T34 六批次（T29 会话接线＋最小校验〔ready——§14.6 v0.13 会话接线五方法即预埋接缝的消费任务〕／T30 对象生命周期 B1／T31 区域工况字段编辑 B2／T32 九命令 UI 流程 C／T33 三维呈现与拾取 D（前置 View3D 阶段 B）／T34 校验体验收口 E，T30~T34 planned 待独立评审放行）；批次结构 v2 经所有者确认（B 拆 B1/B2、最小校验并入 A）；②待裁决登记：冻结工件（v4）文件化导出承接与否（DTB §4.2 O-46）、RequirementLevel::Info/confidence 承接与否（DTB §4.2 O-47）——均不阻塞 T29~T31；③DTB v0.34/ui.md v1.31/契约 tasks/foundation/UI-T29.json（ready）＋UI-T30~T34.json（planned）同批；④v0.13 头行漏更本批补记。需求语义零变化 |
 | v0.16 | 2026-10-04 | 宿主审核 P2 呈现批次①（分支 req-readonly-init-fix；findings F-499/F-501 承载；纯呈现层）：①**双树职责标识（F-499 自持面）**——RequirementsPanelWidget 顶部常驻草稿提示条（"当前编辑：需求草稿——经『应用草稿』提交后生成新项目修订（工业项目树呈现已应用版本）"，objectName ird_req_draft_hint，kTextMuted 词表色）＋树名标注"需求树（当前草稿）"（gui requirementTree 定位器同文更新＋具名用例 DraftHintAndTreeTitle_DualTreeRoleLabels_F499）；共享项目树侧状态标识涉 PIPE §6.2 共享装配面互斥——随后续任务协调（F-499 维持 open）；②**应用语义文案（F-501）**——宿主 File→工业机器人项目菜单"应用修改"→"应用草稿"（与两域面板既有『应用草稿』指引统一）＋应用/撤销/重做三动作悬停说明分层交代预检门禁/修订不可变/两级撤销差别；③测试：requirements_gui 44/44（新增 1）＋ui_gui 78/78＋requirements_test 200 通过 1 跳过＋ui_test 246/246 回归全绿。需求语义零变化（命令 id/路由/门禁零变化——纯文案与呈现件） |
