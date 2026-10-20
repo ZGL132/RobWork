@@ -33,6 +33,7 @@
 #include <QPixmap>
 #include <QTableWidget>
 #include <QDialog>
+#include <QScrollBar>
 #include <QTimer>
 #include <QTreeWidget>
 #include <sdurws/ird/modeling/StructureEdit.hpp>
@@ -733,4 +734,122 @@ TEST(ModelingUiModuleHostWiring, NamedPoseCanSaveAfterSessionReopen_MDL17_AT04)
     const auto& entries=module.session().draft.poseSetObject->entries;
     const auto saved=std::find_if(entries.begin(),entries.end(),[](const auto& e){return e.key=="reopened-inspection";});
     ASSERT_NE(saved,entries.end());EXPECT_DOUBLE_EQ(saved->jointConfiguration[0],0.45);
+}
+
+
+namespace {
+/**
+ * @brief MDL-05模态窗口超时守卫；仅本用例UI线程拥有定时器，析构停止。
+ * 失败时关闭真实窗口避免阻塞后续串行GUI，不代替窗口校验。
+ */
+class PropertyModalWatchdog {
+public:
+    PropertyModalWatchdog()
+    {
+        QObject::connect(&timer,&QTimer::timeout,[]{
+            ADD_FAILURE()<<"生产物性窗口未按预期响应";
+            if(auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget())){dialog->reject();}
+        });
+        timer.setSingleShot(true);timer.start(5000);
+    }
+private:
+    QTimer timer; ///< 本用例UI线程管理，不保留窗口指针。
+};
+/** @brief 保存当前真实物性窗口；[in] name为唯一图片名，目录由runner指定。 */
+void propertySnapshot(QDialog& dialog,const QString& name)
+{
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(out.isEmpty()){return;}
+    ASSERT_TRUE(QDir().mkpath(out));
+    ASSERT_TRUE(dialog.grab().save(QDir(out).filePath(name+".png")));
+}
+}
+
+/** @brief F09/MDL-05：零关节原点的法兰也能录入独立几何，取消不改完整草稿。 */
+TEST(ModelingImportGui, PropertySegmentsOnFlangeProductionEntry_MDL05)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto before=module.session().draft;
+    std::unique_ptr<QWidget> panel(module.createPanel());
+    // 精确业务身份交给既有面板定位入口，不假设树标签装饰格式。
+    auto* modelingPanel=qobject_cast<ModelingPanelWidget*>(panel.get());ASSERT_NE(modelingPanel,nullptr);
+    modelingPanel->focusObject(before.design.links.back().objectId);
+    bool seen=false;PropertyModalWatchdog watchdog;
+    QTimer::singleShot(0,panel.get(),[&]{
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        if(!dialog){return;}seen=true;
+        EXPECT_EQ(dialog->objectName(),"ird_modeling_property_segments");
+        EXPECT_NE(dialog->findChild<QTableWidget*>("ird_modeling_segments_table"),nullptr);
+        dialog->reject();
+    });
+    EXPECT_FALSE(module.executeDomainCommand("modeling.estimate-properties"));
+    EXPECT_TRUE(seen)<<"F09：生产估算尚未打开完整段元表单";
+    EXPECT_EQ(module.session().draft,before);
+}
+
+/** @brief F09/MDL-05：真实表单校验、三类段元/密度/位姿及草稿一次撤销。 */
+TEST(ModelingImportGui, PropertySegmentWindowValidationAndLocalHistory_MDL05)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto branch=sdurws::ird::core::BranchId::generate();
+    const auto revision=sdurws::ird::core::RevisionId::generate();
+    module.bindSessionAnchor(branch,revision);module.noteAppliedRevision(revision,sdurws::ird::core::ObjectId::generate());
+    std::unique_ptr<QWidget> panel(module.createPanel());
+    auto* view=qobject_cast<ModelingPanelWidget*>(panel.get());ASSERT_NE(view,nullptr);
+    const auto before=module.session().draft;
+    view->focusObject(before.design.links.back().objectId);
+    int submits=0;module.bindCommandSubmit([&](const sdurws::ird::ui::CommandId&){++submits;});
+    PropertyModalWatchdog watchdog;
+    QTimer::singleShot(0,panel.get(),[&]{
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());ASSERT_NE(dialog,nullptr);
+        auto* table=dialog->findChild<QTableWidget*>("ird_modeling_segments_table");ASSERT_NE(table,nullptr);
+        auto* confirm=dialog->findChild<QPushButton*>("ird_modeling_segments_confirm");ASSERT_NE(confirm,nullptr);
+        auto* feedback=dialog->findChild<QLabel*>("ird_modeling_segments_feedback");ASSERT_NE(feedback,nullptr);
+        auto* add=dialog->findChild<QPushButton*>("ird_modeling_segments_add");ASSERT_NE(add,nullptr);
+        auto* remove=dialog->findChild<QPushButton*>("ird_modeling_segments_remove");ASSERT_NE(remove,nullptr);
+        EXPECT_EQ(table->columnCount(),12);EXPECT_EQ(table->rowCount(),1);
+        confirm->click();EXPECT_TRUE(dialog->isVisible());EXPECT_TRUE(feedback->text().contains(QStringLiteral("第1段")));
+        auto set=[&](int row,int column,const char* value){table->item(row,column)->setText(QString::fromLatin1(value));};
+        auto type=[&](int row){return qobject_cast<QComboBox*>(table->cellWidget(row,0));};
+        auto material=[&](int row){return qobject_cast<QComboBox*>(table->cellWidget(row,4));};
+        // 非有限原文保留；密度默认只读，显式切自定义后必须用户填写。
+        set(0,1,"nan");set(0,3,"0.4");confirm->click();
+        EXPECT_TRUE(feedback->text().contains(QStringLiteral("有限")));EXPECT_EQ(table->item(0,1)->text(),"nan");
+        EXPECT_FALSE(table->item(0,5)->flags().testFlag(Qt::ItemIsEditable));
+        set(0,1,"0.2");type(0)->setCurrentIndex(1);set(0,2,"0.3");confirm->click();
+        EXPECT_TRUE(dialog->isVisible());EXPECT_TRUE(feedback->text().contains(QStringLiteral("估算未通过")));
+        set(0,2,"0.1");type(0)->setCurrentIndex(0); // 第1段实心圆柱。
+        add->click();type(1)->setCurrentIndex(1);set(1,1,"0.3");set(1,2,"0.1");set(1,3,"0.5");
+        add->click();type(2)->setCurrentIndex(2);set(2,1,"0.2");set(2,2,"0.4");set(2,3,"0.6");
+        material(2)->setCurrentIndex(5);EXPECT_TRUE(table->item(2,5)->text().isEmpty());
+        confirm->click();EXPECT_TRUE(feedback->text().contains(QStringLiteral("第3段")));
+        set(2,5,"1000");set(2,6,"1");set(2,9,"0.1");set(2,10,"0.2");set(2,11,"0.3");
+        // 删除中间行后控制回调必须按当前行重定位，不能写到旧第三行。
+        add->click();table->setCurrentCell(1,1);remove->click();
+        type(1)->setCurrentIndex(2);material(1)->setCurrentIndex(1);
+        EXPECT_EQ(table->item(1,5)->text(),"2700");material(1)->setCurrentIndex(5);set(1,5,"1000");
+        type(2)->setCurrentIndex(1);set(2,1,"0.3");set(2,2,"0.1");set(2,3,"0.5");
+        EXPECT_GT(table->horizontalScrollBar()->maximum(),0);
+        propertySnapshot(*dialog,"property-segments-complete");confirm->click();
+    });
+    ASSERT_TRUE(module.executeDomainCommand("modeling.estimate-properties"));
+    const auto after=module.session().draft;const auto& body=after.design.links.back().body;
+    ASSERT_TRUE(body.mass.tryValue());EXPECT_GT(body.mass.value(),48);
+    // 独立NumPy矩阵乘积Rz(.3)Ry(.2)Rx(.1)及闭式段惯量/平行轴参考值；
+    // 不调用被测估算器求期望，能发现表单漏消费密度、段平移或任一姿态角。
+    EXPECT_NEAR(body.mass.value(),1429.044130518073,1e-9);
+    EXPECT_NEAR(body.centerOfMass.value()[0],0.033588885727831586,1e-12);
+    EXPECT_NEAR(body.inertia.value().ixy,0.136621186,1e-8);
+    EXPECT_NEAR(body.inertia.value().ixz,-0.259629403,1e-8);
+    EXPECT_NEAR(body.inertia.value().iyz,0.00121206902,1e-10);
+    EXPECT_EQ(body.mass.provenance().kind,sdurws::ird::core::ProvenanceKind::GeometricEstimate);
+    EXPECT_EQ(after.changes.size(),before.changes.size()+1);
+    auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");ASSERT_NE(undo,nullptr);
+    auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");ASSERT_NE(redo,nullptr);
+    ASSERT_TRUE(undo->isEnabled());undo->click();EXPECT_EQ(module.session().draft,before);
+    redo->click();EXPECT_EQ(module.session().draft,after);
+    module.setWritable(false);EXPECT_FALSE(module.executeDomainCommand("modeling.estimate-properties"));
+    EXPECT_EQ(module.session().draft,after);EXPECT_EQ(module.session().baseRevision,revision);EXPECT_EQ(submits,0);
 }

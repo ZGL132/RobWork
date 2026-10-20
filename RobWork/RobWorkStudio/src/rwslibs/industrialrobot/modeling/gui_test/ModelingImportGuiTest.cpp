@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file ModelingImportGuiTest.cpp
  * @brief WP-13-T24：导入参数与报告的真实Windows模态窗口验收。
  *
@@ -8,6 +8,7 @@
  */
 #include <gtest/gtest.h>
 #include <QApplication>
+#include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDir>
@@ -20,7 +21,6 @@
 #include <QTimer>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 #include "plugin/ModelingCommandFlows.hpp"
-#include "plugin/ModelingUiModule.hpp"
 #include <sdurws/ird/modeling/Template.hpp>
 #include <sdurws/ird/modeling/ModelDiff.hpp>
 
@@ -51,6 +51,27 @@ void snapshot(QDialog& dialog,const QString& name)
     ASSERT_TRUE(QDir().mkpath(out));
     ASSERT_TRUE(dialog.grab().save(QDir(out).filePath(name+".png")));
 }
+}
+
+/** @brief MDL-05：空段元表拒绝、长表滚动以及取消均不产生估算结果。 */
+TEST(ModelingImportGui, PropertyEmptyLongTableCancel_MDL05)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);ModalWatchdog watchdog;
+    QTimer::singleShot(0,[]{
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());ASSERT_NE(dialog,nullptr);
+        auto* table=dialog->findChild<QTableWidget*>("ird_modeling_segments_table");ASSERT_NE(table,nullptr);
+        auto* remove=dialog->findChild<QPushButton*>("ird_modeling_segments_remove");ASSERT_NE(remove,nullptr);remove->click();
+        EXPECT_EQ(table->rowCount(),0);dialog->findChild<QPushButton*>("ird_modeling_segments_confirm")->click();
+        EXPECT_TRUE(dialog->isVisible());
+        const auto message=dialog->findChild<QLabel*>("ird_modeling_segments_feedback")->text();
+        EXPECT_TRUE(message.contains(QStringLiteral("至少一个段元")));
+        EXPECT_FALSE(message.contains("@pre"));
+        auto* add=dialog->findChild<QPushButton*>("ird_modeling_segments_add");ASSERT_NE(add,nullptr);
+        for(int row=0;row<40;++row){add->click();}
+        QApplication::processEvents();EXPECT_GT(table->verticalScrollBar()->maximum(),0);
+        snapshot(*dialog,"property-segments-long");dialog->reject();
+    });
+    EXPECT_FALSE(qtModelingDialogHost().editPropertySegments("base").has_value());
 }
 
 /** @brief MDL-08/UX-13：正式命令必须显示逐项差异，而非只有计数的消息框。 */

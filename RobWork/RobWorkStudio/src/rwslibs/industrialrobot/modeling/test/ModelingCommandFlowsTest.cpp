@@ -5,8 +5,8 @@
  *         ModelingDialogHost 测试缝＝FakeHost 预置应答，零真实模态）。
  *
  * 契约锚：modeling.md §9.7.3（两命令语义）、§5.2（占位圆柱）、§5.3
- * （物性估算公式表与来源标记）；段元前置＝驱动关节原点非零（模板种子
- * 恒位姿→零长拒绝的真实语义如实覆盖）。
+ * （物性估算公式表与来源标记）；B3c完整段元由用户显式提供，估算不依赖
+ * 驱动关节原点。数值算法真实执行，窗口交互由独立GUI用例补齐。
  */
 
 #include <gtest/gtest.h>
@@ -19,6 +19,7 @@
 #include <QStringList>
 
 #include <algorithm>
+#include <cmath> // F09独立解析质量/惯量参考，不调用被测估算器算期望。
 #include <optional>
 #include <string>
 
@@ -29,6 +30,7 @@
 #include <sdurws/ird/modeling/Template.hpp>     // RobotDesignTemplateFactory（六轴草稿夹具）
 #include <sdurws/ird/modeling/Codec.hpp>        // AT-31来源资源随对象编码往返保真。
 #include <sdurws/ird/modeling/ModelDiff.hpp>    // F16：真实服务与呈现边界逐项对账。
+#include <sdurws/ird/modeling/PropertyEstimation.hpp> // F09：仅替代应答，真实估算与Codec。
 #include "plugin/ModelingCommandFlows.hpp"      // executeModelingCommand（被测流）
 #include "plugin/ModelingUiModule.hpp"          // ModuleSessionState（会话态入参）
 #include "plugin/ModelingXacroBridge.hpp"       // WP-13-T24：真实生产展开桥，不能只测内核。
@@ -51,6 +53,12 @@ ModelingWorkingSet makeSixAxisDraft()
 
 /// 预置应答替身（测试缝——六方法全预置，取消路径＝nullopt/false）。
 struct FakeHost final : ModelingDialogHost {
+    std::optional<std::vector<SegmentSpec>> segmentsAnswer=[] {
+        SegmentSpec segment;segment.primitive=SolidCylinderSpec{0.02,0.3};
+        segment.material.materialId="steel";return std::vector<SegmentSpec>{segment};
+    }(); ///< 显式预置尺寸，不从测试关节原点推断；nullopt验证取消。
+    std::optional<std::vector<SegmentSpec>> editPropertySegments(const std::string&) override
+    { return segmentsAnswer; }
     std::optional<int> chooseItemAnswer;        ///< chooseItem 应答（nullopt＝取消）
     bool confirmProceedAnswer = true;           ///< confirmProceed 应答
     bool confirmImportAnswer = true;            ///< confirmImport 应答
@@ -319,22 +327,94 @@ TEST(ModelingCommandFlows, PlaceholderGeometry_FlangeLink_Refused_UI_T41C)
     EXPECT_FALSE(fx.session.draft.design.links[flange].visual.has_value());
 }
 
-/// 段元零长（模板种子恒位姿）＝诚实拒绝（零长度圆柱无几何意义——内核
-/// makeLinkPlaceholderCylinder 同款前置的流程侧呈现）。
-TEST(ModelingCommandFlows, EstimateProperties_ZeroLengthSegment_Refused_UI_T41C)
+/// F09：零原点不再阻断独立几何输入；取消仍完整保留草稿。
+TEST(ModelingCommandFlows, EstimateProperties_CancelPreservesZeroOriginDraft_MDL05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01"}, std::vector<std::string>{});
 
     FlowHarness fx;
     fx.session.draft = makeSixAxisDraft();  // 恒位姿种子——不注入非零原点
     fx.anchor = fx.session.draft.design.links[0].objectId;
-    fx.host.chooseItemAnswer = 0;
+    fx.host.segmentsAnswer=std::nullopt;
+    const auto before=fx.session.draft;
 
     std::string summary;
     EXPECT_FALSE(executeModelingCommand("modeling.estimate-properties",
                                         fx.session, fx.deps(), fx.host, summary));
-    EXPECT_TRUE(summary.find("零长度") != std::string::npos)
-        << "种子态（恒位姿）拒绝摘要含几何原因";
+    EXPECT_EQ(fx.session.draft,before);
+}
+
+/** @brief MDL-05：按独立闭式结果核对旋转盒、偏心多段和三图元实际消费。 */
+TEST(ModelingCommandFlows, CompleteSegmentInputsConsumePoseDensityAndAllShapes_MDL05)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    FlowHarness fx;fx.session.draft=makeSixAxisDraft();
+    const auto index=fx.session.draft.design.links.size()-1;
+    fx.anchor=fx.session.draft.design.links[index].objectId; // 法兰无需驱动关节原点。
+    SegmentSpec box;box.primitive=BoxSpec{2,4,6};
+    box.material.density=core::SourcedValue<double>::provided(3,
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    box.linkFromSegment=rw::math::Transform3D<double>({1,2,3},
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1));
+    fx.host.segmentsAnswer=std::vector<SegmentSpec>{box};std::string summary;
+    ASSERT_TRUE(executeModelingCommand("modeling.estimate-properties",fx.session,fx.deps(),fx.host,summary));
+    const auto& body=fx.session.draft.design.links[index].body;
+    EXPECT_DOUBLE_EQ(body.mass.value(),144);EXPECT_DOUBLE_EQ(body.centerOfMass.value()[0],1);
+    EXPECT_DOUBLE_EQ(body.centerOfMass.value()[1],2);EXPECT_DOUBLE_EQ(body.centerOfMass.value()[2],3);
+    EXPECT_DOUBLE_EQ(body.inertia.value().ixx,480);EXPECT_DOUBLE_EQ(body.inertia.value().iyy,624);
+    EXPECT_DOUBLE_EQ(body.inertia.value().izz,240); // Z旋转90°交换盒x/y主惯量。
+    EXPECT_EQ(body.inertia.provenance().kind,core::ProvenanceKind::GeometricEstimate);
+    SegmentSpec cube=box;cube.primitive=BoxSpec{1,1,1};
+    cube.material.density=core::SourcedValue<double>::provided(1,core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    // 独立模式只借用框架数学值类型；显式单位阵避免引入框架静态identity符号。
+    const rw::math::Rotation3D<double> identity(1,0,0,0,1,0,0,0,1);
+    cube.linkFromSegment=rw::math::Transform3D<double>({-1,0,0},identity);auto other=cube;
+    other.linkFromSegment=rw::math::Transform3D<double>({1,0,0},identity);
+    fx.host.segmentsAnswer=std::vector<SegmentSpec>{cube,other};
+    ASSERT_TRUE(executeModelingCommand("modeling.estimate-properties",fx.session,fx.deps(),fx.host,summary));
+    EXPECT_DOUBLE_EQ(body.mass.value(),2);EXPECT_DOUBLE_EQ(body.centerOfMass.value()[0],0);
+    EXPECT_NEAR(body.inertia.value().ixx,1.0/3,1e-12);
+    EXPECT_NEAR(body.inertia.value().iyy,7.0/3,1e-12);EXPECT_NEAR(body.inertia.value().izz,7.0/3,1e-12);
+    // 同一生产流程真实消费圆柱/空心输入；π=acos(-1)，独立解析质量与Izz。
+    const double pi=std::acos(-1.0);
+    cube.primitive=SolidCylinderSpec{0.2,0.4};
+    cube.linkFromSegment=rw::math::Transform3D<double>({0,0,0},identity);
+    other=cube;other.primitive=HollowCylinderSpec{0.3,0.1,0.5};
+    fx.host.segmentsAnswer=std::vector<SegmentSpec>{cube,other};
+    ASSERT_TRUE(executeModelingCommand("modeling.estimate-properties",fx.session,fx.deps(),fx.host,summary));
+    const double m1=pi*0.04*0.4,m2=pi*(0.09-0.01)*0.5;
+    EXPECT_NEAR(body.mass.value(),m1+m2,1e-12);
+    EXPECT_NEAR(body.inertia.value().izz,m1*0.04/2+m2*(0.09+0.01)/2,1e-12);
+    const RobotDesignCodec codec;const auto encoded=codec.encode(ObjectVariant{fx.session.draft.design},kCurrentFormatVersion);
+    ASSERT_TRUE(encoded.ok());const auto decoded=codec.decode(encoded.get(),kCurrentFormatVersion);ASSERT_TRUE(decoded.ok());
+    EXPECT_EQ(std::get<RobotDesign>(decoded.get()).links[index].body,body);
+    EXPECT_EQ(fx.recomputeCalls,3);EXPECT_EQ(fx.session.draft.changes.size(),3u);
+}
+
+/** @brief MDL-05/UX-07：任一权威字段覆盖需确认，坏段元拒绝原子保留三字段。 */
+TEST(ModelingCommandFlows, CompleteEstimateRejectsInvalidAndProtectsAnyAuthority_MDL05)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    for(int field=0;field<3;++field){
+        FlowHarness fx;fx.session.draft=makeSixAxisDraft();fx.anchor=fx.session.draft.design.links[0].objectId;
+        auto& body=fx.session.draft.design.links[0].body;
+        const auto source=core::ValueProvenance::make(core::ProvenanceKind::ImportMapped);
+        if(field==0){body.mass=core::SourcedValue<double>::provided(1,source);}
+        if(field==1){body.centerOfMass=core::SourcedValue<rw::math::Vector3D<double>>::provided({1,2,3},source);}
+        if(field==2){body.inertia=core::SourcedValue<InertiaTensor>::provided({1,1,1,0,0,0},source);}
+        const auto before=fx.session.draft;fx.host.confirmProceedAnswer=false;std::string summary;
+        EXPECT_FALSE(executeModelingCommand("modeling.estimate-properties",fx.session,fx.deps(),fx.host,summary));
+        EXPECT_EQ(fx.session.draft,before);EXPECT_EQ(fx.recomputeCalls,0);
+        EXPECT_TRUE(fx.host.lastConfirmText.contains(QStringLiteral("完整惯量")));
+    }
+    FlowHarness fx;fx.session.draft=makeSixAxisDraft();fx.anchor=fx.session.draft.design.links[0].objectId;
+    const auto before=fx.session.draft;std::string summary;
+    fx.host.segmentsAnswer=std::vector<SegmentSpec>{};
+    EXPECT_FALSE(executeModelingCommand("modeling.estimate-properties",fx.session,fx.deps(),fx.host,summary));
+    SegmentSpec bad;bad.primitive=HollowCylinderSpec{0.1,0.2,1};bad.material.materialId="steel";
+    fx.host.segmentsAnswer=std::vector<SegmentSpec>{bad};
+    EXPECT_FALSE(executeModelingCommand("modeling.estimate-properties",fx.session,fx.deps(),fx.host,summary));
+    EXPECT_EQ(fx.session.draft,before);EXPECT_EQ(fx.recomputeCalls,0);
 }
 
 // =====================================================================

@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": [
+    {
+      "testId": "ModelingPanelGuiTest.PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27",
+      "requirementIds": [
+        "MDL-07"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 667
+    },
+    {
+      "testId": "ModelingImportGui.PropertySegmentsOnFlangeProductionEntry_MDL05",
+      "requirementIds": [
+        "MDL-05"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 634
+    },
+    {
+      "testId": "ModelingImportGui.PropertySegmentWindowValidationAndLocalHistory_MDL05",
+      "requirementIds": [
+        "MDL-05"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 723
+    },
+    {
+      "testId": "ModelingImportGui.PropertyEmptyLongTableCancel_MDL05",
+      "requirementIds": [
+        "MDL-05"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 341
+    }
+  ]
+}

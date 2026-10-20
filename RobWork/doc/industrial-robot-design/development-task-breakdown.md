@@ -1010,3 +1010,5 @@ WP-13-T24 B3a精确登记：MDL-22欧拉输入及域内RPY→EAA转换，Templat
 WP-13-T24 B3b精确登记：MDL-12/MDL-06工程工作范围确认，Template.hpp::JointEditField表尾WorkingRange复用JointLimits；已放行Template.cpp、私有面板与原测试/单元卡范围内实施。原计划B3b八节为边界，不改存储、runtime或依赖边，完整47项终验仍开放。
 
 WP-13-T24 B4a精确登记：MDL-08/UX-13/AT-12完整差异表和现对象身份定位；仅建模私有流程/新窗口/模块、原测试及既有plugin目标新增源。ui/plugin/UiPlugin.cpp只扩既有modeling-tour真实交互补证，不改装配。无公共接口、存储或新边，精确失败矩阵见原计划B4a；全功能终验仍开放。
+
+WP-13-T24 B3c精确登记：MDL-05完整三类图元/多段/密度/段元位姿录入，估算及合成唯一复用PropertyEstimator，去除关节原点前提。范围仅原私有plugin/test/gui/CMake及文档契约；不增公共面/存储/依赖，实施与失败矩阵见原计划B3c，未验证不得标完成。

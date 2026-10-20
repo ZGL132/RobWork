@@ -555,6 +555,8 @@ void ModelingUiModule::refreshFromSession()
 bool ModelingUiModule::executeDomainCommand(const std::string& commandId)
 {
     m_guard.assertOnUiThread();
+    // F09：只读不仅禁用可见按钮，直接宿主调用也不得打开写入型估算流程。
+    if (commandId == "modeling.estimate-properties" && !m_writable) { return false; }
     // 流程依赖（宿主侧回调全量接线——flows 零模块类型依赖的测试缝形态）：
     // reseedTemplate＝模板重种子；reseedCustomChain＝custom-chain 声明重种
     // 子（UI-T63——从零创建落点）；recomputeReadiness＝草稿变更后真判定；

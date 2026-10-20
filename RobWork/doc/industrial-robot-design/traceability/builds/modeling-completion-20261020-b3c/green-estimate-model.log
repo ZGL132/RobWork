@@ -1,0 +1,21 @@
+Note: Google Test filter = *Estimate*:*CompleteSegment*
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.EstimateProperties_WritesBackWithEstimateBadge_UI_T41C
+[       OK ] ModelingCommandFlows.EstimateProperties_WritesBackWithEstimateBadge_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.EstimateProperties_NoSelection_HonestRefusal_UI_T41C
+[       OK ] ModelingCommandFlows.EstimateProperties_NoSelection_HonestRefusal_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.EstimateProperties_OverwriteUserValuesNeedsConfirm_UI_T41C
+[       OK ] ModelingCommandFlows.EstimateProperties_OverwriteUserValuesNeedsConfirm_UI_T41C (0 ms)
+[ RUN      ] ModelingCommandFlows.EstimateProperties_CancelPreservesZeroOriginDraft_MDL05
+[       OK ] ModelingCommandFlows.EstimateProperties_CancelPreservesZeroOriginDraft_MDL05 (0 ms)
+[ RUN      ] ModelingCommandFlows.CompleteSegmentInputsConsumePoseDensityAndAllShapes_MDL05
+[       OK ] ModelingCommandFlows.CompleteSegmentInputsConsumePoseDensityAndAllShapes_MDL05 (0 ms)
+[ RUN      ] ModelingCommandFlows.CompleteEstimateRejectsInvalidAndProtectsAnyAuthority_MDL05
+[       OK ] ModelingCommandFlows.CompleteEstimateRejectsInvalidAndProtectsAnyAuthority_MDL05 (0 ms)
+[----------] 6 tests from ModelingCommandFlows (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 6 tests.

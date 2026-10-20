@@ -51,6 +51,7 @@
 #include <sdurws/ird/modeling/Package.hpp>       // ModelPackagePort（MDL-20 导出/导入）
 #include "ModelingXacroBridge.hpp"            // 受控展开桥（独立 TU——XacroExpand 不可与 DhConvert 共 TU）
 #include "ModelingDiffDialog.hpp"             // F16：完整只读报告，原服务唯一判定。
+#include "ModelingPropertyDialog.hpp"         // F09：真实多段几何/密度/位姿录入。
 #include <sdurws/ird/ui/UiText.hpp>              // resolveText（按钮文案同源的呈现值）
 
 namespace sdurws::ird::modeling {
@@ -63,6 +64,8 @@ namespace {
 /// 生产宿主实现（与 requirements QtDialogHost 同型——交互应答/编排分离）。
 class QtModelingDialogHost final : public ModelingDialogHost {
 public:
+    std::optional<std::vector<SegmentSpec>> editPropertySegments(const std::string& linkName) override
+    { return editModelingPropertySegments(linkName); }
     std::optional<QString> openFilePath(const QString& title,
                                         const QString& filter) override
     {
@@ -1021,65 +1024,31 @@ bool executeModelingCommand(const std::string& commandId,
             summary = "选中对象不是本模型连杆——估算目标无效";
             return false;
         }
-        // 段元几何（旧版 autoLink 同款近似——§5.2）：连杆 i 的占位段＝该
-        // 连杆系原点→其驱动关节 j_i 安装原点（joints[i].origin，连杆系下）；
-        // 末端法兰连杆（links.size()==joints.size()+1 的尾元素）无驱动关节
-        // ——诚实拒绝（法兰几何归后续任务）。位姿数学复用内核
-        // makeLinkPlaceholderCylinder（z 对齐＋中点定位——段系在连杆系下）。
-        if (linkIndex >= draft.design.joints.size()) {
-            summary = "末端法兰连杆无驱动关节原点可构段元——请经导入或后续法兰几何任务";
-            return false;
-        }
-        const auto& origin = draft.design.joints[linkIndex].origin;
-        if (!origin.tryValue().has_value()) {
-            summary = "驱动关节原点未提供——无法推导连杆段元（先补关节原点）";
-            return false;
-        }
-        const rw::math::Vector3D<double> segmentEnd(origin.tryValue()->d());
-        const double length = segmentEnd.norm2();
-        if (!(length > 0.0)) {
-            summary = "段元零长度（关节原点与连杆系原点重合）——无估算几何意义";
-            return false;
-        }
-        // 材料选择（§5.3 默认密度表五键——chooseItem 应答面）。
-        const std::pair<const char*, const char*> materials[] = {
-            {"steel", "钢（7850 kg/m³）"}, {"aluminum", "铝（2700 kg/m³）"},
-            {"cast-iron", "铸铁（7200 kg/m³）"}, {"titanium-alloy", "钛合金（4430 kg/m³）"},
-            {"engineering-plastic", "工程塑料（1200 kg/m³）"},
-        };
-        QStringList items;
-        for (const auto& [id, label] : materials) { items << QString::fromUtf8(label); }
-        const auto pickedMaterial = host.chooseItem(QStringLiteral("选择连杆材料"),
-                                                    QStringLiteral("估算采用 §5.3 默认密度表："),
-                                                    items);
-        if (!pickedMaterial.has_value()) { return false; }  // 用户取消
-
-        // 段元组装（单段实心圆柱——半径＝占位圆柱设计默认值；密度解析在
-        // estimateLink 内〔先 density 已提供值再查默认表〕，此处只给键）。
-        SegmentSpec segment;
-        segment.primitive = SolidCylinderSpec{kPlaceholderCylinderRadius, length};
-        segment.linkFromSegment = makeLinkPlaceholderCylinder(
-            rw::math::Vector3D<double>(0.0, 0.0, 0.0), segmentEnd,
-            "estimate-segment", kPlaceholderCylinderRadius).geometry.localTransform;
-        segment.material.materialId = materials[*pickedMaterial].first;
+        // F09/MDL-05：几何来自用户完整段元输入，与关节原点无关。
+        // 法兰与零原点连杆同样可估算；未确认不读写任何物性。
+        const auto segments=host.editPropertySegments(draft.design.links[linkIndex].localName);
+        if(!segments){return false;}
 
         const PropertyEstimator estimator;
         std::vector<core::DiagnosticRecord> diags;
-        const auto outcome = estimator.estimateLink({segment}, diags);
+        const auto outcome = estimator.estimateLink(*segments, diags);
         if (!outcome.ok()) {
             summary = "物性估算失败：" + outcome.error().detail;
             return false;
         }
         const EstimatedLinkProperties& props = outcome.get();
-        // 写回（§5.3 规则 1——估算结果一律 GeometricEstimate＋公式表标记）：
-        // 覆盖既有用户值前确认（旧值来源非估算＝用户手填，破坏性覆盖须确认）。
+        // 任一已提供的非估算物性都是权威输入，不能只检查mass而静默
+        // 覆盖用户单独提供的质心或完整惯量。确认拒绝保留三项及全部来源。
         LinkEntry& link = session.draft.design.links[linkIndex];
-        const bool overwritingUser =
-            link.body.mass.state() == core::FieldState::Provided
-            && link.body.mass.provenance().kind == core::ProvenanceKind::UserProvided;
+        const auto authoritative=[](const auto& field){
+            return field.state()==core::FieldState::Provided
+                && field.provenance().kind!=core::ProvenanceKind::GeometricEstimate;
+        };
+        const bool overwritingUser=authoritative(link.body.mass)
+            || authoritative(link.body.centerOfMass)||authoritative(link.body.inertia);
         if (overwritingUser
             && !host.confirmProceed(QStringLiteral("覆盖确认"),
-                                    QStringLiteral("该连杆已有用户手填物性——估算结果将覆盖。是否继续？"))) {
+                                    QStringLiteral("该连杆已有权威物性——质量、质心和完整惯量将由估算结果一起覆盖。是否继续？"))) {
             return false;
         }
         link.body.mass = core::SourcedValue<double>::provided(props.massKg, props.provenance);
@@ -1090,8 +1059,8 @@ bool executeModelingCommand(const std::string& commandId,
             core::SourcedValue<InertiaTensor>::provided(props.inertia, props.provenance);
         ModelingChangeRecord record;
         record.subject = "links[" + std::to_string(linkIndex) + "].body";
-        record.summary = std::string("物性估算（材料 ") + materials[*pickedMaterial].first
-                         + "，单段圆柱近似）";
+        record.summary = "物性估算（显式段元 " + std::to_string(segments->size())
+                         + " 段，连杆系合成，来源＝几何估算）";
         session.draft.changes.push_back(std::move(record));
         if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
         summary = "物性估算完成：质量 " + std::to_string(props.massKg) + " kg（来源＝估算）——请经『应用草稿』提交";

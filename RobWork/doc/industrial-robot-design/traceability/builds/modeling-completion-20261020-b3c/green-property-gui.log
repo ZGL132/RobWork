@@ -1,0 +1,20 @@
+Note: Google Test filter = *Property*
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27
+[       OK ] ModelingPanelGuiTest.PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27 (667 ms)
+[----------] 1 test from ModelingPanelGuiTest (667 ms total)
+
+[----------] 3 tests from ModelingImportGui
+[ RUN      ] ModelingImportGui.PropertySegmentsOnFlangeProductionEntry_MDL05
+[       OK ] ModelingImportGui.PropertySegmentsOnFlangeProductionEntry_MDL05 (634 ms)
+[ RUN      ] ModelingImportGui.PropertySegmentWindowValidationAndLocalHistory_MDL05
+[       OK ] ModelingImportGui.PropertySegmentWindowValidationAndLocalHistory_MDL05 (723 ms)
+[ RUN      ] ModelingImportGui.PropertyEmptyLongTableCancel_MDL05
+[       OK ] ModelingImportGui.PropertyEmptyLongTableCancel_MDL05 (341 ms)
+[----------] 3 tests from ModelingImportGui (1699 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (2366 ms total)
+[  PASSED  ] 4 tests.

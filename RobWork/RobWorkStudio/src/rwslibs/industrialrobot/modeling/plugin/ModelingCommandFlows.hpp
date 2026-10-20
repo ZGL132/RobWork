@@ -32,6 +32,7 @@
 #include <QString>
 #include <QStringList>
 #include <string>
+#include <sdurws/ird/modeling/PropertyEstimation.hpp> // F09：既有三段元纯值与唯一公式表。
 
 #include "ModelingUiModule.hpp"  // ModuleSessionState（会话权威态——编辑落点）
 
@@ -150,6 +151,15 @@ struct ModelingDialogHost {
     virtual void showModelDiff(const ModelDiffReport& report,
         const ModelingWorkingSet& baseline, const ModelingWorkingSet& candidate,
         const ModelingDiffLocator& locate);
+
+    /**
+     * @brief MDL-05：编辑完整段元列表；尺寸m、密度kg/m³、连杆系位姿m/rad。
+     * @param linkName [in] 目标连杆的人读名称，仅供标题提示，不作为身份。
+     * @return nullopt＝取消/能力未装配；有值为用户显式确认的按行顺序段元。
+     * 仅UI线程同步使用；默认拒绝，禁止退回固定圆柱并虚构完整输入能力。
+     */
+    virtual std::optional<std::vector<SegmentSpec>> editPropertySegments(const std::string& linkName)
+    { (void)linkName;return std::nullopt; }
 
     /**
      * @brief custom-chain 六轴声明表单（UI-T63——从零创建面；nullopt＝取消）。
