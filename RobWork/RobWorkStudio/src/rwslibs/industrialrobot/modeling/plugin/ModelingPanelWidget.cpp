@@ -872,6 +872,7 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     for (int i = 0; i < 5; ++i) {
         auto* btn = new QPushButton(QString::fromUtf8(kStructButtons[i]), structBar);
         btn->setObjectName(QString::fromLatin1(kStructNames[i]));
+        btn->setEnabled(m_writable); // L-7：构造为只读时也不能出现可写结构入口。
         btn->setToolTip(QString::fromUtf8(kStructButtons[i])
                         + QStringLiteral("（作用于选中关节；草稿级编辑——经"
                                          "『应用草稿』提交后才产生修订）"));
@@ -1125,6 +1126,7 @@ void ModelingPanelWidget::refreshStructureTree(const ModelingWorkingSet& ws)
 void ModelingPanelWidget::onStructureOpClicked(int opIndex)
 {
     m_threadGuard.assertOnUiThread();  // §3.4——编辑面
+    if (!m_writable) { return; } // PM-07：防御直接槽调用，不只依赖按钮灰显。
 
     // 六轴重置＝有损操作（§5.2 v0.28 ④——既有链参数被表值覆盖）：确认
     // 对话承载知情（域原语纯执行不内嵌确认——UI 层职责面）。
@@ -1151,6 +1153,8 @@ void ModelingPanelWidget::onStructureOpClicked(int opIndex)
         if (confirmed != QMessageBox::Yes) { return; }
     }
 
+    // 重置确认运行嵌套事件循环，期间可能切成只读；确认不是继续写入的授权快照。
+    if (!m_writable) { return; }
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
     if (ws == nullptr) { return; }  // 无会话＝编辑禁用（装配层门控同形态）
 
@@ -1267,6 +1271,10 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
 void ModelingPanelWidget::setWritable(bool writable)
 {
     m_writable = writable;
+    // L-7：结构栏此前遗漏只读切换，导致新增/删除/重排仍可修改待保存域帧。
+    if (auto* bar = findChild<QWidget*>(QStringLiteral("ird_modeling_struct_bar"))) {
+        bar->setEnabled(m_writable);
+    }
     if(m_bodyEditor){refreshEditPages();}
     // L-7 控件半区：现有属性行即时降级/恢复（行序同键——只变使能）。
     // UI-T27 P0-2：编辑器文本＝纯值（单位在标签——值/单位分离后回显口径）。

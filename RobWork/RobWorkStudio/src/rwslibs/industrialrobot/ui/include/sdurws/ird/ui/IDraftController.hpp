@@ -112,19 +112,20 @@ constexpr const char* kDraftStaleConflictCancelActionKey = "ui.draft.stale-confl
 // =====================================================================
 
 /**
- * @brief 保存触发源（§10.5 冻结词表；§4.4.5 origin 三值中的 ui 可产出
- *        两值与关闭对话框场景）。
+ * @brief 保存触发源（§10.5；§4.4.5 origin 三值及关闭对话框场景）。
  *
  * 语义锚点：Autosave＝定时落盘（origin=autosave）；Manual＝手动保存
  * （Ctrl+S/命令面板，origin=manual）；CloseDialog＝关闭对话框内的
  * saveAll(Manual)（§8.4"关闭流程中的 saveAll(Manual)"——落盘语义与
- * Manual 相同，触发语境单独成词便于呈现区分进度来源）。ui 永不产出
- * apply-retained（应用被拒后的草稿保留由对端回写——§8.5）。
+ * Manual 相同，触发语境单独成词便于呈现区分进度来源）。ApplyRetained
+ * 仅保留未决Stale原稿（origin=apply-retained），不清脏/冲突，不提交或重建。
+ * ui经既有C-5端口请求，由project唯一DraftService落盘（PM-04/AT-29）。
  */
 enum class SaveTrigger : std::uint8_t {
     Autosave,   ///< 定时落盘（origin=autosave）
     Manual,     ///< 手动保存（origin=manual）
     CloseDialog,///< 关闭对话框保存（落盘语义＝Manual——§8.4 同一入口）
+    ApplyRetained, ///< Stale显式保留：只保存未决冲突模块，保持原base/脏标记/历史。
 };
 
 // =====================================================================
@@ -616,7 +617,7 @@ public:
      * 执行序（§8.2 数据流逐框）：收集脏模块→逐模块 buildDraftDocument
      * （UI 线程，纯内存）→控制器补齐会话一致性字段（归属三元组/时刻/
      * origin）→经落盘执行器调用 save（**磁盘段全在落盘线程**）→阻塞
-     * 等待结局→成功且期间无新编辑清脏标记（脏代次守卫——§8.4"save
+     * 等待结局→普通保存成功且期间无新编辑清脏标记（脏代次守卫——§8.4"save
      * 期间的新脏数据进入下一周期"）→失败保留脏标记＋firstError。
      *
      * 保存/应用分离（PM-04 红线）：本方法只落 drafts/、**零修订**——
@@ -625,7 +626,8 @@ public:
      *
      * @param trigger [in] 触发源（Manual/CloseDialog＝origin=manual
      *                落盘语义；Autosave＝origin=autosave——同一落盘
-     *                入口，§8.4"共用 DraftService 同一入口"）
+     *                入口，§8.4"共用 DraftService 同一入口"）；ApplyRetained只保存
+     *                未决Stale模块，即使已手动清脏仍保存原稿，成功不清脏/冲突
      * @return 保存结局（savedCount/failedCount/firstError——呈现层
      *         即时反馈与关闭对话框失败中止的数据面）
      *

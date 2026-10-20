@@ -326,16 +326,19 @@ public:
         requireWritableSession("saveAll");
         // 同步收集→同步等待落盘结局（§8.4"手动保存与定时保存共用同一
         // 入口"——origin 区分；CloseDialog 落盘语义＝Manual）。
-        const DraftOrigin origin =
-            trigger == SaveTrigger::Autosave ? DraftOrigin::Autosave : DraftOrigin::Manual;
+        const bool retained = trigger == SaveTrigger::ApplyRetained;
+        const DraftOrigin origin = retained ? DraftOrigin::ApplyRetained
+            : trigger == SaveTrigger::Autosave ? DraftOrigin::Autosave : DraftOrigin::Manual;
         // 同一次保存的所有模块共用同一落盘时刻（NFR-COR-02——同一批次的
         // 留痕时刻一致）。
         const std::string savedAtUtc = m_deps.nowUtcIso();
         SaveOutcome outcome;
         for (const auto& handle : m_order) {
             ModuleEntry& entry = m_modules.at(handle);
-            if (entry.dirtySerial == 0) {
-                continue;  // 非脏模块不落盘（§8.2 只收集脏模块）
+            if (retained ? !entry.staleConflictPending : entry.dirtySerial == 0) {
+                // 显式冲突保留只处理未决Stale，手动保存清脏后仍可能有未决冲突。
+                // 其他保存语境保持§8.2只收集脏模块，不波及无冲突的其他域。
+                continue;
             }
             // 文档组装在 UI 线程（域源纯内存——零磁盘 IO）；控制器补齐
             // 会话一致性字段（归属三元组强制与绑定一致——防跨项目落盘；
@@ -352,7 +355,8 @@ public:
                 // 脏代次守卫：仅当保存期间无新编辑（代次未变）才清脏——
                 // 期间有编辑则保持脏标记（新脏进入下一周期，§8.4）。
                 if (entry.dirtySerial == serial) {
-                    entry.dirtySerial = 0;
+                    // 保留成功只证明磁盘有旧稿，不代表应用/重建成功；不能清脏或冲突。
+                    if (!retained) { entry.dirtySerial = 0; }
                     entry.lastSaveOriginToken = draftOriginToken(origin);
                     entry.lastSavedAtUtc = savedAtUtc;
                 }
@@ -784,6 +788,10 @@ private:
     void validateDocument(const ModuleDraftHandle& handle,
                           const DraftDocumentProjection& document) const
     {
+        // 域源明确声明了分支时必须与活动绑定一致，不能靠后续补齐掩盖跨项目事实。
+        if (document.branchId != core::BranchId{} && document.branchId != m_binding->branchId) {
+            throw std::invalid_argument("ui/draft: 草稿分支与活动会话不一致: " + handle);
+        }
         if (document.moduleId != handle || !isValidModuleToken(document.moduleId)) {
             throw std::invalid_argument(
                 "ui/draft: 草稿文档 moduleId 与挂接句柄不一致或词法违约"

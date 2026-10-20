@@ -17,6 +17,11 @@ namespace sdurws {
 namespace ird {
 namespace modeling {
 
+void ModelingPluginAssembly::bindDraftChanged(std::function<void()> callback)
+{
+    if(m_impl){m_impl->bindDraftChanged(std::move(callback));}
+}
+
 ModelingPluginAssembly::ModelingPluginAssembly() = default;
 
 ModelingPluginAssembly::~ModelingPluginAssembly() = default;

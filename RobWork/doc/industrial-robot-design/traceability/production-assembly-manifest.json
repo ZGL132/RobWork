@@ -7,7 +7,7 @@
       "moduleId": "modeling",
       "required": true,
       "wired": true,
-      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2693",
+      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2695",
       "handleSymbol": "modeling::kModuleHandle",
       "waiver": null
     },
@@ -15,7 +15,7 @@
       "moduleId": "requirements",
       "required": true,
       "wired": true,
-      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2736",
+      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2754",
       "handleSymbol": "requirements::kModuleHandle",
       "waiver": null
     }

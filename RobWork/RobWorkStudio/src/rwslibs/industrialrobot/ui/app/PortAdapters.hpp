@@ -203,12 +203,10 @@ private:
  * ↔ ui 值投影，不吞错不改义）。双端口单实例＝同一存储上下文的两个冻结面
  * 由同一适配器承载（装配层单点，SessionPortBundle 冻结三字段形状零变化）。
  *
- * 分支锚诚实边界（UI-T17 立项登记注③）：tryLoad/discard 的对端签名携带
- * 分支（project 侧按 drafts/<branch>/ 寻址），而 ui 冻结端口无分支参数、
- * SessionPortBundle/C-3 亦无分支查询面——本适配器以构造期给定的分支锚承
- * 载（当前为缺省值：本阶段无挂接模块，tryLoad/discard 不可达；分支锚端口
- * 随完整草稿链路装配任务接续）。save 不受此限——分支在文档自身携带
- * （DraftDocumentProjection.branchId）。
+ * 分支锚（PM-08/12）：tryLoad/discard与清单共用构造期分支，生产工厂从
+ * 当前权威branchTips传入现行单默认分支；不能把全零身份当作主分支别名。
+ * ui冻结端口无分支参数，因此锚由L5适配器持有。save仍消费文档自身branchId；
+ * 控制器负责校验域归属。缺省值仅兼容显式采用空锚的旧测试装配。
  *
  * 所有权与保活（INV-SES-3 的适配器侧落点）：本适配器**独占持有**
  * ProjectStore（unique_ptr 自 OpenStoreResult 移入）——ui 经 shared_ptr 持
@@ -265,6 +263,8 @@ public:
     ///        经此取 commands() 命令端口；O-31 装配层特权面——仅宿主插件
     ///        /harness 装配 TU 消费，ui 库产品面零使用）。
     project::ProjectStore& projectStore() noexcept { return *m_store; }
+    /// @brief 返回构造期草稿分支值（PM-08）；仅供L5查询适配器同锚读取，无IO/异常。
+    core::BranchId draftBranchAnchor() const noexcept { return m_draftBranchAnchor; }
 
 private:
     /// 被适配的存储上下文（独占——本类析构即对端析构）。

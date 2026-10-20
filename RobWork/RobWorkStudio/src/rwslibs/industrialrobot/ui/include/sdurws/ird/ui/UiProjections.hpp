@@ -1040,14 +1040,14 @@ assembleReadOnlyBanner(ReadOnlyOpenCause cause,
  * @brief 草稿来源词表（§4.4.5 DraftOrigin 冻结三值的 ui 侧承载）。
  *
  * 词表锚点（不改义）：autosave＝定时落盘（§8.4 定时器）；manual＝手动
- * 保存（Ctrl+S/关闭对话框）；apply-retained＝应用被拒后对端保留草稿时
- * 的回写来源（§8.5"草稿保留（origin=apply-retained，project 侧已处置）"
- * ——该值由对端写入，ui 只读回显，不主动产出）。
+ * 保存（Ctrl+S/关闭对话框）；apply-retained＝Stale拒绝后显式保留原稿。
+ * ui经C-5请求保存完整域文档，project唯一DraftService执行落盘；
+ * project命令拒绝本身不携带域草稿，不能被误认已经保存（PM-04/AT-29）。
  */
 enum class DraftOrigin : std::uint8_t {
     Autosave,     ///< 定时落盘（token "autosave"）
     Manual,       ///< 手动保存（token "manual"；关闭对话框保存同源）
-    ApplyRetained,///< 应用被拒后保留（token "apply-retained"；对端写入）
+    ApplyRetained,///< 应用被拒后保留（token "apply-retained"；ui请求、project落盘）
 };
 
 /**
@@ -1090,8 +1090,8 @@ inline const char* draftOriginToken(DraftOrigin origin) noexcept
  *     等域自治形态对 ui/project 透明）；
  *   - savedAtUtc＝落盘时间（ISO-8601 UTC 文本；DraftController 在落盘
  *     分派时刻填写——同一次保存的所有模块共用同一时刻值，NFR-COR-02）；
- *   - origin＝草稿来源（§4.4.5 冻结三值；apply-retained 由对端写入，
- *     ui 不产出——见 DraftOrigin 注释）。
+ *   - origin＝草稿来源（§4.4.5 冻结三值；apply-retained由ui请求、
+ *     project唯一落盘——见DraftOrigin注释）。
  *
  * externalRefs 不在本投影（阶段 A 登记口径，§16.7 v1.4）：外部引用记录
  * 的投影形态随域编辑器接入（阶段 B）按"首消费冻结"机制增量登记——阶段 A

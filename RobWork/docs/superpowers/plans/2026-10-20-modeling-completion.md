@@ -382,3 +382,24 @@ B4c-3b-2细化：建模buildDraftDocument原来只填写base，未填写已有�
 B4c-3b-2登记同步：完整契约真实运行59通过、1失败，production-assembly-manifest.json的需求attachModule行锚因前方新增接线漂移（2714→2736）。仅更新该现行装配清单行锚，不改冻结历史证据或断言；原始失败另存manifest-anchor-red，修正后完整契约重跑。
 
 B4c-3b-2实际记录：十套件1499通过、0失败、0跳过（Windows GUI226），真实存储链扩展详情/反例而非新增用例项；集成全量Release、独立三目标及verify-task三条通过。正式tour另列FAIL：策略前进后真实Stale，旧脚本仍期待直接应用；现正常退出1，已查看失败窗口截图，不再发生旧空快照访问冲突。生产reader和建模onResult已接，真正窗口/旧稿落盘/迁移尚未闭环；证据b4c3b2-checkpoint，只本地WIP。
+
+## B4c-3b-3a 精确设计：建模编辑通知与冲突旧稿落盘
+
+1. 行为（PM-04/08/11、AT-21/29）：实际建模编辑须进入控制器脏代次，否则Ctrl+S/autosave跳过。新增装配通知只传“完整域帧已变”事件，覆盖字段/结构/部件/导入/局部undo-redo；同内容刷新不通知。Stale拒绝后显式保存原payload和原base，origin=apply-retained，失败保持脏/冲突和局部历史，不重建、不提交。该子批先实现保存基础，三选项/可见迁移仍另批。
+2. 精确公共面：ModelingPluginAssembly仅增加bindDraftChanged(std::function<void()>)默认空回调，UI线程、不能抛错；源在完整域帧变化后通知。ui::SaveTrigger表尾增加ApplyRetained，saveAll该语境只保存pending Stale模块（即便先前manual已清会话脏），不清脏、不清冲突/历史。现有方法/项目存储/origin三值不变。按用户自动推荐授权先设计后实施，不弹选项。
+3. 失败：保存仍经唯一DraftController后台串行执行器与IUiDraftStorePort；落盘拒绝/磁盘错误按SaveOutcome返回，旧内存/锚/历史保持。错归属branch投影不能被保存绑定静默掩盖：域给有效branch且与绑定不符时拒绝。回调装配必须在attach成功后，关闭/换项目解绑，不访问失效会话。非Stale模块不被apply-retained保存波及。
+4. 生命周期：模块持回调与上次观测的完整域帧值；接线初始化观测值，回调无payload借用。源变化观察与局部历史栈独立，undo-redo也通知。无有效branch不通知；脱会话清观察和回调。宿主改用实际store分支与StoreDraftQueryPortAdapter，替代生产仍残留的缺省branch/空清单桩；不改harness桩。
+5. 线程/确定性：完整帧沿唯一encodeModelingDraft比较；纯策略/显示刷新同帧零通知，不以时间或只看changes.size判断。UI线程重算结束/锁外回调，磁盘保存仍后台；同批时刻和原SI字节不变。
+6. 验证：先默认ApplyRetained错误落manual/清脏的真实控制器红例；真实建模源修改/重算/undo-redo通知，固定分支保存不跨项目；真实ProjectStore被拒旧帧保存后重读核对origin/payload/base及零修订。失败/无冲突/已手动保存但仍Stale/只读/后台线程均验证；真实模块GUI用控件编辑验证通知和撤销通知。双模式/相关完整套件/GUI，不把组件通过当宿主tour通过。
+7. 范围：原modeling assembly/plugin/test/gui；新增精确ui允许面IDraftController.hpp、UiProjections.hpp（仅origin注释）、src/DraftController.cpp、test/DraftControllerModelTest.cpp；原UiPlugin、HostCompilePipelineTest和单元卡/DTB/契约/计划/新证据。无CMake/新依赖，不碰F06/F07；现行装配清单行锚随代码更新，不改冻结证据。
+8. 决策：无新长期架构决策。纠正ui单元卡§8.5“project已处置”及公共注释“ui不产apply-retained”的失实实现说明：project从不携完整域草稿，实际由ui经已冻结C-5端口提交该来源，由project唯一DraftService落盘。避免新增第二套存储/线程或让域写文件；需求语义不变。仅本地WIP、不推送、不合入、不使用子代理。
+
+实施：控制器红证 → 编辑通知红证/实现 → 真实保存链和窗口通知 → 双模式/回归/GUI留痕 → 独立WIP检查点，后续正式冲突窗口另批继续。
+
+B4c-3b-3a补充（实施前）：真实GUI红例发现只读后结构新增仍写入草稿（readonly-structure-red）。沿同八节：①L-7/PM-07只读下五种结构动作均零写入；②仅私有ModelingPanelWidget按钮使能和槽防御，无公共变化；③模态重置确认返回后再次复核只读；④不持有旧草稿引用跨模态；⑤UI线程同步；⑥保留红证，逐个按钮禁用并直接invoke槽防御，恢复可写后继续编辑；⑦原plugin/gui允许面内，额外精确登记ui/contract_test/HostDraftChainContractTest.cpp，用既有modeling_plugin传递面验证真实建模帧→控制器→StorePortAdapter磁盘重读原base/payload/origin、零修订，不加依赖；⑧无新架构决策。原草稿通知修复继续，不修改F06/F07或冻结证据。
+
+B4c-3b-3a分支落盘锚补充（实施前）：追溯实际StoreFactoryPortAdapter发现StorePortAdapter构造仍省略分支，tryLoad/discard使用全零目录；只替换控制器binding不足以恢复。八节沿用：PM-08重开应读到同一真实分支原稿；私有工厂打开成功时传现行单默认branchTips首条id，空表明确拒绝，不改公共签名/存储；读写同锚、关闭释放；UI同步打开线程，落盘仍后台；新增真实工厂打开→保存→关闭重开→查询/载荷核对红例；仅额外允许ui/app/PortAdapters.cpp及.hpp相邻过期注释，原契约/单元卡/计划同步；无新增依赖/长期决策、不碰F06/F07。
+
+分支锚红证已真实复现两次tryLoad=Missing及list=0：清单也硬编码全零分支。推荐私有StorePortAdapter增加只读draftBranchAnchor()访问器，查询适配器复用同一构造期锚；生产工厂传权威分支。保留直接测试构造的旧缺省语义，不推断跨分支，不改公共头/六端口签名；额外私有声明位于已放行app/PortAdapters.hpp。
+
+B4c-3b-3a实际验证：十套件1502通过、0失败、0跳过（比前批新增3项）；Windows三套GUI227通过，已查看重做/只读截图。真实工厂及后台串行保存→关闭重开保持payload/base/branch/apply-retained，HEAD不变；只读结构缺口及全零分支读取分别真实红后修复。集成全量Release、独立三目标、verify-task三条（含架构门禁零命中及文档）通过。正式冲突窗口/可见迁移/正式tour及47项三维仍开放，不外推完成；证据另封存b4c3b3a-checkpoint，仅本地WIP。

@@ -207,6 +207,15 @@ struct ModelingPluginAssembly {
      */
     std::optional<ui::DraftDocumentProjection> retainedConflictDraft() const;
 
+    /**
+     * @brief PM-04/PM-11：订阅完整草稿帧变化，供宿主通知控制器脏代次。
+     * @param callback [in] 默认空；仅UI线程同步调用，不能抛错或递归修改草稿。
+     * 绑定不回放历史事件，首次绑定以当前帧建观察点；有效会话内字段、结构、
+     * 部件和局部undo/redo均通知，同内容刷新不通知。脱会话自动解绑，宿主
+     * 在挂接源成功后绑定；回调和值观察点归模块持有，无项目写入或线程转移。
+     */
+    void bindDraftChanged(std::function<void()> callback);
+
 
     /// 应用回执回写（submit Committed 后——基线前移＋根身份回填；T03b-2）。
     void noteAppliedRevision(const sdurws::ird::core::RevisionId& newBase,

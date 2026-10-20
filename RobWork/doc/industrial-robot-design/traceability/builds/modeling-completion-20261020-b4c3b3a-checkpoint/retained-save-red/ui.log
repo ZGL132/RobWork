@@ -1,0 +1,43 @@
+Note: Google Test filter = DraftControllerModelTest.RetainedSaveKeepsConflictAndDirty_PM04_AT29
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DraftControllerModelTest
+[ RUN      ] DraftControllerModelTest.RetainedSaveKeepsConflictAndDirty_PM04_AT29
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(812): error: Expected equality of these values:
+  outcome.savedCount
+    Which is: 2
+  1U
+    Which is: 1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(814): error: Expected equality of these values:
+  saved.origin
+    Which is: 1-byte object <01>
+  ui::DraftOrigin::ApplyRetained
+    Which is: 1-byte object <02>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(816): error: Value of: harness.ctl().summary().modules[0].sessionDirty
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(821): error: Expected equality of these values:
+  harness.ctl().saveAll(SaveTrigger::ApplyRetained).savedCount
+    Which is: 0
+  1U
+    Which is: 1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(823): error: Expected equality of these values:
+  harness.ctl().saveAll(SaveTrigger::ApplyRetained).failedCount
+    Which is: 0
+  1U
+    Which is: 1
+
+[  FAILED  ] DraftControllerModelTest.RetainedSaveKeepsConflictAndDirty_PM04_AT29 (0 ms)
+[----------] 1 test from DraftControllerModelTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DraftControllerModelTest.RetainedSaveKeepsConflictAndDirty_PM04_AT29
+
+ 1 FAILED TEST

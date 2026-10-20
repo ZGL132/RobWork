@@ -2657,8 +2657,8 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
             m_content->noteRecentProject(canonicalPath);  // PM-10 最近项目（去重/上限壳内处理）
         }
         // 草稿会话绑定（UI-T17——§5.2"打开成功→草稿侧编排"）：捕获包装里
-        // 取草稿写半区端口（StorePortAdapter 双面）；分支锚＝缺省值（诚实
-        // 边界——立项登记注③：本阶段无挂接模块，锚不可达）。
+        // 取草稿写半区端口（StorePortAdapter 双面）及真实分支；当前已挂接
+        // 域模块，不能再沿用立项期缺省分支/空清单桩，否则真实草稿无法恢复。
         if (m_draft) {
             if (m_draft->hasSession()) {
                 m_draft->unbindSession();  // 切换流表处置（§8.6——清空再绑）
@@ -2676,9 +2676,11 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
             } else {
                 DraftSessionBinding binding;
                 binding.projectId = report.opened.metadata.projectId;
-                binding.branchId = core::BranchId{};  // 分支锚（诚实边界——见上）
+                const auto tips = m_lastStoreAdapter->projectStore().query().branchTips();
+                if (tips.empty()) { throw std::logic_error("草稿会话缺少权威分支"); }
+                binding.branchId = tips.front().id; // 与现行单默认分支的应用锚同源。
                 binding.writable = report.opened.metadata.writable;
-                binding.drafts = std::make_shared<app::DraftQueryPortStub>();
+                binding.drafts = std::make_shared<app::StoreDraftQueryPortAdapter>(m_lastStoreAdapter);
                 binding.store = std::move(draftStore);
                 m_draft->bindSession(binding);
                 // 建模模块草稿源挂接（T03b-1——§10.5 attachModule；绑定
@@ -2693,6 +2695,22 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                         m_draft->attachModule(
                             modeling::kModuleHandle,
                             modelingDraftSource(*m_domains));
+                        m_domains->modeling.bindDraftChanged([this] {
+                            // 通知只发生于UI线程；关闭/换项目后即使迟到也不能访问失效会话。
+                            if (!m_draft || !m_draft->hasSession() || !m_lastStoreAdapter
+                                || m_lastStoreAdapter->isClosed()) { return; }
+                            try { m_draft->notifySessionDirty(modeling::kModuleHandle); }
+                            catch (const std::exception& error) {
+                                // 编辑已经被域接受，通知失败不能把异常抛回Qt事件循环。
+                                if (m_diag.pipeline) { m_diag.pipeline->logDev(kPluginDevChannel,error.what()); }
+                                if (m_hostStatusBar) { m_hostStatusBar->showMessage(
+                                    QStringLiteral("建模草稿保存通知失败，请检查后重试保存"),8000); }
+                            }
+                        });
+                        // 绑定不回放历史；打开前已有未应用内容时显式补一次脏代次。
+                        if (m_domains->modeling.module->buildDraftCommand(modeling::kModuleHandle)) {
+                            m_draft->notifySessionDirty(modeling::kModuleHandle);
+                        }
                         for(auto& entry:m_domains->applyEntries){
                             if(entry.moduleId!=modeling::kModuleHandle){continue;}
                             // PM-04：仅挂接成功才通知控制器；原先此闭包实际为空。

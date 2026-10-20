@@ -1,0 +1,26 @@
+Note: Google Test filter = ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1237): error: Expected equality of these values:
+  changes
+    Which is: 4
+  3
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1238): error: Expected equality of these values:
+  changes
+    Which is: 4
+  3
+关闭清理不保存跨项目空草稿
+
+[  FAILED  ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21 (1035 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (1036 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1037 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+
+ 1 FAILED TEST

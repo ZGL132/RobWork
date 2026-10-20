@@ -796,6 +796,40 @@ TEST_F(DraftControllerModelTest, StaleRevisionRetainsDraftAndPresentsConflict)
     EXPECT_THROW(harness.ctl().staleConflictData("nonexistent"), std::logic_error);
 }
 
+/** @brief PM-04/AT-29：冲突保留只落原草稿，不清会话状态或另存其他域。 */
+TEST_F(DraftControllerModelTest, RetainedSaveKeepsConflictAndDirty_PM04_AT29)
+{
+    IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
+    auto& harness=h();harness.buildController();harness.bindWritable();
+    auto& source=harness.attachDirty("modeling","完整旧草稿");
+    source.doc.baseRevisionId=core::RevisionId::generate();
+    harness.attachDirty("trajectory","无冲突草稿");
+    CommandResultProjection rejected;rejected.rejectionReason="stale-revision";
+    ui::StaleRevisionDetailProjection detail;detail.currentTipRevision=core::RevisionId::generate().toCanonical();
+    detail.draftBaseRevision=source.doc.baseRevisionId.toCanonical();rejected.staleDetail=detail;
+    harness.ctl().onCommandResult("modeling",rejected);
+    const auto outcome=harness.ctl().saveAll(SaveTrigger::ApplyRetained);
+    EXPECT_EQ(outcome.savedCount,1U);EXPECT_EQ(outcome.failedCount,0U);
+    ASSERT_FALSE(harness.store->saved.empty());const auto& saved=harness.store->saved.front();
+    EXPECT_EQ(saved.origin,ui::DraftOrigin::ApplyRetained);
+    EXPECT_EQ(saved.payload,source.doc.payload);EXPECT_EQ(saved.baseRevisionId,source.doc.baseRevisionId);
+    EXPECT_TRUE(harness.ctl().summary().modules[0].sessionDirty);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+    EXPECT_TRUE(source.rebuildCalls.empty());EXPECT_EQ(harness.store->revisionCount,0);
+    // 手动已保存不代表应用成功，下一次显式冲突保留仍须保存该模块。
+    ASSERT_EQ(harness.ctl().saveAll(SaveTrigger::Manual).failedCount,0U);
+    EXPECT_EQ(harness.ctl().saveAll(SaveTrigger::ApplyRetained).savedCount,1U);
+    harness.store->saveOk=false;
+    EXPECT_EQ(harness.ctl().saveAll(SaveTrigger::ApplyRetained).failedCount,1U);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+    // PM-12：明确跨分支的域文档必须拒绝，不能用活动绑定偷偷改写归属。
+    source.doc.branchId=core::BranchId::generate();
+    const auto writes=harness.store->saved.size();
+    EXPECT_THROW(harness.ctl().saveAll(SaveTrigger::ApplyRetained),std::invalid_argument);
+    EXPECT_EQ(harness.store->saved.size(),writes);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+}
+
 /// §8.5：[基于当前版本重新编辑]——域源以 tip 重建基线、控制器重置脏
 /// 标记与冲突态；无冲突调用＝违约；重编辑清空旧检查点（基线已重建）。
 TEST_F(DraftControllerModelTest, ReEditOnCurrentTipRebuildsBaseline)

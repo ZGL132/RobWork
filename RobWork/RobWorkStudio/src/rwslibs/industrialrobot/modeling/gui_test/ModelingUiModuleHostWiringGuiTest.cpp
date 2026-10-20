@@ -1219,7 +1219,34 @@ TEST(ModelingUiModuleHostWiring, ToolRealFileDialogAndStaleGuard_MDL13_AT28)
     }
 }
 
-/** @brief PM-04/AT-21：真实面板重建完整基线、清未确认表单和局部栈，旧值仍可核对。 */
+/** @brief PM-04/AT-21：真实结构编辑及局部历史均通知保存链，同值/只读/关闭不通知。 */
+TEST(ModelingUiModuleHostWiring, DraftChangeNotificationFromRealControls_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    module.bindSessionAnchor(core::BranchId::generate(),core::RevisionId::generate());
+    std::unique_ptr<QWidget> panel(module.createPanel());panel->resize(1140,840);panel->show();
+    QApplication::processEvents();int changes=0;module.bindDraftChanged([&]{++changes;});
+    module.recomputeReadiness();EXPECT_EQ(changes,0)<<"同值就绪刷新不能制造编辑";
+    auto* add=panel->findChild<QPushButton*>("ird_modeling_struct_add");ASSERT_NE(add,nullptr);
+    add->click();QApplication::processEvents();EXPECT_EQ(changes,1);
+    auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");ASSERT_NE(undo,nullptr);
+    undo->click();QApplication::processEvents();EXPECT_EQ(changes,2)<<"局部撤销也改变待保存内容";
+    auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");ASSERT_NE(redo,nullptr);
+    redo->click();QApplication::processEvents();EXPECT_EQ(changes,3);
+    propertySnapshot(*panel,"draft-change-redo");
+    module.setWritable(false);const auto before=module.session().draft;
+    for(const auto* name:{"ird_modeling_struct_add","ird_modeling_struct_remove",
+        "ird_modeling_struct_up","ird_modeling_struct_down","ird_modeling_struct_reset"}){
+        auto* button=panel->findChild<QPushButton*>(name);ASSERT_NE(button,nullptr);
+        EXPECT_FALSE(button->isEnabled())<<name;button->click();
+    }
+    EXPECT_EQ(module.session().draft,before);EXPECT_EQ(changes,3);
+    propertySnapshot(*panel,"draft-change-readonly");
+    module.onSessionDetached();EXPECT_EQ(changes,3)<<"关闭清理不保存跨项目空草稿";
+}
+
+/** @brief PM-04/AT-21：真实面板重建完整当前基线，并清除旧未确认表单和局部历史。 */
 TEST(ModelingUiModuleHostWiring, ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21)
 {
     IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);

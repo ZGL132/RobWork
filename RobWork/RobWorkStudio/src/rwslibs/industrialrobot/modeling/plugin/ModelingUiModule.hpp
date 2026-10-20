@@ -371,6 +371,8 @@ public:
         const core::BranchId&, const core::RevisionId&)> reader);
     /** @brief 返回上次成功重建前旧草稿的值副本；仅UI线程，无副作用。 */
     std::optional<ui::DraftDocumentProjection> retainedConflictDraft() const;
+    /** @brief 绑定完整域帧变更通知；[in] 回调仅UI线程、不可抛错，空值解绑，不持域值引用。 */
+    void bindDraftChanged(std::function<void()> callback);
 
 
     /**
@@ -555,6 +557,10 @@ private:
     // 值快照覆盖全部部件/资源/摘要，避免字段栈漏掉结构与引用变化；仅UI线程持有。
     std::optional<ModelingWorkingSet> m_historyCurrent;
     std::vector<ModelingWorkingSet> m_draftUndo, m_draftRedo;
+    /// PM-04：保存脏通知与撤销栈独立；undo/redo预先移动历史游标，仍须报告完整帧变化。
+    /// 两值仅UI线程持有；闭包由宿主保证生命周期，关闭会话先解绑再清空域状态。
+    std::function<void()> m_draftChanged;
+    std::optional<std::string> m_observedDraftFrame;
     PanelUiThreadGuard m_guard;              ///< §3.4 UI 线程守卫（构造线程绑定）
     ModuleSessionState m_session;            ///< 会话权威态（工作集唯一载体——装配层更新）
     /// PM-04：只读固定修订读取缝；闭包由模块持有，宿主保证借用目标生命周期。

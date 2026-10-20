@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "modeling-b4c3b3a-checkpoint/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "bc4cda806a1b",
+  "completed": false,
+  "totals": {
+    "total": 1502,
+    "passed": 1502,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 444,
+      "passed": 444,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 332,
+      "passed": 332,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 61,
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 348,
+      "passed": 348,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 82,
+      "passed": 82,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 55,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "formalHost": {
+    "status": "NOT RUN",
+    "reason": "正式冲突窗口/迁移仍未实施；上一批真实tour的Stale失败保持未封闭，本批不重复已知失败"
+  },
+  "notRun": [
+    "全47项真实三维终验",
+    "全新上下文独立验收",
+    "正式冲突窗口及可见迁移闭环"
+  ],
+  "notes": [
+    "相较上批1499项增加3项：GUI编辑通知、控制器冲突保留、真实建模磁盘重开",
+    "Windows GUI三套227通过，截图已查看；结构只读缺口真实红后修复，不声称三维已通过",
+    "retained-save-red/draft-change-red/factory-branch-red/readonly-structure-red保存真实产品红例",
+    "contract-fixture-failure因重复同模板是同值无通知，修正为从空域创建，不冒充产品红证",
+    "真实ProjectStore拒绝来源由既有HostCompilePipeline覆盖；新链消费Stale值并验证后台保存和工厂磁盘重开",
+    "仅本地WIP，不推送、不合入、不使用子代理；F06/F07未修改或集成"
+  ]
+}

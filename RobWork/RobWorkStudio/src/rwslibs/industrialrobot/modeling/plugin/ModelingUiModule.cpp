@@ -687,11 +687,24 @@ void ModelingUiModule::recomputeReadiness()
     if (m_panel != nullptr) {
         m_panel->refreshPanel(m_session.draft, *m_session.readiness);
     }
+    // PM-04/AT-21：观察完整规范域帧，覆盖结构、部件、字段及局部撤销/重做。
+    // 先更新观察点，再于锁外通知；纯就绪刷新不应制造保存脏代次。
+    if (m_observedDraftFrame) {
+        auto frame = encodeModelingDraft(m_session.draft);
+        const bool changed = frame != *m_observedDraftFrame;
+        m_observedDraftFrame = std::move(frame);
+        if (changed && m_session.branch != core::BranchId{} && m_draftChanged) {
+            m_draftChanged();
+        }
+    }
 }
 
 void ModelingUiModule::onSessionDetached()
 {
     m_guard.assertOnUiThread();
+    // 会话边界先切断保存通知，关闭后的空工作集不能成为下一项目的脏草稿。
+    m_draftChanged = {};
+    m_observedDraftFrame.reset();
     // UI-T77（F-567）：先退订选择适配器再清状态源（teardown「先退订消
     // 费者再清状态源，防清理过程重入回调」序的对齐面）——requirements
     // 侧 onSessionDetached 显式调 detachSelectionService，本域此前漏调：
@@ -1030,6 +1043,15 @@ void ModelingUiModule::bindRevisionDraftReader(
 std::optional<ui::DraftDocumentProjection> ModelingUiModule::retainedConflictDraft() const
 {
     m_guard.assertOnUiThread();return m_retainedConflictDraft;
+}
+
+void ModelingUiModule::bindDraftChanged(std::function<void()> callback)
+{
+    m_guard.assertOnUiThread();
+    // 首次接线只建立观察点；既有未应用内容由宿主显式登记，避免绑定回放。
+    m_draftChanged = std::move(callback);
+    if (m_draftChanged) { m_observedDraftFrame = encodeModelingDraft(m_session.draft); }
+    else { m_observedDraftFrame.reset(); }
 }
 
 void ModelingUiModule::bindSessionPoseWriter(

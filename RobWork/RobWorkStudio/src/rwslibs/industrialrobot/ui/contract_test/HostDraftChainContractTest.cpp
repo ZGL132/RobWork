@@ -74,6 +74,8 @@
 #include <sdurws/ird/project/ProjectStore.hpp>          // ProjectStoreFactory（真实工程存储；project 域类型全限定——WP-14-T11 ::project 兜底注）
 #include <sdurws/ird/ui/IDraftController.hpp>           // createDraftController/DraftSessionBinding/SaveTrigger/IModuleDraftSource
 #include <sdurws/ird/ui/UiProjections.hpp>              // DraftDocumentProjection/DraftRowProjection（草稿文档/查询行投影）
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp> // PM-04：真实完整域帧，不伪造模型序列化。
+#include <sdurws/ird/diagnostics/Logging.hpp> // 真实工厂打开的诊断桥采用产品管线。
 #include "app/PortAdapters.hpp"                         // StorePortAdapter（写半区双面）＋StoreDraftQueryPortAdapter（读半区真实适配——F-911 修复面本体）
 
 namespace {
@@ -620,4 +622,68 @@ TEST(HostDraftChain, ClosedContextListReturnsEmptyTruth_UI_T84)
     queryPort.reset();
     storePort.reset();
     removeDirBestEffort(storeDir);
+}
+
+/** @brief PM-04/08、AT-21/29：真实工厂分支锚、建模通知及冲突原稿磁盘重开保真。 */
+TEST(HostDraftChain, ModelingRetainedDraftReopensOnRealBranch_PM04_AT29)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"PM-04","PM-08"}),{"AT-21","AT-29"});
+    namespace modeling = sdurws::ird::modeling;
+    namespace diagnostics = sdurws::ird::diagnostics;
+    const auto dir = std::filesystem::temp_directory_path()
+        / ("ird-modeling-retained-" + core::ObjectId::generate().toCanonical());
+    auto created = project::ProjectStoreFactory::createNew(dir,"冲突旧稿重开");
+    ASSERT_NE(created.store,nullptr);
+    const auto branch = created.store->query().branchTips().front().id;
+    const auto base = created.store->query().head().id;
+    created.store.reset(); // 释放独占锁，再经生产打开工厂建立会话。
+
+    diagnostics::SystemClock clock;diagnostics::FileLogFileOps files;
+    auto pipeline=std::make_shared<diagnostics::LoggingPipeline>(clock,files);
+    diagnostics::StableCodeRegistry registry;diagnostics::registerBuiltinCodes(registry);registry.seal();
+    auto factory=std::make_shared<diagnostics::DiagnosticsFactory>(registry,clock);factory->seal();
+    auto catalog=std::make_shared<diagnostics::DiagCatalog>();
+    app::ProjectDiagnosticsBridge bridge(catalog,factory,pipeline);
+    app::StoreFactoryPortAdapter opener(bridge);
+    ui::SessionPortBundle ports;
+    ASSERT_TRUE(opener.open(dir.u8string(),ui::UiOpenMode::Writable,ports).ok);
+    auto store=std::dynamic_pointer_cast<app::StorePortAdapter>(ports.store);ASSERT_NE(store,nullptr);
+
+    // 磁盘段用真实后台串行执行器；域通知在UI/模型主线程同步进入控制器。
+    app::SerialTaskExecutor disk;ui::DraftControllerDeps deps;
+    deps.postToDiskThread=[&](std::function<void()> task){return disk.post(std::move(task));};
+    deps.postToUiThread=[](std::function<void()> task){task();return true;};
+    auto controller=ui::createDraftController(std::move(deps));
+    ui::DraftSessionBinding binding;binding.projectId=store->projectStore().projectId();
+    binding.branchId=branch;binding.writable=true;binding.store=store;binding.drafts=ports.drafts;
+    controller->bindSession(binding);
+    auto domain=modeling::createModelingPluginAssembly();
+    domain.bindSessionAnchor(branch,base);
+    controller->attachModule("modeling",domain.modelingDraftSource());
+    domain.bindDraftChanged([&]{controller->notifySessionDirty("modeling");});
+    domain.seedTemplateSession(); // 完整新模板是实际域编辑；无需人工notify伪造生产链。
+    ASSERT_TRUE(controller->summary().anyDirty);
+    const auto original=domain.modelingDraftSource().buildDraftDocument();
+    ASSERT_EQ(original.branchId,branch);ASSERT_EQ(original.baseRevisionId,base);
+    // 实际project Stale裁决/详情另由HostCompilePipeline覆盖；这里消费相同值端口。
+    ui::CommandResultProjection stale;stale.rejectionReason="stale-revision";
+    controller->onCommandResult("modeling",stale);
+    const auto saved=controller->saveAll(ui::SaveTrigger::ApplyRetained);
+    ASSERT_EQ(saved.failedCount,0U);ASSERT_EQ(saved.savedCount,1U);
+    EXPECT_TRUE(controller->summary().anyDirty);EXPECT_TRUE(controller->staleConflictData("modeling").present);
+    EXPECT_EQ(store->projectStore().query().head().id,base); // 保存不能产生项目修订。
+    const auto check=[&](const ui::DraftLoadOutcome& loaded){
+        ASSERT_EQ(loaded.status,ui::DraftLoadOutcome::Status::Loaded);
+        EXPECT_EQ(loaded.document.payload,original.payload);
+        EXPECT_EQ(loaded.document.baseRevisionId,base);EXPECT_EQ(loaded.document.branchId,branch);
+        EXPECT_EQ(loaded.document.origin,ui::DraftOrigin::ApplyRetained);
+    };
+    check(store->tryLoad("modeling")); // 生产默认构造曾在全零分支目录读取而Missing。
+    controller->unbindSession();domain.onSessionDetached();
+    binding.store.reset();binding.drafts.reset();controller.reset();ports={};store.reset();
+    ASSERT_TRUE(opener.open(dir.u8string(),ui::UiOpenMode::Writable,ports).ok);
+    store=std::dynamic_pointer_cast<app::StorePortAdapter>(ports.store);ASSERT_NE(store,nullptr);
+    check(store->tryLoad("modeling"));EXPECT_EQ(ports.drafts->listDrafts().size(),1U);
+    EXPECT_EQ(store->projectStore().query().head().id,base);
+    ports={};store.reset();removeDirBestEffort(dir);
 }
