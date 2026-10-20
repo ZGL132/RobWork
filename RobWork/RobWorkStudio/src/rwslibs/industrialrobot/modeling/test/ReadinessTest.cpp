@@ -25,6 +25,7 @@
 
 #include <sdurws/ird/modeling/DiagCodes.hpp>   // 码常量同源对账
 #include <sdurws/ird/modeling/Readiness.hpp>
+#include <sdurws/ird/modeling/Template.hpp> // MDL-12：真实用户确认必须解除范围阻断。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯
 
 #include <gtest/gtest.h>
@@ -110,9 +111,9 @@ TEST(MdlReadiness, LegalWorkingSetAllLayersPassAndPureFunction)
         EXPECT_EQ(w.code, std::string(kMdlReadinessPhysicsMissing));
     }
 
-    // 模板速度/加速度字段的 schema 边界必须显式可见：NotProvided 不阻断
-    // 建模草稿，但报告携带字段路径、单位和补录动作，防止后续轨迹/动力学
-    // 调用方把模板参考值误当成已生效输入。
+    // 速度/加速度缺值预告面（F01 后 schema 已有承载——本夹具单关节未填
+    // v/a，预告条件化登记）：NotProvided 不阻断建模草稿，但报告携带字段
+    // 路径、单位和补录动作（改指关节编辑页——值真实进入运行时计算）。
     const ReadinessNote* schemaGap = nullptr;
     for (const ReadinessNote& note : first.notes) {
         if (note.kind == ReadinessNoteKind::NotProvided) {
@@ -124,8 +125,8 @@ TEST(MdlReadiness, LegalWorkingSetAllLayersPassAndPureFunction)
     EXPECT_EQ(schemaGap->subjectPath, "drivetrain.velocityAcceleration");
     EXPECT_EQ(schemaGap->fieldPath,
               "joints[*].maxVelocity / joints[*].maxAcceleration");
-    EXPECT_EQ(schemaGap->unitText, "rad·s⁻¹ / rad·s⁻²");
-    EXPECT_NE(schemaGap->recommendedAction.find("传动或策略模块"), std::string::npos);
+    EXPECT_NE(schemaGap->unitText.find("rad·s⁻¹"), std::string::npos);
+    EXPECT_NE(schemaGap->recommendedAction.find("关节编辑页"), std::string::npos);
 }
 
 namespace {
@@ -133,7 +134,7 @@ namespace {
 /// 全干净工作集（WP-13-T23 Ready 可达性用例专用）：物性全提供（L5 无
 /// Warning 预告）、传动已配置（不触发 L9 缺省注记）、行程恰 4π＝默认
 /// 阈值（无 Confirmable）、无资源/工具/writable 上下文注记——唯一 note
-/// 就是 L9 无条件登记的 NotProvided schema 缺项预告。
+/// 就是 L9 登记的 NotProvided 缺项预告（F01 后条件化——本夹具关节未填 v/a）。
 ModelingWorkingSet makeFullyProvidedWorkset()
 {
     RobotDesign design = makeSingleJointDesign(-2.0 * kPi, 2.0 * kPi);
@@ -445,6 +446,22 @@ TEST(MdlReadinessAssertionDomains, MissingPhysicsWithConfirmedContinuousApplicab
     EXPECT_TRUE(report.confirmables.empty());  // continuous 行程豁免
 }
 
+/** @brief MDL-12/AT-17：未确认先阻断，真实范围编辑解除阻断，不引入行程确认。 */
+TEST(MdlReadinessAssertionDomains, RangeEditorUnblocksContinuous_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","MDL-06"},std::vector<std::string>{"AT-17"});
+    ReadinessFixture f;RobotDesign design;
+    design.joints.push_back(makeContinuousJoint(makeOid(),"Jspin",false));
+    design.links.push_back(makeLink(makeOid(),"base"));design.links.push_back(makeLink(makeOid(),"link1"));
+    f.bindNames(design);ModelingWorkingSet ws{design,{},makeOid(),{},{},{},{}};
+    const auto pending=f.checker.check(ws,CheckContext{});
+    EXPECT_FALSE(pending.blockers.empty());
+    ASSERT_FALSE(applyJointFieldEdit(ws,0,JointEditField::WorkingRange,JointLimits{-20,20}).has_value());
+    const auto confirmed=f.checker.check(ws,CheckContext{});
+    EXPECT_TRUE(confirmed.blockers.empty());EXPECT_TRUE(confirmed.confirmables.empty());
+    EXPECT_EQ(readinessStatusToken(confirmed.status),"ReadyWithNotes");
+}
+
 /**
  * @brief F-746① 回归钉（断言面）：continuous 关节 workingRange 处 Invalid
  *        态（伪造字节可解码出的深层非法实例——audit 实测路径）→ 断言④
@@ -710,5 +727,38 @@ TEST(MdlReadiness, L9CouplingStageLockAndR2NumericCheck_WP13T18)
             EXPECT_NE(b.code, std::string(kMdl21CouplingInvalid));
         }
         EXPECT_TRUE(report.layers[9].passed);
+    }
+}
+
+/**
+ * @brief WP-13-T25/F01（MDL-01）：关节速度/加速度 schema 落位后就绪注记
+ *        语义收敛——已带模板种子值的工作集不得再登记"schema 无落点"缺项
+ *        预告（该预告的历史前提"§4.3-A 无字段"随 F01 消除）。
+ *
+ * 修复前（红）：L9 无条件登记 drivetrain.velocityAcceleration 缺项预告
+ * （Readiness.cpp v0.52 批）——本用例断言其缺席即红。
+ */
+TEST(MdlReadiness, NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01",{},std::nullopt);
+
+    ReadinessFixture f;
+    // 模板草稿（F01 后 createDraft 携速度/加速度种子 Provided——本用例
+    // 断言其就绪面不再登记 schema 缺项预告；基线态模板草稿被无条件登记
+    // 即红证锚）。
+    const RobotDesignTemplateFactory factory;
+    std::vector<core::DiagnosticRecord> templateDiags;
+    const ModelingWorkingSet ws = factory
+        .createDraft(TemplateId{kTemplateIdGeneric6R},
+                     sdurws::ird::runtime::InstallationPresetToken::Ground, "va-ready", templateDiags)
+        .get();
+    f.bindNames(ws.design);
+    const CheckContext ctx{nullptr, true, std::nullopt};
+
+    const ModelReadinessReport report = f.checker.check(ws, ctx);
+    for (const ReadinessNote& n : report.notes) {
+        EXPECT_EQ(n.subjectPath.find("drivetrain.velocityAcceleration"), std::string::npos)
+            << "速度/加速度已入 schema（F01）——不得再登记 schema 缺项预告: "
+            << n.subjectPath;
     }
 }

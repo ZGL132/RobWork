@@ -1,0 +1,13 @@
+Window: "导入预览确认", App: sdurws_ird_studio.exe.
+	0 窗口 (settable, string) 导入预览确认 Value: 可导入行：2；错误行：1 行错误：必备位置分量缺失或数值非法/单位无法换算（长度列，声明单位 m） 确认导入正确行到草稿？ Secondary Actions: Raise ID: QApplication.QMessageBox
+		1 标题栏 (settable, string) Value: 导入预览确认
+			2 菜单栏 系统 ID: MenuBar
+				3 菜单项 系统
+			4 按钮 关闭
+		5 图像 ID: QApplication.QMessageBox.qt_msgboxex_icon_label
+		6 文本 可导入行：2；错误行：1 行错误：必备位置分量缺失或数值非法/单位无法换算（长度列，声明单位 m） 确认导入正确行到草稿？ ID: QApplication.QMessageBox.qt_msgbox_label
+		7 组 (settable, string) ID: QApplication.QMessageBox.qt_msgbox_buttonbox
+			8 按钮 (settable, string) 确定 ID: QApplication.QMessageBox.qt_msgbox_buttonbox.QPushButton
+			9 按钮 (settable, string) 取消 ID: QApplication.QMessageBox.qt_msgbox_buttonbox.QPushButton
+
+The focused UI element is 9 按钮 (settable, string) 取消 ID: QApplication.QMessageBox.qt_msgbox_buttonbox.QPushButton.

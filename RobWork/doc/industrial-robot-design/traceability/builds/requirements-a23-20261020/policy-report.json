@@ -1,0 +1,1918 @@
+{
+  "schemaVersion": "ird-gtest-xml-derived/1",
+  "reportOrigin": "derived-from-gtest-xml",
+  "note": "目标沿用GTest::gtest_main，不原生输出ird-test-report；本伴随报告仅转写真实XML，traceMetadata不可恢复，不冒充原生listener报告。",
+  "sourceXml": "policy.xml",
+  "sourceSha256": "749a4c0463101bcb1ff6f1bfc87b550f8e5b9d26c7f1f314a7888a1df8ba9927",
+  "summary": {
+    "passed": 211,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "total": 211,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": [
+    {
+      "testId": "PolicyBuild.SourceTreeReachable_POL_BUILD",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 1.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "66",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyBuild.NoQtInclude_POL_BUILD_NFR_MNT_01",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 9.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "77",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyBuild.NoCrossUnitInclude_POL_BUILD_R1_R2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 9.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "97",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyBuild.BaselineLibsPinned_POL_BUILD_R5",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\BuildRedLineTest.cpp",
+      "sourceLine": "124",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyErrors.TokenTableFullEnumeration_NFR_COR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "149",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyErrors.RegistryCodeTableFullEnumeration_NFR_COR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "186",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyErrors.ErrorMessagePrefixConvention_AGENTS_ErrorSemantics",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "223",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.SafetyClearanceZeroIsLegal_D08_Boundary",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "251",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.SafetyClearanceNegativeRejected_POL_PARSE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "261",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.NearLimitRatio1_5OutOfRange_POL_PARSE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "275",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.NearLimitRatioBoundaries_D08_POL_PARSE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "289",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.ConditionNumberDomainWindows_POL_PARSE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "317",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.TravelLimitDomain_AT01_MultiTurn",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "346",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.NonFiniteRejectedForAllDomains_POL_PARSE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "376",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.ThresholdImmutability_StaticTraits",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "405",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyThresholdField.SameValueDifferentDomainNotEqual",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "428",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyJointThresholds.ConservativeDefaultsNoInventedValues_P_POL_2_O10",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "447",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyJointThresholds.MakeCarriesValuesAndOrigins",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "469",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyJointThresholds.NoInertiaRatioField_O11_P_POL_3",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "506",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyJointThresholds.NoCouplingThresholdField_O18_P_RT_7",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "521",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCollisionRules.FieldDefaultsPerCard",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "539",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCollisionRules.EnabledWithoutClearanceRejected_POLICY_THRESHOLD_REQUIRED_MISSING",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "555",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCollisionRules.DisabledWithoutClearanceAllowed",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "570",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCollisionRules.EnabledEmptyDomainsRejected_APPLICABILITY_INVALID",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "581",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCollisionRules.WrongDomainThresholdRejected_PolicyObjectInvalid",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "598",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCollisionRules.PairRuleStructureValidation",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "614",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicySetGate.ValidInstanceRoundTripAndEquality",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "648",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicySetGate.GateRejectsInvalidIdentityStateAnchor_PolicyObjectInvalid",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "684",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicySetGate.GateRejectsFutureAndUnknownSchemaVersions_PM06",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "741",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicySetGate.ReleasedInstanceImmutability_StaticTraits",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicySetTest.cpp",
+      "sourceLine": "771",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.RoundTripFullFieldsPreservesAll_POL_ID_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 1.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "255",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.RoundTripMinimalFieldsPreservesAbsence_POL_ID_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "270",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.DeterministicEncodingAndIdentity_NFR_COR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "288",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.RuleListOrderInvariance_YieldsIdenticalBytesAndIdentity_POL_ID_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "306",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.UnorderedPairEndsInvariance_POL_ID_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "341",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.SetOrderAndDuplicateInvariance_POL_ID_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "366",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.DisplayUnitNotInIdentity_POL_ID_3",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "400",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.ThresholdChangeYieldsNewIdentity_POL_ID_4",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "446",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecId.NearEqualThresholdsDistinctIdentities_POL_ID_5",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "460",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecFloat.CanonicalF64RoundTripPreservesExactBits",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "494",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecFloat.CanonicalF64RejectsNonFiniteAtEncodeEntry",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "529",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecFloat.ParseCanonicalF64RejectsNonFiniteBitPatterns",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "551",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecFloat.OneUlpThresholdDifferenceChangesBytesAndIdentity_Acceptance2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "581",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecCr02.DigestViaCoreContentDigesterOnly_CR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "601",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecCr02.ExcludedFieldsPinned_CR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "619",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecCr02.ThresholdValueOriginNotInIdentity",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "642",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.EncodeRejectsNonFiniteThresholds",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "666",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.EncodeRejectsContractViolations",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "685",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.DecodeRejectsWrongMagicFormAndVersions",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "741",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.DecodeRejectsTruncatedAndPaddedBytes",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "791",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.DecodeRejectsUnknownEnumAndBadPresence",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "829",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.DecodeRejectsNonFiniteBitPatternAndEmptyReason",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "873",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.DecodeRejectsEmptyNumericContractAnchor_F746_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "926",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.DecodeRejectsMalformedScopeTarget_F746_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "963",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyCodecErrors.RoundTripPreservesUtf8AndUnitTokens",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyInputTest.cpp",
+      "sourceLine": "1004",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseSchema.FutureVersionRejectedWithComparativeAndUpgradeGuide_POL_PARSE_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "207",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseSchema.UnknownOlderVersionRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "230",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseSchema.FutureVersionDoesNotInterpretFields",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "243",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseSchema.RoleVocabularyTypoRejectedAsUnknownField",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "260",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseSchema.SceneObjectRoleTokensFrozenVocabulary",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "281",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseThresholds.NonFiniteSafetyClearanceRejectedKeepsRaw_POL_PARSE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "297",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseThresholds.InfiniteTravelLimitRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "316",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseThresholds.NegativeSafetyClearanceCarriesComparative",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "331",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseThresholds.NearLimitRatioOutOfRangeComparative_POL_PARSE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "351",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseThresholds.ZeroTravelLimitRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "369",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseThresholds.ConditionNumberBelowOneRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "385",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseThresholds.MultipleThresholdErrorsCollectedWithoutShortCircuit",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "399",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseThresholds.ValidThresholdsPublishedWithExplicitOrigin",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "425",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseUnits.ForceUnitForLengthRejectedForwardsCoreError_POL_PARSE_3",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "444",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseUnits.UnregisteredUnitTokenRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "460",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseUnits.MillimeterNormalizedToSi_UnitsNotInIdentity",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "474",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseUnits.DegreeTravelLimitNormalizedToRadian",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "491",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseUnits.EmptyUnitTokenMeansFieldSiUnit",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "508",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseRules.DirectCrossListConflictRejected_POL_PARSE_4",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "527",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseRules.RoleExpansionConflictRejected_POL_PARSE_4",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "548",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseRules.GroupNameConflictRejected_POL_PARSE_4",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "569",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseRules.RoleExpansionDuplicateWithinListRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "590",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseRules.ExactDuplicateListsBothEntries_POL_PARSE_5",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "614",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseRules.PairEndsNormalizedToLexicographicOrderInOutput",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "636",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseRules.UndefinedGroupReferenceRejected_POL_PARSE_5",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "658",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseRules.DefinedGroupReferencePublishes",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "676",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseScope.MissingRuleObjectRejectedBindsSubject_POL_PARSE_6",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "695",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseScope.MissingApplicabilityObjectRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "714",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseScope.MultipleMissingObjectsAllReported",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "731",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseApplicability.EmptyDomainsWithEnabledRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "757",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseApplicability.EmptyDomainsWithDisabledPublishes",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "774",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseApplicability.DuplicateDomainsNormalizedInOutput",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "790",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseDefaults.TravelLimitDefaultFilledFromAppendixD_Acceptance2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "814",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseDefaults.UnfrozenDefaultsStayAbsent_Acceptance2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "836",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseDefaults.ExplicitTravelLimitKeepsExplicitOriginWithoutInfo",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "854",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseDefaults.DefaultAppliedAndExplicitValueShareIdentity",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "868",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParseDefaults.RequiredMissingWhenEnabledWithoutClearance_Acceptance2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "885",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParsePipeline.DeterministicParseTwiceSameResult_POL_ID_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "906",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParsePipeline.PublishedIdentityMatchesCodecRecompute",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "921",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParsePipeline.ParseOfDecodedBytesYieldsSamePolicy",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "935",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParsePipeline.ValidatorMatchesResolveDiagnostics",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "952",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParsePipeline.CallerContractViolationsFailFast",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "971",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParsePipeline.AllStageErrorsCollectedInDeterministicOrder",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "1003",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyParsePipeline.PublishedPolicyCarriesPolicyObjectAndAuditFields",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyParsingTest.cpp",
+      "sourceLine": "1048",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPortContexts.NameContextExpectedErrorYieldsNulloptIdempotent_CR_04",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "363",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPortContexts.CallContextReflectsHostState",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "391",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.ResolvePublishesPipelineEqualPolicy_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "409",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.MissingObjectBytesYieldsDiagnosticNoThrow_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "430",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.AbsentExpectedVersionYieldsDiagnosticNoThrow_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "453",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.CallerContractViolationsFailFast_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "470",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.CorruptBytesForwardedAsDiagnosticNoThrow_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "495",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.ForgedEmptyAnchorBytesYieldValueFaceNoThrow_F746_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "516",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.ForgedMalformedScopeTargetBytesYieldValueFaceNoThrow_F746_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "543",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.FutureSchemaBytesForwardSchemaDiagnosticNoThrow_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "574",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.InvalidPolicyContentForwardsPipelineDiagnosticsNoThrow_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "593",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.CollisionBackendReturnsInjectedDescriptor_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "614",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.CollisionEvaluatorBeforeAssemblyFailsFast_PortContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "629",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPort.ConcurrentResolveReadOnlySafety_PortContract_NFR_COR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "646",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPortCache.RepeatedResolveReturnsFieldEqualResult_POL_ID_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "693",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPortCache.CacheKeyIncludesContentVersionSeparatesEntries_POL_ID_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "713",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyPortCache.FailureOutcomeMemoizedFieldEqual_POL_ID_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\PolicyPortTest.cpp",
+      "sourceLine": "746",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagCodeTable.RegisteredCodesCoversWholeTable_SEC9_6",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "81",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagCodeTable.RegisteredCodesDeterministicAcrossInstances_NFR_COR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "102",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagCodeTable.NoDuplicateCodes_SEC9_6",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "113",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagCodeTable.AllCodesMatchCoreSyntax_CORE_C3",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "124",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagCodeTable.RegistryCodeIntersectionConsistent_NFR_MNT_03",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "152",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.StableRecordPassesContractCheck_ERR_01",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "183",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.SubjectOptionalIntegrityCheckedByConsumer_ERR_01",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "207",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.RejectsUnknownCodeFailFast_SEC9_6",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "222",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.RejectsBlankRequiredStrings_CORE_C3",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "245",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.ComparativeRecordPassesContractAndComparativeChecks_UX_03",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "260",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.RejectsComparisonWithInvalidUnit_UX_03",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "293",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.NotApplicableSidePassesCheckWithoutForgedValue_P_POL_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "312",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.InvalidSidePreservesRawText_NFR_COR_03",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "338",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsMake.DeterministicConstruction_NFR_COR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "362",
+      "traceMetadata": null
+    },
+    {
+      "testId": "MakeComparativeHelpers.FiniteValueProvidesWithProvenance_DYN_06",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "379",
+      "traceMetadata": null
+    },
+    {
+      "testId": "MakeComparativeHelpers.NonFiniteValueInvalidatesWithRawText_NFR_COR_03",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "395",
+      "traceMetadata": null
+    },
+    {
+      "testId": "MakeComparativeHelpers.NotApplicableSideKeepsUnit_P_POL_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "417",
+      "traceMetadata": null
+    },
+    {
+      "testId": "MakeComparativeHelpers.AggregatesBothSidesVerbatim_SEC9_6",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "428",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolicyDiagnosticsInterface.PolymorphicUseThroughBaseReference_SEC9_6",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\DiagnosticsTest.cpp",
+      "sourceLine": "445",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SystemDefaultPolicy.FactoryPublishesAppendixDDefaults_F536_O46",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\SystemDefaultPolicyTest.cpp",
+      "sourceLine": "52",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SystemDefaultPolicy.FactoryDeterministicContentIdentity_NFR_COR_02",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\SystemDefaultPolicyTest.cpp",
+      "sourceLine": "91",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SystemDefaultPolicy.ProviderServesDefaultForWellKnownId_F536",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\SystemDefaultPolicyTest.cpp",
+      "sourceLine": "104",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SystemDefaultPolicy.ProviderReportsMissingForForeignId_ERR_01",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\SystemDefaultPolicyTest.cpp",
+      "sourceLine": "125",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SystemDefaultPolicy.ProviderFailsFastOnZeroId_ERR_01",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\SystemDefaultPolicyTest.cpp",
+      "sourceLine": "141",
+      "traceMetadata": null
+    },
+    {
+      "testId": "SystemDefaultPolicy.ProviderFailsFastOnCollisionHalf_PORT_ASSEMBLY",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\SystemDefaultPolicyTest.cpp",
+      "sourceLine": "151",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionScope.SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "421",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionScope.ThreeDomainMatrixRowAssignment_POL_SCOPE_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "475",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionScope.SceneDomainOnlyMandatoryEnters_POL_SCOPE_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "552",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionScope.DisabledPolicyYieldsEmptyScope",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "975",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.ExcludedByRuleKeepsTraceAndSetupExclude_POL_SCOPE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "607",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.MandatoryAdjacentPairSurvivesDefaultFilter_POL_SCOPE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "669",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.ParseTimeConflictStillRejected_POL_SCOPE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "713",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.SceneExpansionConflictRecheckRejectsTwoLayerDefense_POL_SCOPE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "742",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.RuleReferenceMissingFromSceneRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "796",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.DuplicateSceneObjectIdsRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "829",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.EmptySceneContentIdentityRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "849",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.NullWorkcellRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "868",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.PrimaryDeviceUnresolvableRejected_NAME_UNRESOLVED",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "887",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.PrimaryDeviceNameNotADeviceRejected_NAME_UNRESOLVED",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "905",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.GroupTargetConservativelyRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "927",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.NullBackendStrategyRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "952",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionGuards.MandatoryOnUnlistedMatrixComboRejected_F808",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "1117",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionIdentity.SameInputsYieldEqualSessionIdentity",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "996",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionIdentity.CompositionChangesChangeSessionIdentity",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "1020",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionIdentity.SceneListOrderDoesNotChangeExpansion",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "1048",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionDetector.UniqueEntryProducesBuiltinBackend",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "1076",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionSessionTokens.RoleTokenRoundTripExact",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionSessionTest.cpp",
+      "sourceLine": "1094",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.SingleStateDetectsAndClearsAnalyticPair_POL_EVAL_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "503",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.MandatoryStateFindingCarriesProofMaterial_POL_EVAL_3",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "574",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.SampleSetAllCollidingYieldsFindingsOnly_POL_EVAL_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "607",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.PathSequenceKeepsOrderAndPathParameter_POL_EVAL_4",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "641",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.BackendExceptionBecomesFailedNotCollision_POL_EVAL_5",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "686",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.CancellationKeepsPartialFindingsWithoutErrorDiag_POL_EVAL_6",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "721",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.RepeatedEvaluationsAreFieldIdentical_POL_EVAL_7",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "761",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.ConcurrentEvaluateOnSharedSessionIsIdentical_POL_CONC_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "792",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.BoundaryDecisionTableByScriptedDistance_POL_EVAL_8",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "830",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.ModeLabelContextsDoNotChangeOutput_POL_EVAL_8",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "912",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.GeometryGapKeepsCoverageAndDiagnostic_POL_EVAL_9",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "966",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.EmptyScopeAndMalformedQueries_POL_EXC_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "1029",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.ExpiredContextIsRejected_POL_LATE_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "1127",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.MissingDistanceCapabilityFailsLoudly_POL_EVAL_8",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "1152",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.AppliedFiltersTraceAndMandatorySurvive_POL_SCOPE_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "1190",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionEvaluation.StopAtFirstFindingTerminatesEarlyWithCoverage",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "1254",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CollisionQueryContract.QueryCarriesNoThresholdOrModeMembers_R_POL_5_D9",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CollisionEvaluationTest.cpp",
+      "sourceLine": "940",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.TravelAtFourPiBoundaryIsNotExceeded_POL_JNT_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "208",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.TravelAboveFourPiCarriesComparativeTriple_POL_JNT_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "238",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.ContinuousJointExemptFromTravelAndLimitChecks_POL_JNT_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "272",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.ExplicitSixPiThresholdPassesMultiTurnJoint_POL_JNT_1",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "303",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.TravelCheckDisabledEmitsExplicitMarker",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "331",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.UnsetThresholdsOutputExplicitNotApplicable_POL_JNT_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "369",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.IntervalInvalidIsDiagnosticLevelAndSkipsJoint_POL_JNT_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "422",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.EngineeringRangeInvalidIsDiagnosticLevel_POL_JNT_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "478",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.NearLimitBoundaryIsStrictLessThanWithShouldLevel_POL_JNT_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "519",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.LimitViolationClosedIntervalBoundary_POL_JNT_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "559",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.MarginValuesFollowSpecFormulaAndOrdering_POL_JNT_2",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "598",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.NonFinitePositionFailsEvaluationWithoutFabrication",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "651",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.UnresolvableJointNameFailsWithoutGuessing",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "677",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.QueryContractViolationsFailFast",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "699",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.DeterministicOutputIndependentOfTableOrder",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "772",
+      "traceMetadata": null
+    },
+    {
+      "testId": "JointLimits.FactoryInstanceSatisfiesInterfaceContract",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\JointLimitsTest.cpp",
+      "sourceLine": "828",
+      "traceMetadata": null
+    },
+    {
+      "testId": "CompatibilityReasonTokens.ReasonTokenTableExactSeven",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "220",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.DefaultRequirementsAcceptPublishedPolicy",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "242",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.SchemaFutureOnUpperBoundExceeded",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "254",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.SchemaObsoleteOnLowerBoundUnderrun",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "272",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.SchemaBoundariesClosedIntervalAccept",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "289",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.CollisionRequiredButDisabledRejected",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "308",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.BackendMismatchOnAnyFieldDifference",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "336",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.BackendExactDescriptorOrAbsentAccepted",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "381",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.AnchorMismatchOnAppendixDRevision",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "396",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat1.ModeNotApplicableOutsideScope",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "426",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompat2.ContentIdentityChangeSuppliesSliceMaterial",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "467",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompatAll.AllMismatchedReasonsCollectedInEnumOrder",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "509",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompatAll.DeterminismSameInputSameResult",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "549",
+      "traceMetadata": null
+    },
+    {
+      "testId": "PolCompatAll.CheckerInterfaceDelegatesToFreeFunction",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "569",
+      "traceMetadata": null
+    },
+    {
+      "testId": "O20Ppol5.BackendVersionConservativeStance",
+      "outcome": "passed",
+      "reason": "",
+      "durationMs": 0.0,
+      "sourceFile": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\policy\\test\\CompatibilityTest.cpp",
+      "sourceLine": "611",
+      "traceMetadata": null
+    }
+  ]
+}

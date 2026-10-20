@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="2" disabled="0" errors="0" time="0.003" timestamp="2026-10-20T13:24:16.832" name="AllTests">
+  <testsuite name="MdlCompleteWorkingSet" tests="4" failures="2" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T13:24:16.832">
+    <testcase name="AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="771" status="run" result="completed" time="0." timestamp="2026-10-20T13:24:16.832" classname="MdlCompleteWorkingSet" />
+    <testcase name="RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="798" status="run" result="completed" time="0." timestamp="2026-10-20T13:24:16.832" classname="MdlCompleteWorkingSet" />
+    <testcase name="NewPartCannotReuseRetainedOrStructuralIdentity_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="822" status="run" result="completed" time="0." timestamp="2026-10-20T13:24:16.833" classname="MdlCompleteWorkingSet">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;mdl: 基线对象解码失败（数据损坏面）: obj-45cd0db86568ff4f49b1908fbdd7220e — modeling/codec: 解码产物违反不变量 I-MDL-13（subject=tcpList.empty）——字节绕过构造边界被拒（NFR-COR-03）&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "mdl: 基线对象解码失败（数据损坏面）: obj-45cd0db86568ff4f49b1908fbdd7220e — modeling/codec: 解码产物违反不变量 I-MDL-13（subject=tcpList.empty）——字节绕过构造边界被拒（NFR-COR-03）" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="ExistingPartsAndDefaultTransferRestoreFromHistory_PM18_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="848" status="run" result="completed" time="0." timestamp="2026-10-20T13:24:16.833" classname="MdlCompleteWorkingSet">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:883&#x0A;Expected equality of these values:&#x0A;  restoredRoot.toolRefs.front()&#x0A;    Which is: 16-byte object &lt;47-7B F7-CC DC-A1 94-BF 02-55 B7-64 B5-6C 67-C7&gt;&#x0A;  oldTool&#x0A;    Which is: 16-byte object &lt;E2-7E AC-CB B8-60 B6-95 9C-BE FF-AF 1F-D3 C4-1B&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:883
+Expected equality of these values:
+  restoredRoot.toolRefs.front()
+    Which is: 16-byte object <47-7B F7-CC DC-A1 94-BF 02-55 B7-64 B5-6C 67-C7>
+  oldTool
+    Which is: 16-byte object <E2-7E AC-CB B8-60 B6-95 9C-BE FF-AF 1F-D3 C4-1B>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:883&#x0A;Expected equality of these values:&#x0A;  restoredRoot.toolRefs.back()&#x0A;    Which is: 16-byte object &lt;E2-7E AC-CB B8-60 B6-95 9C-BE FF-AF 1F-D3 C4-1B&gt;&#x0A;  other.objectId&#x0A;    Which is: 16-byte object &lt;47-7B F7-CC DC-A1 94-BF 02-55 B7-64 B5-6C 67-C7&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:883
+Expected equality of these values:
+  restoredRoot.toolRefs.back()
+    Which is: 16-byte object <E2-7E AC-CB B8-60 B6-95 9C-BE FF-AF 1F-D3 C4-1B>
+  other.objectId
+    Which is: 16-byte object <47-7B F7-CC DC-A1 94-BF 02-55 B7-64 B5-6C 67-C7>
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="MdlDhCommand" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T13:24:16.834">
+    <testcase name="CompleteWorkingSetSwitchAllowsOnlyUnchangedParts_MDL02_AT16" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\DhConvertEquivalenceTest.cpp" line="822" status="run" result="completed" time="0.001" timestamp="2026-10-20T13:24:16.834" classname="MdlDhCommand" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,15 @@
+Note: Google Test filter = RequirementsView3DFlow.Capture*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from RequirementsView3DFlow
+[ RUN      ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33
+[       OK ] RequirementsView3DFlow.CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33 (343 ms)
+[ RUN      ] RequirementsView3DFlow.CaptureConfirmationRechecksFacts_REQ08_WP14T12
+[       OK ] RequirementsView3DFlow.CaptureConfirmationRechecksFacts_REQ08_WP14T12 (63 ms)
+[ RUN      ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12
+[       OK ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12 (9 ms)
+[----------] 3 tests from RequirementsView3DFlow (417 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (417 ms total)
+[  PASSED  ] 3 tests.

@@ -1,0 +1,46 @@
+[
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+    "sha256": "5a4199927ddb058dc1557ba7f53ddc58ac91df6895fca733bd28691fac184bb2"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+    "sha256": "36d0ad629e9a31bd7116ead6b510df1e1c06e66a53d6d46189621238f6ef3eba"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+    "sha256": "6cf86f882c3de658999d62d5d7ecd63445e90d4959591cefe34f17c4657264c7"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/RequirementsSessionGuiTest.cpp",
+    "sha256": "ffc6aed8738eee2a13d7613055c05785a67954e6b6766a943abf3d25dc701b64"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "sha256": "d9ff28261062e194c781827c317fd4d507b38267cb52c0f64503ee59050ee1d1"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/share/user-manual/index.html",
+    "sha256": "3b0962828b7b30a0fc16a28d97ee01e3d7919e268bf728834affc1f444509cdc"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "sha256": "adf4e5063f1298fb79765411804ee8ad31e6f6331dd9b40968d76413b5cd9eef"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/AboutDialogGuiTest.cpp",
+    "sha256": "e20c4d63ddb7a7a165471c0df85fc162bd36e0392881c026de828eff38b40e2b"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+    "sha256": "c9de23b2af257f44ab808c7be2e66c43beb5699175b7120a39aca962ef265081"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "sha256": "6ce3cb66ebe6604b84e42e9d908780d7e1b9f7a59c585411cfa3c296d7b6357c"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "sha256": "896c280ec6bb7ebee6993c25f02fde7048871ba101ad40ba5e7ee4f3b76917c8"
+  }
+]

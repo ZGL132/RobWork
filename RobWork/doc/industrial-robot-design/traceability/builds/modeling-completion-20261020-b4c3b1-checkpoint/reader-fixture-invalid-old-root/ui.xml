@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="1" disabled="0" errors="0" time="1.507" timestamp="2026-10-20T14:28:30.095" name="AllTests">
+  <testsuite name="HostCompilePipelineTest" tests="3" failures="1" disabled="0" skipped="0" errors="0" time="1.507" timestamp="2026-10-20T14:28:30.095">
+    <testcase name="ConflictRebuildReadsCompleteFixedRevisionAndRetainsOldDraft_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="907" status="run" result="completed" time="0." timestamp="2026-10-20T14:28:30.095" classname="HostCompilePipelineTest">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;恢复已提交建模工作集失败：robot-design / obj-e9b26a6e28eff6dfd6073307df775fc8：modeling/codec: 头域截断（字节偏移 0）&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "恢复已提交建模工作集失败：robot-design / obj-e9b26a6e28eff6dfd6073307df775fc8：modeling/codec: 头域截断（字节偏移 0）" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="RevisionDraftReaderDistinguishesEmptyFromCorruption_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="945" status="run" result="completed" time="0." timestamp="2026-10-20T14:28:30.096" classname="HostCompilePipelineTest" />
+    <testcase name="CompleteWorkingSetDiskApplyAndHistory_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="1077" status="run" result="completed" time="1.505" timestamp="2026-10-20T14:28:30.096" classname="HostCompilePipelineTest" />
+  </testsuite>
+  <testsuite name="HostModelingConflict" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T14:28:31.602">
+    <testcase name="MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="894" status="run" result="completed" time="0." timestamp="2026-10-20T14:28:31.602" classname="HostModelingConflict" />
+  </testsuite>
+</testsuites>

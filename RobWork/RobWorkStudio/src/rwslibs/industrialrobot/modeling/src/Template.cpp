@@ -245,6 +245,63 @@ std::optional<JointEditError> editJointFieldImpl(RobotDesign& design,
                 core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
         return std::nullopt;
     }
+    case JointEditField::WorkingRange: {
+        // MDL-12：工程范围是分析属性，绝不能通过修改bounds或类型来伪装。
+        // 所有检查先于唯一写入，避免用户拒绝后丢掉先前已确认的多圈范围。
+        const auto& range = std::get<JointLimits>(value);
+        if (current.type != JointType::Continuous) {
+            return JointEditError{JointEditErrorCode::TypeBoundsConflict,
+                subject + ".workingRange：仅Continuous可确认工程工作范围（rad）"};
+        }
+        if (!std::isfinite(range.first) || !std::isfinite(range.second)) {
+            return JointEditError{JointEditErrorCode::ValueNotFinite,
+                subject + ".workingRange：工程范围端点必须有限（rad）"};
+        }
+        if (!(range.first < range.second)) {
+            return JointEditError{JointEditErrorCode::LimitIntervalInvalid,
+                subject + ".workingRange：必须qmin'＜qmax'（rad）"};
+        }
+        // 用户经表单确认即是范围来源；不钳制、不取模，跨周边界按实数区间消费。
+        design.joints[jointIndex].workingRange = core::SourcedValue<JointLimits>::provided(
+            range, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        return std::nullopt;
+    }
+    case JointEditField::MaxVelocity:
+    case JointEditField::MaxAcceleration: {
+        // F01（MDL-01）：逐轴速度/加速度限值——两权威模式均权威（同
+        // zeroOffset/bounds 口径）；域规则＝有限且 ≥0（零＝真实零速/零加速
+        // 非缺失；负值物理无意义拒绝——运行时 Description 契约同口径）。
+        // 单位随 type（转动 rad/s、rad/s²；移动 m/s、m/s²），拒绝文案如实
+        // 标注。Fixed 关节无可动语义＝拒绝（先于写入——NotApplicable 态
+        // 不经本编辑流写入）。
+        const double v = std::get<double>(value);
+        const bool isVelocity = field == JointEditField::MaxVelocity;
+        const char* name = isVelocity ? "maxVelocity" : "maxAcceleration";
+        const char* unit = current.type == JointType::Prismatic
+                               ? (isVelocity ? "m/s" : "m/s^2")
+                               : (isVelocity ? "rad/s" : "rad/s^2");
+        if (current.type == JointType::Fixed) {
+            return JointEditError{JointEditErrorCode::TypeBoundsConflict,
+                                  subject + "." + name
+                                      + "：Fixed 关节无可动限值（NotApplicable）"
+                                        "——不得提供"};
+        }
+        if (!std::isfinite(v)) {
+            return JointEditError{JointEditErrorCode::ValueNotFinite,
+                                  subject + "." + name + "：非有限值（NaN/Inf）"};
+        }
+        if (v < 0.0) {
+            return JointEditError{JointEditErrorCode::ValueNotFinite,
+                                  subject + "." + name + "：负值无物理意义（单位 "
+                                      + unit + "，须 ≥0；缺失请留空不填 0）"};
+        }
+        auto& target = isVelocity
+                           ? design.joints[jointIndex].maxVelocity
+                           : design.joints[jointIndex].maxAcceleration;
+        target = core::SourcedValue<double>::provided(
+            v, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        return std::nullopt;
+    }
     case JointEditField::Type: {
         // ⑥ 类型：与既有 bound/workingRange 的非法组合拒绝（§7.3 组合族
         // ——不静默清除既有值，NFR-COR-03；转换后的限位缺失面归就绪校验
@@ -341,6 +398,15 @@ void appendChangeRecord(ModelingWorkingSet& ws, std::size_t jointIndex,
     case JointEditField::Origin:
         record.summary = "修改关节原点位姿（父连杆系——Explicit 权威一等字段；"
                          "改原点属设计变更，下游需重算）";
+        break;
+    case JointEditField::WorkingRange:
+        record.summary = "确认Continuous工程工作范围（rad；跨周不取模、类型与限位不变）";
+        break;
+    case JointEditField::MaxVelocity:
+        record.summary = "修改关节最大速度（转动 rad/s／移动 m/s——MDL-01 逐轴限值）";
+        break;
+    case JointEditField::MaxAcceleration:
+        record.summary = "修改关节最大加速度（转动 rad/s²／移动 m/s²——MDL-01 逐轴限值）";
         break;
     }
     ws.changes.push_back(std::move(record));
@@ -524,6 +590,13 @@ TemplateOutcome RobotDesignTemplateFactory::createDraft(
         joint.zeroOffset = spec.zeroOffset;
         joint.bounds = core::SourcedValue<JointLimits>::provided(spec.bounds,
                                                                  provenance);
+        // F01（MDL-01"逐轴定义…速度/加速度限制"）：模板参考值随 {1,1}
+        // schema 真实入模（此前仅展示不入内核——审计 M05 缺口闭合）；单位
+        // 随类型（六轴模板全旋转＝rad/s、rad/s²）。
+        joint.maxVelocity = core::SourcedValue<double>::provided(
+            spec.maxVelocity, provenance);
+        joint.maxAcceleration = core::SourcedValue<double>::provided(
+            spec.maxAcceleration, provenance);
         // workingRange＝NotApplicable（Revolute 不适用——表 T-MDL-1 该列
         // 全行"—"；I-MDL-4"workingRange 仅 Continuous"）
         joint.workingRange =
@@ -609,6 +682,9 @@ std::string_view jointEditFieldToken(JointEditField field) noexcept
     case JointEditField::ZeroOffset: return "zeroOffset";
     case JointEditField::Bounds: return "bounds";
     case JointEditField::Origin: return "origin";
+    case JointEditField::WorkingRange: return "workingRange";
+    case JointEditField::MaxVelocity: return "maxVelocity";
+    case JointEditField::MaxAcceleration: return "maxAcceleration";
     }
     return "type";  // 全枚举已覆盖，不达此处（无 default——漏项编译器告警）
 }
@@ -636,9 +712,7 @@ std::optional<JointEditError> applyJointFieldEdit(ModelingWorkingSet& ws,
             "modeling/template/edit-index: 关节下标越界: joints["
             + std::to_string(jointIndex) + "]");
     }
-    // ② field 与 value 备择匹配检查（variant 备择序＝枚举声明序——Type/
-    //    Axis/ZeroOffset/Bounds/Origin 对 JointType/V3/double/JointLimits/
-    //    JointOriginEditValue）。
+    // ②字段/载荷核对；WorkingRange复用JointLimits备择，不能按枚举下标取variant。
     const bool matched =
         (field == JointEditField::Type
          && std::holds_alternative<JointType>(value))
@@ -648,8 +722,15 @@ std::optional<JointEditError> applyJointFieldEdit(ModelingWorkingSet& ws,
             && std::holds_alternative<double>(value))
         || (field == JointEditField::Bounds
             && std::holds_alternative<JointLimits>(value))
+        || (field == JointEditField::WorkingRange
+            && std::holds_alternative<JointLimits>(value))
         || (field == JointEditField::Origin
-            && std::holds_alternative<JointOriginEditValue>(value));
+            && std::holds_alternative<JointOriginEditValue>(value))
+        // F01：速度/加速度复用 double 备择（同 ZeroOffset——表尾追加纪律）。
+        || (field == JointEditField::MaxVelocity
+            && std::holds_alternative<double>(value))
+        || (field == JointEditField::MaxAcceleration
+            && std::holds_alternative<double>(value));
     if (!matched) {
         throw std::invalid_argument(
             "modeling/template/edit-variant: value 备择与 field 不匹配: "
@@ -685,6 +766,8 @@ JointBatchEditOutcome applyJointFieldEditBatch(ModelingWorkingSet& ws,
             || (field == JointEditField::ZeroOffset
                 && std::holds_alternative<double>(item.value))
             || (field == JointEditField::Bounds
+                && std::holds_alternative<JointLimits>(item.value))
+            || (field == JointEditField::WorkingRange
                 && std::holds_alternative<JointLimits>(item.value))
             || (field == JointEditField::Origin
                 && std::holds_alternative<JointOriginEditValue>(item.value));
@@ -744,21 +827,34 @@ std::optional<BasePlacementEditError> applyBasePlacementEdit(
     ModelingWorkingSet& ws,
     const BasePlacementEditValue& edit)
 {
-    // ① 契约违约面：非 Custom 预设携带 customEaa——EAA 字段仅对 Custom 有
-    //    语义，静默忽略会掩盖面板状态错误（调用方契约违约 fail-fast，
+    // ① 契约违约面：非 Custom 携带自定义旋转，或两种表示同时携带，均无
+    //    唯一语义，静默忽略会掩盖面板状态错误（调用方契约违约 fail-fast，
     //    AGENTS 错误语义）。
-    if (edit.preset != runtime::InstallationPresetToken::Custom
-        && edit.customEaa.has_value()) {
+    if ((edit.preset != runtime::InstallationPresetToken::Custom
+         && (edit.customEaa.has_value()||edit.customRpy.has_value()))
+        || (edit.customEaa.has_value()&&edit.customRpy.has_value())) {
         throw std::invalid_argument(
-            "modeling/template/base-placement-edit: preset≠Custom 不允许携带"
-            " customEaa（EAA 仅 Custom 有语义——I-MDL-7）");
+            "modeling/template/base-placement-edit: 自定义旋转仅Custom允许，"
+            "customEaa与customRpy必须恰选一（I-MDL-7/MDL-22）");
     }
 
-    // ② 有限性（I-MDL-3）：customEaa（Custom 时）与 basePosition 逐分量
+    // MDL-22欧拉输入是编辑表示；在域入口统一换算，后续复用原EAA校验、
+    // 来源及存储路径。不得由UI或各下游重复实现安装姿态换算。
+    auto effectiveEaa=edit.customEaa;
+    if(edit.customRpy){
+        const auto& rpy=*edit.customRpy;
+        if(!std::isfinite(rpy[0])||!std::isfinite(rpy[1])||!std::isfinite(rpy[2])){
+            return BasePlacementEditError{BasePlacementEditErrorCode::ValueNotFinite,
+                "basePlacement.customRpy：欧拉角含非有限分量（roll/pitch/yaw，rad）"};
+        }
+        effectiveEaa=rpymath::rpyToEaa(rpy);
+    }
+
+    // ② 有限性（I-MDL-3）：有效EAA（含RPY转换）与 basePosition 逐分量
     //    检查——NaN/Inf 非法，不静默置 0、不静默丢弃分量（NFR-COR-03）。
     //    单位：EAA 分量 rad、位置分量 m（世界系）。
-    if (edit.customEaa.has_value()) {
-        const rw::math::Vector3D<double>& eaa = *edit.customEaa;
+    if (effectiveEaa.has_value()) {
+        const rw::math::Vector3D<double>& eaa = *effectiveEaa;
         if (!std::isfinite(eaa[0]) || !std::isfinite(eaa[1])
             || !std::isfinite(eaa[2])) {
             return BasePlacementEditError{
@@ -773,14 +869,14 @@ std::optional<BasePlacementEditError> applyBasePlacementEdit(
             "basePlacement.basePosition：含非有限分量（NaN/Inf）——单位 m"};
     }
 
-    // ③ I-MDL-7 前半：Custom 无预设矩阵，customEaa 缺失即非法（runtime
+    // ③ I-MDL-7 前半：Custom 无预设矩阵，两种旋转输入均缺失即非法（runtime
     //    §4.2"Custom 时必填"同口径；fail-fast 属调用方错误、这里是用户
     //    可输入面——走值面拒绝，编辑器就地提示）。
     if (edit.preset == runtime::InstallationPresetToken::Custom
-        && !edit.customEaa.has_value()) {
+        && !effectiveEaa.has_value()) {
         return BasePlacementEditError{
             BasePlacementEditErrorCode::CustomEaaMissing,
-            "basePlacement.customEaa：custom 预设必填旋转矢量（单位 rad）"
+            "basePlacement：custom 预设必填欧拉角或旋转矢量（单位 rad）"
             "——I-MDL-7 前半"};
     }
 
@@ -795,8 +891,7 @@ std::optional<BasePlacementEditError> applyBasePlacementEdit(
     //    modeling 只存参数不存矩阵）。
     if (edit.preset == runtime::InstallationPresetToken::Custom) {
         const rw::math::Rotation3D<double> rotation = runtime::rotationFromCustomEaa(
-            rw::math::Vector3D<double>((*edit.customEaa)[0], (*edit.customEaa)[1],
-                                       (*edit.customEaa)[2]));
+            *effectiveEaa);
         // 恒等判定：逐元素与 I 偏差 ≤1×10⁻¹² 即视为恒等——容差与值模型
         // I-MDL-7 正交容差同源同尺度（§4.10 行；非自设魔数）。
         constexpr double kIdentityTol = 1e-12;  // 无量纲（旋转矩阵元素）
@@ -826,7 +921,7 @@ std::optional<BasePlacementEditError> applyBasePlacementEdit(
     if (edit.preset == runtime::InstallationPresetToken::Custom) {
         candidateValue.customEaa =
             core::SourcedValue<rw::math::Vector3D<double>>::provided(
-                *edit.customEaa,
+                *effectiveEaa,
                 core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
     }
     candidateValue.basePosition =

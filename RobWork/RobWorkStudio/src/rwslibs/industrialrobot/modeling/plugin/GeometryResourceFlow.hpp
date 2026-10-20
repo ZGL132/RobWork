@@ -58,6 +58,30 @@ namespace modeling {
  */
 ResourceProbeFn makeIoResourceProbe();
 
+/** @brief 工具/场景管理的几何来源词表；仅私有UI编排，未改变项目存储。 */
+enum class ManagedGeometrySource { None, Existing, External };
+/**
+ * @brief 根据已有引用或Recorded网格后缀识别几何资源，拒绝来源XML等非几何。
+ * @param ws [in] 当前完整草稿，仅读取，不接管任何资源所有权。
+ * @param key [in] 清单资源键；不存在或非几何返回nullopt。
+ * @return 原几何类别或Mesh；不读取文件，不产生第二套摘要，纯函数可重入。
+ */
+std::optional<GeometryKind> existingGeometryKind(const ModelingWorkingSet& ws,const std::string& key);
+/**
+ * @brief 在完整工作集副本登记几何来源，资源键/复用/格式过滤沿B3f既有规则。
+ * @param before [in] 只读完整基线；恒不修改。
+ * @param geometry [in,out] 调用方持有的候选几何；仅成功更新，替换时保留局部m/rad位姿。
+ * @param source [in] None摘除、Existing引用、External沿io安全读取。
+ * @param resourceOrPath [in] 资源键或用户明确选择的UTF-8路径。
+ * @param probe [in] External资源端口；缺位或失败返回拒绝，不吞错误。
+ * @param error [out] 中文纠错信息；成功清空。
+ * @return 带资源清单的候选工作集，失败nullopt；只有上层完整事务才写权威草稿。
+ * 纯值编排不调用Qt；有副作用的文件读取只经probe，调用期间不得并发修改基线。
+ */
+std::optional<ModelingWorkingSet> evaluateManagedGeometry(const ModelingWorkingSet& before,
+    std::optional<GeometryRef>& geometry,ManagedGeometrySource source,const std::string& resourceOrPath,
+    const ResourceProbeFn& probe,std::string& error);
+
 // =====================================================================
 // 面板编排（文件对话框＋域原语触发——拒绝呈现回流）
 // =====================================================================

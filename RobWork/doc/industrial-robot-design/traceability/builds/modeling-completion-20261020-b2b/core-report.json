@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "ird-gtest-xml-derived/1",
+  "reportOrigin": "derived-from-gtest-xml",
+  "sourceXml": "core.xml",
+  "sourceSha256": "32cdcdcf6c9e26d3c60cc7bbf4f2df2ab8b19eb29996e506198ed0e137f8d2e8",
+  "note": "core沿用gtest_main，本伴随报告由真实XML派生，不能恢复IRD追溯元数据。",
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0
+  },
+  "tests": [
+    {
+      "testId": "BuildRedLine.SourceTreeReachable_UT_BUILD",
+      "outcome": "passed",
+      "durationMs": 0.0,
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.NoQtInclude_NFR_MNT_01_R3",
+      "outcome": "passed",
+      "durationMs": 3.0,
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.NoCrossUnitInclude_R1_R2_T1",
+      "outcome": "passed",
+      "durationMs": 3.0,
+      "traceMetadata": null
+    },
+    {
+      "testId": "BuildRedLine.PublicHeaderPathLayout_R2",
+      "outcome": "passed",
+      "durationMs": 0.0,
+      "traceMetadata": null
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+Note: Google Test filter = RequirementsSessionGuiTest.Region*WP14T12
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12 (438 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSamplingCompleteAtomic_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSamplingCompleteAtomic_REQ03_WP14T12 (45 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionSamplingModesCancelAndReject_REQ03_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionSamplingModesCancelAndReject_REQ03_WP14T12 (56 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(400): error: Expected equality of these values:
+  region.box.center[0]
+    Which is: 1
+  0.75
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(398): error: Expected equality of these values:
+  region
+    Which is: 680-byte object <8E-D3 8D-4C D5-40 5D-1D 30-C6 F2-65 5B-3E 40-09 E7-AC AC-E4 BA-8C E5-8C BA-E5 9F-9F 00-00 00-00 0C-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-01 42-53 22-02 00-00 00-00 00-00 00-00 00-00 ... D0-E3 41-53 22-02 00-00 90-D3 79-4F 22-02 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+  second
+    Which is: 680-byte object <8E-D3 8D-4C D5-40 5D-1D 30-C6 F2-65 5B-3E 40-09 E7-AC AC-E4 BA-8C E5-8C BA-E5 9F-9F 00-00 00-00 0C-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-01 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 44-68 AC-58 FF-7F 00-00 00-00 83-4F 22-02 00-00 00-00 00-00 22-02 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00>
+不得改写切换后的区域，轨=0
+
+[  FAILED  ] RequirementsSessionGuiTest.RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12 (48 ms)
+[----------] 4 tests from RequirementsSessionGuiTest (588 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (589 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12
+
+ 1 FAILED TEST

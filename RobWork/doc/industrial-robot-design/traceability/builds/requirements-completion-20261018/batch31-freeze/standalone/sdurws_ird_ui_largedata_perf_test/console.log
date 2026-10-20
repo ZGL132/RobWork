@@ -1,0 +1,14 @@
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from LargeDataBenchmark
+[ RUN      ] LargeDataBenchmark.TaskPointsFiveThousandSaveLoadPagedBrowse_WP23T04_B03
+[       OK ] LargeDataBenchmark.TaskPointsFiveThousandSaveLoadPagedBrowse_WP23T04_B03 (1874 ms)
+[ RUN      ] LargeDataBenchmark.SampleResultsHundredThousandArchiveLoadPagedBrowse_WP23T04_B03
+[       OK ] LargeDataBenchmark.SampleResultsHundredThousandArchiveLoadPagedBrowse_WP23T04_B03 (3576 ms)
+[ RUN      ] LargeDataBenchmark.CandidateSummariesTenThousandExportLoadPagedBrowse_WP23T04_B03
+[       OK ] LargeDataBenchmark.CandidateSummariesTenThousandExportLoadPagedBrowse_WP23T04_B03 (10450 ms)
+[----------] 3 tests from LargeDataBenchmark (15902 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (15903 ms total)
+[  PASSED  ] 3 tests.

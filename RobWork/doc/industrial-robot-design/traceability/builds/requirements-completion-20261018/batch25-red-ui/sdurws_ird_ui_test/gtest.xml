@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.029" timestamp="2026-10-19T04:53:14.637" name="AllTests">
+  <testsuite name="KinEvaluationChannel" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.028" timestamp="2026-10-19T04:53:14.637">
+    <testcase name="BatchHonorsEveryConstraintMask_REQ01_A16" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1294" status="run" result="completed" time="0.013" timestamp="2026-10-19T04:53:14.637" classname="KinEvaluationChannel">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;failed&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束0 解 0 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "failed"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束0 解 0 个/1 工况
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;failed&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束1 解 0 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "failed"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束1 解 0 个/1 工况
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;failed&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束2 解 0 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "failed"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束2 解 0 个/1 工况
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;failed&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束3 解 0 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "failed"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束3 解 0 个/1 工况
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;failed&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束4 解 0 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "failed"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束4 解 0 个/1 工况
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;failed&quot;&#x0A;  i == 6 ? &quot;failed&quot; : &quot;completed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;分量约束5 解 0 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1328
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "failed"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+分量约束5 解 0 个/1 工况
+]]></failure>
+    </testcase>
+    <testcase name="BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1334" status="run" result="completed" time="0.015" timestamp="2026-10-19T04:53:14.650" classname="KinEvaluationChannel">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1380&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;failed&quot;&#x0A;  point.objectId == rollFree.objectId ? &quot;completed&quot; : &quot;failed&quot;&#x0A;    Which is: &quot;completed&quot;&#x0A;允许工具滚转 解 0 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1380
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "failed"
+  point.objectId == rollFree.objectId ? "completed" : "failed"
+    Which is: "completed"
+允许工具滚转 解 0 个/1 工况
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1380&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;completed&quot;&#x0A;  point.objectId == rollFree.objectId ? &quot;completed&quot; : &quot;failed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;指向目标反例 解 1 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1380
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "completed"
+  point.objectId == rollFree.objectId ? "completed" : "failed"
+    Which is: "failed"
+指向目标反例 解 1 个/1 工况
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1380&#x0A;Expected equality of these values:&#x0A;  it-&gt;second.outcomeState&#x0A;    Which is: &quot;completed&quot;&#x0A;  point.objectId == rollFree.objectId ? &quot;completed&quot; : &quot;failed&quot;&#x0A;    Which is: &quot;failed&quot;&#x0A;对齐法向反例 解 1 个/1 工况&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp:1380
+Expected equality of these values:
+  it->second.outcomeState
+    Which is: "completed"
+  point.objectId == rollFree.objectId ? "completed" : "failed"
+    Which is: "failed"
+对齐法向反例 解 1 个/1 工况
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

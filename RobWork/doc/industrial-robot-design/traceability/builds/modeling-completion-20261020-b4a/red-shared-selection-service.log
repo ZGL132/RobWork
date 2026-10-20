@@ -1,0 +1,45 @@
+Note: Google Test filter = *DiffLocates*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.DiffLocatesLiveObjectsAndRefusesDeleted_UX13_AT12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(164): error: Expected equality of these values:
+  selection.selectedObjectIds()
+    Which is: {}
+  std::vector<core::ObjectId>{*module.session().draft.rootObjectId}
+    Which is: { 16-byte object <61-1A 17-B8 5D-6E A6-CB 06-1A 5D-08 8E-53 C5-28> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(165): error: Expected equality of these values:
+  selection.selectionSource()
+    Which is: (nullopt)
+  ui::SelectionSource::Command
+    Which is: 1-byte object <03>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(171): error: Expected equality of these values:
+  selection.selectedObjectIds()
+    Which is: {}
+  std::vector<core::ObjectId>{*selected}
+    Which is: { 16-byte object <AD-1F 7A-CA 8E-39 FC-1C 3A-9A 17-37 90-3C 4F-A2> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(172): error: Expected equality of these values:
+  selection.selectionSource()
+    Which is: (nullopt)
+  ui::SelectionSource::Command
+    Which is: 1-byte object <03>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(178): error: Expected equality of these values:
+  selection.selectedObjectIds()
+    Which is: {}
+  std::vector<core::ObjectId>{*selected}
+    Which is: { 16-byte object <AD-1F 7A-CA 8E-39 FC-1C 3A-9A 17-37 90-3C 4F-A2> }
+
+[  FAILED  ] ModelingUiModuleHostWiring.DiffLocatesLiveObjectsAndRefusesDeleted_UX13_AT12 (1351 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (1351 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1351 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.DiffLocatesLiveObjectsAndRefusesDeleted_UX13_AT12
+
+ 1 FAILED TEST

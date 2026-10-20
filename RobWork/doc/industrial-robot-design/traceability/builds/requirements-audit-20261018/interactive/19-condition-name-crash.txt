@@ -1,0 +1,12 @@
+Window: "工业机械臂设计平台", App: sdurws_ird_studio.exe.
+	0 窗口 (settable, string) 工业机械臂设计平台 Value: 工况面板：编辑行携带词表外键 name Secondary Actions: Raise ID: QApplication.QMessageBox
+		1 标题栏 (settable, string) Value: 工业机械臂设计平台
+			2 菜单栏 系统 ID: MenuBar
+				3 菜单项 系统
+			4 按钮 关闭
+		5 图像 ID: QApplication.QMessageBox.qt_msgboxex_icon_label
+		6 文本 工况面板：编辑行携带词表外键 name ID: QApplication.QMessageBox.qt_msgbox_label
+		7 组 (settable, string) ID: QApplication.QMessageBox.qt_msgbox_buttonbox
+			8 按钮 (settable, string) 确定 ID: QApplication.QMessageBox.qt_msgbox_buttonbox.QPushButton
+
+The focused UI element is 8 按钮 (settable, string) 确定 ID: QApplication.QMessageBox.qt_msgbox_buttonbox.QPushButton.

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.075" timestamp="2026-10-20T15:26:17.029" name="AllTests">
+  <testsuite name="HostDraftChain" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.075" timestamp="2026-10-20T15:26:17.029">
+    <testcase name="ModelingRetainedDraftReopensOnRealBranch_PM04_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp" line="628" status="run" result="completed" time="0.075" timestamp="2026-10-20T15:26:17.029" classname="HostDraftChain">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp:676&#x0A;Expected equality of these values:&#x0A;  loaded.status&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;  ui::DraftLoadOutcome::Status::Loaded&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp:676
+Expected equality of these values:
+  loaded.status
+    Which is: 1-byte object <02>
+  ui::DraftLoadOutcome::Status::Loaded
+    Which is: 1-byte object <00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp:676&#x0A;Expected equality of these values:&#x0A;  loaded.status&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;  ui::DraftLoadOutcome::Status::Loaded&#x0A;    Which is: 1-byte object &lt;00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp:676
+Expected equality of these values:
+  loaded.status
+    Which is: 1-byte object <02>
+  ui::DraftLoadOutcome::Status::Loaded
+    Which is: 1-byte object <00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp:686&#x0A;Expected equality of these values:&#x0A;  ports.drafts-&gt;listDrafts().size()&#x0A;    Which is: 0&#x0A;  1U&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp:686
+Expected equality of these values:
+  ports.drafts->listDrafts().size()
+    Which is: 0
+  1U
+    Which is: 1
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -27,6 +27,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstring>  // std::memcmp（F-618 级别字节定位）
@@ -44,6 +45,61 @@ namespace core = sdurws::ird::core;
 // =====================================================================
 // 往返：parse(encode(x))==x（acceptance 2——§4.5"往返"行）。
 // =====================================================================
+
+/** @brief MDL-15/AT-28：固定帧完整往返、旧1.2与损坏presence明确拒绝。 */
+TEST(CodecRoundtripTest, FixedSceneFramePresenceAndVersion_MDL15_AT28)
+{
+    auto f=richFixture();f.scene.front().geometry.reset();
+    const auto frame=f.build();const auto bytes=rtcodec::encode(frame);
+    const auto parsed=rtcodec::parse(bytes);ASSERT_TRUE(parsed.ok());
+    EXPECT_EQ(parsed.get(),frame);EXPECT_EQ(rtcodec::encode(parsed.get()),bytes);
+    ASSERT_EQ(parsed.get().scene().size(),1U);EXPECT_FALSE(parsed.get().scene().front().geometry);
+    auto old=bytes;old[9]=0;old[10]=2;EXPECT_FALSE(rtcodec::parse(old).ok());
+    const auto& name=frame.scene().front().localName;
+    const auto pos=std::search(bytes.begin(),bytes.end(),name.begin(),name.end());ASSERT_NE(pos,bytes.end());
+    // canonical1.3场景协议：名称后为12个double（世界平移3+旋转9），再为presence。
+    const auto presence=static_cast<std::size_t>(pos-bytes.begin())+name.size()+12U*8U;
+    ASSERT_LT(presence,bytes.size());ASSERT_EQ(bytes[presence],0U);
+    auto malformed=bytes;malformed[presence]=2;EXPECT_FALSE(rtcodec::parse(malformed).ok());
+    auto truncated=bytes;truncated.resize(presence);EXPECT_FALSE(rtcodec::parse(truncated).ok());
+    // 无几何和真实引用都必须往返，不能只支持新固定帧而破坏旧障碍物。
+    f.scene.front().geometry=f.manifest.front();const auto obstacle=f.build();
+    const auto geometric=rtcodec::parse(rtcodec::encode(obstacle));ASSERT_TRUE(geometric.ok());
+    ASSERT_TRUE(geometric.get().scene().front().geometry);EXPECT_EQ(geometric.get(),obstacle);
+    EXPECT_NE(frame.contentIdentity(),obstacle.contentIdentity());
+}
+
+/** @brief A-15：1.2完整目录往返、命名偏移篡改与旧1.1缓存必须拒绝。 */
+TEST(CodecRoundtripTest, NamedTcpRoundtripTamperAndOldMinor_REQ01_A15)
+{
+    auto f = richFixture();
+    const auto offset = rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.125, 0.25, 0.5),
+                                                     sdurws::ird::runtime::detail::identityTransform3D().R());
+    f.tools[0].namedTcpOffsets = {{"unique_tcp_a15", offset}};
+    const auto model = f.build();
+    auto bytes = rtcodec::encode(model);
+    auto decoded = rtcodec::parse(bytes);
+    ASSERT_TRUE(decoded.ok());
+    ASSERT_EQ(decoded.get().tools()[0].namedTcpOffsets.size(), 1U);
+    EXPECT_EQ(decoded.get(), model);
+    EXPECT_EQ(rtcodec::encode(decoded.get()), bytes);
+    EXPECT_EQ(rtcodec::kVersionMinor, 3U); // B3g场景可选几何升版；A15完整命名目录仍保留。
+    // 头7字节magic，随后major/minor各2字节大端；伪装为旧1.1精确拒绝。
+    auto old = bytes; old[9] = 0; old[10] = 1;
+    EXPECT_FALSE(rtcodec::parse(old).ok());
+    const std::string key = "unique_tcp_a15";
+    const auto found = std::search(bytes.begin(), bytes.end(), key.begin(), key.end());
+    ASSERT_NE(found, bytes.end());
+    // 工具目录count位于键前8字节（4字节count＋4字节键长）；超限必须先拒绝分配。
+    auto excessive = bytes;
+    const auto keyIndex = static_cast<std::size_t>(std::distance(bytes.begin(), found));
+    ASSERT_GE(keyIndex, 8U);
+    std::fill(excessive.begin() + keyIndex - 8, excessive.begin() + keyIndex - 4, 0xff);
+    EXPECT_FALSE(rtcodec::parse(excessive).ok());
+    // 仅改键字节，结构仍合法；必须因内容身份复核不一致而拒绝。
+    *found = static_cast<std::uint8_t>('v');
+    EXPECT_FALSE(rtcodec::parse(bytes).ok());
+}
 
 /** minimal 夹具往返：全字段 operator== 相等、身份相等、再编码逐字节相等。 */
 TEST(CodecRoundtripTest, MinimalModelRoundtripsExactly)

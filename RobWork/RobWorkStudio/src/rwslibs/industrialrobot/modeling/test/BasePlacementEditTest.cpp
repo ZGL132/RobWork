@@ -843,3 +843,45 @@ TEST(MdlBasePlacementEdit, SingleFieldCompileIntoRWorldBase_WP13T11_ACC4)
                      .has_value())
         << "预设一致性合法（Custom 且 R≠I）";
 }
+
+/** @brief MDL-22/AT-37：欧拉输入只生成既有EAA，编译矩阵对照独立ZYX元素公式。 */
+TEST(MdlBasePlacementEdit, EulerCompilesAndCodecRoundTrips_MDL22_AT37)
+{
+    IRD_TEST_INFO("MDL-22",{},std::nullopt);
+    // 一般角、万向锁、pi附近与接近零：以最终矩阵验等，避免欧拉多解假失败。
+    for(const auto& rpy:std::vector<rwmath::Vector3D<double>>{{0.3,-0.4,0.7},{0.2,kPiHalf,-0.6},{0.0,0.0,2*kPiHalf},{1e-6,-2e-6,3e-6}}){
+        auto ws=makeSixAxisDraft();const auto before=ws;
+        BasePlacementEditValue edit;edit.preset=runtime::InstallationPresetToken::Custom;
+        edit.customRpy=rpy;edit.basePosition={0.1,-0.2,0.3};
+        const auto error=applyBasePlacementEdit(ws,edit);
+        ASSERT_FALSE(error.has_value())<<(error?error->detail:"");
+        const auto resolved=runtime::resolveWorldBaseTransform(toRuntimeBase(ws.design.basePlacement));
+        ASSERT_TRUE(resolved.ok());
+        const double cr=std::cos(rpy[0]),sr=std::sin(rpy[0]),cp=std::cos(rpy[1]),sp=std::sin(rpy[1]),cy=std::cos(rpy[2]),sy=std::sin(rpy[2]);
+        expectRotationEquals(resolved.get().R(),cy*cp,cy*sp*sr-sy*cr,cy*sp*cr+sy*sr,
+            sy*cp,sy*sp*sr+cy*cr,sy*sp*cr-cy*sr,-sp,cp*sr,cp*cr,1e-12);
+        EXPECT_DOUBLE_EQ(resolved.get().P()[0],0.1);EXPECT_DOUBLE_EQ(resolved.get().P()[1],-0.2);EXPECT_DOUBLE_EQ(resolved.get().P()[2],0.3);
+        EXPECT_EQ(ws.changes.size(),before.changes.size()+1);
+        RobotDesignCodec codec;const auto encoded=codec.encode(ObjectVariant{ws.design},kCurrentFormatVersion);
+        ASSERT_TRUE(encoded.ok());const auto decoded=codec.decode(encoded.get(),kCurrentFormatVersion);
+        ASSERT_TRUE(decoded.ok());EXPECT_EQ(std::get<RobotDesign>(decoded.get()),ws.design);
+    }
+}
+
+/** @brief MDL-22：非法/歧义欧拉输入原子拒绝，表示错误不允许被静默忽略。 */
+TEST(MdlBasePlacementEdit, EulerInvalidAndAmbiguousAreAtomic_MDL22_AT37)
+{
+    IRD_TEST_INFO("MDL-22",{},std::nullopt);
+    auto ws=makeSixAxisDraft();const auto before=ws;
+    BasePlacementEditValue edit;edit.preset=runtime::InstallationPresetToken::Custom;
+    edit.customRpy=rwmath::Vector3D<double>(0,std::numeric_limits<double>::quiet_NaN(),0);
+    auto error=applyBasePlacementEdit(ws,edit);ASSERT_TRUE(error.has_value());
+    EXPECT_EQ(error->code,BasePlacementEditErrorCode::ValueNotFinite);EXPECT_EQ(ws,before);
+    edit.customRpy=rwmath::Vector3D<double>(0,0,0.4);edit.customEaa=rwmath::Vector3D<double>(0,0,0.4);
+    EXPECT_THROW(applyBasePlacementEdit(ws,edit),std::invalid_argument);EXPECT_EQ(ws,before);
+    edit.customEaa.reset();edit.preset=runtime::InstallationPresetToken::Ground;
+    EXPECT_THROW(applyBasePlacementEdit(ws,edit),std::invalid_argument);EXPECT_EQ(ws,before);
+    edit.preset=runtime::InstallationPresetToken::Custom;edit.customRpy=rwmath::Vector3D<double>(0,0,0);
+    error=applyBasePlacementEdit(ws,edit);ASSERT_TRUE(error.has_value());
+    EXPECT_EQ(error->code,BasePlacementEditErrorCode::PresetIdentityRotation);EXPECT_EQ(ws,before);
+}

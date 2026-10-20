@@ -1,0 +1,24 @@
+Note: Google Test filter = *LateAutosaveCannotClearPostApply*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DraftControllerModelTest
+[ RUN      ] DraftControllerModelTest.LateAutosaveCannotClearPostApplyEdit_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1156): error: Value of: state.modules.front().sessionDirty
+  Actual: false
+Expected: true
+旧保存回执不能清掉应用后的新编辑
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1157): error: Value of: state.modules.front().lastSaveOriginToken.empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] DraftControllerModelTest.LateAutosaveCannotClearPostApplyEdit_PM04_AT21 (0 ms)
+[----------] 1 test from DraftControllerModelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DraftControllerModelTest.LateAutosaveCannotClearPostApplyEdit_PM04_AT21
+
+ 1 FAILED TEST

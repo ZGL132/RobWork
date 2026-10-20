@@ -1316,3 +1316,8 @@ diagnostics：建议码表注册（§9.6）；文案与用户可见表述归其�
 | 测试 | 单元测试覆盖本文列出的正例、反例和不变量 |
 | 追踪 | 每个任务至少关联一个需求和一个验证目标 |
 | 门禁 | validate-docs.ps1、validate-task.ps1 和单元验证命令通过 |
+
+
+### A-23 宿主工程策略生命周期消费（2026-10-20，WP-14-T12）
+
+策略编辑的RawPolicyInput、PolicyCodec、七段解析、发布门及contentIdentity仍是唯一权威，policy公共接口/实现未变化。L5按不可变project修订装配字节源和存在性/角色上下文，不将可变HEAD用于Provider的(oid,cv)缓存；多策略对象/坏编码保持失败，不伪装系统缺省。UI空字段保留nullopt；组定义尚无Raw承载时groupDefined=false，由既有解析明确拒绝未定义组。首次撤销可保留项目分配身份并恢复系统缺省语义，身份是project业务锚，语义身份仍由policy唯一计算。

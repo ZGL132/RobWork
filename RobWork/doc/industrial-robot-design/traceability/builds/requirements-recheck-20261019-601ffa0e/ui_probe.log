@@ -1,0 +1,44 @@
+Note: Google Test filter = *Review*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from KinEvaluationChannel
+[ RUN      ] KinEvaluationChannel.ReviewDirectionPositiveCases
+REVIEW free_control completed 解 1 个/1 工况
+REVIEW pointing_Z completed 解 1 个/1 工况
+REVIEW normal_Z completed 解 1 个/1 工况
+[       OK ] KinEvaluationChannel.ReviewDirectionPositiveCases (11 ms)
+[ RUN      ] KinEvaluationChannel.ReviewTiltedDirectionPositiveCases
+REVIEW tilted_pointing completed 解 1 个/1 工况
+REVIEW tilted_normal completed 解 1 个/1 工况
+[       OK ] KinEvaluationChannel.ReviewTiltedDirectionPositiveCases (15 ms)
+[ RUN      ] KinEvaluationChannel.ReviewOppositeDirectionMustFail
+BOUNDARY opposite=1 boundary-pointing completed 解 1 个/1 工况
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp(86): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "completed"
+  opposite?"failed":"completed"
+    Which is: "failed"
+boundary-pointing
+
+BOUNDARY opposite=1 boundary-normal completed 解 1 个/1 工况
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-recheck-20261019\ui_probe.cpp(86): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "completed"
+  opposite?"failed":"completed"
+    Which is: "failed"
+boundary-normal
+
+[  FAILED  ] KinEvaluationChannel.ReviewOppositeDirectionMustFail (1 ms)
+[ RUN      ] KinEvaluationChannel.ReviewDirectionCorrectionMustConverge
+BOUNDARY opposite=0 boundary-pointing completed 解 1 个/1 工况
+BOUNDARY opposite=0 boundary-normal completed 解 1 个/1 工况
+[       OK ] KinEvaluationChannel.ReviewDirectionCorrectionMustConverge (0 ms)
+[----------] 4 tests from KinEvaluationChannel (29 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (29 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinEvaluationChannel.ReviewOppositeDirectionMustFail
+
+ 1 FAILED TEST

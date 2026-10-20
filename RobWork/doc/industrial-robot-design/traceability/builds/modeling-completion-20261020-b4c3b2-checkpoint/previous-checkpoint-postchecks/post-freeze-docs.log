@@ -1,0 +1,12 @@
+Write-Error: evidence index out of date: index=12914 actual=13024——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/REPORT.md——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/checkpoint-summary.json——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/checkpoint-summary.py——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/core-report.json——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/core.log——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/core.xml——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/full-build.log——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/gui-fixture-build-missing-private-symbols.log——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/gui-modeling_gui/base-euler.png——重跑 index-evidence.ps1
+Write-Error: evidence index missing entry: builds/modeling-completion-20261020-b4c3b1-checkpoint/gui-modeling_gui/body-editor-confirm.png——重跑 index-evidence.ps1
+Write-Error: evidence index mismatch total: 110（仅列前 10 条）——重跑 index-evidence.ps1

@@ -206,6 +206,9 @@ add_library(sdurws_ird_requirements_plugin STATIC
     plugin/PanelStationModel.cpp         # 工位检查器/五规则显隐表/编辑回填（ACC1/2，零 Qt）
     plugin/PanelRegionModel.cpp          # 区域表/采样双模式/预览几何（ACC1，零 Qt）
     plugin/PanelConditionModel.cpp       # 工况表/检查器/必验预览（ACC1，零 Qt）
+    plugin/RegionSamplingForm.cpp       # WP-14-T12：区域采样定义完整暂存，确认原子写入
+    plugin/ConditionStructureForm.cpp    # WP-14-T12：内联暂存结构，确认一次提交，UI线程Qt私有面
+    plugin/StationDefinitionDialog.cpp  # WP-14-T12：工位引用与规则暂存，不新增公共接口
     plugin/PanelValidationModel.cpp      # R0~R9 分层/逐项/语义说明（ACC1，零 Qt）
     plugin/PanelCommandCatalog.cpp       # 九条域命令登记/装配描述符/就绪投影/L-R12（ACC4/5）
     plugin/PanelEditFlow.cpp             # L-R2/L-R9 编辑流编排＋两级撤销呈现（ACC2/4）

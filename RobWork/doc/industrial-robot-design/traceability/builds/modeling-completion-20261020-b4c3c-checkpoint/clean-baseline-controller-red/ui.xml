@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.001" timestamp="2026-10-20T16:50:48.493" name="AllTests">
+  <testsuite name="DraftControllerModelTest" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T16:50:48.493">
+    <testcase name="CleanBaselineConsumesDraftAndKeepsHistory_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp" line="1162" status="run" result="completed" time="0." timestamp="2026-10-20T16:50:48.493" classname="DraftControllerModelTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1169&#x0A;Value of: outcome.ok&#x0A;  Actual: false&#x0A;Expected: true&#x0A;当前草稿控制器不支持干净状态结算&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1169
+Value of: outcome.ok
+  Actual: false
+Expected: true
+当前草稿控制器不支持干净状态结算
+]]></failure>
+    </testcase>
+    <testcase name="FailedCleanBaselineKeepsOriginalState_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp" line="1181" status="run" result="completed" time="0." timestamp="2026-10-20T16:50:48.494" classname="DraftControllerModelTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1191&#x0A;Expected equality of these values:&#x0A;  outcome.errorToken&#x0A;    Which is: &quot;not-supported&quot;&#x0A;  &quot;exception&quot;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1191
+Expected equality of these values:
+  outcome.errorToken
+    Which is: "not-supported"
+  "exception"
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1196&#x0A;Expected equality of these values:&#x0A;  outcome.errorToken&#x0A;    Which is: &quot;not-supported&quot;&#x0A;  &quot;executor-stopped&quot;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1196
+Expected equality of these values:
+  outcome.errorToken
+    Which is: "not-supported"
+  "executor-stopped"
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1197&#x0A;Value of: harness.ctl().notifySessionClean(&quot;modeling&quot;).ok&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1197
+Value of: harness.ctl().notifySessionClean("modeling").ok
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="LateAutosaveCannotClearRedoAfterClean_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp" line="1203" status="run" result="completed" time="0." timestamp="2026-10-20T16:50:48.494" classname="DraftControllerModelTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1211&#x0A;Value of: harness.ctl().notifySessionClean(&quot;modeling&quot;).ok&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1211
+Value of: harness.ctl().notifySessionClean("modeling").ok
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

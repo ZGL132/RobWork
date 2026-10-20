@@ -28,6 +28,11 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QCheckBox>
+#include <QScrollArea>
+#include <QScrollBar>
+#include "plugin/ModelingBodyEditor.hpp"
+#include <QDir> // MDL-22真实窗口截图证据，仅写测试指定输出目录。
 #include <QClipboard>   // 复制钮断言（UI-T59 剪贴板＝预览全文）
 #include <QMap>
 #include <cstdio>
@@ -39,6 +44,10 @@
 #include <QTableWidget>
 #include <QTreeWidgetItemIterator>
 #include <QPushButton>
+#include <QDialog>          // F14：耦合编辑模态
+#include <QDialogButtonBox>  // F14：模态确认钮
+#include <QSpinBox>          // F14：窗口/阶数输入
+#include <QTimer>            // F14：模态应答定时器
 #include <sdurws/ird/modeling/GeometryLinkEdit.hpp>  // attachExternalGeometry/detachGeometry/GeometrySlot（UI-T48 域原语直调）
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
@@ -118,7 +127,10 @@ bool inJointEditPane(const QWidget& panel, const QObject* widget)
             || name == QStringLiteral("ird_modeling_tool_area")
             || name == QStringLiteral("ird_modeling_scene_area")
             || name == QStringLiteral("ird_modeling_pose_area")
-            || name == QStringLiteral("ird_modeling_drivetrain_area")) {
+            || name == QStringLiteral("ird_modeling_drivetrain_area")
+            || name == QStringLiteral("ird_modeling_body_editor")
+            || name == QStringLiteral("ird_modeling_scene_editor")
+            || name == QStringLiteral("ird_modeling_tool_editor")) {
             return true;
         }
     }
@@ -372,10 +384,99 @@ int jointEditRowOf(const QTableWidget& table, const char* fieldKey)
 }
 
 /**
+ * @brief MDL-12/AT-17：continuous工程范围必须经真实表单两步确认，不能冒充限位。
+ * 验证多圈rad输入不取模、取消零修改、范围整体更新及只读门控；仅UI线程运行。
+ */
+TEST_F(ModelingPanelGuiTest, ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","MDL-06"},std::vector<std::string>{"AT-17"});
+    // 复现导入后未确认continuous状态：保留类型，bounds不适用，工程范围缺失。
+    auto& joint=m_ws.design.joints[0];joint.type=JointType::Continuous;
+    joint.bounds=core::SourcedValue<JointLimits>::notApplicable();
+    joint.workingRange=core::SourcedValue<JointLimits>::notProvided();
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    m_panel->focusObject(joint.objectId);
+    m_panel->resize(1280,900);m_panel->show();QApplication::processEvents();
+    auto* table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
+    const int lo=jointEditRowOf(*table,"working-range-min");
+    const int hi=jointEditRowOf(*table,"working-range-max");
+    ASSERT_GE(lo,0)<<"continuous工程范围下限入口缺失";
+    ASSERT_GE(hi,0)<<"continuous工程范围上限入口缺失";
+    EXPECT_LT(jointEditRowOf(*table,"bounds-min"),0)<<"工程范围不得冒充限位";
+    auto* host=m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    const auto before=m_ws;
+    const QString initialLower=table->item(lo,1)->text();
+    // 首次仅填写一端不能凭空补齐另一端；该失败亦不得推进权威来源/历史。
+    table->item(lo,1)->setText(QStringLiteral("-8"));QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    EXPECT_EQ(m_ws,before)<<"缺一端必须拒绝，不能伪造默认范围";
+    EXPECT_EQ(table->item(lo,1)->text(),initialLower)<<"拒绝后显示须回到未确认值，不能显示已接受-8";
+    table->item(lo,1)->setText(QStringLiteral("-8"));table->item(hi,1)->setText(QStringLiteral("10"));
+    QApplication::processEvents();EXPECT_EQ(m_ws,before)<<"输入不能提前确认工程范围";
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_cancel"))->click();
+    EXPECT_EQ(m_ws,before)<<"取消必须零写入";
+    table->item(lo,1)->setText(QStringLiteral("-8"));table->item(hi,1)->setText(QStringLiteral("10"));
+    QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    EXPECT_EQ(m_ws,before)<<"展示确认区仍不能写入";
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    ASSERT_TRUE(joint.workingRange.tryValue().has_value());
+    EXPECT_EQ(joint.workingRange.value(),(JointLimits{-8,10}));
+    EXPECT_EQ(joint.workingRange.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_EQ(joint.type,JointType::Continuous);EXPECT_EQ(joint.bounds.state(),core::FieldState::NotApplicable);
+    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1)<<"一对端点只记一次变更";
+    // 让工程范围两行真正进入表格视口，再断言裁剪几何并留图；创建了控件不等于可见。
+    table->scrollToItem(table->item(hi,0),QAbstractItemView::PositionAtBottom);
+    QApplication::processEvents();
+    EXPECT_TRUE(table->viewport()->rect().contains(table->visualItemRect(table->item(lo,0))));
+    EXPECT_TRUE(table->viewport()->rect().contains(table->visualItemRect(table->item(hi,0))));
+    const QString evidence=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!evidence.isEmpty()){QDir().mkpath(evidence);EXPECT_TRUE(m_panel->grab().save(evidence+"/continuous-range.png"));}
+    // 反向区间通过真实编辑链提交，域必须拒绝并回填原权威范围。
+    const auto accepted=m_ws;
+    table->item(lo,1)->setText(QStringLiteral("11"));QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    EXPECT_EQ(m_ws,accepted);
+    EXPECT_EQ(table->item(lo,1)->text(),QStringLiteral("-8"))<<"领域拒绝后表单不得保留11为已应用基线";
+    EXPECT_EQ(table->item(hi,1)->text(),QStringLiteral("10"));
+    table->scrollToItem(table->item(hi,0),QAbstractItemView::PositionAtBottom);QApplication::processEvents();
+    if(!evidence.isEmpty()){EXPECT_TRUE(m_panel->grab().save(evidence+"/continuous-range-rejected.png"));}
+    m_panel->setWritable(false);
+    EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_table_panel"))->isEnabled());
+}
+
+/** @brief MDL-12/UX-05：同关节类型更新须重建schema，排队旧字段不写新模型。 */
+TEST_F(ModelingPanelGuiTest, ContinuousRangeSchemaRebuildKeepsQueuedModelAlive_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","UX-05"},std::vector<std::string>{"AT-17"});
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    auto* oldTable=jointEditTable(*m_panel);ASSERT_NE(oldTable,nullptr);
+    // itemChanged故意留在事件队列；同索引换schema时不能解引用已销毁模型。
+    oldTable->item(jointEditRowOf(*oldTable,"bounds-min"),1)->setText(QStringLiteral("-7"));
+    m_ws.design.joints[0].type=JointType::Continuous;
+    m_ws.design.joints[0].bounds=core::SourcedValue<JointLimits>::notApplicable();
+    m_ws.design.joints[0].workingRange=core::SourcedValue<JointLimits>::notProvided();
+    const auto before=m_ws;
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    QApplication::processEvents();QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+    auto* table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
+    EXPECT_GE(jointEditRowOf(*table,"working-range-min"),0);
+    EXPECT_LT(jointEditRowOf(*table,"bounds-min"),0);EXPECT_EQ(m_ws,before);
+    // 再切非continuous，证明工程范围行不泄露给移动关节，单位随schema重建。
+    m_ws.design.joints[0].type=JointType::Prismatic;
+    m_ws.design.joints[0].workingRange=core::SourcedValue<JointLimits>::notApplicable();
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});QApplication::processEvents();
+    table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
+    EXPECT_GE(jointEditRowOf(*table,"bounds-min"),0);EXPECT_LT(jointEditRowOf(*table,"working-range-min"),0);
+}
+
+/**
  * 编辑页空态→选中建页链（UI-T53——B.1"结构树选择→详细编辑页"主入口）：
- * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝12 行数值表装配
- * （轴向 3＋原点 6＋零位 1＋限位 2）；切到连杆＝面板收起回空态（编辑页
- * 只对关节供给——工具/场景归后续批次）。
+ * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝14 行数值表装配
+ * （轴向 3＋原点 6＋零位 1＋限位 2＋F01 速度/加速度 2）；切到连杆＝面板
+ * 收起回空态（编辑页只对关节供给——工具/场景归后续批次）。
  */
 TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53)
 {
@@ -387,14 +488,16 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_U
     ASSERT_NE(hint, nullptr);
     EXPECT_FALSE(hint->text().isEmpty()) << "空态提示缺失（ERR-01——不伪造页也不留白）";
 
-    // 选中关节→建页：12 行（登记序＝装配序）。
+    // 选中关节→建页：14 行（登记序＝装配序；F01 表尾追加速度/加速度两行）。
     m_panel->focusObject(m_ws.design.joints[0].objectId);
     QTableWidget* table = jointEditTable(*m_panel);
     ASSERT_NE(table, nullptr) << "选中关节后编辑页未装配";
-    EXPECT_EQ(table->rowCount(), 12) << "编辑页字段集非 12 行（轴向 3＋原点 6＋零位 1＋限位 2）";
+    EXPECT_EQ(table->rowCount(), 14) << "编辑页字段集非 14 行（轴向 3＋原点 6＋零位 1＋限位 2＋速度/加速度 2——F01）";
     EXPECT_NE(jointEditRowOf(*table, "origin-x"), -1);
     EXPECT_NE(jointEditRowOf(*table, "origin-yaw"), -1);
     EXPECT_NE(jointEditRowOf(*table, "bounds-max"), -1);
+    EXPECT_NE(jointEditRowOf(*table, "max-velocity"), -1) << "F01：最大速度行未装配";
+    EXPECT_NE(jointEditRowOf(*table, "max-acceleration"), -1) << "F01：最大加速度行未装配";
 
     // 切到连杆→回空态（非关节目标无数值编辑页——诚实收口；收起打在
     // ParamTablePanel 根的显式隐藏位上，内层表格只随父链不可见）。
@@ -582,6 +685,8 @@ TEST_F(ModelingPanelGuiTest, BasePlacementEdit_WholeReplacementChain_UI_T54)
     // 自定义预设→EAA 行随启（I-MDL-7：仅 Custom 有语义——非 Custom 携带即
     // 域原语 fail-fast 面，UI 侧先行禁用同口径）。
     preset->setCurrentIndex(3);
+    // F15默认改为欧拉输入；本既有用例仍完整验证显式选择高级EAA的兼容路径。
+    m_panel->findChild<QComboBox*>("ird_modeling_base_rotation_mode")->setCurrentIndex(1);
     QDoubleSpinBox* eaaY = m_panel->findChild<QDoubleSpinBox*>(QStringLiteral("ird_modeling_base_eaa_y"));
     ASSERT_NE(eaaY, nullptr);
     EXPECT_TRUE(eaaY->isEnabled()) << "自定义预设下 EAA 行应启用";
@@ -612,6 +717,47 @@ TEST_F(ModelingPanelGuiTest, BasePlacementEdit_WholeReplacementChain_UI_T54)
     ASSERT_NE(restoreBtn, nullptr);
     restoreBtn->click();
     ASSERT_EQ(m_ws.changes.size(), std::size_t{1}) << "还原不得产生域调用";
+}
+
+/** @brief MDL-22/AT-37：用户可经明确ZYX欧拉角输入任意安装姿态，确认前不写草稿。 */
+TEST_F(ModelingPanelGuiTest, BaseEulerEntryAndAtomicApply_MDL22_AT37)
+{
+    IRD_TEST_INFO("MDL-22",{},std::nullopt);
+    m_panel->resize(1280,900);m_panel->show();QApplication::processEvents();
+    enterBaseMode(*m_panel);
+    auto* mode=m_panel->findChild<QComboBox*>("ird_modeling_base_rotation_mode");
+    auto* roll=m_panel->findChild<QDoubleSpinBox*>("ird_modeling_base_roll");
+    auto* pitch=m_panel->findChild<QDoubleSpinBox*>("ird_modeling_base_pitch");
+    auto* yaw=m_panel->findChild<QDoubleSpinBox*>("ird_modeling_base_yaw");
+    ASSERT_NE(mode,nullptr)<<"F15：基座页缺少欧拉角表示选择";
+    ASSERT_NE(roll,nullptr);ASSERT_NE(pitch,nullptr);ASSERT_NE(yaw,nullptr);
+    EXPECT_EQ(mode->currentIndex(),0);
+    m_panel->findChild<QComboBox*>("ird_modeling_base_preset")->setCurrentIndex(3);
+    ASSERT_TRUE(roll->isVisible());ASSERT_TRUE(pitch->isVisible());ASSERT_TRUE(yaw->isVisible());
+    const auto before=m_ws;
+    roll->setValue(0.3);pitch->setValue(-0.4);yaw->setValue(0.7);
+    EXPECT_EQ(m_ws,before)<<"输入和显示切换不能写入草稿";
+    m_panel->findChild<QPushButton*>("ird_modeling_base_apply")->click();
+    EXPECT_EQ(m_ws.design.basePlacement.preset,runtime::InstallationPresetToken::Custom);
+    ASSERT_TRUE(m_ws.design.basePlacement.customEaa.tryValue().has_value());
+    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1);
+    // 还原由权威姿态反解，而不是保留上次未应用输入。
+    yaw->setValue(1.1);m_panel->findChild<QPushButton*>("ird_modeling_base_restore")->click();
+    EXPECT_NEAR(roll->value(),0.3,1e-6);EXPECT_NEAR(pitch->value(),-0.4,1e-6);EXPECT_NEAR(yaw->value(),0.7,1e-6);
+    const auto accepted=m_ws;
+    mode->setCurrentIndex(1);mode->setCurrentIndex(0);EXPECT_EQ(m_ws,accepted);
+    // 用实际Qt窗口内容留痕；这里只证明编辑页，不冒充正式宿主完整三维验收。
+    const auto evidence=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!evidence.isEmpty()){
+        QDir().mkpath(evidence);QApplication::processEvents();
+        EXPECT_TRUE(m_panel->grab().save(evidence+"/base-euler.png"));
+    }
+    m_panel->setWritable(false);
+    EXPECT_FALSE(roll->isEnabled());EXPECT_FALSE(pitch->isEnabled());EXPECT_FALSE(yaw->isEnabled());
+    auto* preset=m_panel->findChild<QComboBox*>("ird_modeling_base_preset");
+    preset->setCurrentIndex(0);preset->setCurrentIndex(3);
+    EXPECT_FALSE(roll->isEnabled())<<"只读预设切换不能复活输入";
+    EXPECT_EQ(m_ws,accepted);
 }
 
 /**
@@ -713,6 +859,9 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     const auto buttons = m_panel->findChildren<QPushButton*>();
     ASSERT_GT(buttons.size(), std::size_t{0}) << "命令按钮未构建（区③空）";
     for (const QPushButton* btn : buttons) {
+        // L-5局部历史独立于项目命令可用性，空栈不能被全放行快照启用。
+        if (btn->objectName().startsWith(QStringLiteral("ird_modeling_draft_"))) { continue; }
+        if (btn->objectName()==QStringLiteral("ird_modeling_retained_review")) { continue; } // PM-04只读呈现按旧稿存在性使能，不进入项目命令目录。
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; } // 历史钮不入禁用对账
         if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; } // 折叠开关不入对账（F-502 呈现件——非命令目录按钮）
         if (btn->objectName() == QString::fromUtf8("ird_modeling_preview_copy")) { continue; } // 预览复制钮不入对账（UI-T59 呈现件——非命令目录按钮）
@@ -732,6 +881,8 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
         return ui::CommandAvailability{true, true, true, ui::DisableReason{}};
     });
     for (const QPushButton* btn : buttons) {
+        if (btn->objectName().startsWith(QStringLiteral("ird_modeling_draft_"))) { continue; }
+        if (btn->objectName()==QStringLiteral("ird_modeling_retained_review")) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_preview_copy")) { continue; }
@@ -740,6 +891,13 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
         if (inJointEditPane(*m_panel, btn)) { continue; }
         EXPECT_TRUE(btn->isEnabled()) << "放行快照下按钮仍禁用";
     }
+    // 独立验证新入口的真实契约：无旧稿时全放行也不能启用，装配只读
+    // 查看后只读会话仍可核对，清回调后重新禁用，不受项目写命令门控。
+    auto* review=m_panel->findChild<QPushButton*>("ird_modeling_retained_review");ASSERT_NE(review,nullptr);
+    EXPECT_FALSE(review->isEnabled());int views=0;
+    m_panel->setRetainedReviewAction([&]{++views;});m_panel->setWritable(false);
+    EXPECT_TRUE(review->isEnabled());review->click();EXPECT_EQ(views,1);
+    m_panel->setRetainedReviewAction({});EXPECT_FALSE(review->isEnabled());
 }
 
 // =====================================================================
@@ -1909,4 +2067,464 @@ TEST_F(ModelingPanelGuiTest, SameObjectRefreshKeepsPendingValue_UI_T79)
     auto* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
     host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
     EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_confirm_region"))->isHidden());
+}
+
+/** @brief MDL-05/V-17：真实内联输入原位纠错、质心显式二选一与完整张量，取消零写入。 */
+TEST_F(ModelingPanelGuiTest, ManualBodyFieldsAndCentroidChoice_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    // 与生产模块相同：接受后重投影摘要和编辑页，截图必须核对同一草稿真值。
+    m_panel->setPostEditAction([this]{m_panel->refreshPanel(m_ws,{});});
+    auto& body=m_ws.design.links.back().body;
+    const auto source=core::ValueProvenance::make(core::ProvenanceKind::GeometricEstimate);
+    body.mass=core::SourcedValue<double>::provided(2,source);
+    body.centerOfMass=core::SourcedValue<rw::math::Vector3D<double>>::provided({0,0,0},source);
+    body.inertia=core::SourcedValue<InertiaTensor>::provided({3,4,5,0.1,0.2,0.3},source);
+    m_panel->refreshPanel(m_ws,{});m_panel->focusObject(m_ws.design.links.back().objectId);
+    m_panel->resize(900,650);m_panel->show();QApplication::processEvents();
+    auto* editor=m_panel->findChild<QWidget*>("ird_modeling_body_editor");ASSERT_NE(editor,nullptr);
+    auto field=[&](int i){return editor->findChild<QLineEdit*>(QStringLiteral("ird_body_value_%1").arg(i));};
+    auto* mass=editor->findChild<QCheckBox*>("ird_body_mass_edit");
+    auto* com=editor->findChild<QCheckBox*>("ird_body_com_edit");
+    auto* tensor=editor->findChild<QCheckBox*>("ird_body_inertia_edit");
+    auto* choice=editor->findChild<QComboBox*>("ird_body_centroid_resolution");
+    auto* apply=editor->findChild<QPushButton*>("ird_body_apply");
+    auto* cancel=editor->findChild<QPushButton*>("ird_body_cancel");
+    auto* feedback=editor->findChild<QLabel*>("ird_body_feedback");
+    const auto before=m_ws;
+    mass->setChecked(true);field(0)->setText("-1");apply->click();
+    EXPECT_EQ(m_ws,before);EXPECT_EQ(field(0)->text(),"-1");EXPECT_TRUE(feedback->text().contains(QStringLiteral("正数")));
+    field(0)->setText("4");com->setChecked(true);
+    field(1)->setText("1");field(2)->setText("2");field(3)->setText("3");
+    EXPECT_EQ(choice->currentIndex(),0);apply->click();EXPECT_EQ(m_ws,before);
+    EXPECT_TRUE(feedback->text().contains(QStringLiteral("明确选择")));
+    choice->setCurrentIndex(1);EXPECT_FALSE(tensor->isEnabled());apply->click();
+    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1);
+    EXPECT_DOUBLE_EQ(body.mass.value(),4);EXPECT_DOUBLE_EQ(body.inertia.value().ixx,55);
+    EXPECT_DOUBLE_EQ(body.inertia.value().ixy,-7.9);EXPECT_DOUBLE_EQ(body.inertia.value().iyz,-23.7);
+    EXPECT_EQ(body.inertia.provenance(),source);EXPECT_FALSE(mass->isChecked());
+    const auto migrated=m_ws;
+    com->setChecked(true);field(1)->setText("2");choice->setCurrentIndex(2);
+    EXPECT_TRUE(tensor->isChecked());
+    const char* values[]={"5","6","7","0.4","0.5","0.6"};
+    for(int i=0;i<6;++i){field(i+4)->setText(values[i]);}
+    field(9)->setText("nan");apply->click();EXPECT_EQ(m_ws,migrated);EXPECT_EQ(field(9)->text(),"nan");
+    field(9)->setText("0.6");apply->click();
+    EXPECT_DOUBLE_EQ(body.centerOfMass.value()[0],2);EXPECT_DOUBLE_EQ(body.inertia.value().iyz,0.6);
+    EXPECT_EQ(body.inertia.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+2);
+    EXPECT_EQ(field(7)->cursorPosition(),0);EXPECT_EQ(field(9)->cursorPosition(),0);
+    ASSERT_GE(editors().size(),3);EXPECT_EQ(editors()[0]->text(),"4");
+    EXPECT_TRUE(editors()[1]->text().startsWith("2, 2, 3"));
+    const auto accepted=m_ws;mass->setChecked(true);field(0)->setText("8");cancel->click();
+    EXPECT_EQ(m_ws,accepted);EXPECT_EQ(field(0)->text(),"4");EXPECT_FALSE(mass->isChecked());
+    // 无改动确认、无默认质心决议，均不伪造历史。
+    apply->click();EXPECT_EQ(m_ws,accepted);EXPECT_EQ(choice->currentIndex(),0);
+    EXPECT_FALSE(feedback->text().contains("migrate-inertia"));
+    auto* scroll=editor->parentWidget()->parentWidget();
+    auto* area=qobject_cast<QScrollArea*>(scroll);ASSERT_NE(area,nullptr);
+    EXPECT_GT(area->verticalScrollBar()->maximum(),0);
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!out.isEmpty()){
+        ASSERT_TRUE(QDir().mkpath(out));area->verticalScrollBar()->setValue(0);QApplication::processEvents();
+        ASSERT_TRUE(m_panel->grab().save(QDir(out).filePath("body-editor-top.png")));
+        area->ensureWidgetVisible(apply);QApplication::processEvents();
+        ASSERT_TRUE(m_panel->grab().save(QDir(out).filePath("body-editor-confirm.png")));
+    }
+}
+
+/** @brief MDL-05：同目标刷新保留未确认输入，切目标清除；只读与过时基线在出口再次拒绝。 */
+TEST_F(ModelingPanelGuiTest, ManualBodyRefreshStaleAndReadOnly_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    m_panel->focusObject(m_ws.design.links.back().objectId);
+    auto* editor=m_panel->findChild<QWidget*>("ird_modeling_body_editor");ASSERT_NE(editor,nullptr);
+    auto* mass=editor->findChild<QCheckBox*>("ird_body_mass_edit");
+    auto* field=editor->findChild<QLineEdit*>("ird_body_value_0");
+    auto* apply=editor->findChild<QPushButton*>("ird_body_apply");
+    auto* feedback=editor->findChild<QLabel*>("ird_body_feedback");
+    mass->setChecked(true);field->setText("8");m_panel->refreshPanel(m_ws,{});
+    EXPECT_TRUE(mass->isChecked());EXPECT_EQ(field->text(),"8");
+    m_panel->setWritable(false);EXPECT_FALSE(apply->isEnabled());
+    const auto before=m_ws;apply->click();EXPECT_EQ(m_ws,before);
+    m_panel->setWritable(true);EXPECT_EQ(field->text(),"8");
+    // 不刷新而更换权威基线，确认不能覆盖后台变更。
+    m_ws.design.links.back().body.mass=core::SourcedValue<double>::provided(3,
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    const auto changed=m_ws;apply->click();EXPECT_EQ(m_ws,changed);
+    EXPECT_TRUE(feedback->text().contains(QStringLiteral("基线已改变")));
+    m_panel->refreshPanel(m_ws,{});EXPECT_FALSE(mass->isChecked());EXPECT_EQ(field->text(),"3");
+    mass->setChecked(true);field->setText("12");m_panel->focusObject(m_ws.design.links.front().objectId);
+    EXPECT_FALSE(mass->isChecked());m_panel->focusObject(m_ws.design.links.back().objectId);
+    EXPECT_EQ(field->text(),"3");EXPECT_EQ(m_ws,changed);
+}
+
+/** @brief MDL-05：无基准不猜零，迁移拒绝；完整输入可建立用户物性，出口不可绕只读。 */
+TEST(ModelingManualBodyGui, MissingBaselineCompleteInputAndReadOnly_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    int accepts=0;BodyData accepted;
+    ModelingBodyEditor editor(nullptr,[&](const core::ObjectId&,const BodyData&,
+        const ManualBodyResult& result,std::string&){++accepts;accepted=result.body;return true;});
+    const auto id=core::ObjectId::generate();editor.bindTarget(id,BodyData{},"empty-link",true);
+    auto field=[&](int i){return editor.findChild<QLineEdit*>(QStringLiteral("ird_body_value_%1").arg(i));};
+    auto* mass=editor.findChild<QCheckBox*>("ird_body_mass_edit");
+    auto* com=editor.findChild<QCheckBox*>("ird_body_com_edit");
+    auto* tensor=editor.findChild<QCheckBox*>("ird_body_inertia_edit");
+    auto* choice=editor.findChild<QComboBox*>("ird_body_centroid_resolution");
+    auto* apply=editor.findChild<QPushButton*>("ird_body_apply");
+    auto* feedback=editor.findChild<QLabel*>("ird_body_feedback");
+    for(int i=0;i<10;++i){EXPECT_TRUE(field(i)->text().isEmpty());}
+    mass->setChecked(true);field(0)->setText("2");com->setChecked(true);
+    field(1)->setText("1");field(2)->setText("2");field(3)->setText("3");
+    choice->setCurrentIndex(1);apply->click();EXPECT_EQ(accepts,0);
+    EXPECT_TRUE(feedback->text().contains(QStringLiteral("旧质心")));
+    choice->setCurrentIndex(2);EXPECT_TRUE(tensor->isChecked());apply->click();EXPECT_EQ(accepts,0);
+    const char* values[]={"3","4","5","0.1","0.2","0.3"};
+    for(int i=0;i<6;++i){field(i+4)->setText(values[i]);}
+    apply->click();ASSERT_EQ(accepts,1);EXPECT_DOUBLE_EQ(accepted.mass.value(),2);
+    EXPECT_DOUBLE_EQ(accepted.inertia.value().ixy,0.1);
+    EXPECT_EQ(accepted.centerOfMass.provenance().kind,core::ProvenanceKind::UserProvided);
+    editor.bindTarget(id,accepted,"empty-link",false);mass->setChecked(true);field(0)->setText("9");
+    EXPECT_FALSE(apply->isEnabled());
+    // 直接派发信号验证执行端守卫；禁用控件的click自身会短路，不能证明出口安全。
+    ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));EXPECT_EQ(accepts,1);
+}
+
+/** @brief F12/MDL-15：两构建模式都运行真实内联页，暂存/换目标/只读/空会话均正确。 */
+TEST_F(ModelingPanelGuiTest, SceneManagerPendingSelectionAndReadOnly_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    int accepted=0;m_panel->setPostEditAction([&]{++accepted;});
+    m_panel->resize(1100,760);m_panel->show();QApplication::processEvents();
+    auto* entry=m_panel->findChild<QPushButton*>("ird_modeling_edit_scene_mode");ASSERT_NE(entry,nullptr);
+    entry->click();auto* name=m_panel->findChild<QLineEdit*>("ird_scene_name");ASSERT_NE(name,nullptr);
+    auto* apply=m_panel->findChild<QPushButton*>("ird_scene_apply");ASSERT_NE(apply,nullptr);
+    const auto before=m_ws;name->setText("first");
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});EXPECT_EQ(name->text(),"first");EXPECT_EQ(m_ws,before);
+    apply->click();ASSERT_EQ(m_ws.sceneObjects.size(),1U);EXPECT_EQ(accepted,1);
+    const auto first=m_ws;name->setText("not_confirmed");
+    m_panel->findChild<QPushButton*>("ird_scene_cancel")->click();EXPECT_EQ(name->text(),"first");EXPECT_EQ(m_ws,first);
+    auto* objects=m_panel->findChild<QComboBox*>("ird_scene_objects");ASSERT_NE(objects,nullptr);
+    objects->setCurrentIndex(0);EXPECT_TRUE(name->text().isEmpty());name->setText("second");apply->click();
+    ASSERT_EQ(m_ws.sceneObjects.size(),2U);EXPECT_EQ(accepted,2);EXPECT_EQ(m_ws.design.sceneRefs.size(),2U);
+    name->setText("must_discard");objects->setCurrentIndex(1);EXPECT_EQ(name->text(),"first");
+    // 权威基线改变必须丢弃旧暂存，不能把旧名称覆盖新内容。
+    name->setText("old_pending");m_ws.sceneObjects.front().localName="externally_changed";
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});EXPECT_EQ(name->text(),"externally_changed");
+    m_panel->setWritable(false);const auto readOnly=m_ws;EXPECT_FALSE(apply->isEnabled());
+    ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));EXPECT_EQ(m_ws,readOnly);EXPECT_EQ(accepted,2);
+    m_panel->setEditTargetProvider({});entry->click();EXPECT_FALSE(apply->isEnabled());
+}
+/** @brief F08：两个构建模式都运行真实工具页，暂存/选择/只读/物性基线均守卫。 */
+TEST_F(ModelingPanelGuiTest, ToolManagerPendingSelectionReadOnly_MDL13_AT01)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-01"},std::nullopt);
+    int edits=0;m_panel->setPostEditAction([&]{++edits;});m_panel->resize(1140,840);m_panel->show();QApplication::processEvents();
+    auto* entry=m_panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode");ASSERT_NE(entry,nullptr);entry->click();
+    auto* editor=m_panel->findChild<QWidget*>("ird_modeling_tool_editor");ASSERT_NE(editor,nullptr);
+    auto* name=editor->findChild<QLineEdit*>("ird_tool_name");auto* apply=editor->findChild<QPushButton*>("ird_tool_apply");
+    auto* def=editor->findChild<QCheckBox*>("ird_tool_default");auto* feedback=editor->findChild<QLabel*>("ird_tool_feedback");
+    name->setText("gripper");const auto before=m_ws;m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    EXPECT_EQ(name->text(),"gripper");apply->click();EXPECT_EQ(m_ws,before);EXPECT_EQ(edits,0);
+    EXPECT_TRUE(feedback->text().contains(QStringLiteral("默认")));def->setChecked(true);apply->click();
+    ASSERT_EQ(m_ws.toolObjects.size(),1U);EXPECT_EQ(edits,1);const auto first=m_ws;
+    name->setText("discard");editor->findChild<QPushButton*>("ird_tool_cancel")->click();EXPECT_EQ(name->text(),"gripper");EXPECT_EQ(m_ws,first);
+    auto* objects=editor->findChild<QComboBox*>("ird_tool_objects");objects->setCurrentIndex(0);name->setText("second");apply->click();
+    ASSERT_EQ(m_ws.toolObjects.size(),2U);EXPECT_EQ(edits,2);EXPECT_EQ(m_ws.design.defaultTcp->toolOid,first.toolObjects.front().objectId);
+    name->setText("discard_again");objects->setCurrentIndex(1);EXPECT_EQ(name->text(),"gripper");
+    // 未广播刷新时的真实基线漂移也必须由确认出口拒绝，不能只测重绑后的正常回填。
+    name->setText("stale");m_ws.toolObjects.front().localName="external";const auto changed=m_ws;
+    apply->click();EXPECT_EQ(m_ws,changed);EXPECT_TRUE(feedback->text().contains(QStringLiteral("基线")));
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    EXPECT_EQ(name->text(),"external");m_panel->setWritable(false);const auto readOnly=m_ws;
+    EXPECT_FALSE(apply->isEnabled());EXPECT_FALSE(editor->findChild<QWidget*>("ird_tool_body_editor")->isEnabled());
+    ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));EXPECT_EQ(m_ws,readOnly);
+    m_panel->setWritable(true);EXPECT_TRUE(apply->isEnabled());
+    const auto folder=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!folder.isEmpty()){QDir().mkpath(folder);ASSERT_TRUE(m_panel->grab().save(folder+"/tool-manager-top.png"));}
+}
+
+/**
+ * F01（WP-13-T25/MDL-01）：最大速度表单编辑全链——值列输入 1.25 rad/s→
+ * 两步确认→applyJointFieldEdit(MaxVelocity) 接受→工作集 Provided＋
+ * UserProvided＋变更记录；随后负值经同一链被域拒绝且工作集保持接受值
+ * （拒绝原子性——表格回退真实草稿值，不残留新值）。
+ */
+TEST_F(ModelingPanelGuiTest, JointDetailEditPane_MaxVelocityEditAndRejectChain_MDL01_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01", {}, std::nullopt);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QTableWidget* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    const int row = jointEditRowOf(*table, "max-velocity");
+    ASSERT_GE(row, 0) << "F01：最大速度行未装配";
+
+    // 合法值链：1.25 rad/s →两步确认→域接受。
+    table->item(row, 1)->setText(QStringLiteral("1.25"));
+    QApplication::processEvents();
+    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    QApplication::processEvents();
+
+    const auto& velocity = m_ws.design.joints[0].maxVelocity;
+    ASSERT_EQ(velocity.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(velocity.value(), 1.25);
+    EXPECT_EQ(velocity.provenance().kind, core::ProvenanceKind::UserProvided);
+    ASSERT_FALSE(m_ws.changes.empty());
+    EXPECT_NE(m_ws.changes.back().summary.find("最大速度"), std::string::npos);
+
+    // 拒绝链：-0.5 →域拒绝（负值）→工作集保持 1.25（原子性），表格按
+    // 真实草稿回填（F04 教训：拒绝后不得残留被拒输入值）。
+    table->item(row, 1)->setText(QStringLiteral("-0.5"));
+    QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_ws.design.joints[0].maxVelocity.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(m_ws.design.joints[0].maxVelocity.value(), 1.25)
+        << "负值被拒后工作集须保持原值（拒绝原子性）";
+    // 表格显示＝真实草稿回填（拒绝回执链——confirm 后回填钩子）。
+    QTableWidget* refreshed = jointEditTable(*m_panel);
+    ASSERT_NE(refreshed, nullptr);
+    const int refreshedRow = jointEditRowOf(*refreshed, "max-velocity");
+    ASSERT_GE(refreshedRow, 0);
+    EXPECT_EQ(refreshed->item(refreshedRow, 1)->text(), QStringLiteral("1.25"))
+        << "拒绝后表格须显示真实草稿值而非被拒输入（F04 同族纪律）";
+}
+
+// =====================================================================
+// F14（WP-13-T25/MDL-21/AT-38）：耦合矩阵编辑入口与域裁决链
+// =====================================================================
+
+/**
+ * @brief F14 入口与能力位门控：传动页有耦合区（摘要＋编辑＋移除钮）；
+ *        面板缺省 R1Locked＝公共默认红线（编辑钮禁用）；setCouplingStage
+ *        (R2Enabled) 即时放行；只读会话再禁用。修复前（红）：传动页零
+ *        耦合入口（审计 M31 第一问题——域原语 T18 落位但无 UI 载体）。
+ */
+TEST_F(ModelingPanelGuiTest, CouplingEditorEntryAndStageGating_MDL21_WP13T25)
+{
+    IRD_TEST_INFO("MDL-21",{"AT-38"},std::nullopt);
+
+    auto* edit = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_coupling_edit"));
+    ASSERT_NE(edit, nullptr) << "F14：传动页缺少耦合矩阵编辑入口（审计 M31）";
+    auto* remove = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_coupling_remove"));
+    ASSERT_NE(remove, nullptr);
+    auto* summary = m_panel->findChild<QLabel*>(
+        QStringLiteral("ird_modeling_coupling_summary"));
+    ASSERT_NE(summary, nullptr);
+    EXPECT_TRUE(summary->text().contains(QStringLiteral("未配置")))
+        << "六轴草稿无耦合——摘要应呈未配置态";
+
+    // 公共默认 R1Locked：编辑入口禁用（存在即阻断的呈现半区）；移除恒可用。
+    EXPECT_FALSE(edit->isEnabled())
+        << "缺省能力位 R1Locked——配置入口必须禁用（不提前放开 R1 红线）";
+    EXPECT_TRUE(remove->isEnabled()) << "移除（清除不是配置）两阶段均可用";
+
+    // R2 注入→即时放行；只读降级→再禁用（与可写性合取）。
+    m_panel->setCouplingStage(CouplingStage::R2Enabled);
+    QApplication::processEvents();
+    EXPECT_TRUE(edit->isEnabled()) << "R2Enabled 注入后配置入口应放行";
+    m_panel->setWritable(false);
+    QApplication::processEvents();
+    EXPECT_FALSE(edit->isEnabled()) << "只读会话下配置入口必须禁用";
+    EXPECT_FALSE(remove->isEnabled());
+    m_panel->setWritable(true);
+    m_panel->setCouplingStage(CouplingStage::R1Locked);
+    QApplication::processEvents();
+    EXPECT_FALSE(edit->isEnabled()) << "回到 R1 后再禁用（能力位与可写性正交）";
+}
+
+/**
+ * @brief F14 编辑全链（非对角矩阵）：R2 下打开模态→窗口 J4..J6＋3 阶→
+ *        录入交接固定数值探针矩阵 C=[[1,0.2,0],[0,1,-0.1],[0.3,0,1.5]]
+ *        →应用→工作集 coupling 落位（元素/窗口/阶数逐项＋变更记录）；
+ *        探针数值（Δq=C·Δθ、τ_motor=Cᵀ·τ、瞬时功率）以独立期望在用例内
+ *        核对（不调用被测映射生成答案——期望值手算固定）。
+ */
+TEST_F(ModelingPanelGuiTest, CouplingEditorNonDiagonalAcceptThenRemove_MDL21_WP13T25)
+{
+    IRD_TEST_INFO("MDL-21",{"AT-38"},std::nullopt);
+
+    m_panel->setCouplingStage(CouplingStage::R2Enabled);
+    QApplication::processEvents();
+    const std::size_t changesBefore = m_ws.changes.size();
+
+    // 模态应答（watchdog 同款纪律：超时拒绝并判失败）。
+    QTimer timeout;
+    timeout.setSingleShot(true);
+    QObject::connect(&timeout, &QTimer::timeout, [] {
+        ADD_FAILURE() << "耦合编辑模态未按预期响应";
+        if (auto* d = qobject_cast<QDialog*>(QApplication::activeModalWidget())) {
+            d->reject();
+        }
+    });
+    timeout.start(10000);
+    QTimer::singleShot(50, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog, nullptr) << "耦合编辑模态未弹出";
+        EXPECT_EQ(dialog->objectName(),
+                  QStringLiteral("ird_modeling_coupling_dialog"));
+        auto* first = dialog->findChild<QSpinBox*>(
+            QStringLiteral("ird_modeling_coupling_first"));
+        ASSERT_NE(first, nullptr);
+        auto* order = dialog->findChild<QSpinBox*>(
+            QStringLiteral("ird_modeling_coupling_order"));
+        ASSERT_NE(order, nullptr);
+        first->setValue(4);   // 窗口 J4..J6（0 基 3..5）
+        order->setValue(3);
+        QApplication::processEvents();
+        auto* table = dialog->findChild<QTableWidget*>(
+            QStringLiteral("ird_modeling_coupling_table"));
+        ASSERT_NE(table, nullptr);
+        ASSERT_EQ(table->rowCount(), 3);
+        // 交接固定探针矩阵（非对角——对角/单位阵不具证明力）。
+        const double c[3][3] = {{1.0, 0.2, 0.0},
+                                {0.0, 1.0, -0.1},
+                                {0.3, 0.0, 1.5}};
+        for (int r = 0; r < 3; ++r) {
+            for (int col = 0; col < 3; ++col) {
+                table->item(r, col)->setText(QString::number(c[r][col]));
+            }
+        }
+        QApplication::processEvents();
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)
+            ->click();
+    });
+    m_panel->openCouplingEditor();
+
+    // 工作集落位断言（元素行主序逐项＋窗口＋方阵阶数＋申报条件数为有限>1）。
+    ASSERT_TRUE(m_ws.drivetrainObject.has_value());
+    ASSERT_TRUE(m_ws.drivetrainObject->coupling.has_value());
+    const CouplingDesign& cd = *m_ws.drivetrainObject->coupling;
+    ASSERT_EQ(cd.rows, 3u);
+    ASSERT_EQ(cd.cols, 3u);
+    EXPECT_EQ(cd.jointRangeFirst, 3u);
+    EXPECT_EQ(cd.jointRangeLast, 5u);
+    const double expect[9] = {1.0, 0.2, 0.0, 0.0, 1.0, -0.1, 0.3, 0.0, 1.5};
+    for (std::size_t k = 0; k < 9; ++k) {
+        EXPECT_DOUBLE_EQ(cd.c[k], expect[k]) << "元素 " << k;
+    }
+    EXPECT_GT(cd.conditionNumber, 1.0);
+    EXPECT_TRUE(std::isfinite(cd.conditionNumber));
+    EXPECT_GT(m_ws.changes.size(), changesBefore) << "应用未留变更记录";
+
+    // 摘要行更新（窗口/阶数可观察）。
+    QApplication::processEvents();
+    auto* summary = m_panel->findChild<QLabel*>(
+        QStringLiteral("ird_modeling_coupling_summary"));
+    ASSERT_NE(summary, nullptr);
+    EXPECT_TRUE(summary->text().contains(QStringLiteral("J4..J6")))
+        << "摘要未呈现窗口";
+    EXPECT_TRUE(summary->text().contains(QStringLiteral("3×3")))
+        << "摘要未呈现阶数";
+
+    // ---- 交接固定数值探针（独立手算期望——非对角矩阵的映射语义面）----
+    // Δθ_motor=[1,2,3] rad → Δq_joint=C·Δθ=[1.4,1.7,4.8] rad；
+    // τ_joint=[2,-1,4] N·m → τ_motor=Cᵀ·τ=[3.2,-0.6,6.1] N·m；
+    // 两侧瞬时机械功率同值 20.3 W（虚功守恒——DYN-04）。
+    {
+        const double dtheta[3] = {1.0, 2.0, 3.0};
+        const double tauJoint[3] = {2.0, -1.0, 4.0};
+        double dq[3] = {0, 0, 0};
+        double tauMotor[3] = {0, 0, 0};
+        for (int r = 0; r < 3; ++r) {
+            for (int col = 0; col < 3; ++col) {
+                dq[r] += cd.c[r * 3 + col] * dtheta[col];
+                tauMotor[col] += cd.c[r * 3 + col] * tauJoint[r];
+            }
+        }
+        EXPECT_NEAR(dq[0], 1.4, 1e-12);
+        EXPECT_NEAR(dq[1], 1.7, 1e-12);
+        EXPECT_NEAR(dq[2], 4.8, 1e-12);
+        EXPECT_NEAR(tauMotor[0], 3.2, 1e-12);
+        EXPECT_NEAR(tauMotor[1], -0.6, 1e-12);
+        EXPECT_NEAR(tauMotor[2], 6.1, 1e-12);
+        const double powerJoint = tauJoint[0] * dq[0] + tauJoint[1] * dq[1]
+                                  + tauJoint[2] * dq[2];
+        const double powerMotor = tauMotor[0] * dtheta[0]
+                                  + tauMotor[1] * dtheta[1]
+                                  + tauMotor[2] * dtheta[2];
+        EXPECT_NEAR(powerJoint, 20.3, 1e-12);
+        EXPECT_NEAR(powerMotor, 20.3, 1e-12) << "虚功守恒（两侧功率应相等）";
+    }
+
+    // ---- 移除：清除后回到未配置（两阶段均允许的面）----
+    auto* remove = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_coupling_remove"));
+    ASSERT_NE(remove, nullptr);
+    remove->click();
+    QApplication::processEvents();
+    ASSERT_TRUE(m_ws.drivetrainObject.has_value());
+    EXPECT_FALSE(m_ws.drivetrainObject->coupling.has_value())
+        << "移除后耦合配置应清除";
+}
+
+/**
+ * @brief F14 拒绝面（数值）：奇异矩阵（秩 1）经域校验拒绝——模态保留、
+ *        错误行呈现稳定 token、工作集 coupling 逐字段不变（原子性）；
+ *        随后取消＝零写入。
+ */
+TEST_F(ModelingPanelGuiTest, CouplingEditorSingularRejectedAtomicCancelSafe_MDL21_WP13T25)
+{
+    IRD_TEST_INFO("MDL-21",{},std::nullopt);
+
+    m_panel->setCouplingStage(CouplingStage::R2Enabled);
+    QApplication::processEvents();
+    const ModelingWorkingSet before = m_ws;
+
+    QTimer timeout;
+    timeout.setSingleShot(true);
+    QObject::connect(&timeout, &QTimer::timeout, [] {
+        ADD_FAILURE() << "耦合编辑模态未按预期响应";
+        if (auto* d = qobject_cast<QDialog*>(QApplication::activeModalWidget())) {
+            d->reject();
+        }
+    });
+    timeout.start(10000);
+    QTimer::singleShot(50, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog, nullptr);
+        auto* order = dialog->findChild<QSpinBox*>
+(
+            QStringLiteral("ird_modeling_coupling_order"));
+        ASSERT_NE(order, nullptr);
+        order->setValue(2);
+        QApplication::processEvents();
+        auto* table = dialog->findChild<QTableWidget*>(
+            QStringLiteral("ird_modeling_coupling_table"));
+        ASSERT_NE(table, nullptr);
+        for (int r = 0; r < 2; ++r) {
+            for (int col = 0; col < 2; ++col) {
+                table->item(r, col)->setText(QStringLiteral("1"));
+            }
+        }
+        QApplication::processEvents();
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)
+            ->click();
+        QApplication::processEvents();
+        EXPECT_NE(QApplication::activeModalWidget(), nullptr)
+            << "域拒绝后模态应保留（原位重试）";
+        auto* err = dialog->findChild<QLabel*>(
+            QStringLiteral("ird_modeling_coupling_error"));
+        ASSERT_NE(err, nullptr);
+        EXPECT_TRUE(err->text().contains(QStringLiteral("singular")))
+            << "奇异拒绝的稳定 token 未呈现: " << err->text().toStdString();
+        EXPECT_TRUE(err->text().contains(QStringLiteral("工作集未修改")))
+            << "拒绝原子性未在回执注明";
+        dialog->reject();
+    });
+    m_panel->openCouplingEditor();
+    EXPECT_EQ(m_ws, before) << "拒绝＋取消后工作集必须与进入前逐字段相等（F14 顺序修正后）";
+
+
+
+
+
+
 }

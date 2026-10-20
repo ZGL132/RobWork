@@ -1,0 +1,22 @@
+Note: Google Test filter = CommandSubmitS6.ObjectIdAllocation_BothPathsCommit:CommandSubmitS6.CompleteObjectSet*:TxEngineTest.RetainedObjects*
+[==========] Running 5 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from TxEngineTest
+[ RUN      ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01
+[       OK ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01 (65 ms)
+[ RUN      ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01
+[       OK ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01 (79 ms)
+[----------] 2 tests from TxEngineTest (145 ms total)
+
+[----------] 3 tests from CommandSubmitS6
+[ RUN      ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+[       OK ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit (124 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08
+[       OK ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08 (176 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04
+[       OK ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04 (187 ms)
+[----------] 3 tests from CommandSubmitS6 (489 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test suites ran. (638 ms total)
+[  PASSED  ] 5 tests.

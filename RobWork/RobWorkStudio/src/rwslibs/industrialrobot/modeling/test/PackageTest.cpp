@@ -38,6 +38,7 @@
 #include <vector>
 
 #include <sdurws/ird/io/Json.hpp>       // IStructuredDataReader——manifest 直接读取核对
+#include <sdurws/ird/core/Identity.hpp> // 临时目录跨进程唯一身份，不参与导出内容的确定性身份。
 #include <sdurws/ird/io/ZipChannel.hpp> // openZipChannel——导入回读同款 IO-T04 面（ACC1 观测）
 #include <sdurws/ird/modeling/DiagCodes.hpp>   // MDL-* 码常量（诊断码断言——禁字符串拼码）
 #include <sdurws/ird/modeling/Import.hpp>   // ModelImportMapper::mapWorkCellXml——R1 边界核对（ACC3）
@@ -157,14 +158,16 @@ struct PackageFixture {
     }
 };
 
-/// 用例专属临时目录（唯一计数——并行用例互不干扰；析构递归清理）。
+/// 用例专属临时目录：借用既有随机ObjectId实现跨进程唯一，夹具独占并在析构清理。
 class TempDir {
 public:
+    /** @brief 建立仅本用例拥有的目录；真实文件系统错误沿异常失败，不复用其他进程目录。 */
     TempDir()
     {
-        static int counter = 0;
+        // 集成和独立测试可在不同进程运行，进程内counter会让两者共用
+        // ird-pkg-test-1并互删文件。随机后缀仅隔离夹具，不进入包规范字节。
         path_ = std::filesystem::temp_directory_path()
-            / ("ird-pkg-test-" + std::to_string(++counter));
+            / ("ird-pkg-test-" + core::ObjectId::generate().toCanonical());
         std::filesystem::create_directories(path_);
     }
     ~TempDir() { std::filesystem::remove_all(path_); }

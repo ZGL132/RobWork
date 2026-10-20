@@ -1,0 +1,18 @@
+Note: Google Test filter = *NamedPoseRestoreEntry*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.NamedPoseRestoreEntryIsPresent_MDL17_AT04
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(519): error: Expected: (restore) != (nullptr), actual: NULL vs (nullptr)
+F13：命名位姿恢复入口缺失
+
+[  FAILED  ] ModelingUiModuleHostWiring.NamedPoseRestoreEntryIsPresent_MDL17_AT04 (36 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (37 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (37 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.NamedPoseRestoreEntryIsPresent_MDL17_AT04
+
+ 1 FAILED TEST

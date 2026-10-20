@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="2" disabled="0" errors="0" time="0.002" timestamp="2026-10-20T12:46:48.719" name="AllTests">
+  <testsuite name="ModelingDraftAnchor" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-20T12:46:48.720">
+    <testcase name="PendingDraftKeepsRevisionAndHistory_PM04_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="819" status="run" result="completed" time="0.001" timestamp="2026-10-20T12:46:48.720" classname="ModelingDraftAnchor">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:832&#x0A;Expected equality of these values:&#x0A;  module.buildDraftCommand(&quot;modeling&quot;)-&gt;expectedRevision&#x0A;    Which is: (16-byte object &lt;B6-17 92-0C 4F-B1 AE-EB C5-D8 91-4C D6-24 C5-EC&gt;)&#x0A;  base&#x0A;    Which is: 16-byte object &lt;56-87 9D-B8 1C-D9 33-B5 49-3B E4-FC 20-83 C7-DA&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:832
+Expected equality of these values:
+  module.buildDraftCommand("modeling")->expectedRevision
+    Which is: (16-byte object <B6-17 92-0C 4F-B1 AE-EB C5-D8 91-4C D6-24 C5-EC>)
+  base
+    Which is: 16-byte object <56-87 9D-B8 1C-D9 33-B5 49-3B E4-FC 20-83 C7-DA>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:834&#x0A;Expected equality of these values:&#x0A;  module.session().baseRevision&#x0A;    Which is: (16-byte object &lt;B6-17 92-0C 4F-B1 AE-EB C5-D8 91-4C D6-24 C5-EC&gt;)&#x0A;  base&#x0A;    Which is: 16-byte object &lt;56-87 9D-B8 1C-D9 33-B5 49-3B E4-FC 20-83 C7-DA&gt;&#x0A;未进行基线重放，不允许静默前移&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:834
+Expected equality of these values:
+  module.session().baseRevision
+    Which is: (16-byte object <B6-17 92-0C 4F-B1 AE-EB C5-D8 91-4C D6-24 C5-EC>)
+  base
+    Which is: 16-byte object <56-87 9D-B8 1C-D9 33-B5 49-3B E4-FC 20-83 C7-DA>
+未进行基线重放，不允许静默前移
+]]></failure>
+    </testcase>
+    <testcase name="ContentDifferenceWithoutSummaryKeepsBase_PM04_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="840" status="run" result="completed" time="0." timestamp="2026-10-20T12:46:48.721" classname="ModelingDraftAnchor">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:852&#x0A;Expected equality of these values:&#x0A;  module.session().baseRevision&#x0A;    Which is: (16-byte object &lt;23-08 88-32 F3-24 FC-B5 5E-78 F6-11 E6-17 10-C8&gt;)&#x0A;  closure.revision&#x0A;    Which is: 16-byte object &lt;12-E3 19-F0 79-C8 41-98 DA-34 31-DA C5-BC A2-FA&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:852
+Expected equality of these values:
+  module.session().baseRevision
+    Which is: (16-byte object <23-08 88-32 F3-24 FC-B5 5E-78 F6-11 E6-17 10-C8>)
+  closure.revision
+    Which is: 16-byte object <12-E3 19-F0 79-C8 41-98 DA-34 31-DA C5-BC A2-FA>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:853&#x0A;Expected equality of these values:&#x0A;  module.session().baselineSnapshot&#x0A;    Which is: (nullopt)&#x0A;  baseline&#x0A;    Which is: (1072-byte object &lt;01-00 00-00 34-39 2D-33 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 97-01 00-00 00-00 00-00 00-00 00-00 01-00 00-00 97-01 00-00 ... 28-D0 32-50 0A-00 00-00 5C-CA 32-50 0A-00 00-00 00-00 00-00 FF-7F 00-00 A0-01 1D-B8 97-01 00-00 70-2C 1D-B8 97-01 00-00 C0-0C 35-B6 97-01 00-00 00-CA 32-50 0A-00 00-00 01-00 00-00 00-00 00-00&gt;)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:853
+Expected equality of these values:
+  module.session().baselineSnapshot
+    Which is: (nullopt)
+  baseline
+    Which is: (1072-byte object <01-00 00-00 34-39 2D-33 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 97-01 00-00 00-00 00-00 00-00 00-00 01-00 00-00 97-01 00-00 ... 28-D0 32-50 0A-00 00-00 5C-CA 32-50 0A-00 00-00 00-00 00-00 FF-7F 00-00 A0-01 1D-B8 97-01 00-00 70-2C 1D-B8 97-01 00-00 C0-0C 35-B6 97-01 00-00 00-CA 32-50 0A-00 00-00 01-00 00-00 00-00 00-00>)
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:855&#x0A;Expected: module.bindSessionAnchor(core::BranchId::generate(),newer) throws an exception of type std::runtime_error.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:855
+Expected: module.bindSessionAnchor(core::BranchId::generate(),newer) throws an exception of type std::runtime_error.
+  Actual: it throws nothing.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:856&#x0A;Expected equality of these values:&#x0A;  module.session().branch&#x0A;    Which is: 16-byte object &lt;53-5E 66-76 9D-C9 49-B2 A9-A9 87-6B 4E-04 7C-95&gt;&#x0A;  closure.branch&#x0A;    Which is: 16-byte object &lt;34-E7 9C-10 5F-CB 32-6C C1-81 3B-1F 8C-1E 85-89&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:856
+Expected equality of these values:
+  module.session().branch
+    Which is: 16-byte object <53-5E 66-76 9D-C9 49-B2 A9-A9 87-6B 4E-04 7C-95>
+  closure.branch
+    Which is: 16-byte object <34-E7 9C-10 5F-CB 32-6C C1-81 3B-1F 8C-1E 85-89>
+]]></failure>
+    </testcase>
+    <testcase name="CleanAndInitiallyUnboundSessionsCanAdvance_PM04_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="861" status="run" result="completed" time="0." timestamp="2026-10-20T12:46:48.721" classname="ModelingDraftAnchor" />
+  </testsuite>
+</testsuites>

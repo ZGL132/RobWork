@@ -605,6 +605,8 @@ endif()
 if(TARGET sdurws)
     target_sources(sdurws_ird_ui_contract_test PRIVATE
         contract_test/HostIntegrationContractTest.cpp
+        contract_test/HostEngineeringPolicyTest.cpp  # A-23：真实项目修订策略，不替代解析计算。
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostEngineeringPolicy.cpp
         contract_test/HostDraftChainContractTest.cpp  # UI-T84——F-911 全链保真（真实工程存储＋生产查询适配器→restoreOnOpen→adopt 逐字节一致；requirements_plugin 链接面经本门控块——集成树专属，PresentationBridge 同因先例）
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainModuleRunner.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainAssembly.cpp  # ASM-STUDIO——bundle 符号面（析构/statusOf out-of-line）；本 TU 内 assembleDomainPlugins 不被调用（QDockWidget 依赖），仅链接承载
@@ -751,7 +753,8 @@ target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF)
+    CXX_EXTENSIONS OFF
+    AUTOMOC ON) # UX-14：系统URL服务边界记录器需要元对象，两种模式显式一致。
 if(MSVC)
     target_compile_options(sdurws_ird_ui_gui_test PRIVATE /utf-8)
 endif()
@@ -772,12 +775,18 @@ target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE
 # "首个 target_link_libraries(<目标> "命中，本门控块若在前即被误取为主
 # 块（testkit/testkit_qt 断言翻红——UI-T45 实施期实证）。
 if(TARGET sdurws)
+    target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE IRD_UI_HAS_PRODUCT_HOST=1)
     target_sources(sdurws_ird_ui_gui_test PRIVATE
+        gui_test/HostDraftConflictGuiTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostDraftConflict.cpp # PM-04：与正式插件同源的真实冲突窗口，不新增链接边。
+        gui_test/HostEngineeringPolicyGuiTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostEngineeringPolicy.cpp
         gui_test/HostView3DGatewayGuiTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostView3DGateway.cpp)
     target_include_directories(sdurws_ird_ui_gui_test PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(sdurws_ird_ui_gui_test PRIVATE
+        sdurws_ird_modeling_plugin  # A-23：测试仅复用已装配插件传递的project/policy，不新增产品库边。
         sdurw_kinematics
         sdurw_math)
 endif()
@@ -909,10 +918,12 @@ add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
 if(TARGET sdurws)
     add_library(sdurws_ird_ui_plugin MODULE
         plugin/UiPlugin.cpp
+        plugin/HostEngineeringPolicy.cpp
         studio/CrashCapture.cpp  # WP-24-T02——崩溃捕获设施（UiPlugin 快照源接线消费——同单元共享 TU 随宿主装配面编入）
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
         plugin/ExtraDomainAssembly.cpp  # ASM-UI——dynamics/selection/optimization 三新域承接（ASM-STUDIO 批起本目标与 studio 两同源目标均编入——studio 三条 unit 级边已随该批增登）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
+        plugin/HostDraftConflict.cpp  # PM-04/08：旧稿保存门控及显式冲突三选项，使用既有控制器。
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（上行拾取/呈现出口/TCP 源）
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（WorkCellScene 原语编排）
         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（十段链适配＋快照缓存＋探针＋名称上下文）
@@ -1037,8 +1048,10 @@ if(TARGET sdurws)
         studio/CrashCapture.cpp  # WP-24-T02——OS 级崩溃捕获装配（零 Qt——捕获路径纪律；同单元私有装配面 TU）
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
+        plugin/HostEngineeringPolicy.cpp  # A-23：正式宿主与动态插件同源，避免只验证插件。
         plugin/ExtraDomainAssembly.cpp  # ASM-STUDIO——三新域承接（studio→三域 unit 级边本批增登后编入；与插件目标同源，IRD_UI_PLUGIN_EXTRA_DOMAINS 定义区分段生效）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历（与插件目标同源）
+        plugin/HostDraftConflict.cpp  # PM-04：正式studio与插件使用同一冲突窗口和保存门控。
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（与插件目标同源）
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（与插件目标同源）
         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（与插件目标同源）
@@ -1107,6 +1120,32 @@ if(TARGET sdurws)
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets)
+
+    # UX-14/WP-14-T12：帮助入口已有固定相对路径，构建与安装必须提供
+    # 同一份离线手册。独立资源目标每次构建核对复制，兼容VS多配置生成器；
+    # LINK_DEPENDS仅Make/Ninja有效，不能用它声称VS中的HTML会自动更新。
+    # 直接读取studio创建时的输出目录，不用TARGET_FILE_DIR生成表达式，
+    # 避免旧CMake策略在资源目标与exe之间制造隐式反向构建依赖。
+    get_target_property(_ird_studio_runtime_dir sdurws_ird_studio RUNTIME_OUTPUT_DIRECTORY)
+    if(NOT _ird_studio_runtime_dir)
+        message(FATAL_ERROR "studio runtime output directory missing for manual deployment")
+    endif()
+    if(CMAKE_CONFIGURATION_TYPES)
+        # VS在输出目录后添加Release/Debug，userManualPath的../正好回到该目录。
+        set(_ird_manual_output_dir "${_ird_studio_runtime_dir}/share/ird/user-manual")
+    else()
+        set(_ird_manual_output_dir "${_ird_studio_runtime_dir}/../share/ird/user-manual")
+    endif()
+    add_custom_target(sdurws_ird_ui_manual
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+                "${_ird_manual_output_dir}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_CURRENT_SOURCE_DIR}/../share/user-manual/index.html"
+                "${_ird_manual_output_dir}/index.html"
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../share/user-manual/index.html")
+    add_dependencies(sdurws_ird_studio sdurws_ird_ui_manual)
+    # 集成GUI即使只构建该目标也具备真实部署前置；独立模式仍验证缺失反馈。
+    add_dependencies(sdurws_ird_ui_gui_test sdurws_ird_ui_manual)
 
     # 框架运行时 DLL 就位（框架 RobWorkStudio 目标同款——RobWork 共享库
     # 面 build/RobWork/bin 复制到 exe 旁；Qt 运行时经 TARGET_RUNTIME_DLLS
@@ -1241,6 +1280,10 @@ if(TARGET sdurws)
     # WP-24-T01"基线变更走设计变更评审"）。
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../share/baseline.md"
             DESTINATION share
+            COMPONENT IRD_PRODUCT)
+    # 与userManualPath一致的安装布局，不能仅在开发机构建树补文件。
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../share/user-manual/"
+            DESTINATION share/ird/user-manual
             COMPONENT IRD_PRODUCT)
 else()
     # 独立冒烟模式：无框架目标——产品目标不注册（集成树专属；冒烟模式

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.738" timestamp="2026-10-20T08:38:22.986" name="AllTests">
+  <testsuite name="ModelingImportGui" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.738" timestamp="2026-10-20T08:38:22.986">
+    <testcase name="PropertySegmentsOnFlangeProductionEntry_MDL05" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingImportGuiTest.cpp" line="58" status="run" result="completed" time="0.738" timestamp="2026-10-20T08:38:22.986" classname="ModelingImportGui">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingImportGuiTest.cpp:76&#x0A;Value of: seen&#x0A;  Actual: false&#x0A;Expected: true&#x0A;F09：生产估算尚未打开完整段元表单&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingImportGuiTest.cpp:76
+Value of: seen
+  Actual: false
+Expected: true
+F09：生产估算尚未打开完整段元表单
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

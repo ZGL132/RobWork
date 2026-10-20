@@ -1,0 +1,22 @@
+Note: Google Test filter = *SingularRejectedAtomic*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.CouplingEditorSingularRejectedAtomicCancelSafe_MDL21_WP13T25
+C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(2331): error: Expected equality of these values:
+  m_ws
+    Which is: 1072-byte object <01-00 00-00 54-00 45-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 4F-00 4E-00 00-00 00-00 41-00 52-00 01-00 00-00 43-00 3B-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00>
+  before
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 CB-01 00-00 00-00 00-00 CB-01 00-00 01-00 00-00 00-00 00-00 ... 60-C7 81-AF CB-01 00-00 30-C8 81-AF CB-01 00-00 00-00 00-00 00-00 00-00 D0-AE 7F-AF CB-01 00-00 58-81 80-AF CB-01 00-00 08-3D 1D-E0 FE-7F 00-00 00-F3 1C-E0 FE-7F 00-00 00-1E A9-E7 73-07 00-00>
+拒绝＋取消后工作集必须与进入前逐字段相等（F14 顺序修正后）
+
+[  FAILED  ] ModelingPanelGuiTest.CouplingEditorSingularRejectedAtomicCancelSafe_MDL21_WP13T25 (1176 ms)
+[----------] 1 test from ModelingPanelGuiTest (1176 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1177 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingPanelGuiTest.CouplingEditorSingularRejectedAtomicCancelSafe_MDL21_WP13T25
+
+ 1 FAILED TEST

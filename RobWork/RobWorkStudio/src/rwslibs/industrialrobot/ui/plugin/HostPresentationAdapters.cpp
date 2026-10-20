@@ -22,6 +22,8 @@
  */
 
 #include "HostPresentationAdapters.hpp"
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp> // F13公共装配值，不访问建模私有头。
+#include <cmath>
 
 #include "QtTextBillboard.hpp"  // Qt 纹理化文本 billboard（F-556——骨架标签承载，共享件）
 
@@ -52,6 +54,54 @@ using namespace rw::math;
 namespace sdurws {
 namespace ird {
 namespace ui {
+
+bool stageModelingSessionPose(const modeling::ModelingSessionPoseRequest& request,
+    const runtime::RuntimeSnapshot& snapshot,rw::models::WorkCell& cell,
+    rw::kinematics::State& state,std::string& reason)
+{
+    reason.clear();
+    const auto reject=[&](const std::string& why){reason="恢复姿态被拒绝："+why+"——原会话不变";return false;};
+    // 第一步：当前呈现必须是同一发布快照的本体，不能向旧项目/别的设备写q。
+    const auto& chain=snapshot.model().chain();
+    if(&snapshot.workCell().workCell()!=&cell){return reject("宿主与已发布快照不是同一WorkCell");}
+    if(request.branch!=snapshot.branch()||request.rootObjectId!=chain.robotObjectId){
+        return reject("方案分支或机器人根身份不匹配");
+    }
+    if(request.jointIds.size()!=chain.joints.size()||request.jointConfiguration.size()!=chain.joints.size()){
+        return reject("构型维度与已应用关节链不一致");
+    }
+    std::vector<double> raw;
+    for(std::size_t i=0;i<chain.joints.size();++i){
+        const auto& joint=chain.joints[i];const double q=request.jointConfiguration[i];
+        const std::string at="关节"+std::to_string(i+1)+"（"+joint.localName+"）";
+        if(request.jointIds[i]!=joint.objectId){return reject(at+"身份或链序不匹配");}
+        if(!std::isfinite(q)){return reject(at+"构型不是有限值");}
+        if(joint.type==runtime::JointType::Fixed){continue;} // 固定段有身份槽，但不占设备q自由度。
+        // 第二步：请求已用建模冻结基线折叠过原始零偏；这里不重复减偏。
+        // 对通用runtime快照仍按CanonicalJoint契约还原canonical坐标核查限位，
+        // 正式CanonicalBridge路径的joint.zeroOffset为0，两条路径同规。
+        const double canonicalQ=q+joint.zeroOffset;
+        if(!std::isfinite(canonicalQ)){return reject(at+"零偏换算溢出");}
+        if(joint.bounds&&(canonicalQ<joint.bounds->lower||canonicalQ>joint.bounds->upper)){
+            return reject(at+"超出限位（单位rad/m按类型）");
+        }
+        if(joint.workingRange&&(canonicalQ<joint.workingRange->lower||canonicalQ>joint.workingRange->upper)){
+            return reject(at+"超出连续关节工作范围（rad）");
+        }
+        raw.push_back(q);
+    }
+    // 第三步：设备名只消费runtime已生成的权威值；不取首个设备或拼接名称。
+    const auto device=cell.findDevice(chain.deviceName);
+    if(device.isNull()||device->getDOF()!=raw.size()){return reject("目标设备缺失或自由度不匹配");}
+    try{
+        auto candidate=state;
+        rw::math::Q q(raw.size());
+        for(std::size_t i=0;i<raw.size();++i){q[i]=raw[i];}
+        device->setQ(q,candidate);
+        state=std::move(candidate); // 全部检查后才回写调用者的副本，项目/模型结构零修改。
+    }catch(const std::exception& error){return reject(std::string("State更新失败：")+error.what());}
+    return true;
+}
 
 // =====================================================================
 // 发布模型骨架三维呈现（UI-T77——F-550 修复增量）

@@ -500,8 +500,9 @@ TEST(MdlCodec, EncodeRejectsUnsupportedVersion_WP13T03_ACC4)
                               && kv.second == std::string(kRobotDesignObjectType));
     }
     EXPECT_TRUE(hasType);
-    // 未知次版本（1.1——追加字段未落位前不可产出）
-    auto futureMinor = codec.encode(object, FormatVersion{1, 1});
+    // 未知次版本（1.2——{1,1} 已随 F01 落位为当前格式，未来次版本仍不可
+    // 产出；版本闸语义不变，仅探测值随当前版本前移）
+    auto futureMinor = codec.encode(object, FormatVersion{1, 2});
     ASSERT_FALSE(futureMinor.ok());
     EXPECT_EQ(futureMinor.error().code, ModelingErrorCode::SchemaVersionUnsupported);
 }
@@ -677,4 +678,150 @@ TEST(MdlCodec, DrivetrainCouplingDecodeRejectsNonFinite_WP13T18_ACC3)
     const auto decoded = codec.decode(bytes, kCurrentFormatVersion);
     ASSERT_FALSE(decoded.ok());
     EXPECT_EQ(decoded.error().code, ModelingErrorCode::MalformedPayload);
+}
+
+// =====================================================================
+// WP-13-T25/F01：{1,1} 表尾追加与 {1,0} 兼容读（MDL-01 逐轴速度/加速度）
+// =====================================================================
+
+namespace {
+
+/// 小端 u32 追加（§4.8 固定字节序——与 Sink::u32 同口径）。
+void leU32(std::vector<std::uint8_t>& b, std::uint32_t v)
+{
+    b.push_back(static_cast<std::uint8_t>(v & 0xFFu));
+    b.push_back(static_cast<std::uint8_t>((v >> 8) & 0xFFu));
+    b.push_back(static_cast<std::uint8_t>((v >> 16) & 0xFFu));
+    b.push_back(static_cast<std::uint8_t>((v >> 24) & 0xFFu));
+}
+
+/// 追加字符串（u32 长度前缀——Sink::string 同口径）。
+void leString(std::vector<std::uint8_t>& b, const char* s)
+{
+    const std::string text(s);
+    leU32(b, static_cast<std::uint32_t>(text.size()));
+    b.insert(b.end(), text.begin(), text.end());
+}
+
+/// 追加 NotProvided SourcedValue（单状态字节 0x01——四态声明序）。
+void notProvidedByte(std::vector<std::uint8_t>& b) { b.push_back(0x01); }
+
+/// 追加非零 ObjectId（16 字节——非全零防 canonical 空身份）。
+void oidBytes(std::vector<std::uint8_t>& b, std::uint8_t seed)
+{
+    for (std::uint8_t i = 0; i < 16; ++i) { b.push_back(static_cast<std::uint8_t>(seed + i)); }
+}
+
+}  // namespace
+
+/**
+ * @brief F01 兼容读：{1,0} 旧格式根对象字节（按线上格式规范逐字节构造
+ *        ——最小 1 关节 2 连杆、全 SourcedValue＝NotProvided、不含 {1,1}
+ *        追加段）在 {1,1} 读端解码成功，追加字段读为 NotProvided
+ *        （缺失≠零值——不虚构）；同对象再以当前格式编码即升级 {1,1}。
+ */
+TEST(MdlCodec, DecodesV10BytesWithoutVelocityFieldsCompatible_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01",{},std::nullopt);
+    // ---- 手构 {1,0} 字节（字段定序＝putRobotDesign 声明序；显式权威）----
+    std::vector<std::uint8_t> old;
+    old.insert(old.end(), {'I', 'R', 'D', 'M', 'D', 'L', 'O'});
+    leU32(old, 1);  // major=1
+    leU32(old, 0);  // minor=0（旧格式——无 v/a 追加段）
+    leString(old, "robot-design");
+    leU32(old, 1);          // schemaVersion
+    leString(old, "old");   // displayName
+    old.push_back(0x00);    // authority=Explicit
+    old.push_back(0x00);    // preset=Ground
+    notProvidedByte(old);   // customEaa
+    notProvidedByte(old);   // basePosition
+    leU32(old, 1);          // joints 计数=1
+    {
+        oidBytes(old, 0x11);          // objectId
+        leString(old, "j1");          // localName
+        old.push_back(0x00);          // type=Revolute
+        const double zero = 0.0;      // zeroOffset f64（小端 8 字节）
+        std::uint8_t f8[8];
+        std::memcpy(f8, &zero, 8);
+        old.insert(old.end(), f8, f8 + 8);
+        notProvidedByte(old);          // axis
+        notProvidedByte(old);          // origin
+        notProvidedByte(old);          // bounds
+        notProvidedByte(old);          // workingRange
+        // ★ {1,0} 到此为止——无 maxVelocity/maxAcceleration 两字节
+    }
+    leU32(old, 2);          // links 计数=2
+    for (std::uint8_t li = 0; li < 2; ++li) {
+        oidBytes(old, static_cast<std::uint8_t>(0x41 + li));
+        leString(old, li == 0 ? "base" : "l1");
+        notProvidedByte(old);   // mass
+        notProvidedByte(old);   // centerOfMass
+        notProvidedByte(old);   // inertia
+        old.push_back(0x00);    // material presence=0
+        old.push_back(0x00);    // visual presence=0
+        old.push_back(0x00);    // collision presence=0
+    }
+    old.push_back(0x00);    // defaultTcp presence=0
+    leU32(old, 0);          // toolRefs 空
+    leU32(old, 0);          // sceneRefs 空
+    old.push_back(0x00);    // poseSetRef presence=0
+    old.push_back(0x00);    // drivetrainRef presence=0
+    leU32(old, 0);          // resourceManifest 空
+    leString(old, "");      // notes
+
+    const RobotDesignCodec codec;
+    auto decoded = codec.decode(Bytes{old}, kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok()) << "旧 {1,0} 字节应兼容解码: "
+                              << (decoded.ok() ? std::string() : decoded.error().detail);
+    ASSERT_EQ(decoded.get().index(), 0u);
+    const RobotDesign& design = std::get<RobotDesign>(decoded.get());
+    ASSERT_EQ(design.joints.size(), 1u);
+    // 兼容读语义：追加字段＝NotProvided（缺失≠零——不虚构 0）。
+    EXPECT_EQ(design.joints[0].maxVelocity.state(), sdurws::ird::core::FieldState::NotProvided);
+    EXPECT_EQ(design.joints[0].maxAcceleration.state(), sdurws::ird::core::FieldState::NotProvided);
+
+    // 升级路径：同对象以当前格式 {1,1} 再编码→解码往返（新字段可写）。
+    auto reencoded = codec.encode(decoded.get(), kCurrentFormatVersion);
+    ASSERT_TRUE(reencoded.ok());
+    auto round = codec.decode(reencoded.get(), kCurrentFormatVersion);
+    ASSERT_TRUE(round.ok());
+    const RobotDesign& again = std::get<RobotDesign>(round.get());
+    EXPECT_EQ(again.joints[0].maxVelocity.state(), sdurws::ird::core::FieldState::NotProvided);
+}
+
+/**
+ * @brief F01 值入身份：逐关节不同 v/a 值→根对象编码字节不同（内容寻址
+ *        语义——CON-05/ARC-04 的编码侧观测）；同值重编码字节全等。
+ */
+TEST(MdlCodec, VelocityValuesEnterEncodedIdentity_WP13T25)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-01", "CON-05"}, std::vector<std::string>{});
+    const RobotDesignCodec codec;
+    RobotDesign design = makeCanonicalExplicitDesign();
+    const std::size_t n = design.joints.size();
+    ASSERT_GE(n, std::size_t{2});
+    // 逐轴不同值（交接建议探针族：v=[0.8..], a=[1..]——逐轴对应可观测）。
+    for (std::size_t i = 0; i < n; ++i) {
+        design.joints[i].maxVelocity =
+            sdurws::ird::core::SourcedValue<double>::provided(0.8 + 0.3 * static_cast<double>(i),
+                                                 sdurws::ird::core::ValueProvenance::make(
+                                                     sdurws::ird::core::ProvenanceKind::UserProvided));
+        design.joints[i].maxAcceleration =
+            sdurws::ird::core::SourcedValue<double>::provided(1.0 + 1.0 * static_cast<double>(i),
+                                                 sdurws::ird::core::ValueProvenance::make(
+                                                     sdurws::ird::core::ProvenanceKind::UserProvided));
+    }
+    auto withValues = codec.encode(ObjectVariant{design}, kCurrentFormatVersion);
+    ASSERT_TRUE(withValues.ok());
+    // 同值重编码＝逐字节全等（确定性）。
+    auto again = codec.encode(ObjectVariant{design}, kCurrentFormatVersion);
+    ASSERT_TRUE(again.ok());
+    EXPECT_EQ(withValues.get(), again.get());
+    // 仅改 j1 速度→字节不同（值入身份）。
+    design.joints[0].maxVelocity =
+        sdurws::ird::core::SourcedValue<double>::provided(9.9, sdurws::ird::core::ValueProvenance::make(
+                                                      sdurws::ird::core::ProvenanceKind::UserProvided));
+    auto changed = codec.encode(ObjectVariant{design}, kCurrentFormatVersion);
+    ASSERT_TRUE(changed.ok());
+    EXPECT_NE(withValues.get(), changed.get());
 }

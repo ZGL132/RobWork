@@ -85,6 +85,7 @@ KinematicsPanelWidget::KinematicsPanelWidget(KinPanelServices services,
 
     // 状态行（非模态反馈——UX-03/07：一切反馈就地，零模态对话框）。
     m_statusLine = new QLabel(tr("就绪"), this);
+    m_statusLine->setObjectName(QStringLiteral("ird_kin_status_line"));  // 验证定位锚（宿主遍历）
     layout->addWidget(m_statusLine);
 
     // 初刷（事件驱动出口的首调——现取重投影）。
@@ -445,7 +446,7 @@ void KinematicsPanelWidget::refreshAll()
         return local && (!m_commandAvailability || m_commandAvailability(id).enabled);
     };
     m_batchButton->setEnabled(commandEnabled("kinematics.validate-task-points",
-                                            writable && static_cast<bool>(m_services.backgroundSubmit)));
+                                             writable && static_cast<bool>(m_services.backgroundSubmit)));
     m_coverageRunButton->setEnabled(commandEnabled("kinematics.evaluate-coverage",
                                                    writable && static_cast<bool>(m_services.backgroundSubmit)));
     m_setTcpButton->setEnabled(commandEnabled("kinematics.set-default-tcp",

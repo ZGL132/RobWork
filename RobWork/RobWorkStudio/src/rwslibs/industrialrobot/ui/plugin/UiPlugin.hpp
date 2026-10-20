@@ -128,6 +128,7 @@ class HostModelCompilePort;        // 宿主编译端口（UI-T46——十段链
 class HostCompileProbe;            // 编译分段探针（UI-T46——等价验证注入面）
 class HostRuntimeNameContext;      // 行程评估名称上下文（UI-T46——真值端口现取）
 class HostDraftAwareNameContext;   // 草稿名感知装饰上下文（UI-T74/F-546 出路①）
+class HostEngineeringPolicy;       // A-23 工程策略真实编辑与按修订解析
 class KinEvaluationExecutor;       // kinematics 覆盖评估执行器（UI-T64——完整类型在本目录 .cpp）
 class KinProjectCommandGateway;    // ★ KIN-P4——设默认命令网关（完整类型在 KinHostServicesAssembly.hpp）
 }  // namespace ui
@@ -412,7 +413,7 @@ private:
     /// 崩溃捕获 dev 日志尾快照源（WP-24-T02——§7.6 第③段接线体；绑定
     /// m_diag——声明在其后保证初始化序安全；接线见 initialize 装配第一步）。
     PluginDevTailCrashSource m_crashTailSource;
-    std::shared_ptr<app::UnloadedPolicySource> m_policySource;    ///< 策略未装载占位（C-10）
+    std::shared_ptr<ui::HostEngineeringPolicy> m_policySource;   ///< A-23 宿主策略适配器
     /// 名称解析端口（C-11）：装配起点＝NullUiNameResolver 桩（恒 nullopt）；
     /// F-551 起需求域可用时升级为需求域解析前端（RequirementsNameResolver
     /// ——工作集语义名，闭包外对象 nullopt 与桩同语义面）。接口类型承载
@@ -508,6 +509,11 @@ private:
     QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
     QDockWidget* m_requirementsDock = nullptr;   ///< "IRD 需求"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
     QDockWidget* m_kinematicsDock = nullptr;     ///< "IRD 运动学"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
+    /// 运动学面板体（无类型 QWidget*——后台完成回执经面板公共槽
+    /// showStatusText 按名投递，宿主侧零 kinematics 插件层头依赖；
+    /// QPointer 防面板先于迟到回执析构的悬垂）。此前回执文本在 route
+    /// 闭包被 (void) 丢弃＝完成/失败只进账面与覆盖表、状态行不可观测。
+    QPointer<QWidget> m_kinematicsPanel;
     QDockWidget* m_kinematicsAdvancedDock = nullptr; ///< "IRD 运动学（求解配置）"Dock（Right 区高级面板位——UX-04）
     // 三新域面板 Dock（ASM-PANEL 收口批 2026-10-10——六域面板全部可见；
     // Left 区宿主侧承载＝ui.md §16.7 v1.15 WP-24-T03 首版登记④"中央区
@@ -580,7 +586,7 @@ private:
     // 服务逐项接通"的宿主持有面；全部非 owning 指针的指向对象即下列
     // 成员——存活期覆盖面板使用期）。
     /// 单点求解器（无状态可共享——静态产品实例的成员落位）。
-    kinematics::IkSolver m_kinIkSolver;
+    std::unique_ptr<kinematics::IIkSolver> m_kinPolicyIkSolver; ///< A-23：同步面板与后台消费同一发布策略。
     /// 位姿指标评估器（无状态可共享）。
     kinematics::FkEvaluator m_kinFkEvaluator;
     /// 会话姿态写点（宿主持有——D8/D9 宿主关节桥与面板 L-K4/L-K5 共用

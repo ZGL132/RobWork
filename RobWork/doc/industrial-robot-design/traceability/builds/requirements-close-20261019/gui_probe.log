@@ -1,0 +1,24 @@
+Note: Google Test filter = *Review*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.ReviewConfirmUnchangedRegionCreatesPlan
+[       OK ] RequirementsSessionGuiTest.ReviewConfirmUnchangedRegionCreatesPlan (922 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReviewRandomDigest
+REVIEW random_count=10 denominator=10
+[       OK ] RequirementsSessionGuiTest.ReviewRandomDigest (12 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReviewRegionSpacingThenResize
+REVIEW old=5 stored=9 expected=9
+[       OK ] RequirementsSessionGuiTest.ReviewRegionSpacingThenResize (158 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReviewRegionBatchResizeSyncsPlan
+REVIEW batch_resize size=4 plan_count=9
+[       OK ] RequirementsSessionGuiTest.ReviewRegionBatchResizeSyncsPlan (168 ms)
+[ RUN      ] RequirementsSessionGuiTest.ReviewSegmentEnableToggle
+REVIEW toggle before=1
+REVIEW toggle after approach=1
+[       OK ] RequirementsSessionGuiTest.ReviewSegmentEnableToggle (666 ms)
+[----------] 5 tests from RequirementsSessionGuiTest (1928 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (1929 ms total)
+[  PASSED  ] 5 tests.

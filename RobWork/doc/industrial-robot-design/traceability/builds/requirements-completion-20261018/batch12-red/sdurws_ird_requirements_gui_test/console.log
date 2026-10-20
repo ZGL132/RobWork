@@ -1,0 +1,108 @@
+Note: Google Test filter = RequirementsView3DFlow.CaptureConfirmationRechecksFacts_REQ08_WP14T12:RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RequirementsView3DFlow
+[ RUN      ] RequirementsView3DFlow.CaptureConfirmationRechecksFacts_REQ08_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(271): error: Value of: executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams)
+  Actual: true
+Expected: false
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(272): error: Value of: editor.workingSet().points.entries.empty()
+  Actual: false
+Expected: true
+过期确认必须零写入
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(271): error: Value of: executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams)
+  Actual: true
+Expected: false
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(272): error: Value of: editor.workingSet().points.entries.empty()
+  Actual: false
+Expected: true
+过期确认必须零写入
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(271): error: Value of: executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams)
+  Actual: true
+Expected: false
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 2
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(272): error: Value of: editor.workingSet().points.entries.empty()
+  Actual: false
+Expected: true
+过期确认必须零写入
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 2
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(271): error: Value of: executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams)
+  Actual: true
+Expected: false
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 3
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(272): error: Value of: editor.workingSet().points.entries.empty()
+  Actual: false
+Expected: true
+过期确认必须零写入
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 3
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(271): error: Value of: executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams)
+  Actual: true
+Expected: false
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 4
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(272): error: Value of: editor.workingSet().points.entries.empty()
+  Actual: false
+Expected: true
+过期确认必须零写入
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 4
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(271): error: Value of: executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams)
+  Actual: true
+Expected: false
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 5
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(272): error: Value of: editor.workingSet().points.entries.empty()
+  Actual: false
+Expected: true
+过期确认必须零写入
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(251): 5
+
+[  FAILED  ] RequirementsView3DFlow.CaptureConfirmationRechecksFacts_REQ08_WP14T12 (190 ms)
+[ RUN      ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(287): error: Value of: executeRequirementCommand("requirements.capture-tcp", panel, editor, sink, host, &seams)
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(288): error: Value of: editor.workingSet().points.entries.empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsView3DFlowTest.cpp(291): error: Value of: editor.workingSet().points.entries.empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12 (10 ms)
+[----------] 2 tests from RequirementsView3DFlow (200 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (200 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] RequirementsView3DFlow.CaptureConfirmationRechecksFacts_REQ08_WP14T12
+[  FAILED  ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12
+
+ 2 FAILED TESTS

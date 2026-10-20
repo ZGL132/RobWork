@@ -848,9 +848,10 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
         bool posLimitOk = true;            ///< 限位数值解析成功
         double limitMin = 0.0, limitMax = 0.0;  ///< 限位（已换算：Revolute rad/Prismatic m）
         bool limitIllegalOrder = false;    ///< qmin≥qmax（错误面）
-        bool hasVelLimit = false;          ///< <VelLimit max>（未保留面）
+        bool hasVelLimit = false;          ///< <VelLimit max>（F01 起映射 maxVelocity）
         double velLimitMax = 0.0;
-        bool hasAccLimit = false;          ///< <AccLimit>（未保留面）
+        bool hasAccLimit = false;          ///< <AccLimit>（F01 起映射 maxAcceleration）
+        double accLimitMax = 0.0;
         bool isPassive = false;            ///< state="Passive"（未保留注记）
         std::vector<WcModel> models;       ///< 挂本元素的几何模型（文档序）
         ImportSourceSpan span{};           ///< 元素定位
@@ -1001,6 +1002,7 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
                 parseDoubleStable(sub.attribute("max").as_string(""), &item.velLimitMax);
             } else if (subName == "AccLimit" && refMatches) {
                 item.hasAccLimit = true;
+                parseDoubleStable(sub.attribute("max").as_string(""), &item.accLimitMax);
             } else if (subName == "Drawable" || subName == "CollisionModel") {
                 // 链元素直下模型（框架 FrameParser model_p 文法——主挂载点）。
                 item.models.push_back(
@@ -1348,27 +1350,58 @@ ImportOutcome extractWorkCellDevice(const ValidatedSource& source,
                 }
             }
 
-            // —— VelLimit/AccLimit（无 schema 落点——未保留逐项列出）。
-            if (item.hasVelLimit) {
-                ImportUnsupportedItem u;
-                u.kind = "joint-velocity-limit";
-                u.subject = "joint '" + item.rawName + "' VelLimit max="
-                            + formatDoubleStable(item.velLimitMax);
-                u.reason = "速度上限无 schema 落点（§4.3-A 未登记 maxVelocity——"
-                           "不发明字段）——报告承载不静默丢弃";
-                u.guidance = "速度上限可经传动设计/策略对象在后续编辑流登记";
-                u.span = item.span;
-                outcome.report.unsupported.push_back(std::move(u));
-            }
-            if (item.hasAccLimit) {
-                ImportUnsupportedItem u;
-                u.kind = std::string(kWcUnsupportedAccLimit);
-                u.subject = "joint '" + item.rawName + "' AccLimit";
-                u.reason = "加速度上限无 schema 落点（§4.3-A 未登记 maxAcceleration"
-                           "——不发明字段）——报告承载不静默丢弃";
-                u.guidance = "加速度上限可经传动设计对象在后续编辑流登记";
-                u.span = item.span;
-                outcome.report.unsupported.push_back(std::move(u));
+            // —— VelLimit/AccLimit（F01/{1,1}：maxVelocity/maxAcceleration
+            //     真实落点）。源制式＝SI 直入（rad/s、rad/s²｜m/s、m/s²——
+            //     框架速度/加速度限值无 deg 换算面）；合法（有限且 ≥0）→
+            //     Provided＋映射行；非法/负值→错误项不静默；Fixed→忽略面。
+            {
+                const bool movableItem =
+                    item.type == JointType::Revolute || item.type == JointType::Prismatic;
+                const auto mapLimit = [&](bool present, double value, const char* element,
+                                          const char* field, bool isVelocity) {
+                    if (!present) { return; }
+                    const std::string jointField =
+                        "joints[" + std::to_string(draft.joints.size())
+                        + std::string(".") + field;
+                    if (!movableItem) {
+                        ImportIgnoredItem ig;
+                        ig.element = std::string("joint '") + item.rawName + "'/"
+                                     + element;
+                        ig.reason = "Fixed 关节无可动限值语义——忽略（不解释）";
+                        ig.span = item.span;
+                        outcome.report.ignored.push_back(std::move(ig));
+                        return;
+                    }
+                    if (!std::isfinite(value) || value < 0.0) {
+                        ImportErrorItem errItem;
+                        errItem.kind = "value-illegal";
+                        errItem.subject = std::string("joint '") + item.rawName
+                                          + "'." + element;
+                        errItem.detail = std::string(element)
+                                         + " 数值非法（须有限且 ≥0，单位 SI；实值 "
+                                         + formatDoubleStable(value) + "）";
+                        errItem.span = item.span;
+                        outcome.report.errors.push_back(std::move(errItem));
+                        return;
+                    }
+                    auto& target = isVelocity ? entry.maxVelocity : entry.maxAcceleration;
+                    target = core::SourcedValue<double>::provided(value,
+                                                                  importProvenance());
+                    ImportMappedItem mapped;
+                    mapped.sourcePath = "chain[" + std::to_string(ci) + "]/" + element;
+                    mapped.targetField = jointField;
+                    mapped.valueText = formatDoubleStable(value)
+                                       + (item.type == JointType::Revolute
+                                              ? (isVelocity ? " rad/s" : " rad/s^2")
+                                              : (isVelocity ? " m/s" : " m/s^2"));
+                    mapped.note = "来源 workcell-import（F01 schema 落点）";
+                    mapped.span = item.span;
+                    outcome.report.mapped.push_back(std::move(mapped));
+                };
+                mapLimit(item.hasVelLimit, item.velLimitMax, "VelLimit",
+                         "maxVelocity", /*isVelocity=*/true);
+                mapLimit(item.hasAccLimit, item.accLimitMax, "AccLimit",
+                         "maxAcceleration", /*isVelocity=*/false);
             }
 
             // —— Passive 标记（无落点——注记面）。

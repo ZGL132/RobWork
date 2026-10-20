@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="2" disabled="0" errors="0" time="0.293" timestamp="2026-10-20T03:53:27.206" name="AllTests">
+  <testsuite name="HostPolicyTest" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="0.293" timestamp="2026-10-20T03:53:27.206">
+    <testcase name="AmbiguousRevisionMustNotFallBackToDefault_UX08_A23" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp" line="66" status="run" result="completed" time="0.092" timestamp="2026-10-20T03:53:27.206" classname="HostPolicyTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp:75&#x0A;Value of: result.policy.has_value()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp:75
+Value of: result.policy.has_value()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp:75&#x0A;Value of: result.diagnostics.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp:75
+Value of: result.diagnostics.empty()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp:76&#x0A;Value of: host.summary().available&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp:76
+Value of: host.summary().available
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="CorruptPolicyMustStayUnavailable_UX08_A23" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp" line="78" status="run" result="completed" time="0.076" timestamp="2026-10-20T03:53:27.299" classname="HostPolicyTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp:86&#x0A;Value of: host.summary().available&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp:86
+Value of: host.summary().available
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="OldRevisionRemainsExactAfterHeadAdvances_MDL06_A23" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostEngineeringPolicyTest.cpp" line="88" status="run" result="completed" time="0.124" timestamp="2026-10-20T03:53:27.375" classname="HostPolicyTest" />
+  </testsuite>
+</testsuites>

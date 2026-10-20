@@ -1,0 +1,16 @@
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from RequirementsResidualReview
+[ RUN      ] RequirementsResidualReview.NarrowRollOutsideSeedMustConverge_REQ09
+[       OK ] RequirementsResidualReview.NarrowRollOutsideSeedMustConverge_REQ09 (0 ms)
+[ RUN      ] RequirementsResidualReview.OppositeToolAxisMustBeRejected_REQ09
+[       OK ] RequirementsResidualReview.OppositeToolAxisMustBeRejected_REQ09 (0 ms)
+[ RUN      ] RequirementsResidualReview.OppositeToolAxisFullPoseControl_REQ09
+[       OK ] RequirementsResidualReview.OppositeToolAxisFullPoseControl_REQ09 (0 ms)
+[ RUN      ] RequirementsResidualReview.TiltedDirectionNeedsActualCorrection_REQ09
+[       OK ] RequirementsResidualReview.TiltedDirectionNeedsActualCorrection_REQ09 (0 ms)
+[----------] 4 tests from RequirementsResidualReview (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 4 tests.

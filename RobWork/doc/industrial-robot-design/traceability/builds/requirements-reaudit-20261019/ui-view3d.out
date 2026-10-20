@@ -1,0 +1,34 @@
+Note: Google Test filter = WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06:HostView3DGateway.*
+[==========] Running 11 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkbenchShellGuiTest
+[ RUN      ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06
+[       OK ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06 (487 ms)
+[----------] 1 test from WorkbenchShellGuiTest (488 ms total)
+
+[----------] 10 tests from HostView3DGateway
+[ RUN      ] HostView3DGateway.UpstreamPick_ResolvesSelectsAndDispatches_UI_T45
+[       OK ] HostView3DGateway.UpstreamPick_ResolvesSelectsAndDispatches_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45
+[       OK ] HostView3DGateway.UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PresentationOutlet_TransactionSemantics_UI_T45
+[       OK ] HostView3DGateway.PresentationOutlet_TransactionSemantics_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PresentationOutlet_IncompleteView_FailsCleanly_UI_T45
+[       OK ] HostView3DGateway.PresentationOutlet_IncompleteView_FailsCleanly_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45
+[       OK ] HostView3DGateway.TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.Constructor_MissingRequiredSeams_Throws_UI_T45
+[       OK ] HostView3DGateway.Constructor_MissingRequiredSeams_Throws_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PreviewOutlet_DegradedApplyAndClear_UI_T33
+[       OK ] HostView3DGateway.PreviewOutlet_DegradedApplyAndClear_UI_T33 (0 ms)
+[ RUN      ] HostView3DGateway.PreviewOutlet_DrawFailureKeepsOld_UI_T33
+[       OK ] HostView3DGateway.PreviewOutlet_DrawFailureKeepsOld_UI_T33 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78
+[       OK ] HostView3DGateway.UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78
+[       OK ] HostView3DGateway.UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78 (0 ms)
+[----------] 10 tests from HostView3DGateway (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 11 tests from 2 test suites ran. (493 ms total)
+[  PASSED  ] 11 tests.

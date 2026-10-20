@@ -1,0 +1,15 @@
+Note: Google Test filter = RequirementsSessionGuiTest.View3DTarget*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23 (387 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23 (84 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23 (23 ms)
+[----------] 3 tests from RequirementsSessionGuiTest (495 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (495 ms total)
+[  PASSED  ] 3 tests.

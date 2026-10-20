@@ -796,6 +796,40 @@ TEST_F(DraftControllerModelTest, StaleRevisionRetainsDraftAndPresentsConflict)
     EXPECT_THROW(harness.ctl().staleConflictData("nonexistent"), std::logic_error);
 }
 
+/** @brief PM-04/AT-29：冲突保留只落原草稿，不清会话状态或另存其他域。 */
+TEST_F(DraftControllerModelTest, RetainedSaveKeepsConflictAndDirty_PM04_AT29)
+{
+    IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
+    auto& harness=h();harness.buildController();harness.bindWritable();
+    auto& source=harness.attachDirty("modeling","完整旧草稿");
+    source.doc.baseRevisionId=core::RevisionId::generate();
+    harness.attachDirty("trajectory","无冲突草稿");
+    CommandResultProjection rejected;rejected.rejectionReason="stale-revision";
+    ui::StaleRevisionDetailProjection detail;detail.currentTipRevision=core::RevisionId::generate().toCanonical();
+    detail.draftBaseRevision=source.doc.baseRevisionId.toCanonical();rejected.staleDetail=detail;
+    harness.ctl().onCommandResult("modeling",rejected);
+    const auto outcome=harness.ctl().saveAll(SaveTrigger::ApplyRetained);
+    EXPECT_EQ(outcome.savedCount,1U);EXPECT_EQ(outcome.failedCount,0U);
+    ASSERT_FALSE(harness.store->saved.empty());const auto& saved=harness.store->saved.front();
+    EXPECT_EQ(saved.origin,ui::DraftOrigin::ApplyRetained);
+    EXPECT_EQ(saved.payload,source.doc.payload);EXPECT_EQ(saved.baseRevisionId,source.doc.baseRevisionId);
+    EXPECT_TRUE(harness.ctl().summary().modules[0].sessionDirty);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+    EXPECT_TRUE(source.rebuildCalls.empty());EXPECT_EQ(harness.store->revisionCount,0);
+    // 手动已保存不代表应用成功，下一次显式冲突保留仍须保存该模块。
+    ASSERT_EQ(harness.ctl().saveAll(SaveTrigger::Manual).failedCount,0U);
+    EXPECT_EQ(harness.ctl().saveAll(SaveTrigger::ApplyRetained).savedCount,1U);
+    harness.store->saveOk=false;
+    EXPECT_EQ(harness.ctl().saveAll(SaveTrigger::ApplyRetained).failedCount,1U);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+    // PM-12：明确跨分支的域文档必须拒绝，不能用活动绑定偷偷改写归属。
+    source.doc.branchId=core::BranchId::generate();
+    const auto writes=harness.store->saved.size();
+    EXPECT_THROW(harness.ctl().saveAll(SaveTrigger::ApplyRetained),std::invalid_argument);
+    EXPECT_EQ(harness.store->saved.size(),writes);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+}
+
 /// §8.5：[基于当前版本重新编辑]——域源以 tip 重建基线、控制器重置脏
 /// 标记与冲突态；无冲突调用＝违约；重编辑清空旧检查点（基线已重建）。
 TEST_F(DraftControllerModelTest, ReEditOnCurrentTipRebuildsBaseline)
@@ -1036,4 +1070,149 @@ TEST_F(DraftControllerModelTest,
     EXPECT_FALSE(discarded.ok);
     EXPECT_EQ(discarded.errorToken, "executor-stopped");
     EXPECT_TRUE(harness.store->discardCalls.empty());
+}
+
+/** @brief PM-04/AT-21：成功回执消费本模块磁盘稿；拒绝、中止不删除，保存/删除仍经串行磁盘端口。 */
+TEST_F(DraftControllerModelTest, AppliedDraftConsumesDiskBeforeClearingSession_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto& harness=h();harness.bindWritable();harness.attachDirty("modeling","full-draft");
+    harness.ctl().pushLocalCheckpoint("modeling");
+    CommandResultProjection rejected;rejected.rejectionReason="stale-revision";
+    harness.ctl().onCommandResult("modeling",rejected);
+    ASSERT_EQ(harness.ctl().saveAll(SaveTrigger::ApplyRetained).savedCount,1U);
+    EXPECT_TRUE(harness.store->discardCalls.empty())<<"拒绝保留原完整稿";
+    CommandResultProjection aborted;aborted.status=CommandResultProjection::Status::Aborted;
+    harness.ctl().onCommandResult("modeling",aborted);
+    EXPECT_TRUE(harness.store->discardCalls.empty())<<"中止不能消费草稿";
+    CommandResultProjection committed;committed.status=CommandResultProjection::Status::Committed;
+    committed.newRevision=core::RevisionId::generate();
+    harness.ctl().onCommandResult("modeling",committed);
+    EXPECT_EQ(harness.store->discardCalls,(std::vector<std::string>{"modeling"}));
+    EXPECT_FALSE(harness.ctl().summary().modules.front().sessionDirty);
+    EXPECT_FALSE(harness.ctl().staleConflictData("modeling").present);
+    EXPECT_FALSE(harness.ctl().undoLocalEdit("modeling"));
+}
+
+/** @brief PM-04/AT-21：删除异常/拒收不能清脏或清冲突，显式重试成功后才消费控制器状态。 */
+TEST_F(DraftControllerModelTest, FailedAppliedDraftConsumptionRetainsState_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto& harness=h();harness.bindWritable();auto& source=harness.attachDirty("modeling","original");
+    harness.ctl().pushLocalCheckpoint("modeling");source.doc.payload="edited";
+    CommandResultProjection rejected;rejected.rejectionReason="stale-revision";
+    harness.ctl().onCommandResult("modeling",rejected);
+    CommandResultProjection committed;committed.status=CommandResultProjection::Status::Committed;
+    committed.newRevision=core::RevisionId::generate();
+    harness.store->throwOnDiscard=true;
+    EXPECT_THROW(harness.ctl().onCommandResult("modeling",committed),std::runtime_error);
+    EXPECT_TRUE(harness.ctl().summary().modules.front().sessionDirty);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+    EXPECT_EQ(source.doc.payload,"edited");
+    EXPECT_TRUE(harness.ctl().undoLocalEdit("modeling"))<<"消费失败不能销毁局部历史";
+    harness.store->throwOnDiscard=false;harness.disk.setAcceptPost(false);
+    EXPECT_THROW(harness.ctl().onCommandResult("modeling",committed),std::runtime_error);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+    harness.disk.setAcceptPost(true);
+    EXPECT_NO_THROW(harness.ctl().onCommandResult("modeling",committed));
+    EXPECT_FALSE(harness.ctl().staleConflictData("modeling").present);
+    EXPECT_FALSE(harness.ctl().summary().modules.front().sessionDirty);
+}
+
+/** @brief PM-04：已排队autosave完成回执迟到时，不得在成功消费后恢复过期的保存来源/脏标记。 */
+TEST_F(DraftControllerModelTest, LateAutosaveReceiptCannotReviveConsumedDraft_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto& harness=h();std::vector<std::function<void()>> uiQueue;
+    auto deps=harness.makeDeps();
+    deps.postToUiThread=[&](std::function<void()> task){uiQueue.push_back(std::move(task));return true;};
+    harness.controller=ui::createDraftController(std::move(deps));harness.bindWritable();
+    harness.attachDirty("modeling","before-apply");
+    ASSERT_EQ(harness.ctl().tickAutosave(harness.now),1U);ASSERT_EQ(uiQueue.size(),1U);
+    CommandResultProjection committed;committed.status=CommandResultProjection::Status::Committed;
+    committed.newRevision=core::RevisionId::generate();harness.ctl().onCommandResult("modeling",committed);
+    for(auto& task:uiQueue){task();}
+    EXPECT_EQ(harness.store->discardCalls,(std::vector<std::string>{"modeling"}));
+    const auto state=harness.ctl().summary();ASSERT_EQ(state.modules.size(),1U);
+    EXPECT_FALSE(state.modules.front().sessionDirty);
+    EXPECT_TRUE(state.modules.front().lastSaveOriginToken.empty());
+    EXPECT_TRUE(state.modules.front().lastSavedAtUtc.empty());
+}
+
+/** @brief PM-04：消费后的首个新编辑不能与旧autosave的代次1重号，迟到回执不得清掉新编辑。 */
+TEST_F(DraftControllerModelTest, LateAutosaveCannotClearPostApplyEdit_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto& harness=h();std::vector<std::function<void()>> uiQueue;auto deps=harness.makeDeps();
+    deps.postToUiThread=[&](std::function<void()> task){uiQueue.push_back(std::move(task));return true;};
+    harness.controller=ui::createDraftController(std::move(deps));harness.bindWritable();
+    auto& source=harness.attachDirty("modeling","old-autosave");
+    ASSERT_EQ(harness.ctl().tickAutosave(harness.now),1U);ASSERT_EQ(uiQueue.size(),1U);
+    CommandResultProjection committed;committed.status=CommandResultProjection::Status::Committed;
+    committed.newRevision=core::RevisionId::generate();harness.ctl().onCommandResult("modeling",committed);
+    source.doc.payload="new-edit-after-apply";harness.ctl().notifySessionDirty("modeling");
+    for(auto& task:uiQueue){task();}
+    const auto state=harness.ctl().summary();ASSERT_EQ(state.modules.size(),1U);
+    EXPECT_TRUE(state.modules.front().sessionDirty)<<"旧保存回执不能清掉应用后的新编辑";
+    EXPECT_TRUE(state.modules.front().lastSaveOriginToken.empty());
+    EXPECT_EQ(source.doc.payload,"new-edit-after-apply");
+}
+
+/** @brief PM-04/PM-18：回到基线只消费本模块磁盘稿，不能销毁可用的局部重做与撤销历史。 */
+TEST_F(DraftControllerModelTest, CleanBaselineConsumesDraftAndKeepsHistory_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto& harness=h();harness.bindWritable();auto& source=harness.attachDirty("modeling","baseline");
+    harness.ctl().pushLocalCheckpoint("modeling");source.doc.payload="edited";
+    ASSERT_EQ(harness.ctl().saveAll(SaveTrigger::Manual).savedCount,1U);
+    ASSERT_TRUE(harness.ctl().undoLocalEdit("modeling"));ASSERT_EQ(source.doc.payload,"baseline");
+    const auto outcome=harness.ctl().notifySessionClean("modeling");ASSERT_TRUE(outcome.ok)<<outcome.detail;
+    EXPECT_EQ(harness.store->discardCalls,(std::vector<std::string>{"modeling"}));
+    auto view=harness.ctl().summary().modules.front();EXPECT_FALSE(view.sessionDirty);
+    EXPECT_TRUE(view.lastSaveOriginToken.empty());EXPECT_TRUE(view.lastSavedAtUtc.empty());
+    EXPECT_EQ(harness.ctl().tickAutosave(harness.now),0U)<<"干净基线不能再次自动保存旧稿";
+    ASSERT_TRUE(harness.ctl().redoLocalEdit("modeling"));EXPECT_EQ(source.doc.payload,"edited");
+    harness.ctl().notifySessionDirty("modeling"); // 宿主在真实域回放通知后按完整内容判定脏态。
+    EXPECT_TRUE(harness.ctl().summary().modules.front().sessionDirty);
+    ASSERT_TRUE(harness.ctl().undoLocalEdit("modeling"));EXPECT_EQ(source.doc.payload,"baseline");
+    EXPECT_EQ(harness.store->revisionCount,0);
+}
+
+/** @brief PM-04/AT-21：结算失败保留原脏态、来源、冲突及历史；只读/无会话不准写入。 */
+TEST_F(DraftControllerModelTest, FailedCleanBaselineKeepsOriginalState_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto& harness=h();harness.bindWritable();auto& source=harness.attachDirty("modeling","baseline");
+    harness.ctl().pushLocalCheckpoint("modeling");source.doc.payload="edited";
+    ASSERT_EQ(harness.ctl().saveAll(SaveTrigger::Manual).savedCount,1U);
+    harness.ctl().notifySessionDirty("modeling");CommandResultProjection rejected;
+    rejected.rejectionReason="stale-revision";harness.ctl().onCommandResult("modeling",rejected);
+    const auto before=harness.ctl().summary().modules.front();harness.store->throwOnDiscard=true;
+    auto outcome=harness.ctl().notifySessionClean("modeling");EXPECT_FALSE(outcome.ok);
+    EXPECT_EQ(outcome.errorToken,"exception");auto after=harness.ctl().summary().modules.front();
+    EXPECT_EQ(after.sessionDirty,before.sessionDirty);EXPECT_EQ(after.lastSaveOriginToken,before.lastSaveOriginToken);
+    EXPECT_EQ(after.lastSavedAtUtc,before.lastSavedAtUtc);EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present);
+    EXPECT_EQ(source.doc.payload,"edited");EXPECT_TRUE(harness.ctl().undoLocalEdit("modeling"));
+    harness.store->throwOnDiscard=false;harness.disk.setAcceptPost(false);
+    outcome=harness.ctl().notifySessionClean("modeling");EXPECT_FALSE(outcome.ok);EXPECT_EQ(outcome.errorToken,"executor-stopped");
+    harness.disk.setAcceptPost(true);ASSERT_TRUE(harness.ctl().notifySessionClean("modeling").ok);
+    EXPECT_TRUE(harness.ctl().staleConflictData("modeling").present)<<"干净结算不能伪造冲突已解决";
+    harness.ctl().unbindSession();EXPECT_THROW(harness.ctl().notifySessionClean("modeling"),std::logic_error);
+}
+
+/** @brief PM-04：清理后重做的新编辑须使用新代次，迟到autosave不能复活保存标记或清掉新稿。 */
+TEST_F(DraftControllerModelTest, LateAutosaveCannotClearRedoAfterClean_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto& harness=h();std::vector<std::function<void()>> queue;auto deps=harness.makeDeps();
+    deps.postToUiThread=[&](std::function<void()> task){queue.push_back(std::move(task));return true;};
+    harness.controller=ui::createDraftController(std::move(deps));harness.bindWritable();
+    auto& source=harness.attachDirty("modeling","baseline");harness.ctl().pushLocalCheckpoint("modeling");
+    source.doc.payload="edited";ASSERT_EQ(harness.ctl().tickAutosave(harness.now),1U);
+    ASSERT_TRUE(harness.ctl().undoLocalEdit("modeling"));ASSERT_TRUE(harness.ctl().notifySessionClean("modeling").ok);
+    ASSERT_TRUE(harness.ctl().redoLocalEdit("modeling"));harness.ctl().notifySessionDirty("modeling");
+    for(auto& task:queue){task();}
+    auto view=harness.ctl().summary().modules.front();EXPECT_TRUE(view.sessionDirty);
+    EXPECT_TRUE(view.lastSaveOriginToken.empty());EXPECT_TRUE(view.lastSavedAtUtc.empty());
+    EXPECT_EQ(source.doc.payload,"edited");EXPECT_EQ(harness.store->discardCalls.size(),1U);
 }

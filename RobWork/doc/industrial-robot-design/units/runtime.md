@@ -1591,3 +1591,16 @@ public:
 | v0.19 | 2026-10-09 | audit F-593 修复（分支 audit-p2-fixes）：S3 限位量级抽样警告专用注册码——①ValidationIssue（src 内部结构）增 registryCodeOverride 覆盖码面（警告级专用；Error 级恒空），checkBoundMagnitude 警告携 RT-BOUNDS-MAGNITUDE（建议码面待 diagnostics 收编〔PA-1〕——比照 RT-RESOURCE-RECORDED 先例，无枚举对应、§10.11 冻结关系不扩）；②CompilerImpl S3 警告转译优先取覆盖码（无覆盖保持 registryCode(code) 原径）；③CanonicalModel isHardErrorDiagCode 不在集内（注释登记警告类示例）——修复前警告复用 RT-UNIT-MISMATCH 与 builder 硬失败码集相撞，"发布＋警告"合法模型整次编译硬失败；④DescriptionValidator.hpp 覆盖面注释与卡 §10.11 事件码面随批登记。回归钉 CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593（±360 deg 误作 rad 模型发布成功＋诊断块含新码＋不含 RT-UNIT-MISMATCH） |
 | v0.22 | 2026-10-12 | audit F-741 契约文档更正（分支 audit-r2d-fixes；草案预编号 F-642→正式 F-741，映射 traceability/gov-r2-id-remap.md；纯文档事实更正——代码/码表/注册零变更；合入时主线 v0.21 撞号——本行顺延 v0.22）：§10.11 级别标定括注中 RT-ROBWORK-ERROR 从"警告/事件类码 level=Warning"组移出，更正为 **Error 级**（对齐 diagnostics DiagCodes.cpp 注册值 severity=Error ⇒ level=Error 机械映射——F-618 标定规则自身的必然结论）。矛盾后果（F-741 原文）：按 v0.20 括注理解该码为 Warning 级，会与 §4.3.5 builder 拒绝判据 `record.level==Error`（fail-closed）的预期行为冲突——契约文档即代码。范围纪律：同括注中 RT-CANCELLED 实际注册 severity=Info（⇒level=Info）与"level=Warning"组描述亦有出入，但不在 F-741 登记面——未一并更正（不扩本批裁决面，留待后续登记；本行如实留痕观察）。 |
 | v0.20 | 2026-10-10 | F-618 诊断面 schema 演进（所有者裁决 2026-10-09 排期；分支 diag-schema-level，先单元卡后代码——core.md v0.12 增列 DiagnosticLevel/record.level、diagnostics.md v0.14 增列 CodeDescriptor.level＋RT-BOUNDS-MAGNITUDE 收编，本卡承载 runtime 侧语义）：①**§4.3.5 诊断块拒绝判据改按级别**——"仅警告级"的判定由"码 ∈ 硬失败码集"（CanonicalModel isHardErrorDiagCode，十码枚举表）改为 `record.level==Error`；码集判定废除（级别是唯一判据，码值不再参与阻断判定——消除警告与错误共用注册码必然相撞的结构性根因，F-593 取专用警告码①为本条止血形态）；②**§4.5 编码形态升版 canonical-model/1.0→1.1**——诊断块逐条记录尾追加 level 字节（kVersionMinor 0→1；旧 minor 字节经既有版本检查显式拒绝；全字段编码仅存续于会话内 worker 物化通道不入 .rwdesign、诊断块不入身份域 contentIdentity 不变——无跨版本存量字节）；③**§10.11 RT 码面 14→15 项**——RT-BOUNDS-MAGNITUDE 随 diagnostics.md v0.14 正式注册（severity=Warning/level=Warning），本卡 v0.19"建议码面待收编"注就此闭合；registryCodeOverride 机制保留（枚举冻结不扩——警告码无 RuntimeErrorCode 对应，覆盖码面是其唯一承载通道），其"建议码面"定性升格为"已注册警告码承载通道"；十段链硬失败码全部标定 error 级（注册表 severity 映射），RT-RESOURCE-RECORDED 维持未注册建议码面不扩裁；④CompilerImpl warningRecord 单点显式声明 level=Warning（S3 量级抽样＋S4 资源固化提醒两产码路径）；⑤DescriptionValidator.hpp 覆盖码面注释同步。回归钉：CanonicalModelTest 按级别拒绝面适配＋UnitMismatch error 级阻断钉＋CodecTest level 往返钉（详见实现提交） |
+
+
+### WP-14-T12 A-15 命名TCP完整目录增量（2026-10-19，所有者精确批准）
+
+ToolDescription与CanonicalTool表尾默认空namedTcpOffsets，条目为原tcpKey与T_flange_tcp（平移m、正交非反射旋转）；空目录保留旧单TCP描述。S3/S5拒绝空键、重复键及非法变换，builder按UTF-8无符号字节序排序；S5映射完整目录，非默认TCP变化也进入模型相等与内容身份。原defaultTcpIndex必填/排序重定位不变。
+
+RT-Codec由1.1升1.2：每工具默认偏移后追加count、逐键与变换，全字段和身份域都包含；精确版本门拒绝旧1.1缓存，旧project建模对象格式不变，可重新编译。解码对新目录条数先以包长必要上限拒绝巨额分配，再逐条检查截断/变换/键/身份。默认实体TCP帧与NameMap不扩展，命名TCP数值消费归FK/IK；不修改WorkCellCompiler、框架或依赖边。
+
+### WP-13-T24 B3g：场景固定帧可选几何
+
+MDL-15/AT-28：SceneObjectDescription及CanonicalSceneObject.geometry改为optional，nullopt表示合法世界系固定帧；几何存在时沿原清单/摘要约束。canonical编码1.3明确presence，旧物化缓存精确版本拒绝，项目schema不改。hasScene按对象存在、hasCollisionGeometry仅按实际引用；名称保留SceneObject映射，空几何不生成Geometry映射。真实WorkCell仍建世界固连FixedFrame，不预乘安装姿态。八节设计及精确范围见2026-10-20-modeling-completion.md B3g；未验证不标通过。
+
+B3g实施验证：18套件2599通过、0失败、3既有占位跳过，双模式/全量Release及verify-task三条机器检查通过；证据traceability/builds/modeling-completion-20261020-b3g/，详细分类见FOLLOWUP与XML。真实网格及新入口端到端磁盘/三维尚未封闭，不将本批编译消费绿色外推到47项终验。

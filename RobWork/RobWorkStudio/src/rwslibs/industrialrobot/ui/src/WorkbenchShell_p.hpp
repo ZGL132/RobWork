@@ -456,11 +456,20 @@ struct LayoutMemory {
  */
 QWidget* createView3DPlaceholder(QWidget* parent);
 
+/** @brief A-23 私有编辑入口；实现由宿主持有，仅 UI 线程调用，无写权威。 */
+class IPolicySummaryEditSource {
+public:
+    /** @brief 通过接口销毁适配器；资源所有权仍归具体宿主。 */
+    virtual ~IPolicySummaryEditSource() = default;
+    /** @brief 经宿主命令注册表请求编辑；拒绝或取消不得写项目。 */
+    virtual void requestPolicyEdit() = 0;
+};
+
 /**
  * @brief 构建右栏工程策略摘要只读卡（UI-T07 阶段 A——§6.7 策略摘要入口）。
  *
  * 卡面＝分组渲染的只读行集（分组异名——POL-ID-3）＋"修改策略…"跳转
- * 入口（阶段 A 仅延期提示——表单归阶段 B，不虚构编辑能力）。行数据由
+ * 入口（A-23生产宿主经命令注册表打开编辑器；只读旧源保留延期反馈）。行数据由
  * 策略摘要端口（ShellWiring.policySource——O-31 ui 自有端口，L5 适配
  * policy::IPolicyProvider）的快照经 policySummaryRows 纯函数装配，卡
  * 控件零策略语义（模型层单一权威——PolicySummaryCard.hpp 契约）。
@@ -468,15 +477,18 @@ QWidget* createView3DPlaceholder(QWidget* parent);
  *
  * @param policySource [in] 策略摘要端口引用（壳已校验非空——§10.1 前置；
  *               引用须在卡存活期内有效——壳持有 wiring 共享引用保证之）
- * @param refreshOut   [in] 可选出参：接收"重拉端口快照并重建卡内容"的
+ * @param refreshOut   [out] 可选出参：接收"重拉端口快照并重建卡内容"的
  *               刷新钩子（UI 线程调用；钩子生命周期≤卡容器）
  * @param parent [in] 父控件（右栏内容区——所有权移交 Qt 对象树）
+ * @param editRequest [in] UI线程命令入口；默认空时由私有编辑适配器处理，
+ *               未装配编辑适配器则呈现既有提示；回调有效期须覆盖卡容器。
  * @return 卡容器指针（objectName=ird_policy_summary_card；不交出壳外
  *         ——ARC-02）
  */
+
 QWidget* createPolicySummaryCard(IPolicySummarySource& policySource,
                                  std::function<void()>* refreshOut,
-                                 QWidget* parent);
+                                 QWidget* parent, std::function<void()> editRequest = {});
 
 // =====================================================================
 // WorkbenchShell 实现（UI-T16 起＝顶层窗口宿主层）

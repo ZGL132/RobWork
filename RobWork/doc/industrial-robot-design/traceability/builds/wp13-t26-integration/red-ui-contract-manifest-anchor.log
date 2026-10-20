@@ -1,0 +1,35 @@
+Note: Google Test filter = AssemblyManifest.WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from AssemblyManifest
+[ RUN      ] AssemblyManifest.WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\AssemblyManifestContractTest.cpp(502): error: Value of: anchorIsAttachCall
+  Actual: false
+Expected: true
+wiredAnchor 琛屽繀椤绘槸 attachModule 璋冪敤锛堣绾ф牳瀵光€斺€旇鍙锋紓绉伙紳鐧昏澶卞疄锛? ui/plugin/UiPlugin.cpp:2700
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\AssemblyManifestContractTest.cpp(505): error: Value of: tokenSeenInWindow
+  Actual: false
+Expected: true
+閿氱偣琛岃捣 3 琛岀獥鍙ｅ唴蹇呴』鍙 handleSymbol token锛堝琛岃皟鐢ㄥ煙褰掑睘缁戝畾锛? modeling 鈫?modeling::kModuleHandle
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\AssemblyManifestContractTest.cpp(502): error: Value of: anchorIsAttachCall
+  Actual: false
+Expected: true
+wiredAnchor 琛屽繀椤绘槸 attachModule 璋冪敤锛堣绾ф牳瀵光€斺€旇鍙锋紓绉伙紳鐧昏澶卞疄锛? ui/plugin/UiPlugin.cpp:2774
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\AssemblyManifestContractTest.cpp(505): error: Value of: tokenSeenInWindow
+  Actual: false
+Expected: true
+閿氱偣琛岃捣 3 琛岀獥鍙ｅ唴蹇呴』鍙 handleSymbol token锛堝琛岃皟鐢ㄥ煙褰掑睘缁戝畾锛? requirements 鈫?requirements::kModuleHandle
+
+[  FAILED  ] AssemblyManifest.WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84 (51 ms)
+[----------] 1 test from AssemblyManifest (51 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (51 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] AssemblyManifest.WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84
+
+ 1 FAILED TEST

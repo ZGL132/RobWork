@@ -1,0 +1,42 @@
+[
+  {
+    "path": "build.log",
+    "sha256": "b830995f04f82ee3d72542ce1c0da9e4a83b6a545d6da01dc68ffcc6cd9f6188"
+  },
+  {
+    "path": "FOLLOWUP.md",
+    "sha256": "342ea133195894ab4eadc4c2d30b8d2dfa95c16de97084c399619a2a3f5e3b59"
+  },
+  {
+    "path": "mixed_probe.cpp",
+    "sha256": "c130a871d280931b51e09f10eb5bfe6640da36767eb7973a515793deac2142fd"
+  },
+  {
+    "path": "mixed_probe.rsp",
+    "sha256": "b0e6ffa6cc5b4edaf68fcc8e40cb9572b74a672774e45b7493dfbf5ef2ea5bd3"
+  },
+  {
+    "path": "mixed-report.json",
+    "sha256": "c259c9adb0b04066d4a14c23815b6d48d02e65a1ee88b894d255f3724dcacdcd"
+  },
+  {
+    "path": "mixed.log",
+    "sha256": "9b2d369c1359efbe3cd0b0a259423871c3e83f2da2ab9d9c1583ba8f76dac29a"
+  },
+  {
+    "path": "mixed.xml",
+    "sha256": "71ced4394bc76edec63baa2fcf98b44f93f28c3c9bd84b5900d74c5b4359a03f"
+  },
+  {
+    "path": "native-diagnostic.log",
+    "sha256": "6b834f7a322aca7525f522179978022eded5fe9c3a0a1be01104e30a53e5f146"
+  },
+  {
+    "path": "native-diagnostic.ps1",
+    "sha256": "4624ea2556ca32b529480a670df55693d8824d10682135b5c0abf016a7f9262a"
+  },
+  {
+    "path": "run.ps1",
+    "sha256": "3f4f3d8c9b118ed115d754dfbee591b64040afc430a3e48a3cb33b25d64aba16"
+  }
+]

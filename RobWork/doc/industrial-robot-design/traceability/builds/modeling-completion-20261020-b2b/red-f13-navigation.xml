@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.489" timestamp="2026-10-20T06:38:46.207" name="AllTests">
+  <testsuite name="ModelingUiModuleHostWiring" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.489" timestamp="2026-10-20T06:38:46.207">
+    <testcase name="NamedPosePageReachableWithoutExistingObject_MDL17_AT04" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="567" status="run" result="completed" time="0.489" timestamp="2026-10-20T06:38:46.207" classname="ModelingUiModuleHostWiring">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:573&#x0A;Expected: (mode) != (nullptr), actual: NULL vs (nullptr)&#x0A;空位姿集没有树锚，必须有可见入口创建首个命名姿态&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:573
+Expected: (mode) != (nullptr), actual: NULL vs (nullptr)
+空位姿集没有树锚，必须有可见入口创建首个命名姿态
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -156,8 +156,8 @@ public:
  *     不作身份）/角色/几何事实）：
  *       链连杆 → Role=RobotLink、hasCollisionGeometry=连杆碰撞几何引用
  *       在场；工具 → Role=Tool、hasCollisionGeometry=工具几何引用在场；
- *       场景对象 → Role=EnvironmentObject、hasCollisionGeometry=true
- *       （规范模型场景几何必有——CanonicalSceneObject 契约）；
+ *       场景对象 → Role=EnvironmentObject、hasCollisionGeometry=场景几何引用在场；
+ *       无几何世界固定帧仍保留对象，显示标记不作为碰撞几何（MDL-15/AT-28）；
  *   - adjacentLinkPairs ← 模型相邻事实：链序相邻对 (link_i, link_{i+1})
  *     ＋工具安装对 (链末连杆, tool_i)（MDL-13 工具经法兰安装——默认
  *     相邻过滤的模型事实消费源，policy §7.1）。

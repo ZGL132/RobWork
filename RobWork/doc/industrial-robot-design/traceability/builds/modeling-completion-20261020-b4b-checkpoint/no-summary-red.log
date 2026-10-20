@@ -1,0 +1,20 @@
+Note: Google Test filter = ModelingDraftRestore.ChangedPayloadWithoutSummary*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingDraftRestore
+[ RUN      ] ModelingDraftRestore.ChangedPayloadWithoutSummaryRemainsPending_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(796): error: Value of: target.buildDraftCommand("modeling")
+  Actual: false
+Expected: true
+恢复不能把有差异内容当无草稿
+
+[  FAILED  ] ModelingDraftRestore.ChangedPayloadWithoutSummaryRemainsPending_PM04_AT21 (1 ms)
+[----------] 1 test from ModelingDraftRestore (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingDraftRestore.ChangedPayloadWithoutSummaryRemainsPending_PM04_AT21
+
+ 1 FAILED TEST

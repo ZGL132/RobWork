@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.003" timestamp="2026-10-18T23:04:45.824" name="AllTests">
+  <testsuite name="HostCompilePipelineTest" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-10-18T23:04:45.824">
+    <testcase name="ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="268" status="run" result="completed" time="0." timestamp="2026-10-18T23:04:45.824" classname="HostCompilePipelineTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:307&#x0A;Value of: result.ok&#x0A;  Actual: false&#x0A;Expected: true&#x0A;新场景载荷不应丢类型，也不能被当作根对象解码&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:307
+Value of: result.ok
+  Actual: false
+Expected: true
+新场景载荷不应丢类型，也不能被当作根对象解码
+]]></failure>
+    </testcase>
+    <testcase name="SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="311" status="run" result="completed" time="0." timestamp="2026-10-18T23:04:45.825" classname="HostCompilePipelineTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:353&#x0A;Value of: result.ok&#x0A;  Actual: false&#x0A;Expected: true&#x0A;部件单独更新必须保留基线根，不要求根冗余写入&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:353
+Value of: result.ok
+  Actual: false
+Expected: true
+部件单独更新必须保留基线根，不要求根冗余写入
+]]></failure>
+    </testcase>
+    <testcase name="RecordedResourceIsRereadAndFailurePreservesSnapshot_REQ10_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="357" status="run" result="completed" time="0.002" timestamp="2026-10-18T23:04:45.825" classname="HostCompilePipelineTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:383&#x0A;Value of: first.ok&#x0A;  Actual: false&#x0A;Expected: true&#x0A;真实Recorded资源必须能从现有io桥读取&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:383
+Value of: first.ok
+  Actual: false
+Expected: true
+真实Recorded资源必须能从现有io桥读取
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

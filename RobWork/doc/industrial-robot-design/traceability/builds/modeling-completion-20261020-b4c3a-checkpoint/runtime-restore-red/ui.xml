@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="1.346" timestamp="2026-10-20T14:03:35.228" name="AllTests">
+  <testsuite name="HostCompilePipelineTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="1.346" timestamp="2026-10-20T14:03:35.228">
+    <testcase name="CompleteWorkingSetDiskApplyAndHistory_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="1005" status="run" result="completed" time="1.346" timestamp="2026-10-20T14:03:35.228" classname="HostCompilePipelineTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:1225&#x0A;Expected equality of these values:&#x0A;  compile-&gt;lastPublishedSnapshot()-&gt;model().tools().front().objectId&#x0A;    Which is: 16-byte object &lt;8A-67 4C-11 89-A1 66-D5 5E-7A 89-1F FE-EA 14-EE&gt;&#x0A;  firstToolId&#x0A;    Which is: 16-byte object &lt;00-6F 2E-2A 16-4A DB-CB 2B-8E D9-7B D7-AE 97-B8&gt;&#x0A;apply-named-poses&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:1225
+Expected equality of these values:
+  compile->lastPublishedSnapshot()->model().tools().front().objectId
+    Which is: 16-byte object <8A-67 4C-11 89-A1 66-D5 5E-7A 89-1F FE-EA 14-EE>
+  firstToolId
+    Which is: 16-byte object <00-6F 2E-2A 16-4A DB-CB 2B-8E D9-7B D7-AE 97-B8>
+apply-named-poses
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

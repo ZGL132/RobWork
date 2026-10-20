@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="0.038" timestamp="2026-10-20T00:13:00.697" name="AllTests">
+  <testsuite name="RequirementsClosureFollowup" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.038" timestamp="2026-10-20T00:13:00.697">
+    <testcase name="RealMixedHundredAndSnapshotRebind_REQ03_KIN04" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-followup-20261020\mixed_probe.cpp" line="16" status="run" result="completed" time="0.038" timestamp="2026-10-20T00:13:00.697" classname="RequirementsClosureFollowup" />
+  </testsuite>
+</testsuites>

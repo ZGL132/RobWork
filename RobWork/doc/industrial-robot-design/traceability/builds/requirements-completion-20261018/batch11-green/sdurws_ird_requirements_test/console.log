@@ -1,0 +1,13 @@
+Note: Google Test filter = PluginPanel.RegionPreview*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from PluginPanel
+[ RUN      ] PluginPanel.RegionPreviewGeometryOutlineAndGrid_ACC1
+[       OK ] PluginPanel.RegionPreviewGeometryOutlineAndGrid_ACC1 (0 ms)
+[ RUN      ] PluginPanel.RegionPreviewAxisAlignedAndBounded_REQ03_WP14T12
+[       OK ] PluginPanel.RegionPreviewAxisAlignedAndBounded_REQ03_WP14T12 (0 ms)
+[----------] 2 tests from PluginPanel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.

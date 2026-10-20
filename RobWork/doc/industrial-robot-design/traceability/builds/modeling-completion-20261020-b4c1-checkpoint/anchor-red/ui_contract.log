@@ -1,0 +1,91 @@
+Note: Google Test filter = HostIntegrationContractTest.*PM04_AT29:HostIntegrationContractTest.RunDomainApply_DomainExceptionIsolated_OthersProceed
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from HostIntegrationContractTest
+[ RUN      ] HostIntegrationContractTest.RunDomainApply_DomainExceptionIsolated_OthersProceed
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(374): error: Expected equality of these values:
+  report.submittedCount()
+    Which is: 2
+  1U
+    Which is: 1
+组装失败未调用submit，不可计入已提交
+
+[  FAILED  ] HostIntegrationContractTest.RunDomainApply_DomainExceptionIsolated_OthersProceed (0 ms)
+[ RUN      ] HostIntegrationContractTest.RestoredModelDraftKeepsOldBaseThroughApply_PM04_AT29
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1131): error: Expected equality of these values:
+  envelope.expectedRevision
+    Which is: (16-byte object <EA-78 64-A2 22-CC 37-DF 23-A3 9E-57 D0-19 43-B2>)
+  oldBase
+    Which is: 16-byte object <53-72 49-D2 CC-36 86-03 00-CE C9-15 5D-D0 D2-70>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1135): error: Expected equality of these values:
+  result.status.rejection
+    Which is: 4-byte object <05-00 00-00>
+  project::CommandStatus::Rejection::StaleRevision
+    Which is: 4-byte object <03-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1136): error: Expected equality of these values:
+  report.entries.front().rejectionReason
+    Which is: "submit-failed: mdl: \xE2\x91\xA3\xE7\xAD\x96\xE7\x95\xA5\xE7\xAB\xAF\xE5\x8F\xA3\xE6\x9C\xAA\xE8\xA3\x85\xE9\x85\x8D\xEF\xBC\x88\xE8\xA3\x85\xE9\x85\x8D\xE7\xBC\xBA\xE9\x99\xB7\xEF\xBC\x89"
+    As Text: "submit-failed: mdl: ④策略端口未装配（装配缺陷）"
+  "stale-revision"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1139): error: Expected equality of these values:
+  retained.baseRevisionId
+    Which is: 16-byte object <EA-78 64-A2 22-CC 37-DF 23-A3 9E-57 D0-19 43-B2>
+  oldBase
+    Which is: 16-byte object <53-72 49-D2 CC-36 86-03 00-CE C9-15 5D-D0 D2-70>
+
+[  FAILED  ] HostIntegrationContractTest.RestoredModelDraftKeepsOldBaseThroughApply_PM04_AT29 (32 ms)
+[ RUN      ] HostIntegrationContractTest.PendingModelBranchChangeIsIsolatedBeforeSubmit_PM04_AT29
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1165): error: Expected equality of these values:
+  envelope.commandType
+    Which is: "apply-robot-design"
+  "fake.apply"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1166): error: Expected equality of these values:
+  submitted
+    Which is: 2
+  1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1167): error: Expected equality of these values:
+  report.submittedCount()
+    Which is: 2
+  1U
+    Which is: 1
+准备失败不能冒称已提交
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1168): error: Value of: report.entries.front().committed
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1169): error: Expected equality of these values:
+  report.entries.front().rejectionReason.find("anchor-bind-failed:")
+    Which is: 18446744073709551615
+  0U
+    Which is: 0
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1172): error: Expected equality of these values:
+  retained.baseRevisionId
+    Which is: 16-byte object <EE-A4 00-99 E1-91 07-7C 10-87 3E-70 1B-51 59-32>
+  base
+    Which is: 16-byte object <29-71 3A-43 29-27 3D-F5 BA-F6 2A-C7 4C-10 B6-32>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1173): error: Expected equality of these values:
+  domain.module->buildDraftCommand("modeling")->branch
+    Which is: 16-byte object <F9-33 06-70 F8-69 65-66 E9-34 3E-DC 1C-CF 2E-6C>
+  branch
+    Which is: 16-byte object <5C-8C E1-6E 7B-39 94-DA 33-3D 11-E9 AA-C6 86-48>
+
+[  FAILED  ] HostIntegrationContractTest.PendingModelBranchChangeIsIsolatedBeforeSubmit_PM04_AT29 (0 ms)
+[----------] 3 tests from HostIntegrationContractTest (33 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (33 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] HostIntegrationContractTest.RunDomainApply_DomainExceptionIsolated_OthersProceed
+[  FAILED  ] HostIntegrationContractTest.RestoredModelDraftKeepsOldBaseThroughApply_PM04_AT29
+[  FAILED  ] HostIntegrationContractTest.PendingModelBranchChangeIsIsolatedBeforeSubmit_PM04_AT29
+
+ 3 FAILED TESTS

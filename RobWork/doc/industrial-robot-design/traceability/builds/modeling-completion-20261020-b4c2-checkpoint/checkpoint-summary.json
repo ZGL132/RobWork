@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "modeling-b4c2-checkpoint/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "1b7ac6013637962936cdddca57b1d1616e981351",
+  "completed": false,
+  "totals": {
+    "total": 1430,
+    "passed": 1430,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 440,
+      "passed": 440,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 328,
+      "passed": 328,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 60,
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 348,
+      "passed": 348,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 80,
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 55,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "formalHost": {
+    "status": "FAIL",
+    "exitCode": -1073741819,
+    "reason": "策略修订推进后旧草稿正确Stale；尚缺真正重建，旧tour误期待可直接提交；后续空快照解引用崩溃",
+    "stdout": "modeling-tour.log",
+    "screenshots": "modeling-tour"
+  },
+  "notRun": [
+    "全新上下文独立验收",
+    "完整47项真实三维终验"
+  ],
+  "notes": [
+    "用户已通知GUI恢复；串行执行三套真实窗口测试，正式宿主失败如实单列，不计入套件绿数",
+    "红证按目录区分原产品缺口、API旧路径脚手架及测试前置错误；最终只统计七套件完整轮次，不重复累计",
+    "完整工作集首次/修改/移除/重新新增、正式身份回执、固定修订读取、撤销重做及磁盘重开走真实ProjectStore和HostModelCompilePort",
+    "增加完整工作集命令token、assembly成功回执方法；旧五命令/v2帧/项目对象格式和依赖边不变",
+    "回读异常保留真实Committed修订及未消费草稿，不清控制器脏标记；后续域继续",
+    "双模式构建和verify-task结论见实际日志；既有编译警告不称零警告",
+    "三GUI套件225通过，正式宿主旧流程FAIL；完整新增工作集正式窗口提交/状态文案及47项三维仍未验齐",
+    "旧五命令与多历史单例部件互操作、冲突真正重建已登记B4c-3，尚未由本批闭合",
+    "仅本地WIP，不推送不合入；F06/F07未修改/集成；冻结后格式/范围日志随后续只增保存"
+  ]
+}

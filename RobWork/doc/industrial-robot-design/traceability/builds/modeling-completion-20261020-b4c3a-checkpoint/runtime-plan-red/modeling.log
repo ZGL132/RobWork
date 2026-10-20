@@ -1,0 +1,28 @@
+Note: Google Test filter = MdlLegacyHistory.*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from MdlLegacyHistory
+[ RUN      ] MdlLegacyHistory.FiveApplyTokensIgnoreUnreferencedHistoricalParts_PM18_AT29
+[       OK ] MdlLegacyHistory.FiveApplyTokensIgnoreUnreferencedHistoricalParts_PM18_AT29 (1 ms)
+[ RUN      ] MdlLegacyHistory.FiveRestoreTokensReattachRetainedPartsFromFixedRevision_PM18_AT29
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(954): error: Value of: plan.requiresDualCompile
+  Actual: false
+Expected: true
+历史根重新挂接运行时部件，不能沿用纯命名位姿族的false位
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(949): apply-named-poses
+
+[  FAILED  ] MdlLegacyHistory.FiveRestoreTokensReattachRetainedPartsFromFixedRevision_PM18_AT29 (0 ms)
+[ RUN      ] MdlLegacyHistory.PoseOnlyRestoreKeepsRuntimeCompilationSkipped_PM18_AT29
+[       OK ] MdlLegacyHistory.PoseOnlyRestoreKeepsRuntimeCompilationSkipped_PM18_AT29 (0 ms)
+[ RUN      ] MdlLegacyHistory.RestoreRejectsDuplicateWrongTokenAndEmbeddedIdentity_PM18_AT29
+[       OK ] MdlLegacyHistory.RestoreRejectsDuplicateWrongTokenAndEmbeddedIdentity_PM18_AT29 (0 ms)
+[----------] 4 tests from MdlLegacyHistory (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (2 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlLegacyHistory.FiveRestoreTokensReattachRetainedPartsFromFixedRevision_PM18_AT29
+
+ 1 FAILED TEST

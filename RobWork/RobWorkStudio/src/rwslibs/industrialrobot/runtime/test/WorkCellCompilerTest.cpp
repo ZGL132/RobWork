@@ -557,6 +557,21 @@ TEST(WorkCellCompilerTest, SceneAndBaseFramesCarryNoInstallComponent_RT_BW_4)
                          "RT-BW-4 BaseFrame 无安装分量");
 }
 
+/** @brief MDL-15/AT-28/37：真实WC保留无几何世界帧，倒挂不改变其世界位姿。 */
+TEST(WorkCellCompilerTest, FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37)
+{
+    auto fixture=invertedWithSceneFixture();fixture.scene.front().geometry.reset();
+    const auto model=fixture.build();const auto names=buildRuntimeNameMap(model);
+    const auto named=names.resolveObjectId(model.scene().front().objectId);ASSERT_TRUE(named.ok());
+    const auto compiled=compileWorkCell(model);ASSERT_FALSE(compiled.workCell.isNull());
+    const auto* frame=compiled.workCell->findFrame(named.get().fullName);ASSERT_NE(frame,nullptr);
+    const auto pose=rw::kinematics::Kinematics::worldTframe(frame,compiled.workCell->getDefaultState());
+    expectTransformClose(pose,model.scene().front().worldPose.R(),model.scene().front().worldPose.P(),
+        "MDL-15固定帧倒挂安装下仍固连世界");
+    EXPECT_FALSE(model.scene().front().geometry);
+    EXPECT_EQ(frame->getParent(),compiled.workCell->getWorldFrame());
+}
+
 // =====================================================================
 // RT-AD-1：RobWork 异常→稳定诊断转译（§8.4）。
 // =====================================================================

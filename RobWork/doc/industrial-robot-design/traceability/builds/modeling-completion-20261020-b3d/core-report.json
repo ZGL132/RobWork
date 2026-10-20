@@ -1,0 +1,7 @@
+{
+  "source": "core.xml",
+  "note": "gtest_main不消费--ird_report；本伴随报告仅派生自真实XML",
+  "tests": 4,
+  "failed": 0,
+  "skipped": 0
+}

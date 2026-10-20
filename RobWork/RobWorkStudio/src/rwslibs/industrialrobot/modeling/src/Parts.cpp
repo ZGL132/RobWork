@@ -1050,13 +1050,12 @@ std::optional<CouplingEditError> applyDrivetrainCouplingEdit(
         return std::nullopt;
     }
 
-    // ---- ④ 传动对象确保（缺席创建＋根引用写入——与 UI-T60 三原语同款
-    // 前置；ensureDrivetrainObject 私有辅助无下标入参、不抛）。
-    ensureDrivetrainObject(ws);
-
-    // ---- ⑤ 数值校验（checkCouplingMatrix——I-MDL-11 重算复核；三处
+    // ---- ④ 数值校验（checkCouplingMatrix——I-MDL-11 重算复核；三处
     // 共用同一判定：编辑边界/prepare/L9——NFR-MNT-04）。jointCount＝根
-    // 关节表长度（窗口越界判据）。
+    // 关节表长度（窗口越界判据）。★ WP-13-T25/F14 顺序修正：校验先行于
+    // 传动对象确保——原序（先 ensure 后校验）使被拒提交残留已创建对象与
+    // 根 drivetrainRef（"拒绝时工作集字节不变"契约对数值拒绝面失守——
+    // GUI 拒绝原子性用例实测暴露）；校验只读候选值，不需要对象存在。
     const CouplingMatrixCheck check =
         checkCouplingMatrix(*coupling, ws.design.joints.size());
     if (!check.ok()) {
@@ -1078,6 +1077,11 @@ std::optional<CouplingEditError> applyDrivetrainCouplingEdit(
         }
         return CouplingEditError{code, check.detail};
     }
+
+    // ---- ⑤ 传动对象确保（缺席创建＋根引用写入——与 UI-T60 三原语同款
+    //      前置；ensureDrivetrainObject 私有辅助无下标入参、不抛）。已过
+    //      校验——本步后只剩提交，无拒绝路径。
+    ensureDrivetrainObject(ws);
 
     // ---- ⑥ 提交：coupling 整体写入＋恰一条变更记录（append-only）。
     ws.drivetrainObject->coupling = std::move(*coupling);

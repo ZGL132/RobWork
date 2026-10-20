@@ -31,6 +31,7 @@
 #ifndef IRD_MODELING_PLUGIN_MODELINGUIMODULE_HPP
 #define IRD_MODELING_PLUGIN_MODELINGUIMODULE_HPP
 
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -74,6 +75,8 @@ class QWidget;  // 前置声明：createPanel 返回类型（全局域——插�
 namespace sdurws::ird::modeling {
 
 class ModelingPanelWidget;
+class ObjectClosureView; // 同步借用的只读闭包端口，完整类型仅实现文件消费。
+struct ModelingSessionPoseRequest; // 装配纯值请求，完整定义归公共装配头。
 
 /**
  * @brief 模块会话态（buildDraftCommand 的输入面——装配层在会话建立/草稿
@@ -95,6 +98,13 @@ struct ModuleSessionState {
     /// 已应用修订预览视图（UI-T41 A3——AppliedRevisionView 定格于应用时刻；
     /// nullopt＝无已应用修订——预览页空态。撤销/重做事件即失效——内容未知）。
     std::optional<AppliedRevisionView> appliedPreview;
+
+    /// 导入自碰撞排除候选（WP-13-T25/F07——P-MDL-3 移交链的会话承载）：
+    /// 最近一次导入确认（URDF disable_collisions 等）产生的连杆名对；供
+    /// 策略编辑器预填（呈现"导入候选"，经用户显式确认才写入策略修订
+    /// ——policy 权威不变）。每次导入确认整体替换；不经确认零策略写入。
+    /// 仅 UI 线程访问（§3.4）。
+    std::vector<std::pair<std::string, std::string>> importedSelfCollisionCandidates;
 };
 
 // UI-T63 从零创建面（CustomChainJointSpec/CustomChainDeclaration——完整型
@@ -227,6 +237,9 @@ public:
      *        面板创建时应用。不绑定＝按钮呈现键名原文——不虚构文案）。
      */
     void bindTextResolver(std::function<QString(const std::string&)> resolve);
+    /** @brief MDL-17：绑定仅UI线程同步会话姿态出口；空回调使恢复入口禁用。 */
+    void bindSessionPoseWriter(std::function<bool(const ModelingSessionPoseRequest&,
+                                                 std::string&)> writer);
 
     /**
      * @brief 绑定 WC/DWC XML 外供导出回调（UI-T56——export-workcell-xml
@@ -270,6 +283,14 @@ public:
      * @param writable [in] 会话可写性（true＝可写会话；false＝只读/降级只读）
      */
     void setWritable(bool writable);
+
+    /**
+     * @brief 耦合阶段能力位注入（F14/MDL-21——面板暂存/即时双形态转发，
+     *        setWritable 同一时序语义；缺省 R1Locked＝公共默认红线）。
+     *
+     * @param stage [in] 耦合能力位（R1Locked｜R2Enabled——正式宿主装配注入）
+     */
+    void setCouplingStage(CouplingStage stage);
 
     /**
      * @brief 首版装配会话种子（generic-6r 草稿经真实 createDraft 产出——
@@ -322,10 +343,63 @@ public:
     /**
      * @brief 绑定会话锚（打开成功后由装配层调用——分支＋当前 tip；此后
      *        buildDraftCommand 产出的信封携带真实分支，baseRevision 锚定
-     *        该 tip＝Stale 判据有效）。
+     *        该 tip＝Stale 判据有效）。已有脏草稿的同分支绑定保留原锚；
+     *        跨分支未处置草稿抛std::runtime_error，所有会话值保持不变。
+     * @param branch [in] 待绑定分支，初始绑定由宿主提供有效身份。
+     * @param base [in] 当前tip；不能作为已完成草稿重放的证明。
+     * @return 无返回；干净/首次绑定才改变锚，仅UI线程调用。
+     * @throws std::runtime_error 已有干净锚改变时完整读取失败；原内容/锚/基线不变。
+     * 已锚干净会话须读取整个目标修订，不允许旧值仅换base；首次无锚种子兼容保留。
      */
     void bindSessionAnchor(const core::BranchId& branch,
                            const core::RevisionId& base);
+
+    /**
+     * @brief A-14：完整已提交工作集恢复，参数/失败契约见装配门面同名方法。
+     * @param closure [in] 同修订闭包，仅同步借用；单位沿原SI值。
+     * @param rootObjectId [in] 唯一根有效身份；branch/revision为已接受会话锚。
+     * @param branch [in] 有效活动分支；候选预打开不得调用。
+     * @param revision [in] 有效修订；同根同锚幂等保留编辑。
+     * @param errorText [out] 成功清空，失败定位且会话不变。
+     * @return 完整候选成功采纳/幂等为true；数据或草稿冲突为false。
+     * @throws std::invalid_argument 无效身份。仅UI线程，值归模块所有。
+     */
+    bool restoreCommittedSession(const ObjectClosureView& closure,
+        const core::ObjectId& rootObjectId, const core::BranchId& branch,
+        const core::RevisionId& revision, std::string& errorText);
+
+    /**
+     * @brief PM-04/AT-21：成功提交后从该不可变修订完整采纳正式身份和部件值。
+     * @param closure [in] 本次CommandResult.newRevision的只读闭包，同步借用。
+     * @param rootObjectId [in] 该修订唯一根的有效持久ID。
+     * @param branch [in] 已提交命令的有效分支；不得用其他会话冒充回执。
+     * @param revision [in] 成功结果的有效修订；无量纲身份，不读取可变HEAD。
+     * @param errorText [out] 成功清空，失败给出定位信息。
+     * @return true时完整工作集替换并建立干净基线；false时草稿、基线和锚均不变。
+     * 与普通重开不同，此入口允许消费本次已提交的脏草稿；不得在拒绝/取消时调用。
+     * @throws std::invalid_argument 任一身份无效，属装配契约违约。
+     * 仅UI线程；模块拥有解码值，不保留closure引用，所有物理量沿Codec的SI单位。
+     */
+    bool acceptAppliedSession(const ObjectClosureView& closure,
+        const core::ObjectId& rootObjectId, const core::BranchId& branch,
+        const core::RevisionId& revision, std::string& errorText);
+
+    /** @brief PM-04：绑定固定修订完整读取器；输入/失败/借用语义沿装配门面。 */
+    void bindRevisionDraftReader(std::function<std::optional<ui::DraftDocumentProjection>(
+        const core::BranchId&, const core::RevisionId&)> reader);
+    /** @brief 返回上次成功重建前旧草稿的值副本；仅UI线程，无副作用。 */
+    std::optional<ui::DraftDocumentProjection> retainedConflictDraft() const;
+    /** @brief 绑定完整域帧变更通知；[in] 回调仅UI线程、不可抛错，空值解绑，不持域值引用。 */
+    void bindDraftChanged(std::function<void()> callback);
+
+    /**
+     * @brief 判断是否有未应用内容，供绑定与事件入口保护旧草稿修订锚。
+     * @return 摘要非空或存在保存基线且规范内容不同为true；无基线时仅摘要表明编辑。
+     * @throws std::runtime_error 内部工作集无法编码，不能将失败当作无编辑。
+     * 仅UI线程调用，仅读取模块拥有的工作集；SI/集合规范沿唯一Codec。
+     */
+    bool hasPendingDraft() const;
+
 
     /**
      * @brief 应用回执回写（submit Committed 后由装配层调用——编辑基线
@@ -349,14 +423,15 @@ public:
     void onSessionDetached();
 
     /**
-     * @brief 修订提交事件（非 draft.apply 路径——撤销/重做/其他会话入口
-     *        产生新修订时由宿主事件桥调用：编辑基线前移到新 tip＋就绪
-     *        重算＋面板刷新；编辑记录不清零——与 noteAppliedRevision 的
-     *        "应用即消费"语义区分，§8.5 重建基线的会话对位）。
+     * @brief 修订提交事件：当前分支的脏草稿保留旧锚/基线/局部历史，
+     *        让project拒绝过期应用；干净会话完整读取指定修订后再前移。
+     *        与当前锚同修订的事件幂等，保留成功同步回执已建立的基线。
      *
      * @param branch [in] 提交所在分支（非当前锚定分支的事件忽略——跨分支
      *                修订不触碰编辑基线，§6.2 纪元过滤的模块对位）
      * @param newTip [in] 新 tip 修订
+     * 读取失败保留旧锚/工作集/基线/局部历史，清应用预览并在面板提示；
+     * 不把异常抛入事件分发，也不以旧内容冒充新修订。仅UI线程，无项目写入。
      */
     void onRevisionCommitted(const core::BranchId& branch,
                              const core::RevisionId& newTip);
@@ -436,16 +511,21 @@ public:
     /// 显示名（UX-02 工程用语——草稿表/横幅/冲突对话框呈现值源）。
     std::string displayName() const override;
 
-    /// 组装当前草稿文档（落盘分派时控制器取值——payload＝根对象 canonical
-    /// 字节，与命令 payload 同源编码；归属三元组/时刻/origin 由控制器补齐）。
+    /// 组装当前完整工作集草稿文档（B4b私有域帧，五对象原Codec字节及未应用摘要；
+    /// 归属三元组/时刻/origin由控制器补齐，项目外层格式保持不变）。
     ui::DraftDocumentProjection buildDraftDocument() const override;
 
     /// 承接恢复的草稿文档（打开期 restoreOnOpen——payload 解码回写工作集
-    /// design；解码失败保持现状不中断打开，诚实边界登记于 §15）。
+    /// 全部五对象及changes；完整候选失败保持现状，基线快照不改、旧base保留）。
     void adoptRestoredDocument(const ui::DraftDocumentProjection& document) override;
 
-    /// 以指定修订重建编辑基线（§8.5[基于当前版本重新编辑]——Stale 冲突
-    /// 对话的用户迁移半区；会话基线改写为 tip）。
+    /**
+     * @brief PM-04：完整读取指定修订并建立新基线，保留旧完整草稿供用户迁移。
+     * @param tipRevisionCanonical [in] 有效目标修订规范身份；不能只换旧草稿的锚。
+     * @throws std::invalid_argument 身份/当前分支无效；std::runtime_error未装配、
+     *         读取/类型/帧/身份错配或非干净响应；失败保持旧会话及待迁移素材。
+     * 仅UI线程，无项目写入/自动重试；成功清旧表单及局部历史，SI及身份原样保留。
+     */
     void rebuildOnRevision(const std::string& tipRevisionCanonical) override;
 
     // ---- 就绪真判定（T03b-2b——真实 ModelReadinessChecker 装配）--------
@@ -463,8 +543,81 @@ public:
     void recomputeReadiness();
 
 private:
+    /** @brief 恢复保存的精确命名条目；[in] key为权威键，[out] summary为中文原因。
+     * @return 成功表示真实宿主State已更新；缺基线/条目/出口、非法数值均false且草稿不变。仅UI线程。
+     */
+    bool restoreNamedPose(const std::string& key,std::string& summary);
+    std::function<bool(const ModelingSessionPoseRequest&,std::string&)> m_sessionPoseWriter; ///< 同步宿主出口；UI线程持闭包。
+    /**
+     * @brief 共用完整读取器：普通恢复保护编辑，成功回执消费本次已提交工作集。
+     * @param closure [in] 固定修订只读源；rootObjectId/branch/revision沿公开恢复契约。
+     * @param rootObjectId [in] 唯一根有效ID；不重新取号。
+     * @param branch [in] 有效活动分支；revision为对应的不可变修订。
+     * @param revision [in] 同closure修订身份；不访问HEAD。
+     * @param errorText [out] 成功空，失败定位；失败不改变任何会话值。
+     * @param applicationReceipt [in] true仅用于成功提交回执，允许消费脏草稿。
+     * @return 完整候选采纳/普通幂等为true，读取/数据/冲突失败为false。
+     * @throws std::invalid_argument 无效身份。仅UI线程，closure仅同步借用。
+     */
+    bool readCommittedSession(const ObjectClosureView& closure,
+        const core::ObjectId& rootObjectId, const core::BranchId& branch,
+        const core::RevisionId& revision, std::string& errorText, bool applicationReceipt);
+
+
+    /** @brief L-5：记录一次被接受的完整草稿版本；相等重算不入栈，新编辑清重做。仅UI线程。 */
+    void rememberDraftHistory();
+    /** @brief 清理局部历史；[in] retainCurrent=true以当前草稿建新起点，false用于关闭后空会话。 */
+    void clearDraftHistory(bool retainCurrent = true);
+    /** @brief 恢复局部历史；[in] redo=true重做、false撤销；空栈/只读返回false，零项目写入。 */
+    bool restoreDraftHistory(bool redo);
+    /** @brief 把局部历史可用态推入面板；只读门控仍由面板合取，未建面板时零操作。 */
+    void refreshDraftHistoryState();
+    /** @brief PM-04/MDL-08：以值副本展示当前工作集与保留旧稿，不覆盖或提交；坏帧就地报错。仅UI线程。 */
+    void showRetainedConflictReview();
+
+    /**
+     * @brief 完整读取指定不可变修订为局部候选，显式重建与干净刷新共用。
+     * @param branch [in] 有效分支；revision [in] 有效固定修订，均须与响应精确相同。
+     * @return 完整干净工作集；reader明确nullopt返回合法空工作集。
+     * @throws std::runtime_error 未装配、读取失败、身份不符、坏帧或非干净基线。
+     * 仅UI线程、无状态写入，不保留reader响应引用；数值/排序沿唯一Codec。
+     */
+    ModelingWorkingSet readRevisionWorkingSet(const core::BranchId& branch,
+        const core::RevisionId& revision) const;
+
+    /**
+     * @brief 为已确认干净会话完整刷新指定修订，成功才一起采纳锚及工作集。
+     * @param branch [in] 目标分支；revision [in] 不可变目标修订。
+     * @throws std::runtime_error 完整读取失败，原工作集/锚/基线/历史均不变。
+     * UI线程同步；成功清跨修订局部历史、取消过期未确认表单并刷新呈现，
+     * 不创建或覆盖用户保留的冲突旧稿，不写项目/不产生修订。
+     */
+    void refreshCleanRevision(const core::BranchId& branch,const core::RevisionId& revision);
+
+    /**
+     * @brief 一次已接受的草稿及其导入候选快照（T26/F07，局部历史内部值）。
+     * 候选是该草稿的临时来源信息，不能在撤销模型后留给另一模型使用；
+     * 因此与完整工作集同一步保存和恢复，不另建策略权威或持久化字段。
+     * 模块按值持有并管理生命周期；仅UI线程访问，不跨项目保留。
+     */
+    struct DraftHistoryFrame {
+        ModelingWorkingSet draft; ///< 全部部件/资源/来源/摘要，物理单位沿工作集SI契约。
+        std::vector<std::pair<std::string,std::string>> candidates; ///< 导入报告原序连杆名对，非策略修订。
+    };
+    std::optional<DraftHistoryFrame> m_historyCurrent;
+    std::vector<DraftHistoryFrame> m_draftUndo, m_draftRedo;
+    /// PM-04：保存脏通知与撤销栈独立；undo/redo预先移动历史游标，仍须报告完整帧变化。
+    /// 两值仅UI线程持有；闭包由宿主保证生命周期，关闭会话先解绑再清空域状态。
+    std::function<void()> m_draftChanged;
+    std::optional<std::string> m_observedDraftFrame;
     PanelUiThreadGuard m_guard;              ///< §3.4 UI 线程守卫（构造线程绑定）
     ModuleSessionState m_session;            ///< 会话权威态（工作集唯一载体——装配层更新）
+    /// PM-04：只读固定修订读取缝；闭包由模块持有，宿主保证借用目标生命周期。
+    std::function<std::optional<ui::DraftDocumentProjection>(const core::BranchId&,
+        const core::RevisionId&)> m_revisionDraftReader;
+    /// 旧未应用完整草稿保留原base，供用户迁移；仅UI线程，关闭会话清除。
+    std::optional<ui::DraftDocumentProjection> m_retainedConflictDraft;
+    std::uint64_t m_reviewSessionGeneration=0; ///< 关闭即递增；相同项目/同一修订重开也不能复用旧窗口定位。
     ModelingPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
     ui::IWorkbenchShell* m_shell = nullptr;  ///< 壳门面引用（非 owning——§10.9 生命周期）
     CommandSubmitFn m_pendingSubmit;         ///< 面板创建前的提交出口暂存（创建时应用）
@@ -501,6 +654,9 @@ private:
                                              ///  更新；createPanel 作为面板初始态。
                                              ///  默认 true＝装配期无项目会话的可写
                                              ///  草稿态，宿主打开只读项目后经转发
+    CouplingStage m_couplingStage = CouplingStage::R1Locked;  ///< F14：耦合能力位
+                                             ///  暂存（setCouplingStage 更新；缺省
+                                             ///  R1Locked＝公共默认红线）
                                              ///  面纠正——UI-T43 前该初值在面板上
                                              ///  不可纠正，是接线缺口）
     std::unique_ptr<policy::IJointLimitEvaluator> m_evaluator{

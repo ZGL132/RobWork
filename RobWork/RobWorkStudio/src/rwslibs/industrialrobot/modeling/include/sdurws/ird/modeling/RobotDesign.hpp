@@ -450,6 +450,17 @@ struct JointEntry {
     /// 属性，不回写 bounds（MDL-12/V12-01）。
     core::SourcedValue<JointLimits> workingRange;
 
+    /// 最大速度（WP-13-T25/F01——MDL-01"逐轴定义关节…速度/加速度限制"的
+    /// 关节一等权威字段）：转动 rad/s、移动 m/s（随 type）。两权威模式均
+    /// 权威（同 bounds/zeroOffset 口径）。Provided 须有限且 ≥0（零＝真实
+    /// 零速，不是缺失——缺失保持 NotProvided，不填 0 不猜值）；Fixed＝
+    /// NotApplicable。编码随格式 {1,1} 追加（旧 {1,0} 字节解码为
+    /// NotProvided——兼容读）。
+    core::SourcedValue<double> maxVelocity;
+
+    /// 最大加速度（同 maxVelocity 口径）：转动 rad/s²、移动 m/s²。
+    core::SourcedValue<double> maxAcceleration;
+
     /// DH 参数缓存（θ 偏置/d/a/α，rad·m）。仅 StandardDH 态填写＝权威
     /// （随字节编码）；Explicit 态如存在则为只读派生展示值（**不参与编码
     /// 身份**——D-MDL-5，读取时按需确定性重算）。

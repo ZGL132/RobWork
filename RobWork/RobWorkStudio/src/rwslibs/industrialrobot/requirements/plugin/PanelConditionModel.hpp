@@ -133,10 +133,15 @@ OperatingCondition applyConditionEditSet(const OperatingCondition& base,
                                          const ui::ParamEditSet& edits,
                                          std::vector<std::string>& known);
 /**
- * @brief 工况枚举行回填（UI-T37 返工②——等级/启用 QComboBox 提交轨）。
+ * @brief 工况文本/枚举行回填（名称、备注和等级/启用的类型化提交轨）。
  *
  * 键词表："level" → tryRequirementLevel 反查（词表外 throw）；
- * "enabled" → "是"/"否" → bool。其余键＝实现缺陷 fail-fast。
+ * "enabled" → "是"/"否" → bool；"name"/"note"保留原始文本。
+ * @param base [in] 当前工况，不修改其身份和非目标字段。
+ * @param key [in] 文本/枚举字段键，词表外键抛出 invalid_argument。
+ * @param valueText [in] 用户文本，无物理单位；名称合法性由领域编辑器裁决。
+ * @param known [out] 本次回填字段键，进入时清空。
+ * @return 独立候选值；仅UI线程调用，无共享状态，不写入编辑器。
  */
 OperatingCondition applyConditionEnumEdit(const OperatingCondition& base,
                                           const std::string& key,

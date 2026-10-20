@@ -1,0 +1,36 @@
+Note: Google Test filter = *ResultReceiptException*:*AppliedModelingDraftIsMissing*
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from HostIntegrationContractTest
+[ RUN      ] HostIntegrationContractTest.ResultReceiptExceptionKeepsCommitAndContinues_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp(1211): error: Expected: report=ui::runDomainApply({a,b},std::nullopt, [this](project::CommandEnvelope,project::ICommandInteraction*){return makeCommitted();},nullptr) doesn't throw an exception.
+  Actual: it throws std::runtime_error with description "磁盘草稿消费失败".
+
+[  FAILED  ] HostIntegrationContractTest.ResultReceiptExceptionKeepsCommitAndContinues_PM04_AT21 (0 ms)
+[----------] 1 test from HostIntegrationContractTest (0 ms total)
+
+[----------] 1 test from HostDraftChain
+[ RUN      ] HostDraftChain.AppliedModelingDraftIsMissingAfterRealReopen_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp(723): error: Expected equality of these values:
+  store->tryLoad("modeling").status
+    Which is: 1-byte object <00>
+  ui::DraftLoadOutcome::Status::Missing
+    Which is: 1-byte object <02>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostDraftChainContractTest.cpp(731): error: Expected equality of these values:
+  after->tryLoad("modeling").status
+    Which is: 1-byte object <00>
+  ui::DraftLoadOutcome::Status::Missing
+    Which is: 1-byte object <02>
+
+[  FAILED  ] HostDraftChain.AppliedModelingDraftIsMissingAfterRealReopen_PM04_AT21 (65 ms)
+[----------] 1 test from HostDraftChain (65 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (65 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] HostIntegrationContractTest.ResultReceiptExceptionKeepsCommitAndContinues_PM04_AT21
+[  FAILED  ] HostDraftChain.AppliedModelingDraftIsMissingAfterRealReopen_PM04_AT21
+
+ 2 FAILED TESTS

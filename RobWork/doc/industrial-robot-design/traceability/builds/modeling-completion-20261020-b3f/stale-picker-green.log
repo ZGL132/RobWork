@@ -1,0 +1,11 @@
+Note: Google Test filter = *SceneExternalGeometryFileDialog*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.SceneExternalGeometryFileDialog_MDL15_AT28
+[       OK ] ModelingUiModuleHostWiring.SceneExternalGeometryFileDialog_MDL15_AT28 (2540 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (2540 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2540 ms total)
+[  PASSED  ] 1 test.

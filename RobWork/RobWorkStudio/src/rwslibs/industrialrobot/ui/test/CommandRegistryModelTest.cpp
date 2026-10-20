@@ -498,6 +498,38 @@ TEST(CommandRegistryModel, PaletteStableOrderLimitAndRecents_UX13_PM14)
 // §7.2 装配收口：seal 后注册拒绝（§10.3"运行期 registerCommand 拒绝"）
 // =====================================================================
 
+TEST(CommandRegistryModel, RequirementsChineseTitlesAndSearch_UX02_UX13)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+    CommandRegistryDeps deps;
+    deps.ownerWhitelist = {"requirements"};
+    auto registry = ui::createCommandRegistry(std::move(deps));
+    // A-10：逐条验证需求九命令的用户标题与中文搜索，不能只修按钮而留下命令面板泄漏。
+    const std::vector<std::pair<std::string, std::string>> commands{
+        {"import-csv", "导入 CSV"}, {"import-json", "导入 JSON"},
+        {"export-copy", "导出副本"}, {"capture-tcp", "捕获 TCP"},
+        {"pick-feature", "拾取几何特征"}, {"mirror-stations", "镜像工位"},
+        {"create-array", "批量阵列"}, {"apply-template", "应用工艺模板"},
+        {"regenerate-linked", "按模板重生成"}};
+    for (const auto& command : commands) {
+        const auto id = "requirements." + command.first;
+        ASSERT_EQ(registry->registerCommand(makeDescriptor(id, "requirements"), RecordingHandler{}),
+                  RegistrationResult::Ok);
+    }
+    for (const auto& command : commands) {
+        const auto id = "requirements." + command.first;
+        const auto found = registry->paletteSnapshot(command.second, 50);
+        const auto row = std::find_if(found.begin(), found.end(), [&id](const CommandView& view) {
+            return view.id == id;
+        });
+        ASSERT_NE(row, found.end()) << "中文工程标题必须能搜索到：" << command.second;
+        EXPECT_EQ(row->title, command.second) << "面板不能回退显示内部命令ID";
+    }
+    // 旧公共解析器的未知键契约仍为空串；壳层旧表也必须保持可用。
+    EXPECT_EQ(ui::commandTransitionalTitle("cmd.project.new.title"), "新建项目");
+    EXPECT_TRUE(ui::commandTransitionalTitle("cmd.unregistered.title").empty());
+}
+
 TEST(CommandRegistryModel, SealRejectsRuntimeRegistration_UI_T06)
 {
     IRD_TEST_INFO("SA-01", {}, std::nullopt);

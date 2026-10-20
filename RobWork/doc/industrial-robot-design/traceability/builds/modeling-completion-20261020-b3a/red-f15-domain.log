@@ -1,0 +1,59 @@
+Note: Google Test filter = *Euler*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from MdlBasePlacementEdit
+[ RUN      ] MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(857): error: Value of: error.has_value()
+  Actual: true
+Expected: false
+basePlacement.customEaa：custom 预设必填旋转矢量（单位 rad）——I-MDL-7 前半
+
+[  FAILED  ] MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.EulerInvalidAndAmbiguousAreAtomic_MDL22_AT37
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(879): error: Expected equality of these values:
+  error->code
+    Which is: 4-byte object <01-00 00-00>
+  BasePlacementEditErrorCode::ValueNotFinite
+    Which is: 4-byte object <00-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(881): error: Expected: applyBasePlacementEdit(ws,edit) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(881): error: Expected equality of these values:
+  ws
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 03-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 08-00 00-00 00-00 00-00 20-F2 C4-89 E1-01 00-00 00-00 00-00 00-00 00-00 00-00 C1-89 E1-01 00-00 36-00 00-00 00-00 00-00 00-67 AC-58 FF-7F 00-00>
+  before
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 E1-01 00-00 00-00 00-00 E1-01 00-00 01-00 00-00 E1-01 00-00 ... F0-CF BB-8B E1-01 00-00 21-E0 1C-E0 FE-7F 00-00 D0-CF BB-8B E1-01 00-00 80-CF BB-8B E1-01 00-00 50-D0 BB-8B E1-01 00-00 00-00 00-00 00-00 00-00 50-D3 CC-89 E1-01 00-00 00-A1 C8-89 E1-01 00-00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(883): error: Expected: applyBasePlacementEdit(ws,edit) throws an exception of type std::invalid_argument.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(883): error: Expected equality of these values:
+  ws
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 08-00 00-00 00-00 00-00 20-F2 C4-89 E1-01 00-00 00-00 00-00 00-00 00-00 00-00 C1-89 E1-01 00-00 36-00 00-00 00-00 00-00 00-67 AC-58 FF-7F 00-00>
+  before
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 E1-01 00-00 00-00 00-00 E1-01 00-00 01-00 00-00 E1-01 00-00 ... F0-CF BB-8B E1-01 00-00 21-E0 1C-E0 FE-7F 00-00 D0-CF BB-8B E1-01 00-00 80-CF BB-8B E1-01 00-00 50-D0 BB-8B E1-01 00-00 00-00 00-00 00-00 00-00 50-D3 CC-89 E1-01 00-00 00-A1 C8-89 E1-01 00-00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(886): error: Expected equality of these values:
+  error->code
+    Which is: 4-byte object <01-00 00-00>
+  BasePlacementEditErrorCode::PresetIdentityRotation
+    Which is: 4-byte object <02-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp(886): error: Expected equality of these values:
+  ws
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 08-00 00-00 00-00 00-00 20-F2 C4-89 E1-01 00-00 00-00 00-00 00-00 00-00 00-00 C1-89 E1-01 00-00 36-00 00-00 00-00 00-00 00-67 AC-58 FF-7F 00-00>
+  before
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 E1-01 00-00 00-00 00-00 E1-01 00-00 01-00 00-00 E1-01 00-00 ... F0-CF BB-8B E1-01 00-00 21-E0 1C-E0 FE-7F 00-00 D0-CF BB-8B E1-01 00-00 80-CF BB-8B E1-01 00-00 50-D0 BB-8B E1-01 00-00 00-00 00-00 00-00 00-00 50-D3 CC-89 E1-01 00-00 00-A1 C8-89 E1-01 00-00>
+
+[  FAILED  ] MdlBasePlacementEdit.EulerInvalidAndAmbiguousAreAtomic_MDL22_AT37 (0 ms)
+[----------] 2 tests from MdlBasePlacementEdit (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37
+[  FAILED  ] MdlBasePlacementEdit.EulerInvalidAndAmbiguousAreAtomic_MDL22_AT37
+
+ 2 FAILED TESTS

@@ -1,0 +1,29 @@
+Note: Google Test filter = ParamTablePanelGuiTest.*
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from ParamTablePanelGuiTest
+[ RUN      ] ParamTablePanelGuiTest.StructureAndValueUnitColumns_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.StructureAndValueUnitColumns_UI_T08_ACC1 (533 ms)
+[ RUN      ] ParamTablePanelGuiTest.InPlaceErrorKeepsValue_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.InPlaceErrorKeepsValue_UI_T08_ACC1 (182 ms)
+[ RUN      ] ParamTablePanelGuiTest.ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1 (205 ms)
+[ RUN      ] ParamTablePanelGuiTest.ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1 (194 ms)
+[ RUN      ] ParamTablePanelGuiTest.CancelRestore_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.CancelRestore_UI_T08_ACC1 (175 ms)
+[ RUN      ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1 (320 ms)
+[ RUN      ] ParamTablePanelGuiTest.NoOutletDisablesApply_UI_T08_ACC2
+[       OK ] ParamTablePanelGuiTest.NoOutletDisablesApply_UI_T08_ACC2 (272 ms)
+[ RUN      ] ParamTablePanelGuiTest.DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1 (245 ms)
+[ RUN      ] ParamTablePanelGuiTest.UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1 (293 ms)
+[ RUN      ] ParamTablePanelGuiTest.FilterRowsByKeySubstring_UI_T08_ACC1
+[       OK ] ParamTablePanelGuiTest.FilterRowsByKeySubstring_UI_T08_ACC1 (242 ms)
+[----------] 10 tests from ParamTablePanelGuiTest (2666 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (2666 ms total)
+[  PASSED  ] 10 tests.

@@ -649,6 +649,70 @@ int TxEngineTest::s_caseCounter = 0;
 // 健康路径（§7.1 七步全过＝F8 边界扫描的 T7 控制腿）
 // =====================================================================
 
+/// ARC-01／§4.4.2：保留引用原样合并，不重写保留字节、不列入 introducedObjects。
+TEST_F(TxEngineTest, RetainedObjects_CompleteManifest_ARC01)
+{
+    auto plan = makePlan();
+    sdurws::ird::project::ObjectRef retained;
+    retained.objectId = ObjectId::generate();
+    retained.contentVersion = m_objects->publishObject(retained.objectId, "untouched-robot");
+    retained.objectTypeToken = "RobotDesign";
+    retained.digest256 = cvHex(retained.contentVersion);
+    plan.retainedObjects.push_back(retained);
+    const auto before = snapshotCommitted();
+    const auto result = m_engine->commit(plan, m_engine->readHead(), m_seed.m0, m_seed.m0Ref);
+    const auto manifest = sdurws::ird::project::codec::parseRevisionManifest(readAll(
+        m_proj / "revisions" / result.revisionId.toCanonical() / "manifest.json"));
+    ASSERT_EQ(manifest.objectRefs.size(), 3u);
+    EXPECT_EQ(manifest.objectRefs[1], retained);
+    EXPECT_EQ(manifest.objectRefs[2].objectId, plan.newObjects[0].oid);
+    ASSERT_EQ(manifest.introducedObjects.size(), 2u);
+    EXPECT_NE(manifest.introducedObjects[0], retained.contentVersion);
+    EXPECT_NE(manifest.introducedObjects[1], retained.contentVersion);
+    // HEAD 允许前进；旧修订及全部原有对象字节必须保持原状。
+    for (const auto& entry : before) {
+        if (entry.first != "HEAD") {
+            EXPECT_EQ(readAll(m_proj / entry.first), entry.second) << entry.first;
+        }
+    }
+}
+
+/// ARC-01／NFR-REL-01：保留计划畸形在分配序号/落盘前拒绝，磁盘和水位均零变化。
+TEST_F(TxEngineTest, RetainedObjects_InvalidPlansZeroWrite_ARC01)
+{
+    sdurws::ird::project::ObjectRef valid;
+    valid.objectId = ObjectId::generate();
+    valid.contentVersion = m_objects->publishObject(valid.objectId, "retained-payload");
+    valid.objectTypeToken = "RobotDesign";
+    valid.digest256 = cvHex(valid.contentVersion);
+    const auto before = snapshotCommitted();
+    const auto stagingBefore = stagingChildren();
+    for (int invalidCase = 0; invalidCase < 8; ++invalidCase) {
+        SCOPED_TRACE(invalidCase);
+        auto plan = makePlan();
+        plan.retainedObjects.push_back(valid);
+        // 独立覆盖重复/新旧同ID/无效ID/CV/空token/摘要格式/摘要不符/元数据夹带。
+        switch (invalidCase) {
+        case 0: plan.retainedObjects.push_back(valid); break;
+        case 1: plan.newObjects[0].oid = valid.objectId; break;
+        case 2: plan.retainedObjects[0].objectId = {}; break;
+        case 3: plan.retainedObjects[0].contentVersion = {}; break;
+        case 4: plan.retainedObjects[0].objectTypeToken.clear(); break;
+        case 5: plan.retainedObjects[0].digest256 = "not-a-digest"; break;
+        case 6: plan.retainedObjects[0].digest256 = std::string(64, 'a'); break;
+        case 7: plan.retainedObjects[0] = m_seed.r0Manifest.objectRefs[0]; break;
+        }
+        EXPECT_THROW(m_engine->commit(plan, m_engine->readHead(), m_seed.m0, m_seed.m0Ref),
+                     std::invalid_argument);
+        EXPECT_EQ(snapshotCommitted(), before);
+        EXPECT_EQ(stagingChildren(), stagingBefore);
+    }
+    // 前面的非法调用不能消耗单调水位；下一次合法提交仍应为第二修订。
+    const auto plan = makePlan();
+    const auto result = m_engine->commit(plan, m_engine->readHead(), m_seed.m0, m_seed.m0Ref);
+    EXPECT_EQ(result.revisionSeq, 2u);
+}
+
 /**
  * 锚定：NFR-REL-01／§7.1 七步协议／PM-08（PRJ-TX-4 前置健康路径）。
  *

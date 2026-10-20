@@ -1,0 +1,19 @@
+Note: Google Test filter = *BatchParameters*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12 (433 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12 (959 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12 (55 ms)
+[ RUN      ] RequirementsSessionGuiTest.BatchParametersAnchorAndReadOnly_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.BatchParametersAnchorAndReadOnly_UX05_WP14T12 (1999 ms)
+[ RUN      ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12 (1040 ms)
+[----------] 5 tests from RequirementsSessionGuiTest (4489 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (4489 ms total)
+[  PASSED  ] 5 tests.

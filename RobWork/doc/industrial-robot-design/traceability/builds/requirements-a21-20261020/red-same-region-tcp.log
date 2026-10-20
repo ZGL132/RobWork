@@ -1,0 +1,27 @@
+Note: Google Test filter = *PerPlanTcp*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from KinRegionCoverage
+[ RUN      ] KinRegionCoverage.PerPlanTcpRealSolverAndMissingDefault_REQ01_A21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\RegionCoverageTest.cpp(684): error: Expected equality of these values:
+  separate.coverage.position.reached
+    Which is: 2
+  1U
+    Which is: 1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\RegionCoverageTest.cpp(685): error: Expected equality of these values:
+  separate.coverage.position.unreachable
+    Which is: 0
+  1U
+    Which is: 1
+
+[  FAILED  ] KinRegionCoverage.PerPlanTcpRealSolverAndMissingDefault_REQ01_A21 (1 ms)
+[----------] 1 test from KinRegionCoverage (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinRegionCoverage.PerPlanTcpRealSolverAndMissingDefault_REQ01_A21
+
+ 1 FAILED TEST

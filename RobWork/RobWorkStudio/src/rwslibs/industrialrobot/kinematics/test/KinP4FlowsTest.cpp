@@ -120,7 +120,7 @@ rw::math::Transform3D<double> zeroPoseTcpTarget(const P4Harness& h)
 // TCP 解析单点（★ KIN-P4 审查 §4——三入口统一语义的唯一实现）
 // =====================================================================
 
-/// 有工具快照：解析成功且身份自描述（TcpRef{默认工具对象, 局部名}——
+/// 有工具快照：解析成功且身份自描述（TcpRef{默认工具对象, 空键＝默认TCP}——
 /// 修复前位姿页构造空 TcpRef、设默认 TCP 传 TcpRef{}，解析缺失）。
 TEST(KinP4Flows, ResolveSessionTcp_ResolvesDefaultTool_KIN_P4)
 {
@@ -130,7 +130,29 @@ TEST(KinP4Flows, ResolveSessionTcp_ResolvesDefaultTool_KIN_P4)
     const KinTcpResolution tcp = resolveSessionTcp(h.services);
     ASSERT_TRUE(tcp.ok) << tcp.statusText;
     EXPECT_EQ(tcp.tcp.toolObject, h.model.tools().at(0).objectId);
-    EXPECT_EQ(tcp.tcp.tcpKey, h.model.tools().at(0).localName);
+    EXPECT_TRUE(tcp.tcp.tcpKey.empty());
+}
+
+/** @brief REQ-01/KIN-14：真实同名非默认TCP不能改变面板默认TCP的FK位置。 */
+TEST(KinP4Flows, DefaultTcpIgnoresNamedKeyCollision_REQ01_A15)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "KIN-14"}, std::vector<std::string>{"AT-23"});
+    const auto original = twoLinkModel();
+    auto tools = original.tools();
+    // 工具名恰为另一个TCP的真实键，显式选该键与选择默认TCP必须可区分。
+    tools[0].namedTcpOffsets = {{tools[0].localName, trans(0.2, 0, 0.9)}};
+    const auto model = runtime::CanonicalModelBuilder().setHeader(original.header())
+        .setWorld(original.world()).setChain(original.chain()).setTools(tools)
+        .setDefaultTcpIndex(0U).build();
+    TestView view(model);
+    KinPanelServices services; services.modelView = &view;
+    const auto selected = resolveSessionTcp(services);
+    ASSERT_TRUE(selected.ok) << selected.statusText;
+    const auto result = FkEvaluator().evaluate(view, selected.tcp, {0, 0});
+    ASSERT_TRUE(result.ok());
+    // 独立黄金：两杆1.1+0.7 m、默认TCP无z偏移；错误同名键会给出1.3和0.9。
+    EXPECT_NEAR(result.get().tcpInBase.P()[0], 1.8, 1e-12);
+    EXPECT_NEAR(result.get().tcpInBase.P()[2], 0.0, 1e-12);
 }
 
 /// 无工具快照：解析失败＝KIN-NO-TCP＋建模侧指引（显式拒绝——绝不以空

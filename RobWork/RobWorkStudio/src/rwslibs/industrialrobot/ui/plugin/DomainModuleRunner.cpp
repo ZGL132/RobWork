@@ -8,6 +8,7 @@
 #include "DomainModuleRunner.hpp"
 
 #include <algorithm>
+#include <exception> // 每域准备/提交异常隔离，显式消费标准异常类型。
 #include <utility>
 
 namespace sdurws {
@@ -34,9 +35,11 @@ std::size_t DomainApplyReport::committedCount() const
 
 std::size_t DomainApplyReport::submittedCount() const
 {
-    // 提交数＝条目总数−无草稿数（Submitted 两态〔成/败〕都计入——都发生
-    // 过对端 submit 调用）。
-    return entries.size() - noDraftCount();
+    // PM-04：锚/组装失败未进入submit，不得在用户状态行冒称已提交。
+    return static_cast<std::size_t>(std::count_if(entries.begin(), entries.end(),
+        [](const DomainApplyEntryReport& row) {
+            return row.outcome == DomainApplyEntryReport::Outcome::Submitted;
+        }));
 }
 
 bool DomainApplyReport::anyCommitted() const noexcept
@@ -56,8 +59,8 @@ namespace {
  *
  * @param result [in] 对端命令结果
  * @return 投影值（status/newRevision/rejectionReason/abortReason——
- *         Stale 冲突定位投影由 DraftController 侧按 reason 组装，此处
- *         只携 token，与首版形态一致）
+ *         Stale详情由L5宿主onResult适配器按原草稿/查询补齐；控制器只消费
+ *         已提供的详情，不自行解析project诊断或判定冲突）
  */
 CommandResultProjection projectCommandResult(const project::CommandResult& result)
 {
@@ -116,7 +119,17 @@ DomainApplyReport runDomainApply(
         // ①锚同步（组装前必须锚定——T03b-2c 纪律的遍历推广；无锚语义域
         //   跳过本步，nullopt anchor 同样如实跳过）。
         if (entry.bindAnchor && anchor.has_value()) {
-            entry.bindAnchor(anchor->first, anchor->second);
+            try {
+                entry.bindAnchor(anchor->first, anchor->second);
+            } catch (const std::exception& error) {
+                // 未处置跨分支草稿或装配异常只阻止当前域，不能在组装前
+                // 直接穿透并中止其它域，也不能把准备失败算成无草稿。
+                row.outcome = DomainApplyEntryReport::Outcome::PreparationFailed;
+                row.rejectionReason = std::string("anchor-bind-failed: ") + error.what();
+                if (devLog) { devLog("draft.apply[" + entry.moduleId + "]: " + row.rejectionReason); }
+                report.entries.push_back(std::move(row));
+                continue;
+            }
         }
 
         // ②域信封组装（§8.5 域侧半区——域内唯一入口；nullopt＝无草稿可
@@ -128,8 +141,8 @@ DomainApplyReport runDomainApply(
                 envelope = entry.module->buildDraftCommand(entry.moduleId);
             } catch (const std::exception& error) {
                 // 域内组装异常＝该域缺陷：按提交失败承载（无提交发生——
-                // 记 Submitted+未 committed＋原因），其余域照常（隔离）。
-                row.outcome = DomainApplyEntryReport::Outcome::Submitted;
+                // 记 PreparationFailed＋原因），其余域照常（隔离）。
+                row.outcome = DomainApplyEntryReport::Outcome::PreparationFailed;
                 row.rejectionReason = std::string("build-draft-command-failed: ") + error.what();
                 report.entries.push_back(std::move(row));
                 if (devLog) {
@@ -169,9 +182,6 @@ DomainApplyReport runDomainApply(
             // ④回执（投影映射→DraftController〔可空跳过〕；Committed→域
             //   回执处理〔锚前移/根回填——可空跳过〕）。
             const CommandResultProjection projection = projectCommandResult(result);
-            if (entry.onResult) {
-                entry.onResult(projection);
-            }
             row.committed = result.committed();
             if (row.committed && result.newRevision.has_value()) {
                 row.revision = result.newRevision->toCanonical();
@@ -182,17 +192,36 @@ DomainApplyReport runDomainApply(
             } else if (projection.status == CommandResultProjection::Status::Failed) {
                 row.rejectionReason = "failed";
             }
+            bool receiptFailed=false;
             if (row.committed && entry.onCommitted) {
-                entry.onCommitted(result);
+                try {
+                    entry.onCommitted(result);
+                } catch (const std::exception& error) {
+                    // PM-04：提交事实已发生，回读失败不能伪装成未提交或清掉
+                    // 未消费草稿；只隔离回执，后续域仍照常执行。
+                    receiptFailed=true;
+                    row.rejectionReason=std::string("commit-receipt-failed: ")+error.what();
+                }
+            }
+            // 只有完整回执成功才通知草稿控制器消费脏标记；拒绝/中止仍原样通知。
+            if (!receiptFailed && entry.onResult) {
+                try {
+                    entry.onResult(projection);
+                } catch (const std::exception& error) {
+                    // 完整域回读后仍可能在C-5磁盘消费处失败；提交不可回滚，
+                    // 不能让该异常中断Qt事件或后域，也不能虚报全部应用完成。
+                    row.rejectionReason=std::string(row.committed
+                        ? "commit-receipt-failed: " : "result-receipt-failed: ")+error.what();
+                }
             }
         }
-        report.entries.push_back(std::move(row));
         if (devLog) {
             devLog("draft.apply[" + entry.moduleId + "]: committed="
                    + (row.committed ? "1" : "0")
-                   + (row.committed ? " rev=" + row.revision
-                                    : " reason=" + row.rejectionReason));
+                   + (row.committed ? " rev=" + row.revision : "")
+                   + (row.rejectionReason.empty() ? "" : " reason=" + row.rejectionReason));
         }
+        report.entries.push_back(std::move(row));
     }
     return report;
 }

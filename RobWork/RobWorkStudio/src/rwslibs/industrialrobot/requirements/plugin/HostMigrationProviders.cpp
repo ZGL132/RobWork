@@ -520,7 +520,13 @@ bool RequirementsSelectionAdapter::reportView3DPick(const core::ObjectId& oid)
                                   oid).has_value()) {
         return false;
     }
+    // 共享服务对完全相同的选择去重；本地创建后撤销却可能已清空面板锚。
+    // 重复的用户拾取仍须重新定位原工位，否则移动/特征命令错误地没有目标。
+    // 非重复选择沿服务正常广播，避免定位回调执行两遍；不伪造选择变更事件。
+    const bool repeated=m_service->selectedObjectIds()==std::vector<core::ObjectId>{oid}
+        && m_service->selectionSource()==ui::SelectionSource::View3DPick;
     m_service->selectBusiness({oid}, ui::SelectionSource::View3DPick);
+    if (repeated && m_deps.panelHighlight) { m_deps.panelHighlight(oid); }
     return true;
 }
 

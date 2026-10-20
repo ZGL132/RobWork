@@ -1,0 +1,5 @@
+{
+  "ProcessId": 60208,
+  "ExecutablePath": "C:\\zcode-wt\\build-wp13-t25\\RobWorkStudio\\bin\\Release\\sdurws_ird_ui_gui_test.exe",
+  "CommandLine": "C:\\zcode-wt\\build-wp13-t25\\RobWorkStudio\\bin\\Release\\sdurws_ird_ui_gui_test.exe --gtest_filter=HostPolicyGuiTest.* --gtest_output=xml:C:/zcode-wt/wp13-t25/RobWork/doc/industrial-robot-design/traceability/builds/wp13-t25-f07/green-ui-policy-gui.xml"
+}

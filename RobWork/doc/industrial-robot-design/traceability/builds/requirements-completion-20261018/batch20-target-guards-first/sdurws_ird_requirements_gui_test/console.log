@@ -1,0 +1,21 @@
+Note: Google Test filter = RequirementsSessionGuiTest.View3DTarget*
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23 (305 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23 (68 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23 (29 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetInvalidRigidOutputZeroWrite_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetInvalidRigidOutputZeroWrite_REQ08_AT23 (12 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetSessionAndQueuedBaselineGuard_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetSessionAndQueuedBaselineGuard_REQ08_AT23 (15 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMenuAndShortcutShareGate_REQ08_AT23
+[       OK ] RequirementsSessionGuiTest.View3DTargetMenuAndShortcutShareGate_REQ08_AT23 (439 ms)
+[----------] 6 tests from RequirementsSessionGuiTest (873 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (873 ms total)
+[  PASSED  ] 6 tests.

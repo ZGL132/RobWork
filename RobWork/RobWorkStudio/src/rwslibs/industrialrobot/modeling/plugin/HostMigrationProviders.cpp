@@ -649,16 +649,37 @@ void ModelingSelectionAdapter::onSelectionChanged(const ui::SelectionChange& cha
 
 bool ModelingSelectionAdapter::reportView3DPick(const core::ObjectId& oid)
 {
+    return reportSelection(oid, ui::SelectionSource::View3DPick);
+}
+
+bool ModelingSelectionAdapter::reportCommandSelection(const core::ObjectId& oid)
+{
+    return reportSelection(oid, ui::SelectionSource::Command);
+}
+
+bool ModelingSelectionAdapter::reportSelection(const core::ObjectId& oid,
+                                               ui::SelectionSource source)
+{
     // 前置过滤：未订阅/无效身份（全零保留值）/闭包外对象一律不上报
     // ——selectBusiness 对无效身份 fail-fast，域侧先过滤（拾取未命中
     // 本域是常态，不出诊断——协议 selectBusiness 契约的调用方义务）。
-    if (m_service == nullptr || !m_deps.workingSet() || !oid.isValid()) {
+    const auto* workingSet = m_deps.workingSet(); // 本次调用只取一次当前草稿，避免过滤两次取源。
+    if (m_service == nullptr || workingSet == nullptr || !oid.isValid()) {
         return false;
     }
-    if (!resolveSelection(*m_deps.workingSet(), oid).has_value()) {
+    if (!resolveSelection(*workingSet, oid).has_value()) {
         return false;
     }
-    m_service->selectBusiness({oid}, ui::SelectionSource::View3DPick);
+    // 共享服务对相同集合/来源幂等，不会再次广播。用户可能已在域自持树
+    // 浏览了别的节点，此时重复“定位”仍须恢复面板；只补下行呈现，不制造
+    // 第二次业务选择写入。正常变化则完全由已有订阅链驱动面板和检查器。
+    const bool unchanged = m_service->selectedObjectIds() == std::vector<core::ObjectId>{oid}
+        && m_service->selectionSource() == source
+        && !m_service->hasRuntimeOnlySelection();
+    m_service->selectBusiness({oid}, source);
+    if (unchanged && m_deps.panelHighlight) {
+        m_deps.panelHighlight(oid);
+    }
     return true;
 }
 

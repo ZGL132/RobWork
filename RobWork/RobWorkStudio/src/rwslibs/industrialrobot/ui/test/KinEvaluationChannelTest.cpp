@@ -40,6 +40,9 @@
 #include <vector>
 
 #include <sdurws/ird/core/Digest.hpp>
+#include <sdurws/ird/policy/PolicyInput.hpp>
+#include <sdurws/ird/policy/PolicyParsing.hpp>
+#include <sdurws/ird/policy/SystemDefaultPolicy.hpp>
 #include <sdurws/ird/core/Identity.hpp>
 #include <sdurws/ird/kinematics/KinematicsPanelChannels.hpp>  // 通道值面
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>           // 合法配置基线
@@ -85,6 +88,23 @@ public:
         , m_tWorldBase(tWorldBase)
     {
     }
+    /**
+     * @brief 为姿态消费回归设置真实工具安装旋转，关节链仍为解析二连杆。
+     * @param tWorldBase [in] 基座在世界系的位姿（m、正交旋转）。
+     * @param tcpRotation [in] 法兰到TCP的旋转（无量纲）；TCP平移仍为0.7 m。
+     * 测试持有模型值，后台仅只读；builder非法输入抛出，不能伪造求解结果。
+     */
+    FixtureView(rw::math::Transform3D<double> tWorldBase,
+                rw::math::Rotation3D<double> tcpRotation)
+        : m_model(makeModel(twoLinkModel().chain().joints,
+                            rw::math::Transform3D<double>(
+                                rw::math::Vector3D<double>(0.7, 0, 0), tcpRotation)))
+        , m_tWorldBase(tWorldBase)
+    {
+    }
+    /** @brief A-15：测试端口持有真实builder模型值，不替代任何FK/IK计算。 */
+    explicit FixtureView(runtime::CanonicalModel model)
+        : m_model(std::move(model)), m_tWorldBase(rw::math::Transform3D<double>::identity()) {}
     const runtime::CanonicalModel& model() const override { return m_model; }
     rw::math::Transform3D<double> worldToBase() const override
     {
@@ -117,6 +137,11 @@ public:
         return {};  // 同上——零编辑消费
     }
     req::EditOutcome applyEdit(const req::EditBatch&) override { return {}; }
+    req::EditOutcome applyEditsAtomic(
+        const std::vector<req::RequirementEdit>&) override
+    {
+        return {};  // 原子批量（A-18 接口增列）——替身零编辑消费同语义
+    }
     bool undoLocal() noexcept override { return false; }
     bool redoLocal() noexcept override { return false; }
     std::string buildChangeSummary() const override { return {}; }
@@ -687,11 +712,8 @@ TEST(KinEvaluationChannel, ProjectPlan_InvertedBasePreset_KIN_P1)
                          rw::math::Vector3D<double>(0.0, 0.0, 0.3), 1e-12);
 }
 
-/// 侧装安放（Wall 预设 R_y(π/2)，基座世界位 (1,0,0)）＋非立方盒
-/// Grid 2×1×1：钉住轴交换半区——参考系盒经轴交换旋转后**仍然轴对齐**
-/// （预设矩阵为符号置换阵），尺寸随轴置换、中心点精确变换。世界盒 z 边
-/// 0.6 m 转为基座盒 x 边，域体心采样两格落基座 x＝−0.3±0.15——尺寸
-/// 置换与中心变换同时可观测。
+/// A-21/REQ-03：侧装基座下仍沿参考系局部X划分两格，不能把计数改挂到基座X。
+/// World格心(0.6,0,0.3)/(0.7,0,0.3)必须精确映到基座(-0.3,0,-0.4/-0.3)。
 TEST(KinEvaluationChannel, ProjectPlan_WallBasePreset_KIN_P1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-04", "KIN-07", "MDL-22"},
@@ -740,29 +762,21 @@ TEST(KinEvaluationChannel, ProjectPlan_WallBasePreset_KIN_P1)
     const std::vector<rw::math::Vector3D<double>> positions =
         positionKindSamples(*result);
     ASSERT_EQ(positions.size(), 2U);
-    // 投影盒期望（基座系）：中心＝R_y(−π/2)·((0.65,0,0.3)−(1,0,0))
-    // ＝(−0.3,0,−0.35)；尺寸＝(size_z,size_y,size_x)＝(0.6,0.4,0.2)
-    // （轴交换置换——世界盒 z 边 0.6 转为基座盒 x 边）。域 Grid 体心
-    // 采样在**投影后的基座盒**内沿基座 x 取两格：x＝−0.3±0.15。
-    EXPECT_NEAR(positions[0][0], -0.45, 1e-9);
+    // 独立解析：R_y(-π/2)*(worldPoint-(1,0,0))=(-z,y,x-1)。
+    // 局部X两格仍为世界X=0.6/0.7，原测试沿变换后的基座X重新分格会改变任务。
+    EXPECT_NEAR(positions[0][0], -0.3, 1e-9);
     EXPECT_NEAR(positions[0][1], 0.0, 1e-9);
-    EXPECT_NEAR(positions[0][2], -0.35, 1e-9);
-    EXPECT_NEAR(positions[1][0], -0.15, 1e-9);
+    EXPECT_NEAR(positions[0][2], -0.4, 1e-9);
+    EXPECT_NEAR(positions[1][0], -0.3, 1e-9);
     EXPECT_NEAR(positions[1][1], 0.0, 1e-9);
-    EXPECT_NEAR(positions[1][2], -0.35, 1e-9);
-    // 闭环：两样本直乘 T_world_base 回到世界点——
-    //   (−0.45,0,−0.35) → (−0.35,0,0.45)+(1,0,0)＝(0.65,0,0.45)；
-    //   (−0.15,0,−0.35) → (−0.35,0,0.15)+(1,0,0)＝(0.65,0,0.15)。
+    EXPECT_NEAR(positions[1][2], -0.3, 1e-9);
     expectWorldRoundTrip(view->worldToBase(), positions[0],
-                         rw::math::Vector3D<double>(0.65, 0.0, 0.45), 1e-9);
+                         rw::math::Vector3D<double>(0.6, 0.0, 0.3), 1e-9);
     expectWorldRoundTrip(view->worldToBase(), positions[1],
-                         rw::math::Vector3D<double>(0.65, 0.0, 0.15), 1e-9);
+                         rw::math::Vector3D<double>(0.7, 0.0, 0.3), 1e-9);
 }
 
-/// 轴交换旋转的模型参考系（ModelFrame 旋转 R_z(π/2)）精确支持：轴交换
-/// （符号置换）旋转下盒仍轴对齐——解析面按 runtime 反解设施求
-/// T_base_ref 后中心/尺寸精确置换，不拒绝（runtime 设施对任意正交旋转
-/// 均可反解，拒绝面只保留给"盒不可轴对齐表示"的任意角旋转）。
+/// 轴交换旋转参考系仍精确支持，沿原局部轴划格，中心用权威变换投影。
 TEST(KinEvaluationChannel, ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-04", "KIN-07"},
@@ -832,20 +846,20 @@ TEST(KinEvaluationChannel, ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1)
     EXPECT_NEAR(positions[0][2], 0.3, 1e-12);
 }
 
-/// 任意角旋转参考系保持显式拒绝（R1 轴对齐盒约束的诚实拒绝面——KIN-P1
-/// 只把"轴交换/轴翻转"形态纳入精确支持；任意角（如 R_z(π/6)）下盒变换
-/// 后不再轴对齐，保守包络会静默改变覆盖率语义，维持拒绝并如实告知）。
-TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrameStillRejected_KIN_P1)
+/// A-21/REQ-03：局部两点必须精确随30°参考系旋转，不得换成基座系包围盒。
+TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrame_REQ03_A21)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-04", "KIN-07"},
                   std::vector<std::string>{});
-    auto view = std::make_shared<FixtureView>();  // 地面安装（恒等）
+    // 非零世界平移及倾斜基座，参考Frame再绕Z旋转30°；复合后仍须精确还原局部格点。
+    const rw::math::Transform3D<double> worldBase({1,2,3},rw::math::Rotation3D<double>(1,0,0,0,std::cos(0.4),-std::sin(0.4),0,std::sin(0.4),std::cos(0.4)));
+    auto view = std::make_shared<FixtureView>(worldBase);
     ScriptedEditor editor(makeOneRegionOnePlanWorkset(
         rw::math::Vector3D<double>(0.65, 0.0, 0.3),
         rw::math::Vector3D<double>(0.2, 0.2, 0.2),
-        {1U, 1U, 1U}));
-    // 区域参考系改 ModelFrame，解析缝给任意角旋转 R_z(π/6)（非符号置换
-    // ——盒变换后呈 30° 斜置，RegionBox 无法精确表示）。
+        {2U, 1U, 1U}));
+    // 原局部X格心0.6/0.7 m，经Rz(π/6)后Y分别0.3/0.35 m；
+    // 若以包围盒代替有向盒，这两个精确位置就会变化。
     req::RequirementWorkingSet ws = editor.workingSet();
     const core::ObjectId frameOid = core::ObjectId::tryFromCanonical(
         "obj-44444444444444444444444444444444").value_or(core::ObjectId{});
@@ -857,9 +871,9 @@ TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrameStillRejected_KIN_P1
     constexpr double kSin30 = 0.5;                  // sin(π/6)
     KinEvaluationExecutor executor(KinEvaluationExecutor::Deps{
         &frameEditor,
-        [](const core::ObjectId&) {
+        [worldBase](const core::ObjectId&) {
             return std::optional<rw::math::Transform3D<double>>(
-                rw::math::Transform3D<double>(
+                worldBase * rw::math::Transform3D<double>(
                     rw::math::Vector3D<double>(0.0, 0.0, 0.0),
                     rw::math::Rotation3D<double>(
                         kCos30, -kSin30, 0.0,
@@ -867,8 +881,7 @@ TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrameStillRejected_KIN_P1
                         0.0, 0.0, 1.0)));
         },
         QCoreApplication::instance(), {}});
-    // 先绑定快照（拒绝必须来自切片的旋转判定而非"快照缺位"——拒绝原因
-    // 归属精确是本用例断言面的一半）。
+    // 真实发布模型视图；只在参考Frame查询端口注入给定变换，不替代采样/FK/IK。
     const core::ContentIdentity boundId =
         core::ContentIdentity::tryFromCanonical(
             "cid-3333333333333333333333333333333333333333333333333333333333333333")
@@ -881,9 +894,22 @@ TEST(KinEvaluationChannel, ProjectPlan_ArbitraryRotatedFrameStillRejected_KIN_P1
     request.snapshotId = boundId;
     request.epoch = executor.epoch();
     const KinChannelBackgroundAck ack = executor.submit(request);
-    // 受理拒绝（切片失败——旋转参考系如实拒绝，不静默扩权）。
-    EXPECT_FALSE(ack.accepted);
-    EXPECT_NE(ack.reason.find("旋转"), std::string::npos) << ack.reason;
+    ASSERT_TRUE(ack.accepted) << ack.reason;
+    for (int i = 0; i < 500 && !executor.latestCoverageResult(); ++i) {
+        QCoreApplication::processEvents();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    const auto result = executor.latestCoverageResult();
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(result->ok) << result->errorText;
+    const auto positions = positionKindSamples(*result);
+    ASSERT_EQ(positions.size(), 2u);
+    for (std::size_t i = 0; i < 2; ++i) {
+        const double x = 0.6 + 0.1 * i;
+        EXPECT_NEAR(positions[i][0], kCos30 * x, 1e-12);
+        EXPECT_NEAR(positions[i][1], kSin30 * x, 1e-12);
+        EXPECT_NEAR(positions[i][2], 0.3, 1e-12);
+    }
 }
 
 // =====================================================================
@@ -942,6 +968,9 @@ req::RequirementWorkingSet makeWorksetWithTaskPoint()
         core::SourcedValue<rw::math::Vector3D<double>>::provided(
             rw::math::Vector3D<double>(1.8, 0.0, 0.0),
             core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    // A-16：旧夹具过去依赖下游忽略默认全false掩码；现在明确表达完整位姿，
+    // 让兼容性用例验证真实FullPose而不是非法空约束。
+    point.pose.constrainedDof = {true, true, true, true, true, true};
     ws.points.entries.push_back(point);
 
     req::OperatingCondition condition;
@@ -1085,4 +1114,523 @@ TEST(KinEvaluationChannel, BatchChannel_RealComputationAndOutcomes_KIN_P4)
     EXPECT_EQ(h.notes[0].kind, KinChannelBackgroundKind::TaskPointsBatch);
 }
 
+/**
+ * @brief REQ-09/AT-23：混合非零RPY必须经参考系和基座合成后进入真实IK。
+ * 零关节时TCP姿态是解析常量；只传参考系姿态将没有满足完整位姿的解。
+ */
+TEST(KinEvaluationChannel, BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "REQ-09"},
+                  std::vector<std::string>{"AT-23"});
+    constexpr double pi = 3.14159265358979323846;
+    const double h = std::sqrt(3.0) / 2.0;
+    // 独立解析常量：Rz(π/6)·Ry(π/6)·Rx(π/2)，与产品RPY构造无关。
+    const rw::math::Rotation3D<double> tcpR(
+        0.75, h / 2, 0.5, h / 2, 0.25, -h, -0.5, h, 0);
+    const rw::math::Transform3D<double> worldBase(
+        rw::math::Vector3D<double>(1, 2, 3), rotZ(pi / 2));
+    const rw::math::Transform3D<double> baseRef(
+        rw::math::Vector3D<double>(0.2, 0.3, 0.4), rotZ(pi / 2));
+    const auto frameId = idFrom<core::ObjectId>("req09-position-frame");
+    auto ws = makeWorksetWithTaskPoint();
+    auto& point = ws.points.entries.front();
+    point.refFrame.kind = req::RequirementRefKind::ModelFrame;
+    point.refFrame.objectId = frameId;
+    point.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        // 比全展边界内移1 μm（远小于1 mm位置容差），避免多次世界变换的
+        // 浮点舍入恰好越过解析半径上界；本用例集中验证姿态，而非边界证明。
+        rw::math::Vector3D<double>(-0.3, -1.6 + 1e-6, -0.4),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    point.pose.constrainedDof = {true, true, true, true, true, true};
+    point.pose.orientation.fixedRpy = {pi / 2, pi / 6, -pi / 3};
+    ScriptedEditor editor(ws);
+    ExecutorHarness harn;
+    harn.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor, [=](const core::ObjectId& id)
+            -> std::optional<rw::math::Transform3D<double>> {
+            return id == frameId ? std::optional<rw::math::Transform3D<double>>(
+                worldBase * baseRef) : std::nullopt;
+        }, QCoreApplication::instance(),
+        [&harn](const KinChannelBackgroundResultNote& note) { harn.notes.push_back(note); }});
+    harn.executor->attachView(std::make_shared<FixtureView>(worldBase, tcpR), harn.boundId);
+    auto config = makeLegalConfig();
+    config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    harn.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request;
+    request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = harn.boundId;
+    request.epoch = harn.executor->epoch();
+    const auto ack = harn.executor->submit(request);
+    ASSERT_TRUE(ack.accepted) << ack.reason;
+    harn.drain();
+    const auto results = harn.executor->latestBatchOutcomes();
+    ASSERT_EQ(results.size(), 1U);
+    EXPECT_EQ(results.begin()->second.outcomeState, "completed")
+        << "非零混合RPY与旋转参考系应还原零位TCP，而非使用参考系旋转";
+}
+
+/** @brief REQ-09/AT-23：对齐目标与位置参考系必须分别解析，悬空目标禁止受理。 */
+TEST(KinEvaluationChannel, BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-09"}, std::vector<std::string>{"AT-23"});
+    // 同一解析端口承接模型根和场景Frame；每轮仍走真实IK，不能只给World兜底。
+    for (const auto referenceKind : {req::RequirementRefKind::ModelFrame, req::RequirementRefKind::SceneObject}) {
+        SCOPED_TRACE(int(referenceKind));
+        const auto targetId = idFrom<core::ObjectId>("req09-align-frame");
+        auto ws = makeWorksetWithTaskPoint();
+        ws.points.entries.front().pose.orientation.kind = req::OrientationRuleKind::AlignFrame;
+        ws.points.entries.front().pose.orientation.targetFrame.kind = referenceKind;
+        ws.points.entries.front().pose.orientation.targetFrame.objectId = targetId;
+        ws.points.entries.front().pose.constrainedDof = {true, true, true, true, true, true};
+        ScriptedEditor editor(ws);
+        ExecutorHarness harn;
+        bool available = true;
+        const auto tcpR = rotZ(0.6);
+        harn.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+            &editor, [&](const core::ObjectId& id)
+                -> std::optional<rw::math::Transform3D<double>> {
+                return available && id == targetId
+                    ? std::optional<rw::math::Transform3D<double>>(
+                        rw::math::Transform3D<double>(rw::math::Vector3D<double>(3, 4, 5), tcpR))
+                    : std::nullopt;
+            }, QCoreApplication::instance(),
+            [&harn](const KinChannelBackgroundResultNote& note) { harn.notes.push_back(note); }});
+        harn.executor->attachView(std::make_shared<FixtureView>(trans(0, 0, 0), tcpR), harn.boundId);
+        auto config = makeLegalConfig();
+        config.initialStrategy = InitialValueStrategy::ReferenceQ;
+        harn.executor->setConfiguration(config);
+        KinChannelBackgroundRequest request;
+        request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+        request.snapshotId = harn.boundId;
+        request.epoch = harn.executor->epoch();
+        const auto ack = harn.executor->submit(request);
+        ASSERT_TRUE(ack.accepted) << ack.reason;
+        harn.drain();
+        const auto results = harn.executor->latestBatchOutcomes();
+        ASSERT_EQ(results.size(), 1U);
+        EXPECT_EQ(results.begin()->second.outcomeState, "completed");
+        available = false;
+        const auto rejected = harn.executor->submit(request);
+        EXPECT_FALSE(rejected.accepted) << "悬空对齐引用不得降级为单位姿态继续求解";
+        EXPECT_NE(rejected.reason.find(ws.points.entries.front().name), std::string::npos);
+        EXPECT_TRUE(rejected.taskRef.empty());
+    }
+}
+
 }  // namespace
+
+/** @brief REQ-01/09：两工具四键真实批量IK必须产生各自结果，错键/悬空在受理前定位。 */
+/**
+ * @brief A-21/REQ-01/03：同一目标的两个区域必须分别消费自己的TCP。
+ * 单移动轴行程[0,1]m；目标X=2m，默认零偏TCP超界，长TCP偏置2m在q=0可达。
+ * 对照必须来自真实IK和解析界限，不能由脚本求解器指定颜色/状态。
+ */
+TEST(KinEvaluationChannel, RegionNamedTcpAndMissingKey_REQ01_A21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "REQ-03"}, std::vector<std::string>{"AT-03"});
+    const auto original = makeModel({prismatic("a21-x", {1, 0, 0}, 0, 1)}, trans(0, 0, 0));
+    auto tools = original.tools();
+    tools[0].namedTcpOffsets = {{"long", trans(2, 0, 0)}, {tools[0].localName, trans(2, 0, 0)}};
+    auto other=tools[0]; other.objectId=idFrom<core::ObjectId>("a21-other-tool");
+    other.localName="legacy_alias"; other.tcpOffset=trans(2,0,0);
+    other.namedTcpOffsets={{"long",trans(2,0,0)}}; tools.push_back(other);
+    auto header=original.header(); auto ref=header.objectRefs.back();
+    ref.objectId=other.objectId; ref.objectTypeToken="tool-definition"; header.objectRefs.push_back(ref);
+    const auto model = runtime::CanonicalModelBuilder().setHeader(header)
+        .setWorld(original.world()).setChain(original.chain()).setTools(tools)
+        .setDefaultTcpIndex(0U).build();
+    auto ws = makeOneRegionOnePlanWorkset({2, 0, 0}, {0.02, 0.02, 0.02}, {1, 1, 1});
+    auto longRegion = ws.regions.entries.front();
+    longRegion.objectId = idFrom<core::ObjectId>("a21-long-region");
+    longRegion.name = "长TCP区域";
+    req::RequirementReference tcp;
+    tcp.kind = req::RequirementRefKind::Tool; tcp.objectId = tools[0].objectId; tcp.tcpKey = "long";
+    longRegion.tcpRef = tcp;
+    ws.regions.entries.push_back(longRegion);
+    auto longPlan = ws.plans.entries.front();
+    longPlan.objectId = idFrom<core::ObjectId>("a21-long-plan");
+    longPlan.regionRef = longRegion.objectId;
+    ws.plans.entries.push_back(longPlan);
+    // 显式DefaultTcp、真实同名键优先、另一工具的命名键和旧工具名别名，全部真实求解。
+    for (int variant=0; variant<4; ++variant) {
+        auto region=longRegion; region.objectId=idFrom<core::ObjectId>("a21-region-"+std::to_string(variant));
+        region.name="TCP解析对照"+std::to_string(variant);
+        region.tcpRef->objectId=variant<2 ? tools[0].objectId : other.objectId;
+        region.tcpRef->tcpKey=variant==0 ? "" : variant==1 ? tools[0].localName
+                                                               : variant==2 ? "long" : other.localName;
+        if (variant==0) {
+            req::RequirementReference defaultRef; defaultRef.kind=req::RequirementRefKind::DefaultTcp;
+            region.tcpRef=defaultRef; // requirements用DefaultTcp表达默认；内核空键另测。
+        }
+        ws.regions.entries.push_back(region);
+        auto plan=longPlan; plan.objectId=idFrom<core::ObjectId>("a21-plan-"+std::to_string(variant));
+        plan.regionRef=region.objectId; ws.plans.entries.push_back(plan);
+    }
+    ScriptedEditor editor(ws); ExecutorHarness h; h.rebuildExecutorWithEditor(&editor);
+    h.executor->attachView(std::make_shared<FixtureView>(model), h.boundId);
+    KinChannelBackgroundRequest request; request.kind = KinChannelBackgroundKind::RegionCoverage;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain(); const auto result = h.executor->latestCoverageResult(); ASSERT_TRUE(result);
+    ASSERT_TRUE(result->ok) << result->errorText;
+    EXPECT_EQ(result->position.planned, 6u);
+    EXPECT_EQ(result->position.reached, 4u);
+    EXPECT_EQ(result->position.unreachable, 2u);
+    for (const auto& sample : result->samples) {
+        if (sample.kind != KinChannelSampleKind::Position) { continue; }
+        EXPECT_EQ(sample.state, (sample.regionObjectId != ws.regions.entries.front().objectId
+            && sample.regionObjectId != ws.regions.entries[2].objectId)
+            ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable);
+    }
+    // 引用错误必须在受理线程定位到区域，并且零后台派发。
+    for (const bool missingTool : {false, true}) {
+        auto invalid = ws;
+        invalid.regions.entries.back().tcpRef->tcpKey = "missing";
+        if (missingTool) invalid.regions.entries.back().tcpRef->objectId = idFrom<core::ObjectId>("a21-ghost");
+        ScriptedEditor badEditor(invalid); ExecutorHarness bad;
+        bad.rebuildExecutorWithEditor(&badEditor);
+        bad.executor->attachView(std::make_shared<FixtureView>(model), bad.boundId);
+        request.snapshotId = bad.boundId; request.epoch = bad.executor->epoch();
+        const auto rejected = bad.executor->submit(request);
+        EXPECT_FALSE(rejected.accepted);
+        EXPECT_NE(rejected.reason.find(invalid.regions.entries.back().name), std::string::npos) << rejected.reason;
+        EXPECT_TRUE(bad.notes.empty());
+    }
+}
+
+TEST(KinEvaluationChannel, BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "REQ-09"}, std::vector<std::string>{"AT-23"});
+    const auto original = twoLinkModel();
+    auto tools = original.tools();
+    tools[0].namedTcpOffsets = {{"low", trans(0.7, 0, 0.2)}, {"high", trans(0.7, 0, 0.4)}};
+    auto second = tools[0];
+    second.objectId = idFrom<core::ObjectId>("a15-second-tool"); second.localName = "tool_2";
+    second.namedTcpOffsets = {{"low", trans(0.7, 0, 0.6)}, {"high", trans(0.7, 0, 0.8)}};
+    tools.push_back(second);
+    auto header = original.header();
+    auto entry = header.objectRefs.back();
+    entry.objectId = second.objectId; entry.objectTypeToken = "tool-definition";
+    header.objectRefs.push_back(entry);
+    tools[0].namedTcpOffsets.push_back({"tool_1", trans(0.7, 0, 0.9)});
+    const auto model = runtime::CanonicalModelBuilder().setHeader(header).setWorld(original.world())
+        .setChain(original.chain()).setTools(tools).setDefaultTcpIndex(0U).build();
+    auto ws = makeWorksetWithTaskPoint();
+    auto prototype = ws.points.entries.front(); ws.points.entries.clear();
+    unsigned index = 0;
+    for (const auto& tool : tools) {
+        for (const auto& tcp : tool.namedTcpOffsets) {
+            if (tcp.first == "tool_1") { continue; } // 同名键专供默认选择碰撞反例。
+            auto point = prototype;
+            point.objectId = idFrom<core::ObjectId>("a15-point-" + std::to_string(index++));
+            point.name = "TCP工位" + std::to_string(index);
+            req::RequirementReference ref; ref.kind = req::RequirementRefKind::Tool;
+            ref.objectId = tool.objectId; ref.tcpKey = tcp.first; point.tcpRef = ref;
+            // q*=(0.3,−0.5)，z仅来自指定TCP。默认TCP永远z=0，无法解释这些目标。
+            point.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+                rw::math::Vector3D<double>(1.1*std::cos(0.3)+0.7*std::cos(-0.2),
+                                           1.1*std::sin(0.3)+0.7*std::sin(-0.2), tcp.second.P()[2]),
+                core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+            point.pose.orientation.fixedRpy = {0, 0, -0.2};
+            ws.points.entries.push_back(point);
+        }
+    }
+    // 目录有与工具名相同的另一偏移，默认TCP仍必须用空键，而非旧localName别名。
+    // 对照点：同一目标改用默认TCP，必须实际求解失败，防只检查信封字段造成假绿。
+    auto wrong = ws.points.entries.front(); wrong.objectId = idFrom<core::ObjectId>("a15-wrong-default");
+    wrong.tcpRef.reset(); ws.points.entries.push_back(wrong);
+    auto canonical = wrong; canonical.objectId = idFrom<core::ObjectId>("a15-canonical-default");
+    canonical.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(1.1*std::cos(0.3)+0.7*std::cos(-0.2),
+                                   1.1*std::sin(0.3)+0.7*std::sin(-0.2), 0),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    ws.points.entries.push_back(canonical);
+    ScriptedEditor editor(ws);
+    ExecutorHarness h;
+    h.rebuildExecutorWithEditor(&editor);
+    h.executor->attachView(std::make_shared<FixtureView>(model), h.boundId);
+    auto config = makeLegalConfig(); config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    // 非零解析目标需要迭代收敛；合法配置默认1次仅供零位受理测试，不能充当数值预算。
+    config.iterationLimit = 200U;
+    h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request; request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain();
+    const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 6U) << (h.notes.empty() ? "无完成回执" : h.notes.back().summaryText);
+    for (const auto& point : ws.points.entries) {
+        const auto it = results.find(point.objectId); ASSERT_NE(it, results.end());
+        EXPECT_EQ(it->second.outcomeState, point.objectId == wrong.objectId ? "failed" : "completed") << point.name << " " << it->second.outcomeText;
+    }
+    for (const bool danglingTool : {false, true}) {
+        auto bad = ws; bad.points.entries.resize(1);
+        bad.points.entries[0].tcpRef->tcpKey = "missing";
+        if (danglingTool) bad.points.entries[0].tcpRef->objectId = idFrom<core::ObjectId>("a15-ghost");
+        ScriptedEditor badEditor(bad); ExecutorHarness rejected;
+        rejected.rebuildExecutorWithEditor(&badEditor);
+        rejected.executor->attachView(std::make_shared<FixtureView>(model), rejected.boundId);
+        request.snapshotId = rejected.boundId; request.epoch = rejected.executor->epoch();
+        const auto refusal = rejected.executor->submit(request);
+        EXPECT_FALSE(refusal.accepted);
+        EXPECT_NE(refusal.reason.find(bad.points.entries[0].name), std::string::npos);
+        EXPECT_TRUE(rejected.notes.empty());
+    }
+}
+
+/**
+ * @brief A-16/REQ-01：六个掩码位逐一真实消费，自由分量即使极大也不能进入可达证明。
+ * 目标各只有一个受约束分量，零位即满足；另设X=100m的真失败对照，禁止忽略所有掩码。
+ */
+TEST(KinEvaluationChannel, BatchHonorsEveryConstraintMask_REQ01_A16)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01"}, std::vector<std::string>{"AT-23"});
+    auto ws = makeWorksetWithTaskPoint();
+    const auto prototype = ws.points.entries.front(); ws.points.entries.clear();
+    for (int axis = 0; axis < 7; ++axis) {
+        auto point = prototype;
+        point.objectId = idFrom<core::ObjectId>("a16-mask-" + std::to_string(axis));
+        point.name = "分量约束" + std::to_string(axis);
+        auto& mask = point.pose.constrainedDof; mask = {};
+        rw::math::Vector3D<double> position(99, 99, 99); // 自由坐标，m；故意超出模型半径。
+        switch (axis) {
+            case 0: mask.x = true; position[0] = 1.8; break;
+            case 1: mask.y = true; position[1] = 0; break;
+            case 2: mask.z = true; position[2] = 0; break;
+            case 3: mask.roll = true; break;
+            case 4: mask.pitch = true; break;
+            case 5: mask.yaw = true; break;
+            default: mask.x = true; position[0] = 100; break;
+        }
+        point.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            position, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        ws.points.entries.push_back(point);
+    }
+    ScriptedEditor editor(ws); ExecutorHarness h; h.rebuildExecutorWithEditor(&editor);
+    auto config = makeLegalConfig(); config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    config.iterationLimit = 200; h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request; request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain();
+    const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 7U);
+    for (std::size_t i = 0; i < ws.points.entries.size(); ++i) {
+        const auto it = results.find(ws.points.entries[i].objectId); ASSERT_NE(it, results.end());
+        EXPECT_EQ(it->second.outcomeState, i == 6 ? "failed" : "completed")
+            << ws.points.entries[i].name << " " << it->second.outcomeText;
+    }
+}
+
+/** @brief A-16/REQ-09：方向/滚转规则不可静默按Fixed求解（批35 P1-4 起方向规则为扭转自由族，倾斜正例语义见批35 注）。 */
+TEST(KinEvaluationChannel, BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-09"}, std::vector<std::string>{"AT-23"});
+    auto ws = makeWorksetWithTaskPoint();
+    auto prototype = ws.points.entries.front(); ws.points.entries.clear();
+    prototype.pose.constrainedDof = {true, true, true, true, true, true};
+    auto rollFree = prototype;
+    rollFree.objectId = idFrom<core::ObjectId>("a16-roll-free"); rollFree.name = "允许工具滚转";
+    rollFree.pose.orientation.kind = req::OrientationRuleKind::ToolRollFree;
+    // 两杆q=(0.3,-0.5)的独立解析位置，实际工具轴恒+Z，允许绕其滚转应成功。
+    rollFree.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(1.1*std::cos(0.3)+0.7*std::cos(-0.2),
+                                   1.1*std::sin(0.3)+0.7*std::sin(-0.2),0),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    ws.points.entries.push_back(rollFree);
+    auto fixed = rollFree; fixed.objectId = idFrom<core::ObjectId>("a16-fixed-control");
+    fixed.name = "固定姿态对照"; fixed.pose.orientation = {}; ws.points.entries.push_back(fixed);
+    auto pointing = prototype; pointing.objectId = idFrom<core::ObjectId>("a16-point-at");
+    pointing.name = "指向目标反例"; pointing.pose.orientation.kind = req::OrientationRuleKind::PointAtTarget;
+    pointing.pose.orientation.targetPoint = {0, 1, 0};
+    ws.points.entries.push_back(pointing);
+    const auto normalId = idFrom<core::ObjectId>("a16-normal-frame");
+    auto normal = prototype; normal.objectId = idFrom<core::ObjectId>("a16-normal-point");
+    normal.name = "对齐法向反例"; normal.pose.orientation.kind = req::OrientationRuleKind::AlignGeometryNormal;
+    normal.pose.orientation.targetSceneObject = normalId;
+    normal.pose.orientation.feature = req::OrientationFeature::FramePlaneNormal;
+    ws.points.entries.push_back(normal);
+    ScriptedEditor editor(ws); ExecutorHarness h;
+    h.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor, [=](const core::ObjectId& id) -> std::optional<rw::math::Transform3D<double>> {
+            // 名称端口给出独立黄金参考系：Rx(π/2)使局部+Z指向世界-Y。
+            // 两个平面转轴永远不能令工具+Z对齐该方向；求解/变换逻辑均为产品实现。
+            if (id != normalId) { return std::nullopt; }
+            return rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0),
+                rw::math::Rotation3D<double>(1,0,0,0,0,-1,0,1,0));
+        }, QCoreApplication::instance(),
+        [&h](const KinChannelBackgroundResultNote& note) { h.notes.push_back(note); }});
+    h.executor->attachView(h.view, h.boundId);
+    auto config = makeLegalConfig(); config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    config.iterationLimit = 200; h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request; request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain(); const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 4U);
+    // 批35（评审 P1-4）：方向规则自扭转自由起按 {R_target·Rz(θ)} 族求解
+    // ——本平面夹具下 +Y 水平方向对竖直工具轴不可达，"failed＋解 0 个"
+    // 为诚实几何结果（可达正例由 IkTest.TiltedToolTwistFreeDirection 与
+    // BatchDirectionRulesFreeToolRoll 两钉承载；Fixed 对照在可达位姿上
+    // 因姿态不可满足而 failed——同为诚实几何结果）。
+    // 后续闭环：绕工具Z滚转不会改变Z方向。法向为-Y，而实际工具恒+Z，
+    // 两者点积恒0，因此法向也必须失败。批35把错误成功登记为期望成功，
+    // 与上面的独立几何事实相矛盾；此处恢复几何断言，不迁就求解器结果。
+    for (const auto& point : ws.points.entries) {
+        const auto it = results.find(point.objectId); ASSERT_NE(it, results.end());
+        const bool expectCompleted = point.objectId == rollFree.objectId;
+        EXPECT_EQ(it->second.outcomeState, expectCompleted ? "completed" : "failed")
+            << point.name << " " << it->second.outcomeText;
+    }
+}
+/**
+ * @brief REQ-09/AT-23：在需求生产批量通道核对反向轴拒绝与真实方向纠正。
+ * @param opposite [in] true为受限Z轴与反向目标（必失败）；false为X轴0.2rad可达目标。
+ *
+ * fixture只提供CanonicalModel与权威Frame值，求解与规则投影均为产品实现；
+ * 生命周期限本测试主线程，后台由ExecutorHarness::drain等待完成。
+ */
+void verifyRequirementDirectionBoundary(bool opposite)
+{
+    const double angle=opposite?3.14159265358979323846:0.2;
+    const rw::math::Rotation3D<double> targetR(
+        1,0,0,0,std::cos(angle),-std::sin(angle),0,std::sin(angle),std::cos(angle));
+    const auto model=opposite
+        ?makeModel({revolute("boundary-z",{0,0,1},trans(0,0,0),-0.01,0.01)},trans(0,0,0))
+        :makeModel({revolute("boundary-x",{1,0,0},trans(0,0,0),-1,1)},trans(0,0,0));
+    auto ws=makeWorksetWithTaskPoint();
+    auto prototype=ws.points.entries.front();
+    ws.points.entries.clear();
+    prototype.pose.constrainedDof={true,true,true,true,true,true};
+    prototype.pose.position=core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        {0,0,0},core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    auto pointing=prototype;
+    pointing.name="方向边界指向";pointing.objectId=idFrom<core::ObjectId>("boundary-pointing");
+    pointing.pose.orientation.kind=req::OrientationRuleKind::PointAtTarget;
+    // 单位长度目标，位置单位m；实际工具Z应等于Rx(angle)的第三列。
+    pointing.pose.orientation.targetPoint={0,-std::sin(angle),std::cos(angle)};
+    ws.points.entries.push_back(pointing);
+    const auto frame=idFrom<core::ObjectId>("boundary-frame");
+    auto normal=prototype;
+    normal.name="方向边界法向";normal.objectId=idFrom<core::ObjectId>("boundary-normal");
+    normal.pose.orientation.kind=req::OrientationRuleKind::AlignGeometryNormal;
+    normal.pose.orientation.targetSceneObject=frame;
+    normal.pose.orientation.feature=req::OrientationFeature::FramePlaneNormal;
+    ws.points.entries.push_back(normal);
+    ScriptedEditor editor(ws);
+    ExecutorHarness h;
+    h.view=std::make_shared<FixtureView>(model);
+    h.executor=std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor,[=](const core::ObjectId& id)->std::optional<rw::math::Transform3D<double>>{
+            if(id!=frame) return std::nullopt;
+            return rw::math::Transform3D<double>({0,0,0},targetR);
+        },QCoreApplication::instance(),
+        [&h](const KinChannelBackgroundResultNote& note){h.notes.push_back(note);}});
+    h.executor->attachView(h.view,h.boundId);
+    auto config=makeLegalConfig();
+    config.initialStrategy=InitialValueStrategy::ReferenceQ;
+    config.iterationLimit=200;
+    h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request;
+    request.kind=KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId=h.boundId;request.epoch=h.executor->epoch();
+    const auto ack=h.executor->submit(request);
+    ASSERT_TRUE(ack.accepted)<<ack.reason;
+    h.drain();
+    const auto outcomes=h.executor->latestBatchOutcomes();
+    ASSERT_EQ(outcomes.size(),2u);
+    for(const auto& point:ws.points.entries) {
+        const auto it=outcomes.find(point.objectId);
+        ASSERT_NE(it,outcomes.end());
+        EXPECT_EQ(it->second.outcomeState,opposite?"failed":"completed")
+            <<point.name<<" "<<it->second.outcomeText;
+    }
+}
+/** @brief REQ-09/AT-23：相反180度不能输出“解1个”，防止错误结果进入需求清单。 */
+TEST(KinEvaluationChannel, OppositeDirectionRejected_REQ09_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {"AT-23"}, std::nullopt);
+    verifyRequirementDirectionBoundary(true);
+}
+/** @brief REQ-09/AT-23：从零初值纠正倾斜方向，两种规则均进入真实IK。 */
+TEST(KinEvaluationChannel, DirectionCorrectionFromZero_REQ09_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {"AT-23"}, std::nullopt);
+    verifyRequirementDirectionBoundary(false);
+}
+
+/** @brief 批34 评审 F4：方向规则只约束工具轴指向——绕轴滚转是规则未定义
+ *         面，不得额外固定任意参考系滚转。反例：平面二连杆工具 +Z 天然
+ *         竖直，"指向正上方"的方向规则在旧实现（固定构造基的滚转）下
+ *         误判 failed；修复后（全周自由）应 completed。 */
+TEST(KinEvaluationChannel, BatchDirectionRulesFreeToolRoll_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-09"}, std::vector<std::string>{});
+    auto ws = makeWorksetWithTaskPoint();
+    auto prototype = ws.points.entries.front(); ws.points.entries.clear();
+    prototype.pose.constrainedDof = {true, true, true, true, true, true};
+    auto pointing = prototype;
+    pointing.pose.orientation.kind = req::OrientationRuleKind::PointAtTarget;
+    const double px = 1.1 * std::cos(0.3) + 0.7 * std::cos(-0.2);
+    const double py = 1.1 * std::sin(0.3) + 0.7 * std::sin(-0.2);
+    pointing.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(px, py, 0),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    pointing.pose.orientation.targetPoint = {px, py, 1.0};  // 正上方——方向＝+Z
+    ws.points.entries = {pointing};
+    ScriptedEditor editor(ws); ExecutorHarness h;
+    h.executor = std::make_shared<KinEvaluationExecutor>(KinEvaluationExecutor::Deps{
+        &editor, [=](const core::ObjectId&) -> std::optional<rw::math::Transform3D<double>> {
+            return std::nullopt;
+        }, QCoreApplication::instance(),
+        [&h](const KinChannelBackgroundResultNote& note) { h.notes.push_back(note); }});
+    h.executor->attachView(h.view, h.boundId);
+    auto config = makeLegalConfig(); config.initialStrategy = InitialValueStrategy::ReferenceQ;
+    config.iterationLimit = 200; h.executor->setConfiguration(config);
+    KinChannelBackgroundRequest request;
+    request.kind = KinChannelBackgroundKind::TaskPointsBatch;
+    request.snapshotId = h.boundId; request.epoch = h.executor->epoch();
+    const auto ack = h.executor->submit(request); ASSERT_TRUE(ack.accepted) << ack.reason;
+    h.drain();
+    const auto results = h.executor->latestBatchOutcomes(); ASSERT_EQ(results.size(), 1U);
+    const auto& outcome = results.begin()->second;
+    EXPECT_EQ(outcome.outcomeState, "completed")
+        << outcome.outcomeText << "（方向规则不得额外固定工具滚转）";
+}
+
+/** @brief A-23：完成后换绑同模型的新策略也必须清除单点结果，不能保留旧结论。 */
+TEST(KinEvaluationChannel, PolicyRebindClearsFinishedSolve_ARC05_A23)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"ARC-05","CON-06"}), (std::vector<std::string>{"AT-01"}));
+    ExecutorHarness h;KinChannelBackgroundRequest request;
+    request.kind=KinChannelBackgroundKind::SessionSolve;request.snapshotId=h.boundId;request.epoch=h.executor->epoch();
+    request.solveTargetInBase=rw::math::Transform3D<double>(rw::math::Vector3D<double>(1.8,0,0));
+    ASSERT_TRUE(h.executor->submit(request).accepted);h.drain();ASSERT_TRUE(h.executor->latestSolveResult());
+    h.executor->setPolicy(std::make_shared<const policy::EngineeringPolicySet>(policy::makeSystemDefaultPolicySet()));
+    h.executor->attachView(h.view,h.boundId);
+    EXPECT_FALSE(h.executor->latestSolveResult());EXPECT_FALSE(h.executor->latestCoverageResult());
+    EXPECT_TRUE(h.executor->latestBatchOutcomes().empty());
+}
+
+/** @brief A-23：启用碰撞策略却无设施时，真实IK不得给出“未碰撞”的绿色结论。 */
+TEST(KinEvaluationChannel, EnabledCollisionWithoutFacilityRemainsInsufficient_ARC05_A23)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"ARC-05","KIN-05"}), (std::vector<std::string>{"AT-01"}));
+    class Context final:public policy::IPolicyValidationContext {
+    public:
+        bool objectExists(core::ObjectId)const override{return false;}
+        std::optional<std::string> objectRole(core::ObjectId)const override{return std::nullopt;}
+        bool groupDefined(std::string_view)const override{return false;}
+    } context;
+    policy::RawPolicyInput raw;raw.policyObject=policy::systemDefaultPolicyObjectId();
+    raw.collision.enabled=true;raw.collision.enabledDomains={policy::CollisionDomain::Self};
+    raw.collision.safetyClearance=policy::RawThresholdInput{0.01,"m"};
+    const auto policy=policy::resolvePolicy(raw,context);ASSERT_TRUE(policy.policy);
+    ExecutorHarness h;h.executor->setPolicy(std::make_shared<const sdurws::ird::policy::EngineeringPolicySet>(*policy.policy));
+    KinChannelBackgroundRequest request;request.kind=KinChannelBackgroundKind::SessionSolve;
+    request.snapshotId=h.boundId;request.epoch=h.executor->epoch();
+    request.solveTargetInBase=rw::math::Transform3D<double>(rw::math::Vector3D<double>(1.8,0,0));
+    ASSERT_TRUE(h.executor->submit(request).accepted);h.drain();
+    const auto result=h.executor->latestSolveResult();ASSERT_TRUE(result);ASSERT_TRUE(result->solutionSet);
+    EXPECT_FALSE(result->ok);
+    EXPECT_NE(result->errorText.find("数据不足"),std::string::npos);
+    // 域契约保留几何解作为诊断，但逐解未评价且整体不可走绿色完成通道。
+    for(const auto& solution:result->solutionSet->solutions)EXPECT_FALSE(solution.collisionStatus.evaluated);
+}

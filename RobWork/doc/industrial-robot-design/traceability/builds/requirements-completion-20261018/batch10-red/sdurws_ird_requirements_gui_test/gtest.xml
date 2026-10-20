@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.455" timestamp="2026-10-18T21:03:11.559" name="AllTests">
+  <testsuite name="RequirementsSessionGuiTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.455" timestamp="2026-10-18T21:03:11.559">
+    <testcase name="RegionSamplingCompleteAtomic_REQ03_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="288" status="run" result="completed" time="0.455" timestamp="2026-10-18T21:03:11.559" classname="RequirementsSessionGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:294&#x0A;Expected: (form) != (nullptr), actual: NULL vs (nullptr)&#x0A;生产区域检查器缺完整采样编辑入口&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:294
+Expected: (form) != (nullptr), actual: NULL vs (nullptr)
+生产区域检查器缺完整采样编辑入口
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

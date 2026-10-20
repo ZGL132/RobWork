@@ -1,0 +1,202 @@
+Window: "RobWorkStudio v26.10.18-redesign-main", App: sdurws_ird_studio.exe.
+	0 窗口 (settable, string) RobWorkStudio v26.10.18-redesign-main Secondary Actions: Raise ID: QApplication.RobWorkStudio_MainWindow
+		308 窗口 (settable, string) IRD 需求 Secondary Actions: Raise ID: QApplication.ird_requirements_dock
+			309 标题栏 (settable, string) Value: IRD 需求
+				310 按钮 关闭
+			311 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll
+				312 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport
+					313 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget
+						314 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget
+							315 按钮 (settable, string) 导入 ▾ ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.ird_req_import_dropdown
+							316 按钮 (settable, string) 导出副本 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QPushButton
+							317 按钮 (settable, string) 更多操作 ▾ ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.ird_req_more_actions_dropdown
+							318 自定义 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QFrame
+							319 按钮 (disabled, settable, string) 撤销 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QPushButton
+							320 按钮 (disabled, settable, string) 重做 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QPushButton
+							321 按钮 (disabled, settable, string) 撤销上次应用 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QPushButton
+							322 文本 已导入 2 个工位（1 条错误行跳过） ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QLabel
+						323 文本 当前编辑：需求草稿——经『应用草稿』提交后生成新项目修订（工业项目树呈现已应用版本） ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.ird_req_draft_hint
+						324 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget
+							325 树 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTreeWidget
+								576 标头 (selectable, settable, string) 需求树（当前草稿） ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTreeWidget
+								577 标头 (selectable, settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTreeWidget
+								578 树项目 (selectable, settable, string) 需求工程 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTreeWidget
+						329 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget
+							330 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget
+								331 窗格 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget
+									332 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget
+										333 文本 工位 > 未选择 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.ird_req_tab_station_header
+										334 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.QWidget
+											335 按钮 (settable, string) 新增工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.QWidget.ird_req_add_points
+											336 按钮 (disabled, settable, string) 复制工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.QWidget.ird_req_duplicate_points
+											337 按钮 (disabled, settable, string) 删除工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.QWidget.ird_req_remove_points
+										338 文本 请在左侧需求树或列表中选择对象，或点击上方新增 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.ird_req_empty_hint_points
+								339 选项卡 (settable, string) 工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+									340 选项卡项目 (selectable, settable, string) 工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+									341 选项卡项目 (selectable, settable, string) 区域 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+									342 选项卡项目 (selectable, settable, string) 工况 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+									343 选项卡项目 (selectable, settable, string) 校验 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+				344 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_hcontainer
+					345 滚动条 (settable, float) Value: 0 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_hcontainer.QScrollBar
+				346 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_vcontainer
+					347 滚动条 (settable, float) Value: 0 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_vcontainer.QScrollBar
+		1 标题栏 (settable, string) Value: RobWorkStudio v26.10.18-redesign-main
+			2 菜单栏 系统 ID: MenuBar
+				3 菜单项 系统
+			4 按钮 最小化
+			5 按钮 最大化
+			6 按钮 关闭
+		7 菜单栏 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.QMenuBar
+			8 菜单项 (settable, string) File ID: QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction
+			9 菜单项 (settable, string) Tools ID: QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction
+			10 菜单项 (settable, string) View3D ID: QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction
+			11 菜单项 (settable, string) 视图 ID: QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction
+			12 菜单项 (settable, string) Plugins ID: QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction
+			13 菜单项 (settable, string) Help ID: QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction
+		14 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.rws::RWStudioView3D
+			15 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.rws::RWStudioView3D.rws::SceneOpenGLViewer
+		16 工具栏 (settable, string) View3D ID: QApplication.RobWorkStudio_MainWindow.View3D
+			17 复选框 (settable, string) Solid ID: QApplication.RobWorkStudio_MainWindow.View3D.QToolButton
+			18 复选框 (settable, string) Wire ID: QApplication.RobWorkStudio_MainWindow.View3D.QToolButton
+			19 复选框 (settable, string) Outline ID: QApplication.RobWorkStudio_MainWindow.View3D.QToolButton
+			20 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.View3D.QToolBarSeparator
+			21 复选框 (settable, string) Transparent ID: QApplication.RobWorkStudio_MainWindow.View3D.QToolButton
+			22 复选框 (settable, string) Pivot Point ID: QApplication.RobWorkStudio_MainWindow.View3D.QToolButton
+			23 复选框 (settable, string) Collision Checking ID: QApplication.RobWorkStudio_MainWindow.View3D.QToolButton
+		24 工具栏 (settable, string) Standard views ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D
+			25 按钮 (settable, string) Home view ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton
+			26 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolBarSeparator
+			27 按钮 (settable, string) Axiometric (Ctrl + A) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton
+			28 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolBarSeparator
+			29 按钮 (settable, string) Front (Ctrl + F) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton
+			30 按钮 (settable, string) Right (Ctrl + R) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton
+			31 按钮 (settable, string) Top (Ctrl + T) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton
+			32 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolBarSeparator
+			33 按钮 (settable, string) Rear (Ctrl + E) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton
+			34 按钮 (settable, string) Left (Ctrl + L) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton
+			35 按钮 (settable, string) Bottom (Ctrl + B) ID: QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton
+		36 工具栏 (settable, string) Zoom toolbar ID: QApplication.RobWorkStudio_MainWindow.ZoomToolbar
+			37 按钮 (settable, string) Zoom in (Ctrl + +) ID: QApplication.RobWorkStudio_MainWindow.ZoomToolbar.QToolButton
+			38 按钮 (settable, string) Zoom out (Ctrl + -) ID: QApplication.RobWorkStudio_MainWindow.ZoomToolbar.QToolButton
+			39 按钮 (settable, string) Autozoom (Ctrl + *) ID: QApplication.RobWorkStudio_MainWindow.ZoomToolbar.QToolButton
+		40 工具栏 (settable, string) Plugins ID: QApplication.RobWorkStudio_MainWindow.PluginsBar
+			41 按钮 (settable, string) Log ID: QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton
+			42 按钮 (settable, string) Jog ID: QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton
+			43 按钮 (settable, string) TreeView ID: QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton
+			44 按钮 (settable, string) PlayBack ID: QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton
+			45 按钮 (settable, string) 工业项目树 ID: QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton
+		46 状态栏 ID: QApplication.RobWorkStudio_MainWindow.QStatusBar
+			47 缩略图 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.QStatusBar.QSizeGrip
+			48 文本 建模域遍历演示项目 ID: QApplication.RobWorkStudio_MainWindow.QStatusBar.ird_status_project_text
+		49 窗格 (settable, string) 工业项目树 ID: QApplication.RobWorkStudio_MainWindow.工业项目树
+			50 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body
+				51 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget
+					52 树 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						230 树项目 (selectable, settable, string) 项目结构 ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						231 树项目 (selectable, settable, string) 建模对象 ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						232 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						233 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						234 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						235 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						236 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						237 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						238 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						239 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						240 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						241 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						348 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						349 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						350 树项目 (selectable, settable, string) （未命名对象） ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						351 树项目 (selectable, settable, string) 需求对象 ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						352 树项目 (selectable, settable, string) 分析配置 ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+						353 树项目 (selectable, settable, string) 结果 / 证据 / 报告 ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget
+					71 编辑 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.ird_tree_search
+					72 组合框 (settable, string) Value: 全部分组 ID: QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.ird_tree_group_filter
+			73 按钮 (settable, string) 关闭 ID: QApplication.RobWorkStudio_MainWindow.工业项目树.qt_dockwidget_closebutton
+			74 按钮 (settable, string) 悬浮 ID: QApplication.RobWorkStudio_MainWindow.工业项目树.qt_dockwidget_floatbutton
+		75 窗格 (settable, string) IRD 属性与诊断 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock
+			76 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll
+				77 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport
+					78 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget
+						79 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_property_inspector
+							80 文本 未选中对象 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_property_inspector.ird_property_inspector_placeholder
+							81 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_property_inspector.QWidget
+						82 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.QWidget
+							83 自定义 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.QWidget.ird_readiness_summary_card
+								84 文本 跨域就绪摘要 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.QWidget.ird_readiness_summary_card.QLabel
+								85 文本 建模：输入不完整 需求：待提交后判定 运动学：输入不完整 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.QWidget.ird_readiness_summary_card.QLabel
+						86 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content
+							87 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card
+								248 文本 工程策略（计算权威） ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_group_authority
+								249 文本 工程策略：未装载 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_policy
+								250 文本 会话显示设置（不属策略字段） ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_group_display
+								251 文本 显示开关与策略的关系：显示碰撞几何/高亮等是会话显示设置，不存在于工程策略字段（POL-ID-3）：仅影响显示呈现，不改变计算与策略内容身份 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_display-separation
+								252 文本 显示控件：显示控件随三维视图交互在后续版本提供 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_display-controls
+			93 按钮 (settable, string) 关闭 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.qt_dockwidget_closebutton
+			94 按钮 (settable, string) 悬浮 ID: QApplication.RobWorkStudio_MainWindow.ird_props_dock.qt_dockwidget_floatbutton
+		95 窗格 (settable, string) IRD 任务和状态 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock
+			96 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll
+				97 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport
+					98 组 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs
+						99 窗格 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs.qt_tabwidget_stackedwidget
+							100 文本 本阶段将在后续版本提供 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs.qt_tabwidget_stackedwidget.QLabel
+						101 选项卡 (settable, string) 结果 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs.qt_tabwidget_tabbar
+							102 选项卡项目 (selectable, settable, string) 结果 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs.qt_tabwidget_tabbar
+							103 选项卡项目 (selectable, settable, string) 任务进度 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs.qt_tabwidget_tabbar
+							104 选项卡项目 (selectable, settable, string) 诊断 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs.qt_tabwidget_tabbar
+							105 选项卡项目 (selectable, settable, string) 日志 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs.qt_tabwidget_tabbar
+							106 选项卡项目 (selectable, settable, string) 下一步建议 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.ird_tasks_dock_scroll.qt_scrollarea_viewport.ird_bottom_tabs.qt_tabwidget_tabbar
+			107 按钮 (settable, string) 关闭 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.qt_dockwidget_closebutton
+			108 按钮 (settable, string) 悬浮 ID: QApplication.RobWorkStudio_MainWindow.ird_tasks_dock.qt_dockwidget_floatbutton
+		109 选项卡 (settable, string) ID: QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar
+		110 选项卡 (settable, string) IRD 属性与诊断 ID: QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar
+			111 选项卡项目 (selectable, settable, string) IRD 属性与诊断 ID: QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar
+			112 按钮 (selectable, disabled, settable, string) 向左滚动 ID: QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar.ScrollLeftButton
+			113 按钮 (selectable, settable, string) 向右滚动 ID: QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar.ScrollRightButton
+		308 窗口 (settable, string) IRD 需求 Secondary Actions: Raise ID: QApplication.ird_requirements_dock
+			309 标题栏 (settable, string) Value: IRD 需求
+				310 按钮 关闭
+			311 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll
+				312 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport
+					313 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget
+						314 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget
+							315 按钮 (settable, string) 导入 ▾ ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.ird_req_import_dropdown
+							316 按钮 (settable, string) 导出副本 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QPushButton
+							317 按钮 (settable, string) 更多操作 ▾ ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.ird_req_more_actions_dropdown
+							318 自定义 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QFrame
+							319 按钮 (disabled, settable, string) 撤销 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QPushButton
+							320 按钮 (disabled, settable, string) 重做 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QPushButton
+							321 按钮 (disabled, settable, string) 撤销上次应用 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QPushButton
+							322 文本 已导入 2 个工位（1 条错误行跳过） ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QLabel
+						323 文本 当前编辑：需求草稿——经『应用草稿』提交后生成新项目修订（工业项目树呈现已应用版本） ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.ird_req_draft_hint
+						324 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget
+							325 树 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTreeWidget
+								576 标头 (selectable, settable, string) 需求树（当前草稿） ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTreeWidget
+								577 标头 (selectable, settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTreeWidget
+								578 树项目 (selectable, settable, string) 需求工程 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTreeWidget
+						329 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget
+							330 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget
+								331 窗格 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget
+									332 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget
+										333 文本 工位 > 未选择 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.ird_req_tab_station_header
+										334 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.QWidget
+											335 按钮 (settable, string) 新增工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.QWidget.ird_req_add_points
+											336 按钮 (disabled, settable, string) 复制工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.QWidget.ird_req_duplicate_points
+											337 按钮 (disabled, settable, string) 删除工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.QWidget.ird_req_remove_points
+										338 文本 请在左侧需求树或列表中选择对象，或点击上方新增 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_stackedwidget.QWidget.ird_req_empty_hint_points
+								339 选项卡 (settable, string) 工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+									340 选项卡项目 (selectable, settable, string) 工位 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+									341 选项卡项目 (selectable, settable, string) 区域 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+									342 选项卡项目 (selectable, settable, string) 工况 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+									343 选项卡项目 (selectable, settable, string) 校验 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_viewport.sdurws::ird::requirements::RequirementsPanelWidget.QWidget.QTabWidget.qt_tabwidget_tabbar
+				344 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_hcontainer
+					345 滚动条 (settable, float) Value: 0 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_hcontainer.QScrollBar
+				346 组 (settable, string) ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_vcontainer
+					347 滚动条 (settable, float) Value: 0 ID: QApplication.ird_requirements_dock.ird_requirements_dock_scroll.qt_scrollarea_vcontainer.QScrollBar
+
+Document text: ```
+跨域就绪摘要
+建模：输入不完整
+需求：待提交后判定
+运动学：输入不完整
+```

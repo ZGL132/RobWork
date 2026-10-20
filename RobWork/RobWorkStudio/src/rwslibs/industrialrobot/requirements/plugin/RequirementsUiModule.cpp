@@ -435,6 +435,7 @@ void RequirementsUiModule::attachPanel(RequirementsPanelWidget* panel)
     // 又有 setWritable 到达，attachPanel 完成后面板必等于模块缓存态）。
     if (m_panel != nullptr) {
         m_panel->setWritable(m_writable);
+        if (m_view3dSeamsBound) { m_panel->setView3DSeams(m_view3dSeams); }
     }
     wirePanelPostEdit();
 }
@@ -837,9 +838,13 @@ void RequirementsUiModule::bindView3DSeams(RequirementsView3DSeams seams)
     m_guard.assertOnUiThread();
     // lastPicked 缝重写为自引用闭包（本模块即拾取登记面——宿主透传的
     // 其余缝保持原样）。
-    seams.lastPickedObjectId = [this]() { return m_lastView3DPick; };
+    // 宿主真拾取源包含建模/场景对象，不能被仅接收本域对象的适配器缓存覆盖。
+    if (!seams.lastPickedObjectId) {
+        seams.lastPickedObjectId = [this]() { return m_lastView3DPick; };
+    }
     m_view3dSeams = std::move(seams);
     m_view3dSeamsBound = true;
+    if (m_panel) { m_panel->setView3DSeams(m_view3dSeams); }
 }
 
 void RequirementsUiModule::bindStationMarkersSink(
@@ -897,8 +902,11 @@ bool RequirementsUiModule::executeDomainCommand(const std::string& commandId)
     }
     // UI-T33：三维缝透传（绑定在位＝capture-tcp/pick-feature 走真数据源；
     // 未绑定＝空指针透传，面板/命令流保持诚实降级原文）。
-    return m_panel->executeDomainCommand(
-        commandId, m_view3dSeamsBound ? &m_view3dSeams : nullptr);
+    // 命令栈上副本固定发起时基线与函数对象，避免嵌套循环重绑成员导致悬空。
+    auto seams = m_view3dSeams;
+    seams.sessionRevisionId = m_session.baseRevision
+        ? m_session.baseRevision->toCanonical() : std::string{};
+    return m_panel->executeDomainCommand(commandId, m_view3dSeamsBound ? &seams : nullptr);
 }
 
 }  // namespace sdurws::ird::requirements

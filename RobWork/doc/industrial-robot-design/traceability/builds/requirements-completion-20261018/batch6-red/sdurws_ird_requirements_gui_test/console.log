@@ -1,0 +1,28 @@
+Note: Google Test filter = *BatchParameters*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(213): error: Expected: (batch) != (nullptr), actual: NULL vs (nullptr)
+需求工位必须有非模态筛选/批量参数编辑入口
+
+[  FAILED  ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12 (462 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(250): error: Expected: (batch) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12 (15 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(268): error: Expected: (batch) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12 (15 ms)
+[----------] 3 tests from RequirementsSessionGuiTest (494 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (494 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+
+ 3 FAILED TESTS

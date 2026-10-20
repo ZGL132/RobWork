@@ -1,0 +1,28 @@
+Note: Google Test filter = *ToolManager*:*ToolRealFile*
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.ToolManagerPendingSelectionReadOnly_MDL13_AT01
+[       OK ] ModelingPanelGuiTest.ToolManagerPendingSelectionReadOnly_MDL13_AT01 (1553 ms)
+[----------] 1 test from ModelingPanelGuiTest (1553 ms total)
+
+[----------] 3 tests from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01
+[       OK ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01 (964 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1113): error: Value of: scroll->viewport()->rect().contains(bodyApply->mapTo(scroll->viewport(),bodyApply->rect().center()))
+  Actual: false
+Expected: true
+
+[  FAILED  ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01 (1144 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28
+[       OK ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28 (2261 ms)
+[----------] 3 tests from ModelingUiModuleHostWiring (4369 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (5923 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01
+
+ 1 FAILED TEST

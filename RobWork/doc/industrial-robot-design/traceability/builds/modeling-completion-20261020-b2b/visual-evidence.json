@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "modeling-pose-window-evidence/1",
+  "viewportRoi": [
+    511,
+    98,
+    1528,
+    1074
+  ],
+  "changedPixelsAbove12": 1934,
+  "totalViewportPixels": 992592,
+  "pixelEvidence": "仅证明同相机下真实三维呈现变化；几何正确性另由真实Device q及独立FK测试核对",
+  "before": "modeling-tour/mtour-b2b-before-restore.png",
+  "after": "modeling-tour/mtour-b2b-after-restore.png"
+}

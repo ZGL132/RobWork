@@ -181,17 +181,17 @@ struct MirrorPlaneSpec {
  * 四构型的字段读取表（其余字段忽略——逐构型校验各自子集，缺省值不
  * 参与语义）：
  *   - Linear     ：direction/spacingM/count；
- *   - Rectangular ：direction/spacingM/count＋direction2/spacing2M/count2；
- *   - Circular    ：center/radiusM/startAngleRad/angleStepRad/count；
+ *   - Rectangular ：主/第二/第三方向及各自间距/计数；默认count3=1保留旧二维；
+ *   - Circular    ：center/radiusM/startAngleRad/angleStepRad/count/circleNormal；
  *   - Polyline    ：polyline/polylineSpacingM。
  *
  * 几何语义（全在源条目 refFrame 系下表达；派生条目继承源 refFrame）：
  *   - Linear      ：第 i 条（i=1..count）位置＝源位置＋direction·(spacingM·i)；
- *   - Rectangular ：第 (i,j) 条＝源位置＋direction·(spacingM·i)＋
- *                   direction2·(spacing2M·j)，i=1..count、j=1..count2；
- *   - Circular    ：第 i 条位于 refFrame 系 XY 平面圆（法向 Z——圆心/
- *                   半径在该平面表达）上，角度 θᵢ = startAngleRad＋
- *                   angleStepRad·i，位置＝center＋radiusM·(cosθᵢ, sinθᵢ, 0)；
+ *   - Rectangular ：第(i,j,k)条＝源位置＋单位主方向·spacingM·i＋单位第二
+ *                   方向·spacing2M·j＋单位层方向·spacing3M·k；i/j从1起，k从0起。
+ *   - Circular    ：第i条位于circleNormal定义的圆面，角度θᵢ=startAngleRad＋
+ *                   angleStepRad·i，位置=center＋radiusM·(u cosθᵢ＋v sinθᵢ)，
+ *                   u/v的确定性定义见circleNormal字段；默认法向+Z即旧XY圆。
  *   - Polyline    ：沿折线从起点量弧长 sₖ = polylineSpacingM·k（k=1 起），
  *                   sₖ ≤ 折线总弧长的每个 sₖ 处放一条（条数由间距与
  *                   总弧长派生——"数量"不由调用方直接指定）。
@@ -215,11 +215,20 @@ struct ArrayParams {
     double spacing2M = 0.0;  ///< 第二向间距（m；>0 且有限）
     int count2 = 0;          ///< 第二向条数（仅 Rectangular；≥1）
 
+    // ---- REQ-11第三方向组（所有者2026-10-18审阅批准，WP-14-T12）----
+    // 单层时完全忽略第三方向/间距且不写新增配方键，保持历史二维产物兼容。
+    rw::math::Vector3D<double> direction3{0.0, 0.0, 1.0}; ///< 层方向，无量纲，源refFrame系；多层时非零有限。
+    double spacing3M = 0.0; ///< 层间距，m；count3>1时>0有限，单层默认0不参与几何。
+    int count3 = 1; ///< 层数，≥1；第k层偏移(k-1)·spacing3M，首层位于原二维平面。
+
     // ---- Circular ----
-    rw::math::Vector3D<double> center{0.0, 0.0, 0.0};  ///< 圆心（m；refFrame 系 XY 平面内）
+    rw::math::Vector3D<double> center{0.0, 0.0, 0.0};  ///< 圆心（m；源refFrame系；圆面经过该点）
     double radiusM = 0.0;        ///< 圆半径（m；>0 且有限）
     double startAngleRad = 0.0;  ///< 起始角（rad；自 +X 轴逆时针）
     double angleStepRad = 0.0;   ///< 角步距（rad；非零——0 步距生成全重名同位点，非法）
+    /// 圆平面法向，无量纲，源refFrame系，非零有限；默认+Z保留旧XY圆。
+    /// 零角方向为+X在圆面投影的单位向量，平行于X时改用+Y；第二基向量n×u。
+    rw::math::Vector3D<double> circleNormal{0.0, 0.0, 1.0};
 
     // ---- Polyline ----
     std::vector<rw::math::Vector3D<double>> polyline;  ///< 折线顶点（m；refFrame 系；≥2 点，相邻点不重合）
@@ -261,6 +270,9 @@ struct EditBatch {
     std::vector<core::DiagnosticRecord> diagnostics;  ///< ok 态：批次警告诊断（warning 级——不阻断应用）
     std::string summary;             ///< ok 态：人读中文摘要（"镜像生成 N 条"等）
     RequirementError error{};        ///< err 态：首个参数违例（调用方错误值面）
+    /// 已存在工位的完整更新值；ObjectId必须存在且批内唯一，不能与新增/替换重叠。
+    /// REQ-11解除关联保留身份/工况引用；与其他载荷共同校验、一次入栈，默认空兼容旧调用。
+    std::vector<TaskPoint> updatedPoints;
 
     bool operator==(const EditBatch& o) const;
     bool operator!=(const EditBatch& o) const { return !(*this == o); }

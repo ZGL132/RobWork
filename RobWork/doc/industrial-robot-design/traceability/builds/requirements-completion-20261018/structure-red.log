@@ -1,0 +1,23 @@
+Note: Google Test filter = *ConditionStructure*WP14T12
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.ConditionStructureAtomicApply_AT02_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2278): error: Expected: (payloads) != (nullptr), actual: NULL vs (nullptr)
+空工况必须提供负载结构编辑入口
+
+[  FAILED  ] RequirementsSessionGuiTest.ConditionStructureAtomicApply_AT02_WP14T12 (424 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionStructureRejectCancelReadOnly_AT02_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2320): error: Expected: (add) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] RequirementsSessionGuiTest.ConditionStructureRejectCancelReadOnly_AT02_WP14T12 (15 ms)
+[----------] 2 tests from RequirementsSessionGuiTest (440 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (440 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.ConditionStructureAtomicApply_AT02_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.ConditionStructureRejectCancelReadOnly_AT02_WP14T12
+
+ 2 FAILED TESTS

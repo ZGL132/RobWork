@@ -340,7 +340,10 @@ private:
  *     建模闭包内对象（域外/无效身份拒绝上报＝false，零伪造——协议
  *     selectBusiness 的无效身份契约会 fail-fast，域侧先过滤）；以
  *     SelectionSource::View3DPick 汇入唯一写入口（L2 高亮判定随服务
- *     编排——本类不做正向存在性判定，那是 nameMap 端口的事）。
+ *     编排——本类不做正向存在性判定，那是 nameMap 端口的事）；
+ *   - 上行（差异定位命令）：reportCommandSelection 复用同一闭包过滤，
+ *     以 Command 来源上报。相同选中被服务幂等省略广播时，只重放域面板
+ *     定位，仍由共享服务持有唯一业务选择，禁止从下行回调重入写服务。
  *
  * 订阅生命周期：attach(service) 订阅（RAII 句柄由本类持有）；detach()
  * 显式退订；析构自动退订——**service 必须晚于本对象析构**（句柄退订
@@ -392,7 +395,24 @@ public:
      */
     bool reportView3DPick(const core::ObjectId& oid);
 
+    /**
+     * @brief F16/UX-13：将差异定位作为命令来源上报共享选择服务。
+     * @param oid [in] 当前建模闭包内的有效身份；不按报告旧下标猜测对象。
+     * @return true＝共享选择与面板已同步；未订阅、无效或闭包外身份返回
+     *         false，保留既有选中。仅 UI 线程调用，不得从选择广播中重入。
+     */
+    bool reportCommandSelection(const core::ObjectId& oid);
+
 private:
+    /**
+     * @brief 复用同一闭包过滤和唯一写入口，保留拾取与命令的真实来源。
+     * @param oid [in] 待定位的有效对象身份。
+     * @param source [in] 调用入口的真实来源，不在适配器中重命名来源。
+     * @return 已上报返回 true；服务缺位或身份不属于当前工作集返回 false。
+     * 服务幂等不广播时，仅重放面板下行定位，禁止在下行回调中再写服务。
+     */
+    bool reportSelection(const core::ObjectId& oid, ui::SelectionSource source);
+
     ModelingSharedSurfaceDeps m_deps;       ///< 装配依赖（非 owning——见结构注）
     ui::SelectionService* m_service = nullptr;  ///< 已订阅服务（attach/detach 管理）
     std::unique_ptr<core::IEventSubscription> m_subscription;  ///< RAII 订阅句柄

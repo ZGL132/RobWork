@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="1" disabled="0" errors="0" time="0.002" timestamp="2026-10-20T14:07:13.839" name="AllTests">
+  <testsuite name="MdlLegacyHistory" tests="4" failures="1" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-20T14:07:13.839">
+    <testcase name="FiveApplyTokensIgnoreUnreferencedHistoricalParts_PM18_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="896" status="run" result="completed" time="0.001" timestamp="2026-10-20T14:07:13.839" classname="MdlLegacyHistory" />
+    <testcase name="FiveRestoreTokensReattachRetainedPartsFromFixedRevision_PM18_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="932" status="run" result="completed" time="0." timestamp="2026-10-20T14:07:13.841" classname="MdlLegacyHistory">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:954&#x0A;Value of: plan.requiresDualCompile&#x0A;  Actual: false&#x0A;Expected: true&#x0A;历史根重新挂接运行时部件，不能沿用纯命名位姿族的false位&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(949): apply-named-poses&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:954
+Value of: plan.requiresDualCompile
+  Actual: false
+Expected: true
+历史根重新挂接运行时部件，不能沿用纯命名位姿族的false位
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(949): apply-named-poses
+]]></failure>
+    </testcase>
+    <testcase name="PoseOnlyRestoreKeepsRuntimeCompilationSkipped_PM18_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="959" status="run" result="completed" time="0." timestamp="2026-10-20T14:07:13.841" classname="MdlLegacyHistory" />
+    <testcase name="RestoreRejectsDuplicateWrongTokenAndEmbeddedIdentity_PM18_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="990" status="run" result="completed" time="0." timestamp="2026-10-20T14:07:13.841" classname="MdlLegacyHistory" />
+  </testsuite>
+</testsuites>

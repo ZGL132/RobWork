@@ -112,19 +112,20 @@ constexpr const char* kDraftStaleConflictCancelActionKey = "ui.draft.stale-confl
 // =====================================================================
 
 /**
- * @brief 保存触发源（§10.5 冻结词表；§4.4.5 origin 三值中的 ui 可产出
- *        两值与关闭对话框场景）。
+ * @brief 保存触发源（§10.5；§4.4.5 origin 三值及关闭对话框场景）。
  *
  * 语义锚点：Autosave＝定时落盘（origin=autosave）；Manual＝手动保存
  * （Ctrl+S/命令面板，origin=manual）；CloseDialog＝关闭对话框内的
  * saveAll(Manual)（§8.4"关闭流程中的 saveAll(Manual)"——落盘语义与
- * Manual 相同，触发语境单独成词便于呈现区分进度来源）。ui 永不产出
- * apply-retained（应用被拒后的草稿保留由对端回写——§8.5）。
+ * Manual 相同，触发语境单独成词便于呈现区分进度来源）。ApplyRetained
+ * 仅保留未决Stale原稿（origin=apply-retained），不清脏/冲突，不提交或重建。
+ * ui经既有C-5端口请求，由project唯一DraftService落盘（PM-04/AT-29）。
  */
 enum class SaveTrigger : std::uint8_t {
     Autosave,   ///< 定时落盘（origin=autosave）
     Manual,     ///< 手动保存（origin=manual）
     CloseDialog,///< 关闭对话框保存（落盘语义＝Manual——§8.4 同一入口）
+    ApplyRetained, ///< Stale显式保留：只保存未决冲突模块，保持原base/脏标记/历史。
 };
 
 // =====================================================================
@@ -591,6 +592,23 @@ public:
      */
     virtual void notifySessionDirty(const ModuleDraftHandle& handle) = 0;
 
+    /**
+     * @brief 域确认完整工作集已回到应用基线后，结算本模块的未应用磁盘稿。
+     * @param handle [in] 已挂接模块句柄；调用方必须先按域的完整内容比较确认干净。
+     * @return 经既有后台串行端口消费成功才清会话脏代次及保存来源/时刻；
+     *         失败返回原错误且保留状态。默认实现返回not-supported，不冒称已清理。
+     * @throws std::logic_error 真实控制器未绑定可写会话或句柄未挂接。
+     *
+     * 仅UI线程调用。此通知不是命令提交，不产生修订，不改变域内容、冲突或
+     * 局部undo/redo历史；重做回到编辑态后仍须notifySessionDirty。磁盘缺失
+     * 为幂等成功，文件/分支规则唯一归project；不得直接删除文件绕过端口。
+     */
+    virtual DraftDiscardOutcome notifySessionClean(const ModuleDraftHandle& handle)
+    {
+        (void)handle;
+        return {false, "not-supported", "当前草稿控制器不支持干净状态结算"};
+    }
+
     // ---- 汇总（§8.2——未保存标记与跨模块汇总）----
 
     /**
@@ -616,7 +634,7 @@ public:
      * 执行序（§8.2 数据流逐框）：收集脏模块→逐模块 buildDraftDocument
      * （UI 线程，纯内存）→控制器补齐会话一致性字段（归属三元组/时刻/
      * origin）→经落盘执行器调用 save（**磁盘段全在落盘线程**）→阻塞
-     * 等待结局→成功且期间无新编辑清脏标记（脏代次守卫——§8.4"save
+     * 等待结局→普通保存成功且期间无新编辑清脏标记（脏代次守卫——§8.4"save
      * 期间的新脏数据进入下一周期"）→失败保留脏标记＋firstError。
      *
      * 保存/应用分离（PM-04 红线）：本方法只落 drafts/、**零修订**——
@@ -625,7 +643,8 @@ public:
      *
      * @param trigger [in] 触发源（Manual/CloseDialog＝origin=manual
      *                落盘语义；Autosave＝origin=autosave——同一落盘
-     *                入口，§8.4"共用 DraftService 同一入口"）
+     *                入口，§8.4"共用 DraftService 同一入口"）；ApplyRetained只保存
+     *                未决Stale模块，即使已手动清脏仍保存原稿，成功不清脏/冲突
      * @return 保存结局（savedCount/failedCount/firstError——呈现层
      *         即时反馈与关闭对话框失败中止的数据面）
      *
@@ -721,7 +740,8 @@ public:
      *
      * 分支表（§8.5/§8.6 逐行）：
      *   - Committed：应用成功＝草稿被消费（§8.6"应用成功后磁盘草稿由
-     *     project 侧处置；ui 清会话脏标记"）——清脏＋清局部撤销栈
+     *     project 侧处置；ui 清会话脏标记”）——先经既有C-5写端口在串行
+     *     磁盘执行器消费本模块草稿，成功后清脏＋清局部撤销栈
      *     （§8.7"局部撤销不能撤销已应用修订"）＋记录已应用修订；
      *   - Rejected(stale-revision)：冲突未决——**草稿保留**（脏标记
      *     保持；§8.5"拒绝永远不销毁草稿"）＋暂存冲突定位数据（对话
@@ -734,7 +754,9 @@ public:
      * @param result [in] 命令结果投影（staleDetail 仅
      *               Rejected("stale-revision") 时非空——presence 纪律）
      *
-     * @throws std::logic_error 句柄未挂接（路由违约）
+     * @throws std::logic_error 句柄未挂接或只读会话收到Committed（路由违约）
+     * @throws std::runtime_error 已提交但草稿消费失败；保留原控制器状态，
+     *         路由方须保留真实Committed事实并报告回执失败，禁止自动再提交。
      */
     virtual void onCommandResult(const ModuleDraftHandle& handle,
                                  const CommandResultProjection& result) = 0;

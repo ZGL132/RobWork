@@ -1,0 +1,348 @@
+{
+  "schemaVersion": "requirements-a23-verification/1",
+  "taskId": "WP-14-T12",
+  "baseCommit": "b3ae9582e679b6dbbde80bb526e75e2384b1f0ff",
+  "scope": "A-23工程策略闭环；不构成原120项全功能终验",
+  "environment": {
+    "os": "Windows",
+    "toolchain": "Visual Studio 2022 x64",
+    "qtPlatform": "windows",
+    "guiExecutables": "绝对路径、串行"
+  },
+  "builds": {
+    "integration": "PASS，全量Release",
+    "standalone": "PASS，12个相关目标",
+    "gates": "PASS，零命中",
+    "verifyTask": "PASS，3条机器命令"
+  },
+  "totals": {
+    "total": 3639,
+    "passed": 3635,
+    "failed": 0,
+    "skipped": 4,
+    "envUnavailable": 4
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "reportOrigin": "native-ird-listener",
+      "total": 391,
+      "passed": 391,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "modeling_contract",
+      "reportOrigin": "native-ird-listener",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "modeling_gui",
+      "reportOrigin": "native-ird-listener",
+      "total": 45,
+      "passed": 45,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "ui",
+      "reportOrigin": "native-ird-listener",
+      "total": 324,
+      "passed": 324,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "ui_contract",
+      "reportOrigin": "native-ird-listener",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "ui_gui",
+      "reportOrigin": "native-ird-listener",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "requirements",
+      "reportOrigin": "native-ird-listener",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1,
+      "envUnavailable": 1,
+      "skippedTests": [
+        {
+          "name": "GuiRegistration.V22RegisteredNotExecuted_ACC1",
+          "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\requirements\\test\\GoldenDatasetsContractTest.cpp:2018\nV-22 GUI 流程仅登记（envUnavailable 如实登记）\n"
+        }
+      ]
+    },
+    {
+      "name": "requirements_contract",
+      "reportOrigin": "native-ird-listener",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "requirements_gui",
+      "reportOrigin": "native-ird-listener",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "kinematics",
+      "reportOrigin": "native-ird-listener",
+      "total": 287,
+      "passed": 286,
+      "failed": 0,
+      "skipped": 1,
+      "envUnavailable": 1,
+      "skippedTests": [
+        {
+          "name": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1",
+          "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\kinematics\\test\\PluginPanelTest.cpp:836\nGUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）\n"
+        }
+      ]
+    },
+    {
+      "name": "kinematics_contract",
+      "reportOrigin": "native-ird-listener",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "kinematics_gui",
+      "reportOrigin": "native-ird-listener",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_modeling",
+      "reportOrigin": "native-ird-listener",
+      "total": 316,
+      "passed": 316,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "reportOrigin": "native-ird-listener",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "reportOrigin": "native-ird-listener",
+      "total": 40,
+      "passed": 40,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_ui",
+      "reportOrigin": "native-ird-listener",
+      "total": 267,
+      "passed": 267,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_ui_contract",
+      "reportOrigin": "native-ird-listener",
+      "total": 34,
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_ui_gui",
+      "reportOrigin": "native-ird-listener",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_requirements",
+      "reportOrigin": "native-ird-listener",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1,
+      "envUnavailable": 1,
+      "skippedTests": [
+        {
+          "name": "GuiRegistration.V22RegisteredNotExecuted_ACC1",
+          "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\requirements\\test\\GoldenDatasetsContractTest.cpp:2018\nV-22 GUI 流程仅登记（envUnavailable 如实登记）\n"
+        }
+      ]
+    },
+    {
+      "name": "standalone_requirements_contract",
+      "reportOrigin": "native-ird-listener",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_requirements_gui",
+      "reportOrigin": "native-ird-listener",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_kinematics",
+      "reportOrigin": "native-ird-listener",
+      "total": 280,
+      "passed": 279,
+      "failed": 0,
+      "skipped": 1,
+      "envUnavailable": 1,
+      "skippedTests": [
+        {
+          "name": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1",
+          "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\kinematics\\test\\PluginPanelTest.cpp:836\nGUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）\n"
+        }
+      ]
+    },
+    {
+      "name": "standalone_kinematics_contract",
+      "reportOrigin": "native-ird-listener",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_kinematics_gui",
+      "reportOrigin": "native-ird-listener",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "policy",
+      "reportOrigin": "derived-from-gtest-xml",
+      "total": 211,
+      "passed": 211,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "project",
+      "reportOrigin": "native-ird-listener",
+      "total": 282,
+      "passed": 282,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "core",
+      "reportOrigin": "derived-from-gtest-xml",
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    }
+  ],
+  "tours": [
+    {
+      "name": "modeling-tour",
+      "passedAssertions": 262,
+      "failedAssertions": 0,
+      "screenshots": 25,
+      "exitCode": 0
+    },
+    {
+      "name": "requirements-tour",
+      "passedAssertions": 235,
+      "failedAssertions": 0,
+      "screenshots": 31,
+      "exitCode": 0
+    }
+  ],
+  "closedInThisBatch": [
+    "OPEN-02"
+  ],
+  "remainingIssues": [
+    "OPEN-03",
+    "OPEN-04",
+    "OPEN-05",
+    "OPEN-07",
+    "OPEN-08"
+  ],
+  "limitations": [
+    "无真实碰撞设施时只给数据不足，不代表完成真实碰撞检测",
+    "独立UI不含集成专属HostEngineeringPolicy/KinEvaluationChannel用例",
+    "只读/分支/跨项目隔离由真实ProjectStore契约覆盖，未以此代替原120项终验"
+  ]
+}

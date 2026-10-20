@@ -33,6 +33,7 @@
 #include <Eigen/Cholesky>  // LLT——DLS 正规方程 (JJᵀ＋λ²I) 求解（O-40 Eigen PRIVATE）
 
 #include <cmath>
+#include <algorithm>
 #include <limits>
 #include <optional>
 #include <stdexcept>
@@ -108,8 +109,8 @@ bool targetAllFinite(const rw::math::Transform3D<double>& t)
 
 /// TCP 未配置/悬空（§9.6 KIN-NO-TCP 两分语义）——消息锚见 resolveTcpOrThrow。
 
-/// 解析 TCP 引用（空键＝canonical TCP；非空精确匹配 localName——违例
- /// FrameUnresolved）。求解器 fail-fast 轨：解析失败以 invalid_argument
+/// 解析 TCP 引用（空键＝默认TCP；非空先命中原tcpKey再允许localName旧别名——违例
+/// FrameUnresolved）。求解器 fail-fast 轨：解析失败以 invalid_argument
 /// 抛出（消息携带 KIN-NO-TCP/FrameUnresolved 语义锚——§5.5 错误组）。
 const runtime::CanonicalTool& resolveTcpOrThrow(const IKinRuntimeView& view,
                                                 const TcpRef& tcp)
@@ -126,7 +127,10 @@ const runtime::CanonicalTool& resolveTcpOrThrow(const IKinRuntimeView& view,
                    "（KIN-NO-TCP 语义锚——§5.5/§9.6；调用方错误 fail-fast）");
     }
     const runtime::CanonicalTool& tool = tools.at(loc->index);
-    if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName) {
+    // A-15：只验证同一快照的键；实际变换由FK和解析界限各自消费，不在UI造真值。
+    const auto named = std::find_if(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+        [&](const auto& entry) { return entry.first == tcp.tcpKey; });
+    if (!tcp.tcpKey.empty() && named == tool.namedTcpOffsets.end() && tcp.tcpKey != tool.localName) {
         failCaller("IkRequest.tcp：tcpKey '" + tcp.tcpKey + "' 不命中工具 '"
                    + tool.localName + "' 的 canonical TCP"
                    "（FrameUnresolved 语义锚——§9.2；调用方错误 fail-fast）");
@@ -175,6 +179,192 @@ Eigen::Matrix<double, 6, 1> poseError(const rw::math::Transform3D<double>& targe
     oriResidualOut = aa.angle() < 0.0 ? -aa.angle() : aa.angle();
     return e;
 }
+
+/**
+ * @brief Z-Y-X 欧拉提取（参考系内 roll/pitch/yaw，rad——残差与欧拉率
+ *        Jacobian 共用的单一真值，批34 提升为文件级）。
+ *
+ * ★ 批34（评审 F3）：万向锁 ±90° 两分支同号——ZYX 提取在 cp=0 时
+ * r(0,1)/r(1,1)＝sin/cos(r∓y)（+90°为 r−y、−90°为 r+y），roll 固定 0
+ * 后两者都给出 yaw＝−atan2(r(0,1), r(1,1))；旧实现按 sinPitch 翻号使
+ * +90° 分支 yaw 反号（评审反例"正90°俯仰分支的yaw符号错误"）。
+ */
+std::array<double, 3> zyxEulerAngles(const rw::math::Rotation3D<double>& r)
+{
+    constexpr double kGimbalEpsilon = 1e-5;
+    constexpr double kHalfPi = 1.57079632679489661923;
+    const double cosPitch = std::sqrt(r(0, 0) * r(0, 0) + r(1, 0) * r(1, 0));
+    const double sinPitch = -r(2, 0);
+    std::array<double, 3> a{}; // roll(X), pitch(Y), yaw(Z)，单位 rad
+    if (cosPitch < kGimbalEpsilon) {
+        // 万向锁时固定 roll=0，yaw 从剩余矩阵项确定（两分支同号——见上注）。
+        a[0] = 0.0;
+        a[1] = sinPitch < 0.0 ? -kHalfPi : kHalfPi;
+        a[2] = -std::atan2(r(0, 1), r(1, 1));
+    } else {
+        a[1] = std::atan2(sinPitch, cosPitch);
+        a[0] = std::atan2(r(2, 1), r(2, 2));
+        a[2] = std::atan2(r(1, 0), r(0, 0));
+    }
+    return a;
+}
+
+/// 跨周最短角差（rad），固定到[-pi,pi]，用于残差及差分角展开。
+double wrapAngle(double angle)
+{
+    return std::atan2(std::sin(angle), std::cos(angle));
+}
+
+/// 参考系转置：输入参考轴在基座系的旋转，返回基座系到参考系的旋转。
+rw::math::Rotation3D<double> transposeOf(const rw::math::Rotation3D<double>& r)
+{
+    return rw::math::Rotation3D<double>(
+        r(0,0),r(1,0),r(2,0), r(0,1),r(1,1),r(2,1), r(0,2),r(1,2),r(2,2));
+}
+
+/// 逐项矩阵乘法，避免独立冒烟模式引入框架库外联符号；输入输出均为旋转值。
+rw::math::Rotation3D<double> composeOf(const rw::math::Rotation3D<double>& a,
+                                     const rw::math::Rotation3D<double>& b)
+{
+    return rw::math::Rotation3D<double>(
+        a(0,0)*b(0,0)+a(0,1)*b(1,0)+a(0,2)*b(2,0),
+        a(0,0)*b(0,1)+a(0,1)*b(1,1)+a(0,2)*b(2,1),
+        a(0,0)*b(0,2)+a(0,1)*b(1,2)+a(0,2)*b(2,2),
+        a(1,0)*b(0,0)+a(1,1)*b(1,0)+a(1,2)*b(2,0),
+        a(1,0)*b(0,1)+a(1,1)*b(1,1)+a(1,2)*b(2,1),
+        a(1,0)*b(0,2)+a(1,1)*b(1,2)+a(1,2)*b(2,2),
+        a(2,0)*b(0,0)+a(2,1)*b(1,0)+a(2,2)*b(2,0),
+        a(2,0)*b(0,1)+a(2,1)*b(1,1)+a(2,2)*b(2,1),
+        a(2,0)*b(0,2)+a(2,1)*b(1,2)+a(2,2)*b(2,2));
+}
+
+/**
+ * @brief 在目标工具Z轴旋转族中选离实际姿态最近的合法旋转（A-16）。
+ * @param target [in] 基座系目标姿态，只读借用。
+ * @param actual [in] 同一FK快照的基座系实际姿态，只读借用。
+ * @param range [in] 合法工具轴扭转区间，rad，已由请求校验保证有限且递增。
+ * @return 基座系最近目标族旋转值。反向轴退化时固定零扭转参考后再投影区间。
+ *
+ * 最小测地角等价于最大化trace(E*Rz(-theta))，E=target^T*actual；
+ * 其theta相关项为(E00+E11)cos(theta)+(E10-E01)sin(theta)。
+ * 因而直接atan2得到最优扭转，不把ZYZ的gamma误认为完整swing/twist扭转。
+ * 只投影目标，不把反向180度的零反对称部分错误视为已满足。
+ */
+rw::math::Rotation3D<double> nearestToolRollTarget(
+    const rw::math::Rotation3D<double>& target,
+    const rw::math::Rotation3D<double>& actual,
+    const std::array<double,2>& range)
+{
+    constexpr double kTwoPi=6.28318530717958647692;
+    const auto relative=composeOf(transposeOf(target),actual);
+    const double sine=relative(1,0)-relative(0,1);
+    const double cosine=relative(0,0)+relative(1,1);
+    // 轴反向时整族等距，固定theta=0避免atan2的有符号零影响确定性。
+    double theta=std::hypot(sine,cosine)>1e-12 ? std::atan2(sine,cosine) : 0.0;
+    const double span=range[1]-range[0];
+    if(span<kTwoPi) {
+        double offset=std::fmod(theta-range[0],kTwoPi);
+        if(offset<0.0) offset+=kTwoPi;
+        if(offset<=span) {
+            theta=range[0]+offset; // 同一姿态的周期等价元确在区间内。
+        } else {
+            // 周期意义下比较两端，跨±pi和非零周数区间不能直接数值clamp。
+            theta=std::fabs(wrapAngle(theta-range[0]))
+                <=std::fabs(wrapAngle(theta-range[1])) ? range[0] : range[1];
+        }
+    }
+    const double c=std::cos(theta),s=std::sin(theta);
+    return composeOf(target,rw::math::Rotation3D<double>(c,-s,0,s,c,0,0,0,1));
+}
+
+/**
+ * @brief 按A-16唯一契约构造参考系六分量目标减实际残差。
+ * @param target [in] 基座系目标，位置m、旋转无量纲，借用。
+ * @param actual [in] 同一快照真实FK，位置m，借用。
+ * @param constraint [in] 参考系旋转、六分量掩码和工具轴扭转区间，借用。
+ * @param posResidual [out] 启用位置分量的二范数，m。
+ * @param oriResidual [out] 启用欧拉分量的二范数，rad。
+ * @return 固定x/y/z/roll/pitch/yaw顺序，未启用行置零；无共享状态且不抛异常。
+ *
+ * 绕轴自由只改变允许的目标族；之后仍用同一参考系ZYX分量与掩码，
+ * 不把Euler分量替换为轴角分量，也不依据自由分量选择另一套Euler表示。
+ * 迭代、收敛及独立FK复验均调用本函数，防止“求得的解”与验收语义分裂。
+ */
+Eigen::Matrix<double,6,1> constrainedPoseError(
+    const rw::math::Transform3D<double>& target,
+    const rw::math::Transform3D<double>& actual,
+    const TaskPoseConstraint& constraint,double& posResidual,double& oriResidual)
+{
+    const auto& rr=constraint.referenceInBase;
+    const auto refT=transposeOf(rr);
+    const auto desired=constraint.allowToolRoll
+        ?nearestToolRollTarget(target.R(),actual.R(),constraint.rollRange):target.R();
+    const auto targetRpy=zyxEulerAngles(composeOf(refT,desired));
+    const auto actualRpy=zyxEulerAngles(composeOf(refT,actual.R()));
+    const auto dp=target.P()-actual.P();
+    Eigen::Matrix<double,6,1> e=Eigen::Matrix<double,6,1>::Zero();
+    double p2=0.0,r2=0.0;
+    for(int i=0;i<3;++i) {
+        if(constraint.constrainedDof[static_cast<std::size_t>(i)]) {
+            e(i)=rr(0,i)*dp[0]+rr(1,i)*dp[1]+rr(2,i)*dp[2];
+            p2+=e(i)*e(i);
+        }
+        if(constraint.constrainedDof[static_cast<std::size_t>(3+i)]) {
+            e(3+i)=wrapAngle(targetRpy[static_cast<std::size_t>(i)]
+                            -actualRpy[static_cast<std::size_t>(i)]);
+            r2+=e(3+i)*e(3+i);
+        }
+    }
+    posResidual=std::sqrt(p2);oriResidual=std::sqrt(r2);
+    return e;
+}
+
+/**
+ * @brief 真实FK中心差分构造J=-de/dq，再求固定阻尼最小二乘步长（A-16）。
+ * @param request [in] 当前只读快照、TCP、目标及非空约束；借用且不跨调用保存。
+ * @param q [in] 当前关节向量，转轴rad、移动轴m，顺序与CanonicalModel一致。
+ * @param e [in] 同一q的目标减实际六维残差，m/rad。
+ * @param failure [out] 差分FK失败时的定位文本；调用方转为既有设施失败值。
+ * @return 成功为dq值；失败为nullopt，不以零步长掩盖设施错误。
+ *
+ * 固定每轴先+h再-h、h=1e-7 rad/m。差分整个残差而非几何角速度，
+ * 同时包含参考系投影、Euler提取、目标族周期投影及掩码的导数。
+ * 参数误差本身跨周，差分时也先wrap角差，避免±pi相邻值被误读为2pi跳跃。
+ */
+std::optional<Eigen::VectorXd> constrainedDampedLeastSquaresStep(
+    const IkRequest& request,const std::vector<double>& q,
+    const Eigen::Matrix<double,6,1>& e,std::string& failure)
+{
+    constexpr double kDifferenceStep=1e-7;
+    const auto dof=q.size();
+    Eigen::MatrixXd j=Eigen::MatrixXd::Zero(6,static_cast<Eigen::Index>(dof));
+    const FkEvaluator fk;
+    for(std::size_t column=0;column<dof;++column) {
+        auto plus=q,minus=q;
+        plus[column]+=kDifferenceStep;minus[column]-=kDifferenceStep;
+        const auto fp=fk.evaluate(*request.modelView,request.tcp,plus);
+        const auto fm=fk.evaluate(*request.modelView,request.tcp,minus);
+        if(!fp.ok()||!fm.ok()) {
+            failure="约束Jacobian差分FK失败，轴"+std::to_string(column)+": "
+                +(!fp.ok()?fp.error().detail:fm.error().detail);
+            return std::nullopt;
+        }
+        double unusedPosition=0.0,unusedOrientation=0.0;
+        const auto ep=constrainedPoseError(request.targetInBase,fp.get().tcpInBase,
+            *request.taskConstraint,unusedPosition,unusedOrientation);
+        const auto em=constrainedPoseError(request.targetInBase,fm.get().tcpInBase,
+            *request.taskConstraint,unusedPosition,unusedOrientation);
+        for(int row=0;row<6;++row) {
+            const double difference=row>=3?wrapAngle(ep(row)-em(row)):ep(row)-em(row);
+            j(row,static_cast<Eigen::Index>(column))=-difference/(2.0*kDifferenceStep);
+        }
+    }
+    Eigen::MatrixXd normal=j*j.transpose();
+    const double lambda2=kIkDampingLambda*kIkDampingLambda;
+    for(int i=0;i<6;++i) normal(i,i)+=lambda2;
+    return Eigen::VectorXd(j.transpose()*normal.llt().solve(e));
+}
+
 
 /// 阻尼最小二乘步长 Δq＝Jₜᵀ(JₜJₜᵀ＋λ²I_m)⁻¹eₜ（λ＝kIkDampingLambda——设计
 /// 默认，黄金锁定 T13；行优先雅可比显式映射拷贝——Eigen 默认列主序，
@@ -451,6 +641,30 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
                    + std::to_string(static_cast<unsigned>(request.taskSpace))
                    + "）——调用方错误 fail-fast（NFR-COR-03）");
     }
+    if (request.taskConstraint.has_value()) {
+        const TaskPoseConstraint& c = *request.taskConstraint;
+        bool any = false;
+        for (bool bit : c.constrainedDof) any = any || bit;
+        if (!any) failCaller("IkRequest.taskConstraint：六分量不能全部自由");
+        for (int i = 0; i < 3; ++i) for (int j = 0; j < 3; ++j) {
+            if (!std::isfinite(c.referenceInBase(i, j)))
+                failCaller("IkRequest.taskConstraint.referenceInBase：旋转含非有限分量");
+        }
+        for (int i = 0; i < 3; ++i) {
+            double norm = 0.0;
+            for (int k = 0; k < 3; ++k) norm += c.referenceInBase(k, i) * c.referenceInBase(k, i);
+            if (std::fabs(norm - 1.0) > 1e-9) failCaller("IkRequest.taskConstraint.referenceInBase：旋转非正交");
+            for (int j = i + 1; j < 3; ++j) {
+                double dot = 0.0;
+                for (int k = 0; k < 3; ++k) dot += c.referenceInBase(k, i) * c.referenceInBase(k, j);
+                if (std::fabs(dot) > 1e-9) failCaller("IkRequest.taskConstraint.referenceInBase：旋转非正交");
+            }
+        }
+        if (!std::isfinite(c.rollRange[0]) || !std::isfinite(c.rollRange[1])
+            || c.rollRange[0] >= c.rollRange[1]) {
+            failCaller("IkRequest.taskConstraint.rollRange：区间非法（单位rad）");
+        }
+    }
     // 任务维度（A02 修复核心——目标函数与 Jacobian 子块的维数来源）：
     // 仅位置任务取 3（只位置误差进目标函数）；完整位姿任务取 6（v1
     // 行为逐位保持）。
@@ -534,7 +748,11 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
     outcome.solutionSet.requestIdentity = request.requestIdentity;
     outcome.collisionNotEvaluated = request.collisionSession == nullptr;
 
-    if (targetDistance > bound.get().totalRadius) {
+    const bool fullPositionConstraint = !request.taskConstraint.has_value()
+        || (request.taskConstraint->constrainedDof[0]
+            && request.taskConstraint->constrainedDof[1]
+            && request.taskConstraint->constrainedDof[2]);
+    if (fullPositionConstraint && targetDistance > bound.get().totalRadius) {
         // 结局 5：目标位置超出解析工作半径上界——零迭代，仅产素材
         // （V-10 前半：成立与否归 evidence validateProof）。
         outcome.outcomeKind = IkOutcomeKind::AnalyticBoundExceeded;
@@ -601,12 +819,22 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             // PositionOnly 只查位置残差——A02；FullPose 双残差逐项不变）。
             // e 恒按 6 维产出（姿态残差仍如实计算供记录——PositionOnly
             // 下仅前 taskDim 维进目标函数）。
+            // 验收残差（契约面——欧拉/目标族）供收敛判据与解记录；迭代
+            // 残差（测地——批35 P1-3 迭代/验收分离）供 DLS 步进。
             const Eigen::Matrix<double, 6, 1> e =
-                poseError(request.targetInBase, m.get().tcpInBase,
-                          posResidual, oriResidual);
-            if (convergedForTask(request.taskSpace, posResidual, oriResidual,
-                                 request.positionTolerance,
-                                 request.orientationTolerance)) {
+                request.taskConstraint.has_value()
+                    ? constrainedPoseError(request.targetInBase, m.get().tcpInBase,
+                                           *request.taskConstraint, posResidual,
+                                           oriResidual)
+                    : poseError(request.targetInBase, m.get().tcpInBase,
+                                posResidual, oriResidual);
+            const bool converged = request.taskConstraint.has_value()
+                ? (posResidual <= request.positionTolerance
+                   && oriResidual <= request.orientationTolerance)
+                : convergedForTask(request.taskSpace, posResidual, oriResidual,
+                                   request.positionTolerance,
+                                   request.orientationTolerance);
+            if (converged) {
                 isConverged = true;
                 break;
             }
@@ -625,8 +853,30 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             }
             // 2d. 阻尼最小二乘更新（Δq＝Jₜᵀ(JₜJₜᵀ＋λ²I)⁻¹eₜ——定序固定；
             // taskDim 决定 e 的有效维与 Jacobian 子块行数——A02）。
-            const Eigen::VectorXd dq = dampedLeastSquaresStep(
-                m.get().jacobian, dof, taskDim, e.head(taskDim));
+            Eigen::VectorXd dq;
+            if (request.taskConstraint.has_value()) {
+                // A-16差分仍复用唯一FK；设施失效必须终止整次请求，不能假装无解。
+                std::string differenceFailure;
+                const auto step=constrainedDampedLeastSquaresStep(request,q,e,differenceFailure);
+                if (!step.has_value()) {
+                    return makeFacilityFailure(IkFacilityFailureStage::IterationFkEvaluation,
+                        request,search,differenceFailure);
+                }
+                dq=*step;
+            } else {
+                // 旧nullopt请求沿用原几何Jacobian、阻尼和数值路径。
+                dq=dampedLeastSquaresStep(m.get().jacobian,dof,taskDim,e.head(taskDim));
+            }
+            // ★ 批34：约束求解步长上限（调试实测跨欧拉分支时巨步 29 rad
+            //   ——欧拉提取在 ±90° 分支边界残差跳变，巨步与跳变互激发散；
+            //   步长上限＋DLS 阻尼使跨分支迭代有界可回收）。
+            if (request.taskConstraint.has_value()) {
+                const double dqNorm = dq.norm();
+                constexpr double kConstrainedMaxStep = 0.35;
+                if (dqNorm > kConstrainedMaxStep) {
+                    dq *= kConstrainedMaxStep / dqNorm;
+                }
+            }
             for (std::size_t i = 0; i < dof; ++i) {
                 q[i] += dq(static_cast<Eigen::Index>(i));
             }
@@ -686,14 +936,23 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
                         + recheck.error().detail);
             }
             // 复验残差（比较型量——覆写当次残差变量，供记录承载）。
-            poseError(request.targetInBase, recheck.get().tcpInBase,
-                      posResidual, oriResidual);
+            if (request.taskConstraint.has_value()) {
+                constrainedPoseError(request.targetInBase, recheck.get().tcpInBase,
+                                     *request.taskConstraint, posResidual, oriResidual);
+            } else {
+                poseError(request.targetInBase, recheck.get().tcpInBase,
+                          posResidual, oriResidual);
+            }
             // 复验收敛判据与迭代内同任务维度（A02——PositionOnly 只查
             // 位置残差；两判据必须同源，防"迭代放行、复验拦截"的判据
             // 漂移——残差复验的本意是独立 FK 复算，不是换一套判据）。
-            if (!convergedForTask(request.taskSpace, posResidual, oriResidual,
-                                  request.positionTolerance,
-                                  request.orientationTolerance)) {
+            const bool recheckConverged = request.taskConstraint.has_value()
+                ? (posResidual <= request.positionTolerance
+                   && oriResidual <= request.orientationTolerance)
+                : convergedForTask(request.taskSpace, posResidual, oriResidual,
+                                   request.positionTolerance,
+                                   request.orientationTolerance);
+            if (!recheckConverged) {
                 filteredRecords.push_back(
                     makeFilteredRecord(s, SolutionFilterReason::ResidualRecheck,
                                        posResidual, oriResidual));

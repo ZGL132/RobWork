@@ -9560,6 +9560,15 @@
       "registeredAt": "2026-10-18",
       "title": "validate-docs 增卡头一致性机检维度：「日期」行应含现行版本（卡头最高文档版本行）的登记日期——本次家族修复前 project 卡日期行滞留 2026-09-09 达 v0.1~v0.26 十七个版本、kinematics 滞留 2026-10-12 达十余跳，机检缺失使漂移只能靠验收者通读发现",
       "owner": "治理脚本所有者（validate-docs.ps1 维护批——与既有卡头版本行同步类机检建议一并评估）"
+    },
+    {
+      "id": "F-945",
+      "source": "WP-13-T26 返工批（2026-10-20 attempt 1 验收后——补拍宿主截图时真实暴露；主线 90e9c041 亲测同败＝存量缺陷非集成引入，builds/wp13-t26-integration/ 三阶段红绿证）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-20",
+      "title": "正式宿主 layout 冒烟探针未随 T82 滚动视口适配＋装配拆分断言未随 WP-14-T12 决策更新：IRD_UI_PLUGIN_SMOKE=layout 的命令条布局锚直接对 QDockWidget::widget()（installDockViewport 的 QScrollArea）取 layout() 恒空，整组命令条断言误报 cur=0（T82 合入 2026-10-15 起 DoD 布局冒烟实际不可用，ui-t26 2026-10-18 绿证为旧构建产物）；另 requirements-assembled-split 期望停留 7/2 撤牌口径，而 WP-14-T12/REQ-10 已将九条全数恢复可达（kAssembled=9）",
+      "owner": "WP-13-T26 返工批消账（UiPlugin.cpp 探针解包 QScrollArea 取面板本体＋断言更新 9/0；主线侧该修复随本分支合入带回）"
     }
   ]
 }

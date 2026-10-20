@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.058" timestamp="2026-10-19T23:18:03.069" name="AllTests">
+  <testsuite name="KinEvaluationChannel" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.058" timestamp="2026-10-19T23:18:03.069">
+    <testcase name="ReviewDirectionPositiveCases" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\ui_probe.cpp" line="2" status="run" result="completed" time="0.026" timestamp="2026-10-19T23:18:03.069" classname="KinEvaluationChannel" />
+    <testcase name="ReviewTiltedDirectionPositiveCases" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\ui_probe.cpp" line="30" status="run" result="completed" time="0.015" timestamp="2026-10-19T23:18:03.095" classname="KinEvaluationChannel" />
+    <testcase name="ReviewOppositeDirectionMustFail" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\ui_probe.cpp" line="88" status="run" result="completed" time="0.015" timestamp="2026-10-19T23:18:03.110" classname="KinEvaluationChannel" />
+    <testcase name="ReviewDirectionCorrectionMustConverge" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\requirements-close-20261019\ui_probe.cpp" line="89" status="run" result="completed" time="0.001" timestamp="2026-10-19T23:18:03.126" classname="KinEvaluationChannel" />
+  </testsuite>
+</testsuites>

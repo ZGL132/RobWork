@@ -10,10 +10,16 @@
  */
 
 #include "ModelingPanelWidget.hpp"
+#include "ModelingBodyEditor.hpp"
+#include "ModelingSceneEditor.hpp"
+#include "ModelingToolEditor.hpp"
+#include <QScrollArea>
 
 #include <QApplication>                           // clipboard（UI-T59 预览复制钮）
 #include <QClipboard>                             // QClipboard 完整类型（复制钮——UI-T59）
 #include <QComboBox>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QDoubleValidator>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
@@ -24,9 +30,11 @@
 #include <QLabel>
 #include <QLineEdit>                              // TCP 显示名行编辑（UI-T58）
 #include <QScrollBar>
+#include <QSpinBox>
 #include <QSplitter>
 #include <QStackedWidget>
 #include <QTabWidget>
+#include <QTableWidget>
 #include <QTime>
 #include <QTreeWidgetItemIterator>
 #include <QVBoxLayout>
@@ -36,6 +44,7 @@
 #include <string>
 
 #include <sdurws/ird/modeling/Package.hpp>  // previewExportKindToken（UI-T59——预览类型词表单一来源）
+#include <sdurws/ird/runtime/BaseWorldTransform.hpp> // MDL-22：只消费权威变换作欧拉显示，不另建安装变换。
 #include <sdurws/ird/ui/UiText.hpp>   // 文案键解析（UI-T25——迁移标记标签挂键；
                                       // 构造期命令标题 resolver 尚未注入，此处直读
                                       // UiText 静态表，requirements 面板先例同款）
@@ -55,6 +64,15 @@ namespace {
 constexpr int kAnchorColumn = 1;  // 锚列（树第 2 列——UI-T47 gui 定位复用）
 /// 树标签列（呈现列——localName＋工程用语标签，UX-02）。
 constexpr int kLabelColumn = 0;
+
+/** @brief MDL-22：基座输入页的统一坐标/角度说明；关闭重开后也恢复同一文案。 */
+QString basePlacementInputHint()
+{
+    return QStringLiteral("基座相对世界坐标系：R_world_base=Rz(yaw)·Ry(pitch)·Rx(roll)，"
+        "欧拉角roll/pitch/yaw均为rad；位置为世界系m。地面0°、倒挂180°、壁装90°。"
+        "自定义可选欧拉角或高级EAA（轴×角，rad），仅应用当前表示；切换不写草稿。"
+        "『应用』整体写入草稿，顶栏『应用草稿』才产生项目修订。");
+}
 
 /// 将模型层稳定状态词转换为工程师可直接理解的中文标签；状态词本身仍
 /// 保留在 PanelModel 中，避免 UI 文案反向参与就绪判定。
@@ -90,6 +108,11 @@ constexpr const char* kJointOriginYawKey = "origin-yaw";
 constexpr const char* kJointZeroOffsetKey = "zero-offset";
 constexpr const char* kJointBoundsMinKey = "bounds-min";
 constexpr const char* kJointBoundsMaxKey = "bounds-max";
+constexpr const char* kJointRangeMinKey = "working-range-min";
+constexpr const char* kJointRangeMaxKey = "working-range-max";
+// ---- F01（WP-13-T25）：关节速度/加速度编辑行（表尾追加——寻址锚同风格）。
+constexpr const char* kJointMaxVelocityKey = "max-velocity";
+constexpr const char* kJointMaxAccelerationKey = "max-acceleration";
 
 // ---- UI-T55 工具/场景位姿编辑页字段键（各 6 行——出口分组装配与基线
 //      回填的寻址锚；小写连字符词法同上）---------------------------
@@ -162,6 +185,11 @@ core::UnitToken jointEditUnitToken(core::QuantityKind kind)
     switch (kind) {
     case core::QuantityKind::Length: return core::UnitToken::find("m").value();
     case core::QuantityKind::Angle: return core::UnitToken::find("rad").value();
+    // F01：速度/加速度量纲（rad/s、m/s、rad/s^2、m/s^2——core 17 单位表在册）。
+    case core::QuantityKind::LinearVelocity: return core::UnitToken::find("m/s").value();
+    case core::QuantityKind::AngularVelocity: return core::UnitToken::find("rad/s").value();
+    case core::QuantityKind::LinearAcceleration: return core::UnitToken::find("m/s^2").value();
+    case core::QuantityKind::AngularAcceleration: return core::UnitToken::find("rad/s^2").value();
     default: break;
     }
     return core::UnitToken::find("1").value();  // 轴向＝无量纲单位向量
@@ -201,6 +229,8 @@ std::string chineseFieldLabel(const std::string& key)
         {"zero-offset", "零位偏置"},
         {"bounds", "限位"},
         {"working-range", "工作范围"},
+        {"max-velocity", "最大速度"},
+        {"max-acceleration", "最大加速度"},
         {"dh-alpha", "DH-α"},
         {"dh-a", "DH-a"},
         {"dh-d", "DH-d"},
@@ -306,7 +336,8 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
 {
     // 区位总布局：左右分栏（树｜属性）＋下部叠放（工具/就绪/预览——
     // 页签承载三区，对应 UX-09 五区布局的建模域投影）。
-    auto* mainLayout = new QHBoxLayout(this);
+    // 局部历史工具条在整栏上方；左右分栏仍由下面唯一splitter承载。
+    auto* mainLayout = new QVBoxLayout(this);
     // 左右栏使用可拖动分隔器：结构树需要保持可读宽度，右侧参数表在窄窗
     // 中则应优先获得空间。分隔位置属于会话呈现设置，不改变模型数据。
     auto* splitter = new QSplitter(Qt::Horizontal, this);
@@ -322,6 +353,34 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     splitter->setStretchFactor(0, 5);
     splitter->setStretchFactor(1, 4);
     splitter->setSizes({520, 420});
+    // L-5：草稿历史入口常驻，明确区别于宿主项目撤销（后者产生逆命令修订）。
+    // 本行只调用UI编辑器回调，不借全局命令注册表改变项目历史。
+    auto* draftHistoryRow = new QHBoxLayout();
+    m_draftUndoButton = new QPushButton(QStringLiteral("撤销草稿编辑"),this);
+    m_draftRedoButton = new QPushButton(QStringLiteral("重做草稿编辑"),this);
+    m_draftUndoButton->setObjectName("ird_modeling_draft_undo");
+    m_draftRedoButton->setObjectName("ird_modeling_draft_redo");
+    m_draftUndoButton->setToolTip(QStringLiteral("撤回尚未应用的一次草稿编辑；不产生项目修订"));
+    m_draftRedoButton->setToolTip(QStringLiteral("恢复被撤销的草稿编辑；新编辑会清除重做记录"));
+    m_draftUndoButton->setEnabled(false);m_draftRedoButton->setEnabled(false);
+    connect(m_draftUndoButton,&QPushButton::clicked,this,[this]{
+        if(m_writable&&m_canUndoDraft&&m_draftUndoAction){m_draftUndoAction();}
+    });
+    connect(m_draftRedoButton,&QPushButton::clicked,this,[this]{
+        if(m_writable&&m_canRedoDraft&&m_draftRedoAction){m_draftRedoAction();}
+    });
+    draftHistoryRow->addWidget(m_draftUndoButton);draftHistoryRow->addWidget(m_draftRedoButton);
+    // PM-04/AT-29：旧稿不能只存在内部getter；重建后保留可见只读入口供用户迁移。
+    m_retainedReviewButton=new QPushButton(QStringLiteral("查看冲突旧稿对照"),this);
+    m_retainedReviewButton->setObjectName("ird_modeling_retained_review");
+    m_retainedReviewButton->setToolTip(QStringLiteral("对照当前工作集与保留旧稿，逐项重新编辑；查看不会覆盖当前内容"));
+    m_retainedReviewButton->setEnabled(false);
+    connect(m_retainedReviewButton,&QPushButton::clicked,this,[this]{
+        // 模态期间关闭项目会清空成员回调；本次调用先值持有，避免清理正在执行的闭包。
+        const auto review=m_retainedReviewAction;if(review){review();}
+    });
+    draftHistoryRow->addWidget(m_retainedReviewButton);
+    draftHistoryRow->addStretch(1);mainLayout->addLayout(draftHistoryRow);
     mainLayout->addWidget(splitter, 1);
     buildStructureTreePane(left);   // 区①建模结构树（左栏）
     buildPropertyPane(right);       // 区②属性编辑区（右栏）
@@ -351,6 +410,15 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
         "基座安装姿态编辑（预设/位置/自定义 EAA——MDL-22，整体替换语义）"));
     modeRow->addWidget(jointModeBtn);
     modeRow->addWidget(baseModeBtn);
+    // MDL-17：首个命名位姿创建前没有树锚，因此必须有独立可见入口。
+    auto* poseModeBtn=new QPushButton(QStringLiteral("命名位姿"),editPage);
+    poseModeBtn->setObjectName(QStringLiteral("ird_modeling_edit_pose_mode"));
+    modeRow->addWidget(poseModeBtn);
+    auto* sceneModeBtn=new QPushButton(QStringLiteral("场景管理"),editPage);
+    sceneModeBtn->setObjectName(QStringLiteral("ird_modeling_edit_scene_mode"));
+    modeRow->addWidget(sceneModeBtn);
+    auto* toolModeBtn=new QPushButton(QStringLiteral("工具管理"),editPage);
+    toolModeBtn->setObjectName("ird_modeling_edit_tool_mode");modeRow->addWidget(toolModeBtn);
     modeRow->addStretch(1);
     editLay->addLayout(modeRow);
     m_editStack = new QStackedWidget(editPage);
@@ -379,6 +447,86 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     m_editStack->addWidget(m_poseSetArea);             // index 4
     buildDrivetrainPane();                             // UI-T60——传动页（F-497 余项）
     m_editStack->addWidget(m_drivetrainArea);          // index 5
+    // MDL-05/F10：选择连杆即显示内联页；窄窗允许滚动，不另开模态编辑器。
+    auto* bodyScroll=new QScrollArea(m_editStack);bodyScroll->setWidgetResizable(true);
+    m_bodyArea=bodyScroll;
+    m_bodyEditor=new ModelingBodyEditor(bodyScroll,[this](const core::ObjectId& id,
+        const BodyData& before,const ManualBodyResult& result,std::string& error){
+        // 出口现取权威草稿并比对完整基线，拒绝选择漂移/后台替换/只读绕行。
+        m_threadGuard.assertOnUiThread();
+        auto* ws=m_editTarget?m_editTarget():nullptr;
+        if(!m_writable||!ws||m_lastSelected!=id){error="目标已改变或项目只读，请重新选择连杆。";return false;}
+        const auto target=resolveSelection(*ws,id);
+        if(!target||target->kind!=SelectedTarget::Kind::Link
+            ||ws->design.links[target->index].body!=before){
+            error="连杆物性基线已改变，请刷新后重新编辑。";return false;
+        }
+        if(before==result.body){return true;}
+        const auto subject="links["+std::to_string(target->index)+"].body";
+        ws->design.links[target->index].body=result.body;
+        ws->changes.push_back({subject,result.summary});
+        onEditApplied("连杆物性"); // 唯一重算/局部历史入口；此后不使用旧草稿引用。
+        return true;
+    });
+    bodyScroll->setWidget(m_bodyEditor);m_editStack->addWidget(bodyScroll);
+    // F12：管理入口不依赖既有树锚。接受前重新取完整草稿，防模态文件选择期间
+    // 的修订/只读切换覆盖更新；唯一后置入口记录一次局部历史，不提交项目命令。
+    auto* sceneScroll=new QScrollArea(m_editStack);sceneScroll->setWidgetResizable(true);
+    m_sceneManagerArea=sceneScroll;
+    m_sceneManager=new ModelingSceneEditor(sceneScroll,
+        [this](const ModelingWorkingSet& before,const ModelingWorkingSet& after,
+            std::optional<core::ObjectId> selected,std::string& error){
+            m_threadGuard.assertOnUiThread();auto* current=m_editTarget?m_editTarget():nullptr;
+            if(!m_writable||!current||*current!=before){
+                error="草稿基线已改变或项目只读，请刷新后重新确认。";return false;
+            }
+            *current=after;
+            onEditApplied("场景对象");
+            // onEditApplied可重入刷新，之后重新现取，不保留旧工作集/对象引用。
+            current=m_editTarget?m_editTarget():nullptr;
+            if(!current){return true;}
+            refreshStructureTree(*current);focusObject(selected);
+            m_sceneManager->bindTarget(current,selected,m_writable);
+            m_editStack->setCurrentWidget(m_sceneManagerArea);
+            return true;
+        },[this](std::optional<core::ObjectId> selected){
+            focusObject(selected);auto* current=m_editTarget?m_editTarget():nullptr;
+            m_sceneManager->bindTarget(current,selected,m_writable);
+            m_editStack->setCurrentWidget(m_sceneManagerArea);
+        });
+    sceneScroll->setWidget(m_sceneManager);m_editStack->addWidget(sceneScroll);
+    connect(m_sceneManager->findChild<QPushButton*>("ird_scene_pose"),&QPushButton::clicked,this,[this]{
+        refreshScenePosePane();m_editStack->setCurrentWidget(m_sceneArea);
+    });
+    // MDL-13：空工具没有树锚，管理页独立可达；安装/TCP仍跳转已有完整页。
+    auto* toolScroll=new QScrollArea(m_editStack);toolScroll->setWidgetResizable(true);
+    m_toolManagerArea=toolScroll;
+    m_toolManager=new ModelingToolEditor(toolScroll,
+        [this](const ModelingWorkingSet& before,const ModelingWorkingSet& after,
+            std::optional<core::ObjectId> selected,std::string& error){
+            m_threadGuard.assertOnUiThread();auto* current=m_editTarget?m_editTarget():nullptr;
+            if(!m_writable||!current||*current!=before){error="草稿基线已改变或项目只读，请刷新后重新确认。";return false;}
+            *current=after;onEditApplied("工具对象");
+            // 接受回调可能同步刷新，之后必须现取，不能复用旧工作集引用。
+            current=m_editTarget?m_editTarget():nullptr;if(!current){return true;}
+            refreshStructureTree(*current);focusObject(selected);
+            m_toolManager->bindTarget(current,selected,m_writable);m_editStack->setCurrentWidget(m_toolManagerArea);
+            return true;
+        },[this](std::optional<core::ObjectId> selected){
+            focusObject(selected);auto* current=m_editTarget?m_editTarget():nullptr;
+            m_toolManager->bindTarget(current,selected,m_writable);m_editStack->setCurrentWidget(m_toolManagerArea);
+        });
+    toolScroll->setWidget(m_toolManager);m_editStack->addWidget(toolScroll);
+    connect(m_toolManager->findChild<QPushButton*>("ird_tool_pose"),&QPushButton::clicked,this,[this]{
+        refreshToolMountPane();refreshTcpPane();m_editStack->setCurrentWidget(m_toolArea);
+    });
+    connect(toolModeBtn,&QPushButton::clicked,this,[this]{
+        auto* current=m_editTarget?m_editTarget():nullptr;std::optional<core::ObjectId> selected;
+        if(current&&m_lastSelected){const auto target=resolveSelection(*current,*m_lastSelected);
+            if(target&&target->kind==SelectedTarget::Kind::Tool){selected=m_lastSelected;}}
+        focusObject(selected);current=m_editTarget?m_editTarget():nullptr;
+        m_toolManager->bindTarget(current,selected,m_writable);m_editStack->setCurrentWidget(m_toolManagerArea);
+    });
     editLay->addWidget(m_editStack, 1);
     connect(baseModeBtn, &QPushButton::clicked, this, [this] {
         m_editStack->setCurrentWidget(m_basePage);
@@ -387,6 +535,19 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     connect(jointModeBtn, &QPushButton::clicked, this, [this] {
         m_editStack->setCurrentIndex(0);
         refreshJointEditPane();  // 回关节模式——树选中锚照常驱动
+    });
+    connect(poseModeBtn,&QPushButton::clicked,this,[this]{
+        refreshPoseSetPane();m_editStack->setCurrentWidget(m_poseSetArea);
+    });
+    connect(sceneModeBtn,&QPushButton::clicked,this,[this]{
+        auto* current=m_editTarget?m_editTarget():nullptr;
+        std::optional<core::ObjectId> selected;
+        if(current&&m_lastSelected){const auto target=resolveSelection(*current,*m_lastSelected);
+            if(target&&target->kind==SelectedTarget::Kind::Scene){selected=m_lastSelected;}}
+        focusObject(selected); // 新增模式不保留其他对象选中，防后台刷新切回旧对象编辑页。
+        current=m_editTarget?m_editTarget():nullptr;
+        m_sceneManager->bindTarget(current,selected,m_writable);
+        m_editStack->setCurrentWidget(m_sceneManagerArea);
     });
     buildToolsPane(new QVBoxLayout(toolsPage));        // 区③域工具区（StageId=modeling）
     buildReadinessPane(new QVBoxLayout(readinessPage));// 区④就绪与诊断条
@@ -552,6 +713,61 @@ void ModelingPanelWidget::setPostEditAction(PostEditAction action)
     m_postEditAction = std::move(action);
 }
 
+void ModelingPanelWidget::setPoseRestoreAction(
+    std::function<bool(const std::string&,std::string&)> action)
+{
+    m_threadGuard.assertOnUiThread();m_poseRestoreAction=std::move(action);
+    if(m_poseSetRestoreBtn){
+        m_poseSetRestoreBtn->setEnabled(static_cast<bool>(m_poseRestoreAction)&&!m_poseSetSelectedKey.isEmpty());
+    }
+}
+
+void ModelingPanelWidget::setDraftHistoryActions(PostEditAction undo,PostEditAction redo)
+{
+    m_threadGuard.assertOnUiThread();
+    m_draftUndoAction=std::move(undo);m_draftRedoAction=std::move(redo);
+    refreshCommandEnablement();
+}
+
+void ModelingPanelWidget::setDraftHistoryState(bool canUndo,bool canRedo)
+{
+    m_threadGuard.assertOnUiThread();
+    m_canUndoDraft=canUndo;m_canRedoDraft=canRedo;
+    refreshCommandEnablement();
+}
+
+void ModelingPanelWidget::setRetainedReviewAction(PostEditAction review)
+{
+    m_threadGuard.assertOnUiThread();
+    // 只读保护写入，核对旧稿不写入；使能只取决于模块是否保留完整原稿。
+    m_retainedReviewAction=std::move(review);
+    m_retainedReviewButton->setEnabled(static_cast<bool>(m_retainedReviewAction));
+}
+
+void ModelingPanelWidget::cancelPendingForHistoryRestore()
+{
+    m_threadGuard.assertOnUiThread();
+    if(m_bodyEditor){m_bodyEditor->cancelPending();}
+    if(m_sceneManager){m_sceneManager->cancelPending();}
+    if(m_toolManager){m_toolManager->cancelPending();}
+    // 普通后台刷新按UI-T79保留暂存；明确撤销/重做则必须取消暂存，再由
+    // 后续refreshPanel推入恢复值。模型取消只清数据；还须走表单既有取消
+    // 动作隐藏确认区，避免旧确认明细在恢复后仍可见、误导用户再次确认。
+    for(auto* model:{m_jointEditModel.get(),m_toolEditModel.get(),m_sceneEditModel.get(),
+                    m_tcpOffsetModel.get(),m_poseSetConfigModel.get(),m_drivetrainModel.get()}){
+        if(model){model->cancelRestore();}
+    }
+    // 只操作当前六个表单：结构变化会deleteLater旧表单，控件树中仍可能有
+    // 已失去模型的旧节点；遍历全部后代并点击会在事件队列清理前解引用悬空模型。
+    for(auto* form:{m_jointEditPanel,m_toolEditPanel,m_sceneEditPanel,m_tcpOffsetPanel,
+                    m_poseSetConfigPanel,m_drivetrainPanel}){
+        if(!form){continue;}
+        if(auto* cancel=form->findChild<QPushButton*>(QStringLiteral("ird_param_cancel"))){
+            cancel->click();
+        }
+    }
+}
+
 void ModelingPanelWidget::setCommandTitleResolver(CommandTitleResolver resolver)
 {
     m_titleResolver = std::move(resolver);
@@ -688,6 +904,7 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     for (int i = 0; i < 5; ++i) {
         auto* btn = new QPushButton(QString::fromUtf8(kStructButtons[i]), structBar);
         btn->setObjectName(QString::fromLatin1(kStructNames[i]));
+        btn->setEnabled(m_writable); // L-7：构造为只读时也不能出现可写结构入口。
         btn->setToolTip(QString::fromUtf8(kStructButtons[i])
                         + QStringLiteral("（作用于选中关节；草稿级编辑——经"
                                          "『应用草稿』提交后才产生修订）"));
@@ -941,12 +1158,13 @@ void ModelingPanelWidget::refreshStructureTree(const ModelingWorkingSet& ws)
 void ModelingPanelWidget::onStructureOpClicked(int opIndex)
 {
     m_threadGuard.assertOnUiThread();  // §3.4——编辑面
+    if (!m_writable) { return; } // PM-07：防御直接槽调用，不只依赖按钮灰显。
 
     // 六轴重置＝有损操作（§5.2 v0.28 ④——既有链参数被表值覆盖）：确认
     // 对话承载知情（域原语纯执行不内嵌确认——UI 层职责面）。
     // F-502（宿主审核 P2）分段知情文案：逐项列出将被替换/清空的对象面＋
     // 明确项目历史语义（草稿级操作不立即产生修订；应用后修订不可变——
-    // PA-2；草稿期无撤销栈，如实告知），默认按钮保持"否"。
+    // PA-2；应用前可经局部历史撤回），默认按钮保持"否"。
     if (opIndex == 4) {
         const QMessageBox::StandardButton confirmed = QMessageBox::question(
             this, QStringLiteral("六轴重置"),
@@ -957,8 +1175,8 @@ void ModelingPanelWidget::onStructureOpClicked(int opIndex)
                            "・物性与几何引用随连杆重建一并清空\n\n"
                            "项目历史：本操作只改当前草稿，不会立即产生修订；"
                            "点『应用草稿』后才生成新修订——修订不可变（历史只"
-                           "增不改，项目级撤销＝以新修订对冲），草稿期亦无撤"
-                           "销栈，请确认后执行。\n\n"
+                           "增不改，项目级撤销＝以新修订对冲）；应用前可经"
+                           "『撤销草稿编辑』撤回，请确认后执行。\n\n"
                            "确认重置？")
                 .arg(QString::number(m_editTarget && m_editTarget()
                                          ? m_editTarget()->design.joints.size()
@@ -967,6 +1185,8 @@ void ModelingPanelWidget::onStructureOpClicked(int opIndex)
         if (confirmed != QMessageBox::Yes) { return; }
     }
 
+    // 重置确认运行嵌套事件循环，期间可能切成只读；确认不是继续写入的授权快照。
+    if (!m_writable) { return; }
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
     if (ws == nullptr) { return; }  // 无会话＝编辑禁用（装配层门控同形态）
 
@@ -1007,6 +1227,11 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
                                        const ModelReadinessReport& report)
 {
     m_threadGuard.assertOnUiThread();  // §3.4——刷新触点同样是编辑面
+
+    // 脏态与完整工作集的编辑记录同源；撤销回干净基线/应用成功后不能
+    // 保留旧true，否则标题和关闭提醒会与当前草稿内容不一致（PM-04）。
+    const bool dirty=!ws.changes.empty();
+    if(m_dirty!=dirty){m_dirty=dirty;Q_EMIT sessionDirtyChanged(dirty);}
 
     // ---- 区①结构树：全量重建（UI-T47 抽出 refreshStructureTree——与
     //      结构操作按钮槽共用同一树投影，零第二实现）----
@@ -1078,6 +1303,11 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
 void ModelingPanelWidget::setWritable(bool writable)
 {
     m_writable = writable;
+    // L-7：结构栏此前遗漏只读切换，导致新增/删除/重排仍可修改待保存域帧。
+    if (auto* bar = findChild<QWidget*>(QStringLiteral("ird_modeling_struct_bar"))) {
+        bar->setEnabled(m_writable);
+    }
+    if(m_bodyEditor){refreshEditPages();}
     // L-7 控件半区：现有属性行即时降级/恢复（行序同键——只变使能）。
     // UI-T27 P0-2：编辑器文本＝纯值（单位在标签——值/单位分离后回显口径）。
     m_propertyRows = applyReadOnlyGate(m_propertyRows, m_writable);
@@ -1095,7 +1325,7 @@ void ModelingPanelWidget::setWritable(bool writable)
     // L-7 基座页半区（UI-T54）：应用钮同步禁用（EAA 行使能在
     // refreshBasePlacementPane 按 writable 复合判定，进页/应用后刷新）。
     if (m_baseApplyBtn != nullptr) {
-        m_baseApplyBtn->setEnabled(m_writable);
+        refreshBasePlacementPane(); // 只读切换同步禁用全部输入，不能靠预设切换复活旋转控件。
     }
     // L-7 工具/场景页半区（UI-T55）：面板整体禁用（刷新入口按 writable
     // 复合，此处即时同步不等待下次选中事件）。
@@ -1123,6 +1353,15 @@ void ModelingPanelWidget::setWritable(bool writable)
     }
     if (m_poseSetConfigPanel != nullptr) { m_poseSetConfigPanel->setEnabled(m_writable); }
     if (m_drivetrainPanel != nullptr) { m_drivetrainPanel->setEnabled(m_writable); }
+    // F14：耦合区随可写性与阶段能力位同步（编辑入口＝可写∧R2；移除＝可写）。
+    if (m_couplingEditButton != nullptr) {
+        m_couplingEditButton->setEnabled(
+            m_writable && m_couplingStage == CouplingStage::R2Enabled);
+    }
+    if (m_couplingRemoveButton != nullptr) {
+        m_couplingRemoveButton->setEnabled(m_writable);
+    }
+    refreshCouplingSummary();
     // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
     // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
     // 残留可用呈现，与需求域"切换后必须同步刷新全部状态承载面"的整改口径
@@ -1133,6 +1372,9 @@ void ModelingPanelWidget::setWritable(bool writable)
 
 void ModelingPanelWidget::refreshCommandEnablement()
 {
+    // 局部历史无需项目命令提交出口；只读、空栈与未装配各自均禁用。
+    m_draftUndoButton->setEnabled(m_writable&&m_canUndoDraft&&static_cast<bool>(m_draftUndoAction));
+    m_draftRedoButton->setEnabled(m_writable&&m_canRedoDraft&&static_cast<bool>(m_draftRedoAction));
     // UI-T43 统一收口（四个触发点共用——判定面唯一，语义见头注）。循环内
     // 合取顺序：提交出口→只读门控（§7.6/L-7 面板半区）→可用性快照；
     // 任一不满足＝禁用，不虚构可达性。
@@ -1519,7 +1761,9 @@ void ModelingPanelWidget::buildJointEditPane(QVBoxLayout* bottom)
     caption->setText(QStringLiteral(
         "原点：父连杆系（位置 m／姿态 rad；ZYX 约定 R＝Rz(yaw)·Ry(pitch)·"
         "Rx(roll)）；轴向：连杆系单位向量。Explicit 权威下轴向/原点可编辑，"
-        "StandardDH 权威下为派生只读（提交被域守卫拒绝）。"));
+        "StandardDH 权威下为派生只读（提交被域守卫拒绝）。"
+        "Continuous工程范围单位rad，仅供分析，跨周不取模、不设行程上限；"
+        "经应用/确认后写入草稿，关节类型与限位不变。"));
     caption->setStyleSheet(
         QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
     bottom->addWidget(caption);
@@ -1598,6 +1842,7 @@ void ModelingPanelWidget::refreshJointEditPane()
     // 构造后字段集不可变——ParamEditModel 契约）。
     const bool sameTarget = m_jointEditTarget.has_value()
                             && *m_jointEditTarget == *jointIndex
+                            && m_jointEditSchemaType == joint.type
                             && m_jointEditPanel != nullptr;
     if (!sameTarget) {
         rebuildJointEditModel(joint);
@@ -1633,14 +1878,15 @@ void ModelingPanelWidget::refreshJointEditPane()
 
 void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
 {
-    // 12 行字段装配（行序＝登记序——表单呈现与确认区明细的稳定序）：
-    // 轴向 3（无量纲）→原点 6（m＋rad）→零位偏置 1→限位 2（量纲随类型）。
+    // 14行稳定序：轴向3、原点6、零偏1，两行随类型为限位或工程范围，表尾
+    // 两行＝最大速度/最大加速度（F01）。continuous工程范围是分析属性，必须
+    // 显式区分不可用的权威限位（MDL-12）。
     const core::QuantityKind qk = jointEditQuantityKind(joint.type);
     const core::UnitToken jointUnit = jointEditUnitToken(qk);
     const core::UnitToken dimensionless = core::UnitToken::find("1").value();
 
     std::vector<ui::QuantityFieldSpec> specs;
-    specs.reserve(12);
+    specs.reserve(14);
     specs.push_back(ui::makeQuantityFieldSpec(
         kJointAxisXKey, "轴向 X", core::QuantityKind::Dimensionless,
         dimensionless, dimensionless));
@@ -1670,23 +1916,76 @@ void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
         core::UnitToken::find("rad").value(), core::UnitToken::find("rad").value()));
     specs.push_back(ui::makeQuantityFieldSpec(
         kJointZeroOffsetKey, "零位偏置", qk, jointUnit, jointUnit));
+    const bool continuous = joint.type == JointType::Continuous;
     specs.push_back(ui::makeQuantityFieldSpec(
-        kJointBoundsMinKey, "限位下限", qk, jointUnit, jointUnit));
+        continuous ? kJointRangeMinKey : kJointBoundsMinKey,
+        continuous ? "工程范围下限" : "限位下限", qk, jointUnit, jointUnit));
     specs.push_back(ui::makeQuantityFieldSpec(
-        kJointBoundsMaxKey, "限位上限", qk, jointUnit, jointUnit));
+        continuous ? kJointRangeMaxKey : kJointBoundsMaxKey,
+        continuous ? "工程范围上限" : "限位上限", qk, jointUnit, jointUnit));
+    // F01（MDL-01）：逐轴速度/加速度两行（表尾追加——14 行稳定序）；单位随
+    // 类型（转动 rad/s、rad/s²；移动 m/s、m/s²）。Fixed 行仍呈现（提交轨
+    // 域拒绝——编辑出口按 Fixed 拒绝提供，呈现不虚构可用性）。
+    const core::QuantityKind vk =
+        joint.type == JointType::Prismatic ? core::QuantityKind::LinearVelocity
+                                           : core::QuantityKind::AngularVelocity;
+    const core::QuantityKind ak =
+        joint.type == JointType::Prismatic ? core::QuantityKind::LinearAcceleration
+                                           : core::QuantityKind::AngularAcceleration;
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointMaxVelocityKey, "最大速度", vk, jointEditUnitToken(vk),
+        jointEditUnitToken(vk)));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointMaxAccelerationKey, "最大加速度", ak, jointEditUnitToken(ak),
+        jointEditUnitToken(ak)));
 
-    // 换目标重建：旧面板随 Qt 父子析构（deleteLater——重建处于刷新路径内，
-    // 延迟删除避免重入）；模型随之重建（字段集不可变契约）。
+    // 换目标/类型时重建；延迟删除避免重入，旧表单的依赖延寿见下。
     if (m_jointEditPanel != nullptr) {
-        m_jointEditPanel->deleteLater();
+        // 旧表格itemChanged会排队；类型变更/换对象重建时，借用模型和出口
+        // 必须活到旧表单销毁。移出当前控件树也防止后续findChild误命中旧字段。
+        auto* retiredPanel = m_jointEditPanel;
+        auto retiredModel = std::shared_ptr<ui::ParamEditModel>(std::move(m_jointEditModel));
+        auto retiredOutlet = std::shared_ptr<ui::IFormEditOutlet>(std::move(m_jointEditOutlet));
+        retiredPanel->hide();
+        retiredPanel->setParent(nullptr);
+        QObject::connect(retiredPanel, &QObject::destroyed, [retiredModel, retiredOutlet] {});
+        retiredPanel->deleteLater();
         m_jointEditPanel = nullptr;
     }
+    m_jointEditOutlet = std::make_unique<JointDetailEditOutlet>(*this);
     m_jointEditModel = std::make_unique<ui::ParamEditModel>(std::move(specs));
+    m_jointEditSchemaType = joint.type;
     // 出口为空＝只读呈现（"应用…"禁用＋kNoOutletTooltip——不虚构可达性；
     // 本面板构造期即建出口，此为防御面）。
     m_jointEditPanel = ui::createParamTablePanel(
         *m_jointEditModel, m_jointEditOutlet.get(), {}, m_jointEditHost);
     static_cast<QVBoxLayout*>(m_jointEditHost->layout())->addWidget(m_jointEditPanel);
+
+    // F04真实拒绝截图：公共件confirmApply在void出口返回后才推进乐观基线，
+    // 所以出口内的权威回填会被覆盖。Qt同线程槽按连接注册顺序同步执行；
+    // 在公共件既有确认槽之后追加回执，确保最终显示来自真实草稿、而非输入值。
+    // 连接随当前表单销毁，且核对页身份，旧表单的排队信号不能刷新新页。
+    const QPointer<QWidget> form = m_jointEditPanel;
+    auto* confirm = form->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"));
+    connect(confirm, &QPushButton::clicked, form, [this, form] {
+        if (!form || form != m_jointEditPanel || !m_jointEditModel
+            || m_jointEditModel->hasErrors() || !m_jointEditModel->pendingChanges().empty()) {
+            return; // 表单解析拒绝/仍有暂存时不覆盖用户待纠正输入。
+        }
+        auto* ws = m_editTarget ? m_editTarget() : nullptr;
+        if (!ws || !m_jointEditTarget || *m_jointEditTarget >= ws->design.joints.size()) {
+            return; // 会话已关闭/选中失效，不能把其它对象当作回执源。
+        }
+        const auto& current = ws->design.joints[*m_jointEditTarget];
+        if (m_jointEditSchemaType != current.type) { return; }
+        pushJointEditBaselines(current);
+        ui::refreshParamTablePanel(form);
+        // void出口只承诺移交；这里明确显示已按实际草稿回填，接受/拒绝原因
+        // 仍使用原域结果行，不把领域拒绝误报成“已应用修改”。
+        if (auto* impact = form->findChild<QLabel*>(QStringLiteral("ird_param_impact"))) {
+            impact->setText(QStringLiteral("已按当前草稿回填；接受结果与拒绝原因见下方。"));
+        }
+    });
 }
 
 void ModelingPanelWidget::pushJointEditBaselines(const JointEntry& joint)
@@ -1726,13 +2025,29 @@ void ModelingPanelWidget::pushJointEditBaselines(const JointEntry& joint)
     }
     // 零位偏置非 SourcedValue（恒有值）。
     set(kJointZeroOffsetKey, joint.zeroOffset);
-    // 限位：Continuous＝NotApplicable（I-MDL-4）→ nullopt 基线。
-    if (const auto bounds = joint.bounds.tryValue()) {
-        set(kJointBoundsMinKey, bounds->first);
-        set(kJointBoundsMaxKey, bounds->second);
+    // 未确认工程范围保持“未设”，不借用bounds或虚构默认范围。其它类型仍读限位。
+    const bool continuous = joint.type == JointType::Continuous;
+    const auto interval = continuous ? joint.workingRange.tryValue() : joint.bounds.tryValue();
+    const auto* lowerKey = continuous ? kJointRangeMinKey : kJointBoundsMinKey;
+    const auto* upperKey = continuous ? kJointRangeMaxKey : kJointBoundsMaxKey;
+    if (interval) {
+        set(lowerKey, interval->first);
+        set(upperKey, interval->second);
     } else {
-        set(kJointBoundsMinKey, std::nullopt);
-        set(kJointBoundsMaxKey, std::nullopt);
+        set(lowerKey, std::nullopt);
+        set(upperKey, std::nullopt);
+    }
+    // F01：速度/加速度基线——Provided 直投真实值；缺失保持空（表单留空＝
+    // 不触碰，缺失≠零值——NFR-COR-03）。
+    if (const auto v = joint.maxVelocity.tryValue()) {
+        set(kJointMaxVelocityKey, *v);
+    } else {
+        set(kJointMaxVelocityKey, std::nullopt);
+    }
+    if (const auto a = joint.maxAcceleration.tryValue()) {
+        set(kJointMaxAccelerationKey, *a);
+    } else {
+        set(kJointMaxAccelerationKey, std::nullopt);
     }
 }
 
@@ -1844,6 +2159,27 @@ void ModelingPanelWidget::applyJointDetailEdits(const ui::ParamEditSet& editSet)
         }
     }
 
+    // MDL-12：首次确认必须给齐两端；修改单端时另一端取已确认基线。
+    // 整对只提交一次，与通用表单两步确认及局部草稿历史保持同一接受边界。
+    if (staged.count(kJointRangeMinKey) || staged.count(kJointRangeMaxKey)) {
+        const auto lower = component(kJointRangeMinKey);
+        const auto upper = component(kJointRangeMaxKey);
+        if (lower && upper) {
+            submit(JointEditField::WorkingRange, JointEditValue{JointLimits{*lower, *upper}});
+        } else {
+            rejectAssembly("工程工作范围尚未确认：请填写上下两端（rad），不使用默认限位代替");
+        }
+    }
+
+    // ---- F01：速度/加速度组（单值直投——脏键才提交；留空＝不触碰该字段，
+    //      缺失保持 NotProvided 不虚构零值；域内有限/非负/Fixed 裁决）----
+    if (const auto it = staged.find(kJointMaxVelocityKey); it != staged.end()) {
+        submit(JointEditField::MaxVelocity, JointEditValue{it->second});
+    }
+    if (const auto it = staged.find(kJointMaxAccelerationKey); it != staged.end()) {
+        submit(JointEditField::MaxAcceleration, JointEditValue{it->second});
+    }
+
     // 权威同步（接受组基线推进对齐、被拒组基线回退真实权威——
     // ParamEditModel.confirmApply 的移交推进是乐观的，域拒绝在此修正）。
     // UI-T66 落位注（UI-T53 划界"编辑页分组编辑不入 L-4 重演队列"消账）：
@@ -1869,11 +2205,7 @@ void ModelingPanelWidget::buildBasePlacementPane()
     m_baseHint->setWordWrap(true);
     m_baseHint->setStyleSheet(
         QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
-    m_baseHint->setText(QStringLiteral(
-        "基座安装姿态＝基座坐标系相对世界坐标系（MDL-22/M-11）：预设给出安装"
-        "旋转（地面 0°／倒挂 180°／壁装 90°），自定义预设须给 EAA 旋转矢量"
-        "（轴×角，rad）；位置为基座原点世界系坐标（m）。提交＝整体替换"
-        "（落草稿，经顶栏『应用草稿』产生修订）。"));
+    m_baseHint->setText(basePlacementInputHint());
     lay->addWidget(m_baseHint);
 
     auto* form = new QFormLayout();
@@ -1902,22 +2234,40 @@ void ModelingPanelWidget::buildBasePlacementPane()
     m_baseEaaX = makeSpin("ird_modeling_base_eaa_x", -6.283185307179586, 6.283185307179586, 0.01);
     m_baseEaaY = makeSpin("ird_modeling_base_eaa_y", -6.283185307179586, 6.283185307179586, 0.01);
     m_baseEaaZ = makeSpin("ird_modeling_base_eaa_z", -6.283185307179586, 6.283185307179586, 0.01);
+    m_baseRoll = makeSpin("ird_modeling_base_roll", -6.283185307179586, 6.283185307179586, 0.01);
+    m_basePitch = makeSpin("ird_modeling_base_pitch", -6.283185307179586, 6.283185307179586, 0.01);
+    m_baseYaw = makeSpin("ird_modeling_base_yaw", -6.283185307179586, 6.283185307179586, 0.01);
     // EAA 用 6 位小数（rad 的呈现精度——0.000001 rad ≈ 0.00006°，位置 4 位
     // ＝0.1 mm 已足；两者均为呈现精度，域接受任意有限 double）。
     for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) { spin->setDecimals(6); }
+    // 欧拉与轴角同精度，±2pi是输入控件的呈现范围；域仍接收任意有限rad。
+    for(auto* spin:{m_baseRoll,m_basePitch,m_baseYaw}){spin->setDecimals(6);}
     form->addRow(QStringLiteral("位置 X（m）"), m_basePosX);
     form->addRow(QStringLiteral("位置 Y（m）"), m_basePosY);
     form->addRow(QStringLiteral("位置 Z（m）"), m_basePosZ);
+    m_baseRotationMode=new QComboBox(m_basePage);
+    m_baseRotationMode->setObjectName(QStringLiteral("ird_modeling_base_rotation_mode"));
+    m_baseRotationMode->addItems({QStringLiteral("ZYX欧拉角（rad）"),QStringLiteral("高级EAA轴角（rad）")});
+    form->addRow(QStringLiteral("自定义旋转表示"),m_baseRotationMode);
+    form->addRow(QStringLiteral("roll 绕X（rad）"),m_baseRoll);
+    form->addRow(QStringLiteral("pitch 绕Y（rad）"),m_basePitch);
+    form->addRow(QStringLiteral("yaw 绕Z（rad）"),m_baseYaw);
     form->addRow(QStringLiteral("自定义 EAA X（rad）"), m_baseEaaX);
     form->addRow(QStringLiteral("自定义 EAA Y（rad）"), m_baseEaaY);
     form->addRow(QStringLiteral("自定义 EAA Z（rad）"), m_baseEaaZ);
+    const auto showRotationMode=[this,form](int mode){
+        for(auto* spin:{m_baseRoll,m_basePitch,m_baseYaw}){form->setRowVisible(spin,mode==0);}
+        for(auto* spin:{m_baseEaaX,m_baseEaaY,m_baseEaaZ}){form->setRowVisible(spin,mode==1);}
+    };
+    connect(m_baseRotationMode,&QComboBox::currentIndexChanged,this,showRotationMode);
+    showRotationMode(0); // 默认欧拉满足MDL-22；高级EAA仍显式可选，不改变既有存储。
     lay->addLayout(form);
 
     auto* btnRow = new QHBoxLayout();
     m_baseApplyBtn = new QPushButton(QStringLiteral("应用"), m_basePage);
     m_baseApplyBtn->setObjectName(QStringLiteral("ird_modeling_base_apply"));
     m_baseApplyBtn->setToolTip(QStringLiteral(
-        "整体替换基座安装姿态（预设/自定义 EAA/位置）——落草稿，拒绝原因就地呈现"));
+        "整体替换基座安装姿态（预设/当前旋转表示/世界位置）——落草稿，拒绝原因就地呈现"));
     auto* restoreBtn = new QPushButton(QStringLiteral("还原"), m_basePage);
     restoreBtn->setObjectName(QStringLiteral("ird_modeling_base_restore"));
     restoreBtn->setToolTip(QStringLiteral("放弃未应用输入，回填当前权威值（零脏化）"));
@@ -1930,8 +2280,8 @@ void ModelingPanelWidget::buildBasePlacementPane()
     // 预设切换→EAA 行使能跟随（仅 Custom 有语义——I-MDL-7；非 Custom 携带
     // EAA 是域原语 fail-fast 面，UI 侧先行禁用即呈现层同口径）。
     connect(m_basePreset, &QComboBox::currentIndexChanged, this, [this](int index) {
-        const bool custom = index == 3;
-        for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) {
+        const bool custom = index == 3 && m_writable;
+        for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ,m_baseRoll,m_basePitch,m_baseYaw}) {
             spin->setEnabled(custom);
         }
     });
@@ -1947,11 +2297,18 @@ void ModelingPanelWidget::refreshBasePlacementPane()
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
     const bool usable = ws != nullptr && m_writable;
     m_baseApplyBtn->setEnabled(usable);  // L-7 页级门控（无会话/只读＝禁用）
+    m_basePreset->setEnabled(usable);
+    m_baseRotationMode->setEnabled(ws!=nullptr); // 只读仍可切换表示检查姿态，不写权威。
+    for(auto* spin:{m_basePosX,m_basePosY,m_basePosZ}){spin->setEnabled(usable);}
+    for(auto* spin:{m_baseEaaX,m_baseEaaY,m_baseEaaZ,m_baseRoll,m_basePitch,m_baseYaw}){
+        spin->setEnabled(usable && m_basePreset->currentIndex()==3);
+    }
     if (ws == nullptr) {
         m_baseHint->setText(QStringLiteral(
             "基座安装编辑需已打开项目（草稿会话）。"));
         return;
     }
+    m_baseHint->setText(basePlacementInputHint());
     const auto& bp = ws->design.basePlacement;
     // 预设回填（枚举→组合框序——构建期固定映射的逆）。
     int index = 0;
@@ -1963,7 +2320,7 @@ void ModelingPanelWidget::refreshBasePlacementPane()
     }
     m_basePreset->setCurrentIndex(index);
     const bool custom = index == 3;
-    for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) {
+    for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ,m_baseRoll,m_basePitch,m_baseYaw}) {
         spin->setEnabled(custom && m_writable);
     }
     // 位置回填（未提供＝0 占位——模板/导入缺省即地面零位，不伪造"已设"徽标）。
@@ -1976,6 +2333,14 @@ void ModelingPanelWidget::refreshBasePlacementPane()
     m_baseEaaX->setValue(custom && eaa.has_value() ? (*eaa)[0] : 0.0);
     m_baseEaaY->setValue(custom && eaa.has_value() ? (*eaa)[1] : 0.0);
     m_baseEaaZ->setValue(custom && eaa.has_value() ? (*eaa)[2] : 0.0);
+    // 只读显示复用runtime权威旋转，再用现有呈现反解；UI不定义第二安装变换。
+    // 缺失自定义值时仅用地面预设占位；不调用框架外联identity()，保持独立构建边界。
+    const auto rotation=custom
+        ? (eaa?runtime::rotationFromCustomEaa(*eaa)
+              :runtime::installationPresetRotation(runtime::InstallationPresetToken::Ground))
+        : runtime::installationPresetRotation(bp.preset);
+    const auto rpy=rpyview::rotationToRpy(rotation);
+    m_baseRoll->setValue(rpy[0]);m_basePitch->setValue(rpy[1]);m_baseYaw->setValue(rpy[2]);
 }
 
 void ModelingPanelWidget::onBasePlacementApplyClicked()
@@ -1984,7 +2349,7 @@ void ModelingPanelWidget::onBasePlacementApplyClicked()
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
     if (ws == nullptr || !m_writable) { return; }  // 无会话/只读——编辑禁用（L-7）
 
-    // 表单→编辑值（整体替换语义；非 Custom 不携 customEaa——携带即域原语
+    // 表单→编辑值（整体替换语义；非 Custom 不携自定义旋转——携带即域原语
     // fail-fast 契约违约，UI 侧按预设分流避免）。
     BasePlacementEditValue edit;
     switch (m_basePreset->currentIndex()) {
@@ -1994,8 +2359,12 @@ void ModelingPanelWidget::onBasePlacementApplyClicked()
     default: edit.preset = runtime::InstallationPresetToken::Ground; break;
     }
     if (edit.preset == runtime::InstallationPresetToken::Custom) {
-        edit.customEaa = rw::math::Vector3D<double>(
-            m_baseEaaX->value(), m_baseEaaY->value(), m_baseEaaZ->value());
+        if(m_baseRotationMode->currentIndex()==0){
+            edit.customRpy=rw::math::Vector3D<double>(m_baseRoll->value(),m_basePitch->value(),m_baseYaw->value());
+        }else{
+            edit.customEaa = rw::math::Vector3D<double>(
+                m_baseEaaX->value(), m_baseEaaY->value(), m_baseEaaZ->value());
+        }
     }
     edit.basePosition = rw::math::Vector3D<double>(
         m_basePosX->value(), m_basePosY->value(), m_basePosZ->value());
@@ -2573,6 +2942,17 @@ void ModelingPanelWidget::buildPoseSetPane()
     entryRow->addWidget(m_poseSetAddBtn);
     entryRow->addWidget(m_poseSetRemoveBtn);
     entryRow->addWidget(m_poseSetApplyBtn);
+    m_poseSetRestoreBtn=new QPushButton(QStringLiteral("恢复到已应用模型"),area);
+    m_poseSetRestoreBtn->setObjectName(QStringLiteral("ird_modeling_pose_restore"));
+    m_poseSetRestoreBtn->setToolTip(QStringLiteral("恢复保存条目的姿态；未确认输入不参与，仅改变会话，不产生项目修订"));
+    m_poseSetRestoreBtn->setEnabled(false);
+    entryRow->addWidget(m_poseSetRestoreBtn);
+    connect(m_poseSetRestoreBtn,&QPushButton::clicked,this,[this]{
+        if(!m_poseRestoreAction||m_poseSetSelectedKey.isEmpty()){return;}
+        std::string summary;
+        const bool restored=m_poseRestoreAction(m_poseSetSelectedKey.toStdString(),summary);
+        setOutcomeMessage(QString::fromStdString(summary),restored?OutcomeSeverity::Info:OutcomeSeverity::Warning);
+    });
     lay->addLayout(entryRow);
 
     auto* keyNoteForm = new QHBoxLayout();
@@ -2607,22 +2987,26 @@ void ModelingPanelWidget::buildPoseSetPane()
 
 void ModelingPanelWidget::rebuildPoseSetConfigModel()
 {
+    if (m_poseSetConfigPanel != nullptr) {
+        // MDL-17重开回归：参数表的itemChanged会排队执行。旧窗口延迟删除时，
+        // 它借用的模型/出口也必须活到destroyed；否则旧表格事件访问已释放模型。
+        // 先隐藏并移出控件树，确保用户和当前页的查询均只看到新表单。
+        auto* retiredPanel=m_poseSetConfigPanel;
+        auto retiredModel=std::shared_ptr<ui::ParamEditModel>(std::move(m_poseSetConfigModel));
+        auto retiredOutlet=std::shared_ptr<ui::IFormEditOutlet>(std::move(m_poseSetOutlet));
+        retiredPanel->hide();
+        retiredPanel->setParent(nullptr);
+        QObject::connect(retiredPanel,&QObject::destroyed,
+                         [retiredModel,retiredOutlet]{});
+        retiredPanel->deleteLater();
+        m_poseSetConfigPanel=nullptr;
+    }
     // 零关节守卫（构造期无编辑目标——ParamEditModel 空字段集 fail-fast，
     // 行集延迟到刷新期有目标时重建）。
     ModelingWorkingSet* wsProbe = m_editTarget ? m_editTarget() : nullptr;
     if (wsProbe == nullptr || wsProbe->design.joints.empty()) {
-        if (m_poseSetConfigPanel != nullptr) {
-            m_poseSetConfigPanel->deleteLater();
-            m_poseSetConfigPanel = nullptr;
-        }
         m_poseSetConfigJointCount = 0;
         return;
-    }
-    // 旧行随 Qt 父子析构（deleteLater——刷新路径内延迟删除防重入；
-    // UI-T55 实测教训同款防悬空纪律）。
-    if (m_poseSetConfigPanel != nullptr) {
-        m_poseSetConfigPanel->deleteLater();
-        m_poseSetConfigPanel = nullptr;
     }
     m_poseSetOutlet = std::make_unique<PoseSetEditOutlet>(*this);
     const core::UnitToken m = core::UnitToken::find("m").value();
@@ -2679,6 +3063,7 @@ void ModelingPanelWidget::refreshPoseSetPane()
                                                        : (m_poseSetCombo->count() > 0 ? 0 : -1));
     }
     m_poseSetSelectedKey = m_poseSetCombo->currentText();
+    m_poseSetRestoreBtn->setEnabled(static_cast<bool>(m_poseRestoreAction)&&!m_poseSetSelectedKey.isEmpty());
     m_poseSetAddBtn->setEnabled(writable);
     m_poseSetRemoveBtn->setEnabled(writable && !m_poseSetSelectedKey.isEmpty());
     m_poseSetApplyBtn->setEnabled(writable);
@@ -2746,7 +3131,10 @@ void ModelingPanelWidget::onPoseSetAddClicked()
     if (!err.has_value()) {
         onEditApplied("poseSet.entries");
         m_poseSetSelectedKey = QString::fromStdString(key);  // 新键即选中
-        refreshPropertiesFromLastWorkingSet();
+        // 创建首个对象后将结构树焦点一并移入位姿集，否则通用刷新会回到
+        // 旧关节页，用户刚打开的管理页在新增后消失（MDL-17连续编辑路径）。
+        if(ws->poseSetObject){focusObject(ws->poseSetObject->objectId);}
+        else{refreshPropertiesFromLastWorkingSet();}
         return;
     }
     EditRejection rejection;
@@ -2828,8 +3216,7 @@ void ModelingPanelWidget::buildDrivetrainPane()
     lay->setContentsMargins(0, 0, 0, 0);
     auto* cap = new QLabel(QStringLiteral(
         "传动设计编辑（传动比无量纲须 >0；摩擦三元 fv/fc/bias 与力矩限值"
-        "额定/峰值——单位随关节类型；耦合 coupling 属 R2/阶段 D、目录回填"
-        "归选型命令，均不在此页）"), area);
+        "额定/峰值——单位随关节类型；目录回填归选型命令不在此页）"), area);
     cap->setWordWrap(true);
     cap->setStyleSheet(
         QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
@@ -2843,6 +3230,63 @@ void ModelingPanelWidget::buildDrivetrainPane()
     if (m_drivetrainPanel != nullptr) {
         lay->addWidget(m_drivetrainPanel, 1);  // 零关节守卫下为空——重建期再挂
     }
+
+    // ---- 耦合矩阵区（WP-13-T25/F14——MDL-21/AT-38：§4.7 coupling 一等
+    //      字段的编辑入口；域原语 applyDrivetrainCouplingEdit（T18 落位）
+    //      此前零 UI 载体＝审计 M31 第一问题）。阶段能力位经
+    //      setCouplingStage 注入（缺省 R1Locked＝公共默认红线）。
+    auto* couplingHeader = new QLabel(QStringLiteral("耦合矩阵（MDL-21/R2）"), area);
+    couplingHeader->setStyleSheet(
+        QStringLiteral("font-weight: 600; color: %1;")
+            .arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    lay->addWidget(couplingHeader);
+    m_couplingSummary = new QLabel(area);
+    m_couplingSummary->setObjectName(QStringLiteral("ird_modeling_coupling_summary"));
+    m_couplingSummary->setWordWrap(true);
+    lay->addWidget(m_couplingSummary);
+    auto* couplingRow = new QHBoxLayout();
+    m_couplingEditButton = new QPushButton(QStringLiteral("编辑耦合矩阵…"), area);
+    m_couplingEditButton->setObjectName(QStringLiteral("ird_modeling_coupling_edit"));
+    m_couplingEditButton->setToolTip(QStringLiteral(
+        "打开关节窗口线性耦合矩阵编辑（Δq_joint = C·Δθ_motor；方阵/可逆/"
+        "条件数 ≤1×10⁸ 域校验——MDL-21/R2）"));
+    connect(m_couplingEditButton, &QPushButton::clicked, this,
+            &ModelingPanelWidget::openCouplingEditor);
+    couplingRow->addWidget(m_couplingEditButton);
+    m_couplingRemoveButton = new QPushButton(QStringLiteral("移除耦合配置"), area);
+    m_couplingRemoveButton->setObjectName(QStringLiteral("ird_modeling_coupling_remove"));
+    m_couplingRemoveButton->setToolTip(QStringLiteral(
+        "清除耦合配置（两阶段均允许——移除不是配置；R1 阶段的修复动作经此面）"));
+    connect(m_couplingRemoveButton, &QPushButton::clicked, this, [this] {
+        ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+        if (ws == nullptr || !m_writable) { return; }
+        if (!ws->drivetrainObject.has_value()
+            || !ws->drivetrainObject->coupling.has_value()) {
+            return;  // 无配置＝无动作（幂等）
+        }
+        const auto err =
+            applyDrivetrainCouplingEdit(*ws, m_couplingStage, std::nullopt);
+        if (!err.has_value()) {
+            onEditApplied("drivetrain.coupling（移除）");
+        } else {
+            EditRejection rejection;
+            rejection.codeToken = std::string(couplingEditErrorCodeToken(err->code));
+            rejection.detail = err->detail;
+            onEditRejected(rejection);
+        }
+        refreshPropertiesFromLastWorkingSet();
+    });
+    couplingRow->addWidget(m_couplingRemoveButton);
+    couplingRow->addStretch(1);
+    lay->addLayout(couplingRow);
+    lay->addStretch(1);
+    // 构建期即应用能力位/可写性门控（初值不失实——按钮缺省 enabled=true
+    // 不得越过 R1 红线呈现可用）。
+    setCouplingStage(m_couplingStage);
+    m_couplingEditButton->setEnabled(m_writable
+                                     && m_couplingStage == CouplingStage::R2Enabled);
+    m_couplingRemoveButton->setEnabled(m_writable);
+    refreshCouplingSummary();
 }
 
 void ModelingPanelWidget::rebuildDrivetrainModel()
@@ -2918,6 +3362,7 @@ void ModelingPanelWidget::refreshDrivetrainPane()
     const std::size_t jointCount = ws != nullptr ? ws->design.joints.size() : 0;
     if (jointCount != m_drivetrainJointCount) { rebuildDrivetrainModel(); }
     if (m_drivetrainPanel != nullptr) { m_drivetrainPanel->setEnabled(m_writable); }
+    refreshCouplingSummary();  // F14：耦合摘要随基线回填同拍刷新
 
     // SourcedValue 基线回填（NotProvided＝nullopt 空编辑器——不虚构数值；
     // 权威值缓存供分组装配"净取权威"）。
@@ -3081,6 +3526,18 @@ void ModelingPanelWidget::refreshEditPages()
     // ——树选中即切页；其余目标/空选中不动当前页（基座模式为显式入口，
     // UI-T54 语义保持——仅刷新关节区提示面）。
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if(m_sceneManager){
+        std::optional<core::ObjectId> selected;
+        if(ws&&m_lastSelected){const auto target=resolveSelection(*ws,*m_lastSelected);
+            if(target&&target->kind==SelectedTarget::Kind::Scene){selected=m_lastSelected;}}
+        m_sceneManager->bindTarget(ws,selected,m_writable);
+    }
+    if(m_toolManager){
+        std::optional<core::ObjectId> selected;
+        if(ws&&m_lastSelected){const auto target=resolveSelection(*ws,*m_lastSelected);
+            if(target&&target->kind==SelectedTarget::Kind::Tool){selected=m_lastSelected;}}
+        m_toolManager->bindTarget(ws,selected,m_writable);
+    }
     SelectedTarget::Kind kind = SelectedTarget::Kind::Joint;
     bool resolved = false;
     if (ws != nullptr && m_lastSelected.has_value()) {
@@ -3090,15 +3547,26 @@ void ModelingPanelWidget::refreshEditPages()
             resolved = true;
         }
     }
+    if(resolved&&kind==SelectedTarget::Kind::Link){
+        // 退离关节时同步旧页空态，避免手动返回关节模式仍残留上一目标。
+        refreshJointEditPane();
+        const auto target=resolveSelection(*ws,*m_lastSelected);
+        const auto& link=ws->design.links[target->index];
+        m_bodyEditor->bindTarget(m_lastSelected,link.body,link.localName,m_writable);
+        m_editStack->setCurrentWidget(m_bodyArea);return;
+    }
+    // 离开连杆时清除暂存，避免之后误套到另一对象。
+    m_bodyEditor->bindTarget(std::nullopt,BodyData{},"",m_writable);
     if (resolved && kind == SelectedTarget::Kind::Tool) {
         refreshToolMountPane();
         refreshTcpPane();  // UI-T57——TCP 段随工具页同刷（combo/基线/使能）
-        m_editStack->setCurrentWidget(m_toolArea);
+        if(m_editStack->currentWidget()!=m_toolManagerArea){m_editStack->setCurrentWidget(m_toolArea);}
         return;
     }
     if (resolved && kind == SelectedTarget::Kind::Scene) {
         refreshScenePosePane();
-        m_editStack->setCurrentWidget(m_sceneArea);
+        // 管理页接受/后台刷新时保留当前页及暂存；位姿入口显式切换到原六分量页。
+        if(m_editStack->currentWidget()!=m_sceneManagerArea){m_editStack->setCurrentWidget(m_sceneArea);}
         return;
     }
     // 位姿集/传动页（UI-T60——F-497 余项：均有 ObjectId 树锚，B.1 主通道）。
@@ -3329,6 +3797,200 @@ std::optional<core::ObjectId> ModelingPanelWidget::nodeAnchor(QTreeWidgetItem* i
     const std::string anchor = item->text(kAnchorColumn).toStdString();
     if (anchor.empty()) { return std::nullopt; }  // 分组行无锚
     return core::ObjectId::tryFromCanonical(anchor);
+}
+
+
+// =====================================================================
+// F14（WP-13-T25/MDL-21/AT-38）：耦合矩阵编辑入口
+// =====================================================================
+
+void ModelingPanelWidget::setCouplingStage(CouplingStage stage)
+{
+    m_couplingStage = stage;
+    // 能力位变化同步按钮可用性（R1 下"编辑配置"入口禁用——存在即阻断的
+    // 呈现半区；移除钮恒可用〔清除不是配置〕）。
+    if (m_couplingEditButton != nullptr) {
+        m_couplingEditButton->setEnabled(m_writable
+                                         && stage == CouplingStage::R2Enabled);
+        m_couplingEditButton->setToolTip(
+            stage == CouplingStage::R2Enabled
+                ? QStringLiteral("打开关节窗口线性耦合矩阵编辑（Δq_joint = "
+                                 "C·Δθ_motor；方阵/可逆/条件数 ≤1×10⁸ 域校验"
+                                 "——MDL-21/R2）")
+                : QStringLiteral("耦合配置在当前能力位（R1）下锁定——存在即"
+                                 "阻断（MDL-21-COUPLING-STAGE-LOCKED）；可先"
+                                 "移除既有配置"));
+    }
+    if (m_couplingRemoveButton != nullptr) {
+        m_couplingRemoveButton->setEnabled(m_writable);
+    }
+}
+
+void ModelingPanelWidget::openCouplingEditor()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable || ws->design.joints.empty()) { return; }
+    if (m_couplingStage != CouplingStage::R2Enabled) {
+        // R1 能力位下不开配置模态（编辑入口已禁用——此处为防御面）。
+        EditRejection rejection;
+        rejection.codeToken =
+            std::string(couplingEditErrorCodeToken(CouplingEditErrorCode::StageLocked));
+        rejection.detail = "耦合配置在当前能力位（R1）下锁定——MDL-21 已按 "
+                           "R2 解冻的宿主装配位生效后可配置";
+        onEditRejected(rejection);
+        return;
+    }
+    const std::size_t jointCount = ws->design.joints.size();
+    const CouplingDesign& existing =
+        ws->drivetrainObject.has_value()
+                && ws->drivetrainObject->coupling.has_value()
+            ? *ws->drivetrainObject->coupling
+            : CouplingDesign{};
+
+    QDialog dialog(this);
+    dialog.setObjectName(QStringLiteral("ird_modeling_coupling_dialog"));
+    dialog.setWindowTitle(QStringLiteral("编辑耦合矩阵（MDL-21/R2）"));
+    dialog.resize(520, 460);
+    auto* lay = new QVBoxLayout(&dialog);
+    auto* note = new QLabel(QStringLiteral(
+        "约定：Δq_joint = C·Δθ_motor（行＝关节窗口序，列＝对应电机轴同序；"
+        "力矩对偶 τ_motor = Cᵀ·τ_joint——DYN-04 虚功）。矩阵须方阵、可逆且"
+        "条件数 ≤1×10⁸（域校验拒绝不静默）。"), &dialog);
+    note->setWordWrap(true);
+    lay->addWidget(note);
+    auto* form = new QFormLayout();
+    auto* firstSpin = new QSpinBox(&dialog);
+    firstSpin->setObjectName(QStringLiteral("ird_modeling_coupling_first"));
+    firstSpin->setRange(1, static_cast<int>(jointCount));
+    firstSpin->setValue(existing.jointRangeFirst != 0 || existing.rows != 0
+                            ? static_cast<int>(existing.jointRangeFirst) + 1
+                            : 1);
+    auto* orderSpin = new QSpinBox(&dialog);
+    orderSpin->setObjectName(QStringLiteral("ird_modeling_coupling_order"));
+    orderSpin->setRange(1, static_cast<int>(jointCount));
+    orderSpin->setValue(existing.rows != 0 ? static_cast<int>(existing.rows) : 2);
+    form->addRow(QStringLiteral("窗口首关节（J 序）"), firstSpin);
+    form->addRow(QStringLiteral("矩阵阶数 n（窗口关节数＝电机轴数）"), orderSpin);
+    lay->addLayout(form);
+    auto* table = new QTableWidget(
+        orderSpin->value(), orderSpin->value(), &dialog);
+    table->setObjectName(QStringLiteral("ird_modeling_coupling_table"));
+    auto rebuildTable = [&, table](int order, const CouplingDesign* from) {
+        table->setRowCount(order);
+        table->setColumnCount(order);
+        for (int r = 0; r < order; ++r) {
+            for (int c = 0; c < order; ++c) {
+                double v = (r == c) ? 1.0 : 0.0;  // 缺省单位阵
+                if (from != nullptr && r < static_cast<int>(from->rows)
+                    && c < static_cast<int>(from->cols)) {
+                    v = from->c[static_cast<std::size_t>(r)
+                                 * from->cols + static_cast<std::size_t>(c)];
+                }
+                table->setItem(r, c, new QTableWidgetItem(QString::number(v)));
+            }
+        }
+    };
+    {
+        const CouplingDesign* from =
+            (existing.rows != 0) ? &existing : nullptr;
+        rebuildTable(orderSpin->value(), from);
+    }
+    // 阶数变化→表格重建（已有值尽量保留：对角延拓，新格按单位阵缺省）。
+    connect(orderSpin, &QSpinBox::valueChanged, this, [&, rebuildTable](int order) {
+        CouplingDesign keep;
+        keep.rows = keep.cols = static_cast<std::uint32_t>(table->rowCount());
+        for (int r = 0; r < table->rowCount(); ++r) {
+            for (int c = 0; c < table->columnCount(); ++c) {
+                keep.c.push_back(table->item(r, c) != nullptr
+                                     ? table->item(r, c)->text().toDouble()
+                                     : 0.0);
+            }
+        }
+        rebuildTable(order, &keep);
+    });
+    lay->addWidget(table, 1);
+    auto* errLabel = new QLabel(&dialog);
+    errLabel->setObjectName(QStringLiteral("ird_modeling_coupling_error"));
+    errLabel->setWordWrap(true);
+    errLabel->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kWarning)));
+    lay->addWidget(errLabel);
+    auto* buttons =
+        new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("应用"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, [&] {
+        // 组装 CouplingDesign：逐格解析（非法数值定位提示并保留模态）→
+        // 域原语裁决（拒绝保留模态原位重试——工作集未动）。
+        const int order = orderSpin->value();
+        const std::uint32_t first =
+            static_cast<std::uint32_t>(firstSpin->value() - 1);
+        CouplingDesign design;
+        design.rows = design.cols = static_cast<std::uint32_t>(order);
+        design.jointRangeFirst = first;
+        design.jointRangeLast = first + static_cast<std::uint32_t>(order) - 1;
+        design.c.reserve(static_cast<std::size_t>(order) * order);
+        for (int r = 0; r < order; ++r) {
+            for (int c = 0; c < order; ++c) {
+                bool ok = false;
+                const double v = table->item(r, c) != nullptr
+                                     ? table->item(r, c)->text().toDouble(&ok)
+                                     : 0.0;
+                if (!ok || !std::isfinite(v)) {
+                    errLabel->setText(QStringLiteral("第 %1 行第 %2 列不是有限"
+                                                     "数值——请修正后重试")
+                                          .arg(r + 1)
+                                          .arg(c + 1));
+                    return;
+                }
+                design.c.push_back(v);
+            }
+        }
+        // 申报条件数＝域校验重算值（checkCouplingMatrix 先行取得 κ——申报
+        // 值不参与判定，仅作展示缓存；真正的判定在 apply 原语内重算）。
+        const CouplingMatrixCheck pre =
+            checkCouplingMatrix(design, static_cast<std::uint32_t>(jointCount));
+        design.conditionNumber = pre.recomputedConditionNumber;
+        const auto err =
+            applyDrivetrainCouplingEdit(*ws, m_couplingStage, design);
+        if (err.has_value()) {
+            errLabel->setText(QString::fromStdString(
+                std::string(couplingEditErrorCodeToken(err->code)) + "："
+                + err->detail + "（工作集未修改，可修正后重试）"));
+            return;  // 拒绝保留模态——原子性由域原语保证（字节不变）
+        }
+        onEditApplied("drivetrain.coupling（窗口 J" + std::to_string(first + 1)
+                      + "..J" + std::to_string(first + order) + "，"
+                      + std::to_string(order) + "×" + std::to_string(order) + "）");
+        refreshPropertiesFromLastWorkingSet();
+        dialog.accept();
+    });
+    lay->addWidget(buttons);
+    dialog.exec();  // 取消＝零写入（模态内未触发 apply 即无任何工作集触碰）
+}
+
+void ModelingPanelWidget::refreshCouplingSummary()
+{
+    if (m_couplingSummary == nullptr) { return; }
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    const std::optional<CouplingDesign>& coupling =
+        (ws != nullptr && ws->drivetrainObject.has_value())
+            ? ws->drivetrainObject->coupling
+            : std::nullopt;
+    if (!coupling.has_value()) {
+        m_couplingSummary->setText(QStringLiteral(
+            "当前：未配置（Δq＝Δθ 直驱；R1 阶段允许，配置则阻断）"));
+        return;
+    }
+    m_couplingSummary->setText(QStringLiteral(
+        "当前：窗口 J%1..J%2，%3×%4 矩阵（申报条件数 %5——判定以重算为准）")
+        .arg(coupling->jointRangeFirst + 1)
+        .arg(coupling->jointRangeLast + 1)
+        .arg(coupling->rows)
+        .arg(coupling->cols)
+        .arg(coupling->conditionNumber));
 }
 
 }  // namespace sdurws::ird::modeling

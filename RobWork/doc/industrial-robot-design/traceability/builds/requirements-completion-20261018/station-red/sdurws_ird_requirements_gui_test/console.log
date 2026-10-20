@@ -1,0 +1,23 @@
+Note: Google Test filter = *StationDefinition*WP14T12
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2276): error: Expected: (button) != (nullptr), actual: NULL vs (nullptr)
+工位必须可完整编辑参考系、TCP及引用型姿态规则
+
+[  FAILED  ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12 (379 ms)
+[ RUN      ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2315): error: Expected: (button) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12 (26 ms)
+[----------] 2 tests from RequirementsSessionGuiTest (406 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (406 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.StationDefinitionAtomicReferences_AT23_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.StationDefinitionRejectCancel_AT23_WP14T12
+
+ 2 FAILED TESTS

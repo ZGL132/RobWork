@@ -1,0 +1,3 @@
+index-evidence: 13125 files, 670.7 MB -> traceability/evidence-index.json
+index-evidence: lifecycle current=27 historical=564 unverified=12534; associated=596 unassociated=12529
+index-evidence: sha computed=13106 skippedLarge=19; duplicateGroups=749 (listed 100)

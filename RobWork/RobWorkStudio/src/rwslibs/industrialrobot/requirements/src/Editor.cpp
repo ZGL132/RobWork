@@ -462,7 +462,7 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
     }
     // 空批次（无新条目且无替换）＝无事可做的调用方错误（避免制造
     // "空撤销步"污染撤销栈语义）。
-    if (batch.newPoints.empty() && batch.replaceNames.empty()) {
+    if (batch.newPoints.empty() && batch.replaceNames.empty() && batch.updatedPoints.empty()) {
         out.error = loadFailure("批次为空（无新条目且无替换名——无编辑语义）");
         return out;
     }
@@ -558,24 +558,43 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
         }
     }
 
-    // ---- ③写入（先替换移除、后追加新条目＋排序）——校验全部通过后才
-    //      动工作集（拒绝面不产生部分写入）。
+    // ---- ③完整更新预检：只更新已存在身份，不将调用方拼错ID悄悄当新增。
+    //      解除关联不是删除，仍被工况引用的工位无需解除绑定；与替换/新增重叠则拒绝。
+    std::vector<core::ObjectId> updatedIds;
+    for (const auto& point : batch.updatedPoints) {
+        const auto original = std::find_if(ws_.points.entries.begin(), ws_.points.entries.end(),
+            [&](const TaskPoint& p) { return p.objectId == point.objectId; });
+        if (original == ws_.points.entries.end()
+            || std::find(updatedIds.begin(), updatedIds.end(), point.objectId) != updatedIds.end()
+            || std::find(batch.replaceNames.begin(), batch.replaceNames.end(), original->name) != batch.replaceNames.end()
+            || std::any_of(batch.newPoints.begin(), batch.newPoints.end(), [&](const TaskPoint& p) { return p.objectId == point.objectId; })) {
+            out.error = loadFailure("批次更新目标不存在、重复或与新增/替换重叠，请刷新后重试");
+            return out;
+        }
+        updatedIds.push_back(point.objectId);
+    }
+
+    // ---- ④在候选工作集上写入，沿用单条upsert的不变量/名称校验；所有失败
+    //      直接丢弃候选，权威工作集/撤销栈在最终交换前保持原状（REQ-11）。
+    RequirementWorkingSet candidate = ws_;
     for (const auto& name : batch.replaceNames) {
-        auto& entries = ws_.points.entries;
+        auto& entries = candidate.points.entries;
         entries.erase(std::remove_if(entries.begin(), entries.end(),
                                      [&name](const TaskPoint& p) { return p.name == name; }),
                       entries.end());
     }
     for (const auto& p : batch.newPoints) {
-        ws_.points.entries.push_back(p);
+        candidate.points.entries.push_back(p);
     }
-    sortEntriesByObjectId(ws_.points.entries);
+    for (const auto& point : batch.updatedPoints) {
+        if (!upsertEntry(candidate.points.entries, point, "任务点", out.error, validateTaskPoint)) { return out; }
+    }
+    sortEntriesByObjectId(candidate.points.entries);
 
     // ---- ④跨集合 id 唯一复核（I-REQ-2 跨集合半区——全集视图核对，
     //      与单条 applyEdit 同源；违例回滚快照）。
-    if (auto e = checkCrossSetIdUniqueness(ws_.points.entries, ws_.regions.entries,
-                                           ws_.conditions.entries, ws_.plans.entries)) {
-        ws_ = std::move(snapshot);
+    if (auto e = checkCrossSetIdUniqueness(candidate.points.entries, candidate.regions.entries,
+                                           candidate.conditions.entries, candidate.plans.entries)) {
         out.error = std::move(*e);
         out.error.detail = "requirements/editor: " + out.error.detail
                          + "（I-REQ-2 跨集合半区）";
@@ -588,6 +607,7 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
         batch.summary.empty() ? ("批次应用 " + std::to_string(batch.newPoints.size())
                                + " 条")
                               : batch.summary;
+    ws_ = std::move(candidate);
     undoStack_.push_back(UndoStep{std::move(snapshot), line});
     redoStack_.clear();
     if (!summary_.empty()) {
@@ -598,6 +618,71 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
     out.accepted = true;
     out.changeSummary = line;
     out.diagnostics = batch.diagnostics;
+    return out;
+}
+
+// =====================================================================
+// A-18：任意编辑组合的原子应用（接口 A-18 增列的落位——区域采样确认
+// ＝区域＋派生计划两编辑一撤销；区域删除＝计划随删＋区域移除同款）
+// =====================================================================
+
+EditOutcome RequirementEditor::applyEditsAtomic(
+    const std::vector<RequirementEdit>& edits)
+{
+    EditOutcome out;
+    if (!loaded_) {
+        out.error = loadFailure("编辑器未载入基线（loadBaseline 前置违约——调用方错误）");
+        return out;
+    }
+    if (edits.empty()) {
+        out.error = loadFailure("applyEditsAtomic：空编辑序列（调用方错误——不虚构空修订）");
+        return out;
+    }
+    // 原子前快照（中段拒绝的整体回滚锚——单编辑 applyEdit 的拒绝路径
+    // 只自回滚"该条编辑前"状态，多编辑组合须回滚到组合前状态）。
+    const RequirementWorkingSet atomicSnapshot = ws_;
+    const std::size_t undoDepthBefore = undoStack_.size();
+    // 中段接受的编辑会清重做栈＋推进摘要/计数——拒绝面须全数恢复
+    // （@post"工作集/栈全部不变"的完整语义）。
+    std::vector<UndoStep> redoSnapshot = redoStack_;
+    std::string summaryBefore = summary_;
+    std::size_t editCountBefore = editCount_;
+    std::string combined;
+    for (const auto& edit : edits) {
+        // 逐条复用单编辑 applyEdit（校验链同源——NFR-MNT-04 零第二份）；
+        // 其接受面会各推一条撤销快照，接受聚合后合并（见下）。
+        EditOutcome one = applyEdit(edit);
+        if (!one.accepted) {
+            ws_ = atomicSnapshot;  // 原子回滚：工作集回到组合前状态
+            while (undoStack_.size() > undoDepthBefore) {
+                undoStack_.pop_back();  // 弹出中段已推快照（栈面同回滚）
+            }
+            redoStack_ = std::move(redoSnapshot);
+            summary_ = std::move(summaryBefore);
+            editCount_ = editCountBefore;
+            out.error = std::move(one.error);
+            out.diagnostics.clear();  // 拒绝＝零产出（单条警告面随编辑作废）
+            return out;
+        }
+        if (!combined.empty()) { combined += "\n"; }
+        combined += one.changeSummary;
+    }
+    // 全部接受——撤销合并：弹出本组合推入的 N 条快照，保留**第一条编辑
+    // 前**快照（＝原子前状态，栈底方向的那条）以合并摘要重新入栈——
+    // undoLocal 一次即整体回滚（恰一次撤销入栈的 @post）。
+    if (edits.size() >= 2) {
+        std::vector<UndoStep> pushed;
+        pushed.reserve(edits.size());
+        for (std::size_t i = 0; i < edits.size() && !undoStack_.empty(); ++i) {
+            pushed.push_back(std::move(undoStack_.back()));
+            undoStack_.pop_back();
+        }
+        // pushed 逆序（back 先出）——组合前快照在 pushed 尾部。
+        UndoStep merged{std::move(pushed.back().snapshot), combined};
+        undoStack_.push_back(std::move(merged));
+    }
+    out.accepted = true;
+    out.changeSummary = combined;
     return out;
 }
 

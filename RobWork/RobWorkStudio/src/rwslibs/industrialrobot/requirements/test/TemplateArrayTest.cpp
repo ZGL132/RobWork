@@ -593,6 +593,92 @@ TEST(ReqTemplateArray, LinearArrayCountAndSpacing_WP14T07_ACC2)
  * Rectangular 阵列（ACC2）：2×3 网格→恰 6 条，位置 (i·0.5, j·0.25, 0)
  * 全网格覆盖（i=1..2、j=1..3）。
  */
+/** @brief REQ-11/AT-24：独立行列层几何、可重生成配方和旧二维兼容。 */
+TEST(ReqTemplateArray, RectangularLayersAndRecipe_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    TemplateArrayService service;
+    ArrayParams p; p.sources = {makeSourcePoint("S", {1, 2, 3})};
+    p.count = 2; p.count2 = 3; p.spacingM = 0.5; p.spacing2M = 0.2;
+    const auto old = service.applyArray(ArrayKind::Rectangular, p); ASSERT_TRUE(old.ok);
+    p.count3 = 2; p.spacing3M = 0.7;
+    const auto result = service.applyArray(ArrayKind::Rectangular, p); ASSERT_TRUE(result.ok);
+    ASSERT_EQ(result.newPoints.size(), 12U);
+    for (int i = 1; i <= 2; ++i) { for (int j = 1; j <= 3; ++j) { for (int k = 0; k < 2; ++k) {
+        const auto& pos = result.newPoints[static_cast<std::size_t>(((i - 1) * 3 + j - 1) * 2 + k)].pose.position.value();
+        EXPECT_DOUBLE_EQ(pos[0], 1 + 0.5 * i); EXPECT_DOUBLE_EQ(pos[1], 2 + 0.2 * j); EXPECT_DOUBLE_EQ(pos[2], 3 + 0.7 * k);
+    } } }
+    RequirementWorkingSet ws; ws.points.entries = p.sources;
+    ws.points.entries.insert(ws.points.entries.end(), result.newPoints.begin(), result.newPoints.end());
+    const auto regen = service.regenerate(ws, result.provenance.instanceId);
+    ASSERT_TRUE(regen.found); ASSERT_EQ(regen.batch.newPoints.size(), 12U); EXPECT_TRUE(regen.conflictNames.empty());
+    // 损坏配方不是旧配方：新增层数有后缀时不能用atoi悄悄截成合法整数。
+    auto corrupt = ws;
+    for (auto& entry : corrupt.points.entries) {
+        if (entry.generation) {
+            for (auto& parameter : entry.generation->parameters) { if (parameter.first == "count3") { parameter.second = "2oops"; } }
+        }
+    }
+    EXPECT_FALSE(service.regenerate(corrupt, result.provenance.instanceId).found);
+    p.count3 = 1; p.spacing3M = -1;
+    const auto compatible = service.applyArray(ArrayKind::Rectangular, p); ASSERT_TRUE(compatible.ok);
+    EXPECT_EQ(compatible.provenance.parameters, old.provenance.parameters);
+    p.count3 = 0; EXPECT_FALSE(service.applyArray(ArrayKind::Rectangular, p).ok);
+    p.count3 = 2; EXPECT_FALSE(service.applyArray(ArrayKind::Rectangular, p).ok);
+    p.spacing3M = 1; p.direction3 = {0, 0, 0}; EXPECT_FALSE(service.applyArray(ArrayKind::Rectangular, p).ok);
+    p.direction3 = {0, 0, 1}; p.count = 2147483647;
+    EXPECT_FALSE(service.applyArray(ArrayKind::Rectangular, p).ok) << "数量乘积必须在分配前拒绝";
+}
+
+/** @brief REQ-11/AT-24：非Z圆面按确定性基向量计算，默认法向配方兼容。 */
+TEST(ReqTemplateArray, CircularPlaneNormal_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    TemplateArrayService service; ArrayParams p; p.sources = {makeSourcePoint("S", {1, 2, 3})};
+    p.count = 2; p.radiusM = 2; p.angleStepRad = 1.5707963267948966; p.circleNormal = {1, 0, 0};
+    const auto result = service.applyArray(ArrayKind::Circular, p); ASSERT_TRUE(result.ok);
+    ASSERT_EQ(result.newPoints.size(), 2U);
+    const auto a = result.newPoints[0].pose.position.value();
+    EXPECT_NEAR(a[0], 0, 1e-12); EXPECT_NEAR(a[1], 0, 1e-12); EXPECT_NEAR(a[2], 2, 1e-12);
+    const auto b = result.newPoints[1].pose.position.value(); EXPECT_NEAR(b[1], -2, 1e-12);
+    RequirementWorkingSet ws; ws.points.entries = p.sources;
+    ws.points.entries.insert(ws.points.entries.end(), result.newPoints.begin(), result.newPoints.end());
+    const auto regen = service.regenerate(ws, result.provenance.instanceId);
+    ASSERT_TRUE(regen.found); EXPECT_TRUE(regen.conflictNames.empty());
+    ASSERT_EQ(regen.batch.newPoints.size(), 2U);
+    EXPECT_NEAR(regen.batch.newPoints[0].pose.position.value()[2], 2, 1e-12);
+    p.circleNormal = {0, 0, 0}; EXPECT_FALSE(service.applyArray(ArrayKind::Circular, p).ok);
+}
+
+/** @brief REQ-11：批次更新保留身份，混合非法更新/重复/新增重叠整批零写。 */
+TEST(ReqTemplateArray, AtomicExistingPointUpdates_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    const auto base = BaselineBundle::make(makeSourcePoint("P1", {1, 2, 3}));
+    RequirementEditor editor; ASSERT_TRUE(editor.loadBaseline(base.closure).ok);
+    ASSERT_TRUE(editor.applyEdit(makeSourcePoint("P2", {4, 5, 6})).accepted);
+    const auto before = editor.workingSet();
+    EditBatch update; update.ok = true; update.updatedPoints = before.points.entries;
+    for (auto& point : update.updatedPoints) { point.note = "一次批量更新"; }
+    EXPECT_NE(update, EditBatch{});
+    ASSERT_TRUE(editor.applyEdit(update).accepted);
+    for (const auto& point : editor.workingSet().points.entries) { EXPECT_EQ(point.note, "一次批量更新"); }
+    ASSERT_TRUE(editor.undoLocal()); EXPECT_EQ(editor.workingSet(), before);
+    ASSERT_TRUE(editor.redoLocal()); ASSERT_TRUE(editor.undoLocal());
+    const auto edits = editor.draftStatus().edits;
+    auto bad = update; bad.updatedPoints.back().name = "";
+    EXPECT_FALSE(editor.applyEdit(bad).accepted); EXPECT_EQ(editor.workingSet(), before);
+    bad = update; bad.updatedPoints.back().objectId = core::ObjectId::generate();
+    EXPECT_FALSE(editor.applyEdit(bad).accepted); EXPECT_EQ(editor.workingSet(), before);
+    bad = update; bad.updatedPoints.push_back(bad.updatedPoints.front());
+    EXPECT_FALSE(editor.applyEdit(bad).accepted); EXPECT_EQ(editor.workingSet(), before);
+    bad = update; bad.newPoints.push_back(bad.updatedPoints.front());
+    EXPECT_FALSE(editor.applyEdit(bad).accepted); EXPECT_EQ(editor.workingSet(), before);
+    bad = update; bad.replaceNames.push_back(bad.updatedPoints.front().name);
+    EXPECT_FALSE(editor.applyEdit(bad).accepted); EXPECT_EQ(editor.workingSet(), before);
+    EXPECT_EQ(editor.draftStatus().edits, edits);
+}
+
 TEST(ReqTemplateArray, RectangularArrayGrid_WP14T07_ACC2)
 {
     IRD_TEST_INFO(std::vector<std::string>{"REQ-11"},

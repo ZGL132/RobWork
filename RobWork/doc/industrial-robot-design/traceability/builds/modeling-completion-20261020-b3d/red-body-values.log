@@ -1,0 +1,27 @@
+Note: Google Test filter = ModelingManualBody.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from ModelingManualBody
+[ RUN      ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1319): error: Value of: out
+  Actual: false
+Expected: true
+
+[  FAILED  ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17 (0 ms)
+[ RUN      ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1352): error: Value of: out
+  Actual: false
+Expected: true
+物性编辑尚未实现
+
+[  FAILED  ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17 (0 ms)
+[----------] 2 tests from ModelingManualBody (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17
+[  FAILED  ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17
+
+ 2 FAILED TESTS

@@ -96,8 +96,10 @@ struct FormatVersion {
 };
 
 /// 当前编解码器能产出/完全支持的格式版本（单一权威；升版走单元卡增量
-/// 修订登记——破坏性变更另走设计变更评审）。
-inline constexpr FormatVersion kCurrentFormatVersion{1, 0};
+/// 修订登记——破坏性变更另走设计变更评审）。{1,1}＝WP-13-T25/F01 批次：
+/// JointEntry 表尾追加 maxVelocity/maxAcceleration 两 SourcedValue（旧
+/// {1,0} 字节仍可解码——追加字段读为 NotProvided，兼容读不升级）。
+inline constexpr FormatVersion kCurrentFormatVersion{1, 1};
 
 /// 编码字节载体（§9.4.9 "Bytes"——UTF-8/二进制混合的字节流，见文件头布局）。
 using Bytes = std::vector<std::uint8_t>;

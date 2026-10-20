@@ -270,7 +270,7 @@ constexpr const char* kCardObjectName = "ird_policy_summary_card";
  * @param units     [in] 显示单位选项（阶段 A 恒 §4.6 出厂默认 m/rad）
  */
 void buildPolicyCardContent(QWidget* container, IPolicySummarySource& source,
-                            const PolicySummaryDisplayUnits& units)
+                            const PolicySummaryDisplayUnits& units, const std::function<void()>& editRequest)
 {
     // 清空旧内容（takeAt 逐项取出：控件即删、间距项即删、条目本身即删）
     // ——注意三类条目的删除互斥：QWidgetItem 是包裹件（与控件对象不同体，
@@ -324,9 +324,7 @@ void buildPolicyCardContent(QWidget* container, IPolicySummarySource& source,
         rowLabel->setWordWrap(true);
         layout->addWidget(rowLabel);
 
-        // 修改策略跳转入口（acc2）：按钮只挂"延期提示"反馈（§4.1 占位
-        // 口径）——不打开任何表单、不触达任何写路径（编辑表单归阶段 B，
-        // 届时经编辑适配器→①命令端口；本阶段不虚构编辑能力 §11.4）。
+        // A-23：生产卡经注册表门控到宿主编辑器；无编辑适配的测试/旧宿主保留延期反馈。
         if (row.key == "edit-path") {
             auto* editButton = new QPushButton(QString::fromUtf8("修改策略…"), container);
             editButton->setObjectName("ird_policy_edit_button");
@@ -336,8 +334,14 @@ void buildPolicyCardContent(QWidget* container, IPolicySummarySource& source,
             notice->setObjectName("ird_policy_edit_notice");
             notice->setWordWrap(true);
             notice->hide();
+            auto* editSource = dynamic_cast<detail::IPolicySummaryEditSource*>(&source);
             QObject::connect(editButton, &QPushButton::clicked, container,
-                             [notice] {
+                             [notice, editSource, editRequest] {
+                                 if (editRequest) { editRequest(); return; }
+                                 if (editSource != nullptr) {
+                                     editSource->requestPolicyEdit();
+                                     return;
+                                 }
                                  // 点击反馈＝延期提示（kPolicyEditDeferredNotice
                                  // ——契约文案单点，模型测试钉住原文）；重建后
                                  // 旧标签销毁则本守卫使回调空转。
@@ -358,21 +362,21 @@ void buildPolicyCardContent(QWidget* container, IPolicySummarySource& source,
 
 QWidget* detail::createPolicySummaryCard(IPolicySummarySource& policySource,
                                          std::function<void()>* refreshOut,
-                                         QWidget* parent)
+                                         QWidget* parent, std::function<void()> editRequest)
 {
     auto* container = new QWidget(parent);
     container->setObjectName(kCardObjectName);
     // 阶段 A 显示单位＝§4.6 出厂默认（m/rad——KIN-12 显示投影缺省制式；
     // 用户级显示单位偏好的设置承载与消费随用户设置任务接入）。
     const PolicySummaryDisplayUnits units = PolicySummaryDisplayUnits::siDefaults();
-    buildPolicyCardContent(container, policySource, units);
+    buildPolicyCardContent(container, policySource, units, editRequest);
     if (refreshOut != nullptr) {
         // 刷新钩子：容器存活期内重新拉取端口快照并重建内容（UI 线程——
         // §3.4 M-1；壳在 initialize 与 presentProjectContext 后触发）。
         // container 由调用方（Qt 父子树）销毁，钩子生命周期≤容器。
-        *refreshOut = [container, &policySource, units] {
+        *refreshOut = [container, &policySource, units, editRequest] {
             if (container != nullptr) {
-                buildPolicyCardContent(container, policySource, units);
+                buildPolicyCardContent(container, policySource, units, editRequest);
             }
         };
     }

@@ -1,0 +1,20 @@
+Note: Google Test filter = CrashCapture.*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from CrashCapture
+[ RUN      ] CrashCapture.EmitAssemblesSixSegmentsIntoKeyValueFile_PM17_S76
+[       OK ] CrashCapture.EmitAssemblesSixSegmentsIntoKeyValueFile_PM17_S76 (22 ms)
+[ RUN      ] CrashCapture.EmitWithoutSourceLeavesRuntimeSegmentsEmpty_HonestEmpty
+[       OK ] CrashCapture.EmitWithoutSourceLeavesRuntimeSegmentsEmpty_HonestEmpty (17 ms)
+[ RUN      ] CrashCapture.ReentrantEmitIsRejectedByOneShotGate_Acceptance1
+[       OK ] CrashCapture.ReentrantEmitIsRejectedByOneShotGate_Acceptance1 (2 ms)
+[ RUN      ] CrashCapture.WriteFailureDegradesWithoutThrow_DT_LIFE4
+[ird-diagnostics] [crash-report-write-failed] code=DIAG-LOG-WRITE-FAILED dir=[USER]\AppData\Local\Temp\ird-t24-crashcap-blocker-54172-4\occupied
+[       OK ] CrashCapture.WriteFailureDegradesWithoutThrow_DT_LIFE4 (1 ms)
+[ RUN      ] CrashCapture.SnapshotSourceFailureDoesNotBreakReportPath
+[       OK ] CrashCapture.SnapshotSourceFailureDoesNotBreakReportPath (13 ms)
+[----------] 5 tests from CrashCapture (57 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (58 ms total)
+[  PASSED  ] 5 tests.

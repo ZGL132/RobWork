@@ -31,6 +31,7 @@
 #include <Eigen/Core>
 #include <Eigen/SVD>  // JacobiSVD——O-40 登记的 SVD 唯一实现点（rw::math 无 SVD）
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <limits>
@@ -216,11 +217,16 @@ Expected<PoseMetrics> FkEvaluator::evaluate(const IKinRuntimeView& view,
             makeNoTcp("TCP 引用悬空：toolObject 未解析到快照工具（KIN-NO-TCP 素材——§9.6）"));
     }
     const runtime::CanonicalTool& tool = tools.at(loc->index);
-    // 键匹配：空串＝canonical TCP；非空须与工具 localName 精确相等
-    // （canonical 面单 TCP——解析规则登记于 KinTypes.hpp/卡 §14.6）。
-    if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName) {
-        return Expected<PoseMetrics>::err(
-            makeFrameUnresolved(tcp.tcpKey, tool.localName));
+    // A-15/KIN-14：实际键优先，避免工具名恰好等于某tcpKey时误用默认项。
+    // 指针仅在本次同步计算借用，所有权归不可变模型，不发布到UI或缓存。
+    const rw::math::Transform3D<double>* tcpOffset = &tool.tcpOffset;
+    if (!tcp.tcpKey.empty()) {
+        const auto selected = std::find_if(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+            [&](const auto& entry) { return entry.first == tcp.tcpKey; });
+        if (selected != tool.namedTcpOffsets.end()) { tcpOffset = &selected->second; }
+        else if (tcp.tcpKey != tool.localName) {
+            return Expected<PoseMetrics>::err(makeFrameUnresolved(tcp.tcpKey, tool.localName));
+        }
     }
 
     // ---- 第 4 步：链式 FK＋几何雅可比源点采集（单遍；Eigen 组件域）----
@@ -279,10 +285,10 @@ Expected<PoseMetrics> FkEvaluator::evaluate(const IKinRuntimeView& view,
     }
     // T_base_flange＝RAcc/pAcc（链末——法兰系）。
 
-    // 4d. TCP 偏置：T_base_tcp＝T_base_flange·T_flange_tcp（工具单 TCP——
+    // 4d. 所选TCP偏置：T_base_tcp＝T_base_flange·T_flange_tcp（A-15完整目录——
     // runtime §4.3.4；tcpOffset 正交性由模型构造域保证）。
-    const Eigen::Matrix3d Rt = toEigen(tool.tcpOffset.R());
-    const Eigen::Vector3d pt = toEigen(tool.tcpOffset.P());
+    const Eigen::Matrix3d Rt = toEigen(tcpOffset->R());
+    const Eigen::Vector3d pt = toEigen(tcpOffset->P());
     const Eigen::Matrix3d RTcp = RAcc * Rt;
     const Eigen::Vector3d pTcp = RAcc * pt + pAcc;
 

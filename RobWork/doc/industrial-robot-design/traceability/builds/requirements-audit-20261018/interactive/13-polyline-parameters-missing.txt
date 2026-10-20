@@ -1,0 +1,15 @@
+Window: "批量阵列参数", App: sdurws_ird_studio.exe.
+	0 窗口 (settable, string) 批量阵列参数 Secondary Actions: Raise ID: QApplication.QDialog
+		1 标题栏 (settable, string) Value: 批量阵列参数
+			2 菜单栏 系统 ID: MenuBar
+				3 菜单项 系统
+			4 按钮 关闭
+		5 旋转图标 (settable, float) 生成数量 Value: 3 ID: QApplication.QDialog.QSpinBox
+		6 旋转图标 (settable, float) 间距/半径 Value: 0.5 ID: QApplication.QDialog.QDoubleSpinBox
+		7 文本 生成数量 ID: QApplication.QDialog.QLabel
+		8 文本 间距/半径 ID: QApplication.QDialog.QLabel
+		9 组 (settable, string) ID: QApplication.QDialog.QDialogButtonBox
+			10 按钮 (settable, string) 确定 ID: QApplication.QDialog.QDialogButtonBox.QPushButton
+			11 按钮 (settable, string) 取消 ID: QApplication.QDialog.QDialogButtonBox.QPushButton
+
+The focused UI element is 5 旋转图标 (settable, float) 生成数量 Value: 3 ID: QApplication.QDialog.QSpinBox.

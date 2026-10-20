@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="1" disabled="0" errors="0" time="0.001" timestamp="2026-10-20T13:14:09.293" name="AllTests">
+  <testsuite name="ModelingCompleteApply" tests="2" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T13:14:09.293">
+    <testcase name="ReceiptReplacesTemporaryPartsEvenAtSameAnchor_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="910" status="run" result="completed" time="0.001" timestamp="2026-10-20T13:14:09.293" classname="ModelingCompleteApply">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:919&#x0A;Value of: module.acceptAppliedSession(closure,*closure.expected.rootObjectId, closure.branch,closure.revision,error)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;建模工作集有未应用编辑，请先处置后再切换已提交基线&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:919
+Value of: module.acceptAppliedSession(closure,*closure.expected.rootObjectId, closure.branch,closure.revision,error)
+  Actual: false
+Expected: true
+建模工作集有未应用编辑，请先处置后再切换已提交基线
+]]></failure>
+    </testcase>
+    <testcase name="FailedReceiptKeepsWholeDirtySession_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="933" status="run" result="completed" time="0." timestamp="2026-10-20T13:14:09.294" classname="ModelingCompleteApply" />
+  </testsuite>
+</testsuites>

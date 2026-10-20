@@ -1,0 +1,11 @@
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/MATRIX-RESULTS.md
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/MATRIX.md
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/REPORT.md
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/acceptance_probe_complete-report.json
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/acceptance_probe_complete.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/acceptance_probe_complete.xml
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/build.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/drivetrain-report.json
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/drivetrain.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/modeling-audit-20261019-601ffa0e/drivetrain.xml
+Write-Error: untracked evidence total: 145（仅列前 10）——先 git add 再重跑 index-evidence.ps1

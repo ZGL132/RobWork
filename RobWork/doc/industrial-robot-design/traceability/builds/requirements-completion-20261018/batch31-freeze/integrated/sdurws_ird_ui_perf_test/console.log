@@ -1,0 +1,14 @@
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from InteractionResponseBenchmark
+[ RUN      ] InteractionResponseBenchmark.FiveOpsIdleStateGoldenScaleP95_WP23T02_B01
+[       OK ] InteractionResponseBenchmark.FiveOpsIdleStateGoldenScaleP95_WP23T02_B01 (2 ms)
+[ RUN      ] InteractionResponseBenchmark.FiveOpsBackgroundStateGoldenScaleP95_WP23T02_B01
+[       OK ] InteractionResponseBenchmark.FiveOpsBackgroundStateGoldenScaleP95_WP23T02_B01 (173 ms)
+[ RUN      ] InteractionResponseBenchmark.LongWorkRunsOffUiThreadAndMarshalsBack_WP23T02_B01
+[       OK ] InteractionResponseBenchmark.LongWorkRunsOffUiThreadAndMarshalsBack_WP23T02_B01 (1352 ms)
+[----------] 3 tests from InteractionResponseBenchmark (1529 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (1539 ms total)
+[  PASSED  ] 3 tests.

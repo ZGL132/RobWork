@@ -1,0 +1,14 @@
+{
+  "modeling": {
+    "passedAssertions": 240,
+    "failedAssertions": 0,
+    "processExit": 0,
+    "evidence": "batch24-final-host-modeling/stdout.log"
+  },
+  "requirements": {
+    "passedAssertions": 141,
+    "failedAssertions": 0,
+    "processExit": 0,
+    "evidence": "batch24-final-host-requirements/stdout.log"
+  }
+}

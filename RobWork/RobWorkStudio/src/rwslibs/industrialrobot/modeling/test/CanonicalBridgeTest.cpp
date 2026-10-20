@@ -49,6 +49,7 @@
 #include <sdurws/ird/modeling/ObjectTypes.hpp>
 #include <sdurws/ird/modeling/Parts.hpp>
 #include <sdurws/ird/modeling/RobotDesign.hpp>
+#include <sdurws/ird/modeling/Template.hpp> // MDL-12：确认后的工程范围必须真实进入编译输入。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 #include <gtest/gtest.h>
@@ -312,9 +313,10 @@ bool sameDescription(const runtime::RobotDesignDescription& a,
         const runtime::SceneObjectDescription& sb = b.scene[i];
         if (sa.objectId != sb.objectId || sa.localName != sb.localName
             || !sameTransform(sa.worldPose, sb.worldPose)
-            || !sameResourceRef(sa.geometry.resource, sb.geometry.resource)) {
+            || sa.geometry.has_value()!=sb.geometry.has_value()) {
             return false;
         }
+        if(sa.geometry&&!sameResourceRef(sa.geometry->resource,sb.geometry->resource)){return false;}
     }
     if (a.base.preset != b.base.preset
         || !sameSourcedVec(a.base.customEaa, b.base.customEaa)
@@ -916,6 +918,7 @@ TEST(MdlCanonicalBridge, ToolsMappingDefaultTcpFirstAndTcpCompose_WP13T12_ACC1)
     ToolDefinition a;
     a.objectId = toolA;
     a.localName = "gripperA";
+    a.mountInterface = explicitPose(0.2, 0.3, 0.4, kPi / 2);
     a.tcpList.push_back(TcpEntry{"tipA1", explicitPose(0.0, 0.0, 0.05, 0.0), ""});
     a.tcpList.push_back(TcpEntry{"tipA2", explicitPose(0.0, 0.0, 0.06, 0.0), ""});
     // 工具 B（默认工具——tcpKey "tip2" 指向第二条）。
@@ -932,6 +935,10 @@ TEST(MdlCanonicalBridge, ToolsMappingDefaultTcpFirstAndTcpCompose_WP13T12_ACC1)
 
     auto built = buildFrom(closure);
     ASSERT_TRUE(built.ok()) << built.error().detail;
+    // A-15/REQ-01：完整键目录必须经真实建模对象Codec闭包保留，不能只剩默认项。
+    ASSERT_EQ(built.get().tools.front().namedTcpOffsets.size(), 2u);
+    EXPECT_EQ(built.get().tools.front().namedTcpOffsets[0].first, "tip2");
+    EXPECT_EQ(built.get().tools.front().namedTcpOffsets[1].first, "tip2a");
     ASSERT_EQ(built.get().tools.size(), 2u);
     // 次序：默认工具居首。
     EXPECT_TRUE(built.get().tools[0].objectId == toolB);
@@ -945,8 +952,14 @@ TEST(MdlCanonicalBridge, ToolsMappingDefaultTcpFirstAndTcpCompose_WP13T12_ACC1)
     EXPECT_NEAR(first.tcpOffset.R()(1, 0), std::sin(kPi / 2), 1e-15);
     // 非默认工具 A 取首条 "tipA1"。
     const runtime::ToolDescription& second = built.get().tools[1];
+    ASSERT_EQ(second.namedTcpOffsets.size(), 2U);
+    EXPECT_EQ(second.namedTcpOffsets[1].first, "tipA2");
+    EXPECT_NEAR(second.namedTcpOffsets[1].second.P()[0], 0.2, 1e-12);
+    EXPECT_NEAR(second.namedTcpOffsets[1].second.P()[2], 0.46, 1e-12);
+    EXPECT_NEAR(second.namedTcpOffsets[1].second.R()(1, 0), 1.0, 1e-12);
+
     EXPECT_TRUE(sameVec(second.tcpOffset.P(),
-                        rwmath::Vector3D<double>(0.0, 0.0, 0.05)));
+                        rwmath::Vector3D<double>(0.2, 0.3, 0.45)));
 }
 
 /**
@@ -991,8 +1004,9 @@ TEST(MdlCanonicalBridge, SceneWorldPoseNotPreMultipliedByInstallRotation_WP13T12
     EXPECT_NEAR(sd.worldPose.R()(1, 0), std::sin(0.7), 1e-15);
     EXPECT_NEAR(sd.worldPose.R()(1, 1), std::cos(0.7), 1e-15);
     // 场景几何经清单解引用（Recorded 声明面）。
-    EXPECT_EQ(sd.geometry.resource.state, runtime::ResourceState::Recorded);
-    EXPECT_TRUE(sd.geometry.resource.contentDigest == tableDigest);
+    ASSERT_TRUE(sd.geometry);
+    EXPECT_EQ(sd.geometry->resource.state, runtime::ResourceState::Recorded);
+    EXPECT_TRUE(sd.geometry->resource.contentDigest == tableDigest);
 }
 
 /**
@@ -1649,23 +1663,23 @@ TEST(MdlCanonicalBridge, IncompleteModelRefusesWithoutRuntimeRepair_WP13T12_ACC4
         EXPECT_NE(built.error().detail.find("axis"), std::string::npos);
         EXPECT_TRUE(diags.empty()) << "两态不产诊断记录（值面错误＋定位参数）";
     }
-    // ②场景对象无几何引用（runtime CanonicalSceneObject.geometry 必有——
-    // 不伪造资源引用，定位到对象）。
+    // ②显式场景几何引用不存在仍须拒绝；合法无几何固定帧另有MDL-15用例。
     {
         const core::ObjectId sid = makeOid();
         RobotDesign design = minimalDesign();
         design.sceneRefs = {sid};
         SceneObject bare;
         bare.objectId = sid;
-        bare.localName = "bare";  // geometry 缺省＝nullopt
+        bare.localName = "bare";
+        bare.geometry=GeometryRef{"missing_mesh",testbridge::identityTransform3D(),GeometryKind::Mesh};
         BridgeClosure closure;
         putRoot(closure, design);
         closure.put(sid, std::string(kSceneObjectObjectType), encode(bare));
         auto built = buildFrom(closure);
         ASSERT_FALSE(built.ok());
         EXPECT_EQ(built.error().code, ModelingErrorCode::RefMissing);
-        EXPECT_TRUE(hasParam(built.error(), "object-id", sid.toCanonical()))
-            << "场景几何缺失定位到对象 ObjectId";
+        EXPECT_NE(built.error().detail.find("missing_mesh"),std::string::npos)
+            << "显式坏场景几何须保留实际资源定位";
     }
 }
 
@@ -1760,4 +1774,85 @@ TEST(MdlCanonicalBridge, DrivetrainCouplingR2Mapping_WP13T18)
     EXPECT_EQ(cm.jointRange.count, 3u);
     EXPECT_DOUBLE_EQ(cm.conditionNumber.value_or(0.0), 3.0)
         << "申报条件数透传（编译校验器一律重算为准——Description.hpp 注）";
+}
+
+/** @brief MDL-12/AT-17：编辑后的跨周范围按零偏平移，Continuous类型和权威值不改。 */
+TEST(MdlCanonicalBridge, EditedContinuousRangeFeedsRuntime_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},std::vector<std::string>{"AT-17"});
+    modeling::ModelingWorkingSet ws;ws.design.displayName="spin";
+    auto joint=makeRevoluteJoint(makeOid(),"Jspin",-1,1,0.5);
+    joint.type=modeling::JointType::Continuous;
+    joint.bounds=core::SourcedValue<modeling::JointLimits>::notApplicable();
+    ws.design.joints.push_back(joint);
+    ws.design.links.push_back(makeLink(makeOid(),"base"));ws.design.links.push_back(makeLink(makeOid(),"link1"));
+    ASSERT_FALSE(modeling::applyJointFieldEdit(ws,0,modeling::JointEditField::WorkingRange,modeling::JointLimits{-8,10}).has_value());
+    BridgeClosure closure;putRoot(closure,ws.design);const auto built=buildFrom(closure);
+    ASSERT_TRUE(built.ok())<<built.error().detail;
+    const auto& compiled=built.get().joints.at(0);
+    EXPECT_EQ(compiled.type,runtime::JointType::Continuous);
+    ASSERT_TRUE(compiled.workingRange.has_value());
+    EXPECT_DOUBLE_EQ(compiled.workingRange->lower,-8.5);EXPECT_DOUBLE_EQ(compiled.workingRange->upper,9.5);
+    EXPECT_EQ(ws.design.joints[0].workingRange.value(),(modeling::JointLimits{-8,10}));
+    EXPECT_EQ(ws.design.joints[0].type,modeling::JointType::Continuous);
+    EXPECT_EQ(ws.design.joints[0].bounds.state(),core::FieldState::NotApplicable);
+}
+
+/** @brief MDL-15/AT-28：生产桥必须接受无几何世界固定帧，不能凭空要求资源。 */
+TEST(MdlCanonicalBridge, FixedSceneFrameIsAValidDescription_MDL15_AT28)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-15"},std::vector<std::string>{"AT-28"});
+    auto design=minimalDesign();const auto id=makeOid();design.sceneRefs={id};
+    SceneObject frame;frame.objectId=id;frame.localName="world_fixture";
+    frame.worldPose=rwmath::Transform3D<double>(rwmath::Vector3D<double>(1,2,3),
+        testbridge::identityTransform3D().R());
+    BridgeClosure closure;putRoot(closure,design);
+    closure.put(id,std::string(kSceneObjectObjectType),encode(frame));
+    const auto built=buildFrom(closure);
+    ASSERT_TRUE(built.ok())<<built.error().detail;
+    ASSERT_EQ(built.get().scene.size(),1U);EXPECT_EQ(built.get().scene.front().objectId,id);
+    EXPECT_FALSE(built.get().scene.front().geometry);
+    EXPECT_TRUE(sameTransform(built.get().scene.front().worldPose,frame.worldPose));
+    EXPECT_TRUE(built.get().resourceRefs.empty())<<"固定帧不能伪造网格资源";
+}
+
+/**
+ * @brief WP-13-T25/F01（MDL-01/AT-01）：模板种子的逐轴最大速度/最大加速度
+ *        必须经编码→canonical 桥真实流入 runtime JointDescription（六轴
+ *        不同值逐轴对应核对——期望值取 sixAxisTemplateDefaults 单一权威，
+ *        不经被测桥反推）。
+ *
+ * 修复前（红）：CanonicalBridge 将 maxVelocity/maxAcceleration 硬写
+ * NotProvided（"schema 无落点"）——模板参考值不进入运行时计算（审计 M05）。
+ */
+TEST(MdlCanonicalBridge, TemplateVelocityAccelerationFlowToDescription_WP13T25)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-01"}, std::vector<std::string>{"AT-01"});
+
+    const RobotDesignTemplateFactory factory;
+    std::vector<core::DiagnosticRecord> diags;
+    const ModelingWorkingSet ws = factory
+        .createDraft(TemplateId{kTemplateIdGeneric6R},
+                     runtime::InstallationPresetToken::Ground, "va-bot", diags)
+        .get();
+    const auto defaults = sixAxisTemplateDefaults();
+
+    BridgeClosure closure;
+    putRoot(closure, ws.design);
+    auto built = buildFrom(closure);
+    ASSERT_TRUE(built.ok()) << built.error().detail;
+    const runtime::RobotDesignDescription& desc = built.get();
+
+    ASSERT_EQ(desc.joints.size(), defaults.size());
+    for (std::size_t i = 0; i < defaults.size(); ++i) {
+        const runtime::JointDescription& jd = desc.joints[i];
+        ASSERT_EQ(jd.maxVelocity.state(), core::FieldState::Provided)
+            << "j" << i + 1 << " 最大速度未随模板种子进入描述（F01 红证锚）";
+        EXPECT_DOUBLE_EQ(jd.maxVelocity.value(), defaults[i].maxVelocity)
+            << "j" << i + 1 << " 最大速度逐轴失配";
+        ASSERT_EQ(jd.maxAcceleration.state(), core::FieldState::Provided)
+            << "j" << i + 1 << " 最大加速度未随模板种子进入描述（F01 红证锚）";
+        EXPECT_DOUBLE_EQ(jd.maxAcceleration.value(), defaults[i].maxAcceleration)
+            << "j" << i + 1 << " 最大加速度逐轴失配";
+    }
 }

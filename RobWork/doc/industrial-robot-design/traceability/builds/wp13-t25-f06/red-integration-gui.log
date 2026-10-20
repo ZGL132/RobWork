@@ -1,0 +1,18 @@
+Note: Google Test filter = ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33
+C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(640): error: Expected: (button) != (nullptr), actual: NULL vs (nullptr)
+F06：正式面板缺少 modeling.import-workcell 命令按钮（审计 M14）
+
+[  FAILED  ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33 (590 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (590 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (590 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33
+
+ 1 FAILED TEST

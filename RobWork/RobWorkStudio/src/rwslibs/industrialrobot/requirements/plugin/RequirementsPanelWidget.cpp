@@ -10,11 +10,19 @@
 
 #include "RequirementsPanelWidget.hpp"
 #include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次＋UI-T33 三维缝重载）
+#include "RegionSamplingForm.hpp"  // REQ-03：采样定义暂存，不生成样本。
+#include <sdurws/ird/requirements/Sampling.hpp>  // A-18：计划构建单点（ISamplingPlanBuilder——D-REQ-2 规范化唯一实现）
+#include "ConditionStructureForm.hpp"  // WP-14-T12：负载/事件结构暂存，确认后原子写草稿。
+#include "StationDefinitionDialog.hpp" // WP-14-T12：完整引用与姿态载荷一次确认。
+#include <QPointer> // 模态嵌套循环可能拆除面板；确认守卫不得解引用已销毁控件。
+#include <QShortcut> // 三维目标的页内快捷键，与菜单/按钮共用同一确认入口。
 
 #include <QBrush>
 #include <QAction>   // 导入下拉菜单动作（返工⑤）
 #include <QButtonGroup>  // 自由度分段互斥组（UI-T37 R1——约束/自由二态）
 #include <QCheckBox>  // 启用 Switch（UI-T37 R1——QSS 重绘指示器）
+#include <QClipboard> // UX-05：复制TSV模板走真实系统剪贴板，不写需求草稿。
+#include <QGuiApplication>
 #include <QColor>
 #include <QComboBox>
 #include <QDialog>
@@ -35,6 +43,7 @@
 #include <QStyle>     // 动态属性样式重算（UI-T37 R2——状态卡分色）
 #include <QSlider>      // 覆盖率滑块（UI-T37 R1——滑块+输入双联）
 #include <QTabWidget>
+#include <QTableWidget> // 只读参数表禁用编辑触发器，保留筛选/单位查看和复制。
 #include <QTreeWidget>
 #include <QPainter>  // Tag 药丸绘制（UI-T37 R2——彩色标签委托）
 #include <QVBoxLayout>
@@ -48,13 +57,127 @@
 
 #include <algorithm>  // std::min（删除锚回落位次钳制）
 #include <charconv>   // std::to_chars（formatSiText——数值确定性文本化）
+#include <cmath>
 #include <functional>  // std::function（UI-T36 层级树递归定位）
 #include <set>        // uniqueEntryName 的已占名集合
+#include <map>        // 数量基线按稳定字段键查取，不从已格式化显示文本反解真值。
+#include <type_traits>
 #include <stdexcept>
 #include <utility>
 
 namespace sdurws::ird::requirements {
 namespace {
+
+/** @brief 仅作交互位姿表达转换：字段roll/pitch/yaw(rad)按Rz·Ry·Rx组成无量纲旋转。 */
+rw::math::Rotation3D<> targetEditRotation(const rw::math::Vector3D<>& rpy)
+{
+    const double cr=std::cos(rpy[0]),sr=std::sin(rpy[0]),cp=std::cos(rpy[1]),sp=std::sin(rpy[1]);
+    const double cy=std::cos(rpy[2]),sy=std::sin(rpy[2]);
+    return {cy*cp,cy*sp*sr-sy*cr,cy*sp*cr+sy*sr,
+        sy*cp,sy*sp*sr+cy*cr,sy*sp*cr-cy*sr,-sp,cp*sr,cp*cr};
+}
+/** @brief 世界系确认矩阵反解roll/pitch/yaw(rad)，近万向锁保留首列微小余弦。 */
+rw::math::Vector3D<> targetEditRpy(const rw::math::Rotation3D<>& r)
+{
+    const double cp=std::hypot(r(0,0),r(1,0));
+    const double pitch=std::atan2(-r(2,0),cp);
+    return cp>1e-12 ? rw::math::Vector3D<>(std::atan2(r(2,1),r(2,2)),pitch,std::atan2(r(1,0),r(0,0)))
+        : rw::math::Vector3D<>(0,pitch,std::atan2(-r(0,1),r(1,1)));
+}
+/** @brief 交互端口值须为有限刚体位姿：m平移、正交右手旋转，误差容许1e-8无量纲。 */
+bool finiteTargetEditPose(const rw::math::Transform3D<>& pose)
+{
+    const auto& r=pose.R();
+    for (int i=0;i<3;++i) {
+        if (!std::isfinite(pose.P()[i])) { return false; }
+        for (int j=0;j<3;++j) { if (!std::isfinite(r(i,j))) { return false; } }
+    }
+    for (int i=0;i<3;++i) {
+        for (int j=0;j<3;++j) {
+            double dot=0; for (int k=0;k<3;++k) { dot+=r(k,i)*r(k,j); }
+            if (std::abs(dot-(i==j ? 1.0 : 0.0))>1e-8) { return false; }
+        }
+    }
+    const double determinant=r(0,0)*(r(1,1)*r(2,2)-r(1,2)*r(2,1))
+        -r(0,1)*(r(1,0)*r(2,2)-r(1,2)*r(2,0))+r(0,2)*(r(1,0)*r(2,1)-r(1,1)*r(2,0));
+    return std::abs(determinant-1.0)<=1e-8;
+}
+
+/**
+ * @brief 批量表会话的Qt寿命壳（UX-05），拥有模型与出口且先销毁借用它们的视图。
+ * 面板刷新会删除本壳；确认回调只复制修改集，禁止同步刷新删除正在发信号的控件。
+ * 生命周期归需求面板父子树；非线程安全，仅UI线程访问。
+ */
+class RequirementParameterTable final : public QWidget, public ui::IFormEditOutlet {
+public:
+    /** @brief 装配独立暂存模型。specs为非空SI字段词表；writable仅控制写入口，回调只排队移交修改集。 */
+    RequirementParameterTable(std::vector<ui::QuantityFieldSpec> specs,
+        const std::map<std::string, std::optional<double>>& values,
+        std::function<void(const ui::ParamEditSet&)> submit, bool writable, QWidget* parent)
+        : QWidget(parent), m_model(std::move(specs)), m_submit(std::move(submit))
+    {
+        // 直接从领域值建立SI基线，保留缺失态；显示格式精度不能成为权威数据来源。
+        for (const auto& spec : m_model.fields()) { m_model.setBaseline(spec.key, values.at(spec.key)); }
+        auto* layout = new QVBoxLayout(this);
+        layout->setContentsMargins(0, 0, 0, 0);
+        auto* toggle = new QPushButton(QStringLiteral("参数表：筛选 / 批量粘贴"), this);
+        toggle->setObjectName("ird_req_batch_toggle");
+        toggle->setCheckable(true);
+        layout->addWidget(toggle);
+        auto* pasteHelp = new QWidget(this);
+        auto* helpLayout = new QVBoxLayout(pasteHelp);
+        helpLayout->setContentsMargins(0, 0, 0, 0);
+        auto* help = new QLabel(QStringLiteral(
+            "TSV每行：参数键＋制表符＋数值。数值使用表中当前显示单位，不附单位后缀。"
+            "先复制当前筛选中有值的行作为模板；修改后粘贴暂存，再确认写入。"), pasteHelp);
+        help->setWordWrap(true); help->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        helpLayout->addWidget(help);
+        auto* copy = new QPushButton(QStringLiteral("复制当前筛选表格 TSV"), pasteHelp);
+        copy->setObjectName("ird_req_copy_tsv"); helpLayout->addWidget(copy);
+        layout->addWidget(pasteHelp); pasteHelp->hide();
+        connect(copy, &QPushButton::clicked, this, [this]() {
+            QStringList lines;
+            // UX-05：键和筛选行序来自同一公共模型，用户不必猜内部字段名。
+            // 未提供值不是零；仅复制有真值的行，帮助文案明确此范围。
+            for (const auto& key : m_model.visibleKeys()) {
+                const auto value = m_model.currentValueSi(key);
+                if (!value) { continue; }
+                const auto& spec = m_model.spec(key);
+                const double shown = core::convert(*value, spec.siUnit, m_model.displayUnit(key));
+                // 表格六位显示只供阅读，模板回贴会重新进入数值解析，必须保存
+                // double的17位往返精度，不能复制被舍入的显示文本再污染草稿。
+                char buffer[64];
+                const auto number = std::to_chars(buffer, buffer + sizeof(buffer), shown,
+                    std::chars_format::general, 17);
+                if (number.ec != std::errc()) {
+                    throw std::logic_error("需求TSV模板数值格式化失败：double缓冲假设被破坏");
+                }
+                lines.push_back(QString::fromStdString(key) + '\t'
+                    + QString::fromLatin1(buffer, static_cast<int>(number.ptr - buffer)));
+            }
+            QGuiApplication::clipboard()->setText(lines.join('\n'));
+        });
+        m_view = ui::createParamTablePanel(m_model, writable ? this : nullptr, {}, this);
+        if (!writable) {
+            // 只读仍允许复制、筛选和切换显示单位；公共件缺出口已禁用应用，
+            // 再关闭输入/粘贴，避免只读会话出现看似可修改的暂存值。
+            m_view->findChild<QTableWidget*>("ird_param_table")->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            m_view->findChild<QPushButton*>("ird_param_paste")->setEnabled(false);
+        }
+        layout->addWidget(m_view);
+        m_view->hide();
+        connect(toggle, &QPushButton::toggled, m_view, &QWidget::setVisible);
+        connect(toggle, &QPushButton::toggled, pasteHelp, &QWidget::setVisible);
+    }
+    /** @brief 显式先释放保存模型/出口裸引用的公共视图，再析构成员，避免悬垂引用。 */
+    ~RequirementParameterTable() override { delete m_view; }
+    /** @brief 接收SI修改集值副本；最终业务校验与一次撤销由需求编辑器负责。 */
+    void applyEdits(const ui::ParamEditSet& edits) override { m_submit(edits); }
+private:
+    ui::ParamEditModel m_model; ///< 本表私有暂存，零正式工作集所有权。
+    std::function<void(const ui::ParamEditSet&)> m_submit; ///< 非同步刷新出口，仅UI线程。
+    QWidget* m_view = nullptr; ///< Qt子控件；析构中先销毁以满足公共组件引用契约。
+};
 
 // 树/表节点列上的锚存取（UI-T36 修复：锚列＝行末隐藏列——makeTable 追加
 // 的空标题末列。原 kAnchorColumn=1 为单列树形态遗留：两列以上显示列的
@@ -289,6 +412,7 @@ void RequirementsPanelWidget::setCommandAvailability(CommandAvailabilityFn avail
 
 void RequirementsPanelWidget::setEditTargetProvider(EditTargetProvider provider)
 {
+    ++m_interactionEpoch; // 更换提供器也使原身份绑定失效，即便复用同一编辑器地址。
     m_editTarget = std::move(provider);
 }
 
@@ -297,9 +421,51 @@ void RequirementsPanelWidget::setPostEditAction(PostEditAction action)
     m_postEditAction = std::move(action);
 }
 
+void RequirementsPanelWidget::setView3DSeams(RequirementsView3DSeams seams)
+{
+    m_threadGuard.assertOnUiThread();
+    // 装配对象替换视作交互代次变化，嵌套事件循环中的旧确认不得写回新能力。
+    ++m_interactionEpoch;
+    m_view3dSeams = std::move(seams);
+}
+
+std::function<bool()> RequirementsPanelWidget::interactiveWriteGuard(
+    const IRequirementEditor* editor) const
+{
+    m_threadGuard.assertOnUiThread();
+    // QPointer只观察Qt生命周期；先核对现取身份，再允许调用方读原编辑器。
+    // 代次能识别“关闭再打开同一项目/同一编辑器地址”的ABA场景。
+    const QPointer<const RequirementsPanelWidget> panel(this);
+    const auto epoch = m_interactionEpoch;
+    return [panel, epoch, editor]() {
+        return panel && panel->m_interactionEpoch == epoch && panel->m_writable
+            && !panel->m_sessionDetached && panel->m_editTarget
+            && panel->m_editTarget() == editor;
+    };
+}
+
 void RequirementsPanelWidget::setRegionPreviewSink(RegionPreviewSink sink)
 {
     m_regionPreview = std::move(sink);
+}
+
+std::function<bool()> RequirementsPanelWidget::referenceEditGuard(const IRequirementEditor* editor,
+    const std::vector<RequirementsReferenceChoice>& choices) const
+{
+    const auto guard=interactiveWriteGuard(editor);
+    const auto directory=m_view3dSeams.referenceChoices;
+    const auto before=editor ? editor->workingSet() : RequirementWorkingSet{};
+    return [guard,directory,choices,before,editor] {
+        if (!guard() || editor->workingSet()!=before) { return false; }
+        if (!directory) { return true; } // 旧装配无目录仍复核会话及完整工作集。
+        const auto latest=directory();
+        if (latest.size()!=choices.size()) { return false; }
+        for (std::size_t i=0;i<choices.size();++i) {
+            if (latest[i].reference!=choices[i].reference || latest[i].displayName!=choices[i].displayName
+                || latest[i].available!=choices[i].available || latest[i].unavailableReason!=choices[i].unavailableReason) { return false; }
+        }
+        return true;
+    };
 }
 
 void RequirementsPanelWidget::setSampleResultsSink(SampleResultsSink sink)
@@ -1011,6 +1177,25 @@ QWidget* RequirementsPanelWidget::makeLifecycleBar(QWidget* parent,
         }
         lay->addWidget(btn);
     }
+    if (member==WorkingSetMember::Points) {
+        for (const bool creating : {true,false}) {
+            auto* button=new QPushButton(creating ? "三维创建目标…" : "三维移动选中…",bar);
+            const auto name=creating ? "ird_req_create_target_3d" : "ird_req_move_target_3d";
+            button->setObjectName(name); button->setProperty("irdLifecycle",true);
+            button->setProperty("irdLifecycleAction",creating ? "add" : "move");
+            button->setProperty("irdLifecycleKey","points"); lay->addWidget(button);
+            connect(button,&QPushButton::clicked,this,[this,creating] { onEditTarget3D(creating); });
+            auto* shortcut=new QShortcut(QKeySequence(creating ? "Alt+Shift+C" : "Alt+Shift+M"),this);
+            shortcut->setContext(Qt::WidgetWithChildrenShortcut);
+            connect(shortcut,&QShortcut::activated,button,&QPushButton::click);
+            // 更多操作也暴露同一入口；不注册另一套域命令或撤销路径。
+            if (m_moreMenuButton && m_moreMenuButton->menu()) {
+                auto* action=m_moreMenuButton->menu()->addAction(button->text());
+                action->setObjectName(QString(name)+"_menu"); action->setProperty("irdTargetButton",QString(name));
+                connect(action,&QAction::triggered,button,&QPushButton::click);
+            }
+        }
+    }
     return bar;
 }
 
@@ -1077,6 +1262,12 @@ void RequirementsPanelWidget::refreshLifecycleAndEmptyStates()
         btn->setToolTip(hasSelection ? QString() : noSelectionReason);
     }
     // 属性区空态（各页独立——选择面按本页对象集合判定，跨页互不影响）。
+    for (auto* action : findChildren<QAction*>()) {
+        const auto target=action->property("irdTargetButton").toString();
+        if (!target.isEmpty()) {
+            if (auto* button=findChild<QPushButton*>(target)) { action->setEnabled(button->isEnabled()); }
+        }
+    }
     const auto applyState = [](QScrollArea* scroll, QLabel* hint, bool has) {
         if (scroll != nullptr) { scroll->setVisible(has); }
         if (hint != nullptr) { hint->setVisible(!has); }
@@ -1136,8 +1327,73 @@ void RequirementsPanelWidget::refreshCommandEnablement()
         m_importDropdownButton->setEnabled(importAnyEnabled);
     }
     if (m_moreMenuButton != nullptr) {
+        for (auto* action : findChildren<QAction*>()) {
+            if (!action->property("irdTargetButton").toString().isEmpty() && action->isEnabled()) { moreAnyEnabled=true; }
+        }
         m_moreMenuButton->setEnabled(moreAnyEnabled);
     }
+}
+
+void RequirementsPanelWidget::onEditTarget3D(bool creating)
+{
+    auto* editor=m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || m_sessionDetached) { return; }
+    const auto seams=m_view3dSeams; // 嵌套交互期间装配替换也不借用成员function的存储。
+    if (!seams.editWorldTarget || !seams.referenceWorldPose) {
+        showStatusLine("三维目标交互或参考系世界变换未装配"); return;
+    }
+    const auto before=editor->workingSet();
+    const auto choices=seams.referenceChoices ? seams.referenceChoices() : std::vector<RequirementsReferenceChoice>{};
+    const auto guard=referenceEditGuard(editor,choices);
+    std::optional<TaskPoint> base;
+    RequirementReference reference;
+    if (!creating) {
+        for (const auto& point : before.points.entries) {
+            if (m_stationSelectedId==point.objectId) { base=point; break; }
+        }
+        if (!base || base->pose.position.state()!=core::FieldState::Provided) {
+            showStatusLine("请先选择已提供位置的工位"); return;
+        }
+        reference=base->refFrame;
+    }
+    const auto frame=seams.referenceWorldPose(reference);
+    if (!frame || !finiteTargetEditPose(*frame)) { showStatusLine("工位参考系当前不可解析，不能进行三维交互"); return; }
+    auto initial=rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1));
+    if (base) {
+        // 移动仅编辑位置。Fixed显示真实固定姿态；其它规则使用参考系交互轴，
+        // 宿主明确说明不是规则深解析结果，不在界面复制求解器的姿态真值。
+        // 使用框架公开的Eigen矩阵表达式；独立冒烟模式只提供数学模板头，
+        // 不能调用依赖框架显式实例化库的Rotation3D外联运算符。
+        initial=rw::math::Transform3D<>(rw::math::Vector3D<>(frame->R().e()*base->pose.position.value().e()+frame->P().e()),
+            base->pose.orientation.kind==OrientationRuleKind::Fixed
+                ? rw::math::Rotation3D<>(frame->R().e()*targetEditRotation(base->pose.orientation.fixedRpy).e()) : frame->R());
+    }
+    const auto confirmed=seams.editWorldTarget(initial,creating);
+    if (!guard()) { return; } // 面板销毁/切项目时不再访问this或原编辑器。
+    if (!confirmed) { showStatusLine("三维目标交互已取消，草稿未改变"); return; }
+    if (!finiteTargetEditPose(*confirmed)) { showStatusLine("三维目标返回无效位姿，草稿未改变"); return; }
+    const auto currentFrame=seams.referenceWorldPose(reference);
+    if (!currentFrame || *currentFrame!=*frame) { showStatusLine("参考系已移动，请重新进行三维交互"); return; }
+    TaskPoint candidate=base ? *base : TaskPoint{};
+    if (creating) {
+        // 仅最终确认后取号。世界系新目标约束完整六分量，来源明确为人工交互值。
+        candidate.objectId=core::ObjectId::generate(); candidate.name=uniqueEntryName(before,WorkingSetMember::Points,"三维目标");
+        candidate.refFrame=RequirementReference{}; candidate.pose.constrainedDof={true,true,true,true,true,true};
+        candidate.pose.orientation.kind=OrientationRuleKind::Fixed;
+        candidate.pose.orientation.fixedRpy=targetEditRpy(confirmed->R());
+        candidate.work=TaskSegment{true,SegmentAxis::ToolZ,1.0};
+    }
+    candidate.pose.position=core::SourcedValue<rw::math::Vector3D<>>::provided(
+        // 刚体旋转的逆为转置：把世界确认位置减去参考系原点，再旋回局部系。
+        creating ? confirmed->P() : rw::math::Vector3D<>(frame->R().e().transpose()*(confirmed->P().e()-frame->P().e())),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    if (base && candidate==*base) { return; }
+    QMetaObject::invokeMethod(this,[this,guard,seams,reference,frame,candidate] {
+        if (!guard()) { return; }
+        const auto latest=seams.referenceWorldPose(reference);
+        if (!latest || *latest!=*frame) { showStatusLine("参考系已移动，请重新进行三维交互"); return; }
+        if (submitStructuralEdit(RequirementEdit{candidate})) { focusObject(candidate.objectId); }
+    },Qt::QueuedConnection);
 }
 
 std::string RequirementsPanelWidget::uniqueEntryName(
@@ -1186,6 +1442,143 @@ bool RequirementsPanelWidget::submitStructuralEdit(const RequirementEdit& edit)
     m_undoTracker.recordAppliedEdit();
     onEditApplied(out.changeSummary);
     return true;
+}
+
+bool RequirementsPanelWidget::submitStructuralEditsAtomic(
+    const std::vector<RequirementEdit>& edits)
+{
+    // A-18：结构编辑组合的原子提交（applyEditsAtomic——恰一次撤销入栈；
+    // 记账与 sink 链同 submitStructuralEdit，一次入账对应一次组合回滚）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr) {
+        showStatusLine(QStringLiteral("未应用：未打开需求会话（不可编辑）"));
+        return false;
+    }
+    const EditOutcome out = editor->applyEditsAtomic(edits);
+    if (!out.accepted) {
+        showStatusLine(QString::fromStdString(
+            "未应用（" + out.error.detail + "）"));
+        return false;
+    }
+    m_undoTracker.recordAppliedEdit();
+    onEditApplied(out.changeSummary);
+    return true;
+}
+
+QWidget* RequirementsPanelWidget::makeBatchParameterTable(const RequirementEdit& edit)
+{
+    // 三类条目共享UI参数规则；仅字段映射留在需求域，不复制解析、单位或筛选逻辑。
+    // optional值直接保持未设/未提供，不给缺失位置补默认零向量。
+    return std::visit([this](const auto& base) -> QWidget* {
+        using Entry = std::decay_t<decltype(base)>;
+        if constexpr (std::is_same_v<Entry, TaskPoint> || std::is_same_v<Entry, WorkRegion>
+                      || std::is_same_v<Entry, OperatingCondition>) {
+            std::vector<ui::QuantityFieldSpec> specs;
+            std::map<std::string, std::optional<double>> values;
+            const char* name = nullptr;
+            if constexpr (std::is_same_v<Entry, TaskPoint>) {
+                name = "ird_req_batch_station"; specs = stationQuantitySpecs();
+                values = {{"tolerance-position", base.tolerance.positionTolerance},
+                    {"tolerance-orientation", base.tolerance.orientationTolerance},
+                    {"segment-approach-distance", base.approach.distanceM},
+                    {"segment-retract-distance", base.retract.distanceM},
+                    {"fixed-rpy-r", base.pose.orientation.fixedRpy[0]},
+                    {"fixed-rpy-p", base.pose.orientation.fixedRpy[1]},
+                    {"fixed-rpy-y", base.pose.orientation.fixedRpy[2]},
+                    {"target-point-x", base.pose.orientation.targetPoint[0]},
+                    {"target-point-y", base.pose.orientation.targetPoint[1]},
+                    {"target-point-z", base.pose.orientation.targetPoint[2]},
+                    {"roll-min", base.pose.orientation.rollRange.min},
+                    {"roll-max", base.pose.orientation.rollRange.max}};
+                if (const auto position = base.pose.position.tryValue()) {
+                    values.emplace("pose-position-x", (*position)[0]);
+                    values.emplace("pose-position-y", (*position)[1]);
+                    values.emplace("pose-position-z", (*position)[2]);
+                } else {
+                    // 四态位置必须先经完整定义建立三轴值；单轴编辑不能猜测其余两轴。
+                    specs.erase(std::remove_if(specs.begin(), specs.end(), [](const auto& spec) {
+                        return spec.key.rfind("pose-position-", 0) == 0;
+                    }), specs.end());
+                }
+                // 姿态参数只展示当前规则使用的键；修改隐藏规则不能形成可见成功假象。
+                const auto ruleKeys = orientationRuleParamKeys(base.pose.orientation.kind);
+                specs.erase(std::remove_if(specs.begin(), specs.end(), [&ruleKeys](const auto& spec) {
+                    const bool ruleField = spec.key.rfind("fixed-rpy-", 0) == 0
+                        || spec.key.rfind("target-point-", 0) == 0 || spec.key.rfind("roll-", 0) == 0;
+                    return ruleField && std::find(ruleKeys.begin(), ruleKeys.end(), spec.key) == ruleKeys.end();
+                }), specs.end());
+            } else if constexpr (std::is_same_v<Entry, WorkRegion>) {
+                name = "ird_req_batch_region"; specs = regionQuantitySpecs();
+                values = {{"box-center-x", base.box.center[0]}, {"box-center-y", base.box.center[1]},
+                    {"box-center-z", base.box.center[2]}, {"box-size-x", base.box.size[0]},
+                    {"box-size-y", base.box.size[1]}, {"box-size-z", base.box.size[2]},
+                    {"coverage-position", base.coverageTargets.minPositionCoverage},
+                    {"coverage-orientation", base.coverageTargets.minOrientationCoverage}};
+            } else {
+                name = "ird_req_batch_condition"; specs = conditionQuantitySpecs(base);
+                values.emplace("cycle-time", base.targetCycleTimeS);
+                for (std::size_t i = 0; i < base.payloads.size(); ++i) {
+                    values.emplace("payload-" + std::to_string(i + 1) + "-mass", base.payloads[i].mass.tryValue());
+                }
+            }
+            auto* expected = m_editTarget ? m_editTarget() : nullptr;
+            auto* table = new RequirementParameterTable(std::move(specs), values,
+                [this, base, expected](const ui::ParamEditSet& edits) {
+                    QMetaObject::invokeMethod(this, [this, base, expected, edits] {
+                        // 提交前重取会话与完整基线；切项目、对象删除或并发字段编辑均不覆盖新数据。
+                        auto* editor = m_editTarget ? m_editTarget() : nullptr;
+                        if (!m_writable || m_sessionDetached || !editor || editor != expected) { return; }
+                        const auto& entries = [&]() -> const std::vector<Entry>& {
+                            if constexpr (std::is_same_v<Entry, TaskPoint>) { return editor->workingSet().points.entries; }
+                            else if constexpr (std::is_same_v<Entry, WorkRegion>) { return editor->workingSet().regions.entries; }
+                            else { return editor->workingSet().conditions.entries; }
+                        }();
+                        const auto latest = std::find_if(entries.begin(), entries.end(), [&base](const auto& entry) {
+                            return entry.objectId == base.objectId;
+                        });
+                        if (latest == entries.end() || *latest != base) {
+                            renderInspector(editor->workingSet());
+                            renderRegionPage(editor->workingSet());
+                            renderConditionPage(editor->workingSet());
+                            showStatusLine("对象已改变，请重新打开参数表"); return;
+                        }
+                        try {
+                            std::vector<std::string> known;
+                            const Entry candidate = [&]() {
+                                if constexpr (std::is_same_v<Entry, TaskPoint>) { return applyStationEditSet(base, edits, known); }
+                                else if constexpr (std::is_same_v<Entry, WorkRegion>) { return applyRegionEditSet(base, edits, known); }
+                                else { return applyConditionEditSet(base, edits, known); }
+                            }();
+                            if (candidate != base) {
+                                // ★ 批35（评审 P1-5）：区域批量参数表与单字段
+                                // 轨同入计划同步入口（批量改盒长后派生计数随
+                                // 动——独立复现反例的原断链面）。
+                                bool applied = false;
+                                if constexpr (std::is_same_v<Entry, WorkRegion>) {
+                                    applied = submitRegionEditWithPlanSync(*editor, candidate);
+                                } else {
+                                    applied = submitStructuralEdit(RequirementEdit{candidate});
+                                }
+                                if (!applied) {
+                                    // 公共表已经完成移交；域拒绝后重投权威基线，避免其本地新值冒充已应用。
+                                    renderInspector(editor->workingSet());
+                                    renderRegionPage(editor->workingSet());
+                                    renderConditionPage(editor->workingSet());
+                                }
+                            }
+                        } catch (const std::invalid_argument& error) {
+                            showStatusLine(QString::fromUtf8(error.what()));
+                        }
+                    }, Qt::QueuedConnection);
+                }, m_writable, this);
+            table->setObjectName(name);
+            table->setEnabled(expected && !m_sessionDetached);
+            return table;
+        } else {
+            throw std::logic_error("需求参数表仅接受工位、区域或工况条目");
+        }
+    }, edit);
 }
 
 /// 工况新增向导内建面板（UI-T37 R2 acceptance 4——缺省工厂；测试经
@@ -1383,7 +1776,22 @@ void RequirementsPanelWidget::onRemoveEntry(WorkingSetMember member)
             }
         }
     }
-    if (!submitStructuralEdit(removeEdit(m_lastSelected.value(), member))) {
+    // A-18：有计划的区域＝计划先删＋区域后删**原子**应用（删除保护④
+    // "被采样计划引用的区域"拒绝区域先删——组合内依序自然满足；恰一次
+    // 撤销＝"删除区域"单动作单回滚）。无计划区域与其它集合走原单编辑轨。
+    if (member == WorkingSetMember::Regions) {
+        std::vector<RequirementEdit> atomicEdits;
+        for (const auto& plan : editor->workingSet().plans.entries) {
+            if (plan.regionRef == m_lastSelected.value()) {
+                atomicEdits.push_back(RequirementEdit{std::make_pair(
+                    plan.objectId, static_cast<int>(WorkingSetMember::Plans))});
+            }
+        }
+        atomicEdits.push_back(removeEdit(m_lastSelected.value(), member));
+        if (!submitStructuralEditsAtomic(atomicEdits)) {
+            return;  // 拒绝（域拒绝面）——就地错误已呈现
+        }
+    } else if (!submitStructuralEdit(removeEdit(m_lastSelected.value(), member))) {
         return;  // 拒绝（如必验引用等域拒绝面）——就地错误已呈现
     }
     // 锚回落：删除后同集合取同位次（越界取末条）条目；空集合＝清空选中。
@@ -1442,6 +1850,7 @@ void RequirementsPanelWidget::refreshPanel(const RequirementWorkingSet& ws,
 
 void RequirementsPanelWidget::setWritable(bool writable)
 {
+    if (m_writable != writable) { ++m_interactionEpoch; } // 只读→可写也不能复活旧确认。
     m_writable = writable;  // L-R12——ui 只读横幅同源事实
     // 可写性切换＝全面板重投影（检查器行门控随行投影刷新；命令按钮可达
     // 性由 readOnlyAllowed 的 ui 命令门控面承担——本面板只控编辑行与撤销钮）。
@@ -1472,6 +1881,7 @@ void RequirementsPanelWidget::resetForSessionDetached()
     // （生命周期键、撤销键、命令键全部按上一会话末态呈现）。本方法把
     // 全部会话态归零、投影收拢为无会话空态。零修订（会话态清理面）。
     m_threadGuard.assertOnUiThread();
+    ++m_interactionEpoch;
     m_sessionDetached = true;  // 无会话判定旗标（refreshPanel 复位——UI-T39）
     // ①会话选中锚与草稿撤销记账归零（记账器事实源＝编辑器局部栈——栈
     //   已随基线复位/会话终结，记账同步归零；跨会话残留即"幽灵可撤销"）。
@@ -1553,6 +1963,7 @@ void RequirementsPanelWidget::noteBaselineReloaded()
     // 的撤销记账（对栈深的外部记账）同步归零，撤销/重做键随新记账刷新。
     // 零修订（记账是会话态）。
     m_threadGuard.assertOnUiThread();
+    ++m_interactionEpoch;
     m_undoTracker.reset();
     refreshUndoButtons();
 }
@@ -1836,10 +2247,10 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     }
     // 行投影（writable 门控在模型层——applyReadOnlyGate 同源规则内置）。
     m_stationRows = stationFieldsFor(*point, m_writable);
+    m_stationBasicForm->addRow(makeBatchParameterTable(RequirementEdit{*point}));
 
-    // 数量词表（一次取用——行键可编辑性的裁决面）。UI-T37 崩溃修复：本页
-    // 名称/等级/段/姿态种类等行此前呈可编辑态而词表无键，提交即触发"词表
-    // 外键 fail-fast"崩溃——本批起对齐区域轨 T31 诚实降级（非词表行只读）。
+    // 数量字段用唯一单位词表；名称/备注/顺序键有独立文本轨，枚举走类型
+    // 词表，结构引用由完整定义表单暂存。不可将“无数量spec”泛化为只读。
     const std::vector<ui::QuantityFieldSpec> specs = stationQuantitySpecs();
     const auto specDriven = [&specs](const std::string& key) {
         for (const ui::QuantityFieldSpec& s : specs) {
@@ -1897,14 +2308,34 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
             form->addRow(new QLabel(QString::fromStdString(r.label), this), combo);
             return;
         }
-        const bool placeholder =
-            r.valueText == "未提供" || r.valueText == "未设";
+        // 名称/备注中的“未设”是合法原文，只有结构占位行才能清空显示。
+        const bool textField = r.fieldKey == "name" || r.fieldKey == "note" || r.fieldKey == "sequence-key";
+        const bool placeholder = (r.fieldKey == "sequence-key" && !point->sequenceKey)
+            || (!textField && (r.valueText == "未提供" || r.valueText == "未设"));
         auto* edit = new QLineEdit(
             placeholder ? QString() : QString::fromStdString(r.valueText), this);
         const bool editable = r.enablement == StationFieldEnablement::Editable
-                              && specDriven(r.fieldKey) && m_writable;
+                              && (specDriven(r.fieldKey) || textField) && m_writable;
         edit->setReadOnly(!editable);
         edit->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
+        if (r.fieldKey == "source" && point->generation.has_value()) {
+            // REQ-07/11、AT-24：短徽标保持列表易读，悬停详情提供实际批次
+            // 和重生成采用的参数快照。这里只投影域内既有溯源，不另建可
+            // 编辑副本，也不触发草稿写入；参数保持生产者的确定性顺序。
+            const auto& provenance = *point->generation;
+            QString details = QStringLiteral("生成器：%1\n生成批次：%2\n关联：%3")
+                .arg(QString::fromStdString(provenance.generatorId),
+                     QString::fromStdString(provenance.instanceId),
+                     provenance.linked ? QStringLiteral("已关联") : QStringLiteral("已解除"));
+            for (const auto& parameter : provenance.parameters) {
+                details += QStringLiteral("\n%1 = %2")
+                    .arg(QString::fromStdString(parameter.first),
+                         QString::fromStdString(parameter.second));
+            }
+            // 参数可能来自导入文本，显式转义避免被Qt当成富文本标签执行。
+            edit->setToolTip(QStringLiteral("<qt><pre>%1</pre></qt>").arg(details.toHtmlEscaped()));
+            edit->setAccessibleDescription(details);
+        }
         // 权威文本（幻影脏化短路基准——提交/刷新双轨同源）。
         edit->setProperty("irdAuthoritativeValue",
                           QString::fromStdString(
@@ -2103,32 +2534,16 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
             }
             connect(b, &QPushButton::clicked, this,
                     [this, keys, on = p.on](bool) {
-                        IRequirementEditor* editor =
-                            m_editTarget ? m_editTarget() : nullptr;
-                        if (editor == nullptr || !m_writable
-                            || !m_lastSelected.has_value()) {
-                            return;
-                        }
-                        const RequirementWorkingSet& ws = editor->workingSet();
-                        for (const TaskPoint& pt : ws.points.entries) {
-                            if (pt.objectId != m_lastSelected.value()) {
-                                continue;
+                        // 六轴预设是一次用户操作，必须只排队一个完整值。
+                        // 逐轴排队既会被基线守卫拒绝，也会让撤销只恢复最后一轴。
+                        queueStationEdit([keys, on](const TaskPoint& base) {
+                            TaskPoint candidate = base;
+                            std::vector<std::string> known;
+                            for (const auto& key : keys) {
+                                candidate = applyStationToggleEdit(candidate, key.toStdString(), on, known);
                             }
-                            const ConstrainedDof& d = pt.pose.constrainedDof;
-                            for (const QString& k : keys) {
-                                bool cur = false;
-                                if (k == QStringLiteral("dof-x")) { cur = d.x; }
-                                else if (k == QStringLiteral("dof-y")) { cur = d.y; }
-                                else if (k == QStringLiteral("dof-z")) { cur = d.z; }
-                                else if (k == QStringLiteral("dof-roll")) { cur = d.roll; }
-                                else if (k == QStringLiteral("dof-pitch")) { cur = d.pitch; }
-                                else if (k == QStringLiteral("dof-yaw")) { cur = d.yaw; }
-                                if (cur != on) {
-                                    submitStationToggle(k.toStdString(), on);
-                                }
-                            }
-                            return;
-                        }
+                            return candidate; // 全自由由域至少一约束不变量整体拒绝，零部分写入。
+                        });
                     });
             pl->addWidget(b);
         }
@@ -2172,7 +2587,9 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         enabledCombo->addItem(QStringLiteral("停用"));
         { QSignalBlocker blocker(enabledCombo);
         enabledCombo->setCurrentIndex(segOn ? 0 : 1); }
-        enabledCombo->setEnabled(m_writable);
+        // 作业段就是工位本身（REQ-02、§4.3），不可像接近/撤离段一样停用。
+        // 保留只读“启用”显示，域validateTaskPoint仍负责拒绝绕过界面的非法值。
+        enabledCombo->setEnabled(m_writable && key != QStringLiteral("segment-work"));
         connect(enabledCombo, &QComboBox::currentIndexChanged, this,
                 [this, key](int idx) {
                     submitStationToggle(key.toStdString(), idx == 0);
@@ -2259,6 +2676,42 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         renderTextRow(form, r);
     }
     renderDofMatrix(dofRows);
+    // 完整定义入口补齐文本、参考系/TCP与引用型规则。对话框独立暂存，
+    // 关闭后才写草稿；同步提交不会销毁仍在发信的对话框按钮。
+    auto* definition = new QPushButton(QStringLiteral("编辑名称、参考系/TCP与完整姿态…"), this);
+    definition->setObjectName("ird_station_definition_edit");
+    definition->setEnabled(m_writable);
+    connect(definition, &QPushButton::clicked, this, [this, base = *point] {
+        auto* editor = m_editTarget ? m_editTarget() : nullptr;
+        if (!editor || !m_writable) { return; }
+        const auto before = editor->workingSet();
+        const auto guard = interactiveWriteGuard(editor);
+        const auto directory = m_view3dSeams.referenceChoices;
+        const auto choices = directory ? directory() : std::vector<RequirementsReferenceChoice>{};
+        const auto candidate = editStationDefinition(this, base, before.points, directory ? &choices : nullptr);
+        if (!candidate || *candidate == base) { return; }
+        if (!guard()) { return; } // 模态期间父面板可能销毁；此后才能再次访问this。
+        // 完整工作集与引用目录均固定于发起拍，模态期间的切会话/目标删除不覆盖。
+        const auto stillCurrent = [this, editor, before, guard, directory, choices] {
+            if (!guard() || editor->workingSet() != before) { return false; }
+            if (!directory) { return true; } // 旧装配的明确降级输入仍走既有域校验。
+            const auto latest = directory();
+            if (latest.size() != choices.size()) { return false; }
+            for (std::size_t i=0; i<latest.size(); ++i) {
+                if (latest[i].reference != choices[i].reference || latest[i].displayName != choices[i].displayName
+                    || latest[i].available != choices[i].available || latest[i].unavailableReason != choices[i].unavailableReason) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        if (!stillCurrent()) { showStatusLine("会话、工位或引用目录已改变，请重新打开完整定义"); return; }
+        QMetaObject::invokeMethod(this, [this, stillCurrent, value = *candidate] {
+            if (!stillCurrent()) { showStatusLine("会话、工位或引用目录已改变，请重新打开完整定义"); return; }
+            submitStructuralEdit(RequirementEdit{value});
+        }, Qt::QueuedConnection);
+    });
+    m_stationBasicForm->addRow(definition);
 }
 
 void RequirementsPanelWidget::showStatusLine(const QString& text)
@@ -2287,205 +2740,238 @@ QFormLayout* RequirementsPanelWidget::stationFormForKey(const std::string& key) 
     return nullptr;  // 词表外键＝投影/卡片漂移（调用方 fail-fast）
 }
 
-void RequirementsPanelWidget::submitStationValue(const std::string& key,
-                                                 const QString& text)
+/**
+ * @brief 固定发起编辑器和工位基线，队列执行变换，避免切换选中后写错对象。
+ * @param transform [in] 对原条目的纯值变换；用户解析错误抛invalid_argument。
+ * 所有状态限UI线程；指针仅作身份比较，执行前经当前provider重新取得并核对。
+ */
+void RequirementsPanelWidget::queueStationEdit(std::function<TaskPoint(const TaskPoint&)> transform)
 {
-    // 队列化出信号处理器（UI-T37 返工——修改容差/启用即崩的根因修复）：
-    // 提交链会同步刷新并清空重建控件树；若在信号槽内直接执行，正在发射
-    // 信号的控件（SpinBox/行编辑/Switch）会在发射途中被删除＝use-after-
-    // free。旧插件同场景不崩＝其刷新为固定控件回填不重建；本面板重建式
-    // 刷新下，队列化（事件循环下一拍执行，控件删除发生在发射完成后）是
-    // 等价的出险排除。
-    QMetaObject::invokeMethod(
-        this,
-        [this, key, text] { submitStationValueNow(key, text); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitStationValueNow(const std::string& key,
-                                                    const QString& text)
-{
-    // L-R2 提交轨（复合/SpinBox 控件共用——与行编辑槽同语义；显键形供
-    // 非 QLineEdit 控件复用）。权威值短路在控件侧已完成。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const TaskPoint& p : ws.points.entries) {
-        if (p.objectId != m_lastSelected.value()) {
-            continue;
-        }
-        for (const ui::QuantityFieldSpec& spec : stationQuantitySpecs()) {
-            if (spec.key != key) {
-                continue;
-            }
-            const ui::ValueParseResult parsed =
-                parseFieldValueText(text.toStdString(), spec);
-            if (!parsed.ok) {
-                showStatusLine(QString::fromStdString(parsed.reason));
-                renderInspector(ws);  // 回退显示工作集权威值
+    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || !m_lastSelected) { return; }
+    for (const auto& point : editor->workingSet().points.entries) {
+        if (point.objectId != *m_lastSelected) { continue; }
+        QMetaObject::invokeMethod(this, [this, editor, base = point, transform = std::move(transform)] {
+            if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
+            for (const auto& latest : editor->workingSet().points.entries) {
+                if (latest.objectId != base.objectId) { continue; }
+                if (latest != base) { showStatusLine("工位已改变，请重新输入"); return; }
+                try {
+                    const TaskPoint candidate = transform(base);
+                    if (candidate == base) { return; } // 失焦或重复信号不制造局部撤销记录。
+                    if (submitEntryEdit(*editor, *this, candidate) == EditSubmitOutcome::Applied) {
+                        m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                    }
+                } catch (const std::invalid_argument& failure) {
+                    // 用户非法数值原位反馈，保留输入；内部词表错误仍走logic_error。
+                    showStatusLine(QString::fromUtf8(failure.what()));
+                }
                 return;
             }
+        }, Qt::QueuedConnection);
+        return;
+    }
+}
+
+void RequirementsPanelWidget::submitStationValue(const std::string& key, const QString& text)
+{
+    queueStationEdit([key, text](const TaskPoint& base) {
+        // 文本不参与单位/数量解析；顺序键空输入显式清除可选前驱，零不是缺失。
+        if (key == "name" || key == "note" || key == "sequence-key") {
+            TaskPoint out = base;
+            if (key == "name") { out.name = text.trimmed().toStdString(); }
+            else if (key == "note") { out.note = text.toStdString(); }
+            else { out.sequenceKey = text.trimmed().isEmpty() ? std::nullopt
+                : std::optional<std::string>(text.trimmed().toStdString()); }
+            return out;
+        }
+        for (const auto& spec : stationQuantitySpecs()) {
+            if (spec.key != key) { continue; }
+            const auto parsed = parseFieldValueText(text.toStdString(), spec);
+            if (!parsed.ok) { throw std::invalid_argument(parsed.reason); }
             ui::ParamEditSet edits;
             ui::ParamChange change;
-            change.key = key;
-            change.label = spec.label;
-            change.newSi = parsed.siValue;
+            change.key = key; change.label = spec.label; change.newSi = parsed.siValue;
             edits.changes.push_back(change);
             std::vector<std::string> known;
-            const TaskPoint candidate = applyStationEditSet(p, edits, known);
-            const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
-            if (outcome == EditSubmitOutcome::Applied) {
-                m_undoTracker.recordAppliedEdit();
-            }
-            return;
+            return applyStationEditSet(base, edits, known);
         }
         throw std::logic_error("工位面板：编辑行携带词表外键 " + key);
-    }
+    });
 }
 
 void RequirementsPanelWidget::submitStationToggle(const std::string& key, bool on)
 {
-    // 队列化出信号处理器（同 submitStationValue——提交链同步删发射控件＝UB）。
-    QMetaObject::invokeMethod(
-        this, [this, key, on] { submitStationToggleNow(key, on); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitStationEnumValue(const std::string& key,
-                                                     const QString& text)
-{
-    // 队列化出信号处理器（QComboBox currentIndexChanged 同样可能发生在
-    // 面板重建期——同 UB 排除口径）。
-    QMetaObject::invokeMethod(
-        this, [this, key, text] { submitStationEnumValueNow(key, text); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitStationEnumValueNow(const std::string& key,
-                                                        const QString& text)
-{
-    // 枚举提交轨（applyStationEnumEdit——等级 QComboBox；域裁决同链）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const TaskPoint& p : ws.points.entries) {
-        if (p.objectId != m_lastSelected.value()) {
-            continue;
-        }
+    queueStationEdit([key, on](const TaskPoint& base) {
         std::vector<std::string> known;
-        const TaskPoint candidate =
-            applyStationEnumEdit(p, key, text.toStdString(), known);
-        const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
-        }
-        return;
-    }
+        return applyStationToggleEdit(base, key, on, known);
+    });
 }
 
-void RequirementsPanelWidget::submitRegionEnumValue(const std::string& key,
-                                                    const QString& text)
+void RequirementsPanelWidget::submitStationEnumValue(const std::string& key, const QString& text)
 {
-    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
-    QMetaObject::invokeMethod(
-        this, [this, key, text] { submitRegionEnumValueNow(key, text); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitRegionEnumValueNow(const std::string& key,
-                                                       const QString& text)
-{
-    // 区域枚举提交轨（applyRegionEnumEdit——等级 QComboBox；域裁决同链）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const WorkRegion& region : ws.regions.entries) {
-        std::optional<core::ObjectId> selected;
-        if (m_regionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_regionTable->currentItem());
-        }
-        if (!selected.has_value() || region.objectId != selected.value()) {
-            continue;
-        }
+    queueStationEdit([key, text](const TaskPoint& base) {
         std::vector<std::string> known;
-        const WorkRegion candidate =
-            applyRegionEnumEdit(region, key, text.toStdString(), known);
-        const EditSubmitOutcome outcome =
-            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
+        return applyStationEnumEdit(base, key, text.toStdString(), known);
+    });
+}
+
+/**
+ * @brief 以发起时区域快照绑定原编辑器和ObjectId，再排队执行字段变换。
+ * @param transform [in] 候选变换；仅接受完整基线，不持控件或可变选中行。
+ *
+ * UI线程；原编辑器为非拥有身份标记，先与当前提供器比对才允许读取。
+ * 外部修改/删除/会话切换拒绝过期输入，防止排队期间把旧行数据写到新行。
+ */
+// A-18（Phase-A 冻结终验；"无独立计划页"所有者裁决 2026-10-19）：采样
+// 计划条目随区域采样确认自动构建——计划是区域采样定义的派生事实
+// （req-plan-set 为评估切片消费面，UI 缺创建路径＝评估链对用户内容不可
+// 达，r11 实测"工作集无采样计划"）。构建单点＝ISamplingPlanBuilder
+// （D-REQ-2 规范化唯一实现，本单元零第二份）；同区域复用既有计划 id
+// （R6 计划-区域一一对应，重确认＝更新非重复）；新计划句柄＝generate()
+// （O-36 编辑期临时身份惯例，与生命周期新增同款）。
+bool RequirementsPanelWidget::submitRegionEditWithPlanSync(
+    IRequirementEditor& editor, const WorkRegion& candidate)
+{
+    // ★ 批35（评审 P1-5）：区域写入的统一入口——有派生计划＝区域编辑＋
+    // 计划 upsert 原子批（恰一次撤销；计划随几何/采样同步——派生事实半
+    // 区）；无计划＝原单编辑轨；构建拒绝＝整个编辑拒绝（区域与计划保持
+    // 一致，不留悬空）。单字段轨与批量参数表轨都经此处（P1-5：批量入口
+    // 原绕过同步）。
+    for (const auto& plan : editor.workingSet().plans.entries) {
+        if (plan.regionRef == candidate.objectId) {
+            const auto planEdit = buildRegionPlanEdit(editor, candidate);
+            if (!planEdit.has_value()) { return false; }  // 构建拒绝——就地错误已呈现。
+            return submitStructuralEditsAtomic(
+                std::vector<RequirementEdit>{candidate, *planEdit});
         }
+    }
+    return submitEntryEdit(editor, *this, candidate) == EditSubmitOutcome::Applied;
+}
+
+std::optional<RequirementEdit> RequirementsPanelWidget::buildRegionPlanEdit(
+    IRequirementEditor& editor, const WorkRegion& region)
+{
+    const SamplingPlan* existing = nullptr;
+    for (const auto& plan : editor.workingSet().plans.entries) {
+        if (plan.regionRef == region.objectId) { existing = &plan; break; }
+    }
+    SamplingPlanSpec spec;
+    if (existing != nullptr) { spec.planObjectId = existing->objectId; }
+    spec.positionSampling = region.positionSampling;
+    spec.orientationSampling = region.orientationSampling;
+    spec.note = region.note;
+    SamplingPlanBuilder builder;
+    std::vector<core::DiagnosticRecord> buildDiags;
+    const PlanOutcome outcome = builder.buildPlan(region, spec, buildDiags);
+    if (!outcome.ok) {
+        // 构建拒绝（退化区域/非法采样）＝域裁决面——就地呈现，不静默、
+        // 不伪造计划（NFR-COR-03 第一戒律）。
+        showStatusLine(QString::fromUtf8(outcome.error.detail));
+        return std::nullopt;
+    }
+    return RequirementEdit{outcome.plan};
+}
+
+void RequirementsPanelWidget::queueRegionEdit(std::function<WorkRegion(const WorkRegion&)> transform)
+{
+    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || !m_regionTable->currentItem()) { return; }
+    const auto selected = nodeAnchor(m_regionTable->currentItem());
+    if (!selected) { return; }
+    for (const auto& region : editor->workingSet().regions.entries) {
+        if (region.objectId != *selected) { continue; }
+        QMetaObject::invokeMethod(this, [this, editor, base = region, transform = std::move(transform)] {
+            m_threadGuard.assertOnUiThread();
+            if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
+            for (const auto& latest : editor->workingSet().regions.entries) {
+                if (latest.objectId != base.objectId) { continue; }
+                if (latest != base) { showStatusLine("区域已改变，请重新输入"); return; }
+                try {
+                    const WorkRegion candidate = transform(base);
+                    if (candidate == base) { return; } // 重复失焦信号不制造空撤销记录。
+                    // ★ 批34（评审 F5）：区域有派生计划＝计划是区域采样定义
+                    //   的忠实投影（A-18 裁决语义的同步半区）——区域几何/采
+                    //   样编辑后计划必须随动（间距归一计数随盒尺寸变化，
+                    //   R03-03 响应面）；有计划＝区域编辑＋计划 upsert 原子
+                    //   应用（恰一次撤销）；无计划＝原单编辑轨（计划创建仍
+                    //   归采样表单确认面）。构建拒绝（更新后区域不可重建计
+                    //   划）＝整个编辑拒绝——区域与计划保持一致，不留悬空。
+                    if (submitRegionEditWithPlanSync(*editor, candidate)) {
+                        m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                    }
+                } catch (const std::invalid_argument& failure) {
+                    showStatusLine(QString::fromUtf8(failure.what()));
+                    renderRegionPage(editor->workingSet()); // 旧单字段轨沿用拒绝后回投权威值。
+                }
+                return;
+            }
+        }, Qt::QueuedConnection);
         return;
     }
+}
+
+void RequirementsPanelWidget::submitRegionEnumValue(const std::string& key, const QString& text)
+{
+    queueRegionEdit([key, text](const WorkRegion& base) {
+        std::vector<std::string> known;
+        return applyRegionEnumEdit(base, key, text.toStdString(), known);
+    });
 }
 
 void RequirementsPanelWidget::submitConditionEnumValue(const std::string& key,
                                                        const QString& text)
 {
-    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
-    QMetaObject::invokeMethod(
-        this, [this, key, text] { submitConditionEnumValueNow(key, text); },
-        Qt::QueuedConnection);
+    // 发起时固定身份；排队期间切换行不能把输入写到新选中工况（WP-14-T12）。
+    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || !m_conditionTable->currentItem()) { return; }
+    const auto selected = nodeAnchor(m_conditionTable->currentItem());
+    if (!selected) { return; }
+    for (const auto& condition : editor->workingSet().conditions.entries) {
+        if (condition.objectId == *selected) {
+            QMetaObject::invokeMethod(this, [this, key, text, base = condition, editor] {
+                submitConditionEnumValueNow(key, text, base, editor);
+            }, Qt::QueuedConnection);
+            return;
+        }
+    }
 }
 
 void RequirementsPanelWidget::submitConditionEnumValueNow(const std::string& key,
-                                                          const QString& text)
+    const QString& text, const OperatingCondition& base, IRequirementEditor* expectedEditor)
 {
     // 工况枚举提交轨（applyConditionEnumEdit——等级/启用；域裁决同链）。
     m_threadGuard.assertOnUiThread();
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
+    if (editor == nullptr || editor != expectedEditor || !m_writable) {
         return;
     }
     const RequirementWorkingSet& ws = editor->workingSet();
     for (const OperatingCondition& c : ws.conditions.entries) {
-        std::optional<core::ObjectId> selected;
-        if (m_conditionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_conditionTable->currentItem());
-        }
-        if (!selected.has_value() || c.objectId != selected.value()) {
-            continue;
-        }
+        if (c.objectId != base.objectId) { continue; }
+        if (c != base) { showStatusLine("工况已改变，请重新输入"); return; }
         std::vector<std::string> known;
-        const OperatingCondition candidate =
-            applyConditionEnumEdit(c, key, text.toStdString(), known);
+        OperatingCondition candidate = c;
+        if (key == "name" || key == "note" || key == "level" || key == "enabled") {
+            candidate = applyConditionEnumEdit(c, key, text.toStdString(), known);
+        } else if (key == "cycle-time" && text.trimmed().isEmpty()) {
+            candidate.targetCycleTimeS.reset();  // 显式清空可选节拍≠提供零秒。
+        } else {
+            const auto specs = conditionQuantitySpecs(c);
+            const auto spec = std::find_if(specs.begin(), specs.end(), [&key](const auto& value) { return value.key == key; });
+            if (spec == specs.end()) { throw std::logic_error("工况面板：编辑行携带词表外键 " + key); }
+            const auto parsed = parseFieldValueText(text.toStdString(), *spec);
+            if (!parsed.ok) { showStatusLine(QString::fromStdString(parsed.reason)); return; }
+            ui::ParamEditSet edits;
+            ui::ParamChange change; change.key = key; change.label = spec->label; change.newSi = parsed.siValue;
+            edits.changes.push_back(change);
+            candidate = applyConditionEditSet(c, edits, known);
+        }
         const EditSubmitOutcome outcome =
             submitEntryEdit(*editor, *this, RequirementEdit{candidate});
         if (outcome == EditSubmitOutcome::Applied) {
             m_undoTracker.recordAppliedEdit();
-        }
-        return;
-    }
-}
-
-void RequirementsPanelWidget::submitStationToggleNow(const std::string& key, bool on)
-{
-    // 二态提交轨（启用开关/自由度矩阵——applyStationToggleEdit 布尔回填
-    // ＋submitEntryEdit 域裁决；拒绝面与行编辑同链）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const TaskPoint& p : ws.points.entries) {
-        if (p.objectId != m_lastSelected.value()) {
-            continue;
-        }
-        std::vector<std::string> known;
-        const TaskPoint candidate = applyStationToggleEdit(p, key, on, known);
-        const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
+            refreshUndoButtons();
         }
         return;
     }
@@ -2555,6 +3041,63 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         }
         const std::vector<StationFieldRow> fields =
             regionFieldsFor(region, m_regionService, m_writable);
+        m_regionBasicForm->addRow(makeBatchParameterTable(RequirementEdit{region}));
+        // REQ-03：整块定义暂存；回调捕获进入基线而非排队执行时的选中行。
+        // 一次提交/撤销，外部修改或会话切换时不得覆盖新权威值。
+        const auto directory=m_view3dSeams.referenceChoices;
+        const auto choices=directory ? directory() : std::vector<RequirementsReferenceChoice>{};
+        const auto directoryGuard=referenceEditGuard(m_editTarget ? m_editTarget() : nullptr,choices);
+        auto* sampling = new RegionSamplingForm(region, m_writable,
+            [this, base = region, directoryGuard, expectedEditor = (m_editTarget ? m_editTarget() : nullptr)](WorkRegion candidate) {
+                QMetaObject::invokeMethod(this, [this, base, directoryGuard, expectedEditor, candidate = std::move(candidate)] {
+                    if (!directoryGuard()) { showStatusLine("会话、工作集或引用目录已改变，请刷新区域表单"); return; }
+                    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+                    if (!m_writable || !editor || editor != expectedEditor) { return; }
+                    for (const auto& latest : editor->workingSet().regions.entries) {
+                        if (latest.objectId != base.objectId) { continue; }
+                        if (latest != base) { showStatusLine("区域已改变，请刷新采样表后重试"); return; }
+                        // A-18：整块采样确认＝区域编辑＋派生计划 upsert 原子
+                        // 应用（恰一次撤销——"一次提交/撤销"契约保持）。
+                        // ★ 批34（评审 F6）：直接确认（零变化）也必须补建缺
+                        //   失计划——表单侧 no-op 门禁移入本回调（幂等半区）：
+                        //   区域无变化且派生计划与既有同值＝零动作零撤销（不
+                        //   制造空撤销步的既有纪律保持）；区域无变化但计划缺
+                        //   失＝只提交计划编辑；区域有变化＝原子对。
+                        const SamplingPlan* existingPlan = nullptr;
+                        for (const auto& plan : editor->workingSet().plans.entries) {
+                            if (plan.regionRef == candidate.objectId) {
+                                existingPlan = &plan;
+                                break;
+                            }
+                        }
+                        const auto planEdit = buildRegionPlanEdit(*editor, candidate);
+                        if (!planEdit.has_value()) { return; } // 构建拒绝——就地错误已呈现。
+                        const bool regionChanged = !(candidate == latest);
+                        bool planChanged = true;
+                        if (existingPlan != nullptr) {
+                            const auto& derived = std::get<SamplingPlan>(*planEdit);
+                            planChanged = !(derived == *existingPlan);
+                        }
+                        if (!regionChanged && !planChanged) { return; }
+                        if (!regionChanged) {
+                            if (submitEntryEditsAtomic(*editor, *this,
+                                    std::vector<RequirementEdit>{*planEdit})
+                                == EditSubmitOutcome::Applied) {
+                                m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                            }
+                            return;
+                        }
+                        if (submitEntryEditsAtomic(*editor, *this,
+                                std::vector<RequirementEdit>{candidate, *planEdit})
+                            == EditSubmitOutcome::Applied) {
+                            m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                        }
+                        return;
+                    }
+                }, Qt::QueuedConnection);
+            }, this, directory ? &choices : nullptr);
+        m_regionBasicForm->addRow(sampling);
+
 
         // 词表面（可编辑裁决——UI-T37：采样计数/间距/随机数/备注等非词表
         // 行诚实灰显〔此前可编辑但提交即词表外键 fail-fast〕；覆盖率姿态
@@ -2968,6 +3511,32 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
         if (const auto anchor = nodeAnchor(m_conditionTable->currentItem())) {
             for (const OperatingCondition& c : ws.conditions.entries) {
                 if (c.objectId == anchor.value()) {
+                    m_conditionForm->addRow(makeBatchParameterTable(RequirementEdit{c}));
+                    // REQ-04：结构编辑器只拥有进入基线的副本。确认排到信号返回后，
+                    // 并绑定原编辑器/对象及基线；切换选择不改写新对象，外部刷新或
+                    // 另一编辑已改变原对象时拒绝过期候选，避免覆盖新数据。
+                    const auto directory=m_view3dSeams.referenceChoices;
+                    const auto choices=directory ? directory() : std::vector<RequirementsReferenceChoice>{};
+                    const auto directoryGuard=referenceEditGuard(m_editTarget ? m_editTarget() : nullptr,choices);
+                    auto* structure = new ConditionStructureForm(c, ws.points.entries, m_writable,
+                        [this, base = c, directoryGuard, expectedEditor = (m_editTarget ? m_editTarget() : nullptr)](OperatingCondition candidate) {
+                            QMetaObject::invokeMethod(this,
+                                [this, base, directoryGuard, expectedEditor, candidate = std::move(candidate)] {
+                                    if (!directoryGuard()) { showStatusLine("会话、工作集或引用目录已改变，请刷新工况表单"); return; }
+                                    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+                                    if (!m_writable || !editor || editor != expectedEditor) { return; }
+                                    const auto& entries = editor->workingSet().conditions.entries;
+                                    const auto found = std::find_if(entries.begin(), entries.end(),
+                                        [&base](const OperatingCondition& value) { return value.objectId == base.objectId; });
+                                    if (found == entries.end() || *found != base) {
+                                        showStatusLine("工况已改变，请刷新结构表后重试"); return;
+                                    }
+                                    if (submitEntryEdit(*editor, *this, RequirementEdit{candidate}) == EditSubmitOutcome::Applied) {
+                                        m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                                    }
+                                }, Qt::QueuedConnection);
+                        }, this, directory ? &choices : nullptr);
+                    m_conditionForm->addRow(structure);
                     for (const StationFieldRow& fr :
                          conditionFieldsFor(c, m_conditionService, m_writable)) {
                         // 枚举下拉行（UI-T37 返工②——等级/启用一律
@@ -3017,8 +3586,10 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
                         // B2（UI-T31）：数值行按 enablement 可编（specs 词
                         // 表行——onConditionFieldEditingFinished 提交轨）；
                         // 派生/引用行保持只读（区域页同款收窄）。
-                        const bool editable =
-                            fr.enablement == StationFieldEnablement::Editable;
+                        // 结构字段由上方完整暂存表承担；下方仅提供摘要。只有已有
+                        // 提交轨的文本/节拍保留逐字段编辑，不能把摘要当数量解析。
+                        const bool editable = fr.enablement == StationFieldEnablement::Editable
+                            && (fr.fieldKey == "name" || fr.fieldKey == "note" || fr.fieldKey == "cycle-time");
                         edit->setReadOnly(!editable);
                         edit->setProperty("irdFieldKey",
                                           QString::fromStdString(fr.fieldKey));
@@ -3327,203 +3898,80 @@ void RequirementsPanelWidget::onRegionFieldEditingFinished()
                       edit->text());
 }
 
-void RequirementsPanelWidget::submitRegionValue(const std::string& key,
-                                                const QString& text)
+void RequirementsPanelWidget::submitRegionValue(const std::string& key, const QString& text)
 {
-    // 队列化出信号处理器（同 submitStationValue——提交链同步删发射控件＝UB）。
-    QMetaObject::invokeMethod(
-        this, [this, key, text] { submitRegionValueNow(key, text); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitRegionValueNow(const std::string& key,
-                                                   const QString& text)
-{
-    // B2（UI-T31）区域轨统一提交：权威值短路（控件侧）→词表 spec 匹配→
-    // parseFieldValueText（唯一解析出口，SA-12）→applyRegionEditSet→
-    // submitEntryEdit 域裁决（接受/拒绝分流见 sink；四态语义与工位一致）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;  // 无会话/只读——不虚构可编辑
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const WorkRegion& region : ws.regions.entries) {
-        // 区域检查器绑定区域表选中行（renderRegionPage 的投影锚）。
-        std::optional<core::ObjectId> selected;
-        if (m_regionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_regionTable->currentItem());
-        }
-        if (!selected.has_value() || region.objectId != selected.value()) {
-            continue;
-        }
-        for (const ui::QuantityFieldSpec& spec : regionQuantitySpecs()) {
-            if (spec.key != key) {
-                continue;
-            }
-            const ui::ValueParseResult parsed =
-                parseFieldValueText(text.toStdString(), spec);
-            if (!parsed.ok) {
-                // 拒绝·解析面：就地错误＋回退权威值（重投影）。
-                showStatusLine(QString::fromStdString(parsed.reason));
-                renderRegionPage(ws);
-                return;
-            }
+    // 单位解析仍归公共数量词表；只改变排队的对象绑定，不复制单位换算或域裁决。
+    queueRegionEdit([key, text](const WorkRegion& base) {
+        for (const auto& spec : regionQuantitySpecs()) {
+            if (spec.key != key) { continue; }
+            const auto parsed = parseFieldValueText(text.toStdString(), spec);
+            if (!parsed.ok) { throw std::invalid_argument(parsed.reason); }
             ui::ParamEditSet edits;
-            ui::ParamChange change;
-            change.key = key;
-            change.label = spec.label;
-            change.newSi = parsed.siValue;
+            ui::ParamChange change; change.key = key; change.label = spec.label; change.newSi = parsed.siValue;
             edits.changes.push_back(change);
             std::vector<std::string> known;
-            const WorkRegion candidate = applyRegionEditSet(region, edits, known);
-            const EditSubmitOutcome outcome =
-                submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-            if (outcome == EditSubmitOutcome::Applied) {
-                m_undoTracker.recordAppliedEdit();  // L-R4 记账
-            }
-            return;
+            return applyRegionEditSet(base, edits, known);
         }
-        // 词表外键＝实现缺陷（行模型与 specs 词表漂移）——fail-fast。
         throw std::logic_error("区域面板：编辑行携带词表外键 " + key);
-    }
+    });
 }
 
 void RequirementsPanelWidget::submitRegionToggle(const std::string& key, bool on)
 {
-    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
-    QMetaObject::invokeMethod(
-        this, [this, key, on] { submitRegionToggleNow(key, on); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitRegionToggleNow(const std::string& key, bool on)
-{
-    // 区域二态提交轨（启用开关——applyRegionToggleEdit 布尔回填＋域裁决）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const WorkRegion& region : ws.regions.entries) {
-        std::optional<core::ObjectId> selected;
-        if (m_regionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_regionTable->currentItem());
-        }
-        if (!selected.has_value() || region.objectId != selected.value()) {
-            continue;
-        }
+    queueRegionEdit([key, on](const WorkRegion& base) {
         std::vector<std::string> known;
-        const WorkRegion candidate = applyRegionToggleEdit(region, key, on, known);
-        const EditSubmitOutcome outcome =
-            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
-        }
-        return;
-    }
+        return applyRegionToggleEdit(base, key, on, known);
+    });
 }
 
-void RequirementsPanelWidget::submitRegionCounts(
-    const std::array<std::uint32_t, 3>& counts)
+void RequirementsPanelWidget::submitRegionCounts(const std::array<std::uint32_t, 3>& counts)
 {
-    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
-    QMetaObject::invokeMethod(
-        this, [this, counts] { submitRegionCountsNow(counts); },
-        Qt::QueuedConnection);
-}
-
-void RequirementsPanelWidget::submitRegionCountsNow(
-    const std::array<std::uint32_t, 3>& counts)
-{
-    // 采样计数提交轨（UI-T37 R1——applyRegionSamplingCountsEdit 回填；计数
-    // 合法域归域校验链——拒绝面与行编辑同链，就地错误呈现一致）。
-    m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;
-    }
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const WorkRegion& region : ws.regions.entries) {
-        std::optional<core::ObjectId> selected;
-        if (m_regionTable->currentItem() != nullptr) {
-            selected = nodeAnchor(m_regionTable->currentItem());
-        }
-        if (!selected.has_value() || region.objectId != selected.value()) {
-            continue;
-        }
-        std::vector<std::string> known;
-        const WorkRegion candidate =
-            applyRegionSamplingCountsEdit(region, counts, known);
-        const EditSubmitOutcome outcome =
-            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-        if (outcome == EditSubmitOutcome::Applied) {
-            m_undoTracker.recordAppliedEdit();
-        }
+    // A-18：采样计数提交＝区域编辑＋派生计划 upsert 原子应用（恰一次撤
+    // 销——发起时固定身份，排队期间切换行不得写入新选中行）。
+    auto* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (!editor || !m_writable || !m_regionTable->currentItem()) { return; }
+    const auto selected = nodeAnchor(m_regionTable->currentItem());
+    if (!selected) { return; }
+    for (const auto& region : editor->workingSet().regions.entries) {
+        if (region.objectId != *selected) { continue; }
+        QMetaObject::invokeMethod(this, [this, editor, base = region, counts] {
+            m_threadGuard.assertOnUiThread();
+            if (!m_writable || !m_editTarget || m_editTarget() != editor) { return; }
+            for (const auto& latest : editor->workingSet().regions.entries) {
+                if (latest.objectId != base.objectId) { continue; }
+                if (latest != base) { showStatusLine("区域已改变，请重新输入"); return; }
+                try {
+                    std::vector<std::string> knownKeys;
+                    const WorkRegion candidate =
+                        applyRegionSamplingCountsEdit(base, counts, knownKeys);
+                    if (candidate == base) { return; } // 重复失焦信号不制造空撤销记录。
+                    const auto planEdit = buildRegionPlanEdit(*editor, candidate);
+                    if (!planEdit.has_value()) { return; } // 构建拒绝——就地错误已呈现。
+                    if (submitEntryEditsAtomic(*editor, *this,
+                            std::vector<RequirementEdit>{candidate, *planEdit})
+                        == EditSubmitOutcome::Applied) {
+                        m_undoTracker.recordAppliedEdit(); refreshUndoButtons();
+                    }
+                } catch (const std::invalid_argument& failure) {
+                    showStatusLine(QString::fromUtf8(failure.what()));
+                    renderRegionPage(editor->workingSet());
+                }
+                return;
+            }
+        }, Qt::QueuedConnection);
         return;
     }
 }
 
 void RequirementsPanelWidget::onConditionFieldEditingFinished()
 {
-    // B2（UI-T31）工况轨——同构（applyConditionEditSet 回填）。
+    // REQ-04/UX-05：从信号sender复制文本后即退出；所有字段统一排队，
+    // 原对象与会话在发起时绑定，刷新不得销毁当前发信控件或改写新选中行。
     m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;
-    }
     auto* edit = qobject_cast<QLineEdit*>(QObject::sender());
-    if (edit == nullptr) {
-        return;
-    }
-    if (edit->text() == edit->property("irdAuthoritativeValue").toString()) {
-        return;
-    }
-    const std::string key = edit->property("irdFieldKey").toString().toStdString();
-    const RequirementWorkingSet& ws = editor->workingSet();
-    if (m_conditionTable->currentItem() == nullptr) {
-        return;
-    }
-    const auto selected = nodeAnchor(m_conditionTable->currentItem());
-    if (!selected.has_value()) {
-        return;
-    }
-    for (const OperatingCondition& c : ws.conditions.entries) {
-        if (c.objectId != selected.value()) {
-            continue;
-        }
-        for (const ui::QuantityFieldSpec& spec : conditionQuantitySpecs(c)) {
-            if (spec.key != key) {
-                continue;
-            }
-            const ui::ValueParseResult parsed =
-                parseFieldValueText(edit->text().toStdString(), spec);
-            if (!parsed.ok) {
-                showStatusLine(QString::fromStdString(parsed.reason));
-                renderConditionPage(ws);
-                return;
-            }
-            ui::ParamEditSet edits;
-            ui::ParamChange change;
-            change.key = key;
-            change.label = spec.label;
-            change.newSi = parsed.siValue;
-            edits.changes.push_back(change);
-            std::vector<std::string> known;
-            const OperatingCondition candidate =
-                applyConditionEditSet(c, edits, known);
-            const EditSubmitOutcome outcome =
-                submitEntryEdit(*editor, *this, RequirementEdit{candidate});
-            if (outcome == EditSubmitOutcome::Applied) {
-                m_undoTracker.recordAppliedEdit();
-            }
-            return;
-        }
-        throw std::logic_error("工况面板：编辑行携带词表外键 " + key);
-    }
+    if (!edit || edit->text() == edit->property("irdAuthoritativeValue").toString()) { return; }
+    submitConditionEnumValue(edit->property("irdFieldKey").toString().toStdString(), edit->text());
 }
-
 void RequirementsPanelWidget::onCommandButtonClicked()
 {
     // 域命令区：按钮激活→转发注入的提交出口（不本地执行任何域逻辑——
@@ -3613,6 +4061,15 @@ void RequirementsPanelWidget::onProjectUndo()
 // =====================================================================
 // IRequirementEditSink（L-R2 分流回调）
 // =====================================================================
+
+void RequirementsPanelWidget::onBatchEditApplied(const std::string& changeSummary)
+{
+    m_threadGuard.assertOnUiThread();
+    // REQ-11：整批只对应一个编辑器栈帧，记账必须发生在刷新按钮状态之前。
+    // 字段/结构轨自行记账，继续经onEditApplied刷新，避免一次动作变成两次撤销。
+    m_undoTracker.recordAppliedEdit();
+    onEditApplied(changeSummary);
+}
 
 void RequirementsPanelWidget::onEditApplied(const std::string& changeSummary)
 {

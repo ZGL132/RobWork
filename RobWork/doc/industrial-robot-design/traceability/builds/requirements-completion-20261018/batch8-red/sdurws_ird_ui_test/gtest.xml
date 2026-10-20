@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-18T20:33:12.846" name="AllTests">
+  <testsuite name="CommandRegistryModel" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-18T20:33:12.846">
+    <testcase name="RequirementsChineseTitlesAndSearch_UX02_UX13" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CommandRegistryModelTest.cpp" line="501" status="run" result="completed" time="0." timestamp="2026-10-18T20:33:12.846" classname="CommandRegistryModel">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CommandRegistryModelTest.cpp:525&#x0A;Expected: (row) != (found.end()), actual: 8-byte object &lt;00-00 00-00 00-00 00-00&gt; vs 8-byte object &lt;00-00 00-00 00-00 00-00&gt;&#x0A;中文工程标题必须能搜索到：导入 CSV&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CommandRegistryModelTest.cpp:525
+Expected: (row) != (found.end()), actual: 8-byte object <00-00 00-00 00-00 00-00> vs 8-byte object <00-00 00-00 00-00 00-00>
+中文工程标题必须能搜索到：导入 CSV
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

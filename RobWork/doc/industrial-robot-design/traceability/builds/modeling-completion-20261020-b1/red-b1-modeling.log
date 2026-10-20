@@ -1,0 +1,47 @@
+Note: Google Test filter = *ExistingNestedXacro*:*XacroBranchesUse*:*ImportConfirmationShows*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.ExistingNestedXacroIncludeUsesProductionBridge_MDL19_AT31
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(824): error: Value of: expanded.ok
+  Actual: false
+Expected: true
+ValidatedXacroSource 契约违约：入口字节/树根键/来源摘要/来源路径缺一不可（io 产物装配面）
+
+[  FAILED  ] ModelingCommandFlows.ExistingNestedXacroIncludeUsesProductionBridge_MDL19_AT31 (3 ms)
+[ RUN      ] ModelingCommandFlows.XacroBranchesUseSameExplicitSelectionAsUrdf_MDL12_AT17
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(847): error: Value of: executeModelingCommand("modeling.import-xacro", fx.session, fx.deps(), fx.host, summary)
+  Actual: false
+Expected: true
+Xacro 展开失败：ValidatedXacroSource 契约违约：入口字节/树根键/来源摘要/来源路径缺一不可（io 产物装配面）
+
+[  FAILED  ] ModelingCommandFlows.XacroBranchesUseSameExplicitSelectionAsUrdf_MDL12_AT17 (14 ms)
+[ RUN      ] ModelingCommandFlows.ImportConfirmationShowsObjectFieldsValuesAndReasons_MDL11_AT15
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(864): error: Value of: fx.host.lastConfirmText.contains("j1")
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(865): error: Value of: fx.host.lastConfirmText.contains("lower")
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(866): error: Value of: fx.host.lastConfirmText.contains("-1.57")
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(867): error: Value of: fx.host.lastConfirmText.contains("axis")
+  Actual: false
+Expected: true
+
+[  FAILED  ] ModelingCommandFlows.ImportConfirmationShowsObjectFieldsValuesAndReasons_MDL11_AT15 (4 ms)
+[----------] 3 tests from ModelingCommandFlows (21 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (22 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] ModelingCommandFlows.ExistingNestedXacroIncludeUsesProductionBridge_MDL19_AT31
+[  FAILED  ] ModelingCommandFlows.XacroBranchesUseSameExplicitSelectionAsUrdf_MDL12_AT17
+[  FAILED  ] ModelingCommandFlows.ImportConfirmationShowsObjectFieldsValuesAndReasons_MDL11_AT15
+
+ 3 FAILED TESTS

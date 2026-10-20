@@ -22,10 +22,18 @@
 #include <gtest/gtest.h>
 
 #include <QCoreApplication>
+#include <QTemporaryDir>
+#include <QFile>
+#include "plugin/GeometryResourceFlow.hpp"
+#include "plugin/ModelingDraftCodec.hpp" // B4b域帧须在独立/集成两模式都能真实往返。
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记（testkit §7.3）
 
 #include <atomic>
+#include <limits> // F10非有限值反例，必须走真实拒绝路径。
 #include <regex>
 #include <set>
 #include <thread>
@@ -41,6 +49,10 @@
 #include "plugin/PanelModel.hpp"           // 五区投影（ACC2/ACC5）
 #include "plugin/PanelRefresh.hpp"         // 刷新协调器/线程守卫（ACC5）
 #include "plugin/PanelSelection.hpp"       // L-1 会话选中（ACC3）
+#include <sdurws/ird/modeling/Codec.hpp>
+#include "plugin/ModelingBodyEditor.hpp" // F10纯值编排，真实迁移与完整张量判定。
+#include "plugin/ModelingSceneEditor.hpp" // F12纯值事务，错误时完整基线保持不变。
+#include "plugin/ModelingToolEditor.hpp" // F08工具/默认TCP/几何候选完整事务。
 #include "plugin/ModelingCommandFlows.hpp"  // customChainRowSemanticCheck（UI-T66——F-523① 录入辅助面）
 #include <sdurws/ird/ui/CommandInteractionBridge.hpp>          // ui 确认交互桥（L-3——UI-T13 落位面）
 
@@ -743,31 +755,32 @@ TEST(PluginPanel, L8_CentroidInlineChoiceModelData_WP13T15_ACC3)
 // ACC4——域命令登记（卡 §9.7.3 表逐行；ui.md §10.9/§11.2）
 // =====================================================================
 
-/// 十一条 CommandId 点分小写、逐行与卡 §9.7.3 表一致、无重复（export-package
+/// 十二条 CommandId 点分小写、逐行与卡 §9.7.3 表一致、无重复（export-package
 /// 与 import-package 两条独立命令不合并；export-workcell-xml 为 UI-T56
-/// 表尾追加——WC/DWC XML 外供导出）。
+/// 表尾追加——WC/DWC XML 外供导出；import-workcell 为 WP-13-T25/F06
+/// 表尾追加——外部 WorkCell 反向导入）。
 TEST(PluginPanel, Commands_TenDottedCommandIds_WP13T15_ACC4)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-07"}, std::vector<std::string>{});
 
     const auto cmds = modelingDomainCommands();
-    ASSERT_EQ(cmds.size(), 11U) << "卡 §9.7.3 表恰十一条（UI-T56 表尾追加）";
+    ASSERT_EQ(cmds.size(), 12U) << "卡 §9.7.3 表恰十二条（UI-T56＋WP-13-T25/F06 表尾追加）";
 
     // 逐行对照（行序＝卡表行序——登记序确定性）。
-    const char* expected[11] = {
+    const char* expected[12] = {
         "modeling.new-from-template", "modeling.import-urdf",
         "modeling.import-xacro", "modeling.switch-authority",
         "modeling.estimate-properties", "modeling.generate-placeholder-geometry",
         "modeling.diff-baseline", "modeling.export-package",
         "modeling.import-package", "modeling.reset-home-zero",
-        "modeling.export-workcell-xml",
+        "modeling.export-workcell-xml", "modeling.import-workcell",
     };
     std::set<std::string> ids;
     for (std::size_t i = 0; i < cmds.size(); ++i) {
         EXPECT_EQ(cmds[i].id, expected[i]) << "第 " << i << " 行与卡表不一致";
         ids.insert(cmds[i].id);
     }
-    EXPECT_EQ(ids.size(), 11U) << "无重复 id（点分小写全局唯一——§7.2）";
+    EXPECT_EQ(ids.size(), 12U) << "无重复 id（点分小写全局唯一——§7.2）";
 
     // 点分小写词形：点分段＋段内 [a-z0-9-]（卡 §9.7.3 十条全小写——段内
     // 连字符如 reset-home-zero；ui 词表段字符集 [A-Za-z0-9-]，词表全小写）。
@@ -1303,4 +1316,359 @@ TEST(PluginPanel, GeometryRows_ShapeBadgeAndDanglingDetection_UI_T41C)
     EXPECT_TRUE(visual.valueText.find(
         std::string(geometryKindToken(GeometryKind::Mesh))) != std::string::npos)
         << "形状类别徽标缺失（C2）";
+}
+
+/** @brief MDL-05/V-17：独立闭式迁移与完整覆盖，保持未改字段及来源。 */
+TEST(ModelingManualBody, ExplicitMigrationAndCompleteOverride_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    BodyData body;const auto source=core::ValueProvenance::make(core::ProvenanceKind::GeometricEstimate);
+    body.mass=core::SourcedValue<double>::provided(2,source);
+    body.centerOfMass=core::SourcedValue<rw::math::Vector3D<double>>::provided({0,0,0},source);
+    body.inertia=core::SourcedValue<InertiaTensor>::provided({3,4,5,0.1,0.2,0.3},source);
+    const auto before=body;std::string error;ManualBodyEdit edit;
+    auto out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out);EXPECT_EQ(out->body,body);
+    edit.mass=4;out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out);
+    EXPECT_DOUBLE_EQ(out->body.mass.value(),4);EXPECT_EQ(out->body.inertia,body.inertia);
+    EXPECT_EQ(out->body.centerOfMass,body.centerOfMass);
+    edit.centerOfMass=rw::math::Vector3D<double>{1,2,3};
+    EXPECT_FALSE(evaluateManualBodyEdit(body,edit,error));EXPECT_FALSE(error.empty());
+    edit.resolution=CentroidEditResolution::MigrateInertia;
+    out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out)<<error;
+    // 使用已确认质量4kg：I'=I+4((d·d)E-ddᵀ)，独立逐分量参考。
+    const auto& t=out->body.inertia.value();
+    EXPECT_DOUBLE_EQ(t.ixx,55);EXPECT_DOUBLE_EQ(t.iyy,44);EXPECT_DOUBLE_EQ(t.izz,25);
+    EXPECT_DOUBLE_EQ(t.ixy,-7.9);EXPECT_DOUBLE_EQ(t.ixz,-11.8);EXPECT_DOUBLE_EQ(t.iyz,-23.7);
+    EXPECT_EQ(out->body.inertia.provenance(),source);
+    EXPECT_EQ(out->body.centerOfMass.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_NE(out->summary.find("migrate-inertia"),std::string::npos);
+    edit.resolution=CentroidEditResolution::OverwriteInertia;
+    EXPECT_FALSE(evaluateManualBodyEdit(body,edit,error));
+    edit.inertia=InertiaTensor{5,6,7,0.4,0.5,0.6};
+    out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out)<<error;
+    EXPECT_EQ(out->body.inertia.value(),*edit.inertia);
+    EXPECT_EQ(out->body.inertia.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_NE(out->summary.find("overwrite-inertia"),std::string::npos);EXPECT_EQ(body,before);
+    // 完整六分量与来源必须经真实Codec保持，不能只验证窗口内存中的值。
+    const RobotDesignTemplateFactory factory;std::vector<core::DiagnosticRecord> diags;
+    auto draft=factory.createDraft(TemplateId{kTemplateIdGeneric6R},
+        runtime::InstallationPresetToken::Ground,"body-codec",diags).get();
+    draft.design.links.back().body=out->body;
+    const RobotDesignCodec codec;const auto bytes=codec.encode(ObjectVariant{draft.design},kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());const auto decoded=codec.decode(bytes.get(),kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());EXPECT_EQ(std::get<RobotDesign>(decoded.get()),draft.design);
+
+}
+
+/** @brief MDL-05/06：缺基准、未决议、非有限、负质量和非法完整张量均拒绝。 */
+TEST(ModelingManualBody, MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    BodyData body;std::string error;ManualBodyEdit edit;
+    edit.mass=2;edit.centerOfMass=rw::math::Vector3D<double>{1,2,3};
+    edit.resolution=CentroidEditResolution::MigrateInertia;
+    EXPECT_FALSE(evaluateManualBodyEdit(body,edit,error));EXPECT_EQ(body,BodyData{});
+    edit.resolution=CentroidEditResolution::OverwriteInertia;edit.inertia=InertiaTensor{3,4,5,0.1,0.2,0.3};
+    auto out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out)<<error;
+    EXPECT_DOUBLE_EQ(out->body.mass.value(),2);EXPECT_DOUBLE_EQ(out->body.centerOfMass.value()[2],3);
+    const auto full=out->body;
+    for(const double mass:{-1.0,0.0,std::numeric_limits<double>::infinity()}){
+        ManualBodyEdit bad;bad.mass=mass;EXPECT_FALSE(evaluateManualBodyEdit(full,bad,error));
+    }
+    for(const auto tensor:{InertiaTensor{-1,2,2,0,0,0},InertiaTensor{1,1,8,0,0,0},
+                          InertiaTensor{1,1,1,5,0,0}}){
+        ManualBodyEdit bad;bad.inertia=tensor;EXPECT_FALSE(evaluateManualBodyEdit(full,bad,error));
+    }
+    ManualBodyEdit bad;bad.centerOfMass=rw::math::Vector3D<double>{0,std::numeric_limits<double>::quiet_NaN(),0};
+    EXPECT_FALSE(evaluateManualBodyEdit(full,bad,error));EXPECT_EQ(body,BodyData{});
+}
+
+/** @brief F12/MDL-15/AT-28：固定帧增改删原子更新根引用与对象，世界位姿不被重置。 */
+TEST(ModelingSceneTransactions, CreateUpdateRemoveAndCodec_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    const auto before=makeSixAxisDraft();
+    SceneEditRequest request;request.target=core::ObjectId::generate();request.localName="fixture";
+    std::string error;
+    const auto added=evaluateSceneEdit(before,request,{},error);ASSERT_TRUE(added)<<error;
+    ASSERT_EQ(added->sceneObjects.size(),1U);ASSERT_EQ(added->design.sceneRefs.size(),1U);
+    EXPECT_EQ(added->design.sceneRefs.front(),request.target);
+    EXPECT_EQ(added->sceneObjects.front().objectId,request.target);EXPECT_FALSE(added->sceneObjects.front().geometry);
+    EXPECT_EQ(added->changes.size(),before.changes.size()+1);
+    auto positioned=*added;
+    ASSERT_FALSE(applyScenePoseEdit(positioned,0,PartPoseEditValue{1,2,3,0.1,0.2,0.3}));
+    request.action=SceneEditAction::Update;request.localName="fixture_renamed";
+    request.role=SceneObjectRole::Workpiece;
+    const auto updated=evaluateSceneEdit(positioned,request,{},error);ASSERT_TRUE(updated)<<error;
+    EXPECT_EQ(updated->sceneObjects.front().worldPose,positioned.sceneObjects.front().worldPose);
+    EXPECT_EQ(updated->sceneObjects.front().role,SceneObjectRole::Workpiece);
+    EXPECT_EQ(updated->sceneObjects.front().localName,"fixture_renamed");
+    // 实际独立对象编码/解码，不把纯结构相等当成持久化兼容。
+    const RobotDesignCodec codec;
+    const auto bytes=codec.encode(ObjectVariant{updated->sceneObjects.front()},kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());const auto decoded=codec.decode(bytes.get(),kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());EXPECT_EQ(std::get<SceneObject>(decoded.get()),updated->sceneObjects.front());
+    const auto unchanged=evaluateSceneEdit(*updated,request,{},error);ASSERT_TRUE(unchanged);
+    EXPECT_EQ(*unchanged,*updated)<<"恒等更新不追加摘要或历史";
+    request.action=SceneEditAction::Remove;
+    EXPECT_FALSE(evaluateSceneEdit(*updated,request,{},error));EXPECT_FALSE(error.empty());
+    request.confirmRemove=true;
+    const auto removed=evaluateSceneEdit(*updated,request,{},error);ASSERT_TRUE(removed)<<error;
+    EXPECT_TRUE(removed->sceneObjects.empty());EXPECT_TRUE(removed->design.sceneRefs.empty());
+    EXPECT_EQ(before.sceneObjects.size(),0U)<<"初始输入始终只读";
+}
+/** @brief F12：非法输入/身份/资源拒绝；共享资源不因删除或摘除而丢失。 */
+TEST(ModelingSceneTransactions, RejectAndSharedResource_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    auto before=makeSixAxisDraft();ResourceRef resource;resource.resourceId="shared";
+    resource.externalRecord=ExternalResourceRecord{"C:/fixture.stl",resource.contentDigest};
+    before.design.resourceManifest.push_back(resource);
+    SceneEditRequest request;request.target=core::ObjectId::generate();request.localName="obstacle";
+    request.source=SceneGeometrySource::Existing;request.resourceOrPath="shared";
+    std::string error;const auto added=evaluateSceneEdit(before,request,{},error);ASSERT_TRUE(added)<<error;
+    ASSERT_TRUE(added->sceneObjects.front().geometry);
+    EXPECT_EQ(added->sceneObjects.front().geometry->resourceRefId,"shared");
+    EXPECT_EQ(added->design.resourceManifest,before.design.resourceManifest);
+    const auto baseline=*added;
+    for(const auto& name:std::vector<std::string>{"",before.design.links.front().localName,"bad\nname","obstacle"}){
+        request.target=core::ObjectId::generate();request.localName=name;
+        EXPECT_FALSE(evaluateSceneEdit(baseline,request,{},error))<<name;
+        EXPECT_EQ(*added,baseline);
+    }
+    request.action=SceneEditAction::Update;request.target=baseline.sceneObjects.front().objectId;
+    request.localName="obstacle";request.resourceOrPath="missing";
+    EXPECT_FALSE(evaluateSceneEdit(baseline,request,{},error));
+    request.source=SceneGeometrySource::External;request.resourceOrPath="missing.stl";
+    EXPECT_FALSE(evaluateSceneEdit(baseline,request,{},error));
+    request.source=SceneGeometrySource::None;
+    const auto detached=evaluateSceneEdit(baseline,request,{},error);ASSERT_TRUE(detached)<<error;
+    EXPECT_FALSE(detached->sceneObjects.front().geometry);EXPECT_EQ(detached->design.resourceManifest,before.design.resourceManifest);
+    request.action=SceneEditAction::Remove;request.confirmRemove=true;
+    const auto removed=evaluateSceneEdit(baseline,request,{},error);ASSERT_TRUE(removed);
+    EXPECT_EQ(removed->design.resourceManifest,before.design.resourceManifest);
+    request.target=core::ObjectId::generate();EXPECT_FALSE(evaluateSceneEdit(baseline,request,{},error));
+}
+
+/** @brief F12/MDL-15：真实磁盘/安全io快照登记、重复确认与缺文件拒绝，不伪造摘要。 */
+TEST(ModelingSceneTransactions, ExternalDiskGeometryAndFailureAtomicity_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());const auto path=dir.filePath(QStringLiteral("障碍物.stl"));
+    QFile file(path);ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    const QByteArray mesh="solid obstacle\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid obstacle\n";
+    ASSERT_EQ(file.write(mesh),mesh.size());file.close();
+    const auto before=makeSixAxisDraft();SceneEditRequest request;
+    request.target=core::ObjectId::generate();request.localName="obstacle";
+    request.source=SceneGeometrySource::External;request.resourceOrPath=path.toStdString();
+    const auto probe=makeIoResourceProbe();std::string error;
+    const auto added=evaluateSceneEdit(before,request,probe,error);ASSERT_TRUE(added)<<error;
+    ASSERT_EQ(added->design.resourceManifest.size(),before.design.resourceManifest.size()+1);
+    const auto& resource=added->design.resourceManifest.back();EXPECT_EQ(resource.state,ResourceState::Recorded);
+    ASSERT_TRUE(resource.externalRecord);EXPECT_EQ(resource.contentDigest,resource.externalRecord->recordedDigest);
+    EXPECT_NE(resource.contentDigest,core::Digest256{});ASSERT_TRUE(added->sceneObjects.front().geometry);
+    EXPECT_EQ(resource.resourceId,added->sceneObjects.front().geometry->resourceRefId);
+    request.action=SceneEditAction::Update;
+    const auto same=evaluateSceneEdit(*added,request,probe,error);ASSERT_TRUE(same)<<error;EXPECT_EQ(*same,*added);
+    request.resourceOrPath=dir.filePath("missing.stl").toStdString();
+    EXPECT_FALSE(evaluateSceneEdit(*added,request,probe,error));EXPECT_FALSE(error.empty());
+    QFile text(dir.filePath("not-geometry.urdf"));ASSERT_TRUE(text.open(QIODevice::WriteOnly));
+    ASSERT_GT(text.write("<robot name=\"not-mesh\"/>"),0);text.close();
+    request.resourceOrPath=text.fileName().toStdString();
+    EXPECT_FALSE(evaluateSceneEdit(*added,request,probe,error));
+    EXPECT_EQ(added->design.resourceManifest.back(),resource);EXPECT_TRUE(before.sceneObjects.empty());
+}
+
+/** @brief F12：正式编译桥的名称约束和非几何资源反例必须在确认时拒绝。 */
+TEST(ModelingSceneTransactions, RejectIllegalNameAndSourceKinds_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    auto before=makeSixAxisDraft();SceneEditRequest request;request.target=core::ObjectId::generate();
+    std::string error;
+    for(const auto& name:std::vector<std::string>{"with space","slash/name","name:bad","中文名称"}){
+        request.localName=name;EXPECT_FALSE(evaluateSceneEdit(before,request,{},error))<<name;
+    }
+    request.localName="fixture";request.source=SceneGeometrySource::Existing;request.resourceOrPath="source-xml";
+    ResourceRef ref;ref.resourceId="source-xml";ref.externalRecord=ExternalResourceRecord{"C:/source.xacro",ref.contentDigest};
+    before.design.resourceManifest.push_back(ref);
+    EXPECT_FALSE(evaluateSceneEdit(before,request,{},error))<<"来源XML不是可选几何";
+    request.source=SceneGeometrySource::None;request.role=SceneObjectRole::RobotLink;
+    EXPECT_FALSE(evaluateSceneEdit(before,request,{},error));
+    // 环境管理器不能通过删除绕过角色边界；导入/旧数据中的机器人角色须交对应编辑入口。
+    SceneObject robotPart;robotPart.objectId=request.target;robotPart.localName="robot_part";
+    robotPart.role=SceneObjectRole::RobotLink;before.sceneObjects.push_back(robotPart);
+    before.design.sceneRefs.push_back(robotPart.objectId);
+    request.action=SceneEditAction::Remove;request.confirmRemove=true;
+    EXPECT_FALSE(evaluateSceneEdit(before,request,{},error))<<"删除也须遵循环境/工件角色边界";
+}
+/** @brief F08/MDL-13：新增/改名/删除的根引用和默认TCP必须原子一致，更新保留安装/TCP/物性。 */
+TEST(ModelingToolTransactions, CrudDefaultAndPreserve_MDL13_AT01)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-01"},std::nullopt);
+    const auto before=makeSixAxisDraft();ToolEditRequest r;r.target=core::ObjectId::generate();r.localName="gripper";
+    std::string error;EXPECT_FALSE(evaluateToolEdit(before,r,{},error))<<"首工具必须显式选择默认";
+    r.makeDefault=true;const auto created=evaluateToolEdit(before,r,{},error);ASSERT_TRUE(created)<<error;
+    ASSERT_EQ(created->toolObjects.size(),1U);ASSERT_TRUE(created->design.defaultTcp);
+    EXPECT_EQ(created->design.toolRefs,std::vector<core::ObjectId>{r.target});
+    EXPECT_EQ(created->design.defaultTcp->toolOid,r.target);EXPECT_EQ(created->design.defaultTcp->tcpKey,"tcp");
+    auto baseline=*created;auto& tool=baseline.toolObjects.front();tool.mountInterface.P()[0]=0.125;
+    tool.tcpList.front().offset.P()[2]=0.3;TcpEntry extra;extra.key="probe";extra.offset.P()[1]=0.2;tool.tcpList.push_back(extra);
+    tool.body.mass=core::SourcedValue<double>::provided(2,core::ValueProvenance::make(core::ProvenanceKind::ImportMapped));
+    r.action=ToolEditAction::Update;r.localName="gripper_renamed";r.displayName="焊接夹具";
+    const auto updated=evaluateToolEdit(baseline,r,{},error);ASSERT_TRUE(updated)<<error;
+    auto expected=baseline.toolObjects.front();expected.localName=r.localName;expected.displayName=r.displayName;
+    EXPECT_EQ(updated->toolObjects.front(),expected);
+    const auto same=evaluateToolEdit(*updated,r,{},error);ASSERT_TRUE(same);EXPECT_EQ(*same,*updated);
+    r.makeDefault=false;EXPECT_FALSE(evaluateToolEdit(*updated,r,{},error));
+    r.action=ToolEditAction::Remove;EXPECT_FALSE(evaluateToolEdit(*updated,r,{},error));
+    r.confirmRemove=true;const auto removed=evaluateToolEdit(*updated,r,{},error);ASSERT_TRUE(removed)<<error;
+    EXPECT_TRUE(removed->toolObjects.empty());EXPECT_TRUE(removed->design.toolRefs.empty());EXPECT_FALSE(removed->design.defaultTcp);
+    EXPECT_TRUE(before.toolObjects.empty())<<"输入完整基线从未被修改";
+}
+
+/** @brief F08：默认工具有其他候选时禁止猜测替代，显式改默认后才允许删除旧工具。 */
+TEST(ModelingToolTransactions, MultiToolDefaultProtection_MDL13_AT28)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-28"},std::nullopt);
+    ToolEditRequest r;r.target=core::ObjectId::generate();r.localName="first";r.makeDefault=true;std::string error;
+    const auto first=evaluateToolEdit(makeSixAxisDraft(),r,{},error);ASSERT_TRUE(first);
+    const auto firstId=r.target;r.target=core::ObjectId::generate();r.localName="second";r.makeDefault=false;
+    const auto two=evaluateToolEdit(*first,r,{},error);ASSERT_TRUE(two)<<error;
+    EXPECT_EQ(two->design.defaultTcp->toolOid,firstId);
+    ToolEditRequest remove;remove.action=ToolEditAction::Remove;remove.target=firstId;remove.confirmRemove=true;
+    EXPECT_FALSE(evaluateToolEdit(*two,remove,{},error));EXPECT_TRUE(error.find("默认TCP")!=std::string::npos);
+    r.action=ToolEditAction::Update;r.makeDefault=true;const auto newDefault=evaluateToolEdit(*two,r,{},error);ASSERT_TRUE(newDefault);
+    EXPECT_EQ(newDefault->design.defaultTcp->toolOid,r.target);
+    const auto removed=evaluateToolEdit(*newDefault,remove,{},error);ASSERT_TRUE(removed)<<error;
+    ASSERT_EQ(removed->toolObjects.size(),1U);EXPECT_EQ(removed->toolObjects.front().objectId,r.target);
+}
+
+/** @brief F08：非法名称、重复身份、失效引用及错误资源均拒绝，不把来源XML当网格。 */
+TEST(ModelingToolTransactions, InvalidIdentityNamesReferencesAndResources_MDL13_AT01)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-01"},std::nullopt);
+    auto before=makeSixAxisDraft();ToolEditRequest r;r.localName="tool";r.makeDefault=true;std::string error;
+    EXPECT_FALSE(evaluateToolEdit(before,r,{},error));r.target=before.design.joints.front().objectId;
+    EXPECT_FALSE(evaluateToolEdit(before,r,{},error));r.target=core::ObjectId::generate();
+    for(const auto& name:std::vector<std::string>{"","with space","a/b",before.design.joints.front().localName}){
+        r.localName=name;EXPECT_FALSE(evaluateToolEdit(before,r,{},error))<<name;
+    }
+    r.localName="valid";r.source=ManagedGeometrySource::Existing;r.resourceOrPath="missing";
+    EXPECT_FALSE(evaluateToolEdit(before,r,{},error));
+    ResourceRef source;source.resourceId="source";source.externalRecord=ExternalResourceRecord{"C:/source.urdf",source.contentDigest};
+    before.design.resourceManifest.push_back(source);r.resourceOrPath="source";EXPECT_FALSE(evaluateToolEdit(before,r,{},error));
+    r.source=ManagedGeometrySource::External;r.resourceOrPath="C:/missing.stl";
+    EXPECT_FALSE(evaluateToolEdit(before,r,{},error));
+    r.source=ManagedGeometrySource::None;const auto added=evaluateToolEdit(before,r,{},error);ASSERT_TRUE(added);
+    auto broken=*added;broken.design.toolRefs.push_back(r.target);r.action=ToolEditAction::Update;
+    EXPECT_FALSE(evaluateToolEdit(broken,r,{},error));
+}
+
+/** @brief F08：真实中文磁盘网格沿io冻结摘要，替换保留局部位姿，删除保留共享资源，Codec完整往返。 */
+TEST(ModelingToolTransactions, RealDiskResourceAndCodec_MDL13_AT28)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-28"},std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());QFile file(dir.filePath(QStringLiteral("夹具.stl")));
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    ASSERT_GT(file.write("solid tool\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid tool\n"),0);file.close();
+    ToolEditRequest r;r.target=core::ObjectId::generate();r.localName="gripper";r.makeDefault=true;
+    r.source=ManagedGeometrySource::External;r.resourceOrPath=file.fileName().toStdString();std::string error;const auto probe=makeIoResourceProbe();
+    const auto added=evaluateToolEdit(makeSixAxisDraft(),r,probe,error);ASSERT_TRUE(added)<<error;
+    ASSERT_TRUE(added->toolObjects.front().geometry);ASSERT_FALSE(added->design.resourceManifest.empty());
+    const auto& resource=added->design.resourceManifest.back();EXPECT_NE(resource.contentDigest,core::Digest256{});
+    ASSERT_TRUE(resource.externalRecord);EXPECT_EQ(resource.contentDigest,resource.externalRecord->recordedDigest);
+    auto baseline=*added;baseline.toolObjects.front().geometry->localTransform.P()[0]=0.12;
+    r.action=ToolEditAction::Update;const auto same=evaluateToolEdit(baseline,r,probe,error);ASSERT_TRUE(same)<<error;EXPECT_EQ(*same,baseline);
+    r.source=ManagedGeometrySource::Existing;r.resourceOrPath=resource.resourceId;
+    const auto existing=evaluateToolEdit(baseline,r,{},error);ASSERT_TRUE(existing);EXPECT_EQ(*existing,baseline);
+    for(const auto& value:std::vector<ObjectVariant>{ObjectVariant(baseline.design),ObjectVariant(baseline.toolObjects.front())}){
+        const RobotDesignCodec codec;const auto bytes=codec.encode(value,kCurrentFormatVersion);ASSERT_TRUE(bytes.ok());
+        const auto decoded=codec.decode(bytes.get(),kCurrentFormatVersion);ASSERT_TRUE(decoded.ok());EXPECT_EQ(decoded.get(),value);
+    }
+    r.action=ToolEditAction::Remove;r.confirmRemove=true;const auto removed=evaluateToolEdit(baseline,r,{},error);ASSERT_TRUE(removed);
+    EXPECT_EQ(removed->design.resourceManifest,baseline.design.resourceManifest);
+}
+
+/** @brief B4b/AT-21：真实中文磁盘UTF-8往返、完整工具/场景值及封装确定性。 */
+TEST(ModelingDraftCodec, DiskRoundTripAndLegacyExactReferences_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto ws=makeSixAxisDraft();ws.rootObjectId=core::ObjectId::generate();
+    ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="draft-tool";
+    TcpEntry tcp;tcp.key="tip";tcp.offset.P()[2]=0.234;tool.tcpList={tcp};
+    ws.toolObjects={tool};ws.design.toolRefs={tool.objectId};ws.design.defaultTcp=TcpRef{tool.objectId,"tip"};
+    SceneObject scene;scene.objectId=core::ObjectId::generate();scene.localName="draft-fixture";
+    scene.worldPose.P()[0]=1.25;ws.sceneObjects={scene};ws.design.sceneRefs={scene.objectId};
+    ws.changes.push_back({"tools","完整工具/场景未应用中文摘要"});const auto before=ws;
+    const auto payload=encodeModelingDraft(ws);EXPECT_EQ(payload,encodeModelingDraft(ws));
+    EXPECT_EQ(ws,before)<<"保存不得消费未应用草稿";
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());QFile file(dir.filePath(QStringLiteral("完整建模草稿.json")));
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly));ASSERT_EQ(file.write(payload.data(),static_cast<qint64>(payload.size())),static_cast<qint64>(payload.size()));file.close();
+    ASSERT_TRUE(file.open(QIODevice::ReadOnly));const auto bytes=file.readAll();file.close();
+    std::string error;const auto decoded=decodeModelingDraft(bytes.toStdString(),ModelingWorkingSet{},error);
+    ASSERT_TRUE(decoded)<<error;EXPECT_EQ(*decoded,ws);
+    const auto doc=QJsonDocument::fromJson(QByteArray::fromStdString(payload)).object();
+    const auto legacy=doc.value("root").toString().toStdString();
+    auto baseline=ws;baseline.changes.clear();baseline.design.displayName="旧基线";
+    const auto old=decodeModelingDraft(legacy,baseline,error);ASSERT_TRUE(old)<<error;
+    EXPECT_EQ(old->design,ws.design);EXPECT_EQ(old->toolObjects,ws.toolObjects);EXPECT_EQ(old->sceneObjects,ws.sceneObjects);
+    EXPECT_FALSE(old->changes.empty())<<"旧格式内容不同仍须保留未应用事实";
+    EXPECT_FALSE(decodeModelingDraft(legacy,ModelingWorkingSet{},error))<<"旧根缺部件不能猜造";
+}
+
+/** @brief B4b/AT-21：完整帧类型/版本/重复/缺引用/身份错位均原子拒绝，输入零变更。 */
+TEST(ModelingDraftCodec, MalformedFramesRejectWithoutPartialValues_PM08_AT21)
+{
+    IRD_TEST_INFO("PM-08",{"AT-21"},std::nullopt);
+    auto ws=makeSixAxisDraft();ToolEditRequest request;request.target=core::ObjectId::generate();
+    request.localName="draft-tool";request.makeDefault=true;std::string error;
+    const auto full=evaluateToolEdit(ws,request,{},error);ASSERT_TRUE(full)<<error;ws=*full;
+    const auto payload=encodeModelingDraft(ws);const auto original=QJsonDocument::fromJson(QByteArray::fromStdString(payload)).object();
+    for(int fault=0;fault<11;++fault){
+        auto doc=original;
+        if(fault==0){doc["version"]=2;}
+        if(fault==1){doc["rootId"]="bad-id";}
+        if(fault==2){auto values=doc["tools"].toArray();values.append(values.first());doc["tools"]=values;}
+        if(fault==3){doc["tools"]=QJsonArray{};}
+        if(fault==4){doc["root"]=doc["tools"].toArray().first();}
+        if(fault==5){doc["poses"]="x0";}
+        if(fault==6){doc.remove("changes");}
+        if(fault==7){doc["rootId"]=QString::fromStdString(ws.toolObjects.front().objectId.toCanonical());}
+        if(fault==8){doc["scenes"]=QJsonValue::Null;}
+        if(fault==9){doc["changes"]=QJsonArray{QJsonObject{{"subject",true},{"summary","bad"}}};}
+        auto input=QJsonDocument(doc).toJson(QJsonDocument::Compact).toStdString();
+        if(fault==10){input+="trailing";}
+        EXPECT_FALSE(decodeModelingDraft(input,ws,error))<<"fault="<<fault;EXPECT_FALSE(error.empty());EXPECT_EQ(ws,*full);
+    }
+    for(const std::string bad:{std::string{},std::string{"{"},std::string{"xx"},std::string{"0"}}){
+        EXPECT_FALSE(decodeModelingDraft(bad,ws,error));EXPECT_FALSE(error.empty());
+    }
+}
+
+/// WP-13-T25/F01（MDL-01）：关节属性行必须投影逐轴最大速度/最大加速度
+/// （rad·s⁻¹/rad·s⁻² 随类型；可编辑——joint 一等权威字段；此前划界
+/// "属传动对象不投影"随 schema 落位废止——§4.3-A 表行同步）。
+TEST(PluginPanel, JointRowsIncludeVelocityAccelerationEditable_MDL01_WP13T25)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-01"}, std::vector<std::string>{});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    const auto target = resolveSelection(ws, ws.design.joints[0].objectId);
+    ASSERT_TRUE(target.has_value());
+    const auto rows = propertyFieldsFor(ws, *target);
+
+    auto rowOf = [&rows](const char* key) {
+        for (const auto& r : rows) {
+            if (r.fieldKey == key) { return r; }
+        }
+        return PropertyFieldRow{};
+    };
+    const PropertyFieldRow velocity = rowOf("max-velocity");
+    EXPECT_EQ(velocity.fieldKey, "max-velocity") << "关节行缺最大速度投影（F01）";
+    EXPECT_EQ(velocity.enablement, FieldEnablement::Editable)
+        << "速度为关节一等权威字段——可编辑行";
+    const PropertyFieldRow acceleration = rowOf("max-acceleration");
+    EXPECT_EQ(acceleration.fieldKey, "max-acceleration") << "关节行缺最大加速度投影（F01）";
+    EXPECT_EQ(acceleration.enablement, FieldEnablement::Editable)
+        << "加速度为关节一等权威字段——可编辑行";
 }

@@ -1,0 +1,254 @@
+{
+  "batch": 23,
+  "task": "WP-14-T12",
+  "status": "WIP",
+  "note": "A-14本批组件和宿主验证；不替代原120项逐行终验。跳过按testcase/skipped元素统计。",
+  "integrated": {
+    "total": 1612,
+    "passed": 1611,
+    "failed": 0,
+    "skipped": 1,
+    "executables": {
+      "sdurws_ird_core_test": {
+        "total": 65,
+        "passed": 65,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_core_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_core_test/ird-test-report.json",
+        "jsonOrigin": "transcribed-from-original-gtest-xml"
+      },
+      "sdurws_ird_modeling_contract_test": {
+        "total": 17,
+        "passed": 17,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_modeling_contract_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_modeling_contract_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_modeling_gui_test": {
+        "total": 45,
+        "passed": 45,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_modeling_gui_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_modeling_gui_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_modeling_test": {
+        "total": 390,
+        "passed": 390,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_modeling_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_modeling_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_project_contract_test": {
+        "total": 32,
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_project_contract_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_project_contract_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_project_test": {
+        "total": 282,
+        "passed": 282,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_project_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_project_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_requirements_contract_test": {
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_requirements_contract_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_requirements_contract_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_requirements_gui_test": {
+        "total": 95,
+        "passed": 95,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_requirements_gui_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_requirements_gui_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_requirements_test": {
+        "total": 221,
+        "passed": 220,
+        "failed": 0,
+        "skipped": 1,
+        "evidence": "batch23-final-integrated/sdurws_ird_requirements_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_requirements_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_ui_contract_test": {
+        "total": 50,
+        "passed": 50,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated-ui-recheck/sdurws_ird_ui_contract_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated-ui-recheck/sdurws_ird_ui_contract_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_ui_gui_test": {
+        "total": 85,
+        "passed": 85,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated-ui-recheck/sdurws_ird_ui_gui_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated-ui-recheck/sdurws_ird_ui_gui_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_ui_test": {
+        "total": 314,
+        "passed": 314,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-integrated/sdurws_ird_ui_test/gtest.xml",
+        "jsonEvidence": "batch23-final-integrated/sdurws_ird_ui_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      }
+    }
+  },
+  "standalone": {
+    "total": 1449,
+    "passed": 1448,
+    "failed": 0,
+    "skipped": 1,
+    "executables": {
+      "sdurws_ird_core_test": {
+        "total": 63,
+        "passed": 63,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-core/sdurws_ird_core_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-core/sdurws_ird_core_test/ird-test-report.json",
+        "jsonOrigin": "transcribed-from-original-gtest-xml"
+      },
+      "sdurws_ird_modeling_contract_test": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-modeling/sdurws_ird_modeling_contract_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-modeling/sdurws_ird_modeling_contract_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_modeling_gui_test": {
+        "total": 40,
+        "passed": 40,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-modeling/sdurws_ird_modeling_gui_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-modeling/sdurws_ird_modeling_gui_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_modeling_test": {
+        "total": 316,
+        "passed": 316,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-modeling/sdurws_ird_modeling_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-modeling/sdurws_ird_modeling_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_project_contract_test": {
+        "total": 32,
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-project/sdurws_ird_project_contract_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-project/sdurws_ird_project_contract_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_project_test": {
+        "total": 282,
+        "passed": 282,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-project/sdurws_ird_project_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-project/sdurws_ird_project_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_requirements_contract_test": {
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-requirements-clean-v2/sdurws_ird_requirements_contract_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-requirements-clean-v2/sdurws_ird_requirements_contract_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_requirements_gui_test": {
+        "total": 95,
+        "passed": 95,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-requirements-clean-v2/sdurws_ird_requirements_gui_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-requirements-clean-v2/sdurws_ird_requirements_gui_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_requirements_test": {
+        "total": 221,
+        "passed": 220,
+        "failed": 0,
+        "skipped": 1,
+        "evidence": "batch23-final-standalone-requirements-clean-v2/sdurws_ird_requirements_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-requirements-clean-v2/sdurws_ird_requirements_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_ui_contract_test": {
+        "total": 34,
+        "passed": 34,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-ui-clean/sdurws_ird_ui_contract_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-ui-clean/sdurws_ird_ui_contract_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_ui_gui_test": {
+        "total": 75,
+        "passed": 75,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-ui-clean/sdurws_ird_ui_gui_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-ui-clean/sdurws_ird_ui_gui_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      },
+      "sdurws_ird_ui_test": {
+        "total": 267,
+        "passed": 267,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "batch23-final-standalone-ui-clean/sdurws_ird_ui_test/gtest.xml",
+        "jsonEvidence": "batch23-final-standalone-ui-clean/sdurws_ird_ui_test/ird-test-report.json",
+        "jsonOrigin": "executable"
+      }
+    }
+  },
+  "host": {
+    "modeling": {
+      "exitCode": 0,
+      "passed": 240,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "batch23-final-host-modeling/stdout.log"
+    },
+    "requirements": {
+      "exitCode": 0,
+      "passed": 141,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "batch23-final-host-requirements/stdout.log"
+    }
+  }
+}

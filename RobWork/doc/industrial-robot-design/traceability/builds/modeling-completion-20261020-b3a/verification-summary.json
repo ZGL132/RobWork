@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "modeling-completion-b3a/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "8fbc7ca8",
+  "scope": "F15欧拉输入实现验证；全部安装姿态三维/重力/碰撞仍待B5",
+  "totals": {
+    "total": 1335,
+    "passed": 1335,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 404,
+      "passed": 404,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 56,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 329,
+      "passed": 329,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 44,
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "tour": {
+    "passed": 274,
+    "failed": 0,
+    "scope": "既有综合回归，含其他域流程，不等同建模功能数"
+  },
+  "environment": {
+    "os": "Windows",
+    "toolchain": "VS2022 x64",
+    "qtPlatform": "windows",
+    "guiExecution": "绝对路径、单exe串行"
+  },
+  "builds": {
+    "integration": "PASS，全量Release",
+    "standalone": "PASS，12目标",
+    "gates": "PASS，零命中",
+    "verifyTask": "PASS，3条机器命令"
+  },
+  "limitations": [
+    "未执行全新上下文独立验收",
+    "core伴随JSON派生自真实XML",
+    "窗口截图不能替代正式宿主三维、重力及环境碰撞一致性",
+    "整体47项全功能终验未完成"
+  ]
+}

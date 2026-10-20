@@ -1,0 +1,23 @@
+Note: Google Test filter = MdlPackage.*
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from MdlPackage
+[ RUN      ] MdlPackage.ExportPackageShape_WP13T13_ACC1
+[       OK ] MdlPackage.ExportPackageShape_WP13T13_ACC1 (37 ms)
+[ RUN      ] MdlPackage.ExportDeterministicBytes_WP13T13_ACC1_ACC2
+[       OK ] MdlPackage.ExportDeterministicBytes_WP13T13_ACC1_ACC2 (38 ms)
+[ RUN      ] MdlPackage.ExportFailurePreservesPrevious_WP13T13_ACC2
+[       OK ] MdlPackage.ExportFailurePreservesPrevious_WP13T13_ACC2 (28 ms)
+[ RUN      ] MdlPackage.ImportRejectsForeignArtifact_WP13T13_ACC3
+[       OK ] MdlPackage.ImportRejectsForeignArtifact_WP13T13_ACC3 (3 ms)
+[ RUN      ] MdlPackage.RoundtripItemwiseChecklist_WP13T13_ACC4
+[       OK ] MdlPackage.RoundtripItemwiseChecklist_WP13T13_ACC4 (24 ms)
+[ RUN      ] MdlPackage.TamperedPackageRejected_WP13T13_ACC3_ACC4
+[       OK ] MdlPackage.TamperedPackageRejected_WP13T13_ACC3_ACC4 (51 ms)
+[ RUN      ] MdlPackage.PackageChecklistText_Deterministic_UI_T61
+[       OK ] MdlPackage.PackageChecklistText_Deterministic_UI_T61 (0 ms)
+[----------] 7 tests from MdlPackage (183 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (183 ms total)
+[  PASSED  ] 7 tests.

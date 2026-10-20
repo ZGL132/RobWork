@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.83" timestamp="2026-10-19T00:15:51.884" name="AllTests">
+  <testsuite name="RequirementsSessionGuiTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.83" timestamp="2026-10-19T00:15:51.884">
+    <testcase name="ReferenceDirectoryMissingIsExplicit_REQ01_AT23" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="3277" status="run" result="completed" time="0.83" timestamp="2026-10-19T00:15:51.884" classname="RequirementsSessionGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:3290&#x0A;Expected: (choices) != (nullptr), actual: NULL vs (nullptr)&#x0A;名称目录入口缺失，不可要求产品用户填写内部对象标识&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:3290
+Expected: (choices) != (nullptr), actual: NULL vs (nullptr)
+名称目录入口缺失，不可要求产品用户填写内部对象标识
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:3293&#x0A;Expected: (hint) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:3293
+Expected: (hint) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

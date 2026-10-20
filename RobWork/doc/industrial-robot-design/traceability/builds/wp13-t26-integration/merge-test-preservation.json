@@ -1,0 +1,152 @@
+[
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingImportGuiTest.cpp",
+    "addedTests": 1,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp",
+    "addedTests": 4,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingUiModuleHostWiringGuiTest.cpp",
+    "addedTests": 1,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingCommandFlows.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPluginAssembly.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelCommandCatalog.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CanonicalBridge.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Codec.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Readiness.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/WorkCellReverseImport.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CanonicalBridgeTest.cpp",
+    "addedTests": 1,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CodecTest.cpp",
+    "addedTests": 2,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ImportTest.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ModelingCommandFlowsTest.cpp",
+    "addedTests": 7,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginModuleT03BTest.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+    "addedTests": 1,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ReadinessTest.cpp",
+    "addedTests": 1,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TemplateTest.cpp",
+    "addedTests": 1,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostEngineeringPolicyGuiTest.cpp",
+    "addedTests": 1,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostEngineeringPolicy.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "addedTests": 0,
+    "preserved": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/UiText.cpp",
+    "addedTests": 0,
+    "preserved": true
+  }
+]

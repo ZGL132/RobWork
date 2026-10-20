@@ -1,0 +1,6 @@
+PASS same-bytes C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/RobWorkStudio/bin/share/ird/user-manual/index.html SHA256=3B0962828B7B30A0FC16A28D97EE01E3D7919E268BF728834AFFC1F444509CDC
+PASS same-bytes C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/requirements-close-20261019/install/share/ird/user-manual/index.html SHA256=3B0962828B7B30A0FC16A28D97EE01E3D7919E268BF728834AFFC1F444509CDC
+PASS stale-fixture-differs
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+PASS resource-target-restores-source-bytes

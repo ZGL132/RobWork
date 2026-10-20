@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "modeling-completion-b2b/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "a77feaee92a0903ac77ad4cba692f058208c8b16",
+  "scope": "F13恢复链实现验证；Home/Zero正式窗口全路径及47项终验仍未完成",
+  "environment": {
+    "os": "Windows",
+    "toolchain": "VS2022 x64",
+    "qtPlatform": "windows",
+    "guiExecution": "绝对路径、单exe串行"
+  },
+  "totals": {
+    "total": 1329,
+    "passed": 1329,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 402,
+      "passed": 402,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "modeling_gui",
+      "total": 55,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 327,
+      "passed": 327,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 43,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "native-ird-listener"
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "reportOrigin": "derived-from-gtest-xml"
+    }
+  ],
+  "tour": {
+    "passed": 274,
+    "failed": 0,
+    "scope": "含既有其他域流程，不能等同建模功能数"
+  },
+  "builds": {
+    "integration": "PASS，全量Release",
+    "standalone": "PASS，12目标",
+    "gates": "PASS，零命中",
+    "verifyTask": "PASS，3条机器命令"
+  },
+  "implementationVerified": [
+    "F02",
+    "F03",
+    "F05",
+    "F17",
+    "F13恢复链"
+  ],
+  "remainingImplementation": [
+    "F01",
+    "F04",
+    "F06",
+    "F07",
+    "F08",
+    "F09",
+    "F10",
+    "F12",
+    "F14",
+    "F15",
+    "F16"
+  ],
+  "pendingReverification": [
+    "F11工程策略（A-23已实现）",
+    "F13/HomeZero正式窗口全路径",
+    "完整47项与真实三维矩阵"
+  ],
+  "limitations": [
+    "本批没有执行全新上下文独立验收",
+    "core伴随报告由真实gtest XML派生",
+    "代理链截图不证明全部真实mesh、安装姿态、TCP和显示模式",
+    "建模控件须滚动可达，完整窗口布局和操作矩阵仍留B5"
+  ]
+}

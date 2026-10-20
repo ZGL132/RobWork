@@ -1,0 +1,179 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Automatic MOC for target qtpropertybrowser
+  Auto build dll exports
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\pqp.lib
+  qtpropertybrowser.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_csgjs.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\sdurw_csgjs.lib
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  Auto build dll exports
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_analytic_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_analytic_geometry.dll
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  Automatic MOC for target sdurws_ird_evidence
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Automatic MOC for target sdurws_ird_project
+  sdurw_analytic_geometry.rwplugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_analytic_geometry.rwplugin.dll
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  Automatic MOC for target sdurws_ird_policy
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  sdurws_ird_selection.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_ui
+  Automatic MOC for target sdurws_ird_reporting
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_reporting.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_selection_plugin
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  sdurws_ird_selection_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_selection_plugin.lib
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurws_ird_requirements_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_csg.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_csg.dll
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  sdurw_simplefinger.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simplefinger.dll
+  sdurw_simplefinger.rwplugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simplefinger.rwplugin.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  sdurw_proximitystrategies.rwplugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.rwplugin.dll
+  Automatic MOC for target sdurws
+  sdurws.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws.lib
+  Auto build dll exports
+  Automatic MOC for target sdurws_gtask
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Automatic MOC for target sdurws_plugin.rwplugin
+  Automatic MOC for target sdurws_atask
+  sdurws_plugin.rwplugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\sdurws_plugin.rwplugin.dll
+  sdurws_atask.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\plugins\Release\sdurws_atask.dll
+  sdurws_gtask.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\plugins\Release\sdurws_gtask.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC and UIC for target sdurwsim_bullet
+  Automatic MOC for target sdurws_ird_runtime
+  Automatic MOC and UIC for target RWSimulatorPlugin
+  RWSimulatorPlugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\libs\Release\RWSimulatorPlugin.dll
+  Auto build dll exports
+  sdurwsim_bullet.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim_bullet.dll
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC and UIC for target sdurwsim_gui
+  Automatic MOC for target sdurws_ird_dynamics
+  sdurws_ird_dynamics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_dynamics.lib
+  Automatic MOC for target sdurws_ird_modeling
+  Automatic MOC for target sdurws_ird_kinematics
+  Auto build dll exports
+  Automatic MOC for target sdurws_ird_optimization
+  sdurwsim_gui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim_gui.dll
+  sdurws_ird_optimization.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_optimization.lib
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  sdurws_ird_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  Automatic MOC and UIC for target SimUtilityPlugin
+  Automatic MOC for target sdurws_ird_optimization_plugin
+  SimUtilityPlugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\libs\Release\SimUtilityPlugin.dll
+  sdurws_ird_optimization_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_optimization_plugin.lib
+  Automatic MOC for target sdurws_ird_dynamics_plugin
+  Automatic MOC and UIC for target GraspTableGeneratorPlugin
+  sdurws_ird_dynamics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_dynamics_plugin.lib
+  GraspTableGeneratorPlugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\libs\Release\GraspTableGeneratorPlugin.dll
+  sdurws_ird_kinematics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC and UIC for target bt_plugin.rwplugin
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  bt_plugin.rwplugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\bt_plugin.rwplugin.dll
+  sdurws_ird_modeling_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC and UIC for target RWSimPlugin
+  Automatic MOC for target sdurws_ird_ui_plugin
+  RWSimPlugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\libs\Release\RWSimPlugin.dll
+  Automatic MOC and UIC for target SimTaskPlugin
+  SimTaskPlugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\libs\Release\SimTaskPlugin.dll
+  Automatic MOC and UIC for target sdurwsim_test
+  Auto build dll exports
+  sdurwsim_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim_test.dll
+  Automatic MOC and UIC for target EngineTestPlugin
+  EngineTestPlugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\libs\Release\EngineTestPlugin.dll
+  DomainAssembly.cpp
+  ExtraDomainAssembly.cpp
+  UiPlugin.cpp
+  mocs_compilation_Release.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.hpp(102,7): warning C4099: “sdurws::ird::core::ProjectId”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_plugin.vcxproj]
+  (编译源文件“sdurws_ird_ui_plugin_autogen/mocs_compilation_Release.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Identity.hpp(108,1):
+      参见“sdurws::ird::core::ProjectId”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.hpp(102,7): warning C4099: “sdurws::ird::core::ProjectId”: 类型名称以前使用“struct”现在使用的是“class” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_plugin.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp”)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Identity.hpp(108,1):
+      参见“sdurws::ird::core::ProjectId”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4389,84): error C2039: "localName": 不是 "sdurws::ird::modeling::RobotDesign" 的成员 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_plugin.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\include\sdurws\ird\modeling\RobotDesign.hpp(517,8):
+      参见“sdurws::ird::modeling::RobotDesign”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4389,21): error C2064: 项不会计算为接受 1 个参数的函数 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_plugin.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4389,21):
+      类不会将“operator()”或用户定义的转换运算符定义到指向函数的指针或指向函数的引用(它们接受适当数量的参数)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4389,21):
+      尝试匹配参数列表“(sdurws::ird::ui::IrdWorkbenchHostPlugin::assembleView3DGateway::Ref)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4393,53): error C2039: "displayName": 不是 "sdurws::ird::modeling::SceneObject" 的成员 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_plugin.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\include\sdurws\ird\modeling\Parts.hpp(167,8):
+      参见“sdurws::ird::modeling::SceneObject”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4393,99): error C2039: "displayName": 不是 "sdurws::ird::modeling::SceneObject" 的成员 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_plugin.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\include\sdurws\ird\modeling\Parts.hpp(167,8):
+      参见“sdurws::ird::modeling::SceneObject”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4393,21): error C2064: 项不会计算为接受 1 个参数的函数 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_plugin.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4393,21):
+      类不会将“operator()”或用户定义的转换运算符定义到指向函数的指针或指向函数的引用(它们接受适当数量的参数)
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\UiPlugin.cpp(4393,21):
+      尝试匹配参数列表“(sdurws::ird::ui::IrdWorkbenchHostPlugin::assembleView3DGateway::Ref)”时
+  

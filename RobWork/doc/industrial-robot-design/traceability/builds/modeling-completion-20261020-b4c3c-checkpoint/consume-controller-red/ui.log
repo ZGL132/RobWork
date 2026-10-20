@@ -1,0 +1,56 @@
+Note: Google Test filter = *AppliedDraft*:*LateAutosave*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from DraftControllerModelTest
+[ RUN      ] DraftControllerModelTest.AppliedDraftConsumesDiskBeforeClearingSession_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1091): error: Expected equality of these values:
+  harness.store->discardCalls
+    Which is: {}
+  (std::vector<std::string>{"modeling"})
+    Which is: { "modeling" }
+
+[  FAILED  ] DraftControllerModelTest.AppliedDraftConsumesDiskBeforeClearingSession_PM04_AT21 (0 ms)
+[ RUN      ] DraftControllerModelTest.FailedAppliedDraftConsumptionRetainsState_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1108): error: Expected: harness.ctl().onCommandResult("modeling",committed) throws an exception of type std::runtime_error.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1109): error: Value of: harness.ctl().summary().modules.front().sessionDirty
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1110): error: Value of: harness.ctl().staleConflictData("modeling").present
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1112): error: Value of: harness.ctl().undoLocalEdit("modeling")
+  Actual: false
+Expected: true
+消费失败不能销毁局部历史
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1114): error: Expected: harness.ctl().onCommandResult("modeling",committed) throws an exception of type std::runtime_error.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1115): error: Value of: harness.ctl().staleConflictData("modeling").present
+  Actual: false
+Expected: true
+
+[  FAILED  ] DraftControllerModelTest.FailedAppliedDraftConsumptionRetainsState_PM04_AT21 (0 ms)
+[ RUN      ] DraftControllerModelTest.LateAutosaveReceiptCannotReviveConsumedDraft_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1135): error: Expected equality of these values:
+  harness.store->discardCalls
+    Which is: {}
+  (std::vector<std::string>{"modeling"})
+    Which is: { "modeling" }
+
+[  FAILED  ] DraftControllerModelTest.LateAutosaveReceiptCannotReviveConsumedDraft_PM04_AT21 (0 ms)
+[----------] 3 tests from DraftControllerModelTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] DraftControllerModelTest.AppliedDraftConsumesDiskBeforeClearingSession_PM04_AT21
+[  FAILED  ] DraftControllerModelTest.FailedAppliedDraftConsumptionRetainsState_PM04_AT21
+[  FAILED  ] DraftControllerModelTest.LateAutosaveReceiptCannotReviveConsumedDraft_PM04_AT21
+
+ 3 FAILED TESTS

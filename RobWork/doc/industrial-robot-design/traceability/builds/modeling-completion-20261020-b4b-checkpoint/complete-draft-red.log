@@ -1,0 +1,34 @@
+Note: Google Test filter = ModelingDraftRestore.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingDraftRestore
+[ RUN      ] ModelingDraftRestore.CompleteWorkingSetAndPendingChanges_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(707): error: Expected equality of these values:
+  restored.session().draft
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 20-56 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 FF-7F 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 30-CB B2-A5 03-00 00-00 00-00 00-00 27-00 00-00 90-C5 B2-A5 03-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-AA C1-58 FF-7F 00-00>
+  edited
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 C0-31 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00>
+不能以旧保存部件替代磁盘草稿中的新部件
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(710): error: Value of: restored.buildDraftCommand("modeling")
+  Actual: false
+Expected: true
+恢复未应用草稿不能因清空changes而不可应用
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(713): error: Expected equality of these values:
+  fresh.session().draft
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 D0-57 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-30 E0-D9 B2-A5 03-00 00-00 EA-B7 81-0E 8F-04 00-00 DC-90 C1-58 FF-7F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00>
+  edited
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 C0-31 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00>
+完整帧重建不应依赖既有部件残留
+
+[  FAILED  ] ModelingDraftRestore.CompleteWorkingSetAndPendingChanges_PM04_AT21 (1 ms)
+[----------] 1 test from ModelingDraftRestore (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingDraftRestore.CompleteWorkingSetAndPendingChanges_PM04_AT21
+
+ 1 FAILED TEST

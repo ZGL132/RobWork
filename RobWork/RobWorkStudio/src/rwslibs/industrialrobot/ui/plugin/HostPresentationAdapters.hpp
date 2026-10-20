@@ -67,7 +67,21 @@ class RobWorkStudio;  // 前置复述（框架头已含——注释面；防循�
 
 namespace sdurws {
 namespace ird {
+namespace modeling { struct ModelingSessionPoseRequest; }
 namespace ui {
+
+/**
+ * @brief MDL-17/AT-04：按当前发布快照在State副本中原子准备命名姿态。
+ * @param request [in] 同分支/同根/同关节序的RobWork增量q，rad/m；Fixed不消耗Device自由度。
+ * @param snapshot [in] 当前已发布不可变快照，同步借用，不缓存。
+ * @param cell [in] 宿主当前WorkCell，须与snapshot同实例；不修改结构。
+ * @param state [in,out] 宿主State副本；全量校验后才赋新值，拒绝时保持原值。
+ * @param reason [out] 成功清空；数据/环境拒绝给中文定位原因，不抛调用方可恢复错误。
+ * @return true仅表示副本已准备，调用方再一次setState；零项目命令/修订。仅UI线程。
+ */
+bool stageModelingSessionPose(const modeling::ModelingSessionPoseRequest& request,
+    const runtime::RuntimeSnapshot& snapshot,rw::models::WorkCell& cell,
+    rw::kinematics::State& state,std::string& reason);
 
 // =====================================================================
 // HostRuntimeNameMapPort——名称映射真值端口（HostEmptyNameMapPort 的替换

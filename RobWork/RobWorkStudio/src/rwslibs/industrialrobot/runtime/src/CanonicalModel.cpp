@@ -484,8 +484,9 @@ RuntimeCapability deriveRuntimeCapability(const RobotChain& chain,
     }
     cap.hasJointVelocityLimits = velocityFull;
     cap.hasFrictionModel = frictionFull;
-    // 碰撞几何位：任一连杆 collision / 任一工具 geometry / 场景非空（§9.6）。
-    cap.hasCollisionGeometry = anyCollision || !scene.empty();
+    // MDL-15：场景非空只证明有固定帧；只有真实几何引用才提供碰撞能力。
+    cap.hasCollisionGeometry = anyCollision || std::any_of(scene.begin(),scene.end(),
+        [](const CanonicalSceneObject& object){return object.geometry.has_value();});
 
     cap.hasCouplingMatrix = drivetrain.coupling.has_value();
     cap.hasWorkCell = true;               // 恒 true（§9.6——无 WC 即无快照）
@@ -741,6 +742,16 @@ CanonicalModel CanonicalModelBuilder::build() const
             requireValidInertia(*im, what + ".inertia");
         }
         requireValidTransform(t.tcpOffset, what + ".tcpOffset");
+        // A-15：空选择键保留给默认TCP，实际目录键必须非空且唯一；旋转和平移
+        // 与默认偏移使用同一数值门，避免未选中的坏TCP进入不可变快照。
+        std::vector<std::string> tcpKeys;
+        for (const auto& entry : t.namedTcpOffsets) {
+            if (entry.first.empty() || std::find(tcpKeys.begin(), tcpKeys.end(), entry.first) != tcpKeys.end()) {
+                throw inputInvalid(what + ".namedTcpOffsets：TCP键为空或重复");
+            }
+            tcpKeys.push_back(entry.first);
+            requireValidTransform(entry.second, what + ".namedTcpOffsets[" + entry.first + "]");
+        }
         requireInManifest(t.geometry, what + ".geometry");
     }
 
@@ -876,6 +887,14 @@ CanonicalModel CanonicalModelBuilder::build() const
     // 被破坏，按结构违约 fail-fast（不静默产出错位模型）。
     // 注意：build() 为 const（§4.3 builder 契约——可重复调用），重定位写入
     // 在本地副本上进行，builder 成员保持只读。
+    // A-15：按UTF-8无符号字节序归一目录；不改变工具的默认TCP含义。
+    // 先前已拒重复，因此此处只做排列归一，不静默覆盖任一条目。
+    for (auto& tool : tools) {
+        std::sort(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(), [](const auto& a, const auto& b) {
+            return std::lexicographical_compare(a.first.begin(), a.first.end(), b.first.begin(), b.first.end(),
+                [](char x, char y) { return static_cast<unsigned char>(x) < static_cast<unsigned char>(y); });
+        });
+    }
     std::optional<std::uint32_t> defaultTcpIndex = m_defaultTcpIndex;
     std::optional<core::ObjectId> defaultTcpObjectId;
     if (defaultTcpIndex.has_value()) {
@@ -1055,6 +1074,12 @@ bool CanonicalModel::operator==(const CanonicalModel& o) const noexcept
         const CanonicalTool& x = m_tools[i];
         const CanonicalTool& y = o.m_tools[i];
         if (!(x.objectId == y.objectId && x.localName == y.localName)) { return false; }
+        // A-15：目录已按键归一，逐项位模式相等；非默认项变化也属于模型变化。
+        if (x.namedTcpOffsets.size() != y.namedTcpOffsets.size()) { return false; }
+        for (std::size_t k = 0; k < x.namedTcpOffsets.size(); ++k) {
+            if (x.namedTcpOffsets[k].first != y.namedTcpOffsets[k].first
+                || !transformEqual(x.namedTcpOffsets[k].second, y.namedTcpOffsets[k].second)) { return false; }
+        }
         if (x.geometry.has_value() != y.geometry.has_value()) { return false; }
         if (x.geometry && !resourceIdentityEqual(*x.geometry, *y.geometry)) { return false; }
         if (!svDoubleEqual(x.mass, y.mass) || !svVecEqual(x.centerOfMass, y.centerOfMass)
@@ -1069,10 +1094,12 @@ bool CanonicalModel::operator==(const CanonicalModel& o) const noexcept
         const CanonicalSceneObject& x = m_scene[i];
         const CanonicalSceneObject& y = o.m_scene[i];
         if (!(x.objectId == y.objectId && x.localName == y.localName
-              && transformEqual(x.worldPose, y.worldPose)
-              && resourceIdentityEqual(x.geometry, y.geometry))) {
+              && transformEqual(x.worldPose, y.worldPose))) {
             return false;
         }
+        // 可选状态也是身份内容；固定帧不能与任意“空资源”比较为相等。
+        if(x.geometry.has_value()!=y.geometry.has_value()){return false;}
+        if(x.geometry&&!resourceIdentityEqual(*x.geometry,*y.geometry)){return false;}
     }
     if (m_drivetrain.ratioPerJoint.size() != o.m_drivetrain.ratioPerJoint.size()) { return false; }
     for (std::size_t i = 0; i < m_drivetrain.ratioPerJoint.size(); ++i) {

@@ -1,0 +1,17 @@
+Note: Google Test filter = DraftConflictGui.*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from DraftConflictGui
+[ RUN      ] DraftConflictGui.ViewThenCancelRetainsOriginal_PM04_AT29
+[       OK ] DraftConflictGui.ViewThenCancelRetainsOriginal_PM04_AT29 (263 ms)
+[ RUN      ] DraftConflictGui.ExplicitRebuildConsumesFixedTip_PM04_AT21
+[       OK ] DraftConflictGui.ExplicitRebuildConsumesFixedTip_PM04_AT21 (79 ms)
+[ RUN      ] DraftConflictGui.SaveFailureDisablesRebuild_PM08_AT29
+[       OK ] DraftConflictGui.SaveFailureDisablesRebuild_PM08_AT29 (85 ms)
+[ RUN      ] DraftConflictGui.ChangedSessionOrReaderFailureKeepsDraft_PM04_AT29
+[       OK ] DraftConflictGui.ChangedSessionOrReaderFailureKeepsDraft_PM04_AT29 (294 ms)
+[----------] 4 tests from DraftConflictGui (733 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (734 ms total)
+[  PASSED  ] 4 tests.

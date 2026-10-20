@@ -1,0 +1,268 @@
+Note: Google Test filter = *WP14T12*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2215): error: Value of: previewMatches
+  Actual: false
+Expected: true
+AT-24：数量编辑后生产预览未同步
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:bin-picking"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <01-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:bin-picking"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <01-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:bin-picking"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <01-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:machine-tending"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <03-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:machine-tending"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <03-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:machine-tending"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <03-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2215): error: Value of: previewMatches
+  Actual: false
+Expected: true
+AT-24：数量编辑后生产预览未同步
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2215): error: Value of: previewMatches
+  Actual: false
+Expected: true
+AT-24：数量编辑后生产预览未同步
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:inspection"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <05-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:inspection"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <05-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:inspection"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <05-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2215): error: Value of: previewMatches
+  Actual: false
+Expected: true
+AT-24：数量编辑后生产预览未同步
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:tool-change"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <08-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:tool-change"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <08-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:tool-change"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <08-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2215): error: Value of: previewMatches
+  Actual: false
+Expected: true
+AT-24：数量编辑后生产预览未同步
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:handover"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <0A-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:handover"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <0A-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2226): error: Expected equality of these values:
+  point.generation->generatorId
+    Which is: "template:palletizing"
+  expected.newPoints.front().generation->generatorId
+    Which is: "template:handover"
+AT-24：用户选择的模板类别必须写入生成来源
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2228): error: Expected equality of these values:
+  point.processTag
+    Which is: 4-byte object <02-00 00-00>
+  expected.newPoints.front().processTag
+    Which is: 4-byte object <0A-00 00-00>
+AT-24：工艺标签必须与所选类别一致
+
+[  FAILED  ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12 (1068 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2255): error: Expected: QMetaObject::invokeMethod(field, "editingFinished", Qt::DirectConnection) doesn't throw an exception.
+  Actual: it throws std::logic_error with description "工况面板：编辑行携带词表外键 name".
+AT-02：合法文本输入不得触发内部数量词表异常
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2260): error: Expected equality of these values:
+  key == std::string("name") ? c.name : c.note
+    Which is: "C1"
+  (QString(QtPrivate::qMakeStringPrivate(u"" "搬运工况-名称验证"))).toStdString()
+    Which is: "\xE6\x90\xAC\xE8\xBF\x90\xE5\xB7\xA5\xE5\x86\xB5-\xE5\x90\x8D\xE7\xA7\xB0\xE9\xAA\x8C\xE8\xAF\x81"
+    As Text: "搬运工况-名称验证"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(2261): error: Value of: m_editor.undoLocal()
+  Actual: false
+Expected: true
+
+[  FAILED  ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12 (32 ms)
+[----------] 2 tests from RequirementsSessionGuiTest (1101 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1101 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.ProductionTemplateKindsAndLivePreview_AT24_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.ConditionNameAndNoteEditing_AT02_WP14T12
+
+ 2 FAILED TESTS

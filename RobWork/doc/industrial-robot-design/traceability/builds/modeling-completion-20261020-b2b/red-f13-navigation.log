@@ -1,0 +1,18 @@
+Note: Google Test filter = *NamedPosePageReachable*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.NamedPosePageReachableWithoutExistingObject_MDL17_AT04
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(573): error: Expected: (mode) != (nullptr), actual: NULL vs (nullptr)
+空位姿集没有树锚，必须有可见入口创建首个命名姿态
+
+[  FAILED  ] ModelingUiModuleHostWiring.NamedPosePageReachableWithoutExistingObject_MDL17_AT04 (489 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (489 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (489 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.NamedPosePageReachableWithoutExistingObject_MDL17_AT04
+
+ 1 FAILED TEST

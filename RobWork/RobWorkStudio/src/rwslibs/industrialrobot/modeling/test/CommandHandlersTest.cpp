@@ -27,7 +27,10 @@
 #include <gtest/gtest.h>
 
 #include <stdexcept>
+#include <algorithm>
 #include <string>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 using namespace sdurws::ird::modeling::testfixture;
@@ -170,7 +173,7 @@ TEST(MdlCommandHandlers, PayloadCodecRoundtripAndDamage)
 }
 
 /**
- * @brief 五命令族 L5 装配注册（project.md §6.5）：全 token 可查＋重复
+ * @brief 旧五命令及完整工作集命令 L5 装配注册：全 token 可查＋重复
  *        注册边界拒绝（fail-fast）。
  */
 TEST(MdlCommandHandlers, RegistryRegistrationAndDuplicateRejection)
@@ -181,12 +184,13 @@ TEST(MdlCommandHandlers, RegistryRegistrationAndDuplicateRejection)
     project::HandlerRegistry registry;
     registerModelingCommandHandlers(registry, f.services);
 
-    EXPECT_EQ(registry.size(), std::size_t{5});
+    EXPECT_EQ(registry.size(), std::size_t{6});
     EXPECT_NE(registry.find("apply-robot-design"), nullptr);
     EXPECT_NE(registry.find("apply-tool-definition"), nullptr);
     EXPECT_NE(registry.find("apply-scene-objects"), nullptr);
     EXPECT_NE(registry.find("apply-named-poses"), nullptr);
     EXPECT_NE(registry.find("apply-drivetrain-design"), nullptr);
+    EXPECT_NE(registry.find("apply-modeling-working-set"), nullptr);
     EXPECT_EQ(registry.find("apply-nonexistent"), nullptr);
 
     // 同族二次注册＝装配错误（std::invalid_argument——注册表边界拒绝）。
@@ -583,6 +587,61 @@ TEST(MdlCommandPrepare, TravelExceededProducesConfirmableViaPolicyPort)
     EXPECT_NE(plan.summary.find("行程上限待确认"), std::string::npos);
 }
 
+namespace {
+/** @brief A-23红回归兼容旧公共头：缺装配缝时运行失败，不能用编译失败代替行为证据。 */
+template<class T, class = void> struct HasRevisionPolicyResolver : std::false_type {};
+template<class T> struct HasRevisionPolicyResolver<T, std::void_t<decltype(
+    std::declval<T&>().resolvePolicyForRevision)>> : std::true_type {};
+
+/** @brief 仅在新装配缝存在时绑定真实阈值；回调为④策略端口边界，行程判定仍用真实评估器。 */
+template<class T, class F> bool bindRevisionResolver(T& services, F resolver)
+{
+    if constexpr (HasRevisionPolicyResolver<T>::value) {
+        services.resolvePolicyForRevision = std::move(resolver);
+        return true;
+    }
+    return false;
+}
+}
+
+/**
+ * @brief A-23/MDL-06：同一处理器必须读prepare基线的策略，不能读取漂移HEAD或固定缺省。
+ * 两修订分别给4π/20π rad，设计行程12π rad，应仅前者产生待确认；空策略须阻断。
+ */
+TEST(MdlCommandPrepare, RevisionPolicyResolverUsesExactBaseline_MDL06_A23)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "UX-08"}, std::vector<std::string>{"AT-01"});
+    HandlerFixture f;
+    f.provider.policyToReturn.emplace(makePolicy(4.0 * kPi));
+    const auto first=makeBaselineView(core::RevisionId::generate());
+    const auto second=makeBaselineView(core::RevisionId::generate());
+    std::vector<core::RevisionId> resolved;
+    bool missing=false;
+    ASSERT_TRUE(bindRevisionResolver(f.services, [&](const project::RevisionView& base) {
+        resolved.push_back(base.id);
+        policy::PolicyResolution r;
+        if (!missing) r.policy.emplace(makePolicy(base.id==first.id ? 4*kPi : 20*kPi));
+        return r;
+    })) << "尚未装配按基线修订解析策略的公共回调";
+    ApplyRobotDesignHandler handler(f.services);
+    const auto design=makeSingleJointDesign(-6*kPi,6*kPi); f.bindNames(design);
+    CommandPayload payload; payload.objects.push_back(newSlot(std::string(kRobotDesignObjectType),design));
+    project::HandlerContext ctx(f.query,&f.compile,nullptr);
+    for (const auto& base : {first,second}) {
+        f.query.view=second; // 查询端口HEAD故意漂移；被测回调仍须取得显式base。
+        project::CommandPlan plan; std::vector<core::DiagnosticRecord> diags;
+        ASSERT_EQ(handler.prepare(ctx,makeEnvelope(base,std::string(kCmdApplyRobotDesign),payload),base,plan,diags),
+                  project::PrepareOutcome::Planned);
+        EXPECT_EQ(plan.confirmableFindings.size(),base.id==first.id ? 1u : 0u);
+    }
+    ASSERT_EQ(resolved.size(),2u); EXPECT_EQ(resolved[0],first.id); EXPECT_EQ(resolved[1],second.id);
+    EXPECT_EQ(f.provider.resolveCalls,0); // 新回调为权威；不混用旧固定源。
+    missing=true; project::CommandPlan plan; std::vector<core::DiagnosticRecord> diags;
+    EXPECT_EQ(handler.prepare(ctx,makeEnvelope(first,std::string(kCmdApplyRobotDesign),payload),first,plan,diags),
+              project::PrepareOutcome::RejectedHardAssert);
+    EXPECT_TRUE(plan.objectWrites.empty());
+}
+
 /**
  * @brief ACC1/ACC2 prepare 侧载体：断言域就地阻止——continuous 工作范围
  *        未确认→RejectedHardAssert＋MDL-ASSERT-RANGE-NOT-FINITE 逐项定位
@@ -682,4 +741,278 @@ TEST(MdlCommandPrepare, MixedBadBoundsRevoluteAndUnconfirmedContinuous_RejectsOn
         if (d.code == std::string(kMdlAssertRangeNotFinite)) { rangeFound = true; }
     }
     EXPECT_TRUE(rangeFound) << "缺少 MDL-ASSERT-RANGE-NOT-FINITE 范围诊断";
+}
+
+namespace {
+/** @brief MDL-04/13/15：真实Codec五槽输入；物理量SI，临时部件身份仅用于根引用关联。 */
+CommandPayload completeTestPayload(RobotDesign root)
+{
+    ToolDefinition tool;tool.objectId=makeOid();tool.localName="gripper";
+    TcpEntry tcp;tcp.key="tip";tcp.offset.P()[2]=0.18;tool.tcpList={tcp};
+    SceneObject scene;scene.objectId=makeOid();scene.localName="fixture";scene.worldPose.P()[0]=1.2;
+    PoseSet poses;poses.objectId=makeOid();poses.entries={PoseSetEntry{"homeConfiguration",{0.2},"参考姿态"}};
+    DrivetrainDesign drivetrain;drivetrain.objectId=makeOid();
+    drivetrain.ratioPerJoint={core::SourcedValue<double>::provided(100.0,userProvenance())};
+    drivetrain.frictionPerJoint.resize(1);drivetrain.torqueLimitsPerJoint.resize(1);
+    root.toolRefs={tool.objectId};root.defaultTcp=TcpRef{tool.objectId,"tip"};
+    root.sceneRefs={scene.objectId};root.poseSetRef=poses.objectId;root.drivetrainRef=drivetrain.objectId;
+    CommandPayload payload;payload.objects.push_back(newSlot(std::string(kRobotDesignObjectType),root));
+    const auto append=[&](const auto& value,std::string_view token){
+        auto slot=replaceSlot(value.objectId,std::string(token),ObjectVariant{value});slot.allocateNew=true;
+        payload.objects.push_back(std::move(slot));
+    };
+    append(tool,kToolDefinitionObjectType);append(scene,kSceneObjectObjectType);
+    append(poses,kNamedPoseSetObjectType);append(drivetrain,kRobotDrivetrainObjectType);
+    return payload;
+}
+}
+
+/** @brief MDL-06/PM-04：新命令真实规划五对象并精确回填默认TCP，其余断言仍由共用管线执行。 */
+TEST(MdlCompleteWorkingSet, AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    HandlerFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    const auto root=makeSingleJointDesign(-1.0,1.0);f.bindNames(root);
+    f.query.view=makeBaselineView(core::RevisionId::generate());
+    auto payload=completeTestPayload(root);project::HandlerRegistry registry;
+    registerModelingCommandHandlers(registry,f.services);
+    auto* handler=registry.find("apply-modeling-working-set");ASSERT_NE(handler,nullptr);
+    project::HandlerContext ctx(f.query,&f.compile,nullptr);project::CommandPlan plan;
+    std::vector<core::DiagnosticRecord> diagnostics;
+    EXPECT_EQ(handler->prepare(ctx,makeEnvelope(f.query.view,"apply-modeling-working-set",payload),
+        f.query.view,plan,diagnostics),project::PrepareOutcome::Planned);
+    ASSERT_EQ(plan.objectWrites.size(),5U);EXPECT_TRUE(plan.requiresDualCompile);
+    EXPECT_NE(plan.summary.find("应用完整建模工作集"),std::string::npos)<<"用户命令历史须显示中文摘要";
+    EXPECT_FALSE(plan.inversePayloadCanonical); // 首次创建沿既有首修订边界不可逆。
+    const auto decoded=RobotDesignCodec{}.decode(plan.objectWrites.front().payloadCanonical,kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());const auto& written=std::get<RobotDesign>(decoded.get());
+    ASSERT_TRUE(written.defaultTcp);EXPECT_EQ(written.defaultTcp->toolOid,plan.objectWrites[1].objectId);
+    EXPECT_EQ(written.toolRefs.front(),plan.objectWrites[1].objectId);
+    EXPECT_EQ(written.sceneRefs.front(),plan.objectWrites[2].objectId);
+    EXPECT_EQ(written.poseSetRef,plan.objectWrites[3].objectId);EXPECT_EQ(written.drivetrainRef,plan.objectWrites[4].objectId);
+    for(std::size_t i=1;i<plan.objectWrites.size();++i){
+        EXPECT_NE(plan.objectWrites[i].objectId,payload.objects[i].objectId)<<"持久ID必须由project重新分配";
+    }
+}
+
+/** @brief PM-04：完整槽契约拒绝缺席、重复、错配和把已有ID冒充新增的输入，零可消费计划。 */
+TEST(MdlCompleteWorkingSet, RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    HandlerFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    const auto root=makeSingleJointDesign(-1.0,1.0);f.bindNames(root);
+    f.query.view=makeBaselineView(core::RevisionId::generate());
+    project::HandlerRegistry registry;registerModelingCommandHandlers(registry,f.services);
+    auto* handler=registry.find("apply-modeling-working-set");ASSERT_NE(handler,nullptr);
+    for(int fault=0;fault<4;++fault){
+        auto payload=completeTestPayload(root);
+        if(fault==0){payload.objects.pop_back();}
+        if(fault==1){payload.objects.push_back(payload.objects[1]);}
+        if(fault==2){payload.objects[1].objectId=makeOid();}
+        if(fault==3){payload.objects[1].allocateNew=false;}
+        project::HandlerContext ctx(f.query,&f.compile,nullptr);project::CommandPlan plan;
+        std::vector<core::DiagnosticRecord> diagnostics;
+        EXPECT_EQ(handler->prepare(ctx,makeEnvelope(f.query.view,"apply-modeling-working-set",payload),
+            f.query.view,plan,diagnostics),project::PrepareOutcome::RejectedInvalidInput)<<fault;
+        EXPECT_TRUE(plan.objectWrites.empty())<<fault;
+    }
+}
+
+
+/** @brief PM-04：完整命令拒绝碰撞历史/根/关节身份；不得分配或写入可消费半计划。 */
+TEST(MdlCompleteWorkingSet, NewPartCannotReuseRetainedOrStructuralIdentity_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    HandlerFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    const auto root=makeSingleJointDesign(-1.0,1.0);f.bindNames(root);
+    f.query.view=makeBaselineView(core::RevisionId::generate());
+    const auto rootId=makeOid();f.query.addObject(rootId,std::string(kRobotDesignObjectType),encodeVariant(root));
+    ToolDefinition retained;retained.objectId=makeOid();retained.localName="history";
+    retained.tcpList={TcpEntry{"tip",rw::math::Transform3D<>{},""}};
+    f.query.addObject(retained.objectId,std::string(kToolDefinitionObjectType),encodeVariant(retained));
+    project::HandlerRegistry registry;registerModelingCommandHandlers(registry,f.services);
+    auto* handler=registry.find(std::string(kCmdApplyModelingWorkingSet));ASSERT_NE(handler,nullptr);
+    for(const auto& reused:{retained.objectId,rootId,root.joints.front().objectId,root.links.front().objectId}){
+        auto payload=completeTestPayload(root);auto candidate=std::get<RobotDesign>(
+            RobotDesignCodec{}.decode(payload.objects.front().objectBytes,kCurrentFormatVersion).get());
+        auto tool=std::get<ToolDefinition>(RobotDesignCodec{}.decode(payload.objects[1].objectBytes,kCurrentFormatVersion).get());
+        tool.objectId=reused;candidate.toolRefs={reused};candidate.defaultTcp=TcpRef{reused,"tip"};
+        payload.objects.front()=replaceSlot(rootId,std::string(kRobotDesignObjectType),candidate);
+        payload.objects[1]=replaceSlot(reused,std::string(kToolDefinitionObjectType),tool);payload.objects[1].allocateNew=true;
+        project::HandlerContext ctx(f.query,&f.compile,nullptr);project::CommandPlan plan;std::vector<core::DiagnosticRecord> diags;
+        EXPECT_EQ(handler->prepare(ctx,makeEnvelope(f.query.view,std::string(kCmdApplyModelingWorkingSet),payload),
+            f.query.view,plan,diags),project::PrepareOutcome::RejectedInvalidInput);
+        EXPECT_TRUE(plan.objectWrites.empty());
+    }
+}
+
+/** @brief PM-18：完整替换保留已有ID，工具移除转移默认TCP且逆放能读取保留对象。 */
+TEST(MdlCompleteWorkingSet, ExistingPartsAndDefaultTransferRestoreFromHistory_PM18_AT21)
+{
+    IRD_TEST_INFO("PM-18",{"AT-21"},std::nullopt);
+    HandlerFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    auto payload=completeTestPayload(makeSingleJointDesign(-1.0,1.0));
+    const auto rootId=makeOid();auto root=std::get<RobotDesign>(RobotDesignCodec{}.decode(payload.objects[0].objectBytes,kCurrentFormatVersion).get());
+    f.bindNames(root);f.query.view=makeBaselineView(core::RevisionId::generate());
+    // 第二工具为合法替代默认；引用集合由Codec按ID规范排序，默认必须按精确键而非首项解析。
+    auto other=std::get<ToolDefinition>(RobotDesignCodec{}.decode(payload.objects[1].objectBytes,kCurrentFormatVersion).get());
+    other.objectId=makeOid();other.localName="other-gripper";root.toolRefs.push_back(other.objectId);
+    payload.objects[0]=replaceSlot(rootId,std::string(kRobotDesignObjectType),root);
+    payload.objects.push_back(replaceSlot(other.objectId,std::string(kToolDefinitionObjectType),other));
+    for(auto& slot:payload.objects){slot.allocateNew=false;f.query.addObject(slot.objectId,slot.objectTypeToken,slot.objectBytes);}
+    project::HandlerRegistry registry;registerModelingCommandHandlers(registry,f.services);
+    auto* handler=registry.find(std::string(kCmdApplyModelingWorkingSet));ASSERT_NE(handler,nullptr);
+    const auto oldTool=root.toolRefs.front();root.toolRefs.erase(root.toolRefs.begin());root.defaultTcp=TcpRef{other.objectId,"tip"};
+    payload.objects[0]=replaceSlot(rootId,std::string(kRobotDesignObjectType),root);
+    payload.objects.erase(payload.objects.begin()+1); // 不填旧removals段，移除事实须由根差值推导。
+    project::HandlerContext ctx(f.query,&f.compile,nullptr);project::CommandPlan plan;std::vector<core::DiagnosticRecord> diags;
+    ASSERT_EQ(handler->prepare(ctx,makeEnvelope(f.query.view,std::string(kCmdApplyModelingWorkingSet),payload),
+        f.query.view,plan,diags),project::PrepareOutcome::Planned);
+    ASSERT_EQ(plan.objectWrites.size(),5U);ASSERT_TRUE(plan.inversePayloadCanonical);
+    const auto inverse=tryDecodeCommandPayload(*plan.inversePayloadCanonical);ASSERT_TRUE(inverse);
+    // 端口模拟提交后的固定引用集，旧工具保留；Restore按根引用找回它，不要求逆槽带重复对象。
+    for(const auto& write:plan.objectWrites){
+        const auto id=*write.objectId;
+        auto& refs=f.query.view.objectRefs;refs.erase(std::remove_if(refs.begin(),refs.end(),[&](const auto& r){return r.objectId==id;}),refs.end());
+        f.query.addObject(id,write.objectTypeToken,write.payloadCanonical);
+    }
+    f.query.view.id=core::RevisionId::generate();project::CommandPlan restored;
+    ASSERT_EQ(handler->prepare(ctx,makeEnvelope(f.query.view,std::string(kCmdApplyModelingWorkingSet),*inverse),
+        f.query.view,restored,diags),project::PrepareOutcome::Planned);
+    const auto value=RobotDesignCodec{}.decode(restored.objectWrites.front().payloadCanonical,kCurrentFormatVersion);
+    ASSERT_TRUE(value.ok());const auto& restoredRoot=std::get<RobotDesign>(value.get());
+    ASSERT_TRUE(restoredRoot.defaultTcp);EXPECT_EQ(restoredRoot.defaultTcp->toolOid,oldTool);
+    ASSERT_EQ(restoredRoot.toolRefs.size(),2U);
+    EXPECT_NE(std::find(restoredRoot.toolRefs.begin(),restoredRoot.toolRefs.end(),oldTool),restoredRoot.toolRefs.end());
+    EXPECT_NE(std::find(restoredRoot.toolRefs.begin(),restoredRoot.toolRefs.end(),other.objectId),restoredRoot.toolRefs.end());
+    EXPECT_EQ(restored.objectWrites.front().payloadCanonical,inverse->objects.front().objectBytes)
+        <<"逆放必须保留前一根的原Codec规范字节";
+}
+
+/**
+ * @brief PM-18：完整命令保留的历史单例不应阻止旧五命令继续编辑当前活动闭包。
+ * 根只引用一份位姿/传动；另一份仅供旧历史撤销使用，不能当成第二份活动对象。
+ */
+TEST(MdlLegacyHistory, FiveApplyTokensIgnoreUnreferencedHistoricalParts_PM18_AT29)
+{
+    IRD_TEST_INFO("PM-18",{"AT-29"},std::nullopt);
+    HandlerFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    auto payload=completeTestPayload(makeSingleJointDesign(-1.0,1.0));
+    const auto rootId=makeOid();payload.objects.front().objectId=rootId;
+    f.query.view=makeBaselineView(core::RevisionId::generate());
+    for(auto& slot:payload.objects){slot.allocateNew=false;f.query.addObject(slot.objectId,slot.objectTypeToken,slot.objectBytes);}
+    auto root=std::get<RobotDesign>(RobotDesignCodec{}.decode(payload.objects.front().objectBytes,kCurrentFormatVersion).get());
+    f.bindNames(root);
+    // 这些对象字节仍合法存在，但没有被当前根引用；PA-2允许历史累积。
+    auto historicalPoses=std::get<PoseSet>(RobotDesignCodec{}.decode(payload.objects[3].objectBytes,kCurrentFormatVersion).get());
+    historicalPoses.objectId=makeOid();f.query.addObject(historicalPoses.objectId,std::string(kNamedPoseSetObjectType),encodeVariant(historicalPoses));
+    auto historicalDrivetrain=std::get<DrivetrainDesign>(RobotDesignCodec{}.decode(payload.objects[4].objectBytes,kCurrentFormatVersion).get());
+    historicalDrivetrain.objectId=makeOid();f.query.addObject(historicalDrivetrain.objectId,std::string(kRobotDrivetrainObjectType),encodeVariant(historicalDrivetrain));
+    project::HandlerRegistry registry;registerModelingCommandHandlers(registry,f.services);
+    const std::vector<std::string_view> tokens={kCmdApplyRobotDesign,kCmdApplyToolDefinition,
+        kCmdApplySceneObjects,kCmdApplyNamedPoses,kCmdApplyDrivetrainDesign};
+    for(std::size_t i=0;i<tokens.size();++i){
+        SCOPED_TRACE(std::string(tokens[i]));CommandPayload edit;edit.objects={payload.objects[i]};
+        if(tokens[i]==kCmdApplyNamedPoses){
+            // 旧命令槽仅承载用户命名条目；保留Home/Zero由域合并，不得把完整槽语义套到旧token。
+            auto poses=std::get<PoseSet>(RobotDesignCodec{}.decode(edit.objects.front().objectBytes,kCurrentFormatVersion).get());
+            poses.entries={PoseSetEntry{"inspection",{0.3},"用户检查姿态"}};
+            edit.objects.front().objectBytes=encodeVariant(poses);
+        }
+        auto* handler=registry.find(std::string(tokens[i]));ASSERT_NE(handler,nullptr);
+        project::HandlerContext ctx(f.query,&f.compile,nullptr);project::CommandPlan plan;
+        std::vector<core::DiagnosticRecord> diags;
+        EXPECT_EQ(handler->prepare(ctx,makeEnvelope(f.query.view,std::string(tokens[i]),edit),
+            f.query.view,plan,diags),project::PrepareOutcome::Planned);
+        EXPECT_FALSE(plan.objectWrites.empty());EXPECT_TRUE(plan.inversePayloadCanonical);
+    }
+}
+
+/** @brief PM-18：旧五命令的根历史逆放必须从固定修订重新挂接当前不活动的部件。 */
+TEST(MdlLegacyHistory, FiveRestoreTokensReattachRetainedPartsFromFixedRevision_PM18_AT29)
+{
+    IRD_TEST_INFO("PM-18",{"AT-29"},std::nullopt);
+    HandlerFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    const auto historical=completeTestPayload(makeSingleJointDesign(-1.0,1.0));
+    const auto rootId=makeOid();auto emptyRoot=std::get<RobotDesign>(
+        RobotDesignCodec{}.decode(historical.objects[0].objectBytes,kCurrentFormatVersion).get());
+    auto savedRoot=emptyRoot;emptyRoot.toolRefs.clear();emptyRoot.defaultTcp.reset();
+    emptyRoot.sceneRefs.clear();emptyRoot.poseSetRef.reset();emptyRoot.drivetrainRef.reset();
+    f.bindNames(emptyRoot);f.query.view=makeBaselineView(core::RevisionId::generate());
+    f.query.addObject(rootId,std::string(kRobotDesignObjectType),encodeVariant(emptyRoot));
+    for(std::size_t i=1;i<historical.objects.size();++i){const auto& s=historical.objects[i];f.query.addObject(s.objectId,s.objectTypeToken,s.objectBytes);}
+    CommandPayload restore;restore.mode=CommandPayload::Mode::Restore;
+    restore.objects={replaceSlot(rootId,std::string(kRobotDesignObjectType),savedRoot)};
+    project::HandlerRegistry registry;registerModelingCommandHandlers(registry,f.services);
+    for(const auto token:{kCmdApplyRobotDesign,kCmdApplyToolDefinition,kCmdApplySceneObjects,
+                         kCmdApplyNamedPoses,kCmdApplyDrivetrainDesign}){
+        SCOPED_TRACE(std::string(token));project::HandlerContext ctx(f.query,&f.compile,nullptr);
+        project::CommandPlan plan;std::vector<core::DiagnosticRecord> diags;
+        EXPECT_EQ(registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore),
+            f.query.view,plan,diags),project::PrepareOutcome::Planned);
+        ASSERT_EQ(plan.objectWrites.size(),1U);EXPECT_EQ(plan.objectWrites.front().payloadCanonical,restore.objects.front().objectBytes);
+        EXPECT_TRUE(plan.requiresDualCompile)<<"历史根重新挂接运行时部件，不能沿用纯命名位姿族的false位";
+    }
+}
+
+/** @brief MDL-06/PM-18：仅命名位姿内容或引用恢复不改变运行时输入，仍不得触发双编译。 */
+TEST(MdlLegacyHistory, PoseOnlyRestoreKeepsRuntimeCompilationSkipped_PM18_AT29)
+{
+    IRD_TEST_INFO("PM-18",{"AT-29"},std::nullopt);
+    HandlerFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    const auto original=completeTestPayload(makeSingleJointDesign(-1.0,1.0));
+    const auto rootId=makeOid();f.query.view=makeBaselineView(core::RevisionId::generate());
+    f.query.addObject(rootId,std::string(kRobotDesignObjectType),original.objects[0].objectBytes);
+    for(std::size_t i=1;i<original.objects.size();++i){const auto& s=original.objects[i];
+        f.query.addObject(s.objectId,s.objectTypeToken,s.objectBytes);}
+    auto root=std::get<RobotDesign>(RobotDesignCodec{}.decode(original.objects[0].objectBytes,kCurrentFormatVersion).get());
+    f.bindNames(root);
+    auto poses=std::get<PoseSet>(RobotDesignCodec{}.decode(original.objects[3].objectBytes,kCurrentFormatVersion).get());
+    poses.entries.push_back({"inspection",{0.3},"仅改命名位姿，单位rad"});
+    // 保留第二份历史位姿集，只用于根引用迁移；不改变工具/场景/传动或关节。
+    auto retained=poses;retained.objectId=makeOid();
+    f.query.addObject(retained.objectId,std::string(kNamedPoseSetObjectType),encodeVariant(retained));
+    ApplyNamedPosesHandler handler(f.services);
+    for(int change=0;change<2;++change){
+        SCOPED_TRACE(change);CommandPayload restore;restore.mode=CommandPayload::Mode::Restore;
+        if(change==0){restore.objects={replaceSlot(poses.objectId,std::string(kNamedPoseSetObjectType),poses)};}
+        else{auto relinked=root;relinked.poseSetRef=retained.objectId;
+            restore.objects={replaceSlot(rootId,std::string(kRobotDesignObjectType),relinked)};}
+        project::HandlerContext ctx(f.query,&f.compile,nullptr);project::CommandPlan plan;
+        std::vector<core::DiagnosticRecord> diags;
+        ASSERT_EQ(handler.prepare(ctx,makeEnvelope(f.query.view,std::string(kCmdApplyNamedPoses),restore),
+            f.query.view,plan,diags),project::PrepareOutcome::Planned);
+        EXPECT_FALSE(plan.requiresDualCompile)<<"纯位姿恢复继续遵守不编译契约，不能一律强制重编译";
+    }
+}
+
+/** @brief PM-18/MDL-06：旧Restore不得接受重复槽、伪造token或嵌入身份；拒绝无写计划。 */
+TEST(MdlLegacyHistory, RestoreRejectsDuplicateWrongTokenAndEmbeddedIdentity_PM18_AT29)
+{
+    IRD_TEST_INFO("PM-18",{"AT-29"},std::nullopt);
+    HandlerFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    const auto original=completeTestPayload(makeSingleJointDesign(-1.0,1.0));
+    const auto rootId=makeOid();f.query.view=makeBaselineView(core::RevisionId::generate());
+    f.query.addObject(rootId,std::string(kRobotDesignObjectType),original.objects[0].objectBytes);
+    for(std::size_t i=1;i<original.objects.size();++i){const auto& s=original.objects[i];f.query.addObject(s.objectId,s.objectTypeToken,s.objectBytes);}
+    auto root=std::get<RobotDesign>(RobotDesignCodec{}.decode(original.objects[0].objectBytes,kCurrentFormatVersion).get());f.bindNames(root);
+    project::HandlerRegistry registry;registerModelingCommandHandlers(registry,f.services);
+    for(const auto token:{kCmdApplyRobotDesign,kCmdApplyToolDefinition,kCmdApplySceneObjects,
+                         kCmdApplyNamedPoses,kCmdApplyDrivetrainDesign}){
+        for(int fault=0;fault<4;++fault){
+            SCOPED_TRACE(std::string(token)+" fault="+std::to_string(fault));
+            CommandPayload restore;restore.mode=CommandPayload::Mode::Restore;
+            restore.objects={original.objects[1]};restore.objects.front().allocateNew=false;
+            if(fault==0){restore.objects.push_back(restore.objects.front());}
+            if(fault==1){restore.objects.front().objectTypeToken=std::string(kSceneObjectObjectType);}
+            if(fault==2){auto tool=std::get<ToolDefinition>(RobotDesignCodec{}.decode(restore.objects.front().objectBytes,kCurrentFormatVersion).get());
+                tool.objectId=makeOid();restore.objects.front().objectBytes=encodeVariant(tool);}
+            if(fault==3){restore.objects.front().objectId=makeOid();}
+            project::HandlerContext ctx(f.query,&f.compile,nullptr);project::CommandPlan plan;
+            std::vector<core::DiagnosticRecord> diags;
+            EXPECT_EQ(registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore),
+                f.query.view,plan,diags),project::PrepareOutcome::RejectedInvalidInput);
+            EXPECT_TRUE(plan.objectWrites.empty());
+        }
+    }
 }

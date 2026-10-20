@@ -1,4 +1,4 @@
-# 工业机械臂设计软件 · 实现任务拆分（development-task-breakdown）
+﻿# 工业机械臂设计软件 · 实现任务拆分（development-task-breakdown）
 
 | 字段 | 值 |
 | --- | --- |
@@ -9,6 +9,7 @@
 | 文档版本 | v0.93（2026-10-18，commit-lint 止增批：§5.1 脚本清单增 commit-lint〔前缀白名单＋标题非空话＋四段正文；-Range 只查新增提交，历史 F-012 豁免〕；AGENTS §6.3 同步自检与 passed/skipped 计数口径〔F-926 消账〕；F-012 整族销案〔历史不回写〕）。前一版本 v0.92 保留如下。 |
 | 文档版本 | v0.92（2026-10-18，WP-15-T19 合入收尾：wp15-t19〔87fec2c3..b9601d97b8ba，独立验收 attempt 1 PASS——0 阻断／2 建议 F-932/F-933，记录 traceability/acceptance/wp-15-t19-20261018.md @ acc/wp-15-t19/1 775cc37e〕按 PIPE §4.7 先合记录（10917d0c）后合代码（04ea1704）--no-ff 并入 redesign-main〔87fec2c3..04ea1704，零冲突〕；契约 WP-15-T19 翻 done；evidence-index 再生成；验收段补齐 GUI 用例运行（集成/冒烟各 20/20）。前一版本 v0.91 保留如下。 |
 | 文档版本 | v0.91（2026-10-18，WP-15-T19 按所有者裁决路线 A 实施：§2.16 T19 行更新为「插件 Eigen 头文件轴角组合＋集成等价钉」；契约 status ready（blocked 解除）；kinematics.md v0.32 §11 行同步）。前一版本 v0.90 保留如下。 |
+| 文档版本 | v0.91（2026-10-20，WP-13-T25 立卡〔旁支并行批〕：§2.14 增 WP-13-T25 行——建模审计 20261019-601ffa0e 中 F06/F01/F07/F14 四项的并行修复（独立 worktree C:/zcode-wt/wp13-t25 自基线 f873984b，与主任务 WP-13-T24 并行不冲突：主任务保留 F16 及 F08/F09/F10/F11/F12）；契约 tasks/foundation/WP-13-T25.json 同批（ready）；F06 已实现验证——§2.14 行内登记；modeling.md v0.55 同批）。前一版本 v0.90 保留如下。 |
 | 文档版本 | v0.90（2026-10-18，WP-15-T19 立卡（blocked）与 F-919 修复方案勘察：§2.16 增 WP-15-T19 行〔运动学独立冒烟树链接缺陷——显式链接 sdurw_math 方案被「冒烟树无框架库」实测证伪（LNK1181），A/B/C 三出路待所有者裁决，契约 task note 载证据〕；T17 为 R2 预留位故取 T19；kinematics.md §11 增行/版本递增同批）。前一版本 v0.89 保留如下。 |
 | 文档版本 | v0.89（2026-10-18，F-927 消账：AGENTS §4.1 与 §5.1 fresh 树行订正 F-907 前置落位表述——`RobWorkStudio.ini.template.static` 必须位于源码树侧 `RobWork/RobWorkStudio/bin/`（configure_file 的 `${RWS_ROOT}/bin/` 解析面），构建树侧 `build/...` 不构成有效前置；F-907 原『复制至构建树源码侧』表述作废）。前一版本 v0.88 保留如下。 |
 | 文档版本 | v0.88（2026-10-18，WP-10-T85 合入收尾：wp10-t85〔afc27ea2..e23d07ec，验收 attempt 2 PASS，记录 traceability/acceptance/UI-T85-20261018-r2.md @ acc/UI-T85/2 500479c2〕--no-ff 并入 redesign-main〔代码 8ee2e057＋记录 12352989〕；契约 UI-T85 翻 done；findings F-921/F-922 status 补翻 fixed＋验收 G-1 登记为 F-931；证据索引再生成）。前一版本 v0.87 保留如下。 |
@@ -481,6 +482,9 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-13-T20 | 建模迁移（方案 B.1 迁移链，SA-18 D11） | modeling | WP-10-T22（共享面就绪） | B1-SPEC §5；modeling.md §9（插件界面）；WP-10-T21/T22 注册协议 | 建模域三接入面：TreeNodesProvider（建模对象入项目树）＋PropertyPagesProvider（常用字段入检查器；DH/物性入复杂编辑页）＋SelectionAdapter（选择联动与三维高亮）＋本域自持导航 deprecated 标记 | MDL-07（联动选择呈现的宿主形态迁移） | 建模对象经项目树导航→检查器常用字段→复杂编辑页（DH/物性分野 D6）→三维高亮全链路用例通过；Provider 增量面验收（无整体重写提交）；迁移期间旧面板可用性零损失；ird_gates 增量登记；留痕 traceability/builds/wp13-t20/ | 修改共享 UI 装配面禁止（只消费 UI-T21/T22 注册协议——§5.3 互斥）；删除未迁移域可用性禁止；插件零计算逻辑红线不变 | M |
 | WP-13-T22 | 缺陷修复批A（交互域）modeling 面〔≙FIX-T1；**2026-10-12 立项——先卡后码**；契约 tasks/foundation/FIX-T1.json，status=ready 待独立评审放行〕：F-799（CommandHandlers.cpp apply-robot-design 断言阻塞项检查晚于行程校验——assertJointLimitIntervals 产 blockers 后不返回，evaluateTravelLimits 对缺已确认工作范围 Continuous 抛 std::logic_error 逃逸穿 Qt 事件循环；修复＝有阻塞即 RejectedHardAssert 值轨拒绝先于行程评估）＋F-800（StructureEdit.cpp 六轴重置清 toolRefs/sceneRefs/poseSetRef 不清 defaultTcp——悬挂引用可入库违 I-MDL-9；修复＝重置同拍清除）；两缺陷均先复现测试（红）→修复（绿）→回归钉住；缺陷登记源＝audit/round2-20261010/recheck-34-legacy.md §三 P1 存量复核（2026-10-12 治理批立卡，owner 空＝无修复登记）；详见 FIX-T1 卡 | modeling | 无（基线自足） | findings.json F-799/F-800；modeling.md §9.3/§4.10 | 两复现用例＋两修复＋回归钉住 | MDL-06、MDL-12、ERR-01 | 复现用例修复前红/修复后绿；modeling_test 全绿；ird_gates 零新增 | project/io/diagnostics 等批外单元零触碰（并行路线 B 辖域） | S |
 | WP-13-T23 | 建模可靠性打磨批〔先码后卡——2026-10-17 合入收尾补登；契约 tasks/foundation/WP-13-T23.json status=done；代码 aa47c0c5..07324d30 七提交：①惯量特征值各向同性边界（p2==0 零矩阵分支优先）②CanonicalBridge 零位折叠非法轴防御（零轴·NaN·Inf 归一化前拒绝）③WorkCell·DWC 导出先暂存后统一发布（多文件原子性）④DH 求解量纲步长与尺度边界⑤耦合矩阵奇异值独立参考交叉验证⑥就绪呈现补齐（ReadinessNote 增 NotProvided·Informational 事实状态＋对象锚·字段路径·单位·修复建议；L9 登记关节最大速度·最大加速度 schema 缺项非阻断预告；面板中文状态标签·字段单位动作 tooltip·对象反向定位；模板与自定义链回执声明预填值不进入运行时计算）⑦就绪状态聚合修正（所有者 2026-10-17 裁决 B——NotProvided 不参与三态聚合，Ready 恢复可达，Informational 保持既有聚合）；设计登记 modeling.md v0.45~v0.53〕 | modeling | 无（基线自足——就绪面语义前置 WP-13-T08/T18 已在库） | findings.json F-906/F-907；modeling.md §8.2/§9.4.4/§9.7.1；验收记录 traceability/acceptance/WP-13-T23-20261017.md@acc/WP-13-T23/1@948ca02c | 七处数值·防御修复＋就绪呈现与聚合修正＋检查器级回归钉 2 例（NotProvidedOnlyNoteKeepsReadyReachable_WP13T23／InformationalNoteStillAggregatesReadyWithNotes_WP13T23）＋变异红证 M1/M2 | MDL-06、MDL-16、REQ-06、UX-03 | 双模式重配构建零错误；集成 386/386＋17/17＋GUI 44 过+1 既有跳过、冒烟 316/316＋8/8（验收者 fresh worktree 亲手复现）；ird_gates 零命中；变异翻红后还原回绿；validate-task·validate-docs PASS | 框架源码/REQUIREMENTS/ARCHITECTURE 零触碰（验收 4.1 核实 patches diff 空——SA-02 成立） | S |
+| WP-13-T24 | 建模验收缺陷修复（2026-10-20所有者要求；先卡后码，分批计划见superpowers计划） | modeling | WP-13-T06/T21 done | modeling.md §6.5/§9.7；601ffa0e审计47项 | B1导入、B2a草稿局部历史已实现验证；B2b恢复链已实现验证；B3a补欧拉输入及域内换算，精确范围见契约/八节设计；后续逐批登记 | MDL-03/11/12/17/19/22、UX-03/13、KIN-06、PM-18 | 真实红绿回归、双模式构建、真实窗口和原始证据；全功能结论须47项复验 | 框架/需求/架构只读；B2b公共增量按所有者自动推荐授权先八节设计登记，无新边/格式；不推送不自行合入 | M |
+| WP-13-T26 | 建模双分支集成及联合复验（2026-10-20所有者授权） | modeling | WP-13-T24/T25实现批，独立验收仍开放 | modeling.md §9.7；冻结两支及主线DoD | 解决冲突、审查语义适配、双模式及真实窗口复验、冻结SHA交接 | MDL-01/04/06/08/13/15/18/21、PM-04/18、UX-03/13 | 真实执行四态与新证据，完整47项仍逐项验收 | 不推送/不合入主线/不用子代理，精确范围见契约 | M |
+| WP-13-T25 | 建模审计并行修复批〔2026-10-20旁支会话承接 WP-13-T24 B3 批中四项——F06 WorkCell导入入口／F01 逐关节速度加速度／F07 自碰撞配置／F14 耦合编辑与宿主R2；独立 worktree（C:/zcode-wt/wp13-t25，基线 f873984b）与主任务并行，主任务保留 F16 及 F08/F09/F10/F11/F12；先卡后码，逐项先红后绿、一项一提交〕 | modeling | WP-13-T17/T18、WP-14-T12 done | modeling.md §6.6/§6.3/§4.3/§8.1/§9.7.3；policy.md §4.3/§5.1；601ffa0e 审计 M14/M05/M17/M31 | F06 已实现验证（598c9b03）；F01 已实现验证（7a9f0516——schema {1,1} 含 F06 复跑）；F07 已实现验证（09faf7f0——A-23 主链核实＋P-MDL-3 移交半区，modeling v0.57）；F14 已实现验证（耦合编辑入口＋面板/模块/门面能力位注入链＋宿主 R2Enabled＋原语拒绝原子性顺序修正——modeling v0.58） | MDL-18/01/06/03、MDL-04/ARC-05、MDL-21 | 每项独立红绿回归（真实临时文件/真实 Qt 对话框链）、双模式构建、ird_gates/BuildRedLine/validate-* 真实证据；47 项终验仍归统一验收 | 框架/需求/架构只读；selfCollisionHints 不入权威编码；耦合公共默认 R1Locked 保留；不使用子代理、不推送、不自行合入 redesign-main；不触碰主任务 worktree 与其未提交 F16 代码 | M |
 
 ### 2.15 WP-14 requirements（单元卡待产出；REQ-01~12）
 
@@ -499,6 +503,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-14-T11 | 需求域装配门面补建（O-45 裁决——B.1 批次序 10 插入微任务） | requirements | WP-15-T18（批次链序；O-31 门面纪律双先例） | O-45 裁决行；modeling/kinematics 两域 assembly/ 门面先例；requirements.md §9.8/§11 | `requirements/assembly/sdurws/ird/requirements/RequirementsPluginAssembly.hpp`（插件目标 PUBLIC include 面）＋`plugin/RequirementsPluginAssembly.cpp`（编入 sdurws_ird_requirements_plugin）＋域内契约测试 | UX-12、NFR-MNT-01 | 门面出线 RequirementsUiModule（IPluginUiModule 接口面）与迁移三接入面句柄（与 ModelingPluginAssembly/KinematicsPluginAssembly 同构形状，宿主装配层零 requirements 私有头依赖）；零行为变化（已验收语义只出线不重写；HostMigration 16 用例零修改全绿＋单元全量测试零回退）；双模式构建零错误；ird_gates 零增量（消费边归 UI-T23 登记）；留痕 traceability/builds/wp14-t11/ | 修改共享 UI 装配面禁止（PIPE §6.2）；改 RequirementsUiModule/HostMigrationProviders 已验收语义禁止（门面只出线）；消费其他单元私有头禁止（R-2） | S |
 | WP-14-T12 | 缺陷修复批A（交互域）requirements 核实面〔≙FIX-T1；2026-10-12 立项〕：F-460（blocking——需求域二连 draft.apply 必拒）核实收口——audit-r2c 批已修复（实现 2fe3da66f＋独立验收 pass a17df640a＋合入 c028c550d 均在基线）而 findings 账面漏翻仍 open，本批跑复现测试实证绿后 append 修复注（附三提交 SHA）翻 fixed；零代码改动（修复已在基线） | requirements | 无（基线自足） | findings.json F-460；requirements.md §4.6 | 复现实证＋findings 翻牌 | ERR-01 | PluginPanelTest 二连应用用例绿实证；requirements_test 全绿 | F-551 避让（并行会话链在途）；零代码改动 | XS |
 | WP-14-T13 | 采样点着色功能批 requirements 面板面〔≙FIX-T2；2026-10-12 立项〕：区域页「采样结果」清单组（行＝样本号＋状态中文词表＋坐标摘要＋未通过原因直投）＋点击→高亮请求出口＋无评估结果诚实空态；RequirementsPanelWidget 增 SampleResultRow 投影结构与 setSampleResultsSink/bindSampleHighlightRequest 双缝（StationMarkerProjection 先例同款）；零 Readiness 语义改动（清单＝执行器账面投影非域诊断——「诊断素材粒度」缺口的呈现侧绕行）；requirements_gui 清单点击出口＋空态具名用例；详见 FIX-T2 卡 | requirements | 无（基线自足） | findings.json F-495；requirements.md §9.8 | 面板清单＋双缝＋gui 用例 | UX-02、ERR-01 | 清单点击→出口断言绿；空态钉住；requirements_test 全绿 | 域语义零改动；数据翻译归 ui 装配层单点（R-1/R-2） | M |
+| WP-14-T12 | 需求模块全功能审计缺陷修复与生产交互验证（2026-10-18所有者授权；A-01～A-12及原120项矩阵；分支wp14-t12，实施中） | requirements | WP-14-T11 | requirements.md §9.8/§7；审计requirements-audit-20261018；计划docs/superpowers/plans/2026-10-18-requirements-completion.md | 生产表单接线修复、失败回归、真实交互/三维证据 | REQ-01～12、UX-02/03/05/06/09/11、AT-02/23/24 | 120项逐行真实执行；失败/未执行不得记通过；双模式、门禁、测试留痕 | 框架源码、公共接口及需求语义不改；新增跨域接口先过设计门 | L |
 
 ### 2.16 WP-15 kinematics（单元卡待产出；KIN-01~14）
 
@@ -846,6 +851,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | R-5（proximity 直链禁止） | policy 产品实现（碰撞唯一实现） | policy.md §3.4；AT-19 | 生效（WP-07-T01 起） | 2026-09-10 |
 | R-5（同上） | 各 `_test`/`_contract_test` 经 testkit/policy 替身消费 | §5.3；POL-T11 | 生效 | 2026-09-10 |
 | T-1/T-2（testkit 分发/依赖） | 无例外 | testkit.md §2.4 | — | 2026-09-10 |
+| SUB（精确测试边） | `sdurws_ird_ui_gui_test -> sdurws_ird_modeling_plugin`；真实工程策略编辑窗口同源消费项目修订与策略解析，project/policy经插件既有PUBLIC依赖传递；不放宽产品库依赖 | WP-14-T12 A-23补充一，所有者明确批准；机器登记仅IRD_TEST_TARGET_EDGES一条 | 生效（仅集成GUI测试） | 2026-10-20 |
 | SUB（ARCH §3.5 表外边） | `sdurws_ird_ui_app`（开发验证 harness，装配层目标）：ui->project（打开五步协议适配链接面）＋ui->ui（app 目标自边，同型于 ui_gui_test 既有 `->ui` 形态） | O-31 裁决（装配层同时看见两边写适配器）；DTB §2.11 WP-10-T15 行 | 生效（WP-10-T15 起；`sdurws_ird_ui` 产品库链接块仍仅 core/diagnostics＋Qt） | 2026-09-22 |
 | SUB（ARCH §3.5 表外边） | `sdurws_ird_ui_plugin`（工作台宿主插件，装配层目标）：ui->project（宿主集成边——插件复用 harness PortAdapters 适配形态，打开五步协议适配编译入插件目标）＋ui->ui（plugin 目标链接本单元产品库自边，同型于 ui_app 既有形态）。两边一行登记，机器消费面＝traceability/wp10-t16-gate-registrations.md | O-38 裁决②（"插件复用 harness PortAdapters 适配形态——O-31 装配层特权边同款登记模式"）；DTB §2.11 WP-10-T16 行；ui 库产品面（`sdurws_ird_ui` 源集）零对 project 链接/include 不变 | 生效（WP-10-T16 起；开发期验证通道——产品交付路径零新增，正式装配归 WP-24-T03） | 2026-09-23 |
 | SUB＋R-3（命中集增量登记） | `sdurws_ird_studio`（正式产品主程序，WP-24-T08——宿主融合形态装配路径骨架，B1-SPEC §2.1 目标名冻结）：SUB 三边 studio->ui（产品目标链接本单元产品库——装配基座 WorkbenchContent/UiSessionController 等语义承载）＋studio->project（WP-24-T03 装配基座同源 TU 内既有适配边，ui_plugin 先例同款）＋studio->modeling（装配基座 DomainAssembly 的建模装配门面消费边，ui->modeling 先例同款）；R-3 命中×3＝产品名形态目标链 Qt6::Core/Gui/Widgets（sdurws_ird_ui 同款既有命中模式——NFR-MNT-01"ui 界面目标"例外类：宿主包装目标本体即 Qt 界面，非 L2 计算内核）。命中集 base 79 条→head 85 条，增量恰为本行六条，零意外命中；机器消费面＝traceability/builds/wp24-t08/ird-gates-{base,head}-norm.txt 与 ird-gates-增量登记.md | SA-18 D1（RobWorkStudio 唯一产品主窗口——正式产品目标必然链框架 rws 公共库与 Qt，B1-SPEC §2.1 实现路径闭合）；O-31 装配层特权（同源 TU 复用，装配器同时看见两边）；DTB §2.25 WP-24-T08 行；白名单数据面零改动（依赖图不变式保持） | 生效（WP-24-T08 起；门禁目标在库内既有 79 条登记态命中基线上零意外新增） | 2026-09-28 |
@@ -1005,3 +1011,47 @@ AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子�
 
 **并发与合入安全（v0.12，PIPE v1.6）**：tick 并发的唯一裁判是 `.git/ird-pipeline-tick.lock` 原子锁；pipeline-lock.ps1 以绝对仓库路径派生 Windows 命名 mutex，将 status/acquire/renew/release 的读判写完整串行，再以 O_EXCL 创建作文件层兜底，旧 tick 的 fencing 核对与修改锁文件之间不存在 TOCTOU。实施/验收工作者以 run 租约标识，未超时只汇报不续派；阻塞等待返回后必须再次 renew 才能处理完成事件或写 state。验收对象以 40 位 SHA 冻结（base/headSha/acceptedHead 链），合入按 acceptedHead 执行且先验证远端分支未漂移；验收 fail 的不可变记录以 lastFailureRecord{branch,path,commit,attempt} 只传给返工 implementing 工作者。state.queue 为结构化条目 {taskId,contractPath,branch}（branch 唯一来源在契约）。
 | WP-10-T51 | 工位位置编辑轨〔≙UI-T51；分支 ui-t51 基点 26237d5b；**实施落位，status=ready 待独立验收**〕："空间与公差"卡三轴坐标输入解锁（UI-T37 返工③登记兑现——所有者 2026-10-03 使用反馈承接）：applyStationEditSet 增 pose-position-x/y/z 三键（三维整体量语义＋NotProvided 基线 fail-fast——四态语义零变化）＋renderPoseRow 三轴 SpinBox 条件可编辑（submitStationValue 队列化提交——幻影短路同卡先例）＋具名用例（只读退役/幻影短路/单轴接受未编辑轴保持/undoLocal 回滚）＋ACC2 封闭性断言随批（12→15）；requirements_test 200/200＋requirements_gui 40/40；留痕 traceability/builds/ui-t51/；详见 ui.md §13 UI-T51 行 | 2026-10-03 | — |
+
+WP-13-T24 B3a精确登记：MDL-22欧拉输入及域内RPY→EAA转换，Template.hpp::BasePlacementEditValue表尾customRpy默认空；实现/验证/范围按2026-10-20-modeling-completion计划B3a，不改runtime或存储格式。
+
+WP-13-T24 B3b精确登记：MDL-12/MDL-06工程工作范围确认，Template.hpp::JointEditField表尾WorkingRange复用JointLimits；已放行Template.cpp、私有面板与原测试/单元卡范围内实施。原计划B3b八节为边界，不改存储、runtime或依赖边，完整47项终验仍开放。
+
+WP-13-T24 B4a精确登记：MDL-08/UX-13/AT-12完整差异表和现对象身份定位；仅建模私有流程/新窗口/模块、原测试及既有plugin目标新增源。ui/plugin/UiPlugin.cpp只扩既有modeling-tour真实交互补证，不改装配。无公共接口、存储或新边，精确失败矩阵见原计划B4a；全功能终验仍开放。
+
+WP-13-T24 B3c精确登记：MDL-05完整三类图元/多段/密度/段元位姿录入，估算及合成唯一复用PropertyEstimator，去除关节原点前提。范围仅原私有plugin/test/gui/CMake及文档契约；不增公共面/存储/依赖，实施与失败矩阵见原计划B3c，未验证不得标完成。
+
+WP-13-T24 B3d增量：MDL-05/F10完整物性内联编辑和质心确认，仅既有建模私有允许面；原计划B3d先红后绿及完整验证，零公共/存储/新依赖边变化，当前未验收。
+
+WP-13-T24/B3f（2026-10-20）：按所有者自动采用推荐方案授权登记F12场景CRUD内联编辑及已有/外部几何来源，原私有允许面、无新增依赖边/公共面/存储。F06已由所有者交wp13-t25并行，本会话不再实施；集成时保留c43fc49e及后续修复。验证结论以新冻结证据为准。
+
+WP-13-T24 B3g（2026-10-20）：按所有者推荐方案自动执行授权，先登记runtime场景几何可选及canonical1.3精确公共变化，modeling桥/名称/能力/碰撞事实同步；项目存储不改，无新依赖边。范围与反例见原计划B3g及契约allowedFiles，未验证不标完成，F06保持另一工作树职责。
+
+WP-13-T24 B3h增量登记：F08工具草稿管理仅扩原私有插件/测试/CMake面，复用资源/物性/安装/TCP，不改需求/公共接口/存储/跨域依赖。精确设计见2026-10-20-modeling-completion.md B3h；F06继续另一工作树负责。
+
+WP-13-T24 B4b：按总计划八节登记完整工作集磁盘域帧，原私有允许面实施，PM-04/08、AT-21真实恢复；无公共/存储/依赖边变化，F06保持独立，项目完整apply另验。
+
+WP-13-T24 B4c-1登记：按总计划八节修复PM-04旧草稿真实应用前锚/事件偷换及跨分支异常隔离，实际测试在ui/contract_test/HostIntegrationContractTest.cpp；仅既有接口实现/注释，无新公共形状/存储/依赖边。B4b最终GUI等待用户通知，F06/F07不实施，B4c-2完整apply保持开放。
+
+WP-13-T24 B4c-2登记：仅新增建模完整工作集token及assembly完整成功回执接口，v2与旧五命令兼容，私有规划/活动闭包/逆放及固定修订宿主读取；精确范围和测试矩阵见总计划B4c-2和契约。无新存储/依赖边，F06/F07不动。
+
+WP-13-T24 B4c-2检查点：十套件1430通过、0失败、0跳过，双模式/verify-task通过；正式宿主单列FAIL，过期草稿安全拒绝后未真正重建，旧tour无快照防护崩溃。证据modeling-completion-20261020-b4c2-checkpoint；本地WIP，B4c-3继续修复，47项不标完成。
+
+WP-13-T24 B4c-3a登记：仅原允许私有规划/CommandHandlers及原测试，统一活动引用投影和旧Restore固定修订恢复；不改旧五token/载荷版本/存储或依赖。先复现历史多单例误拒绝、旧Restore重复/错类型误受理，再真实存储交错新旧历史验证。真正冲突重建/宿主取证失败仍开放，详见原计划。
+
+WP-13-T24 B4c-3a回归：1495通过、0失败、0跳过（GUI225）；4项新增建模用例，core改跑全量65项。旧命名位姿历史恢复漏双编译已真实复现并修复，纯位姿恢复仍不编译；公共头仅同步注释无新接口。正式宿主冲突重建/失败保护及完整47项三维仍开放，WIP证据另封存b4c3a-checkpoint。
+
+WP-13-T24 B4c-3b-1设计登记：装配门面仅增固定修订读取回调和旧冲突草稿只读副本，私有模块重建完整新基线及保留旧待迁移素材；原ui源端口/项目存储不变。精确八节见总计划，用户自动推荐授权下先登记后实施；完整宿主交互/落盘仍另批，不以模块实现代替全链闭合。
+
+WP-13-T24 B4c-3b-1检查点：1499通过、0失败、0跳过（GUI226），新增3项UI模型和1项窗口；固定修订完整读取及旧稿保留真实验证，包测试临时目录改跨进程唯一。双模式及verify-task通过，既有警告保留；完整宿主冲突与47项三维仍开放，证据b4c3b1-checkpoint。
+
+WP-13-T24 B4c-3b-2设计登记：生产完整reader/onResult接线、固定分支修订Stale详情、tour缺快照立即失败出口。发现既有注释所称onResult并未实际接线，按真实挂接成功后补齐；仅原私有允许面，公共/存储/依赖不改。具体八节与矩阵见总计划；窗口/落盘/迁移另批，不标整体完成。
+
+WP-13-T24 B4c-3b-3b登记：私有冲突三选项窗口与保存失败门控、正式宿主精确会话/tip/原帧守卫、建模旧稿逐项只读对照。ui/CMake在既有ui_plugin/studio/ui_gui目标同源编入私有窗口，无新目标或边。完整八节与失败矩阵见总计划；只本地WIP、不自行合入，不外推47项及真实三维通过。
+
+WP-13-T24 B4c-3c设计登记：正式窗口冲突至手工重新编辑/再次应用全流程；实际强断言复现成功应用未消费磁盘旧稿，重开旧稿覆盖当前完整基线。复用既有C-5 discard写端口/后台串行执行器补成功消费，失败保留控制器状态并由runner隔离；仅既有公共头契约注释，无新接口/存储/依赖。八节/精确范围及红绿矩阵见原计划补充，不外推47项通过。
+
+WP-13-T24 B4c-3c干净结算补充：ModelingPluginAssembly.hasPendingDraft纯查询复用域完整规范比较，不能按摘要或命令可提交性猜测干净；IDraftController.notifySessionClean默认not-supported，真实实现经C-5后台FIFO消费磁盘稿，成功仅清脏代次/保存来源/时刻，保留冲突与局部undo/redo。宿主完整变更回调按实际pending分流，失败保留状态并提示；重做重新置脏，终身代次防旧autosave误清。精确八节/真实红绿证据见原计划，不外推47项交付。
+
+WP-13-T24 B4c-3d：干净会话不能以旧内容仅换新base；同分支新事件/已锚会话不同tip绑定须完整读取固定修订root及活动部件后一次采纳，失败旧值/锚/基线/历史不变且预览诚实缺席，脏稿保持原Stale语义。复用唯一reader/Codec，无新公共签名/格式/依赖；精确八节和验证矩阵见总计划。
+
+WP-13-T24 B4c-3d装配增量：正式建模RevisionCommitted回调仅复制值并排入宿主UI队列；事务返回后按来源adapter实例/关闭/project身份守卫调用完整固定修订读取，避免同步重入project写锁。域脏稿/分支/重复修订过滤不变，零公共签名和存储变化；真实外部场景创建及更新即时完整字节断言先红后验，详见原计划。

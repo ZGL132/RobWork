@@ -3,10 +3,9 @@
  * @brief  建模域命令 UI 流程实现（UI-T41 批次 A——八命令真实链＋两条
  *         诚实缺席，见头注批次边界）。
  *
- * 实现纪律：域判定零入（全部经内核实现类）。文件读取通道现状（UI-T48
- * 登记）：URDF/Xacro 导入仍为标准库 fstream（其升级＝导入向导任务范围，
- * UI-T41 note⑧ 挂账面如实收窄——本卡只兑现几何资源选择流的 io 真装，
- * 见 GeometryResourceFlow.cpp；导入流换轨另行任务，不在本卡）。
+ * 实现纪律：域判定零入（全部经内核实现类）。WP-13-T24补齐导入：
+ * URDF经io单文件预检及累计字节预算；Xacro由私有桥安全冻结离线依赖，
+ * 再经参数页与同一映射/显式选链流程。报告逐项展示，确认前零草稿替换。
  */
 
 #include "ModelingCommandFlows.hpp"
@@ -20,6 +19,10 @@
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QTableWidget>
+#include <QPlainTextEdit>
+#include <QPushButton>
+#include <QHeaderView>
+#include <QRegularExpression>
 
 #include <algorithm>
 #include <charconv>                               // std::to_chars（UI-T63 声明表单预填文本）
@@ -27,7 +30,7 @@
 #include <cctype>
 #include <filesystem>
 #include <set>
-#include <fstream>
+#include <array>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
@@ -36,6 +39,7 @@
 #include "ModelingFlowsInternal.hpp"          // 域内拆分接口（权威切换流——DhConvert 独立 TU）
 
 #include <sdurws/ird/core/Digest.hpp>            // core::ContentDigester（快照摘要——io 快照同源口径）
+#include <sdurws/ird/io/IoDiagnostics.hpp>
 #include <sdurws/ird/io/ResourceIo.hpp>          // io 资源读取服务（F-473——导入依赖树装配半区）
 #include <sdurws/ird/modeling/Codec.hpp>         // RobotDesignCodec/ObjectVariant（闭包字节编码）
 #include <sdurws/ird/modeling/Import.hpp>        // ModelImportMapper（URDF/Xacro 映射）
@@ -46,6 +50,8 @@
 #include <sdurws/ird/ui/UiTheme.hpp>             // ui::palette（声明表单警示色——主题词表单点）
 #include <sdurws/ird/modeling/Package.hpp>       // ModelPackagePort（MDL-20 导出/导入）
 #include "ModelingXacroBridge.hpp"            // 受控展开桥（独立 TU——XacroExpand 不可与 DhConvert 共 TU）
+#include "ModelingDiffDialog.hpp"             // F16：完整只读报告，原服务唯一判定。
+#include "ModelingPropertyDialog.hpp"         // F09：真实多段几何/密度/位姿录入。
 #include <sdurws/ird/ui/UiText.hpp>              // resolveText（按钮文案同源的呈现值）
 
 namespace sdurws::ird::modeling {
@@ -58,6 +64,8 @@ namespace {
 /// 生产宿主实现（与 requirements QtDialogHost 同型——交互应答/编排分离）。
 class QtModelingDialogHost final : public ModelingDialogHost {
 public:
+    std::optional<std::vector<SegmentSpec>> editPropertySegments(const std::string& linkName) override
+    { return editModelingPropertySegments(linkName); }
     std::optional<QString> openFilePath(const QString& title,
                                         const QString& filter) override
     {
@@ -105,13 +113,92 @@ public:
 
     bool confirmImport(const QString& summaryText) override
     {
-        return QMessageBox::question(nullptr, QStringLiteral("导入确认"), summaryText)
-               == QMessageBox::Yes;
+        // MDL-11：报告必须可滚动、可复制，长模型不能挤出屏幕或只剩计数。
+        QDialog dialog;
+        dialog.setObjectName("ird_modeling_import_report");
+        dialog.setWindowTitle(QStringLiteral("导入确认：逐项映射报告"));
+        dialog.resize(800,580);
+        auto* layout=new QVBoxLayout(&dialog);
+        auto* report=new QPlainTextEdit(&dialog);
+        report->setObjectName("ird_modeling_import_report_text");
+        report->setReadOnly(true);report->setPlainText(summaryText);
+        layout->addWidget(report);
+        auto* buttons=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dialog);
+        buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("确认导入草稿"));
+        buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+        QObject::connect(buttons,&QDialogButtonBox::accepted,&dialog,&QDialog::accept);
+        QObject::connect(buttons,&QDialogButtonBox::rejected,&dialog,&QDialog::reject);
+        layout->addWidget(buttons);
+        return dialog.exec()==QDialog::Accepted;
+    }
+
+    std::optional<std::vector<std::pair<std::string,std::string>>> editXacroParameters(
+        const std::vector<std::pair<std::string,std::string>>& defaults) override
+    {
+        // 参数只作字面替换；原文默认值未经求值，未修改行不能错误覆盖属性依赖。
+        QDialog dialog;
+        dialog.setObjectName("ird_modeling_xacro_parameters");
+        dialog.setWindowTitle(QStringLiteral("Xacro 参数与离线展开"));dialog.resize(720,440);
+        auto* layout=new QVBoxLayout(&dialog);
+        auto* note=new QLabel(QStringLiteral("保留原值使用源文件默认；修改或新增行作为显式替换。"
+            "仅作字面替换，不执行表达式、环境变量或外部程序；include已在导入根内冻结。"),&dialog);
+        note->setWordWrap(true);layout->addWidget(note);
+        auto* table=new QTableWidget(static_cast<int>(defaults.size()),2,&dialog);
+        table->setObjectName("ird_modeling_xacro_parameter_table");
+        table->setHorizontalHeaderLabels({QStringLiteral("参数名"),QStringLiteral("值（原文本，保留单位）")});
+        table->horizontalHeader()->setStretchLastSection(true);
+        for(int row=0;row<table->rowCount();++row){
+            table->setItem(row,0,new QTableWidgetItem(QString::fromStdString(defaults[row].first)));
+            table->setItem(row,1,new QTableWidgetItem(QString::fromStdString(defaults[row].second)));
+        }
+        layout->addWidget(table);
+        auto* add=new QPushButton(QStringLiteral("添加参数"),&dialog);
+        add->setObjectName("ird_modeling_xacro_add_parameter");
+        QObject::connect(add,&QPushButton::clicked,&dialog,[table]{
+            const int row=table->rowCount();table->insertRow(row);
+            table->setItem(row,0,new QTableWidgetItem());table->setItem(row,1,new QTableWidgetItem());
+            table->setCurrentCell(row,0);table->editItem(table->item(row,0));
+        });layout->addWidget(add);
+        auto* error=new QLabel(&dialog);error->setWordWrap(true);
+        error->setObjectName("ird_modeling_xacro_parameter_error");layout->addWidget(error);
+        auto* buttons=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dialog);
+        buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("展开并继续"));
+        buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+        layout->addWidget(buttons);
+        std::vector<std::pair<std::string,std::string>> answer;
+        QObject::connect(buttons,&QDialogButtonBox::rejected,&dialog,&QDialog::reject);
+        QObject::connect(buttons,&QDialogButtonBox::accepted,&dialog,[&]{
+            std::set<std::string> names;
+            std::vector<std::pair<std::string,std::string>> proposed;
+            const QRegularExpression identifier(QStringLiteral("^[A-Za-z_][A-Za-z0-9_]*$"));
+            for(int row=0;row<table->rowCount();++row){
+                const auto key=table->item(row,0)?table->item(row,0)->text().trimmed():QString();
+                const auto value=table->item(row,1)?table->item(row,1)->text():QString();
+                if(key.isEmpty()&&value.isEmpty()){continue;}
+                if(!identifier.match(key).hasMatch()||!names.insert(key.toStdString()).second){
+                    error->setText(QStringLiteral("第%1行参数名无效或重复；使用字母、数字、下划线，不能以数字开头。").arg(row+1));
+                    table->setCurrentCell(row,0);return;
+                }
+                const auto original=std::find_if(defaults.begin(),defaults.end(),[&](const auto& d){return d.first==key.toStdString();});
+                if(original==defaults.end()||original->second!=value.toStdString()){
+                    proposed.emplace_back(key.toStdString(),value.toStdString());
+                }
+            }
+            answer=std::move(proposed);dialog.accept();
+        });
+        if(dialog.exec()!=QDialog::Accepted){return std::nullopt;}
+        return answer;
     }
 
     void showInfo(const QString& title, const QString& text) override
     {
         QMessageBox::information(nullptr, title, text);
+    }
+
+    void showModelDiff(const ModelDiffReport& report,const ModelingWorkingSet& baseline,
+        const ModelingWorkingSet& candidate,const ModelingDiffLocator& locate) override
+    {
+        showModelingDiffDialog(report,baseline,candidate,locate);
     }
 
     std::optional<std::vector<CustomChainJointSpec>> declareCustomChain(
@@ -245,6 +332,13 @@ std::optional<std::string> customChainRowSemanticCheck(double axisX, double axis
     return std::nullopt;
 }
 
+void ModelingDialogHost::showModelDiff(const ModelDiffReport&,const ModelingWorkingSet&,
+    const ModelingWorkingSet&,const ModelingDiffLocator&)
+{
+    // 私有测试/宿主未实现完整页是装配违约，不能静默退回已知缺陷的计数页。
+    throw std::logic_error("modeling/dialog/diff-unwired: 完整差异呈现未装配");
+}
+
 ModelingDialogHost& qtModelingDialogHost()
 {
     static QtModelingDialogHost host;  // 无状态单例（进程级——UI 线程消费）
@@ -276,6 +370,7 @@ bool isAssembledModelingCommand(const std::string& commandId)
         "modeling.diff-baseline",     "modeling.export-package",
         "modeling.import-package",    "modeling.reset-home-zero",
         "modeling.export-workcell-xml",  // UI-T56——WC/DWC XML 外供导出（第十一号）
+        "modeling.import-workcell",   // WP-13-T25/F06——外部 .wc.xml 反向导入（第十二号）
     };
     return kAssembled.count(commandId) != 0;
 }
@@ -286,22 +381,37 @@ namespace {
 // 流程内部辅助（纯函数/小工具——全部 UI 线程调用）
 // =====================================================================
 
-/// 读取本地文件全部字节（二进制；用户对话框自选路径——见文件头注）。
-std::optional<std::vector<std::uint8_t>> readFileBytes(const QString& path,
-                                                       std::string& error)
+/**
+ * @brief URDF入口读取；[in] path为用户自选绝对路径，[out] error为稳定io码或空文件原因。
+ * @return 预算内真实字节；读前单文件预检、逐块总字节累计，失败无部分产物。
+ * 仅UI线程调用；io句柄/预算由本轮局部对象持有，不写文件或项目。
+ */
+std::optional<std::vector<std::uint8_t>> readFileBytes(const QString& path,std::string& error)
 {
-    std::ifstream in(path.toStdWString(), std::ios::binary);
-    if (!in.is_open()) {
-        error = "无法打开文件（不存在或无读取权限）";
-        return std::nullopt;
-    }
-    std::vector<std::uint8_t> bytes{std::istreambuf_iterator<char>(in),
-                                    std::istreambuf_iterator<char>()};
-    if (bytes.empty()) {
-        error = "文件为空（0 字节）——不是可导入的模型文档";
-        return std::nullopt;
-    }
-    return bytes;
+    const auto reader=io::makeResourceReader();
+    const auto budget=io::makeBudgetGuard();
+    const auto opened=budget->openScope(io::BudgetSpec::productDefault());
+    if(!opened){error=std::string(io::errorCodeToken(opened.error.code));return std::nullopt;}
+    const auto read=[&]() -> std::optional<std::vector<std::uint8_t>> {
+        auto stream=reader->open(std::filesystem::path(path.toStdWString()),{},nullptr,nullptr);
+        if(!stream){error=std::string(io::errorCodeToken(stream.error.code));return std::nullopt;}
+        std::vector<std::uint8_t> bytes;
+        std::array<std::uint8_t,io::kResourceReadBlockBytes> buffer{};
+        for(;;){
+            const auto chunk=stream.value.read(buffer.data(),buffer.size());
+            if(!chunk){error=std::string(io::errorCodeToken(chunk.error.code));return std::nullopt;}
+            if(!chunk.value){break;}
+            const auto charged=budget->charge(opened.value,io::BudgetDimension::TotalBytes,chunk.value);
+            if(!charged){error=std::string(io::errorCodeToken(charged.error.code));return std::nullopt;}
+            bytes.insert(bytes.end(),buffer.begin(),buffer.begin()+chunk.value);
+        }
+        if(bytes.empty()){error="文件为空（0字节）——不是可导入模型";return std::nullopt;}
+        return bytes;
+    };
+    auto result=read();
+    const auto closed=budget->closeScope(opened.value);
+    if(!closed){error=std::string(io::errorCodeToken(closed.error.code));return std::nullopt;}
+    return result;
 }
 
 /// 构造入口资源快照（digest＝SHA-256 权威判据——io ResourceSnapshot 同源）。
@@ -438,6 +548,138 @@ io::ResourceDependencyTree assembleImportDependencyTree(
     return tree;
 }
 
+// =====================================================================
+// WorkCell 入口装载（WP-13-T25/F06——.wc.xml 通道的流半区装配）
+// =====================================================================
+
+/**
+ * @brief WorkCell 入口读取：io openGenericXml 良构校验＋真实字节＋摘要对账。
+ *
+ * 装配纪律（与生产 Xacro 桥 loadXacroInputImpl 同款——F06 红线"真实字节、
+ * 快照、依赖树及资源记录必须一致"）：
+ *   ① openGenericXml（.wc.xml 通道冻结读取面——io.md §9.6）：expat 良构
+ *      校验＋全文件 SHA-256 摘要；良构违例在 io 侧拦截（IO-FORMAT-XML-*）。
+ *   ② readFileBytes：预算内经 io 句柄读真实字节（单文件预检＋逐块
+ *      TotalBytes 计费——不绕过 io 文件层）。
+ *   ③ 摘要对账：两窗口摘要/字节数不一致＝文件在选择后被改动（ResChanged
+ *      诚实拒绝），不把变化窗口的字节冒充稳定输入。
+ *
+ * @param path  [in] 用户自选 .wc.xml 绝对路径
+ * @param doc   [out] io 良构解析树（Polytope 引用提取输入——语义解释归
+ *                modeling，本函数不解读内容）
+ * @param bytes [out] 入口文档真实字节（ValidatedSource.bytes 载体）
+ * @param error [out] 失败原因（io 稳定码或对账失败说明）
+ * @return false＝读取/良构/对账失败（无部分产物）
+ *
+ * 仅 UI 线程调用；io 句柄/预算由本轮局部对象持有，不写任何文件。
+ */
+bool loadWorkCellEntry(const QString& path, io::GenericXmlDoc& doc,
+                       std::vector<std::uint8_t>& bytes, std::string& error)
+{
+    const io::IResourceReaderPtr reader = io::makeResourceReader();
+    const auto parsed = reader->openGenericXml(
+        std::filesystem::path(path.toStdWString()), {}, nullptr, nullptr);
+    if (!parsed) {
+        error = std::string(io::errorCodeToken(parsed.error.code));
+        return false;
+    }
+    auto readBytes = readFileBytes(path, error);
+    if (!readBytes) { return false; }
+    // 摘要对账（两读取窗口一致性——变化窗口不冒充稳定输入）。
+    core::ContentDigester digester;
+    digester.update(readBytes->data(), readBytes->size());
+    const core::Digest256 byteDigest = digester.finalize();
+    if (byteDigest != parsed.value.digest
+        || readBytes->size() != parsed.value.totalBytes) {
+        error = std::string(io::errorCodeToken(io::IoErrorCode::ResChanged))
+                + "：入口文件在读取窗口间发生变化";
+        return false;
+    }
+    doc = parsed.value;
+    bytes = std::move(*readBytes);
+    return true;
+}
+
+/**
+ * @brief WorkCell 依赖树装配（缺失容忍——引擎消费形态）。
+ *
+ * 入口文档节点（真实快照）＋逐 `<Polytope file>` 引用节点：存在＝io 真实
+ * 快照（digest 身份）、缺失/拦截＝exists=false 缺失叶——引擎按 V-08 转
+ * Recorded＋IO-RES-MISSING 事实（缺失≠不可行，不阻断导入、不虚构存在）。
+ * 引用自 io 良构解析树递归收集（不走正则——元素语义路由归 io 产物）；
+ * 远距方案（"://"）不入树（黄金件约定）；同键去重＋relPath 字典序稳定。
+ */
+io::ResourceDependencyTree assembleWorkCellDependencyTree(
+    const io::GenericXmlDoc& doc,
+    const io::ResourceSnapshot& entrySnapshot,
+    const std::filesystem::path& baseDir,
+    const std::string& rootRel)
+{
+    io::ResourceDependencyTree tree;
+    tree.rootRel = rootRel;
+
+    io::ResourceNode entry;
+    entry.relPath = rootRel;
+    entry.exists = true;
+    entry.snapshot = entrySnapshot;
+    tree.nodes.push_back(std::move(entry));
+
+    // Polytope 引用递归收集（文档序——io GenericXmlDoc 子元素天然文档序）。
+    std::vector<std::string> refs;
+    std::function<void(const io::GenericXmlNode&)> collect =
+        [&](const io::GenericXmlNode& node) {
+            if (node.name == "Polytope") {
+                for (const auto& attr : node.attrs) {
+                    if (attr.first == "file" && !attr.second.empty()) {
+                        refs.push_back(attr.second);
+                    }
+                }
+            }
+            for (const auto& child : node.children) { collect(child); }
+        };
+    collect(doc.root);
+
+    const io::IResourceReaderPtr reader = io::makeResourceReader();
+    io::ResourceOpenSpec spec;
+    spec.role = io::PathRole::UserSource;  // 用户自选导入文件的角色同源
+    for (const std::string& rawRef : refs) {
+        const std::string relKey = foldResourceKey(rawRef);
+        // 远距方案/空引用不入树（不虚构资源——黄金件同款约定）。
+        if (relKey.empty() || relKey.find("://") != std::string::npos) {
+            continue;
+        }
+        bool seen = false;
+        for (const io::ResourceNode& n : tree.nodes) {
+            if (n.relPath == relKey) { seen = true; break; }
+        }
+        if (seen) { continue; }
+
+        io::ResourceNode node;
+        node.relPath = relKey;
+        const auto snapshot = reader->snapshot(
+            baseDir / std::filesystem::u8path(rawRef), spec, nullptr, nullptr);
+        if (snapshot) {
+            node.exists = true;
+            node.snapshot = snapshot.value;
+        } else {
+            node.exists = false;  // 缺失叶（含预算/护栏拦截的诚实降级）
+        }
+        tree.nodes.push_back(std::move(node));
+
+        io::ResourceEdge edge;
+        edge.fromRel = rootRel;
+        edge.toRel = relKey;
+        edge.kind = io::ResourceEdgeKind::Mesh;
+        tree.edges.push_back(std::move(edge));
+    }
+
+    std::sort(tree.nodes.begin(), tree.nodes.end(),
+              [](const io::ResourceNode& a, const io::ResourceNode& b) {
+                  return a.relPath < b.relPath;
+              });
+    return tree;
+}
+
 /// 导入报告的人读摘要（确认对话框文本——四清单计数＋分支/错误如实呈现）。
 QString importSummaryText(const ImportReport& report)
 {
@@ -452,6 +694,22 @@ QString importSummaryText(const ImportReport& report)
                        .arg(qulonglong(report.unsupported.size()))
                        .arg(qulonglong(report.pendingConfirms.size()))
                        .arg(qulonglong(report.errors.size()));
+    // 逐清单保持领域报告的稳定顺序；对象/字段/工程值与理由均保留，不能另造映射。
+    const auto add=[&](const QString& category,const std::string& object,const std::string& detail,
+                       const ImportSourceSpan& span){
+        text+=QStringLiteral("\n[%1] %2：%3").arg(category,QString::fromStdString(object),QString::fromStdString(detail));
+        if(span.line){text+=QStringLiteral(" （%1:%2:%3）").arg(QString::fromStdString(span.relFile)).arg(span.line).arg(span.column);}
+    };
+    for(const auto& item:report.mapped){add(QStringLiteral("映射"),item.sourcePath,item.targetField+" = "+item.valueText+"；"+item.note,item.span);}
+    for(const auto& item:report.defaults){add(QStringLiteral("默认"),item.field,item.appliedValue+"；"+item.reason,item.span);}
+    for(const auto& item:report.ignored){add(QStringLiteral("忽略"),item.element,item.reason,item.span);}
+    for(const auto& item:report.unsupported){add(QStringLiteral("不支持"),item.subject,item.kind+"；"+item.reason+"；"+item.guidance,item.span);}
+    for(const auto& item:report.pendingConfirms){add(QStringLiteral("待确认"),item.subject,item.kind+"；"+item.question,item.span);}
+    for(const auto& item:report.errors){add(QStringLiteral("错误"),item.subject,item.kind+"；"+item.detail,item.span);}
+    for(const auto& item:report.jointStatuses){add(QStringLiteral("关节状态"),item.jointName,item.status+"；"+item.reason,item.span);}
+    for(const auto& item:report.resources){add(QStringLiteral("资源"),item.relPath,item.state+"；"+item.digestHex,item.span);}
+    for(const auto& item:report.selfCollisionCandidates){add(QStringLiteral("自碰撞候选"),item.link1,item.link2,item.span);}
+    for(const auto& item:report.drivetrainCandidates){add(QStringLiteral("传动候选"),item.jointName,item.valueText+" → Peak，需确认",item.span);}
     if (!report.branches.empty()) {
         text += QStringLiteral("\n\n检测到分支链 %1 条：").arg(report.branches.size());
         for (const ImportBranchItem& b : report.branches) {
@@ -686,8 +944,8 @@ bool executeModelingCommand(const std::string& commandId,
             }
             deps.reseedTemplate();
             summary = "已从模板重建草稿（generic-6r）——未应用编辑已清空；"
-                      "注意：模板预填的最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）"
-                      "当前不进入建模计算内核，请在传动或策略模块补录";
+                      "模板预填的逐轴最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）"
+                      "已随 F01 schema 落位真实进入模型与运行时计算";
             return true;
         }
         // custom-chain：六轴逐轴声明（UI-T63——从零创建；类型锁 Revolute，
@@ -718,8 +976,8 @@ bool executeModelingCommand(const std::string& commandId,
         declaration.joints = *declared;
         const bool reseeded = deps.reseedCustomChain(declaration, summary);
         if (reseeded) {
-            summary += "；注意：模板预填的最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）"
-                       "当前不进入建模计算内核，请在传动或策略模块补录";
+            summary += "；逐轴最大速度/最大加速度未随声明携带——请在关节编辑页"
+                       "补录（缺失保持未提供，不虚构零值）";
         }
         return reseeded;  // true＝草稿已按声明重建（summary 带回执）；
                           // false＝声明非法/域拒绝（summary 带原因）
@@ -738,10 +996,10 @@ bool executeModelingCommand(const std::string& commandId,
         if (path.isEmpty()) { return false; }  // 用户取消
 
         std::string error;
-        const auto bytes = readFileBytes(path, error);
-        if (!bytes.has_value()) {
-            summary = "导入中止：" + error;
-            return false;
+        std::optional<std::vector<std::uint8_t>> bytes;
+        if(!isXacro){
+            bytes=readFileBytes(path,error);
+            if(!bytes){summary="导入中止："+error;return false;}
         }
 
         std::vector<core::DiagnosticRecord> diags;
@@ -754,9 +1012,8 @@ bool executeModelingCommand(const std::string& commandId,
         // （无部分产物）——两契约夹缝使含 mesh 的模型此前经本流恒被拒。
         // 按黄金测试（GoldenImportTest V-06/V-08）装配纪律在流半区补树，
         // 装配语义见 assembleImportDependencyTree 头注。Xacro 树自展开产物
-        // 提取、基目录＝入口文档目录：单文件 xacro 精确；include 子目录内
-        // 的 mesh 引用可能标缺失（V-08 警告可见）——多文件精确解析随导入
-        // 向导任务（与选链重映射同批）。
+        // 提取，遵循URDF相对入口目录的几何引用语义；不猜测替换为include目录。
+        // include本身已由私有桥独立验证，缺mesh维持V-08可编辑警告。
         const std::filesystem::path fsPath(path.toStdWString());
         const std::string rootRel =
             foldResourceKey(fsPath.filename().u8string());
@@ -772,57 +1029,74 @@ bool executeModelingCommand(const std::string& commandId,
                 return source;
             };
 
-        ImportOutcome outcome;
+        ValidatedSource source;
+        XacroProvenance provenance;
+        std::vector<io::ResourceNode> xacroSources;
         if (isXacro) {
-            // Xacro 受控展开（P-MDL-4——护栏归 io/语义归 modeling）：展开经
-            // ModelingXacroBridge（独立 TU——XacroExpand/DhConvert 同名值类型
-            // 不可共 TU）；无用户参数代入（替换表空），产物走与 URDF 同映射。
-            const ModelXacroExpandResult expanded = expandXacroBytes(*bytes, path);
-            if (!expanded.ok) {
-                summary = "Xacro 展开失败：" + expanded.errorDetail;
-                return false;
+            // 冻结源与依赖后让用户填写参数；只展开这份内存输入一次。
+            const auto input=loadXacroInput(path);
+            if(!input.ok){summary="Xacro读取失败："+input.errorDetail;return false;}
+            const auto parameters=host.editXacroParameters(input.parameterDefaults);
+            if(!parameters){return false;}
+            const auto expanded=expandXacroInput(input,*parameters);
+            if(!expanded.ok){summary="Xacro展开失败："+expanded.errorDetail;return false;}
+            source=assembleSource(expanded.expandedBytes,
+                std::string(expanded.expandedBytes.begin(),expanded.expandedBytes.end()),
+                expanded.entrySnapshot);
+            provenance.sourceDigest=expanded.sourceDigest;
+            provenance.sourceAbsPath=path.toStdString();
+            provenance.substitutions=expanded.substitutions;
+            for(const auto& node:input.dependencyTree.nodes){
+                if(node.relPath!=input.dependencyTree.rootRel){xacroSources.push_back(node);}
             }
-            ValidatedSource expandedSource = assembleSource(
-                expanded.expandedBytes,
-                std::string(expanded.expandedBytes.begin(),
-                            expanded.expandedBytes.end()),
-                expanded.entrySnapshot);  // 来源身份保持
-            XacroProvenance provenance;
-            provenance.sourceDigest = expanded.sourceDigest;
-            provenance.sourceAbsPath = path.toStdString();
-            outcome = mapper.mapXacroExpanded(expandedSource, provenance, options, diags);
         } else {
-            const auto source = assembleSource(
-                *bytes, std::string(bytes->begin(), bytes->end()),
-                makeEntrySnapshot(path, *bytes));
-            outcome = mapper.mapUrdf(source, options, diags);
+            source=assembleSource(*bytes,std::string(bytes->begin(),bytes->end()),makeEntrySnapshot(path,*bytes));
         }
-
-        // 多可动分支：报告分支清单——用户显式选链后重映射一层（§6.4 维度一；
-        // 每次调用解析一层分裂——选中分支内部再分裂经下一轮循环处理）。
-        // Xacro 路径的选链重映射随导入向导任务补全（展开产物单次有效——诚实缺席）。
-        if (isXacro && outcome.draft.has_value() == false
-            && !outcome.report.branches.empty()) {
-            summary = "Xacro 文件含多条可动分支链——显式选链映射随导入向导任务补全";
-            return false;
-        }
-        if (!isXacro && outcome.draft.has_value() == false
-            && !outcome.report.branches.empty()) {
-            QStringList candidates;
-            for (const ImportBranchItem& b : outcome.report.branches) {
-                candidates << QString::fromStdString(b.branchRoot);
-            }
-            const auto picked = host.chooseItem(
-                QStringLiteral("选择主链"),
-                QStringLiteral("该文件含多条可动分支链——请选择建模主链（每次解析一层分裂）："),
-                candidates);
-            if (!picked.has_value()) { return false; }
-            options.selectedMainBranch = outcome.report.branches[*picked].branchRoot;
+        const auto mapFrozen=[&]{
             diags.clear();
-            const auto source = assembleSource(
-                *bytes, std::string(bytes->begin(), bytes->end()),
-                makeEntrySnapshot(path, *bytes));
-            outcome = mapper.mapUrdf(source, options, diags);
+            auto mapped=isXacro?mapper.mapXacroExpanded(source,provenance,options,diags)
+                               :mapper.mapUrdf(source,options,diags);
+            // MDL-19离线交付：include与入口同为来源资源。复用已有Recorded
+            // 资源格式，让项目统一检测缺失/变化并执行固化，不私建第二套存储。
+            // 按冻结树的相对键排序追加，选链重映射也只消费同一份快照。
+            if(mapped.draft){
+                for(const auto& node:xacroSources){
+                    const auto key="xacro-include/"+node.relPath;
+                    const auto& manifest=mapped.draft->resourceManifest;
+                    if(!node.exists||!node.snapshot||std::any_of(manifest.begin(),manifest.end(),[&](const auto& ref){return ref.resourceId==key;})){
+                        mapped.draft.reset();
+                        mapped.report.submittable=false;
+                        mapped.error=ImportError{ImportErrorCode::SourceInconsistent,{},"Xacro来源缺少快照或资源键冲突："+key};
+                        break;
+                    }
+                    ResourceRef ref;ref.resourceId=key;ref.state=ResourceState::Recorded;
+                    const auto& snapshot=*node.snapshot;
+                    ref.contentDigest=snapshot.contentDigest;
+                    ref.externalRecord=ExternalResourceRecord{
+                        std::filesystem::path(snapshot.finalPath).u8string(),ref.contentDigest};
+                    mapped.draft->resourceManifest.push_back(std::move(ref));
+                    ImportResourceItem row;row.resourceId=key;row.relPath=node.relPath;
+                    row.state="recorded";
+                    row.digestHex=QByteArray(reinterpret_cast<const char*>(snapshot.contentDigest.data()),
+                        static_cast<int>(snapshot.contentDigest.size())).toHex().toStdString();
+                    row.span=ImportSourceSpan{node.relPath,0,0};
+                    mapped.report.resources.push_back(std::move(row));
+                }
+            }
+            return mapped;
+        };
+        ImportOutcome outcome=mapFrozen();
+        if(!outcome.draft&&!outcome.report.branches.empty()){
+            QStringList candidates;
+            for(const auto& branch:outcome.report.branches){candidates<<QString::fromStdString(branch.branchRoot);}
+            const auto picked=host.chooseItem(QStringLiteral("选择主链"),
+                QStringLiteral("检测到多条可动分支链，请显式选择主链："),candidates);
+            if(!picked){return false;}
+            if(*picked<0||*picked>=candidates.size()){
+                summary="导入取消：主链选择索引无效";return false;
+            }
+            options.selectedMainBranch=outcome.report.branches[*picked].branchRoot;
+            outcome=mapFrozen();
         }
 
         if (outcome.error.has_value() && !outcome.draft.has_value()) {
@@ -836,9 +1110,16 @@ bool executeModelingCommand(const std::string& commandId,
             return false;
         }
 
-        // 报告确认（四清单计数摘要——确认后草稿落盘）。
+        // 逐项报告确认；明确确认后才替换内存草稿（尚不写项目修订）。
         if (!host.confirmImport(importSummaryText(outcome.report))) {
             return false;
+        }
+        // F07/P-MDL-3 移交半区：自碰撞排除候选随确认进入会话承载（策略
+        // 编辑器预填输入——用户在策略编辑中显式确认才产生策略修订；取消
+        // 路径上方已 return，候选不携带）。每次导入确认整体替换。
+        session.importedSelfCollisionCandidates.clear();
+        for (const ImportSelfCollisionItem& c : outcome.report.selfCollisionCandidates) {
+            session.importedSelfCollisionCandidates.emplace_back(c.link1, c.link2);
         }
         // 审核修正（UI-T41 批次D R1——恰一根不变量）：导入＝**替换既有模型
         // 内容**——已回填的项目根身份必须保留，否则下次 draft.apply 按
@@ -856,6 +1137,103 @@ bool executeModelingCommand(const std::string& commandId,
         summary = (isXacro ? "Xacro 导入完成：" : "URDF 导入完成：")
                   + std::to_string(outcome.report.mapped.size()) + " 项映射、"
                   + std::to_string(outcome.report.errors.size()) + " 项错误——草稿已更新，请经『应用草稿』提交";
+        return true;
+    }
+
+    // ---- modeling.import-workcell（外部 WorkCell 反向导入——§6.6 通道；
+    //      WP-13-T25/F06：MDL-18/AT-33 有损提取入草稿。与 URDF/Xacro 导入
+    //      同纪律：真实读取→引擎提取→多设备显式选链→逐项报告确认→确认才
+    //      替换草稿（保根）；一切取消/失败零工作集修改、零修订零落盘。----
+    if (commandId == "modeling.import-workcell") {
+        const auto picked = host.openFilePath(
+            QStringLiteral("导入 WorkCell"),
+            QStringLiteral("WorkCell (*.wc.xml *.xml);;所有文件 (*)"));
+        if (!picked.has_value()) { return false; }  // 用户取消（UX-03：非错误）
+        const QString& path = *picked;
+
+        // 入口装载（良构校验＋真实字节＋摘要对账——失败无部分产物）。
+        io::GenericXmlDoc doc;
+        std::vector<std::uint8_t> bytes;
+        std::string error;
+        if (!loadWorkCellEntry(path, doc, bytes, error)) {
+            summary = "导入中止：" + error;
+            return false;
+        }
+
+        // ValidatedSource 装配：入口节点真实快照＋Polytope 缺失容忍树。
+        const std::filesystem::path fsPath(path.toStdWString());
+        const std::string rootRel = foldResourceKey(fsPath.filename().u8string());
+        ValidatedSource source;
+        source.bytes = bytes;
+        source.entrySnapshot = makeEntrySnapshot(path, bytes);
+        source.dependencyTree = assembleWorkCellDependencyTree(
+            doc, source.entrySnapshot, fsPath.parent_path(), rootRel);
+
+        // 引擎提取（§6.6 单一实现——mapWorkCellXml 委托 extractWorkCellDevice）；
+        // 多设备文件产分支报告→用户显式选设备（§6.4 同机制：不默认选第一个），
+        // 取消＝静默终止；重映射消费同一冻结源（不重读文件）。
+        const ModelImportMapper mapper;
+        ImportOptions options;
+        std::vector<core::DiagnosticRecord> diags;
+        const auto mapFrozen = [&] {
+            diags.clear();
+            return mapper.mapWorkCellXml(source, options, diags);
+        };
+        ImportOutcome outcome = mapFrozen();
+        if (!outcome.draft && !outcome.report.branches.empty()) {
+            QStringList candidates;
+            for (const auto& branch : outcome.report.branches) {
+                candidates << QString::fromStdString(branch.branchRoot);
+            }
+            const auto chosen = host.chooseItem(
+                QStringLiteral("选择目标设备"),
+                QStringLiteral("检测到多个设备，请显式选择要提取的设备："),
+                candidates);
+            if (!chosen.has_value()) { return false; }  // 取消选链零修改
+            if (*chosen < 0 || *chosen >= candidates.size()) {
+                summary = "导入取消：设备选择索引无效";
+                return false;
+            }
+            options.selectedMainBranch = outcome.report.branches[*chosen].branchRoot;
+            outcome = mapFrozen();
+        }
+
+        // 失败面：error 有值无草稿＝不可提取（根检查/无设备/选链不存在/
+        // 源不一致）——如实转述；报告已由引擎无条件完整产出。
+        if (outcome.error.has_value() && !outcome.draft.has_value()) {
+            summary = "导入失败（" + std::string(importErrorCodeToken(outcome.error->code))
+                      + "）：" + outcome.error->detail;
+            return false;
+        }
+        if (!outcome.draft.has_value()) {
+            summary = "导入未产出草稿——详见提取报告（错误项 "
+                      + std::to_string(outcome.report.errors.size()) + " 条）";
+            return false;
+        }
+
+        // 逐项提取报告确认（AT-33 验收核心——不可表达/未保留逐项可见）；
+        // 确认前零草稿替换。
+        if (!host.confirmImport(importSummaryText(outcome.report))) {
+            return false;
+        }
+        // 草稿替换（恰一根不变量 R1——与 URDF/Xacro 导入同款：已回填项目根
+        // 身份保留，避免下次 draft.apply 重复建根）。
+        const std::optional<core::ObjectId> previousRoot = session.draft.rootObjectId;
+        session.draft = ModelingWorkingSet{};
+        session.draft.rootObjectId = previousRoot;
+        session.draft.design = *outcome.draft;
+        ModelingChangeRecord record;
+        record.subject = "design";
+        record.summary = "导入 WorkCell 草稿（MDL-18 有损提取）";
+        session.draft.changes.push_back(std::move(record));
+        // T26/F07：WorkCell提取结果没有URDF的候选报告，旧模型的名称对
+        // 不得随着同根内容替换继续参与策略预填；确认之前保持原状态。
+        session.importedSelfCollisionCandidates.clear();
+        if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
+        summary = "WorkCell 导入完成："
+                  + std::to_string(outcome.report.mapped.size()) + " 项映射、"
+                  + std::to_string(outcome.report.errors.size())
+                  + " 项错误——草稿已更新，请经『应用草稿』提交";
         return true;
     }
 
@@ -883,65 +1261,31 @@ bool executeModelingCommand(const std::string& commandId,
             summary = "选中对象不是本模型连杆——估算目标无效";
             return false;
         }
-        // 段元几何（旧版 autoLink 同款近似——§5.2）：连杆 i 的占位段＝该
-        // 连杆系原点→其驱动关节 j_i 安装原点（joints[i].origin，连杆系下）；
-        // 末端法兰连杆（links.size()==joints.size()+1 的尾元素）无驱动关节
-        // ——诚实拒绝（法兰几何归后续任务）。位姿数学复用内核
-        // makeLinkPlaceholderCylinder（z 对齐＋中点定位——段系在连杆系下）。
-        if (linkIndex >= draft.design.joints.size()) {
-            summary = "末端法兰连杆无驱动关节原点可构段元——请经导入或后续法兰几何任务";
-            return false;
-        }
-        const auto& origin = draft.design.joints[linkIndex].origin;
-        if (!origin.tryValue().has_value()) {
-            summary = "驱动关节原点未提供——无法推导连杆段元（先补关节原点）";
-            return false;
-        }
-        const rw::math::Vector3D<double> segmentEnd(origin.tryValue()->d());
-        const double length = segmentEnd.norm2();
-        if (!(length > 0.0)) {
-            summary = "段元零长度（关节原点与连杆系原点重合）——无估算几何意义";
-            return false;
-        }
-        // 材料选择（§5.3 默认密度表五键——chooseItem 应答面）。
-        const std::pair<const char*, const char*> materials[] = {
-            {"steel", "钢（7850 kg/m³）"}, {"aluminum", "铝（2700 kg/m³）"},
-            {"cast-iron", "铸铁（7200 kg/m³）"}, {"titanium-alloy", "钛合金（4430 kg/m³）"},
-            {"engineering-plastic", "工程塑料（1200 kg/m³）"},
-        };
-        QStringList items;
-        for (const auto& [id, label] : materials) { items << QString::fromUtf8(label); }
-        const auto pickedMaterial = host.chooseItem(QStringLiteral("选择连杆材料"),
-                                                    QStringLiteral("估算采用 §5.3 默认密度表："),
-                                                    items);
-        if (!pickedMaterial.has_value()) { return false; }  // 用户取消
-
-        // 段元组装（单段实心圆柱——半径＝占位圆柱设计默认值；密度解析在
-        // estimateLink 内〔先 density 已提供值再查默认表〕，此处只给键）。
-        SegmentSpec segment;
-        segment.primitive = SolidCylinderSpec{kPlaceholderCylinderRadius, length};
-        segment.linkFromSegment = makeLinkPlaceholderCylinder(
-            rw::math::Vector3D<double>(0.0, 0.0, 0.0), segmentEnd,
-            "estimate-segment", kPlaceholderCylinderRadius).geometry.localTransform;
-        segment.material.materialId = materials[*pickedMaterial].first;
+        // F09/MDL-05：几何来自用户完整段元输入，与关节原点无关。
+        // 法兰与零原点连杆同样可估算；未确认不读写任何物性。
+        const auto segments=host.editPropertySegments(draft.design.links[linkIndex].localName);
+        if(!segments){return false;}
 
         const PropertyEstimator estimator;
         std::vector<core::DiagnosticRecord> diags;
-        const auto outcome = estimator.estimateLink({segment}, diags);
+        const auto outcome = estimator.estimateLink(*segments, diags);
         if (!outcome.ok()) {
             summary = "物性估算失败：" + outcome.error().detail;
             return false;
         }
         const EstimatedLinkProperties& props = outcome.get();
-        // 写回（§5.3 规则 1——估算结果一律 GeometricEstimate＋公式表标记）：
-        // 覆盖既有用户值前确认（旧值来源非估算＝用户手填，破坏性覆盖须确认）。
+        // 任一已提供的非估算物性都是权威输入，不能只检查mass而静默
+        // 覆盖用户单独提供的质心或完整惯量。确认拒绝保留三项及全部来源。
         LinkEntry& link = session.draft.design.links[linkIndex];
-        const bool overwritingUser =
-            link.body.mass.state() == core::FieldState::Provided
-            && link.body.mass.provenance().kind == core::ProvenanceKind::UserProvided;
+        const auto authoritative=[](const auto& field){
+            return field.state()==core::FieldState::Provided
+                && field.provenance().kind!=core::ProvenanceKind::GeometricEstimate;
+        };
+        const bool overwritingUser=authoritative(link.body.mass)
+            || authoritative(link.body.centerOfMass)||authoritative(link.body.inertia);
         if (overwritingUser
             && !host.confirmProceed(QStringLiteral("覆盖确认"),
-                                    QStringLiteral("该连杆已有用户手填物性——估算结果将覆盖。是否继续？"))) {
+                                    QStringLiteral("该连杆已有权威物性——质量、质心和完整惯量将由估算结果一起覆盖。是否继续？"))) {
             return false;
         }
         link.body.mass = core::SourcedValue<double>::provided(props.massKg, props.provenance);
@@ -952,8 +1296,8 @@ bool executeModelingCommand(const std::string& commandId,
             core::SourcedValue<InertiaTensor>::provided(props.inertia, props.provenance);
         ModelingChangeRecord record;
         record.subject = "links[" + std::to_string(linkIndex) + "].body";
-        record.summary = std::string("物性估算（材料 ") + materials[*pickedMaterial].first
-                         + "，单段圆柱近似）";
+        record.summary = "物性估算（显式段元 " + std::to_string(segments->size())
+                         + " 段，连杆系合成，来源＝几何估算）";
         session.draft.changes.push_back(std::move(record));
         if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
         summary = "物性估算完成：质量 " + std::to_string(props.massKg) + " kg（来源＝估算）——请经『应用草稿』提交";
@@ -1015,16 +1359,7 @@ bool executeModelingCommand(const std::string& commandId,
         const ModelDiffService service;
         const ModelDiffReport report =
             service.diff(*session.baselineSnapshot, session.draft);
-        QString text = QStringLiteral("与基线修订的差异（Model Diff）\n\n"
-                                      "结构组：%1 条\n参数组：%2 条\n物性组：%3 条")
-                           .arg(report.structure.size())
-                           .arg(report.parameters.size())
-                           .arg(report.properties.size());
-        if (report.structure.empty() && report.parameters.empty()
-            && report.properties.empty()) {
-            text += QStringLiteral("\n\n两工作集逐字段全等——无差异。");
-        }
-        host.showInfo(QStringLiteral("与基线比较"), text);
+        host.showModelDiff(report,*session.baselineSnapshot,session.draft,deps.locateDiffObject);
         summary = "与基线比较完成：结构 " + std::to_string(report.structure.size())
                   + "／参数 " + std::to_string(report.parameters.size())
                   + "／物性 " + std::to_string(report.properties.size()) + " 条差异";
@@ -1085,6 +1420,7 @@ bool executeModelingCommand(const std::string& commandId,
         record.subject = "design";
         record.summary = "导入规范模型包（MDL-20 round-trip 入草稿）";
         session.draft.changes.push_back(std::move(record));
+        session.importedSelfCollisionCandidates.clear(); // 包未承载导入报告，不能借用旧来源。
         if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
         summary = "规范包导入完成——草稿已更新，请经『应用草稿』提交";
         return true;
@@ -1123,27 +1459,23 @@ bool executeModelingCommand(const std::string& commandId,
 
     // ---- modeling.reset-home-zero（会话命令——零修订；MDL-17/§4.6）-------
     if (commandId == "modeling.reset-home-zero") {
-        // 复位目标参考＝位姿集保留键（homeConfiguration/zeroConfiguration——
-        // §4.6 行 386）；三维会话姿态承载面随 View3D 阶段 B（UI-T33）落位，
-        // 本命令当前呈现参考数据（V-27：位姿集参考数据读取不产生写）。
-        if (!session.draft.poseSetObject.has_value()) {
-            summary = "无位姿集参考数据（草稿未含命名位姿集）——无可复位的会话姿态";
-            return false;
-        }
-        QString text = QStringLiteral("复位 Home/Zero（会话姿态参考）\n");
-        for (const auto& entry : session.draft.poseSetObject->entries) {
-            if (entry.key == "zero" || entry.key == "home") {
-                QString q;
-                for (double v : entry.jointConfiguration) {
-                    q += QStringLiteral("%1 ").arg(v, 0, 'g', 6);
-                }
-                text += QStringLiteral("\n%1：[%2]").arg(
-                    QString::fromStdString(entry.key), q);
+        // MDL-17：只显示权威保留键；旧home/zero不是别名，不得静默选中。
+        // 保存条目由模块装配出口恢复到真实宿主，取消/缺出口不写任何会话态。
+        if(!deps.restoreNamedPose){summary="会话姿态恢复未装配——未写入";return false;}
+        if(!session.draft.poseSetObject){summary="命名位姿集缺失——无可恢复的Home/Zero";return false;}
+        QStringList choices;
+        for(const auto key:{kHomeConfigurationPoseKey,kZeroConfigurationPoseKey}){
+            if(std::any_of(session.draft.poseSetObject->entries.begin(),session.draft.poseSetObject->entries.end(),
+                [&](const auto& e){return e.key==key;})){
+                choices.push_back(QString::fromStdString(std::string(key)));
             }
         }
-        host.showInfo(QStringLiteral("复位 Home/Zero"), text);
-        summary = "Home/Zero 参考数据已呈现（会话命令——零修订；姿态承载面随三维视图落位）";
-        return true;
+        if(choices.empty()){summary="未定义homeConfiguration/zeroConfiguration——未写入";return false;}
+        const auto selected=host.chooseItem(QStringLiteral("恢复Home/Zero"),
+            QStringLiteral("选择保存的姿态（仅改变已应用模型的会话姿态）"),choices);
+        if(!selected){summary.clear();return false;}
+        if(*selected<0||*selected>=choices.size()){summary="姿态选择下标无效——未写入";return false;}
+        return deps.restoreNamedPose(choices[*selected].toStdString(),summary);
     }
 
     // 未知命令 id＝调用方违约（PA-1 路由面——fail-fast，不静默吞）。

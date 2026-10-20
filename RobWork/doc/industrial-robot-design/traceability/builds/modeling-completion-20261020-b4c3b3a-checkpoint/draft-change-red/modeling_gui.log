@@ -1,0 +1,42 @@
+Note: Google Test filter = ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1232): error: Expected equality of these values:
+  changes
+    Which is: 0
+  1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1234): error: Expected equality of these values:
+  changes
+    Which is: 0
+  2
+局部撤销也改变待保存内容
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1236): error: Expected equality of these values:
+  changes
+    Which is: 0
+  3
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1237): error: Expected equality of these values:
+  changes
+    Which is: 0
+  3
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1238): error: Expected equality of these values:
+  changes
+    Which is: 0
+  3
+关闭清理不保存跨项目空草稿
+
+[  FAILED  ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21 (890 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (891 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (893 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+
+ 1 FAILED TEST

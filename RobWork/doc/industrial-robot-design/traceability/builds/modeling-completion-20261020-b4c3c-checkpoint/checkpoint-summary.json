@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "modeling-b4c3c-checkpoint/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "37ddc7ded99cea94ae876a44bff7db8864accefe",
+  "completed": false,
+  "totals": {
+    "total": 1516,
+    "passed": 1516,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 444,
+      "passed": 444,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 339,
+      "passed": 339,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 348,
+      "passed": 348,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 83,
+      "passed": 83,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 94,
+      "passed": 94,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 55,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "formalHost": {
+    "status": "PASS",
+    "checksPassed": 359,
+    "checksFailed": 0,
+    "scope": "正式draft.apply冲突/原稿落盘/取消/完整重建/手工重填/再次应用/两次重开/继续编辑；原FK、需求三维交互和投影检查"
+  },
+  "notRun": [
+    "47项全部功能最终验收",
+    "真实网格及全部安装姿态/TCP/导航/透明线框/遮挡高亮",
+    "干净会话外部修订完整实时刷新专项",
+    "F01/F14剩余入口及正式R2完整装配",
+    "全新上下文独立验收"
+  ],
+  "notes": [
+    "套件与正式宿主检查分开计数，重复专项不累计",
+    "Qt真实窗口已查看，代理图元不冒称真实mesh",
+    "旧无条件脏通知导致undo后的无编辑旧稿落盘并覆盖后续场景；成功消费和clean结算共同修复",
+    "冲突未决时宿主保留旧完整磁盘稿；显式重建不自动提交",
+    "无子代理、不推送、不合入；F06/F07留另一智能体",
+    "早期红证与夹具错误单独保留；中间一次冲突结算失败原日志被同名重跑覆盖，仅在计划如实登记，不冒称冻结原日志"
+  ]
+}

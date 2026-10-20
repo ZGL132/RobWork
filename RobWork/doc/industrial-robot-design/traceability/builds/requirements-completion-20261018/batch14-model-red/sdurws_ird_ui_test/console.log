@@ -1,0 +1,30 @@
+Note: Google Test filter = HostCompilePipelineTest.*REQ10_WP14T12
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from HostCompilePipelineTest
+[ RUN      ] HostCompilePipelineTest.ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12
+RT-INPUT-INVALID: runtime/input-invalid: S2: reader 解析失败（oid=obj-a01e827955df585762487fd170aa0608）：runtime/input-invalid: reader: RefMissing object-id=obj-0f829adcc6196b6207efb217153fb2de field=sceneRefs[0]——引用对象 token 不匹配（期望 scene-object，实得 ）
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(288): error: Value of: result.ok
+  Actual: false
+Expected: true
+新场景载荷不应丢类型，也不能被当作根对象解码
+
+[  FAILED  ] HostCompilePipelineTest.ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12 (0 ms)
+[ RUN      ] HostCompilePipelineTest.SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12
+RT-INPUT-INVALID: runtime/input-invalid: S2: reader 解析失败（oid=obj-f460a3983a5de420ee88eabeda658920）：runtime/input-invalid: reader: RefMissing object-id=obj-029fbf55684821be087eb86aef970546 field=sceneRefs[0]——引用对象 token 不匹配（期望 scene-object，实得 ）
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(318): error: Value of: result.ok
+  Actual: false
+Expected: true
+部件单独更新必须保留基线根，不要求根冗余写入
+
+[  FAILED  ] HostCompilePipelineTest.SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12 (0 ms)
+[----------] 2 tests from HostCompilePipelineTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] HostCompilePipelineTest.ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12
+[  FAILED  ] HostCompilePipelineTest.SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12
+
+ 2 FAILED TESTS

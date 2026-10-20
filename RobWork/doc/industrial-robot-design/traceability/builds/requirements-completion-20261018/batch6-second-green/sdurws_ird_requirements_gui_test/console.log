@@ -1,0 +1,39 @@
+Note: Google Test filter = *BatchParameters*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(239): error: Expected equality of these values:
+  after.pose.position.value()[0]
+    Which is: 250
+  0.25
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(240): error: Expected equality of these values:
+  after.pose.position.value()[1]
+    Which is: 500
+  0.5
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(242): error: Expected equality of these values:
+  after.tolerance.positionTolerance
+    Which is: 2
+  0.002
+
+[  FAILED  ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12 (513 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12 (32 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(282): error: Value of: m_editor.workingSet().conditions.entries.front().targetCycleTimeS
+  Actual: false
+Expected: true
+
+[  FAILED  ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12 (1494 ms)
+[----------] 3 tests from RequirementsSessionGuiTest (2040 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (2040 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+
+ 2 FAILED TESTS

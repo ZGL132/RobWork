@@ -25,12 +25,25 @@
  */
 
 #include <gtest/gtest.h>
+#include <QFile> // 资源桥回归使用真实临时文件，io负责实际安全读取和摘要复核。
+#include <QTemporaryDir>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <sdurws/ird/modeling/CommandHandlers.hpp>
+#include <sdurws/ird/policy/SystemDefaultPolicy.hpp>
+#include <sdurws/ird/project/ProjectStore.hpp>
+#include <sdurws/ird/project/UndoRedo.hpp>
+#include <sdurws/ird/ui/IDraftController.hpp> // 完整装配门面只前置声明，调用需公共完整类型。
+#include <sdurws/ird/ui/IPluginUiModule.hpp>
+
 
 #include <iostream>
 #include <map>
 #include <memory>
 #include <optional>
 #include <string>
+#include <type_traits> // 历史五变体取内嵌身份，根身份仍来自闭包引用。
 #include <vector>
 
 #include <sdurws/ird/core/Identity.hpp>
@@ -40,7 +53,15 @@
 #include <sdurws/ird/project/CommandService.hpp>  // project::CompileRequest/ObjectWrite（S5 编排输入）
 #include <sdurws/ird/project/QueryPort.hpp>       // project::IProjectQueryPort（替身契约形状）
 #include <sdurws/ird/runtime/HostPresentationView.hpp>  // createHostPresentationView（真实呈现视图）
+#include <sdurws/ird/kinematics/Fk.hpp>
+#include <sdurws/ird/kinematics/Ik.hpp>
+#include <cmath>
+#include <limits>
+#include <rw/kinematics/Kinematics.hpp>
+#include <rw/models/Device.hpp>
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>
 #include <sdurws/ird/runtime/Snapshot.hpp>
+#include <sdurws/ird/runtime/Codec.hpp>  // A-15：真实worker物化编码，完整命名TCP不可丢失。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 // UI-T78 渲染面用例的框架消费面（被测 TU 同源编入门控块的框架链接面——
@@ -238,6 +259,87 @@ protected:
 
 /// 编译成功面：计划闭包→十段链发布→快照缓存可取（名称映射非空——S8
 /// 产物随快照在位；编译基线对账面回读一致）。
+/**
+ * @brief A-15/REQ-01：真实建模对象字节→宿主十段编译→真实FK/IK的完整目录链。
+ * 查询替身只提供对象字节；Codec、安装复合、内容身份、求解均为产品实现。
+ */
+TEST_F(HostCompilePipelineTest, NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15)
+{
+    IRD_TEST_INFO("REQ-01", {"AT-23"}, std::nullopt);
+    const modeling::RobotDesignCodec codec;
+    const auto decoded = codec.decode(m_designBytes, modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    auto root = std::get<modeling::RobotDesign>(decoded.get());
+    modeling::ToolDefinition tool;
+    tool.objectId = core::ObjectId::generate(); tool.localName = "named-tool";
+    tool.mountInterface = rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.2, 0.3, 0.4),
+        rw::math::Rotation3D<double>(0,-1,0,1,0,0,0,0,1));
+    tool.tcpList = {{"a", rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.5,0,0),
+                        rw::math::Rotation3D<double>::identity()), ""},
+                   {"b", rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0.4,0),
+                        rw::math::Rotation3D<double>::identity()), ""}};
+    root.toolRefs = {tool.objectId}; root.defaultTcp = modeling::TcpRef{tool.objectId, "a"};
+    const auto rootBytes = codec.encode(modeling::ObjectVariant(root), modeling::kCurrentFormatVersion);
+    const auto toolBytes = codec.encode(modeling::ObjectVariant(tool), modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(rootBytes.ok()); ASSERT_TRUE(toolBytes.ok());
+    m_designBytes = rootBytes.get();
+    m_query->addObject(tool.objectId, std::string(modeling::kToolDefinitionObjectType), toolBytes.get());
+    HostModelCompilePort port({m_query.get(), core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType), nullptr});
+    const auto result = port.compileWorkCellAndDwc(makeCompileRequest());
+    ASSERT_TRUE(result.ok);
+    const auto snapshot = port.lastPublishedSnapshot(); ASSERT_TRUE(snapshot);
+    ASSERT_EQ(snapshot->model().tools()[0].namedTcpOffsets.size(), 2U);
+    // 跨进程前置也走真实物化工厂：同一1.2字节必须保留完整目录与身份。
+    // 快照选项直接取原发布值，避免测试自行猜测编译开关造成身份漂移。
+    runtime::snapshotcodec::MaterializedPayload payload;
+    payload.revision.id = snapshot->revision(); payload.revision.seq = snapshot->revisionSeq();
+    payload.revision.branch = snapshot->branch();
+    payload.revision.objectRefs = snapshot->model().header().objectRefs;
+    payload.canonicalModelBytes = runtime::rtcodec::encode(snapshot->model());
+    payload.nameMapBytes = runtime::rtcodec::encodeNameMap(snapshot->nameMap());
+    payload.options = snapshot->compileOptions();
+    payload.compilerContractVersion = snapshot->compilerContractVersion();
+    payload.compilerVersion = snapshot->compilerVersion();
+    payload.expectedModelIdentity = snapshot->modelIdentity();
+    payload.expectedNameMapIdentity = snapshot->nameMapIdentity();
+    const auto materialized = runtime::RuntimeSnapshotFactory().materialize(
+        runtime::snapshotcodec::encode(payload));
+    ASSERT_NE(materialized.snapshot, nullptr);
+    EXPECT_EQ(materialized.snapshot->modelIdentity(), snapshot->modelIdentity());
+    EXPECT_EQ(materialized.snapshot->model(), snapshot->model());
+    // 仅借用已发布不可变快照。适配器是IKinRuntimeView端口，不包含计算替身。
+    struct View final : kinematics::IKinRuntimeView {
+        const runtime::CanonicalModel& value;
+        explicit View(const runtime::CanonicalModel& model) : value(model) {}
+        const runtime::CanonicalModel& model() const override { return value; }
+        rw::math::Transform3D<double> worldToBase() const override { return value.world().T_world_base; }
+    } view(materialized.snapshot->model());
+    const double q = 0.3;
+    for (const auto& row : std::vector<std::pair<std::string, rw::math::Vector3D<double>>>{
+            {"a", {0.2,0.8,0.4}}, {"b", {-0.2,0.3,0.4}}}) {
+        kinematics::TcpRef tcp; tcp.toolObject = tool.objectId; tcp.tcpKey = row.first;
+        const auto fk = kinematics::FkEvaluator().evaluate(view, tcp, {q}); ASSERT_TRUE(fk.ok());
+        const auto p = row.second;
+        const rw::math::Vector3D<double> expected(std::cos(q)*p[0]-std::sin(q)*p[1],
+                                                std::sin(q)*p[0]+std::cos(q)*p[1], p[2]);
+        EXPECT_LT((fk.get().tcpInBase.P() - expected).norm2(), 1e-12);
+        // 安装旋转Rz(π/2)＋关节角q，独立解析，不复用FK输出作为IK目标。
+        const double theta = q + 1.5707963267948966;
+        kinematics::IkRequest request;
+        request.modelView = &view; request.tcp = tcp;
+        request.targetInBase = rw::math::Transform3D<double>(expected,
+            rw::math::Rotation3D<double>(std::cos(theta),-std::sin(theta),0,
+                                         std::sin(theta),std::cos(theta),0,0,0,1));
+        request.initialValues = {{0.1}}; request.referenceQ = {0};
+        request.iterationLimit = 200; request.intervals = kinematics::evaluationIntervals(view);
+        const auto solved = kinematics::IkSolver().solve(request);
+        ASSERT_EQ(solved.outcomeKind, kinematics::IkOutcomeKind::SolutionsFound);
+        ASSERT_FALSE(solved.solutionSet.solutions.empty());
+        EXPECT_NEAR(solved.solutionSet.solutions.front().q[0], q, 1e-3);
+    }
+}
+
 TEST_F(HostCompilePipelineTest, CompilePort_PublishesSnapshotAndCachesIt)
 {
     HostModelCompilePort port(HostModelCompilePort::Deps{
@@ -260,6 +362,139 @@ TEST_F(HostCompilePipelineTest, CompilePort_PublishesSnapshotAndCachesIt)
     EXPECT_GT(snapshot->nameMap().size(), 0u) << "S8 名称映射应随快照在位";
     // 编译基线对账（发布归属修订的编排取数面——呈现事实构造的输入）。
     EXPECT_TRUE(port.lastPublishedBaseRevision() == m_query->view.id);
+}
+
+/** @brief REQ-10：新场景计划位于根之前时也按真实token解引用并完成十段链。 */
+TEST_F(HostCompilePipelineTest, ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {"AT-23"}, std::nullopt);
+    const modeling::RobotDesignCodec codec;
+    const auto decoded=codec.decode(m_designBytes,modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    auto design=std::get<modeling::RobotDesign>(decoded.get());
+    modeling::SceneObject fixture;
+    fixture.objectId=core::ObjectId::generate(); fixture.localName="pick-fixture";
+    fixture.worldPose.P()=rw::math::Vector3D<>(0.4,0.2,0.1); // 世界系m，不预乘安装姿态。
+    const std::vector<std::uint8_t> geometryBytes{'s','o','l','i','d',' ','f','i','x','t','u','r','e'};
+    modeling::ResourceRef resource;
+    resource.resourceId="fixture-geometry"; resource.state=modeling::ResourceState::Solidified;
+    core::ContentDigester digest; digest.update(geometryBytes.data(),geometryBytes.size());
+    resource.contentDigest=digest.finalize();
+    core::ContentVersion version; version.bytes=resource.contentDigest;
+    resource.solidifiedObject=modeling::SolidifiedRef{core::ObjectId::generate(),version};
+    m_query->addObject(resource.solidifiedObject->objectId,"resource",geometryBytes);
+    design.resourceManifest.push_back(resource);
+    fixture.geometry=modeling::GeometryRef{}; fixture.geometry->resourceRefId=resource.resourceId;
+    design.sceneRefs.push_back(fixture.objectId);
+    const auto sceneBytes=codec.encode(modeling::ObjectVariant(fixture),modeling::kCurrentFormatVersion);
+    const auto rootBytes=codec.encode(modeling::ObjectVariant(design),modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(sceneBytes.ok()); ASSERT_TRUE(rootBytes.ok());
+    const std::vector<project::ObjectWrite> writes{
+        {fixture.objectId,std::string(modeling::kSceneObjectObjectType),sceneBytes.get()},
+        {m_rootId,std::string(modeling::kRobotDesignObjectType),rootBytes.get()}};
+    HostProjectClosureView closure(*m_query,std::string(modeling::kRobotDesignObjectType),&writes);
+    const auto root=closure.tryObjectByToken(modeling::kRobotDesignObjectType);
+    const auto scene=closure.tryObject(fixture.objectId);
+    ASSERT_TRUE(root); ASSERT_TRUE(scene);
+    EXPECT_EQ(root->bytes,rootBytes.get()) << "根检索不能依赖计划槽顺序";
+    EXPECT_EQ(scene->objectTypeToken,modeling::kSceneObjectObjectType);
+    EXPECT_EQ(scene->bytes,sceneBytes.get());
+    HostModelCompilePort port({m_query.get(),core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType),nullptr});
+    const project::CompileRequest request{*m_query,writes,m_query->view.id};
+    const auto result=port.compileWorkCellAndDwc(request);
+    for(const auto& diag:result.diagnostics){ std::cerr<<diag.code<<": "<<diag.cause<<'\n'; }
+    EXPECT_TRUE(result.ok) << "新场景载荷不应丢类型，也不能被当作根对象解码";
+}
+
+/** @brief REQ-10：仅改既有场景时，从基线取根、从计划取场景，不能按首条载荷猜根。 */
+TEST_F(HostCompilePipelineTest, SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {"AT-23"}, std::nullopt);
+    const modeling::RobotDesignCodec codec;
+    const auto decoded=codec.decode(m_designBytes,modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    auto design=std::get<modeling::RobotDesign>(decoded.get());
+    modeling::SceneObject fixture;
+    fixture.objectId=core::ObjectId::generate(); fixture.localName="pick-fixture";
+    const std::vector<std::uint8_t> geometryBytes{'s','o','l','i','d',' ','f','i','x','t','u','r','e'};
+    modeling::ResourceRef resource;
+    resource.resourceId="fixture-geometry"; resource.state=modeling::ResourceState::Solidified;
+    core::ContentDigester digest; digest.update(geometryBytes.data(),geometryBytes.size());
+    resource.contentDigest=digest.finalize();
+    core::ContentVersion version; version.bytes=resource.contentDigest;
+    resource.solidifiedObject=modeling::SolidifiedRef{core::ObjectId::generate(),version};
+    design.resourceManifest.push_back(resource);
+    fixture.geometry=modeling::GeometryRef{}; fixture.geometry->resourceRefId=resource.resourceId;
+    design.sceneRefs.push_back(fixture.objectId);
+    const auto rootBytes=codec.encode(modeling::ObjectVariant(design),modeling::kCurrentFormatVersion);
+    const auto oldSceneBytes=codec.encode(modeling::ObjectVariant(fixture),modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(rootBytes.ok()); ASSERT_TRUE(oldSceneBytes.ok());
+    m_query->view.objectRefs.clear(); m_query->objects.clear();
+    m_query->addObject(resource.solidifiedObject->objectId,"resource",geometryBytes);
+    m_query->addObject(m_rootId,std::string(modeling::kRobotDesignObjectType),rootBytes.get());
+    m_query->addObject(fixture.objectId,std::string(modeling::kSceneObjectObjectType),oldSceneBytes.get());
+    fixture.worldPose.P()=rw::math::Vector3D<>(0.6,0.3,0.2); // 更新世界系位置，单位m。
+    const auto sceneBytes=codec.encode(modeling::ObjectVariant(fixture),modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(sceneBytes.ok());
+    const std::vector<project::ObjectWrite> writes{
+        {fixture.objectId,std::string(modeling::kSceneObjectObjectType),sceneBytes.get()}};
+    HostProjectClosureView closure(*m_query,std::string(modeling::kRobotDesignObjectType),&writes);
+    const auto root=closure.tryObjectByToken(modeling::kRobotDesignObjectType);
+    const auto scene=closure.tryObject(fixture.objectId);
+    ASSERT_TRUE(root); ASSERT_TRUE(scene);
+    EXPECT_EQ(root->bytes,rootBytes.get()) << "无根计划时必须读取基线根";
+    EXPECT_EQ(scene->bytes,sceneBytes.get()) << "场景应读新计划，不能退回旧场景";
+    HostModelCompilePort port({m_query.get(),core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType),nullptr});
+    const project::CompileRequest request{*m_query,writes,m_query->view.id};
+    const auto result=port.compileWorkCellAndDwc(request);
+    for(const auto& diag:result.diagnostics){ std::cerr<<diag.code<<": "<<diag.cause<<'\n'; }
+    EXPECT_TRUE(result.ok) << "部件单独更新必须保留基线根，不要求根冗余写入";
+}
+
+/** @brief REQ-10/CON-03：Recorded资源经真实io读取，变化/缺失拒绝且不替换原快照。 */
+TEST_F(HostCompilePipelineTest, RecordedResourceIsRereadAndFailurePreservesSnapshot_REQ10_WP14T12)
+{
+    IRD_TEST_INFO("REQ-10", {"AT-23"}, std::nullopt);
+    QTemporaryDir directory; ASSERT_TRUE(directory.isValid());
+    const QString path=directory.filePath("fixture.stl");
+    const QByteArray content("solid fixture\nendsolid fixture\n");
+    QFile file(path); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    ASSERT_EQ(file.write(content),content.size()); file.close();
+    const modeling::RobotDesignCodec codec;
+    const auto decoded=codec.decode(m_designBytes,modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    auto design=std::get<modeling::RobotDesign>(decoded.get());
+    modeling::ResourceRef resource; resource.resourceId="fixture-resource";
+    core::ContentDigester digest; digest.update(content.constData(),static_cast<std::size_t>(content.size()));
+    resource.contentDigest=digest.finalize();
+    resource.externalRecord=modeling::ExternalResourceRecord{path.toStdString(),resource.contentDigest};
+    design.resourceManifest.push_back(resource);
+    const auto bytes=codec.encode(modeling::ObjectVariant(design),modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());
+    const std::vector<project::ObjectWrite> writes{
+        {m_rootId,std::string(modeling::kRobotDesignObjectType),bytes.get()}};
+    HostModelCompilePort port({m_query.get(),core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType),nullptr});
+    const project::CompileRequest request{*m_query,writes,m_query->view.id};
+    const auto first=port.compileWorkCellAndDwc(request);
+    for(const auto& diag:first.diagnostics){std::cerr<<diag.code<<": "<<diag.cause<<'\n';}
+    ASSERT_TRUE(first.ok) << "真实Recorded资源必须能从现有io桥读取";
+    const auto original=port.lastPublishedSnapshot(); ASSERT_NE(original,nullptr);
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly|QIODevice::Truncate));
+    ASSERT_EQ(file.write("changed",7),7); file.close();
+    const auto changed=port.compileWorkCellAndDwc(request);
+    EXPECT_FALSE(changed.ok);
+    EXPECT_TRUE(std::any_of(changed.diagnostics.begin(),changed.diagnostics.end(),[](const auto& d){
+        return d.cause.find("resource-changed")!=std::string::npos;}));
+    EXPECT_EQ(port.lastPublishedSnapshot(),original) << "资源变化不能替换已发布快照";
+    ASSERT_TRUE(file.remove());
+    const auto missing=port.compileWorkCellAndDwc(request);
+    EXPECT_FALSE(missing.ok);
+    EXPECT_TRUE(std::any_of(missing.diagnostics.begin(),missing.diagnostics.end(),[](const auto& d){
+        return d.cause.find("resource-missing")!=std::string::npos;}));
+    EXPECT_EQ(port.lastPublishedSnapshot(),original);
 }
 
 /// 编译失败面：非法对象字节→ok=false＋诊断非空（MDL-06——失败不提交，
@@ -652,3 +887,512 @@ TEST_F(HostCompilePipelineTest,
 
 }  // namespace
 }  // namespace sdurws::ird::ui::test
+
+namespace sdurws::ird::ui::test {
+namespace {
+/** @brief PM-04/AT-21：没有权威读取装配时不能把旧草稿直接换成新修订锚。 */
+TEST(HostModelingConflict, MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto domain=modeling::createModelingPluginAssembly();domain.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto base=core::RevisionId::generate();
+    domain.bindSessionAnchor(branch,base);auto& source=domain.modelingDraftSource();
+    const auto before=source.buildDraftDocument();
+    EXPECT_THROW(source.rebuildOnRevision(core::RevisionId::generate().toCanonical()),std::runtime_error);
+    EXPECT_EQ(source.buildDraftDocument().payload,before.payload);
+    EXPECT_EQ(source.buildDraftDocument().baseRevisionId,base)<<"未完整读取权威工作集不得宣称已重建";
+}
+
+/** @brief PM-04/AT-21：完整基线替换与待迁移草稿原子保留，错误回调不得污染旧值。 */
+TEST_F(HostCompilePipelineTest, ConflictRebuildReadsCompleteFixedRevisionAndRetainsOldDraft_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    // 原S5夹具基线是故意不可解码的旧占位字节，由plannedWrites覆盖；
+    // 本测试读取已保存修订，必须登记真实Codec根，不能把S5覆盖前置套到重开。
+    m_query->view.objectRefs.clear();m_query->objects.clear();
+    m_query->addObject(m_rootId,std::string(modeling::kRobotDesignObjectType),m_designBytes);
+    auto domain=modeling::createModelingPluginAssembly();domain.seedTemplateSession();
+    const auto branch=m_query->view.branch;domain.bindSessionAnchor(branch,core::RevisionId::generate());
+    auto& source=domain.modelingDraftSource();const auto old=source.buildDraftDocument();
+    domain.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r){
+        return readModelingRevisionDraft(*m_query,b,r);
+    });
+    source.rebuildOnRevision(m_query->view.id.toCanonical());
+    const auto actual=source.buildDraftDocument();
+    const auto expected=readModelingRevisionDraft(*m_query,branch,m_query->view.id);ASSERT_TRUE(expected);
+    EXPECT_EQ(actual.payload,expected->payload);EXPECT_EQ(actual.baseRevisionId,m_query->view.id);
+    ASSERT_TRUE(domain.retainedConflictDraft());EXPECT_EQ(domain.retainedConflictDraft()->payload,old.payload);
+    EXPECT_EQ(domain.retainedConflictDraft()->baseRevisionId,old.baseRevisionId);
+    EXPECT_FALSE(domain.module->buildDraftCommand(modeling::kModuleHandle))<<"新基线不能继承旧编辑摘要";
+    // 已有待迁移素材也属于失败原子性；空返回只代表明确无根，不能由错字节推导。
+    for(int fault=0;fault<5;++fault){
+        domain.bindRevisionDraftReader([&,fault](const core::BranchId&,const core::RevisionId&)
+            ->std::optional<DraftDocumentProjection>{
+            if(fault==0){throw std::runtime_error("实际读取失败");}
+            auto invalid=*expected;
+            if(fault==1){invalid.moduleId="requirements";}
+            if(fault==2){invalid.baseRevisionId=core::RevisionId::generate();}
+            if(fault==3){invalid.payload="broken-frame";}
+            if(fault==4){invalid=old;invalid.baseRevisionId=m_query->view.id;}
+            return invalid;
+        });
+        EXPECT_THROW(source.rebuildOnRevision(m_query->view.id.toCanonical()),std::runtime_error)<<fault;
+        EXPECT_EQ(source.buildDraftDocument().payload,actual.payload);
+        EXPECT_EQ(domain.retainedConflictDraft()->payload,old.payload);
+        EXPECT_EQ(domain.retainedConflictDraft()->baseRevisionId,old.baseRevisionId);
+    }
+    EXPECT_THROW(source.rebuildOnRevision("bad-revision"),std::invalid_argument);
+    domain.onSessionDetached();EXPECT_FALSE(domain.retainedConflictDraft());
+}
+
+/** @brief PM-04：固定修订无根是合法空态；跨分支、多个根或坏字节必须定位失败。 */
+TEST_F(HostCompilePipelineTest, RevisionDraftReaderDistinguishesEmptyFromCorruption_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    m_query->view.objectRefs.clear();m_query->objects.clear();
+    m_query->addObject(m_rootId,std::string(modeling::kRobotDesignObjectType),m_designBytes);
+    const auto original=m_query->view;const auto originalBytes=m_query->objects;
+    EXPECT_THROW(readModelingRevisionDraft(*m_query,core::BranchId::generate(),original.id),std::runtime_error);
+    m_query->view.objectRefs.clear();EXPECT_FALSE(readModelingRevisionDraft(*m_query,original.branch,original.id));
+    auto domain=modeling::createModelingPluginAssembly();domain.seedTemplateSession();
+    domain.bindSessionAnchor(original.branch,core::RevisionId::generate());const auto old=domain.modelingDraftSource().buildDraftDocument();
+    domain.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r){return readModelingRevisionDraft(*m_query,b,r);});
+    domain.modelingDraftSource().rebuildOnRevision(original.id.toCanonical());
+    EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().baseRevisionId,original.id);
+    EXPECT_FALSE(domain.module->buildDraftCommand(modeling::kModuleHandle));
+    ASSERT_TRUE(domain.retainedConflictDraft());EXPECT_EQ(domain.retainedConflictDraft()->payload,old.payload);
+    m_query->view=original;m_query->view.objectRefs.push_back(original.objectRefs.front());
+    EXPECT_THROW(readModelingRevisionDraft(*m_query,original.branch,original.id),std::runtime_error);
+    m_query->view=original;for(auto& item:m_query->objects){item.second={0xff};}
+    EXPECT_THROW(readModelingRevisionDraft(*m_query,original.branch,original.id),std::runtime_error);
+    m_query->objects=originalBytes;
+}
+
+/** @brief MDL-17/AT-04：真实编译WC上恢复关节，独立核对末端矩阵；非法请求不改State。 */
+TEST_F(HostCompilePipelineTest, NamedPoseStagesRealStateAndRejectsAtomically_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    HostModelCompilePort port(HostModelCompilePort::Deps{m_query.get(),core::ProjectId::generate(),std::string(modeling::kRobotDesignObjectType),nullptr});
+    ASSERT_TRUE(port.compileWorkCellAndDwc(makeCompileRequest()).ok);
+    const auto snapshot=port.lastPublishedSnapshot();ASSERT_NE(snapshot,nullptr);
+    auto view=runtime::createHostPresentationView(snapshot,m_query->view.id);
+    auto cell=view->hostPresentationWorkCell();
+    const auto device=cell->findDevice(snapshot->model().chain().deviceName);
+    ASSERT_FALSE(device.isNull());
+    auto state=cell->getDefaultState();
+    modeling::ModelingSessionPoseRequest request;
+    request.branch=snapshot->branch();request.rootObjectId=m_rootId;
+    for(const auto& joint:snapshot->model().chain().joints){request.jointIds.push_back(joint.objectId);}
+    request.jointConfiguration={0.5};std::string reason;
+    ASSERT_TRUE(stageModelingSessionPose(request,*snapshot,*cell,state,reason))<<reason;
+    EXPECT_DOUBLE_EQ(device->getQ(state)[0],0.5);
+    const auto end=rw::kinematics::Kinematics::worldTframe(device->getEnd(),state);
+    EXPECT_NEAR(end.R()(0,0),std::cos(0.5),1e-12);
+    EXPECT_NEAR(end.R()(1,0),std::sin(0.5),1e-12);
+    const auto accepted=device->getQ(state);
+    for(int mode=0;mode<5;++mode){
+        auto invalid=request;
+        if(mode==0){invalid.branch=core::BranchId::generate();}
+        if(mode==1){invalid.rootObjectId=core::ObjectId::generate();}
+        if(mode==2){invalid.jointIds[0]=core::ObjectId::generate();}
+        if(mode==3){invalid.jointConfiguration[0]=2.0;} // 原夹具限位[0,1] rad。
+        if(mode==4){invalid.jointConfiguration[0]=std::numeric_limits<double>::quiet_NaN();}
+        EXPECT_FALSE(stageModelingSessionPose(invalid,*snapshot,*cell,state,reason))<<mode;
+        EXPECT_FALSE(reason.empty());EXPECT_EQ(device->getQ(state),accepted);
+    }
+}
+
+} // namespace
+} // namespace sdurws::ird::ui::test
+
+namespace sdurws::ird::ui::test {
+namespace {
+/** @brief MDL-17：零偏已折叠、Fixed不占q、移动轴m单位，独立几何参照核对。 */
+TEST_F(HostCompilePipelineTest, NamedPoseMixedChainKeepsZeroOffsetAndFixedSemantics_MDL17_AT04)
+{
+    IRD_TEST_INFO("MDL-17",{},std::nullopt);
+    modeling::RobotDesignCodec codec;
+    const auto decoded=codec.decode(m_designBytes,modeling::kCurrentFormatVersion);ASSERT_TRUE(decoded.ok());
+    auto design=std::get<modeling::RobotDesign>(decoded.get());
+    design.joints[0].zeroOffset=0.2; // rad，编译桥折叠入origin，恢复q_rw需为0.6-0.2。
+    const auto provided=core::ValueProvenance::make(core::ProvenanceKind::UserProvided);
+    auto fixed=design.joints[0];fixed.objectId=core::ObjectId::generate();fixed.localName="fixed";
+    fixed.type=modeling::JointType::Fixed;fixed.zeroOffset=0;
+    fixed.bounds=core::SourcedValue<modeling::JointLimits>::notProvided();
+    modeling::JointPose fixedPose(rw::math::Transform3D<>(rw::math::Vector3D<>(0,0,0.2),rw::math::Rotation3D<>::identity()));
+    fixed.origin=core::SourcedValue<modeling::JointPose>::provided(fixedPose,provided);
+    auto slide=design.joints[0];slide.objectId=core::ObjectId::generate();slide.localName="slide";
+    slide.type=modeling::JointType::Prismatic;slide.zeroOffset=0;
+    slide.axis=core::SourcedValue<rw::math::Vector3D<>>::provided({1,0,0},provided);
+    slide.bounds=core::SourcedValue<modeling::JointLimits>::provided({-0.5,0.5},provided);
+    design.joints.push_back(fixed);design.joints.push_back(slide);
+    for(const auto* name:{"fixed-link","slide-link"}){
+        auto link=design.links.back();link.objectId=core::ObjectId::generate();link.localName=name;
+        design.links.push_back(link);
+    }
+    const auto encoded=codec.encode(modeling::ObjectVariant{design},modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(encoded.ok());m_designBytes=encoded.get();
+    HostModelCompilePort port({m_query.get(),core::ProjectId::generate(),std::string(modeling::kRobotDesignObjectType),nullptr});
+    ASSERT_TRUE(port.compileWorkCellAndDwc(makeCompileRequest()).ok);
+    const auto snapshot=port.lastPublishedSnapshot();
+    const auto view=runtime::createHostPresentationView(snapshot,m_query->view.id);
+    const auto cell=view->hostPresentationWorkCell();auto state=cell->getDefaultState();
+    const auto device=cell->findDevice(snapshot->model().chain().deviceName);
+    modeling::ModelingSessionPoseRequest request;
+    request.branch=snapshot->branch();request.rootObjectId=m_rootId;
+    for(const auto& joint:design.joints){request.jointIds.push_back(joint.objectId);}
+    request.jointConfiguration={0.4,0.0,0.1};std::string reason;
+    ASSERT_TRUE(stageModelingSessionPose(request,*snapshot,*cell,state,reason))<<reason;
+    ASSERT_EQ(device->getQ(state).size(),2U);
+    const auto end=rw::kinematics::Kinematics::worldTframe(device->getEnd(),state);
+    EXPECT_NEAR(end.P()[0],0.1*std::cos(0.6),1e-12);
+    EXPECT_NEAR(end.P()[1],0.1*std::sin(0.6),1e-12);EXPECT_NEAR(end.P()[2],0.2,1e-12);
+    const auto previous=device->getQ(state);
+    request.jointConfiguration[2]=0.8;
+    EXPECT_FALSE(stageModelingSessionPose(request,*snapshot,*cell,state,reason));
+    EXPECT_EQ(device->getQ(state),previous);
+    request.jointConfiguration.pop_back();
+    EXPECT_FALSE(stageModelingSessionPose(request,*snapshot,*cell,state,reason));
+    EXPECT_EQ(device->getQ(state),previous);
+    rw::models::WorkCell other("other");
+    EXPECT_FALSE(stageModelingSessionPose(request,*snapshot,other,state,reason));
+    EXPECT_EQ(device->getQ(state),previous);
+}
+} // namespace
+
+/** @brief PM-04/ARC-04：回执按冻结(oid,cv)读取，HEAD前移或删除不能改变旧结果。 */
+TEST_F(HostCompilePipelineTest, CommittedClosureStaysOnExactRevision_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    m_query->view.objectRefs.clear();
+    m_query->addObject(m_rootId,std::string(modeling::kRobotDesignObjectType),m_designBytes);
+    const auto fixed=m_query->view;
+    HostRevisionClosureView closure(*m_query,fixed);
+    // 不替换查询算法；仅移动端口的HEAD并提供同ID新字节，旧字节仍完整保留。
+    m_query->view.id=core::RevisionId::generate();m_query->view.objectRefs.clear();
+    m_query->addObject(m_rootId,std::string(modeling::kRobotDesignObjectType),{9,8,7});
+    const auto old=closure.tryObject(m_rootId);ASSERT_TRUE(old);
+    EXPECT_EQ(old->bytes,m_designBytes);
+    m_query->view.objectRefs.clear();
+    const auto byToken=closure.tryObjectByToken(modeling::kRobotDesignObjectType);
+    ASSERT_TRUE(byToken);EXPECT_EQ(byToken->bytes,m_designBytes);
+    EXPECT_FALSE(closure.tryObject(core::ObjectId::generate()));
+}
+
+/** @brief PM-04/08/18：真实存储+正式编译+同源回执的完整增改删、逆放与磁盘重开。 */
+TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"PM-04","PM-08","PM-18","MDL-06"}),{"AT-21"});
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());
+    auto opened=project::ProjectStoreFactory::createNew(
+        std::filesystem::path(dir.path().toStdWString())/"complete.rwdesign","完整工作集");
+    auto store=std::move(opened.store);
+    auto domain=modeling::createModelingPluginAssembly();
+    HostRuntimeNameMapPort nameMap;HostRuntimeNameContext runtimeNames(&nameMap);
+    HostDraftAwareNameContext names({&runtimeNames,[&](const core::ObjectId& id)->std::optional<std::string>{
+        std::string name;return domain.tryDraftObjectName(id,name)?std::optional<std::string>{name}:std::nullopt;
+    }});
+    auto evaluator=policy::makeJointLimitEvaluator();policy::SystemDefaultPolicyProvider provider;
+    modeling::HandlerServices services{{evaluator.get(),&names},&provider,policy::systemDefaultPolicyObjectId(),std::nullopt};
+    modeling::registerModelingCommandHandlers(store->handlerRegistry(),services);
+    auto compile=std::make_unique<HostModelCompilePort>(HostModelCompilePort::Deps{
+        &store->query(),store->projectId(),std::string(modeling::kRobotDesignObjectType),nullptr});
+    store->commands().attachCompilePort(compile.get());
+    const modeling::RobotDesignCodec codec;
+    const auto hex=[&](const auto& value){
+        const auto encoded=codec.encode(modeling::ObjectVariant{value},modeling::kCurrentFormatVersion);
+        if(!encoded.ok()){throw std::logic_error("完整链测试编码失败："+encoded.error().detail);}
+        return QString::fromLatin1(QByteArray(reinterpret_cast<const char*>(encoded.get().data()),
+            static_cast<qsizetype>(encoded.get().size())).toHex());
+    };
+    const auto decode=[&](const QJsonValue& value){
+        const auto raw=QByteArray::fromHex(value.toString().toLatin1());
+        const auto decoded=codec.decode(std::vector<std::uint8_t>(raw.begin(),raw.end()),modeling::kCurrentFormatVersion);
+        if(!decoded.ok()){throw std::logic_error("完整链测试读回失败："+decoded.error().detail);}
+        return decoded.get();
+    };
+    const auto savedDoc=[&](){return QJsonDocument::fromJson(QByteArray::fromStdString(
+        domain.modelingDraftSource().buildDraftDocument().payload)).object();};
+    auto root=std::get<modeling::RobotDesign>(codec.decode(m_designBytes,modeling::kCurrentFormatVersion).get());
+    modeling::ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="gripper";
+    tool.tcpList={{"tip",rw::math::Transform3D<>(rw::math::Vector3D<>(0,0,0.2)),""}};
+    modeling::SceneObject scene;scene.objectId=core::ObjectId::generate();scene.localName="fixed-marker";
+    scene.worldPose.P()[0]=1.2; // 世界系m，无几何固定帧不能被伪造为碰撞物。
+    modeling::PoseSet poses;poses.objectId=core::ObjectId::generate();
+    poses.entries={{"homeConfiguration",{0.2},"参考"}};
+    modeling::DrivetrainDesign drivetrain;drivetrain.objectId=core::ObjectId::generate();
+    drivetrain.ratioPerJoint={core::SourcedValue<double>::provided(100.0,
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided))};
+    drivetrain.frictionPerJoint.resize(1);drivetrain.torqueLimitsPerJoint.resize(1);
+    const auto setParts=[&](QJsonObject& doc){
+        root.toolRefs={tool.objectId};root.defaultTcp=modeling::TcpRef{tool.objectId,"tip"};
+        root.sceneRefs={scene.objectId};root.poseSetRef=poses.objectId;root.drivetrainRef=drivetrain.objectId;
+        doc["root"]=hex(root);doc["tools"]=QJsonArray{hex(tool)};doc["scenes"]=QJsonArray{hex(scene)};
+        doc["poses"]=hex(poses);doc["drivetrain"]=hex(drivetrain);
+    };
+    QJsonObject document{{"format","ird-modeling-draft"},{"version",1},{"rootId",QJsonValue(QJsonValue::Null)}};
+    setParts(document);
+    domain.bindSessionAnchor(store->query().head().branch,store->query().head().id);
+    const auto stage=[&](QJsonObject doc){
+        doc["changes"]=QJsonArray{QJsonObject{{"subject","full.apply"},{"summary","完整工作集编辑"}}};
+        ui::DraftDocumentProjection frame;frame.moduleId="modeling";frame.baseRevisionId=store->query().head().id;
+        frame.payload=QJsonDocument(doc).toJson(QJsonDocument::Compact).toStdString();
+        domain.modelingDraftSource().adoptRestoredDocument(frame);
+        // void恢复口没有返回值；先核对真实接受的五对象，不能让坏夹具沿旧好草稿误提交。
+        const auto actual=savedDoc();
+        for(const auto* key:{"root","tools","scenes","poses","drivetrain"}){
+            EXPECT_EQ(actual[key],doc[key])<<"草稿前置未接受："<<key;
+            if(actual[key]!=doc[key]){return false;}
+        }
+        return true;
+    };
+    const auto apply=[&](){
+        const auto before=store->query().head();const auto envelope=domain.module->buildDraftCommand("modeling");
+        if(!envelope){ADD_FAILURE()<<"草稿未生成完整命令";return project::CommandResult{};}
+        auto result=store->commands().submit(*envelope);
+        for(const auto& diag:result.diagnostics){std::cerr<<diag.code<<"\n";}
+        EXPECT_TRUE(result.committed());
+        if(result.committed()){
+            EXPECT_EQ(store->query().head().seq,before.seq+1);
+            acceptModelingCommittedSession(domain,store->query(),result);
+            EXPECT_FALSE(domain.module->buildDraftCommand("modeling"));
+        }
+        return result;
+    };
+    // 拒绝路径使用同一个真实草稿源、命令服务和编译端口；每次检查零修订及完整草稿未丢失。
+    const auto reject=[&](const QJsonObject& candidate,project::ICommandInteraction* interaction){
+        if(!stage(candidate)){ADD_FAILURE()<<"拒绝用例前置未接受，禁止提交旧草稿";return project::CommandResult{};}
+        const auto before=store->query().head();
+        const auto frame=domain.modelingDraftSource().buildDraftDocument().payload;
+        const auto envelope=domain.module->buildDraftCommand("modeling");
+        if(!envelope){ADD_FAILURE()<<"拒绝场景未组装命令";return project::CommandResult{};}
+        const auto result=store->commands().submit(*envelope,interaction);
+        EXPECT_FALSE(result.committed());EXPECT_EQ(store->query().head().id,before.id);
+        EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().payload,frame);
+        return result;
+    };
+    // 域草稿解码已拒绝缺部件，因此命令层结构反例直接改运输槽，仍走真实project入口。
+    ASSERT_TRUE(stage(document));auto validEnvelope=*domain.module->buildDraftCommand("modeling");
+    auto incomplete=*modeling::tryDecodeCommandPayload(validEnvelope.payloadCanonical);incomplete.objects.pop_back();
+    auto badEnvelope=validEnvelope;badEnvelope.payloadCanonical=modeling::encodeCommandPayload(incomplete);
+    const auto initial=store->query().head();const auto initialFrame=domain.modelingDraftSource().buildDraftDocument().payload;
+    const auto bad=store->commands().submit(badEnvelope);
+    EXPECT_EQ(bad.status.rejection,project::CommandStatus::Rejection::InvalidPayload);
+    EXPECT_EQ(store->query().head().id,initial.id);
+    EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().payload,initialFrame);
+    auto invalidRoot=root;invalidRoot.joints.front().type=modeling::JointType::Continuous;
+    invalidRoot.joints.front().bounds=core::SourcedValue<modeling::JointLimits>{}; // Continuous不能携有限bounds。
+    auto hard=document;hard["root"]=hex(invalidRoot);
+    const auto hardResult=reject(hard,nullptr);
+    EXPECT_EQ(hardResult.status.rejection,project::CommandStatus::Rejection::HardAssertFailed);
+    class Decline final:public project::ICommandInteraction {
+    public:
+        int calls=0; ///< 确认端口唯一替身，数值与策略判定均走产品实现。
+        bool isAlive()const override{return true;} ///< 本轮同步交互存活。
+        std::optional<std::vector<core::ConfirmationCredential>> requestConfirmations(
+            const std::vector<core::ConfirmableFinding>& findings)override
+        {++calls;EXPECT_FALSE(findings.empty());return std::nullopt;} ///< 模拟用户明确拒绝。
+    } decline;
+    auto wideRoot=root;wideRoot.joints.front().bounds=core::SourcedValue<modeling::JointLimits>::provided(
+        {0.0,40.0},core::ValueProvenance::make(core::ProvenanceKind::UserProvided)); // rad，超过缺省整周阈值。
+    auto wide=document;wide["root"]=hex(wideRoot);
+    const auto declined=reject(wide,&decline);
+    EXPECT_EQ(declined.status.rejection,project::CommandStatus::Rejection::ConfirmationsRejected);EXPECT_EQ(decline.calls,1);
+    auto unavailableRoot=root;modeling::ResourceRef resource;resource.resourceId="missing-mesh";
+    resource.externalRecord=modeling::ExternalResourceRecord{dir.path().toStdString()+"/missing.stl",{}};
+    unavailableRoot.resourceManifest={resource};auto unavailableScene=scene;
+    unavailableScene.geometry=modeling::GeometryRef{"missing-mesh"};
+    auto unavailable=document;unavailable["root"]=hex(unavailableRoot);unavailable["scenes"]=QJsonArray{hex(unavailableScene)};
+    const auto compileFailed=reject(unavailable,nullptr);
+    EXPECT_TRUE(compileFailed.status.failed());EXPECT_FALSE(compileFailed.diagnostics.empty());
+    EXPECT_FALSE(compile->lastPublishedSnapshot()); // 实际io/编译失败不能发布伪成功快照。
+    ASSERT_TRUE(stage(document));const auto firstResult=apply();ASSERT_TRUE(firstResult.committed());
+    const auto stale=store->commands().submit(validEnvelope);
+    EXPECT_EQ(stale.status.rejection,project::CommandStatus::Rejection::StaleRevision);
+    EXPECT_EQ(store->query().head().id,*firstResult.newRevision);
+    // PM-04/AT-29：真实拒绝后详情必须保留原base，并取目标分支权威tip；
+    // 不能让控制器拿着空tip重建或把旧草稿自动迁到HEAD。
+    ui::CommandResultProjection rejected;
+    rejected.rejectionReason="stale-revision";
+    auto rejectedDraft=domain.modelingDraftSource().buildDraftDocument();
+    EXPECT_EQ(rejectedDraft.branchId,validEnvelope.branch);
+    rejectedDraft.baseRevisionId=*validEnvelope.expectedRevision; // 对应实际被拒的旧信封。
+    const auto staleProjection=projectModelingCommandResult(store->query(),
+        rejectedDraft,rejected);
+    ASSERT_TRUE(staleProjection.staleDetail);
+    EXPECT_EQ(staleProjection.staleDetail->draftBaseRevision,validEnvelope.expectedRevision->toCanonical());
+    EXPECT_EQ(staleProjection.staleDetail->currentTipRevision,firstResult.newRevision->toCanonical());
+    EXPECT_FALSE(staleProjection.staleDetail->advancedSummary.empty());
+    EXPECT_FALSE(staleProjection.staleDetail->involvedObjectNames.empty());
+    auto invalidDraft=rejectedDraft;invalidDraft.branchId=core::BranchId::generate();
+    EXPECT_THROW(projectModelingCommandResult(store->query(),invalidDraft,rejected),std::runtime_error);
+    invalidDraft=rejectedDraft;invalidDraft.baseRevisionId={};
+    EXPECT_THROW(projectModelingCommandResult(store->query(),invalidDraft,rejected),std::invalid_argument);
+    invalidDraft=rejectedDraft;invalidDraft.baseRevisionId=core::RevisionId::generate();
+    EXPECT_THROW(projectModelingCommandResult(store->query(),invalidDraft,rejected),std::exception);
+    // 非Stale不需要文档身份，也不允许顺手触发完整修订读取或携冲突详情。
+    auto otherResult=rejected;otherResult.rejectionReason="not-writable";
+    EXPECT_FALSE(projectModelingCommandResult(store->query(),{},otherResult).staleDetail);
+    otherResult.status=ui::CommandResultProjection::Status::Committed;
+    otherResult.newRevision=firstResult.newRevision;
+    const auto successProjection=projectModelingCommandResult(store->query(),{},otherResult);
+    EXPECT_EQ(successProjection.newRevision,firstResult.newRevision);EXPECT_FALSE(successProjection.staleDetail);
+    const auto first=store->query().head();HostRevisionClosureView firstClosure(store->query(),first);
+    document=savedDoc();root=std::get<modeling::RobotDesign>(decode(document["root"]));
+    tool=std::get<modeling::ToolDefinition>(decode(document["tools"].toArray().at(0)));
+    scene=std::get<modeling::SceneObject>(decode(document["scenes"].toArray().at(0)));
+    poses=std::get<modeling::PoseSet>(decode(document["poses"]));
+    drivetrain=std::get<modeling::DrivetrainDesign>(decode(document["drivetrain"]));
+    ASSERT_TRUE(root.defaultTcp);EXPECT_EQ(root.defaultTcp->toolOid,tool.objectId);
+    const auto firstToolId=tool.objectId;const auto firstPoseId=poses.objectId;
+    EXPECT_EQ(root.toolRefs.front(),tool.objectId);EXPECT_EQ(root.poseSetRef,poses.objectId);
+    ASSERT_TRUE(compile->lastPublishedSnapshot());EXPECT_EQ(compile->lastPublishedSnapshot()->model().tools().size(),1U);
+    // 第二次仅修改已有部件，正式身份/对象集数量必须保持，不能再创建临时副本。
+    tool.displayName="修改后的夹爪";setParts(document);ASSERT_TRUE(stage(document));
+    ASSERT_TRUE(apply().committed());EXPECT_EQ(store->query().head().objectRefs.size(),first.objectRefs.size());
+    document=savedDoc();EXPECT_EQ(std::get<modeling::ToolDefinition>(decode(document["tools"].toArray().at(0))).objectId,firstToolId);
+    // 移除活动引用保留历史字节，之后重新创建第二个位姿集/传动也不能触发多活动对象错误。
+    root.toolRefs.clear();root.defaultTcp.reset();root.sceneRefs.clear();root.poseSetRef.reset();root.drivetrainRef.reset();
+    document["root"]=hex(root);document["tools"]=QJsonArray{};document["scenes"]=QJsonArray{};
+    document["poses"]=QJsonValue(QJsonValue::Null);document["drivetrain"]=QJsonValue(QJsonValue::Null);
+    ASSERT_TRUE(stage(document));ASSERT_TRUE(apply().committed());const auto removed=store->query().head();
+    EXPECT_EQ(removed.objectRefs.size(),first.objectRefs.size());EXPECT_TRUE(compile->lastPublishedSnapshot()->model().tools().empty());
+    document=savedDoc();tool.objectId=core::ObjectId::generate();scene.objectId=core::ObjectId::generate();
+    poses.objectId=core::ObjectId::generate();drivetrain.objectId=core::ObjectId::generate();
+    setParts(document);ASSERT_TRUE(stage(document));ASSERT_TRUE(apply().committed());
+    const auto second=store->query().head();document=savedDoc();
+    const auto secondPoses=std::get<modeling::PoseSet>(decode(document["poses"]));
+    EXPECT_NE(secondPoses.objectId,firstPoseId);EXPECT_EQ(second.objectRefs.size(),first.objectRefs.size()+4U);
+    auto undone=store->undoRedo().undo(second.branch);ASSERT_TRUE(undone.committed());
+    acceptModelingCommittedSession(domain,store->query(),undone);
+    EXPECT_TRUE(savedDoc()["poses"].isNull());EXPECT_TRUE(savedDoc()["tools"].toArray().isEmpty());
+    auto redone=store->undoRedo().redo(second.branch);ASSERT_TRUE(redone.committed());
+    acceptModelingCommittedSession(domain,store->query(),redone);
+    EXPECT_EQ(std::get<modeling::PoseSet>(decode(savedDoc()["poses"])).objectId,secondPoses.objectId);
+    // PM-18/B4c-3a：新完整命令已留下两份历史单例，现在真实执行旧五token。
+    // 不只测prepare；每次都经项目事务/正式编译及同源权威回执，再逐命令撤销/重做。
+    const std::vector<std::string_view> legacyTokens={modeling::kCmdApplyRobotDesign,
+        modeling::kCmdApplyToolDefinition,modeling::kCmdApplySceneObjects,
+        modeling::kCmdApplyNamedPoses,modeling::kCmdApplyDrivetrainDesign};
+    const auto submitLegacy=[&](std::string_view token,const modeling::CommandPayload& payload){
+        auto envelope=validEnvelope; // 请求信封不分配命令身份，持久取号仍唯一归project。
+        envelope.branch=store->query().head().branch;envelope.expectedRevision=store->query().head().id;
+        envelope.commandType=std::string(token);envelope.payloadCanonical=modeling::encodeCommandPayload(payload);
+        const auto result=store->commands().submit(envelope);
+        EXPECT_TRUE(result.committed())<<std::string(token);
+        if(result.committed()){acceptModelingCommittedSession(domain,store->query(),result);}
+        return result.committed();
+    };
+    for(std::size_t i=0;i<legacyTokens.size();++i){
+        SCOPED_TRACE(std::string(legacyTokens[i]));const auto current=savedDoc();
+        const char* keys[]={"root","tools","scenes","poses","drivetrain"};
+        const auto part=(i==1||i==2)?current[keys[i]].toArray().at(0):current[keys[i]];
+        auto value=decode(part);
+        if(i==0){std::get<modeling::RobotDesign>(value).notes="旧根命令仍可编辑";}
+        if(i==1){std::get<modeling::ToolDefinition>(value).displayName="旧工具命令仍可编辑";}
+        if(i==2){std::get<modeling::SceneObject>(value).worldPose.P()[1]=0.35;}
+        if(i==3){std::get<modeling::PoseSet>(value).entries={{"inspection",{0.35},"旧命令用户姿态"}};}
+        if(i==4){std::get<modeling::DrivetrainDesign>(value).ratioPerJoint[0]=
+            core::SourcedValue<double>::provided(120.0,core::ValueProvenance::make(core::ProvenanceKind::UserProvided));}
+        modeling::PayloadObjectSlot slot;slot.allocateNew=false;slot.objectTypeToken=
+            std::string(i==0?modeling::kRobotDesignObjectType:i==1?modeling::kToolDefinitionObjectType:
+                i==2?modeling::kSceneObjectObjectType:i==3?modeling::kNamedPoseSetObjectType:modeling::kRobotDrivetrainObjectType);
+        slot.objectId=i==0?*core::ObjectId::tryFromCanonical(current["rootId"].toString().toStdString()):
+            std::visit([](const auto& typed)->core::ObjectId{
+                using T=std::decay_t<decltype(typed)>;
+                if constexpr(std::is_same_v<T,modeling::RobotDesign>){return {};}
+                else{return typed.objectId;}
+            },value);
+        const auto encoded=codec.encode(value,modeling::kCurrentFormatVersion);ASSERT_TRUE(encoded.ok());
+        slot.objectBytes=encoded.get();modeling::CommandPayload edit;edit.objects={slot};
+        ASSERT_TRUE(submitLegacy(legacyTokens[i],edit));const auto after=savedDoc();
+        // project现行§5.5按tip.inverse撤销；连续undo会撤销上一条逆命令，
+        // 不能把它当作未声明的多级游标栈。逐条严格核对完整值，保留真实旧token历史面。
+        const auto result=store->undoRedo().undo(second.branch);ASSERT_TRUE(result.committed());
+        acceptModelingCommittedSession(domain,store->query(),result);EXPECT_EQ(savedDoc(),current);
+        const auto replay=store->undoRedo().redo(second.branch);ASSERT_TRUE(replay.committed());
+        acceptModelingCommittedSession(domain,store->query(),replay);EXPECT_EQ(savedDoc(),after);
+    }
+    // 旧历史根槽只携字节，需从当前固定修订找回第一份已不活动的四类部件。
+    const auto oldRoot=firstClosure.tryObjectByToken(modeling::kRobotDesignObjectType);ASSERT_TRUE(oldRoot);
+    modeling::PayloadObjectSlot rootHistory;rootHistory.allocateNew=false;
+    rootHistory.objectTypeToken=std::string(modeling::kRobotDesignObjectType);
+    rootHistory.objectId=*core::ObjectId::tryFromCanonical(savedDoc()["rootId"].toString().toStdString());
+    rootHistory.objectBytes=oldRoot->bytes;modeling::CommandPayload restore;
+    restore.mode=modeling::CommandPayload::Mode::Restore;restore.objects={rootHistory};
+    for(const auto token:legacyTokens){
+        const auto before=savedDoc();ASSERT_TRUE(submitLegacy(token,restore));
+        EXPECT_EQ(std::get<modeling::PoseSet>(decode(savedDoc()["poses"])).objectId,firstPoseId);
+        EXPECT_EQ(std::get<modeling::ToolDefinition>(decode(savedDoc()["tools"].toArray().at(0))).objectId,firstToolId);
+        // 数据恢复不等于正式编译快照恢复；旧named-poses族逆槽若改变运行时根，
+        // 也必须双编译，不能沿其纯位姿正向命令的false位跳过真实运动学/三维输入。
+        ASSERT_TRUE(compile->lastPublishedSnapshot());ASSERT_EQ(compile->lastPublishedSnapshot()->model().tools().size(),1U);
+        EXPECT_EQ(compile->lastPublishedSnapshot()->model().tools().front().objectId,firstToolId)<<std::string(token);
+        const auto restored=savedDoc();
+        auto inverse=store->undoRedo().undo(second.branch);ASSERT_TRUE(inverse.committed());
+        acceptModelingCommittedSession(domain,store->query(),inverse);EXPECT_EQ(savedDoc(),before);
+        EXPECT_EQ(compile->lastPublishedSnapshot()->model().tools().front().objectId,
+            std::get<modeling::ToolDefinition>(decode(before["tools"].toArray().at(0))).objectId)<<std::string(token);
+        auto replay=store->undoRedo().redo(second.branch);ASSERT_TRUE(replay.committed());
+        acceptModelingCommittedSession(domain,store->query(),replay);EXPECT_EQ(savedDoc(),restored);
+        inverse=store->undoRedo().undo(second.branch);ASSERT_TRUE(inverse.committed());
+        acceptModelingCommittedSession(domain,store->query(),inverse);EXPECT_EQ(savedDoc(),before);
+    }
+    const auto oldTool=firstClosure.tryObject(firstToolId);ASSERT_TRUE(oldTool);
+    EXPECT_TRUE(std::get<modeling::ToolDefinition>(codec.decode(oldTool->bytes,modeling::kCurrentFormatVersion).get()).displayName.empty());
+    // B4c-3b-1：HEAD已多次前进，重新编辑仍必须读指定的首个完整修订，
+    // 原最终草稿保留原base；不能从最新HEAD偷读，也不能给旧内容直接换锚。
+    const auto beforeRebuild=domain.modelingDraftSource().buildDraftDocument();
+    const auto finalHead=store->query().head();
+    domain.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r){
+        return readModelingRevisionDraft(store->query(),b,r);
+    });
+    domain.modelingDraftSource().rebuildOnRevision(first.id.toCanonical());
+    const auto firstDraft=readModelingRevisionDraft(store->query(),first.branch,first.id);ASSERT_TRUE(firstDraft);
+    EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().payload,firstDraft->payload);
+    ASSERT_TRUE(domain.retainedConflictDraft());EXPECT_EQ(domain.retainedConflictDraft()->payload,beforeRebuild.payload);
+    EXPECT_EQ(domain.retainedConflictDraft()->baseRevisionId,beforeRebuild.baseRevisionId);
+    EXPECT_EQ(store->query().head().id,finalHead.id)<<"重建不产生项目修订，也不重试提交";
+    HostRevisionClosureView finalClosure(store->query(),finalHead);std::string receiptError;
+    const auto finalRoot=core::ObjectId::tryFromCanonical(savedDoc()["rootId"].toString().toStdString());ASSERT_TRUE(finalRoot);
+    ASSERT_TRUE(domain.acceptAppliedSession(finalClosure,*finalRoot,finalHead.branch,finalHead.id,receiptError))<<receiptError;
+    // PM-04/B4c-3d：另一个编辑入口真实更新场景，域不能依赖本次onCommitted
+    // 回执。只收到项目修订事件时也须通过已装配reader读完整根/活动闭包。
+    {
+        const auto before=domain.modelingDraftSource().buildDraftDocument();
+        const auto parts=savedDoc()["scenes"].toArray();ASSERT_FALSE(parts.isEmpty());
+        auto changed=std::get<modeling::SceneObject>(decode(parts.at(0)));
+        changed.worldPose.P()[2]=0.628; // 世界系m，刻意区别已有修订。
+        const auto bytes=codec.encode(modeling::ObjectVariant{changed},modeling::kCurrentFormatVersion);ASSERT_TRUE(bytes.ok());
+        modeling::CommandPayload update;update.objects.push_back({false,changed.objectId,
+            std::string(modeling::kSceneObjectObjectType),bytes.get()});
+        auto request=validEnvelope;request.branch=finalHead.branch;request.expectedRevision=finalHead.id;
+        request.commandType=std::string(modeling::kCmdApplySceneObjects);
+        request.payloadCanonical=modeling::encodeCommandPayload(update);
+        const auto result=store->commands().submit(request);ASSERT_TRUE(result.committed());
+        const auto tip=store->query().head();
+        const auto expected=readModelingRevisionDraft(store->query(),tip.branch,tip.id);ASSERT_TRUE(expected);
+        EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().payload,before.payload);
+        domain.onRevisionCommitted(tip.branch,tip.id);
+        EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().payload,expected->payload);
+        EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().baseRevisionId,tip.id);
+        EXPECT_FALSE(domain.hasPendingDraft());EXPECT_EQ(store->query().head().id,tip.id);
+    }
+    const auto finalFrame=domain.modelingDraftSource().buildDraftDocument().payload;
+    const auto path=store->canonicalPath();const auto finalRevision=store->query().head();
+    EXPECT_EQ(store->requestClose(),0U);compile.reset();store.reset();
+    project::OpenStoreRequest request;request.path=path;request.mode=project::OpenMode::ReadOnly;
+    auto reopened=project::ProjectStoreFactory::open(request);store=std::move(reopened.store);
+    HostRevisionClosureView restoredClosure(store->query(),store->query().head());
+    const auto restoredRoot=core::ObjectId::tryFromCanonical(savedDoc()["rootId"].toString().toStdString());ASSERT_TRUE(restoredRoot);
+    auto restored=modeling::createModelingPluginAssembly();std::string error;
+    ASSERT_TRUE(restored.restoreCommittedSession(restoredClosure,*restoredRoot,finalRevision.branch,finalRevision.id,error))<<error;
+    EXPECT_EQ(restored.modelingDraftSource().buildDraftDocument().payload,finalFrame);
+    modeling::registerModelingCommandHandlers(store->handlerRegistry(),services);
+    auto readOnlyAttempt=validEnvelope;readOnlyAttempt.branch=finalRevision.branch;readOnlyAttempt.expectedRevision=finalRevision.id;
+    const auto readOnly=store->commands().submit(readOnlyAttempt);
+    EXPECT_EQ(readOnly.status.rejection,project::CommandStatus::Rejection::NotWritable);
+    EXPECT_EQ(restored.modelingDraftSource().buildDraftDocument().payload,finalFrame);
+    EXPECT_EQ(store->query().head().id,finalRevision.id); // 重开浏览零项目修订。
+}
+} // namespace sdurws::ird::ui::test

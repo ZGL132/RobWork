@@ -62,6 +62,7 @@
 
 #include <sdurws/ird/core/Identity.hpp>             // ProjectId/RevisionId/ObjectId/ContentVersion
 #include <sdurws/ird/modeling/CanonicalBridge.hpp>  // modeling::ObjectClosureView（闭包域字节源——R-1 经公共头）
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp> // 完整成功回执装配门面，零私有头。
 #include <sdurws/ird/modeling/DhConvert.hpp>        // modeling::CompileProbe（等价验证分段探针抽象）/RobotDesignDescription
 #include <sdurws/ird/policy/Contexts.hpp>           // policy::IPolicyNameContext（行程评估名称上下文抽象）
 #include <sdurws/ird/project/CommandService.hpp>    // project::IModelCompilePort/CompileRequest/CompileResult
@@ -168,14 +169,14 @@ public:
      * @param query        [in] 存储查询端口（非 owning）
      * @param designToken  [in] 根对象类型 token（路由键——runtime
      *                     kRobotDesignObjectType 同源常量）
-     * @param plannedBytes [in] 计划写入载荷表（非 owning——按 ObjectId
-     *                     线性查找；计划写入集规模＝单命令写入数，小）
+     * @param plannedWrites [in] 完整计划对象槽（非拥有，仅同步编译调用期有效）；
+     *                     必须保留token，根按类型查找，部件按ObjectId查找，
+     *                     禁止按槽序猜测对象种类。单命令规模小，使用线性查找。
      */
     HostProjectClosureView(
         const project::IProjectQueryPort& query,
         std::string designToken,
-        const std::vector<std::pair<core::ObjectId, std::vector<std::uint8_t>>>*
-            plannedBytes);
+        const std::vector<project::ObjectWrite>* plannedWrites);
 
     std::optional<modeling::ClosureObject>
         tryObjectByToken(std::string_view objectTypeToken) const override;
@@ -185,9 +186,67 @@ public:
 private:
     const project::IProjectQueryPort* m_query;   ///< 存储取数面（非 owning）
     std::string m_designToken;                   ///< 根对象 token（路由键）
-    const std::vector<std::pair<core::ObjectId, std::vector<std::uint8_t>>>*
-        m_plannedBytes;                          ///< 计划写入载荷（非 owning）
+    const std::vector<project::ObjectWrite>* m_plannedWrites; ///< 完整计划槽；调用方持有，同步编译期间借用。
 };
+
+/**
+ * @brief PM-04：成功回执的固定修订闭包；拥有RevisionView值，查询端口仅借用。
+ * 仅UI线程同步读取；不访问HEAD，因此后续修订不能改变本回执的(oid,cv)。
+ */
+class HostRevisionClosureView final : public modeling::ObjectClosureView {
+public:
+    /**
+     * @brief 冻结读取引用集；不立即读取对象字节。
+     * @param query [in] 调用方持有的存储端口，须覆盖视图同步使用期。
+     * @param revision [in] 完整不可变修订投影，值拷贝持有；身份有效。
+     * @throws std::invalid_argument 修订或分支身份无效，属装配违约。
+     */
+    HostRevisionClosureView(const project::IProjectQueryPort& query, project::RevisionView revision);
+    /** @brief [in] token精确匹配且仅有一个对象才返回；缺失/歧义/读失败为空。 */
+    std::optional<modeling::ClosureObject> tryObjectByToken(std::string_view token) const override;
+    /** @brief [in] id仅按冻结引用的精确cv读取；缺失/重复/读失败为空，不猜HEAD。 */
+    std::optional<modeling::ClosureObject> tryObject(const core::ObjectId& id) const override;
+private:
+    const project::IProjectQueryPort* m_query; ///< 调用方拥有，同步借用，不延长存储生命周期。
+    project::RevisionView m_revision; ///< 固定引用值；物理单位在原对象Codec中。
+};
+
+/**
+ * @brief 成功提交的建模回执唯一装配：冻结newRevision并完整采纳，失败抛异常供runner隔离。
+ * @param domain [in,out] 本会话建模门面，失败不改变其草稿/锚/基线。
+ * @param query [in] 本会话存储只读口，仅本次同步借用。
+ * @param result [in] 已Committed且携newRevision的真实命令结果。
+ * @throws std::invalid_argument 未成功或无修订（装配违约）；std::runtime_error根缺失/歧义/读回失败。
+ * 仅UI线程；不新增修订、不持有依赖，不用可变HEAD代替成功修订。
+ */
+void acceptModelingCommittedSession(modeling::ModelingPluginAssembly& domain,
+    const project::IProjectQueryPort& query,const project::CommandResult& result);
+
+/**
+ * @brief PM-04：完整读取指定分支/不可变修订的建模草稿值，供冲突重建使用。
+ * @param query [in] 本会话只读查询，同步借用；按指定revision读取精确(oid,cv)。
+ * @param branch [in] 有效目标分支；指定修订必须属于该分支。
+ * @param revision [in] 有效目标修订；不得替换为HEAD。
+ * @return 无根时nullopt；有唯一根时返回原Codec完整域帧，base等于revision、摘要为空。
+ * @throws std::invalid_argument 身份无效；std::runtime_error分支/根歧义/字节错误；
+ *         查询异常沿原端口透传。仅UI线程，无写入/修订，返回值归调用方。
+ */
+std::optional<DraftDocumentProjection> readModelingRevisionDraft(
+    const project::IProjectQueryPort& query,const core::BranchId& branch,
+    const core::RevisionId& revision);
+
+/**
+ * @brief 为project已判定的Stale回执补固定修订对照，不在UI重新判定冲突。
+ * @param query [in] 活动项目只读查询，同步借用。
+ * @param draft [in] 原草稿完整值；branch/base必须有效且属于同一项目会话。
+ * @param result [in] 原回执投影；非Stale时原样返回且零查询。
+ * @return 保持原状态并补充tip/base/摘要/涉事对象呈现名的值副本。
+ * @throws std::invalid_argument 草稿身份无效；读取/闭包错误原样抛出。
+ * 仅UI线程，无持有依赖、无写入；名称只经建模公共装配解析，不显示对象哈希。
+ */
+CommandResultProjection projectModelingCommandResult(
+    const project::IProjectQueryPort& query,const DraftDocumentProjection& draft,
+    CommandResultProjection result);
 
 // =====================================================================
 // HostModelCompilePort——project IModelCompilePort 的 runtime 十段链适配

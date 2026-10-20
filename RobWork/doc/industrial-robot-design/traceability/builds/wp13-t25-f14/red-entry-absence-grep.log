@@ -1,0 +1,6 @@
+# F14 入口缺失红证（基线 09faf7f0＝F07 批后、F14 实现前）
+命令：git grep -c ird_modeling_coupling_edit 09faf7f0 -- 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/*'
+命中 0（传动页无耦合入口——审计 M31 第一问题在实现前状态成立）
+
+命令：git show 09faf7f0:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp | grep -n CouplingStage::R1Locked
+5312:        modeling::CouplingStage::R1Locked,

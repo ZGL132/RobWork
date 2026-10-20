@@ -220,8 +220,8 @@ TEST_F(UndoRedoServiceTest, ApplyUndoRedoEachCommittedAsNewRevisionHistoryAppend
     ASSERT_TRUE(s3.canUndo);
 }
 
-// ---- acceptance 1 补充：重做在内容面恢复原始载荷（引用级撤销的测试域
-//      形态——撤销修订不引用域对象，重做修订重新携带原负载对象）。
+// ---- acceptance 1 补充：逆命令与重做重放的内容面验证。输入件的逆命令只写
+//      元数据，未声明域根变更；ARC-01完整修订必须保留原引用，不能据此冒充域删除。
 
 TEST_F(UndoRedoServiceTest, UndoThenRedoRestoresOriginalPayloadAndCommandFamily)
 {
@@ -235,12 +235,14 @@ TEST_F(UndoRedoServiceTest, UndoThenRedoRestoresOriginalPayloadAndCommandFamily)
     ASSERT_TRUE(applied.committed());
     const RevisionView v1 = query.revision(*applied.newRevision);
 
-    // ---- 撤销：纯元数据修订——objectRefs 仅剩元数据对象（测试域"移除
-    //      引用"形态；引用集级回退的业务判定归域处理器——§6.5/§6.9）。
+    // ---- 撤销：纯元数据逆命令仍保留原域引用。业务真实移除需声明域根更新，
+    //      空objectWrites没有“删除所有对象”的语义（§4.4.2／§6.5／§6.9）。
     const CommandResult undone = undoRedo.undo(main);
     ASSERT_TRUE(undone.committed());
     const RevisionView v2 = query.revision(*undone.newRevision);
-    ASSERT_EQ(v2.objectRefs.size(), std::size_t{1});
+    ASSERT_EQ(v1.objectRefs.size(), std::size_t{2});
+    ASSERT_EQ(v2.objectRefs.size(), std::size_t{2});
+    EXPECT_EQ(v2.objectRefs[1], v1.objectRefs[1]);
     EXPECT_EQ(v2.objectRefs[0].objectTypeToken, "ProjectMetadata");  // kMetadataTypeToken
 
     // ---- 重做：重放原始载荷——新修订重新携带同负载对象（tryObject 读
@@ -248,6 +250,10 @@ TEST_F(UndoRedoServiceTest, UndoThenRedoRestoresOriginalPayloadAndCommandFamily)
     const CommandResult redone = undoRedo.redo(main);
     ASSERT_TRUE(redone.committed());
     const RevisionView v3 = query.revision(*redone.newRevision);
+    // 原命令每次申请新OID；重放新增一项，原项保留，两份负载均必须原样。
+    ASSERT_EQ(v3.objectRefs.size(), std::size_t{3});
+    EXPECT_EQ(v3.objectRefs[1], v1.objectRefs[1]);
+    EXPECT_NE(v3.objectRefs[2].objectId, v1.objectRefs[1].objectId);
     bool restored = false;
     for (const ObjectRef& ref : v3.objectRefs) {
         if (ref.objectTypeToken != "TestData") {

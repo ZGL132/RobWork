@@ -817,3 +817,31 @@ TEST(MdlDhCommand, AuthoritySwitchWithoutServicesFailsFast_WP13T09_ACC5)
                      query.view, plan, diags),
                  std::logic_error);
 }
+
+/** @brief MDL-02：完整槽中未变部件允许独立权威切换；真实部件编辑仍按C-6拒绝。 */
+TEST(MdlDhCommand, CompleteWorkingSetSwitchAllowsOnlyUnchangedParts_MDL02_AT16)
+{
+    IRD_TEST_INFO("MDL-02",{"AT-16"},std::nullopt);
+    SwitchFixture f;f.provider.policyToReturn.emplace(makePolicy(4.0*kPi));
+    auto baseline=makeExplicitBaseline(makeTwoJointChain());const auto rootId=makeOid();
+    ToolDefinition tool;tool.objectId=makeOid();tool.localName="gripper";
+    tool.tcpList={TcpEntry{"tip",rw::math::Transform3D<>{},""}};
+    baseline.design.toolRefs={tool.objectId};baseline.design.defaultTcp=TcpRef{tool.objectId,"tip"};
+    f.query.view=makeBaselineView(core::RevisionId::generate());
+    f.query.addObject(rootId,std::string(kRobotDesignObjectType),encodeVariant(baseline.design));
+    f.query.addObject(tool.objectId,std::string(kToolDefinitionObjectType),encodeVariant(tool));f.bindNames(baseline.design);
+    auto root=baseline.design;root.authority=AuthorityMode::StandardDH;
+    for(auto& joint:root.joints){joint.dhDerived.reset();}
+    project::HandlerRegistry registry;registerModelingCommandHandlers(registry,f.services);
+    auto* handler=registry.find(std::string(kCmdApplyModelingWorkingSet));ASSERT_NE(handler,nullptr);
+    for(bool changed:{false,true}){
+        auto candidate=tool;if(changed){candidate.displayName="混入的部件修改";}
+        CommandPayload payload;payload.objects={replaceSlot(rootId,std::string(kRobotDesignObjectType),root),
+            replaceSlot(tool.objectId,std::string(kToolDefinitionObjectType),candidate)};
+        project::HandlerContext ctx(f.query,&f.compile,nullptr);project::CommandPlan plan;std::vector<core::DiagnosticRecord> diags;
+        const auto result=handler->prepare(ctx,makeEnvelope(f.query.view,std::string(kCmdApplyModelingWorkingSet),payload),f.query.view,plan,diags);
+        EXPECT_EQ(result,changed?project::PrepareOutcome::RejectedInvalidInput:project::PrepareOutcome::Planned);
+        if(changed){EXPECT_TRUE(plan.objectWrites.empty());}
+        else{ASSERT_EQ(plan.objectWrites.size(),2U);EXPECT_EQ(*plan.objectWrites[1].objectId,tool.objectId);}
+    }
+}

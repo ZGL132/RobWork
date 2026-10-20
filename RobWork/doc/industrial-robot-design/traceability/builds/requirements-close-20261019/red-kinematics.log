@@ -1,0 +1,35 @@
+Note: Google Test filter = KinIk.ToolRollAxisCenteredSeedCorrects*:KinIk.ToolRollOppositeAxisRejected*:KinIk.ToolRollDirectionCorrectionRealFk*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from KinIk
+[ RUN      ] KinIk.ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(1496): error: Value of: out.solutionSet.solutions.empty()
+  Actual: true
+Expected: false
+轴心唯一初值 0.5
+
+[  FAILED  ] KinIk.ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollOppositeAxisRejected_REQ09_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(1510): error: Value of: IkSolver().solve(req).solutionSet.solutions.empty()
+  Actual: false
+Expected: true
+反向角 rad=3.1415926535897931
+
+[  FAILED  ] KinIk.ToolRollOppositeAxisRejected_REQ09_WP14T12 (0 ms)
+[ RUN      ] KinIk.ToolRollDirectionCorrectionRealFk_REQ09_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(1523): error: Value of: out.solutionSet.solutions.empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] KinIk.ToolRollDirectionCorrectionRealFk_REQ09_WP14T12 (0 ms)
+[----------] 3 tests from KinIk (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] KinIk.ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12
+[  FAILED  ] KinIk.ToolRollOppositeAxisRejected_REQ09_WP14T12
+[  FAILED  ] KinIk.ToolRollDirectionCorrectionRealFk_REQ09_WP14T12
+
+ 3 FAILED TESTS

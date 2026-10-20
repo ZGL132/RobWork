@@ -1,0 +1,28 @@
+Note: Google Test filter = *ImportWizardAtomicRows*:*CommandFlows_ImportCsvPartial*:*CsvProductionMappingAndUnits*:*CsvAllErrorDetails*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PluginPanel
+[ RUN      ] PluginPanel.ImportWizardAtomicRows_AT02_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(1164): error: Expected equality of these values:
+  editor.workingSet().points.entries.size()
+    Which is: 2
+  before.points.entries.size() + 2
+    Which is: 3
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(1166): error: Expected equality of these values:
+  editor.workingSet()
+    Which is: 272-byte object <01-00 00-00 BF-01 00-00 E5-9F BA-E7 BA-BF E9-9C 80-E6 B1-82 E9-9B 86-00 0F-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 10-00 00-00 00-00 00-00 00-00 00-00 00-00 00-01 01-20 00-00 00-00 00-00 ... 01-00 00-00 FF-7F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 02-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00>
+  before
+    Which is: 272-byte object <01-00 00-00 00-00 00-00 E5-9F BA-E7 BA-BF E9-9C 80-E6 B1-82 E9-9B 86-00 0F-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 10-00 00-00 00-00 00-00 00-00 00-00 00-00 00-01 01-20 00-00 00-00 00-00 ... 01-00 00-00 BF-01 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00>
+多行导入不能互相覆盖，亦不能拆成多步撤销
+
+[  FAILED  ] PluginPanel.ImportWizardAtomicRows_AT02_WP14T12 (0 ms)
+[----------] 1 test from PluginPanel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] PluginPanel.ImportWizardAtomicRows_AT02_WP14T12
+
+ 1 FAILED TEST

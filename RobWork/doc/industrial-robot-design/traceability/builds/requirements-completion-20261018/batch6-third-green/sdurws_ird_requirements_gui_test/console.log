@@ -1,0 +1,39 @@
+Note: Google Test filter = *BatchParameters*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.StationBatchParametersAtomic_UX05_WP14T12 (484 ms)
+[ RUN      ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.RegionBatchParametersAtomic_UX05_WP14T12 (27 ms)
+[ RUN      ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(281): error: Value of: batch->findChild<QWidget*>("ird_param_confirm_region")->isHidden()
+  Actual: true
+Expected: false
+无待应用修改
+
+[  FAILED  ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12 (1489 ms)
+[ RUN      ] RequirementsSessionGuiTest.BatchParametersAnchorAndReadOnly_UX05_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(305): error: Expected equality of these values:
+  point.pose.position.value()[0]
+    Which is: 1
+  0.25
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(316): error: Expected equality of these values:
+  point.pose.position.value()[0]
+    Which is: 1
+  0.25
+
+[  FAILED  ] RequirementsSessionGuiTest.BatchParametersAnchorAndReadOnly_UX05_WP14T12 (1819 ms)
+[ RUN      ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12
+[       OK ] RequirementsSessionGuiTest.BatchParametersRejectStaleBaseline_UX05_WP14T12 (1797 ms)
+[----------] 5 tests from RequirementsSessionGuiTest (5617 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (5617 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.ConditionBatchParametersCancel_UX05_WP14T12
+[  FAILED  ] RequirementsSessionGuiTest.BatchParametersAnchorAndReadOnly_UX05_WP14T12
+
+ 2 FAILED TESTS

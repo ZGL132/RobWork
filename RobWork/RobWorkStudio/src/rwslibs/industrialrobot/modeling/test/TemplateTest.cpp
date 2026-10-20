@@ -31,11 +31,13 @@
 #include <sdurws/ird/modeling/PropertyEstimation.hpp>  // defaultMaterialDensity（材料密度单源对账）
 #include <sdurws/ird/modeling/RobotDesign.hpp>    // checkInvariants（I-MDL-1~12 静态断言层）
 #include <sdurws/ird/modeling/Template.hpp>       // 被测主面（工厂/编辑流/几何辅助）
+#include <sdurws/ird/modeling/Codec.hpp>          // MDL-12：旧工程范围存储往返。
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <limits>
 #include <cstdint>
 #include <optional>
 #include <stdexcept>
@@ -1012,4 +1014,105 @@ TEST(MdlTemplate, CopyVisualToCollision_SameResourceRef_WP13T07_ACC5)
     EXPECT_EQ(collision.provenance.kind, ProvenanceKind::GeometricEstimate);
     ASSERT_TRUE(collision.provenance.methodTag.has_value());
     EXPECT_EQ(*collision.provenance.methodTag, "collision-copy");
+}
+
+/** @brief MDL-12/AT-17：有限多圈工程范围只写独立属性，旧Codec保真往返。 */
+TEST(MdlTemplate, ContinuousWorkingRangeEditAndCodec_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},std::vector<std::string>{"AT-17"});
+    auto ws=makeSixAxisDraft();
+    auto& joint=ws.design.joints[0];joint.type=JointType::Continuous;
+    joint.bounds=sdurws::ird::core::SourcedValue<JointLimits>::notApplicable();
+    joint.workingRange=sdurws::ird::core::SourcedValue<JointLimits>::notProvided();
+    const auto before=ws;
+    ASSERT_FALSE(applyJointFieldEdit(ws,0,JointEditField::WorkingRange,JointLimits{-8,10}).has_value());
+    EXPECT_EQ(joint.workingRange.value(),(JointLimits{-8,10}));
+    EXPECT_EQ(joint.workingRange.provenance().kind,ProvenanceKind::UserProvided);
+    auto expected=before.design;expected.joints[0].workingRange=joint.workingRange;
+    EXPECT_EQ(ws.design,expected)<<"只允许范围属性变化，类型/来源/限位不改";
+    EXPECT_EQ(ws.changes.size(),before.changes.size()+1);
+    sdurws::ird::modeling::RobotDesignCodec codec;
+    const auto bytes=codec.encode(sdurws::ird::modeling::ObjectVariant{ws.design},sdurws::ird::modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());const auto decoded=codec.decode(bytes.get(),sdurws::ird::modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());EXPECT_EQ(std::get<sdurws::ird::modeling::RobotDesign>(decoded.get()),ws.design);
+    EXPECT_EQ(sdurws::ird::modeling::jointEditFieldToken(JointEditField::WorkingRange),"workingRange");
+}
+
+/** @brief MDL-12/MDL-06：非法范围原子拒绝，批量仅接受合法continuous行。 */
+TEST(MdlTemplate, ContinuousWorkingRangeRejectAndBatch_MDL12_AT17)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12","MDL-06"},std::vector<std::string>{"AT-17"});
+    auto ws=makeSixAxisDraft();ws.design.joints[0].type=JointType::Continuous;
+    ws.design.joints[0].bounds=sdurws::ird::core::SourcedValue<JointLimits>::notApplicable();
+    const auto before=ws;
+    for(const auto range:std::vector<JointLimits>{{1,1},{2,1},{0,std::numeric_limits<double>::infinity()},
+            {std::numeric_limits<double>::quiet_NaN(),1}}){
+        const auto error=applyJointFieldEdit(ws,0,JointEditField::WorkingRange,range);
+        ASSERT_TRUE(error.has_value());EXPECT_EQ(ws,before);
+    }
+    const auto wrongType=applyJointFieldEdit(ws,1,JointEditField::WorkingRange,JointLimits{-1,1});
+    ASSERT_TRUE(wrongType.has_value());EXPECT_EQ(wrongType->code,JointEditErrorCode::TypeBoundsConflict);EXPECT_EQ(ws,before);
+    EXPECT_THROW(applyJointFieldEdit(ws,0,JointEditField::WorkingRange,0.1),std::invalid_argument);
+    EXPECT_EQ(ws,before);
+    const auto result=applyJointFieldEditBatch(ws,JointEditField::WorkingRange,
+        {{0,JointLimits{-20,20}},{1,JointLimits{-2,2}}});
+    EXPECT_EQ(result.appliedCount,1u);EXPECT_EQ(result.rejectedRows,(std::vector<std::size_t>{1}));
+    EXPECT_EQ(ws.changes.size(),before.changes.size()+1);
+    EXPECT_EQ(ws.design.joints[0].workingRange.value(),(JointLimits{-20,20}));
+    EXPECT_EQ(ws.design.joints[1],before.design.joints[1]);
+}
+
+// =====================================================================
+// WP-13-T25/F01：逐轴速度/加速度编辑规则（MDL-01——applyJointFieldEdit）
+// =====================================================================
+
+/// F01 编辑域规则：合法值写入（UserProvided）＋拒绝面（负值/非有限/Fixed）
+/// ＋拒绝原子性（工作集字节不变）＋逐轴独立（不同值互不串扰）。
+TEST(MdlTemplateEdit, VelocityAccelerationEditRules_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01",{},std::nullopt);
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    const ModelingWorkingSet before = ws;
+
+    // ① 合法：逐轴不同值（交接探针族 v=[0.8,1.1,..]、a=[1..6]）。
+    const double v[6] = {0.8, 1.1, 1.4, 1.7, 2.0, 2.3};
+    const double a[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    for (std::size_t i = 0; i < 6; ++i) {
+        EXPECT_FALSE(applyJointFieldEdit(ws, i, JointEditField::MaxVelocity,
+                                         JointEditValue{v[i]}).has_value())
+            << "j" << i + 1 << " 速度合法值被拒";
+        EXPECT_FALSE(applyJointFieldEdit(ws, i, JointEditField::MaxAcceleration,
+                                         JointEditValue{a[i]}).has_value())
+            << "j" << i + 1 << " 加速度合法值被拒";
+        ASSERT_EQ(ws.design.joints[i].maxVelocity.state(), sdurws::ird::core::FieldState::Provided);
+        EXPECT_DOUBLE_EQ(ws.design.joints[i].maxVelocity.value(), v[i]);
+        ASSERT_EQ(ws.design.joints[i].maxAcceleration.state(), sdurws::ird::core::FieldState::Provided);
+        EXPECT_DOUBLE_EQ(ws.design.joints[i].maxAcceleration.value(), a[i]);
+        EXPECT_EQ(ws.design.joints[i].maxVelocity.provenance().kind,
+                  sdurws::ird::core::ProvenanceKind::UserProvided);
+    }
+    // 零值合法（真实零速≠缺失——不得被误拒）。
+    EXPECT_FALSE(applyJointFieldEdit(ws, 0, JointEditField::MaxVelocity,
+                                     JointEditValue{0.0}).has_value());
+    EXPECT_DOUBLE_EQ(ws.design.joints[0].maxVelocity.value(), 0.0);
+
+    // ② 拒绝面：负值/NaN——工作集不变（先校验后提交的原子性）。
+    const ModelingWorkingSet afterEdits = ws;
+    const auto negative = applyJointFieldEdit(ws, 0, JointEditField::MaxVelocity,
+                                              JointEditValue{-1.0});
+    ASSERT_TRUE(negative.has_value());
+    EXPECT_EQ(negative->code, JointEditErrorCode::ValueNotFinite);
+    const auto nanValue = std::numeric_limits<double>::quiet_NaN();
+    const auto nonFinite = applyJointFieldEdit(ws, 0, JointEditField::MaxAcceleration,
+                                               JointEditValue{nanValue});
+    ASSERT_TRUE(nonFinite.has_value());
+    EXPECT_EQ(ws, afterEdits) << "拒绝后工作集必须与拒绝前逐字段相等（原子性）";
+
+    // ③ Fixed 关节拒绝（无可动限值语义——先于写入）。
+    ws.design.joints[5].type = JointType::Fixed;
+    const auto fixedReject = applyJointFieldEdit(ws, 5, JointEditField::MaxVelocity,
+                                                 JointEditValue{1.0});
+    ASSERT_TRUE(fixedReject.has_value());
+    EXPECT_EQ(fixedReject->code, JointEditErrorCode::TypeBoundsConflict);
 }

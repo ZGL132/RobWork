@@ -1,0 +1,35 @@
+Note: Google Test filter = ModelingDraftRestore.*:ModelingDraftCodec.*:ModelingCommittedRestore.*
+[==========] Running 10 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from ModelingDraftCodec
+[ RUN      ] ModelingDraftCodec.DiskRoundTripAndLegacyExactReferences_PM04_AT21
+[       OK ] ModelingDraftCodec.DiskRoundTripAndLegacyExactReferences_PM04_AT21 (11 ms)
+[ RUN      ] ModelingDraftCodec.MalformedFramesRejectWithoutPartialValues_PM08_AT21
+[       OK ] ModelingDraftCodec.MalformedFramesRejectWithoutPartialValues_PM08_AT21 (0 ms)
+[----------] 2 tests from ModelingDraftCodec (12 ms total)
+
+[----------] 3 tests from ModelingCommittedRestore
+[ RUN      ] ModelingCommittedRestore.FullClosureAndIdempotentEdits_REQ10_UX06
+[       OK ] ModelingCommittedRestore.FullClosureAndIdempotentEdits_REQ10_UX06 (0 ms)
+[ RUN      ] ModelingCommittedRestore.MalformedClosurePreservesWholeSession_REQ10_ARC04
+[       OK ] ModelingCommittedRestore.MalformedClosurePreservesWholeSession_REQ10_ARC04 (1 ms)
+[ RUN      ] ModelingCommittedRestore.SavedBaselineThenDraftAndReadonly_REQ10_UX06
+[       OK ] ModelingCommittedRestore.SavedBaselineThenDraftAndReadonly_REQ10_UX06 (0 ms)
+[----------] 3 tests from ModelingCommittedRestore (2 ms total)
+
+[----------] 5 tests from ModelingDraftRestore
+[ RUN      ] ModelingDraftRestore.CompleteWorkingSetAndPendingChanges_PM04_AT21
+[       OK ] ModelingDraftRestore.CompleteWorkingSetAndPendingChanges_PM04_AT21 (0 ms)
+[ RUN      ] ModelingDraftRestore.ProjectStoreSaveCloseReadOnlyReopen_PM04_AT21
+[       OK ] ModelingDraftRestore.ProjectStoreSaveCloseReadOnlyReopen_PM04_AT21 (40 ms)
+[ RUN      ] ModelingDraftRestore.RejectAtomicAndRetainStaleBaseline_PM04_AT29
+[       OK ] ModelingDraftRestore.RejectAtomicAndRetainStaleBaseline_PM04_AT29 (4 ms)
+[ RUN      ] ModelingDraftRestore.ChangedPayloadWithoutSummaryRemainsPending_PM04_AT21
+[       OK ] ModelingDraftRestore.ChangedPayloadWithoutSummaryRemainsPending_PM04_AT21 (0 ms)
+[ RUN      ] ModelingDraftRestore.CanonicalSetOrderDoesNotInventPendingChanges_PM04_AT21
+[       OK ] ModelingDraftRestore.CanonicalSetOrderDoesNotInventPendingChanges_PM04_AT21 (0 ms)
+[----------] 5 tests from ModelingDraftRestore (46 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 3 test suites ran. (60 ms total)
+[  PASSED  ] 10 tests.

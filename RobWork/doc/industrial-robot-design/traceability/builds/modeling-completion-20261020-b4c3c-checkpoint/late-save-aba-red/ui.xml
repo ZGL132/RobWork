@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-20T16:37:35.463" name="AllTests">
+  <testsuite name="DraftControllerModelTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T16:37:35.463">
+    <testcase name="LateAutosaveCannotClearPostApplyEdit_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp" line="1143" status="run" result="completed" time="0." timestamp="2026-10-20T16:37:35.463" classname="DraftControllerModelTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1156&#x0A;Value of: state.modules.front().sessionDirty&#x0A;  Actual: false&#x0A;Expected: true&#x0A;旧保存回执不能清掉应用后的新编辑&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1156
+Value of: state.modules.front().sessionDirty
+  Actual: false
+Expected: true
+旧保存回执不能清掉应用后的新编辑
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1157&#x0A;Value of: state.modules.front().lastSaveOriginToken.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1157
+Value of: state.modules.front().lastSaveOriginToken.empty()
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

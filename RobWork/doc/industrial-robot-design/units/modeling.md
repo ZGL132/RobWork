@@ -4,6 +4,12 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.59（2026-10-20，WP-13-T26 双分支集成：保留T24完整工作集/历史/事件与T25导入/v/a/R2语义；补导入自碰撞候选与局部历史及会话边界一致性，私有帧同存工作集与候选，模板/声明链/WorkCell/规范包/修订或磁盘恢复/关闭清旧来源，失败取消保留，成功应用同稿保留供显式策略确认。无新公共接口/持久化字段；候选重开恢复及来源schema仍属F07开放面。v0.55同日治理与实施记录均保留，不以旧版本条目覆盖任何规则；实际验证及剩余缺口见T26新证据。） |
+| 文档版本 | v0.58（2026-10-20，WP-13-T25/F14 批次落位——耦合矩阵编辑入口＋正式宿主 R2 装配（MDL-21/AT-38——审计 M31 两问题闭合）：①**编辑入口**：传动页新增耦合区（摘要行＋编辑/移除钮＋模态编辑器——窗口首关节/阶数/n×n 表格、Δq_joint=C·Δθ_motor 约定明示、域原语 applyDrivetrainCouplingEdit 裁决、拒绝保留模态原位重试、取消零写入、移除两阶段均允许）；②**能力位贯通**：面板/模块/装配门面 setCouplingStage 注入链（面板缺省 R1Locked＝公共默认红线不动——构建期即应用门控防初值失实；R2Enabled 仅正式宿主装配注入）；③**正式宿主 R2**：UiPlugin HandlerServices.couplingStage 由 R1Locked 改传 R2Enabled（MDL-21 已随 2026-10-10 GOV-UNFROZEN 解冻——修复前正式宿主有效矩阵恒被解码门拒为 MDL-21-COUPLING-STAGE-LOCKED）；mimic/planar/floating/闭环维持阻断（M-6）；④**域原语顺序修正（bug 修复）**：applyDrivetrainCouplingEdit 数值校验先行于传动对象确保——原序使被拒提交残留已创建对象与根 drivetrainRef（"拒绝时工作集字节不变"对数值拒绝面失守；GUI 拒绝原子性用例实测暴露，红证在案）；⑤GUI 用例含交接固定数值探针（非对角 C=[[1,0.2,0],[0,1,-0.1],[0.3,0,1.5]]：Δq=[1.4,1.7,4.8] rad、τ_motor=[3.2,-0.6,6.1] N·m、双侧瞬时功率 20.3 W——独立手算期望）；矩阵映射算法消费（位置/力矩/限位）归 drivetrain 既有 MappingR2GoldenTest＋统一验收（不复制实现）。前一版本 v0.57 保留如下。 |
+| 文档版本 | v0.57（2026-10-20，WP-13-T25/F07 批次落位——导入自碰撞候选→策略草稿移交半区（P-MDL-3；policy 已冻结，"待冻结"前置解除）：①§6.3 disable_collisions 行移交语义落位登记——导入确认后候选入 `ModuleSessionState.importedSelfCollisionCandidates`（每次导入确认整体替换、取消不携带），装配门面新增只读取值器（值拷贝、不泄模块私有类型——R-2）；②宿主策略编辑器（A-23 模态）预填半区：连杆名→ObjectId 解析数据源＝当前修订 robot-design 根对象字节（modeling 公共 Codec 解码；名称作用域＝建模根内 localName，无前缀拼接/剥离——R-4），预填忽略对象对（来源注明"导入候选"、同对去重）；未解析名（模型未应用/不在修订）警示行列出不静默丢弃；预填仅进表单——经用户显式确认才随 submit 产生策略修订，取消零写入（policy 权威/存储格式零改动）；③遗留登记：候选"已解析预填→确认→评估器复算"的端到端数值链与三维覆盖层对照归统一验收批（B5 口径）；"Manual/Auto/Imported 来源标记"入 policy schema（per-pair provenance 词表）与"基座首段/静态排除"开关语义仍属 policy 卡演化面，待所有者裁决。前一版本 v0.56 保留如下。 |
+| 文档版本 | v0.56（2026-10-20，WP-13-T25/F01 批次落位——逐关节最大速度/最大加速度 schema 落位（MDL-01"逐轴定义关节（类型、轴线、零位、限位、速度/加速度限制）"——审计 M05 缺口闭合）：①**§4.3-A 表尾追加 maxVelocity/maxAcceleration 两行**（SourcedValue<double>，转动 rad/s、rad/s²｜移动 m/s、m/s²；两权威模式均权威；Provided 须有限且 ≥0〔零＝真实零速非缺失〕；Fixed＝NotApplicable）；②**编码格式 {1,0}→{1,1}**（表尾追加纪律——旧 {1,0} 字节兼容读为 NotProvided，无升级器语义不变）；③CanonicalBridge 硬写 NotProvided 改 Provided 透传（SI 真值门＋provenance 原样——runtime JointDescription 既有字段真实消费）；④模板种子/URDF velocity/WorkCell VelLimit·AccLimit 三入口真实映射（报告由"无落点不支持"转映射行——§6.3/§6.6 同步；joint-velocity-limit/joint-acceleration-limit 两 kind 生产面退役、词表值保留在册）；⑤面板＝属性行 max-velocity/max-acceleration 两行＋编辑页 12→14 行＋applyJointFieldEdit 域规则（负值/非有限/Fixed 拒绝、拒绝原子性）；⑥就绪 L9 注记条件化（存在可动关节缺值才登记——全值齐备零登记，§8.2 v0.53 口径的 F01 注记面更新）；⑦黄金数据集 mdl-urdf-import 期望面随契约演化更新（unsupported 8→3＋mappedVelocityCount=5 计数锚——manifest 摘要/历史登记，非对账失败掩盖）。前一版本 v0.55 保留如下。 |
+| 文档版本 | v0.55（2026-10-20，WP-13-T25/F06 批次落位——外部 WorkCell 反向导入正式命令入口：§9.7.3 表尾追加第十二号 `modeling.import-workcell`〔Stage/Project、readOnlyAllowed=false——写路径〕；命令流装配纪律＝io openGenericXml 良构校验（io.md §9.6 冻结读取面）＋readFileBytes 真实字节＋两读取窗口 SHA-256 摘要对账（ResChanged 诚实拒绝）＋Polytope 缺失容忍依赖树（存在＝io 真实快照、缺失＝exists=false 叶——引擎按 V-08 转 Recorded＋IO-RES-MISSING 事实）→§6.6 提取引擎→多设备分支显式选链（§6.4 同机制，不默认选第一个）→逐项提取报告确认（AT-33）→确认才替换草稿〔恰一根不变量 R1 同 URDF/Xacro 导入〕；取消选文件/取消选链/取消报告/根检查失败/摘要失配零工作集修改零修订；"从 WorkCell XML 新建项目来源"维持明确不做。审计 20261019-601ffa0e M14/MDL-18 复验口径＝正式窗口选文件→选设备→完整报告→确认→树/属性可编辑。前一版本 v0.54 保留如下。 |
+| 文档版本 | v0.54（2026-10-18，B7 文本勘误批：§14.6 v0.8「新增 13→15 条 MdlTemplate」、v0.12「MdlPartObjectCommands 12→14 条」、v0.17 冒烟「246/246＋14/14→200/200＋8/8」与分组「ACC2 六→七/ACC3 五→六」；findings F-312/F-343/F-353/F-354 消账）。前一版本 v0.53 保留如下。 |
 | 文档版本 | v0.55（2026-10-19，DOC-T16 测试策略修订批——GUI 口径翻转：§1.4 非目标行/§10.1 总则/V-30 行的"仅登记不启动"废止，按 DTB §5.2 DoD 第 5~7 条（DTB v0.97 同批）常态化执行——人工点验＋关键交互链固化为 Widgets 级生产路径测试进常驻回归＋入口/布局冒烟＋宿主遍历；依据＝需求模块全功能审计〔分支 codex/requirements-audit-20261018〕A-01~A-12 全部位于无自动化覆盖的生产接线/呈现层＋修复批新登 A-13~A-16 跨域消费链——modeling 尚未做过同口径真实宿主审计，新 DoD 生效后第一批补；纯登记零语义零代码；§14.6 v0.55 行；requirements v0.21/acceptance-protocol v1.10/DTB v0.97 同批。前一版本 v0.54 保留如下。 |
 | 文档版本 | v0.53（2026-10-17，WP-13-T23 就绪状态聚合修正批〔分支 wp13-t23-reliability-polish；依据＝2026-10-17 审核发现＋所有者裁决 B〕：①**§8.2 状态聚合口径精确化**——呈现级 notes 中仅 Informational 上下文注记计入 ReadyWithNotes，`NotProvided` 缺项预告不参与三态聚合（呈现级直投就绪条＋missingItemKeys 通道；blocking 语义不变）。背景：v0.52 在 L9 无条件登记 NotProvided 后，状态聚合既有的"`!notes.empty()`→ReadyWithNotes"分支使任何干净模型的就绪状态永为 ReadyWithNotes、`Ready` 不可达，建模域汇聚 verdict（PanelCommandCatalog::modelingReadinessProjection）恒为 NotApplicable、缺项键恒有 missing.L9——与 v0.52 条目"不改变现有计算判定"的表述不符，本批兑现"呈现级不降级"承诺并恢复 v0.52 之前的状态可达性（Informational 仍聚合——既有口径不变）；②Readiness.hpp 状态枚举与 ReadinessNoteKind 注释、Readiness.cpp 状态汇总处与 L9 登记处注释同步该口径；③测试：ReadinessTest 新增 2 例检查器级回归钉（NotProvidedOnlyNoteKeepsReadyReachable_WP13T23——全干净工作集唯一 note 为 NotProvided 时状态必须为 Ready；InformationalNoteStillAggregatesReadyWithNotes_WP13T23——writable=false 的 L11 上下文注记仍降级 ReadyWithNotes，防止豁免被扩大）；④**审核更正登记**：v0.52 批 GUI 测试"桌面/Qt 运行环境阻塞（0xC0000409）"结论不成立——复现证实为启动进程缺 Qt/vcpkg DLL 搜索 PATH 所致，正确设置环境变量后 `sdurws_ird_modeling_gui_test` 全绿（44 通过＋1 既有跳过）；GUI 用例命名溯源由 _UI_T82 更正为 _WP13T23（UI-T82 为已完结停靠任务，与本用例无关）；最终源码态全量构建由本批补齐。前一版 v0.52 保留如下。）|
 | 文档版本 | v0.52（2026-10-17，WP-13-T23 可靠性打磨增量：①§8.2/§9.4.4 的 `ReadinessNote` 增加 `NotProvided/Informational` 事实状态、对象锚、字段路径、单位和修复建议；②L9 明确登记关节最大速度/最大加速度尚无当前建模 schema 落点，模板预填值不进入运行时计算，作为非阻断提示引导工程师在传动或策略模块补录；③§9.7.1 就绪条把未提供/警告/阻断/待确认/提示转成中文状态标签，字段/单位/动作经 tooltip 透传并支持对象定位；④模板向导回执同步提示该边界；新增 Readiness/PanelModel/GUI 回归用例。该增量不改变现有计算判定和 schema，不把参考值伪造为 runtime 输入。）|
@@ -373,6 +379,8 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 | `zeroOffset` | `double`，rad（转动）或 m（移动）；`q_authoritative = q_zeroOffset + q_rw`（runtime 口径） | 两模式均为权威（零位语义不随权威模式切换） |
 | `bounds` | `SourcedValue<std::pair<double,double>>{qmin,qmax}`，rad/m；Revolute/Prismatic 必填且 qmin<qmax（硬断言 MDL-06④）；Continuous＝NotApplicable | 两模式均为权威 |
 | `workingRange` | `SourcedValue<std::pair<double,double>>`，rad；仅 Continuous，必须有限区间 qmin'<qmax' | 分析消费属性，**不回写 bounds**（MDL-12/V12-01） |
+| `maxVelocity` | `SourcedValue<double>`，转动 rad/s、移动 m/s（随 type） | **WP-13-T25/F01 追加（{1,1} 表尾）**：MDL-01"逐轴定义关节（…速度/加速度限制）"的关节一等权威字段，两权威模式均权威（同 bounds/zeroOffset）；Provided 须有限且 ≥0（零＝真实零速非缺失——缺失保持 NotProvided 不填 0）；Fixed＝NotApplicable；旧 {1,0} 字节解码＝NotProvided（兼容读）；流入 runtime `JointDescription.maxVelocity`（provenance 透传） |
+| `maxAcceleration` | `SourcedValue<double>`，转动 rad/s²、移动 m/s²（随 type） | 同 maxVelocity 口径；流入 `JointDescription.maxAcceleration` |
 | `dhDerived` | `std::optional<DhParameters>`（θ 偏置/d/a/α，rad·m） | 仅 StandardDH 态填写＝权威；Explicit 态下如存在则为只读派生展示值（不参与编码身份，见 §7.2） |
 
 **表 4.3-B `LinkEntry`**：
@@ -608,11 +616,11 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 | `<material>` | materialRef（估算密度提示） | URDF 材质无密度→密度 NotProvided（估算不可用，报告登记） |
 | `<joint type="revolute|continuous|prismatic|fixed">` | JointEntry.type | 四类识别（MDL-12）；mimic/planar/floating→§6.4 阻断口径，**不得转 FixedFrame、不得经选择绕过**（M-6） |
 | `<axis>` | axis | 任意有限非零轴可接受（不要求 Z，MDL-11）；**缺失**→按 URDF 语义取局部 +X 并记入"待确认草稿"清单（用户确认后可应用）；**零轴/非有限**→仅报告、该关节标记 Invalid，包含此类关节的草稿**不得提交修订**（MDL-11 后半，prepare 断言兜底） |
-| `<limit effort velocity lower upper>` | bounds、maxVelocity；effort→torqueLimit（drivetrain 对象，Peak 候选） | 缺 lower/upper（revolute）→待确认草稿项；continuous→bounds NotApplicable（类型保留） |
+| `<limit effort velocity lower upper>` | bounds、maxVelocity（F01/{1,1}：velocity→`joints[i].maxVelocity` Provided ImportMapped——单位随类型 SI 直入 rad/s｜m/s；负值/非有限＝错误项不静默）；effort→torqueLimit（drivetrain 对象，Peak 候选） | 缺 lower/upper（revolute）→待确认草稿项；continuous→bounds NotApplicable（类型保留） |
 | `<mimic>` | 不映射 | 识别＋报告＋阻断（MDL-12；MDL-21 启用后仅线性耦合放开） |
 | `<transmission>` | 不映射（线性耦合候选提示，R2） | 报告"不支持项" |
 | `<gazebo>` 等外来扩展 | 忽略项清单 | 报告不解释 |
-| `<disable_collisions>`（自碰撞配置） | SelfCollisionHints（临时）→导入报告"策略草稿候选输入" | **不写策略对象**（policy 权威）；交接 API 待 policy 冻结（P-MDL-3） |
+| `<disable_collisions>`（自碰撞配置） | SelfCollisionHints（临时）→导入报告"策略草稿候选输入" | **不写策略对象**（policy 权威）；**移交半区已落位（WP-13-T25/F07——P-MDL-3）**：导入确认后候选入会话承载（`ModuleSessionState.importedSelfCollisionCandidates`，门面只读取值器），宿主策略编辑器（A-23 模态）经当前修订 robot-design 解码解析连杆名→ObjectId 预填忽略对象对（来源注明"导入候选"；未解析名警示不静默），经用户显式确认才产生策略修订——取消零写入 |
 | （无安装语义） | basePlacement＝ground（来源 ImportMapped＋"默认补全"清单） | MDL-22 V15-04：未显式配置默认地面 |
 
 ### 6.4 链型判定（§2.1 两维度；MDL-12）
@@ -637,7 +645,9 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 - 展开产物进入与 URDF **相同**的映射与安全边界（§6.3/§6.4）；展开失败/依赖缺失→可定位诊断（宏名/行列），不产生草稿。
 - 所有权口径：展开**语义/引擎**归 modeling（DTB WP-13-T06 `XacroExpand.*`）；io.md §13.3 同名单与 WP-13-T06 的重叠登记为 P-MDL-4（§14.3），建议口径"护栏 io、语义 modeling"，待 io 卡所有者确认。
 
-### 6.6 WorkCell 反向导入（MDL-18，R2／阶段 D——已实现，WP-13-T17 落位）
+### 6.6 WorkCell 反向导入（MDL-18，R2／阶段 D——已实现，WP-13-T17 落位；命令入口随 WP-13-T25/F06 落位）
+
+> 【入口落位登记（2026-10-20，WP-13-T25/F06 批）】本通道的正式命令入口＝`modeling.import-workcell`（§9.7.3 表尾第十二号）——审计 20261019-601ffa0e M14 的缺口（"提取内核可用、正式命令目录无入口"）就此闭合；命令流装配纪律见 §9.7.3 行（openGenericXml 良构校验＋摘要对账＋Polytope 缺失容忍树＋显式选链＋逐项报告确认＋恰一根草稿替换）。
 
 > 【落位登记（2026-10-12，WP-13-T17 实现批）】本通道由"仅边界设计"转已实现；提取语义按本节登记落位（实现＝`WorkCellReverseImport.hpp/.cpp` 提取引擎，`IModelImportMapper::mapWorkCellXml` 委托——单一实现）。planned 占位（2026-10-05）与阶段 D 启用（2026-10-12 治理批，io.md §9.6 v0.10 冻结 `IResourceReader::openGenericXml` 签名）见契约 tasks/foundation/WP-13-T17.json note。
 
@@ -647,13 +657,13 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
   - **关节类型**（MDL-12 同一判定）：`<Joint type>` Revolute/Prismatic、`<Frame type=Fixed>`（缺省 Fixed）、`<DHJoint>`（d 属性＝Revolute 形态）可表达；Spherical/PrismaticSpherical/Universal/PrismaticUniversal（多自由度）、Movable 自由帧、词表外类型→`joint-type` 不可表达**无草稿**（不得转 FixedFrame——M-6）；`<Depend>` 从动关节＝mimic 同款（识别＋报告＋阻断，类型保留，草稿不可提交——V-10）。
   - **DH 提取边界（本节增量登记）**：仅"全链均为 Revolute 型 `<DHJoint>`"的同质链经 `IDhExplicitConverter::dhToExplicit` 展开（§7.4 单一实现——DhChain 只参数化 Revolute 链；alpha/offset 源单位 deg 换算 rad）；混合链/含 Prismatic DHJoint 不可展开——逐个列入不可表达清单（诚实边界，不绕过、不重写第二份展开公式）。
   - **位姿/轴**：`<Pos>`（m）＋`<RPY>`（**源单位 deg→rad**，框架 Deg2Rad 同口径）→ origin（T_parent_joint）；缺省→零位（默认清单不静默）；框架 Joint 无轴元素——轴向固定为关节局部系 z 轴 (0,0,1)（框架语义，映射清单注明来源）。
-  - **限位**：`<PosLimit min max>`（Revolute 源单位 **deg→rad**、Prismatic 源 m——框架 addLimits convFactor 同口径）→ bounds；缺失/非法→待确认（limit-missing）；`<VelLimit>`/`<AccLimit>`→未保留逐项列出（§4.3-A 无对应字段，不发明 schema）。
+  - **限位**：`<PosLimit min max>`（Revolute 源单位 **deg→rad**、Prismatic 源 m——框架 addLimits convFactor 同口径）→ bounds；缺失/非法→待确认（limit-missing）；`<VelLimit>`/`<AccLimit>`→**F01/{1,1} 起映射** `maxVelocity`/`maxAcceleration`（源制式 SI 直入 rad/s、rad/s²｜m/s、m/s²——框架速度/加速度限值无 deg 换算面；非法/负值＝错误项；Fixed＝忽略面；旧"未保留逐项列出"口径随 §4.3-A 字段落位废止）。
   - **Q 构型**：设备内首 `<Q name>`（rad）对位可动关节（Fixed/Passive/Depend 不占位）→ 逐关节 `zeroOffset`（权威零位＝源初始姿态，q_authoritative = q_zeroOffset + q_rw；§7.4 zeroOffset 与 DH θ_offset 显式分离不烘入几何）；备选构型/维数失配→`q-config-residual` 未保留逐项列出。
   - **几何/资源**：`<Drawable>`→visual、`<CollisionModel>`→collision（重复仅首个映射，其余 multiple-visual/multiple-collision 逐条报告）；`<Polytope file>`→Mesh 资源 Recorded 登记（依赖树缺失叶/无叶→IO-RES-MISSING 事实＋missing 状态——缺失≠不可行，V-08）；解析图元→`geometry-primitive` 未保留（GeometryRef 无参数承载）。
   - **碰撞设置**：`<CollisionSetup file>`/`<ProximitySetup file>`（框架文法仅外部文件引用）→`collision-setup-external` 未保留逐项列出（排除对清单不在本通道解析范围）。
   - **场景/其他**：WorkCell 级 Frame/Drawable/CollisionModel→`scene-object` 未保留（单设备草稿不携带）；设备基帧安装位姿→`base-placement` 未保留（MDL-22 默认地面；安装预设语义归 runtime 单一权威 P-RT-4）；Camera/Property/Calibration/未知元素→ignored 逐项不静默。
   - **连杆合成**（有损）：links[0]＝设备名＋"-base"、links[i+1]＝帧名＋"-link"（I-MDL-2 命名空间为关节∪连杆同域——帧既是关节又是连杆，同名即冲突，后缀为合成规则）；WorkCell XML 不承载连杆惯性——物性全部 NotProvided 降级（默认清单逐连杆登记）。
-- 提取报告（AT-33 验收核心）：ImportReport 复用面——四清单（mapped/defaults/ignored/unsupported）＋待确认＋关节状态＋资源状态表＋分支报告＋主链能力结论（judgeChainCapability 复用）＋submittable；报告无条件产出（失败出口同样完整）。ImportUnsupportedItem kind 词表 WorkCell 通道追加六值（device-type/scene-object/collision-setup-external/q-config-residual/joint-acceleration-limit/base-placement——表尾追加）；'workcell-channel-r2' 引导面随通道实现**退役**（R1 边界响应不再产出——词表登记见 §15 v0.47）。
+- 提取报告（AT-33 验收核心）：ImportReport 复用面——四清单（mapped/defaults/ignored/unsupported）＋待确认＋关节状态＋资源状态表＋分支报告＋主链能力结论（judgeChainCapability 复用）＋submittable；报告无条件产出（失败出口同样完整）。ImportUnsupportedItem kind 词表 WorkCell 通道追加六值（device-type/scene-object/collision-setup-external/q-config-residual/joint-acceleration-limit/base-placement——表尾追加）；'workcell-channel-r2' 引导面随通道实现**退役**（R1 边界响应不再产出——词表登记见 §15 v0.47）。**F01/{1,1} 起生产面不再产出 joint-velocity-limit/joint-acceleration-limit 两 kind**（VelLimit/AccLimit 已映射 §4.3-A 字段——词表值保留在册为历史稳定面，与 'workcell-channel-r2' 退役同款纪律）。
 - 草稿红线（不变）：结果永远是草稿——不经确认不产生修订、不落盘、不经 project/**（PA-1；对象身份全部为确定性临时句柄 §6.7）；"从 WorkCell XML 新建项目来源"维持明确不做（PM 明确不做清单——建模通道≠新建来源通道）。
 
 ### 6.7 导入资源与对象身份（CON-03 三段边界、PM-01）
@@ -847,7 +857,7 @@ DH 权威 ──(展开，无损，允许)──> 显式权威        显式权�
 ```
 
 - **不可行模型 ≠ 未就绪模型**：就绪校验只回答"模型输入是否完备合法、能否构造与编译"；"工程上是否可行"（可达性/碰撞/动力学裕度）归各评估域的工程判定（EngineeringStatus，evidence 词表）。modeling 不输出 Feasible/Infeasible 结论；就绪诊断不使用工程判定状态词（七态投影归 ui 求值，modeling 只供 `inputComplete`/缺项数据）。
-- **呈现级 notes 的状态聚合口径（v0.53，WP-13-T23 所有者裁决 B）**：上图中"有 Warning/待确认"的三态触发面按实现语义精确化为——`Warning/Confirmable/Informational 呈现级注记（只读、应用预检等上下文事实）计入 ReadyWithNotes`；`NotProvided 缺项预告（如 L9 关节速度/加速度 schema 边界）不参与三态聚合`——它是"呈现级直投就绪条"的系统级事实（schema 无承载位置不是工程师在建模内可消除的输入缺陷），参与聚合会使无条件登记的预告把 Ready 变为不可达状态、建模域汇聚 verdict 恒降级，三态失去区分度。NotProvided 仅以"未提供"行（含对象锚/字段/单位/修复动作）在就绪条呈现，并经 `missingItemKeys` 通道上报缺项计数；blocking 语义不受影响（呈现级阻断仍走 NotReady）。
+- **呈现级 notes 的状态聚合口径（v0.53，WP-13-T23 所有者裁决 B；F01 批注记面更新）**：上图中"有 Warning/待确认"的三态触发面按实现语义精确化为——`Warning/Confirmable/Informational 呈现级注记（只读、应用预检等上下文事实）计入 ReadyWithNotes`；`NotProvided 缺项预告（如 L9 关节速度/加速度缺值——F01 后 schema 已有承载位置，预告条件化为"存在可动关节缺值"，模板草稿等全值齐备面零登记）不参与三态聚合`——参与聚合会使预告把 Ready 变为不可达状态、建模域汇聚 verdict 恒降级，三态失去区分度。NotProvided 仅以"未提供"行（含对象锚/字段/单位/修复动作——补录动作已改指关节编辑页）在就绪条呈现，并经 `missingItemKeys` 通道上报缺项计数；blocking 语义不受影响（呈现级阻断仍走 NotReady）。
 - **结果流向**：UI——`DomainReadinessItem{domainKey="modeling", inputComplete, missingItemKeys}` 经 `IPluginUiModule::readonlyProjections()` 上报（ui §6.5 只汇聚不判定）；project——Blocking/Confirmable 在命令 prepare 内重估（就绪校验结果不替代 prepare 现场断言，防 TOCTOU）；evidence——不直接消费建模就绪（快照完整性由组装方与通用证据门禁判定）；诊断目录——Warning/Confirmable 明细经 IDiagnosticSink 留痕。
 
 **四轴状态正交关系表**（编辑状态 × 模型就绪 × 编译状态 × 工程状态——四轴互不替代，CON-02/TASK-02 正交原则）：
@@ -1299,6 +1309,7 @@ protected:
 | `modeling.export-package` / `modeling.import-package` | Stage/Project | MDL-20 规范包导出/导入 | true / false |
 | `modeling.reset-home-zero` | Session | 复位 Home/Zero（会话姿态，KIN-06 语义，零修订） | true |
 | `modeling.export-workcell-xml` | Project | WC/DWC XML 外供导出（UI-T56——MDL-20 ③"另可导出供外部查看"；数据源＝已应用修订的 runtime 编译快照只读视图，宿主 bindWorkCellExport 注入，快照缺席诚实缺席；零修订零草稿触碰） | true |
+| `modeling.import-workcell` | Stage/Project | 外部 WorkCell 反向导入向导（WP-13-T25/F06——MDL-18/AT-33：io openGenericXml 良构校验＋真实字节摘要对账→§6.6 提取引擎→多设备显式选链→逐项提取报告确认→草稿替换〔恰一根不变量〕；"从 WorkCell XML 新建项目来源"仍明确不做） | false |
 
 （`draft.apply`/`draft.save` 等项目级命令由 ui 既有注册承载，modeling 只供给 `buildDraftCommand`；快捷键绑定一律经 ui HotkeyBindingTable，插件不私占全局快捷键——SA-16。）
 
@@ -1606,3 +1617,131 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 | v0.33 | 2026-10-04 | **宿主审核 P2 呈现批次①**（分支 req-readonly-init-fix；findings F-502 承载；纯呈现层）：①**六轴重置确认分段知情文案**——逐项列出将被替换/清空对象面（全部关节参数/工具与场景引用/物性几何随连杆清空）＋项目历史语义（草稿级操作不立即产生修订；应用后修订不可变 PA-2；草稿期无撤销栈如实告知——不虚指可撤销），默认按钮保持"否"；②**命令频率分层**——低频诊断六命令（权威切换/物性估算/占位几何/基线比较/规范包导出/规范包导入）收进『更多操作』折叠区（默认收起；objectName ird_modeling_more_toggle/ird_modeling_more_host；命令集合/id/使能逻辑零变化——m_commandButtons 同序 push 保持，refreshCommandEnablement 零改动，gui 三个按钮遍历辅助同步排除呈现件）＋复位 Home/Zero 常驻（审核"常用编辑操作"层）；③预览空态过期"顶栏"指引改菜单路径（File→工业机器人项目→应用草稿——顶栏已随 UI-T38 退役）；结构五钮 tooltip"应用修改"→『应用草稿』同批统一。测试：modeling_gui 18/18（新增 MoreActionsCollapse_DefaultCollapsedAndToggle_F502——默认收起/展开收起对称/目录对账不漂移）＋modeling_test 322 全绿。卡面语义零变化（§9.7.1 呈现密度与文案属实现自由度——v0.25 同款登记备查口径） |
 | v0.32 | 2026-10-04 | **建模面板呈现中文化与复合值展开批次**（分支 ui-panel-zh-labels；owner 2026-10-04 直接指示"属性英文改中文＋axis 为何显示值已提供"的兑现；纯呈现层）：①**属性行标签 fieldKey→工程中文固定映射**（chineseFieldLabel——widget 层 25 键＋tcp:/pose: 前缀键拼接；fieldKey 稳定机器键面零变化——HostMigration 批量粘贴/基线注入寻址锚不动；表外键回退键名原文不虚构文案）；②**Provided 态复合值展开为精确数值**——轴向 formatVector 三维、原点/工具安装接口/场景世界位姿 formatPose 六值〔RPY 逐元素反解呈现专用——F-480 同族不触 rw::math::RPY 外联符号，与 HostMigrationProviders::rotationToRpy 同式〕、惯量 formatInertia 六分量〔InertiaTensor 声明序〕；sourcedRow"[值已提供]"分支退役为模板级防御面（占位现界面即"新增复合字段漏登记展开"信号）；③**关节类型/权威模式/场景角色/几何类别值＝中文呈现映射**（switch 全枚举无 default——token 仍为机器权威，括注保留英文供文档对照；基座预设中文标签同款先例）；④**测试**：PluginPanelTest 新用例 Properties_CompoundValuesExpandedAndChineseTokenDisplay（展开值精确断言＋RPY 反解 Rz(π/2)→yaw=π/2 确定性＋权威两态映射）；modeling_test 322（+1）＋modeling_gui 17 全绿。需求语义零变化（§9.7.1 呈现密度与文案属实现自由度——v0.25 同款登记备查口径） |
 | v0.47 | 2026-10-12 | WP-13-T17 实现落位登记（文档同步；任务契约 tasks/foundation/WP-13-T17.json——阶段 D 启用 3e7382a4＋授权扩面 fc75ccfa）：①**io 侧 GenericXml 通用 XML 通道实现**（io.md §9.6 v0.10 冻结签名——`ResourceIo.hpp` 增 `GenericXmlNode`〔元素名原文含前缀/属性序＝文档序/子元素文档序/直接子文本分层聚合〕＋`GenericXmlDoc`〔root/totalBytes/digest〕值类型＋`IResourceReader::openGenericXml` 纯虚；`ResourceIo.cpp` 增 expat 自实现结构树解析〔下标路径寻址——children 为 vector 冻结类型，指针栈会在扩容时悬垂；根元素填充语义＝恰一根〕，防护流程与 snapshot 同序②SafePath→③SingleFileBytes 预检→④SP-6 打开→⑤每块预算/取消检查点→⑥ContentDigester SHA-256→⑦解析；良构失败 IO-FORMAT-XML-SYNTAX 携行列；不引入 sdurw_loaders——DTB §4.6 表行；★等价调整登记＝卡面字段类型 `core::ContentDigest` 按 `core::Digest256` 落位〔该类型名 core 公共头不存在——摘要值类型唯一 Digest256，ResourceSnapshot.contentDigest 同型先例〕，算法/宽度/语义零变更）；②**modeling 侧提取引擎落位**（§6.6 更新为已实现——`WorkCellReverseImport.hpp/.cpp` 新公共头＋src：`extractWorkCellDevice(source, options, diags)` 纯函数；`Import.cpp::mapWorkCellXml` 从 R1 NotImplemented 边界响应切换为委托提取；提取语义逐条：目标设备选择＝§6.4 同机制〔多 SerialDevice 分支报告＋未选链 MultiBranchNeedsSelection 无草稿＋选链不存在 SourceInconsistent〕、关节类型 MDL-12 同一判定〔Revolute/Prismatic/Fixed 可表达；Spherical/PrismaticSpherical/Universal/PrismaticUniversal/Movable 词表外→joint-type 不可表达无草稿 M-6〕、Depend 从动＝mimic 同款〔清单扫描期登记＋提交阻断〕、DHJoint 全旋转同质链经 dhToExplicit 展开〔T09 单一实现 NFR-MNT-04——混合链/Prismatic DH 逐个列不可表达清单，不重写第二份展开公式；alpha/offset 源 deg→rad〕、位姿 `<Pos>` m＋`<RPY>` 源 deg→rad〔框架 Deg2Rad 同口径〕、轴固定关节局部 z (0,0,1)〔框架语义 mapped 注明〕、PosLimit Revolute 源 deg→rad/Prismatic m〔框架 addLimits convFactor 同口径〕、VelLimit/AccLimit 未保留逐项、Q 首配置→zeroOffset〔权威零位＝源初始姿态；备选/失配 q-config-residual〕、Drawable→visual/CollisionModel→collision〔重复仅首个〕、Polytope→Mesh Recorded〔缺失叶 IO-RES-MISSING 事实＋missing 状态 V-08〕、图元 geometry-primitive、CollisionSetup/ProximitySetup 外部引用 collision-setup-external、WorkCell 级场景 scene-object、基帧 base-placement〔MDL-22 默认地面〕、Camera/Property/Calibration ignored、连杆合成 links[0]＝设备名+"-base"/links[i+1]＝帧名+"-link"〔I-MDL-2 关节∪连杆同域命名空间——帧即关节即连杆，同名即冲突〕、物性全 NotProvided 降级逐连杆登记、名称冲突检查关节∪连杆全集）；③**词表退役/追加**（Import.hpp：ImportUnsupportedItem kind 词表移除 'workcell-channel-r2'〔R1 引导面退役——NotImplemented 保留为历史枚举值不再产出〕＋追加 WorkCell 通道六值 device-type/scene-object/collision-setup-external/q-config-residual/joint-acceleration-limit/base-placement〔WorkCellReverseImport.hpp 词表常量〕）；④**测试**（新增 MdlWorkCellImport 组 9 条：提取语义逐项〔类型/限位 deg→rad/位姿 RPY deg→rad/轴〕＋Q→zeroOffset＋备选构型未保留＋几何资源 Recorded/missing＋IO-RES-MISSING 诊断＋有损报告逐项列出〔collision-setup-external/base-placement/joint-velocity-limit/scene-object/Camera ignored/defaults GE〕＋不可表达清单〔Spherical/Movable/Depend→无草稿 UnsupportedJointType〕＋多设备分支报告/未选链拒绝/选链成功/选链不存在＋草稿不产生修订〔确定性临时句柄两次调用逐字段相等＋checkInvariants 全量核查〕＋能力结论 BeyondTemplateRange＋诊断行序稳定＋接口与引擎同源钉扎〔mapWorkCellXml≡extractWorkCellDevice〕；既有 MdlImport R1 边界用例更新为通道实现验证〔MapWorkCellXml_ChannelImplementedR1Retired〕；PackageTest 边界用例断言更新〔NotImplemented→SourceInconsistent——非 WorkCell 字节仍无草稿 fail-closed〕；ResourceIoTest 增 GenericXml 通道 4 条〔文档序结构树/前缀原文/text 分层聚合＋digest 与 snapshot 同算法、SYNTAX 行列、P-1 缺失传递、协作取消 IO-CANCELLED——预算面说明：冻结签名无 budgetScope 尾参〔与 open 同形态〕，超限拒绝面由同一 BudgetScopeSession 防护核的既有预算用例承载〕）；⑤**验证留痕**（traceability/builds/wp13-t17/）：集成构建零错误〔industrialrobot 全链库/测试/应用目标；框架 RobWorkSim 侧 RWSimulatorPlugin/bt_plugin 两目标在本构建树预存在编译失败——框架头/eigen 宏冲突，SA-02 零源码修改不予触碰，与 industrialrobot 无依赖〕；独立冒烟构建零错误；测试全绿＝主测试 14 目标 2659/2659〔io 127〔+4〕、modeling 371〔+9〕、requirements 212、kinematics 183、trajectory 179、dynamics 111、selection 284、optimization 172、core 64、evidence 205、policy 206、project 257、runtime 271、diagnostics 117〕＋contract_test 13 目标 417/417＋gui_test 42/42＋drivetrain 37/37；ird_gates 与 validate-task/validate-docs 结论见本批留痕。文档头版本升 v0.47 |
+
+### 14.7 WP-14-T12 A-14：已保存工作集恢复（2026-10-19所有者精确批准）
+
+需求依据REQ-10、UX-06。关闭清空域会话后，重新打开必须从已接受项目HEAD的同一只读闭包恢复可编辑基线，不能只恢复runtime设备，也不能从WorkCell逆推原参数。装配门面新增`restoreCommittedSession(closure, rootObjectId, branch, revision, errorText)`：仅UI线程同步借用既有ObjectClosureView；按根引用顺序经RobotDesignCodec恢复根、工具、场景、位姿集和传动，保留原ObjectId、SI m/rad及来源。
+
+所有对象完整校验后一次采纳，建立clean baseline/应用预览、changes为空；不提交命令、不新增修订、不缓存闭包。无效根/分支/修订身份抛invalid_argument；缺对象、token/嵌入身份错误、坏字节/版本及读取错误返回false并定位，原会话不变。同根/分支/修订幂等保留未应用编辑；不同基线且已有编辑拒绝覆盖。只读允许恢复浏览。宿主先恢复保存基线，再执行既有未应用草稿恢复；关闭仍按原脱离路径清空，切换不串值。
+
+宿主对HEAD根计数，唯一根才恢复；无根的新工程走原空态，多根定位报错。共享树由原provider现取恢复值，根/子身份不重新编号。测试使用真实Codec、真实树/属性provider及正式宿主重开选择/继续编辑；此修复不代表多TCP、方向部分约束、mesh或120项完整终验通过。新增接口和精确文件范围见WP-14-T12契约及需求补齐计划A-14。
+
+
+### WP-14-T12 A-15 完整TCP描述映射增量（2026-10-19，所有者精确批准）
+
+CanonicalBridge将ToolDefinition.tcpList全部原键映射到runtime.namedTcpOffsets，每项按mountInterface·offset计算T_flange_tcp（平移m，旋转无量纲）。原tcpOffset选取仍为默认工具指定键、其余工具首条；完整目录的排序/数值验证/内容身份归runtime，桥不维护第二份真值。RobotDesign/ToolDefinition对象Codec与project格式不变，旧项目可从原对象重新编译为canonical1.2。新增验证沿真实建模Codec闭包及非恒等安装接口，不能以仅字段存在替代下游数值验证。
+
+
+### A-23 按prepare基线修订解析策略（2026-10-20，WP-14-T12）
+
+HandlerServices表尾增加默认空resolvePolicyForRevision(const project::RevisionView&)；非空时以本次prepare的baseSnapshot解析，不能读取HEAD替代；空回调保持原policyProvider/policyObject/policyVersion兼容。失败空策略阻断命令，不回退默认。宿主bindPolicyProvider面板预检与命令prepare同时消费同一已发布策略；原不可变修订、项目存储及六端口依赖不变。CommandHandlersTest的A23真实基线两修订回归核对低/高阈值、HEAD漂移及空解析失败。
+
+### WP-13-T24 B1：建模验收缺陷修复（2026-10-20）
+
+- 来源：601ffa0e审计F02/F03/F05，原始47项矩阵只读；当前工作基线84f1cfc7。
+- 私有导入装配补齐Xacro include安全读取、用户参数、展开后显式选链；映射报告逐项展示对象/字段/前后值/原因，取消或错误不替换草稿。
+- 不改公共接口/存储格式，不增加依赖；io负责安全读取与预算，modeling负责展开/映射。完整八节与逐批账本见`../../docs/superpowers/plans/2026-10-20-modeling-completion.md`。
+- B1实现验证通过：集成全量Release、独立12目标构建、ird_gates零命中及verify-task三条命令；10套件1316项通过、0失败、0跳过。来源include按既有Recorded资源格式保存真实摘要与路径，编码往返保真；共享深度预算及堆缓冲避免Windows递归栈溢出。
+- 真实Qt参数表/错误提示/长报告3张图已复核；证据见`../traceability/builds/modeling-completion-20261020-b1/verification-summary.json`及FOLLOWUP.md。只到导入批次实现验证，不宣称47项及真实三维整体交付；后续B2～B5仍按计划推进。
+
+### WP-13-T24 B2a：草稿编辑器局部历史（2026-10-20）
+
+按§9.3/§9.7.2 L-5补齐UI编辑器内完整工作集版本栈，常驻两钮明确区分草稿与项目历史。沿既有编辑接受→就绪重算入口记录，纯重算/拒绝/取消不入栈；新编辑清重做，应用成功/跨基线/恢复/关闭清栈。完整值含根身份、全部部件、资源及变更摘要，历史不入值模型或磁盘，不改公共接口。恢复前取消当前六个有效表单的未确认输入及确认区（不遍历deleteLater旧表单），后重算就绪与树/属性/脏态。实现验证十套件1319通过、0失败、0跳过，双模式构建与门禁通过；证据traceability/builds/modeling-completion-20261020-b2a/。完整47项及正式宿主三维仍待后续批次，不据此宣称终验。
+
+### WP-13-T24 B2b：命名姿态真实宿主恢复（2026-10-20）
+
+F13恢复入口遵循MDL-17/KIN-06，仅改变已应用模型的会话State。公共装配面追加ModelingSessionPoseRequest及bindSessionPoseWriter；字段为分支/根/逐关节身份与RobWork增量q（含Fixed槽位，rad/m；模块按已应用baseline的原始zeroOffset换算，不能用已折叠的canonical零偏代替）。Home/Zero只用权威保留键，命名页恢复保存条目不消费暂存。宿主同步核对同快照WorkCell、分支/根/关节序及限位，按q_rw+CanonicalJoint.zeroOffset核查限位后，在State副本直接写入q_rw；缺能力明确拒绝，取消/失败旧态不变，零项目命令或修订。精确八节/范围见原计划B2b，实施验证完成前不标封闭。
+
+B2b实现验证：1329通过、0失败、0跳过，双模式构建/门禁通过；正式宿主274条检查通过（含其他域）。真实恢复、窗口视口及数值/像素证据见traceability/builds/modeling-completion-20261020-b2b/FOLLOWUP.md。Home/Zero完整正式窗口路径和全部47项/三维矩阵仍待后续，不标最终封闭。
+
+### WP-13-T24 B3a：基座欧拉输入精确增量
+
+F15按MDL-22增加ZYX欧拉输入（roll/pitch/yaw rad，R_world_base=RzRyRx），BasePlacementEditValue表尾customRpy默认空，与customEaa互斥。域内转换既有EAA后复用原校验/存储/编译路径；不新增权威矩阵。完整八节设计与实施顺序见原计划B3a，未验证前不标完成。
+
+### WP-13-T24 B3b：continuous工程工作范围精确增量
+
+F04按MDL-12/MDL-06/AT-17补齐可确认范围。JointEditField表尾WorkingRange复用JointLimits载荷（rad），仅Continuous允许、端点有限且严格有序；与bounds独立，不取模、不设有限旋转行程阈值。接受写既有workingRange为UserProvided，保留type/bounds/来源其余字段；拒绝零修改。详细表单两步确认/取消沿现有公共件，类型变化重建schema并延寿deleteLater旧模型。既有Codec、CanonicalBridge及断言消费不另改语义。八节设计、范围和先红后绿顺序见原计划B3b，验证前不标完成。
+
+B3b实现验证：1344通过、0失败、3项剪贴板环境跳过（新增12项回归全部通过）；双模式构建/门禁与正式宿主274条既有综合检查通过。真实输入/确认、拒绝、范围持久化与减零偏消费、局部历史及表单生命周期证据见traceability/builds/modeling-completion-20261020-b3b/。剪贴板待环境恢复补验，正式项目/三维跨周及47项终验未完成。
+
+B3b显示补正：初轮截图发现领域拒绝后表格保留输入值，新增显示断言真实失败后，私有关节表按当前草稿后置回填，保留拒绝原因。最终1347通过、0失败、0跳过，原三项剪贴板跳过均已实际通过；双模式/全量Release/门禁/verify-task及宿主274条回归通过，截图已查看。最终证据traceability/builds/modeling-completion-20261020-b3b-display/取代初轮显示结论，初轮冻结不改；完整三维仍待B5。
+
+### WP-13-T24 B4a：完整差异窗口与定位
+
+F16按MDL-08/UX-13/AT-12补完整只读差异表，沿唯一ModelDiffService逐行呈现三组、前后值/单位及来源变化；对象定位经既有面板focusObject和共享选中链。无效/已删锚诚实拒绝，根字段仅定位真实根，不按旧数组下标猜对象。只扩私有对话宿主/流程/模块与新私有窗口，既有目标新增源，不增公共接口/存储/依赖。实施步骤及失败矩阵见原计划B4a，验证前不标完成。
+
+B4a真实回归补正：正式宿主证明仅focusObject会漏写共享选中，私有适配器新增Command来源上报，先写SelectionService再沿原下行链同步面板；重复定位只补幂等服务未广播的面板呈现，退订/删除/资源无节点拒绝且保留原选中。空字段与增删缺失侧分别显示“（空）/（不存在）”。最终10套件1354通过、0失败、2剪贴板环境跳过；正式宿主285条综合检查通过，截图已查看；完整证据见traceability/builds/modeling-completion-20261020-b4a/，完整47项及B5视觉仍开放，复制须环境恢复补验。
+
+### WP-13-T24 B3c：完整几何物性估算输入
+
+F09沿§5.3唯一SegmentSpec/PropertyEstimator补齐三类图元、多段、每段材料或显式密度，以及连杆系T_link_segment（m、ZYX rad）输入。任何现存连杆含法兰均可，估算不依赖关节原点；接受后仅把真实合成结果/原来源写BodyData，配方不伪造持久化。取消、非法、只读及任一权威物性覆盖拒绝保持完整工作集。只扩私有对话宿主/新窗口、原测试及既有目标源；无公共头/格式/公式/新边变化。八节设计与验证矩阵见原计划B3c，未验证不得标完成。
+
+### WP-13-T24 B3d：连杆权威物性与质心确认
+
+F10按§5.3/L-8内联编辑质量、质心和完整张量；质心变化显式迁移/覆盖，沿applyCentroidEdit及唯一惯量判定。私有页按身份/基线重查后原子写入，零项目修订，一次局部历史；取消、非法、只读和漂移拒绝。精确八节与执行步骤见原计划B3d，未验证不标完成。
+
+B3d实现验证：十套件1376通过、0失败、0跳过，双模式/全量Release/门禁通过；冻结证据traceability/builds/modeling-completion-20261020-b3d/。F10入口/数值/窗口/局部历史已验证，47项正式全路径与三维及独立验收仍开放。
+
+### WP-13-T24 B3f / F12 场景管理增量
+
+MDL-15/AT-28：独立场景入口承接空集新增、名称/角色/已有资源或外部网格来源编辑、显式删除确认。内联页只暂存，接受经完整基线核对一次写草稿及局部历史；世界位姿沿原PartPoseEdit、外部资源沿io安全探测/Recorded，无新公共面/存储/依赖。共享资源及历史对象不级联删除，跨域引用由项目事务权威保护。失败取消只读零修改；完整磁盘、碰撞与三维终验仍独立记录。八节设计见2026-10-20-modeling-completion.md B3f。
+B3f最终产品回归：十套件1389通过、0失败、0跳过，正式宿主既有综合tour285条通过；双模式/全量Release通过。已新增真实嵌套文件选择过期与角色删除反例并完成红绿修复。F12整体仍开放：无几何固定帧编译拒绝、真实mesh挂接/碰撞及完整磁盘/三维未由本批验齐。证据落traceability/builds/modeling-completion-20261020-b3f/，治理检查以随批最终日志为准。
+
+### WP-13-T24 B3g：固定帧透传
+
+MDL-15/AT-28：场景无几何不再在CanonicalBridge误拒绝；完整身份/世界位姿透传runtime可选几何契约，存在的坏几何引用仍按原规则拒绝。canonical1.3由runtime负责，不改项目schema。详见总计划B3g八节及精确公共范围，真实mesh/碰撞完整消费和47项终验仍开放。
+
+B3g实施验证：18套件2599通过、0失败、3既有占位跳过，双模式/全量Release及verify-task三条机器检查通过；证据traceability/builds/modeling-completion-20261020-b3g/，详细分类见FOLLOWUP与XML。真实网格及新入口端到端磁盘/三维尚未封闭，不将本批编译消费绿色外推到47项终验。
+
+### WP-13-T24 B3h / F08 工具草稿管理
+
+MDL-13/04/05：独立管理入口补空工具可达性，完整候选承接名称/几何/默认TCP保护及删除；物性复用已有迁移/惯量合法性，安装与TCP沿原页。场景和工具共享私有资源来源求值，无公共/存储/新边变化。八节设计及失败/生命周期/验证见总计划B3h；真实磁盘/跨域删除保护/三维未验齐不标全功能通过。
+
+B3h实施实测：十套件1404通过、0失败、0跳过；集成建模422/契约17/GUI79，UI326/契约57/GUI90，core红线4，独立建模346/契约8/GUI55。集成全量Release/独立三目标通过，正式宿主既有综合tour285通过；这些数字不代表新增入口的磁盘/三维终验。证据modeling-completion-20261020-b3h逐项XML与窗口截图；根单槽命令/磁盘载荷遗漏完整部件与恢复清changes缺口转下一批B4修复，F08仍开放。治理检查结论以该批最终日志为准。
+
+### WP-13-T24 B4b 完整磁盘草稿设计
+
+PM-04/08、AT-21：私有版本JSON封装根及四类部件的原Codec字节、根身份及未应用摘要，完整候选校验后一次恢复；不覆盖保存基线、不清未应用事实，局部历史新起点。旧根hex仅从当前基线按确切ID补部件，缺失拒绝。详见总计划B4b八节；项目存储/公共面/新边不变，完整部件项目apply与删除保护仍转B4c。
+
+B4b检查点：完整域帧/原子恢复/未应用事实/规范比较真实非GUI七套件1189通过、0失败、0跳过；双模式及机器验证三条通过。用户要求另一工作树GUI结束并通知后复验，最终三GUI与正式宿主NOT RUN，重叠GUI轮次invalid。证据modeling-completion-20261020-b4b-checkpoint，只保存WIP、不标完成；B4c非GUI可继续。
+
+### WP-13-T24 B4c-1：旧草稿锚保护
+
+PM-04/AT-29：bindSessionAnchor与外部修订事件不能给未重放的脏草稿偷换baseRevision；同分支保留原锚/基线/历史供project拒绝Stale，跨分支未处置拒绝，干净及初始绑定沿原推进。此增量替代v0.22无条件前移编辑基线的旧实现描述，不改变需求；无公共形状/存储变化。完整应用与GUI终验仍开放。
+
+### WP-13-T24 B4c-2：完整工作集原子应用
+
+新增apply-modeling-working-set，复用v2载荷，旧五token保留。临时ID仅请求内关联、project一次取号后精确回填；完整部件槽与根引用一一对应，活动闭包和保留历史对象区分；新命令逆放按固定修订重建。assembly只新增acceptAppliedSession完整权威回执，普通恢复仍保护草稿。细节及失败/验证见总计划B4c/B4c-2，未验证不标完成。
+
+B4c-2检查点：非GUI1205通过，三套真实窗口225通过，合计1430通过、0失败、0跳过；双模式及verify-task通过。真实存储/编译贯通完整工作集增改删、再次新增、undo-redo及磁盘重开。正式宿主FAIL（策略推进后正确Stale，但尚缺真正重建；旧tour继续空快照解引用崩溃）；原始证据modeling-completion-20261020-b4c2-checkpoint。B4c-3继续旧历史互操作/冲突重建与宿主修复，47项及真实网格三维未闭合，仅WIP。
+
+### WP-13-T24 B4c-3a：旧命令与历史保留部件互操作
+
+沿PM-18/MDL-06，旧五token同样只按根引用重建活动闭包；所有保留对象字节继续作为inverse素材。旧Restore由final prepare的私有固定修订规划器统一校验槽身份/类型/重复及历史存在性，再按根候选及计划覆盖完整恢复，原字节直写；旧Apply槽含义不变（命名位姿槽仍只含用户条目，不得混入Home/Zero）。精确范围及红绿/真实存储矩阵见总计划B4c-3a，无公共/存储/依赖边变化；冲突真正重建与宿主失败保护仍另行完成。
+
+运行时同步补充：旧命名位姿Restore若恢复工具/场景/根运行时字段，按活动闭包实际差异要求双编译，final合并族默认位与规划结果；仅位姿内容/引用变化仍跳过。比较排除位姿集/引用及编辑日志，不把未活动历史对象写入误作活动变化。真实快照工具身份失败及规划红例先保存，再实施验证；不以数据恢复通过代替正式运行时一致性。
+
+B4c-3a实施回归：十套件1495通过、0失败、0跳过，含三套Windows窗口225项；建模增加4项，core本批改跑全量65项而非仅4项红线。真实存储链核对旧五token、逐命令撤销重做、磁盘重开及正式运行时工具身份。证据modeling-completion-20261020-b4c3a-checkpoint；正式宿主已知失败及47项全三维未由本批闭合，不标终验通过。
+
+### WP-13-T24 B4c-3b-1：冲突重新编辑完整读取（设计登记）
+
+装配门面仅增加bindRevisionDraftReader同步固定修订草稿读取回调及retainedConflictDraft只读值副本。rebuildOnRevision通过reader完整读取指定修订，成功建立真实新基线并保存旧草稿/base作待迁移素材，绝不直接重标锚；无reader/无效响应/读取失败均保留全部旧状态并抛定位异常。明确无根时建立空态，不伪造模板。仅UI线程，唯一Codec/SI/身份不变；完整八节与精确范围见总计划B4c-3b-1。宿主冲突落盘/三选项及迁移呈现另批继续，当前不标闭合。
+
+B4c-3b-1实施检查点：十套件1499通过、0失败、0跳过（新增3项UI模型及1项Windows窗口；GUI226），固定修订完整读取及旧稿原base保留真实贯通ProjectStore；已查看新工具树/管理页截图。测试夹具跨进程同名导出目录误删已修复，双模式并发包专项各7通过，最终完整套件不重复累计专项。宿主读取器绑定/冲突落盘/三选项/迁移呈现和tour失败保护尚未闭合；证据另封存b4c3b1-checkpoint，不标47项终验。
+
+B4c-3b-2：buildDraftDocument同时投影已有会话branch和base，供宿主精确定位原草稿分支；projectId和落盘字段仍由控制器绑定填充。生产reader/onResult接线及固定修订详情由L5补齐，非Stale不读取。tour在缺应用/快照或重开失败时非零终止，不以继续截图掩盖失败；冲突窗口/保留落盘/可见迁移仍另批。无公共接口或存储变化，八节设计见总计划。
+
+WP-13-T24 B4c-3b-3a：ModelingPluginAssembly::bindDraftChanged(std::function<void()>)默认空，UI线程同步；绑定以完整规范域帧建立观察点、不回放，同值刷新不通知，字段/结构/部件/导入与局部撤销重做均通知。回调不得抛错或递归改草稿，宿主保证目标生命周期，脱会话先清回调/观察点。保存脏通知独立于历史栈；宿主挂接成功后接入DraftController，已有未应用稿显式初始登记。L-7五种结构操作补齐只读灰显及槽入口/重置确认后的只读复核。
+### WP-13-T24 B4c-3b-3b：冲突旧稿可见对照
+
+PM-04/MDL-08：完整重建成功后面板常驻“查看冲突旧稿对照”，左侧当前工作集、右侧保留原稿，复用唯一ModelDiffService逐对象/字段/来源展示；只读可看，不覆盖、不应用，由用户手工迁移。窗口使用值副本，关闭/切换或基线改变后拒绝旧窗口定位；关闭会话清旧稿并禁入口。正式冲突先落旧帧再允许重建，保存失败/会话或tip漂移/读取错误均保留原稿。实现与验证细节见总计划同名八节；正式tour及47项三维另验，不因组件通过标交付。
+
+### WP-13-T24 B4c-3c：正式操作与成功应用草稿消费
+
+正式draft.apply确认、Stale取消/完整重建、磁盘原稿保留和旧稿对照之后，用户须经原控件重新编辑并明确应用；测试通道不换锚或回灌旧载荷。真实重开强校验发现已应用旧稿未消费，会覆盖当前根/活动部件；修复沿ui既有C-5写端口与串行执行器。完整八节及实际结果见总计划本批，47项全三维仍未闭合。
+
+WP-13-T24 B4c-3c干净结算补充：ModelingPluginAssembly.hasPendingDraft纯查询复用域完整规范比较，不能按摘要或命令可提交性猜测干净；IDraftController.notifySessionClean默认not-supported，真实实现经C-5后台FIFO消费磁盘稿，成功仅清脏代次/保存来源/时刻，保留冲突与局部undo/redo。宿主完整变更回调按实际pending分流，失败保留状态并提示；重做重新置脏，终身代次防旧autosave误清。精确八节/真实红绿证据见原计划，不外推47项交付。
+
+WP-13-T24 B4c-3d：干净会话不能以旧内容仅换新base；同分支新事件/已锚会话不同tip绑定须完整读取固定修订root及活动部件后一次采纳，失败旧值/锚/基线/历史不变且预览诚实缺席，脏稿保持原Stale语义。复用唯一reader/Codec，无新公共签名/格式/依赖；精确八节和验证矩阵见总计划。
+
+WP-13-T24 B4c-3d装配增量：正式建模RevisionCommitted回调仅复制值并排入宿主UI队列；事务返回后按来源adapter实例/关闭/project身份守卫调用完整固定修订读取，避免同步重入project写锁。域脏稿/分支/重复修订过滤不变，零公共签名和存储变化；真实外部场景创建及更新即时完整字节断言先红后验，详见原计划。

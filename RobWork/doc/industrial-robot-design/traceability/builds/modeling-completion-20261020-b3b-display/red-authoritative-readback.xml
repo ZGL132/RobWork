@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="1.303" timestamp="2026-10-20T07:40:06.135" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="1.303" timestamp="2026-10-20T07:40:06.135">
+    <testcase name="ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="379" status="run" result="completed" time="1.303" timestamp="2026-10-20T07:40:06.135" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:403&#x0A;Expected equality of these values:&#x0A;  table-&gt;item(lo,1)-&gt;text()&#x0A;    Which is: { 2-byte object &lt;2D-00&gt;, 2-byte object &lt;38-00&gt; }&#x0A;  initialLower&#x0A;    Which is: { 2-byte object &lt;2A-67&gt;, 2-byte object &lt;BE-8B&gt; }&#x0A;拒绝后显示须回到未确认值，不能显示已接受-8&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:403
+Expected equality of these values:
+  table->item(lo,1)->text()
+    Which is: { 2-byte object <2D-00>, 2-byte object <38-00> }
+  initialLower
+    Which is: { 2-byte object <2A-67>, 2-byte object <BE-8B> }
+拒绝后显示须回到未确认值，不能显示已接受-8
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:431&#x0A;Expected equality of these values:&#x0A;  table-&gt;item(lo,1)-&gt;text()&#x0A;    Which is: { 2-byte object &lt;31-00&gt;, 2-byte object &lt;31-00&gt; }&#x0A;  (QString(QtPrivate::qMakeStringPrivate(u&quot;&quot; &quot;-8&quot;)))&#x0A;    Which is: { 2-byte object &lt;2D-00&gt;, 2-byte object &lt;38-00&gt; }&#x0A;领域拒绝后表单不得保留11为已应用基线&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:431
+Expected equality of these values:
+  table->item(lo,1)->text()
+    Which is: { 2-byte object <31-00>, 2-byte object <31-00> }
+  (QString(QtPrivate::qMakeStringPrivate(u"" "-8")))
+    Which is: { 2-byte object <2D-00>, 2-byte object <38-00> }
+领域拒绝后表单不得保留11为已应用基线
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,738 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_runtime_test
+  sdurws_ird_runtime_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_modeling_test
+  sdurws_ird_modeling_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_modeling_gui_test
+  sdurws_ird_modeling_gui_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_gui_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_kinematics_test
+  sdurws_ird_kinematics_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  pqp.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\pqp.lib
+  Automatic MOC for target qtpropertybrowser
+  qtpropertybrowser.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  yaobi.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws
+  sdurws.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws.lib
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui_test
+  HostCompilePort.cpp
+  HostCompilePipelineTest.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1034,35): error C2027: 使用了未定义类型“sdurws::ird::ui::IModuleDraftSource” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\assembly\sdurws\ird\modeling\ModelingPluginAssembly.hpp(44,7):
+      参见“sdurws::ird::ui::IModuleDraftSource”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1059,35): error C2027: 使用了未定义类型“sdurws::ird::ui::IModuleDraftSource” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\assembly\sdurws\ird\modeling\ModelingPluginAssembly.hpp(44,7):
+      参见“sdurws::ird::ui::IModuleDraftSource”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1062,75): error C2027: 使用了未定义类型“sdurws::ird::ui::IPluginUiModule” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\include\sdurws\ird\ui\IPluginUiRegistrar.hpp(57,7):
+      参见“sdurws::ird::ui::IPluginUiModule”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1062,84): error C2039: "buildDraftCommand": 不是 "std::unique_ptr<sdurws::ird::ui::IPluginUiModule,std::default_delete<sdurws::ird::ui::IPluginUiModule>>" 的成员 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3335,7):
+      参见“std::unique_ptr<sdurws::ird::ui::IPluginUiModule,std::default_delete<sdurws::ird::ui::IPluginUiModule>>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1062,60): error C2737: “envelope”: 必须初始化 const 对象 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1063,13): error C3536: “envelope”: 初始化之前无法使用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1064,46): error C2100: 无法取消引用类型为“int”的操作数 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1065,25): error C2530: “diag”: 必须初始化引用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1065,25): error C3531: “diag”: 类型包含“auto”的符号必须具有初始值设定项 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1065,29): error C2143: 语法错误: 缺少“;”(在“:”的前面) [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1065,30): error C3536: “result”: 初始化之前无法使用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1065,48): error C2143: 语法错误: 缺少“;”(在“)”的前面) [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1066,9): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1066,9):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1066,9):
+          尝试匹配参数列表“()”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1066,9): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1066,9):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,13): error C2664: “void sdurws::ird::ui::acceptModelingCommittedSession(sdurws::ird::modeling::ModelingPluginAssembly &,const sdurws::ird::project::IProjectQueryPort &,const sdurws::ird::project::CommandResult &)”: 无法将参数 3 从“int”转换为“const sdurws::ird::project::CommandResult &” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+      原因如下: 无法从“int”转换为“const sdurws::ird::project::CommandResult”
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+      “sdurws::ird::project::CommandResult::CommandResult”: 没有重载函数可以转换所有参数类型
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\include\sdurws\ird\project\CommandService.hpp(210,1):
+          可能是“sdurws::ird::project::CommandResult::CommandResult(sdurws::ird::project::CommandResult &&)”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+              “sdurws::ird::project::CommandResult::CommandResult(sdurws::ird::project::CommandResult &&)”: 无法将参数 1 从“int”转换为“sdurws::ird::project::CommandResult &&”
+                  C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+                  原因如下: 无法从“int”转换为“sdurws::ird::project::CommandResult”
+                  C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+                  转换要求第二个用户定义的转换运算符或构造函数
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\include\sdurws\ird\project\CommandService.hpp(210,1):
+          或    “sdurws::ird::project::CommandResult::CommandResult(const sdurws::ird::project::CommandResult &)”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+              “sdurws::ird::project::CommandResult::CommandResult(const sdurws::ird::project::CommandResult &)”: 无法将参数 1 从“int”转换为“const sdurws::ird::project::CommandResult &”
+                  C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+                  原因如下: 无法从“int”转换为“const sdurws::ird::project::CommandResult”
+                  C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+                  转换要求第二个用户定义的转换运算符或构造函数
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,66):
+          尝试匹配参数列表“(int)”时
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\plugin\HostCompilePort.hpp(222,6):
+      参见“sdurws::ird::ui::acceptModelingCommittedSession”的声明
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1069,13):
+      尝试匹配参数列表“(sdurws::ird::modeling::ModelingPluginAssembly, sdurws::ird::project::IProjectQueryPort, int)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1070,13): error C2027: 使用了未定义类型“sdurws::ird::ui::IPluginUiModule” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\include\sdurws\ird\ui\IPluginUiRegistrar.hpp(57,7):
+      参见“sdurws::ird::ui::IPluginUiModule”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1070,13): error C2039: "buildDraftCommand": 不是 "std::unique_ptr<sdurws::ird::ui::IPluginUiModule,std::default_delete<sdurws::ird::ui::IPluginUiModule>>" 的成员 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\memory(3335,7):
+      参见“std::unique_ptr<sdurws::ird::ui::IPluginUiModule,std::default_delete<sdurws::ird::ui::IPluginUiModule>>”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1070,13): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1070,13):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1070,13):
+          尝试匹配参数列表“()”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1070,13): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1070,13):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,16): error C3487: “int”: 所有返回表达式必须推导为相同类型: 以前为“sdurws::ird::project::CommandResult” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,9): error C2440: “return”: 无法从“int”转换为“sdurws::ird::project::CommandResult” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,9):
+      “sdurws::ird::project::CommandResult::CommandResult”: 没有重载函数可以转换所有参数类型
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\include\sdurws\ird\project\CommandService.hpp(210,1):
+          可能是“sdurws::ird::project::CommandResult::CommandResult(sdurws::ird::project::CommandResult &&)”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,9):
+              “sdurws::ird::project::CommandResult::CommandResult(sdurws::ird::project::CommandResult &&)”: 无法将参数 1 从“int”转换为“sdurws::ird::project::CommandResult &&”
+                  C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,16):
+                  原因如下: 无法从“int”转换为“sdurws::ird::project::CommandResult”
+                  C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,16):
+                  转换要求第二个用户定义的转换运算符或构造函数
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\include\sdurws\ird\project\CommandService.hpp(210,1):
+          或    “sdurws::ird::project::CommandResult::CommandResult(const sdurws::ird::project::CommandResult &)”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,9):
+              “sdurws::ird::project::CommandResult::CommandResult(const sdurws::ird::project::CommandResult &)”: 无法将参数 1 从“int”转换为“const sdurws::ird::project::CommandResult &”
+                  C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,16):
+                  原因如下: 无法从“int”转换为“const sdurws::ird::project::CommandResult”
+                  C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,16):
+                  转换要求第二个用户定义的转换运算符或构造函数
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1072,9):
+          尝试匹配参数列表“(int)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1076,5): error C2679: 二元“=”: 没有找到接受“void”类型的右操作数的运算符(或没有可接受的转换) [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qjsonobject.h(47,18):
+      可能是“QJsonObject &QJsonObject::operator =(QJsonObject &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1076,5):
+          “QJsonObject &QJsonObject::operator =(QJsonObject &&) noexcept”: 无法将参数 2 从“void”转换为“QJsonObject &&”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1076,22):
+              void 类型的表达式不能转换为其他类型
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qjsonobject.h(43,18):
+      或    “QJsonObject &QJsonObject::operator =(const QJsonObject &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1076,5):
+          “QJsonObject &QJsonObject::operator =(const QJsonObject &) noexcept”: 无法将参数 2 从“void”转换为“const QJsonObject &”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1076,22):
+              void 类型的表达式不能转换为其他类型
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1076,5):
+      尝试匹配参数列表“(QJsonObject, void)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1088,5): error C2679: 二元“=”: 没有找到接受“void”类型的右操作数的运算符(或没有可接受的转换) [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qjsonobject.h(47,18):
+      可能是“QJsonObject &QJsonObject::operator =(QJsonObject &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1088,5):
+          “QJsonObject &QJsonObject::operator =(QJsonObject &&) noexcept”: 无法将参数 2 从“void”转换为“QJsonObject &&”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1088,22):
+              void 类型的表达式不能转换为其他类型
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qjsonobject.h(43,18):
+      或    “QJsonObject &QJsonObject::operator =(const QJsonObject &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1088,5):
+          “QJsonObject &QJsonObject::operator =(const QJsonObject &) noexcept”: 无法将参数 2 从“void”转换为“const QJsonObject &”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1088,22):
+              void 类型的表达式不能转换为其他类型
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1088,5):
+      尝试匹配参数列表“(QJsonObject, void)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1095,5): error C2679: 二元“=”: 没有找到接受“void”类型的右操作数的运算符(或没有可接受的转换) [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qjsonobject.h(47,18):
+      可能是“QJsonObject &QJsonObject::operator =(QJsonObject &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1095,5):
+          “QJsonObject &QJsonObject::operator =(QJsonObject &&) noexcept”: 无法将参数 2 从“void”转换为“QJsonObject &&”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1095,22):
+              void 类型的表达式不能转换为其他类型
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qjsonobject.h(43,18):
+      或    “QJsonObject &QJsonObject::operator =(const QJsonObject &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1095,5):
+          “QJsonObject &QJsonObject::operator =(const QJsonObject &) noexcept”: 无法将参数 2 从“void”转换为“const QJsonObject &”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1095,22):
+              void 类型的表达式不能转换为其他类型
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1095,5):
+      尝试匹配参数列表“(QJsonObject, void)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1098,45): error C2679: 二元“=”: 没有找到接受“void”类型的右操作数的运算符(或没有可接受的转换) [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qjsonobject.h(47,18):
+      可能是“QJsonObject &QJsonObject::operator =(QJsonObject &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1098,45):
+          “QJsonObject &QJsonObject::operator =(QJsonObject &&) noexcept”: 无法将参数 2 从“void”转换为“QJsonObject &&”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1098,62):
+              void 类型的表达式不能转换为其他类型
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qjsonobject.h(43,18):
+      或    “QJsonObject &QJsonObject::operator =(const QJsonObject &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1098,45):
+          “QJsonObject &QJsonObject::operator =(const QJsonObject &) noexcept”: 无法将参数 2 从“void”转换为“const QJsonObject &”
+              C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1098,62):
+              void 类型的表达式不能转换为其他类型
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1098,45):
+      尝试匹配参数列表“(QJsonObject, void)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,5): error C2108: 下标不是整型 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,5):
+          尝试匹配参数列表“()”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,47): error C2108: 下标不是整型 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,47): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,47):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,47):
+          尝试匹配参数列表“()”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,47): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1103,47):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5): error C2108: 下标不是整型 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5): error C2672: “std::get”: 未找到匹配的重载函数 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\variant(1223,37):
+      可能是“decltype(auto) std::get(const std::variant<_Types...> &&)”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\variant(1212,37):
+      或    “decltype(auto) std::get(const std::variant<_Types...> &)”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\variant(1201,37):
+      或    “decltype(auto) std::get(std::variant<_Types...> &&)”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\variant(1190,37):
+      或    “decltype(auto) std::get(std::variant<_Types...> &)”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\variant(1179,37):
+      或    “decltype(auto) std::get(const std::variant<_Types...> &&)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\variant(1169,37):
+      或    “decltype(auto) std::get(const std::variant<_Types...> &)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\variant(1159,37):
+      或    “decltype(auto) std::get(std::variant<_Types...> &&)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\variant(1149,37):
+      或    “decltype(auto) std::get(std::variant<_Types...> &)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\tuple(975,34):
+      或    “const _Ty &&std::get(const std::tuple<_Types...> &&) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\tuple(963,28):
+      或    “_Ty &&std::get(std::tuple<_Types...> &&) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\tuple(951,33):
+      或    “const _Ty &std::get(const std::tuple<_Types...> &) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\tuple(939,27):
+      或    “_Ty &std::get(std::tuple<_Types...> &) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(755,35):
+      或    “const _Ty2 &&std::get(const std::pair<_Ty1,_Ty2> &&) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(749,35):
+      或    “const _Ty1 &&std::get(const std::pair<_Ty1,_Ty2> &&) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(739,70):
+      或    “const tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &&std::get(const std::pair<_Ty1,_Ty2> &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(733,29):
+      或    “_Ty2 &&std::get(std::pair<_Ty1,_Ty2> &&) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(727,29):
+      或    “_Ty1 &&std::get(std::pair<_Ty1,_Ty2> &&) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(717,64):
+      或    “tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &&std::get(std::pair<_Ty1,_Ty2> &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(711,34):
+      或    “const _Ty2 &std::get(const std::pair<_Ty1,_Ty2> &) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(705,34):
+      或    “const _Ty1 &std::get(const std::pair<_Ty1,_Ty2> &) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(695,69):
+      或    “const tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &std::get(const std::pair<_Ty1,_Ty2> &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(689,28):
+      或    “_Ty2 &std::get(std::pair<_Ty1,_Ty2> &) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(683,28):
+      或    “_Ty1 &std::get(std::pair<_Ty1,_Ty2> &) noexcept”
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(673,63):
+      或    “tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &std::get(std::pair<_Ty1,_Ty2> &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(197,34):
+      或    “const _Ty &&std::get(const std::array<_Ty,_Size> &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(194,28):
+      或    “_Ty &&std::get(std::array<_Ty,_Size> &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(191,33):
+      或    “const _Ty &std::get(const std::array<_Ty,_Size> &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(188,27):
+      或    “_Ty &std::get(std::array<_Ty,_Size> &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Idx”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(185,72):
+      或    “const tuple_element<_Index,std::tuple<_Types...>>::type &&std::get(const std::tuple<_Types...> &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Index”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(182,66):
+      或    “tuple_element<_Index,std::tuple<_Types...>>::type &&std::get(std::tuple<_Types...> &&) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Index”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(179,71):
+      或    “const tuple_element<_Index,std::tuple<_Types...>>::type &std::get(const std::tuple<_Types...> &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Index”的模板参数无效，应为编译时常量表达式
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\utility(176,65):
+      或    “tuple_element<_Index,std::tuple<_Types...>>::type &std::get(std::tuple<_Types...> &) noexcept”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “std::get”:“_Index”的模板参数无效，应为编译时常量表达式
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1106,5):
+      尝试匹配参数列表“(const char [66], const char [21], const sdurws::ird::core::ObjectId)”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1109,53): error C2027: 使用了未定义类型“sdurws::ird::ui::IModuleDraftSource” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\assembly\sdurws\ird\modeling\ModelingPluginAssembly.hpp(44,7):
+      参见“sdurws::ird::ui::IModuleDraftSource”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1109,16): error C2737: “finalFrame”: 必须初始化 const 对象 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1115,81): error C2108: 下标不是整型 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1115,16): error C2737: “restoredRoot”: 必须初始化 const 对象 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1115,109): error C3536: “restoredRoot”: 初始化之前无法使用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1117,5): error C2100: 无法取消引用类型为“int”的操作数 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1117,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1117,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1117,5):
+          尝试匹配参数列表“()”时
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1117,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1117,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1118,5): error C2027: 使用了未定义类型“sdurws::ird::ui::IModuleDraftSource” [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\assembly\sdurws\ird\modeling\ModelingPluginAssembly.hpp(44,7):
+      参见“sdurws::ird::ui::IModuleDraftSource”的声明
+  
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1118,5): error C3536: “finalFrame”: 初始化之前无法使用 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1118,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1118,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1118,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1118,5):
+      尝试匹配参数列表“(const char [60], const char [11], int)”时
+  

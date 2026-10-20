@@ -20,20 +20,34 @@
  */
 
 #include <gtest/gtest.h>
+#include <limits> // 非有限交互返回值必须被拒绝，不能写入领域草稿。
 
 #include <QApplication>
+#include <QClipboard> // UX-05：真实剪贴板经过公共参数表粘贴入口。
+#include <QElapsedTimer>
+#include <QKeyEvent> // REQ-08：向真实窗口派发快捷键，覆盖按钮以外的用户入口。
+#include <QEventLoop>
+#include <QTimer>
+#include <set> // 生成批次逐条身份必须唯一，不能仅用条目数量代替。
 #include <QCheckBox>  // 启用 Switch 断言（UI-T37 R1）
 #include <QGroupBox>  // 卡片分组定位（UI-T37 返工——QGroupBox 形态）
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenu>  // 导入下拉菜单断言（UI-T37 返工⑤）
 #include <QPushButton>
+#include <QPlainTextEdit> // AT-02：真实导入确认页全量纯文本错误展示。
 #include <QScrollArea>
 #include <QSlider>  // 覆盖率双联断言（UI-T37 R1）
 #include <QSpinBox>  // 采样计数复合行断言（UI-T37 R1）
+#include <algorithm>  // 批33：段行控件按行序排序。
+#include <QPoint>  // 批33：mapTo 行序坐标。
+#include <QFormLayout>  // WP-14-T12 批33：段行 LabelRole/FieldRole 精确取法。
+#include <QDoubleSpinBox>  // WP-14-T12 批33：段距离旋箱（接近/撤离复合行）。
 #include <QTabWidget>
 #include <QToolButton>  // 卡片折叠三角断言（UI-T37 返工⑤）
 #include <QTreeWidget>
+#include <QTableWidget>  // WP-14-T12：生产工况结构表，验证空集合的新增与原子应用。
+#include <QListWidget>  // 适用工位多选的真实控件。
 #include <QWidget>
 
 #include <sdurws/ird/ui/FlowLayout.hpp>  // 边距耦合半区（UI-T36 G-1 守卫重构——公共头 R-2 合规）
@@ -53,6 +67,25 @@ using namespace sdurws::ird;
 using namespace sdurws::ird::requirements;
 
 namespace {
+
+/**
+ * @brief 等待Windows真实剪贴板可读（最多3秒），不以空剪贴板冒充生产粘贴成功。
+ * @param text [in] TSV文本；测试窗销毁后OLE所有权消息可能尚未派发，先泵事件再重试。
+ * @return 实际读回完全一致才为true；超时仍由用例失败，不跳过或替换生产粘贴路径。
+ */
+bool setRequirementClipboard(const QString& text)
+{
+    QElapsedTimer deadline; deadline.start();
+    do {
+        QApplication::processEvents();
+        QApplication::clipboard()->setText(text);
+        if (QApplication::clipboard()->text() == text) { return true; }
+        QEventLoop messages;
+        QTimer::singleShot(20, &messages, &QEventLoop::quit);
+        messages.exec();
+    } while (deadline.elapsed() < 3000);
+    return false;
+}
 
 /// 闭包域字节源的测试实现（harness MapClosure 同款——内存映射形态）。
 class MapClosure final : public RequirementObjectClosureView {
@@ -197,6 +230,445 @@ protected:
     RequirementReadinessReport m_report{};            ///< 首刷就绪报告
     std::unique_ptr<RequirementsPanelWidget> m_panel; ///< 被测面板
 };
+
+/** @brief UX-05：工位批量输入先暂存，非法行定位，修正后整体确认与撤销。 */
+TEST_F(RequirementsSessionGuiTest, StationBatchParametersAtomic_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    const auto before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_station");
+    ASSERT_NE(batch, nullptr) << "需求工位必须有非模态筛选/批量参数编辑入口";
+    auto* filter = batch->findChild<QLineEdit*>("ird_param_filter");
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table");
+    ASSERT_NE(filter, nullptr); ASSERT_NE(table, nullptr);
+    const int allRows = table->rowCount();
+    filter->setText(QStringLiteral("容差"));
+    EXPECT_GT(table->rowCount(), 0); EXPECT_LT(table->rowCount(), allRows);
+    filter->clear();
+    auto* units = batch->findChild<QComboBox*>("ird_param_unit_switch"); ASSERT_NE(units, nullptr);
+    const int mmIndex = units->findText(QStringLiteral("长度：mm")); ASSERT_GE(mmIndex, 0);
+    units->setCurrentIndex(mmIndex); units->activated(mmIndex);
+    // 公共参数表以单位列声明输入单位，TSV值列只填数值，不重复附加单位后缀。
+    ASSERT_TRUE(setRequirementClipboard("pose-position-x\t250\ntolerance-position\tbad")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), before) << "粘贴仅暂存";
+    auto* impact = batch->findChild<QLabel*>("ird_param_impact");
+    ASSERT_NE(impact, nullptr);
+    EXPECT_TRUE(impact->text().contains(QStringLiteral("第2行"))) << impact->text().toStdString();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    EXPECT_TRUE(batch->findChild<QWidget*>("ird_param_confirm_region")->isHidden());
+    ASSERT_TRUE(setRequirementClipboard("tolerance-position\t2\npose-position-y\t500")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    QApplication::processEvents();
+    std::fprintf(stderr, "[s8]\n");
+    const auto after = m_editor.workingSet().points.entries.front();
+    EXPECT_DOUBLE_EQ(after.pose.position.value()[0], 0.25);
+    EXPECT_DOUBLE_EQ(after.pose.position.value()[1], 0.5);
+    EXPECT_DOUBLE_EQ(after.pose.position.value()[2], before.pose.position.value()[2]);
+    EXPECT_DOUBLE_EQ(after.tolerance.positionTolerance, 0.002);
+    std::fprintf(stderr, "[s9]\n");
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+    ASSERT_TRUE(m_editor.redoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), after);
+}
+
+/** @brief UX-05：筛选/单位切换后可取得真实字段键及精确数值模板，只读复制零写入。 */
+TEST_F(RequirementsSessionGuiTest, ParameterTsvTemplateFollowsFilterAndUnits_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    auto precise = m_editor.workingSet().points.entries.front();
+    precise.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(0.1234567891234567, 2.0, 3.0), precise.source);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{precise}).accepted);
+    const auto before = m_editor.workingSet();
+    m_panel->refreshPanel(before, m_report);
+    m_panel->focusObject(before.points.entries.front().objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_station");
+    ASSERT_NE(batch, nullptr);
+    auto* copy = batch->findChild<QPushButton*>("ird_req_copy_tsv");
+    ASSERT_NE(copy, nullptr) << "UX-05：用户必须能取得真实字段键与当前单位下的TSV模板";
+    auto* filter = batch->findChild<QLineEdit*>("ird_param_filter");
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table");
+    auto* units = batch->findChild<QComboBox*>("ird_param_unit_switch");
+    ASSERT_NE(filter, nullptr); ASSERT_NE(table, nullptr); ASSERT_NE(units, nullptr);
+    QString label;
+    for (int row = 0; row < table->rowCount(); ++row) {
+        if (table->item(row,0)->data(Qt::UserRole).toString() == "pose-position-x") {
+            label = table->item(row,0)->text(); break;
+        }
+    }
+    ASSERT_FALSE(label.isEmpty()); filter->setText(label);
+    const int mmIndex = units->findText(QStringLiteral("长度：mm")); ASSERT_GE(mmIndex, 0);
+    units->setCurrentIndex(mmIndex); units->activated(mmIndex);
+    copy->click(); QApplication::processEvents();
+    const QString copied = QGuiApplication::clipboard()->text();
+    const auto columns = copied.split('\t'); ASSERT_EQ(columns.size(), 2);
+    EXPECT_EQ(columns[0], "pose-position-x");
+    bool parsed = false; const double copiedMm = columns[1].toDouble(&parsed);
+    ASSERT_TRUE(parsed); EXPECT_DOUBLE_EQ(copiedMm, 0.1234567891234567 * 1000.0)
+        << "TSV回贴不能把工程值截成表格六位显示精度";
+    EXPECT_FALSE(copied.contains("pose-position-y\t")) << "模板只包含当前筛选行";
+    EXPECT_FALSE(copied.contains(" mm")) << "数值列不重复包含单位后缀";
+    EXPECT_EQ(m_editor.workingSet(), before) << "复制模板只读，不能改草稿";
+    m_panel->setWritable(false);
+    // 可写性变化会重建表单，重新定位新控件，不读取被销毁的旧窗口指针。
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    copy = batch->findChild<QPushButton*>("ird_req_copy_tsv"); ASSERT_NE(copy, nullptr);
+    filter = batch->findChild<QLineEdit*>("ird_param_filter"); ASSERT_NE(filter, nullptr);
+    units = batch->findChild<QComboBox*>("ird_param_unit_switch"); ASSERT_NE(units, nullptr);
+    filter->setText(label);
+    const int readOnlyMm = units->findText(QStringLiteral("长度：mm")); ASSERT_GE(readOnlyMm, 0);
+    units->setCurrentIndex(readOnlyMm); units->activated(readOnlyMm);
+    EXPECT_TRUE(copy->isEnabled()) << "只读会话仍可复制参数";
+    EXPECT_FALSE(batch->findChild<QPushButton*>("ird_param_paste")->isEnabled());
+    EXPECT_FALSE(batch->findChild<QPushButton*>("ird_param_apply")->isEnabled());
+    EXPECT_EQ(batch->findChild<QTableWidget*>("ird_param_table")->editTriggers(), QAbstractItemView::NoEditTriggers);
+    // Windows销毁旧表单后的OLE剪贴板所有权消息可能尚未完成；只重试真实
+    // 复制按钮并泵事件，不直接把期望文本写剪贴板，最多3秒仍失败则报错。
+    QElapsedTimer deadline; deadline.start();
+    QString readOnlyCopy;
+    do {
+        QApplication::processEvents(); copy->click();
+        readOnlyCopy = QGuiApplication::clipboard()->text();
+        if (readOnlyCopy == copied) { break; }
+        QEventLoop messages; QTimer::singleShot(20, &messages, &QEventLoop::quit); messages.exec();
+    } while (deadline.elapsed() < 3000);
+    EXPECT_EQ(readOnlyCopy, copied);
+    EXPECT_EQ(m_editor.workingSet(), before);
+}
+
+/** @brief UX-05/REQ-03：区域中心/尺寸批量修改经领域校验，只入一次撤销栈。 */
+TEST_F(RequirementsSessionGuiTest, RegionBatchParametersAtomic_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_region");
+    ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("box-center-x\t0.25\nbox-size-z\t0.75")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click(); QApplication::processEvents();
+    const auto after = m_editor.workingSet().regions.entries.front();
+    EXPECT_DOUBLE_EQ(after.box.center[0], 0.25); EXPECT_DOUBLE_EQ(after.box.size[2], 0.75);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+}
+
+/** @brief REQ-03：区域三种采样和可选姿态覆盖率可暂存，确认整批一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, RegionSamplingCompleteAtomic_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr) << "生产区域检查器缺完整采样编辑入口";
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    for (int axis = 0; axis < 3; ++axis) {
+        form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))->setText("0.25");
+    }
+    form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("12");
+    form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("4");
+    form->findChild<QCheckBox*>("ird_region_orientation_coverage_enabled")->setChecked(true);
+    form->findChild<QLineEdit*>("ird_region_orientation_coverage")->setText("0.65");
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before) << "编辑未确认应零写入";
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    const auto after = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(after.positionSampling.method, PositionSamplingMethod::GridBySpacing);
+    EXPECT_EQ(after.positionSampling.spacing, (std::array<double, 3>{0.25,0.25,0.25}));
+    EXPECT_EQ(after.orientationSampling.directionSamples, 12u);
+    EXPECT_EQ(after.orientationSampling.rollSamples, 4u);
+    ASSERT_TRUE(after.coverageTargets.minOrientationCoverage);
+    EXPECT_DOUBLE_EQ(*after.coverageTargets.minOrientationCoverage, 0.65);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    ASSERT_TRUE(m_editor.redoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), after);
+}
+
+/** @brief A-18：区域采样确认自动构建/upsert 采样计划条目；区域删除随删。
+ *
+ * 生产路径全链（真实表单确认→面板派生钩→ISamplingPlanBuilder→编辑器
+ * upsert）——覆盖评估切片消费 req-plan-set，UI 缺计划创建路径即评估链
+ * 对用户内容不可达（A-18 根因面，r11 宿主实测）。用例名带缺陷号。
+ */
+TEST_F(RequirementsSessionGuiTest, RegionSamplingBuildsPlanEntry_A18_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05"}, std::nullopt);
+    const WorkRegion region = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(region.objectId);
+    ASSERT_TRUE(m_editor.workingSet().plans.entries.empty())
+        << "夹具基线应无计划条目（A-18 前提）";
+
+    // 生产入口：完整采样表单确认（Grid 计数 3×2×2——与基线 {2,2,2} 不同
+    // 值，upsert 更新可观测）。
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr) << "生产区域检查器缺完整采样编辑入口";
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::Grid)));
+    form->findChild<QLineEdit*>("ird_region_grid_count_0")->setText("3");
+    form->findChild<QLineEdit*>("ird_region_grid_count_1")->setText("2");
+    form->findChild<QLineEdit*>("ird_region_grid_count_2")->setText("2");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+
+    // A-18 核心：采样确认 Applied 后计划条目自动派生（恰一条、同区域）。
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "采样确认后应派生计划条目（A-18——评估切片消费面）";
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().regionRef,
+              region.objectId);
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts,
+              (std::array<std::uint32_t, 3>{3u, 2u, 2u}));
+
+    // 重确认＝更新非重复（R6 计划-区域一一对应）。首次确认后面板重绘
+    // 重建采样表单（诚实刷新面）——旧指针随旧窗销毁，测试经 objectName
+    // 从当前控件树重定位。
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    form->findChild<QLineEdit*>("ird_region_grid_count_0")->setText("4");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "重确认应复用既有计划 id（R6），不得新增第二条";
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts[0], 4u);
+
+    // 区域删除随删计划（悬空计划预防）——真实删除按钮（与用户点击同槽
+    // 轨；onRemoveEntry 为 private，按钮 objectName＝生命周期锚惯例）。
+    QPushButton* removeBtn = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_req_remove_regions"));
+    ASSERT_NE(removeBtn, nullptr) << "区域生命周期删除按钮缺失";
+    removeBtn->click();
+    QApplication::processEvents();
+    EXPECT_TRUE(m_editor.workingSet().regions.entries.empty());
+    EXPECT_TRUE(m_editor.workingSet().plans.entries.empty())
+        << "区域删除应随删其采样计划（R6 悬空预防）";
+}
+
+/** @brief REQ-03：随机/零网格、可选覆盖率清除、取消及非法输入都走真实表单。 */
+TEST_F(RequirementsSessionGuiTest, RegionSamplingModesCancelAndReject_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05", "UX-11"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method"); ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::Random)));
+    form->findChild<QLineEdit*>("ird_region_random_count")->setText("24");
+    form->findChild<QPushButton*>("ird_region_sampling_cancel")->click();
+    EXPECT_EQ(method->currentData().toInt(), int(PositionSamplingMethod::Grid));
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::Random)));
+    form->findChild<QLineEdit*>("ird_region_random_count")->setText("4294967296");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    EXPECT_FALSE(form->findChild<QLabel*>("ird_region_sampling_error")->text().isEmpty());
+    form->findChild<QLineEdit*>("ird_region_random_count")->setText("-1");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    form->findChild<QLineEdit*>("ird_region_random_count")->setText("24");
+    form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before) << "姿态计数零必须拒绝";
+    form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("6");
+    form->findChild<QLineEdit*>("ird_region_definition_name")->setText(QStringLiteral("随机区域"));
+    form->findChild<QLineEdit*>("ird_region_definition_note")->setText(QStringLiteral("原文备注"));
+    form->findChild<QCheckBox*>("ird_region_collision")->setChecked(true);
+    form->findChild<QLineEdit*>("ird_region_margin")->setText("0.15");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    auto random = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(random.positionSampling.method, PositionSamplingMethod::Random);
+    EXPECT_EQ(random.positionSampling.count, 24u);
+    EXPECT_EQ(random.name, "随机区域"); EXPECT_EQ(random.note, "原文备注");
+    EXPECT_TRUE(random.demands.collisionFreeRequired); ASSERT_TRUE(random.demands.minimumJointMargin);
+    EXPECT_DOUBLE_EQ(*random.demands.minimumJointMargin, 0.15);
+    // 新投影后重新查控件；切回Grid允许位置零样本，绝不把未设姿态覆盖率造零。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::Grid)));
+    form->findChild<QLineEdit*>("ird_region_grid_count_0")->setText("0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    const auto grid = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(grid.positionSampling.method, PositionSamplingMethod::Grid);
+    EXPECT_EQ(grid.positionSampling.counts[0], 0u);
+    EXPECT_FALSE(grid.coverageTargets.minOrientationCoverage);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), random);
+    m_panel->setWritable(false); m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr); EXPECT_FALSE(form->isEnabled());
+}
+
+/** @brief REQ-03：旧数量/开关/等级/计数四轨在排队后切选中行，不得写到新区域。 */
+TEST_F(RequirementsSessionGuiTest, RegionQueuedFieldsKeepOriginalAnchor_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05"}, std::nullopt);
+    const auto first = m_editor.workingSet().regions.entries.front();
+    const auto second = makeRegion("第二区域");
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{second}).accepted);
+    for (int track = 0; track < 4; ++track) {
+        m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(first.objectId);
+        if (track == 0) {
+            QLineEdit* edit = nullptr;
+            for (auto* field : m_panel->findChildren<QLineEdit*>()) {
+                if (field->property("irdFieldKey").toString() == "box-center-x") { edit = field; break; }
+            }
+            ASSERT_NE(edit, nullptr); edit->setText("0.75"); QMetaObject::invokeMethod(edit, "editingFinished");
+        } else if (track == 1) {
+            auto* toggle = m_panel->findChild<QComboBox*>("ird_region_enabled_combo"); ASSERT_NE(toggle, nullptr);
+            toggle->setCurrentIndex(1);
+        } else if (track == 2) {
+            auto* level = m_panel->findChild<QComboBox*>("ird_region_level_combo"); ASSERT_NE(level, nullptr);
+            level->setCurrentText("Should");
+        } else {
+            const auto spins = m_panel->findChildren<QSpinBox*>("ird_region_count_spin"); ASSERT_EQ(spins.size(), 3);
+            spins[0]->setValue(3);
+        }
+        m_panel->focusObject(second.objectId); QApplication::processEvents();
+        for (const auto& region : m_editor.workingSet().regions.entries) {
+            if (region.objectId == second.objectId) { EXPECT_EQ(region, second) << "不得改写切换后的区域，轨=" << track; }
+            if (region.objectId == first.objectId) {
+                if (track == 0) { EXPECT_DOUBLE_EQ(region.box.center[0], 0.75); }
+                if (track == 1) { EXPECT_FALSE(region.enabled); }
+                if (track == 2) { EXPECT_EQ(region.level, RequirementLevel::Should); }
+                if (track == 3) { EXPECT_EQ(region.positionSampling.counts[0], 3u); }
+            }
+        }
+        if (::testing::Test::HasFailure()) { return; }
+    }
+}
+
+/** @brief REQ-03：完整暂存拒绝基线变化/禁写；姿态覆盖率可明确清除。 */
+TEST_F(RequirementsSessionGuiTest, RegionSamplingBaselineAndOptionalClear_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-11"}, std::nullopt);
+    auto before = m_editor.workingSet().regions.entries.front();
+    before.coverageTargets.minOrientationCoverage = 0.7;
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{before}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    form->findChild<QCheckBox*>("ird_region_orientation_coverage_enabled")->setChecked(false);
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_FALSE(m_editor.workingSet().regions.entries.front().coverageTargets.minOrientationCoverage);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    for (int axis=0; axis<3; ++axis) { form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))->setText("-0.1"); }
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), before);
+    EXPECT_FALSE(form->findChild<QLabel*>("ird_region_sampling_error")->text().isEmpty());
+    for (int axis=0; axis<3; ++axis) { form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))->setText("0.1"); }
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click(); // 候选已排队。
+    auto newer = before; newer.note = "外部修改必须保留";
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{newer}).accepted);
+    QApplication::processEvents(); EXPECT_EQ(m_editor.workingSet().regions.entries.front(), newer);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form"); ASSERT_NE(form, nullptr);
+    form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("3");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    m_panel->setWritable(false); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front(), newer);
+}
+
+/** @brief UX-05/REQ-04：未设节拍显示未设，取消零写入，确认节拍只进草稿。 */
+TEST_F(RequirementsSessionGuiTest, ConditionBatchParametersCancel_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    const auto before = m_editor.workingSet().conditions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_condition");
+    ASSERT_NE(batch, nullptr);
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table"); ASSERT_NE(table, nullptr);
+    EXPECT_NE(table->item(0, 1)->text(), QStringLiteral("0")) << "缺失节拍不能伪造成零";
+    ASSERT_TRUE(setRequirementClipboard("cycle-time\t4")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_cancel")->click();
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before);
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    ASSERT_FALSE(batch->findChild<QWidget*>("ird_param_confirm_region")->isHidden())
+        << batch->findChild<QLabel*>("ird_param_impact")->text().toStdString();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click(); QApplication::processEvents();
+    ASSERT_TRUE(m_editor.workingSet().conditions.entries.front().targetCycleTimeS);
+    EXPECT_DOUBLE_EQ(*m_editor.workingSet().conditions.entries.front().targetCycleTimeS, 4);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before);
+}
+
+/** @brief UX-05：暂存期间切换对象或进入只读，不得把输入写到另一个对象/禁写会话。 */
+TEST_F(RequirementsSessionGuiTest, BatchParametersAnchorAndReadOnly_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {"UX-11"}, std::nullopt);
+    const auto before = m_editor.workingSet().points.entries.front();
+    const auto second = makePoint("批量编辑第二工位", 4, 5, 6);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{second}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("pose-position-x\t0.25")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    m_panel->focusObject(second.objectId); // 确认已排队，改变选择不改变载荷目标。
+    QApplication::processEvents();
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (point.objectId == before.objectId) { EXPECT_DOUBLE_EQ(point.pose.position.value()[0], 0.25); }
+        if (point.objectId == second.objectId) { EXPECT_EQ(point, second); }
+    }
+    m_panel->focusObject(before.objectId);
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("pose-position-x\t0.75")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    m_panel->setWritable(false); QApplication::processEvents();
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (point.objectId == before.objectId) { EXPECT_DOUBLE_EQ(point.pose.position.value()[0], 0.25); }
+    }
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    // UX-05：只读禁写应核对真实写入口；筛选/复制保留可用，不能锁死整块表格。
+    EXPECT_TRUE(batch->isEnabled());
+    EXPECT_FALSE(batch->findChild<QPushButton*>("ird_param_paste")->isEnabled());
+    EXPECT_FALSE(batch->findChild<QPushButton*>("ird_param_apply")->isEnabled());
+    EXPECT_EQ(batch->findChild<QTableWidget*>("ird_param_table")->editTriggers(), QAbstractItemView::NoEditTriggers);
+}
+
+/** @brief UX-05：完整对象基线冲突或域校验拒绝时整批零写入，不留下表格假成功。 */
+TEST_F(RequirementsSessionGuiTest, BatchParametersRejectStaleBaseline_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {"REQ-09"}, std::nullopt);
+    const auto before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report); m_panel->focusObject(before.objectId);
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("pose-position-x\t0.25")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    auto changed = before; changed.note = "外部编辑不能被旧参数覆盖";
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{changed}).accepted);
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), changed);
+    // 下限/上限各自合法但区间逆序应由领域拒绝，不能部分应用其中一项。
+    changed.pose.orientation.kind = OrientationRuleKind::ToolRollFree;
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{changed}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    ASSERT_TRUE(setRequirementClipboard("roll-min\t2\nroll-max\t1\npose-position-x\t0.5")) << "Windows剪贴板写入必须真实可读";
+    batch->findChild<QPushButton*>("ird_param_paste")->click();
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), changed);
+    batch = m_panel->findChild<QWidget*>("ird_req_batch_station"); ASSERT_NE(batch, nullptr);
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table"); ASSERT_NE(table, nullptr);
+    for (int row = 0; row < table->rowCount(); ++row) {
+        if (table->item(row, 0)->data(Qt::UserRole).toString() == "pose-position-x") {
+            EXPECT_EQ(table->item(row, 1)->text(), QStringLiteral("1"));
+        }
+    }
+}
 
 // =====================================================================
 // acceptance 1 会话数据面：基线闭包载入→四集合入面板（树投影＋定位）。
@@ -782,6 +1254,10 @@ TEST_F(RequirementsSessionGuiTest, StationPositionEditing_ThreeAxis_UI_T47)
 #include <QTemporaryDir>
 #include <QDir>
 #include "plugin/RequirementsCommandFlows.hpp"  // executeRequirementCommand/host 注入缝
+#include <sdurws/ird/requirements/Import.hpp> // WP-14-T12：字段行身份与实际单位预览断言。
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QTimer>
 
 namespace {
 
@@ -793,9 +1269,13 @@ public:
     std::optional<int> item;                     ///< 条目选择应答
     bool templateOk = true;                      ///< 模板表单确认
     bool arrayOk = true;                         ///< 阵列表单确认
+    bool productionArray = false;                ///< AT-24：驱动生产参数对话框。
+    bool productionMirror = false;               ///< AT-24：驱动生产镜面表单。
     int arrayCount = 3;                          ///< 阵列数量应答
     double arraySpacing = 0.5;                   ///< 阵列间距应答
     bool importConfirmed = true;                 ///< 导入确认应答
+    bool productionMapping = false;              ///< WP-14-T12：映射步骤驱动真实Qt表单。
+    QString lastImportSummary;                   ///< 逐行错误的完整呈现证据。
     requirements::CommandDialogHost::RegenerateAction action =
         requirements::CommandDialogHost::RegenerateAction::Cancel;
 
@@ -813,20 +1293,31 @@ public:
     {
         return item;
     }
-    bool editTemplateParams(requirements::TemplateParams& params) override
+    bool editTemplateParams(requirements::TemplateKind&, requirements::TemplateParams& params) override
     {
         // 预置改动：1×2 网格（黄金默认的确定子集——用例断言可预期）。
         params.countX = 1;
         params.countY = 2;
         return templateOk;
     }
-    bool editArrayParams(int& count, double& spacing) override
+    bool editArrayDefinition(ArrayKind kind, ArrayParams& params) override
     {
-        count = arrayCount;
-        spacing = arraySpacing;
+        if (productionArray) { return qtDialogHost().editArrayDefinition(kind, params); }
+        params.count = arrayCount; params.spacingM = arraySpacing;
         return arrayOk;
     }
-    bool confirmImport(const QString&) override { return importConfirmed; }
+    bool editMirrorPlane(const std::vector<TaskPoint>& sources, MirrorPlaneSpec& plane) override
+    {
+        if (productionMirror) { return qtDialogHost().editMirrorPlane(sources, plane); }
+        if (!item) { return false; }
+        plane.axisNormal = *item == 0 ? rw::math::Vector3D<>(1, 0, 0) : *item == 1 ? rw::math::Vector3D<>(0, 1, 0) : rw::math::Vector3D<>(0, 0, 1);
+        return true;
+    }
+    bool editImportMapping(const io::RawTable& table, FieldMapping& mapping, ImportUnitOptions& units) override
+    {
+        return !productionMapping || qtDialogHost().editImportMapping(table, mapping, units);
+    }
+    bool confirmImport(const QString& text) override { lastImportSummary = text; return importConfirmed; }
     requirements::CommandDialogHost::RegenerateAction chooseRegenerateAction() override
     {
         return action;
@@ -922,6 +1413,300 @@ TEST_F(RequirementsSessionGuiTest, CommandFlows_CreateArray_UI_T32)
     EXPECT_EQ(m_editor.workingSet().points.entries.size(), preArray + 3);
 }
 
+/** @brief REQ-11/AT-24：四构型完整参数经生产表单生成真实坐标，整批按钮撤销。 */
+TEST_F(RequirementsSessionGuiTest, ArrayCompleteProductionForms_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    const auto source = m_editor.workingSet().points.entries.front();
+    for (int kind = 0; kind < 4; ++kind) {
+        const auto before = m_editor.workingSet();
+        m_panel->refreshPanel(before, m_report); m_panel->focusObject(source.objectId);
+        FakeDialogHost host; host.item = kind; host.productionArray = true;
+        bool visited = false;
+        QTimer::singleShot(0, [&] {
+            auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            if (!dialog) { return; }
+            visited = true;
+            auto* count = dialog->findChild<QSpinBox*>("array-count");
+            auto* spacing = dialog->findChild<QDoubleSpinBox*>("array-spacing");
+            if (!count || !spacing) {
+                ADD_FAILURE() << "完整阵列参数控件缺失，kind=" << kind;
+                dialog->reject(); return;
+            }
+            count->setValue(2); spacing->setValue(0.5);
+            if (kind == 0) {
+                dialog->findChild<QDoubleSpinBox*>("array-direction-x")->setValue(0);
+                dialog->findChild<QDoubleSpinBox*>("array-direction-y")->setValue(1);
+            } else if (kind == 1) {
+                dialog->findChild<QSpinBox*>("array-count2")->setValue(3);
+                dialog->findChild<QDoubleSpinBox*>("array-spacing2")->setValue(0.2);
+                dialog->findChild<QSpinBox*>("array-count3")->setValue(2);
+                dialog->findChild<QDoubleSpinBox*>("array-spacing3")->setValue(0.7);
+            } else if (kind == 2) {
+                dialog->findChild<QDoubleSpinBox*>("array-radius")->setValue(2);
+                dialog->findChild<QDoubleSpinBox*>("array-start-angle")->setValue(1.5707963267948966);
+                dialog->findChild<QDoubleSpinBox*>("array-angle-step")->setValue(1.5707963267948966);
+            } else {
+                dialog->findChild<QPlainTextEdit*>("array-polyline")->setPlainText("0 0 0\n0 0 1\n0 1 1");
+            }
+            dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        });
+        EXPECT_TRUE(executeRequirementCommand("requirements.create-array", *m_panel, m_editor, *m_panel, host));
+        EXPECT_TRUE(visited);
+        const auto& points = m_editor.workingSet().points.entries;
+        const std::size_t generatedCount[] = {2, 12, 2, 4};
+        ASSERT_EQ(points.size(), before.points.entries.size() + generatedCount[kind]);
+        const TaskPoint* generated = nullptr;
+        // 编辑器按随机ObjectId稳定排序，不能把容器首元素误当几何生成第1条。
+        const auto expectedName = source.name + (kind == 1 ? "-A1x1x1" : "-A1");
+        for (const auto& point : points) { if (point.name == expectedName) { generated = &point; break; } }
+        ASSERT_NE(generated, nullptr);
+        const auto p = generated->pose.position.value();
+        if (kind == 0) { EXPECT_DOUBLE_EQ(p[0], source.pose.position.value()[0]); EXPECT_DOUBLE_EQ(p[1], source.pose.position.value()[1] + 0.5); }
+        if (kind == 1) { EXPECT_DOUBLE_EQ(p[0], source.pose.position.value()[0] + 0.5); EXPECT_DOUBLE_EQ(p[1], source.pose.position.value()[1] + 0.2); }
+        if (kind == 2) { EXPECT_NEAR(p[0], -2.0, 1e-12); EXPECT_NEAR(p[1], 0.0, 1e-12); }
+        if (kind == 3) { EXPECT_DOUBLE_EQ(p[0], 0.0); EXPECT_DOUBLE_EQ(p[2], 0.5); }
+        QPushButton* undo = nullptr;
+        for (auto* button : m_panel->findChildren<QPushButton*>()) { if (button->text() == "撤销") { undo = button; } }
+        ASSERT_NE(undo, nullptr); ASSERT_TRUE(undo->isEnabled()); undo->click();
+        EXPECT_EQ(m_editor.workingSet(), before);
+    }
+}
+
+
+/** @brief REQ-07/11：生产命令的生成来源可见，重生成保留手改并整体撤销。 */
+TEST_F(RequirementsSessionGuiTest, GenerationProvenanceAndConflict_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-07", {"AT-24"}, std::nullopt);
+    FakeDialogHost host;
+    ASSERT_TRUE(executeRequirementCommand("requirements.apply-template",*m_panel,m_editor,*m_panel,host));
+    const auto generated=m_editor.workingSet();
+    const auto it=std::find_if(generated.points.entries.begin(),generated.points.entries.end(),
+        [](const TaskPoint& p){return p.generation.has_value();});
+    ASSERT_NE(it,generated.points.entries.end());
+    const auto selected=*it;
+    std::set<std::string> ids;
+    for(const auto& p:generated.points.entries) {
+        EXPECT_TRUE(ids.insert(p.objectId.toCanonical()).second) << "批次条目必须有独立身份";
+        if(p.generation) {
+            EXPECT_EQ(p.generation->instanceId,selected.generation->instanceId);
+            EXPECT_FALSE(p.generation->generatorId.empty());
+        }
+    }
+    m_panel->refreshPanel(generated,m_report);m_panel->focusObject(selected.objectId);
+    auto* source=fieldEditor(*m_panel,"source");ASSERT_NE(source,nullptr);
+    EXPECT_EQ(source->text(),QStringLiteral("模板"));EXPECT_TRUE(source->isReadOnly());
+    // REQ-07/AT-24：徽标之外必须能追溯同一生成批次及参数快照，
+    // 否则使用者无法区分两次模板生成，也无法核对重生成将采用的输入。
+    EXPECT_TRUE(source->toolTip().contains(QString::fromStdString(selected.generation->instanceId)));
+    EXPECT_TRUE(source->toolTip().contains(QString::fromStdString(selected.generation->generatorId)));
+    for (const auto& parameter : selected.generation->parameters) {
+        EXPECT_TRUE(source->toolTip().contains(QString::fromStdString(parameter.first)));
+        EXPECT_TRUE(source->toolTip().contains(QString::fromStdString(parameter.second)));
+    }
+    auto changed=selected;changed.tolerance.positionTolerance=0.005;
+    ASSERT_TRUE(m_editor.applyEdit(changed).accepted);
+    const auto beforeRegenerate=m_editor.workingSet();
+    m_panel->refreshPanel(beforeRegenerate,m_report);m_panel->focusObject(changed.objectId);
+    host.action=CommandDialogHost::RegenerateAction::Regenerate;
+    ASSERT_TRUE(executeRequirementCommand("requirements.regenerate-linked",*m_panel,m_editor,*m_panel,host));
+    const auto& after=m_editor.workingSet().points.entries;
+    const auto victim=std::find_if(after.begin(),after.end(),
+        [&](const TaskPoint& p){return p.objectId==changed.objectId;});
+    ASSERT_NE(victim,after.end());EXPECT_EQ(*victim,changed) << "手改不能被重生成静默覆盖";
+    EXPECT_EQ(after.size(),beforeRegenerate.points.entries.size());
+    EXPECT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet(),beforeRegenerate) << "一次撤销必须完整恢复重生成前的批次";
+}
+
+/** @brief REQ-06：混合未完成草稿中的有效区域仍可纯呈现预览，不写草稿。 */
+TEST_F(RequirementsSessionGuiTest, MixedDraftValidRegionPreview_REQ06_WP14T12)
+{
+    IRD_TEST_INFO("REQ-06", {}, std::nullopt);
+    // 不完整点和有效区域共存：正式就绪应阻断，但区域的呈现预览仍可用。
+    // 预览输出是纯几何，不能把它当成覆盖计算或正式证据。
+    auto mixed = m_editor.workingSet();
+    mixed.points.entries.front().pose.position = {};
+    const auto report = m_checker.check(mixed, CheckContext{});
+    ASSERT_TRUE(report.hasBlocking());
+    const auto before = m_editor.workingSet();
+    const auto status = m_editor.draftStatus();
+    std::optional<RegionPreviewGeometry> shown;
+    m_panel->setRegionPreviewSink([&](const std::optional<RegionPreviewGeometry>& value) {
+        shown = value;
+    });
+    m_panel->refreshPanel(mixed, report);
+    m_panel->focusObject(mixed.regions.entries.front().objectId);
+    QApplication::processEvents();
+    ASSERT_TRUE(shown.has_value());
+    EXPECT_EQ(shown->regionObjectId, mixed.regions.entries.front().objectId);
+    EXPECT_FALSE(shown->gridLines.empty());
+    EXPECT_EQ(m_editor.workingSet(), before);
+    EXPECT_EQ(m_editor.draftStatus().dirty, status.dirty);
+    EXPECT_EQ(m_editor.draftStatus().edits, status.edits);
+}
+
+/** @brief REQ-02/06：顺序键真实编辑后，域单点识别环、重复和悬空前驱。 */
+TEST_F(RequirementsSessionGuiTest, SequenceEditingRejectsInvalidTopology_REQ02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-02", {"REQ-06"}, std::nullopt);
+    const auto p1 = m_editor.workingSet().points.entries.front();
+    const auto p2 = makePoint("P2", 2.0, 3.0, 4.0);
+    const auto p3 = makePoint("P3", 3.0, 4.0, 5.0);
+    ASSERT_TRUE(m_editor.applyEdit(p2).accepted);
+    ASSERT_TRUE(m_editor.applyEdit(p3).accepted);
+    const auto before = m_editor.workingSet();
+    // 文本字段经同一editingFinished队列提交；每笔重绘后重新定位，
+    // 值面允许暂存未完成顺序，正式就绪由R7复用的checkSequence裁决。
+    const auto editKey = [&](const core::ObjectId& id, const QString& key) {
+        m_panel->refreshPanel(m_editor.workingSet(), m_report);
+        m_panel->focusObject(id);
+        auto* field = fieldEditor(*m_panel, "sequence-key");
+        if (field == nullptr) { ADD_FAILURE() << "顺序键字段缺失"; return; }
+        field->setText(key);
+        QMetaObject::invokeMethod(field, "editingFinished", Qt::DirectConnection);
+        QApplication::processEvents();
+    };
+    const TaskPointService service;
+    editKey(p2.objectId, QStringLiteral("P1"));
+    editKey(p3.objectId, QStringLiteral("P2"));
+    EXPECT_TRUE(service.checkSequence(m_editor.workingSet().points.entries).acyclic);
+    editKey(p1.objectId, QStringLiteral("P3"));
+    const auto cycle = service.checkSequence(m_editor.workingSet().points.entries);
+    EXPECT_FALSE(cycle.acyclic); EXPECT_EQ(cycle.cycleNodes.size(), 3u);
+    ASSERT_TRUE(m_editor.undoLocal());
+    editKey(p3.objectId, QStringLiteral("P1"));
+    const auto duplicate = service.checkSequence(m_editor.workingSet().points.entries);
+    EXPECT_FALSE(duplicate.acyclic);
+    EXPECT_EQ(duplicate.duplicateKeys, std::vector<std::string>{"P1"});
+    ASSERT_TRUE(m_editor.undoLocal());
+    editKey(p3.objectId, QStringLiteral("不存在的工位"));
+    const auto dangling = service.checkSequence(m_editor.workingSet().points.entries);
+    EXPECT_FALSE(dangling.acyclic);
+    EXPECT_EQ(dangling.danglingKeys, std::vector<std::string>{"不存在的工位"});
+    // 撤回悬空和最初两笔合法边，恢复三个独立点，不影响新增历史。
+    for (int i = 0; i < 3; ++i) { ASSERT_TRUE(m_editor.undoLocal()); }
+    EXPECT_EQ(m_editor.workingSet(), before);
+}
+
+/** @brief UX-05：显示单位切换只投影，不改变SI值、就绪或局部撤销历史。 */
+TEST_F(RequirementsSessionGuiTest, DisplayUnitSwitchZeroDraftWrite_UX05_WP14T12)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    const auto status=m_editor.draftStatus();
+    m_panel->refreshPanel(before,m_report);m_panel->focusObject(before.points.entries.front().objectId);
+    auto* batch=m_panel->findChild<QWidget*>("ird_req_batch_station");ASSERT_NE(batch,nullptr);
+    auto* units=batch->findChild<QComboBox*>("ird_param_unit_switch");ASSERT_NE(units,nullptr);
+    for(const QString& label:{QStringLiteral("长度：mm"),QStringLiteral("长度：m"),
+                              QStringLiteral("角度：deg"),QStringLiteral("角度：rad")}) {
+        const int index=units->findText(label);ASSERT_GE(index,0);
+        units->setCurrentIndex(index);units->activated(index);QApplication::processEvents();
+        EXPECT_EQ(m_editor.workingSet(),before) << label.toStdString();
+        EXPECT_EQ(m_editor.draftStatus().dirty,status.dirty);
+        EXPECT_EQ(m_editor.draftStatus().edits,status.edits);
+    }
+}
+
+
+/** @brief REQ-11：解除关联是一次批次；撤销必须恢复全批关联及其他条目。 */
+TEST_F(RequirementsSessionGuiTest, DetachAtomicUndo_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    FakeDialogHost host;
+    ASSERT_TRUE(executeRequirementCommand("requirements.apply-template", *m_panel, m_editor, *m_panel, host));
+    const auto before = m_editor.workingSet();
+    for (const auto& point : before.points.entries) {
+        if (point.generation) { m_panel->focusObject(point.objectId); break; }
+    }
+    host.action = CommandDialogHost::RegenerateAction::Detach;
+    ASSERT_TRUE(executeRequirementCommand("requirements.regenerate-linked", *m_panel, m_editor, *m_panel, host));
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (point.generation) { EXPECT_FALSE(point.generation->linked); }
+        else {
+            const auto original = std::find_if(before.points.entries.begin(), before.points.entries.end(), [&](const TaskPoint& p) { return p.objectId == point.objectId; });
+            ASSERT_NE(original, before.points.entries.end()); EXPECT_EQ(point, *original);
+        }
+    }
+    QPushButton* undo = nullptr; QPushButton* redo = nullptr;
+    for (auto* button : m_panel->findChildren<QPushButton*>()) {
+        if (button->text() == "撤销") { undo = button; }
+        if (button->text() == "重做") { redo = button; }
+    }
+    ASSERT_NE(undo, nullptr); ASSERT_NE(redo, nullptr);
+    ASSERT_TRUE(undo->isEnabled()); undo->click();
+    EXPECT_EQ(m_editor.workingSet(), before) << "解除关联不能逐条留下半批状态";
+    ASSERT_TRUE(redo->isEnabled()); redo->click();
+    for (const auto& point : m_editor.workingSet().points.entries) { if (point.generation) { EXPECT_FALSE(point.generation->linked); } }
+}
+
+/** @brief REQ-11/AT-24：非World镜面、任意法向，同系反射与取消零写。 */
+TEST_F(RequirementsSessionGuiTest, MirrorFrameAndNormalProduction_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    auto source = m_editor.workingSet().points.entries.front();
+    source.refFrame.kind = RequirementRefKind::ModelFrame;
+    source.refFrame.objectId = core::ObjectId::generate();
+    ASSERT_TRUE(m_editor.applyEdit(source).accepted);
+    const auto before = m_editor.workingSet(); m_panel->refreshPanel(before, m_report); m_panel->focusObject(source.objectId);
+    FakeDialogHost host; host.productionMirror = true;
+    bool visited = false;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget()); if (!dialog) { return; }
+        visited = true;
+        auto* kind = dialog->findChild<QComboBox*>("mirror-frame-kind");
+        auto* id = dialog->findChild<QLineEdit*>("mirror-frame-id");
+        ASSERT_NE(kind, nullptr); ASSERT_NE(id, nullptr);
+        EXPECT_EQ(kind->currentIndex(), 1); EXPECT_EQ(id->text().toStdString(), source.refFrame.objectId->toCanonical());
+        auto* ok = dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok);
+        id->setText("bad-id"); EXPECT_FALSE(ok->isEnabled());
+        id->setText(QString::fromStdString(source.refFrame.objectId->toCanonical()));
+        dialog->findChild<QDoubleSpinBox*>("mirror-normal-0")->setValue(0); EXPECT_FALSE(ok->isEnabled());
+        dialog->findChild<QDoubleSpinBox*>("mirror-normal-0")->setValue(1);
+        dialog->findChild<QDoubleSpinBox*>("mirror-normal-1")->setValue(1);
+        ASSERT_TRUE(ok->isEnabled()); ok->click();
+    });
+    ASSERT_TRUE(executeRequirementCommand("requirements.mirror-stations", *m_panel, m_editor, *m_panel, host)); EXPECT_TRUE(visited);
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), before.points.entries.size() + 1);
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (!point.generation) { continue; }
+        EXPECT_EQ(point.refFrame, source.refFrame);
+        EXPECT_NEAR(point.pose.position.value()[0], -source.pose.position.value()[1], 1e-12);
+        EXPECT_NEAR(point.pose.position.value()[1], -source.pose.position.value()[0], 1e-12);
+        EXPECT_NEAR(point.pose.position.value()[2], source.pose.position.value()[2], 1e-12);
+    }
+    MirrorPlaneSpec plane; plane.refFrame = source.refFrame; plane.axisNormal = {1, 0, 0};
+    const auto original = plane;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget()); if (!dialog) { return; }
+        dialog->findChild<QDoubleSpinBox*>("mirror-normal-1")->setValue(1); dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().editMirrorPlane({source}, plane)); EXPECT_EQ(plane.refFrame, original.refFrame); EXPECT_EQ(plane.axisNormal, original.axisNormal);
+}
+
+/** @brief REQ-11：真实阵列表单非法方向/顶点不能确认，取消不改参数。 */
+TEST_F(RequirementsSessionGuiTest, ArrayInvalidAndCancelProduction_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    ArrayParams p; p.sources = m_editor.workingSet().points.entries; p.count = 2; p.spacingM = 0.5;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget()); if (!dialog) { return; }
+        auto* ok = dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok);
+        dialog->findChild<QDoubleSpinBox*>("array-direction-x")->setValue(0); EXPECT_FALSE(ok->isEnabled());
+        dialog->findChild<QDoubleSpinBox*>("array-direction-y")->setValue(1); EXPECT_TRUE(ok->isEnabled()); dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().editArrayDefinition(ArrayKind::Linear, p)); EXPECT_EQ(p.direction, rw::math::Vector3D<>(1, 0, 0));
+    p.polyline = {{0, 0, 0}, {0, 0, 1}}; p.polylineSpacingM = 0.5;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget()); if (!dialog) { return; }
+        auto* text = dialog->findChild<QPlainTextEdit*>("array-polyline"); auto* ok = dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok);
+        text->setPlainText("bad coordinates"); EXPECT_FALSE(ok->isEnabled());
+        text->setPlainText("0 0 0\n0 0 0"); EXPECT_FALSE(ok->isEnabled());
+        text->setPlainText("0 0 0\n0 0 1\n0 1 1"); EXPECT_TRUE(ok->isEnabled()); dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().editArrayDefinition(ArrayKind::Polyline, p)); EXPECT_EQ(p.polyline.size(), 2U);
+}
+
 TEST_F(RequirementsSessionGuiTest, CommandFlows_ExportCopy_UI_T32)
 {
     IRD_TEST_INFO("ERR-01", {}, std::nullopt);
@@ -970,6 +1755,21 @@ TEST_F(RequirementsSessionGuiTest, CommandFlows_ImportCsvPartial_UI_T32)
     EXPECT_EQ(m_editor.workingSet().points.entries.size(), before + 2)
         << m_panel->showCommandFeedbackText().toStdString()
         << "（部分成功语义：正确行应 +2、坏行跳过）";
+    // REQ-11 不仅要求编辑器有栈：用户必须能经真实面板按钮整批撤销/重做。
+    QPushButton* undo = nullptr;
+    QPushButton* redo = nullptr;
+    for (auto* button : m_panel->findChildren<QPushButton*>()) {
+        if (button->text() == QStringLiteral("撤销")) { undo = button; }
+        if (button->text() == QStringLiteral("重做")) { redo = button; }
+    }
+    ASSERT_NE(undo, nullptr); ASSERT_NE(redo, nullptr);
+    ASSERT_TRUE(undo->isEnabled()) << "CSV成功后草稿撤销按钮必须立即可用";
+    undo->click();
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), before)
+        << "REQ-11：一次CSV导入的正确行必须一次撤销整体恢复";
+    ASSERT_TRUE(redo->isEnabled());
+    redo->click();
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), before + 2);
 
     // 反例：坏结构（无表头行）——结构级拒绝（false＋就地反馈）。
     const QString badPath = QDir(dir.path()).filePath(QStringLiteral("bad.csv"));
@@ -983,6 +1783,122 @@ TEST_F(RequirementsSessionGuiTest, CommandFlows_ImportCsvPartial_UI_T32)
                                            m_editor, *m_panel, host))
         << "结构级拒绝应返回 false";
     EXPECT_EQ(m_editor.workingSet().points.entries.size(), mid);
+}
+
+/** @brief REQ-05/AT-02：未知表头人工映射、mm/deg的实际SI预览与落库一致。 */
+TEST_F(RequirementsSessionGuiTest, CsvProductionMappingAndUnits_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-05", {}, std::nullopt);
+    QTemporaryDir dir;
+    const QString path = QDir(dir.path()).filePath("mapping.csv");
+    QFile file(path); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    file.write("id,name,customX,y,z,yaw\ns1,映射工位,1000,2000,3000,90\n"); file.close();
+    FakeDialogHost host; host.openPath = path; host.productionMapping = true;
+    bool visited = false;
+    QTimer::singleShot(0, [&visited] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        if (!dialog) { return; }
+        visited = true;
+        auto* xColumn = dialog->findChild<QComboBox*>("import-map-x");
+        auto* xUnit = dialog->findChild<QComboBox*>("import-unit-x");
+        ASSERT_NE(xColumn, nullptr); ASSERT_NE(xUnit, nullptr);
+        xColumn->setCurrentIndex(xColumn->findData(2));
+        for (const char* key : {"x", "y", "z"}) {
+            dialog->findChild<QComboBox*>(QString("import-unit-%1").arg(key))->setCurrentText("mm");
+        }
+        dialog->findChild<QComboBox*>("import-unit-yaw")->setCurrentText("deg");
+        auto* table = dialog->findChild<QTableWidget*>("import-mapping-table");
+        ASSERT_NE(table, nullptr);
+        EXPECT_TRUE(table->item(static_cast<int>(ImportField::X), 3)->text().contains("1 m"));
+        EXPECT_TRUE(table->item(static_cast<int>(ImportField::Yaw), 3)->text().contains("rad"));
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    const bool ok = executeRequirementCommand("requirements.import-csv", *m_panel, m_editor, *m_panel, host);
+    QApplication::processEvents();
+    EXPECT_TRUE(visited) << "生产流必须呈现人工映射和单位预览步骤";
+    ASSERT_TRUE(ok) << m_panel->showCommandFeedbackText().toStdString();
+    bool found = false;
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        if (point.name != "映射工位") { continue; }
+        found = true; EXPECT_DOUBLE_EQ(point.pose.position.value()[0], 1.0);
+        EXPECT_DOUBLE_EQ(point.pose.position.value()[1], 2.0);
+        EXPECT_NEAR(point.pose.orientation.fixedRpy[2], 1.5707963267948966, 1e-14);
+    }
+    EXPECT_TRUE(found);
+}
+
+/** @brief AT-02：超过8条行错误仍逐条保留行号/列/原文和建议，取消零写入。 */
+TEST_F(RequirementsSessionGuiTest, CsvAllErrorDetails_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-05", {}, std::nullopt);
+    QTemporaryDir dir;
+    const QString path = QDir(dir.path()).filePath("errors.csv");
+    QFile file(path); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    QByteArray csv("id,name,x,y,z\n");
+    for (int row = 1; row <= 12; ++row) {
+        csv += QString("id%1,坏行%1,bad%1,0,0\n").arg(row).toUtf8();
+    }
+    file.write(csv); file.close();
+    const auto before = m_editor.workingSet();
+    FakeDialogHost host; host.openPath = path; host.importConfirmed = false;
+    EXPECT_TRUE(executeRequirementCommand("requirements.import-csv", *m_panel, m_editor, *m_panel, host));
+    for (int row = 1; row <= 12; ++row) {
+        EXPECT_TRUE(host.lastImportSummary.contains(QString("row=%1;").arg(row))) << row;
+        EXPECT_TRUE(host.lastImportSummary.contains(QString("bad%1").arg(row))) << row;
+    }
+    EXPECT_TRUE(host.lastImportSummary.contains("column=x"));
+    EXPECT_EQ(m_editor.workingSet(), before);
+
+    // 确认页采用真实生产控件，长文本可滚动复制，不能把CSV内容当富文本解释。
+    bool visited = false;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        if (!dialog) { return; }
+        visited = true;
+        auto* text = dialog->findChild<QPlainTextEdit*>("import-outcome-details");
+        if (text) {
+            EXPECT_TRUE(text->isReadOnly());
+            EXPECT_EQ(text->toPlainText(), host.lastImportSummary);
+            EXPECT_TRUE(text->toPlainText().contains("bad12"));
+        } else { ADD_FAILURE() << "生产确认页缺少可滚动全量明细"; }
+        dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().confirmImport(host.lastImportSummary));
+    EXPECT_TRUE(visited);
+}
+
+/** @brief REQ-05：缺必填映射/非法单位禁下一步，取消保留映射和单位原值。 */
+TEST_F(RequirementsSessionGuiTest, CsvMappingValidationCancel_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-05", {}, std::nullopt);
+    io::RawTable table; table.report.hasHeader = true;
+    table.report.header = {"id", "name", "x", "y", "z"};
+    auto mapping = autoDetectMapping(table, RequirementImporter{}.fieldDictionary()).mapping;
+    auto units = ImportUnitOptions::defaults();
+    const auto beforeMapping = mapping; const auto beforeUnits = units;
+    bool visited = false;
+    QTimer::singleShot(0, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        if (!dialog) { return; }
+        visited = true;
+        auto* next = dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok);
+        auto* x = dialog->findChild<QComboBox*>("import-map-x");
+        auto* unit = dialog->findChild<QComboBox*>("import-unit-x");
+        if (next && x && unit) {
+            EXPECT_TRUE(next->isEnabled());
+            x->setCurrentIndex(0); EXPECT_FALSE(next->isEnabled());
+            x->setCurrentIndex(x->findData(2)); EXPECT_TRUE(next->isEnabled());
+            unit->setCurrentText("kg"); EXPECT_FALSE(next->isEnabled());
+            unit->setCurrentText("mm"); EXPECT_TRUE(next->isEnabled());
+        } else { ADD_FAILURE() << "映射页控件缺失"; }
+        dialog->reject();
+    });
+    EXPECT_FALSE(qtDialogHost().editImportMapping(table, mapping, units));
+    EXPECT_TRUE(visited);
+    EXPECT_EQ(mapping.columnOf, beforeMapping.columnOf);
+    for (std::size_t i = 0; i < kImportFieldCount; ++i) {
+        EXPECT_EQ(units.unitFor(static_cast<ImportField>(i)), beforeUnits.unitFor(static_cast<ImportField>(i)));
+    }
 }
 
 TEST_F(RequirementsSessionGuiTest, CommandFlows_JsonAndDegrades_UI_T32)
@@ -1438,6 +2354,7 @@ TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
     QPushButton* constrainAll = m_panel->findChild<QPushButton*>(
         QStringLiteral("ird_dof_preset_constrain"));
     ASSERT_NE(constrainAll, nullptr) << "快捷预设行缺失";
+    const auto beforePreset = m_editor.workingSet().points.entries.front();
     constrainAll->click();
     QApplication::processEvents();
     const auto& dofAll =
@@ -1445,6 +2362,9 @@ TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
     EXPECT_TRUE(dofAll.x && dofAll.y && dofAll.z && dofAll.roll && dofAll.pitch
                 && dofAll.yaw)
         << "全部约束预设未批量生效";
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), beforePreset)
+        << "REQ-11：六轴预设须一次撤销完整恢复";
 }
 
 /// UI-T37 R1 区域复合行与实时预览（acceptance 2）：盒中心三编辑器同容器、
@@ -1509,22 +2429,20 @@ TEST_F(RequirementsSessionGuiTest, RegionCompositeAndLiveCount_UI_T37)
         << "覆盖率滑块未接通双联提交轨";
 }
 
-/// UI-T37 R1 崩溃修复回归（词表外键陷阱）：非数量行（名称/段/顺序键）只读
-/// 灰显——此前呈可编辑态但提交即"词表外键 fail-fast"崩溃；行编辑器权威值
-/// 零变化（不进入编辑流）。
-TEST_F(RequirementsSessionGuiTest, NonQuantityRowsReadOnly_UI_T37)
+/// WP-14-T12保留溯源只读纪律；名称/顺序键已有类型正确的文本轨，不再禁用。
+TEST_F(RequirementsSessionGuiTest, SourceRowsReadOnly_UI_T37)
 {
     IRD_TEST_INFO("ERR-01", {}, std::nullopt);
     m_panel->refreshPanel(m_editor.workingSet(), m_report);
     m_panel->focusObject(m_editor.workingSet().points.entries.front().objectId);
     QApplication::processEvents();
     // segment-approach 返工③起为下拉复合行（启用/轴/距离）——不再断言只读。
-    const char* readonlyKeys[] = {"name", "sequence-key"};
+    const char* readonlyKeys[] = {"source"};
     for (const char* key : readonlyKeys) {
         QLineEdit* edit = fieldEditor(*m_panel, key);
         ASSERT_NE(edit, nullptr) << "行缺失: " << key;
         EXPECT_TRUE(edit->isReadOnly())
-            << "非数量行应只读（词表外键崩溃修复）: " << key;
+            << "来源事实必须只读: " << key;
     }
     // 权威值零变化（只读行不进入编辑流——域状态不被触碰）。
     const std::string nameBefore =
@@ -2177,4 +3095,1462 @@ TEST_F(RequirementsSessionGuiTest, MirrorRequiresStationAnchor_UI_T39)
         << "拒绝反馈未说明需要工位条目";
     EXPECT_EQ(m_editor.workingSet().points.entries.size(), before)
         << "被拒镜像产生了集合变更";
+}
+
+/**
+ * @brief AT-24：驱动生产模板对话框，验证所选六类别没有在编排层丢失。
+ *
+ * 测试不注入模板应答替身，QTimer 只模拟用户操作真实控件；生成、提交、
+ * 溯源与撤销均使用真实领域实现。每轮撤销恢复相同基线，防止名称冲突掩盖缺陷。
+ */
+TEST_F(RequirementsSessionGuiTest, ProductionTemplateKindsAndLivePreview_AT24_WP14T12)
+{
+    IRD_TEST_INFO("REQ-07", {}, std::nullopt);
+    const TemplateKind kinds[] = {TemplateKind::BinPicking, TemplateKind::MachineTending,
+        TemplateKind::Palletizing, TemplateKind::Inspection, TemplateKind::ToolChange,
+        TemplateKind::Handover};
+    const auto before = m_editor.workingSet().points.entries.size();
+    for (const TemplateKind kind : kinds) {
+        QTimer::singleShot(0, [kind] {
+            auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            ASSERT_NE(dialog, nullptr);
+            auto* combo = dialog->findChild<QComboBox*>();
+            ASSERT_NE(combo, nullptr);
+            combo->setCurrentIndex(combo->findData(int(kind)));
+            const auto counts = dialog->findChildren<QSpinBox*>();
+            ASSERT_EQ(counts.size(), 2);
+            counts[0]->setValue(3);
+            counts[1]->setValue(1);
+            bool previewMatches = false;
+            for (auto* label : dialog->findChildren<QLabel*>()) {
+                if (label->text() == QStringLiteral("将生成 3 个工位")) {
+                    previewMatches = true;
+                }
+            }
+            EXPECT_TRUE(previewMatches) << "AT-24：数量编辑后生产预览未同步";
+            dialog->accept();
+        });
+        ASSERT_TRUE(executeRequirementCommand("requirements.apply-template", *m_panel,
+                                              m_editor, *m_panel));
+        ASSERT_EQ(m_editor.workingSet().points.entries.size(), before + 3);
+        const auto expected = TemplateArrayService{}.applyTemplate(kind,
+            defaultTemplateParams(kind));
+        ASSERT_TRUE(expected.ok);
+        for (const auto& point : m_editor.workingSet().points.entries) {
+            if (!point.generation) { continue; }
+            EXPECT_EQ(point.generation->generatorId, expected.newPoints.front().generation->generatorId)
+                << "AT-24：用户选择的模板类别必须写入生成来源";
+            EXPECT_EQ(point.processTag, expected.newPoints.front().processTag)
+                << "AT-24：工艺标签必须与所选类别一致";
+        }
+        ASSERT_TRUE(m_editor.undoLocal());
+    }
+}
+
+/** @brief AT-02：工况文本编辑不能进入数量词表异常分支，且能整体撤销。 */
+TEST_F(RequirementsSessionGuiTest, ConditionNameAndNoteEditing_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    auto* table = m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_req_condition_table"));
+    ASSERT_NE(table, nullptr);
+    table->setCurrentItem(table->topLevelItem(0));
+    QApplication::processEvents();
+    for (const char* key : {"name", "note"}) {
+        QLineEdit* field = nullptr;
+        for (auto* edit : m_panel->findChildren<QLineEdit*>()) {
+            if (edit->property("irdFieldKey").toString() == QString::fromUtf8(key)) {
+                field = edit;
+                break;
+            }
+        }
+        ASSERT_NE(field, nullptr);
+        ASSERT_FALSE(field->isReadOnly());
+        field->setText(QStringLiteral("搬运工况-名称验证"));
+        EXPECT_NO_THROW(QMetaObject::invokeMethod(field, "editingFinished", Qt::DirectConnection))
+            << "AT-02：合法文本输入不得触发内部数量词表异常";
+        QApplication::processEvents();
+        const auto& c = m_editor.workingSet().conditions.entries.front();
+        EXPECT_EQ(key == std::string("name") ? c.name : c.note,
+                  QStringLiteral("搬运工况-名称验证").toStdString());
+        ASSERT_TRUE(m_editor.undoLocal());
+        m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    }
+}
+
+/** @brief REQ-01/09：生产完整定义对话框暂存名称、引用及规则，一次确认/撤销。 */
+TEST_F(RequirementsSessionGuiTest, StationDefinitionAtomicReferences_AT23_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* button = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+    ASSERT_NE(button, nullptr) << "工位必须可完整编辑参考系、TCP及引用型姿态规则";
+    const std::string objectId = "obj-12345678901234567890123456789012";
+    QTimer::singleShot(0, [this, objectId, before] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog, nullptr);
+        dialog->findChild<QLineEdit*>("station-name")->setText("完整工位");
+        dialog->findChild<QComboBox*>("station-process")->setCurrentIndex(5); // Inspect
+        dialog->findChild<QComboBox*>("station-reference-kind")->setCurrentIndex(1);
+        dialog->findChild<QLineEdit*>("station-reference-object")->setText(QString::fromStdString(objectId));
+        dialog->findChild<QComboBox*>("station-tcp-kind")->setCurrentIndex(2);
+        dialog->findChild<QLineEdit*>("station-tcp-object")->setText(QString::fromStdString(objectId));
+        dialog->findChild<QLineEdit*>("station-tcp-key")->setText("tcp-main");
+        dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(1);
+        dialog->findChild<QLineEdit*>("station-target-object")->setText(QString::fromStdString(objectId));
+        EXPECT_EQ(m_editor.workingSet().points.entries.front(), before) << "确认前不得写草稿";
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    button->click();
+    QApplication::processEvents();
+    const TaskPoint after = m_editor.workingSet().points.entries.front();
+    EXPECT_EQ(after.name, "完整工位");
+    EXPECT_EQ(after.processTag, ProcessTag::Inspect);
+    EXPECT_EQ(after.refFrame.kind, RequirementRefKind::ModelFrame);
+    ASSERT_TRUE(after.tcpRef);
+    EXPECT_EQ(after.tcpRef->tcpKey, "tcp-main");
+    EXPECT_EQ(after.pose.orientation.kind, OrientationRuleKind::AlignFrame);
+    EXPECT_EQ(after.pose.orientation.targetFrame.objectId, after.refFrame.objectId);
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), before) << "全部字段须一次撤销";
+}
+
+/** @brief REQ-01/09：缺目标引用保留表单与错误，取消零写入，只读禁写。 */
+TEST_F(RequirementsSessionGuiTest, StationDefinitionRejectCancel_AT23_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* button = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+    ASSERT_NE(button, nullptr);
+    QTimer::singleShot(0, [this, before] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog, nullptr);
+        dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(2);
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        EXPECT_TRUE(dialog->isVisible()) << "缺几何对象应保留输入";
+        EXPECT_FALSE(dialog->findChild<QLabel*>("station-definition-error")->text().isEmpty());
+        EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+        dialog->reject();
+    });
+    button->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+    m_panel->setWritable(false);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    auto* readOnlyButton = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+    ASSERT_NE(readOnlyButton, nullptr);
+    EXPECT_FALSE(readOnlyButton->isEnabled());
+}
+
+/** @brief REQ-01：排队编辑后立即选另一工位，输入仍只能写回发起对象。 */
+TEST_F(RequirementsSessionGuiTest, StationQueuedValueKeepsAnchor_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    const TaskPoint second = makePoint("第二工位", 4, 5, 6);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{second}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    QDoubleSpinBox* spin = nullptr;
+    for (auto* candidate : m_panel->findChildren<QDoubleSpinBox*>()) {
+        if (candidate->property("irdFieldKey").toString() == "tolerance-position") { spin = candidate; break; }
+    }
+    ASSERT_NE(spin, nullptr);
+    spin->setValue(0.05);
+    QMetaObject::invokeMethod(spin, "editingFinished", Qt::DirectConnection);
+    m_panel->focusObject(second.objectId); // 先切选中，不给排队提交运行机会。
+    QApplication::processEvents();
+    for (const auto& point : m_editor.workingSet().points.entries) {
+        EXPECT_DOUBLE_EQ(point.tolerance.positionTolerance,
+            point.objectId == before.objectId ? 0.05 : second.tolerance.positionTolerance);
+    }
+}
+
+/** @brief AT-23：五规则均由生产表单构建，非活动载荷归默认，数值不丢失。 */
+TEST_F(RequirementsSessionGuiTest, StationDefinitionFiveRules_AT23_WP14T12)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    for (int kind = 0; kind < 5; ++kind) {
+        m_panel->refreshPanel(m_editor.workingSet(), m_report);
+        m_panel->focusObject(before.objectId);
+        auto* button = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+        ASSERT_NE(button, nullptr);
+        QTimer::singleShot(0, [kind] {
+            auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            ASSERT_NE(dialog, nullptr);
+            dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(kind);
+            dialog->findChild<QLineEdit*>("station-rpy")->setText("0.1234567891234567, -0.2, 0.3");
+            dialog->findChild<QLineEdit*>("station-target-object")->setText("obj-12345678901234567890123456789012");
+            dialog->findChild<QLineEdit*>("station-scene")->setText("obj-12345678901234567890123456789012");
+            dialog->findChild<QComboBox*>("station-feature")->setCurrentIndex(1);
+            dialog->findChild<QCheckBox*>("station-invert")->setChecked(true);
+            dialog->findChild<QLineEdit*>("station-target-point")->setText("1, 2, 3");
+            dialog->findChild<QLineEdit*>("station-roll-min")->setText("-1.2");
+            dialog->findChild<QLineEdit*>("station-roll-max")->setText("2.3");
+            dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        });
+        button->click(); QApplication::processEvents();
+        const auto after = m_editor.workingSet().points.entries.front();
+        EXPECT_EQ(after.pose.orientation.kind, static_cast<OrientationRuleKind>(kind));
+        EXPECT_FALSE(validateTaskPoint(after).has_value());
+        EXPECT_EQ(after.pose.position, before.pose.position) << "未改位置须保留值及来源";
+        if (kind == 0) { EXPECT_DOUBLE_EQ(after.pose.orientation.fixedRpy[0], 0.1234567891234567); }
+        if (kind == 2) { EXPECT_TRUE(after.pose.orientation.invertNormal); EXPECT_EQ(after.pose.orientation.feature, OrientationFeature::FramePlaneNormal); }
+        if (kind == 4) { EXPECT_DOUBLE_EQ(after.pose.orientation.rollRange.min, -1.2); EXPECT_DOUBLE_EQ(after.pose.orientation.rollRange.max, 2.3); }
+        ASSERT_TRUE(m_editor.undoLocal());
+        EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+    }
+}
+
+/** @brief REQ-01：普通名称/备注有类型正确的直接编辑轨，不受数量词表禁用。 */
+TEST_F(RequirementsSessionGuiTest, StationTextEditing_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const TaskPoint before = m_editor.workingSet().points.entries.front();
+    for (const char* key : {"name", "note"}) {
+        m_panel->refreshPanel(m_editor.workingSet(), m_report);
+        m_panel->focusObject(before.objectId);
+        auto* edit = fieldEditor(*m_panel, key);
+        ASSERT_NE(edit, nullptr);
+        ASSERT_FALSE(edit->isReadOnly()) << "名称和备注必须能直接输入";
+        edit->setText("工位文本验证");
+        QMetaObject::invokeMethod(edit, "editingFinished", Qt::DirectConnection);
+        QApplication::processEvents();
+        const auto& point = m_editor.workingSet().points.entries.front();
+        EXPECT_EQ(std::string(key) == "name" ? point.name : point.note, "工位文本验证");
+        ASSERT_TRUE(m_editor.undoLocal());
+    }
+}
+
+/** @brief REQ-04：空工况可新增负载和三类事件，确认一次写入、一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, ConditionStructureAtomicApply_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(m_editor.workingSet().conditions.entries.front().objectId);
+    auto* payloads = m_panel->findChild<QTableWidget*>("ird_condition_payloads");
+    auto* events = m_panel->findChild<QTableWidget*>("ird_condition_events");
+    auto* addPayload = m_panel->findChild<QPushButton*>("ird_condition_add_payload");
+    auto* addEvent = m_panel->findChild<QPushButton*>("ird_condition_add_event");
+    auto* apply = m_panel->findChild<QPushButton*>("ird_condition_structure_apply");
+    ASSERT_NE(payloads, nullptr) << "空工况必须提供负载结构编辑入口";
+    ASSERT_NE(events, nullptr);
+    ASSERT_NE(addPayload, nullptr);
+    ASSERT_NE(addEvent, nullptr);
+    ASSERT_NE(apply, nullptr);
+    const OperatingCondition before = m_editor.workingSet().conditions.entries.front();
+    addPayload->click();
+    payloads->item(0, 3)->setText("2.5");  // kg；不是缺失转零。
+    payloads->item(0, 4)->setText("0.1, 0.2, 0.3");  // 工具TCP系，m。
+    payloads->item(0, 5)->setText("0.4");  // kg·m²。
+    for (int i = 0; i < 3; ++i) {
+        addEvent->click();
+        auto* kind = qobject_cast<QComboBox*>(events->cellWidget(i, 0));
+        ASSERT_NE(kind, nullptr);
+        kind->setCurrentIndex(i);  // Grasp / Release / Dwell。
+        events->item(i, 2)->setText("1.25");  // s。
+    }
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before)
+        << "结构表修改在确认前不能写入草稿";
+    apply->click();
+    QApplication::processEvents();
+    const auto& actual = m_editor.workingSet().conditions.entries.front();
+    ASSERT_EQ(actual.payloads.size(), 1);
+    EXPECT_DOUBLE_EQ(actual.payloads[0].mass.value(), 2.5);
+    EXPECT_DOUBLE_EQ(actual.payloads[0].com.value()[1], 0.2);
+    EXPECT_DOUBLE_EQ(actual.payloads[0].inertia.value(), 0.4);
+    ASSERT_EQ(actual.events.size(), 3);
+    EXPECT_EQ(actual.events[2].type, ConditionEventType::Dwell);
+    EXPECT_DOUBLE_EQ(*actual.events[2].durationS, 1.25);
+    EXPECT_EQ(actual.events[0].stationRef, m_editor.workingSet().points.entries.front().objectId);
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before)
+        << "整张结构表必须一次撤销，不留下半个负载/事件集合";
+}
+
+/** @brief REQ-04/UX-03：非法物性、取消、只读均零写入，不抛内部词表异常。 */
+TEST_F(RequirementsSessionGuiTest, ConditionStructureRejectCancelReadOnly_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(m_editor.workingSet().conditions.entries.front().objectId);
+    auto* add = m_panel->findChild<QPushButton*>("ird_condition_add_payload");
+    ASSERT_NE(add, nullptr);
+    const auto before = m_editor.workingSet().conditions.entries.front();
+    add->click();
+    auto* payloads = m_panel->findChild<QTableWidget*>("ird_condition_payloads");
+    ASSERT_NE(payloads, nullptr);
+    payloads->item(0, 3)->setText("-2");
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before);
+    auto* error = m_panel->findChild<QLabel*>("ird_condition_structure_error");
+    ASSERT_NE(error, nullptr);
+    EXPECT_FALSE(error->text().isEmpty());
+    m_panel->findChild<QPushButton*>("ird_condition_structure_cancel")->click();
+    EXPECT_EQ(payloads->rowCount(), 0) << "取消恢复进入表单时的结构";
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), before);
+    m_panel->setWritable(false);
+    QApplication::processEvents();
+    EXPECT_FALSE(m_panel->findChild<QPushButton*>("ird_condition_add_payload")->isEnabled());
+    EXPECT_FALSE(m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->isEnabled());
+}
+
+/** @brief REQ-04：文本提交排队后切换选中，必须仍编辑发起时的工况。 */
+TEST_F(RequirementsSessionGuiTest, ConditionQueuedEditKeepsOriginalAnchor_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    const auto original = m_editor.workingSet().conditions.entries.front();
+    auto other = original; other.objectId = core::ObjectId::generate(); other.name = "C2";
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{other}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(original.objectId);
+    QLineEdit* field = nullptr;
+    for (auto* edit : m_panel->findChildren<QLineEdit*>()) {
+        if (edit->property("irdFieldKey").toString() == "note") { field = edit; break; }
+    }
+    ASSERT_NE(field, nullptr);
+    field->setText("仅修改原工况");
+    QMetaObject::invokeMethod(field, "editingFinished", Qt::DirectConnection);
+    m_panel->focusObject(other.objectId);  // 不先处理排队的提交。
+    QApplication::processEvents();
+    for (const auto& condition : m_editor.workingSet().conditions.entries) {
+        EXPECT_EQ(condition.note, condition.objectId == original.objectId ? "仅修改原工况" : other.note)
+            << "延迟提交不能使用执行时的新选中对象";
+    }
+}
+
+/** @brief REQ-04：环境/工具/适用范围/要求值可编辑，物性缺失不转零，增删可撤销。 */
+TEST_F(RequirementsSessionGuiTest, ConditionReferencesAndFourStates_AT02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    const auto before = m_editor.workingSet().conditions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* payloads = m_panel->findChild<QTableWidget*>("ird_condition_payloads");
+    ASSERT_NE(payloads, nullptr);
+    m_panel->findChild<QPushButton*>("ird_condition_add_payload")->click();
+    payloads->item(0, 3)->setText("0");  // 明确提供的零质量；域契约允许非负。
+    payloads->item(0, 4)->setText("不适用");
+    // 惯量保持未提供，不能因其它字段确认而转成0。
+    const auto envId = core::ObjectId::generate();
+    m_panel->findChild<QLineEdit*>("ird_condition_environment")->setText(QString::fromStdString(envId.toCanonical()));
+    m_panel->findChild<QLineEdit*>("ird_condition_margin")->setText("0.1");
+    m_panel->findChild<QCheckBox*>("ird_condition_collision")->setChecked(false);
+    m_panel->findChild<QComboBox*>("ird_condition_scope")->setCurrentIndex(1);
+    m_panel->findChild<QListWidget*>("ird_condition_stations")->item(0)->setCheckState(Qt::Checked);
+    m_panel->findChild<QPushButton*>("ird_condition_add_tool")->click();
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click();
+    QApplication::processEvents();
+    const auto actual = m_editor.workingSet().conditions.entries.front();
+    ASSERT_EQ(actual.payloads.size(), 1);
+    EXPECT_EQ(actual.payloads[0].mass.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(actual.payloads[0].mass.value(), 0);
+    EXPECT_EQ(actual.payloads[0].com.state(), core::FieldState::NotApplicable);
+    EXPECT_EQ(actual.payloads[0].inertia.state(), core::FieldState::NotProvided);
+    ASSERT_EQ(actual.environmentRefs.size(), 1);
+    EXPECT_EQ(actual.environmentRefs.front(), envId);
+    EXPECT_EQ(actual.appliesTo.scope, AppliesToScope::Stations);
+    EXPECT_EQ(actual.appliesTo.stations, std::vector<core::ObjectId>{m_editor.workingSet().points.entries.front().objectId});
+    ASSERT_EQ(actual.toolRefs.size(), 1);
+    EXPECT_EQ(actual.toolRefs.front().kind, RequirementRefKind::DefaultTcp);
+    EXPECT_FALSE(actual.demands.collisionFreeRequired);
+    EXPECT_DOUBLE_EQ(*actual.demands.minimumJointMargin, 0.1);
+    // 刷新后未变物性必须保留原始provenance；再改裕量，不重建来源。
+    m_panel->findChild<QLineEdit*>("ird_condition_margin")->setText("0.2");
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front().payloads, actual.payloads);
+    ASSERT_TRUE(m_editor.undoLocal());
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    payloads = m_panel->findChild<QTableWidget*>("ird_condition_payloads");
+    payloads->setCurrentCell(0, 3);
+    m_panel->findChild<QPushButton*>("ird_condition_remove_payload")->click();
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click();
+    QApplication::processEvents();
+    EXPECT_TRUE(m_editor.workingSet().conditions.entries.front().payloads.empty());
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.front(), actual);
+}
+
+/** @brief REQ-01/09：缺宿主目录时明确显示名称选择能力缺失，取消零写入。 */
+TEST_F(RequirementsSessionGuiTest, ReferenceDirectoryMissingIsExplicit_REQ01_AT23)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const auto before = m_editor.workingSet();
+    m_panel->refreshPanel(before, m_report);
+    m_panel->focusObject(before.points.entries.front().objectId);
+    auto* button = m_panel->findChild<QPushButton*>("ird_station_definition_edit");
+    ASSERT_NE(button, nullptr);
+    QTimer::singleShot(0, [this] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog, nullptr);
+        if (!dialog) { return; }
+        auto* choices = dialog->findChild<QComboBox*>("station-reference-choice");
+        EXPECT_NE(choices, nullptr) << "名称目录入口缺失，不可要求产品用户填写内部对象标识";
+        if (choices) { EXPECT_FALSE(choices->isEnabled()); }
+        auto* hint = dialog->findChild<QLabel*>("station-reference-directory-hint");
+        EXPECT_NE(hint, nullptr);
+        if (hint) { EXPECT_TRUE(hint->text().contains("未装配")); }
+        dialog->reject();
+    });
+    button->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(), before) << "取消不得写入任一字段";
+}
+
+/** @brief REQ-01/09：真实名称下拉保存浅引用，取消/过期目录零写入，一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, NamedStationReferencesAtomicAndStale_REQ01_AT23)
+{
+    IRD_TEST_INFO("REQ-01", {}, std::nullopt);
+    const auto before = m_editor.workingSet();
+    RequirementReference world;
+    RequirementReference fixture; fixture.kind=RequirementRefKind::SceneObject;
+    fixture.objectId=core::ObjectId::generate();
+    RequirementReference model; model.kind=RequirementRefKind::ModelFrame;
+    model.objectId=core::ObjectId::generate();
+    RequirementReference tcp; tcp.kind=RequirementRefKind::Tool;
+    tcp.objectId=core::ObjectId::generate(); tcp.tcpKey="offset";
+    std::vector<RequirementsReferenceChoice> choices{
+        {world,"世界坐标系",true,""},{fixture,"夹具 / 工件A",true,""},
+        {model,"机械臂 / 基座",true,""},{tcp,"夹爪 / 偏置TCP",true,""}};
+    RequirementsView3DSeams seams; seams.referenceChoices=[&] { return choices; };
+    m_panel->setView3DSeams(seams);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(before.points.entries.front().objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        // REQ-09：位置参考系允许World，但AlignFrame只允许模型/场景；
+        // 不向用户提供一个必定被领域校验拒绝的名称候选。
+        auto* positionRefs=dialog->findChild<QComboBox*>("station-reference-choice");
+        auto* targetRefs=dialog->findChild<QComboBox*>("station-target-choice");
+        ASSERT_NE(positionRefs,nullptr); ASSERT_NE(targetRefs,nullptr);
+        EXPECT_GE(positionRefs->findText("世界坐标系"),0);
+        EXPECT_EQ(targetRefs->findText("世界坐标系"),-1);
+        EXPECT_GE(targetRefs->findText("机械臂 / 基座"),0);
+        EXPECT_GE(targetRefs->findText("夹具 / 工件A"),0);
+        for (const auto& item : {std::pair<const char*,const char*>{"station-reference-choice","夹具 / 工件A"},
+                {"station-tcp-choice","夹爪 / 偏置TCP"},{"station-target-choice","机械臂 / 基座"}}) {
+            auto* combo=dialog->findChild<QComboBox*>(item.first); EXPECT_NE(combo,nullptr);
+            if (combo) { const int row=combo->findText(item.second); EXPECT_GE(row,0); combo->setCurrentIndex(row); }
+        }
+        dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(1);
+        EXPECT_TRUE(dialog->findChild<QLineEdit*>("station-reference-object")->isHidden())
+            << "正式目录下不能向产品用户展示内部ObjectId输入";
+        EXPECT_EQ(m_editor.workingSet(),before) << "选择只更新暂存值";
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    const auto after=m_editor.workingSet().points.entries.front();
+    EXPECT_EQ(after.refFrame,fixture); ASSERT_TRUE(after.tcpRef); EXPECT_EQ(*after.tcpRef,tcp);
+    EXPECT_EQ(after.pose.orientation.kind,OrientationRuleKind::AlignFrame);
+    EXPECT_EQ(after.pose.orientation.targetFrame,model);
+    EXPECT_EQ(after.pose.position,before.points.entries.front().pose.position);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(before.points.entries.front().objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        dialog->findChild<QLineEdit*>("station-name")->setText("不允许过期写回");
+        choices.pop_back(); // 宿主目录在嵌套事件循环中发生变化。
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before) << "引用目录过期应拒绝整次编辑";
+}
+
+/** @brief REQ-01/09：悬空历史引用保留，不能静默回落World；新不可用项禁止确认。 */
+TEST_F(RequirementsSessionGuiTest, NamedReferenceMissingPreservedAndUnavailableRejected_REQ09_AT23)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    auto point=m_editor.workingSet().points.entries.front();
+    point.refFrame.kind=RequirementRefKind::SceneObject; point.refFrame.objectId=core::ObjectId::generate();
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{point}).accepted);
+    const auto before=m_editor.workingSet();
+    RequirementReference other=point.refFrame; other.objectId=core::ObjectId::generate();
+    RequirementsView3DSeams seams;
+    seams.referenceChoices=[&] { return std::vector<RequirementsReferenceChoice>{{RequirementReference{},"世界坐标系",true,""},
+        {other,"停用夹具",false,"当前运行时帧缺失"}}; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report); m_panel->focusObject(point.objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        auto* choice=dialog->findChild<QComboBox*>("station-reference-choice");
+        EXPECT_NE(choice,nullptr); if (!choice) { dialog->reject(); return; }
+        EXPECT_TRUE(choice->currentText().contains("缺失"));
+        dialog->findChild<QLineEdit*>("station-name")->setText("保留悬空引用");
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().refFrame,point.refFrame);
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().name,"保留悬空引用");
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(point.objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        auto* choice=dialog->findChild<QComboBox*>("station-reference-choice");
+        const int row=choice->findText("停用夹具（不可用）"); EXPECT_GE(row,0);
+        if (row>=0) {
+            EXPECT_FALSE(choice->model()->flags(choice->model()->index(row,0)) & Qt::ItemIsEnabled);
+            choice->setCurrentIndex(row); // 即使程序输入绕过灰显，确认仍须拒绝。
+        }
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        EXPECT_TRUE(dialog->isVisible());
+        EXPECT_FALSE(dialog->findChild<QLabel*>("station-definition-error")->text().isEmpty());
+        dialog->reject();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-01/09：同一工具多个TCP按精确键选取，几何对象独立选择并可一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, NamedGeometryAndMultiTcpKeepIdentity_REQ09_AT23)
+{
+    IRD_TEST_INFO("REQ-09", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    RequirementReference tcpA; tcpA.kind=RequirementRefKind::Tool;
+    tcpA.objectId=core::ObjectId::generate(); tcpA.tcpKey="tip-a";
+    auto tcpB=tcpA; tcpB.tcpKey="tip-b";
+    auto otherTool=tcpB; otherTool.objectId=core::ObjectId::generate();
+    RequirementReference geometry; geometry.kind=RequirementRefKind::SceneObject;
+    geometry.objectId=core::ObjectId::generate();
+    RequirementsView3DSeams seams;
+    // 仅名称端口提供候选值；表单、校验、草稿与撤销均使用真实实现。
+    seams.referenceChoices=[=] { return std::vector<RequirementsReferenceChoice>{
+        {RequirementReference{},"世界坐标系",true,""},{tcpA,"夹爪A / tip-a",true,""},
+        {tcpB,"夹爪A / tip-b",true,""},{otherTool,"夹爪B / tip-b",true,""},
+        {geometry,"场景 / 支承面",true,""}}; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    m_panel->focusObject(before.points.entries.front().objectId);
+    QTimer::singleShot(0,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        EXPECT_NE(dialog,nullptr); if (!dialog) { return; }
+        auto* tcp=dialog->findChild<QComboBox*>("station-tcp-choice");
+        auto* scene=dialog->findChild<QComboBox*>("station-geometry-choice");
+        EXPECT_NE(tcp,nullptr); EXPECT_NE(scene,nullptr);
+        if (!tcp || !scene) { dialog->reject(); return; }
+        EXPECT_EQ(tcp->count(),4) << "可选空行和三个具名TCP，不得按工具ID合并";
+        EXPECT_EQ(scene->count(),2) << "几何列表只包含未选提示与场景，不混入工具";
+        tcp->setCurrentIndex(tcp->findText("夹爪A / tip-b"));
+        scene->setCurrentIndex(scene->findText("场景 / 支承面"));
+        dialog->findChild<QComboBox*>("station-rule-kind")->setCurrentIndex(2);
+        dialog->findChild<QComboBox*>("station-feature")->setCurrentIndex(1);
+        dialog->findChild<QCheckBox*>("station-invert")->setChecked(true);
+        EXPECT_EQ(m_editor.workingSet(),before) << "预选几何与TCP不能提前写草稿";
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+    });
+    m_panel->findChild<QPushButton*>("ird_station_definition_edit")->click(); QApplication::processEvents();
+    const auto after=m_editor.workingSet().points.entries.front();
+    ASSERT_TRUE(after.tcpRef); EXPECT_EQ(*after.tcpRef,tcpB);
+    EXPECT_EQ(after.pose.orientation.kind,OrientationRuleKind::AlignGeometryNormal);
+    EXPECT_EQ(after.pose.orientation.targetSceneObject,geometry.objectId);
+    EXPECT_EQ(after.pose.orientation.feature,OrientationFeature::FramePlaneNormal);
+    EXPECT_TRUE(after.pose.orientation.invertNormal);
+    EXPECT_EQ(after.refFrame,before.points.entries.front().refFrame);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-03：区域参考系/TCP按业务名选择，暂存不换算盒坐标，整批一次撤销。 */
+TEST_F(RequirementsSessionGuiTest, NamedRegionReferencesAtomicAndStale_REQ03_AT02)
+{
+    IRD_TEST_INFO("REQ-03", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    RequirementReference frame; frame.kind=RequirementRefKind::SceneObject; frame.objectId=core::ObjectId::generate();
+    RequirementReference tcp; tcp.kind=RequirementRefKind::Tool; tcp.objectId=core::ObjectId::generate(); tcp.tcpKey="tip";
+    std::vector<RequirementsReferenceChoice> choices{{RequirementReference{},"世界坐标系",true,""},
+        {frame,"场景 / 区域夹具",true,""},{tcp,"工具 / 探针 / tip",true,""}};
+    RequirementsView3DSeams seams; seams.referenceChoices=[&] { return choices; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    m_panel->focusObject(before.regions.entries.front().objectId);
+    auto* reference=m_panel->findChild<QComboBox*>("ird_region_reference_choice");
+    auto* tool=m_panel->findChild<QComboBox*>("ird_region_tcp_choice");
+    ASSERT_NE(reference,nullptr) << "区域缺业务名称参考系入口";
+    ASSERT_NE(tool,nullptr) << "区域缺业务名称TCP入口";
+    reference->setCurrentIndex(reference->findText("场景 / 区域夹具"));
+    tool->setCurrentIndex(tool->findText("工具 / 探针 / tip"));
+    EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().refFrame,frame);
+    ASSERT_TRUE(m_editor.workingSet().regions.entries.front().tcpRef);
+    EXPECT_EQ(*m_editor.workingSet().regions.entries.front().tcpRef,tcp);
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().box,before.regions.entries.front().box);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(before.regions.entries.front().objectId);
+    reference=m_panel->findChild<QComboBox*>("ird_region_reference_choice");
+    reference->setCurrentIndex(reference->findText("场景 / 区域夹具"));
+    choices.pop_back(); // 与工位相同：未刷新表单不能向变化的目录提交。
+    m_panel->findChild<QPushButton*>("ird_region_sampling_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-04：工况负载/工具/环境均按名称绑定，未确认零写入，过期拒绝。 */
+TEST_F(RequirementsSessionGuiTest, NamedConditionReferencesAtomicAndStale_REQ04_AT02)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    RequirementReference scene; scene.kind=RequirementRefKind::SceneObject; scene.objectId=core::ObjectId::generate();
+    RequirementReference tcp; tcp.kind=RequirementRefKind::Tool; tcp.objectId=core::ObjectId::generate(); tcp.tcpKey="tip";
+    std::vector<RequirementsReferenceChoice> choices{{scene,"场景 / 障碍物",true,""},{tcp,"工具 / 夹爪 / tip",true,""}};
+    RequirementsView3DSeams seams; seams.referenceChoices=[&] { return choices; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    m_panel->focusObject(before.conditions.entries.front().objectId);
+    auto* environment=m_panel->findChild<QListWidget*>("ird_condition_environment_choices");
+    ASSERT_NE(environment,nullptr) << "工况缺按业务名选择环境的入口";
+    ASSERT_EQ(environment->count(),1); environment->item(0)->setCheckState(Qt::Checked);
+    EXPECT_TRUE(m_panel->findChild<QLineEdit*>("ird_condition_environment")->isHidden());
+    m_panel->findChild<QPushButton*>("ird_condition_add_payload")->click();
+    m_panel->findChild<QPushButton*>("ird_condition_add_tool")->click();
+    for (const auto* name : {"ird_condition_payloads","ird_condition_tools"}) {
+        auto* table=m_panel->findChild<QTableWidget*>(name); ASSERT_NE(table,nullptr);
+        auto* combo=qobject_cast<QComboBox*>(table->cellWidget(0,0)); ASSERT_NE(combo,nullptr);
+        const int row=combo->findText("工具 / 夹爪 / tip"); ASSERT_GE(row,0); combo->setCurrentIndex(row);
+        EXPECT_TRUE(table->isColumnHidden(1)); EXPECT_TRUE(table->isColumnHidden(2));
+    }
+    EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click(); QApplication::processEvents();
+    const auto after=m_editor.workingSet().conditions.entries.front();
+    EXPECT_EQ(after.environmentRefs,std::vector<core::ObjectId>{*scene.objectId});
+    EXPECT_EQ(after.toolRefs,std::vector<RequirementReference>{tcp});
+    ASSERT_EQ(after.payloads.size(),1); EXPECT_EQ(after.payloads.front().toolRef,tcp);
+    EXPECT_EQ(after.payloads.front().mass.state(),core::FieldState::NotProvided);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(before.conditions.entries.front().objectId);
+    m_panel->findChild<QListWidget*>("ird_condition_environment_choices")->item(0)->setCheckState(Qt::Checked);
+    choices.clear();
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-03/04：历史缺失引用保留、新不可用环境拒绝、取消与只读零写入。 */
+TEST_F(RequirementsSessionGuiTest, NamedInlineReferencesMissingUnavailableCancelReadOnly_REQ04_AT02)
+{
+    IRD_TEST_INFO("REQ-04", {}, std::nullopt);
+    auto condition=m_editor.workingSet().conditions.entries.front();
+    const auto missing=core::ObjectId::generate(); condition.environmentRefs={missing};
+    ConditionPayload payload; payload.toolRef.kind=RequirementRefKind::Tool;
+    payload.toolRef.objectId=core::ObjectId::generate(); payload.toolRef.tcpKey="missing-tip";
+    condition.payloads={payload}; ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{condition}).accepted);
+    const auto before=m_editor.workingSet();
+    RequirementReference blocked; blocked.kind=RequirementRefKind::SceneObject; blocked.objectId=core::ObjectId::generate();
+    RequirementsView3DSeams seams; seams.referenceChoices=[=] { return std::vector<RequirementsReferenceChoice>{
+        {blocked,"未发布环境",false,"没有运行时帧"}}; };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report); m_panel->focusObject(condition.objectId);
+    auto* environments=m_panel->findChild<QListWidget*>("ird_condition_environment_choices");
+    ASSERT_NE(environments,nullptr); ASSERT_EQ(environments->count(),2);
+    EXPECT_EQ(environments->item(1)->checkState(),Qt::Checked);
+    EXPECT_TRUE(environments->item(1)->text().contains("缺失"));
+    auto* table=m_panel->findChild<QTableWidget*>("ird_condition_payloads"); ASSERT_NE(table,nullptr);
+    auto* tool=qobject_cast<QComboBox*>(table->cellWidget(0,0)); ASSERT_NE(tool,nullptr);
+    EXPECT_TRUE(tool->currentText().contains("缺失"));
+    table->item(0,3)->setText("2.5");
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click(); QApplication::processEvents();
+    const auto after=m_editor.workingSet().conditions.entries.front();
+    EXPECT_EQ(after.environmentRefs,condition.environmentRefs); EXPECT_EQ(after.payloads.front().toolRef,payload.toolRef);
+    EXPECT_DOUBLE_EQ(after.payloads.front().mass.value(),2.5);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->refreshPanel(before,m_report); m_panel->focusObject(condition.objectId);
+    environments=m_panel->findChild<QListWidget*>("ird_condition_environment_choices");
+    EXPECT_FALSE(environments->item(0)->flags() & Qt::ItemIsEnabled);
+    environments->item(0)->setCheckState(Qt::Checked); // 程序绕过灰显也不能提交不可用新引用。
+    m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+    EXPECT_FALSE(m_panel->findChild<QLabel*>("ird_condition_structure_error")->text().isEmpty());
+    m_panel->findChild<QPushButton*>("ird_condition_structure_cancel")->click();
+    EXPECT_EQ(environments->item(0)->checkState(),Qt::Unchecked);
+    EXPECT_EQ(environments->item(1)->checkState(),Qt::Checked);
+    m_panel->setWritable(false); QApplication::processEvents();
+    EXPECT_FALSE(m_panel->findChild<QListWidget*>("ird_condition_environment_choices")->isEnabled());
+    EXPECT_FALSE(m_panel->findChild<QPushButton*>("ird_condition_structure_apply")->isEnabled());
+    EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-08：三维入口缺装配时诚实反馈并零写入，不伪造交互成功。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetMissingSeamIsExplicit_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet(); m_panel->refreshPanel(before,m_report);
+    m_panel->focusObject(before.points.entries.front().objectId);
+    auto* create=m_panel->findChild<QPushButton*>("ird_req_create_target_3d");
+    auto* move=m_panel->findChild<QPushButton*>("ird_req_move_target_3d");
+    ASSERT_NE(create,nullptr) << "缺少三维创建目标入口";
+    ASSERT_NE(move,nullptr) << "缺少三维移动选中工位入口";
+    create->click(); QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet(),before);
+    EXPECT_TRUE(m_panel->showCommandFeedbackText().contains("未装配"));
+}
+
+/** @brief REQ-08：真实刚体变换写回旋转非World参考系，确认一次撤销，取消/漂移零写。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetMoveTransformCancelAndStale_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    auto point=m_editor.workingSet().points.entries.front();
+    point.refFrame.kind=RequirementRefKind::SceneObject; point.refFrame.objectId=core::ObjectId::generate();
+    point.pose.position=core::SourcedValue<rw::math::Vector3D<double>>::provided({0.1,0.2,0.3},
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{point}).accepted); const auto before=m_editor.workingSet();
+    // 独立常量矩阵：参考系绕世界Z转90°，原局部(0.1,0.2,0.3)应到(0.8,2.1,3.3)m。
+    rw::math::Transform3D<> frame({1,2,3},rw::math::Rotation3D<>(0,-1,0,1,0,0,0,0,1));
+    int mode=0,calls=0;
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[&](const RequirementReference&) { return std::optional<rw::math::Transform3D<>>{frame}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>& initial,bool creating)->std::optional<rw::math::Transform3D<>> {
+        ++calls; EXPECT_FALSE(creating); EXPECT_EQ(m_editor.workingSet(),before);
+        EXPECT_NEAR(initial.P()[0],0.8,1e-12); EXPECT_NEAR(initial.P()[1],2.1,1e-12); EXPECT_NEAR(initial.P()[2],3.3,1e-12);
+        if (mode==1) { return std::nullopt; }
+        if (mode==2) { frame=rw::math::Transform3D<>({2,2,3},frame.R()); }
+        return rw::math::Transform3D<>(initial.P()+rw::math::Vector3D<>(0.3,-0.2,0.1),initial.R());
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report); m_panel->focusObject(point.objectId);
+    auto* move=m_panel->findChild<QPushButton*>("ird_req_move_target_3d"); ASSERT_NE(move,nullptr);
+    move->click(); QApplication::processEvents();
+    const auto actual=m_editor.workingSet().points.entries.front();
+    EXPECT_NEAR(actual.pose.position.value()[0],-0.1,1e-12);
+    EXPECT_NEAR(actual.pose.position.value()[1],-0.1,1e-12);
+    EXPECT_NEAR(actual.pose.position.value()[2],0.4,1e-12);
+    auto expected=point; expected.pose.position=actual.pose.position;
+    EXPECT_EQ(actual,expected) << "仅位置改变，原引用/规则/约束/TCP/工况关联不得改变";
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    for (mode=1;mode<=2;++mode) {
+        m_panel->refreshPanel(before,m_report); m_panel->focusObject(point.objectId);
+        m_panel->findChild<QPushButton*>("ird_req_move_target_3d")->click(); QApplication::processEvents();
+        EXPECT_EQ(m_editor.workingSet(),before) << "取消或参考系世界变换漂移不得写回";
+    }
+    EXPECT_EQ(calls,3);
+}
+
+/** @brief REQ-08：世界系三维创建使用返回位姿，确认前零写、一次撤销，禁写不调用端口。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetCreateAtomicAndReadOnly_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet(); int calls=0;
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[](const RequirementReference&) { return std::optional<rw::math::Transform3D<>>{
+        rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1))}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>&,bool creating) {
+        ++calls; EXPECT_TRUE(creating); EXPECT_EQ(m_editor.workingSet(),before);
+        return std::optional<rw::math::Transform3D<>>{rw::math::Transform3D<>({0.4,0.5,0.6},
+            rw::math::Rotation3D<>(0,-1,0,1,0,0,0,0,1))};
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    auto* create=m_panel->findChild<QPushButton*>("ird_req_create_target_3d"); ASSERT_NE(create,nullptr);
+    create->click(); QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(),before.points.entries.size()+1);
+    // 编辑器按ObjectId规范排序，新分配的随机身份不保证位于集合末尾。
+    const auto& entries=m_editor.workingSet().points.entries;
+    const auto added=std::find_if(entries.begin(),entries.end(),[&](const auto& candidate) {
+        return std::none_of(before.points.entries.begin(),before.points.entries.end(),
+            [&](const auto& old) { return candidate.objectId==old.objectId; });
+    });
+    ASSERT_NE(added,entries.end()); const auto& point=*added;
+    EXPECT_EQ(point.refFrame.kind,RequirementRefKind::World); EXPECT_TRUE(point.objectId.isValid());
+    EXPECT_NE(point.objectId,before.points.entries.front().objectId);
+    EXPECT_DOUBLE_EQ(point.pose.position.value()[0],0.4); EXPECT_DOUBLE_EQ(point.pose.position.value()[2],0.6);
+    EXPECT_EQ(point.pose.orientation.kind,OrientationRuleKind::Fixed);
+    EXPECT_NEAR(point.pose.orientation.fixedRpy[2],1.5707963267948966,1e-12);
+    ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+    m_panel->setWritable(false); QApplication::processEvents();
+    create=m_panel->findChild<QPushButton*>("ird_req_create_target_3d"); EXPECT_FALSE(create->isEnabled());
+    create->click(); QApplication::processEvents(); EXPECT_EQ(calls,1); EXPECT_EQ(m_editor.workingSet(),before);
+}
+
+/** @brief REQ-08：端口返回NaN/无穷/退化或左手矩阵时拒绝，保留完整草稿及撤销深度。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetInvalidRigidOutputZeroWrite_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    const auto identity=rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1));
+    int mode=0,calls=0;
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[&](const RequirementReference&) { return std::optional{identity}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>&,bool)->std::optional<rw::math::Transform3D<>> {
+        ++calls; auto result=identity;
+        if (mode==0) { result.P()[0]=std::numeric_limits<double>::quiet_NaN(); }
+        if (mode==1) { result.P()[2]=std::numeric_limits<double>::infinity(); }
+        if (mode==2) { result.R()(0,0)=0; }
+        if (mode==3) { result.R()(2,2)=-1; }
+        return result;
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    for (mode=0;mode<4;++mode) {
+        m_panel->findChild<QPushButton*>("ird_req_create_target_3d")->click(); QApplication::processEvents();
+        EXPECT_EQ(m_editor.workingSet(),before);
+        EXPECT_TRUE(m_panel->showCommandFeedbackText().contains("无效"));
+        EXPECT_FALSE(m_editor.undoLocal()) << "非法交互不得产生撤销记录";
+    }
+    EXPECT_EQ(calls,4);
+}
+
+/** @brief REQ-08：嵌套交互中重载/换编辑器以及确认后排队前外部修改均使旧确认失效。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetSessionAndQueuedBaselineGuard_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet();
+    const auto identity=rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1));
+    int mode=0;
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[&](const RequirementReference&) { return std::optional{identity}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>&,bool)->std::optional<rw::math::Transform3D<>> {
+        if (mode==0) { m_panel->noteBaselineReloaded(); }
+        if (mode==1) { m_panel->setEditTargetProvider([this] { return &m_editor; }); }
+        if (mode==2) {
+            QTimer::singleShot(0,m_panel.get(),[&] {
+                auto changed=m_editor.workingSet().points.entries.front(); changed.note="外部编辑优先";
+                ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{changed}).accepted);
+            });
+        }
+        return rw::math::Transform3D<>({0.4,0.5,0.6},identity.R());
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    for (mode=0;mode<3;++mode) {
+        m_panel->findChild<QPushButton*>("ird_req_create_target_3d")->click(); QApplication::processEvents();
+        if (mode<2) { EXPECT_EQ(m_editor.workingSet(),before); }
+        else {
+            EXPECT_EQ(m_editor.workingSet().points.entries.size(),before.points.entries.size());
+            EXPECT_EQ(m_editor.workingSet().points.entries.front().note,"外部编辑优先");
+            ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet(),before);
+        }
+        EXPECT_FALSE(m_editor.undoLocal()) << "过期确认不能留下额外撤销步骤";
+    }
+}
+
+/** @brief REQ-08：更多菜单与真实键盘快捷键共用三维确认入口，只读时同样禁止调用。 */
+TEST_F(RequirementsSessionGuiTest, View3DTargetMenuAndShortcutShareGate_REQ08_AT23)
+{
+    IRD_TEST_INFO("REQ-08", {}, std::nullopt);
+    const auto before=m_editor.workingSet(); int calls=0;
+    const auto identity=rw::math::Transform3D<>({0,0,0},rw::math::Rotation3D<>(1,0,0,0,1,0,0,0,1));
+    RequirementsView3DSeams seams;
+    seams.referenceWorldPose=[&](const RequirementReference&) { return std::optional{identity}; };
+    seams.editWorldTarget=[&](const rw::math::Transform3D<>&,bool)->std::optional<rw::math::Transform3D<>> {
+        ++calls; return std::nullopt;
+    };
+    m_panel->setView3DSeams(seams); m_panel->refreshPanel(before,m_report);
+    auto* action=m_panel->findChild<QAction*>("ird_req_create_target_3d_menu");
+    ASSERT_NE(action,nullptr) << "顶部更多菜单必须提供真实入口";
+    action->trigger(); EXPECT_EQ(calls,1);
+    m_panel->show(); m_panel->activateWindow(); m_panel->setFocus();
+    QEventLoop settle; QTimer::singleShot(100,&settle,&QEventLoop::quit); settle.exec();
+    const auto sendKey=[&] {
+        QKeyEvent press(QEvent::KeyPress,Qt::Key_C,Qt::AltModifier|Qt::ShiftModifier);
+        QApplication::sendEvent(m_panel.get(),&press);
+        QKeyEvent release(QEvent::KeyRelease,Qt::Key_C,Qt::AltModifier|Qt::ShiftModifier);
+        QApplication::sendEvent(m_panel.get(),&release); QApplication::processEvents();
+    };
+    sendKey(); EXPECT_EQ(calls,2) << "真实快捷键应进入同一交互端口";
+    m_panel->setWritable(false); QApplication::processEvents();
+    EXPECT_FALSE(action->isEnabled()); action->trigger(); sendKey();
+    EXPECT_EQ(calls,2); EXPECT_EQ(m_editor.workingSet(),before);
+}
+// =====================================================================
+// WP-14-T12 批33（gui 补产第一批——矩阵对账遗留行的生产路径补证）：
+// R02 段编辑族／R01 删除保护与重名／R03 间距与姿态采样字段／R05 公式
+// 与引号转义／R12 版本与未知键。全部走真实控件事件流（新 DoD 第 5
+// 条——投影模型/域函数测试不替代）。
+// =====================================================================
+
+/** @brief REQ-02：接近/撤离段启用、进退轴、距离经段复合行真实编辑；作业
+ *         段锁启用；一次撤销整体恢复。 */
+TEST_F(RequirementsSessionGuiTest, StationSegmentsEditAndWorkLock_REQ02_WP14T12)
+{
+    IRD_TEST_INFO("REQ-02", {"UX-05"}, std::nullopt);
+    const auto before = m_editor.workingSet().points.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    QApplication::processEvents();
+
+    // 段行控件定位（QFormLayout 行/列角色——段表单布局对象跨面板重建
+    // 存活〔成员 m_stationSegmentForm，行由 clearFormRows 清空重建〕，
+    // LabelRole↔FieldRole 同行配对＝与用户所见同位）。接受编辑→检查器
+    // 重建＝行控件全换——每步交互后 relocate 重取（悬垂指针＝SEH）。
+    QFormLayout* segForm = nullptr;
+    for (QFormLayout* lay : m_panel->findChildren<QFormLayout*>()) {
+        for (int i = 0; i < lay->rowCount() && segForm == nullptr; ++i) {
+            const QLayoutItem* li = lay->itemAt(i, QFormLayout::LabelRole);
+            const QLabel* lab =
+                li != nullptr ? qobject_cast<QLabel*>(li->widget()) : nullptr;
+            if (lab != nullptr && lab->text() == QStringLiteral("接近段")) {
+                segForm = lay;
+            }
+        }
+    }
+    ASSERT_NE(segForm, nullptr) << "段行表单布局缺失";
+    QList<QComboBox*> enabledCombos;
+    QList<QComboBox*> axisCombos;
+    QList<QDoubleSpinBox*> segSpins;
+    const auto relocate = [&segForm, &enabledCombos, &axisCombos, &segSpins] {
+        const auto rowField = [&](const QString& label) -> QWidget* {
+            for (int i = 0; i < segForm->rowCount(); ++i) {
+                const QLayoutItem* labelItem =
+                    segForm->itemAt(i, QFormLayout::LabelRole);
+                const QLabel* lab = labelItem != nullptr
+                    ? qobject_cast<QLabel*>(labelItem->widget()) : nullptr;
+                if (lab == nullptr || lab->text() != label) { continue; }
+                const QLayoutItem* fieldItem =
+                    segForm->itemAt(i, QFormLayout::FieldRole);
+                return fieldItem != nullptr ? fieldItem->widget() : nullptr;
+            }
+            return nullptr;
+        };
+        enabledCombos.clear();
+        axisCombos.clear();
+        segSpins.clear();
+        for (const QString& label :
+             {QStringLiteral("接近段"), QStringLiteral("作业段"),
+              QStringLiteral("撤离段")}) {
+            if (QWidget* cell = rowField(label)) {
+                if (QComboBox* combo = cell->findChild<QComboBox*>()) {
+                    enabledCombos.append(combo);
+                }
+            }
+        }
+        for (const QString& label :
+             {QStringLiteral("接近段"), QStringLiteral("撤离段")}) {
+            if (QWidget* cell = rowField(label)) {
+                const auto combos = cell->findChildren<QComboBox*>();
+                if (combos.size() >= 2) { axisCombos.append(combos.at(1)); }
+                if (QDoubleSpinBox* spin = cell->findChild<QDoubleSpinBox*>()) {
+                    segSpins.append(spin);
+                }
+            }
+        }
+    };
+    relocate();
+    ASSERT_EQ(enabledCombos.size(), 3) << "接近/作业/撤离三段启用下拉缺失";
+    ASSERT_EQ(axisCombos.size(), 2) << "接近/撤离进退轴下拉缺失";
+    ASSERT_EQ(segSpins.size(), 2) << "接近/撤离距离旋箱缺失";
+
+    // 作业段＝工位本身不可停用（REQ-02 语义锁）；接近/撤离可交互。
+    EXPECT_FALSE(enabledCombos[1]->isEnabled()) << "作业段启用下拉必须锁死";
+    EXPECT_TRUE(enabledCombos[0]->isEnabled());
+    EXPECT_TRUE(enabledCombos[2]->isEnabled());
+
+    // 接近段距离 0.25 m（editingFinished 直连提交轨——与手输同源）。
+    segSpins[0]->setValue(0.25);
+    QMetaObject::invokeMethod(segSpins[0], "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    EXPECT_DOUBLE_EQ(m_editor.workingSet().points.entries.front().approach.distanceM,
+                     0.25)
+        << "接近段距离未入草稿（复合行提交轨断链）";
+    relocate();
+
+    // 接近段进退轴切 ReferenceZ（枚举直投——单元格内第 2 个下拉＝轴）。
+    ASSERT_EQ(axisCombos.size(), 2);
+    axisCombos[0]->setCurrentText(QStringLiteral("ReferenceZ"));
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().approach.axis,
+              SegmentAxis::ReferenceZ)
+        << "接近段进退轴未入草稿";
+    relocate();
+
+    // 撤离段独立距离——与接近段互不串值（R02-03 的独立面；段停用态下
+    // 距离可先置——启用时的正距离校验见域 validateTaskPoint）。
+    ASSERT_EQ(segSpins.size(), 2);
+    segSpins[1]->setValue(0.4);
+    QMetaObject::invokeMethod(segSpins[1], "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    const auto after = m_editor.workingSet().points.entries.front();
+    EXPECT_DOUBLE_EQ(after.retract.distanceM, 0.4) << "撤离段距离未入草稿";
+    EXPECT_DOUBLE_EQ(after.approach.distanceM, 0.25) << "撤离段编辑串改了接近段";
+    EXPECT_EQ(after.approach.axis, SegmentAxis::ReferenceZ) << "撤离段编辑串改了接近段轴";
+
+    // REQ-02：在距离已合法时通过真实下拉启停两段；每次提交会重绘，
+    // 必须重新定位控件，不能对已销毁的旧控件继续发信号。
+    for (const int segment : {0, 2}) {
+        relocate();
+        enabledCombos[segment]->setCurrentIndex(0);
+        QApplication::processEvents();
+        const auto& enabled = m_editor.workingSet().points.entries.front();
+        EXPECT_TRUE(segment == 0 ? enabled.approach.enabled : enabled.retract.enabled);
+        relocate();
+        enabledCombos[segment]->setCurrentIndex(1);
+        QApplication::processEvents();
+        const auto& disabled = m_editor.workingSet().points.entries.front();
+        EXPECT_FALSE(segment == 0 ? disabled.approach.enabled : disabled.retract.enabled);
+    }
+    // 三笔参数编辑及四笔启停各占一个撤销步；一次一步完整回到基线。
+    for (int i = 0; i < 7; ++i) {
+        ASSERT_TRUE(m_editor.undoLocal()) << "第 " << i + 1 << " 笔撤销失败";
+    }
+    EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
+}
+
+TEST_F(RequirementsSessionGuiTest, StationReferencedDeleteGuards_REQ01_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {"REQ-04", "REQ-07"}, std::nullopt);
+    const core::ObjectId p1 = m_editor.workingSet().points.entries.front().objectId;
+
+    // ① 工况 appliesTo 绑定 P1（编辑面构造引用——与
+    //    ConditionReferencesAndFourStates 同一域形态）后，删除 P1＝拒绝。
+    OperatingCondition cond = m_editor.workingSet().conditions.entries.front();
+    cond.appliesTo.scope = AppliesToScope::Stations;
+    cond.appliesTo.stations = {p1};
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{cond}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(p1);
+    QPushButton* removeBtn =
+        m_panel->findChild<QPushButton*>(QStringLiteral("ird_req_remove_points"));
+    ASSERT_NE(removeBtn, nullptr) << "工位生命周期删除按钮缺失";
+    removeBtn->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), 1u)
+        << "被工况 appliesTo 引用的工位删除必须被拒（§5.1 删除引用保护）";
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().objectId, p1)
+        << "拒绝删除后原工位必须原样保留";
+
+    // ② 顺序键前驱引用保护：P2 的顺序键引用 P1 名称 → 删除 P1＝拒绝。
+    TaskPoint p2 = makePoint("P2", 4.0, 5.0, 6.0);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{p2}).accepted);
+    TaskPoint p2seq;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.name == "P2") { p2seq = p; }  // 编辑器按 ObjectId 稳定序——按名现取
+    }
+    ASSERT_TRUE(p2seq.objectId.isValid()) << "P2 入集失败（夹具装配错误）";
+    p2seq.sequenceKey = std::optional<std::string>{std::string("P1")};
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{p2seq}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(p1);
+    removeBtn->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), 2u)
+        << "被顺序键前驱引用的工位删除必须被拒（§5.1 删除引用保护 c 轨）";
+
+    // ③ 解除两路引用（工况 appliesTo 复位＋顺序键清空走真实卡片字段）
+    //    → 删除成功＋锚回落（守卫语义正反面：引用在场＝拒、引用解除＝通）。
+    OperatingCondition unbound = m_editor.workingSet().conditions.entries.front();
+    unbound.appliesTo.scope = AppliesToScope::None;
+    unbound.appliesTo.stations.clear();
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{unbound}).accepted);
+    m_panel->focusObject(p2seq.objectId);
+    QApplication::processEvents();
+    QLineEdit* seqField = fieldEditor(*m_panel, "sequence-key");
+    ASSERT_NE(seqField, nullptr) << "顺序键卡片行缺失";
+    seqField->setText(QString());
+    QMetaObject::invokeMethod(seqField, "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    bool seqCleared = true;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.objectId == p2seq.objectId && p.sequenceKey.has_value()) { seqCleared = false; }
+    }
+    ASSERT_TRUE(seqCleared) << "顺序键清空必须落账（解除引用前置）";
+    m_panel->focusObject(p1);
+    removeBtn->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), 1u)
+        << "解除引用后删除应成功";
+    EXPECT_FALSE(m_editor.workingSet().points.entries.front().objectId == p1);
+}
+
+/** @brief REQ-01：重名拒绝（编辑器 upsert 查重）走真实名称字段——拒绝后
+ *         原值保留；非重名改名照常通过（对照轨）。 */
+TEST_F(RequirementsSessionGuiTest, StationDuplicateNameRejectKeepsOriginal_REQ01_WP14T12)
+{
+    IRD_TEST_INFO("REQ-01", {"I-REQ-2"}, std::nullopt);
+    TaskPoint p2 = makePoint("P2", 4.0, 5.0, 6.0);
+    ASSERT_TRUE(m_editor.applyEdit(RequirementEdit{p2}).accepted);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    core::ObjectId p2oid;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.name == "P2") { p2oid = p.objectId; }
+    }
+    ASSERT_TRUE(p2oid.isValid()) << "P2 入集失败（夹具装配错误）";
+    m_panel->focusObject(p2oid);
+    QApplication::processEvents();
+    QLineEdit* nameField = fieldEditor(*m_panel, "name");
+    ASSERT_NE(nameField, nullptr);
+
+    // 重名提交 → 编辑器拒绝 → 工作集字节不变（原值保留——I-REQ-2）。
+    // 注意：拒绝路径 renderInspector 重建检查器行（原值回退显示）——
+    // nameField 随旧行销毁，二次定位必须重走 fieldEditor（悬垂防回归）。
+    nameField->setText(QStringLiteral("P1"));
+    QMetaObject::invokeMethod(nameField, "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    bool seen = false;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.objectId == p2oid) {
+            seen = true;
+            EXPECT_EQ(p.name, "P2") << "重名拒绝后原名称必须保留";
+        }
+    }
+    ASSERT_TRUE(seen) << "拒绝路径不得丢条目";
+
+    // 对照：非重名改名照常通过（拒绝轨不是编辑轨整体失灵）。
+    QLineEdit* nameFieldAgain = fieldEditor(*m_panel, "name");
+    ASSERT_NE(nameFieldAgain, nullptr) << "拒绝重绘后名称行缺失";
+    nameFieldAgain->setText(QStringLiteral("P2-改"));
+    QMetaObject::invokeMethod(nameFieldAgain, "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.objectId == p2oid) {
+            EXPECT_EQ(p.name, "P2-改") << "非重名改名应通过";
+        }
+    }
+}
+
+/** @brief REQ-03：间距采样真实表单——区域存 GridBySpacing 原值；确认派生
+ *         计划＝buildPlan 单点归一的 Grid 权威计数；同值重确认计数不变
+ *         （确定性），间距改密计数响应。 */
+TEST_F(RequirementsSessionGuiTest, RegionSpacingSamplingNormalizedPlan_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"D-REQ-2"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    form->findChild<QLineEdit*>("ird_region_spacing_0")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_1")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_2")->setText("1.0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+
+    // 区域存原值（GridBySpacing 原样——区域面承载原始间距，不预归一）。
+    const auto region = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(region.positionSampling.method, PositionSamplingMethod::GridBySpacing);
+    EXPECT_DOUBLE_EQ(region.positionSampling.spacing[0], 0.5);
+    EXPECT_DOUBLE_EQ(region.positionSampling.spacing[2], 1.0);
+
+    // 确认派生计划（A-18 接线面）＝规范化 Grid 计数（D-REQ-2——计划面
+    // 不承载原始间距），计数 ≥1 且随确认入集。
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "间距区域确认应派生计划（A-18 同一接线）";
+    const auto plan = m_editor.workingSet().plans.entries.front();
+    EXPECT_EQ(plan.positionSampling.method, PositionSamplingMethod::Grid);
+    EXPECT_GE(plan.positionSampling.counts[0], 1u);
+    const auto counts1 = plan.positionSampling.counts;
+    const core::ObjectId planId = plan.objectId;
+
+    // 同值重确认（面板重绘后重定位表单）→ 计数不变（确定性归一）＋
+    // 计划 id 复用（R6 一一对应）。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    form->findChild<QLineEdit*>("ird_region_spacing_0")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_1")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_2")->setText("1.0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u) << "重确认不得新增第二条计划";
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts,
+              counts1)
+        << "同间距重确认计数必须逐位不变（确定性归一）";
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().objectId, planId);
+
+    // 间距改密（0.25 全轴）→ 计数响应（归一对间距敏感——非装饰面）。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    form->findChild<QLineEdit*>("ird_region_spacing_0")->setText("0.25");
+    form->findChild<QLineEdit*>("ird_region_spacing_1")->setText("0.25");
+    form->findChild<QLineEdit*>("ird_region_spacing_2")->setText("0.25");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u);
+    const auto counts2 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+    EXPECT_GT(counts2[0] * counts2[1] * counts2[2],
+              counts1[0] * counts1[1] * counts1[2])
+        << "间距改密后归一计数必须增加";
+}
+
+/** @brief REQ-03：姿态方向/滚转采样计数走真实表单——区域存值、派生计划
+ *         同值投影；零计数拒绝保原值。 */
+TEST_F(RequirementsSessionGuiTest, RegionOrientationSamplingCounts_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+
+    // 方向 4×滚转 3 → 区域存值；派生计划姿态采样同值（计划＝区域采样
+    // 定义的忠实投影——A-18 裁决语义）。
+    form->findChild<QLineEdit*>("ird_region_direction_samples")->setText("4");
+    form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("3");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().orientationSampling.directionSamples, 4u);
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().orientationSampling.rollSamples, 3u);
+    if (m_editor.workingSet().plans.entries.size() == 1u) {
+        EXPECT_EQ(m_editor.workingSet().plans.entries.front().orientationSampling.directionSamples, 4u);
+        EXPECT_EQ(m_editor.workingSet().plans.entries.front().orientationSampling.rollSamples, 3u);
+    }
+
+    // 滚转零计数 → 域拒绝＋区域原值保留（非法输入不落草稿——UX-05）。
+    // 拒绝路径 renderRegionPage 重建采样表单（诚实刷新面）——旧 form
+    // 指针随旧窗销毁，错误标签断言前必须经 objectName 重定位。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    form->findChild<QLineEdit*>("ird_region_roll_samples")->setText("0");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().orientationSampling.rollSamples, 3u)
+        << "滚转零计数必须拒绝且保留原值";
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr) << "拒绝重绘后采样表单缺失";
+    EXPECT_FALSE(form->findChild<QLabel*>("ird_region_sampling_error")->text().isEmpty())
+        << "零计数拒绝必须就地报错";
+}
+
+/** @brief AT-02：CSV 公式样式单元格按字面数据导入（NFR-SEC-03 不求值）；
+ *         引号字段内逗号/双写引号按 RFC 方言解出单字段。 */
+TEST_F(RequirementsSessionGuiTest, CsvFormulaLiteralAndQuotedFields_AT02_WP14T12)
+{
+    IRD_TEST_INFO("AT-02", {"NFR-SEC-03"}, std::nullopt);
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString path = QDir(dir.path()).filePath(QStringLiteral("esc.csv"));
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+    f.write("id,name,x,y,z\n"
+            "s1,=1+2,1.0,2.0,3.0\n"
+            "s2,\"含,逗号\",4.0,5.0,6.0\n"
+            "s3,\"引\"\"内嵌\",7.0,8.0,9.0\n");
+    f.close();
+    FakeDialogHost host;
+    host.openPath = path;
+    host.importConfirmed = true;
+    const std::size_t before = m_editor.workingSet().points.entries.size();
+    ASSERT_TRUE(executeRequirementCommand("requirements.import-csv", *m_panel,
+                                          m_editor, *m_panel, host))
+        << m_panel->showCommandFeedbackText().toStdString();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), before + 3u);
+
+    // 逐名现取断言（导入产物名称面＝字面数据）。
+    bool sawFormula = false;
+    bool sawComma = false;
+    bool sawQuote = false;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.name == "=1+2") {
+            sawFormula = true;  // 公式样式文本原样入库——无求值路径
+        } else if (p.name == "含,逗号") {
+            sawComma = true;    // 引号内逗号＝单字段（方言解出）
+        } else if (p.name == "引\"内嵌") {
+            sawQuote = true;    // 双写引号解出单引号（RFC 4180 转义）
+        }
+    }
+    EXPECT_TRUE(sawFormula) << "公式样式文本必须按字面导入（NFR-SEC-03 不求值）";
+    EXPECT_TRUE(sawComma) << "引号内逗号必须解为单字段";
+    EXPECT_TRUE(sawQuote) << "双写引号必须解出单引号";
+}
+
+/** @brief REQ-12：JSON 版本门（未来版本稳定拒绝）与顶层未知键拒绝
+ *         （NFR-DEP-04）走真实导入命令——均零写入；合法基线照常导入
+ *         （对照轨）。 */
+TEST_F(RequirementsSessionGuiTest, JsonImportVersionAndUnknownKeyReject_REQ12_WP14T12)
+{
+    IRD_TEST_INFO("REQ-12", {"NFR-DEP-04"}, std::nullopt);
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+
+    // ① 未来版本：schemaVersion=2 → io 版本门稳定拒绝（不猜测降级）。
+    const QString futurePath = QDir(dir.path()).filePath(QStringLiteral("future.json"));
+    {
+        QFile f(futurePath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+        f.write("{\"schemaVersion\": 2, \"points\": []}");
+        f.close();
+    }
+    FakeDialogHost host;
+    host.openPath = futurePath;
+    host.importConfirmed = true;
+    const auto baseline = m_editor.workingSet();
+    EXPECT_FALSE(executeRequirementCommand("requirements.import-json", *m_panel,
+                                           m_editor, *m_panel, host))
+        << "未来版本必须稳定拒绝";
+    EXPECT_EQ(m_editor.workingSet(), baseline) << "版本拒绝必须零写入";
+
+    // ② 顶层未知键：Reject 词典（NFR-DEP-04——不静默吞字段）。
+    const QString unknownPath = QDir(dir.path()).filePath(QStringLiteral("unknown.json"));
+    {
+        QFile f(unknownPath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+        f.write("{\"schemaVersion\": 1, \"sneaky_extra\": 1, \"points\": []}");
+        f.close();
+    }
+    host.openPath = unknownPath;
+    EXPECT_FALSE(executeRequirementCommand("requirements.import-json", *m_panel,
+                                           m_editor, *m_panel, host))
+        << "顶层未知键必须拒绝";
+    EXPECT_EQ(m_editor.workingSet(), baseline) << "未知键拒绝必须零写入";
+
+    // ③ 对照：合法基线导入照常通过（拒绝轨不是导入轨失灵）。
+    const QString okPath = QDir(dir.path()).filePath(QStringLiteral("ok.json"));
+    {
+        QFile f(okPath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+        f.write("{\n"
+                "  \"schemaVersion\": 1,\n"
+                "  \"points\": [\n"
+                "    {\"id\": \"p1\", \"name\": \"取件点\", \"process_tag\": \"Pick\",\n"
+                "     \"level\": \"Must\", \"enabled\": \"true\", \"ref_frame\": \"World\",\n"
+                "     \"x\": 1.0, \"y\": 2.0, \"z\": 3.0, \"note\": \"示例备注\"}\n"
+                "  ]\n"
+                "}");
+        f.close();
+    }
+    host.openPath = okPath;
+    EXPECT_TRUE(executeRequirementCommand("requirements.import-json", *m_panel,
+                                          m_editor, *m_panel, host))
+        << m_panel->showCommandFeedbackText().toStdString();
+    bool sawImported = false;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.name == "取件点") { sawImported = true; }
+    }
+    EXPECT_TRUE(sawImported) << "合法 JSON 导入产物缺失";
+}
+/** @brief 批34 评审 F5：区域有派生计划＝计划随区域几何同步（间距归一计
+ *         数随盒尺寸变化）——真实尺寸字段编辑后计划原子更新，一次撤销
+ *         区域与计划双回。 */
+TEST_F(RequirementsSessionGuiTest, RegionSizeEditSyncsDerivedPlan_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"D-REQ-2"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+
+    // 间距采样确认 → 派生计划（批33 用例同款流程）。
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    form->findChild<QLineEdit*>("ird_region_spacing_0")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_1")->setText("0.5");
+    form->findChild<QLineEdit*>("ird_region_spacing_2")->setText("0.5");
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u);
+    const auto counts1 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+
+    // 真实尺寸字段改盒 X 尺寸 2.0→2.5 → 计划原子同步（归一计数随尺寸变）。
+    QLineEdit* sizeX = fieldEditor(*m_panel, "box-size-x");
+    ASSERT_NE(sizeX, nullptr) << "盒尺寸 X 字段缺失";
+    sizeX->setText("2.5");
+    QMetaObject::invokeMethod(sizeX, "editingFinished", Qt::DirectConnection);
+    QApplication::processEvents();
+    const auto afterRegion = m_editor.workingSet().regions.entries.front();
+    EXPECT_DOUBLE_EQ(afterRegion.box.size[0], 2.5) << "尺寸编辑未入草稿";
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "尺寸编辑不得增删计划条目（upsert 同步）";
+    const auto counts2 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+    EXPECT_NE(counts2, counts1) << "尺寸变更后计划计数必须同步（F5 断链面）";
+
+    // 一次撤销＝区域与计划双回（原子批）。
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().box.size[0], 2.0);
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts,
+              counts1);
+}
+
+/** @brief 批34 评审 F6：直接确认默认采样（零变化）必须补建缺失计划；
+ *         计划已存在且派生同值＝幂等零动作（工作集字节不变）。 */
+TEST_F(RequirementsSessionGuiTest, RegionConfirmWithoutChangeBuildsMissingPlan_REQ03_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {}, std::nullopt);
+    const auto region = m_editor.workingSet().regions.entries.front();
+    ASSERT_TRUE(m_editor.workingSet().plans.entries.empty())
+        << "夹具基线应无计划条目";
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(region.objectId);
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u)
+        << "直接确认默认采样应派生计划（F6 断链面）";
+    const auto derived = m_editor.workingSet().plans.entries.front();
+    const auto wsAfterFirst = m_editor.workingSet();
+
+    // 幂等半区：零变化再确认＝零动作（工作集字节不变、不重复入栈）。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(region.objectId);
+    form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u) << "幂等再确认不得新增计划";
+    EXPECT_EQ(m_editor.workingSet(), wsAfterFirst) << "幂等再确认工作集字节必须不变";
+}
+
+/** @brief 批35 评审 P1-5：区域批量参数表与单字段轨同入计划同步——盒长
+ *         2→4 m（0.5 m 间距）派生计数 5→9，不经剪贴板（直改表格值列）。 */
+TEST_F(RequirementsSessionGuiTest, RegionBatchResizeSyncsPlan_UX05_WP14T12)
+{
+    IRD_TEST_INFO("REQ-03", {"UX-05"}, std::nullopt);
+    const auto before = m_editor.workingSet().regions.entries.front();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(before.objectId);
+
+    // 先经采样表单确认派生计划（0.5 m 间距——盒长 2.0 m → X 计数 5）。
+    auto* form = m_panel->findChild<QWidget*>("ird_region_sampling_form");
+    ASSERT_NE(form, nullptr);
+    auto* method = form->findChild<QComboBox*>("ird_region_sampling_method");
+    ASSERT_NE(method, nullptr);
+    method->setCurrentIndex(method->findData(int(PositionSamplingMethod::GridBySpacing)));
+    for (int axis = 0; axis < 3; ++axis) {
+        form->findChild<QLineEdit*>(QString("ird_region_spacing_%1").arg(axis))
+            ->setText("0.5");
+    }
+    form->findChild<QPushButton*>("ird_region_sampling_apply")->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u);
+    ASSERT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts[0], 5U)
+        << "夹具基线：盒长 2.0/间距 0.5 → X 计数 5";
+    const auto counts1 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+
+    // 批量参数表直改值列（kValueColumn=1；键在列 0 的 UserRole）——不经
+    // 剪贴板。box-size-x 2.0→4.0。
+    auto* batch = m_panel->findChild<QWidget*>("ird_req_batch_region");
+    ASSERT_NE(batch, nullptr);
+    auto* table = batch->findChild<QTableWidget*>("ird_param_table");
+    ASSERT_NE(table, nullptr);
+    int sizeRow = -1;
+    for (int r = 0; r < table->rowCount(); ++r) {
+        const QTableWidgetItem* keyItem = table->item(r, 0);
+        if (keyItem != nullptr
+            && keyItem->data(Qt::UserRole).toString() == QStringLiteral("box-size-x")) {
+            sizeRow = r;
+            break;
+        }
+    }
+    ASSERT_GE(sizeRow, 0) << "批量表缺 box-size-x 行";
+    QTableWidgetItem* valueItem = table->item(sizeRow, 1);
+    ASSERT_NE(valueItem, nullptr) << "批量表值列缺失";
+    valueItem->setText(QStringLiteral("4"));
+    QApplication::processEvents();
+    QApplication::processEvents();  // singleShot 暂存排空
+
+    batch->findChild<QPushButton*>("ird_param_apply")->click();
+    batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    QApplication::processEvents();
+
+    // 区域尺寸写入＋计划同步（X 计数 5→9——4/0.5+1）。
+    EXPECT_DOUBLE_EQ(m_editor.workingSet().regions.entries.front().box.size[0], 4.0)
+        << "批量表尺寸写入未落账";
+    ASSERT_EQ(m_editor.workingSet().plans.entries.size(), 1u) << "同步应 upsert 不新增";
+    const auto counts2 = m_editor.workingSet().plans.entries.front().positionSampling.counts;
+    EXPECT_EQ(counts2[0], 9U) << "盒长 4 m/间距 0.5 m → X 计数 9（P1-5 同步面）";
+    EXPECT_NE(counts2, counts1);
+
+    // 一次撤销＝区域与计划双回（原子批）。
+    ASSERT_TRUE(m_editor.undoLocal());
+    EXPECT_EQ(m_editor.workingSet().regions.entries.front().box.size[0], 2.0);
+    EXPECT_EQ(m_editor.workingSet().plans.entries.front().positionSampling.counts,
+              counts1);
 }

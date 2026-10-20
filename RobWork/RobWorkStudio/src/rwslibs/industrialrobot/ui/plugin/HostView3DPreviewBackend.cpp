@@ -59,6 +59,29 @@ namespace {
 /// 预览组节点名前缀（clear 的删除面——draw/clear 共用常量，防漂移）。
 constexpr char kPreviewPrefix[] = "ird-req-preview-";
 
+/**
+ * @brief 会话预览的固定颜色绘制作用域（UX-06/A-18），不拥有GL上下文。
+ * 仅当前UI渲染线程栈上使用；宿主可保留灯光/材质/纹理，不能让其把
+ * 诊断色重新光照成灰黑色。保存全部相关属性，作用域退出完整恢复，
+ * 避免修好预览后又污染后续机器人实体、标签、线宽或点大小。
+ */
+class PreviewColorScope final {
+public:
+    /** @brief 借用当前兼容GL上下文；只关闭颜色覆盖来源，保留深度测试。 */
+    PreviewColorScope()
+    {
+        glPushAttrib(GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_CURRENT_BIT
+                     | GL_LINE_BIT | GL_POINT_BIT | GL_TEXTURE_BIT);
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_1D);
+        glDisable(GL_TEXTURE_2D);
+    }
+    /** @brief 恢复进入前的宿主状态；不得跨上下文或跨绘制回调存活。 */
+    ~PreviewColorScope() { glPopAttrib(); }
+    PreviewColorScope(const PreviewColorScope&) = delete;
+    PreviewColorScope& operator=(const PreviewColorScope&) = delete;
+};
+
 /// 逐点着色分色（判定已由域侧完成——本函数只做词表到 GL 颜色的映射；
 /// 色值经 UiTheme palette 词表供色——UI-T65 消硬编码，F-495 统一供色）。
 void applyCellColor(View3DCellState state)
@@ -133,6 +156,7 @@ class StationMarkerRender final : public Render
               DrawableNode::DrawType type, double alpha) const override
     {
         (void)type;
+        const PreviewColorScope colorScope;
         // 三轴：局部平移至点位后画 X/Y/Z 三线段（GL_LINES——轴指示惯例
         // 形态；轴长与挂帧形态 addFrameAxis 同尺度 0.25 m＝工位尺度）。
         glPushMatrix();
@@ -190,6 +214,7 @@ class RegionOutlineRender final : public Render
         (void)info;
         (void)type;
         (void)alpha;
+        const PreviewColorScope colorScope;
         // 十二棱（八角点拓扑——UI-T77/F-562 修正：生产者角序＝二进制序
         // 〔PanelRegionModel「索引 i 的 bit0→+sx、bit1→+sy、bit2→+sz」〕，
         // 边表按该角序连 12 条真棱——x 向 {0,1}{2,3}{4,5}{6,7}＋y 向
@@ -245,6 +270,7 @@ class SampleGridRender final : public Render
     {
         (void)info;
         (void)type;
+        const PreviewColorScope colorScope;
         // 格线骨架（UI-T52 字面化——采样格的线段呈现：灰细线与着色点并
         // 存〔格线＝格结构、点＝样本锚——两层视觉语义分离〕；空＝无格）。
         if (!m_gridLines.empty()) {
@@ -277,7 +303,11 @@ class SampleGridRender final : public Render
             const Vector3D<double>& h = *m_highlighted;
             // 放大点芯（约 3 倍点径——与 5px 常规点在视觉上明确分层）。
             glPointSize(14.0f);
-            glColor4fv(ui::palette::kRegionTintDefaultGl);
+            // 词表是RGB三元组，glColor4fv会越界读取第4个float作为alpha，
+            // 导致14px点芯透明/随机透明；显式使用回调alpha，保持宿主透明语义。
+            glColor4f(ui::palette::kRegionTintDefaultGl[0],
+                      ui::palette::kRegionTintDefaultGl[1],
+                      ui::palette::kRegionTintDefaultGl[2],static_cast<float>(alpha));
             glBegin(GL_POINTS);
             glVertex3d(h[0], h[1], h[2]);
             glEnd();

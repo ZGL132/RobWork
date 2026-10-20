@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.001" timestamp="2026-10-20T12:02:50.701" name="AllTests">
+  <testsuite name="ModelingDraftRestore" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T12:02:50.701">
+    <testcase name="CompleteWorkingSetAndPendingChanges_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="684" status="run" result="completed" time="0.001" timestamp="2026-10-20T12:02:50.701" classname="ModelingDraftRestore">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:707&#x0A;Expected equality of these values:&#x0A;  restored.session().draft&#x0A;    Which is: 1072-byte object &lt;01-00 00-00 00-00 00-00 20-56 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 FF-7F 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 30-CB B2-A5 03-00 00-00 00-00 00-00 27-00 00-00 90-C5 B2-A5 03-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-AA C1-58 FF-7F 00-00&gt;&#x0A;  edited&#x0A;    Which is: 1072-byte object &lt;01-00 00-00 00-00 00-00 C0-31 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00&gt;&#x0A;不能以旧保存部件替代磁盘草稿中的新部件&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:707
+Expected equality of these values:
+  restored.session().draft
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 20-56 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 FF-7F 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 30-CB B2-A5 03-00 00-00 00-00 00-00 27-00 00-00 90-C5 B2-A5 03-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-AA C1-58 FF-7F 00-00>
+  edited
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 C0-31 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00>
+不能以旧保存部件替代磁盘草稿中的新部件
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:710&#x0A;Value of: restored.buildDraftCommand(&quot;modeling&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;恢复未应用草稿不能因清空changes而不可应用&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:710
+Value of: restored.buildDraftCommand("modeling")
+  Actual: false
+Expected: true
+恢复未应用草稿不能因清空changes而不可应用
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:713&#x0A;Expected equality of these values:&#x0A;  fresh.session().draft&#x0A;    Which is: 1072-byte object &lt;01-00 00-00 00-00 00-00 D0-57 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-30 E0-D9 B2-A5 03-00 00-00 EA-B7 81-0E 8F-04 00-00 DC-90 C1-58 FF-7F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00&gt;&#x0A;  edited&#x0A;    Which is: 1072-byte object &lt;01-00 00-00 00-00 00-00 C0-31 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00&gt;&#x0A;完整帧重建不应依赖既有部件残留&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:713
+Expected equality of these values:
+  fresh.session().draft
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 D0-57 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-30 E0-D9 B2-A5 03-00 00-00 EA-B7 81-0E 8F-04 00-00 DC-90 C1-58 FF-7F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00>
+  edited
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 C0-31 D7-E0 0F-01 00-00 00-00 00-00 00-00 00-00 12-00 00-00 00-00 00-00 1F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00>
+完整帧重建不应依赖既有部件残留
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

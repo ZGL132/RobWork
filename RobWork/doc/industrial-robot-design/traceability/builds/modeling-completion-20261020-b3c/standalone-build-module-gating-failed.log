@@ -1,0 +1,44 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\project\Release\sdurws_ird_project.lib
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\Release\sdurws_ird_modeling.lib
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\Release\sdurws_ird_modeling_plugin.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\testkit\Release\sdurws_ird_testkit.lib
+  ModelingCommandFlowsTest.cpp
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(591,14): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\sdurws_ird_modeling_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(602,14): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\sdurws_ird_modeling_test.vcxproj]
+  sdurws_ird_modeling_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\Release\sdurws_ird_modeling_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\project\Release\sdurws_ird_project.lib
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\Release\sdurws_ird_modeling.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_modeling_contract_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\Release\sdurws_ird_modeling_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_io.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\project\Release\sdurws_ird_project.lib
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_modeling.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\Release\sdurws_ird_modeling.lib
+  sdurws_ird_ui.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\Release\sdurws_ird_modeling_plugin.lib
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\testkit\Release\sdurws_ird_testkit.lib
+  ModelingImportGuiTest.cpp
+sdurws_ird_modeling_plugin.lib(ModelingUiModule.obj) : error LNK2019: 无法解析的外部符号 "class std::unique_ptr<class sdurws::ird::policy::IJointLimitEvaluator,struct std::default_delete<class sdurws::ird::policy::IJointLimitEvaluator> > __cdecl sdurws::ird::policy::makeJointLimitEvaluator(void)" (?makeJointLimitEvaluator@policy@ird@sdurws@@YA?AV?$unique_ptr@VIJointLimitEvaluator@policy@ird@sdurws@@U?$default_delete@VIJointLimitEvaluator@policy@ird@sdurws@@@std@@@std@@XZ)，函数 "public: __cdecl sdurws::ird::modeling::ModelingUiModule::ModelingUiModule(void)" (??0ModelingUiModule@modeling@ird@sdurws@@QEAA@XZ) 中引用了该符号 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\sdurws_ird_modeling_gui_test.vcxproj]
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\Release\sdurws_ird_modeling_gui_test.exe : fatal error LNK1120: 1 个无法解析的外部命令 [C:\Users\zgl18\.codex\worktrees\486b\RobWork\build\modeling-audit-20261019\standalone\modeling\sdurws_ird_modeling_gui_test.vcxproj]

@@ -1,0 +1,26 @@
+Note: Google Test filter = *Review*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from KinEvaluationChannel
+[ RUN      ] KinEvaluationChannel.ReviewDirectionPositiveCases
+REVIEW free_control completed 解 1 个/1 工况
+REVIEW pointing_Z completed 解 1 个/1 工况
+REVIEW normal_Z completed 解 1 个/1 工况
+[       OK ] KinEvaluationChannel.ReviewDirectionPositiveCases (26 ms)
+[ RUN      ] KinEvaluationChannel.ReviewTiltedDirectionPositiveCases
+REVIEW tilted_pointing completed 解 1 个/1 工况
+REVIEW tilted_normal completed 解 1 个/1 工况
+[       OK ] KinEvaluationChannel.ReviewTiltedDirectionPositiveCases (15 ms)
+[ RUN      ] KinEvaluationChannel.ReviewOppositeDirectionMustFail
+BOUNDARY opposite=1 boundary-pointing failed 解 0 个/1 工况
+BOUNDARY opposite=1 boundary-normal failed 解 0 个/1 工况
+[       OK ] KinEvaluationChannel.ReviewOppositeDirectionMustFail (15 ms)
+[ RUN      ] KinEvaluationChannel.ReviewDirectionCorrectionMustConverge
+BOUNDARY opposite=0 boundary-pointing completed 解 1 个/1 工况
+BOUNDARY opposite=0 boundary-normal completed 解 1 个/1 工况
+[       OK ] KinEvaluationChannel.ReviewDirectionCorrectionMustConverge (1 ms)
+[----------] 4 tests from KinEvaluationChannel (58 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (58 ms total)
+[  PASSED  ] 4 tests.

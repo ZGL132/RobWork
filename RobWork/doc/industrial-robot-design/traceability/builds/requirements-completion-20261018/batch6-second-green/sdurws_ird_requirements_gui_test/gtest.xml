@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="2" disabled="0" errors="0" time="2.04" timestamp="2026-10-18T19:17:23.436" name="AllTests">
+  <testsuite name="RequirementsSessionGuiTest" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="2.04" timestamp="2026-10-18T19:17:23.436">
+    <testcase name="StationBatchParametersAtomic_UX05_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="206" status="run" result="completed" time="0.513" timestamp="2026-10-18T19:17:23.436" classname="RequirementsSessionGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:239&#x0A;Expected equality of these values:&#x0A;  after.pose.position.value()[0]&#x0A;    Which is: 250&#x0A;  0.25&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:239
+Expected equality of these values:
+  after.pose.position.value()[0]
+    Which is: 250
+  0.25
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:240&#x0A;Expected equality of these values:&#x0A;  after.pose.position.value()[1]&#x0A;    Which is: 500&#x0A;  0.5&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:240
+Expected equality of these values:
+  after.pose.position.value()[1]
+    Which is: 500
+  0.5
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:242&#x0A;Expected equality of these values:&#x0A;  after.tolerance.positionTolerance&#x0A;    Which is: 2&#x0A;  0.002&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:242
+Expected equality of these values:
+  after.tolerance.positionTolerance
+    Which is: 2
+  0.002
+]]></failure>
+    </testcase>
+    <testcase name="RegionBatchParametersAtomic_UX05_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="248" status="run" result="completed" time="0.032" timestamp="2026-10-18T19:17:23.949" classname="RequirementsSessionGuiTest" />
+    <testcase name="ConditionBatchParametersCancel_UX05_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp" line="266" status="run" result="completed" time="1.494" timestamp="2026-10-18T19:17:23.982" classname="RequirementsSessionGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:282&#x0A;Value of: m_editor.workingSet().conditions.entries.front().targetCycleTimeS&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp:282
+Value of: m_editor.workingSet().conditions.entries.front().targetCycleTimeS
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

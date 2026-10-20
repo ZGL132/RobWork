@@ -8,6 +8,7 @@
  */
 
 #include "KinEvaluationChannel.hpp"
+#include <sdurws/ird/policy/SystemDefaultPolicy.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -16,6 +17,7 @@
 #include <utility>
 
 #include <QMetaObject>
+#include <rw/math/RPY.hpp>  // 构造参数顺序为yaw/pitch/roll，区别于需求字段顺序
 
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // analysisConfigurationDigest（受理对齐键）
 #include <sdurws/ird/kinematics/Evaluators.hpp>      // runRegionCoverageComputation/RegionCoverageQuery
@@ -73,7 +75,8 @@ private:
 // =====================================================================
 
 KinEvaluationExecutor::KinEvaluationExecutor(Deps deps)
-    : m_deps(std::move(deps))
+    : m_policy(std::make_shared<const policy::EngineeringPolicySet>(policy::makeSystemDefaultPolicySet())),
+      m_deps(std::move(deps))
 {
 }
 
@@ -105,6 +108,7 @@ void KinEvaluationExecutor::attachView(
     m_snapshotId = snapshotId;
     ++m_epoch;
     m_latestCoverage.reset();
+    m_latestSolve.reset(); // A-23：求解结果与覆盖/批量一致，策略/快照换绑必须同拍清账。
     // ★ KIN-P4：批量账面同拍清空（与覆盖账面同一换绑纪律）＋在途任务
     // 协作取消置位（真实取消路径——SessionSolve 求解探针/批量批间查询
     // 消费后早停返回取消态，非结局如实呈现；替换全部标志为新代——
@@ -180,7 +184,10 @@ bool KinEvaluationExecutor::projectRefFrameToBase(
     // 任务点切片共用同一参考系代数，零第二份实现。）
     rw::math::Transform3D<double> worldTref =
         rw::math::Transform3D<double>::identity();
-    if (refFrame.kind == requirements::RequirementRefKind::ModelFrame) {
+    if (refFrame.kind == requirements::RequirementRefKind::ModelFrame
+        || refFrame.kind == requirements::RequirementRefKind::SceneObject) {
+        // REQ-01/09：夹具/零件也是既有可选参考系，按同一ObjectId名称端口
+        // 解析到已发布帧；不能在需求预览支持SceneObject而评估切片中漏掉它。
         if (!m_deps.resolveFrame || !refFrame.objectId
             || !refFrame.objectId->isValid()) {
             errorText = "参考系不可解析（引用缺载荷或解析缝未装配）";
@@ -196,7 +203,7 @@ bool KinEvaluationExecutor::projectRefFrameToBase(
         }
         worldTref = *resolved;
     } else if (refFrame.kind != requirements::RequirementRefKind::World) {
-        errorText = "参考系种类不在本批支持面（仅 World/ModelFrame）";
+        errorText = "参考系种类不可用于位姿参考（支持 World/ModelFrame/SceneObject）";
         return false;
     }
 
@@ -242,65 +249,11 @@ bool KinEvaluationExecutor::projectPlan(const requirements::SamplingPlan& plan,
         return false;
     }
 
-    // ---- 第三步：盒可表示性判定（R1 轴对齐盒约束——按 runtime 设施真实
-    // 能力划定支持面，KIN-P1 A01 修复半区）。
-    // kinematics RegionBox 是基座系**轴对齐**盒；refFrame 相对基座的旋转
-    // 只有在盒映射后仍轴对齐时才能精确投影——即 R_base_ref 为**符号置换
-    // 阵**（轴交换/轴翻转：每行每列恰一个 ±1，恒等为其特例）。runtime
-    // 反解设施对任意正交旋转均可反解（纯函数无姿态限制），故判定不看
-    // "有无旋转"而看"盒可否精确表示"：安装三预设（Ground 恒等/Inverted
-    // R_x(π)/Wall R_y(π/2)——P-RT-4 冻结矩阵均为符号置换阵）与轴交换的
-    // 模型帧自此精确支持（KIN-P1 验收"平移/侧装/倒装基座安放下世界→基座
-    // 转换全部正确"；修复前旋转检测把倒装/侧装安放下的一切区域——含
-    // World 参考系——整体误拒）；任意角旋转下盒呈斜置，取保守包络会静默
-    // 放大区域、改变覆盖率语义——维持显式拒绝（审查报告 §3 A01 注"旋转
-    // 参考系……平移反例不能当作任意旋转都已实测"的保留半区），不静默
-    // 扩权。判定容差 1e-9＝装配投影的数值零（沿用原恒等检测口径：仅吸收
-    // 恒等/预设矩阵的浮点表示误差，预设矩阵元素精确 ∈{0,±1}，正交组合
-    // 不引入舍入放大）。
-    const rw::math::Rotation3D<double>& r = baseTref.R();
-    bool signedPermutation = true;
-    for (int i = 0; i < 3 && signedPermutation; ++i) {
-        int dominantCol = -1;  // 该行主导元素（|r|≈1）列号——符号置换每行恰一
-        for (int j = 0; j < 3; ++j) {
-            const double magnitude = std::fabs(r(i, j));
-            if (magnitude > 1.0 - 1e-9) {
-                if (dominantCol >= 0) {
-                    signedPermutation = false;  // 一行两主导——非置换（任意角）
-                    break;
-                }
-                dominantCol = j;
-            } else if (magnitude > 1e-9) {
-                signedPermutation = false;  // 非主导非零元素——任意角形态
-                break;
-            }
-        }
-        if (dominantCol < 0) {
-            signedPermutation = false;  // 全零行——非正交（非法旋转，拒绝）
-        }
-    }
-    if (!signedPermutation) {
-        errorText = "区域参考系相对基座存在任意角旋转（盒变换后非轴对齐）——"
-                    "R1 轴对齐盒约束，旋转参考系解析留后续任务";
-        return false;
-    }
-
-    // ---- 第四步：盒中心/尺寸精确投影（旋转已限定恒等或符号置换）。
-    // 中心：基座系中心＝T_base_ref·(参考系中心)＝P＋R·c——恒等时退化为
-    // 原平移直投（既有行为不变）；符号置换时轴交换/翻转下的精确点变换。
-    // 尺寸：|R|·size 逐行求和——符号置换每行恰一个 ±1，即取被换到该轴的
-    // 原边长（轴翻转不改边长）。这是 RegionBox（轴对齐盒）的表示换算，
-    // 非第二套变换真值——变换值全部来自 runtime 反解设施。
-    rw::math::Vector3D<double> projectedSize;
-    for (int i = 0; i < 3; ++i) {
-        double sum = 0.0;
-        for (int j = 0; j < 3; ++j) {
-            sum += std::fabs(r(i, j)) * region.box.size[j];
-        }
-        projectedSize[i] = sum;  // 单位 m（符号置换下＝被置换的原边长）
-    }
+    // A-21/REQ-03：盒局部边长保持原值，参考系旋转作为纯值进入采样内核。
+    // 任意合法刚体旋转均精确消费；包围盒会改变样本位置和覆盖率，禁止替代。
     out.box.center = baseTref.P() + baseTref.R() * region.box.center;
-    out.box.size = projectedSize;
+    out.box.size = region.box.size;
+    out.box.orientationInBase = baseTref.R();
 
     // ---- 第五步：采样定义投影（域值→域投影型——字段搬运零换算）。
     // 位置侧：工作集计划条目恒为规范化 Grid 形态（D-REQ-2——计划构建
@@ -339,9 +292,37 @@ bool KinEvaluationExecutor::projectPlan(const requirements::SamplingPlan& plan,
 
     // ---- 锚与要求值（区域锚/区域级碰撞要求——KIN-05 承接面直投；
     // 镜像溯源不入评估——域注"生成不消费"，保持缺省形态）。
+    // A-21/REQ-01：区域独立TCP与工位使用同一解析权威，只传工具ID和键。
+    // 在受理线程拒绝悬空/未知键并定位区域；后台不会静默换成默认TCP。
+    if (region.tcpRef && region.tcpRef->kind != requirements::RequirementRefKind::DefaultTcp) {
+        const auto& ref = *region.tcpRef;
+        if (!ref.wellFormed() || ref.kind != requirements::RequirementRefKind::Tool || !ref.objectId) {
+            errorText = "区域“" + region.name + "”的TCP引用非法，请重新选择工具和TCP";
+            return false;
+        }
+        const auto& tools = m_snapshot->model().tools();
+        const auto tool = std::find_if(tools.begin(), tools.end(), [&](const auto& item) {
+            return item.objectId == *ref.objectId;
+        });
+        if (tool == tools.end() || (!ref.tcpKey.empty() && ref.tcpKey != tool->localName
+            && !std::any_of(tool->namedTcpOffsets.begin(), tool->namedTcpOffsets.end(),
+                [&](const auto& entry) { return entry.first == ref.tcpKey; }))) {
+            errorText = "区域“" + region.name + "”的工具/TCP未在当前模型解析，请重新选择TCP";
+            return false;
+        }
+        out.tcpOverride = kinematics::TcpRef{*ref.objectId, ref.tcpKey};
+    }
     out.regionObjectId = region.objectId;
     out.demands.collisionFreeRequired = region.demands.collisionFreeRequired;
     out.demands.minimumJointMargin = region.demands.minimumJointMargin;
+    try {
+        // 受理前统一核对完整计划新增字段；错误必须带业务名、原因与建议动作。
+        (void)kinematics::sampleSetIdentity(out, m_config.regionBudget);
+    } catch (const std::invalid_argument& e) {
+        errorText = "区域“" + region.name + "”参考系/TCP非法：" + e.what()
+            + "；请修正该区域引用后重试";
+        return false;
+    }
     return true;
 }
 
@@ -570,6 +551,47 @@ kinematics::KinChannelBackgroundAck KinEvaluationExecutor::submit(
 // 取消标志随闭包只读消费；回投经 QMetaObject 回 UI 线程）
 // =====================================================================
 
+namespace {
+/** @brief 缺失碰撞设施的端口应答；不是碰撞算法，任何构型均保持证据不足。 */
+class MissingPolicyCollisionSession final : public kinematics::IKinCollisionSession {
+public:
+    /** @brief q[in]为rad/m构型；设施未装配返回EvidenceMissing，不给无碰撞结论。 */
+    kinematics::IkCollisionVerdict evaluate(const std::vector<double>&) const override
+    {
+        kinematics::IkCollisionVerdict result;
+        result.state=kinematics::IkCollisionEvaluationState::EvidenceMissing;
+        result.statusDetail="当前策略要求碰撞检查，但宿主碰撞设施未装配";
+        return result;
+    }
+};
+}
+
+namespace {
+/** @brief 同步/后台使用相同碰撞不足语义的L5求解适配器；宿主持有，仅UI线程调用。 */
+class PolicyAwareIkSolver final : public kinematics::IIkSolver {
+public:
+    /** @brief source[in]返回已发布策略值；不拥有project，不回查存储。 */
+    explicit PolicyAwareIkSolver(std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source)
+        : m_source(std::move(source)) {}
+    /** @brief request[in]原请求不改；缺设施经端口返回EvidenceMissing后交真实求解器消费。 */
+    kinematics::IkOutcome solve(const kinematics::IkRequest& request) const override
+    {
+        const auto policy=m_source();
+        auto bound=request;
+        MissingPolicyCollisionSession missing;
+        if (!policy || policy->collision.enabled) { bound.collisionSession=&missing; }
+        return kinematics::IkSolver{}.solve(bound);
+    }
+private:
+    std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> m_source; ///< 宿主存活期内调用。
+};
+}
+std::unique_ptr<kinematics::IIkSolver> makePolicyAwareIkSolver(
+    std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source)
+{
+    return std::make_unique<PolicyAwareIkSolver>(std::move(source));
+}
+
 void KinEvaluationExecutor::launchCoverageTask(
     const std::string& taskRef, std::uint64_t epoch,
     const core::ContentIdentity& snapshotIdAtSubmit,
@@ -579,11 +601,12 @@ void KinEvaluationExecutor::launchCoverageTask(
     const std::shared_ptr<std::atomic_bool>& cancelFlag)
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+    const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
     QObject* routeContext = m_deps.routeContext;
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
                     snapshotIdAtSubmit, configDigestAtSubmit,
                     query = std::move(query),
                     request = std::move(request)]() mutable {
@@ -603,6 +626,9 @@ void KinEvaluationExecutor::launchCoverageTask(
                 Qt::QueuedConnection);
             return;
         }
+        MissingPolicyCollisionSession missingCollision;
+        if (policyAtSubmit && policyAtSubmit->collision.enabled) { query.collisionSession=&missingCollision; }
+        if (!policyAtSubmit) { query.collisionSession=&missingCollision; }
         NullEvaluationContext context;
         kinematics::KinChannelCoverageResult result;
         try {
@@ -695,6 +721,7 @@ void KinEvaluationExecutor::launchSolveTask(
     const std::shared_ptr<std::atomic_bool>& cancelFlag)
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+    const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
     QObject* routeContext = m_deps.routeContext;
     // 求解器（Deps 注入可空——空＝内置 IkSolver 生产实例；无状态可共享，
     // 静态存储期——后台线程安全消费）。
@@ -704,7 +731,7 @@ void KinEvaluationExecutor::launchSolveTask(
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
                     snapshotIdAtSubmit, configDigestAtSubmit, solver,
                     request]() mutable {
         kinematics::KinChannelSolveResult result;
@@ -722,6 +749,8 @@ void KinEvaluationExecutor::launchSolveTask(
         } else {
             kinematics::IkRequest bound = request;
             bound.modelView = view.get();
+            MissingPolicyCollisionSession missingCollision;
+            if (!policyAtSubmit || policyAtSubmit->collision.enabled) { bound.collisionSession=&missingCollision; }
             bound.cancellationProbe = [cancelFlag] {
                 return cancelFlag->load(std::memory_order_acquire);
             };
@@ -739,6 +768,12 @@ void KinEvaluationExecutor::launchSolveTask(
                 result.errorText = "求解设施失败（非结局——求解中途 FK "
                                    "复算失败，详见评估诊断）";
                 result.summaryText = result.errorText;
+            } else if (outcome.collisionEvidenceMissing) {
+                // 几何解允许保留诊断，但缺碰撞证据不能通过ok通道进入会话可行结果。
+                result.ok = false;
+                result.errorText = "数据不足：当前策略要求碰撞检查，但碰撞证据/设施缺失";
+                result.summaryText = result.errorText;
+                result.solutionSet = std::make_shared<const kinematics::IkSolutionSet>(outcome.solutionSet);
             } else {
                 result.ok = true;
                 // ---- 解集原值随结果投递（shared_ptr 值转移——宿主闭包
@@ -773,11 +808,12 @@ void KinEvaluationExecutor::launchBatchTask(
     const std::shared_ptr<std::atomic_bool>& cancelFlag)
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
+    const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
     QObject* routeContext = m_deps.routeContext;
     KinEvaluationExecutor* self = this;
     m_inflight.push_back(
         std::async(std::launch::async,
-                   [self, routeContext, view, epoch, taskRef, cancelFlag,
+                   [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
                     snapshotIdAtSubmit, query = std::move(query),
                     request = std::move(request)]() mutable {
         // ---- 视图空＝受理后解绑的竞态残留——中止回投（与覆盖通道同轨）。
@@ -793,6 +829,8 @@ void KinEvaluationExecutor::launchBatchTask(
         }
         // ---- 可取消上下文（★ KIN-P4——任务级取消标志接批间查询与逐项
         // 求解探针：换绑/解绑置位后批量早停，未派发项如实 NotRun）。
+        MissingPolicyCollisionSession missingCollision;
+        if (!policyAtSubmit || policyAtSubmit->collision.enabled) { query.collisionSession=&missingCollision; }
         CancelableEvaluationContext context(cancelFlag);
         std::optional<kinematics::BatchComputation> computation;
         std::string errorText;
@@ -836,7 +874,7 @@ bool KinEvaluationExecutor::resolveDefaultTcp(kinematics::TcpRef& out,
                                               std::string& errorText) const
 {
     // ---- KIN-14 默认 TCP 权威解析（模型快照 tools/defaultTcpIndex →
-    // TcpRef{toolObject, localName}）。与 kinematics 面板侧
+    // TcpRef{toolObject, 空键}；空键明确选默认偏移，防实际键与工具名碰撞。与面板侧
     // resolveSessionTcp 同语义——ui 执行器不可消费插件私有头（R-2），
     // 按同一 KIN-14 规则独立落位（两处注释互链；解析规则权威在
     // KinTypes.hpp TcpRef 注，非本执行器私设）。
@@ -850,7 +888,7 @@ bool KinEvaluationExecutor::resolveDefaultTcp(kinematics::TcpRef& out,
     }
     const runtime::CanonicalTool& tool = tools.at(*defaultIdx);
     out.toolObject = tool.objectId;
-    out.tcpKey = tool.localName;  // 显式名——请求自描述（不依赖空串隐式约定）
+    out.tcpKey.clear();  // A-15：查询级默认必须用空键，工具名可能恰为另一个实际TCP键。
     return true;
 }
 
@@ -971,19 +1009,38 @@ KinEvaluationExecutor::BatchSlice KinEvaluationExecutor::sliceBatch() const
                               ? kinematics::BatchRequirementLevel::Must
                               : kinematics::BatchRequirementLevel::Should;
         projected.enabled = point.enabled;
+        // A-15/REQ-01：仅投影ObjectId＋原tcpKey，变换真值仍由同一runtime快照提供。
+        // 深度引用校验在受理线程完成，防后台异常被误呈现为“不可达”。
+        if (point.tcpRef && point.tcpRef->kind != requirements::RequirementRefKind::DefaultTcp) {
+            const auto& ref = *point.tcpRef;
+            const auto loc = ref.objectId ? model.findObject(*ref.objectId) : std::nullopt;
+            if (ref.kind != requirements::RequirementRefKind::Tool || !loc
+                || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
+                slice.errorText = "任务点「" + point.name + "」TCP工具引用悬空";
+                return slice;
+            }
+            const auto& tool = model.tools().at(loc->index);
+            const auto named = std::find_if(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+                [&](const auto& entry) { return entry.first == ref.tcpKey; });
+            if (!ref.tcpKey.empty() && named == tool.namedTcpOffsets.end() && ref.tcpKey != tool.localName) {
+                slice.errorText = "任务点「" + point.name + "」TCP键不存在：" + ref.tcpKey;
+                return slice;
+            }
+            kinematics::TcpRef overrideRef;
+            overrideRef.toolObject = *ref.objectId; overrideRef.tcpKey = ref.tcpKey;
+            projected.tcpOverride = std::move(overrideRef);
+        }
         // ---- 点参考系解析（★ KIN-P4：与区域计划共用 projectRefFrameToBase
-        // 单点——World 恒等/ModelFrame 解析缝；旋转参考系按盒可表示性
-        // 同规则拒绝——任务点目标位姿同样受 R1 支持面约束，reason 如实）。
+        // 单点——World 恒等/ModelFrame 解析缝；任务点为完整位姿，
+        // 不受区域轴对齐盒的可表示性限制，旋转直接参与位姿链）。
         rw::math::Transform3D<double> baseTref;
         if (!projectRefFrameToBase(point.refFrame, baseTref, slice.errorText)) {
             return slice;
         }
         // ---- 目标位姿（refFrame 系 → 基座系 {B}：位置＝T_base_ref·p；
-        // 姿态＝R_base_ref·R_ref——point.pose.position 在 refFrame 系
-        // （RequirementTypes.hpp 字段注），任务点无独立姿态规则值时
-        // OrientationRule 缺省恒等旋转（五规则的位置存在性语义务经域
-        // 评估器解释——本投影直投约束位置与参考系旋转目标，与面板单点
-        // 求解的目标形态一致）。未提供位置（SourcedValue 四态——MDL-06
+        // point.pose.position 在 refFrame 系（RequirementTypes.hpp 字段注）。
+        // 位置与姿态的参考目标必须分开：AlignFrame的目标只决定旋转，
+        // 不能拿目标Frame的原点覆盖任务点位置。未提供位置（MDL-06
         // 缺失不转零）＝点数据不足，如实拒绝该点投影（ERR-01）。
         const std::optional<rw::math::Vector3D<double>> pointPosition =
             point.pose.position.tryValue();
@@ -994,9 +1051,88 @@ KinEvaluationExecutor::BatchSlice KinEvaluationExecutor::sliceBatch() const
         }
         projected.targetInBase.P() =
             baseTref.P() + baseTref.R() * *pointPosition;
-        // 姿态：R_base_ref·R_ref_orientation（当前批仅位置存在性语义——
-        // 目标姿态取参考系旋转；域评估器按 orientationTolerance 判收敛）。
+        // REQ-09：固定姿态字面按roll/pitch/yaw（rad）存储，应用序是
+        // Rz(yaw)·Ry(pitch)·Rx(roll)。RobWork的RPY构造参数却按Z/Y/X，
+        // 因此必须显式反序传入，再左乘参考系→基座系的旋转。
+        // 这里只修复既有完整位姿载体能表达的Fixed/AlignFrame；其余规则
+        // 的方向约束/滚转自由与分量掩码仍需消费者能力，不能据此宣称完整支持。
         projected.targetInBase.R() = baseTref.R();
+        kinematics::TaskPoseConstraint taskConstraint;
+        taskConstraint.referenceInBase = baseTref.R();
+        taskConstraint.constrainedDof = {
+            point.pose.constrainedDof.x, point.pose.constrainedDof.y,
+            point.pose.constrainedDof.z, point.pose.constrainedDof.roll,
+            point.pose.constrainedDof.pitch, point.pose.constrainedDof.yaw};
+        const auto& rule = point.pose.orientation;
+        if (rule.kind == requirements::OrientationRuleKind::Fixed) {
+            const auto& rpy = rule.fixedRpy;
+            if (!std::isfinite(rpy[0]) || !std::isfinite(rpy[1]) || !std::isfinite(rpy[2])) {
+                slice.errorText = "任务点「" + point.name + "」固定姿态含非有限角（rad）";
+                return slice;
+            }
+            projected.targetInBase.R() = baseTref.R()
+                * rw::math::RPY<double>(rpy[2], rpy[1], rpy[0]).toRotation3D();
+        } else if (rule.kind == requirements::OrientationRuleKind::AlignFrame) {
+            rw::math::Transform3D<double> baseTtarget;
+            if (!projectRefFrameToBase(rule.targetFrame, baseTtarget, slice.errorText)) {
+                // 目标悬空是输入错误；拒绝整个受理，既有结果账面不被替换。
+                slice.errorText = "任务点「" + point.name + "」对齐目标：" + slice.errorText;
+                return slice;
+            }
+            projected.targetInBase.R() = baseTtarget.R();
+        } else if (rule.kind == requirements::OrientationRuleKind::AlignGeometryNormal
+                   || rule.kind == requirements::OrientationRuleKind::PointAtTarget) {
+            rw::math::Vector3D<double> direction;
+            if (rule.kind == requirements::OrientationRuleKind::AlignGeometryNormal) {
+                if (!rule.feature.has_value()
+                    || *rule.feature != requirements::OrientationFeature::FramePlaneNormal
+                    || !rule.targetSceneObject.has_value()) {
+                    slice.errorText = "任务点「" + point.name + "」法向规则缺少FramePlaneNormal引用";
+                    return slice;
+                }
+                rw::math::Transform3D<double> baseTtarget;
+                if (!projectRefFrameToBase(
+                        requirements::RequirementReference{
+                            requirements::RequirementRefKind::SceneObject,
+                            rule.targetSceneObject}, baseTtarget, slice.errorText)) {
+                    slice.errorText = "任务点「" + point.name + "」几何法向目标不可解析：" + slice.errorText;
+                    return slice;
+                }
+                direction = baseTtarget.R() * rw::math::Vector3D<double>(0.0, 0.0, 1.0);
+                if (rule.invertNormal) direction = -direction;
+            } else {
+                const rw::math::Vector3D<double> targetBase =
+                    baseTref.P() + baseTref.R() * rule.targetPoint;
+                direction = targetBase - projected.targetInBase.P();
+            }
+            const double length = std::sqrt(direction.norm2());
+            if (!std::isfinite(length) || length <= 1e-12) {
+                slice.errorText = "任务点「" + point.name + "」方向目标与任务点重合，无法确定工具轴";
+                return slice;
+            }
+            direction *= (1.0 / length);
+            rw::math::Vector3D<double> refAxis(1.0, 0.0, 0.0);
+            if (std::fabs(refAxis.dot(direction)) > 0.9) refAxis = rw::math::Vector3D<double>(0.0, 1.0, 0.0);
+            rw::math::Vector3D<double> xAxis = refAxis.cross(direction);
+            xAxis *= (1.0 / std::sqrt(xAxis.norm2()));
+            const rw::math::Vector3D<double> yAxis = direction.cross(xAxis);
+            projected.targetInBase.R() = rw::math::Rotation3D<double>(
+                xAxis[0], yAxis[0], direction[0], xAxis[1], yAxis[1], direction[1],
+                xAxis[2], yAxis[2], direction[2]);
+            // ★ 批34（评审 F4）：方向规则只约束工具轴指向——绕轴滚转是
+            //   规则未定义面。上面 targetInBase.R() 的参考轴选取（X 优先、
+            //  近平行换 Y）只是构造任意正交基的实现细节，把它当约束目标＝
+            //   额外固定了工具滚转（评审反例）。放开为全周自由
+            //   （allowToolRoll＋span=2π——求解器语义"全周＝无区间残差"，
+            //   残差侧 yaw 行按 rollResidualActive=0 置零不驱动）。
+            taskConstraint.allowToolRoll = true;
+            taskConstraint.rollRange = {-3.14159265358979323846, 3.14159265358979323846};
+        }
+        if (rule.kind == requirements::OrientationRuleKind::ToolRollFree) {
+            taskConstraint.allowToolRoll = true;
+            taskConstraint.rollRange = {rule.rollRange.min, rule.rollRange.max};
+        }
+        projected.taskConstraint = taskConstraint;
         // ---- 容差/要求值直投（I-REQ-5 >0 有限——域校验链保证）。
         projected.positionTolerance = point.tolerance.positionTolerance;    // m
         projected.orientationTolerance = point.tolerance.orientationTolerance; // rad

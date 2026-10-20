@@ -1,0 +1,17 @@
+Note: Google Test filter = ModelingCommandFlows.XacroIncludeIdentitySurvivesImport*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.XacroIncludeIdentitySurvivesImport_MDL19_AT31
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(936): error: Expected: (found) != (resources.end()), actual: 8-byte object <48-25 68-2B 95-02 00-00> vs 8-byte object <48-25 68-2B 95-02 00-00>
+
+[  FAILED  ] ModelingCommandFlows.XacroIncludeIdentitySurvivesImport_MDL19_AT31 (20 ms)
+[----------] 1 test from ModelingCommandFlows (20 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (20 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingCommandFlows.XacroIncludeIdentitySurvivesImport_MDL19_AT31
+
+ 1 FAILED TEST

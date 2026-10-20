@@ -1,0 +1,19 @@
+Note: Google Test filter = *RectangularLayersAndRecipe*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ReqTemplateArray
+[ RUN      ] ReqTemplateArray.RectangularLayersAndRecipe_AT24_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\TemplateArrayTest.cpp(622): error: Value of: service.regenerate(corrupt, result.provenance.instanceId).found
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReqTemplateArray.RectangularLayersAndRecipe_AT24_WP14T12 (0 ms)
+[----------] 1 test from ReqTemplateArray (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ReqTemplateArray.RectangularLayersAndRecipe_AT24_WP14T12
+
+ 1 FAILED TEST

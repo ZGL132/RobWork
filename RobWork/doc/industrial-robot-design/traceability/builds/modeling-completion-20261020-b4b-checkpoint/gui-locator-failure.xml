@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="3.008" timestamp="2026-10-20T12:21:07.558" name="AllTests">
+  <testsuite name="ModelingUiModuleHostWiring" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="3.008" timestamp="2026-10-20T12:21:07.558">
+    <testcase name="CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="1138" status="run" result="completed" time="3.008" timestamp="2026-10-20T12:21:07.558" classname="ModelingUiModuleHostWiring">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:1167&#x0A;Value of: tree-&gt;findItems(&quot;restored-fixture&quot;,Qt::MatchContains|Qt::MatchRecursive).isEmpty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:1167
+Value of: tree->findItems("restored-fixture",Qt::MatchContains|Qt::MatchRecursive).isEmpty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

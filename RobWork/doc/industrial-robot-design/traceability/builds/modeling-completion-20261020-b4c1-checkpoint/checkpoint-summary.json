@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "modeling-b4c1-checkpoint/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "af405e7bb4c34f21ea675efef0314add9304849e",
+  "completed": false,
+  "totals": {
+    "total": 1194,
+    "passed": 1194,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 432,
+      "passed": 432,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 59,
+      "passed": 59,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 348,
+      "passed": 348,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "notRun": [
+    "最终集成modeling_gui复验",
+    "最终集成ui_gui复验",
+    "最终独立modeling_gui复验",
+    "正式宿主modeling-tour"
+  ],
+  "notes": [
+    "用户要求GUI等待另一工作树结束并通知，本批未启动任何GUI/正式宿主",
+    "红证2项模块失败、3项应用编排失败来自未修复产品；最终仅统计七套件完整非GUI轮次，不重复累计",
+    "真实ProjectStore受理旧expectedRevision后返回StaleRevision，草稿/分支tip原样保留；跨分支拒绝隔离继续后域",
+    "无新增公共形状、命令token、存储或依赖边；仅追加私有Outcome准备失败态并修正状态计数",
+    "双模式构建及verify-task三条通过；构建日志含既有编译警告，不称零警告",
+    "最终GUI/局部历史窗口/状态文案视觉NOT RUN；未进行全新上下文独立验收",
+    "仅本地WIP，不推送不合入；完整工作集apply/回执/保留对象/冲突重建和47项终验仍开放",
+    "F06/F07未修改/集成；冻结后的索引/文档/格式/范围检查随下一批只增记录"
+  ]
+}

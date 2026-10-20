@@ -468,10 +468,19 @@ enum class JointEditField {
     /// 表尾追加并走单元卡增量修订——本枚举注同款口径）；RPY 约定＝ZYX
     /// （R＝Rz(yaw)·Ry(pitch)·Rx(roll)——与面板呈现反解同一约定）。
     Origin,
+    /// MDL-12/AT-17：Continuous专用工程工作范围{qmin',qmax'}，rad；
+    /// 复用JointLimits载荷，不改类型/bounds、不取模、不限制多圈行程。
+    WorkingRange,
+    /// F01（WP-13-T25/MDL-01）：逐轴最大速度（double 备择；转动 rad/s、
+    /// 移动 m/s——单位随 type）。Provided 须有限且 ≥0（零＝真实零速非
+    /// 缺失；负值/非有限拒绝）；表尾追加纪律同 Origin/WorkingRange 先例。
+    MaxVelocity,
+    /// 同 MaxVelocity：逐轴最大加速度（转动 rad/s²、移动 m/s²）。
+    MaxAcceleration,
 };
 
 /**
- * @brief 编辑字段稳定 token（"type"/"axis"/"zeroOffset"/"bounds"——变更
+ * @brief 编辑字段稳定 token（含"origin"/"workingRange"——变更
  *        摘要与 UT 判别串）。纯函数；确定性。
  */
 std::string_view jointEditFieldToken(JointEditField field) noexcept;
@@ -493,7 +502,8 @@ enum class JointEditErrorCode {
     /// "limit-interval-invalid"——qmin≥qmax（I-MDL-4 前半；rad/m 随类型）
     LimitIntervalInvalid,
     /// "type-bounds-conflict"——Continuous 与已提供 bounds 并存（I-MDL-4
-    /// 后半：Continuous＝bounds NotApplicable；不静默清除已有值——NFR-COR-03）
+    /// 后半：Continuous＝bounds NotApplicable、workingRange仅Continuous；
+    /// 不静默清除已有值——NFR-COR-03）
     TypeBoundsConflict,
 };
 
@@ -555,8 +565,7 @@ struct JointOriginEditValue {
 };
 
 /**
- * @brief 字段编辑的值载荷（与 JointEditField 一一对应的 variant——可编辑
- *        字段各一备择；备择序＝枚举声明序）。
+ * @brief 字段编辑的值载荷；旧备择序保持不变，WorkingRange复用JointLimits。
  *
  * Axis 备择不预先归一化（不静默改写输入——NFR-COR-03；I-MDL-6 只要求
  * 非零/有限/可归一化，单位向量语义在消费侧解读）。Origin 备择携带六个
@@ -586,6 +595,10 @@ using JointEditValue =
  *     六分量有限性（ValueNotFinite），接受时旋转矩阵由域内核按 ZYX 约定
  *     组合（R＝Rz·Ry·Rx——JointOriginEditValue 类型注；F-480 外联符号
  *     纪律：不调 rw::math::RPY 构造）。
+ *   ⑧WorkingRange：仅Continuous，JointLimits载荷单位rad；两端有限且
+ *     严格递增后写既有workingRange/UserProvided，零修改type/bounds，
+ *     不取模、不施加行程阈值；非Continuous→TypeBoundsConflict，非有限
+ *     →ValueNotFinite，无序→LimitIntervalInvalid。
  *
  * 接受后：design 对应字段更新（axis/bounds 以 UserProvided 来源写入——
  * 用户输入覆盖保留来源标记，§5.3 规则 1 同款语义）＋追加**一条**变更摘要
@@ -665,10 +678,10 @@ JointBatchEditOutcome applyJointFieldEditBatch(ModelingWorkingSet& ws,
  *        EditOutcome 时映射到 ModelingErrorCode 校验族）。
  */
 enum class BasePlacementEditErrorCode {
-    /// "value-not-finite"——customEaa/basePosition 含 NaN/Inf（I-MDL-3：
+    /// "value-not-finite"——customEaa/customRpy/basePosition 含 NaN/Inf（I-MDL-3：
     /// 非法值不静默置 0/不静默丢弃）
     ValueNotFinite,
-    /// "custom-eaa-missing"——custom 预设缺 customEaa（I-MDL-7 前半：
+    /// "custom-eaa-missing"——custom 预设的EAA与RPY均缺（稳定码沿用；I-MDL-7 前半：
     /// Custom 无预设矩阵，编辑表示必填——runtime §4.2 同口径）
     CustomEaaMissing,
     /// "preset-identity-rotation"——preset≠ground 而旋转为恒等（I-MDL-7
@@ -715,10 +728,12 @@ struct BasePlacementEditError {
  * 字段语义（MDL-22；单位纪律见各注）：
  *   - preset：安装预设（runtime::InstallationPresetToken 四值词表——单一
  *     权威，直接复用；modeling 不另设词表）；
- *   - customEaa：custom 预设必填的旋转矢量（EAA：方向＝轴、模长＝角，
+ *   - customEaa：custom 预设可选的旋转矢量（与customRpy恰选一）（EAA：方向＝轴、模长＝角，
  *     **单位 rad**）；preset≠Custom 时**必须**为 nullopt（携带即调用方
  *     契约违约——fail-fast；EAA 只对 Custom 有语义，静默忽略会掩盖面板
  *     状态错误）；
+ *   - customRpy：可选ZYX欧拉角{roll,pitch,yaw}，rad，Rz(yaw)Ry(pitch)Rx(roll)；
+ *     仅Custom允许，域内换算为既有EAA，不参与持久化字段；
  *   - basePosition：基座原点世界系位置（**单位 m**；整体替换语义下必填
  *     ——面板提交时携带当前显示值；由本编辑流以 UserProvided 来源写入）。
  *
@@ -740,6 +755,12 @@ struct BasePlacementEditValue {
 
     /// 基座原点位置（单位 m，世界坐标系下表示）。
     rw::math::Vector3D<double> basePosition{0.0, 0.0, 0.0};
+
+    /// MDL-22/AT-37：自定义ZYX欧拉输入{roll,pitch,yaw}，单位rad；
+    /// R_world_base=Rz(yaw)Ry(pitch)Rx(roll)，基座系相对世界系。
+    /// 默认空保留旧EAA调用；Custom时与customEaa恰选一，非Custom必须空。
+    /// 仅是本次编辑的值表示，域内换算为既有EAA存储，不新增权威矩阵。
+    std::optional<rw::math::Vector3D<double>> customRpy;
 };
 
 /**
@@ -748,13 +769,13 @@ struct BasePlacementEditValue {
  *
  * 规则（按检查序；拒绝时工作集**字节不变**——与 applyJointFieldEdit 同款
  * 强保证）：
- *   ①preset≠Custom 而携带 customEaa＝调用方契约违约→抛
+ *   ①preset≠Custom 而携带任一自定义旋转，或EAA/RPY同时提供＝契约违约→抛
  *     std::invalid_argument fail-fast（EAA 字段仅 Custom 有语义）；
- *   ②customEaa（Custom 时）/basePosition 逐分量有限性→ValueNotFinite
+ *   ②customEaa/customRpy（Custom 时）/basePosition 逐分量有限性→ValueNotFinite
  *     （I-MDL-3：不静默置 0）；
- *   ③preset==Custom 且 customEaa 缺失→CustomEaaMissing（I-MDL-7 前半：
+ *   ③preset==Custom 且EAA/RPY均缺失→CustomEaaMissing（I-MDL-7 前半：
  *     Custom 无预设矩阵，编辑表示必填——runtime §4.2 同口径）；
- *   ④preset==Custom 且 customEaa 经 runtime::rotationFromCustomEaa()
+ *   ④RPY在建模域先换算主值EAA，后续同规；Custom的EAA经runtime::rotationFromCustomEaa()
  *     （EAA→R 唯一权威换算点——P-RT-4）产出的 R 逐元素与恒等阵偏差
  *     ≤1×10⁻¹²→PresetIdentityRotation（I-MDL-7 后半"preset≠ground 而
  *     R=I"的映射层拒绝——T03 §15 增量 f) 登记的 T11 落位点；与 runtime
@@ -777,7 +798,7 @@ struct BasePlacementEditValue {
  * @return nullopt＝接受（工作集已更新＋一条变更记录）；非空＝拒绝
  *         （局部错误面——工作集不变）
  *
- * @throws std::invalid_argument preset≠Custom 而携带 customEaa（调用方
+ * @throws std::invalid_argument 非Custom携带自定义旋转或EAA/RPY同时提供（调用方
  *               契约违约——fail-fast）
  *
  * 非线程安全（编辑态仅 UI 线程——ModelingWorkingSet 注）；确定性（同

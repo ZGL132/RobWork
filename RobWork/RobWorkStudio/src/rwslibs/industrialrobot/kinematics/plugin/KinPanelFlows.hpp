@@ -60,8 +60,8 @@ inline constexpr std::chrono::milliseconds kInlineBudgetMs{1000};
 struct KinTcpResolution {
     /// 解析是否成功（false＝tcp 无语义——statusText 直显）。
     bool ok = false;
-    /// 解析产物（ok==true 时非空——TcpRef{默认工具对象身份, 工具局部名}；
-    /// 名字经快照对象索引可解析，请求自描述）。
+    /// 解析产物（ok==true 时非空——TcpRef{默认工具对象身份, 空键＝默认TCP}；
+    /// 工具身份经快照对象索引可解析，空键不与任何真实命名TCP混淆）。
     TcpRef tcp;
     /// 失败原因（ok==false 非空——KIN-NO-TCP＋建模侧配置指引）。
     std::string statusText;
@@ -72,7 +72,7 @@ struct KinTcpResolution {
  *        必须贯穿刷新、求解、设默认三个入口"的唯一实现）。
  *
  * 解析规则（KIN-14 默认 TCP 权威）：模型快照 tools 非空且
- * defaultTcpIndex 有值且指向有效项 → TcpRef{tool.objectId, tool.localName}
+ * defaultTcpIndex 有值且指向有效项 → TcpRef{tool.objectId, 空键＝默认TCP}
  * （与 assembleSessionSolveRequest 步骤 1 同一语义——本函数抽出后该处
  * 改调本函数，消除第二份解析）。任一前提不成立＝解析失败：
  *   - 模型视图未装配（空缝——能力降级如实呈现）；
@@ -127,9 +127,8 @@ struct KinSolveRequestAssembly {
  * IkSolver 请求校验（fail-fast 轨）必然拒绝，异常穿越 Qt 槽。本函数把
  * 装配义务显式化，逐字段来源：
  *   - TCP 身份：模型快照 defaultTcpIndex（KIN-14 默认 TCP 权威）→
- *     TcpRef{tool.objectId, tool.localName}——名称经快照对象索引可解析
- *     （空 tcpKey 语义上等价 canonical TCP，此处显式填 localName 使请
- *     求自描述）；无工具/默认索引缺失＝KIN-NO-TCP 装配失败（显式报错
+ *     TcpRef{tool.objectId, 空键＝默认TCP}——名称经快照对象索引可解析
+ *     （空键明确选择默认偏移，实际同名TCP键不改变此入口语义）；无工具/默认索引缺失＝KIN-NO-TCP 装配失败（显式报错
  *     不提交——解析失败的请求没有"先发后修"的道理）；
  *   - 初值集：savedConfig（initialStrategy/initialValuesCount/seed）×
  *     evaluationIntervals(view) × referenceQ——经域设施 makeInitialValues

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0." timestamp="2026-10-20T10:13:01.059" name="AllTests">
+  <testsuite name="ModelingSceneTransactions" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T10:13:01.059">
+    <testcase name="CreateUpdateRemoveAndCodec_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1378" status="run" result="completed" time="0." timestamp="2026-10-20T10:13:01.059" classname="ModelingSceneTransactions">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1384&#x0A;Value of: added&#x0A;  Actual: false&#x0A;Expected: true&#x0A;F12场景事务尚未实现&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1384
+Value of: added
+  Actual: false
+Expected: true
+F12场景事务尚未实现
+]]></failure>
+    </testcase>
+    <testcase name="RejectAndSharedResource_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1412" status="run" result="completed" time="0." timestamp="2026-10-20T10:13:01.060" classname="ModelingSceneTransactions">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1420&#x0A;Value of: added&#x0A;  Actual: false&#x0A;Expected: true&#x0A;F12场景事务尚未实现&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1420
+Value of: added
+  Actual: false
+Expected: true
+F12场景事务尚未实现
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

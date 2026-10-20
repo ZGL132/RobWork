@@ -225,22 +225,40 @@ ModelReadinessReport ModelReadinessChecker::check(const ModelingWorkingSet& ws,
     };
     auto runL9 = [&] {
         // L9 传动可用（I-MDL-11/12——WP-13-T18 起阶段位参数化＋coded 化）。
-        // 速度/加速度限值目前没有进入 modeling 的 DrivetrainDesign/runtime
-        // schema。这里显式登记 NotProvided 预告，防止模板向导的参考值被误
-        // 认为已经参与轨迹或动力学计算；它不阻断建模草稿保存，也不参与
-        // 三态聚合（呈现级——见文末状态汇总处口径），只在就绪条上显示可
-        // 定位的字段、单位和补录动作（REQ-06/NFR-COR-03）。
-        const std::optional<core::ObjectId> drivetrainSubject =
-            ws.drivetrainObject.has_value()
-                ? std::optional<core::ObjectId>(ws.drivetrainObject->objectId)
-                : std::nullopt;
-        addNote(ReadinessLayer::L9Drivetrain, "drivetrain.velocityAcceleration",
-                "关节最大速度/最大加速度尚未进入当前建模 schema；模板预填值仅供参考，"
-                "不会进入运行时计算",
-                false, ReadinessNoteKind::NotProvided, drivetrainSubject,
-                "joints[*].maxVelocity / joints[*].maxAcceleration",
-                "rad·s⁻¹ / rad·s⁻²",
-                "请在传动或策略模块补录后，再运行轨迹与动力学计算");
+        // F01/{1,1}：maxVelocity/maxAcceleration 已入 JointEntry schema（模板
+        // 种子/导入映射/编辑流三入口真实落位并流入运行时）。仅当存在可动
+        // 关节缺值时登记 NotProvided 缺项预告（可定位字段/单位/补录动作——
+        // REQ-06/NFR-COR-03）；全值齐备（如模板草稿）零登记。
+        {
+            std::size_t missingVelocity = 0;
+            std::size_t missingAcceleration = 0;
+            std::optional<core::ObjectId> firstMissing;
+            for (const JointEntry& j : ws.design.joints) {
+                const bool movable = j.type == JointType::Revolute
+                                     || j.type == JointType::Prismatic
+                                     || j.type == JointType::Continuous;
+                if (!movable) { continue; }
+                if (j.maxVelocity.state() != core::FieldState::Provided) {
+                    ++missingVelocity;
+                    firstMissing = firstMissing ? firstMissing : j.objectId;
+                }
+                if (j.maxAcceleration.state() != core::FieldState::Provided) {
+                    ++missingAcceleration;
+                }
+            }
+            if (missingVelocity + missingAcceleration > 0) {
+                addNote(ReadinessLayer::L9Drivetrain,
+                        "drivetrain.velocityAcceleration",
+                        "关节最大速度/最大加速度未提供（" +
+                            std::to_string(missingVelocity) + " 轴缺速度、" +
+                            std::to_string(missingAcceleration)
+                            + " 轴缺加速度）——缺失不虚构零值",
+                        false, ReadinessNoteKind::NotProvided, firstMissing,
+                        "joints[*].maxVelocity / joints[*].maxAcceleration",
+                        "rad·s⁻¹ / rad·s⁻²（移动关节 m·s⁻¹ / m·s⁻²）",
+                        "请在关节编辑页补录逐轴限值后，再运行轨迹与动力学计算");
+            }
+        }
         if (ws.drivetrainObject.has_value()) {
             // 值面不变量（checkInvariants——I-MDL-11 自洽/I-MDL-12 R1 锁；
             // 阶段位＝ctx.couplingStage——默认 R1Locked，"不提前放开 R1

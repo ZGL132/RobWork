@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-19T01:17:04.983" name="AllTests">
+  <testsuite name="HostMigration" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-19T01:17:04.984">
+    <testcase name="Selection_UpstreamPickOnlyClosure_ACC2" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\HostMigrationTest.cpp" line="766" status="run" result="completed" time="0." timestamp="2026-10-19T01:17:04.984" classname="HostMigration">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\HostMigrationTest.cpp:800&#x0A;Expected equality of these values:&#x0A;  highlight.calls.size()&#x0A;    Which is: 0&#x0A;  1u&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\HostMigrationTest.cpp:800
+Expected equality of these values:
+  highlight.calls.size()
+    Which is: 0
+  1u
+    Which is: 1
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

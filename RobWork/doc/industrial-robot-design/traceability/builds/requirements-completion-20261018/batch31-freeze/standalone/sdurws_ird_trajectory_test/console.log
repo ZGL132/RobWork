@@ -1,0 +1,85 @@
+[==========] Running 34 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from TrjDiagCodes
+[ RUN      ] TrjDiagCodes.FactoryScopeIsSection144FullTable_WP16T03_ACC3
+[       OK ] TrjDiagCodes.FactoryScopeIsSection144FullTable_WP16T03_ACC3 (0 ms)
+[ RUN      ] TrjDiagCodes.DescriptorFieldsMatchSection144Rows_WP16T03_ACC3
+[       OK ] TrjDiagCodes.DescriptorFieldsMatchSection144Rows_WP16T03_ACC3 (0 ms)
+[ RUN      ] TrjDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP16T03_ACC3
+[       OK ] TrjDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP16T03_ACC3 (0 ms)
+[ RUN      ] TrjDiagCodes.RegistersIntoStableCodeRegistry_WP16T03_ACC3
+[       OK ] TrjDiagCodes.RegistersIntoStableCodeRegistry_WP16T03_ACC3 (0 ms)
+[ RUN      ] TrjDiagCodes.DuplicateRegistrationRejected_WP16T03_ACC3
+[       OK ] TrjDiagCodes.DuplicateRegistrationRejected_WP16T03_ACC3 (0 ms)
+[----------] 5 tests from TrjDiagCodes (0 ms total)
+
+[----------] 4 tests from TrjBuildRedLine
+[ RUN      ] TrjBuildRedLine.ProductFaceHasZeroQtIncludes_WP16T03_ACC1
+[       OK ] TrjBuildRedLine.ProductFaceHasZeroQtIncludes_WP16T03_ACC1 (14 ms)
+[ RUN      ] TrjBuildRedLine.IncludeFaceRestrictedToSevenRegisteredEdges_WP16T03_ACC2
+[       OK ] TrjBuildRedLine.IncludeFaceRestrictedToSevenRegisteredEdges_WP16T03_ACC2 (14 ms)
+[ RUN      ] TrjBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP16T03_ACC2
+[       OK ] TrjBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP16T03_ACC2 (9 ms)
+[ RUN      ] TrjBuildRedLine.ProductFaceFilesNonEmpty_WP16T03_ACC1
+[       OK ] TrjBuildRedLine.ProductFaceFilesNonEmpty_WP16T03_ACC1 (7 ms)
+[----------] 4 tests from TrjBuildRedLine (46 ms total)
+
+[----------] 17 tests from TrjPlanConfig
+[ RUN      ] TrjPlanConfig.ValidBaselinePasses_WP16T04_ACC2
+[       OK ] TrjPlanConfig.ValidBaselinePasses_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.ZeroSeedRejected_WP16T04_ACC2
+[       OK ] TrjPlanConfig.ZeroSeedRejected_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.TaskPointWithoutOidRejected_WP16T04_ACC2
+[       OK ] TrjPlanConfig.TaskPointWithoutOidRejected_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.HomeWithDanglingOidRejected_WP16T04_ACC2
+[       OK ] TrjPlanConfig.HomeWithDanglingOidRejected_WP16T04_ACC2 (1 ms)
+[ RUN      ] TrjPlanConfig.PositiveFloatDomainsRejected_WP16T04_ACC2
+[       OK ] TrjPlanConfig.PositiveFloatDomainsRejected_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.LimitsScaleDomainRejected_WP16T04_ACC2
+[       OK ] TrjPlanConfig.LimitsScaleDomainRejected_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.TimeParamMethodWordlistRejected_WP16T04_ACC2
+[       OK ] TrjPlanConfig.TimeParamMethodWordlistRejected_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.TimeParamMethodSepticAccepted_WP16T14
+[       OK ] TrjPlanConfig.TimeParamMethodSepticAccepted_WP16T14 (0 ms)
+[ RUN      ] TrjPlanConfig.PlannerStringSafetyRejected_WP16T04_ACC2
+[       OK ] TrjPlanConfig.PlannerStringSafetyRejected_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.EncodeDecodeRoundtrip_WP16T04_ACC2
+[       OK ] TrjPlanConfig.EncodeDecodeRoundtrip_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.EncodeDeterministic_WP16T04_ACC2
+[       OK ] TrjPlanConfig.EncodeDeterministic_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.ParamsDictionaryOrderCanonical_WP16T04_ACC2
+[       OK ] TrjPlanConfig.ParamsDictionaryOrderCanonical_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.MagicHeader_WP16T04_ACC2
+[       OK ] TrjPlanConfig.MagicHeader_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.DecodeRejections_WP16T04_ACC2
+[       OK ] TrjPlanConfig.DecodeRejections_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.DigestEqualsShaOverCanonicalBytes_WP16T04_ACC2
+[       OK ] TrjPlanConfig.DigestEqualsShaOverCanonicalBytes_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.DigestSensitiveToFieldChange_WP16T04_ACC2
+[       OK ] TrjPlanConfig.DigestSensitiveToFieldChange_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfig.RefEntryKindTokenAndIdentity_WP16T04_ACC2
+[       OK ] TrjPlanConfig.RefEntryKindTokenAndIdentity_WP16T04_ACC2 (0 ms)
+[----------] 17 tests from TrjPlanConfig (1 ms total)
+
+[----------] 8 tests from TrjEvaluationDims
+[ RUN      ] TrjEvaluationDims.PayloadKindTokenV1VocabularyAndDispatch_WP16T11_ACC1
+[       OK ] TrjEvaluationDims.PayloadKindTokenV1VocabularyAndDispatch_WP16T11_ACC1 (0 ms)
+[ RUN      ] TrjEvaluationDims.ProfileV1ItemsFrozenFiveRows_WP16T11_ACC1
+[       OK ] TrjEvaluationDims.ProfileV1ItemsFrozenFiveRows_WP16T11_ACC1 (0 ms)
+[ RUN      ] TrjEvaluationDims.ProfileV1ItemIdLookup_WP16T11_ACC1
+[       OK ] TrjEvaluationDims.ProfileV1ItemIdLookup_WP16T11_ACC1 (0 ms)
+[ RUN      ] TrjEvaluationDims.ZeroPlaceholderGuard_WP16T11_ACC2
+[       OK ] TrjEvaluationDims.ZeroPlaceholderGuard_WP16T11_ACC2 (0 ms)
+[ RUN      ] TrjEvaluationDims.ConsumerDispatchProtocol_WP16T11_ACC1
+[       OK ] TrjEvaluationDims.ConsumerDispatchProtocol_WP16T11_ACC1 (0 ms)
+[ RUN      ] TrjEvaluationDims.ProfileV2Progression_WP16T14_ACC2
+[       OK ] TrjEvaluationDims.ProfileV2Progression_WP16T14_ACC2 (0 ms)
+[ RUN      ] TrjEvaluationDims.ProfileV3Progression_WP16T15_ACC2
+[       OK ] TrjEvaluationDims.ProfileV3Progression_WP16T15_ACC2 (0 ms)
+[ RUN      ] TrjEvaluationDims.ProfileV4Progression_WP16T16_ACC2
+[       OK ] TrjEvaluationDims.ProfileV4Progression_WP16T16_ACC2 (0 ms)
+[----------] 8 tests from TrjEvaluationDims (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 34 tests from 4 test suites ran. (49 ms total)
+[  PASSED  ] 34 tests.

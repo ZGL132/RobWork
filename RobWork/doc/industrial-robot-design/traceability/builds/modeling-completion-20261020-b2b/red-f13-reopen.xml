@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="1" disabled="0" errors="0" time="0.93" timestamp="2026-10-20T06:45:37.168" name="AllTests">
+  <testsuite name="ModelingUiModuleHostWiring" tests="4" failures="1" disabled="0" skipped="0" errors="0" time="0.93" timestamp="2026-10-20T06:45:37.168">
+    <testcase name="NamedPoseRestoreEntryIsPresent_MDL17_AT04" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="514" status="run" result="completed" time="0.147" timestamp="2026-10-20T06:45:37.168" classname="ModelingUiModuleHostWiring" />
+    <testcase name="NamedPoseRestoreUsesAppliedOffsetsAndIgnoresStaging_MDL17_AT04" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="525" status="run" result="completed" time="0.03" timestamp="2026-10-20T06:45:37.316" classname="ModelingUiModuleHostWiring" />
+    <testcase name="NamedPosePageReachableWithoutExistingObject_MDL17_AT04" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="567" status="run" result="completed" time="0.464" timestamp="2026-10-20T06:45:37.346" classname="ModelingUiModuleHostWiring" />
+    <testcase name="NamedPoseCanSaveAfterSessionReopen_MDL17_AT04" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="582" status="run" result="completed" time="0.288" timestamp="2026-10-20T06:45:37.811" classname="ModelingUiModuleHostWiring">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;ui/form-edit: 未知字段键: pose-config-0&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "ui/form-edit: 未知字段键: pose-config-0" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

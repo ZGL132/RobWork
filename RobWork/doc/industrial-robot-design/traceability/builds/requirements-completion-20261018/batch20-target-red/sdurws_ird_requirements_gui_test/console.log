@@ -1,0 +1,28 @@
+Note: Google Test filter = RequirementsSessionGuiTest.View3DTarget*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(3566): error: Expected: (create) != (nullptr), actual: NULL vs (nullptr)
+缺少三维创建目标入口
+
+[  FAILED  ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23 (398 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(3595): error: Expected: (move) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23 (21 ms)
+[ RUN      ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(3625): error: Expected: (create) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23 (16 ms)
+[----------] 3 tests from RequirementsSessionGuiTest (436 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (436 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.View3DTargetMissingSeamIsExplicit_REQ08_AT23
+[  FAILED  ] RequirementsSessionGuiTest.View3DTargetMoveTransformCancelAndStale_REQ08_AT23
+[  FAILED  ] RequirementsSessionGuiTest.View3DTargetCreateAtomicAndReadOnly_REQ08_AT23
+
+ 3 FAILED TESTS

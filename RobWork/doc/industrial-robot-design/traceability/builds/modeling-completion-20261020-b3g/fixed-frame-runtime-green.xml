@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-10-20T11:02:44.118" name="AllTests">
+  <testsuite name="CanonicalModelBuilderTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T11:02:44.118">
+    <testcase name="FixedFrameHasSceneWithoutCollision_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CanonicalModelTest.cpp" line="72" status="run" result="completed" time="0." timestamp="2026-10-20T11:02:44.118" classname="CanonicalModelBuilderTest" />
+  </testsuite>
+  <testsuite name="CodecRoundtripTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T11:02:44.119">
+    <testcase name="FixedSceneFramePresenceAndVersion_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CodecTest.cpp" line="50" status="run" result="completed" time="0." timestamp="2026-10-20T11:02:44.119" classname="CodecRoundtripTest" />
+  </testsuite>
+  <testsuite name="RuntimeNameMapTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T11:02:44.119">
+    <testcase name="FixedFrameHasObjectButNoGeometryName_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\NameMapTest.cpp" line="62" status="run" result="completed" time="0." timestamp="2026-10-20T11:02:44.119" classname="RuntimeNameMapTest" />
+  </testsuite>
+  <testsuite name="WorkCellCompilerTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T11:02:44.119">
+    <testcase name="FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp" line="561" status="run" result="completed" time="0." timestamp="2026-10-20T11:02:44.119" classname="WorkCellCompilerTest" />
+  </testsuite>
+</testsuites>

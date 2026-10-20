@@ -27,6 +27,9 @@
 #include <QAction>
 #include <QApplication>
 #include <QDialog>
+#include <QDesktopServices>
+#include <QFile>
+#include <QFileInfo>
 #include <QLabel>
 #include <QMainWindow>
 #include <QMenu>
@@ -35,6 +38,7 @@
 #include <QStatusBar>
 #include <QTableWidget>
 #include <QTemporaryDir>
+#include <QUrl>
 #include <QWidget>
 
 #include <sdurws/ird/diagnostics/Catalog.hpp>
@@ -50,6 +54,24 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+/**
+ * @brief UX-14：记录操作系统打开URL的边界；不替代手册文件或菜单命令。
+ *
+ * 用例在UI线程栈上持有，析构撤销全局处理器，防止影响后续用例和真实帮助。
+ */
+class ManualUrlRecorder final : public QObject {
+    Q_OBJECT
+public:
+    /** @brief 在本用例期间接管本地文件打开请求；无文件写入或浏览器进程。 */
+    ManualUrlRecorder() { QDesktopServices::setUrlHandler("file", this, "record"); }
+    /** @brief 恢复系统默认打开行为；调用方不再持有本对象。 */
+    ~ManualUrlRecorder() override { QDesktopServices::unsetUrlHandler("file"); }
+    QUrl opened; ///< 最近打开的本地URL；仅UI线程读写，空值表示未调用系统服务。
+public Q_SLOTS:
+    /** @brief 记录菜单帮助请求；url [in] 必须由产品帮助入口给出。 */
+    void record(const QUrl& url) { opened = url; }
+};
 
 namespace {
 
@@ -424,14 +446,21 @@ TEST_F(AboutDialogGuiTest, AboutDialogWithoutSourceShowsPlaceholders_UI_PLG_2_UI
 // =====================================================================
 
 /**
- * 操作（菜单"帮助手册"触发 help.contents）→ 预期（阶段 A 部署树无手册
- * 文件：不启动打开动作、状态栏给出用户可见缺失反馈、Dev 日志留排障明文
- * ——入口点了没反应属可见性违例）。手册文件随部署提供后的打开成功路径
- * 归 UI-T14 契约套件（需受控部署树——本套件不虚构文件存在性）。
+ * UX-14/U22：集成宿主须部署真实手册并将菜单请求发送到相同本地URL；
+ * 独立模式没有产品部署目标，继续验证缺失时的用户反馈。两种模式分支
+ * 均真实执行，不能把文件缺失当成集成交付合格。
  */
-TEST_F(AboutDialogGuiTest, HelpContentsMissingManualGivesVisibleFeedback_UX14_UI_T10)
+TEST_F(AboutDialogGuiTest, HelpContentsDeploymentAndFeedback_UX14_WP14T12)
 {
     IRD_TEST_INFO("UX-14", {}, std::nullopt);
+
+    const QString manual = QString::fromStdString(ui::userManualPath());
+#ifdef IRD_UI_HAS_PRODUCT_HOST
+    ASSERT_TRUE(QFileInfo::exists(manual)) << "正式宿主构建没有部署帮助文件："
+                                         << manual.toStdString();
+#endif
+    const bool deployed = QFileInfo::exists(manual);
+    ManualUrlRecorder recorder;
 
     IWorkbenchShell* shell = createShell();
     ASSERT_NE(shell, nullptr);
@@ -450,9 +479,24 @@ TEST_F(AboutDialogGuiTest, HelpContentsMissingManualGivesVisibleFeedback_UX14_UI
     EXPECT_TRUE(message.contains(QString::fromUtf8(u8"用户手册")))
         << "缺失反馈未点明手册语义: " << message.toStdString();
 
-    // 排障留痕：Dev 通道出线缺失明文（含解析路径——呈现面不带路径，日志带）。
-    EXPECT_TRUE(m_devLog->seen("用户手册入口文件缺失"))
-        << "手册缺失未留 Dev 排障明文";
+    if (deployed) {
+        // 文件内容与真实菜单出站地址共同核对，防止仅有空文件或错误帮助目标。
+        QFile file(manual);
+        ASSERT_TRUE(file.open(QIODevice::ReadOnly));
+        const QByteArray html = file.readAll();
+        for (const char* anchor : {"stations", "regions", "conditions", "drafts",
+                                   "import-export", "templates", "view3d", "validation"}) {
+            EXPECT_TRUE(html.contains(QByteArray("id=\"") + anchor + '"')) << anchor;
+        }
+        EXPECT_EQ(QFileInfo(recorder.opened.toLocalFile()).absoluteFilePath(),
+                  QFileInfo(manual).absoluteFilePath());
+        EXPECT_FALSE(m_devLog->seen("用户手册入口文件缺失"));
+    } else {
+        // 独立模式保留环境缺供的真实反馈，零系统打开请求。
+        EXPECT_TRUE(recorder.opened.isEmpty());
+        EXPECT_TRUE(m_devLog->seen("用户手册入口文件缺失"))
+            << "手册缺失未留 Dev 排障明文";
+    }
 
     // 诊断目录零产出：手册缺失不是 §3.5 登记事件（无稳定码——不虚构
     // 诊断条目；Dev 日志是唯一排障出线）。
@@ -460,3 +504,5 @@ TEST_F(AboutDialogGuiTest, HelpContentsMissingManualGivesVisibleFeedback_UX14_UI
 }
 
 }  // namespace
+
+#include "AboutDialogGuiTest.moc"

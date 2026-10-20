@@ -1,0 +1,70 @@
+Note: Google Test filter = DraftConflictGui.*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from DraftConflictGui
+[ RUN      ] DraftConflictGui.ViewThenCancelRetainsOriginal_PM04_AT29
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(85): error: Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+
+[  FAILED  ] DraftConflictGui.ViewThenCancelRetainsOriginal_PM04_AT29 (0 ms)
+[ RUN      ] DraftConflictGui.ExplicitRebuildConsumesFixedTip_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(85): error: Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(109): error: Expected equality of these values:
+  run([&](QDialog* d,int){click(d,"ird_draft_conflict_reedit");})
+    Which is: 4-byte object <00-00 00-00>
+  DraftConflictResolution::Rebuilt
+    Which is: 4-byte object <01-00 00-00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(110): error: Expected equality of these values:
+  source.rebuilt
+    Which is: 0
+  1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(110): error: Expected equality of these values:
+  source.doc.baseRevisionId
+    Which is: 16-byte object <FE-47 06-06 C6-E7 46-63 65-88 8D-C4 D1-BD 55-5C>
+  tip
+    Which is: 16-byte object <C6-34 EE-02 B4-DD 8A-2C 7A-CC 3D-D9 EC-25 B2-4A>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(111): error: Value of: controller->staleConflictData("modeling").present
+  Actual: true
+Expected: false
+
+[  FAILED  ] DraftConflictGui.ExplicitRebuildConsumesFixedTip_PM04_AT21 (0 ms)
+[ RUN      ] DraftConflictGui.SaveFailureDisablesRebuild_PM08_AT29
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(85): error: Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+
+[  FAILED  ] DraftConflictGui.SaveFailureDisablesRebuild_PM08_AT29 (0 ms)
+[ RUN      ] DraftConflictGui.ChangedSessionOrReaderFailureKeepsDraft_PM04_AT29
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(85): error: Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp(85): error: Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+
+[  FAILED  ] DraftConflictGui.ChangedSessionOrReaderFailureKeepsDraft_PM04_AT29 (0 ms)
+[----------] 4 tests from DraftConflictGui (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (4 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] DraftConflictGui.ViewThenCancelRetainsOriginal_PM04_AT29
+[  FAILED  ] DraftConflictGui.ExplicitRebuildConsumesFixedTip_PM04_AT21
+[  FAILED  ] DraftConflictGui.SaveFailureDisablesRebuild_PM08_AT29
+[  FAILED  ] DraftConflictGui.ChangedSessionOrReaderFailureKeepsDraft_PM04_AT29
+
+ 4 FAILED TESTS

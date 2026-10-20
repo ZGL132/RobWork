@@ -81,6 +81,17 @@ public:
     virtual void onEditApplied(const std::string& changeSummary) = 0;
 
     /**
+     * @brief 一次批量命令接受后通知呈现层记录一次草稿撤销，再刷新。
+     * @param changeSummary [in] 整批摘要，非空UTF-8人读文字，无物理单位。
+     * REQ-11：批次函数拥有一次提交，故由此回调统一记账；字段轨由其调用方
+     * 记账，不能在onEditApplied中重复累计。仅UI线程；默认转发兼容无撤销视图的出口。
+     */
+    virtual void onBatchEditApplied(const std::string& changeSummary)
+    {
+        onEditApplied(changeSummary);
+    }
+
+    /**
      * @brief 会话脏通知（PM-04/PM-11——标题 `*` 标记的生产者接线点；与
      *        ui DraftController.notifySessionDirty 汇合——接线随装配）。
      */
@@ -139,6 +150,27 @@ enum class EditSubmitOutcome {
 EditSubmitOutcome submitEntryEdit(IRequirementEditor& editor, IRequirementEditSink& sink,
                                   const RequirementEdit& edit);
 
+/**
+ * @brief A-18：任意编辑组合的原子提交流（submitEntryEdit 的组合泛化——
+ *        编排 editor.applyEditsAtomic；恰一次撤销入栈/整体回滚的裁决与
+ *        记账在编辑器域内，本函数零判定）。
+ *
+ * 编排序（零判定——全部裁决在编辑器域校验链内）：
+ *   ① 调 editor.applyEditsAtomic（任一拒绝＝工作集与栈全部不变）；
+ *   ② accepted==true：sink.onEditApplied（合并摘要）→
+ *      sink.notifySessionDirty；
+ *   ③ accepted==false：sink.onEditRejected（就地呈现；无任何模态路径）。
+ *
+ * @param editor [in,out] 目标编辑器（接受时工作集已更新——仅 UI 线程）
+ * @param sink   [in] 编辑流出口（调用期存活——非 owning）
+ * @param edits  [in] 编辑序列（值语义——依序原子应用）
+ * @return 分流结果（Applied/Rejected——与 sink 回调一一对应）
+ *
+ * 非 UI 线程调用＝契约违约（§3.4）。
+ */
+EditSubmitOutcome submitEntryEditsAtomic(IRequirementEditor& editor, IRequirementEditSink& sink,
+                                         const std::vector<RequirementEdit>& edits);
+
 // =====================================================================
 // L-R9 批次编辑流（镜像/阵列/模板——REQ-11 批量整体撤销）
 // =====================================================================
@@ -153,7 +185,7 @@ EditSubmitOutcome submitEntryEdit(IRequirementEditor& editor, IRequirementEditSi
  *      态批次）：sink.onEditRejected（就地——参数修正后重试，UX-03；
  *      不 fail-fast：参数来自用户表单，属正常业务路径）；
  *   ② batch.ok==true → editor.applyEdit(batch)：
- *      - 接受：sink.onEditApplied（批次摘要）＋批次警告诊断
+ *      - 接受：sink.onBatchEditApplied（一次撤销记账及刷新）＋批次警告诊断
  *        （REQ-DERIVE-MIRROR-PENDING 等 warning——不阻断应用，知情登记）
  *        逐条投递 onBatchWarning；sink.notifySessionDirty；
  *      - 拒绝：sink.onEditRejected（编辑器校验链同源——零数据变更）。

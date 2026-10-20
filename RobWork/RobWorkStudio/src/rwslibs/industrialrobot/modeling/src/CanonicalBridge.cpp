@@ -36,6 +36,7 @@
  */
 
 #include <sdurws/ird/modeling/CanonicalBridge.hpp>  // 公共路径自含（Codec.cpp 同款——公共头唯一暴露位）
+#include "LocalNameValidation.hpp" // V-26输入质量唯一规则，F12编辑入口同源拒绝。
 
 #include <algorithm>
 #include <cmath>
@@ -159,16 +160,7 @@ ModelingError illegalName(std::string field, std::string detail)
 
 /// localName 合法字符集（§4.3-A 行原文 [A-Za-z0-9_.-]；非空——导入侧
 /// sanitizeLocalName 同一词表，模板 createDraft 步③同判）。
-bool isLegalLocalName(std::string_view name)
-{
-    if (name.empty()) { return false; }
-    for (const char ch : name) {
-        const bool legal = (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')
-            || (ch >= '0' && ch <= '9') || ch == '_' || ch == '.' || ch == '-';
-        if (!legal) { return false; }
-    }
-    return true;
-}
+using inputquality::isLegalLocalName;
 
 /// robotLocalName 输入质量面（runtime §4.3.3 硬规则的最小建模侧预演：
 /// 非空且不含 '/'；其余字符集不作建模侧拒绝——runtime 设备名合法化为
@@ -381,8 +373,9 @@ runtime::JointType toRuntimeJointType(JointType type)
  *   c) lower/upper：Revolute/Prismatic 由 bounds 折叠映射（rad/m）；Continuous
  *      必为 NotProvided（§4.2——工作范围另载）；Fixed 无限位→NotProvided；
  *   d) workingRange：仅 Continuous 映射（MDL-12 分析消费属性）；
- *   e) maxVelocity/maxAcceleration：建模 schema 无落点（§4.3-A 未登记——
- *      v0.6 ②a"不发明字段"口径）→NotProvided（能力缺失降级非失败）；
+ *   e) maxVelocity/maxAcceleration（F01/{1,1} 起）：JointEntry 一等权威
+ *      字段 Provided 透传（SI 真值门＋provenance 原样）；缺失→NotProvided
+ *      （能力缺失降级非失败）；
  *   f) axis：Explicit 权威透传；Fixed 无可动轴且缺失→+Z 中性填充（实现层
  *      细化③）；可动关节缺失→RefMissing（必备输入缺失，不伪造）。
  *
@@ -540,10 +533,41 @@ runtime::Expected<runtime::JointDescription, ModelingError>
         }
     }
 
-    // ---- maxVelocity/maxAcceleration：建模 schema 无落点（§4.3-A 未登记——
-    // 不发明字段）→NotProvided（runtime 能力缺失降级路径，非失败）。
-    jd.maxVelocity = core::SourcedValue<double>::notProvided();
-    jd.maxAcceleration = core::SourcedValue<double>::notProvided();
+    // ---- maxVelocity/maxAcceleration（WP-13-T25/F01——MDL-01 逐轴限值随
+    // {1,1} schema 落位）：Provided 值经 SI 真值门透传（有限非 NaN——单位
+    // 随 type：转动 rad/s、rad/s²；移动 m/s、m/s²；非有限＝UnitIllegal
+    // 拒绝，不静默吞）；缺失保持 NotProvided（runtime 能力缺失降级非失败）
+    // ＋原 provenance 透传（模板/导入/用户来源可追溯）。
+    {
+        const core::QuantityKind velocityKind =
+            src.type == JointType::Prismatic
+                ? core::QuantityKind::LinearVelocity
+                : core::QuantityKind::AngularVelocity;
+        const core::QuantityKind accelerationKind =
+            src.type == JointType::Prismatic
+                ? core::QuantityKind::LinearAcceleration
+                : core::QuantityKind::AngularAcceleration;
+        if (const auto v = src.maxVelocity.tryValue(); v.has_value()) {
+            const auto gated = siGate(*v, velocityKind);
+            if (!gated.has_value()) {
+                return runtime::Expected<runtime::JointDescription, ModelingError>::err(
+                    unitIllegal(field + ".maxVelocity",
+                                "最大速度未通过 SI 真值门（非有限值拒绝）"));
+            }
+            jd.maxVelocity = core::SourcedValue<double>::provided(
+                *gated, src.maxVelocity.provenance());
+        }
+        if (const auto a = src.maxAcceleration.tryValue(); a.has_value()) {
+            const auto gated = siGate(*a, accelerationKind);
+            if (!gated.has_value()) {
+                return runtime::Expected<runtime::JointDescription, ModelingError>::err(
+                    unitIllegal(field + ".maxAcceleration",
+                                "最大加速度未通过 SI 真值门（非有限值拒绝）"));
+            }
+            jd.maxAcceleration = core::SourcedValue<double>::provided(
+                *gated, src.maxAcceleration.provenance());
+        }
+    }
     return runtime::Expected<runtime::JointDescription, ModelingError>::ok(
         std::move(jd));
 }
@@ -1012,6 +1036,13 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
         const rw::math::Rotation3D<double> r =
             rotMul(tool.mountInterface.R(), chosen->offset.R());
         td.tcpOffset = rw::math::Transform3D<double>(p, r);
+        // A-15/MDL-13：保留每个原始tcpKey，安装接口必须参与所有偏移的复合，
+        // 否则非默认TCP会在编译边界丢失。这里仅做描述映射，排序与身份归runtime。
+        for (const auto& entry : tool.tcpList) {
+            td.namedTcpOffsets.emplace_back(entry.key, rw::math::Transform3D<double>(
+                rotVec(tool.mountInterface.R(), entry.offset.P()) + tool.mountInterface.P(),
+                rotMul(tool.mountInterface.R(), entry.offset.R())));
+        }
         desc.tools.push_back(std::move(td));
     }
 
@@ -1052,21 +1083,15 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
         // 世界系固连位姿（不得预乘安装旋转——§6.4 禁止项 3；检测在 runtime
         // S6/S9，建模侧保证不引入预乘——原样透传即不预乘）。
         sd.worldPose = sceneObject.worldPose;
-        // 环境几何：runtime CanonicalSceneObject.geometry 必有——modeling
-        // 侧缺失不可映射（不伪造资源引用），RefMissing 定位。
-        if (!sceneObject.geometry.has_value()) {
-            return runtime::Expected<runtime::RobotDesignDescription,
-                                     ModelingError>::err(
-                refMissing(sceneObject.objectId.toCanonical(), field + ".geometry",
-                           "场景对象无几何引用（runtime 环境几何引用必有——"
-                           "不可伪造，补几何或移除引用）"));
+        // MDL-15/AT-28：无几何是合法固定帧，保留身份和世界位姿，不补资源。
+        // 显式几何仍经过原引用/单位门，不能把坏引用降级成“无几何”静默放行。
+        if(sceneObject.geometry){
+            auto mapped=mapGeometryRef(*sceneObject.geometry,root,field+".geometry");
+            if(!mapped.ok()){
+                return runtime::Expected<runtime::RobotDesignDescription,ModelingError>::err(mapped.error());
+            }
+            sd.geometry=std::move(mapped.get());
         }
-        auto mapped = mapGeometryRef(*sceneObject.geometry, root, field + ".geometry");
-        if (!mapped.ok()) {
-            return runtime::Expected<runtime::RobotDesignDescription,
-                                     ModelingError>::err(mapped.error());
-        }
-        sd.geometry = std::move(mapped.get());
         desc.scene.push_back(std::move(sd));
     }
 

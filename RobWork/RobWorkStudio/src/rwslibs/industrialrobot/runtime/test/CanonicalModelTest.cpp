@@ -20,6 +20,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cstdint>
 #include <cmath>
 #include <filesystem>
@@ -65,6 +66,26 @@ TEST(CanonicalModelBuilderTest, BuildsMinimalFixtureAndDerivesCapability)
     EXPECT_FALSE(cap.hasCollisionGeometry);
     EXPECT_EQ(cap.jointTypesPresent.size(), 2u);
     EXPECT_EQ(cap.jointTypesPresent[0], JointType::Revolute) << "类型按链序（V12-01）";
+}
+
+/** @brief MDL-15/AT-28：固定帧有场景身份但无碰撞能力，显式坏资源仍拒绝。 */
+TEST(CanonicalModelBuilderTest, FixedFrameHasSceneWithoutCollision_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    auto f=richFixture();f.tools.clear();f.defaultTcp.reset();
+    for(auto& link:f.chain.links){link.visual.reset();link.collision.reset();}
+    f.scene.front().geometry.reset();
+    const auto frame=f.build();EXPECT_TRUE(frame.capabilities().hasScene);
+    EXPECT_FALSE(frame.capabilities().hasCollisionGeometry);
+    ASSERT_EQ(frame.scene().size(),1U);EXPECT_FALSE(frame.scene().front().geometry);
+    // “无几何”与“显式引用非法资源”两种业务状态必须分开，不能都当缺省接受。
+    auto invalid=f;invalid.scene.front().geometry=ResourceRef{};
+    EXPECT_THROW(invalid.build(),RuntimeError);
+    auto geometric=f;geometric.scene.front().geometry=geometric.manifest.front();
+    const auto withGeometry=geometric.build();EXPECT_TRUE(withGeometry.capabilities().hasCollisionGeometry);
+    EXPECT_NE(frame.contentIdentity(),withGeometry.contentIdentity());EXPECT_FALSE(frame==withGeometry);
+    auto moved=f;moved.scene.front().worldPose.P()[0]+=0.125;
+    EXPECT_NE(frame.contentIdentity(),moved.build().contentIdentity())<<"固定帧世界位姿必须入身份";
 }
 
 /** rich 夹具构造成功：全部能力位置位（物性/摩擦/工具/场景/碰撞/耦合）。 */
@@ -654,4 +675,36 @@ TEST(CanonicalModelTransientTest, SourceScanNoPersistenceIncludes)
                 << file.filename().string() << " 出现持久化痕迹：" << needle;
         }
     }
+}
+
+/** @brief A-15/CON-05：命名目录排列归一、非默认值进入身份与相等、坏值拒绝。 */
+TEST(CanonicalModelBuilderTest, NamedTcpIdentityOrderAndValidation_REQ01_A15)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "CON-05"}, std::vector<std::string>{"AT-23"});
+    auto a = richFixture();
+    const auto identity = sdurws::ird::runtime::detail::identityTransform3D();
+    const rw::math::Transform3D<double> shifted(rw::math::Vector3D<double>(0.2, 0.3, 0.4), identity.R());
+    a.tools[0].namedTcpOffsets = {{"z", shifted}, {"a", identity}};
+    auto b = a;
+    std::reverse(b.tools[0].namedTcpOffsets.begin(), b.tools[0].namedTcpOffsets.end());
+    const auto first = a.build(), second = b.build();
+    EXPECT_EQ(first, second);
+    EXPECT_EQ(first.contentIdentity(), second.contentIdentity());
+    EXPECT_EQ(first.tools()[0].namedTcpOffsets[0].first, "a");
+    b.tools[0].namedTcpOffsets[0].second.P()[0] += 0.01;
+    const auto changed = b.build();
+    EXPECT_NE(first, changed);
+    EXPECT_NE(first.contentIdentity(), changed.contentIdentity());
+    auto invalid = a;
+    invalid.tools[0].namedTcpOffsets[1].first = "z";
+    EXPECT_ANY_THROW(invalid.build());
+    invalid = a;
+    invalid.tools[0].namedTcpOffsets[0].first.clear();
+    EXPECT_ANY_THROW(invalid.build());
+    invalid = a;
+    invalid.tools[0].namedTcpOffsets[0].second.P()[0] = std::numeric_limits<double>::quiet_NaN();
+    EXPECT_ANY_THROW(invalid.build());
+    invalid = a;
+    invalid.tools[0].namedTcpOffsets[0].second.R() = rw::math::Rotation3D<double>(-1,0,0,0,1,0,0,0,1);
+    EXPECT_ANY_THROW(invalid.build());
 }

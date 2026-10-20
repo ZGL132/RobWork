@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "ird-gtest-xml-derived/1",
+  "reportOrigin": "derived-from-gtest-xml",
+  "sourceXml": "core.xml",
+  "sourceSha256": "7e273d1ec888dcbb42545f003b6a8aed69f30e4c6a5e294934021d78ab364818",
+  "note": "core采用gtest_main，伴随JSON由真实XML派生，不冒称原生IRD报告。",
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0
+  }
+}

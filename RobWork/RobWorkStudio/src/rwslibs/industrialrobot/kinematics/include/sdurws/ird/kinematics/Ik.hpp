@@ -81,7 +81,7 @@ inline constexpr char kTaskPointIkEvaluationKey[] = "kin-task-point-ik";
 ///   同 seed 序列整体改变 ⇒ 同请求可产出不同初值/不同解 ⇒ 修复前后的
 ///   解集不可假借同一版本比较（审查 A06 明确要求：不能让新旧算法假借
 ///   同一身份）；JointGrid/ReferenceQ 两策略不消费 seed、数值逐位不变。
-inline constexpr std::uint32_t kIkSolverContractVersion = 3U;
+inline constexpr std::uint32_t kIkSolverContractVersion = 4U;
 
 /// 阻尼最小二乘的阻尼系数 λ（无量纲设计默认——Δq＝Jᵀ(JJᵀ＋λ²I₆)⁻¹e；
 /// λ²＝1e-6 在米级工作半径下近伪逆、近奇异处抑振荡；随黄金数据集锁定
@@ -366,6 +366,8 @@ struct IkRequest {
     /// 调用点行为逐位不变；追加成员带默认值——T07 追加纪律同款：既有
     /// 聚合初始化调用点合法，二进制契约按表尾追加不重排）。
     IkTaskSpace taskSpace = IkTaskSpace::FullPose;
+    /// 可选六分量约束；空值保持旧FullPose语义，非空时由约束分支消费。
+    std::optional<TaskPoseConstraint> taskConstraint;
 };
 
 // =====================================================================

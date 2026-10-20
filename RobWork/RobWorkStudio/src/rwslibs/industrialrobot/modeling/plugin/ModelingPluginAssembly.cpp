@@ -17,6 +17,17 @@ namespace sdurws {
 namespace ird {
 namespace modeling {
 
+bool ModelingPluginAssembly::hasPendingDraft() const
+{
+    // PM-04：完整内容等价只由域判定；宿主不能用“没有摘要”替代这个结论。
+    return m_impl && m_impl->hasPendingDraft();
+}
+
+void ModelingPluginAssembly::bindDraftChanged(std::function<void()> callback)
+{
+    if(m_impl){m_impl->bindDraftChanged(std::move(callback));}
+}
+
 ModelingPluginAssembly::ModelingPluginAssembly() = default;
 
 ModelingPluginAssembly::~ModelingPluginAssembly() = default;
@@ -47,6 +58,12 @@ void ModelingPluginAssembly::bindTextResolver(
     if (m_impl != nullptr) {
         m_impl->bindTextResolver(std::move(resolve));
     }
+}
+
+void ModelingPluginAssembly::bindSessionPoseWriter(
+    std::function<bool(const ModelingSessionPoseRequest&,std::string&)> writer)
+{
+    if(m_impl){m_impl->bindSessionPoseWriter(std::move(writer));}
 }
 
 void ModelingPluginAssembly::bindWorkCellExport(
@@ -89,6 +106,24 @@ void ModelingPluginAssembly::seedTemplateSession()
     }
 }
 
+std::vector<std::pair<std::string, std::string>>
+ModelingPluginAssembly::importedSelfCollisionCandidates() const
+{
+    // F07/P-MDL-3 移交链读取面：值拷贝出会话承载（不泄模块私有类型——
+    // R-2 装配面纪律；未装配＝空集诚实缺席）。
+    if (m_impl != nullptr) {
+        return m_impl->session().importedSelfCollisionCandidates;
+    }
+    return {};
+}
+
+void ModelingPluginAssembly::setCouplingStage(CouplingStage stage)
+{
+    if (m_impl != nullptr) {
+        m_impl->setCouplingStage(stage);
+    }
+}
+
 void ModelingPluginAssembly::bindSessionAnchor(
     const sdurws::ird::core::BranchId& branch,
     const sdurws::ird::core::RevisionId& base)
@@ -98,6 +133,26 @@ void ModelingPluginAssembly::bindSessionAnchor(
     }
 }
 
+bool ModelingPluginAssembly::restoreCommittedSession(
+    const ObjectClosureView& closure, const core::ObjectId& rootObjectId,
+    const core::BranchId& branch, const core::RevisionId& revision, std::string& errorText)
+{
+    // A-14：装配层只转发同步只读输入，所有恢复校验和会话写入归建模模块。
+    if (m_impl == nullptr) {
+        errorText = "建模模块未装配，无法恢复已提交工作集";
+        return false;
+    }
+    return m_impl->restoreCommittedSession(closure, rootObjectId, branch, revision, errorText);
+}
+
+bool ModelingPluginAssembly::acceptAppliedSession(
+    const ObjectClosureView& closure, const core::ObjectId& rootObjectId,
+    const core::BranchId& branch, const core::RevisionId& revision, std::string& errorText)
+{
+    if (!m_impl) { errorText="建模模块未装配，无法读取应用回执"; return false; }
+    return m_impl->acceptAppliedSession(closure, rootObjectId, branch, revision, errorText);
+}
+
 void ModelingPluginAssembly::noteAppliedRevision(
     const sdurws::ird::core::RevisionId& newBase,
     const std::optional<sdurws::ird::core::ObjectId>& rootObjectId)
@@ -105,6 +160,18 @@ void ModelingPluginAssembly::noteAppliedRevision(
     if (m_impl != nullptr) {
         m_impl->noteAppliedRevision(newBase, rootObjectId);
     }
+}
+
+void ModelingPluginAssembly::bindRevisionDraftReader(
+    std::function<std::optional<ui::DraftDocumentProjection>(const core::BranchId&,
+        const core::RevisionId&)> reader)
+{
+    if(m_impl){m_impl->bindRevisionDraftReader(std::move(reader));}
+}
+
+std::optional<ui::DraftDocumentProjection> ModelingPluginAssembly::retainedConflictDraft() const
+{
+    return m_impl?m_impl->retainedConflictDraft():std::nullopt;
 }
 
 void ModelingPluginAssembly::refreshFromSession()

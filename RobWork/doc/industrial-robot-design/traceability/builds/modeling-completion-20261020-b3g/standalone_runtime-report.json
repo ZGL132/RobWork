@@ -1,0 +1,9 @@
+{
+  "source": "standalone_runtime.xml",
+  "note": "GTest::gtest_main不消费ird_report；本报告仅派生自真实XML",
+  "name": "standalone_runtime",
+  "total": 195,
+  "passed": 195,
+  "failed": 0,
+  "skipped": 0
+}

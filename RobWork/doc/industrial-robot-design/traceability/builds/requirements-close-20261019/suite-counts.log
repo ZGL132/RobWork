@@ -1,0 +1,128 @@
+{
+  "gui_probe": {
+    "total": 5,
+    "PASS": 5,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "kinematics": {
+    "total": 284,
+    "PASS": 283,
+    "FAIL": 0,
+    "SKIP": 1
+  },
+  "kinematics_contract": {
+    "total": 57,
+    "PASS": 57,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "kinematics_gui": {
+    "total": 20,
+    "PASS": 20,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "requirements": {
+    "total": 222,
+    "PASS": 221,
+    "FAIL": 0,
+    "SKIP": 1
+  },
+  "requirements_contract": {
+    "total": 16,
+    "PASS": 16,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "requirements_gui": {
+    "total": 110,
+    "PASS": 104,
+    "FAIL": 6,
+    "SKIP": 0
+  },
+  "residual_probe": {
+    "total": 4,
+    "PASS": 4,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "standalone_kinematics": {
+    "total": 277,
+    "PASS": 276,
+    "FAIL": 0,
+    "SKIP": 1
+  },
+  "standalone_kinematics_contract": {
+    "total": 57,
+    "PASS": 57,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "standalone_kinematics_gui": {
+    "total": 20,
+    "PASS": 20,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "standalone_requirements": {
+    "total": 222,
+    "PASS": 221,
+    "FAIL": 0,
+    "SKIP": 1
+  },
+  "standalone_requirements_contract": {
+    "total": 16,
+    "PASS": 16,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "standalone_requirements_gui": {
+    "total": 110,
+    "PASS": 104,
+    "FAIL": 6,
+    "SKIP": 0
+  },
+  "standalone_ui": {
+    "total": 267,
+    "PASS": 267,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "standalone_ui_contract": {
+    "total": 34,
+    "PASS": 34,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "standalone_ui_gui": {
+    "total": 75,
+    "PASS": 74,
+    "FAIL": 0,
+    "SKIP": 1
+  },
+  "ui": {
+    "total": 321,
+    "PASS": 321,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "ui_contract": {
+    "total": 50,
+    "PASS": 50,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "ui_gui": {
+    "total": 85,
+    "PASS": 84,
+    "FAIL": 0,
+    "SKIP": 1
+  },
+  "ui_probe": {
+    "total": 4,
+    "PASS": 4,
+    "FAIL": 0,
+    "SKIP": 0
+  }
+}

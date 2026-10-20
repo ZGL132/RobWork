@@ -1,0 +1,20 @@
+Note: Google Test filter = *CanonicalSetOrder*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingDraftRestore
+[ RUN      ] ModelingDraftRestore.CanonicalSetOrderDoesNotInventPendingChanges_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(815): error: Value of: module.restoreCommittedSession(closure,*closure.expected.rootObjectId, closure.branch,core::RevisionId::generate(),error)
+  Actual: false
+Expected: true
+建模工作集有未应用编辑，请先处置后再切换已提交基线
+
+[  FAILED  ] ModelingDraftRestore.CanonicalSetOrderDoesNotInventPendingChanges_PM04_AT21 (1 ms)
+[----------] 1 test from ModelingDraftRestore (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingDraftRestore.CanonicalSetOrderDoesNotInventPendingChanges_PM04_AT21
+
+ 1 FAILED TEST

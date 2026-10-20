@@ -1,0 +1,117 @@
+TABLE KEYS
+dt-ratio-0
+dt-friction-viscous-0
+dt-friction-coulomb-0
+dt-friction-bias-0
+dt-torque-rated-0
+dt-torque-peak-0
+dt-ratio-1
+dt-friction-viscous-1
+dt-friction-coulomb-1
+dt-friction-bias-1
+dt-torque-rated-1
+dt-torque-peak-1
+dt-ratio-2
+dt-friction-viscous-2
+dt-friction-coulomb-2
+dt-friction-bias-2
+dt-torque-rated-2
+dt-torque-peak-2
+dt-ratio-3
+dt-friction-viscous-3
+dt-friction-coulomb-3
+dt-friction-bias-3
+dt-torque-rated-3
+dt-torque-peak-3
+dt-ratio-4
+dt-friction-viscous-4
+dt-friction-coulomb-4
+dt-friction-bias-4
+dt-torque-rated-4
+dt-torque-peak-4
+dt-ratio-5
+dt-friction-viscous-5
+dt-friction-coulomb-5
+dt-friction-bias-5
+dt-torque-rated-5
+dt-torque-peak-5
+pose-config-0
+pose-config-1
+pose-config-2
+pose-config-3
+pose-config-4
+pose-config-5
+world-x
+world-y
+world-z
+world-r
+world-p
+world-yaw
+mount-x
+mount-y
+mount-z
+mount-r
+mount-p
+mount-yaw
+tcp-offset-x
+tcp-offset-y
+tcp-offset-z
+tcp-offset-r
+tcp-offset-p
+tcp-offset-yaw
+BUTTONS
+ird_modeling_preview_copy: 复制全部
+ird_modeling_more_toggle: 更多操作 ▸
+ird_modeling_cmd_modeling.new-from-template: cmd.modeling.new-from-template.title
+ird_modeling_cmd_modeling.import-urdf: cmd.modeling.import-urdf.title
+ird_modeling_cmd_modeling.import-xacro: cmd.modeling.import-xacro.title
+ird_modeling_cmd_modeling.switch-authority: cmd.modeling.switch-authority.title
+ird_modeling_cmd_modeling.estimate-properties: cmd.modeling.estimate-properties.title
+ird_modeling_cmd_modeling.generate-placeholder-geometry: cmd.modeling.generate-placeholder-geometry.title
+ird_modeling_cmd_modeling.diff-baseline: cmd.modeling.diff-baseline.title
+ird_modeling_cmd_modeling.export-package: cmd.modeling.export-package.title
+ird_modeling_cmd_modeling.import-package: cmd.modeling.import-package.title
+ird_modeling_cmd_modeling.export-workcell-xml: cmd.modeling.export-workcell-xml.title
+ird_modeling_cmd_modeling.reset-home-zero: cmd.modeling.reset-home-zero.title
+ird_modeling_edit_joint_mode: 关节编辑
+ird_modeling_edit_base_mode: 基座安装…
+ird_param_confirm_yes: 确认应用
+ird_param_confirm_no: 再改改
+ird_param_paste: 从剪贴板粘贴
+ird_param_apply: 应用…
+ird_param_cancel: 取消恢复
+ird_modeling_pose_add: 新增条目
+ird_modeling_pose_remove: 删除条目
+ird_modeling_pose_apply: 保存条目
+ird_param_confirm_yes: 确认应用
+ird_param_confirm_no: 再改改
+ird_param_paste: 从剪贴板粘贴
+ird_param_apply: 应用…
+ird_param_cancel: 取消恢复
+ird_param_confirm_yes: 确认应用
+ird_param_confirm_no: 再改改
+ird_param_paste: 从剪贴板粘贴
+ird_param_apply: 应用…
+ird_param_cancel: 取消恢复
+ird_param_confirm_yes: 确认应用
+ird_param_confirm_no: 再改改
+ird_param_paste: 从剪贴板粘贴
+ird_param_apply: 应用…
+ird_param_cancel: 取消恢复
+ird_modeling_tcp_add: 新增 TCP
+ird_modeling_tcp_remove: 删除 TCP
+ird_modeling_tcp_default: 设为默认
+ird_modeling_tcp_displayname_apply: 应用显示名
+ird_param_confirm_yes: 确认应用
+ird_param_confirm_no: 再改改
+ird_param_paste: 从剪贴板粘贴
+ird_param_apply: 应用…
+ird_param_cancel: 取消恢复
+ird_modeling_base_apply: 应用
+ird_modeling_base_restore: 还原
+ird_modeling_history_toggle: 诊断历史
+ird_modeling_struct_add: 新增关节
+ird_modeling_struct_remove: 删除关节
+ird_modeling_struct_up: 上移
+ird_modeling_struct_down: 下移
+ird_modeling_struct_reset: 六轴重置

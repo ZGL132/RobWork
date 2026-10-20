@@ -28,6 +28,7 @@
 #include <cmath>
 
 #include <rw/math/Rotation3D.hpp>
+#include <rw/math/Vector3D.hpp>
 
 namespace sdurws::ird::modeling::rpymath {
 
@@ -60,6 +61,35 @@ inline rw::math::Rotation3D<double> rpyToRotation(double roll, double pitch,
         -sp,
         cp * sr,
         cp * cr);
+}
+
+/**
+ * @brief MDL-22：ZYX欧拉编辑值换算为既有主值EAA，不产生第二份安装矩阵。
+ * @param rpy [in] {roll,pitch,yaw}，rad，分量必须有限（入口已校验）。
+ * @return 轴乘角的旋转矢量，rad，角度主值[0,pi]；零旋转返回零矢量。
+ *
+ * 纯函数、无共享状态；半角四元数按qz*qy*qx组合，与上方RzRyRx同约定。
+ * 采用atan2求角而不除sin(theta)，使pi附近及欧拉万向锁处仍有稳定轴角。
+ */
+inline rw::math::Vector3D<double> rpyToEaa(const rw::math::Vector3D<double>& rpy)
+{
+    const double cr=std::cos(rpy[0]/2),sr=std::sin(rpy[0]/2);
+    const double cp=std::cos(rpy[1]/2),sp=std::sin(rpy[1]/2);
+    const double cy=std::cos(rpy[2]/2),sy=std::sin(rpy[2]/2);
+    double w=cr*cp*cy+sr*sp*sy;
+    double x=sr*cp*cy-cr*sp*sy;
+    double y=cr*sp*cy+sr*cp*sy;
+    double z=cr*cp*sy-sr*sp*cy;
+    // q与-q表示同一旋转。固定非负标量部以选主值轴角；归一化仅消除
+    // 三角运算舍入，不修改用户姿态，也不缓存矩阵或叠加安装变换。
+    const double norm=std::hypot(std::hypot(w,x),std::hypot(y,z));
+    const double scale=(w<0?-1.0:1.0)/norm;
+    w*=scale;x*=scale;y*=scale;z*=scale;
+    const double sineHalf=std::hypot(x,y,z);
+    // 仅精确零向量无可定义轴；小角保持atan2极限，不截断有效微小姿态。
+    if(sineHalf==0){return {0,0,0};}
+    const double angleScale=2*std::atan2(sineHalf,w)/sineHalf;
+    return {x*angleScale,y*angleScale,z*angleScale};
 }
 
 }  // namespace sdurws::ird::modeling::rpymath

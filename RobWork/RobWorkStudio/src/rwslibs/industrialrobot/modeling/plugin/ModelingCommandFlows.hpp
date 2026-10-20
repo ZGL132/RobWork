@@ -14,7 +14,7 @@
  *     的唯一路由（PA-1——本文件是被调用端，requirements 域
  *     RequirementsCommandFlows 同构先例）。
  *
- * 批次边界（诚实声明）：本层是"最小真实链路"——导入不经完整向导报告页
+ * 批次边界（历史首版说明，WP-13-T24/B1已补逐项报告）：首版导入不经完整向导报告页
  * （L-10 完整形态归后续任务），以确认对话框呈现映射报告摘要；规范包导出
  * 自当前会话草稿闭包（ObjectClosureView 值源），不触项目存储读取路径。
  * 偏差登记于 DTB §5.4（UI-T41 行）。
@@ -32,18 +32,25 @@
 #include <QString>
 #include <QStringList>
 #include <string>
+#include <sdurws/ird/modeling/PropertyEstimation.hpp> // F09：既有三段元纯值与唯一公式表。
 
 #include "ModelingUiModule.hpp"  // ModuleSessionState（会话权威态——编辑落点）
 
 namespace sdurws {
 namespace ird {
 namespace core {
-class ObjectId;  // 前向声明（选中锚入参——完整类型经 Identity.hpp 随 cpp）
+struct ObjectId;  // 前向声明与core真实struct一致，避免跨TU类键不一致告警。
 }  // namespace core
 }  // namespace ird
 }  // namespace sdurws
 
 namespace sdurws::ird::modeling {
+
+struct ModelDiffReport;
+struct ModelDiffEntry;
+struct ModelingWorkingSet;
+/// F16：只借用本轮条目，返回人读定位结果；仅UI线程、零业务写入。
+using ModelingDiffLocator = std::function<std::string(const ModelDiffEntry&)>;
 
 /**
  * @brief 命令对话框宿主（测试缝——requirements CommandDialogHost 同案）。
@@ -120,8 +127,39 @@ struct ModelingDialogHost {
     virtual bool confirmProceed(const QString& title, const QString& text) = 0;
     /// 导入报告确认（计数摘要＋行级清单——确认＝草稿落盘）。
     virtual bool confirmImport(const QString& summaryText) = 0;
+    /**
+     * @brief MDL-19参数编辑应答；[in] defaults为冻结源参数名/默认原文。
+     * @return nullopt=取消；空表=沿用全部源默认值；非空=用户显式替换文本。
+     * 仅UI线程；默认实现保持旧测试宿主兼容，真实Qt宿主必须提供参数编辑页。
+     */
+    virtual std::optional<std::vector<std::pair<std::string, std::string>>>
+        editXacroParameters(const std::vector<std::pair<std::string, std::string>>& defaults)
+    {
+        (void)defaults;
+        return std::vector<std::pair<std::string, std::string>>{};
+    }
     /// 结论呈现（权威切换判定报告/diff 报告——纯知会，仅"确定"钮）。
     virtual void showInfo(const QString& title, const QString& text) = 0;
+
+    /**
+     * @brief 展示MDL-08/UX-13完整只读差异表，关闭只结束查看。
+     * @param report [in] 唯一差异服务结果，保持三组/原行序，不在呈现层重算。
+     * @param baseline/candidate [in] 同一轮工作集借用值，仅解析名称和物理单位。
+     * @param locate [in] 可空定位回调，只在本方法同步调用期间有效；返回中文回执。
+     * 仅UI线程；默认实现抛logic_error，未装配不得退化成计数页并虚报完成。
+     */
+    virtual void showModelDiff(const ModelDiffReport& report,
+        const ModelingWorkingSet& baseline, const ModelingWorkingSet& candidate,
+        const ModelingDiffLocator& locate);
+
+    /**
+     * @brief MDL-05：编辑完整段元列表；尺寸m、密度kg/m³、连杆系位姿m/rad。
+     * @param linkName [in] 目标连杆的人读名称，仅供标题提示，不作为身份。
+     * @return nullopt＝取消/能力未装配；有值为用户显式确认的按行顺序段元。
+     * 仅UI线程同步使用；默认拒绝，禁止退回固定圆柱并虚构完整输入能力。
+     */
+    virtual std::optional<std::vector<SegmentSpec>> editPropertySegments(const std::string& linkName)
+    { (void)linkName;return std::nullopt; }
 
     /**
      * @brief custom-chain 六轴声明表单（UI-T63——从零创建面；nullopt＝取消）。
@@ -181,6 +219,10 @@ struct ModelingFlowDeps {
     /// ＝false＋原因入 summary（诚实缺席不虚构产物）；目标路径来自
     /// saveFilePath 替身/真身。
     std::function<bool(const std::string& targetPath, std::string& summary)> exportWorkCellXml;
+    /// MDL-17：精确键恢复到真实宿主；空/失败诚实拒绝，恢复不产生项目修订。
+    std::function<bool(const std::string& key,std::string& summary)> restoreNamedPose;
+    /// F16：按真实条目身份定位现工作集对象；未装配/已删必须诚实说明。
+    ModelingDiffLocator locateDiffObject;
 };
 
 /**
@@ -193,7 +235,7 @@ struct ModelingFlowDeps {
  * generate-placeholder-geometry＝相邻关节原点占位圆柱批量生成；
  * diff-baseline＝与最近应用基线的 ModelDiff 查看（只读）；
  * export-package/import-package＝MDL-20 规范包导出/导入；reset-home-zero
- * ＝位姿集参考数据读取呈报（会话命令零修订——MDL-17/§4.6 行 386）。
+ * ＝选择权威保留键并恢复真实宿主State（会话命令零修订——MDL-17/§4.6）。
  *
  * @param commandId [in] 域命令 id（点分小写——未知 id＝调用方违约 fail-fast）
  * @param session   [in,out] 会话权威态（草稿编辑落点——仅 UI 线程）

@@ -102,11 +102,12 @@ namespace sdurws::ird::kinematics {
 inline constexpr char kRegionCoverageEvaluationKey[] = "kin-region-coverage";
 
 /// 评估器输入/输出契约版本（进 sliceId——CON-04；一经交付不回退）。
+/// ★ v3（A-21）：精确有向盒与逐计划TCP进入求解和样本身份，拒绝旧结果混用。
 /// ★ v2（KIN-P5/审查 A06）：Random 位置采样与逐样本 IK 的 SeededRandom
 ///   初值序列随 64 位完整种子混合（kIkSolverContractVersion 2→3 同批）
 ///   整体改变——同 (计划, 种子) 在 v1/v2 两代下的覆盖率结论可不同，版本
 ///   不升级会让两代评估产出假借同一 slice 身份比较。
-inline constexpr std::uint32_t kRegionCoverageContractVersion = 2U;
+inline constexpr std::uint32_t kRegionCoverageContractVersion = 3U;
 
 /// 域载荷登记 token（evidence §7.1 域词表——卡面点形保留；v1 随
 /// canonical 布局 codec 版本演进）。
@@ -170,13 +171,17 @@ struct RegionSamplingBudget {
 struct RegionBox {
     /// 盒中心（基座系 {B}，单位 m）。
     rw::math::Vector3D<double> center = rw::math::Vector3D<double>(0.0, 0.0, 0.0);
-    /// 盒三边长（基座系 {B} 各轴对齐——轴对齐盒；单位 m；三分量 >0 有限）。
+    /// 盒局部三轴边长（单位 m；三分量 >0 有限）；不以基座系包围盒代替。
     rw::math::Vector3D<double> size = rw::math::Vector3D<double>(0.0, 0.0, 0.0);
+
+    /// A-21/REQ-03：盒局部轴在基座系{B}的正交旋转（无量纲，det=+1）。
+    /// 默认显式单位阵保留旧调用的轴对齐数值；纯值随计划冻结，并发只读。
+    rw::math::Rotation3D<double> orientationInBase{1, 0, 0, 0, 1, 0, 0, 0, 1};
 
     /// 精确等值（逐成员——身份面比较禁用数值容差；Vector3D 分量精确相等）。
     bool operator==(const RegionBox& o) const
     {
-        return center == o.center && size == o.size;
+        return center == o.center && size == o.size && orientationInBase == o.orientationInBase;
     }
     bool operator!=(const RegionBox& o) const { return !(*this == o); }
 };
@@ -291,12 +296,17 @@ struct SamplingPlan {
     /// 镜像派生源区域身份（空＝原生条目——溯源元数据，生成不消费）。
     std::optional<core::ObjectId> mirrorOf;
 
+    /// A-21/REQ-01：本计划的TCP浅引用；空＝沿查询defaultTcp，非空精确解析
+    /// 同一runtime快照的命名键（空键默认、真实键优先、旧工具名别名兼容）。
+    /// 纯值不拥有Frame；后台只读消费，不能以默认TCP静默替代错误引用。
+    std::optional<TcpRef> tcpOverride;
+
     bool operator==(const SamplingPlan& o) const
     {
         return regionObjectId == o.regionObjectId
             && planContentIdentity == o.planContentIdentity && box == o.box
             && position == o.position && orientation == o.orientation
-            && demands == o.demands && mirrorOf == o.mirrorOf;
+            && demands == o.demands && mirrorOf == o.mirrorOf && tcpOverride == o.tcpOverride;
     }
     bool operator!=(const SamplingPlan& o) const { return !(*this == o); }
 };
@@ -446,29 +456,13 @@ struct SampleResultSet {
  *        sampleSetIdentity ＝ SHA-256 over (planContentIdentity ‖
  *        预算/种子参数 canonical)）。
  *
- * canonical 字节布局（codec 版本 2——**格式冻结前**的 kinematics 实现
- * 落值，登记随单元卡 §14.6 v0.6（v1）/§14.6 v0.27（v2——KIN-P5/审查
- * A06 种子派生算法换代的全局升版：同 (计划, seed) 在两代算法下样本点
- * 不同，身份不得跨代假借）；evidence 卡冻结 canonical 格式时以此
- * 为准对齐——P-KIN-3 三方一致义务；冻结前对账面＝快照 SamplingPlanRef
- * 逐字节比对，不一致即 DataInsufficient，本布局的任何漂移都会被对账
- * 捕获，设计上安全）：
- * @code
- *   "IRDSSID"（7 字节 ASCII magic——字面常量 "IRDSSID1" 的前 7 字节，
- *     实写口径与实现一致：F-395 督办纠正——原登记"8 字节"系把字面量
- *     尾数字符误计入 magic 长度，实现只取 7 字节，尾位 '1' 不入字节流）
- *   ‖ u32 codecVersion = 2（小端——v1→v2 随 KIN-P5/审查 A06 种子派生
- *     算法换代全局升版，见上注）
- *   ‖ u32 planIdLength（小端）‖ planContentIdentity.toCanonical()（ASCII，
- *     形如 "cid-<64hex>"——规范文本字节，与 core 规范文本面同源）
- *   ‖ u64 seed（小端——预算/种子参数 canonical 的当前全集；Grid 采样
- *     不消费 seed，但 seed 仍入身份：预算/种子是采样计划的决定输入之一，
- *     KIN-04 R8/KIN-13 明文；线程数不入身份——执行参数，见
- *     RegionSamplingBudget 注）
- * @endcode
- *
- * "身份对计划参数计算而非对枚举列表"（evidence §4.1.4 原文）——本函数
- * 只消费计划身份与预算/种子，不枚举样本点（大样本集不枚举入快照）。
+ * 兼容入口：等价于单位旋转、无独立TCP的完整SamplingPlan重载。
+ * v3 canonical布局：7字节ASCII "IRDSSID"、小端u32版本3、
+ * u32计划规范文本字节数及文本、u64 seed、行主序9个f64旋转、
+ * u32 TCP存在位；存在时追加16字节工具ID及u32长度+UTF-8键。
+ * -0旋转分量归一为+0；threadCount不入身份。旧v2不能匹配v3。
+ * 来源计划摘要承诺原计划参数，新增旋转/TCP由完整重载直接编码；
+ * 本函数不枚举样本，也不改写requirements来源摘要（CON-05）。
  *
  * @param planContentIdentity [in] 计划内容身份（requirements 侧 canonical
  *                             原值；允许零值——零值照实入摘要，对账面
@@ -483,6 +477,20 @@ struct SampleResultSet {
 core::ContentIdentity sampleSetIdentity(const core::ContentIdentity& planContentIdentity,
                                         const RegionSamplingBudget& budget);
 
+/**
+ * @brief A-21：计算完整计划的v3样本身份，追加有向盒旋转及独立TCP。
+ * @param plan [in] 只读计划；来源planContentIdentity不改写，新增旋转为
+ *                 有限正交右手矩阵（容差1e-9），TCP存在时工具ID必须有效。
+ * @param budget [in] seed进入身份，threadCount为执行参数、不进入身份。
+ * @return SHA-256身份；默认单位阵/空TCP时与旧签名结果完全相同。
+ * @throws std::invalid_argument 旋转非法或TCP工具ID为保留值（调用方错误）。
+ * v3布局在原magic/version/计划摘要/seed后追加9个行主序f64（-0归+0）、
+ * u32 TCP存在位，存在时追加16字节工具ID与u32长度+UTF-8键。旧v2不匹配。
+ * 纯函数，不枚举样本；并发安全，成本O(TCP键字节数)。
+ */
+core::ContentIdentity sampleSetIdentity(const SamplingPlan& plan,
+                                       const RegionSamplingBudget& budget);
+
 // =====================================================================
 // 确定性样本生成（D-KIN-6 黄金锁定面——生成规则逐函数登记，修改走
 // 设计变更并同步卡面 §7.2）
@@ -493,16 +501,18 @@ core::ContentIdentity sampleSetIdentity(const core::ContentIdentity& planContent
  *        黄金锁定）"的唯一实现点）。
  *
  * 生成规则（D-KIN-6；黄金锁定 T13）：盒 [min,max]（min=center−size/2，
- * max=center＋size/2——基座系 {B}，m）逐轴均分为 counts[i] 格，样本取
+ * max=center＋size/2——尚未施加参考旋转，m）逐轴均分为 counts[i] 格，样本取
  * 格心：coord_i(k_i) ＝ min_i ＋ (k_i ＋ 0.5)·(size_i / counts_i)。枚举序
  * ＝x 最慢、z 最快（index ＝ (ix·counts[1]＋iy)·counts[2]＋iz——黄金
- * 锁定序）；任一轴 counts=0 → 0 个样本（零样本场景，I-REQ-6）。
+ * 锁定序）；输出为center+orientationInBase*(coord-center)，参考旋转不改变格序。
+ * 任一轴 counts=0 → 0 个样本（零样本场景，I-REQ-6）。
  *
  * @param box    [in] 区域盒（基座系 {B}；size 三分量 >0 有限——调用方
  *               契约，装配校验面保证）
  * @param counts [in] 逐轴计数（无量纲；0 合法——零样本）
  * @return 采样位置列（生成序＝枚举序；单位 m，基座系 {B}）
  *
+ * @throws std::invalid_argument 旋转非有限、非正交或反射（调用方错误）。
  * 纯函数；线程安全；确定性（与 seed 无关——Grid 不消费种子）。
  */
 std::vector<rw::math::Vector3D<double>>

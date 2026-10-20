@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 生成时间 | 2026-10-18T11:22:45+08:00 |
-| 生成基线 | git HEAD df9fa11e235c11a5f3aa5fd3fb55c04a4f3255da |
+| 生成时间 | 2026-10-19T15:30:18+08:00 |
+| 生成基线 | git HEAD 6996f689d4c53e44f07d6e8eeb9128dfabb0fe5c |
 | 任务状态（契约） | done |
 | 单元 / 主 WP | core / WP-B |
 | 分支 | wp03-t01 |
@@ -42,7 +42,6 @@
 
 - 前置依赖：全部 done（无阻塞）。
 - open finding：F-004（suggestion）RWS 顶层全局 CMAKE_AUTOMOC 传播使 industrialrobot 各目标出现空转 MOC 步骤（实证零 Qt 依赖）
-- open finding：F-201（suggestion）acceptance-protocol.md §4.10 条文『phase-one-validation.log 或 resultNote 已更新』与流水线实践脱节：phase-one-validation.log 尾行停在 CORE-T01（2026-09-10），其后的全部已合入任务（TK-T03 系至 IO-T05 系数十个）均未追加；traceability/pipeline/state.json 的 schema 中不存在 resultNote 字段（全文 grep 计数 0）——条文两个载体均无实际维护路径。任务级验证留痕的实际落位为 traceability/builds/<branch>/（gtest XML＋ird-test-report.json＋日志），IO-T06 attempt 1/2 验收均按此口径判定 4.10
 
 ## 6. 验收要点（契约 acceptance）
 
@@ -55,7 +54,7 @@
 | 源文件 | git blob SHA-1 |
 | --- | --- |
 | RobWork/doc/industrial-robot-design/tasks/foundation/CORE-T01.json | 10da2bf3fbebe548c37efd15da8ac2d428381087 |
-| RobWork/doc/industrial-robot-design/units/core.md | 07e3b38a4bc98d0e2223cf5de83d7c8880c99dce |
+| RobWork/doc/industrial-robot-design/units/core.md | e4d1ea3cab6a7d48802c8001b94ab05fd75d724a |
 | RobWork/doc/industrial-robot-design/REQUIREMENTS.md | 349489fe5cf47c956a8007a58c187568642533ad |
 | RobWork/doc/industrial-robot-design/context/reading-paths.md | 1b7d1bcc50fca5b8e0efd7947bb76ae79a77e87f |
 | RobWork/doc/industrial-robot-design/context/asset-inventory.json | 281f3f4a5978fd271ea7e0e6b5cb52d75125bfb7 |

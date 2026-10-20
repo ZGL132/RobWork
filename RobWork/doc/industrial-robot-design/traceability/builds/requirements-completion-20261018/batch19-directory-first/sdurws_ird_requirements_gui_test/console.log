@@ -1,0 +1,13 @@
+Note: Google Test filter = RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02:RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02
+[       OK ] RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02 (365 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02
+[       OK ] RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02 (47 ms)
+[----------] 2 tests from RequirementsSessionGuiTest (413 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (413 ms total)
+[  PASSED  ] 2 tests.

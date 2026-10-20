@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-20T14:24:48.304" name="AllTests">
+  <testsuite name="HostModelingConflict" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T14:24:48.304">
+    <testcase name="MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="894" status="run" result="completed" time="0." timestamp="2026-10-20T14:24:48.304" classname="HostModelingConflict">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:901&#x0A;Expected: source.rebuildOnRevision(core::RevisionId::generate().toCanonical()) throws an exception of type std::runtime_error.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:901
+Expected: source.rebuildOnRevision(core::RevisionId::generate().toCanonical()) throws an exception of type std::runtime_error.
+  Actual: it throws nothing.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:903&#x0A;Expected equality of these values:&#x0A;  source.buildDraftDocument().baseRevisionId&#x0A;    Which is: 16-byte object &lt;B5-0A E2-57 33-1A 71-59 30-42 4D-C9 0A-BB D6-D2&gt;&#x0A;  base&#x0A;    Which is: 16-byte object &lt;88-63 1D-44 8A-88 61-6E 56-5D 4C-CE A6-21 86-BF&gt;&#x0A;未完整读取权威工作集不得宣称已重建&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:903
+Expected equality of these values:
+  source.buildDraftDocument().baseRevisionId
+    Which is: 16-byte object <B5-0A E2-57 33-1A 71-59 30-42 4D-C9 0A-BB D6-D2>
+  base
+    Which is: 16-byte object <88-63 1D-44 8A-88 61-6E 56-5D 4C-CE A6-21 86-BF>
+未完整读取权威工作集不得宣称已重建
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

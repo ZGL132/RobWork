@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0.041" timestamp="2026-10-19T05:31:46.833" name="AllTests">
+  <testsuite name="KinEvaluationChannel" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.041" timestamp="2026-10-19T05:31:46.833">
+    <testcase name="BatchHonorsEveryConstraintMask_REQ01_A16" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1294" status="run" result="completed" time="0.026" timestamp="2026-10-19T05:31:46.833" classname="KinEvaluationChannel" />
+    <testcase name="BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp" line="1334" status="run" result="completed" time="0.015" timestamp="2026-10-19T05:31:46.859" classname="KinEvaluationChannel" />
+  </testsuite>
+</testsuites>

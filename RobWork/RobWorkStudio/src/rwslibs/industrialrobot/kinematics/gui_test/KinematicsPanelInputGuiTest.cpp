@@ -383,11 +383,11 @@ TEST(KinematicsPanelInput, SolveButton_CarriesCompleteAssembledRequest_KIN_P2)
     ASSERT_TRUE(h.recorder.received.has_value());
     const IkRequest& req = *h.recorder.received;
 
-    // TCP 身份：命中快照工具＋tcpKey＝工具局部名（自描述形态）。
+    // TCP身份：命中快照工具＋空键＝默认偏移（A-15，不受真实同名非默认键影响）。
     const auto loc = h.view.model().findObject(req.tcp.toolObject);
     ASSERT_TRUE(loc.has_value()) << "TCP 身份必须经名称解析为可解析工具";
     EXPECT_EQ(loc->kind, runtime::CanonicalModel::ObjectKind::Tool);
-    EXPECT_EQ(req.tcp.tcpKey, h.view.model().tools().front().localName);
+    EXPECT_TRUE(req.tcp.tcpKey.empty());
 
     // 初值集：非空（来自配置——缺省 JointGrid×1）且逐项 dof 维。
     ASSERT_FALSE(req.initialValues.empty());

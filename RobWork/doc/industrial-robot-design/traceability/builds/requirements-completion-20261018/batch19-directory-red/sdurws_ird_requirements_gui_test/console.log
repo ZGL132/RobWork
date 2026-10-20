@@ -1,0 +1,24 @@
+Note: Google Test filter = RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02:RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from RequirementsSessionGuiTest
+[ RUN      ] RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(3458): error: Expected: (reference) != (nullptr), actual: NULL vs (nullptr)
+区域缺业务名称参考系入口
+
+[  FAILED  ] RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02 (168 ms)
+[ RUN      ] RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\gui_test\RequirementsSessionGuiTest.cpp(3489): error: Expected: (environment) != (nullptr), actual: NULL vs (nullptr)
+工况缺按业务名选择环境的入口
+
+[  FAILED  ] RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02 (19 ms)
+[----------] 2 tests from RequirementsSessionGuiTest (187 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (187 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] RequirementsSessionGuiTest.NamedRegionReferencesAtomicAndStale_REQ03_AT02
+[  FAILED  ] RequirementsSessionGuiTest.NamedConditionReferencesAtomicAndStale_REQ04_AT02
+
+ 2 FAILED TESTS

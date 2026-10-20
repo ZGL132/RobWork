@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "modeling-completion-b3c/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "d4b27df07aa0",
+  "scope": "F09完整段元估算录入与局部历史实现验证；整体47项及完整三维终验仍待B5",
+  "totals": {
+    "total": 1364,
+    "passed": 1364,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 411,
+      "passed": 411,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 66,
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 335,
+      "passed": 335,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 50,
+      "passed": 50,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "tour": {
+    "passed": 285,
+    "failed": 0,
+    "scope": "正式宿主综合流程，含其他域，不等同建模功能数量"
+  },
+  "environment": {
+    "os": "Windows",
+    "toolchain": "VS2022 x64",
+    "qtPlatform": "windows",
+    "guiExecution": "绝对路径、单exe串行"
+  },
+  "builds": {
+    "integration": "PASS，全量Release",
+    "standalone": "PASS，12目标",
+    "gates": "PASS，零命中",
+    "verifyTask": "PASS，三条机器命令"
+  },
+  "limitations": [
+    "未执行全新上下文独立验收",
+    "core伴随报告派生自真实XML",
+    "剪贴板预览本轮集成/独立均通过；不覆盖B4a历史环境跳过记录",
+    "保留法兰估算入口及错误提示红证，修复后重跑验证；定向轮次不重复累计",
+    "独立构建测试默认数学构造与模块集成边界链接失败日志保留；两项完整模块用例仅集成编入",
+    "截图及共享选中不能替代B5全部真实mesh、安装姿态、TCP、导航和碰撞验收",
+    "未推送、未自行合入主线"
+  ]
+}

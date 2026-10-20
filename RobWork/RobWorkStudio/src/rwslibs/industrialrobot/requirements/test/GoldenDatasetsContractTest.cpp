@@ -2019,3 +2019,26 @@ TEST(GuiRegistration, V22RegisteredNotExecuted_ACC1)
 }
 
 }  // namespace
+/** @brief 批34 评审 F7：Random 计划的分母＝randomCount——counts 载荷
+ *         （过期/零）不得按 Grid 乘积冒充分母（A-18 放行 Random 形态后
+ *         的分母同步面）。 */
+TEST(MdlGoldenTransport, RandomPlanDenominatorUsesRandomCount_WP14T12)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-04"}, std::vector<std::string>{});
+    using namespace req;
+    SamplingPlan random;
+    random.objectId = oidOf("obj-1d0000000000000000000000000000f7");
+    random.regionRef = oidOf("obj-2c000000000000000000000000000004");
+    random.positionSampling.method = PositionSamplingMethod::Random;
+    random.positionSampling.count = 24U;            // planned count（分母真值）
+    random.positionSampling.counts = {0U, 0U, 0U};  // 过期/零载荷——不得按 Grid 乘积
+    random.orientationSampling.directionSamples = 1U;
+    random.orientationSampling.rollSamples = 1U;
+    SamplingPlanBuilder builder;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    auto d = builder.digest(random, diags);
+    ASSERT_TRUE(d.ok()) << d.error().detail;
+    EXPECT_EQ(d.get().positionSamples, 24U)
+        << "Random 分母必须取 randomCount（counts 乘积＝0 即分母归零——F7）";
+    EXPECT_EQ(d.get().orientationSamples, 1U);
+}

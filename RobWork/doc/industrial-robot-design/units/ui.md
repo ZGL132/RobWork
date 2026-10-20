@@ -48,6 +48,12 @@
 
 ---
 
+## WP-14-T12 帮助交付增量（2026-10-19）
+
+承接需求全功能封闭任务A-22：`share/user-manual/index.html`新增离线中文需求操作手册，覆盖工位、区域与采样、工况、导入导出、模板阵列、三维交互、校验、草稿与两种撤销。`userManualPath()`及公共接口不变，`ui/CMakeLists.txt`以独立资源目标在正式宿主和集成GUI构建前复制到既定相对路径，并在IRD_PRODUCT组件安装到`share/ird/user-manual`；每次构建核对复制，使VS多配置生成器中的资源改动也能更新。无新单元依赖边、存储或框架修改。
+
+GUI目标显式AUTOMOC用于系统URL边界记录器，兼容框架的QT_NO_KEYWORDS；集成模式要求实际部署文件存在并核对帮助菜单发送的本地URL及内容章节，独立模式继续核对未部署时的可见提示。记录器退出时恢复系统打开器；不以替身代替文件存在性或菜单命令，也不启动外部浏览器。构建、GUI、安装树哈希的实际结果见本轮traceability/builds/requirements-close-20261019。全产品工程策略、真实碰撞高亮和跨域供数缺口不由本次手册修复推定关闭。
+
 ## 1. 文档信息、上游基线与目标
 
 ### 1.1 输入版本登记（以磁盘实际版本为准，2026-09-10 核对）
@@ -952,8 +958,8 @@ L5壳 ─registerCommand(desc,handler)→ CommandRegistry（冲突拒绝＋诊�
       · 显示：当前分支 tip（RevisionView 摘要＋命令摘要）vs 草稿 baseRevisionId
         （冲突定位数据由 CommandResult 附带——project §6.2：当前 tip/前进修订摘要/涉事对象差异）
       · 选项：[基于当前版本重新编辑]（推荐）/ [查看差异对象] / [取消]
-      · 草稿保留（origin=apply-retained，project 侧已处置）
-    "重新编辑"＝域编辑器以当前 HEAD 重建编辑基线（用户迁移未应用修改），
+      · 草稿保留（origin=apply-retained，ui经C-5提交原payload/base，由project唯一DraftService落盘；命令拒绝本身不保存域草稿）
+    "重新编辑"＝域编辑器按冲突窗口确认的当前分支固定 tip 完整重建编辑基线（用户迁移未应用修改），
     ui 重置该模块会话脏标记与 baseRevision 显示；不得自动重试提交
 ```
 
@@ -2030,3 +2036,46 @@ public:
 | UI-T49 | 碰撞模型编辑面批次（**落位登记（2026-10-04，status=ready 待独立验收——立项登记的交付兑现）**；契约 tasks/foundation/UI-T49.json；分支 ui-t49 基点＝redesign-main@f7d32d8a（UI-T48 合入收尾后——原登记"ui-t48 head"的等价后移）：①**域原语**＝GeometryLinkEdit 增原语④ copyVisualToCollision（§5.2 几何生成辅助②落位——同 resourceRefId＋localTransform/kind 初值随复制〔GeometryRef 值拷贝即全部语义，清单零改动：两槽引用同一 ResourceRef 是合法共享态〕＋拒绝面表尾追加两值：VisualNotSet〔复制源缺失诚实拒绝〕/CollisionOccupied〔已有引用未确认覆盖——UI 收码弹确认携 confirmOverwrite=true 重调，estimate 覆盖确认同款纪律〕＋methodTag "collision-copy" 经变更摘要留痕〔GeometryRef schema 无来源字段——产物与手编同权〕；零网格重画/凸包简化；ARC-05 零判定语义）；②**面板承载**＝collision-geometry 行钮条第三钮"从视觉复制"（ird_modeling_geo_copy_collision——仅 collision 行）＋visual 未设诚实禁用＋toolTip 原因（refreshCollisionCopyGating 共用辅助——重建/增量两条投影路径同源刷新，杜绝禁用态滞后）＋覆盖确认对话框（QMessageBox question——六轴重置同款）；G6 独立碰撞模型表＝collision 行编辑面（批二已落位的挂接/替换/摘除独立承载）＋本卡两槽独立性具名断言收口（spec 批三"消费批二引用编辑流设施"口径）；③**测试**＝GeometryLinkEditTest 五用例（复制同资源＋清单零改动＋摘要来源标记/VisualNotSet 拒绝字节不变/Occupied 未确认拒绝＋确认覆盖＋旧条目保留/两槽独立性〔摘 visual 存 collision＋改 collision 位姿 visual 不动〕/越界）＋gui 一具名用例（GeometryCopyButton_VisualToCollision——承载＋点击落草稿同资源＋零 visual 改写＋visual 未设禁用与原因）；modeling_test 318（新增 5）＋modeling_gui 16（新增 1）＋ui_test 246＋requirements_test 201 全绿；留痕 traceability/builds/ui-t49/ | 碰撞编辑零 visual 改写（两槽独立性断言——域/gui 双半区）；悬空检测与资源状态呈现复用既有投影（C2 徽标＋L6 清单级探测两槽同权——零新投影）；SelfCollisionHints 不动（P-MDL-3 既有轨） | UI-T48 |
 | UI-T50 | 建模对象编辑扩展收口批次（**落位登记（2026-10-04，status=ready 待独立验收——立项登记的交付兑现；四批收口卡）**；契约 tasks/foundation/UI-T50.json；分支 ui-t50 基点＝redesign-main@ab5b139f（UI-T49 合入收尾后——原登记"ui-t49 head"的等价后移）：①**五对象属性页扩展**＝HostMigrationProviders ModelingPropertyPagesProvider 增四对象检查器页（§9.7.5"v1 无页面供给"诚实二态对工具/场景/位姿集/传动撤牌）：工具页（安装接口位姿六值〔RPY 反解逐元素解析——冒烟 header-only 纪律，不触 RPY 外联符号 F-480 同族〕＋TCP 计数＋质量＝8 字段）＋场景页（世界系固连位姿六值——M-11 原值呈现）＋位姿集页（条目计数＋Home/Zero 保留键存在性 0/1）＋传动页（链计数＋首关节样例：减速比/库仑摩擦/额定与峰值力矩；**逐项 SourcedValue 来源标记经 label 后缀现拼呈现**〔acceptance 4——协议零改动〕；fv 量纲 N·m·s/rad 不在 core QuantityKind 词表诚实缺席）；四页统一 readOnly 事实页形态（列表/合并/命令流编辑非 D5"少量高频标量"语义——零移交面；D-MDL-10 零即时编译）＋D6 统一入口 `object-properties`"在域面板编辑"（hosted=false——激活 focusObject 定位；activateComplexPage 寻址核对同步扩展）；**根/基座决议＝无页面供给维持**（G8 增量词表边界——决议登记本行，诚实二态不撤）；②**P1 收口对账**＝traceability/reconciliation/P1-modeling-editing-20261004.md（三项落位声明：TCP 捕获〔UI-T45＋UI-T33，WP-24-T08 前置残留除外〕/三维拾取〔UI-T45〕/建模对象编辑扩展〔本四批〕；报告原文不在库按可考面收口——残项三项如实登记，原文取得后逐条复核增量修订）；③**整合回归**＝gui 具名用例 EditingChain_EndToEnd_FourSegments（真实点击链四段贯通：结构树新增钮→几何挂接原语→复制钮落碰撞→属性页重投影不回退）＋draft.apply→编译链复验援引既有契约面（apply-robot-design 命令流归 ui_contract/contract 测试与 WP-24-T08 装配验证——登记注）；④**测试**＝HostMigrationTest 三用例（四页供给＋来源标记/入口与激活扩展＋根基座零应答维持锚/空集合优雅降级）＋gui 一例；modeling_test 321（新增 3）＋modeling_gui 17（新增 1）＋ui_contract 32＋ui_test 246＋requirements_test 201 全绿；ird_gates 75 条与 T49 基线语义全等（零新增）；留痕 traceability/builds/ui-t50/ | 根/基座页面维持无页面供给（实施段决议——非 G8 词表）；新增页覆盖后"v1 无页面供给"诚实二态逐键撤牌（§9.7.5 行同步更新）；D-MDL-10 草稿不编译（四页只读零编译触发）；fv 量纲缺席与 D5 只读形态为诚实边界非缩水（F-483 同族登记） | UI-T47＋UI-T48＋UI-T49 |
 | UI-T51 | 工位位置编辑轨——"空间与公差"卡三轴坐标输入解锁（**实施落位，status=ready 待独立验收**；所有者 2026-10-03 使用反馈『需求界面空间与公差没法输入坐标值』承接——UI-T37 返工③登记的"位置编辑轨随后续批次"兑现；分支 ui-t51 基点 ui-t46@26237d5b）：①域侧回填＝applyStationEditSet 增 pose-position-x/y/z 三键——三维整体量语义（基于基线向量改命中轴后整体重写 SourcedValue，来源标记翻转 UserProvided）；NotProvided 基线收到单轴编辑＝四态语义漂移 fail-fast（"以零补全"通道在域函数层切断——I-REQ/ERR-01 零变化）；stationQuantitySpecs 三键在册（Length/m 不设界——防范围暗示误导，target-point-* 同款）；②UI 半区＝renderPoseRow 三轴 SpinBox 只读呈现退役——条件可编辑（m_writable 门控，L-R12 与区域轨盒复合行同款）＋editingFinished 队列化提交（submitStationValue 同卡先例——幻影脏化短路＋权威值 formatSiText 同形等值）；非数值四态占位维持灰显；③测试＝StationPositionEditing_ThreeAxis_UI_T47 具名用例（只读退役/幻影短路/单轴接受后未编辑轴保持＝三维整体语义/undoLocal 同栈回滚）＋ACC2 规格封闭性断言随批（12→15＋三键在册）；requirements_test 200/200＋requirements_gui 40/40；留痕 traceability/builds/ui-t51/ | 端口语义零变化（submitStationValue 队列化出险既有承载）；未提供态"提供位置"录入归捕获 TCP/导入通道（不在本卡）；只读会话禁用由 m_writable 单点门控（L-R12 既有体系） | UI-T37 |
+
+
+### A-23 工程策略真实编辑与发布接线（2026-10-20，WP-14-T12）
+
+- HostEngineeringPolicy私有适配器：无项目策略时投影policy工厂缺省；已存在对象损坏或多候选必须不可用并给诊断，禁止默认回退。解析按调用方冻结修订的完整对象集及内容版本，建模嵌入关节/连杆的角色由公共codec读取，不从存储token猜测。
+- policy.edit登记为Project作用域、readOnlyAllowed=false；摘要卡经同一CommandRegistry调用，模态编辑器全字段消费RawPolicyInput/PolicyCodec。空阈值不补造；m/mm、rad/deg切换只经core convert；受保护锚/兼容字段完整保留；输入、规则冲突、悬空引用均由policy原位拒绝。取消、只读、项目切换、过期基线零写入。
+- 首次确认由HandlerContext取正式ObjectId。首次撤销保留该新ID及历史，以系统缺省完整Raw写新版本恢复原语义；重做复用该ID，不删除修订、不增加tombstone格式。后续编辑逆载荷为旧完整字节。
+- RevisionCommitted在Qt队列回投后重读发布策略、刷新摘要、推进评估纪元并清理覆盖/求解/批量账面；后台捕获不可变shared_ptr及语义身份，不回查漂移HEAD。碰撞策略启用而检测器未装配时通过既有IKinCollisionSession给EvidenceMissing，不能以空会话当作未启用或无碰撞。
+- 新集成测试：HostEngineeringPolicyTest、HostEngineeringPolicyGuiTest、KinEvaluationChannel的A-23回归；正式modeling-tour新增真实策略入口与截图。完整验证结果以本批traceability证据为准，未完成检查不得记为通过。
+
+- 测试依赖仅新增ui_gui_test→modeling_plugin，所有者2026-10-20批准A-23补充一；DTB §4.5和IRD_TEST_TARGET_EDGES精确登记，project/policy沿既有PUBLIC边传递。装配清单仅同步源码行号，不改变域集合。
+
+### WP-13-T24 B2b：建模命名姿态宿主装配增量（2026-10-20）
+
+经ModelingPluginAssembly::bindSessionPoseWriter消费纯值请求。HostPresentationAdapters校验同快照WorkCell、分支/根/关节序、有限性及限位，Fixed不消耗q；模块以已应用baseline的原始零偏换算q_rw（不消费未应用零偏），宿主用q_rw+CanonicalJoint.zeroOffset核查canonical限位并直接写入q_rw；先在State副本整批处理，UiPlugin再一次setState触发既有D8桥。只读允许会话姿态变化，禁止项目命令写入。无新链接边/目标，精确设计与当前状态见WP-13-T24原计划B2b。
+
+### WP-13-T24 B4a：正式宿主差异交互补证
+
+仅在UiPlugin既有modeling-tour自动化段新增真实关节表暂存/确认、正式比较按钮、完整差异行/单位/值与共享选中定位、关闭及草稿局部撤销清理检查；项目修订和编译身份保持不变。差异产品实现仍在modeling私有层，无ui装配、公共面或链接边变化。精确设计与实际结果见WP-13-T24原计划B4a，不以此替代B5完整三维终验。
+
+### WP-13-T24 B4c-1：应用前锚失败隔离
+
+runDomainApply在每域build前捕获bindAnchor的std::exception，记录anchor-bind-failed、零build/submit并继续其余域；私有Outcome追加PreparationFailed，实际提交计数排除准备失败，宿主状态行明确部分失败。真实门面/ProjectStore Stale与跨分支反例见HostIntegrationContractTest，完整回执与窗口验收仍后续。
+
+### WP-13-T24 B4c-2：成功应用的固定修订回执
+
+私有HostRevisionClosureView按固定RevisionView的(oid,cv)读取，UiPlugin建模应用成功后完整权威回读；回读失败保留草稿并明确诊断，不从可变HEAD或临时工作集建立clean。精确设计见总计划B4c-2，GUI仍待通知。
+
+WP-13-T24 B4c-2 回执隔离：完整建模回读失败保留实际Committed修订与草稿；runner记commit-receipt-failed并继续后域，状态行单列已提交但未回读，不向DraftController伪造已完成回执。无公共/存储/依赖变化，GUI未执行边界按总计划登记。
+
+B4c-2检查点实证：十套件1430通过（非GUI1205、Windows GUI225）、0失败、0跳过；双模式及verify-task通过。正式宿主另列FAIL：策略推进后的Stale安全门正确，旧tour误期待直接提交，缺真正重建且后续无快照防护，退出-1073741819。证据modeling-completion-20261020-b4c2-checkpoint；继续B4c-3，不能将套件通过代替宿主/47项终验。
+
+WP-13-T24 B4c-3b-2登记：宿主建模onResult原来实际未填，按attachModule成功后填闭包并补Stale定位详情；固定branch/base及权威分支tip经query读取，涉事名称经建模公共装配解析，跨域未知项只显示中文类型标签。生产reader现取受控活动adapter；错误详情清空防误重建。tour前置失败立即留图并非零退出。仅原私有允许面，无公共/存储/依赖变化；冲突窗口/保留落盘/迁移仍待下一批，不以接线代替闭环。
+
+WP-13-T24 B4c-3b-3a增量：SaveTrigger表尾追加ApplyRetained，仅保存未决Stale模块（即便已手动清脏），成功不清脏/冲突/局部历史、不重建/提交。域文档有效branch与会话不符时拒绝，不能补齐掩盖跨分支事实。建模装配bindDraftChanged以完整规范域帧变化同步通知，绑定不回放、同值不通知、局部undo/redo通知、脱会话解绑。生产保存绑定真实分支及StoreDraftQueryPortAdapter，替代立项空桩。
+生产分支锚补充：StoreFactoryPortAdapter按权威branchTips首条id构造StorePortAdapter，私有draftBranchAnchor()让list/tryLoad/discard同锚；全零值不再被当作主分支别名。旧显式空锚测试仍兼容，PM-12不自动迁移草稿。
+WP-13-T24 B4c-3b-3b：正式建模Stale回执后经ApplyRetained先保存原完整稿，再呈现当前tip/原base/前进摘要及重新编辑、查看差异对象、取消三选项。保存失败用稳定token给人可读原因，开发detail只留日志；禁重建，取消/关闭不改内容或历史。模态每次重建前复核同活动adapter、有效会话、原branch/base/payload和精确分支tip；漂移拒绝，不静默换锚。显式重建只调用控制器完整reader，不重试提交，状态行明确待手工迁移并保留整批其他域结局。窗口与插件/studio同源，未新增依赖边；完整tour和全功能终验仍开放。
+
+WP-13-T24 B4c-3c生命周期纠正：Committed经完整权威回读后，DraftController必须先经既有C-5 discardDraft调用project唯一草稿服务消费本模块磁盘稿，再清会话脏标记/冲突/局部历史；不能只清标记后让旧稿在下次打开覆盖新基线。后台FIFO保证已排队autosave先于删除，迟到保存回执不得恢复过期保存轨迹。失败不清原状态，由runner保留Committed修订事实、标commit-receipt-failed并继续其余域；关闭放弃会话编辑仍不删除未消费磁盘稿。仅原接口实现/契约注释，无新公共面/存储/依赖，八节和红绿实证见原计划。
+
+WP-13-T24 B4c-3c干净结算补充：ModelingPluginAssembly.hasPendingDraft纯查询复用域完整规范比较，不能按摘要或命令可提交性猜测干净；IDraftController.notifySessionClean默认not-supported，真实实现经C-5后台FIFO消费磁盘稿，成功仅清脏代次/保存来源/时刻，保留冲突与局部undo/redo。宿主完整变更回调按实际pending分流，失败保留状态并提示；重做重新置脏，终身代次防旧autosave误清。精确八节/真实红绿证据见原计划，不外推47项交付。
+
+WP-13-T24 B4c-3d装配增量：正式建模RevisionCommitted回调仅复制值并排入宿主UI队列；事务返回后按来源adapter实例/关闭/project身份守卫调用完整固定修订读取，避免同步重入project写锁。域脏稿/分支/重复修订过滤不变，零公共签名和存储变化；真实外部场景创建及更新即时完整字节断言先红后验，详见原计划。

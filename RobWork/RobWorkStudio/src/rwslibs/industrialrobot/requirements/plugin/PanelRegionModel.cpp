@@ -10,6 +10,7 @@
 
 #include "PanelRegionModel.hpp"
 
+#include <algorithm>
 #include <charconv>
 #include <cmath>
 #include <utility>
@@ -243,35 +244,47 @@ RegionPreviewGeometry regionPreviewGeometry(const WorkRegion& region,
                                                     box.center[2] + sz);
     }
 
-    // ---- 第三步：采样格线（countsValid 且计数非零的轴产 counts[i]+1 条
-    //      等分线；counts=0 的轴不产线——零样本区域仅呈现轮廓，V-02 口径：
-    //      零样本合法存储，预览如实表达"无格"）。----
-    if (countsValid) {
-        // 半尺寸数组（下标 0/1/2 ↔ x/y/z——格位计算的轴向寻址载体）。
-        const double half[3] = {hx, hy, hz};
-        // 每轴格坐标：第 k 条（k=0..counts[i]）位于 center−half＋size·k/counts
-        // （counts=0 时该轴无格——循环体不执行，零样本轴如实无格）。
-        for (int axis = 0; axis < 3; ++axis) {
-            const std::size_t ax = static_cast<std::size_t>(axis);
-            const std::uint32_t n = counts[ax];
-            if (n == 0) {
-                continue;  // 零样本轴——无格线
+    // ---- 第三步：单元边界辅助格，而非样本点或可行性结果。----
+    // KIN 的真实 Grid 样本位于单元体心；这里只把规范化计数解释为分割数，
+    // 不复制样本生成器。Random 的旧 counts 载荷不能冒充随机样本分布；
+    // 任一零计数都代表位置样本空集，因此整盒无辅助格（REQ-03/KIN-04）。
+    const bool random = region.positionSampling.method == PositionSamplingMethod::Random;
+    const bool hasGrid = countsValid && !random
+        && counts[0] != 0 && counts[1] != 0 && counts[2] != 0;
+    bool thinned = false;
+    if (hasGrid) {
+        // 每轴最多 33 个边界坐标：三方向合计最多 3×33²=3267 条线。
+        // 这是呈现预算，不是采样预算；合法 uint32 大计数仍原样进入计划。
+        constexpr std::uint64_t maxBoundaries = 33;
+        std::array<std::vector<double>, 3> coordinates;
+        for (std::size_t axis = 0; axis < 3; ++axis) {
+            const std::uint64_t n = counts[axis];
+            const std::uint64_t shown = std::min(n + 1, maxBoundaries);
+            thinned = thinned || n + 1 > shown;
+            coordinates[axis].reserve(static_cast<std::size_t>(shown));
+            for (std::uint64_t k = 0; k < shown; ++k) {
+                // 64 位中间量防止 UINT32_MAX+1 和索引乘法溢出。
+                // floor(k*n/(shown-1)) 稳定选取真实单元边界，保留两端；
+                // n>=1 保证 shown>=2，不会除零。坐标单位 m、参考系 refFrame。
+                const auto boundary = k * n / (shown - 1);
+                coordinates[axis].push_back(box.center[axis] - box.size[axis] / 2.0
+                    + box.size[axis] * (static_cast<double>(boundary) / static_cast<double>(n)));
             }
-            for (std::uint32_t k = 0; k <= n; ++k) {
-                // 该轴第 k 格位（盒下底起等分——D-REQ-2 计数语义的几何直译）。
-                const double gridCoord = -half[ax] + box.size[ax]
-                                       * (static_cast<double>(k) / static_cast<double>(n));
-                // 线段沿该轴的横截方向铺开：线段两端在该轴上同取格位，
-                // 其余两轴取盒的两端（-half 端 → +half 端——格面内平行线）。
-                double a[3] = {-hx, -hy, -hz};
-                double b[3] = {hx, hy, hz};
-                a[ax] = gridCoord;
-                b[ax] = gridCoord;
-                rw::math::Vector3D<double> pa(box.center[0] + a[0], box.center[1] + a[1],
-                                              box.center[2] + a[2]);
-                rw::math::Vector3D<double> pb(box.center[0] + b[0], box.center[1] + b[1],
-                                              box.center[2] + b[2]);
-                geo.gridLines.emplace_back(pa, pb);
+        }
+        for (std::size_t axis = 0; axis < 3; ++axis) {
+            const auto transverseA = (axis + 1) % 3;
+            const auto transverseB = (axis + 2) % 3;
+            for (const double a : coordinates[transverseA]) {
+                for (const double b : coordinates[transverseB]) {
+                    // 仅延伸轴的坐标变化，另外两轴固定，避免画出面对角线。
+                    auto start = box.center;
+                    start[axis] -= box.size[axis] / 2.0;
+                    start[transverseA] = a;
+                    start[transverseB] = b;
+                    auto end = start;
+                    end[axis] += box.size[axis];
+                    geo.gridLines.emplace_back(start, end);
+                }
             }
         }
     }
@@ -280,7 +293,16 @@ RegionPreviewGeometry regionPreviewGeometry(const WorkRegion& region,
     geo.summaryText = "盒 " + formatDeterministic(box.size[0]) + "×"
                     + formatDeterministic(box.size[1]) + "×"
                     + formatDeterministic(box.size[2]) + " m";
-    geo.summaryText += countsValid ? (" · 格 " + formatCounts(counts)) : " · 格 未定";
+    if (random) {
+        geo.summaryText += " · 随机 " + std::to_string(region.positionSampling.count)
+            + " · 样本未生成，无辅助格";
+    } else if (!countsValid) {
+        geo.summaryText += " · 辅助格 未定";
+    } else {
+        geo.summaryText += " · 单元边界辅助格 " + formatCounts(counts);
+        if (!hasGrid) { geo.summaryText += " · 零样本，无辅助格"; }
+        if (thinned) { geo.summaryText += " · 显示已抽稀（每轴至多33个边界）"; }
+    }
     geo.refFrame = region.refFrame;  // UI-T33——参考系原值随几何（世界系变换的投影方输入）
     // UI-T65——区域锚与覆盖率目标（F-495 消费卡的投影过滤/框色对照输入；
     // 值直投零换算——目标下限域默认 0.8 由 CoverageTargets 承载）。

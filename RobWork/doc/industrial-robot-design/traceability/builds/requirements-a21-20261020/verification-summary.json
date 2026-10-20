@@ -1,0 +1,245 @@
+{
+  "schemaVersion": "requirements-a21-verification/1",
+  "taskId": "WP-14-T12",
+  "baseCommit": "277dd6aa140e4b7445718334dd5ab915c28825b3",
+  "scope": "A-21与剪贴板重跑；不构成需求模块120项全量验收",
+  "environment": {
+    "os": "Windows",
+    "toolchain": "Visual Studio 2022 x64",
+    "qtPlatform": "windows",
+    "guiExecutables": "串行、绝对路径"
+  },
+  "builds": {
+    "integration": "PASS，全量Release",
+    "standalone": "PASS，9个相关目标",
+    "gates": "PASS，零命中",
+    "verifyTask": "PASS，3条机器命令"
+  },
+  "totals": {
+    "total": 2250,
+    "passed": 2246,
+    "failed": 0,
+    "skipped": 4,
+    "envUnavailable": 4
+  },
+  "suites": [
+    {
+      "name": "requirements",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1,
+      "envUnavailable": 1,
+      "skippedTests": [
+        {
+          "name": "GuiRegistration.V22RegisteredNotExecuted_ACC1",
+          "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\requirements\\test\\GoldenDatasetsContractTest.cpp:2018\nV-22 GUI 流程仅登记（envUnavailable 如实登记）\n"
+        }
+      ]
+    },
+    {
+      "name": "requirements_contract",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "requirements_gui",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "kinematics",
+      "total": 287,
+      "passed": 286,
+      "failed": 0,
+      "skipped": 1,
+      "envUnavailable": 1,
+      "skippedTests": [
+        {
+          "name": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1",
+          "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\kinematics\\test\\PluginPanelTest.cpp:836\nGUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）\n"
+        }
+      ]
+    },
+    {
+      "name": "kinematics_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "kinematics_gui",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "ui",
+      "total": 322,
+      "passed": 322,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "ui_contract",
+      "total": 50,
+      "passed": 50,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "ui_gui",
+      "total": 85,
+      "passed": 85,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_requirements",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1,
+      "envUnavailable": 1,
+      "skippedTests": [
+        {
+          "name": "GuiRegistration.V22RegisteredNotExecuted_ACC1",
+          "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\requirements\\test\\GoldenDatasetsContractTest.cpp:2018\nV-22 GUI 流程仅登记（envUnavailable 如实登记）\n"
+        }
+      ]
+    },
+    {
+      "name": "standalone_requirements_contract",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_requirements_gui",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_kinematics",
+      "total": 280,
+      "passed": 279,
+      "failed": 0,
+      "skipped": 1,
+      "envUnavailable": 1,
+      "skippedTests": [
+        {
+          "name": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1",
+          "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\kinematics\\test\\PluginPanelTest.cpp:836\nGUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）\n"
+        }
+      ]
+    },
+    {
+      "name": "standalone_kinematics_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_kinematics_gui",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_ui",
+      "total": 267,
+      "passed": 267,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_ui_contract",
+      "total": 34,
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    },
+    {
+      "name": "standalone_ui_gui",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0,
+      "envUnavailable": 0,
+      "skippedTests": []
+    }
+  ],
+  "tours": [
+    {
+      "name": "requirements-tour",
+      "passedAssertions": 235,
+      "failedAssertions": 0,
+      "screenshots": 31,
+      "exitCode": 0
+    },
+    {
+      "name": "modeling-tour",
+      "passedAssertions": 245,
+      "failedAssertions": 0,
+      "screenshots": 22,
+      "exitCode": 0
+    }
+  ],
+  "historicalFailures": [
+    "red-ui",
+    "red-same-region-tcp",
+    "ui-old-wall-grid"
+  ],
+  "driverErrors": [
+    "modeling-tour-driver-assertions.log"
+  ],
+  "closedIssues": [
+    "OPEN-01",
+    "OPEN-06"
+  ],
+  "remainingIssues": [
+    "OPEN-02",
+    "OPEN-03",
+    "OPEN-04",
+    "OPEN-05",
+    "OPEN-07",
+    "OPEN-08"
+  ]
+}

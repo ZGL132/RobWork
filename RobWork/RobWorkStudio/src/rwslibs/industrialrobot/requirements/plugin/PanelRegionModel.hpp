@@ -209,16 +209,17 @@ WorkRegion applyRegionSamplingCountsEdit(const WorkRegion& base,
  *        §4.4 头行"本单元不做坐标变换"）。
  *
  * 线段对＝(起点, 终点)；corners 恒 8 点（盒角，索引序＝(x,y,z) 二进制序：
- * i 的 bit0→+sx、bit1→+sy、bit2→+sz）；gridLines 为采样格线（每轴
- * counts[i]+1 条——格面位置按 counts 均分盒尺寸；counts=0 的轴不产线——
- * 零样本区域仅呈现轮廓）。零结果语义：本几何不携带任何覆盖率/可行性
- * 信息（结果着色归 KIN-07——不伪造评估结论）。
+ * i 的 bit0→+sx、bit1→+sy、bit2→+sz）；gridLines 为轴对齐的单元边界
+ * 辅助格。真实 Grid 样本位于单元体心，由 KIN 生成；辅助格不代表样本。
+ * 每轴最多显示 33 个边界坐标，三方向总线数至多 3267；抽稀在摘要明示。
+ * Random、任一轴零计数或规范化失败仅呈现轮廓，不伪造样本/评估结论。
+ * 输出按值拥有，无共享状态、可重入；结果着色归 KIN-07。
  */
 struct RegionPreviewGeometry {
     std::array<rw::math::Vector3D<double>, 8> corners{};     ///< 盒角点（m；refFrame 系）
     std::vector<std::pair<rw::math::Vector3D<double>, rw::math::Vector3D<double>>>
-        gridLines;  ///< 采样格线段（m；refFrame 系；每轴 counts[i]+1 条）
-    std::string summaryText;  ///< 预览摘要（"盒 sx×sy×sz m·格 4×3×2"——确定性）
+        gridLines;  ///< 单元边界辅助线（m；refFrame 系；至多3267条）
+    std::string summaryText;  ///< 确定性摘要：盒尺寸、辅助格分割数及抽稀/无格原因
 
     /// 参考系原值（UI-T33——世界系变换的投影方输入；World 缺省合法——
     /// 几何顶点即 refFrame 系，投影方经宿主帧位姿变换到世界系投递）。

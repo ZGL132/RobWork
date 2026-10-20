@@ -298,6 +298,8 @@ struct TaskPointIkQuery {
     /// 标记 collisionNotEvaluated；真实④端口会话组装随 T07 落位——
     /// Collision.hpp assembleCollisionScene＋makeCollisionSession）。
     const IKinCollisionSession* collisionSession = nullptr;
+    /// 可选任务位姿约束；空值沿用旧TaskPointIk契约。
+    std::optional<TaskPoseConstraint> taskConstraint;
 
     bool operator==(const TaskPointIkQuery& o) const
     {
@@ -308,7 +310,7 @@ struct TaskPointIkQuery {
             && positionTolerance == o.positionTolerance
             && orientationTolerance == o.orientationTolerance
             && dedupThresholdPerAxis == o.dedupThresholdPerAxis && seed == o.seed
-            && configDigest == o.configDigest
+            && configDigest == o.configDigest && taskConstraint == o.taskConstraint
             && collisionSession == o.collisionSession;
     }
     bool operator!=(const TaskPointIkQuery& o) const { return !(*this == o); }

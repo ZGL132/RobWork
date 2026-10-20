@@ -167,6 +167,7 @@ add_library(sdurws_ird_modeling STATIC
     src/GeometryLinkEdit.cpp  # UI-T48——几何资源引用编辑原语（§6.7 登记面＋挂换摘）
     src/Readiness.cpp
     src/CommandHandlers.cpp
+    src/WorkingSetCommand.cpp # B4c-2：完整工作集规划复用断言管线，内核零Qt。
     src/DhConvert.cpp
     src/CanonicalBridge.cpp
     src/Package.cpp
@@ -197,6 +198,12 @@ add_library(sdurws_ird_modeling_plugin STATIC
     plugin/ModelingPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
     plugin/ModelingUiModule.cpp      # ui.md §11.2 模块实现（buildDraftCommand 域侧组装）
     plugin/ModelingCommandFlows.cpp  # 域命令 UI 流（UI-T41 A2——八命令真实链）
+    plugin/ModelingDiffDialog.cpp    # WP-13-T24/F16：只读完整差异表与现对象定位，无新依赖。
+    plugin/ModelingPropertyDialog.cpp # WP-13-T24/F09：完整段元输入，计算复用既有域估算器。
+    plugin/ModelingBodyEditor.cpp # MDL-05/F10：内联编辑及纯值编排，同目标无新依赖边。
+    plugin/ModelingSceneEditor.cpp # MDL-15/F12：场景事务和内联管理，复用原资源/位姿边界。
+    plugin/ModelingToolEditor.cpp # MDL-13/F08：工具管理和物性复用，无新增链接边。
+    plugin/ModelingDraftCodec.cpp # PM-04/08：完整工作集私有域帧，对象字节复用唯一Codec。
     plugin/ModelingAuthorityFlows.cpp  # 权威切换流（UI-T41——DhConvert 独立 TU）
     plugin/ModelingXacroBridge.cpp  # Xacro 展开桥（UI-T41——XacroExpand 独立 TU）
     plugin/ModelingPluginAssembly.cpp)  # WP-24-T03 首版装配门面实现（assembly/ 公共头的私有实现）
@@ -676,7 +683,9 @@ ird_add_gtest(sdurws_ird_modeling_test)
 # 对运行方环境变量的隐式依赖）。
 add_executable(sdurws_ird_modeling_gui_test
     gui_test/TestMainReport.cpp
-    gui_test/ModelingPanelGuiTest.cpp)
+    gui_test/ModelingPanelGuiTest.cpp
+    # WP-13-T24：真实生产导入对话框，验证参数编辑/报告可读性及取消原子性。
+    gui_test/ModelingImportGuiTest.cpp)
 
 # UI-T43 模块级接线用例（ModelingUiModule 被测面——生产装配序文案解析
 # 回归＋setWritable 暂存/即时双形态链路）：被测类型构造期持 policy 行程

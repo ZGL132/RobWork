@@ -1,0 +1,20 @@
+Note: Google Test filter = *ToolManager*:*ToolRealFile*
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.ToolManagerPendingSelectionReadOnly_MDL13_AT01
+[       OK ] ModelingPanelGuiTest.ToolManagerPendingSelectionReadOnly_MDL13_AT01 (1680 ms)
+[----------] 1 test from ModelingPanelGuiTest (1681 ms total)
+
+[----------] 3 tests from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01
+[       OK ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01 (1108 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01
+[       OK ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01 (1479 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28
+[       OK ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28 (2701 ms)
+[----------] 3 tests from ModelingUiModuleHostWiring (5289 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (6970 ms total)
+[  PASSED  ] 4 tests.

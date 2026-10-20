@@ -55,6 +55,9 @@ class QDoubleSpinBox;
 class QStackedWidget;
 
 namespace sdurws::ird::modeling {
+class ModelingBodyEditor;
+class ModelingSceneEditor;
+class ModelingToolEditor;
 
 /**
  * @brief 建模域面板 widget（五区合一——挂位于 ui 中央区 StageId=modeling 位）。
@@ -94,6 +97,17 @@ public:
      *        不注入＝无后置动作，行为同前）。
      */
     void setPostEditAction(PostEditAction action);
+    /** @brief MDL-17：绑定保存条目恢复出口；空＝未装配禁用；回调同步返回结果和原因，零草稿编辑。 */
+    void setPoseRestoreAction(std::function<bool(const std::string&,std::string&)> action);
+
+    /** @brief 绑定编辑器局部历史动作；[in] undo/redo仅UI线程调用，模块拥有历史，空则禁用。 */
+    void setDraftHistoryActions(PostEditAction undo, PostEditAction redo);
+    /** @brief 接收栈可用态；[in] canUndo/canRedo不含只读门控，面板与m_writable合取。 */
+    void setDraftHistoryState(bool canUndo, bool canRedo);
+    /** @brief PM-04：绑定旧稿只读对照动作；[in] review为空时禁用，允许只读会话查看。 */
+    void setRetainedReviewAction(PostEditAction review);
+    /** @brief 局部历史恢复前丢弃未确认表单输入，防旧暂存覆盖恢复后的权威值。零草稿写入。 */
+    void cancelPendingForHistoryRestore();
 
     /// 命令标题文案解析器形态（titleKey→工程用语——宿主接 ui::resolveText）。
     using CommandTitleResolver = std::function<QString(const std::string& titleKey)>;
@@ -272,7 +286,7 @@ private:
 
     /// 基座安装编辑页内容构建（构造期一次——表单挂 m_basePage 布局）。
     void buildBasePlacementPane();
-    /// 权威值→基座表单回填（ws 现取；预设组合框/位置/EAA 三组；进页与
+    /// 权威值→基座表单回填（ws 现取；预设/世界位置/欧拉和EAA；进页与
     /// 应用后调用——不在全局刷新中回填，避免踩踏未应用输入）。
     void refreshBasePlacementPane();
     /// 应用槽（整体替换语义→applyBasePlacementEdit 域原语；接受走 L-2
@@ -323,6 +337,16 @@ private:
     void refreshDrivetrainPane();                 ///< SourcedValue 基线回填（NotProvided＝空）
     void applyDrivetrainEdits(const ui::ParamEditSet& editSet);  ///< 出口分组装配（三族原语）
     void rejectDrivetrainEdit(const DrivetrainEditError& err);   ///< 拒绝就地呈现（词表 token）
+public:
+    /// F14/MDL-21：耦合阶段能力位注入（缺省 R1Locked＝公共默认红线；
+    /// R2Enabled 由正式宿主装配注入——UiPlugin 装配点）。
+    void setCouplingStage(CouplingStage stage);
+    /// F14/MDL-21：耦合矩阵编辑模态（窗口/阶数/n×n 表格→域原语
+    /// applyDrivetrainCouplingEdit；拒绝原子性＋取消零写入）。
+    void openCouplingEditor();
+private:
+    /// F14/MDL-21：耦合配置摘要行刷新（refreshDrivetrainPane 尾调用）。
+    void refreshCouplingSummary();
     std::size_t drivetrainBaselineSlot(const std::string& key) const;  ///< 键→基线槽位
     /// 位姿类编辑页通用构建（说明行＋ParamTablePanel——工具/场景页同构
     /// 复用；模型/面板经引用回填成员，堆栈页由调用方 addWidget 定序）。
@@ -356,6 +380,12 @@ private:
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询（空＝仅提交出口门控）
     CommandTitleResolver m_titleResolver;     ///< 标题文案解析器（WP-24-T03；空＝呈现键名原文）
     PostEditAction m_postEditAction;          ///< 编辑后动作（T03b-2b 就绪重算钩子；可空）
+    PostEditAction m_draftUndoAction, m_draftRedoAction; ///< UI模块持有历史，面板只转发交互。
+    QPushButton* m_draftUndoButton = nullptr; ///< Qt父子所有权，仅UI线程访问。
+    QPushButton* m_draftRedoButton = nullptr; ///< Qt父子所有权，不进入项目命令目录。
+    QPushButton* m_retainedReviewButton = nullptr; ///< 旧稿对照常驻入口，Qt父子所有权，仅UI线程。
+    PostEditAction m_retainedReviewAction; ///< 模块拥有旧稿，本面板不持域数据；脱会话置空。
+    bool m_canUndoDraft = false, m_canRedoDraft = false; ///< 栈状态快照，结合只读态刷新按钮。
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     bool m_writable = true;                   ///< 会话可写性（L-7 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）
@@ -383,11 +413,16 @@ private:
     QWidget* m_jointEditPanel = nullptr;      ///< createParamTablePanel 产物（换选中目标时重建）
     std::unique_ptr<ui::ParamEditModel> m_jointEditModel;  ///< 编辑会话模型（基线/暂存/就地错误三层——ui 公共件）
     std::optional<std::size_t> m_jointEditTarget;  ///< 页当前绑定关节下标（nullopt＝未绑定——重建/推基线分路锚）
+    std::optional<JointType> m_jointEditSchemaType; ///< 字段集/单位随类型；同索引换类型仍须重建。
 
     // ---- UI-T54 基座安装姿态编辑页（raw 指针＝Qt 父子所有权）----
     QStackedWidget* m_editStack = nullptr;      ///< 编辑页签模态堆栈（0＝关节区，1＝基座安装页）
     QWidget* m_basePage = nullptr;              ///< 基座安装编辑页（stacked 第 2 页）
     QComboBox* m_basePreset = nullptr;          ///< 安装预设（四值词表——runtime 单一权威的呈现映射）
+    QComboBox* m_baseRotationMode = nullptr;    ///< 旋转输入表示：默认ZYX欧拉、高级EAA；仅会话呈现态。
+    QDoubleSpinBox* m_baseRoll = nullptr;       ///< 基座相对世界旋转roll，rad，Rz(yaw)Ry(pitch)Rx(roll)。
+    QDoubleSpinBox* m_basePitch = nullptr;      ///< 同一ZYX约定pitch，rad；仅Custom可写。
+    QDoubleSpinBox* m_baseYaw = nullptr;        ///< 同一ZYX约定yaw，rad；Qt父子树拥有这些控件，仅UI线程。
     QDoubleSpinBox* m_basePosX = nullptr;       ///< 基座原点位置 X，单位 m（世界坐标系下表示）
     QDoubleSpinBox* m_basePosY = nullptr;       ///< 基座原点位置 Y，单位 m（世界坐标系下表示）
     QDoubleSpinBox* m_basePosZ = nullptr;       ///< 基座原点位置 Z，单位 m（世界坐标系下表示）
@@ -404,6 +439,10 @@ private:
     std::unique_ptr<ui::IFormEditOutlet> m_sceneOutlet;  ///< 场景页出口（构造期一次）
     QWidget* m_toolArea = nullptr;              ///< 工具页容器（stacked 第 3 页）
     QWidget* m_sceneArea = nullptr;             ///< 场景页容器（stacked 第 4 页）
+    ModelingToolEditor* m_toolManager = nullptr; ///< F08工具完整候选编辑页，Qt拥有，仅UI线程访问。
+    QWidget* m_toolManagerArea = nullptr; ///< 独立可滚动管理入口，不依赖已有树锚。
+    ModelingSceneEditor* m_sceneManager = nullptr; ///< F12内联管理器；Qt拥有，完整基线仅用于确认前比较。
+    QWidget* m_sceneManagerArea = nullptr; ///< F12可滚动管理页，空场景有独立入口。
     QWidget* m_toolEditPanel = nullptr;         ///< 工具页 ParamTablePanel 产物
     QWidget* m_sceneEditPanel = nullptr;        ///< 场景页 ParamTablePanel 产物
     std::unique_ptr<ui::ParamEditModel> m_toolEditModel;   ///< 工具页编辑会话模型
@@ -432,6 +471,8 @@ private:
     QPushButton* m_poseSetAddBtn = nullptr;       ///< 新增条目（pose-N 零位姿种子）
     QPushButton* m_poseSetRemoveBtn = nullptr;    ///< 删除条目
     QPushButton* m_poseSetApplyBtn = nullptr;     ///< 应用条目（key/note/config 组装）
+    QPushButton* m_poseSetRestoreBtn = nullptr;   ///< 恢复保存条目到真实宿主会话，只读也允许。
+    std::function<bool(const std::string&,std::string&)> m_poseRestoreAction; ///< UI线程同步回调，不保留条目引用。
     QLineEdit* m_poseSetKeyEdit = nullptr;        ///< 条目键行编辑
     QLineEdit* m_poseSetNoteEdit = nullptr;       ///< 条目备注行编辑
     QWidget* m_poseSetConfigPanel = nullptr;      ///< 关节构型数值表（行随关节表）
@@ -442,12 +483,20 @@ private:
     // ---- UI-T60 传动页（F-497 余项）----
     class DrivetrainEditOutlet;                   ///< 传动数值表移交壳
     std::unique_ptr<ui::IFormEditOutlet> m_drivetrainOutlet;  ///< 传动页出口
+    ModelingBodyEditor* m_bodyEditor = nullptr; ///< F10内联编辑器，Qt拥有，仅UI线程访问。
+    QWidget* m_bodyArea = nullptr; ///< 可滚动连杆物性页，不持工作集。
     QWidget* m_drivetrainArea = nullptr;          ///< 传动页容器（stacked 第 6 页）
     QWidget* m_drivetrainPanel = nullptr;         ///< 传动数值表（ratio/摩擦/力矩）
     std::unique_ptr<ui::ParamEditModel> m_drivetrainModel;    ///< 传动编辑模型
     std::size_t m_drivetrainJointCount = 0;       ///< 行缓存（关节表变化→重建）
     /// 传动权威基线（槽位＝关节序×6＋族序 0~5——"净取权威"分组装配）。
     std::vector<std::optional<double>> m_drivetrainBaseline;
+    /// F14/MDL-21：耦合阶段能力位（缺省 R1Locked＝公共默认红线——Parts.hpp
+    /// 默认值同源；R2Enabled 仅经正式宿主 setCouplingStage 注入）。
+    CouplingStage m_couplingStage = CouplingStage::R1Locked;
+    QLabel* m_couplingSummary = nullptr;          ///< 耦合配置摘要行（无配置/窗口+阶数）
+    QPushButton* m_couplingEditButton = nullptr;  ///< 编辑入口（模态）
+    QPushButton* m_couplingRemoveButton = nullptr;  ///< 移除入口（两阶段均允许）
     std::optional<std::size_t> m_sceneEditTarget;  ///< 场景页当前绑定下标
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----

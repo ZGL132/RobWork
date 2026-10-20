@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.001" timestamp="2026-10-19T22:28:38.295" name="AllTests">
+  <testsuite name="KinIk" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-19T22:28:38.295">
+    <testcase name="ToolRollAxisCenteredSeedCorrects_REQ09_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp" line="1486" status="run" result="completed" time="0." timestamp="2026-10-19T22:28:38.295" classname="KinIk">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp:1496&#x0A;Value of: out.solutionSet.solutions.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;轴心唯一初值 0.5&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp:1496
+Value of: out.solutionSet.solutions.empty()
+  Actual: true
+Expected: false
+轴心唯一初值 0.5
+]]></failure>
+    </testcase>
+    <testcase name="ToolRollOppositeAxisRejected_REQ09_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp" line="1501" status="run" result="completed" time="0." timestamp="2026-10-19T22:28:38.295" classname="KinIk">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp:1510&#x0A;Value of: IkSolver().solve(req).solutionSet.solutions.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;反向角 rad=3.1415926535897931&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp:1510
+Value of: IkSolver().solve(req).solutionSet.solutions.empty()
+  Actual: false
+Expected: true
+反向角 rad=3.1415926535897931
+]]></failure>
+    </testcase>
+    <testcase name="ToolRollDirectionCorrectionRealFk_REQ09_WP14T12" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp" line="1514" status="run" result="completed" time="0." timestamp="2026-10-19T22:28:38.296" classname="KinIk">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp:1523&#x0A;Value of: out.solutionSet.solutions.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp:1523
+Value of: out.solutionSet.solutions.empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

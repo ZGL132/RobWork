@@ -1,0 +1,20 @@
+Note: Google Test filter = View3DContract.*:View3DPreviewMarkerPosition.*
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from View3DContract
+[ RUN      ] View3DContract.ManifestFreezesNineItemsInRequirementOrder_UX11
+[       OK ] View3DContract.ManifestFreezesNineItemsInRequirementOrder_UX11 (0 ms)
+[ RUN      ] View3DContract.ManifestIdsWellFormedAndUnique_UX11
+[       OK ] View3DContract.ManifestIdsWellFormedAndUnique_UX11 (0 ms)
+[ RUN      ] View3DContract.SessionPoseContractPinned_KIN06_AT04
+[       OK ] View3DContract.SessionPoseContractPinned_KIN06_AT04 (0 ms)
+[----------] 3 tests from View3DContract (0 ms total)
+
+[----------] 1 test from View3DPreviewMarkerPosition
+[ RUN      ] View3DPreviewMarkerPosition.FrameMarkerPositionAppendOnly_UI_T77
+[       OK ] View3DPreviewMarkerPosition.FrameMarkerPositionAppendOnly_UI_T77 (0 ms)
+[----------] 1 test from View3DPreviewMarkerPosition (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 4 tests.

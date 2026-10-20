@@ -25,13 +25,14 @@
 #include <string>
 
 #include <sdurws/ird/requirements/TemplateArray.hpp>  // TemplateParams/ArrayKind（表单应答值面）
+#include <sdurws/ird/requirements/Import.hpp> // WP-14-T12：私有映射对话框使用原字段/单位类型。
 #include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // RequirementsView3DSeams（UI-T33——门面消费面同单元）
 
 namespace sdurws::ird::requirements {
 
 class RequirementsPanelWidget;
 class IRequirementEditor;
-struct IRequirementEditSink;
+class IRequirementEditSink;
 
 /**
  * @brief 命令对话框宿主（UI-T32 返工测试缝——attempt1 fail B-1 的修复面）。
@@ -61,14 +62,37 @@ struct CommandDialogHost {
                                           const QStringList& items) = 0;
 
     /// 模板参数表单（六类下拉＋数值行＋计数预览——生产为 QDialog）。
+    /// @param kind [in,out] 初始/确认的类别；取消时保持原值，禁止由参数猜测类别。
     /// @param params [in,out] 进入＝表单预填（域黄金默认）；确认＝用户改后值。
-    virtual bool editTemplateParams(TemplateParams& params) = 0;
+    virtual bool editTemplateParams(TemplateKind& kind, TemplateParams& params) = 0;
 
-    /// 阵列参数表单（构型选择在 chooseItem——本面承载数值参数）。
-    /// @param count [in,out] 生成数量；@param spacing [in,out] 间距/半径。
-    virtual bool editArrayParams(int& count, double& spacing) = 0;
+    /**
+     * @brief 暂存四构型完整参数，并经领域服务预览数量/错误；取消不改入参。
+     * @param kind [in] 四构型之一；仅呈现该构型使用的字段。
+     * @param params [in,out] 源只读保留；长度m、角度rad、方向在源refFrame系。
+     * @return true确认；false取消。仅UI线程，输出仍经原服务生成一个批次。
+     */
+    virtual bool editArrayDefinition(ArrayKind kind, ArrayParams& params) = 0;
 
-    /// 导入预览确认（计数＋行级错误清单——QMessageBox::question 应答面）。
+    /**
+     * @brief 暂存参考系镜面与任意非零法向，领域服务负责合法性和反射。
+     * @param sources [in] 源条目值，仅调用期借用，反射必须同参考系表达。
+     * @param plane [in,out] 初始/确认镜面，取消保持原值；法向无量纲。
+     * @return true确认；false取消。仅UI线程，不执行草稿写入。
+     */
+    virtual bool editMirrorPlane(const std::vector<TaskPoint>& sources, MirrorPlaneSpec& plane) = 0;
+
+    /**
+     * @brief 暂存人工列映射及单位，显示域函数SI换算预览；取消不改入参。
+     * @param table [in] 已解析CSV，仅调用期借用；表头必须存在。
+     * @param mapping [in,out] 自动映射起点，确认才覆盖。
+     * @param units [in,out] 每字段单位声明，确认才覆盖，落库仍经core转换。
+     * @return true确认，false取消；仅UI线程，用户错误就地呈现。
+     */
+    virtual bool editImportMapping(const io::RawTable& table, FieldMapping& mapping,
+                                    ImportUnitOptions& units) = 0;
+
+    /// 导入预览确认（计数＋全量行级错误的可滚动纯文本；取消不写草稿）。
     virtual bool confirmImport(const QString& summaryText) = 0;
 
     /// 重生成/解除双动作选择（QMessageBox 三钮应答面）。

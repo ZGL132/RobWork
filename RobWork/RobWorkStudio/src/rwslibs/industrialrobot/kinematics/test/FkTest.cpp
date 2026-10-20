@@ -509,3 +509,36 @@ TEST(KinFk, DeterministicByteOutput_WP15T03_ACC1)
     EXPECT_NE(bytes1, encodePoseMetricsCanonical(r3.get()))
         << "不同 q 的载荷字节必须可分辨";
 }
+
+/** @brief REQ-01/09、KIN-14：非零关节下，命名TCP必须改变真实FK位置与雅可比。 */
+TEST(KinFk, NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01", "KIN-14"}, std::vector<std::string>{"AT-23"});
+    const auto original = twoLinkModel();
+    auto tools = original.tools();
+    // 法兰到安装座为Rz(π/2)、平移(0.2,0.3,0)，再挂两个不同工具系偏移。
+    // 合成结果独立手算：tip=(0.2,0.8,0)，同工具名键=(−0.2,0.3,0)。
+    tools[0].namedTcpOffsets = {{"tip", trans(0.2, 0.8, 0)},
+                                {"tool_1", trans(-0.2, 0.3, 0)}};
+    const auto model = rt::CanonicalModelBuilder().setHeader(original.header())
+        .setWorld(original.world()).setChain(original.chain()).setTools(tools)
+        .setDefaultTcpIndex(0U).build();
+    TestView view(model);
+    constexpr double pi = 3.14159265358979323846;
+    const std::vector<double> q{pi / 2, -pi / 2};
+    TcpRef ref = tcpRef();
+    for (const auto& row : tools[0].namedTcpOffsets) {
+        ref.tcpKey = row.first;
+        const auto value = FkEvaluator().evaluate(view, ref, q);
+        ASSERT_TRUE(value.ok()) << value.error().detail;
+        EXPECT_NEAR(value.get().tcpInBase.P()[0], row.second.P()[0], 1e-12);
+        EXPECT_NEAR(value.get().tcpInBase.P()[1], 1.1 + row.second.P()[1], 1e-12);
+    }
+    // 空键保持原默认0.7m；未知键显式失败。真实同名键已在上面优先命中。
+    ref.tcpKey.clear();
+    const auto defaultValue = FkEvaluator().evaluate(view, ref, q);
+    ASSERT_TRUE(defaultValue.ok());
+    EXPECT_NEAR(defaultValue.get().tcpInBase.P()[0], 0.7, 1e-12);
+    ref.tcpKey = "missing";
+    EXPECT_FALSE(FkEvaluator().evaluate(view, ref, q).ok());
+}

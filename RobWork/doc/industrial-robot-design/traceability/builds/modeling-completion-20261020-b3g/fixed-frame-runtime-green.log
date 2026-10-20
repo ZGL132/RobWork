@@ -1,0 +1,27 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = *MDL15*
+[==========] Running 4 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from CanonicalModelBuilderTest
+[ RUN      ] CanonicalModelBuilderTest.FixedFrameHasSceneWithoutCollision_MDL15_AT28
+[       OK ] CanonicalModelBuilderTest.FixedFrameHasSceneWithoutCollision_MDL15_AT28 (0 ms)
+[----------] 1 test from CanonicalModelBuilderTest (0 ms total)
+
+[----------] 1 test from CodecRoundtripTest
+[ RUN      ] CodecRoundtripTest.FixedSceneFramePresenceAndVersion_MDL15_AT28
+[       OK ] CodecRoundtripTest.FixedSceneFramePresenceAndVersion_MDL15_AT28 (0 ms)
+[----------] 1 test from CodecRoundtripTest (0 ms total)
+
+[----------] 1 test from RuntimeNameMapTest
+[ RUN      ] RuntimeNameMapTest.FixedFrameHasObjectButNoGeometryName_MDL15_AT28
+[       OK ] RuntimeNameMapTest.FixedFrameHasObjectButNoGeometryName_MDL15_AT28 (0 ms)
+[----------] 1 test from RuntimeNameMapTest (0 ms total)
+
+[----------] 1 test from WorkCellCompilerTest
+[ RUN      ] WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37
+[       OK ] WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37 (0 ms)
+[----------] 1 test from WorkCellCompilerTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 4 test suites ran. (1 ms total)
+[  PASSED  ] 4 tests.

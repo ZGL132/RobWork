@@ -6,14 +6,21 @@
  */
 
 #include "HostCompilePort.hpp"
+#include <sdurws/ird/ui/IDraftController.hpp> // 完整固定修订草稿源方法，需要公共源接口完整定义。
 
 #include "HostPresentationAdapters.hpp"  // HostRuntimeNameMapPort 完整类型（currentPresentation 现取面）
 
 #include <algorithm>
+#include <filesystem>
+#include <map>
+#include <set> // 冲突对象名称去重；稳定遍历顺序不依赖哈希容器。
 #include <stdexcept>
 #include <utility>
 
 #include <sdurws/ird/core/Digest.hpp>  // ContentDigester（合成 cv/digest——SHA-256 单一摘要路径）
+#include <sdurws/ird/io/ResourceIo.hpp> // 现有资源桥：SafePath/预算/Recorded复读仍归io。
+#include <sdurws/ird/io/IoDiagnostics.hpp> // 原io稳定码保留在资源失败细节中。
+#include <sdurws/ird/modeling/Codec.hpp> // 只读根清单与reader同源，宿主不复制声明键算法。
 
 namespace sdurws {
 namespace ird {
@@ -29,6 +36,124 @@ core::Digest256 sha256Of(const std::vector<std::uint8_t>& bytes)
     digester.update(bytes.data(), bytes.size());
     return digester.finalize();
 }
+
+/**
+ * @brief 同步编译期资源装配桥：闭包/外部记录→io验证→runtime，只机械转译。
+ *
+ * REQ-10夹具前置暴露原宿主从未绑定CompileRequest.resources。该对象由
+ * compileWorkCellAndDwc栈持有，注入源、io缓冲一同存活至S10结束；无共享
+ * 可变业务状态。Recorded每次实际读取和摘要复核由io执行，不能缓存旧字节。
+ */
+class HostCompileResources final : public runtime::IRuntimeResourceProvider,
+    private io::IProjectBytesSource, private io::IExternalRefSource {
+public:
+    /**
+     * @brief 装配同次根/reader的资源声明；错误根留给原S2产出定位诊断。
+     * @param closure [in] 同步编译闭包（非拥有，构造期读取后只持值副本）。
+     * @param reader [in] 原reader（非拥有），声明键仍由modeling生成。
+     * @param designToken [in] 根token，无单位；不存在根时保留空资源源。
+     * @throws std::logic_error 同次根清单与reader的数量/顺序契约不一致。
+     */
+    HostCompileResources(const HostProjectClosureView& closure,
+        const modeling::RobotDesignReader& reader, const std::string& designToken)
+    {
+        const auto root=closure.tryObjectByToken(designToken);
+        if (!root) { return; }
+        const modeling::RobotDesignCodec codec;
+        const auto decoded=codec.decode(root->bytes,modeling::kCurrentFormatVersion);
+        const auto described=reader.read(root->bytes,modeling::kRobotDesignSchemaVersion);
+        if (!decoded.ok() || !described.ok()
+            || !std::holds_alternative<modeling::RobotDesign>(decoded.get())) { return; }
+        const auto& manifest=std::get<modeling::RobotDesign>(decoded.get()).resourceManifest;
+        const auto& refs=described.get().resourceRefs;
+        // CanonicalBridge逐项按根清单序输出资源声明。核对数量/摘要/状态，
+        // 防止以后reader改序时静默把外部路径绑到另一个声明键。
+        if (manifest.size()!=refs.size()) {
+            throw std::logic_error("宿主资源装配：reader资源清单数量不一致");
+        }
+        for (std::size_t i=0;i<manifest.size();++i) {
+            const auto& entry=manifest[i]; const auto& ref=refs[i];
+            const bool recorded=entry.state==modeling::ResourceState::Recorded;
+            if (entry.contentDigest!=ref.contentDigest
+                || recorded!=(ref.state==runtime::ResourceState::Recorded)) {
+                throw std::logic_error("宿主资源装配：reader资源清单顺序/摘要不一致");
+            }
+            if (recorded && entry.externalRecord) {
+                io::ExternalRefRecord value;
+                value.externalRefId=ref.resourceId.toCanonical();
+                value.absPath=std::filesystem::u8path(entry.externalRecord->absPath);
+                value.recordedDigest=entry.externalRecord->recordedDigest;
+                m_records.emplace(value.externalRefId,std::move(value));
+            } else if (!recorded && entry.solidifiedObject) {
+                const auto object=closure.tryObject(entry.solidifiedObject->objectId);
+                if (object) {
+                    // 只持同一闭包的不可变副本；缺失/版本不符不能改读任意版本。
+                    const auto digest=sha256Of(object->bytes);
+                    if (digest==entry.solidifiedObject->contentVersion.bytes) {
+                        m_solidified.emplace(ref.resourceId.toCanonical(),object->bytes);
+                    }
+                }
+            }
+        }
+        m_adapter=io::makeRuntimeResourceAdapter(this,this);
+    }
+
+    /**
+     * @brief 现取io验证结果，按原三码映射；不吞错、不替代SafePath或预算。
+     * @param resourceId [in] reader提供的声明/固化键，原样回显。
+     * @return 成功为借用缓冲（io持有至本桥析构），失败含原io码与说明。
+     */
+    runtime::Expected<runtime::ResourceBytes,runtime::ResourceReadError>
+    tryResourceBytes(core::ObjectId resourceId) const override
+    {
+        using Result=runtime::Expected<runtime::ResourceBytes,runtime::ResourceReadError>;
+        if (!m_adapter) {
+            return Result::err({runtime::RuntimeErrorCode::ResourceMissing,resourceId,
+                "宿主资源声明不可用（根或reader失败，详见S2诊断）"});
+        }
+        const auto read=m_adapter->tryResourceBytes(resourceId);
+        if (read.status==io::ResourceReadStatus::Ok) {
+            return Result::ok({read.bytes.data,read.bytes.size,read.bytes.digest});
+        }
+        auto code=runtime::RuntimeErrorCode::ResourceMissing;
+        if (read.status==io::ResourceReadStatus::Changed) { code=runtime::RuntimeErrorCode::ResourceChanged; }
+        if (read.status==io::ResourceReadStatus::Budget) { code=runtime::RuntimeErrorCode::ResourceBudget; }
+        return Result::err({code,resourceId,std::string(io::errorCodeToken(read.error.code))+": "+read.error.detail});
+    }
+private:
+    /**
+     * @brief 按固化键读同次闭包副本，不从外部路径读取Solidified资源。
+     * @param objectId [in] 固化对象身份，原样作键，不拼接/剥离名称。
+     * @param cv [in] 内容版本；全零为io当前版本约定，非零须匹配摘要。
+     * @return 借用字节视图（本桥持有）；未命中ResNotFound，版本不符ResChanged。
+     */
+    io::IoResult<io::ProjectBytesView> tryObjectBytes(const core::ObjectId& objectId,
+        const core::ContentVersion& cv) const override
+    {
+        io::IoResult<io::ProjectBytesView> out;
+        const auto it=m_solidified.find(objectId.toCanonical());
+        if (it==m_solidified.end()) { out.error.code=io::IoErrorCode::ResNotFound; return out; }
+        const auto digest=sha256Of(it->second);
+        const bool unspecified=std::all_of(cv.bytes.begin(),cv.bytes.end(),[](auto b){return b==0;});
+        if (!unspecified && cv.bytes!=digest) { out.error.code=io::IoErrorCode::ResChanged; return out; }
+        out.value={it->second.data(),it->second.size(),digest}; return out;
+    }
+    /**
+     * @brief 按reader声明键读Recorded记录值，不猜路径、不替代io文件读取。
+     * @param id [in] io原样透传的声明键规范文本，无单位。
+     * @return 记录值副本；未命中ResNotFound，由io统一归为Missing。
+     */
+    io::IoResult<io::ExternalRefRecord> tryRecord(const io::IoString& id) const override
+    {
+        io::IoResult<io::ExternalRefRecord> out;
+        const auto it=m_records.find(id);
+        if(it==m_records.end()){out.error.code=io::IoErrorCode::ResNotFound;return out;}
+        out.value=it->second;return out;
+    }
+    std::map<std::string,std::vector<std::uint8_t>> m_solidified; ///< 同次闭包字节副本，构造后只读。
+    std::map<std::string,io::ExternalRefRecord> m_records; ///< 根清单记录值副本，路径不作身份。
+    io::IRuntimeResourceAdapterPtr m_adapter; ///< 最后声明，先析构；缓冲不比注入源活得更久。
+};
 
 /// project 修订视图 → runtime 修订摘要（机械投影——字段一一对应，零加工）。
 runtime::RevisionSummary toSummary(const project::RevisionView& view)
@@ -157,8 +282,8 @@ bool HostProjectClosureSource::objectInRevision(core::RevisionId revision,
 HostProjectClosureView::HostProjectClosureView(
     const project::IProjectQueryPort& query,
     std::string designToken,
-    const std::vector<std::pair<core::ObjectId, std::vector<std::uint8_t>>>* plannedBytes)
-    : m_query(&query), m_designToken(std::move(designToken)), m_plannedBytes(plannedBytes)
+    const std::vector<project::ObjectWrite>* plannedWrites)
+    : m_query(&query), m_designToken(std::move(designToken)), m_plannedWrites(plannedWrites)
 {
 }
 
@@ -171,14 +296,15 @@ std::optional<modeling::ClosureObject>
     // 先查计划写入覆盖层（同 token 的计划写入＝本次新建/重写的根对象——
     // 单命令至多一个 robot-design 写入，取首命中；处理器 S3 重复根约束
     // 的既有裁决面）。
-    if (m_plannedBytes != nullptr) {
-        for (const auto& entry : *m_plannedBytes) {
-            if (!entry.second.empty()) {
-                // 字节从计划载荷直供（根对象本次必然是计划写入——新建或
-                // 整体重写；基线复用不产生 robot-design 写入）。
+    if (m_plannedWrites != nullptr) {
+        for (const auto& entry : *m_plannedWrites) {
+            if (entry.objectTypeToken == objectTypeToken) {
+                // REQ-10：仅场景/工具更新时可以没有根写入；根也未必排首位。
+                // 按真实token筛选，不把首条部件字节伪装为机器人根；坏字节
+                // 仍交reader拒绝，不能用空载荷回落旧值来掩盖计划错误。
                 modeling::ClosureObject obj;
-                obj.objectTypeToken = m_designToken;
-                obj.bytes = entry.second;
+                obj.objectTypeToken = entry.objectTypeToken;
+                obj.bytes = entry.payloadCanonical;
                 return obj;
             }
         }
@@ -206,17 +332,14 @@ std::optional<modeling::ClosureObject>
     HostProjectClosureView::tryObject(const core::ObjectId& objectId) const
 {
     // 计划写入覆盖层优先（部件对象本次重写/新建——同源键空间）。
-    if (m_plannedBytes != nullptr) {
-        for (const auto& entry : *m_plannedBytes) {
-            if (entry.first == objectId && !entry.second.empty()) {
+    if (m_plannedWrites != nullptr) {
+        for (const auto& entry : *m_plannedWrites) {
+            if (entry.objectId == objectId) {
                 modeling::ClosureObject obj;
-                // token 未知（本视图不持 (oid,token) 映射——计划写入的
-                // token 在字节源覆盖层配对表里；部件解引用只消费字节，
-                // token 由 builder 复核面自行核对）——以空串投递会让
-                // builder 的 token 复核失据。改从字节源同款键表装配时
-                // 一并提供 token（编排侧装配 plannedBytes 对时携带）。
-                obj.objectTypeToken.clear();
-                obj.bytes = entry.second;
+                // 根sceneRefs/toolRefs解引用要求对象类型与身份同时匹配。
+                // 直接借用原计划槽保留二者，不能丢token再要求reader放宽校验。
+                obj.objectTypeToken = entry.objectTypeToken;
+                obj.bytes = entry.payloadCanonical;
                 return obj;
             }
         }
@@ -239,9 +362,145 @@ std::optional<modeling::ClosureObject>
     return std::nullopt;
 }
 
+HostRevisionClosureView::HostRevisionClosureView(
+    const project::IProjectQueryPort& query,project::RevisionView revision)
+    :m_query(&query),m_revision(std::move(revision))
+{
+    if(!m_revision.id.isValid()||!m_revision.branch.isValid()){
+        throw std::invalid_argument("固定回执闭包需要有效修订和分支");
+    }
+}
+
+std::optional<modeling::ClosureObject> HostRevisionClosureView::tryObjectByToken(std::string_view token)const
+{
+    const project::ObjectRef* unique=nullptr;
+    for(const auto& ref:m_revision.objectRefs){
+        if(ref.objectTypeToken!=token){continue;}
+        if(unique){return std::nullopt;} // 多根等歧义必须显式拒绝，不能取第一条猜结果。
+        unique=&ref;
+    }
+    return unique?tryObject(unique->objectId):std::nullopt;
+}
+
+std::optional<modeling::ClosureObject> HostRevisionClosureView::tryObject(const core::ObjectId& id)const
+{
+    const project::ObjectRef* unique=nullptr;
+    for(const auto& ref:m_revision.objectRefs){
+        if(ref.objectId!=id){continue;}
+        if(unique){return std::nullopt;} // 重复身份不是合法闭包，避免引用序影响结果。
+        unique=&ref;
+    }
+    if(!unique){return std::nullopt;}
+    const auto bytes=m_query->tryObject(unique->objectId,unique->contentVersion);
+    if(!bytes){return std::nullopt;} // 原读取失败由模块附对象定位，不回落到新版本。
+    return modeling::ClosureObject{unique->objectTypeToken,*bytes};
+}
+
+void acceptModelingCommittedSession(modeling::ModelingPluginAssembly& domain,
+    const project::IProjectQueryPort& query,const project::CommandResult& result)
+{
+    if(!result.committed()||!result.newRevision){
+        throw std::invalid_argument("建模完整回执只接受成功提交及其修订");
+    }
+    const auto revision=query.revision(*result.newRevision);
+    std::optional<core::ObjectId> root;
+    for(const auto& ref:revision.objectRefs){
+        if(ref.objectTypeToken!=modeling::kRobotDesignObjectType){continue;}
+        if(root){throw std::runtime_error("建模应用回执存在多个根对象");}
+        root=ref.objectId;
+    }
+    if(!root){throw std::runtime_error("建模应用回执缺少根对象");}
+    HostRevisionClosureView closure(query,revision);std::string error;
+    if(!domain.acceptAppliedSession(closure,*root,revision.branch,revision.id,error)){
+        throw std::runtime_error(error); // 模块保证失败原子性；runner保留Committed事实及脏标记。
+    }
+}
+
 // =====================================================================
 // HostModelCompilePort
 // =====================================================================
+
+std::optional<DraftDocumentProjection> readModelingRevisionDraft(
+    const project::IProjectQueryPort& query,const core::BranchId& branch,
+    const core::RevisionId& revisionId)
+{
+    if(!branch.isValid()||!revisionId.isValid()){
+        throw std::invalid_argument("建模修订读取需要有效分支和修订");
+    }
+    const auto revision=query.revision(revisionId);
+    if(revision.id!=revisionId||revision.branch!=branch){
+        throw std::runtime_error("建模修订读取的分支或修订不匹配");
+    }
+    std::optional<core::ObjectId> root;
+    for(const auto& ref:revision.objectRefs){
+        if(ref.objectTypeToken!=modeling::kRobotDesignObjectType){continue;}
+        if(root){throw std::runtime_error("建模修订含多个根，不能猜测新基线");}
+        root=ref.objectId;
+    }
+    if(!root){return std::nullopt;} // 无模型是合法事实，与读错严格区分。
+    // 临时域装配只复用其完整读取/Codec，不接面板、不写项目，也不接收旧草稿。
+    // 所有值按固定修订读取，不能由当前运行时逆推设计或复制恢复算法。
+    auto reader=modeling::createModelingPluginAssembly();HostRevisionClosureView closure(query,revision);
+    std::string error;
+    if(!reader.restoreCommittedSession(closure,*root,branch,revisionId,error)){
+        throw std::runtime_error(error);
+    }
+    return reader.modelingDraftSource().buildDraftDocument();
+}
+
+CommandResultProjection projectModelingCommandResult(
+    const project::IProjectQueryPort& query,const DraftDocumentProjection& draft,
+    CommandResultProjection result)
+{
+    // 只补project已拒绝的Stale；其他结局不能触发额外读盘或伪造详情。
+    if(result.status!=CommandResultProjection::Status::Rejected
+       ||result.rejectionReason!="stale-revision"){return result;}
+    if(draft.moduleId!=modeling::kModuleHandle||!draft.branchId.isValid()
+       ||!draft.baseRevisionId.isValid()){
+        throw std::invalid_argument("建模冲突回执缺少原草稿分支或基线");
+    }
+    const auto tips=query.branchTips();std::optional<core::RevisionId> tip;
+    for(const auto& row:tips){if(row.id==draft.branchId){tip=row.tip;break;}}
+    if(!tip){throw std::runtime_error("建模冲突目标分支已不存在");}
+    const auto base=query.revision(draft.baseRevisionId);const auto current=query.revision(*tip);
+    if(base.id!=draft.baseRevisionId||current.id!=*tip
+       ||base.branch!=draft.branchId||current.branch!=draft.branchId){
+        throw std::runtime_error("建模冲突修订身份或分支不匹配");
+    }
+    // 名称仍由完整域装配负责；不从自由diagnostics文本解析身份，不显示哈希。
+    const auto readNames=[&](const project::RevisionView& view){
+        auto domain=modeling::createModelingPluginAssembly();
+        const auto document=readModelingRevisionDraft(query,view.branch,view.id);
+        if(document){domain.modelingDraftSource().adoptRestoredDocument(*document);}
+        return domain;
+    };
+    auto oldDomain=readNames(base);auto newDomain=readNames(current);
+    using Pair=std::pair<std::optional<project::ObjectRef>,std::optional<project::ObjectRef>>;
+    std::map<std::string,Pair> objects;
+    for(const auto& ref:base.objectRefs){objects[ref.objectId.toCanonical()].first=ref;}
+    for(const auto& ref:current.objectRefs){objects[ref.objectId.toCanonical()].second=ref;}
+    StaleRevisionDetailProjection detail;detail.draftBaseRevision=base.id.toCanonical();
+    detail.currentTipRevision=current.id.toCanonical();
+    detail.advancedSummary="修订序号 "+std::to_string(current.seq)+"："+current.commandSummary;
+    std::set<std::string> seen;
+    for(const auto& item:objects){
+        const auto& before=item.second.first;const auto& after=item.second.second;
+        if(before&&after&&*before==*after){continue;} // 保留历史的未变引用不是差异。
+        const auto& ref=after?*after:*before;std::string name;
+        if(!newDomain.tryDraftObjectName(ref.objectId,name)
+           &&!oldDomain.tryDraftObjectName(ref.objectId,name)){
+            // 根/位姿/传动并非可选几何锚，名称面可能没有它们，用中文类型标签。
+            // 删除工具/场景先从旧固定修订解析，不依赖当前运行时名称目录。
+            if(ref.objectTypeToken==modeling::kRobotDesignObjectType){name="机器人设计";}
+            else if(ref.objectTypeToken==modeling::kNamedPoseSetObjectType){name="命名位姿";}
+            else if(ref.objectTypeToken==modeling::kRobotDrivetrainObjectType){name="传动设计";}
+            else if(ref.objectId==current.metadataRef.objectId){name="工程元数据";}
+            else{name="工程配置对象";}
+        }
+        if(seen.insert(name).second){detail.involvedObjectNames.push_back(std::move(name));}
+    }
+    result.staleDetail=std::move(detail);return result;
+}
 
 HostModelCompilePort::HostModelCompilePort(Deps deps)
     : m_deps(std::move(deps)),
@@ -267,14 +526,13 @@ project::CompileResult
     const project::RevisionView base = request.query.revision(request.baseRevision);
     runtime::RevisionSummary summary = toSummary(base);
 
-    // 计划写入键/字节/（oid,字节）三表并行装配——字节源/闭包源/reader
+    // 计划写入键/字节两表装配；reader直接借用完整计划槽，保留类型，避免
+    // 第三份(oid,bytes)投影遗漏token。字节源/闭包源/reader
     // 闭包视图同源消费（§9.2 同源绑定的编排侧执行）。
     std::vector<std::pair<core::ObjectId, core::ContentVersion>> plannedKeys;
     std::vector<std::vector<std::uint8_t>> plannedByteCopies;
-    std::vector<std::pair<core::ObjectId, std::vector<std::uint8_t>>> plannedPairs;
     plannedKeys.reserve(request.plannedWrites.size());
     plannedByteCopies.reserve(request.plannedWrites.size());
-    plannedPairs.reserve(request.plannedWrites.size());
     for (const project::ObjectWrite& write : request.plannedWrites) {
         if (!write.objectId.has_value()) {
             continue;  // 申请新对象（project 分配）不会出现在 S5——S3 已解析
@@ -283,7 +541,6 @@ project::CompileResult
         cv.bytes = sha256Of(write.payloadCanonical);
         plannedKeys.emplace_back(*write.objectId, cv);
         plannedByteCopies.push_back(write.payloadCanonical);
-        plannedPairs.emplace_back(*write.objectId, write.payloadCanonical);
 
         // 计划写入引用进合成修订（同 oid 基线引用被覆盖——对象全量替换
         // 语义；引用表去重以计划写入优先，编译器逐项取数即得新态）。
@@ -306,8 +563,9 @@ project::CompileResult
     HostProjectObjectBytesSource bytesSource(*m_deps.query, plannedKeys,
                                              plannedByteCopies);
     HostProjectClosureView closureView(*m_deps.query, m_deps.designObjectTypeToken,
-                                       &plannedPairs);
+                                       &request.plannedWrites);
     const modeling::RobotDesignReader reader(&closureView);
+    HostCompileResources resources(closureView,reader,m_deps.designObjectTypeToken);
 
     // ---- 第三步：runtime 请求装配＋十段链整体事务（§5——S1～S10；DWC
     // 默认请求＝MDL-06 双编译语义；取消令牌不注入——命令执行槽内同步
@@ -318,6 +576,7 @@ project::CompileResult
     rtRequest.objects = &bytesSource;
     rtRequest.closure = &closureSource;
     rtRequest.designReader = &reader;
+    rtRequest.resources = &resources;
     // options 取默认（requestDynamicWorkCell=true＝双编译；includeCollision
     // Geometry=true——呈现几何与碰撞几何齐备，宿主挂接即完整模型）。
 

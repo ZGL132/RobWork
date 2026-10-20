@@ -1,0 +1,85 @@
+Note: Google Test filter = PluginPanel.RegionPreviewAxisAlignedAndBounded_REQ03_WP14T12
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PluginPanel
+[ RUN      ] PluginPanel.RegionPreviewAxisAlignedAndBounded_REQ03_WP14T12
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(629): error: Expected equality of these values:
+  changed
+    Which is: 2
+  1
+三维格线不得成为面对角线
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(632): error: Value of: regionPreviewGeometry(random, service).gridLines.empty()
+  Actual: false
+Expected: true
+随机样本未生成，不可拿旧Grid载荷画格
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(634): error: Value of: regionPreviewGeometry(zero, service).gridLines.empty()
+  Actual: false
+Expected: true
+位置样本乘积为零，仅显示盒轮廓
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(637): error: Expected: (preview.gridLines.size()) <= (3267u), actual: 30003 vs 3267
+最多33×33×3条呈现辅助线，不改变真实计划
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\PluginPanelTest.cpp(638): error: Expected: (preview.summaryText.find("抽稀")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+辅助显示抽稀必须可见
+
+[  FAILED  ] PluginPanel.RegionPreviewAxisAlignedAndBounded_REQ03_WP14T12 (2 ms)
+[----------] 1 test from PluginPanel (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] PluginPanel.RegionPreviewAxisAlignedAndBounded_REQ03_WP14T12
+
+ 1 FAILED TEST

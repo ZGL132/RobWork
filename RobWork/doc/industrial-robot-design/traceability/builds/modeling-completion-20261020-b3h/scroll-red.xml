@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="1" disabled="0" errors="0" time="5.923" timestamp="2026-10-20T11:42:51.388" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="1.553" timestamp="2026-10-20T11:42:51.388">
+    <testcase name="ToolManagerPendingSelectionReadOnly_MDL13_AT01" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="2205" status="run" result="completed" time="1.553" timestamp="2026-10-20T11:42:51.388" classname="ModelingPanelGuiTest" />
+  </testsuite>
+  <testsuite name="ModelingUiModuleHostWiring" tests="3" failures="1" disabled="0" skipped="0" errors="0" time="4.369" timestamp="2026-10-20T11:42:52.941">
+    <testcase name="EmptyToolManagerEntry_MDL13_AT01" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="970" status="run" result="completed" time="0.964" timestamp="2026-10-20T11:42:52.941" classname="ModelingUiModuleHostWiring" />
+    <testcase name="ToolManagerHistoryBodyAndNavigation_MDL13_AT01" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="1063" status="run" result="completed" time="1.144" timestamp="2026-10-20T11:42:53.906" classname="ModelingUiModuleHostWiring">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:1113&#x0A;Value of: scroll-&gt;viewport()-&gt;rect().contains(bodyApply-&gt;mapTo(scroll-&gt;viewport(),bodyApply-&gt;rect().center()))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:1113
+Value of: scroll->viewport()->rect().contains(bodyApply->mapTo(scroll->viewport(),bodyApply->rect().center()))
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="ToolRealFileDialogAndStaleGuard_MDL13_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="1123" status="run" result="completed" time="2.261" timestamp="2026-10-20T11:42:55.050" classname="ModelingUiModuleHostWiring" />
+  </testsuite>
+</testsuites>

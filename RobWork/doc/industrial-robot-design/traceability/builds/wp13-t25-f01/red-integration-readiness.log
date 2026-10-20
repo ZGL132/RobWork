@@ -1,0 +1,22 @@
+Note: Google Test filter = MdlReadiness.NoVelocitySchemaGapNote*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlReadiness
+[ RUN      ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25
+C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ReadinessTest.cpp(753): error: Expected equality of these values:
+  n.subjectPath.find("drivetrain.velocityAcceleration")
+    Which is: 0
+  std::string::npos
+    Which is: 18446744073709551615
+速度/加速度已入 schema（F01）——不得再登记 schema 缺项预告: drivetrain.velocityAcceleration
+
+[  FAILED  ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25 (0 ms)
+[----------] 1 test from MdlReadiness (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25
+
+ 1 FAILED TEST

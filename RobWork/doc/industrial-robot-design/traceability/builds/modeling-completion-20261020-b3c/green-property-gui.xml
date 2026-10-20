@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="2.366" timestamp="2026-10-20T08:48:32.122" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.667" timestamp="2026-10-20T08:48:32.122">
+    <testcase name="PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="257" status="run" result="completed" time="0.667" timestamp="2026-10-20T08:48:32.122" classname="ModelingPanelGuiTest" />
+  </testsuite>
+  <testsuite name="ModelingImportGui" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="1.699" timestamp="2026-10-20T08:48:32.790">
+    <testcase name="PropertySegmentsOnFlangeProductionEntry_MDL05" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingImportGuiTest.cpp" line="59" status="run" result="completed" time="0.634" timestamp="2026-10-20T08:48:32.790" classname="ModelingImportGui" />
+    <testcase name="PropertySegmentWindowValidationAndLocalHistory_MDL05" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingImportGuiTest.cpp" line="82" status="run" result="completed" time="0.723" timestamp="2026-10-20T08:48:33.424" classname="ModelingImportGui" />
+    <testcase name="PropertyEmptyLongTableCancel_MDL05" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingImportGuiTest.cpp" line="148" status="run" result="completed" time="0.341" timestamp="2026-10-20T08:48:34.147" classname="ModelingImportGui" />
+  </testsuite>
+</testsuites>

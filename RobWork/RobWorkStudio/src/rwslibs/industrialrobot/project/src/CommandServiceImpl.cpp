@@ -659,6 +659,27 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
         commitPlan.parentRevisionId = baseView.id;
     }
 
+    // ARC-01／§4.4.2／WP-14-T12 A-13：域处理器只声明增量，但新修订
+    // 必须自足。常规提交沿 S2 已受理分支基线保留未改对象；建支时实际
+    // parent 可能来自另一源分支，必须跟随该源 tip，不能混入磁盘 HEAD 的对象。
+    // 两种底本均取自 project 查询权威，且仍在既有命令槽内，不缓存跨线程视图。
+    const RevisionView retainedBase = *commitPlan.parentRevisionId == baseView.id
+        ? baseView : m_host.query().revision(*commitPlan.parentRevisionId);
+    commitPlan.retainedObjects.reserve(retainedBase.objectRefs.size());
+    for (const ObjectRef& ref : retainedBase.objectRefs) {
+        if (ref.objectId == retainedBase.metadataRef.objectId) {
+            // 元数据总由事务引擎产生新版本；旧元数据仅经历史/谱系引用留存。
+            continue;
+        }
+        const bool replaced = std::any_of(
+            commitPlan.newObjects.begin(), commitPlan.newObjects.end(),
+            [&ref](const tx::PlannedObject& obj) { return obj.oid == ref.objectId; });
+        if (!replaced) {
+            // 保留项维持基线稳定顺序，不重写字节、不重新编址；同 OID 更新只留新引用。
+            commitPlan.retainedObjects.push_back(ref);
+        }
+    }
+
     // 命令留痕（§4.4.4/§6.4 版本三元组）：project 原样持久化不解释
     // （D-10）。
     commitPlan.command.commandType = envelope.commandType;

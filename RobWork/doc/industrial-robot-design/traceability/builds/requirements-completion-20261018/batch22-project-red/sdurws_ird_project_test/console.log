@@ -1,0 +1,21 @@
+Note: Google Test filter = CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandSubmitS6
+[ RUN      ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\CommandServiceTest.cpp(485): error: Expected equality of these values:
+  domainObjects
+    Which is: 1
+  expectedDomainObjects++
+    Which is: 2
+
+[  FAILED  ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit (112 ms)
+[----------] 1 test from CommandSubmitS6 (112 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (112 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+
+ 1 FAILED TEST

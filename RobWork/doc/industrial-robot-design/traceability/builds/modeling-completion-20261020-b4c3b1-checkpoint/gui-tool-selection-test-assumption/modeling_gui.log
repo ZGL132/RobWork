@@ -1,0 +1,22 @@
+Note: Google Test filter = *ConflictRebuildRefreshesTreeAndCancelsPending*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(1251): error: Expected equality of these values:
+  currentName->text()
+    Which is: {}
+  "current-gripper"
+    Which is: 00007FF774EEBDF0
+旧未确认输入不能回写到新修订的工具
+
+[  FAILED  ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21 (746 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (746 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (748 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21
+
+ 1 FAILED TEST

@@ -434,6 +434,9 @@ TEST(ReqEditor, EmptyRootLoadBaselineAndFirstEdit_UI_T35)
     p.objectId = core::ObjectId::generate();
     p.name = "工位";
     p.pose.constrainedDof.z = true;  // 至少约束一个分量（I-REQ-5）
+    // 与生产新增工位相同，作业段恒启用；此用例验证空根首编辑，
+    // 不能靠遗漏work初始化绕过REQ-02不变量。
+    p.work = TaskSegment{true, SegmentAxis::ToolZ, 1.0};
     p.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
         rw::math::Vector3D<double>(0.0, 0.0, 0.0),
         core::ValueProvenance::make(core::ProvenanceKind::UserProvided));

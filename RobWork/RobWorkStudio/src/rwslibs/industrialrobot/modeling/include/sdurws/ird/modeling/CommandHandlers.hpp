@@ -130,6 +130,8 @@ namespace sdurws::ird::modeling {
 /// @brief apply-robot-design——写入 robot-design 根对象（＋新增部件对象）；
 ///        requiresDualCompile=true（§9.3 表行 1——权威参数化对象入 WC/DWC）。
 inline constexpr std::string_view kCmdApplyRobotDesign = "apply-robot-design";
+/// PM-04/B4c-2：一次应用完整工作集。v2根首槽+完整部件槽，旧五token语义不变。
+inline constexpr std::string_view kCmdApplyModelingWorkingSet = "apply-modeling-working-set";
 
 /// @brief apply-tool-definition——写入 tool-definition（＋根引用表增量）；
 ///        requiresDualCompile=true（工具几何/物性入 WC/DWC——§9.3 表行 2）。
@@ -140,7 +142,8 @@ inline constexpr std::string_view kCmdApplyToolDefinition = "apply-tool-definiti
 inline constexpr std::string_view kCmdApplySceneObjects = "apply-scene-objects";
 
 /// @brief apply-named-poses——写入 named-pose-set；requiresDualCompile=
-///        false（不进 Description——§9.3 表行 4；纯参考数据零编译影响）。
+///        false（Apply及纯位姿Restore不进Description——§9.3表行4）；
+///        历史Restore若同时恢复其他运行时输入则按实际闭包差异要求双编译。
 inline constexpr std::string_view kCmdApplyNamedPoses = "apply-named-poses";
 
 /// @brief apply-drivetrain-design——写入 robot-drivetrain；requiresDual
@@ -480,6 +483,10 @@ inline constexpr std::uint32_t kCommandPayloadVersion = 2;
  * 身份语义（与 ModelingWorkingSet 的临时句柄纪律衔接——Template.hpp 注）：
  *   - allocateNew=true：新对象——objectId 须为全零保留值（未分配标记），
  *     prepare 经 ctx.objectId() 取号回填（PA-1：身份分配唯一归 project）；
+ *     仅apply-modeling-working-set的新部件槽例外：必须携有效请求内临时ID，
+ *     与内嵌ID相等且不在基线已知身份中，用于根引用精确关联；持久写入前重新取号。
+ *     该新token的根新增槽仍为全零，其完整部件槽与根引用必须一一对应。
+ *     Restore只接受已有持久ID，旧五命令仍按全零新增槽契约受理。
  *   - allocateNew=false：既有对象替换——objectId 须有效且存在于基线闭包
  *     （写不存在的身份＝无效输入）。
  *
@@ -629,6 +636,16 @@ struct HandlerServices {
     /// （I-MDL-11 重算复核），mimic/planar/floating/闭环阻断不随动（M-6，
     /// 阻断判定在导入域固定、不消费本能力位）。单元卡 §15 v0.45 登记）。
     CouplingStage couplingStage = CouplingStage::R1Locked;
+
+    /**
+     * @brief A-23/MDL-06：按prepare的不可变基线修订解析实际工程策略。
+     * @param base [in] 本次命令基线的完整对象引用集；不得用可变HEAD替代。
+     * @return 已发布策略或空策略及定位诊断；空策略使行程断言就地阻断。
+     * 默认空回调兼容既有policyProvider/object/version；非空时此回调为唯一来源。
+     * 由宿主持有并保证闭包生命周期覆盖处理器；仅命令执行线程调用，不得修改修订。
+     * 异常仅用于装配契约违约；数据/环境错误沿PolicyResolution诊断返回。
+     */
+    std::function<policy::PolicyResolution(const project::RevisionView&)> resolvePolicyForRevision;
 };
 
 /**
@@ -736,8 +753,8 @@ protected:
     /// 共用断言套件（由 m_services.assertionPorts 构造——与就绪校验同一
     /// 判定面，NFR-MNT-04；声明序在 m_services 之后——初始化依赖）。
     AssertionSuite m_suite;
-    /// 本命令的 requiresDualCompile 声明（§9.3 表列——apply-named-poses
-    /// 为 false，其余 true）。
+    /// 本命令的 requiresDualCompile 最低要求（§9.3表列——apply-named-poses
+    /// 为false，其余true）；历史Restore改变运行时闭包时由私有规划结果补充。
     bool m_requiresDualCompile;
 };
 
@@ -848,7 +865,8 @@ protected:
 
 /**
  * @brief apply-named-poses 处理器（§9.3 表行 4；requiresDualCompile=
- *        false——不进 Description；无物性断言（纯参考数据））。
+ *        false——Apply及纯位姿Restore不进Description；历史Restore改变
+ *        工具/场景等活动运行时内容时要求双编译，避免项目与快照脱节）。
  *
  * 槽形状语义：Apply 模式恰一个 named-pose-set 槽；基线须已有根。槽内
  * entries＝用户命名位姿全集——经 mergeNamedPoseEntries 合并流（§4.6/
@@ -859,8 +877,9 @@ protected:
  * 载荷（域结构校验——值面违例明细见 PoseEditErrorCode）。allocateNew→
  * 取号＋根 poseSetRef 置入（根内该引用须原为未设置——"至多一份"）；
  * 显式 oid→基线既有位姿集字节替换。位姿集不经名称映射、不进任何评估器
- * 依赖键（§4.6/D-MDL-3）——本命令零编译影响，S5 跳过双编译（位姿集修
- * 订不触发重算）。
+ * 依赖键（§4.6/D-MDL-3）——纯位姿修改零编译影响，S5跳过双编译。
+ * Restore沿旧历史帧受理已有对象原字节，可重新挂接根引用的保留部件；
+ * 仅当位姿以外的活动运行时内容变化时额外编译，不改变纯位姿不重算语义。
  */
 class ApplyNamedPosesHandler final : public IModelingCommandHandler {
 public:
@@ -909,12 +928,12 @@ protected:
 };
 
 /**
- * @brief 五命令处理器族装配注册（project.md §6.5——L5 应用壳装配期一
+ * @brief 旧五命令及完整工作集命令装配注册（project.md §6.5——L5 装配期一
  *        次性；注册表所有权接收 unique_ptr，重复 token 注册边界拒绝）。
  *
  * @param registry       [in,out] 目标注册表（调用方持有——本函数不接管）
  * @param services       [in] 全族共享的装配服务集（AssertionSuite 端口＋
- *                       ④端口锚定——五处理器持同一服务集；处理器无状态
+ *                       ④端口锚定——六处理器持同一服务集；无会话可变态
  *                       ——共享安全）
  * @throws std::invalid_argument 注册表拒绝（token 重复——同族二次装配即
  *         装配错误，fail-fast）

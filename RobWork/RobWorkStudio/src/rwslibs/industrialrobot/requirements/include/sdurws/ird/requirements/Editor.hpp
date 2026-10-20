@@ -276,6 +276,31 @@ public:
     virtual EditOutcome applyEdit(const EditBatch& batch) = 0;
 
     /**
+     * @brief A-18 增列：任意编辑组合的原子应用——edits 依序应用于候选
+     *        工作集，全部接受＝**恰一次**撤销入栈（undoLocal 一次整体
+     *        回滚）＋重做栈清空＋编辑计数 +N；任一拒绝＝工作集与栈全部
+     *        不变（@post 与单条 applyEdit 同款，不落半批）。
+     *
+     * 落位动因（WP-14-T12 A-18，"无独立计划页"所有者裁决 2026-10-19）：
+     * 区域采样确认＝区域编辑＋派生计划 upsert 两编辑一撤销；区域删除＝
+     * 计划随删＋区域移除两编辑一撤销（删除保护④"被计划引用的区域"要
+     * 求计划先于区域移除——组合内依序即自然满足）。EditBatch（T07）是
+     * TaskPoint 批次专形，本接口为其任意编辑组合的泛化——单条 applyEdit
+     * 与 EditBatch 语义零变化。
+     *
+     * 校验链：与单条 applyEdit 同源（NFR-MNT-04——逐条复用同一校验函数，
+     * 零第二份）；中段拒绝的整体回滚由实现保证（快照还原）。
+     *
+     * @param edits [in] 编辑序列（值语义——依序应用；空序列＝调用方错
+     *              误，拒绝）
+     * @return 接受/拒绝＋合并摘要（changeSummary＝逐条摘要换行拼接）
+     *
+     * 线程约束：仅 UI 线程。
+     */
+    virtual EditOutcome applyEditsAtomic(
+        const std::vector<RequirementEdit>& edits) = 0;
+
+    /**
      * @brief 局部撤销一步（§9.3 undoLocal——零修订；编辑器工作集回退，
      *        项目级撤销归 project 逆命令——两套撤销分离，REQ-11）。
      * @return true＝撤销成功（工作集回退一步）；false＝无可撤销编辑
@@ -315,6 +340,8 @@ public:
     const RequirementWorkingSet& workingSet() const noexcept override { return ws_; }
     EditOutcome applyEdit(const RequirementEdit& edit) override;
     EditOutcome applyEdit(const EditBatch& batch) override;
+    EditOutcome applyEditsAtomic(
+        const std::vector<RequirementEdit>& edits) override;
     bool undoLocal() noexcept override;
     bool redoLocal() noexcept override;
     std::string buildChangeSummary() const override { return summary_; }

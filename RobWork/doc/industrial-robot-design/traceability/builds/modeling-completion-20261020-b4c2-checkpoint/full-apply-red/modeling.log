@@ -1,0 +1,40 @@
+Note: Google Test filter = ModelingCompleteApply.*:MdlCompleteWorkingSet.*
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingCompleteApply
+[ RUN      ] ModelingCompleteApply.EmitsAllPartSlotsAndStableTemporaryReferences_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(890): error: Expected equality of these values:
+  envelope->commandType
+    Which is: "apply-robot-design"
+  "apply-modeling-working-set"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(892): error: Expected equality of these values:
+  payload->objects.size()
+    Which is: 1
+  5U
+    Which is: 5
+只提交根会丢掉部件修改和新建对象
+
+[  FAILED  ] ModelingCompleteApply.EmitsAllPartSlotsAndStableTemporaryReferences_PM04_AT21 (0 ms)
+[----------] 1 test from ModelingCompleteApply (0 ms total)
+
+[----------] 2 tests from MdlCompleteWorkingSet
+[ RUN      ] MdlCompleteWorkingSet.AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(777): error: Expected: (handler) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] MdlCompleteWorkingSet.AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21 (0 ms)
+[ RUN      ] MdlCompleteWorkingSet.RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(803): error: Expected: (handler) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] MdlCompleteWorkingSet.RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21 (0 ms)
+[----------] 2 tests from MdlCompleteWorkingSet (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] ModelingCompleteApply.EmitsAllPartSlotsAndStableTemporaryReferences_PM04_AT21
+[  FAILED  ] MdlCompleteWorkingSet.AllocatesAndRemapsEveryPartInOnePlan_PM04_AT21
+[  FAILED  ] MdlCompleteWorkingSet.RejectsIncompleteDuplicateAndReusedIdentities_PM04_AT21
+
+ 3 FAILED TESTS

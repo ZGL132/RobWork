@@ -143,6 +143,23 @@ public:
      */
     void setPostEditAction(PostEditAction action);
 
+    /**
+     * @brief 固定模态交互的原编辑器和会话代次，确认写回前现查可写资格（REQ-08）。
+     * @param editor [in] 非拥有编辑器身份；只比较地址，调用方保证成功守卫后才解引用。
+     * @return UI线程调用的谓词；面板销毁、脱离/重载、禁写或编辑器变化返回false。
+     * 不读取模型副本、不写草稿；std::bad_alloc按环境内存失败向外传播。
+     */
+    std::function<bool()> interactiveWriteGuard(const IRequirementEditor* editor) const;
+
+    /**
+     * @brief 固定内联引用表单的完整工作集和目录，排队写回前拒绝漂移。
+     * @param editor [in] 非拥有编辑器身份；先过寿命/会话守卫才读取其工作集。
+     * @param choices [in] 与表单同一拍取得的目录值快照；空不等于未装配。
+     * @return 仅UI线程调用的谓词；会话/工作集/目录变化返回false，零写入。
+     */
+    std::function<bool()> referenceEditGuard(const IRequirementEditor* editor,
+        const std::vector<RequirementsReferenceChoice>& choices) const;
+
     /** @brief 注入区域三维预览出口（装配期；不注入＝预览仅文本摘要）。 */
     void setRegionPreviewSink(RegionPreviewSink sink);
 
@@ -213,6 +230,12 @@ public:
      *        器基线复位的事实对齐），控件投影收拢为无会话空态（树/表/
      *        卡片清空、生命周期与撤销键全禁、空态提示显现）。零修订。
      */
+    /**
+     * @brief 绑定按次现取的名称/三维交互能力；仅UI线程，不缓存跨域真值。
+     * @param seams [in] 宿主值回调副本；空函数明确降级，环境由宿主持有至面板销毁。
+     * 重新绑定推进交互代次，旧模态确认零写入；本函数不查询或修改项目。
+     */
+    void setView3DSeams(RequirementsView3DSeams seams);
     void resetForSessionDetached();
 
     /**
@@ -281,6 +304,8 @@ public:
 
     /// 编辑接受分支：全面板增量刷新（经编辑目标提供器现取工作集）＋脏标记呈现。
     void onEditApplied(const std::string& changeSummary) override;
+    /** @brief 批次接受后记录一次局部撤销并刷新；仅UI线程，摘要[in]为UTF-8文字。 */
+    void onBatchEditApplied(const std::string& changeSummary) override;
     /// 会话脏通知（标题 `*` 标记呈现半区——PM-04/PM-11；信号上呈装配层）。
     void notifySessionDirty() override;
 
@@ -400,24 +425,22 @@ private:
 
     /// 工位值提交（复合/二态控件共用轨——队列化出信号处理器：提交链同步
     /// 刷新重建控件树，槽内直执＝发射控件被删 use-after-free——返工修复）。
+    /// @brief 基于发起时完整工位基线排队变换；仅UI线程，过期拒绝，不拥有编辑器。
+    void queueStationEdit(std::function<TaskPoint(const TaskPoint&)> transform);
     void submitStationValue(const std::string& key, const QString& text);
-    void submitStationValueNow(const std::string& key, const QString& text);
     /// 工位二态提交（applyStationToggleEdit——启用开关/自由度矩阵共用）。
     void submitStationToggle(const std::string& key, bool on);
-    void submitStationToggleNow(const std::string& key, bool on);
     /// 工位枚举提交（applyStationEnumEdit——等级 QComboBox；UI-T37 返工）。
     void submitStationEnumValue(const std::string& key, const QString& text);
-    void submitStationEnumValueNow(const std::string& key, const QString& text);
     /// 区域值提交（onRegionFieldEditingFinished 的 sender 无关形）。
+    /// @brief 固定原编辑器/区域/完整基线的UI队列；transform为值变换，无外部所有权。
+    void queueRegionEdit(std::function<WorkRegion(const WorkRegion&)> transform);
     void submitRegionValue(const std::string& key, const QString& text);
-    void submitRegionValueNow(const std::string& key, const QString& text);
     /// 区域二态提交（applyRegionToggleEdit）。
     void submitRegionToggle(const std::string& key, bool on);
-    void submitRegionToggleNow(const std::string& key, bool on);
     /// 区域采样计数提交（applyRegionSamplingCountsEdit——counts 三元组整数
     /// 回填；formatCounts 的逆变换，域规范化/裁决仍走 submitEntryEdit）。
     void submitRegionCounts(const std::array<std::uint32_t, 3>& counts);
-    void submitRegionCountsNow(const std::array<std::uint32_t, 3>& counts);
     /// 工位行键→所属卡片表单路由（词表分派——键族集合封闭）。
     QFormLayout* stationFormForKey(const std::string& key) const;
     /// 区域/工况表行同步（信号屏蔽——树点击驱动检查器联动用；返工③）。
@@ -426,9 +449,16 @@ private:
     /// 区域/工况枚举提交（applyRegionEnumEdit/applyConditionEnumEdit——
     /// 等级与启用 QComboBox 轨；返工②）。
     void submitRegionEnumValue(const std::string& key, const QString& text);
-    void submitRegionEnumValueNow(const std::string& key, const QString& text);
     void submitConditionEnumValue(const std::string& key, const QString& text);
-    void submitConditionEnumValueNow(const std::string& key, const QString& text);
+    /**
+     * @brief 执行已绑定原工况的排队字段提交；全在UI线程，不持控件裸指针。
+     * @param key [in] 名称/备注/枚举或数量词表键。
+     * @param text [in] 用户原始输入；数量含显式显示单位。
+     * @param base [in] 发起时对象及值；已改变则拒绝，避免过期写入。
+     * @param expectedEditor [in] 发起会话的非拥有指针，仅用于身份比较，绝不解引用。
+     */
+    void submitConditionEnumValueNow(const std::string& key, const QString& text,
+                                    const OperatingCondition& base, IRequirementEditor* expectedEditor);
     /// 状态文本统一出口（横幅可见性随文本——R2 警示条）。
     void showStatusLine(const QString& text);
 
@@ -445,12 +475,26 @@ private:
     /// 新增槽：构造合法起步条目（域夹具同款默认值）＋自动名防撞 →
     /// applyEdit → 接受＝sink 链刷新＋选中新条目；拒绝＝状态行就地错误。
     void onAddEntry(WorkingSetMember member);
+
+    /**
+     * @brief REQ-08：调用宿主临时三维工具，确认后复核基线并一次排队写回。
+     * @param creating [in] true创建World工位，false仅移动选中工位位置，保留其规则/引用。
+     * 仅UI线程；宿主取消、缺缝、会话/目录/参考系变化均零写入并就地反馈。
+     */
+    void onEditTarget3D(bool creating);
     /// 复制槽：当前选中条目深拷贝＋新 id＋『 副本』名防撞 → applyEdit →
     /// 选中副本；溯源字段保持源值（复件非伪造模板物——诚实登记）。
     void onDuplicateEntry(WorkingSetMember member);
     /// 删除槽：选中条目 removeEdit → 接受后锚回落（同集合规范序次条，
     /// 空集合＝清空选中）；拒绝（含被必验引用等域拒绝面）＝就地错误。
     void onRemoveEntry(WorkingSetMember member);
+    /// A-18：构建区域采样计划条目的 upsert 编辑值（"无独立计划页"所有
+    /// 者裁决 2026-10-19——计划随区域采样定义派生，构建单点＝
+    /// ISamplingPlanBuilder（D-REQ-2 规范化唯一实现）；同区域复用既有
+    /// 计划 id（R6 一一对应）；构建拒绝＝就地呈现并返回 nullopt）。
+    /// 调用方经 applyEditsAtomic 与区域编辑原子提交（恰一次撤销）。
+    std::optional<RequirementEdit> buildRegionPlanEdit(
+        IRequirementEditor& editor, const WorkRegion& region);
     /// 集合内未占用的条目名（base 后缀递增——I-REQ-3 拒绝面前的第一道
     /// 防线；撞名仍由域侧裁决，双保险）。
     std::string uniqueEntryName(const RequirementWorkingSet& ws,
@@ -458,6 +502,22 @@ private:
     /// 结构编辑统一提交轨（applyEdit → 接受走 onEditApplied sink 链——
     /// UI-T29 组合子随之触发就绪重估；拒绝就地报错。返回接受与否）。
     bool submitStructuralEdit(const RequirementEdit& edit);
+    /// A-18：结构编辑组合的原子提交轨（applyEditsAtomic——恰一次撤销；
+    /// 记账与 sink 链同单编辑版，一次入账对应一次组合回滚）。
+    bool submitStructuralEditsAtomic(const std::vector<RequirementEdit>& edits);
+    /// ★ 批35（评审 P1-5）：区域写入统一入口——有派生计划＝区域＋计划
+    /// upsert 原子批（计划随几何/采样同步）；无计划＝单编辑轨；构建拒绝
+    /// ＝整个编辑拒绝。单字段轨与批量参数表轨共用（两条写路径不漏同步）。
+    bool submitRegionEditWithPlanSync(IRequirementEditor& editor,
+                                      const WorkRegion& candidate);
+
+    /**
+     * @brief 创建非模态数量参数表；筛选/单位/粘贴统一复用UI公共组件（UX-05）。
+     * @param base [in] 当前工位/区域/工况的完整值基线；其他编辑类型属装配错误。
+     * @return Qt父子树托管的表单；确认只排队提交到原编辑器和未改变的原对象。
+     * 仅UI线程；缺失值不补零，领域拒绝时保留原工作集并显示诊断。
+     */
+    QWidget* makeBatchParameterTable(const RequirementEdit& base);
     std::vector<ui::CommandDescriptor> m_commands;  ///< 域命令目录（§9.8 九条——装配数据）
     CommandSubmitFn m_commandSubmit;          ///< 命令提交出口（装配层注入；空＝按钮禁用）
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询
@@ -466,7 +526,9 @@ private:
     RegionPreviewSink m_regionPreview;        ///< 区域三维预览出口（装配层注入；空＝文本摘要）
     StationMarkersSink m_stationMarkersSink;  ///< 工位标记出口（UI-T33——装配层注入；空＝无投递）
     ConditionWizardFn m_conditionWizard;      ///< 工况向导缝（空＝内建对话框——R2）
+    RequirementsView3DSeams m_view3dSeams; ///< 回调由宿主持有环境；只在UI交互时现取值。
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）
+    std::uint64_t m_interactionEpoch = 0;      ///< UI交互代次；会话/基线/写资格变化使旧确认失效。
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）
     bool m_sessionDetached = false;           ///< 会话脱离旗标（UI-T39——resetFor-
                                               ///< SessionDetached 置位、refreshPanel

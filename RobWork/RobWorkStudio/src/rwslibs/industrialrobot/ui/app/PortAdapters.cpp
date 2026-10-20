@@ -412,8 +412,7 @@ DraftSaveOutcome StorePortAdapter::save(const DraftDocumentProjection& document)
 DraftLoadOutcome StorePortAdapter::tryLoad(const std::string& moduleId)
 {
     DraftLoadOutcome out;
-    // 分支锚（诚实边界——类注释）：当前缺省值下对端按不存在的分支目录
-    // 寻址＝Missing（"无草稿是常态不是错误"），行为有定义且不虚构。
+    // PM-08：与save文档/清单使用同一真实分支，不能用全零目录虚报Missing。
     std::vector<core::DiagnosticRecord> diags;
     try {
         std::optional<project::DraftDocument> doc =
@@ -538,10 +537,12 @@ OpenStoreOutcome StoreFactoryPortAdapter::open(const std::string& canonicalPath,
         }
 
         // 成功路径（含降级只读——PM-07：降级不是失败）：装配会话端口绑定。
-        // store 端口接管 unique_ptr＝ui 经 shared 持有存储上下文保活引用
-        // （INV-SES-3）；drafts/tasks 为 v0.1 桩（诚实边界见各桩类注释）。
+        // store接管上下文；现行单默认分支与宿主apply锚同源。空表是存储事实
+        // 不完整，不能构造一个会在错误分支静默丢草稿的成功会话。
+        const auto tips = result.store->query().branchTips();
+        if (tips.empty()) { throw std::logic_error("StoreFactoryPortAdapter: 项目缺少权威分支"); }
         std::shared_ptr<StorePortAdapter> storePort =
-            std::make_shared<StorePortAdapter>(std::move(result.store));
+            std::make_shared<StorePortAdapter>(std::move(result.store),tips.front().id);
 
         outcome.ok = true;
         outcome.opened.metadata.projectId = projectId;
@@ -608,9 +609,8 @@ std::vector<DraftRowProjection> StoreDraftQueryPortAdapter::listDrafts() const
         return rows;
     }
     try {
-        // 缺省主分支清单（INV-M3 单默认分支；写半区 binding.branchId 同锚
-        // ——两端对称，草稿落盘/清单永不跨分支错位）。
-        for (const auto& info : m_store->projectStore().drafts().list(core::BranchId{})) {
+        // PM-08/12：复用写半区的构造期锚，避免生产真实分支保存后清单仍读全零目录。
+        for (const auto& info : m_store->projectStore().drafts().list(m_store->draftBranchAnchor())) {
             DraftRowProjection row;
             // 文档键＝模块 token（§4.1 行命名 <module>.draft.json 的语义键
             // ——ui 侧不做路径拼装/内容解析，丢弃语义收敛在模块配对键上）。
