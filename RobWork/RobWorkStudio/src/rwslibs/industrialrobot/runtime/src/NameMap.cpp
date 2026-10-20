@@ -266,7 +266,8 @@ RuntimeNameMap buildRuntimeNameMap(const CanonicalModel& model)
         for (const CanonicalSceneObject& s : model.scene()) {
             // SceneObject 行：世界系固连对象（scopeToken="Scene"）。
             raws.push_back({s.objectId, NameScope::SceneObject, false, s.localName, false});
-            pushGeometry(s.geometry, true, s.localName, kGeometryCollisionFacet);
+            // 固定帧的SceneObject映射照常存在，但不能伪造Geometry映射（MDL-15）。
+            if(s.geometry){pushGeometry(*s.geometry, true, s.localName, kGeometryCollisionFacet);}
         }
         // Body 行：仅 capabilities.hasDynamicWorkCell（§7.1"DWC 存在时"——
         // 能力位由 builder 从内容派生，读取它保持纯函数性）。

@@ -484,8 +484,9 @@ RuntimeCapability deriveRuntimeCapability(const RobotChain& chain,
     }
     cap.hasJointVelocityLimits = velocityFull;
     cap.hasFrictionModel = frictionFull;
-    // 碰撞几何位：任一连杆 collision / 任一工具 geometry / 场景非空（§9.6）。
-    cap.hasCollisionGeometry = anyCollision || !scene.empty();
+    // MDL-15：场景非空只证明有固定帧；只有真实几何引用才提供碰撞能力。
+    cap.hasCollisionGeometry = anyCollision || std::any_of(scene.begin(),scene.end(),
+        [](const CanonicalSceneObject& object){return object.geometry.has_value();});
 
     cap.hasCouplingMatrix = drivetrain.coupling.has_value();
     cap.hasWorkCell = true;               // 恒 true（§9.6——无 WC 即无快照）
@@ -1093,10 +1094,12 @@ bool CanonicalModel::operator==(const CanonicalModel& o) const noexcept
         const CanonicalSceneObject& x = m_scene[i];
         const CanonicalSceneObject& y = o.m_scene[i];
         if (!(x.objectId == y.objectId && x.localName == y.localName
-              && transformEqual(x.worldPose, y.worldPose)
-              && resourceIdentityEqual(x.geometry, y.geometry))) {
+              && transformEqual(x.worldPose, y.worldPose))) {
             return false;
         }
+        // 可选状态也是身份内容；固定帧不能与任意“空资源”比较为相等。
+        if(x.geometry.has_value()!=y.geometry.has_value()){return false;}
+        if(x.geometry&&!resourceIdentityEqual(*x.geometry,*y.geometry)){return false;}
     }
     if (m_drivetrain.ratioPerJoint.size() != o.m_drivetrain.ratioPerJoint.size()) { return false; }
     for (std::size_t i = 0; i < m_drivetrain.ratioPerJoint.size(); ++i) {

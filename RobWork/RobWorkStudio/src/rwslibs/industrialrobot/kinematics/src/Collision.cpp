@@ -178,14 +178,14 @@ assembleCollisionScene(const IKinRuntimeView& view, const IKinCollisionSceneSour
         scene.objects.push_back(std::move(entry));
     }
 
-    // 3c. 场景对象段：Role=EnvironmentObject；几何必有（CanonicalScene-
-    // Object 契约"环境几何资源引用（必有）"——事实恒真）。
+    // 3c. MDL-15：固定帧仍是场景对象，但只有同快照中的实际引用才提供几何。
+    // WorkCell里的显示标记是可拾取代理，不能据此谎报实体碰撞几何。
     for (const runtime::CanonicalSceneObject& object : model.scene()) {
         policy::SceneObjectEntry entry;
         entry.objectId = object.objectId;
         entry.localName = object.localName;
         entry.role = policy::SceneObjectRole::EnvironmentObject;
-        entry.hasCollisionGeometry = true;
+        entry.hasCollisionGeometry = object.geometry.has_value();
         scene.objects.push_back(std::move(entry));
     }
 

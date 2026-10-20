@@ -355,7 +355,9 @@ struct SceneObjectDescription {
     /// 世界系固连位姿（T_world_scene；单位 m；非有限/非正交/反射→InputInvalid——
     ///  RT-BW-6"场景位姿非有限"反例的字段）。
     rw::math::Transform3D<double> worldPose = detail::identityTransform3D(); // 单位变换初值（场景位姿必被赋值）
-    GeometryRef geometry; ///< 环境几何资源引用（§4.2 原文为值成员——必有）
+    /// MDL-15/AT-28：nullopt为合法世界固定帧，不代表缺失或零尺寸网格。
+    /// 存在时仍须命中资源清单；值由描述拥有，发布后并发只读，不触发资源读取。
+    std::optional<GeometryRef> geometry;
 };
 
 /**

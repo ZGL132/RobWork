@@ -1,0 +1,20 @@
+Note: Google Test filter = *FixedSceneFrameIsAValidDescription*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlCanonicalBridge
+[ RUN      ] MdlCanonicalBridge.FixedSceneFrameIsAValidDescription_MDL15_AT28
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(1810): error: Value of: built.ok()
+  Actual: false
+Expected: true
+场景对象无几何引用（runtime 环境几何引用必有——不可伪造，补几何或移除引用）
+
+[  FAILED  ] MdlCanonicalBridge.FixedSceneFrameIsAValidDescription_MDL15_AT28 (0 ms)
+[----------] 1 test from MdlCanonicalBridge (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlCanonicalBridge.FixedSceneFrameIsAValidDescription_MDL15_AT28
+
+ 1 FAILED TEST

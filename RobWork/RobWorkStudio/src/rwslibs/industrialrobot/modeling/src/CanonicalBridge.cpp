@@ -1051,21 +1051,15 @@ runtime::Expected<runtime::RobotDesignDescription, ModelingError>
         // 世界系固连位姿（不得预乘安装旋转——§6.4 禁止项 3；检测在 runtime
         // S6/S9，建模侧保证不引入预乘——原样透传即不预乘）。
         sd.worldPose = sceneObject.worldPose;
-        // 环境几何：runtime CanonicalSceneObject.geometry 必有——modeling
-        // 侧缺失不可映射（不伪造资源引用），RefMissing 定位。
-        if (!sceneObject.geometry.has_value()) {
-            return runtime::Expected<runtime::RobotDesignDescription,
-                                     ModelingError>::err(
-                refMissing(sceneObject.objectId.toCanonical(), field + ".geometry",
-                           "场景对象无几何引用（runtime 环境几何引用必有——"
-                           "不可伪造，补几何或移除引用）"));
+        // MDL-15/AT-28：无几何是合法固定帧，保留身份和世界位姿，不补资源。
+        // 显式几何仍经过原引用/单位门，不能把坏引用降级成“无几何”静默放行。
+        if(sceneObject.geometry){
+            auto mapped=mapGeometryRef(*sceneObject.geometry,root,field+".geometry");
+            if(!mapped.ok()){
+                return runtime::Expected<runtime::RobotDesignDescription,ModelingError>::err(mapped.error());
+            }
+            sd.geometry=std::move(mapped.get());
         }
-        auto mapped = mapGeometryRef(*sceneObject.geometry, root, field + ".geometry");
-        if (!mapped.ok()) {
-            return runtime::Expected<runtime::RobotDesignDescription,
-                                     ModelingError>::err(mapped.error());
-        }
-        sd.geometry = std::move(mapped.get());
         desc.scene.push_back(std::move(sd));
     }
 

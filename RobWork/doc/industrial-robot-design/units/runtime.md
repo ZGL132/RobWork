@@ -1598,3 +1598,9 @@ public:
 ToolDescription与CanonicalTool表尾默认空namedTcpOffsets，条目为原tcpKey与T_flange_tcp（平移m、正交非反射旋转）；空目录保留旧单TCP描述。S3/S5拒绝空键、重复键及非法变换，builder按UTF-8无符号字节序排序；S5映射完整目录，非默认TCP变化也进入模型相等与内容身份。原defaultTcpIndex必填/排序重定位不变。
 
 RT-Codec由1.1升1.2：每工具默认偏移后追加count、逐键与变换，全字段和身份域都包含；精确版本门拒绝旧1.1缓存，旧project建模对象格式不变，可重新编译。解码对新目录条数先以包长必要上限拒绝巨额分配，再逐条检查截断/变换/键/身份。默认实体TCP帧与NameMap不扩展，命名TCP数值消费归FK/IK；不修改WorkCellCompiler、框架或依赖边。
+
+### WP-13-T24 B3g：场景固定帧可选几何
+
+MDL-15/AT-28：SceneObjectDescription及CanonicalSceneObject.geometry改为optional，nullopt表示合法世界系固定帧；几何存在时沿原清单/摘要约束。canonical编码1.3明确presence，旧物化缓存精确版本拒绝，项目schema不改。hasScene按对象存在、hasCollisionGeometry仅按实际引用；名称保留SceneObject映射，空几何不生成Geometry映射。真实WorkCell仍建世界固连FixedFrame，不预乘安装姿态。八节设计及精确范围见2026-10-20-modeling-completion.md B3g；未验证不标通过。
+
+B3g实施验证：18套件2599通过、0失败、3既有占位跳过，双模式/全量Release及verify-task三条机器检查通过；证据traceability/builds/modeling-completion-20261020-b3g/，详细分类见FOLLOWUP与XML。真实网格及新入口端到端磁盘/三维尚未封闭，不将本批编译消费绿色外推到47项终验。

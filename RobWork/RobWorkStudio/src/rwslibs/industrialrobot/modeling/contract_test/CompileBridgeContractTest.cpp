@@ -177,7 +177,7 @@ runtime::CanonicalModel assembleS5(const IdentityValues& ids,
         cs.objectId = s.objectId;
         cs.localName = s.localName;
         cs.worldPose = s.worldPose;
-        cs.geometry = s.geometry.resource;
+        if(s.geometry){cs.geometry=s.geometry->resource;} // MDL-15：固定帧不伪造资源。
         scene.push_back(std::move(cs));
     }
 

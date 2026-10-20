@@ -220,3 +220,19 @@ B3f真实中文路径回归失败：makeIoResourceProbe在Windows使用窄路径
 B3f嵌套文件选择真实红例：文件窗口打开期间seedTemplateSession切换草稿，旧路径返回后写入新页，断言实际失败（stale-picker-red）。私有修复在打开前持完整基线/目标/暂存代际，返回后复核基线、目标、权限和代际；取消、重绑或权限变化使代际失效，切走又切回也不复用旧结果。过期结果原位提示、零暂存写入，不改公共面/资源读取/线程或存储。原真实窗口回归增加只读切换和取消反例，仍在已登记B3f范围。
 B3f角色门补充：真实纯值反例发现Remove早返回绕过角色检查，可删除RobotLink角色场景。已保存role-delete-red，将既有角色守卫前移到更新/删除共用入口，保持环境/工件增改删语义，其余角色原位拒绝；不改变对象格式或项目引用裁决。
 B3f最终产品执行：十套件1389通过、0失败、0跳过；双模式/全量Release退出0；正式宿主既有综合tour285条通过，0失败。已查看管理页和宿主重开截图，仅作为相应窗口证据，不冒称真实网格/碰撞验收。F12消费缺口按上节继续，治理日志/证据封存及本地提交在本批最终完成；F06仍归另一工作树。
+
+## B3g精确设计：无几何场景固定帧完整编译消费（F12第一段消费链）
+
+1. 行为：MDL-15/AT-28、MDL-22/AT-37。场景对象可只有身份、名称和T_world_scene；无几何是合法固定帧，编译后仍可按原ObjectId解析/拾取/定位和读取世界位姿，不丢帧、不伪造几何资源。环境几何在场时仍必须有效且命中清单。安装姿态不作用于场景帧。固定帧本身不提供碰撞几何、不使hasCollisionGeometry误置true。
+2. 公共面：仅将runtime Description.hpp::SceneObjectDescription.geometry改为optional<GeometryRef>、CanonicalModel.hpp::CanonicalSceneObject.geometry改为optional<ResourceRef>，缺省nullopt；Codec.hpp canonical编码1.2→1.3，在每场景位姿后编码presence及条件资源。kinematics/Collision.hpp仅更新既有装配契约注释。旧几何赋值仍可隐式构造optional；直接访问者改为显式判空。项目对象schema/格式不改，descriptionContractVersion继续沿根schema；canonical缓存/worker物化按精确版本拒绝旧字节，可从旧项目重新编译，身份头版本变化进入所有缓存键，不伪称身份不变。
+3. 失败：nullopt合法；显式空/缺清单/摘要不匹配的资源仍按原稳定错误拒绝，非法名称/身份/位姿也维持原拒绝。parse拒绝非法presence、截断及旧minor。无几何不静默转换为资源、不触发读取。旧测试的“无几何必失败”修正为固定帧成功，保留其余缺失反例并新增显式坏资源反例。
+4. 生命周期/权威：描述、规范模型按值持有，发布后不可变。modeling桥仅透传可选值；runtime仍唯一生成名称/真实世界FixedFrame、规范身份和能力；kinematics只从同快照的geometry.has_value投影几何事实。既有20mm显示标记仅用于帧定位，非实体资源、非碰撞形状，本批不改变其呈现。无跨域私有头、无新依赖边。
+5. 线程/确定性：纯值构造/编码无Qt无I/O；同一可选状态和字段产生同字节/身份。场景仍按ObjectId规范文本排序；presence入全字段和身份域，nullopt不等于零值资源。WorkCell仍在原编译线程生成，视图只读。
+6. 验证：先生产CanonicalBridge固定帧真实红例；再最小规范模型固定帧构建、身份/能力/名称（有SceneObject无Geometry映射）、Codec完整往返/缺失与坏presence/旧版本拒绝、显式坏资源拒绝。真实WC核对倒挂下固定帧T_world_scene和Frame存在；真实碰撞装配有/无几何事实对照，不用算法替身。完整runtime/modeling/kinematics及相关UI回归、双模式、门禁与正式宿主综合回归；固定帧从新场景入口保存重开和真实网格/视觉仍在后续B4/B5验齐，不能凭本批宣称F12闭合。
+7. 精确实现范围：modeling/src/CanonicalBridge.cpp及test/CanonicalBridgeTest.cpp；runtime上述三公共头，src/CanonicalModel.cpp、CompilerImpl.cpp、Codec.cpp、NameMap.cpp，test/CanonicalModelTest.cpp、CodecTest.cpp、NameMapTest.cpp、WorkCellCompilerTest.cpp、CacheKeyTest.cpp、DescriptionValidatorTest.cpp、ContractSuiteTest.cpp；kinematics/src/Collision.cpp、include/sdurws/ird/kinematics/Collision.hpp、test/CollisionPortTest.cpp；必要既有ui/test/HostCompilePipelineTest.cpp仅适配可选访问（若检索无访问不改）。单元卡runtime/modeling/kinematics、DTB、原WP-13-T24契约和本计划同步；新证据modeling-completion-20261020-b3g，旧证据只读。所有者已授权推荐方案自动实施，按此登记后继续，不再弹选项，不推送/合入，不实施F06。
+8. 决策：无新长期架构决策。采用与modeling已有optional及runtime工具几何一致的值语义；不另加“有无几何”布尔标记造成双权威，不用空资源/零尺寸网格冒充固定帧。真实mesh加载属下一段独立消费设计，未混入此公共变化。
+
+B3g顺序：真实桥红例→可选公共值及桥/编码/身份/名称/碰撞事实→真实WC/Codec/反例→双模式完整相关回归/宿主→冻结、治理检查、本地提交。B3f提交69d753e9，post-commit格式/134路径范围检查均通过，后检查日志随B3g新增保存。
+B3g检索补充：既有modeling/contract_test/CompileBridgeContractTest.cpp手工中性S5桥直接访问s.geometry.resource，精确追加该测试文件以判空透传；无产品接口/新边变化。CodecTest原A15版本断言同步为1.3，其余命名TCP/旧1.1拒绝断言保留，新增旧1.2拒绝。
+
+B3g实际结果：18套件2602跑，2599通过、0失败、3既有占位跳过（runtime子进程worker1项、运动学集成/独立GUI登记各1项；原生ird将后两项分类为envUnavailable，按XML及显式分类合计核对）。集成全量Release、独立13目标构建及verify-task三条机器检查通过，ird_gates零命中；正式宿主既有综合tour285条通过、0失败，不能代替新增固定帧入口端到端三维。红证、Codec/能力/名称/倒挂真实WC/碰撞事实对照和报告留痕在traceability/builds/modeling-completion-20261020-b3g/。固定帧新入口保存重开/拾取、真实mesh挂接/碰撞和完整47项仍开放；不推送不合入。

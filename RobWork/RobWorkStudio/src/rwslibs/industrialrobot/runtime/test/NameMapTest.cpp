@@ -57,6 +57,20 @@ using sdurws::ird::runtime::RuntimeNameMap;
 using sdurws::ird::runtime::RuntimeNameNotice;
 using sdurws::ird::runtime::RuntimeResolveError;
 using sdurws::ird::runtime::buildRuntimeNameMap;
+
+/** @brief MDL-15/AT-28：空几何保留场景名称锚，但不能生成假的几何名称。 */
+TEST(RuntimeNameMapTest, FixedFrameHasObjectButNoGeometryName_MDL15_AT28)
+{
+    auto f=richFixture();f.tools.clear();f.defaultTcp.reset();
+    for(auto& link:f.chain.links){link.visual.reset();link.collision.reset();}
+    f.scene.front().geometry.reset();const auto model=f.build();const auto names=buildRuntimeNameMap(model);
+    const auto id=model.scene().front().objectId;bool sceneFound=false;
+    for(const auto& entry:names.entries()){
+        if(entry.objectId==id&&entry.scope==NameScope::SceneObject){sceneFound=true;}
+        EXPECT_NE(entry.scope,NameScope::Geometry)<<"无实体几何不得生成Geometry名字";
+    }
+    EXPECT_TRUE(sceneFound);EXPECT_TRUE(names.resolveObjectId(id).ok());
+}
 using sdurws::ird::runtime::crossCheckRuntimeNames;
 namespace rtcodec = sdurws::ird::runtime::rtcodec;
 namespace core = sdurws::ird::core;

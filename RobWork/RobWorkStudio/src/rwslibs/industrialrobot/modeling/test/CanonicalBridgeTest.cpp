@@ -313,9 +313,10 @@ bool sameDescription(const runtime::RobotDesignDescription& a,
         const runtime::SceneObjectDescription& sb = b.scene[i];
         if (sa.objectId != sb.objectId || sa.localName != sb.localName
             || !sameTransform(sa.worldPose, sb.worldPose)
-            || !sameResourceRef(sa.geometry.resource, sb.geometry.resource)) {
+            || sa.geometry.has_value()!=sb.geometry.has_value()) {
             return false;
         }
+        if(sa.geometry&&!sameResourceRef(sa.geometry->resource,sb.geometry->resource)){return false;}
     }
     if (a.base.preset != b.base.preset
         || !sameSourcedVec(a.base.customEaa, b.base.customEaa)
@@ -1003,8 +1004,9 @@ TEST(MdlCanonicalBridge, SceneWorldPoseNotPreMultipliedByInstallRotation_WP13T12
     EXPECT_NEAR(sd.worldPose.R()(1, 0), std::sin(0.7), 1e-15);
     EXPECT_NEAR(sd.worldPose.R()(1, 1), std::cos(0.7), 1e-15);
     // 场景几何经清单解引用（Recorded 声明面）。
-    EXPECT_EQ(sd.geometry.resource.state, runtime::ResourceState::Recorded);
-    EXPECT_TRUE(sd.geometry.resource.contentDigest == tableDigest);
+    ASSERT_TRUE(sd.geometry);
+    EXPECT_EQ(sd.geometry->resource.state, runtime::ResourceState::Recorded);
+    EXPECT_TRUE(sd.geometry->resource.contentDigest == tableDigest);
 }
 
 /**
@@ -1661,23 +1663,23 @@ TEST(MdlCanonicalBridge, IncompleteModelRefusesWithoutRuntimeRepair_WP13T12_ACC4
         EXPECT_NE(built.error().detail.find("axis"), std::string::npos);
         EXPECT_TRUE(diags.empty()) << "两态不产诊断记录（值面错误＋定位参数）";
     }
-    // ②场景对象无几何引用（runtime CanonicalSceneObject.geometry 必有——
-    // 不伪造资源引用，定位到对象）。
+    // ②显式场景几何引用不存在仍须拒绝；合法无几何固定帧另有MDL-15用例。
     {
         const core::ObjectId sid = makeOid();
         RobotDesign design = minimalDesign();
         design.sceneRefs = {sid};
         SceneObject bare;
         bare.objectId = sid;
-        bare.localName = "bare";  // geometry 缺省＝nullopt
+        bare.localName = "bare";
+        bare.geometry=GeometryRef{"missing_mesh",testbridge::identityTransform3D(),GeometryKind::Mesh};
         BridgeClosure closure;
         putRoot(closure, design);
         closure.put(sid, std::string(kSceneObjectObjectType), encode(bare));
         auto built = buildFrom(closure);
         ASSERT_FALSE(built.ok());
         EXPECT_EQ(built.error().code, ModelingErrorCode::RefMissing);
-        EXPECT_TRUE(hasParam(built.error(), "object-id", sid.toCanonical()))
-            << "场景几何缺失定位到对象 ObjectId";
+        EXPECT_NE(built.error().detail.find("missing_mesh"),std::string::npos)
+            << "显式坏场景几何须保留实际资源定位";
     }
 }
 
@@ -1794,4 +1796,22 @@ TEST(MdlCanonicalBridge, EditedContinuousRangeFeedsRuntime_MDL12_AT17)
     EXPECT_EQ(ws.design.joints[0].workingRange.value(),(modeling::JointLimits{-8,10}));
     EXPECT_EQ(ws.design.joints[0].type,modeling::JointType::Continuous);
     EXPECT_EQ(ws.design.joints[0].bounds.state(),core::FieldState::NotApplicable);
+}
+
+/** @brief MDL-15/AT-28：生产桥必须接受无几何世界固定帧，不能凭空要求资源。 */
+TEST(MdlCanonicalBridge, FixedSceneFrameIsAValidDescription_MDL15_AT28)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-15"},std::vector<std::string>{"AT-28"});
+    auto design=minimalDesign();const auto id=makeOid();design.sceneRefs={id};
+    SceneObject frame;frame.objectId=id;frame.localName="world_fixture";
+    frame.worldPose=rwmath::Transform3D<double>(rwmath::Vector3D<double>(1,2,3),
+        testbridge::identityTransform3D().R());
+    BridgeClosure closure;putRoot(closure,design);
+    closure.put(id,std::string(kSceneObjectObjectType),encode(frame));
+    const auto built=buildFrom(closure);
+    ASSERT_TRUE(built.ok())<<built.error().detail;
+    ASSERT_EQ(built.get().scene.size(),1U);EXPECT_EQ(built.get().scene.front().objectId,id);
+    EXPECT_FALSE(built.get().scene.front().geometry);
+    EXPECT_TRUE(sameTransform(built.get().scene.front().worldPose,frame.worldPose));
+    EXPECT_TRUE(built.get().resourceRefs.empty())<<"固定帧不能伪造网格资源";
 }

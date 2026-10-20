@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "modeling-completion-b3g/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "69d753e95502",
+  "scope": "固定帧编译/名称/身份/碰撞事实；真实网格/完整47项尚未封闭",
+  "totals": {
+    "total": 2602,
+    "passed": 2599,
+    "failed": 0,
+    "skipped": 3
+  },
+  "suites": [
+    {
+      "name": "runtime",
+      "total": 294,
+      "passed": 293,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "name": "modeling",
+      "total": 418,
+      "passed": 418,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "kinematics",
+      "total": 288,
+      "passed": 287,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "name": "kinematics_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "kinematics_gui",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_runtime",
+      "total": 195,
+      "passed": 195,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 342,
+      "passed": 342,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 54,
+      "passed": 54,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_kinematics",
+      "total": 280,
+      "passed": 279,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "name": "standalone_kinematics_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_kinematics_gui",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "skips": [
+    {
+      "suite": "runtime",
+      "test": "ContractSuite.ChildProcessWorker_RT_ID_1",
+      "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\runtime\\test\\ContractSuiteTest.cpp:281\n非子进程模式（父用例 CrossProcessIdentityStable 派生时才执行）\n"
+    },
+    {
+      "suite": "kinematics",
+      "test": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1",
+      "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\kinematics\\test\\PluginPanelTest.cpp:836\nGUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）\n"
+    },
+    {
+      "suite": "standalone_kinematics",
+      "test": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1",
+      "reason": "C:\\Users\\zgl18\\.codex\\worktrees\\486b\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\kinematics\\test\\PluginPanelTest.cpp:836\nGUI 呈现仅登记（真实执行已迁移 gui_test——环境事实如实）\n"
+    }
+  ],
+  "tour": {
+    "passed": 285,
+    "failed": 0,
+    "scope": "既有正式宿主综合流程，含其他域；未新增本批场景三维验收"
+  },
+  "environment": {
+    "toolchain": "VS2022 x64",
+    "qtPlatform": "windows",
+    "guiExecution": "单调度器串行、绝对exe"
+  },
+  "limitations": [
+    "runtime/standalone_runtime/core的JSON派生自真实XML",
+    "F06归另一工作树，未实施/集成",
+    "无全新上下文独立验收",
+    "无几何固定帧新入口至保存重开完整宿主路径尚待验齐",
+    "真实mesh挂接、碰撞与完整47项仍开放",
+    "未推送、未自行合入"
+  ]
+}

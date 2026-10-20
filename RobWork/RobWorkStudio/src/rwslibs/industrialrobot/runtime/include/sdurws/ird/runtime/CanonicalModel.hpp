@@ -246,8 +246,9 @@ struct CanonicalSceneObject {
     /// 世界系固连位姿（T_world_scene；平移单位 m；正交非反射＋有限，否则
     /// 构造拒绝——RT-BW-6"场景位姿非有限"反例的字段）。
     rw::math::Transform3D<double> worldPose = detail::identityTransform3D();
-    /// 环境几何资源引用（必有；须命中 resourceManifest）。
-    ResourceRef geometry;
+    /// MDL-15/AT-28：nullopt表示无实体几何的世界固定帧，仍保留对象/名称索引。
+    /// 有值时须命中resourceManifest；presence入内容身份，不将显示标记视为碰撞几何。
+    std::optional<ResourceRef> geometry;
 };
 
 /**
@@ -401,8 +402,8 @@ struct RobotChain {
  *     若有出入按 DTB §5.4 登记对齐）；
  *   - hasJointVelocityLimits：全部关节 maxVelocity Provided（§9.6 字面）；
  *   - hasCollisionGeometry：任一连杆 collision / 任一工具 geometry /
- *     场景非空（§9.6"≥1 连杆/工具/场景 collision 几何"——场景对象的几何
- *     即碰撞障碍物）；
+ *     任一场景geometry存在（MDL-15/AT-28：世界固定帧本身没有实体几何，
+ *     场景非空只置hasScene，显示标记不提供碰撞能力）；
  *   - hasFrictionModel：全部关节摩擦三元组均 Provided（DYN-06 消费）；
  *   - hasCouplingMatrix：drivetrain.coupling 存在（"良态"已由 S3 判定）。
  *

@@ -1,0 +1,16 @@
+modeling {'total': 418, 'passed': 418, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+modeling_contract {'total': 17, 'passed': 17, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+modeling_gui {'total': 75, 'passed': 75, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+kinematics {'total': 288, 'passed': 287, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 1, 'datasetInvalid': 0, 'decisive': False}
+kinematics_contract {'total': 57, 'passed': 57, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+kinematics_gui {'total': 20, 'passed': 20, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+ui {'total': 326, 'passed': 326, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+ui_contract {'total': 57, 'passed': 57, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+ui_gui {'total': 90, 'passed': 90, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+standalone_modeling {'total': 342, 'passed': 342, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+standalone_modeling_contract {'total': 8, 'passed': 8, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+standalone_modeling_gui {'total': 54, 'passed': 54, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+standalone_kinematics {'total': 280, 'passed': 279, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 1, 'datasetInvalid': 0, 'decisive': False}
+standalone_kinematics_contract {'total': 57, 'passed': 57, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+standalone_kinematics_gui {'total': 20, 'passed': 20, 'failed': 0, 'skipped': 0, 'notRun': 0, 'envUnavailable': 0, 'datasetInvalid': 0, 'decisive': True}
+PASS: 15 native reports match XML after explicit non-run classification; 3 derived reports separately identified

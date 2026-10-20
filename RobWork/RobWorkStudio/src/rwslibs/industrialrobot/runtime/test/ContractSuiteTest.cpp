@@ -633,7 +633,7 @@ void addSceneObject(td::ContractHarness& h, std::vector<std::uint8_t>& meshOut)
     so.worldPose = rw::math::Transform3D<double>(
         rw::math::Vector3D<double>(1.0, -0.5, 0.8),  // 世界系坐标，单位 m
         detail::identityTransform3D().R());
-    so.geometry.resource = ref;  // GeometryRef 包装（§4.2——Description 侧形态）
+    so.geometry=GeometryRef{};so.geometry->resource=ref; // 显式几何包装；nullopt另表示世界固定帧。
     h.description.scene.push_back(so);
 
     // 闭包登记场景对象（字节/摘要一致——S2 完整性复核的申报值形态）。

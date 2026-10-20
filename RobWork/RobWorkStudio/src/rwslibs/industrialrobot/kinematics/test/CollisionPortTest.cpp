@@ -217,8 +217,10 @@ struct CollisionRig {
  *        1.0 m、盒间隙 0.8 m（清晰）。规范模型侧：link1 声明碰撞几何
  *        引用（与 WC 侧 Tool 帧的 RigidObject 对应——会话评估半区按
  *        "声明有几何"注册后端）。
+ * @param withEnvironmentGeometry [in] 默认true保留实体环境；false模拟仅固定帧，
+ *        WC中仍有可见载体，以验证装配不从呈现物体臆造碰撞能力。
  */
-CollisionRig makeRig()
+CollisionRig makeRig(bool withEnvironmentGeometry=true)
 {
     CollisionRig rig;
     const RigIds ids;
@@ -345,7 +347,7 @@ CollisionRig makeRig()
     envEntry.localName = "env_box";
     envEntry.worldPose = rw::math::Transform3D<double>(
         rw::math::Vector3D<double>(kArmLength, 0.0, 0.0));
-    envEntry.geometry = link1Collision;  // 环境几何必有——复用清单条目（夹具）
+    if(withEnvironmentGeometry){envEntry.geometry=link1Collision;} // 固定帧无实体引用，显示载体不改变事实。
 
     rt::WorldPlacement world;
     world.T_world_base = rw::math::Transform3D<double>::identity();
@@ -564,6 +566,18 @@ TEST(KinCollisionPort, AssembleSceneFromSnapshotFacts_WP15T07_ACC1)
               std::make_pair(rig.ids.link0, rig.ids.link1));
     EXPECT_EQ(scene.get().adjacentLinkPairs[1],
               std::make_pair(rig.ids.link1, rig.ids.tool));
+}
+
+/** @brief MDL-15/AT-28：固定帧保留场景身份，不能从WC显示载体虚报碰撞几何。 */
+TEST(KinCollisionPort, FixedFrameProjectionHasNoCollisionGeometry_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    const auto rig=makeRig(false);RigView view(*rig.model);
+    const auto scene=kin::assembleCollisionScene(view,rig.source);ASSERT_TRUE(scene.ok());
+    const auto it=std::find_if(scene.get().objects.begin(),scene.get().objects.end(),
+        [&](const policy::SceneObjectEntry& object){return object.objectId==rig.ids.env;});
+    ASSERT_NE(it,scene.get().objects.end());EXPECT_EQ(it->role,policy::SceneObjectRole::EnvironmentObject);
+    EXPECT_FALSE(it->hasCollisionGeometry);EXPECT_EQ(it->localName,"env_box");
 }
 
 // =====================================================================

@@ -830,7 +830,9 @@ std::vector<std::uint8_t> encodeImpl(const CanonicalModel& model, std::uint16_t 
         w.raw16(s.objectId.bytes);
         w.str(s.localName);
         writeTransform(w, s.worldPose);
-        writeResourceRef(w, s.geometry, identityDomain);
+        // canonical1.3：显式有无状态参与两种编码域，nullopt与任意资源字节不同。
+        w.presence(s.geometry.has_value());
+        if (s.geometry) { writeResourceRef(w, *s.geometry, identityDomain); }
     }
 
     // ---- 传动块（§4.3.4）----
@@ -1068,8 +1070,17 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
         scene.resize(n);
         for (CanonicalSceneObject& s : scene) {
             if (!r.raw16(s.objectId.bytes) || !r.str(s.localName)
-                || !readTransform(r, s.worldPose) || !readResourceRef(r, s.geometry)) {
+                || !readTransform(r, s.worldPose)) {
                 return failed();
+            }
+            // 先验证presence词表，只有显式存在才读引用；截断或坏值走统一失败轨，
+            // 绝不能把损坏资源当作合法固定帧发布。缺省构造的optional保持nullopt。
+            bool hasGeometry = false;
+            if (!r.presence(hasGeometry)) { return failed(); }
+            if (hasGeometry) {
+                ResourceRef ref;
+                if (!readResourceRef(r, ref)) { return failed(); }
+                s.geometry = std::move(ref);
             }
         }
 

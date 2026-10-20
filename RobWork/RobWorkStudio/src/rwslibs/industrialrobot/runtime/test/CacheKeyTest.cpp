@@ -137,7 +137,7 @@ void mutateResourceBytes(Fixture& f)
         rebindOpt(l.collision);
     }
     for (CanonicalTool& t : f.tools) { rebindOpt(t.geometry); }
-    for (CanonicalSceneObject& s : f.scene) { rebind(s.geometry); }
+    for (CanonicalSceneObject& s : f.scene) { rebindOpt(s.geometry); }
 }
 
 }  // namespace

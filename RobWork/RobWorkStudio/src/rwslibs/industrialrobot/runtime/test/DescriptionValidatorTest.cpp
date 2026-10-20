@@ -174,7 +174,7 @@ RobotDesignDescription makeValidDescription()
     geo.contentDigest = core::Digest256{1u, 2u, 3u}; // 非零摘要（形态合法即可）
     geo.state = ResourceState::Solidified;
     geo.accessVersion = 1;
-    scene.geometry.resource = geo;
+    scene.geometry=GeometryRef{};scene.geometry->resource=geo; // 显式几何存在，固定帧nullopt另验。
     d.scene.push_back(scene);
 
     d.base.preset = InstallationPresetToken::Ground;

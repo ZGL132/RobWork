@@ -1065,3 +1065,9 @@ RegionBox表尾orientationInBase是盒局部轴到基座系的有限右手正交
 SamplingPlan表尾tcpOverride缺省沿query.defaultTcp，存在时只消费同一快照的工具ID与键。空键为默认偏移，真实命名键精确匹配优先于旧localName别名；显式引用缺失在装配期拒绝。缺省TCP缺失只将实际依赖它的计划标DataInsufficient，不能拖累独立TCP的合法计划。UI读取runtime权威参考变换及目录，受理前错误带区域名与修复动作，计算库不持Frame指针，不新增跨域依赖。
 
 覆盖契约版本与样本身份codec均2→3。已批准的sampleSetIdentity(SamplingPlan,budget)是完整编码入口：原7字节magic、版本、来源计划规范文本、seed后追加行主序9个小端f64（-0归+0）、u32 override存在位；存在时追加16字节工具ID及u32长度+UTF-8键。旧签名保留并转默认新增字段的同一编码器，threadCount不入身份，WorkspaceSampler使用完整计划重算冻结凭据。旧v2不得复用；项目存储不变。原计划字段仍由来源摘要承诺，不在UI改写requirements摘要。
+
+### WP-13-T24 B3g：场景几何事实投影补齐
+
+MDL-15/AT-28：runtime场景几何可选，assembleCollisionScene从同快照geometry.has_value投影hasCollisionGeometry；固定帧仍保留身份/角色/名称，不将显示标记当碰撞几何。原policy消费/算法/公共签名不改。八节范围及真实装配反例见2026-10-20-modeling-completion.md B3g；未验证不标通过。
+
+B3g实施验证：18套件2599通过、0失败、3既有占位跳过，双模式/全量Release及verify-task三条机器检查通过；证据traceability/builds/modeling-completion-20261020-b3g/，详细分类见FOLLOWUP与XML。真实网格及新入口端到端磁盘/三维尚未封闭，不将本批编译消费绿色外推到47项终验。

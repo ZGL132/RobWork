@@ -1,0 +1,9 @@
+{
+  "source": "runtime.xml",
+  "note": "GTest::gtest_main不消费ird_report；本报告仅派生自真实XML",
+  "name": "runtime",
+  "total": 294,
+  "passed": 293,
+  "failed": 0,
+  "skipped": 1
+}

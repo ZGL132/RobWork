@@ -46,6 +46,29 @@ namespace core = sdurws::ird::core;
 // 往返：parse(encode(x))==x（acceptance 2——§4.5"往返"行）。
 // =====================================================================
 
+/** @brief MDL-15/AT-28：固定帧完整往返、旧1.2与损坏presence明确拒绝。 */
+TEST(CodecRoundtripTest, FixedSceneFramePresenceAndVersion_MDL15_AT28)
+{
+    auto f=richFixture();f.scene.front().geometry.reset();
+    const auto frame=f.build();const auto bytes=rtcodec::encode(frame);
+    const auto parsed=rtcodec::parse(bytes);ASSERT_TRUE(parsed.ok());
+    EXPECT_EQ(parsed.get(),frame);EXPECT_EQ(rtcodec::encode(parsed.get()),bytes);
+    ASSERT_EQ(parsed.get().scene().size(),1U);EXPECT_FALSE(parsed.get().scene().front().geometry);
+    auto old=bytes;old[9]=0;old[10]=2;EXPECT_FALSE(rtcodec::parse(old).ok());
+    const auto& name=frame.scene().front().localName;
+    const auto pos=std::search(bytes.begin(),bytes.end(),name.begin(),name.end());ASSERT_NE(pos,bytes.end());
+    // canonical1.3场景协议：名称后为12个double（世界平移3+旋转9），再为presence。
+    const auto presence=static_cast<std::size_t>(pos-bytes.begin())+name.size()+12U*8U;
+    ASSERT_LT(presence,bytes.size());ASSERT_EQ(bytes[presence],0U);
+    auto malformed=bytes;malformed[presence]=2;EXPECT_FALSE(rtcodec::parse(malformed).ok());
+    auto truncated=bytes;truncated.resize(presence);EXPECT_FALSE(rtcodec::parse(truncated).ok());
+    // 无几何和真实引用都必须往返，不能只支持新固定帧而破坏旧障碍物。
+    f.scene.front().geometry=f.manifest.front();const auto obstacle=f.build();
+    const auto geometric=rtcodec::parse(rtcodec::encode(obstacle));ASSERT_TRUE(geometric.ok());
+    ASSERT_TRUE(geometric.get().scene().front().geometry);EXPECT_EQ(geometric.get(),obstacle);
+    EXPECT_NE(frame.contentIdentity(),obstacle.contentIdentity());
+}
+
 /** @brief A-15：1.2完整目录往返、命名偏移篡改与旧1.1缓存必须拒绝。 */
 TEST(CodecRoundtripTest, NamedTcpRoundtripTamperAndOldMinor_REQ01_A15)
 {
@@ -60,7 +83,7 @@ TEST(CodecRoundtripTest, NamedTcpRoundtripTamperAndOldMinor_REQ01_A15)
     ASSERT_EQ(decoded.get().tools()[0].namedTcpOffsets.size(), 1U);
     EXPECT_EQ(decoded.get(), model);
     EXPECT_EQ(rtcodec::encode(decoded.get()), bytes);
-    EXPECT_EQ(rtcodec::kVersionMinor, 2U);
+    EXPECT_EQ(rtcodec::kVersionMinor, 3U); // B3g场景可选几何升版；A15完整命名目录仍保留。
     // 头7字节magic，随后major/minor各2字节大端；伪装为旧1.1精确拒绝。
     auto old = bytes; old[9] = 0; old[10] = 1;
     EXPECT_FALSE(rtcodec::parse(old).ok());

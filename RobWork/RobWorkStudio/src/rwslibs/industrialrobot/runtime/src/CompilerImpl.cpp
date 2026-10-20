@@ -581,7 +581,8 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
         cs.objectId = s.objectId;
         cs.localName = s.localName;
         cs.worldPose = s.worldPose;     // 世界系固连（禁止预乘安装旋转——§6.4 禁止项 3）
-        cs.geometry = s.geometry.resource;
+        // MDL-15：无几何是世界固定帧，不伪造资源；存在的引用仍由builder核对清单。
+        if(s.geometry){cs.geometry=s.geometry->resource;}
         scene.push_back(std::move(cs));
     }
 
