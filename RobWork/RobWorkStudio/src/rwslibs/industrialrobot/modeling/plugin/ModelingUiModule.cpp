@@ -393,6 +393,17 @@ void ModelingUiModule::setWritable(bool writable)
     }
 }
 
+void ModelingUiModule::setCouplingStage(CouplingStage stage)
+{
+    // F14/MDL-21：耦合阶段能力位转发（宿主装配注入；面板未创建＝暂存，
+    // createPanel 时应用——与 setWritable 同一时序语义）。
+    m_guard.assertOnUiThread();
+    m_couplingStage = stage;
+    if (m_panel != nullptr) {
+        m_panel->setCouplingStage(stage);
+    }
+}
+
 void ModelingUiModule::seedTemplateSession()
 {
     m_guard.assertOnUiThread();
@@ -526,6 +537,7 @@ QWidget* ModelingUiModule::createPanel()
         panel->setCommandTitleResolver(m_textResolver);
     }
     m_panel = panel;  // attachPanel 同义（公开方法语义一致，直接落成员）
+    panel->setCouplingStage(m_couplingStage);  // F14：暂存能力位应用（装配序无关）
     attachPanelWiring();  // 预览供给接线＋已定格预览推送（UI-T59——面板
                           // 晚于绑定/定格的装配序补齐）
     // 编辑后钩子（T03b-2b）：每次 L-2 接受后重算真就绪并刷新就绪条。

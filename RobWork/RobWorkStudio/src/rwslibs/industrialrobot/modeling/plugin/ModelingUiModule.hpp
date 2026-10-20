@@ -284,6 +284,14 @@ public:
     void setWritable(bool writable);
 
     /**
+     * @brief 耦合阶段能力位注入（F14/MDL-21——面板暂存/即时双形态转发，
+     *        setWritable 同一时序语义；缺省 R1Locked＝公共默认红线）。
+     *
+     * @param stage [in] 耦合能力位（R1Locked｜R2Enabled——正式宿主装配注入）
+     */
+    void setCouplingStage(CouplingStage stage);
+
+    /**
      * @brief 首版装配会话种子（generic-6r 草稿经真实 createDraft 产出——
      *        会话工作集权威载体；readiness 不预置＝投影呈 DataInsufficient
      *        缺省行，判定接线随收口任务）。
@@ -545,6 +553,9 @@ private:
                                              ///  更新；createPanel 作为面板初始态。
                                              ///  默认 true＝装配期无项目会话的可写
                                              ///  草稿态，宿主打开只读项目后经转发
+    CouplingStage m_couplingStage = CouplingStage::R1Locked;  ///< F14：耦合能力位
+                                             ///  暂存（setCouplingStage 更新；缺省
+                                             ///  R1Locked＝公共默认红线）
                                              ///  面纠正——UI-T43 前该初值在面板上
                                              ///  不可纠正，是接线缺口）
     std::unique_ptr<policy::IJointLimitEvaluator> m_evaluator{

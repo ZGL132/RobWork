@@ -5309,7 +5309,14 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
         std::nullopt,            // policyVersion＝不适用（系统缺省集无版本演进）
         m_dhConverter.get(),     // DH 转换器（权威切换变体）
         m_compileProbe.get(),    // 编译分段探针（等价验证）
-        modeling::CouplingStage::R1Locked,
+        // F14（WP-13-T25/MDL-21）：正式宿主显式装配 R2 能力位——MDL-21
+        // 已随 2026-10-10 GOV-UNFROZEN 解冻（REQUIREMENTS v1.17），线性
+        // 耦合矩阵放行（方阵/可逆/条件数≤1e8 仍由 checkCouplingMatrix
+        // 单一实现校验）；公共默认 R1Locked 保留（Parts.hpp 默认值不动，
+        // mimic/planar/floating/闭环维持阻断——M-6）。修复前宿主传
+        // R1Locked：有效矩阵经正式宿主提交恒被解码门拒为
+        // MDL-21-COUPLING-STAGE-LOCKED（审计 M31 第二问题）。
+        modeling::CouplingStage::R2Enabled,
         [this](const project::RevisionView& revision) {
             return m_policySource->resolvePolicyForRevision(revision);
         },                       // A-23：严格消费 prepare 基线修订
@@ -5319,6 +5326,12 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
         m_diag.pipeline->logDev(kPluginDevChannel,
                                 "建模域命令处理器已注册（apply-robot-design 族五 token——§5.3.5 装配期；"
                                 "F-461 modeling 半区收口）");
+    }
+    // F14：面板编辑入口与处理器族共享同一 R2 能力位（单一决策点——上面
+    // services.couplingStage 与此处同源；面板缺省 R1Locked 公共默认不动）。
+    if (m_domains != nullptr) {
+        m_domains->modeling.setCouplingStage(
+            modeling::CouplingStage::R2Enabled);
     }
 
     // 桥会话绑定（F-910 修复面——按当前绑定态分派：未绑定＝attach（常规

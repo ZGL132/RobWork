@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="1.177" timestamp="2026-10-20T13:30:13.304" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="1.176" timestamp="2026-10-20T13:30:13.304">
+    <testcase name="CouplingEditorSingularRejectedAtomicCancelSafe_MDL21_WP13T25" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="2281" status="run" result="completed" time="1.176" timestamp="2026-10-20T13:30:13.304" classname="ModelingPanelGuiTest">
+      <failure message="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:2331&#x0A;Expected equality of these values:&#x0A;  m_ws&#x0A;    Which is: 1072-byte object &lt;01-00 00-00 54-00 45-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 4F-00 4E-00 00-00 00-00 41-00 52-00 01-00 00-00 43-00 3B-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00&gt;&#x0A;  before&#x0A;    Which is: 1072-byte object &lt;01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 CB-01 00-00 00-00 00-00 CB-01 00-00 01-00 00-00 00-00 00-00 ... 60-C7 81-AF CB-01 00-00 30-C8 81-AF CB-01 00-00 00-00 00-00 00-00 00-00 D0-AE 7F-AF CB-01 00-00 58-81 80-AF CB-01 00-00 08-3D 1D-E0 FE-7F 00-00 00-F3 1C-E0 FE-7F 00-00 00-1E A9-E7 73-07 00-00&gt;&#x0A;拒绝＋取消后工作集必须与进入前逐字段相等（F14 顺序修正后）&#x0A;" type=""><![CDATA[C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:2331
+Expected equality of these values:
+  m_ws
+    Which is: 1072-byte object <01-00 00-00 54-00 45-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 4F-00 4E-00 00-00 00-00 41-00 52-00 01-00 00-00 43-00 3B-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00>
+  before
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 CB-01 00-00 00-00 00-00 CB-01 00-00 01-00 00-00 00-00 00-00 ... 60-C7 81-AF CB-01 00-00 30-C8 81-AF CB-01 00-00 00-00 00-00 00-00 00-00 D0-AE 7F-AF CB-01 00-00 58-81 80-AF CB-01 00-00 08-3D 1D-E0 FE-7F 00-00 00-F3 1C-E0 FE-7F 00-00 00-1E A9-E7 73-07 00-00>
+拒绝＋取消后工作集必须与进入前逐字段相等（F14 顺序修正后）
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

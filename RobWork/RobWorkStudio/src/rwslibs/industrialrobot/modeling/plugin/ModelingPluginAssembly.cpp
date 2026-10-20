@@ -106,6 +106,13 @@ ModelingPluginAssembly::importedSelfCollisionCandidates() const
     return {};
 }
 
+void ModelingPluginAssembly::setCouplingStage(CouplingStage stage)
+{
+    if (m_impl != nullptr) {
+        m_impl->setCouplingStage(stage);
+    }
+}
+
 void ModelingPluginAssembly::bindSessionAnchor(
     const sdurws::ird::core::BranchId& branch,
     const sdurws::ird::core::RevisionId& base)
