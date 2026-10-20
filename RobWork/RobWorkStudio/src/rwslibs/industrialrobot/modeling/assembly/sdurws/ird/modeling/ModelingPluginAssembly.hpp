@@ -148,7 +148,9 @@ struct ModelingPluginAssembly {
     /// 首版会话种子（generic-6r 真实草稿；转发模块内部）。
     void seedTemplateSession();
 
-    /// 会话锚绑定（打开成功后——分支＋tip；转发模块内部，T03b-2）。
+    /// 会话锚绑定（打开成功后——分支＋tip；仅UI线程）。已有脏草稿同分支
+    /// 保留旧锚接受project的Stale裁决；跨分支未处置抛std::runtime_error且原值不变。
+    /// 首次/干净绑定沿原路径推进，绑定本身不代表基线重放或用户确认。
     void bindSessionAnchor(const sdurws::ird::core::BranchId& branch,
                            const sdurws::ird::core::RevisionId& base);
 

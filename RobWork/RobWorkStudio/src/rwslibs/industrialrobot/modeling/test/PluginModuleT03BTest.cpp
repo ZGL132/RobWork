@@ -137,8 +137,8 @@ TEST(PluginPanelT03B, DomainReadinessSourceParity_WP24_T03B)
 
 /**
  * 会话脱离与修订事件（契约 WP-24-T03b acceptance 6 的模块级验证面）：
- * 锚定后 onRevisionCommitted 前移基线（信封 expectedRevision＝新 tip——
- * 再应用不误报 Stale）；非锚定分支事件忽略；onSessionDetached 清空会话
+ * 锚定后有未应用草稿的onRevisionCommitted保留原基线（PM-04拒绝旧草稿）；
+ * 非锚定分支事件忽略；onSessionDetached清空会话
  * 态（此后 buildDraftCommand 恒 nullopt）。
  */
 TEST(PluginPanelT03B, SessionDetachAndRevisionAdvance_WP24_T03B)
@@ -160,15 +160,14 @@ TEST(PluginPanelT03B, SessionDetachAndRevisionAdvance_WP24_T03B)
     workingSet.draft.changes.push_back(
         ModelingChangeRecord{"joints[1]", "测试编辑（T03B 会话同步用例）"});
 
-    // 撤销/重做形态的修订提交：基线前移到新 tip；编辑记录保留（与
-    // noteAppliedRevision 的"应用即消费"区分）。
+    // PM-04：未应用编辑没有成功重放，外部修订不能偷换其expectedRevision。
     const core::RevisionId newTip = core::RevisionId::generate();
     module.onRevisionCommitted(branch, newTip);
     const auto envelope = module.buildDraftCommand("modeling");
     ASSERT_TRUE(envelope.has_value());
     EXPECT_EQ(envelope->expectedRevision.has_value()
-                  && envelope->expectedRevision->toCanonical() == newTip.toCanonical(),
-              true) << "基线未前移到新 tip（再应用将误报 Stale）";
+                  && envelope->expectedRevision->toCanonical() == tip.toCanonical(),
+              true) << "旧草稿基线被偷换，无法接受project的Stale拒绝";
     EXPECT_FALSE(workingSet.draft.changes.empty())
         << "修订事件清零了编辑记录（与应用回执语义混淆）";
 
@@ -177,7 +176,7 @@ TEST(PluginPanelT03B, SessionDetachAndRevisionAdvance_WP24_T03B)
                                core::RevisionId::generate());
     const auto envelope2 = module.buildDraftCommand("modeling");
     ASSERT_TRUE(envelope2.has_value());
-    EXPECT_EQ(envelope2->expectedRevision->toCanonical(), newTip.toCanonical());
+    EXPECT_EQ(envelope2->expectedRevision->toCanonical(), tip.toCanonical());
 
     // 会话脱离：锚清空＋changes 清空→buildDraftCommand 恒 nullopt。
     module.onSessionDetached();
@@ -813,4 +812,68 @@ TEST(ModelingDraftRestore, CanonicalSetOrderDoesNotInventPendingChanges_PM04_AT2
     std::string error;
     EXPECT_TRUE(module.restoreCommittedSession(closure,*closure.expected.rootObjectId,
         closure.branch,core::RevisionId::generate(),error))<<error;
+}
+
+/** @brief PM-04/AT-29：重复锚定及外部事件不能把未重放的草稿冒充为新修订编辑。 */
+TEST(ModelingDraftAnchor, PendingDraftKeepsRevisionAndContents_PM04_AT29)
+{
+    IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto base=core::RevisionId::generate();
+    module.bindSessionAnchor(branch,base);
+    module.session().draft.changes.push_back({"root","尚未应用的编辑"});
+    const auto before=module.buildDraftDocument();
+    const auto baseline=module.session().baselineSnapshot;
+    const auto newer=core::RevisionId::generate();
+    module.bindSessionAnchor(branch,newer);
+    EXPECT_EQ(module.buildDraftDocument().payload,before.payload);
+    ASSERT_TRUE(module.buildDraftCommand("modeling"));
+    EXPECT_EQ(module.buildDraftCommand("modeling")->expectedRevision,base);
+    module.onRevisionCommitted(branch,newer);
+    EXPECT_EQ(module.session().baseRevision,base)<<"未进行基线重放，不允许静默前移";
+    EXPECT_EQ(module.session().baselineSnapshot,baseline);
+    EXPECT_EQ(module.buildDraftDocument().payload,before.payload);
+}
+
+/** @brief PM-04：摘要缺席的真实内容差异也必须保护旧锚和保存基线。 */
+TEST(ModelingDraftAnchor, ContentDifferenceWithoutSummaryKeepsBase_PM04_AT29)
+{
+    IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
+    CommittedModelClosure closure;ModelingUiModule module;std::string error;
+    ASSERT_TRUE(module.restoreCommittedSession(closure,*closure.expected.rootObjectId,
+        closure.branch,closure.revision,error))<<error;
+    module.session().draft.toolObjects.front().displayName="无摘要的真实工具编辑";
+    ASSERT_TRUE(module.session().draft.changes.empty());
+    const auto original=module.buildDraftDocument();const auto baseline=module.session().baselineSnapshot;
+    const auto newer=core::RevisionId::generate();
+    module.bindSessionAnchor(closure.branch,newer);
+    module.onRevisionCommitted(closure.branch,newer);
+    EXPECT_EQ(module.session().baseRevision,closure.revision);
+    EXPECT_EQ(module.session().baselineSnapshot,baseline);
+    EXPECT_EQ(module.buildDraftDocument().payload,original.payload);
+    EXPECT_THROW(module.bindSessionAnchor(core::BranchId::generate(),newer),std::runtime_error);
+    EXPECT_EQ(module.session().branch,closure.branch);
+    EXPECT_EQ(module.buildDraftDocument().payload,original.payload);
+}
+
+/** @brief PM-04：首次绑定和干净会话可推进；规范集合重排不得误判有编辑。 */
+TEST(ModelingDraftAnchor, CleanAndInitiallyUnboundSessionsCanAdvance_PM04_AT29)
+{
+    IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto base=core::RevisionId::generate();
+    EXPECT_NO_THROW(module.bindSessionAnchor(branch,base));
+    EXPECT_EQ(module.session().baseRevision,base);
+    module.noteAppliedRevision(base,core::ObjectId::generate());
+    const auto applied=module.session().baselineSnapshot;
+    module.onRevisionCommitted(branch,base);
+    EXPECT_EQ(module.session().baselineSnapshot,applied)<<"自身提交事件不能作废同步回执";
+    const auto newer=core::RevisionId::generate();
+    module.onRevisionCommitted(branch,newer);
+    EXPECT_EQ(module.session().baseRevision,newer);
+    EXPECT_TRUE(module.session().draft.changes.empty());
+    const auto other=core::BranchId::generate();
+    EXPECT_NO_THROW(module.bindSessionAnchor(other,base));
+    EXPECT_EQ(module.session().branch,other);
+    EXPECT_EQ(module.session().baseRevision,base);
 }

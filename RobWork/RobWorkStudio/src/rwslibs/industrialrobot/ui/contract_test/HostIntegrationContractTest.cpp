@@ -23,6 +23,14 @@
 #include <gtest/gtest.h>
 
 #include <QCoreApplication>
+#include <QTemporaryDir>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <filesystem>
+#include <sdurws/ird/project/ProjectStore.hpp>
+#include <sdurws/ird/modeling/CommandHandlers.hpp>
+#include <sdurws/ird/ui/IDraftController.hpp>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求追溯登记（ASM-UI 用例起接入）
 
@@ -363,6 +371,7 @@ TEST_F(HostIntegrationContractTest, RunDomainApply_DomainExceptionIsolated_Other
     EXPECT_NE(report.entries[0].rejectionReason.find("build-draft-command-failed"),
               std::string::npos);
     EXPECT_TRUE(report.entries[1].committed);   // 其余域照常提交
+    EXPECT_EQ(report.submittedCount(),1U)<<"组装失败未调用submit，不可计入已提交";
 }
 
 // =====================================================================
@@ -1090,6 +1099,78 @@ TEST_F(HostIntegrationContractTest,
         << "selection 面板记录空＝nullptr（结构违约防御——不越界）";
     EXPECT_EQ(ui::optimizationPanelWidget(emptyDescriptorExtra), nullptr)
         << "optimization 面板记录空＝nullptr（结构违约防御——不越界）";
+}
+
+
+/** @brief PM-04/AT-29：真实恢复→runner→项目Stale门，不用替身代替并发判定。 */
+TEST_F(HostIntegrationContractTest, RestoredModelDraftKeepsOldBaseThroughApply_PM04_AT29)
+{
+    IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
+    QTemporaryDir directory;ASSERT_TRUE(directory.isValid());
+    auto created=project::ProjectStoreFactory::createNew(
+        std::filesystem::path(directory.path().toStdWString())/L"project","stale-apply",nullptr,nullptr);
+    ASSERT_TRUE(created.store);auto& store=*created.store;
+    modeling::registerModelingCommandHandlers(store.handlerRegistry(),modeling::HandlerServices{});
+    const auto tips=store.query().branchTips();ASSERT_EQ(tips.size(),1U);
+    const auto branch=tips.front().id;const auto head=tips.front().tip;
+    auto domain=modeling::createModelingPluginAssembly();domain.seedTemplateSession();
+    domain.bindSessionAnchor(branch,head);
+    auto document=domain.modelingDraftSource().buildDraftDocument();
+    // 恢复边界中的旧身份不等于tip；是否存在旧字节不影响project先执行Stale门。
+    const auto oldBase=core::RevisionId::generate();document.baseRevisionId=oldBase;
+    auto frame=QJsonDocument::fromJson(QByteArray::fromStdString(document.payload)).object();
+    frame["changes"]=QJsonArray{QJsonObject{{"subject","root"},{"summary","恢复未应用修改"}}};
+    document.payload=QJsonDocument(frame).toJson(QJsonDocument::Compact).toStdString();
+    domain.modelingDraftSource().adoptRestoredDocument(document);
+    const auto original=domain.modelingDraftSource().buildDraftDocument();
+    ui::DomainModuleEntry entry;entry.moduleId="modeling";entry.module=domain.module.get();
+    entry.bindAnchor=[&](const auto& b,const auto& r){domain.bindSessionAnchor(b,r);};
+    int submitted=0;project::CommandResult result;
+    const auto report=ui::runDomainApply({entry},std::make_pair(branch,head),
+        [&](project::CommandEnvelope envelope,project::ICommandInteraction* interaction){
+            ++submitted;EXPECT_EQ(envelope.expectedRevision,oldBase);
+            result=store.commands().submit(envelope,interaction);return result;
+        },nullptr);
+    ASSERT_EQ(report.entries.size(),1U);EXPECT_EQ(submitted,1);
+    EXPECT_EQ(result.status.rejection,project::CommandStatus::Rejection::StaleRevision);
+    EXPECT_FALSE(result.committed());EXPECT_EQ(report.entries.front().rejectionReason,"stale-revision");
+    EXPECT_EQ(store.query().branchTips().front().tip,head)<<"过期草稿必须零修订";
+    const auto retained=domain.modelingDraftSource().buildDraftDocument();
+    EXPECT_EQ(retained.baseRevisionId,oldBase);EXPECT_EQ(retained.payload,original.payload);
+    (void)store.requestClose();EXPECT_TRUE(store.closed());
+}
+
+/** @brief PM-04：跨分支未处置拒绝必须在runner内隔离，保留草稿并继续其它域。 */
+TEST_F(HostIntegrationContractTest, PendingModelBranchChangeIsIsolatedBeforeSubmit_PM04_AT29)
+{
+    IRD_TEST_INFO("PM-04",{"AT-29"},std::nullopt);
+    auto domain=modeling::createModelingPluginAssembly();domain.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto base=core::RevisionId::generate();
+    domain.bindSessionAnchor(branch,base);
+    auto document=domain.modelingDraftSource().buildDraftDocument();
+    auto frame=QJsonDocument::fromJson(QByteArray::fromStdString(document.payload)).object();
+    frame["changes"]=QJsonArray{QJsonObject{{"subject","root"},{"summary","跨分支前的未应用修改"}}};
+    document.payload=QJsonDocument(frame).toJson(QJsonDocument::Compact).toStdString();
+    domain.modelingDraftSource().adoptRestoredDocument(document);
+    const auto original=domain.modelingDraftSource().buildDraftDocument();
+    ui::DomainModuleEntry model;model.moduleId="modeling";model.module=domain.module.get();
+    model.bindAnchor=[&](const auto& b,const auto& r){domain.bindSessionAnchor(b,r);};
+    FakeDomainModule healthy;healthy.nextEnvelope=makeEnvelope();
+    ui::DomainModuleEntry other;other.moduleId="other";other.module=&healthy;
+    int submitted=0;ui::DomainApplyReport report;
+    EXPECT_NO_THROW(report=ui::runDomainApply({model,other},
+        std::make_pair(core::BranchId::generate(),core::RevisionId::generate()),
+        [&](project::CommandEnvelope envelope,project::ICommandInteraction*){
+            ++submitted;EXPECT_EQ(envelope.commandType,"fake.apply");return makeCommitted();
+        },nullptr));
+    ASSERT_EQ(report.entries.size(),2U);EXPECT_EQ(submitted,1);EXPECT_EQ(healthy.buildCalls,1);
+    EXPECT_EQ(report.submittedCount(),1U)<<"准备失败不能冒称已提交";
+    EXPECT_FALSE(report.entries.front().committed);
+    EXPECT_EQ(report.entries.front().rejectionReason.find("anchor-bind-failed:"),0U);
+    EXPECT_TRUE(report.entries.back().committed);
+    const auto retained=domain.modelingDraftSource().buildDraftDocument();
+    EXPECT_EQ(retained.payload,original.payload);EXPECT_EQ(retained.baseRevisionId,base);
+    EXPECT_EQ(domain.module->buildDraftCommand("modeling")->branch,branch);
 }
 
 }  // namespace

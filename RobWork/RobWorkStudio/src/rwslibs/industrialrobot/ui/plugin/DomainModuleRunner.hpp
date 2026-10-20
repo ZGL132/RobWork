@@ -72,7 +72,7 @@ struct DomainModuleEntry {
     IPluginUiModule* module = nullptr;
     /// 会话锚绑定（buildDraftCommand 前调用——信封 branch/baseRevision 取
     /// 自会话态；入参＝权威分支表首条 tip（INV-M3 单默认分支）。空＝无锚
-    /// 语义域，跳过）。
+    /// 语义域，跳过）；std::exception使本域记PreparationFailed，零组装/提交。
     std::function<void(const core::BranchId&, const core::RevisionId&)> bindAnchor;
     /// Committed 回执的域处理（锚前移/根身份回填等域特定语义——入参＝
     /// 对端命令结果原值。空＝无回执处理域）。
@@ -87,11 +87,12 @@ struct DomainModuleEntry {
  * @brief 单个域模块的应用结果（遍历报告的行值——只读值语义）。
  */
 struct DomainApplyEntryReport {
-    /// 单模块结局两值：NoDraft＝buildDraftCommand 返回 nullopt（无草稿可
-    /// 应用——§8.5 合法形态，零提交）；Submitted＝已组装信封并提交。
+    /// 单模块结局：无草稿、实际提交和准备失败；后者未进入submit，
+    /// 不得计为无编辑或已提交（PM-04失败隔离及诚实呈现）。
     enum class Outcome : std::uint8_t {
         NoDraft,    ///< 无草稿可应用（跳过提交——不产生空修订）
         Submitted,  ///< 信封已提交（committed/rejection 见后续字段）
+        PreparationFailed, ///< 锚绑定/组装异常：原因有效，零submit，其余域继续。
     };
     std::string moduleId;       ///< 模块键（与条目一致）
     Outcome outcome = Outcome::NoDraft;
@@ -111,7 +112,7 @@ struct DomainApplyReport {
     std::size_t noDraftCount() const;
     /// @brief 已提交（Committed）模块数。
     std::size_t committedCount() const;
-    /// @brief 已组装并提交（无论成败）模块数＝entries 数−NoDraft 数。
+    /// @brief 实际进入submit的模块数（无论成败），不包含锚/组装失败。
     std::size_t submittedCount() const;
     /// @brief 是否存在任何提交（状态行汇总文案的判定位）。
     bool anyCommitted() const noexcept;

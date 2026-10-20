@@ -2055,3 +2055,7 @@ public:
 ### WP-13-T24 B4a：正式宿主差异交互补证
 
 仅在UiPlugin既有modeling-tour自动化段新增真实关节表暂存/确认、正式比较按钮、完整差异行/单位/值与共享选中定位、关闭及草稿局部撤销清理检查；项目修订和编译身份保持不变。差异产品实现仍在modeling私有层，无ui装配、公共面或链接边变化。精确设计与实际结果见WP-13-T24原计划B4a，不以此替代B5完整三维终验。
+
+### WP-13-T24 B4c-1：应用前锚失败隔离
+
+runDomainApply在每域build前捕获bindAnchor的std::exception，记录anchor-bind-failed、零build/submit并继续其余域；私有Outcome追加PreparationFailed，实际提交计数排除准备失败，宿主状态行明确部分失败。真实门面/ProjectStore Stale与跨分支反例见HostIntegrationContractTest，完整回执与窗口验收仍后续。

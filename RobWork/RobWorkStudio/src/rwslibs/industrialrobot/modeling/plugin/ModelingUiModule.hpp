@@ -327,7 +327,11 @@ public:
     /**
      * @brief 绑定会话锚（打开成功后由装配层调用——分支＋当前 tip；此后
      *        buildDraftCommand 产出的信封携带真实分支，baseRevision 锚定
-     *        该 tip＝Stale 判据有效）。
+     *        该 tip＝Stale 判据有效）。已有脏草稿的同分支绑定保留原锚；
+     *        跨分支未处置草稿抛std::runtime_error，所有会话值保持不变。
+     * @param branch [in] 待绑定分支，初始绑定由宿主提供有效身份。
+     * @param base [in] 当前tip；不能作为已完成草稿重放的证明。
+     * @return 无返回；干净/首次绑定才改变锚，仅UI线程调用。
      */
     void bindSessionAnchor(const core::BranchId& branch,
                            const core::RevisionId& base);
@@ -368,10 +372,9 @@ public:
     void onSessionDetached();
 
     /**
-     * @brief 修订提交事件（非 draft.apply 路径——撤销/重做/其他会话入口
-     *        产生新修订时由宿主事件桥调用：编辑基线前移到新 tip＋就绪
-     *        重算＋面板刷新；编辑记录不清零——与 noteAppliedRevision 的
-     *        "应用即消费"语义区分，§8.5 重建基线的会话对位）。
+     * @brief 修订提交事件：当前分支的脏草稿保留旧锚/基线/局部历史，
+     *        让project拒绝过期应用；干净会话前移并使未知预览失效。
+     *        与当前锚同修订的事件幂等，保留成功同步回执已建立的基线。
      *
      * @param branch [in] 提交所在分支（非当前锚定分支的事件忽略——跨分支
      *                修订不触碰编辑基线，§6.2 纪元过滤的模块对位）
@@ -487,6 +490,14 @@ private:
      */
     bool restoreNamedPose(const std::string& key,std::string& summary);
     std::function<bool(const ModelingSessionPoseRequest&,std::string&)> m_sessionPoseWriter; ///< 同步宿主出口；UI线程持闭包。
+    /**
+     * @brief 判断是否有未应用内容，供绑定与事件入口保护旧草稿修订锚。
+     * @return 摘要非空或存在保存基线且规范内容不同为true；无基线时仅摘要表明编辑。
+     * @throws std::runtime_error 内部工作集无法编码，不能将失败当作无编辑。
+     * 仅UI线程调用，仅读取模块拥有的工作集；SI/集合规范沿唯一Codec。
+     */
+    bool hasPendingDraft() const;
+
     /** @brief L-5：记录一次被接受的完整草稿版本；相等重算不入栈，新编辑清重做。仅UI线程。 */
     void rememberDraftHistory();
     /** @brief 清理局部历史；[in] retainCurrent=true以当前草稿建新起点，false用于关闭后空会话。 */

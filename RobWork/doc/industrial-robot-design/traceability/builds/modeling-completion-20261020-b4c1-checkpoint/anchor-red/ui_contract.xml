@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.033" timestamp="2026-10-20T12:47:44.848" name="AllTests">
+  <testsuite name="HostIntegrationContractTest" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.033" timestamp="2026-10-20T12:47:44.848">
+    <testcase name="RunDomainApply_DomainExceptionIsolated_OthersProceed" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp" line="345" status="run" result="completed" time="0." timestamp="2026-10-20T12:47:44.848" classname="HostIntegrationContractTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:374&#x0A;Expected equality of these values:&#x0A;  report.submittedCount()&#x0A;    Which is: 2&#x0A;  1U&#x0A;    Which is: 1&#x0A;组装失败未调用submit，不可计入已提交&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:374
+Expected equality of these values:
+  report.submittedCount()
+    Which is: 2
+  1U
+    Which is: 1
+组装失败未调用submit，不可计入已提交
+]]></failure>
+    </testcase>
+    <testcase name="RestoredModelDraftKeepsOldBaseThroughApply_PM04_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp" line="1106" status="run" result="completed" time="0.032" timestamp="2026-10-20T12:47:44.848" classname="HostIntegrationContractTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1131&#x0A;Expected equality of these values:&#x0A;  envelope.expectedRevision&#x0A;    Which is: (16-byte object &lt;EA-78 64-A2 22-CC 37-DF 23-A3 9E-57 D0-19 43-B2&gt;)&#x0A;  oldBase&#x0A;    Which is: 16-byte object &lt;53-72 49-D2 CC-36 86-03 00-CE C9-15 5D-D0 D2-70&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1131
+Expected equality of these values:
+  envelope.expectedRevision
+    Which is: (16-byte object <EA-78 64-A2 22-CC 37-DF 23-A3 9E-57 D0-19 43-B2>)
+  oldBase
+    Which is: 16-byte object <53-72 49-D2 CC-36 86-03 00-CE C9-15 5D-D0 D2-70>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1135&#x0A;Expected equality of these values:&#x0A;  result.status.rejection&#x0A;    Which is: 4-byte object &lt;05-00 00-00&gt;&#x0A;  project::CommandStatus::Rejection::StaleRevision&#x0A;    Which is: 4-byte object &lt;03-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1135
+Expected equality of these values:
+  result.status.rejection
+    Which is: 4-byte object <05-00 00-00>
+  project::CommandStatus::Rejection::StaleRevision
+    Which is: 4-byte object <03-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1136&#x0A;Expected equality of these values:&#x0A;  report.entries.front().rejectionReason&#x0A;    Which is: &quot;submit-failed: mdl: \xE2\x91\xA3\xE7\xAD\x96\xE7\x95\xA5\xE7\xAB\xAF\xE5\x8F\xA3\xE6\x9C\xAA\xE8\xA3\x85\xE9\x85\x8D\xEF\xBC\x88\xE8\xA3\x85\xE9\x85\x8D\xE7\xBC\xBA\xE9\x99\xB7\xEF\xBC\x89&quot;&#x0A;    As Text: &quot;submit-failed: mdl: ④策略端口未装配（装配缺陷）&quot;&#x0A;  &quot;stale-revision&quot;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1136
+Expected equality of these values:
+  report.entries.front().rejectionReason
+    Which is: "submit-failed: mdl: \xE2\x91\xA3\xE7\xAD\x96\xE7\x95\xA5\xE7\xAB\xAF\xE5\x8F\xA3\xE6\x9C\xAA\xE8\xA3\x85\xE9\x85\x8D\xEF\xBC\x88\xE8\xA3\x85\xE9\x85\x8D\xE7\xBC\xBA\xE9\x99\xB7\xEF\xBC\x89"
+    As Text: "submit-failed: mdl: ④策略端口未装配（装配缺陷）"
+  "stale-revision"
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1139&#x0A;Expected equality of these values:&#x0A;  retained.baseRevisionId&#x0A;    Which is: 16-byte object &lt;EA-78 64-A2 22-CC 37-DF 23-A3 9E-57 D0-19 43-B2&gt;&#x0A;  oldBase&#x0A;    Which is: 16-byte object &lt;53-72 49-D2 CC-36 86-03 00-CE C9-15 5D-D0 D2-70&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1139
+Expected equality of these values:
+  retained.baseRevisionId
+    Which is: 16-byte object <EA-78 64-A2 22-CC 37-DF 23-A3 9E-57 D0-19 43-B2>
+  oldBase
+    Which is: 16-byte object <53-72 49-D2 CC-36 86-03 00-CE C9-15 5D-D0 D2-70>
+]]></failure>
+    </testcase>
+    <testcase name="PendingModelBranchChangeIsIsolatedBeforeSubmit_PM04_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp" line="1144" status="run" result="completed" time="0." timestamp="2026-10-20T12:47:44.881" classname="HostIntegrationContractTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1165&#x0A;Expected equality of these values:&#x0A;  envelope.commandType&#x0A;    Which is: &quot;apply-robot-design&quot;&#x0A;  &quot;fake.apply&quot;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1165
+Expected equality of these values:
+  envelope.commandType
+    Which is: "apply-robot-design"
+  "fake.apply"
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1166&#x0A;Expected equality of these values:&#x0A;  submitted&#x0A;    Which is: 2&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1166
+Expected equality of these values:
+  submitted
+    Which is: 2
+  1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1167&#x0A;Expected equality of these values:&#x0A;  report.submittedCount()&#x0A;    Which is: 2&#x0A;  1U&#x0A;    Which is: 1&#x0A;准备失败不能冒称已提交&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1167
+Expected equality of these values:
+  report.submittedCount()
+    Which is: 2
+  1U
+    Which is: 1
+准备失败不能冒称已提交
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1168&#x0A;Value of: report.entries.front().committed&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1168
+Value of: report.entries.front().committed
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1169&#x0A;Expected equality of these values:&#x0A;  report.entries.front().rejectionReason.find(&quot;anchor-bind-failed:&quot;)&#x0A;    Which is: 18446744073709551615&#x0A;  0U&#x0A;    Which is: 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1169
+Expected equality of these values:
+  report.entries.front().rejectionReason.find("anchor-bind-failed:")
+    Which is: 18446744073709551615
+  0U
+    Which is: 0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1172&#x0A;Expected equality of these values:&#x0A;  retained.baseRevisionId&#x0A;    Which is: 16-byte object &lt;EE-A4 00-99 E1-91 07-7C 10-87 3E-70 1B-51 59-32&gt;&#x0A;  base&#x0A;    Which is: 16-byte object &lt;29-71 3A-43 29-27 3D-F5 BA-F6 2A-C7 4C-10 B6-32&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1172
+Expected equality of these values:
+  retained.baseRevisionId
+    Which is: 16-byte object <EE-A4 00-99 E1-91 07-7C 10-87 3E-70 1B-51 59-32>
+  base
+    Which is: 16-byte object <29-71 3A-43 29-27 3D-F5 BA-F6 2A-C7 4C-10 B6-32>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1173&#x0A;Expected equality of these values:&#x0A;  domain.module-&gt;buildDraftCommand(&quot;modeling&quot;)-&gt;branch&#x0A;    Which is: 16-byte object &lt;F9-33 06-70 F8-69 65-66 E9-34 3E-DC 1C-CF 2E-6C&gt;&#x0A;  branch&#x0A;    Which is: 16-byte object &lt;5C-8C E1-6E 7B-39 94-DA 33-3D 11-E9 AA-C6 86-48&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp:1173
+Expected equality of these values:
+  domain.module->buildDraftCommand("modeling")->branch
+    Which is: 16-byte object <F9-33 06-70 F8-69 65-66 E9-34 3E-DC 1C-CF 2E-6C>
+  branch
+    Which is: 16-byte object <5C-8C E1-6E 7B-39 94-DA 33-3D 11-E9 AA-C6 86-48>
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

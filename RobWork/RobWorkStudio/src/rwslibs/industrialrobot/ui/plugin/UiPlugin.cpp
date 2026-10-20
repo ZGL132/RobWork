@@ -258,7 +258,7 @@ public:
             m_domains->onRevisionCommitted(payload.branch, payload.revision);
         }
         if (m_devLog) {
-            m_devLog("revision-committed -> modeling baseline advance: branch="
+            m_devLog("revision-committed -> modeling event delivered: branch="
                      + payload.branch.toCanonical()
                      + " rev=" + payload.revision.toCanonical());
         }
@@ -3617,24 +3617,25 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
             }
         });
 
-    // 状态行汇总（呈现值源＝遍历报告——零虚构：无草稿域如实计数）。
+    // 状态行只使用实际结局：准备失败既不是无修改，也不是已提交。
+    // 部分成功时仍报告失败域数，不能因另一域成功而掩盖跨分支/组装拒绝。
     if (m_hostStatusBar != nullptr) {
-        if (report.submittedCount() == 0) {
+        const auto failed = report.entries.size() - report.noDraftCount() - report.committedCount();
+        if (failed != 0) {
             m_hostStatusBar->showMessage(
-                QString::fromUtf8("无已应用的草稿变更（%1 个域均无待应用修改）")
-                    .arg(static_cast<int>(report.entries.size())),
-                4000);
+                QString::fromUtf8("草稿应用：%1 个域已应用，%2 个域未应用（详情见诊断），%3 个域无变更")
+                    .arg(static_cast<int>(report.committedCount()))
+                    .arg(static_cast<int>(failed))
+                    .arg(static_cast<int>(report.noDraftCount())), 6000);
         } else if (report.anyCommitted()) {
             m_hostStatusBar->showMessage(
                 QString::fromUtf8("草稿已应用：提交 %1 个域修订（%2 个域无变更）")
                     .arg(static_cast<int>(report.committedCount()))
-                    .arg(static_cast<int>(report.noDraftCount())),
-                5000);
+                    .arg(static_cast<int>(report.noDraftCount())), 5000);
         } else {
             m_hostStatusBar->showMessage(
-                QString::fromUtf8("草稿应用未提交（%1 个域被拒绝/中止——详情见诊断）")
-                    .arg(static_cast<int>(report.submittedCount())),
-                6000);
+                QString::fromUtf8("无待应用的草稿变更（%1 个域均无待应用修改）")
+                    .arg(static_cast<int>(report.noDraftCount())), 4000);
         }
     }
     // 提交后的共享面刷新（域工作集修订→共享树/检查器呈现同步——L1 链路

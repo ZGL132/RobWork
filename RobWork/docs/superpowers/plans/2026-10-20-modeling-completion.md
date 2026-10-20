@@ -287,3 +287,23 @@ B4b干净切换补充：clean-switch-red真实复现磁盘TCP规范化后，rest
 B4c实施顺序：B4b封存→精确契约同步及真实原子应用红证→完整槽规划/ID回填/移除事实→权威回执重读→Stale真实入口反例→真实磁盘及undo/redo→完整窗口/双模式/门禁→独立冻结本地提交。当前尚未修改B4c产品代码。
 
 B4b状态保存：用户要求等待另一工作树GUI结束并通知后再恢复窗口验证，先转其他非GUI工作。最新非GUI七套件1189通过、0失败、0跳过；双模式构建/verify-task三条通过。较早窗口专项通过但最终完整集成GUI发生跨工作树重叠，列invalid不计最终通过。最终三GUI与正式宿主NOT RUN；证据冻结modeling-completion-20261020-b4b-checkpoint，明确本地WIP而非B4b/47项完成。下一批先推进B4c非GUI，不推送不合入。
+
+## B4c-1实施登记：过期草稿的真实入口保护（非GUI可独立验证）
+
+按用户等待另一工作树GUI通知、先做其他工作的指令，将B4c拆为可独立验证的锚保护与后续完整工作集应用，不以B4b窗口未完成阻塞本批纯模型工作。
+1. 行为：PM-04/PM-18/AT-29原文要求过期拒绝并保留；同分支脏草稿的绑定/外部修订事件保留原锚、工作集、保存基线和局部历史。未锚定首次绑定、无未应用内容的会话沿原路径推进。跨分支有未处置草稿明确拒绝，先处置/脱离后再切换。
+2. 接口：不增签名/字段/token；修改原私有模块方法和assembly既有绑定方法契约注释。runner将bindAnchor纳入每域异常隔离，原因anchor-bind-failed，零build/submit且继续其余域。实际runner测试文件是ui/contract_test/HostIntegrationContractTest.cpp，替代草案不存在的ui/test/DomainModuleRunnerTest.cpp。
+3. 失败：跨分支未处置为std::runtime_error，由runner隔离并报告，不静默跳过或虚报NoDraft；同分支过期由project真实Stale门拒绝。规范比较编码失败仍fail-fast且原状态不变。未知异常不吞。
+4. 生命周期：仅原模块拥有值；比较共用B4b规范内容，changes与真实差异共同判断，不能因摘要缺席漏保护。不读写磁盘、不分配持久ID，不替project判断修订是否存在。
+5. 线程：沿原UI线程同步调用；无新共享状态，规范比较沿唯一Codec/SI/集合排序。
+6. 测试：先真实门面恢复旧base文档→runner→真实ProjectStore Stale拒绝；跨分支拒绝后草稿逐字节保留、零提交并继续后域；同分支历史、空摘要真实差异、无基线摘要、外部事件、干净首次绑定正例。模型/契约双模式、全量构建/门禁留痕；所有GUI仍NOT RUN，不冒称交互或三维通过。
+7. 文档/范围：仅modeling/plugin/ModelingUiModule.hpp/.cpp、原assembly头注释、modeling/test/PluginModuleT03BTest.cpp；ui/plugin/DomainModuleRunner.hpp/.cpp、ui/contract_test/HostIntegrationContractTest.cpp；单元卡/DTB/原契约/本计划、新证据b4c1。无公共形状/存储/新边/F06/F07变化。依据用户自动推荐授权登记后实施，不弹选项、不推送不合入。
+8. 决策：无新长期架构决策。只绑定锚不能充当重放/合并；现行模块没有实现成功重放证明，不能沿旧注释以防“误报Stale”为由跳过需求安全门。原T03b测试中要求脏草稿无条件前移的旧断言按需求纠正，补干净推进正例。
+
+B4c-1报告补充：原runner将组装异常标成Submitted且submittedCount按差值计数，无法诚实区分尚未提交的锚/组装失败。私有DomainApplyEntryReport::Outcome表尾增加PreparationFailed（不改公共头/持久化），两个准备失败路径使用该态；submittedCount只数Submitted。UiPlugin状态汇总以实际已应用/失败/无编辑分类，准备失败不能落入“全部无变更”。原build异常回归补真实提交计数断言，新增跨分支回归也验证计数。精确范围追加既有UiPlugin.cpp的状态文案段；GUI输出仍等待用户通知，当前仅构建/模型验证。
+
+B4c-1本批模型验证结果：集成modeling432、modeling_contract17、ui326、ui_contract59、core红线4；独立modeling348、contract8，合计1194通过、0失败、0跳过。集成全量Release和独立三目标构建退出0；verify-task结论以冻结日志为准。新增3模块与2契约回归；准备失败计数的既有回归补强亦先失败后通过。最终GUI/正式宿主/局部历史真实窗口仍NOT RUN，按用户要求等待通知；仅保存WIP，不标B4b/B4c或47项完成。
+
+B4c-2自审发现的后续必验项（尚未实施）：当前rebuildBaseline将保留但根未引用的全部建模对象装入工作集，PoseSet/Drivetrain有第二个保留对象即抛；完整apply必须按根引用选择活动候选、同时保留全部原字节作inverse/身份防碰撞素材。新命令Restore须按本次固定基线/逆写入重建完整闭包，不能沿可变HEAD取数或丢掉已解除引用的旧部件。C-6权威切换独立性应按真实部件内容判定，新token携带未变的完整部件槽不代表混合编辑；原五命令槽语义保留。rebuildOnRevision目前只重标锚，真正“基于当前版本重新编辑”的完整基线读取仍需下一批一并核实，不能凭B4c-1安全拒绝宣称冲突交互已全闭合。
+
+B4c-1冻结检查点：traceability/builds/modeling-completion-20261020-b4c1-checkpoint；verify-task三条已真实通过、1194通过且无失败跳过。最终GUI/正式宿主仍NOT RUN，本地WIP，不推送/合入。冻结后的索引、文档、格式和范围日志随后续批次新增保存。

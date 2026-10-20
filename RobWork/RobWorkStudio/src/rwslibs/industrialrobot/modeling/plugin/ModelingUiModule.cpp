@@ -704,10 +704,19 @@ void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
     if (!(m_session.branch == branch)) {
         return;
     }
-    // 非 draft.apply 路径的修订提交（撤销/重做/其他入口——§8.5 重建基线
-    // 的会话对位）：编辑基线前移到新 tip。与 noteAppliedRevision 的差异：
-    // 编辑记录不清零（撤销/重做消费的是修订历史，未应用的域编辑仍归
-    // 用户处置——草稿继续以新基线编辑，再应用不误报 Stale）。
+    // PM-04/AT-29：事件只报告有新修订，不证明未应用编辑已在新基线上重放。
+    // 自身提交的同步回执已经定格基线；重复事件不能使刚建立的预览/基线失效。
+    if (m_session.baseRevision == newTip) { return; }
+    if (hasPendingDraft()) {
+        // 保留工作集、保存基线和局部历史，让后续命令仍以旧锚接受project的
+        // Stale裁决。不能只改修订号而把旧内容冒充成已合并的新内容。
+        if (m_panel) {
+            m_panel->setOutcomeMessage(QString::fromUtf8(
+                "项目已有新修订，建模草稿基于旧修订；请先处置草稿后重新编辑。"));
+        }
+        return;
+    }
+    // 干净会话无待重放内容，沿原路径推进并使未知的新修订预览失效。
     m_session.baseRevision = newTip;
     clearDraftHistory(); // 项目修订边界与草稿局部历史正交，不跨已提交修订回放。
     // 应用侧快照失效（UI-T41——撤销/重做后的修订内容本模块未知：预览页/
@@ -722,11 +731,30 @@ void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
 // 会话锚定与应用回执（T03b-2——apply 网关的模块半区）
 // =====================================================================
 
+bool ModelingUiModule::hasPendingDraft() const
+{
+    // B4b完整规范比较是唯一的内容等价口径：摘要缺席不能漏掉真实修改，
+    // TCP等集合的Codec规范排序也不能把干净磁盘恢复误判为有编辑。
+    return !m_session.draft.changes.empty()
+        || (m_session.baselineSnapshot
+            && canonicalDraftContents(m_session.draft)
+                != canonicalDraftContents(*m_session.baselineSnapshot));
+}
+
 void ModelingUiModule::bindSessionAnchor(const core::BranchId& branch,
                                          const core::RevisionId& base)
 {
     m_guard.assertOnUiThread();
     const bool changed=!(m_session.branch==branch)||m_session.baseRevision!=base;
+    if (m_session.branch.isValid() && m_session.baseRevision && hasPendingDraft()) {
+        // 首次打开仍可给无锚的种子绑定真实分支；已有草稿必须保留原关联。
+        // 跨分支意味着用户尚未处置的内容将写入另一方案，必须显式拒绝。
+        if (!(m_session.branch == branch)) {
+            throw std::runtime_error("建模草稿有未应用编辑，请先处置后再切换分支");
+        }
+        // 同分支的新tip不等于成功重放，保留旧expectedRevision及局部撤销栈。
+        return;
+    }
     m_session.branch = branch;
     m_session.baseRevision = base;
     if(changed){clearDraftHistory();} // 新分支/新基线不能沿用另一会话的回退点。
