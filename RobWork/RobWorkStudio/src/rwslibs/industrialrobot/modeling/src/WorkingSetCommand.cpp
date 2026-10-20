@@ -232,4 +232,58 @@ std::optional<ModelingWorkingSet> readReferencedWorkingSet(
 
 std::unique_ptr<project::ICommandHandler> makeWorkingSetCommandHandler(const HandlerServices& services)
 {return std::make_unique<WorkingSetHandler>(services);}
+
+DecodeOutcome planLegacyFixedRestore(const project::IProjectQueryPort& query,
+    const project::RevisionView& revision,const CommandPayload& payload,
+    const ModelingWorkingSet& baseline,project::CommandPlan& out)
+{
+    if(payload.mode!=CommandPayload::Mode::Restore||payload.objects.empty()
+       ||!payload.removals.empty()||!baseline.rootObjectId){return invalidWorkingSet();}
+    RobotDesign root=baseline.design;
+    std::set<std::string> seen;
+    std::vector<project::ObjectWrite> writes;
+    DecodeOutcome result;
+    // 第一步只校验并构造局部覆盖层。历史槽可包含目前未活动的对象，
+    // 但必须已存在于该不可变修订；不能以“能替换当前部件”代替身份/类型核验。
+    for(const auto& slot:payload.objects){
+        if(slot.allocateNew||!slot.objectId.isValid()
+           ||!seen.insert(slot.objectId.toCanonical()).second){return invalidWorkingSet();}
+        const auto ref=std::find_if(revision.objectRefs.begin(),revision.objectRefs.end(),
+            [&](const auto& r){return r.objectId==slot.objectId;});
+        if(ref==revision.objectRefs.end()||ref->objectTypeToken!=slot.objectTypeToken){return invalidWorkingSet();}
+        const auto decoded=RobotDesignCodec{}.decode(slot.objectBytes,kCurrentFormatVersion);
+        if(!decoded.ok()||tokenOf(decoded.get())!=slot.objectTypeToken){return invalidWorkingSet();}
+        const bool identityMatches=std::visit([&](const auto& typed){
+            using T=std::decay_t<decltype(typed)>;
+            if constexpr(std::is_same_v<T,RobotDesign>){
+                if(slot.objectId!=*baseline.rootObjectId){return false;}
+                root=typed;result.travelRelevant=true;return true;
+            }else{return typed.objectId==slot.objectId;}
+        },decoded.get());
+        if(!identityMatches){return invalidWorkingSet();}
+        project::ObjectWrite write;write.objectId=slot.objectId;write.objectTypeToken=slot.objectTypeToken;
+        write.payloadCanonical=slot.objectBytes;writes.push_back(std::move(write));
+        result.affectedOids.push_back(slot.objectId);
+    }
+    // 第二步从最终根投影活动闭包，未写的历史部件按同一修订精确cv补齐。
+    // 根先/后或缺席都不影响结果；无关保留对象仅写其历史字节，不进入活动断言。
+    const auto candidate=readReferencedWorkingSet(query,revision,root,*baseline.rootObjectId,writes);
+    if(!candidate){return invalidWorkingSet();}
+    result.candidate=*candidate;
+    const auto oldRefs=partRefs(baseline.design);const auto newRefs=partRefs(root);
+    if(!oldRefs||!newRefs){return invalidWorkingSet();}
+    for(const auto& item:*oldRefs){if(!newRefs->count(item.first)){
+        result.removedRefs.push_back(*core::ObjectId::tryFromCanonical(item.first));
+    }}
+    // PM-18/MDL-06：历史帧可能跨命令族携带根及部件；纯命名位姿族的默认
+    // false位不能掩盖实际工具/场景/关节变化，否则项目已恢复、运行时仍用旧值。
+    // 仅排除明确不进入运行时的位姿集/引用和编辑日志，其他完整值变化保守重编译。
+    // 两个副本都来自同一固定修订及本次覆盖，不读取HEAD，也不改写持久原字节。
+    const auto runtimeInputs=[](ModelingWorkingSet value){
+        value.poseSetObject.reset();value.design.poseSetRef.reset();value.changes.clear();
+        return value;
+    };
+    out.requiresDualCompile=runtimeInputs(baseline)!=runtimeInputs(*candidate);
+    out.objectWrites=std::move(writes);return result;
+}
 } // namespace sdurws::ird::modeling

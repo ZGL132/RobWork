@@ -915,34 +915,25 @@ BaselineSnapshot rebuildBaseline(project::HandlerContext& ctx,
                     snap.ws.rootObjectId = ref.objectId;
                     snap.ws.design = typed;
                 } else if constexpr (std::is_same_v<T, ToolDefinition>) {
-                    if(envelope.commandType==kCmdApplyModelingWorkingSet){return;}
-                    snap.ws.toolObjects.push_back(typed);
+                    // 部件稍后只按根引用读取；保留对象仍完整进入entries供逆放。
+                    return;
                 } else if constexpr (std::is_same_v<T, SceneObject>) {
-                    if(envelope.commandType==kCmdApplyModelingWorkingSet){return;}
-                    snap.ws.sceneObjects.push_back(typed);
+                    return;
                 } else if constexpr (std::is_same_v<T, PoseSet>) {
-                    if(envelope.commandType==kCmdApplyModelingWorkingSet){return;}
-                    if (snap.ws.poseSetObject.has_value()) {
-                        throw std::logic_error("mdl: 基线闭包含多个位姿集（存储违约）");
-                    }
-                    snap.ws.poseSetObject = typed;
+                    return;
                 } else {
                     static_assert(std::is_same_v<T, DrivetrainDesign>, "五变体全覆盖");
-                    if(envelope.commandType==kCmdApplyModelingWorkingSet){return;}
-                    if (snap.ws.drivetrainObject.has_value()) {
-                        throw std::logic_error("mdl: 基线闭包含多个传动对象（存储违约）");
-                    }
-                    snap.ws.drivetrainObject = typed;
+                    return;
                 }
             },
             value);
     }
-    if(envelope.commandType==kCmdApplyModelingWorkingSet&&snap.ws.rootObjectId){
+    if(snap.ws.rootObjectId){
         // project保留所有未改对象，已解除根引用的部件仍是合法历史素材。
-        // 新完整命令只把根实际引用的部件装入活动工作集，entries仍保留全部原字节。
+        // 新旧命令都只把根实际引用的部件装入活动工作集，不能因历史累积误报多单例。
         const auto active=readReferencedWorkingSet(ctx.query(),baseSnapshot,
             snap.ws.design,*snap.ws.rootObjectId,{});
-        if(!active){throw std::logic_error("完整命令基线活动闭包损坏：根引用无法精确恢复");}
+        if(!active){throw std::logic_error("建模基线活动闭包损坏：根引用无法精确恢复");}
         snap.ws=*active;
     }
     return snap;
@@ -1099,7 +1090,12 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
     // ---- ③ 子类钩子：差值解码＋命令形状校验＋取号回填＋写入集表达 ----
     //（钩子按 §9.4.8 语义把对象写入集表达进 out.objectWrites——其余字段
     //  归基类；拒绝路径基类清空计划——拒绝态计划不可消费。）
-    DecodeOutcome dec = decodeAndPlan(ctx, *payload, baseline.ws, out);
+    // PM-18：旧历史逆放也必须能重新挂接保留部件。final管线在此把本次
+    // 固定修订传给私有规划器，不改变公共虚钩子或处理器跨调用生命周期。
+    DecodeOutcome dec = payload->mode==CommandPayload::Mode::Restore
+        && envelope.commandType!=kCmdApplyModelingWorkingSet
+        ?planLegacyFixedRestore(ctx.query(),baseSnapshot,*payload,baseline.ws,out)
+        :decodeAndPlan(ctx, *payload, baseline.ws, out);
     if (dec.outcome != project::PrepareOutcome::Planned) {
         out.objectWrites.clear();
         return dec.outcome;  // RejectedInvalidInput（域口径——槽形状/身份/一致性）
@@ -1198,8 +1194,9 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
     // 诊断，不与候选闭包断言的派生违例混报：被拒候选不进入后续断言域）。
     if (!dec.removedRefs.empty()) {
         std::vector<core::DiagnosticRecord> protectionBlockers;
-        // 新完整事务可显式转移/清空默认TCP后解除旧工具；旧五命令保持原保护语义。
-        const auto& protectedRoot=envelope.commandType==kCmdApplyModelingWorkingSet
+        // 完整事务或历史逆放可显式转移/清空默认TCP后解除旧工具；旧五Apply仍用原保护语义。
+        const auto& protectedRoot=(envelope.commandType==kCmdApplyModelingWorkingSet
+            ||payload->mode==CommandPayload::Mode::Restore)
             ?dec.candidate.design:baseline.ws.design;
         m_suite.assertReferenceProtection(protectedRoot, dec.removedRefs, protectionBlockers);
         if (!protectionBlockers.empty()) {
@@ -1280,7 +1277,9 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
 
     // ---- ⑤ 计划最终化（S4 确认编排/S5 双编译/S6 事务归 project）----
     //（objectWrites 已由钩子表达进 out——此处只补齐其余计划字段。）
-    out.requiresDualCompile = m_requiresDualCompile;
+    // 旧命名位姿Restore允许恢复历史根/其他部件，规划器已按实际活动闭包
+    // 表达额外编译需求；不能用命令族的false位覆盖它。纯位姿变化仍为false。
+    out.requiresDualCompile = m_requiresDualCompile || out.requiresDualCompile;
     // 待确认集：稳定排序（对象 id 字典序）——与就绪报告同一排序纪律。
     std::sort(confirmables.begin(), confirmables.end(),
               [](const core::ConfirmableFinding& a, const core::ConfirmableFinding& b) {
@@ -1336,56 +1335,8 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
 
 namespace {
 
-/// Restore 模式的共用钩子体（§6.9：快照逆放——全部槽显式身份且存在于
-/// 基线；写入＝载荷携带的前一版本 canonical 字节原样直写；候选＝基线中
-/// 对应对象替换为解码值，断言管线照常执行——新修订的确认须重新绑定）。
-DecodeOutcome decodeRestoreCommon(const CommandPayload& payload,
-                                  const ModelingWorkingSet& baseline,
-                                  project::CommandPlan& out)
-{
-    DecodeOutcome result;
-    if (payload.objects.empty()) { return invalidInput(); }
-    // 逆放不表达移除（移除的逆＝根对象字节还原，引用随根恢复——v2 载荷
-    // 的 removals 段在 Restore 模式恒空；非空＝无效载荷）。
-    if (!payload.removals.empty()) { return invalidInput(); }
-    // 候选＝基线底（逆放对象就地替换——未涉及对象保持基线态）。
-    result.candidate = baseline;
-    result.candidate.rootObjectId = baseline.rootObjectId;
-    bool rootRestored = false;  // 根被逆放＝关节行程事实随本次变更（MDL-06④域）
-    std::vector<core::ObjectId> affected;
-    affected.reserve(payload.objects.size());
-    for (const PayloadObjectSlot& slot : payload.objects) {
-        // 逆放槽契约：显式身份＋存在于基线＋token 一致＋字节可解码。
-        if (slot.allocateNew) { return invalidInput(); }
-        if (!slot.objectId.isValid()) { return invalidInput(); }
-        const auto decoded = decodeSlotObject(slot);
-        if (!decoded.has_value()) { return invalidInput(); }
-        // 基线存在性＋token 一致性（恢复不存在的身份＝无效载荷）。
-        bool exists = false;
-        if (baseline.rootObjectId.has_value() && *baseline.rootObjectId == slot.objectId
-            && slot.objectTypeToken == kRobotDesignObjectType
-            && std::holds_alternative<RobotDesign>(*decoded)) {
-            exists = true;
-            result.candidate.design = std::get<RobotDesign>(*decoded);
-            result.candidate.rootObjectId = slot.objectId;
-            rootRestored = true;
-        } else if (replacePartInCandidate(result.candidate, slot.objectId, *decoded)) {
-            exists = true;
-        }
-        if (!exists) { return invalidInput(); }
-        // 写入＝前一版本字节原样（(oid,cv) 快照——不重编码，位级保真）。
-        project::ObjectWrite write;
-        write.objectId = slot.objectId;
-        write.objectTypeToken = slot.objectTypeToken;
-        write.payloadCanonical = slot.objectBytes;
-        out.objectWrites.push_back(std::move(write));
-        affected.push_back(slot.objectId);
-    }
-    result.affectedOids = std::move(affected);
-    result.travelRelevant = rootRestored;
-    result.outcome = project::PrepareOutcome::Planned;
-    return result;
-}
+// PM-18/B4c-3a：Restore已由final prepare统一规划，下面五钩子只表达
+// 原Apply槽形状。不能再用当前活动部件替换来模拟历史闭包恢复。
 
 /// 根部件引用挂载（按 token 把新对象身份挂入根引用表；"至多一份"约束在
 /// 位姿集/传动面强制）。前置：root 为可变候选根。
@@ -1508,9 +1459,6 @@ DecodeOutcome ApplyRobotDesignHandler::decodeAndPlan(project::HandlerContext& ct
                                                      const ModelingWorkingSet& baseline,
                                                      project::CommandPlan& out)
 {
-    if (payload.mode == CommandPayload::Mode::Restore) {
-        return decodeRestoreCommon(payload, baseline, out);
-    }
     DecodeOutcome result;
     // 候选＝基线底＋本次增量（与 ApplyToolDefinitionHandler 的 WP-13-T10
     // 修复同款语义——本处理器当初漏改）。原实现 candidate 默认空构造、
@@ -1612,9 +1560,6 @@ DecodeOutcome ApplyToolDefinitionHandler::decodeAndPlan(project::HandlerContext&
                                                         const ModelingWorkingSet& baseline,
                                                         project::CommandPlan& out)
 {
-    if (payload.mode == CommandPayload::Mode::Restore) {
-        return decodeRestoreCommon(payload, baseline, out);
-    }
 
     // ---- 移除面（WP-13-T10/V-04/V-05）：恰一个工具引用移除，objects 空
     //（写入面与移除面混载＝无效载荷——§9.3 表行 2 单对象命令形状）----
@@ -1725,9 +1670,6 @@ DecodeOutcome ApplySceneObjectsHandler::decodeAndPlan(project::HandlerContext& c
                                                       const ModelingWorkingSet& baseline,
                                                       project::CommandPlan& out)
 {
-    if (payload.mode == CommandPayload::Mode::Restore) {
-        return decodeRestoreCommon(payload, baseline, out);
-    }
     DecodeOutcome result;
     // 槽形状：对象槽与/或移除槽至少其一（批量增/改/移除引用可混载——
     // §9.3 表行 3）；全空＝无效载荷；基线须已有根。
@@ -1823,9 +1765,6 @@ DecodeOutcome ApplyNamedPosesHandler::decodeAndPlan(project::HandlerContext& ctx
                                                     const ModelingWorkingSet& baseline,
                                                     project::CommandPlan& out)
 {
-    if (payload.mode == CommandPayload::Mode::Restore) {
-        return decodeRestoreCommon(payload, baseline, out);
-    }
     DecodeOutcome result;
     // 槽形状：恰一个 named-pose-set 槽；基线须已有根；纯参考数据——无物性
     // 断言（断言管线照常执行但不产生该域发现）。
@@ -1898,9 +1837,6 @@ DecodeOutcome ApplyDrivetrainDesignHandler::decodeAndPlan(project::HandlerContex
                                                           const ModelingWorkingSet& baseline,
                                                           project::CommandPlan& out)
 {
-    if (payload.mode == CommandPayload::Mode::Restore) {
-        return decodeRestoreCommon(payload, baseline, out);
-    }
     DecodeOutcome result;
     // 槽形状：恰一个 robot-drivetrain 槽；基线须已有根。
     if (payload.objects.size() != 1

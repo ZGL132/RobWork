@@ -1,0 +1,2 @@
+verify-task-scope: WP-13-T24 base=1b7ac6013637 head=6cab3ff47cdd changed=146 allowedRules=50 forbiddenRules=6
+verify-task-scope: PASS WP-13-T24 —— 146 个路径全部在允许面内

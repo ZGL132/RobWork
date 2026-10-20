@@ -1,0 +1,57 @@
+Note: Google Test filter = *CompleteWorkingSetDiskApplyAndHistory*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from HostCompilePipelineTest
+[ RUN      ] HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1208): error: Expected equality of these values:
+  savedDoc()
+    Which is: { 16-byte object <20-3D BC-61 43-00 00-00 01-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 03-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 05-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 07-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 09-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 11-00 00-00 00-00 00-00> }
+  legacyFrames[i-1]
+    Which is: { 16-byte object <38-A8 8C-20 DE-01 00-00 01-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 03-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 05-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 07-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 09-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 11-00 00-00 00-00 00-00> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1208): error: Expected equality of these values:
+  savedDoc()
+    Which is: { 16-byte object <20-3D BC-61 43-00 00-00 01-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 03-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 05-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 07-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 09-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 11-00 00-00 00-00 00-00> }
+  legacyFrames[i-1]
+    Which is: { 16-byte object <30-A8 8C-20 DE-01 00-00 01-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 03-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 05-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 07-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 09-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 11-00 00-00 00-00 00-00> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1208): error: Expected equality of these values:
+  savedDoc()
+    Which is: { 16-byte object <20-3D BC-61 43-00 00-00 01-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 03-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 05-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 07-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 09-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 11-00 00-00 00-00 00-00> }
+  legacyFrames[i-1]
+    Which is: { 16-byte object <28-A8 8C-20 DE-01 00-00 01-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 03-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 05-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 07-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 09-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 11-00 00-00 00-00 00-00> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1208): error: Expected equality of these values:
+  savedDoc()
+    Which is: { 16-byte object <20-3D BC-61 43-00 00-00 01-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 03-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 05-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 07-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 09-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <20-3D BC-61 43-00 00-00 11-00 00-00 00-00 00-00> }
+  legacyFrames[i-1]
+    Which is: { 16-byte object <20-A8 8C-20 DE-01 00-00 01-00 00-00 00-00 00-00>, 16-byte object <20-A8 8C-20 DE-01 00-00 03-00 00-00 00-00 00-00>, 16-byte object <20-A8 8C-20 DE-01 00-00 05-00 00-00 00-00 00-00>, 16-byte object <20-A8 8C-20 DE-01 00-00 07-00 00-00 00-00 00-00>, 16-byte object <20-A8 8C-20 DE-01 00-00 09-00 00-00 00-00 00-00>, 16-byte object <20-A8 8C-20 DE-01 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <20-A8 8C-20 DE-01 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <20-A8 8C-20 DE-01 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <20-A8 8C-20 DE-01 00-00 11-00 00-00 00-00 00-00> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1212): error: Expected equality of these values:
+  savedDoc()
+    Which is: { 16-byte object <F8-3C BC-61 43-00 00-00 01-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 03-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 05-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 07-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 09-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 11-00 00-00 00-00 00-00> }
+  legacyFrames[i+1]
+    Which is: { 16-byte object <28-A8 8C-20 DE-01 00-00 01-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 03-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 05-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 07-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 09-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <28-A8 8C-20 DE-01 00-00 11-00 00-00 00-00 00-00> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1212): error: Expected equality of these values:
+  savedDoc()
+    Which is: { 16-byte object <F8-3C BC-61 43-00 00-00 01-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 03-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 05-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 07-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 09-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 11-00 00-00 00-00 00-00> }
+  legacyFrames[i+1]
+    Which is: { 16-byte object <30-A8 8C-20 DE-01 00-00 01-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 03-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 05-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 07-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 09-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <30-A8 8C-20 DE-01 00-00 11-00 00-00 00-00 00-00> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(1212): error: Expected equality of these values:
+  savedDoc()
+    Which is: { 16-byte object <F8-3C BC-61 43-00 00-00 01-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 03-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 05-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 07-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 09-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <F8-3C BC-61 43-00 00-00 11-00 00-00 00-00 00-00> }
+  legacyFrames[i+1]
+    Which is: { 16-byte object <38-A8 8C-20 DE-01 00-00 01-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 03-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 05-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 07-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 09-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 0B-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 0D-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 0F-00 00-00 00-00 00-00>, 16-byte object <38-A8 8C-20 DE-01 00-00 11-00 00-00 00-00 00-00> }
+
+[  FAILED  ] HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory_PM04_AT21 (1419 ms)
+[----------] 1 test from HostCompilePipelineTest (1419 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1420 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory_PM04_AT21
+
+ 1 FAILED TEST

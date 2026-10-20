@@ -142,7 +142,8 @@ inline constexpr std::string_view kCmdApplyToolDefinition = "apply-tool-definiti
 inline constexpr std::string_view kCmdApplySceneObjects = "apply-scene-objects";
 
 /// @brief apply-named-poses——写入 named-pose-set；requiresDualCompile=
-///        false（不进 Description——§9.3 表行 4；纯参考数据零编译影响）。
+///        false（Apply及纯位姿Restore不进Description——§9.3表行4）；
+///        历史Restore若同时恢复其他运行时输入则按实际闭包差异要求双编译。
 inline constexpr std::string_view kCmdApplyNamedPoses = "apply-named-poses";
 
 /// @brief apply-drivetrain-design——写入 robot-drivetrain；requiresDual
@@ -752,8 +753,8 @@ protected:
     /// 共用断言套件（由 m_services.assertionPorts 构造——与就绪校验同一
     /// 判定面，NFR-MNT-04；声明序在 m_services 之后——初始化依赖）。
     AssertionSuite m_suite;
-    /// 本命令的 requiresDualCompile 声明（§9.3 表列——apply-named-poses
-    /// 为 false，其余 true）。
+    /// 本命令的 requiresDualCompile 最低要求（§9.3表列——apply-named-poses
+    /// 为false，其余true）；历史Restore改变运行时闭包时由私有规划结果补充。
     bool m_requiresDualCompile;
 };
 
@@ -864,7 +865,8 @@ protected:
 
 /**
  * @brief apply-named-poses 处理器（§9.3 表行 4；requiresDualCompile=
- *        false——不进 Description；无物性断言（纯参考数据））。
+ *        false——Apply及纯位姿Restore不进Description；历史Restore改变
+ *        工具/场景等活动运行时内容时要求双编译，避免项目与快照脱节）。
  *
  * 槽形状语义：Apply 模式恰一个 named-pose-set 槽；基线须已有根。槽内
  * entries＝用户命名位姿全集——经 mergeNamedPoseEntries 合并流（§4.6/
@@ -875,8 +877,9 @@ protected:
  * 载荷（域结构校验——值面违例明细见 PoseEditErrorCode）。allocateNew→
  * 取号＋根 poseSetRef 置入（根内该引用须原为未设置——"至多一份"）；
  * 显式 oid→基线既有位姿集字节替换。位姿集不经名称映射、不进任何评估器
- * 依赖键（§4.6/D-MDL-3）——本命令零编译影响，S5 跳过双编译（位姿集修
- * 订不触发重算）。
+ * 依赖键（§4.6/D-MDL-3）——纯位姿修改零编译影响，S5跳过双编译。
+ * Restore沿旧历史帧受理已有对象原字节，可重新挂接根引用的保留部件；
+ * 仅当位姿以外的活动运行时内容变化时额外编译，不改变纯位姿不重算语义。
  */
 class ApplyNamedPosesHandler final : public IModelingCommandHandler {
 public:

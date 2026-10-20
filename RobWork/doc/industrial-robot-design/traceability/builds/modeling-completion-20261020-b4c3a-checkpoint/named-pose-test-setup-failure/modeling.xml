@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="1" disabled="0" errors="0" time="0.001" timestamp="2026-10-20T13:55:21.966" name="AllTests">
+  <testsuite name="MdlLegacyHistory" tests="3" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T13:55:21.966">
+    <testcase name="FiveApplyTokensIgnoreUnreferencedHistoricalParts_PM18_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="896" status="run" result="completed" time="0.001" timestamp="2026-10-20T13:55:21.966" classname="MdlLegacyHistory">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:920&#x0A;Expected equality of these values:&#x0A;  handler-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(tokens[i]),edit), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;  project::PrepareOutcome::Planned&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:920
+Expected equality of these values:
+  handler->prepare(ctx,makeEnvelope(f.query.view,std::string(tokens[i]),edit), f.query.view,plan,diags)
+    Which is: 4-byte object <02-00 00-00>
+  project::PrepareOutcome::Planned
+    Which is: 4-byte object <00-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:921&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:921
+Value of: plan.objectWrites.empty()
+  Actual: true
+Expected: false
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:921&#x0A;Value of: plan.inversePayloadCanonical&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:921
+Value of: plan.inversePayloadCanonical
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses
+]]></failure>
+    </testcase>
+    <testcase name="FiveRestoreTokensReattachRetainedPartsFromFixedRevision_PM18_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="926" status="run" result="completed" time="0." timestamp="2026-10-20T13:55:21.967" classname="MdlLegacyHistory" />
+    <testcase name="RestoreRejectsDuplicateWrongTokenAndEmbeddedIdentity_PM18_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="952" status="run" result="completed" time="0." timestamp="2026-10-20T13:55:21.967" classname="MdlLegacyHistory" />
+  </testsuite>
+</testsuites>

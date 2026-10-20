@@ -29,6 +29,21 @@ std::optional<ModelingWorkingSet> readReferencedWorkingSet(
     const std::vector<project::ObjectWrite>& writes);
 
 /**
+ * @brief PM-18：按固定修订规划旧五命令的历史逆放，槽形状和原字节保持兼容。
+ * @param query [in] 调用方持有的只读口，同步借用，不随HEAD取数。
+ * @param revision [in] 本次prepare固定修订，包含未活动的历史对象。
+ * @param payload [in] Restore帧；槽须已有、唯一、类型和内嵌身份匹配，允许不带根槽。
+ * @param baseline [in] 当前根引用的活动闭包，SI物理量；其值不被修改。
+ * @param out [out] 完整计划；成功时按实际活动运行时差异设置requiresDualCompile，
+ *        仅位姿集内容/引用及编辑日志差异不要求编译；失败不发布半计划，原canonical字节不重编码。
+ * @return Planned或RejectedInvalidInput；真实存储异常沿既有查询契约透传。
+ * 无持久取号、无共享状态；仅既有命令执行线程同步调用。
+ */
+DecodeOutcome planLegacyFixedRestore(const project::IProjectQueryPort& query,
+    const project::RevisionView& revision, const CommandPayload& payload,
+    const ModelingWorkingSet& baseline, project::CommandPlan& out);
+
+/**
  * @brief 创建无会话可变态的完整工作集处理器；所有权转交project注册表。
  * @param services [in] 共用断言/策略/转换端口，借用目标须覆盖处理器生命周期。
  * @return 新处理器，命令token为apply-modeling-working-set，载荷版本仍为2。

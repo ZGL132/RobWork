@@ -1,0 +1,39 @@
+Note: Google Test filter = MdlLegacyHistory.*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from MdlLegacyHistory
+[ RUN      ] MdlLegacyHistory.FiveApplyTokensIgnoreUnreferencedHistoricalParts_PM18_AT29
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(920): error: Expected equality of these values:
+  handler->prepare(ctx,makeEnvelope(f.query.view,std::string(tokens[i]),edit), f.query.view,plan,diags)
+    Which is: 4-byte object <02-00 00-00>
+  project::PrepareOutcome::Planned
+    Which is: 4-byte object <00-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(921): error: Value of: plan.objectWrites.empty()
+  Actual: true
+Expected: false
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(921): error: Value of: plan.inversePayloadCanonical
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(915): apply-named-poses
+
+[  FAILED  ] MdlLegacyHistory.FiveApplyTokensIgnoreUnreferencedHistoricalParts_PM18_AT29 (1 ms)
+[ RUN      ] MdlLegacyHistory.FiveRestoreTokensReattachRetainedPartsFromFixedRevision_PM18_AT29
+[       OK ] MdlLegacyHistory.FiveRestoreTokensReattachRetainedPartsFromFixedRevision_PM18_AT29 (0 ms)
+[ RUN      ] MdlLegacyHistory.RestoreRejectsDuplicateWrongTokenAndEmbeddedIdentity_PM18_AT29
+[       OK ] MdlLegacyHistory.RestoreRejectsDuplicateWrongTokenAndEmbeddedIdentity_PM18_AT29 (0 ms)
+[----------] 3 tests from MdlLegacyHistory (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlLegacyHistory.FiveApplyTokensIgnoreUnreferencedHistoricalParts_PM18_AT29
+
+ 1 FAILED TEST

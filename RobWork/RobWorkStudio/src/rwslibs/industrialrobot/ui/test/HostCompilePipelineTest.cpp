@@ -43,6 +43,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <type_traits> // 历史五变体取内嵌身份，根身份仍来自闭包引用。
 #include <vector>
 
 #include <sdurws/ird/core/Identity.hpp>
@@ -1163,6 +1164,75 @@ TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
     auto redone=store->undoRedo().redo(second.branch);ASSERT_TRUE(redone.committed());
     acceptModelingCommittedSession(domain,store->query(),redone);
     EXPECT_EQ(std::get<modeling::PoseSet>(decode(savedDoc()["poses"])).objectId,secondPoses.objectId);
+    // PM-18/B4c-3a：新完整命令已留下两份历史单例，现在真实执行旧五token。
+    // 不只测prepare；每次都经项目事务/正式编译及同源权威回执，再逐命令撤销/重做。
+    const std::vector<std::string_view> legacyTokens={modeling::kCmdApplyRobotDesign,
+        modeling::kCmdApplyToolDefinition,modeling::kCmdApplySceneObjects,
+        modeling::kCmdApplyNamedPoses,modeling::kCmdApplyDrivetrainDesign};
+    const auto submitLegacy=[&](std::string_view token,const modeling::CommandPayload& payload){
+        auto envelope=validEnvelope; // 请求信封不分配命令身份，持久取号仍唯一归project。
+        envelope.branch=store->query().head().branch;envelope.expectedRevision=store->query().head().id;
+        envelope.commandType=std::string(token);envelope.payloadCanonical=modeling::encodeCommandPayload(payload);
+        const auto result=store->commands().submit(envelope);
+        EXPECT_TRUE(result.committed())<<std::string(token);
+        if(result.committed()){acceptModelingCommittedSession(domain,store->query(),result);}
+        return result.committed();
+    };
+    for(std::size_t i=0;i<legacyTokens.size();++i){
+        SCOPED_TRACE(std::string(legacyTokens[i]));const auto current=savedDoc();
+        const char* keys[]={"root","tools","scenes","poses","drivetrain"};
+        const auto part=(i==1||i==2)?current[keys[i]].toArray().at(0):current[keys[i]];
+        auto value=decode(part);
+        if(i==0){std::get<modeling::RobotDesign>(value).notes="旧根命令仍可编辑";}
+        if(i==1){std::get<modeling::ToolDefinition>(value).displayName="旧工具命令仍可编辑";}
+        if(i==2){std::get<modeling::SceneObject>(value).worldPose.P()[1]=0.35;}
+        if(i==3){std::get<modeling::PoseSet>(value).entries={{"inspection",{0.35},"旧命令用户姿态"}};}
+        if(i==4){std::get<modeling::DrivetrainDesign>(value).ratioPerJoint[0]=
+            core::SourcedValue<double>::provided(120.0,core::ValueProvenance::make(core::ProvenanceKind::UserProvided));}
+        modeling::PayloadObjectSlot slot;slot.allocateNew=false;slot.objectTypeToken=
+            std::string(i==0?modeling::kRobotDesignObjectType:i==1?modeling::kToolDefinitionObjectType:
+                i==2?modeling::kSceneObjectObjectType:i==3?modeling::kNamedPoseSetObjectType:modeling::kRobotDrivetrainObjectType);
+        slot.objectId=i==0?*core::ObjectId::tryFromCanonical(current["rootId"].toString().toStdString()):
+            std::visit([](const auto& typed)->core::ObjectId{
+                using T=std::decay_t<decltype(typed)>;
+                if constexpr(std::is_same_v<T,modeling::RobotDesign>){return {};}
+                else{return typed.objectId;}
+            },value);
+        const auto encoded=codec.encode(value,modeling::kCurrentFormatVersion);ASSERT_TRUE(encoded.ok());
+        slot.objectBytes=encoded.get();modeling::CommandPayload edit;edit.objects={slot};
+        ASSERT_TRUE(submitLegacy(legacyTokens[i],edit));const auto after=savedDoc();
+        // project现行§5.5按tip.inverse撤销；连续undo会撤销上一条逆命令，
+        // 不能把它当作未声明的多级游标栈。逐条严格核对完整值，保留真实旧token历史面。
+        const auto result=store->undoRedo().undo(second.branch);ASSERT_TRUE(result.committed());
+        acceptModelingCommittedSession(domain,store->query(),result);EXPECT_EQ(savedDoc(),current);
+        const auto replay=store->undoRedo().redo(second.branch);ASSERT_TRUE(replay.committed());
+        acceptModelingCommittedSession(domain,store->query(),replay);EXPECT_EQ(savedDoc(),after);
+    }
+    // 旧历史根槽只携字节，需从当前固定修订找回第一份已不活动的四类部件。
+    const auto oldRoot=firstClosure.tryObjectByToken(modeling::kRobotDesignObjectType);ASSERT_TRUE(oldRoot);
+    modeling::PayloadObjectSlot rootHistory;rootHistory.allocateNew=false;
+    rootHistory.objectTypeToken=std::string(modeling::kRobotDesignObjectType);
+    rootHistory.objectId=*core::ObjectId::tryFromCanonical(savedDoc()["rootId"].toString().toStdString());
+    rootHistory.objectBytes=oldRoot->bytes;modeling::CommandPayload restore;
+    restore.mode=modeling::CommandPayload::Mode::Restore;restore.objects={rootHistory};
+    for(const auto token:legacyTokens){
+        const auto before=savedDoc();ASSERT_TRUE(submitLegacy(token,restore));
+        EXPECT_EQ(std::get<modeling::PoseSet>(decode(savedDoc()["poses"])).objectId,firstPoseId);
+        EXPECT_EQ(std::get<modeling::ToolDefinition>(decode(savedDoc()["tools"].toArray().at(0))).objectId,firstToolId);
+        // 数据恢复不等于正式编译快照恢复；旧named-poses族逆槽若改变运行时根，
+        // 也必须双编译，不能沿其纯位姿正向命令的false位跳过真实运动学/三维输入。
+        ASSERT_TRUE(compile->lastPublishedSnapshot());ASSERT_EQ(compile->lastPublishedSnapshot()->model().tools().size(),1U);
+        EXPECT_EQ(compile->lastPublishedSnapshot()->model().tools().front().objectId,firstToolId)<<std::string(token);
+        const auto restored=savedDoc();
+        auto inverse=store->undoRedo().undo(second.branch);ASSERT_TRUE(inverse.committed());
+        acceptModelingCommittedSession(domain,store->query(),inverse);EXPECT_EQ(savedDoc(),before);
+        EXPECT_EQ(compile->lastPublishedSnapshot()->model().tools().front().objectId,
+            std::get<modeling::ToolDefinition>(decode(before["tools"].toArray().at(0))).objectId)<<std::string(token);
+        auto replay=store->undoRedo().redo(second.branch);ASSERT_TRUE(replay.committed());
+        acceptModelingCommittedSession(domain,store->query(),replay);EXPECT_EQ(savedDoc(),restored);
+        inverse=store->undoRedo().undo(second.branch);ASSERT_TRUE(inverse.committed());
+        acceptModelingCommittedSession(domain,store->query(),inverse);EXPECT_EQ(savedDoc(),before);
+    }
     const auto oldTool=firstClosure.tryObject(firstToolId);ASSERT_TRUE(oldTool);
     EXPECT_TRUE(std::get<modeling::ToolDefinition>(codec.decode(oldTool->bytes,modeling::kCurrentFormatVersion).get()).displayName.empty());
     const auto finalFrame=domain.modelingDraftSource().buildDraftDocument().payload;

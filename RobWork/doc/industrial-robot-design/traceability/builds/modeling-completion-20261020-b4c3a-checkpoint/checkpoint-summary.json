@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "modeling-b4c3a-checkpoint/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "6cab3ff47cdd8510a9f9c97b3bfeb3a2edb2835e",
+  "completed": false,
+  "totals": {
+    "total": 1495,
+    "passed": 1495,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 444,
+      "passed": 444,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 328,
+      "passed": 328,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 60,
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 348,
+      "passed": 348,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 80,
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 55,
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "notRun": [
+    "本批正式modeling-tour未重跑：上批已证实的真正冲突重建及空快照保护仍未修复",
+    "完整47项真实三维终验",
+    "全新上下文独立验收"
+  ],
+  "notes": [
+    "新增4项建模历史互操作用例；真实UI存储链扩展旧五token正向/恢复及逐命令undo-redo/磁盘重开，含正式快照身份对账",
+    "core本批执行全部65项，含4项BuildRedLine；不得把相对上批增加的61项说成新增测试",
+    "旧named-poses Restore漏双编译的实际失败见runtime-restore-red和runtime-plan-red；修复后纯位姿恢复仍无双编译",
+    "GUI使用VS2022 x64/windows/绝对路径，串行225项；完整恢复工具及物性底部截图已查看",
+    "named-pose-test-setup-failure、legacy-chain-test-setup-build-failure及undo-sequence-test-contract-mismatch为测试前置/契约错误，不冒充产品红证",
+    "既有上批正式宿主FAIL见../modeling-completion-20261020-b4c2-checkpoint，绿套件不抵消未闭合问题",
+    "仅本地WIP、不推送不合入；未使用子代理，F06/F07未修改/集成"
+  ]
+}

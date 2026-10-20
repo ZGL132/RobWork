@@ -342,3 +342,9 @@ B4c-2摘要补充：真实summary-red复现新增token直接显示英文机器�
 B4c-2检查点实际结果：非GUI七套件1205通过、0失败、0跳过；用户通知GUI恢复后串行执行三套Windows真实窗口测试（集成modeling_gui80、ui_gui90、独立modeling_gui55）共225通过、0失败、0跳过。合计十套件1430通过，XML与ird逐项对账；core报告明确由XML派生。集成全量Release、独立三目标构建与verify-task机器三条通过，保留既有编译警告。已检查工具/完整草稿恢复、物性、continuous、差异窗口截图。
 
 正式modeling-tour真实FAIL：策略修订推进后旧建模草稿正确保留原锚并被Stale拒绝，旧tour仍假设自动迁移；后续无模型快照却继续解引用，退出-1073741819。原始失败日志/截图完整保留；不把1430绿套件外推为宿主或47项通过。B4c-3继续真正重建/旧历史兼容并加固tour失败出口，新增完整工作集窗口应用仍需专项。证据modeling-completion-20261020-b4c2-checkpoint，仅本地WIP，不推送不合入、不使用子代理。
+
+B4c-3a实施细化（沿B4c-3八节）：先独立修复旧命令/历史互操作，暂不改冲突公共面。全部token的活动基线按根引用恢复，历史bytes仍完整收集；旧Restore由final prepare调用私有固定修订规划器，接受根槽缺席/任意原合法槽序，逐槽校验存在性、精确token/内嵌身份/重复/allocateNew，并以根候选+计划覆盖重建活动闭包；原字节逆放不重编码。旧五Apply槽形状不变。先增加含双历史PoseSet/Drivetrain的五命令正向及五历史Restore红例，随后真实存储交错新旧命令撤销重做。旧Restore最终引用保护使用候选defaultTcp，不能因恢复旧根而误拒绝已经原子迁移的默认。精确文件仍原CommandHandlers.cpp/WorkingSetCommand.hpp/.cpp、CommandHandlersTest和HostCompilePipelineTest；原任务卡已覆盖。C2封存提交6cab3ff4，后检查日志随本批；真实宿主失败保护及冲突重建下一子批继续，不能为让tour通过而静默重标锚。
+
+B4c-3a运行时同步补充（实施前登记，沿上述八节）：真实ProjectStore链的数据断言通过后，新增正式快照工具身份断言复现旧apply-named-poses Restore改变活动工具却不重编译。①PM-18/MDL-06要求历史恢复后的项目与运行时一致；②仅私有规划器输出既有CommandPlan.requiresDualCompile，final以处理器固有需求或本次运行时差异合并，不改公共/存储面；③合法候选才发布该位，拒绝及真实编译失败仍零提交；④固定修订输入只读、局部值副本归调用栈；⑤原命令线程、完整值精确比较，不依赖名称或HEAD；⑥先保存runtime-restore-red，再验证旧五族重新挂接工具时均发布正确快照，并增加纯位姿内容/仅位姿引用变更仍不双编译的反例；⑦精确范围仍原五个源码/测试文件及本计划、单元卡/契约，不扩F06/F07；⑧无新长期架构决策。比较时仅排除poseSetObject、design.poseSetRef和编辑changes，其他根/工具/场景/传动差异均保守要求双编译；未活动历史对象写入不影响活动运行时。不能将固定族false位用于会恢复其他运行时部件的历史帧。
+
+B4c-3a验证记录：十套件1495通过、0失败、0跳过（相较B4c-2增加4项建模用例；core本次全量65项而非仅4项红线，额外61项并非新增）。真实存储链已对旧五token逐条应用/逆放/重做及关闭重开，并核对正式快照工具身份。三套Windows GUI共225通过，已看完整草稿恢复工具和物性底部截图。同步已允许CommandHandlers.hpp的纯文档注释，明确纯位姿与恢复运行时部件的双编译差别，无新声明。正式宿主不在本批重复运行已知失败，真正冲突重建/失败保护、47项全三维仍开放；完整证据另封存b4c3a-checkpoint，不回写上批。

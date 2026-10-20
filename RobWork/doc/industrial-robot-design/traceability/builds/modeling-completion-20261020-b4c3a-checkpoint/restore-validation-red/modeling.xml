@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.002" timestamp="2026-10-20T13:53:21.325" name="AllTests">
+  <testsuite name="MdlLegacyHistory" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T13:53:21.325">
+    <testcase name="RestoreRejectsDuplicateWrongTokenAndEmbeddedIdentity_PM18_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp" line="952" status="run" result="completed" time="0.001" timestamp="2026-10-20T13:53:21.325" classname="MdlLegacyHistory">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=2&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <01-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-robot-design fault=2
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=2&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <01-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-tool-definition fault=2
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=2&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <01-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-scene-objects fault=2
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=2&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <01-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-named-poses fault=2
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <00-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977&#x0A;Value of: plan.objectWrites.empty()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:977
+Value of: plan.objectWrites.empty()
+  Actual: false
+Expected: true
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976&#x0A;Expected equality of these values:&#x0A;  registry.find(std::string(token))-&gt;prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  project::PrepareOutcome::RejectedInvalidInput&#x0A;    Which is: 4-byte object &lt;02-00 00-00&gt;&#x0A;Google Test trace:&#x0A;C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=2&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp:976
+Expected equality of these values:
+  registry.find(std::string(token))->prepare(ctx,makeEnvelope(f.query.view,std::string(token),restore), f.query.view,plan,diags)
+    Which is: 4-byte object <01-00 00-00>
+  project::PrepareOutcome::RejectedInvalidInput
+    Which is: 4-byte object <02-00 00-00>
+Google Test trace:
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CommandHandlersTest.cpp(965): apply-drivetrain-design fault=2
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
