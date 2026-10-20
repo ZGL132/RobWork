@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-20T22:12:07+08:00",
+  "generatedAt": "2026-10-21T00:12:14+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 14048,
-    "totalBytes": 758333581,
+    "totalFiles": 14131,
+    "totalBytes": 762719652,
     "byKind": {
-      "manual-acceptance": 1,
+      "markdown-doc": 41,
+      "pipeline-artifact": 2,
+      "json-data": 7,
       "governance-record": 40,
       "benchmark": 8,
-      "pipeline-artifact": 2,
-      "acceptance-record": 515,
-      "markdown-doc": 41,
-      "json-data": 7,
-      "log": 1,
       "gtest-report": 335,
-      "build-log": 13098
+      "acceptance-record": 516,
+      "build-log": 13180,
+      "log": 1,
+      "manual-acceptance": 1
     },
     "byLifecycle": {
-      "unverified": 13457,
-      "current": 27,
+      "unverified": 13539,
+      "historical": 565,
       "superseded": 0,
-      "historical": 564
+      "current": 27
     },
-    "associated": 596,
-    "unassociated": 13452,
-    "shaComputed": 14029,
+    "associated": 597,
+    "unassociated": 13534,
+    "shaComputed": 14112,
     "shaSkippedLarge": 19,
-    "duplicateGroupsTotal": 803,
+    "duplicateGroupsTotal": 814,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -1496,7 +1496,8 @@
       "sha256": "edd8b603d925fc03f23c989964206ad51ba1820bfba9c1c5f74c63f2714f2527",
       "paths": [
         "builds/modeling-completion-20261020-b2a/standalone_modeling_contract-report.json",
-        "builds/modeling-completion-20261020-b3d/standalone_modeling_contract-report.json"
+        "builds/modeling-completion-20261020-b3d/standalone_modeling_contract-report.json",
+        "builds/wp13-t26-acc3/acc3-standalone-modeling_contract-report.json"
       ]
     },
     {
@@ -5356,6 +5357,16 @@
       ],
       "bytes": 14089,
       "sha256": "4f5925aefcd743fa84ad12d666b572de9a3b03a3c2d5e1eaddab428873ce6073",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/WP-13-T26-20261020-r3.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-13-T26"
+      ],
+      "bytes": 16255,
+      "sha256": "a3e33eb6fbfa551b81e31aceb787c4ad385273d3781fe3f8b5f679f65349a1bd",
       "lifecycle": "historical"
     },
     {
@@ -101555,6 +101566,574 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/1-default-layout.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109550,
+      "sha256": "4d18fcf3775cc1ce33c59d1201548d8185bbc60cf0340c803d9901fc3d42b813",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/10-tasks-dock-summoned.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 120456,
+      "sha256": "a1e7056f03ca518701e0f8afd7e2293ee2348fddd5a011c1b89450c9549e0330",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/2-view-menu.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6782,
+      "sha256": "911ced36861952171a34c034c10247ffa3e5e6be14b888b7fa006b32a17c6581",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/3-domain-panel-summoned.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 126253,
+      "sha256": "f6cd41b3413fe84f35c64f87ebbc48d82659eff07f5355de8310a722d1108409",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/4-requirements-buttons.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17699,
+      "sha256": "bacacda0a5874b9c7d3019d822c1dc7448772db3f41e79510d24b45077866759",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/5-requirements-narrow.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17590,
+      "sha256": "7b468d6dc7a81aed92cd56a6bed6270262d638fb6c73ee524392d845fe3d2ab9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/6-min-window.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 137114,
+      "sha256": "b7f6004ae88c1d1a4883d09b8e6708b0e35d6e70b7538a61192dcd650621f968",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/8-modeling-panel.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9330,
+      "sha256": "4a487aebfd959189f63496a60e3dd57ef6c0d438370579f7cbe06d1699198a6e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/9-kinematics-panel.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12394,
+      "sha256": "dc38d2111cafac9ed9a0e2054ead78db236ca4c48ca3199ca022332e50c06914",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-shots/geometry-report.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8738,
+      "sha256": "fa66d822efe59e68bc2fa12b972942c39bb417bf08bbd8b012b8585d7a93397b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-tour-auto.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2289,
+      "sha256": "433a42c95f23c39aef77861a3e1f0ee7e79f65e5963c30743b136e6464417f05",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-tour-layout-with-shots.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7075,
+      "sha256": "14c119e554f31388a5d866507c5e583db6cd75c87e4845ac677befcd65a0c2a5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-host-tour-layout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6544,
+      "sha256": "e5d3251fdedb843b7ef33bea6116943aad701343eafb17c3269fcc0ac5e1ce75",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47279,
+      "sha256": "d7add1086a39cf50134dc08a288f5c8f761950b74418a1f7975538f0c2fe64d6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10396,
+      "sha256": "d38e884af62356240fd9ea2a1347c1e977bbbf272943b94aedbc678c606da9d6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20480,
+      "sha256": "ef2a36c79b196121ee1d718633c0e22dbc02d48ffbc6bc90be99195cd0a8088b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 16661,
+      "sha256": "80a40f17c8d1f725c578d93e4c75117017ad3010c59008156dbdc9c40c75c572",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3943,
+      "sha256": "a69c55695515e48e339d1850712bdd9544d3dc07f5c44d393e22aa6c99ff236c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7368,
+      "sha256": "983c613fcad8a6dcd359e01ab56a8742ee2c937b5c07dcd3af2d4804354b2a6b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 238455,
+      "sha256": "610c9a1b60fb8a5db3f2e8e6c84b00f10a064e5d8f1909a0c4ac39049d68f63c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47539,
+      "sha256": "298b394237ca6e7fbb8c1db51a13ecb4a708c4cd2ef415764a3a3fbd6a200745",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-kinematics.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 92082,
+      "sha256": "0f3a6c8280a55d6dfce2cb85dd8fbd61b82dd19c5a008de19dc84ebadc25ecc9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 74862,
+      "sha256": "34a742cad796187fdc28116d6a8ced55db103f36bce85ad6c30740b8beb81ecd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18817,
+      "sha256": "56f7d4e96dbd4128d85f27aaea61a76540dcae1494f85bede87f88cc1bac5164",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 31237,
+      "sha256": "2e696be0773e3559499bc2abd3548ad7ea7b9a50ea93eaf60490ddfc4d7f53ee",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 380089,
+      "sha256": "3b842815eba7a2a3b7b3fbe3ff354e0a1c598d6032f4097916bdec1aa285ccff",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 80674,
+      "sha256": "444f8d50520735846f706432f9921809cdd973fbd891b11d5c0826e2880b0b26",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 150186,
+      "sha256": "1ece087fd9afd8d58303538834b9ce3aceab2ebbb492f30049ac0507900842e4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-runtime.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 49068,
+      "sha256": "1c4475dd87d2004ae6fa4ff29365ca3809ef9720d4675c0c98d7a26ad9e0a8d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-runtime.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97483,
+      "sha256": "d7fa19795cd76e9cd32f8264ab6b511fbfefa7cc6a6793dd75e1fcab44f8345c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51989,
+      "sha256": "336e1b57ad9dd81002900470849cff49f23ace889a916cf4959cea338595a22e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12018,
+      "sha256": "17439e1d24adf9396dc9a446b06230b45a7b62e37a3657db96890361f286a06b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 22402,
+      "sha256": "da6e9390e537ba8f1203651e9934682ed75082aa75e4c102991f6feddc0992ed",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 77478,
+      "sha256": "58b3457b4949b714fcab01ec52168fc95b5e09e848752d9fb19f32fb510564d4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20357,
+      "sha256": "da4182f6a1e076969c8482599dbbbd0793750198fb57f217be97bb43673274e4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 33323,
+      "sha256": "375d28607bb661ca3783d66e3cf277851ae322f9e578a3786352ca9292d9b39f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 274062,
+      "sha256": "1d552b795a9b80b1f9f5689fe967146ced023d26e7ed9cf18c128634b55ced06",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 59475,
+      "sha256": "50c304b78f7a816dd7f13ff7dee80a18b32a86e7307d7f5d31c586b133a75b05",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-integration-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109722,
+      "sha256": "4ebb955c3d554219e41d2e5b92d9ae125fe7d084048344fc4d9b30d6824aeb54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutation-restore-full-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 80663,
+      "sha256": "3f6dabfcf8bd2df8c0c6aeea9948f91ac455539824c1b4e584709c8e5d2efdaf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutation-restore-full-modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 150192,
+      "sha256": "9f1fa88987248cfa10cd9108f9b8ef8e8320665ab0ce36df77027a88e8d2fa93",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutationA-green.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 596,
+      "sha256": "8f494953afb14dcf4c94a91bf3943fe94e1ed9a96cf731b781f6216bf5b658ea",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutationA-green.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 659,
+      "sha256": "75bb709d9a5b2814b1668d90483f3c0fff301f18ef02091f4e7eb3253d771c2a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutationA-red.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1007,
+      "sha256": "b1f6f1711c969032a2c755a20044ff0d9903d75ae824c8b8e4ebdc471ae87b83",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutationA-red.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1271,
+      "sha256": "cf1465013beaa1381d30075ac4492d2c6b1c72c7c611db6cc06e4edd26a09f4a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutationB-green.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 608,
+      "sha256": "fea36ff1215a87152e673b22dfb61c698897fd465a5e3eaf0791f937cef1c550",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutationB-green.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 672,
+      "sha256": "baa72b52ffc3bc62577e3706c3d04d3f9aa94f598291d1c6a5213c10b2b58403",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutationB-red.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1846,
+      "sha256": "656a07d7ae2aeb72dac6d737e84856ac720fd40c263cb5ca52f51c2fefe50a3a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-mutationB-red.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2952,
+      "sha256": "b599d5abb4a728e7f9cc4808c9467ac97cbf314518e6979943c592f3b9fbd872",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6709,
+      "sha256": "edd8b603d925fc03f23c989964206ad51ba1820bfba9c1c5f74c63f2714f2527",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1748,
+      "sha256": "6de67fc90c46ac44ccece2cf022e2f828634ff70b894f4a00c594a816f3743de",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3107,
+      "sha256": "108f9ca35d6d15afeb8d9f1578d1c5fe83f18a399180b695bbe7ed4bd9eb0750",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 49200,
+      "sha256": "52afc195567a1566cf9f50b1b8b91c2de84f9eb5f65e1dbea19669cac2b90153",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12832,
+      "sha256": "d622913ae260a0242ec0b4a056a136d294b9c27f2d424c598d17c9ea585d3492",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20536,
+      "sha256": "7a6cb56603816157f01c135f53af990053e10ab8a0f0780f6cb10bb9f68e8f30",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 294994,
+      "sha256": "791e35ae609dba13032ccba74baea5d2dac4dea1eb154d1c2b7a48928d18ad2c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 60935,
+      "sha256": "eeb6fb2243116646d7518a0a2a31159ff05aa39f2c30cf9f54cb88704360544e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/acc3-standalone-modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 115125,
+      "sha256": "7a377837dbcca9ef0edd091bfa7a23002d958414f39f80154e2a4776ab471522",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/commit-messages.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29936,
+      "sha256": "972113badf54aa6f4bcbe708f8852a72d9ebd3220679483956cd3607d5590d28",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/integrate-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37354,
+      "sha256": "7527be2c6aa69d27e5adcc0c4a992629d2cc0c754b3eb7f1fd9b21efc6dc9653",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/integrate-configure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11842,
+      "sha256": "93b363adf5989c2e2563620474a7ef872a7fcd842759574e3feb09f4ca4a68b7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/ird-gates.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1882,
+      "sha256": "26a7f0a4eae0aee7495f4c6459977f47a926981bcbba795781d0afc01e191c40",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/mutationA-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4967,
+      "sha256": "a627fd82b87f0ae4943b076e777c633476357e4cffefc61a3852a8cb2ad3eae2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/mutationA-restore-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4967,
+      "sha256": "a627fd82b87f0ae4943b076e777c633476357e4cffefc61a3852a8cb2ad3eae2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/mutationB-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4956,
+      "sha256": "a497b7e54cdcc4b3993ac18d64b63ebd2bbb85fadf9036dc6a962c6b9fb02438",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/mutationB-restore-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4956,
+      "sha256": "a497b7e54cdcc4b3993ac18d64b63ebd2bbb85fadf9036dc6a962c6b9fb02438",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/scope-645.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 174,
+      "sha256": "63fb3727302842f68c9be3f81a0931774a21af90d4fb7f6c28ec165d0be89659",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/scope-e64.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 174,
+      "sha256": "fffa085e52bd7be69caf2743b0629b2db9ff0afee7636faeebc9262ee1993174",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3829,
+      "sha256": "b2cc5f60e137509d34ec06034b63a8771a9f8e534b95383559f5c50caf6f91a3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/standalone-configure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1240,
+      "sha256": "b6bfbbee18d8ddf28c7c3bacd4d38201e296141c109292b594bb9c8827fce052",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-acc3/logs/validate-docs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 131,
+      "sha256": "6bda54e69743a2cdc4826ded4de506cdf18d55e45aa7d8199297ab0503399e89",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp13-t26-integration/green-full-build.log",
       "kind": "build-log",
       "taskIds": [],
@@ -102280,6 +102859,94 @@
       "taskIds": [],
       "bytes": 9032,
       "sha256": "aca93ba5913dcdaac54563cc77ef66abcb595a88aa3e953313ef286bf7c29ff9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/ird-gates.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14295,
+      "sha256": "2f3f96851bbd45c00bf8a1146d60b69591523c706d4eae62190101f4a854aad4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 74751,
+      "sha256": "5703fd847f921bed61dcd897fcdeadb0df50e5a4e20cb33355970ec001ebb502",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 16779,
+      "sha256": "1cb65560394ad66df35d474992b40939a0f47181f653d991538f690403fa0661",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32585,
+      "sha256": "ec13191c2658572e75d34bf0902ada2e63076f6162b8653c91006185178f640f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 380093,
+      "sha256": "0c87e4802b89618930fadfd9cf3cd39e6d0ffcf7e1b83ca366ab5282927c6b8b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 80144,
+      "sha256": "dc934529739768a0ccccb6c8f2fcac28ec5e15e94d72923c76c34cd197d38d59",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 159911,
+      "sha256": "c25f3d4f2c85af21354981671b0cb1270aea661aa95b284e5a57507915a8f07f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/README.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1406,
+      "sha256": "fe0da685649de9b7bfa9f367c622e8398f94a8b2b3ae3a736f0ed456de389d4f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51987,
+      "sha256": "caff4cf106c2a89a40cfe0f311075e9f472c431241e7f47882afe589b549e76e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12017,
+      "sha256": "8e652c148dad03c0ef9daf8855519503a9e88514479927b1a207f6d033cab52b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-main-merge-20261021/ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23726,
+      "sha256": "ee2d409d546ed3a9601a003389d57c69c7732e07c52d023bba3bc70e7af5422a",
       "lifecycle": "unverified"
     },
     {
@@ -111590,7 +112257,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1265767,
+      "bytes": 1266570,
       "sha256": null,
       "lifecycle": "unverified"
     },

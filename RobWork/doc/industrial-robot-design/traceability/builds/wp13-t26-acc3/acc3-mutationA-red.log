@@ -1,0 +1,20 @@
+Note: Google Test filter = *ImportCandidatesDoNotLeakAcrossTemplateOrClose_MDL04_PM04*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingIntegration
+[ RUN      ] ModelingIntegration.ImportCandidatesDoNotLeakAcrossTemplateOrClose_MDL04_PM04
+C:\acc-wp13t26\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(757): error: Value of: module.session().importedSelfCollisionCandidates.empty()
+  Actual: false
+Expected: true
+模板替换保留了另一导入的候选
+
+[  FAILED  ] ModelingIntegration.ImportCandidatesDoNotLeakAcrossTemplateOrClose_MDL04_PM04 (0 ms)
+[----------] 1 test from ModelingIntegration (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingIntegration.ImportCandidatesDoNotLeakAcrossTemplateOrClose_MDL04_PM04
+
+ 1 FAILED TEST

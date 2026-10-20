@@ -9569,6 +9569,15 @@
       "registeredAt": "2026-10-20",
       "title": "正式宿主 layout 冒烟探针未随 T82 滚动视口适配＋装配拆分断言未随 WP-14-T12 决策更新：IRD_UI_PLUGIN_SMOKE=layout 的命令条布局锚直接对 QDockWidget::widget()（installDockViewport 的 QScrollArea）取 layout() 恒空，整组命令条断言误报 cur=0（T82 合入 2026-10-15 起 DoD 布局冒烟实际不可用，ui-t26 2026-10-18 绿证为旧构建产物）；另 requirements-assembled-split 期望停留 7/2 撤牌口径，而 WP-14-T12/REQ-10 已将九条全数恢复可达（kAssembled=9）",
       "owner": "WP-13-T26 返工批消账（UiPlugin.cpp 探针解包 QScrollArea 取面板本体＋断言更新 9/0；主线侧该修复随本分支合入带回）"
+    },
+    {
+      "id": "F-948",
+      "source": "WP-13-T26 attempt 3 独立验收（2026-10-20，acc/WP-13-T26/3——建议级转登，acceptance-protocol §5）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-20",
+      "title": "IRD_UI_PLUGIN_SMOKE=layout 截图产出依赖环境变量 IRD_UI_PLUGIN_SMOKE_OUT，未设置时 snapPng 静默返回（无提示行、不计失败）——复现/验收者不知该前置会漏留截图档或误判截图缺失；attempt 3 亲跑首次未设变量即零截图，补设后 9 张齐全（UiPlugin.cpp snapPng 闭包：outDir.isEmpty() 即 return）",
+      "owner": "ui 单元/治理（建议：outDir 为空时输出提示行（如 screenshot-skipped:no-out-dir），或在证据 README 写明该前置变量）"
     }
   ]
 }

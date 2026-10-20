@@ -1,5 +1,7 @@
 # 建模双分支集成与复验计划
 
+2026-10-21合入登记：所有者明确指令“合入主分支”，覆盖下文此前阶段性的禁止合入/推送约束。冻结c0a19e7399748268ff1bb41d2db208be29b33473已经第三轮独立验收通过（acc/WP-13-T26/3@0fb2ffe2，记录WP-13-T26-20261020-r3.md）。本次执行未使用子代理；产品合并7bc8eacd进入唯一开发主线redesign-main，暂存树与冻结送验对象相同。合并现场重跑modeling 462、ui_contract 63、真实Windows modeling_gui 91全部通过，零失败/跳过。随后保留验收证据、建议F-948及完成登记，T24/T25原分支不改、main不动；47项终验、真实mesh/三维覆盖层及F07持久来源仍开放，T26 done不外推产品全功能通过。远程同步另以真实push结果报告，不能把本地合入等同远程交付。
+
 用户2026-10-20授权按建议顺序执行。使用executing-plans，无子代理、不推送、不合入redesign-main。当前复用已隔离工作树；集成分支wp13-t26。源wp13-t24@e64cdd6260a077cb3e42f3e4dbef44cb818045d7、wp13-t25@6cfe7ea382f8d2425531fa7fe221d50701a3e492保持不变；wp14-t12已包含在前者。
 
 ## 行为与边界（八节）
@@ -21,8 +23,8 @@
 - [x] 审核自动合并产品语义：v/a完整帧、候选生命周期、耦合能力/历史；登记必要修复和真实回归。发现并修复候选与局部历史/会话边界脱节（DraftHistoryFrame同帧持有；八处边界清旧来源；失败取消保留）。
 - [x] 重配双模式并串行构建；运行相关全量套件及真实Windows窗口tour，逐项记录四态。集成462/462、modeling_gui 91/91、runtime 293+1环境跳过、kinematics 287+1登记跳过、ui 339/339、ui_contract 63/63、kinematics_contract 57/57、ui_gui 95/95、kinematics_gui 20/20、独立冒烟360+8+59（另1例F-620环境跳过）、正式宿主tour auto 8步全ok、ird_gates全项零命中、validate-docs PASS（索引重建后）、commit-lint PASS。
 - [x] 冻结新证据、索引、范围/文档/提交门禁；本地集成提交，生成冻结SHA验收交接（证据目录traceability/builds/wp13-t26-integration/，SHA见文末交接记录）。
-- [ ] 全新上下文独立验收（本会话不可提供模型级独立性）。
-- [ ] 独立验收通过后所有者决定是否合入redesign-main。
+- [x] 全新上下文独立验收：attempt3对冻结c0a19e73 verdict=pass；本次合入仅消费已有记录，未派发子代理。
+- [x] 所有者2026-10-21指令合入redesign-main，产品合并7bc8eacd；远程同步按实际push结果报告。
 
 ## 冻结SHA验收交接（2026-10-20）
 

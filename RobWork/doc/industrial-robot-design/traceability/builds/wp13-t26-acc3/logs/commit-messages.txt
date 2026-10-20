@@ -1,0 +1,446 @@
+=== c0a19e73 [WP-13-T26] 返工批2：索引尺寸登记对齐默认检出并修正报告计数表述
+改动内容（What）：
+- B-1 闭环（attempt 2 唯一阻断）：两处证据文件（builds/
+  requirements-audit-20261018/.gitignore、builds/requirements-close-
+  20261019/source-diff.patch）系历史批次作者原始行尾存留盘上、从未被
+  git 重写，索引按该盘上形态登记尺寸而与默认 Windows 检出（autocrlf=
+  true 的 CRLF 形态）失配——强制从 HEAD 重写为规范检出形态（131／
+  101444，与 attempt 2 验收环境实测值逐字节一致，git status 零变化＝
+  blob 未动）后重建 evidence-index.json
+- F-947 修正：证据 README 报告计数"集成 ×9"改"×8"（runtime 无
+  报告＝F-944，总数 11 不变）；SHA256SUMS 随 README 按 blob 口径重算
+- 集成计划文档登记 attempt 2 记录与返工批 2
+
+改动原因（Why）：
+- attempt 2 验收记录 acc/WP-13-T26/2@734348e9 唯一阻断 B-1 的返工
+  输入：契约 verify 门禁（validate-docs）须在默认配置 Windows 检出
+  环境可复现通过
+- 脚本级行尾归一根治（bytes 登记与校验改 blob 口径）不在本契约
+  allowedFiles（scripts/industrialrobot/ 归治理脚本所有者）——F-946
+  保持 open，本批仅做范围内数据对齐，不越界改治理脚本
+
+验证（How）：
+- 重写后尺寸 131/101444 与 attempt 2 验收环境实测一致；索引重建
+  （14029 sha computed）；validate-docs PASS（20 units/14048 evidence）
+- SHA256SUMS 90 条按 git show :<path> blob 口径生成，README 哈希同步
+
+影响面与兼容性：
+- 索引数据对齐默认 Windows 检出形态；autocrlf=false（LF）环境仍会
+  失配——该环境敏感性根因归 F-946 治理所有者；blob 零变化，仓库内容
+  无实质改动
+
+=== e0dd884c [WP-13-T26] 返工批：补齐ird报告与真实窗口截图并修复布局冒烟探针
+改动内容（What）：
+- A1 闭环（attempt 1 阻断①）：证据目录补齐 11 份 ird 测试报告
+  （green-integration-*×9＋green-standalone-*×3 之一 runtime 无报告＝F-944
+  登记口径）与真实窗口截图两目录——host-shots/（正式宿主 layout 冒烟
+  9 张＋几何报告）＋gui-shots/（modeling_gui 用例 29 张）；modeling_gui
+  的 xml/log/report 同源刷新为返工批重跑（90 通过＋1 F-620 环境跳过）
+- A2 闭环（attempt 1 阻断②）：SHA256SUMS.txt 改按仓库 blob 内容（LF
+  归一）重算（90 条），README 注明校验口径＝git show HEAD:<路径>
+- F-945 修复（返工中发现，主线 90e9c041 亲测同败＝存量非集成引入）：
+  UiPlugin.cpp layout 冒烟探针解包 T82 滚动视口（installDockViewport
+  的 QScrollArea）取面板本体再取根布局；requirements-assembled-split
+  断言随 WP-14-T12/REQ-10 九条全恢复可达的既定决策更新 7/2→9/0
+- findings.json 登记 F-945（status=fixed）；集成计划文档登记验收轮次
+  （attempt 1 fail＋返工闭环＋attempt 2 请求）
+
+改动原因（Why）：
+- attempt 1 验收记录 acc/WP-13-T26/1@ce7fa787 两项阻断的返工输入
+  （协议 §5：fail→返工→attempt 2 全量重验）
+- F-945：补拍宿主截图时暴露 layout 冒烟整组断言误报——探针布局锚
+  自 T82（2026-10-15）起恒空，DoD 入口布局冒烟实际不可用；主线复现
+  证明为存量缺陷，本批随返工一并修复带回主线
+
+验证（How）：
+- 三阶段红绿：red-layout-smoke-probe-broken-15fails.log（修复前）→
+  red-layout-smoke-split-stale-1fail.log（探针修复后仅拆分断言红）→
+  green-host-tour-layout.log（全绿 DONE）；主线失败复现
+  red-layout-smoke-mainline-90e9c041.log（wt-repro detached@90e9c041
+  增量重建亲测）
+- 探针修复零回归：studio 重建后 ui_gui 95/95、正式宿主 auto tour
+  8 步全 ok 重跑；validate-docs PASS（索引重建 14029 证据）
+- SHA256SUMS 与仓库 blob 逐一相符（生成命令即 git show :<path>）
+
+影响面与兼容性：
+- 冒烟代码仅在 IRD_UI_PLUGIN_SMOKE 环境变量触发路径运行，生产行为
+  零变化；主线侧随本分支合入获得探针修复；runtime ird 报告缺失
+  （F-944）与三维终验开放面维持如实登记
+
+=== 8a6d2603 [WP-13-T26] 登记冻结SHA验收交接记录
+改动内容（What）：
+- 集成计划文档追加"冻结SHA验收交接"表：集成分支/验收范围
+  64587067..e18914bd、三个提交的完整SHA、证据位置、复验结论、
+  开放面与验收请求
+
+改动原因（Why）：
+- 三段式实施循环的交接要求（DTB §5.7）：实施段结束时冻结SHA并
+  发出验收请求，供全新上下文按 acceptance-protocol 执行独立验收
+
+验证（How）：
+- git log 核对三个提交完整SHA无误；commit-lint 64587067..HEAD PASS
+
+影响面与兼容性：
+- 仅辅助文档；无代码变化
+
+=== e18914bd [WP-13-T26] 冻结集成复验证据并重建证据索引
+改动内容（What）：
+- 新增证据目录 traceability/builds/wp13-t26-integration/（37 文件＋
+  SHA256SUMS）：README 记录集成范围/冻结源/三处先红后修缺陷/绿证计数/
+  开放面；merge-test-preservation.json（8 处冲突双方用例保留核对）
+- 红证三份：red-modeling-candidate-lifecycle（461/1——候选跨模板/关闭
+  泄漏）、red-gui-candidate-history（GUI 撤销后候选残留）、
+  red-ui-contract-manifest-anchor（UI-T84 装配清单锚点漂移）
+- 绿证：集成 modeling 462/462、modeling_gui 91/91、runtime 293+1 环境跳过、
+  kinematics 287+1 登记跳过、ui 339/339、ui_contract 63/63、
+  kinematics_contract 57/57、ui_gui 95/95、kinematics_gui 20/20、独立冒烟
+  modeling 360/360＋contract 8/8＋gui 59+1 F-620 环境跳过、正式宿主真实窗口
+  tour auto 8 步全 ok、ird_gates 全项零命中、全量 Release 构建与独立冒烟
+  树配置日志
+- evidence-index.json 经 index-evidence.ps1 重建（13994 条证据）；
+  validate-docs PASS
+- docs/superpowers/plans/2026-10-20-modeling-integration.md 勾选集成与
+  复验步骤并登记计数
+
+改动原因（Why）：
+- DoD 验证留痕要求（AGENTS §4.2）：测试必须真实执行并留 XML/ird 报告/
+  日志；三处集成缺陷的先红后修故事需独立红证支撑
+- 合并带入 wp13-t25 既有证据目录后索引过期，统一重建一次覆盖全部
+
+验证（How）：
+- validate-docs PASS（20 units／13994 evidence）；证据文件 SHA-256 逐文件
+  登记（SHA256SUMS.txt 36 行）
+
+影响面与兼容性：
+- 仅证据与辅助文档；真实三维逐项验证未执行不标 PASS（README 开放面
+  如实登记），独立验收仍待全新上下文
+
+=== bc8d212f [WP-13-T26] 修复导入候选会话与局部历史一致性并补集成回归
+改动内容（What）：
+- ModelingUiModule.hpp/.cpp：草稿私有局部历史从裸 ModelingWorkingSet 升级
+  为 DraftHistoryFrame（完整工作集＋导入自碰撞候选同帧）；clearDraftHistory/
+  rememberDraftHistory/restoreDraftHistory 三入口同步持帧，撤销/重做时两个
+  值从同一帧一起恢复，不按名称重算候选
+- 八处会话边界清空旧来源候选：模板重种子 seedTemplateSession、自定义声明
+  链 reseedCustomChain、会话关闭 onSessionDetached、固定修订恢复
+  readCommittedSession（无应用回执分支——成功应用同稿保留供显式策略确认）、
+  磁盘草稿恢复 adoptRestoredDocument、冲突重建 rebuildOnRevision、外部修订
+ 刷新 refreshCleanRevision、WorkCell 导入与规范包导入两命令
+  （ModelingCommandFlows.cpp——包体不承载导入报告，不得借用旧来源）
+- 新增三例集成回归（两支组合语义而非单支字段复测）：
+  · PluginModuleT03BTest ImportCandidatesDoNotLeakAcrossTemplateOrClose_
+    MDL04_PM04——模板替换与会话关闭后候选必须清空
+  · PluginModuleT03BTest VelocityAndCouplingSurviveCompleteDraftAndRevision_
+    PM04_MDL21——F01 逐关节 v/a＋F14 非对角 R2 耦合经完整修订帧恢复、磁盘
+    草稿封装、应用信封 payloadCanonical 全程保持
+  · ModelingUiModuleHostWiringGuiTest ImportedCandidatesFollowRealDraftUndoRedo_
+    MDL04_PM04——真实按钮撤销回到模板后候选清空、重做连候选一起恢复
+- units/modeling.md 新增 v0.59 版本条目登记本批语义
+
+改动原因（Why）：
+- 集成联合复验真实暴露的产品缺口：F07 候选保存在会话侧，与 T24 的草稿
+  局部历史／模型替换／关闭生命周期脱节——撤销导入后草稿回模板而候选残留，
+  模板替换/换项目后旧连杆名对会误入策略编辑器预填（MDL-04/PM-04/ARC-05）
+- 契约 acceptance 3 明确"不以两支单独通过外推集成成功"，两支各自单测
+  均无法覆盖此组合路径
+
+验证（How）：
+- 先红后修：red-modeling-candidate-lifecycle（461 通过/1 失败）修复后
+  集成 modeling 全量 462/462；red-gui-candidate-history（GUI 真实按钮
+  路径失败）修复后 modeling_gui 91/91
+- 全量联合复验（详见证据批）：集成树 462+91+293+287+339+63+57+95+20
+  （另 2 例登记/环境跳过）、独立冒烟树 360+8+59（另 1 例 F-620 环境跳过）、
+  正式宿主真实窗口 tour 8 步全 ok、ird_gates 全项零命中
+
+影响面与兼容性：
+- 仅私有实现细节与测试，无新公共接口、无项目/草稿持久化字段；候选仍为
+  会话临时输入（重开不恢复），来源 schema 与持久化完善仍属 F07 开放面
+
+=== 4044abd1 [WP-13-T26] 合并wp13-t25实现批并修正装配清单锚点漂移
+改动内容（What）：
+- 合并 wp13-t25@6cfe7ea3（F06 WorkCell 导入／F01 逐关节 v/a／F07 自碰撞
+  候选移交／F14 耦合编辑与宿主 R2）到集成分支 wp13-t26
+- 8 处冲突逐段解决：6 个测试文件双方文件尾新增用例全部保留（逐文件
+  核对记录 merge-test-preservation.json，随证据批提交）；units/modeling.md
+  保留两支全部版本条目；证据索引留待证据批统一重建
+- 修正 git 不可见的语义冲突：两支 UiPlugin.cpp 改动合并后 attachModule
+  真实行号落在 2707/2781，生产装配清单 wiredAnchor 仍登记 t24 侧
+  2700/2774——production-assembly-manifest.json 两处锚点更新为 2707/2781
+- 新增任务契约 tasks/foundation/WP-13-T26.json（status=ready，集成执行
+  授权卡）＋ development-task-breakdown.md §2.14 登记 WP-13-T26 行
+
+改动原因（Why）：
+- 所有者 2026-10-20 授权按"集成分支整合→解冲突→双模式与真实窗口复验→
+  独立验收→所有者决定合入 redesign-main"顺序执行
+- 清单锚点漂移属装配登记失实（IRD-NOTE-006 登记先行裁决），由 UI-T84
+  契约测试行级核对暴露，在其完备面内修正登记而非放宽断言
+
+验证（How）：
+- 红证 red-ui-contract-manifest-anchor.{xml,log}：锚点回退后 UI-T84
+  失败真实复现；修正后 ui_contract 全量 63/63 通过
+  （green-integration-ui-contract.{xml,log}，随证据批提交）
+- 完整联合复验结果随证据批提交；合并点本身不单独宣称全绿
+
+影响面与兼容性：
+- 仅集成分支 wp13-t26；源分支 wp13-t24/wp13-t25 引用不变；
+  不合入 redesign-main、不推送远程（契约 note 边界）
+
+=== 64587067 [WP-13-T26] 同步集成分支的主线验收规则（WIP）
+改动内容（What）：
+- 在独立集成分支保留wp13-t24完整历史，合并redesign-main的90e9c041验收规则修订。
+改动原因（Why）：
+- 所有者授权按建议先整合再验证；集成须消费当前DoD的GUI生产路径与跨域消费要求。
+验证（How）：
+- 合并树预检无冲突；当前仅同步文档，未执行合并后全量构建和测试（WIP，后续统一执行）。
+影响面与兼容性：
+- 仅集成分支，不修改两个源任务分支、redesign-main或冻结main；不推送。
+
+=== 6cfe7ea3 [WP-13-T25] F14 耦合矩阵编辑入口与正式宿主R2装配（审计M31/MDL-21/AT-38）
+改动内容（What）：
+- modeling/plugin/ModelingPanelWidget.hpp/.cpp：传动页新增耦合区（摘要行
+  ird_modeling_coupling_summary＋编辑/移除钮）＋模态编辑器
+  openCouplingEditor（窗口首关节/阶数/n×n 表格——约定 Δq_joint=C·Δθ_motor
+  明示、逐格有限性校验、阶数变化对角延拓保留、域原语裁决、拒绝保留模态
+  原位重试、取消零写入）；setCouplingStage 能力位门控（缺省 R1Locked＝
+  公共默认红线——构建期即应用防初值失实；编辑钮＝可写∧R2、移除钮＝可写）
+- modeling/plugin/ModelingUiModule.hpp/.cpp＋装配门面
+  ModelingPluginAssembly.hpp/.cpp：setCouplingStage 注入链（面板暂存/即时
+  双形态转发——setWritable 同款时序语义；门面新增 Parts.hpp 公共头包含）
+- ui/plugin/UiPlugin.cpp：HandlerServices.couplingStage 由 R1Locked 改传
+  R2Enabled（MDL-21 已随 2026-10-10 GOV-UNFROZEN 解冻——修复前正式宿主
+  有效矩阵恒被解码门拒 MDL-21-COUPLING-STAGE-LOCKED）；同拍注入面板能力
+  位（单一决策点）；公共默认 R1Locked 保留、mimic/planar/floating/闭环
+  维持阻断（M-6）
+- modeling/src/Parts.cpp＋Parts.hpp：applyDrivetrainCouplingEdit 顺序修正
+  （bug）——数值校验先行于 ensureDrivetrainObject：原序数值拒绝残留已
+  创建传动对象与根 drivetrainRef，违"拒绝时工作集字节不变"（本批新 GUI
+  原子性用例实测暴露）；清除面/阶段锁/提交序不变
+- 测试（modeling/gui_test/ModelingPanelGuiTest.cpp 新增 3 例）：入口与
+  能力位门控三态（R1 禁用→R2 放行→只读再禁用→回 R1 再禁用）；非对角
+  矩阵编辑全链（交接固定探针 C=[[1,0.2,0],[0,1,-0.1],[0.3,0,1.5]]：元素/
+  窗口/阶数落位＋变更记录＋摘要呈现＋探针数值独立手算期望——Δq=C·Δθ=
+  [1.4,1.7,4.8] rad、τ_motor=Cᵀ·τ=[3.2,-0.6,6.1] N·m、双侧瞬时功率
+  20.3 W 虚功守恒；移除回未配置）；奇异矩阵拒绝原子性（模态保留＋
+  "singular" 稳定 token＋取消后工作集逐字段相等——顺序修正后成立）
+- 文档：units/modeling.md v0.58（F14 批次登记）；DTB §2.14 行状态更新；
+  证据 traceability/builds/wp13-t25-f14/（红绿 XML/SHA-256/README）
+
+改动原因（Why）：
+- 审计 20261019-601ffa0e M31 两问题：①无耦合矩阵编辑入口（域原语随
+  WP-13-T18 落位但零 UI 载体）；②正式宿主 HandlerServices 未提供尾部
+  couplingStage 落默认 R1Locked（有效矩阵提交恒拒）——MDL-21 已按
+  2026-10-10 GOV-UNFROZEN 解冻（REQUIREMENTS v1.17），R2 装配位合法
+
+验证（How）：
+- 先红后绿：红证①red-entry-absence-grep.log（基线 09faf7f0 git grep
+  入口锚命中 0＋UiPlugin:5312 传 R1Locked——两问题实现前状态成立）；
+  红证②red-atomicity-residue.{xml,log}（修复前原语奇异拒绝残留对象）
+- 独立模式：modeling 344跑：344通过＋0失败＋0跳过（PartsTest T18 用例
+  回归——R1 锁/R2 接受/清除/权威中立不破坏）、contract 8跑：8通过、
+  gui 51跑：51通过（新增 3 例）；集成模式：modeling 421跑：421通过、
+  contract 17跑：17通过、modeling_gui 65跑：65通过、ui 326跑：326通过、
+  ui_gui 91跑：91通过；ird_gates 零命中；validate-docs/task PASS
+- 矩阵映射消费（位置恢复/限位/RNEA 交叉耦合）不复制实现——归 drivetrain
+  既有 MappingR2GoldenTest＋统一验收（M-12/NFR-MNT-07）；真实三维 NOT RUN
+  （本项无三维消费面，如实登记）
+
+影响面与兼容性：
+- R1 公共默认保留（Parts.hpp 默认值/面板缺省门控不动——负例在案）；
+  纯新增 UI 载体与装配位切换；域原语顺序修正使数值拒绝面恢复字节不变
+  契约（既有接受/清除/阶段锁行为零变化——回归全绿）
+
+=== 09faf7f0 [WP-13-T25] F07 导入自碰撞候选到策略草稿移交半区（审计M17/MDL-04/ARC-05/AT-19）
+改动内容（What）：
+- 核实（零代码）：审计M17主体缺口（自碰撞启停/排除对可写配置入口）已由
+  WP-14-T12 A-23在本批基线内闭合——policy.edit命令＋策略卡入口、
+  HostEngineeringPolicy全字段模态（启停/四域/安全间距/相邻过滤/必检对/
+  忽略对PairEditor）、submit经project产生修订、resolvePolicyForRevision
+  按冻结修订解析、kinematics/optimization/trajectory评估接线收
+  resolvedPolicy；A-23套件5例＋本批新增1例复跑全绿
+- modeling/plugin/ModelingUiModule.hpp：ModuleSessionState新增
+  importedSelfCollisionCandidates（导入自碰撞排除候选会话承载——
+  确认后整体替换、取消不携带）
+- modeling/plugin/ModelingCommandFlows.cpp：URDF/Xacro导入确认后候选
+  入会话承载（P-MDL-3移交的modeling/io侧装配半区——policy.md §5.3归属）
+- modeling装配门面（ModelingPluginAssembly.hpp/.cpp）：新增只读取值器
+  importedSelfCollisionCandidates()（值拷贝、不泄模块私有类型——R-2）
+- ui/plugin/HostEngineeringPolicy.hpp/.cpp：edit重载携带候选——当前修订
+  robot-design根对象字节经modeling公共Codec解码解析连杆名→ObjectId
+  （R-4：无前缀拼接/剥离），预填忽略对象对（reason注明"导入候选"、
+  同对去重）；未解析名（模型未应用/名称不在修订）警示行列出不静默丢弃；
+  预填仅进表单——经用户显式确认才产生策略修订（policy权威/存储零改动）
+- ui/plugin/UiPlugin.cpp：策略编辑回调携带建模会话候选（装配接线）
+- 测试：新增流用例（取消不携带＋确认按报告序入承载）＋GUI诚实缺席例
+  （空项目未解析警示＋零预填＋取消零写入）
+- 文档：units/modeling.md v0.57（§6.3移交行落位登记）；DTB §2.14行
+  状态更新；证据 traceability/builds/wp13-t25-f07/（链路核实表＋红绿
+  XML/SHA-256/README含遗留登记）
+
+改动原因（Why）：
+- 审计20261019-601ffa0e M17复验口径"能显示导入提示"≠"能进入策略编辑"：
+  URDF disable_collisions候选此前只进报告即死端；P-MDL-3登记的"交接API
+  待policy冻结"前置已解除（RawPolicyInput冻结在案），按policy.md §5.3
+  "modeling/io侧装配为RawPolicyInput后进入管线"落位移交半区
+
+验证（How）：
+- 先红后绿：红证＝候选死端（确认后承载恒空）red-session-candidates.*
+- 独立 modeling 344跑：344通过＋0失败＋0跳过；集成 modeling 421跑：
+  421通过、modeling_gui 62跑：62通过、ui_gui 91跑：91通过（含策略套件
+  6/6——A-23既有5例复跑＋新增1例）、ui_test 326跑：326通过（python313
+  PATH前置）；ird_gates零命中；validate-docs/task PASS
+- F07四层：数据PASS（承载/解析/去重）；Qt交互PASS（真实模态链）；正式
+  宿主PASS（命令注册/只读门控/提交/按修订解析——既有链核实＋复跑）；
+  真实三维NOT RUN（覆盖层归B5统一验收，如实登记）
+
+影响面与兼容性：
+- 纯新增路径：policy语义/存储格式/RawPolicyInput零改动；候选不经用户
+  确认零策略写入；遗留（per-pair来源标记、基座首段/静态开关、三入口
+  数值对照与覆盖层视觉）登记待所有者/统一验收——不猜实现
+
+=== 7a9f0516 [WP-13-T25] F01 逐关节最大速度/最大加速度schema落位（审计M05/MDL-01/AT-01）
+改动内容（What）：
+- RobotDesign.hpp/.cpp：JointEntry 表尾追加 maxVelocity/maxAcceleration
+  （SourcedValue<double>——转动 rad/s、rad/s²｜移动 m/s、m/s² 随 type；
+  两权威模式均权威；Provided 须有限且≥0〔零＝真实零速非缺失〕；
+  Fixed＝NotApplicable）
+- Codec.hpp/.cpp：格式版本 {1,0}→{1,1}（表尾追加纪律）；关节编解码
+  追加两字段；旧 {1,0} 字节兼容读为 NotProvided（streamMinor 分支）
+- CanonicalBridge.cpp：maxVelocity/maxAcceleration 由硬写 NotProvided
+  改为 Provided 透传（SI 真值门＋provenance 原样——runtime
+  JointDescription 既有字段真实消费）
+- Template.cpp：createDraft 模板种子逐轴落位（sixAxisTemplateDefaults
+  单一权威）；JointEditField 表尾追加 MaxVelocity/MaxAcceleration＋
+  applyJointFieldEdit 域规则（负值/非有限/Fixed 拒绝、拒绝原子性、
+  备择卫兵扩展）＋变更记录摘要
+- Import.cpp：URDF <limit velocity> 真实映射 maxVelocity（ImportMapped
+  来源；负值/语法非法＝错误项；fixed＝忽略面）——旧"joint-velocity-limit
+  无落点"不支持面消亡
+- WorkCellReverseImport.cpp：VelLimit/AccLimit 映射 maxVelocity/
+  maxAcceleration（源 SI 直入；AccLimit 值解析补齐）；两 kind 生产面退役
+- PanelModel.cpp＋ModelingPanelWidget.cpp：关节属性行 max-velocity/
+  max-acceleration 两行（中文标签＋单位随类型）＋编辑页 12→14 行＋
+  基线回填/出口转译；jointEditUnitToken 增速度/加速度量纲
+- Readiness.cpp：L9 注记条件化（存在可动关节缺值才登记；全值齐备
+  零登记；补录动作改指关节编辑页）
+- ModelingCommandFlows.cpp：模板回执文案更新（值已真实入模）
+- 测试：新增红转绿 4 例＋Codec 兼容读（手构 {1,0} 字节夹具）/值入身份/
+  编辑规则（逐轴不同值 v=[0.8..2.3]/a=[1..6]）/GUI 14 行装配＋速度
+  表单编辑与拒绝回填链；既有断言随契约演化更新（URDF/WC 报告面、
+  黄金数据集期望 unsupported 8→3＋mappedVelocityCount=5〔manifest
+  摘要与 history 登记随批〕、编码版本探测 1.1→1.2、编辑页行数 12→14、
+  F06 流/GUI 两处 VelLimit 断言复跑更新）
+- 文档：units/modeling.md v0.56（表 4.3-A 两行＋§6.3 velocity 映射＋
+  §6.6 VelLimit/AccLimit 映射与 kind 退役＋§8.2 注记面更新）；
+  证据 traceability/builds/wp13-t25-f01/（红绿 XML/日志/SHA-256/README）
+
+改动原因（Why）：
+- 审计 20261019-601ffa0e M05/F01：关节缺最大速度/最大加速度编辑和权威
+  字段，模板参考值不进入模型；MDL-01 原文"逐轴定义关节（类型、轴线、
+  零位、限位、速度/加速度限制）"——权威归属＝关节一等字段（§4.7 传动
+  对象无速度字段，旧"属传动对象"划界系缺字段期过渡口径，随本批废止）
+
+验证（How）：
+- 先红后绿：红证 4 例留存 wp13-t25-f01/red-*（桥 NotProvided/URDF
+  谎报无落点/面板行缺失/就绪无条件注记）
+- 独立模式：modeling_test 343跑：343通过＋0失败＋0跳过、contract 8跑：
+  8通过、modeling_gui 48跑：48通过；集成模式：modeling_test 420跑：
+  420通过＋0失败＋0跳过、contract 17跑：17通过、modeling_gui 62跑：
+  62通过（QT_QPA_PLATFORM=windows）、ui_test 326跑：326通过
+  （python313 PATH 前置）；ird_gates 零命中；validate-docs/
+  validate-task PASS
+- 旧编码兼容：手构最小 {1,0} 根对象字节按线上格式规范逐字节构造，
+  {1,1} 读端解码成功且追加字段＝NotProvided（缺失≠零）；再编码升级
+  {1,1} 往返；逐关节不同值→编码字节不同（值入身份）
+- 黄金数据集演化：mdl-urdf-import 期望面 unsupported 8→3＋
+  mappedVelocityCount=5——契约演化随批登记（manifest sha/history），
+  测试同步钉住映射面，非对账失败回写
+- 消费者边界如实登记：本批闭合点＝描述层 Provided 透传；轨迹/动力学
+  端到端数值消费归跨域链复验（统一验收批）
+
+影响面与兼容性：
+- 编码格式 {1,1}：新写的对象字节互不相同（内容身份变化→新修订——
+  预期行为）；旧 {1,0} 字节只读兼容（无升级器语义不变）；runtime
+  零改动（JointDescription 字段既有）；F06 复跑完成（VelLimit 报告
+  转映射行——流＋GUI 双面断言更新）
+
+=== 598c9b03 [WP-13-T25] F06 外部WorkCell反向导入正式命令入口（审计M14/MDL-18/AT-33）
+改动内容（What）：
+- modeling/plugin/PanelCommandCatalog.cpp：命令目录表尾追加第十二号
+  modeling.import-workcell（Project作用域/写路径readOnlyAllowed=false）
+- modeling/plugin/ModelingCommandFlows.cpp：新增 import-workcell 命令流——
+  loadWorkCellEntry（io openGenericXml 良构校验＋readFileBytes 真实字节＋
+  两读取窗口SHA-256摘要对账，ResChanged诚实拒绝）＋assembleWorkCellDependencyTree
+  （Polytope引用缺失容忍树：存在＝io真实快照、缺失＝exists=false叶）＋
+  mapWorkCellXml提取→多设备分支显式选链（chooseItem全候选，不默认选第一个）
+  →逐项报告confirmImport→恰一根草稿替换（R1不变量）；isAssembledModelingCommand
+  词表同步加词
+- ui/src/UiText.cpp：cmd.modeling.import-workcell title/tooltip两键（表50→52）
+- 测试：ModelingCommandFlowsTest 新增5例（真实临时.wc.xml：单设备真读/deg→rad
+  独立数值核对/RPY90°→R_z(π/2)/PosLimit±170°→rad/Q→zeroOffset/双设备显式
+  选链含取消/报告取消零替换/非WC根诚实拒绝/文件取消静默）；GUI新增2例
+  （面板按钮注册·文案·只读门控＋真Qt文件对话框→真报告→取消零替换截图留痕）；
+  目录计数契约同步11→12（PluginPanelTest/PluginModuleT03BTest/F466对账）
+- 文档：units/modeling.md §9.7.3表行＋§6.6入口落位注＋v0.55；DTB §2.14
+  WP-13-T25行＋v0.91；契约WP-13-T25.json；执行计划文档；证据
+  traceability/builds/wp13-t25-f06/（红绿XML/日志/截图/SHA-256清单/README）
+
+改动原因（Why）：
+- 审计20261019-601ffa0e M14/F06：WorkCell提取内核（WP-13-T17）可用但正式
+  命令目录无入口，用户无法从可见入口选择外部.wc.xml生成可编辑草稿
+  （MDL-18/AT-33）；主任务WP-13-T24 B3批该项经交接计划委托本批实现
+
+验证（How）：
+- 先红后绿：红证5流（unknown command id）＋1 GUI（按钮nullptr）留存
+  wp13-t25-f06/red-*；实现后全绿
+- 独立模式：modeling_test 337跑：337通过＋0失败＋0跳过；contract 8跑：
+  8通过；集成模式：modeling_test 413跑：413通过＋0失败＋0跳过、contract
+  17跑：17通过、modeling_gui 61跑：61通过（QT_QPA_PLATFORM=windows）、
+  ui_test 326跑：326通过（python313 PATH前置）；ird_gates零命中；
+  validate-docs/validate-task PASS；gate-all 91/99（4失败逐项基线归因：
+  本批GUI测试smoke环境自备已修复＋CrashCapture负载瞬态事后双绿＋
+  optimization契约与project_perf两例stash态复现为基线固有，证据在案）
+- 全新集成树框架RobWorkSim目标（sdurwsim_gui等）编译失败为基线固有
+  （stash全改动后同错复现148 error，主worktree同源obj 10-18曾编过——
+  疑SDK漂移暴露框架潜伏问题；SA-02不私改框架，登记待所有者处置）；
+  产品目标（industrialrobot＋RobWorkStudio链）构建零错误
+
+影响面与兼容性：
+- 纯新增命令与流程，既有11条命令零变化；目录计数契约11→12随表行同步；
+  提取引擎/存储格式/公共接口零改动；F01落地后需复跑本项
+  （VelLimit/AccLimit映射随schema落点更新）
+
+=== 90e9c041 [governance] 增补DoD条款——GUI生产路径测试/入口布局冒烟/跨域消费链回归进入统一完成定义
+改动内容（What）：
+- development-task-breakdown.md v0.97：§5.2 DoD 第 5 条强化（人工点验＋关键交互链
+  固化 Widgets 级生产路径测试进常驻回归——投影/领域函数测试不得替代；豁免须所有者
+  确认，实施者不得自行登记）＋新增第 6 条入口与布局冒烟＋第 7 条跨域消费链回归；
+  §5.1"插件 GUI 手动验证通道"行补宿主遍历脚本化推荐载体
+- units/requirements.md v0.21：§1.4 非目标行/§10.1 总则/V-22 行/§13 REQ-08 行的
+  "仅登记不启动"口径翻转"必执行"；§14.6 v0.21 行
+- units/modeling.md v0.55：§1.4/§10.1/V-30 行同款翻转；§14.6 v0.55 行（modeling
+  同口径真实宿主审计列新 DoD 生效后第一批）
+- acceptance-protocol.md v1.10：§4 新增 4.12"UI 任务真实交互证据"核对项（11→12 项），
+  §2.1/§5 计数同步；§7 增行
+- 新建契约 tasks/DOC-T16.json（done——本批即其执行；编号＝DOC 族已实占 T01~T15
+  取下一可用号）
+
+改动原因（Why）：
+- 需求模块全功能审计（分支 codex/requirements-audit-20261018，报告随 wp14-t12 合入
+  主线）A-01~A-12 十二项缺陷全部位于无自动化覆盖的生产接线/呈现层，领域算法层零
+  缺陷；wp14-t12 修复批又新登 A-13~A-16 跨域消费链缺陷
+- 原 DTB §5.2 第 5 条（v0.20）仅为一次性人工点验且允许实施者自行登记豁免——挡不住
+  接线层缺陷也不防回归；须把点验过的交互链固化为常驻生产路径测试并封堵豁免口子
+- 所有者 2026-10-19 批准测试策略修订计划（DoD 时机裁决：起草即行、效力自下一批
+  授权契约生效、不追溯 wp14-t12）
+
+验证（How）：
+- validate-task PASS（DOC-T16）；validate-docs PASS（20 units/12 trace entries/
+  362 task files/6733 evidence）；commit-lint PASS（bd34ee43，-Range a5ccb4d6..HEAD）
+- 纯文档批：双模式构建按 DTB §5.2 第 1 条"纯文档任务免除"口径如实登记未执行；
+  ird_gates 零源码变更面不适用
+
+影响面与兼容性：
+- 零产品源码、零需求语义变更、findings.json 零触碰；M 判据不变
+- 新 DoD（第 5~7 条）自下一批授权契约生效，不追溯在途任务；wp14-t12 验收口径已由
+  其契约冻结（120 项逐行终验）不受影响
+
