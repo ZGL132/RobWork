@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] ReportingContractSuite.RP_IDEM_1_ProjectArchiveIdempotentHit (8 ms)
+[ RUN      ] ReportingContractSuite.RP_IDEM_2_ExternalIdempotentNoOp
+[       OK ] ReportingContractSuite.RP_IDEM_2_ExternalIdempotentNoOp (16 ms)
+[ RUN      ] ReportingContractSuite.RP_CONF_1_ConflictDetectionAndResolution
+[       OK ] ReportingContractSuite.RP_CONF_1_ConflictDetectionAndResolution (38 ms)
+[ RUN      ] ReportingContractSuite.RP_DISK_1_DiskFull_AbandonAndRetry
+[       OK ] ReportingContractSuite.RP_DISK_1_DiskFull_AbandonAndRetry (7 ms)
+[ RUN      ] ReportingContractSuite.RP_RO_1_ReadOnlyProject_TwoPaths
+[       OK ] ReportingContractSuite.RP_RO_1_ReadOnlyProject_TwoPaths (5 ms)
+[ RUN      ] ReportingContractSuite.RP_SAN_1_DiagnosticRedaction
+[       OK ] ReportingContractSuite.RP_SAN_1_DiagnosticRedaction (1 ms)
+[ RUN      ] ReportingContractSuite.RP_REVW_1_ReviewEvolutionChain
+[       OK ] ReportingContractSuite.RP_REVW_1_ReviewEvolutionChain (14 ms)
+[ RUN      ] ReportingContractSuite.RP_REVW_2_UnsignedExportable
+[       OK ] ReportingContractSuite.RP_REVW_2_UnsignedExportable (20 ms)
+[ RUN      ] ReportingContractSuite.RP_BUN_1_BundleAssemblyAndCollaboration
+[       OK ] ReportingContractSuite.RP_BUN_1_BundleAssemblyAndCollaboration (4 ms)
+[ RUN      ] ReportingContractSuite.RP_GATE_1_BuildRedLines
+[       OK ] ReportingContractSuite.RP_GATE_1_BuildRedLines (23 ms)
+[----------] 32 tests from ReportingContractSuite (290 ms total)
+
+[----------] Global test environment tear-down
+[==========] 235 tests from 37 test suites ran. (547 ms total)
+[  PASSED  ] 235 tests.
+Exit=0

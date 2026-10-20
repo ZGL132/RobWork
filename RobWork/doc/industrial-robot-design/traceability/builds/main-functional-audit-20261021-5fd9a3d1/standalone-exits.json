@@ -1,0 +1,32 @@
+[
+  {
+    "name": "standalone_requirements",
+    "exit": 0,
+    "finishedUtc": "2026-10-20T16:55:15.1535240Z"
+  },
+  {
+    "name": "standalone_requirements_contract",
+    "exit": 0,
+    "finishedUtc": "2026-10-20T16:55:19.3690351Z"
+  },
+  {
+    "name": "standalone_requirements_gui",
+    "exit": 0,
+    "finishedUtc": "2026-10-20T16:55:37.1582095Z"
+  },
+  {
+    "name": "standalone_modeling",
+    "exit": 0,
+    "finishedUtc": "2026-10-20T16:55:42.8925571Z"
+  },
+  {
+    "name": "standalone_modeling_contract",
+    "exit": 0,
+    "finishedUtc": "2026-10-20T16:55:47.8772682Z"
+  },
+  {
+    "name": "standalone_modeling_gui",
+    "exit": 0,
+    "finishedUtc": "2026-10-20T16:56:22.3418043Z"
+  }
+]

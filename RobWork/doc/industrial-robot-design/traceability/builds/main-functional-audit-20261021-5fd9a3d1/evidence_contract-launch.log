@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] EnvelopeAccessorContract.DataInsufficientWithoutMissingListRejectedBothFaces
+[       OK ] EnvelopeAccessorContract.DataInsufficientWithoutMissingListRejectedBothFaces (0 ms)
+[ RUN      ] EnvelopeAccessorContract.CanceledFeasibleRejectedBothFaces
+[       OK ] EnvelopeAccessorContract.CanceledFeasibleRejectedBothFaces (0 ms)
+[ RUN      ] EnvelopeAccessorContract.CompletedWithEmptyEvidenceListFlaggedByPredicate
+[       OK ] EnvelopeAccessorContract.CompletedWithEmptyEvidenceListFlaggedByPredicate (0 ms)
+[----------] 4 tests from EnvelopeAccessorContract (0 ms total)
+
+[----------] 5 tests from SliceFixtureContract
+[ RUN      ] SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4
+[       OK ] SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4 (36 ms)
+[ RUN      ] SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance
+[       OK ] SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance (6 ms)
+[ RUN      ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1
+[       OK ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1 (0 ms)
+[ RUN      ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1
+[       OK ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1 (0 ms)
+[ RUN      ] SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest
+[       OK ] SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest (0 ms)
+[----------] 5 tests from SliceFixtureContract (44 ms total)
+
+[----------] Global test environment tear-down
+[==========] 14 tests from 3 test suites ran. (58 ms total)
+[  PASSED  ] 14 tests.
+Exit=0

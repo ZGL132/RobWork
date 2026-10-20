@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12 (8 ms)
+[ RUN      ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12 (41 ms)
+[ RUN      ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33
+[       OK ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33 (40 ms)
+[ RUN      ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12 (236 ms)
+[ RUN      ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12 (137 ms)
+[ RUN      ] RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52
+[       OK ] RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52 (13 ms)
+[ RUN      ] RequirementsView3DFlow.StationMarkersCarryPositionWhenProvided_UI_T77
+[       OK ] RequirementsView3DFlow.StationMarkersCarryPositionWhenProvided_UI_T77 (16 ms)
+[ RUN      ] RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77
+[       OK ] RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77 (9 ms)
+[ RUN      ] RequirementsView3DFlow.SampleResultList_EmptyStateHonest_FIX_T2
+[       OK ] RequirementsView3DFlow.SampleResultList_EmptyStateHonest_FIX_T2 (10 ms)
+[ RUN      ] RequirementsView3DFlow.SampleResultList_ClickEmitsHighlightRequest_FIX_T2
+[       OK ] RequirementsView3DFlow.SampleResultList_ClickEmitsHighlightRequest_FIX_T2 (9 ms)
+[----------] 12 tests from RequirementsView3DFlow (605 ms total)
+
+[----------] Global test environment tear-down
+[==========] 110 tests from 3 test suites ran. (10558 ms total)
+[  PASSED  ] 110 tests.
+Exit=0

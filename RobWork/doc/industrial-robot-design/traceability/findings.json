@@ -9578,6 +9578,42 @@
       "registeredAt": "2026-10-20",
       "title": "IRD_UI_PLUGIN_SMOKE=layout 截图产出依赖环境变量 IRD_UI_PLUGIN_SMOKE_OUT，未设置时 snapPng 静默返回（无提示行、不计失败）——复现/验收者不知该前置会漏留截图档或误判截图缺失；attempt 3 亲跑首次未设变量即零截图，补设后 9 张齐全（UiPlugin.cpp snapPng 闭包：outDir.isEmpty() 即 return）",
       "owner": "ui 单元/治理（建议：outDir 为空时输出提示行（如 screenshot-skipped:no-out-dir），或在证据 README 写明该前置变量）"
+    },
+    {
+      "id": "F-949",
+      "source": "2026-10-21 合入后主线5fd9a3d1需求/建模复核；traceability/builds/main-functional-audit-20261021-5fd9a3d1/REPORT.md",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-21",
+      "title": "优化采用契约旧断言把修订中保留RobotDesign引用等同对象复制：主线完整回归52条中该用例失败，独立单跑稳定复现；与A-13新修订保留完整基线OID/CV语义冲突，需修正断言及单元卡并验证无新增设计对象，不能回退完整引用集修复",
+      "owner": "optimization/project契约所有者；MA-05"
+    },
+    {
+      "id": "F-950",
+      "source": "2026-10-21 合入后主线5fd9a3d1需求/建模复核；traceability/builds/main-functional-audit-20261021-5fd9a3d1/REPORT.md",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-21",
+      "title": "正式需求tour两种窗口尺寸滚动到底均取得近乎全空白Dock截图，独立复跑稳定重现但235项断言仍全绿：step13只检查滚动条value==maximum，未验证最后业务字段/按钮可见可点击；尚待区分布局与抓图绘制时机，不推导数据丢失",
+      "owner": "ui/requirements界面与验收所有者；MA-04"
+    },
+    {
+      "id": "F-951",
+      "source": "2026-10-21 合入后主线5fd9a3d1需求/建模复核；traceability/builds/main-functional-audit-20261021-5fd9a3d1/REPORT.md",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-21",
+      "title": "区域覆盖后台捕获任务cancelFlag却仍使用NullEvaluationContext（KinEvaluationChannel.cpp:632），取消恒false且进度被丢弃；单点/批量取消及迟到结果隔离通过不能证明coverage真实早停；源码接线已确认，大型采样取消延迟尚未实测",
+      "owner": "ui区域覆盖执行通道所有者；MA-03"
+    },
+    {
+      "id": "F-952",
+      "source": "2026-10-21 合入后主线5fd9a3d1需求/建模复核；traceability/builds/main-functional-audit-20261021-5fd9a3d1/REPORT.md",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-21",
+      "title": "主线扩展复验41个exe均有XML/stdout，显式传--ird_report仍仅产36份报告：evidence/evidence_contract/policy/policy_contract/runtime缺原生ird报告；需补接报告入口或登记明确豁免，不能以伪造转换报告补齐三件套",
+      "owner": "testkit及相关目标所有者；MA-09"
     }
   ]
 }

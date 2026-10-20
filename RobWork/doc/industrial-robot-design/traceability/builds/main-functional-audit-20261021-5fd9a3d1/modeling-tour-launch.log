@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ird-ui-smoke-mtour] pass step7 chinese-filter-requirements.regenerate-linked
+[ird-ui-smoke-mtour] pass step7 all-nine-requirements-commands
+[ird-ui-smoke-mtour] snap mtour-7-chinese-palette.png
+[ird-ui-smoke-mtour] step 8 scene-update-close-reopen
+[ird-ui-smoke-mtour] pass step8 regression-starts-with-real-session-pose
+[ird-ui-smoke-mtour] pass step8 closed-project-clears-session-pose
+[ird-ui-plugin] 已从保存修订恢复机器人运行时：rev-b135ab3f224854cf2309d3ae129bc598
+[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-mtour-demo-SRqdkI（可写：是）
+[ird-ui-smoke-mtour] pass step8 scene-update-real-project-reopened
+[ird-ui-smoke-mtour] pass step8 reopen-complete-manifest-zero-revisions
+[ird-ui-smoke-mtour] pass step8 scene-update-robot-restored-in-new-workcell
+[ird-ui-smoke-mtour] pass step8 scene-update-fixture-world-transform-restored
+[ird-ui-smoke-mtour] pass step8 scene-update-new-workcell-rendered
+[ird-ui-smoke-mtour] pass step8 committed-modeling-workset-and-tree-restored
+[ird-ui-smoke-mtour] step8 disk-draft status=2 origin=0 base=rev-00000000000000000000000000000000 tip=rev-b135ab3f224854cf2309d3ae129bc598
+[ird-ui-smoke-mtour] pass step8 reopened-shared-tree-resolves-real-joint-name
+[ird-ui-smoke-mtour] pass step8 reopened-shared-selection-focuses-modeling-joint
+[ird-ui-smoke-mtour] step8 parts actual=1 expected=1 removals=0
+[ird-ui-smoke-mtour] step8 part id=obj-f2cfd616e6c95963b006ff948b033d37 type=scene-object expected=1 new=0 found=1 bytes=1 disk-size=310 draft-size=310
+[ird-ui-smoke-mtour] pass step8 continued-edit-retains-every-active-part-byte-and-identity
+[ird-ui-smoke-mtour] step8 edited scenes=1 base=rev-b135ab3f224854cf2309d3ae129bc598
+[ird-ui-smoke-mtour] pass step8 reopened-modeling-form-edits-real-same-root-draft
+[ird-ui-smoke-mtour] pass step8 continued-draft-edit-zero-project-revisions
+[ird-ui-smoke-mtour] snap mtour-8-scene-update-reopened.png
+Exit=0

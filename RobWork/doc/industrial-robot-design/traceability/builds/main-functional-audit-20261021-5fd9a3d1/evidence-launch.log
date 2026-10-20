@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[----------] 9 tests from EvaluatorPortVerdict (0 ms total)
+
+[----------] 2 tests from EvaluatorPortContext
+[ RUN      ] EvaluatorPortContext.CancelledEvaluationThrowsThroughPort
+[       OK ] EvaluatorPortContext.CancelledEvaluationThrowsThroughPort (0 ms)
+[ RUN      ] EvaluatorPortContext.ObjectReadAndProgressChannels
+[       OK ] EvaluatorPortContext.ObjectReadAndProgressChannels (0 ms)
+[----------] 2 tests from EvaluatorPortContext (0 ms total)
+
+[----------] 1 test from EvaluatorPortCurrentness
+[ RUN      ] EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV
+[       OK ] EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV (0 ms)
+[----------] 1 test from EvaluatorPortCurrentness (0 ms total)
+
+[----------] 2 tests from ScriptedDoubleBoundary
+[ RUN      ] ScriptedDoubleBoundary.DoubleLivesOnlyInTestSources_EV_REG_3
+[       OK ] ScriptedDoubleBoundary.DoubleLivesOnlyInTestSources_EV_REG_3 (20 ms)
+[ RUN      ] ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme_EV_REG_3
+[       OK ] ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme_EV_REG_3 (7 ms)
+[----------] 2 tests from ScriptedDoubleBoundary (27 ms total)
+
+[----------] Global test environment tear-down
+[==========] 205 tests from 59 test suites ran. (69 ms total)
+[  PASSED  ] 205 tests.
+Exit=0

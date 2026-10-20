@@ -1,0 +1,207 @@
+[==========] Running 77 tests from 16 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from WfBuildGraph
+[ RUN      ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1
+[       OK ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1
+[       OK ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2
+[       OK ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2 (0 ms)
+[ RUN      ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1
+[       OK ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2
+[       OK ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2 (9 ms)
+[----------] 5 tests from WfBuildGraph (12 ms total)
+
+[----------] 3 tests from WfPluginRegistration
+[ RUN      ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1
+[       OK ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1
+[       OK ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1
+[       OK ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1 (0 ms)
+[----------] 3 tests from WfPluginRegistration (0 ms total)
+
+[----------] 4 tests from WfGateContract
+[ RUN      ] WfGateContract.GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112
+[       OK ] WfGateContract.GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112 (8 ms)
+[ RUN      ] WfGateContract.WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3
+[       OK ] WfGateContract.WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3 (5 ms)
+[ RUN      ] WfGateContract.ProjectionOwnershipStaysWithUi_WP22T03_ACC3
+[       OK ] WfGateContract.ProjectionOwnershipStaysWithUi_WP22T03_ACC3 (4 ms)
+[ RUN      ] WfGateContract.InvalidationHintIsPureValueData_WP22T03_ACC1
+[       OK ] WfGateContract.InvalidationHintIsPureValueData_WP22T03_ACC1 (0 ms)
+[----------] 4 tests from WfGateContract (17 ms total)
+
+[----------] 8 tests from NewProjectWizardContract
+[ RUN      ] NewProjectWizardContract.WF_VER_201_TemplateMainlineCreatesBaselineRevision
+[       OK ] NewProjectWizardContract.WF_VER_201_TemplateMainlineCreatesBaselineRevision (68 ms)
+[ RUN      ] NewProjectWizardContract.WF_VER_201_UrdfSourceRegistersReadOnlyBaseline
+[       OK ] NewProjectWizardContract.WF_VER_201_UrdfSourceRegistersReadOnlyBaseline (59 ms)
+[ RUN      ] NewProjectWizardContract.WF_VER_201_BlankMainlineStopsAtR0
+[       OK ] NewProjectWizardContract.WF_VER_201_BlankMainlineStopsAtR0 (35 ms)
+[ RUN      ] NewProjectWizardContract.WF_VER_202_CancelBeforeConfirmLeavesNothing
+[       OK ] NewProjectWizardContract.WF_VER_202_CancelBeforeConfirmLeavesNothing (0 ms)
+[ RUN      ] NewProjectWizardContract.WF_VER_203_DomainInitFailureCleansAndKeepsInputs
+[       OK ] NewProjectWizardContract.WF_VER_203_DomainInitFailureCleansAndKeepsInputs (104 ms)
+[ RUN      ] NewProjectWizardContract.WF_VER_203_CreateNewFailurePresentsAndRetries
+[       OK ] NewProjectWizardContract.WF_VER_203_CreateNewFailurePresentsAndRetries (77 ms)
+[ RUN      ] NewProjectWizardContract.WF_VER_204_ExternalHandlingBothWaysForwarded
+[       OK ] NewProjectWizardContract.WF_VER_204_ExternalHandlingBothWaysForwarded (138 ms)
+[ RUN      ] NewProjectWizardContract.WF_VER_Port_ModelingNotDirectlyLinked
+[       OK ] NewProjectWizardContract.WF_VER_Port_ModelingNotDirectlyLinked (7 ms)
+[----------] 8 tests from NewProjectWizardContract (492 ms total)
+
+[----------] 3 tests from OpenWizardContract
+[ RUN      ] OpenWizardContract.WF_VER_205_FiveStepProtocolAllThreeSources
+[       OK ] OpenWizardContract.WF_VER_205_FiveStepProtocolAllThreeSources (83 ms)
+[ RUN      ] OpenWizardContract.WF_VER_206_CorruptProjectFailsWithConcreteFileAndCurrentUntouched
+[       OK ] OpenWizardContract.WF_VER_206_CorruptProjectFailsWithConcreteFileAndCurrentUntouched (60 ms)
+[ RUN      ] OpenWizardContract.WF_VER_206_NotAProjectPresentsContextAndGuidance
+[       OK ] OpenWizardContract.WF_VER_206_NotAProjectPresentsContextAndGuidance (1 ms)
+[----------] 3 tests from OpenWizardContract (145 ms total)
+
+[----------] 7 tests from CloseFlowContract
+[ RUN      ] CloseFlowContract.WF_VER_209_DialogDataPlaneAndCancelAbortsOverRealDrafts
+[       OK ] CloseFlowContract.WF_VER_209_DialogDataPlaneAndCancelAbortsOverRealDrafts (39 ms)
+[ RUN      ] CloseFlowContract.WF_VER_210_WaitOptionDrainsArchiveThenContextClosed
+[       OK ] CloseFlowContract.WF_VER_210_WaitOptionDrainsArchiveThenContextClosed (66 ms)
+[ RUN      ] CloseFlowContract.WF_VER_211_CooperativeCancelReachesDrainedClose
+[       OK ] CloseFlowContract.WF_VER_211_CooperativeCancelReachesDrainedClose (26 ms)
+[ RUN      ] CloseFlowContract.WF_VER_212_SchemeSwitchCancelPathZeroWrite
+[       OK ] CloseFlowContract.WF_VER_212_SchemeSwitchCancelPathZeroWrite (37 ms)
+[ RUN      ] CloseFlowContract.WF_VER_212_SchemeSwitchProceedPathZeroWrite
+[       OK ] CloseFlowContract.WF_VER_212_SchemeSwitchProceedPathZeroWrite (32 ms)
+[ RUN      ] CloseFlowContract.SwitchCandidateSuccessClosesCurrentAndHandsOver
+[       OK ] CloseFlowContract.SwitchCandidateSuccessClosesCurrentAndHandsOver (67 ms)
+[ RUN      ] CloseFlowContract.SwitchCandidateCorruptFailsAndCurrentUntouched
+[       OK ] CloseFlowContract.SwitchCandidateCorruptFailsAndCurrentUntouched (83 ms)
+[----------] 7 tests from CloseFlowContract (352 ms total)
+
+[----------] 6 tests from SaveAsPackageContract
+[ RUN      ] SaveAsPackageContract.SaveAs_EntersNewProject_ViaOpenProtocol_P05_AT20
+[       OK ] SaveAsPackageContract.SaveAs_EntersNewProject_ViaOpenProtocol_P05_AT20 (86 ms)
+[ RUN      ] SaveAsPackageContract.SaveAs_Cancelled_TargetLeftClean_AT20
+[       OK ] SaveAsPackageContract.SaveAs_Cancelled_TargetLeftClean_AT20 (38 ms)
+[ RUN      ] SaveAsPackageContract.Export_RealZipArtifact_SourceUntouched_P05
+[       OK ] SaveAsPackageContract.Export_RealZipArtifact_SourceUntouched_P05 (80 ms)
+[ RUN      ] SaveAsPackageContract.Export_Cancelled_TargetUntouched_P05
+[       OK ] SaveAsPackageContract.Export_Cancelled_TargetUntouched_P05 (34 ms)
+[ RUN      ] SaveAsPackageContract.Import_PathTraversalRejected_NoTarget_P05
+[       OK ] SaveAsPackageContract.Import_PathTraversalRejected_NoTarget_P05 (15 ms)
+[ RUN      ] SaveAsPackageContract.Import_ExportedPackRoundTrip_VerifiedPublished_P05
+[       OK ] SaveAsPackageContract.Import_ExportedPackRoundTrip_VerifiedPublished_P05 (78 ms)
+[----------] 6 tests from SaveAsPackageContract (332 ms total)
+
+[----------] 7 tests from ReconnectReadOnlyContract
+[ RUN      ] ReconnectReadOnlyContract.LegacySchemaVersion_Rejected_GuidanceDiag_FileUntouched_P06_AT20
+[       OK ] ReconnectReadOnlyContract.LegacySchemaVersion_Rejected_GuidanceDiag_FileUntouched_P06_AT20 (30 ms)
+[ RUN      ] ReconnectReadOnlyContract.FutureSchemaVersion_Rejected_ThreeKeysGuidance_P06
+[       OK ] ReconnectReadOnlyContract.FutureSchemaVersion_Rejected_ThreeKeysGuidance_P06 (73 ms)
+[ RUN      ] ReconnectReadOnlyContract.LegacyRwprojFile_RoutedUnknown_ZeroSideEffect_P06
+[       OK ] ReconnectReadOnlyContract.LegacyRwprojFile_RoutedUnknown_ZeroSideEffect_P06 (1 ms)
+[ RUN      ] ReconnectReadOnlyContract.SecondWriterDegradesReadOnly_PidNotice_SubmitRejected_P07
+[       OK ] ReconnectReadOnlyContract.SecondWriterDegradesReadOnly_PidNotice_SubmitRejected_P07 (39 ms)
+[ RUN      ] ReconnectReadOnlyContract.LockRelease_RestoresWritable_P07
+[       OK ] ReconnectReadOnlyContract.LockRelease_RestoresWritable_P07 (37 ms)
+[ RUN      ] ReconnectReadOnlyContract.Relink_ExplicitCommit_ProducesNewRevision_P09_AT21
+[       OK ] ReconnectReadOnlyContract.Relink_ExplicitCommit_ProducesNewRevision_P09_AT21 (66 ms)
+[ RUN      ] ReconnectReadOnlyContract.RelinkFailedOrNotNeeded_NoProjectMutation_P09
+[       OK ] ReconnectReadOnlyContract.RelinkFailedOrNotNeeded_NoProjectMutation_P09 (27 ms)
+[----------] 7 tests from ReconnectReadOnlyContract (275 ms total)
+
+[----------] 3 tests from StatusBannerContract
+[ RUN      ] StatusBannerContract.ThreeScenarios_RealRecovery_CatalogFolded_BannerData_P15_AT21
+[       OK ] StatusBannerContract.ThreeScenarios_RealRecovery_CatalogFolded_BannerData_P15_AT21 (49 ms)
+[ RUN      ] StatusBannerContract.TitleSources_FromRealStore_QueryFace_P11
+[       OK ] StatusBannerContract.TitleSources_FromRealStore_QueryFace_P11 (28 ms)
+[ RUN      ] StatusBannerContract.ReadOnlyDegraded_TitleSuffix_DiscardGate_P11_P15
+[       OK ] StatusBannerContract.ReadOnlyDegraded_TitleSuffix_DiscardGate_P11_P15 (36 ms)
+[----------] 3 tests from StatusBannerContract (114 ms total)
+
+[----------] 5 tests from WfSettingsContract
+[ RUN      ] WfSettingsContract.CanonicalBytesMatchIoCanonicalize
+[       OK ] WfSettingsContract.CanonicalBytesMatchIoCanonicalize (7 ms)
+[ RUN      ] WfSettingsContract.RoundTripViaIoSyntaxReader
+[       OK ] WfSettingsContract.RoundTripViaIoSyntaxReader (4 ms)
+[ RUN      ] WfSettingsContract.WriteFailurePreservesPreviousFileAtomically
+[       OK ] WfSettingsContract.WriteFailurePreservesPreviousFileAtomically (14 ms)
+[ RUN      ] WfSettingsContract.StoreLeavesNoResidueInDirectory
+[       OK ] WfSettingsContract.StoreLeavesNoResidueInDirectory (4 ms)
+[ RUN      ] WfSettingsContract.LoadDiagnosticsCarryWorkflowChannel
+[       OK ] WfSettingsContract.LoadDiagnosticsCarryWorkflowChannel (8 ms)
+[----------] 5 tests from WfSettingsContract (40 ms total)
+
+[----------] 5 tests from ComparisonContract
+[ RUN      ] ComparisonContract.Compare_RealSchemeBranches_WF_VER_224
+[       OK ] ComparisonContract.Compare_RealSchemeBranches_WF_VER_224 (98 ms)
+[ RUN      ] ComparisonContract.HighlightDiffersOnValueDelta_WF_VER_224
+[       OK ] ComparisonContract.HighlightDiffersOnValueDelta_WF_VER_224 (53 ms)
+[ RUN      ] ComparisonContract.RejectsInconsistentBaseline_WF_VER_225
+[       OK ] ComparisonContract.RejectsInconsistentBaseline_WF_VER_225 (63 ms)
+[ RUN      ] ComparisonContract.UnknownBranchFailsFast_PresentTense
+[       OK ] ComparisonContract.UnknownBranchFailsFast_PresentTense (32 ms)
+[ RUN      ] ComparisonContract.Popt8WarningPassThroughAndDegradedChannel
+[       OK ] ComparisonContract.Popt8WarningPassThroughAndDegradedChannel (105 ms)
+[----------] 5 tests from ComparisonContract (354 ms total)
+
+[----------] 8 tests from CommandsContract
+[ RUN      ] CommandsContract.Registration_AllFourteen_Ok_PaletteListsAll_UX13_F5
+[       OK ] CommandsContract.Registration_AllFourteen_Ok_PaletteListsAll_UX13_F5 (25 ms)
+[ RUN      ] CommandsContract.PaletteFuzzySearch_ReachesEveryCommand_UX13_F5
+[       OK ] CommandsContract.PaletteFuzzySearch_ReachesEveryCommand_UX13_F5 (23 ms)
+[ RUN      ] CommandsContract.DuplicateRegistration_RejectedAtBoundary_NotOverwritten
+[       OK ] CommandsContract.DuplicateRegistration_RejectedAtBoundary_NotOverwritten (27 ms)
+[ RUN      ] CommandsContract.ResetHomeZero_ZeroRevisionEndToEnd_KIN06
+[       OK ] CommandsContract.ResetHomeZero_ZeroRevisionEndToEnd_KIN06 (29 ms)
+[ RUN      ] CommandsContract.UndoRedo_ProducesNewRevisions_HistoryAppendOnly_P18_AT29
+[       OK ] CommandsContract.UndoRedo_ProducesNewRevisions_HistoryAppendOnly_P18_AT29 (153 ms)
+[ RUN      ] CommandsContract.UndoRedo_EmptyHistory_StableNotice_NoCrash_P18
+[       OK ] CommandsContract.UndoRedo_EmptyHistory_StableNotice_NoCrash_P18 (28 ms)
+[ RUN      ] CommandsContract.Contributor_InterfaceDispatch_FourteenCommands_BindableAll_SA16
+[       OK ] CommandsContract.Contributor_InterfaceDispatch_FourteenCommands_BindableAll_SA16 (29 ms)
+[ RUN      ] CommandsContract.Descriptors_FrozenRows_GoldenFieldsPerUiTable
+[       OK ] CommandsContract.Descriptors_FrozenRows_GoldenFieldsPerUiTable (35 ms)
+[----------] 8 tests from CommandsContract (354 ms total)
+
+[----------] 6 tests from WfGateAdviceFixture
+[ RUN      ] WfGateAdviceFixture.ManifestRegistered_WP22T13_ACC2
+[       OK ] WfGateAdviceFixture.ManifestRegistered_WP22T13_ACC2 (49 ms)
+[ RUN      ] WfGateAdviceFixture.GateReplay_MatchesGolden_WP22T13_ACC2
+[       OK ] WfGateAdviceFixture.GateReplay_MatchesGolden_WP22T13_ACC2 (2 ms)
+[ RUN      ] WfGateAdviceFixture.AdviceReplay_MatchesGolden_WP22T13_ACC2
+[       OK ] WfGateAdviceFixture.AdviceReplay_MatchesGolden_WP22T13_ACC2 (2 ms)
+[ RUN      ] WfGateAdviceFixture.InvalidationMapping_MatchesGolden_WP22T13_ACC2
+[       OK ] WfGateAdviceFixture.InvalidationMapping_MatchesGolden_WP22T13_ACC2 (1 ms)
+[ RUN      ] WfGateAdviceFixture.DeterministicReplay_DoubleRunIdentical_WP22T13_ACC2
+[       OK ] WfGateAdviceFixture.DeterministicReplay_DoubleRunIdentical_WP22T13_ACC2 (1 ms)
+[ RUN      ] WfGateAdviceFixture.ToleranceProfileZeroToleranceChannel_WP22T13_ACC2
+[       OK ] WfGateAdviceFixture.ToleranceProfileZeroToleranceChannel_WP22T13_ACC2 (8 ms)
+[----------] 6 tests from WfGateAdviceFixture (66 ms total)
+
+[----------] 2 tests from InFlightArchiveContract
+[ RUN      ] InFlightArchiveContract.WF_VER_210_EndToEndInFlightArchiveWaitedBeforeClose
+[       OK ] InFlightArchiveContract.WF_VER_210_EndToEndInFlightArchiveWaitedBeforeClose (36 ms)
+[ RUN      ] InFlightArchiveContract.WF_VER_211_EndToEndCooperativeCancelReachesClosed
+[       OK ] InFlightArchiveContract.WF_VER_211_EndToEndCooperativeCancelReachesClosed (25 ms)
+[----------] 2 tests from InFlightArchiveContract (61 ms total)
+
+[----------] 1 test from LifeCycleMainlineContract
+[ RUN      ] LifeCycleMainlineContract.WF_VER_227_FullMainlineNewEditApplyUndoRedoPackageSaveAs
+[       OK ] LifeCycleMainlineContract.WF_VER_227_FullMainlineNewEditApplyUndoRedoPackageSaveAs (393 ms)
+[----------] 1 test from LifeCycleMainlineContract (393 ms total)
+
+[----------] 4 tests from HostAssemblyContract
+[ RUN      ] HostAssemblyContract.AssembledControllerClosesRealStoreThroughInterface
+[       OK ] HostAssemblyContract.AssembledControllerClosesRealStoreThroughInterface (25 ms)
+[ RUN      ] HostAssemblyContract.BackfillTranslateSubmitsAuthoritativeWriteViaCommandPort
+[       OK ] HostAssemblyContract.BackfillTranslateSubmitsAuthoritativeWriteViaCommandPort (114 ms)
+[ RUN      ] HostAssemblyContract.CloseSupervisorForcesAbandonBoundedAndStoreCloses
+[       OK ] HostAssemblyContract.CloseSupervisorForcesAbandonBoundedAndStoreCloses (628 ms)
+[ RUN      ] HostAssemblyContract.StoreRecoveryFactAdapterFoldsRealCatalog
+[       OK ] HostAssemblyContract.StoreRecoveryFactAdapterFoldsRealCatalog (30 ms)
+[----------] 4 tests from HostAssemblyContract (798 ms total)
+
+[----------] Global test environment tear-down
+[==========] 77 tests from 16 test suites ran. (3936 ms total)
+[  PASSED  ] 77 tests.

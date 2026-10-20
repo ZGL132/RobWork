@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] KinematicsPanelSession.ResetHome_DefinedSourceEnablesButton_KIN_R2 (4 ms)
+[ RUN      ] KinematicsPanelSession.ResetHome_DimensionMismatchExplicitHint_KIN_P3
+[       OK ] KinematicsPanelSession.ResetHome_DimensionMismatchExplicitHint_KIN_P3 (4 ms)
+[----------] 6 tests from KinematicsPanelSession (33 ms total)
+
+[----------] 2 tests from KinHostLoop
+[ RUN      ] KinHostLoop.SixAxisVariantClosedLoop_KIN_P4
+[       OK ] KinHostLoop.SixAxisVariantClosedLoop_KIN_P4 (44 ms)
+[ RUN      ] KinHostLoop.PanelPresentation_RealExecution_KIN_P4
+[       OK ] KinHostLoop.PanelPresentation_RealExecution_KIN_P4 (5 ms)
+[----------] 2 tests from KinHostLoop (51 ms total)
+
+[----------] 3 tests from KinematicsPanelSampling
+[ RUN      ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2
+[       OK ] KinematicsPanelSampling.SamplingGroup_ModeSwitchEnablesFields_KIN_R2 (4 ms)
+[ RUN      ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2
+[       OK ] KinematicsPanelSampling.SamplingGroup_RunJointRandomFillsSummary_KIN_R2 (9 ms)
+[ RUN      ] KinematicsPanelSampling.ProjectionCanvasAndPngExport_KIN_R2
+[       OK ] KinematicsPanelSampling.ProjectionCanvasAndPngExport_KIN_R2 (10 ms)
+[----------] 3 tests from KinematicsPanelSampling (25 ms total)
+
+[----------] Global test environment tear-down
+[==========] 20 tests from 4 test suites ran. (399 ms total)
+[  PASSED  ] 20 tests.
+Exit=0

@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] DtMappingR2Golden.ReflectedInertiaR2FullMatrix_WP18T05_ACC2
+[       OK ] DtMappingR2Golden.ReflectedInertiaR2FullMatrix_WP18T05_ACC2 (0 ms)
+[ RUN      ] DtMappingR2Golden.SameMatrixIdentityThreeConsumers_WP18T05_ACC2
+[       OK ] DtMappingR2Golden.SameMatrixIdentityThreeConsumers_WP18T05_ACC2 (0 ms)
+[----------] 7 tests from DtMappingR2Golden (0 ms total)
+
+[----------] 6 tests from DtGoldenMapping
+[ RUN      ] DtGoldenMapping.AnalyticSingleGolden_WP18T04_ACC1
+[       OK ] DtGoldenMapping.AnalyticSingleGolden_WP18T04_ACC1 (47 ms)
+[ RUN      ] DtGoldenMapping.VirtualWorkMatrixEquivalence_At38R1_WP18T04_ACC1
+[       OK ] DtGoldenMapping.VirtualWorkMatrixEquivalence_At38R1_WP18T04_ACC1 (2 ms)
+[ RUN      ] DtGoldenMapping.At38R1RejectionCounterexamples_WP18T04_ACC1
+[       OK ] DtGoldenMapping.At38R1RejectionCounterexamples_WP18T04_ACC1 (3 ms)
+[ RUN      ] DtGoldenMapping.BidirectionalEnergyGolden_WP18T04_ACC1
+[       OK ] DtGoldenMapping.BidirectionalEnergyGolden_WP18T04_ACC1 (2 ms)
+[ RUN      ] DtGoldenMapping.DwellZeroGolden_WP18T04_ACC1
+[       OK ] DtGoldenMapping.DwellZeroGolden_WP18T04_ACC1 (2 ms)
+[ RUN      ] DtGoldenMapping.ReflectedInertiaGolden_WP18T04_ACC1
+[       OK ] DtGoldenMapping.ReflectedInertiaGolden_WP18T04_ACC1 (2 ms)
+[----------] 6 tests from DtGoldenMapping (62 ms total)
+
+[----------] Global test environment tear-down
+[==========] 38 tests from 5 test suites ran. (90 ms total)
+[  PASSED  ] 38 tests.
+Exit=0

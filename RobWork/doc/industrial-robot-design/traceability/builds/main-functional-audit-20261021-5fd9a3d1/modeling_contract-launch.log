@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] MdlCommandPipelineContract.V22StaleBaselineFailsFastDefensively (0 ms)
+[ RUN      ] MdlCommandPipelineContract.StableCodesRegisteredWithoutPrebuilding_WP13T09
+[       OK ] MdlCommandPipelineContract.StableCodesRegisteredWithoutPrebuilding_WP13T09 (0 ms)
+[----------] 4 tests from MdlCommandPipelineContract (0 ms total)
+
+[----------] 2 tests from MdlCompileBridgeContract
+[ RUN      ] MdlCompileBridgeContract.ReaderOutputFeedsCanonicalBuilder_WP13T12_ACC3
+[       OK ] MdlCompileBridgeContract.ReaderOutputFeedsCanonicalBuilder_WP13T12_ACC3 (0 ms)
+[ RUN      ] MdlCompileBridgeContract.ReaderFailureNeverReachesS5_WP13T12_ACC3
+[       OK ] MdlCompileBridgeContract.ReaderFailureNeverReachesS5_WP13T12_ACC3 (0 ms)
+[----------] 2 tests from MdlCompileBridgeContract (0 ms total)
+
+[----------] 3 tests from MdlGoldenPeerContract
+[ RUN      ] MdlGoldenPeerContract.IoPeerImportPipelineMissingLeafContract_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.IoPeerImportPipelineMissingLeafContract_WP13T16_ACC5 (1 ms)
+[ RUN      ] MdlGoldenPeerContract.ProjectPeerGoldenTemplateApplyPlan_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.ProjectPeerGoldenTemplateApplyPlan_WP13T16_ACC5 (0 ms)
+[ RUN      ] MdlGoldenPeerContract.At37BasePlacementParameterInputFace_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.At37BasePlacementParameterInputFace_WP13T16_ACC5 (0 ms)
+[----------] 3 tests from MdlGoldenPeerContract (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 17 tests from 5 test suites ran. (38 ms total)
+[  PASSED  ] 17 tests.
+Exit=0

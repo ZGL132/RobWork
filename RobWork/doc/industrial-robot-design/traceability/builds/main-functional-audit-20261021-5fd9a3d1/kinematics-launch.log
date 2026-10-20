@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[----------] 16 tests from HostMigration (0 ms total)
+
+[----------] 7 tests from KinCollisionPort
+[ RUN      ] KinCollisionPort.AssembleSceneFromSnapshotFacts_WP15T07_ACC1
+[       OK ] KinCollisionPort.AssembleSceneFromSnapshotFacts_WP15T07_ACC1 (0 ms)
+[ RUN      ] KinCollisionPort.FixedFrameProjectionHasNoCollisionGeometry_MDL15_AT28
+[       OK ] KinCollisionPort.FixedFrameProjectionHasNoCollisionGeometry_MDL15_AT28 (0 ms)
+[ RUN      ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2
+[       OK ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2 (0 ms)
+[ RUN      ] KinCollisionPort.RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3
+[       OK ] KinCollisionPort.RealSessionVerdictAndConsistency_WP15T07_ACC1_ACC3 (0 ms)
+[ RUN      ] KinCollisionPort.AdapterForwardsEveryQueryNoCache_WP15T07_ACC3
+[       OK ] KinCollisionPort.AdapterForwardsEveryQueryNoCache_WP15T07_ACC3 (0 ms)
+[ RUN      ] KinCollisionPort.FacilityFailureMapsToFacilityFailed_WP15T07_ACC2
+[       OK ] KinCollisionPort.FacilityFailureMapsToFacilityFailed_WP15T07_ACC2 (1 ms)
+[ RUN      ] KinCollisionPort.DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2
+[       OK ] KinCollisionPort.DisabledPolicySessionMapsToEvidenceMissing_WP15T07_ACC2 (0 ms)
+[----------] 7 tests from KinCollisionPort (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 288 tests from 32 test suites ran. (11453 ms total)
+[  PASSED  ] 287 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1
+Exit=0

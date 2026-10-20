@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] MdlGoldenTemplate.Tmdl1GoldenParameterLock_WP13T16_ACC3
+[       OK ] MdlGoldenTemplate.Tmdl1GoldenParameterLock_WP13T16_ACC3 (0 ms)
+[ RUN      ] MdlGoldenTemplate.GoldenDraftMatchesDatasetExpectations_WP13T16_ACC3
+[       OK ] MdlGoldenTemplate.GoldenDraftMatchesDatasetExpectations_WP13T16_ACC3 (0 ms)
+[ RUN      ] MdlGoldenTemplate.SevenAxisRegisteredNotEnabled_WP13T16_ACC3
+[       OK ] MdlGoldenTemplate.SevenAxisRegisteredNotEnabled_WP13T16_ACC3 (0 ms)
+[----------] 3 tests from MdlGoldenTemplate (2 ms total)
+
+[----------] 5 tests from MdlGoldenImport
+[ RUN      ] MdlGoldenImport.GoldenUrdfReportCounts_V06_WP13T16_ACC3
+[       OK ] MdlGoldenImport.GoldenUrdfReportCounts_V06_WP13T16_ACC3 (1 ms)
+[ RUN      ] MdlGoldenImport.GoldenUrdfDraftValues_V06_WP13T16_ACC3
+[       OK ] MdlGoldenImport.GoldenUrdfDraftValues_V06_WP13T16_ACC3 (1 ms)
+[ RUN      ] MdlGoldenImport.GoldenUrdfInertiaDataQualityGate_WP13T16_ACC4
+[       OK ] MdlGoldenImport.GoldenUrdfInertiaDataQualityGate_WP13T16_ACC4 (1 ms)
+[ RUN      ] MdlGoldenImport.GoldenXacroMacroMapping_AT31_WP13T16_ACC3
+[       OK ] MdlGoldenImport.GoldenXacroMacroMapping_AT31_WP13T16_ACC3 (1 ms)
+[ RUN      ] MdlGoldenImport.GoldenXacroCyclePassthrough_V09_WP13T16_ACC3
+[       OK ] MdlGoldenImport.GoldenXacroCyclePassthrough_V09_WP13T16_ACC3 (0 ms)
+[----------] 5 tests from MdlGoldenImport (6 ms total)
+
+[----------] Global test environment tear-down
+[==========] 360 tests from 34 test suites ran. (975 ms total)
+[  PASSED  ] 360 tests.
+Exit=0

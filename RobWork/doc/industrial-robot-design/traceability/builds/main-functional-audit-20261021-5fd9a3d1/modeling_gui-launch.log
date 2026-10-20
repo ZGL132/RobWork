@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01 (499 ms)
+[ RUN      ] ModelingUiModuleHostWiring.SceneExternalGeometryFileDialog_MDL15_AT28
+[       OK ] ModelingUiModuleHostWiring.SceneExternalGeometryFileDialog_MDL15_AT28 (1969 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01
+[       OK ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01 (686 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21 (1058 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28
+[       OK ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28 (1864 ms)
+[ RUN      ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21 (548 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21 (508 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CleanRevisionRefreshesRealTreeAndForms_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CleanRevisionRefreshesRealTreeAndForms_PM04_AT21 (512 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21 (699 ms)
+[ RUN      ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33
+[       OK ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33 (285 ms)
+[----------] 29 tests from ModelingUiModuleHostWiring (15667 ms total)
+
+[----------] Global test environment tear-down
+[==========] 91 tests from 4 test suites ran. (33648 ms total)
+[  PASSED  ] 91 tests.
+Exit=0

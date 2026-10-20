@@ -1,0 +1,22 @@
+[
+  {
+    "exit": 0,
+    "name": "requirements-tour",
+    "finishedUtc": "2026-10-20T16:45:57.3903470Z"
+  },
+  {
+    "exit": 0,
+    "name": "modeling-tour",
+    "finishedUtc": "2026-10-20T16:46:35.9370841Z"
+  },
+  {
+    "exit": 0,
+    "name": "auto",
+    "finishedUtc": "2026-10-20T16:46:43.7327878Z"
+  },
+  {
+    "exit": 0,
+    "name": "layout",
+    "finishedUtc": "2026-10-20T16:46:56.4015897Z"
+  }
+]

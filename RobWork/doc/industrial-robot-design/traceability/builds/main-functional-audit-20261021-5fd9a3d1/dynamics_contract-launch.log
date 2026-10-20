@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] DynCommandsBoundary.CommandVocabularyAndOutcomeDefaults (0 ms)
+[ RUN      ] DynCommandsBoundary.CommandFaceHasZeroComputationSymbols
+[       OK ] DynCommandsBoundary.CommandFaceHasZeroComputationSymbols (0 ms)
+[ RUN      ] DynCommandsBoundary.OutcomeMatchesZeroRevisionContractOnAccept
+[       OK ] DynCommandsBoundary.OutcomeMatchesZeroRevisionContractOnAccept (0 ms)
+[----------] 3 tests from DynCommandsBoundary (0 ms total)
+
+[----------] 2 tests from DynAt07
+[ RUN      ] DynAt07.FullCycleEnvelopeAndNoMissedMandatory_WP17T10_ACC1
+[       OK ] DynAt07.FullCycleEnvelopeAndNoMissedMandatory_WP17T10_ACC1 (3 ms)
+[ RUN      ] DynAt07.DataInsufficientDegradation_WP17T10_ACC1
+[       OK ] DynAt07.DataInsufficientDegradation_WP17T10_ACC1 (2 ms)
+[----------] 2 tests from DynAt07 (5 ms total)
+
+[----------] 2 tests from DynHandoffBoundary
+[ RUN      ] DynHandoffBoundary.UpstreamKeyFrozenToPeerCardRegistration_WP17T10_ACC3
+[       OK ] DynHandoffBoundary.UpstreamKeyFrozenToPeerCardRegistration_WP17T10_ACC3 (0 ms)
+[ RUN      ] DynHandoffBoundary.PayloadFieldFaceAlignmentRegistered_WP17T10_ACC3
+[       OK ] DynHandoffBoundary.PayloadFieldFaceAlignmentRegistered_WP17T10_ACC3 (0 ms)
+[----------] 2 tests from DynHandoffBoundary (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 30 tests from 10 test suites ran. (57 ms total)
+[  PASSED  ] 30 tests.
+Exit=0

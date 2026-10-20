@@ -1,0 +1,118 @@
+[
+  {
+    "sheet": "contact-sheets\\requirements-tour-1.jpg",
+    "originals": [
+      "requirements-tour\\tour-1-panel-empty-state.png",
+      "requirements-tour\\tour-2-station-edited.png",
+      "requirements-tour\\tour-2b-tsv-template.png",
+      "requirements-tour\\tour-2c-segments-verified.png",
+      "requirements-tour\\tour-3-confirm-0.png",
+      "requirements-tour\\tour-3-confirm-1.png",
+      "requirements-tour\\tour-3-confirm-2.png",
+      "requirements-tour\\tour-3-method-0.png",
+      "requirements-tour\\tour-3-method-1.png"
+    ]
+  },
+  {
+    "sheet": "contact-sheets\\requirements-tour-2.jpg",
+    "originals": [
+      "requirements-tour\\tour-3-method-2.png",
+      "requirements-tour\\tour-3-region-sampling.png",
+      "requirements-tour\\tour-3a-spacing.png",
+      "requirements-tour\\tour-3b-random.png",
+      "requirements-tour\\tour-4-validation.png",
+      "requirements-tour\\tour-4b-view3d-coloring.png",
+      "requirements-tour\\tour-4c-validation-row-click.png",
+      "requirements-tour\\tour-5-final-state.png",
+      "requirements-tour\\tour-6b-view3d-real-coloring.png"
+    ]
+  },
+  {
+    "sheet": "contact-sheets\\requirements-tour-3.jpg",
+    "originals": [
+      "requirements-tour\\tour-6c-sample-blue-circle.png",
+      "requirements-tour\\tour-7-view-0.png",
+      "requirements-tour\\tour-7-view-1.png",
+      "requirements-tour\\tour-7-view-2.png",
+      "requirements-tour\\tour-7-view-3.png",
+      "requirements-tour\\tour-8-real-four-state-palette.png",
+      "requirements-tour\\tour-8b-real-selected-ring.png",
+      "requirements-tour\\tour-8c-product-export.png",
+      "requirements-tour\\tour-9-populated-bottom-0.png"
+    ]
+  },
+  {
+    "sheet": "contact-sheets\\requirements-tour-4.jpg",
+    "originals": [
+      "requirements-tour\\tour-9-populated-bottom-1.png",
+      "requirements-tour\\tour-9-populated-top-0.png",
+      "requirements-tour\\tour-9-populated-top-1.png",
+      "requirements-tour\\tour-apply-confirmation.png"
+    ]
+  },
+  {
+    "sheet": "contact-sheets\\modeling-tour-1.jpg",
+    "originals": [
+      "modeling-tour\\mtour-1-panel.png",
+      "modeling-tour\\mtour-2-reseeded.png",
+      "modeling-tour\\mtour-3-origin-edit.png",
+      "modeling-tour\\mtour-4-structure.png",
+      "modeling-tour\\mtour-5-applied.png",
+      "modeling-tour\\mtour-5.5-reopened.png",
+      "modeling-tour\\mtour-5.7-scene-picked.png",
+      "modeling-tour\\mtour-6-exported.png",
+      "modeling-tour\\mtour-7-chinese-palette.png"
+    ]
+  },
+  {
+    "sheet": "contact-sheets\\modeling-tour-2.jpg",
+    "originals": [
+      "modeling-tour\\mtour-8-scene-update-reopened.png",
+      "modeling-tour\\mtour-a21-oriented-samples.png",
+      "modeling-tour\\mtour-a23-low-policy-comparison.png",
+      "modeling-tour\\mtour-a23-policy-editor.png",
+      "modeling-tour\\mtour-a23-policy-summary.png",
+      "modeling-tour\\mtour-b2b-after-restore.png",
+      "modeling-tour\\mtour-b2b-before-restore.png",
+      "modeling-tour\\mtour-b4a-diff.png",
+      "modeling-tour\\mtour-capture-confirm-0.png"
+    ]
+  },
+  {
+    "sheet": "contact-sheets\\modeling-tour-3.jpg",
+    "originals": [
+      "modeling-tour\\mtour-capture-confirm-1.png",
+      "modeling-tour\\mtour-capture-confirm-2.png",
+      "modeling-tour\\mtour-capture-restored.png",
+      "modeling-tour\\mtour-condition-name-directory.png",
+      "modeling-tour\\mtour-conflict-cancel.png",
+      "modeling-tour\\mtour-conflict-reedit.png",
+      "modeling-tour\\mtour-environment-name-choice.png",
+      "modeling-tour\\mtour-name-directory.png",
+      "modeling-tour\\mtour-pick-normal-confirm.png"
+    ]
+  },
+  {
+    "sheet": "contact-sheets\\modeling-tour-4.jpg",
+    "originals": [
+      "modeling-tour\\mtour-retained-review.png",
+      "modeling-tour\\mtour-target-3d-perspective-yaw.png",
+      "modeling-tour\\mtour-target-3d-preview.png",
+      "modeling-tour\\mtour-target-3d-tool.png"
+    ]
+  },
+  {
+    "sheet": "contact-sheets\\layout-1.jpg",
+    "originals": [
+      "layout\\1-default-layout.png",
+      "layout\\10-tasks-dock-summoned.png",
+      "layout\\2-view-menu.png",
+      "layout\\3-domain-panel-summoned.png",
+      "layout\\4-requirements-buttons.png",
+      "layout\\5-requirements-narrow.png",
+      "layout\\6-min-window.png",
+      "layout\\8-modeling-panel.png",
+      "layout\\9-kinematics-panel.png"
+    ]
+  }
+]

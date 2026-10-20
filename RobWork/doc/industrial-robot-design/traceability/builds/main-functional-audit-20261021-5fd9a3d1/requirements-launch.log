@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] DeterminismFaces.SameInputSameBytesAndCanonicalSort_ACC5
+[       OK ] DeterminismFaces.SameInputSameBytesAndCanonicalSort_ACC5 (2 ms)
+[ RUN      ] DeterminismFaces.NonFiniteAndIllegalNotSilent_ACC5
+[       OK ] DeterminismFaces.NonFiniteAndIllegalNotSilent_ACC5 (0 ms)
+[----------] 2 tests from DeterminismFaces (2 ms total)
+
+[----------] 1 test from GuiRegistration
+[ RUN      ] GuiRegistration.V22RegisteredNotExecuted_ACC1
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp(2018): Skipped
+V-22 GUI 流程仅登记（envUnavailable 如实登记）
+
+[  SKIPPED ] GuiRegistration.V22RegisteredNotExecuted_ACC1 (0 ms)
+[----------] 1 test from GuiRegistration (0 ms total)
+
+[----------] 1 test from MdlGoldenTransport
+[ RUN      ] MdlGoldenTransport.RandomPlanDenominatorUsesRandomCount_WP14T12
+[       OK ] MdlGoldenTransport.RandomPlanDenominatorUsesRandomCount_WP14T12 (0 ms)
+[----------] 1 test from MdlGoldenTransport (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 222 tests from 26 test suites ran. (175 ms total)
+[  PASSED  ] 221 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] GuiRegistration.V22RegisteredNotExecuted_ACC1
+Exit=0

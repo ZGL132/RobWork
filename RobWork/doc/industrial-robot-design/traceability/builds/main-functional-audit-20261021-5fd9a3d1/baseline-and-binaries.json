@@ -1,0 +1,64 @@
+{
+  "baseline": "5fd9a3d192ea1f67484bed7aec089ec10719c51a",
+  "branch": "redesign-main",
+  "originTracking": "5fd9a3d192ea1f67484bed7aec089ec10719c51a",
+  "frozenMain": "49a9e819c24c7ef15dff24366a4a551068c2d269",
+  "platform": "windows",
+  "architecture": "VS2022 x64",
+  "artifacts": [
+    {
+      "lastWriteUtc": "2026-10-20T16:42:18.9424412Z",
+      "sha256": "6a012c70cfb94e03cb36603c446dfbec099a2c4f39cd9e3a4b94c4920f7d7928",
+      "bytes": 10778624,
+      "name": "sdurws_ird_studio.exe"
+    },
+    {
+      "lastWriteUtc": "2026-10-20T16:18:17.3823203Z",
+      "sha256": "ebc65baf8bcf0e709cdf12c5666aa9d10809c072317cd6cebd6ccb1a0331b2c3",
+      "bytes": 4577792,
+      "name": "sdurws_ird_requirements_test.exe"
+    },
+    {
+      "lastWriteUtc": "2026-10-20T16:18:04.5258573Z",
+      "sha256": "073ecbbddd0fb161a5d585f4f951487a77fa447049bee2acda10822cc520be21",
+      "bytes": 3235840,
+      "name": "sdurws_ird_requirements_gui_test.exe"
+    },
+    {
+      "lastWriteUtc": "2026-10-20T16:17:04.6621992Z",
+      "sha256": "3f34c782b8e011a14163839d712a2538d8f3c9871689ebec1da3287358724262",
+      "bytes": 9137664,
+      "name": "sdurws_ird_modeling_test.exe"
+    },
+    {
+      "lastWriteUtc": "2026-10-20T16:16:39.2659799Z",
+      "sha256": "838b8b313cdb4b8ad115a2f5a7530b0ad7c137054bbeb4c813a5d6fc3e11072a",
+      "bytes": 4191744,
+      "name": "sdurws_ird_modeling_gui_test.exe"
+    },
+    {
+      "lastWriteUtc": "2026-10-20T16:42:33.0232926Z",
+      "sha256": "5768e8f6dd5b4e0c7ea2f5d93be1fa3dd3c72231cd3b5f5596d50aa754c7a886",
+      "bytes": 9190400,
+      "name": "sdurws_ird_ui_test.exe"
+    },
+    {
+      "lastWriteUtc": "2026-10-20T16:20:07.4153140Z",
+      "sha256": "3802782af7ef3383851adb839c169382d10c653fa36b65cd6d5b13b23c7194bf",
+      "bytes": 3103744,
+      "name": "sdurws_ird_ui_gui_test.exe"
+    },
+    {
+      "lastWriteUtc": "2026-10-20T16:18:29.7622269Z",
+      "sha256": "332702ce52a32006768bc5df09293259da560b87a5ca395a35ec613119fe3fd4",
+      "bytes": 2808320,
+      "name": "sdurws_ird_runtime_test.exe"
+    },
+    {
+      "lastWriteUtc": "2026-10-20T16:16:15.9970240Z",
+      "sha256": "dbcfdd401ee38e2266407ca04b996ed613d230d7758030305c2ed69aa7f708b8",
+      "bytes": 4729344,
+      "name": "sdurws_ird_kinematics_test.exe"
+    }
+  ]
+}

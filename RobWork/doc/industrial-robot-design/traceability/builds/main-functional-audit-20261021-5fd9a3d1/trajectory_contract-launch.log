@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] TrjProcessSpeedContract.FailFastTokenPrefixFamily_WP16T15_ACC2
+[       OK ] TrjProcessSpeedContract.FailFastTokenPrefixFamily_WP16T15_ACC2 (0 ms)
+[ RUN      ] TrjProcessSpeedContract.EvaluationDimsV3ConsumerOrder_WP16T15_ACC2
+[       OK ] TrjProcessSpeedContract.EvaluationDimsV3ConsumerOrder_WP16T15_ACC2 (0 ms)
+[----------] 5 tests from TrjProcessSpeedContract (0 ms total)
+
+[----------] 6 tests from TrjContinuousProcessContract
+[ RUN      ] TrjContinuousProcessContract.BodyTypesNoExtensionSlots_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.BodyTypesNoExtensionSlots_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.SegmentSpaceTypeVocabularyShape_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.SegmentSpaceTypeVocabularyShape_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.ReusedContinuityBrokenCodeMetadata_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.ReusedContinuityBrokenCodeMetadata_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.AngularVelocityUnitTokenRegistered_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.AngularVelocityUnitTokenRegistered_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.FailFastTokenPrefixFamily_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.FailFastTokenPrefixFamily_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.EvaluationDimsV4ConsumerOrder_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.EvaluationDimsV4ConsumerOrder_WP16T16_ACC2 (0 ms)
+[----------] 6 tests from TrjContinuousProcessContract (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 69 tests from 13 test suites ran. (294 ms total)
+[  PASSED  ] 69 tests.
+Exit=0

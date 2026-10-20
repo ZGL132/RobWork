@@ -1,0 +1,335 @@
+{
+  "baseline": "5fd9a3d192ea1f67484bed7aec089ec10719c51a",
+  "executions": [
+    {
+      "suite": "drivetrain",
+      "total": 38,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "drivetrain_contract",
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "dynamics",
+      "total": 113,
+      "passed": 112,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "suite": "dynamics_contract",
+      "total": 30,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "evidence",
+      "total": 205,
+      "passed": 205,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "evidence_contract",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "io",
+      "total": 130,
+      "passed": 130,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "io_contract",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "kinematics",
+      "total": 288,
+      "passed": 287,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "suite": "kinematics_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "kinematics_gui",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "modeling",
+      "total": 462,
+      "passed": 462,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "modeling_gui",
+      "total": 91,
+      "passed": 91,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "optimization",
+      "total": 215,
+      "passed": 214,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "suite": "optimization_contract",
+      "total": 52,
+      "passed": 51,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "suite": "policy",
+      "total": 211,
+      "passed": 211,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "policy_contract",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "project",
+      "total": 282,
+      "passed": 282,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "project_contract",
+      "total": 32,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "reporting",
+      "total": 235,
+      "passed": 235,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "reporting_contract",
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "requirements",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "suite": "requirements_contract",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "requirements_gui",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "runtime",
+      "total": 294,
+      "passed": 293,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "suite": "selection",
+      "total": 293,
+      "passed": 292,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "suite": "selection_contract",
+      "total": 64,
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "standalone_modeling",
+      "total": 360,
+      "passed": 360,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "standalone_modeling_gui",
+      "total": 60,
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "standalone_requirements",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "suite": "standalone_requirements_contract",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "standalone_requirements_gui",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "trajectory",
+      "total": 182,
+      "passed": 182,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "trajectory_contract",
+      "total": 69,
+      "passed": 69,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ui",
+      "total": 339,
+      "passed": 339,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ui_contract",
+      "total": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ui_gui",
+      "total": 95,
+      "passed": 95,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "workflow",
+      "total": 197,
+      "passed": 197,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "workflow_contract",
+      "total": 77,
+      "passed": 77,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "host_runs": [
+    {
+      "name": "requirements-tour",
+      "passed_assertions": 235,
+      "auto_ok_steps": 0,
+      "screenshots": 31,
+      "done": true
+    },
+    {
+      "name": "modeling-tour",
+      "passed_assertions": 361,
+      "auto_ok_steps": 0,
+      "screenshots": 31,
+      "done": false
+    },
+    {
+      "name": "auto",
+      "passed_assertions": 0,
+      "auto_ok_steps": 8,
+      "screenshots": 0,
+      "done": true
+    },
+    {
+      "name": "layout",
+      "passed_assertions": 67,
+      "auto_ok_steps": 0,
+      "screenshots": 9,
+      "done": true
+    }
+  ],
+  "row_counts": {
+    "requirements": {
+      "PASS": 74,
+      "NOT RUN": 42,
+      "FAIL": 4
+    },
+    "modeling": {
+      "NOT RUN": 18,
+      "SKIP": 1,
+      "PASS": 22,
+      "FAIL": 6
+    }
+  }
+}

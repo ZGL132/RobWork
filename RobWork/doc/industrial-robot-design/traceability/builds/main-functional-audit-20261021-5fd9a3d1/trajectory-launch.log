@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] TrjContinuousProcess.RealPipelineDwellSwitchOk_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.DwellSwitchSpeedNonzeroDetected_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.DwellSwitchSpeedNonzeroDetected_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.StationaryDwellGoldenOk_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.StationaryDwellGoldenOk_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.TwoAxisInfinityNormSemantics_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.TwoAxisInfinityNormSemantics_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.ViolationRecordDimensionOrder_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.ViolationRecordDimensionOrder_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.CanceledZeroMaterial_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.CanceledZeroMaterial_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.EmptyBoundariesLegalOk_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.EmptyBoundariesLegalOk_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.RequestViolationFailFastFamily_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.RequestViolationFailFastFamily_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.DeterministicReplay_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.DeterministicReplay_TRJ08S3_ACC1 (0 ms)
+[ RUN      ] TrjContinuousProcess.ContinuousProcessSegmentGuard_TRJ08S3_ACC1
+[       OK ] TrjContinuousProcess.ContinuousProcessSegmentGuard_TRJ08S3_ACC1 (0 ms)
+[----------] 15 tests from TrjContinuousProcess (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 182 tests from 29 test suites ran. (453 ms total)
+[  PASSED  ] 182 tests.
+Exit=0

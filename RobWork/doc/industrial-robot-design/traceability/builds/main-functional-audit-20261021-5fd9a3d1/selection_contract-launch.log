@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] SelGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP19T11_ACC2
+[       OK ] SelGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP19T11_ACC2 (0 ms)
+[ RUN      ] SelGoldenDatasetContract.DataRootLayout_WP19T11_ACC2
+[       OK ] SelGoldenDatasetContract.DataRootLayout_WP19T11_ACC2 (0 ms)
+[----------] 4 tests from SelGoldenDatasetContract (9 ms total)
+
+[----------] 6 tests from SelLinearDriveContract
+[ RUN      ] SelLinearDriveContract.ProductFaceHasNoDrivetrainIncludes_WP19T12_ACC2
+[       OK ] SelLinearDriveContract.ProductFaceHasNoDrivetrainIncludes_WP19T12_ACC2 (4 ms)
+[ RUN      ] SelLinearDriveContract.ProductFaceHasNoLinearMappingFormulaTokens_WP19T12_ACC2
+[       OK ] SelLinearDriveContract.ProductFaceHasNoLinearMappingFormulaTokens_WP19T12_ACC2 (5 ms)
+[ RUN      ] SelLinearDriveContract.T12TokenVocabularyAndDiagCodes_WP19T12_ACC2
+[       OK ] SelLinearDriveContract.T12TokenVocabularyAndDiagCodes_WP19T12_ACC2 (0 ms)
+[ RUN      ] SelLinearDriveContract.LinearDriveKindVocabularyClosed_WP19T12_ACC2
+[       OK ] SelLinearDriveContract.LinearDriveKindVocabularyClosed_WP19T12_ACC2 (0 ms)
+[ RUN      ] SelLinearDriveContract.V2SchemaRegistrationFace_WP19T12_ACC2
+[       OK ] SelLinearDriveContract.V2SchemaRegistrationFace_WP19T12_ACC2 (0 ms)
+[ RUN      ] SelLinearDriveContract.LinearScreeningViaInterfaceDispatch_WP19T12_ACC2
+[       OK ] SelLinearDriveContract.LinearScreeningViaInterfaceDispatch_WP19T12_ACC2 (0 ms)
+[----------] 6 tests from SelLinearDriveContract (10 ms total)
+
+[----------] Global test environment tear-down
+[==========] 64 tests from 11 test suites ran. (66 ms total)
+[  PASSED  ] 64 tests.
+Exit=0

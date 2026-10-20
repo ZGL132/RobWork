@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] DtMappingEvalContract.EndToEndSliceEvaluation_WP18T03_ACC1
+[       OK ] DtMappingEvalContract.EndToEndSliceEvaluation_WP18T03_ACC1 (0 ms)
+[ RUN      ] DtMappingEvalContract.EndToEndCoupledSliceEvaluation_WP18T05_ACC2
+[       OK ] DtMappingEvalContract.EndToEndCoupledSliceEvaluation_WP18T05_ACC2 (0 ms)
+[ RUN      ] DtMappingEvalContract.DispatchAndDataErrorTracks_WP18T03_ACC1
+[       OK ] DtMappingEvalContract.DispatchAndDataErrorTracks_WP18T03_ACC1 (0 ms)
+[----------] 5 tests from DtMappingEvalContract (2 ms total)
+
+[----------] 5 tests from DtGoldenDatasetContract
+[ RUN      ] DtGoldenDatasetContract.ManifestRegistration_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.ManifestRegistration_WP18T04_ACC2 (1 ms)
+[ RUN      ] DtGoldenDatasetContract.IntegrityCoversAllFiles_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.IntegrityCoversAllFiles_WP18T04_ACC2 (0 ms)
+[ RUN      ] DtGoldenDatasetContract.InputsExpectedCrossConsistency_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.InputsExpectedCrossConsistency_WP18T04_ACC2 (1 ms)
+[ RUN      ] DtGoldenDatasetContract.ToleranceProfileChannelAndPdt3_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.ToleranceProfileChannelAndPdt3_WP18T04_ACC2 (0 ms)
+[ RUN      ] DtGoldenDatasetContract.DataRootLayout_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.DataRootLayout_WP18T04_ACC2 (0 ms)
+[----------] 5 tests from DtGoldenDatasetContract (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 15 tests from 3 test suites ran. (11 ms total)
+[  PASSED  ] 15 tests.
+Exit=0

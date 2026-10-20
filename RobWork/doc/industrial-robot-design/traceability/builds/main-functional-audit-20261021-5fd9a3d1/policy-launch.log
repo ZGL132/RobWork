@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[----------] 9 tests from PolCompat1 (0 ms total)
+
+[----------] 1 test from PolCompat2
+[ RUN      ] PolCompat2.ContentIdentityChangeSuppliesSliceMaterial
+[       OK ] PolCompat2.ContentIdentityChangeSuppliesSliceMaterial (0 ms)
+[----------] 1 test from PolCompat2 (0 ms total)
+
+[----------] 3 tests from PolCompatAll
+[ RUN      ] PolCompatAll.AllMismatchedReasonsCollectedInEnumOrder
+[       OK ] PolCompatAll.AllMismatchedReasonsCollectedInEnumOrder (0 ms)
+[ RUN      ] PolCompatAll.DeterminismSameInputSameResult
+[       OK ] PolCompatAll.DeterminismSameInputSameResult (0 ms)
+[ RUN      ] PolCompatAll.CheckerInterfaceDelegatesToFreeFunction
+[       OK ] PolCompatAll.CheckerInterfaceDelegatesToFreeFunction (0 ms)
+[----------] 3 tests from PolCompatAll (0 ms total)
+
+[----------] 1 test from O20Ppol5
+[ RUN      ] O20Ppol5.BackendVersionConservativeStance
+[       OK ] O20Ppol5.BackendVersionConservativeStance (0 ms)
+[----------] 1 test from O20Ppol5 (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 211 tests from 39 test suites ran. (42 ms total)
+[  PASSED  ] 211 tests.
+Exit=0

@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[----------] 1 test from ModelingManualBodyGui (8 ms total)
+
+[----------] 8 tests from ModelingImportGui
+[ RUN      ] ModelingImportGui.PropertyEmptyLongTableCancel_MDL05
+[       OK ] ModelingImportGui.PropertyEmptyLongTableCancel_MDL05 (568 ms)
+[ RUN      ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12
+[       OK ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12 (248 ms)
+[ RUN      ] ModelingImportGui.DiffUnitsFollowBothJointTypes_UX13_AT12
+[       OK ] ModelingImportGui.DiffUnitsFollowBothJointTypes_UX13_AT12 (141 ms)
+[ RUN      ] ModelingImportGui.DiffLongValuesEmptyAndUnwiredLocation_UX13_AT12
+[       OK ] ModelingImportGui.DiffLongValuesEmptyAndUnwiredLocation_UX13_AT12 (602 ms)
+[ RUN      ] ModelingImportGui.ParametersRejectDuplicateThenApplyLiteralOverride_MDL19_AT31
+[       OK ] ModelingImportGui.ParametersRejectDuplicateThenApplyLiteralOverride_MDL19_AT31 (261 ms)
+[ RUN      ] ModelingImportGui.ParameterCancelReturnsNoSubstitution_MDL19_AT31
+[       OK ] ModelingImportGui.ParameterCancelReturnsNoSubstitution_MDL19_AT31 (174 ms)
+[ RUN      ] ModelingImportGui.FullImportReportScrollableSelectableAndCancelSafe_MDL11_AT15
+[       OK ] ModelingImportGui.FullImportReportScrollableSelectableAndCancelSafe_MDL11_AT15 (243 ms)
+[ RUN      ] ModelingImportGui.WorkCellRealFileDialogToReportCancelSafe_MDL18_AT33
+[       OK ] ModelingImportGui.WorkCellRealFileDialogToReportCancelSafe_MDL18_AT33 (638 ms)
+[----------] 8 tests from ModelingImportGui (2885 ms total)
+
+[----------] Global test environment tear-down
+[==========] 60 tests from 3 test suites ran. (28026 ms total)
+[  PASSED  ] 60 tests.
+Exit=0

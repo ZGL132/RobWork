@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ird-ui-smoke-tour] pass step12 selected-fixture-applied
+[ird-ui-smoke-tour] pass step12 selected-ring-changes-real-pixels=297
+[ird-ui-smoke-tour] pass step12 selected-blue-core-pixels=148
+[ird-ui-smoke-tour] snap tour-8b-real-selected-ring.png
+[ird-ui-smoke-tour] pass step12 product-png-export-decodes
+[ird-ui-smoke-tour] pass step12 production-preview-restored
+[ird-ui-smoke-tour] pass step12 display-mask-unchanged
+[ird-ui-smoke-tour] pass step12 display-zero-draft-write
+[ird-ui-smoke-tour] pass step12 display-zero-project-revision
+[ird-ui-smoke-tour] step 13 populated-dock-layout
+[ird-ui-smoke-tour] pass step13 populated-add-reachable-0
+[ird-ui-smoke-tour] snap tour-9-populated-top-0.png
+[ird-ui-smoke-tour] pass step13 populated-scroll-bottom-reachable
+[ird-ui-smoke-tour] pass step13 populated-scroll-bottom-reachable
+[ird-ui-smoke-tour] snap tour-9-populated-bottom-0.png
+[ird-ui-smoke-tour] pass step13 populated-add-reachable-1
+[ird-ui-smoke-tour] snap tour-9-populated-top-1.png
+[ird-ui-smoke-tour] pass step13 populated-scroll-bottom-reachable
+[ird-ui-smoke-tour] pass step13 populated-scroll-bottom-reachable
+[ird-ui-smoke-tour] snap tour-9-populated-bottom-1.png
+[ird-ui-smoke-tour] pass step13 layout-zero-draft-write
+[ird-ui-smoke-tour] pass step13 layout-zero-revision
+[ird-ui-smoke-tour] snap tour-5-final-state.png
+[ird-ui-smoke-tour] DONE (failed-assert=0)
+Exit=0

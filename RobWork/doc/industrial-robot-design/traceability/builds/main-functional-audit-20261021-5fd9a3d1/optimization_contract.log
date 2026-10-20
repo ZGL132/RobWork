@@ -1,0 +1,152 @@
+[==========] Running 52 tests from 12 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from OptBuildGraph
+[ RUN      ] OptBuildGraph.UnitEdgesNineRegisteredAndClosed_WP20T02_ACC1
+[       OK ] OptBuildGraph.UnitEdgesNineRegisteredAndClosed_WP20T02_ACC1 (0 ms)
+[ RUN      ] OptBuildGraph.PluginTargetPresent_WP20T02_ACC1
+[       OK ] OptBuildGraph.PluginTargetPresent_WP20T02_ACC1 (0 ms)
+[ RUN      ] OptBuildGraph.NineRegisteredEdgesPresent_WP20T02_ACC1
+[       OK ] OptBuildGraph.NineRegisteredEdgesPresent_WP20T02_ACC1 (0 ms)
+[ RUN      ] OptBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP20T02_ACC2
+[       OK ] OptBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP20T02_ACC2 (0 ms)
+[ RUN      ] OptBuildGraph.NoTestkitEdgeOnProductTarget_WP20T02_ACC1
+[       OK ] OptBuildGraph.NoTestkitEdgeOnProductTarget_WP20T02_ACC1 (0 ms)
+[ RUN      ] OptBuildGraph.IncludeFaceMatchesRegisteredEdges_WP20T02_ACC2
+[       OK ] OptBuildGraph.IncludeFaceMatchesRegisteredEdges_WP20T02_ACC2 (12 ms)
+[----------] 6 tests from OptBuildGraph (16 ms total)
+
+[----------] 5 tests from OptPluginAssembly
+[ RUN      ] OptPluginAssembly.DescriptorMatchesUiRegistrations_WP20T02_ACC1
+[       OK ] OptPluginAssembly.DescriptorMatchesUiRegistrations_WP20T02_ACC1 (0 ms)
+[ RUN      ] OptPluginAssembly.PluginFaceHasZeroComputationSymbols_WP20T02_ACC2
+[       OK ] OptPluginAssembly.PluginFaceHasZeroComputationSymbols_WP20T02_ACC2 (2 ms)
+[ RUN      ] OptPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP20T02_ACC2
+[       OK ] OptPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP20T02_ACC2 (2 ms)
+[ RUN      ] OptPluginAssembly.PluginFaceHasNoR2PauseResumeSurface_WP20T10_ACC2
+[       OK ] OptPluginAssembly.PluginFaceHasNoR2PauseResumeSurface_WP20T10_ACC2 (2 ms)
+[ RUN      ] OptPluginAssembly.PluginIdAlignsHostWhitelistVocabulary_WP20T10_ACC1
+[       OK ] OptPluginAssembly.PluginIdAlignsHostWhitelistVocabulary_WP20T10_ACC1 (0 ms)
+[----------] 5 tests from OptPluginAssembly (8 ms total)
+
+[----------] 3 tests from OptPluginRegistration
+[ RUN      ] OptPluginRegistration.TranslatedDescriptorMatchesSelfHeldFace_ASMPLUG_ACC2
+[       OK ] OptPluginRegistration.TranslatedDescriptorMatchesSelfHeldFace_ASMPLUG_ACC2 (0 ms)
+[ RUN      ] OptPluginRegistration.ActivationPassesRealRegistrarPort_ASMPLUG_ACC2
+[       OK ] OptPluginRegistration.ActivationPassesRealRegistrarPort_ASMPLUG_ACC2 (0 ms)
+[ RUN      ] OptPluginRegistration.ActivationWithoutRegistrarFailsFast_ASMPLUG_ACC2
+[       OK ] OptPluginRegistration.ActivationWithoutRegistrarFailsFast_ASMPLUG_ACC2 (0 ms)
+[----------] 3 tests from OptPluginRegistration (0 ms total)
+
+[----------] 5 tests from OptVariableContract
+[ RUN      ] OptVariableContract.StageBKeepsRatioEditableWhilePerformanceStaysStageD_WP20T03_ACC2
+[       OK ] OptVariableContract.StageBKeepsRatioEditableWhilePerformanceStaysStageD_WP20T03_ACC2 (0 ms)
+[ RUN      ] OptVariableContract.RatioValueDomainPositiveFiniteEnforced_WP20T03_ACC2
+[       OK ] OptVariableContract.RatioValueDomainPositiveFiniteEnforced_WP20T03_ACC2 (0 ms)
+[ RUN      ] OptVariableContract.BindingValidationConsumesSnapshotClosureContract_WP20T03_ACC1
+[       OK ] OptVariableContract.BindingValidationConsumesSnapshotClosureContract_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariableContract.DiffCandidatePatchViaProviderInterface_WP20T03_B1
+[       OK ] OptVariableContract.DiffCandidatePatchViaProviderInterface_WP20T03_B1 (0 ms)
+[ RUN      ] OptVariableContract.SectionTypeEntryKeptRegisteredButDisabledInBothStages_WP20T03_G1
+[       OK ] OptVariableContract.SectionTypeEntryKeptRegisteredButDisabledInBothStages_WP20T03_G1 (0 ms)
+[----------] 5 tests from OptVariableContract (0 ms total)
+
+[----------] 4 tests from OptConstraintContract
+[ RUN      ] OptConstraintContract.Port3ConsumptionPathThroughRealRegistry_WP20T04_ACC1
+[       OK ] OptConstraintContract.Port3ConsumptionPathThroughRealRegistry_WP20T04_ACC1 (0 ms)
+[ RUN      ] OptConstraintContract.StageBJointFamilyRejectionIsLaunchBlockNotCandidateRejection_WP20T04_ACC2
+[       OK ] OptConstraintContract.StageBJointFamilyRejectionIsLaunchBlockNotCandidateRejection_WP20T04_ACC2 (0 ms)
+[ RUN      ] OptConstraintContract.NoCollisionAlgorithmInUnitSources_WP20T04_ACC1
+[       OK ] OptConstraintContract.NoCollisionAlgorithmInUnitSources_WP20T04_ACC1 (1 ms)
+[ RUN      ] OptConstraintContract.VerdictTraceShapeReferencesEvidenceCurrentForm_WP20T04_ACC4
+[       OK ] OptConstraintContract.VerdictTraceShapeReferencesEvidenceCurrentForm_WP20T04_ACC4 (0 ms)
+[----------] 4 tests from OptConstraintContract (1 ms total)
+
+[----------] 3 tests from OptObjectiveParetoContract
+[ RUN      ] OptObjectiveParetoContract.MetricVocabularyAndDefaultActivation
+[       OK ] OptObjectiveParetoContract.MetricVocabularyAndDefaultActivation (0 ms)
+[ RUN      ] OptObjectiveParetoContract.ToleranceConfigCarriedIntoConfigOpt
+[       OK ] OptObjectiveParetoContract.ToleranceConfigCarriedIntoConfigOpt (0 ms)
+[ RUN      ] OptObjectiveParetoContract.NoWeightedScoreInProductSources
+[       OK ] OptObjectiveParetoContract.NoWeightedScoreInProductSources (478 ms)
+[----------] 3 tests from OptObjectiveParetoContract (478 ms total)
+
+[----------] 5 tests from OptEvaluatorPortsContract
+[ RUN      ] OptEvaluatorPortsContract.QuickCacheNeverUpgradesToVerified_WP20T06_ACC1
+[       OK ] OptEvaluatorPortsContract.QuickCacheNeverUpgradesToVerified_WP20T06_ACC1 (0 ms)
+[ RUN      ] OptEvaluatorPortsContract.SessionCacheFullHitSkipsReEvaluation_WP20T06_ACC2
+[       OK ] OptEvaluatorPortsContract.SessionCacheFullHitSkipsReEvaluation_WP20T06_ACC2 (0 ms)
+[ RUN      ] OptEvaluatorPortsContract.CacheHitIsNotCurrentness_WP20T06_ACC2
+[       OK ] OptEvaluatorPortsContract.CacheHitIsNotCurrentness_WP20T06_ACC2 (0 ms)
+[ RUN      ] OptEvaluatorPortsContract.PartialResultNeverFormalCacheHit_WP20T06_ACC2
+[       OK ] OptEvaluatorPortsContract.PartialResultNeverFormalCacheHit_WP20T06_ACC2 (0 ms)
+[ RUN      ] OptEvaluatorPortsContract.ChangedConfigYieldsSliceMismatchRecalc_WP20T06_ACC2
+[       OK ] OptEvaluatorPortsContract.ChangedConfigYieldsSliceMismatchRecalc_WP20T06_ACC2 (0 ms)
+[----------] 5 tests from OptEvaluatorPortsContract (1 ms total)
+
+[----------] 4 tests from OptExportContract
+[ RUN      ] OptExportContract.AuditCsvConsistentWithReplayStatistics_WP20T09
+[       OK ] OptExportContract.AuditCsvConsistentWithReplayStatistics_WP20T09 (0 ms)
+[ RUN      ] OptExportContract.FileLayerViaIoWritersOnly_WP20T09_ACC3
+[       OK ] OptExportContract.FileLayerViaIoWritersOnly_WP20T09_ACC3 (1 ms)
+[ RUN      ] OptExportContract.PreflightClassCommentThrowsAligned_GACCT08_1
+[       OK ] OptExportContract.PreflightClassCommentThrowsAligned_GACCT08_1 (0 ms)
+[ RUN      ] OptExportContract.AuditCountersGuardedByCacheHitFlag_G1
+[       OK ] OptExportContract.AuditCountersGuardedByCacheHitFlag_G1 (0 ms)
+[----------] 4 tests from OptExportContract (3 ms total)
+
+[----------] 3 tests from OptGeneratorContract
+[ RUN      ] OptGeneratorContract.RegisteredVocabularyHasNoEmptyPlaceholder
+[       OK ] OptGeneratorContract.RegisteredVocabularyHasNoEmptyPlaceholder (0 ms)
+[ RUN      ] OptGeneratorContract.StrategySwitchGoesThroughConfigOptReferenceAndIdentity
+[       OK ] OptGeneratorContract.StrategySwitchGoesThroughConfigOptReferenceAndIdentity (0 ms)
+[ RUN      ] OptGeneratorContract.UnknownStrategyRejectedByValidationAndDispatch
+[       OK ] OptGeneratorContract.UnknownStrategyRejectedByValidationAndDispatch (0 ms)
+[----------] 3 tests from OptGeneratorContract (0 ms total)
+
+[----------] 5 tests from ApplierContractFixture
+[ RUN      ] ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\optimization\contract_test\ApplierContractTest.cpp(496): error: Expected: (ref.objectTypeToken) != ("RobotDesign"), actual: "RobotDesign" vs "RobotDesign"
+建支修订不得写入任何设计对象（不复制对象——OPT-VER-145）
+
+[  FAILED  ] ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2 (109 ms)
+[ RUN      ] ApplierContractFixture.BaselineRevisionBytesImmutable_WP20T07_ACC2
+[       OK ] ApplierContractFixture.BaselineRevisionBytesImmutable_WP20T07_ACC2 (116 ms)
+[ RUN      ] ApplierContractFixture.AssembleAndPreviewDoNotTouchStore_WP20T07_ACC1
+[       OK ] ApplierContractFixture.AssembleAndPreviewDoNotTouchStore_WP20T07_ACC1 (47 ms)
+[ RUN      ] ApplierContractFixture.StaleRevisionRejectedCandidatePreserved_WP20T07_ACC3
+[       OK ] ApplierContractFixture.StaleRevisionRejectedCandidatePreserved_WP20T07_ACC3 (147 ms)
+[ RUN      ] ApplierContractFixture.UndoRedoOwnedByProject_WP20T07_ACC3
+[       OK ] ApplierContractFixture.UndoRedoOwnedByProject_WP20T07_ACC3 (173 ms)
+[----------] 5 tests from ApplierContractFixture (595 ms total)
+
+[----------] 3 tests from OptPreflightContract
+[ RUN      ] OptPreflightContract.BlocksLocatableOnRealAssembly_OPTVER112_135
+[       OK ] OptPreflightContract.BlocksLocatableOnRealAssembly_OPTVER112_135 (0 ms)
+[ RUN      ] OptPreflightContract.CompleteAssemblyAllowsFormalExport_WP20T08
+[       OK ] OptPreflightContract.CompleteAssemblyAllowsFormalExport_WP20T08 (0 ms)
+[ RUN      ] OptPreflightContract.SessionStateNoPersistenceChannel_WP20T08_ACC3
+[       OK ] OptPreflightContract.SessionStateNoPersistenceChannel_WP20T08_ACC3 (0 ms)
+[----------] 3 tests from OptPreflightContract (1 ms total)
+
+[----------] 6 tests from OptGoldenDatasetContract
+[ RUN      ] OptGoldenDatasetContract.ManifestsRegistered_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ManifestsRegistered_WP20T11_ACC2 (1 ms)
+[ RUN      ] OptGoldenDatasetContract.IntegrityCoversAllFiles_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.IntegrityCoversAllFiles_WP20T11_ACC2 (1 ms)
+[ RUN      ] OptGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.DataRootLayout_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.DataRootLayout_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.GoldenStatusesUseCandidateStatusTokens_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.GoldenStatusesUseCandidateStatusTokens_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2 (0 ms)
+[----------] 6 tests from OptGoldenDatasetContract (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 52 tests from 12 test suites ran. (1109 ms total)
+[  PASSED  ] 51 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2
+
+ 1 FAILED TEST

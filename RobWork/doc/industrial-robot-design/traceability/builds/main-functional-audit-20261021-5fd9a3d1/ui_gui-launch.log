@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] HostView3DGateway.UpstreamPick_ResolvesSelectsAndDispatches_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45
+[       OK ] HostView3DGateway.UpstreamPick_MissOrUnresolved_NoSideEffect_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PresentationOutlet_TransactionSemantics_UI_T45
+[       OK ] HostView3DGateway.PresentationOutlet_TransactionSemantics_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PresentationOutlet_IncompleteView_FailsCleanly_UI_T45
+[       OK ] HostView3DGateway.PresentationOutlet_IncompleteView_FailsCleanly_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45
+[       OK ] HostView3DGateway.TcpPose_WorldFrameValueAndDegradedPaths_KIN06_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.Constructor_MissingRequiredSeams_Throws_UI_T45
+[       OK ] HostView3DGateway.Constructor_MissingRequiredSeams_Throws_UI_T45 (0 ms)
+[ RUN      ] HostView3DGateway.PreviewOutlet_DegradedApplyAndClear_UI_T33
+[       OK ] HostView3DGateway.PreviewOutlet_DegradedApplyAndClear_UI_T33 (0 ms)
+[ RUN      ] HostView3DGateway.PreviewOutlet_DrawFailureKeepsOld_UI_T33
+[       OK ] HostView3DGateway.PreviewOutlet_DrawFailureKeepsOld_UI_T33 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78
+[       OK ] HostView3DGateway.UpstreamPick_PublishedModelFrame_ReachesDispatchAndSelection_UX11_AT23_UI_T78 (0 ms)
+[ RUN      ] HostView3DGateway.UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78
+[       OK ] HostView3DGateway.UpstreamPick_WriteBackStaysSessionPose_KIN06_UI_T78 (0 ms)
+[----------] 10 tests from HostView3DGateway (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 95 tests from 15 test suites ran. (7861 ms total)
+[  PASSED  ] 95 tests.
+Exit=0

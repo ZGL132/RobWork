@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] IoPackTest.MissingRequiredMirrorEntryRejected (18 ms)
+[ RUN      ] IoPackTest.ImportCancelAtBeginPreCancelledTokenLeavesNoArtifacts
+[       OK ] IoPackTest.ImportCancelAtBeginPreCancelledTokenLeavesNoArtifacts (2 ms)
+[----------] 10 tests from IoPackTest (244 ms total)
+
+[----------] 3 tests from IoTempTest
+[ RUN      ] IoTempTest.CreateMarksAndCleanupIsIdempotent
+[       OK ] IoTempTest.CreateMarksAndCleanupIsIdempotent (1 ms)
+[ RUN      ] IoTempTest.EquivalentKeyMutexAllowsSingleSession
+[       OK ] IoTempTest.EquivalentKeyMutexAllowsSingleSession (3 ms)
+[ RUN      ] IoTempTest.CrashResidueWithMarkerRecoveredWithoutMarkerUntouched
+[       OK ] IoTempTest.CrashResidueWithMarkerRecoveredWithoutMarkerUntouched (4 ms)
+[----------] 3 tests from IoTempTest (9 ms total)
+
+[----------] 2 tests from IoAtomicTest
+[ RUN      ] IoAtomicTest.PreparePolicyAndCommitReplace
+[       OK ] IoAtomicTest.PreparePolicyAndCommitReplace (31 ms)
+[ RUN      ] IoAtomicTest.AbortLeavesTargetUntouched
+[       OK ] IoAtomicTest.AbortLeavesTargetUntouched (13 ms)
+[----------] 2 tests from IoAtomicTest (45 ms total)
+
+[----------] Global test environment tear-down
+[==========] 130 tests from 13 test suites ran. (1759 ms total)
+[  PASSED  ] 130 tests.
+Exit=0

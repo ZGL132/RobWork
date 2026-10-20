@@ -1,0 +1,18 @@
+Note: Google Test filter = ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ApplierContractFixture
+[ RUN      ] ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\optimization\contract_test\ApplierContractTest.cpp(496): error: Expected: (ref.objectTypeToken) != ("RobotDesign"), actual: "RobotDesign" vs "RobotDesign"
+建支修订不得写入任何设计对象（不复制对象——OPT-VER-145）
+
+[  FAILED  ] ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2 (137 ms)
+[----------] 1 test from ApplierContractFixture (137 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (138 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2
+
+ 1 FAILED TEST
