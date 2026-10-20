@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-20T10:22:49.226" name="AllTests">
+  <testsuite name="ModelingSceneTransactions" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T10:22:49.226">
+    <testcase name="RejectIllegalNameAndSourceKinds_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1477" status="run" result="completed" time="0." timestamp="2026-10-20T10:22:49.226" classname="ModelingSceneTransactions">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1483&#x0A;Value of: evaluateSceneEdit(before,request,{},error)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;with space&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1483
+Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+with space
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1483&#x0A;Value of: evaluateSceneEdit(before,request,{},error)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;slash/name&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1483
+Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+slash/name
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1483&#x0A;Value of: evaluateSceneEdit(before,request,{},error)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;name:bad&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1483
+Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+name:bad
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1483&#x0A;Value of: evaluateSceneEdit(before,request,{},error)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;中文名称&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1483
+Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+中文名称
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1488&#x0A;Value of: evaluateSceneEdit(before,request,{},error)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;来源XML不是可选几何&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1488
+Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+来源XML不是可选几何
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

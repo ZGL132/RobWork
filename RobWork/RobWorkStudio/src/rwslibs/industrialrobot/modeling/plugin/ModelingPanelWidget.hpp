@@ -56,6 +56,7 @@ class QStackedWidget;
 
 namespace sdurws::ird::modeling {
 class ModelingBodyEditor;
+class ModelingSceneEditor;
 
 /**
  * @brief 建模域面板 widget（五区合一——挂位于 ui 中央区 StageId=modeling 位）。
@@ -423,6 +424,8 @@ private:
     std::unique_ptr<ui::IFormEditOutlet> m_sceneOutlet;  ///< 场景页出口（构造期一次）
     QWidget* m_toolArea = nullptr;              ///< 工具页容器（stacked 第 3 页）
     QWidget* m_sceneArea = nullptr;             ///< 场景页容器（stacked 第 4 页）
+    ModelingSceneEditor* m_sceneManager = nullptr; ///< F12内联管理器；Qt拥有，完整基线仅用于确认前比较。
+    QWidget* m_sceneManagerArea = nullptr; ///< F12可滚动管理页，空场景有独立入口。
     QWidget* m_toolEditPanel = nullptr;         ///< 工具页 ParamTablePanel 产物
     QWidget* m_sceneEditPanel = nullptr;        ///< 场景页 ParamTablePanel 产物
     std::unique_ptr<ui::ParamEditModel> m_toolEditModel;   ///< 工具页编辑会话模型

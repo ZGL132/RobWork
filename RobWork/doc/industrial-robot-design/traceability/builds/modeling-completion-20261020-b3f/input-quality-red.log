@@ -1,0 +1,40 @@
+Note: Google Test filter = *RejectIllegalNameAndSourceKinds*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingSceneTransactions
+[ RUN      ] ModelingSceneTransactions.RejectIllegalNameAndSourceKinds_MDL15_AT28
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1483): error: Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+with space
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1483): error: Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+slash/name
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1483): error: Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+name:bad
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1483): error: Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+中文名称
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1488): error: Value of: evaluateSceneEdit(before,request,{},error)
+  Actual: true
+Expected: false
+来源XML不是可选几何
+
+[  FAILED  ] ModelingSceneTransactions.RejectIllegalNameAndSourceKinds_MDL15_AT28 (0 ms)
+[----------] 1 test from ModelingSceneTransactions (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingSceneTransactions.RejectIllegalNameAndSourceKinds_MDL15_AT28
+
+ 1 FAILED TEST

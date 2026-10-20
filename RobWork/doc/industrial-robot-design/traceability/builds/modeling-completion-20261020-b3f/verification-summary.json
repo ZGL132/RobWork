@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "modeling-completion-b3f/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "c43fc49e069821cbef1e16714cdb7783bed4e0a9",
+  "scope": "F12场景管理草稿入口；固定帧编译/真实几何碰撞/47项全功能仍未封闭",
+  "totals": {
+    "total": 1389,
+    "passed": 1389,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 417,
+      "passed": 417,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 341,
+      "passed": 341,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 54,
+      "passed": 54,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "tour": {
+    "passed": 285,
+    "failed": 0,
+    "scope": "正式宿主既有综合tour，含其他域，不等于本批场景三维验收"
+  },
+  "environment": {
+    "os": "Windows",
+    "toolchain": "VS2022 x64",
+    "qtPlatform": "windows",
+    "guiExecution": "绝对路径、GUI单exe串行"
+  },
+  "limitations": [
+    "无全新上下文独立验收",
+    "F06由wp13-t25负责，本批不实施/集成",
+    "无几何固定帧正式编译尚拒绝，F12保持开放",
+    "真实mesh挂接和碰撞仍未完成",
+    "core伴随JSON明确派生自真实XML",
+    "未推送、未自行合入"
+  ]
+}

@@ -36,6 +36,9 @@
 #include <QDialog>
 #include <QScrollBar>
 #include <QTimer>
+#include <QTemporaryDir>
+#include <QFile>
+#include <QFileDialog>
 #include <QTreeWidget>
 #include <sdurws/ird/modeling/StructureEdit.hpp>
 #include <sdurws/ird/ui/SelectionService.hpp>
@@ -757,7 +760,7 @@ private:
     QTimer timer; ///< 本用例UI线程管理，不保留窗口指针。
 };
 /** @brief 保存当前真实物性窗口；[in] name为唯一图片名，目录由runner指定。 */
-void propertySnapshot(QDialog& dialog,const QString& name)
+void propertySnapshot(QWidget& dialog,const QString& name)
 {
     const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
     if(out.isEmpty()){return;}
@@ -868,6 +871,20 @@ TEST(ModelingUiModuleHostWiring, LinkBodyEditorReachable_MDL05_V17)
     EXPECT_TRUE(editor->isVisible());
 }
 
+/** @brief F12/MDL-15/AT-28：没有场景对象时也必须能进入真实新增页。 */
+TEST(ModelingUiModuleHostWiring, EmptySceneManagementReachable_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    ASSERT_TRUE(module.session().draft.sceneObjects.empty());
+    std::unique_ptr<QWidget> panel(module.createPanel());panel->show();QApplication::processEvents();
+    auto* entry=panel->findChild<QPushButton*>("ird_modeling_edit_scene_mode");
+    ASSERT_NE(entry,nullptr)<<"F12：空场景无新增固定帧/障碍物入口";
+    entry->click();QApplication::processEvents();
+    auto* manager=panel->findChild<QWidget*>("ird_modeling_scene_editor");
+    ASSERT_NE(manager,nullptr);EXPECT_TRUE(manager->isVisible());
+}
+
 /** @brief F10/MDL-05：真实模块仅记一次局部历史，恢复清暂存且零命令/修订。 */
 TEST(ModelingUiModuleHostWiring, ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17)
 {
@@ -897,4 +914,130 @@ TEST(ModelingUiModuleHostWiring, ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17)
     EXPECT_EQ(module.session().baseRevision,revision);EXPECT_EQ(submits,0);
     module.setWritable(false);EXPECT_FALSE(apply->isEnabled());apply->click();
     EXPECT_EQ(module.session().draft,after);
+}
+
+/** @brief F12/MDL-15/AT-28：真实场景管理增改删、局部历史、位姿与零项目修订。 */
+TEST(ModelingUiModuleHostWiring, SceneCrudLocalHistoryAndWorldPose_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto revision=core::RevisionId::generate();module.bindSessionAnchor(core::BranchId::generate(),revision);
+    int submits=0;module.bindCommandSubmit([&](const ui::CommandId&){++submits;});
+    std::unique_ptr<QWidget> panel(module.createPanel());panel->resize(1100,760);panel->show();QApplication::processEvents();
+    auto* view=qobject_cast<ModelingPanelWidget*>(panel.get());ASSERT_NE(view,nullptr);
+    auto* entry=panel->findChild<QPushButton*>("ird_modeling_edit_scene_mode");ASSERT_NE(entry,nullptr);entry->click();
+    auto* name=panel->findChild<QLineEdit*>("ird_scene_name");ASSERT_NE(name,nullptr);
+    auto* apply=panel->findChild<QPushButton*>("ird_scene_apply");ASSERT_NE(apply,nullptr);
+    auto* remove=panel->findChild<QPushButton*>("ird_scene_remove");ASSERT_NE(remove,nullptr);
+    auto* feedback=panel->findChild<QLabel*>("ird_scene_feedback");ASSERT_NE(feedback,nullptr);
+    auto* confirm=panel->findChild<QCheckBox*>("ird_scene_confirm_remove");ASSERT_NE(confirm,nullptr);
+    auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");
+    auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");ASSERT_NE(undo,nullptr);ASSERT_NE(redo,nullptr);
+    const auto before=module.session().draft;
+    apply->click();EXPECT_EQ(module.session().draft,before);EXPECT_FALSE(feedback->text().isEmpty());
+    name->setText("fixture");apply->click();const auto added=module.session().draft;
+    ASSERT_EQ(added.sceneObjects.size(),1U);EXPECT_EQ(added.design.sceneRefs.front(),added.sceneObjects.front().objectId);
+    EXPECT_EQ(added.changes.size(),before.changes.size()+1);EXPECT_TRUE(undo->isEnabled());
+    name->setText("pending");module.recomputeReadiness();
+    EXPECT_EQ(name->text(),"pending");EXPECT_TRUE(panel->findChild<QWidget*>("ird_modeling_scene_editor")->isVisible());
+    panel->findChild<QPushButton*>("ird_scene_cancel")->click();EXPECT_EQ(name->text(),"fixture");
+    EXPECT_EQ(module.session().draft,added);
+    name->setText("fixture_changed");apply->click();const auto updated=module.session().draft;
+    EXPECT_EQ(updated.sceneObjects.front().localName,"fixture_changed");
+    EXPECT_EQ(updated.sceneObjects.front().objectId,added.sceneObjects.front().objectId);
+    undo->click();EXPECT_EQ(module.session().draft,added);EXPECT_EQ(name->text(),"fixture");
+    redo->click();EXPECT_EQ(module.session().draft,updated);
+    remove->click();EXPECT_EQ(module.session().draft,updated);EXPECT_TRUE(feedback->text().contains(QStringLiteral("确认")));
+    // 所有对象均保留世界系位姿；原六分量编辑页仍可进入，不被新管理页遮蔽。
+    panel->findChild<QPushButton*>("ird_scene_pose")->click();
+    EXPECT_TRUE(panel->findChild<QWidget*>("ird_modeling_scene_area")->isVisible());entry->click();
+    propertySnapshot(*panel,"scene-manager-updated");
+    confirm->setChecked(true);remove->click();const auto removed=module.session().draft;
+    EXPECT_TRUE(removed.sceneObjects.empty());EXPECT_TRUE(removed.design.sceneRefs.empty());
+    undo->click();EXPECT_EQ(module.session().draft,updated);redo->click();EXPECT_EQ(module.session().draft,removed);
+    undo->click();module.setWritable(false);EXPECT_FALSE(apply->isEnabled());EXPECT_FALSE(remove->isEnabled());
+    // 直接派发信号也必须守住只读出口，不能仅依赖按钮灰显。
+    const auto readOnly=module.session().draft;name->setText("must_not_write");
+    ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));
+    ASSERT_TRUE(QMetaObject::invokeMethod(remove,"clicked",Qt::DirectConnection));
+    EXPECT_EQ(module.session().draft,readOnly);EXPECT_EQ(submits,0);EXPECT_EQ(module.session().baseRevision,revision);
+}
+
+/** @brief F12/MDL-15：真实Windows文件选择/外部网格来源、确认前零写入与资源摘要。 */
+TEST(ModelingUiModuleHostWiring, SceneExternalGeometryFileDialog_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());const auto path=dir.filePath("obstacle.stl");
+    QFile file(path);ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    ASSERT_GT(file.write("solid obstacle\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid obstacle\n"),0);file.close();
+    ModelingUiModule module;module.seedTemplateSession();std::unique_ptr<QWidget> panel(module.createPanel());
+    panel->resize(1100,760);panel->show();QApplication::processEvents();
+    panel->findChild<QPushButton*>("ird_modeling_edit_scene_mode")->click();
+    auto* name=panel->findChild<QLineEdit*>("ird_scene_name");ASSERT_NE(name,nullptr);name->setText("obstacle");
+    auto* source=panel->findChild<QComboBox*>("ird_scene_source");ASSERT_NE(source,nullptr);source->setCurrentIndex(2);
+    auto* browse=panel->findChild<QPushButton*>("ird_scene_browse");ASSERT_NE(browse,nullptr);
+    // 仍运行windows平台的真实QFileDialog，只把native外壳替换成Qt控件以可重复输入。
+    // RAII恢复进程属性；定时器仅在真实对话边界模拟用户文件选择，不替代io或计算。
+    struct DialogModeRestore {
+        bool old=QApplication::testAttribute(Qt::AA_DontUseNativeDialogs);
+        DialogModeRestore(){QApplication::setAttribute(Qt::AA_DontUseNativeDialogs,true);}
+        ~DialogModeRestore(){QApplication::setAttribute(Qt::AA_DontUseNativeDialogs,old);}
+    } restore;
+    const auto before=module.session().draft;bool seen=false;QTimer select;select.setInterval(150);
+    QObject::connect(&select,&QTimer::timeout,[&]{
+        auto* dialog=qobject_cast<QFileDialog*>(QApplication::activeModalWidget());
+        if(!dialog){return;}
+        if(!seen){seen=true;dialog->setDirectory(dir.path());dialog->selectFile("obstacle.stl");return;}
+        // 文件系统模型异步装载目录；下一轮事件后再输入并确认，避免过早accept仅导航目录。
+        if(auto* input=dialog->findChild<QLineEdit*>("fileNameEdit")){input->setText("obstacle.stl");}
+        EXPECT_TRUE(QMetaObject::invokeMethod(dialog,"accept",Qt::DirectConnection));
+    });
+    QTimer watchdog;watchdog.setSingleShot(true);
+    QObject::connect(&watchdog,&QTimer::timeout,[]{
+        ADD_FAILURE()<<"场景几何文件对话未响应";
+        if(auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget())){dialog->reject();}
+    });
+    select.start();watchdog.start(5000);browse->click();select.stop();watchdog.stop();ASSERT_TRUE(seen);
+    EXPECT_EQ(module.session().draft,before);
+    EXPECT_EQ(panel->findChild<QLineEdit*>("ird_scene_path")->text(),path);
+    panel->findChild<QPushButton*>("ird_scene_apply")->click();
+    const auto& after=module.session().draft;ASSERT_EQ(after.sceneObjects.size(),1U);
+    ASSERT_TRUE(after.sceneObjects.front().geometry);ASSERT_EQ(after.design.resourceManifest.size(),before.design.resourceManifest.size()+1);
+    const auto& resource=after.design.resourceManifest.back();EXPECT_EQ(resource.state,ResourceState::Recorded);
+    ASSERT_TRUE(resource.externalRecord);EXPECT_EQ(resource.contentDigest,resource.externalRecord->recordedDigest);
+    EXPECT_EQ(after.sceneObjects.front().geometry->resourceRefId,resource.resourceId);
+    propertySnapshot(*panel,"scene-manager-external");
+    // 文件选择的嵌套事件循环中可能切换项目/草稿；返回的旧文件不能套用到新目标。
+    source->setCurrentIndex(2);seen=false;QObject::disconnect(&select,nullptr,nullptr,nullptr);
+    QObject::connect(&select,&QTimer::timeout,[&]{
+        auto* dialog=qobject_cast<QFileDialog*>(QApplication::activeModalWidget());if(!dialog){return;}
+        if(!seen){seen=true;module.seedTemplateSession();dialog->setDirectory(dir.path());dialog->selectFile("obstacle.stl");return;}
+        if(auto* input=dialog->findChild<QLineEdit*>("fileNameEdit")){input->setText("obstacle.stl");}
+        EXPECT_TRUE(QMetaObject::invokeMethod(dialog,"accept",Qt::DirectConnection));
+    });
+    select.start();watchdog.start(5000);browse->click();select.stop();watchdog.stop();ASSERT_TRUE(seen);
+    EXPECT_TRUE(panel->findChild<QLineEdit*>("ird_scene_path")->text().isEmpty())
+        <<"旧目标文件选择结果不得污染新草稿";
+    EXPECT_TRUE(module.session().draft.sceneObjects.empty());
+    // 同样核对权限切换及显式取消。代际守卫应覆盖“值未变，但用户已终止本次编辑”。
+    for(const bool readOnly:{true,false}){
+        module.setWritable(true);source->setCurrentIndex(2);seen=false;
+        const auto stable=module.session().draft;
+        QObject::disconnect(&select,nullptr,nullptr,nullptr);
+        QObject::connect(&select,&QTimer::timeout,[&]{
+            auto* dialog=qobject_cast<QFileDialog*>(QApplication::activeModalWidget());if(!dialog){return;}
+            if(!seen){
+                seen=true;
+                if(readOnly){module.setWritable(false);}
+                else {panel->findChild<QPushButton*>("ird_scene_cancel")->click();}
+                dialog->setDirectory(dir.path());dialog->selectFile("obstacle.stl");return;
+            }
+            if(auto* input=dialog->findChild<QLineEdit*>("fileNameEdit")){input->setText("obstacle.stl");}
+            EXPECT_TRUE(QMetaObject::invokeMethod(dialog,"accept",Qt::DirectConnection));
+        });
+        select.start();watchdog.start(5000);browse->click();select.stop();watchdog.stop();ASSERT_TRUE(seen);
+        EXPECT_TRUE(panel->findChild<QLineEdit*>("ird_scene_path")->text().isEmpty());
+        EXPECT_TRUE(panel->findChild<QLabel*>("ird_scene_feedback")->text().contains(QStringLiteral("丢弃")));
+        EXPECT_EQ(module.session().draft,stable);
+    }
 }

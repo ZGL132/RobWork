@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="2.54" timestamp="2026-10-20T10:46:14.094" name="AllTests">
+  <testsuite name="ModelingUiModuleHostWiring" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="2.54" timestamp="2026-10-20T10:46:14.094">
+    <testcase name="SceneExternalGeometryFileDialog_MDL15_AT28" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="967" status="run" result="completed" time="2.54" timestamp="2026-10-20T10:46:14.094" classname="ModelingUiModuleHostWiring" />
+  </testsuite>
+</testsuites>

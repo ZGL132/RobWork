@@ -62,8 +62,10 @@ ResourceProbeFn makeIoResourceProbe()
     return [reader, budget](const std::string& absPath,
                                         std::string& errText)
         -> std::optional<ResourceProbeResult> {
+        // Qt/领域字符串契约为UTF-8；Windows窄路径构造受系统代码页影响，
+        // 中文网格会在转换/回填时抛异常。显式UTF-8↔原生路径，不改变io安全检查。
         const std::filesystem::path path =
-            std::filesystem::path(absPath).make_preferred();
+            std::filesystem::u8path(absPath).make_preferred();
 
         // ①格式识别（魔数/扩展名——读前轻探；失败＝IO-FORMAT-MESH-UNKNOWN
         // 族，detail 携带首 16 字节摘要——io 侧脱敏语义）。
@@ -84,7 +86,7 @@ ResourceProbeFn makeIoResourceProbe()
 
         ResourceProbeResult result;
         result.contentDigest = snap.value.contentDigest;
-        result.absPath = snap.value.finalPath.string();
+        result.absPath = snap.value.finalPath.u8string();
         result.isMeshFamily = isMeshFamilyKind(identified.value);
         return result;
     };

@@ -22,6 +22,9 @@
 #include <gtest/gtest.h>
 
 #include <QCoreApplication>
+#include <QTemporaryDir>
+#include <QFile>
+#include "plugin/GeometryResourceFlow.hpp"
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记（testkit §7.3）
 
@@ -44,6 +47,7 @@
 #include "plugin/PanelSelection.hpp"       // L-1 会话选中（ACC3）
 #include <sdurws/ird/modeling/Codec.hpp>
 #include "plugin/ModelingBodyEditor.hpp" // F10纯值编排，真实迁移与完整张量判定。
+#include "plugin/ModelingSceneEditor.hpp" // F12纯值事务，错误时完整基线保持不变。
 #include "plugin/ModelingCommandFlows.hpp"  // customChainRowSemanticCheck（UI-T66——F-523① 录入辅助面）
 #include <sdurws/ird/ui/CommandInteractionBridge.hpp>          // ui 确认交互桥（L-3——UI-T13 落位面）
 
@@ -1371,4 +1375,123 @@ TEST(ModelingManualBody, MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17)
     }
     ManualBodyEdit bad;bad.centerOfMass=rw::math::Vector3D<double>{0,std::numeric_limits<double>::quiet_NaN(),0};
     EXPECT_FALSE(evaluateManualBodyEdit(full,bad,error));EXPECT_EQ(body,BodyData{});
+}
+
+/** @brief F12/MDL-15/AT-28：固定帧增改删原子更新根引用与对象，世界位姿不被重置。 */
+TEST(ModelingSceneTransactions, CreateUpdateRemoveAndCodec_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    const auto before=makeSixAxisDraft();
+    SceneEditRequest request;request.target=core::ObjectId::generate();request.localName="fixture";
+    std::string error;
+    const auto added=evaluateSceneEdit(before,request,{},error);ASSERT_TRUE(added)<<error;
+    ASSERT_EQ(added->sceneObjects.size(),1U);ASSERT_EQ(added->design.sceneRefs.size(),1U);
+    EXPECT_EQ(added->design.sceneRefs.front(),request.target);
+    EXPECT_EQ(added->sceneObjects.front().objectId,request.target);EXPECT_FALSE(added->sceneObjects.front().geometry);
+    EXPECT_EQ(added->changes.size(),before.changes.size()+1);
+    auto positioned=*added;
+    ASSERT_FALSE(applyScenePoseEdit(positioned,0,PartPoseEditValue{1,2,3,0.1,0.2,0.3}));
+    request.action=SceneEditAction::Update;request.localName="fixture_renamed";
+    request.role=SceneObjectRole::Workpiece;
+    const auto updated=evaluateSceneEdit(positioned,request,{},error);ASSERT_TRUE(updated)<<error;
+    EXPECT_EQ(updated->sceneObjects.front().worldPose,positioned.sceneObjects.front().worldPose);
+    EXPECT_EQ(updated->sceneObjects.front().role,SceneObjectRole::Workpiece);
+    EXPECT_EQ(updated->sceneObjects.front().localName,"fixture_renamed");
+    // 实际独立对象编码/解码，不把纯结构相等当成持久化兼容。
+    const RobotDesignCodec codec;
+    const auto bytes=codec.encode(ObjectVariant{updated->sceneObjects.front()},kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());const auto decoded=codec.decode(bytes.get(),kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());EXPECT_EQ(std::get<SceneObject>(decoded.get()),updated->sceneObjects.front());
+    const auto unchanged=evaluateSceneEdit(*updated,request,{},error);ASSERT_TRUE(unchanged);
+    EXPECT_EQ(*unchanged,*updated)<<"恒等更新不追加摘要或历史";
+    request.action=SceneEditAction::Remove;
+    EXPECT_FALSE(evaluateSceneEdit(*updated,request,{},error));EXPECT_FALSE(error.empty());
+    request.confirmRemove=true;
+    const auto removed=evaluateSceneEdit(*updated,request,{},error);ASSERT_TRUE(removed)<<error;
+    EXPECT_TRUE(removed->sceneObjects.empty());EXPECT_TRUE(removed->design.sceneRefs.empty());
+    EXPECT_EQ(before.sceneObjects.size(),0U)<<"初始输入始终只读";
+}
+/** @brief F12：非法输入/身份/资源拒绝；共享资源不因删除或摘除而丢失。 */
+TEST(ModelingSceneTransactions, RejectAndSharedResource_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    auto before=makeSixAxisDraft();ResourceRef resource;resource.resourceId="shared";
+    resource.externalRecord=ExternalResourceRecord{"C:/fixture.stl",resource.contentDigest};
+    before.design.resourceManifest.push_back(resource);
+    SceneEditRequest request;request.target=core::ObjectId::generate();request.localName="obstacle";
+    request.source=SceneGeometrySource::Existing;request.resourceOrPath="shared";
+    std::string error;const auto added=evaluateSceneEdit(before,request,{},error);ASSERT_TRUE(added)<<error;
+    ASSERT_TRUE(added->sceneObjects.front().geometry);
+    EXPECT_EQ(added->sceneObjects.front().geometry->resourceRefId,"shared");
+    EXPECT_EQ(added->design.resourceManifest,before.design.resourceManifest);
+    const auto baseline=*added;
+    for(const auto& name:std::vector<std::string>{"",before.design.links.front().localName,"bad\nname","obstacle"}){
+        request.target=core::ObjectId::generate();request.localName=name;
+        EXPECT_FALSE(evaluateSceneEdit(baseline,request,{},error))<<name;
+        EXPECT_EQ(*added,baseline);
+    }
+    request.action=SceneEditAction::Update;request.target=baseline.sceneObjects.front().objectId;
+    request.localName="obstacle";request.resourceOrPath="missing";
+    EXPECT_FALSE(evaluateSceneEdit(baseline,request,{},error));
+    request.source=SceneGeometrySource::External;request.resourceOrPath="missing.stl";
+    EXPECT_FALSE(evaluateSceneEdit(baseline,request,{},error));
+    request.source=SceneGeometrySource::None;
+    const auto detached=evaluateSceneEdit(baseline,request,{},error);ASSERT_TRUE(detached)<<error;
+    EXPECT_FALSE(detached->sceneObjects.front().geometry);EXPECT_EQ(detached->design.resourceManifest,before.design.resourceManifest);
+    request.action=SceneEditAction::Remove;request.confirmRemove=true;
+    const auto removed=evaluateSceneEdit(baseline,request,{},error);ASSERT_TRUE(removed);
+    EXPECT_EQ(removed->design.resourceManifest,before.design.resourceManifest);
+    request.target=core::ObjectId::generate();EXPECT_FALSE(evaluateSceneEdit(baseline,request,{},error));
+}
+
+/** @brief F12/MDL-15：真实磁盘/安全io快照登记、重复确认与缺文件拒绝，不伪造摘要。 */
+TEST(ModelingSceneTransactions, ExternalDiskGeometryAndFailureAtomicity_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());const auto path=dir.filePath(QStringLiteral("障碍物.stl"));
+    QFile file(path);ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    const QByteArray mesh="solid obstacle\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid obstacle\n";
+    ASSERT_EQ(file.write(mesh),mesh.size());file.close();
+    const auto before=makeSixAxisDraft();SceneEditRequest request;
+    request.target=core::ObjectId::generate();request.localName="obstacle";
+    request.source=SceneGeometrySource::External;request.resourceOrPath=path.toStdString();
+    const auto probe=makeIoResourceProbe();std::string error;
+    const auto added=evaluateSceneEdit(before,request,probe,error);ASSERT_TRUE(added)<<error;
+    ASSERT_EQ(added->design.resourceManifest.size(),before.design.resourceManifest.size()+1);
+    const auto& resource=added->design.resourceManifest.back();EXPECT_EQ(resource.state,ResourceState::Recorded);
+    ASSERT_TRUE(resource.externalRecord);EXPECT_EQ(resource.contentDigest,resource.externalRecord->recordedDigest);
+    EXPECT_NE(resource.contentDigest,core::Digest256{});ASSERT_TRUE(added->sceneObjects.front().geometry);
+    EXPECT_EQ(resource.resourceId,added->sceneObjects.front().geometry->resourceRefId);
+    request.action=SceneEditAction::Update;
+    const auto same=evaluateSceneEdit(*added,request,probe,error);ASSERT_TRUE(same)<<error;EXPECT_EQ(*same,*added);
+    request.resourceOrPath=dir.filePath("missing.stl").toStdString();
+    EXPECT_FALSE(evaluateSceneEdit(*added,request,probe,error));EXPECT_FALSE(error.empty());
+    QFile text(dir.filePath("not-geometry.urdf"));ASSERT_TRUE(text.open(QIODevice::WriteOnly));
+    ASSERT_GT(text.write("<robot name=\"not-mesh\"/>"),0);text.close();
+    request.resourceOrPath=text.fileName().toStdString();
+    EXPECT_FALSE(evaluateSceneEdit(*added,request,probe,error));
+    EXPECT_EQ(added->design.resourceManifest.back(),resource);EXPECT_TRUE(before.sceneObjects.empty());
+}
+
+/** @brief F12：正式编译桥的名称约束和非几何资源反例必须在确认时拒绝。 */
+TEST(ModelingSceneTransactions, RejectIllegalNameAndSourceKinds_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    auto before=makeSixAxisDraft();SceneEditRequest request;request.target=core::ObjectId::generate();
+    std::string error;
+    for(const auto& name:std::vector<std::string>{"with space","slash/name","name:bad","中文名称"}){
+        request.localName=name;EXPECT_FALSE(evaluateSceneEdit(before,request,{},error))<<name;
+    }
+    request.localName="fixture";request.source=SceneGeometrySource::Existing;request.resourceOrPath="source-xml";
+    ResourceRef ref;ref.resourceId="source-xml";ref.externalRecord=ExternalResourceRecord{"C:/source.xacro",ref.contentDigest};
+    before.design.resourceManifest.push_back(ref);
+    EXPECT_FALSE(evaluateSceneEdit(before,request,{},error))<<"来源XML不是可选几何";
+    request.source=SceneGeometrySource::None;request.role=SceneObjectRole::RobotLink;
+    EXPECT_FALSE(evaluateSceneEdit(before,request,{},error));
+    // 环境管理器不能通过删除绕过角色边界；导入/旧数据中的机器人角色须交对应编辑入口。
+    SceneObject robotPart;robotPart.objectId=request.target;robotPart.localName="robot_part";
+    robotPart.role=SceneObjectRole::RobotLink;before.sceneObjects.push_back(robotPart);
+    before.design.sceneRefs.push_back(robotPart.objectId);
+    request.action=SceneEditAction::Remove;request.confirmRemove=true;
+    EXPECT_FALSE(evaluateSceneEdit(before,request,{},error))<<"删除也须遵循环境/工件角色边界";
 }

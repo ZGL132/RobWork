@@ -36,6 +36,7 @@
  */
 
 #include <sdurws/ird/modeling/CanonicalBridge.hpp>  // 公共路径自含（Codec.cpp 同款——公共头唯一暴露位）
+#include "LocalNameValidation.hpp" // V-26输入质量唯一规则，F12编辑入口同源拒绝。
 
 #include <algorithm>
 #include <cmath>
@@ -159,16 +160,7 @@ ModelingError illegalName(std::string field, std::string detail)
 
 /// localName 合法字符集（§4.3-A 行原文 [A-Za-z0-9_.-]；非空——导入侧
 /// sanitizeLocalName 同一词表，模板 createDraft 步③同判）。
-bool isLegalLocalName(std::string_view name)
-{
-    if (name.empty()) { return false; }
-    for (const char ch : name) {
-        const bool legal = (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')
-            || (ch >= '0' && ch <= '9') || ch == '_' || ch == '.' || ch == '-';
-        if (!legal) { return false; }
-    }
-    return true;
-}
+using inputquality::isLegalLocalName;
 
 /// robotLocalName 输入质量面（runtime §4.3.3 硬规则的最小建模侧预演：
 /// 非空且不含 '/'；其余字符集不作建模侧拒绝——runtime 设备名合法化为

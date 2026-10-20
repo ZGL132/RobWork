@@ -11,6 +11,7 @@
 
 #include "ModelingPanelWidget.hpp"
 #include "ModelingBodyEditor.hpp"
+#include "ModelingSceneEditor.hpp"
 #include <QScrollArea>
 
 #include <QApplication>                           // clipboard（UI-T59 预览复制钮）
@@ -388,6 +389,9 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     auto* poseModeBtn=new QPushButton(QStringLiteral("命名位姿"),editPage);
     poseModeBtn->setObjectName(QStringLiteral("ird_modeling_edit_pose_mode"));
     modeRow->addWidget(poseModeBtn);
+    auto* sceneModeBtn=new QPushButton(QStringLiteral("场景管理"),editPage);
+    sceneModeBtn->setObjectName(QStringLiteral("ird_modeling_edit_scene_mode"));
+    modeRow->addWidget(sceneModeBtn);
     modeRow->addStretch(1);
     editLay->addLayout(modeRow);
     m_editStack = new QStackedWidget(editPage);
@@ -438,6 +442,35 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
         return true;
     });
     bodyScroll->setWidget(m_bodyEditor);m_editStack->addWidget(bodyScroll);
+    // F12：管理入口不依赖既有树锚。接受前重新取完整草稿，防模态文件选择期间
+    // 的修订/只读切换覆盖更新；唯一后置入口记录一次局部历史，不提交项目命令。
+    auto* sceneScroll=new QScrollArea(m_editStack);sceneScroll->setWidgetResizable(true);
+    m_sceneManagerArea=sceneScroll;
+    m_sceneManager=new ModelingSceneEditor(sceneScroll,
+        [this](const ModelingWorkingSet& before,const ModelingWorkingSet& after,
+            std::optional<core::ObjectId> selected,std::string& error){
+            m_threadGuard.assertOnUiThread();auto* current=m_editTarget?m_editTarget():nullptr;
+            if(!m_writable||!current||*current!=before){
+                error="草稿基线已改变或项目只读，请刷新后重新确认。";return false;
+            }
+            *current=after;
+            onEditApplied("场景对象");
+            // onEditApplied可重入刷新，之后重新现取，不保留旧工作集/对象引用。
+            current=m_editTarget?m_editTarget():nullptr;
+            if(!current){return true;}
+            refreshStructureTree(*current);focusObject(selected);
+            m_sceneManager->bindTarget(current,selected,m_writable);
+            m_editStack->setCurrentWidget(m_sceneManagerArea);
+            return true;
+        },[this](std::optional<core::ObjectId> selected){
+            focusObject(selected);auto* current=m_editTarget?m_editTarget():nullptr;
+            m_sceneManager->bindTarget(current,selected,m_writable);
+            m_editStack->setCurrentWidget(m_sceneManagerArea);
+        });
+    sceneScroll->setWidget(m_sceneManager);m_editStack->addWidget(sceneScroll);
+    connect(m_sceneManager->findChild<QPushButton*>("ird_scene_pose"),&QPushButton::clicked,this,[this]{
+        refreshScenePosePane();m_editStack->setCurrentWidget(m_sceneArea);
+    });
     editLay->addWidget(m_editStack, 1);
     connect(baseModeBtn, &QPushButton::clicked, this, [this] {
         m_editStack->setCurrentWidget(m_basePage);
@@ -449,6 +482,16 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     });
     connect(poseModeBtn,&QPushButton::clicked,this,[this]{
         refreshPoseSetPane();m_editStack->setCurrentWidget(m_poseSetArea);
+    });
+    connect(sceneModeBtn,&QPushButton::clicked,this,[this]{
+        auto* current=m_editTarget?m_editTarget():nullptr;
+        std::optional<core::ObjectId> selected;
+        if(current&&m_lastSelected){const auto target=resolveSelection(*current,*m_lastSelected);
+            if(target&&target->kind==SelectedTarget::Kind::Scene){selected=m_lastSelected;}}
+        focusObject(selected); // 新增模式不保留其他对象选中，防后台刷新切回旧对象编辑页。
+        current=m_editTarget?m_editTarget():nullptr;
+        m_sceneManager->bindTarget(current,selected,m_writable);
+        m_editStack->setCurrentWidget(m_sceneManagerArea);
     });
     buildToolsPane(new QVBoxLayout(toolsPage));        // 区③域工具区（StageId=modeling）
     buildReadinessPane(new QVBoxLayout(readinessPage));// 区④就绪与诊断条
@@ -641,6 +684,7 @@ void ModelingPanelWidget::cancelPendingForHistoryRestore()
 {
     m_threadGuard.assertOnUiThread();
     if(m_bodyEditor){m_bodyEditor->cancelPending();}
+    if(m_sceneManager){m_sceneManager->cancelPending();}
     // 普通后台刷新按UI-T79保留暂存；明确撤销/重做则必须取消暂存，再由
     // 后续refreshPanel推入恢复值。模型取消只清数据；还须走表单既有取消
     // 动作隐藏确认区，避免旧确认明细在恢复后仍可见、误导用户再次确认。
@@ -3306,6 +3350,12 @@ void ModelingPanelWidget::refreshEditPages()
     // ——树选中即切页；其余目标/空选中不动当前页（基座模式为显式入口，
     // UI-T54 语义保持——仅刷新关节区提示面）。
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if(m_sceneManager){
+        std::optional<core::ObjectId> selected;
+        if(ws&&m_lastSelected){const auto target=resolveSelection(*ws,*m_lastSelected);
+            if(target&&target->kind==SelectedTarget::Kind::Scene){selected=m_lastSelected;}}
+        m_sceneManager->bindTarget(ws,selected,m_writable);
+    }
     SelectedTarget::Kind kind = SelectedTarget::Kind::Joint;
     bool resolved = false;
     if (ws != nullptr && m_lastSelected.has_value()) {
@@ -3333,7 +3383,8 @@ void ModelingPanelWidget::refreshEditPages()
     }
     if (resolved && kind == SelectedTarget::Kind::Scene) {
         refreshScenePosePane();
-        m_editStack->setCurrentWidget(m_sceneArea);
+        // 管理页接受/后台刷新时保留当前页及暂存；位姿入口显式切换到原六分量页。
+        if(m_editStack->currentWidget()!=m_sceneManagerArea){m_editStack->setCurrentWidget(m_sceneArea);}
         return;
     }
     // 位姿集/传动页（UI-T60——F-497 余项：均有 ObjectId 树锚，B.1 主通道）。

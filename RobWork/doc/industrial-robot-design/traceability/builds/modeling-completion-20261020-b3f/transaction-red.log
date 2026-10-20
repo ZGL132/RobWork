@@ -1,0 +1,28 @@
+Note: Google Test filter = ModelingSceneTransactions.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from ModelingSceneTransactions
+[ RUN      ] ModelingSceneTransactions.CreateUpdateRemoveAndCodec_MDL15_AT28
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1384): error: Value of: added
+  Actual: false
+Expected: true
+F12场景事务尚未实现
+
+[  FAILED  ] ModelingSceneTransactions.CreateUpdateRemoveAndCodec_MDL15_AT28 (0 ms)
+[ RUN      ] ModelingSceneTransactions.RejectAndSharedResource_MDL15_AT28
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1420): error: Value of: added
+  Actual: false
+Expected: true
+F12场景事务尚未实现
+
+[  FAILED  ] ModelingSceneTransactions.RejectAndSharedResource_MDL15_AT28 (0 ms)
+[----------] 2 tests from ModelingSceneTransactions (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ModelingSceneTransactions.CreateUpdateRemoveAndCodec_MDL15_AT28
+[  FAILED  ] ModelingSceneTransactions.RejectAndSharedResource_MDL15_AT28
+
+ 2 FAILED TESTS

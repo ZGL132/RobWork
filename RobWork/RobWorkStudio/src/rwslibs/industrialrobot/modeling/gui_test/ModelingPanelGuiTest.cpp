@@ -124,7 +124,8 @@ bool inJointEditPane(const QWidget& panel, const QObject* widget)
             || name == QStringLiteral("ird_modeling_scene_area")
             || name == QStringLiteral("ird_modeling_pose_area")
             || name == QStringLiteral("ird_modeling_drivetrain_area")
-            || name == QStringLiteral("ird_modeling_body_editor")) {
+            || name == QStringLiteral("ird_modeling_body_editor")
+            || name == QStringLiteral("ird_modeling_scene_editor")) {
             return true;
         }
     }
@@ -2172,4 +2173,30 @@ TEST(ModelingManualBodyGui, MissingBaselineCompleteInputAndReadOnly_MDL05_V17)
     EXPECT_FALSE(apply->isEnabled());
     // 直接派发信号验证执行端守卫；禁用控件的click自身会短路，不能证明出口安全。
     ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));EXPECT_EQ(accepts,1);
+}
+
+/** @brief F12/MDL-15：两构建模式都运行真实内联页，暂存/换目标/只读/空会话均正确。 */
+TEST_F(ModelingPanelGuiTest, SceneManagerPendingSelectionAndReadOnly_MDL15_AT28)
+{
+    IRD_TEST_INFO("MDL-15",{"AT-28"},std::nullopt);
+    int accepted=0;m_panel->setPostEditAction([&]{++accepted;});
+    m_panel->resize(1100,760);m_panel->show();QApplication::processEvents();
+    auto* entry=m_panel->findChild<QPushButton*>("ird_modeling_edit_scene_mode");ASSERT_NE(entry,nullptr);
+    entry->click();auto* name=m_panel->findChild<QLineEdit*>("ird_scene_name");ASSERT_NE(name,nullptr);
+    auto* apply=m_panel->findChild<QPushButton*>("ird_scene_apply");ASSERT_NE(apply,nullptr);
+    const auto before=m_ws;name->setText("first");
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});EXPECT_EQ(name->text(),"first");EXPECT_EQ(m_ws,before);
+    apply->click();ASSERT_EQ(m_ws.sceneObjects.size(),1U);EXPECT_EQ(accepted,1);
+    const auto first=m_ws;name->setText("not_confirmed");
+    m_panel->findChild<QPushButton*>("ird_scene_cancel")->click();EXPECT_EQ(name->text(),"first");EXPECT_EQ(m_ws,first);
+    auto* objects=m_panel->findChild<QComboBox*>("ird_scene_objects");ASSERT_NE(objects,nullptr);
+    objects->setCurrentIndex(0);EXPECT_TRUE(name->text().isEmpty());name->setText("second");apply->click();
+    ASSERT_EQ(m_ws.sceneObjects.size(),2U);EXPECT_EQ(accepted,2);EXPECT_EQ(m_ws.design.sceneRefs.size(),2U);
+    name->setText("must_discard");objects->setCurrentIndex(1);EXPECT_EQ(name->text(),"first");
+    // 权威基线改变必须丢弃旧暂存，不能把旧名称覆盖新内容。
+    name->setText("old_pending");m_ws.sceneObjects.front().localName="externally_changed";
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});EXPECT_EQ(name->text(),"externally_changed");
+    m_panel->setWritable(false);const auto readOnly=m_ws;EXPECT_FALSE(apply->isEnabled());
+    ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));EXPECT_EQ(m_ws,readOnly);EXPECT_EQ(accepted,2);
+    m_panel->setEditTargetProvider({});entry->click();EXPECT_FALSE(apply->isEnabled());
 }
