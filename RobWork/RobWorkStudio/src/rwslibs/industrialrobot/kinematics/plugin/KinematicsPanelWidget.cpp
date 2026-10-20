@@ -15,6 +15,7 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QScrollArea>
+#include <QSignalBlocker>
 #include <QVBoxLayout>
 
 #include <cmath>
@@ -1425,46 +1426,6 @@ void KinematicsPanelWidget::onSolutionDoubleClicked(int row, int column)
 // KinematicsConfigPanel——求解配置高级面板（UX-04）
 // =====================================================================
 
-/**
- * @brief 域编辑出口（ui IFormEditOutlet 实现——表单公共件确认移交的
- *        域侧半区；把 ParamEditSet 转译为 applyConfigurationEdit 流）。
- */
-class KinematicsConfigPanel::ConfigEditOutlet final : public ui::IFormEditOutlet {
-public:
-    ConfigEditOutlet(KinPanelServices services, KinModuleSessionState& session,
-                     std::function<void(const QString&)> statusSink,
-                     std::function<void()> hintRefresh)
-        : m_services(std::move(services))
-        , m_session(session)
-        , m_statusSink(std::move(statusSink))
-        , m_hintRefresh(std::move(hintRefresh))
-    {
-    }
-
-    void applyEdits(const ui::ParamEditSet& editSet) override
-    {
-        // UI-T08 对端（acceptance 3"命令确认交互经 ui 表单公共件"）：
-        // 确认修改集→域编排（校验/提示/保存——L-K7 唯一编排点）。
-        std::vector<std::pair<std::string, double>> changes;
-        changes.reserve(editSet.changes.size());
-        for (const ui::ParamChange& c : editSet.changes) {
-            changes.emplace_back(c.key, c.newSi);  // SI 真值直传（KIN-12）
-        }
-        const KinConfigEditResult r = applyConfigurationEdit(
-            m_session, m_session.savedConfig, changes, m_services.configPersist);
-        m_statusSink(QString::fromStdString(r.ok ? r.statusText : r.reason));
-        if (r.ok) {
-            m_hintRefresh();  // 提示行重投（事件驱动——零自动重算）
-        }
-    }
-
-private:
-    KinPanelServices m_services;
-    KinModuleSessionState& m_session;
-    std::function<void(const QString&)> m_statusSink;
-    std::function<void()> m_hintRefresh;
-};
-
 KinematicsConfigPanel::KinematicsConfigPanel(KinPanelServices services,
                                              KinModuleSessionState& session,
                                              QWidget* parent)
@@ -1522,16 +1483,59 @@ KinematicsConfigPanel::KinematicsConfigPanel(KinPanelServices services,
         ui::QuantityBounds{1.0, 9007199254740992.0}, true));
     m_paramModel = std::make_unique<ui::ParamEditModel>(std::move(specs));
 
-    // 编辑出口（确认移交→applyConfigurationEdit——L-K7 域半区）。
-    m_outlet = std::make_unique<ConfigEditOutlet>(
-        m_services, m_session,
-        [this](const QString& t) { showStatusText(t); },
-        [this]() { refreshAll(); });
-
-    // 表单公共件面板（确认区/单位切换/批量粘贴——宿主规则全量继承）。
-    m_paramTable = ui::createParamTablePanel(*m_paramModel, m_outlet.get(),
-                                             ui::ParamTablePanelOptions{}, this);
+    // F04：公共件承载解析/单位/粘贴，整体确认包含策略；void数值出口
+    // 无法反馈持久化失败，因此不让它提前清空草稿。对象仍由Qt父子链持有。
+    m_paramTable = ui::createParamTablePanel(*m_paramModel, nullptr,
+                                            ui::ParamTablePanelOptions{}, this);
+    for (const char* name : {"ird_param_apply", "ird_param_cancel",
+                             "ird_param_confirm_region", "ird_param_confirm_text",
+                             "ird_param_confirm_yes", "ird_param_confirm_no"}) {
+        auto* original = m_paramTable->findChild<QWidget*>(QString::fromLatin1(name));
+        if (original != nullptr) {
+            original->hide();
+            original->setObjectName(QString::fromLatin1(name) + "_numeric_only");
+        }
+    }
     layout->addWidget(m_paramTable);
+    m_confirmRegion = new QWidget(this);
+    m_confirmRegion->setObjectName("ird_param_confirm_region");
+    auto* confirmation = new QVBoxLayout(m_confirmRegion);
+    m_confirmText = new QLabel(m_confirmRegion);
+    m_confirmText->setObjectName("ird_param_confirm_text");
+    m_confirmText->setWordWrap(true);
+    m_confirmText->setTextFormat(Qt::PlainText);
+    confirmation->addWidget(m_confirmText);
+    auto* yes = new QPushButton(tr("确认保存"), m_confirmRegion);
+    yes->setObjectName("ird_param_confirm_yes");
+    auto* no = new QPushButton(tr("再改改"), m_confirmRegion);
+    no->setObjectName("ird_param_confirm_no");
+    confirmation->addWidget(yes);
+    confirmation->addWidget(no);
+    m_confirmRegion->hide();
+    layout->addWidget(m_confirmRegion);
+    auto* actions = new QHBoxLayout;
+    auto* apply = new QPushButton(tr("保存配置…"), this);
+    apply->setObjectName("ird_param_apply");
+    apply->setEnabled(static_cast<bool>(m_services.configPersist));
+    if (!m_services.configPersist) {
+        apply->setToolTip(tr("用户级持久化通道未装配，无法保存；仍可编辑或取消恢复"));
+    }
+    auto* cancel = new QPushButton(tr("取消恢复"), this);
+    cancel->setObjectName("ird_param_cancel");
+    actions->addWidget(apply);
+    actions->addWidget(cancel);
+    layout->addLayout(actions);
+    connect(apply, &QPushButton::clicked, this, &KinematicsConfigPanel::prepareConfigurationSave);
+    connect(yes, &QPushButton::clicked, this, &KinematicsConfigPanel::confirmConfigurationSave);
+    connect(no, &QPushButton::clicked, this, [this]() {
+        // 再改改只撤回授权，保留完整草稿；取消恢复则还原整个配置。
+        m_confirmationBaseline.reset();
+        m_confirmRegion->hide();
+    });
+    connect(cancel, &QPushButton::clicked, this, [this]() {
+        refreshAll();
+        showStatusText(tr("已取消配置修改，恢复保存基线"));
+    });
 
     // ---- 依赖提示行（L-K7 纯提示——不自动重算）。
     m_hintTable = makeTable({tr("提示"), tr("说明")}, this);
@@ -1568,7 +1572,13 @@ void KinematicsConfigPanel::refreshAll()
     m_paramModel->setBaseline("region-threads",
                               static_cast<double>(c.regionBudget.threadCount));
     m_paramModel->setBaseline("seed", static_cast<double>(c.seed));
+    const QSignalBlocker blocker(m_strategyBox);
+    m_draftStrategy = c.initialStrategy;
     m_strategyBox->setCurrentIndex(static_cast<int>(c.initialStrategy));
+    ui::refreshParamTablePanel(m_paramTable);
+    m_confirmationBaseline.reset();
+    m_confirmationChanges.clear();
+    m_confirmRegion->hide();
 
     // 策略只读摘要（缺省文本＝如实说明——宿主可经装配注入替换）。
     fillSingleColumn(m_policyTable,
@@ -1599,9 +1609,82 @@ void KinematicsConfigPanel::onStrategyChanged(int index)
     m_draftStrategy = static_cast<InitialValueStrategy>(index);
 }
 
-void KinematicsConfigPanel::onApplyResult(const QString& statusText)
+std::vector<std::pair<std::string, double>> KinematicsConfigPanel::configurationChanges() const
 {
-    showStatusText(statusText);
+    // 注册序使确认和提交稳定一致；枚举并入同一批次，支持单独修改策略。
+    std::vector<std::pair<std::string, double>> changes;
+    for (const auto& change : m_paramModel->pendingChanges()) {
+        changes.emplace_back(change.key, change.newSi);
+    }
+    if (m_draftStrategy != m_session.savedConfig.initialStrategy) {
+        changes.emplace_back("initial-strategy", static_cast<double>(m_draftStrategy));
+    }
+    return changes;
+}
+
+void KinematicsConfigPanel::prepareConfigurationSave()
+{
+    // 有错误即整批拒绝，避免只保存配置的合法部分。旧授权每次都撤回。
+    m_confirmationBaseline.reset();
+    m_confirmRegion->hide();
+    if (m_paramModel->hasErrors()) {
+        const auto key = m_paramModel->firstErrorKey().value();
+        showStatusText(tr("配置未保存：%1：%2").arg(QString::fromStdString(key),
+            QString::fromStdString(m_paramModel->statusText(key))));
+        return;
+    }
+    const auto changes = configurationChanges();
+    if (changes.empty()) {
+        showStatusText(tr("配置没有修改"));
+        return;
+    }
+    QStringList details;
+    for (const auto& change : m_paramModel->pendingChanges()) {
+        const auto& spec = m_paramModel->spec(change.key);
+        const auto unit = m_paramModel->displayUnit(change.key);
+        const QString before = change.oldSi ? QString::fromStdString(
+            ui::formatFieldValueText(*change.oldSi, spec.siUnit, unit)) : tr("未设");
+        details << tr("%1：%2 → %3").arg(QString::fromStdString(spec.label), before,
+            QString::fromStdString(ui::formatFieldValueText(change.newSi, spec.siUnit, unit)));
+    }
+    if (m_draftStrategy != m_session.savedConfig.initialStrategy) {
+        details << tr("初值策略：%1 → %2").arg(
+            m_strategyBox->itemText(static_cast<int>(m_session.savedConfig.initialStrategy)),
+            m_strategyBox->currentText());
+    }
+    m_confirmationChanges = changes;
+    m_confirmationBaseline = m_session.savedConfig;
+    m_confirmText->setText(tr("请确认整个配置的修改：\n%1").arg(details.join("\n")));
+    m_confirmRegion->show();
+}
+
+void KinematicsConfigPanel::confirmConfigurationSave()
+{
+    // UX-07：只授权展示过的修改。新基线或再编辑都要求重新确认，零写入。
+    if (!m_confirmationBaseline || m_paramModel->hasErrors()
+        || !(*m_confirmationBaseline == m_session.savedConfig)
+        || m_confirmationChanges != configurationChanges()) {
+        m_confirmationBaseline.reset();
+        m_confirmRegion->hide();
+        showStatusText(tr("配置或保存基线已变化，请重新点击保存并确认"));
+        return;
+    }
+    const auto result = applyConfigurationEdit(m_session, *m_confirmationBaseline,
+        m_confirmationChanges, m_services.configPersist);
+    m_confirmationBaseline.reset();
+    m_confirmRegion->hide();
+    if (result.ok) {
+        refreshAll();
+        // 仅真实保存成功才前移表单基线并呈现依赖提示；不触发重算。
+        m_hintTable->setRowCount(static_cast<int>(result.hintRows.size()));
+        for (int row = 0; row < m_hintTable->rowCount(); ++row) {
+            const auto& hint = result.hintRows[static_cast<std::size_t>(row)];
+            m_hintTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(hint.label)));
+            m_hintTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(hint.displayText)));
+        }
+    }
+    // 失败不刷新草稿，用户无需重输即可重试；错误原因在状态行可见。
+    showStatusText(QString::fromStdString(result.ok ? result.statusText : result.reason));
 }
 
 }  // namespace kinematics

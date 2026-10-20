@@ -328,9 +328,9 @@ std::optional<std::string> tcpBackfillText(
  * @brief 配置编辑应用结果（L-K7 编排产出——提示行集＋保存说明）。
  */
 struct KinConfigEditResult {
-    /// 应用是否成功（false＝校验拒绝——reason 为首错定位，配置零变更）。
+    /// 应用是否成功（false＝校验或持久化拒绝——reason 为首错定位，配置零变更）。
     bool ok = false;
-    /// 拒绝原因（ok==false 非空——validateAnalysisConfiguration 文案）。
+    /// 拒绝原因（ok==false非空：域校验定位或持久化拒绝/异常的原始原因）。
     std::string reason;
     /// 依赖提示行集（ok==true 时经域设施产出——L-K7 纯提示）。
     std::vector<KinNamedValueRow> hintRows;
@@ -340,7 +340,7 @@ struct KinConfigEditResult {
 
 /**
  * @brief 求解配置编辑应用流（L-K7 唯一编排点——表单确认后的域侧半区；
- *        ui 表单公共件 ParamEditModel::confirmApply 的移交出口实现面）。
+ *        面板完整修改集（数值＋策略）的保存出口）。
  *
  * 执行序：
  *   1. 逐键写回草稿配置（changes 的键值→AnalysisConfiguration 字段——
@@ -349,14 +349,14 @@ struct KinConfigEditResult {
  *      NFR-COR-03 不钳制）；
  *   3. analyzeConfigurationChange（域设施——依赖提示数据）；
  *   4. 保存缝装配时→configPersist（用户级 PM-14 通道）＋saved 更新；
- *      未装配→编辑仅在会话生效，状态行如实说明"用户级持久化通道未
- *      装配"（P-KIN-4——存储接口待 ui 卡冻结）。
+ *      未装配/拒绝/存储异常→失败，原配置保持，面板保留草稿供重试。
  *   全程零重算触发（L-K7"不自动重算"——结构保证：无任何评估入口）。
  *
  * @param session       [in,out] 会话态（savedConfig 基线与更新面）
  * @param savedBefore   [in] 保存基线（应用前 savedConfig——提示比较基准）
- * @param changes       [in] 确认的修改集（键值对——ParamEditSet 转译）
- * @param persist       [in] 用户级保存缝（可空——见执行序 4）
+ * @param changes       [in] 已确认的修改集；数值为SI（m/rad/无量纲），
+ *                      策略编码0/1/2；整数项须先经表单整数/范围校验。
+ * @param persist       [in] 用户级保存缝（可空，空时拒绝；std::exception转失败结果）
  * @return 应用结果（提示行/状态行）
  *
  * @throws std::invalid_argument changes 含未知字段键（键表封闭——装配错误）

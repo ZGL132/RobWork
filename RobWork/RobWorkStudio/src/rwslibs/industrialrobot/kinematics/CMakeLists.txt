@@ -533,7 +533,9 @@ target_sources(sdurws_ird_kinematics_gui_test PRIVATE
     gui_test/KinematicsPanelSamplingGuiTest.cpp
     # WP-15-T20：补充真实窗口反例，覆盖已有输入切单位和默认区域盒采样。
     # 与原有用例共同链接真算法，不用替身掩盖端到端行为错误。
-    gui_test/KinematicsAcceptanceGuiTest.cpp)
+    gui_test/KinematicsAcceptanceGuiTest.cpp
+    # WP-15-T20 F04：策略/数值整体确认与用户级保存失败的真实窗口回归。
+    gui_test/KinematicsConfigAcceptanceGuiTest.cpp)
 target_compile_features(sdurws_ird_kinematics_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_gui_test PROPERTIES
     CXX_STANDARD 17

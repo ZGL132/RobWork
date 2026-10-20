@@ -1,0 +1,27 @@
+Note: Google Test filter = KinConfigAcceptance.*
+[==========] Running 9 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 9 tests from KinConfigAcceptance
+[ RUN      ] KinConfigAcceptance.InitialFieldsShowSavedBaseline_KIN13
+[       OK ] KinConfigAcceptance.InitialFieldsShowSavedBaseline_KIN13 (152 ms)
+[ RUN      ] KinConfigAcceptance.StrategyOnlySavesAndReopens_AT27
+[       OK ] KinConfigAcceptance.StrategyOnlySavesAndReopens_AT27 (205 ms)
+[ RUN      ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27
+[       OK ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27 (158 ms)
+[ RUN      ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27
+[       OK ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27 (155 ms)
+[ RUN      ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27
+[       OK ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27 (163 ms)
+[ RUN      ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07
+[       OK ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07 (183 ms)
+[ RUN      ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13
+[       OK ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13 (123 ms)
+[ RUN      ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27
+[       OK ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27 (173 ms)
+[ RUN      ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27
+[       OK ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27 (126 ms)
+[----------] 9 tests from KinConfigAcceptance (1446 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 1 test suite ran. (1449 ms total)
+[  PASSED  ] 9 tests.

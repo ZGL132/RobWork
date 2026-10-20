@@ -1,0 +1,100 @@
+Note: Google Test filter = KinConfigAcceptance.*
+[==========] Running 9 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 9 tests from KinConfigAcceptance
+[ RUN      ] KinConfigAcceptance.InitialFieldsShowSavedBaseline_KIN13
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(153): error: Expected equality of these values:
+  h.value("iteration-limit")->text().toDouble(&parsed)
+    Which is: 0
+  256.0
+    Which is: 256
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(154): error: Value of: parsed
+  Actual: false
+Expected: true
+
+[  FAILED  ] KinConfigAcceptance.InitialFieldsShowSavedBaseline_KIN13 (238 ms)
+[ RUN      ] KinConfigAcceptance.StrategyOnlySavesAndReopens_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(168): error: Value of: confirm->isVisible()
+  Actual: false
+Expected: true
+策略单独修改也应有确认区
+
+[  FAILED  ] KinConfigAcceptance.StrategyOnlySavesAndReopens_AT27 (195 ms)
+[ RUN      ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(190): error: Expected equality of these values:
+  h.state.savedConfig.initialStrategy
+    Which is: 1-byte object <02>
+  InitialValueStrategy::SeededRandom
+    Which is: 1-byte object <01>
+
+[  FAILED  ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27 (182 ms)
+[ RUN      ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(204): error: Expected equality of these values:
+  h.strategy()->currentIndex()
+    Which is: 0
+  2
+
+[  FAILED  ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27 (174 ms)
+[ RUN      ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(223): error: Value of: h.panel->lastStatusText().contains("仅在会话生效")
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(113): error: Value of: target->isVisible()
+  Actual: false
+Expected: true
+ird_param_confirm_yes
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(227): error: Expected equality of these values:
+  h.writes
+    Which is: 1
+  2
+
+[  FAILED  ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27 (193 ms)
+[ RUN      ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(241): error: Expected equality of these values:
+  h.writes
+    Which is: 1
+  0
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(242): error: Expected equality of these values:
+  h.state.savedConfig.iterationLimit
+    Which is: 1024
+  256U
+    Which is: 256
+
+[  FAILED  ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07 (179 ms)
+[ RUN      ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(252): error: Value of: save->isEnabled()
+  Actual: true
+Expected: false
+
+[  FAILED  ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13 (134 ms)
+[ RUN      ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27
+[       OK ] KinConfigAcceptance.InvalidNumberBlocksWholeConfiguration_AT27 (151 ms)
+[ RUN      ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(281): error: Expected: result = applyConfigurationEdit(h.state, before, {{"iteration-limit", 512}}, [](const AnalysisConfiguration&) -> bool { throw std::runtime_error("模拟用户级存储写入异常"); }) doesn't throw an exception.
+  Actual: it throws std::runtime_error with description "模拟用户级存储写入异常".
+
+C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp(283): error: Value of: result.reason.empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27 (158 ms)
+[----------] 9 tests from KinConfigAcceptance (1614 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 1 test suite ran. (1617 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 8 tests, listed below:
+[  FAILED  ] KinConfigAcceptance.InitialFieldsShowSavedBaseline_KIN13
+[  FAILED  ] KinConfigAcceptance.StrategyOnlySavesAndReopens_AT27
+[  FAILED  ] KinConfigAcceptance.StrategyAndNumericSaveTogether_AT27
+[  FAILED  ] KinConfigAcceptance.CancelRestoresStrategyAndNumbers_AT27
+[  FAILED  ] KinConfigAcceptance.PersistenceFailurePreservesDraftForRetry_AT27
+[  FAILED  ] KinConfigAcceptance.ChangedDraftRequiresNewConfirmation_UX07
+[  FAILED  ] KinConfigAcceptance.MissingStorageDisablesSave_KIN13
+[  FAILED  ] KinConfigAcceptance.StorageExceptionBecomesRejectedResult_AT27
+
+ 8 FAILED TESTS

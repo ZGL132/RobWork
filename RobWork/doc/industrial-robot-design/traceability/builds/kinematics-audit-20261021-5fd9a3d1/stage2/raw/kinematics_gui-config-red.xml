@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="9" failures="8" disabled="0" errors="0" time="1.617" timestamp="2026-10-21T02:46:39.549" name="AllTests">
+  <testsuite name="KinConfigAcceptance" tests="9" failures="8" disabled="0" skipped="0" errors="0" time="1.614" timestamp="2026-10-21T02:46:39.552">
+    <testcase name="InitialFieldsShowSavedBaseline_KIN13" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="147" status="run" result="completed" time="0.238" timestamp="2026-10-21T02:46:39.552" classname="KinConfigAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:153&#x0A;Expected equality of these values:&#x0A;  h.value(&quot;iteration-limit&quot;)-&gt;text().toDouble(&amp;parsed)&#x0A;    Which is: 0&#x0A;  256.0&#x0A;    Which is: 256&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:153
+Expected equality of these values:
+  h.value("iteration-limit")->text().toDouble(&parsed)
+    Which is: 0
+  256.0
+    Which is: 256
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:154&#x0A;Value of: parsed&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:154
+Value of: parsed
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="StrategyOnlySavesAndReopens_AT27" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="158" status="run" result="completed" time="0.195" timestamp="2026-10-21T02:46:39.791" classname="KinConfigAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:168&#x0A;Value of: confirm-&gt;isVisible()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;策略单独修改也应有确认区&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:168
+Value of: confirm->isVisible()
+  Actual: false
+Expected: true
+策略单独修改也应有确认区
+]]></failure>
+    </testcase>
+    <testcase name="StrategyAndNumericSaveTogether_AT27" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="181" status="run" result="completed" time="0.182" timestamp="2026-10-21T02:46:39.987" classname="KinConfigAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:190&#x0A;Expected equality of these values:&#x0A;  h.state.savedConfig.initialStrategy&#x0A;    Which is: 1-byte object &lt;02&gt;&#x0A;  InitialValueStrategy::SeededRandom&#x0A;    Which is: 1-byte object &lt;01&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:190
+Expected equality of these values:
+  h.state.savedConfig.initialStrategy
+    Which is: 1-byte object <02>
+  InitialValueStrategy::SeededRandom
+    Which is: 1-byte object <01>
+]]></failure>
+    </testcase>
+    <testcase name="CancelRestoresStrategyAndNumbers_AT27" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="196" status="run" result="completed" time="0.174" timestamp="2026-10-21T02:46:40.170" classname="KinConfigAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:204&#x0A;Expected equality of these values:&#x0A;  h.strategy()-&gt;currentIndex()&#x0A;    Which is: 0&#x0A;  2&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:204
+Expected equality of these values:
+  h.strategy()->currentIndex()
+    Which is: 0
+  2
+]]></failure>
+    </testcase>
+    <testcase name="PersistenceFailurePreservesDraftForRetry_AT27" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="211" status="run" result="completed" time="0.193" timestamp="2026-10-21T02:46:40.346" classname="KinConfigAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:223&#x0A;Value of: h.panel-&gt;lastStatusText().contains(&quot;仅在会话生效&quot;)&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:223
+Value of: h.panel->lastStatusText().contains("仅在会话生效")
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:113&#x0A;Value of: target-&gt;isVisible()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;ird_param_confirm_yes&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:113
+Value of: target->isVisible()
+  Actual: false
+Expected: true
+ird_param_confirm_yes
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:227&#x0A;Expected equality of these values:&#x0A;  h.writes&#x0A;    Which is: 1&#x0A;  2&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:227
+Expected equality of these values:
+  h.writes
+    Which is: 1
+  2
+]]></failure>
+    </testcase>
+    <testcase name="ChangedDraftRequiresNewConfirmation_UX07" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="233" status="run" result="completed" time="0.179" timestamp="2026-10-21T02:46:40.540" classname="KinConfigAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:241&#x0A;Expected equality of these values:&#x0A;  h.writes&#x0A;    Which is: 1&#x0A;  0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:241
+Expected equality of these values:
+  h.writes
+    Which is: 1
+  0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:242&#x0A;Expected equality of these values:&#x0A;  h.state.savedConfig.iterationLimit&#x0A;    Which is: 1024&#x0A;  256U&#x0A;    Which is: 256&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:242
+Expected equality of these values:
+  h.state.savedConfig.iterationLimit
+    Which is: 1024
+  256U
+    Which is: 256
+]]></failure>
+    </testcase>
+    <testcase name="MissingStorageDisablesSave_KIN13" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="246" status="run" result="completed" time="0.134" timestamp="2026-10-21T02:46:40.720" classname="KinConfigAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:252&#x0A;Value of: save-&gt;isEnabled()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:252
+Value of: save->isEnabled()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="InvalidNumberBlocksWholeConfiguration_AT27" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="256" status="run" result="completed" time="0.151" timestamp="2026-10-21T02:46:40.856" classname="KinConfigAcceptance" />
+    <testcase name="StorageExceptionBecomesRejectedResult_AT27" file="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp" line="272" status="run" result="completed" time="0.158" timestamp="2026-10-21T02:46:41.008" classname="KinConfigAcceptance">
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:281&#x0A;Expected: result = applyConfigurationEdit(h.state, before, {{&quot;iteration-limit&quot;, 512}}, [](const AnalysisConfiguration&amp;) -&gt; bool { throw std::runtime_error(&quot;模拟用户级存储写入异常&quot;); }) doesn&apos;t throw an exception.&#x0A;  Actual: it throws std::runtime_error with description &quot;模拟用户级存储写入异常&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:281
+Expected: result = applyConfigurationEdit(h.state, before, {{"iteration-limit", 512}}, [](const AnalysisConfiguration&) -> bool { throw std::runtime_error("模拟用户级存储写入异常"); }) doesn't throw an exception.
+  Actual: it throws std::runtime_error with description "模拟用户级存储写入异常".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:283&#x0A;Value of: result.reason.empty()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\3582\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\gui_test\KinematicsConfigAcceptanceGuiTest.cpp:283
+Value of: result.reason.empty()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
