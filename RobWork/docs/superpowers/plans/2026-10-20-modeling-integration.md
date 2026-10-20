@@ -42,7 +42,9 @@
 
 - **attempt 1（2026-10-20，独立子会话验收——所有者指令）**：verdict=**fail**。阻断 2 项均属证据留痕面——A1 证据目录缺 ird 报告与截图（契约 acceptance 条 2 四类载体）；A2 SHA256SUMS 与仓库 blob 的 README 哈希失配（行尾归一口径，F-943 同族根因）。产品代码/双模式构建/全量套件/红线/注释/文档/commit 质量全过；变异翻红验证过。记录：traceability/acceptance/WP-13-T26-20261020.md＠acc/WP-13-T26/1@ce7fa787（已推 origin）。建议级 F-942/F-943/F-944 已由验收方转登该分支。
 - **返工批（同日）**：①A1 闭环——补 11 份 ird 报告（runtime 无报告＝F-944）＋截图两目录（host-shots 布局冒烟 9 张＋gui-shots 建模 GUI 29 张）；②A2 闭环——SHA256SUMS 改按仓库 blob（LF 归一）计算并在 README 注明口径；③返工中发现并修复 F-945（主线存量）：layout 冒烟探针未解包 T82 滚动视口＋装配拆分断言未随 WP-14-T12 九条全恢复更新——主线 90e9c041 亲测同败留证，三阶段红→绿（15 fails→1 fail→DONE），修复后 ui_gui 95/95 与 auto tour 8 步重跑零回归。
-- **attempt 2（重新全量验收）**：对新冻结 SHA 重新发起（acc/WP-13-T26/2）；按协议 §5 全量重跑不做增量。
+- **attempt 2（2026-10-20，独立子会话验收 attempt 2 全量重验）**：verdict=**fail**，仅 1 阻断（B-1）——validate-docs 证据索引**尺寸校验**行尾敏感：索引登记值与默认 Windows 检出（autocrlf=true）的工作树尺寸失配（.gitignore 127→131、source-diff.patch 99827→101444）；LF 口径复算 PASS 证明索引数据无失实。其余 11 项全过（含 attempt 1 A1/A2 闭环亲验、F-945 三阶段红绿与主线复现证自洽、变异双红、layout 冒烟 67 断言全 PASS）。记录：traceability/acceptance/WP-13-T26-20261020-r2.md＠acc/WP-13-T26/2@734348e9（已推 origin）。F-946（脚本侧行尾归一根治，治理脚本所有者——不在本契约 allowedFiles，本任务不越界修）/F-947（README ×9→×8 表述）转登。
+- **返工批 2（同日）**：B-1 范围内正解——两失配文件（requirements-audit-20261018/.gitignore、requirements-close-20261019/source-diff.patch）系作者原始行尾存留盘上从未被 git 重写；强制从 HEAD 重写为规范检出形态（131/101444，blob 零变化）后重建索引，登记值即与默认 Windows 检出逐字节一致；脚本级根治仍归 F-946 开放。F-947 同批修正（README ×8＋F-944 注记）。
+- **attempt 3（重新全量验收）**：对新冻结 SHA 重新发起（acc/WP-13-T26/3）。
 
 ## 已知差异核对
 

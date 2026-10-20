@@ -57,7 +57,7 @@ attempt 1 独立子会话验收（acc/WP-13-T26/1@ce7fa787）verdict=fail，两�
 | green-standalone-modeling-gui.{xml,log} | 60 跑：59 通过＋1 环境跳过（PreviewPane_MultiTypeChain_UI_T59——F-620 剪贴板被外部占用） |
 | green-host-tour-auto.log | 正式宿主 sdurws_ird_studio 真实窗口 auto 冒烟 8 步全 ok（建项目/共享树/L1 检查器/应用模块/L3/清理/建模装配 12 命令/关闭重开），Exit=0（返工批探针修复后重跑） |
 | green-host-tour-layout.log＋host-shots/ | 正式宿主 layout 冒烟全绿 DONE（净室首启默认布局＋呼出需求面板＋命令条九键/导入下拉/更多操作断言＋窄窗无重叠＋最小窗中央区保护），真实窗口截图 9 张＋几何报告（F-945 修复后） |
-| green-integration-*-report.json ×9＋green-standalone-*-report.json ×3 | ird 测试报告（A1 闭环；runtime 套件不产报告＝F-944 登记） |
+| green-integration-*-report.json ×8＋green-standalone-*-report.json ×3 | ird 测试报告（A1 闭环；runtime 套件不产报告＝F-944 登记，集成侧实为 8 份——F-947 表述修正） |
 | gui-shots/（29 张 PNG） | modeling_gui 真实窗口用例运行期截图（返工批重跑同源） |
 | green-ird-gates.log | R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 全部零命中 |
 

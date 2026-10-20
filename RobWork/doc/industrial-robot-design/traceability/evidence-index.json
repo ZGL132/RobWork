@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-20T21:29:25+08:00",
+  "generatedAt": "2026-10-20T22:12:07+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -11,24 +11,24 @@
   },
   "summary": {
     "totalFiles": 14048,
-    "totalBytes": 758331912,
+    "totalBytes": 758333581,
     "byKind": {
+      "manual-acceptance": 1,
+      "governance-record": 40,
+      "benchmark": 8,
+      "pipeline-artifact": 2,
       "acceptance-record": 515,
+      "markdown-doc": 41,
       "json-data": 7,
       "log": 1,
-      "benchmark": 8,
-      "markdown-doc": 41,
-      "pipeline-artifact": 2,
-      "build-log": 13098,
-      "governance-record": 40,
-      "manual-acceptance": 1,
-      "gtest-report": 335
+      "gtest-report": 335,
+      "build-log": 13098
     },
     "byLifecycle": {
-      "historical": 564,
-      "current": 27,
       "unverified": 13457,
-      "superseded": 0
+      "current": 27,
+      "superseded": 0,
+      "historical": 564
     },
     "associated": 596,
     "unassociated": 13452,
@@ -34542,8 +34542,8 @@
       "path": "builds/requirements-audit-20261018/.gitignore",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 127,
-      "sha256": "127534b46e07fcc6f6526b3427f2819abcf6633a0e249cd6f380f65858b93a5b",
+      "bytes": 131,
+      "sha256": "5800e8db117e10a1edbf519ee3bf861245a1e1a0c721797a98f8f27147cd5891",
       "lifecycle": "unverified"
     },
     {
@@ -37278,8 +37278,8 @@
       "path": "builds/requirements-close-20261019/source-diff.patch",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 99827,
-      "sha256": "4ce39aa63610e6a571aa99a901efeb0e70221e84cdee85d6cf0a2b37884946b9",
+      "bytes": 101444,
+      "sha256": "cdd18b8bdfa1a139e661b47957ee9bd9a44d0521396d04b09dfcb3c36d7e65d5",
       "lifecycle": "unverified"
     },
     {
@@ -102198,8 +102198,8 @@
       "path": "builds/wp13-t26-integration/README.md",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 7657,
-      "sha256": "faf1c868f538b915f66def19d3fd8e37bbdd5d43c6a02977d8e664483f0e4088",
+      "bytes": 7705,
+      "sha256": "4819d9551a4c609c85a47b114303ae15a65d81d538dcaeb460359c8673bde259",
       "lifecycle": "unverified"
     },
     {
@@ -102279,7 +102279,7 @@
       "kind": "build-log",
       "taskIds": [],
       "bytes": 9032,
-      "sha256": "f00d6952f3887364097b3c3634c6b21c19d8118babb3e2499675c4ecb26e00ea",
+      "sha256": "aca93ba5913dcdaac54563cc77ef66abcb595a88aa3e953313ef286bf7c29ff9",
       "lifecycle": "unverified"
     },
     {
