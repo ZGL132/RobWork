@@ -2693,6 +2693,28 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                         m_draft->attachModule(
                             modeling::kModuleHandle,
                             modelingDraftSource(*m_domains));
+                        for(auto& entry:m_domains->applyEntries){
+                            if(entry.moduleId!=modeling::kModuleHandle){continue;}
+                            // PM-04：仅挂接成功才通知控制器；原先此闭包实际为空。
+                            entry.onResult=[this](const CommandResultProjection& result){
+                                if(!m_draft||!m_draft->hasSession()||!m_domains){return;}
+                                auto projected=result;
+                                try{
+                                    if(m_lastStoreAdapter&&!m_lastStoreAdapter->isClosed()){
+                                        projected=projectModelingCommandResult(
+                                            m_lastStoreAdapter->projectStore().query(),
+                                            m_domains->modeling.modelingDraftSource().buildDraftDocument(),result);
+                                    }
+                                }catch(const std::exception& error){
+                                    // 读取失败仍传真实Stale、保留原草稿；无详情禁止重建。
+                                    projected.staleDetail=StaleRevisionDetailProjection{};
+                                    if(m_diag.pipeline){m_diag.pipeline->logDev(kPluginDevChannel,error.what());}
+                                    if(m_hostStatusBar){m_hostStatusBar->showMessage(
+                                        QStringLiteral("草稿冲突详情读取失败，原草稿已保留"),8000);}
+                                }
+                                m_draft->onCommandResult(modeling::kModuleHandle,projected);
+                            };
+                        }
                     } catch (const std::exception& attachError) {
                         if (m_diag.pipeline) {
                             m_diag.pipeline->logDev(
@@ -5322,6 +5344,14 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
     };
     modeling::registerModelingCommandHandlers(store.handlerRegistry(), services);
     if(m_domains){
+        // reader经受控会话现取query，不捕获前一个已关闭项目的裸引用。
+        m_domains->modeling.bindRevisionDraftReader([this](const core::BranchId& branch,
+            const core::RevisionId& revision)->std::optional<DraftDocumentProjection>{
+            if(!m_lastStoreAdapter||m_lastStoreAdapter->isClosed()){
+                throw std::runtime_error("建模修订读取缺少活动项目会话");
+            }
+            return readModelingRevisionDraft(m_lastStoreAdapter->projectStore().query(),branch,revision);
+        });
         for(auto& entry:m_domains->applyEntries){
             if(entry.moduleId!=modeling::kModuleHandle){continue;}
             // 全部正式应用路径（含宿主tour直接遍历）共享此完整回执；不捕获
@@ -8578,6 +8608,13 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
            "step5 modeling-apply (committed=" +
                std::string(modelingCommitted ? "true" : "false") +
                " rej=[" + modelingRej + "])");
+        if(!modelingCommitted||!m_compilePort||!m_compilePort->lastPublishedSnapshot()){
+            // 验证前置失败必须就地终止。Stale是真实安全拒绝，不能继续把
+            // 空快照当模型使用，亦不能自动迁锚让后续截图掩盖失败。
+            snapPng(hostWin,"mtour-5-apply-failed.png");
+            std::cout<<"[ird-ui-smoke-mtour] stopped: apply/snapshot prerequisite failed"<<std::endl;
+            QCoreApplication::exit(1);return;
+        }
         // 首应用不可逆（全新项目全部受影响对象无前版——处理器声明不可逆，
         // requirements 拍 9 同款产品语义）：项目级 undo 不可用＝诚实状态面
         // （非缺陷；二连应用探针见 requirements 拍 9 的会话基线演进验证）。
@@ -8662,6 +8699,11 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             && !m_controller->hasOpenSession() && openViaSessionController(demoPath.toStdString());
         const bool restored = reopened && m_compilePort && m_compilePort->lastPublishedSnapshot();
         ok(restored, "step5.5 saved-runtime-restored");
+        if(!restored){
+            snapPng(hostWin,"mtour-5.5-reopen-failed.png");
+            std::cout<<"[ird-ui-smoke-mtour] stopped: reopen/snapshot prerequisite failed"<<std::endl;
+            QCoreApplication::exit(1);return;
+        }
         settleEvents(300); // 编译快照在位不等于宿主已完成呈现挂接，额外断言实际场景。
         const auto restoredCell = getRobWorkStudio()->getWorkCell();
         ok(reopened && m_controller->hasOpenSession(), "step5.5 real-open-session");

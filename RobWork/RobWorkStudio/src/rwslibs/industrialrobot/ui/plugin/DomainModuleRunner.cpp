@@ -59,8 +59,8 @@ namespace {
  *
  * @param result [in] 对端命令结果
  * @return 投影值（status/newRevision/rejectionReason/abortReason——
- *         Stale 冲突定位投影由 DraftController 侧按 reason 组装，此处
- *         只携 token，与首版形态一致）
+ *         Stale详情由L5宿主onResult适配器按原草稿/查询补齐；控制器只消费
+ *         已提供的详情，不自行解析project诊断或判定冲突）
  */
 CommandResultProjection projectCommandResult(const project::CommandResult& result)
 {

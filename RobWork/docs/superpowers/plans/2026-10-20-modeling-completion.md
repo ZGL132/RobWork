@@ -363,3 +363,22 @@ B4c-3a验证记录：十套件1495通过、0失败、0跳过（相较B4c-2增加
 B4c-3b-1验证前置补充（实施前登记）：集成/独立modeling套件并行时，既有PackageTest::TempDir使用进程内counter构造相同ird-pkg-test-1目录，真实独立套件在导出中断退出3，串行复核348通过。仅修正本卡已允许PackageTest.cpp夹具临时目录为core::ObjectId随机唯一后缀，包内容确定性仍在同一目录内比较，无产品变化；保留原并行失败和串行复核，修复后双模式专项并行复核。GUI两轮旧exe零匹配不计通过；首次重建界面断言误要求自动选首个工具，按既有用户选择契约改为清旧输入后显式focusObject，单独留痕，不冒充产品缺陷。
 
 B4c-3b-1实际结果：十套件1499通过、0失败、0跳过（含Windows真实窗口226项），新增UI模型3项和窗口1项。指定完整修订读取、无reader/错响应原子拒绝、旧完整草稿原base/payload保留已验证；新模型树/工具名刷新、旧暂存取消及显式选择后工具页值已截图复核。集成全量Release、独立三目标和verify-task三条通过。证据另封存modeling-completion-20261020-b4c3b1-checkpoint。生产reader绑定、真正冲突落盘/三选项/迁移、正式tour失败出口及47项三维仍开放，不外推通过；仅本地WIP，不推送、不合入。
+
+## B4c-3b-2 精确设计：正式宿主读取/冲突回执接线及失败出口
+
+1. 行为：PM-04/AT-21/AT-29。生产绑定完整修订reader；建模apply条目的onResult原来实际为空（代码注释误称已接），本批按真实挂接成功再绑定DraftController。Stale只由project判定，宿主按草稿原branch/base和权威该分支tip生成完整详情，绝不由HEAD或诊断文本猜测。无窗口/保留落盘/迁移入口前仍明确未闭环。
+2. 接口：无公共接口或新依赖。仅HostCompilePort.hpp/.cpp新增私有projectModelingCommandResult(query, draft, resultProjection)值适配；UiPlugin.cpp在attachPresentationSession绑定reader，在attachModule成功后装配onResult。DomainModuleRunner.cpp仅纠正“控制器自行构造详情”的错误注释；原投影/命令/存储不改。
+3. 失败：错误分支/修订、坏闭包或错身份抛错，宿主捕获记录且仍通知原Stale投影（不能伪造有效详情）。无完整详情不可重新编辑。正式tour在apply无完整快照或重开失败时截图、输出FAIL并非零退出，禁止继续解引用；不改期望Stale为成功。
+4. 生命周期：reader经宿主现取受控活动adapter，并校验非closed；不捕获已打开store裸引用。onResult只在草稿会话挂接成功后填，消费当前域源完整文档值；临时恢复器和闭包只同步借用，结果不存引用。
+5. 线程/确定性：仅UI线程；tip取branchTips精确分支，再固定revision；逐对象引用按ObjectId稳定排序、内容版本比较，不拼接/剥离框架名。涉事对象名称经建模装配公共名称解析，未知跨域对象用类型中文标签、不暴露哈希。UI不重新计算Stale判定。
+6. 验证：先真实存储链在旧base提交被拒后断言回执详情存在，当前实现缺适配为红；新旧完整部件/策略前进摘要、固定base、无根、无变化、非Stale不读取、错分支/缺修订反例。正式tour真实运行必须到Stale并正常非零结束，不能崩溃；完整相关套件/GUI、双模式/门禁。
+7. 文档：原契约允许面内HostCompilePort、UiPlugin、DomainModuleRunner和HostCompilePipelineTest；ui/modeling单元卡及DTB/契约增量。本批证据另建b4c3b2，不修改已封存记录，不碰F06/F07。后续窗口/落盘/迁移另起八节设计。
+8. 决策：无新长期决策；采用L5值适配消费已有查询，避免扩project结果公共面或解析diagnostics自由文本。按用户自动推荐授权执行，不弹选项、不推送、不合入、不使用子代理。
+
+实施顺序：真实Stale回执断言红证 → 私有固定修订投影及反例 → 正式reader/onResult接线及tour失败出口 → 双模式和完整相关测试/真实GUI/tour → 只增证据与本地WIP提交。
+
+B4c-3b-2细化：建模buildDraftDocument原来只填写base，未填写已有会话branch字段。按同一源m_session.branch补齐值投影，供宿主原分支精确读取；控制器保存时仍核对并填会话归属，不改存储。精确实现面增加原允许的ModelingUiModule.cpp；测试核对投影分支等于真实被拒信封，不能由HEAD猜测。
+
+B4c-3b-2登记同步：完整契约真实运行59通过、1失败，production-assembly-manifest.json的需求attachModule行锚因前方新增接线漂移（2714→2736）。仅更新该现行装配清单行锚，不改冻结历史证据或断言；原始失败另存manifest-anchor-red，修正后完整契约重跑。
+
+B4c-3b-2实际记录：十套件1499通过、0失败、0跳过（Windows GUI226），真实存储链扩展详情/反例而非新增用例项；集成全量Release、独立三目标及verify-task三条通过。正式tour另列FAIL：策略前进后真实Stale，旧脚本仍期待直接应用；现正常退出1，已查看失败窗口截图，不再发生旧空快照访问冲突。生产reader和建模onResult已接，真正窗口/旧稿落盘/迁移尚未闭环；证据b4c3b2-checkpoint，只本地WIP。

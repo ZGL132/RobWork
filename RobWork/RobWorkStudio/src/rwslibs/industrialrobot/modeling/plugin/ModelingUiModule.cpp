@@ -943,6 +943,9 @@ ui::DraftDocumentProjection ModelingUiModule::buildDraftDocument() const
     ui::DraftDocumentProjection document;
     document.schemaVersion = 1; // 私有域帧版本，仅遥测；project写自己的文件版本。
     document.moduleId = kModuleHandle;
+    // 冲突详情须按草稿所属分支读取；这里已有权威会话分支，不让宿主从HEAD猜。
+    // projectId及保存时刻仍由控制器按绑定填充，保存分支亦由该绑定覆盖。
+    document.branchId = m_session.branch;
     document.baseRevisionId = m_session.baseRevision.value_or(core::RevisionId{});
     document.payload = encodeModelingDraft(m_session.draft);
     return document;

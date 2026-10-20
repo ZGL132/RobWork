@@ -1210,6 +1210,33 @@ TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
     const auto stale=store->commands().submit(validEnvelope);
     EXPECT_EQ(stale.status.rejection,project::CommandStatus::Rejection::StaleRevision);
     EXPECT_EQ(store->query().head().id,*firstResult.newRevision);
+    // PM-04/AT-29：真实拒绝后详情必须保留原base，并取目标分支权威tip；
+    // 不能让控制器拿着空tip重建或把旧草稿自动迁到HEAD。
+    ui::CommandResultProjection rejected;
+    rejected.rejectionReason="stale-revision";
+    auto rejectedDraft=domain.modelingDraftSource().buildDraftDocument();
+    EXPECT_EQ(rejectedDraft.branchId,validEnvelope.branch);
+    rejectedDraft.baseRevisionId=*validEnvelope.expectedRevision; // 对应实际被拒的旧信封。
+    const auto staleProjection=projectModelingCommandResult(store->query(),
+        rejectedDraft,rejected);
+    ASSERT_TRUE(staleProjection.staleDetail);
+    EXPECT_EQ(staleProjection.staleDetail->draftBaseRevision,validEnvelope.expectedRevision->toCanonical());
+    EXPECT_EQ(staleProjection.staleDetail->currentTipRevision,firstResult.newRevision->toCanonical());
+    EXPECT_FALSE(staleProjection.staleDetail->advancedSummary.empty());
+    EXPECT_FALSE(staleProjection.staleDetail->involvedObjectNames.empty());
+    auto invalidDraft=rejectedDraft;invalidDraft.branchId=core::BranchId::generate();
+    EXPECT_THROW(projectModelingCommandResult(store->query(),invalidDraft,rejected),std::runtime_error);
+    invalidDraft=rejectedDraft;invalidDraft.baseRevisionId={};
+    EXPECT_THROW(projectModelingCommandResult(store->query(),invalidDraft,rejected),std::invalid_argument);
+    invalidDraft=rejectedDraft;invalidDraft.baseRevisionId=core::RevisionId::generate();
+    EXPECT_THROW(projectModelingCommandResult(store->query(),invalidDraft,rejected),std::exception);
+    // 非Stale不需要文档身份，也不允许顺手触发完整修订读取或携冲突详情。
+    auto otherResult=rejected;otherResult.rejectionReason="not-writable";
+    EXPECT_FALSE(projectModelingCommandResult(store->query(),{},otherResult).staleDetail);
+    otherResult.status=ui::CommandResultProjection::Status::Committed;
+    otherResult.newRevision=firstResult.newRevision;
+    const auto successProjection=projectModelingCommandResult(store->query(),{},otherResult);
+    EXPECT_EQ(successProjection.newRevision,firstResult.newRevision);EXPECT_FALSE(successProjection.staleDetail);
     const auto first=store->query().head();HostRevisionClosureView firstClosure(store->query(),first);
     document=savedDoc();root=std::get<modeling::RobotDesign>(decode(document["root"]));
     tool=std::get<modeling::ToolDefinition>(decode(document["tools"].toArray().at(0)));

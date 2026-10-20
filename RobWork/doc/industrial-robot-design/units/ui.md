@@ -2067,3 +2067,5 @@ runDomainApply在每域build前捕获bindAnchor的std::exception，记录anchor-
 WP-13-T24 B4c-2 回执隔离：完整建模回读失败保留实际Committed修订与草稿；runner记commit-receipt-failed并继续后域，状态行单列已提交但未回读，不向DraftController伪造已完成回执。无公共/存储/依赖变化，GUI未执行边界按总计划登记。
 
 B4c-2检查点实证：十套件1430通过（非GUI1205、Windows GUI225）、0失败、0跳过；双模式及verify-task通过。正式宿主另列FAIL：策略推进后的Stale安全门正确，旧tour误期待直接提交，缺真正重建且后续无快照防护，退出-1073741819。证据modeling-completion-20261020-b4c2-checkpoint；继续B4c-3，不能将套件通过代替宿主/47项终验。
+
+WP-13-T24 B4c-3b-2登记：宿主建模onResult原来实际未填，按attachModule成功后填闭包并补Stale定位详情；固定branch/base及权威分支tip经query读取，涉事名称经建模公共装配解析，跨域未知项只显示中文类型标签。生产reader现取受控活动adapter；错误详情清空防误重建。tour前置失败立即留图并非零退出。仅原私有允许面，无公共/存储/依赖变化；冲突窗口/保留落盘/迁移仍待下一批，不以接线代替闭环。

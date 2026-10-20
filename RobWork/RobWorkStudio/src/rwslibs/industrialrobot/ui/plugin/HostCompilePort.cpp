@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <map>
+#include <set> // 冲突对象名称去重；稳定遍历顺序不依赖哈希容器。
 #include <stdexcept>
 #include <utility>
 
@@ -445,6 +446,60 @@ std::optional<DraftDocumentProjection> readModelingRevisionDraft(
         throw std::runtime_error(error);
     }
     return reader.modelingDraftSource().buildDraftDocument();
+}
+
+CommandResultProjection projectModelingCommandResult(
+    const project::IProjectQueryPort& query,const DraftDocumentProjection& draft,
+    CommandResultProjection result)
+{
+    // 只补project已拒绝的Stale；其他结局不能触发额外读盘或伪造详情。
+    if(result.status!=CommandResultProjection::Status::Rejected
+       ||result.rejectionReason!="stale-revision"){return result;}
+    if(draft.moduleId!=modeling::kModuleHandle||!draft.branchId.isValid()
+       ||!draft.baseRevisionId.isValid()){
+        throw std::invalid_argument("建模冲突回执缺少原草稿分支或基线");
+    }
+    const auto tips=query.branchTips();std::optional<core::RevisionId> tip;
+    for(const auto& row:tips){if(row.id==draft.branchId){tip=row.tip;break;}}
+    if(!tip){throw std::runtime_error("建模冲突目标分支已不存在");}
+    const auto base=query.revision(draft.baseRevisionId);const auto current=query.revision(*tip);
+    if(base.id!=draft.baseRevisionId||current.id!=*tip
+       ||base.branch!=draft.branchId||current.branch!=draft.branchId){
+        throw std::runtime_error("建模冲突修订身份或分支不匹配");
+    }
+    // 名称仍由完整域装配负责；不从自由diagnostics文本解析身份，不显示哈希。
+    const auto readNames=[&](const project::RevisionView& view){
+        auto domain=modeling::createModelingPluginAssembly();
+        const auto document=readModelingRevisionDraft(query,view.branch,view.id);
+        if(document){domain.modelingDraftSource().adoptRestoredDocument(*document);}
+        return domain;
+    };
+    auto oldDomain=readNames(base);auto newDomain=readNames(current);
+    using Pair=std::pair<std::optional<project::ObjectRef>,std::optional<project::ObjectRef>>;
+    std::map<std::string,Pair> objects;
+    for(const auto& ref:base.objectRefs){objects[ref.objectId.toCanonical()].first=ref;}
+    for(const auto& ref:current.objectRefs){objects[ref.objectId.toCanonical()].second=ref;}
+    StaleRevisionDetailProjection detail;detail.draftBaseRevision=base.id.toCanonical();
+    detail.currentTipRevision=current.id.toCanonical();
+    detail.advancedSummary="修订序号 "+std::to_string(current.seq)+"："+current.commandSummary;
+    std::set<std::string> seen;
+    for(const auto& item:objects){
+        const auto& before=item.second.first;const auto& after=item.second.second;
+        if(before&&after&&*before==*after){continue;} // 保留历史的未变引用不是差异。
+        const auto& ref=after?*after:*before;std::string name;
+        if(!newDomain.tryDraftObjectName(ref.objectId,name)
+           &&!oldDomain.tryDraftObjectName(ref.objectId,name)){
+            // 根/位姿/传动并非可选几何锚，名称面可能没有它们，用中文类型标签。
+            // 删除工具/场景先从旧固定修订解析，不依赖当前运行时名称目录。
+            if(ref.objectTypeToken==modeling::kRobotDesignObjectType){name="机器人设计";}
+            else if(ref.objectTypeToken==modeling::kNamedPoseSetObjectType){name="命名位姿";}
+            else if(ref.objectTypeToken==modeling::kRobotDrivetrainObjectType){name="传动设计";}
+            else if(ref.objectId==current.metadataRef.objectId){name="工程元数据";}
+            else{name="工程配置对象";}
+        }
+        if(seen.insert(name).second){detail.involvedObjectNames.push_back(std::move(name));}
+    }
+    result.staleDetail=std::move(detail);return result;
 }
 
 HostModelCompilePort::HostModelCompilePort(Deps deps)

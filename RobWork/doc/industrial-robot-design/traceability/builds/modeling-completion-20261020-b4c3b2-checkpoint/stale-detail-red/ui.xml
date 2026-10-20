@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.072" timestamp="2026-10-20T14:51:37.492" name="AllTests">
+  <testsuite name="HostCompilePipelineTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.072" timestamp="2026-10-20T14:51:37.493">
+    <testcase name="CompleteWorkingSetDiskApplyAndHistory_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp" line="1083" status="run" result="completed" time="0.072" timestamp="2026-10-20T14:51:37.493" classname="HostCompilePipelineTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:1219&#x0A;Value of: staleProjection.staleDetail&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp:1219
+Value of: staleProjection.staleDetail
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

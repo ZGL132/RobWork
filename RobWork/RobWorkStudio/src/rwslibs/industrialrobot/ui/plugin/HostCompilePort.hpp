@@ -235,6 +235,19 @@ std::optional<DraftDocumentProjection> readModelingRevisionDraft(
     const project::IProjectQueryPort& query,const core::BranchId& branch,
     const core::RevisionId& revision);
 
+/**
+ * @brief 为project已判定的Stale回执补固定修订对照，不在UI重新判定冲突。
+ * @param query [in] 活动项目只读查询，同步借用。
+ * @param draft [in] 原草稿完整值；branch/base必须有效且属于同一项目会话。
+ * @param result [in] 原回执投影；非Stale时原样返回且零查询。
+ * @return 保持原状态并补充tip/base/摘要/涉事对象呈现名的值副本。
+ * @throws std::invalid_argument 草稿身份无效；读取/闭包错误原样抛出。
+ * 仅UI线程，无持有依赖、无写入；名称只经建模公共装配解析，不显示对象哈希。
+ */
+CommandResultProjection projectModelingCommandResult(
+    const project::IProjectQueryPort& query,const DraftDocumentProjection& draft,
+    CommandResultProjection result);
+
 // =====================================================================
 // HostModelCompilePort——project IModelCompilePort 的 runtime 十段链适配
 // （＋最近发布快照缓存——呈现 source 的唯一供数面）
