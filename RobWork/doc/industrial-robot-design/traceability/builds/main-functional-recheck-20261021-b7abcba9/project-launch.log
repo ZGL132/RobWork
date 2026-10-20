@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+
+[----------] 1 test from PackageExportD17
+[ RUN      ] PackageExportD17.SnapshotAnchoredDuringConcurrentCommit
+[       OK ] PackageExportD17.SnapshotAnchoredDuringConcurrentCommit (118 ms)
+[----------] 1 test from PackageExportD17 (118 ms total)
+
+[----------] 1 test from PackageCancel
+[ RUN      ] PackageCancel.CheckpointCancel_NoTargetOutput_NoResidue
+[       OK ] PackageCancel.CheckpointCancel_NoTargetOutput_NoResidue (76 ms)
+[----------] 1 test from PackageCancel (76 ms total)
+
+[----------] 1 test from PackageImportFailures
+[ RUN      ] PackageImportFailures.DiagnosticsPassedThrough_NoTargetNoResidue
+[       OK ] PackageImportFailures.DiagnosticsPassedThrough_NoTargetNoResidue (68 ms)
+[----------] 1 test from PackageImportFailures (68 ms total)
+
+[----------] 1 test from PackageContract
+[ RUN      ] PackageContract.CallerErrorsFailFast_AssemblyViolations
+[       OK ] PackageContract.CallerErrorsFailFast_AssemblyViolations (59 ms)
+[----------] 1 test from PackageContract (59 ms total)
+
+[----------] Global test environment tear-down
+[==========] 282 tests from 47 test suites ran. (10036 ms total)
+[  PASSED  ] 282 tests.
+Exit=0

@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+
+[----------] 3 tests from KinCommandsContract
+[ RUN      ] KinCommandsContract.O35NoDotTokenAndValuePinning_WP15T08_ACC4
+[       OK ] KinCommandsContract.O35NoDotTokenAndValuePinning_WP15T08_ACC4 (0 ms)
+[ RUN      ] KinCommandsContract.PayloadFrameDecodesByIndependentReader_WP15T08_ACC2
+[       OK ] KinCommandsContract.PayloadFrameDecodesByIndependentReader_WP15T08_ACC2 (0 ms)
+[ RUN      ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3
+[       OK ] KinCommandsContract.NoOwnDomainCommandSchema_WP15T08_ACC3 (7 ms)
+[----------] 3 tests from KinCommandsContract (7 ms total)
+
+[----------] 4 tests from KinPluginGraph
+[ RUN      ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4
+[       OK ] KinPluginGraph.PluginLinkageFaceExactlyKinematicsAndUi_ACC4 (0 ms)
+[ RUN      ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2
+[       OK ] KinPluginGraph.PluginSourcesZeroComputationScan_ACC2 (6 ms)
+[ RUN      ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2
+[       OK ] KinPluginGraph.QtConsumptionConfinedToPluginFileDomains_ACC2 (0 ms)
+[ RUN      ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4
+[       OK ] KinPluginGraph.TaskPointViewIsReadOnlyConsumption_ACC4 (0 ms)
+[----------] 4 tests from KinPluginGraph (7 ms total)
+
+[----------] Global test environment tear-down
+[==========] 57 tests from 8 test suites ran. (57 ms total)
+[  PASSED  ] 57 tests.
+Exit=0

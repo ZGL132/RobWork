@@ -1,0 +1,177 @@
+[
+  {
+    "finishedUtc": "2026-10-20T21:32:12.0358392Z",
+    "exit": 0,
+    "name": "requirements"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:32:15.3690972Z",
+    "exit": 0,
+    "name": "requirements_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:32:28.9246166Z",
+    "exit": 0,
+    "name": "requirements_gui"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:32:33.6120844Z",
+    "exit": 0,
+    "name": "modeling"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:32:37.1142298Z",
+    "exit": 0,
+    "name": "modeling_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:33:23.2265919Z",
+    "exit": 0,
+    "name": "modeling_gui"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:33:28.4217551Z",
+    "exit": 0,
+    "name": "runtime"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:33:42.4097766Z",
+    "exit": 0,
+    "name": "kinematics"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:33:47.7237532Z",
+    "exit": 0,
+    "name": "kinematics_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:33:55.4291962Z",
+    "exit": 0,
+    "name": "kinematics_gui"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:02.2529440Z",
+    "exit": 0,
+    "name": "ui"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:07.5065891Z",
+    "exit": 0,
+    "name": "ui_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:20.6357457Z",
+    "exit": 0,
+    "name": "ui_gui"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:33.9189002Z",
+    "exit": 0,
+    "name": "project"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:44.4739673Z",
+    "exit": 0,
+    "name": "project_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:48.1420616Z",
+    "exit": 0,
+    "name": "policy"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:51.7728525Z",
+    "exit": 0,
+    "name": "policy_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:55.3914800Z",
+    "exit": 0,
+    "name": "evidence"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:34:58.8215729Z",
+    "exit": 0,
+    "name": "evidence_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:04.1235396Z",
+    "exit": 0,
+    "name": "io"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:08.0105219Z",
+    "exit": 0,
+    "name": "io_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:11.9388538Z",
+    "exit": 0,
+    "name": "trajectory"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:15.5724832Z",
+    "exit": 0,
+    "name": "trajectory_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:19.1162339Z",
+    "exit": 0,
+    "name": "dynamics"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:22.5971918Z",
+    "exit": 0,
+    "name": "dynamics_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:26.0011645Z",
+    "exit": 0,
+    "name": "drivetrain"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:29.3509906Z",
+    "exit": 0,
+    "name": "drivetrain_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:33.3890199Z",
+    "exit": 0,
+    "name": "selection"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:36.8045670Z",
+    "exit": 0,
+    "name": "selection_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:40.5880699Z",
+    "exit": 0,
+    "name": "optimization"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:45.1306492Z",
+    "exit": 1,
+    "name": "optimization_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:49.0016571Z",
+    "exit": 0,
+    "name": "reporting"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:52.3735887Z",
+    "exit": 0,
+    "name": "reporting_contract"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:35:56.5160847Z",
+    "exit": 0,
+    "name": "workflow"
+  },
+  {
+    "finishedUtc": "2026-10-20T21:36:03.9818952Z",
+    "exit": 0,
+    "name": "workflow_contract"
+  }
+]

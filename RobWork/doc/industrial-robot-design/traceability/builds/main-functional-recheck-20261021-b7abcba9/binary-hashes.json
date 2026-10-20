@@ -1,0 +1,362 @@
+[
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_core_test.exe",
+    "name": "sdurws_ird_core_test.exe",
+    "sha256": "6d8175f5bf41c096c43af0c516e33b89d7b0cd57d548482be7b601b45561f79b",
+    "bytes": 566272
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_demo6r.exe",
+    "name": "sdurws_ird_demo6r.exe",
+    "sha256": "6014a12970d868ba32859d1b5574a1ad856ccf1bc4082f316c8266eabbb6e5b8",
+    "bytes": 1168896
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_diagnostics_contract_test.exe",
+    "name": "sdurws_ird_diagnostics_contract_test.exe",
+    "sha256": "5c97f6dfbf06eede6dd5873680db85f6efb8f5c5ceb8c88d6130685efc49fcaf",
+    "bytes": 598016
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_diagnostics_test.exe",
+    "name": "sdurws_ird_diagnostics_test.exe",
+    "sha256": "33b96e463f58f4d74ed758856361db721969bab04c2058477607e3b02a0d9e7a",
+    "bytes": 1489408
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_drivetrain_contract_test.exe",
+    "name": "sdurws_ird_drivetrain_contract_test.exe",
+    "sha256": "e7d5724d406ed0ae2aea4fe35f7db48bed6b811d1b207df2c3ebdbff24d7fc72",
+    "bytes": 848896
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_drivetrain_test.exe",
+    "name": "sdurws_ird_drivetrain_test.exe",
+    "sha256": "97c2c9c274498cf1af4cd739d5450da20192ab012cef65d2a9368906ba67b59a",
+    "bytes": 1171456
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_dynamics_app.exe",
+    "name": "sdurws_ird_dynamics_app.exe",
+    "sha256": "f65d8025a087112a66380011e9c621e2342981c67fa8b2dbca5c240112cc51e6",
+    "bytes": 206848
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_dynamics_contract_test.exe",
+    "name": "sdurws_ird_dynamics_contract_test.exe",
+    "sha256": "6acf325731703fd194b7c7a468b898c58964991e15648d0a30ceedc58a8ceb05",
+    "bytes": 1195520
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_dynamics_test.exe",
+    "name": "sdurws_ird_dynamics_test.exe",
+    "sha256": "4fa54b7195b7630c9c4d7c99bf0f17135c5b717a3cb97dfe0d20b0fd6ac4c0a1",
+    "bytes": 2120704
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_evidence_contract_test.exe",
+    "name": "sdurws_ird_evidence_contract_test.exe",
+    "sha256": "0b8c12662b9fd29e84cb4bb1f1ffd9b512cdac586ed4538eb9ea96483ffb555a",
+    "bytes": 664576
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_evidence_test.exe",
+    "name": "sdurws_ird_evidence_test.exe",
+    "sha256": "03b5a5069eaa7a4481532fe9728134e3e05dd6c116fd62de59a40ac1009990e8",
+    "bytes": 2031616
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_execution_contract_test.exe",
+    "name": "sdurws_ird_execution_contract_test.exe",
+    "sha256": "f77906680e4e9270caa2222f8b5b63177dd2399cde21b46779d4bb3d5aecf0f4",
+    "bytes": 2156544
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_execution_perf_test.exe",
+    "name": "sdurws_ird_execution_perf_test.exe",
+    "sha256": "32bfed6a91b35b25f8bbf92bd6cadbfd4b3f904769b6333bdf544ef914b4d944",
+    "bytes": 801792
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_execution_test.exe",
+    "name": "sdurws_ird_execution_test.exe",
+    "sha256": "92b703823d3f9737535965487b51279c5226b18da3b1855bbbcc1bad79a7c17a",
+    "bytes": 2782208
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_execution_worker.exe",
+    "name": "sdurws_ird_execution_worker.exe",
+    "sha256": "00d0dff0eac30e9377897d4fad512090e4f4345b01a320bbdea64ca09a0fa3e2",
+    "bytes": 129024
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_io_contract_test.exe",
+    "name": "sdurws_ird_io_contract_test.exe",
+    "sha256": "13c7f80d7f7ea8b4e21387c1490672a5559f21aafd56fd208a3e071de963d01c",
+    "bytes": 894464
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_io_test.exe",
+    "name": "sdurws_ird_io_test.exe",
+    "sha256": "9e285c5092389f559f6ef692e489089bb03db7b5bdb76cbe7015ca3f38f33677",
+    "bytes": 2257408
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_app.exe",
+    "name": "sdurws_ird_kinematics_app.exe",
+    "sha256": "b6ce8705ced7cf67e2ef7e767548d583614fc9a31c08de488908d7eb86e3e837",
+    "bytes": 1080832
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_contract_test.exe",
+    "name": "sdurws_ird_kinematics_contract_test.exe",
+    "sha256": "71e5c89375ea6f95d0bf82c24b400df4faaf998e56b4100088624706a084b53a",
+    "bytes": 1631744
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_gui_test.exe",
+    "name": "sdurws_ird_kinematics_gui_test.exe",
+    "sha256": "d9a0be8cf3f22578f11d338668f623aad0a9b532fba0fc6ef92cf27cd3a0f97a",
+    "bytes": 1548800
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_test.exe",
+    "name": "sdurws_ird_kinematics_test.exe",
+    "sha256": "dc5ad2a33d6227bc9124f3ba51115b5d15c2e9223af7f850775fee98105175d1",
+    "bytes": 4745728
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_app.exe",
+    "name": "sdurws_ird_modeling_app.exe",
+    "sha256": "d32bde6988afd317b54752516f26800d661101a11ee7da3b4e3fe7fcb57860f7",
+    "bytes": 1597440
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_contract_test.exe",
+    "name": "sdurws_ird_modeling_contract_test.exe",
+    "sha256": "838f1b263acde2945dc4b4f31ed0a47432d0045d11ac77831cbaa511b3f655b9",
+    "bytes": 1854976
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe",
+    "name": "sdurws_ird_modeling_gui_test.exe",
+    "sha256": "ff7ffb1bdd4b3fa41c82e0e1159d6963094e4007c1b006345596e0295dd05be4",
+    "bytes": 4191744
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+    "name": "sdurws_ird_modeling_test.exe",
+    "sha256": "ce1fac5f03613478084b004a4247e31c9950ecc485d5014e25506fb694240878",
+    "bytes": 9137664
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_optimization_contract_test.exe",
+    "name": "sdurws_ird_optimization_contract_test.exe",
+    "sha256": "b62d013dadd14c0a243a62ef231f2bacbcff626cd12164cf75f06f042f0fdfac",
+    "bytes": 2599936
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_optimization_perf_test.exe",
+    "name": "sdurws_ird_optimization_perf_test.exe",
+    "sha256": "8ca051cf5125b02ebd936281a7cede8a3e7a27de0e37a14c83e82023ae41c04d",
+    "bytes": 1243648
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_optimization_test.exe",
+    "name": "sdurws_ird_optimization_test.exe",
+    "sha256": "85a4e461333ba8601eed13867d32bd00d3f04a4c8a56642f104d1a2377162b17",
+    "bytes": 3666944
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_policy_contract_test.exe",
+    "name": "sdurws_ird_policy_contract_test.exe",
+    "sha256": "5ddac8bc2bd2bec5a58e6f3819065a0a9b18160c8a4ae91be03c93ed9f5aa43a",
+    "bytes": 1030144
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_policy_test.exe",
+    "name": "sdurws_ird_policy_test.exe",
+    "sha256": "eac38b5f4c20e40c79181f7dcf1cf84c783347c356db2d169d1852ea4e3f65d8",
+    "bytes": 1744384
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_project_contract_test.exe",
+    "name": "sdurws_ird_project_contract_test.exe",
+    "sha256": "1598b41fa82a9f2ad2aa26436fe6b81f94907e94f1dd5551bedbb62ec2ddfe1a",
+    "bytes": 1602560
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_project_openbench_worker.exe",
+    "name": "sdurws_ird_project_openbench_worker.exe",
+    "sha256": "32c4d6468848b79992b12c2db1abb0995dbe3a201cfadd4c7bc1cfebd28ae3a0",
+    "bytes": 770560
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_project_perf_test.exe",
+    "name": "sdurws_ird_project_perf_test.exe",
+    "sha256": "96524e6239262831c178927ec1c2cb6993302973824aa756789c285132363bff",
+    "bytes": 1136128
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_project_test.exe",
+    "name": "sdurws_ird_project_test.exe",
+    "sha256": "3c0cd965702a5f15fca4f40fc69b928f0f26d54cb791e45d12419e55cde7e14e",
+    "bytes": 3546624
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_reporting_contract_test.exe",
+    "name": "sdurws_ird_reporting_contract_test.exe",
+    "sha256": "a7ab6f881931fcd7f12683aeac73351fe5931dda17586d62cf21d55b5a6405fb",
+    "bytes": 1788928
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_reporting_test.exe",
+    "name": "sdurws_ird_reporting_test.exe",
+    "sha256": "f3d3cb92e71ae65af98bb7715a5d79e9c094cb6f36d4e8388d1900c70fa9a790",
+    "bytes": 3475456
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_requirements_app.exe",
+    "name": "sdurws_ird_requirements_app.exe",
+    "sha256": "fafd03d97124ee14a63187a2e2ea09fc17bb3d72b1172c8d8fe59e9bce089405",
+    "bytes": 2021888
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_requirements_contract_test.exe",
+    "name": "sdurws_ird_requirements_contract_test.exe",
+    "sha256": "cb33bdf509e749d3c3de5d16d3389a18cb1a550745232438db35b45d91fb614c",
+    "bytes": 1262080
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_requirements_gui_test.exe",
+    "name": "sdurws_ird_requirements_gui_test.exe",
+    "sha256": "7682b3cc7363ccfb2ae0b793206231f172347537035f42fe222dd9ff4906d7f9",
+    "bytes": 3235840
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_requirements_test.exe",
+    "name": "sdurws_ird_requirements_test.exe",
+    "sha256": "08ba05106e8a72854ddf6495955fb1ee21c25adc25e357140c56909c777ff5d2",
+    "bytes": 4577792
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_runtime_test.exe",
+    "name": "sdurws_ird_runtime_test.exe",
+    "sha256": "34c04aa2e0ef31d539ff422586d6e79b9fd4decf8bcb958bd76c37daf3151e09",
+    "bytes": 2808320
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_selection_app.exe",
+    "name": "sdurws_ird_selection_app.exe",
+    "sha256": "859d5113418a7be9e854f46d354c500b5fcb7c9cb3ffe851502d40c5cd29225b",
+    "bytes": 141824
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_selection_contract_test.exe",
+    "name": "sdurws_ird_selection_contract_test.exe",
+    "sha256": "7ab3300edbd7a55882b13c8cdf1b789432117fd2eb99f0f552083ccbfc9cc614",
+    "bytes": 1916416
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_selection_test.exe",
+    "name": "sdurws_ird_selection_test.exe",
+    "sha256": "e6e4faa80f2627a0651a70dc615cd7492c21b76e7f9563a537c2038687d569ca",
+    "bytes": 3634176
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_studio.exe",
+    "name": "sdurws_ird_studio.exe",
+    "sha256": "0d1e4526c1cf79b44005806a1d6603799e9b98f556654a9c54fd15d1d5802bbc",
+    "bytes": 10787840
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_testdata_lint.exe",
+    "name": "sdurws_ird_testdata_lint.exe",
+    "sha256": "a47dacf270a046dff49af8fe3848caf9a787e358d63674a2c6a6b463c77f1a4d",
+    "bytes": 273920
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_testkit_prochelper.exe",
+    "name": "sdurws_ird_testkit_prochelper.exe",
+    "sha256": "b9bf24480ce8cbd87225bf982087cf2bfdf0f89ef9e20aed65e1d7f240b8a6dc",
+    "bytes": 39424
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_testkit_test.exe",
+    "name": "sdurws_ird_testkit_test.exe",
+    "sha256": "ee13aea791933882d0627b9fa0f0807c2407dfbfc9242bbd677cb05436e114ed",
+    "bytes": 1230848
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_app.exe",
+    "name": "sdurws_ird_trajectory_app.exe",
+    "sha256": "f923de693b134428a7edd6af465362f1927abbecaa70af65040ec844b84e65b2",
+    "bytes": 151040
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_contract_test.exe",
+    "name": "sdurws_ird_trajectory_contract_test.exe",
+    "sha256": "a0cc5fdba5c88cd4b915c5f37e8e64148e52f70e4bb9793360788a8b23e7808c",
+    "bytes": 1366016
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_test.exe",
+    "name": "sdurws_ird_trajectory_test.exe",
+    "sha256": "e9069a865b4ec75d2db10d8946981f43748dabae65050571f039ad14760e7929",
+    "bytes": 2752512
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_ui_app.exe",
+    "name": "sdurws_ird_ui_app.exe",
+    "sha256": "761441f6384534ecceb460dcfb019f612d55bad8162ca654349d90626ba49df9",
+    "bytes": 1677824
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_ui_contract_test.exe",
+    "name": "sdurws_ird_ui_contract_test.exe",
+    "sha256": "a67bfc176f30892601555ad43c11a7e5f9042d33fbf91e69c47eab4bc754f8e8",
+    "bytes": 6889984
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_ui_gui_test.exe",
+    "name": "sdurws_ird_ui_gui_test.exe",
+    "sha256": "f662a2113d03db3c47b99c74295114e9b637993dcbf688b489d875f8ffefae77",
+    "bytes": 3103744
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_ui_largedata_perf_test.exe",
+    "name": "sdurws_ird_ui_largedata_perf_test.exe",
+    "sha256": "12ece64ce559346102f7e646468281c0040f2d8d71a930832b020a7c10d91bce",
+    "bytes": 1832448
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_ui_perf_test.exe",
+    "name": "sdurws_ird_ui_perf_test.exe",
+    "sha256": "978444a2fd667b46c557839c74f3359c85321f6a4ffd8fb651d97593719e3a88",
+    "bytes": 709632
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe",
+    "name": "sdurws_ird_ui_test.exe",
+    "sha256": "d77d96d3228088e417ddb5b57bd66124d9e19afff6487f290da8d5e84ad68118",
+    "bytes": 9190400
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_workflow_contract_test.exe",
+    "name": "sdurws_ird_workflow_contract_test.exe",
+    "sha256": "1107d513515f178f804582867774cc4802de36e8f26c6520be8ed43d8b79dc20",
+    "bytes": 3384832
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_workflow_test.exe",
+    "name": "sdurws_ird_workflow_test.exe",
+    "sha256": "c8f03b469e13ec4dd98ea877e07599d7326e6d439d44cc8a0eed55a8eb5d458f",
+    "bytes": 3086848
+  },
+  {
+    "path": "build/RobWorkStudio/libs/Release/sdurws_ird_ui_plugin.dll",
+    "name": "sdurws_ird_ui_plugin.dll",
+    "sha256": "904f5c7313aa538eb3306fd9f69e3f2e4f17f3de4eda9fde1fd740f2bbd467dd",
+    "bytes": 10259968
+  }
+]

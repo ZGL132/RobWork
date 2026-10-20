@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] HostPolicyTest.InvalidStaleAndFullFieldsRoundTrip_UX08_A23
+[       OK ] HostPolicyTest.InvalidStaleAndFullFieldsRoundTrip_UX08_A23 (64 ms)
+[ RUN      ] HostPolicyTest.ReopenReadOnlyAndCrossProjectIsolation_PM02_A23
+[       OK ] HostPolicyTest.ReopenReadOnlyAndCrossProjectIsolation_PM02_A23 (80 ms)
+[ RUN      ] HostPolicyTest.BranchPolicyChangesKeepOtherBranchAndOldRevisionExact_PM12_A23
+[       OK ] HostPolicyTest.BranchPolicyChangesKeepOtherBranchAndOldRevisionExact_PM12_A23 (206 ms)
+[----------] 7 tests from HostPolicyTest (777 ms total)
+
+[----------] 5 tests from HostDraftChain
+[ RUN      ] HostDraftChain.TextPayloadSaveReopenRestoreByteEqual_UI_T84_ACC4
+[       OK ] HostDraftChain.TextPayloadSaveReopenRestoreByteEqual_UI_T84_ACC4 (59 ms)
+[ RUN      ] HostDraftChain.RequirementsDraftFullChainByteEqual_UI_T85_F917
+[       OK ] HostDraftChain.RequirementsDraftFullChainByteEqual_UI_T85_F917 (27 ms)
+[ RUN      ] HostDraftChain.ClosedContextListReturnsEmptyTruth_UI_T84
+[       OK ] HostDraftChain.ClosedContextListReturnsEmptyTruth_UI_T84 (35 ms)
+[ RUN      ] HostDraftChain.ModelingRetainedDraftReopensOnRealBranch_PM04_AT29
+[       OK ] HostDraftChain.ModelingRetainedDraftReopensOnRealBranch_PM04_AT29 (80 ms)
+[ RUN      ] HostDraftChain.AppliedModelingDraftIsMissingAfterRealReopen_PM04_AT21
+[       OK ] HostDraftChain.AppliedModelingDraftIsMissingAfterRealReopen_PM04_AT21 (69 ms)
+[----------] 5 tests from HostDraftChain (273 ms total)
+
+[----------] Global test environment tear-down
+[==========] 63 tests from 13 test suites ran. (2106 ms total)
+[  PASSED  ] 63 tests.
+Exit=0

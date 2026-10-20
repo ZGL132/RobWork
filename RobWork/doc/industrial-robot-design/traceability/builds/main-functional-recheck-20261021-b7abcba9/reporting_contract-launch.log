@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] ModelSummaryTaskStatusHeaderDiscipline.PublicHeadersZeroOffTreeIncludes_RPT12_ACC3 (0 ms)
+[----------] 1 test from ModelSummaryTaskStatusHeaderDiscipline (0 ms total)
+
+[----------] 2 tests from TaskStatusVocabulary
+[ RUN      ] TaskStatusVocabulary.TerminationTokensMatchCoreTerminalStateTokens_RPT12_ACC3
+[       OK ] TaskStatusVocabulary.TerminationTokensMatchCoreTerminalStateTokens_RPT12_ACC3 (0 ms)
+[ RUN      ] TaskStatusVocabulary.StateAxisHasNoSecondVocabulary_RPT12_ACC3
+[       OK ] TaskStatusVocabulary.StateAxisHasNoSecondVocabulary_RPT12_ACC3 (0 ms)
+[----------] 2 tests from TaskStatusVocabulary (0 ms total)
+
+[----------] 4 tests from RoundtripCrossUnitContract
+[ RUN      ] RoundtripCrossUnitContract.RecomputeRequestConsumesCoreAuthorityTypes
+[       OK ] RoundtripCrossUnitContract.RecomputeRequestConsumesCoreAuthorityTypes (0 ms)
+[ RUN      ] RoundtripCrossUnitContract.CheckerReusesFrozenResolverSeam
+[       OK ] RoundtripCrossUnitContract.CheckerReusesFrozenResolverSeam (0 ms)
+[ RUN      ] RoundtripCrossUnitContract.RecomputeSourceIsAbstractInjectableContract
+[       OK ] RoundtripCrossUnitContract.RecomputeSourceIsAbstractInjectableContract (0 ms)
+[ RUN      ] RoundtripCrossUnitContract.RoundtripHeaderZeroOffTreeIncludes_RPT16
+[       OK ] RoundtripCrossUnitContract.RoundtripHeaderZeroOffTreeIncludes_RPT16 (0 ms)
+[----------] 4 tests from RoundtripCrossUnitContract (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 65 tests from 24 test suites ran. (58 ms total)
+[  PASSED  ] 65 tests.
+Exit=0

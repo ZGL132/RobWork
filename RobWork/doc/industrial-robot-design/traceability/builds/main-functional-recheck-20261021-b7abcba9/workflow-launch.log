@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] HostAdapter.BackfillTranslateFlowPreconditionsAndNoRecord (33 ms)
+[ RUN      ] HostAdapter.BackfillTranslateFlowSubmitsThroughCommandPort
+[       OK ] HostAdapter.BackfillTranslateFlowSubmitsThroughCommandPort (109 ms)
+[ RUN      ] HostAdapter.BackfillTranslateFlowFailureTracksPreserveHonesty
+[       OK ] HostAdapter.BackfillTranslateFlowFailureTracksPreserveHonesty (90 ms)
+[ RUN      ] HostAdapter.ExecutionCloseDrainAdapterEmptySchedulerLightFace
+[       OK ] HostAdapter.ExecutionCloseDrainAdapterEmptySchedulerLightFace (0 ms)
+[ RUN      ] HostAdapter.ControllerOpenProjectCancelLeavesSessionUntouched
+[       OK ] HostAdapter.ControllerOpenProjectCancelLeavesSessionUntouched (0 ms)
+[ RUN      ] HostAdapter.ControllerRequestCloseWithoutProjectFailsFast
+[       OK ] HostAdapter.ControllerRequestCloseWithoutProjectFailsFast (0 ms)
+[ RUN      ] HostAdapter.ControllerNewProjectWizardCancelLeavesNoTrace
+[       OK ] HostAdapter.ControllerNewProjectWizardCancelLeavesNoTrace (0 ms)
+[ RUN      ] HostAdapter.ControllerPackageImportEntersViaOpenProtocol
+[       OK ] HostAdapter.ControllerPackageImportEntersViaOpenProtocol (0 ms)
+[ RUN      ] HostAdapter.ControllerOpenProjectPackRoute_CollectsImportOnce_WithPrefill
+[       OK ] HostAdapter.ControllerOpenProjectPackRoute_CollectsImportOnce_WithPrefill (0 ms)
+[ RUN      ] HostAdapter.ControllerSwitchClose_ActivatesCandidateStoreIdentity
+[       OK ] HostAdapter.ControllerSwitchClose_ActivatesCandidateStoreIdentity (42 ms)
+[----------] 23 tests from HostAdapter (544 ms total)
+
+[----------] Global test environment tear-down
+[==========] 197 tests from 16 test suites ran. (745 ms total)
+[  PASSED  ] 197 tests.
+Exit=0

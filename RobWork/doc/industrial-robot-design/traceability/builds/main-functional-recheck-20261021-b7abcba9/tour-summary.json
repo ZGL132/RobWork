@@ -1,0 +1,20 @@
+{
+  "requirements-tour": {
+    "assertionsPassed": 235,
+    "png": 31,
+    "doneMarkerPresent": true,
+    "exitCode": 0
+  },
+  "modeling-tour": {
+    "assertionsPassed": 361,
+    "png": 31,
+    "doneMarkerPresent": false,
+    "exitCode": 0
+  },
+  "layout": {
+    "assertionsPassed": 67,
+    "png": 9,
+    "doneMarkerPresent": true,
+    "exitCode": 0
+  }
+}

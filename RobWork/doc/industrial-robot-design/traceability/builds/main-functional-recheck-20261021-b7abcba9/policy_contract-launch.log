@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] PolicyProofMaterialContract.FindingCarriesCompleteProofMaterialFields
+[       OK ] PolicyProofMaterialContract.FindingCarriesCompleteProofMaterialFields (0 ms)
+[ RUN      ] PolicyProofMaterialContract.NonCollisionOrSelfPairRejectedByChecklist
+[       OK ] PolicyProofMaterialContract.NonCollisionOrSelfPairRejectedByChecklist (0 ms)
+[ RUN      ] PolicyProofMaterialContract.SourceAnchorsPinBothFieldShapes
+[       OK ] PolicyProofMaterialContract.SourceAnchorsPinBothFieldShapes (0 ms)
+[ RUN      ] PolicyProofMaterialContract.ContentIdentityChangeSuppliesSliceInvalidationMaterial
+[       OK ] PolicyProofMaterialContract.ContentIdentityChangeSuppliesSliceInvalidationMaterial (0 ms)
+[----------] 4 tests from PolicyProofMaterialContract (0 ms total)
+
+[----------] 4 tests from PolCollisionAnalytic
+[ RUN      ] PolCollisionAnalytic.DatasetLoadsThroughFullManifestChain
+[       OK ] PolCollisionAnalytic.DatasetLoadsThroughFullManifestChain (89 ms)
+[ RUN      ] PolCollisionAnalytic.PolicySnapshotConsumedThroughPolicyObject
+[       OK ] PolCollisionAnalytic.PolicySnapshotConsumedThroughPolicyObject (0 ms)
+[ RUN      ] PolCollisionAnalytic.AllCasesMatchHandDerivedExpectations
+[       OK ] PolCollisionAnalytic.AllCasesMatchHandDerivedExpectations (0 ms)
+[ RUN      ] PolCollisionAnalytic.At37InvertedMountConsumesCompiledStateWithoutSecondRotation
+[       OK ] PolCollisionAnalytic.At37InvertedMountConsumesCompiledStateWithoutSecondRotation (0 ms)
+[----------] 4 tests from PolCollisionAnalytic (90 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 5 test suites ran. (255 ms total)
+[  PASSED  ] 23 tests.
+Exit=0

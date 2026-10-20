@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] MdlPartObjectCommands.DrivetrainCoupling_R2ValidPlansDualCompileAndInverse_WP13T18_ACC3 (0 ms)
+[----------] 17 tests from MdlPartObjectCommands (0 ms total)
+
+[----------] 2 tests from MdlPackageWorkCell
+[ RUN      ] MdlPackageWorkCell.WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5
+[       OK ] MdlPackageWorkCell.WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5 (27 ms)
+[ RUN      ] MdlPackageWorkCell.PreviewExportsFourKinds_UI_T59
+[       OK ] MdlPackageWorkCell.PreviewExportsFourKinds_UI_T59 (0 ms)
+[----------] 2 tests from MdlPackageWorkCell (27 ms total)
+
+[----------] 4 tests from MdlGoldenDhEquivalence
+[ RUN      ] MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenExpansionClosedForm_V11_WP13T16_ACC3 (1 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenRoundtripParameters_V11_WP13T16_ACC3 (11 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenFkEquivalence_V11_WP13T16_ACC3 (11 ms)
+[ RUN      ] MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3
+[       OK ] MdlGoldenDhEquivalence.GoldenNotExpressibleFiveStates_V11_WP13T16_ACC3 (1 ms)
+[----------] 4 tests from MdlGoldenDhEquivalence (25 ms total)
+
+[----------] Global test environment tear-down
+[==========] 462 tests from 54 test suites ran. (993 ms total)
+[  PASSED  ] 462 tests.
+Exit=0

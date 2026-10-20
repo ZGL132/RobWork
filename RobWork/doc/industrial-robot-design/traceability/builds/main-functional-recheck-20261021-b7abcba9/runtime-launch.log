@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] HostPresentationViewTest.PresentationStateMutationIsolatedFromSnapshot_RT_PRES_3
+[       OK ] HostPresentationViewTest.PresentationStateMutationIsolatedFromSnapshot_RT_PRES_3 (0 ms)
+[ RUN      ] HostPresentationViewTest.ResolutionAndTransformReuseSameSource_RT_PRES_4
+[       OK ] HostPresentationViewTest.ResolutionAndTransformReuseSameSource_RT_PRES_4 (0 ms)
+[ RUN      ] HostPresentationViewTest.FactoryFailsFastOnInvalidInput_RT_PRES_5
+[       OK ] HostPresentationViewTest.FactoryFailsFastOnInvalidInput_RT_PRES_5 (0 ms)
+[----------] 5 tests from HostPresentationViewTest (0 ms total)
+
+[----------] 4 tests from GoldenDataLint
+[ RUN      ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3
+[       OK ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3
+[       OK ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3
+[       OK ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3
+[       OK ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3 (0 ms)
+[----------] 4 tests from GoldenDataLint (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 294 tests from 59 test suites ran. (324 ms total)
+[  PASSED  ] 293 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] ContractSuite.ChildProcessWorker_RT_ID_1
+Exit=0

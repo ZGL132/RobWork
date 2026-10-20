@@ -1,0 +1,29 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] OptJointRun.CheckpointCodecRoundTripAndRejects_WP21T04_ACC2 (0 ms)
+[ RUN      ] OptJointRun.CheckpointResumeStatisticsNeverDuplicated_WP21T04_ACC3
+[       OK ] OptJointRun.CheckpointResumeStatisticsNeverDuplicated_WP21T04_ACC3 (10 ms)
+[ RUN      ] OptJointRun.CheckpointCorruptRejectedByCoordinator_WP21T04_ACC2
+[       OK ] OptJointRun.CheckpointCorruptRejectedByCoordinator_WP21T04_ACC2 (17 ms)
+[ RUN      ] OptJointRun.CheckpointVersionIncompatibleNoMigration_WP21T04_ACC2
+[       OK ] OptJointRun.CheckpointVersionIncompatibleNoMigration_WP21T04_ACC2 (4 ms)
+[ RUN      ] OptJointRun.StageBRequestRejectedAtStart_WP21T04_ACC2
+[       OK ] OptJointRun.StageBRequestRejectedAtStart_WP21T04_ACC2 (0 ms)
+[ RUN      ] OptJointRun.BaselineCandidateAlwaysVerifiedSeat_WP21T04_ACC1
+[       OK ] OptJointRun.BaselineCandidateAlwaysVerifiedSeat_WP21T04_ACC1 (0 ms)
+[ RUN      ] OptJointRun.PauseAtBatchBoundaryEmitsCheckpointState_WP21T07_OPTVER229
+[       OK ] OptJointRun.PauseAtBatchBoundaryEmitsCheckpointState_WP21T07_OPTVER229 (0 ms)
+[ RUN      ] OptJointRun.ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER227_228_230
+[       OK ] OptJointRun.ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER227_228_230 (5 ms)
+[ RUN      ] OptJointRun.CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231
+[       OK ] OptJointRun.CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231 (5 ms)
+[----------] 15 tests from OptJointRun (46 ms total)
+
+[----------] Global test environment tear-down
+[==========] 215 tests from 30 test suites ran. (311 ms total)
+[  PASSED  ] 214 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable
+Exit=0
