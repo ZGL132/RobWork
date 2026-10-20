@@ -1,0 +1,37 @@
+Note: Google Test filter = ModelingCommandFlows.ImportWorkcell_*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.ImportWorkcell_SingleDevice_RealReadProducesDraft_MDL18_AT33
+unknown file: error: C++ exception with description "modeling 命令流：未知域命令 id（modeling.import-workcell）" thrown in the test body.
+
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_SingleDevice_RealReadProducesDraft_MDL18_AT33 (2 ms)
+[ RUN      ] ModelingCommandFlows.ImportWorkcell_TwoDevices_ExplicitChoiceNotAutoFirst_MDL18
+unknown file: error: C++ exception with description "modeling 命令流：未知域命令 id（modeling.import-workcell）" thrown in the test body.
+
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_TwoDevices_ExplicitChoiceNotAutoFirst_MDL18 (1 ms)
+[ RUN      ] ModelingCommandFlows.ImportWorkcell_ConfirmRejected_KeepsSessionDraft_MDL18
+unknown file: error: C++ exception with description "modeling 命令流：未知域命令 id（modeling.import-workcell）" thrown in the test body.
+
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_ConfirmRejected_KeepsSessionDraft_MDL18 (1 ms)
+[ RUN      ] ModelingCommandFlows.ImportWorkcell_NotWorkCellRoot_HonestRefusal_MDL18
+unknown file: error: C++ exception with description "modeling 命令流：未知域命令 id（modeling.import-workcell）" thrown in the test body.
+
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_NotWorkCellRoot_HonestRefusal_MDL18 (1 ms)
+[ RUN      ] ModelingCommandFlows.ImportWorkcell_FileDialogCancel_Silent_MDL18
+unknown file: error: C++ exception with description "modeling 命令流：未知域命令 id（modeling.import-workcell）" thrown in the test body.
+
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_FileDialogCancel_Silent_MDL18 (0 ms)
+[----------] 5 tests from ModelingCommandFlows (6 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (7 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 5 tests, listed below:
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_SingleDevice_RealReadProducesDraft_MDL18_AT33
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_TwoDevices_ExplicitChoiceNotAutoFirst_MDL18
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_ConfirmRejected_KeepsSessionDraft_MDL18
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_NotWorkCellRoot_HonestRefusal_MDL18
+[  FAILED  ] ModelingCommandFlows.ImportWorkcell_FileDialogCancel_Silent_MDL18
+
+ 5 FAILED TESTS

@@ -86,7 +86,7 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
 /// ／B2 诊断历史标题；值＝工程用语中文，UX-02）。
 /// FIX-PANEL 批增行：kinematics 域八命令标题（既有漏登——六域描述符承载
 /// 键现产对账抓到后随批补齐；族注见表尾 kinematics 段）。
-constexpr std::array<TextRow, 50> kDomainCommandTitleTable{{
+constexpr std::array<TextRow, 52> kDomainCommandTitleTable{{
     { "cmd.modeling.new-from-template.title",          "从模板新建"       },
     { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
     { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
@@ -98,6 +98,8 @@ constexpr std::array<TextRow, 50> kDomainCommandTitleTable{{
     { "cmd.modeling.import-package.title",             "导入规范包"       },
     { "cmd.modeling.reset-home-zero.title",            "复位 Home/Zero"   },
     { "cmd.modeling.export-workcell-xml.title",        "导出 WorkCell XML" },
+    // WP-13-T25/F06：外部 WorkCell 反向导入命令（目录表尾追加第十二号）。
+    { "cmd.modeling.import-workcell.title",            "导入 WorkCell"    },
     { "cmd.modeling.flow-not-assembled",               "该域流程未装配（随后续建模任务提供）" },
     { "cmd.flow-not-assembled.reason",                 "该流程将在后续版本提供" },
     { "reason.no-project",                              "请先打开工业机器人项目" },
@@ -134,6 +136,7 @@ constexpr std::array<TextRow, 50> kDomainCommandTitleTable{{
     { "cmd.modeling.export-workcell-xml.tooltip",      "把已应用修订的编译产物导出为 WorkCell/DWC XML 供外部工具查看（只读会话可用；数据源＝编译快照）" },
     { "cmd.modeling.import-package.tooltip",           "导入本软件导出的规范模型包并替换当前草稿" },
     { "cmd.modeling.reset-home-zero.tooltip",          "呈报位姿集 Home/Zero 参考数据（会话命令，零修订）" },
+    { "cmd.modeling.import-workcell.tooltip",          "从外部 .wc.xml 有损提取单设备关节链生成建模草稿（含逐项提取报告确认；MDL-18）" },
     // —— UI-T41 批次B：建模面板呈现键（B2 诊断历史标题／B7 复合行指引）——
     { "panel.modeling.field.composite.tooltip",        "该字段为复合行，不支持就地编辑——物性可经『物性估算』、几何可经『生成占位几何』域命令维护" },
     { "panel.modeling.history.title",                  "诊断历史" },

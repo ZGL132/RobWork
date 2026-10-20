@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T25",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "建模审计并行修复批：F06 WorkCell导入入口／F01关节速度加速度／F07自碰撞配置／F14耦合编辑与宿主R2",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T17",
+    "WP-13-T18",
+    "WP-14-T12"
+  ],
+  "requirements": [
+    "MDL-18",
+    "MDL-01",
+    "MDL-06",
+    "MDL-04",
+    "ARC-05",
+    "MDL-21",
+    "MDL-03"
+  ],
+  "designRefs": [
+    "units/modeling.md#6.6",
+    "units/modeling.md#4.3",
+    "units/modeling.md#6.3",
+    "units/modeling.md#8.1",
+    "units/modeling.md#9.7",
+    "units/policy.md#4.3",
+    "units/policy.md#5.1",
+    "development-task-breakdown.md#2.14"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/UiText.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostEngineeringPolicy.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostEngineeringPolicy.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/policy.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T25.json",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/docs/superpowers/plans/2026-10-20-modeling-parallel-fixes.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build C:/zcode-wt/build-wp13-t25 --config Release",
+    "cmake --build C:/zcode-wt/build-wp13-t25 --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T25.json"
+  ],
+  "branch": "wp13-t25",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-3",
+    "P-MDL-7"
+  ],
+  "acceptance": [
+    "F06/MDL-18/AT-33：正式命令目录新增外部WorkCell导入入口；真实文件选择→io验证读取→mapWorkCellXml提取→多设备显式选择→逐项报告→确认才替换草稿；取消/失败/不可表达零工作集修改、零修订；仅提取引擎单测通过不算完成，F01落地后复跑本项映射/报告",
+    "F01/MDL-01：单一权威数据路径（输入→域校验→工作集→编码→Description→canonical→既有消费者）；转动rad/s、rad/s²，移动m/s、m²，Provided须有限≥0，缺失保持NotProvided不填0；旧编码真实解码兼容，新值往返与身份变化有证据；URDF/WorkCell导入映射与报告同步（已落点值不再谎报无落点）；拒绝后旧值完整恢复；两步确认/取消/只读/局部撤销重做真实交互断言",
+    "F07/MDL-04/ARC-05/AT-19：用户输入→策略草稿→policy解析→project命令/修订→实际评估器链路闭合；策略权威归policy（selfCollisionHints仅导入提示不冒充已保存策略）；启停/排除对/安全距离进入同一已解析策略且真实重算可见；取消/解析拒绝零发布零修订；显示开关不改变计算启用状态",
+    "F14/MDL-21/AT-38：私有编辑入口（矩阵/关节窗口展示、录入、更改、移除，Δq_joint=C·Δθ_motor约定明示）；域验证复用runtime唯一矩阵校验（不复制SVD/不信任用户conditionNumber）；非方阵/奇异/病态/非有限拒绝且拒绝后旧值恢复；正式宿主显式装配R2能力（处理器与就绪上下文一致），公共默认R1Locked保留、mimic/planar/floating/闭环不放开；非对角矩阵独立期望验证（位置/力矩/限位/功率）",
+    "全批纪律：先红后绿逐项推进（顺序F06→F01→F07→F14，每项一个完整提交）；不使用子代理；不推送；不合入redesign-main；不触碰主任务worktree（C:/Users/zgl18/.codex/worktrees/486b）与其未提交F16代码；四层状态（数据/Qt交互/正式宿主/真实三维）逐项如实报告，未执行记NOT RUN"
+  ],
+  "note": "2026-10-20旁支会话承接主任务WP-13-T24 B3批中F06/F01/F07/F14四项的并行修复（主智能体计划文档：modeling-parallel-handoff；主任务保留F16及F08/F09/F10/F11/F12）。独立worktree C:/zcode-wt/wp13-t25自基线f873984b起（601ffa0e审计＋其后9提交，含WP-14-T12策略编辑A-23与WP-13-T24 B1/B2/B3a/B3b）。交接文档modeling-parallel-handoff-20261020.md未以文件形态存在于仓库，内容以会话提供的计划文本为准（如实登记）。status=ready仅表示获准实施，不代表验收通过；每项实施前在该项提交内含精确八节设计与范围登记。⚠环境登记（F06批实证，证据wp13-t25-f06/README.md）：本机全新集成树的框架RobWorkSim目标（sdurwsim_gui/bt_plugin）编译失败为基线固有（stash全改动后同错复现，148 error；主worktree同源obj 2026-10-18曾编译成功——疑SDK/工具链漂移暴露框架潜伏问题；SA-02不私改框架，待所有者处置）——verify第1条全量构建在该面上受阻，产品目标（industrialrobot＋RobWorkStudio链）零错误口径达成；gate-all另有2例基线固有失败（optimization契约OPT-VER-145断言、project_perf HotStartP95≈3.7s>3s）均已stash态复现归因，非本批引入。"
+}

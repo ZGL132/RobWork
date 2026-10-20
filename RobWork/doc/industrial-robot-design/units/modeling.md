@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.55（2026-10-20，WP-13-T25/F06 批次落位——外部 WorkCell 反向导入正式命令入口：§9.7.3 表尾追加第十二号 `modeling.import-workcell`〔Stage/Project、readOnlyAllowed=false——写路径〕；命令流装配纪律＝io openGenericXml 良构校验（io.md §9.6 冻结读取面）＋readFileBytes 真实字节＋两读取窗口 SHA-256 摘要对账（ResChanged 诚实拒绝）＋Polytope 缺失容忍依赖树（存在＝io 真实快照、缺失＝exists=false 叶——引擎按 V-08 转 Recorded＋IO-RES-MISSING 事实）→§6.6 提取引擎→多设备分支显式选链（§6.4 同机制，不默认选第一个）→逐项提取报告确认（AT-33）→确认才替换草稿〔恰一根不变量 R1 同 URDF/Xacro 导入〕；取消选文件/取消选链/取消报告/根检查失败/摘要失配零工作集修改零修订；"从 WorkCell XML 新建项目来源"维持明确不做。审计 20261019-601ffa0e M14/MDL-18 复验口径＝正式窗口选文件→选设备→完整报告→确认→树/属性可编辑。前一版本 v0.54 保留如下。 |
 | 文档版本 | v0.54（2026-10-18，B7 文本勘误批：§14.6 v0.8「新增 13→15 条 MdlTemplate」、v0.12「MdlPartObjectCommands 12→14 条」、v0.17 冒烟「246/246＋14/14→200/200＋8/8」与分组「ACC2 六→七/ACC3 五→六」；findings F-312/F-343/F-353/F-354 消账）。前一版本 v0.53 保留如下。 |
 | 文档版本 | v0.53（2026-10-17，WP-13-T23 就绪状态聚合修正批〔分支 wp13-t23-reliability-polish；依据＝2026-10-17 审核发现＋所有者裁决 B〕：①**§8.2 状态聚合口径精确化**——呈现级 notes 中仅 Informational 上下文注记计入 ReadyWithNotes，`NotProvided` 缺项预告不参与三态聚合（呈现级直投就绪条＋missingItemKeys 通道；blocking 语义不变）。背景：v0.52 在 L9 无条件登记 NotProvided 后，状态聚合既有的"`!notes.empty()`→ReadyWithNotes"分支使任何干净模型的就绪状态永为 ReadyWithNotes、`Ready` 不可达，建模域汇聚 verdict（PanelCommandCatalog::modelingReadinessProjection）恒为 NotApplicable、缺项键恒有 missing.L9——与 v0.52 条目"不改变现有计算判定"的表述不符，本批兑现"呈现级不降级"承诺并恢复 v0.52 之前的状态可达性（Informational 仍聚合——既有口径不变）；②Readiness.hpp 状态枚举与 ReadinessNoteKind 注释、Readiness.cpp 状态汇总处与 L9 登记处注释同步该口径；③测试：ReadinessTest 新增 2 例检查器级回归钉（NotProvidedOnlyNoteKeepsReadyReachable_WP13T23——全干净工作集唯一 note 为 NotProvided 时状态必须为 Ready；InformationalNoteStillAggregatesReadyWithNotes_WP13T23——writable=false 的 L11 上下文注记仍降级 ReadyWithNotes，防止豁免被扩大）；④**审核更正登记**：v0.52 批 GUI 测试"桌面/Qt 运行环境阻塞（0xC0000409）"结论不成立——复现证实为启动进程缺 Qt/vcpkg DLL 搜索 PATH 所致，正确设置环境变量后 `sdurws_ird_modeling_gui_test` 全绿（44 通过＋1 既有跳过）；GUI 用例命名溯源由 _UI_T82 更正为 _WP13T23（UI-T82 为已完结停靠任务，与本用例无关）；最终源码态全量构建由本批补齐。前一版 v0.52 保留如下。）|
 | 文档版本 | v0.52（2026-10-17，WP-13-T23 可靠性打磨增量：①§8.2/§9.4.4 的 `ReadinessNote` 增加 `NotProvided/Informational` 事实状态、对象锚、字段路径、单位和修复建议；②L9 明确登记关节最大速度/最大加速度尚无当前建模 schema 落点，模板预填值不进入运行时计算，作为非阻断提示引导工程师在传动或策略模块补录；③§9.7.1 就绪条把未提供/警告/阻断/待确认/提示转成中文状态标签，字段/单位/动作经 tooltip 透传并支持对象定位；④模板向导回执同步提示该边界；新增 Readiness/PanelModel/GUI 回归用例。该增量不改变现有计算判定和 schema，不把参考值伪造为 runtime 输入。）|
@@ -637,7 +638,9 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 - 展开产物进入与 URDF **相同**的映射与安全边界（§6.3/§6.4）；展开失败/依赖缺失→可定位诊断（宏名/行列），不产生草稿。
 - 所有权口径：展开**语义/引擎**归 modeling（DTB WP-13-T06 `XacroExpand.*`）；io.md §13.3 同名单与 WP-13-T06 的重叠登记为 P-MDL-4（§14.3），建议口径"护栏 io、语义 modeling"，待 io 卡所有者确认。
 
-### 6.6 WorkCell 反向导入（MDL-18，R2／阶段 D——已实现，WP-13-T17 落位）
+### 6.6 WorkCell 反向导入（MDL-18，R2／阶段 D——已实现，WP-13-T17 落位；命令入口随 WP-13-T25/F06 落位）
+
+> 【入口落位登记（2026-10-20，WP-13-T25/F06 批）】本通道的正式命令入口＝`modeling.import-workcell`（§9.7.3 表尾第十二号）——审计 20261019-601ffa0e M14 的缺口（"提取内核可用、正式命令目录无入口"）就此闭合；命令流装配纪律见 §9.7.3 行（openGenericXml 良构校验＋摘要对账＋Polytope 缺失容忍树＋显式选链＋逐项报告确认＋恰一根草稿替换）。
 
 > 【落位登记（2026-10-12，WP-13-T17 实现批）】本通道由"仅边界设计"转已实现；提取语义按本节登记落位（实现＝`WorkCellReverseImport.hpp/.cpp` 提取引擎，`IModelImportMapper::mapWorkCellXml` 委托——单一实现）。planned 占位（2026-10-05）与阶段 D 启用（2026-10-12 治理批，io.md §9.6 v0.10 冻结 `IResourceReader::openGenericXml` 签名）见契约 tasks/foundation/WP-13-T17.json note。
 
@@ -1299,6 +1302,7 @@ protected:
 | `modeling.export-package` / `modeling.import-package` | Stage/Project | MDL-20 规范包导出/导入 | true / false |
 | `modeling.reset-home-zero` | Session | 复位 Home/Zero（会话姿态，KIN-06 语义，零修订） | true |
 | `modeling.export-workcell-xml` | Project | WC/DWC XML 外供导出（UI-T56——MDL-20 ③"另可导出供外部查看"；数据源＝已应用修订的 runtime 编译快照只读视图，宿主 bindWorkCellExport 注入，快照缺席诚实缺席；零修订零草稿触碰） | true |
+| `modeling.import-workcell` | Stage/Project | 外部 WorkCell 反向导入向导（WP-13-T25/F06——MDL-18/AT-33：io openGenericXml 良构校验＋真实字节摘要对账→§6.6 提取引擎→多设备显式选链→逐项提取报告确认→草稿替换〔恰一根不变量〕；"从 WorkCell XML 新建项目来源"仍明确不做） | false |
 
 （`draft.apply`/`draft.save` 等项目级命令由 ui 既有注册承载，modeling 只供给 `buildDraftCommand`；快捷键绑定一律经 ui HotkeyBindingTable，插件不私占全局快捷键——SA-16。）
 

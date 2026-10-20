@@ -11,15 +11,22 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QKeyEvent>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QPixmap>
 #include <QPushButton>
 #include <QScrollBar>
 #include <QTableWidget>
+#include <QTemporaryDir>
 #include <QTimer>
+#include <QScopeGuard>   // qScopeGuard（F06 冒烟环境进程内自开自收）
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 #include "plugin/ModelingCommandFlows.hpp"
+#include "plugin/ModelingUiModule.hpp"   // ModuleSessionState（F06 会话态入参）
 
 using namespace sdurws::ird::modeling;
 namespace {
@@ -108,4 +115,74 @@ TEST(ModelingImportGui, FullImportReportScrollableSelectableAndCancelSafe_MDL11_
         dialog->reject();
     });
     EXPECT_FALSE(qtModelingDialogHost().confirmImport(report));
+}
+
+/** @brief F06/MDL-18/AT-33：WorkCell 导入真实 Qt 对话框链——生产宿主
+ * openFilePath（smoke 态非原生对话框）选真实 .wc.xml→真实引擎提取→
+ * 真实报告对话框承载提取内容（设备名/映射/未保留项可见）→取消零替换。
+ * 单设备夹具不经选链（chooseItem 面另由流测试替身覆盖）。
+ */
+TEST(ModelingImportGui, WorkCellRealFileDialogToReportCancelSafe_MDL18_AT33)
+{
+    IRD_TEST_INFO("MDL-18",{"AT-33"},std::nullopt);
+    // 冒烟对话框形态自备（IRD_UI_PLUGIN_SMOKE 的设计用途＝让生产文件对话
+    // 框以非原生形态可自动化——原生模态无法 findChild 应答；ctest/gate 上下
+    // 文不带该变量，本用例进程内自开自收，测试结束恢复进程环境）。
+    const bool hadSmoke = !qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE").isEmpty();
+    qputenv("IRD_UI_PLUGIN_SMOKE", "1");
+    const auto restoreSmoke = qScopeGuard([&hadSmoke] {
+        if (hadSmoke) { qputenv("IRD_UI_PLUGIN_SMOKE", "1"); }
+        else { qunsetenv("IRD_UI_PLUGIN_SMOKE"); }
+    });
+    // 临时目录真实 .wc.xml（三关节最小可提取单设备——数值面由流测试独立
+    // 核对，此处验证真实对话框链与报告内容承载）。
+    QTemporaryDir dir;ASSERT_TRUE(dir.isValid());
+    const QString wcPath=dir.filePath(QStringLiteral("real.wc.xml"));
+    {QFile f(wcPath);ASSERT_TRUE(f.open(QIODevice::WriteOnly|QIODevice::Text));
+     f.write(QStringLiteral("<?xml version=\"1.0\"?>\n"
+        "<WorkCell name=\"gui cell\">\n"
+        "  <SerialDevice name=\"guiarm\">\n"
+        "    <Joint name=\"g1\" type=\"Revolute\"><PosLimit min=\"-90\" max=\"90\"/><VelLimit max=\"1.2\"/></Joint>\n"
+        "    <Joint name=\"g2\" type=\"Revolute\"><PosLimit min=\"-90\" max=\"90\"/></Joint>\n"
+        "    <Joint name=\"g3\" type=\"Revolute\"><PosLimit min=\"-120\" max=\"120\"/></Joint>\n"
+        "    <Q name=\"Home\"> 0.1 0.2 0.3 </Q>\n"
+        "  </SerialDevice>\n"
+        "</WorkCell>\n").toUtf8());}
+    // 事件链应答：①真实文件对话框（名称框输入真实路径＋回车＝用户确认）；
+    // ②下一拍提取报告对话框（断言内容后 reject＝用户取消——取消安全面）。
+    // 两级定时器链：文件对话框关闭须先回到事件循环，报告模态才升起。
+    ModalWatchdog watchdog;
+    QTimer::singleShot(0,[wcPath]{
+        auto* fileDialog=qobject_cast<QFileDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(fileDialog,nullptr)<<"生产文件选择对话框未弹出";
+        // 填入文件名编辑框并以回车确认（accept 为 protected——真实用户
+        // 路径＝在名称框输入并回车，不走受保护接口）。
+        auto* nameEdit=fileDialog->findChild<QLineEdit*>(QStringLiteral("fileNameEdit"));
+        ASSERT_NE(nameEdit,nullptr)<<"非原生文件对话框缺少文件名编辑框";
+        nameEdit->setText(wcPath);
+        // 确认＝触发对话框 accept 槽（与"打开"按钮同一槽；accept 为
+        // protected 故经元对象调用——对话框本体/路径选择均为真实生产面）。
+        QMetaObject::invokeMethod(fileDialog,"accept");
+        QTimer::singleShot(0,[]{
+            auto* report=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+            ASSERT_NE(report,nullptr);
+            EXPECT_EQ(report->objectName(),QStringLiteral("ird_modeling_import_report"));
+            auto* text=report->findChild<QPlainTextEdit*>("ird_modeling_import_report_text");
+            ASSERT_NE(text,nullptr);
+            const QString body=text->toPlainText();
+            EXPECT_TRUE(body.contains(QStringLiteral("guiarm")))<<"报告未承载设备名";
+            EXPECT_TRUE(body.contains(QStringLiteral("joints[0].bounds")))<<"报告未承载映射落点";
+            EXPECT_TRUE(body.contains(QStringLiteral("joint-velocity-limit")))<<"未保留项不可见";
+            snapshot(*report,"workcell-import-report");
+            report->reject();
+        });
+    });
+    // 生产宿主直接驱动命令流（qtModelingDialogHost 真实模态）。
+    ModuleSessionState session;  // 空会话——取消后应保持零关节（未被替换）
+    std::string summary;
+    const bool executed=executeModelingCommand("modeling.import-workcell",
+        session,ModelingFlowDeps{},qtModelingDialogHost(),summary);
+    EXPECT_FALSE(executed)<<"报告取消后不得报完成";
+    EXPECT_TRUE(summary.empty())<<"取消属正常终止（UX-03），无错误回执";
+    EXPECT_TRUE(session.draft.design.joints.empty())<<"取消后草稿被替换（违约）";
 }

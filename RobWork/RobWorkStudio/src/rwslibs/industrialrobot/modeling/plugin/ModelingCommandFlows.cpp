@@ -353,6 +353,7 @@ bool isAssembledModelingCommand(const std::string& commandId)
         "modeling.diff-baseline",     "modeling.export-package",
         "modeling.import-package",    "modeling.reset-home-zero",
         "modeling.export-workcell-xml",  // UI-T56——WC/DWC XML 外供导出（第十一号）
+        "modeling.import-workcell",   // WP-13-T25/F06——外部 .wc.xml 反向导入（第十二号）
     };
     return kAssembled.count(commandId) != 0;
 }
@@ -513,6 +514,138 @@ io::ResourceDependencyTree assembleImportDependencyTree(
             node.snapshot = snapshot.value;
         } else {
             node.exists = false;
+        }
+        tree.nodes.push_back(std::move(node));
+
+        io::ResourceEdge edge;
+        edge.fromRel = rootRel;
+        edge.toRel = relKey;
+        edge.kind = io::ResourceEdgeKind::Mesh;
+        tree.edges.push_back(std::move(edge));
+    }
+
+    std::sort(tree.nodes.begin(), tree.nodes.end(),
+              [](const io::ResourceNode& a, const io::ResourceNode& b) {
+                  return a.relPath < b.relPath;
+              });
+    return tree;
+}
+
+// =====================================================================
+// WorkCell 入口装载（WP-13-T25/F06——.wc.xml 通道的流半区装配）
+// =====================================================================
+
+/**
+ * @brief WorkCell 入口读取：io openGenericXml 良构校验＋真实字节＋摘要对账。
+ *
+ * 装配纪律（与生产 Xacro 桥 loadXacroInputImpl 同款——F06 红线"真实字节、
+ * 快照、依赖树及资源记录必须一致"）：
+ *   ① openGenericXml（.wc.xml 通道冻结读取面——io.md §9.6）：expat 良构
+ *      校验＋全文件 SHA-256 摘要；良构违例在 io 侧拦截（IO-FORMAT-XML-*）。
+ *   ② readFileBytes：预算内经 io 句柄读真实字节（单文件预检＋逐块
+ *      TotalBytes 计费——不绕过 io 文件层）。
+ *   ③ 摘要对账：两窗口摘要/字节数不一致＝文件在选择后被改动（ResChanged
+ *      诚实拒绝），不把变化窗口的字节冒充稳定输入。
+ *
+ * @param path  [in] 用户自选 .wc.xml 绝对路径
+ * @param doc   [out] io 良构解析树（Polytope 引用提取输入——语义解释归
+ *                modeling，本函数不解读内容）
+ * @param bytes [out] 入口文档真实字节（ValidatedSource.bytes 载体）
+ * @param error [out] 失败原因（io 稳定码或对账失败说明）
+ * @return false＝读取/良构/对账失败（无部分产物）
+ *
+ * 仅 UI 线程调用；io 句柄/预算由本轮局部对象持有，不写任何文件。
+ */
+bool loadWorkCellEntry(const QString& path, io::GenericXmlDoc& doc,
+                       std::vector<std::uint8_t>& bytes, std::string& error)
+{
+    const io::IResourceReaderPtr reader = io::makeResourceReader();
+    const auto parsed = reader->openGenericXml(
+        std::filesystem::path(path.toStdWString()), {}, nullptr, nullptr);
+    if (!parsed) {
+        error = std::string(io::errorCodeToken(parsed.error.code));
+        return false;
+    }
+    auto readBytes = readFileBytes(path, error);
+    if (!readBytes) { return false; }
+    // 摘要对账（两读取窗口一致性——变化窗口不冒充稳定输入）。
+    core::ContentDigester digester;
+    digester.update(readBytes->data(), readBytes->size());
+    const core::Digest256 byteDigest = digester.finalize();
+    if (byteDigest != parsed.value.digest
+        || readBytes->size() != parsed.value.totalBytes) {
+        error = std::string(io::errorCodeToken(io::IoErrorCode::ResChanged))
+                + "：入口文件在读取窗口间发生变化";
+        return false;
+    }
+    doc = parsed.value;
+    bytes = std::move(*readBytes);
+    return true;
+}
+
+/**
+ * @brief WorkCell 依赖树装配（缺失容忍——引擎消费形态）。
+ *
+ * 入口文档节点（真实快照）＋逐 `<Polytope file>` 引用节点：存在＝io 真实
+ * 快照（digest 身份）、缺失/拦截＝exists=false 缺失叶——引擎按 V-08 转
+ * Recorded＋IO-RES-MISSING 事实（缺失≠不可行，不阻断导入、不虚构存在）。
+ * 引用自 io 良构解析树递归收集（不走正则——元素语义路由归 io 产物）；
+ * 远距方案（"://"）不入树（黄金件约定）；同键去重＋relPath 字典序稳定。
+ */
+io::ResourceDependencyTree assembleWorkCellDependencyTree(
+    const io::GenericXmlDoc& doc,
+    const io::ResourceSnapshot& entrySnapshot,
+    const std::filesystem::path& baseDir,
+    const std::string& rootRel)
+{
+    io::ResourceDependencyTree tree;
+    tree.rootRel = rootRel;
+
+    io::ResourceNode entry;
+    entry.relPath = rootRel;
+    entry.exists = true;
+    entry.snapshot = entrySnapshot;
+    tree.nodes.push_back(std::move(entry));
+
+    // Polytope 引用递归收集（文档序——io GenericXmlDoc 子元素天然文档序）。
+    std::vector<std::string> refs;
+    std::function<void(const io::GenericXmlNode&)> collect =
+        [&](const io::GenericXmlNode& node) {
+            if (node.name == "Polytope") {
+                for (const auto& attr : node.attrs) {
+                    if (attr.first == "file" && !attr.second.empty()) {
+                        refs.push_back(attr.second);
+                    }
+                }
+            }
+            for (const auto& child : node.children) { collect(child); }
+        };
+    collect(doc.root);
+
+    const io::IResourceReaderPtr reader = io::makeResourceReader();
+    io::ResourceOpenSpec spec;
+    spec.role = io::PathRole::UserSource;  // 用户自选导入文件的角色同源
+    for (const std::string& rawRef : refs) {
+        const std::string relKey = foldResourceKey(rawRef);
+        // 远距方案/空引用不入树（不虚构资源——黄金件同款约定）。
+        if (relKey.empty() || relKey.find("://") != std::string::npos) {
+            continue;
+        }
+        bool seen = false;
+        for (const io::ResourceNode& n : tree.nodes) {
+            if (n.relPath == relKey) { seen = true; break; }
+        }
+        if (seen) { continue; }
+
+        io::ResourceNode node;
+        node.relPath = relKey;
+        const auto snapshot = reader->snapshot(
+            baseDir / std::filesystem::u8path(rawRef), spec, nullptr, nullptr);
+        if (snapshot) {
+            node.exists = true;
+            node.snapshot = snapshot.value;
+        } else {
+            node.exists = false;  // 缺失叶（含预算/护栏拦截的诚实降级）
         }
         tree.nodes.push_back(std::move(node));
 
@@ -980,6 +1113,100 @@ bool executeModelingCommand(const std::string& commandId,
         summary = (isXacro ? "Xacro 导入完成：" : "URDF 导入完成：")
                   + std::to_string(outcome.report.mapped.size()) + " 项映射、"
                   + std::to_string(outcome.report.errors.size()) + " 项错误——草稿已更新，请经『应用草稿』提交";
+        return true;
+    }
+
+    // ---- modeling.import-workcell（外部 WorkCell 反向导入——§6.6 通道；
+    //      WP-13-T25/F06：MDL-18/AT-33 有损提取入草稿。与 URDF/Xacro 导入
+    //      同纪律：真实读取→引擎提取→多设备显式选链→逐项报告确认→确认才
+    //      替换草稿（保根）；一切取消/失败零工作集修改、零修订零落盘。----
+    if (commandId == "modeling.import-workcell") {
+        const auto picked = host.openFilePath(
+            QStringLiteral("导入 WorkCell"),
+            QStringLiteral("WorkCell (*.wc.xml *.xml);;所有文件 (*)"));
+        if (!picked.has_value()) { return false; }  // 用户取消（UX-03：非错误）
+        const QString& path = *picked;
+
+        // 入口装载（良构校验＋真实字节＋摘要对账——失败无部分产物）。
+        io::GenericXmlDoc doc;
+        std::vector<std::uint8_t> bytes;
+        std::string error;
+        if (!loadWorkCellEntry(path, doc, bytes, error)) {
+            summary = "导入中止：" + error;
+            return false;
+        }
+
+        // ValidatedSource 装配：入口节点真实快照＋Polytope 缺失容忍树。
+        const std::filesystem::path fsPath(path.toStdWString());
+        const std::string rootRel = foldResourceKey(fsPath.filename().u8string());
+        ValidatedSource source;
+        source.bytes = bytes;
+        source.entrySnapshot = makeEntrySnapshot(path, bytes);
+        source.dependencyTree = assembleWorkCellDependencyTree(
+            doc, source.entrySnapshot, fsPath.parent_path(), rootRel);
+
+        // 引擎提取（§6.6 单一实现——mapWorkCellXml 委托 extractWorkCellDevice）；
+        // 多设备文件产分支报告→用户显式选设备（§6.4 同机制：不默认选第一个），
+        // 取消＝静默终止；重映射消费同一冻结源（不重读文件）。
+        const ModelImportMapper mapper;
+        ImportOptions options;
+        std::vector<core::DiagnosticRecord> diags;
+        const auto mapFrozen = [&] {
+            diags.clear();
+            return mapper.mapWorkCellXml(source, options, diags);
+        };
+        ImportOutcome outcome = mapFrozen();
+        if (!outcome.draft && !outcome.report.branches.empty()) {
+            QStringList candidates;
+            for (const auto& branch : outcome.report.branches) {
+                candidates << QString::fromStdString(branch.branchRoot);
+            }
+            const auto chosen = host.chooseItem(
+                QStringLiteral("选择目标设备"),
+                QStringLiteral("检测到多个设备，请显式选择要提取的设备："),
+                candidates);
+            if (!chosen.has_value()) { return false; }  // 取消选链零修改
+            if (*chosen < 0 || *chosen >= candidates.size()) {
+                summary = "导入取消：设备选择索引无效";
+                return false;
+            }
+            options.selectedMainBranch = outcome.report.branches[*chosen].branchRoot;
+            outcome = mapFrozen();
+        }
+
+        // 失败面：error 有值无草稿＝不可提取（根检查/无设备/选链不存在/
+        // 源不一致）——如实转述；报告已由引擎无条件完整产出。
+        if (outcome.error.has_value() && !outcome.draft.has_value()) {
+            summary = "导入失败（" + std::string(importErrorCodeToken(outcome.error->code))
+                      + "）：" + outcome.error->detail;
+            return false;
+        }
+        if (!outcome.draft.has_value()) {
+            summary = "导入未产出草稿——详见提取报告（错误项 "
+                      + std::to_string(outcome.report.errors.size()) + " 条）";
+            return false;
+        }
+
+        // 逐项提取报告确认（AT-33 验收核心——不可表达/未保留逐项可见）；
+        // 确认前零草稿替换。
+        if (!host.confirmImport(importSummaryText(outcome.report))) {
+            return false;
+        }
+        // 草稿替换（恰一根不变量 R1——与 URDF/Xacro 导入同款：已回填项目根
+        // 身份保留，避免下次 draft.apply 重复建根）。
+        const std::optional<core::ObjectId> previousRoot = session.draft.rootObjectId;
+        session.draft = ModelingWorkingSet{};
+        session.draft.rootObjectId = previousRoot;
+        session.draft.design = *outcome.draft;
+        ModelingChangeRecord record;
+        record.subject = "design";
+        record.summary = "导入 WorkCell 草稿（MDL-18 有损提取）";
+        session.draft.changes.push_back(std::move(record));
+        if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
+        summary = "WorkCell 导入完成："
+                  + std::to_string(outcome.report.mapped.size()) + " 项映射、"
+                  + std::to_string(outcome.report.errors.size())
+                  + " 项错误——草稿已更新，请经『应用草稿』提交";
         return true;
     }
 

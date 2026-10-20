@@ -63,6 +63,11 @@ std::vector<ui::CommandDescriptor> modelingDomainCommands()
         // ＝已应用修订的 runtime 编译快照只读视图，零修订零失效；
         // readOnlyAllowed=true——只读会话亦可导出查看）。
         make("modeling.export-workcell-xml", ui::CommandScope::Project, true, "建模/规范包"),
+        // ⑫ 外部 WorkCell 反向导入（WP-13-T25/F06——MDL-18/AT-33：.wc.xml
+        // 有损提取入草稿；表尾追加纪律同⑪。写路径 readOnlyAllowed=false；
+        // 与 URDF/Xacro 三条独立命令；"从 WorkCell 新建项目来源"明确不做
+        // ——PM 清单）。
+        make("modeling.import-workcell", ui::CommandScope::Project, false, "建模/导入"),
     };
 }
 

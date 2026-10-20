@@ -623,3 +623,32 @@ TEST(ModelingUiModuleHostWiring, NamedPoseCanSaveAfterSessionReopen_MDL17_AT04)
     const auto saved=std::find_if(entries.begin(),entries.end(),[](const auto& e){return e.key=="reopened-inspection";});
     ASSERT_NE(saved,entries.end());EXPECT_DOUBLE_EQ(saved->jointConfiguration[0],0.45);
 }
+
+/** @brief F06/MDL-18/AT-33：外部 WorkCell 导入必须有正式命令入口——面板
+ * 按钮存在、文案＝UiText 登记中文（非内部键泄漏——UX-02）、写命令在只读
+ * 会话禁用（L-7）。修复前面板无此按钮（审计 M14：内核可用、入口缺失）。
+ */
+TEST(ModelingUiModuleHostWiring, WorkCellImportCommandButtonRegistered_MDL18_AT33)
+{
+    IRD_TEST_INFO("MDL-18",{"AT-33"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    // 生产装配序（TextResolverBoundBeforePanelCreation 同款）：解析器先于
+    // createPanel——按钮标题经 UiText 解析为登记中文（键值见 UiText.cpp 表）。
+    module.bindTextResolver([](const std::string& key) {
+        const std::string text = ui::resolveText(key);
+        return QString::fromStdString(text.empty() ? key : text);
+    });
+    module.bindCommandSubmit([](const ui::CommandId&){});
+    module.setWritable(false);  // 只读会话初值——写命令必须初始禁用
+    std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* button=widget->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_cmd_modeling.import-workcell"));
+    ASSERT_NE(button,nullptr)<<"F06：正式面板缺少 modeling.import-workcell 命令按钮（审计 M14）";
+    const QString title=button->text();
+    EXPECT_FALSE(title.isEmpty());
+    EXPECT_FALSE(title.startsWith(QStringLiteral("cmd.")))<<"UX-02：按钮文案泄漏内部键";
+    EXPECT_NE(title,QStringLiteral("modeling.import-workcell"))<<"按钮文案未解析为中文标题";
+    EXPECT_FALSE(button->isEnabled())<<"L-7：写命令在只读会话必须禁用";
+    module.setWritable(true);
+    EXPECT_TRUE(button->isEnabled())<<"恢复可写后导入按钮必须可用";
+}
