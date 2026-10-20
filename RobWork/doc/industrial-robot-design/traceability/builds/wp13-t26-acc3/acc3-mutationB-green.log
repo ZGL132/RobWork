@@ -1,0 +1,11 @@
+Note: Google Test filter = *VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingIntegration
+[ RUN      ] ModelingIntegration.VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21
+[       OK ] ModelingIntegration.VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21 (1 ms)
+[----------] 1 test from ModelingIntegration (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 1 test.

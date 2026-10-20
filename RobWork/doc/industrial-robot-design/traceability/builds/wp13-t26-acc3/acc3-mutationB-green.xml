@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-10-20T22:27:37.473" name="AllTests">
+  <testsuite name="ModelingIntegration" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T22:27:37.473">
+    <testcase name="VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21" file="C:\acc-wp13t26\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="720" status="run" result="completed" time="0.001" timestamp="2026-10-20T22:27:37.473" classname="ModelingIntegration" />
+  </testsuite>
+</testsuites>

@@ -9560,6 +9560,15 @@
       "registeredAt": "2026-10-18",
       "title": "validate-docs 增卡头一致性机检维度：「日期」行应含现行版本（卡头最高文档版本行）的登记日期——本次家族修复前 project 卡日期行滞留 2026-09-09 达 v0.1~v0.26 十七个版本、kinematics 滞留 2026-10-12 达十余跳，机检缺失使漂移只能靠验收者通读发现",
       "owner": "治理脚本所有者（validate-docs.ps1 维护批——与既有卡头版本行同步类机检建议一并评估）"
+    },
+    {
+      "id": "F-948",
+      "source": "WP-13-T26 attempt 3 独立验收（2026-10-20，acc/WP-13-T26/3——建议级转登，acceptance-protocol §5）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-20",
+      "title": "IRD_UI_PLUGIN_SMOKE=layout 截图产出依赖环境变量 IRD_UI_PLUGIN_SMOKE_OUT，未设置时 snapPng 静默返回（无提示行、不计失败）——复现/验收者不知该前置会漏留截图档或误判截图缺失；attempt 3 亲跑首次未设变量即零截图，补设后 9 张齐全（UiPlugin.cpp snapPng 闭包：outDir.isEmpty() 即 return）",
+      "owner": "ui 单元/治理（建议：outDir 为空时输出提示行（如 screenshot-skipped:no-out-dir），或在证据 README 写明该前置变量）"
     }
   ]
 }
