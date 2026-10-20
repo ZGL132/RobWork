@@ -1,0 +1,20 @@
+Note: Google Test filter = ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04
+C:\acc-wp13t26\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(944): error: Value of: module.session().importedSelfCollisionCandidates.empty()
+  Actual: false
+Expected: true
+鎾ら攢瀵煎叆鍚庡師妯℃澘涓嶈兘缁х画鎻愪緵璇ュ鍏ョ殑鍊欓€?
+
+[  FAILED  ] ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04 (535 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (535 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (535 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04
+
+ 1 FAILED TEST

@@ -1,0 +1,18 @@
+閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.12.6+db5f6012c
+
+  ird_gates锛氫緷璧栫孩绾夸笌琛ヤ竵闂ㄧ锛圧-1~R-5/T-1/T-2/SUB/SA-02锛嬪紩鎿庤嚜娴嬶級
+  [ird_gates] 閼奉亝绁?pass_clean閿涙艾鍏遍崙鈧径鐟板徔闁俺绻冮敍鍫熸￥鐠囶垱濮ら敍?[ird_gates] 閼奉亝绁?pass_perf_targets閿涙艾鍏遍崙鈧径鐟板徔闁俺绻冮敍鍫熸￥鐠囶垱濮ら敍?[ird_gates] 閼奉亝绁?pass_perf_registered_edge閿涙艾鍏遍崙鈧径鐟板徔闁俺绻冮敍鍫熸￥鐠囶垱濮ら敍?[ird_gates] 閼奉亝绁?pass_openbench_worker閿涙艾鍏遍崙鈧径鐟板徔闁俺绻冮敍鍫熸￥鐠囶垱濮ら敍?[ird_gates] 閼奉亝绁?fail_perf_unregistered閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-SUB
+  [ird_gates] 閼奉亝绁?fail_openbench_testkit閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-T1
+  [ird_gates] 閼奉亝绁?fail_perf_lookalike閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-T1
+  [ird_gates] 閼奉亝绁?pass_r4comment閿涙艾鍏遍崙鈧径鐟板徔闁俺绻冮敍鍫熸￥鐠囶垱濮ら敍?[ird_gates] 閼奉亝绁?pass_r4cliff閿涙艾鍏遍崙鈧径鐟板徔闁俺绻冮敍鍫熸￥鐠囶垱濮ら敍?[ird_gates] 閼奉亝绁?fail_r4cliff閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-R4
+  [ird_gates] 閼奉亝绁?fail_r1閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-R1
+  [ird_gates] 閼奉亝绁?fail_t1閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-T1
+  [ird_gates] 閼奉亝绁?fail_r5閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-R5
+  [ird_gates] 閼奉亝绁?fail_sub閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-SUB
+  [ird_gates] 閼奉亝绁?fail_r3閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-R3
+  [ird_gates] 閼奉亝绁?fail_r4閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-R4
+  [ird_gates] 閼奉亝绁?fail_t2閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 閹殿偅寮块弽鐧哥窗C:/acc-wp13t26/wt-repro/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 閸忋劑鍎村Λ鈧弻銉┾偓姘崇箖閿涙瓓-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闂嗚泛鎳℃稉?==============================================================
+  Building Custom Rule C:/acc-wp13t26/wt-repro/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt

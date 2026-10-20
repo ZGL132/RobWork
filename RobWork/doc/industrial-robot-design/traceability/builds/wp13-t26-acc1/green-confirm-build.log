@@ -1,0 +1,18 @@
+閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWork\bin\Release\sdurw_control.dll

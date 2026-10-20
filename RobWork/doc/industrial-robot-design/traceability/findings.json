@@ -9560,6 +9560,33 @@
       "registeredAt": "2026-10-18",
       "title": "validate-docs 增卡头一致性机检维度：「日期」行应含现行版本（卡头最高文档版本行）的登记日期——本次家族修复前 project 卡日期行滞留 2026-09-09 达 v0.1~v0.26 十七个版本、kinematics 滞留 2026-10-12 达十余跳，机检缺失使漂移只能靠验收者通读发现",
       "owner": "治理脚本所有者（validate-docs.ps1 维护批——与既有卡头版本行同步类机检建议一并评估）"
+    },
+    {
+      "id": "F-942",
+      "source": "traceability/acceptance/WP-13-T26-20261020.md#F-942（独立子会话验收 attempt 1 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-20",
+      "title": "AGENTS.md §4.1 集成模式配置命令样本未带 Qt 前缀（-DCMAKE_PREFIX_PATH=<Qt 目录>）：fresh 树按文档口径配置在 RobWorkStudioSetup.cmake:178 处报 Could NOT find Qt6 or Qt5 失败（本验收首轮实证；主仓库既有 build/CMakeCache.txt 证明集成配置历来携带该参数）。缺参影响『全新上下文按 AGENTS.md 入口照执行』的验收可复现口径，与独立冒烟段已带前缀的写法不一致",
+      "owner": "根规则维护者（AGENTS.md §4.1 修订批——集成命令补 -DCMAKE_PREFIX_PATH 示例参数）"
+    },
+    {
+      "id": "F-943",
+      "source": "traceability/acceptance/WP-13-T26-20261020.md#F-943（独立子会话验收 attempt 1 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-20",
+      "title": "validate-docs/index-evidence 的证据文件大小比对未做行尾归一化：core.autocrlf=true 的 Windows fresh 检出将 LF 转 CRLF 后，builds/requirements-audit-20261018/.gitignore（127→131）与 builds/requirements-close-20261019/source-diff.patch（99827→101444）触发假阳性 size mismatch 并使 validate-docs 退出码 1（归一 LF 后与索引登记逐字节一致——环境现象非索引失实）。行尾敏感使 CRLF 检出环境的全新验收会话门禁假失败",
+      "owner": "治理脚本所有者（validate-docs.ps1/index-evidence.ps1 维护批——比对逻辑行尾归一化，或对 .gitignore/.patch 类文件改用内容摘要登记）"
+    },
+    {
+      "id": "F-944",
+      "source": "traceability/acceptance/WP-13-T26-20261020.md#F-944（独立子会话验收 attempt 1 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-20",
+      "title": "--ird_report 测试报告机制覆盖不一致：9 个集成测试套件中 runtime（sdurws_ird_runtime_test）不产出 ird 报告文件（其余 8 个集成套件与 3 个独立冒烟套件均正常产出，同参数同调用方式实证）——若 ird 报告作为验收留痕载体（AGENTS §4.2/契约 acceptance 常点名），runtime 侧将成为系统性缺口",
+      "owner": "测试基建所有者（runtime 单元测试 main 接入 ird_report 或在 DTB §5.5 登记例外口径）"
     }
   ]
 }
