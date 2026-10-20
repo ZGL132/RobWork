@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T20",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "运动学全功能逐项审核与缺陷修复闭环",
+  "status": "ready",
+  "dependsOn": ["WP-15-T19"],
+  "requirements": ["KIN-01", "KIN-02", "KIN-03", "KIN-04", "KIN-05", "KIN-06", "KIN-07", "KIN-08", "KIN-09", "KIN-10", "KIN-11", "KIN-12", "KIN-13", "KIN-14", "UX-03", "UX-05", "UX-06", "UX-11", "NFR-COR-01", "NFR-COR-02", "NFR-PERF-01"],
+  "designRefs": ["units/kinematics.md#9.8", "units/kinematics.md#10", "development-task-breakdown.md#2.16"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinHostServicesAssembly.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinHostServicesAssemblyTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/KinematicsCompletionGuiTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-15-T20.json",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/docs/superpowers/plans/2026-10-21-kinematics-completion.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/**", "RobWork/RobWorkSim/**", "RobWork/RobWorkStudio/src/rws/**", "vcpkg/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md", "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/assembly/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode build",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode standalone-configure",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode standalone-build",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name kinematics",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name kinematics_contract",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name kinematics_gui",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name standalone_kinematics",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name standalone_kinematics_contract",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode test -Name standalone_kinematics_gui",
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1 -Mode gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t20",
+  "interUnit": true,
+  "knownPitfalls": ["P-KIN-3", "P-KIN-4", "P-KIN-5", "P-KIN-7"],
+  "acceptance": [
+    "按需求冻结70项清单并逐项说明验证方法；计算、真实交互、三维独立记录PASS/FAIL/SKIP/NOT RUN，不以原有套件通过代替产品验收",
+    "每项缺陷先真实复现、登记根因与精确修复设计，再红绿回归；未验证功能不得宣称闭环，跨域消费有真实回归",
+    "双模式构建、模型/契约/Windows windows平台GUI及正式宿主实际执行，XML与ird报告和截图/日志只增不改",
+    "无框架改动、无业务域互链、中文注释合格；公共面或协作边变化先增量登记设计及契约，禁止提前实现",
+    "完成批次提交推送，独立验收与主线合入保留所有者决定；未执行、失败、发布延期均诚实报告"
+  ],
+  "note": "2026-10-21用户直接授权仿照需求/建模审核修复运动学每个功能；不使用子代理、不弹出选项。基线5fd9a3d1。T17为R2扩展单位预留，T18/T19已用，故本轮T20。第一批公共include/assembly仍禁止修改；有证据后按精确八节设计修订范围。完整计划与功能矩阵在本任务允许路径内。此为实施会话，不自签独立验收pass。"
+}

@@ -14,9 +14,11 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include <QPainter>
+#include <QScrollArea>
 #include <QVBoxLayout>
 
 #include <cmath>
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -77,14 +79,30 @@ KinematicsPanelWidget::KinematicsPanelWidget(KinPanelServices services,
     // 在共享项目树的口径不变，本面板页签呈现零变化）。
 
     m_tabs = new QTabWidget(this);
-    m_tabs->addTab(buildPosePane(), tr("位姿指标"));
-    m_tabs->addTab(buildTaskPane(), tr("任务点验证"));
-    m_tabs->addTab(buildCoveragePane(), tr("区域覆盖"));
-    m_tabs->addTab(buildResultsPane(), tr("结果与可视化"));
+    // WP-15-T20 F03/UX-09：QTabWidget会采纳所有页面的最大最小尺寸，
+    // 即便当前页很短，结果长页也曾把整个宿主撑出屏幕。滚动容器隔离内容
+    // 的最低尺寸，使小窗口可操作到最后一行；Qt父子链负责释放内容和容器。
+    /**
+     * @brief 将已有页面装入滚动容器，仅UI构造期调用。
+     * @param content [in,out] 非空页控件，Qt所有权转交给新容器。
+     * @return 由m_tabs最终持有的容器，不持有业务状态。
+     */
+    const auto scrollable = [this](QWidget* content) {
+        auto* scroll = new QScrollArea(m_tabs);
+        scroll->setWidgetResizable(true);
+        scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setWidget(content);
+        return scroll;
+    };
+    m_tabs->addTab(scrollable(buildPosePane()), tr("位姿指标"));
+    m_tabs->addTab(scrollable(buildTaskPane()), tr("任务点验证"));
+    m_tabs->addTab(scrollable(buildCoveragePane()), tr("区域覆盖"));
+    m_tabs->addTab(scrollable(buildResultsPane()), tr("结果与可视化"));
     layout->addWidget(m_tabs);
 
     // 状态行（非模态反馈——UX-03/07：一切反馈就地，零模态对话框）。
     m_statusLine = new QLabel(tr("就绪"), this);
+    m_statusLine->setWordWrap(true); // 长诊断换行，不能再由单行文字撑宽宿主。
     m_statusLine->setObjectName(QStringLiteral("ird_kin_status_line"));  // 验证定位锚（宿主遍历）
     layout->addWidget(m_statusLine);
 
@@ -506,8 +524,60 @@ void KinematicsPanelWidget::refreshAll()
 
 void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProjection>& units)
 {
-    // L-K8：设置会话投影后全面板重投影——SI 真值不变（结果不动），仅
-    // 显示文本重建；零重算（无任何评估调用）/零修订（无命令提交）。
+    // WP-15-T20 F02/AT-27：编辑框也承载显示制式，不能只改标签再用新
+    // 制式解释旧数值（原0.1 m会被当成0.1 mm）。先由旧制式逆投影为SI，
+    // 再经唯一单位设施投到新制式。空/非法原文保留，让用户修正而非清零。
+    // 所有转换先暂存；任一合法数值换算溢出时整次切换不生效，避免混合制式。
+    std::vector<std::pair<QLineEdit*, QString>> pending;
+    /**
+     * @brief 暂存一个编辑字段的新显示值，不在此步改任何控件或会话。
+     * @param edit [in] 本面板持有的非空编辑框；原文按旧显示制式解释。
+     * @param angle [in] true为rad角度，false为m长度；坐标系保持基座系。
+     * @return false表示换算溢出；非法/空原文原样保留并返回true。
+     * 单位设施异常交由调用处归为切换拒绝，pending仅活到本次UI调用结束。
+     */
+    const auto reproject = [this, &units, &pending](QLineEdit* edit, bool angle) {
+        bool parsed = false;
+        const double value = edit->text().toDouble(&parsed);
+        if (!parsed || !std::isfinite(value)) {
+            return true; // 非法原文/空缺省不被替换，后续提交仍由原校验拒绝。
+        }
+        const double si = angle ? resolveKinAngleDisplayToSi(value, m_session.displayUnits)
+                                : resolveKinDisplayToSi(value, m_session.displayUnits);
+        if (!std::isfinite(si)) { return false; }
+        const double projected = units.has_value()
+            ? (angle ? units->projectAngle(si) : units->projectLength(si)) : si;
+        if (!std::isfinite(projected)) { return false; }
+        // 可编辑数值会重新进入求解，必须用double往返精度；不能采用只读
+        // 指标的6位显示精度，否则反复切换将改变物理目标及求解结果。
+        pending.emplace_back(edit, QString::number(
+            projected, 'g', std::numeric_limits<double>::max_digits10));
+        return true;
+    };
+    bool convertible = true;
+    try {
+        for (auto* edit : {m_targetX, m_targetY, m_targetZ, m_wsRegionCX,
+                           m_wsRegionCY, m_wsRegionCZ, m_wsRegionSX,
+                           m_wsRegionSY, m_wsRegionSZ}) {
+            if (!reproject(edit, false)) { convertible = false; break; }
+        }
+        if (convertible) {
+            for (auto* edit : {m_targetRoll, m_targetPitch, m_targetYaw}) {
+                if (!reproject(edit, true)) { convertible = false; break; }
+            }
+        }
+    } catch (const std::exception&) {
+        // 单位设施拒绝数值范围属于用户输入问题，不让异常穿越Qt槽；
+        // 下面统一保留全部原文和旧制式，提示用户缩小数值后重试。
+        convertible = false;
+    }
+    if (!convertible) {
+        showStatusText(tr("显示单位切换未应用：输入换算后超出有限数值范围；"
+                          "请减小数值后重试。原单位与全部原值保留。"));
+        return;
+    }
+    for (const auto& value : pending) { value.first->setText(value.second); }
+    // 只改变显示文本与投影句柄，结果SI真值、配置、修订和缓存身份都不动。
     m_session.displayUnits = units;
     refreshAll();
 }
@@ -1055,11 +1125,15 @@ void KinematicsPanelWidget::onWsRunClicked()
             const QString t = edit->text().trimmed();
             bool good = false;
             const double v = t.toDouble(&good);
-            if (!good || !std::isfinite(v)) {
-                ok = false;
+            // WP-15-T20 F01：每次成功解析必须显式回写true；旧实现仅在
+            // 失败时写false，外层初值false导致任何合法区域盒都被拒绝。
+            ok = good && std::isfinite(v);
+            if (!ok) {
                 return 0.0;
             }
-            return resolveKinDisplayToSi(v, m_session.displayUnits);  // SI m
+            const double si = resolveKinDisplayToSi(v, m_session.displayUnits); // 基座系m。
+            ok = std::isfinite(si); // 换算后也要有限，不能把溢出交给数值求解。
+            return si;
         };
         params.regionCenterX = readLength(m_wsRegionCX);
         if (ok) {

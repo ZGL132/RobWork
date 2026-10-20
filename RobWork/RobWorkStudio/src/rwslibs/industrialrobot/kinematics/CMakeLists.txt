@@ -530,7 +530,10 @@ add_executable(sdurws_ird_kinematics_gui_test
 target_sources(sdurws_ird_kinematics_gui_test PRIVATE
     gui_test/KinematicsPanelSessionGuiTest.cpp
     gui_test/KinHostLoopGuiTest.cpp  # ★ KIN-P4——六轴改型闭环＋呈现转真实执行（审查 §5 KIN-P4 验收主径）
-    gui_test/KinematicsPanelSamplingGuiTest.cpp)  # ★ KIN-R2 任务3——探索式采样组模式编辑入口（KIN-09/F-905 呈现半区）
+    gui_test/KinematicsPanelSamplingGuiTest.cpp
+    # WP-15-T20：补充真实窗口反例，覆盖已有输入切单位和默认区域盒采样。
+    # 与原有用例共同链接真算法，不用替身掩盖端到端行为错误。
+    gui_test/KinematicsAcceptanceGuiTest.cpp)
 target_compile_features(sdurws_ird_kinematics_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_gui_test PROPERTIES
     CXX_STANDARD 17

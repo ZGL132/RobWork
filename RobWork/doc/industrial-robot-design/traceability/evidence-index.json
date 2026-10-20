@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-21T00:12:14+08:00",
+  "generatedAt": "2026-10-21T01:18:10+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 14131,
-    "totalBytes": 762719652,
+    "totalFiles": 14239,
+    "totalBytes": 766523096,
     "byKind": {
-      "markdown-doc": 41,
-      "pipeline-artifact": 2,
-      "json-data": 7,
-      "governance-record": 40,
-      "benchmark": 8,
-      "gtest-report": 335,
-      "acceptance-record": 516,
-      "build-log": 13180,
+      "manual-acceptance": 1,
       "log": 1,
-      "manual-acceptance": 1
+      "pipeline-artifact": 2,
+      "markdown-doc": 41,
+      "build-log": 13288,
+      "json-data": 7,
+      "acceptance-record": 516,
+      "gtest-report": 335,
+      "governance-record": 40,
+      "benchmark": 8
     },
     "byLifecycle": {
-      "unverified": 13539,
-      "historical": 565,
+      "unverified": 13647,
       "superseded": 0,
+      "historical": 565,
       "current": 27
     },
     "associated": 597,
-    "unassociated": 13534,
-    "shaComputed": 14112,
+    "unassociated": 13642,
+    "shaComputed": 14220,
     "shaSkippedLarge": 19,
-    "duplicateGroupsTotal": 814,
+    "duplicateGroupsTotal": 820,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -674,6 +674,24 @@
         "builds/gov-gate/old-engine-scale.log",
         "builds/gov-gate/red-fail-case.log",
         "builds/gov-gate/red-pass-case.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-20261021-011547-271.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-baseline.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-green1.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-20261021-011552-357.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-baseline.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-expanded-red.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-green-full.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-green1.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-red2.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-20261021-011533-147.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-baseline.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-green1.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_contract-20261021-011612-414.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_contract-green1.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_gui-20261021-011617-246.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_gui-green-full.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics-20261021-011558-508.stderr.log",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics-green1.stderr.log",
         "builds/modeling-audit-20261019-601ffa0e/tour-r2.stderr.log",
         "builds/modeling-completion-20261020-b2b/modeling-tour.stderr.log",
         "builds/modeling-completion-20261020-b3a/modeling-tour.stderr.log",
@@ -913,6 +931,54 @@
       "paths": [
         "builds/kin-p4/ird-test-report-last-run.json",
         "builds/kin-p4/ird-test-report-root.json"
+      ]
+    },
+    {
+      "sha256": "4de27b39dc83d8a44d50bf1ddd331c8903b8a8e91df42392d18ce69a976829c4",
+      "paths": [
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-20261021-011547-271-report.json",
+        "builds/requirements-a23-20261020/kinematics_contract-report.json"
+      ]
+    },
+    {
+      "sha256": "ef7171cea8725d02a73da006795beeb5a41e0b7c6d0e3df469e0688d12e774dc",
+      "paths": [
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-expanded-red/cartesian-box-run.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-red2/cartesian-box-run.png"
+      ]
+    },
+    {
+      "sha256": "5381d1091ef7751d213b70ee83491a84cf8688caae39b010cc788cf7a1ebf6fe",
+      "paths": [
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-expanded-red/filled-target-mm.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-red2/filled-target-mm.png"
+      ]
+    },
+    {
+      "sha256": "a9212cbe1c029778ab6f3b20834fe3855b9864e31a8a97b6a764a2b2ed47b58c",
+      "paths": [
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/cartesian-box-run.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/cartesian-box-run.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/cartesian-box-run.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/cartesian-box-run.png"
+      ]
+    },
+    {
+      "sha256": "4efdf0fcf2a7a9ec9dcd9d8b6d2165adff7f28ee775f89e6884c6aeaf2d9af2e",
+      "paths": [
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/filled-target-mm.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/filled-target-mm.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/filled-target-mm.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/filled-target-mm.png"
+      ]
+    },
+    {
+      "sha256": "e9d4a5709240558bd83ff70162e296f8e1f47c99c04e4c14073240229a85b629",
+      "paths": [
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/results-small-window-bottom.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/results-small-window-bottom.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/results-small-window-bottom.png",
+        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/results-small-window-bottom.png"
       ]
     },
     {
@@ -1561,60 +1627,6 @@
         "builds/modeling-completion-20261020-b2b/modeling-tour/mtour-3-origin-edit.png",
         "builds/modeling-completion-20261020-b3a/modeling-tour/mtour-3-origin-edit.png",
         "builds/modeling-completion-20261020-b3b-display/modeling-tour/mtour-3-origin-edit.png"
-      ]
-    },
-    {
-      "sha256": "ffb9e980376d59ba7fe1373cd7bc80dae1e9ce5fc1f06a2afd9ba1d85e5cf0c5",
-      "paths": [
-        "builds/modeling-completion-20261020-b2b/modeling-tour/mtour-4-structure.png",
-        "builds/modeling-completion-20261020-b3a/modeling-tour/mtour-4-structure.png",
-        "builds/modeling-completion-20261020-b3b-display/modeling-tour/mtour-4-structure.png"
-      ]
-    },
-    {
-      "sha256": "17611849426627e5739dca6b3873b7d4739ac877bd554f82ec261499bf29d108",
-      "paths": [
-        "builds/modeling-completion-20261020-b2b/modeling-tour/mtour-5-applied.png",
-        "builds/modeling-completion-20261020-b2b/modeling-tour/mtour-6-exported.png",
-        "builds/modeling-completion-20261020-b3a/modeling-tour/mtour-5-applied.png",
-        "builds/modeling-completion-20261020-b3a/modeling-tour/mtour-6-exported.png",
-        "builds/modeling-completion-20261020-b3b-display/modeling-tour/mtour-5-applied.png",
-        "builds/modeling-completion-20261020-b3b-display/modeling-tour/mtour-6-exported.png"
-      ]
-    },
-    {
-      "sha256": "c4c6d358ad3e2ff1d80832b7052b4abb932985983e32321fae3c9be17c6e4ba7",
-      "paths": [
-        "builds/modeling-completion-20261020-b2b/modeling-tour/mtour-5.5-reopened.png",
-        "builds/modeling-completion-20261020-b3a/modeling-tour/mtour-5.5-reopened.png",
-        "builds/modeling-completion-20261020-b3b-display/modeling-tour/mtour-5.5-reopened.png"
-      ]
-    },
-    {
-      "sha256": "40171794dadeb12752026693f6a5ab8bfcec10f6ffb541751171586d1793ac37",
-      "paths": [
-        "builds/modeling-completion-20261020-b2b/modeling-tour/mtour-5.7-scene-picked.png",
-        "builds/modeling-completion-20261020-b3a/modeling-tour/mtour-5.7-scene-picked.png",
-        "builds/modeling-completion-20261020-b3b-display/modeling-tour/mtour-5.7-scene-picked.png",
-        "builds/requirements-a23-20261020/modeling-tour/mtour-5.7-scene-picked.png"
-      ]
-    },
-    {
-      "sha256": "81f110b03c5783a7b362d4366291f7721690ea0dedd28486cf7450eb73f00433",
-      "paths": [
-        "builds/modeling-completion-20261020-b2b/modeling-tour/mtour-7-chinese-palette.png",
-        "builds/modeling-completion-20261020-b3a/modeling-tour/mtour-7-chinese-palette.png",
-        "builds/modeling-completion-20261020-b3b-display/modeling-tour/mtour-7-chinese-palette.png",
-        "builds/requirements-a23-20261020/modeling-tour/mtour-7-chinese-palette.png"
-      ]
-    },
-    {
-      "sha256": "f54c2b85f6deb9d53abcc013700973543ac62030b50dfe0aebbb99a9e9115b58",
-      "paths": [
-        "builds/modeling-completion-20261020-b2b/modeling-tour/mtour-8-scene-update-reopened.png",
-        "builds/modeling-completion-20261020-b3a/modeling-tour/mtour-8-scene-update-reopened.png",
-        "builds/modeling-completion-20261020-b3b-display/modeling-tour/mtour-8-scene-update-reopened.png",
-        "builds/requirements-a23-20261020/modeling-tour/mtour-8-scene-update-reopened.png"
       ]
     }
   ],
@@ -11387,6 +11399,870 @@
       "taskIds": [],
       "bytes": 4928,
       "sha256": "687eaa81321ed4c0da3bb1a9fec046884fb2d9cfdc14fbf5fe6038750bb0b041",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/ISSUES-stage1.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4758,
+      "sha256": "6449ec67563db0b5779df36903fae7032bfefaa8426a1cb5789234ee83ca22c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/MATRIX-RESULTS-stage1.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10470,
+      "sha256": "2779c76f440afe93cb4a6b63f35edd3af8359f8f38ace61d301a16ca73470b2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/MATRIX.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9933,
+      "sha256": "b2fb34b0e48408adfdcdc11b175a1b54963f77de925917a2c031aff59f09e75f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/REPORT-stage1.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4925,
+      "sha256": "76c18a29ffff2b1f9181c301615a6a3ac3891f971f55d42c3fe4f5785b9ec1a7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/build-kinematics-20261021-011416-148.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 26898,
+      "sha256": "ce523bb6070a0c386b22ed20a9de022bc8991aef474075314171e0b38239510b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/build-kinematics-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27156,
+      "sha256": "dcce829728e1f4a8b2af98a8149442e7391e6950794b8ee2225cb08325d6a1f0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/build-kinematics-source-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27190,
+      "sha256": "9bb9432d676f2fabb872e677a08866a45ad1a42289171186bee69301eb608baa",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/build-kinematics.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 247760,
+      "sha256": "3ef679e390c4368b7dc3e0fdaa51205a5d3a06c60d764066a6967c15c2f29edc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/configure-kinematics.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12248,
+      "sha256": "01959cfebdc47f1de5c2d8b6f5b909f488c38312439fd33b02c781e65deb237e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/gates-kinematics-20261021-011623-096.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1903,
+      "sha256": "ef5c5d2e352d2981c4e91e43cb3b460e74f3e6837c75ff1714c0aa82df5c5e1f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/gates-kinematics-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2036,
+      "sha256": "f35dcc8d61ffd5c2e10046dc76cc947ef061205c645aadd9502a3f984d6278db",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/gui-build-kinematics-expanded-red.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5988,
+      "sha256": "4b2f5da7efaee28244198cfcbcde3cfb2cf148cc6fb91f364aa912a5fdcd9495",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-20261021-011547-271-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47279,
+      "sha256": "4de27b39dc83d8a44d50bf1ddd331c8903b8a8e91df42392d18ce69a976829c4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-20261021-011547-271.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-20261021-011547-271.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21682,
+      "sha256": "5c8d284234c83b6ec4a0ede3d65bf4a0f67d51fa745f2acfea5d737d3084f1c7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-baseline-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47279,
+      "sha256": "79722449e7e04a80ff98685c0d3572efc3548b346782675624e055acd5ca8c33",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-baseline.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-baseline.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21683,
+      "sha256": "690c9727e66d923261d584915fa34f5bb90115605d3ed1dc04bdb9fe2a3ece94",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-green1-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47279,
+      "sha256": "2a7a321870b9595dc879164ed1a06a5fed0a634d14ad6891b75987433c1a5191",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-green1.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-green1.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21682,
+      "sha256": "013b624e8a39141aab108efca6ff22bba9b5e2e419e4334efaee5666f61c6630",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-20261021-011552-357-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21697,
+      "sha256": "67242cf6cbbf3b56e3cf35deb02cd7cbc585e3ec9fae754d70039d0e4dc2263d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-20261021-011552-357.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-20261021-011552-357.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10031,
+      "sha256": "ec25c88d659162076cc4f611f0d26be40499e7a6c42c895e2a2a8f041c596647",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-baseline-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 16664,
+      "sha256": "f6d412ca7304b52e20c3e3946c589bed5a5bffd795c9399cffd673e2ca3c8886",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-baseline.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-baseline.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7787,
+      "sha256": "6cc133f60926c93ee12699df0830399203e80187440eb53ffd85dae69924bd70",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-expanded-red-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5657,
+      "sha256": "ccc43cd117af67de0945cbf53cd5058819b45d1c853e470dbdd69bbf10c3d9ff",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-expanded-red.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-expanded-red.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27621,
+      "sha256": "81eb076ff49d16296f0ad81316908f23b2d629caba783929db4323ae8020c75c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-green-full-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21700,
+      "sha256": "c93ec7cc8a72afe1c4a7db3b1e8e8a4315a3a6b6538224b1746f17d4fd1fb521",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-green-full.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-green-full.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10028,
+      "sha256": "36e7d5017f60d2aa672aa6cbc93a52e2eb2ad5b8dcc0405a073df332090be3ab",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-green1-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5272,
+      "sha256": "76c004c939000934bdde4bd0e9a324112d3a359196403a79d0348d8225f60c9a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-green1.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-green1.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2417,
+      "sha256": "b083522e7eef91cf278961730c299bd511745673147e1d4f669a8e9410a38961",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-red2-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2940,
+      "sha256": "6d0bc70e6b756d3cc830b6e1c96489b70399fdd83c40366128da997f60410faa",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-red2.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_gui-red2.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3850,
+      "sha256": "17145eb2f5283fa611fabd9c923bed513982233ac11fec2f639bb72a5974f436",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-20261021-011533-147-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 238455,
+      "sha256": "fac5c535cae470da0eb38c70d7e1b40580c3247f541d49ca104156ff814d2ebc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-20261021-011533-147.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-20261021-011533-147.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 98183,
+      "sha256": "9adfc6ece2dc48d81c6acc1f30a1c5209f16992deb2d58ae882e46c87afd78ba",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-baseline-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 238459,
+      "sha256": "e7995173030d6f44e63fe6614d59dfeadaae7678d5163340a7f7aaa614bc39b2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-baseline.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-baseline.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 98211,
+      "sha256": "cc876379710a0fb34173a605fc6dfa187c6f65b11a8fd1d11e73f7ca23f37484",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-green1-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 238455,
+      "sha256": "00cb25b56d78b4ce5a762f83acdf974271115eabcc9939ec4681a66f26863951",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-green1.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics-green1.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 98193,
+      "sha256": "a37138ede82270964af2e4394d2bbe47a3d6688dbd7dd99bbb8052047845ae4f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_contract-20261021-011612-414-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47279,
+      "sha256": "aadb86847c526c9e5d77e7457753f54a8383fc40a3837321e2506f944580f0e4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_contract-20261021-011612-414.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_contract-20261021-011612-414.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21683,
+      "sha256": "99bb4b93a52cfa8489a50499e8abe5f1517d1000cc913994547878af99ed4b9f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_contract-green1-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47279,
+      "sha256": "d0e784d612abec0b59f41f0dbf533225c131f00c28e89bf0811e2b6dc869148f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_contract-green1.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_contract-green1.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21683,
+      "sha256": "1c67bc06a0ad0b097f800264465255550a18040737ae4e212e8df6246b12d085",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_gui-20261021-011617-246-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21698,
+      "sha256": "5081d121c95167d9613eb60f315892944a4b2dc0cf0a5a05251aabb14f71fc63",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_gui-20261021-011617-246.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_gui-20261021-011617-246.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10031,
+      "sha256": "23c1148c66d9bbfe124638e059dbac850eccc3bfc111d9abd300bff955263cfd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_gui-green-full-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 21697,
+      "sha256": "2c95f56dcdabba0c8fd2cd8e383ca9acd7a1bb1eab4097fd14dfc432a2c3543d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_gui-green-full.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics_gui-green-full.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10031,
+      "sha256": "575029d597e765044b3a126d8a3dd31854daa94fc2f3fe3191e7d152f6e0db7b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics-20261021-011558-508-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 231825,
+      "sha256": "43e8805112d3d6c3bd3f835f3a1c0867162ce302b128d65fe3b29e15aef54c19",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics-20261021-011558-508.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics-20261021-011558-508.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 95222,
+      "sha256": "05fbad8f31abe8933c83abb3588ee5aef1d6691194b8e5f612c96c7cdb0a31c0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics-green1-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 231825,
+      "sha256": "201ee65c96203a714aa8923be2a7df90eadffd3c906321717340886e1cf85308",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics-green1.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone_kinematics-green1.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 95225,
+      "sha256": "a3f9ab191004ac11a1e25b0f72c314db3ae7e2745fe6f944d96ef4808cb57e9e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone-build-kinematics-20261021-011524-335.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6256,
+      "sha256": "2bdf48ea5704c5a5b4c6e172e78fc2a2cf986e8dfbc6962f806ec62e102e57d0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone-build-kinematics-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 16783,
+      "sha256": "99951b40a25a3a37521a618885d3f1dc297d0ec480bbb4fd95b9981cf87575c2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone-configure-kinematics-20261021-011505-294.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1268,
+      "sha256": "4f29d1e0da5ae816db27d4dcf82f9475731f919882842561dd53a6cee2090a91",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/standalone-configure-kinematics-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2034,
+      "sha256": "d98b97550f2fd5f4b75b4e98e26292c4e0ede4113b11a2deafbdbdb450c2cf87",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_contract-20261021-011547-271.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10396,
+      "sha256": "6543f8be175e2e8909f17d4cdf719f231c19db89123484ea04cc4585b3b235db",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_contract-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10396,
+      "sha256": "c437669128a9f0f8022006921724e6d683a22c0bace2efed04ee8f58b336c200",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_contract-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10396,
+      "sha256": "aa5be40855a91243258df0c927d3d3cd634169f9575bfbcde4c7cde42d5a5a22",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_gui-20261021-011552-357.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5033,
+      "sha256": "1c08ad123544ca739caa95ffe37c8e349070856cfb5b32664de3b75e9aac91a2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_gui-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3997,
+      "sha256": "2d151a9279140d3894e130bf7c9041a8aea9f695849aeab3c1f7b85757172096",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_gui-expanded-red.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13374,
+      "sha256": "82716b4d44255864e31edbd1c962edaa0de46ce31a1ed2cd6f97d32c1ffb3234",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_gui-green-full.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5036,
+      "sha256": "116da46f731311eb08939822337071d77030a70ff86942a66544f4004ea2cf4a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_gui-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1363,
+      "sha256": "046b3f6a6984f2f6d36df7a9e1c69422ee603bd5d52421580644c7a0534e53ef",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics_gui-red2.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2250,
+      "sha256": "d4eb3ca5c8db7808e43bf4e94c478b8aa0a663074d620bda342ff48c0b4c2261",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics-20261021-011533-147.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47561,
+      "sha256": "c46a02bbd1fa5d5d7591ae0de5cc058b305274be0ecee5a8917d2994754bb168",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47572,
+      "sha256": "59e9c019aaf480bf7731be3e64953bc9051598f8f63481a727351cbc87c8e7ff",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-kinematics-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47564,
+      "sha256": "8465779fdb38bfc71547e5344352d96b06733a10b920d0ee95e09c3bd4cba7af",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-standalone_kinematics_contract-20261021-011612-414.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10396,
+      "sha256": "1ccaf6e20455c5a8016a11799af1bcb3367e90dd4b9fabeb14ffee6492efc5c5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-standalone_kinematics_contract-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10396,
+      "sha256": "43c0cb91d44e2111db3ac3f0b42fe3770ae6f9abf547bd6661ae8cb4f08ca56d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-standalone_kinematics_gui-20261021-011617-246.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5034,
+      "sha256": "09c8725a55ca9826aef26f14df35eadcdf3a4707b37f24fb748516fe35133e3e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-standalone_kinematics_gui-green-full.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5033,
+      "sha256": "995724bd840d9c4a9e8263d38547b8c87791890918152dca2ff4fbb72e9638b7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-standalone_kinematics-20261021-011558-508.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 46043,
+      "sha256": "bf426f8705765ea358c9ac22af24b6f08653c642c2ad83aab5b1346c469df6c7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/test-standalone_kinematics-green1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 46043,
+      "sha256": "fdc30c97ed84c62eedbb1c2e167354619265566678d018a9bc076cd36cc4f27a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/validate-docs-initial.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 178,
+      "sha256": "1fead819d6775a83c054e28e5307d3afb5eb19b26facf0faffd890d87339cce3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/verify-task-stage1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18697,
+      "sha256": "ca94e0289abf250fe68e9d5edf39705688b22b782fab68bc273f546ee64a3658",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-recorded.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3903,
+      "sha256": "da5c6340e616fe1a0f325a4f09561df1b4f319eb266c58e2932533acd1b49620",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/run-stage1.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3951,
+      "sha256": "fbd10ec41c35cfa9b449b7cda3d638f41902e4a3f2e5a7f9b375ce2d06922e09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-expanded-red/cartesian-box-run.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 77125,
+      "sha256": "ef7171cea8725d02a73da006795beeb5a41e0b7c6d0e3df469e0688d12e774dc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-expanded-red/filled-target-mm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34629,
+      "sha256": "5381d1091ef7751d213b70ee83491a84cf8688caae39b010cc788cf7a1ebf6fe",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/cartesian-box-run.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79628,
+      "sha256": "a9212cbe1c029778ab6f3b20834fe3855b9864e31a8a97b6a764a2b2ed47b58c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/filled-target-mm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34737,
+      "sha256": "4efdf0fcf2a7a9ec9dcd9d8b6d2165adff7f28ee775f89e6884c6aeaf2d9af2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/results-small-window-bottom.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 38069,
+      "sha256": "e9d4a5709240558bd83ff70162e296f8e1f47c99c04e4c14073240229a85b629",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/cartesian-box-run.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79628,
+      "sha256": "a9212cbe1c029778ab6f3b20834fe3855b9864e31a8a97b6a764a2b2ed47b58c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/filled-target-mm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34737,
+      "sha256": "4efdf0fcf2a7a9ec9dcd9d8b6d2165adff7f28ee775f89e6884c6aeaf2d9af2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/results-small-window-bottom.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 38069,
+      "sha256": "e9d4a5709240558bd83ff70162e296f8e1f47c99c04e4c14073240229a85b629",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/cartesian-box-run.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79628,
+      "sha256": "a9212cbe1c029778ab6f3b20834fe3855b9864e31a8a97b6a764a2b2ed47b58c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/filled-target-mm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34737,
+      "sha256": "4efdf0fcf2a7a9ec9dcd9d8b6d2165adff7f28ee775f89e6884c6aeaf2d9af2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/results-small-window-bottom.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 38069,
+      "sha256": "e9d4a5709240558bd83ff70162e296f8e1f47c99c04e4c14073240229a85b629",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-red2/cartesian-box-run.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 77125,
+      "sha256": "ef7171cea8725d02a73da006795beeb5a41e0b7c6d0e3df469e0688d12e774dc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-red2/filled-target-mm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34629,
+      "sha256": "5381d1091ef7751d213b70ee83491a84cf8688caae39b010cc788cf7a1ebf6fe",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/cartesian-box-run.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79628,
+      "sha256": "a9212cbe1c029778ab6f3b20834fe3855b9864e31a8a97b6a764a2b2ed47b58c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/filled-target-mm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34737,
+      "sha256": "4efdf0fcf2a7a9ec9dcd9d8b6d2165adff7f28ee775f89e6884c6aeaf2d9af2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/results-small-window-bottom.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 38069,
+      "sha256": "e9d4a5709240558bd83ff70162e296f8e1f47c99c04e4c14073240229a85b629",
       "lifecycle": "unverified"
     },
     {
