@@ -6482,12 +6482,22 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                     // QTabWidget 堆叠栈中几何天然相交（叠加页不可见但
                     // geometry() 仍相交），混入会把"页签堆叠"误报为流式栅格
                     // 重叠——重叠断言只对同一可见层的命令条按钮成立。
+                    // T82 滚动视口解包（F-945）：域 Dock 挂载的是
+                    // installDockViewport 的 QScrollArea，命令条锚在滚动内容
+                    // （面板本体）的根布局第 0 行——探针必须先取视口内容再
+                    // 取布局；直接对 QScrollArea 取 layout() 恒为空布局，
+                    // 布局锚失效＝整组命令条断言误报（cur=0）。
                     QWidget* commandBar = nullptr;
-                    if (auto* rootLayout =
-                            qobject_cast<QVBoxLayout*>(m_requirementsDock->widget()
-                                                           ->layout());
-                        rootLayout != nullptr && rootLayout->count() > 0) {
-                        commandBar = rootLayout->itemAt(0)->widget();
+                    QWidget* dockContent = m_requirementsDock->widget();
+                    if (auto* scrollArea = qobject_cast<QScrollArea*>(dockContent)) {
+                        dockContent = scrollArea->widget();
+                    }
+                    if (dockContent != nullptr) {
+                        if (auto* rootLayout =
+                                qobject_cast<QVBoxLayout*>(dockContent->layout());
+                            rootLayout != nullptr && rootLayout->count() > 0) {
+                            commandBar = rootLayout->itemAt(0)->widget();
+                        }
                     }
                     check(commandBar != nullptr, "requirements-command-bar-present");
                     const auto buttons =
@@ -6635,8 +6645,13 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                             }
                         }
                     }
-                    check(noProjectCount == 7 && notAssembledCount == 2,
-                          "requirements-assembled-split=7/2 (cur="
+                    // WP-14-T12/REQ-10：三维装配落位后九条需求命令全数恢复
+                    // 可达——kAssembled 撤牌清单已按装配事实更新为九条（旧
+                    // 7/2 口径的撤牌两键永久禁用属装配登记失实）。布局断言
+                    // 随该既定决策改为 9/0；无项目态九键仍走 reason.no-project
+                    // 注册表门控（PM-10 禁用＋说明），不是撤牌语义。
+                    check(noProjectCount == 9 && notAssembledCount == 0,
+                          "requirements-assembled-split=9/0 (cur="
                               + std::to_string(noProjectCount) + "/"
                               + std::to_string(notAssembledCount) + ")");
                     // 返工⑤：下拉本体呈现面核对——无项目态两导入动作全禁

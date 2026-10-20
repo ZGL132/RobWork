@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-20T19:17:52+08:00",
+  "generatedAt": "2026-10-20T21:29:25+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 13994,
-    "totalBytes": 754747331,
+    "totalFiles": 14048,
+    "totalBytes": 758331912,
     "byKind": {
-      "markdown-doc": 41,
-      "gtest-report": 335,
-      "governance-record": 40,
-      "manual-acceptance": 1,
-      "pipeline-artifact": 2,
-      "build-log": 13044,
+      "acceptance-record": 515,
       "json-data": 7,
       "log": 1,
       "benchmark": 8,
-      "acceptance-record": 515
+      "markdown-doc": 41,
+      "pipeline-artifact": 2,
+      "build-log": 13098,
+      "governance-record": 40,
+      "manual-acceptance": 1,
+      "gtest-report": 335
     },
     "byLifecycle": {
-      "superseded": 0,
-      "current": 27,
       "historical": 564,
-      "unverified": 13403
+      "current": 27,
+      "unverified": 13457,
+      "superseded": 0
     },
     "associated": 596,
-    "unassociated": 13398,
-    "shaComputed": 13975,
+    "unassociated": 13452,
+    "shaComputed": 14029,
     "shaSkippedLarge": 19,
-    "duplicateGroupsTotal": 802,
+    "duplicateGroupsTotal": 803,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -101567,7 +101567,31 @@
       "kind": "build-log",
       "taskIds": [],
       "bytes": 2302,
-      "sha256": "777bcd1e8f75867b963acb6cfa45ab7e9c1b1c22572231def0fb11b5dc49070b",
+      "sha256": "811f1fd7c60072c607cd52376a34ebd5ba50488794564d9146481f6b86aba6db",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/green-host-tour-layout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7062,
+      "sha256": "aa0e1e1b71b4f9944501103524904bdc66991eb8658b5fdf7007a2af37bb7cc8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/green-integration-kinematics_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47279,
+      "sha256": "36d7fa4534d12b2ec179f7f5686475e97b52066896ed27a77aa37e77bb252c12",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/green-integration-kinematics_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 16661,
+      "sha256": "399169df82730c584602e024cee4ef271a90e0c97fb499b7fdc10dff1849dfd7",
       "lifecycle": "unverified"
     },
     {
@@ -101603,6 +101627,14 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t26-integration/green-integration-kinematics-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 238454,
+      "sha256": "a913a8b82918732a49f4bffc8b15a0b140c6a8bf3d180dc064986431db2b8c02",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp13-t26-integration/green-integration-kinematics.log",
       "kind": "build-log",
       "taskIds": [],
@@ -101619,19 +101651,35 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t26-integration/green-integration-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 74863,
+      "sha256": "412c893646098e4024d85e26c02113f40e6fbc08910e6f83ed85bc70ba0209d3",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp13-t26-integration/green-integration-modeling-gui.log",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 16779,
-      "sha256": "57f254a231c4cdad32f8fd91d50d48bcd0027f312d8b5ca7e83d43c96c3d7d2f",
+      "bytes": 17155,
+      "sha256": "49a454a097c6a15337b2a36237f2e417fdf59a685f213e83862ea9519e6dcfae",
       "lifecycle": "unverified"
     },
     {
       "path": "builds/wp13-t26-integration/green-integration-modeling-gui.xml",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 32584,
-      "sha256": "990b9b834aa3bf3039584104adce0fc8cb58123120b240160fb1ec8e3735855c",
+      "bytes": 33177,
+      "sha256": "9bab5cc383117e05ba213b32d6c08b5f0e6e68c11ed456322d9db4fb883b0dee",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/green-integration-modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 380088,
+      "sha256": "d8bb15dd391a8901cb6819dc1e443e7eb39f9bbb40963d807bd57e5e270f7549",
       "lifecycle": "unverified"
     },
     {
@@ -101667,6 +101715,22 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t26-integration/green-integration-ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51985,
+      "sha256": "591db22e0b68d8c858ba2ee529acd15b1520042cb3ec5ff853228c61c038af9b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/green-integration-ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 77366,
+      "sha256": "45149826742dd72128c76e2883f7762f4490c86609895d73d382b6ca7b8cd7b4",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp13-t26-integration/green-integration-ui-contract.log",
       "kind": "build-log",
       "taskIds": [],
@@ -101696,6 +101760,14 @@
       "taskIds": [],
       "bytes": 34786,
       "sha256": "c9596074058cdb410aab81836d441faec2d4218bcf9bbeb6131fe320d340b6f5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/green-integration-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 274063,
+      "sha256": "93910aee699272571f12cfb4302f5ed21306f39977c2201d173ea1d3b57b8fad",
       "lifecycle": "unverified"
     },
     {
@@ -101731,6 +101803,22 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t26-integration/green-standalone-modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6709,
+      "sha256": "a9f420731ff93bbdc3236e7df76ae1327194371d1679c76588f1bac33e1de302",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/green-standalone-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 49200,
+      "sha256": "38995fba924272712421f8b1a3c3c22a1e51966d213b4a717b007d6f35da9bd7",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp13-t26-integration/green-standalone-modeling-contract.log",
       "kind": "build-log",
       "taskIds": [],
@@ -101763,6 +101851,14 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t26-integration/green-standalone-modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 294996,
+      "sha256": "4665506f5ea8b74a7aca32a9bb3f13cde3bae248a7f4eeebe4f0016588a7fc95",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp13-t26-integration/green-standalone-modeling.log",
       "kind": "build-log",
       "taskIds": [],
@@ -101779,6 +101875,318 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t26-integration/gui-shots/base-euler.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50402,
+      "sha256": "6f0e72160a2a533b75395d3b97d4e15d4db531e62b0706fba1dcad4b2e576807",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/body-editor-confirm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57213,
+      "sha256": "430ac1b48eff7fa89cd072364940cc28947a03ef8821e68538f69b8c30bf6e86",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/body-editor-top.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 58345,
+      "sha256": "28cc8a221ba3e05aad37e2215529837c9c6cd8b0356d83cef55d4f9808a17390",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/clean-revision-live-tree-and-form.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 67563,
+      "sha256": "56a40c8f493b3f86c3b4541bc509d67727eb8f8bb54d938f65665448d9da3abf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/conflict-rebuilt-current-tool.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 67425,
+      "sha256": "02726da77dec38516391382357a88d848f9cbea11b5bb5721a4ee4a6e3625a77",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/continuous-range-rejected.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 72468,
+      "sha256": "fe530d987481557e616086dd84a53554bc8ac4be9b59d9d46f705032910907a9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/continuous-range.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70974,
+      "sha256": "4b8d9d3bca34a0471e3b59b9a6a995566bf4b889123658fed3ffeba3d3542b12",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/diff-deleted-refused.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34749,
+      "sha256": "c8f8ad59dbb3cf6fd8db188f97a6fd05f2c5c47a650e26a85edfe0147f6bd874",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/diff-empty.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17098,
+      "sha256": "d959fe0707c19881f00074561c87767e37eb750e3c5c5bf175db41a8ac83a798",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/diff-long-values.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23440,
+      "sha256": "de2edc157dd1eb6318ea02c4fd0d54fedca6775e435e10b440dc0b93ec9449d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/diff-three-groups.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29581,
+      "sha256": "2e9f5580cab355b383b671a66fcdf72cc18997042f4ae953b29ee52403f59d8c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/draft-change-readonly.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47568,
+      "sha256": "ce88312a9b8ac59b2758108cfa06b2ac3c0de37e85e36f77f8cd8d7f538c65b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/draft-change-redo.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48174,
+      "sha256": "3b8c8cd55d7bea18ac7d611ed4b14942fb24340f453385d203c9a4ff3145d65d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/draft-history.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 77805,
+      "sha256": "5a987b900040deac3eec0154374b6198c182c5d50740e5eea44fad57d65f3531",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/draft-undo-clean-redo-retained.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47449,
+      "sha256": "efd6988fe73222cc76db80394cd428ef4624089d0209bcd60245559c445c85b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/full-draft-restored-tool.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 62512,
+      "sha256": "051d59128f792f2df06fd8db46d84b48b06bad8c0ebe7101828fe60224b8fc99",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/import-report.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51801,
+      "sha256": "9222b9264b1430effded92d147c356bfb0756658377744dab7afae3e12156eec",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/property-segments-complete.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28888,
+      "sha256": "8086b709cf1ea9313b0ce7ebdd013bba7b570e3234c29374dd315cf723c7f06b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/property-segments-long.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47487,
+      "sha256": "aa25ef2199495f7ad3cd017574a57bffcbd0f55b1eaf820c15a845b04940f9f3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/retained-draft-review.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32691,
+      "sha256": "fc383b2368c8f4430cda0f6122bf946a27d24cbf7dd4d3416203ab6da2934c49",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/scene-manager-external.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51885,
+      "sha256": "f9e4d47005e7d65cba5cf8a4b728c3e46ea84810098b999b750c4d95b01cd805",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/scene-manager-updated.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53363,
+      "sha256": "f6a2dfd852901f90e50f02528fc98ee46c6db96a23d737466fac0b2da8945be4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/tool-manager-body-bottom.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 62369,
+      "sha256": "135c2a37b172dfefc7020da0d24a9904b10fbae9c3ac3a1befa7dd3898347d4e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/tool-manager-body.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 65516,
+      "sha256": "6e797940785dd7ec2f30529b6e1d987224e390352814ef0a833a4038d17279b4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/tool-manager-external.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66762,
+      "sha256": "c76f2c2411d58ee86b1ed54e2fc2b9e2b34e026682a74178b7e6feddfb28ef5d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/tool-manager-top.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64501,
+      "sha256": "cb3fb38fe8a9b5b69c8af159f8200bc9a05fd9b3a8634fabfa1fd748d1f97dc4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/workcell-import-report.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 73072,
+      "sha256": "27d6a9224cf6f65f3fc92b90e0c9c930db17fbe5991e565509f98364ae5ca4a8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/xacro-duplicate-error.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17485,
+      "sha256": "17b4d2e50fcf0e0f542f421eea2ca44c45b45cfab61c6a8b5f83d0d9e579f919",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/gui-shots/xacro-parameters.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17489,
+      "sha256": "56936eacddd0494a453629224cdfa87b88894b3d1e951841325c4070abe34d6b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/1-default-layout.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109550,
+      "sha256": "4d18fcf3775cc1ce33c59d1201548d8185bbc60cf0340c803d9901fc3d42b813",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/10-tasks-dock-summoned.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 120456,
+      "sha256": "a1e7056f03ca518701e0f8afd7e2293ee2348fddd5a011c1b89450c9549e0330",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/2-view-menu.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6782,
+      "sha256": "911ced36861952171a34c034c10247ffa3e5e6be14b888b7fa006b32a17c6581",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/3-domain-panel-summoned.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 126253,
+      "sha256": "f6cd41b3413fe84f35c64f87ebbc48d82659eff07f5355de8310a722d1108409",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/4-requirements-buttons.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17699,
+      "sha256": "bacacda0a5874b9c7d3019d822c1dc7448772db3f41e79510d24b45077866759",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/5-requirements-narrow.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17590,
+      "sha256": "7b468d6dc7a81aed92cd56a6bed6270262d638fb6c73ee524392d845fe3d2ab9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/6-min-window.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 137114,
+      "sha256": "b7f6004ae88c1d1a4883d09b8e6708b0e35d6e70b7538a61192dcd650621f968",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/8-modeling-panel.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9330,
+      "sha256": "4a487aebfd959189f63496a60e3dd57ef6c0d438370579f7cbe06d1699198a6e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/9-kinematics-panel.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12394,
+      "sha256": "dc38d2111cafac9ed9a0e2054ead78db236ca4c48ca3199ca022332e50c06914",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/host-shots/geometry-report.txt",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9005,
+      "sha256": "4c09ca7fe21840e4e63026a98b6ce81c5ec11f0da15ce471298f26332207d906",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp13-t26-integration/merge-test-preservation.json",
       "kind": "build-log",
       "taskIds": [],
@@ -101790,8 +102198,8 @@
       "path": "builds/wp13-t26-integration/README.md",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 5273,
-      "sha256": "791c039dbce328fda032304d016b8be9c3a2c5780397d4cbc382b5ee90530b63",
+      "bytes": 7657,
+      "sha256": "faf1c868f538b915f66def19d3fd8e37bbdd5d43c6a02977d8e664483f0e4088",
       "lifecycle": "unverified"
     },
     {
@@ -101808,6 +102216,30 @@
       "taskIds": [],
       "bytes": 1439,
       "sha256": "23f3d5e222e3b193cdae9bfde86d2daedfb1219f2fe587480d670e53a11d9fb2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/red-layout-smoke-mainline-90e9c041.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8286,
+      "sha256": "226ca04ba244be4e28d3fea247f14105b276e47766b0a81d0721728cb445cee3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/red-layout-smoke-probe-broken-15fails.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8237,
+      "sha256": "b6900bef7781a264a9aef3db1b543e66922480534bb138a88929844155fae661",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t26-integration/red-layout-smoke-split-stale-1fail.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7144,
+      "sha256": "5131f9f87c28ef506ec002ca04b1850bcb4cc53fcf0b30de51a1194f7184f611",
       "lifecycle": "unverified"
     },
     {
@@ -101846,8 +102278,8 @@
       "path": "builds/wp13-t26-integration/SHA256SUMS.txt",
       "kind": "build-log",
       "taskIds": [],
-      "bytes": 3516,
-      "sha256": "ce2ef800141bca8a601496485489766a73c2a1275d0247a4f6156bb36685a7dc",
+      "bytes": 9032,
+      "sha256": "f00d6952f3887364097b3c3634c6b21c19d8118babb3e2499675c4ecb26e00ea",
       "lifecycle": "unverified"
     },
     {
@@ -111158,7 +111590,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1264696,
+      "bytes": 1265767,
       "sha256": null,
       "lifecycle": "unverified"
     },

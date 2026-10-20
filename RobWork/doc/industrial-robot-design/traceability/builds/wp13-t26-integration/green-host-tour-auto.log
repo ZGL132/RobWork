@@ -16,7 +16,7 @@
 [ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 420 px（受内容最小宽度钳制时如实留痕）
 [ird-ui-smoke] started
 [ird-ui-smoke] step1 create-demo=ok
-[ird-ui-plugin] 项目已打开：C:\Users\zgl18\AppData\Local\Temp\ird-ui-smoke-demo-UluaIs（可写：是）
+[ird-ui-plugin] 项目已打开：C:\Users\zgl18\AppData\Local\Temp\ird-ui-smoke-demo-sCOWId（可写：是）
 [ird-ui-smoke] step1 open=ok nodes=13
 [ird-ui-smoke] step2 tree-nodes=ok
 [ird-ui-smoke] step3 l1-inspector=ok
@@ -24,6 +24,6 @@
 [ird-ui-smoke] step5 l3-runtimeonly=ok
 [ird-ui-smoke] step6 teardown=ok
 [ird-ui-smoke] step7 modeling-assembly=ok commands=12
-[ird-ui-plugin] 项目已打开：C:\Users\zgl18\AppData\Local\Temp\ird-ui-smoke-demo-UluaIs（可写：是）
+[ird-ui-plugin] 项目已打开：C:\Users\zgl18\AppData\Local\Temp\ird-ui-smoke-demo-sCOWId（可写：是）
 [ird-ui-smoke] step8 close-reopen=ok closed=ok reopened=ok
 [ird-ui-smoke] DONE

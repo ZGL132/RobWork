@@ -26,6 +26,17 @@
 - ModelingIntegration.ImportCandidatesDoNotLeakAcrossTemplateOrClose_MDL04_PM04：见上表。
 - ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04（GUI 真实按钮）：撤销回到模板后候选清空，重做恢复导入稿连同候选。
 
+## 返工批（attempt 1 验收 fail 后——2026-10-20）
+
+attempt 1 独立子会话验收（acc/WP-13-T26/1@ce7fa787）verdict=fail，两项阻断均为证据留痕面；本批返工闭环：
+
+| 阻断 | 闭环 |
+| --- | --- |
+| A1 缺 ird 报告与截图（契约 acceptance 条 2 四类载体） | 补齐 11 份 `*-report.json`（green-integration-*×9＋green-standalone-*×3 中 runtime 无报告——F-944 登记）；截图两目录：host-shots/（正式宿主 layout 冒烟真实窗口 9 张＋几何报告）＋gui-shots/（modeling_gui 真实窗口用例 29 张） |
+| A2 SHA256SUMS 与库内 README 哈希失配 | 根因＝行尾归一化（F-943 同族）：工作树与仓库 blob 的 CRLF/LF 不一致。本批起 SHA256SUMS 改按**仓库 blob 内容（LF 归一）**计算，校验口径 `git show HEAD:<路径>` 逐一可复现 |
+
+返工中新发现并修复（先红后修，红证在案）：**F-945**——正式宿主 layout 冒烟（IRD_UI_PLUGIN_SMOKE=layout）探针未随 T82 滚动视口（installDockViewport 的 QScrollArea）适配，命令条布局锚恒空导致整组断言误报（cur=0）；且装配拆分断言仍停留旧 7/2 撤牌口径，未随 WP-14-T12/REQ-10 九条全恢复可达的既定决策更新。主线 90e9c041 亲测同样失败（red-layout-smoke-mainline-90e9c041.log）＝存量缺陷非集成引入。修复＝探针解包 QScrollArea 取面板本体＋断言更新 9/0；三阶段红证：red-layout-smoke-probe-broken-15fails.log（修复前 15 断言红）→ red-layout-smoke-split-stale-1fail.log（探针修复后仅拆分断言红）→ green-host-tour-layout.log（全绿 DONE）。
+
 ## 绿证（全部真实执行，构建树 build/＝集成模式、build/modeling-integration-20261020/standalone＝独立冒烟）
 
 | 文件 | 结果 |
@@ -33,18 +44,21 @@
 | green-full-build.log | 集成树全量 Release 构建 Exit=0（VS2022 x64） |
 | green-standalone-configure.log | 独立冒烟树配置成功（vcpkg toolchain＋Qt 前缀，AGENTS §4.1 双模式口径） |
 | green-integration-modeling.{xml,log} | 462 通过/0 失败/0 跳过 |
-| green-integration-modeling-gui.{xml,log} | 91/0/0（真实 Qt 窗口） |
+| green-integration-modeling-gui.{xml,log} | 91 跑：90 通过＋1 环境跳过（F-620 剪贴板被外部占用——返工批同源刷新，xml/log/report 同一运行） |
 | green-integration-runtime.{xml,log} | 294 跑：293 通过＋1 环境跳过（ContractSuite.ChildProcessWorker_RT_ID_1——子进程工作器环境面） |
 | green-integration-kinematics.{xml,log} | 288 跑：287 通过＋1 登记跳过（KinGuiPresentationRegisteredNotExecuted_ACC1——GUI 呈现注册不执行面） |
 | green-integration-ui.{xml,log} | 339/0/0 |
 | green-integration-ui-contract.{xml,log} | 63/0/0（清单锚点修复后） |
 | green-integration-kinematics-contract.{xml,log} | 57/0/0 |
-| green-integration-ui-gui.{xml,log} | 95/0/0（真实 Qt 窗口） |
+| green-integration-ui-gui.{xml,log} | 95/0/0（真实 Qt 窗口；探针修复后重跑确认零回归） |
 | green-integration-kinematics-gui.{xml,log} | 20/0/0（真实 Qt 窗口） |
 | green-standalone-modeling.{xml,log} | 360/0/0 |
 | green-standalone-modeling-contract.{xml,log} | 8/0/0 |
 | green-standalone-modeling-gui.{xml,log} | 60 跑：59 通过＋1 环境跳过（PreviewPane_MultiTypeChain_UI_T59——F-620 剪贴板被外部占用） |
-| green-host-tour-auto.log | 正式宿主 sdurws_ird_studio 真实窗口 auto 冒烟 8 步全 ok（建项目/共享树/L1 检查器/应用模块/L3/清理/建模装配 12 命令/关闭重开），Exit=0 |
+| green-host-tour-auto.log | 正式宿主 sdurws_ird_studio 真实窗口 auto 冒烟 8 步全 ok（建项目/共享树/L1 检查器/应用模块/L3/清理/建模装配 12 命令/关闭重开），Exit=0（返工批探针修复后重跑） |
+| green-host-tour-layout.log＋host-shots/ | 正式宿主 layout 冒烟全绿 DONE（净室首启默认布局＋呼出需求面板＋命令条九键/导入下拉/更多操作断言＋窄窗无重叠＋最小窗中央区保护），真实窗口截图 9 张＋几何报告（F-945 修复后） |
+| green-integration-*-report.json ×9＋green-standalone-*-report.json ×3 | ird 测试报告（A1 闭环；runtime 套件不产报告＝F-944 登记） |
+| gui-shots/（29 张 PNG） | modeling_gui 真实窗口用例运行期截图（返工批重跑同源） |
 | green-ird-gates.log | R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 全部零命中 |
 
 ## 开放面（本批不宣称完成）

@@ -28,7 +28,7 @@
 
 | 项 | 值 |
 | --- | --- |
-| 集成分支 | wp13-t26（本地；按契约不推送远程、不合入 redesign-main） |
+| 集成分支 | wp13-t26（所有者 2026-10-20「将所有本地同步到远程」指令后已推 origin；仍不合入 redesign-main） |
 | 验收范围 | 64587067..分支头（4 个新提交，末位为本交接提交；源分支 wp13-t24@e64cdd62 与 wp13-t25@6cfe7ea3 引用不变） |
 | 合并提交 | 4044abd1a90f1d1b79ef60e81c22d508184f83b0（合并 wp13-t25＋装配清单锚点修正＋T26 契约/DTB 登记） |
 | 修复提交 | bc8d212f950ac6bbc9a3975fe5b8e4aee7702bb3（候选会话/局部历史一致性＋3 例集成回归＋modeling v0.59） |
@@ -37,6 +37,12 @@
 | 复验结论 | 双模式构建零错误；集成 462+91+293+287+339+63+57+95+20（2 例登记/环境跳过）、独立冒烟 360+8+59（1 例 F-620 环境跳过）、正式宿主 tour 8 步、ird_gates 零命中、validate-docs/verify-task/commit-lint PASS |
 | 开放面 | 真实三维逐项（mesh/覆盖层）未验不标 PASS；F07 来源 schema 与重开恢复属 policy 演化面；WP-13-T24/T25 正式独立验收仍待全新上下文执行 |
 | 验收请求 | 请以全新会话按 doc/industrial-robot-design/acceptance-protocol.md 对 wp13-t26@e18914bd 执行对抗式验收；本会话为实施方，其复验不构成独立验收 |
+
+## 验收轮次记录
+
+- **attempt 1（2026-10-20，独立子会话验收——所有者指令）**：verdict=**fail**。阻断 2 项均属证据留痕面——A1 证据目录缺 ird 报告与截图（契约 acceptance 条 2 四类载体）；A2 SHA256SUMS 与仓库 blob 的 README 哈希失配（行尾归一口径，F-943 同族根因）。产品代码/双模式构建/全量套件/红线/注释/文档/commit 质量全过；变异翻红验证过。记录：traceability/acceptance/WP-13-T26-20261020.md＠acc/WP-13-T26/1@ce7fa787（已推 origin）。建议级 F-942/F-943/F-944 已由验收方转登该分支。
+- **返工批（同日）**：①A1 闭环——补 11 份 ird 报告（runtime 无报告＝F-944）＋截图两目录（host-shots 布局冒烟 9 张＋gui-shots 建模 GUI 29 张）；②A2 闭环——SHA256SUMS 改按仓库 blob（LF 归一）计算并在 README 注明口径；③返工中发现并修复 F-945（主线存量）：layout 冒烟探针未解包 T82 滚动视口＋装配拆分断言未随 WP-14-T12 九条全恢复更新——主线 90e9c041 亲测同败留证，三阶段红→绿（15 fails→1 fail→DONE），修复后 ui_gui 95/95 与 auto tour 8 步重跑零回归。
+- **attempt 2（重新全量验收）**：对新冻结 SHA 重新发起（acc/WP-13-T26/2）；按协议 §5 全量重跑不做增量。
 
 ## 已知差异核对
 
