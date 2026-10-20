@@ -1815,3 +1815,44 @@ TEST(MdlCanonicalBridge, FixedSceneFrameIsAValidDescription_MDL15_AT28)
     EXPECT_TRUE(sameTransform(built.get().scene.front().worldPose,frame.worldPose));
     EXPECT_TRUE(built.get().resourceRefs.empty())<<"固定帧不能伪造网格资源";
 }
+
+/**
+ * @brief WP-13-T25/F01（MDL-01/AT-01）：模板种子的逐轴最大速度/最大加速度
+ *        必须经编码→canonical 桥真实流入 runtime JointDescription（六轴
+ *        不同值逐轴对应核对——期望值取 sixAxisTemplateDefaults 单一权威，
+ *        不经被测桥反推）。
+ *
+ * 修复前（红）：CanonicalBridge 将 maxVelocity/maxAcceleration 硬写
+ * NotProvided（"schema 无落点"）——模板参考值不进入运行时计算（审计 M05）。
+ */
+TEST(MdlCanonicalBridge, TemplateVelocityAccelerationFlowToDescription_WP13T25)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-01"}, std::vector<std::string>{"AT-01"});
+
+    const RobotDesignTemplateFactory factory;
+    std::vector<core::DiagnosticRecord> diags;
+    const ModelingWorkingSet ws = factory
+        .createDraft(TemplateId{kTemplateIdGeneric6R},
+                     runtime::InstallationPresetToken::Ground, "va-bot", diags)
+        .get();
+    const auto defaults = sixAxisTemplateDefaults();
+
+    BridgeClosure closure;
+    putRoot(closure, ws.design);
+    auto built = buildFrom(closure);
+    ASSERT_TRUE(built.ok()) << built.error().detail;
+    const runtime::RobotDesignDescription& desc = built.get();
+
+    ASSERT_EQ(desc.joints.size(), defaults.size());
+    for (std::size_t i = 0; i < defaults.size(); ++i) {
+        const runtime::JointDescription& jd = desc.joints[i];
+        ASSERT_EQ(jd.maxVelocity.state(), core::FieldState::Provided)
+            << "j" << i + 1 << " 最大速度未随模板种子进入描述（F01 红证锚）";
+        EXPECT_DOUBLE_EQ(jd.maxVelocity.value(), defaults[i].maxVelocity)
+            << "j" << i + 1 << " 最大速度逐轴失配";
+        ASSERT_EQ(jd.maxAcceleration.state(), core::FieldState::Provided)
+            << "j" << i + 1 << " 最大加速度未随模板种子进入描述（F01 红证锚）";
+        EXPECT_DOUBLE_EQ(jd.maxAcceleration.value(), defaults[i].maxAcceleration)
+            << "j" << i + 1 << " 最大加速度逐轴失配";
+    }
+}

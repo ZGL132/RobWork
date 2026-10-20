@@ -524,7 +524,7 @@ TEST(ModelingCommandFlows, AssembledSetMatchesCatalog_F466)
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01"}, std::vector<std::string>{});
 
     const auto catalog = modelingDomainCommands();
-    ASSERT_EQ(catalog.size(), std::size_t{11}) << "§9.7.3 卡表目录十一条（契约面——UI-T56 表尾追加）";
+    ASSERT_EQ(catalog.size(), std::size_t{12}) << "§9.7.3 卡表目录十二条（契约面——UI-T56 表尾追加第十一号、WP-13-T25/F06 表尾追加第十二号 import-workcell）";
 
     for (const auto& desc : catalog) {
         EXPECT_TRUE(isAssembledModelingCommand(desc.id))
@@ -1184,4 +1184,335 @@ TEST(ModelingCommandFlows, DiffPassesCompleteReportWithoutEditing_MDL08_AT12)
     EXPECT_FALSE(h.host.shownDiff->structure.empty());EXPECT_FALSE(h.host.shownDiff->parameters.empty());
     EXPECT_FALSE(h.host.shownDiff->properties.empty());EXPECT_EQ(h.host.showInfoCount,0);
     EXPECT_EQ(h.session.draft,before);EXPECT_EQ(*h.session.baselineSnapshot,baseline);EXPECT_EQ(h.recomputeCalls,0);
+}
+
+
+// =====================================================================
+// import-workcell（WP-13-T25/F06——MDL-18/AT-33：外部 .wc.xml 有损反向
+// 导入的正式命令流。提取引擎 mapWorkCellXml 已随 WP-13-T17 落位，本批补
+// 命令目录入口＋生产流装配：真实磁盘读取（io openGenericXml 良构校验＋
+// 真实字节摘要对账）→引擎提取→多设备显式选链→逐项报告确认→确认才替换
+// 草稿。夹具＝临时目录真实文件（非内存替身），与 import-urdf 流测试同款
+// 纪律（writeStl 复用最小合法 ASCII STL——io 网格护栏真实面数统计）。
+// =====================================================================
+
+namespace {
+
+/// 六轴全旋转单设备 WorkCell（F06 流夹具）：j1 带 RPY 90°（deg→rad 独立
+/// 核对面）＋PosLimit ±170°＋VelLimit 1.5（本批 schema 边界＝未保留逐项
+/// 列出面；F01 落地后转映射）；一存在一缺失两笔 Polytope（V-08 面）；
+/// 首命名构型 Home（非零 Q→逐关节 zeroOffset）＋备选构型 Alt（未保留面）。
+QString writeWorkCellSixAxis(const QTemporaryDir& dir)
+{
+    const QDir meshDir(dir.path());
+    meshDir.mkpath(QStringLiteral("meshes"));
+    QFile file(dir.filePath(QStringLiteral("cell.wc.xml")));
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    file.write(QStringLiteral(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<WorkCell name=\"flow cell\">\n"
+        "  <SerialDevice name=\"arm\">\n"
+        "    <Joint name=\"j1\" type=\"Revolute\">\n"
+        "      <Pos>0 0 0.2</Pos><RPY>0 0 90</RPY>\n"
+        "      <PosLimit min=\"-170\" max=\"170\"/><VelLimit max=\"1.5\"/>\n"
+        "      <Drawable name=\"l1d\"><Polytope file=\"meshes/l1.stl\"/></Drawable>\n"
+        "    </Joint>\n"
+        "    <Joint name=\"j2\" type=\"Revolute\"><Pos>0 0 0.4</Pos>"
+        "<PosLimit min=\"-120\" max=\"120\"/></Joint>\n"
+        "    <Joint name=\"j3\" type=\"Revolute\"><Pos>0 0 0.3</Pos>"
+        "<PosLimit min=\"-170\" max=\"170\"/></Joint>\n"
+        "    <Joint name=\"j4\" type=\"Revolute\"><Pos>0 0.3 0</Pos>"
+        "<PosLimit min=\"-120\" max=\"120\"/></Joint>\n"
+        "    <Joint name=\"j5\" type=\"Revolute\"><Pos>0.3 0 0</Pos>"
+        "<PosLimit min=\"-170\" max=\"170\"/></Joint>\n"
+        "    <Joint name=\"j6\" type=\"Revolute\">\n"
+        "      <Pos>0 0 0.15</Pos><PosLimit min=\"-360\" max=\"360\"/>\n"
+        "      <CollisionModel name=\"l6c\"><Polytope file=\"meshes/ghost.stl\"/></CollisionModel>\n"
+        "    </Joint>\n"
+        "    <Q name=\"Home\"> 0.5 -0.1 0.2 0.3 -0.4 0.6 </Q>\n"
+        "    <Q name=\"Alt\"> 1 2 3 4 5 6 </Q>\n"
+        "  </SerialDevice>\n"
+        "</WorkCell>\n").toUtf8());
+    return dir.filePath(QStringLiteral("cell.wc.xml"));
+}
+
+/// 双设备 WorkCell（目标设备显式选择面——§6.4 同机制：不默认选第一个）。
+QString writeWorkCellTwoDevices(const QTemporaryDir& dir)
+{
+    QFile file(dir.filePath(QStringLiteral("twin.wc.xml")));
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    file.write(QStringLiteral(
+        "<?xml version=\"1.0\"?>\n"
+        "<WorkCell name=\"twin cell\">\n"
+        "  <SerialDevice name=\"arm-a\">\n"
+        "    <Joint name=\"a1\" type=\"Revolute\"><PosLimit min=\"-90\" max=\"90\"/></Joint>\n"
+        "  </SerialDevice>\n"
+        "  <SerialDevice name=\"arm-b\">\n"
+        "    <Joint name=\"b1\" type=\"Revolute\"><PosLimit min=\"0\" max=\"180\"/></Joint>\n"
+        "  </SerialDevice>\n"
+        "</WorkCell>\n").toUtf8());
+    return dir.filePath(QStringLiteral("twin.wc.xml"));
+}
+
+}  // namespace
+
+/// F06/AT-33 主路径：真实 .wc.xml→真实磁盘读取→提取→报告确认→草稿替换。
+/// 断言半部（独立核对，不调用被测转换生成期望）：
+///   - RPY "0 0 90"（deg）→ origin 旋转＝R_z(π/2)：r(1,0)=1、r(0,1)=-1；
+///   - PosLimit ±170（deg）→ bounds ≈ ±170·π/180 rad（1e-12 容差）；
+///   - Q Home j1=0.5 → zeroOffset=0.5（rad，源制式即 rad 不换算）；
+///   - 一存在一缺失 Polytope → 资源清单恰两笔（缺失≠阻断，V-08）；
+///   - 报告文本逐项可见：未保留面（joint-velocity-limit）不得静默。
+TEST(ModelingCommandFlows, ImportWorkcell_SingleDevice_RealReadProducesDraft_MDL18_AT33)
+{
+    IRD_TEST_INFO("MDL-18",{"AT-33"},std::nullopt);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    writeStl(dir);  // meshes/l1.stl 真实存在（ghost.stl 有意不写——缺失叶面）
+    const QString wcPath = writeWorkCellSixAxis(dir);
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    const std::optional<core::ObjectId> previousRoot = core::ObjectId::generate();
+    fx.session.draft.rootObjectId = previousRoot;
+    fx.host.openPathAnswer = wcPath;
+    fx.host.confirmImportAnswer = true;
+
+    std::string summary;
+    const bool executed = executeModelingCommand(
+        "modeling.import-workcell", fx.session, fx.deps(), fx.host, summary);
+
+    EXPECT_TRUE(executed) << "summary=" << summary;
+    EXPECT_NE(summary.find("WorkCell 导入完成"), std::string::npos)
+        << "summary=" << summary;
+    // 六关节＋七连杆（links[0]=设备名-base 合成规则，§6.6 连杆合成）。
+    ASSERT_EQ(fx.session.draft.design.joints.size(), std::size_t{6});
+    ASSERT_EQ(fx.session.draft.design.links.size(), std::size_t{7});
+    EXPECT_EQ(fx.session.draft.design.joints[0].localName, "j1");
+    EXPECT_EQ(fx.session.draft.design.links[0].localName, "arm-base");
+    // 独立数值核对（deg→rad 由本断言固定期望，不引用被测换算）。
+    const double k170rad = 170.0 * 3.14159265358979323846 / 180.0;
+    const auto bounds = fx.session.draft.design.joints[0].bounds.tryValue();
+    ASSERT_TRUE(bounds.has_value());
+    EXPECT_NEAR(bounds->first, -k170rad, 1e-12);
+    EXPECT_NEAR(bounds->second, k170rad, 1e-12);
+    const auto origin = fx.session.draft.design.joints[0].origin.tryValue();
+    ASSERT_TRUE(origin.has_value());
+    EXPECT_NEAR(origin->r()(1, 0), 1.0, 1e-12);   // R_z(π/2)
+    EXPECT_NEAR(origin->r()(0, 1), -1.0, 1e-12);
+    EXPECT_NEAR(origin->d()[2], 0.2, 1e-12);      // Pos z=0.2 m
+    EXPECT_NEAR(fx.session.draft.design.joints[0].zeroOffset, 0.5, 1e-15);
+    EXPECT_NEAR(fx.session.draft.design.joints[5].zeroOffset, 0.6, 1e-15);
+    // 资源清单：l1.stl（存在，真实 digest）＋ghost.stl（缺失，Recorded）。
+    EXPECT_EQ(fx.session.draft.design.resourceManifest.size(), std::size_t{2});
+    // 逐项报告可见性（AT-33 字面——未保留内容不得静默丢弃）。F01 复跑
+    // 更新：VelLimit 已映射 maxVelocity（报告呈现映射行而非未保留项）；
+    // 备选构型仍无落点（q-config-residual 未保留面不变）。
+    const std::string reportText = fx.host.lastConfirmText.toStdString();
+    EXPECT_NE(reportText.find("maxVelocity"), std::string::npos)
+        << "VelLimit 映射行未在报告呈现（F01 复跑口径）";
+    EXPECT_EQ(reportText.find("joint-velocity-limit"), std::string::npos)
+        << "velocity 已有落点——不得再报未保留（F01）";
+    EXPECT_NE(reportText.find("q-config-residual"), std::string::npos)
+        << "备选构型未保留项未在报告呈现";
+    // 草稿替换纪律：保根（恰一根不变量 R1）＋留痕＋就绪重算。
+    EXPECT_EQ(fx.session.draft.rootObjectId, previousRoot);
+    EXPECT_FALSE(fx.session.draft.changes.empty());
+    EXPECT_EQ(fx.recomputeCalls, 1);
+}
+
+/// F06/§6.4：多设备文件必须显式选链——候选清单含全部设备名；取消选链
+/// 零草稿修改；选中第二设备按其所辖关节提取（不默认选第一个）。
+TEST(ModelingCommandFlows, ImportWorkcell_TwoDevices_ExplicitChoiceNotAutoFirst_MDL18)
+{
+    IRD_TEST_INFO("MDL-18",{"AT-33"},std::nullopt);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString twinPath = writeWorkCellTwoDevices(dir);
+
+    // 取消选链：草稿原样（与 before 逐字段相等），summary 清空。
+    {
+        FlowHarness fx;
+        fx.session.draft = makeSixAxisDraft();
+        const ModelingWorkingSet before = fx.session.draft;
+        fx.host.openPathAnswer = twinPath;
+        fx.host.chooseItemAnswer.reset();  // 用户取消设备选择
+        std::string summary;
+        EXPECT_FALSE(executeModelingCommand(
+            "modeling.import-workcell", fx.session, fx.deps(), fx.host, summary));
+        EXPECT_EQ(fx.session.draft, before) << "取消选链不得改写工作集";
+        EXPECT_TRUE(summary.empty());
+    }
+    // 显式选第二设备（arm-b）：候选两设备、下标 1＝arm-b——提取其关节 b1。
+    {
+        FlowHarness fx;
+        fx.session.draft = makeSixAxisDraft();
+        fx.host.openPathAnswer = twinPath;
+        fx.host.chooseItemAnswer = 1;
+        fx.host.confirmImportAnswer = true;
+        std::string summary;
+        EXPECT_TRUE(executeModelingCommand(
+            "modeling.import-workcell", fx.session, fx.deps(), fx.host, summary));
+        // 候选清单＝两设备名（F06 红证锚：不得隐藏第二个设备）。
+        EXPECT_EQ(fx.host.chosenItems,
+                  (QStringList{QStringLiteral("arm-a"), QStringLiteral("arm-b")}));
+        ASSERT_EQ(fx.session.draft.design.joints.size(), std::size_t{1});
+        EXPECT_EQ(fx.session.draft.design.joints[0].localName, "b1")
+            << "未按显式选择的设备提取（疑似默认选了第一个）";
+    }
+}
+
+/// F06/SA-15：报告确认取消 → 草稿逐字段保持原状、零编辑记录、零就绪重算。
+TEST(ModelingCommandFlows, ImportWorkcell_ConfirmRejected_KeepsSessionDraft_MDL18)
+{
+    IRD_TEST_INFO("SA-15",{},std::nullopt);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    writeStl(dir);
+    const QString wcPath = writeWorkCellSixAxis(dir);
+
+    FlowHarness fx;
+    const ModelingWorkingSet before = makeSixAxisDraft();
+    fx.session.draft = before;
+    fx.host.openPathAnswer = wcPath;
+    fx.host.confirmImportAnswer = false;  // 用户在逐项报告页取消
+
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand(
+        "modeling.import-workcell", fx.session, fx.deps(), fx.host, summary));
+    EXPECT_EQ(fx.session.draft, before) << "报告取消不得替换草稿";
+    EXPECT_TRUE(fx.session.draft.changes.empty());
+    EXPECT_EQ(fx.recomputeCalls, 0);
+}
+
+/// F06 诚实拒绝面：非 WorkCell 根文档（URDF 根元素）→引擎根检查拒绝＋
+/// 报告登记"根元素不是 WorkCell"，无草稿、summary 带原因（不静默）。
+TEST(ModelingCommandFlows, ImportWorkcell_NotWorkCellRoot_HonestRefusal_MDL18)
+{
+    IRD_TEST_INFO("MDL-18",{},std::nullopt);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString urdfPath = writeUrdf(dir, /*withMesh=*/false);
+
+    FlowHarness fx;
+    const ModelingWorkingSet before = makeSixAxisDraft();
+    fx.session.draft = before;
+    fx.host.openPathAnswer = urdfPath;
+    fx.host.confirmImportAnswer = true;  // 即使确认也不得产出草稿
+
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand(
+        "modeling.import-workcell", fx.session, fx.deps(), fx.host, summary));
+    EXPECT_NE(summary.find("导入失败"), std::string::npos) << "summary=" << summary;
+    EXPECT_EQ(fx.session.draft, before);
+}
+
+/// F06/UX-03：文件对话框取消＝正常取消（非错误）——零修改、summary 空。
+TEST(ModelingCommandFlows, ImportWorkcell_FileDialogCancel_Silent_MDL18)
+{
+    IRD_TEST_INFO("UX-03",{},std::nullopt);
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    const ModelingWorkingSet before = fx.session.draft;
+    fx.host.openPathAnswer.reset();  // 用户取消选文件
+
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand(
+        "modeling.import-workcell", fx.session, fx.deps(), fx.host, summary));
+    EXPECT_TRUE(summary.empty());
+    EXPECT_EQ(fx.session.draft, before);
+}
+
+/// F01/MDL-01：URDF `<limit velocity>` 在 schema 落位（JointEntry.maxVelocity）
+/// 后必须真实映射入草稿，不再以"joint-velocity-limit 无落点"谎报不支持
+/// （修复前红：Import.cpp 报告面登记 unsupported——本用例断言其缺席）。
+TEST(ModelingCommandFlows, ImportUrdfVelocityNotReportedUnsupported_MDL01_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01",{},std::nullopt);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString urdfPath = writeUrdf(dir, /*withMesh=*/false);
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.host.openPathAnswer = urdfPath;
+    fx.host.confirmImportAnswer = true;
+
+    std::string summary;
+    EXPECT_TRUE(executeModelingCommand(
+        "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary))
+        << "summary=" << summary;
+    const std::string reportText = fx.host.lastConfirmText.toStdString();
+    EXPECT_EQ(reportText.find("joint-velocity-limit"), std::string::npos)
+        << "velocity 已有 schema 落点——不得再报无落点不支持项（F01）";
+}
+
+/// F07/MDL-04/P-MDL-3：URDF disable_collisions 候选在导入确认后进入会话
+/// 承载（importedSelfCollisionCandidates——策略编辑器预填的移交半区）；
+/// 取消确认不携带。修复前（红）：候选只进报告、会话承载恒空＝导入提示
+/// 死端（审计 M17 复验口径"能显示导入提示"≠"能进入策略编辑"）。
+TEST(ModelingCommandFlows, ImportUrdfSeedsSelfCollisionCandidatesToSession_MDL04_WP13T25)
+{
+    IRD_TEST_INFO("MDL-04",{"AT-19"},std::nullopt);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    // URDF 带两条 disable_collisions（base↔l1、l1↔l2——PR2 风格自碰撞排除）。
+    const QString urdfPath = dir.filePath(QStringLiteral("pairs.urdf"));
+    {
+        QFile f(urdfPath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+        f.write(QStringLiteral(
+            "<?xml version=\"1.0\"?>\n"
+            "<robot name=\"pair arm\">\n"
+            "  <disable_collisions link1=\"base\" link2=\"l1\"/>\n"
+            "  <disable_collisions link1=\"l1\" link2=\"l2\"/>\n"
+            "  <link name=\"base\"/>\n"
+            "  <link name=\"l1\"/>\n"
+            "  <link name=\"l2\"/>\n"
+            "  <joint name=\"j1\" type=\"revolute\">\n"
+            "    <parent link=\"base\"/><child link=\"l1\"/>\n"
+            "    <origin xyz=\"0 0 0.2\"/><axis xyz=\"0 1 0\"/>\n"
+            "    <limit lower=\"-1.57\" upper=\"1.57\" effort=\"50\" velocity=\"1.0\"/>\n"
+            "  </joint>\n"
+            "  <joint name=\"j2\" type=\"revolute\">\n"
+            "    <parent link=\"l1\"/><child link=\"l2\"/>\n"
+            "    <origin xyz=\"0.1 0 0\"/><axis xyz=\"0 0 1\"/>\n"
+            "    <limit lower=\"-3.14\" upper=\"3.14\" effort=\"40\" velocity=\"2.0\"/>\n"
+            "  </joint>\n"
+            "</robot>\n").toUtf8());
+    }
+
+    // 取消面：确认前取消→候选不得入会话（不经确认零移交）。
+    {
+        FlowHarness fx;
+        fx.host.openPathAnswer = urdfPath;
+        fx.host.confirmImportAnswer = false;
+        std::string summary;
+        EXPECT_FALSE(executeModelingCommand(
+            "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary));
+        EXPECT_TRUE(fx.session.importedSelfCollisionCandidates.empty())
+            << "取消确认后候选不得入会话承载";
+    }
+    // 确认面：两对候选按报告序入会话（链路＝策略编辑器预填输入）。
+    {
+        FlowHarness fx;
+        fx.host.openPathAnswer = urdfPath;
+        fx.host.confirmImportAnswer = true;
+        std::string summary;
+        EXPECT_TRUE(executeModelingCommand(
+            "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary))
+            << "summary=" << summary;
+        ASSERT_EQ(fx.session.importedSelfCollisionCandidates.size(), std::size_t{2});
+        EXPECT_EQ(fx.session.importedSelfCollisionCandidates[0].first, "base");
+        EXPECT_EQ(fx.session.importedSelfCollisionCandidates[0].second, "l1");
+        EXPECT_EQ(fx.session.importedSelfCollisionCandidates[1].first, "l1");
+        EXPECT_EQ(fx.session.importedSelfCollisionCandidates[1].second, "l2");
+    }
 }

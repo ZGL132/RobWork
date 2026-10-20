@@ -1,0 +1,21 @@
+Note: Google Test filter = *SelfCollisionCandidates*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.ImportUrdfSeedsSelfCollisionCandidatesToSession_MDL04_WP13T25
+C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(1402): error: Expected equality of these values:
+  fx.session.importedSelfCollisionCandidates.size()
+    Which is: 0
+  std::size_t{2}
+    Which is: 2
+
+[  FAILED  ] ModelingCommandFlows.ImportUrdfSeedsSelfCollisionCandidatesToSession_MDL04_WP13T25 (3 ms)
+[----------] 1 test from ModelingCommandFlows (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (3 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingCommandFlows.ImportUrdfSeedsSelfCollisionCandidatesToSession_MDL04_WP13T25
+
+ 1 FAILED TEST

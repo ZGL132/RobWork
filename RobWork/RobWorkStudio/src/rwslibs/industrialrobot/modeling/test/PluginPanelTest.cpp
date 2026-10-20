@@ -755,31 +755,32 @@ TEST(PluginPanel, L8_CentroidInlineChoiceModelData_WP13T15_ACC3)
 // ACC4——域命令登记（卡 §9.7.3 表逐行；ui.md §10.9/§11.2）
 // =====================================================================
 
-/// 十一条 CommandId 点分小写、逐行与卡 §9.7.3 表一致、无重复（export-package
+/// 十二条 CommandId 点分小写、逐行与卡 §9.7.3 表一致、无重复（export-package
 /// 与 import-package 两条独立命令不合并；export-workcell-xml 为 UI-T56
-/// 表尾追加——WC/DWC XML 外供导出）。
+/// 表尾追加——WC/DWC XML 外供导出；import-workcell 为 WP-13-T25/F06
+/// 表尾追加——外部 WorkCell 反向导入）。
 TEST(PluginPanel, Commands_TenDottedCommandIds_WP13T15_ACC4)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-07"}, std::vector<std::string>{});
 
     const auto cmds = modelingDomainCommands();
-    ASSERT_EQ(cmds.size(), 11U) << "卡 §9.7.3 表恰十一条（UI-T56 表尾追加）";
+    ASSERT_EQ(cmds.size(), 12U) << "卡 §9.7.3 表恰十二条（UI-T56＋WP-13-T25/F06 表尾追加）";
 
     // 逐行对照（行序＝卡表行序——登记序确定性）。
-    const char* expected[11] = {
+    const char* expected[12] = {
         "modeling.new-from-template", "modeling.import-urdf",
         "modeling.import-xacro", "modeling.switch-authority",
         "modeling.estimate-properties", "modeling.generate-placeholder-geometry",
         "modeling.diff-baseline", "modeling.export-package",
         "modeling.import-package", "modeling.reset-home-zero",
-        "modeling.export-workcell-xml",
+        "modeling.export-workcell-xml", "modeling.import-workcell",
     };
     std::set<std::string> ids;
     for (std::size_t i = 0; i < cmds.size(); ++i) {
         EXPECT_EQ(cmds[i].id, expected[i]) << "第 " << i << " 行与卡表不一致";
         ids.insert(cmds[i].id);
     }
-    EXPECT_EQ(ids.size(), 11U) << "无重复 id（点分小写全局唯一——§7.2）";
+    EXPECT_EQ(ids.size(), 12U) << "无重复 id（点分小写全局唯一——§7.2）";
 
     // 点分小写词形：点分段＋段内 [a-z0-9-]（卡 §9.7.3 十条全小写——段内
     // 连字符如 reset-home-zero；ui 词表段字符集 [A-Za-z0-9-]，词表全小写）。
@@ -1642,4 +1643,32 @@ TEST(ModelingDraftCodec, MalformedFramesRejectWithoutPartialValues_PM08_AT21)
     for(const std::string bad:{std::string{},std::string{"{"},std::string{"xx"},std::string{"0"}}){
         EXPECT_FALSE(decodeModelingDraft(bad,ws,error));EXPECT_FALSE(error.empty());
     }
+}
+
+/// WP-13-T25/F01（MDL-01）：关节属性行必须投影逐轴最大速度/最大加速度
+/// （rad·s⁻¹/rad·s⁻² 随类型；可编辑——joint 一等权威字段；此前划界
+/// "属传动对象不投影"随 schema 落位废止——§4.3-A 表行同步）。
+TEST(PluginPanel, JointRowsIncludeVelocityAccelerationEditable_MDL01_WP13T25)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-01"}, std::vector<std::string>{});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    const auto target = resolveSelection(ws, ws.design.joints[0].objectId);
+    ASSERT_TRUE(target.has_value());
+    const auto rows = propertyFieldsFor(ws, *target);
+
+    auto rowOf = [&rows](const char* key) {
+        for (const auto& r : rows) {
+            if (r.fieldKey == key) { return r; }
+        }
+        return PropertyFieldRow{};
+    };
+    const PropertyFieldRow velocity = rowOf("max-velocity");
+    EXPECT_EQ(velocity.fieldKey, "max-velocity") << "关节行缺最大速度投影（F01）";
+    EXPECT_EQ(velocity.enablement, FieldEnablement::Editable)
+        << "速度为关节一等权威字段——可编辑行";
+    const PropertyFieldRow acceleration = rowOf("max-acceleration");
+    EXPECT_EQ(acceleration.fieldKey, "max-acceleration") << "关节行缺最大加速度投影（F01）";
+    EXPECT_EQ(acceleration.enablement, FieldEnablement::Editable)
+        << "加速度为关节一等权威字段——可编辑行";
 }

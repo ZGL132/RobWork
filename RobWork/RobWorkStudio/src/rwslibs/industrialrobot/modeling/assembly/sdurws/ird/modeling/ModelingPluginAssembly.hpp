@@ -31,6 +31,7 @@
 
 #include <QString>                                 // 文案解析返回值（bindTextResolver）
 #include <sdurws/ird/core/Identity.hpp>            // core::BranchId/RevisionId/ObjectId（会话锚/回执值面）
+#include <sdurws/ird/modeling/Parts.hpp>           // CouplingStage（F14：setCouplingStage 入参——公共头 R-2）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>    // ui::PluginUiDescriptor（§10.9 装配描述符）
 #include <sdurws/ird/ui/UiProjections.hpp> // PM-04完整固定修订草稿投影，沿既有源端口值面。
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::CommandId（命令提交出口入参）
@@ -297,6 +298,23 @@ struct ModelingPluginAssembly {
 
     /// @brief 订阅选择服务（下行"树选→面板高亮"启用——转发模块）。
     void attachSelectionService(ui::SelectionService& service);
+
+    /**
+     * @brief 耦合阶段能力位注入（F14/MDL-21——正式宿主装配点调用；
+     *        面板编辑入口与命令处理器族共享同一能力位语义。缺省
+     *        R1Locked＝公共默认红线；R2Enabled 经宿主显式注入）。
+     */
+    void setCouplingStage(CouplingStage stage);
+
+    /**
+     * @brief 导入自碰撞排除候选读取（WP-13-T25/F07——P-MDL-3 移交链）：
+     *        最近一次导入确认产生的连杆名对（值拷贝；未装配/无导入＝空）。
+     *
+     * 消费面＝宿主策略编辑器预填（经用户显式确认才写入策略修订——policy
+     * 权威不变）；只读、仅 UI 线程（会话态 §3.4）。
+     */
+    std::vector<std::pair<std::string, std::string>>
+    importedSelfCollisionCandidates() const;
 
     /// @brief 显式退订选择服务（幂等——转发模块）。
     void detachSelectionService();

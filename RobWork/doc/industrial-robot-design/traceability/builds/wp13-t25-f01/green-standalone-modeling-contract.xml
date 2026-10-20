@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="8" failures="0" disabled="0" errors="0" time="0.027" timestamp="2026-10-20T11:57:31.164" name="AllTests">
+  <testsuite name="MdlBuildGraph" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.025" timestamp="2026-10-20T11:57:31.164">
+    <testcase name="UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="158" status="run" result="completed" time="0." timestamp="2026-10-20T11:57:31.164" classname="MdlBuildGraph" />
+    <testcase name="SixRegisteredEdgesPresent_WP13T02_ACC3" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="210" status="run" result="completed" time="0." timestamp="2026-10-20T11:57:31.165" classname="MdlBuildGraph" />
+    <testcase name="NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="239" status="run" result="completed" time="0.001" timestamp="2026-10-20T11:57:31.166" classname="MdlBuildGraph" />
+    <testcase name="NoTestkitEdgeOnProductTarget_WP13T02_ACC2" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="285" status="run" result="completed" time="0." timestamp="2026-10-20T11:57:31.167" classname="MdlBuildGraph" />
+    <testcase name="IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="324" status="run" result="completed" time="0.021" timestamp="2026-10-20T11:57:31.168" classname="MdlBuildGraph" />
+  </testsuite>
+  <testsuite name="MdlDescriptionBridgeContract" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-20T11:57:31.190">
+    <testcase name="DescriptionFieldSetAlignment_WP13T12_ACC3" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\DescriptionBridgeContractTest.cpp" line="60" status="run" result="completed" time="0.001" timestamp="2026-10-20T11:57:31.190" classname="MdlDescriptionBridgeContract" />
+    <testcase name="SchemaVersionSameSourceAsContractVersion_WP13T12_ACC3" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\DescriptionBridgeContractTest.cpp" line="110" status="run" result="completed" time="0." timestamp="2026-10-20T11:57:31.191" classname="MdlDescriptionBridgeContract" />
+    <testcase name="ReaderFailureTrackIsValueFace_WP13T12_ACC3" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\DescriptionBridgeContractTest.cpp" line="138" status="run" result="completed" time="0." timestamp="2026-10-20T11:57:31.191" classname="MdlDescriptionBridgeContract" />
+  </testsuite>
+</testsuites>

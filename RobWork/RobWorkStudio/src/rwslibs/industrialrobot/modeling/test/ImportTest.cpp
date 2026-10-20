@@ -550,12 +550,10 @@ TEST(MdlImport, FullUrdf_FieldMappingRowsObservable_WP13T05_ACC2)
     EXPECT_TRUE(gazeboIgnored) << "<gazebo> 外来扩展入忽略清单";
     EXPECT_TRUE(materialIgnored) << "robot 级材质定义入忽略清单";
     bool transmissionUnsupported = false;
-    bool velocityUnsupported = false;
     bool scaleUnsupported = false;
     bool rosUriUnsupported = false;
     for (const auto& item : report.unsupported) {
         if (item.kind == "transmission") { transmissionUnsupported = true; }
-        if (item.kind == "joint-velocity-limit") { velocityUnsupported = true; }
         if (item.kind == "mesh-scale") {
             scaleUnsupported = true;
             EXPECT_NE(item.subject.find("scale=2 1 1"), std::string::npos);
@@ -568,7 +566,15 @@ TEST(MdlImport, FullUrdf_FieldMappingRowsObservable_WP13T05_ACC2)
         }
     }
     EXPECT_TRUE(transmissionUnsupported);
-    EXPECT_TRUE(velocityUnsupported);
+    // F01（MDL-01）：<limit velocity> 已真实映射 maxVelocity——映射清单可观察
+    // （旧"joint-velocity-limit 无落点"不支持面随 schema 落位消亡）。
+    bool velocityMapped = false;
+    for (const auto& m : report.mapped) {
+        if (m.targetField.find(".maxVelocity") != std::string::npos) {
+            velocityMapped = true;
+        }
+    }
+    EXPECT_TRUE(velocityMapped) << "velocity 应映射 joints[i].maxVelocity（F01）";
     EXPECT_TRUE(scaleUnsupported);
     EXPECT_TRUE(rosUriUnsupported);
 
@@ -2012,9 +2018,26 @@ TEST(MdlWorkCellImport, Extract_LossyReportItemsListed_WP13T17_ACC2)
               nullptr) << "CollisionSetup 必须逐项列出（AT-33）";
     // —— 设备基帧安装（MDL-22 默认地面——未保留）。
     ASSERT_NE(findUnsupported(outcome.report, "base-placement"), nullptr);
-    // —— VelLimit（无 schema 落点——未保留）。
-    ASSERT_NE(findUnsupported(outcome.report, "joint-velocity-limit", "j1"),
-              nullptr) << "VelLimit 必须逐项列出";
+    // —— VelLimit/AccLimit（F01/{1,1}：已映射 maxVelocity/maxAcceleration
+    //     ——映射行可观察；旧"未保留"面随 schema 落位消亡，此断言随之
+    //     改钉映射面）。
+    {
+        bool velMapped = false;
+        for (const auto& m : outcome.report.mapped) {
+            if (m.targetField.find(".maxVelocity") != std::string::npos
+                && m.sourcePath.find("VelLimit") != std::string::npos) {
+                velMapped = true;
+            }
+        }
+        EXPECT_TRUE(velMapped) << "VelLimit 应映射 maxVelocity（F01）";
+        // 链序＝[base(Fixed), j1, j2]（WorkCell 帧即关节——§6.6 连杆合成
+        // 同源；j1＝joints[1]）。Fixed 基帧无可动限值（NotProvided 直投）。
+        ASSERT_EQ(outcome.draft->joints.size(), std::size_t{3});
+        ASSERT_EQ(outcome.draft->joints[0].maxVelocity.state(),
+                  FieldState::NotProvided);
+        ASSERT_EQ(outcome.draft->joints[1].maxVelocity.state(), FieldState::Provided);
+        EXPECT_DOUBLE_EQ(outcome.draft->joints[1].maxVelocity.value(), 1.5);
+    }
     // —— 场景内容（单设备草稿不携带）。
     ASSERT_NE(findUnsupported(outcome.report, "scene-object", "table"), nullptr);
     ASSERT_NE(findUnsupported(outcome.report, "scene-object", "scene-prop"), nullptr);

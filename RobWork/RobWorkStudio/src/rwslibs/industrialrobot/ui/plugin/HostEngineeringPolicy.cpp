@@ -8,6 +8,10 @@
  */
 #include "HostEngineeringPolicy.hpp"
 
+#include <sdurws/ird/modeling/Codec.hpp>         // RobotDesignCodec（F07 导入候选名称解析——robot-design 根解码，公共头 R-2）
+#include <sdurws/ird/modeling/ObjectTypes.hpp>   // kRobotDesignObjectType（根对象 token 单一权威）
+#include <sdurws/ird/modeling/RobotDesign.hpp>   // RobotDesign/LinkEntry（localName→ObjectId 解析面）
+
 #include <array>
 #include <QCheckBox>
 #include <QComboBox>
@@ -604,6 +608,14 @@ project::CommandResult HostEngineeringPolicy::submit(
 
 void HostEngineeringPolicy::edit(QWidget* parent)
 {
+    edit(parent, {});
+}
+
+void HostEngineeringPolicy::edit(
+    QWidget* parent,
+    const std::vector<std::pair<std::string, std::string>>&
+        importedExcludedCandidates)
+{
     // 模态循环会处理关闭/切换项目事件；共享别名锚住原存储，提交前同时核对
     // 原项目仍绑定、仍可写、基线仍是表单打开时修订，禁止误写新项目。
     const auto owner=m_storeOwner;
@@ -621,12 +633,86 @@ void HostEngineeringPolicy::edit(QWidget* parent)
         try { input=policy::PolicyCodec::decode(*bytes); }
         catch(const policy::PolicyError& error) { QMessageBox::warning(parent,QStringLiteral("工程策略"),QString::fromUtf8(error.what())); return; }
     }
+
+    // ---- F07/P-MDL-3：导入排除候选预填（半区说明见头注）。名称→ObjectId
+    //      解析数据源＝当前修订 robot-design 根对象字节（modeling 公共
+    //      Codec 解码——R-2 合规；名称作用域＝建模根内 localName，与导入
+    //      候选的源语义一致，不做前缀拼接/剥离——R-4）。未解析名不静默
+    //      丢弃——警示行如实列出；预填仅进表单，确认才产生策略修订。
+    QString seedNote;
+    if (!importedExcludedCandidates.empty()) {
+        std::map<std::string, core::ObjectId> linkIds;
+        const bool modelReadable = [&] {
+            constexpr std::string_view kRobotDesignToken{modeling::kRobotDesignObjectType};
+            std::optional<project::ObjectRef> root;
+            for (const auto& ref : base.objectRefs) {
+                if (ref.objectTypeToken == std::string(kRobotDesignToken)) {
+                    if (root.has_value()) { return false; }  // 多根歧义＝不解析
+                    root = ref;
+                }
+            }
+            if (!root.has_value()) { return false; }
+            const auto bytes = store->query().tryObject(root->objectId,
+                                                        root->contentVersion);
+            if (!bytes) { return false; }
+            try {
+                const modeling::RobotDesignCodec codec;
+                const auto decoded = codec.decode(
+                    modeling::Bytes{bytes->begin(), bytes->end()},
+                    modeling::kCurrentFormatVersion);
+                if (!decoded.ok()
+                    || decoded.get().index() != 0u) { return false; }
+                for (const auto& link :
+                     std::get<modeling::RobotDesign>(decoded.get()).links) {
+                    linkIds.emplace(link.localName, link.objectId);
+                }
+                return true;
+            } catch (...) { return false; }  // 解码面异常＝不可解析（诚实缺席）
+        }();
+        const auto lookup = [&](const std::string& name)
+            -> std::optional<core::ObjectId> {
+            const auto it = linkIds.find(name);
+            if (it == linkIds.end()) { return std::nullopt; }
+            return it->second;
+        };
+        std::size_t seeded = 0;
+        QStringList unresolved;
+        for (const auto& [name1, name2] : importedExcludedCandidates) {
+            const auto o1 = lookup(name1);
+            const auto o2 = lookup(name2);
+            if (!modelReadable || !o1.has_value() || !o2.has_value()) {
+                unresolved << QString::fromStdString(name1 + " ↔ " + name2);
+                continue;
+            }
+            const bool duplicated = std::any_of(
+                input.collision.excludedPairs.begin(),
+                input.collision.excludedPairs.end(),
+                [&](const policy::PairRule& r) {
+                    return (r.first.object == *o1 && r.second.object == *o2)
+                           || (r.first.object == *o2 && r.second.object == *o1);
+                });
+            if (duplicated) { continue; }  // 既有策略已含该对＝不重复预填
+            input.collision.excludedPairs.push_back(policy::PairRule::make(
+                policy::ScopeTarget::makeObject(*o1),
+                policy::ScopeTarget::makeObject(*o2),
+                policy::PolicyRuleLevel::Should,
+                "导入候选（URDF disable_collisions）——经确认写入策略"));
+            ++seeded;
+        }
+        seedNote = QStringLiteral("｜导入候选预填 %1 对").arg(seeded);
+        if (!unresolved.isEmpty()) {
+            seedNote += QStringLiteral("；未解析 %1 对（模型未应用或名称不在"
+                                       "当前修订，未预填）：")
+                        .arg(unresolved.size())
+                        + unresolved.join(QStringLiteral("、"));
+        }
+    }
     QDialog dialog(parent); dialog.setObjectName("ird_policy_editor");
     dialog.setWindowTitle(QStringLiteral("修改工程策略")); dialog.resize(900,680);
     auto* layout=new QVBoxLayout(&dialog);
-    auto* source=new QLabel(ref?QStringLiteral("来源：项目策略；确认产生一个新修订，取消不写入"):
-        QStringLiteral("来源：系统缺省；首次确认后创建项目策略，未设置阈值保持未设置"),&dialog);
-    source->setObjectName("policy_source"); layout->addWidget(source);
+    auto* source=new QLabel((ref?QStringLiteral("来源：项目策略；确认产生一个新修订，取消不写入"):
+        QStringLiteral("来源：系统缺省；首次确认后创建项目策略，未设置阈值保持未设置"))+seedNote,&dialog);
+    source->setObjectName("policy_source"); source->setWordWrap(true); layout->addWidget(source);
     auto* tabs=new QTabWidget(&dialog); layout->addWidget(tabs,1);
     auto* general=new QWidget(tabs); auto* form=new QFormLayout(general); tabs->addTab(general,QStringLiteral("碰撞与阈值"));
     auto check=[&](const char* name,const QString& label,bool value) {

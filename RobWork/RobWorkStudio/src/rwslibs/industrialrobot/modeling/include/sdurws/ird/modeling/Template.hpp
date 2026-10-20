@@ -471,6 +471,12 @@ enum class JointEditField {
     /// MDL-12/AT-17：Continuous专用工程工作范围{qmin',qmax'}，rad；
     /// 复用JointLimits载荷，不改类型/bounds、不取模、不限制多圈行程。
     WorkingRange,
+    /// F01（WP-13-T25/MDL-01）：逐轴最大速度（double 备择；转动 rad/s、
+    /// 移动 m/s——单位随 type）。Provided 须有限且 ≥0（零＝真实零速非
+    /// 缺失；负值/非有限拒绝）；表尾追加纪律同 Origin/WorkingRange 先例。
+    MaxVelocity,
+    /// 同 MaxVelocity：逐轴最大加速度（转动 rad/s²、移动 m/s²）。
+    MaxAcceleration,
 };
 
 /**

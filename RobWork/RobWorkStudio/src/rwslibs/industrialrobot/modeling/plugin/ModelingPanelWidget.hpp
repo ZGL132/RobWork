@@ -337,6 +337,16 @@ private:
     void refreshDrivetrainPane();                 ///< SourcedValue 基线回填（NotProvided＝空）
     void applyDrivetrainEdits(const ui::ParamEditSet& editSet);  ///< 出口分组装配（三族原语）
     void rejectDrivetrainEdit(const DrivetrainEditError& err);   ///< 拒绝就地呈现（词表 token）
+public:
+    /// F14/MDL-21：耦合阶段能力位注入（缺省 R1Locked＝公共默认红线；
+    /// R2Enabled 由正式宿主装配注入——UiPlugin 装配点）。
+    void setCouplingStage(CouplingStage stage);
+    /// F14/MDL-21：耦合矩阵编辑模态（窗口/阶数/n×n 表格→域原语
+    /// applyDrivetrainCouplingEdit；拒绝原子性＋取消零写入）。
+    void openCouplingEditor();
+private:
+    /// F14/MDL-21：耦合配置摘要行刷新（refreshDrivetrainPane 尾调用）。
+    void refreshCouplingSummary();
     std::size_t drivetrainBaselineSlot(const std::string& key) const;  ///< 键→基线槽位
     /// 位姿类编辑页通用构建（说明行＋ParamTablePanel——工具/场景页同构
     /// 复用；模型/面板经引用回填成员，堆栈页由调用方 addWidget 定序）。
@@ -481,6 +491,12 @@ private:
     std::size_t m_drivetrainJointCount = 0;       ///< 行缓存（关节表变化→重建）
     /// 传动权威基线（槽位＝关节序×6＋族序 0~5——"净取权威"分组装配）。
     std::vector<std::optional<double>> m_drivetrainBaseline;
+    /// F14/MDL-21：耦合阶段能力位（缺省 R1Locked＝公共默认红线——Parts.hpp
+    /// 默认值同源；R2Enabled 仅经正式宿主 setCouplingStage 注入）。
+    CouplingStage m_couplingStage = CouplingStage::R1Locked;
+    QLabel* m_couplingSummary = nullptr;          ///< 耦合配置摘要行（无配置/窗口+阶数）
+    QPushButton* m_couplingEditButton = nullptr;  ///< 编辑入口（模态）
+    QPushButton* m_couplingRemoveButton = nullptr;  ///< 移除入口（两阶段均允许）
     std::optional<std::size_t> m_sceneEditTarget;  ///< 场景页当前绑定下标
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----

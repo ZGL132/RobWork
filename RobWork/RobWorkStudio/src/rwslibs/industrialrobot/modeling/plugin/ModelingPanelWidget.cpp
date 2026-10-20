@@ -18,6 +18,8 @@
 #include <QApplication>                           // clipboard（UI-T59 预览复制钮）
 #include <QClipboard>                             // QClipboard 完整类型（复制钮——UI-T59）
 #include <QComboBox>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QDoubleValidator>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
@@ -28,9 +30,11 @@
 #include <QLabel>
 #include <QLineEdit>                              // TCP 显示名行编辑（UI-T58）
 #include <QScrollBar>
+#include <QSpinBox>
 #include <QSplitter>
 #include <QStackedWidget>
 #include <QTabWidget>
+#include <QTableWidget>
 #include <QTime>
 #include <QTreeWidgetItemIterator>
 #include <QVBoxLayout>
@@ -106,6 +110,9 @@ constexpr const char* kJointBoundsMinKey = "bounds-min";
 constexpr const char* kJointBoundsMaxKey = "bounds-max";
 constexpr const char* kJointRangeMinKey = "working-range-min";
 constexpr const char* kJointRangeMaxKey = "working-range-max";
+// ---- F01（WP-13-T25）：关节速度/加速度编辑行（表尾追加——寻址锚同风格）。
+constexpr const char* kJointMaxVelocityKey = "max-velocity";
+constexpr const char* kJointMaxAccelerationKey = "max-acceleration";
 
 // ---- UI-T55 工具/场景位姿编辑页字段键（各 6 行——出口分组装配与基线
 //      回填的寻址锚；小写连字符词法同上）---------------------------
@@ -178,6 +185,11 @@ core::UnitToken jointEditUnitToken(core::QuantityKind kind)
     switch (kind) {
     case core::QuantityKind::Length: return core::UnitToken::find("m").value();
     case core::QuantityKind::Angle: return core::UnitToken::find("rad").value();
+    // F01：速度/加速度量纲（rad/s、m/s、rad/s^2、m/s^2——core 17 单位表在册）。
+    case core::QuantityKind::LinearVelocity: return core::UnitToken::find("m/s").value();
+    case core::QuantityKind::AngularVelocity: return core::UnitToken::find("rad/s").value();
+    case core::QuantityKind::LinearAcceleration: return core::UnitToken::find("m/s^2").value();
+    case core::QuantityKind::AngularAcceleration: return core::UnitToken::find("rad/s^2").value();
     default: break;
     }
     return core::UnitToken::find("1").value();  // 轴向＝无量纲单位向量
@@ -217,6 +229,8 @@ std::string chineseFieldLabel(const std::string& key)
         {"zero-offset", "零位偏置"},
         {"bounds", "限位"},
         {"working-range", "工作范围"},
+        {"max-velocity", "最大速度"},
+        {"max-acceleration", "最大加速度"},
         {"dh-alpha", "DH-α"},
         {"dh-a", "DH-a"},
         {"dh-d", "DH-d"},
@@ -1339,6 +1353,15 @@ void ModelingPanelWidget::setWritable(bool writable)
     }
     if (m_poseSetConfigPanel != nullptr) { m_poseSetConfigPanel->setEnabled(m_writable); }
     if (m_drivetrainPanel != nullptr) { m_drivetrainPanel->setEnabled(m_writable); }
+    // F14：耦合区随可写性与阶段能力位同步（编辑入口＝可写∧R2；移除＝可写）。
+    if (m_couplingEditButton != nullptr) {
+        m_couplingEditButton->setEnabled(
+            m_writable && m_couplingStage == CouplingStage::R2Enabled);
+    }
+    if (m_couplingRemoveButton != nullptr) {
+        m_couplingRemoveButton->setEnabled(m_writable);
+    }
+    refreshCouplingSummary();
     // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
     // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
     // 残留可用呈现，与需求域"切换后必须同步刷新全部状态承载面"的整改口径
@@ -1855,14 +1878,15 @@ void ModelingPanelWidget::refreshJointEditPane()
 
 void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
 {
-    // 12行稳定序：轴向3、原点6、零偏1，最后两行随类型为限位或工程范围。
-    // continuous工程范围是分析属性，必须显式区分不可用的权威限位（MDL-12）。
+    // 14行稳定序：轴向3、原点6、零偏1，两行随类型为限位或工程范围，表尾
+    // 两行＝最大速度/最大加速度（F01）。continuous工程范围是分析属性，必须
+    // 显式区分不可用的权威限位（MDL-12）。
     const core::QuantityKind qk = jointEditQuantityKind(joint.type);
     const core::UnitToken jointUnit = jointEditUnitToken(qk);
     const core::UnitToken dimensionless = core::UnitToken::find("1").value();
 
     std::vector<ui::QuantityFieldSpec> specs;
-    specs.reserve(12);
+    specs.reserve(14);
     specs.push_back(ui::makeQuantityFieldSpec(
         kJointAxisXKey, "轴向 X", core::QuantityKind::Dimensionless,
         dimensionless, dimensionless));
@@ -1899,6 +1923,21 @@ void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
     specs.push_back(ui::makeQuantityFieldSpec(
         continuous ? kJointRangeMaxKey : kJointBoundsMaxKey,
         continuous ? "工程范围上限" : "限位上限", qk, jointUnit, jointUnit));
+    // F01（MDL-01）：逐轴速度/加速度两行（表尾追加——14 行稳定序）；单位随
+    // 类型（转动 rad/s、rad/s²；移动 m/s、m/s²）。Fixed 行仍呈现（提交轨
+    // 域拒绝——编辑出口按 Fixed 拒绝提供，呈现不虚构可用性）。
+    const core::QuantityKind vk =
+        joint.type == JointType::Prismatic ? core::QuantityKind::LinearVelocity
+                                           : core::QuantityKind::AngularVelocity;
+    const core::QuantityKind ak =
+        joint.type == JointType::Prismatic ? core::QuantityKind::LinearAcceleration
+                                           : core::QuantityKind::AngularAcceleration;
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointMaxVelocityKey, "最大速度", vk, jointEditUnitToken(vk),
+        jointEditUnitToken(vk)));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointMaxAccelerationKey, "最大加速度", ak, jointEditUnitToken(ak),
+        jointEditUnitToken(ak)));
 
     // 换目标/类型时重建；延迟删除避免重入，旧表单的依赖延寿见下。
     if (m_jointEditPanel != nullptr) {
@@ -1997,6 +2036,18 @@ void ModelingPanelWidget::pushJointEditBaselines(const JointEntry& joint)
     } else {
         set(lowerKey, std::nullopt);
         set(upperKey, std::nullopt);
+    }
+    // F01：速度/加速度基线——Provided 直投真实值；缺失保持空（表单留空＝
+    // 不触碰，缺失≠零值——NFR-COR-03）。
+    if (const auto v = joint.maxVelocity.tryValue()) {
+        set(kJointMaxVelocityKey, *v);
+    } else {
+        set(kJointMaxVelocityKey, std::nullopt);
+    }
+    if (const auto a = joint.maxAcceleration.tryValue()) {
+        set(kJointMaxAccelerationKey, *a);
+    } else {
+        set(kJointMaxAccelerationKey, std::nullopt);
     }
 }
 
@@ -2118,6 +2169,15 @@ void ModelingPanelWidget::applyJointDetailEdits(const ui::ParamEditSet& editSet)
         } else {
             rejectAssembly("工程工作范围尚未确认：请填写上下两端（rad），不使用默认限位代替");
         }
+    }
+
+    // ---- F01：速度/加速度组（单值直投——脏键才提交；留空＝不触碰该字段，
+    //      缺失保持 NotProvided 不虚构零值；域内有限/非负/Fixed 裁决）----
+    if (const auto it = staged.find(kJointMaxVelocityKey); it != staged.end()) {
+        submit(JointEditField::MaxVelocity, JointEditValue{it->second});
+    }
+    if (const auto it = staged.find(kJointMaxAccelerationKey); it != staged.end()) {
+        submit(JointEditField::MaxAcceleration, JointEditValue{it->second});
     }
 
     // 权威同步（接受组基线推进对齐、被拒组基线回退真实权威——
@@ -3156,8 +3216,7 @@ void ModelingPanelWidget::buildDrivetrainPane()
     lay->setContentsMargins(0, 0, 0, 0);
     auto* cap = new QLabel(QStringLiteral(
         "传动设计编辑（传动比无量纲须 >0；摩擦三元 fv/fc/bias 与力矩限值"
-        "额定/峰值——单位随关节类型；耦合 coupling 属 R2/阶段 D、目录回填"
-        "归选型命令，均不在此页）"), area);
+        "额定/峰值——单位随关节类型；目录回填归选型命令不在此页）"), area);
     cap->setWordWrap(true);
     cap->setStyleSheet(
         QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
@@ -3171,6 +3230,63 @@ void ModelingPanelWidget::buildDrivetrainPane()
     if (m_drivetrainPanel != nullptr) {
         lay->addWidget(m_drivetrainPanel, 1);  // 零关节守卫下为空——重建期再挂
     }
+
+    // ---- 耦合矩阵区（WP-13-T25/F14——MDL-21/AT-38：§4.7 coupling 一等
+    //      字段的编辑入口；域原语 applyDrivetrainCouplingEdit（T18 落位）
+    //      此前零 UI 载体＝审计 M31 第一问题）。阶段能力位经
+    //      setCouplingStage 注入（缺省 R1Locked＝公共默认红线）。
+    auto* couplingHeader = new QLabel(QStringLiteral("耦合矩阵（MDL-21/R2）"), area);
+    couplingHeader->setStyleSheet(
+        QStringLiteral("font-weight: 600; color: %1;")
+            .arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    lay->addWidget(couplingHeader);
+    m_couplingSummary = new QLabel(area);
+    m_couplingSummary->setObjectName(QStringLiteral("ird_modeling_coupling_summary"));
+    m_couplingSummary->setWordWrap(true);
+    lay->addWidget(m_couplingSummary);
+    auto* couplingRow = new QHBoxLayout();
+    m_couplingEditButton = new QPushButton(QStringLiteral("编辑耦合矩阵…"), area);
+    m_couplingEditButton->setObjectName(QStringLiteral("ird_modeling_coupling_edit"));
+    m_couplingEditButton->setToolTip(QStringLiteral(
+        "打开关节窗口线性耦合矩阵编辑（Δq_joint = C·Δθ_motor；方阵/可逆/"
+        "条件数 ≤1×10⁸ 域校验——MDL-21/R2）"));
+    connect(m_couplingEditButton, &QPushButton::clicked, this,
+            &ModelingPanelWidget::openCouplingEditor);
+    couplingRow->addWidget(m_couplingEditButton);
+    m_couplingRemoveButton = new QPushButton(QStringLiteral("移除耦合配置"), area);
+    m_couplingRemoveButton->setObjectName(QStringLiteral("ird_modeling_coupling_remove"));
+    m_couplingRemoveButton->setToolTip(QStringLiteral(
+        "清除耦合配置（两阶段均允许——移除不是配置；R1 阶段的修复动作经此面）"));
+    connect(m_couplingRemoveButton, &QPushButton::clicked, this, [this] {
+        ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+        if (ws == nullptr || !m_writable) { return; }
+        if (!ws->drivetrainObject.has_value()
+            || !ws->drivetrainObject->coupling.has_value()) {
+            return;  // 无配置＝无动作（幂等）
+        }
+        const auto err =
+            applyDrivetrainCouplingEdit(*ws, m_couplingStage, std::nullopt);
+        if (!err.has_value()) {
+            onEditApplied("drivetrain.coupling（移除）");
+        } else {
+            EditRejection rejection;
+            rejection.codeToken = std::string(couplingEditErrorCodeToken(err->code));
+            rejection.detail = err->detail;
+            onEditRejected(rejection);
+        }
+        refreshPropertiesFromLastWorkingSet();
+    });
+    couplingRow->addWidget(m_couplingRemoveButton);
+    couplingRow->addStretch(1);
+    lay->addLayout(couplingRow);
+    lay->addStretch(1);
+    // 构建期即应用能力位/可写性门控（初值不失实——按钮缺省 enabled=true
+    // 不得越过 R1 红线呈现可用）。
+    setCouplingStage(m_couplingStage);
+    m_couplingEditButton->setEnabled(m_writable
+                                     && m_couplingStage == CouplingStage::R2Enabled);
+    m_couplingRemoveButton->setEnabled(m_writable);
+    refreshCouplingSummary();
 }
 
 void ModelingPanelWidget::rebuildDrivetrainModel()
@@ -3246,6 +3362,7 @@ void ModelingPanelWidget::refreshDrivetrainPane()
     const std::size_t jointCount = ws != nullptr ? ws->design.joints.size() : 0;
     if (jointCount != m_drivetrainJointCount) { rebuildDrivetrainModel(); }
     if (m_drivetrainPanel != nullptr) { m_drivetrainPanel->setEnabled(m_writable); }
+    refreshCouplingSummary();  // F14：耦合摘要随基线回填同拍刷新
 
     // SourcedValue 基线回填（NotProvided＝nullopt 空编辑器——不虚构数值；
     // 权威值缓存供分组装配"净取权威"）。
@@ -3680,6 +3797,200 @@ std::optional<core::ObjectId> ModelingPanelWidget::nodeAnchor(QTreeWidgetItem* i
     const std::string anchor = item->text(kAnchorColumn).toStdString();
     if (anchor.empty()) { return std::nullopt; }  // 分组行无锚
     return core::ObjectId::tryFromCanonical(anchor);
+}
+
+
+// =====================================================================
+// F14（WP-13-T25/MDL-21/AT-38）：耦合矩阵编辑入口
+// =====================================================================
+
+void ModelingPanelWidget::setCouplingStage(CouplingStage stage)
+{
+    m_couplingStage = stage;
+    // 能力位变化同步按钮可用性（R1 下"编辑配置"入口禁用——存在即阻断的
+    // 呈现半区；移除钮恒可用〔清除不是配置〕）。
+    if (m_couplingEditButton != nullptr) {
+        m_couplingEditButton->setEnabled(m_writable
+                                         && stage == CouplingStage::R2Enabled);
+        m_couplingEditButton->setToolTip(
+            stage == CouplingStage::R2Enabled
+                ? QStringLiteral("打开关节窗口线性耦合矩阵编辑（Δq_joint = "
+                                 "C·Δθ_motor；方阵/可逆/条件数 ≤1×10⁸ 域校验"
+                                 "——MDL-21/R2）")
+                : QStringLiteral("耦合配置在当前能力位（R1）下锁定——存在即"
+                                 "阻断（MDL-21-COUPLING-STAGE-LOCKED）；可先"
+                                 "移除既有配置"));
+    }
+    if (m_couplingRemoveButton != nullptr) {
+        m_couplingRemoveButton->setEnabled(m_writable);
+    }
+}
+
+void ModelingPanelWidget::openCouplingEditor()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable || ws->design.joints.empty()) { return; }
+    if (m_couplingStage != CouplingStage::R2Enabled) {
+        // R1 能力位下不开配置模态（编辑入口已禁用——此处为防御面）。
+        EditRejection rejection;
+        rejection.codeToken =
+            std::string(couplingEditErrorCodeToken(CouplingEditErrorCode::StageLocked));
+        rejection.detail = "耦合配置在当前能力位（R1）下锁定——MDL-21 已按 "
+                           "R2 解冻的宿主装配位生效后可配置";
+        onEditRejected(rejection);
+        return;
+    }
+    const std::size_t jointCount = ws->design.joints.size();
+    const CouplingDesign& existing =
+        ws->drivetrainObject.has_value()
+                && ws->drivetrainObject->coupling.has_value()
+            ? *ws->drivetrainObject->coupling
+            : CouplingDesign{};
+
+    QDialog dialog(this);
+    dialog.setObjectName(QStringLiteral("ird_modeling_coupling_dialog"));
+    dialog.setWindowTitle(QStringLiteral("编辑耦合矩阵（MDL-21/R2）"));
+    dialog.resize(520, 460);
+    auto* lay = new QVBoxLayout(&dialog);
+    auto* note = new QLabel(QStringLiteral(
+        "约定：Δq_joint = C·Δθ_motor（行＝关节窗口序，列＝对应电机轴同序；"
+        "力矩对偶 τ_motor = Cᵀ·τ_joint——DYN-04 虚功）。矩阵须方阵、可逆且"
+        "条件数 ≤1×10⁸（域校验拒绝不静默）。"), &dialog);
+    note->setWordWrap(true);
+    lay->addWidget(note);
+    auto* form = new QFormLayout();
+    auto* firstSpin = new QSpinBox(&dialog);
+    firstSpin->setObjectName(QStringLiteral("ird_modeling_coupling_first"));
+    firstSpin->setRange(1, static_cast<int>(jointCount));
+    firstSpin->setValue(existing.jointRangeFirst != 0 || existing.rows != 0
+                            ? static_cast<int>(existing.jointRangeFirst) + 1
+                            : 1);
+    auto* orderSpin = new QSpinBox(&dialog);
+    orderSpin->setObjectName(QStringLiteral("ird_modeling_coupling_order"));
+    orderSpin->setRange(1, static_cast<int>(jointCount));
+    orderSpin->setValue(existing.rows != 0 ? static_cast<int>(existing.rows) : 2);
+    form->addRow(QStringLiteral("窗口首关节（J 序）"), firstSpin);
+    form->addRow(QStringLiteral("矩阵阶数 n（窗口关节数＝电机轴数）"), orderSpin);
+    lay->addLayout(form);
+    auto* table = new QTableWidget(
+        orderSpin->value(), orderSpin->value(), &dialog);
+    table->setObjectName(QStringLiteral("ird_modeling_coupling_table"));
+    auto rebuildTable = [&, table](int order, const CouplingDesign* from) {
+        table->setRowCount(order);
+        table->setColumnCount(order);
+        for (int r = 0; r < order; ++r) {
+            for (int c = 0; c < order; ++c) {
+                double v = (r == c) ? 1.0 : 0.0;  // 缺省单位阵
+                if (from != nullptr && r < static_cast<int>(from->rows)
+                    && c < static_cast<int>(from->cols)) {
+                    v = from->c[static_cast<std::size_t>(r)
+                                 * from->cols + static_cast<std::size_t>(c)];
+                }
+                table->setItem(r, c, new QTableWidgetItem(QString::number(v)));
+            }
+        }
+    };
+    {
+        const CouplingDesign* from =
+            (existing.rows != 0) ? &existing : nullptr;
+        rebuildTable(orderSpin->value(), from);
+    }
+    // 阶数变化→表格重建（已有值尽量保留：对角延拓，新格按单位阵缺省）。
+    connect(orderSpin, &QSpinBox::valueChanged, this, [&, rebuildTable](int order) {
+        CouplingDesign keep;
+        keep.rows = keep.cols = static_cast<std::uint32_t>(table->rowCount());
+        for (int r = 0; r < table->rowCount(); ++r) {
+            for (int c = 0; c < table->columnCount(); ++c) {
+                keep.c.push_back(table->item(r, c) != nullptr
+                                     ? table->item(r, c)->text().toDouble()
+                                     : 0.0);
+            }
+        }
+        rebuildTable(order, &keep);
+    });
+    lay->addWidget(table, 1);
+    auto* errLabel = new QLabel(&dialog);
+    errLabel->setObjectName(QStringLiteral("ird_modeling_coupling_error"));
+    errLabel->setWordWrap(true);
+    errLabel->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kWarning)));
+    lay->addWidget(errLabel);
+    auto* buttons =
+        new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("应用"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, [&] {
+        // 组装 CouplingDesign：逐格解析（非法数值定位提示并保留模态）→
+        // 域原语裁决（拒绝保留模态原位重试——工作集未动）。
+        const int order = orderSpin->value();
+        const std::uint32_t first =
+            static_cast<std::uint32_t>(firstSpin->value() - 1);
+        CouplingDesign design;
+        design.rows = design.cols = static_cast<std::uint32_t>(order);
+        design.jointRangeFirst = first;
+        design.jointRangeLast = first + static_cast<std::uint32_t>(order) - 1;
+        design.c.reserve(static_cast<std::size_t>(order) * order);
+        for (int r = 0; r < order; ++r) {
+            for (int c = 0; c < order; ++c) {
+                bool ok = false;
+                const double v = table->item(r, c) != nullptr
+                                     ? table->item(r, c)->text().toDouble(&ok)
+                                     : 0.0;
+                if (!ok || !std::isfinite(v)) {
+                    errLabel->setText(QStringLiteral("第 %1 行第 %2 列不是有限"
+                                                     "数值——请修正后重试")
+                                          .arg(r + 1)
+                                          .arg(c + 1));
+                    return;
+                }
+                design.c.push_back(v);
+            }
+        }
+        // 申报条件数＝域校验重算值（checkCouplingMatrix 先行取得 κ——申报
+        // 值不参与判定，仅作展示缓存；真正的判定在 apply 原语内重算）。
+        const CouplingMatrixCheck pre =
+            checkCouplingMatrix(design, static_cast<std::uint32_t>(jointCount));
+        design.conditionNumber = pre.recomputedConditionNumber;
+        const auto err =
+            applyDrivetrainCouplingEdit(*ws, m_couplingStage, design);
+        if (err.has_value()) {
+            errLabel->setText(QString::fromStdString(
+                std::string(couplingEditErrorCodeToken(err->code)) + "："
+                + err->detail + "（工作集未修改，可修正后重试）"));
+            return;  // 拒绝保留模态——原子性由域原语保证（字节不变）
+        }
+        onEditApplied("drivetrain.coupling（窗口 J" + std::to_string(first + 1)
+                      + "..J" + std::to_string(first + order) + "，"
+                      + std::to_string(order) + "×" + std::to_string(order) + "）");
+        refreshPropertiesFromLastWorkingSet();
+        dialog.accept();
+    });
+    lay->addWidget(buttons);
+    dialog.exec();  // 取消＝零写入（模态内未触发 apply 即无任何工作集触碰）
+}
+
+void ModelingPanelWidget::refreshCouplingSummary()
+{
+    if (m_couplingSummary == nullptr) { return; }
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    const std::optional<CouplingDesign>& coupling =
+        (ws != nullptr && ws->drivetrainObject.has_value())
+            ? ws->drivetrainObject->coupling
+            : std::nullopt;
+    if (!coupling.has_value()) {
+        m_couplingSummary->setText(QStringLiteral(
+            "当前：未配置（Δq＝Δθ 直驱；R1 阶段允许，配置则阻断）"));
+        return;
+    }
+    m_couplingSummary->setText(QStringLiteral(
+        "当前：窗口 J%1..J%2，%3×%4 矩阵（申报条件数 %5——判定以重算为准）")
+        .arg(coupling->jointRangeFirst + 1)
+        .arg(coupling->jointRangeLast + 1)
+        .arg(coupling->rows)
+        .arg(coupling->cols)
+        .arg(coupling->conditionNumber));
 }
 
 }  // namespace sdurws::ird::modeling

@@ -106,6 +106,24 @@ void ModelingPluginAssembly::seedTemplateSession()
     }
 }
 
+std::vector<std::pair<std::string, std::string>>
+ModelingPluginAssembly::importedSelfCollisionCandidates() const
+{
+    // F07/P-MDL-3 移交链读取面：值拷贝出会话承载（不泄模块私有类型——
+    // R-2 装配面纪律；未装配＝空集诚实缺席）。
+    if (m_impl != nullptr) {
+        return m_impl->session().importedSelfCollisionCandidates;
+    }
+    return {};
+}
+
+void ModelingPluginAssembly::setCouplingStage(CouplingStage stage)
+{
+    if (m_impl != nullptr) {
+        m_impl->setCouplingStage(stage);
+    }
+}
+
 void ModelingPluginAssembly::bindSessionAnchor(
     const sdurws::ird::core::BranchId& branch,
     const sdurws::ird::core::RevisionId& base)

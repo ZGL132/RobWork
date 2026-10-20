@@ -426,6 +426,19 @@ TEST(MdlGoldenImport, GoldenUrdfReportCounts_V06_WP13T16_ACC3)
               static_cast<std::size_t>(jNum(*counts, "mappedCountAtLeast")));
     EXPECT_GE(report.defaults.size(),
               static_cast<std::size_t>(jNum(*counts, "defaultsCountAtLeast")));
+    // F01（WP-13-T25）：velocity→maxVelocity 映射计数钉住（golden 五轴——
+    // j1/j2/j4/j5/j6；旧 joint-velocity-limit 未保留面随 schema 落位消亡）。
+    {
+        std::size_t velocityRows = 0;
+        for (const auto& m : report.mapped) {
+            if (m.targetField.find(".maxVelocity") != std::string::npos) {
+                ++velocityRows;
+            }
+        }
+        EXPECT_EQ(velocityRows,
+                  static_cast<std::size_t>(jNum(*counts, "mappedVelocityCount")))
+            << "velocity 映射行计数与黄金期望不符（F01）";
+    }
 
     // —— 可提交面：submittable 且无错误项（AT-15 断言收口）——
     ASSERT_NE(counts->find("submittable"), nullptr);

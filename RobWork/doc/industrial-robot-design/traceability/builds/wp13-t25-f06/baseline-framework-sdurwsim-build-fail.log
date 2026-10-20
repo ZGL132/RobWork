@@ -1,0 +1,821 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  pqp.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\libs\Release\pqp.lib
+  Automatic MOC for target qtpropertybrowser
+  qtpropertybrowser.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  Auto build dll exports
+  sdurw_core.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_opengl.dll
+  yaobi.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws
+  sdurws.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWorkStudio\libs\Release\sdurws.lib
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWork\bin\Release\sdurw_pathplanners.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> C:\zcode-wt\build-wp13-t25\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC and UIC for target sdurwsim_gui
+  SupportPoseAnalyserDialog.cpp
+  BodyMotionWidget.cpp
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(223,42): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(223,51): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(430,23): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(430,23): error C2059: 语法错误:“const” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(430,23): error C2334: “:”的前面有意外标记；跳过明显的函数体 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(444,23): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(507,38): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(522,38): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(692,6): error C2143: 语法错误: 缺少“)”(在“;”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(692,6): error C2059: 语法错误:“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(692,6): error C2238: 意外的标记位于“;”之前 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(695,2): error C2059: 语法错误:“}” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(695,2): error C2143: 语法错误: 缺少“;”(在“}”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\Math.hpp(223,42): error C2059: 语法错误:“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(130,51): error C2039: "Transform3D": 不是 "rw::rw::math" 的成员 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(36,26):
+      参见“rw::rw::math”的声明
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(130,51):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(62,40):
+          在编译类模板“rw::rw::math::VelocityScrew6D”时
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(130,35): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(130,62): error C2143: 语法错误: 缺少“,”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(138,26): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(138,40): error C2143: 语法错误: 缺少“,”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(138,9): error C2535: “rw::rw::math::VelocityScrew6D<T>::VelocityScrew6D(const int)”: 已经定义或声明成员函数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(130,9):
+      参见“rw::rw::math::VelocityScrew6D<T>::VelocityScrew6D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(145,9): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(145,23): error C2143: 语法错误: 缺少“;”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(146,9): error C2334: “{”的前面有意外标记；跳过明显的函数体 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(156,9): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(156,18): error C2143: 语法错误: 缺少“;”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(156,41): error C2334: “{”的前面有意外标记；跳过明显的函数体 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(373,70): error C2039: "Transform3D": 不是 "rw::rw::math" 的成员 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(36,26):
+      参见“rw::rw::math”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(373,54): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(373,81): error C2143: 语法错误: 缺少“,”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(373,43): error C2803: “operator *”必须至少有一个类类型的形参 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19): error C2327: “rw::rw::math::VelocityScrew6D<T>::Vector3D”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19):
+      参见“rw::rw::math::VelocityScrew6D<T>::Vector3D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,13): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,27): error C2143: 语法错误: 缺少“;”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19): error C2086: “const int rw::rw::math::VelocityScrew6D<T>::Vector3D”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,51): error C2238: 意外的标记位于“;”之前 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19): error C2327: “rw::rw::math::VelocityScrew6D<T>::EAA”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19):
+      参见“rw::rw::math::VelocityScrew6D<T>::EAA”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,13): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,22): error C2143: 语法错误: 缺少“;”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19): error C2086: “const int rw::rw::math::VelocityScrew6D<T>::EAA”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,52): error C2238: 意外的标记位于“;”之前 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19): error C2327: “rw::rw::math::VelocityScrew6D<T>::EAA”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19):
+      参见“rw::rw::math::VelocityScrew6D<T>::EAA”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,13): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,22): error C2143: 语法错误: 缺少“;”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19): error C2086: “const int rw::rw::math::VelocityScrew6D<T>::EAA”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,52): error C2238: 意外的标记位于“;”之前 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19): error C2327: “rw::rw::math::VelocityScrew6D<T>::Vector3D”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19):
+      参见“rw::rw::math::VelocityScrew6D<T>::Vector3D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,13): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,27): error C2143: 语法错误: 缺少“;”(在“<”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19): error C2086: “const int rw::rw::math::VelocityScrew6D<T>::Vector3D”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,75): error C2238: 意外的标记位于“;”之前 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(380,13): error C2059: 语法错误:“return” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(380,49): error C2238: 意外的标记位于“;”之前 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(87,17): error C3878: 语法错误:“expression”后出现意外标记“RW__message” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(84,29):
+      此诊断出现在编译器生成的函数“rw::rw::math::VelocityScrew6D<T>::VelocityScrew6D(const Eigen::MatrixBase<OtherDerived> &)”中
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(87,17): message : 已跳过错误恢复:“标识符 ( 字符串” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(84,29):
+      此诊断出现在编译器生成的函数“rw::rw::math::VelocityScrew6D<T>::VelocityScrew6D(const Eigen::MatrixBase<OtherDerived> &)”中
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(87,17): error C2760: 语法错误: 此处出现意外的“,”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(84,29):
+      此诊断出现在编译器生成的函数“rw::rw::math::VelocityScrew6D<T>::VelocityScrew6D(const Eigen::MatrixBase<OtherDerived> &)”中
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(87,17): error C3878: 语法错误:“expression-statement”后出现意外标记“,” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(84,29):
+      此诊断出现在编译器生成的函数“rw::rw::math::VelocityScrew6D<T>::VelocityScrew6D(const Eigen::MatrixBase<OtherDerived> &)”中
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(87,17): message : 已跳过错误恢复:“,” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(84,29):
+      此诊断出现在编译器生成的函数“rw::rw::math::VelocityScrew6D<T>::VelocityScrew6D(const Eigen::MatrixBase<OtherDerived> &)”中
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(87,17): error C7510: “Message”: 类型 从属名称的使用必须以“typename”为前缀 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(84,29):
+      此诊断出现在编译器生成的函数“rw::rw::math::VelocityScrew6D<T>::VelocityScrew6D(const Eigen::MatrixBase<OtherDerived> &)”中
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(431,9): error C2255: “friend”: 不允许位于类定义之外 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(431,9): error C2143: 语法错误: 缺少“;”(在“<cv-qualifier>”的前面) [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(138,9): error C2535: “rw::rw::math::VelocityScrew6D<double>::VelocityScrew6D(const int)”: 已经定义或声明成员函数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(130,9):
+      参见“rw::rw::math::VelocityScrew6D<double>::VelocityScrew6D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19): error C2327: “rw::rw::math::VelocityScrew6D<double>::Vector3D”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19):
+      参见“rw::rw::math::VelocityScrew6D<double>::Vector3D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19): error C2086: “const int rw::rw::math::VelocityScrew6D<double>::Vector3D”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19): error C2327: “rw::rw::math::VelocityScrew6D<double>::EAA”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19):
+      参见“rw::rw::math::VelocityScrew6D<double>::EAA”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19): error C2086: “const int rw::rw::math::VelocityScrew6D<double>::EAA”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19): error C2327: “rw::rw::math::VelocityScrew6D<double>::EAA”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19):
+      参见“rw::rw::math::VelocityScrew6D<double>::EAA”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19): error C2086: “const int rw::rw::math::VelocityScrew6D<double>::EAA”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19): error C2327: “rw::rw::math::VelocityScrew6D<double>::Vector3D”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19):
+      参见“rw::rw::math::VelocityScrew6D<double>::Vector3D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19): error C2086: “const int rw::rw::math::VelocityScrew6D<double>::Vector3D”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(138,9): error C2535: “rw::rw::math::VelocityScrew6D<float>::VelocityScrew6D(const int)”: 已经定义或声明成员函数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(130,9):
+      参见“rw::rw::math::VelocityScrew6D<float>::VelocityScrew6D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(373,43): error C2556: “const rw::rw::math::VelocityScrew6D<float> rw::rw::math::operator *(const int)”: 重载函数与“const rw::rw::math::VelocityScrew6D<double> rw::rw::math::operator *(const int)”只是在返回类型上不同 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(373,43):
+      参见“rw::rw::math::operator *”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19): error C2327: “rw::rw::math::VelocityScrew6D<float>::Vector3D”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19):
+      参见“rw::rw::math::VelocityScrew6D<float>::Vector3D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(376,19): error C2086: “const int rw::rw::math::VelocityScrew6D<float>::Vector3D”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19): error C2327: “rw::rw::math::VelocityScrew6D<float>::EAA”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19):
+      参见“rw::rw::math::VelocityScrew6D<float>::EAA”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(377,19): error C2086: “const int rw::rw::math::VelocityScrew6D<float>::EAA”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19): error C2327: “rw::rw::math::VelocityScrew6D<float>::EAA”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19):
+      参见“rw::rw::math::VelocityScrew6D<float>::EAA”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(378,19): error C2086: “const int rw::rw::math::VelocityScrew6D<float>::EAA”: 重定义 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19): error C2327: “rw::rw::math::VelocityScrew6D<float>::Vector3D”: 不是类型名称、静态或枚举数 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19):
+      参见“rw::rw::math::VelocityScrew6D<float>::Vector3D”的声明
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rw\math\VelocityScrew6D.hpp(379,19): error C1003: 错误计数超过 100；正在停止编译 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/log/BodyMotionWidget.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(460,33): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(461,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(464,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(477,33): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(478,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(483,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(486,33): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(487,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(492,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(529,33): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(530,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(533,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(544,33): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(545,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(550,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(553,33): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(554,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(559,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(54,45):
+          在编译类模板“rwlibs::algorithms::KDTree”时
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C3878: 语法错误:“simple-declaration”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C3878: 语法错误:“simple-declaration-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C3878: 语法错误:“statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C3878: 语法错误:“statement-seq”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33):
+      缺少以下项之一:  '}' ?
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C2760: 语法错误: 此处出现意外的“)”；应为“}” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C3878: 语法错误:“compound-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C3878: 语法错误:“selection-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(451,33): message : 已跳过错误恢复:“) )” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(452,17): message : 已跳过错误恢复:“) ) =” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,17): message : 已跳过错误恢复:“) ) =” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(455,30): error C2065: “maxTmp”: 未声明的标识符 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C3878: 语法错误:“simple-declaration”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C3878: 语法错误:“simple-declaration-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C3878: 语法错误:“statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C3878: 语法错误:“statement-seq”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33):
+      缺少以下项之一:  '}' ?
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C2760: 语法错误: 此处出现意外的“)”；应为“}” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C3878: 语法错误:“compound-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C3878: 语法错误:“selection-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(521,33): message : 已跳过错误恢复:“) )” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(522,17): message : 已跳过错误恢复:“) ) =” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,17): message : 已跳过错误恢复:“) ) =” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTree.hpp(525,30): error C2065: “maxTmp”: 未声明的标识符 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(398,33): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(399,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(402,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(415,39): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(416,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(421,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(424,39): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(425,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(430,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(461,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(464,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(468,33): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(469,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(472,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(483,39): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(484,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(489,17): warning C4003: 类函数宏的调用“max”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(492,39): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(493,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(498,17): warning C4003: 类函数宏的调用“min”参数不足 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(54,40):
+          在编译类模板“rwlibs::algorithms::KDTreeQ”时
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C3878: 语法错误:“simple-declaration”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C3878: 语法错误:“simple-declaration-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C3878: 语法错误:“statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C3878: 语法错误:“statement-seq”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33):
+      缺少以下项之一:  '}' ?
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C2760: 语法错误: 此处出现意外的“)”；应为“}” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C3878: 语法错误:“compound-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C3878: 语法错误:“selection-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(389,33): message : 已跳过错误恢复:“) )” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(390,17): message : 已跳过错误恢复:“) ) =” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): error C2760: 语法错误: 此处出现意外的“)”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): error C3878: 语法错误:“expression-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): message : 已跳过错误恢复:“) ) ?” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): error C2760: 语法错误: 此处出现意外的“:”；应为“;” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): error C3878: 语法错误:“expression-statement”后出现意外标记“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): message : 已跳过错误恢复:“:” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,17): message : 已跳过错误恢复:“) ) =” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(393,30): error C2065: “maxTmp”: 未声明的标识符 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): error C2760: 语法错误: 此处出现意外的“)”；应为“表达式” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): error C3878: 语法错误:“simple-declaration”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): error C3878: 语法错误:“simple-declaration-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): error C3878: 语法错误:“statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): error C3878: 语法错误:“statement-seq”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+      C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33):
+      缺少以下项之一:  '}' ?
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): error C2760: 语法错误: 此处出现意外的“)”；应为“}” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): error C3878: 语法错误:“compound-statement”后出现意外标记“)” [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  
+C:\zcode-wt\wp13-t25\RobWork\RobWork\src\rwlibs\algorithms\kdtree\KDTreeQ.hpp(460,33): error C1003: 错误计数超过 100；正在停止编译 [C:\zcode-wt\build-wp13-t25\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  (编译源文件“../../../../../wp13-t25/RobWork/RobWorkSim/src/rwsimlibs/gui/SupportPoseAnalyserDialog.cpp”)
+  

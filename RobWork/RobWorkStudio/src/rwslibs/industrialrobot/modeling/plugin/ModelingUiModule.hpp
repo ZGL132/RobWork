@@ -98,6 +98,13 @@ struct ModuleSessionState {
     /// 已应用修订预览视图（UI-T41 A3——AppliedRevisionView 定格于应用时刻；
     /// nullopt＝无已应用修订——预览页空态。撤销/重做事件即失效——内容未知）。
     std::optional<AppliedRevisionView> appliedPreview;
+
+    /// 导入自碰撞排除候选（WP-13-T25/F07——P-MDL-3 移交链的会话承载）：
+    /// 最近一次导入确认（URDF disable_collisions 等）产生的连杆名对；供
+    /// 策略编辑器预填（呈现"导入候选"，经用户显式确认才写入策略修订
+    /// ——policy 权威不变）。每次导入确认整体替换；不经确认零策略写入。
+    /// 仅 UI 线程访问（§3.4）。
+    std::vector<std::pair<std::string, std::string>> importedSelfCollisionCandidates;
 };
 
 // UI-T63 从零创建面（CustomChainJointSpec/CustomChainDeclaration——完整型
@@ -276,6 +283,14 @@ public:
      * @param writable [in] 会话可写性（true＝可写会话；false＝只读/降级只读）
      */
     void setWritable(bool writable);
+
+    /**
+     * @brief 耦合阶段能力位注入（F14/MDL-21——面板暂存/即时双形态转发，
+     *        setWritable 同一时序语义；缺省 R1Locked＝公共默认红线）。
+     *
+     * @param stage [in] 耦合能力位（R1Locked｜R2Enabled——正式宿主装配注入）
+     */
+    void setCouplingStage(CouplingStage stage);
 
     /**
      * @brief 首版装配会话种子（generic-6r 草稿经真实 createDraft 产出——
@@ -631,6 +646,9 @@ private:
                                              ///  更新；createPanel 作为面板初始态。
                                              ///  默认 true＝装配期无项目会话的可写
                                              ///  草稿态，宿主打开只读项目后经转发
+    CouplingStage m_couplingStage = CouplingStage::R1Locked;  ///< F14：耦合能力位
+                                             ///  暂存（setCouplingStage 更新；缺省
+                                             ///  R1Locked＝公共默认红线）
                                              ///  面纠正——UI-T43 前该初值在面板上
                                              ///  不可纠正，是接线缺口）
     std::unique_ptr<policy::IJointLimitEvaluator> m_evaluator{

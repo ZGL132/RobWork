@@ -44,6 +44,10 @@
 #include <QTableWidget>
 #include <QTreeWidgetItemIterator>
 #include <QPushButton>
+#include <QDialog>          // F14：耦合编辑模态
+#include <QDialogButtonBox>  // F14：模态确认钮
+#include <QSpinBox>          // F14：窗口/阶数输入
+#include <QTimer>            // F14：模态应答定时器
 #include <sdurws/ird/modeling/GeometryLinkEdit.hpp>  // attachExternalGeometry/detachGeometry/GeometrySlot（UI-T48 域原语直调）
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
@@ -470,9 +474,9 @@ TEST_F(ModelingPanelGuiTest, ContinuousRangeSchemaRebuildKeepsQueuedModelAlive_M
 
 /**
  * 编辑页空态→选中建页链（UI-T53——B.1"结构树选择→详细编辑页"主入口）：
- * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝12 行数值表装配
- * （轴向 3＋原点 6＋零位 1＋限位 2）；切到连杆＝面板收起回空态（编辑页
- * 只对关节供给——工具/场景归后续批次）。
+ * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝14 行数值表装配
+ * （轴向 3＋原点 6＋零位 1＋限位 2＋F01 速度/加速度 2）；切到连杆＝面板
+ * 收起回空态（编辑页只对关节供给——工具/场景归后续批次）。
  */
 TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53)
 {
@@ -484,14 +488,16 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_U
     ASSERT_NE(hint, nullptr);
     EXPECT_FALSE(hint->text().isEmpty()) << "空态提示缺失（ERR-01——不伪造页也不留白）";
 
-    // 选中关节→建页：12 行（登记序＝装配序）。
+    // 选中关节→建页：14 行（登记序＝装配序；F01 表尾追加速度/加速度两行）。
     m_panel->focusObject(m_ws.design.joints[0].objectId);
     QTableWidget* table = jointEditTable(*m_panel);
     ASSERT_NE(table, nullptr) << "选中关节后编辑页未装配";
-    EXPECT_EQ(table->rowCount(), 12) << "编辑页字段集非 12 行（轴向 3＋原点 6＋零位 1＋限位 2）";
+    EXPECT_EQ(table->rowCount(), 14) << "编辑页字段集非 14 行（轴向 3＋原点 6＋零位 1＋限位 2＋速度/加速度 2——F01）";
     EXPECT_NE(jointEditRowOf(*table, "origin-x"), -1);
     EXPECT_NE(jointEditRowOf(*table, "origin-yaw"), -1);
     EXPECT_NE(jointEditRowOf(*table, "bounds-max"), -1);
+    EXPECT_NE(jointEditRowOf(*table, "max-velocity"), -1) << "F01：最大速度行未装配";
+    EXPECT_NE(jointEditRowOf(*table, "max-acceleration"), -1) << "F01：最大加速度行未装配";
 
     // 切到连杆→回空态（非关节目标无数值编辑页——诚实收口；收起打在
     // ParamTablePanel 根的显式隐藏位上，内层表格只随父链不可见）。
@@ -2237,4 +2243,288 @@ TEST_F(ModelingPanelGuiTest, ToolManagerPendingSelectionReadOnly_MDL13_AT01)
     m_panel->setWritable(true);EXPECT_TRUE(apply->isEnabled());
     const auto folder=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
     if(!folder.isEmpty()){QDir().mkpath(folder);ASSERT_TRUE(m_panel->grab().save(folder+"/tool-manager-top.png"));}
+}
+
+/**
+ * F01（WP-13-T25/MDL-01）：最大速度表单编辑全链——值列输入 1.25 rad/s→
+ * 两步确认→applyJointFieldEdit(MaxVelocity) 接受→工作集 Provided＋
+ * UserProvided＋变更记录；随后负值经同一链被域拒绝且工作集保持接受值
+ * （拒绝原子性——表格回退真实草稿值，不残留新值）。
+ */
+TEST_F(ModelingPanelGuiTest, JointDetailEditPane_MaxVelocityEditAndRejectChain_MDL01_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01", {}, std::nullopt);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QTableWidget* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    const int row = jointEditRowOf(*table, "max-velocity");
+    ASSERT_GE(row, 0) << "F01：最大速度行未装配";
+
+    // 合法值链：1.25 rad/s →两步确认→域接受。
+    table->item(row, 1)->setText(QStringLiteral("1.25"));
+    QApplication::processEvents();
+    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    QApplication::processEvents();
+
+    const auto& velocity = m_ws.design.joints[0].maxVelocity;
+    ASSERT_EQ(velocity.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(velocity.value(), 1.25);
+    EXPECT_EQ(velocity.provenance().kind, core::ProvenanceKind::UserProvided);
+    ASSERT_FALSE(m_ws.changes.empty());
+    EXPECT_NE(m_ws.changes.back().summary.find("最大速度"), std::string::npos);
+
+    // 拒绝链：-0.5 →域拒绝（负值）→工作集保持 1.25（原子性），表格按
+    // 真实草稿回填（F04 教训：拒绝后不得残留被拒输入值）。
+    table->item(row, 1)->setText(QStringLiteral("-0.5"));
+    QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_ws.design.joints[0].maxVelocity.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(m_ws.design.joints[0].maxVelocity.value(), 1.25)
+        << "负值被拒后工作集须保持原值（拒绝原子性）";
+    // 表格显示＝真实草稿回填（拒绝回执链——confirm 后回填钩子）。
+    QTableWidget* refreshed = jointEditTable(*m_panel);
+    ASSERT_NE(refreshed, nullptr);
+    const int refreshedRow = jointEditRowOf(*refreshed, "max-velocity");
+    ASSERT_GE(refreshedRow, 0);
+    EXPECT_EQ(refreshed->item(refreshedRow, 1)->text(), QStringLiteral("1.25"))
+        << "拒绝后表格须显示真实草稿值而非被拒输入（F04 同族纪律）";
+}
+
+// =====================================================================
+// F14（WP-13-T25/MDL-21/AT-38）：耦合矩阵编辑入口与域裁决链
+// =====================================================================
+
+/**
+ * @brief F14 入口与能力位门控：传动页有耦合区（摘要＋编辑＋移除钮）；
+ *        面板缺省 R1Locked＝公共默认红线（编辑钮禁用）；setCouplingStage
+ *        (R2Enabled) 即时放行；只读会话再禁用。修复前（红）：传动页零
+ *        耦合入口（审计 M31 第一问题——域原语 T18 落位但无 UI 载体）。
+ */
+TEST_F(ModelingPanelGuiTest, CouplingEditorEntryAndStageGating_MDL21_WP13T25)
+{
+    IRD_TEST_INFO("MDL-21",{"AT-38"},std::nullopt);
+
+    auto* edit = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_coupling_edit"));
+    ASSERT_NE(edit, nullptr) << "F14：传动页缺少耦合矩阵编辑入口（审计 M31）";
+    auto* remove = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_coupling_remove"));
+    ASSERT_NE(remove, nullptr);
+    auto* summary = m_panel->findChild<QLabel*>(
+        QStringLiteral("ird_modeling_coupling_summary"));
+    ASSERT_NE(summary, nullptr);
+    EXPECT_TRUE(summary->text().contains(QStringLiteral("未配置")))
+        << "六轴草稿无耦合——摘要应呈未配置态";
+
+    // 公共默认 R1Locked：编辑入口禁用（存在即阻断的呈现半区）；移除恒可用。
+    EXPECT_FALSE(edit->isEnabled())
+        << "缺省能力位 R1Locked——配置入口必须禁用（不提前放开 R1 红线）";
+    EXPECT_TRUE(remove->isEnabled()) << "移除（清除不是配置）两阶段均可用";
+
+    // R2 注入→即时放行；只读降级→再禁用（与可写性合取）。
+    m_panel->setCouplingStage(CouplingStage::R2Enabled);
+    QApplication::processEvents();
+    EXPECT_TRUE(edit->isEnabled()) << "R2Enabled 注入后配置入口应放行";
+    m_panel->setWritable(false);
+    QApplication::processEvents();
+    EXPECT_FALSE(edit->isEnabled()) << "只读会话下配置入口必须禁用";
+    EXPECT_FALSE(remove->isEnabled());
+    m_panel->setWritable(true);
+    m_panel->setCouplingStage(CouplingStage::R1Locked);
+    QApplication::processEvents();
+    EXPECT_FALSE(edit->isEnabled()) << "回到 R1 后再禁用（能力位与可写性正交）";
+}
+
+/**
+ * @brief F14 编辑全链（非对角矩阵）：R2 下打开模态→窗口 J4..J6＋3 阶→
+ *        录入交接固定数值探针矩阵 C=[[1,0.2,0],[0,1,-0.1],[0.3,0,1.5]]
+ *        →应用→工作集 coupling 落位（元素/窗口/阶数逐项＋变更记录）；
+ *        探针数值（Δq=C·Δθ、τ_motor=Cᵀ·τ、瞬时功率）以独立期望在用例内
+ *        核对（不调用被测映射生成答案——期望值手算固定）。
+ */
+TEST_F(ModelingPanelGuiTest, CouplingEditorNonDiagonalAcceptThenRemove_MDL21_WP13T25)
+{
+    IRD_TEST_INFO("MDL-21",{"AT-38"},std::nullopt);
+
+    m_panel->setCouplingStage(CouplingStage::R2Enabled);
+    QApplication::processEvents();
+    const std::size_t changesBefore = m_ws.changes.size();
+
+    // 模态应答（watchdog 同款纪律：超时拒绝并判失败）。
+    QTimer timeout;
+    timeout.setSingleShot(true);
+    QObject::connect(&timeout, &QTimer::timeout, [] {
+        ADD_FAILURE() << "耦合编辑模态未按预期响应";
+        if (auto* d = qobject_cast<QDialog*>(QApplication::activeModalWidget())) {
+            d->reject();
+        }
+    });
+    timeout.start(10000);
+    QTimer::singleShot(50, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog, nullptr) << "耦合编辑模态未弹出";
+        EXPECT_EQ(dialog->objectName(),
+                  QStringLiteral("ird_modeling_coupling_dialog"));
+        auto* first = dialog->findChild<QSpinBox*>(
+            QStringLiteral("ird_modeling_coupling_first"));
+        ASSERT_NE(first, nullptr);
+        auto* order = dialog->findChild<QSpinBox*>(
+            QStringLiteral("ird_modeling_coupling_order"));
+        ASSERT_NE(order, nullptr);
+        first->setValue(4);   // 窗口 J4..J6（0 基 3..5）
+        order->setValue(3);
+        QApplication::processEvents();
+        auto* table = dialog->findChild<QTableWidget*>(
+            QStringLiteral("ird_modeling_coupling_table"));
+        ASSERT_NE(table, nullptr);
+        ASSERT_EQ(table->rowCount(), 3);
+        // 交接固定探针矩阵（非对角——对角/单位阵不具证明力）。
+        const double c[3][3] = {{1.0, 0.2, 0.0},
+                                {0.0, 1.0, -0.1},
+                                {0.3, 0.0, 1.5}};
+        for (int r = 0; r < 3; ++r) {
+            for (int col = 0; col < 3; ++col) {
+                table->item(r, col)->setText(QString::number(c[r][col]));
+            }
+        }
+        QApplication::processEvents();
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)
+            ->click();
+    });
+    m_panel->openCouplingEditor();
+
+    // 工作集落位断言（元素行主序逐项＋窗口＋方阵阶数＋申报条件数为有限>1）。
+    ASSERT_TRUE(m_ws.drivetrainObject.has_value());
+    ASSERT_TRUE(m_ws.drivetrainObject->coupling.has_value());
+    const CouplingDesign& cd = *m_ws.drivetrainObject->coupling;
+    ASSERT_EQ(cd.rows, 3u);
+    ASSERT_EQ(cd.cols, 3u);
+    EXPECT_EQ(cd.jointRangeFirst, 3u);
+    EXPECT_EQ(cd.jointRangeLast, 5u);
+    const double expect[9] = {1.0, 0.2, 0.0, 0.0, 1.0, -0.1, 0.3, 0.0, 1.5};
+    for (std::size_t k = 0; k < 9; ++k) {
+        EXPECT_DOUBLE_EQ(cd.c[k], expect[k]) << "元素 " << k;
+    }
+    EXPECT_GT(cd.conditionNumber, 1.0);
+    EXPECT_TRUE(std::isfinite(cd.conditionNumber));
+    EXPECT_GT(m_ws.changes.size(), changesBefore) << "应用未留变更记录";
+
+    // 摘要行更新（窗口/阶数可观察）。
+    QApplication::processEvents();
+    auto* summary = m_panel->findChild<QLabel*>(
+        QStringLiteral("ird_modeling_coupling_summary"));
+    ASSERT_NE(summary, nullptr);
+    EXPECT_TRUE(summary->text().contains(QStringLiteral("J4..J6")))
+        << "摘要未呈现窗口";
+    EXPECT_TRUE(summary->text().contains(QStringLiteral("3×3")))
+        << "摘要未呈现阶数";
+
+    // ---- 交接固定数值探针（独立手算期望——非对角矩阵的映射语义面）----
+    // Δθ_motor=[1,2,3] rad → Δq_joint=C·Δθ=[1.4,1.7,4.8] rad；
+    // τ_joint=[2,-1,4] N·m → τ_motor=Cᵀ·τ=[3.2,-0.6,6.1] N·m；
+    // 两侧瞬时机械功率同值 20.3 W（虚功守恒——DYN-04）。
+    {
+        const double dtheta[3] = {1.0, 2.0, 3.0};
+        const double tauJoint[3] = {2.0, -1.0, 4.0};
+        double dq[3] = {0, 0, 0};
+        double tauMotor[3] = {0, 0, 0};
+        for (int r = 0; r < 3; ++r) {
+            for (int col = 0; col < 3; ++col) {
+                dq[r] += cd.c[r * 3 + col] * dtheta[col];
+                tauMotor[col] += cd.c[r * 3 + col] * tauJoint[r];
+            }
+        }
+        EXPECT_NEAR(dq[0], 1.4, 1e-12);
+        EXPECT_NEAR(dq[1], 1.7, 1e-12);
+        EXPECT_NEAR(dq[2], 4.8, 1e-12);
+        EXPECT_NEAR(tauMotor[0], 3.2, 1e-12);
+        EXPECT_NEAR(tauMotor[1], -0.6, 1e-12);
+        EXPECT_NEAR(tauMotor[2], 6.1, 1e-12);
+        const double powerJoint = tauJoint[0] * dq[0] + tauJoint[1] * dq[1]
+                                  + tauJoint[2] * dq[2];
+        const double powerMotor = tauMotor[0] * dtheta[0]
+                                  + tauMotor[1] * dtheta[1]
+                                  + tauMotor[2] * dtheta[2];
+        EXPECT_NEAR(powerJoint, 20.3, 1e-12);
+        EXPECT_NEAR(powerMotor, 20.3, 1e-12) << "虚功守恒（两侧功率应相等）";
+    }
+
+    // ---- 移除：清除后回到未配置（两阶段均允许的面）----
+    auto* remove = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_coupling_remove"));
+    ASSERT_NE(remove, nullptr);
+    remove->click();
+    QApplication::processEvents();
+    ASSERT_TRUE(m_ws.drivetrainObject.has_value());
+    EXPECT_FALSE(m_ws.drivetrainObject->coupling.has_value())
+        << "移除后耦合配置应清除";
+}
+
+/**
+ * @brief F14 拒绝面（数值）：奇异矩阵（秩 1）经域校验拒绝——模态保留、
+ *        错误行呈现稳定 token、工作集 coupling 逐字段不变（原子性）；
+ *        随后取消＝零写入。
+ */
+TEST_F(ModelingPanelGuiTest, CouplingEditorSingularRejectedAtomicCancelSafe_MDL21_WP13T25)
+{
+    IRD_TEST_INFO("MDL-21",{},std::nullopt);
+
+    m_panel->setCouplingStage(CouplingStage::R2Enabled);
+    QApplication::processEvents();
+    const ModelingWorkingSet before = m_ws;
+
+    QTimer timeout;
+    timeout.setSingleShot(true);
+    QObject::connect(&timeout, &QTimer::timeout, [] {
+        ADD_FAILURE() << "耦合编辑模态未按预期响应";
+        if (auto* d = qobject_cast<QDialog*>(QApplication::activeModalWidget())) {
+            d->reject();
+        }
+    });
+    timeout.start(10000);
+    QTimer::singleShot(50, [&] {
+        auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog, nullptr);
+        auto* order = dialog->findChild<QSpinBox*>
+(
+            QStringLiteral("ird_modeling_coupling_order"));
+        ASSERT_NE(order, nullptr);
+        order->setValue(2);
+        QApplication::processEvents();
+        auto* table = dialog->findChild<QTableWidget*>(
+            QStringLiteral("ird_modeling_coupling_table"));
+        ASSERT_NE(table, nullptr);
+        for (int r = 0; r < 2; ++r) {
+            for (int col = 0; col < 2; ++col) {
+                table->item(r, col)->setText(QStringLiteral("1"));
+            }
+        }
+        QApplication::processEvents();
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)
+            ->click();
+        QApplication::processEvents();
+        EXPECT_NE(QApplication::activeModalWidget(), nullptr)
+            << "域拒绝后模态应保留（原位重试）";
+        auto* err = dialog->findChild<QLabel*>(
+            QStringLiteral("ird_modeling_coupling_error"));
+        ASSERT_NE(err, nullptr);
+        EXPECT_TRUE(err->text().contains(QStringLiteral("singular")))
+            << "奇异拒绝的稳定 token 未呈现: " << err->text().toStdString();
+        EXPECT_TRUE(err->text().contains(QStringLiteral("工作集未修改")))
+            << "拒绝原子性未在回执注明";
+        dialog->reject();
+    });
+    m_panel->openCouplingEditor();
+    EXPECT_EQ(m_ws, before) << "拒绝＋取消后工作集必须与进入前逐字段相等（F14 顺序修正后）";
+
+
+
+
+
+
 }

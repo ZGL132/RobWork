@@ -378,9 +378,9 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
 
     switch (target.kind) {
     case SelectedTarget::Kind::Joint: {
-        // 关节（§9.7.1：类型/轴/零位/限位＋工作范围；DH 权威下轴/原点灰显
-        // 只读——§7.2 派生只读的呈现半区。速度/加速度限值属传动对象
-        // （MDL-16——§4.7），不在此投影——"只显示相关属性"的类别划界）。
+        // 关节（§9.7.1：类型/轴/零位/限位＋工作范围＋速度/加速度限值
+        // 〔F01/{1,1}——MDL-01 逐轴字段，旧"属传动对象不投影"划界随 schema
+        // 落位废止〕；DH 权威下轴/原点灰显只读——§7.2 派生只读的呈现半区）。
         const JointEntry& j = ws.design.joints.at(target.index);
         const bool dhAuthority = ws.design.authority == AuthorityMode::StandardDH;
         const auto dhGrey = dhAuthority ? FieldEnablement::ReadOnlyGrey : FieldEnablement::Editable;
@@ -433,6 +433,24 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
                      + formatDeterministic(j.workingRange.value().second);
             }
             add("working-range", text, "rad", FieldEnablement::Editable, prov);
+        }
+        // 逐轴最大速度/最大加速度（F01——MDL-01 关节一等字段；单位随类型：
+        // 转动 rad/s、rad/s²；移动 m/s、m/s²）。Fixed 语义上 NotApplicable，
+        // 呈现随 SourcedValue 四态直投（不虚构）。
+        {
+            const bool moving = j.type == JointType::Prismatic;
+            auto [textV, provV] = sourcedRow(j.maxVelocity);
+            if (j.maxVelocity.state() == core::FieldState::Provided) {
+                textV = formatDeterministic(j.maxVelocity.value());
+            }
+            add("max-velocity", textV, moving ? "m/s" : "rad/s",
+                FieldEnablement::Editable, provV);
+            auto [textA, provA] = sourcedRow(j.maxAcceleration);
+            if (j.maxAcceleration.state() == core::FieldState::Provided) {
+                textA = formatDeterministic(j.maxAcceleration.value());
+            }
+            add("max-acceleration", textA, moving ? "m/s^2" : "rad/s^2",
+                FieldEnablement::Editable, provA);
         }
         // DH 投影参数（UI-T41 批次C C3——§7.2"DH 态下为权威可编辑"的呈现半区；
         // 有投影值即呈现（无论当前权威——显式权威下的残留投影值如实直投），

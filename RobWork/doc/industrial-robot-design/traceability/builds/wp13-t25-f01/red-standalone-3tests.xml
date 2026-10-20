@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.003" timestamp="2026-10-20T11:05:05.358" name="AllTests">
+  <testsuite name="MdlCanonicalBridge" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T11:05:05.359">
+    <testcase name="TemplateVelocityAccelerationFlowToDescription_WP13T25" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp" line="1808" status="run" result="completed" time="0." timestamp="2026-10-20T11:05:05.359" classname="MdlCanonicalBridge">
+      <failure message="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp:1829&#x0A;Expected equality of these values:&#x0A;  jd.maxVelocity.state()&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  core::FieldState::Provided&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;j1 最大速度未随模板种子进入描述（F01 红证锚）&#x0A;" type=""><![CDATA[C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp:1829
+Expected equality of these values:
+  jd.maxVelocity.state()
+    Which is: 4-byte object <01-00 00-00>
+  core::FieldState::Provided
+    Which is: 4-byte object <00-00 00-00>
+j1 最大速度未随模板种子进入描述（F01 红证锚）
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ModelingCommandFlows" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-20T11:05:05.359">
+    <testcase name="ImportUrdfVelocityNotReportedUnsupported_MDL01_WP13T25" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="1320" status="run" result="completed" time="0.002" timestamp="2026-10-20T11:05:05.359" classname="ModelingCommandFlows">
+      <failure message="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:1338&#x0A;Expected equality of these values:&#x0A;  reportText.find(&quot;joint-velocity-limit&quot;)&#x0A;    Which is: 2552&#x0A;  std::string::npos&#x0A;    Which is: 18446744073709551615&#x0A;velocity 已有 schema 落点——不得再报无落点不支持项（F01）&#x0A;" type=""><![CDATA[C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:1338
+Expected equality of these values:
+  reportText.find("joint-velocity-limit")
+    Which is: 2552
+  std::string::npos
+    Which is: 18446744073709551615
+velocity 已有 schema 落点——不得再报无落点不支持项（F01）
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="PluginPanel" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-20T11:05:05.362">
+    <testcase name="JointRowsIncludeVelocityAccelerationEditable_MDL01_WP13T25" file="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp" line="1312" status="run" result="completed" time="0." timestamp="2026-10-20T11:05:05.362" classname="PluginPanel">
+      <failure message="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1328&#x0A;Expected equality of these values:&#x0A;  velocity.fieldKey&#x0A;    Which is: &quot;&quot;&#x0A;  &quot;max-velocity&quot;&#x0A;关节行缺最大速度投影（F01）&#x0A;" type=""><![CDATA[C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1328
+Expected equality of these values:
+  velocity.fieldKey
+    Which is: ""
+  "max-velocity"
+关节行缺最大速度投影（F01）
+]]></failure>
+      <failure message="C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1332&#x0A;Expected equality of these values:&#x0A;  acceleration.fieldKey&#x0A;    Which is: &quot;&quot;&#x0A;  &quot;max-acceleration&quot;&#x0A;关节行缺最大加速度投影（F01）&#x0A;" type=""><![CDATA[C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp:1332
+Expected equality of these values:
+  acceleration.fieldKey
+    Which is: ""
+  "max-acceleration"
+关节行缺最大加速度投影（F01）
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

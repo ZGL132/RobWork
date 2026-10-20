@@ -202,4 +202,34 @@ TEST_F(HostPolicyGuiTest, ReadOnlyAndUnboundNeverOpenWritableEditor_UX11_A23)
     host.bindProjectStore(static_cast<project::ProjectStore*>(nullptr));host.edit(nullptr);
     EXPECT_EQ(QApplication::activeModalWidget(),nullptr);
 }
+
+/** @brief F07/P-MDL-3（WP-13-T25）：导入排除候选预填的诚实缺席面——空项目
+ * （无已应用模型）候选不可解析：警示行如实列出未解析对、忽略表零预填、
+
+/** @brief F07/P-MDL-3（WP-13-T25）：导入排除候选预填的诚实缺席面——空项目
+ * （无已应用模型）候选不可解析：警示行如实列出未解析对、忽略表零预填、
+ * 取消零写入；候选不经确认绝不产生策略内容（policy 权威不变）。*/
+TEST_F(HostPolicyGuiTest, ImportedCandidatesUnresolvedListedNeverSilent_MDL04_WP13T25)
+{
+    IRD_TEST_INFO((std::vector<std::string>{"MDL-04","ARC-05"}),(std::vector<std::string>{"AT-19"}));
+    const auto initial=store->query().head();
+    // 模态应答模式（同夹具 edit 辅助——50ms 后检视并取消）。
+    QTimer timeout;timeout.setSingleShot(true);
+    QObject::connect(&timeout,&QTimer::timeout,[] {
+        if(auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget()))dialog->reject();
+        ADD_FAILURE()<<"策略编辑交互超时";
+    });timeout.start(10000);
+    QTimer::singleShot(50,[&] {
+        auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(dialog,nullptr)<<"带候选的编辑器未弹出";
+        auto* source=dialog->findChild<QLabel*>("policy_source");ASSERT_NE(source,nullptr);
+        EXPECT_TRUE(source->text().contains(QStringLiteral("未解析 2 对")))<<"未解析候选必须如实警示（不静默丢弃）";
+        EXPECT_TRUE(source->text().contains(QStringLiteral("base ↔ l1")))<<"候选对名称可观察";
+        auto* table=dialog->findChild<QTableWidget*>("policy_excluded");ASSERT_NE(table,nullptr);
+        EXPECT_EQ(table->rowCount(),0)<<"不可解析候选不得预填（无对象身份不虚构规则）";
+        dialog->reject();
+    });
+    host.edit(nullptr,{{"base","l1"},{"l1","l2"}});
+    EXPECT_EQ(store->query().head().id,initial.id)<<"取消零写入";
+}
 } // namespace sdurws::ird::ui::test

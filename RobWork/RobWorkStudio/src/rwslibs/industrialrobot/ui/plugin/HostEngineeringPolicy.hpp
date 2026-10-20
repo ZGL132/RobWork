@@ -57,6 +57,20 @@ public:
         const project::RevisionView& base, const policy::RawPolicyInput& input, bool allocateNew);
     /** @brief 模态编辑全字段；parent[in]借用Qt父窗口，取消无写入，诊断可原位重试。 */
     void edit(QWidget* parent);
+    /**
+     * @brief 模态编辑＋导入排除候选预填（WP-13-T25/F07——P-MDL-3 移交链
+     *        的消费半区）。候选为连杆名对：经当前修订 robot-design 对象
+     *        解码解析为 ObjectId 后预填忽略对象对（来源注明"导入候选"）；
+     *        未解析名不静默丢弃——对话框警示行如实列出。预填仅进表单，
+     *        经用户显式确认才随 submit 产生策略修订（取消零写入）。
+     *
+     * @param parent [in] Qt 父窗口（借用）
+     * @param importedExcludedCandidates [in] 导入确认产生的连杆名对（空＝
+     *        无预填，与单参重载等价）
+     */
+    void edit(QWidget* parent,
+              const std::vector<std::pair<std::string, std::string>>&
+                  importedExcludedCandidates);
     /** @brief UI线程重读当前修订并发布共享纯值；失败发布空，不回退。 */
     void refreshPublishedPolicy();
     /** @brief 返回当前发布值；后台请求必须按值捕获shared_ptr，不在后台回查HEAD。 */
