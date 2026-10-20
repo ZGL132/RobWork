@@ -927,8 +927,8 @@ bool executeModelingCommand(const std::string& commandId,
             }
             deps.reseedTemplate();
             summary = "已从模板重建草稿（generic-6r）——未应用编辑已清空；"
-                      "注意：模板预填的最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）"
-                      "当前不进入建模计算内核，请在传动或策略模块补录";
+                      "模板预填的逐轴最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）"
+                      "已随 F01 schema 落位真实进入模型与运行时计算";
             return true;
         }
         // custom-chain：六轴逐轴声明（UI-T63——从零创建；类型锁 Revolute，
@@ -959,8 +959,8 @@ bool executeModelingCommand(const std::string& commandId,
         declaration.joints = *declared;
         const bool reseeded = deps.reseedCustomChain(declaration, summary);
         if (reseeded) {
-            summary += "；注意：模板预填的最大速度/最大加速度（rad·s⁻¹/rad·s⁻²）"
-                       "当前不进入建模计算内核，请在传动或策略模块补录";
+            summary += "；逐轴最大速度/最大加速度未随声明携带——请在关节编辑页"
+                       "补录（缺失保持未提供，不虚构零值）";
         }
         return reseeded;  // true＝草稿已按声明重建（summary 带回执）；
                           // false＝声明非法/域拒绝（summary 带原因）

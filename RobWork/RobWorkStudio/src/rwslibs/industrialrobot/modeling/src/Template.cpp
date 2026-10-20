@@ -266,6 +266,42 @@ std::optional<JointEditError> editJointFieldImpl(RobotDesign& design,
             range, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
         return std::nullopt;
     }
+    case JointEditField::MaxVelocity:
+    case JointEditField::MaxAcceleration: {
+        // F01（MDL-01）：逐轴速度/加速度限值——两权威模式均权威（同
+        // zeroOffset/bounds 口径）；域规则＝有限且 ≥0（零＝真实零速/零加速
+        // 非缺失；负值物理无意义拒绝——运行时 Description 契约同口径）。
+        // 单位随 type（转动 rad/s、rad/s²；移动 m/s、m/s²），拒绝文案如实
+        // 标注。Fixed 关节无可动语义＝拒绝（先于写入——NotApplicable 态
+        // 不经本编辑流写入）。
+        const double v = std::get<double>(value);
+        const bool isVelocity = field == JointEditField::MaxVelocity;
+        const char* name = isVelocity ? "maxVelocity" : "maxAcceleration";
+        const char* unit = current.type == JointType::Prismatic
+                               ? (isVelocity ? "m/s" : "m/s^2")
+                               : (isVelocity ? "rad/s" : "rad/s^2");
+        if (current.type == JointType::Fixed) {
+            return JointEditError{JointEditErrorCode::TypeBoundsConflict,
+                                  subject + "." + name
+                                      + "：Fixed 关节无可动限值（NotApplicable）"
+                                        "——不得提供"};
+        }
+        if (!std::isfinite(v)) {
+            return JointEditError{JointEditErrorCode::ValueNotFinite,
+                                  subject + "." + name + "：非有限值（NaN/Inf）"};
+        }
+        if (v < 0.0) {
+            return JointEditError{JointEditErrorCode::ValueNotFinite,
+                                  subject + "." + name + "：负值无物理意义（单位 "
+                                      + unit + "，须 ≥0；缺失请留空不填 0）"};
+        }
+        auto& target = isVelocity
+                           ? design.joints[jointIndex].maxVelocity
+                           : design.joints[jointIndex].maxAcceleration;
+        target = core::SourcedValue<double>::provided(
+            v, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        return std::nullopt;
+    }
     case JointEditField::Type: {
         // ⑥ 类型：与既有 bound/workingRange 的非法组合拒绝（§7.3 组合族
         // ——不静默清除既有值，NFR-COR-03；转换后的限位缺失面归就绪校验
@@ -365,6 +401,12 @@ void appendChangeRecord(ModelingWorkingSet& ws, std::size_t jointIndex,
         break;
     case JointEditField::WorkingRange:
         record.summary = "确认Continuous工程工作范围（rad；跨周不取模、类型与限位不变）";
+        break;
+    case JointEditField::MaxVelocity:
+        record.summary = "修改关节最大速度（转动 rad/s／移动 m/s——MDL-01 逐轴限值）";
+        break;
+    case JointEditField::MaxAcceleration:
+        record.summary = "修改关节最大加速度（转动 rad/s²／移动 m/s²——MDL-01 逐轴限值）";
         break;
     }
     ws.changes.push_back(std::move(record));
@@ -548,6 +590,13 @@ TemplateOutcome RobotDesignTemplateFactory::createDraft(
         joint.zeroOffset = spec.zeroOffset;
         joint.bounds = core::SourcedValue<JointLimits>::provided(spec.bounds,
                                                                  provenance);
+        // F01（MDL-01"逐轴定义…速度/加速度限制"）：模板参考值随 {1,1}
+        // schema 真实入模（此前仅展示不入内核——审计 M05 缺口闭合）；单位
+        // 随类型（六轴模板全旋转＝rad/s、rad/s²）。
+        joint.maxVelocity = core::SourcedValue<double>::provided(
+            spec.maxVelocity, provenance);
+        joint.maxAcceleration = core::SourcedValue<double>::provided(
+            spec.maxAcceleration, provenance);
         // workingRange＝NotApplicable（Revolute 不适用——表 T-MDL-1 该列
         // 全行"—"；I-MDL-4"workingRange 仅 Continuous"）
         joint.workingRange =
@@ -634,6 +683,8 @@ std::string_view jointEditFieldToken(JointEditField field) noexcept
     case JointEditField::Bounds: return "bounds";
     case JointEditField::Origin: return "origin";
     case JointEditField::WorkingRange: return "workingRange";
+    case JointEditField::MaxVelocity: return "maxVelocity";
+    case JointEditField::MaxAcceleration: return "maxAcceleration";
     }
     return "type";  // 全枚举已覆盖，不达此处（无 default——漏项编译器告警）
 }
@@ -674,7 +725,12 @@ std::optional<JointEditError> applyJointFieldEdit(ModelingWorkingSet& ws,
         || (field == JointEditField::WorkingRange
             && std::holds_alternative<JointLimits>(value))
         || (field == JointEditField::Origin
-            && std::holds_alternative<JointOriginEditValue>(value));
+            && std::holds_alternative<JointOriginEditValue>(value))
+        // F01：速度/加速度复用 double 备择（同 ZeroOffset——表尾追加纪律）。
+        || (field == JointEditField::MaxVelocity
+            && std::holds_alternative<double>(value))
+        || (field == JointEditField::MaxAcceleration
+            && std::holds_alternative<double>(value));
     if (!matched) {
         throw std::invalid_argument(
             "modeling/template/edit-variant: value 备择与 field 不匹配: "

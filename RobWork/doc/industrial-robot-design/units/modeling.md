@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.56（2026-10-20，WP-13-T25/F01 批次落位——逐关节最大速度/最大加速度 schema 落位（MDL-01"逐轴定义关节（类型、轴线、零位、限位、速度/加速度限制）"——审计 M05 缺口闭合）：①**§4.3-A 表尾追加 maxVelocity/maxAcceleration 两行**（SourcedValue<double>，转动 rad/s、rad/s²｜移动 m/s、m/s²；两权威模式均权威；Provided 须有限且 ≥0〔零＝真实零速非缺失〕；Fixed＝NotApplicable）；②**编码格式 {1,0}→{1,1}**（表尾追加纪律——旧 {1,0} 字节兼容读为 NotProvided，无升级器语义不变）；③CanonicalBridge 硬写 NotProvided 改 Provided 透传（SI 真值门＋provenance 原样——runtime JointDescription 既有字段真实消费）；④模板种子/URDF velocity/WorkCell VelLimit·AccLimit 三入口真实映射（报告由"无落点不支持"转映射行——§6.3/§6.6 同步；joint-velocity-limit/joint-acceleration-limit 两 kind 生产面退役、词表值保留在册）；⑤面板＝属性行 max-velocity/max-acceleration 两行＋编辑页 12→14 行＋applyJointFieldEdit 域规则（负值/非有限/Fixed 拒绝、拒绝原子性）；⑥就绪 L9 注记条件化（存在可动关节缺值才登记——全值齐备零登记，§8.2 v0.53 口径的 F01 注记面更新）；⑦黄金数据集 mdl-urdf-import 期望面随契约演化更新（unsupported 8→3＋mappedVelocityCount=5 计数锚——manifest 摘要/历史登记，非对账失败掩盖）。前一版本 v0.55 保留如下。 |
 | 文档版本 | v0.55（2026-10-20，WP-13-T25/F06 批次落位——外部 WorkCell 反向导入正式命令入口：§9.7.3 表尾追加第十二号 `modeling.import-workcell`〔Stage/Project、readOnlyAllowed=false——写路径〕；命令流装配纪律＝io openGenericXml 良构校验（io.md §9.6 冻结读取面）＋readFileBytes 真实字节＋两读取窗口 SHA-256 摘要对账（ResChanged 诚实拒绝）＋Polytope 缺失容忍依赖树（存在＝io 真实快照、缺失＝exists=false 叶——引擎按 V-08 转 Recorded＋IO-RES-MISSING 事实）→§6.6 提取引擎→多设备分支显式选链（§6.4 同机制，不默认选第一个）→逐项提取报告确认（AT-33）→确认才替换草稿〔恰一根不变量 R1 同 URDF/Xacro 导入〕；取消选文件/取消选链/取消报告/根检查失败/摘要失配零工作集修改零修订；"从 WorkCell XML 新建项目来源"维持明确不做。审计 20261019-601ffa0e M14/MDL-18 复验口径＝正式窗口选文件→选设备→完整报告→确认→树/属性可编辑。前一版本 v0.54 保留如下。 |
 | 文档版本 | v0.54（2026-10-18，B7 文本勘误批：§14.6 v0.8「新增 13→15 条 MdlTemplate」、v0.12「MdlPartObjectCommands 12→14 条」、v0.17 冒烟「246/246＋14/14→200/200＋8/8」与分组「ACC2 六→七/ACC3 五→六」；findings F-312/F-343/F-353/F-354 消账）。前一版本 v0.53 保留如下。 |
 | 文档版本 | v0.53（2026-10-17，WP-13-T23 就绪状态聚合修正批〔分支 wp13-t23-reliability-polish；依据＝2026-10-17 审核发现＋所有者裁决 B〕：①**§8.2 状态聚合口径精确化**——呈现级 notes 中仅 Informational 上下文注记计入 ReadyWithNotes，`NotProvided` 缺项预告不参与三态聚合（呈现级直投就绪条＋missingItemKeys 通道；blocking 语义不变）。背景：v0.52 在 L9 无条件登记 NotProvided 后，状态聚合既有的"`!notes.empty()`→ReadyWithNotes"分支使任何干净模型的就绪状态永为 ReadyWithNotes、`Ready` 不可达，建模域汇聚 verdict（PanelCommandCatalog::modelingReadinessProjection）恒为 NotApplicable、缺项键恒有 missing.L9——与 v0.52 条目"不改变现有计算判定"的表述不符，本批兑现"呈现级不降级"承诺并恢复 v0.52 之前的状态可达性（Informational 仍聚合——既有口径不变）；②Readiness.hpp 状态枚举与 ReadinessNoteKind 注释、Readiness.cpp 状态汇总处与 L9 登记处注释同步该口径；③测试：ReadinessTest 新增 2 例检查器级回归钉（NotProvidedOnlyNoteKeepsReadyReachable_WP13T23——全干净工作集唯一 note 为 NotProvided 时状态必须为 Ready；InformationalNoteStillAggregatesReadyWithNotes_WP13T23——writable=false 的 L11 上下文注记仍降级 ReadyWithNotes，防止豁免被扩大）；④**审核更正登记**：v0.52 批 GUI 测试"桌面/Qt 运行环境阻塞（0xC0000409）"结论不成立——复现证实为启动进程缺 Qt/vcpkg DLL 搜索 PATH 所致，正确设置环境变量后 `sdurws_ird_modeling_gui_test` 全绿（44 通过＋1 既有跳过）；GUI 用例命名溯源由 _UI_T82 更正为 _WP13T23（UI-T82 为已完结停靠任务，与本用例无关）；最终源码态全量构建由本批补齐。前一版 v0.52 保留如下。）|
@@ -374,6 +375,8 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 | `zeroOffset` | `double`，rad（转动）或 m（移动）；`q_authoritative = q_zeroOffset + q_rw`（runtime 口径） | 两模式均为权威（零位语义不随权威模式切换） |
 | `bounds` | `SourcedValue<std::pair<double,double>>{qmin,qmax}`，rad/m；Revolute/Prismatic 必填且 qmin<qmax（硬断言 MDL-06④）；Continuous＝NotApplicable | 两模式均为权威 |
 | `workingRange` | `SourcedValue<std::pair<double,double>>`，rad；仅 Continuous，必须有限区间 qmin'<qmax' | 分析消费属性，**不回写 bounds**（MDL-12/V12-01） |
+| `maxVelocity` | `SourcedValue<double>`，转动 rad/s、移动 m/s（随 type） | **WP-13-T25/F01 追加（{1,1} 表尾）**：MDL-01"逐轴定义关节（…速度/加速度限制）"的关节一等权威字段，两权威模式均权威（同 bounds/zeroOffset）；Provided 须有限且 ≥0（零＝真实零速非缺失——缺失保持 NotProvided 不填 0）；Fixed＝NotApplicable；旧 {1,0} 字节解码＝NotProvided（兼容读）；流入 runtime `JointDescription.maxVelocity`（provenance 透传） |
+| `maxAcceleration` | `SourcedValue<double>`，转动 rad/s²、移动 m/s²（随 type） | 同 maxVelocity 口径；流入 `JointDescription.maxAcceleration` |
 | `dhDerived` | `std::optional<DhParameters>`（θ 偏置/d/a/α，rad·m） | 仅 StandardDH 态填写＝权威；Explicit 态下如存在则为只读派生展示值（不参与编码身份，见 §7.2） |
 
 **表 4.3-B `LinkEntry`**：
@@ -609,7 +612,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 | `<material>` | materialRef（估算密度提示） | URDF 材质无密度→密度 NotProvided（估算不可用，报告登记） |
 | `<joint type="revolute|continuous|prismatic|fixed">` | JointEntry.type | 四类识别（MDL-12）；mimic/planar/floating→§6.4 阻断口径，**不得转 FixedFrame、不得经选择绕过**（M-6） |
 | `<axis>` | axis | 任意有限非零轴可接受（不要求 Z，MDL-11）；**缺失**→按 URDF 语义取局部 +X 并记入"待确认草稿"清单（用户确认后可应用）；**零轴/非有限**→仅报告、该关节标记 Invalid，包含此类关节的草稿**不得提交修订**（MDL-11 后半，prepare 断言兜底） |
-| `<limit effort velocity lower upper>` | bounds、maxVelocity；effort→torqueLimit（drivetrain 对象，Peak 候选） | 缺 lower/upper（revolute）→待确认草稿项；continuous→bounds NotApplicable（类型保留） |
+| `<limit effort velocity lower upper>` | bounds、maxVelocity（F01/{1,1}：velocity→`joints[i].maxVelocity` Provided ImportMapped——单位随类型 SI 直入 rad/s｜m/s；负值/非有限＝错误项不静默）；effort→torqueLimit（drivetrain 对象，Peak 候选） | 缺 lower/upper（revolute）→待确认草稿项；continuous→bounds NotApplicable（类型保留） |
 | `<mimic>` | 不映射 | 识别＋报告＋阻断（MDL-12；MDL-21 启用后仅线性耦合放开） |
 | `<transmission>` | 不映射（线性耦合候选提示，R2） | 报告"不支持项" |
 | `<gazebo>` 等外来扩展 | 忽略项清单 | 报告不解释 |
@@ -650,13 +653,13 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
   - **关节类型**（MDL-12 同一判定）：`<Joint type>` Revolute/Prismatic、`<Frame type=Fixed>`（缺省 Fixed）、`<DHJoint>`（d 属性＝Revolute 形态）可表达；Spherical/PrismaticSpherical/Universal/PrismaticUniversal（多自由度）、Movable 自由帧、词表外类型→`joint-type` 不可表达**无草稿**（不得转 FixedFrame——M-6）；`<Depend>` 从动关节＝mimic 同款（识别＋报告＋阻断，类型保留，草稿不可提交——V-10）。
   - **DH 提取边界（本节增量登记）**：仅"全链均为 Revolute 型 `<DHJoint>`"的同质链经 `IDhExplicitConverter::dhToExplicit` 展开（§7.4 单一实现——DhChain 只参数化 Revolute 链；alpha/offset 源单位 deg 换算 rad）；混合链/含 Prismatic DHJoint 不可展开——逐个列入不可表达清单（诚实边界，不绕过、不重写第二份展开公式）。
   - **位姿/轴**：`<Pos>`（m）＋`<RPY>`（**源单位 deg→rad**，框架 Deg2Rad 同口径）→ origin（T_parent_joint）；缺省→零位（默认清单不静默）；框架 Joint 无轴元素——轴向固定为关节局部系 z 轴 (0,0,1)（框架语义，映射清单注明来源）。
-  - **限位**：`<PosLimit min max>`（Revolute 源单位 **deg→rad**、Prismatic 源 m——框架 addLimits convFactor 同口径）→ bounds；缺失/非法→待确认（limit-missing）；`<VelLimit>`/`<AccLimit>`→未保留逐项列出（§4.3-A 无对应字段，不发明 schema）。
+  - **限位**：`<PosLimit min max>`（Revolute 源单位 **deg→rad**、Prismatic 源 m——框架 addLimits convFactor 同口径）→ bounds；缺失/非法→待确认（limit-missing）；`<VelLimit>`/`<AccLimit>`→**F01/{1,1} 起映射** `maxVelocity`/`maxAcceleration`（源制式 SI 直入 rad/s、rad/s²｜m/s、m/s²——框架速度/加速度限值无 deg 换算面；非法/负值＝错误项；Fixed＝忽略面；旧"未保留逐项列出"口径随 §4.3-A 字段落位废止）。
   - **Q 构型**：设备内首 `<Q name>`（rad）对位可动关节（Fixed/Passive/Depend 不占位）→ 逐关节 `zeroOffset`（权威零位＝源初始姿态，q_authoritative = q_zeroOffset + q_rw；§7.4 zeroOffset 与 DH θ_offset 显式分离不烘入几何）；备选构型/维数失配→`q-config-residual` 未保留逐项列出。
   - **几何/资源**：`<Drawable>`→visual、`<CollisionModel>`→collision（重复仅首个映射，其余 multiple-visual/multiple-collision 逐条报告）；`<Polytope file>`→Mesh 资源 Recorded 登记（依赖树缺失叶/无叶→IO-RES-MISSING 事实＋missing 状态——缺失≠不可行，V-08）；解析图元→`geometry-primitive` 未保留（GeometryRef 无参数承载）。
   - **碰撞设置**：`<CollisionSetup file>`/`<ProximitySetup file>`（框架文法仅外部文件引用）→`collision-setup-external` 未保留逐项列出（排除对清单不在本通道解析范围）。
   - **场景/其他**：WorkCell 级 Frame/Drawable/CollisionModel→`scene-object` 未保留（单设备草稿不携带）；设备基帧安装位姿→`base-placement` 未保留（MDL-22 默认地面；安装预设语义归 runtime 单一权威 P-RT-4）；Camera/Property/Calibration/未知元素→ignored 逐项不静默。
   - **连杆合成**（有损）：links[0]＝设备名＋"-base"、links[i+1]＝帧名＋"-link"（I-MDL-2 命名空间为关节∪连杆同域——帧既是关节又是连杆，同名即冲突，后缀为合成规则）；WorkCell XML 不承载连杆惯性——物性全部 NotProvided 降级（默认清单逐连杆登记）。
-- 提取报告（AT-33 验收核心）：ImportReport 复用面——四清单（mapped/defaults/ignored/unsupported）＋待确认＋关节状态＋资源状态表＋分支报告＋主链能力结论（judgeChainCapability 复用）＋submittable；报告无条件产出（失败出口同样完整）。ImportUnsupportedItem kind 词表 WorkCell 通道追加六值（device-type/scene-object/collision-setup-external/q-config-residual/joint-acceleration-limit/base-placement——表尾追加）；'workcell-channel-r2' 引导面随通道实现**退役**（R1 边界响应不再产出——词表登记见 §15 v0.47）。
+- 提取报告（AT-33 验收核心）：ImportReport 复用面——四清单（mapped/defaults/ignored/unsupported）＋待确认＋关节状态＋资源状态表＋分支报告＋主链能力结论（judgeChainCapability 复用）＋submittable；报告无条件产出（失败出口同样完整）。ImportUnsupportedItem kind 词表 WorkCell 通道追加六值（device-type/scene-object/collision-setup-external/q-config-residual/joint-acceleration-limit/base-placement——表尾追加）；'workcell-channel-r2' 引导面随通道实现**退役**（R1 边界响应不再产出——词表登记见 §15 v0.47）。**F01/{1,1} 起生产面不再产出 joint-velocity-limit/joint-acceleration-limit 两 kind**（VelLimit/AccLimit 已映射 §4.3-A 字段——词表值保留在册为历史稳定面，与 'workcell-channel-r2' 退役同款纪律）。
 - 草稿红线（不变）：结果永远是草稿——不经确认不产生修订、不落盘、不经 project/**（PA-1；对象身份全部为确定性临时句柄 §6.7）；"从 WorkCell XML 新建项目来源"维持明确不做（PM 明确不做清单——建模通道≠新建来源通道）。
 
 ### 6.7 导入资源与对象身份（CON-03 三段边界、PM-01）
@@ -850,7 +853,7 @@ DH 权威 ──(展开，无损，允许)──> 显式权威        显式权�
 ```
 
 - **不可行模型 ≠ 未就绪模型**：就绪校验只回答"模型输入是否完备合法、能否构造与编译"；"工程上是否可行"（可达性/碰撞/动力学裕度）归各评估域的工程判定（EngineeringStatus，evidence 词表）。modeling 不输出 Feasible/Infeasible 结论；就绪诊断不使用工程判定状态词（七态投影归 ui 求值，modeling 只供 `inputComplete`/缺项数据）。
-- **呈现级 notes 的状态聚合口径（v0.53，WP-13-T23 所有者裁决 B）**：上图中"有 Warning/待确认"的三态触发面按实现语义精确化为——`Warning/Confirmable/Informational 呈现级注记（只读、应用预检等上下文事实）计入 ReadyWithNotes`；`NotProvided 缺项预告（如 L9 关节速度/加速度 schema 边界）不参与三态聚合`——它是"呈现级直投就绪条"的系统级事实（schema 无承载位置不是工程师在建模内可消除的输入缺陷），参与聚合会使无条件登记的预告把 Ready 变为不可达状态、建模域汇聚 verdict 恒降级，三态失去区分度。NotProvided 仅以"未提供"行（含对象锚/字段/单位/修复动作）在就绪条呈现，并经 `missingItemKeys` 通道上报缺项计数；blocking 语义不受影响（呈现级阻断仍走 NotReady）。
+- **呈现级 notes 的状态聚合口径（v0.53，WP-13-T23 所有者裁决 B；F01 批注记面更新）**：上图中"有 Warning/待确认"的三态触发面按实现语义精确化为——`Warning/Confirmable/Informational 呈现级注记（只读、应用预检等上下文事实）计入 ReadyWithNotes`；`NotProvided 缺项预告（如 L9 关节速度/加速度缺值——F01 后 schema 已有承载位置，预告条件化为"存在可动关节缺值"，模板草稿等全值齐备面零登记）不参与三态聚合`——参与聚合会使预告把 Ready 变为不可达状态、建模域汇聚 verdict 恒降级，三态失去区分度。NotProvided 仅以"未提供"行（含对象锚/字段/单位/修复动作——补录动作已改指关节编辑页）在就绪条呈现，并经 `missingItemKeys` 通道上报缺项计数；blocking 语义不受影响（呈现级阻断仍走 NotReady）。
 - **结果流向**：UI——`DomainReadinessItem{domainKey="modeling", inputComplete, missingItemKeys}` 经 `IPluginUiModule::readonlyProjections()` 上报（ui §6.5 只汇聚不判定）；project——Blocking/Confirmable 在命令 prepare 内重估（就绪校验结果不替代 prepare 现场断言，防 TOCTOU）；evidence——不直接消费建模就绪（快照完整性由组装方与通用证据门禁判定）；诊断目录——Warning/Confirmable 明细经 IDiagnosticSink 留痕。
 
 **四轴状态正交关系表**（编辑状态 × 模型就绪 × 编译状态 × 工程状态——四轴互不替代，CON-02/TASK-02 正交原则）：

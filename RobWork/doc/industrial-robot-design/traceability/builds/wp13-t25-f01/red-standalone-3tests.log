@@ -1,0 +1,53 @@
+Note: Google Test filter = *WP13T25*
+[==========] Running 3 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlCanonicalBridge
+[ RUN      ] MdlCanonicalBridge.TemplateVelocityAccelerationFlowToDescription_WP13T25
+C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CanonicalBridgeTest.cpp(1829): error: Expected equality of these values:
+  jd.maxVelocity.state()
+    Which is: 4-byte object <01-00 00-00>
+  core::FieldState::Provided
+    Which is: 4-byte object <00-00 00-00>
+j1 最大速度未随模板种子进入描述（F01 红证锚）
+
+[  FAILED  ] MdlCanonicalBridge.TemplateVelocityAccelerationFlowToDescription_WP13T25 (0 ms)
+[----------] 1 test from MdlCanonicalBridge (0 ms total)
+
+[----------] 1 test from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.ImportUrdfVelocityNotReportedUnsupported_MDL01_WP13T25
+C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(1338): error: Expected equality of these values:
+  reportText.find("joint-velocity-limit")
+    Which is: 2552
+  std::string::npos
+    Which is: 18446744073709551615
+velocity 已有 schema 落点——不得再报无落点不支持项（F01）
+
+[  FAILED  ] ModelingCommandFlows.ImportUrdfVelocityNotReportedUnsupported_MDL01_WP13T25 (2 ms)
+[----------] 1 test from ModelingCommandFlows (2 ms total)
+
+[----------] 1 test from PluginPanel
+[ RUN      ] PluginPanel.JointRowsIncludeVelocityAccelerationEditable_MDL01_WP13T25
+C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1328): error: Expected equality of these values:
+  velocity.fieldKey
+    Which is: ""
+  "max-velocity"
+关节行缺最大速度投影（F01）
+
+C:\zcode-wt\wp13-t25\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1332): error: Expected equality of these values:
+  acceleration.fieldKey
+    Which is: ""
+  "max-acceleration"
+关节行缺最大加速度投影（F01）
+
+[  FAILED  ] PluginPanel.JointRowsIncludeVelocityAccelerationEditable_MDL01_WP13T25 (0 ms)
+[----------] 1 test from PluginPanel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 3 test suites ran. (3 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] MdlCanonicalBridge.TemplateVelocityAccelerationFlowToDescription_WP13T25
+[  FAILED  ] ModelingCommandFlows.ImportUrdfVelocityNotReportedUnsupported_MDL01_WP13T25
+[  FAILED  ] PluginPanel.JointRowsIncludeVelocityAccelerationEditable_MDL01_WP13T25
+
+ 3 FAILED TESTS

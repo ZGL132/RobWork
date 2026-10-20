@@ -381,8 +381,9 @@ runtime::JointType toRuntimeJointType(JointType type)
  *   c) lower/upper：Revolute/Prismatic 由 bounds 折叠映射（rad/m）；Continuous
  *      必为 NotProvided（§4.2——工作范围另载）；Fixed 无限位→NotProvided；
  *   d) workingRange：仅 Continuous 映射（MDL-12 分析消费属性）；
- *   e) maxVelocity/maxAcceleration：建模 schema 无落点（§4.3-A 未登记——
- *      v0.6 ②a"不发明字段"口径）→NotProvided（能力缺失降级非失败）；
+ *   e) maxVelocity/maxAcceleration（F01/{1,1} 起）：JointEntry 一等权威
+ *      字段 Provided 透传（SI 真值门＋provenance 原样）；缺失→NotProvided
+ *      （能力缺失降级非失败）；
  *   f) axis：Explicit 权威透传；Fixed 无可动轴且缺失→+Z 中性填充（实现层
  *      细化③）；可动关节缺失→RefMissing（必备输入缺失，不伪造）。
  *
@@ -540,10 +541,41 @@ runtime::Expected<runtime::JointDescription, ModelingError>
         }
     }
 
-    // ---- maxVelocity/maxAcceleration：建模 schema 无落点（§4.3-A 未登记——
-    // 不发明字段）→NotProvided（runtime 能力缺失降级路径，非失败）。
-    jd.maxVelocity = core::SourcedValue<double>::notProvided();
-    jd.maxAcceleration = core::SourcedValue<double>::notProvided();
+    // ---- maxVelocity/maxAcceleration（WP-13-T25/F01——MDL-01 逐轴限值随
+    // {1,1} schema 落位）：Provided 值经 SI 真值门透传（有限非 NaN——单位
+    // 随 type：转动 rad/s、rad/s²；移动 m/s、m/s²；非有限＝UnitIllegal
+    // 拒绝，不静默吞）；缺失保持 NotProvided（runtime 能力缺失降级非失败）
+    // ＋原 provenance 透传（模板/导入/用户来源可追溯）。
+    {
+        const core::QuantityKind velocityKind =
+            src.type == JointType::Prismatic
+                ? core::QuantityKind::LinearVelocity
+                : core::QuantityKind::AngularVelocity;
+        const core::QuantityKind accelerationKind =
+            src.type == JointType::Prismatic
+                ? core::QuantityKind::LinearAcceleration
+                : core::QuantityKind::AngularAcceleration;
+        if (const auto v = src.maxVelocity.tryValue(); v.has_value()) {
+            const auto gated = siGate(*v, velocityKind);
+            if (!gated.has_value()) {
+                return runtime::Expected<runtime::JointDescription, ModelingError>::err(
+                    unitIllegal(field + ".maxVelocity",
+                                "最大速度未通过 SI 真值门（非有限值拒绝）"));
+            }
+            jd.maxVelocity = core::SourcedValue<double>::provided(
+                *gated, src.maxVelocity.provenance());
+        }
+        if (const auto a = src.maxAcceleration.tryValue(); a.has_value()) {
+            const auto gated = siGate(*a, accelerationKind);
+            if (!gated.has_value()) {
+                return runtime::Expected<runtime::JointDescription, ModelingError>::err(
+                    unitIllegal(field + ".maxAcceleration",
+                                "最大加速度未通过 SI 真值门（非有限值拒绝）"));
+            }
+            jd.maxAcceleration = core::SourcedValue<double>::provided(
+                *gated, src.maxAcceleration.provenance());
+        }
+    }
     return runtime::Expected<runtime::JointDescription, ModelingError>::ok(
         std::move(jd));
 }

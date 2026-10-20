@@ -1916,16 +1916,50 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
             item.span = src.limitSpan;
             report.drivetrainCandidates.push_back(std::move(item));
         }
-        // —— velocity（无 schema 落点——不支持面报告，不静默丢弃）。
+        // —— velocity（F01/{1,1}：maxVelocity 真实落点——§6.3 limit 行
+        //     "velocity→maxVelocity"）。合法（有限且 ≥0，单位随类型 SI 直入
+        //     rad/s｜m/s）→Provided＋映射行；语法/负值→错误项不静默；fixed
+        //     关节→忽略面（无可动限值语义）。
         if (src.hasVelocity) {
-            ImportUnsupportedItem item;
-            item.kind = "joint-velocity-limit";
-            item.subject = "joint '" + name + "' velocity=" + src.velocityText;
-            item.reason = "<limit velocity> 无 schema 落点（§4.3-A 未登记 maxVelocity"
-                          "——不发明字段）——报告承载不静默丢弃";
-            item.guidance = "速度上限可经传动设计/策略对象在后续编辑流登记";
-            item.span = src.limitSpan;
-            report.unsupported.push_back(std::move(item));
+            double velocityValue = 0.0;
+            const bool syntaxOk = parseDoubleStable(src.velocityText, &velocityValue);
+            if (!isMovableType(type)) {
+                ImportIgnoredItem item;
+                item.element = "joint '" + name + "'/limit@velocity";
+                item.reason = "fixed 关节无可动限值语义——忽略（不解释）";
+                item.span = src.limitSpan;
+                report.ignored.push_back(std::move(item));
+            } else if (!syntaxOk || !std::isfinite(velocityValue)) {
+                valueIllegal = true;
+                ImportErrorItem item;
+                item.kind = "value-illegal";
+                item.subject = "joint '" + name + "'.limit@velocity";
+                item.detail = "velocity 数值语法非法/非有限（原文: "
+                              + src.velocityText + "）";
+                item.span = src.limitSpan;
+                report.errors.push_back(std::move(item));
+            } else if (velocityValue < 0.0) {
+                valueIllegal = true;
+                ImportErrorItem item;
+                item.kind = "value-illegal";
+                item.subject = "joint '" + name + "'.limit@velocity";
+                item.detail = "velocity 为负（" + src.velocityText
+                              + "）——最大速度须 ≥0（rad/s｜m/s）";
+                item.span = src.limitSpan;
+                report.errors.push_back(std::move(item));
+            } else {
+                entry.maxVelocity = core::SourcedValue<double>::provided(
+                    velocityValue, importProvenance("urdf-import"));
+                ImportMappedItem mapped;
+                mapped.sourcePath = "joint[" + std::to_string(ci) + "]/limit@velocity";
+                mapped.targetField =
+                    "joints[" + std::to_string(ci) + "].maxVelocity";
+                mapped.valueText = formatDoubleStable(velocityValue)
+                                   + (type == 0 ? " rad/s" : " m/s");
+                mapped.note = "来源 import-mapped（F01 schema 落点）";
+                mapped.span = src.limitSpan;
+                report.mapped.push_back(std::move(mapped));
+            }
         }
 
         draft.joints.push_back(std::move(entry));

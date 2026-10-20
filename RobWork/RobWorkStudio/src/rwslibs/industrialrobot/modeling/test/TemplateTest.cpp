@@ -1061,3 +1061,58 @@ TEST(MdlTemplate, ContinuousWorkingRangeRejectAndBatch_MDL12_AT17)
     EXPECT_EQ(ws.design.joints[0].workingRange.value(),(JointLimits{-20,20}));
     EXPECT_EQ(ws.design.joints[1],before.design.joints[1]);
 }
+
+// =====================================================================
+// WP-13-T25/F01：逐轴速度/加速度编辑规则（MDL-01——applyJointFieldEdit）
+// =====================================================================
+
+/// F01 编辑域规则：合法值写入（UserProvided）＋拒绝面（负值/非有限/Fixed）
+/// ＋拒绝原子性（工作集字节不变）＋逐轴独立（不同值互不串扰）。
+TEST(MdlTemplateEdit, VelocityAccelerationEditRules_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01",{},std::nullopt);
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    const ModelingWorkingSet before = ws;
+
+    // ① 合法：逐轴不同值（交接探针族 v=[0.8,1.1,..]、a=[1..6]）。
+    const double v[6] = {0.8, 1.1, 1.4, 1.7, 2.0, 2.3};
+    const double a[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    for (std::size_t i = 0; i < 6; ++i) {
+        EXPECT_FALSE(applyJointFieldEdit(ws, i, JointEditField::MaxVelocity,
+                                         JointEditValue{v[i]}).has_value())
+            << "j" << i + 1 << " 速度合法值被拒";
+        EXPECT_FALSE(applyJointFieldEdit(ws, i, JointEditField::MaxAcceleration,
+                                         JointEditValue{a[i]}).has_value())
+            << "j" << i + 1 << " 加速度合法值被拒";
+        ASSERT_EQ(ws.design.joints[i].maxVelocity.state(), sdurws::ird::core::FieldState::Provided);
+        EXPECT_DOUBLE_EQ(ws.design.joints[i].maxVelocity.value(), v[i]);
+        ASSERT_EQ(ws.design.joints[i].maxAcceleration.state(), sdurws::ird::core::FieldState::Provided);
+        EXPECT_DOUBLE_EQ(ws.design.joints[i].maxAcceleration.value(), a[i]);
+        EXPECT_EQ(ws.design.joints[i].maxVelocity.provenance().kind,
+                  sdurws::ird::core::ProvenanceKind::UserProvided);
+    }
+    // 零值合法（真实零速≠缺失——不得被误拒）。
+    EXPECT_FALSE(applyJointFieldEdit(ws, 0, JointEditField::MaxVelocity,
+                                     JointEditValue{0.0}).has_value());
+    EXPECT_DOUBLE_EQ(ws.design.joints[0].maxVelocity.value(), 0.0);
+
+    // ② 拒绝面：负值/NaN——工作集不变（先校验后提交的原子性）。
+    const ModelingWorkingSet afterEdits = ws;
+    const auto negative = applyJointFieldEdit(ws, 0, JointEditField::MaxVelocity,
+                                              JointEditValue{-1.0});
+    ASSERT_TRUE(negative.has_value());
+    EXPECT_EQ(negative->code, JointEditErrorCode::ValueNotFinite);
+    const auto nanValue = std::numeric_limits<double>::quiet_NaN();
+    const auto nonFinite = applyJointFieldEdit(ws, 0, JointEditField::MaxAcceleration,
+                                               JointEditValue{nanValue});
+    ASSERT_TRUE(nonFinite.has_value());
+    EXPECT_EQ(ws, afterEdits) << "拒绝后工作集必须与拒绝前逐字段相等（原子性）";
+
+    // ③ Fixed 关节拒绝（无可动限值语义——先于写入）。
+    ws.design.joints[5].type = JointType::Fixed;
+    const auto fixedReject = applyJointFieldEdit(ws, 5, JointEditField::MaxVelocity,
+                                                 JointEditValue{1.0});
+    ASSERT_TRUE(fixedReject.has_value());
+    EXPECT_EQ(fixedReject->code, JointEditErrorCode::TypeBoundsConflict);
+}

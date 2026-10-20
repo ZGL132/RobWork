@@ -745,6 +745,11 @@ void putRobotDesign(Sink& s, const RobotDesign& d)
         }
         putSourcedValue(s, j.bounds);        // rad/m——两模式均权威
         putSourcedValue(s, j.workingRange);  // rad——仅 continuous 有语义
+        // {1,1} 表尾追加（F01——MDL-01 逐轴速度/加速度限制）：转动
+        // rad/s、rad/s²；移动 m/s、m/s²（单位随 type，编码侧不带单位换算——
+        // SI 真值门同 bounds）。
+        putSourcedValue(s, j.maxVelocity);
+        putSourcedValue(s, j.maxAcceleration);
     }
     // links（链序保持；selfCollisionHints 不编码——§4.3-B）
     s.u32(static_cast<std::uint32_t>(d.links.size()));
@@ -799,7 +804,8 @@ void putRobotDesign(Sink& s, const RobotDesign& d)
     s.string(d.notes);
 }
 
-bool getRobotDesign(Reader& r, RobotDesign* out, std::string* err)
+bool getRobotDesign(Reader& r, RobotDesign* out, std::string* err,
+                  std::uint32_t streamMinor = 0)
 {
     RobotDesign d;
     if (!r.u32(&d.schemaVersion)) { *err = "schemaVersion 截断"; return false; }
@@ -856,6 +862,13 @@ bool getRobotDesign(Reader& r, RobotDesign* out, std::string* err)
         }
         if (!getSourcedValue(r, &j.bounds, err)) { return false; }
         if (!getSourcedValue(r, &j.workingRange, err)) { return false; }
+        // {1,1} 表尾追加字段（F01）：旧 {1,0} 流不含本段——按 NotProvided
+        // 兼容读（缺失≠零值，不虚构）；新流逐字段读取（单位随 type：转动
+        // rad/s、rad/s²；移动 m/s、m/s²——SI 真值门同 bounds）。
+        if (streamMinor >= 1) {
+            if (!getSourcedValue(r, &j.maxVelocity, err)) { return false; }
+            if (!getSourcedValue(r, &j.maxAcceleration, err)) { return false; }
+        }
         d.joints.push_back(std::move(j));
     }
 
@@ -1341,7 +1354,7 @@ Expected<ObjectVariant> RobotDesignCodec::decode(const Bytes& bytes,
     ObjectVariant object;
     if (token == std::string(kRobotDesignObjectType)) {
         RobotDesign d;
-        if (!getRobotDesign(r, &d, &err)) {
+        if (!getRobotDesign(r, &d, &err, minor)) {
             return Expected<ObjectVariant>::err(malformedAt(r.offset(), err));
         }
         if (d.schemaVersion != major) {

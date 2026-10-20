@@ -463,9 +463,9 @@ TEST_F(ModelingPanelGuiTest, ContinuousRangeSchemaRebuildKeepsQueuedModelAlive_M
 
 /**
  * 编辑页空态→选中建页链（UI-T53——B.1"结构树选择→详细编辑页"主入口）：
- * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝12 行数值表装配
- * （轴向 3＋原点 6＋零位 1＋限位 2）；切到连杆＝面板收起回空态（编辑页
- * 只对关节供给——工具/场景归后续批次）。
+ * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝14 行数值表装配
+ * （轴向 3＋原点 6＋零位 1＋限位 2＋F01 速度/加速度 2）；切到连杆＝面板
+ * 收起回空态（编辑页只对关节供给——工具/场景归后续批次）。
  */
 TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53)
 {
@@ -477,14 +477,16 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_U
     ASSERT_NE(hint, nullptr);
     EXPECT_FALSE(hint->text().isEmpty()) << "空态提示缺失（ERR-01——不伪造页也不留白）";
 
-    // 选中关节→建页：12 行（登记序＝装配序）。
+    // 选中关节→建页：14 行（登记序＝装配序；F01 表尾追加速度/加速度两行）。
     m_panel->focusObject(m_ws.design.joints[0].objectId);
     QTableWidget* table = jointEditTable(*m_panel);
     ASSERT_NE(table, nullptr) << "选中关节后编辑页未装配";
-    EXPECT_EQ(table->rowCount(), 12) << "编辑页字段集非 12 行（轴向 3＋原点 6＋零位 1＋限位 2）";
+    EXPECT_EQ(table->rowCount(), 14) << "编辑页字段集非 14 行（轴向 3＋原点 6＋零位 1＋限位 2＋速度/加速度 2——F01）";
     EXPECT_NE(jointEditRowOf(*table, "origin-x"), -1);
     EXPECT_NE(jointEditRowOf(*table, "origin-yaw"), -1);
     EXPECT_NE(jointEditRowOf(*table, "bounds-max"), -1);
+    EXPECT_NE(jointEditRowOf(*table, "max-velocity"), -1) << "F01：最大速度行未装配";
+    EXPECT_NE(jointEditRowOf(*table, "max-acceleration"), -1) << "F01：最大加速度行未装配";
 
     // 切到连杆→回空态（非关节目标无数值编辑页——诚实收口；收起打在
     // ParamTablePanel 根的显式隐藏位上，内层表格只随父链不可见）。
@@ -2045,4 +2047,54 @@ TEST_F(ModelingPanelGuiTest, SameObjectRefreshKeepsPendingValue_UI_T79)
     auto* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
     host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
     EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_confirm_region"))->isHidden());
+}
+
+/**
+ * F01（WP-13-T25/MDL-01）：最大速度表单编辑全链——值列输入 1.25 rad/s→
+ * 两步确认→applyJointFieldEdit(MaxVelocity) 接受→工作集 Provided＋
+ * UserProvided＋变更记录；随后负值经同一链被域拒绝且工作集保持接受值
+ * （拒绝原子性——表格回退真实草稿值，不残留新值）。
+ */
+TEST_F(ModelingPanelGuiTest, JointDetailEditPane_MaxVelocityEditAndRejectChain_MDL01_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01", {}, std::nullopt);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QTableWidget* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    const int row = jointEditRowOf(*table, "max-velocity");
+    ASSERT_GE(row, 0) << "F01：最大速度行未装配";
+
+    // 合法值链：1.25 rad/s →两步确认→域接受。
+    table->item(row, 1)->setText(QStringLiteral("1.25"));
+    QApplication::processEvents();
+    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    QApplication::processEvents();
+
+    const auto& velocity = m_ws.design.joints[0].maxVelocity;
+    ASSERT_EQ(velocity.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(velocity.value(), 1.25);
+    EXPECT_EQ(velocity.provenance().kind, core::ProvenanceKind::UserProvided);
+    ASSERT_FALSE(m_ws.changes.empty());
+    EXPECT_NE(m_ws.changes.back().summary.find("最大速度"), std::string::npos);
+
+    // 拒绝链：-0.5 →域拒绝（负值）→工作集保持 1.25（原子性），表格按
+    // 真实草稿回填（F04 教训：拒绝后不得残留被拒输入值）。
+    table->item(row, 1)->setText(QStringLiteral("-0.5"));
+    QApplication::processEvents();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_ws.design.joints[0].maxVelocity.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(m_ws.design.joints[0].maxVelocity.value(), 1.25)
+        << "负值被拒后工作集须保持原值（拒绝原子性）";
+    // 表格显示＝真实草稿回填（拒绝回执链——confirm 后回填钩子）。
+    QTableWidget* refreshed = jointEditTable(*m_panel);
+    ASSERT_NE(refreshed, nullptr);
+    const int refreshedRow = jointEditRowOf(*refreshed, "max-velocity");
+    ASSERT_GE(refreshedRow, 0);
+    EXPECT_EQ(refreshed->item(refreshedRow, 1)->text(), QStringLiteral("1.25"))
+        << "拒绝后表格须显示真实草稿值而非被拒输入（F04 同族纪律）";
 }

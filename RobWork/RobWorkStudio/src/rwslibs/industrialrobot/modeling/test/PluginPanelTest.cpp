@@ -1305,3 +1305,31 @@ TEST(PluginPanel, GeometryRows_ShapeBadgeAndDanglingDetection_UI_T41C)
         std::string(geometryKindToken(GeometryKind::Mesh))) != std::string::npos)
         << "形状类别徽标缺失（C2）";
 }
+
+/// WP-13-T25/F01（MDL-01）：关节属性行必须投影逐轴最大速度/最大加速度
+/// （rad·s⁻¹/rad·s⁻² 随类型；可编辑——joint 一等权威字段；此前划界
+/// "属传动对象不投影"随 schema 落位废止——§4.3-A 表行同步）。
+TEST(PluginPanel, JointRowsIncludeVelocityAccelerationEditable_MDL01_WP13T25)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-01"}, std::vector<std::string>{});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    const auto target = resolveSelection(ws, ws.design.joints[0].objectId);
+    ASSERT_TRUE(target.has_value());
+    const auto rows = propertyFieldsFor(ws, *target);
+
+    auto rowOf = [&rows](const char* key) {
+        for (const auto& r : rows) {
+            if (r.fieldKey == key) { return r; }
+        }
+        return PropertyFieldRow{};
+    };
+    const PropertyFieldRow velocity = rowOf("max-velocity");
+    EXPECT_EQ(velocity.fieldKey, "max-velocity") << "关节行缺最大速度投影（F01）";
+    EXPECT_EQ(velocity.enablement, FieldEnablement::Editable)
+        << "速度为关节一等权威字段——可编辑行";
+    const PropertyFieldRow acceleration = rowOf("max-acceleration");
+    EXPECT_EQ(acceleration.fieldKey, "max-acceleration") << "关节行缺最大加速度投影（F01）";
+    EXPECT_EQ(acceleration.enablement, FieldEnablement::Editable)
+        << "加速度为关节一等权威字段——可编辑行";
+}

@@ -1196,10 +1196,14 @@ TEST(ModelingCommandFlows, ImportWorkcell_SingleDevice_RealReadProducesDraft_MDL
     EXPECT_NEAR(fx.session.draft.design.joints[5].zeroOffset, 0.6, 1e-15);
     // 资源清单：l1.stl（存在，真实 digest）＋ghost.stl（缺失，Recorded）。
     EXPECT_EQ(fx.session.draft.design.resourceManifest.size(), std::size_t{2});
-    // 逐项报告可见性（AT-33 字面——未保留内容不得静默丢弃）。
+    // 逐项报告可见性（AT-33 字面——未保留内容不得静默丢弃）。F01 复跑
+    // 更新：VelLimit 已映射 maxVelocity（报告呈现映射行而非未保留项）；
+    // 备选构型仍无落点（q-config-residual 未保留面不变）。
     const std::string reportText = fx.host.lastConfirmText.toStdString();
-    EXPECT_NE(reportText.find("joint-velocity-limit"), std::string::npos)
-        << "VelLimit 未保留项未在报告逐项呈现";
+    EXPECT_NE(reportText.find("maxVelocity"), std::string::npos)
+        << "VelLimit 映射行未在报告呈现（F01 复跑口径）";
+    EXPECT_EQ(reportText.find("joint-velocity-limit"), std::string::npos)
+        << "velocity 已有落点——不得再报未保留（F01）";
     EXPECT_NE(reportText.find("q-config-residual"), std::string::npos)
         << "备选构型未保留项未在报告呈现";
     // 草稿替换纪律：保根（恰一根不变量 R1）＋留痕＋就绪重算。
@@ -1312,4 +1316,29 @@ TEST(ModelingCommandFlows, ImportWorkcell_FileDialogCancel_Silent_MDL18)
         "modeling.import-workcell", fx.session, fx.deps(), fx.host, summary));
     EXPECT_TRUE(summary.empty());
     EXPECT_EQ(fx.session.draft, before);
+}
+
+/// F01/MDL-01：URDF `<limit velocity>` 在 schema 落位（JointEntry.maxVelocity）
+/// 后必须真实映射入草稿，不再以"joint-velocity-limit 无落点"谎报不支持
+/// （修复前红：Import.cpp 报告面登记 unsupported——本用例断言其缺席）。
+TEST(ModelingCommandFlows, ImportUrdfVelocityNotReportedUnsupported_MDL01_WP13T25)
+{
+    IRD_TEST_INFO("MDL-01",{},std::nullopt);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString urdfPath = writeUrdf(dir, /*withMesh=*/false);
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.host.openPathAnswer = urdfPath;
+    fx.host.confirmImportAnswer = true;
+
+    std::string summary;
+    EXPECT_TRUE(executeModelingCommand(
+        "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary))
+        << "summary=" << summary;
+    const std::string reportText = fx.host.lastConfirmText.toStdString();
+    EXPECT_EQ(reportText.find("joint-velocity-limit"), std::string::npos)
+        << "velocity 已有 schema 落点——不得再报无落点不支持项（F01）";
 }

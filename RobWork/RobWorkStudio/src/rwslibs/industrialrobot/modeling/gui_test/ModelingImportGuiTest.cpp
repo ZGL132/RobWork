@@ -169,10 +169,13 @@ TEST(ModelingImportGui, WorkCellRealFileDialogToReportCancelSafe_MDL18_AT33)
             EXPECT_EQ(report->objectName(),QStringLiteral("ird_modeling_import_report"));
             auto* text=report->findChild<QPlainTextEdit*>("ird_modeling_import_report_text");
             ASSERT_NE(text,nullptr);
-            const QString body=text->toPlainText();
-            EXPECT_TRUE(body.contains(QStringLiteral("guiarm")))<<"报告未承载设备名";
-            EXPECT_TRUE(body.contains(QStringLiteral("joints[0].bounds")))<<"报告未承载映射落点";
-            EXPECT_TRUE(body.contains(QStringLiteral("joint-velocity-limit")))<<"未保留项不可见";
+        const QString body=text->toPlainText();
+        EXPECT_TRUE(body.contains(QStringLiteral("guiarm")))<<"报告未承载设备名";
+        EXPECT_TRUE(body.contains(QStringLiteral("joints[0].bounds")))<<"报告未承载映射落点";
+        // F01 复跑口径：VelLimit 已映射 maxVelocity（映射行可见），旧
+        // "joint-velocity-limit 未保留"不再产出。
+        EXPECT_TRUE(body.contains(QStringLiteral("maxVelocity")))<<"速度映射行不可见（F01）";
+        EXPECT_FALSE(body.contains(QStringLiteral("joint-velocity-limit")))<<"velocity 已有落点，不得再报未保留（F01）";
             snapshot(*report,"workcell-import-report");
             report->reject();
         });

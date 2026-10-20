@@ -31,6 +31,7 @@
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/UiText.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostEngineeringPolicy.hpp",

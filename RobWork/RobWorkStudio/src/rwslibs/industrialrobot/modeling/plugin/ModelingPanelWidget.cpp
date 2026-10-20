@@ -102,6 +102,9 @@ constexpr const char* kJointBoundsMinKey = "bounds-min";
 constexpr const char* kJointBoundsMaxKey = "bounds-max";
 constexpr const char* kJointRangeMinKey = "working-range-min";
 constexpr const char* kJointRangeMaxKey = "working-range-max";
+// ---- F01（WP-13-T25）：关节速度/加速度编辑行（表尾追加——寻址锚同风格）。
+constexpr const char* kJointMaxVelocityKey = "max-velocity";
+constexpr const char* kJointMaxAccelerationKey = "max-acceleration";
 
 // ---- UI-T55 工具/场景位姿编辑页字段键（各 6 行——出口分组装配与基线
 //      回填的寻址锚；小写连字符词法同上）---------------------------
@@ -174,6 +177,11 @@ core::UnitToken jointEditUnitToken(core::QuantityKind kind)
     switch (kind) {
     case core::QuantityKind::Length: return core::UnitToken::find("m").value();
     case core::QuantityKind::Angle: return core::UnitToken::find("rad").value();
+    // F01：速度/加速度量纲（rad/s、m/s、rad/s^2、m/s^2——core 17 单位表在册）。
+    case core::QuantityKind::LinearVelocity: return core::UnitToken::find("m/s").value();
+    case core::QuantityKind::AngularVelocity: return core::UnitToken::find("rad/s").value();
+    case core::QuantityKind::LinearAcceleration: return core::UnitToken::find("m/s^2").value();
+    case core::QuantityKind::AngularAcceleration: return core::UnitToken::find("rad/s^2").value();
     default: break;
     }
     return core::UnitToken::find("1").value();  // 轴向＝无量纲单位向量
@@ -213,6 +221,8 @@ std::string chineseFieldLabel(const std::string& key)
         {"zero-offset", "零位偏置"},
         {"bounds", "限位"},
         {"working-range", "工作范围"},
+        {"max-velocity", "最大速度"},
+        {"max-acceleration", "最大加速度"},
         {"dh-alpha", "DH-α"},
         {"dh-a", "DH-a"},
         {"dh-d", "DH-d"},
@@ -1726,14 +1736,15 @@ void ModelingPanelWidget::refreshJointEditPane()
 
 void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
 {
-    // 12行稳定序：轴向3、原点6、零偏1，最后两行随类型为限位或工程范围。
-    // continuous工程范围是分析属性，必须显式区分不可用的权威限位（MDL-12）。
+    // 14行稳定序：轴向3、原点6、零偏1，两行随类型为限位或工程范围，表尾
+    // 两行＝最大速度/最大加速度（F01）。continuous工程范围是分析属性，必须
+    // 显式区分不可用的权威限位（MDL-12）。
     const core::QuantityKind qk = jointEditQuantityKind(joint.type);
     const core::UnitToken jointUnit = jointEditUnitToken(qk);
     const core::UnitToken dimensionless = core::UnitToken::find("1").value();
 
     std::vector<ui::QuantityFieldSpec> specs;
-    specs.reserve(12);
+    specs.reserve(14);
     specs.push_back(ui::makeQuantityFieldSpec(
         kJointAxisXKey, "轴向 X", core::QuantityKind::Dimensionless,
         dimensionless, dimensionless));
@@ -1770,6 +1781,21 @@ void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
     specs.push_back(ui::makeQuantityFieldSpec(
         continuous ? kJointRangeMaxKey : kJointBoundsMaxKey,
         continuous ? "工程范围上限" : "限位上限", qk, jointUnit, jointUnit));
+    // F01（MDL-01）：逐轴速度/加速度两行（表尾追加——14 行稳定序）；单位随
+    // 类型（转动 rad/s、rad/s²；移动 m/s、m/s²）。Fixed 行仍呈现（提交轨
+    // 域拒绝——编辑出口按 Fixed 拒绝提供，呈现不虚构可用性）。
+    const core::QuantityKind vk =
+        joint.type == JointType::Prismatic ? core::QuantityKind::LinearVelocity
+                                           : core::QuantityKind::AngularVelocity;
+    const core::QuantityKind ak =
+        joint.type == JointType::Prismatic ? core::QuantityKind::LinearAcceleration
+                                           : core::QuantityKind::AngularAcceleration;
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointMaxVelocityKey, "最大速度", vk, jointEditUnitToken(vk),
+        jointEditUnitToken(vk)));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointMaxAccelerationKey, "最大加速度", ak, jointEditUnitToken(ak),
+        jointEditUnitToken(ak)));
 
     // 换目标/类型时重建；延迟删除避免重入，旧表单的依赖延寿见下。
     if (m_jointEditPanel != nullptr) {
@@ -1868,6 +1894,18 @@ void ModelingPanelWidget::pushJointEditBaselines(const JointEntry& joint)
     } else {
         set(lowerKey, std::nullopt);
         set(upperKey, std::nullopt);
+    }
+    // F01：速度/加速度基线——Provided 直投真实值；缺失保持空（表单留空＝
+    // 不触碰，缺失≠零值——NFR-COR-03）。
+    if (const auto v = joint.maxVelocity.tryValue()) {
+        set(kJointMaxVelocityKey, *v);
+    } else {
+        set(kJointMaxVelocityKey, std::nullopt);
+    }
+    if (const auto a = joint.maxAcceleration.tryValue()) {
+        set(kJointMaxAccelerationKey, *a);
+    } else {
+        set(kJointMaxAccelerationKey, std::nullopt);
     }
 }
 
@@ -1989,6 +2027,15 @@ void ModelingPanelWidget::applyJointDetailEdits(const ui::ParamEditSet& editSet)
         } else {
             rejectAssembly("工程工作范围尚未确认：请填写上下两端（rad），不使用默认限位代替");
         }
+    }
+
+    // ---- F01：速度/加速度组（单值直投——脏键才提交；留空＝不触碰该字段，
+    //      缺失保持 NotProvided 不虚构零值；域内有限/非负/Fixed 裁决）----
+    if (const auto it = staged.find(kJointMaxVelocityKey); it != staged.end()) {
+        submit(JointEditField::MaxVelocity, JointEditValue{it->second});
+    }
+    if (const auto it = staged.find(kJointMaxAccelerationKey); it != staged.end()) {
+        submit(JointEditField::MaxAcceleration, JointEditValue{it->second});
     }
 
     // 权威同步（接受组基线推进对齐、被拒组基线回退真实权威——

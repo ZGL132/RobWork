@@ -85,8 +85,8 @@
     },
     {
       "path": "expected/import-report.json",
-      "sha256": "3d99e004dc2be24f57ec0ff8fd1fff7bdac4a438788a77172d3905957b22043b",
-      "sizeBytes": 2821
+      "sha256": "2448cd83ac6f28990a0e64cf15bbaa7355ac4f7036b50c877f7aa3443c4474d1",
+      "sizeBytes": 2962
     },
     {
       "path": "expected/xacro-samples.json",
@@ -105,6 +105,13 @@
     "committed": true
   },
   "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-20",
+      "change": "F01 期望面更新（WP-13-T25）：<limit velocity> 随 {1,1} schema 落位真实映射 joints[i].maxVelocity——unsupported 由 8（含 joint-velocity-limit×5）降为 3，新增 mappedVelocityCount=5 计数锚；其余计数不变。变更属产品契约演化（MDL-01），非夹具对账失败掩盖——期望面与新映射实现同批提交，测试断言同步钉住映射面。",
+      "reReviewedBy": "WP-13-T25 实施会话（旁支并行批——验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    },
     {
       "version": "1.0.0",
       "date": "2026-09-25",

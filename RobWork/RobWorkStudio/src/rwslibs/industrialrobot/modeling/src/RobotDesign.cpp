@@ -178,6 +178,8 @@ bool JointEntry::operator==(const JointEntry& o) const
         && zeroOffset == o.zeroOffset
         && bounds == o.bounds
         && workingRange == o.workingRange
+        && maxVelocity == o.maxVelocity
+        && maxAcceleration == o.maxAcceleration
         && dhDerived == o.dhDerived;
 }
 

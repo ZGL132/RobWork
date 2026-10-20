@@ -42,6 +42,13 @@ Worktree：`C:/zcode-wt/wp13-t25`（独立 Git 索引）；构建树：`C:/zcode
 
 固定顺序 F06→F01→F07→F14（F01 后复跑 F06 映射/报告）。每项一个完整提交（代码+测试+文档+证据），提交前双模式构建＋受影响测试＋ird_gates＋BuildRedLine＋validate-docs/task＋verify-task＋范围检查。证据目录：`traceability/builds/wp13-t25-f06/`、`-f01/`、`-f07/`、`-f14/`（只增不改）。
 
+### F01 状态：已实现验证（G1～G4 闭环，2026-10-20）
+
+- G1 红证：4 例红（桥 NotProvided／URDF 谎报无落点／面板行缺失／就绪无条件注记）——red-*.{xml,log}。
+- G2 实现：JointEntry 表尾两字段（MDL-01 关节一等权威；转动 rad/s、rad/s²｜移动 m/s、m/s²；≥0；Fixed NotApplicable）＋Codec {1,1}（旧 {1,0} 兼容读）＋Bridge 透传＋模板/URDF/WorkCell 三入口映射＋面板两行＋编辑页 14 行＋域规则＋就绪条件化＋黄金期望演化（非掩盖）。
+- G3 验证：独立 343/8/48、集成 420/17/62/326 全绿；ird_gates 零命中；validate-docs/task PASS；F06 复跑完成（VelLimit 报告转映射行——流＋GUI 双面）。
+- 消费者边界如实登记：描述层 Provided 为本批闭合点；轨迹/动力学端到端数值消费归跨域链复验（统一验收批）。
+
 ### F06 状态：已实现验证（G1～G4 闭环，2026-10-20）
 
 - G1 红证：5 流＋1 GUI 全红（red-standalone-modeling.* / red-integration-gui.*）。
