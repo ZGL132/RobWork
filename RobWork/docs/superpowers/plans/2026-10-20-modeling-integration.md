@@ -24,6 +24,20 @@
 - [ ] 全新上下文独立验收（本会话不可提供模型级独立性）。
 - [ ] 独立验收通过后所有者决定是否合入redesign-main。
 
+## 冻结SHA验收交接（2026-10-20）
+
+| 项 | 值 |
+| --- | --- |
+| 集成分支 | wp13-t26（本地；按契约不推送远程、不合入 redesign-main） |
+| 验收范围 | 64587067..分支头（4 个新提交，末位为本交接提交；源分支 wp13-t24@e64cdd62 与 wp13-t25@6cfe7ea3 引用不变） |
+| 合并提交 | 4044abd1a90f1d1b79ef60e81c22d508184f83b0（合并 wp13-t25＋装配清单锚点修正＋T26 契约/DTB 登记） |
+| 修复提交 | bc8d212f950ac6bbc9a3975fe5b8e4aee7702bb3（候选会话/局部历史一致性＋3 例集成回归＋modeling v0.59） |
+| 证据提交 | e18914bdc2373b78d7988a6a19c668660cf62d0c（证据目录＋索引重建＋计划勾选） |
+| 证据位置 | doc/industrial-robot-design/traceability/builds/wp13-t26-integration/（README＋SHA256SUMS＋红绿证） |
+| 复验结论 | 双模式构建零错误；集成 462+91+293+287+339+63+57+95+20（2 例登记/环境跳过）、独立冒烟 360+8+59（1 例 F-620 环境跳过）、正式宿主 tour 8 步、ird_gates 零命中、validate-docs/verify-task/commit-lint PASS |
+| 开放面 | 真实三维逐项（mesh/覆盖层）未验不标 PASS；F07 来源 schema 与重开恢复属 policy 演化面；WP-13-T24/T25 正式独立验收仍待全新上下文执行 |
+| 验收请求 | 请以全新会话按 doc/industrial-robot-design/acceptance-protocol.md 对 wp13-t26@e18914bd 执行对抗式验收；本会话为实施方，其复验不构成独立验收 |
+
 ## 已知差异核对
 
 双方文件尾新增用例冲突用逐段保留解决，公共最后一个闭括号需分别补齐。TEST具名集合核对中旁支旧EstimateProperties_ZeroLengthSegment_Refused_UI_T41C在主树B3c已按完整段元估算有意替换，不恢复已废除的“零长必须拒绝”前提；新估算GUI及独立解析值测试保留。其他缺失逐条人工核对，禁止批量采用一侧覆盖。
