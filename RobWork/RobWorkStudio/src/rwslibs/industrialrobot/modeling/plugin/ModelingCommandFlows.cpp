@@ -1226,6 +1226,9 @@ bool executeModelingCommand(const std::string& commandId,
         record.subject = "design";
         record.summary = "导入 WorkCell 草稿（MDL-18 有损提取）";
         session.draft.changes.push_back(std::move(record));
+        // T26/F07：WorkCell提取结果没有URDF的候选报告，旧模型的名称对
+        // 不得随着同根内容替换继续参与策略预填；确认之前保持原状态。
+        session.importedSelfCollisionCandidates.clear();
         if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
         summary = "WorkCell 导入完成："
                   + std::to_string(outcome.report.mapped.size()) + " 项映射、"
@@ -1417,6 +1420,7 @@ bool executeModelingCommand(const std::string& commandId,
         record.subject = "design";
         record.summary = "导入规范模型包（MDL-20 round-trip 入草稿）";
         session.draft.changes.push_back(std::move(record));
+        session.importedSelfCollisionCandidates.clear(); // 包未承载导入报告，不能借用旧来源。
         if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
         summary = "规范包导入完成——草稿已更新，请经『应用草稿』提交";
         return true;

@@ -594,10 +594,18 @@ private:
      */
     void refreshCleanRevision(const core::BranchId& branch,const core::RevisionId& revision);
 
-    // 历史是UI编辑器内部态（L-5），不放进ModelingWorkingSet或项目修订。
-    // 值快照覆盖全部部件/资源/摘要，避免字段栈漏掉结构与引用变化；仅UI线程持有。
-    std::optional<ModelingWorkingSet> m_historyCurrent;
-    std::vector<ModelingWorkingSet> m_draftUndo, m_draftRedo;
+    /**
+     * @brief 一次已接受的草稿及其导入候选快照（T26/F07，局部历史内部值）。
+     * 候选是该草稿的临时来源信息，不能在撤销模型后留给另一模型使用；
+     * 因此与完整工作集同一步保存和恢复，不另建策略权威或持久化字段。
+     * 模块按值持有并管理生命周期；仅UI线程访问，不跨项目保留。
+     */
+    struct DraftHistoryFrame {
+        ModelingWorkingSet draft; ///< 全部部件/资源/来源/摘要，物理单位沿工作集SI契约。
+        std::vector<std::pair<std::string,std::string>> candidates; ///< 导入报告原序连杆名对，非策略修订。
+    };
+    std::optional<DraftHistoryFrame> m_historyCurrent;
+    std::vector<DraftHistoryFrame> m_draftUndo, m_draftRedo;
     /// PM-04：保存脏通知与撤销栈独立；undo/redo预先移动历史游标，仍须报告完整帧变化。
     /// 两值仅UI线程持有；闭包由宿主保证生命周期，关闭会话先解绑再清空域状态。
     std::function<void()> m_draftChanged;

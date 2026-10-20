@@ -472,6 +472,10 @@ void ModelingUiModule::seedTemplateSession()
     const std::optional<core::ObjectId> previousRoot = m_session.draft.rootObjectId;
     m_session.draft = outcome.get();
     m_session.draft.rootObjectId = previousRoot;
+    // F07 候选只属于产生它的导入草稿；模板重种子已经替换模型来源，
+    // 继续保留旧连杆名会把另一模型的排除建议误投到策略编辑器。
+    // 因此候选与工作集在同一会话边界一起清除，策略仍需用户重新确认。
+    m_session.importedSelfCollisionCandidates.clear();
     // 种子即重置应用侧快照（UI-T41——基线快照/预览视图随草稿重建失效）。
     m_session.baselineSnapshot.reset();
     m_session.appliedPreview.reset();
@@ -555,6 +559,7 @@ bool ModelingUiModule::reseedCustomChain(const CustomChainDeclaration& decls,
     const std::optional<core::ObjectId> previousRoot = m_session.draft.rootObjectId;
     m_session.draft = std::move(fresh);
     m_session.draft.rootObjectId = previousRoot;
+    m_session.importedSelfCollisionCandidates.clear(); // 新声明链没有旧导入报告；失败分支到此之前已返回。
     m_session.baselineSnapshot.reset();
     m_session.appliedPreview.reset();
     pushAppliedPreviewToPanel();
@@ -733,6 +738,9 @@ void ModelingUiModule::onSessionDetached()
     m_session.branch = core::BranchId{};
     m_session.baseRevision.reset();
     m_session.draft = ModelingWorkingSet{};
+    // 关闭是项目会话边界：导入报告中的临时候选不得泄漏给下一个项目。
+    // 候选没有独立持久化身份，不能依赖下一次导入恰好覆盖它。
+    m_session.importedSelfCollisionCandidates.clear();
     m_retainedConflictDraft.reset(); // 待迁移素材只属原项目，禁止关闭后泄漏到新会话。
     clearDraftHistory(false); // 关闭后的空态不是可撤销版本，禁止跨项目恢复。
     m_session.readiness.reset();
@@ -915,6 +923,9 @@ bool ModelingUiModule::readCommittedSession(
     // 第二步完整候选一次采纳，再复用应用回执建立clean baseline和预览。
     // 此入口不提交命令，也不持有闭包引用；关闭仍沿原会话脱离路径清理。
     m_session.draft = std::move(candidate);
+    // 普通修订恢复没有导入报告；应用回执则仍属同一次导入，允许用户随后
+    // 显式确认候选。读错时尚未到达此采纳点，原候选保持不变。
+    if(!applicationReceipt){m_session.importedSelfCollisionCandidates.clear();}
     m_session.branch = branch;
     noteAppliedRevision(revision, rootObjectId);
     return true;
@@ -1014,6 +1025,7 @@ void ModelingUiModule::adoptRestoredDocument(
         candidate->changes.push_back({"draft.restore","恢复未应用建模工作集"});
     }
     m_session.draft=std::move(*candidate);
+    m_session.importedSelfCollisionCandidates.clear(); // 磁盘帧未存导入报告，不能借用恢复前的候选。
     // 保留磁盘草稿的旧基线，让项目命令服务真实判断Stale；不能用当前tip
     // 偷换原基线。旧载荷无基线时保持已有锚，未知身份不猜测。
     if(document.baseRevisionId.isValid()){m_session.baseRevision=document.baseRevisionId;}
@@ -1036,6 +1048,7 @@ void ModelingUiModule::rebuildOnRevision(const std::string& tipRevisionCanonical
     m_retainedConflictDraft=previous;
     if(m_panel){m_panel->cancelPendingForHistoryRestore();}
     m_session.draft=std::move(candidate);
+    m_session.importedSelfCollisionCandidates.clear(); // 新修订基线与旧导入来源隔离，旧稿另有完整保留。
     noteAppliedRevision(*tip,m_session.draft.rootObjectId);
     if(m_panel){m_panel->setOutcomeMessage(QString::fromUtf8(
         "已读取当前修订的完整基线；旧草稿已保留，请核对并迁移未应用修改。"));}
@@ -1072,6 +1085,7 @@ void ModelingUiModule::refreshCleanRevision(const core::BranchId& branch,const c
     if(m_panel){m_panel->cancelPendingForHistoryRestore();}
     m_session.branch=branch;
     m_session.draft=std::move(candidate);
+    m_session.importedSelfCollisionCandidates.clear(); // 外部修订不携带本会话导入报告。
     noteAppliedRevision(revision,m_session.draft.rootObjectId);
     if(m_panel){m_panel->setOutcomeMessage(QString::fromUtf8(
         "已完整读取项目新修订的建模工作集；未确认表单已刷新，当前无未应用编辑。"));}
@@ -1192,7 +1206,7 @@ void ModelingUiModule::clearDraftHistory(bool retainCurrent)
 {
     m_guard.assertOnUiThread();
     m_draftUndo.clear();m_draftRedo.clear();
-    if(retainCurrent){m_historyCurrent=m_session.draft;}
+    if(retainCurrent){m_historyCurrent=DraftHistoryFrame{m_session.draft,m_session.importedSelfCollisionCandidates};}
     else{m_historyCurrent.reset();}
     refreshDraftHistoryState();
 }
@@ -1200,12 +1214,13 @@ void ModelingUiModule::clearDraftHistory(bool retainCurrent)
 void ModelingUiModule::rememberDraftHistory()
 {
     m_guard.assertOnUiThread();
-    if(!m_historyCurrent){m_historyCurrent=m_session.draft;}
-    else if(*m_historyCurrent!=m_session.draft){
+    const DraftHistoryFrame current{m_session.draft,m_session.importedSelfCollisionCandidates};
+    if(!m_historyCurrent){m_historyCurrent=current;}
+    else if(m_historyCurrent->draft!=current.draft||m_historyCurrent->candidates!=current.candidates){
         // 先保存上个接受版本，再采纳新版本；一次表单/批量操作只触发一次。
         // 根身份、来源徽标、全部资源和部件与changes共同回退，不重算或猜测旧值。
         m_draftUndo.push_back(*m_historyCurrent);
-        m_historyCurrent=m_session.draft;m_draftRedo.clear();
+        m_historyCurrent=current;m_draftRedo.clear();
     }
     refreshDraftHistoryState();
 }
@@ -1216,9 +1231,11 @@ bool ModelingUiModule::restoreDraftHistory(bool redo)
     auto& from=redo?m_draftRedo:m_draftUndo;
     auto& to=redo?m_draftUndo:m_draftRedo;
     if(!m_writable||from.empty()){return false;} // 空栈/只读由执行端再次防御。
-    to.push_back(m_session.draft);
-    m_session.draft=std::move(from.back());from.pop_back();
-    m_historyCurrent=m_session.draft; // 下面的就绪重算不得将恢复本身再作为新编辑入栈。
+    to.push_back(DraftHistoryFrame{m_session.draft,m_session.importedSelfCollisionCandidates});
+    // 两个值从同一帧一起恢复；不靠名称重算候选，不提交策略或项目命令。
+    m_session.draft=std::move(from.back().draft);
+    m_session.importedSelfCollisionCandidates=std::move(from.back().candidates);from.pop_back();
+    m_historyCurrent=DraftHistoryFrame{m_session.draft,m_session.importedSelfCollisionCandidates};
     if(m_panel){m_panel->cancelPendingForHistoryRestore();}
     recomputeReadiness();
     if(m_panel){

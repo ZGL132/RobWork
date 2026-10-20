@@ -924,6 +924,30 @@ TEST(ModelingUiModuleHostWiring, ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17)
     EXPECT_EQ(module.session().draft,after);
 }
 
+/** @brief T26/F07：真实草稿撤销按钮必须同时恢复导入候选，不能将当前模型与另一导入建议混用。 */
+TEST(ModelingUiModuleHostWiring, ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-04","PM-04"},{"AT-21"});
+    ModelingUiModule module;module.seedTemplateSession();
+    std::unique_ptr<QWidget> panel(module.createPanel());
+    const auto before=module.session().draft;
+    // 模拟已确认导入的领域结果，不替代数学/编码算法；测试目标是模块历史
+    // 及真实按钮接线，导入映射本体另由Import和CommandFlows真实用例验证。
+    module.session().draft.design.displayName="导入模型";
+    module.session().draft.changes.push_back({"import","已确认的导入"});
+    module.session().importedSelfCollisionCandidates={{"base","l1"}};
+    module.recomputeReadiness();const auto imported=module.session().draft;
+    auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");
+    auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");
+    ASSERT_NE(undo,nullptr);ASSERT_NE(redo,nullptr);ASSERT_TRUE(undo->isEnabled());
+    undo->click();EXPECT_EQ(module.session().draft,before);
+    EXPECT_TRUE(module.session().importedSelfCollisionCandidates.empty())
+        <<"撤销导入后原模板不能继续提供该导入的候选";
+    redo->click();EXPECT_EQ(module.session().draft,imported);
+    const std::vector<std::pair<std::string,std::string>> expected={{"base","l1"}};
+    EXPECT_EQ(module.session().importedSelfCollisionCandidates,expected);
+}
+
 /** @brief F12/MDL-15/AT-28：真实场景管理增改删、局部历史、位姿与零项目修订。 */
 TEST(ModelingUiModuleHostWiring, SceneCrudLocalHistoryAndWorldPose_MDL15_AT28)
 {

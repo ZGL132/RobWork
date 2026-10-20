@@ -716,6 +716,50 @@ TEST(ModelingDraftRestore, CompleteWorkingSetAndPendingChanges_PM04_AT21)
     EXPECT_EQ(fresh.session().draft,edited)<<"完整帧重建不应依赖既有部件残留";
 }
 
+/** @brief T26：两支组合后完整域帧与固定修订均须保留逐轴SI速度/加速度及非对角R2耦合。 */
+TEST(ModelingIntegration, VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"PM-04","MDL-01","MDL-21"},{"AT-21"});
+    CommittedModelClosure closure;
+    auto& expected=closure.expected;
+    for(std::size_t i=0;i<expected.design.joints.size();++i){
+        // 本夹具全旋转轴：速度rad/s、加速度rad/s²；逐轴不同以揭露串轴/标量广播。
+        expected.design.joints[i].maxVelocity=core::SourcedValue<double>::provided(0.8+0.3*i,userProvenance());
+        expected.design.joints[i].maxAcceleration=core::SourcedValue<double>::provided(1.0+i,userProvenance());
+    }
+    CouplingDesign coupling;
+    coupling.rows=3;coupling.cols=3;coupling.jointRangeFirst=3;coupling.jointRangeLast=5;
+    coupling.c={1,0.2,0,0,1,-0.1,0.3,0,1.5};coupling.conditionNumber=2;
+    expected.drivetrainObject->coupling=coupling;
+    closure.put(*expected.rootObjectId,kRobotDesignObjectType,ObjectVariant{expected.design});
+    closure.put(expected.drivetrainObject->objectId,kRobotDrivetrainObjectType,ObjectVariant{*expected.drivetrainObject});
+    ModelingUiModule source;std::string error;
+    ASSERT_TRUE(source.restoreCommittedSession(closure,*expected.rootObjectId,closure.branch,closure.revision,error))<<error;
+    EXPECT_EQ(source.session().draft,expected)<<"固定修订完整恢复不得丢掉v/a或R2耦合";
+    source.session().draft.changes.push_back({"integration","完整帧跨分支新字段"});
+    const auto document=source.buildDraftDocument();
+    ModelingUiModule target;
+    ASSERT_TRUE(target.restoreCommittedSession(closure,*expected.rootObjectId,closure.branch,closure.revision,error))<<error;
+    target.adoptRestoredDocument(document);
+    EXPECT_EQ(target.session().draft,source.session().draft)<<"磁盘草稿封装必须使用当前Codec的完整对象";
+    const auto envelope=target.buildDraftCommand("modeling");ASSERT_TRUE(envelope);
+    EXPECT_EQ(envelope->payloadCanonical,source.buildDraftCommand("modeling")->payloadCanonical)
+        <<"恢复后应用信封应保留相同完整部件和新字段";
+}
+
+/** @brief T26/F07：候选属于导入草稿，模型替换与项目关闭都不能泄漏旧名称对。 */
+TEST(ModelingIntegration, ImportCandidatesDoNotLeakAcrossTemplateOrClose_MDL04_PM04)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-04","PM-04"},{"AT-21"});
+    ModelingUiModule module;module.seedTemplateSession();
+    module.session().importedSelfCollisionCandidates={{"base","l1"}};
+    module.seedTemplateSession();
+    EXPECT_TRUE(module.session().importedSelfCollisionCandidates.empty())<<"模板替换保留了另一导入的候选";
+    module.session().importedSelfCollisionCandidates={{"l1","l2"}};
+    module.onSessionDetached();
+    EXPECT_TRUE(module.session().importedSelfCollisionCandidates.empty())<<"关闭后另一项目会读到旧候选";
+}
+
 /** @brief B4b/AT-21：生产工程DraftService真实保存→关闭→只读重开→完整域恢复，HEAD零改写。 */
 TEST(ModelingDraftRestore, ProjectStoreSaveCloseReadOnlyReopen_PM04_AT21)
 {
