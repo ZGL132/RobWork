@@ -79,7 +79,9 @@ struct DomainModuleEntry {
     /// 保留真实Committed修订并跳过onResult清脏通知，其余域继续。
     std::function<void(const project::CommandResult&)> onCommitted;
     /// 回执投影回写（DraftController onCommandResult——脏标记清零/撤销栈
-    /// 清理/Stale 冲突暂存。空＝无草稿源挂接〔保存清单不含本模块〕，如实
+    /// 清理/磁盘稿消费/Stale 冲突暂存。异常按commit-receipt-failed或
+    /// result-receipt-failed隔离，保留真实提交事实并继续后域。
+    /// 空＝无草稿源挂接〔保存清单不含本模块〕，如实
     /// 跳过——诚实边界见 DomainAssembly 登记注）。
     std::function<void(const CommandResultProjection&)> onResult;
 };
@@ -99,7 +101,7 @@ struct DomainApplyEntryReport {
     Outcome outcome = Outcome::NoDraft;
     bool committed = false;     ///< 仅 Submitted 时有意义——对端 Committed
     std::string revision;       ///< 新修订 canonical 文本（committed 时非空）
-    std::string rejectionReason;///< 拒绝/中止/失败原因；committed时非空表示回读失败，提交事实仍保留。
+    std::string rejectionReason;///< 拒绝/中止/失败原因；committed时非空表示回执处理失败，提交事实仍保留。
 };
 
 /**

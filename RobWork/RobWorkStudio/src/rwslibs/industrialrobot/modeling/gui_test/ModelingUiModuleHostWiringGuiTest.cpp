@@ -1246,6 +1246,38 @@ TEST(ModelingUiModuleHostWiring, DraftChangeNotificationFromRealControls_PM04_AT
     module.onSessionDetached();EXPECT_EQ(changes,3)<<"关闭清理不保存跨项目空草稿";
 }
 
+/** @brief PM-04/PM-18：真实结构控件undo回基线为clean，redo为dirty；无摘要字段/部件差异也不能漏判。 */
+TEST(ModelingUiModuleHostWiring, CompletePendingStateTracksUndoRedo_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto revision=core::RevisionId::generate();
+    module.bindSessionAnchor(core::BranchId::generate(),revision);
+    module.noteAppliedRevision(revision,core::ObjectId::generate());
+    ASSERT_FALSE(module.hasPendingDraft());
+    std::unique_ptr<QWidget> panel(module.createPanel());panel->resize(1140,840);panel->show();
+    QApplication::processEvents();std::vector<bool> pending;
+    module.bindDraftChanged([&]{pending.push_back(module.hasPendingDraft());});
+    auto* add=panel->findChild<QPushButton*>("ird_modeling_struct_add");ASSERT_NE(add,nullptr);
+    auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");ASSERT_NE(undo,nullptr);
+    auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");ASSERT_NE(redo,nullptr);
+    add->click();QApplication::processEvents();EXPECT_TRUE(module.hasPendingDraft());
+    undo->click();QApplication::processEvents();EXPECT_FALSE(module.hasPendingDraft());
+    ASSERT_TRUE(redo->isEnabled());redo->click();QApplication::processEvents();EXPECT_TRUE(module.hasPendingDraft());
+    undo->click();QApplication::processEvents();ASSERT_FALSE(module.hasPendingDraft());
+    EXPECT_EQ(pending,(std::vector<bool>{true,false,true,false}));
+    // 直接声明无摘要的完整内容反例：被测规范比较必须覆盖根字段和活动部件，
+    // 不能仅以命令可提交/摘要列表为空推断没有修改。
+    const auto baseline=module.session().draft;ASSERT_TRUE(baseline.changes.empty());
+    module.session().draft.design.displayName="unsummarized-field";EXPECT_TRUE(module.hasPendingDraft());
+    module.session().draft=baseline;
+    ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="unsummarized-tool";
+    tool.tcpList={{"tcp",rw::math::Transform3D<double>::identity(),""}};
+    module.session().draft.toolObjects={tool};module.session().draft.design.toolRefs={tool.objectId};
+    EXPECT_TRUE(module.hasPendingDraft());module.session().draft=baseline;EXPECT_FALSE(module.hasPendingDraft());
+    propertySnapshot(*panel,"draft-undo-clean-redo-retained");
+}
+
 /** @brief PM-04/AT-21：真实面板重建完整当前基线，并清除旧未确认表单和局部历史。 */
 TEST(ModelingUiModuleHostWiring, ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21)
 {

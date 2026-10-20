@@ -775,6 +775,7 @@ void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
 
 bool ModelingUiModule::hasPendingDraft() const
 {
+    m_guard.assertOnUiThread();
     // B4b完整规范比较是唯一的内容等价口径：摘要缺席不能漏掉真实修改，
     // TCP等集合的Codec规范排序也不能把干净磁盘恢复误判为有编辑。
     return !m_session.draft.changes.empty()

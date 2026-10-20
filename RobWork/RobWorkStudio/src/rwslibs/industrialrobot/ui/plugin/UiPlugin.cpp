@@ -2700,7 +2700,22 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                             // 通知只发生于UI线程；关闭/换项目后即使迟到也不能访问失效会话。
                             if (!m_draft || !m_draft->hasSession() || !m_lastStoreAdapter
                                 || m_lastStoreAdapter->isClosed()) { return; }
-                            try { m_draft->notifySessionDirty(modeling::kModuleHandle); }
+                            try {
+                                if (!m_domains) { return; }
+                                // Stale 冲突尚未由用户取消/重建时，保留的旧完整稿是
+                                // 待迁移素材；即使域帧暂时等于基线，也不能被干净
+                                // 结算提前消费，否则下一次明确应用无法再呈现原稿。
+                                if (m_domains->modeling.hasPendingDraft()
+                                    || m_draft->staleConflictData(modeling::kModuleHandle).present) {
+                                    m_draft->notifySessionDirty(modeling::kModuleHandle);
+                                } else {
+                                    // PM-18：局部undo可回到干净基线，但redo必须保留。
+                                    // 结算仅消费未应用磁盘稿，不伪造项目提交或重置域历史。
+                                    const auto outcome=m_draft->notifySessionClean(modeling::kModuleHandle);
+                                    if (!outcome.ok) { throw std::runtime_error(
+                                        "建模干净草稿结算失败："+outcome.errorToken+"；"+outcome.detail); }
+                                }
+                            }
                             catch (const std::exception& error) {
                                 // 编辑已经被域接受，通知失败不能把异常抛回Qt事件循环。
                                 if (m_diag.pipeline) { m_diag.pipeline->logDev(kPluginDevChannel,error.what()); }
@@ -2709,7 +2724,7 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                             }
                         });
                         // 绑定不回放历史；打开前已有未应用内容时显式补一次脏代次。
-                        if (m_domains->modeling.module->buildDraftCommand(modeling::kModuleHandle)) {
+                        if (m_domains->modeling.hasPendingDraft()) {
                             m_draft->notifySessionDirty(modeling::kModuleHandle);
                         }
                         for(auto& entry:m_domains->applyEntries){
@@ -3719,14 +3734,14 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
             // 冲突处置没有提交新修订；保留整批其他域结局，不能用泛化的
             // “未应用”覆盖已重建待迁移，也不能掩盖其他域失败或回读失败。
             m_hostStatusBar->showMessage(conflictMessage+QStringLiteral(
-                "（本批：%1 个域已提交，其中 %2 个回读失败；%3 个域未应用）")
+                "（本批：%1 个域已提交，其中 %2 个回执处理失败；%3 个域未应用）")
                 .arg(static_cast<int>(report.committedCount()))
                 .arg(static_cast<int>(receiptFailed)).arg(static_cast<int>(failed)),12000);
         }else if(receiptFailed!=0){
             // 项目修订已成功，回读/呈现尚未完成；不能冒称“全部应用完成”，
             // 更不能自动重提同一草稿制造重复部件，须显示诊断并保留原草稿。
             m_hostStatusBar->showMessage(
-                QString::fromUtf8("草稿应用：%1 个域已提交但回读失败（草稿已保留），%2 个域完整应用，%3 个域未应用；详情见诊断")
+                QString::fromUtf8("草稿应用：%1 个域已提交但回执处理失败（请检查草稿状态），%2 个域完整应用，%3 个域未应用；详情见诊断")
                     .arg(static_cast<int>(receiptFailed))
                     .arg(static_cast<int>(report.committedCount()-receiptFailed))
                     .arg(static_cast<int>(failed)),10000);
@@ -8414,29 +8429,30 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         QPushButton* tmplBtn = panel->findChild<QPushButton*>(
             QStringLiteral("ird_modeling_cmd_modeling.new-from-template"));
         ok(tmplBtn != nullptr, "step2 template-cmd-present");
+        // 冲突重建后由测试模拟用户重新执行同一可见模板操作，不能把保留
+        // 旧payload回灌或直接换锚。这一闭包只操作真实控件和原模态确认。
+        const auto createTemplateFromControls=[&]{
         if (tmplBtn != nullptr) {
-            // 预排队定时器：chooseItem（QInputDialog::getItem——非编辑态
-            // QComboBox）选首项（generic-6r）＋OK。
-            QTimer::singleShot(300, this, [] {
-                QWidget* modal = QApplication::activeModalWidget();
-                if (modal == nullptr) {
-                    std::cout << "[ird-ui-smoke-mtour] FAIL item-modal-missing"
-                              << std::endl;
-                    return;
-                }
-                if (QComboBox* combo = modal->findChild<QComboBox*>()) {
-                    combo->setCurrentIndex(0);
-                }
-                if (QDialog* dlg = qobject_cast<QDialog*>(modal)) {
-                    if (QDialogButtonBox* box = modal->findChild<QDialogButtonBox*>()) {
-                        box->button(QDialogButtonBox::Ok)->click();
-                        (void)dlg;
-                    }
-                }
+            // 定时器与本次操作同寿命，窗口未出现必须计入真实失败，不能
+            // 只打印FAIL后仍以退出0交付；轮询只应答模板选择窗口。
+            bool chosen=false;QTimer poll,timeout;poll.setInterval(60);timeout.setSingleShot(true);
+            QObject::connect(&poll,&QTimer::timeout,this,[&]{
+                auto* dialog=qobject_cast<QInputDialog*>(QApplication::activeModalWidget());
+                if(!dialog){return;}
+                auto* combo=dialog->findChild<QComboBox*>();
+                auto* box=dialog->findChild<QDialogButtonBox*>();
+                if(combo&&box){chosen=true;combo->setCurrentIndex(0);dialog->accept();}
             });
-            tmplBtn->click();  // 触发 exec()——嵌套循环执行上面定时器
+            QObject::connect(&timeout,&QTimer::timeout,this,[&]{
+                ok(false,"b4c template-modal-timeout");
+                if(auto* dialog=qobject_cast<QInputDialog*>(QApplication::activeModalWidget())){dialog->reject();}
+            });
+            poll.start();timeout.start(10000);tmplBtn->click();
+            poll.stop();timeout.stop();ok(chosen,"b4c real-template-choice-confirmed");
             settleEvents(500);
         }
+        };
+        createTemplateFromControls();
         QLabel* statusLine = panel->findChild<QLabel*>(
             QStringLiteral("ird_modeling_status_line"));
         ok(statusLine != nullptr
@@ -8529,6 +8545,7 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         // 仅改一个关节会得到重叠链，不能用于判断完整机器人三维显示是否正确。
         // 从真实参数表为六轴输入非退化尺寸（m/rad），仍经原确认/编辑/应用链。
         step("3.5 spatial-chain-fixture");
+        const auto setSpatialChainFromControls=[&]{
         for (int jointIndex = 1; jointIndex <= 6 && structTree; ++jointIndex) {
             QTreeWidgetItem* target = nullptr;
             QTreeWidgetItemIterator it(structTree);
@@ -8572,6 +8589,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 settleEvents(100);
             }
         }
+        };
+        setSpatialChainFromControls();
 
         // ---- 拍 4：结构新增关节（链长 6→7）------------------------------
 
@@ -8589,6 +8608,7 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             }
             return n;
         };
+        const auto addSeventhJointFromControls=[&]{
         if (structTree != nullptr && structAdd != nullptr) {
             jointRowsBefore = countJointRows(structTree);
             structAdd->click();
@@ -8599,6 +8619,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                    + " before=" + std::to_string(jointRowsBefore) + ")");
             snapPng(hostWin, "mtour-4-structure.png");
         }
+        };
+        addSeventhJointFromControls();
 
         // ---- 拍 5：draft.apply 建模域真实修订---------------------------
         step("5 modeling-draft-apply");
@@ -8624,6 +8646,103 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             m_content->submitCommand("policy.edit");settleEvents(180);
         };
         editTourTravel(QStringLiteral("1"));
+        // PM-04：策略命令已推进tip；先经正式入口处理Stale。不能为继续旧
+        // tour而偷换base，低阈值比较必须在完整重建并重新编辑后的有效基线上验证。
+        const auto formalApply=[&](std::optional<bool> rebuild){
+            bool confirmed=false,conflictSeen=false,objectsSeen=false;const int before=failedCount;
+            QTimer poll,watchdog;poll.setInterval(60);watchdog.setSingleShot(true);
+            QObject::connect(&poll,&QTimer::timeout,this,[&]{
+                auto* modal=QApplication::activeModalWidget();if(!modal){return;}
+                if(auto* question=qobject_cast<QMessageBox*>(modal)){
+                    if(question->windowTitle()==QStringLiteral("应用草稿")){
+                        confirmed=true;question->button(QMessageBox::Yes)->click();return;
+                    }
+                }
+                auto* dialog=qobject_cast<QDialog*>(modal);
+                if(!dialog||dialog->objectName()!="ird_draft_conflict"){return;}
+                if(!rebuild.has_value()){ok(false,"b4c unexpected-conflict-after-manual-reedit");dialog->reject();return;}
+                if(!conflictSeen){
+                    conflictSeen=true;snapPng(dialog,*rebuild?"mtour-conflict-reedit.png":"mtour-conflict-cancel.png");
+                    auto* diff=dialog->findChild<QPushButton*>("ird_draft_conflict_diff");
+                    ok(diff!=nullptr,"b4c conflict-diff-choice-present");if(diff){diff->click();}return;
+                }
+                const auto* names=dialog->findChild<QLabel*>("ird_draft_conflict_objects");
+                objectsSeen=names&&names->isVisible();ok(objectsSeen,"b4c conflict-objects-visible");
+                auto* action=dialog->findChild<QPushButton*>(*rebuild?"ird_draft_conflict_reedit":"ird_draft_conflict_cancel");
+                ok(action&&action->isEnabled(),"b4c explicit-conflict-choice-available");
+                if(action&&action->isEnabled()){
+                    action->click();
+                    if(dialog->isVisible()){
+                        ok(false,"b4c explicit-choice-did-not-complete");dialog->reject();
+                    }
+                }else{dialog->reject();}
+            });
+            QObject::connect(&watchdog,&QTimer::timeout,this,[&]{
+                ok(false,"b4c formal-apply-modal-timeout");
+                if(auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget())){dialog->reject();}
+            });
+            poll.start();watchdog.start(15000);m_content->submitCommand("draft.apply");
+            poll.stop();watchdog.stop();settleEvents(100);
+            ok(confirmed,"b4c formal-apply-confirmed");
+            if(rebuild.has_value()){ok(conflictSeen&&objectsSeen,"b4c formal-conflict-window-consumed");}
+            return failedCount==before;
+        };
+        const auto reeditThroughConflict=[&](bool cancelFirst){
+            const int failuresBefore=failedCount;
+            const auto original=modelingDraftSource(*m_domains).buildDraftDocument();
+            const auto tip=m_lastStoreAdapter->projectStore().query().head().id;
+            const auto verifyDisk=[&]{
+                const auto disk=m_lastStoreAdapter->tryLoad(modeling::kModuleHandle);
+                ok(disk.status==DraftLoadOutcome::Status::Loaded,"b4c old-draft-saved-on-real-disk");
+                ok(disk.document.payload==original.payload&&disk.document.baseRevisionId==original.baseRevisionId
+                    &&disk.document.branchId==original.branchId&&disk.document.origin==DraftOrigin::ApplyRetained,
+                    "b4c disk-retains-original-payload-base-branch-origin");
+            };
+            if(cancelFirst){
+                if(!formalApply(false)){return false;}
+                const auto unchanged=modelingDraftSource(*m_domains).buildDraftDocument();
+                ok(unchanged.payload==original.payload&&unchanged.baseRevisionId==original.baseRevisionId,
+                    "b4c cancel-keeps-original-draft-and-anchor");
+                ok(m_draft->staleConflictData(modeling::kModuleHandle).present,"b4c cancel-keeps-pending-conflict");
+                verifyDisk();
+            }
+            if(!formalApply(true)){return false;}
+            verifyDisk();const auto retained=m_domains->modeling.retainedConflictDraft();
+            ok(retained&&retained->payload==original.payload&&retained->baseRevisionId==original.baseRevisionId,
+                "b4c full-rebuild-retains-complete-old-draft");
+            const auto current=modelingDraftSource(*m_domains).buildDraftDocument();
+            ok(current.baseRevisionId==tip&&!m_domains->modeling.module->buildDraftCommand(modeling::kModuleHandle),
+                "b4c full-current-baseline-clean-without-auto-submit");
+            ok(m_lastStoreAdapter->projectStore().query().head().id==tip,"b4c conflict-choices-zero-revisions");
+            auto* review=panel->findChild<QPushButton*>("ird_modeling_retained_review");
+            ok(review&&review->isEnabled(),"b4c retained-review-entry-present");
+            if(!review){return false;}
+            bool seen=false;QTimer timeout,inspect;timeout.setSingleShot(true);inspect.setSingleShot(true);
+            QObject::connect(&timeout,&QTimer::timeout,this,[&]{
+                ok(false,"b4c retained-review-timeout");
+                if(auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget())){dialog->reject();}
+            });
+            QObject::connect(&inspect,&QTimer::timeout,this,[&]{
+                auto* dialog=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+                seen=dialog&&dialog->objectName()=="ird_modeling_diff";
+                ok(seen,"b4c real-retained-review-window");if(!dialog){return;}
+                auto* table=dialog->findChild<QTableWidget*>("ird_modeling_diff_table");
+                ok(table&&table->rowCount()>0,"b4c retained-review-full-differences");
+                snapPng(dialog,"mtour-retained-review.png");dialog->reject();
+            });
+            timeout.start(10000);inspect.start(100);review->click();timeout.stop();inspect.stop();
+            ok(modelingDraftSource(*m_domains).buildDraftDocument().payload==current.payload,
+                "b4c review-close-keeps-current-working-set");
+            if(!seen||failedCount!=failuresBefore){return false;}
+            // 用户明确在新基线上重新输入；没有恢复旧帧或调用内部换锚接口。
+            createTemplateFromControls();setSpatialChainFromControls();addSeventhJointFromControls();
+            const auto edited=modelingDraftSource(*m_domains).buildDraftDocument();
+            ok(edited.baseRevisionId==tip&&m_domains->modeling.module->buildDraftCommand(modeling::kModuleHandle).has_value(),
+                "b4c manual-controls-recreate-draft-on-current-baseline");
+            ok(m_lastStoreAdapter->projectStore().query().head().id==tip,"b4c manual-reedit-zero-project-writes");
+            return failedCount==failuresBefore;
+        };
+        if(!reeditThroughConflict(true)){QCoreApplication::exit(1);return;}
         const auto lowBase=m_lastStoreAdapter->projectStore().query().head();
         ok(m_policySource->publishedPolicy() && m_policySource->publishedPolicy()->jointThresholds.finiteRotationTravelLimit.siValue()==1.0,
            "a23 low-policy-published");
@@ -8640,49 +8759,21 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         ok(m_lastStoreAdapter->projectStore().query().head().id==lowBase.id,"a23 unconfirmed-comparison-zero-write");
         snapPng(hostWin,"mtour-a23-low-policy-comparison.png");
         editTourTravel(QStringLiteral("24"));
-        const DomainApplyReport applyReport = runDomainApply(
-            modelingOnly,
-            std::nullopt,
-            [this](project::CommandEnvelope envelope,
-                   project::ICommandInteraction* cmdInteraction) {
-                const auto adapter = m_lastStoreAdapter;
-                if (adapter == nullptr) { return project::CommandResult{}; }
-                return adapter->projectStore().commands().submit(
-                    std::move(envelope), cmdInteraction);
-            },
-            nullptr,
-            [this](const std::string& message) {
-                if (m_diag.pipeline) {
-                    m_diag.pipeline->logDev(kPluginDevChannel, message);
-                }
-            });
-        bool modelingCommitted = false;
-        for (const auto& entry : applyReport.entries) {
-            if (entry.moduleId == "modeling" && entry.committed) {
-                modelingCommitted = true;
-            }
-        }
+        if(!reeditThroughConflict(false)){QCoreApplication::exit(1);return;}
+        const auto beforeApply=m_lastStoreAdapter->projectStore().query().head().id;
+        if(!formalApply(std::nullopt)){QCoreApplication::exit(1);return;}
+        const bool modelingCommitted=m_lastStoreAdapter->projectStore().query().head().id!=beforeApply
+            &&!m_domains->modeling.module->buildDraftCommand(modeling::kModuleHandle);
         // F-536/O-46 裁决出路②（UI-T73）：④端口已装配真实策略源——
         // A-23此拍按项目24 rad阈值评估；原 known-gap 断
         // 言（policyPortGap/undo-unavailable-under-known-gap）随翻转退役，
         // 断言名沿用旧号 F-524 的历史行一并更正（F-543 传证）。
-        std::string modelingRej;
-        for (const auto& entry5 : applyReport.entries) {
-            if (entry5.moduleId == "modeling") {
-                std::cout << "[ird-ui-smoke-mtour] step5 outcome="
-                          << static_cast<int>(entry5.outcome) << " committed="
-                          << entry5.committed << " rej=[" << entry5.rejectionReason
-                          << "] rev=[" << entry5.revision << "]" << std::endl;
-                if (!entry5.committed) { modelingRej = entry5.rejectionReason; }
-            }
-        }
         // F-546 出路①（UI-T74）：草稿名感知装饰装配——首应用行程校验可执
         // 行，apply 提交（UI-T73 诚实中间态断言兑现翻转；A-23先验证1 rad
         // 超限必须确认，再验证24 rad不超限可提交）。
         ok(modelingCommitted,
            "step5 modeling-apply (committed=" +
-               std::string(modelingCommitted ? "true" : "false") +
-               " rej=[" + modelingRej + "])");
+               std::string(modelingCommitted ? "true" : "false") + ")");
         if(!modelingCommitted||!m_compilePort||!m_compilePort->lastPublishedSnapshot()){
             // 验证前置失败必须就地终止。Stale是真实安全拒绝，不能继续把
             // 空快照当模型使用，亦不能自动迁锚让后续截图掩盖失败。
@@ -8804,6 +8895,13 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         if (reopened) {
             ok(m_lastStoreAdapter->projectStore().query().head().id == savedHead,
                "step5.5 reopen-zero-revisions");
+            // 已应用草稿必须被消费；只看runtime恢复成功发现不了旧磁盘稿
+            // 再次覆盖编辑器的问题。先核对权威base/clean，再继续其余步骤。
+            ok(modelingDraftSource(*m_domains).buildDraftDocument().baseRevisionId==savedHead
+                &&!m_domains->modeling.module->buildDraftCommand(modeling::kModuleHandle),
+                "step5.5 reopened-editor-clean-on-exact-saved-revision");
+            ok(m_lastStoreAdapter->tryLoad(modeling::kModuleHandle).status==DraftLoadOutcome::Status::Missing,
+                "step5.5 applied-draft-consumed-on-real-disk");
         }
         snapPng(hostWin, "mtour-5.5-reopened.png");
 
@@ -9764,12 +9862,19 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             HostProjectClosureView closure(m_lastStoreAdapter->projectStore().query(),
                 std::string(modeling::kRobotDesignObjectType), nullptr);
             const auto rootBytes = closure.tryObjectByToken(modeling::kRobotDesignObjectType);
+            const auto restoredDiskDraft=m_lastStoreAdapter->tryLoad(modeling::kModuleHandle);
+            std::cout<<"[ird-ui-smoke-mtour] step8 disk-draft status="<<static_cast<int>(restoredDiskDraft.status)
+                <<" origin="<<static_cast<int>(restoredDiskDraft.document.origin)
+                <<" base="<<restoredDiskDraft.document.baseRevisionId.toCanonical()
+                <<" tip="<<afterReopen.id.toCanonical()<<std::endl;
             bool jointSelected = false;
+            std::optional<modeling::RobotDesign> savedModel;
             if (rootBytes) {
                 const auto decoded = modeling::RobotDesignCodec{}.decode(
                     rootBytes->bytes, modeling::kCurrentFormatVersion);
                 const auto* root = decoded.ok() ? std::get_if<modeling::RobotDesign>(&decoded.get()) : nullptr;
                 if (root && !root->joints.empty()) {
+                    savedModel=*root; // 固定磁盘基线值，后面的表单编辑不能改变此参照。
                     ok(m_nameResolver->resolveObjectId(root->joints.front().objectId)
                         == std::optional<std::string>{root->joints.front().localName},
                        "step8 reopened-shared-tree-resolves-real-joint-name");
@@ -9803,13 +9908,53 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                     confirm->click(); settleEvents(150);
                     const auto command = m_domains->modeling.module->buildDraftCommand("modeling");
                     const auto payload = command ? modeling::tryDecodeCommandPayload(command->payloadCanonical) : std::nullopt;
-                    if (payload && payload->objects.size() == 1) {
+                    if (payload&&!payload->objects.empty()&&savedModel
+                        &&command->commandType==modeling::kCmdApplyModelingWorkingSet) {
+                        // B4c完整工作集命令已替代单根槽。强校验根和全部活动
+                        // 部件，而不是把“恰一槽”简单放宽成“至少一槽”。
+                        const auto savedRoot=std::find_if(afterReopen.objectRefs.begin(),afterReopen.objectRefs.end(),
+                            [](const project::ObjectRef& ref){return ref.objectTypeToken==modeling::kRobotDesignObjectType;});
+                        std::vector<std::pair<core::ObjectId,std::string>> expectedParts;
+                        for(const auto& id:savedModel->toolRefs){expectedParts.emplace_back(id,modeling::kToolDefinitionObjectType);}
+                        for(const auto& id:savedModel->sceneRefs){expectedParts.emplace_back(id,modeling::kSceneObjectObjectType);}
+                        if(savedModel->poseSetRef){expectedParts.emplace_back(*savedModel->poseSetRef,modeling::kNamedPoseSetObjectType);}
+                        if(savedModel->drivetrainRef){expectedParts.emplace_back(*savedModel->drivetrainRef,modeling::kRobotDrivetrainObjectType);}
+                        bool complete=payload->objects.size()==1+expectedParts.size()&&payload->removals.empty();
+                        std::cout<<"[ird-ui-smoke-mtour] step8 parts actual="<<payload->objects.size()-1
+                            <<" expected="<<expectedParts.size()<<" removals="<<payload->removals.size()<<std::endl;
+                        for(std::size_t index=1;index<payload->objects.size();++index){
+                            const auto& part=payload->objects[index];
+                            const auto expected=std::find_if(expectedParts.begin(),expectedParts.end(),
+                                [&](const auto& item){return item.first==part.objectId&&item.second==part.objectTypeToken;});
+                            const auto originalPart=closure.tryObject(part.objectId);
+                            std::cout<<"[ird-ui-smoke-mtour] step8 part id="<<part.objectId.toCanonical()
+                                <<" type="<<part.objectTypeToken<<" expected="<<(expected!=expectedParts.end())
+                                <<" new="<<part.allocateNew<<" found="<<bool(originalPart)
+                                <<" bytes="<<(originalPart&&originalPart->bytes==part.objectBytes)
+                                <<" disk-size="<<(originalPart?originalPart->bytes.size():0)
+                                <<" draft-size="<<part.objectBytes.size()<<std::endl;
+                            complete=complete&&expected!=expectedParts.end()&&!part.allocateNew
+                                &&originalPart&&originalPart->objectTypeToken==part.objectTypeToken
+                                &&originalPart->bytes==part.objectBytes;
+                            if(expected!=expectedParts.end()){expectedParts.erase(expected);}
+                        }
+                        complete=complete&&expectedParts.empty();
+                        ok(complete,"step8 continued-edit-retains-every-active-part-byte-and-identity");
                         const auto decoded = modeling::RobotDesignCodec{}.decode(
                             payload->objects.front().objectBytes, modeling::kCurrentFormatVersion);
                         const auto* edited = decoded.ok() ? std::get_if<modeling::RobotDesign>(&decoded.get()) : nullptr;
+                        std::cout<<"[ird-ui-smoke-mtour] step8 edited scenes="<<(edited?edited->sceneRefs.size():0)
+                            <<" base="<<(command->expectedRevision?command->expectedRevision->toCanonical():"none")<<std::endl;
                         continuedEdit = edited && !edited->joints.empty()
                             && edited->joints.front().origin.tryValue()
                             && std::abs(edited->joints.front().origin.tryValue()->d()[2] - 0.177) < 1e-12
+                            &&savedRoot!=afterReopen.objectRefs.end()
+                            &&payload->objects.front().objectId==savedRoot->objectId
+                            &&payload->objects.front().objectTypeToken==modeling::kRobotDesignObjectType
+                            &&edited->joints.front().objectId==savedModel->joints.front().objectId
+                            &&edited->toolRefs==savedModel->toolRefs&&edited->sceneRefs==savedModel->sceneRefs
+                            &&edited->poseSetRef==savedModel->poseSetRef&&edited->drivetrainRef==savedModel->drivetrainRef
+                            &&complete&&command->branch==afterReopen.branch
                             && !payload->objects.front().allocateNew
                             && command->expectedRevision == afterReopen.id;
                     }

@@ -216,6 +216,16 @@ struct ModelingPluginAssembly {
      */
     void bindDraftChanged(std::function<void()> callback);
 
+    /**
+     * @brief 查询完整工作集相对应用基线是否仍有未应用修改。
+     * @return 摘要非空或完整规范内容不同为true；未装配为false。无基线时
+     *         仅摘要表明编辑，不能把编码失败当作干净；比较包含全部根与部件。
+     * @throws std::runtime_error 完整内容编码失败，调用方须保留原草稿状态并提示。
+     * 仅UI线程、无IO或写入；复用域的唯一规范比较，不按buildDraftCommand
+     * 是否可提交推断脏态。配合bindDraftChanged结算undo回到基线，redo仍保留。
+     */
+    bool hasPendingDraft() const;
+
 
     /// 应用回执回写（submit Committed 后——基线前移＋根身份回填；T03b-2）。
     void noteAppliedRevision(const sdurws::ird::core::RevisionId& newBase,

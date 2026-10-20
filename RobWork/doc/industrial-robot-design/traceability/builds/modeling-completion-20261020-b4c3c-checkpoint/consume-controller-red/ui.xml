@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.001" timestamp="2026-10-20T16:35:39.651" name="AllTests">
+  <testsuite name="DraftControllerModelTest" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-20T16:35:39.651">
+    <testcase name="AppliedDraftConsumesDiskBeforeClearingSession_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp" line="1076" status="run" result="completed" time="0." timestamp="2026-10-20T16:35:39.651" classname="DraftControllerModelTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1091&#x0A;Expected equality of these values:&#x0A;  harness.store-&gt;discardCalls&#x0A;    Which is: {}&#x0A;  (std::vector&lt;std::string&gt;{&quot;modeling&quot;})&#x0A;    Which is: { &quot;modeling&quot; }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1091
+Expected equality of these values:
+  harness.store->discardCalls
+    Which is: {}
+  (std::vector<std::string>{"modeling"})
+    Which is: { "modeling" }
+]]></failure>
+    </testcase>
+    <testcase name="FailedAppliedDraftConsumptionRetainsState_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp" line="1098" status="run" result="completed" time="0." timestamp="2026-10-20T16:35:39.652" classname="DraftControllerModelTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1108&#x0A;Expected: harness.ctl().onCommandResult(&quot;modeling&quot;,committed) throws an exception of type std::runtime_error.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1108
+Expected: harness.ctl().onCommandResult("modeling",committed) throws an exception of type std::runtime_error.
+  Actual: it throws nothing.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1109&#x0A;Value of: harness.ctl().summary().modules.front().sessionDirty&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1109
+Value of: harness.ctl().summary().modules.front().sessionDirty
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1110&#x0A;Value of: harness.ctl().staleConflictData(&quot;modeling&quot;).present&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1110
+Value of: harness.ctl().staleConflictData("modeling").present
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1112&#x0A;Value of: harness.ctl().undoLocalEdit(&quot;modeling&quot;)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;消费失败不能销毁局部历史&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1112
+Value of: harness.ctl().undoLocalEdit("modeling")
+  Actual: false
+Expected: true
+消费失败不能销毁局部历史
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1114&#x0A;Expected: harness.ctl().onCommandResult(&quot;modeling&quot;,committed) throws an exception of type std::runtime_error.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1114
+Expected: harness.ctl().onCommandResult("modeling",committed) throws an exception of type std::runtime_error.
+  Actual: it throws nothing.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1115&#x0A;Value of: harness.ctl().staleConflictData(&quot;modeling&quot;).present&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1115
+Value of: harness.ctl().staleConflictData("modeling").present
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="LateAutosaveReceiptCannotReviveConsumedDraft_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp" line="1123" status="run" result="completed" time="0." timestamp="2026-10-20T16:35:39.652" classname="DraftControllerModelTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1135&#x0A;Expected equality of these values:&#x0A;  harness.store-&gt;discardCalls&#x0A;    Which is: {}&#x0A;  (std::vector&lt;std::string&gt;{&quot;modeling&quot;})&#x0A;    Which is: { &quot;modeling&quot; }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp:1135
+Expected equality of these values:
+  harness.store->discardCalls
+    Which is: {}
+  (std::vector<std::string>{"modeling"})
+    Which is: { "modeling" }
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

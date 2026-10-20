@@ -40,6 +40,7 @@
 #include <ctime>
 #include <future>
 #include <map>
+#include <limits> // 脏代次不能回绕重号，否则迟到保存会误清后续编辑。
 #include <optional>
 #include <stdexcept>
 #include <utility>
@@ -251,8 +252,29 @@ public:
         // 脏代次单调递增：落盘完成回执只在"代次未变"时清脏——save 期间
         // 的新编辑（代次已前进）自动落入下一周期（§8.4"不合并半成品
         // 文档"的判定锚）。
-        ++entry.dirtySerial;
+        if (m_nextDirtySerial == std::numeric_limits<std::uint64_t>::max()) {
+            throw std::overflow_error("ui/draft: 草稿脏代次已耗尽，不能重复使用保存身份");
+        }
+        // clean仍用0表示，但取号源在控制器整个生命周期内只增不减。
+        // 应用后或换会话后的首个编辑不得与在途autosave的旧代次1重号。
+        entry.dirtySerial = ++m_nextDirtySerial;
         fireDirtyObserver();
+    }
+
+    DraftDiscardOutcome notifySessionClean(const ModuleDraftHandle& handle) override
+    {
+        ModuleEntry& entry = requireModule(handle, "notifySessionClean");
+        // PM-04/PM-18：只有域的完整比较可以确认回到应用基线。先经C-5
+        // 消费此前保存的编辑稿；后台FIFO排在在途autosave之后，失败不动状态。
+        const auto outcome = discardDraft(handle);
+        if (!outcome.ok) { return outcome; }
+        entry.dirtySerial = 0;
+        entry.lastSaveOriginToken.clear();
+        entry.lastSavedAtUtc.clear();
+        // 这不是Committed回执，冲突和局部两栈都保留。用户redo后会再次
+        // 通知dirty，终身单调代次阻止旧autosave回执清掉redo的新编辑。
+        fireDirtyObserver();
+        return outcome;
     }
 
     // ---- 汇总（§8.2）----
@@ -573,6 +595,15 @@ public:
     {
         ModuleEntry& entry = requireModule(handle, "onCommandResult");
         if (result.status == CommandResultProjection::Status::Committed) {
+            // PM-04/AT-21：命令服务不持有域草稿句柄，不能假设它已经删除
+            // 草稿。经C-5唯一写端口让project消费current/bak/new，文件名和
+            // 幂等规则仍归project。串行执行器保证已投递的autosave先写后删；
+            // 清理失败保留本控制器的原状态，交宿主报告真实“已提交但未闭环”。
+            const auto consumed = discardDraft(handle);
+            if (!consumed.ok) {
+                throw std::runtime_error("ui/draft: 已提交但磁盘草稿消费失败："
+                    + consumed.errorToken + "；" + consumed.detail);
+            }
             // 应用成功＝草稿被消费（§8.6"磁盘草稿由 project 侧处置——
             // 应用即消费；ui 清会话脏标记"）。局部撤销栈同时清空（§8.7
             // "局部撤销不能撤销已应用修订"——修订历史归项目命令栈）。
@@ -686,6 +717,8 @@ public:
         const DraftDocumentProjection document = entry.undoStack.back();
         entry.undoStack.pop_back();
         entry.source->adoptRestoredDocument(document);
+        // 域内容实际回放后由宿主的完整比较决定 dirty/clean；控制器不在
+        // 这里猜测摘要，避免把回到基线误判为仍脏或反之。
         return true;
     }
 
@@ -699,6 +732,7 @@ public:
         const DraftDocumentProjection document = entry.redoStack.back();
         entry.redoStack.pop_back();
         entry.source->adoptRestoredDocument(document);
+        // redo 同样只回放域值；bindDraftChanged 随后通知新的完整状态。
         return true;
     }
 
@@ -713,7 +747,7 @@ private:
         IModuleDraftSource* source = nullptr;
         /// 显示名（挂接时刻定格——UX-02 呈现值）。
         std::string displayName;
-        /// 会话脏代次（0＝干净；notifySessionDirty 递增——"save 期间的
+        /// 会话脏代次（0＝干净；notifySessionDirty取控制器终身单调号——"save 期间的
         /// 新脏进入下一周期"的判定锚，§8.4）。
         std::uint64_t dirtySerial = 0;
         /// 局部撤销栈（检查点文档值——§8.7 会话栈；随会话销毁不持久化）。
@@ -981,6 +1015,8 @@ private:
     /// 在途 autosave 计数（§8.4"同一时刻至多一个 save 在途"的控制器半区
     /// ——>0 时新 tick 跳过；变更只在 UI 线程）。
     std::size_t m_autosavesInFlight = 0;
+    /// 控制器终身脏序号；应用/重建/解绑均不归零，避免迟到保存回执的ABA重号。
+    std::uint64_t m_nextDirtySerial = 0;
     /// 翻转回调的上一值（沿触发锚）。
     bool m_lastEmittedDirty = false;
 };

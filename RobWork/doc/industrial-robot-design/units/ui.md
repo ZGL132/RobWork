@@ -2073,3 +2073,7 @@ WP-13-T24 B4c-3b-2登记：宿主建模onResult原来实际未填，按attachMod
 WP-13-T24 B4c-3b-3a增量：SaveTrigger表尾追加ApplyRetained，仅保存未决Stale模块（即便已手动清脏），成功不清脏/冲突/局部历史、不重建/提交。域文档有效branch与会话不符时拒绝，不能补齐掩盖跨分支事实。建模装配bindDraftChanged以完整规范域帧变化同步通知，绑定不回放、同值不通知、局部undo/redo通知、脱会话解绑。生产保存绑定真实分支及StoreDraftQueryPortAdapter，替代立项空桩。
 生产分支锚补充：StoreFactoryPortAdapter按权威branchTips首条id构造StorePortAdapter，私有draftBranchAnchor()让list/tryLoad/discard同锚；全零值不再被当作主分支别名。旧显式空锚测试仍兼容，PM-12不自动迁移草稿。
 WP-13-T24 B4c-3b-3b：正式建模Stale回执后经ApplyRetained先保存原完整稿，再呈现当前tip/原base/前进摘要及重新编辑、查看差异对象、取消三选项。保存失败用稳定token给人可读原因，开发detail只留日志；禁重建，取消/关闭不改内容或历史。模态每次重建前复核同活动adapter、有效会话、原branch/base/payload和精确分支tip；漂移拒绝，不静默换锚。显式重建只调用控制器完整reader，不重试提交，状态行明确待手工迁移并保留整批其他域结局。窗口与插件/studio同源，未新增依赖边；完整tour和全功能终验仍开放。
+
+WP-13-T24 B4c-3c生命周期纠正：Committed经完整权威回读后，DraftController必须先经既有C-5 discardDraft调用project唯一草稿服务消费本模块磁盘稿，再清会话脏标记/冲突/局部历史；不能只清标记后让旧稿在下次打开覆盖新基线。后台FIFO保证已排队autosave先于删除，迟到保存回执不得恢复过期保存轨迹。失败不清原状态，由runner保留Committed修订事实、标commit-receipt-failed并继续其余域；关闭放弃会话编辑仍不删除未消费磁盘稿。仅原接口实现/契约注释，无新公共面/存储/依赖，八节和红绿实证见原计划。
+
+WP-13-T24 B4c-3c干净结算补充：ModelingPluginAssembly.hasPendingDraft纯查询复用域完整规范比较，不能按摘要或命令可提交性猜测干净；IDraftController.notifySessionClean默认not-supported，真实实现经C-5后台FIFO消费磁盘稿，成功仅清脏代次/保存来源/时刻，保留冲突与局部undo/redo。宿主完整变更回调按实际pending分流，失败保留状态并提示；重做重新置脏，终身代次防旧autosave误清。精确八节/真实红绿证据见原计划，不外推47项交付。

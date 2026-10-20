@@ -1,0 +1,44 @@
+Note: Google Test filter = *CleanBaseline*:*LateAutosaveCannotClearRedo*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from DraftControllerModelTest
+[ RUN      ] DraftControllerModelTest.CleanBaselineConsumesDraftAndKeepsHistory_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1169): error: Value of: outcome.ok
+  Actual: false
+Expected: true
+当前草稿控制器不支持干净状态结算
+
+[  FAILED  ] DraftControllerModelTest.CleanBaselineConsumesDraftAndKeepsHistory_PM04_AT21 (0 ms)
+[ RUN      ] DraftControllerModelTest.FailedCleanBaselineKeepsOriginalState_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1191): error: Expected equality of these values:
+  outcome.errorToken
+    Which is: "not-supported"
+  "exception"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1196): error: Expected equality of these values:
+  outcome.errorToken
+    Which is: "not-supported"
+  "executor-stopped"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1197): error: Value of: harness.ctl().notifySessionClean("modeling").ok
+  Actual: false
+Expected: true
+
+[  FAILED  ] DraftControllerModelTest.FailedCleanBaselineKeepsOriginalState_PM04_AT21 (0 ms)
+[ RUN      ] DraftControllerModelTest.LateAutosaveCannotClearRedoAfterClean_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\DraftControllerModelTest.cpp(1211): error: Value of: harness.ctl().notifySessionClean("modeling").ok
+  Actual: false
+Expected: true
+
+[  FAILED  ] DraftControllerModelTest.LateAutosaveCannotClearRedoAfterClean_PM04_AT21 (0 ms)
+[----------] 3 tests from DraftControllerModelTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] DraftControllerModelTest.CleanBaselineConsumesDraftAndKeepsHistory_PM04_AT21
+[  FAILED  ] DraftControllerModelTest.FailedCleanBaselineKeepsOriginalState_PM04_AT21
+[  FAILED  ] DraftControllerModelTest.LateAutosaveCannotClearRedoAfterClean_PM04_AT21
+
+ 3 FAILED TESTS

@@ -375,6 +375,14 @@ public:
     /** @brief 绑定完整域帧变更通知；[in] 回调仅UI线程、不可抛错，空值解绑，不持域值引用。 */
     void bindDraftChanged(std::function<void()> callback);
 
+    /**
+     * @brief 判断是否有未应用内容，供绑定与事件入口保护旧草稿修订锚。
+     * @return 摘要非空或存在保存基线且规范内容不同为true；无基线时仅摘要表明编辑。
+     * @throws std::runtime_error 内部工作集无法编码，不能将失败当作无编辑。
+     * 仅UI线程调用，仅读取模块拥有的工作集；SI/集合规范沿唯一Codec。
+     */
+    bool hasPendingDraft() const;
+
 
     /**
      * @brief 应用回执回写（submit Committed 后由装配层调用——编辑基线
@@ -521,14 +529,6 @@ private:
      */
     bool restoreNamedPose(const std::string& key,std::string& summary);
     std::function<bool(const ModelingSessionPoseRequest&,std::string&)> m_sessionPoseWriter; ///< 同步宿主出口；UI线程持闭包。
-    /**
-     * @brief 判断是否有未应用内容，供绑定与事件入口保护旧草稿修订锚。
-     * @return 摘要非空或存在保存基线且规范内容不同为true；无基线时仅摘要表明编辑。
-     * @throws std::runtime_error 内部工作集无法编码，不能将失败当作无编辑。
-     * 仅UI线程调用，仅读取模块拥有的工作集；SI/集合规范沿唯一Codec。
-     */
-    bool hasPendingDraft() const;
-
     /**
      * @brief 共用完整读取器：普通恢复保护编辑，成功回执消费本次已提交工作集。
      * @param closure [in] 固定修订只读源；rootObjectId/branch/revision沿公开恢复契约。

@@ -204,7 +204,16 @@ DomainApplyReport runDomainApply(
                 }
             }
             // 只有完整回执成功才通知草稿控制器消费脏标记；拒绝/中止仍原样通知。
-            if (!receiptFailed && entry.onResult) { entry.onResult(projection); }
+            if (!receiptFailed && entry.onResult) {
+                try {
+                    entry.onResult(projection);
+                } catch (const std::exception& error) {
+                    // 完整域回读后仍可能在C-5磁盘消费处失败；提交不可回滚，
+                    // 不能让该异常中断Qt事件或后域，也不能虚报全部应用完成。
+                    row.rejectionReason=std::string(row.committed
+                        ? "commit-receipt-failed: " : "result-receipt-failed: ")+error.what();
+                }
+            }
         }
         if (devLog) {
             devLog("draft.apply[" + entry.moduleId + "]: committed="

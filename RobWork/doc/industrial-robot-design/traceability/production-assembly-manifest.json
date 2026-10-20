@@ -15,7 +15,7 @@
       "moduleId": "requirements",
       "required": true,
       "wired": true,
-      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2755",
+      "wiredAnchor": "ui/plugin/UiPlugin.cpp:2770",
       "handleSymbol": "requirements::kModuleHandle",
       "waiver": null
     }

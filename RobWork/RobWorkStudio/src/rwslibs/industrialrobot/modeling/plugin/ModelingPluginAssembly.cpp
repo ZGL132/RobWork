@@ -17,6 +17,12 @@ namespace sdurws {
 namespace ird {
 namespace modeling {
 
+bool ModelingPluginAssembly::hasPendingDraft() const
+{
+    // PM-04：完整内容等价只由域判定；宿主不能用“没有摘要”替代这个结论。
+    return m_impl && m_impl->hasPendingDraft();
+}
+
 void ModelingPluginAssembly::bindDraftChanged(std::function<void()> callback)
 {
     if(m_impl){m_impl->bindDraftChanged(std::move(callback));}

@@ -592,6 +592,23 @@ public:
      */
     virtual void notifySessionDirty(const ModuleDraftHandle& handle) = 0;
 
+    /**
+     * @brief 域确认完整工作集已回到应用基线后，结算本模块的未应用磁盘稿。
+     * @param handle [in] 已挂接模块句柄；调用方必须先按域的完整内容比较确认干净。
+     * @return 经既有后台串行端口消费成功才清会话脏代次及保存来源/时刻；
+     *         失败返回原错误且保留状态。默认实现返回not-supported，不冒称已清理。
+     * @throws std::logic_error 真实控制器未绑定可写会话或句柄未挂接。
+     *
+     * 仅UI线程调用。此通知不是命令提交，不产生修订，不改变域内容、冲突或
+     * 局部undo/redo历史；重做回到编辑态后仍须notifySessionDirty。磁盘缺失
+     * 为幂等成功，文件/分支规则唯一归project；不得直接删除文件绕过端口。
+     */
+    virtual DraftDiscardOutcome notifySessionClean(const ModuleDraftHandle& handle)
+    {
+        (void)handle;
+        return {false, "not-supported", "当前草稿控制器不支持干净状态结算"};
+    }
+
     // ---- 汇总（§8.2——未保存标记与跨模块汇总）----
 
     /**
@@ -723,7 +740,8 @@ public:
      *
      * 分支表（§8.5/§8.6 逐行）：
      *   - Committed：应用成功＝草稿被消费（§8.6"应用成功后磁盘草稿由
-     *     project 侧处置；ui 清会话脏标记"）——清脏＋清局部撤销栈
+     *     project 侧处置；ui 清会话脏标记”）——先经既有C-5写端口在串行
+     *     磁盘执行器消费本模块草稿，成功后清脏＋清局部撤销栈
      *     （§8.7"局部撤销不能撤销已应用修订"）＋记录已应用修订；
      *   - Rejected(stale-revision)：冲突未决——**草稿保留**（脏标记
      *     保持；§8.5"拒绝永远不销毁草稿"）＋暂存冲突定位数据（对话
@@ -736,7 +754,9 @@ public:
      * @param result [in] 命令结果投影（staleDetail 仅
      *               Rejected("stale-revision") 时非空——presence 纪律）
      *
-     * @throws std::logic_error 句柄未挂接（路由违约）
+     * @throws std::logic_error 句柄未挂接或只读会话收到Committed（路由违约）
+     * @throws std::runtime_error 已提交但草稿消费失败；保留原控制器状态，
+     *         路由方须保留真实Committed事实并报告回执失败，禁止自动再提交。
      */
     virtual void onCommandResult(const ModuleDraftHandle& handle,
                                  const CommandResultProjection& result) = 0;

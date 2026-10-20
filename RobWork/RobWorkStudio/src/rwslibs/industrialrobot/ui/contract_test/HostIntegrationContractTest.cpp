@@ -1196,3 +1196,22 @@ TEST_F(HostIntegrationContractTest, CommitReceiptExceptionKeepsCommitFactAndCont
     EXPECT_EQ(resultCalls,0)<<"回读失败不得清掉DraftController的未消费草稿标记";
     EXPECT_EQ(healthyReceipts,1);EXPECT_TRUE(report.entries[1].rejectionReason.empty());
 }
+
+/** @brief PM-04：草稿磁盘消费等onResult异常不能抹掉真实Committed事实，也不能跳过下一域。 */
+TEST_F(HostIntegrationContractTest, ResultReceiptExceptionKeepsCommitAndContinues_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    FakeDomainModule broken,healthy;broken.nextEnvelope=makeEnvelope();healthy.nextEnvelope=makeEnvelope();
+    int nextResults=0;ui::DomainModuleEntry a;a.moduleId="broken";a.module=&broken;
+    a.onResult=[](const ui::CommandResultProjection&){throw std::runtime_error("磁盘草稿消费失败");};
+    ui::DomainModuleEntry b;b.moduleId="healthy";b.module=&healthy;
+    b.onResult=[&](const ui::CommandResultProjection&){++nextResults;};
+    ui::DomainApplyReport report;
+    ASSERT_NO_THROW(report=ui::runDomainApply({a,b},std::nullopt,
+        [this](project::CommandEnvelope,project::ICommandInteraction*){return makeCommitted();},nullptr));
+    ASSERT_EQ(report.entries.size(),2U);EXPECT_EQ(report.committedCount(),2U);
+    EXPECT_EQ(report.submittedCount(),2U);EXPECT_TRUE(report.entries.front().committed);
+    EXPECT_FALSE(report.entries.front().revision.empty());
+    EXPECT_EQ(report.entries.front().rejectionReason.find("commit-receipt-failed:"),0U);
+    EXPECT_EQ(nextResults,1);EXPECT_TRUE(report.entries.back().rejectionReason.empty());
+}
