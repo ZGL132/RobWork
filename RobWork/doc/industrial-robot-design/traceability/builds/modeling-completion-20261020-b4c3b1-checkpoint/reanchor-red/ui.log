@@ -1,0 +1,25 @@
+Note: Google Test filter = HostModelingConflict.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from HostModelingConflict
+[ RUN      ] HostModelingConflict.MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(901): error: Expected: source.rebuildOnRevision(core::RevisionId::generate().toCanonical()) throws an exception of type std::runtime_error.
+  Actual: it throws nothing.
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\HostCompilePipelineTest.cpp(903): error: Expected equality of these values:
+  source.buildDraftDocument().baseRevisionId
+    Which is: 16-byte object <B5-0A E2-57 33-1A 71-59 30-42 4D-C9 0A-BB D6-D2>
+  base
+    Which is: 16-byte object <88-63 1D-44 8A-88 61-6E 56-5D 4C-CE A6-21 86-BF>
+未完整读取权威工作集不得宣称已重建
+
+[  FAILED  ] HostModelingConflict.MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21 (0 ms)
+[----------] 1 test from HostModelingConflict (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] HostModelingConflict.MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21
+
+ 1 FAILED TEST

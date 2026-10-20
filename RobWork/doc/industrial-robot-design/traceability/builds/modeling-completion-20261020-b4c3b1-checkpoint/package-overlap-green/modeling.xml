@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="7" failures="0" disabled="0" errors="0" time="0.183" timestamp="2026-10-20T14:38:38.409" name="AllTests">
+  <testsuite name="MdlPackage" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0.183" timestamp="2026-10-20T14:38:38.409">
+    <testcase name="ExportPackageShape_WP13T13_ACC1" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PackageTest.cpp" line="221" status="run" result="completed" time="0.037" timestamp="2026-10-20T14:38:38.409" classname="MdlPackage" />
+    <testcase name="ExportDeterministicBytes_WP13T13_ACC1_ACC2" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PackageTest.cpp" line="313" status="run" result="completed" time="0.038" timestamp="2026-10-20T14:38:38.446" classname="MdlPackage" />
+    <testcase name="ExportFailurePreservesPrevious_WP13T13_ACC2" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PackageTest.cpp" line="351" status="run" result="completed" time="0.028" timestamp="2026-10-20T14:38:38.485" classname="MdlPackage" />
+    <testcase name="ImportRejectsForeignArtifact_WP13T13_ACC3" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PackageTest.cpp" line="414" status="run" result="completed" time="0.003" timestamp="2026-10-20T14:38:38.513" classname="MdlPackage" />
+    <testcase name="RoundtripItemwiseChecklist_WP13T13_ACC4" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PackageTest.cpp" line="468" status="run" result="completed" time="0.024" timestamp="2026-10-20T14:38:38.516" classname="MdlPackage" />
+    <testcase name="TamperedPackageRejected_WP13T13_ACC3_ACC4" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PackageTest.cpp" line="566" status="run" result="completed" time="0.051" timestamp="2026-10-20T14:38:38.541" classname="MdlPackage" />
+    <testcase name="PackageChecklistText_Deterministic_UI_T61" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PackageTest.cpp" line="619" status="run" result="completed" time="0." timestamp="2026-10-20T14:38:38.592" classname="MdlPackage" />
+  </testsuite>
+</testsuites>

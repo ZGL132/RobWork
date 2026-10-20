@@ -1,0 +1,26 @@
+Note: Google Test filter = HostModelingConflict.*:HostCompilePipelineTest.ConflictRebuild*:HostCompilePipelineTest.RevisionDraftReader*:HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory*
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from HostCompilePipelineTest
+[ RUN      ] HostCompilePipelineTest.ConflictRebuildReadsCompleteFixedRevisionAndRetainsOldDraft_PM04_AT21
+unknown file: error: C++ exception with description "恢复已提交建模工作集失败：robot-design / obj-e9b26a6e28eff6dfd6073307df775fc8：modeling/codec: 头域截断（字节偏移 0）" thrown in the test body.
+
+[  FAILED  ] HostCompilePipelineTest.ConflictRebuildReadsCompleteFixedRevisionAndRetainsOldDraft_PM04_AT21 (0 ms)
+[ RUN      ] HostCompilePipelineTest.RevisionDraftReaderDistinguishesEmptyFromCorruption_PM04_AT21
+[       OK ] HostCompilePipelineTest.RevisionDraftReaderDistinguishesEmptyFromCorruption_PM04_AT21 (0 ms)
+[ RUN      ] HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory_PM04_AT21
+[       OK ] HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory_PM04_AT21 (1505 ms)
+[----------] 3 tests from HostCompilePipelineTest (1507 ms total)
+
+[----------] 1 test from HostModelingConflict
+[ RUN      ] HostModelingConflict.MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21
+[       OK ] HostModelingConflict.MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21 (0 ms)
+[----------] 1 test from HostModelingConflict (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (1507 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] HostCompilePipelineTest.ConflictRebuildReadsCompleteFixedRevisionAndRetainsOldDraft_PM04_AT21
+
+ 1 FAILED TEST

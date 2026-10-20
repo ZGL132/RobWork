@@ -890,6 +890,84 @@ TEST_F(HostCompilePipelineTest,
 
 namespace sdurws::ird::ui::test {
 namespace {
+/** @brief PM-04/AT-21：没有权威读取装配时不能把旧草稿直接换成新修订锚。 */
+TEST(HostModelingConflict, MissingRevisionReaderRejectsWithoutReanchoring_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    auto domain=modeling::createModelingPluginAssembly();domain.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto base=core::RevisionId::generate();
+    domain.bindSessionAnchor(branch,base);auto& source=domain.modelingDraftSource();
+    const auto before=source.buildDraftDocument();
+    EXPECT_THROW(source.rebuildOnRevision(core::RevisionId::generate().toCanonical()),std::runtime_error);
+    EXPECT_EQ(source.buildDraftDocument().payload,before.payload);
+    EXPECT_EQ(source.buildDraftDocument().baseRevisionId,base)<<"未完整读取权威工作集不得宣称已重建";
+}
+
+/** @brief PM-04/AT-21：完整基线替换与待迁移草稿原子保留，错误回调不得污染旧值。 */
+TEST_F(HostCompilePipelineTest, ConflictRebuildReadsCompleteFixedRevisionAndRetainsOldDraft_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    // 原S5夹具基线是故意不可解码的旧占位字节，由plannedWrites覆盖；
+    // 本测试读取已保存修订，必须登记真实Codec根，不能把S5覆盖前置套到重开。
+    m_query->view.objectRefs.clear();m_query->objects.clear();
+    m_query->addObject(m_rootId,std::string(modeling::kRobotDesignObjectType),m_designBytes);
+    auto domain=modeling::createModelingPluginAssembly();domain.seedTemplateSession();
+    const auto branch=m_query->view.branch;domain.bindSessionAnchor(branch,core::RevisionId::generate());
+    auto& source=domain.modelingDraftSource();const auto old=source.buildDraftDocument();
+    domain.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r){
+        return readModelingRevisionDraft(*m_query,b,r);
+    });
+    source.rebuildOnRevision(m_query->view.id.toCanonical());
+    const auto actual=source.buildDraftDocument();
+    const auto expected=readModelingRevisionDraft(*m_query,branch,m_query->view.id);ASSERT_TRUE(expected);
+    EXPECT_EQ(actual.payload,expected->payload);EXPECT_EQ(actual.baseRevisionId,m_query->view.id);
+    ASSERT_TRUE(domain.retainedConflictDraft());EXPECT_EQ(domain.retainedConflictDraft()->payload,old.payload);
+    EXPECT_EQ(domain.retainedConflictDraft()->baseRevisionId,old.baseRevisionId);
+    EXPECT_FALSE(domain.module->buildDraftCommand(modeling::kModuleHandle))<<"新基线不能继承旧编辑摘要";
+    // 已有待迁移素材也属于失败原子性；空返回只代表明确无根，不能由错字节推导。
+    for(int fault=0;fault<5;++fault){
+        domain.bindRevisionDraftReader([&,fault](const core::BranchId&,const core::RevisionId&)
+            ->std::optional<DraftDocumentProjection>{
+            if(fault==0){throw std::runtime_error("实际读取失败");}
+            auto invalid=*expected;
+            if(fault==1){invalid.moduleId="requirements";}
+            if(fault==2){invalid.baseRevisionId=core::RevisionId::generate();}
+            if(fault==3){invalid.payload="broken-frame";}
+            if(fault==4){invalid=old;invalid.baseRevisionId=m_query->view.id;}
+            return invalid;
+        });
+        EXPECT_THROW(source.rebuildOnRevision(m_query->view.id.toCanonical()),std::runtime_error)<<fault;
+        EXPECT_EQ(source.buildDraftDocument().payload,actual.payload);
+        EXPECT_EQ(domain.retainedConflictDraft()->payload,old.payload);
+        EXPECT_EQ(domain.retainedConflictDraft()->baseRevisionId,old.baseRevisionId);
+    }
+    EXPECT_THROW(source.rebuildOnRevision("bad-revision"),std::invalid_argument);
+    domain.onSessionDetached();EXPECT_FALSE(domain.retainedConflictDraft());
+}
+
+/** @brief PM-04：固定修订无根是合法空态；跨分支、多个根或坏字节必须定位失败。 */
+TEST_F(HostCompilePipelineTest, RevisionDraftReaderDistinguishesEmptyFromCorruption_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    m_query->view.objectRefs.clear();m_query->objects.clear();
+    m_query->addObject(m_rootId,std::string(modeling::kRobotDesignObjectType),m_designBytes);
+    const auto original=m_query->view;const auto originalBytes=m_query->objects;
+    EXPECT_THROW(readModelingRevisionDraft(*m_query,core::BranchId::generate(),original.id),std::runtime_error);
+    m_query->view.objectRefs.clear();EXPECT_FALSE(readModelingRevisionDraft(*m_query,original.branch,original.id));
+    auto domain=modeling::createModelingPluginAssembly();domain.seedTemplateSession();
+    domain.bindSessionAnchor(original.branch,core::RevisionId::generate());const auto old=domain.modelingDraftSource().buildDraftDocument();
+    domain.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r){return readModelingRevisionDraft(*m_query,b,r);});
+    domain.modelingDraftSource().rebuildOnRevision(original.id.toCanonical());
+    EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().baseRevisionId,original.id);
+    EXPECT_FALSE(domain.module->buildDraftCommand(modeling::kModuleHandle));
+    ASSERT_TRUE(domain.retainedConflictDraft());EXPECT_EQ(domain.retainedConflictDraft()->payload,old.payload);
+    m_query->view=original;m_query->view.objectRefs.push_back(original.objectRefs.front());
+    EXPECT_THROW(readModelingRevisionDraft(*m_query,original.branch,original.id),std::runtime_error);
+    m_query->view=original;for(auto& item:m_query->objects){item.second={0xff};}
+    EXPECT_THROW(readModelingRevisionDraft(*m_query,original.branch,original.id),std::runtime_error);
+    m_query->objects=originalBytes;
+}
+
 /** @brief MDL-17/AT-04：真实编译WC上恢复关节，独立核对末端矩阵；非法请求不改State。 */
 TEST_F(HostCompilePipelineTest, NamedPoseStagesRealStateAndRejectsAtomically_MDL17_AT04)
 {
@@ -1235,6 +1313,22 @@ TEST_F(HostCompilePipelineTest, CompleteWorkingSetDiskApplyAndHistory_PM04_AT21)
     }
     const auto oldTool=firstClosure.tryObject(firstToolId);ASSERT_TRUE(oldTool);
     EXPECT_TRUE(std::get<modeling::ToolDefinition>(codec.decode(oldTool->bytes,modeling::kCurrentFormatVersion).get()).displayName.empty());
+    // B4c-3b-1：HEAD已多次前进，重新编辑仍必须读指定的首个完整修订，
+    // 原最终草稿保留原base；不能从最新HEAD偷读，也不能给旧内容直接换锚。
+    const auto beforeRebuild=domain.modelingDraftSource().buildDraftDocument();
+    const auto finalHead=store->query().head();
+    domain.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r){
+        return readModelingRevisionDraft(store->query(),b,r);
+    });
+    domain.modelingDraftSource().rebuildOnRevision(first.id.toCanonical());
+    const auto firstDraft=readModelingRevisionDraft(store->query(),first.branch,first.id);ASSERT_TRUE(firstDraft);
+    EXPECT_EQ(domain.modelingDraftSource().buildDraftDocument().payload,firstDraft->payload);
+    ASSERT_TRUE(domain.retainedConflictDraft());EXPECT_EQ(domain.retainedConflictDraft()->payload,beforeRebuild.payload);
+    EXPECT_EQ(domain.retainedConflictDraft()->baseRevisionId,beforeRebuild.baseRevisionId);
+    EXPECT_EQ(store->query().head().id,finalHead.id)<<"重建不产生项目修订，也不重试提交";
+    HostRevisionClosureView finalClosure(store->query(),finalHead);std::string receiptError;
+    const auto finalRoot=core::ObjectId::tryFromCanonical(savedDoc()["rootId"].toString().toStdString());ASSERT_TRUE(finalRoot);
+    ASSERT_TRUE(domain.acceptAppliedSession(finalClosure,*finalRoot,finalHead.branch,finalHead.id,receiptError))<<receiptError;
     const auto finalFrame=domain.modelingDraftSource().buildDraftDocument().payload;
     const auto path=store->canonicalPath();const auto finalRevision=store->query().head();
     EXPECT_EQ(store->requestClose(),0U);compile.reset();store.reset();

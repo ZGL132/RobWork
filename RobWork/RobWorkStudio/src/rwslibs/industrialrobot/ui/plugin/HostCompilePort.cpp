@@ -6,6 +6,7 @@
  */
 
 #include "HostCompilePort.hpp"
+#include <sdurws/ird/ui/IDraftController.hpp> // 完整固定修订草稿源方法，需要公共源接口完整定义。
 
 #include "HostPresentationAdapters.hpp"  // HostRuntimeNameMapPort 完整类型（currentPresentation 现取面）
 
@@ -417,6 +418,34 @@ void acceptModelingCommittedSession(modeling::ModelingPluginAssembly& domain,
 // =====================================================================
 // HostModelCompilePort
 // =====================================================================
+
+std::optional<DraftDocumentProjection> readModelingRevisionDraft(
+    const project::IProjectQueryPort& query,const core::BranchId& branch,
+    const core::RevisionId& revisionId)
+{
+    if(!branch.isValid()||!revisionId.isValid()){
+        throw std::invalid_argument("建模修订读取需要有效分支和修订");
+    }
+    const auto revision=query.revision(revisionId);
+    if(revision.id!=revisionId||revision.branch!=branch){
+        throw std::runtime_error("建模修订读取的分支或修订不匹配");
+    }
+    std::optional<core::ObjectId> root;
+    for(const auto& ref:revision.objectRefs){
+        if(ref.objectTypeToken!=modeling::kRobotDesignObjectType){continue;}
+        if(root){throw std::runtime_error("建模修订含多个根，不能猜测新基线");}
+        root=ref.objectId;
+    }
+    if(!root){return std::nullopt;} // 无模型是合法事实，与读错严格区分。
+    // 临时域装配只复用其完整读取/Codec，不接面板、不写项目，也不接收旧草稿。
+    // 所有值按固定修订读取，不能由当前运行时逆推设计或复制恢复算法。
+    auto reader=modeling::createModelingPluginAssembly();HostRevisionClosureView closure(query,revision);
+    std::string error;
+    if(!reader.restoreCommittedSession(closure,*root,branch,revisionId,error)){
+        throw std::runtime_error(error);
+    }
+    return reader.modelingDraftSource().buildDraftDocument();
+}
 
 HostModelCompilePort::HostModelCompilePort(Deps deps)
     : m_deps(std::move(deps)),

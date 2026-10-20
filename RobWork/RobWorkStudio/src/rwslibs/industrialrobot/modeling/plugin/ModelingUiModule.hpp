@@ -366,6 +366,12 @@ public:
         const core::ObjectId& rootObjectId, const core::BranchId& branch,
         const core::RevisionId& revision, std::string& errorText);
 
+    /** @brief PM-04：绑定固定修订完整读取器；输入/失败/借用语义沿装配门面。 */
+    void bindRevisionDraftReader(std::function<std::optional<ui::DraftDocumentProjection>(
+        const core::BranchId&, const core::RevisionId&)> reader);
+    /** @brief 返回上次成功重建前旧草稿的值副本；仅UI线程，无副作用。 */
+    std::optional<ui::DraftDocumentProjection> retainedConflictDraft() const;
+
 
     /**
      * @brief 应用回执回写（submit Committed 后由装配层调用——编辑基线
@@ -483,8 +489,13 @@ public:
     /// 全部五对象及changes；完整候选失败保持现状，基线快照不改、旧base保留）。
     void adoptRestoredDocument(const ui::DraftDocumentProjection& document) override;
 
-    /// 以指定修订重建编辑基线（§8.5[基于当前版本重新编辑]——Stale 冲突
-    /// 对话的用户迁移半区；会话基线改写为 tip）。
+    /**
+     * @brief PM-04：完整读取指定修订并建立新基线，保留旧完整草稿供用户迁移。
+     * @param tipRevisionCanonical [in] 有效目标修订规范身份；不能只换旧草稿的锚。
+     * @throws std::invalid_argument 身份/当前分支无效；std::runtime_error未装配、
+     *         读取/类型/帧/身份错配或非干净响应；失败保持旧会话及待迁移素材。
+     * 仅UI线程，无项目写入/自动重试；成功清旧表单及局部历史，SI及身份原样保留。
+     */
     void rebuildOnRevision(const std::string& tipRevisionCanonical) override;
 
     // ---- 就绪真判定（T03b-2b——真实 ModelReadinessChecker 装配）--------
@@ -546,6 +557,11 @@ private:
     std::vector<ModelingWorkingSet> m_draftUndo, m_draftRedo;
     PanelUiThreadGuard m_guard;              ///< §3.4 UI 线程守卫（构造线程绑定）
     ModuleSessionState m_session;            ///< 会话权威态（工作集唯一载体——装配层更新）
+    /// PM-04：只读固定修订读取缝；闭包由模块持有，宿主保证借用目标生命周期。
+    std::function<std::optional<ui::DraftDocumentProjection>(const core::BranchId&,
+        const core::RevisionId&)> m_revisionDraftReader;
+    /// 旧未应用完整草稿保留原base，供用户迁移；仅UI线程，关闭会话清除。
+    std::optional<ui::DraftDocumentProjection> m_retainedConflictDraft;
     ModelingPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
     ui::IWorkbenchShell* m_shell = nullptr;  ///< 壳门面引用（非 owning——§10.9 生命周期）
     CommandSubmitFn m_pendingSubmit;         ///< 面板创建前的提交出口暂存（创建时应用）

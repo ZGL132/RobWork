@@ -706,6 +706,7 @@ void ModelingUiModule::onSessionDetached()
     m_session.branch = core::BranchId{};
     m_session.baseRevision.reset();
     m_session.draft = ModelingWorkingSet{};
+    m_retainedConflictDraft.reset(); // 待迁移素材只属原项目，禁止关闭后泄漏到新会话。
     clearDraftHistory(false); // 关闭后的空态不是可撤销版本，禁止跨项目恢复。
     m_session.readiness.reset();
     m_session.baselineSnapshot.reset();   // 应用侧快照随会话作废（UI-T41）
@@ -985,15 +986,47 @@ void ModelingUiModule::adoptRestoredDocument(
 void ModelingUiModule::rebuildOnRevision(const std::string& tipRevisionCanonical)
 {
     m_guard.assertOnUiThread();
-    // §8.5[基于当前版本重新编辑]的域侧半区：编辑基线改写为分支 tip。
-    // 非法 canonical＝调用方违约（控制器只传合法 tip）——解析失败忽略
-    // （基线不变，不虚构已重建）。
-    const auto tip =
-        core::RevisionId::tryFromCanonical(tipRevisionCanonical);
-    if (tip.has_value()) {
-        m_session.baseRevision = *tip;
-        clearDraftHistory(); // 用户选择重新编辑即建立新的基线边界。
+    const auto tip=core::RevisionId::tryFromCanonical(tipRevisionCanonical);
+    if(!tip||!m_session.branch.isValid()){
+        throw std::invalid_argument("重新编辑需要有效分支及修订身份");
     }
+    if(!m_revisionDraftReader){throw std::runtime_error("建模固定修订读取未装配，原草稿已保留");}
+    // 第一步完整读取到局部值。旧草稿/历史/锚都不能在读错或类型错时先行清除。
+    // nullopt由宿主明确表达无根；此时新基线是空项目，不能用旧模板伪造新权威值。
+    const auto document=m_revisionDraftReader(m_session.branch,*tip);
+    ModelingWorkingSet candidate;
+    if(document){
+        if(document->moduleId!=kModuleHandle||document->baseRevisionId!=*tip){
+            throw std::runtime_error("建模固定修订读取的模块或修订不匹配");
+        }
+        std::string error;
+        const auto decoded=decodeModelingDraft(document->payload,ModelingWorkingSet{},error);
+        if(!decoded||!decoded->rootObjectId||!decoded->changes.empty()){
+            throw std::runtime_error("建模固定修订读取不是完整干净基线："+error);
+        }
+        candidate=*decoded;
+    }
+    const auto previous=buildDraftDocument(); // 保留完整旧值和原base，绝不重标锚后保存。
+    // 第二步一次采纳。控制器在本方法成功返回后才清冲突/会话脏标记；这里
+    // 不重试提交，用户必须基于新的完整值逐项迁移旧修改。
+    m_retainedConflictDraft=previous;
+    if(m_panel){m_panel->cancelPendingForHistoryRestore();}
+    m_session.draft=std::move(candidate);
+    noteAppliedRevision(*tip,m_session.draft.rootObjectId);
+    if(m_panel){m_panel->setOutcomeMessage(QString::fromUtf8(
+        "已读取当前修订的完整基线；旧草稿已保留，请核对并迁移未应用修改。"));}
+}
+
+void ModelingUiModule::bindRevisionDraftReader(
+    std::function<std::optional<ui::DraftDocumentProjection>(const core::BranchId&,
+        const core::RevisionId&)> reader)
+{
+    m_guard.assertOnUiThread();m_revisionDraftReader=std::move(reader);
+}
+
+std::optional<ui::DraftDocumentProjection> ModelingUiModule::retainedConflictDraft() const
+{
+    m_guard.assertOnUiThread();return m_retainedConflictDraft;
 }
 
 void ModelingUiModule::bindSessionPoseWriter(

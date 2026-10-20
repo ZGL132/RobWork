@@ -44,6 +44,7 @@
 #include <functional> // 文件对话嵌套事件的边界动作，不替代域逻辑。
 #include <QFileDialog>
 #include <QTreeWidget>
+#include <QTreeWidgetItemIterator> // 冲突重建后遍历真实树项，确认新修订工具已呈现。
 #include <sdurws/ird/modeling/StructureEdit.hpp>
 #include <sdurws/ird/ui/SelectionService.hpp>
 #include <memory>
@@ -1216,4 +1217,45 @@ TEST(ModelingUiModuleHostWiring, ToolRealFileDialogAndStaleGuard_MDL13_AT28)
         EXPECT_TRUE(editor->findChild<QLineEdit*>("ird_tool_path")->text().isEmpty());EXPECT_EQ(module.session().draft,stable);
         EXPECT_TRUE(editor->findChild<QLabel*>("ird_tool_feedback")->text().contains(QStringLiteral("丢弃")));
     }
+}
+
+/** @brief PM-04/AT-21：真实面板重建完整基线、清未确认表单和局部栈，旧值仍可核对。 */
+TEST(ModelingUiModuleHostWiring, ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21)
+{
+    IRD_TEST_INFO("PM-04",{"AT-21"},std::nullopt);
+    ModelingUiModule target;target.seedTemplateSession();const auto branch=core::BranchId::generate();
+    target.bindSessionAnchor(branch,core::RevisionId::generate());
+    const auto old=target.buildDraftDocument();
+    ModelingUiModule authoritative;authoritative.seedTemplateSession();
+    authoritative.session().draft.design.displayName="当前修订的权威模型";
+    // 固定修订输入夹具：直接声明完整合法工具；被测重建/Codec/树投影仍走产品实现。
+    ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="current-gripper";
+    tool.tcpList={{"tcp",rw::math::Transform3D<double>::identity(),""}};
+    authoritative.session().draft.toolObjects={tool};authoritative.session().draft.design.toolRefs={tool.objectId};
+    authoritative.session().draft.design.defaultTcp=TcpRef{tool.objectId,"tcp"};
+    const auto revision=core::RevisionId::generate();
+    authoritative.bindSessionAnchor(branch,revision);authoritative.noteAppliedRevision(revision,core::ObjectId::generate());
+    const auto current=authoritative.buildDraftDocument();
+    target.bindRevisionDraftReader([&](const core::BranchId& b,const core::RevisionId& r)
+        ->std::optional<ui::DraftDocumentProjection>{EXPECT_EQ(b,branch);EXPECT_EQ(r,revision);return current;});
+    std::unique_ptr<QWidget> panel(target.createPanel());panel->resize(1140,840);panel->show();QApplication::processEvents();
+    panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode")->click();
+    auto* pending=panel->findChild<QLineEdit*>("ird_tool_name");ASSERT_NE(pending,nullptr);pending->setText("unconfirmed-old-tool");
+    target.rebuildOnRevision(revision.toCanonical());QApplication::processEvents();
+    EXPECT_EQ(target.buildDraftDocument().payload,current.payload);ASSERT_TRUE(target.retainedConflictDraft());
+    EXPECT_EQ(target.retainedConflictDraft()->payload,old.payload);EXPECT_EQ(target.retainedConflictDraft()->baseRevisionId,old.baseRevisionId);
+    EXPECT_FALSE(target.buildDraftCommand("modeling"));
+    EXPECT_FALSE(panel->findChild<QPushButton*>("ird_modeling_draft_undo")->isEnabled());
+    // 重建清除了旧选中目标；空管理入口合法地进入新增态。先核对旧暂存
+    // 输入已消失，再按真实导航选择新工具，不能把“自动选第一件”当成需求。
+    panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode")->click();QApplication::processEvents();
+    EXPECT_NE(panel->findChild<QLineEdit*>("ird_tool_name")->text(),"unconfirmed-old-tool");
+    auto* view=qobject_cast<ModelingPanelWidget*>(panel.get());ASSERT_NE(view,nullptr);view->focusObject(tool.objectId);
+    panel->findChild<QPushButton*>("ird_modeling_edit_tool_mode")->click();QApplication::processEvents();
+    auto* currentName=panel->findChild<QLineEdit*>("ird_tool_name");ASSERT_NE(currentName,nullptr);
+    EXPECT_EQ(currentName->text(),"current-gripper")<<"旧未确认输入不能回写到新修订的工具";
+    bool found=false;for(auto* tree:panel->findChildren<QTreeWidget*>()){
+        QTreeWidgetItemIterator it(tree);for(;*it;++it){if((*it)->text(0).contains("current-gripper")){found=true;}}
+    }
+    EXPECT_TRUE(found);propertySnapshot(*panel,"conflict-rebuilt-current-tool");
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.748" timestamp="2026-10-20T14:35:09.724" name="AllTests">
+  <testsuite name="ModelingUiModuleHostWiring" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.746" timestamp="2026-10-20T14:35:09.725">
+    <testcase name="ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp" line="1223" status="run" result="completed" time="0.746" timestamp="2026-10-20T14:35:09.726" classname="ModelingUiModuleHostWiring">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:1251&#x0A;Expected equality of these values:&#x0A;  currentName-&gt;text()&#x0A;    Which is: {}&#x0A;  &quot;current-gripper&quot;&#x0A;    Which is: 00007FF774EEBDF0&#x0A;旧未确认输入不能回写到新修订的工具&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp:1251
+Expected equality of these values:
+  currentName->text()
+    Which is: {}
+  "current-gripper"
+    Which is: 00007FF774EEBDF0
+旧未确认输入不能回写到新修订的工具
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

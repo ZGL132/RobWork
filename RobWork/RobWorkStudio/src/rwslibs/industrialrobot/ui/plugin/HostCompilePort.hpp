@@ -222,6 +222,19 @@ private:
 void acceptModelingCommittedSession(modeling::ModelingPluginAssembly& domain,
     const project::IProjectQueryPort& query,const project::CommandResult& result);
 
+/**
+ * @brief PM-04：完整读取指定分支/不可变修订的建模草稿值，供冲突重建使用。
+ * @param query [in] 本会话只读查询，同步借用；按指定revision读取精确(oid,cv)。
+ * @param branch [in] 有效目标分支；指定修订必须属于该分支。
+ * @param revision [in] 有效目标修订；不得替换为HEAD。
+ * @return 无根时nullopt；有唯一根时返回原Codec完整域帧，base等于revision、摘要为空。
+ * @throws std::invalid_argument 身份无效；std::runtime_error分支/根歧义/字节错误；
+ *         查询异常沿原端口透传。仅UI线程，无写入/修订，返回值归调用方。
+ */
+std::optional<DraftDocumentProjection> readModelingRevisionDraft(
+    const project::IProjectQueryPort& query,const core::BranchId& branch,
+    const core::RevisionId& revision);
+
 // =====================================================================
 // HostModelCompilePort——project IModelCompilePort 的 runtime 十段链适配
 // （＋最近发布快照缓存——呈现 source 的唯一供数面）

@@ -348,3 +348,18 @@ B4c-3a实施细化（沿B4c-3八节）：先独立修复旧命令/历史互操�
 B4c-3a运行时同步补充（实施前登记，沿上述八节）：真实ProjectStore链的数据断言通过后，新增正式快照工具身份断言复现旧apply-named-poses Restore改变活动工具却不重编译。①PM-18/MDL-06要求历史恢复后的项目与运行时一致；②仅私有规划器输出既有CommandPlan.requiresDualCompile，final以处理器固有需求或本次运行时差异合并，不改公共/存储面；③合法候选才发布该位，拒绝及真实编译失败仍零提交；④固定修订输入只读、局部值副本归调用栈；⑤原命令线程、完整值精确比较，不依赖名称或HEAD；⑥先保存runtime-restore-red，再验证旧五族重新挂接工具时均发布正确快照，并增加纯位姿内容/仅位姿引用变更仍不双编译的反例；⑦精确范围仍原五个源码/测试文件及本计划、单元卡/契约，不扩F06/F07；⑧无新长期架构决策。比较时仅排除poseSetObject、design.poseSetRef和编辑changes，其他根/工具/场景/传动差异均保守要求双编译；未活动历史对象写入不影响活动运行时。不能将固定族false位用于会恢复其他运行时部件的历史帧。
 
 B4c-3a验证记录：十套件1495通过、0失败、0跳过（相较B4c-2增加4项建模用例；core本次全量65项而非仅4项红线，额外61项并非新增）。真实存储链已对旧五token逐条应用/逆放/重做及关闭重开，并核对正式快照工具身份。三套Windows GUI共225通过，已看完整草稿恢复工具和物性底部截图。同步已允许CommandHandlers.hpp的纯文档注释，明确纯位姿与恢复运行时部件的双编译差别，无新声明。正式宿主不在本批重复运行已知失败，真正冲突重建/失败保护、47项全三维仍开放；完整证据另封存b4c3a-checkpoint，不回写上批。
+
+## B4c-3b-1 精确设计：冲突重新编辑的完整读取及旧草稿保留
+
+1. 行为（PM-04/AT-21、ui§8.5）：rebuildOnRevision必须从指定不可变修订完整读取当前根/部件，成功建立干净新基线；旧未应用完整草稿及原base保留为待迁移素材，不得将旧内容直接重标锚。此子批先闭合模块及真实固定修订读取，不把宿主冲突对话框/落盘origin或迁移入口标完成。
+2. 精确公共面：仅ModelingPluginAssembly增加bindRevisionDraftReader（默认空的同步std::function，入参branch/revision，返回可选DraftDocumentProjection）和retainedConflictDraft()只读值副本。返回nullopt明确代表该固定修订无建模根；数据/读错须抛异常，不能用nullopt掩盖失败。源端口IModuleDraftSource签名不变，消费既有ui投影，不新增业务依赖。私有HostCompilePort提供同源读取辅助，宿主正式接线下一子批继续。依据用户“后续最推荐自动执行”授权先登记后实施，不再次弹选项。
+3. 失败：无reader、无效tip、reader异常、返回module/base/根身份或字节不合法均拒绝且保留草稿、旧基线、历史、旧锚及上次待迁移素材；当前模块未绑定有效分支为调用方违约。成功只采纳完整候选，绝不自动提交/重试。空根仅来自reader明确无根，正常空态不伪造模板模型。
+4. 生命周期/所有权：模块持有reader闭包，宿主保证借用目标存活或以受控会话句柄检查；投影与旧完整草稿由模块值持有，调用后不存闭包视图。onSessionDetached清除待迁移素材，防跨项目泄漏；成功应用不静默删除待迁移素材，留用户核对。
+5. 线程/确定性：UI线程同步；query.revision(id)及精确(oid,cv)读取，不能HEAD替代。沿原唯一Codec和完整草稿帧，SI数值不经文本浮点重算，保留对象身份/来源。只读可重建浏览，不能提交。空reader诚实拒绝。
+6. 测试：先真实域源无reader调用反例，证明当前只换锚；再真实ProjectStore/HostRevisionClosureView读旧固定修订且HEAD已前进，核对全部部件与旧草稿base/原字节保留；无根合法空态、错分支/缺修订/多根/坏字节/reader异常原子拒绝。窗口后续验证迁移展示与取消不覆盖。完成后双模式、相关完整套件及GUI。
+7. 范围：原契约已允许的modeling assembly/插件、ui/plugin/HostCompilePort.hpp/.cpp、ui/test/HostCompilePipelineTest.cpp及原modeling测试/单元卡/DTB/契约/本计划/新证据。不碰F06/F07、项目存储、框架、requirements/kinematics。本子批不引入SaveTrigger或改ui源端口，完整宿主冲突保存与对话框需后续单独精确登记。
+8. 决策：无新长期架构决策；以完整只读源替代重标锚，是PM-04权威修订语义消费。B4c-3a已本地封存f958648b90a2，后检查日志随本批保存，原冻结证据不回写。
+
+B4c-3b-1验证前置补充（实施前登记）：集成/独立modeling套件并行时，既有PackageTest::TempDir使用进程内counter构造相同ird-pkg-test-1目录，真实独立套件在导出中断退出3，串行复核348通过。仅修正本卡已允许PackageTest.cpp夹具临时目录为core::ObjectId随机唯一后缀，包内容确定性仍在同一目录内比较，无产品变化；保留原并行失败和串行复核，修复后双模式专项并行复核。GUI两轮旧exe零匹配不计通过；首次重建界面断言误要求自动选首个工具，按既有用户选择契约改为清旧输入后显式focusObject，单独留痕，不冒充产品缺陷。
+
+B4c-3b-1实际结果：十套件1499通过、0失败、0跳过（含Windows真实窗口226项），新增UI模型3项和窗口1项。指定完整修订读取、无reader/错响应原子拒绝、旧完整草稿原base/payload保留已验证；新模型树/工具名刷新、旧暂存取消及显式选择后工具页值已截图复核。集成全量Release、独立三目标和verify-task三条通过。证据另封存modeling-completion-20261020-b4c3b1-checkpoint。生产reader绑定、真正冲突落盘/三选项/迁移、正式tour失败出口及47项三维仍开放，不外推通过；仅本地WIP，不推送、不合入。

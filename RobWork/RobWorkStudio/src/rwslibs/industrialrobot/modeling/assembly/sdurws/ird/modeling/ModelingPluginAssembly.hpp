@@ -32,6 +32,7 @@
 #include <QString>                                 // 文案解析返回值（bindTextResolver）
 #include <sdurws/ird/core/Identity.hpp>            // core::BranchId/RevisionId/ObjectId（会话锚/回执值面）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>    // ui::PluginUiDescriptor（§10.9 装配描述符）
+#include <sdurws/ird/ui/UiProjections.hpp> // PM-04完整固定修订草稿投影，沿既有源端口值面。
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::CommandId（命令提交出口入参）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>     // ui::CommandAvailability（按钮门控）
 
@@ -186,6 +187,25 @@ struct ModelingPluginAssembly {
     bool acceptAppliedSession(const ObjectClosureView& closure,
         const core::ObjectId& rootObjectId, const core::BranchId& branch,
         const core::RevisionId& revision, std::string& errorText);
+
+    /**
+     * @brief PM-04：绑定“基于当前版本重新编辑”的完整固定修订读取器。
+     * @param reader [in] UI线程同步回调；参数为有效分支/指定修订，返回该修订
+     *        无编辑摘要的完整域草稿（module/base须精确匹配、根身份有效）。
+     *        nullopt仅代表该修订无建模根；读错/歧义/坏数据须抛std::runtime_error，
+     *        不得伪装无根。空回调表示未装配，重新编辑拒绝且保留原状态。
+     * @return 无返回。模块持有闭包，宿主保证借用目标存活或校验会话已关闭；
+     *         不允许回调写项目或修改本模块，不自动提交/重试。SI和身份沿唯一Codec。
+     */
+    void bindRevisionDraftReader(std::function<std::optional<ui::DraftDocumentProjection>(
+        const core::BranchId&, const core::RevisionId&)> reader);
+
+    /**
+     * @brief 读取成功重建前保留的旧完整草稿，供用户核对和手动迁移。
+     * @return 含原base及完整根/部件/摘要的值副本；尚未重建或会话脱离为空。
+     * 仅UI线程；不写项目/草稿磁盘、不把旧内容套上新锚，也不清除保留值。
+     */
+    std::optional<ui::DraftDocumentProjection> retainedConflictDraft() const;
 
 
     /// 应用回执回写（submit Committed 后——基线前移＋根身份回填；T03b-2）。

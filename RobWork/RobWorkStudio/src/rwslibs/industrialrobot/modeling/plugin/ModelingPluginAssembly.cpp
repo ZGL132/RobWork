@@ -133,6 +133,18 @@ void ModelingPluginAssembly::noteAppliedRevision(
     }
 }
 
+void ModelingPluginAssembly::bindRevisionDraftReader(
+    std::function<std::optional<ui::DraftDocumentProjection>(const core::BranchId&,
+        const core::RevisionId&)> reader)
+{
+    if(m_impl){m_impl->bindRevisionDraftReader(std::move(reader));}
+}
+
+std::optional<ui::DraftDocumentProjection> ModelingPluginAssembly::retainedConflictDraft() const
+{
+    return m_impl?m_impl->retainedConflictDraft():std::nullopt;
+}
+
 void ModelingPluginAssembly::refreshFromSession()
 {
     if (m_impl != nullptr) {
