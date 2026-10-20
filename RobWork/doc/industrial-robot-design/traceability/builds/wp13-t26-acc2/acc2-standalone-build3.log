@@ -1,0 +1,15 @@
+  sdurws_ird_core.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_io.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_project.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\project\Release\sdurws_ird_project.lib
+  sdurws_ird_runtime.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_modeling.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\modeling\Release\sdurws_ird_modeling.lib
+  sdurws_ird_ui.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\modeling\Release\sdurws_ird_modeling_plugin.lib
+  sdurws_ird_testkit.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\testkit\Release\sdurws_ird_testkit.lib
+  ModelingImportGuiTest.cpp
+  ModelingPanelGuiTest.cpp
+  正在生成代码...
+  sdurws_ird_modeling_gui_test.vcxproj -> C:\acc-wp13t26\wt-repro\build-standalone\modeling\Release\sdurws_ird_modeling_gui_test.exe

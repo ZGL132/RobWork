@@ -1,0 +1,30 @@
+  Automatic MOC for target sdurws_ird_workflow
+  Comparison.cpp
+  Gate.cpp
+  Projection.cpp
+  Types.cpp
+  sdurws_ird_workflow.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWorkStudio\libs\Release\sdurws_ird_workflow.lib
+  Automatic MOC for target sdurws_ird_workflow_plugin
+  WorkflowCommandCatalog.cpp
+  WorkflowHostAdapters.cpp
+  WorkflowPluginAssembly.cpp
+  sdurws_ird_workflow_plugin.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWorkStudio\libs\Release\sdurws_ird_workflow_plugin.lib
+  Automatic MOC for target sdurws_ird_workflow_contract_test
+  CommandsContractTest.cpp
+  ComparisonContractTest.cpp
+  GateAdviceFixtureContractTest.cpp
+  HostAssemblyContractTest.cpp
+  LifeCycleMainlineContractTest.cpp
+  PluginRegistrationContractTest.cpp
+  StatusBannerContractTest.cpp
+C:\acc-wp13t26\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\LifeCycleMainlineContractTest.cpp(860,37): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回�?[C:\acc-wp13t26\wt-repro\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+C:\acc-wp13t26\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\LifeCycleMainlineContractTest.cpp(907,32): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回�?[C:\acc-wp13t26\wt-repro\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+C:\acc-wp13t26\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\LifeCycleMainlineContractTest.cpp(909,32): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回�?[C:\acc-wp13t26\wt-repro\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+  sdurws_ird_workflow_contract_test.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_contract_test.exe
+  Automatic MOC for target sdurws_ird_workflow_test
+  ComparisonTest.cpp
+  GateAdviceTest.cpp
+  HostAdapterTest.cpp
+  StatusProjectionTest.cpp
+C:\acc-wp13t26\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\test\HostAdapterTest.cpp(1283,32): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回�?[C:\acc-wp13t26\wt-repro\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_test.vcxproj]
+  sdurws_ird_workflow_test.vcxproj -> C:\acc-wp13t26\wt-repro\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_test.exe

@@ -1,0 +1,15 @@
+-- BUILD_sdurwsim_lua  OFF : SWIG not found!
+-- BUILD_sdurwsim_java  OFF : SWIG not found!
+-- BUILD_sdurwsim_python  OFF : SWIG not found!
+-- BUILD_SimulatorLogViewer  ON : Enabled by default.
+-- BUILD_sdurwsim_test  ON : Enabled by default.
+-- BUILD_RWSimulatorPlugin  ON : Enabled by default.
+-- BUILD_SimUtilityPlugin  ON : Enabled by default.
+-- BUILD_GraspTableGeneratorPlugin  ON : Enabled by default.
+-- BUILD_RWSimPlugin  ON : Enabled by default.
+-- BUILD_SimTaskPlugin  ON : Enabled by default.
+-- BUILD_EngineTestPlugin  ON : Enabled by default.
+-- RobWork tests DISABLED!
+-- Configuring done (7.1s)
+-- Generating done (26.6s)
+-- Build files have been written to: C:/acc-wp13t26/wt-repro/build

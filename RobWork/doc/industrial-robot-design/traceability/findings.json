@@ -9560,6 +9560,24 @@
       "registeredAt": "2026-10-18",
       "title": "validate-docs 增卡头一致性机检维度：「日期」行应含现行版本（卡头最高文档版本行）的登记日期——本次家族修复前 project 卡日期行滞留 2026-09-09 达 v0.1~v0.26 十七个版本、kinematics 滞留 2026-10-12 达十余跳，机检缺失使漂移只能靠验收者通读发现",
       "owner": "治理脚本所有者（validate-docs.ps1 维护批——与既有卡头版本行同步类机检建议一并评估）"
+    },
+    {
+      "id": "F-946",
+      "source": "WP-13-T26 attempt 2 独立验收（2026-10-20，traceability/acceptance/WP-13-T26-20261020-r2.md#B-1；复现日志 builds/wp13-t26-acc2/acc2-validate-docs-crlf-fail.log 与 acc2-validate-docs-lf-pass.log）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-20",
+      "title": "validate-docs.ps1 的 evidence-index bytes 尺寸校验对行尾检出配置敏感：索引登记值＝仓库 blob（LF）口径，校验却按工作树文件尺寸——core.autocrlf=true（Git for Windows 默认）的 fresh 检出把文本检出为 CRLF 后必然失配（WP-13-T26 acc2 实测：.gitignore 127→131、source-diff.patch 99827→101444，退出码 1），契约 verify 门禁在任何默认配置 Windows 检出环境不可复现通过；属 F-943 行尾族在尺寸校验载体上的未闭环（attempt 1 的 A2 只闭环了 SHA256SUMS 哈希口径）。LF 口径复算 PASS（20 units/14048 evidence）证明索引数据本身无失实",
+      "owner": "治理脚本所有者（validate-docs.ps1 / index-evidence.ps1 维护批：bytes 登记与校验统一改 git show blob 口径或对文本 LF 归一后计算——与 SHA256SUMS 的 A2 修复同法）"
+    },
+    {
+      "id": "F-947",
+      "source": "WP-13-T26 attempt 2 独立验收（2026-10-20，traceability/acceptance/WP-13-T26-20261020-r2.md#S-2）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-20",
+      "title": "证据 README 绿证表行『green-integration-*-report.json ×9＋green-standalone-*-report.json ×3』与实际件数不符：integration 报告实为 8 份（runtime 套件不产 ird 报告），×3 standalone 正确——同行已注明 F-944 口径故语义无歧义，但计数表述按文件数应写 ×8",
+      "owner": "WP-13-T26 返工批随 B-1 一并修正证据 README 计数表述"
     }
   ]
 }

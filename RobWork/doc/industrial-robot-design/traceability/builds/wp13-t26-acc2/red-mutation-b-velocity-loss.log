@@ -1,0 +1,22 @@
+Note: Google Test filter = ModelingIntegration.VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingIntegration
+[ RUN      ] ModelingIntegration.VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21
+C:\acc-wp13t26\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(738): error: Expected equality of these values:
+  source.session().draft
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 70-00 00-00 00-00 00-00 08-00 00-00 00-00 00-00 CC-60 4C-ED BF-01 00-00 1B-00 00-00 00-00 00-00 FF-FF FF-FF 52-00 00-00 01-00 00-00 00-00 00-00 00-67 AC-58 FF-7F 00-00 01-00 00-00 00-00 00-00>
+  expected
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00>
+鍥哄畾淇瀹屾暣鎭㈠涓嶅緱涓㈡帀v/a鎴朢2鑰﹀悎
+
+[  FAILED  ] ModelingIntegration.VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21 (1 ms)
+[----------] 1 test from ModelingIntegration (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingIntegration.VelocityAndCouplingSurviveCompleteDraftAndRevision_PM04_MDL21
+
+ 1 FAILED TEST
