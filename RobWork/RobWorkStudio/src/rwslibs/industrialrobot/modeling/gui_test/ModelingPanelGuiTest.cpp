@@ -855,6 +855,7 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     for (const QPushButton* btn : buttons) {
         // L-5局部历史独立于项目命令可用性，空栈不能被全放行快照启用。
         if (btn->objectName().startsWith(QStringLiteral("ird_modeling_draft_"))) { continue; }
+        if (btn->objectName()==QStringLiteral("ird_modeling_retained_review")) { continue; } // PM-04只读呈现按旧稿存在性使能，不进入项目命令目录。
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; } // 历史钮不入禁用对账
         if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; } // 折叠开关不入对账（F-502 呈现件——非命令目录按钮）
         if (btn->objectName() == QString::fromUtf8("ird_modeling_preview_copy")) { continue; } // 预览复制钮不入对账（UI-T59 呈现件——非命令目录按钮）
@@ -875,6 +876,7 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     });
     for (const QPushButton* btn : buttons) {
         if (btn->objectName().startsWith(QStringLiteral("ird_modeling_draft_"))) { continue; }
+        if (btn->objectName()==QStringLiteral("ird_modeling_retained_review")) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; }
         if (btn->objectName() == QString::fromUtf8("ird_modeling_preview_copy")) { continue; }
@@ -883,6 +885,13 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
         if (inJointEditPane(*m_panel, btn)) { continue; }
         EXPECT_TRUE(btn->isEnabled()) << "放行快照下按钮仍禁用";
     }
+    // 独立验证新入口的真实契约：无旧稿时全放行也不能启用，装配只读
+    // 查看后只读会话仍可核对，清回调后重新禁用，不受项目写命令门控。
+    auto* review=m_panel->findChild<QPushButton*>("ird_modeling_retained_review");ASSERT_NE(review,nullptr);
+    EXPECT_FALSE(review->isEnabled());int views=0;
+    m_panel->setRetainedReviewAction([&]{++views;});m_panel->setWritable(false);
+    EXPECT_TRUE(review->isEnabled());review->click();EXPECT_EQ(views,1);
+    m_panel->setRetainedReviewAction({});EXPECT_FALSE(review->isEnabled());
 }
 
 // =====================================================================

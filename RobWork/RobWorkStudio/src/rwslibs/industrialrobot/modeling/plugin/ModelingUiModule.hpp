@@ -31,6 +31,7 @@
 #ifndef IRD_MODELING_PLUGIN_MODELINGUIMODULE_HPP
 #define IRD_MODELING_PLUGIN_MODELINGUIMODULE_HPP
 
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -552,6 +553,8 @@ private:
     bool restoreDraftHistory(bool redo);
     /** @brief 把局部历史可用态推入面板；只读门控仍由面板合取，未建面板时零操作。 */
     void refreshDraftHistoryState();
+    /** @brief PM-04/MDL-08：以值副本展示当前工作集与保留旧稿，不覆盖或提交；坏帧就地报错。仅UI线程。 */
+    void showRetainedConflictReview();
 
     // 历史是UI编辑器内部态（L-5），不放进ModelingWorkingSet或项目修订。
     // 值快照覆盖全部部件/资源/摘要，避免字段栈漏掉结构与引用变化；仅UI线程持有。
@@ -568,6 +571,7 @@ private:
         const core::RevisionId&)> m_revisionDraftReader;
     /// 旧未应用完整草稿保留原base，供用户迁移；仅UI线程，关闭会话清除。
     std::optional<ui::DraftDocumentProjection> m_retainedConflictDraft;
+    std::uint64_t m_reviewSessionGeneration=0; ///< 关闭即递增；相同项目/同一修订重开也不能复用旧窗口定位。
     ModelingPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
     ui::IWorkbenchShell* m_shell = nullptr;  ///< 壳门面引用（非 owning——§10.9 生命周期）
     CommandSubmitFn m_pendingSubmit;         ///< 面板创建前的提交出口暂存（创建时应用）

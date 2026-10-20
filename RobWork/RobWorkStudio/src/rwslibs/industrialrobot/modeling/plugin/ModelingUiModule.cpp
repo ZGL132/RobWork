@@ -12,6 +12,7 @@
 #include "ModelingCommandFlows.hpp"           // executeModelingCommand（UI-T41 A2——域命令 UI 流）
 #include "ModelingPanelWidget.hpp"
 #include "ModelingDraftCodec.hpp" // B4b完整工作集域帧，不再只存根。
+#include "ModelingDiffDialog.hpp" // PM-04：复用唯一差异服务/窗口提供旧稿可见核对。
 #include <QDebug>
 #include "PolicyNameContexts.hpp"             // RuntimeMapPolicyNameContext（T03b——映射转发形名称上下文，退役草稿桩）
 
@@ -702,6 +703,7 @@ void ModelingUiModule::recomputeReadiness()
 void ModelingUiModule::onSessionDetached()
 {
     m_guard.assertOnUiThread();
+    ++m_reviewSessionGeneration; // 模态对照窗口可能尚在；先作废其定位，再清项目对象。
     // 会话边界先切断保存通知，关闭后的空工作集不能成为下一项目的脏草稿。
     m_draftChanged = {};
     m_observedDraftFrame.reset();
@@ -1110,7 +1112,38 @@ bool ModelingUiModule::restoreNamedPose(const std::string& key,std::string& summ
 
 void ModelingUiModule::refreshDraftHistoryState()
 {
-    if(m_panel){m_panel->setDraftHistoryState(!m_draftUndo.empty(),!m_draftRedo.empty());}
+    if(m_panel){
+        m_panel->setDraftHistoryState(!m_draftUndo.empty(),!m_draftRedo.empty());
+        m_panel->setRetainedReviewAction(m_retainedConflictDraft
+            ?std::function<void()>([this]{showRetainedConflictReview();}):std::function<void()>{});
+    }
+}
+
+void ModelingUiModule::showRetainedConflictReview()
+{
+    m_guard.assertOnUiThread();
+    if(!m_retainedConflictDraft||!m_panel){return;}
+    std::string error;const auto old=decodeModelingDraft(
+        m_retainedConflictDraft->payload,ModelingWorkingSet{},error);
+    if(!old){m_panel->setOutcomeMessage(QString::fromStdString("无法读取保留旧稿："+error));return;}
+    // 模态期间可能关闭/切换项目，比较用值副本，禁止借用可变工作集跨事件循环。
+    const auto current=m_session.draft;const auto branch=m_session.branch;const auto base=m_session.baseRevision;
+    const auto generation=m_reviewSessionGeneration;
+    const auto report=ModelDiffService{}.diff(current,*old);
+    showModelingDiffDialog(report,current,*old,[this,branch,base,generation](const ModelDiffEntry& entry){
+        if(!m_panel||m_reviewSessionGeneration!=generation
+            ||m_session.branch!=branch||m_session.baseRevision!=base){
+            return std::string("项目已变化，不能使用旧窗口定位，请关闭后重新查看。");
+        }
+        const auto target=entry.objectId.isValid()?std::optional<core::ObjectId>(entry.objectId):m_session.draft.rootObjectId;
+        if(!target||entry.field=="resource"||!resolveSelection(m_session.draft,*target)){
+            return std::string("该项仅在旧稿或资源清单中存在，请核对后在当前工作集手工重新编辑。");
+        }
+        if(m_adapter){
+            if(!m_adapter->reportCommandSelection(*target)){return std::string("共享选择服务不可用，原选中保持。");}
+        }else{m_panel->focusObject(target);}
+        return std::string("已定位当前工作集中的对象；请核对旧值后手工编辑，尚未覆盖任何内容。");
+    },true);
 }
 
 void ModelingUiModule::clearDraftHistory(bool retainCurrent)

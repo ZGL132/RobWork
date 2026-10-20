@@ -104,6 +104,8 @@ public:
     void setDraftHistoryActions(PostEditAction undo, PostEditAction redo);
     /** @brief 接收栈可用态；[in] canUndo/canRedo不含只读门控，面板与m_writable合取。 */
     void setDraftHistoryState(bool canUndo, bool canRedo);
+    /** @brief PM-04：绑定旧稿只读对照动作；[in] review为空时禁用，允许只读会话查看。 */
+    void setRetainedReviewAction(PostEditAction review);
     /** @brief 局部历史恢复前丢弃未确认表单输入，防旧暂存覆盖恢复后的权威值。零草稿写入。 */
     void cancelPendingForHistoryRestore();
 
@@ -371,6 +373,8 @@ private:
     PostEditAction m_draftUndoAction, m_draftRedoAction; ///< UI模块持有历史，面板只转发交互。
     QPushButton* m_draftUndoButton = nullptr; ///< Qt父子所有权，仅UI线程访问。
     QPushButton* m_draftRedoButton = nullptr; ///< Qt父子所有权，不进入项目命令目录。
+    QPushButton* m_retainedReviewButton = nullptr; ///< 旧稿对照常驻入口，Qt父子所有权，仅UI线程。
+    PostEditAction m_retainedReviewAction; ///< 模块拥有旧稿，本面板不持域数据；脱会话置空。
     bool m_canUndoDraft = false, m_canRedoDraft = false; ///< 栈状态快照，结合只读态刷新按钮。
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     bool m_writable = true;                   ///< 会话可写性（L-7 门控输入）

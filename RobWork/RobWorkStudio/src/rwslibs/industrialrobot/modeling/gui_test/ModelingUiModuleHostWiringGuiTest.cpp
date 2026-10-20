@@ -1285,4 +1285,38 @@ TEST(ModelingUiModuleHostWiring, ConflictRebuildRefreshesTreeAndCancelsPending_P
         QTreeWidgetItemIterator it(tree);for(;*it;++it){if((*it)->text(0).contains("current-gripper")){found=true;}}
     }
     EXPECT_TRUE(found);propertySnapshot(*panel,"conflict-rebuilt-current-tool");
+    // PM-04/AT-29：旧稿必须有真实可见入口，不能只靠内部getter声称“可迁移”。
+    auto* review=panel->findChild<QPushButton*>("ird_modeling_retained_review");ASSERT_NE(review,nullptr);
+    target.setWritable(false);EXPECT_TRUE(review->isEnabled())<<"只读仍允许核对旧稿";
+    const auto stable=target.buildDraftDocument();bool reviewed=false;QTimer watchdog;watchdog.setSingleShot(true);
+    QObject::connect(&watchdog,&QTimer::timeout,[]{ADD_FAILURE()<<"旧稿对照未响应";
+        if(auto* d=qobject_cast<QDialog*>(QApplication::activeModalWidget())){d->reject();}});
+    QTimer::singleShot(50,[&]{auto* d=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(d,nullptr);EXPECT_EQ(d->objectName(),"ird_modeling_diff");
+        auto* purpose=d->findChild<QLabel*>("ird_modeling_diff_context");ASSERT_NE(purpose,nullptr);
+        EXPECT_TRUE(purpose->text().contains(QStringLiteral("当前工作集")));
+        EXPECT_TRUE(purpose->text().contains(QStringLiteral("旧稿")));
+        auto* table=d->findChild<QTableWidget*>("ird_modeling_diff_table");ASSERT_NE(table,nullptr);
+        EXPECT_GE(table->columnWidth(3)-12,
+            table->fontMetrics().horizontalAdvance(table->horizontalHeaderItem(3)->text()))
+            <<"比较方向必须完整可见，不能截断成含糊的表头";
+        bool oldName=false,newName=false;
+        for(int row=0;row<table->rowCount();++row){
+            newName|=table->item(row,5)->text().contains(QStringLiteral("当前修订的权威模型"));
+            oldName|=table->item(row,6)->text().contains(QStringLiteral("demo"));
+        }
+        EXPECT_TRUE(newName);EXPECT_TRUE(oldName);reviewed=true;propertySnapshot(*d,"retained-draft-review");d->reject();
+    });
+    watchdog.start(5000);review->click();watchdog.stop();EXPECT_TRUE(reviewed);
+    EXPECT_EQ(target.buildDraftDocument().payload,stable.payload);
+    EXPECT_EQ(target.retainedConflictDraft()->payload,old.payload);
+    // PM-04：旧对照跨关闭/同项目重开后也不能定位新会话。这里只验证关闭
+    // 边界，不把面板仍存活等同于原项目仍有效，且禁止对已清空模型解引用。
+    QTimer::singleShot(50,[&]{auto* d=qobject_cast<QDialog*>(QApplication::activeModalWidget());
+        ASSERT_NE(d,nullptr);target.onSessionDetached();EXPECT_FALSE(review->isEnabled());
+        auto* jump=d->findChild<QPushButton*>("ird_modeling_diff_locate");ASSERT_NE(jump,nullptr);jump->click();
+        auto* feedback=d->findChild<QLabel*>("ird_modeling_diff_feedback");ASSERT_NE(feedback,nullptr);
+        EXPECT_TRUE(feedback->text().contains(QStringLiteral("项目已变化")));d->reject();
+    });
+    watchdog.start(5000);review->click();watchdog.stop();EXPECT_FALSE(review->isEnabled());
 }

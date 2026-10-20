@@ -95,7 +95,11 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DraftControllerModelTest.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/HostDraftChainContractTest.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/app/PortAdapters.cpp",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/app/PortAdapters.hpp"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/app/PortAdapters.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostDraftConflict.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostDraftConflict.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostDraftConflictGuiTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -142,7 +146,8 @@
     "B4c-3a：旧五Apply和历史Restore与保留对象互操作；活动闭包只认根引用，原始历史字节保留；旧Restore固定修订精确解引用、槽身份/类型/重复严校验，真实存储撤销重做及磁盘重开。历史Restore改变位姿以外的活动运行时输入须双编译并核对正式快照，纯位姿内容/引用恢复仍不编译。仅原允许实现/测试及公共头契约注释，无新增公共接口或存储。冲突真正重建与正式宿主失败保护仍未闭合。",
     "B4c-3b-1：精确装配面增加bindRevisionDraftReader及retainedConflictDraft；完整固定修订读取替代rebuildOnRevision重标锚，成功保留旧完整草稿/base作待迁移素材；无reader/错响应/读取失败原子拒绝，无根合法空态。真实存储及固定修订反例、双模式/GUI留痕；宿主冲突落盘/三选项/迁移及tour失败保护另批继续，不提前标通过。",
     "B4c-3b-2：生产绑定完整reader、挂接成功后绑定建模onResult；私有固定修订适配补充Stale详情，原草稿投影带所属branch，非Stale零读取；tour前置失败就地非零结束，不再解引用空快照。窗口/落盘/迁移另批，精确八节见总计划，不改公共接口/存储/依赖。",
-    "B4c-3b-3a：精确增加建模bindDraftChanged默认空回调与ui SaveTrigger.ApplyRetained表尾枚举，域完整帧变化通知脏代次；冲突显式保存旧帧/base/origin，不清脏/冲突/历史、不重建或提交。生产绑定实际分支和草稿查询，错分支保存拒绝；真实存储/后台/GUI先红后绿。窗口/可见迁移另批，八节见计划。"
+    "B4c-3b-3a：精确增加建模bindDraftChanged默认空回调与ui SaveTrigger.ApplyRetained表尾枚举，域完整帧变化通知脏代次；冲突显式保存旧帧/base/origin，不清脏/冲突/历史、不重建或提交。生产绑定实际分支和草稿查询，错分支保存拒绝；真实存储/后台/GUI先红后绿。窗口/可见迁移另批，八节见计划。",
+    "B4c-3b-3b：正式建模Stale先保存原稿，再呈现三选项；保存失败/会话与tip漂移/reader失败不重建，取消不改旧稿。重建后提供当前工作集与保留原稿逐字段可见对照，手工迁移不自动提交；私有设计见计划。"
   ],
   "note": "2026-10-20所有者要求开始修复601ffa0e建模验收17项问题；授权常规方案自动采用推荐选择，不再弹出选项。按所有者此前指令不使用子代理、不推送、不自行合入。B1已提交aa7186d8；登记B2a编辑器局部历史精确设计，范围仍仅原私有模块/面板/测试；先登记B1精确范围，后续批次实施前逐项补设计与契约。当前status=ready仅表示获准实施，不代表验收通过。 B2a已本地提交a77feaee；所有者自动采用推荐方案授权下，登记B2b公共装配请求/回调与精确宿主适配范围，不新增业务依赖或存储格式。"
 }

@@ -16,10 +16,11 @@ namespace sdurws::ird::modeling {
  * @param report [in] 原始服务报告，组内行序保持不变。
  * @param baseline/candidate [in] 本轮基线/草稿，仅借用至窗口关闭以解析名称和单位。
  * @param locate [in] 同步会话定位回调；可空，空时明确未装配。
+ * @param retainedReview [in] 默认false为普通基线差异；true明确左侧当前工作集、右侧旧稿，提示手工迁移。
  * Qt子控件由栈上QDialog父子树管理；仅UI线程，无共享可变态。
  */
 void showModelingDiffDialog(const ModelDiffReport& report,
     const ModelingWorkingSet& baseline, const ModelingWorkingSet& candidate,
-    const ModelingDiffLocator& locate);
+    const ModelingDiffLocator& locate,bool retainedReview=false);
 }
 #endif

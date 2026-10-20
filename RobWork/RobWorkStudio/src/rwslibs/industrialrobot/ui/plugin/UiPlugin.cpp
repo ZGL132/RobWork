@@ -110,6 +110,7 @@
 #include <sdurws/ird/ui/UiPorts.hpp>             // ui::IUiNameResolver（共享面名称解析端口——C-11 复用面）
 
 #include "DomainModuleRunner.hpp"                // runDomainApply（UI-T23 acceptance 2——draft.apply 多模块遍历）
+#include "HostDraftConflict.hpp" // PM-04/08：保存原稿后显式选择完整重建，禁止静默换锚。
 #include "KinEvaluationChannel.hpp"              // kinematics 覆盖评估执行器（UI-T64——F-490① 上游批装配半区）
 #include "KinHostServicesAssembly.hpp"           // ★ KIN-P4——面板服务缝宿主装配（网关/补丁/写出/持久化/Home）
 #include "HostView3DGateway.hpp"                 // 宿主三维网关（UI-T45——上行拾取/呈现出口/TCP 源）
@@ -3657,6 +3658,55 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
             }
         });
 
+    // PM-04/AT-29：提交端已经给出真实Stale并回写控制器；此处只编排用户
+    // 选择，不自行重判命令或自动重试。模态期间旧adapter由shared保活，
+    // 但关闭/切换后不能再使用其域源或刷新旧项目，因此同时校验活动身份。
+    QString conflictMessage;
+    const auto sameSession=[this,adapter]{
+        return m_lastStoreAdapter==adapter&&!adapter->isClosed()&&m_domains
+            &&m_controller&&m_controller->hasOpenSession()&&m_draft&&m_draft->hasSession();
+    };
+    const bool modelingStale=std::any_of(report.entries.begin(),report.entries.end(),
+        [](const DomainApplyEntryReport& row){
+            return row.moduleId==modeling::kModuleHandle&&!row.committed
+                &&row.rejectionReason=="stale-revision";
+        });
+    if(modelingStale&&sameSession()){
+        try{
+            const auto original=modelingDraftSource(*m_domains).buildDraftDocument();
+            const auto conflict=m_draft->staleConflictData(modeling::kModuleHandle);
+            const auto stillCurrent=[&,original,conflict]{
+                if(!sameSession()){return false;}
+                // 域稿必须仍是被拒绝的那一完整帧。不能以“同项目”代替内容
+                // 检查，也不能把外部推进的新tip静默替换为用户原确认的tip。
+                const auto now=modelingDraftSource(*m_domains).buildDraftDocument();
+                if(now.moduleId!=original.moduleId||now.schemaVersion!=original.schemaVersion
+                    ||now.branchId!=original.branchId||now.baseRevisionId!=original.baseRevisionId
+                    ||now.payload!=original.payload){return false;}
+                for(const auto& tip:store.query().branchTips()){
+                    if(tip.id==original.branchId){return tip.tip.toCanonical()==conflict.currentTipRevision;}
+                }
+                return false; // 原分支已不在权威表中，不猜默认分支或HEAD。
+            };
+            const auto resolution=presentDraftConflict(m_dockBody.data(),*m_draft,
+                modeling::kModuleHandle,stillCurrent);
+            if(!sameSession()){return out;}
+            switch(resolution){
+            case DraftConflictResolution::Rebuilt:
+                conflictMessage=QStringLiteral("建模已读取当前版本，原草稿已保留；请打开“查看冲突旧稿对照”逐项重新编辑后再应用");
+                refreshSharedSurfaces();break;
+            case DraftConflictResolution::Cancelled:
+                conflictMessage=QStringLiteral("已取消冲突处置，建模原草稿和基线保持；本次未应用建模修改");break;
+            case DraftConflictResolution::Unavailable:
+                conflictMessage=QStringLiteral("冲突详情或项目已变化，建模原草稿保持；请重新获取详情后再处理");break;
+            }
+        }catch(const std::exception& error){
+            if(m_diag.pipeline){m_diag.pipeline->logDev(kPluginDevChannel,error.what());}
+            if(!sameSession()){return out;}
+            conflictMessage=QStringLiteral("建模冲突处置失败，原草稿已保留；请检查诊断后重试");
+        }
+    }
+
     // 状态行只使用实际结局：准备失败既不是无修改，也不是已提交。
     // 部分成功时仍报告失败域数，不能因另一域成功而掩盖跨分支/组装拒绝。
     if (m_hostStatusBar != nullptr) {
@@ -3665,7 +3715,14 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
             report.entries.begin(),report.entries.end(),[](const DomainApplyEntryReport& row){
                 return row.committed&&!row.rejectionReason.empty();
             }));
-        if(receiptFailed!=0){
+        if(!conflictMessage.isEmpty()){
+            // 冲突处置没有提交新修订；保留整批其他域结局，不能用泛化的
+            // “未应用”覆盖已重建待迁移，也不能掩盖其他域失败或回读失败。
+            m_hostStatusBar->showMessage(conflictMessage+QStringLiteral(
+                "（本批：%1 个域已提交，其中 %2 个回读失败；%3 个域未应用）")
+                .arg(static_cast<int>(report.committedCount()))
+                .arg(static_cast<int>(receiptFailed)).arg(static_cast<int>(failed)),12000);
+        }else if(receiptFailed!=0){
             // 项目修订已成功，回读/呈现尚未完成；不能冒称“全部应用完成”，
             // 更不能自动重提同一草稿制造重复部件，须显示诊断并保留原草稿。
             m_hostStatusBar->showMessage(

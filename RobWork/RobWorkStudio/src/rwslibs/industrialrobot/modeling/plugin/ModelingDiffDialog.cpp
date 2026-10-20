@@ -114,7 +114,7 @@ QString changeTitle(ModelDiffChangeKind kind)
 
 void showModelingDiffDialog(const ModelDiffReport& report,
     const ModelingWorkingSet& baseline,const ModelingWorkingSet& candidate,
-    const ModelingDiffLocator& locate)
+    const ModelingDiffLocator& locate,bool retainedReview)
 {
     // 三组和组内顺序完全沿原服务，表格禁止排序，确保行与真实条目一一对应。
     std::vector<const ModelDiffEntry*> rows;
@@ -123,9 +123,14 @@ void showModelingDiffDialog(const ModelDiffReport& report,
     }
     const auto baselineNames=namesFor(baseline),candidateNames=namesFor(candidate);
     QDialog dialog;
-    dialog.setObjectName("ird_modeling_diff");dialog.setWindowTitle(QStringLiteral("与基线比较：逐项差异"));
-    dialog.resize(1140,650);
+    dialog.setObjectName("ird_modeling_diff");dialog.setWindowTitle(retainedReview
+        ?QStringLiteral("冲突旧稿对照：逐项核对后手工编辑"):QStringLiteral("与基线比较：逐项差异"));
+    dialog.resize(retainedReview?1200:1140,650);
     auto* layout=new QVBoxLayout(&dialog);
+    if(retainedReview){
+        auto* context=new QLabel(QStringLiteral("左侧为当前工作集，右侧为原基线上的未应用旧稿。请逐项核对并在当前工作集中手工重新编辑；关闭此窗口不覆盖内容，也不应用草稿。"),&dialog);
+        context->setObjectName("ird_modeling_diff_context");context->setWordWrap(true);layout->addWidget(context);
+    }
     auto* note=new QLabel(QStringLiteral("结构 %1 条 / 参数 %2 条 / 物性 %3 条。"
         "双击行或点击定位；查看和定位不改变基线、草稿及项目修订。")
         .arg(report.structure.size()).arg(report.parameters.size()).arg(report.properties.size()),&dialog);
@@ -135,6 +140,9 @@ void showModelingDiffDialog(const ModelDiffReport& report,
     table->setHorizontalHeaderLabels({QStringLiteral("分组"),QStringLiteral("对象"),QStringLiteral("字段路径"),
         QStringLiteral("变化"),QStringLiteral("单位"),QStringLiteral("基线值与来源"),QStringLiteral("草稿值与来源"),
         QStringLiteral("值变化"),QStringLiteral("来源变化")});
+    if(retainedReview){table->horizontalHeaderItem(3)->setText(QStringLiteral("旧稿相对当前"));
+        table->horizontalHeaderItem(5)->setText(QStringLiteral("当前工作集值与来源"));
+        table->horizontalHeaderItem(6)->setText(QStringLiteral("保留旧稿值与来源"));}
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setSelectionMode(QAbstractItemView::SingleSelection);table->setSortingEnabled(false);
@@ -143,6 +151,12 @@ void showModelingDiffDialog(const ModelDiffReport& report,
     // 长原文不撑大对话框，在下方完整查看/选择复制。
     const int widths[]={60,110,175,55,90,200,200,65,75};
     for(int col=0;col<9;++col){table->setColumnWidth(col,widths[col]);}
+    if(retainedReview){
+        // 真实窗口已复现55px旧列宽截断比较方向。按当前字体度量加两侧
+        // 留白，兼容系统缩放；窄窗口保留横向滚动，不裁掉“旧稿相对当前”。
+        table->setColumnWidth(3,table->horizontalHeader()->fontMetrics()
+            .horizontalAdvance(table->horizontalHeaderItem(3)->text())+24);
+    }
     for(int row=0;row<table->rowCount();++row){
         const auto& entry=*rows[row];
         QString name=QStringLiteral("模型 ")+QString::fromStdString(candidate.design.displayName);
@@ -186,7 +200,8 @@ void showModelingDiffDialog(const ModelDiffReport& report,
     QObject::connect(table,&QTableWidget::cellDoubleClicked,&dialog,[&](int,int){locateCurrent();});
     QObject::connect(table,&QTableWidget::currentCellChanged,&dialog,[&](int row,int,int,int){
         if(row<0){detail->clear();return;}
-        detail->setPlainText(QStringLiteral("%1 / %2 / %3\n基线：%4\n草稿：%5")
+        detail->setPlainText((retainedReview?QStringLiteral("%1 / %2 / %3\n当前工作集：%4\n保留旧稿：%5")
+            :QStringLiteral("%1 / %2 / %3\n基线：%4\n草稿：%5"))
             .arg(table->item(row,1)->text(),table->item(row,2)->text(),table->item(row,4)->text(),
                  table->item(row,5)->text(),table->item(row,6)->text()));
     });

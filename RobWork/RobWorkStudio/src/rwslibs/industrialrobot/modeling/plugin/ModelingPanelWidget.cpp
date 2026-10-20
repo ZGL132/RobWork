@@ -356,6 +356,16 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
         if(m_writable&&m_canRedoDraft&&m_draftRedoAction){m_draftRedoAction();}
     });
     draftHistoryRow->addWidget(m_draftUndoButton);draftHistoryRow->addWidget(m_draftRedoButton);
+    // PM-04/AT-29：旧稿不能只存在内部getter；重建后保留可见只读入口供用户迁移。
+    m_retainedReviewButton=new QPushButton(QStringLiteral("查看冲突旧稿对照"),this);
+    m_retainedReviewButton->setObjectName("ird_modeling_retained_review");
+    m_retainedReviewButton->setToolTip(QStringLiteral("对照当前工作集与保留旧稿，逐项重新编辑；查看不会覆盖当前内容"));
+    m_retainedReviewButton->setEnabled(false);
+    connect(m_retainedReviewButton,&QPushButton::clicked,this,[this]{
+        // 模态期间关闭项目会清空成员回调；本次调用先值持有，避免清理正在执行的闭包。
+        const auto review=m_retainedReviewAction;if(review){review();}
+    });
+    draftHistoryRow->addWidget(m_retainedReviewButton);
     draftHistoryRow->addStretch(1);mainLayout->addLayout(draftHistoryRow);
     mainLayout->addWidget(splitter, 1);
     buildStructureTreePane(left);   // 区①建模结构树（左栏）
@@ -710,6 +720,14 @@ void ModelingPanelWidget::setDraftHistoryState(bool canUndo,bool canRedo)
     m_threadGuard.assertOnUiThread();
     m_canUndoDraft=canUndo;m_canRedoDraft=canRedo;
     refreshCommandEnablement();
+}
+
+void ModelingPanelWidget::setRetainedReviewAction(PostEditAction review)
+{
+    m_threadGuard.assertOnUiThread();
+    // 只读保护写入，核对旧稿不写入；使能只取决于模块是否保留完整原稿。
+    m_retainedReviewAction=std::move(review);
+    m_retainedReviewButton->setEnabled(static_cast<bool>(m_retainedReviewAction));
 }
 
 void ModelingPanelWidget::cancelPendingForHistoryRestore()

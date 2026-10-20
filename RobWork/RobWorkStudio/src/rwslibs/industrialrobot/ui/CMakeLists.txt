@@ -777,6 +777,8 @@ target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE
 if(TARGET sdurws)
     target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE IRD_UI_HAS_PRODUCT_HOST=1)
     target_sources(sdurws_ird_ui_gui_test PRIVATE
+        gui_test/HostDraftConflictGuiTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostDraftConflict.cpp # PM-04：与正式插件同源的真实冲突窗口，不新增链接边。
         gui_test/HostEngineeringPolicyGuiTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostEngineeringPolicy.cpp
         gui_test/HostView3DGatewayGuiTest.cpp
@@ -921,6 +923,7 @@ if(TARGET sdurws)
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
         plugin/ExtraDomainAssembly.cpp  # ASM-UI——dynamics/selection/optimization 三新域承接（ASM-STUDIO 批起本目标与 studio 两同源目标均编入——studio 三条 unit 级边已随该批增登）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
+        plugin/HostDraftConflict.cpp  # PM-04/08：旧稿保存门控及显式冲突三选项，使用既有控制器。
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（上行拾取/呈现出口/TCP 源）
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（WorkCellScene 原语编排）
         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（十段链适配＋快照缓存＋探针＋名称上下文）
@@ -1048,6 +1051,7 @@ if(TARGET sdurws)
         plugin/HostEngineeringPolicy.cpp  # A-23：正式宿主与动态插件同源，避免只验证插件。
         plugin/ExtraDomainAssembly.cpp  # ASM-STUDIO——三新域承接（studio→三域 unit 级边本批增登后编入；与插件目标同源，IRD_UI_PLUGIN_EXTRA_DOMAINS 定义区分段生效）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历（与插件目标同源）
+        plugin/HostDraftConflict.cpp  # PM-04：正式studio与插件使用同一冲突窗口和保存门控。
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（与插件目标同源）
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（与插件目标同源）
         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（与插件目标同源）

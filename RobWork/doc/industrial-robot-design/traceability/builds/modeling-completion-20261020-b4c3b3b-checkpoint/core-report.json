@@ -1,0 +1,9 @@
+{
+  "source": "core.xml",
+  "note": "gtest_main不消费ird_report；此报告从真实XML派生",
+  "name": "core",
+  "total": 65,
+  "passed": 65,
+  "failed": 0,
+  "skipped": 0
+}

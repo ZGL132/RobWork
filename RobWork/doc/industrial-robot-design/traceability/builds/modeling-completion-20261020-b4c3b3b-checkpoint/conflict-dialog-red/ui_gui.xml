@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="4" disabled="0" errors="0" time="0.004" timestamp="2026-10-20T15:47:16.689" name="AllTests">
+  <testsuite name="DraftConflictGui" tests="4" failures="4" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-10-20T15:47:16.690">
+    <testcase name="ViewThenCancelRetainsOriginal_PM04_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp" line="93" status="run" result="completed" time="0." timestamp="2026-10-20T15:47:16.690" classname="DraftConflictGui">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85&#x0A;Value of: seen&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正式冲突窗口未呈现&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85
+Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+]]></failure>
+    </testcase>
+    <testcase name="ExplicitRebuildConsumesFixedTip_PM04_AT21" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp" line="107" status="run" result="completed" time="0." timestamp="2026-10-20T15:47:16.692" classname="DraftConflictGui">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85&#x0A;Value of: seen&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正式冲突窗口未呈现&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85
+Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:109&#x0A;Expected equality of these values:&#x0A;  run([&amp;](QDialog* d,int){click(d,&quot;ird_draft_conflict_reedit&quot;);})&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;  DraftConflictResolution::Rebuilt&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:109
+Expected equality of these values:
+  run([&](QDialog* d,int){click(d,"ird_draft_conflict_reedit");})
+    Which is: 4-byte object <00-00 00-00>
+  DraftConflictResolution::Rebuilt
+    Which is: 4-byte object <01-00 00-00>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:110&#x0A;Expected equality of these values:&#x0A;  source.rebuilt&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:110
+Expected equality of these values:
+  source.rebuilt
+    Which is: 0
+  1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:110&#x0A;Expected equality of these values:&#x0A;  source.doc.baseRevisionId&#x0A;    Which is: 16-byte object &lt;FE-47 06-06 C6-E7 46-63 65-88 8D-C4 D1-BD 55-5C&gt;&#x0A;  tip&#x0A;    Which is: 16-byte object &lt;C6-34 EE-02 B4-DD 8A-2C 7A-CC 3D-D9 EC-25 B2-4A&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:110
+Expected equality of these values:
+  source.doc.baseRevisionId
+    Which is: 16-byte object <FE-47 06-06 C6-E7 46-63 65-88 8D-C4 D1-BD 55-5C>
+  tip
+    Which is: 16-byte object <C6-34 EE-02 B4-DD 8A-2C 7A-CC 3D-D9 EC-25 B2-4A>
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:111&#x0A;Value of: controller-&gt;staleConflictData(&quot;modeling&quot;).present&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:111
+Value of: controller->staleConflictData("modeling").present
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="SaveFailureDisablesRebuild_PM08_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp" line="114" status="run" result="completed" time="0." timestamp="2026-10-20T15:47:16.692" classname="DraftConflictGui">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85&#x0A;Value of: seen&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正式冲突窗口未呈现&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85
+Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+]]></failure>
+    </testcase>
+    <testcase name="ChangedSessionOrReaderFailureKeepsDraft_PM04_AT29" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp" line="121" status="run" result="completed" time="0." timestamp="2026-10-20T15:47:16.693" classname="DraftConflictGui">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85&#x0A;Value of: seen&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正式冲突窗口未呈现&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85
+Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85&#x0A;Value of: seen&#x0A;  Actual: false&#x0A;Expected: true&#x0A;正式冲突窗口未呈现&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\HostDraftConflictGuiTest.cpp:85
+Value of: seen
+  Actual: false
+Expected: true
+正式冲突窗口未呈现
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-20T15:37:28+08:00",
+  "generatedAt": "2026-10-20T16:11:55+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 13228,
-    "totalBytes": 707152114,
+    "totalFiles": 13349,
+    "totalBytes": 711496349,
     "byKind": {
-      "governance-record": 40,
-      "log": 1,
-      "gtest-report": 335,
-      "acceptance-record": 515,
-      "json-data": 7,
       "benchmark": 8,
-      "markdown-doc": 41,
+      "json-data": 7,
+      "acceptance-record": 515,
       "manual-acceptance": 1,
-      "build-log": 12278,
-      "pipeline-artifact": 2
+      "pipeline-artifact": 2,
+      "markdown-doc": 41,
+      "log": 1,
+      "build-log": 12399,
+      "gtest-report": 335,
+      "governance-record": 40
     },
     "byLifecycle": {
-      "current": 27,
+      "unverified": 12758,
       "historical": 564,
       "superseded": 0,
-      "unverified": 12637
+      "current": 27
     },
     "associated": 596,
-    "unassociated": 12632,
-    "shaComputed": 13209,
+    "unassociated": 12753,
+    "shaComputed": 13330,
     "shaSkippedLarge": 19,
-    "duplicateGroupsTotal": 750,
+    "duplicateGroupsTotal": 761,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -698,6 +698,12 @@
         "builds/modeling-completion-20261020-b4c3b3a-checkpoint/draft-change-red/modeling_gui.stderr.log",
         "builds/modeling-completion-20261020-b4c3b3a-checkpoint/readonly-structure-red/modeling_gui.stderr.log",
         "builds/modeling-completion-20261020-b4c3b3a-checkpoint/standalone_modeling_gui.stderr.log",
+        "builds/modeling-completion-20261020-b4c3b3b-checkpoint/availability-fixture-failure/standalone_modeling_gui.stderr.log",
+        "builds/modeling-completion-20261020-b4c3b3b-checkpoint/clipped-header-red/modeling_gui.stderr.log",
+        "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-red/ui_gui.stderr.log",
+        "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-green/modeling_gui.stderr.log",
+        "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-red/modeling_gui.stderr.log",
+        "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling_gui.stderr.log",
         "builds/requirements-a21-20261020/modeling-tour.stderr.log",
         "builds/requirements-a21-20261020/requirements-tour.stderr.log",
         "builds/requirements-a23-20261020/modeling-tour.stderr.log",
@@ -26642,6 +26648,974 @@
       "taskIds": [],
       "bytes": 30280,
       "sha256": "22eb68b8c52b1b03a270528d5b53aa5c55385ce4b4f1f2d6ff36f183ca87083e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/availability-fixture-failure/standalone_modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 44992,
+      "sha256": "f73b3f96024af673ce944197b9e482d523b03380bae8af2c2a29685cc6900d20",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/availability-fixture-failure/standalone_modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11421,
+      "sha256": "2776362a9da79446a0170027729d920e70eed7d861ae3509c67220c92bf7b648",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/availability-fixture-failure/standalone_modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/availability-fixture-failure/standalone_modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 22218,
+      "sha256": "34e6a007738d9fadb469fbbf5d3e86f8d2673593a42fa0be46daac7b84ceb103",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/checkpoint-summary.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2425,
+      "sha256": "fc9f98430999415cc96110ded183bf5ce9f3e44b2327188b1ed8629bd8f95681",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/checkpoint-summary.py",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2878,
+      "sha256": "5d032056b567b6472cf0d6a616f8557b5add3baab84bb4d77d9fefaf6cf1f087",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/clipped-header-red/gui-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6835,
+      "sha256": "9a3059638f51827f50c6592dda9126939b7ad85dcaa5fa2e8942067b827f10f3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/clipped-header-red/modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1145,
+      "sha256": "de5f693043d4d044f4715e620685d48b25559a6103eab6d823c218913379421b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/clipped-header-red/modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1166,
+      "sha256": "37b37a62ea1cc66c031ae37983f1426f83f0fa625dad59074addb9fa92da0869",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/clipped-header-red/modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/clipped-header-red/modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1538,
+      "sha256": "c2cf15b532c186767e99084d7637f4bfc10d46ad9f47455be3669305cf89bfaa",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/clipped-header-red/retained-draft-review.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32528,
+      "sha256": "040bd80bbc8d297c62a256c3963b11b2f37b2673087d873c38e9898567ddd932",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-green/ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3522,
+      "sha256": "6f0e38b2576b7a5969329923590199e2cb2c782c5ce03a56fce9cce2a800b1c4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-green/ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 981,
+      "sha256": "2a2fd36d05af86f730abe167e649c6efd961ad34d87fa72bcc2384b1a2c00a66",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-green/ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50,
+      "sha256": "d29c0e2aa1712b927783b17a1423f4daf361e64e92b3cae433688effcf094bee",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-green/ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1660,
+      "sha256": "32beac253dd4c20022e045e87adffc9a66cbc5b23aec6013bebc48db1e13717f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-red/ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3772,
+      "sha256": "99178cbb4245434f6c65d4a73d9130334d28d1fd80823171e9e7fa8417a5c7a5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-red/ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3638,
+      "sha256": "f8caf1d0c23c68793febfa20799fa81545773f8129c379d845ad7b4aaf4f4233",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-red/ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/conflict-dialog-red/ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6967,
+      "sha256": "0dec4c9a40e7dc508368b1c38eedad8611ef69df4b0c16c070b52108df863ba1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/core-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 180,
+      "sha256": "2dacf1ffac9e179e63e4528a4e601ad91ac67caeb3e44a95737de49b8fe9d66c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/core.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12224,
+      "sha256": "192bdbc76fce57a62983977519e2ac04ec845dacbc7258e56017edca6920a7c7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/core.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 25954,
+      "sha256": "b834caa0905aa6bfdaea22e976a4f8997c3751a5d0f7e3c38a3694554f4246ad",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/first-complete-green/modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 67218,
+      "sha256": "8fc049044ef2ad150403d07c6b49e929888bb9eee947379205f48d135be10a10",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/first-complete-green/modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 15087,
+      "sha256": "9273c9b55da8a6b896e1385ae0426f247e16fc3fd2247f24648ed1872111f04a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/first-complete-green/modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 45,
+      "sha256": "7625435776bd31c11663c3b1105b05675b7caa3a89dfffae36c39af615d19159",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/first-complete-green/modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29375,
+      "sha256": "46af2b33d58a050ddfaa232558aed95244267dec11d7a407a0503a1a8a5b3d08",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/full-build-before-fixture-fix.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36744,
+      "sha256": "e891a1c1168fa0404479361a1e98aed297640b4f861ae3797d80484eef640fdb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/full-build-before-header-fix.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28637,
+      "sha256": "2d98f3ee5cf3d8e859964a3d97228c776c26675a8ae58bef03c3d1708b08bd4e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/full-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28637,
+      "sha256": "2d98f3ee5cf3d8e859964a3d97228c776c26675a8ae58bef03c3d1708b08bd4e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6835,
+      "sha256": "9a3059638f51827f50c6592dda9126939b7ad85dcaa5fa2e8942067b827f10f3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/base-euler.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50402,
+      "sha256": "6f0e72160a2a533b75395d3b97d4e15d4db531e62b0706fba1dcad4b2e576807",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/body-editor-confirm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57213,
+      "sha256": "430ac1b48eff7fa89cd072364940cc28947a03ef8821e68538f69b8c30bf6e86",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/body-editor-top.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 58345,
+      "sha256": "28cc8a221ba3e05aad37e2215529837c9c6cd8b0356d83cef55d4f9808a17390",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/conflict-rebuilt-current-tool.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 67349,
+      "sha256": "f886e098d3670de63817027fc824cc4015ec518e19fb865ecd50c5785091446f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/continuous-range-rejected.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 68341,
+      "sha256": "93036f7ed22b9d0c706e5f5505757c390997fd7abaf9ffca69bf32658b88e182",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/continuous-range.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66314,
+      "sha256": "1bd7846811f9c7aa90b3a1e1c5539db85bdb25ce84034825609f6c55dedefec9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/diff-deleted-refused.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34749,
+      "sha256": "c8f8ad59dbb3cf6fd8db188f97a6fd05f2c5c47a650e26a85edfe0147f6bd874",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/diff-empty.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17098,
+      "sha256": "d959fe0707c19881f00074561c87767e37eb750e3c5c5bf175db41a8ac83a798",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/diff-long-values.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23440,
+      "sha256": "de2edc157dd1eb6318ea02c4fd0d54fedca6775e435e10b440dc0b93ec9449d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/diff-three-groups.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29581,
+      "sha256": "2e9f5580cab355b383b671a66fcdf72cc18997042f4ae953b29ee52403f59d8c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/draft-change-readonly.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47568,
+      "sha256": "ce88312a9b8ac59b2758108cfa06b2ac3c0de37e85e36f77f8cd8d7f538c65b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/draft-change-redo.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48174,
+      "sha256": "3b8c8cd55d7bea18ac7d611ed4b14942fb24340f453385d203c9a4ff3145d65d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/draft-history.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 69731,
+      "sha256": "e97c61ddd7bd761f74d8ca11aba2b7e97b02cb989fc68a2ff8d2004772fc05f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/full-draft-restored-tool.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 62512,
+      "sha256": "051d59128f792f2df06fd8db46d84b48b06bad8c0ebe7101828fe60224b8fc99",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/import-report.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51801,
+      "sha256": "9222b9264b1430effded92d147c356bfb0756658377744dab7afae3e12156eec",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/property-segments-complete.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28888,
+      "sha256": "8086b709cf1ea9313b0ce7ebdd013bba7b570e3234c29374dd315cf723c7f06b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/property-segments-long.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47384,
+      "sha256": "2dd1c51385206b6edc696f4da63d374b3b7831445475df587018de0ab278443d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/retained-draft-review.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32691,
+      "sha256": "fc383b2368c8f4430cda0f6122bf946a27d24cbf7dd4d3416203ab6da2934c49",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/scene-manager-external.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51885,
+      "sha256": "f9e4d47005e7d65cba5cf8a4b728c3e46ea84810098b999b750c4d95b01cd805",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/scene-manager-updated.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53363,
+      "sha256": "f6a2dfd852901f90e50f02528fc98ee46c6db96a23d737466fac0b2da8945be4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/tool-manager-body-bottom.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 62369,
+      "sha256": "135c2a37b172dfefc7020da0d24a9904b10fbae9c3ac3a1befa7dd3898347d4e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/tool-manager-body.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 65516,
+      "sha256": "6e797940785dd7ec2f30529b6e1d987224e390352814ef0a833a4038d17279b4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/tool-manager-external.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66762,
+      "sha256": "c76f2c2411d58ee86b1ed54e2fc2b9e2b34e026682a74178b7e6feddfb28ef5d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/tool-manager-top.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64501,
+      "sha256": "cb3fb38fe8a9b5b69c8af159f8200bc9a05fd9b3a8634fabfa1fd748d1f97dc4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/xacro-duplicate-error.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17485,
+      "sha256": "17b4d2e50fcf0e0f542f421eea2ca44c45b45cfab61c6a8b5f83d0d9e579f919",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-modeling_gui/xacro-parameters.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17489,
+      "sha256": "56936eacddd0494a453629224cdfa87b88894b3d1e951841325c4070abe34d6b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/base-euler.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50402,
+      "sha256": "6f0e72160a2a533b75395d3b97d4e15d4db531e62b0706fba1dcad4b2e576807",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/body-editor-confirm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57213,
+      "sha256": "430ac1b48eff7fa89cd072364940cc28947a03ef8821e68538f69b8c30bf6e86",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/body-editor-top.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 58345,
+      "sha256": "28cc8a221ba3e05aad37e2215529837c9c6cd8b0356d83cef55d4f9808a17390",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/continuous-range-rejected.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 68341,
+      "sha256": "93036f7ed22b9d0c706e5f5505757c390997fd7abaf9ffca69bf32658b88e182",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/continuous-range.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66314,
+      "sha256": "1bd7846811f9c7aa90b3a1e1c5539db85bdb25ce84034825609f6c55dedefec9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/diff-empty.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17098,
+      "sha256": "d959fe0707c19881f00074561c87767e37eb750e3c5c5bf175db41a8ac83a798",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/diff-long-values.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23440,
+      "sha256": "de2edc157dd1eb6318ea02c4fd0d54fedca6775e435e10b440dc0b93ec9449d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/diff-three-groups.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29581,
+      "sha256": "2e9f5580cab355b383b671a66fcdf72cc18997042f4ae953b29ee52403f59d8c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/import-report.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51801,
+      "sha256": "9222b9264b1430effded92d147c356bfb0756658377744dab7afae3e12156eec",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/property-segments-long.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47396,
+      "sha256": "b92d5aefc3cde7d506151487d19b7527ae600c11f7c767e775d83d70a82f28ea",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/tool-manager-top.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64501,
+      "sha256": "cb3fb38fe8a9b5b69c8af159f8200bc9a05fd9b3a8634fabfa1fd748d1f97dc4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/xacro-duplicate-error.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17485,
+      "sha256": "17b4d2e50fcf0e0f542f421eea2ca44c45b45cfab61c6a8b5f83d0d9e579f919",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-standalone_modeling_gui/xacro-parameters.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17489,
+      "sha256": "56936eacddd0494a453629224cdfa87b88894b3d1e951841325c4070abe34d6b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-ui_gui/conflict-objects-cancel.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18367,
+      "sha256": "095e8367cbdff1358d2d337f5eb24a47a3f95d2c799a64a9772e64186fec4c34",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/gui-ui_gui/conflict-save-failed.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20264,
+      "sha256": "73f67c51e28932e4c9f115016d0ce7835895515b04e4da37f00bd8163df59e95",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14430,
+      "sha256": "79a2bd6416eb95ba22dd0c10c082d16fef036b6cfd7fc863794b3be6f1ab7953",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3660,
+      "sha256": "d441bc0b3d215fe1540ab92a7c85c7d065bed803bd575a401ce7b606f4ed6f94",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6930,
+      "sha256": "fd103ba67641be97b8ec66f7968e95f3db2ecb03e0ab2eef82913a65ebf0eff7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 67217,
+      "sha256": "e96cc1a956b66658972404748f852cc6a05e48044c1a9e197c8d3c0f3f69b7e8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 15086,
+      "sha256": "174a4f7f6f0f2295afa6a24e5e3f413bfc8426a4d23c70eb0aa79673257faae1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 45,
+      "sha256": "7625435776bd31c11663c3b1105b05675b7caa3a89dfffae36c39af615d19159",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29380,
+      "sha256": "128df00783cdb4a69d14d61578c0dac281dee94fe700214a664fd857edeb88f5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 365204,
+      "sha256": "ef6791f18e35717db2178746c1cf0a8926a5ee1df52c67e3e5fd6e3fabcf95d9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76727,
+      "sha256": "721967f1396403ceeab6fa36f71d998c404503d7c8433eaada9e0b49a5b4339d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 153477,
+      "sha256": "85b625f5f49c7a5a38ac541a104e9d00f5a21822f6c5c8d2eacd05b390ba9d3d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/previous-4e456add-docs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 131,
+      "sha256": "01a1b4f46a75cc728ec044da3172fc3a9af97307489085d2469ded7f93f8f07a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/previous-4e456add-post-lint.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 69,
+      "sha256": "363e6edd450a61c94a42dea9cc95e6ef113a61fb779e4fc103e238b007ad801b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/previous-4e456add-post-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 186,
+      "sha256": "32565493df148cd0e88c55950fdd940b628443175573be0f86db83ee60f45969",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/REPORT.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2543,
+      "sha256": "f8ef1022187c0b1e8537235bb3dd2a04e1b6f6c6870ec6e1d48ce1b79109efd9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-green/modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1082,
+      "sha256": "ec84654641df3faea9decaa169f47125de0ae3137ff76ce349b4a90f26ed040e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-green/modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 652,
+      "sha256": "5bd52ff866d7507d12a8333a8cb7d58e2b231653ef2bacfb3f47e20359668ffc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-green/modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-green/modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 719,
+      "sha256": "215f696454f2bcef7f1276d16d75e260f302a81993c19c56f59782fcc43c4a67",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-red/modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1145,
+      "sha256": "4bfdd6c127986dab7edb723e75d90e5da43d885eba92bd9f1cedbd513798a4c5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-red/modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1022,
+      "sha256": "8bdfd1abae1bf8efc2fbb22d84d6a93c69ba8257d3505f78d54ea040b62ddfb7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-red/modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/retained-review-red/modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1230,
+      "sha256": "6895fe837dcdfd4c1b66b7b08db01e65f275f203ec08eb2c6ed5697c03f88a89",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/run.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8125,
+      "sha256": "cad695eee6628f43b6d7c6844a3490671d2a00692f7dbf2d786311833e1983a2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6709,
+      "sha256": "debce9df03d598890228a79d2c3ea53544dd5acce9b0203cbebd805c4636ee42",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1748,
+      "sha256": "e4e80fa1d82b22db0b6accf278988a180744628026622252131e881b59d5896b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3284,
+      "sha256": "17390514c991458cf4118fdf0f6f0c9e9642a2710561c519064c7612abced98e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 44930,
+      "sha256": "3c2d1eac515b9827dbcd2fc8256ddf574e7e15f289e38762de670b01bca68422",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10017,
+      "sha256": "a59a1886b587797de80164a91016bfb9b15e2c6035213489aeacc964e3187c2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19486,
+      "sha256": "a54716c17391fd96c201d4e6e6eba9628c1f58637bf5ee5dd75cdecf18811c37",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 285176,
+      "sha256": "a8fd409143ca5e166484a65e40edaa7a09b1224514b3d0ed679e010faa572bcb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 58753,
+      "sha256": "2d5f1bf4944d36deaebe2688be46eb2baf06449a858c2496753e73bbfa1cc9e4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone_modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 118488,
+      "sha256": "fa6689eb35d509e2f02f0c6efdc8d0e718b8b48124841db27707ff9dbc9fff56",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone-before-fixture-fix.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8020,
+      "sha256": "f7db035c837acdab328b01c0773c6670987fdb05010efed93ead1d1b81eb4e28",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone-before-header-fix.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5212,
+      "sha256": "9667f4f5e4b9e65fc06530e8bd11b8d45e73d90fd81a10d70bde97204cec22a4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5210,
+      "sha256": "5a5980a5766fbd38934e74dac81b2f4bfe1e29b9f0b6ecafea1bde040aae35dc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/studio-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 56317,
+      "sha256": "5988f6138a5e5098984beb6ee0eb60bf81a5424df556bc5bf9c346b8a35178b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50312,
+      "sha256": "45898074b538345d1dd361227d4ab2c5ae75694c9717b73179a1ad524f3d205e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11643,
+      "sha256": "a802c9af612f104b82a5b3e5a46779bc43c7f6132c4ad4f562a1552781682f7a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23018,
+      "sha256": "289419eb27f25277c310e6104455bb3b7ac174f23211ea40ad2146814f2e631c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76522,
+      "sha256": "066c84a54d82869056ff7b1474c8a9c98fa5475a7357f7cc01917aba9535ee93",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17880,
+      "sha256": "5825356284399152629d2d1137ad2892f9f9f90d975bafdba15a1040b27c6382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 434,
+      "sha256": "f033c81497eb1be1366bdee49b3d35693ee02ac0e44d4b309c83652f8223d92f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34447,
+      "sha256": "87c687b27411c3fea0f119031ef1eb2734a2df7cb7a1668f21f390640ebabf22",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui-gui-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18295,
+      "sha256": "31955fbe941bae80d45e98c5e1968abdea1f1ce6b6716eb56ff7e6d67e787fe9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 268203,
+      "sha256": "159f39c023bb37bf78e276c4264b422c15caead5565bf600a6de52154c3ed098",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 58179,
+      "sha256": "63d4b2d21ffee7942d1caef4c2b1317f68f885a4a100d57148bccd7972436a9e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 114461,
+      "sha256": "fd9e009064230bf54e36e54fcde324ae21a62e16f6cad4e60d0a89e327aa1055",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-completion-20261020-b4c3b3b-checkpoint/verify-task.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 30771,
+      "sha256": "6f63171bd6b0b6db0c0b91b1a427af04cf8499ec5c5a667a5746b660a6f49fde",
       "lifecycle": "unverified"
     },
     {
@@ -108105,7 +109079,7 @@
       "kind": "json-data",
       "taskIds": [],
       "bytes": 1003,
-      "sha256": "1ae5935ce34ba9e01bc7b53b58968f8ae814b9a6e0057084c6b40f548e96395c",
+      "sha256": "b43ae4c621f839d7039f3527b76e42215308b22d5f674fc2178a20b7fe18df24",
       "lifecycle": "unverified"
     },
     {

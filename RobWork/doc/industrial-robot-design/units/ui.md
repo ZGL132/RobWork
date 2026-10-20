@@ -959,7 +959,7 @@ L5壳 ─registerCommand(desc,handler)→ CommandRegistry（冲突拒绝＋诊�
         （冲突定位数据由 CommandResult 附带——project §6.2：当前 tip/前进修订摘要/涉事对象差异）
       · 选项：[基于当前版本重新编辑]（推荐）/ [查看差异对象] / [取消]
       · 草稿保留（origin=apply-retained，ui经C-5提交原payload/base，由project唯一DraftService落盘；命令拒绝本身不保存域草稿）
-    "重新编辑"＝域编辑器以当前 HEAD 重建编辑基线（用户迁移未应用修改），
+    "重新编辑"＝域编辑器按冲突窗口确认的当前分支固定 tip 完整重建编辑基线（用户迁移未应用修改），
     ui 重置该模块会话脏标记与 baseRevision 显示；不得自动重试提交
 ```
 
@@ -2072,3 +2072,4 @@ WP-13-T24 B4c-3b-2登记：宿主建模onResult原来实际未填，按attachMod
 
 WP-13-T24 B4c-3b-3a增量：SaveTrigger表尾追加ApplyRetained，仅保存未决Stale模块（即便已手动清脏），成功不清脏/冲突/局部历史、不重建/提交。域文档有效branch与会话不符时拒绝，不能补齐掩盖跨分支事实。建模装配bindDraftChanged以完整规范域帧变化同步通知，绑定不回放、同值不通知、局部undo/redo通知、脱会话解绑。生产保存绑定真实分支及StoreDraftQueryPortAdapter，替代立项空桩。
 生产分支锚补充：StoreFactoryPortAdapter按权威branchTips首条id构造StorePortAdapter，私有draftBranchAnchor()让list/tryLoad/discard同锚；全零值不再被当作主分支别名。旧显式空锚测试仍兼容，PM-12不自动迁移草稿。
+WP-13-T24 B4c-3b-3b：正式建模Stale回执后经ApplyRetained先保存原完整稿，再呈现当前tip/原base/前进摘要及重新编辑、查看差异对象、取消三选项。保存失败用稳定token给人可读原因，开发detail只留日志；禁重建，取消/关闭不改内容或历史。模态每次重建前复核同活动adapter、有效会话、原branch/base/payload和精确分支tip；漂移拒绝，不静默换锚。显式重建只调用控制器完整reader，不重试提交，状态行明确待手工迁移并保留整批其他域结局。窗口与插件/studio同源，未新增依赖边；完整tour和全功能终验仍开放。
