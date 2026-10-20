@@ -442,6 +442,20 @@ public:
     const RuntimeNameMap& nameMap() const override;
     const RuntimeCapability& capabilities() const override;
     const WorkCellConstView& workCell() const override;
+    /**
+     * @brief WC 底层句柄（MA-02 碰撞设施消费面——非 const Ptr 借持视图）。
+     *
+     * 为什么需要：rw::proximity::CollisionDetector 构造签名取
+     * Ptr<WorkCell>（遗留非 const 面——策略按 Frame 在策略内部建模型，
+     * 不写 WC 本体）；快照以 const Ptr 持有，碰撞设施是首个需要非 const
+     * 句柄的只读消费者。语义与安全面：非持有（rw Ptr 裸指针形态＝零
+     * 所有权——析构不释放，生命周期由调用方持有的快照背书）；调用方
+     * 不得经此句柄写 WC（碰撞检测只读语义——写路径类型上不可防，纪律
+     * 等价 WorkCellConstView 的 const 契约）；恒等返回 m_workCell 所指
+     * （零拷贝零分配）。
+     * @return WC 非 const 借持句柄（快照存活期内有效）
+     */
+    rw::core::Ptr<rw::models::WorkCell> workCellHandle() const;
     Expected<DynamicWorkCellConstView, RuntimeError> tryDynamicWorkCell() const override;
     rw::math::Transform3D<double> worldToBase() const override;
     rw::math::Transform3D<double> baseToWorld() const override;

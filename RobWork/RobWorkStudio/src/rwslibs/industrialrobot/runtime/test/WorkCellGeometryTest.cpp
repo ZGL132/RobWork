@@ -576,12 +576,13 @@ TEST(WorkCellGeometryTest, HonestSkipWithoutProviderOrManifest_RT_GEO_4)
     const WorkCellCompileOutcome b = compileWorkCell(mRich, nullptr);
     ASSERT_TRUE(!b.workCell.isNull()) << "provider 缺位编译失败（诚实跳过面违约）";
 
-    // ---- (c) provider 在位＋manifest 非空→S6 零调用（接口位不消费）----
+    // ---- (c) provider 在位（恒缺）＋manifest 非空→逐引用真实尝试读取
+    // （MA-01 真实消费面——读取失败逐引用回退图元代理，编译不阻塞）----
     CountingResourceProvider provider;
     const WorkCellCompileOutcome c = compileWorkCell(mRich, &provider);
     ASSERT_TRUE(!c.workCell.isNull());
-    EXPECT_EQ(provider.callCount(), std::size_t{0})
-        << "S6 消费了资源字节（mesh 通道越权实现——RT-T15 只预留接口位）";
+    EXPECT_GE(provider.callCount(), std::size_t{1})
+        << "S6 未发起资源读取（MA-01 真实消费面未生效——引用命中清单即应尝试）";
 
     // ---- (d) 产出仍为基本图元（prim 恒挂接——呈现代理与 mesh 通道正交）----
     std::map<std::string, GeometryView> gc;
@@ -671,4 +672,223 @@ TEST(WorkCellGeometryTest, S6ProductSurfacesUnchangedByGeometry_RT_GEO_5)
     ASSERT_EQ(encodedBefore.size(), encodedAfter.size());
     EXPECT_TRUE(encodedBefore == encodedAfter)
         << "编译改变模型编码（显示代理泄漏进身份域——ARC-04 违例）";
+}
+
+// =====================================================================
+// MA-01（2026-10-21 主线功能审计立项批）：资源 mesh 真实加载端到端。
+// =====================================================================
+
+namespace {
+
+/// 构造二进制 STL 字节（80B 头＋u32 数量＋每三角 50B——紧凑多三角形态；
+/// 顶点沿 X 错开使三角非退化，解析器可计数）。
+std::vector<std::uint8_t> makeBinaryStl(std::size_t triangleCount)
+{
+    std::vector<std::uint8_t> bytes(80 + 4 + triangleCount * 50, 0);
+    const std::string header = "ird-test-stl";
+    std::copy(header.begin(), header.end(), bytes.begin());
+    const std::uint32_t count = static_cast<std::uint32_t>(triangleCount);
+    std::memcpy(bytes.data() + 80, &count, 4);
+    for (std::size_t i = 0; i < triangleCount; ++i) {
+        std::uint8_t* tri = bytes.data() + 84 + i * 50;
+        const float base = static_cast<float>(i);
+        const float verts[9] = {base, 0.0f, 0.0f, base + 1.0f, 0.0f,
+                                0.0f, base, 1.0f, 0.0f};
+        // 法线（12B）置零（解析器不消费法线有效性）；顶点 36B；属性 2B 置零。
+        std::memcpy(tri + 12, verts, 36);
+    }
+    return bytes;
+}
+
+/// 字节摘要（与编译器 S4 复核同源——ContentDigester 单点）。
+core::Digest256 digestOfBytes(const std::vector<std::uint8_t>& bytes)
+{
+    core::ContentDigester digester;
+    digester.update(bytes.data(), bytes.size());
+    return digester.finalize();
+}
+
+/// 内存资源提供者（MA-01 测试替身——digest 命中即返回；miss 走
+/// ResourceMissing 轨）。
+class InMemoryMeshProvider final : public IRuntimeResourceProvider
+{
+public:
+    InMemoryMeshProvider(std::map<core::ObjectId, std::vector<std::uint8_t>> table)
+        : m_table(std::move(table))
+    {
+    }
+
+    Expected<ResourceBytes, ResourceReadError>
+        tryResourceBytes(core::ObjectId resourceId) const override
+    {
+        const auto it = m_table.find(resourceId);
+        if (it == m_table.end()) {
+            ResourceReadError err;
+            err.code = RuntimeErrorCode::ResourceMissing;
+            err.resourceId = resourceId;
+            err.detail = "MA-01 内存替身：无该资源";
+            return Expected<ResourceBytes, ResourceReadError>::err(std::move(err));
+        }
+        m_last.data = it->second.data();
+        m_last.size = it->second.size();
+        m_last.digest = digestOfBytes(it->second);
+        return Expected<ResourceBytes, ResourceReadError>::ok(m_last);
+    }
+
+private:
+    std::map<core::ObjectId, std::vector<std::uint8_t>> m_table;
+    mutable ResourceBytes m_last;  ///< 借持视图缓冲（provider 持有——P-IO-2）
+};
+
+/// 重绑夹具资源引用（manifest 条目＋全部同 id 引用同步改 digest/hint——
+/// §4.3.3"引用须命中 manifest"约束的测试侧同源更新）。
+void rebindResource(Fixture& f, std::size_t manifestIndex,
+                    const core::Digest256& digest, const char* hint)
+{
+    f.manifest.at(manifestIndex).contentDigest = digest;
+    f.manifest.at(manifestIndex).sourcePathHint = hint;
+    const ResourceRef updated = f.manifest.at(manifestIndex);
+    for (auto& link : f.chain.links) {
+        if (link.visual.has_value()
+            && link.visual->resourceId == updated.resourceId) {
+            link.visual = updated;
+        }
+        if (link.collision.has_value()
+            && link.collision->resourceId == updated.resourceId) {
+            link.collision = updated;
+        }
+    }
+    for (auto& tool : f.tools) {
+        if (tool.geometry.has_value()
+            && tool.geometry->resourceId == updated.resourceId) {
+            tool.geometry = updated;
+        }
+    }
+    for (auto& scene : f.scene) {
+        if (scene.geometry.has_value()
+            && scene.geometry->resourceId == updated.resourceId) {
+            scene.geometry = updated;
+        }
+    }
+}
+
+}  // namespace
+
+/**
+ * MA-01 STL 端到端：provider 供给有效二进制 STL——编译后连杆 visual/
+ * collision 两引用各挂真实网格（PlainTriMesh 类型＋名字面〈帧名〉.visual/
+ * .collision——NameMap 几何 facet 命名），图元代理并存不互斥。
+ */
+TEST(WorkCellGeometryTest, ResourceMeshStlAttachedEndToEnd_RT_GEO_7)
+{
+    Fixture f = threeSpanRichFixture();
+    const std::vector<std::uint8_t> stl1 = makeBinaryStl(1);
+    const std::vector<std::uint8_t> stl2 = makeBinaryStl(4);
+    rebindResource(f, 0, digestOfBytes(stl1), "m1.stl");
+    rebindResource(f, 1, digestOfBytes(stl2), "m2.stl");
+    const CanonicalModel model = f.build();
+    const RuntimeNameMap map = buildRuntimeNameMap(model);
+
+    InMemoryMeshProvider provider({
+        {f.manifest.at(0).resourceId, stl1},
+        {f.manifest.at(1).resourceId, stl2},
+    });
+    const WorkCellCompileOutcome out = compileWorkCell(model, &provider);
+    ASSERT_TRUE(!out.workCell.isNull()) << "STL 端到端编译失败";
+
+    std::map<std::string, GeometryView> geoms;
+    collectGeometries(*out.workCell, geoms);
+    std::size_t meshCount = 0;
+    for (const auto& entry : geoms) {
+        if (entry.second.type == rw::geometry::GeometryData::PlainTriMesh) {
+            ++meshCount;
+        }
+    }
+    EXPECT_GE(meshCount, std::size_t{2})
+        << "STL 端到端网格数＜2（visual＋collision 未都挂接）";
+    const std::string link1Visual =
+        scopedName(map, f.chain.links.at(1).objectId, NameScope::LinkFrame) + ".visual";
+    const std::string link2Collision =
+        scopedName(map, f.chain.links.at(2).objectId, NameScope::LinkFrame) + ".collision";
+    EXPECT_TRUE(geoms.count(link1Visual) != 0)
+        << "link1 visual 网格缺失（名字面=" << link1Visual << "）";
+    EXPECT_TRUE(geoms.count(link2Collision) != 0)
+        << "link2 collision 网格缺失（名字面=" << link2Collision << "）";
+}
+
+/**
+ * MA-01 OBJ 端到端：文本 OBJ（v/f 三角）经 LoaderOBJ 解析合并挂接——
+ * 同名面存在且类型＝PlainTriMesh。
+ */
+TEST(WorkCellGeometryTest, ResourceMeshObjAttachedEndToEnd_RT_GEO_7)
+{
+    Fixture f = threeSpanRichFixture();
+    const std::string objText =
+        "v 0 0 0\nv 1 0 0\nv 0 1 0\nv 0 0 1\nf 1 2 3\nf 1 2 4\n";
+    const std::vector<std::uint8_t> objBytes(objText.begin(), objText.end());
+    rebindResource(f, 0, digestOfBytes(objBytes), "m1.obj");
+    const CanonicalModel model = f.build();
+    const RuntimeNameMap map = buildRuntimeNameMap(model);
+
+    InMemoryMeshProvider provider({{f.manifest.at(0).resourceId, objBytes}});
+    const WorkCellCompileOutcome out = compileWorkCell(model, &provider);
+    ASSERT_TRUE(!out.workCell.isNull()) << "OBJ 端到端编译失败";
+
+    std::map<std::string, GeometryView> geoms;
+    collectGeometries(*out.workCell, geoms);
+    const std::string link1Visual =
+        scopedName(map, f.chain.links.at(1).objectId, NameScope::LinkFrame) + ".visual";
+    ASSERT_TRUE(geoms.count(link1Visual) != 0)
+        << "OBJ 网格缺失（名字面=" << link1Visual << "）";
+    EXPECT_EQ(geoms.at(link1Visual).type,
+              rw::geometry::GeometryData::PlainTriMesh)
+        << "OBJ 挂接非网格几何（解析合并面违约）";
+}
+
+/**
+ * MA-01 摘要复核反面：provider 字节与引用 digest 失配——挂接被拒（S4
+ * 挂接点复核），零网格产出且编译成功（回退图元代理——诚实缺省）。
+ */
+TEST(WorkCellGeometryTest, ResourceMeshDigestMismatchSkipped_RT_GEO_7)
+{
+    Fixture f = threeSpanRichFixture();
+    const std::vector<std::uint8_t> stl = makeBinaryStl(2);
+    core::Digest256 forged = digestOfBytes(stl);
+    forged[0] = static_cast<std::uint8_t>(forged[0] ^ 0xFF);  // 伪造失配
+    rebindResource(f, 0, forged, "m1.stl");
+    const CanonicalModel model = f.build();
+
+    InMemoryMeshProvider provider({{f.manifest.at(0).resourceId, stl}});
+    const WorkCellCompileOutcome out = compileWorkCell(model, &provider);
+    ASSERT_TRUE(!out.workCell.isNull()) << "摘要失配不应使编译失败";
+
+    std::map<std::string, GeometryView> geoms;
+    collectGeometries(*out.workCell, geoms);
+    for (const auto& entry : geoms) {
+        EXPECT_NE(entry.second.type, rw::geometry::GeometryData::PlainTriMesh)
+            << entry.first << "：摘要失配仍挂接网格（S4 复核违约）";
+    }
+}
+
+/**
+ * MA-01 格式守门反面：hint 指向未支持格式（.dae——Assimp 依赖面）——
+ * 明确跳过（不伪装解析），编译成功零网格。
+ */
+TEST(WorkCellGeometryTest, ResourceMeshUnsupportedFormatSkipped_RT_GEO_7)
+{
+    Fixture f = threeSpanRichFixture();
+    const std::vector<std::uint8_t> stl = makeBinaryStl(2);
+    rebindResource(f, 0, digestOfBytes(stl), "m1.dae");
+    const CanonicalModel model = f.build();
+
+    InMemoryMeshProvider provider({{f.manifest.at(0).resourceId, stl}});
+    const WorkCellCompileOutcome out = compileWorkCell(model, &provider);
+    ASSERT_TRUE(!out.workCell.isNull()) << "未支持格式不应使编译失败";
+
+    std::map<std::string, GeometryView> geoms;
+    collectGeometries(*out.workCell, geoms);
+    for (const auto& entry : geoms) {
+        EXPECT_NE(entry.second.type, rw::geometry::GeometryData::PlainTriMesh)
+            << entry.first << "：未支持格式仍产出网格（格式守门违约）";
+    }
 }

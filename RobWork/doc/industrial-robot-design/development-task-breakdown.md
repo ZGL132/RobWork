@@ -850,7 +850,9 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | R-4（同上） | policy 策略消费点（只读消费整名，禁拼接/剥离） | P-POL-8（O-12 措辞确认后） | 待确认 | 2026-09-10 |
 | R-5（proximity 直链禁止） | policy 产品实现（碰撞唯一实现） | policy.md §3.4；AT-19 | 生效（WP-07-T01 起） | 2026-09-10 |
 | R-5（同上） | 各 `_test`/`_contract_test` 经 testkit/policy 替身消费 | §5.3；POL-T11 | 生效 | 2026-09-10 |
-| T-1/T-2（testkit 分发/依赖） | 无例外 | testkit.md §2.4 | — | 2026-09-10 |
+| R-5（同上） | 各 `_test`/`_contract_test` 经 testkit/policy 替身消费 | §5.3；POL-T11 | 生效 | 2026-10-10 |
+| R-5（proximity 直链/包含禁止） | `sdurws_ird_runtime`（MA-02 真实碰撞设施——CollisionSession/CollisionDetector/PQP 窄相；判定权威仍归 policy 规则面〔RuntimeCollisionRules 由宿主从 policy CollisionRules 投影〕，runtime 只承载场景几何级判定执行；机器面＝IRD_R5_EXEMPT_TARGETS 增列） | 主线功能审计 MA-02 所有者 2026-10-21 立项；runtime.md v0.28 ② | 生效（wp13-t28 起） | 2026-10-21 |
+| LIB（sdurw_loaders 须登记） | `sdurws_ird_runtime` 消费 sdurw_loaders 的 STL/OBJ 解析器（MA-01 网格资源通道——STLFile/LoaderOBJ；DAE/WRL/IV 依赖 Assimp 不引入）；机器面＝IRD_FRAMEWORK_REGISTER_ALLOWED 增列 | 主线功能审计 MA-01 所有者 2026-10-21 立项；runtime.md v0.28 ①；§4.6 实测表行同步 | 生效（wp13-t28 起） | 2026-10-21 || T-1/T-2（testkit 分发/依赖） | 无例外 | testkit.md §2.4 | — | 2026-09-10 |
 | SUB（精确测试边） | `sdurws_ird_ui_gui_test -> sdurws_ird_modeling_plugin`；真实工程策略编辑窗口同源消费项目修订与策略解析，project/policy经插件既有PUBLIC依赖传递；不放宽产品库依赖 | WP-14-T12 A-23补充一，所有者明确批准；机器登记仅IRD_TEST_TARGET_EDGES一条 | 生效（仅集成GUI测试） | 2026-10-20 |
 | SUB（ARCH §3.5 表外边） | `sdurws_ird_ui_app`（开发验证 harness，装配层目标）：ui->project（打开五步协议适配链接面）＋ui->ui（app 目标自边，同型于 ui_gui_test 既有 `->ui` 形态） | O-31 裁决（装配层同时看见两边写适配器）；DTB §2.11 WP-10-T15 行 | 生效（WP-10-T15 起；`sdurws_ird_ui` 产品库链接块仍仅 core/diagnostics＋Qt） | 2026-09-22 |
 | SUB（ARCH §3.5 表外边） | `sdurws_ird_ui_plugin`（工作台宿主插件，装配层目标）：ui->project（宿主集成边——插件复用 harness PortAdapters 适配形态，打开五步协议适配编译入插件目标）＋ui->ui（plugin 目标链接本单元产品库自边，同型于 ui_app 既有形态）。两边一行登记，机器消费面＝traceability/wp10-t16-gate-registrations.md | O-38 裁决②（"插件复用 harness PortAdapters 适配形态——O-31 装配层特权边同款登记模式"）；DTB §2.11 WP-10-T16 行；ui 库产品面（`sdurws_ird_ui` 源集）零对 project 链接/include 不变 | 生效（WP-10-T16 起；开发期验证通道——产品交付路径零新增，正式装配归 WP-24-T03） | 2026-09-23 |
@@ -865,10 +867,10 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | `sdurw_math` | rw::math 数学类型 | core（WP-03-T01）、policy（WP-07-T01） |
 | `sdurw_kinematics` | Frame/State/StateStructure | runtime（WP-06-T01）、policy |
 | `sdurw_models` | WorkCell/Device/Joint | runtime、policy |
-| `sdurw_proximity` | 碰撞后端接口 | policy（R-5 例外唯一产品引用方） |
+| `sdurw_proximity` | 碰撞后端接口 | policy（R-5 例外）、runtime（MA-02 碰撞设施——R-5 例外第二引用方，2026-10-21 登记） |
 | `sdurwsim` | DynamicWorkCell/刚体动力学 | runtime（WP-06-T01）、dynamics（WP-17-T02） |
 | `sdurw_pathplanners` | 路径规划 | trajectory（WP-16-T06；业务域经各自计算库消费） |
-| `sdurw_loaders` | XML 解析 | 原则不使用（io/modeling 导入通道自行实现安全解析；若启用须登记） |
+| `sdurw_loaders` | XML 解析＋网格模型加载（STL/OBJ） | runtime（MA-01 网格资源通道——2026-10-21 登记启用，LIB 门禁白名单同步；io/modeling 导入通道维持自行实现安全解析不变） |
 
 ### 4.7 验收发现跟踪登记册（v0.9；findings.json 建册，配合 PIPE v1.3 §7 发现闭环）
 

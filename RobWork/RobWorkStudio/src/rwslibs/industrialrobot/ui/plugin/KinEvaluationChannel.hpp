@@ -75,7 +75,9 @@ namespace ui {
  * @return 宿主独占拥有的IIkSolver；内部调用真实IkSolver，不另实现数值算法。
  */
 std::unique_ptr<kinematics::IIkSolver> makePolicyAwareIkSolver(
-    std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source);
+    std::function<std::shared_ptr<const policy::EngineeringPolicySet>()> source,
+    std::function<std::shared_ptr<const runtime::RuntimeSnapshot>()> runtimeSnapshot
+        = {});
 
 // =====================================================================
 // KinSessionModelView——地址稳定的可换绑模型视图（缝注入值）
@@ -610,6 +612,12 @@ private:
     /// 完成处理（后台线程经 invokeMethod 回 UI 线程后执行——账面写点
     /// ＋结果入账＋note 投递，全部在本方法内完成。绑定键取**提交时**
     /// 快照/配置值——迟到任务的产物按提交锚丢弃，绝不打上新锚）。
+    /// MA-02：真实碰撞会话装配（按提交拍——规则随提交时策略投影）。
+    /// 返回 null＝设施不可用（快照缺位/无设备/规则拒收——调用方回落
+    /// EvidenceMissing 桩，KIN-05 诚实降级语义保持）。
+    std::shared_ptr<kinematics::IKinCollisionSession> makeRealCollisionSessionIfAvailable(
+        const std::shared_ptr<const policy::EngineeringPolicySet>& policy);
+
     void onCoverageFinished(const std::string& taskRef,
                             const core::ContentIdentity& snapshotIdAtSubmit,
                             const core::ContentIdentity& configDigestAtSubmit,
@@ -645,6 +653,7 @@ private:
                         const std::string& reason);
 
     std::shared_ptr<const policy::EngineeringPolicySet> m_policy; ///< UI发布并由任务闭包捕获；不随HEAD漂移。
+    std::shared_ptr<const runtime::RuntimeSnapshot> m_runtimeSnapshot; ///< MA-02：换绑拍副本（真实碰撞设施源——与视图同源同值）。
     Deps m_deps;  ///< 依赖（editor/resolveFrame/routeContext/resultRoute）
 
     std::shared_ptr<const kinematics::IKinRuntimeView> m_snapshot;  ///< 当前模型视图（空＝未绑定；产品路径＝快照包裹器，测试路径＝替身）

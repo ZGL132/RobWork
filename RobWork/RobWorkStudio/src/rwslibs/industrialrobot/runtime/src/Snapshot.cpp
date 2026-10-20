@@ -755,6 +755,16 @@ const WorkCellConstView& RuntimeSnapshot::workCell() const
     return m_workCellView;
 }
 
+rw::core::Ptr<rw::models::WorkCell> RuntimeSnapshot::workCellHandle() const
+{
+    // 非持有裸指针形态（rw Ptr 裸构造＝零所有权——析构不释放；生命周期
+    // 由本快照的 m_workCell 持有背书）。const_cast 只为满足
+    // CollisionDetector 的遗留非 const 构造签名——本快照消费纪律禁止经
+    // 该句柄写 WC（见头文件访问器注）。
+    return rw::core::Ptr<rw::models::WorkCell>(
+        const_cast<rw::models::WorkCell*>(m_workCell.get()));
+}
+
 Expected<DynamicWorkCellConstView, RuntimeError> RuntimeSnapshot::tryDynamicWorkCell() const
 {
     // 无 DWC→错误＋定位能力项（§8.3 属性表"code 指向能力缺失，非崩溃"）：

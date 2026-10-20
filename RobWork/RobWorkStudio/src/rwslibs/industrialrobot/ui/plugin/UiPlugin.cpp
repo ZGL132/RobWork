@@ -3428,7 +3428,10 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
     // 配置保存/具名 Home——命令门面在项目打开拍装配（installKinematics-
     // CommandHandler），此处仅注入现值——无项目态为空＝按钮禁用诚实）。
     if (!m_kinPolicyIkSolver) {
-        m_kinPolicyIkSolver=makePolicyAwareIkSolver([this] { return m_policySource->publishedPolicy(); });
+        // MA-02：快照源同源接线（lastPublishedSnapshot——零第二编译路径）。
+        m_kinPolicyIkSolver=makePolicyAwareIkSolver([this] { return m_policySource->publishedPolicy(); },
+                                                    [this] { return m_compilePort ? m_compilePort->lastPublishedSnapshot()
+                                                                                  : nullptr; });
     }
     channels.ikSolver = m_kinPolicyIkSolver.get();
     channels.fkEvaluator = &m_kinFkEvaluator;

@@ -46,12 +46,18 @@
                                                       // rotationFromCustomEaa（S6 复用）
 #include <sdurws/ird/runtime/Errors.hpp>              // token/registryCode/RuntimeError
 #include <sdurws/ird/runtime/NameMap.hpp>             // buildRuntimeNameMap（名称唯一源）
+#include <sdurws/ird/core/Digest.hpp>                 // ContentDigester/formatDigest
+                                                      // （MA-01 摘要复核＋临时文件名）
 
 #include <rw/geometry/Box.hpp>            // 基本图元：盒（法兰/TCP/场景标记——RT-T15）
 #include <rw/geometry/Cylinder.hpp>       // 基本图元：圆柱（连杆近似——RT-T15）
 #include <rw/geometry/Geometry.hpp>       // 几何载体（图元数据＋帧内位姿＋挂接帧）
+#include <rw/geometry/Model3D.hpp>        // OBJ 解析产物（MA-01——逐对象 TriMesh 合并）
+#include <rw/geometry/TriMesh.hpp>        // TriMesh 接口（网格的 GeometryData 基类）
 #include <rw/core/Exception.hpp>          // rw::core::Exception（§8.4 转译行 1）
 #include <rw/kinematics/FixedFrame.hpp>   // 基座/连杆/TCP/场景帧
+#include <rw/loaders/model3d/STLFile.hpp>   // STL 解析（MA-01——二进制/ASCII 原生）
+#include <rw/loaders/model3d/LoaderOBJ.hpp> // OBJ 解析（MA-01——原生 LoaderOBJ）
 #include <rw/models/Joint.hpp>            // bounds/限速/限加速度显式设值
 #include <rw/models/Object.hpp>           // WC 几何载体基类（WorkCellScene 消费面）
 #include <rw/models/PrismaticJoint.hpp>   // 移动关节
@@ -61,7 +67,10 @@
 #include <rw/models/WorkCell.hpp>         // 编译产物
 
 #include <algorithm>
+#include <cctype>
 #include <exception>
+#include <filesystem>
+#include <fstream>
 #include <new>
 #include <stdexcept>
 #include <utility>
@@ -187,32 +196,216 @@ void attachPrimitive(rw::models::WorkCell& workCell,
     workCell.add(carrier.template cast<rw::models::Object>());
 }
 
-/**
- * @brief mesh 资源通道接线预留位（RT-T15——**有意的诚实跳过空实现**）。
- *
- * 为什么是空实现（卡面 RT-T15 明确登记，不私裁）：真实 visual/collision
- * mesh 渲染＝保真度升级项，涉及三段缺口——①io 侧 mesh 解析加载器、
- * ②GeometryRef.localTransform 编译域透传、④IRuntimeResourceProvider 资源
- * 字节消费（findings F-550 登记）——**待所有者裁决**后随 io 阶段 B 落位。
- * 本批只把 provider 句柄经编译链接线到 S6（compileWorkCell 第二参数——
- * 未来实现的依赖位），不消费资源字节、不虚构几何、不产错误级诊断、不
- * 阻塞编译（§8.6 诚实跳过语义；RT-GEO 诚实跳过面用例断言 provider 零调用）。
- *
- * 未来形态（登记供裁决参考，非本批实现）：对 CanonicalLink.visual/collision、
- * CanonicalTool.geometry、CanonicalSceneObject.geometry 逐引用经 provider
- * 取已验证字节→io 解析为基线 TriMesh→以 Geometry 载体挂接（localTransform
- * 透传为帧内位姿）——图元是否降级为网格缺失时的 fallback 亦属裁决范围。
- *
- * @param model            [in] 规范模型（resourceManifest/引用清单来源）
- * @param resourceProvider [in] 资源提供者（可空＝缺位；本批恒不消费）
- */
-void attachResourceMeshGeometry(const CanonicalModel& model,
-                                const IRuntimeResourceProvider* resourceProvider)
+// =====================================================================
+// MA-01（2026-10-21 主线功能审计立项——RT-T15 诚实跳过的真实化批次）：
+// 资源 mesh 真实加载通道。三段缺口的本批闭合面：
+//   ①解析——STL（STLFile 原生，二进制/ASCII）与 OBJ（LoaderOBJ 原生，
+//     Model3D 逐对象 TriMesh 合并）经**临时文件**解析（RobWork 加载器
+//     为文件路径面，provider 给内存字节——落盘即用即删，文件名以内容
+//     摘要十六进制命名＝同内容同名幂等）；DAE/WRL/IV 的原生加载器依赖
+//     Assimp/Inventor（本构建 Assimp 停用）——明确跳过（不伪装解析），
+//     其依赖新增属 DTB §3 登记事项，与 F-550 演化面继续开放。
+//   ④消费——IRuntimeResourceProvider::tryResourceBytes 取已验证字节
+//     （§8.6：SafePath/预算归 io，provider 返回前已校验）；本层以
+//     ContentDigester 复算 SHA-256 比对 ResourceRef.contentDigest（S4
+//     复查的挂接点复核——同内容才挂接，失配跳过该引用）。
+//   ②帧内变换——CanonicalModel 的 ResourceRef 无 localTransform 字段
+//    （契约演化面），网格以**恒等帧内位姿**挂接（网格原点＝连杆/工具/
+//    场景系原点）；字段引入属 codec 版本演化，不私裁。
+// 失败语义：provider 缺位/资源缺失/摘要失配/格式不可解析/解析异常——
+// 全部跳过该引用并保持图元代理回退（§8.6 诚实缺省：能力缺失≠非法，
+// 编译不阻塞、零错误级诊断）；无 localTransform 的网格挂接同名契约与
+// 呈现代理（RT-ID/RT-CACHE 不入身份域）一致。
+// =====================================================================
+
+/// 摘要十六进制（小写 64 字符——临时文件名与日志定位用；formatDigest
+/// 的 tag 前缀即完整前缀形态）。
+std::string meshDigestTag(const core::Digest256& digest)
 {
-    // 有意不消费（见上注）：参数保留＝接口位本体；显式 void 化防未用告警，
-    // 也表明"未使用"是设计事实而非遗漏。
-    (void)model;
-    (void)resourceProvider;
+    return core::detail::formatDigest("ird-mesh-", digest);
+}
+
+/**
+ * @brief 判定 mesh 资源格式（sourcePathHint 扩展名小写判定）。
+ * @param hint [in] 源路径提示（可空——路径不作身份，仅扩展名判定用）
+ * @return "stl"/"obj"（本批可解析）；其余/空＝不可判定（空串）
+ */
+std::string meshFormatOf(const std::optional<std::string>& hint)
+{
+    if (!hint.has_value() || hint->size() < 2) {
+        return {};
+    }
+    std::string ext = hint->substr(hint->rfind('.') + 1);
+    for (char& c : ext) {
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    }
+    if (ext == "stl" || ext == "obj") {
+        return ext;
+    }
+    return {};  // dae/wrl/iv 等＝Assimp/Inventor 依赖面——明确跳过（见上注）
+}
+
+/**
+ * @brief 把内存字节落临时文件并按格式解析为 TriMesh 几何数据。
+ *
+ * 临时文件纪律：路径＝临时目录/〈摘要标签〉.〈ext〉——同内容同名（幂
+ * 等，并发同摘要写同字节安全）；解析后即删。异常（磁盘/解析）向上抛
+ * 由调用方按"该引用跳过"消费。
+ *
+ * @param data [in] 资源字节起始（provider 借持——调用期有效）
+ * @param size [in] 字节数
+ * @param format [in] "stl"/"obj"（meshFormatOf 产物）
+ * @param digest [in] 内容摘要（临时文件名成分）
+ * @return TriMesh 几何数据（PlainTriMeshN1F——float 三角，呈现/碰撞
+ *         共用 GeometryData 面）
+ * @throws std::runtime_error 落盘失败；rw 解析异常透传
+ */
+rw::geometry::GeometryData::Ptr parseMeshViaTempFile(
+    const std::uint8_t* data, std::size_t size,
+    const std::string& format, const core::Digest256& digest)
+{
+    const std::filesystem::path tempPath =
+        std::filesystem::temp_directory_path()
+        / (meshDigestTag(digest) + "." + format);
+    {
+        std::ofstream out(tempPath, std::ios::binary | std::ios::trunc);
+        if (!out.good()) {
+            throw std::runtime_error("mesh temp file open failed: "
+                                     + tempPath.string());
+        }
+        out.write(reinterpret_cast<const char*>(data),
+                  static_cast<std::streamsize>(size));
+        if (!out.good()) {
+            throw std::runtime_error("mesh temp file write failed: "
+                                     + tempPath.string());
+        }
+    }
+    // RAII 清理（解析异常也删临时文件——不留垃圾）。
+    struct TempFileRemover {
+        std::filesystem::path path;
+        ~TempFileRemover() {
+            std::error_code ec;
+            std::filesystem::remove(path, ec);  // 清理失败不掩盖解析结果
+        }
+    } remover{tempPath};
+
+    if (format == "stl") {
+        // STL：原生二进制/ASCII 自动判别（STLFile::load）。PlainTriMesh
+        // 实现 TriMesh（GeometryData 子接口）——直接作几何数据。
+        return rw::loaders::STLFile::load(tempPath.string());
+    }
+    // OBJ：LoaderOBJ → Model3D（逐对象 TriMesh）——合并为单一
+    // PlainTriMeshN1F（每引用一个几何载体，名字面单锚；材质/法线面为
+    // 呈现增强，不入几何身份——本批只保真形与比例）。
+    rw::loaders::LoaderOBJ loader;
+    const rw::core::Ptr<rw::geometry::Model3D> model3d = loader.load(tempPath.string());
+    auto merged = rw::core::ownedPtr(new rw::geometry::PlainTriMeshN1F());
+    std::size_t triangles = 0;
+    for (const rw::core::Ptr<rw::geometry::Object3DGeneric>& object :
+         model3d->getObjects()) {
+        const std::size_t faces = object->countFaces();
+        for (std::size_t f = 0; f < faces; ++f) {
+            // getTriangle 返回 double 三角——float 收窄显式逐分量（基线
+            // Vector3D 无 double→float 隐式转换，编译器已证）。
+            const rw::geometry::Triangle<double> tri = object->getTriangle(f);
+            merged->add(rw::geometry::TriangleN1<float>(
+                rw::math::Vector3D<float>(static_cast<float>(tri[0][0]),
+                                          static_cast<float>(tri[0][1]),
+                                          static_cast<float>(tri[0][2])),
+                rw::math::Vector3D<float>(static_cast<float>(tri[1][0]),
+                                          static_cast<float>(tri[1][1]),
+                                          static_cast<float>(tri[1][2])),
+                rw::math::Vector3D<float>(static_cast<float>(tri[2][0]),
+                                          static_cast<float>(tri[2][1]),
+                                          static_cast<float>(tri[2][2]))));
+            ++triangles;
+        }
+    }
+    if (triangles == 0) {
+        throw std::runtime_error("obj parse produced zero triangles");
+    }
+    return merged;
+}
+
+/**
+ * @brief mesh 待挂件（MA-01——收集器模式，同 linkCylinders：帧构建期
+ *        收集、第 9 步统一消费；帧以 shared_ptr 持有随编译期存活）。
+ */
+struct MeshReferral {
+    rw::core::Ptr<rw::kinematics::FixedFrame> frame; ///< 挂接帧（已入 WC 帧树）
+    const char* facet;                               ///< 呈现面"visual"/碰撞面"collision"
+    ResourceRef ref;                                 ///< 内容寻址引用（§8.6）
+};
+
+/**
+ * @brief mesh 资源通道真实消费（MA-01——RT-T15 诚实跳过的真实化）。
+ *
+ * 逐引用流程：provider 取已验证字节（§8.6——io 侧 SafePath/预算已过）
+ * → ContentDigester 复算 SHA-256 比对引用摘要（S4 挂接点复核，失配跳
+ * 过）→ sourcePathHint 扩展名判格式（stl/obj 可解析；dae/wrl/iv 依赖
+ * Assimp/Inventor——明确跳过）→ 临时文件解析（见 parseMeshViaTempFile）
+ * → Geometry 载体挂接帧（恒等帧内位姿——localTransform 契约演化面，
+ * 见上批注）。任何失败跳过该引用＝图元代理回退（§8.6 诚实缺省），不
+ * 阻塞编译、零错误级诊断。
+ *
+ * @param workCell [out] 编译产物 WC（载体对象 add 目标）
+ * @param resourceProvider [in] 资源提供者（可空＝缺位；缺位整批跳过）
+ * @param referrals [in] 收集器产物（帧构建期收集的待挂件）
+ */
+void attachResourceMeshGeometry(
+    rw::models::WorkCell& workCell,
+    const IRuntimeResourceProvider* resourceProvider,
+    const std::vector<MeshReferral>& referrals)
+{
+    if (resourceProvider == nullptr) {
+        return;  // 缺位＝能力缺失（诚实跳过面保留——provider 注入是装配契约）
+    }
+    for (const MeshReferral& referral : referrals) {
+        // ---- 第一步：取资源字节（Expected 两态轨——失败跳过该引用）。
+        const auto fetched = resourceProvider->tryResourceBytes(referral.ref.resourceId);
+        if (!fetched.ok()) {
+            continue;  // 资源缺失/变更/预算——io 侧已检测，跳过回退代理
+        }
+        const ResourceBytes bytes = fetched.get();
+
+        // ---- 第二步：S4 挂接点摘要复核（同内容才挂接——CON-05 内容寻址
+        // 的消费侧闭环；与 ResourceRef.contentDigest 和 provider 摘要双比）。
+        core::ContentDigester digester;
+        digester.update(bytes.data, bytes.size);
+        if (digester.finalize() != referral.ref.contentDigest
+            || bytes.digest != referral.ref.contentDigest) {
+            continue;  // 失配＝引用失实——不挂接（回退代理，编译不阻塞）
+        }
+
+        // ---- 第三步：格式判定（扩展名——路径不作身份仅判定用）。
+        const std::string format = meshFormatOf(referral.ref.sourcePathHint);
+        if (format.empty()) {
+            continue;  // 无 hint/不可解析格式（dae/wrl/iv 依赖未装——明确跳过）
+        }
+
+        // ---- 第四步：临时文件解析＋挂接。解析异常（磁盘/格式坏）按该
+        // 引用跳过消费——§8.4 转译面之外的能力缺失轨，不失败编译。
+        try {
+            const rw::geometry::GeometryData::Ptr meshData =
+                parseMeshViaTempFile(bytes.data, bytes.size, format,
+                                     referral.ref.contentDigest);
+            // 载体纪律同 attachPrimitive：显式名/恒等位姿/scale=1（网格
+            // 坐标＝m 真值直用——io 侧单位契约）。
+            const rw::geometry::Geometry::Ptr geometry = rw::core::ownedPtr(
+                new rw::geometry::Geometry(meshData,
+                                           referral.frame->getName() + "."
+                                               + referral.facet,
+                                           1.0));
+            geometry->setTransform(detail::identityTransform3D());
+            geometry->setFrame(referral.frame);
+            const rw::core::Ptr<rw::models::RigidObject> carrier =
+                rw::core::ownedPtr(
+                    new rw::models::RigidObject(referral.frame, geometry));
+            workCell.add(carrier.cast<rw::models::Object>());
+        } catch (const std::exception&) {
+            continue;  // 解析失败＝该引用回退代理（诚实缺省，零错误级诊断）
+        }
+    }
 }
 
 /**
@@ -437,11 +630,24 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
             linkCylinders;
         // 标记盒待挂件：法兰/TCP/场景对象帧（轴标记级图元——盒心即帧原点）。
         std::vector<rw::core::Ptr<rw::kinematics::FixedFrame>> markerFrames;
+        // MA-01 网格待挂件（收集器模式——第 9 步统一消费；引用可空＝
+        // 不收集，收集序＝帧构建序＝确定性）。
+        std::vector<MeshReferral> meshReferrals;
 
         // 基座连杆（links[0]）的子关节＝joints[0]（构造不变量：links＝
         // joints+1 且 joints≥1——builder 保证，此处直取 at 安全）。
         linkCylinders.emplace_back(
             previousFrame, chain.joints.front().origin.P());
+        // MA-01 收集：基座连杆 visual/collision mesh 待挂件（引用可空＝
+        // 不收集——§8.6 可选引用语义）。
+        if (chain.links.front().visual.has_value()) {
+            meshReferrals.push_back({previousFrame, "visual",
+                                     *chain.links.front().visual});
+        }
+        if (chain.links.front().collision.has_value()) {
+            meshReferrals.push_back({previousFrame, "collision",
+                                     *chain.links.front().collision});
+        }
 
         // 设备链（SerialDevice 构造输入——基座到法兰的连通 Frame 序列；
         // 裸指针视图，所有权仍在 StateStructure）。
@@ -556,6 +762,16 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
                 linkCylinders.emplace_back(
                     linkFrame, chain.joints.at(i + 1).origin.P());
             }
+            // MA-01 收集：本连杆 visual/collision mesh 待挂件（连杆系＝
+            // 权威 FK 下的连杆原点——网格恒等挂接即随构型运动）。
+            if (chain.links.at(i + 1).visual.has_value()) {
+                meshReferrals.push_back({linkFrame, "visual",
+                                         *chain.links.at(i + 1).visual});
+            }
+            if (chain.links.at(i + 1).collision.has_value()) {
+                meshReferrals.push_back({linkFrame, "collision",
+                                         *chain.links.at(i + 1).collision});
+            }
         }
 
         // ===== 第 6 步：工具 TCP 帧（§4.3.4/MDL-13——挂法兰，tcpOffset 为
@@ -571,6 +787,12 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
                 rw::core::ownedPtr(new rw::kinematics::FixedFrame(tcpName, tool.tcpOffset));
             workCell->addFrame(tcpFrame, previousFrame);  // previousFrame＝法兰帧
             markerFrames.push_back(tcpFrame);
+            // MA-01 收集：工具几何（facet 统一 collision——NameMap §7 注：
+            // 工具/场景几何在碰撞评估消费；呈现经同一几何载体）。
+            if (tool.geometry.has_value()) {
+                meshReferrals.push_back({tcpFrame, "collision",
+                                         *tool.geometry});
+            }
         }
 
         // ===== 第 7 步：场景对象帧（§4.3.4/MDL-15——挂 WORLD 根，世界系
@@ -584,6 +806,11 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
                     new rw::kinematics::FixedFrame(sceneName, sceneObject.worldPose));
             workCell->addFrame(sceneFrame, rw::core::Ptr<rw::kinematics::Frame>(worldFrame));
             markerFrames.push_back(sceneFrame);
+            // MA-01 收集：场景几何（facet 统一 collision——同工具口径）。
+            if (sceneObject.geometry.has_value()) {
+                meshReferrals.push_back({sceneFrame, "collision",
+                                         *sceneObject.geometry});
+            }
         }
 
         // ===== 第 8 步：SerialDevice 构造与登记（§5.2 S6 输出"Device 名"
@@ -630,9 +857,9 @@ WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
                             detail::identityTransform3D(),
                             frame->getName() + kMarkerBoxSuffix);
         }
-        // mesh 资源通道：接线预留（provider 句柄已随编译链接线至 S6——
-        // 本批诚实跳过不消费；真实 mesh 渲染待所有者裁决，见函数注释）。
-        attachResourceMeshGeometry(model, resourceProvider);
+        // mesh 资源通道（MA-01 真实消费——收集器待挂件逐引用"字节→摘要
+        // 复核→临时文件解析→挂接"；失败逐引用回退图元代理，编译不阻塞）。
+        attachResourceMeshGeometry(*workCell, resourceProvider, meshReferrals);
 
         // ===== 第 10 步：S9 防御性自检（§12 RT-T07 测试列"RT-BW-4〔S9 部分〕
         // "的编译器侧落点）：BaseMount 读回值 vs 权威 T_world_base 逐元素

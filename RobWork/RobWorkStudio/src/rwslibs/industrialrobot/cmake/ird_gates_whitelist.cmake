@@ -380,9 +380,12 @@ set(IRD_R3_EXCEPTION_TARGETS "sdurws_ird_ui"
 #   - policy 产品实现（碰撞唯一实现，WP-07-T01 起生效）
 #   - runtime 场景装配若需 proximity 类型（仅限构造 WorkCell 几何挂载）
 #     另行登记——当前无条目。
+#   - 2026-10-21 起新增：runtime 真实碰撞设施（MA-02 所有者立项——
+#     CollisionSession/CollisionDetector；判定权威仍归 policy 规则面，
+#     runtime 只承载场景几何级判定执行；登记册 DTB §4.5 对应行）。
 # 语义：IRD_R5_EXEMPT_TARGETS 中的目标名豁免 R-5 扫描。
 # ---------------------------------------------------------------------
-set(IRD_R5_EXEMPT_TARGETS "sdurws_ird_policy")
+set(IRD_R5_EXEMPT_TARGETS "sdurws_ird_policy" "sdurws_ird_runtime")
 
 # ---------------------------------------------------------------------
 # T-1/T-2 —— testkit 分发/依赖红线（testkit.md §2.4）：无例外（DTB §4.5）。
@@ -396,11 +399,13 @@ set(IRD_R5_EXEMPT_TARGETS "sdurws_ird_policy")
 # 框架基线库白名单（L1；DTB §4.6 实测表）——产品目标可链的框架库前缀。
 # 需登记方可使用的框架库（DTB §4.6"若启用须登记"）单列于
 # IRD_FRAMEWORK_REGISTER_REQUIRED；命中即失败，登记后经
-# IRD_FRAMEWORK_REGISTER_ALLOWED 豁免（当前为空）。
+# IRD_FRAMEWORK_REGISTER_ALLOWED 豁免（2026-10-21 起一条：MA-01 网格
+# 资源通道消费 sdurw_loaders 的 STL/OBJ 解析器——所有者立项批；登记册
+# DTB §4.5 LIB 行＋§4.6 实测表行）。
 # ---------------------------------------------------------------------
 set(IRD_FRAMEWORK_LIB_PREFIXES "sdurw" "sdurwsim" "sdurws_")
 set(IRD_FRAMEWORK_REGISTER_REQUIRED "sdurw_loaders")
-set(IRD_FRAMEWORK_REGISTER_ALLOWED "")
+set(IRD_FRAMEWORK_REGISTER_ALLOWED "sdurw_loaders")
 
 # ---------------------------------------------------------------------
 # 测试目标允许链接的非 ird 目标前缀（gtest 家族；DTB §5.5 唯一接入机制）

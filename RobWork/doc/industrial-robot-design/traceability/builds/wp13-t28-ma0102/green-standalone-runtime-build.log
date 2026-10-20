@@ -1,0 +1,18 @@
+CMake is re-running because C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/modeling-integration-20261020/standalone/runtime/CMakeFiles/generate.stamp is out-of-date.
+  the file 'C:/Users/zgl18/.codex/worktrees/486b/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt'
+  is newer than 'C:/Users/zgl18/.codex/worktrees/486b/RobWork/build/modeling-integration-20261020/standalone/runtime/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode锛堢嫭绔嬪啋鐑燂紝涓嶄唬琛ㄩ泦鎴愭瀯寤猴級
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- industrialrobot.ui: standalone smoke mode鈥斺€攕durws_ird_ui_plugin not registered (framework-hosted plugin target, integrated tree only; ui.md 搂13 UI-T16)
+-- industrialrobot.ui: standalone smoke mode鈥斺€攕durws_ird_studio not registered (framework-hosted product target, integrated tree only; WP-24-T08 / B1-SPEC 搂2.1)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (2.8s)
