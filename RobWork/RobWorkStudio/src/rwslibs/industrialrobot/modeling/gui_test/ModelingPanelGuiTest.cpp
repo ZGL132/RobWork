@@ -28,6 +28,10 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QCheckBox>
+#include <QScrollArea>
+#include <QScrollBar>
+#include "plugin/ModelingBodyEditor.hpp"
 #include <QDir> // MDL-22真实窗口截图证据，仅写测试指定输出目录。
 #include <QClipboard>   // 复制钮断言（UI-T59 剪贴板＝预览全文）
 #include <QMap>
@@ -119,7 +123,8 @@ bool inJointEditPane(const QWidget& panel, const QObject* widget)
             || name == QStringLiteral("ird_modeling_tool_area")
             || name == QStringLiteral("ird_modeling_scene_area")
             || name == QStringLiteral("ird_modeling_pose_area")
-            || name == QStringLiteral("ird_modeling_drivetrain_area")) {
+            || name == QStringLiteral("ird_modeling_drivetrain_area")
+            || name == QStringLiteral("ird_modeling_body_editor")) {
             return true;
         }
     }
@@ -2045,4 +2050,126 @@ TEST_F(ModelingPanelGuiTest, SameObjectRefreshKeepsPendingValue_UI_T79)
     auto* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
     host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
     EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_confirm_region"))->isHidden());
+}
+
+/** @brief MDL-05/V-17：真实内联输入原位纠错、质心显式二选一与完整张量，取消零写入。 */
+TEST_F(ModelingPanelGuiTest, ManualBodyFieldsAndCentroidChoice_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    // 与生产模块相同：接受后重投影摘要和编辑页，截图必须核对同一草稿真值。
+    m_panel->setPostEditAction([this]{m_panel->refreshPanel(m_ws,{});});
+    auto& body=m_ws.design.links.back().body;
+    const auto source=core::ValueProvenance::make(core::ProvenanceKind::GeometricEstimate);
+    body.mass=core::SourcedValue<double>::provided(2,source);
+    body.centerOfMass=core::SourcedValue<rw::math::Vector3D<double>>::provided({0,0,0},source);
+    body.inertia=core::SourcedValue<InertiaTensor>::provided({3,4,5,0.1,0.2,0.3},source);
+    m_panel->refreshPanel(m_ws,{});m_panel->focusObject(m_ws.design.links.back().objectId);
+    m_panel->resize(900,650);m_panel->show();QApplication::processEvents();
+    auto* editor=m_panel->findChild<QWidget*>("ird_modeling_body_editor");ASSERT_NE(editor,nullptr);
+    auto field=[&](int i){return editor->findChild<QLineEdit*>(QStringLiteral("ird_body_value_%1").arg(i));};
+    auto* mass=editor->findChild<QCheckBox*>("ird_body_mass_edit");
+    auto* com=editor->findChild<QCheckBox*>("ird_body_com_edit");
+    auto* tensor=editor->findChild<QCheckBox*>("ird_body_inertia_edit");
+    auto* choice=editor->findChild<QComboBox*>("ird_body_centroid_resolution");
+    auto* apply=editor->findChild<QPushButton*>("ird_body_apply");
+    auto* cancel=editor->findChild<QPushButton*>("ird_body_cancel");
+    auto* feedback=editor->findChild<QLabel*>("ird_body_feedback");
+    const auto before=m_ws;
+    mass->setChecked(true);field(0)->setText("-1");apply->click();
+    EXPECT_EQ(m_ws,before);EXPECT_EQ(field(0)->text(),"-1");EXPECT_TRUE(feedback->text().contains(QStringLiteral("正数")));
+    field(0)->setText("4");com->setChecked(true);
+    field(1)->setText("1");field(2)->setText("2");field(3)->setText("3");
+    EXPECT_EQ(choice->currentIndex(),0);apply->click();EXPECT_EQ(m_ws,before);
+    EXPECT_TRUE(feedback->text().contains(QStringLiteral("明确选择")));
+    choice->setCurrentIndex(1);EXPECT_FALSE(tensor->isEnabled());apply->click();
+    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1);
+    EXPECT_DOUBLE_EQ(body.mass.value(),4);EXPECT_DOUBLE_EQ(body.inertia.value().ixx,55);
+    EXPECT_DOUBLE_EQ(body.inertia.value().ixy,-7.9);EXPECT_DOUBLE_EQ(body.inertia.value().iyz,-23.7);
+    EXPECT_EQ(body.inertia.provenance(),source);EXPECT_FALSE(mass->isChecked());
+    const auto migrated=m_ws;
+    com->setChecked(true);field(1)->setText("2");choice->setCurrentIndex(2);
+    EXPECT_TRUE(tensor->isChecked());
+    const char* values[]={"5","6","7","0.4","0.5","0.6"};
+    for(int i=0;i<6;++i){field(i+4)->setText(values[i]);}
+    field(9)->setText("nan");apply->click();EXPECT_EQ(m_ws,migrated);EXPECT_EQ(field(9)->text(),"nan");
+    field(9)->setText("0.6");apply->click();
+    EXPECT_DOUBLE_EQ(body.centerOfMass.value()[0],2);EXPECT_DOUBLE_EQ(body.inertia.value().iyz,0.6);
+    EXPECT_EQ(body.inertia.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+2);
+    EXPECT_EQ(field(7)->cursorPosition(),0);EXPECT_EQ(field(9)->cursorPosition(),0);
+    ASSERT_GE(editors().size(),3);EXPECT_EQ(editors()[0]->text(),"4");
+    EXPECT_TRUE(editors()[1]->text().startsWith("2, 2, 3"));
+    const auto accepted=m_ws;mass->setChecked(true);field(0)->setText("8");cancel->click();
+    EXPECT_EQ(m_ws,accepted);EXPECT_EQ(field(0)->text(),"4");EXPECT_FALSE(mass->isChecked());
+    // 无改动确认、无默认质心决议，均不伪造历史。
+    apply->click();EXPECT_EQ(m_ws,accepted);EXPECT_EQ(choice->currentIndex(),0);
+    EXPECT_FALSE(feedback->text().contains("migrate-inertia"));
+    auto* scroll=editor->parentWidget()->parentWidget();
+    auto* area=qobject_cast<QScrollArea*>(scroll);ASSERT_NE(area,nullptr);
+    EXPECT_GT(area->verticalScrollBar()->maximum(),0);
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!out.isEmpty()){
+        ASSERT_TRUE(QDir().mkpath(out));area->verticalScrollBar()->setValue(0);QApplication::processEvents();
+        ASSERT_TRUE(m_panel->grab().save(QDir(out).filePath("body-editor-top.png")));
+        area->ensureWidgetVisible(apply);QApplication::processEvents();
+        ASSERT_TRUE(m_panel->grab().save(QDir(out).filePath("body-editor-confirm.png")));
+    }
+}
+
+/** @brief MDL-05：同目标刷新保留未确认输入，切目标清除；只读与过时基线在出口再次拒绝。 */
+TEST_F(ModelingPanelGuiTest, ManualBodyRefreshStaleAndReadOnly_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    m_panel->focusObject(m_ws.design.links.back().objectId);
+    auto* editor=m_panel->findChild<QWidget*>("ird_modeling_body_editor");ASSERT_NE(editor,nullptr);
+    auto* mass=editor->findChild<QCheckBox*>("ird_body_mass_edit");
+    auto* field=editor->findChild<QLineEdit*>("ird_body_value_0");
+    auto* apply=editor->findChild<QPushButton*>("ird_body_apply");
+    auto* feedback=editor->findChild<QLabel*>("ird_body_feedback");
+    mass->setChecked(true);field->setText("8");m_panel->refreshPanel(m_ws,{});
+    EXPECT_TRUE(mass->isChecked());EXPECT_EQ(field->text(),"8");
+    m_panel->setWritable(false);EXPECT_FALSE(apply->isEnabled());
+    const auto before=m_ws;apply->click();EXPECT_EQ(m_ws,before);
+    m_panel->setWritable(true);EXPECT_EQ(field->text(),"8");
+    // 不刷新而更换权威基线，确认不能覆盖后台变更。
+    m_ws.design.links.back().body.mass=core::SourcedValue<double>::provided(3,
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    const auto changed=m_ws;apply->click();EXPECT_EQ(m_ws,changed);
+    EXPECT_TRUE(feedback->text().contains(QStringLiteral("基线已改变")));
+    m_panel->refreshPanel(m_ws,{});EXPECT_FALSE(mass->isChecked());EXPECT_EQ(field->text(),"3");
+    mass->setChecked(true);field->setText("12");m_panel->focusObject(m_ws.design.links.front().objectId);
+    EXPECT_FALSE(mass->isChecked());m_panel->focusObject(m_ws.design.links.back().objectId);
+    EXPECT_EQ(field->text(),"3");EXPECT_EQ(m_ws,changed);
+}
+
+/** @brief MDL-05：无基准不猜零，迁移拒绝；完整输入可建立用户物性，出口不可绕只读。 */
+TEST(ModelingManualBodyGui, MissingBaselineCompleteInputAndReadOnly_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    int accepts=0;BodyData accepted;
+    ModelingBodyEditor editor(nullptr,[&](const core::ObjectId&,const BodyData&,
+        const ManualBodyResult& result,std::string&){++accepts;accepted=result.body;return true;});
+    const auto id=core::ObjectId::generate();editor.bindTarget(id,BodyData{},"empty-link",true);
+    auto field=[&](int i){return editor.findChild<QLineEdit*>(QStringLiteral("ird_body_value_%1").arg(i));};
+    auto* mass=editor.findChild<QCheckBox*>("ird_body_mass_edit");
+    auto* com=editor.findChild<QCheckBox*>("ird_body_com_edit");
+    auto* tensor=editor.findChild<QCheckBox*>("ird_body_inertia_edit");
+    auto* choice=editor.findChild<QComboBox*>("ird_body_centroid_resolution");
+    auto* apply=editor.findChild<QPushButton*>("ird_body_apply");
+    auto* feedback=editor.findChild<QLabel*>("ird_body_feedback");
+    for(int i=0;i<10;++i){EXPECT_TRUE(field(i)->text().isEmpty());}
+    mass->setChecked(true);field(0)->setText("2");com->setChecked(true);
+    field(1)->setText("1");field(2)->setText("2");field(3)->setText("3");
+    choice->setCurrentIndex(1);apply->click();EXPECT_EQ(accepts,0);
+    EXPECT_TRUE(feedback->text().contains(QStringLiteral("旧质心")));
+    choice->setCurrentIndex(2);EXPECT_TRUE(tensor->isChecked());apply->click();EXPECT_EQ(accepts,0);
+    const char* values[]={"3","4","5","0.1","0.2","0.3"};
+    for(int i=0;i<6;++i){field(i+4)->setText(values[i]);}
+    apply->click();ASSERT_EQ(accepts,1);EXPECT_DOUBLE_EQ(accepted.mass.value(),2);
+    EXPECT_DOUBLE_EQ(accepted.inertia.value().ixy,0.1);
+    EXPECT_EQ(accepted.centerOfMass.provenance().kind,core::ProvenanceKind::UserProvided);
+    editor.bindTarget(id,accepted,"empty-link",false);mass->setChecked(true);field(0)->setText("9");
+    EXPECT_FALSE(apply->isEnabled());
+    // 直接派发信号验证执行端守卫；禁用控件的click自身会短路，不能证明出口安全。
+    ASSERT_TRUE(QMetaObject::invokeMethod(apply,"clicked",Qt::DirectConnection));EXPECT_EQ(accepts,1);
 }

@@ -10,6 +10,8 @@
  */
 
 #include "ModelingPanelWidget.hpp"
+#include "ModelingBodyEditor.hpp"
+#include <QScrollArea>
 
 #include <QApplication>                           // clipboard（UI-T59 预览复制钮）
 #include <QClipboard>                             // QClipboard 完整类型（复制钮——UI-T59）
@@ -414,6 +416,28 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     m_editStack->addWidget(m_poseSetArea);             // index 4
     buildDrivetrainPane();                             // UI-T60——传动页（F-497 余项）
     m_editStack->addWidget(m_drivetrainArea);          // index 5
+    // MDL-05/F10：选择连杆即显示内联页；窄窗允许滚动，不另开模态编辑器。
+    auto* bodyScroll=new QScrollArea(m_editStack);bodyScroll->setWidgetResizable(true);
+    m_bodyArea=bodyScroll;
+    m_bodyEditor=new ModelingBodyEditor(bodyScroll,[this](const core::ObjectId& id,
+        const BodyData& before,const ManualBodyResult& result,std::string& error){
+        // 出口现取权威草稿并比对完整基线，拒绝选择漂移/后台替换/只读绕行。
+        m_threadGuard.assertOnUiThread();
+        auto* ws=m_editTarget?m_editTarget():nullptr;
+        if(!m_writable||!ws||m_lastSelected!=id){error="目标已改变或项目只读，请重新选择连杆。";return false;}
+        const auto target=resolveSelection(*ws,id);
+        if(!target||target->kind!=SelectedTarget::Kind::Link
+            ||ws->design.links[target->index].body!=before){
+            error="连杆物性基线已改变，请刷新后重新编辑。";return false;
+        }
+        if(before==result.body){return true;}
+        const auto subject="links["+std::to_string(target->index)+"].body";
+        ws->design.links[target->index].body=result.body;
+        ws->changes.push_back({subject,result.summary});
+        onEditApplied("连杆物性"); // 唯一重算/局部历史入口；此后不使用旧草稿引用。
+        return true;
+    });
+    bodyScroll->setWidget(m_bodyEditor);m_editStack->addWidget(bodyScroll);
     editLay->addWidget(m_editStack, 1);
     connect(baseModeBtn, &QPushButton::clicked, this, [this] {
         m_editStack->setCurrentWidget(m_basePage);
@@ -616,6 +640,7 @@ void ModelingPanelWidget::setDraftHistoryState(bool canUndo,bool canRedo)
 void ModelingPanelWidget::cancelPendingForHistoryRestore()
 {
     m_threadGuard.assertOnUiThread();
+    if(m_bodyEditor){m_bodyEditor->cancelPending();}
     // 普通后台刷新按UI-T79保留暂存；明确撤销/重做则必须取消暂存，再由
     // 后续refreshPanel推入恢复值。模型取消只清数据；还须走表单既有取消
     // 动作隐藏确认区，避免旧确认明细在恢复后仍可见、误导用户再次确认。
@@ -1165,6 +1190,7 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
 void ModelingPanelWidget::setWritable(bool writable)
 {
     m_writable = writable;
+    if(m_bodyEditor){refreshEditPages();}
     // L-7 控件半区：现有属性行即时降级/恢复（行序同键——只变使能）。
     // UI-T27 P0-2：编辑器文本＝纯值（单位在标签——值/单位分离后回显口径）。
     m_propertyRows = applyReadOnlyGate(m_propertyRows, m_writable);
@@ -3289,6 +3315,16 @@ void ModelingPanelWidget::refreshEditPages()
             resolved = true;
         }
     }
+    if(resolved&&kind==SelectedTarget::Kind::Link){
+        // 退离关节时同步旧页空态，避免手动返回关节模式仍残留上一目标。
+        refreshJointEditPane();
+        const auto target=resolveSelection(*ws,*m_lastSelected);
+        const auto& link=ws->design.links[target->index];
+        m_bodyEditor->bindTarget(m_lastSelected,link.body,link.localName,m_writable);
+        m_editStack->setCurrentWidget(m_bodyArea);return;
+    }
+    // 离开连杆时清除暂存，避免之后误套到另一对象。
+    m_bodyEditor->bindTarget(std::nullopt,BodyData{},"",m_writable);
     if (resolved && kind == SelectedTarget::Kind::Tool) {
         refreshToolMountPane();
         refreshTcpPane();  // UI-T57——TCP 段随工具页同刷（combo/基线/使能）

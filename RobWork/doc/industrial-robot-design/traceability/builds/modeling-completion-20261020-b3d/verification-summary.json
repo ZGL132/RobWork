@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "modeling-completion-b3d/1",
+  "taskId": "WP-13-T24",
+  "baseCommit": "cdfd4cdb10cb",
+  "scope": "F10连杆物性编辑实现验证；47项及完整三维仍未终验",
+  "totals": {
+    "total": 1376,
+    "passed": 1376,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "modeling",
+      "total": 413,
+      "passed": 413,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_contract",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "modeling_gui",
+      "total": 71,
+      "passed": 71,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui",
+      "total": 326,
+      "passed": 326,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_contract",
+      "total": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "ui_gui",
+      "total": 90,
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 337,
+      "passed": 337,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 53,
+      "passed": 53,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "core",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "tour": {
+    "passed": 285,
+    "failed": 0,
+    "scope": "正式宿主既有综合流程，含其他域；无本批新增F10磁盘/三维验收"
+  },
+  "environment": {
+    "os": "Windows",
+    "toolchain": "VS2022 x64",
+    "qtPlatform": "windows",
+    "guiExecution": "绝对路径、GUI单exe串行"
+  },
+  "limitations": [
+    "未执行全新上下文独立验收",
+    "core伴随JSON派生自真实XML",
+    "同用例红绿重复轮次未累计",
+    "保留旧关节空态实际失败与修正回归",
+    "未推送、未自行合入",
+    "完整47项/真实mesh/安装/TCP/导航/碰撞仍待后续"
+  ],
+  "builds": {
+    "integration": "PASS，全量Release",
+    "standalone": "PASS，12目标",
+    "gates": "PASS，零命中",
+    "verifyTask": "PASS，三条机器命令",
+    "validateTask": "PASS"
+  }
+}

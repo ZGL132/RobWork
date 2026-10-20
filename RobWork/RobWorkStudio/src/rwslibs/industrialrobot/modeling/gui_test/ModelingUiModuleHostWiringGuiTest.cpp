@@ -24,6 +24,7 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
 #include <QPlainTextEdit>
@@ -852,4 +853,48 @@ TEST(ModelingImportGui, PropertySegmentWindowValidationAndLocalHistory_MDL05)
     redo->click();EXPECT_EQ(module.session().draft,after);
     module.setWritable(false);EXPECT_FALSE(module.executeDomainCommand("modeling.estimate-properties"));
     EXPECT_EQ(module.session().draft,after);EXPECT_EQ(module.session().baseRevision,revision);EXPECT_EQ(submits,0);
+}
+
+/** @brief F10/MDL-05/V-17：选中连杆须有可写物性内联页，不止只读摘要。 */
+TEST(ModelingUiModuleHostWiring, LinkBodyEditorReachable_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    std::unique_ptr<QWidget> panel(module.createPanel());panel->show();QApplication::processEvents();
+    auto* view=qobject_cast<ModelingPanelWidget*>(panel.get());ASSERT_NE(view,nullptr);
+    view->focusObject(module.session().draft.design.links.back().objectId);QApplication::processEvents();
+    auto* editor=panel->findChild<QWidget*>("ird_modeling_body_editor");
+    ASSERT_NE(editor,nullptr)<<"F10：连杆质量/质心/完整惯量缺内联可写入口";
+    EXPECT_TRUE(editor->isVisible());
+}
+
+/** @brief F10/MDL-05：真实模块仅记一次局部历史，恢复清暂存且零命令/修订。 */
+TEST(ModelingUiModuleHostWiring, ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    const auto branch=core::BranchId::generate();const auto revision=core::RevisionId::generate();
+    module.bindSessionAnchor(branch,revision);
+    std::unique_ptr<QWidget> panel(module.createPanel());
+    auto* view=qobject_cast<ModelingPanelWidget*>(panel.get());ASSERT_NE(view,nullptr);
+    view->focusObject(module.session().draft.design.links.back().objectId);
+    int submits=0;module.bindCommandSubmit([&](const ui::CommandId&){++submits;});
+    const auto before=module.session().draft;
+    auto* mass=panel->findChild<QCheckBox*>("ird_body_mass_edit");ASSERT_NE(mass,nullptr);
+    auto* field=panel->findChild<QLineEdit*>("ird_body_value_0");ASSERT_NE(field,nullptr);
+    auto* apply=panel->findChild<QPushButton*>("ird_body_apply");ASSERT_NE(apply,nullptr);
+    mass->setChecked(true);field->setText("4.5");apply->click();
+    const auto after=module.session().draft;
+    EXPECT_EQ(after.changes.size(),before.changes.size()+1);
+    ASSERT_TRUE(after.design.links.back().body.mass.tryValue());
+    EXPECT_DOUBLE_EQ(after.design.links.back().body.mass.value(),4.5);
+    auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");
+    auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");
+    ASSERT_TRUE(undo->isEnabled());mass->setChecked(true);field->setText("99");undo->click();
+    EXPECT_EQ(module.session().draft,before);EXPECT_FALSE(mass->isChecked());EXPECT_NE(field->text(),"99");
+    ASSERT_TRUE(redo->isEnabled());redo->click();EXPECT_EQ(module.session().draft,after);
+    EXPECT_EQ(field->text(),"4.5");EXPECT_FALSE(mass->isChecked());
+    EXPECT_EQ(module.session().baseRevision,revision);EXPECT_EQ(submits,0);
+    module.setWritable(false);EXPECT_FALSE(apply->isEnabled());apply->click();
+    EXPECT_EQ(module.session().draft,after);
 }

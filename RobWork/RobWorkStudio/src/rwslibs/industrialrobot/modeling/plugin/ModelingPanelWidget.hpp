@@ -55,6 +55,7 @@ class QDoubleSpinBox;
 class QStackedWidget;
 
 namespace sdurws::ird::modeling {
+class ModelingBodyEditor;
 
 /**
  * @brief 建模域面板 widget（五区合一——挂位于 ui 中央区 StageId=modeling 位）。
@@ -462,6 +463,8 @@ private:
     // ---- UI-T60 传动页（F-497 余项）----
     class DrivetrainEditOutlet;                   ///< 传动数值表移交壳
     std::unique_ptr<ui::IFormEditOutlet> m_drivetrainOutlet;  ///< 传动页出口
+    ModelingBodyEditor* m_bodyEditor = nullptr; ///< F10内联编辑器，Qt拥有，仅UI线程访问。
+    QWidget* m_bodyArea = nullptr; ///< 可滚动连杆物性页，不持工作集。
     QWidget* m_drivetrainArea = nullptr;          ///< 传动页容器（stacked 第 6 页）
     QWidget* m_drivetrainPanel = nullptr;         ///< 传动数值表（ratio/摩擦/力矩）
     std::unique_ptr<ui::ParamEditModel> m_drivetrainModel;    ///< 传动编辑模型

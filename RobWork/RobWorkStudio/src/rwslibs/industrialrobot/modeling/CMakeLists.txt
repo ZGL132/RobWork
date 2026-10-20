@@ -199,6 +199,7 @@ add_library(sdurws_ird_modeling_plugin STATIC
     plugin/ModelingCommandFlows.cpp  # 域命令 UI 流（UI-T41 A2——八命令真实链）
     plugin/ModelingDiffDialog.cpp    # WP-13-T24/F16：只读完整差异表与现对象定位，无新依赖。
     plugin/ModelingPropertyDialog.cpp # WP-13-T24/F09：完整段元输入，计算复用既有域估算器。
+    plugin/ModelingBodyEditor.cpp # MDL-05/F10：内联编辑及纯值编排，同目标无新依赖边。
     plugin/ModelingAuthorityFlows.cpp  # 权威切换流（UI-T41——DhConvert 独立 TU）
     plugin/ModelingXacroBridge.cpp  # Xacro 展开桥（UI-T41——XacroExpand 独立 TU）
     plugin/ModelingPluginAssembly.cpp)  # WP-24-T03 首版装配门面实现（assembly/ 公共头的私有实现）

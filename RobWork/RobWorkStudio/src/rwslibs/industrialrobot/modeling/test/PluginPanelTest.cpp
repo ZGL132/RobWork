@@ -26,6 +26,7 @@
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记（testkit §7.3）
 
 #include <atomic>
+#include <limits> // F10非有限值反例，必须走真实拒绝路径。
 #include <regex>
 #include <set>
 #include <thread>
@@ -41,6 +42,8 @@
 #include "plugin/PanelModel.hpp"           // 五区投影（ACC2/ACC5）
 #include "plugin/PanelRefresh.hpp"         // 刷新协调器/线程守卫（ACC5）
 #include "plugin/PanelSelection.hpp"       // L-1 会话选中（ACC3）
+#include <sdurws/ird/modeling/Codec.hpp>
+#include "plugin/ModelingBodyEditor.hpp" // F10纯值编排，真实迁移与完整张量判定。
 #include "plugin/ModelingCommandFlows.hpp"  // customChainRowSemanticCheck（UI-T66——F-523① 录入辅助面）
 #include <sdurws/ird/ui/CommandInteractionBridge.hpp>          // ui 确认交互桥（L-3——UI-T13 落位面）
 
@@ -1303,4 +1306,69 @@ TEST(PluginPanel, GeometryRows_ShapeBadgeAndDanglingDetection_UI_T41C)
     EXPECT_TRUE(visual.valueText.find(
         std::string(geometryKindToken(GeometryKind::Mesh))) != std::string::npos)
         << "形状类别徽标缺失（C2）";
+}
+
+/** @brief MDL-05/V-17：独立闭式迁移与完整覆盖，保持未改字段及来源。 */
+TEST(ModelingManualBody, ExplicitMigrationAndCompleteOverride_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    BodyData body;const auto source=core::ValueProvenance::make(core::ProvenanceKind::GeometricEstimate);
+    body.mass=core::SourcedValue<double>::provided(2,source);
+    body.centerOfMass=core::SourcedValue<rw::math::Vector3D<double>>::provided({0,0,0},source);
+    body.inertia=core::SourcedValue<InertiaTensor>::provided({3,4,5,0.1,0.2,0.3},source);
+    const auto before=body;std::string error;ManualBodyEdit edit;
+    auto out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out);EXPECT_EQ(out->body,body);
+    edit.mass=4;out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out);
+    EXPECT_DOUBLE_EQ(out->body.mass.value(),4);EXPECT_EQ(out->body.inertia,body.inertia);
+    EXPECT_EQ(out->body.centerOfMass,body.centerOfMass);
+    edit.centerOfMass=rw::math::Vector3D<double>{1,2,3};
+    EXPECT_FALSE(evaluateManualBodyEdit(body,edit,error));EXPECT_FALSE(error.empty());
+    edit.resolution=CentroidEditResolution::MigrateInertia;
+    out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out)<<error;
+    // 使用已确认质量4kg：I'=I+4((d·d)E-ddᵀ)，独立逐分量参考。
+    const auto& t=out->body.inertia.value();
+    EXPECT_DOUBLE_EQ(t.ixx,55);EXPECT_DOUBLE_EQ(t.iyy,44);EXPECT_DOUBLE_EQ(t.izz,25);
+    EXPECT_DOUBLE_EQ(t.ixy,-7.9);EXPECT_DOUBLE_EQ(t.ixz,-11.8);EXPECT_DOUBLE_EQ(t.iyz,-23.7);
+    EXPECT_EQ(out->body.inertia.provenance(),source);
+    EXPECT_EQ(out->body.centerOfMass.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_NE(out->summary.find("migrate-inertia"),std::string::npos);
+    edit.resolution=CentroidEditResolution::OverwriteInertia;
+    EXPECT_FALSE(evaluateManualBodyEdit(body,edit,error));
+    edit.inertia=InertiaTensor{5,6,7,0.4,0.5,0.6};
+    out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out)<<error;
+    EXPECT_EQ(out->body.inertia.value(),*edit.inertia);
+    EXPECT_EQ(out->body.inertia.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_NE(out->summary.find("overwrite-inertia"),std::string::npos);EXPECT_EQ(body,before);
+    // 完整六分量与来源必须经真实Codec保持，不能只验证窗口内存中的值。
+    const RobotDesignTemplateFactory factory;std::vector<core::DiagnosticRecord> diags;
+    auto draft=factory.createDraft(TemplateId{kTemplateIdGeneric6R},
+        runtime::InstallationPresetToken::Ground,"body-codec",diags).get();
+    draft.design.links.back().body=out->body;
+    const RobotDesignCodec codec;const auto bytes=codec.encode(ObjectVariant{draft.design},kCurrentFormatVersion);
+    ASSERT_TRUE(bytes.ok());const auto decoded=codec.decode(bytes.get(),kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());EXPECT_EQ(std::get<RobotDesign>(decoded.get()),draft.design);
+
+}
+
+/** @brief MDL-05/06：缺基准、未决议、非有限、负质量和非法完整张量均拒绝。 */
+TEST(ModelingManualBody, MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17)
+{
+    IRD_TEST_INFO("MDL-05",{},std::nullopt);
+    BodyData body;std::string error;ManualBodyEdit edit;
+    edit.mass=2;edit.centerOfMass=rw::math::Vector3D<double>{1,2,3};
+    edit.resolution=CentroidEditResolution::MigrateInertia;
+    EXPECT_FALSE(evaluateManualBodyEdit(body,edit,error));EXPECT_EQ(body,BodyData{});
+    edit.resolution=CentroidEditResolution::OverwriteInertia;edit.inertia=InertiaTensor{3,4,5,0.1,0.2,0.3};
+    auto out=evaluateManualBodyEdit(body,edit,error);ASSERT_TRUE(out)<<error;
+    EXPECT_DOUBLE_EQ(out->body.mass.value(),2);EXPECT_DOUBLE_EQ(out->body.centerOfMass.value()[2],3);
+    const auto full=out->body;
+    for(const double mass:{-1.0,0.0,std::numeric_limits<double>::infinity()}){
+        ManualBodyEdit bad;bad.mass=mass;EXPECT_FALSE(evaluateManualBodyEdit(full,bad,error));
+    }
+    for(const auto tensor:{InertiaTensor{-1,2,2,0,0,0},InertiaTensor{1,1,8,0,0,0},
+                          InertiaTensor{1,1,1,5,0,0}}){
+        ManualBodyEdit bad;bad.inertia=tensor;EXPECT_FALSE(evaluateManualBodyEdit(full,bad,error));
+    }
+    ManualBodyEdit bad;bad.centerOfMass=rw::math::Vector3D<double>{0,std::numeric_limits<double>::quiet_NaN(),0};
+    EXPECT_FALSE(evaluateManualBodyEdit(full,bad,error));EXPECT_EQ(body,BodyData{});
 }
