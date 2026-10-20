@@ -135,18 +135,24 @@ void KinEvaluationExecutor::setConfiguration(
 
 /**
  * @brief 可取消评估上下文（★ KIN-P4——任务级协作取消标志的上下文载体；
- *        与 NullEvaluationContext 的差异仅在 cancellationRequested：从
- *        任务级 atomic 标志读取——换绑/解绑置位后批间查询与逐项求解
- *        探针消费，批量任务早停返回 NotRun 残余，真实可取消）。
+ *        与 NullEvaluationContext 的差异：cancellationRequested 从任务级
+ *        atomic 标志读取——换绑/解绑置位后批间查询与逐样本探针消费，
+ *        任务早停返回 NotRun 残余，真实可取消；reportProgress 把域计算
+ *        里程碑单调落值到任务级进度原子——taskRows 投影消费（MA-03 接
+ *        线：此前进度被吞＝任务行永远无进度呈现））。
  *
- * 线程约束：cancellationRequested 在后台评估线程被周期查询（atomic
- * acquire 读）；构造/析构在任务闭包栈——标志 shared_ptr 随闭包存活。
+ * 线程约束：cancellationRequested/reportProgress 均在后台评估线程被
+ * 周期调用（atomic 读/写）；构造/析构在任务闭包栈——标志与进度原子的
+ * shared_ptr 随闭包与 TaskEntry 双侧存活。
  */
 class CancelableEvaluationContext final : public evidence::IEvaluationContext {
 public:
+    /// @param flag     [in] 任务级取消标志（submit 拍创建——换绑/解绑置位）。
+    /// @param progress [in] 任务级进度原子（可空——单点求解无进度源）。
     explicit CancelableEvaluationContext(
-        std::shared_ptr<std::atomic_bool> flag)
-        : m_flag(std::move(flag))
+        std::shared_ptr<std::atomic_bool> flag,
+        std::shared_ptr<std::atomic_uint8_t> progress = nullptr)
+        : m_flag(std::move(flag)), m_progress(std::move(progress))
     {
     }
     bool cancellationRequested() const override
@@ -155,8 +161,15 @@ public:
     }
     void reportProgress(std::uint8_t percent, std::string_view phase) override
     {
-        (void)percent;
-        (void)phase;  // 进度设施未装配——不伪造百分比（任务行缺省呈现）
+        (void)phase;  // 阶段词表归域（solve-region 等）——任务行只取百分比
+        // 单调化落值（域按完成数计百分比单调；取 max 防御并行分片的
+        // 乱序报告——relaxed 竞争无害，取大者即真实进度）。
+        if (m_progress != nullptr) {
+            const auto current = m_progress->load(std::memory_order_relaxed);
+            if (percent > current) {
+                m_progress->store(percent, std::memory_order_relaxed);
+            }
+        }
     }
     std::optional<std::vector<std::uint8_t>> tryObjectBytes(
         core::ObjectId objectId, core::ContentVersion contentVersion) const override
@@ -170,6 +183,8 @@ private:
     /// 任务级取消标志（submit 拍创建——换绑/解绑置位；共享所有权限定
     /// 在任务闭包与执行器成员表之间）。
     std::shared_ptr<std::atomic_bool> m_flag;
+    /// 任务级进度原子（可空——跨线程落点语义见 TaskEntry::progress 注）。
+    std::shared_ptr<std::atomic_uint8_t> m_progress;
 };
 
 bool KinEvaluationExecutor::projectRefFrameToBase(
@@ -528,12 +543,16 @@ kinematics::KinChannelBackgroundAck KinEvaluationExecutor::submit(
     }
 
     // ---- 受理登记（taskRef＝kind 前缀＋纪元＋序号——任务行对齐键）。
+    // MA-03：进度原子随受理创建并入账——后台 reportProgress 单调落值，
+    // taskRows 在 UI 线程读取（免锁跨线程最小共享面）。
     const std::string taskRef = "kin-cov-" + std::to_string(m_epoch) + "-"
                                 + std::to_string(m_seq);
     ack.accepted = true;
     ack.reason = "覆盖评估已受理";
     ack.taskRef = taskRef;
-    m_tasks.push_back(TaskEntry{taskRef, request.epoch, true, false, ""});
+    auto progressFlag = std::make_shared<std::atomic_uint8_t>(0);
+    m_tasks.push_back(TaskEntry{taskRef, request.epoch, true, false, "",
+                                progressFlag});
 
     // ---- 后台派发（闭包组装唯一书写点——launchCoverageTask；future
     // 必须持有（hpp m_inflight 注——丢弃即 submit 阻塞等完整个评估，
@@ -541,7 +560,7 @@ kinematics::KinChannelBackgroundAck KinEvaluationExecutor::submit(
     // m_snapshotId——回投侧的绑定键取提交时值，迟到任务绝不打上新锚）。
     launchCoverageTask(taskRef, request.epoch, request.snapshotId,
                        slice.query.configDigest, std::move(slice.query),
-                       std::move(slice.request), cancelFlag);
+                       std::move(slice.request), cancelFlag, progressFlag);
 
     return ack;
 }
@@ -598,7 +617,8 @@ void KinEvaluationExecutor::launchCoverageTask(
     const core::ContentIdentity& configDigestAtSubmit,
     kinematics::RegionCoverageQuery query,
     evidence::EvaluationRequest request,
-    const std::shared_ptr<std::atomic_bool>& cancelFlag)
+    const std::shared_ptr<std::atomic_bool>& cancelFlag,
+    const std::shared_ptr<std::atomic_uint8_t>& progressFlag)
 {
     std::shared_ptr<const kinematics::IKinRuntimeView> view = m_snapshot;
     const auto policyAtSubmit=m_policy; // UI受理拍捕获策略及其contentIdentity，后台不回查项目。
@@ -607,6 +627,7 @@ void KinEvaluationExecutor::launchCoverageTask(
     m_inflight.push_back(
         std::async(std::launch::async,
                    [self, routeContext, view, policyAtSubmit, epoch, taskRef, cancelFlag,
+                    progressFlag,
                     snapshotIdAtSubmit, configDigestAtSubmit,
                     query = std::move(query),
                     request = std::move(request)]() mutable {
@@ -629,7 +650,12 @@ void KinEvaluationExecutor::launchCoverageTask(
         MissingPolicyCollisionSession missingCollision;
         if (policyAtSubmit && policyAtSubmit->collision.enabled) { query.collisionSession=&missingCollision; }
         if (!policyAtSubmit) { query.collisionSession=&missingCollision; }
-        NullEvaluationContext context;
+        // MA-03（主线功能审计 2026-10-21）：此前此处是 NullEvaluationContext
+        // ——计算不消费取消（cancelFlag 只挡迟到结果，大型采样计算本身
+        // 不早停）、进度回报被吞（任务行永远无百分比）。接通可取消上下文：
+        // 批间查询＋逐样本探针消费 cancelFlag，runRegionCoverageComputation
+        // 停止派发剩余批次（NotRun 残余）；reportProgress 单调落值。
+        CancelableEvaluationContext context{cancelFlag, progressFlag};
         kinematics::KinChannelCoverageResult result;
         try {
             const kinematics::RegionCoverageComputation computation =
@@ -700,14 +726,18 @@ void KinEvaluationExecutor::launchCoverageTask(
 
         // ---- 回投 UI 线程（账面写点/note 投递的线程分格——类注职责链
         // 末段；queued functor 在 receiver 析构后由 Qt 安全丢弃——
-        // 执行器与上下文同存活期，无悬垂）。
+        // 执行器与上下文同存活期，无悬垂）。取消（MA-03 接通后计算真实
+        // 早停——NotRun 残余＋incomplete=true）按"中断"轨入账而非伪装
+        // 成一次完整覆盖：cancelled 读 acquire 与计算探针同序，置位即
+        // 至少一批未派发。
+        const bool cancelledNow = cancelFlag->load(std::memory_order_acquire);
         QMetaObject::invokeMethod(
             routeContext,
             [self, taskRef, snapshotIdAtSubmit, configDigestAtSubmit, epoch,
-             result]() {
+             result, cancelledNow]() {
                 self->onCoverageFinished(taskRef, snapshotIdAtSubmit,
                                          configDigestAtSubmit, epoch, result,
-                                         false);
+                                         cancelledNow);
             },
             Qt::QueuedConnection);
     }));
@@ -1541,7 +1571,14 @@ std::vector<kinematics::KinChannelTaskStatusRow> KinEvaluationExecutor::taskRows
         row.taskRefText = t.taskRef;
         if (t.running) {
             row.stateLabelKey = "task.state.running";
-            row.percent = std::nullopt;  // 进度设施未装配——不伪造百分比
+            // MA-03：覆盖任务的进度原子由后台 reportProgress 单调落值——
+            // 真实百分比呈现；无进度源（单点求解）维持缺省不伪造。
+            if (t.progress != nullptr) {
+                row.percent = static_cast<int>(
+                    t.progress->load(std::memory_order_relaxed));
+            } else {
+                row.percent = std::nullopt;
+            }
         } else if (t.interrupted) {
             row.stateLabelKey = "task.state.interrupted";
         } else if (t.summary.rfind("覆盖评估失败", 0) == 0) {

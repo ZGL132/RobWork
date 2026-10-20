@@ -209,6 +209,9 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_runtime_test
+    test/TestMainReport.cpp            # 自有测试入口：安装 testkit 记录监听器
+                                       # （MA-09——gtest_main 固定入口无监听器
+                                       # 安装点，--ird_report 不产报告）
     test/BuildRedLineTest.cpp           # RT-T01：构建红线扫描＋L1 清单钉住
     test/ErrorsTest.cpp                 # RT-T02：RT-ERR 全表（token/稳定码/分类逐值）＋异常轨＋错误载荷
     test/SourcesTest.cpp                # RT-T02：Sources 注入契约语义（§3.3）＋错误归属可定位（§5.2 表）
@@ -316,7 +319,7 @@ target_sources(sdurws_ird_runtime_test PRIVATE
 target_link_libraries(sdurws_ird_runtime_test PRIVATE
     sdurws_ird_runtime
     sdurws_ird_testkit
-    GTest::gtest_main)
+    GTest::gtest)  # 自有 main（TestMainReport.cpp）——gtest_main 的 main 不再用
 
 # 校验器私有实现头（src/DescriptionValidator.hpp）对单元内测试可见——
 # §3.1 把校验器列在 src（非模板实现），R-2 只禁跨单元私有头（RT-T11 编译器

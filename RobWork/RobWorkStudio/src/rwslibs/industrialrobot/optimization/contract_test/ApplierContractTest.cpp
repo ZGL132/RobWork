@@ -487,14 +487,35 @@ TEST_F(ApplierContractFixture, TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2
     EXPECT_FALSE(out.branchAfterCreate.label.empty());
 
     // OPT-VER-145（半区二）：不复制对象——建支是纯元数据命令（分支表随
-    // ProjectMetadata 提交，§10.2）：其修订引用集**零设计对象写入**（无
-    // RobotDesign token 的引用条目——设计对象库字节面零新增，仅元数据
-    // 对象前进），基线根对象的 (oid, cv) 引用保持指向既有对象。
+    // ProjectMetadata 提交，§10.2）。观测语义随 WP-14-T12 A-13 修订自足
+    // 语义修正（主线功能审计 MA-05——2026-10-21）：A-13 落位后新修订经
+    // 保留集携带父修订全部未改对象引用，"不复制"的权威含义＝对象库零
+    // 新增、设计字节零改写，而非修订视图缺失该引用——旧断言"引用集零
+    // RobotDesign 条目"与完整引用集语义冲突（建支修订恰保留基线的唯一
+    // 设计引用）。强断言三件：恰一根引用＋原 oid＋原 cv（对象库无新增
+    // 设计对象版本、基线字节原样可取）。
     const project::RevisionView metaRev
         = opened->store->query().revision(*out.step1.newRevision);
-    for (const project::ObjectRef& ref : metaRev.objectRefs) {
-        EXPECT_NE(ref.objectTypeToken, "RobotDesign")
-            << "建支修订不得写入任何设计对象（不复制对象——OPT-VER-145）";
+    {
+        std::vector<project::ObjectRef> metaDesignRefs;
+        for (const project::ObjectRef& ref : metaRev.objectRefs) {
+            if (ref.objectTypeToken == "RobotDesign") {
+                metaDesignRefs.push_back(ref);
+            }
+        }
+        ASSERT_EQ(metaDesignRefs.size(), 1U)
+            << "建支修订自足视图恰保留基线的唯一设计引用（A-13 完整引用集）";
+        EXPECT_EQ(metaDesignRefs.front().objectId, root.objectId)
+            << "保留引用指向原对象（oid 不变——不复制不重编址）";
+        EXPECT_EQ(metaDesignRefs.front().contentVersion, root.contentVersion)
+            << "保留引用指向原内容版本（cv 不变——设计对象库零新增版本）";
+        // 对象库层面：原设计字节仍按原 (oid, cv) 可取且等于基线字节——
+        // 建支既未改写也未另存设计对象（"不复制对象"的对象库观测面）。
+        const auto retainedBytes = opened->store->query().tryObject(
+            root.objectId, root.contentVersion);
+        ASSERT_TRUE(retainedBytes.has_value());
+        EXPECT_EQ(*retainedBytes, baselineBytes)
+            << "建支后设计对象字节仍为基线原字节（零改写）";
     }
     // 元数据对象前进：建支修订携带有效的元数据引用（分支表增量——
     // ProjectMetadata 新版本随修订发布）。

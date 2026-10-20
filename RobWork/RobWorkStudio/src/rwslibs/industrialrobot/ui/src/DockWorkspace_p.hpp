@@ -43,6 +43,70 @@ inline void configureWorkspaceTabs(QMainWindow& host, const QString& title)
 }
 
 /**
+ * @brief 内容部件最小高变化的重协商过滤器（MA-04——主线功能审计
+ *        2026-10-21 的布局缺口修复面）。
+ *
+ * 缺陷机理（requirements-tour 几何取证）：QScrollArea::setWidgetResizable
+ * 只在**视口 resize** 时按 max(视口, 内容 minimumSizeHint) 重设内容部件
+ * 高。两类缺口使内容高停留在旧协商值（实测 917 对回落后的 455）：①内部
+ * 状态切换（需求面板四页签当前页变化——区域页表格最小高远大于工位页）；
+ * ②更隐蔽的内部状态变化（表单行随树选择收起/展开）被**内层滚动区吸收**，
+ * 最小高提示改变不再产生任何到达本层的事件（事件类型实测留痕：
+ * LayoutRequest 仅在 917 期间到达，最小高回落后零事件）。差值全部成为
+ * 滚到底后的空白尾区：用户/取证通道滚到底只见树与表单的拉伸空白，
+ * "滚动条到位≠内容可达"。
+ *
+ * 本过滤器在内容部件的 LayoutRequest 与 **Paint** 拍重申高度不变式：
+ * 内容高 == max(视口高, 当前 minimumSizeHint)（与 Qt widgetResizable 同
+ * 式）。Paint 拍自愈是确定性闭环：任何状态变化后的第一次重绘即修正
+ * （resize 触发重排与重绘，二次绘制时不变式已成立，无循环）；每次重绘
+ * 一次整数比较，热路径可忽略。只影响高度协商，不触碰任何业务数值、
+ * 不提交草稿/修订；宽度仍交 Qt（widgetResizable 原语义）。UI 线程限定
+ * （事件派发即 UI 线程）。
+ */
+class DockContentResizeFilter : public QObject
+{
+public:
+    explicit DockContentResizeFilter(QScrollArea& owner)
+        : m_owner(owner)
+    {
+    }
+
+protected:
+    /// @brief LayoutRequest/Paint 拦截：重申内容高不变式。
+    /// @param watched [in] 被过滤对象（安装时绑定内容部件）。
+    /// @param event [in] 事件；不消费任何事件（全部照常分发——重协商
+    /// 经 resize 自然生效，不与 Qt 竞争滚动条状态）。
+    /// @return QObject::eventFilter 的透传结果。
+    bool eventFilter(QObject* watched, QEvent* event) override
+    {
+        if (watched == m_owner.widget() && m_owner.widgetResizable()
+            && (event->type() == QEvent::LayoutRequest
+                || event->type() == QEvent::Paint)) {
+            QWidget* content = m_owner.widget();
+            const int targetHeight = std::max(m_owner.viewport()->height(),
+                                              content->minimumSizeHint().height());
+            if (content->height() != targetHeight
+                || content->maximumHeight() != targetHeight) {
+                // 最大高夹紧（与 resize 同拍）：widgetResizable 的回写路径
+                // 以内容 sizeHint 为目标时会把高度顶回旧协商值（实测
+                // 917↔455 拉锯）——maximumHeight 是 Qt 硬约束，resize 钳制
+                // 于 [minimumHeight, maximumHeight]，回写被确定性压制。
+                // 视口增高时本拍即放宽上界，不阻断正常伸展。
+                content->setMaximumHeight(std::max(targetHeight, content->minimumHeight()));
+                content->resize(m_owner.viewport()->width(), targetHeight);
+            }
+        }
+        return QObject::eventFilter(watched, event);
+    }
+
+private:
+    /// 滚动区本体（构造绑定——比 qobject_cast 持内容指针更稳：setWidget
+    /// 换内容时过滤器随旧内容失效，不悬垂）。
+    QScrollArea& m_owner;
+};
+
+/**
  * @brief 给宿主 Dock 安装可滚动内容，使长表单的最小高度不传播到整个窗口。
  * @param dock [in,out] 宿主 Dock，UI 线程借用；本函数不持有其引用。
  * @param panel [in] 域工厂产物；非空时所有权交给滚动视口，空则保持空 Dock。
@@ -64,7 +128,13 @@ inline void installDockViewport(QDockWidget& dock, QWidget* panel,
     // 原表单最小尺寸不变，全部内容以滚动访问，避免标签栏被挤到任务区背后。
     scroll->setMinimumSize(minWidth, minHeight);
     scroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    // MA-04：内容最小高重协商过滤器。过滤器对象以 scroll 为父（同生命
+    // 周期——滚动区析构时过滤器同亡，无泄漏）；监听对象＝内容部件
+    //（setWidget 后建立父子，widget() 恒非空）。
+    auto* resizeFilter = new DockContentResizeFilter(*scroll);
+    resizeFilter->setParent(scroll);
     scroll->setWidget(panel);
+    panel->installEventFilter(resizeFilter);
     dock.setWidget(scroll);
 }
 

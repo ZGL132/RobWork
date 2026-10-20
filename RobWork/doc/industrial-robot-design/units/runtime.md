@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.27（2026-10-21，主线功能审计修复批 MA-09：`sdurws_ird_runtime_test` 自有测试入口 TestMainReport.cpp——安装 testkit TestRecordListener（ird-test-report.json 用例级明细）；此前 gtest_main 固定入口无监听器安装点，`--ird_report` 传参不产报告（审计留痕缺口五目标之一）。L2 零 Qt 红线保持：纯 gtest 入口不构造 QCoreApplication（kinematics WP-15-T12 先例的豁免形态差异如实登记）。evidence/policy 两单元同批同款（各卡登记略）。前一版本 v0.26 保留。） |
 | 文档版本 | v0.26（2026-10-18，转义损毁补齐批——41fc3b78 首修假阴性勘误：locked→blocked、validate-* 首字母两模式按字节级替换补齐（v0.25 仅落上 ToUpper 模式；locked/validate-* 因源文含不可见 0x08/0x0B 控制字符未替换，grep 验证同样被阻断成假阴性）；F-005/F-006/F-058/F-078/F-936 resolution 补勘误注记＋新登 F-937）。前一版本 v0.25 保留如下。 |
 | 文档版本 | v0.25（2026-10-18，AI 执行就绪补充/单元任务退出条件两节转义损毁修复：未展开 runtime-ToUpper 模板→单位代号、locked→blocked、validate-* 首字母——F-005/F-006/F-058/F-078/F-936）。前一版本 v0.24 保留如下。 |
 | 文档版本 | v0.24（2026-10-12，治理批台账滞后修正——纯登记面零契约语义变更：§15.3 三行补注消账 P-RT-4〔modeling WP-13-T11 交叉核对完成，留痕 traceability/wp13-t11-prt4-crosscheck.md〕／P-RT-8〔project.md P-PR-7〔PRJ-T16〕project 侧确认无增量需求〕／P-RT-9〔evidence.md P-EV-6 已于 EV-T12 就地翻转、对账关闭〕＋§15.4 v0.24 行；governance-log P-RT-4 行同批 closed。前一版本 v0.23（RT-T15 编译器基本图元几何挂接实现落位登记——原文见 §15.4 v0.23 行）；v0.22：F-741 契约文档更正；v0.21：RT-T15 立项登记）|

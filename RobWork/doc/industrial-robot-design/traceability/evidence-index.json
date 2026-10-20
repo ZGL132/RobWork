@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-21T01:02:28+08:00",
+  "generatedAt": "2026-10-21T04:06:26+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 14500,
-    "totalBytes": 791452327,
+    "totalFiles": 14514,
+    "totalBytes": 792045620,
     "byKind": {
-      "manual-acceptance": 1,
-      "log": 1,
-      "build-log": 13549,
-      "json-data": 7,
-      "governance-record": 40,
-      "gtest-report": 335,
-      "benchmark": 8,
       "pipeline-artifact": 2,
+      "build-log": 13563,
+      "gtest-report": 335,
+      "governance-record": 40,
+      "log": 1,
       "acceptance-record": 516,
-      "markdown-doc": 41
+      "markdown-doc": 41,
+      "benchmark": 8,
+      "json-data": 7,
+      "manual-acceptance": 1
     },
     "byLifecycle": {
-      "superseded": 0,
-      "unverified": 13908,
+      "unverified": 13922,
+      "current": 27,
       "historical": 565,
-      "current": 27
+      "superseded": 0
     },
     "associated": 597,
-    "unassociated": 13903,
-    "shaComputed": 14480,
+    "unassociated": 13917,
+    "shaComputed": 14494,
     "shaSkippedLarge": 20,
     "duplicateGroupsTotal": 831,
     "duplicateGroupsListed": 100
@@ -105851,6 +105851,118 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/wp13-t27-audit-fixes/diag-event-trace-stale-negotiation.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 372078,
+      "sha256": "1939a7ef96609f5e603533fad8e99bbe6851f32a9425a95e6d7e683b2356749d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/green-fix-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10035,
+      "sha256": "c819a3d0c9e7810786163e33bf972d7dabe3947aa553bf2da5ff40ba0f1d1576",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/green-full-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 33891,
+      "sha256": "7b329ad576cab2d049ba32b80e60db382fdccff92fa1e1b87554b18bfe568df1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/green-host-tour-auto.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2302,
+      "sha256": "c1d09c16fa2689b182bb10eaf7c36f2175221bb3fbbcdd0790b7afba7298f6ab",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/green-host-tour-layout.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7062,
+      "sha256": "8e72ebd0557ed7302ef32138c1a09f247c6ed9e901e083f8bf5137ecbe980c63",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/green-host-tour-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29085,
+      "sha256": "5e11a0a79a1aa632a3c50232554f1b553fdcea61e35023aeca1750cdef434392",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/green-optimization-contract-52.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20500,
+      "sha256": "d41eee08b788ba7a309ace794f0473982a49b563cd24067a22f9dc946534e6f5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/green-req-tour-after-fix.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19397,
+      "sha256": "9c4032f5967f04cff23d92df9f50e22b5a4378533f1da4efefd1faf2f8132e6c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/ma09-runtime-ird-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 233,
+      "sha256": "04757c7fda50e3ca146d91816df5614fe067ad020303779586708365372091d8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/ma09-targets-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41555,
+      "sha256": "8aa6f3671e7e5e9b103e4f802e483f9e2e121d23fe5f95f9a87ec021d1f80647",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/README.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4512,
+      "sha256": "7eddb173cca5e5d4f8fc84229603116b6dcd534bd736069abee8941f0a7babbc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/red-req-tour-blank-tail-stale-assertions.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19389,
+      "sha256": "070b7ae53fdde68b6aca37874a6c9dfcf56e433cd6e779f78870c7926a5e4f93",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/req-tour-fixed-shots/tour-9-populated-bottom-0.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19085,
+      "sha256": "53dde9f7ba3352f8c080b8bc0afaa6996085133e03132cfe07534a3e5f7f3a11",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/wp13-t27-audit-fixes/req-tour-fixed-shots/tour-9-populated-bottom-1.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12487,
+      "sha256": "f9341d6450890b5ecd8edd5f80ff6e6127bfb4ac9da97fe53daa515d0f4eb4ae",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/wp14-t02/base_histogram.txt",
       "kind": "build-log",
       "taskIds": [],
@@ -115158,7 +115270,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1269091,
+      "bytes": 1270773,
       "sha256": null,
       "lifecycle": "unverified"
     },

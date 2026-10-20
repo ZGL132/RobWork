@@ -568,7 +568,8 @@ private:
                             const core::ContentIdentity& configDigestAtSubmit,
                             kinematics::RegionCoverageQuery query,
                             evidence::EvaluationRequest request,
-                            const std::shared_ptr<std::atomic_bool>& cancelFlag);
+                            const std::shared_ptr<std::atomic_bool>& cancelFlag,
+                            const std::shared_ptr<std::atomic_uint8_t>& progressFlag);
 
     /// ★ KIN-P4：单点求解任务后台派发（真实求解器执行——取消探针接
     /// 任务级标志；完成回投 onSolveFinished）。
@@ -598,6 +599,12 @@ private:
         bool running = true;        ///< true＝在途；false＝终态
         bool interrupted = false;   ///< 终态中断标记
         std::string summary;        ///< 终态摘要（空＝在途）
+        /// 后台评估进度（MA-03 接线——runRegionCoverageComputation 经
+        /// CancelableEvaluationContext::reportProgress 写入；taskRows 在
+        /// UI 线程只读取值。atomic 单向整型＝跨线程最小共享面，免锁；
+        /// 空＝该任务无进度源（单点求解），任务行维持缺省呈现不伪造。
+        /// 账面行本体仍仅 UI 线程增删——该指针所指原子是唯一跨线程字）。
+        std::shared_ptr<std::atomic_uint8_t> progress;
     };
 
     /// 完成处理（后台线程经 invokeMethod 回 UI 线程后执行——账面写点

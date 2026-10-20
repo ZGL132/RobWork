@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.36（2026-10-21，主线功能审计修复批 MA-03：ui/plugin/KinEvaluationChannel 覆盖后台通道接通真实取消与进度——launchCoverageTask 以 CancelableEvaluationContext 取代 NullEvaluationContext（此前 cancelFlag 只挡迟到结果、计算本身不早停、进度被吞）；上下文新增进度原子落点（reportProgress 单调取大落值，TaskEntry.progress 跨线程共享），taskRows 对在途覆盖任务行投影真实百分比（无进度源的单点求解维持缺省不伪造）；取消时结果按 interrupted 轨入账（onCoverageFinished interrupted=true）不伪装完整覆盖。runRegionCoverageComputation 的批间/逐样本取消探针与 §7.1 reportProgress 语义零变化——纯接线。前一版本 v0.35 保留。） |
 | 文档版本 | v0.35（2026-10-19，WP-14-T12 A-16 六分量任务约束与五姿态规则真实消费：TaskPoseConstraint 表尾值扩展；IK/批量契约版本升级；空值兼容旧 FullPose） |
 | 文档版本 | v0.33（2026-10-18，kinematics 清理批（F-932/F-933 消账）：§11 T19 行符号归属订正为 `KinPanelRotation::rotationFromRpySi`（实际落位 kinematics/plugin/KinPanelRotation）；kGimbalEpsilon 收敛为头文件 `inline constexpr kGimbalEpsilonDefault` 单一来源；DTB v0.94 同批）。前一版本 v0.32 保留如下。 |
 | 文档版本 | v0.32（2026-10-18，WP-15-T19 按所有者裁决路线 A 实施：§11 T19 行更新——插件 `rotationFromRpySi`（Eigen 头文件轴角组合，Z-Y-X 与 rw::math::RPY 同序）＋集成 `IRD_HAVE_SDURW_MATH` 等价钉；设计偏离登记＝KIN-R2 v0.28『rw 库设施直调零自写三角』改述为『Eigen 头文件轴角组合＋集成等价钉』；DTB v0.91 同批）。前一版本 v0.31 保留如下。 |

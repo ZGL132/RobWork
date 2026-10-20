@@ -5,6 +5,7 @@
 | 项目 | 内容 |
 | --- | --- |
 | 文档代号 | UNIT-UI |
+| 文档版本 | v1.111（2026-10-21，主线功能审计修复批 MA-04：Dock 滚动视口内容高重协商缺口闭合——`installDockViewport`（src/DockWorkspace_p.hpp）新增 `DockContentResizeFilter`，在内容部件 LayoutRequest/Paint 拍重申不变式〔内容高==max(视口高,当前 minimumSizeHint)〕并以 maximumHeight 同拍夹紧压制 widgetResizable 以 sizeHint 为目标的回写（事件取证留痕：内容高被旧协商值 917 钉住、最小高回落 455 后零事件到达，此前任何事件钩子均无效）；requirements-tour step13 补真实断言〔滚到底后 Dock 可视区交互控件数≥1——此前只查滚动条 value==maximum，空白尾区两轮稳定复现而自动断言全绿〕＋内外滚动几何/面板子项最小高 stdout 留痕。修复后 content 889→560、vmax 570→241、可视交互控件 0→7/5，tour 全绿。UI 线程限定；零业务数值/草稿/修订面。前一版本 v1.110 保留。） |
 | 文档版本 | v1.110（2026-10-18，UI-T85 实现落位登记——草稿链格式裁决落地跨域修复批：F-918 归一化半区〔save 归一化＋守卫钉〕＋F-917 铠装半区〔hexArmor/unhexArmor 对称〕＋HostDraftChain 段 B 翻正向〔RequirementsDraftFullChainByteEqual_UI_T85_F917——翻转即 F-917 关闭验收面〕＋投影字段改义〔UiProjections.hpp 两向事实＋三处旧语义注释同步〕＋§8 schemaVersion 语义注＋§12.5 S3 钉住注＋§13 UI-T85 行兑现注＋§16.7 v1.110；findings F-917/F-918 翻 fixed；project.md v0.26/requirements.md v0.19/DTB v0.87 同批。前一版本保留如下）。 |
 | 文档版本 | v1.109（2026-10-18，UI-T85 立卡：所有者裁决 F-917/F-918 编码方案落地〔hex 铠装对齐 modeling 惯例＋project save 归一化——裁决全文见 findings 两 owner 行〕；§13 增 UI-T85 行＋§16.7 v1.109。前一版本保留如下）。 |
 | 文档版本 | v1.108（2026-10-17，UI-T84 实现落位登记——宿主装配与生命周期收口 F-910/F-911 修复批：§13 增行＋§16.7 v1.108＋冒烟 step8 常驻。同日返工批修订：§16.7 v1.108 行①段根因叙事按验收 attempt 1 实证修正〔触发面＝关闭不拆绑重复挂接、放大面＝undo 可用性谓词查询已关上下文——原"双 teardown"叙事废弃〕＋④段两段式全链测试与 F-917/F-918 登记。前一版本保留如下）。 |

@@ -8305,6 +8305,80 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
                 bar->setValue(bar->maximum()); settleEvents(100);
                 ok(bar->value()==bar->maximum(),"step13 populated-scroll-bottom-reachable");
             }
+            // MA-04（主线功能审计 2026-10-21）：滚动条到位≠内容可达——
+            // 此前滚到底的截图内容区近乎全空白且两轮稳定复现，而旧断言只
+            // 查滚动条 value==maximum 仍报 PASS（绿色计数掩盖视觉异常）。
+            // 补两件：①几何留痕——逐可见滚动区记录视口高/内容高/滚动条
+            // max，加面板最底交互控件的 Dock 映射几何（stdout 进 tour 日志，
+            // 供布局归因）；②真实断言——滚到底后最底部可交互控件必须仍
+            // 与 Dock 可视区相交且 visibleRegion 非空（"可见即可达"最低
+            // 标准：底部若是拉伸空白尾区，最底控件已被滚出可视区即红）。
+            {
+                const QRect dockRect = m_requirementsDock ? m_requirementsDock->rect() : QRect();
+                int scanned = 0;
+                int interactiveCount = 0;
+                int visibleInteractive = 0;  // 滚到底后仍与 Dock 可视区相交的交互控件数
+                for (auto* w : panel->findChildren<QWidget*>()) {
+                    ++scanned;
+                    if (!w->isVisible() || !w->isEnabled()) { continue; }
+                    const bool interactive =
+                        qobject_cast<QPushButton*>(w) != nullptr
+                        || qobject_cast<QToolButton*>(w) != nullptr
+                        || qobject_cast<QLineEdit*>(w) != nullptr
+                        || qobject_cast<QComboBox*>(w) != nullptr
+                        || qobject_cast<QSpinBox*>(w) != nullptr
+                        || qobject_cast<QDoubleSpinBox*>(w) != nullptr;
+                    if (!interactive) { continue; }
+                    ++interactiveCount;
+                    const QRect mapped(w->mapTo(m_requirementsDock, QPoint(0, 0)), w->size());
+                    if (dockRect.intersects(mapped)
+                        && !w->visibleRegion().isEmpty()) {
+                        ++visibleInteractive;
+                    }
+                }
+                std::string geo = "[ird-ui-smoke-tour-geo] pass="
+                    + std::to_string(pass) + " dock="
+                    + std::to_string(dockRect.width()) + "x"
+                    + std::to_string(dockRect.height())
+                    + " scanned=" + std::to_string(scanned)
+                    + " interactive=" + std::to_string(interactiveCount)
+                    + " visibleInteractive=" + std::to_string(visibleInteractive);
+                for (auto* scroll : layoutScrolls) {
+                    if (!scroll->isVisible() || scroll->widget() == nullptr) { continue; }
+                    geo += " | " + scroll->objectName().toStdString()
+                        + " vp=" + std::to_string(scroll->viewport()->height())
+                        + " content=" + std::to_string(scroll->widget()->height())
+                        + " vmax=" + std::to_string(scroll->verticalScrollBar()->maximum());
+                }
+                // 二层几何（MA-04 归因）：面板最小高度提示＋内容部件树高——
+                // 定位外层 content(=面板最小高)由哪个子项驱动。
+                geo += " || panelMinHint="
+                    + std::to_string(panel->minimumSizeHint().height());
+                QWidget* panelContent = panel;
+                if (auto* outer = qobject_cast<QScrollArea*>(panel)) {
+                    panelContent = outer->widget();
+                }
+                if (panelContent != nullptr) {
+                    geo += " contentMin="
+                        + std::to_string(panelContent->minimumSizeHint().height())
+                        + " contentH="
+                        + std::to_string(panelContent->height());
+                    const auto kids = panelContent->findChildren<QWidget*>();
+                    for (auto* w : kids) {
+                        if (w->parentWidget() != panelContent) { continue; }
+                        geo += " child[" + w->objectName().toStdString()
+                            + "]min="
+                            + std::to_string(w->minimumSizeHint().height());
+                    }
+                }
+                // 真实断言（MA-04）：滚到底后 Dock 可视区内必须仍有交互
+                // 控件（≥1）——空白尾区形态下全部控件被滚出可视区即红。
+                ok(visibleInteractive >= 1,
+                   "step13 populated-bottom-controls-visible-"
+                    + std::to_string(pass) + " (cur="
+                    + std::to_string(visibleInteractive) + ")");
+                std::cout << geo << std::endl;
+            }
             snapPng(m_requirementsDock,("tour-9-populated-bottom-"+std::to_string(pass)+".png").c_str());
         }
         hostWin->resize(savedSize); hostWin->restoreState(savedLayout); settleEvents(150);

@@ -369,6 +369,23 @@ RequirementsPanelWidget::RequirementsPanelWidget(bool writable, QWidget* parent)
     buildRegionPage(m_pages);
     buildConditionPage(m_pages);
     buildValidationPage(m_pages);
+    // MA-04（主线功能审计 2026-10-21）：页签切换后收缩自身到当前最小高。
+    // 缺陷机理：宿主 Dock 滚动视口（installDockViewport 的
+    // widgetResizable 滚动区）只在视口 resize 或内容部件 resize 时按
+    // max(视口, minimumSizeHint) 重协商内容高；QStackedLayout 的最小高
+    // 随当前页变化（区域页表格最小高远大于工位页），但"页签切换"本身
+    // 不产生任何一方 resize——内容部件停留在旧页钉住的高（实测 889/917
+    // 对 455），差值全部成为滚到底后的空白尾区。这里在切换拍显式收缩到
+    // 当前 minimumSizeHint：外层滚动区对内容 resize 的重协商是 Qt 确定
+    // 路径，随后按新最小高稳定（视口更高时由 widgetResizable 拉回视口
+    // 高，语义不变）。只影响几何协商，零业务数值/草稿/修订面。
+    connect(m_pages, &QTabWidget::currentChanged, this, [this](int) {
+        if (m_pages->count() == 0) { return; }
+        const int minHeight = minimumSizeHint().height();
+        if (height() > minHeight) {
+            resize(width(), minHeight);
+        }
+    });
     // 工业风主题（UI-T37 R1——面板作用域安装：本面板子树生效，宿主
     // chrome/其他域面板不受影响；QSS 由 UiTheme 调色板常量单一词表拼装）。
     ui::applyIndustrialTheme(this);

@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.22（2026-10-21，主线功能审计修复批 MA-04 面板侧配合：`RequirementsPanelWidget` 构造挂 `m_pages` currentChanged——切换拍把面板自身收缩到当前 minimumSizeHint（height()>min 才收缩），为宿主 Dock 滚动视口（ui 侧 DockContentResizeFilter，ui.md v1.111）的 widgetResizable 重协商提供确定触发；与 ui 侧 Paint 拍不变式重申互为双保险。零业务数值/草稿/修订面。前一版本 v0.21 保留。） |
 | 文档版本 | v0.21（2026-10-19，DOC-T16 测试策略修订批——GUI 口径翻转：§1.4 非目标行/§10.1 总则/V-22 行/§13 REQ-08 行的"仅登记不启动"废止，按 DTB §5.2 DoD 第 5~7 条（DTB v0.97 同批）常态化执行——人工点验＋关键交互链固化为 Widgets 级生产路径测试进常驻回归＋入口/布局冒烟＋宿主遍历；依据＝需求模块全功能审计〔分支 codex/requirements-audit-20261018，报告 traceability/builds/requirements-audit-20261018/REPORT.md，随 wp14-t12 合入主线〕A-01~A-12 全部位于无自动化覆盖的生产接线/呈现层＋修复批新登 A-13~A-16 跨域消费链；纯登记零语义零代码；§14.6 v0.21 行；acceptance-protocol v1.10/modeling v0.55/DTB v0.97 同批。前一版本 v0.20 保留如下。 |
 | 文档版本 | v0.20（2026-10-18，B7 长尾分诊批——卡头「日期」行失同步家族（F-369/F-374）底案修复：日期行补 2026-10-18（v0.19）现行段；家族两条随批关闭；纯登记零语义。前一版本 v0.19 保留如下。 |
 | 文档版本 | v0.19（2026-10-18，UI-T85（≙WP-10-T85）F-917 hex 铠装对称落位登记——草稿链格式裁决跨域批（findings F-917/F-918 所有者裁决 2026-10-18 落地；requirements 侧半区）：RequirementsDraftSource build/adopt 两端 hexArmor/unhexArmor 对称〔F-917 裁决——payload＝帧字节小写 hex 文本过 project 草稿格式 UTF-8 校验，与 modeling 既有铠装惯例同型；解铠装失败＝草稿损坏 fail-fast 不猜测；铠装仅在域插件边界内侧，CR-02 ui 只搬运不解析不动〕＋schemaVersion 改义注记〔域内载荷版本仅呈现/遥测不落盘——project save 归一化，F-918〕；§14.6 v0.19 行；ui.md v1.110/project.md v0.26/DTB v0.87 同批；需求语义零变化。前一版本 v0.18（2026-10-12，FIX-T2 采样点着色功能批 requirements 面板面落位——完整描述见下行）|

@@ -146,6 +146,9 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_policy_test
+    test/TestMainReport.cpp            # 自有测试入口：安装 testkit 记录监听器
+                                       # （MA-09——gtest_main 固定入口无监听器
+                                       # 安装点，--ird_report 不产报告）
     test/BuildRedLineTest.cpp
     test/PolicySetTest.cpp    # POL-T02：字段约束与不可变性用例（POL-PARSE-2 前置）
     test/PolicyInputTest.cpp  # POL-T03：canonical 往返/位模式/排序无关/CR-02/错误路径
@@ -201,7 +204,7 @@ target_link_libraries(sdurws_ird_policy_test PRIVATE
     sdurws_ird_testkit   # POL-T10：checkDiagnosticRecord/checkComparativeFields
                          # （§11 测试设施——units/testkit.md §5.5 签名的真实
                          # 消费；仅测试目标链接，产品库红线面不变）
-    GTest::gtest_main)
+    GTest::gtest)  # 自有 main（TestMainReport.cpp）——gtest_main 的 main 不再用
 
 # 源码树位置与 L1 链接清单注入（红线扫描用例输入；清单＝R-5 例外钉住——运行期
 # 断言"清单与登记一致"，集成四库、冒烟空串）。
@@ -236,6 +239,9 @@ add_custom_command(TARGET sdurws_ird_policy_test POST_BUILD
 #   - 公共头 include：policy/test（替身头 <sdurws/ird/policy/testdouble/…>
 #     ——§11 测试设施行的落位；仅测试目标可见，产品 include 面不变）。
 add_executable(sdurws_ird_policy_contract_test
+    test/TestMainReport.cpp            # 自有测试入口：安装 testkit 记录监听器
+                                       # （MA-09——gtest_main 固定入口无监听器
+                                       # 安装点，--ird_report 不产报告）
     test/PolicyCodecFixtureContractTest.cpp   # POL-T11：pol-policy-codec-fixture
                                               # 消费（双实现互证——编码/身份/
                                               # 变体无关性；GoldenDataset 全链）
@@ -289,7 +295,7 @@ target_link_libraries(sdurws_ird_policy_contract_test PRIVATE
     sdurws_ird_policy
     sdurws_ird_testkit   # §10.2 policy 行消费面（Dataset/JsonLite/ToleranceProfile/
                          # SetCheck/IRD_TEST_INFO——测试侧依赖，产品库红线面不变）
-    GTest::gtest_main)
+    GTest::gtest)  # 自有 main（TestMainReport.cpp）
 
 # 替身头 include 根（§11 落位 policy/test/sdurws/ird/policy/testdouble/）＋
 # 源码树位置注入（边界机检/源码锚扫描的输入——与 _test 目标同源）。

@@ -83,6 +83,9 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_evidence_test
+    test/TestMainReport.cpp            # 自有测试入口：安装 testkit 记录监听器
+                                       # （MA-09——gtest_main 固定入口无监听器
+                                       # 安装点，--ird_report 不产报告）
     test/BuildRedLineTest.cpp
     test/ErrorsTest.cpp              # EV-T02：EV-ERR 全表（token/建议码逐值）＋异常轨
     test/DependencyTest.cpp          # EV-T02：EV-DEP 键语法/声明闭包/条目语法正反例
@@ -112,7 +115,7 @@ endif()
 target_link_libraries(sdurws_ird_evidence_test PRIVATE
     sdurws_ird_evidence
     sdurws_ird_testkit
-    GTest::gtest_main)
+    GTest::gtest)  # 自有 main（TestMainReport.cpp）——gtest_main 的 main 不再用
 
 # 源码树位置注入（红线扫描用例输入——core/testkit/runtime 同款）。
 target_compile_definitions(sdurws_ird_evidence_test PRIVATE
@@ -148,6 +151,9 @@ ird_add_gtest(sdurws_ird_evidence_test)
 # （源码扫描）＋包络三轴字段类型＝core 词表类型（编译期 static_assert）＋
 # token 字面量与 core::toToken 输出逐一相等（词表漂移的机检防线）。
 add_executable(sdurws_ird_evidence_contract_test
+    test/TestMainReport.cpp            # 自有测试入口：安装 testkit 记录监听器
+                                       # （MA-09——gtest_main 固定入口无监听器
+                                       # 安装点，--ird_report 不产报告）
     test/EnvelopeContractTest.cpp         # EV-T07：CR-01 词表契约（类型面/源码面/值面三防线）
     test/EnvelopeAccessorContractTest.cpp # EV-T11：envelope 访问器特化（testkit
                                           # checkEnvelopeCombination 消费——
@@ -176,7 +182,7 @@ endif()
 target_link_libraries(sdurws_ird_evidence_contract_test PRIVATE
     sdurws_ird_evidence
     sdurws_ird_testkit
-    GTest::gtest_main)
+    GTest::gtest)  # 自有 main（TestMainReport.cpp）
 
 # 源码树位置注入（词表本地定义扫描的输入——与 _test 目标同源）。
 target_compile_definitions(sdurws_ird_evidence_contract_test PRIVATE
