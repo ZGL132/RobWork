@@ -1,0 +1,724 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[----------] 9 tests from EvaluatorPortVerdict (0 ms total)
+
+[----------] 2 tests from EvaluatorPortContext
+[ RUN      ] EvaluatorPortContext.CancelledEvaluationThrowsThroughPort
+[       OK ] EvaluatorPortContext.CancelledEvaluationThrowsThroughPort (0 ms)
+[ RUN      ] EvaluatorPortContext.ObjectReadAndProgressChannels
+[       OK ] EvaluatorPortContext.ObjectReadAndProgressChannels (0 ms)
+[----------] 2 tests from EvaluatorPortContext (0 ms total)
+
+[----------] 1 test from EvaluatorPortCurrentness
+[ RUN      ] EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV
+[       OK ] EvaluatorPortCurrentness.DisplayUnitSwitchProducesNoInvalidationReason_EV_INV (0 ms)
+[----------] 1 test from EvaluatorPortCurrentness (0 ms total)
+
+[----------] 2 tests from ScriptedDoubleBoundary
+[ RUN      ] ScriptedDoubleBoundary.DoubleLivesOnlyInTestSources_EV_REG_3
+[       OK ] ScriptedDoubleBoundary.DoubleLivesOnlyInTestSources_EV_REG_3 (4 ms)
+[ RUN      ] ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme_EV_REG_3
+[       OK ] ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme_EV_REG_3 (0 ms)
+[----------] 2 tests from ScriptedDoubleBoundary (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 205 tests from 59 test suites ran. (35 ms total)
+[  PASSED  ] 205 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] EnvelopeAccessorContract.DataInsufficientWithoutMissingListRejectedBothFaces
+[       OK ] EnvelopeAccessorContract.DataInsufficientWithoutMissingListRejectedBothFaces (0 ms)
+[ RUN      ] EnvelopeAccessorContract.CanceledFeasibleRejectedBothFaces
+[       OK ] EnvelopeAccessorContract.CanceledFeasibleRejectedBothFaces (0 ms)
+[ RUN      ] EnvelopeAccessorContract.CompletedWithEmptyEvidenceListFlaggedByPredicate
+[       OK ] EnvelopeAccessorContract.CompletedWithEmptyEvidenceListFlaggedByPredicate (0 ms)
+[----------] 4 tests from EnvelopeAccessorContract (0 ms total)
+
+[----------] 5 tests from SliceFixtureContract
+[ RUN      ] SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4
+[       OK ] SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4 (0 ms)
+[ RUN      ] SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance
+[       OK ] SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance (0 ms)
+[ RUN      ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1
+[       OK ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1 (0 ms)
+[ RUN      ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1
+[       OK ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1 (0 ms)
+[ RUN      ] SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest
+[       OK ] SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest (0 ms)
+[----------] 5 tests from SliceFixtureContract (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 14 tests from 3 test suites ran. (13 ms total)
+[  PASSED  ] 14 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+
+[----------] 1 test from PolicyDiagnosticsInterface
+[ RUN      ] PolicyDiagnosticsInterface.PolymorphicUseThroughBaseReference_SEC9_6
+[       OK ] PolicyDiagnosticsInterface.PolymorphicUseThroughBaseReference_SEC9_6 (0 ms)
+[----------] 1 test from PolicyDiagnosticsInterface (0 ms total)
+
+[----------] 6 tests from SystemDefaultPolicy
+[ RUN      ] SystemDefaultPolicy.FactoryPublishesAppendixDDefaults_F536_O46
+[       OK ] SystemDefaultPolicy.FactoryPublishesAppendixDDefaults_F536_O46 (0 ms)
+[ RUN      ] SystemDefaultPolicy.FactoryDeterministicContentIdentity_NFR_COR_02
+[       OK ] SystemDefaultPolicy.FactoryDeterministicContentIdentity_NFR_COR_02 (0 ms)
+[ RUN      ] SystemDefaultPolicy.ProviderServesDefaultForWellKnownId_F536
+[       OK ] SystemDefaultPolicy.ProviderServesDefaultForWellKnownId_F536 (0 ms)
+[ RUN      ] SystemDefaultPolicy.ProviderReportsMissingForForeignId_ERR_01
+[       OK ] SystemDefaultPolicy.ProviderReportsMissingForForeignId_ERR_01 (0 ms)
+[ RUN      ] SystemDefaultPolicy.ProviderFailsFastOnZeroId_ERR_01
+[       OK ] SystemDefaultPolicy.ProviderFailsFastOnZeroId_ERR_01 (0 ms)
+[ RUN      ] SystemDefaultPolicy.ProviderFailsFastOnCollisionHalf_PORT_ASSEMBLY
+[       OK ] SystemDefaultPolicy.ProviderFailsFastOnCollisionHalf_PORT_ASSEMBLY (0 ms)
+[----------] 6 tests from SystemDefaultPolicy (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 141 tests from 26 test suites ran. (26 ms total)
+[  PASSED  ] 141 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] PolPolicyCodecFixture.LoadsThroughFullManifestChain
+[       OK ] PolPolicyCodecFixture.LoadsThroughFullManifestChain (1 ms)
+[ RUN      ] PolPolicyCodecFixture.IntegrityDigestsMatchCommittedFiles
+[       OK ] PolPolicyCodecFixture.IntegrityDigestsMatchCommittedFiles (1 ms)
+[ RUN      ] PolPolicyCodecFixture.CanonicalEncodingMatchesIndependentExpectation
+[       OK ] PolPolicyCodecFixture.CanonicalEncodingMatchesIndependentExpectation (0 ms)
+[ RUN      ] PolPolicyCodecFixture.ContentIdentityMatchesIndependentDigest
+[       OK ] PolPolicyCodecFixture.ContentIdentityMatchesIndependentDigest (0 ms)
+[ RUN      ] PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity
+[       OK ] PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity (0 ms)
+[----------] 5 tests from PolPolicyCodecFixture (4 ms total)
+
+[----------] 3 tests from PolicyTestDoubleBoundary
+[ RUN      ] PolicyTestDoubleBoundary.ProductSourcesContainNoDoubleSymbols
+[       OK ] PolicyTestDoubleBoundary.ProductSourcesContainNoDoubleSymbols (4 ms)
+[ RUN      ] PolicyTestDoubleBoundary.DoubleHeaderCarriesBoundaryDeclaration
+[       OK ] PolicyTestDoubleBoundary.DoubleHeaderCarriesBoundaryDeclaration (0 ms)
+[ RUN      ] PolicyTestDoubleBoundary.TestReadmeDeclaresBoundaryFullText
+[       OK ] PolicyTestDoubleBoundary.TestReadmeDeclaresBoundaryFullText (0 ms)
+[----------] 3 tests from PolicyTestDoubleBoundary (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 2 test suites ran. (8 ms total)
+[  PASSED  ] 8 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] BaseMountConsistencyTest.ExactMatchConsistent
+[       OK ] BaseMountConsistencyTest.ExactMatchConsistent (0 ms)
+[ RUN      ] BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4
+[       OK ] BaseMountConsistencyTest.DoubleApplicationDetected_RT_BW_4 (0 ms)
+[ RUN      ] BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied
+[       OK ] BaseMountConsistencyTest.WrongRotationNotMarkedDoubleApplied (0 ms)
+[ RUN      ] BaseMountConsistencyTest.WithinToleranceDeviationPasses
+[       OK ] BaseMountConsistencyTest.WithinToleranceDeviationPasses (0 ms)
+[----------] 4 tests from BaseMountConsistencyTest (0 ms total)
+
+[----------] 4 tests from GoldenDataLint
+[ RUN      ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3
+[       OK ] GoldenDataLint.RtgFkEquationLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3
+[       OK ] GoldenDataLint.RtNamemapRoundtripLoadsAndPassesManifest_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3
+[       OK ] GoldenDataLint.ToleranceProfileRtLoadsAndResolvesAllSuitePaths_RT_T12_ACC3 (0 ms)
+[ RUN      ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3
+[       OK ] GoldenDataLint.CoveredRequirementsInDictionary_RT_T12_ACC3 (0 ms)
+[----------] 4 tests from GoldenDataLint (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 195 tests from 49 test suites ran. (66 ms total)
+[  PASSED  ] 195 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] OptPreflightContract.CompleteAssemblyAllowsFormalExport_WP20T08
+[       OK ] OptPreflightContract.CompleteAssemblyAllowsFormalExport_WP20T08 (0 ms)
+[ RUN      ] OptPreflightContract.SessionStateNoPersistenceChannel_WP20T08_ACC3
+[       OK ] OptPreflightContract.SessionStateNoPersistenceChannel_WP20T08_ACC3 (0 ms)
+[----------] 3 tests from OptPreflightContract (0 ms total)
+
+[----------] 6 tests from OptGoldenDatasetContract
+[ RUN      ] OptGoldenDatasetContract.ManifestsRegistered_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ManifestsRegistered_WP20T11_ACC2 (2 ms)
+[ RUN      ] OptGoldenDatasetContract.IntegrityCoversAllFiles_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.IntegrityCoversAllFiles_WP20T11_ACC2 (1 ms)
+[ RUN      ] OptGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.DataRootLayout_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.DataRootLayout_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.GoldenStatusesUseCandidateStatusTokens_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.GoldenStatusesUseCandidateStatusTokens_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2 (0 ms)
+[----------] 6 tests from OptGoldenDatasetContract (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 52 tests from 12 test suites ran. (1010 ms total)
+[  PASSED  ] 52 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] EventPayload.KindConsistency_UT_EVT (0 ms)
+[ RUN      ] EventPayload.AccessorGuardThrows_UT_EVT
+[       OK ] EventPayload.AccessorGuardThrows_UT_EVT (0 ms)
+[----------] 2 tests from EventPayload (0 ms total)
+
+[----------] 2 tests from EventValue
+[ RUN      ] EventValue.CopyMoveEquality_UT_EVT
+[       OK ] EventValue.CopyMoveEquality_UT_EVT (0 ms)
+[ RUN      ] EventValue.EmittedAtUtcParticipatesInEquality_F794
+[       OK ] EventValue.EmittedAtUtcParticipatesInEquality_F794 (0 ms)
+[----------] 2 tests from EventValue (0 ms total)
+
+[----------] 3 tests from ReferenceBus
+[ RUN      ] ReferenceBus.FifoDeliveryOrder_UT_EVT
+[       OK ] ReferenceBus.FifoDeliveryOrder_UT_EVT (0 ms)
+[ RUN      ] ReferenceBus.UnsubscribeStopsDelivery_UT_EVT
+[       OK ] ReferenceBus.UnsubscribeStopsDelivery_UT_EVT (0 ms)
+[ RUN      ] ReferenceBus.MultipleSubscribersAllReceive_UT_EVT
+[       OK ] ReferenceBus.MultipleSubscribersAllReceive_UT_EVT (0 ms)
+[----------] 3 tests from ReferenceBus (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 63 tests from 39 test suites ran. (262 ms total)
+[  PASSED  ] 63 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] DeterminismFaces.SameInputSameBytesAndCanonicalSort_ACC5
+[       OK ] DeterminismFaces.SameInputSameBytesAndCanonicalSort_ACC5 (2 ms)
+[ RUN      ] DeterminismFaces.NonFiniteAndIllegalNotSilent_ACC5
+[       OK ] DeterminismFaces.NonFiniteAndIllegalNotSilent_ACC5 (0 ms)
+[----------] 2 tests from DeterminismFaces (2 ms total)
+
+[----------] 1 test from GuiRegistration
+[ RUN      ] GuiRegistration.V22RegisteredNotExecuted_ACC1
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\test\GoldenDatasetsContractTest.cpp(2018): Skipped
+V-22 GUI 流程仅登记（envUnavailable 如实登记）
+
+[  SKIPPED ] GuiRegistration.V22RegisteredNotExecuted_ACC1 (0 ms)
+[----------] 1 test from GuiRegistration (0 ms total)
+
+[----------] 1 test from MdlGoldenTransport
+[ RUN      ] MdlGoldenTransport.RandomPlanDenominatorUsesRandomCount_WP14T12
+[       OK ] MdlGoldenTransport.RandomPlanDenominatorUsesRandomCount_WP14T12 (0 ms)
+[----------] 1 test from MdlGoldenTransport (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 222 tests from 26 test suites ran. (136 ms total)
+[  PASSED  ] 221 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] GuiRegistration.V22RegisteredNotExecuted_ACC1
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+
+[----------] 2 tests from PeerRedLine
+[ RUN      ] PeerRedLine.T1ProductFaceZeroTestkitHeaders_ACC3
+[       OK ] PeerRedLine.T1ProductFaceZeroTestkitHeaders_ACC3 (22 ms)
+[ RUN      ] PeerRedLine.T2TestTargetLinkFormAcyclicAndTestdataExclusion_ACC3
+[       OK ] PeerRedLine.T2TestTargetLinkFormAcyclicAndTestdataExclusion_ACC3 (0 ms)
+[----------] 2 tests from PeerRedLine (22 ms total)
+
+[----------] 5 tests from RequirementsPluginGraph
+[ RUN      ] RequirementsPluginGraph.FacadeHeaderAssemblyLocationZeroPrivateInclude_O45
+[       OK ] RequirementsPluginGraph.FacadeHeaderAssemblyLocationZeroPrivateInclude_O45 (0 ms)
+[ RUN      ] RequirementsPluginGraph.FacadeExposeAcceptanceSurface_O45
+[       OK ] RequirementsPluginGraph.FacadeExposeAcceptanceSurface_O45 (0 ms)
+[ RUN      ] RequirementsPluginGraph.UiModuleInterfaceSwitchRegistered_O45
+[       OK ] RequirementsPluginGraph.UiModuleInterfaceSwitchRegistered_O45 (0 ms)
+[ RUN      ] RequirementsPluginGraph.FacadeImplInPluginTargetAndPublicInclude_O45
+[       OK ] RequirementsPluginGraph.FacadeImplInPluginTargetAndPublicInclude_O45 (0 ms)
+[ RUN      ] RequirementsPluginGraph.PluginTargetLinkFaceUnchanged_O45
+[       OK ] RequirementsPluginGraph.PluginTargetLinkFaceUnchanged_O45 (0 ms)
+[----------] 5 tests from RequirementsPluginGraph (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 16 tests from 7 test suites ran. (59 ms total)
+[  PASSED  ] 16 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] MdlGoldenTemplate.Tmdl1GoldenParameterLock_WP13T16_ACC3
+[       OK ] MdlGoldenTemplate.Tmdl1GoldenParameterLock_WP13T16_ACC3 (0 ms)
+[ RUN      ] MdlGoldenTemplate.GoldenDraftMatchesDatasetExpectations_WP13T16_ACC3
+[       OK ] MdlGoldenTemplate.GoldenDraftMatchesDatasetExpectations_WP13T16_ACC3 (0 ms)
+[ RUN      ] MdlGoldenTemplate.SevenAxisRegisteredNotEnabled_WP13T16_ACC3
+[       OK ] MdlGoldenTemplate.SevenAxisRegisteredNotEnabled_WP13T16_ACC3 (0 ms)
+[----------] 3 tests from MdlGoldenTemplate (1 ms total)
+
+[----------] 5 tests from MdlGoldenImport
+[ RUN      ] MdlGoldenImport.GoldenUrdfReportCounts_V06_WP13T16_ACC3
+[       OK ] MdlGoldenImport.GoldenUrdfReportCounts_V06_WP13T16_ACC3 (0 ms)
+[ RUN      ] MdlGoldenImport.GoldenUrdfDraftValues_V06_WP13T16_ACC3
+[       OK ] MdlGoldenImport.GoldenUrdfDraftValues_V06_WP13T16_ACC3 (0 ms)
+[ RUN      ] MdlGoldenImport.GoldenUrdfInertiaDataQualityGate_WP13T16_ACC4
+[       OK ] MdlGoldenImport.GoldenUrdfInertiaDataQualityGate_WP13T16_ACC4 (0 ms)
+[ RUN      ] MdlGoldenImport.GoldenXacroMacroMapping_AT31_WP13T16_ACC3
+[       OK ] MdlGoldenImport.GoldenXacroMacroMapping_AT31_WP13T16_ACC3 (0 ms)
+[ RUN      ] MdlGoldenImport.GoldenXacroCyclePassthrough_V09_WP13T16_ACC3
+[       OK ] MdlGoldenImport.GoldenXacroCyclePassthrough_V09_WP13T16_ACC3 (0 ms)
+[----------] 5 tests from MdlGoldenImport (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 360 tests from 34 test suites ran. (581 ms total)
+[  PASSED  ] 360 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[ RUN      ] MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3
+[       OK ] MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3 (0 ms)
+[ RUN      ] MdlBuildGraph.SixRegisteredEdgesPresent_WP13T02_ACC3
+[       OK ] MdlBuildGraph.SixRegisteredEdgesPresent_WP13T02_ACC3 (0 ms)
+[ RUN      ] MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2
+[       OK ] MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2 (1 ms)
+[ RUN      ] MdlBuildGraph.NoTestkitEdgeOnProductTarget_WP13T02_ACC2
+[       OK ] MdlBuildGraph.NoTestkitEdgeOnProductTarget_WP13T02_ACC2 (0 ms)
+[ RUN      ] MdlBuildGraph.IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3
+[       OK ] MdlBuildGraph.IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3 (23 ms)
+[----------] 5 tests from MdlBuildGraph (27 ms total)
+
+[----------] 3 tests from MdlDescriptionBridgeContract
+[ RUN      ] MdlDescriptionBridgeContract.DescriptionFieldSetAlignment_WP13T12_ACC3
+[       OK ] MdlDescriptionBridgeContract.DescriptionFieldSetAlignment_WP13T12_ACC3 (1 ms)
+[ RUN      ] MdlDescriptionBridgeContract.SchemaVersionSameSourceAsContractVersion_WP13T12_ACC3
+[       OK ] MdlDescriptionBridgeContract.SchemaVersionSameSourceAsContractVersion_WP13T12_ACC3 (0 ms)
+[ RUN      ] MdlDescriptionBridgeContract.ReaderFailureTrackIsValueFace_WP13T12_ACC3
+[       OK ] MdlDescriptionBridgeContract.ReaderFailureTrackIsValueFace_WP13T12_ACC3 (0 ms)
+[----------] 3 tests from MdlDescriptionBridgeContract (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 2 test suites ran. (29 ms total)
+[  PASSED  ] 8 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[----------] 9 tests from DefectPinning
+[ RUN      ] DefectPinning.HostRequirementsContext_NoEmptyClosureLiteral_F554
+[       OK ] DefectPinning.HostRequirementsContext_NoEmptyClosureLiteral_F554 (6 ms)
+[ RUN      ] DefectPinning.HostView3DSeams_ClosureRefsDeferredThisCapture_F558
+[       OK ] DefectPinning.HostView3DSeams_ClosureRefsDeferredThisCapture_F558 (7 ms)
+[ RUN      ] DefectPinning.ContentCommandRejection_GuardsResolveTextAgainstEmptyKey_F557
+[       OK ] DefectPinning.ContentCommandRejection_GuardsResolveTextAgainstEmptyKey_F557 (1 ms)
+[ RUN      ] DefectPinning.SimulatorPluginTU_NomimaxGuardBeforeFirstInclude_F714
+[       OK ] DefectPinning.SimulatorPluginTU_NomimaxGuardBeforeFirstInclude_F714 (0 ms)
+[ RUN      ] DefectPinning.HostProjectCloseTeardown_PreviewCachesClearedBeforeRemovePreview_F559
+[       OK ] DefectPinning.HostProjectCloseTeardown_PreviewCachesClearedBeforeRemovePreview_F559 (5 ms)
+[ RUN      ] DefectPinning.HostRegionPreviewEmptySet_ClearsCachesAndDeliversNulloptLayers_F560
+[       OK ] DefectPinning.HostRegionPreviewEmptySet_ClearsCachesAndDeliversNulloptLayers_F560 (6 ms)
+[ RUN      ] DefectPinning.HostRegionRefUnresolved_GridClearedSameTickAsBox_F561
+[       OK ] DefectPinning.HostRegionRefUnresolved_GridClearedSameTickAsBox_F561 (6 ms)
+[ RUN      ] DefectPinning.RegionOutlineEdges_BinaryCornerOrderTwelveTrueEdges_F562
+[       OK ] DefectPinning.RegionOutlineEdges_BinaryCornerOrderTwelveTrueEdges_F562 (0 ms)
+[ RUN      ] DefectPinning.CompilePortDigest_LowercaseHexAlphabetGuarded_F563
+[       OK ] DefectPinning.CompilePortDigest_LowercaseHexAlphabetGuarded_F563 (0 ms)
+[----------] 9 tests from DefectPinning (35 ms total)
+
+[----------] Global test environment tear-down
+[==========] 275 tests from 24 test suites ran. (1703 ms total)
+[  PASSED  ] 275 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] RequirementsView3DFlow.CaptureReadOnlyAndCancelDoNotWrite_REQ08_WP14T12 (20 ms)
+[ RUN      ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.CaptureRotationNearGimbalLock_REQ10_WP14T12 (104 ms)
+[ RUN      ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33
+[       OK ] RequirementsView3DFlow.PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33 (57 ms)
+[ RUN      ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.ScenePickAndConfirmationGuard_REQ10_WP14T12 (386 ms)
+[ RUN      ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12
+[       OK ] RequirementsView3DFlow.ModulePreservesHostPickSeam_REQ10_WP14T12 (199 ms)
+[ RUN      ] RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52
+[       OK ] RequirementsView3DFlow.RegionPreviewSink_ForwardsGridLines_UI_T52 (22 ms)
+[ RUN      ] RequirementsView3DFlow.StationMarkersCarryPositionWhenProvided_UI_T77
+[       OK ] RequirementsView3DFlow.StationMarkersCarryPositionWhenProvided_UI_T77 (29 ms)
+[ RUN      ] RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77
+[       OK ] RequirementsView3DFlow.RegionPreviewSink_EmptySetDeliversNullopt_UI_T77 (19 ms)
+[ RUN      ] RequirementsView3DFlow.SampleResultList_EmptyStateHonest_FIX_T2
+[       OK ] RequirementsView3DFlow.SampleResultList_EmptyStateHonest_FIX_T2 (26 ms)
+[ RUN      ] RequirementsView3DFlow.SampleResultList_ClickEmitsHighlightRequest_FIX_T2
+[       OK ] RequirementsView3DFlow.SampleResultList_ClickEmitsHighlightRequest_FIX_T2 (19 ms)
+[----------] 12 tests from RequirementsView3DFlow (1059 ms total)
+
+[----------] Global test environment tear-down
+[==========] 110 tests from 3 test suites ran. (13753 ms total)
+[  PASSED  ] 110 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[----------] 1 test from ModelingManualBodyGui (3 ms total)
+
+[----------] 8 tests from ModelingImportGui
+[ RUN      ] ModelingImportGui.PropertyEmptyLongTableCancel_MDL05
+[       OK ] ModelingImportGui.PropertyEmptyLongTableCancel_MDL05 (212 ms)
+[ RUN      ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12
+[       OK ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12 (130 ms)
+[ RUN      ] ModelingImportGui.DiffUnitsFollowBothJointTypes_UX13_AT12
+[       OK ] ModelingImportGui.DiffUnitsFollowBothJointTypes_UX13_AT12 (102 ms)
+[ RUN      ] ModelingImportGui.DiffLongValuesEmptyAndUnwiredLocation_UX13_AT12
+[       OK ] ModelingImportGui.DiffLongValuesEmptyAndUnwiredLocation_UX13_AT12 (305 ms)
+[ RUN      ] ModelingImportGui.ParametersRejectDuplicateThenApplyLiteralOverride_MDL19_AT31
+[       OK ] ModelingImportGui.ParametersRejectDuplicateThenApplyLiteralOverride_MDL19_AT31 (123 ms)
+[ RUN      ] ModelingImportGui.ParameterCancelReturnsNoSubstitution_MDL19_AT31
+[       OK ] ModelingImportGui.ParameterCancelReturnsNoSubstitution_MDL19_AT31 (107 ms)
+[ RUN      ] ModelingImportGui.FullImportReportScrollableSelectableAndCancelSafe_MDL11_AT15
+[       OK ] ModelingImportGui.FullImportReportScrollableSelectableAndCancelSafe_MDL11_AT15 (113 ms)
+[ RUN      ] ModelingImportGui.WorkCellRealFileDialogToReportCancelSafe_MDL18_AT33
+[       OK ] ModelingImportGui.WorkCellRealFileDialogToReportCancelSafe_MDL18_AT33 (352 ms)
+[----------] 8 tests from ModelingImportGui (1453 ms total)
+
+[----------] Global test environment tear-down
+[==========] 60 tests from 3 test suites ran. (20213 ms total)
+[  PASSED  ] 60 tests.
+Exit=0
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] PropertyInspectorGuiTest.SelectionSwitchClearsStaleHostedPage (45 ms)
+[ RUN      ] PropertyInspectorGuiTest.FactoryRejectsEmptyDeps_FailFast
+[       OK ] PropertyInspectorGuiTest.FactoryRejectsEmptyDeps_FailFast (0 ms)
+[----------] 14 tests from PropertyInspectorGuiTest (493 ms total)
+
+[----------] 3 tests from DomainReadinessSummaryCard
+[ RUN      ] DomainReadinessSummaryCard.VerdictMapping_CoversFourStatuses_UX02_UI_T44
+[       OK ] DomainReadinessSummaryCard.VerdictMapping_CoversFourStatuses_UX02_UI_T44 (0 ms)
+[ RUN      ] DomainReadinessSummaryCard.SetRows_RendersDomainVerdictLines_UI_T44
+[       OK ] DomainReadinessSummaryCard.SetRows_RendersDomainVerdictLines_UI_T44 (0 ms)
+[ RUN      ] DomainReadinessSummaryCard.SetRows_EmptyRows_HonestEmptyState_ERR01_UI_T44
+[       OK ] DomainReadinessSummaryCard.SetRows_EmptyRows_HonestEmptyState_ERR01_UI_T44 (0 ms)
+[----------] 3 tests from DomainReadinessSummaryCard (1 ms total)
+
+[----------] 2 tests from HostIntegrationGuiTest
+[ RUN      ] HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder_RendersAndNotSelectable
+[       OK ] HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder_RendersAndNotSelectable (0 ms)
+[ RUN      ] HostIntegrationGuiTest.ProjectCloseTeardown_InspectorHostedPageCleared
+[       OK ] HostIntegrationGuiTest.ProjectCloseTeardown_InspectorHostedPageCleared (0 ms)
+[----------] 2 tests from HostIntegrationGuiTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 76 tests from 12 test suites ran. (6743 ms total)
+[  PASSED  ] 76 tests.
+Exit=0
+{
+  "suites": [
+    {
+      "name": "standalone_evidence",
+      "total": 205,
+      "passed": 205,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 205,
+        "passed": 205,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_evidence_contract",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 14,
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_policy",
+      "total": 141,
+      "passed": 141,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 141,
+        "passed": 141,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_policy_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_runtime",
+      "total": 195,
+      "passed": 195,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 195,
+        "passed": 195,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_optimization_contract",
+      "total": 52,
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 52,
+        "passed": 52,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_core",
+      "total": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 63,
+        "passed": 63,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_requirements",
+      "total": 222,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 1,
+      "nativeCounts": {
+        "total": 222,
+        "passed": 221,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 1,
+        "datasetInvalid": 0
+      },
+      "decisive": false,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_requirements_contract",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 16,
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_modeling",
+      "total": 360,
+      "passed": 360,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 360,
+        "passed": 360,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_modeling_contract",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_ui",
+      "total": 275,
+      "passed": 275,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 275,
+        "passed": 275,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_requirements_gui",
+      "total": 110,
+      "passed": 110,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 110,
+        "passed": 110,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_modeling_gui",
+      "total": 60,
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 60,
+        "passed": 60,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "standalone_ui_gui",
+      "total": 76,
+      "passed": 76,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 76,
+        "passed": 76,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    }
+  ],
+  "totals": {
+    "total": 1805,
+    "passed": 1804,
+    "failed": 0,
+    "skipped": 1
+  },
+  "nativeTotals": {
+    "total": 1805,
+    "passed": 1804,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 1,
+    "datasetInvalid": 0
+  }
+}

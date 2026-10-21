@@ -1,0 +1,73 @@
+{
+  "suites": [
+    {
+      "name": "runtime",
+      "total": 300,
+      "passed": 299,
+      "failed": 0,
+      "skipped": 1,
+      "nativeCounts": {
+        "total": 300,
+        "passed": 299,
+        "failed": 0,
+        "skipped": 1,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "optimization_contract",
+      "total": 52,
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 52,
+        "passed": 52,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    },
+    {
+      "name": "ui_gui",
+      "total": 96,
+      "passed": 96,
+      "failed": 0,
+      "skipped": 0,
+      "nativeCounts": {
+        "total": 96,
+        "passed": 96,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0
+      },
+      "decisive": true,
+      "nativeMatchesXml": true
+    }
+  ],
+  "totals": {
+    "total": 448,
+    "passed": 447,
+    "failed": 0,
+    "skipped": 1
+  },
+  "nativeTotals": {
+    "total": 448,
+    "passed": 447,
+    "failed": 0,
+    "skipped": 1,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0
+  }
+}

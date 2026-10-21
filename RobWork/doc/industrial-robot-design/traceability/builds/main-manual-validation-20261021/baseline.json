@@ -1,0 +1,12 @@
+{
+  "main": "de7590e75ff06bf17f2c251b55f53f9b78dfbe88",
+  "root": "C:/Users/zgl18/.codex/worktrees/3582/RobWork",
+  "source": "redesign-main",
+  "purpose": "所有者授权合入最新修复，供手工验收；未伪称独立验收",
+  "frozenMain": "49a9e819c24c7ef15dff24366a4a551068c2d269",
+  "cmakeCacheBinding": [
+    "RWS_BUILD_INDUSTRIALROBOT:BOOL=ON",
+    "CMAKE_HOME_DIRECTORY:INTERNAL=C:/Users/zgl18/.codex/worktrees/3582/RobWork/RobWork"
+  ],
+  "guiEnvironment": "VS2022 x64; QT_QPA_PLATFORM=windows; single GUI process"
+}

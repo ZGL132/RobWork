@@ -1,0 +1,27 @@
+[==========] Running 8 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from PolPolicyCodecFixture
+[ RUN      ] PolPolicyCodecFixture.LoadsThroughFullManifestChain
+[       OK ] PolPolicyCodecFixture.LoadsThroughFullManifestChain (1 ms)
+[ RUN      ] PolPolicyCodecFixture.IntegrityDigestsMatchCommittedFiles
+[       OK ] PolPolicyCodecFixture.IntegrityDigestsMatchCommittedFiles (1 ms)
+[ RUN      ] PolPolicyCodecFixture.CanonicalEncodingMatchesIndependentExpectation
+[       OK ] PolPolicyCodecFixture.CanonicalEncodingMatchesIndependentExpectation (0 ms)
+[ RUN      ] PolPolicyCodecFixture.ContentIdentityMatchesIndependentDigest
+[       OK ] PolPolicyCodecFixture.ContentIdentityMatchesIndependentDigest (0 ms)
+[ RUN      ] PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity
+[       OK ] PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity (0 ms)
+[----------] 5 tests from PolPolicyCodecFixture (4 ms total)
+
+[----------] 3 tests from PolicyTestDoubleBoundary
+[ RUN      ] PolicyTestDoubleBoundary.ProductSourcesContainNoDoubleSymbols
+[       OK ] PolicyTestDoubleBoundary.ProductSourcesContainNoDoubleSymbols (4 ms)
+[ RUN      ] PolicyTestDoubleBoundary.DoubleHeaderCarriesBoundaryDeclaration
+[       OK ] PolicyTestDoubleBoundary.DoubleHeaderCarriesBoundaryDeclaration (0 ms)
+[ RUN      ] PolicyTestDoubleBoundary.TestReadmeDeclaresBoundaryFullText
+[       OK ] PolicyTestDoubleBoundary.TestReadmeDeclaresBoundaryFullText (0 ms)
+[----------] 3 tests from PolicyTestDoubleBoundary (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 2 test suites ran. (8 ms total)
+[  PASSED  ] 8 tests.

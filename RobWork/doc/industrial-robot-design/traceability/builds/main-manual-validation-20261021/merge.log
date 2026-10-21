@@ -1,0 +1,667 @@
+Updating 402e5992a..de7590e75
+Fast-forward
+ .../cmake/ird_gates_whitelist.cmake                |    11 +-
+ .../rwslibs/industrialrobot/core/CMakeLists.txt    |     6 +-
+ .../industrialrobot/core/test/TestMainReport.cpp   |    23 +
+ .../industrialrobot/evidence/CMakeLists.txt        |    10 +-
+ .../evidence/test/TestMainReport.cpp               |    32 +
+ .../contract_test/ApplierContractTest.cpp          |    33 +-
+ .../rwslibs/industrialrobot/policy/CMakeLists.txt  |    10 +-
+ .../industrialrobot/policy/test/TestMainReport.cpp |    32 +
+ .../plugin/RequirementsPanelWidget.cpp             |    17 +
+ .../rwslibs/industrialrobot/runtime/CMakeLists.txt |    18 +-
+ .../sdurws/ird/runtime/CollisionSession.hpp        |   130 +
+ .../include/sdurws/ird/runtime/Snapshot.hpp        |    14 +
+ .../runtime/src/CollisionSession.cpp               |   230 +
+ .../industrialrobot/runtime/src/Snapshot.cpp       |    10 +
+ .../runtime/src/WorkCellCompiler.cpp               |   273 +-
+ .../runtime/test/CollisionSessionTest.cpp          |   108 +
+ .../runtime/test/DescriptionValidatorTest.cpp      |    25 +-
+ .../runtime/test/TestMainReport.cpp                |    32 +
+ .../runtime/test/WorkCellGeometryTest.cpp          |   226 +-
+ .../ui/gui_test/WorkbenchContentGuiTest.cpp        |    76 +
+ .../ui/plugin/KinEvaluationChannel.cpp             |   238 +-
+ .../ui/plugin/KinEvaluationChannel.hpp             |    14 +-
+ .../rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp |    79 +-
+ .../industrialrobot/ui/src/DockWorkspace_p.hpp     |    70 +
+ .../ui/test/HostCompilePipelineTest.cpp            |    26 +
+ .../ui/test/KinEvaluationChannelTest.cpp           |    73 +
+ .../development-task-breakdown.md                  |     8 +-
+ .../tasks/foundation/WP-13-T29.json                |   113 +
+ .../builds/wp13-t27-audit-fixes/README.md          |    38 +
+ .../diag-event-trace-stale-negotiation.log         |  8268 ++++++++++
+ .../wp13-t27-audit-fixes/green-fix-build.log       |   118 +
+ .../wp13-t27-audit-fixes/green-full-build.log      |   371 +
+ .../wp13-t27-audit-fixes/green-host-tour-auto.log  |    29 +
+ .../green-host-tour-layout.log                     |    95 +
+ .../green-host-tour-modeling.log                   |   443 +
+ .../green-optimization-contract-52.xml             |    79 +
+ .../green-req-tour-after-fix.log                   |   307 +
+ .../ma09-runtime-ird-report.json                   |    14 +
+ .../wp13-t27-audit-fixes/ma09-targets-build.log    |   569 +
+ .../red-req-tour-blank-tail-stale-assertions.log   |   307 +
+ .../tour-9-populated-bottom-0.png                  |   Bin 0 -> 19085 bytes
+ .../tour-9-populated-bottom-1.png                  |   Bin 0 -> 12487 bytes
+ .../traceability/builds/wp13-t28-ma0102/README.md  |    63 +
+ .../builds/wp13-t28-ma0102/green-full-build.log    |   379 +
+ .../wp13-t28-ma0102/green-host-tour-auto.log       |    29 +
+ .../green-host-tour-requirements.log               |   307 +
+ .../green-runtime-geo7-collision.xml               |    19 +
+ .../green-standalone-runtime-build.log             |    18 +
+ .../builds/wp13-t29-closure/OPEN-ISSUES.md         |    27 +
+ .../traceability/builds/wp13-t29-closure/REPORT.md |    84 +
+ .../builds/wp13-t29-closure/REPOSITORY-STATE.md    |    55 +
+ .../traceability/builds/wp13-t29-closure/auto.log  |    28 +
+ .../builds/wp13-t29-closure/auto.stderr.log        |     0
+ .../builds/wp13-t29-closure/baseline.json          |    17 +
+ .../wp13-t29-closure/batch-before-ma09-fix.log     |   556 +
+ .../traceability/builds/wp13-t29-closure/batch.log |   556 +
+ .../traceability/builds/wp13-t29-closure/batch.ps1 |    13 +
+ .../builds/wp13-t29-closure/capture-evidence.py    |    47 +
+ .../wp13-t29-closure/commit-lint-precheck.log      |     2 +
+ .../builds/wp13-t29-closure/commit-message.txt     |    21 +
+ .../builds/wp13-t29-closure/core-report.json       |  2095 +++
+ .../traceability/builds/wp13-t29-closure/core.log  |   255 +
+ .../traceability/builds/wp13-t29-closure/core.xml  |   148 +
+ .../builds/wp13-t29-closure/evidence-report.json   |  6618 ++++++++
+ .../builds/wp13-t29-closure/evidence.log           |   592 +
+ .../builds/wp13-t29-closure/evidence.xml           |   326 +
+ .../wp13-t29-closure/evidence_contract-report.json |   463 +
+ .../builds/wp13-t29-closure/evidence_contract.log  |    42 +
+ .../builds/wp13-t29-closure/evidence_contract.xml  |    23 +
+ .../full-build-before-ma09-fix.log                 |   420 +
+ .../builds/wp13-t29-closure/full-build.log         |   557 +
+ .../traceability/builds/wp13-t29-closure/gates.log |    17 +
+ .../wp13-t29-closure/green-ma04/ui_gui-report.json |    49 +
+ .../builds/wp13-t29-closure/green-ma04/ui_gui.log  |    11 +
+ .../wp13-t29-closure/green-ma04/ui_gui.stderr.log  |     0
+ .../builds/wp13-t29-closure/green-ma04/ui_gui.xml  |     6 +
+ .../gui-modeling_gui/base-euler.png                |   Bin 0 -> 68224 bytes
+ .../gui-modeling_gui/body-editor-confirm.png       |   Bin 0 -> 76945 bytes
+ .../gui-modeling_gui/body-editor-top.png           |   Bin 0 -> 78986 bytes
+ .../clean-revision-live-tree-and-form.png          |   Bin 0 -> 88091 bytes
+ .../conflict-rebuilt-current-tool.png              |   Bin 0 -> 87625 bytes
+ .../gui-modeling_gui/continuous-range-rejected.png |   Bin 0 -> 95696 bytes
+ .../gui-modeling_gui/continuous-range.png          |   Bin 0 -> 92577 bytes
+ .../gui-modeling_gui/diff-deleted-refused.png      |   Bin 0 -> 45822 bytes
+ .../gui-modeling_gui/diff-empty.png                |   Bin 0 -> 22358 bytes
+ .../gui-modeling_gui/diff-long-values.png          |   Bin 0 -> 33574 bytes
+ .../gui-modeling_gui/diff-three-groups.png         |   Bin 0 -> 38990 bytes
+ .../gui-modeling_gui/draft-change-readonly.png     |   Bin 0 -> 63441 bytes
+ .../gui-modeling_gui/draft-change-redo.png         |   Bin 0 -> 63826 bytes
+ .../gui-modeling_gui/draft-history.png             |   Bin 0 -> 100893 bytes
+ .../draft-undo-clean-redo-retained.png             |   Bin 0 -> 62359 bytes
+ .../gui-modeling_gui/full-draft-restored-tool.png  |   Bin 0 -> 82524 bytes
+ .../gui-modeling_gui/import-report.png             |   Bin 0 -> 67246 bytes
+ .../property-segments-complete.png                 |   Bin 0 -> 36917 bytes
+ .../gui-modeling_gui/property-segments-long.png    |   Bin 0 -> 60593 bytes
+ .../gui-modeling_gui/retained-draft-review.png     |   Bin 0 -> 43021 bytes
+ .../gui-modeling_gui/scene-manager-external.png    |   Bin 0 -> 66961 bytes
+ .../gui-modeling_gui/scene-manager-updated.png     |   Bin 0 -> 68724 bytes
+ .../gui-modeling_gui/tool-manager-body-bottom.png  |   Bin 0 -> 82879 bytes
+ .../gui-modeling_gui/tool-manager-body.png         |   Bin 0 -> 85176 bytes
+ .../gui-modeling_gui/tool-manager-external.png     |   Bin 0 -> 86156 bytes
+ .../gui-modeling_gui/tool-manager-top.png          |   Bin 0 -> 84384 bytes
+ .../gui-modeling_gui/workcell-import-report.png    |   Bin 0 -> 93017 bytes
+ .../gui-modeling_gui/xacro-duplicate-error.png     |   Bin 0 -> 21589 bytes
+ .../gui-modeling_gui/xacro-parameters.png          |   Bin 0 -> 21606 bytes
+ .../gui-standalone_modeling_gui/base-euler.png     |   Bin 0 -> 63740 bytes
+ .../body-editor-confirm.png                        |   Bin 0 -> 67992 bytes
+ .../body-editor-top.png                            |   Bin 0 -> 67992 bytes
+ .../continuous-range-rejected.png                  |   Bin 0 -> 87881 bytes
+ .../continuous-range.png                           |   Bin 0 -> 84856 bytes
+ .../gui-standalone_modeling_gui/diff-empty.png     |   Bin 0 -> 20766 bytes
+ .../diff-long-values.png                           |   Bin 0 -> 28641 bytes
+ .../diff-three-groups.png                          |   Bin 0 -> 35934 bytes
+ .../gui-standalone_modeling_gui/import-report.png  |   Bin 0 -> 66202 bytes
+ .../property-segments-long.png                     |   Bin 0 -> 55311 bytes
+ .../tool-manager-top.png                           |   Bin 0 -> 77199 bytes
+ .../workcell-import-report.png                     |   Bin 0 -> 86769 bytes
+ .../xacro-duplicate-error.png                      |   Bin 0 -> 19450 bytes
+ .../xacro-parameters.png                           |   Bin 0 -> 19484 bytes
+ .../gui-ui_gui/conflict-objects-cancel.png         |   Bin 0 -> 22735 bytes
+ .../gui-ui_gui/conflict-save-failed.png            |   Bin 0 -> 24488 bytes
+ .../wp13-t29-closure/harness-error/ui_gui.log      |     5 +
+ .../harness-error/ui_gui.stderr.log                |     1 +
+ .../validate_reports-before-outcome-projection.py  |    30 +
+ .../wp13-t29-closure/index-evidence-initial.log    |     3 +
+ .../builds/wp13-t29-closure/inventory.log          |   101 +
+ .../builds/wp13-t29-closure/kinematics-report.json | 10279 ++++++++++++
+ .../builds/wp13-t29-closure/kinematics.log         |   682 +
+ .../builds/wp13-t29-closure/kinematics.xml         |   359 +
+ .../kinematics_contract-report.json                |  2033 +++
+ .../wp13-t29-closure/kinematics_contract.log       |   143 +
+ .../wp13-t29-closure/kinematics_contract.xml       |    76 +
+ .../wp13-t29-closure/kinematics_gui-report.json    |  1267 ++
+ .../builds/wp13-t29-closure/kinematics_gui.log     |    93 +
+ .../wp13-t29-closure/kinematics_gui.stderr.log     |     0
+ .../builds/wp13-t29-closure/kinematics_gui.xml     |    50 +
+ .../builds/wp13-t29-closure/layout.log             |    95 +
+ .../builds/wp13-t29-closure/layout.stderr.log      |     0
+ .../wp13-t29-closure/layout/1-default-layout.png   |   Bin 0 -> 141576 bytes
+ .../layout/10-tasks-dock-summoned.png              |   Bin 0 -> 154365 bytes
+ .../builds/wp13-t29-closure/layout/2-view-menu.png |   Bin 0 -> 8484 bytes
+ .../layout/3-domain-panel-summoned.png             |   Bin 0 -> 163474 bytes
+ .../layout/4-requirements-buttons.png              |   Bin 0 -> 23866 bytes
+ .../layout/5-requirements-narrow.png               |   Bin 0 -> 23280 bytes
+ .../wp13-t29-closure/layout/6-min-window.png       |   Bin 0 -> 177889 bytes
+ .../wp13-t29-closure/layout/8-modeling-panel.png   |   Bin 0 -> 13861 bytes
+ .../wp13-t29-closure/layout/9-kinematics-panel.png |   Bin 0 -> 18015 bytes
+ .../wp13-t29-closure/layout/geometry-report.txt    |   163 +
+ .../builds/wp13-t29-closure/modeling-report.json   | 16347 +++++++++++++++++++
+ .../builds/wp13-t29-closure/modeling-tour.log      |   443 +
+ .../wp13-t29-closure/modeling-tour.stderr.log      |     0
+ .../modeling-tour/mtour-1-panel.png                |   Bin 0 -> 211295 bytes
+ .../modeling-tour/mtour-2-reseeded.png             |   Bin 0 -> 211587 bytes
+ .../modeling-tour/mtour-3-origin-edit.png          |   Bin 0 -> 211813 bytes
+ .../modeling-tour/mtour-4-structure.png            |   Bin 0 -> 216866 bytes
+ .../modeling-tour/mtour-5-applied.png              |   Bin 0 -> 216985 bytes
+ .../modeling-tour/mtour-5.5-reopened.png           |   Bin 0 -> 215752 bytes
+ .../modeling-tour/mtour-5.7-scene-picked.png       |   Bin 0 -> 137289 bytes
+ .../modeling-tour/mtour-6-exported.png             |   Bin 0 -> 216985 bytes
+ .../modeling-tour/mtour-7-chinese-palette.png      |   Bin 0 -> 134661 bytes
+ .../mtour-8-scene-update-reopened.png              |   Bin 0 -> 127496 bytes
+ .../modeling-tour/mtour-a21-oriented-samples.png   |   Bin 0 -> 40856 bytes
+ .../mtour-a23-low-policy-comparison.png            |   Bin 0 -> 216725 bytes
+ .../modeling-tour/mtour-a23-policy-editor.png      |   Bin 0 -> 32626 bytes
+ .../modeling-tour/mtour-a23-policy-summary.png     |   Bin 0 -> 204982 bytes
+ .../modeling-tour/mtour-b2b-after-restore.png      |   Bin 0 -> 221858 bytes
+ .../modeling-tour/mtour-b2b-before-restore.png     |   Bin 0 -> 222567 bytes
+ .../modeling-tour/mtour-b4a-diff.png               |   Bin 0 -> 29221 bytes
+ .../modeling-tour/mtour-capture-confirm-0.png      |   Bin 0 -> 12559 bytes
+ .../modeling-tour/mtour-capture-confirm-1.png      |   Bin 0 -> 12559 bytes
+ .../modeling-tour/mtour-capture-confirm-2.png      |   Bin 0 -> 12849 bytes
+ .../modeling-tour/mtour-capture-restored.png       |   Bin 0 -> 242962 bytes
+ .../mtour-condition-name-directory.png             |   Bin 0 -> 9953 bytes
+ .../modeling-tour/mtour-conflict-cancel.png        |   Bin 0 -> 21194 bytes
+ .../modeling-tour/mtour-conflict-reedit.png        |   Bin 0 -> 21172 bytes
+ .../mtour-environment-name-choice.png              |   Bin 0 -> 2402 bytes
+ .../modeling-tour/mtour-export.irdbundle           |   Bin 0 -> 3316 bytes
+ .../modeling-tour/mtour-fixture.stl                |   Bin 0 -> 135 bytes
+ .../modeling-tour/mtour-name-directory.png         |   Bin 0 -> 32872 bytes
+ .../modeling-tour/mtour-pick-normal-confirm.png    |   Bin 0 -> 12641 bytes
+ .../modeling-tour/mtour-retained-review.png        |   Bin 0 -> 66716 bytes
+ .../mtour-target-3d-perspective-yaw.png            |   Bin 0 -> 19768 bytes
+ .../modeling-tour/mtour-target-3d-preview.png      |   Bin 0 -> 115229 bytes
+ .../modeling-tour/mtour-target-3d-tool.png         |   Bin 0 -> 18887 bytes
+ .../builds/wp13-t29-closure/modeling.log           |  1091 ++
+ .../builds/wp13-t29-closure/modeling.xml           |   573 +
+ .../wp13-t29-closure/modeling_contract-report.json |   621 +
+ .../builds/wp13-t29-closure/modeling_contract.log  |    54 +
+ .../builds/wp13-t29-closure/modeling_contract.xml  |    30 +
+ .../wp13-t29-closure/modeling_gui-report.json      |  3162 ++++
+ .../builds/wp13-t29-closure/modeling_gui.log       |   199 +
+ .../wp13-t29-closure/modeling_gui.stderr.log       |     3 +
+ .../builds/wp13-t29-closure/modeling_gui.xml       |   102 +
+ .../optimization_contract-report.json              |  1854 +++
+ .../wp13-t29-closure/optimization_contract.log     |   145 +
+ .../wp13-t29-closure/optimization_contract.xml     |    79 +
+ .../builds/wp13-t29-closure/patch-inventory.json   |  2428 +++
+ .../builds/wp13-t29-closure/patch_inventory.py     |    24 +
+ .../builds/wp13-t29-closure/policy-report.json     |  6767 ++++++++
+ .../builds/wp13-t29-closure/policy.log             |   544 +
+ .../builds/wp13-t29-closure/policy.xml             |   292 +
+ .../wp13-t29-closure/policy_contract-report.json   |   799 +
+ .../builds/wp13-t29-closure/policy_contract.log    |    66 +
+ .../builds/wp13-t29-closure/policy_contract.xml    |    36 +
+ .../wp13-t29-closure/red-ma03/ui-report.json       |    84 +
+ .../builds/wp13-t29-closure/red-ma03/ui.log        |    25 +
+ .../builds/wp13-t29-closure/red-ma03/ui.xml        |    16 +
+ .../wp13-t29-closure/red-ma09-core/README.txt      |     1 +
+ .../builds/wp13-t29-closure/red-ma09-core/core.log |   256 +
+ .../builds/wp13-t29-closure/red-ma09-core/core.xml |   148 +
+ .../wp13-t29-closure/red-ma09-validation.log       |     5 +
+ .../wp13-t29-closure/red-ma09/runtime-report.json  |    14 +
+ .../builds/wp13-t29-closure/red-ma09/runtime.log   |   790 +
+ .../builds/wp13-t29-closure/red-ma09/runtime.xml   |   427 +
+ .../builds/wp13-t29-closure/replacement-map.json   |    92 +
+ .../builds/wp13-t29-closure/report-validation.log  |   361 +
+ .../wp13-t29-closure/repository-inventory.json     |  6100 +++++++
+ .../wp13-t29-closure/repository_inventory.py       |    66 +
+ .../wp13-t29-closure/requirements-report.json      |  8039 +++++++++
+ .../builds/wp13-t29-closure/requirements-tour.log  |   307 +
+ .../wp13-t29-closure/requirements-tour.stderr.log  |     0
+ .../requirements-tour/tour-1-panel-empty-state.png |   Bin 0 -> 220517 bytes
+ .../requirements-tour/tour-2-station-edited.png    |   Bin 0 -> 216511 bytes
+ .../requirements-tour/tour-2b-tsv-template.png     |   Bin 0 -> 223512 bytes
+ .../tour-2c-segments-verified.png                  |   Bin 0 -> 216511 bytes
+ .../requirements-tour/tour-3-confirm-0.png         |   Bin 0 -> 232145 bytes
+ .../requirements-tour/tour-3-confirm-1.png         |   Bin 0 -> 245246 bytes
+ .../requirements-tour/tour-3-confirm-2.png         |   Bin 0 -> 292886 bytes
+ .../requirements-tour/tour-3-method-0.png          |   Bin 0 -> 232554 bytes
+ .../requirements-tour/tour-3-method-1.png          |   Bin 0 -> 244991 bytes
+ .../requirements-tour/tour-3-method-2.png          |   Bin 0 -> 292417 bytes
+ .../requirements-tour/tour-3-region-sampling.png   |   Bin 0 -> 265794 bytes
+ .../requirements-tour/tour-3a-spacing.png          |   Bin 0 -> 292886 bytes
+ .../requirements-tour/tour-3b-random.png           |   Bin 0 -> 232145 bytes
+ .../requirements-tour/tour-4-validation.png        |   Bin 0 -> 273853 bytes
+ .../requirements-tour/tour-4b-view3d-coloring.png  |   Bin 0 -> 173356 bytes
+ .../tour-4c-validation-row-click.png               |   Bin 0 -> 274249 bytes
+ .../requirements-tour/tour-5-final-state.png       |   Bin 0 -> 272911 bytes
+ .../tour-6b-view3d-real-coloring.png               |   Bin 0 -> 174309 bytes
+ .../tour-6c-sample-blue-circle.png                 |   Bin 0 -> 175031 bytes
+ .../requirements-tour/tour-7-view-0.png            |   Bin 0 -> 25690 bytes
+ .../requirements-tour/tour-7-view-1.png            |   Bin 0 -> 17161 bytes
+ .../requirements-tour/tour-7-view-2.png            |   Bin 0 -> 17670 bytes
+ .../requirements-tour/tour-7-view-3.png            |   Bin 0 -> 175031 bytes
+ .../tour-8-real-four-state-palette.png             |   Bin 0 -> 12590 bytes
+ .../tour-8b-real-selected-ring.png                 |   Bin 0 -> 13615 bytes
+ .../requirements-tour/tour-8c-product-export.png   |   Bin 0 -> 13601 bytes
+ .../tour-9-populated-bottom-0.png                  |   Bin 0 -> 19085 bytes
+ .../tour-9-populated-bottom-1.png                  |   Bin 0 -> 12487 bytes
+ .../requirements-tour/tour-9-populated-top-0.png   |   Bin 0 -> 290889 bytes
+ .../requirements-tour/tour-9-populated-top-1.png   |   Bin 0 -> 207954 bytes
+ .../requirements-tour/tour-apply-confirmation.png  |   Bin 0 -> 8210 bytes
+ .../builds/wp13-t29-closure/requirements.log       |   532 +
+ .../builds/wp13-t29-closure/requirements.xml       |   281 +
+ .../requirements_contract-report.json              |   581 +
+ .../wp13-t29-closure/requirements_contract.log     |    58 +
+ .../wp13-t29-closure/requirements_contract.xml     |    33 +
+ .../wp13-t29-closure/requirements_gui-report.json  |  3795 +++++
+ .../builds/wp13-t29-closure/requirements_gui.log   |   234 +
+ .../wp13-t29-closure/requirements_gui.stderr.log   |     2 +
+ .../builds/wp13-t29-closure/requirements_gui.xml   |   119 +
+ .../traceability/builds/wp13-t29-closure/run.ps1   |   109 +
+ .../builds/wp13-t29-closure/runtime-report.json    |  9727 +++++++++++
+ .../builds/wp13-t29-closure/runtime.log            |   790 +
+ .../builds/wp13-t29-closure/runtime.xml            |   427 +
+ .../wp13-t29-closure/source-binary-hashes.json     |    49 +
+ .../builds/wp13-t29-closure/standalone-batch.log   |   724 +
+ .../builds/wp13-t29-closure/standalone-batch.ps1   |    14 +
+ .../standalone-build-before-core.log               |   658 +
+ .../builds/wp13-t29-closure/standalone-build.log   |   155 +
+ .../wp13-t29-closure/standalone-configure.log      |    32 +
+ .../wp13-t29-closure/standalone_core-report.json   |  2031 +++
+ .../builds/wp13-t29-closure/standalone_core.log    |   248 +
+ .../builds/wp13-t29-closure/standalone_core.xml    |   144 +
+ .../standalone_evidence-report.json                |  6618 ++++++++
+ .../wp13-t29-closure/standalone_evidence.log       |   592 +
+ .../wp13-t29-closure/standalone_evidence.xml       |   326 +
+ .../standalone_evidence_contract-report.json       |   463 +
+ .../standalone_evidence_contract.log               |    42 +
+ .../standalone_evidence_contract.xml               |    23 +
+ .../standalone_modeling-report.json                | 12668 ++++++++++++++
+ .../wp13-t29-closure/standalone_modeling.log       |   827 +
+ .../wp13-t29-closure/standalone_modeling.xml       |   431 +
+ .../standalone_modeling_contract-report.json       |   289 +
+ .../standalone_modeling_contract.log               |    27 +
+ .../standalone_modeling_contract.xml               |    15 +
+ .../standalone_modeling_gui-report.json            |  2075 +++
+ .../wp13-t29-closure/standalone_modeling_gui.log   |   134 +
+ .../standalone_modeling_gui.stderr.log             |     0
+ .../wp13-t29-closure/standalone_modeling_gui.xml   |    69 +
+ .../standalone_optimization_contract-report.json   |  1854 +++
+ .../standalone_optimization_contract.log           |   145 +
+ .../standalone_optimization_contract.xml           |    79 +
+ .../wp13-t29-closure/standalone_policy-report.json |  4527 +++++
+ .../builds/wp13-t29-closure/standalone_policy.log  |   365 +
+ .../builds/wp13-t29-closure/standalone_policy.xml  |   196 +
+ .../standalone_policy_contract-report.json         |   271 +
+ .../standalone_policy_contract.log                 |    27 +
+ .../standalone_policy_contract.xml                 |    15 +
+ .../standalone_requirements-report.json            |  8039 +++++++++
+ .../wp13-t29-closure/standalone_requirements.log   |   532 +
+ .../wp13-t29-closure/standalone_requirements.xml   |   281 +
+ .../standalone_requirements_contract-report.json   |   581 +
+ .../standalone_requirements_contract.log           |    58 +
+ .../standalone_requirements_contract.xml           |    33 +
+ .../standalone_requirements_gui-report.json        |  3795 +++++
+ .../standalone_requirements_gui.log                |   234 +
+ .../standalone_requirements_gui.stderr.log         |     2 +
+ .../standalone_requirements_gui.xml                |   119 +
+ .../standalone_runtime-report.json                 |  6296 +++++++
+ .../builds/wp13-t29-closure/standalone_runtime.log |   542 +
+ .../builds/wp13-t29-closure/standalone_runtime.xml |   296 +
+ .../wp13-t29-closure/standalone_ui-report.json     |  9384 +++++++++++
+ .../builds/wp13-t29-closure/standalone_ui.log      |   628 +
+ .../builds/wp13-t29-closure/standalone_ui.xml      |   326 +
+ .../wp13-t29-closure/standalone_ui_gui-report.json |  2589 +++
+ .../builds/wp13-t29-closure/standalone_ui_gui.log  |   193 +
+ .../wp13-t29-closure/standalone_ui_gui.stderr.log  |     1 +
+ .../builds/wp13-t29-closure/standalone_ui_gui.xml  |   103 +
+ .../builds/wp13-t29-closure/tour-summary.json      |    42 +
+ .../builds/wp13-t29-closure/ui-build.log           |   110 +
+ .../builds/wp13-t29-closure/ui-gui-build.log       |    76 +
+ .../builds/wp13-t29-closure/ui-report.json         | 11682 +++++++++++++
+ .../traceability/builds/wp13-t29-closure/ui.log    |   781 +
+ .../traceability/builds/wp13-t29-closure/ui.xml    |   406 +
+ .../wp13-t29-closure/ui_contract-report.json       |  2213 +++
+ .../builds/wp13-t29-closure/ui_contract.log        |   170 +
+ .../builds/wp13-t29-closure/ui_contract.xml        |    92 +
+ .../builds/wp13-t29-closure/ui_gui-report.json     |  3305 ++++
+ .../builds/wp13-t29-closure/ui_gui.log             |   242 +
+ .../builds/wp13-t29-closure/ui_gui.stderr.log      |     2 +
+ .../builds/wp13-t29-closure/ui_gui.xml             |   129 +
+ .../builds/wp13-t29-closure/validate-task.log      |     1 +
+ .../builds/wp13-t29-closure/validate_reports.py    |    45 +
+ .../verified-test-summary-standalone.json          |   289 +
+ .../wp13-t29-closure/verified-test-summary.json    |   361 +
+ .../builds/wp13-t29-closure/verify-task.log        |   329 +
+ .../traceability/evidence-index.json               |  2617 ++-
+ .../traceability/findings.json                     |    14 +-
+ RobWork/doc/industrial-robot-design/units/core.md  |     7 +
+ .../industrial-robot-design/units/kinematics.md    |     1 +
+ .../industrial-robot-design/units/optimization.md  |     1 +
+ .../industrial-robot-design/units/requirements.md  |     1 +
+ .../doc/industrial-robot-design/units/runtime.md   |    10 +
+ RobWork/doc/industrial-robot-design/units/ui.md    |     9 +
+ .../superpowers/plans/2026-10-21-audit-closure.md  |    33 +
+ 346 files changed, 203847 insertions(+), 162 deletions(-)
+ create mode 100644 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp
+ create mode 100644 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp
+ create mode 100644 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp
+ create mode 100644 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CollisionSession.hpp
+ create mode 100644 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CollisionSession.cpp
+ create mode 100644 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CollisionSessionTest.cpp
+ create mode 100644 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp
+ create mode 100644 RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T29.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/README.md
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/diag-event-trace-stale-negotiation.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-fix-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-full-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-host-tour-auto.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-host-tour-layout.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-host-tour-modeling.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-optimization-contract-52.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/green-req-tour-after-fix.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/ma09-runtime-ird-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/ma09-targets-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/red-req-tour-blank-tail-stale-assertions.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/req-tour-fixed-shots/tour-9-populated-bottom-0.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t27-audit-fixes/req-tour-fixed-shots/tour-9-populated-bottom-1.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/README.md
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-full-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-host-tour-auto.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-host-tour-requirements.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-runtime-geo7-collision.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t28-ma0102/green-standalone-runtime-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/OPEN-ISSUES.md
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/REPORT.md
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/REPOSITORY-STATE.md
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/auto.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/auto.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/baseline.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/batch-before-ma09-fix.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/batch.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/batch.ps1
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/capture-evidence.py
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/commit-lint-precheck.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/commit-message.txt
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/core-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/core.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/core.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/evidence-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/evidence.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/evidence.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/evidence_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/evidence_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/evidence_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/full-build-before-ma09-fix.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/full-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gates.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/green-ma04/ui_gui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/green-ma04/ui_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/green-ma04/ui_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/green-ma04/ui_gui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/base-euler.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/body-editor-confirm.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/body-editor-top.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/clean-revision-live-tree-and-form.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/conflict-rebuilt-current-tool.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/continuous-range-rejected.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/continuous-range.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/diff-deleted-refused.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/diff-empty.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/diff-long-values.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/diff-three-groups.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/draft-change-readonly.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/draft-change-redo.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/draft-history.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/draft-undo-clean-redo-retained.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/full-draft-restored-tool.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/import-report.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/property-segments-complete.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/property-segments-long.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/retained-draft-review.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/scene-manager-external.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/scene-manager-updated.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/tool-manager-body-bottom.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/tool-manager-body.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/tool-manager-external.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/tool-manager-top.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/workcell-import-report.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/xacro-duplicate-error.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-modeling_gui/xacro-parameters.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/base-euler.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/body-editor-confirm.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/body-editor-top.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/continuous-range-rejected.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/continuous-range.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/diff-empty.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/diff-long-values.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/diff-three-groups.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/import-report.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/property-segments-long.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/tool-manager-top.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/workcell-import-report.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/xacro-duplicate-error.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-standalone_modeling_gui/xacro-parameters.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-ui_gui/conflict-objects-cancel.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/gui-ui_gui/conflict-save-failed.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/harness-error/ui_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/harness-error/ui_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/harness-error/validate_reports-before-outcome-projection.py
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/index-evidence-initial.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/inventory.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics_gui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/kinematics_gui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/1-default-layout.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/10-tasks-dock-summoned.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/2-view-menu.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/3-domain-panel-summoned.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/4-requirements-buttons.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/5-requirements-narrow.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/6-min-window.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/8-modeling-panel.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/9-kinematics-panel.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/layout/geometry-report.txt
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-1-panel.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-2-reseeded.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-3-origin-edit.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-4-structure.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-5-applied.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-5.5-reopened.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-5.7-scene-picked.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-6-exported.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-7-chinese-palette.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-8-scene-update-reopened.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-a21-oriented-samples.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-a23-low-policy-comparison.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-a23-policy-editor.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-a23-policy-summary.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-b2b-after-restore.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-b2b-before-restore.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-b4a-diff.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-capture-confirm-0.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-capture-confirm-1.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-capture-confirm-2.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-capture-restored.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-condition-name-directory.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-conflict-cancel.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-conflict-reedit.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-environment-name-choice.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-export.irdbundle
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-fixture.stl
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-name-directory.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-pick-normal-confirm.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-retained-review.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-target-3d-perspective-yaw.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-target-3d-preview.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling-tour/mtour-target-3d-tool.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling_gui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/modeling_gui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/optimization_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/optimization_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/optimization_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/patch-inventory.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/patch_inventory.py
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/policy-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/policy.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/policy.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/policy_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/policy_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/policy_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma03/ui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma03/ui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma03/ui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma09-core/README.txt
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma09-core/core.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma09-core/core.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma09-validation.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma09/runtime-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma09/runtime.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/red-ma09/runtime.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/replacement-map.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/report-validation.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/repository-inventory.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/repository_inventory.py
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-1-panel-empty-state.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-2-station-edited.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-2b-tsv-template.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-2c-segments-verified.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3-confirm-0.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3-confirm-1.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3-confirm-2.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3-method-0.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3-method-1.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3-method-2.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3-region-sampling.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3a-spacing.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-3b-random.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-4-validation.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-4b-view3d-coloring.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-4c-validation-row-click.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-5-final-state.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-6b-view3d-real-coloring.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-6c-sample-blue-circle.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-7-view-0.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-7-view-1.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-7-view-2.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-7-view-3.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-8-real-four-state-palette.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-8b-real-selected-ring.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-8c-product-export.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-9-populated-bottom-0.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-9-populated-bottom-1.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-9-populated-top-0.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-9-populated-top-1.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements-tour/tour-apply-confirmation.png
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements_gui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/requirements_gui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/run.ps1
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/runtime-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/runtime.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/runtime.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/source-binary-hashes.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone-batch.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone-batch.ps1
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone-build-before-core.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone-configure.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_core-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_core.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_core.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_evidence-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_evidence.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_evidence.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_evidence_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_evidence_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_evidence_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling_gui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_modeling_gui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_optimization_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_optimization_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_optimization_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_policy-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_policy.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_policy.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_policy_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_policy_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_policy_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements_gui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_requirements_gui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_runtime-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_runtime.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_runtime.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_ui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_ui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_ui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_ui_gui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_ui_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_ui_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/standalone_ui_gui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/tour-summary.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui-gui-build.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui_contract-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui_contract.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui_contract.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui_gui-report.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui_gui.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui_gui.stderr.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/ui_gui.xml
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/validate-task.log
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/validate_reports.py
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/verified-test-summary-standalone.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/verified-test-summary.json
+ create mode 100644 RobWork/doc/industrial-robot-design/traceability/builds/wp13-t29-closure/verify-task.log
+ create mode 100644 RobWork/docs/superpowers/plans/2026-10-21-audit-closure.md

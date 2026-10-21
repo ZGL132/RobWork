@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "de7590e75ff06bf17f2c251b55f53f9b78dfbe88",
+  "sourceRoot": "C:\\Users\\zgl18\\.codex\\worktrees\\3582\\RobWork",
+  "branch": "redesign-main",
+  "productTree": "f58d6c677a806533b988fbdc85faebec5ccee32c",
+  "executable": "C:\\Users\\zgl18\\.codex\\worktrees\\3582\\RobWork\\build\\RobWorkStudio\\bin\\Release\\sdurws_ird_studio.exe",
+  "sha256": "5AE196BCB9E454B00C017F86A905E9D443A7517EC5374C7113F842B0BC0B3DB0",
+  "integration": {
+    "total": 2668,
+    "passed": 2665,
+    "failed": 0,
+    "skipped": 3
+  },
+  "standalone": {
+    "total": 1805,
+    "passed": 1804,
+    "failed": 0,
+    "skipped": 1
+  }
+}

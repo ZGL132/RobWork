@@ -1,0 +1,199 @@
+[==========] Running 91 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 51 tests from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.ReadinessBar_NotProvidedStatusAndActionVisible_WP13T23
+[       OK ] ModelingPanelGuiTest.ReadinessBar_NotProvidedStatusAndActionVisible_WP13T23 (519 ms)
+[ RUN      ] ModelingPanelGuiTest.PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27
+[       OK ] ModelingPanelGuiTest.PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27 (206 ms)
+[ RUN      ] ModelingPanelGuiTest.UnitSeparation_EditorTextPurelyNumeric_UX05_UI_T27
+[       OK ] ModelingPanelGuiTest.UnitSeparation_EditorTextPurelyNumeric_UX05_UI_T27 (204 ms)
+[ RUN      ] ModelingPanelGuiTest.OnlyZeroOffsetEditable_CompositeRowsReadOnly_MDL07_UI_T27
+[       OK ] ModelingPanelGuiTest.OnlyZeroOffsetEditable_CompositeRowsReadOnly_MDL07_UI_T27 (211 ms)
+[ RUN      ] ModelingPanelGuiTest.ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17
+[       OK ] ModelingPanelGuiTest.ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17 (597 ms)
+[ RUN      ] ModelingPanelGuiTest.ContinuousRangeSchemaRebuildKeepsQueuedModelAlive_MDL12_AT17
+[       OK ] ModelingPanelGuiTest.ContinuousRangeSchemaRebuildKeepsQueuedModelAlive_MDL12_AT17 (259 ms)
+[ RUN      ] ModelingPanelGuiTest.JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53
+[       OK ] ModelingPanelGuiTest.JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53 (206 ms)
+[ RUN      ] ModelingPanelGuiTest.JointDetailEditPane_OriginEditApplyChain_UI_T53
+[       OK ] ModelingPanelGuiTest.JointDetailEditPane_OriginEditApplyChain_UI_T53 (216 ms)
+[ RUN      ] ModelingPanelGuiTest.JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T53
+[       OK ] ModelingPanelGuiTest.JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T53 (225 ms)
+[ RUN      ] ModelingPanelGuiTest.JointDetailEditPane_TypeComboBoxChainAndRejectFallback_UI_T66
+[       OK ] ModelingPanelGuiTest.JointDetailEditPane_TypeComboBoxChainAndRejectFallback_UI_T66 (208 ms)
+[ RUN      ] ModelingPanelGuiTest.JointDetailEditPane_ReadOnlySessionDisablesPanel_UI_T53
+[       OK ] ModelingPanelGuiTest.JointDetailEditPane_ReadOnlySessionDisablesPanel_UI_T53 (409 ms)
+[ RUN      ] ModelingPanelGuiTest.BasePlacementEdit_WholeReplacementChain_UI_T54
+[       OK ] ModelingPanelGuiTest.BasePlacementEdit_WholeReplacementChain_UI_T54 (204 ms)
+[ RUN      ] ModelingPanelGuiTest.BaseEulerEntryAndAtomicApply_MDL22_AT37
+[       OK ] ModelingPanelGuiTest.BaseEulerEntryAndAtomicApply_MDL22_AT37 (363 ms)
+[ RUN      ] ModelingPanelGuiTest.BasePlacementEdit_PresetIdentityRotationRejected_UI_T54
+[       OK ] ModelingPanelGuiTest.BasePlacementEdit_PresetIdentityRotationRejected_UI_T54 (220 ms)
+[ RUN      ] ModelingPanelGuiTest.BasePlacementEdit_ReadOnlyDisablesApply_UI_T54
+[       OK ] ModelingPanelGuiTest.BasePlacementEdit_ReadOnlyDisablesApply_UI_T54 (415 ms)
+[ RUN      ] ModelingPanelGuiTest.UnmodifiedEditingFinished_NoDirtyNoApply_ERR01_UI_T27
+[       OK ] ModelingPanelGuiTest.UnmodifiedEditingFinished_NoDirtyNoApply_ERR01_UI_T27 (207 ms)
+[ RUN      ] ModelingPanelGuiTest.AvailabilityProviderDisabled_ButtonsGreyWithReason_UX02_UI_T27
+[       OK ] ModelingPanelGuiTest.AvailabilityProviderDisabled_ButtonsGreyWithReason_UX02_UI_T27 (232 ms)
+[ RUN      ] ModelingPanelGuiTest.CommandButtonTooltip_ResolvedFromUiTextKey_UX02_UI_T41B
+[       OK ] ModelingPanelGuiTest.CommandButtonTooltip_ResolvedFromUiTextKey_UX02_UI_T41B (196 ms)
+[ RUN      ] ModelingPanelGuiTest.MoreActionsCollapse_DefaultCollapsedAndToggle_F502
+[       OK ] ModelingPanelGuiTest.MoreActionsCollapse_DefaultCollapsedAndToggle_F502 (204 ms)
+[ RUN      ] ModelingPanelGuiTest.ZeroOffsetOutOfRange_InlineWarningKeepsAuthoritative_B1
+[       OK ] ModelingPanelGuiTest.ZeroOffsetOutOfRange_InlineWarningKeepsAuthoritative_B1 (196 ms)
+[ RUN      ] ModelingPanelGuiTest.IncrementalRefresh_PreservesEditorFocus_B3
+[       OK ] ModelingPanelGuiTest.IncrementalRefresh_PreservesEditorFocus_B3 (204 ms)
+[ RUN      ] ModelingPanelGuiTest.StatusHistory_AccumulatesAndToggles_B2
+[       OK ] ModelingPanelGuiTest.StatusHistory_AccumulatesAndToggles_B2 (210 ms)
+[ RUN      ] ModelingPanelGuiTest.ReadOnlySession_AvailabilityRefreshCannotReviveWriteCommands_L7_UI_T43
+[       OK ] ModelingPanelGuiTest.ReadOnlySession_AvailabilityRefreshCannotReviveWriteCommands_L7_UI_T43 (183 ms)
+[ RUN      ] ModelingPanelGuiTest.LocateSinkProductionWiring_ReadinessRowClickFocusesTree_UI_T71
+[       OK ] ModelingPanelGuiTest.LocateSinkProductionWiring_ReadinessRowClickFocusesTree_UI_T71 (205 ms)
+[ RUN      ] ModelingPanelGuiTest.StructureButtons_InsertAndRemove_DraftOnly_UI_T47
+[       OK ] ModelingPanelGuiTest.StructureButtons_InsertAndRemove_DraftOnly_UI_T47 (394 ms)
+[ RUN      ] ModelingPanelGuiTest.StructureButtons_RemoveSelected_DraftOnly_UI_T47
+[       OK ] ModelingPanelGuiTest.StructureButtons_RemoveSelected_DraftOnly_UI_T47 (215 ms)
+[ RUN      ] ModelingPanelGuiTest.GeometryActionButtons_LoadAndDetach_UI_T48
+[       OK ] ModelingPanelGuiTest.GeometryActionButtons_LoadAndDetach_UI_T48 (210 ms)
+[ RUN      ] ModelingPanelGuiTest.GeometryCopyButton_VisualToCollision_UI_T49
+[       OK ] ModelingPanelGuiTest.GeometryCopyButton_VisualToCollision_UI_T49 (193 ms)
+[ RUN      ] ModelingPanelGuiTest.EditingChain_EndToEnd_FourSegments_UI_T50
+[       OK ] ModelingPanelGuiTest.EditingChain_EndToEnd_FourSegments_UI_T50 (208 ms)
+[ RUN      ] ModelingPanelGuiTest.ToolMountEdit_SelectionDrivenChain_UI_T55
+[       OK ] ModelingPanelGuiTest.ToolMountEdit_SelectionDrivenChain_UI_T55 (208 ms)
+[ RUN      ] ModelingPanelGuiTest.ScenePoseEdit_SelectionDrivenChain_UI_T55
+[       OK ] ModelingPanelGuiTest.ScenePoseEdit_SelectionDrivenChain_UI_T55 (184 ms)
+[ RUN      ] ModelingPanelGuiTest.PoseEditPanes_ReadOnlyDisables_UI_T55
+[       OK ] ModelingPanelGuiTest.PoseEditPanes_ReadOnlyDisables_UI_T55 (404 ms)
+[ RUN      ] ModelingPanelGuiTest.TcpListEdit_AddAndOffsetChain_UI_T57
+[       OK ] ModelingPanelGuiTest.TcpListEdit_AddAndOffsetChain_UI_T57 (209 ms)
+[ RUN      ] ModelingPanelGuiTest.TcpListEdit_RemoveGuards_UI_T57
+[       OK ] ModelingPanelGuiTest.TcpListEdit_RemoveGuards_UI_T57 (199 ms)
+[ RUN      ] ModelingPanelGuiTest.TcpPane_ReadOnlyDisables_UI_T57
+[       OK ] ModelingPanelGuiTest.TcpPane_ReadOnlyDisables_UI_T57 (389 ms)
+[ RUN      ] ModelingPanelGuiTest.TcpDisplayNameEdit_Chain_UI_T58
+[       OK ] ModelingPanelGuiTest.TcpDisplayNameEdit_Chain_UI_T58 (228 ms)
+[ RUN      ] ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59
+[       OK ] ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59 (193 ms)
+[ RUN      ] ModelingPanelGuiTest.PoseSetEdit_Chain_UI_T60
+[       OK ] ModelingPanelGuiTest.PoseSetEdit_Chain_UI_T60 (234 ms)
+[ RUN      ] ModelingPanelGuiTest.DrivetrainEdit_Chain_UI_T60
+[       OK ] ModelingPanelGuiTest.DrivetrainEdit_Chain_UI_T60 (215 ms)
+[ RUN      ] ModelingPanelGuiTest.PoseDrivetrainPanes_ReadOnlyDisables_UI_T60
+[       OK ] ModelingPanelGuiTest.PoseDrivetrainPanes_ReadOnlyDisables_UI_T60 (417 ms)
+[ RUN      ] ModelingPanelGuiTest.TcpDisplayNameEdit_SetWritableDynamicWindow_F517
+[       OK ] ModelingPanelGuiTest.TcpDisplayNameEdit_SetWritableDynamicWindow_F517 (201 ms)
+[ RUN      ] ModelingPanelGuiTest.FirstSelectionShowsImportedValuesWithoutCancel_UI_T79
+[       OK ] ModelingPanelGuiTest.FirstSelectionShowsImportedValuesWithoutCancel_UI_T79 (205 ms)
+[ RUN      ] ModelingPanelGuiTest.SameObjectRefreshKeepsPendingValue_UI_T79
+[       OK ] ModelingPanelGuiTest.SameObjectRefreshKeepsPendingValue_UI_T79 (230 ms)
+[ RUN      ] ModelingPanelGuiTest.ManualBodyFieldsAndCentroidChoice_MDL05_V17
+[       OK ] ModelingPanelGuiTest.ManualBodyFieldsAndCentroidChoice_MDL05_V17 (401 ms)
+[ RUN      ] ModelingPanelGuiTest.ManualBodyRefreshStaleAndReadOnly_MDL05_V17
+[       OK ] ModelingPanelGuiTest.ManualBodyRefreshStaleAndReadOnly_MDL05_V17 (211 ms)
+[ RUN      ] ModelingPanelGuiTest.SceneManagerPendingSelectionAndReadOnly_MDL15_AT28
+[       OK ] ModelingPanelGuiTest.SceneManagerPendingSelectionAndReadOnly_MDL15_AT28 (304 ms)
+[ RUN      ] ModelingPanelGuiTest.ToolManagerPendingSelectionReadOnly_MDL13_AT01
+[       OK ] ModelingPanelGuiTest.ToolManagerPendingSelectionReadOnly_MDL13_AT01 (407 ms)
+[ RUN      ] ModelingPanelGuiTest.JointDetailEditPane_MaxVelocityEditAndRejectChain_MDL01_WP13T25
+[       OK ] ModelingPanelGuiTest.JointDetailEditPane_MaxVelocityEditAndRejectChain_MDL01_WP13T25 (234 ms)
+[ RUN      ] ModelingPanelGuiTest.CouplingEditorEntryAndStageGating_MDL21_WP13T25
+[       OK ] ModelingPanelGuiTest.CouplingEditorEntryAndStageGating_MDL21_WP13T25 (194 ms)
+[ RUN      ] ModelingPanelGuiTest.CouplingEditorNonDiagonalAcceptThenRemove_MDL21_WP13T25
+[       OK ] ModelingPanelGuiTest.CouplingEditorNonDiagonalAcceptThenRemove_MDL21_WP13T25 (284 ms)
+[ RUN      ] ModelingPanelGuiTest.CouplingEditorSingularRejectedAtomicCancelSafe_MDL21_WP13T25
+[       OK ] ModelingPanelGuiTest.CouplingEditorSingularRejectedAtomicCancelSafe_MDL21_WP13T25 (297 ms)
+[----------] 51 tests from ModelingPanelGuiTest (13437 ms total)
+
+[----------] 1 test from ModelingManualBodyGui
+[ RUN      ] ModelingManualBodyGui.MissingBaselineCompleteInputAndReadOnly_MDL05_V17
+[       OK ] ModelingManualBodyGui.MissingBaselineCompleteInputAndReadOnly_MDL05_V17 (3 ms)
+[----------] 1 test from ModelingManualBodyGui (3 ms total)
+
+[----------] 10 tests from ModelingImportGui
+[ RUN      ] ModelingImportGui.PropertyEmptyLongTableCancel_MDL05
+[       OK ] ModelingImportGui.PropertyEmptyLongTableCancel_MDL05 (155 ms)
+[ RUN      ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12
+[       OK ] ModelingImportGui.FullDiffFromProductionCommand_MDL08_UX13_AT12 (124 ms)
+[ RUN      ] ModelingImportGui.DiffUnitsFollowBothJointTypes_UX13_AT12
+[       OK ] ModelingImportGui.DiffUnitsFollowBothJointTypes_UX13_AT12 (66 ms)
+[ RUN      ] ModelingImportGui.DiffLongValuesEmptyAndUnwiredLocation_UX13_AT12
+[       OK ] ModelingImportGui.DiffLongValuesEmptyAndUnwiredLocation_UX13_AT12 (268 ms)
+[ RUN      ] ModelingImportGui.ParametersRejectDuplicateThenApplyLiteralOverride_MDL19_AT31
+[       OK ] ModelingImportGui.ParametersRejectDuplicateThenApplyLiteralOverride_MDL19_AT31 (106 ms)
+[ RUN      ] ModelingImportGui.ParameterCancelReturnsNoSubstitution_MDL19_AT31
+[       OK ] ModelingImportGui.ParameterCancelReturnsNoSubstitution_MDL19_AT31 (79 ms)
+[ RUN      ] ModelingImportGui.FullImportReportScrollableSelectableAndCancelSafe_MDL11_AT15
+[       OK ] ModelingImportGui.FullImportReportScrollableSelectableAndCancelSafe_MDL11_AT15 (93 ms)
+[ RUN      ] ModelingImportGui.WorkCellRealFileDialogToReportCancelSafe_MDL18_AT33
+[       OK ] ModelingImportGui.WorkCellRealFileDialogToReportCancelSafe_MDL18_AT33 (248 ms)
+[ RUN      ] ModelingImportGui.PropertySegmentsOnFlangeProductionEntry_MDL05
+[       OK ] ModelingImportGui.PropertySegmentsOnFlangeProductionEntry_MDL05 (279 ms)
+[ RUN      ] ModelingImportGui.PropertySegmentWindowValidationAndLocalHistory_MDL05
+[       OK ] ModelingImportGui.PropertySegmentWindowValidationAndLocalHistory_MDL05 (336 ms)
+[----------] 10 tests from ModelingImportGui (1763 ms total)
+
+[----------] 29 tests from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.DiffLocatesLiveObjectsAndRefusesDeleted_UX13_AT12
+[       OK ] ModelingUiModuleHostWiring.DiffLocatesLiveObjectsAndRefusesDeleted_UX13_AT12 (395 ms)
+[ RUN      ] ModelingUiModuleHostWiring.DraftHistoryRestoresFieldsAndStructureWithoutRevision_PM18_L5
+[       OK ] ModelingUiModuleHostWiring.DraftHistoryRestoresFieldsAndStructureWithoutRevision_PM18_L5 (406 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ContinuousRangeDraftHistory_MDL12_AT17
+[       OK ] ModelingUiModuleHostWiring.ContinuousRangeDraftHistory_MDL12_AT17 (224 ms)
+[ RUN      ] ModelingUiModuleHostWiring.DraftHistoryClearsOnDetachAndRejectDoesNotEnter_PM18_L5
+[       OK ] ModelingUiModuleHostWiring.DraftHistoryClearsOnDetachAndRejectDoesNotEnter_PM18_L5 (201 ms)
+[ RUN      ] ModelingUiModuleHostWiring.DraftHistoryRestoresComponentAndCancelsPending_PM18_L5
+[       OK ] ModelingUiModuleHostWiring.DraftHistoryRestoresComponentAndCancelsPending_PM18_L5 (219 ms)
+[ RUN      ] ModelingUiModuleHostWiring.TextResolverBoundBeforePanelCreation_NoInternalKeyLeak_UX02_UI_T43
+[       OK ] ModelingUiModuleHostWiring.TextResolverBoundBeforePanelCreation_NoInternalKeyLeak_UX02_UI_T43 (200 ms)
+[ RUN      ] ModelingUiModuleHostWiring.WritableChain_PendingInitialAndLiveForward_L7_UI_T43
+[       OK ] ModelingUiModuleHostWiring.WritableChain_PendingInitialAndLiveForward_L7_UI_T43 (206 ms)
+[ RUN      ] ModelingUiModuleHostWiring.AppliedPreviewPushChain_Fix_UI_T59
+[       OK ] ModelingUiModuleHostWiring.AppliedPreviewPushChain_Fix_UI_T59 (207 ms)
+[ RUN      ] ModelingUiModuleHostWiring.PackageChecklistPreviewChain_UI_T61
+[       OK ] ModelingUiModuleHostWiring.PackageChecklistPreviewChain_UI_T61 (203 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ReseedCustomChainComposition_UI_T63
+[       OK ] ModelingUiModuleHostWiring.ReseedCustomChainComposition_UI_T63 (0 ms)
+[ RUN      ] ModelingUiModuleHostWiring.NamedPoseRestoreEntryIsPresent_MDL17_AT04
+[       OK ] ModelingUiModuleHostWiring.NamedPoseRestoreEntryIsPresent_MDL17_AT04 (203 ms)
+[ RUN      ] ModelingUiModuleHostWiring.NamedPoseRestoreUsesAppliedOffsetsAndIgnoresStaging_MDL17_AT04
+[       OK ] ModelingUiModuleHostWiring.NamedPoseRestoreUsesAppliedOffsetsAndIgnoresStaging_MDL17_AT04 (206 ms)
+[ RUN      ] ModelingUiModuleHostWiring.NamedPosePageReachableWithoutExistingObject_MDL17_AT04
+[       OK ] ModelingUiModuleHostWiring.NamedPosePageReachableWithoutExistingObject_MDL17_AT04 (298 ms)
+[ RUN      ] ModelingUiModuleHostWiring.NamedPoseCanSaveAfterSessionReopen_MDL17_AT04
+[       OK ] ModelingUiModuleHostWiring.NamedPoseCanSaveAfterSessionReopen_MDL17_AT04 (330 ms)
+[ RUN      ] ModelingUiModuleHostWiring.LinkBodyEditorReachable_MDL05_V17
+[       OK ] ModelingUiModuleHostWiring.LinkBodyEditorReachable_MDL05_V17 (321 ms)
+[ RUN      ] ModelingUiModuleHostWiring.EmptySceneManagementReachable_MDL15_AT28
+[       OK ] ModelingUiModuleHostWiring.EmptySceneManagementReachable_MDL15_AT28 (371 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17
+[       OK ] ModelingUiModuleHostWiring.ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17 (231 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04
+[       OK ] ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04 (204 ms)
+[ RUN      ] ModelingUiModuleHostWiring.SceneCrudLocalHistoryAndWorldPose_MDL15_AT28
+[       OK ] ModelingUiModuleHostWiring.SceneCrudLocalHistoryAndWorldPose_MDL15_AT28 (344 ms)
+[ RUN      ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01
+[       OK ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01 (314 ms)
+[ RUN      ] ModelingUiModuleHostWiring.SceneExternalGeometryFileDialog_MDL15_AT28
+[       OK ] ModelingUiModuleHostWiring.SceneExternalGeometryFileDialog_MDL15_AT28 (1601 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01
+[       OK ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01 (518 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21 (714 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28
+[       OK ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28 (2183 ms)
+[ RUN      ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21 (459 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21 (488 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CleanRevisionRefreshesRealTreeAndForms_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CleanRevisionRefreshesRealTreeAndForms_PM04_AT21 (394 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21 (539 ms)
+[ RUN      ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33
+[       OK ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33 (214 ms)
+[----------] 29 tests from ModelingUiModuleHostWiring (12224 ms total)
+
+[----------] Global test environment tear-down
+[==========] 91 tests from 4 test suites ran. (27432 ms total)
+[  PASSED  ] 91 tests.

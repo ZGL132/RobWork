@@ -1,0 +1,8 @@
+{
+  "source": "de7590e75ff06bf17f2c251b55f53f9b78dfbe88",
+  "baseline": "402e5992ad5fd204148f4844c6bf27b65d785d7d",
+  "origin": "b7abcba9f6c4b32aa1bc0404b44ed1aad22a30a5",
+  "frozenMain": "49a9e819c24c7ef15dff24366a4a551068c2d269",
+  "purpose": "用户授权全部合入开发主线后进行手工验收；不代签独立验收",
+  "time": "2026-10-21T00:16:04.4532541Z"
+}
