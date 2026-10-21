@@ -1,0 +1,202 @@
+{
+  "baseline": "4adc29f1bec2847c64729a13ec45ccc25a675305",
+  "normalization": "CRLF/CR -> LF",
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Redaction.cpp",
+      "sha256_lf": "bbbe7c163e54f07e06adf494a0a313875f10cda7515caf242f227a38b9f3d69b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/Evaluator.cpp",
+      "sha256_lf": "f5e3a4f840fae80c8688b4604c62f6c796ccfbb58f2c432253fd902cac0935f6"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/Commands.hpp",
+      "sha256_lf": "5554fc72c9bb28f87c0db3ba1fcd31b82c01da1762a0c58ead1e5cae7d0393b6"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/plugin/DynamicsPanelWidget.cpp",
+      "sha256_lf": "539ecdaf4d9a633814e3a05bc4ecef627755c2bf6156a587837190921cfade14"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+      "sha256_lf": "c03ba32358735f87dc43a8ba4916b01868653c413ee64a032444ce53c8b31afe"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+      "sha256_lf": "c1d3fd7b7fd9f7ab3fdd9cd77218069d805ddda317ad1586695a5ce9ed1de12d"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Currentness.cpp",
+      "sha256_lf": "14049c348591bf47d1aaa422ce74f1c443a7e000021cbfbe56444448e2ffc48b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Controller.cpp",
+      "sha256_lf": "c68d6077f09b5b062b504b49ebfc37abf81109474d423b7edb3d65a7dd798bef"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/AtomicFile.cpp",
+      "sha256_lf": "b19f57a83d5a8dbb2e12d02406b4a7c81cc8cd66c04fecea4a66068b1e336948"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelCommandCatalog.cpp",
+      "sha256_lf": "a7af3e952f4182a9a59a937a35bdda30ec8ba2f3622802af5cc18f0d82e17d28"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+      "sha256_lf": "0ec2974ff1b5fd7591d7a8c54d443929331ae3ac9c598410a7e734b52a42f092"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingCommandFlows.cpp",
+      "sha256_lf": "e5e7ca06862d4ba4672b4347f2ab40711fd4bad2e4d4b6cdea6b726d8dbf95d2"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+      "sha256_lf": "e98eb18b07bd812591deea3d639a2f3e5fb7244b20a24d92a4a4adfd84d2a52a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelCommandCatalog.cpp",
+      "sha256_lf": "57cbbd4c7a2450cc68146f51fb3ab3539e54af45c2052d2aa10cab92aabdddf3"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/plugin/OptimizationPanelWidget.cpp",
+      "sha256_lf": "33ff310a9bfb8774c1a34e89a0a0be7bf1c6206798d59dff7228c2911c9aabd2"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Export.cpp",
+      "sha256_lf": "20f88e05b5667252413e2c1452738f4b5af73da2eb14b252be4b0526132a7354"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointRun.cpp",
+      "sha256_lf": "80b0973b4c7d62c1996f1aa781f320c42fd538c800c486b82ef64936eb452177"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Preflight.cpp",
+      "sha256_lf": "971a3adb364585a8654fa8cce4e47db1a418f71a0cf2be411262e4615096c04e"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Run.cpp",
+      "sha256_lf": "82c8d3bacd4c803bb5a78bf0f31236f6e57b4a0283832d07e859fc8de08b9ef2"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+      "sha256_lf": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Builder.cpp",
+      "sha256_lf": "038ea1659b6e9509debe1a84f964c121f7228ca62f9a778d168eee504287ed7f"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Bundle.cpp",
+      "sha256_lf": "be1ec5f48eb9f888aa4e1cc5c8018bfa4c05dfc5f1d373fbb931bcee2f4972e0"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Render.cpp",
+      "sha256_lf": "11e66b79b185ba2ee5c275162272a1631a23a6355d1aa6c9d9a439ba7ac818ab"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Roundtrip.cpp",
+      "sha256_lf": "fc20d13bcbfd4b35a32cca2a4f467930c28148d0fdc0305a42b14038d1385df8"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/PanelCommandCatalog.cpp",
+      "sha256_lf": "b420ad604b9b1a28c3f0179441e7dec376419da97e9a38b8541fa2556a045d73"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsCommandFlows.cpp",
+      "sha256_lf": "a8bcfa3283e8566b617e6b6c8e96cca92c11c2ded20f74f00194d94d3232ca58"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+      "sha256_lf": "3a7b5b5b69c5ee5590ca2f055fa5db6c67940386194987f4b2c90ab4da2818e6"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/plugin/SelCatalogPanelWidget.cpp",
+      "sha256_lf": "b0c149302b405d72d25e091959b0eacb9259707b843b534b8fd491f6dc7a4abb"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/plugin/SelPanelCommandCatalog.hpp",
+      "sha256_lf": "07b49a57a5b63ea52d165846eac2255609bccd06a75023ff408c1f02d7898d3c"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "sha256_lf": "14545803439fb2deac06bd89e3a01d7cfe5b0498cb7bc3beb6827d61ea0a8d34"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CatalogValidation.cpp",
+      "sha256_lf": "f7e6dd6fb0df7618592799336b74f38720841c09fa921377dc83dc9ca4c818a1"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Screening.cpp",
+      "sha256_lf": "72078643dc33d58ec014f0bb106df4944c263fa2acbe23fb8153bd3b07662eb6"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Commands.hpp",
+      "sha256_lf": "bea2b59380ba22564035ce22f24955176721d838cec96ef71d6792f7124ea961"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/plugin/TrajectoryPanelWidget.cpp",
+      "sha256_lf": "080965d4780048a30248705d622c218275f3a6603ee92ad7bc4ac2a1dd4849c6"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/ContinuousProcess.cpp",
+      "sha256_lf": "ab29585898d18b081bfb0544bfadb400bc34cd3bc00a76e6a17cca7fdeb35fbe"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "sha256_lf": "bf6dca1412afbd29500e74c9874b9492566fdc93d473ea10caf775c37a4e7ad4"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+      "sha256_lf": "0576e6bd02b9d9008c5ad9594f48ca4dd2ad65d74392470256c9a787ce3cfe29"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/DomainAssembly.cpp",
+      "sha256_lf": "d5b7707359ecb3f3118a5de9a204b3c2a1dbeabb9b8a2e323755b72a275efa96"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/ExtraDomainAssembly.cpp",
+      "sha256_lf": "8f93f1d621ee72a49ac94c8eb0f2531d8db568e8163bd2ef5df9e876f491f4e9"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+      "sha256_lf": "4c346397b0a6c305e1156f1d97720fe0afe09c8621ad1c845e3df553d804ed35"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "sha256_lf": "a0d6a8e9107d4ddbd85a7eb5417013899ff509649273a6ad90a7dcae7b9ebebb"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp",
+      "sha256_lf": "8700aba02f6c3c11703e52991deb9d9402b61b7fdb39c10fd7fe4c0d11b31d58"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/plugin/WorkflowCommandCatalog.cpp",
+      "sha256_lf": "70e5da18d7e31763390df2b33039706adc3b3b278c0da82307b996819baab7f1"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Commands.cpp",
+      "sha256_lf": "9a7e738385da3b7432f1cef8e79671c2b898a04ff44d5fd83c7bf1955bbf88a9"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp",
+      "sha256_lf": "ea6e5916cb27a5f305c7edbc78027539987b2462dc5496c83f4fa2f971b12835"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+      "sha256_lf": "f56373b702a7dafdb680e379e0746b37f4da2dbc90cbbbad3e713ba42f2b8337"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/kinematics.md",
+      "sha256_lf": "ca8a01caeaaa573962e34e9e5b5ba341e9289cc26e4a311c5ce94fe12a1a84c3"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/modeling.md",
+      "sha256_lf": "f027112dbe09c1dcf9f731072c2b00acca181e51e65358e69ca5f684ffb02570"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/requirements.md",
+      "sha256_lf": "41062de031405b82244edd4f62e568cf7fd53f59c07e3f5b8847dabd19090a81"
+    }
+  ]
+}

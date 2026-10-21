@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-21T08:34:33+08:00",
+  "generatedAt": "2026-10-21T09:34:15+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 15461,
-    "totalBytes": 844894500,
+    "totalFiles": 15489,
+    "totalBytes": 845963494,
     "byKind": {
-      "gtest-report": 335,
-      "json-data": 7,
-      "pipeline-artifact": 2,
-      "acceptance-record": 516,
-      "manual-acceptance": 1,
       "log": 1,
+      "acceptance-record": 516,
       "markdown-doc": 41,
       "governance-record": 40,
+      "json-data": 7,
       "benchmark": 8,
-      "build-log": 14510
+      "build-log": 14538,
+      "manual-acceptance": 1,
+      "gtest-report": 335,
+      "pipeline-artifact": 2
     },
     "byLifecycle": {
-      "historical": 565,
       "superseded": 0,
-      "unverified": 14869,
-      "current": 27
+      "unverified": 14897,
+      "current": 27,
+      "historical": 565
     },
     "associated": 597,
-    "unassociated": 14864,
-    "shaComputed": 15441,
+    "unassociated": 14892,
+    "shaComputed": 15469,
     "shaSkippedLarge": 20,
     "duplicateGroupsTotal": 922,
     "duplicateGroupsListed": 100
@@ -19321,6 +19321,230 @@
       "taskIds": [],
       "bytes": 7397,
       "sha256": "4760055b61fe08ddfd6eabee9bea9cb2003874c0c04506156ba32a01691fea78",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/01-REQUIREMENTS.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 159981,
+      "sha256": "e00916a3f65141b4ee23869d92371f06c250cbaf912de50c196ab0a7edd26a00",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/02-MODELING.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 62644,
+      "sha256": "ed569c89cc8c810cd9ab9780e0e1931532e081baa3e0a39e1b3b45d2fac56385",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/03-KINEMATICS.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 92448,
+      "sha256": "4b09c8bd6deb86fd5f7277880c55cae310968da86eb61a4664800419452b0d1d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/04-OTHER-MODULES.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 89372,
+      "sha256": "943011d97db1ffb31d773b82e505bf02d2a7b2a1fd5fe0e5142660b80b98d3a9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/05-PROJECT-SHARED.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50983,
+      "sha256": "6a4b7d34080828a2a29cfa98657270e4368ad5ac9bfe9d4143d83cfb1b8d8b76",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/06-DATA-AND-VISUAL.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 8799,
+      "sha256": "5bf01b31ca5a855c6ea927d357516e06d4a38c9d2a030f791f399c97cf7bdb38",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/07-SOURCE-INVENTORY.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 73559,
+      "sha256": "4d665c8959772cb992bb95a4682cdf7075513fcbad8b217394c04b5120d9b5d8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/08-COVERAGE.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 30273,
+      "sha256": "45105b91e7a5069fbf92d84b722ac91911ebf13afac04759af6eb8fa7c1d1385",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/09-RECORDS.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36556,
+      "sha256": "c744142227fb9cd8454748378d3431d7726fd6aef2c781f0b472c51029edf909",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/catalog.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 417199,
+      "sha256": "563a9787dbd5c2ea74e763204a69e0dfc7c5280a13cec7f583a8a82a762e92e5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/CHECKS.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 831,
+      "sha256": "c9a782d1f56db8399d75cbe86323bbef1b130299d852b12d05ba93e84bf962f4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/asymmetric-box.obj",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 262,
+      "sha256": "7a283d31bdb3eee2fda59ee658b5c82f923e37ad172e4d0a426681bfb669cb1b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/asymmetric-box.stl",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1468,
+      "sha256": "71146cbe6a2acf3924cb8aeb3439c80c6be3d048f2de2dfd6967b8621b659253",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/four-axis-out-of-scope.urdf",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2613,
+      "sha256": "213fa8a1db3829db14dd524de447c5e058b6950a06130be4e28b3878097246e5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/invalid-zero-axis.urdf",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3714,
+      "sha256": "df4c451fea79390e93a4eeb6aebbebedd3fa5414a36805360f7ca8a3a15ad3fe",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/multi-branch.urdf",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3919,
+      "sha256": "fd5c28cc7ac47aad6680db936a831629fbf533a38479fbf811cebedf7156c349",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/requirements-escaping.csv",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 180,
+      "sha256": "768c55d5559af23e6f52e26db7c91d8f09cf0caf0241ed28b4dbe1a41a49dfd5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/requirements-good.csv",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "373038f02ee48f5f923fa2bbeea544ff3485c6cba90d1f606fc0e2f9cd4c172d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/requirements-mapping.csv",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 55,
+      "sha256": "c15a97a85481430652e31cca2eaa24002e77003a7fe86474301cb8660aa8be00",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/requirements-mixed.csv",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 80,
+      "sha256": "7755e7064d2b9f16388122ad7b16cd9853c614b376a9be329168f928756cf150",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/requirements-units.csv",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 60,
+      "sha256": "850d449e907a5039e431ad9e4ffde1275cad1bdb5b1d1df72252f2104bc02b61",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/seven-axis.urdf",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4263,
+      "sha256": "3bdc878a614f187ea938606888c1e9d402baa8a790723c99bdc1c2fcbaeeb8f0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/six-axis-continuous.urdf",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3695,
+      "sha256": "1049324b83aeec7d51e3decc5a11d98d3cbdc159ee1730450b3bbd9bc2f9251d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/six-axis-mixed.urdf",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3721,
+      "sha256": "a2afa54987057008cc89309f6537100672590eae073e4dece6cf8d01fc73a741",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/six-axis-parameter.xacro",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3961,
+      "sha256": "2e088a909ccc3d3694217bbb56b07484a1cc74413176062a321102daa30f0677",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/fixtures/six-axis.urdf",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3714,
+      "sha256": "f23c04cbb828407231d6a7b8cf37fc92b741d2cfec468797c27ae85f5c159535",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/README.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4728,
+      "sha256": "79e8b6cf4271546120a51179386f64b3ddc74146dabfd12242a60d209b390011",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/manual-acceptance-20261021/SOURCE-MANIFEST.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9825,
+      "sha256": "a9c24af6a73279758f593fe8150699041cff5f3f6930bd99ca294e1cb9828e96",
       "lifecycle": "unverified"
     },
     {

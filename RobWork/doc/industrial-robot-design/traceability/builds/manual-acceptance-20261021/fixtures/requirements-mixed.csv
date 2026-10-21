@@ -1,0 +1,4 @@
+id,name,x,y,z
+1,GoodPoint,0.2,0.1,0.3
+2,BadPoint,bad,0.1,0.3
+3,=1+1,0.3,0.2,0.4

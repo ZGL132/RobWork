@@ -1,0 +1,38 @@
+{
+  "kind": "documentation-self-check-only",
+  "baseline": "4adc29f1bec2847c64729a13ec45ccc25a675305",
+  "total": 320,
+  "counts": {
+    "需求": 120,
+    "建模": 47,
+    "运动学": 70,
+    "项目与公共交互": 20,
+    "策略、任务与证据": 10,
+    "轨迹": 13,
+    "动力学与传动": 10,
+    "选型": 10,
+    "优化": 13,
+    "报告与交付": 7
+  },
+  "legacy_coverage": {
+    "requirements": 120,
+    "modeling": 47,
+    "kinematics": 70
+  },
+  "public_headers": 275,
+  "commands": 51,
+  "status": "PASS",
+  "checks": [
+    "unique-ids",
+    "required-fields",
+    "numbered-steps",
+    "all-results-not-run",
+    "legacy-id-coverage",
+    "local-file-links-and-item-anchors",
+    "fixture-xml-syntax",
+    "fixture-csv-shape"
+  ],
+  "product_tests": "NOT RUN",
+  "gui_manual": "NOT RUN",
+  "errors": []
+}
