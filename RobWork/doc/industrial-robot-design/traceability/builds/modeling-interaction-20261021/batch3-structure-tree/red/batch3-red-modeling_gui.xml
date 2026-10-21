@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="3" disabled="0" errors="0" time="0.922" timestamp="2026-10-21T14:03:16.447" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0.918" timestamp="2026-10-21T14:03:16.450">
+    <testcase name="StructureHierarchyGroupsRealObjects_MDL07_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="242" status="run" result="completed" time="0.462" timestamp="2026-10-21T14:03:16.451" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:250&#x0A;Expected equality of these values:&#x0A;  tree-&gt;topLevelItemCount()&#x0A;    Which is: 19&#x0A;  1&#x0A;整个模型应能一次折叠，平铺节点不满足层次导航&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:250
+Expected equality of these values:
+  tree->topLevelItemCount()
+    Which is: 19
+  1
+整个模型应能一次折叠，平铺节点不满足层次导航
+]]></failure>
+    </testcase>
+    <testcase name="TreeCollapsePersistsButRepeatedLocateReveals_MDL07_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="270" status="run" result="completed" time="0.249" timestamp="2026-10-21T14:03:16.913" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:275&#x0A;Expected: (joints) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:275
+Expected: (joints) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="TreeExpandCollapseAllIsReadOnlyNavigation_UX09_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="289" status="run" result="completed" time="0.205" timestamp="2026-10-21T14:03:17.163" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:293&#x0A;Expected: (expand) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:293
+Expected: (expand) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

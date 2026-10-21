@@ -1,0 +1,1010 @@
+[
+  {
+    "Name": " RobWorkStudio v26.10.21-wp13-t29",
+    "Id": "TitleBar",
+    "Type": "ControlType.TitleBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "System Menu Bar",
+    "Id": "SystemMenuBar",
+    "Type": "ControlType.MenuBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "System",
+    "Id": "Item 1",
+    "Type": "ControlType.MenuItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "Minimize",
+    "Id": "Minimize",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Restore",
+    "Id": "Restore",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Close",
+    "Id": "Close",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMenuBar",
+    "Type": "ControlType.MenuBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "File",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction",
+    "Type": "ControlType.MenuItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "Tools",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction",
+    "Type": "ControlType.MenuItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "View3D",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction",
+    "Type": "ControlType.MenuItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "视图",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction",
+    "Type": "ControlType.MenuItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "Plugins",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction",
+    "Type": "ControlType.MenuItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "Help",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMenuBar.QAction",
+    "Type": "ControlType.MenuItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.rws::RWStudioView3D",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.rws::RWStudioView3D.rws::SceneOpenGLViewer",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "View3D",
+    "Id": "QApplication.RobWorkStudio_MainWindow.View3D",
+    "Type": "ControlType.ToolBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "Solid",
+    "Id": "QApplication.RobWorkStudio_MainWindow.View3D.QToolButton",
+    "Type": "ControlType.CheckBox",
+    "Offscreen": false
+  },
+  {
+    "Name": "Wire",
+    "Id": "QApplication.RobWorkStudio_MainWindow.View3D.QToolButton",
+    "Type": "ControlType.CheckBox",
+    "Offscreen": false
+  },
+  {
+    "Name": "Outline",
+    "Id": "QApplication.RobWorkStudio_MainWindow.View3D.QToolButton",
+    "Type": "ControlType.CheckBox",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.View3D.QToolBarSeparator",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "Transparent",
+    "Id": "QApplication.RobWorkStudio_MainWindow.View3D.QToolButton",
+    "Type": "ControlType.CheckBox",
+    "Offscreen": false
+  },
+  {
+    "Name": "Pivot Point",
+    "Id": "QApplication.RobWorkStudio_MainWindow.View3D.QToolButton",
+    "Type": "ControlType.CheckBox",
+    "Offscreen": false
+  },
+  {
+    "Name": "Collision Checking",
+    "Id": "QApplication.RobWorkStudio_MainWindow.View3D.QToolButton",
+    "Type": "ControlType.CheckBox",
+    "Offscreen": false
+  },
+  {
+    "Name": "Standard views",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D",
+    "Type": "ControlType.ToolBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "Home view",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolBarSeparator",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "Axiometric (Ctrl + A)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolBarSeparator",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "Front (Ctrl + F)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Right (Ctrl + R)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Top (Ctrl + T)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolBarSeparator",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "Rear (Ctrl + E)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Left (Ctrl + L)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Bottom  (Ctrl + B)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.StandardViewsView3D.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Zoom toolbar",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ZoomToolbar",
+    "Type": "ControlType.ToolBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "Zoom in (Ctrl + +)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ZoomToolbar.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Zoom out (Ctrl + -)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ZoomToolbar.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Autozoom (Ctrl + *)",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ZoomToolbar.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Plugins",
+    "Id": "QApplication.RobWorkStudio_MainWindow.PluginsBar",
+    "Type": "ControlType.ToolBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "Log",
+    "Id": "QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "Jog",
+    "Id": "QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "TreeView",
+    "Id": "QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "PlayBack",
+    "Id": "QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "工业项目树",
+    "Id": "QApplication.RobWorkStudio_MainWindow.PluginsBar.QToolButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QStatusBar",
+    "Type": "ControlType.StatusBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "建模域遍历演示项目",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QStatusBar.ird_status_project_text",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "工业项目树",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树",
+    "Type": "ControlType.Pane",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.Tree",
+    "Offscreen": false
+  },
+  {
+    "Name": "项目结构",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "建模对象",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "demo",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  j1",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  j2",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  j3",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  j4",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  j5",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  j6",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  j7",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  base",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  l1",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  l2",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  l3",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  l4",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  l5",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  l7",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  l6",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "  requirements-pick-fixture",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "需求对象",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "分析配置",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "结果 / 证据 / 报告",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.QTreeWidget",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.ird_tree_search",
+    "Type": "ControlType.Edit",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.ird_plugin_dock_body.QWidget.ird_tree_group_filter",
+    "Type": "ControlType.ComboBox",
+    "Offscreen": false
+  },
+  {
+    "Name": "关闭",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.qt_dockwidget_closebutton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "悬浮",
+    "Id": "QApplication.RobWorkStudio_MainWindow.工业项目树.qt_dockwidget_floatbutton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "IRD 属性与诊断",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock",
+    "Type": "ControlType.Pane",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_property_inspector",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "未选中对象",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_property_inspector.ird_property_inspector_placeholder",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_property_inspector.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.QWidget.ird_readiness_summary_card",
+    "Type": "ControlType.Custom",
+    "Offscreen": false
+  },
+  {
+    "Name": "跨域就绪摘要",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.QWidget.ird_readiness_summary_card.QLabel",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "建模：输入不完整\n需求：待提交后判定\n运动学：输入不完整",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.QWidget.ird_readiness_summary_card.QLabel",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "工程策略（计算权威）",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_group_authority",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "碰撞检查：停用",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_collision",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "安全间距：显式不适用",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_safety-clearance",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "碰撞对规则：必检 0 对·过滤 0 对",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_pairs",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "行程上限：24 rad",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_travel-limit",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "近限位比：显式不适用",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_near-limit-ratio",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "条件数警告：显式不适用",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_condition-number",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "修改策略：修改策略经命令端口提交生成新修订（权威归策略，ui 只读）",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_edit-path",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "修改策略…",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_edit_button",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "会话显示设置（不属策略字段）",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_group_display",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "显示开关与策略的关系：显示碰撞几何/高亮等是会话显示设置，不存在于工程策略字段（POL-ID-3）：仅影响显示呈现，不改变计算与策略内容身份",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_display-separation",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "显示控件：显示控件随三维视图交互在后续版本提供",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.ird_props_dock_scroll.qt_scrollarea_viewport.QWidget.ird_right_content.ird_policy_summary_card.ird_policy_row_display-controls",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "关闭",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.qt_dockwidget_closebutton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "悬浮",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_props_dock.qt_dockwidget_floatbutton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "IRD 建模",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar",
+    "Type": "ControlType.Tab",
+    "Offscreen": false
+  },
+  {
+    "Name": "IRD 建模",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar",
+    "Type": "ControlType.TabItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "IRD 属性与诊断",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar",
+    "Type": "ControlType.Tab",
+    "Offscreen": false
+  },
+  {
+    "Name": "IRD 属性与诊断",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar",
+    "Type": "ControlType.TabItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "向左滚动",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar.ScrollLeftButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "向右滚动",
+    "Id": "QApplication.RobWorkStudio_MainWindow.QMainWindowTabBar.ScrollRightButton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "IRD 建模",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock",
+    "Type": "ControlType.Pane",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter",
+    "Type": "ControlType.Custom",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "属性",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QLabel",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_property_scroll",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_property_scroll.qt_scrollarea_viewport",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_property_scroll.qt_scrollarea_viewport.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget",
+    "Type": "ControlType.Pane",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "关节编辑",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.ird_modeling_edit_joint_mode",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "基座安装…",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.ird_modeling_edit_base_mode",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "命名位姿",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.ird_modeling_edit_pose_mode",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "场景管理",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.ird_modeling_edit_scene_mode",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "工具管理",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.ird_modeling_edit_tool_mode",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.QStackedWidget",
+    "Type": "ControlType.Pane",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.QStackedWidget.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "当前选中对象无数值编辑页（本批次承载关节——工具/场景/基座安装编辑随后续批次）。",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.QStackedWidget.QWidget.ird_modeling_edit_hint",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "原点：父连杆系（位置 m／姿态 rad；ZYX 约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)）；轴向：连杆系单位向量。Explicit 权威下轴向/原点可编辑，StandardDH 权威下为派生只读（提交被域守卫拒绝）。Continuous工程范围单位rad，仅供分析，跨周不取模、不设行程上限；经应用/确认后写入草稿，关节类型与限位不变。",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.QStackedWidget.QWidget.ird_modeling_edit_caption",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_viewport.QWidget.QStackedWidget.QWidget.ird_modeling_edit_host",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_hcontainer",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_hcontainer.QScrollBar",
+    "Type": "ControlType.ScrollBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_vcontainer",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_stackedwidget.ird_modeling_edit_scroll.qt_scrollarea_vcontainer.QScrollBar",
+    "Type": "ControlType.ScrollBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "编辑",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_tabbar",
+    "Type": "ControlType.Tab",
+    "Offscreen": false
+  },
+  {
+    "Name": "编辑",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_tabbar",
+    "Type": "ControlType.TabItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "工具",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_tabbar",
+    "Type": "ControlType.TabItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "就绪",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_tabbar",
+    "Type": "ControlType.TabItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "预览",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QTabWidget.qt_tabwidget_tabbar",
+    "Type": "ControlType.TabItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_status_line",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "诊断历史",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_history_toggle",
+    "Type": "ControlType.CheckBox",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "建模结构",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.QLabel",
+    "Type": "ControlType.Text",
+    "Offscreen": false
+  },
+  {
+    "Name": "展开全部",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_expand_all",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "折叠全部",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_collapse_all",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "建模结构树",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_tree",
+    "Type": "ControlType.Tree",
+    "Offscreen": false
+  },
+  {
+    "Name": "模型 demo",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_tree",
+    "Type": "ControlType.TreeItem",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_bar",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "新增关节",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_bar.ird_modeling_struct_add",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "删除关节",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_bar.ird_modeling_struct_remove",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "上移",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_bar.ird_modeling_struct_up",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "下移",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_bar.ird_modeling_struct_down",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "六轴重置",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.QWidget.ird_modeling_struct_bar.ird_modeling_struct_reset",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_main_splitter.qt_splithandle_",
+    "Type": "ControlType.Thumb",
+    "Offscreen": false
+  },
+  {
+    "Name": "撤销草稿编辑",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_draft_undo",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "重做草稿编辑",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_draft_redo",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "查看冲突旧稿对照",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_viewport.sdurws::ird::modeling::ModelingPanelWidget.ird_modeling_retained_review",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_hcontainer",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_hcontainer.QScrollBar",
+    "Type": "ControlType.ScrollBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_vcontainer",
+    "Type": "ControlType.Group",
+    "Offscreen": false
+  },
+  {
+    "Name": "",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.ird_modeling_dock_scroll.qt_scrollarea_vcontainer.QScrollBar",
+    "Type": "ControlType.ScrollBar",
+    "Offscreen": false
+  },
+  {
+    "Name": "关闭",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.qt_dockwidget_closebutton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  },
+  {
+    "Name": "悬浮",
+    "Id": "QApplication.RobWorkStudio_MainWindow.ird_modeling_dock.qt_dockwidget_floatbutton",
+    "Type": "ControlType.Button",
+    "Offscreen": false
+  }
+]

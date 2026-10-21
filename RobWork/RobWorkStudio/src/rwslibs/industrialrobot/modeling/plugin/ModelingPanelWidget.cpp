@@ -30,6 +30,7 @@
 #include <QLabel>
 #include <QLineEdit>                              // TCP 显示名行编辑（UI-T58）
 #include <QScrollBar>
+#include <QSignalBlocker> // 树重建恢复选中时屏蔽呈现回环，不覆盖调用方原有阻塞态。
 #include <QSpinBox>
 #include <QSplitter>
 #include <QStackedWidget>
@@ -911,7 +912,17 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     // 结束，本自持树升格为面板主导航呈现；与共享项目树的 L-R1 双向联动
     // 语义不变）。
 
-    left->addWidget(new QLabel(QStringLiteral("建模结构"), this));
+    auto* treeHeader = new QHBoxLayout();
+    treeHeader->addWidget(new QLabel(QStringLiteral("建模结构"), this));
+    treeHeader->addStretch();
+    // WP-13-T30：展开/折叠只改变浏览状态，不归写命令目录，也不受只读门控。
+    auto* expandAll = new QPushButton(QStringLiteral("展开全部"), this);
+    auto* collapseAll = new QPushButton(QStringLiteral("折叠全部"), this);
+    expandAll->setObjectName(QStringLiteral("ird_modeling_struct_expand_all"));
+    collapseAll->setObjectName(QStringLiteral("ird_modeling_struct_collapse_all"));
+    treeHeader->addWidget(expandAll);
+    treeHeader->addWidget(collapseAll);
+    left->addLayout(treeHeader);
     m_tree = new QTreeWidget(this);
     m_tree->setColumnCount(2);
     m_tree->setHeaderHidden(true);
@@ -923,6 +934,8 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
         ui::resolveText("panel.modeling.tree.accessible")));
     connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
             &ModelingPanelWidget::onTreeSelectionChanged);
+    connect(expandAll, &QPushButton::clicked, m_tree, &QTreeWidget::expandAll);
+    connect(collapseAll, &QPushButton::clicked, m_tree, &QTreeWidget::collapseAll);
     left->addWidget(m_tree, 1);
 
     // 结构操作按钮行（UI-T47——§5.2 v0.28 四操作词表的面板承载；六轴重置
@@ -1171,29 +1184,82 @@ void ModelingPanelWidget::setAppliedPreview(
 
 void ModelingPanelWidget::refreshStructureTree(const ModelingWorkingSet& ws)
 {
-    // UI-T41 批次B（B3）：滚动位跨刷新保持（树行重建后滚回原视口——刷新
-    // 不打断浏览位置；选中恢复既有锚机制不变）。
+    // 第一步：只快照呈现状态。旧条目随后由Qt清理，不持有失效节点指针；
+    // 键含模型身份，另建模型不能继承上一模型的折叠状态（MDL-07/UX-09）。
     const int treeScroll = m_tree->verticalScrollBar()->value();
-    m_tree->blockSignals(true);  // 重建期的选中变化不回环（避免重投影风暴）
+    std::map<QString, bool> expanded;
+    for (QTreeWidgetItemIterator it(m_tree); *it; ++it) {
+        expanded.emplace((*it)->data(kLabelColumn, Qt::UserRole).toString(), (*it)->isExpanded());
+    }
+    const QSignalBlocker blocker(m_tree);
     m_tree->clear();
     const std::string lastAnchor =
         m_lastSelected.has_value() ? m_lastSelected->toCanonical() : std::string();
+    const QString modelKey = QString::fromStdString(ws.rootObjectId
+        ? ws.rootObjectId->toCanonical()
+        : (!ws.design.joints.empty() ? ws.design.joints.front().objectId.toCanonical() : "empty-model"));
+    QTreeWidgetItem* root = nullptr;
+    QTreeWidgetItem* jointGroup = nullptr;
+    QTreeWidgetItem* linkGroup = nullptr;
+    QTreeWidgetItem* toolGroup = nullptr;
+    QTreeWidgetItem* sceneGroup = nullptr;
+    QTreeWidgetItem* selectedItem = nullptr;
+    // 第二步：分类是纯视图容器。没有业务锚的节点不允许选中，但保留启用，
+    // 让鼠标折叠箭头和键盘导航可操作；绝不伪造ObjectId改变编辑语义。
+    const auto group = [&](const QString& title, const QString& key) {
+        auto* item = new QTreeWidgetItem(root);
+        item->setText(kLabelColumn, title);
+        item->setData(kLabelColumn, Qt::UserRole, modelKey + "/group/" + key);
+        item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
+        return item;
+    };
     for (const StructureNode& n : buildStructureTree(ws)) {
-        auto* item = new QTreeWidgetItem(m_tree);
+        QTreeWidgetItem* parent = root;
+        switch (n.kind) {
+        case StructureNodeKind::Joint:
+            if (!jointGroup) { jointGroup = group(QStringLiteral("关节"), "joints"); }
+            parent = jointGroup;
+            break;
+        case StructureNodeKind::Link:
+            if (!linkGroup) { linkGroup = group(QStringLiteral("连杆"), "links"); }
+            parent = linkGroup;
+            break;
+        case StructureNodeKind::ToolsGroup:
+            if (!n.objectId) { toolGroup = group(QString::fromStdString(n.displayLabel), "tools"); continue; }
+            parent = toolGroup;
+            break;
+        case StructureNodeKind::SceneGroup:
+            if (!n.objectId) { sceneGroup = group(QString::fromStdString(n.displayLabel), "scene"); continue; }
+            parent = sceneGroup;
+            break;
+        default:
+            break; // 根、基座安装、已有位姿集与传动保持直属层次，不创造挂载语义。
+        }
+        auto* item = parent ? new QTreeWidgetItem(parent) : new QTreeWidgetItem(m_tree);
+        if (n.kind == StructureNodeKind::ModelRoot) { root = item; }
         item->setText(kLabelColumn, QString::fromStdString(n.displayLabel));
         item->setText(kAnchorColumn,
                       n.objectId.has_value()
                           ? QString::fromStdString(n.objectId->toCanonical())
                           : QString());
-        item->setDisabled(!n.objectId.has_value());  // 分组行不可选（无锚——仅折叠呈现）
+        const QString localKey = n.objectId ? QString::fromStdString(n.objectId->toCanonical())
+            : QString::number(static_cast<int>(n.kind));
+        item->setData(kLabelColumn, Qt::UserRole, modelKey + "/object/" + localKey);
+        if (!n.objectId) { item->setFlags(item->flags() & ~Qt::ItemIsSelectable); }
         // 选中保持：重建后按锚恢复当前行（L-1 选中态跨刷新恒定）。失效锚
         // （被删对象）恢复落空＝空选中——属性区空态如实（不伪造行）。
         if (!lastAnchor.empty()
             && item->text(kAnchorColumn) == QString::fromStdString(lastAnchor)) {
-            m_tree->setCurrentItem(item);
+            selectedItem = item;
         }
     }
-    m_tree->blockSignals(false);
+    // 第三步：先恢复当前对象，再恢复显式折叠态。恢复选中不能把用户刚折叠的
+    // 祖先重新展开；只有focusObject的显式定位才展开祖先。新节点默认展开。
+    if (selectedItem) { m_tree->setCurrentItem(selectedItem); }
+    for (QTreeWidgetItemIterator it(m_tree); *it; ++it) {
+        const auto old = expanded.find((*it)->data(kLabelColumn, Qt::UserRole).toString());
+        (*it)->setExpanded(old == expanded.end() || old->second);
+    }
     m_tree->verticalScrollBar()->setValue(treeScroll);  // B3 滚动位还原
 }
 
@@ -1464,7 +1530,7 @@ void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
 
     // 会话选中锚（幂等——重复定位同一对象不重复刷新，防聚焦循环：
     // SelectionAdapter 回调→focusObject→树选中信号→select 同值＝false）。
-    if (!m_selection.select(oid)) { return; }
+    const bool selectionChangedNow = m_selection.select(oid);
     m_lastSelected = oid;
 
     // 自持树滚动＋置当前行（行选中信号因会话锚已置而幂等短路——属性区
@@ -1473,8 +1539,14 @@ void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
     QTreeWidgetItemIterator it(m_tree);
     while (*it != nullptr) {
         if ((*it)->text(kAnchorColumn) == anchor) {
+            // 显式定位须让目标可见；即使OID未变，用户也可能刚折叠祖先。
+            // 重复定位只展开/滚动，不重复发选择事件或重绑表单暂存。
+            for (auto* parent = (*it)->parent(); parent; parent = parent->parent()) {
+                parent->setExpanded(true);
+            }
             m_tree->setCurrentItem(*it);   // 树高亮（选中信号幂等——不回环）
             m_tree->scrollToItem(*it);     // 树滚动（L-1"反向定位→树滚动"）
+            if (!selectionChangedNow) { return; }
             Q_EMIT selectionChanged(anchor);
             refreshPropertiesFromLastWorkingSet();
             return;
@@ -1483,6 +1555,7 @@ void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
     }
     // 树中无该行（内容漂移——如重建间隙）：属性区仍按锚重投影（选中
     // 是会话态不依赖树行），树呈现等待下次 refreshPanel。
+    if (!selectionChangedNow) { return; }
     Q_EMIT selectionChanged(anchor);
     refreshPropertiesFromLastWorkingSet();
 }

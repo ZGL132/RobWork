@@ -224,6 +224,96 @@ protected:
     std::unique_ptr<ModelingPanelWidget> m_panel;  ///< 被测面板（Qt 父子自毁）
 };
 
+/**
+ * @brief 在真实建模树中按可见标题查找节点，测试调用期借用，Qt树负责所有权。
+ * @param tree [in] 夹具创建的结构树，仅GUI主线程访问。
+ * @param label [in] 精确工程标题，无单位；不依赖顶层行号或私有模型键。
+ * @return 匹配节点，未找到返回空；刷新后必须重新查找，禁止持有失效条目。
+ */
+QTreeWidgetItem* structureItem(QTreeWidget& tree, const QString& label)
+{
+    for (QTreeWidgetItemIterator it(&tree); *it; ++it) {
+        if ((*it)->text(0) == label) { return *it; }
+    }
+    return nullptr;
+}
+
+/** @brief MDL-07：对象必须位于真实可折叠父节点下，不能只靠文本缩进模拟层次。 */
+TEST_F(ModelingPanelGuiTest, StructureHierarchyGroupsRealObjects_MDL07_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07","UX-09"},{"AT-01"},std::nullopt);
+    ToolDefinition tool; tool.objectId=core::ObjectId::generate(); tool.localName="manual-tool";
+    TcpEntry tcp; tcp.key="tip"; tool.tcpList.push_back(tcp); m_ws.toolObjects.push_back(tool);
+    SceneObject scene; scene.objectId=core::ObjectId::generate(); scene.localName="manual-fixture";
+    m_ws.sceneObjects.push_back(scene); m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    auto* tree=m_panel->findChild<QTreeWidget*>("ird_modeling_struct_tree"); ASSERT_NE(tree,nullptr);
+    ASSERT_EQ(tree->topLevelItemCount(),1) << "整个模型应能一次折叠，平铺节点不满足层次导航";
+    auto* root=tree->topLevelItem(0); EXPECT_TRUE(root->isExpanded());
+    auto* joints=structureItem(*tree,QStringLiteral("关节")); ASSERT_NE(joints,nullptr);
+    auto* links=structureItem(*tree,QStringLiteral("连杆")); ASSERT_NE(links,nullptr);
+    EXPECT_EQ(joints->parent(),root); EXPECT_EQ(links->parent(),root);
+    ASSERT_EQ(joints->childCount(),6); ASSERT_EQ(links->childCount(),7);
+    EXPECT_EQ(joints->child(0)->text(1).toStdString(),m_ws.design.joints[0].objectId.toCanonical());
+    EXPECT_EQ(links->child(0)->text(1).toStdString(),m_ws.design.links[0].objectId.toCanonical());
+    EXPECT_TRUE(joints->text(1).isEmpty()); EXPECT_FALSE(joints->flags() & Qt::ItemIsSelectable);
+    EXPECT_TRUE(joints->flags() & Qt::ItemIsEnabled) << "分组必须可操作折叠箭头，不能禁用整行";
+    for (const auto& title:{QStringLiteral("工具"),QStringLiteral("场景")}) {
+        auto* group=structureItem(*tree,title); ASSERT_NE(group,nullptr);
+        EXPECT_EQ(group->parent(),root); ASSERT_EQ(group->childCount(),1); EXPECT_TRUE(group->isExpanded());
+    }
+    m_panel->resize(1100,760); m_panel->show(); QApplication::processEvents();
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!out.isEmpty()){QDir().mkpath(out); EXPECT_TRUE(m_panel->grab().save(out+"/t30-tree-hierarchy.png"));}
+}
+
+/** @brief UX-09/MDL-07：后台刷新保留折叠，但三维重复定位应重新展开同一对象的祖先。 */
+TEST_F(ModelingPanelGuiTest, TreeCollapsePersistsButRepeatedLocateReveals_MDL07_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07","UX-09"},{"AT-01"},std::nullopt);
+    auto* tree=m_panel->findChild<QTreeWidget*>("ird_modeling_struct_tree"); ASSERT_NE(tree,nullptr);
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    auto* joints=structureItem(*tree,QStringLiteral("关节")); ASSERT_NE(joints,nullptr);
+    joints->setExpanded(false); m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    joints=structureItem(*tree,QStringLiteral("关节")); ASSERT_NE(joints,nullptr);
+    EXPECT_FALSE(joints->isExpanded()) << "普通刷新不能替使用者展开刚折叠的组";
+    ASSERT_NE(tree->currentItem(),nullptr);
+    EXPECT_EQ(tree->currentItem()->text(1).toStdString(),m_ws.design.joints[0].objectId.toCanonical());
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    EXPECT_TRUE(joints->isExpanded()) << "重复定位不能因选中OID未变而跳过展开";
+    // 改名不改变身份；折叠状态不能以标题为键，否则改名/普通刷新会丢失浏览位置。
+    joints->setExpanded(false); m_ws.design.displayName="renamed-model";
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    joints=structureItem(*tree,QStringLiteral("关节")); ASSERT_NE(joints,nullptr); EXPECT_FALSE(joints->isExpanded());
+    tree->topLevelItem(0)->setExpanded(false); m_panel->focusObject(m_ws.design.joints[1].objectId);
+    EXPECT_TRUE(tree->topLevelItem(0)->isExpanded()); EXPECT_TRUE(joints->isExpanded());
+    EXPECT_TRUE(m_ws.changes.empty()) << "浏览与定位不得修改模型草稿";
+}
+
+/** @brief UX-09：展开/折叠全部是纯浏览，工程只读时也可用，不能触发脏化或结构编辑。 */
+TEST_F(ModelingPanelGuiTest, TreeExpandCollapseAllIsReadOnlyNavigation_UX09_T30)
+{
+    IRD_TEST_INFO("UX-09",{"AT-01"},std::nullopt);
+    auto* tree=m_panel->findChild<QTreeWidget*>("ird_modeling_struct_tree"); ASSERT_NE(tree,nullptr);
+    auto* expand=m_panel->findChild<QPushButton*>("ird_modeling_struct_expand_all"); ASSERT_NE(expand,nullptr);
+    auto* collapse=m_panel->findChild<QPushButton*>("ird_modeling_struct_collapse_all"); ASSERT_NE(collapse,nullptr);
+    int dirtyEvents=0;
+    QObject::connect(m_panel.get(),&ModelingPanelWidget::sessionDirtyChanged,m_panel.get(),[&](bool){++dirtyEvents;});
+    m_panel->setWritable(false); EXPECT_TRUE(expand->isEnabled()); EXPECT_TRUE(collapse->isEnabled());
+    m_panel->resize(1100,760); m_panel->show(); QApplication::processEvents();
+    collapse->click(); EXPECT_FALSE(tree->topLevelItem(0)->isExpanded());
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!out.isEmpty()){QDir().mkpath(out); EXPECT_TRUE(m_panel->grab().save(out+"/t30-tree-collapsed.png"));}
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{}); EXPECT_FALSE(tree->topLevelItem(0)->isExpanded());
+    expand->click();
+    for(QTreeWidgetItemIterator it(tree);*it;++it){if((*it)->childCount()>0){EXPECT_TRUE((*it)->isExpanded());}}
+    EXPECT_EQ(dirtyEvents,0); EXPECT_TRUE(m_ws.changes.empty());
+    // 模板临时OID按模板确定性派生，重复调用工厂并不代表换了身份。
+    // 使用另一工程的真实根OID模拟切换模型，验证新身份不会继承旧根折叠态。
+    collapse->click(); m_ws=makeSixAxisDraft(); m_ws.rootObjectId=core::ObjectId::generate();
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    EXPECT_TRUE(tree->topLevelItem(0)->isExpanded());
+}
+
 /** @brief UX-01：模板和三种导入必须在工具页直接可见，不能藏到高级诊断中。 */
 TEST_F(ModelingPanelGuiTest, ManualEntryCommandsVisibleWithoutExpansion_UX01_T30)
 {
