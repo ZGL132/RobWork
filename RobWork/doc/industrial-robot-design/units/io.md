@@ -1803,3 +1803,7 @@ Xacro 展开机制实现（护栏已定）；`ResourceKind` 扩展（DAE 完整/
 ---
 
 **本文档结束**（io 单元详细设计 v1.0，状态 `Draft`；构建落位进度：骨架随 IO-T01、SafePath/BudgetGuard 随 IO-T02、CSV 读写器随 IO-T03、JSON 读写器＋ZIP 通道随 IO-T04、资源导入服务与外部源检测随 IO-T05、包导入导出 io 侧设施＋固化中转随 IO-T06、契约测试套件整备与留痕随 IO-T07 落位完成——阶段 A 六任务全闭环；P-IO-3 选型冻结随 v0.6 登记。）
+
+## WP-13-T30：Windows扩展路径重入修复
+
+正式建模占位OBJ生成后，io快照返回带\\?\终路径；再次Recorded读取时DriveAbsolute词法分解误把前缀当盘符，导致真实存在文件被报IO-RES-NOT-FOUND。仅在私有词法分解先剥四码元前缀，并让内部扩展化对已有盘符前缀幂等；UNC已有规则及角色安全边界不变。真实文件常规/扩展等价与扩展基点引用先红后绿，最终结果见modeling-interaction-20261021报告。无公共/存储变化。

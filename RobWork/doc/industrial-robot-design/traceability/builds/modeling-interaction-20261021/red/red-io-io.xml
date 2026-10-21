@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.007" timestamp="2026-10-21T11:27:52.402" name="AllTests">
+  <testsuite name="IoSecTest" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.005" timestamp="2026-10-21T11:27:52.403">
+    <testcase name="ExtendedUserSourceReentersWithSameEntity_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp" line="537" status="run" result="completed" time="0.002" timestamp="2026-10-21T11:27:52.404" classname="IoSecTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp:545&#x0A;Value of: again&#x0A;  Actual: false&#x0A;Expected: true&#x0A;用户源不存在（§4.2.5 分类一：ERROR_FILE/PATH_NOT_FOUND 族）&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp:545
+Value of: again
+  Actual: false
+Expected: true
+用户源不存在（§4.2.5 分类一：ERROR_FILE/PATH_NOT_FOUND 族）
+]]></failure>
+    </testcase>
+    <testcase name="ExtendedProjectBaseIsIdempotent_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp" line="551" status="run" result="completed" time="0.002" timestamp="2026-10-21T11:27:52.406" classname="IoSecTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp:561&#x0A;Expected equality of these values:&#x0A;  extended.value.equivKey&#x0A;    Which is: &quot;c:users\\zgl18\\appdata\\local\\temp\\ird_wp11_t03_safepath\\extendedprojectbaseisidempotent_t30_67204\\proj\\objects\\mesh.obj&quot;&#x0A;  plain.value.equivKey&#x0A;    Which is: &quot;c:\\users\\zgl18\\appdata\\local\\temp\\ird_wp11_t03_safepath\\extendedprojectbaseisidempotent_t30_67204\\proj\\objects\\mesh.obj&quot;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp:561
+Expected equality of these values:
+  extended.value.equivKey
+    Which is: "c:users\\zgl18\\appdata\\local\\temp\\ird_wp11_t03_safepath\\extendedprojectbaseisidempotent_t30_67204\\proj\\objects\\mesh.obj"
+  plain.value.equivKey
+    Which is: "c:\\users\\zgl18\\appdata\\local\\temp\\ird_wp11_t03_safepath\\extendedprojectbaseisidempotent_t30_67204\\proj\\objects\\mesh.obj"
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp:562&#x0A;Expected equality of these values:&#x0A;  extended.value.native&#x0A;    Which is: L&quot;\\\\?\\C:Users\\zgl18\\AppData\\Local\\Temp\\ird_wp11_t03_safepath\\ExtendedProjectBaseIsIdempotent_T30_67204\\proj\\objects\\mesh.obj&quot;&#x0A;  plain.value.native&#x0A;    Which is: L&quot;\\\\?\\C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird_wp11_t03_safepath\\ExtendedProjectBaseIsIdempotent_T30_67204\\proj\\objects\\mesh.obj&quot;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp:562
+Expected equality of these values:
+  extended.value.native
+    Which is: L"\\\\?\\C:Users\\zgl18\\AppData\\Local\\Temp\\ird_wp11_t03_safepath\\ExtendedProjectBaseIsIdempotent_T30_67204\\proj\\objects\\mesh.obj"
+  plain.value.native
+    Which is: L"\\\\?\\C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird_wp11_t03_safepath\\ExtendedProjectBaseIsIdempotent_T30_67204\\proj\\objects\\mesh.obj"
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

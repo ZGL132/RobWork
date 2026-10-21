@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.002" timestamp="2026-10-21T11:49:46.771" name="AllTests">
+  <testsuite name="RuntimeSnapshotTest" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-21T11:49:46.772">
+    <testcase name="FactoryRetainsRequestedMeshResources_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SnapshotTest.cpp" line="909" status="run" result="completed" time="0.001" timestamp="2026-10-21T11:49:46.773" classname="RuntimeSnapshotTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SnapshotTest.cpp:942&#x0A;Value of: found&#x0A;  Actual: false&#x0A;Expected: true&#x0A;请求带真实网格，正式快照却只保留代理&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SnapshotTest.cpp:942
+Value of: found
+  Actual: false
+Expected: true
+请求带真实网格，正式快照却只保留代理
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

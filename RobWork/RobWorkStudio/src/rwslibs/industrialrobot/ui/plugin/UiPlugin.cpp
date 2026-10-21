@@ -87,6 +87,8 @@
 
 #include <rw/kinematics/Frame.hpp>               // rw::kinematics::Frame（L3 桥事件值——TreeView Select Frame 转发名源）
 #include <rw/kinematics/State.hpp>               // rw::kinematics::State（D8 Jog 桥——State 变化采样）
+#include <rw/models/Object.hpp> // WP-13-T30：正式宿主检查真实几何载体，非仅资源引用。
+#include <rw/geometry/TriMesh.hpp> // 核对OBJ实际三角面与米制尺寸，排除代理图元假通过。
 #include <rw/models/Device.hpp>                  // rw::models::Device（D8 桥——WorkCell 设备 q 提取）
 #include <rw/models/JointDevice.hpp>             // rw::models::JointDevice（UI-T45——TCP 帧解析 getEnd）
 #include <rw/models/WorkCell.hpp>                // rw::models::WorkCell（L2 高亮按名寻帧/D8 设备枚举——呈现对象公开面）
@@ -3678,7 +3680,16 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
         m_domains->applyEntries, anchor,
         [&store](project::CommandEnvelope envelope,
                  project::ICommandInteraction* cmdInteraction) {
-            return store.commands().submit(std::move(envelope), cmdInteraction);
+            auto result=store.commands().submit(std::move(envelope), cmdInteraction);
+            // 自动遍历保留真实拒绝原因，禁止仅以“未提交”掩盖资源/编译失败。
+            // 正常交互仍走既有诊断面；此分支只向测试进程日志投影回执。
+            if(qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE")=="modeling-tour"){
+                for(const auto& diagnostic:result.diagnostics){
+                    std::cout<<"[ird-ui-smoke-mtour] command-diagnostic "<<diagnostic.context
+                        <<" cause="<<diagnostic.cause<<std::endl;
+                }
+            }
+            return result;
         },
         &interaction,
         [this](const std::string& message) {
@@ -8876,6 +8887,42 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         snapPng(hostWin,"mtour-a23-low-policy-comparison.png");
         editTourTravel(QStringLiteral("24"));
         if(!reeditThroughConflict(false)){QCoreApplication::exit(1);return;}
+        // WP-13-T30/MDL-04：模拟用户选连杆→工具→更多操作→生成占位网格。
+        // 此处处于最后一次冲突重建之后，确保生成的资源真正参与下面正式应用。
+        if(auto* tabs=panel->findChild<QTabWidget*>()){tabs->setCurrentIndex(1);}
+        if(auto* more=panel->findChild<QPushButton*>("ird_modeling_more_toggle")){
+            if(!more->isChecked()){more->click();}
+        }
+        for(int segment=0;segment<6;++segment){
+            const QString label=segment==0 ? QStringLiteral("base") : QStringLiteral("l%1").arg(segment);
+            QTreeWidgetItem* link=nullptr;
+            if(structTree){for(QTreeWidgetItemIterator it(structTree);*it;++it){
+                if((*it)->text(0).endsWith(label)){link=*it;break;}
+            }}
+            ok(link!=nullptr,"t30 placeholder-link-"+std::to_string(segment));
+            if(!link){continue;}structTree->setCurrentItem(link);settleEvents(80);
+            auto* generate=panel->findChild<QPushButton*>("ird_modeling_cmd_modeling.generate-placeholder-geometry");
+            for(auto* parent=generate ? generate->parentWidget() : nullptr;parent;parent=parent->parentWidget()){
+                if(auto* scroll=qobject_cast<QScrollArea*>(parent)){scroll->ensureWidgetVisible(generate);}
+            }
+            ok(generate&&generate->isVisible()&&generate->isEnabled(),"t30 placeholder-command-visible");
+            if(generate){generate->click();}settleEvents(100);
+            ok(statusLine&&statusLine->text().contains(QStringLiteral("已生成并登记资源")),"t30 real-placeholder-generated");
+        }
+        snapPng(hostWin,"mtour-t30-generated-before-apply.png");
+        // 真正提交前复核序列化后的资源路径，避免“按钮成功”掩盖悬空来源。
+        const auto meshCommand=m_domains->modeling.module->buildDraftCommand("modeling");
+        const auto meshPayload=meshCommand ? modeling::tryDecodeCommandPayload(meshCommand->payloadCanonical) : std::nullopt;
+        if(meshPayload){for(const auto& slot:meshPayload->objects){
+            if(slot.objectTypeToken!=modeling::kRobotDesignObjectType){continue;}
+            const auto decoded=modeling::RobotDesignCodec{}.decode(slot.objectBytes,modeling::kCurrentFormatVersion);
+            if(!decoded.ok()){continue;}
+            for(const auto& ref:std::get<modeling::RobotDesign>(decoded.get()).resourceManifest){
+                if(ref.externalRecord){std::cout<<"[ird-ui-smoke-mtour] mesh-source "<<ref.resourceId
+                    <<" path="<<ref.externalRecord->absPath
+                    <<" exists="<<QFile::exists(QString::fromStdString(ref.externalRecord->absPath))<<std::endl;}
+            }
+        }}
         const auto beforeApply=m_lastStoreAdapter->projectStore().query().head().id;
         if(!formalApply(std::nullopt)){QCoreApplication::exit(1);return;}
         const bool modelingCommitted=m_lastStoreAdapter->projectStore().query().head().id!=beforeApply
@@ -8993,6 +9040,36 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
            "a23 saved-policy-restored-after-real-reopen");
         ok(restoredCell && !restoredCell->getDevices().empty(), "step5.5 host-device-restored");
         ok(restoredCell && !restoredCell->getObjects().empty(), "step5.5 host-geometry-restored");
+        // 网格由runtime挂在RigidObject的Geometry中；getModels只覆盖另一种载体。
+        // 逐个检查实际三角网格、轴向端点与半径，不能把代理图元/坐标架算作OBJ成功。
+        std::size_t visibleMeshObjects=0;
+        if(restoredCell){for(const auto& object:restoredCell->getObjects()){
+            for(const auto& geometry:object->getGeometry()){
+                const auto data=geometry->getGeometryData();
+                std::cout<<"[ird-ui-smoke-mtour] host-geometry "<<geometry->getName()
+                    <<" type="<<(data ? static_cast<int>(data->getType()) : -1)
+                    <<" triangles="<<(data ? data->getTriMesh(false)->size() : 0)<<std::endl;
+                if(!data || data->getType()!=rw::geometry::GeometryData::PlainTriMesh){continue;}
+                const auto mesh=data->getTriMesh(false);
+                if(!mesh || mesh->size()!=128){continue;}
+                const double length=std::sqrt(0.1*0.1+0.15*0.15);
+                double minAxis=1.0,maxAxis=-1.0,maxRadius=0.0;
+                for(std::size_t i=0;i<mesh->size();++i){
+                    const auto triangle=mesh->getTriangle(i);
+                    for(int vertex=0;vertex<3;++vertex){
+                        const auto p=triangle[vertex];
+                        const double axial=(p[0]*0.1+p[2]*0.15)/length;
+                        minAxis=std::min(minAxis,axial);maxAxis=std::max(maxAxis,axial);
+                        maxRadius=std::max(maxRadius,std::sqrt(std::max(0.0,p.norm2()*p.norm2()-axial*axial)));
+                    }
+                }
+                ok(std::abs(minAxis)<1e-6&&std::abs(maxAxis-length)<1e-6&&std::abs(maxRadius-0.05)<1e-6,
+                    "t30 generated-mesh-local-metre-dimensions");
+                ++visibleMeshObjects;
+            }
+        }}
+        ok(visibleMeshObjects==6,"t30 six-generated-meshes-restored-in-host-geometry");
+        snapPng(hostWin,"mtour-t30-visible-meshes-after-reopen.png");
         const auto restoredScene = getRobWorkStudio()->getWorkCellScene();
         ok(restoredScene && restoredScene->getWorkCell() == restoredCell,
            "step5.5 scene-workcell-matches-host");

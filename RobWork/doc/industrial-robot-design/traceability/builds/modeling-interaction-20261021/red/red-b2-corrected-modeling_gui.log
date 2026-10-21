@@ -1,0 +1,50 @@
+Note: Google Test filter = *T30
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.ManualEntryCommandsVisibleWithoutExpansion_UX01_T30
+[       OK ] ModelingPanelGuiTest.ManualEntryCommandsVisibleWithoutExpansion_UX01_T30 (982 ms)
+[ RUN      ] ModelingPanelGuiTest.TreeSelectionReturnsToJointEditor_MDL07_T30
+[       OK ] ModelingPanelGuiTest.TreeSelectionReturnsToJointEditor_MDL07_T30 (635 ms)
+[ RUN      ] ModelingPanelGuiTest.ManualWindowFitsAndJointApplyIsReachable_UX09_T30
+[       OK ] ModelingPanelGuiTest.ManualWindowFitsAndJointApplyIsReachable_UX09_T30 (638 ms)
+[ RUN      ] ModelingPanelGuiTest.NamedPoseComboActuallySelectsNewEntry_MDL17_T30
+[       OK ] ModelingPanelGuiTest.NamedPoseComboActuallySelectsNewEntry_MDL17_T30 (447 ms)
+[ RUN      ] ModelingPanelGuiTest.SameTargetRefreshKeepsPoseInputs_UX05_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(306): error: Expected equality of these values:
+  table->item(row,1)->text().toDouble()
+    Which is: 0
+  0.25
+mount-x
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(306): error: Expected equality of these values:
+  table->item(row,1)->text().toDouble()
+    Which is: 0
+  0.25
+tcp-offset-z
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(306): error: Expected equality of these values:
+  table->item(row,1)->text().toDouble()
+    Which is: 0
+  0.25
+world-x
+
+[  FAILED  ] ModelingPanelGuiTest.SameTargetRefreshKeepsPoseInputs_UX05_T30 (382 ms)
+[ RUN      ] ModelingPanelGuiTest.TcpSelectionImmediatelyRepaintsOffset_MDL13_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(327): error: Expected equality of these values:
+  t->item(r,1)->text().toDouble()
+    Which is: 0
+  0.4
+    Which is: 0.40000000000000002
+
+[  FAILED  ] ModelingPanelGuiTest.TcpSelectionImmediatelyRepaintsOffset_MDL13_T30 (383 ms)
+[----------] 6 tests from ModelingPanelGuiTest (3477 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (3479 ms total)
+[  PASSED  ] 4 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ModelingPanelGuiTest.SameTargetRefreshKeepsPoseInputs_UX05_T30
+[  FAILED  ] ModelingPanelGuiTest.TcpSelectionImmediatelyRepaintsOffset_MDL13_T30
+
+ 2 FAILED TESTS

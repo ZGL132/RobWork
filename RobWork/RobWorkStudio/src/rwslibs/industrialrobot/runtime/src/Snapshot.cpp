@@ -1087,7 +1087,10 @@ CompileOutcome RuntimeSnapshotFactory::create(const CompileRequest& request,
 
         // ---- S6：WorkCell 编译（BaseMount 唯一写入＋S9 防御自检内置——
         //      RT-T07；异常经 §8.4 转译后以 RuntimeError 抛出→catch 转 Failed）----
-        const WorkCellCompileOutcome s6 = compileWorkCell(canonical.get());
+        // WP-13-T30/MDL-04：工厂重建S6也必须借用同次请求的资源提供者；
+        // 否则S4已验证资源、底层编译也支持网格，最终发布快照却仅剩代理。
+        // provider仅在此同步调用期使用，快照持有编译后的几何，不延长借用。
+        const WorkCellCompileOutcome s6 = compileWorkCell(canonical.get(), request.resources);
 
         // ---- 段边界取消检查（S7 前）----
         if (cancelRequested(request.cancel)) {

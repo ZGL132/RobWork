@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="9" failures="2" disabled="0" errors="0" time="3.64" timestamp="2026-10-21T10:58:19.854" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="9" failures="2" disabled="0" skipped="0" errors="0" time="3.638" timestamp="2026-10-21T10:58:19.855">
+    <testcase name="ManualEntryCommandsVisibleWithoutExpansion_UX01_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="228" status="run" result="completed" time="0.832" timestamp="2026-10-21T10:58:19.855" classname="ModelingPanelGuiTest" />
+    <testcase name="TreeSelectionReturnsToJointEditor_MDL07_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="241" status="run" result="completed" time="0.445" timestamp="2026-10-21T10:58:20.690" classname="ModelingPanelGuiTest" />
+    <testcase name="ManualWindowFitsAndJointApplyIsReachable_UX09_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="255" status="run" result="completed" time="0.502" timestamp="2026-10-21T10:58:21.137" classname="ModelingPanelGuiTest" />
+    <testcase name="NamedPoseComboActuallySelectsNewEntry_MDL17_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="276" status="run" result="completed" time="0.302" timestamp="2026-10-21T10:58:21.641" classname="ModelingPanelGuiTest" />
+    <testcase name="SameTargetRefreshKeepsPoseInputs_UX05_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="291" status="run" result="completed" time="0.293" timestamp="2026-10-21T10:58:21.946" classname="ModelingPanelGuiTest" />
+    <testcase name="TcpSelectionImmediatelyRepaintsOffset_MDL13_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="314" status="run" result="completed" time="0.282" timestamp="2026-10-21T10:58:22.241" classname="ModelingPanelGuiTest" />
+    <testcase name="RefreshKeepsNamedPoseAndDrivetrainInputs_UX05_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="334" status="run" result="completed" time="0.308" timestamp="2026-10-21T10:58:22.534" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:351&#x0A;Expected equality of these values:&#x0A;  note-&gt;text()&#x0A;    Which is: {}&#x0A;  &quot;尚未保存的备注&quot;&#x0A;    Which is: 00007FF63DBFCBF8&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:351
+Expected equality of these values:
+  note->text()
+    Which is: {}
+  "尚未保存的备注"
+    Which is: 00007FF63DBFCBF8
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:354&#x0A;Expected equality of these values:&#x0A;  t-&gt;item(r,1)-&gt;text().toDouble()&#x0A;    Which is: 0&#x0A;  0.4&#x0A;    Which is: 0.40000000000000002&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:354
+Expected equality of these values:
+  t->item(r,1)->text().toDouble()
+    Which is: 0
+  0.4
+    Which is: 0.40000000000000002
+]]></failure>
+    </testcase>
+    <testcase name="InvalidPoseConfigBlocksSave_MDL17_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="362" status="run" result="completed" time="0.315" timestamp="2026-10-21T10:58:22.844" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:376&#x0A;Expected equality of these values:&#x0A;  m_ws&#x0A;    Which is: 1072-byte object &lt;01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 18-2D 44-54 FB-21 19-C0 18-2D 44-54 FB-21 19-40 0F-00 00-00 00-00 00-00 30-09 D5-ED 3E-02 00-00 0A-00 00-00 00-00 00-00 70-CE 0F-F5 BF-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 BF-00 00-00&gt;&#x0A;  before&#x0A;    Which is: 1072-byte object &lt;01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 28-3A 5A-E5 3E-02 00-00 B8-39 5A-E5 3E-02 00-00 00-3A 5A-E5 3E-02 00-00 21-E0 0C-F4 FE-7F 00-00 00-A3 F0-ED 3E-02 00-00 90-39 5A-E5 3E-02 00-00 60-3A 5A-E5 3E-02 00-00 00-F0 91-3D F6-7F 00-00&gt;&#x0A;构型非法时仍保存了条目的其他字段&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:376
+Expected equality of these values:
+  m_ws
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 18-2D 44-54 FB-21 19-C0 18-2D 44-54 FB-21 19-40 0F-00 00-00 00-00 00-00 30-09 D5-ED 3E-02 00-00 0A-00 00-00 00-00 00-00 70-CE 0F-F5 BF-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 BF-00 00-00>
+  before
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 28-3A 5A-E5 3E-02 00-00 B8-39 5A-E5 3E-02 00-00 00-3A 5A-E5 3E-02 00-00 21-E0 0C-F4 FE-7F 00-00 00-A3 F0-ED 3E-02 00-00 90-39 5A-E5 3E-02 00-00 60-3A 5A-E5 3E-02 00-00 00-F0 91-3D F6-7F 00-00>
+构型非法时仍保存了条目的其他字段
+]]></failure>
+    </testcase>
+    <testcase name="ReplacedJointCannotInheritOldInput_UX05_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="380" status="run" result="completed" time="0.33" timestamp="2026-10-21T10:58:23.160" classname="ModelingPanelGuiTest" />
+  </testsuite>
+</testsuites>

@@ -1614,3 +1614,9 @@ T27改为自有main后，DescriptionValidatorTest.cpp的RT-T16旧环境仍注册
 现移除旧环境，仅由TestMainReport.cpp统一安装；不改领域测试/产品/公共接口。
 修复后集成299通过、1显式跳过，独立195通过、0跳过，均0失败；双模式非零报告与XML逐例一致。
 本轮报告缺口已封闭，证据见wp13-t29-closure，不回写旧空报告；不因此外推真实网格/碰撞全功能完成。
+
+## WP-13-T30：无路径提示网格读取
+
+CanonicalBridge遵循路径不入Description身份而清空sourcePathHint；WorkCellCompiler不能将此合法情况当作无网格能力。仅在hint缺省/空时根据二进制STL记录长度或首条有效文本记录选择既有真实加载器，成功必须有非空三角面；显式不支持格式、摘要不符和解析失败维持原回退。无公共/存储/依赖变化，临时文件及错误语义沿用。真实无hint编译回归及宿主网格/尺寸/截图见modeling-interaction-20261021。
+
+T30正式工厂增量：SnapshotFactory::create的S6透传现有CompileRequest.resources，解决下层编译网格正确而正式快照丢网格；provider同步借用仅活至create返回。worker物化原无资源供给的边界另记，不宣称本批覆盖。

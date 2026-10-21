@@ -332,6 +332,30 @@ TEST_F(ParamTablePanelGuiTest, CancelRestore_UI_T08_ACC1)
     EXPECT_EQ(impact()->text(), QString::fromUtf8(kCancelRestoredText));
 }
 
+/** @brief UX-07：尚在队列的单元格编辑不能在取消后复活成待应用修改。 */
+TEST_F(ParamTablePanelGuiTest, QueuedCellEditCannotSurviveCancel_UX07_T30)
+{
+    IRD_TEST_INFO("UX-07",{},std::nullopt);
+    auto* panel=makePanel(true);
+    table()->item(0,1)->setText("450");
+    // 不先泵队列，模拟编辑器失焦紧接着用户按取消的真实事件顺序。
+    button(panel,"ird_param_cancel")->click();pump();
+    EXPECT_TRUE(m_model->pendingChanges().empty());
+    EXPECT_DOUBLE_EQ(*m_model->currentValueSi("joint-clearance"),0.3);
+}
+
+/** @brief UX-05：权威重绑回填后，旧单元格事件不得污染新对象的表单。 */
+TEST_F(ParamTablePanelGuiTest, QueuedCellEditCannotCrossBaselineRefresh_UX05_T30)
+{
+    IRD_TEST_INFO("UX-05",{},std::nullopt);
+    auto* panel=makePanel(true);
+    table()->item(0,1)->setText("450");
+    m_model->setBaseline("joint-clearance",0.6);
+    ui::refreshParamTablePanel(panel);pump();
+    EXPECT_TRUE(m_model->pendingChanges().empty());
+    EXPECT_DOUBLE_EQ(*m_model->currentValueSi("joint-clearance"),0.6);
+}
+
 // =====================================================================
 // ⑤：批量粘贴与影响明细（UX-05——非模态批量入口）
 // =====================================================================

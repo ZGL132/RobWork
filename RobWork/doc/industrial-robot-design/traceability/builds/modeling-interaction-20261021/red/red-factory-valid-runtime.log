@@ -1,0 +1,20 @@
+Note: Google Test filter = *FactoryRetainsRequested*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RuntimeSnapshotTest
+[ RUN      ] RuntimeSnapshotTest.FactoryRetainsRequestedMeshResources_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\SnapshotTest.cpp(942): error: Value of: found
+  Actual: false
+Expected: true
+请求带真实网格，正式快照却只保留代理
+
+[  FAILED  ] RuntimeSnapshotTest.FactoryRetainsRequestedMeshResources_T30 (1 ms)
+[----------] 1 test from RuntimeSnapshotTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RuntimeSnapshotTest.FactoryRetainsRequestedMeshResources_T30
+
+ 1 FAILED TEST

@@ -654,4 +654,22 @@ TEST(FormEditModel, FormatValueTextUnitSuffixAndDimensionless_UI_T08_ACC1)
     EXPECT_NE(out.reason.find("[1, 10]"), std::string::npos) << "越界原因应含范围: " << out.reason;
 }
 
+/** @brief UX-07：领域出口同步回填拒绝结果后，公共件不得覆盖为乐观新值。 */
+TEST(FormEditModel, AuthoritativeRebindDuringConfirmWins_UX07_T30)
+{
+    IRD_TEST_INFO("UX-07", {}, std::nullopt);
+    auto model = makeLoadedModel();
+    class RebindingOutlet final : public IFormEditOutlet {
+    public:
+        explicit RebindingOutlet(ParamEditModel& model) : model_(model) {}
+        void applyEdits(const ParamEditSet&) override { model_.setBaseline("joint-clearance", 0.3); }
+    private:
+        ParamEditModel& model_; ///< 调用方持有；测试主线程内借用，不接管生命周期。
+    } outlet(model);
+    ASSERT_TRUE(model.setEditText("joint-clearance", "450")); // 当前显示制式mm，输入纯数值。
+    EXPECT_TRUE(model.confirmApply(outlet).ok); // ok仅表示移交，业务回执以权威回填为准。
+    EXPECT_DOUBLE_EQ(*model.currentValueSi("joint-clearance"), 0.3);
+    EXPECT_TRUE(model.pendingChanges().empty());
+}
+
 }  // namespace

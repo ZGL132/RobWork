@@ -393,6 +393,7 @@ private:
     // ---- 最近一次刷新的工作集投影锚（零数据缓存——只存"选中锚"，内容
     //      一律从调用方入参现取；refreshPanel 结束后本类不持有 ws/report）----
     std::optional<core::ObjectId> m_lastSelected;  ///< 属性区当前选中锚（跨刷新保持）
+    std::optional<core::ObjectId> m_editPageAnchor; ///< 上次分派目标，仅选择变化切页，后台刷新不抢走基座等显式页。
     std::optional<AppliedRevisionView> m_appliedPreview; ///< 预览页数据源（A3——模块注入的已应用修订视图）
 
     // ---- UI-T41 批次B（B1/B2/B3 呈现态）--------------------------------

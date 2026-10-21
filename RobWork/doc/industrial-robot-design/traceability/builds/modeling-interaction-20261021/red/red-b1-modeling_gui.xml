@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="4" disabled="0" errors="0" time="1.511" timestamp="2026-10-21T10:37:25.339" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="4" failures="4" disabled="0" skipped="0" errors="0" time="1.509" timestamp="2026-10-21T10:37:25.341">
+    <testcase name="ManualEntryCommandsVisibleWithoutExpansion_UX01_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="228" status="run" result="completed" time="0.638" timestamp="2026-10-21T10:37:25.342" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:236&#x0A;Value of: button-&gt;isVisible()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;new-from-template&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:236
+Value of: button->isVisible()
+  Actual: false
+Expected: true
+new-from-template
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:236&#x0A;Value of: button-&gt;isVisible()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;import-urdf&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:236
+Value of: button->isVisible()
+  Actual: false
+Expected: true
+import-urdf
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:236&#x0A;Value of: button-&gt;isVisible()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;import-xacro&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:236
+Value of: button->isVisible()
+  Actual: false
+Expected: true
+import-xacro
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:236&#x0A;Value of: button-&gt;isVisible()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;import-workcell&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:236
+Value of: button->isVisible()
+  Actual: false
+Expected: true
+import-workcell
+]]></failure>
+    </testcase>
+    <testcase name="TreeSelectionReturnsToJointEditor_MDL07_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="241" status="run" result="completed" time="0.298" timestamp="2026-10-21T10:37:25.981" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:248&#x0A;Value of: host-&gt;isVisible()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;连杆物性页遮住了已选关节的编辑页&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:248
+Value of: host->isVisible()
+  Actual: false
+Expected: true
+连杆物性页遮住了已选关节的编辑页
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:251&#x0A;Value of: host-&gt;isVisible()&#x0A;  Actual: false&#x0A;Expected: true&#x0A;从基座页选新关节后仍未切回关节表&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:251
+Value of: host->isVisible()
+  Actual: false
+Expected: true
+从基座页选新关节后仍未切回关节表
+]]></failure>
+    </testcase>
+    <testcase name="ManualWindowFitsAndJointApplyIsReachable_UX09_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="255" status="run" result="completed" time="0.349" timestamp="2026-10-21T10:37:26.280" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:260&#x0A;Expected: (m_panel-&gt;height()) &lt;= (760), actual: 876 vs 760&#x0A;面板最小高度把真实窗口撑出屏幕&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:260
+Expected: (m_panel->height()) <= (760), actual: 876 vs 760
+面板最小高度把真实窗口撑出屏幕
+]]></failure>
+    </testcase>
+    <testcase name="NamedPoseComboActuallySelectsNewEntry_MDL17_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="276" status="run" result="completed" time="0.22" timestamp="2026-10-21T10:37:26.630" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:287&#x0A;Expected equality of these values:&#x0A;  combo-&gt;currentText()&#x0A;    Which is: { 2-byte object &lt;70-00&gt;, 2-byte object &lt;6F-00&gt;, 2-byte object &lt;73-00&gt;, 2-byte object &lt;65-00&gt;, 2-byte object &lt;2D-00&gt;, 2-byte object &lt;61-00&gt; }&#x0A;  &quot;pose-b&quot;&#x0A;    Which is: 00007FF62FB54728&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:287
+Expected equality of these values:
+  combo->currentText()
+    Which is: { 2-byte object <70-00>, 2-byte object <6F-00>, 2-byte object <73-00>, 2-byte object <65-00>, 2-byte object <2D-00>, 2-byte object <61-00> }
+  "pose-b"
+    Which is: 00007FF62FB54728
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

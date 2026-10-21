@@ -628,11 +628,14 @@ ConfirmApplyResult ParamEditModel::confirmApply(IFormEditOutlet& outlet)
     ParamEditSet editSet;
     editSet.changes = changes;
     outlet.applyEdits(editSet);
-    // 移交即表单侧完成：基线推进到新值并清涉事字段的暂存/错误——表单
-    // 与权威重新对齐；后续应用回执失败由域消费者经 setBaseline 修正
-    // （§8.5 应用回执的协作面在域编辑器，不在本公共件）。
+    // WP-13-T30：出口可以同步setBaseline回填领域接受/拒绝结果；该权威
+    // 必须优先。仅尚未被出口消费的原暂存推进乐观基线，不能在出口返回
+    // 后重新覆盖其回执。ok仍表示移交完成，不冒充领域提交成功。
     for (const auto& change : changes) {
         FieldState& st = stateOf(change.key);
+        if (st.baselineSi != change.oldSi || st.stagedSi != std::optional<double>(change.newSi)) {
+            continue; // 同步权威回填已清暂存，或出口产生了新的编辑状态。
+        }
         st.baselineSi = change.newSi;
         st.stagedSi.reset();
         st.errorReason.clear();

@@ -47,6 +47,8 @@
 #include <QDialog>          // F14：耦合编辑模态
 #include <QDialogButtonBox>  // F14：模态确认钮
 #include <QSpinBox>          // F14：窗口/阶数输入
+#include <QTabWidget>        // WP-13-T30：可见页切换，禁止以隐藏控件click冒充可操作。
+#include <QStackedWidget>    // 树选择必须切换到对应详细编辑页。
 #include <QTimer>            // F14：模态应答定时器
 #include <sdurws/ird/modeling/GeometryLinkEdit.hpp>  // attachExternalGeometry/detachGeometry/GeometrySlot（UI-T48 域原语直调）
 
@@ -221,6 +223,178 @@ protected:
     ModelingWorkingSet m_ws;  ///< 六轴草稿工作集（提供器返回目标——本夹具持有）
     std::unique_ptr<ModelingPanelWidget> m_panel;  ///< 被测面板（Qt 父子自毁）
 };
+
+/** @brief UX-01：模板和三种导入必须在工具页直接可见，不能藏到高级诊断中。 */
+TEST_F(ModelingPanelGuiTest, ManualEntryCommandsVisibleWithoutExpansion_UX01_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-01","MDL-01"},{"AT-01"},std::nullopt);
+    m_panel->resize(1100,760);m_panel->show();
+    auto* tabs=m_panel->findChild<QTabWidget*>();ASSERT_NE(tabs,nullptr);
+    tabs->setCurrentIndex(1);QApplication::processEvents();
+    for(const auto* id:{"new-from-template","import-urdf","import-xacro","import-workcell"}){
+        auto* button=m_panel->findChild<QPushButton*>(QString("ird_modeling_cmd_modeling.")+id);
+        ASSERT_NE(button,nullptr);EXPECT_TRUE(button->isVisible())<<id;
+    }
+}
+
+/** @brief MDL-07：连杆/基座返回关节后，用户必须立刻看到该关节表。 */
+TEST_F(ModelingPanelGuiTest, TreeSelectionReturnsToJointEditor_MDL07_T30)
+{
+    IRD_TEST_INFO("MDL-07",{"AT-01"},std::nullopt);
+    m_panel->resize(1100,760);m_panel->show();
+    m_panel->focusObject(m_ws.design.links.front().objectId);
+    m_panel->focusObject(m_ws.design.joints.front().objectId);QApplication::processEvents();
+    auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");ASSERT_NE(host,nullptr);
+    EXPECT_TRUE(host->isVisible())<<"连杆物性页遮住了已选关节的编辑页";
+    auto* base=m_panel->findChild<QPushButton*>("ird_modeling_edit_base_mode");ASSERT_NE(base,nullptr);
+    base->click();m_panel->focusObject(m_ws.design.joints.back().objectId);QApplication::processEvents();
+    EXPECT_TRUE(host->isVisible())<<"从基座页选新关节后仍未切回关节表";
+}
+
+/** @brief UX-09：真实窗口保持760px高；长属性和隐藏页不得把操作区挤出窗口。 */
+TEST_F(ModelingPanelGuiTest, ManualWindowFitsAndJointApplyIsReachable_UX09_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-09","UX-05"},{"AT-01"},std::nullopt);
+    m_panel->focusObject(m_ws.design.joints.front().objectId);
+    m_panel->resize(1100,760);m_panel->show();QApplication::processEvents();
+    EXPECT_LE(m_panel->height(),760)<<"面板最小高度把真实窗口撑出屏幕";
+    auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");ASSERT_NE(host,nullptr);
+    auto* apply=host->findChild<QPushButton*>("ird_param_apply");ASSERT_NE(apply,nullptr);
+    // 若页面采用滚动承载，就按用户可执行的滚动路径将目标滚入视口。
+    for(auto* parent=apply->parentWidget();parent;parent=parent->parentWidget()){
+        if(auto* scroll=qobject_cast<QScrollArea*>(parent)){scroll->ensureWidgetVisible(apply);}
+    }
+    QApplication::processEvents();
+    const auto center=apply->mapTo(m_panel.get(),apply->rect().center());
+    EXPECT_TRUE(m_panel->rect().contains(center));
+    EXPECT_EQ(m_panel->childAt(center),apply)<<"可见按钮中心被裁剪或被其他控件覆盖";
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!out.isEmpty()){QDir().mkpath(out);EXPECT_TRUE(m_panel->grab().save(out+"/t30-joint-window.png"));}
+}
+
+/** @brief MDL-17：命名位姿下拉必须停在新选择项，并呈现对应构型。 */
+TEST_F(ModelingPanelGuiTest, NamedPoseComboActuallySelectsNewEntry_MDL17_T30)
+{
+    IRD_TEST_INFO("MDL-17",{"AT-28"},std::nullopt);
+    PoseSetEntry a;a.key="pose-a";a.jointConfiguration.assign(6,0.1);
+    PoseSetEntry b;b.key="pose-b";b.jointConfiguration.assign(6,0.2);
+    ASSERT_FALSE(applyPoseSetEntryUpsertEdit(m_ws,a));ASSERT_FALSE(applyPoseSetEntryUpsertEdit(m_ws,b));
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    m_panel->focusObject(m_ws.poseSetObject->objectId);
+    auto* combo=m_panel->findChild<QComboBox*>("ird_modeling_pose_combo");
+    if(!combo){for(auto* c:m_panel->findChildren<QComboBox*>()){if(c->findText("pose-b")>=0){combo=c;break;}}}
+    ASSERT_NE(combo,nullptr);combo->setCurrentIndex(combo->findText("pose-b"));
+    QApplication::processEvents();EXPECT_EQ(combo->currentText(),"pose-b");
+}
+
+/** @brief MDL-13/15：同目标后台刷新不能吞工具/TCP/场景表中未确认的输入。 */
+TEST_F(ModelingPanelGuiTest, SameTargetRefreshKeepsPoseInputs_UX05_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-05","MDL-13","MDL-15"},{"AT-28"},std::nullopt);
+    ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="manual-tool";
+    TcpEntry tcp;tcp.key="tip";tool.tcpList.push_back(tcp);m_ws.toolObjects.push_back(tool);
+    SceneObject scene;scene.objectId=core::ObjectId::generate();scene.localName="manual-scene";
+    m_ws.sceneObjects.push_back(scene);m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    const auto check=[&](const core::ObjectId& id,const QString& key){
+        m_panel->focusObject(id);
+        QTableWidget* table=nullptr;int row=-1;
+        for(auto* t:m_panel->findChildren<QTableWidget*>("ird_param_table")){
+            for(int r=0;r<t->rowCount();++r){if(t->item(r,0)->data(Qt::UserRole).toString()==key){table=t;row=r;}}
+        }
+        ASSERT_NE(table,nullptr);table->item(row,1)->setText("0.25");QApplication::processEvents();
+        m_panel->refreshPanel(m_ws,ModelReadinessReport{});QApplication::processEvents();
+        EXPECT_DOUBLE_EQ(table->item(row,1)->text().toDouble(),0.25)<<key.toStdString();
+    };
+    check(tool.objectId,"mount-x");check(tool.objectId,"tcp-offset-z");
+    check(scene.objectId,"world-x");
+    EXPECT_TRUE(m_ws.changes.empty())<<"表内暂存不应提前写入草稿";
+}
+
+/** @brief MDL-13：选择另一个TCP后，表格必须马上显示新条目的真实偏移。 */
+TEST_F(ModelingPanelGuiTest, TcpSelectionImmediatelyRepaintsOffset_MDL13_T30)
+{
+    IRD_TEST_INFO("MDL-13",{"AT-28"},std::nullopt);
+    ToolDefinition tool;tool.objectId=core::ObjectId::generate();tool.localName="manual-tool";
+    TcpEntry a;a.key="tip-a";TcpEntry b;b.key="tip-b";
+    b.offset=rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0.4),
+        rw::math::Rotation3D<double>(1,0,0,0,1,0,0,0,1));
+    tool.tcpList={a,b};m_ws.toolObjects.push_back(tool);
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});m_panel->focusObject(tool.objectId);
+    auto* combo=m_panel->findChild<QComboBox*>("ird_modeling_tcp_combo");ASSERT_NE(combo,nullptr);
+    EXPECT_TRUE(combo->isEnabled())<<"从无工具变为有工具后，下拉框必须恢复真实鼠标可操作性";
+    combo->setCurrentIndex(1);QApplication::processEvents();
+    bool found=false;
+    for(auto* t:m_panel->findChildren<QTableWidget*>("ird_param_table")){
+        for(int r=0;r<t->rowCount();++r){if(t->item(r,0)->data(Qt::UserRole).toString()=="tcp-offset-z"){
+            EXPECT_DOUBLE_EQ(t->item(r,1)->text().toDouble(),0.4);found=true;
+        }}
+    }
+    EXPECT_TRUE(found);
+}
+
+/** @brief UX-05：位姿未保存文本/构型和传动数值在同基线刷新后仍可继续编辑。 */
+TEST_F(ModelingPanelGuiTest, RefreshKeepsNamedPoseAndDrivetrainInputs_UX05_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-05","MDL-16","MDL-17"},{"AT-28"},std::nullopt);
+    PoseSetEntry pose;pose.key="manual-pose";pose.jointConfiguration.assign(6,0.0);
+    ASSERT_FALSE(applyPoseSetEntryUpsertEdit(m_ws,pose));m_ws.changes.clear();
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});m_panel->focusObject(m_ws.poseSetObject->objectId);
+    auto* note=m_panel->findChild<QLineEdit*>("ird_modeling_pose_note");ASSERT_NE(note,nullptr);
+    note->setText("尚未保存的备注");
+    const auto set=[&](const QString& key,const QString& value){
+        for(auto* t:m_panel->findChildren<QTableWidget*>("ird_param_table")){
+            for(int r=0;r<t->rowCount();++r){if(t->item(r,0)->data(Qt::UserRole).toString()==key){
+                t->item(r,1)->setText(value);QApplication::processEvents();return;
+            }}
+        }FAIL()<<"缺少字段 "<<key.toStdString();
+    };
+    set("pose-config-0","0.4");set("dt-ratio-0","100");
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});QApplication::processEvents();
+    EXPECT_EQ(note->text(),"尚未保存的备注");
+    for(auto* t:m_panel->findChildren<QTableWidget*>("ird_param_table")){
+        for(int r=0;r<t->rowCount();++r){const auto key=t->item(r,0)->data(Qt::UserRole).toString();
+            if(key=="pose-config-0"){EXPECT_DOUBLE_EQ(t->item(r,1)->text().toDouble(),0.4);}
+            if(key=="dt-ratio-0"){EXPECT_DOUBLE_EQ(t->item(r,1)->text().toDouble(),100);}
+        }
+    }
+    EXPECT_TRUE(m_ws.changes.empty());
+}
+
+/** @brief MDL-17：非法构型必须阻止整条保存，不能静默忽略后保存旧值。 */
+TEST_F(ModelingPanelGuiTest, InvalidPoseConfigBlocksSave_MDL17_T30)
+{
+    IRD_TEST_INFO("MDL-17",{"AT-28"},std::nullopt);
+    PoseSetEntry pose;pose.key="manual-pose";pose.jointConfiguration.assign(6,0.0);
+    ASSERT_FALSE(applyPoseSetEntryUpsertEdit(m_ws,pose));m_ws.changes.clear();
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});m_panel->focusObject(m_ws.poseSetObject->objectId);
+    const auto before=m_ws;
+    for(auto* t:m_panel->findChildren<QTableWidget*>("ird_param_table")){
+        for(int r=0;r<t->rowCount();++r){if(t->item(r,0)->data(Qt::UserRole).toString()=="pose-config-0"){
+            t->item(r,1)->setText("不是数值");QApplication::processEvents();
+        }}
+    }
+    m_panel->findChild<QLineEdit*>("ird_modeling_pose_note")->setText("不应提前保存");
+    m_panel->findChild<QPushButton*>("ird_modeling_pose_apply")->click();
+    EXPECT_EQ(m_ws,before)<<"构型非法时仍保存了条目的其他字段";
+}
+
+/** @brief UX-05：新建相同链序关节后，旧对象暂存不能写入新对象。 */
+TEST_F(ModelingPanelGuiTest, ReplacedJointCannotInheritOldInput_UX05_T30)
+{
+    IRD_TEST_INFO("UX-05",{"AT-28"},std::nullopt);
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");
+    auto* table=host->findChild<QTableWidget*>("ird_param_table");ASSERT_NE(table,nullptr);
+    for(int r=0;r<table->rowCount();++r){if(table->item(r,0)->data(Qt::UserRole).toString()=="origin-x"){
+        table->item(r,1)->setText("0.25");QApplication::processEvents();
+    }}
+    m_ws.design.joints[0].objectId=core::ObjectId::generate();
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QApplication::processEvents();table=host->findChild<QTableWidget*>("ird_param_table");ASSERT_NE(table,nullptr);
+    for(int r=0;r<table->rowCount();++r){if(table->item(r,0)->data(Qt::UserRole).toString()=="origin-x"){
+        EXPECT_DOUBLE_EQ(table->item(r,1)->text().toDouble(),0.0);
+    }}
+}
 
 /**
  * @brief 就绪条把 NotProvided 的中文状态和字段三要素呈现给工程师（WP-13-T23）。

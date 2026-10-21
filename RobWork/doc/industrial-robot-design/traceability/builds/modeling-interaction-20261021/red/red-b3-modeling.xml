@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="2" disabled="0" errors="0" time="0.006" timestamp="2026-10-21T10:47:33.316" name="AllTests">
+  <testsuite name="MdlTemplate" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-21T10:47:33.318">
+    <testcase name="PlaceholderCylinder_SegmentGeometry_WP13T07_ACC5" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp" line="879" status="run" result="completed" time="0." timestamp="2026-10-21T10:47:33.318" classname="MdlTemplate" />
+    <testcase name="PlaceholderCylinder_RejectsBadInput_WP13T07_ACC5" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp" line="955" status="run" result="completed" time="0." timestamp="2026-10-21T10:47:33.319" classname="MdlTemplate" />
+  </testsuite>
+  <testsuite name="ModelingCommandFlows" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-21T10:47:33.320">
+    <testcase name="PlaceholderGeometry_WritesVisualRef_UI_T41C" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="282" status="run" result="completed" time="0.001" timestamp="2026-10-21T10:47:33.320" classname="ModelingCommandFlows">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:296&#x0A;Expected equality of these values:&#x0A;  link.visual-&gt;kind&#x0A;    Which is: 4-byte object &lt;01-00 00-00&gt;&#x0A;  GeometryKind::Mesh&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;现有schema通过真实OBJ承载占位圆柱&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:296
+Expected equality of these values:
+  link.visual->kind
+    Which is: 4-byte object <01-00 00-00>
+  GeometryKind::Mesh
+    Which is: 4-byte object <00-00 00-00>
+现有schema通过真实OBJ承载占位圆柱
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:301&#x0A;Expected: (resource) != (resources.end()), actual: 8-byte object &lt;00-00 00-00 00-00 00-00&gt; vs 8-byte object &lt;00-00 00-00 00-00 00-00&gt;&#x0A;生成成功却不能提交：几何资源未登记&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:301
+Expected: (resource) != (resources.end()), actual: 8-byte object <00-00 00-00 00-00 00-00> vs 8-byte object <00-00 00-00 00-00 00-00>
+生成成功却不能提交：几何资源未登记
+]]></failure>
+    </testcase>
+    <testcase name="PlaceholderZeroLengthIsActionableAndAtomic_MDL04_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="312" status="run" result="completed" time="0." timestamp="2026-10-21T10:47:33.321" classname="ModelingCommandFlows">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:317&#x0A;Expected: ok=executeModelingCommand(&quot;modeling.generate-placeholder-geometry&quot;,fx.session,fx.deps(),fx.host,summary) doesn&apos;t throw an exception.&#x0A;  Actual: it throws std::invalid_argument with description &quot;modeling/template/placeholder-length: 起终点重合——零长度圆柱无几何意义&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:317
+Expected: ok=executeModelingCommand("modeling.generate-placeholder-geometry",fx.session,fx.deps(),fx.host,summary) doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "modeling/template/placeholder-length: 起终点重合——零长度圆柱无几何意义".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:318&#x0A;Value of: ok&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:318
+Value of: ok
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:319&#x0A;Expected: (summary.find(&quot;原点&quot;)) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp:319
+Expected: (summary.find("原点")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+]]></failure>
+    </testcase>
+    <testcase name="PlaceholderGeometry_FlangeLink_Refused_UI_T41C" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="323" status="run" result="completed" time="0." timestamp="2026-10-21T10:47:33.322" classname="ModelingCommandFlows" />
+  </testsuite>
+</testsuites>

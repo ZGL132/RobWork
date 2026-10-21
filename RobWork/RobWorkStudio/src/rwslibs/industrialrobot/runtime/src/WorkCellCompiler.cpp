@@ -71,6 +71,7 @@
 #include <exception>
 #include <filesystem>
 #include <fstream>
+#include <sstream> // 无路径资源的首条文本记录检查；不替代真实加载器解析。
 #include <new>
 #include <stdexcept>
 #include <utility>
@@ -246,6 +247,39 @@ std::string meshFormatOf(const std::optional<std::string>& hint)
 }
 
 /**
+ * @brief 给无路径资源选择已有解码器，避免把二进制/未知文本盲送OBJ加载器。
+ * @param bytes [in] 已经摘要校验的借用字节，长度单位B，调用期有效。
+ * @return 支持的解码器名；未知内容返回空串，沿原代理回退，不宣称加载成功。
+ *
+ * 上游LoaderOBJ对未知记录会解引用无效迭代器，无法靠C++异常恢复。因此先
+ * 检查二进制STL的完整记录长度，或文本首条有效记录；完整语法仍只由加载器判定。
+ * 此处不产生格式身份或修改io声明，纯编译期解码选择，无共享状态。
+ */
+std::string meshContentFormat(const ResourceBytes& bytes)
+{
+    if (bytes.data==nullptr || bytes.size==0) { return {}; }
+    if (bytes.size>=84) {
+        // STL固定80B头+4B小端三角数+每面50B；64位乘加避免恶意计数溢出。
+        std::uint64_t count=0;
+        for (int i=0;i<4;++i) { count|=std::uint64_t(bytes.data[80+i])<<(8*i); }
+        if (count>0 && 84+count*50==bytes.size) { return "stl"; }
+    }
+    const std::string text(reinterpret_cast<const char*>(bytes.data),bytes.size);
+    if (text.find('\0')!=std::string::npos) { return {}; }
+    std::istringstream lines(text);std::string line;
+    while (std::getline(lines,line)) {
+        const auto first=line.find_first_not_of(" \t\r");
+        if (first==std::string::npos || line[first]=='#') { continue; }
+        std::istringstream record(line);std::string token;record>>token;
+        if (token=="solid") { return "stl"; }
+        if (token=="v" || token=="vn" || token=="vt" || token=="o" || token=="g"
+            || token=="mtllib" || token=="usemtl" || token=="s") { return "obj"; }
+        return {}; // 未知文本绝不尝试可能不能恢复的上游OBJ路径。
+    }
+    return {};
+}
+
+/**
  * @brief 把内存字节落临时文件并按格式解析为 TriMesh 几何数据。
  *
  * 临时文件纪律：路径＝临时目录/〈摘要标签〉.〈ext〉——同内容同名（幂
@@ -342,7 +376,7 @@ struct MeshReferral {
  *
  * 逐引用流程：provider 取已验证字节（§8.6——io 侧 SafePath/预算已过）
  * → ContentDigester 复算 SHA-256 比对引用摘要（S4 挂接点复核，失配跳
- * 过）→ sourcePathHint 扩展名判格式（stl/obj 可解析；dae/wrl/iv 依赖
+ * 过）→ 显式sourcePathHint判格式，缺省按OBJ/STL真实解析（dae/wrl/iv依赖
  * Assimp/Inventor——明确跳过）→ 临时文件解析（见 parseMeshViaTempFile）
  * → Geometry 载体挂接帧（恒等帧内位姿——localTransform 契约演化面，
  * 见上批注）。任何失败跳过该引用＝图元代理回退（§8.6 诚实缺省），不
@@ -377,18 +411,19 @@ void attachResourceMeshGeometry(
             continue;  // 失配＝引用失实——不挂接（回退代理，编译不阻塞）
         }
 
-        // ---- 第三步：格式判定（扩展名——路径不作身份仅判定用）。
-        const std::string format = meshFormatOf(referral.ref.sourcePathHint);
+        // ---- 第三步：有显式提示时沿既有格式守门；生产canonical合法不带路径。
+        const bool hasHint=referral.ref.sourcePathHint && !referral.ref.sourcePathHint->empty();
+        const std::string format = hasHint ? meshFormatOf(referral.ref.sourcePathHint) : meshContentFormat(bytes);
         if (format.empty()) {
-            continue;  // 无 hint/不可解析格式（dae/wrl/iv 依赖未装——明确跳过）
+            continue;  // 显式不可解析格式仍诚实跳过，不把DAE伪装为已支持。
         }
 
         // ---- 第四步：临时文件解析＋挂接。解析异常（磁盘/格式坏）按该
         // 引用跳过消费——§8.4 转译面之外的能力缺失轨，不失败编译。
         try {
-            const rw::geometry::GeometryData::Ptr meshData =
-                parseMeshViaTempFile(bytes.data, bytes.size, format,
-                                     referral.ref.contentDigest);
+            // 路径不入身份；缺hint时依据已校验内容选择解码器，成功仍须有实际三角面。
+            const auto meshData=parseMeshViaTempFile(bytes.data,bytes.size,format,referral.ref.contentDigest);
+            if (meshData.isNull() || meshData->getTriMesh(false)->size()==0) { continue; }
             // 载体纪律同 attachPrimitive：显式名/恒等位姿/scale=1（网格
             // 坐标＝m 真值直用——io 侧单位契约）。
             const rw::geometry::Geometry::Ptr geometry = rw::core::ownedPtr(

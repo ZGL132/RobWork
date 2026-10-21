@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "failed": 2,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": [
+    {
+      "testId": "ParamTablePanelGuiTest.QueuedCellEditCannotSurviveCancel_UX07_T30",
+      "requirementIds": [
+        "UX-07"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "failed",
+      "reason": "failed: 2 part(s)——详见 gtest 输出与 comparisons 字段",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 194
+    },
+    {
+      "testId": "ParamTablePanelGuiTest.QueuedCellEditCannotCrossBaselineRefresh_UX05_T30",
+      "requirementIds": [
+        "UX-05"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "failed",
+      "reason": "failed: 2 part(s)——详见 gtest 输出与 comparisons 字段",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 104
+    }
+  ]
+}
