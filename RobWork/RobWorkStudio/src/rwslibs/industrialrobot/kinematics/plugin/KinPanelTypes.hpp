@@ -28,6 +28,8 @@
 
 #include <array>
 #include <cstdint>
+#include <sdurws/ird/ui/View3DPreviewContract.hpp> // 只读三维呈现值；无Qt依赖。
+#include <sdurws/ird/kinematics/Render.hpp> // 域诊断渲染值，阈值来源唯一。
 #include <functional>
 #include <memory>
 #include <optional>
@@ -408,6 +410,17 @@ struct KinPanelServices {
     std::function<void(std::function<IkOutcome()>,
                        std::function<void(IkOutcome)>,
                        const QObject*)> inlineSolveAsync;
+    /// KIN-09：宿主执行job一次，再在context存活时于UI线程调用onDone。
+    /// job只访问冻结值与独占临时会话，须自行将异常转换为回执；空缝保留同步诊断路径。
+    std::function<void(std::function<void()>, std::function<void()>,
+                       const QObject*)> workspaceAsync;
+    /// UI线程三维投放（世界系m）及对象高亮；false代表宿主呈现设施不可用。
+    std::function<bool(const ui::View3DPreviewUpdate&,
+                       const std::vector<core::ObjectId>&)> previewSink;
+    /// 已发布policy阈值投影；缺省＝显式不适用，禁止面板发明阈值。
+    std::function<WeakZoneThresholds()> weakThresholds;
+    /// 同快照批量渲染事实；空表示尚无有效产物。
+    std::function<std::optional<BatchRenderData>()> batchRender;
 };
 
 /**

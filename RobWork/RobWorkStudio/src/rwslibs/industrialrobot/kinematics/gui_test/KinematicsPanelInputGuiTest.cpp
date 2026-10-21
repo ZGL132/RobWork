@@ -849,8 +849,43 @@ TEST(KinematicsPanelInput, LateSolveResultIsDroppedAfterTargetChanges_WP15T20)
         << solveStatus->text().toStdString();
 }
 
-/// ★ 审核 P1 回归：异常必须转换为失败回执，面板从在途态恢复；否则
-/// m_solveInFlight 永久为 true，用户无法再次求解。
+/// KIN-02：重试取消或设施失败均不产生新结局，必须保留原结果及过期提示。
+TEST(KinematicsPanelInput, AsyncNonTerminalPreservesExpiredResult_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    for (bool cancel : {true, false}) {
+        StaleResultHarness h;
+        auto* x = h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"));
+        x->setText("0.1");
+        h.panel->findChild<QLineEdit*>(QStringLiteral("target-y"))->setText("0");
+        h.panel->findChild<QLineEdit*>(QStringLiteral("target-z"))->setText("0");
+        ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                              Qt::DirectConnection));
+        h.pendingDone(h.pendingJob());
+        const auto original = h.state.lastSessionSolutionSet;
+        ASSERT_NE(original, nullptr);
+        auto* status = h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+        ASSERT_NE(status, nullptr);
+        x->setText("0.2");
+        ASSERT_TRUE(status->text().contains(QStringLiteral("过期")));
+        ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                              Qt::DirectConnection));
+        IkOutcome outcome;
+        if (cancel) {
+            outcome.cancelled = true;
+        } else {
+            outcome.facilityFailure = IkFacilityFailure{
+                IkFacilityFailureStage::InitialFkEvaluation, "注入设施失败"};
+        }
+        h.pendingDone(std::move(outcome));
+        EXPECT_EQ(h.state.lastSessionSolutionSet, original);
+        EXPECT_TRUE(status->text().contains(QStringLiteral("过期")))
+            << (cancel ? "取消后" : "失败后") << status->text().toStdString();
+    }
+}
+
+/// KIN-02：异常转换为失败回执后必须恢复操作，不应永久停留在途状态。
 TEST(KinematicsPanelInput, AsyncSolverExceptionRestoresSolveAction_WP15T20)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},

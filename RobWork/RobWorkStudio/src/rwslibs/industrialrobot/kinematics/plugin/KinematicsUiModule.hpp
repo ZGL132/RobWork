@@ -143,6 +143,13 @@ public:
         if (partial.homePose) {
             m_services.homePose = partial.homePose;
         }
+        // WP-15-T20：装配→模块→面板三段必须全部直通；否则正式宿主
+        // 看似注入异步缝，工厂却仍收到空缝而退回同步执行。
+        if (partial.inlineSolveAsync) { m_services.inlineSolveAsync = partial.inlineSolveAsync; }
+        if (partial.workspaceAsync) { m_services.workspaceAsync = partial.workspaceAsync; }
+        if (partial.previewSink) { m_services.previewSink = partial.previewSink; }
+        if (partial.weakThresholds) { m_services.weakThresholds = partial.weakThresholds; }
+        if (partial.batchRender) { m_services.batchRender = partial.batchRender; }
     }
 
     /// 服务缝只读访问（UI-T64 测试面——PluginPanelTest 经门面

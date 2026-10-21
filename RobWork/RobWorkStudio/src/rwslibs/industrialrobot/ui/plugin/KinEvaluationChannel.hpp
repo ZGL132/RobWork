@@ -485,6 +485,9 @@ public:
     {
         return m_latestBatch;
     }
+    /// @brief UI线程读取同批域渲染值；无结果或换绑后返回nullopt。
+    std::optional<kinematics::BatchRenderData> latestBatchRender() const
+    { return m_latestBatchRender; }
 
     /// 最近一次批量验证的结果绑定锚（消费方核对键——语义同覆盖账面；
     /// nullopt＝尚无批量结果）。
@@ -663,6 +666,7 @@ private:
     std::map<core::ObjectId, kinematics::KinChannelTaskPointOutcome> m_latestBatch;
     /// ★ KIN-P4：批量账面的结果绑定锚（与 m_latestBatch 同拍写/清）。
     std::optional<core::ContentIdentity> m_latestBatchSnapshotId;
+    std::optional<kinematics::BatchRenderData> m_latestBatchRender; ///< 同批同锚渲染事实。
     std::vector<TaskEntry> m_tasks;  ///< 任务账目（在途＋最近完成——投影序＝登记序）
     /// 在途任务 future（std::async 的 future 析构即阻塞等待——必须持有
     /// 至任务终态，否则 submit 会同步等完整个评估；完成回投后由

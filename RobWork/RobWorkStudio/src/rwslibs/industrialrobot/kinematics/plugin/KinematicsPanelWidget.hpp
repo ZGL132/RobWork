@@ -31,6 +31,8 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QPushButton>
+#include <QProgressBar>
+#include <QTimer>
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QWidget>
@@ -86,6 +88,14 @@ public:
     KinematicsPanelWidget(KinPanelServices services,
                           KinModuleSessionState& session,
                           QWidget* parent = nullptr);
+    /// @brief UI线程析构时请求协作取消；后台只持冻结值，不等待长任务。
+    ~KinematicsPanelWidget() override;
+    /** @brief 将画布鼠标事件转为样本选择；watched/event[in]由Qt持有。
+     * @return 命中时消费事件，空白或其他事件交回Qt；仅UI线程，不抛异常。
+     */
+    bool eventFilter(QObject* watched, QEvent* event) override;
+    /// @brief UI线程将域渲染值投放宿主服务；失败显示原因，不改计算产物。
+    void refreshVisualization();
 
     /// 注入命令标题文案解析器（装配期；不注入＝呈现键名原文——不虚构文案）。
     void setCommandTitleResolver(CommandTitleResolver resolver);
@@ -295,12 +305,20 @@ private:
     QPushButton* m_wsWritebackButton = nullptr; ///< 样本构型回写会话（writebackWorkspacePoint）
     QTableWidget* m_wsSummaryTable = nullptr;   ///< 采样摘要表（lastWorkspaceRun 现投）
     KinInlineSamplingContext m_wsContext;   ///< 内联采样宿主上下文（无取消/进度设施——诚实边界）
+    QPushButton* m_wsCancelButton = nullptr; ///< Qt父子所有权，UI取消入口。
+    QProgressBar* m_wsProgressBar = nullptr; ///< 真实采样百分比，不估算完成度。
+    QTimer* m_wsProgressTimer = nullptr; ///< 100ms读取原子进度，仅长任务期间启用。
+    std::shared_ptr<KinSamplingProgress> m_wsProgress; ///< 与后台共享原子桥，无会话副本。
+    bool m_wsInFlight = false; ///< UI线程防止重复提交，完成/提交异常时清除。
 
     // ---- 页④投影视图（★ KIN-R2 任务6——2D 正交投影散点画布＋PNG 导出
     // 的最小可用入口；三维 RWStudioView3D 接入成本登记后续批次）----
     QComboBox* m_wsProjectionPlaneBox = nullptr; ///< 投影面（XY/XZ/YZ——域三值词表序）
     QLabel* m_wsCanvasLabel = nullptr;       ///< 散点画布（QPixmap 载体——离屏 QPainter 绘制）
     QPushButton* m_wsExportPngButton = nullptr; ///< 导出投影视图 PNG（exportWorkspaceProjectionPng）
+
+    /// 仅呈现命中表：画布像素中心→域sampleIndex，重画即清，不存计算结果。
+    std::vector<std::pair<QPointF, std::uint64_t>> m_wsPickPixels;
 
     // ---- 容器与状态 ----
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器

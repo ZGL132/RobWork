@@ -17,6 +17,7 @@
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QPushButton>
+#include <QProgressBar>
 #include <QScrollArea>
 #include <QTabWidget>
 #include <QTableWidget>
@@ -45,12 +46,17 @@ struct AcceptanceWindow {
     std::unique_ptr<KinematicsPanelWidget> panel;
 
     /** @brief 装配真求解器，配置足够的小预算；构造不产生项目写入。 */
-    AcceptanceWindow()
+    AcceptanceWindow(std::function<void(std::function<void()>,
+        std::function<void()>, const QObject*)> workspaceAsync = {},
+        std::function<bool(const ui::View3DPreviewUpdate&,
+            const std::vector<core::ObjectId>&)> preview = {})
     {
         services.modelView = &view;
         services.ikSolver = &solver;
         services.fkEvaluator = &fk;
         services.sessionPose = &pose;
+        services.workspaceAsync = std::move(workspaceAsync);
+        services.previewSink = std::move(preview);
         state.savedConfig.seed = 7;
         state.savedConfig.regionBudget.seed = 7;
         state.savedConfig.initialValuesCount = 4;
@@ -169,6 +175,141 @@ TEST(KinematicsAcceptance, EditingTargetExpiresExistingResult_WP15T20)
     h.edit("target-x")->setText(QStringLiteral("0.2"));
     EXPECT_TRUE(solveStatus->text().contains(QStringLiteral("结果已过期")))
         << solveStatus->text().toStdString();
+}
+
+/// KIN-08：复算成功应更新当前目标基线，等价文本与真实目标变化分别判定。
+TEST(KinematicsAcceptance, RecomputeRefreshesTargetBaseline_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-08"},
+                  std::vector<std::string>{"AT-27"});
+    AcceptanceWindow h;
+    h.state.snapshotId = core::ContentIdentity::tryFromCanonical(
+        "cid-1111111111111111111111111111111111111111111111111111111111111111").value();
+    h.fillReachableTarget();
+    h.click(h.button(QStringLiteral("求解 IK")));
+    ASSERT_NE(h.state.lastSessionSolutionSet, nullptr);
+    const auto oldResult = h.state.lastSessionSolutionSet;
+    auto* status = h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+    ASSERT_NE(status, nullptr);
+    h.edit("target-x")->setText("0.2");
+    ASSERT_TRUE(status->text().contains(QStringLiteral("过期")));
+    auto* tabs = h.panel->findChild<QTabWidget*>();
+    ASSERT_NE(tabs, nullptr);
+    tabs->setCurrentIndex(3);
+    auto* recompute = h.button(QStringLiteral("复算（当前快照）"));
+    ASSERT_NE(recompute, nullptr);
+    h.click(recompute);
+    ASSERT_NE(h.state.lastSessionSolutionSet, oldResult)
+        << h.panel->lastStatusText().toStdString();
+    EXPECT_FALSE(status->text().contains(QStringLiteral("过期")));
+    // KIN-08：同一物理目标的不同文本不失效；换回旧目标则应过期。
+    h.edit("target-x")->setText("0.2000");
+    EXPECT_FALSE(status->text().contains(QStringLiteral("过期")));
+    h.fillReachableTarget();
+    EXPECT_TRUE(status->text().contains(QStringLiteral("过期")));
+}
+
+/// KIN-09：执行端口暂停期间仍可操作取消；实际采样核消费取消并留下partial。
+TEST(KinematicsAcceptance, WorkspaceAsyncCancelAndLateResult_KIN09)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "NFR-PERF-01"},
+                  std::vector<std::string>{"AT-25"});
+    std::function<void()> job, done;
+    AcceptanceWindow h([&](auto work, auto completion, const QObject*) {
+        job = std::move(work); done = std::move(completion);
+    });
+    h.panel->findChild<QTabWidget*>()->setCurrentIndex(3);
+    h.edit("ws-region-random")->setText("2");
+    auto* run = h.button(QStringLiteral("运行采样"));
+    h.click(run);
+    ASSERT_TRUE(static_cast<bool>(job)) << "必须交给宿主执行，不能同步冻结界面";
+    EXPECT_EQ(h.state.lastWorkspaceRun, nullptr);
+    EXPECT_FALSE(run->isEnabled());
+    auto* cancel = h.panel->findChild<QPushButton*>("ws-cancel");
+    ASSERT_NE(cancel, nullptr);
+    EXPECT_TRUE(cancel->isEnabled());
+    h.click(cancel);
+    job(); done();
+    ASSERT_NE(h.state.lastWorkspaceRun, nullptr);
+    EXPECT_TRUE(h.state.lastWorkspaceRun->cancelled);
+    EXPECT_TRUE(run->isEnabled());
+    const auto original = h.state.lastWorkspaceRun;
+    h.click(run);
+    ++h.state.epoch; // 会话换绑后的旧回执不得入账。
+    job(); done();
+    EXPECT_EQ(h.state.lastWorkspaceRun, original);
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("过期")));
+    h.capture(QStringLiteral("workspace-cancel-late"));
+}
+
+/// KIN-09：真实FK采样完成后显示域上报的100%，销毁后作业仍可安全退出。
+TEST(KinematicsAcceptance, WorkspaceProgressAndDestroyedPanel_KIN09)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-09", "NFR-REL-03"},
+                  std::vector<std::string>{"AT-25"});
+    std::function<void()> job, done;
+    AcceptanceWindow h([&](auto work, auto completion, const QObject*) {
+        job = std::move(work); done = std::move(completion);
+    });
+    h.panel->findChild<QTabWidget*>()->setCurrentIndex(3);
+    h.panel->findChild<QComboBox*>("ws-mode-box")->setCurrentIndex(1);
+    h.edit("ws-joint-random")->setText("3");
+    h.click(h.button(QStringLiteral("运行采样")));
+    ASSERT_TRUE(static_cast<bool>(job));
+    job(); done();
+    ASSERT_NE(h.state.lastWorkspaceRun, nullptr);
+    EXPECT_EQ(h.state.lastWorkspaceRun->results.size(), 3U);
+    auto* progress = h.panel->findChild<QProgressBar*>("ws-progress");
+    ASSERT_NE(progress, nullptr);
+    EXPECT_EQ(progress->value(), 100);
+    const auto original = h.state.lastWorkspaceRun;
+    h.click(h.button(QStringLiteral("运行采样")));
+    h.panel.reset();
+    // 销毁请求取消；后台只用冻结值，完成前不碰宿主会话。
+    EXPECT_NO_THROW(job());
+    EXPECT_EQ(h.state.lastWorkspaceRun, original);
+    // context析构后宿主按契约弃置done，测试不越权调用已销毁控件回调。
+    done = {};
+}
+
+/// KIN-07/09：真实采样点投放既有三维值端口，画布双击沿唯一回写路径。
+TEST(KinematicsAcceptance, WorkspacePreviewAndCanvasPick_KIN07_KIN09)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-07", "KIN-09", "KIN-06"},
+                  std::vector<std::string>{"AT-25", "AT-04"});
+    ui::View3DPreviewUpdate preview;
+    AcceptanceWindow h({}, [&](const auto& value, const auto&) { preview=value; return true; });
+    h.panel->findChild<QTabWidget*>()->setCurrentIndex(3);
+    h.panel->findChild<QComboBox*>("ws-mode-box")->setCurrentIndex(1);
+    h.edit("ws-joint-random")->setText("1");
+    h.click(h.button(QStringLiteral("运行采样")));
+    ASSERT_TRUE(preview.sampleGrid.has_value());
+    ASSERT_EQ(preview.sampleGrid->samples.size(), 1U);
+    ASSERT_NE(h.state.lastWorkspaceRun, nullptr);
+    const auto& sample = h.state.lastWorkspaceRun->results.front();
+    EXPECT_EQ(preview.sampleGrid->samples.front(), sample.tcpPosition);
+    auto* canvas=h.panel->findChild<QLabel*>("ws-projection-canvas");
+    ASSERT_NE(canvas, nullptr);
+    // 实际像素查找绿点（单样本FK可达），避免测试复刻像素映射实现。
+    const auto image=canvas->pixmap().toImage();
+    QPoint pixel(-1,-1);
+    for(int y=0;y<image.height();++y) for(int x=0;x<image.width();++x) {
+        const auto c=image.pixelColor(x,y);
+        if(c.green()>80 && c.red()<30 && c.blue()<30) { pixel=QPoint(x,y); }
+    }
+    ASSERT_GE(pixel.x(),0);
+    const QPointF local=pixel+QPoint((canvas->width()-image.width())/2,
+                                    (canvas->height()-image.height())/2);
+    QMouseEvent press(QEvent::MouseButtonPress,local,canvas->mapToGlobal(local.toPoint()),
+                      Qt::LeftButton,Qt::LeftButton,Qt::NoModifier);
+    QApplication::sendEvent(canvas,&press);
+    EXPECT_EQ(h.edit("ws-sample-index")->text(),QString::number(sample.sampleIndex));
+    EXPECT_EQ(preview.sampleGrid->highlightedSampleIndex,sample.sampleIndex);
+    QMouseEvent dbl(QEvent::MouseButtonDblClick,local,canvas->mapToGlobal(local.toPoint()),
+                    Qt::LeftButton,Qt::LeftButton,Qt::NoModifier);
+    QApplication::sendEvent(canvas,&dbl);
+    EXPECT_TRUE(h.pose.isSet());
+    h.capture(QStringLiteral("workspace-picked"));
 }
 
 /// K40：默认区域盒模式必须真正生成样本，合法字段不能被统一误报为非法。

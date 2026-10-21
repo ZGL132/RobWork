@@ -57,6 +57,7 @@
 #include <rw/graphics/SceneCamera.hpp> // 标准视图验收读取真实相机投影。
 #include <sdurws/ird/ui/UiTheme.hpp> // 验收色值与产品图例共用词表。
 #include <rw/math/RPY.hpp> // 三维创建的世界系RPY输入；构造参数按Z/Y/X轴排列。
+#include <QPointer> // UI线程检查异步回投的面板存活期。
 #include <QPushButton>
 #include <algorithm>
 #include <chrono>
@@ -3464,63 +3465,75 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
         makeKinConfigPersist(m_kinConfigSettings.get());
     channels.homePose =
         makeKinHomePoseProvider(KinPoseSetLoader{std::move(homeEntries)});
-    // ---- ★ 审查 G3：内联求解异步执行缝（WP-15-T20 第三批——插件零自
-    // 建线程红线〔acceptance 2〕的通道化落位：异步能力由装配层线程设施
-    // 承载，与本执行器既有 std::async＋invokeMethod 回投纪律同构）。job
-    // 在工作线程恰执行一次；onDone 经面板 context 队列回投 UI 线程——
-    // context 析构＝回调弃置（Qt invokeMethod 语义），迟到结果不触碰已
-    // 销毁面板。future 以自持 shared_ptr 保活（std::async 返回值析构会
-    // 阻塞等待——必须逃逸作用域）。
-    channels.inlineSolveAsync =
-        [this](std::function<kinematics::IkOutcome()> job,
-               std::function<void(kinematics::IkOutcome)> onDone,
+    // WP-15-T20：求解与采样共用宿主异步设施。后台不接触面板裸指针；
+    // 回投先发给应用UI分发器，再在UI线程检查QPointer，覆盖完成前销毁。
+    channels.workspaceAsync =
+        [this](std::function<void()> job, std::function<void()> onDone,
                const QObject* context) {
-            // std::future 的析构会等待异步任务；先清理已经完成的句柄，
-            // 再把本次句柄交给宿主成员持有，避免局部 future 阻塞 UI，也
-            // 避免旧实现中 future→lambda→future 的引用环。
+            if (!context) { throw std::invalid_argument("缺少UI回投上下文"); }
+            const QPointer<QObject> guard(const_cast<QObject*>(context));
+            QObject* dispatcher = QCoreApplication::instance(); // 应用生存期覆盖宿主future。
             m_kinInlineSolveInflight.erase(
-                std::remove_if(
-                    m_kinInlineSolveInflight.begin(),
-                    m_kinInlineSolveInflight.end(),
-                    [](const std::shared_ptr<std::future<void>>& future) {
-                        return future == nullptr
-                            || future->wait_for(std::chrono::seconds(0))
-                                   == std::future_status::ready;
-                    }),
-                m_kinInlineSolveInflight.end());
+                std::remove_if(m_kinInlineSolveInflight.begin(), m_kinInlineSolveInflight.end(),
+                    [](const std::shared_ptr<std::future<void>>& f) {
+                        return !f || f->wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+                    }), m_kinInlineSolveInflight.end());
             auto inflight = std::make_shared<std::future<void>>();
-            *inflight = std::async(
-                std::launch::async,
-                [job = std::move(job), onDone = std::move(onDone), context]() mutable {
-                    kinematics::IkOutcome outcome;
-                    try {
-                        outcome = job();
-                    } catch (const std::exception& ex) {
-                        // 线程边界必须把调用方/设施异常转换成结构化回执，
-                        // 否则异常会让 onDone 永远不执行，面板的在途标志
-                        // 永久保持 true。原文只留内部诊断素材，不直接
-                        // 穿透到用户界面（错误语义归 kinematics 设施失败）。
-                        outcome.facilityFailure = kinematics::IkFacilityFailure{
-                            kinematics::IkFacilityFailureStage::InitialFkEvaluation,
-                            ex.what()};
-                    } catch (...) {
-                        outcome.facilityFailure = kinematics::IkFacilityFailure{
-                            kinematics::IkFacilityFailureStage::InitialFkEvaluation,
-                            "未知异步异常"};
-                    }
-                    if (context == nullptr) {
-                        return;  // 装配缺陷：没有 UI 上下文时只能丢弃回执
-                    }
-                    QMetaObject::invokeMethod(
-                        const_cast<QObject*>(context),
-                        [onDone = std::move(onDone),
-                         outcome = std::move(outcome)]() mutable {
-                            onDone(std::move(outcome));
-                        },
-                        Qt::QueuedConnection);
+            *inflight = std::async(std::launch::async,
+                [job = std::move(job), onDone = std::move(onDone), guard, dispatcher]() mutable {
+                    job(); // 作业边界负责将设施异常转换为回执。
+                    QMetaObject::invokeMethod(dispatcher,
+                        [guard, onDone = std::move(onDone)]() mutable {
+                            if (guard) { onDone(); } // 仅UI线程访问弱引用。
+                        }, Qt::QueuedConnection);
                 });
             m_kinInlineSolveInflight.push_back(std::move(inflight));
         };
+    channels.inlineSolveAsync =
+        [dispatch = channels.workspaceAsync](std::function<kinematics::IkOutcome()> job,
+               std::function<void(kinematics::IkOutcome)> onDone, const QObject* context) {
+            auto result = std::make_shared<kinematics::IkOutcome>();
+            dispatch([job = std::move(job), result] {
+                try { *result = job(); }
+                catch (const std::exception& e) {
+                    result->facilityFailure = kinematics::IkFacilityFailure{
+                        kinematics::IkFacilityFailureStage::InitialFkEvaluation, e.what()};
+                } catch (...) {
+                    result->facilityFailure = kinematics::IkFacilityFailure{
+                        kinematics::IkFacilityFailureStage::InitialFkEvaluation, "未知异步异常"};
+                }
+            }, [result, onDone = std::move(onDone)]() mutable { onDone(std::move(*result)); }, context);
+        };
+    channels.weakThresholds=[this] {
+        const auto p=m_policySource ? m_policySource->publishedPolicy() : nullptr;
+        return p ? kinematics::weakZoneThresholdsOf(p->jointThresholds) : kinematics::WeakZoneThresholds{};
+    };
+    channels.batchRender=[this]() -> std::optional<kinematics::BatchRenderData> {
+        return m_kinEvaluation ? m_kinEvaluation->latestBatchRender() : std::nullopt;
+    };
+    channels.previewSink=[this](const ui::View3DPreviewUpdate& update,
+                              const std::vector<core::ObjectId>& objects) {
+        auto* studio=getRobWorkStudio();
+        if(!studio || !m_view3dGateway) { return false; }
+        const auto wc=studio->getWorkCell(); const auto scene=studio->getWorkCellScene();
+        if(wc.isNull() || scene.isNull()) { return false; }
+        // 高亮仅按runtime权威端口解析，不拼前缀，不跨帧树存Frame指针。
+        for(const auto& name:m_kinHighlightedNames) {
+            auto* frame=wc->findFrame(name); if(frame) { scene->setHighlighted(false,frame); }
+        }
+        m_kinHighlightedNames.clear();
+        for(const auto& oid:objects) {
+            const auto name=m_nameMapPort ? m_nameMapPort->resolveRuntimeName(oid) : std::nullopt;
+            if(name) {
+                auto* frame=wc->findFrame(*name);
+                if(frame) { scene->setHighlighted(true,frame); m_kinHighlightedNames.push_back(*name); }
+            }
+        }
+        m_kinPreview=update;
+        ui::View3DPreviewUpdate req;
+        req.frameMarkers=m_reqMarkers; req.boxOutline=m_reqBox; req.sampleGrid=m_reqGrid;
+        return applyCombinedPreview(req);
+    };
     kin.installAssemblyChannels(channels);
 }
 
@@ -4613,6 +4626,30 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
                "NameMap 端口＝空映射二态——呈现装配随 WP-24-T08）");
 }
 
+bool IrdWorkbenchHostPlugin::applyCombinedPreview(const ui::View3DPreviewUpdate& update)
+{
+    if(!m_view3dGateway) { return false; }
+    auto combined=update;
+    combined.frameMarkers.insert(combined.frameMarkers.end(),m_kinPreview.frameMarkers.begin(),m_kinPreview.frameMarkers.end());
+    if(m_kinPreview.sampleGrid) {
+        if(!combined.sampleGrid) { combined.sampleGrid=m_kinPreview.sampleGrid; }
+        else {
+            auto& base=*combined.sampleGrid; const auto& kin=*m_kinPreview.sampleGrid;
+            // 两域样本号独立；运动学键放高位命名空间，避免高亮串选需求样本。
+            constexpr std::uint64_t kinBit=std::uint64_t{1}<<63;
+            if(base.cellStates.empty()) { base.cellStates.assign(base.samples.size(),ui::View3DCellState::NotSampled); }
+            if(base.sampleIndices.empty()) { for(std::size_t i=0;i<base.samples.size();++i) { base.sampleIndices.push_back(i); } }
+            for(std::size_t i=0;i<kin.samples.size();++i) {
+                base.samples.push_back(kin.samples[i]);
+                base.cellStates.push_back(kin.cellStates[i]);
+                base.sampleIndices.push_back(kin.sampleIndices[i]|kinBit);
+            }
+            if(kin.highlightedSampleIndex) { base.highlightedSampleIndex=*kin.highlightedSampleIndex|kinBit; }
+        }
+    }
+    return m_view3dGateway->applyPreview(combined);
+}
+
 void IrdWorkbenchHostPlugin::assembleView3DGateway()
 {
     // 宿主三维网关装配（UI-T45——方案 spec 三桥一源的宿主半区；SA-02：
@@ -4956,7 +4993,7 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                     rw::math::Vector3D<> axis(candidate.R()(0,i),candidate.R()(1,i),candidate.R()(2,i));
                     update.sampleGrid->gridLines.push_back({candidate.P(),candidate.P()+axis*0.15});
                 }
-                owner->m_view3dGateway->applyPreview(update);
+                owner->applyCombinedPreview(update);
             };
             const auto readFields=[&] {
                 rw::math::Vector3D<> p,a;
@@ -5058,7 +5095,7 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
             if (owner && owner->m_view3dGateway) {
                 ui::View3DPreviewUpdate update;
                 update.frameMarkers=owner->m_reqMarkers; update.boxOutline=owner->m_reqBox; update.sampleGrid=owner->m_reqGrid;
-                owner->m_view3dGateway->applyPreview(update); // 所有退出路径清临时层，现取原域投影而非恢复旧场景缓存。
+                owner->applyCombinedPreview(update); // 所有退出路径清临时层，现取原域投影而非恢复旧场景缓存。
             }
             return result;
         };
@@ -5148,7 +5185,7 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                 update.frameMarkers = m_reqMarkers;
                 update.boxOutline = m_reqBox;
                 update.sampleGrid = m_reqGrid;
-                m_view3dGateway->applyPreview(update);
+                applyCombinedPreview(update);
             });
         // FIX-T2——样本高亮请求出口（面板清单行点击→置域样本号键；三维
         // 刷新由面板重投最近区域几何触发本闭包重跑〔键先置、投递后到〕，
@@ -5175,7 +5212,7 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                     clearUpdate.frameMarkers = m_reqMarkers;
                     clearUpdate.boxOutline = m_reqBox;    // nullopt＝清框层
                     clearUpdate.sampleGrid = m_reqGrid;   // nullopt＝清格层
-                    if (!m_view3dGateway->applyPreview(clearUpdate)
+                    if (!applyCombinedPreview(clearUpdate)
                         && m_diag.pipeline) {
                         // F-560 附带：applyPreview 返回值不再忽略（契约
                         // 「false＝挂接失败——调用方诚实呈现」）——失败经
@@ -5350,7 +5387,7 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                 update.frameMarkers = m_reqMarkers;
                 update.boxOutline = m_reqBox;
                 update.sampleGrid = m_reqGrid;
-                if (!m_view3dGateway->applyPreview(update) && m_diag.pipeline) {
+                if (!applyCombinedPreview(update) && m_diag.pipeline) {
                     // UI-T77（F-560 附带）：返回值不再忽略——失败＝渲染
                     // 后端缺位/场景不可得（Dev 留痕可观测，网关保留旧
                     // 呈现的事务语义不受影响）。
@@ -5795,6 +5832,8 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
     if (m_selection) {
         m_selection->clearSelection(ui::SelectionSource::Command);
     }
+    m_kinPreview = {};
+    m_kinHighlightedNames.clear();
     if (m_highlightOutlet) {
         m_highlightOutlet->clearHighlight();
     }

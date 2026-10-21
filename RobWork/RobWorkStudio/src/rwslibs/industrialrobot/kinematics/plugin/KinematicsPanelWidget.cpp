@@ -14,12 +14,14 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include <QPainter>
+#include <QMouseEvent>
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QVBoxLayout>
 
 #include <cmath>
 #include <limits>
+#include <sdurws/ird/runtime/BaseWorldTransform.hpp> // 世界变换唯一权威，兼容独立模式。
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -467,7 +469,26 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
 
     auto* wsButtons = new QHBoxLayout();
     m_wsRunButton = new QPushButton(tr("运行采样"), pane);
-    m_wsRunButton->setToolTip(tr("探索式采样（KIN-09）——内联运行，样本量级为演示/诊断面"));
+    m_wsRunButton->setToolTip(tr("探索式采样：后台运行，可取消；取消后保留已计算样本"));
+    m_wsCancelButton = new QPushButton(tr("取消采样"), pane);
+    m_wsCancelButton->setObjectName(QStringLiteral("ws-cancel"));
+    m_wsCancelButton->setEnabled(false);
+    m_wsProgressBar = new QProgressBar(pane);
+    m_wsProgressBar->setObjectName(QStringLiteral("ws-progress"));
+    m_wsProgressBar->setRange(0, 100);
+    m_wsProgressBar->setValue(0);
+    m_wsProgressTimer = new QTimer(this);
+    m_wsProgressTimer->setInterval(100); // 10Hz呈现足够可读，不向UI排队逐样本事件。
+    connect(m_wsProgressTimer, &QTimer::timeout, this, [this] {
+        if (m_wsProgress) { m_wsProgressBar->setValue(m_wsProgress->percent.load()); }
+    });
+    connect(m_wsCancelButton, &QPushButton::clicked, this, [this] {
+        if (m_wsProgress) {
+            m_wsProgress->cancel.store(true);
+            m_wsCancelButton->setEnabled(false);
+            showStatusText(tr("正在取消采样，请等待当前计算检查点……"));
+        }
+    });
     m_wsExportCsvButton = new QPushButton(tr("导出点云 CSV"), pane);
     m_wsWritebackButton = new QPushButton(tr("回写样本构型到会话"), pane);
     connect(m_wsRunButton, &QPushButton::clicked, this,
@@ -477,10 +498,12 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
     connect(m_wsWritebackButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onWsWritebackClicked);
     wsButtons->addWidget(m_wsRunButton);
+    wsButtons->addWidget(m_wsCancelButton);
     wsButtons->addWidget(m_wsExportCsvButton);
     wsButtons->addWidget(m_wsSampleIndex);
     wsButtons->addWidget(m_wsWritebackButton);
     layout->addLayout(wsButtons);
+    layout->addWidget(m_wsProgressBar);
 
     // 采样摘要表（lastWorkspaceRun 现投——模式 token/状态计数/取消标记；
     // F-905 感知半区：模式 token 行即"点从哪来"的强制溯源标注）。
@@ -511,6 +534,12 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
     layout->addLayout(projectionRow);
     m_wsCanvasLabel = new QLabel(pane);
     m_wsCanvasLabel->setObjectName(QStringLiteral("ws-projection-canvas"));
+    m_wsCanvasLabel->installEventFilter(this);
+    m_wsCanvasLabel->setToolTip(tr("单击选择样本，双击将有解样本的构型回写会话"));
+    connect(m_wsSampleIndex, &QLineEdit::textChanged, this, [this] {
+        refreshWsProjectionCanvas();
+        refreshVisualization();
+    });
     m_wsCanvasLabel->setMinimumSize(480, 360);
     m_wsCanvasLabel->setAlignment(Qt::AlignCenter);
     layout->addWidget(m_wsCanvasLabel);
@@ -656,7 +685,8 @@ void KinematicsPanelWidget::refreshAll()
     // 面；TCP 解析在流内显式拒绝）；导出＝写出缝＋会话已有采样产物；
     // 回写＝会话姿态写点＋产物在场。缺一即禁用（诚实降级，与其他缝同
     // 纪律）。
-    m_wsRunButton->setEnabled(m_services.modelView != nullptr);
+    m_wsRunButton->setEnabled(m_services.modelView != nullptr && !m_wsInFlight);
+    m_wsCancelButton->setEnabled(m_wsInFlight && m_wsProgress && !m_wsProgress->cancel.load());
     m_wsExportCsvButton->setEnabled(
         static_cast<bool>(m_services.exportWriter)
         && m_session.lastWorkspaceRun != nullptr);
@@ -672,6 +702,7 @@ void KinematicsPanelWidget::refreshAll()
     refreshWsParamVisibility();
     refreshWsSummary();
     refreshWsProjectionCanvas();
+    refreshVisualization();
 }
 
 void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProjection>& units)
@@ -1217,7 +1248,8 @@ void KinematicsPanelWidget::runSolveNonBlocking(
     req.modelView = modelSnapshot.get();
     m_solveInFlight = true;
     m_solveTargetAtSubmit = targetInBase;
-    m_solveResultExpired = false;
+    // 重试尚无新结局：取消或设施失败时仍须展示旧结果的真实有效性，
+    // 只有完成回调实际提交新解集才允许清除过期态（KIN-02）。
     showStatusText(tr("求解中（异步执行，界面持续响应）……"));
     refreshAll();  // 求解按钮随在途旗标禁用（门控在 refreshAll）
     // 注意：job 按值捕获请求快照与求解器缝指针——面板/会话态在求解期间
@@ -1360,6 +1392,12 @@ void KinematicsPanelWidget::onRecomputeClicked()
     }
     const KinRecomputeFlowResult r =
         recomputeSessionFromIdentity(m_services, m_session, *target);
+    if (r.ok) {
+        // KIN-08：复算已经写入新解集，目标基线必须与该产物同步前移；
+        // 拒绝、取消和设施失败不改基线，以免旧结果被误标为当前结果。
+        m_lastSolvedTarget = *target;
+        m_solveResultExpired = false;
+    }
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（同求解入口——新解集入会话态后门控/解表同步）。
     refreshAll();
@@ -1522,6 +1560,7 @@ void KinematicsPanelWidget::onWsModeChanged(int index)
 
 void KinematicsPanelWidget::onWsRunClicked()
 {
+    if (m_wsInFlight) { return; } // 直接槽调用同样受门控，避免覆盖在途桥。
     // 编辑字段 → 面板参数（SI 真值）：区域盒中心/边长按显示制式读入并
     // 经 resolveKinDisplayToSi 逆换算（与目标编辑器同纪律——提交面唯一
     // 换算点）；计数字段按无符号整数解析。解析失败/非有限/越界＝调用方
@@ -1610,7 +1649,67 @@ void KinematicsPanelWidget::onWsRunClicked()
             return;
         }
     }
-    // 内联运行（编排函数——校验/运行/入会话态；拒绝轨转状态行）。
+    if (m_services.workspaceAsync && m_services.modelView != nullptr) {
+        // KIN-09：复制可换绑视图，后台只有独占临时会话；宿主执行端口
+        // 负责线程与回投，插件不创建线程，不从后台读取任何编辑器。
+        const auto model = std::make_shared<const FrozenRuntimeView>(*m_services.modelView);
+        const auto snapshot = m_session.snapshotId;
+        const auto epoch = m_session.epoch;
+        const auto config = m_session.savedConfig;
+        const auto digest = analysisConfigurationDigest(config);
+        const auto progress = std::make_shared<KinSamplingProgress>();
+        // 回执由后台写、完成后UI读；宿主回投形成先行关系，不并发读写。
+        const auto output = std::make_shared<KinModuleSessionState>();
+        output->savedConfig = config;
+        const auto result = std::make_shared<KinWorkspaceSamplingFlowResult>();
+        m_wsProgress = progress;
+        m_wsInFlight = true;
+        m_wsProgressBar->setValue(0);
+        m_wsProgressTimer->start();
+        showStatusText(tr("采样中，可继续操作界面或取消……"));
+        refreshAll();
+        try {
+            m_services.workspaceAsync(
+                [model, params, progress, output, result] {
+                    KinPanelServices isolated;
+                    isolated.modelView = model.get();
+                    try {
+                        *result = runWorkspaceSamplingFlow(isolated, *output, params, *progress);
+                    } catch (const std::exception& e) {
+                        result->statusText = std::string("采样设施失败：") + e.what();
+                    } catch (...) {
+                        result->statusText = "采样设施失败：未知异常";
+                    }
+                },
+                [this, snapshot, epoch, digest, output, result, progress] {
+                    m_wsInFlight = false;
+                    m_wsProgressTimer->stop();
+                    m_wsProgressBar->setValue(progress->percent.load());
+                    bool current = m_session.snapshotId == snapshot && m_session.epoch == epoch;
+                    try {
+                        current = current && analysisConfigurationDigest(m_session.savedConfig) == digest;
+                    } catch (const std::exception&) { current = false; }
+                    if (!current) {
+                        showStatusText(tr("采样结果已过期：会话或配置已变化，请重新采样"));
+                    } else {
+                        if (result->ok) { m_session.lastWorkspaceRun = output->lastWorkspaceRun; }
+                        showStatusText(QString::fromStdString(result->statusText));
+                    }
+                    m_wsProgress.reset();
+                    refreshAll();
+                }, this);
+        } catch (const std::exception& e) {
+            // 执行设施拒绝提交：恢复可重试状态，旧产物原样保留。
+            progress->cancel.store(true);
+            m_wsInFlight = false;
+            m_wsProgressTimer->stop();
+            m_wsProgress.reset();
+            showStatusText(tr("采样提交失败：%1").arg(QString::fromUtf8(e.what())));
+            refreshAll();
+        }
+        return;
+    }
+    // 缺宿主执行设施时保留同步诊断路径；正式宿主必须装配workspaceAsync。
     const KinWorkspaceSamplingFlowResult r =
         runWorkspaceSamplingFlow(m_services, m_session, params, m_wsContext);
     showStatusText(QString::fromStdString(r.statusText));
@@ -1624,6 +1723,13 @@ void KinematicsPanelWidget::onWsExportCsvClicked()
     // 半区；文件名固定于导出目录——写出经 io AtomicFile 装配缝）。
     showStatusText(QString::fromStdString(exportWorkspacePointCloudCsv(
         m_services, m_session, "kin-workspace-pointcloud.csv")));
+}
+
+KinematicsPanelWidget::~KinematicsPanelWidget()
+{
+    // 销毁不等待计算，令后台在下一检查点终止；Qt释放定时器与控件，
+    // 宿主负责弃置onDone，后台持有的冻结模型/进度由任务自行释放。
+    if (m_wsProgress) { m_wsProgress->cancel.store(true); }
 }
 
 void KinematicsPanelWidget::onWsWritebackClicked()
@@ -1656,6 +1762,7 @@ void KinematicsPanelWidget::refreshWsProjectionCanvas()
     const int width = 480;   // 画布宽（px——呈现几何，非业务量）
     const int height = 360;  // 画布高（px）
     QPixmap canvas(width, height);
+    m_wsPickPixels.clear(); // 每次重画使旧像素命中失效，避免跨结果/投影串选。
     canvas.fill(Qt::white);
     if (!m_session.lastWorkspaceRun) {
         // 占位画布（无产物态——与摘要表空表同口径）。
@@ -1725,8 +1832,15 @@ void KinematicsPanelWidget::refreshWsProjectionCanvas()
                 painter.setPen(QColor(128, 128, 128));   // 未运行/不适用＝灰
                 break;
         }
-        painter.drawPoint(QPointF(mapH(projected[i].first),
-                                  mapV(projected[i].second)));
+        const QPointF pixel(mapH(projected[i].first), mapV(projected[i].second));
+        painter.drawPoint(pixel);
+        m_wsPickPixels.emplace_back(pixel, p.sampleIndex);
+        bool selected = false;
+        const auto index = m_wsSampleIndex->text().toULongLong(&selected);
+        if (selected && index == p.sampleIndex) {
+            painter.setPen(QPen(Qt::blue, 2));
+            painter.drawEllipse(pixel, 6, 6); // 6px蓝圈只表明选中，不改变状态色。
+        }
     }
 
     // 轴标注＋图例（坐标恒基座系 {B} 单位 m——KIN-09 投影语义；图例
@@ -1749,6 +1863,108 @@ void KinematicsPanelWidget::onWsProjectionPlaneChanged(int index)
     // 投影面切换＝画布重绘（纯呈现态——零采样重算零修订）。
     Q_UNUSED(index);
     refreshWsProjectionCanvas();
+}
+
+bool KinematicsPanelWidget::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched != m_wsCanvasLabel ||
+        (event->type() != QEvent::MouseButtonPress && event->type() != QEvent::MouseButtonDblClick)) {
+        return QWidget::eventFilter(watched, event);
+    }
+    const auto* mouse = static_cast<QMouseEvent*>(event);
+    if (mouse->button() != Qt::LeftButton || m_wsCanvasLabel->pixmap().isNull()) { return false; }
+    // QLabel居中显示固定像素画布；先扣除居中留白，再以8px半径命中。
+    // 距离相同取域全序中先出现者，保证重叠点选择确定性。
+    const auto size = m_wsCanvasLabel->pixmap().deviceIndependentSize();
+    const QPointF local = mouse->position() - QPointF(
+        (m_wsCanvasLabel->width()-size.width())/2,
+        (m_wsCanvasLabel->height()-size.height())/2);
+    double bestDistance = 64.0; // 8px容差平方：便于细散点点击，无物理单位。
+    std::optional<std::uint64_t> picked;
+    for (const auto& item : m_wsPickPixels) {
+        const auto delta = item.first-local;
+        const double d = delta.x()*delta.x()+delta.y()*delta.y();
+        if (d < bestDistance) { bestDistance=d; picked=item.second; }
+    }
+    if (!picked) { return false; } // 空白不改已有选择和会话姿态。
+    m_wsSampleIndex->setText(QString::number(*picked));
+    if (event->type() == QEvent::MouseButtonDblClick) { onWsWritebackClicked(); }
+    return true;
+}
+
+void KinematicsPanelWidget::refreshVisualization()
+{
+    if (!m_services.previewSink || !m_services.modelView) { return; }
+    ui::View3DPreviewUpdate update;
+    std::vector<core::ObjectId> objects;
+    const auto worldTbase = m_services.modelView->worldToBase();
+    // 数据源仍为会话权威产物，世界变换只发生在呈现边界，SI真值不改。
+    if (m_session.lastWorkspaceRun) {
+        ui::View3DSampleGrid grid;
+        const auto cloud = buildWorkspacePointCloud(*m_session.lastWorkspaceRun);
+        for (const auto& p : cloud.points) {
+            grid.samples.push_back(runtime::transformBasePointToWorld(worldTbase,p.position));
+            grid.sampleIndices.push_back(p.sampleIndex);
+            grid.cellStates.push_back(p.state==SampleState::Reached ? ui::View3DCellState::Good
+                : p.state==SampleState::Unreachable ? ui::View3DCellState::Failed
+                : p.state==SampleState::DataInsufficient ? ui::View3DCellState::Weak
+                : ui::View3DCellState::NotSampled);
+        }
+        bool valid=false;
+        const auto selected=m_wsSampleIndex->text().toULongLong(&valid);
+        if(valid) { grid.highlightedSampleIndex=selected; }
+        update.sampleGrid=std::move(grid);
+    }
+    try {
+        // 四类诊断都消费域组装器；此处只投坐标/标签，不重新比较阈值或排序。
+        if (m_services.batchRender) {
+            const auto batch=m_services.batchRender();
+            if (batch) {
+                for(const auto& p:batch->failurePoints.points) if(p.targetInBase) {
+                    update.frameMarkers.push_back({"失败点 "+p.pointOid.toCanonical(), "WORLD",
+                        runtime::transformBasePointToWorld(worldTbase,p.targetInBase->P())});
+                }
+                for(const auto& z:batch->weakZones.zones) { objects.push_back(z.jointObject); }
+                for(const auto& p:batch->collisionPairs) { objects.push_back(p.objectA); objects.push_back(p.objectB); }
+            }
+        }
+        if(m_session.lastSessionSolutionSetView) {
+            std::vector<core::ObjectId> joints;
+            for(const auto& j:m_services.modelView->model().chain().joints) {
+                if(j.type!=runtime::JointType::Fixed) { joints.push_back(j.objectId); }
+            }
+            const auto thresholds=m_services.weakThresholds ? m_services.weakThresholds() : WeakZoneThresholds{};
+            const auto data=assembleSolutionSetRenderData(*m_session.lastSessionSolutionSetView,
+                {}, {}, joints, thresholds);
+            const auto tcp=resolveSessionTcp(m_services);
+            const auto& solutions=m_session.lastSessionSolutionSetView->sorted();
+            auto mark=[&](std::size_t index, const std::string& label) {
+                if(!tcp.ok || !m_services.fkEvaluator || index>=solutions.size()) { return; }
+                const auto pose=m_services.fkEvaluator->evaluate(*m_services.modelView,tcp.tcp,solutions[index].q);
+                if(pose.ok()) { update.frameMarkers.push_back({label,"WORLD",pose.get().tcpInWorld.P()}); }
+            };
+            for(const auto& z:data.weakZones.zones) {
+                objects.push_back(z.jointObject);
+                if(z.solutionIndex) { mark(*z.solutionIndex,"薄弱区"); }
+            }
+            if(data.worstJointMargin) {
+                const auto& worst=*data.worstJointMargin;
+                objects.push_back(worst.jointObject);
+                mark(worst.solutionIndex,"最差关节裕量 "+std::to_string(worst.minimumJointMargin));
+            }
+            for(const auto& p:data.collisionPairs) { objects.push_back(p.objectA); objects.push_back(p.objectB); }
+            // 选择行仅定位现有解；检查器与三维共享规范rank，零第二套排序。
+            const auto selected=m_solutionTable->currentIndex();
+            if(selected.isValid()) {
+                const auto rows=solutionRowsFor(*m_session.lastSessionSolutionSetView,
+                    m_usableOnly->isChecked(),dofJointTypes(m_services.modelView->model()),m_session.displayUnits);
+                if(static_cast<std::size_t>(selected.row())<rows.size()) { mark(rows[selected.row()].rank,"当前候选"); }
+            }
+        }
+        if(!m_services.previewSink(update,objects)) { showStatusText(tr("三维显示不可用：宿主场景尚未就绪")); }
+    } catch(const std::exception& e) {
+        showStatusText(tr("三维数据投放失败：%1").arg(QString::fromUtf8(e.what())));
+    }
 }
 
 void KinematicsPanelWidget::onWsExportPngClicked()
@@ -1799,6 +2015,7 @@ void KinematicsPanelWidget::onSolutionSelectionChanged()
     renderRows(m_inspectorTable,
                solutionInspectorRows(*m_session.lastSessionSolutionSetView, ref,
                                      m_session.displayUnits));
+    refreshVisualization();
 }
 
 void KinematicsPanelWidget::onSolutionDoubleClicked(int row, int column)

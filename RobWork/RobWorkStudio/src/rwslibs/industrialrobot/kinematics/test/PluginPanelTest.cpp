@@ -1076,6 +1076,9 @@ TEST(KinAssemblyChannels, InstallChannelsAndNoteRoute_UI_T64)
     scriptedAck.taskRef = "kin-cov-1-1";
     KinematicsAssemblyChannels channels;
     channels.modelView = &view;
+    // WP-15-T20：异步缝必须穿过门面/模块合并，不能在正式工厂静默丢失。
+    channels.inlineSolveAsync = [](auto, auto, const QObject*) {};
+    channels.workspaceAsync = [](auto, auto, const QObject*) {};
     channels.backgroundSubmit =
         [scriptedAck](const KinChannelBackgroundRequest& request) {
             // 通道请求字段透传断言（翻译闭包方向①：私有请求→通道请求）。
@@ -1090,6 +1093,8 @@ TEST(KinAssemblyChannels, InstallChannelsAndNoteRoute_UI_T64)
     // 保持空——mergeAssemblyChannels 逐缝语义不误伤。
     auto* module = static_cast<KinematicsUiModule*>(bundle.module.get());
     ASSERT_TRUE(module->services().backgroundSubmit);
+    EXPECT_TRUE(module->services().inlineSolveAsync);
+    EXPECT_TRUE(module->services().workspaceAsync);
     KinBackgroundRequest privateRequest;
     privateRequest.kind = KinBackgroundKind::RegionCoverage;
     privateRequest.epoch = 7;

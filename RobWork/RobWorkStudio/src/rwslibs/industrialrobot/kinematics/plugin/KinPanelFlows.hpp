@@ -25,6 +25,7 @@
 #define IRD_KINEMATICS_PLUGIN_KINPANELFLOWS_HPP
 
 #include <chrono>
+#include <atomic>
 #include <optional>
 #include <string>
 #include <vector>
@@ -581,6 +582,27 @@ public:
         (void)contentVersion;
         return std::nullopt;  // 探索式零物化消费（纯计算面）
     }
+};
+
+/**
+ * @brief KIN-09 后台采样的取消/进度桥，由UI和任务共同持有至作业结束。
+ *
+ * 仅原子字段跨线程；不持QObject、会话或模型引用。进度为域上报的真实
+ * 百分比（0..100），取消是协作请求，partial事实以WorkspaceSampleRun为准。
+ */
+class KinSamplingProgress final : public evidence::IEvaluationContext {
+public:
+    std::atomic<bool> cancel{false}; ///< UI请求取消；工作线程只读。
+    std::atomic<std::uint8_t> percent{0}; ///< 域采样批次完成百分比，无量纲。
+    /// @brief 工作线程查询取消，不抛异常；true表示下一检查点停止。
+    bool cancellationRequested() const override { return cancel.load(); }
+    /** @brief 接收真实批进度；phase[in]为域阶段标记，本面板只显示百分比。 */
+    void reportProgress(std::uint8_t value, std::string_view phase) override
+    { (void)phase; percent.store(value); }
+    /** @brief 探索式不读取物化对象，任何对象/版本[in]均返回nullopt。 */
+    std::optional<std::vector<std::uint8_t>> tryObjectBytes(
+        core::ObjectId objectId, core::ContentVersion version) const override
+    { (void)objectId; (void)version; return std::nullopt; }
 };
 
 /**

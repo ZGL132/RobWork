@@ -364,6 +364,10 @@ private:
     /// 宿主三维网关装配（UI-T45——getView 不可得＝降级留痕不装配；
     /// 三桥一源的 Deps 绑定与事件过滤挂接）。
     void assembleView3DGateway();
+    /** @brief 合并需求预览与运动学诊断层后原子投放；update[in]为世界系m。
+     * @return 宿主网关投放结果；仅UI线程，不改域数据，不持Frame指针。
+     */
+    bool applyCombinedPreview(const ui::View3DPreviewUpdate& update);
     /// 宿主呈现装配（UI-T46——发布桥＋呈现构造源实例化与观察者接线；
     /// 名称映射真值端口升级为呈现绑定形态。视图不可得＝桥缺席降级，
     /// 与 UI-T45 降级基线同构；编译端口随每次项目打开构造）。
@@ -451,6 +455,8 @@ private:
     std::vector<ui::View3DFrameMarker> m_reqMarkers;
     std::optional<ui::View3DBoxOutline> m_reqBox;
     std::optional<ui::View3DSampleGrid> m_reqGrid;
+    ui::View3DPreviewUpdate m_kinPreview; ///< UI持有的运动学呈现层，换绑/关闭清空。
+    std::vector<std::string> m_kinHighlightedNames; ///< 仅运行时名，投递前清旧高亮。
     /// 当前采样高亮键（FIX-T2——F-495 样本级定位：面板清单行点击的域
     /// 样本号；合并投递时置入 View3DSampleGrid.highlightedSampleIndex，
     /// 渲染层解析未命中＝诚实不亮。区域切换/会话拆除清位〔对账同拍〕）。

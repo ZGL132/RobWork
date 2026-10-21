@@ -236,6 +236,10 @@ void KinematicsPluginAssembly::installAssemblyChannels(
         // ＝回调弃置）。空缝不覆盖＝私有缝保持空（同步内联降级原径）。
         merged.inlineSolveAsync = channels.inlineSolveAsync;
     }
+    if (channels.workspaceAsync) { merged.workspaceAsync = channels.workspaceAsync; }
+    if (channels.previewSink) { merged.previewSink = channels.previewSink; }
+    if (channels.weakThresholds) { merged.weakThresholds = channels.weakThresholds; }
+    if (channels.batchRender) { merged.batchRender = channels.batchRender; }
     m_impl->mergeAssemblyChannels(std::move(merged));
 }
 
