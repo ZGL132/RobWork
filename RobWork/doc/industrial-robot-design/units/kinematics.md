@@ -1075,6 +1075,19 @@ SamplingPlan表尾tcpOverride缺省沿query.defaultTcp，存在时只消费同�
 
 第二批F04（私有面增量）：配置面板沿用ui公共参数模型的解析、显示单位、筛选和粘贴；整体确认同时包含初值策略0/1/2与数值字段。确认区显示同单位old→new，确认后草稿或savedConfig发生变化即拒绝并要求重新确认；取消恢复整个草稿。用户级configPersist返回成功才前移savedConfig和表单基线，缺通道/拒绝/存储std::exception返回失败与原因，草稿完整保留供重试，不再声称“仅在会话生效”。初次注入基线后刷新参数表，缺保存通道时禁用保存并说明原因。无公共头、跨域边或存储格式变更，不改建模与共享UiPlugin。新增9项Windows控件/编排回归真实执行为修复前1通过、8失败，修复后9通过；全量与双模式执行结果及范围见后续REPORT-stage2.md。正式宿主用户级配置装配/项目切换重开尚待验证，F04仅此私有面封闭，70项终验与正式三维不因此转为通过。
 
+第三批（2026-10-21，审查两轮——`audit/kin-verify-20261021/`（verification-report＋interaction-report）：G1~G8（P2）与 G9~G20、O1~O3（P3/观察）修复批；分支 wp15-t20）：
+- **G1 覆盖呈现接通**：装配门面新增 `applyCoverageResult`（KinChannelCoverageResult 聚合→面板覆盖行翻译＋snapshotId/epoch 锚核对内聚单点——迟到/跨快照/失败不投影）；模块 `applyCoverageRows` 转发、面板 `showCoverageRows` 渲染（位置/姿态双行＋计数比"reached/planned"＋零样本/降级标识，零样本不虚构 0%）；ui route 覆盖完成回执后投影。修复前 m_coverageTable 无写点恒空、refreshCoverage 函数不存在、coverageRows 死代码。装配头新增方法＝宿主精确装配面（首批登记口径内）。
+- **G2 缓议**：KIN-07 四类渲染数据三维投放＝正式宿主三维开放项（本批不落位，与"正式归档链/宿主三维"同轨——数据面与 16 例单测维持，呈现投放留后续批次；不因本批转通过）。
+- **G3 求解分流非阻塞（交互语义偏差登记，§5.4）**：异步能力经**装配层线程设施**承载——面板新增 `inlineSolveAsync` 服务缝（通道值面 `KinematicsAssemblyChannels::inlineSolveAsync` 同构直通），job 在装配层工作线程恰执行一次、完成回调经 context 对象队列回投 UI 线程（context 析构＝回调弃置）；缝在场＝点击立即返回、完成经抽取的 `finishSinglePointSolve` 与内联路径同一写点入会话态（恰一次求解——零双份计算），在途旗标禁用求解按钮防重复提交；**插件零自建线程红线（acceptance 2：std::thread/QThread/QtConcurrent/std::async 禁令——KinPluginGraph 契约实测拦截首轮 worker 方案）由此不破**。修复前同步跑完整场求解才事后判断超时（UI 冻结全程＋双份计算）。**偏差**：L-K2"内联 <1 s 或转后台"的落位形态改为"异步缝在场＝立即异步＋回调收口（无预算判定）；缝缺席＝同步内联原径（runSinglePointSolve 不变——其内部超预算转后台语义保留为降级路径）"。
+- **G4/G5 入口接通**：位姿页新增"以当前 TCP 为目标"按钮（L-K5 产品闭环——新增零 Qt `tcpTargetBackfillValues`：会话姿态 FK→T_base_tcp→显示制式六字段投影回填，仅呈现默认值；旧 tcpBackfillText 关节文本形态保留 A05 回归钉角色）＋长度/角度两显示单位下拉（L-K8 对用户可达——m/cm/mm＋rad/deg 词表，m+rad＝SI 直显；切换经 setDisplayUnits 唯一入口，QSignalBlocker 防回环、组合框随 refreshTargetUnitPresentation 对齐会话制式）。
+- **G7 RPY 轴义消歧**：位姿页目标/显示 RPY 标签带轴向（"RPY-Roll＝绕Z/Pitch＝绕Y/Yaw＝绕X"——rw::math::RPY 参数命名），消除与 requirements 面板"Roll 绕 X"同名反轴的静默误抄；跨域词表统一归所有者裁决（ui/plugin/KinEvaluationChannel.cpp:21 反向注释同步修正＝G17）。
+- **G8/G19 计数回卷防御**：Workspace 关节网格笛卡尔积改乘前防回卷检查（6 轴×65536 真积 2⁹⁶ 回卷为 0 绕过上限闸的反例钉死）；Sampling 区域网格 plannedPosition/plannedPose/generateGridPositions 三处乘前回卷检测（fail-fast，拒绝而非静默失真分母）。
+- **G12 种子派生收拢**：splitmix64/streamSeedFor 唯一权威点＝src/SeedMix.hpp（私有头），Ik/Sampling/Envelope/Workspace 四 TU 改 using/别名引用（算法与身份 codec 版本联动换代纪律随头注登记）。
+- **G13/G14 防御收紧**：FK 零行程区间（hi==lo）裕量取边界值 0 不产 NaN（不可达防御——builder 强制 lower<upper 且 chain() 仅 const 访问，登记性用例随批）；Bounds 移动关节缺 bounds 由记 0 改 fail-fast（防解析界限低估误产结局 5 证明素材）。
+- **G6/G10/G11/G18/O1 呈现与小修**：ui route 完成回执后调 refreshFromSession（任务点表结果列/解表自动刷新——修复前只投状态行文本）；refreshTaskArea 注释与实现对齐（taskRows 缝本面板不渲染——任务九态归 ui 任务 Dock）；refreshPosePane 呈现兜底（模型违约 NaN 转状态行，异常不穿越 Qt 槽）；m_jointEditors 死成员删除；目标位置字段占位符"必填"（空值语义与姿态"空＝0"不同族——如实提示）。
+- **G15/G16/D1 维持登记**：上行选中→三维高亮（O-44 v1 边界）、工作空间画布点击拾取（v0.30 最小入口）、harness --auto（开发工具）缓议不落位。
+- 回归钉随批：G8 回卷反例（WorkspaceTest）、G13 登记性用例（FkTest）、G1 装配全链（gui KinematicsPanelCoverage）、G3 非阻塞三判据（gui Input）、G4 回填数值同源（gui Session）、G5 组合框驱动投影（gui Input）；既有 288+57+35 例与两轮审查报告口径全量回归。本批不改公共 include/ 头（装配头新增方法属宿主精确装配面）、不动业务域协作边。
+
 ### WP-13-T24 B3g：场景几何事实投影补齐
 
 MDL-15/AT-28：runtime场景几何可选，assembleCollisionScene从同快照geometry.has_value投影hasCollisionGeometry；固定帧仍保留身份/角色/名称，不将显示标记当碰撞几何。原policy消费/算法/公共签名不改。八节范围及真实装配反例见2026-10-20-modeling-completion.md B3g；未验证不标通过。

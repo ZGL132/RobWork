@@ -21,6 +21,8 @@
 #include <cmath>
 #include <limits>
 #include <memory>
+#include <optional>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -192,15 +194,48 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     form->addRow(m_targetPitchLabel, m_targetPitch);
     form->addRow(m_targetYawLabel, m_targetYaw);
     // 首版标注（按当前会话制式——构造期 displayUnits 尚为缺省 SI 直显，
-    // setDisplayUnits 注入后经 refreshAll 重建）。
+    // setDisplayUnits 注入后经 refreshAll 重建；占位符也在该函数统一
+    // 重建——审查 O1 必填提示随行标签同源）。
     refreshTargetUnitPresentation();
+    // ---- 显示单位切换入口（审查 G5 修复——L-K8 对用户可达；WP-15-T20
+    // 第三批）：长度/角度两制式下拉（KIN-12 R1 冻结子集 m/cm/mm＋rad/
+    // deg）；切换经 setDisplayUnits 唯一入口全面板重投影（零修订/零重算
+    // /结果不动——V-17）。构造期按会话缺省（SI 直显）选中。
+    auto* unitRow = new QHBoxLayout();
+    m_lengthUnitBox = new QComboBox(pane);
+    m_lengthUnitBox->addItem(tr("m"));
+    m_lengthUnitBox->addItem(tr("cm"));
+    m_lengthUnitBox->addItem(tr("mm"));
+    m_angleUnitBox = new QComboBox(pane);
+    m_angleUnitBox->addItem(tr("rad"));
+    m_angleUnitBox->addItem(tr("deg"));
+    unitRow->addWidget(new QLabel(tr("长度单位"), pane));
+    unitRow->addWidget(m_lengthUnitBox);
+    unitRow->addWidget(new QLabel(tr("角度单位"), pane));
+    unitRow->addWidget(m_angleUnitBox);
+    unitRow->addStretch(1);
+    connect(m_lengthUnitBox, &QComboBox::currentIndexChanged, this,
+            &KinematicsPanelWidget::onDisplayUnitChanged);
+    connect(m_angleUnitBox, &QComboBox::currentIndexChanged, this,
+            &KinematicsPanelWidget::onDisplayUnitChanged);
     layout->addLayout(form);
+    layout->addLayout(unitRow);  // 单位切换行在目标表单之后（就近原则）
 
     m_solveButton = new QPushButton(tr("求解 IK"), pane);
     m_solveButton->setToolTip(tr("需要模型视图和逆运动学求解服务"));
     connect(m_solveButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onSolveClicked);
     right->addWidget(m_solveButton);
+    // ---- TCP 位姿回填入口（审查 G4 修复——L-K5 产品闭环；WP-15-T20
+    // 第三批）：把会话姿态对应的当前 TCP 位姿回填进目标六字段（仅呈现
+    // 默认值——求解身份不含会话，D-KIN-4）。可用性＝FK 执行面＋会话姿态
+    // 缝在场（门控随 refreshAll 现取——与"复位 Home"两级门控同则）。
+    m_backfillTcpButton = new QPushButton(tr("以当前 TCP 为目标"), pane);
+    m_backfillTcpButton->setToolTip(
+        tr("需要模型视图、FK 评估器与会话姿态（把当前 TCP 位姿填入目标编辑器）"));
+    connect(m_backfillTcpButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onBackfillTcpClicked);
+    right->addWidget(m_backfillTcpButton);
 
     m_inspectorTable = makeTable({tr("检查器"), tr("值")}, pane);
     right->addWidget(m_inspectorTable);
@@ -458,8 +493,8 @@ void KinematicsPanelWidget::refreshAll()
     refreshPosePane();
     refreshResultsPane();
     refreshTaskArea();
-    // 覆盖页：结果经 results 投影刷新（事件驱动）——投影数据源由装配层
-    // 经 refreshCoverage 携带 CoverageResult 调用；此处仅按钮态。
+    // 覆盖页：结果行经装配门面 applyCoverageResult→showCoverageRows 投影
+    // （审查 G1 修复落位——锚核对＋聚合→行翻译在装配面，本处仅按钮态）。
     const bool writable = m_session.writable;
     const auto commandEnabled = [this](const std::string& id, bool local) {
         return local && (!m_commandAvailability || m_commandAvailability(id).enabled);
@@ -500,7 +535,8 @@ void KinematicsPanelWidget::refreshAll()
         && m_services.ikSolver != nullptr && m_services.modelView != nullptr);
     m_solveButton->setEnabled(commandEnabled("kinematics.solve-ik",
                                              m_services.ikSolver != nullptr
-                                             && m_services.modelView != nullptr));
+                                             && m_services.modelView != nullptr
+                                             && !m_solveInFlight));
     // ---- 探索式采样组门控（★ KIN-R2 任务3）：运行＝模型视图在场（执行
     // 面；TCP 解析在流内显式拒绝）；导出＝写出缝＋会话已有采样产物；
     // 回写＝会话姿态写点＋产物在场。缺一即禁用（诚实降级，与其他缝同
@@ -607,32 +643,62 @@ void KinematicsPanelWidget::refreshTargetUnitPresentation()
     if (m_targetXLabel != nullptr) {
         m_targetXLabel->setText(tr("目标 X（%1，基座系）").arg(lengthSymbol));
         m_targetX->setPlaceholderText(
-            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+            tr("必填——基座系坐标，单位：%1").arg(lengthSymbol));
     }
     if (m_targetYLabel != nullptr) {
         m_targetYLabel->setText(tr("目标 Y（%1，基座系）").arg(lengthSymbol));
         m_targetY->setPlaceholderText(
-            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+            tr("必填——基座系坐标，单位：%1").arg(lengthSymbol));
     }
     if (m_targetZLabel != nullptr) {
         m_targetZLabel->setText(tr("目标 Z（%1，基座系）").arg(lengthSymbol));
         m_targetZ->setPlaceholderText(
-            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+            tr("必填——基座系坐标，单位：%1").arg(lengthSymbol));
     }
+    // ★ 审查 G7 消歧（WP-15-T20 第三批）：RPY 轴义随标签显式标注——本
+    // 面板 RPY 随 rw::math::RPY 参数命名（roll 驱动 Rz、pitch 驱动 Ry、
+    // yaw 驱动 Rx）；requirements 面板"固定 Roll"按航空惯例绕 X。两侧
+    // 各自自洽但同名反轴——标签带轴后消除静默误抄风险（跨域词表统一归
+    // 所有者裁决，登记随卡 §14.6 第三批）。
     if (m_targetRollLabel != nullptr) {
-        m_targetRollLabel->setText(tr("目标 RPY-Roll（%1，基座系）").arg(angleSymbol));
+        m_targetRollLabel->setText(tr("目标 RPY-Roll＝绕Z（%1，基座系）").arg(angleSymbol));
         m_targetRoll->setPlaceholderText(
             tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
     }
     if (m_targetPitchLabel != nullptr) {
-        m_targetPitchLabel->setText(tr("目标 RPY-Pitch（%1，基座系）").arg(angleSymbol));
+        m_targetPitchLabel->setText(tr("目标 RPY-Pitch＝绕Y（%1，基座系）").arg(angleSymbol));
         m_targetPitch->setPlaceholderText(
             tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
     }
     if (m_targetYawLabel != nullptr) {
-        m_targetYawLabel->setText(tr("目标 RPY-Yaw（%1，基座系）").arg(angleSymbol));
+        m_targetYawLabel->setText(tr("目标 RPY-Yaw＝绕X（%1，基座系）").arg(angleSymbol));
         m_targetYaw->setPlaceholderText(
             tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
+    }
+    // ---- 单位切换下拉同步（G5 随附——会话制式为权威，组合框随刷新对
+    // 齐；QSignalBlocker 防 setCurrentIndex 触发 onDisplayUnitChanged 的
+    // 回环——呈现同步零切换语义）。
+    if (m_lengthUnitBox != nullptr && m_angleUnitBox != nullptr) {
+        const QSignalBlocker blockLength(m_lengthUnitBox);
+        const QSignalBlocker blockAngle(m_angleUnitBox);
+        const std::string lengthSymbol =
+            m_session.displayUnits.has_value()
+                ? std::string(m_session.displayUnits->lengthUnit().symbol())
+                : std::string("m");
+        const std::string angleSymbolStd =
+            m_session.displayUnits.has_value()
+                ? std::string(m_session.displayUnits->angleUnit().symbol())
+                : std::string("rad");
+        const int lengthIndex = m_lengthUnitBox->findText(
+            QString::fromStdString(lengthSymbol));
+        const int angleIndex = m_angleUnitBox->findText(
+            QString::fromStdString(angleSymbolStd));
+        if (lengthIndex >= 0) {
+            m_lengthUnitBox->setCurrentIndex(lengthIndex);
+        }
+        if (angleIndex >= 0) {
+            m_angleUnitBox->setCurrentIndex(angleIndex);
+        }
     }
 }
 
@@ -697,7 +763,22 @@ void KinematicsPanelWidget::refreshPosePane()
             + err.detail));
         return;
     }
-    renderRows(m_poseTable, poseMetricRows(metrics.get(), m_session.displayUnits));
+    // ---- 呈现兜底（审查 G11 修复——WP-15-T20 第三批）：模型违约态的
+    // NaN/非有限值会令 poseMetricRows→formatKinQuantityText 抛
+    // invalid_argument（合法 +∞ 已按 A03 三分类放行，此异常仅剩"模型
+    // 违约"形态）——就地转状态行，不让异常穿越 Qt 槽（与 A03"异常不
+    // 穿越槽"教训同则；正常装配下不可达，防御深度）。
+    try {
+        renderRows(m_poseTable,
+                   poseMetricRows(metrics.get(), m_session.displayUnits));
+    } catch (const std::exception& e) {
+        renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
+        m_jointTable->setRowCount(0);
+        showStatusText(QString::fromStdString(
+            std::string("位姿指标呈现异常（模型违约——值面含非法数值）：")
+            + e.what()));
+        return;
+    }
     // 关节表（KIN-12 显示投影——显示制式下的关节向量；KIN-P3/审查 A05：
     // 逐轴按天然量纲投影——转动/连续轴 rad→角度、移动轴 m→长度，"数值
     // ＋单位"同显。逐轴类型从模型关节表提取（dofJointTypes——FK 成功
@@ -761,11 +842,11 @@ void KinematicsPanelWidget::setWritable(bool writable)
 
 void KinematicsPanelWidget::refreshTaskArea()
 {
-    // L-K12 任务状态投影（taskRowsProvider 现取——中断如实、零过滤；
-    // 数据源权威在 ui ITaskPresentationModel，Qt 层投影为行值）。
-    if (m_taskPointTable == nullptr) {
-        return;
-    }
+    // 任务点消费视图现取重投影（taskPointsProvider——只读行集＋结果列）。
+    // ★ 审查 G10 修正：本函数不消费 taskRowsProvider（任务九态/进度）——
+    // 任务状态呈现归 ui 任务 Dock（ITaskPresentationModel 投影），本面板
+    // 无进度列（呈现边界如实登记，注释此前声称"taskRowsProvider 现取"
+    // 与实现不符——已对齐）。
     // 任务点表（只读消费视图——provider 现取零缓存）。列 0 行锚额外携带
     // pointOid 规范文本（Qt::UserRole——WP-15-T18 focusTaskPoint 定位键；
     // 呈现文本仍为工程用语标签，锚对用户不可见）。
@@ -791,6 +872,37 @@ void KinematicsPanelWidget::refreshTaskArea()
                                                   ? (*p.requiredCoverageDone ? tr("完成")
                                                                              : tr("未完成"))
                                                   : tr("—")));
+    }
+}
+
+void KinematicsPanelWidget::showCoverageRows(std::vector<KinCoverageRow> rows)
+{
+    // 覆盖结果行渲染（审查 G1 修复——WP-15-T20 第三批）：装配面已完成
+    // 锚核对与"聚合→行"翻译，本函数只搬运成表（widget 零计算逻辑纪律
+    // 不变）。空行集＝清表（对账失效/无结果的诚实空态——不保留陈旧行）。
+    // 三列：覆盖轴（位置/姿态双口径——KIN-04 R3/R8 分列）、计数比
+    // （"分子/分母"计数比直投——零第二口径）、标识（降级/零样本如实）。
+    if (m_coverageTable == nullptr) {
+        return;
+    }
+    m_coverageTable->setRowCount(static_cast<int>(rows.size()));
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+        const KinCoverageRow& r = rows[i];
+        const auto row = static_cast<int>(i);
+        m_coverageTable->setItem(row, 0, new QTableWidgetItem(
+                                             QString::fromStdString(r.label)));
+        m_coverageTable->setItem(row, 1, new QTableWidgetItem(
+                                             QString::fromStdString(r.ratioText)));
+        // 标识列组合词（零样本优先——比率不存在时降级词无意义）。
+        QString flags;
+        if (r.zeroSamples) {
+            flags = tr("零样本——比率不存在");
+        } else {
+            if (r.degraded) {
+                flags = tr("数据不足——已降级");
+            }
+        }
+        m_coverageTable->setItem(row, 2, new QTableWidgetItem(flags));
     }
 }
 
@@ -916,6 +1028,15 @@ void KinematicsPanelWidget::onSolveClicked()
         showStatusText(QString::fromStdString(assembly.statusText));
         return;
     }
+    // ---- 求解执行形态分派（审查 G3 修复——WP-15-T20 第三批）：异步缝
+    // 在场＝非阻塞（job 经装配层线程设施执行，UI 线程立即返回——插件零
+    // 自建线程红线〔acceptance 2〕的通道化落位）；缝缺席＝同步内联降级
+    // （runSinglePointSolve 原径——其内部超预算转后台语义不变，诚实边
+    // 缘；同步路径的"UI 全程占用＋双份计算"残留随装配缝缺席登记）。
+    if (m_services.inlineSolveAsync) {
+        runSolveNonBlocking(*target, assembly.request);
+        return;  // 状态行/刷新在异步回调（UI 线程）内完成
+    }
     const KinSolveFlowResult r =
         runSinglePointSolve(m_services, m_session, *target, assembly.request);
     showStatusText(QString::fromStdString(r.statusText));
@@ -923,6 +1044,43 @@ void KinematicsPanelWidget::onSolveClicked()
     // 导出/复算按钮的门控随即点亮——修复前按钮态停留在求解前的"无结果
     // 禁用"，用户求解成功仍不能导出，闭环断链）。现取重投影零缓存。
     refreshAll();
+}
+
+void KinematicsPanelWidget::runSolveNonBlocking(
+    const rw::math::Transform3D<double>& targetInBase, const IkRequest& request)
+{
+    // ---- G3 修复（WP-15-T20 第三批）——缝化非阻塞单点求解：
+    // 请求按值快照（targetInBase 绑定）经 inlineSolveAsync 装配缝提交
+    // （job 在装配层工作线程恰执行一次——IIkSolver 纯函数线程安全 §9.2；
+    // 本函数零线程创建——插件零自建线程红线）。完成回调（装配层保证回
+    // UI 线程）经 finishSinglePointSolve 与同步内联路径同一写点入会话
+    // 态（零双份计算——修复前同步跑完才按耗时事后转后台，超时场景
+    // UI 冻结全程＋同一请求后台重算）。在途旗标防重复提交（完成回调清
+    // 位＋refreshAll 重进按钮门控）。context＝this——面板先于回调销毁
+    // 时回投被 Qt 弃置（迟到结果不触碰已销毁面板——缝面契约）。
+    IkRequest req = request;
+    req.targetInBase = targetInBase;
+    m_solveInFlight = true;
+    showStatusText(tr("求解中（异步执行，界面持续响应）……"));
+    refreshAll();  // 求解按钮随在途旗标禁用（门控在 refreshAll）
+    // 注意：job 按值捕获请求快照与求解器缝指针——面板/会话态在求解期间
+    // 被改不回读（D-KIN-4：身份不含会话）；完成回调写会话态（装配层保证
+    // 回 UI 线程）。
+    const IIkSolver* solver = m_services.ikSolver;  // 缝指针——存活期由装配层契约保证
+    const auto t0 = std::chrono::steady_clock::now();
+    m_services.inlineSolveAsync(
+        [solver, req = std::move(req)]() { return solver->solve(req); },
+        [this, t0](IkOutcome outcome) {
+            m_solveInFlight = false;
+            const auto elapsed =
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::steady_clock::now() - t0);
+            const KinSolveFlowResult r = finishSinglePointSolve(
+                m_session, std::move(outcome), elapsed);
+            showStatusText(QString::fromStdString(r.statusText));
+            refreshAll();
+        },
+        this);
 }
 
 void KinematicsPanelWidget::onBatchClicked()
@@ -1009,6 +1167,53 @@ void KinematicsPanelWidget::onRecomputeClicked()
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（同求解入口——新解集入会话态后门控/解表同步）。
     refreshAll();
+}
+
+void KinematicsPanelWidget::onBackfillTcpClicked()
+{
+    // ---- L-K5 位姿回填（审查 G4 修复——WP-15-T20 第三批）：会话姿态经
+    // FK 得当前 TCP 位姿，按显示制式投影后回填目标六字段（仅呈现默认值
+    // ——求解身份不含会话，D-KIN-4；零修订零求解器触碰）。前提缺失＝
+    // 状态行如实说明并停在原地（与复位 Home 拒绝轨同纪律）。
+    const std::optional<KinTcpTargetBackfill> backfill =
+        tcpTargetBackfillValues(m_services, m_session);
+    if (!backfill.has_value()) {
+        showStatusText(tr("回填不可用：需要模型视图、FK 评估器、已设置的"
+                          "会话姿态与可解析的默认 TCP"));
+        return;
+    }
+    const auto text = [](double v) { return QString::number(v, 'g', 12); };
+    m_targetX->setText(text(backfill->xDisplay));
+    m_targetY->setText(text(backfill->yDisplay));
+    m_targetZ->setText(text(backfill->zDisplay));
+    m_targetRoll->setText(text(backfill->rollDisplay));
+    m_targetPitch->setText(text(backfill->pitchDisplay));
+    m_targetYaw->setText(text(backfill->yawDisplay));
+    showStatusText(tr("已回填当前 TCP 位姿（显示制式数值，单位随行标签）"
+                      "——仅作编辑起点，求解身份不含会话"));
+}
+
+void KinematicsPanelWidget::onDisplayUnitChanged(int index)
+{
+    // ---- L-K8 生产入口（审查 G5 修复——WP-15-T20 第三批）：长度/角度
+    // 两下拉当前值→DisplayUnitProjection→setDisplayUnits 唯一入口全面
+    // 板重投影（零修订/零重算/结果不动——V-17）。m＋rad 组合＝nullopt
+    // （SI 直显制式）；下拉值域封闭（m/cm/mm＋rad/deg——KIN-12 R1 冻结
+    // 子集），词表外组合不可达。index 未用（组合框自述当前值）。
+    Q_UNUSED(index);
+    if (m_lengthUnitBox == nullptr || m_angleUnitBox == nullptr) {
+        return;
+    }
+    const std::string length = m_lengthUnitBox->currentText().toStdString();
+    const std::string angle = m_angleUnitBox->currentText().toStdString();
+    if (length == "m" && angle == "rad") {
+        setDisplayUnits(std::optional<DisplayUnitProjection>{});
+        return;
+    }
+    if (const auto units =
+            DisplayUnitProjection::tryFind(length, angle)) {
+        setDisplayUnits(units);
+    }
 }
 
 // ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——槽与刷新实现）------------

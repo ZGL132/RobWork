@@ -191,6 +191,31 @@ KinSolveFlowResult runSinglePointSolve(const KinPanelServices& services,
                                        const IkRequest& request,
                                        std::chrono::milliseconds inlineBudget = kInlineBudgetMs);
 
+/**
+ * @brief 求解结局入会话态（审查 20261021 G3 修复抽取——runSinglePointSolve
+ *        尾段的复用半区；WP-15-T20 第三批）。
+ *
+ * 职责（与原内联尾段逐字同语义）：
+ *   - 取消/求解设施失败：非结局（§5.4/F-746③ 值面）——状态行如实呈现，
+ *     零会话写入；
+ *   - 正常结局：状态行"内联完成（X ms），解 N 个"＋解集入会话态（唯一
+ *     写点：原值＋排序视图双面同批构造——双面同源零二次求解）。
+ *
+ * 消费方：runSinglePointSolve（同步内联/超时保留两分支收口）＋widget
+ * 非阻塞路径（G3——后台缝在场时 worker 线程求解、UI 线程事件环等待，
+ * 预算内完成的结局经本函数与内联路径同一写点入会话态）。
+ *
+ * @param session [in,out] 会话态（正常结局时写入 lastSessionSolutionSet）
+ * @param outcome [in,out] 求解结局（值转移——解集被消费）
+ * @param elapsed [in] 求解耗时（状态行/断言锚）
+ * @return 编排结果（语义同 KinSolveFlowResult）
+ *
+ * 纯编排；UI 线程调用（异步路径＝worker 完成后回 UI 线程调用）。
+ */
+KinSolveFlowResult finishSinglePointSolve(KinModuleSessionState& session,
+                                          IkOutcome outcome,
+                                          std::chrono::milliseconds elapsed);
+
 // =====================================================================
 // L-K3 / L-K6 批量验证与区域覆盖提交（经 execution 后台——进度/取消）
 // =====================================================================
@@ -319,6 +344,39 @@ std::optional<std::string> tcpBackfillText(
     const KinSessionPose* sessionPose, const KinModuleSessionState& session,
     const std::vector<double>& jointsSi,
     const std::vector<runtime::JointType>& dofJointTypes);
+
+/**
+ * @brief "以当前 TCP 为目标"位姿回填值（审查 20261021 G4 修复——L-K5
+ *        数据流的产品入口闭环；WP-15-T20 第三批）。
+ *
+ * 背景：L-K5 原语义＝把会话姿态对应的当前 TCP 位姿回填进目标编辑器
+ * （仅呈现默认值——求解身份不含会话，D-KIN-4）。修复前该数据流零调用
+ * 点（tcpBackfillText 为历史关节编辑器遗留——产关节向量文本，与六字段
+ * 位姿编辑器不匹配，交互对用户不可达）。本函数补齐位姿半区：会话姿态
+ * 经 FK 评估器得 T_base_tcp，位置/姿态按当前显示制式投影为编辑器数值
+ * （单位随行标签——数值本体不带单位后缀）。
+ *
+ * 前提缝（缺一＝nullopt——调用方状态行如实说明，不虚构回填）：
+ * fkEvaluator＋modelView（FK 执行面）、sessionPose 已设置、TCP 解析
+ * （resolveSessionTcp 三入口单点——KIN-14）、FK 求值成功。
+ *
+ * @return 回填值（六字段显示制式数值——roll/pitch/yaw 轴义随
+ *         KinPanelRotation：roll 绕基座系 Z、pitch 绕 Y、yaw 绕 X，
+ *         与 rw::math::RPY 同序；审查 G7 消歧登记同源）
+ *
+ * 纯编排；UI 线程；零修订（只读会话态——KIN-06 同则）。
+ */
+struct KinTcpTargetBackfill {
+    double xDisplay = 0.0;      ///< 目标 X（显示制式长度数值——单位随行标签）
+    double yDisplay = 0.0;      ///< 目标 Y（同上）
+    double zDisplay = 0.0;      ///< 目标 Z（同上）
+    double rollDisplay = 0.0;   ///< RPY-Roll（显示制式角度数值——绕基座系 Z）
+    double pitchDisplay = 0.0;  ///< RPY-Pitch（同上——绕基座系 Y）
+    double yawDisplay = 0.0;    ///< RPY-Yaw（同上——绕基座系 X）
+};
+
+std::optional<KinTcpTargetBackfill> tcpTargetBackfillValues(
+    const KinPanelServices& services, const KinModuleSessionState& session);
 
 // =====================================================================
 // L-K7 求解配置编辑（确认→保存→依赖提示——不自动重算）

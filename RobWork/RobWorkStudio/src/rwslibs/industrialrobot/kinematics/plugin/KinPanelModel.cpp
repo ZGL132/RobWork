@@ -92,11 +92,11 @@ std::vector<KinNamedValueRow> poseMetricRows(
     //          域外无穷收紧同 F-902）。万向锁邻域的 epsilon 特判不改变矩阵元
     //          的直投真值——矩阵行是姿态的第一性呈现，RPY 行是工程可读投影。
     const std::array<double, 3> rpy = rpyFromRotationSi(metrics.tcpInBase.R());
-    rows.push_back(makeRow("tcp-rpy-roll", "姿态 RPY-Roll（基座系）",
+    rows.push_back(makeRow("tcp-rpy-roll", "姿态 RPY-Roll＝绕Z（基座系）",
                            rpy[0], "rad", displayUnits));
-    rows.push_back(makeRow("tcp-rpy-pitch", "姿态 RPY-Pitch（基座系）",
+    rows.push_back(makeRow("tcp-rpy-pitch", "姿态 RPY-Pitch＝绕Y（基座系）",
                            rpy[1], "rad", displayUnits));
-    rows.push_back(makeRow("tcp-rpy-yaw", "姿态 RPY-Yaw（基座系）",
+    rows.push_back(makeRow("tcp-rpy-yaw", "姿态 RPY-Yaw＝绕X（基座系）",
                            rpy[2], "rad", displayUnits));
     for (int r = 0; r < 3; ++r) {
         for (int c = 0; c < 3; ++c) {

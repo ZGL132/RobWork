@@ -1286,6 +1286,17 @@ TEST(KinWorkspace, JointSpaceQueryValidationAndFkErrorFace_KIN_P5)
         RecordingContext ctx;
         EXPECT_THROW(kin::runWorkspaceSampling(view, q, ctx), std::invalid_argument);
     }
+    // ★ 审查 G8 回归（WP-15-T20 第三批）：u64 回卷绕过组合闸——6 轴×
+    // 65536 的真积 2⁹⁶ 在模 2⁶⁴ 下回卷为 0，旧"先乘后判"实现放行后由
+    // 生成核按谎报总数静默产出空/截断样本集（0 ≤ 上限闸）；乘前防回卷
+    // 检查必须拒绝（拒绝而非静默截断——NFR-COR-03）。
+    {
+        TestView six(sixAxisModel());
+        WorkspaceSamplingQuery q = makeJointGridQuery();
+        q.jointGridCounts = {65536U, 65536U, 65536U, 65536U, 65536U, 65536U};
+        RecordingContext ctx;
+        EXPECT_THROW(kin::runWorkspaceSampling(six, q, ctx), std::invalid_argument);
+    }
     // 模式分派负检：JointSpaceGrid 下区域盒不消费——缺省零尺寸盒不拒
     // （区域校验越界会强迫调用方填无意义的区域值）。
     {

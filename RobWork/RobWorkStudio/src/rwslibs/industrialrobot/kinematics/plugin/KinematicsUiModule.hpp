@@ -218,6 +218,16 @@ public:
     /// 面板未创建＝空操作）。
     void refreshFromSession();
 
+    /**
+     * @brief 覆盖结果行投影（审查 20261021 G1 修复——WP-15-T20 第三批；
+     *        装配门面 applyCoverageResult 完成锚核对与聚合→行翻译后经本
+     *        方法转发面板渲染；面板未创建＝空操作——装配序宽容）。
+     *
+     * @param rows [in] 覆盖行集（KinCoverageRow 私有值——翻译已在上游
+     *             装配面完成；空＝清表诚实空态）
+     */
+    void applyCoverageRows(std::vector<KinCoverageRow> rows);
+
     /// 会话态访问（装配层注入快照绑定/配置基线等会话事实的唯一入口）。
     KinModuleSessionState& session() noexcept { return *m_session; }
 

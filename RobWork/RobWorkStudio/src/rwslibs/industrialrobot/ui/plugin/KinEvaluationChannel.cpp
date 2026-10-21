@@ -18,7 +18,12 @@
 #include <utility>
 
 #include <QMetaObject>
-#include <rw/math/RPY.hpp>  // 构造参数顺序为yaw/pitch/roll，区别于需求字段顺序
+#include <rw/math/RPY.hpp>  // ★ 审查 G17 修正：构造签名 RPY(roll, pitch, yaw)——首参
+                            // roll 驱动 Rz（Z-Y-X 欧拉，见 rw/math/RPY.cpp:74-93）；
+                            // requirements fixedRpy 分量 (x,y,z)=(roll,pitch,yaw)、
+                            // 应用序 Rz(yaw)·Ry(pitch)·Rx(roll)，故消费处反序传参。
+                            // 本注释曾写反（"yaw/pitch/roll"）——若按其"纠正"
+                            // 会引入 Z↔X 对调真 bug（审查 20261021 登记）
 
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // analysisConfigurationDigest（受理对齐键）
 #include <sdurws/ird/kinematics/Evaluators.hpp>      // runRegionCoverageComputation/RegionCoverageQuery

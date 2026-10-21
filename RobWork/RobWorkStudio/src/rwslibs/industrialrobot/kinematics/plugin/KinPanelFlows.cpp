@@ -19,6 +19,7 @@
 #include <sdurws/ird/kinematics/Workspace.hpp>  // 探索式采样计算核/点云渲染/回写（★ KIN-R2 任务3——域设施直调）
 #include "KinPanelCommandCatalog.hpp"        // kinCommandEnabledInSession（L-K11 id 门控）
 #include "KinPanelModel.hpp"                 // configChangeHintRows（L-K7 提示行化）
+#include "KinPanelRotation.hpp"              // rpyFromRotationSi（G4 回填姿态提取——审查 WP-15-T20 第三批）
 #include "KinPanelUnits.hpp"                 // formatKinQuantityText（L-K5 回填投影）
 
 namespace sdurws {
@@ -207,22 +208,13 @@ KinSolveFlowResult runSinglePointSolve(const KinPanelServices& services,
     const IkOutcome outcome = services.ikSolver->solve(req);
     const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::steady_clock::now() - t0);
-    result.inlineElapsed = elapsed;
 
-    // ---- 取消：非结局（§5.4）——如实呈现，不入会话态。
-    if (outcome.cancelled) {
-        result.statusText = "求解已取消（非结局）";
-        return result;
+    // ---- 取消/求解设施失败：非结局（§5.4/F-746③ 值面）——finish 内
+    //      早退（预算判定对非结局不适用，与原早退位次等价）。
+    if (outcome.cancelled || outcome.facilityFailure.has_value()) {
+        return finishSinglePointSolve(session, std::move(outcome), elapsed);
     }
-
-    // ---- 求解设施失败：非结局（F-746③ 值面——与取消轨同读法）——如实
-    // 呈现，不入会话态（无终局结局可解读；outcomeKind/solutionSet 均无
-    // 语义，不得当"解 0 个"呈现——无伪完成）。
-    if (outcome.facilityFailure.has_value()) {
-        result.statusText = "求解设施失败（非结局——求解中途 FK 复算失败，"
-                            "详见评估诊断；请核对模型视图后重试）";
-        return result;
-    }
+    result.inlineElapsed = elapsed;  // 超时/转后台分支也携带耗时（断言锚）
 
     // ---- 内联预算判定（NFR-PERF-01/§9.8：>1 s 转后台；预算可注入——
     //      测试确定性触发，产品缺省恒 kInlineBudgetMs）。
@@ -248,18 +240,45 @@ KinSolveFlowResult runSinglePointSolve(const KinPanelServices& services,
                    + " ms 超预算，后台提交被拒：" + ack.reason);
             return result;
         }
-        // 缝未装配——不虚构转后台，如实说明（诚实边界）。
-        result.statusText = "内联耗时 " + std::to_string(elapsed.count())
-                            + " ms 超预算，且后台通道未装配——保留内联结果供参考";
-    } else {
-        result.statusText = "内联完成（" + std::to_string(elapsed.count())
-                            + " ms），解 " + std::to_string(outcome.solutionSet.solutions.size())
-                            + " 个";
+        // 缝未装配——不虚构转后台，如实说明（诚实边界）；解集按超时保留
+        // 语义入会话态（finish 唯一写点），文案覆写为超时保留说明。
+        KinSolveFlowResult finished =
+            finishSinglePointSolve(session, std::move(outcome), elapsed);
+        finished.statusText = "内联耗时 " + std::to_string(elapsed.count())
+                              + " ms 超预算，且后台通道未装配——保留内联结果供参考";
+        return finished;
+    }
+    return finishSinglePointSolve(session, std::move(outcome), elapsed);
+}
+
+KinSolveFlowResult finishSinglePointSolve(KinModuleSessionState& session,
+                                          IkOutcome outcome,
+                                          std::chrono::milliseconds elapsed)
+{
+    KinSolveFlowResult result;
+    result.inlineElapsed = elapsed;
+
+    // ---- 取消：非结局（§5.4）——如实呈现，不入会话态。
+    if (outcome.cancelled) {
+        result.statusText = "求解已取消（非结局）";
+        return result;
     }
 
-    // ---- 解集入会话态（唯一写点——会话级解集会话对象本身，非投影副本；
-    //      原值面供导出/结果绑定，视图面构造时完成一次稳定排序供解表/
-    //      检查器——双面同源零二次求解）。
+    // ---- 求解设施失败：非结局（F-746③ 值面——与取消轨同读法）——如实
+    // 呈现，不入会话态（无终局结局可解读；outcomeKind/solutionSet 均无
+    // 语义，不得当"解 0 个"呈现——无伪完成）。
+    if (outcome.facilityFailure.has_value()) {
+        result.statusText = "求解设施失败（非结局——求解中途 FK 复算失败，"
+                            "详见评估诊断；请核对模型视图后重试）";
+        return result;
+    }
+
+    // ---- 内联完成文案＋解集入会话态（唯一写点——会话级解集会话对象本身，
+    // 非投影副本；原值面供导出/结果绑定，视图面构造时完成一次稳定排序供
+    // 解表/检查器——双面同源零二次求解）。
+    result.statusText = "内联完成（" + std::to_string(elapsed.count())
+                        + " ms），解 " + std::to_string(outcome.solutionSet.solutions.size())
+                        + " 个";
     session.lastSessionSolutionSet =
         std::make_shared<const IkSolutionSet>(std::move(outcome.solutionSet));
     session.lastSessionSolutionSetView =
@@ -442,6 +461,58 @@ std::optional<std::string> tcpBackfillText(
                                     session.displayUnits);
     }
     return text;
+}
+
+std::optional<KinTcpTargetBackfill> tcpTargetBackfillValues(
+    const KinPanelServices& services, const KinModuleSessionState& session)
+{
+    // ---- 前提缝四件（缺一＝回填不可用——nullopt，调用方状态行如实说明；
+    // 不虚构回填——与 tcpBackfillText 未设置轨同纪律）。
+    if (services.fkEvaluator == nullptr || services.modelView == nullptr
+        || services.sessionPose == nullptr
+        || !services.sessionPose->isSet()) {
+        return std::nullopt;
+    }
+    // ---- TCP 身份（三入口统一解析单点——KIN-14 默认工具权威；失败＝
+    // 回填不可用，绝不以空 TcpRef 求 FK）。
+    const KinTcpResolution tcp = resolveSessionTcp(services);
+    if (!tcp.ok) {
+        return std::nullopt;
+    }
+    // ---- FK 求值（会话姿态→当前 TCP 位姿——基座系 {B}）；失败＝诚实
+    // 回退（维度违约等调用方装配态——不做部分回填）。
+    const auto metrics = services.fkEvaluator->evaluate(
+        *services.modelView, tcp.tcp,
+        services.sessionPose->jointConfiguration());
+    if (!metrics.ok()) {
+        return std::nullopt;
+    }
+    const rw::math::Transform3D<double>& pose = metrics.get().tcpInBase;
+    // ---- 显示制式投影（SI→显示正向——KIN-12 读侧投影唯一口径；数值
+    // 本体不带单位后缀——单位随编辑器行标签）。姿态提取 roll/pitch/yaw
+    // （Z-Y-X——KinPanelRotation 轴义，与位姿页显示行同源，审查 G7 消
+    // 歧登记同源）。
+    KinTcpTargetBackfill out;
+    out.xDisplay = session.displayUnits.has_value()
+        ? session.displayUnits->projectLength(pose.P()[0])
+        : pose.P()[0];
+    out.yDisplay = session.displayUnits.has_value()
+        ? session.displayUnits->projectLength(pose.P()[1])
+        : pose.P()[1];
+    out.zDisplay = session.displayUnits.has_value()
+        ? session.displayUnits->projectLength(pose.P()[2])
+        : pose.P()[2];
+    const std::array<double, 3> rpy = rpyFromRotationSi(pose.R());
+    out.rollDisplay = session.displayUnits.has_value()
+        ? session.displayUnits->projectAngle(rpy[0])
+        : rpy[0];
+    out.pitchDisplay = session.displayUnits.has_value()
+        ? session.displayUnits->projectAngle(rpy[1])
+        : rpy[1];
+    out.yawDisplay = session.displayUnits.has_value()
+        ? session.displayUnits->projectAngle(rpy[2])
+        : rpy[2];
+    return out;
 }
 
 KinConfigEditResult applyConfigurationEdit(

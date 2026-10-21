@@ -421,7 +421,13 @@ Expected<PoseMetrics> FkEvaluator::evaluate(const IKinRuntimeView& view,
 
         if (bounded) {
             const double half = (hi - lo) / 2.0;
-            const double margin = (std::min)(qi - lo, hi - qi) / half;
+            // ★ 审查 G13 防御（WP-15-T20 第三批）：half<=0（零/负行程区
+            // 间）时 min(...)/half 为 0/0=NaN，会下游污染渲染层（require-
+            // NotNan 抛出）。上游不变式 builder 强制 lower<upper（runtime/
+            // CanonicalModel 严格不等），正常装配不可达——防御取边界值
+            // 0（区间退化＝处处处于边界），不用 NaN。
+            const double margin =
+                half > 0.0 ? (std::min)(qi - lo, hi - qi) / half : 0.0;
             m.jointMargins.push_back(margin);
             if (std::isfinite(margin) && (!anyFinite || margin < minMargin)) {
                 minMargin = margin;

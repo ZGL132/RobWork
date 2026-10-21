@@ -3214,6 +3214,23 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
                         "槽解析未命中——装配违约）：" + feedback);
             }
         }
+        // ---- 完成回执后的面板刷新（审查 G6 修复——WP-15-T20 第三批）：
+        // 此前 route 只投状态行文本，任务点表结果列停留"未计算"、会话
+        // 求解解表不更新，直至下一次手动操作（数据半区断链——ERR-01 同
+        // 族）。refreshFromSession＝现取重投影既有出口（面板零缓存纪律
+        // 的呈现半区），门面直接调用零 kinematics 私有头。
+        if (m_domains != nullptr && m_domains->kinematics.has_value()) {
+            m_domains->kinematics->refreshFromSession();
+            // 区域覆盖结果投影（审查 G1 修复——聚合→行翻译＋锚核对在
+            // 门面 applyCoverageResult 单点；迟到/跨快照/失败不投影）。
+            if (note.kind == kinematics::KinChannelBackgroundKind::RegionCoverage
+                && m_kinEvaluation != nullptr) {
+                if (const std::optional<kinematics::KinChannelCoverageResult>
+                        coverage = m_kinEvaluation->latestCoverageResult()) {
+                    m_domains->kinematics->applyCoverageResult(*coverage);
+                }
+            }
+        }
     };
 
     // ---- ★ KIN-P4：配置持久化载体与恢复（保存/恢复闭环——PM-14 用户
@@ -3445,6 +3462,32 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
         makeKinConfigPersist(m_kinConfigSettings.get());
     channels.homePose =
         makeKinHomePoseProvider(KinPoseSetLoader{std::move(homeEntries)});
+    // ---- ★ 审查 G3：内联求解异步执行缝（WP-15-T20 第三批——插件零自
+    // 建线程红线〔acceptance 2〕的通道化落位：异步能力由装配层线程设施
+    // 承载，与本执行器既有 std::async＋invokeMethod 回投纪律同构）。job
+    // 在工作线程恰执行一次；onDone 经面板 context 队列回投 UI 线程——
+    // context 析构＝回调弃置（Qt invokeMethod 语义），迟到结果不触碰已
+    // 销毁面板。future 以自持 shared_ptr 保活（std::async 返回值析构会
+    // 阻塞等待——必须逃逸作用域）。
+    channels.inlineSolveAsync =
+        [](std::function<kinematics::IkOutcome()> job,
+           std::function<void(kinematics::IkOutcome)> onDone,
+           const QObject* context) {
+            auto inflight = std::make_shared<std::future<void>>();
+            *inflight = std::async(
+                std::launch::async,
+                [job = std::move(job), onDone = std::move(onDone), context,
+                 inflight]() mutable {
+                    kinematics::IkOutcome outcome = job();
+                    QMetaObject::invokeMethod(
+                        const_cast<QObject*>(context),
+                        [onDone = std::move(onDone),
+                         outcome = std::move(outcome)]() mutable {
+                            onDone(std::move(outcome));
+                        },
+                        Qt::QueuedConnection);
+                });
+        };
     kin.installAssemblyChannels(channels);
 }
 

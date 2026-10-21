@@ -44,6 +44,8 @@
 #include <sdurws/ird/kinematics/SolutionSet.hpp>     // IKinematicSolutionSet（会话解集视图）
 #include <sdurws/ird/kinematics/Workspace.hpp>       // WorkspaceSamplingMode/WorkspaceSampleRun（★ KIN-R2 任务3——探索式采样面板值的域载体）
 
+class QObject;  // 前置声明（★ G3 异步内联求解缝的回投 context——Qt 对象；仅指针形态）
+
 namespace sdurws {
 namespace ird {
 namespace kinematics {
@@ -398,6 +400,14 @@ struct KinPanelServices {
     /// 具名 Home 姿态来源（L-K4 复位 Home 唯一目标来源——KIN-P3/审查
     /// A09；空＝复位 Home 按钮禁用，绝不以当前姿态充当 Home）。
     KinHomePoseProvider homePose;
+    /// 内联求解异步执行缝（★ 审查 G3——WP-15-T20 第三批；插件零自建
+    /// 线程红线〔acceptance 2〕的通道化落位：异步能力由装配层线程设施
+    /// 承载——job 在装配层工作线程恰执行一次，完成后经 context 对象队列
+    /// 回投 onDone 于 UI 线程，context 析构＝回调弃置）。空＝回退同步
+    /// 内联（runSinglePointSolve 原径——诚实降级）。
+    std::function<void(std::function<IkOutcome()>,
+                       std::function<void(IkOutcome)>,
+                       const QObject*)> inlineSolveAsync;
 };
 
 /**

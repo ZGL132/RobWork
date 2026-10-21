@@ -36,6 +36,7 @@
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯
 
+#include <QLineEdit>
 #include <QMetaObject>
 #include <QPushButton>
 #include <QTableWidget>
@@ -327,4 +328,50 @@ TEST(KinematicsPanelSession, ResetHome_DimensionMismatchExplicitHint_KIN_P3)
     EXPECT_NE(status.find("维度"), std::string::npos) << status;
     EXPECT_NE(status.find("未写回"), std::string::npos) << status;
     EXPECT_EQ(h.sessionPose.jointConfiguration(), std::vector<double>(6, 0.4));
+}
+
+/// ★ 审查 G4 回归（WP-15-T20 第三批）："以当前 TCP 为目标"产品入口——
+/// 会话姿态经 FK 回填目标六字段（显示制式数值；仅呈现默认值，求解身份
+/// 不含会话——D-KIN-4）。修复前该数据流零调用点（tcpBackfillText 为旧
+/// 关节编辑器遗留），L-K5 对用户不可达。数值正确性半区：回填 X 与权威
+/// FK 评估的 tcpInBase.P()[0] 同源一致（SI 直显制式——数值零换算差）。
+TEST(KinematicsPanelSession, BackfillTcpFillsTargetEditors_WP15T20_G4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-06", "KIN-01"},
+                  std::vector<std::string>{"AT-04"});
+    SessionPanelHarness h(sixAxisModel());
+    h.sessionPose.setJointConfiguration(
+        {0.3, 0.0, 0.0, 0.0, 0.0, 0.0});
+    h.createPanel();
+
+    QPushButton* backfill = nullptr;
+    for (QPushButton* b : h.panel->findChildren<QPushButton*>()) {
+        if (b->text() == QStringLiteral("以当前 TCP 为目标")) {
+            backfill = b;
+        }
+    }
+    ASSERT_NE(backfill, nullptr);
+
+    // 期望值：同一解析单点＋同一 FK 权威实现（回填数值与其逐位同源）。
+    const KinTcpResolution tcp = resolveSessionTcp(h.services);
+    ASSERT_TRUE(tcp.ok);
+    const auto metrics =
+        h.fk.evaluate(h.view, tcp.tcp, std::vector<double>{0.3, 0.0, 0.0, 0.0, 0.0, 0.0});
+    ASSERT_TRUE(metrics.ok());
+    const double expectedX = metrics.get().tcpInBase.P()[0];
+
+    QLineEdit* x = h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"));
+    QLineEdit* roll = h.panel->findChild<QLineEdit*>(QStringLiteral("target-roll"));
+    ASSERT_NE(x, nullptr);
+    ASSERT_NE(roll, nullptr);
+    ASSERT_TRUE(QMetaObject::invokeMethod(backfill, "click", Qt::DirectConnection));
+
+    bool parsed = false;
+    const double filledX = x->text().toDouble(&parsed);
+    EXPECT_TRUE(parsed);
+    EXPECT_NEAR(filledX, expectedX, 1e-9);
+    EXPECT_FALSE(roll->text().isEmpty());  // RPY 半区同批回填
+    EXPECT_NE(h.panel->lastStatusText().toStdString().find("已回填"),
+              std::string::npos)
+        << h.panel->lastStatusText().toStdString();
 }
