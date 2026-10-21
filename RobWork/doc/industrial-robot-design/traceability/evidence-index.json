@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-21T09:34:15+08:00",
+  "generatedAt": "2026-10-21T14:31:27+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 15489,
-    "totalBytes": 845963494,
+    "totalFiles": 15794,
+    "totalBytes": 860294874,
     "byKind": {
-      "log": 1,
-      "acceptance-record": 516,
-      "markdown-doc": 41,
-      "governance-record": 40,
-      "json-data": 7,
-      "benchmark": 8,
-      "build-log": 14538,
       "manual-acceptance": 1,
+      "benchmark": 8,
+      "pipeline-artifact": 2,
+      "build-log": 14843,
+      "governance-record": 40,
+      "log": 1,
+      "json-data": 7,
+      "markdown-doc": 41,
       "gtest-report": 335,
-      "pipeline-artifact": 2
+      "acceptance-record": 516
     },
     "byLifecycle": {
-      "superseded": 0,
-      "unverified": 14897,
       "current": 27,
-      "historical": 565
+      "historical": 565,
+      "superseded": 0,
+      "unverified": 15202
     },
     "associated": 597,
-    "unassociated": 14892,
-    "shaComputed": 15469,
+    "unassociated": 15197,
+    "shaComputed": 15774,
     "shaSkippedLarge": 20,
-    "duplicateGroupsTotal": 922,
+    "duplicateGroupsTotal": 926,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -504,6 +504,7 @@
         "builds/modeling-completion-20261020-b3g/validate-task.log",
         "builds/modeling-completion-20261020-b3h/validate-task.log",
         "builds/modeling-completion-20261020-b4b-checkpoint/validate-task.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-validate-task.log",
         "builds/requirements-a23-20261020/validate-task.log",
         "builds/requirements-completion-20261018/batch11-build/ird-batch11-task.log",
         "builds/requirements-completion-20261018/batch12-build/ird-batch12-validate-task.log",
@@ -765,6 +766,29 @@
         "builds/modeling-completion-20261020-b4c3d-checkpoint/previous-modeling-tour-20261020-092651-054/modeling-tour.stderr.log",
         "builds/modeling-completion-20261020-b4c3d-checkpoint/previous-modeling-tour-20261020-092930-608/modeling-tour.stderr.log",
         "builds/modeling-completion-20261020-b4c3d-checkpoint/standalone_modeling_gui.stderr.log",
+        "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_contract.stderr.log",
+        "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_contract.stderr.log",
+        "builds/modeling-interaction-20261021/batch2-file-menu/first-attempt/batch2-file-menu-ui_contract.stderr.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_contract.stderr.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling-tour.stderr.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_contract.stderr.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_gui.stderr.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling.stderr.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_contract.stderr.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_contract.stderr.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/red/batch3-red-modeling_gui.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-core.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-io.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-modeling_contract.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-modeling-tour.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-runtime.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-standalone_io.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_contract.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_gui.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-standalone_runtime.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_contract.stderr.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-ui_contract.stderr.log",
         "builds/requirements-a21-20261020/modeling-tour.stderr.log",
         "builds/requirements-a21-20261020/requirements-tour.stderr.log",
         "builds/requirements-a23-20261020/modeling-tour.stderr.log",
@@ -1113,6 +1137,9 @@
         "builds/modeling-completion-20261020-b3c/gates.log",
         "builds/modeling-completion-20261020-b3d/gates.log",
         "builds/modeling-completion-20261020-b3f/gates.log",
+        "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-gates.log",
+        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-gates.log",
+        "builds/modeling-interaction-20261021/final/batch1-final-gates.log",
         "builds/requirements-a21-20261020/gates.log",
         "builds/requirements-a23-20261020/gates.log",
         "builds/requirements-close-20261019/gates.log",
@@ -40105,6 +40132,2446 @@
       "taskIds": [],
       "bytes": 30280,
       "sha256": "ba95c62d7cbcfae0acaf48d613cd09be424a39e4f5c6d84faf89c310b236a59a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29768,
+      "sha256": "3d3d2726e81610e22c85575927f10a440bd76a4bc09209f3af70cd85a3c1b456",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-capture.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 289,
+      "sha256": "ff77e2187b683a5573619514e69449d63e32b27da041293817d9da2321893f6e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-gates.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1903,
+      "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27817,
+      "sha256": "5642271168dd09104c7d87e7dccb625349f6b5cf4c59042d6ebf57e75fb1999b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6397,
+      "sha256": "df96142d2c8810b92fae940478455c792ff61022dba054e37374c201dd205ff7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12943,
+      "sha256": "2dca06697d8753f11d75754e4b8ceee5eade2e88c41dc7047fafad0994a88145",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63176,
+      "sha256": "ffff4d780f41fdc5837db3ae497a4edff07195077f6c6d22fea39f8e01f22eca",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14908,
+      "sha256": "ca3f0788f750acfc55375de7344e7f6b1216ea1175f6b27a77af589a67b04c79",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 384,
+      "sha256": "396ddb3bcc477517b2565726f96acd87eb1b277874149a66be85df4803790629",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28566,
+      "sha256": "a17ae5936bb3b8ef1adedb69cc0b64bdbaf54262be1ad2cc40b80988a14a3aa8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 222427,
+      "sha256": "573b276593c3da02452fff82c3304550210e6551b9cd327b069cf2c0d65d89d6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47846,
+      "sha256": "94cbb42f3602f64f1eb732ac48dc8fb743a588d3273de711100df14062f3c51e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "3b8d40d06a3b119fe55fdfffedc848d0b3ff90981d5116cadd67a4041266f084",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone_ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 94734,
+      "sha256": "6c3ce669c73405d0e5c46f31948fd7683be63a31a0b900df4fc25fc1beeaf470",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14919,
+      "sha256": "9a031a016bc6b9d2fcea8bd4d0ad8957d9e0f212e37ab48c3d1bbbaa28697696",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51987,
+      "sha256": "d29dcfa59da4f70c54a277ddcec01ce8b600e9461e71a1c8f10f5b0704a46c3a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12016,
+      "sha256": "a4ac2d9bc2f55188d74a75a78c27a13a4faa5fd79951cee9e31603761bdfba29",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23732,
+      "sha256": "0d325f61aab5811101ef3c0cba6303bb87b3e93277e46ef4669ed80471ade767",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79814,
+      "sha256": "f39fff572707dbbb18247872b88aafbd9d87ff6ebd38e7ab62cbdb126ec8f86d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18590,
+      "sha256": "9c541e804cde0502d7448513d761544a2acf9c11ef780bf5191beda19e1f7bc9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 434,
+      "sha256": "f033c81497eb1be1366bdee49b3d35693ee02ac0e44d4b309c83652f8223d92f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35809,
+      "sha256": "62835125b547cd737a149a7c05e7a2d46450aba98e0db25ee52ddc4dd339860f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 276498,
+      "sha256": "5e8f492f7d2fc95525baaebbfc6453cfb173544af3988bc4cd6833ee92fc57d0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 59830,
+      "sha256": "a5b245e63c766e7065d01b1d1a705c7f740a9c53f07bcbbda78ee5ca76e909a2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "d0e40a2e579ca311b4d16969759734982bc0340cf52c23e4159f9e61b7f89e18",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 117882,
+      "sha256": "ede7425922dad8bd7b51950efa6c37214ab7c65da396a17ebcd5de77ba24a480",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/capture-file-menu.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3250,
+      "sha256": "d2c84204a65eb5708b63e1665a57218325d89496aefef53870a46790896223a8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/file-menu.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145380,
+      "sha256": "2b5153275e0594b8415fab76c9a2bfea0a7f7deb18f02996588f34f066c6d4af",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/first-attempt/batch2-file-menu-ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 52051,
+      "sha256": "b7e7be21b0720b6bb290a772b2581dcaa148bfd87c9928cc12cf6822b9f4811d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/first-attempt/batch2-file-menu-ui_contract-wrapper.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4772,
+      "sha256": "57e862de49c982d261686e78f7529cf1a50e90cb8571ee7ed11766bd8a293152",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/first-attempt/batch2-file-menu-ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12844,
+      "sha256": "aa384a7fb8ebbd0b71f630f62eda92b02ea6f667be1ee0621ec9f31f24085eee",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/first-attempt/batch2-file-menu-ui_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/first-attempt/batch2-file-menu-ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 25241,
+      "sha256": "16979a6ba524f449d4acac71fc63cc5e73181e71d58925b7a0b564eb94c8170a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/MANUAL.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1438,
+      "sha256": "2d074a8913a97f47effb4e75e9d04ada9fd50be7db79239c5c4b22bcd7db5ad5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/menu-accessibility.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1247,
+      "sha256": "00d0745b21de96df55c01d720154b647cecc34eac776c071b73b926646e03267",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/REPORT.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2881,
+      "sha256": "e768a15f8ce58abc5dedb60d72dd1e882ec144413bc8f49b3e71dd9b98162097",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/source-binary-sha256.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 340,
+      "sha256": "f7f281917e0f549bbed8d62ffc2db6406840af53eff164fa10111c4e782bf57f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch2-file-menu/test-menu-batch.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 609,
+      "sha256": "53054883aebab89c1d15bc8f995b0678b1d1874c8680b6361abf673ccb743d5d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28606,
+      "sha256": "7e776ae0bb84af2f6681988558cf26531652ee4e9be40e03ae77c17d81ab64cd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-gates.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1903,
+      "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14430,
+      "sha256": "f34d1c1ff928c3139a44fc69b3a2b5a62adfaee1c9c7c241d77d3a7a7020acd0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3660,
+      "sha256": "750046df34cb807cf4ea70de84aaf2c80869528c481854e72105f0118205a564",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6932,
+      "sha256": "5b55a7f6d27527c736dc1bf34659a69f6de88854d9c63918da6c4aaa87b66765",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 84876,
+      "sha256": "cbde51049408467550f1fcedc3ca891d12c052cdc760665c7e9a594cea2f2a8d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18842,
+      "sha256": "bc6b2a6db886bea494856e0d46a606213b59d8cecd1fb88720b4cedecdddeb0b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "0683abefd9c446f62de9878c602846b3a8eb43c4782f1882cbd6664cce34e538",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36694,
+      "sha256": "e284f47f0acedf6c1ab7ce25f8507224561a087d545616f9133b569e9df358c2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 380920,
+      "sha256": "5c0b078659b75c7dc2015f084273d274ba614cb167cae8f2caaf8bfd1d81fd5c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling-tour.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32909,
+      "sha256": "170c19d0bda7ce4d86b98ee7bfea638a79ae61632705c94eed5c787923b6f28b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling-tour.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 80314,
+      "sha256": "7d418c98ed3d137b3638645891049b1a8e7de6bf194c373aefd7446aeb900486",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 536,
+      "sha256": "d06540db7a9a5db1d63316b6d0b4f79334594093257705a8e596b4cf8fc647d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 160301,
+      "sha256": "7a2dbdf83aa45af90032d5bb506776df225436e3c92629f41d7ee45708b3d77c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6709,
+      "sha256": "a8913e6b84dc0c1c595332d7c96bb080926a83625d574548df66c64dbcc26af7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1748,
+      "sha256": "b68fe12559a93c974c46c88046dd44d52f0343a2d7684da2a23e45e223161bb2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3274,
+      "sha256": "c36661c6332fcb719a38e77f1601634307be1e5d0b8a9dbd7e5b287aef5883dd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 59211,
+      "sha256": "0a9ca9beac8e016d21185fd4bc1aafd3a7ddf172e1f441e7ddb2fbe70150b693",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13020,
+      "sha256": "af1549667377535311b2b77ab9ac95385fe77eb5042f52a0412f4c91dc939dce",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 25337,
+      "sha256": "34b9f50283df0c9c8a70c05445a2397b11907fce0d66013dfcb94c3ffbce3df5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 295831,
+      "sha256": "877a610e978b2fb05dc11894a6f0c83015eaeb226f60a70ac58c0648d2a4caa6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61117,
+      "sha256": "c8fbebeade88b4e7da8fbd3889d1c5740143af2a429eea485447c320a90ce350",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123077,
+      "sha256": "cd5d2bbd22ea805beefda8d0bd8cc57a16780e06ea7db7325d50d29a9f3e3c55",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27817,
+      "sha256": "df58ce400bcaf7ac4447568cbc3f739054101d802ef948e138d8a7d098b53a5b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6397,
+      "sha256": "e6c4f7b1c367c0e0318b33a1b0980c0be0e9e17160f5dceba820922b4719479b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12943,
+      "sha256": "a4d1ec4f0c9ca769c525733ef16a817b47d3e54a7d057314807ca3f4f3126d1b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63176,
+      "sha256": "91d801e9e1098103d5f7dde5044ce6c031f6ec7dc9520050706b9aab419aabbc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14907,
+      "sha256": "d11ead2feb095553aef8ee698b8350f6ae1f33d07fddcca0a4888bf21a866aa0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 380,
+      "sha256": "f8a3839f4f8085be379513b6683148455fdbf3bae082aef458748b6c8e09560b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28563,
+      "sha256": "50bf70cad3e38b376c7ab062a6dc236321f98ac7251bc085a7f10efe1752a2d9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 222427,
+      "sha256": "5a9ecdbd2764558ea5e76d99b415fb81535630ceb1d556ddce63f76119ad2e79",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47846,
+      "sha256": "168824fadb1381736d454422a9775ce6dc512af81a8d4bde2904352640a7cad3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "efef3d566782e53e5d0bdaf5fa78eb9d8e9663b4ac52327c5c4470c9765d7705",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone_ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 94726,
+      "sha256": "d1ff41fe674ea93ae561c5ffe33e00bea34bb6fedab2e3d8944ca85565a0effb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14946,
+      "sha256": "8fa0bc7b39b1d9f5f7502d85dc7635a823d6330f7cee2930b31ffdf9ae7bd2f1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51989,
+      "sha256": "bc57ba4f3a5d1dedba9099a24c7adc02116b6afbfa3edfa558ae5d9fe47fbfc3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12018,
+      "sha256": "e6133c0c1eae279c5a165bd159820b85b8665049b08602076a4703e3c3b310f5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23728,
+      "sha256": "b9ebc5541f9b752732275f6f9b241d430b6c1c32f4ca2becdd950059da0b6c03",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79812,
+      "sha256": "d4b35dfef410507c7434da1a10982b41e95deb646e3f7272bb0fa023a860bd08",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18587,
+      "sha256": "e52646bb3ba03dec3dbe52781c35fc3f4bf24b6b4bb85babcac0b9f76002efed",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 430,
+      "sha256": "6d271d61547ca5f13c86adaab8be8e21ce05aeef7c44b85c6721e6068390fd19",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35806,
+      "sha256": "525146c86e356d6bf0749bc2a7686254f0bd7bb04fc5fa6a3ad5f4636b43d025",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 276502,
+      "sha256": "bfa514248b91fec7aaa74d9e923c10b8beeb85d710346df2c73df9b14bca248c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 59835,
+      "sha256": "a14fba5ff8324c8b26299c6ab08a42e8e62f2d7be448c723eae5accdca8646a8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "49b9ef94e5c9f218cba600529b8c50c017719b6048a2a08383fc35cc9f5c5119",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 117890,
+      "sha256": "eed021092315f4feeb2cf622f20ec779c83744d3698532e506d829d403b464d4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-validate-task.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 30,
+      "sha256": "dd3d79d803ced76a97c3aab86a2e92c31f986e34b88b6f583946da999d59c7e8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-host-replay-target.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 135,
+      "sha256": "e09a95c4c63a920ab2389c5e89da4fef0fc0eb77c9706b5a657129ca007d820b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-ui-collapsed.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 40213,
+      "sha256": "3a44cdfc4c39ae415983bae02b002d76ffb29cd168283bb67b110885fefcca93",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-ui-expanded.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 44616,
+      "sha256": "b903e46e666ef7768dbbb0bfd123870f074caeebd972aee2e2486a7ce6c6a309",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-uia-timeout-stack.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1434,
+      "sha256": "0e4dab0c0f6c13d761928ad3635906e4234d33f97e08b312e4f439b3457affb2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/capture-stack.py",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2405,
+      "sha256": "9689a52e4b0b178b6525ac5cac033a63952ddb5d1daf37fbff57297e3bab437b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/first-attempt/batch3-final-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 84939,
+      "sha256": "b5a88ae029c648a8a01ef767be48427ce19657beb07d9a80e0e3e4ecf8bbd631",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/first-attempt/batch3-final-modeling_gui-wrapper.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5585,
+      "sha256": "9e11146b26c1b0dbd90348bddf73f7fdc7d02b64bb8068707ed091b24cbb35d7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/first-attempt/batch3-final-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19206,
+      "sha256": "66cacf932b9c6f3d18bcd88272ea20a258a85aa6d8750d8792978d08a24fcd63",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/first-attempt/batch3-final-modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "0683abefd9c446f62de9878c602846b3a8eb43c4782f1882cbd6664cce34e538",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/first-attempt/batch3-final-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37229,
+      "sha256": "abf092961e64b8ac96936e98794e815456d35173bf2ba5e7bc7165c077fc558f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/host-arrow-replay.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "42fa2b333b7539fb7c06948ebbb3f2f50f2e783de0e47e6f5b39ef8ca0361adf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/host-arrow-replay.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 163909,
+      "sha256": "ce2862f69d9989d2834eaa0b557152d3e5c459458979237f2c75d297f7b674e9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/host-collapsed.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154862,
+      "sha256": "12dbeb37674e4a767cd22592528b78608cd7b207b0a609947006b4b4c8f5f6a7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/host-expanded.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 158713,
+      "sha256": "e3f8c759f93459c294cd9a1b6e1fd042ae125837ae8943b8560eb62d36de59c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/host-tree-helpers.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3126,
+      "sha256": "87c3988c8ce67e1b06b2e5f682149b142f650a2338f9c2b379ad2deeef0e8986",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/MANUAL.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3999,
+      "sha256": "c0c033e6ac7ffeaca080b0a7d082beafeffdcf16f4f0363e2bcd28956812e50f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/mtour-4-structure.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 201636,
+      "sha256": "a5a93c3b36072ff9794e3b09a0d905d4a602ecc904d73e918885167c8eb20daf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/mtour-t30-visible-meshes-after-reopen.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 194958,
+      "sha256": "c44af3bd84d36130d7f74f682a253d7dbee35ef1f33351517cb41c5d03e12ec3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/red/batch3-red-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 24860,
+      "sha256": "72a5251cdcb1d920788fa5d67dcef9dfa8d9cfcfa87dccb5729b33c9edb0c0e5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/red/batch3-red-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2967,
+      "sha256": "ffee4cbd7e87d9cb391ecab510453a9d285c359c1b8776a42db7dcea7bddc471",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/red/batch3-red-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2010,
+      "sha256": "e52ca3a44322f45e9e01ba69278bfd01a0c542084d3f224c5046f8c98343ff13",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/red/batch3-red-modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/red/batch3-red-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3033,
+      "sha256": "db91031d46448a83d29e8153487ab37426291007eea77af9d565411a957d3e52",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/replay-tree-arrow.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1726,
+      "sha256": "deac27709355c5f69f1501207be6d815695e0aced1faed693bc137ec3557c99c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/REPORT.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5692,
+      "sha256": "949b1454c9165ddac46c108fb93195243558979470ce5f5da1265216f10a90b3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/run.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4058,
+      "sha256": "eae0ae4cd3c4fa18607e124f05adad376cde9e9c1d4a9ea10f94968fe3078468",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/source-identities.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1387,
+      "sha256": "11c9f2ee2415b8c5f18867738a870ca4039fec55cf8158267b39926d7aedd95a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/suite-summary.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3725,
+      "sha256": "7345a20c0e2f953db9bb916ed2173a74031742f1c25a8c26219859ce6137bc85",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/t30-tree-collapsed.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 38930,
+      "sha256": "8bfa1f024242ca3749436ed94184668bda62baf124938cb8b56e7f2b188f3035",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/t30-tree-hierarchy.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47085,
+      "sha256": "0805a70267d5b6af927f5a602c58cfa7bdef84c2b15d04f498e49bd8fa8b7113",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/test-tree-batch.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 809,
+      "sha256": "5cf9f6c173d7e06aad171f20c5051e39c6924ce4c7994636734c354a246f879c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch3-structure-tree/uia-timeout-observation.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1926,
+      "sha256": "5b7a7dce329bc393929edd00f20359e7ed2dfcf9b35394fe75ec0de0800ae0b7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/binary-and-source-sha256.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4918,
+      "sha256": "b933a18fadbf79dbe09d5c8c08bdfd68681717aa0047ad37e619519954ab15f2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28403,
+      "sha256": "121960a94467d33c88568ff4d500ec083bd4483cf02192bfd66bde273e363c2f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-core-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 49602,
+      "sha256": "a59c375accb4484ad2ba20243f9341b6a2d7ca9eeb9dab50bd787bc5973a57dd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-core.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12088,
+      "sha256": "e881c0dd48d8125e23ad8eb170aae5b07a0a5a6d72f895b588d3f70af6f0106e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-core.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-core.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 25957,
+      "sha256": "b77e490c6bd0ef2ea6087fe4bd5063e230e6ee1a7d4106711f4ea17cd933ad19",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-gates.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1903,
+      "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-io-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 104253,
+      "sha256": "a97a6f6e29a9cdf602239a22afdaf68f5d8858c28e9c73ae67e0f9c32920b221",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-io.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19972,
+      "sha256": "cdbde77ee4fab4d55ce2a4d85357cf515fa125043cd7728ef7081f3d7b25cecf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-io.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-io.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 42609,
+      "sha256": "c2e7e3342d9c939f5a246a2a6174e7ee91217e0f0f2e24080db20b630279bead",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14430,
+      "sha256": "5d15e5889bfe7e018aa0dcbc681009cedf920cc3fda80d44a85e978391f2d84d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3660,
+      "sha256": "6fc0a89cd88fdc4f148da47efb1d5597327ab2b8c77eb8a7a3354aa706ffe7a4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6930,
+      "sha256": "1e8336bbe628e1a1f1d618ce3dfa7e57828eb00e196e492b65d62dce18ff5e4f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82338,
+      "sha256": "a5ccf5ffbe63dab83e2c7b4ac8187cbcadadae0c17a67273d4e5fa9b9b3b65a1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18309,
+      "sha256": "13e751180371da98dbfab06f6619257e5012e386f6ef08259e997f3a5aebe2e8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "0683abefd9c446f62de9878c602846b3a8eb43c4782f1882cbd6664cce34e538",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35651,
+      "sha256": "5a12a027f770013ad4d6229bb2e119593b06a4214ff2b5b42d531acc714a388d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 380924,
+      "sha256": "b69308031fd02326bf0add972593d9f4e447c067893859bbc868b8cb6682099a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling-tour.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32908,
+      "sha256": "24e2c2dfc8753748c13dd27cd84f523375d421b2d48d15294b9b1dac987ace3c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling-tour.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 80318,
+      "sha256": "9c53aff85eef33138938a87a24e4e0ef9c284c835ddc50658ed32e99b12fe47a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 536,
+      "sha256": "d06540db7a9a5db1d63316b6d0b4f79334594093257705a8e596b4cf8fc647d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 160318,
+      "sha256": "b6ae8729f1035c25f64da7455e9f2abdfc2972b369291ee030f13b242a3ba495",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-runtime-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 234650,
+      "sha256": "c4b60b0eacdb844627c9b5d2afb5ca14b6f9d824463675698d75ccf8b8798edc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-runtime.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50453,
+      "sha256": "87413fdabb1e372da25b75621627e2acff7c45ca4c7ab3fbc853fad6b9bb545d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-runtime.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-runtime.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 106669,
+      "sha256": "5ba680ba26164c6018aa1f79ebd14a8352267df4631bfa8ab09690e539a180fc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/base-euler.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 54154,
+      "sha256": "36c12741fbec0318822e9100f03122acc49e1e1162d2d0e60eb744c491b6a2e5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/body-editor-confirm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 42321,
+      "sha256": "4aa277c87ecbcb8648b40f924469b72f9665fbe7807caeb6df09bd8c2e9a8ab1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/body-editor-top.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 44203,
+      "sha256": "5b998a266ae0eceeffbb8d1c5b69f41274983ad364ea685016e3eac33299b562",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/clean-revision-live-tree-and-form.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 68088,
+      "sha256": "35e957d61a58d7f60823376b5e3d6835a3b0a77ab28fa8c06fd873527a01b07f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/conflict-objects-cancel.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18409,
+      "sha256": "227d8bf744c313bfa93291d37bc9b7e8f3bcf3a20de65a0972e2e37694261d4c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/conflict-rebuilt-current-tool.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 67834,
+      "sha256": "e6189ca83d6f88ecfccc27ad8def02c7da1cf827437abbdf5d8fc0cb613bcb5f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/conflict-save-failed.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20211,
+      "sha256": "7c9618d98119e5f27689ba9e035381de1dbdb77b96f9db3d2eca4caf615c0b78",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/continuous-range-rejected.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63824,
+      "sha256": "1d6e9e1f1d9bb1bc7a9b7f5b3e047e9e85fb0f5f0fba04ea76b16ba49e804dc7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/continuous-range.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61838,
+      "sha256": "664a26690062fd1ed4f1ef3bd09e53d3802a4b16668ca1914e059a9ffb855b84",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/diff-deleted-refused.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 34749,
+      "sha256": "c8f8ad59dbb3cf6fd8db188f97a6fd05f2c5c47a650e26a85edfe0147f6bd874",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/diff-empty.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17098,
+      "sha256": "d959fe0707c19881f00074561c87767e37eb750e3c5c5bf175db41a8ac83a798",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/diff-long-values.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23440,
+      "sha256": "de2edc157dd1eb6318ea02c4fd0d54fedca6775e435e10b440dc0b93ec9449d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/diff-three-groups.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29581,
+      "sha256": "2e9f5580cab355b383b671a66fcdf72cc18997042f4ae953b29ee52403f59d8c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/draft-change-readonly.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47968,
+      "sha256": "4eba8796642259fd5a8a00b1bab67ff3bac51f71089c2734b0dda9dc75378971",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/draft-change-redo.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48592,
+      "sha256": "5ff8d4a6ac572aeaf2d55e517fac4f106a7378720e07dcb01b88237472e6889e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/draft-history.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61678,
+      "sha256": "c9026f7fa5d18724e5df6ac2f36bb2468a3462f2767a48d3e4455f3eb11f600b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/draft-undo-clean-redo-retained.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47773,
+      "sha256": "f24300ca04b8b935e88f763f1028714bb0a2a9fb260bb99383435113458d810b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/full-draft-restored-tool.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61966,
+      "sha256": "a7a4fc695975c3f36f97ea54357930386058ec2a2363491a7c12918058872b98",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/import-report.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51801,
+      "sha256": "9222b9264b1430effded92d147c356bfb0756658377744dab7afae3e12156eec",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/property-segments-complete.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28888,
+      "sha256": "8086b709cf1ea9313b0ce7ebdd013bba7b570e3234c29374dd315cf723c7f06b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/property-segments-long.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47199,
+      "sha256": "fc2574a875fb62b58b18bd39b9b11e5db3d0b9067314bf54609a98717ec0345c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/retained-draft-review.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32691,
+      "sha256": "fc383b2368c8f4430cda0f6122bf946a27d24cbf7dd4d3416203ab6da2934c49",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/scene-manager-external.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 52540,
+      "sha256": "0ec501b9fb29549c95e1656953196066c5bbba23760a17fb828fe3d4b5c6228b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/scene-manager-updated.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 53347,
+      "sha256": "93adf0d2855f66ec58dde186b67263b91876a545d41bfbf18b507ae95f0a68eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/t30-joint-window.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37563,
+      "sha256": "1c7a62873cc86eadff2cf24c68e20709dc353894c2070bbdbef092b4ebe40197",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/tool-manager-body-bottom.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63125,
+      "sha256": "265d5694b4f01c4ef753ba5417372dd7fa65f8ba1edce05c4fa9749c4897bdf8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/tool-manager-body.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64762,
+      "sha256": "1456c2d60e451b771a497551a73b50bcbef17f5a57f02ca0303411345d4f1f10",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/tool-manager-external.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 65061,
+      "sha256": "437504aa99f91c473248f13749c8477d1c6d1c6921a1024cd436e4a1bf59d854",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/tool-manager-top.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63758,
+      "sha256": "cff954dffb5d1aaf9aa5fbe77f67b12881426690b1b6ab871eb01ec4091f18cc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/workcell-import-report.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 73072,
+      "sha256": "27d6a9224cf6f65f3fc92b90e0c9c930db17fbe5991e565509f98364ae5ca4a8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/xacro-duplicate-error.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17485,
+      "sha256": "17b4d2e50fcf0e0f542f421eea2ca44c45b45cfab61c6a8b5f83d0d9e579f919",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-shots/xacro-parameters.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17489,
+      "sha256": "56936eacddd0494a453629224cdfa87b88894b3d1e951841325c4070abe34d6b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_io-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 104244,
+      "sha256": "518c5fc73e435b8e7aded97921b86fccfd81fc5fe7c396472fd9512ab5b61235",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_io.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19959,
+      "sha256": "3a96c7e8a5728895c69f3499877eea8f5113557fbe17911bacba4fba89af6f1a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_io.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_io.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 42623,
+      "sha256": "0a145cbf4ad8dd72e670c1d6a490eebda1559971f4f91db61a9a52b863f01103",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6709,
+      "sha256": "6356dd4abd8d74815d675daec5648bea606005f43cfd8967f036e415e7402da2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1748,
+      "sha256": "faed27530b27ad213455b06293a8cd1ea0fbb5e98cabca576cebee8d94e3aec2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3275,
+      "sha256": "49660e193d0ef61cbed8869b993c9642e3acde6f9c8e1f03859ab54edbcc790e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 56671,
+      "sha256": "080e1ee8040f74d5fd8498c08f2b406206e71f827c691cdfad24e2981060972c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12485,
+      "sha256": "2d771380a8d77259bd1aa59aaa2d07be18c829e69723cd09fb4569f721fe1b55",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 24307,
+      "sha256": "106eaa0b1b0d96f44233f140c27b50dc0d151e66c0b8edc8a095c609532fa072",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 295828,
+      "sha256": "99934665084f478ce8863245f0d96159d7469cb2577fdbcae3907a06d1f60b09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61114,
+      "sha256": "f06de61dc8655ca50443166e3eff6443ed10d54b43cf3a8cf139da75a5245ad3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123072,
+      "sha256": "faff1066e247ee8f7df7e0b6486f35b068dc767f9ba2df867a950e6ca5c2385f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_runtime-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 150647,
+      "sha256": "9c894cc911188741974190444a1a6b74586d88cff3be80f69211a555331f984f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_runtime.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32809,
+      "sha256": "168e0faa51c0ec5d606de92b32b666956e0706ad8d6b9de5bcbfedb4365b92e7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_runtime.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_runtime.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 69908,
+      "sha256": "569e93c7ef3ac66848f3b646c70e1c6e311b66de107b73a67d526ab40d93c357",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 27817,
+      "sha256": "8239cc3317c2ba00c1e296241b5c441702f234d49be243e862e15f5c16ec9b5b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6397,
+      "sha256": "55e52b6dcc92541fbea85cf74f2356f7d45b2ba23df37e43c99dde20e5d8cf3e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12942,
+      "sha256": "e23d4283e70ecb19fa15e9dedfdf9e39def1a115699f7c8013cf169c76fcf2db",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63177,
+      "sha256": "bedcf675661718d29f45ab544a5d4351162f1ad5a1a82458833d33a52ee12a64",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14908,
+      "sha256": "ca411a865aa755e230d5219b6e08a976f2668ee421f7391ee01e05738feea228",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 384,
+      "sha256": "396ddb3bcc477517b2565726f96acd87eb1b277874149a66be85df4803790629",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28563,
+      "sha256": "2861afce3ece4334eaa600bd59c243c856b8cbaca629619a9eb15d1b1b8dd876",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 222426,
+      "sha256": "94e936075619b26d8a28dcb134e8bc1cfe205b0cb338d94fece70bdbff635330",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 47844,
+      "sha256": "f3880794a11e7a6007c1619489abc99261e2da4dfa943b1b80b56b74540da2d4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "de996fff1ffdc32c5a47d09100fe6372a657081e9a8c07e635298965c1cd9b81",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone_ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 94728,
+      "sha256": "1da256441fbc6d26c5f1ff257af7dd6d83cbd58aace903a8e6a79532bfc8433e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14919,
+      "sha256": "9bc7ef68d17ae9e80b6d99e110f9923acff3e431b63bf787c5d5f58c0444c207",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-1-panel.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 193215,
+      "sha256": "6d42393639170d54252db8006f0a3459f7751249688c55b0f8118fffce6e4bfe",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-2-reseeded.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 193889,
+      "sha256": "7b47627075e15c77af243256ce0e803aefb7a7753b72166de6174491c55d825a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-3-origin-edit.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 196563,
+      "sha256": "9e3f093cdff9adf1d02b34590f0c8a87f2de2b6949b813ee57513c650cdc3f43",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-4-structure.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 200994,
+      "sha256": "18c2e33de761984528191fdfa967dfb50bc8b057131d644f38ffc22b8599a838",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-5-applied.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 192226,
+      "sha256": "d14985a7c8881332ff92eb914561cbbccae915c18ee3bbd72f0954d681532231",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-5.5-reopened.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 194174,
+      "sha256": "e0d023254e185156dc28589dd6577b0df02ce64ca912e7a9410ee1d74394d8f9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-5.7-scene-picked.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101961,
+      "sha256": "ea12d8168fd730b6d506082ffb8f855f5ff71f02a6e532965467a1c4ea63e0f9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-6-exported.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 195179,
+      "sha256": "6ca18a797e635749751b0d2a22fe2e75fab5ad45859de5caca6ced5f53b223e8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-7-chinese-palette.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 105350,
+      "sha256": "2b6e641b0ac8fe2a82bc5659d8397c85eee0c3b743d47c2b245a18a3a94d74fc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-8-scene-update-reopened.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 99208,
+      "sha256": "f5459673835161a7a3831a6c93472e0d875b1d9a8c1114d89254c96e7eb9847b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-a21-oriented-samples.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 33873,
+      "sha256": "a338b9948bf01780990800f5d27642eab4e5de2a7f15dff746e59cb105f4ffea",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-a23-low-policy-comparison.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 200894,
+      "sha256": "0770ba91f80fb332fd2148bbd4fc658385b884a5749dfa05ac5d85a543dc7ed3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-a23-policy-editor.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 25556,
+      "sha256": "518c2e6f7ca962c591ec4ea2ff616ad1a9ac60ada993abeae7876ac95694e190",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-a23-policy-summary.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 187682,
+      "sha256": "f5d17fb5a5273286a4970c529a673fa739504bc9b04c6410f45692c671700530",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-b2b-after-restore.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 198506,
+      "sha256": "3a585dabc082a01dbed85d6751700bfcd2136cddb77bd21bd801c58dccb7289d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-b2b-before-restore.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 196064,
+      "sha256": "02bb687345708c78bb30fc91f27d0f7c2bd79dc4604e5ae60f6e23cdced33e53",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-b4a-diff.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 22117,
+      "sha256": "39a3ffbdee10cccd9844387e4de9652a464e8f62e29d1d715a45087f2225e1cf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-capture-confirm-0.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9666,
+      "sha256": "6dfd5761a2b6e7af6c847b19215646048d0ecd67ecadd9732372fc4398363f3b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-capture-confirm-1.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9666,
+      "sha256": "6dfd5761a2b6e7af6c847b19215646048d0ecd67ecadd9732372fc4398363f3b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-capture-confirm-2.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9777,
+      "sha256": "ae4a00f5a704f5cadee15ca74023d2dc71a1872f8b607cb1b24398e0b1c17e7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-capture-restored.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 203350,
+      "sha256": "be6ebaec57896d9182f03a011b139902e489dbe5036ffbe9042941b930a6edb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-condition-name-directory.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3315,
+      "sha256": "fb73007e7e6cfdb8c0e450538269da7b1d45d48591ab2971bbf4181543bd84cf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-conflict-cancel.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17353,
+      "sha256": "855f6eec2f44ab77dbb64d091b982a43180ce549aa2a582fd7066bb505440d3a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-conflict-reedit.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17332,
+      "sha256": "7792dc3f3a6e5783389496181d14383925481f8f13c99ff2fe988fe6e9468c95",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-environment-name-choice.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2528,
+      "sha256": "2d98575176b0917ecb7ff659c68775631f2f75b9b7b00b2af5885a0b3fc52adc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-name-directory.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 25607,
+      "sha256": "287814fc6c3e4f5bb4e03e1b395303d8b9e63ff72c97172632764b3054ed3f1f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-pick-normal-confirm.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9823,
+      "sha256": "d246b798d7b7cae58b3af8b6ab7e1d09584891d01f1145eb039b69a02eb6759c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-retained-review.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50691,
+      "sha256": "6ee0c2e5ee4dbad6deb581fe716252945ba2ffb1f7a5248f4094e08cadedf44a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-t30-generated-before-apply.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 192679,
+      "sha256": "af18939986dd9f1193297600025626871e109f42156ba6eecd6c952f282ac7c1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-t30-visible-meshes-after-reopen.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 194174,
+      "sha256": "e0d023254e185156dc28589dd6577b0df02ce64ca912e7a9410ee1d74394d8f9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-target-3d-perspective-yaw.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13571,
+      "sha256": "203e1a89646ddf239872913cf300f5c6848e5799c7de955e7a1b6b191679cde1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-target-3d-preview.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 84777,
+      "sha256": "6e09aa4b4a207e7e65c6c3b5b56225f7822e610d16ce8fc467529694487c2982",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-tour/mtour-target-3d-tool.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12985,
+      "sha256": "e903dd8b2a403ccb7e13104b1a978c74dae5d2e43332e85454f472757410ef3f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51990,
+      "sha256": "da29701389181afd1bf74bbe0a931badcf006777a5d22e51fe5c2a40f56a7ece",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12021,
+      "sha256": "6559b63290773900e1f9e6f6880993f05a069a2710a1d85e22c38a8768b76a79",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23739,
+      "sha256": "d24e7315261742f0482b7083c04d2a653547376231f3b7393e6226fbe1d2850a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79812,
+      "sha256": "80b73740da1f1c78bf8fa1779d7cdf4a757acdcb4ece00fc6a9ef50022ea79bb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18587,
+      "sha256": "c6836c15392aba3940642c5b4a87152f7892b1f95ad4c3d6e8ebd4bff59ceac0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 434,
+      "sha256": "f033c81497eb1be1366bdee49b3d35693ee02ac0e44d4b309c83652f8223d92f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35805,
+      "sha256": "6adc09fb9a7a2a7a7c64cc1f4fb68a3ac0999b19c344f1af1c2f73d74f8d6b37",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 276507,
+      "sha256": "6ab04646072b25555dc9ef782841190a1998a8eabf0b863c9aa353cba82143d0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 59840,
+      "sha256": "aca71ca38f502cad5ec0f3e289f60afddf67873b95439f9a99a4f4c539f0f6d0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 145,
+      "sha256": "ecd3ef70a410b2eee6c25af820dcad7df4a3a899f9bd6ec24a55d34b460acbea",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/final/batch1-final-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 117891,
+      "sha256": "0c753321df5cd2bba85b0f380bee91ab0cacd22f1962eb2435f0046d712ba9b9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/HANDOFF.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1718,
+      "sha256": "cfc60ab2642a118adea48bcf5477be6c50feb7b32089b0e3b0facee64e15b0b6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/MANUAL-BATCH-01.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6971,
+      "sha256": "bf0778f41ee897c8bdb880b454b45c8d7a1c234359400412384da40597fbceda",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/final-content-standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18129,
+      "sha256": "e327e4a2c650edc0545fe3430276cf54179563750f2e8fc4990770865c2a362b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/full-current-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 19412,
+      "sha256": "70fe1f7f4d7c0f3f926ee9ad1782bbb6d65adb735a2a464a2c40fbce1fb0b13d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/full-current-modeling_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "0683abefd9c446f62de9878c602846b3a8eb43c4782f1882cbd6664cce34e538",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/full-current-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37084,
+      "sha256": "4e364b288f28417cc7209fc370889cb1fa15d458e5c51567069aab67ccefc3a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b1-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3858,
+      "sha256": "b90d7f0bd2db08bb66ef7c6b17772afd59492dd44d9c6ff1fae0eaa3b425de9e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b1-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3539,
+      "sha256": "4b6c5ff0cf6bfac1e04693c01d4ad9e87e818692ae1774ec8262435b1aba63e9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b1-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6522,
+      "sha256": "fde532550a9c395a5753d3782187cc9969f7690be527e05c7c215cbbf26937ca",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b2-corrected-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5425,
+      "sha256": "93b2ea0b0214c0be73fda69ed704d1be1e2fb2623f8f51dd67900620bab62799",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b2-corrected-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2662,
+      "sha256": "b418d5ce7b53aec0034a164fde084fb9dba34827461ee677a11bf90154585092",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b2-corrected-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4823,
+      "sha256": "897d1322dbb9b8ac85644dfc22c5d282d85894260ff7c8572f0e46c6d8fa924c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b2-ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1982,
+      "sha256": "529bcde6ff3288f7698f4efbf4b31fb25f0dfea79000047f92adfd9501095aaf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b2-ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1985,
+      "sha256": "e6a6b4b2b7aa7c1c8c72bb137bdf08ea2fcaa0a837186fbc045a2187f232b12f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b2-ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3434,
+      "sha256": "53709722f82a17dc65d34e8cce167b76c7b4ffab4339018eee61b98295a7b61d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b3-modeling-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4451,
+      "sha256": "e943554715d43da3d2b6a7a29aeb6a4a32f5b10a7ac735c8a376c5c1861b5c25",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b3-modeling.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3104,
+      "sha256": "a0046c347e7b691fdff2f646b7a5197c215879376396e2631922920e4a9145a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-b3-modeling.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5733,
+      "sha256": "76bde9a86e1bbebee1f51f98d3653bed1edd74cb17bb2c5ee7a935e3ce514e4b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-confirm-valid-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1097,
+      "sha256": "c47630403126fa784e62df77e12561e4e46ef01dc3d0b81eaab42e51b6ee251b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-confirm-valid-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 909,
+      "sha256": "66d453249d5b1d080c75d83dc0ed72a8c492b3dd49846afa1d532dfe86bc9612",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-confirm-valid-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1326,
+      "sha256": "f3e76dd00fd4985666f88b241700a0c913803d980be23cff4e0a35c5b9e1ca0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-factory-valid-runtime-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1099,
+      "sha256": "a830e29267c6e46f0d6e85f4e13b62b53b5e63872c1e1ec4f53db09bf3e16c2f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-factory-valid-runtime.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 895,
+      "sha256": "fa152ed89cdb740ad556e42dc7035d23e2aa533d78f485086cf517ea444dea4d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-factory-valid-runtime.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1221,
+      "sha256": "6777a5b185dca4afac4a11bd0019f86bc13a2d8ab57b63c81d71a7b068889e94",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-io-io-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1950,
+      "sha256": "cc56825402747ce62c236f431807ff72b00f1cd690c49e217d70caf999396197",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-io-io.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2068,
+      "sha256": "9973111348284d0b6f09035b1170d4a3e5f4ceb31c75a9a980fc78886607df33",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-io-io.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3773,
+      "sha256": "c9ebe7db4a7f0d2163e462d668c049897dcbb85d69e74f70a4699cafd8b60424",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-nohint-runtime-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1092,
+      "sha256": "0285e93da94398dc2177720e856f7a2c00111f104359f49bef1b79673fa59247",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-nohint-runtime.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1349,
+      "sha256": "1ab1fff68fa379a3d7194220d6c5af55f7f10aea4f2ff80fc411e2fd4bdbef36",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-nohint-runtime.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2255,
+      "sha256": "063451d23015df55afd5491a81174f8aa65afcdb12eeca69ae49534a41d51305",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-remaining-modeling_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7946,
+      "sha256": "e2f791c465927f52f874a7b1d1089e72570a12b8f38b176a7f20f12c86057066",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-remaining-modeling_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3746,
+      "sha256": "67e15ab026ec9aea8b6764d6b1efa2d876eb78fea398319f7d69f01ad566316f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/red-remaining-modeling_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6962,
+      "sha256": "32e86161cbe2bbfd5e92065532ddba18fdd4d0e5878921d03cfb0cceea3b7665",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/verified-batch1-runtime.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 50581,
+      "sha256": "f45898ca7cdc437a3de04b4298dd9d578e00c35c1b5242a963e1e08653bb947d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/verified-batch1-runtime.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "83a7e3ab1e61104c18d5875ee9042448647e9c27fb615b13820292b6c1366ae5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/red/verified-batch1-runtime.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 106675,
+      "sha256": "abb166a6932690b14f0380069fb924f72bfc9c6d8b0073841bc23457c76a0049",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/REPORT.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7587,
+      "sha256": "2da3761c237154a8bea382baa2736fcc1c13c1242aaac05ee7ed2ed0c0060a94",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/run.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4058,
+      "sha256": "eae0ae4cd3c4fa18607e124f05adad376cde9e9c1d4a9ea10f94968fe3078468",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/Start-Manual.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1317,
+      "sha256": "7d0e30f8abb6c42d4def93f0354bfb0211c3951c99f531f6f95eedb5c6d003f3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/test-batch.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 795,
+      "sha256": "1418c6a3c19d6821432e513d627cacc3ef5f5f241002bfb1a26d963f77afd82a",
       "lifecycle": "unverified"
     },
     {
@@ -126080,7 +128547,7 @@
       "kind": "json-data",
       "taskIds": [],
       "bytes": 1003,
-      "sha256": "4405311db497697e99aac980f930ea1428bac3fdadc42c1c1ae9b857011bdf8a",
+      "sha256": "623e445f91f8f8643080f050b11c8f940e454eed21439c5f4bcb0dc41d5c8a86",
       "lifecycle": "unverified"
     },
     {

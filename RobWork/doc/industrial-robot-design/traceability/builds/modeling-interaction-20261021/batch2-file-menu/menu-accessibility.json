@@ -1,0 +1,82 @@
+[
+  {
+    "Name": "File",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "新建项目",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "打开项目",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "保存草稿",
+    "Enabled": false,
+    "Offscreen": false
+  },
+  {
+    "Name": "应用草稿",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "撤销",
+    "Enabled": false,
+    "Offscreen": false
+  },
+  {
+    "Name": "重做",
+    "Enabled": false,
+    "Offscreen": false
+  },
+  {
+    "Name": "项目另存为",
+    "Enabled": false,
+    "Offscreen": false
+  },
+  {
+    "Name": "关闭项目",
+    "Enabled": false,
+    "Offscreen": false
+  },
+  {
+    "Name": "最近项目",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "Exit",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "Tools",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "View3D",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "视图",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "Plugins",
+    "Enabled": true,
+    "Offscreen": false
+  },
+  {
+    "Name": "Help",
+    "Enabled": true,
+    "Offscreen": false
+  }
+]

@@ -1,0 +1,21 @@
+Note: Google Test filter = *T30
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from FormEditModel
+[ RUN      ] FormEditModel.AuthoritativeRebindDuringConfirmWins_UX07_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\FormEditModelTest.cpp(671): error: Expected equality of these values:
+  *model.currentValueSi("joint-clearance")
+    Which is: 0.45000000000000001
+  0.3
+    Which is: 0.29999999999999999
+
+[  FAILED  ] FormEditModel.AuthoritativeRebindDuringConfirmWins_UX07_T30 (0 ms)
+[----------] 1 test from FormEditModel (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] FormEditModel.AuthoritativeRebindDuringConfirmWins_UX07_T30
+
+ 1 FAILED TEST

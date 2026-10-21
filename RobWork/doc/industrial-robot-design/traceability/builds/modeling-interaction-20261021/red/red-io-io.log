@@ -1,0 +1,35 @@
+Note: Google Test filter = *T30
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from IoSecTest
+[ RUN      ] IoSecTest.ExtendedUserSourceReentersWithSameEntity_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp(545): error: Value of: again
+  Actual: false
+Expected: true
+用户源不存在（§4.2.5 分类一：ERROR_FILE/PATH_NOT_FOUND 族）
+
+[  FAILED  ] IoSecTest.ExtendedUserSourceReentersWithSameEntity_T30 (2 ms)
+[ RUN      ] IoSecTest.ExtendedProjectBaseIsIdempotent_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp(561): error: Expected equality of these values:
+  extended.value.equivKey
+    Which is: "c:users\\zgl18\\appdata\\local\\temp\\ird_wp11_t03_safepath\\extendedprojectbaseisidempotent_t30_67204\\proj\\objects\\mesh.obj"
+  plain.value.equivKey
+    Which is: "c:\\users\\zgl18\\appdata\\local\\temp\\ird_wp11_t03_safepath\\extendedprojectbaseisidempotent_t30_67204\\proj\\objects\\mesh.obj"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\test\SafePathTest.cpp(562): error: Expected equality of these values:
+  extended.value.native
+    Which is: L"\\\\?\\C:Users\\zgl18\\AppData\\Local\\Temp\\ird_wp11_t03_safepath\\ExtendedProjectBaseIsIdempotent_T30_67204\\proj\\objects\\mesh.obj"
+  plain.value.native
+    Which is: L"\\\\?\\C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird_wp11_t03_safepath\\ExtendedProjectBaseIsIdempotent_T30_67204\\proj\\objects\\mesh.obj"
+
+[  FAILED  ] IoSecTest.ExtendedProjectBaseIsIdempotent_T30 (2 ms)
+[----------] 2 tests from IoSecTest (5 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (7 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] IoSecTest.ExtendedUserSourceReentersWithSameEntity_T30
+[  FAILED  ] IoSecTest.ExtendedProjectBaseIsIdempotent_T30
+
+ 2 FAILED TESTS

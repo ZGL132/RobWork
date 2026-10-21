@@ -1,0 +1,120 @@
+{
+  "base": "04b69c307a5af0e64904193bddca39f861407f6a",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/SafePath.cpp",
+      "bytes": 45539,
+      "sha256": "e88c679a5bc46526a9f5e950b3f70c3181d336028513bfd9a27cdc319bf1fae3"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/SafePathTest.cpp",
+      "bytes": 32059,
+      "sha256": "e725f43eab04eeff780557dd81f8868c75b09c8b033deddc5521d308a7e30725"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp",
+      "bytes": 150170,
+      "sha256": "2d665b1a2d0fa768c86c1214a2514e659b70b5cb9600cfdb2acd8f213caf2685"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingCommandFlows.cpp",
+      "bytes": 87691,
+      "sha256": "daccf2d4b0c92af74aa07410c35922fe8162ed1b1a1c893c135ab8f64894f011"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+      "bytes": 224946,
+      "sha256": "4f2373f24234027727ff47927b5bcc167f89623ad2df1fd8a6fbcd43f82138ba"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.hpp",
+      "bytes": 37413,
+      "sha256": "c3d661b0494caea13b51c549481e2523579070445a16b34349f9a01170414b91"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ModelingCommandFlowsTest.cpp",
+      "bytes": 80472,
+      "sha256": "051d82d764259e1a0b328bc2eb304827b35a48db9dabb3ca33f6c1ff96a6d27c"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+      "bytes": 60211,
+      "sha256": "de3927107a7cf64bb69fc1eda559e374741b98d2ef1ee5fa90a9c48dc7d09c09"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+      "bytes": 66535,
+      "sha256": "a8752eb949ee527903be837a5e88fc245fdf3267cfd2e45f5e1c04105ca93481"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp",
+      "bytes": 52245,
+      "sha256": "fabe66a6cc6ccaffd8df3c2344dbeb6edb21db25a0875283f13b9af587d254f6"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+      "bytes": 48412,
+      "sha256": "997cf11e5739d27597b23826c64d6d315a36646c07b6d8bfb4e94e0784d7dcb4"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/ParamTablePanelGuiTest.cpp",
+      "bytes": 24795,
+      "sha256": "ecbdcb2ceea3ee4a0178c63af6f8d5021a5ba55858e4aa5801bad6d27b51c470"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "bytes": 639523,
+      "sha256": "3c2f256dfe018b9de3e1219e18d6c025b2fdf3fee0e2a0d3bfb909459749ce95"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/FormEditCommon.cpp",
+      "bytes": 31601,
+      "sha256": "d5db057758715a5f22ce6114da2af600a5fb2b6b1e49bb0454fca2877b106136"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp",
+      "bytes": 32378,
+      "sha256": "ef01f722b740072c12fbe53d3a91fc6be8e2a4395ba8824fce4fd845164a58fb"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/FormEditModelTest.cpp",
+      "bytes": 34680,
+      "sha256": "52e41f47af44f773f119cb68ce6ced0c63d0f2cb8687715da1bbc64ca274d2bc"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+      "bytes": 445789,
+      "sha256": "ed6e026212c117f4ed09765f2b6b2f66cc214274e73f4b47d9ddcb78d5062ea7"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json",
+      "bytes": 1026,
+      "sha256": "7aa8745a90384734ed1d8ee5b900e7abeff1d2b85e441f1d94be1bae0b8631b0"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/io.md",
+      "bytes": 206637,
+      "sha256": "59c6c1dcd38be4947f48582693399ca55351cdcafe65dbe33c77c70b798b5bc9"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/modeling.md",
+      "bytes": 387542,
+      "sha256": "9e31e4308cf99aa678bf8587f78f8382ce06d3fc41c09e7c1544c9a361c6b864"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/runtime.md",
+      "bytes": 260032,
+      "sha256": "9abe3a449b77e085f46bd7845fc1e9091ab22558c1fab28b64f59ebb0283d0ce"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/ui.md",
+      "bytes": 639101,
+      "sha256": "07732143e63f15bfc91ebe0857ea157f02be363461f43f39648aeb9002f32af5"
+    },
+    {
+      "path": "build/RobWorkStudio/bin/Release/sdurws_ird_studio.exe",
+      "bytes": 10865664,
+      "sha256": "a6b74884bc08845f2d56fe2597842ca1f04003323176d3777d036407e2a86114"
+    }
+  ]
+}

@@ -532,3 +532,33 @@ TEST(IoSecHeaderRedLines, IoHeadersFreeOfQtAndCrossUnitIncludes)
     }
     EXPECT_GE(scanned, 7u) << "扫描面过小——include 3 头＋src 4 实现文件应至少 7 个";
 }
+
+/** @brief NFR-SEC-01/MDL-04：快照终路径必须能重读，不能把扩展前缀当作盘符。 */
+TEST_F(IoSecTest, ExtendedUserSourceReentersWithSameEntity_T30)
+{
+    IRD_TEST_INFO("NFR-SEC-01", {}, std::nullopt);
+    const auto file=m_dir/L"mesh.obj";
+    {std::ofstream out(file);out<<"v 0 0 0\n";}
+    const auto plain=m_resolver->normalize(PathRole::UserSource,file.wstring());
+    ASSERT_TRUE(plain)<<plain.error.detail;
+    const auto again=m_resolver->normalize(PathRole::UserSource,plain.value.native);
+    ASSERT_TRUE(again)<<again.error.detail;
+    EXPECT_EQ(again.value.equivKey,plain.value.equivKey);
+    EXPECT_EQ(again.value.native,plain.value.native);
+}
+
+/** @brief NFR-SEC-01：已有扩展前缀的管辖基点不能被再次扩展，安全规则仍生效。 */
+TEST_F(IoSecTest, ExtendedProjectBaseIsIdempotent_T30)
+{
+    IRD_TEST_INFO("NFR-SEC-01", {}, std::nullopt);
+    fs::create_directories(projectRoot()/L"objects");
+    {std::ofstream out(projectRoot()/L"objects"/L"mesh.obj");out<<"v 0 0 0\n";}
+    const auto base=fs::path(std::wstring(LR"(\\?\)")+projectRoot().wstring());
+    const auto plain=m_resolver->normalize(PathRole::ProjectResourceRef,L"objects/mesh.obj",projectRoot());
+    const auto extended=m_resolver->normalize(PathRole::ProjectResourceRef,L"objects/mesh.obj",base);
+    ASSERT_TRUE(plain)<<plain.error.detail;
+    ASSERT_TRUE(extended)<<extended.error.detail;
+    EXPECT_EQ(extended.value.equivKey,plain.value.equivKey);
+    EXPECT_EQ(extended.value.native,plain.value.native);
+    EXPECT_FALSE(m_resolver->normalize(PathRole::ProjectResourceRef,L"../outside.obj",base));
+}

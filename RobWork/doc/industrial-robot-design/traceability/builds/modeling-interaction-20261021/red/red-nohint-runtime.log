@@ -1,0 +1,25 @@
+Note: Google Test filter = *WithoutPathHint*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkCellGeometryTest
+[ RUN      ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellGeometryTest.cpp(916): error: Value of: std::any_of(geoms.begin(),geoms.end(),[](const auto& entry){ return entry.second.type==rw::geometry::GeometryData::PlainTriMesh; })
+  Actual: false
+Expected: true
+有真实内容却因缺hint丢失网格
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellGeometryTest.cpp(916): error: Value of: std::any_of(geoms.begin(),geoms.end(),[](const auto& entry){ return entry.second.type==rw::geometry::GeometryData::PlainTriMesh; })
+  Actual: false
+Expected: true
+有真实内容却因缺hint丢失网格
+
+[  FAILED  ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30 (1 ms)
+[----------] 1 test from WorkCellGeometryTest (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (6 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkCellGeometryTest.ContentMeshesWithoutPathHint_T30
+
+ 1 FAILED TEST

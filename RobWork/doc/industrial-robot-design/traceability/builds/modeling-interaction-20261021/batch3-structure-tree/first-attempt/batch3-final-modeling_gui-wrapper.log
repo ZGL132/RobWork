@@ -1,0 +1,67 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] ModelingUiModuleHostWiring.DraftHistoryClearsOnDetachAndRejectDoesNotEnter_PM18_L5 (317 ms)
+[ RUN      ] ModelingUiModuleHostWiring.DraftHistoryRestoresComponentAndCancelsPending_PM18_L5
+[       OK ] ModelingUiModuleHostWiring.DraftHistoryRestoresComponentAndCancelsPending_PM18_L5 (274 ms)
+[ RUN      ] ModelingUiModuleHostWiring.TextResolverBoundBeforePanelCreation_NoInternalKeyLeak_UX02_UI_T43
+[       OK ] ModelingUiModuleHostWiring.TextResolverBoundBeforePanelCreation_NoInternalKeyLeak_UX02_UI_T43 (236 ms)
+[ RUN      ] ModelingUiModuleHostWiring.WritableChain_PendingInitialAndLiveForward_L7_UI_T43
+[       OK ] ModelingUiModuleHostWiring.WritableChain_PendingInitialAndLiveForward_L7_UI_T43 (222 ms)
+[ RUN      ] ModelingUiModuleHostWiring.AppliedPreviewPushChain_Fix_UI_T59
+[       OK ] ModelingUiModuleHostWiring.AppliedPreviewPushChain_Fix_UI_T59 (277 ms)
+[ RUN      ] ModelingUiModuleHostWiring.PackageChecklistPreviewChain_UI_T61
+[       OK ] ModelingUiModuleHostWiring.PackageChecklistPreviewChain_UI_T61 (281 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ReseedCustomChainComposition_UI_T63
+[       OK ] ModelingUiModuleHostWiring.ReseedCustomChainComposition_UI_T63 (0 ms)
+[ RUN      ] ModelingUiModuleHostWiring.NamedPoseRestoreEntryIsPresent_MDL17_AT04
+[       OK ] ModelingUiModuleHostWiring.NamedPoseRestoreEntryIsPresent_MDL17_AT04 (319 ms)
+[ RUN      ] ModelingUiModuleHostWiring.NamedPoseRestoreUsesAppliedOffsetsAndIgnoresStaging_MDL17_AT04
+[       OK ] ModelingUiModuleHostWiring.NamedPoseRestoreUsesAppliedOffsetsAndIgnoresStaging_MDL17_AT04 (278 ms)
+[ RUN      ] ModelingUiModuleHostWiring.NamedPosePageReachableWithoutExistingObject_MDL17_AT04
+[       OK ] ModelingUiModuleHostWiring.NamedPosePageReachableWithoutExistingObject_MDL17_AT04 (385 ms)
+[ RUN      ] ModelingUiModuleHostWiring.NamedPoseCanSaveAfterSessionReopen_MDL17_AT04
+[       OK ] ModelingUiModuleHostWiring.NamedPoseCanSaveAfterSessionReopen_MDL17_AT04 (431 ms)
+[ RUN      ] ModelingUiModuleHostWiring.LinkBodyEditorReachable_MDL05_V17
+[       OK ] ModelingUiModuleHostWiring.LinkBodyEditorReachable_MDL05_V17 (351 ms)
+[ RUN      ] ModelingUiModuleHostWiring.EmptySceneManagementReachable_MDL15_AT28
+[       OK ] ModelingUiModuleHostWiring.EmptySceneManagementReachable_MDL15_AT28 (356 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17
+[       OK ] ModelingUiModuleHostWiring.ManualBodyLocalUndoRedoAndNoRevision_MDL05_V17 (248 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04
+[       OK ] ModelingUiModuleHostWiring.ImportedCandidatesFollowRealDraftUndoRedo_MDL04_PM04 (231 ms)
+[ RUN      ] ModelingUiModuleHostWiring.SceneCrudLocalHistoryAndWorldPose_MDL15_AT28
+[       OK ] ModelingUiModuleHostWiring.SceneCrudLocalHistoryAndWorldPose_MDL15_AT28 (389 ms)
+[ RUN      ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01
+[       OK ] ModelingUiModuleHostWiring.EmptyToolManagerEntry_MDL13_AT01 (383 ms)
+[ RUN      ] ModelingUiModuleHostWiring.SceneExternalGeometryFileDialog_MDL15_AT28
+[       OK ] ModelingUiModuleHostWiring.SceneExternalGeometryFileDialog_MDL15_AT28 (1749 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01
+[       OK ] ModelingUiModuleHostWiring.ToolManagerHistoryBodyAndNavigation_MDL13_AT01 (516 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CompleteDraftRestoresTreeBodyAndFreshHistory_PM04_AT21 (816 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28
+[       OK ] ModelingUiModuleHostWiring.ToolRealFileDialogAndStaleGuard_MDL13_AT28 (1844 ms)
+[ RUN      ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.DraftChangeNotificationFromRealControls_PM04_AT21 (531 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CompletePendingStateTracksUndoRedo_PM04_AT21 (449 ms)
+[ RUN      ] ModelingUiModuleHostWiring.CleanRevisionRefreshesRealTreeAndForms_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.CleanRevisionRefreshesRealTreeAndForms_PM04_AT21 (433 ms)
+[ RUN      ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21
+[       OK ] ModelingUiModuleHostWiring.ConflictRebuildRefreshesTreeAndCancelsPending_PM04_AT21 (602 ms)
+[ RUN      ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33
+[       OK ] ModelingUiModuleHostWiring.WorkCellImportCommandButtonRegistered_MDL18_AT33 (260 ms)
+[----------] 29 tests from ModelingUiModuleHostWiring (13667 ms total)
+
+[----------] Global test environment tear-down
+[==========] 103 tests from 4 test suites ran. (37099 ms total)
+[  PASSED  ] 102 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingPanelGuiTest.TreeExpandCollapseAllIsReadOnlyNavigation_UX09_T30
+
+ 1 FAILED TEST
+��ģ���޶�������ȡʧ�ܣ���ģ�̶��޶���ȡδװ�䣬ԭ�ݸ��ѱ���
+��ģ���޶�������ȡʧ�ܣ���ģ�̶��޶���ȡδװ�䣬ԭ�ݸ��ѱ���
+��ģ�ݸ�ָ��ܾ����ݸ�JSON�𻵻�β�����ݡ�

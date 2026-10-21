@@ -1,0 +1,38 @@
+Note: Google Test filter = *T30
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from ParamTablePanelGuiTest
+[ RUN      ] ParamTablePanelGuiTest.QueuedCellEditCannotSurviveCancel_UX07_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp(343): error: Value of: m_model->pendingChanges().empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp(344): error: Expected equality of these values:
+  *m_model->currentValueSi("joint-clearance")
+    Which is: 0.45000000000000001
+  0.3
+    Which is: 0.29999999999999999
+
+[  FAILED  ] ParamTablePanelGuiTest.QueuedCellEditCannotSurviveCancel_UX07_T30 (193 ms)
+[ RUN      ] ParamTablePanelGuiTest.QueuedCellEditCannotCrossBaselineRefresh_UX05_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp(355): error: Value of: m_model->pendingChanges().empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp(356): error: Expected equality of these values:
+  *m_model->currentValueSi("joint-clearance")
+    Which is: 0.45000000000000001
+  0.6
+    Which is: 0.59999999999999998
+
+[  FAILED  ] ParamTablePanelGuiTest.QueuedCellEditCannotCrossBaselineRefresh_UX05_T30 (104 ms)
+[----------] 2 tests from ParamTablePanelGuiTest (299 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (304 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ParamTablePanelGuiTest.QueuedCellEditCannotSurviveCancel_UX07_T30
+[  FAILED  ] ParamTablePanelGuiTest.QueuedCellEditCannotCrossBaselineRefresh_UX05_T30
+
+ 2 FAILED TESTS

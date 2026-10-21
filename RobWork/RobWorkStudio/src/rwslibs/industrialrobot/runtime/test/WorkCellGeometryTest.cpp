@@ -57,6 +57,7 @@
 #include "CanonicalModelFixture.hpp"        // minimal/rich 夹具（确定性 id）
 
 #include <gtest/gtest.h>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp> // MDL-04生产无hint消费的验收追溯。
 
 #include <algorithm>
 #include <cmath>
@@ -890,5 +891,28 @@ TEST(WorkCellGeometryTest, ResourceMeshUnsupportedFormatSkipped_RT_GEO_7)
     for (const auto& entry : geoms) {
         EXPECT_NE(entry.second.type, rw::geometry::GeometryData::PlainTriMesh)
             << entry.first << "：未支持格式仍产出网格（格式守门违约）";
+    }
+}
+
+/** @brief MDL-04：生产桥合法省略路径hint，不能因此只显示细线代理。 */
+TEST(WorkCellGeometryTest, ContentMeshesWithoutPathHint_T30)
+{
+    IRD_TEST_INFO("MDL-04", {}, std::nullopt);
+    const std::string text="# mesh\nv 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n";
+    const std::vector<std::uint8_t> obj(text.begin(),text.end());
+    for(const auto& bytes:std::vector<std::vector<std::uint8_t>>{obj,makeBinaryStl(3)}){
+        auto f=threeSpanRichFixture();
+        rebindResource(f,0,digestOfBytes(bytes),"");
+        // 生产Description没有hint；空字符串与nullopt均不携带路径身份。
+        f.manifest[0].sourcePathHint=std::nullopt;
+        for(auto& link:f.chain.links){
+            if(link.visual&&link.visual->resourceId==f.manifest[0].resourceId){link.visual->sourcePathHint=std::nullopt;}
+        }
+        InMemoryMeshProvider provider({{f.manifest[0].resourceId,bytes}});
+        const auto out=compileWorkCell(f.build(),&provider);ASSERT_FALSE(out.workCell.isNull());
+        std::map<std::string,GeometryView> geoms;collectGeometries(*out.workCell,geoms);
+        EXPECT_TRUE(std::any_of(geoms.begin(),geoms.end(),[](const auto& entry){
+            return entry.second.type==rw::geometry::GeometryData::PlainTriMesh;
+        }))<<"有真实内容却因缺hint丢失网格";
     }
 }

@@ -1,0 +1,46 @@
+Note: Google Test filter = *Placeholder*
+[==========] Running 5 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from MdlTemplate
+[ RUN      ] MdlTemplate.PlaceholderCylinder_SegmentGeometry_WP13T07_ACC5
+[       OK ] MdlTemplate.PlaceholderCylinder_SegmentGeometry_WP13T07_ACC5 (0 ms)
+[ RUN      ] MdlTemplate.PlaceholderCylinder_RejectsBadInput_WP13T07_ACC5
+[       OK ] MdlTemplate.PlaceholderCylinder_RejectsBadInput_WP13T07_ACC5 (0 ms)
+[----------] 2 tests from MdlTemplate (1 ms total)
+
+[----------] 3 tests from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.PlaceholderGeometry_WritesVisualRef_UI_T41C
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(296): error: Expected equality of these values:
+  link.visual->kind
+    Which is: 4-byte object <01-00 00-00>
+  GeometryKind::Mesh
+    Which is: 4-byte object <00-00 00-00>
+现有schema通过真实OBJ承载占位圆柱
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(301): error: Expected: (resource) != (resources.end()), actual: 8-byte object <00-00 00-00 00-00 00-00> vs 8-byte object <00-00 00-00 00-00 00-00>
+生成成功却不能提交：几何资源未登记
+
+[  FAILED  ] ModelingCommandFlows.PlaceholderGeometry_WritesVisualRef_UI_T41C (1 ms)
+[ RUN      ] ModelingCommandFlows.PlaceholderZeroLengthIsActionableAndAtomic_MDL04_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(317): error: Expected: ok=executeModelingCommand("modeling.generate-placeholder-geometry",fx.session,fx.deps(),fx.host,summary) doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "modeling/template/placeholder-length: 起终点重合——零长度圆柱无几何意义".
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(318): error: Value of: ok
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(319): error: Expected: (summary.find("原点")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+
+[  FAILED  ] ModelingCommandFlows.PlaceholderZeroLengthIsActionableAndAtomic_MDL04_T30 (0 ms)
+[ RUN      ] ModelingCommandFlows.PlaceholderGeometry_FlangeLink_Refused_UI_T41C
+[       OK ] ModelingCommandFlows.PlaceholderGeometry_FlangeLink_Refused_UI_T41C (0 ms)
+[----------] 3 tests from ModelingCommandFlows (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test suites ran. (6 ms total)
+[  PASSED  ] 3 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ModelingCommandFlows.PlaceholderGeometry_WritesVisualRef_UI_T41C
+[  FAILED  ] ModelingCommandFlows.PlaceholderZeroLengthIsActionableAndAtomic_MDL04_T30
+
+ 2 FAILED TESTS

@@ -87,6 +87,8 @@
 
 #include <rw/kinematics/Frame.hpp>               // rw::kinematics::Frame（L3 桥事件值——TreeView Select Frame 转发名源）
 #include <rw/kinematics/State.hpp>               // rw::kinematics::State（D8 Jog 桥——State 变化采样）
+#include <rw/models/Object.hpp> // WP-13-T30：正式宿主检查真实几何载体，非仅资源引用。
+#include <rw/geometry/TriMesh.hpp> // 核对OBJ实际三角面与米制尺寸，排除代理图元假通过。
 #include <rw/models/Device.hpp>                  // rw::models::Device（D8 桥——WorkCell 设备 q 提取）
 #include <rw/models/JointDevice.hpp>             // rw::models::JointDevice（UI-T45——TCP 帧解析 getEnd）
 #include <rw/models/WorkCell.hpp>                // rw::models::WorkCell（L2 高亮按名寻帧/D8 设备枚举——呈现对象公开面）
@@ -305,7 +307,6 @@ std::string canonicalizePathOrKeep(const std::string& rawPath)
 /// 会话标签常量（宿主菜单/对话框的装配层呈现文案——与 WorkbenchText 键面
 /// 词汇保持一致；插件侧不 include src/ 私有头，按既有 orchestrate 对话框
 /// 先例以字面量承载）。
-constexpr const char* kProjectMenuTitle = "工业机器人项目";
 constexpr const char* kRecentMenuTitle = "最近项目";
 constexpr const char* kViewMenuTitle = "视图";
 constexpr const char* kRecentUnavailableSuffix = "（项目位置不可用）";
@@ -1900,15 +1901,18 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
     QMenu* fileMenu = findHostMenu("&File");
     QMenu* toolsMenu = findHostMenu("&Tools");
 
-    // ---- File：按位插入"工业机器人项目"子菜单 ----
+    // ---- File：项目动作直接置于File顶层，与Exit同级（WP-13-T30第2批）----
     // 为什么按位插入而不是尾插：宿主 updateLastFiles 每次 open WorkCell 后
-    // 移除重加"最近文件"条目（追加在菜单尾部）——尾插的项目子菜单会被
+    // 移除重加"最近文件"条目（追加在菜单尾部）——尾插的项目动作会被
     // 后续重排顶到最近文件之下；锚定 Preferences 前的分隔符保持稳定分组。
     if (fileMenu != nullptr) {
-        auto* projectMenu = new QMenu(QString::fromUtf8(kProjectMenuTitle), fileMenu);
-        addCommandAction(projectMenu, "新建项目", "project.new");
-        addCommandAction(projectMenu, "打开项目", "project.open");
-        addCommandAction(projectMenu, "保存草稿", "draft.save");
+        // 先在File登记原有动作，再整组移到稳定锚点；复用同一QAction及命令
+        // 接线，避免复制菜单造成重复触发或使能态不一致。前置分隔符隔开框架命令。
+        const int firstProjectAction = fileMenu->actions().size();
+        fileMenu->addSeparator();
+        addCommandAction(fileMenu, "新建项目", "project.new");
+        addCommandAction(fileMenu, "打开项目", "project.open");
+        addCommandAction(fileMenu, "保存草稿", "draft.save");
         // 写命令入口补全（UI-T38——主 Dock 顶栏命令条退役的承接面）：应用/
         // 撤销/重做此前仅顶栏按钮与 Ctrl+Shift+P 命令面板两入口，顶栏退役
         // 后菜单成为唯一常驻图形入口（§7.2 路由红线不变——动作只转发命令
@@ -1919,23 +1923,23 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
         // F-553：三条命令的基础悬停说明改经 addCommandAction 装配拍快照
         // （refreshHostMenuActions 的禁用原因刷新以之为还原值源——禁用
         // 态呈现原因文案、可用态还原本说明，见该函数注释）。
-        addCommandAction(projectMenu, "应用草稿", "draft.apply", QStringLiteral(
+        addCommandAction(fileMenu, "应用草稿", "draft.apply", QStringLiteral(
             "预检并应用当前草稿——通过门禁后生成新项目修订。"
             "历史只增不改：旧修订不变，项目级撤销＝以新修订对冲；"
             "未应用的草稿编辑请在各域面板内草稿撤销/直接改写。"));
-        addCommandAction(projectMenu, "撤销", "project.undo", QStringLiteral(
+        addCommandAction(fileMenu, "撤销", "project.undo", QStringLiteral(
             "项目级撤销——对冲最近一次已应用的修订（产生一条新修订，历史只增不改）；"
             "未应用的草稿编辑不在此列。"));
-        addCommandAction(projectMenu, "重做", "project.redo", QStringLiteral(
+        addCommandAction(fileMenu, "重做", "project.redo", QStringLiteral(
             "项目级重做——对冲最近一次项目级撤销（产生一条新修订，历史只增不改）。"));
-        addCommandAction(projectMenu, "项目另存为", "project.saveAs");
-        addCommandAction(projectMenu, "关闭项目", "workbench.closeProject");
+        addCommandAction(fileMenu, "项目另存为", "project.saveAs");
+        addCommandAction(fileMenu, "关闭项目", "workbench.closeProject");
         // 最近项目子菜单（PM-10）：内容装配时清空、aboutToShow 现取重建
         // （去重/上限/失效提示全在内容装配面——本插件只投影）。
-        m_recentMenu = new QMenu(QString::fromUtf8(kRecentMenuTitle), projectMenu);
+        m_recentMenu = new QMenu(QString::fromUtf8(kRecentMenuTitle), fileMenu);
         connect(m_recentMenu, &QMenu::aboutToShow, this, [this] { rebuildRecentMenu(); });
-        projectMenu->addSeparator();
-        projectMenu->addMenu(m_recentMenu);
+        fileMenu->addSeparator();
+        fileMenu->addMenu(m_recentMenu);
 
         // 插入锚：Preferences 动作之前最近的分隔符（无则退化为 Preferences
         // 动作本身、再无则追加尾部）。
@@ -1956,9 +1960,8 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
             }
         }
         if (anchor != nullptr) {
-            fileMenu->insertMenu(anchor, projectMenu);
-        } else {
-            fileMenu->addMenu(projectMenu);
+            // insertActions会移动已登记动作，原尾部不残留重复项。
+            fileMenu->insertActions(anchor, fileMenu->actions().mid(firstProjectAction));
         }
     } else {
         reportLine("宿主 File 菜单未定位——项目命令未上菜单（降级形态）");
@@ -3678,7 +3681,16 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
         m_domains->applyEntries, anchor,
         [&store](project::CommandEnvelope envelope,
                  project::ICommandInteraction* cmdInteraction) {
-            return store.commands().submit(std::move(envelope), cmdInteraction);
+            auto result=store.commands().submit(std::move(envelope), cmdInteraction);
+            // 自动遍历保留真实拒绝原因，禁止仅以“未提交”掩盖资源/编译失败。
+            // 正常交互仍走既有诊断面；此分支只向测试进程日志投影回执。
+            if(qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE")=="modeling-tour"){
+                for(const auto& diagnostic:result.diagnostics){
+                    std::cout<<"[ird-ui-smoke-mtour] command-diagnostic "<<diagnostic.context
+                        <<" cause="<<diagnostic.cause<<std::endl;
+                }
+            }
+            return result;
         },
         &interaction,
         [this](const std::string& message) {
@@ -8876,6 +8888,42 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         snapPng(hostWin,"mtour-a23-low-policy-comparison.png");
         editTourTravel(QStringLiteral("24"));
         if(!reeditThroughConflict(false)){QCoreApplication::exit(1);return;}
+        // WP-13-T30/MDL-04：模拟用户选连杆→工具→更多操作→生成占位网格。
+        // 此处处于最后一次冲突重建之后，确保生成的资源真正参与下面正式应用。
+        if(auto* tabs=panel->findChild<QTabWidget*>()){tabs->setCurrentIndex(1);}
+        if(auto* more=panel->findChild<QPushButton*>("ird_modeling_more_toggle")){
+            if(!more->isChecked()){more->click();}
+        }
+        for(int segment=0;segment<6;++segment){
+            const QString label=segment==0 ? QStringLiteral("base") : QStringLiteral("l%1").arg(segment);
+            QTreeWidgetItem* link=nullptr;
+            if(structTree){for(QTreeWidgetItemIterator it(structTree);*it;++it){
+                if((*it)->text(0).endsWith(label)){link=*it;break;}
+            }}
+            ok(link!=nullptr,"t30 placeholder-link-"+std::to_string(segment));
+            if(!link){continue;}structTree->setCurrentItem(link);settleEvents(80);
+            auto* generate=panel->findChild<QPushButton*>("ird_modeling_cmd_modeling.generate-placeholder-geometry");
+            for(auto* parent=generate ? generate->parentWidget() : nullptr;parent;parent=parent->parentWidget()){
+                if(auto* scroll=qobject_cast<QScrollArea*>(parent)){scroll->ensureWidgetVisible(generate);}
+            }
+            ok(generate&&generate->isVisible()&&generate->isEnabled(),"t30 placeholder-command-visible");
+            if(generate){generate->click();}settleEvents(100);
+            ok(statusLine&&statusLine->text().contains(QStringLiteral("已生成并登记资源")),"t30 real-placeholder-generated");
+        }
+        snapPng(hostWin,"mtour-t30-generated-before-apply.png");
+        // 真正提交前复核序列化后的资源路径，避免“按钮成功”掩盖悬空来源。
+        const auto meshCommand=m_domains->modeling.module->buildDraftCommand("modeling");
+        const auto meshPayload=meshCommand ? modeling::tryDecodeCommandPayload(meshCommand->payloadCanonical) : std::nullopt;
+        if(meshPayload){for(const auto& slot:meshPayload->objects){
+            if(slot.objectTypeToken!=modeling::kRobotDesignObjectType){continue;}
+            const auto decoded=modeling::RobotDesignCodec{}.decode(slot.objectBytes,modeling::kCurrentFormatVersion);
+            if(!decoded.ok()){continue;}
+            for(const auto& ref:std::get<modeling::RobotDesign>(decoded.get()).resourceManifest){
+                if(ref.externalRecord){std::cout<<"[ird-ui-smoke-mtour] mesh-source "<<ref.resourceId
+                    <<" path="<<ref.externalRecord->absPath
+                    <<" exists="<<QFile::exists(QString::fromStdString(ref.externalRecord->absPath))<<std::endl;}
+            }
+        }}
         const auto beforeApply=m_lastStoreAdapter->projectStore().query().head().id;
         if(!formalApply(std::nullopt)){QCoreApplication::exit(1);return;}
         const bool modelingCommitted=m_lastStoreAdapter->projectStore().query().head().id!=beforeApply
@@ -8993,6 +9041,36 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
            "a23 saved-policy-restored-after-real-reopen");
         ok(restoredCell && !restoredCell->getDevices().empty(), "step5.5 host-device-restored");
         ok(restoredCell && !restoredCell->getObjects().empty(), "step5.5 host-geometry-restored");
+        // 网格由runtime挂在RigidObject的Geometry中；getModels只覆盖另一种载体。
+        // 逐个检查实际三角网格、轴向端点与半径，不能把代理图元/坐标架算作OBJ成功。
+        std::size_t visibleMeshObjects=0;
+        if(restoredCell){for(const auto& object:restoredCell->getObjects()){
+            for(const auto& geometry:object->getGeometry()){
+                const auto data=geometry->getGeometryData();
+                std::cout<<"[ird-ui-smoke-mtour] host-geometry "<<geometry->getName()
+                    <<" type="<<(data ? static_cast<int>(data->getType()) : -1)
+                    <<" triangles="<<(data ? data->getTriMesh(false)->size() : 0)<<std::endl;
+                if(!data || data->getType()!=rw::geometry::GeometryData::PlainTriMesh){continue;}
+                const auto mesh=data->getTriMesh(false);
+                if(!mesh || mesh->size()!=128){continue;}
+                const double length=std::sqrt(0.1*0.1+0.15*0.15);
+                double minAxis=1.0,maxAxis=-1.0,maxRadius=0.0;
+                for(std::size_t i=0;i<mesh->size();++i){
+                    const auto triangle=mesh->getTriangle(i);
+                    for(int vertex=0;vertex<3;++vertex){
+                        const auto p=triangle[vertex];
+                        const double axial=(p[0]*0.1+p[2]*0.15)/length;
+                        minAxis=std::min(minAxis,axial);maxAxis=std::max(maxAxis,axial);
+                        maxRadius=std::max(maxRadius,std::sqrt(std::max(0.0,p.norm2()*p.norm2()-axial*axial)));
+                    }
+                }
+                ok(std::abs(minAxis)<1e-6&&std::abs(maxAxis-length)<1e-6&&std::abs(maxRadius-0.05)<1e-6,
+                    "t30 generated-mesh-local-metre-dimensions");
+                ++visibleMeshObjects;
+            }
+        }}
+        ok(visibleMeshObjects==6,"t30 six-generated-meshes-restored-in-host-geometry");
+        snapPng(hostWin,"mtour-t30-visible-meshes-after-reopen.png");
         const auto restoredScene = getRobWorkStudio()->getWorkCellScene();
         ok(restoredScene && restoredScene->getWorkCell() == restoredCell,
            "step5.5 scene-workcell-matches-host");

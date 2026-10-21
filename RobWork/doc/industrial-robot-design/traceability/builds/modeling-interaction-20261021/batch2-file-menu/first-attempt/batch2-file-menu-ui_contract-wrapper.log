@@ -1,0 +1,64 @@
+**********************************************************************
+** Visual Studio 2022 Developer PowerShell v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[       OK ] HostIntegrationContractTest.L1_TreeSelectToInspector_E2EPerDomain (0 ms)
+[ RUN      ] HostIntegrationContractTest.L2L3_LinkageContract_FullCases
+[       OK ] HostIntegrationContractTest.L2L3_LinkageContract_FullCases (0 ms)
+[ RUN      ] HostIntegrationContractTest.DomainAssemblyFailure_IsolationStateSurface
+[       OK ] HostIntegrationContractTest.DomainAssemblyFailure_IsolationStateSurface (0 ms)
+[ RUN      ] HostIntegrationContractTest.ProjectCloseTeardown_ComponentLevelAssertions
+[       OK ] HostIntegrationContractTest.ProjectCloseTeardown_ComponentLevelAssertions (0 ms)
+[ RUN      ] HostIntegrationContractTest.HostRegistrarAssemblySequence_Snapshot_ASMUI_ACC2
+[       OK ] HostIntegrationContractTest.HostRegistrarAssemblySequence_Snapshot_ASMUI_ACC2 (0 ms)
+[ RUN      ] HostIntegrationContractTest.SixDomainHostAssemblySequence_Snapshot_ASMSTUDIO_ACC1
+[       OK ] HostIntegrationContractTest.SixDomainHostAssemblySequence_Snapshot_ASMSTUDIO_ACC1 (0 ms)
+[ RUN      ] HostIntegrationContractTest.ExtraDomainPanelPickup_FailureIsolationAbsentReturnsNull_ASM_PANEL_ACC1
+[       OK ] HostIntegrationContractTest.ExtraDomainPanelPickup_FailureIsolationAbsentReturnsNull_ASM_PANEL_ACC1 (0 ms)
+[ RUN      ] HostIntegrationContractTest.RestoredModelDraftKeepsOldBaseThroughApply_PM04_AT29
+[       OK ] HostIntegrationContractTest.RestoredModelDraftKeepsOldBaseThroughApply_PM04_AT29 (28 ms)
+[ RUN      ] HostIntegrationContractTest.PendingModelBranchChangeIsIsolatedBeforeSubmit_PM04_AT29
+[       OK ] HostIntegrationContractTest.PendingModelBranchChangeIsIsolatedBeforeSubmit_PM04_AT29 (0 ms)
+[ RUN      ] HostIntegrationContractTest.CommitReceiptExceptionKeepsCommitFactAndContinues_PM04_AT21
+[       OK ] HostIntegrationContractTest.CommitReceiptExceptionKeepsCommitFactAndContinues_PM04_AT21 (0 ms)
+[ RUN      ] HostIntegrationContractTest.ResultReceiptExceptionKeepsCommitAndContinues_PM04_AT21
+[       OK ] HostIntegrationContractTest.ResultReceiptExceptionKeepsCommitAndContinues_PM04_AT21 (0 ms)
+[----------] 16 tests from HostIntegrationContractTest (32 ms total)
+
+[----------] 7 tests from HostPolicyTest
+[ RUN      ] HostPolicyTest.AmbiguousRevisionMustNotFallBackToDefault_UX08_A23
+[       OK ] HostPolicyTest.AmbiguousRevisionMustNotFallBackToDefault_UX08_A23 (57 ms)
+[ RUN      ] HostPolicyTest.CorruptPolicyMustStayUnavailable_UX08_A23
+[       OK ] HostPolicyTest.CorruptPolicyMustStayUnavailable_UX08_A23 (66 ms)
+[ RUN      ] HostPolicyTest.OldRevisionRemainsExactAfterHeadAdvances_MDL06_A23
+[       OK ] HostPolicyTest.OldRevisionRemainsExactAfterHeadAdvances_MDL06_A23 (96 ms)
+[ RUN      ] HostPolicyTest.FirstCreateUndoRedoPreservesIdentityAndHistory_ARC05_A23
+[       OK ] HostPolicyTest.FirstCreateUndoRedoPreservesIdentityAndHistory_ARC05_A23 (87 ms)
+[ RUN      ] HostPolicyTest.InvalidStaleAndFullFieldsRoundTrip_UX08_A23
+[       OK ] HostPolicyTest.InvalidStaleAndFullFieldsRoundTrip_UX08_A23 (45 ms)
+[ RUN      ] HostPolicyTest.ReopenReadOnlyAndCrossProjectIsolation_PM02_A23
+[       OK ] HostPolicyTest.ReopenReadOnlyAndCrossProjectIsolation_PM02_A23 (68 ms)
+[ RUN      ] HostPolicyTest.BranchPolicyChangesKeepOtherBranchAndOldRevisionExact_PM12_A23
+[       OK ] HostPolicyTest.BranchPolicyChangesKeepOtherBranchAndOldRevisionExact_PM12_A23 (105 ms)
+[----------] 7 tests from HostPolicyTest (530 ms total)
+
+[----------] 5 tests from HostDraftChain
+[ RUN      ] HostDraftChain.TextPayloadSaveReopenRestoreByteEqual_UI_T84_ACC4
+[       OK ] HostDraftChain.TextPayloadSaveReopenRestoreByteEqual_UI_T84_ACC4 (27 ms)
+[ RUN      ] HostDraftChain.RequirementsDraftFullChainByteEqual_UI_T85_F917
+[       OK ] HostDraftChain.RequirementsDraftFullChainByteEqual_UI_T85_F917 (27 ms)
+[ RUN      ] HostDraftChain.ClosedContextListReturnsEmptyTruth_UI_T84
+[       OK ] HostDraftChain.ClosedContextListReturnsEmptyTruth_UI_T84 (20 ms)
+[ RUN      ] HostDraftChain.ModelingRetainedDraftReopensOnRealBranch_PM04_AT29
+[       OK ] HostDraftChain.ModelingRetainedDraftReopensOnRealBranch_PM04_AT29 (52 ms)
+[ RUN      ] HostDraftChain.AppliedModelingDraftIsMissingAfterRealReopen_PM04_AT21
+[       OK ] HostDraftChain.AppliedModelingDraftIsMissingAfterRealReopen_PM04_AT21 (39 ms)
+[----------] 5 tests from HostDraftChain (168 ms total)
+
+[----------] Global test environment tear-down
+[==========] 63 tests from 13 test suites ran. (1902 ms total)
+[  PASSED  ] 62 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] AssemblyManifest.WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84
+
+ 1 FAILED TEST

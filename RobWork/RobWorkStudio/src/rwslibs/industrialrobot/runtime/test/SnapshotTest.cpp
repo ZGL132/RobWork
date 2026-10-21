@@ -58,6 +58,9 @@
 #include "CanonicalModelFixture.hpp"  // minimal/rich 夹具（确定性种子）
 
 #include <gtest/gtest.h>
+#include <rw/models/WorkCell.hpp>
+#include <rw/models/Object.hpp>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp> // MDL-04正式快照资源链追溯。
 
 #include <atomic>
 #include <memory>
@@ -901,3 +904,40 @@ TEST(SnapshotTest, Cr05ValueSupplyEnvironmentEntries_CR_05)
 }
 
 }  // namespace
+
+/** @brief MDL-04：真实快照工厂必须消费请求资源，不能在S6重建时丢掉网格。 */
+TEST(RuntimeSnapshotTest, FactoryRetainsRequestedMeshResources_T30)
+{
+    IRD_TEST_INFO("MDL-04", {}, std::nullopt);
+    auto f=richFixture();
+    const std::string text="v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n";
+    const auto digest=sdurws::ird::runtime::testfixture::digestOf(text);
+    f.manifest[0].contentDigest=digest;f.manifest[0].sourcePathHint=std::nullopt;
+    const auto rebind=[&](std::optional<ResourceRef>& ref){
+        if(ref&&ref->resourceId==f.manifest[0].resourceId){ref=f.manifest[0];}
+    };
+    for(auto& link:f.chain.links){rebind(link.visual);rebind(link.collision);}
+    for(auto& tool:f.tools){rebind(tool.geometry);}
+    for(auto& scene:f.scene){rebind(scene.geometry);}
+    const auto model=f.build();ScriptedCompiler compiler(model,1,"t30-resources");
+    // 仅在注入资源端口供给固定字节；S6/快照/框架几何均真实执行。
+    struct Provider final : IRuntimeResourceProvider {
+        std::string bytes;core::Digest256 digest;core::ObjectId id;
+        Expected<ResourceBytes,ResourceReadError> tryResourceBytes(core::ObjectId key) const override {
+            if(key!=id){return Expected<ResourceBytes,ResourceReadError>::err({RuntimeErrorCode::ResourceMissing,key,"not supplied"});}
+            return Expected<ResourceBytes,ResourceReadError>::ok({reinterpret_cast<const std::uint8_t*>(bytes.data()),bytes.size(),digest});
+        }
+    } provider;
+    provider.bytes=text;provider.digest=digest;provider.id=f.manifest[0].resourceId;
+    CompileRequest request;request.revision=model.header().revision;
+    request.options.requestDynamicWorkCell=false;request.resources=&provider;
+    const auto out=RuntimeSnapshotFactory{}.create(request,compiler);
+    ASSERT_EQ(out.status,CompileStatus::Published);ASSERT_NE(out.snapshot,nullptr);
+    bool found=false;
+    for(const auto& object:out.snapshot->workCellHandle()->getObjects()){
+        for(const auto& geometry:object->getGeometry()){
+            if(geometry->getGeometryData()->getType()==rw::geometry::GeometryData::PlainTriMesh){found=true;}
+        }
+    }
+    EXPECT_TRUE(found)<<"请求带真实网格，正式快照却只保留代理";
+}

@@ -334,7 +334,10 @@ LexicalResult lexicalNormalize(const std::wstring& raw)
     std::wstring body;
     switch (form) {
     case PathForm::DriveAbsolute:
-        body = unified.substr(2);                       // 剥 "C:"
+        // WP-13-T30：snapshot终路径带\\?\，Recorded会把它重新交给本解析器。
+        // 分类已识别实际盘符，但切片也必须跳过前缀，否则把“?\C:”当路径段，
+        // 导致文件明明存在却被UserSource存在性检查拒绝；普通盘符仍剥两码元。
+        body = unified.substr(unified.compare(0, 4, kLongPathPrefix) == 0 ? 6 : 2);
         if (!body.empty() && body.front() == L'\\') {
             body = body.substr(1);
         }
@@ -453,6 +456,10 @@ std::wstring toExtendedForm(const std::wstring& normalizedSlashes)
 {
     const PathForm form = classifyInput(normalizedSlashes);
     if (form == PathForm::DriveAbsolute) {
+        // 已规范化的基点可再次进入P-5/P-6，扩展化必须幂等；双前缀会破坏根语义。
+        if (normalizedSlashes.compare(0, 4, kLongPathPrefix) == 0) {
+            return normalizedSlashes;
+        }
         return std::wstring(kLongPathPrefix) + normalizedSlashes;
     }
     if (form == PathForm::UncAbsolute) {

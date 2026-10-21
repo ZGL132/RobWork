@@ -14,6 +14,9 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QFile>
+#include <QDir>
+#include <QSaveFile>
+#include <QStandardPaths>
 #include <QString>
 #include <QDialog>                                // custom-chain 声明表单（UI-T63）
 #include <QDialogButtonBox>
@@ -33,9 +36,12 @@
 #include <array>
 #include <regex>
 #include <sstream>
+#include <iomanip>
+#include <locale>
 #include <stdexcept>
 #include <utility>
 
+#include "GeometryResourceFlow.hpp"
 #include "ModelingFlowsInternal.hpp"          // 域内拆分接口（权威切换流——DhConvert 独立 TU）
 
 #include <sdurws/ird/core/Digest.hpp>            // core::ContentDigester（快照摘要——io 快照同源口径）
@@ -56,6 +62,63 @@
 
 namespace sdurws::ird::modeling {
 namespace {
+
+/**
+ * @brief 为占位圆柱生成可由现有资源链读取的封闭OBJ，不引入新的项目schema。
+ * @param length [in] 圆柱轴长，单位m，调用方保证有限且大于0。
+ * @param pose [in] 圆柱局部系到所属连杆系的变换，平移m、旋转无量纲。
+ * @param error [out] 文件系统失败时的中文纠错提示。
+ * @return 成功返回持久缓存绝对路径；失败nullopt，调用方不得修改草稿。
+ *
+ * 先生成Z轴中心圆柱，再把内核定位变换烘焙到顶点，输出所属连杆系米制网格。
+ * runtime当前只支持网格恒等挂接，因此引用保持单位变换，不能丢掉非单位局部姿态。
+ * 使用经典locale、17位有效数字和固定32边圆周，同输入产生相同内容摘要。
+ * 缓存是Recorded外部来源；正式应用沿io重读及摘要校验，未固化前仍依赖该文件。
+ * 仅UI命令线程调用，无共享可变状态；QSaveFile原子替换避免半文件被引用。
+ */
+std::optional<QString> writePlaceholderMesh(double length, const rw::math::Transform3D<double>& pose, std::string& error)
+{
+    constexpr int sides = 32; // 预览占位圆柱圆周32边，最大径向偏差小于半径的0.5%。
+    constexpr double pi = 3.14159265358979323846;
+    std::ostringstream obj;obj.imbue(std::locale::classic());obj << std::setprecision(17);
+    obj << "# IRD placeholder cylinder, vertices in link frame, metres\n";
+    const auto vertex=[&](double x,double y,double z){
+        // 展开R*p+t，沿独立构建的header-only纪律，不引入框架外联multiply符号。
+        obj << "v " << pose.R()(0,0)*x+pose.R()(0,1)*y+pose.R()(0,2)*z+pose.P()[0]
+            << ' ' << pose.R()(1,0)*x+pose.R()(1,1)*y+pose.R()(1,2)*z+pose.P()[1]
+            << ' ' << pose.R()(2,0)*x+pose.R()(2,1)*y+pose.R()(2,2)*z+pose.P()[2] << '\n';
+    };
+    for (int i=0;i<sides;++i) {
+        const double a=2*pi*i/sides;
+        const double x=kPlaceholderCylinderRadius*std::cos(a);
+        const double y=kPlaceholderCylinderRadius*std::sin(a);
+        vertex(x,y,-length/2);vertex(x,y,length/2);
+    }
+    vertex(0,0,-length/2);vertex(0,0,length/2);
+    for (int i=0;i<sides;++i) {
+        const int lo=2*i+1, hi=lo+1, nextLo=2*((i+1)%sides)+1, nextHi=nextLo+1;
+        // 从外部观察逆时针三角面，侧面与端盖均朝外，避免背面剔除产生缺面。
+        obj << "f " << lo << ' ' << nextLo << ' ' << nextHi << '\n';
+        obj << "f " << lo << ' ' << nextHi << ' ' << hi << '\n';
+        obj << "f " << 2*sides+1 << ' ' << nextLo << ' ' << lo << '\n';
+        obj << "f " << 2*sides+2 << ' ' << hi << ' ' << nextHi << '\n';
+    }
+    const auto bytes=obj.str();core::ContentDigester digester;digester.update(bytes.data(),bytes.size());
+    const auto digest=digester.finalize();
+    const auto hash=QByteArray(reinterpret_cast<const char*>(digest.data()),static_cast<int>(digest.size())).toHex();
+    const auto cache=QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    if(cache.isEmpty()) {error="系统未提供可写缓存目录，请检查用户目录权限。";return std::nullopt;}
+    const auto directory=cache+"/ird-generated-geometry";
+    if(!QDir().mkpath(directory)){error="不能创建占位网格缓存目录，请检查磁盘及目录权限。";return std::nullopt;}
+    const auto path=directory+"/cylinder-"+QString::fromLatin1(hash)+".obj";
+    QSaveFile file(path);
+    if(!file.open(QIODevice::WriteOnly)
+       || file.write(bytes.data(),static_cast<qint64>(bytes.size()))!=static_cast<qint64>(bytes.size())
+       || !file.commit()) {
+        error="占位网格保存失败："+file.errorString().toStdString();return std::nullopt;
+    }
+    return path;
+}
 
 // =====================================================================
 // 对话框宿主（生产装配——真实 Qt 模态；单例无状态）
@@ -1330,23 +1393,31 @@ bool executeModelingCommand(const std::string& commandId,
             summary = "驱动关节原点未提供——无法定位占位圆柱（先补关节原点）";
             return false;
         }
-        const auto& link = draft.design.links[linkIndex];
-        const std::string refId = "placeholder-" + link.localName;
-        // 内核纯函数生成（确定性——同输入同位姿字节；resourceRefId＝会话内
-        // 作用域键）。★ schema 边界（内核注释原文）：占位原语的 resourceManifest
-        // 登记形态"随 schema 澄清落位"（图元参数无 schema 落点）——本流程不
-        // 伪造清单条目，悬空状态经面板几何行"未入资源清单"警示如实呈现。
-        GeneratedGeometry generated = makeLinkPlaceholderCylinder(
-            rw::math::Vector3D<double>(0.0, 0.0, 0.0),
-            origin.tryValue()->d(), refId, kPlaceholderCylinderRadius);
-        draft.design.links[linkIndex].visual = std::move(generated.geometry);
+        const auto direction=origin.tryValue()->d();
+        const double length=std::sqrt(direction[0]*direction[0]+direction[1]*direction[1]+direction[2]*direction[2]);
+        if(!std::isfinite(length)||length<=0.0){
+            summary="关节原点与连杆原点重合，不能生成零长度圆柱。请先填写该关节原点XYZ（m），或直接挂接真实网格。";
+            return false;
+        }
+        // 先完成文件生成与既有io预算/格式/摘要检查，再一次性写入候选草稿。
+        // 失败只留下可复用缓存文件，不产生半条资源登记或悬空几何引用。
+        const auto generated=makeLinkPlaceholderCylinder(
+            rw::math::Vector3D<double>(0,0,0),direction,"placeholder",kPlaceholderCylinderRadius);
+        std::string error;const auto path=writePlaceholderMesh(length,generated.geometry.localTransform,error);
+        if(!path){summary=error;return false;}
+        // 顶点已经处于连杆系；使用缺省单位局部变换，避免双重应用定位。
+        std::optional<GeometryRef> geometry=GeometryRef{};
+        auto candidate=evaluateManagedGeometry(draft,geometry,ManagedGeometrySource::External,
+            path->toStdString(),makeIoResourceProbe(),error);
+        if(!candidate){summary=error;return false;}
+        candidate->design.links[linkIndex].visual=geometry;
         ModelingChangeRecord record;
-        record.subject = "links[" + std::to_string(linkIndex) + "].visual";
-        record.summary = "生成占位圆柱（半径 " + std::to_string(kPlaceholderCylinderRadius)
-                         + " m，几何引用未入资源清单——schema 边界）";
-        session.draft.changes.push_back(std::move(record));
-        if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
-        summary = "占位圆柱已生成并写入视觉几何（资源清单登记随 schema 澄清落位）——请经『应用草稿』提交";
+        record.subject="links["+std::to_string(linkIndex)+"].visual";
+        record.summary="生成可提交占位网格（圆柱半径 "+std::to_string(kPlaceholderCylinderRadius)+" m）";
+        candidate->changes.push_back(std::move(record));
+        draft=std::move(*candidate);
+        if(deps.recomputeReadiness){deps.recomputeReadiness();}
+        summary="占位圆柱网格已生成并登记资源。请执行项目级『应用草稿』，在正式三维场景观察。";
         return true;
     }
 

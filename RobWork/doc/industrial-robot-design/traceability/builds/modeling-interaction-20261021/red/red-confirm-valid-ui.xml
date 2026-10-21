@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.002" timestamp="2026-10-21T10:54:19.621" name="AllTests">
+  <testsuite name="FormEditModel" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-21T10:54:19.622">
+    <testcase name="AuthoritativeRebindDuringConfirmWins_UX07_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\FormEditModelTest.cpp" line="658" status="run" result="completed" time="0." timestamp="2026-10-21T10:54:19.623" classname="FormEditModel">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\FormEditModelTest.cpp:671&#x0A;Expected equality of these values:&#x0A;  *model.currentValueSi(&quot;joint-clearance&quot;)&#x0A;    Which is: 0.45000000000000001&#x0A;  0.3&#x0A;    Which is: 0.29999999999999999&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\FormEditModelTest.cpp:671
+Expected equality of these values:
+  *model.currentValueSi("joint-clearance")
+    Which is: 0.45000000000000001
+  0.3
+    Which is: 0.29999999999999999
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

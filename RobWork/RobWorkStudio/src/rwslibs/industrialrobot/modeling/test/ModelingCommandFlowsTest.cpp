@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cmath> // F09独立解析质量/惯量参考，不调用被测估算器算期望。
 #include <optional>
+#include <sstream> // 独立读取OBJ顶点，验证烘焙后的连杆系端点而非只验文件存在。
 #include <string>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
@@ -278,8 +279,7 @@ TEST(ModelingCommandFlows, EstimateProperties_OverwriteUserValuesNeedsConfirm_UI
 // generate-placeholder-geometry（§5.2——占位圆柱＋schema 边界诚实留痕）
 // =====================================================================
 
-/// 选中连杆→visual 写入占位圆柱引用（Primitive 类别＋会话作用域键）；资源
-/// 清单不登记（schema 边界——清单登记形态随 schema 澄清落位，流程如实留痕）。
+/// MDL-04/AT-01：占位必须是可读可提交的真实资源；不能仅写悬空Primitive引用。
 TEST(ModelingCommandFlows, PlaceholderGeometry_WritesVisualRef_UI_T41C)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-04"}, std::vector<std::string>{});
@@ -294,20 +294,39 @@ TEST(ModelingCommandFlows, PlaceholderGeometry_WritesVisualRef_UI_T41C)
                                        fx.session, fx.deps(), fx.host, summary));
     const LinkEntry& link = fx.session.draft.design.links[2];
     ASSERT_TRUE(link.visual.has_value()) << "visual 几何引用未写入";
-    EXPECT_EQ(link.visual->kind, GeometryKind::Primitive) << "占位＝原语类别";
-    EXPECT_EQ(link.visual->resourceRefId,
-              "placeholder-" + link.localName) << "会话作用域键按连杆名派生";
-    EXPECT_TRUE(fx.session.draft.design.resourceManifest.empty()
-                || std::none_of(fx.session.draft.design.resourceManifest.begin(),
-                                fx.session.draft.design.resourceManifest.end(),
-                                [&link](const ResourceRef& r) {
-                                    return r.resourceId == link.visual->resourceRefId;
-                                }))
-        << "占位原语不入资源清单（schema 边界——不伪造条目）";
+    EXPECT_EQ(link.visual->kind, GeometryKind::Mesh) << "现有schema通过真实OBJ承载占位圆柱";
+    const auto& resources=fx.session.draft.design.resourceManifest;
+    const auto resource=std::find_if(resources.begin(),resources.end(),[&](const ResourceRef& r){
+        return r.resourceId==link.visual->resourceRefId;
+    });
+    ASSERT_NE(resource,resources.end())<<"生成成功却不能提交：几何资源未登记";
+    ASSERT_TRUE(resource->externalRecord.has_value());
+    QFile mesh(QString::fromStdString(resource->externalRecord->absPath));
+    ASSERT_TRUE(mesh.open(QIODevice::ReadOnly));const auto bytes=mesh.readAll();
+    EXPECT_TRUE(bytes.contains("v "));EXPECT_TRUE(bytes.contains("f "));
+    // 本夹具驱动原点为(0,0,0.3)m：网格必须从连杆原点延伸到该关节，
+    // 不能把中心圆柱和一个runtime尚不消费的局部变换分别保存而显示错位。
+    std::istringstream lines(bytes.toStdString());std::string line;double minZ=1,maxZ=-1;
+    while(std::getline(lines,line)){
+        std::istringstream row(line);std::string token;double x,y,z;
+        if(row>>token && token=="v" && row>>x>>y>>z){minZ=std::min(minZ,z);maxZ=std::max(maxZ,z);}
+    }
+    EXPECT_NEAR(minZ,0.0,1e-12);EXPECT_NEAR(maxZ,0.3,1e-12);
+    EXPECT_DOUBLE_EQ(link.visual->localTransform.P().norm2(),0.0);
+    EXPECT_EQ(resource->externalRecord->recordedDigest,resource->contentDigest);
     ASSERT_EQ(fx.session.draft.changes.size(), std::size_t{1});
-    EXPECT_TRUE(fx.session.draft.changes[0].summary.find("schema") != std::string::npos)
-        << "变更记录留痕 schema 边界";
     EXPECT_EQ(fx.recomputeCalls, 1);
+}
+
+/** @brief MDL-04：模板原点重合是可预期输入，不得抛异常或留下半条几何。 */
+TEST(ModelingCommandFlows, PlaceholderZeroLengthIsActionableAndAtomic_MDL04_T30)
+{
+    IRD_TEST_INFO("MDL-04",{"AT-01"},std::nullopt);
+    FlowHarness fx;fx.session.draft=makeSixAxisDraft();fx.anchor=fx.session.draft.design.links[0].objectId;
+    const auto before=fx.session.draft;std::string summary;bool ok=true;
+    EXPECT_NO_THROW(ok=executeModelingCommand("modeling.generate-placeholder-geometry",fx.session,fx.deps(),fx.host,summary));
+    EXPECT_FALSE(ok);EXPECT_EQ(fx.session.draft,before);
+    EXPECT_NE(summary.find("原点"),std::string::npos);
 }
 
 /// 末端法兰连杆（无驱动关节参考）＝诚实拒绝（法兰几何归后续任务）。

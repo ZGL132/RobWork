@@ -1,0 +1,51 @@
+Note: Google Test filter = *T30
+[==========] Running 9 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 9 tests from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.ManualEntryCommandsVisibleWithoutExpansion_UX01_T30
+[       OK ] ModelingPanelGuiTest.ManualEntryCommandsVisibleWithoutExpansion_UX01_T30 (832 ms)
+[ RUN      ] ModelingPanelGuiTest.TreeSelectionReturnsToJointEditor_MDL07_T30
+[       OK ] ModelingPanelGuiTest.TreeSelectionReturnsToJointEditor_MDL07_T30 (445 ms)
+[ RUN      ] ModelingPanelGuiTest.ManualWindowFitsAndJointApplyIsReachable_UX09_T30
+[       OK ] ModelingPanelGuiTest.ManualWindowFitsAndJointApplyIsReachable_UX09_T30 (502 ms)
+[ RUN      ] ModelingPanelGuiTest.NamedPoseComboActuallySelectsNewEntry_MDL17_T30
+[       OK ] ModelingPanelGuiTest.NamedPoseComboActuallySelectsNewEntry_MDL17_T30 (302 ms)
+[ RUN      ] ModelingPanelGuiTest.SameTargetRefreshKeepsPoseInputs_UX05_T30
+[       OK ] ModelingPanelGuiTest.SameTargetRefreshKeepsPoseInputs_UX05_T30 (293 ms)
+[ RUN      ] ModelingPanelGuiTest.TcpSelectionImmediatelyRepaintsOffset_MDL13_T30
+[       OK ] ModelingPanelGuiTest.TcpSelectionImmediatelyRepaintsOffset_MDL13_T30 (282 ms)
+[ RUN      ] ModelingPanelGuiTest.RefreshKeepsNamedPoseAndDrivetrainInputs_UX05_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(351): error: Expected equality of these values:
+  note->text()
+    Which is: {}
+  "尚未保存的备注"
+    Which is: 00007FF63DBFCBF8
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(354): error: Expected equality of these values:
+  t->item(r,1)->text().toDouble()
+    Which is: 0
+  0.4
+    Which is: 0.40000000000000002
+
+[  FAILED  ] ModelingPanelGuiTest.RefreshKeepsNamedPoseAndDrivetrainInputs_UX05_T30 (308 ms)
+[ RUN      ] ModelingPanelGuiTest.InvalidPoseConfigBlocksSave_MDL17_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(376): error: Expected equality of these values:
+  m_ws
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 18-2D 44-54 FB-21 19-C0 18-2D 44-54 FB-21 19-40 0F-00 00-00 00-00 00-00 30-09 D5-ED 3E-02 00-00 0A-00 00-00 00-00 00-00 70-CE 0F-F5 BF-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 BF-00 00-00>
+  before
+    Which is: 1072-byte object <01-00 00-00 00-00 00-00 64-65 6D-6F 00-00 00-00 00-00 00-00 00-00 00-00 04-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 01-00 00-00 00-00 00-00 ... 28-3A 5A-E5 3E-02 00-00 B8-39 5A-E5 3E-02 00-00 00-3A 5A-E5 3E-02 00-00 21-E0 0C-F4 FE-7F 00-00 00-A3 F0-ED 3E-02 00-00 90-39 5A-E5 3E-02 00-00 60-3A 5A-E5 3E-02 00-00 00-F0 91-3D F6-7F 00-00>
+构型非法时仍保存了条目的其他字段
+
+[  FAILED  ] ModelingPanelGuiTest.InvalidPoseConfigBlocksSave_MDL17_T30 (315 ms)
+[ RUN      ] ModelingPanelGuiTest.ReplacedJointCannotInheritOldInput_UX05_T30
+[       OK ] ModelingPanelGuiTest.ReplacedJointCannotInheritOldInput_UX05_T30 (330 ms)
+[----------] 9 tests from ModelingPanelGuiTest (3638 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 1 test suite ran. (3640 ms total)
+[  PASSED  ] 7 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ModelingPanelGuiTest.RefreshKeepsNamedPoseAndDrivetrainInputs_UX05_T30
+[  FAILED  ] ModelingPanelGuiTest.InvalidPoseConfigBlocksSave_MDL17_T30
+
+ 2 FAILED TESTS

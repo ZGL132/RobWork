@@ -1,0 +1,1 @@
+QWindowsWindow::setGeometry: Unable to set geometry 200x104+640+336 (frame: 216x143+632+305) on QWidgetWindow/"ird_property_inspectorWindow" on "\\.\DISPLAY1". Resulting geometry: 200x119+640+336 (frame: 216x158+632+305) margins: 8, 31, 8, 8 minimum size: 97x104 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=113, y=143)))

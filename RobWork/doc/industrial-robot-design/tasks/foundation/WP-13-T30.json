@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T30",
+  "unit": "modeling",
+  "masterWp": "WP-B",
+  "title": "修复建模人工验收交互阻断并逐项复验",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": [
+    "MDL-01",
+    "MDL-04",
+    "MDL-07",
+    "MDL-13",
+    "MDL-15",
+    "MDL-17",
+    "MDL-22",
+    "UX-01",
+    "UX-05",
+    "UX-07",
+    "UX-09"
+  ],
+  "designRefs": [
+    "units/modeling.md#9.7",
+    "units/ui.md#4.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/FormEditCommon.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/ParamTablePanelGuiTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/FormEditModelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T30.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/modeling-interaction-20261021/**",
+    "RobWork/docs/superpowers/plans/2026-10-21-modeling-interaction-repair.md",
+    "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/SafePath.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/SafePathTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "gui-tests",
+    "doc-update",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t30",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-3",
+    "P-MDL-4",
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "普通窗口所有建模入口及表单应用确认可达，选择驱动编辑页正确，草稿不会因刷新丢失或跨对象误写。",
+    "占位几何沿真实资源通路可提交显示，零长度有明确输入指引；取消零写入。",
+    "按用户最新要求分批交付：第1批覆盖本轮明确修复项，保留红绿证据、XML及原生报告；验证后给出人工步骤并暂停，47项全面复验留待后续批次，不把未验证三维标通过。",
+    "双模式构建和门禁真实执行，不用子代理，不自行合入主线。",
+    "第2批按所有者明确要求：工业机器人项目的8个项目命令及最近项目提升至File顶层，与Exit同级，保持命令路由/顺序/使能和最近项目内容。验证后给出人工步骤并暂停。",
+    "第3批结构树增加模型/分类/对象三级及展开全部/折叠全部，正常刷新保持状态，重复外部定位展开目标祖先，折叠不脏化，验证后人工暂停。"
+  ],
+  "note": "所有者2026-10-21要求先修复完整建模交互再人工终验；沿用推荐方案自动实施授权。基线04b69c307；不改公共接口/依赖边/存储，实施方案见同日modeling-interaction-repair计划。 用户追加：每批修改验证完成提供人工步骤后暂停，等待人工反馈；本契约整体保持ready，不假报全部修复完成。装配清单仅同步UiPlugin include引起的两处行号漂移。"
+}

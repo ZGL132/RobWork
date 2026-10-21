@@ -30,6 +30,7 @@
 #include <QLabel>
 #include <QLineEdit>                              // TCP 显示名行编辑（UI-T58）
 #include <QScrollBar>
+#include <QSignalBlocker> // 树重建恢复选中时屏蔽呈现回环，不覆盖调用方原有阻塞态。
 #include <QSpinBox>
 #include <QSplitter>
 #include <QStackedWidget>
@@ -38,6 +39,7 @@
 #include <QTime>
 #include <QTreeWidgetItemIterator>
 #include <QVBoxLayout>
+#include <QVariant>
 
 #include <array>
 #include <map>
@@ -59,6 +61,30 @@
 
 namespace sdurws::ird::modeling {
 namespace {
+
+/**
+ * @brief 将呈现表绑定到对象及权威SI基线；同一对象同值刷新保留未确认输入。
+ * @param panel [in,out] 调用方持有的UI面板，仅UI线程访问。
+ * @param model [in,out] 表单会话，不改变其公共重绑契约。
+ * @param identity [in] 对象稳定ID及子条目键；下标不能替代身份。
+ * @param values [in] 字段键及SI数值，nullopt表示未提供；角度rad、长度m。
+ * @return true表示已回填；false表示无需重绑。无领域写入、不读取外部资源。
+ */
+bool bindParamBaseline(QWidget* panel, ui::ParamEditModel& model, const QString& identity,
+    const std::vector<std::pair<std::string, std::optional<double>>>& values)
+{
+    QVariantList fingerprint{identity};
+    for (const auto& value : values) {
+        fingerprint.push_back(QString::fromStdString(value.first));
+        fingerprint.push_back(value.second ? QVariant(*value.second) : QVariant());
+    }
+    // 此属性仅记录视图上次绑定来源，不作为业务权威；真实值始终由ws传入。
+    if (panel->property("ird_baseline_binding").toList() == fingerprint) { return false; }
+    panel->setProperty("ird_baseline_binding", fingerprint);
+    for (const auto& value : values) { model.setBaseline(value.first, value.second); }
+    ui::refreshParamTablePanel(panel);
+    return true;
+}
 
 /// 树锚列（隐藏列——节点锚 ObjectId 规范文本；L-1 关联键的控件承载）。
 constexpr int kAnchorColumn = 1;  // 锚列（树第 2 列——UI-T47 gui 定位复用）
@@ -554,8 +580,18 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     buildPreviewPane(new QVBoxLayout(previewPage));    // 区⑤预览页（仅已应用修订）
     // 编辑页签居首（B.1 复杂对象编辑模式——结构树选择→详细编辑页的主入口；
     // 与共享检查器高频标量页分野：大批量/权威敏感字段收口本页）。
-    tabs->addTab(editPage, QStringLiteral("编辑"));
-    tabs->addTab(toolsPage, QStringLiteral("工具"));
+    // UX-05/09：编辑页和工具页都有可变长度内容。滚动边界必须覆盖整页，
+    // 否则属性表与隐藏堆栈页的最小高度会把应用/确认按钮挤出真实屏幕。
+    const auto scrollPage = [tabs](QWidget* page, const char* name) {
+        auto* scroll = new QScrollArea(tabs);
+        scroll->setObjectName(QString::fromLatin1(name));
+        scroll->setWidgetResizable(true);
+        scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setWidget(page);
+        return scroll;
+    };
+    tabs->addTab(scrollPage(editPage,"ird_modeling_edit_scroll"), QStringLiteral("编辑"));
+    tabs->addTab(scrollPage(toolsPage,"ird_modeling_tools_scroll"), QStringLiteral("工具"));
     tabs->addTab(readinessPage, QStringLiteral("就绪"));
     tabs->addTab(previewPage, QStringLiteral("预览"));
     right->addWidget(tabs, 1);
@@ -643,7 +679,10 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     for (std::size_t i = 0; i < m_commands.size(); ++i) {
         // F-502 分层归组：低频诊断六命令入折叠区，其余（对象与导入三条＋
         // 复位 Home/Zero——常用姿态操作）常驻。组首标题随命令同容器。
-        const bool collapsed = m_commands[i].id != "modeling.reset-home-zero";
+        const auto& id = m_commands[i].id;
+        const bool collapsed = id != "modeling.reset-home-zero"
+            && id != "modeling.new-from-template" && id != "modeling.import-urdf"
+            && id != "modeling.import-xacro" && id != "modeling.import-workcell";
         for (const auto& [leaderId, title] : sectionLeaders) {
             if (m_commands[i].id == leaderId) {
                 addSectionHeader(title, collapsed);
@@ -873,7 +912,17 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     // 结束，本自持树升格为面板主导航呈现；与共享项目树的 L-R1 双向联动
     // 语义不变）。
 
-    left->addWidget(new QLabel(QStringLiteral("建模结构"), this));
+    auto* treeHeader = new QHBoxLayout();
+    treeHeader->addWidget(new QLabel(QStringLiteral("建模结构"), this));
+    treeHeader->addStretch();
+    // WP-13-T30：展开/折叠只改变浏览状态，不归写命令目录，也不受只读门控。
+    auto* expandAll = new QPushButton(QStringLiteral("展开全部"), this);
+    auto* collapseAll = new QPushButton(QStringLiteral("折叠全部"), this);
+    expandAll->setObjectName(QStringLiteral("ird_modeling_struct_expand_all"));
+    collapseAll->setObjectName(QStringLiteral("ird_modeling_struct_collapse_all"));
+    treeHeader->addWidget(expandAll);
+    treeHeader->addWidget(collapseAll);
+    left->addLayout(treeHeader);
     m_tree = new QTreeWidget(this);
     m_tree->setColumnCount(2);
     m_tree->setHeaderHidden(true);
@@ -885,6 +934,8 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
         ui::resolveText("panel.modeling.tree.accessible")));
     connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
             &ModelingPanelWidget::onTreeSelectionChanged);
+    connect(expandAll, &QPushButton::clicked, m_tree, &QTreeWidget::expandAll);
+    connect(collapseAll, &QPushButton::clicked, m_tree, &QTreeWidget::collapseAll);
     left->addWidget(m_tree, 1);
 
     // 结构操作按钮行（UI-T47——§5.2 v0.28 四操作词表的面板承载；六轴重置
@@ -924,7 +975,15 @@ void ModelingPanelWidget::buildPropertyPane(QVBoxLayout* right)
     auto* formHost = new QWidget(this);
     m_propertyForm = new QFormLayout(formHost);
     m_propertyForm->setLabelAlignment(Qt::AlignRight);
-    right->addWidget(formHost);
+    // 属性是当前对象的摘要，不应占满详细编辑空间；长属性/几何操作在
+    // 自有视口内滚动，详细编辑页仍保留可用高度（UX-09五区同时可用）。
+    auto* scroll = new QScrollArea(this);
+    scroll->setObjectName(QStringLiteral("ird_modeling_property_scroll"));
+    scroll->setWidgetResizable(true);
+    scroll->setMinimumHeight(72);
+    scroll->setMaximumHeight(180);
+    scroll->setWidget(formHost);
+    right->addWidget(scroll);
 }
 
 // ---- 区③域工具区 -----------------------------------------------------
@@ -1125,29 +1184,82 @@ void ModelingPanelWidget::setAppliedPreview(
 
 void ModelingPanelWidget::refreshStructureTree(const ModelingWorkingSet& ws)
 {
-    // UI-T41 批次B（B3）：滚动位跨刷新保持（树行重建后滚回原视口——刷新
-    // 不打断浏览位置；选中恢复既有锚机制不变）。
+    // 第一步：只快照呈现状态。旧条目随后由Qt清理，不持有失效节点指针；
+    // 键含模型身份，另建模型不能继承上一模型的折叠状态（MDL-07/UX-09）。
     const int treeScroll = m_tree->verticalScrollBar()->value();
-    m_tree->blockSignals(true);  // 重建期的选中变化不回环（避免重投影风暴）
+    std::map<QString, bool> expanded;
+    for (QTreeWidgetItemIterator it(m_tree); *it; ++it) {
+        expanded.emplace((*it)->data(kLabelColumn, Qt::UserRole).toString(), (*it)->isExpanded());
+    }
+    const QSignalBlocker blocker(m_tree);
     m_tree->clear();
     const std::string lastAnchor =
         m_lastSelected.has_value() ? m_lastSelected->toCanonical() : std::string();
+    const QString modelKey = QString::fromStdString(ws.rootObjectId
+        ? ws.rootObjectId->toCanonical()
+        : (!ws.design.joints.empty() ? ws.design.joints.front().objectId.toCanonical() : "empty-model"));
+    QTreeWidgetItem* root = nullptr;
+    QTreeWidgetItem* jointGroup = nullptr;
+    QTreeWidgetItem* linkGroup = nullptr;
+    QTreeWidgetItem* toolGroup = nullptr;
+    QTreeWidgetItem* sceneGroup = nullptr;
+    QTreeWidgetItem* selectedItem = nullptr;
+    // 第二步：分类是纯视图容器。没有业务锚的节点不允许选中，但保留启用，
+    // 让鼠标折叠箭头和键盘导航可操作；绝不伪造ObjectId改变编辑语义。
+    const auto group = [&](const QString& title, const QString& key) {
+        auto* item = new QTreeWidgetItem(root);
+        item->setText(kLabelColumn, title);
+        item->setData(kLabelColumn, Qt::UserRole, modelKey + "/group/" + key);
+        item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
+        return item;
+    };
     for (const StructureNode& n : buildStructureTree(ws)) {
-        auto* item = new QTreeWidgetItem(m_tree);
+        QTreeWidgetItem* parent = root;
+        switch (n.kind) {
+        case StructureNodeKind::Joint:
+            if (!jointGroup) { jointGroup = group(QStringLiteral("关节"), "joints"); }
+            parent = jointGroup;
+            break;
+        case StructureNodeKind::Link:
+            if (!linkGroup) { linkGroup = group(QStringLiteral("连杆"), "links"); }
+            parent = linkGroup;
+            break;
+        case StructureNodeKind::ToolsGroup:
+            if (!n.objectId) { toolGroup = group(QString::fromStdString(n.displayLabel), "tools"); continue; }
+            parent = toolGroup;
+            break;
+        case StructureNodeKind::SceneGroup:
+            if (!n.objectId) { sceneGroup = group(QString::fromStdString(n.displayLabel), "scene"); continue; }
+            parent = sceneGroup;
+            break;
+        default:
+            break; // 根、基座安装、已有位姿集与传动保持直属层次，不创造挂载语义。
+        }
+        auto* item = parent ? new QTreeWidgetItem(parent) : new QTreeWidgetItem(m_tree);
+        if (n.kind == StructureNodeKind::ModelRoot) { root = item; }
         item->setText(kLabelColumn, QString::fromStdString(n.displayLabel));
         item->setText(kAnchorColumn,
                       n.objectId.has_value()
                           ? QString::fromStdString(n.objectId->toCanonical())
                           : QString());
-        item->setDisabled(!n.objectId.has_value());  // 分组行不可选（无锚——仅折叠呈现）
+        const QString localKey = n.objectId ? QString::fromStdString(n.objectId->toCanonical())
+            : QString::number(static_cast<int>(n.kind));
+        item->setData(kLabelColumn, Qt::UserRole, modelKey + "/object/" + localKey);
+        if (!n.objectId) { item->setFlags(item->flags() & ~Qt::ItemIsSelectable); }
         // 选中保持：重建后按锚恢复当前行（L-1 选中态跨刷新恒定）。失效锚
         // （被删对象）恢复落空＝空选中——属性区空态如实（不伪造行）。
         if (!lastAnchor.empty()
             && item->text(kAnchorColumn) == QString::fromStdString(lastAnchor)) {
-            m_tree->setCurrentItem(item);
+            selectedItem = item;
         }
     }
-    m_tree->blockSignals(false);
+    // 第三步：先恢复当前对象，再恢复显式折叠态。恢复选中不能把用户刚折叠的
+    // 祖先重新展开；只有focusObject的显式定位才展开祖先。新节点默认展开。
+    if (selectedItem) { m_tree->setCurrentItem(selectedItem); }
+    for (QTreeWidgetItemIterator it(m_tree); *it; ++it) {
+        const auto old = expanded.find((*it)->data(kLabelColumn, Qt::UserRole).toString());
+        (*it)->setExpanded(old == expanded.end() || old->second);
+    }
     m_tree->verticalScrollBar()->setValue(treeScroll);  // B3 滚动位还原
 }
 
@@ -1418,7 +1530,7 @@ void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
 
     // 会话选中锚（幂等——重复定位同一对象不重复刷新，防聚焦循环：
     // SelectionAdapter 回调→focusObject→树选中信号→select 同值＝false）。
-    if (!m_selection.select(oid)) { return; }
+    const bool selectionChangedNow = m_selection.select(oid);
     m_lastSelected = oid;
 
     // 自持树滚动＋置当前行（行选中信号因会话锚已置而幂等短路——属性区
@@ -1427,8 +1539,14 @@ void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
     QTreeWidgetItemIterator it(m_tree);
     while (*it != nullptr) {
         if ((*it)->text(kAnchorColumn) == anchor) {
+            // 显式定位须让目标可见；即使OID未变，用户也可能刚折叠祖先。
+            // 重复定位只展开/滚动，不重复发选择事件或重绑表单暂存。
+            for (auto* parent = (*it)->parent(); parent; parent = parent->parent()) {
+                parent->setExpanded(true);
+            }
             m_tree->setCurrentItem(*it);   // 树高亮（选中信号幂等——不回环）
             m_tree->scrollToItem(*it);     // 树滚动（L-1"反向定位→树滚动"）
+            if (!selectionChangedNow) { return; }
             Q_EMIT selectionChanged(anchor);
             refreshPropertiesFromLastWorkingSet();
             return;
@@ -1437,6 +1555,7 @@ void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
     }
     // 树中无该行（内容漂移——如重建间隙）：属性区仍按锚重投影（选中
     // 是会话态不依赖树行），树呈现等待下次 refreshPanel。
+    if (!selectionChangedNow) { return; }
     Q_EMIT selectionChanged(anchor);
     refreshPropertiesFromLastWorkingSet();
 }
@@ -1472,12 +1591,20 @@ void ModelingPanelWidget::refreshPropertyRowsFromLastWorkingSet()
     // 更新值文本——不删行不重建控件，输入焦点与未完成输入不丢失（选中/
     // 就绪刷新不再打断编辑）；形状变化（换选中对象/只读切换）才走重建。
     // UI-T27 P0-1 修复的"清空删尽"语义保留在重建路径（while 删尽）。
-    const bool sameShape = rows.size() == m_propertyRows.size()
+    const auto anchor=m_lastSelected ? QString::fromStdString(m_lastSelected->toCanonical()) : QString();
+    auto* formHost=m_propertyForm->parentWidget();
+    const bool sameObject=formHost->property("ird_property_anchor").toString()==anchor;
+    formHost->setProperty("ird_property_anchor",anchor);
+    const bool sameShape = sameObject && rows.size() == m_propertyRows.size()
                            && m_propertyEditors.size() == rows.size();
     if (sameShape) {
         bool keysEqual = true;
         for (std::size_t i = 0; i < rows.size() && keysEqual; ++i) {
-            keysEqual = rows[i].fieldKey == m_propertyRows[i].fieldKey;
+            keysEqual = rows[i].fieldKey == m_propertyRows[i].fieldKey
+                && rows[i].enablement == m_propertyRows[i].enablement
+                && rows[i].unitText == m_propertyRows[i].unitText;
+            // 限位改变后必须重建输入validator，不能沿用旧对象/旧范围。
+            if(rows[i].fieldKey=="bounds" && rows[i].valueText!=m_propertyRows[i].valueText){keysEqual=false;}
         }
         if (keysEqual) {
             for (std::size_t i = 0; i < rows.size(); ++i) {
@@ -1507,6 +1634,8 @@ void ModelingPanelWidget::refreshPropertyRowsFromLastWorkingSet()
 
     // 重建路径：清空必须删尽全部行（UI-T27 P0-1 修复——while 循环删尽，
     // 行数不累积）。
+    // 换目标销毁聚焦编辑器前先断开提交信号，防焦点丢失提交旧对象文本。
+    for(auto* editor:m_propertyEditors){QObject::disconnect(editor,nullptr,this,nullptr);}
     while (m_propertyForm->rowCount() > 0) {
         m_propertyForm->removeRow(0);
     }
@@ -1843,9 +1972,12 @@ void ModelingPanelWidget::refreshJointEditPane()
     const bool sameTarget = m_jointEditTarget.has_value()
                             && *m_jointEditTarget == *jointIndex
                             && m_jointEditSchemaType == joint.type
-                            && m_jointEditPanel != nullptr;
+                            && m_jointEditPanel != nullptr
+                            && m_jointEditPanel->property("ird_joint_id").toString()
+                                == QString::fromStdString(joint.objectId.toCanonical());
     if (!sameTarget) {
         rebuildJointEditModel(joint);
+        m_jointEditPanel->setProperty("ird_joint_id", QString::fromStdString(joint.objectId.toCanonical()));
     }
     m_jointEditHint->hide();
     if (m_jointEditPanel != nullptr) {
@@ -2444,13 +2576,14 @@ void ModelingPanelWidget::refreshToolMountPane()
     // 基线回填（mountInterface 恒有值——Transform3D 值语义，无未提供态）。
     const auto& mount = ws->toolObjects[*toolIndex].mountInterface;
     const auto rpy = rpyview::rotationToRpy(mount.R());
-    m_toolEditModel->setBaseline(kToolMountXKey, mount.P()[0]);
-    m_toolEditModel->setBaseline(kToolMountYKey, mount.P()[1]);
-    m_toolEditModel->setBaseline(kToolMountZKey, mount.P()[2]);
-    m_toolEditModel->setBaseline(kToolMountRollKey, rpy[0]);
-    m_toolEditModel->setBaseline(kToolMountPitchKey, rpy[1]);
-    m_toolEditModel->setBaseline(kToolMountYawKey, rpy[2]);
-    ui::refreshParamTablePanel(m_toolEditPanel);
+    bindParamBaseline(m_toolEditPanel, *m_toolEditModel,
+        QString::fromStdString(ws->toolObjects[*toolIndex].objectId.toCanonical()), {
+            {kToolMountXKey, mount.P()[0]},
+            {kToolMountYKey, mount.P()[1]},
+            {kToolMountZKey, mount.P()[2]},
+            {kToolMountRollKey, rpy[0]},
+            {kToolMountPitchKey, rpy[1]},
+            {kToolMountYawKey, rpy[2]}});
     m_toolEditPanel->setEnabled(m_writable);  // L-7 页级门控
 }
 
@@ -2476,13 +2609,14 @@ void ModelingPanelWidget::refreshScenePosePane()
     m_sceneEditTarget = sceneIndex;
     const auto& world = ws->sceneObjects[*sceneIndex].worldPose;
     const auto rpy = rpyview::rotationToRpy(world.R());
-    m_sceneEditModel->setBaseline(kSceneWorldXKey, world.P()[0]);
-    m_sceneEditModel->setBaseline(kSceneWorldYKey, world.P()[1]);
-    m_sceneEditModel->setBaseline(kSceneWorldZKey, world.P()[2]);
-    m_sceneEditModel->setBaseline(kSceneWorldRollKey, rpy[0]);
-    m_sceneEditModel->setBaseline(kSceneWorldPitchKey, rpy[1]);
-    m_sceneEditModel->setBaseline(kSceneWorldYawKey, rpy[2]);
-    ui::refreshParamTablePanel(m_sceneEditPanel);
+    bindParamBaseline(m_sceneEditPanel, *m_sceneEditModel,
+        QString::fromStdString(ws->sceneObjects[*sceneIndex].objectId.toCanonical()), {
+            {kSceneWorldXKey, world.P()[0]},
+            {kSceneWorldYKey, world.P()[1]},
+            {kSceneWorldZKey, world.P()[2]},
+            {kSceneWorldRollKey, rpy[0]},
+            {kSceneWorldPitchKey, rpy[1]},
+            {kSceneWorldYawKey, rpy[2]}});
     m_sceneEditPanel->setEnabled(m_writable);
 }
 
@@ -2522,6 +2656,7 @@ void ModelingPanelWidget::applyToolMountEdits(const ui::ParamEditSet& editSet)
         rejection.detail = err->detail;
         onEditRejected(rejection);
     }
+    m_toolEditPanel->setProperty("ird_baseline_binding", QVariant());
     refreshPropertiesFromLastWorkingSet();  // 权威同步（乐观基线修正）
 }
 
@@ -2559,6 +2694,7 @@ void ModelingPanelWidget::applyScenePoseEdits(const ui::ParamEditSet& editSet)
         rejection.detail = err->detail;
         onEditRejected(rejection);
     }
+    m_sceneEditPanel->setProperty("ird_baseline_binding", QVariant());
     refreshPropertiesFromLastWorkingSet();
 }
 
@@ -2668,6 +2804,9 @@ void ModelingPanelWidget::refreshTcpPane()
             if (m_tcpCombo->count() > 0) { m_tcpCombo->clear(); }
         }
         m_tcpSelectedKey.clear();
+        m_tcpCombo->setEnabled(false);
+        m_tcpAddBtn->setEnabled(false);m_tcpRemoveBtn->setEnabled(false);m_tcpDefaultBtn->setEnabled(false);
+        m_tcpOffsetPanel->setProperty("ird_baseline_binding", QVariant());
         if (m_tcpOffsetPanel != nullptr) { m_tcpOffsetPanel->setEnabled(false); }
         // 显示名行同步禁用（L-7 无目标分支——UI-T58）。
         if (m_tcpDisplayNameEdit != nullptr) { m_tcpDisplayNameEdit->setEnabled(false); }
@@ -2689,6 +2828,8 @@ void ModelingPanelWidget::refreshTcpPane()
         m_tcpCombo->setCurrentIndex(keepIndex >= 0 ? keepIndex : 0);
     }
     m_tcpSelectedKey = m_tcpCombo->currentText();
+    // 无工具分支会禁用下拉，重新绑定实际工具后必须恢复只读浏览能力。
+    m_tcpCombo->setEnabled(true);
     m_tcpAddBtn->setEnabled(m_writable);
     m_tcpRemoveBtn->setEnabled(m_writable && !m_tcpSelectedKey.isEmpty());
     m_tcpDefaultBtn->setEnabled(m_writable && !m_tcpSelectedKey.isEmpty());
@@ -2702,19 +2843,18 @@ void ModelingPanelWidget::refreshTcpPane()
     const int sel = m_tcpCombo->currentIndex();
     if (sel < 0) { return; }
     const auto& entry = tool.tcpList[static_cast<std::size_t>(sel)];
-    // 显示名基线回填（UI-T58——选中条目 displayName 原样呈现；空值经
-    // placeholder 提示回落。setText 不触发 editingFinished，无重入面）。
-    if (m_tcpDisplayNameEdit != nullptr) {
-        m_tcpDisplayNameEdit->setText(QString::fromStdString(entry.displayName));
-    }
     const auto rpy = rpyview::rotationToRpy(entry.offset.R());
-    m_tcpOffsetModel->setBaseline(kTcpOffsetXKey, entry.offset.P()[0]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetYKey, entry.offset.P()[1]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetZKey, entry.offset.P()[2]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetRollKey, rpy[0]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetPitchKey, rpy[1]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetYawKey, rpy[2]);
-    ui::refreshParamTablePanel(m_tcpOffsetPanel);
+    const bool rebound = bindParamBaseline(m_tcpOffsetPanel, *m_tcpOffsetModel,
+        QString::fromStdString(tool.objectId.toCanonical()) + "/" + m_tcpSelectedKey, {
+            {kTcpOffsetXKey,entry.offset.P()[0]}, {kTcpOffsetYKey,entry.offset.P()[1]},
+            {kTcpOffsetZKey,entry.offset.P()[2]}, {kTcpOffsetRollKey,rpy[0]},
+            {kTcpOffsetPitchKey,rpy[1]}, {kTcpOffsetYawKey,rpy[2]}});
+    // 同目标刷新同时保留尚未提交的显示名；外部权威显示名改变则重新回填。
+    const auto name = QString::fromStdString(entry.displayName);
+    if (rebound || m_tcpDisplayNameEdit->property("ird_source_name").toString() != name) {
+        m_tcpDisplayNameEdit->setText(name);
+        m_tcpDisplayNameEdit->setProperty("ird_source_name",name);
+    }
 }
 
 void ModelingPanelWidget::onTcpComboChanged(int index)
@@ -2728,19 +2868,7 @@ void ModelingPanelWidget::onTcpComboChanged(int index)
         return;
     }
     m_tcpSelectedKey = m_tcpCombo->currentText();
-    const auto& entry =
-        ws->toolObjects[*m_toolEditTarget].tcpList[static_cast<std::size_t>(index)];
-    // 显示名基线随选中切换回填（UI-T58——与 offset 基线同源同刻）。
-    if (m_tcpDisplayNameEdit != nullptr) {
-        m_tcpDisplayNameEdit->setText(QString::fromStdString(entry.displayName));
-    }
-    const auto rpy = rpyview::rotationToRpy(entry.offset.R());
-    m_tcpOffsetModel->setBaseline(kTcpOffsetXKey, entry.offset.P()[0]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetYKey, entry.offset.P()[1]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetZKey, entry.offset.P()[2]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetRollKey, rpy[0]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetPitchKey, rpy[1]);
-    m_tcpOffsetModel->setBaseline(kTcpOffsetYawKey, rpy[2]);
+    refreshTcpPane(); // 单一回填路径，同时重绘偏移表和显示名。
 }
 
 void ModelingPanelWidget::onTcpAddClicked()
@@ -2872,6 +3000,7 @@ void ModelingPanelWidget::applyTcpOffsetEdits(const ui::ParamEditSet& editSet)
         rejection.detail = err->detail;
         onEditRejected(rejection);
     }
+    m_tcpOffsetPanel->setProperty("ird_baseline_binding", QVariant());
     refreshPropertiesFromLastWorkingSet();
 }
 
@@ -3080,30 +3209,38 @@ void ModelingPanelWidget::refreshPoseSetPane()
             if (e.key == m_poseSetSelectedKey.toStdString()) { entry = e; break; }
         }
     }
-    m_poseSetKeyEdit->setText(entry.has_value()
-                                  ? QString::fromStdString(entry->key)
-                                  : QString());
-    m_poseSetNoteEdit->setText(entry.has_value()
-                                   ? QString::fromStdString(entry->note)
-                                   : QString());
-    m_poseSetConfigBaseline.assign(jointCount, 0.0);
-    for (std::size_t i = 0; i < jointCount; ++i) {
-        const std::string key = "pose-config-" + std::to_string(i);
-        if (entry.has_value() && i < entry->jointConfiguration.size()) {
-            m_poseSetConfigBaseline[i] = entry->jointConfiguration[i];
-            m_poseSetConfigModel->setBaseline(key, entry->jointConfiguration[i]);
-        } else {
-            m_poseSetConfigModel->setBaseline(key, std::nullopt);
-        }
+    std::vector<std::pair<std::string,std::optional<double>>> values;
+    for(std::size_t i=0;i<jointCount;++i){
+        values.emplace_back("pose-config-"+std::to_string(i),
+            entry && i<entry->jointConfiguration.size()
+                ? std::optional<double>(entry->jointConfiguration[i]) : std::nullopt);
     }
-    ui::refreshParamTablePanel(m_poseSetConfigPanel);
+    const auto identity=QString::fromStdString(ws && ws->rootObjectId ? ws->rootObjectId->toCanonical() : "")
+        + "/" + (ws && ws->poseSetObject ? QString::fromStdString(ws->poseSetObject->objectId.toCanonical()) : "")
+        + "/" + m_poseSetSelectedKey;
+    // 关闭/重新打开会话的零关节阶段没有数值模型，不能对空表单执行绑定。
+    if(!m_poseSetConfigPanel || !m_poseSetConfigModel){
+        m_poseSetConfigBaseline.clear();m_poseSetKeyEdit->clear();m_poseSetNoteEdit->clear();return;
+    }
+    const bool rebound=bindParamBaseline(m_poseSetConfigPanel,*m_poseSetConfigModel,identity,values);
+    const auto note=entry ? QString::fromStdString(entry->note) : QString();
+    if(rebound || m_poseSetNoteEdit->property("ird_source_note").toString()!=note){
+        m_poseSetKeyEdit->setText(entry ? QString::fromStdString(entry->key) : QString());
+        m_poseSetNoteEdit->setText(note);m_poseSetNoteEdit->setProperty("ird_source_note",note);
+    }
+    if(rebound){
+        // 同基线刷新保留尚未保存的确认构型；只有权威条目或目标变化才替换。
+        m_poseSetConfigBaseline.assign(jointCount,0.0);
+        for(std::size_t i=0;i<jointCount;++i){if(values[i].second){m_poseSetConfigBaseline[i]=*values[i].second;}}
+    }
 }
 
 void ModelingPanelWidget::onPoseSetComboChanged(int index)
 {
     // 选中切换→基线回填（零脏化；refreshPoseSetPane 重建期被 QSignalBlocker
     // 屏蔽，仅用户切换到达此处）。
-    Q_UNUSED(index);
+    if(index < 0){return;}
+    m_poseSetSelectedKey=m_poseSetCombo->itemText(index);
     refreshPoseSetPane();
 }
 
@@ -3181,6 +3318,12 @@ void ModelingPanelWidget::onPoseSetApplyClicked()
     m_threadGuard.assertOnUiThread();
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
     if (ws == nullptr || !m_writable || m_poseSetConfigModel == nullptr) { return; }
+    if(m_poseSetConfigModel->hasErrors()){
+        // 保存按钮也是完整表单的提交入口，不能绕过共享数值校验丢弃非法格。
+        EditRejection rejection;rejection.codeToken="value-not-finite";
+        rejection.detail="请先修正位姿构型输入："+m_poseSetConfigModel->statusText(*m_poseSetConfigModel->firstErrorKey());
+        onEditRejected(rejection);return;
+    }
     // 组装条目：键/备注现行编辑；构型脏值取暂存、未编辑取权威基线
     // （UI-T55 分组装配同款"脏取新/净取权威"）。
     PoseSetEntry entry;
@@ -3363,9 +3506,11 @@ void ModelingPanelWidget::refreshDrivetrainPane()
     if (jointCount != m_drivetrainJointCount) { rebuildDrivetrainModel(); }
     if (m_drivetrainPanel != nullptr) { m_drivetrainPanel->setEnabled(m_writable); }
     refreshCouplingSummary();  // F14：耦合摘要随基线回填同拍刷新
+    if(!m_drivetrainPanel || !m_drivetrainModel){m_drivetrainBaseline.clear();return;}
 
     // SourcedValue 基线回填（NotProvided＝nullopt 空编辑器——不虚构数值；
     // 权威值缓存供分组装配"净取权威"）。
+    std::vector<std::pair<std::string,std::optional<double>>> values;
     m_drivetrainBaseline.assign(jointCount * 6, std::nullopt);
     const std::optional<DrivetrainDesign>& dt =
         ws != nullptr ? ws->drivetrainObject : std::nullopt;
@@ -3375,9 +3520,9 @@ void ModelingPanelWidget::refreshDrivetrainPane()
             if (v.has_value()) {
                 const auto value = v->tryValue();
                 m_drivetrainBaseline[slot] = value;
-                m_drivetrainModel->setBaseline(key, value);
+                values.emplace_back(key,value);
             } else {
-                m_drivetrainModel->setBaseline(key, std::nullopt);
+                values.emplace_back(key,std::nullopt);
             }
         };
         setRow(i * 6 + 0, "dt-ratio-" + std::to_string(i),
@@ -3392,9 +3537,9 @@ void ModelingPanelWidget::refreshDrivetrainPane()
             setRow(i * 6 + 3, "dt-friction-bias-" + std::to_string(i),
                    dt->frictionPerJoint[i].bias);
         } else {
-            m_drivetrainModel->setBaseline("dt-friction-viscous-" + std::to_string(i), std::nullopt);
-            m_drivetrainModel->setBaseline("dt-friction-coulomb-" + std::to_string(i), std::nullopt);
-            m_drivetrainModel->setBaseline("dt-friction-bias-" + std::to_string(i), std::nullopt);
+            values.emplace_back("dt-friction-viscous-" + std::to_string(i),std::nullopt);
+            values.emplace_back("dt-friction-coulomb-" + std::to_string(i),std::nullopt);
+            values.emplace_back("dt-friction-bias-" + std::to_string(i),std::nullopt);
         }
         if (dt.has_value() && i < dt->torqueLimitsPerJoint.size()) {
             setRow(i * 6 + 4, "dt-torque-rated-" + std::to_string(i),
@@ -3402,11 +3547,13 @@ void ModelingPanelWidget::refreshDrivetrainPane()
             setRow(i * 6 + 5, "dt-torque-peak-" + std::to_string(i),
                    dt->torqueLimitsPerJoint[i].peak);
         } else {
-            m_drivetrainModel->setBaseline("dt-torque-rated-" + std::to_string(i), std::nullopt);
-            m_drivetrainModel->setBaseline("dt-torque-peak-" + std::to_string(i), std::nullopt);
+            values.emplace_back("dt-torque-rated-" + std::to_string(i),std::nullopt);
+            values.emplace_back("dt-torque-peak-" + std::to_string(i),std::nullopt);
         }
     }
-    ui::refreshParamTablePanel(m_drivetrainPanel);
+    QString identity=QString::fromStdString(ws && ws->rootObjectId ? ws->rootObjectId->toCanonical() : "");
+    if(ws){for(const auto& joint:ws->design.joints){identity+="/"+QString::fromStdString(joint.objectId.toCanonical());}}
+    bindParamBaseline(m_drivetrainPanel,*m_drivetrainModel,identity,values);
 }
 
 void ModelingPanelWidget::applyDrivetrainEdits(const ui::ParamEditSet& editSet)
@@ -3495,6 +3642,7 @@ void ModelingPanelWidget::applyDrivetrainEdits(const ui::ParamEditSet& editSet)
     if (anyAccepted) {
         onEditApplied("drivetrain（" + std::to_string(applied) + " 族）");
     }
+    m_drivetrainPanel->setProperty("ird_baseline_binding",QVariant());
     refreshPropertiesFromLastWorkingSet();
 }
 
@@ -3526,6 +3674,8 @@ void ModelingPanelWidget::refreshEditPages()
     // ——树选中即切页；其余目标/空选中不动当前页（基座模式为显式入口，
     // UI-T54 语义保持——仅刷新关节区提示面）。
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    const bool changedTarget=m_editPageAnchor!=m_lastSelected;
+    m_editPageAnchor=m_lastSelected;
     if(m_sceneManager){
         std::optional<core::ObjectId> selected;
         if(ws&&m_lastSelected){const auto target=resolveSelection(*ws,*m_lastSelected);
@@ -3589,6 +3739,14 @@ void ModelingPanelWidget::refreshEditPages()
     // Joint／未解析：关节区照常刷新（空态提示在其内）；BaseInstall/
     // ModelRoot 目标维持当前页（基座模式为显式入口，UI-T54 语义保持）。
     refreshJointEditPane();
+    // 选择变化才分派；同目标就绪刷新/基座应用不应抢回关节页。
+    // 连杆→关节和基座→新关节以前只刷新隐藏表，造成“点了却不能编辑”。
+    if(resolved&&kind==SelectedTarget::Kind::Joint&&changedTarget){
+        m_editStack->setCurrentIndex(0);
+    }
+    if(resolved&&kind==SelectedTarget::Kind::BaseInstall&&changedTarget){
+        refreshBasePlacementPane();m_editStack->setCurrentWidget(m_basePage);
+    }
 }
 
 void ModelingPanelWidget::onTreeSelectionChanged()

@@ -1,0 +1,34 @@
+{
+  "base": "b2babf2a95ebc7b8dcedbcee25283c7b8fe45116",
+  "branch": "wp13-t30",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+      "sha256": "b3e0fd6cbde91c112c31ab7bfa817b800fa6de514488dbff927758d3ee640d8b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp",
+      "sha256": "35555f0b4b782f930deb551f117270cc2aa011947fdac73908609bc04b42f1f7"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/modeling.md",
+      "sha256": "ff06ad495b55b54922b96ca7d4d261748053b1c26662f21a94a8654dba804db5"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+      "sha256": "3c33d9f7dbe1cfed13f16b906e3b0595c710cba72504f47f2f903f8cc803d362"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T30.json",
+      "sha256": "59e1be0793defa7ae611ea8b5e86219ce146f56fe0dc9ebc047ecde43b822684"
+    },
+    {
+      "path": "RobWork/docs/superpowers/plans/2026-10-21-modeling-interaction-repair.md",
+      "sha256": "4916af05b2768ebd98e57383c1be24dab03fa0a3dc400b931e28403f7261096b"
+    },
+    {
+      "path": "build/RobWorkStudio/bin/Release/sdurws_ird_studio.exe",
+      "sha256": "5bea9849740e7c8ab4c83624f92360a56e805884336a011fe0d2b5f106bf75eb"
+    }
+  ]
+}

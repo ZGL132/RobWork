@@ -1,0 +1,47 @@
+[
+  {
+    "address": "0x7fff55e1aee4",
+    "symbol": "NtUserMsgWaitForMultipleObjectsEx",
+    "offset": 20
+  },
+  {
+    "address": "0x7ffd95d7ee30",
+    "symbol": "QEventDispatcherWin32::processEvents",
+    "offset": 1600
+  },
+  {
+    "address": "0x7ffdad6bcf19",
+    "symbol": "QWindowsGuiEventDispatcher::processEvents",
+    "offset": 25
+  },
+  {
+    "address": "0x7ffd95bd3194",
+    "symbol": "QEventLoop::exec",
+    "offset": 452
+  },
+  {
+    "address": "0x7ffd95bcaafa",
+    "symbol": "QCoreApplication::exec",
+    "offset": 362
+  },
+  {
+    "address": "0x7ff7823a6113",
+    "symbol": "std::_Compressed_pair<std::allocator<QString>,std::_Vector_val<std::_Simple_types<QString> >,1>::_Get_first",
+    "offset": 3
+  },
+  {
+    "address": "0x7ff782a48a6a",
+    "symbol": "std::vector<std::pair<pugi::xml_node,std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,std::allocator<std::pair<pugi::xml_node,std::basic_string<char,std::char_traits<char>,std::allocator<char> > > > >::vector<std::pair<pugi::xml_node,std::basic_string<char,std::char_traits<char>,std::allocator<char> > >,std::allocator<std::pair<pugi::xml_node,std::basic_string<char,std::char_traits<char>,std::allocator<char> > > > >",
+    "offset": 2698
+  },
+  {
+    "address": "0x7fff577ecd87",
+    "symbol": "BaseThreadInitThunk",
+    "offset": 23
+  },
+  {
+    "address": "0x7fff58b4caec",
+    "symbol": "RtlUserThreadStart",
+    "offset": 44
+  }
+]

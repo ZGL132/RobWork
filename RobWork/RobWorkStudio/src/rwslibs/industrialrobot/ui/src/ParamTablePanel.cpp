@@ -177,15 +177,14 @@ QString changeLineText(ParamEditModel& model, const ParamChange& change)
 /**
  * @brief 按模型当前态重画表格（筛选可见行集 × 四列投影）。
  *
- * 为什么整表重建而不是逐格更新：可见行集随筛选变化、就地错误要求值列
- * 文本回退（保留原值），整表重建分支最少且几十行量级重建微秒级
- * （PolicySummaryCard 清空重建同案）；updating 守卫保证重建中的 setText
- * 不被当作用户编辑。
+ * 行键变化时重建；同一行集只更新文本，保留连续Tab录入时的item身份。
+ * 非法输入回退及状态显示仍来自模型；updating守卫阻止程序回填制造编辑。
  */
 void refreshTable(PanelContext& ctx)
 {
     UpdatingGuard guard(ctx.updating);
     const std::vector<std::string> keys = ctx.model.visibleKeys();
+    const bool sameRows = ctx.rowKeys == keys;
     ctx.rowKeys = keys;
     ctx.table->setRowCount(static_cast<int>(keys.size()));
     for (int row = 0; row < static_cast<int>(keys.size()); ++row) {
@@ -199,10 +198,15 @@ void refreshTable(PanelContext& ctx)
         // 值列（唯一可编辑列——就地编辑；文本＝最后一次有效值，非法输入
         // 不改动它——"保留原值"的呈现面）。未设值也允许编辑（编辑后
         // 从无到有）。
-        auto* valueItem =
-            new QTableWidgetItem(QString::fromStdString(ctx.model.displayNumberText(key)));
+        // WP-13-T30：保留值列item身份，前一格排队刷新不销毁下一格编辑器。
+        auto* valueItem = sameRows ? ctx.table->item(row, kValueColumn) : nullptr;
+        if (valueItem == nullptr) {
+            valueItem = new QTableWidgetItem();
+            ctx.table->setItem(row, kValueColumn, valueItem);
+        }
+        const auto numberText = QString::fromStdString(ctx.model.displayNumberText(key));
+        if (valueItem->text() != numberText) { valueItem->setText(numberText); }
         valueItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
-        ctx.table->setItem(row, kValueColumn, valueItem);
         // 单位列（只读——与值列同显的"单位"半区；KIN-12 切换即换此列；
         // 无量纲显示注册表 token "1"，诚实呈现制式不美化）。
         auto* unitItem = new QTableWidgetItem(
@@ -428,10 +432,10 @@ QWidget* createParamTablePanel(ParamEditModel& model, IFormEditOutlet* outlet,
                          }
                          // 规则执行点（与批量粘贴同一条 parseFieldValueText
                          // 规则）：失败就地显示原因、值不动；成功暂存待确认。
-                         QTimer::singleShot(0, panel, [ctx, key, text]() {
-                             ctx->model.setEditText(key, text);
-                             refreshTable(*ctx);
-                         });
+                         // WP-13-T30：输入立即归属当前会话，取消或目标重绑后
+                         // 不允许旧排队输入复活。仅重绘排队，避免删除事件源项。
+                         ctx->model.setEditText(key, text);
+                         QTimer::singleShot(0, panel, [ctx]() { refreshTable(*ctx); });
                      });
 
     // 批量粘贴：读剪贴板→逐行独立判定→影响明细就地呈现（非模态——
