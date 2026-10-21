@@ -1,0 +1,10 @@
+[
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "sha256": "2422968dac4d232e9366b82a6885615c0c4b653c268874a80d81573000e4b7b1"
+  },
+  {
+    "path": "build/RobWorkStudio/bin/Release/sdurws_ird_studio.exe",
+    "sha256": "968f3377fa286f4469e3c52e0acb007bd5e8d7ec18863290eb684d8ef4f43d76"
+  }
+]

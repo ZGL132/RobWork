@@ -307,7 +307,6 @@ std::string canonicalizePathOrKeep(const std::string& rawPath)
 /// 会话标签常量（宿主菜单/对话框的装配层呈现文案——与 WorkbenchText 键面
 /// 词汇保持一致；插件侧不 include src/ 私有头，按既有 orchestrate 对话框
 /// 先例以字面量承载）。
-constexpr const char* kProjectMenuTitle = "工业机器人项目";
 constexpr const char* kRecentMenuTitle = "最近项目";
 constexpr const char* kViewMenuTitle = "视图";
 constexpr const char* kRecentUnavailableSuffix = "（项目位置不可用）";
@@ -1902,15 +1901,18 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
     QMenu* fileMenu = findHostMenu("&File");
     QMenu* toolsMenu = findHostMenu("&Tools");
 
-    // ---- File：按位插入"工业机器人项目"子菜单 ----
+    // ---- File：项目动作直接置于File顶层，与Exit同级（WP-13-T30第2批）----
     // 为什么按位插入而不是尾插：宿主 updateLastFiles 每次 open WorkCell 后
-    // 移除重加"最近文件"条目（追加在菜单尾部）——尾插的项目子菜单会被
+    // 移除重加"最近文件"条目（追加在菜单尾部）——尾插的项目动作会被
     // 后续重排顶到最近文件之下；锚定 Preferences 前的分隔符保持稳定分组。
     if (fileMenu != nullptr) {
-        auto* projectMenu = new QMenu(QString::fromUtf8(kProjectMenuTitle), fileMenu);
-        addCommandAction(projectMenu, "新建项目", "project.new");
-        addCommandAction(projectMenu, "打开项目", "project.open");
-        addCommandAction(projectMenu, "保存草稿", "draft.save");
+        // 先在File登记原有动作，再整组移到稳定锚点；复用同一QAction及命令
+        // 接线，避免复制菜单造成重复触发或使能态不一致。前置分隔符隔开框架命令。
+        const int firstProjectAction = fileMenu->actions().size();
+        fileMenu->addSeparator();
+        addCommandAction(fileMenu, "新建项目", "project.new");
+        addCommandAction(fileMenu, "打开项目", "project.open");
+        addCommandAction(fileMenu, "保存草稿", "draft.save");
         // 写命令入口补全（UI-T38——主 Dock 顶栏命令条退役的承接面）：应用/
         // 撤销/重做此前仅顶栏按钮与 Ctrl+Shift+P 命令面板两入口，顶栏退役
         // 后菜单成为唯一常驻图形入口（§7.2 路由红线不变——动作只转发命令
@@ -1921,23 +1923,23 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
         // F-553：三条命令的基础悬停说明改经 addCommandAction 装配拍快照
         // （refreshHostMenuActions 的禁用原因刷新以之为还原值源——禁用
         // 态呈现原因文案、可用态还原本说明，见该函数注释）。
-        addCommandAction(projectMenu, "应用草稿", "draft.apply", QStringLiteral(
+        addCommandAction(fileMenu, "应用草稿", "draft.apply", QStringLiteral(
             "预检并应用当前草稿——通过门禁后生成新项目修订。"
             "历史只增不改：旧修订不变，项目级撤销＝以新修订对冲；"
             "未应用的草稿编辑请在各域面板内草稿撤销/直接改写。"));
-        addCommandAction(projectMenu, "撤销", "project.undo", QStringLiteral(
+        addCommandAction(fileMenu, "撤销", "project.undo", QStringLiteral(
             "项目级撤销——对冲最近一次已应用的修订（产生一条新修订，历史只增不改）；"
             "未应用的草稿编辑不在此列。"));
-        addCommandAction(projectMenu, "重做", "project.redo", QStringLiteral(
+        addCommandAction(fileMenu, "重做", "project.redo", QStringLiteral(
             "项目级重做——对冲最近一次项目级撤销（产生一条新修订，历史只增不改）。"));
-        addCommandAction(projectMenu, "项目另存为", "project.saveAs");
-        addCommandAction(projectMenu, "关闭项目", "workbench.closeProject");
+        addCommandAction(fileMenu, "项目另存为", "project.saveAs");
+        addCommandAction(fileMenu, "关闭项目", "workbench.closeProject");
         // 最近项目子菜单（PM-10）：内容装配时清空、aboutToShow 现取重建
         // （去重/上限/失效提示全在内容装配面——本插件只投影）。
-        m_recentMenu = new QMenu(QString::fromUtf8(kRecentMenuTitle), projectMenu);
+        m_recentMenu = new QMenu(QString::fromUtf8(kRecentMenuTitle), fileMenu);
         connect(m_recentMenu, &QMenu::aboutToShow, this, [this] { rebuildRecentMenu(); });
-        projectMenu->addSeparator();
-        projectMenu->addMenu(m_recentMenu);
+        fileMenu->addSeparator();
+        fileMenu->addMenu(m_recentMenu);
 
         // 插入锚：Preferences 动作之前最近的分隔符（无则退化为 Preferences
         // 动作本身、再无则追加尾部）。
@@ -1958,9 +1960,8 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
             }
         }
         if (anchor != nullptr) {
-            fileMenu->insertMenu(anchor, projectMenu);
-        } else {
-            fileMenu->addMenu(projectMenu);
+            // insertActions会移动已登记动作，原尾部不残留重复项。
+            fileMenu->insertActions(anchor, fileMenu->actions().mid(firstProjectAction));
         }
     } else {
         reportLine("宿主 File 菜单未定位——项目命令未上菜单（降级形态）");
