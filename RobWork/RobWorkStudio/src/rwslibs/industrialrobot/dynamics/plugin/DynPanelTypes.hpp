@@ -196,6 +196,8 @@ struct DynPanelServices {
     /// 空态，呈现"无峰值记录"）。
     std::function<std::optional<DynPeakJump>(std::uint32_t jointIndex,
                                              int tokenIndex)> peakLocate;
+    /// 临时会话姿态写点（空＝三维回放未接线；只写宿主 State，不产生项目修订）。
+    std::function<bool(const std::vector<ReplayJointState>&)> replayPoseApply;
     /// 命令提交出口缝（空＝未装配——点击反馈"出口未装配"）。
     std::function<void(const std::string& commandToken)> commandSubmit;
     /// 命令可用性查询缝（空＝全部按可用呈现）。

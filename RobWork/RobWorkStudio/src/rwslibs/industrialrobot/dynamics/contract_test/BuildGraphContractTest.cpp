@@ -192,6 +192,7 @@ TEST(DynBuildGraph, UnitEdgesFiveRegisteredAndClosed_WP17T02_ACC1)
                                      "sdurws_ird_dynamics_test",
                                      "sdurws_ird_dynamics_contract_test",
                                      "sdurws_ird_dynamics_app",
+                                     "sdurws_ird_dynamics_gui_test", // WP-17-T11：Windows 控件实测。
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(std::string("sdurws_ird_") + u);
@@ -327,9 +328,10 @@ TEST(DynBuildGraph, NoTestkitEdgeOnProductTarget_WP17T02_ACC1)
         // T-1 允许形态的唯一落点：测试目标的链接语句（目标名与 testkit
         // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析）。
         const bool onTestTargetLine
-            = (line.find("sdurws_ird_dynamics_test") != std::string::npos
-               || line.find("sdurws_ird_dynamics_contract_test") != std::string::npos)
-              && line.find("target_link_libraries") != std::string::npos;
+            = line.find("target_link_libraries") != std::string::npos
+              && (line.find("sdurws_ird_dynamics_test") != std::string::npos
+                  || line.find("sdurws_ird_dynamics_contract_test") != std::string::npos
+                  || line.find("sdurws_ird_dynamics_gui_test") != std::string::npos);
         EXPECT_TRUE(onTestTargetLine)
             << "testkit 引用必须落在测试目标链接语句行（T-1：产品目标零 "
                "testkit）: " << line;

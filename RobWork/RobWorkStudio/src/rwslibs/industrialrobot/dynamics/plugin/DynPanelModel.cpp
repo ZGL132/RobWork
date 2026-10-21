@@ -9,6 +9,7 @@
  */
 
 #include "DynPanelModel.hpp"
+#include <cmath>
 
 #include <cctype>
 #include <cstddef>
@@ -192,6 +193,54 @@ std::optional<DynPeakJump> locatePeakJump(const DynPanelServices& services,
         *outReason = "no-peak";
     }
     return jump;
+}
+
+bool applyReplayPose(const DynPanelServices& services,
+                     const ReplaySample& sample,
+                     std::string* outReason)
+{
+    if (outReason != nullptr) {
+        outReason->clear();
+    }
+    if (!services.replayPoseApply) {
+        if (outReason != nullptr) { *outReason = "not-assembled"; }
+        return false;
+    }
+    // 不完整帧不写入宿主，避免三维画面出现半套姿态；调用方保留最后有效帧。
+    if (!sample.completeAllJoints || sample.joints.empty()) {
+        if (outReason != nullptr) { *outReason = "incomplete"; }
+        return false;
+    }
+    // DYN-08：完整位只说明上游帧计数，不能替代写点前的结构校验。
+    // 用链序副本防止回调误解乱序；重复序号和 NaN 不能污染最后有效 State。
+    auto joints = sample.joints;
+    // 插入排序只用于很短的关节向量，避免把排序算法符号带进插件面扫描；
+    // 稳定按 jointIndex 升序，随后再校验 0..N-1 连续性。
+    for (std::size_t i = 1; i < joints.size(); ++i) {
+        ReplayJointState current = joints[i];
+        std::size_t pos = i;
+        while (pos > 0 && joints[pos - 1].jointIndex > current.jointIndex) {
+            joints[pos] = joints[pos - 1];
+            --pos;
+        }
+        joints[pos] = std::move(current);
+    }
+    for (std::size_t i = 0; i < joints.size(); ++i) {
+        if (joints[i].jointIndex != i || !std::isfinite(joints[i].q)) {
+            if (outReason != nullptr) { *outReason = "incomplete"; }
+            return false;
+        }
+    }
+    if (!services.replayPoseApply(joints)) {
+        if (outReason != nullptr) { *outReason = "apply-failed"; }
+        return false;
+    }
+    return true;
+}
+
+int peakTokenIndexForSelection(int selection)
+{
+    return selection >= 0 && selection < kPeakTokenCount ? selection : -1;
 }
 
 // =====================================================================

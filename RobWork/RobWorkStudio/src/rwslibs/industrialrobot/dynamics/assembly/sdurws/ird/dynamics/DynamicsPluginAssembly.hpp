@@ -65,10 +65,15 @@
 #ifndef IRD_DYNAMICS_ASSEMBLY_DYNAMICSPLUGINASSEMBLY_HPP
 #define IRD_DYNAMICS_ASSEMBLY_DYNAMICSPLUGINASSEMBLY_HPP
 
+#include <cstdint>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
+#include <tuple>
 #include <vector>
+
+#include <sdurws/ird/dynamics/Replay.hpp> // 临时姿态写点的公共值类型
 
 // ASM-PLUG 收口批（P-DYN-8 消账）：本头新增真实注册面——消费 ui 单元
 // 公共类型（§10.9 装配描述符/登记结果、§7 命令描述符）。包含面纪律同
@@ -236,6 +241,53 @@ public:
      */
     void bindCommandAvailability(
         std::function<bool(const std::string&)> availability);
+
+    /**
+     * @brief 绑定三维回放的临时关节姿态写点（只改宿主 State，不产生修订）。
+     * @param apply [in] 同步消费按 0 基链序排列的全关节状态；q 单位为转动轴
+     *                  rad、移动轴 m。true 表示应用成功；false 必须零写入，
+     *                  保留上次姿态。空函数解除绑定。
+     *
+     * 回调由门面持有，仅 UI 线程调用；捕获宿主必须覆盖面板生命周期。
+     * 宿主负责核对当前快照、设备和关节对象身份，不得用链序猜测首设备。
+     * 绑定本身无副作用；回调抛出的契约异常向调用方传播，不吞错。
+     */
+    void bindReplayPoseApply(
+        std::function<bool(const std::vector<ReplayJointState>&)> apply);
+
+    /**
+     * @brief 绑定正式宿主的曲线投影读取缝。
+     *
+     * @param source [in] 当前已提交结果的曲线投影；空结果表示暂无结果，
+     *                    不得由宿主伪造数值。
+     * 回调由门面持有，UI 线程同步读，返回独立只读值（SI 单位）；空函数
+     * 解除绑定。捕获对象须覆盖面板生命周期；读取异常原样向调用方传播。
+     */
+    void bindCurveSource(std::function<CurveProjection()> source);
+
+    /**
+     * @brief 绑定正式宿主的逐时刻回放数据读取缝。
+     *
+     * @param source [in] 当前已提交结果的回放帧集；空结果表示暂无结果。
+     * 回调的线程、所有权、异常和解绑约定同 bindCurveSource；必须与曲线
+     * 指向同一来源序列和工况，不得混用上一轮或另一工况的帧集。
+     */
+    void bindReplaySource(std::function<ReplayData()> source);
+
+    /**
+     * @brief 绑定正式宿主的峰值定位缝。
+     *
+     * 返回值为值元组（峰值时刻 s、峰值、轨迹段），避免宿主依赖插件
+     * 私有 DTO；装配实现负责翻译成面板模型值。
+     * @param locate [in] 参数为 0 基关节链序、峰值通道 0..5（广义力正/反、
+     *                   速度绝对、加速度绝对、功率正/反）；量纲随关节类型
+     *                   为 N·m/N、rad/s 或 m/s、rad/s² 或 m/s²、W。
+     *                   返回空可选值表示无峰值；空函数解除绑定。
+     * 回调由门面持有，仅 UI 线程同步读；来源须与当前曲线一致，异常传播。
+     */
+    void bindPeakLocate(std::function<std::optional<std::tuple<double, double,
+                                                               std::uint32_t>>(
+                            std::uint32_t, int)> locate);
 
     /**
      * @brief 绑定文案解析器（键→工程用语——宿主接 ui::resolveText；

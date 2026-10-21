@@ -534,6 +534,7 @@ set(IRD_TEST_TARGET_EDGES
     "sdurws_ird_ui_test->sdurws_ird_project"
     "sdurws_ird_ui_test->sdurws_ird_io"
     "sdurws_ird_dynamics_contract_test->sdurws_ird_ui"      # ASM-PLUG 收口批（2026-10-10）——真实注册端口消费面
+    "sdurws_ird_dynamics_gui_test->sdurws_ird_ui"           # WP-17-T11：Windows 控件消费正式文案，DTB §4.5 同步登记。
     "sdurws_ird_selection_contract_test->sdurws_ird_ui"     # ASM-PLUG 收口批（2026-10-10）——同款
     "sdurws_ird_optimization_contract_test->sdurws_ird_ui"  # ASM-PLUG 收口批（2026-10-10）——同款
     "sdurws_ird_ui_contract_test->sdurws_ird_dynamics_plugin"     # ASM-STUDIO 承接批（2026-10-10）——六域聚合注册断言直测面（acc/asm-ui/1 建议级 1 分布钉扎消账）

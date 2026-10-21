@@ -38,6 +38,7 @@ class QComboBox;
 class QPlainTextEdit;
 class QDoubleSpinBox;
 class QPushButton;
+class QTabWidget;
 
 #include <string>
 #include <vector>
@@ -76,15 +77,22 @@ private:
     // ---- 私有流（UI 事件→模型层调用——每段注释标注消费的 L-Dx）----
     void submitCommand(const std::string& commandToken); ///< 命令按钮点击流
     void runReplayAt();        ///< 回放时刻查询流（L-D5）
+    /// @brief 呈现精确时刻 tS（秒）的同源回放；峰值不经输入控件舍入。
+    void showReplayAt(double tS);
     void locatePeakAndJump();  ///< 峰值定位＋游标跳转流（L-D4）
     void refreshCurveView();   ///< 曲线视图刷新流（L-D2 数据消费）
     void refreshReadiness();   ///< 就绪投影呈现流（L-D1）
     void rebuildJointCombo();  ///< 关节下拉重建（曲线投影行集驱动）
+    /// @brief 根据所选关节型刷新中文通道名与 SI 单位；仅修改呈现。
+    void refreshChannelLabels();
 
     // ---- 文案便利（L-D6 解析——全部用户文本的唯一入口）------------
     QString panelText(const std::string& titleKey) const;
 
     DynPanelModule& m_module;        ///< 模块引用（缝＋会话态——非 owning）
+    QTabWidget* m_tabs = nullptr; ///< 两页导航，由 Qt 父子树持有。
+    QPushButton* m_replayButton = nullptr; ///< 无结果时禁用的回放入口。
+    QPushButton* m_locateButton = nullptr; ///< 无结果时禁用的定位入口。
     DynCurveChartView* m_chart = nullptr;   ///< 曲线视图（曲线视图页）
     QLabel* m_readinessLabel = nullptr;     ///< 就绪投影呈现（工作流页）
     QPlainTextEdit* m_recentEdit = nullptr; ///< 最近命令清单（只读呈现）
@@ -92,6 +100,7 @@ private:
     QDoubleSpinBox* m_replayTimeS = nullptr;///< 回放时刻输入（单位 s）
     QComboBox* m_jointCombo = nullptr;      ///< 关节选择（曲线视图页）
     QComboBox* m_channelCombo = nullptr;    ///< 通道选择（曲线视图页）
+    QComboBox* m_peakTokenCombo = nullptr;  ///< 峰值通道选择（统计通道序号）
     QLabel* m_dataStatusLabel = nullptr;    ///< 数据完整性标注（数据不足态）
     std::vector<QPushButton*> m_commandButtons; ///< 命令按钮（可用性门控
                                                 ///<   刷新——与目录同序）

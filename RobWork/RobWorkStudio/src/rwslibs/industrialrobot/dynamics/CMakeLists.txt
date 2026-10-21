@@ -634,6 +634,23 @@ target_include_directories(sdurws_ird_dynamics_app PRIVATE
 # 单行链接语句＝构建图契约测试的登记形态约束（kinematics_app 同款）。
 target_link_libraries(sdurws_ird_dynamics_app PRIVATE sdurws_ird_dynamics_plugin)
 
+# WP-17-T11：真实 Windows Widgets 回归独立进程，避免把 GUI 跳过当通过。
+# 文案直接消费已登记 dynamics→ui 边；与正式宿主同一资源表，禁止复制。
+target_link_libraries(sdurws_ird_dynamics_app PRIVATE sdurws_ird_ui)
+add_executable(sdurws_ird_dynamics_gui_test gui_test/DynamicsPanelGuiTest.cpp)
+set_target_properties(sdurws_ird_dynamics_gui_test PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+target_include_directories(sdurws_ird_dynamics_gui_test PRIVATE plugin test)
+target_link_libraries(sdurws_ird_dynamics_gui_test PRIVATE sdurws_ird_dynamics_plugin sdurws_ird_ui sdurws_ird_testkit GTest::gtest)
+if(MSVC)
+    target_compile_options(sdurws_ird_dynamics_gui_test PRIVATE /utf-8)
+endif()
+add_custom_command(TARGET sdurws_ird_dynamics_gui_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_dynamics_gui_test>
+            $<TARGET_FILE_DIR:sdurws_ird_dynamics_gui_test>
+    COMMAND_EXPAND_LISTS)
+ird_add_gtest(sdurws_ird_dynamics_gui_test)
+
 # 运行期 DLL 就位（kinematics_app 同款）：TARGET_RUNTIME_DLLS 复制 Qt
 # 三件套等共享库到 exe 旁——绝对路径启动免 PATH 依赖。
 add_custom_command(TARGET sdurws_ird_dynamics_app POST_BUILD
@@ -654,13 +671,19 @@ add_custom_command(TARGET sdurws_ird_dynamics_app POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_BINARY_DIR}/dyn-harness-qt.conf"
             "$<TARGET_FILE_DIR:sdurws_ird_dynamics_app>/qt.conf")
+add_custom_command(TARGET sdurws_ird_dynamics_gui_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/dyn-harness-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_dynamics_gui_test>/qt.conf")
+# 真窗口测试独立串行标签，避免常规模型回归并发抢占桌面。
+set_tests_properties(sdurws_ird_dynamics_gui_test PROPERTIES
+    LABELS "ird_gui" RUN_SERIAL TRUE ENVIRONMENT "QT_QPA_PLATFORM=windows")
 
 # ---- ctest LABELS "ird"（modeling/ui/requirements/kinematics/selection
 #      落位同款）----
 # 验收过滤口径：ctest -L "^ird$"——两测试（模型层、进程内、确定性）同
-# 标签；_gui_test 形态本单元无——GUI 呈现归 sdurws_ird_dynamics_app
-# harness 手动验证通道（WP-17-T09 落位；卡 §11.5 流程，本次未启动如实
-# 登记）＋模型层链路用例（DynPluginPanelTest）承载界面链路。
+# 标签；真实窗口独立使用 ird_gui 标签并要求串行运行，不能把模型回归
+# 或 harness 演示界面等同于正式宿主三维验收（WP-17-T11）。
 set_tests_properties(sdurws_ird_dynamics_test sdurws_ird_dynamics_contract_test
     PROPERTIES LABELS "ird")
 

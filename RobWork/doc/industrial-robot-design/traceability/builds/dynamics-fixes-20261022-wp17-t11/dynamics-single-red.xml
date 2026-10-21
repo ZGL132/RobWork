@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.436" timestamp="2026-10-22T05:17:15.410" name="AllTests">
+  <testsuite name="DynWindow" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.435" timestamp="2026-10-22T05:17:15.410">
+    <testcase name="SingleTimestampDrawsVisibleSample_DYN08" file="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp" line="225" status="run" result="completed" time="0.435" timestamp="2026-10-22T05:17:15.410" classname="DynWindow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:240&#x0A;Expected: (coloredPixels) &gt; (0), actual: 0 vs 0&#x0A;绘图区必须有真实样本色像素，空轴不能当作曲线通过&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:240
+Expected: (coloredPixels) > (0), actual: 0 vs 0
+绘图区必须有真实样本色像素，空轴不能当作曲线通过
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -45,6 +45,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -81,6 +82,7 @@ using sdurws::ird::dynamics::DynamicsValidity;
 using sdurws::ird::dynamics::JointCurves;
 using sdurws::ird::dynamics::PeakRecord;
 using sdurws::ird::dynamics::ReplayData;
+using sdurws::ird::dynamics::ReplayJointState;
 using sdurws::ird::dynamics::ReplaySample;
 using sdurws::ird::dynamics::SampleNumericState;
 using sdurws::ird::dynamics::SeriesIdentity;
@@ -94,6 +96,9 @@ using sdurws::ird::dynamics::curveChannelRows;
 using sdurws::ird::dynamics::locatePeakJump;
 using sdurws::ird::dynamics::replaySampleAt;
 using sdurws::ird::dynamics::resolvePanelText;
+using sdurws::ird::dynamics::kPeakTokenCount;
+using sdurws::ird::dynamics::applyReplayPose;
+using sdurws::ird::dynamics::peakTokenIndexForSelection;
 
 namespace {
 
@@ -531,6 +536,54 @@ TEST(DynPanelReplay, ReplayQueryLeavesSessionUntouched_WP17T09_ACC2)
               before.recentCommands.size());
 }
 
+/**
+ * @brief DYN-08 回放姿态桥红回归：有效样本必须把逐关节状态交给宿主三维
+ *        会话写点；越界查询不得调用写点，保持最后有效姿态。
+ */
+TEST(DynPanelReplay, ReplayPoseApplyUsesValidSampleAndPreservesLastPose_WP17T09_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-08", "KIN-06"},
+                  std::vector<std::string>{"AT-04"});
+
+    const ReplayData data = makeGoldenReplay("p09-replay-pose");
+    const std::optional<ReplaySample> sample = replaySampleAt(data, 0.5);
+    ASSERT_TRUE(sample.has_value());
+    DynPanelServices services;
+    std::vector<ReplayJointState> applied;
+    int applyCalls = 0;
+    services.replayPoseApply = [&applied, &applyCalls](const std::vector<ReplayJointState>& joints) {
+        ++applyCalls;
+        applied = joints;
+        return true;
+    };
+    std::string reason = "seeded";
+    EXPECT_TRUE(applyReplayPose(services, *sample, &reason));
+    EXPECT_TRUE(reason.empty());
+    ASSERT_EQ(applied.size(), sample->joints.size());
+    EXPECT_EQ(applied[0].jointIndex, sample->joints[0].jointIndex);
+    EXPECT_DOUBLE_EQ(applied[0].q, sample->joints[0].q);
+
+    const int callsBeforeInvalid = applyCalls;
+    const std::optional<ReplaySample> outOfRange = replaySampleAt(data, 99.0);
+    EXPECT_FALSE(outOfRange.has_value());
+    EXPECT_EQ(applyCalls, callsBeforeInvalid)
+        << "越界样本不应覆盖最后有效会话姿态";
+}
+
+/**
+ * @brief DYN-03/DYN-08 峰值通道选择红回归：界面峰值 token 映射必须覆盖
+ *        六个统计 token，不能固定为 token 0。
+ */
+TEST(DynPanelCurves, PeakSelectionCarriesAllEnvelopeTokens_WP17T09_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-03", "DYN-08"},
+                  std::vector<std::string>{});
+    for (int token = 0; token < kPeakTokenCount; ++token) {
+        EXPECT_EQ(peakTokenIndexForSelection(token), token)
+            << "峰值通道选择应把用户选择的 token 原样传给查询缝";
+    }
+}
+
 // =====================================================================
 // DynPanelCatalog 组——装配登记面（命令目录/域键/描述符/门面绑定）。
 // =====================================================================
@@ -690,24 +743,51 @@ TEST(DynPanelText, ResolveTextFallsBackAndGuardsDigestLeak_WP17T09_ACC1)
     EXPECT_TRUE(fellBack) << "哈希形态解析值不进用户文本";
 }
 
-// =====================================================================
-// DynPanelGui 组——GUI 呈现边界（诚实登记：envUnavailable，非通过）。
-// =====================================================================
+// GUI 验证迁入 gui_test/DynamicsPanelGuiTest.cpp，实际启动 Windows Widgets。
 
-/**
- * @brief GUI 呈现不在本目标（无人值守门禁不做 GUI 运行验证——既有环
- *        境事实）：widget 渲染/交互点击归 sdurws_ird_dynamics_app
- *        harness 手动验证通道（单元卡 §11.5 流程），本次未启动、未留
- *        截图——如实登记为环境不可用，不标注通过（AGENTS §4.2）。
- */
-TEST(DynPanelGui, WidgetPresentationDeferredToHarnessEnvUnavailable)
+/** @brief DYN-08：声明完整但关节重复/非有限的帧不能调用三维写点。 */
+TEST(DynPanelReplay, InvalidCompleteFrameNeverWritesPose_DYN08)
 {
-    IRD_TEST_INFO(std::vector<std::string>{"UX-02", "UX-10"},
-                  std::vector<std::string>{});
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-08"}, std::vector<std::string>{});
+    DynPanelServices services;
+    int writes = 0;
+    services.replayPoseApply = [&writes](const std::vector<ReplayJointState>&) {
+        ++writes; return true;
+    };
+    auto sample = replaySampleAt(makeGoldenReplay("invalid-frame"), 0.0);
+    ASSERT_TRUE(sample.has_value());
+    sample->joints[1].jointIndex = sample->joints[0].jointIndex;
+    EXPECT_FALSE(applyReplayPose(services, *sample));
+    EXPECT_EQ(writes, 0);
+    sample = replaySampleAt(makeGoldenReplay("invalid-frame"), 0.0);
+    sample->joints[0].q = std::numeric_limits<double>::quiet_NaN();
+    EXPECT_FALSE(applyReplayPose(services, *sample));
+    EXPECT_EQ(writes, 0);
+}
 
-    GTEST_SKIP()
-        << "envUnavailable：无人值守门禁不做 GUI 运行验证——曲线视图/"
-           "工作流页的呈现与交互由 sdurws_ird_dynamics_app harness 手动"
-           "点验承载（units/dynamics.md §11.5 流程），本次未启动，"
-           "留痕见 traceability/builds/wp17-t09/ 登记";
+/** @brief 装配回读：三类数据源、峰值元组和姿态写点原样转发并可解绑。 */
+TEST(DynPanelCatalog, ResultBindingsRoundTripAndUnbind_DYN08)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-08"}, std::vector<std::string>{});
+    auto bundle = sdurws::ird::dynamics::createDynamicsPluginAssembly();
+    bundle.bindCurveSource([] { return makeGoldenProjection("bind"); });
+    bundle.bindReplaySource([] { return makeGoldenReplay("bind"); });
+    bundle.bindPeakLocate([](std::uint32_t, int)
+        -> std::optional<std::tuple<double, double, std::uint32_t>> {
+        return std::make_tuple(2.0, 7.0, 1u);
+    });
+    bundle.bindReplayPoseApply([](const std::vector<ReplayJointState>&) { return false; });
+    const auto& services = bundle.module()->services;
+    ASSERT_TRUE(services.curveSource); ASSERT_TRUE(services.replaySource);
+    EXPECT_TRUE(services.curveSource().sourceSeriesId == services.replaySource().sourceSeriesId);
+    const auto peak = services.peakLocate(1, 5);
+    ASSERT_TRUE(peak.has_value());
+    EXPECT_EQ(peak->tokenIndex, 5); EXPECT_EQ(peak->jointIndex, 1u);
+    EXPECT_DOUBLE_EQ(peak->tPeakS, 2.0); EXPECT_DOUBLE_EQ(peak->value, 7.0);
+    EXPECT_EQ(peak->segmentIndex, 1u);
+    EXPECT_FALSE(services.replayPoseApply({}));
+    bundle.bindCurveSource({}); bundle.bindReplaySource({});
+    bundle.bindPeakLocate({}); bundle.bindReplayPoseApply({});
+    EXPECT_FALSE(services.curveSource); EXPECT_FALSE(services.replaySource);
+    EXPECT_FALSE(services.peakLocate); EXPECT_FALSE(services.replayPoseApply);
 }
