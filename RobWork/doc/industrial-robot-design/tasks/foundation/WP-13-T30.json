@@ -43,6 +43,8 @@
     "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T30.json",
     "RobWork/doc/industrial-robot-design/traceability/builds/modeling-interaction-20261021/**",
     "RobWork/docs/superpowers/plans/2026-10-21-modeling-interaction-repair.md",
+    "RobWork/docs/superpowers/specs/2026-10-21-modeling-grouped-form-design.md",
+    "RobWork/docs/superpowers/plans/2026-10-21-modeling-grouped-form-implementation.md",
     "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/SafePath.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/SafePathTest.cpp",
@@ -89,7 +91,8 @@
     "第3批结构树增加模型/分类/对象三级及展开全部/折叠全部，正常刷新保持状态，重复外部定位展开目标祖先，折叠不脏化，验证后人工暂停。",
     "第4批结构树默认窄栏，支持连续缩窄到1像素及0收起并恢复；窄栏操作横向可达、选择/折叠保留且零脏化；完整关节分组表单仅交付设计，不计入实现通过。验证后人工暂停。",
     "第4批追加：建模树关节/连杆选择上报唯一共享服务并驱动正式三维高亮，无几何关节有帧原点标记；切换/清空清旧高亮，下行不回环，纯草稿缺对应物不伪造高亮，零写入。",
-    "第5批修复人工反馈base未高亮：宿主从同OID的权威名称条目选取当前WC实际存在的首/末连杆帧，中间连杆/关节/设备语义不变；红绿回归和正式三维验证后人工暂停。"
+    "第5批修复人工反馈base未高亮：宿主从同OID的权威名称条目选取当前WC实际存在的首/末连杆帧，中间连杆/关节/设备语义不变；红绿回归和正式三维验证后人工暂停。",
+    "第5批已获所有者人工通过；完整分组表单本轮仅设计及实施分解，产品未实施。拟议整表领域公共入口另行精确登记，不把设计文档允许面视为公共接口实施授权。"
   ],
   "note": "所有者2026-10-21要求先修复完整建模交互再人工终验；沿用推荐方案自动实施授权。基线04b69c307；不改公共接口/依赖边/存储，实施方案见同日modeling-interaction-repair计划。 用户追加：每批修改验证完成提供人工步骤后暂停，等待人工反馈；本契约整体保持ready，不假报全部修复完成。装配清单仅同步UiPlugin include引起的两处行号漂移。"
 }
