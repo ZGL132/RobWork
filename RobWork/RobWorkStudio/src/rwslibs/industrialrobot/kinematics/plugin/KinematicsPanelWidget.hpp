@@ -232,6 +232,7 @@ private:
 
     // ---- 页①控件（raw 指针＝Qt 父子所有权）----
     QLabel* m_frameLabel = nullptr;         ///< 参考系/TCP 身份标识行（★ KIN-R2 任务4——坐标系标识）
+    QLabel* m_solveStatusLabel = nullptr;   ///< 求解状态摘要（忙碌/有效/未求解）
     QTableWidget* m_poseTable = nullptr;    ///< 位姿指标行表
     QTableWidget* m_jointTable = nullptr;   ///< 关节表（显示单位投影 KIN-12）
     QLineEdit* m_targetX = nullptr;         ///< 求解目标位置编辑（显示制式数值——提交逆换算回 SI，A07）
@@ -304,6 +305,7 @@ private:
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器
     QLabel* m_statusLine = nullptr; ///< 状态行（非模态反馈——UX-03/07）
     bool m_solveInFlight = false;  ///< 异步求解在途（G3——防重复提交；完成回调清位＋刷新）
+    bool m_solveResultExpired = false; ///< 输入/会话变化后旧结果需重新求解
 };
 
 /**

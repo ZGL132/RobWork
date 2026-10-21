@@ -33,6 +33,7 @@
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯
 
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QEventLoop>
 #include <QLabel>
 #include <QLineEdit>
@@ -47,6 +48,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <stdexcept>
 #include <thread>
 #include <vector>
 
@@ -620,6 +622,80 @@ struct NonBlockingHarness {
     }
 };
 
+/// 迟到回调夹具：把 job/onDone 留在 UI 线程可控的槽中，精确模拟项目
+/// 换绑后旧求解完成的竞态；执行缝本身不创建线程，测试只验证会话身份
+/// 核对与状态收口。
+struct StaleResultHarness {
+    TestView view{sixAxisModel()};
+    WidgetRecordingSolver solver;
+    KinPanelServices services;
+    KinModuleSessionState state;
+    std::function<IkOutcome()> pendingJob;
+    std::function<void(IkOutcome)> pendingDone;
+    std::unique_ptr<KinematicsPanelWidget> panel;
+
+    StaleResultHarness()
+    {
+        services.modelView = &view;
+        services.ikSolver = &solver;
+        services.inlineSolveAsync =
+            [this](std::function<IkOutcome()> job,
+                   std::function<void(IkOutcome)> onDone,
+                   const QObject*) {
+                pendingJob = std::move(job);
+                pendingDone = std::move(onDone);
+            };
+        state.savedConfig.seed = 1;
+        state.savedConfig.regionBudget.seed = 1;
+        panel = std::make_unique<KinematicsPanelWidget>(services, state);
+    }
+};
+
+/// 异常回执夹具：job 抛出调用方异常，缝实现负责转换为设施失败值并回投。
+struct ExceptionResultHarness {
+    TestView view{sixAxisModel()};
+    KinPanelServices services;
+    KinModuleSessionState state;
+    std::unique_ptr<KinematicsPanelWidget> panel;
+
+    ExceptionResultHarness()
+    {
+        services.modelView = &view;
+        services.ikSolver = nullptr;  // 由 job 直接抛出，验证回执收口
+        services.inlineSolveAsync = [](std::function<IkOutcome()> job,
+                                       std::function<void(IkOutcome)> onDone,
+                                       const QObject* context) {
+            IkOutcome outcome;
+            try {
+                outcome = job();
+            } catch (const std::exception& ex) {
+                outcome.facilityFailure = IkFacilityFailure{
+                    IkFacilityFailureStage::InitialFkEvaluation, ex.what()};
+            }
+            QMetaObject::invokeMethod(
+                const_cast<QObject*>(context),
+                [onDone = std::move(onDone),
+                 outcome = std::move(outcome)]() mutable {
+                    onDone(std::move(outcome));
+                },
+                Qt::QueuedConnection);
+        };
+        state.savedConfig.seed = 1;
+        state.savedConfig.regionBudget.seed = 1;
+        // 用可抛异常的求解器替身覆盖异步 job 的调用面。
+        class ThrowingSolver final : public IIkSolver {
+        public:
+            IkOutcome solve(const IkRequest&) const override
+            {
+                throw std::invalid_argument("test async failure");
+            }
+        };
+        static ThrowingSolver solver;
+        services.ikSolver = &solver;
+        panel = std::make_unique<KinematicsPanelWidget>(services, state);
+    }
+};
+
 }  // namespace
 
 /// ★ 审查 G3 回归（WP-15-T20 第三批）：异步缝在场＝求解非阻塞——点击
@@ -696,6 +772,68 @@ TEST(KinematicsPanelInput, SolveNonBlockingViaAssemblySeam_WP15T20_G3)
     EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("内联完成")))
         << h.panel->lastStatusText().toStdString();
     EXPECT_TRUE(solve->isEnabled());  // 在途旗标已清位（按钮门控复位）
+}
+
+/// ★ 审核 P1 回归：会话换绑后旧求解完成不得写入新会话，且按钮必须
+/// 恢复可用；修复前回调直接 finishSinglePointSolve(m_session, ...) 会把
+/// 旧结果写入新纪元。
+TEST(KinematicsPanelInput, LateSolveResultIsDroppedAfterSessionEpochChanges_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    StaleResultHarness h;
+    const QList<QLineEdit*> edits = h.panel->findChildren<QLineEdit*>();
+    ASSERT_FALSE(edits.isEmpty());
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"))
+        ->setText(QStringLiteral("0.1"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-y"))
+        ->setText(QStringLiteral("0"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-z"))
+        ->setText(QStringLiteral("0"));
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                          Qt::DirectConnection));
+    ASSERT_TRUE(static_cast<bool>(h.pendingJob));
+    ASSERT_TRUE(static_cast<bool>(h.pendingDone));
+
+    ++h.state.epoch;  // 模拟项目切换/快照重发布；旧回调随后才迟到。
+    h.pendingDone(h.pendingJob());
+
+    EXPECT_EQ(h.state.lastSessionSolutionSet, nullptr);
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("过期")))
+        << h.panel->lastStatusText().toStdString();
+    QLabel* solveStatus =
+        h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+    ASSERT_NE(solveStatus, nullptr);
+    EXPECT_TRUE(solveStatus->text().contains(QStringLiteral("结果已过期")))
+        << solveStatus->text().toStdString();
+    QPushButton* solve = nullptr;
+    for (QPushButton* button : h.panel->findChildren<QPushButton*>()) {
+        if (button->text() == QStringLiteral("求解 IK")) {
+            solve = button;
+        }
+    }
+    ASSERT_NE(solve, nullptr);
+    EXPECT_TRUE(solve->isEnabled());
+}
+
+/// ★ 审核 P1 回归：异常必须转换为失败回执，面板从在途态恢复；否则
+/// m_solveInFlight 永久为 true，用户无法再次求解。
+TEST(KinematicsPanelInput, AsyncSolverExceptionRestoresSolveAction_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    ExceptionResultHarness h;
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"))
+        ->setText(QStringLiteral("0.1"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-y"))
+        ->setText(QStringLiteral("0"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-z"))
+        ->setText(QStringLiteral("0"));
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                          Qt::DirectConnection));
+    QCoreApplication::processEvents();
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("设施失败")))
+        << h.panel->lastStatusText().toStdString();
 }
 
 /// ★ 审查 G5 回归（WP-15-T20 第三批）：显示单位切换生产入口（长度/角度

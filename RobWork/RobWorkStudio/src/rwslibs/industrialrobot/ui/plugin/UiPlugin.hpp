@@ -59,7 +59,7 @@
 
 #include <memory>
 #include <optional>
-#include <memory>
+#include <future>
 #include <string>
 #include <utility>
 #include <vector>
@@ -575,6 +575,9 @@ private:
     /// 成员析构序经显式析构承载，m_jointLimitEvaluator 同款模式）。堆
     /// 持有保证 sessionView() 地址稳定（面板 modelView 缝的注入值）。
     std::unique_ptr<KinEvaluationExecutor> m_kinEvaluation;
+    /// 面板单点异步求解的任务句柄（UI线程持有；完成任务在下次提交前
+    /// 惰性清理，避免把 future 通过 lambda 反向捕获形成引用环）。
+    std::vector<std::shared_ptr<std::future<void>>> m_kinInlineSolveInflight;
     /// kinematics 会话可写性事实（UI-T64——L-K11 门控输入的宿主侧缓存；
     /// 项目打开拍以 report.opened.metadata.writable 重放，bindSessionFacts
     /// 整体写会话态时消费——私有会话态零解引用，R-2）。

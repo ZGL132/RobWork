@@ -17,6 +17,9 @@
 #include "KinPanelTypes.hpp"           // KinPanelServices 及往返值类型（翻译目标——私有完整型）
 #include "KinematicsUiModule.hpp"      // 具体模块（构造/转发面）
 
+#include <exception>
+#include <optional>
+
 namespace sdurws {
 namespace ird {
 namespace kinematics {
@@ -258,10 +261,26 @@ void KinematicsPluginAssembly::bindSessionFacts(core::ContentIdentity snapshotId
     // 会话事实四值写入（私有聚合完整型在本 TU 可见——翻译单点面；
     // 调用方语义见公共头方法注）。
     KinModuleSessionState& session = m_impl->session();
+    std::optional<core::ContentIdentity> previousConfigDigest;
+    try {
+        previousConfigDigest = analysisConfigurationDigest(session.savedConfig);
+    } catch (const std::exception&) {
+        // 首次绑定前会话仍是缺省未初始化配置；没有旧摘要就不做
+        // “配置变更清理”，避免把初始化拍误判成变更异常。
+    }
+    const core::ContentIdentity nextConfigDigest =
+        analysisConfigurationDigest(config);
     session.snapshotId = snapshotId;
     session.epoch = epoch;
     session.writable = writable;
     session.savedConfig = config;
+    if (previousConfigDigest.has_value()
+        && *previousConfigDigest != nextConfigDigest) {
+        // 配置摘要变化后，旧覆盖结果即使仍绑定同一快照/纪元也不再具备
+        // 当前配置语义；先清空投影，再等待下一次评估完成，避免旧结果
+        // 看起来像新配置的结论（KIN-04/KIN-07 结果身份纪律）。
+        m_impl->applyCoverageRows({});
+    }
 }
 
 void KinematicsPluginAssembly::applySessionSolveOutcome(
@@ -294,8 +313,11 @@ void KinematicsPluginAssembly::applyCoverageResult(
     // 会话事实比对；ok=false 的执行失败同样不投影——失败原因已经
     // noteAssemblyBackgroundResult 状态行呈现，双通道不重复）。
     const KinModuleSessionState& session = m_impl->session();
+    const core::ContentIdentity currentConfigDigest =
+        analysisConfigurationDigest(session.savedConfig);
     if (!result.ok || result.epoch != session.epoch
-        || result.snapshotId != session.snapshotId) {
+        || result.snapshotId != session.snapshotId
+        || result.configDigest != currentConfigDigest) {
         return;
     }
     // ---- 聚合→行翻译（本 TU 单点——零样本不虚构 0%、降级如实，§7.2/

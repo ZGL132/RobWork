@@ -27,6 +27,7 @@
 #include <vector>
 
 #include <sdurws/ird/core/Units.hpp>               // UnitToken::find（字段量纲锚）
+#include <sdurws/ird/runtime/CanonicalModel.hpp>  // FrozenRuntimeView 的值快照
 #include <sdurws/ird/ui/FormEditCommon.hpp>        // 表单公共件（UI-T08 对端——参数表面板）
 #include <sdurws/ird/ui/UiText.hpp>                // 文案键解析（UI-T25——迁移标记标签挂键；
                                                    // 构造期命令标题 resolver 尚未注入，此处直读
@@ -59,6 +60,33 @@ void fillSingleColumn(QTableWidget* table, const QStringList& texts)
         table->setItem(i, 0, new QTableWidgetItem(texts[i]));
     }
 }
+
+/**
+ * @brief 提交期冻结的运动学只读视图。
+ *
+ * 后台求解不能持有会被会话换绑的 KinSessionModelView 地址；这里在 UI
+ * 线程提交瞬间复制模型值与 T_world_base，形成构造后不可变、可并发只读的
+ * 视图。复制的成本与一次请求载荷同阶，换绑只会替换下一次提交使用的值，
+ * 因而迟到任务不会读到新项目的模型。
+ */
+class FrozenRuntimeView final : public IKinRuntimeView {
+public:
+    explicit FrozenRuntimeView(const IKinRuntimeView& source)
+        : m_model(source.model()), m_worldToBase(source.worldToBase())
+    {
+    }
+
+    const runtime::CanonicalModel& model() const override { return m_model; }
+
+    rw::math::Transform3D<double> worldToBase() const override
+    {
+        return m_worldToBase;
+    }
+
+private:
+    runtime::CanonicalModel m_model;
+    rw::math::Transform3D<double> m_worldToBase;
+};
 
 }  // namespace
 
@@ -133,6 +161,16 @@ void KinematicsPanelWidget::showStatusText(const QString& text)
 {
     if (m_statusLine != nullptr) {
         m_statusLine->setText(text);
+        // 状态文字与颜色同步表达反馈等级：过期/失败需要用户重新处理，
+        // 求解中提示正在执行，普通完成态使用稳定的成功色；不改变原有
+        // 文案和测试定位，只把状态差异变成可扫读的视觉信号。
+        if (text.contains(tr("过期")) || text.contains(tr("失败"))) {
+            m_statusLine->setStyleSheet(QStringLiteral("color: #b42318;"));
+        } else if (text.contains(tr("求解中"))) {
+            m_statusLine->setStyleSheet(QStringLiteral("color: #9a6700;"));
+        } else {
+            m_statusLine->setStyleSheet(QStringLiteral("color: #1f6f43;"));
+        }
     }
 }
 
@@ -225,6 +263,10 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     m_solveButton->setToolTip(tr("需要模型视图和逆运动学求解服务"));
     connect(m_solveButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onSolveClicked);
+    m_solveStatusLabel = new QLabel(tr("求解状态：未求解"), pane);
+    m_solveStatusLabel->setObjectName(QStringLiteral("kin-solve-status"));
+    m_solveStatusLabel->setWordWrap(true);
+    right->addWidget(m_solveStatusLabel);
     right->addWidget(m_solveButton);
     // ---- TCP 位姿回填入口（审查 G4 修复——L-K5 产品闭环；WP-15-T20
     // 第三批）：把会话姿态对应的当前 TCP 位姿回填进目标六字段（仅呈现
@@ -537,6 +579,17 @@ void KinematicsPanelWidget::refreshAll()
                                              m_services.ikSolver != nullptr
                                              && m_services.modelView != nullptr
                                              && !m_solveInFlight));
+    if (m_solveStatusLabel != nullptr) {
+        if (m_solveInFlight) {
+            m_solveStatusLabel->setText(tr("求解状态：执行中，输入和会话切换结果不会自动合并"));
+        } else if (m_solveResultExpired) {
+            m_solveStatusLabel->setText(tr("求解状态：结果已过期，请重新求解"));
+        } else if (m_session.lastSessionSolutionSet != nullptr) {
+            m_solveStatusLabel->setText(tr("求解状态：已有当前会话结果"));
+        } else {
+            m_solveStatusLabel->setText(tr("求解状态：未求解"));
+        }
+    }
     // ---- 探索式采样组门控（★ KIN-R2 任务3）：运行＝模型视图在场（执行
     // 面；TCP 解析在流内显式拒绝）；导出＝写出缝＋会话已有采样产物；
     // 回写＝会话姿态写点＋产物在场。缺一即禁用（诚实降级，与其他缝同
@@ -1060,7 +1113,27 @@ void KinematicsPanelWidget::runSolveNonBlocking(
     // 时回投被 Qt 弃置（迟到结果不触碰已销毁面板——缝面契约）。
     IkRequest req = request;
     req.targetInBase = targetInBase;
+    // 提交拍冻结三类身份键，完成回调必须用同一组键核对当前会话。
+    // 这一步把“后台任务正在算什么”与 UI 线程随后可能换绑的会话明确
+    // 分开；旧结果即使完成，也只能作为过期反馈，不能写入新会话。
+    const core::ContentIdentity snapshotIdAtSubmit = m_session.snapshotId;
+    const std::uint64_t epochAtSubmit = m_session.epoch;
+    const core::ContentIdentity configDigestAtSubmit =
+        analysisConfigurationDigest(m_session.savedConfig);
+
+    if (m_services.modelView == nullptr) {
+        m_solveInFlight = false;
+        showStatusText(tr("求解失败：提交时没有可用的模型快照"));
+        refreshAll();
+        return;
+    }
+    // 把可 rebind 的长命视图复制成独立快照；后台任务只持有该对象，
+    // 从此不再通过 m_services.modelView 读取会话委托。
+    auto modelSnapshot =
+        std::make_shared<const FrozenRuntimeView>(*m_services.modelView);
+    req.modelView = modelSnapshot.get();
     m_solveInFlight = true;
+    m_solveResultExpired = false;
     showStatusText(tr("求解中（异步执行，界面持续响应）……"));
     refreshAll();  // 求解按钮随在途旗标禁用（门控在 refreshAll）
     // 注意：job 按值捕获请求快照与求解器缝指针——面板/会话态在求解期间
@@ -1069,14 +1142,39 @@ void KinematicsPanelWidget::runSolveNonBlocking(
     const IIkSolver* solver = m_services.ikSolver;  // 缝指针——存活期由装配层契约保证
     const auto t0 = std::chrono::steady_clock::now();
     m_services.inlineSolveAsync(
-        [solver, req = std::move(req)]() { return solver->solve(req); },
-        [this, t0](IkOutcome outcome) {
+        [solver, modelSnapshot = std::move(modelSnapshot), req = std::move(req)]() mutable {
+            // modelSnapshot 必须在 req.modelView 使用期间保持存活；后台线程
+            // 只读这一份不可变视图，UI 线程 rebind 不会改变其内容。
+            req.modelView = modelSnapshot.get();
+            return solver->solve(req);
+        },
+        [this, t0, snapshotIdAtSubmit, epochAtSubmit, configDigestAtSubmit](
+            IkOutcome outcome) {
             m_solveInFlight = false;
+            bool sameSession = m_session.snapshotId == snapshotIdAtSubmit
+                               && m_session.epoch == epochAtSubmit;
+            try {
+                sameSession = sameSession
+                    && analysisConfigurationDigest(m_session.savedConfig)
+                           == configDigestAtSubmit;
+            } catch (const std::exception&) {
+                // 当前配置若已失去合法性，旧结果同样不能写回；把异常
+                // 归入过期态，避免 Qt 回调线程再次抛出调用方错误。
+                sameSession = false;
+            }
+            if (!sameSession) {
+                // 会话已经换绑或配置发生变化；旧结果不能污染当前结果集。
+                m_solveResultExpired = true;
+                showStatusText(tr("求解结果已过期：会话或配置已变化，请重新求解"));
+                refreshAll();
+                return;
+            }
             const auto elapsed =
                 std::chrono::duration_cast<std::chrono::milliseconds>(
                     std::chrono::steady_clock::now() - t0);
             const KinSolveFlowResult r = finishSinglePointSolve(
                 m_session, std::move(outcome), elapsed);
+            m_solveResultExpired = false;
             showStatusText(QString::fromStdString(r.statusText));
             refreshAll();
         },
@@ -1189,8 +1287,9 @@ void KinematicsPanelWidget::onBackfillTcpClicked()
     m_targetRoll->setText(text(backfill->rollDisplay));
     m_targetPitch->setText(text(backfill->pitchDisplay));
     m_targetYaw->setText(text(backfill->yawDisplay));
+    m_solveResultExpired = true;
     showStatusText(tr("已回填当前 TCP 位姿（显示制式数值，单位随行标签）"
-                      "——仅作编辑起点，求解身份不含会话"));
+                      "——仅作编辑起点，请重新求解"));
 }
 
 void KinematicsPanelWidget::onDisplayUnitChanged(int index)

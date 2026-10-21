@@ -304,6 +304,7 @@ TEST(KinematicsPanelCoverage, ApplyCoverageResultFillsTableAndAnchorGuards_WP15T
     result.ok = true;
     result.snapshotId = snap;
     result.epoch = 7;
+    result.configDigest = analysisConfigurationDigest(config);
     result.position.planned = 100;
     result.position.reached = 60;
     result.positionDefined = true;
@@ -313,6 +314,16 @@ TEST(KinematicsPanelCoverage, ApplyCoverageResultFillsTableAndAnchorGuards_WP15T
     bundle.applyCoverageResult(result);
     ASSERT_EQ(cov->rowCount(), 2);
     EXPECT_EQ(cov->item(0, 0)->text(), QStringLiteral("位置覆盖"));
+    EXPECT_EQ(cov->item(0, 1)->text(), QStringLiteral("60/100"));
+
+    // 同快照同纪元但配置摘要不同：结果身份仍不匹配，必须拒绝投影。
+    KinChannelCoverageResult wrongConfig = result;
+    kinematics::AnalysisConfiguration changedConfig = config;
+    changedConfig.iterationLimit += 1U;
+    wrongConfig.configDigest = analysisConfigurationDigest(changedConfig);
+    wrongConfig.position.reached = 1;
+    bundle.applyCoverageResult(wrongConfig);
+    ASSERT_EQ(cov->rowCount(), 2);
     EXPECT_EQ(cov->item(0, 1)->text(), QStringLiteral("60/100"));
     EXPECT_EQ(cov->item(0, 2)->text(), QStringLiteral("数据不足——已降级"));
     EXPECT_EQ(cov->item(1, 0)->text(), QStringLiteral("姿态覆盖"));

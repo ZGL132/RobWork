@@ -58,6 +58,8 @@
 #include <sdurws/ird/ui/UiTheme.hpp> // 验收色值与产品图例共用词表。
 #include <rw/math/RPY.hpp> // 三维创建的世界系RPY输入；构造参数按Z/Y/X轴排列。
 #include <QPushButton>
+#include <algorithm>
+#include <chrono>
 #include <QRadioButton>
 #include <QStatusBar>
 #include <QScrollArea>
@@ -3470,15 +3472,45 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
     // 销毁面板。future 以自持 shared_ptr 保活（std::async 返回值析构会
     // 阻塞等待——必须逃逸作用域）。
     channels.inlineSolveAsync =
-        [](std::function<kinematics::IkOutcome()> job,
-           std::function<void(kinematics::IkOutcome)> onDone,
-           const QObject* context) {
+        [this](std::function<kinematics::IkOutcome()> job,
+               std::function<void(kinematics::IkOutcome)> onDone,
+               const QObject* context) {
+            // std::future 的析构会等待异步任务；先清理已经完成的句柄，
+            // 再把本次句柄交给宿主成员持有，避免局部 future 阻塞 UI，也
+            // 避免旧实现中 future→lambda→future 的引用环。
+            m_kinInlineSolveInflight.erase(
+                std::remove_if(
+                    m_kinInlineSolveInflight.begin(),
+                    m_kinInlineSolveInflight.end(),
+                    [](const std::shared_ptr<std::future<void>>& future) {
+                        return future == nullptr
+                            || future->wait_for(std::chrono::seconds(0))
+                                   == std::future_status::ready;
+                    }),
+                m_kinInlineSolveInflight.end());
             auto inflight = std::make_shared<std::future<void>>();
             *inflight = std::async(
                 std::launch::async,
-                [job = std::move(job), onDone = std::move(onDone), context,
-                 inflight]() mutable {
-                    kinematics::IkOutcome outcome = job();
+                [job = std::move(job), onDone = std::move(onDone), context]() mutable {
+                    kinematics::IkOutcome outcome;
+                    try {
+                        outcome = job();
+                    } catch (const std::exception& ex) {
+                        // 线程边界必须把调用方/设施异常转换成结构化回执，
+                        // 否则异常会让 onDone 永远不执行，面板的在途标志
+                        // 永久保持 true。原文只留内部诊断素材，不直接
+                        // 穿透到用户界面（错误语义归 kinematics 设施失败）。
+                        outcome.facilityFailure = kinematics::IkFacilityFailure{
+                            kinematics::IkFacilityFailureStage::InitialFkEvaluation,
+                            ex.what()};
+                    } catch (...) {
+                        outcome.facilityFailure = kinematics::IkFacilityFailure{
+                            kinematics::IkFacilityFailureStage::InitialFkEvaluation,
+                            "未知异步异常"};
+                    }
+                    if (context == nullptr) {
+                        return;  // 装配缺陷：没有 UI 上下文时只能丢弃回执
+                    }
                     QMetaObject::invokeMethod(
                         const_cast<QObject*>(context),
                         [onDone = std::move(onDone),
@@ -3487,6 +3519,7 @@ void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
                         },
                         Qt::QueuedConnection);
                 });
+            m_kinInlineSolveInflight.push_back(std::move(inflight));
         };
     kin.installAssemblyChannels(channels);
 }
