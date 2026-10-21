@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="1.398" timestamp="2026-10-21T16:04:14.085" name="AllTests">
+  <testsuite name="ModelingPanelGuiTest" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="1.396" timestamp="2026-10-21T16:04:14.087">
+    <testcase name="TreeWidthContinuousAndCollapse_UX09_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="319" status="run" result="completed" time="0.985" timestamp="2026-10-21T16:04:14.087" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:324&#x0A;Expected: (splitter-&gt;sizes()[0]) &lt;= (300), actual: 594 vs 300&#x0A;默认树栏不应占近半编辑区&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:324
+Expected: (splitter->sizes()[0]) <= (300), actual: 594 vs 300
+默认树栏不应占近半编辑区
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:331&#x0A;The difference between splitter-&gt;sizes()[0] and width is 273, which exceeds 1, where&#x0A;splitter-&gt;sizes()[0] evaluates to 433,&#x0A;width evaluates to 160, and&#x0A;1 evaluates to 1.&#x0A;请求树宽=160&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:331
+The difference between splitter->sizes()[0] and width is 273, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+width evaluates to 160, and
+1 evaluates to 1.
+请求树宽=160
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:331&#x0A;The difference between splitter-&gt;sizes()[0] and width is 353, which exceeds 1, where&#x0A;splitter-&gt;sizes()[0] evaluates to 433,&#x0A;width evaluates to 80, and&#x0A;1 evaluates to 1.&#x0A;请求树宽=80&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:331
+The difference between splitter->sizes()[0] and width is 353, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+width evaluates to 80, and
+1 evaluates to 1.
+请求树宽=80
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:331&#x0A;The difference between splitter-&gt;sizes()[0] and width is 393, which exceeds 1, where&#x0A;splitter-&gt;sizes()[0] evaluates to 433,&#x0A;width evaluates to 40, and&#x0A;1 evaluates to 1.&#x0A;请求树宽=40&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:331
+The difference between splitter->sizes()[0] and width is 393, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+width evaluates to 40, and
+1 evaluates to 1.
+请求树宽=40
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:331&#x0A;The difference between splitter-&gt;sizes()[0] and width is 432, which exceeds 1, where&#x0A;splitter-&gt;sizes()[0] evaluates to 433,&#x0A;width evaluates to 1, and&#x0A;1 evaluates to 1.&#x0A;请求树宽=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:331
+The difference between splitter->sizes()[0] and width is 432, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+width evaluates to 1, and
+1 evaluates to 1.
+请求树宽=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:334&#x0A;The difference between splitter-&gt;sizes()[0] and 240 is 193, which exceeds 1, where&#x0A;splitter-&gt;sizes()[0] evaluates to 433,&#x0A;240 evaluates to 240, and&#x0A;1 evaluates to 1.&#x0A;收起后必须能够恢复&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:334
+The difference between splitter->sizes()[0] and 240 is 193, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+240 evaluates to 240, and
+1 evaluates to 1.
+收起后必须能够恢复
+]]></failure>
+    </testcase>
+    <testcase name="TreeNarrowScrollNavigationNoDirty_MDL07_T30" file="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp" line="339" status="run" result="completed" time="0.41" timestamp="2026-10-21T16:04:15.073" classname="ModelingPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:344&#x0A;Expected: (scroll) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp:344
+Expected: (scroll) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -592,6 +592,16 @@ QWidget* ModelingUiModule::createPanel()
         panel->setCommandTitleResolver(m_textResolver);
     }
     m_panel = panel;  // attachPanel 同义（公开方法语义一致，直接落成员）
+    // MDL-07/T30：补齐域树→共享选择→正式三维的上行；不能监听通用
+    // selectionChanged，否则共享服务下行定位又会伪装成树点击并改写来源。
+    // 连接上下文为panel，Qt销毁面板自动断开；适配器按本次调用现取，退订后零写入。
+    QObject::connect(panel,&ModelingPanelWidget::treeSelectionRequested,panel,
+        [this](const QString& key){
+            if(!m_adapter){return;}
+            if(key.isEmpty()){m_adapter->reportTreeSelection(std::nullopt);return;}
+            const auto id=core::ObjectId::tryFromCanonical(key.toStdString());
+            if(id){m_adapter->reportTreeSelection(*id);}
+        });
     panel->setCouplingStage(m_couplingStage);  // F14：暂存能力位应用（装配序无关）
     attachPanelWiring();  // 预览供给接线＋已定格预览推送（UI-T59——面板
                           // 晚于绑定/定格的装配序补齐）

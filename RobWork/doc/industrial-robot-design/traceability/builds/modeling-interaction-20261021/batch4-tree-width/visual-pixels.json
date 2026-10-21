@@ -1,0 +1,98 @@
+[
+  {
+    "attempt": "batch4-visual-final",
+    "image": "mtour-t30-selected-j1.png",
+    "viewCrop": [
+      781,
+      78,
+      1523,
+      981
+    ],
+    "primaryRgb": [
+      30,
+      90,
+      168
+    ],
+    "primaryPixels": 0
+  },
+  {
+    "attempt": "batch4-visual-final",
+    "image": "mtour-t30-selected-j2.png",
+    "viewCrop": [
+      781,
+      78,
+      1523,
+      981
+    ],
+    "primaryRgb": [
+      30,
+      90,
+      168
+    ],
+    "primaryPixels": 0
+  },
+  {
+    "attempt": "batch4-visual-final",
+    "image": "mtour-t30-selected-link1.png",
+    "viewCrop": [
+      781,
+      78,
+      1523,
+      981
+    ],
+    "primaryRgb": [
+      30,
+      90,
+      168
+    ],
+    "primaryPixels": 4
+  },
+  {
+    "attempt": "batch4-overlay-final",
+    "image": "mtour-t30-selected-j1.png",
+    "viewCrop": [
+      781,
+      78,
+      1523,
+      1101
+    ],
+    "primaryRgb": [
+      30,
+      90,
+      168
+    ],
+    "primaryPixels": 144
+  },
+  {
+    "attempt": "batch4-overlay-final",
+    "image": "mtour-t30-selected-j2.png",
+    "viewCrop": [
+      781,
+      78,
+      1523,
+      1101
+    ],
+    "primaryRgb": [
+      30,
+      90,
+      168
+    ],
+    "primaryPixels": 144
+  },
+  {
+    "attempt": "batch4-overlay-final",
+    "image": "mtour-t30-selected-link1.png",
+    "viewCrop": [
+      781,
+      78,
+      1523,
+      1101
+    ],
+    "primaryRgb": [
+      30,
+      90,
+      168
+    ],
+    "primaryPixels": 1836
+  }
+]

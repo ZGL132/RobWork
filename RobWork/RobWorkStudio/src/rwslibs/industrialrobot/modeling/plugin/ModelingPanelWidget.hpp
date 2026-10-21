@@ -213,6 +213,9 @@ Q_SIGNALS:
     void sessionDirtyChanged(bool dirty);
     /// 选中变化（L-1 正向——装配层接 ui SelectionModel 会话态；零修订）。
     void selectionChanged(const QString& objectKey);
+    /// MDL-07：仅域树用户选择的上行意图；空串表示清空，下行定位不发此信号。
+    /// 接收者仅UI线程消费，不持控件/工作集指针，不产生草稿编辑或项目修订。
+    void treeSelectionRequested(const QString& objectKey);
 
 private Q_SLOTS:
     /// 树选中变化（L-1 正向半区入口——写会话态＋属性区重投影）。

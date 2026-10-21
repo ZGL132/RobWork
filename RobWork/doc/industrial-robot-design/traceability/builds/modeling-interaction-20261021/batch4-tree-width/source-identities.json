@@ -1,0 +1,81 @@
+{
+  "baseline": "922e9dcd945df50c7452e42e7dc8c3ca75ba7a6a",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp",
+      "sha256": "50d78525f70a35280d9311b99b275faddacec89a05ae10221a8b220b72c432fe",
+      "bytes": 161569
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingUiModuleHostWiringGuiTest.cpp",
+      "sha256": "9d3b400fd3320fe69c0b4fd38a9f5e15d43197f54f627dd5292b50d967cfd893",
+      "bytes": 100330
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/HostMigrationProviders.cpp",
+      "sha256": "e8862e58b2fe561d7887d77a3573db99fb3a07394ddf229231bf2013d5a124fd",
+      "bytes": 36782
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/HostMigrationProviders.hpp",
+      "sha256": "9cbae63bb927e1f04134893c0a19890f6b098cc094e85154403425d1b0fe588c",
+      "bytes": 26004
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+      "sha256": "d4c405aac1ad374e9392376a3210843b7f71bf9f1831ccfa471a5f21dc683275",
+      "bytes": 231991
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.hpp",
+      "sha256": "5c49b9b8282003cb940e58eb4f48ee02d30223cadc74517a00e6b5a8e3099097",
+      "bytes": 37691
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.cpp",
+      "sha256": "7506d0ba992a0ee6bdd0b11cd58b84268d85cea27a6fb9585afd5001639c23e2",
+      "bytes": 68799
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "sha256": "bc9e5ed41ab8deba9769274c42610fdae12b811727b8960e510f9cbd1081b5e7",
+      "bytes": 648865
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+      "sha256": "0cafeb1b4e9a6ce48624803818e6a80df23551fc4b87deb51a7d0ce6b130da75",
+      "bytes": 445946
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T30.json",
+      "sha256": "270ab4e6d2c562538eff3e82dd575fcf00c9ed02e79922288e7c4c598662341f",
+      "bytes": 5263
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json",
+      "sha256": "493cbf80f3f1564c6d638b29c34652cae28853f8fec95858bcb5b0ba386a8597",
+      "bytes": 1026
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/modeling.md",
+      "sha256": "1a01147ea3b38edb3e5dd868f69f046f8a36afc25890698658cc0df495a0fd0a",
+      "bytes": 389074
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/units/ui.md",
+      "sha256": "fe5862871b8782f6dd75d519b0d66da31865e92e2d5ef43306c194bc823688a0",
+      "bytes": 640280
+    },
+    {
+      "path": "RobWork/docs/superpowers/plans/2026-10-21-modeling-interaction-repair.md",
+      "sha256": "156dfac46848255338d33b32708aa19e03085af39053f9a0ed4d870c2c23da6a",
+      "bytes": 21528
+    },
+    {
+      "path": "build/RobWorkStudio/bin/Release/sdurws_ird_studio.exe",
+      "sha256": "ccb737484588603f46020bd69768152f9b4e1fd3e269eaf5666e02d5fa76fbd1",
+      "bytes": 10891776
+    }
+  ],
+  "note": "raw on-disk bytes at final verification, evidence index excluded; final delivery commit contains same source"
+}

@@ -657,6 +657,14 @@ bool ModelingSelectionAdapter::reportCommandSelection(const core::ObjectId& oid)
     return reportSelection(oid, ui::SelectionSource::Command);
 }
 
+bool ModelingSelectionAdapter::reportTreeSelection(const std::optional<core::ObjectId>& oid)
+{
+    // 未装配/退订后不保留上一次服务；空选中无需业务闭包解析，显式清除共享高亮。
+    if (!m_service) { return false; }
+    if (!oid) { m_service->clearSelection(ui::SelectionSource::ProjectTree); return true; }
+    return reportSelection(*oid, ui::SelectionSource::ProjectTree);
+}
+
 bool ModelingSelectionAdapter::reportSelection(const core::ObjectId& oid,
                                                ui::SelectionSource source)
 {

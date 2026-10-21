@@ -31,6 +31,7 @@
 #include <QCheckBox>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QSplitter> // WP-13-T30：真实窗口分栏宽度协商，不以minimumWidth属性冒充可缩窄。
 #include "plugin/ModelingBodyEditor.hpp"
 #include <QDir> // MDL-22真实窗口截图证据，仅写测试指定输出目录。
 #include <QClipboard>   // 复制钮断言（UI-T59 剪贴板＝预览全文）
@@ -312,6 +313,64 @@ TEST_F(ModelingPanelGuiTest, TreeExpandCollapseAllIsReadOnlyNavigation_UX09_T30)
     collapse->click(); m_ws=makeSixAxisDraft(); m_ws.rootObjectId=core::ObjectId::generate();
     m_panel->refreshPanel(m_ws,ModelReadinessReport{});
     EXPECT_TRUE(tree->topLevelItem(0)->isExpanded());
+}
+
+/** @brief UX-09：树栏应连续缩窄至零，不能被内部按钮最小宽度卡住或突然跳成折叠。 */
+TEST_F(ModelingPanelGuiTest, TreeWidthContinuousAndCollapse_UX09_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07","UX-09"},{"AT-01"},std::nullopt);
+    m_panel->resize(1100,760); m_panel->show(); QApplication::processEvents();
+    auto* splitter=m_panel->findChild<QSplitter*>("ird_modeling_main_splitter"); ASSERT_NE(splitter,nullptr);
+    EXPECT_LE(splitter->sizes()[0],300) << "默认树栏不应占近半编辑区";
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!out.isEmpty()){QDir().mkpath(out); EXPECT_TRUE(m_panel->grab().save(out+"/t30-width-default.png"));}
+    // 检查布局协商后的实际像素宽度；只设置minimumWidth=0但保留布局最小提示会在这里失败。
+    for(const int width:{160,80,40,1,0}){
+        splitter->setSizes({width,splitter->width()-splitter->handleWidth()-width});
+        QApplication::processEvents();
+        EXPECT_NEAR(splitter->sizes()[0],width,1) << "请求树宽=" << width;
+    }
+    splitter->setSizes({240,splitter->width()-splitter->handleWidth()-240}); QApplication::processEvents();
+    EXPECT_NEAR(splitter->sizes()[0],240,1) << "收起后必须能够恢复";
+    EXPECT_TRUE(m_ws.changes.empty()) << "调整分栏不能改草稿";
+}
+
+/** @brief MDL-07/UX-09：窄栏中的结构按钮仍可滚动访问，恢复后保持选择和折叠且零脏化。 */
+TEST_F(ModelingPanelGuiTest, TreeNarrowScrollNavigationNoDirty_MDL07_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07","UX-09"},{"AT-01"},std::nullopt);
+    m_panel->resize(1100,760); m_panel->show(); QApplication::processEvents();
+    auto* splitter=m_panel->findChild<QSplitter*>("ird_modeling_main_splitter"); ASSERT_NE(splitter,nullptr);
+    auto* scroll=m_panel->findChild<QScrollArea*>("ird_modeling_tree_actions_scroll"); ASSERT_NE(scroll,nullptr);
+    auto* tree=m_panel->findChild<QTreeWidget*>("ird_modeling_struct_tree"); ASSERT_NE(tree,nullptr);
+    auto* collapse=m_panel->findChild<QPushButton*>("ird_modeling_struct_collapse_all"); ASSERT_NE(collapse,nullptr);
+    auto* expand=m_panel->findChild<QPushButton*>("ird_modeling_struct_expand_all"); ASSERT_NE(expand,nullptr);
+    int dirtyEvents=0;
+    QObject::connect(m_panel.get(),&ModelingPanelWidget::sessionDirtyChanged,m_panel.get(),[&](bool){++dirtyEvents;});
+    m_panel->focusObject(m_ws.design.joints[1].objectId);
+    const QString selected=tree->currentItem()->text(1);
+    auto* links=structureItem(*tree,QStringLiteral("连杆")); ASSERT_NE(links,nullptr); links->setExpanded(false);
+    splitter->setSizes({160,splitter->width()-splitter->handleWidth()-160}); QApplication::processEvents();
+    EXPECT_GT(scroll->horizontalScrollBar()->maximum(),0) << "窄栏不能静默裁掉尾部操作";
+    // 逐个定位真实按钮到视口内；使用控件真实映射证明操作没有落在不可见的裁剪区。
+    for(const auto* name:{"ird_modeling_struct_add","ird_modeling_struct_remove","ird_modeling_struct_up","ird_modeling_struct_down","ird_modeling_struct_reset"}){
+        auto* button=m_panel->findChild<QPushButton*>(name); ASSERT_NE(button,nullptr);
+        scroll->ensureWidgetVisible(button,0,0); QApplication::processEvents();
+        const QRect bounds(button->mapTo(scroll->viewport(),QPoint(0,0)),button->size());
+        EXPECT_TRUE(scroll->viewport()->rect().contains(bounds.center())) << name;
+    }
+    const auto out=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
+    if(!out.isEmpty()){QDir().mkpath(out); EXPECT_TRUE(m_panel->grab().save(out+"/t30-width-narrow.png"));}
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    EXPECT_EQ(tree->currentItem()->text(1),selected); EXPECT_FALSE(structureItem(*tree,QStringLiteral("连杆"))->isExpanded());
+    splitter->setSizes({0,splitter->width()-splitter->handleWidth()}); QApplication::processEvents();
+    if(!out.isEmpty()){EXPECT_TRUE(m_panel->grab().save(out+"/t30-width-hidden.png"));}
+    splitter->setSizes({240,splitter->width()-splitter->handleWidth()-240}); QApplication::processEvents();
+    auto* headerScroll=m_panel->findChild<QScrollArea*>("ird_modeling_tree_header_scroll"); ASSERT_NE(headerScroll,nullptr);
+    m_panel->setWritable(false); headerScroll->ensureWidgetVisible(collapse,0,0); collapse->click();
+    EXPECT_FALSE(tree->topLevelItem(0)->isExpanded());
+    headerScroll->ensureWidgetVisible(expand,0,0); expand->click(); EXPECT_TRUE(tree->topLevelItem(0)->isExpanded());
+    EXPECT_EQ(tree->currentItem()->text(1),selected); EXPECT_EQ(dirtyEvents,0); EXPECT_TRUE(m_ws.changes.empty());
 }
 
 /** @brief UX-01：模板和三种导入必须在工具页直接可见，不能藏到高级诊断中。 */

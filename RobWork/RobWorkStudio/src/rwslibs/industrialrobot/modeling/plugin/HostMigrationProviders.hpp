@@ -403,6 +403,14 @@ public:
      */
     bool reportCommandSelection(const core::ObjectId& oid);
 
+    /**
+     * @brief MDL-07：域树选择/清空汇入共享服务，保留ProjectTree真实来源。
+     * @param oid [in] 当前闭包内身份；空值表示用户清空，无物理单位。
+     * @return 已上报为true；未订阅/无效或闭包外身份为false，旧服务保持不变。
+     * 仅UI线程调用；不从下行选择广播中调用，不拥有服务或草稿。
+     */
+    bool reportTreeSelection(const std::optional<core::ObjectId>& oid);
+
 private:
     /**
      * @brief 复用同一闭包过滤和唯一写入口，保留拾取与命令的真实来源。
