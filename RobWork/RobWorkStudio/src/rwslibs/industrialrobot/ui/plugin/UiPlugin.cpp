@@ -348,6 +348,7 @@ constexpr const char* kAuxKeyModelingDock = "domain.modeling";
 constexpr const char* kAuxKeyRequirementsDock = "domain.requirements";
 constexpr const char* kAuxKeyKinematicsDock = "domain.kinematics";
 constexpr const char* kAuxKeyKinematicsAdvancedDock = "domain.kinematicsAdvanced";
+constexpr const char* kAuxKeyTrajectoryDock = "domain.trajectory";
 
 // 三新域辅助记忆键（ASM-PANEL 收口批——六域面板全部可见的可见性半区；
 // 词形 "domain.<token>" 与上方四键同族。工厂默认＝不呈现〔净室默认布局
@@ -1043,12 +1044,23 @@ void IrdWorkbenchHostPlugin::initialize()
     //     的域流程归各自后续任务——处理器给出诚实"未装配"应答，状态行
     //     直写中文文案（装配层呈现面惯例），不虚构执行成功。
     {
+        // trajectory 门面自持的是 trajectory::TrajectoryPluginDescriptor，
+        // 与宿主注册表消费的 ui::PluginUiDescriptor 不是同一类型；先在
+        // 本装配拍完成一次值翻译，再把统一的 ui 描述符指针交给命令注册
+        // 循环。这样不会以不安全的类型转换掩盖跨单元契约差异。
+        std::optional<ui::PluginUiDescriptor> translatedTrajectory;
+        if (m_domains->trajectory.has_value()) {
+            translatedTrajectory = trajectory::translatePluginUiDescriptor(
+                m_domains->trajectory->descriptor);
+        }
         const std::pair<const char*, ui::PluginUiDescriptor*> domainDescriptors[] = {
             {"modeling", &m_domains->modeling.descriptor},
             {"requirements", m_domains->requirements.has_value()
                                  ? &m_domains->requirements->descriptor : nullptr},
             {"kinematics", m_domains->kinematics.has_value()
                                ? &m_domains->kinematics->descriptor : nullptr},
+            {"trajectory", translatedTrajectory.has_value()
+                               ? &*translatedTrajectory : nullptr},
         };
         for (auto& [domainKey, descriptor] : domainDescriptors) {
             if (descriptor == nullptr) {
@@ -1140,6 +1152,7 @@ void IrdWorkbenchHostPlugin::initialize()
         if (auto* host = qobject_cast<QMainWindow*>(parentWidget())) {
             detail::arrangeDomainWorkspace(*host, *this,
                 {m_modelingDock, m_requirementsDock, m_kinematicsDock,
+                 m_trajectoryDock,
                  m_dynamicsDock, m_selectionDock, m_optimizationDock},
                 {m_propsDock, m_kinematicsAdvancedDock});
             // 底部任务也可能被用户浮动/移位，复位后须回到底部，不能仅隐藏。
@@ -1444,6 +1457,62 @@ void IrdWorkbenchHostPlugin::initialize()
             // 同步——syncKinematicsSessionFacts）。
             wireKinematicsEvaluationChannel();
         }
+        // 轨迹面板同一命令注册表接线：受理成功才转发，拒绝命令在面板
+        // 会话记录中止步；可用性由宿主注册表统一提供，避免按钮与菜单
+        // 出现两套门控事实。
+        if (m_domains->trajectory.has_value()) {
+            m_domains->trajectory->bindCommandSubmit(
+                [this](const std::string& id) {
+                    if (m_content != nullptr) { m_content->submitCommand(id); }
+                });
+            m_domains->trajectory->bindCommandAvailability(
+                [this](const std::string& id) {
+                    return m_content != nullptr
+                           && m_content->commandRegistry().availability(id).enabled;
+                });
+            // TRJ-07：播放帧必须落到正式宿主的同一 WorkCell/Device State，
+            // 才能让三维模型、TCP 坐标架和其它依赖 State 的视图同时更新。
+            // 这里仅做值翻译与一次 State 提交，不执行 FK/规划；设备名称和
+            // 链身份来自已发布 runtime 快照，避免在 UI 层猜测或取错首个设备。
+            m_domains->trajectory->bindSessionPoseSink(
+                [this](const std::vector<double>& values) {
+                    auto* studio = getRobWorkStudio();
+                    const auto snapshot = m_compilePort != nullptr
+                                              ? m_compilePort->lastPublishedSnapshot()
+                                              : nullptr;
+                    if (studio == nullptr || snapshot == nullptr) {
+                        return;  // 无项目/无已应用快照：不伪造三维姿态。
+                    }
+                    const auto cell = studio->getWorkCell();
+                    if (cell.isNull()
+                        || &snapshot->workCell().workCell() != cell.get()) {
+                        return;  // 宿主呈现已切换，拒绝把旧轨迹写入新场景。
+                    }
+                    const auto& chain = snapshot->model().chain();
+                    const auto device = cell->findDevice(chain.deviceName);
+                    if (device.isNull()
+                        || device->getDOF()
+                               != static_cast<int>(values.size())) {
+                        return;  // 维度/设备不一致时保持原 State。
+                    }
+                    rw::math::Q q(values.size());
+                    for (std::size_t i = 0; i < values.size(); ++i) {
+                        if (!std::isfinite(values[i])) {
+                            return;  // 播放数据损坏时不污染宿主 State。
+                        }
+                        q[i] = values[i];
+                    }
+                    auto candidate = studio->getState();
+                    device->setQ(q, candidate);
+                    studio->setState(candidate);
+                    if (studio->getView() != nullptr) {
+                        studio->getView()->update();
+                    }
+                });
+            // 失败段定位暂不绑定伪造对象：当前正式宿主尚未持有归档轨迹段
+            // 到 WorkCell 帧/路径图层的权威映射。保持空缝会让按钮置灰并在
+            // 面板明确显示“未装配”，避免把任意关节或基座误当失败段。
+        }
     }
     if (!buildDockBody()) {
         // 内容装配面校验被拒＝装配缺陷（build() 的必填校验覆盖三组：
@@ -1709,6 +1778,15 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
             m_kinematicsAdvancedDock->setObjectName("ird_kinematics_advanced_dock");
             detail::installDockViewport(*m_kinematicsAdvancedDock, kinematicsAdvanced, 280);
         }
+        // 轨迹主面板由 trajectory 装配门面真实创建；失败隔离时工厂返回
+        // nullptr，宿主不创建空 Dock，避免把“白名单存在”误显示成可用功能。
+        QWidget* trajectoryPanel = trajectoryPanelWidget(*m_domains);
+        if (trajectoryPanel != nullptr) {
+            m_trajectoryDock = new QDockWidget(
+                QString::fromUtf8(kTrajectoryDockTitle), this);
+            m_trajectoryDock->setObjectName("ird_trajectory_dock");
+            detail::installDockViewport(*m_trajectoryDock, trajectoryPanel);
+        }
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
         // 三新域面板挂位（ASM-PANEL 收口批 2026-10-10——六域面板全部可见；
         // 收口余量兑现：ui.md §16.7 v1.15 WP-24-T03 登记④"中央区 Central
@@ -1906,6 +1984,12 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
     } else {
         disableAuxToggleTail(kAuxKeyKinematicsAdvancedDock);
     }
+    if (m_trajectoryDock != nullptr) {
+        m_content->setAuxVisibilityTarget(kAuxKeyTrajectoryDock, m_trajectoryDock,
+                                          /*factoryVisible=*/false);
+    } else {
+        disableAuxToggleTail(kAuxKeyTrajectoryDock);
+    }
 
     // UI-T82/PM-14：setupMenu 先于 initialize，菜单创建时所有域 Dock 均
     // 为空。显隐观察必须在本拍（域已创建）绑定，否则标题栏关闭从未写记忆。
@@ -2081,6 +2165,8 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
     addAuxDockToggle(viewMenu, "IRD 运动学面板", kAuxKeyKinematicsDock, m_kinematicsDock);
     addAuxDockToggle(viewMenu, "IRD 运动学（求解配置）面板", kAuxKeyKinematicsAdvancedDock,
                      m_kinematicsAdvancedDock);
+    addAuxDockToggle(viewMenu, "IRD 轨迹面板", kAuxKeyTrajectoryDock,
+                     m_trajectoryDock);
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
     // 三新域面板开关（ASM-PANEL 收口批——六域面板全部可见的用户呼出半区；
     // Dock 缺席〔失败隔离〕时装配拍将菜单项置灰，与上方四项同机制）。
@@ -2138,6 +2224,7 @@ QDockWidget* IrdWorkbenchHostPlugin::auxiliaryDock(const std::string& key) const
         {kAuxKeyRequirementsDock, m_requirementsDock},
         {kAuxKeyKinematicsDock, m_kinematicsDock},
         {kAuxKeyKinematicsAdvancedDock, m_kinematicsAdvancedDock},
+        {kAuxKeyTrajectoryDock, m_trajectoryDock},
         {kAuxKeyDynamicsDock, m_dynamicsDock},
         {kAuxKeySelectionDock, m_selectionDock},
         {kAuxKeyOptimizationDock, m_optimizationDock}};
@@ -2334,6 +2421,10 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
             m_kinematicsAdvancedDock->setVisible(
                 m_content->auxVisible(kAuxKeyKinematicsAdvancedDock));
         }
+        if (m_trajectoryDock != nullptr) {
+            hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_trajectoryDock);
+            m_trajectoryDock->setVisible(m_content->auxVisible(kAuxKeyTrajectoryDock));
+        }
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
         // 三新域 Dock 入宿主（ASM-PANEL 收口批——六域面板全部可见的呈现
         // 落定拍；Left 区同列＝ui.md §16.7 v1.15 首版登记④"宿主侧 Left
@@ -2358,6 +2449,7 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
         // UI-T82：六域统一页签化，一份工作区高度替代六份最小高度的累加。
         detail::arrangeDomainWorkspace(*hostWindow, *this,
             {m_modelingDock, m_requirementsDock, m_kinematicsDock,
+             m_trajectoryDock,
              m_dynamicsDock, m_selectionDock, m_optimizationDock},
                 {m_propsDock, m_kinematicsAdvancedDock});
         m_propsDock->show();
@@ -6335,15 +6427,16 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
     const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
     const bool dockResize = (smoke == QLatin1String("dock-resize"));
     const bool requirementsLayout = (smoke == QLatin1String("requirements-layout"));
+    const bool trajectoryLayout = (smoke == QLatin1String("trajectory-layout"));
     const bool firstRun = (smoke == QLatin1String("layout"));
     const bool secondRun = (smoke == QLatin1String("layout2"));
-    if (!firstRun && !secondRun && !dockResize && !requirementsLayout) {
+    if (!firstRun && !secondRun && !dockResize && !requirementsLayout && !trajectoryLayout) {
         return;
     }
 
     // 度量/断言拍：1200 ms——晚于装载呈现自证（0 拍重申）与两拍宽度收束
     // （0/100 ms），取"宿主装载语义全部落定后"的稳定布局态。
-    QTimer::singleShot(1200, this, [this, firstRun, dockResize, requirementsLayout] {
+    QTimer::singleShot(1200, this, [this, firstRun, dockResize, requirementsLayout, trajectoryLayout] {
         std::cout << "[ird-ui-smoke-layout] started mode="
                   << (firstRun ? "first" : "second") << std::endl;
         std::vector<std::string> lines;  // UTF-8 报告行（几何走查＋断言结论）
@@ -6387,6 +6480,38 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
         QWidget* central = hostWindow->centralWidget();
         lines.push_back("host-window cur=" + std::to_string(hostWindow->width())
                         + "x" + std::to_string(hostWindow->height()));
+
+        if (trajectoryLayout) {
+            // 正式宿主探针只走真实视图菜单开关和真实控件树，不向面板塞
+            // 演示轨迹。无归档时应明确禁用，不能用测试数据掩盖接入缺口。
+            check(m_trajectoryDock != nullptr, "trajectory-dock-created");
+            if (m_trajectoryDock != nullptr) {
+                m_content->setAuxVisible(kAuxKeyTrajectoryDock, false);
+                bool toggled = false;
+                for (const auto& toggle : m_hostAuxToggles) {
+                    if (toggle.first == kAuxKeyTrajectoryDock) {
+                        toggle.second->trigger(); toggled = true; break;
+                    }
+                }
+                settleEvents(250);
+                check(toggled && m_trajectoryDock->isVisible(), "trajectory-opened-from-view-menu");
+                auto* play = m_trajectoryDock->findChild<QPushButton*>("trajectory_play");
+                check(play != nullptr && !play->isEnabled(), "no-archive-play-disabled");
+                const auto sliders = m_trajectoryDock->findChildren<QSlider*>();
+                check(sliders.size() == 1 && !sliders.front()->isEnabled(), "no-archive-seek-disabled");
+                for (auto* button : m_trajectoryDock->findChildren<QPushButton*>()) {
+                    check(!button->text().contains("trajectory.")
+                              && !button->text().contains("cmd."), "trajectory-title-resolved:" + button->text().toStdString());
+                }
+                snapPng(hostWindow, "trajectory-host-empty.png");
+                snapPng(m_trajectoryDock, "trajectory-panel-empty.png");
+                // 复原本探针的开关状态，避免留给下一轮人工验收一个临时布局。
+                m_content->setAuxVisible(kAuxKeyTrajectoryDock, false);
+            }
+            check(central != nullptr && central->isVisible(), "formal-central-view-visible");
+            QCoreApplication::exit(failures.empty() ? 0 : 1);
+            return;
+        }
 
         if (requirementsLayout) {
             // WP-14-T12/A-12：沿真实菜单打开需求Dock，再从窄窗放大；不得在
@@ -6610,8 +6735,8 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
             // 视图菜单呼出通道在册（辅助开关动作——P1"经视图菜单可勾选
             // 呼出"的结构前提；数量＝四域自持面板＋运动学高级＋ASM-PANEL
             // 三新域三域＝7）。
-            check(m_hostAuxToggles.size() == std::size_t{7},
-                  "view-menu-aux-toggles=7 (cur="
+            check(m_hostAuxToggles.size() == std::size_t{8},
+                  "view-menu-aux-toggles=8 (cur="
                       + std::to_string(m_hostAuxToggles.size()) + ")");
             // FIX-PANEL 缺席忍耐挂位拍断言（实机冒烟通道——面板创建成功
             // 的正常装配形态下七开关全部可用：缺席置灰只在面板失败隔离时

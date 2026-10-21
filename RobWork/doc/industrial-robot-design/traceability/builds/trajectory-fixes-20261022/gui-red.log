@@ -1,0 +1,77 @@
+[==========] Running 8 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 8 tests from TrajectoryPanelGuiTest
+[ RUN      ] TrajectoryPanelGuiTest.CurvesRefreshOnConstruction_WP16T12_ACC1
+[       OK ] TrajectoryPanelGuiTest.CurvesRefreshOnConstruction_WP16T12_ACC1 (13 ms)
+[ RUN      ] TrajectoryPanelGuiTest.AvailabilityDisablesCommandButtons_WP16T12_ACC1
+[       OK ] TrajectoryPanelGuiTest.AvailabilityDisablesCommandButtons_WP16T12_ACC1 (0 ms)
+[ RUN      ] TrajectoryPanelGuiTest.MissingPlaybackIsDisabledAndExplained_TRJ07
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(75): error: Value of: sliders.front()->isEnabled()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(80): error: Value of: explained
+  Actual: false
+Expected: true
+
+[  FAILED  ] TrajectoryPanelGuiTest.MissingPlaybackIsDisabledAndExplained_TRJ07 (1 ms)
+[ RUN      ] TrajectoryPanelGuiTest.MissingCommandOutletFeedbackPersists_TRJ06
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(91): error: Value of: lists.front()->toPlainText().contains((QString(QtPrivate::qMakeStringPrivate(u"" "命令出口未装配"))))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(93): error: Value of: lists.front()->toPlainText().contains((QString(QtPrivate::qMakeStringPrivate(u"" "命令出口未装配"))))
+  Actual: false
+Expected: true
+
+[  FAILED  ] TrajectoryPanelGuiTest.MissingCommandOutletFeedbackPersists_TRJ06 (0 ms)
+[ RUN      ] TrajectoryPanelGuiTest.InvalidPlaybackNeverReachesPoseSink_TRJ07
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(112): error: Expected equality of these values:
+  writes
+    Which is: 1
+  0
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(116): error: Expected: panel->findChildren<QSlider*>().front()->setValue(600) doesn't throw an exception.
+  Actual: it throws std::runtime_error with description "archive unavailable".
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(117): error: Expected equality of these values:
+  writes
+    Which is: 1
+  0
+
+[  FAILED  ] TrajectoryPanelGuiTest.InvalidPlaybackNeverReachesPoseSink_TRJ07 (0 ms)
+[ RUN      ] TrajectoryPanelGuiTest.PlaybackAdvancesPausesAndResets_TRJ07
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(136): error: Expected: (play) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] TrajectoryPanelGuiTest.PlaybackAdvancesPausesAndResets_TRJ07 (123 ms)
+[ RUN      ] TrajectoryPanelGuiTest.SessionRefreshClearsStaleCurves_TRJ07
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(167): error: Expected equality of these values:
+  joint->count()
+    Which is: 1
+  0
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(168): error: Value of: joint->isEnabled()
+  Actual: true
+Expected: false
+
+[  FAILED  ] TrajectoryPanelGuiTest.SessionRefreshClearsStaleCurves_TRJ07 (1 ms)
+[ RUN      ] TrajectoryPanelGuiTest.FailureWithoutLocatorExplainsDisabledAction_TRJ06
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(183): error: Value of: explained
+  Actual: false
+Expected: true
+
+[  FAILED  ] TrajectoryPanelGuiTest.FailureWithoutLocatorExplainsDisabledAction_TRJ06 (0 ms)
+[----------] 8 tests from TrajectoryPanelGuiTest (144 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 1 test suite ran. (146 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 6 tests, listed below:
+[  FAILED  ] TrajectoryPanelGuiTest.MissingPlaybackIsDisabledAndExplained_TRJ07
+[  FAILED  ] TrajectoryPanelGuiTest.MissingCommandOutletFeedbackPersists_TRJ06
+[  FAILED  ] TrajectoryPanelGuiTest.InvalidPlaybackNeverReachesPoseSink_TRJ07
+[  FAILED  ] TrajectoryPanelGuiTest.PlaybackAdvancesPausesAndResets_TRJ07
+[  FAILED  ] TrajectoryPanelGuiTest.SessionRefreshClearsStaleCurves_TRJ07
+[  FAILED  ] TrajectoryPanelGuiTest.FailureWithoutLocatorExplainsDisabledAction_TRJ06
+
+ 6 FAILED TESTS

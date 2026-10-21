@@ -552,6 +552,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-16-T14 | 实现 jerk 上限约束（R2） | trajectory | WP-16-T08/T11 | §17.1 子项 | 时间参数化纳入关节 jerk 限值 | TRJ-08-S1 | 限值满足断言＋超限段定位诊断 | — | M |
 | WP-16-T15 | 实现工艺速度约束（R2） | trajectory | WP-16-T08/T11 | §17.1 子项 | 指定段 TCP 速度受限/恒定 | TRJ-08-S2 | 工艺速度约束满足断言＋超限诊断 | — | S |
 | WP-16-T16 | 实现连续工艺轨迹段（R2） | trajectory | WP-16-T08/T11 | §17.1 子项 | 连续（不停驻）段表达与段间边界行为 | TRJ-08-S3 | 段间速度连续、驻留/不停驻切换明确断言 | — | M |
+| WP-16-T17 | 修复轨迹审核缺陷与正式宿主交互 | trajectory | WP-16-T12/T13 | trajectory.md §24；2026-10-22交付修复设计 | 算法修复、真实GUI目标、宿主注册/空态/回放控制、闭合清单 | TRJ-01/02/06/07、UX-02/10 | 失败复现→真实回归；三维与端到端缺口如实保留 | 零业务互链，零伪造归档数据 | M |
 
 ### 2.18 WP-17 dynamics（单元卡待产出；DYN-01~03/05~08）
 
@@ -845,6 +846,9 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | project.md 完整性争议（P-EV-6/P-POL-6） | 2026-09-10 实测 project.md §1~§15 完整（runtime.md P-RT-9 同结论）——两卡登记已过时 | evidence.md/policy.md 下次增量修订消账 |
 
 ### 4.5 红线例外登记册（WP-01-T03 维护；未登记例外被门禁检出即构建失败）
+
+2026-10-22 WP-16-T17 精确装配边增量：`sdurws_ird_ui_plugin -> sdurws_ird_trajectory_plugin`、`sdurws_ird_studio -> sdurws_ird_trajectory_plugin`；测试边 `sdurws_ird_ui_contract_test -> sdurws_ird_trajectory_plugin`。
+两类宿主通过 trajectory 公共装配门面创建正式 Dock、注册命令/文案并绑定会话姿态出口；ui 计算库不新增链接，业务计算库零新增互链。契约测试直接编译 `DomainAssembly.cpp`，需同源完整链接并验证真实描述符、注册器和全部中文标题。此前只有白名单插件 token，不能替代真实 CMake 边登记；实际门禁已检出两条缺边，现与机器目标级白名单、任务契约同批登记。用户已要求按推荐设计连续实施。
 
 | 红线 | 例外范围 | 依据 | 状态 | 登记日期 |
 | --- | --- | --- | --- | --- |

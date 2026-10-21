@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.121" timestamp="2026-10-22T05:13:26.474" name="AllTests">
+  <testsuite name="TrajectoryPanelGuiTest" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.119" timestamp="2026-10-22T05:13:26.476">
+    <testcase name="SessionEpochChangeStopsOldPlayback_TRJ07" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="194" status="run" result="completed" time="0.117" timestamp="2026-10-22T05:13:26.476" classname="TrajectoryPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:216&#x0A;Expected equality of these values:&#x0A;  writes&#x0A;    Which is: 8&#x0A;  writesAtSwitch&#x0A;    Which is: 2&#x0A;切换后不能继续输出旧归档帧&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:216
+Expected equality of these values:
+  writes
+    Which is: 8
+  writesAtSwitch
+    Which is: 2
+切换后不能继续输出旧归档帧
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:217&#x0A;Expected equality of these values:&#x0A;  play-&gt;text()&#x0A;    Which is: { 2-byte object &lt;82-66&gt;, 2-byte object &lt;5C-50&gt; }&#x0A;  (QString(QtPrivate::qMakeStringPrivate(u&quot;&quot; &quot;播放&quot;)))&#x0A;    Which is: { 2-byte object &lt;AD-64&gt;, 2-byte object &lt;3E-65&gt; }&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:217
+Expected equality of these values:
+  play->text()
+    Which is: { 2-byte object <82-66>, 2-byte object <5C-50> }
+  (QString(QtPrivate::qMakeStringPrivate(u"" "播放")))
+    Which is: { 2-byte object <AD-64>, 2-byte object <3E-65> }
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:218&#x0A;Expected equality of these values:&#x0A;  time-&gt;value()&#x0A;    Which is: 0.69599999999999995&#x0A;  0.0&#x0A;    Which is: 0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:218
+Expected equality of these values:
+  time->value()
+    Which is: 0.69599999999999995
+  0.0
+    Which is: 0
+]]></failure>
+    </testcase>
+    <testcase name="FailureLocatorExceptionIsVisible_TRJ06" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="222" status="run" result="completed" time="0.001" timestamp="2026-10-22T05:13:26.594" classname="TrajectoryPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:232&#x0A;Expected: locate-&gt;click() doesn&apos;t throw an exception.&#x0A;  Actual: it throws std::runtime_error with description &quot;view unavailable&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:232
+Expected: locate->click() doesn't throw an exception.
+  Actual: it throws std::runtime_error with description "view unavailable".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:237&#x0A;Value of: explained&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:237
+Value of: explained
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

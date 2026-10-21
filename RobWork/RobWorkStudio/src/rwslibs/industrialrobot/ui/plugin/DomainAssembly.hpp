@@ -56,6 +56,7 @@
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>      // 建模装配门面（O-31 装配器消费面）
 #include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // 需求装配门面（O-45 补建缝——UI-T23 消费）
 #include <sdurws/ird/kinematics/KinematicsPluginAssembly.hpp>  // 运动学装配门面（WP-15-T18 出线——UI-T23 消费）
+#include <sdurws/ird/trajectory/TrajectoryPluginAssembly.hpp> // 轨迹装配门面（WP-16-T12——正式宿主消费）
 
 #include "DomainModuleRunner.hpp"                // DomainModuleEntry（draft.apply 遍历条目——acceptance 2）
 
@@ -94,6 +95,9 @@ struct DomainPluginAssembly {
     std::optional<requirements::RequirementsPluginAssembly> requirements;
     /// 运动学装配产物（失败隔离缺席＝nullopt——同上）。
     std::optional<kinematics::KinematicsPluginAssembly> kinematics;
+    /// 轨迹装配产物（失败隔离缺席＝nullopt；白名单已有 trajectory，
+    /// 但正式宿主必须同时持有门面才能创建工作流面板和注册命令）。
+    std::optional<trajectory::TrajectoryPluginAssembly> trajectory;
     /// ASM-UI 三新域（dynamics/selection/optimization）装配产物容器——
     /// 类型擦除句柄（实型＝ExtraDomainAssemblies，见 ExtraDomainAssembly
     /// .hpp；由携带 IRD_UI_PLUGIN_EXTRA_DOMAINS 定义的宿主目标——ui_plugin
@@ -204,6 +208,9 @@ QWidget* kinematicsPanelWidget(const DomainPluginAssembly& bundle);
  */
 QWidget* kinematicsAdvancedPanelWidget(const DomainPluginAssembly& bundle);
 
+/// 轨迹主面板（工作流＋曲线视图合一 Tab；域缺席＝nullptr）。
+QWidget* trajectoryPanelWidget(const DomainPluginAssembly& bundle);
+
 /// 建模模块草稿源（§10.5 attachModule 第二参数——宿主打开成功后挂接）。
 ui::IModuleDraftSource& modelingDraftSource(DomainPluginAssembly& bundle);
 
@@ -215,6 +222,8 @@ extern const char* const kRequirementsDockTitle;
 extern const char* const kKinematicsDockTitle;
 /// 运动学高级面板 Dock 的标题（宿主 chrome 文案——同上）。
 extern const char* const kKinematicsAdvancedDockTitle;
+/// 轨迹面板 Dock 的标题。
+extern const char* const kTrajectoryDockTitle;
 
 }  // namespace ui
 }  // namespace ird

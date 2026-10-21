@@ -40,15 +40,24 @@ bool isFiniteDouble(double v)
 
 /// 关节轴的量纲与单位（附录 D C7 运行校验口径：逐轴按关节类型定纲——
 /// 转动 rad、移动 m；本域不持有关节类型视图，以区间上下界的数值尺度
-/// 无法可靠区分，故单位标注按调用方声明。本实现以 Angle 口径标注素材
-/// 单位并在 cause 文案中写明逐轴量纲约定——V-03 素材的单位字段义务由
-/// core::ComparativeFields 承载，量纲歧义在 cause 中显式说明，不私设
-/// 第二套判定）。
-core::UnitToken axisUnitToken()
+/// 无法可靠区分，故单位按调用方声明。空的旧请求兼容 Angle；明确的
+/// Length 则使用 m。非法量纲在入口拒绝，不等待实际越限后才发现。
+core::UnitToken axisUnitToken(core::QuantityKind kind)
 {
-    // rad token（core 注册表编译期冻结——find 失败属 core 注册表缺陷，
-    // 该断言在 core Units 测试已钉住；此处取值失败即环境缺陷 fail-fast）。
-    auto token = core::UnitToken::find("rad");
+    const char* symbol = nullptr;
+    if (kind == core::QuantityKind::Angle) {
+        symbol = "rad";
+    } else if (kind == core::QuantityKind::Length) {
+        symbol = "m";
+    } else {
+        throw TrajectoryError("trajectory/ptp/joint-unit",
+                              "关节量纲必须为 Angle/rad 或 Length/m");
+    }
+    // 单位 token 由 core 注册表提供；找不到是注册表缺陷，不能静默回退。
+    auto token = core::UnitToken::find(symbol);
+    if (!token.has_value()) {
+        throw TrajectoryError("trajectory/ptp/joint-unit", "core 注册表缺少关节 SI 单位");
+    }
     return *token;
 }
 
@@ -206,6 +215,19 @@ PtpPlanResult planPtpSegment(const PtpRequest& request)
                               "终点候选解集为空却调用 PTP 规划（前置违约——"
                               "§15.1 非法示例；无解结局由序列展开层产素材）");
     }
+    if (!request.jointQuantityKinds.empty()
+        && request.jointQuantityKinds.size() != dof) {
+        throw TrajectoryError("trajectory/ptp/joint-unit",
+                              "jointQuantityKinds 必须与关节维度一致");
+    }
+    for (const auto kind : request.jointQuantityKinds) {
+        (void)axisUnitToken(kind); // 全量核验：区间内的非法量纲同样属于调用方违约。
+    }
+    const auto jointKindAt = [&request](std::size_t axis) {
+        return request.jointQuantityKinds.empty()
+            ? core::QuantityKind::Angle
+            : request.jointQuantityKinds[axis];
+    };
     if (!request.tcpRef.isValid()) {
         throw TrajectoryError("trajectory/ptp/tcp-ref",
                               "tcpRef 必须为合法对象身份（§6.3——禁止名称直存，"
@@ -269,16 +291,18 @@ PtpPlanResult planPtpSegment(const PtpRequest& request)
             if (q[i] < lo || q[i] > hi) {
                 // 越限素材：reasonToken=TRJ-LIMIT-EXCEEDED（DiagCodes 常量
                 // ——禁字符串拼码）；比较型三要素＝实际关节值/越限侧界值/
-                // 单位（rad——逐轴按关节类型定纲的口径见 axisUnitToken 注）。
+                // 单位由调用方提供的逐轴关节量纲决定，禁止根据数值猜测。
                 FailedSegmentRecord rec;
                 rec.segmentIndex = request.segmentIndex;
                 rec.phaseToken = kPhasePlanPtp;
                 rec.reasonToken = std::string(kTrjLimitExceeded);
                 rec.pathParameter = s;  // 端点 s=0/1——段内可定位
+                const core::UnitToken unit = axisUnitToken(jointKindAt(i));
                 rec.cause = std::string(which) + "构型越出评价区间（轴 "
                               + std::to_string(i) + "：实际 "
                               + std::to_string(q[i]) + "，区间 [" + std::to_string(lo)
-                              + ", " + std::to_string(hi) + "]，单位 rad（移动关节 m））";
+                              + ", " + std::to_string(hi) + "]，单位 "
+                              + std::string(unit.symbol()) + "）";
                 rec.recommendedAction =
                     "检查该构型来源（startStateRef 解析或 IK 硬过滤视图）——"
                     "越限构型不得进入 PTP 几何；修正限位视图或替换构型后重评";
@@ -289,10 +313,10 @@ PtpPlanResult planPtpSegment(const PtpRequest& request)
                 const auto provenance = core::ValueProvenance::make(
                     core::ProvenanceKind::DerivedReadOnly, {}, {}, "ptp-endpoint");
                 cmp.actual.quantity = core::SourcedValue<double>::provided(q[i], provenance);
-                cmp.actual.unit = axisUnitToken();
+                cmp.actual.unit = unit;
                 const double bound = (q[i] < lo) ? lo : hi;
                 cmp.expected.quantity = core::SourcedValue<double>::provided(bound, provenance);
-                cmp.expected.unit = axisUnitToken();
+                cmp.expected.unit = unit;
                 rec.comparison = cmp;
                 return rec;
             }

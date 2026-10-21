@@ -86,7 +86,7 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
 /// ／B2 诊断历史标题；值＝工程用语中文，UX-02）。
 /// FIX-PANEL 批增行：kinematics 域八命令标题（既有漏登——六域描述符承载
 /// 键现产对账抓到后随批补齐；族注见表尾 kinematics 段）。
-constexpr std::array<TextRow, 52> kDomainCommandTitleTable{{
+constexpr std::array<TextRow, 61> kDomainCommandTitleTable{{
     { "cmd.modeling.new-from-template.title",          "从模板新建"       },
     { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
     { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
@@ -157,6 +157,17 @@ constexpr std::array<TextRow, 52> kDomainCommandTitleTable{{
     { "cmd.kinematics.set-default-device.title",       "设默认设备" },
     { "cmd.kinematics.export-results.title",           "导出结果" },
     { "cmd.kinematics.reset-session-pose.title",       "复位会话姿态" },
+    // 轨迹正式宿主接入：描述符程序化派生的全部命令/页面键必须在唯一
+    // 文案出口登记，否则面板构造会抛 unknown-key，整个宿主无法交互。
+    { "cmd.trajectory.plan-sequence.title",            "规划作业序列" },
+    { "cmd.trajectory.preview-segment.title",          "预览选中段" },
+    { "cmd.trajectory.local-replan.title",             "局部重规划" },
+    { "cmd.trajectory.play.title",                     "播放轨迹" },
+    { "cmd.trajectory.playback-seek.title",            "定位到时刻" },
+    { "cmd.trajectory.export.title",                   "导出轨迹" },
+    { "cmd.trajectory.show-curve.title",               "查看曲线" },
+    { "plugin.trajectory.panel.workflow.title",        "轨迹工作流" },
+    { "plugin.trajectory.panel.curves.title",          "轨迹曲线" },
 }};
 /// 键族①c：需求面板卡片文案（UI-T37——卡片标题＋"?"帮助位；值＝设计规格
 /// 2026-10-01 §3/§4 卡片化分组词表；键前缀 panel.requirements.card.*）。

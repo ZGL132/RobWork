@@ -67,6 +67,25 @@
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>
 #include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>
 #include <sdurws/ird/kinematics/KinematicsPluginAssembly.hpp>
+#include <sdurws/ird/trajectory/TrajectoryPluginAssembly.hpp>
+
+/** @brief TRJ-07：真实轨迹装配门面经正式注册器登记，所有现产标题都可解析。 */
+TEST(TrajectoryHostAssembly, RegistersRealDescriptorAndResolvesAllTitles_TRJ07)
+{
+    using namespace sdurws::ird;
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-07","UX-02"},std::vector<std::string>{"AT-04"});
+    auto domain=trajectory::createTrajectoryPluginAssembly();
+    auto registrar=ui::createPluginUiRegistrar({"trajectory"});
+    ASSERT_EQ(trajectory::registerWithHostRegistrar(domain,registrar.get()),ui::RegistrationOutcome::Ok);
+    const auto descriptor=trajectory::translatePluginUiDescriptor(domain.descriptor);
+    ASSERT_EQ(descriptor.commands.size(),7U);
+    ASSERT_EQ(descriptor.panels.size(),1U);
+    EXPECT_NO_THROW(ui::resolveText(descriptor.titleKey));
+    for(const auto& command:descriptor.commands){EXPECT_NO_THROW(ui::resolveText(command.titleKey));}
+    for(const auto& panel:descriptor.panels){EXPECT_NO_THROW(ui::resolveText(panel.titleKey));}
+    // 本层不创建 QWidget，不冒充正式窗口或真实三维；这些证据归 GUI/宿主探针。
+    EXPECT_NE(domain.uiModule(),nullptr);
+}
 
 namespace {
 

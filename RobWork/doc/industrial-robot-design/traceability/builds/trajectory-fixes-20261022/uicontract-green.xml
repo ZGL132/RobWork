@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="0.003" timestamp="2026-10-22T05:12:49.412" name="AllTests">
+  <testsuite name="TrajectoryHostAssembly" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-22T05:12:49.414">
+    <testcase name="RegistersRealDescriptorAndResolvesAllTitles_TRJ07" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\HostIntegrationContractTest.cpp" line="73" status="run" result="completed" time="0." timestamp="2026-10-22T05:12:49.414" classname="TrajectoryHostAssembly" />
+  </testsuite>
+</testsuites>

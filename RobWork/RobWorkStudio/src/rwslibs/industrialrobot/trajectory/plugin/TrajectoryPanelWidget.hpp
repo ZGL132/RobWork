@@ -37,6 +37,7 @@
 #define IRD_TRAJECTORY_PLUGIN_TRAJECTORYPANELWIDGET_HPP
 
 #include <QString>  // channelLabel 返回类型（Qt Core——呈现文本素材）
+#include <QElapsedTimer>
 #include <QWidget>
 
 #include <vector>
@@ -51,6 +52,8 @@ class QLabel;      // 前置声明（就绪/帧读数文本）
 class QPlainTextEdit; // 前置声明（最近命令清单——只读）
 class QPushButton; // 前置声明（命令区/播放按钮）
 class QSlider;     // 前置声明（动画进度）
+class QDoubleSpinBox;
+class QTimer;
 
 namespace sdurws::ird::trajectory {
 
@@ -90,15 +93,20 @@ private:
 
     // ---- 交互处理（Qt 信号→成员函数——零 Q_OBJECT 的函数指针 connect）。
     void onCommandButtonClicked();        ///< 命令按钮：受理＋提交两步
-    void onPlayClicked();                 ///< 动画播放：进度位置查表驱动
+    void onPlayClicked();                 ///< 动画播放/暂停：只推进归档查表时刻
     void onSeekMoved(int sliderValue);    ///< 进度拖动：查表定位帧读数
     void onCurveJointChanged(int index);  ///< 关节切换：重投影曲线页
     void onCurveChannelChanged(int index);///< 通道切换：重投影曲线页
+    void onFailureLocateClicked();        ///< 失败段定位：请求宿主三维出口
 
     // ---- 呈现辅助（查表/读数——零计算红线的 UI 线程合法操作面）。 ----
     /// 按进度值查表并更新帧读数与会话姿态驱动缝（t＝进度比例×总时长；
     /// 缝未装配时读数区呈现未装配态）。
     void seekToSliderValue(int sliderValue);
+    /** @brief 停止会话动画并恢复播放文案；不改变已显示姿态，无异常。 */
+    void stopPlayback();
+    /** @brief 同步回放入口；源缺失、损坏或时长非法时禁用并解释原因。 */
+    void refreshPlaybackControls();
     /// 重投影曲线页（curvesSource 缝取序列→曲线视图；空缝呈现空态）。
     void refreshCurvesPage();
     /// 通道下拉序号→通道词表值（0/1/2→Position/Velocity/Acceleration；
@@ -116,7 +124,17 @@ private:
     QLabel* m_readinessLabel = nullptr;    ///< 就绪投影文本（UX-10 七态素材）
     QPlainTextEdit* m_recentList = nullptr; ///< 最近命令清单（只读呈现缓冲）
     QLabel* m_frameReadout = nullptr;      ///< 动画帧读数（t/q/qd 文本行）
+    QLabel* m_failureLabel = nullptr;      ///< 失败素材与定位反馈
     QSlider* m_progressSlider = nullptr;   ///< 动画进度（0..1000 映射总时长）
+    QPushButton* m_failureLocateButton = nullptr; ///< 定位到三维按钮
+    QPushButton* m_playButton = nullptr;  ///< Qt 父子树持有；播放/暂停同一入口
+    QPushButton* m_resetButton = nullptr; ///< 复位至归档起点，零项目写入
+    QDoubleSpinBox* m_timeSpin = nullptr; ///< 当前播放时刻，单位 s
+    QTimer* m_playTimer = nullptr;        ///< UI 线程定时查表；Qt 父子树持有
+    QElapsedTimer m_playClock;            ///< 单调时钟，避免系统时间调整影响动画
+    double m_playStartS = 0.0;            ///< 本次播放开始时的归档时间，单位 s
+    std::uint64_t m_playbackEpoch = 0;    ///< 已投影的会话纪元；切换时停止旧动画，防跨项目写帧
+    QString m_commandFeedback;            ///< 最近提交反馈；刷新时保留，不伪造执行成功
     std::vector<QPushButton*> m_commandButtons; ///< 七命令按钮（词表序）
 
     // ---- 曲线页控件。 ------------------------------------------------

@@ -521,6 +521,9 @@ set(IRD_TEST_TARGET_EDGES
     # 建模插件既有公共project/policy依赖；仅放行此GUI测试目标，不扩产品边。
     "sdurws_ird_ui_gui_test->sdurws_ird_modeling_plugin"
     "sdurws_ird_ui_contract_test->sdurws_ird_kinematics_plugin"
+    # 2026-10-22 轨迹审核修复：宿主装配同源直编＋描述符现产文案回归；
+    # 只登记测试目标，不新增业务域互链（R-1）。
+    "sdurws_ird_ui_contract_test->sdurws_ird_trajectory_plugin"
     "sdurws_ird_ui_contract_test->sdurws_ird_requirements_plugin"
     "sdurws_ird_ui_test->sdurws_ird_requirements"
     "sdurws_ird_ui_test->sdurws_ird_modeling_plugin"
@@ -576,6 +579,10 @@ set(IRD_TARGET_LEVEL_EDGES
     "sdurws_ird_ui_plugin->sdurws_ird_modeling_plugin"
     "sdurws_ird_ui_plugin->sdurws_ird_requirements_plugin"
     "sdurws_ird_ui_plugin->sdurws_ird_kinematics_plugin"
+    # WP-16-T17：只放行两类宿主的轨迹门面装配边，不放宽 ui 计算库或业务域互链。
+    # 正式 Dock/命令/文案注册与会话姿态桥见 DTB §4.5 同日登记。
+    "sdurws_ird_ui_plugin->sdurws_ird_trajectory_plugin"
+    "sdurws_ird_studio->sdurws_ird_trajectory_plugin"
     "sdurws_ird_ui_plugin->sdurws_ird_dynamics_plugin"      # ASM-PLUG 收口批（2026-10-10）——宿主装配层消费三域门面（ui_plugin 链接面修改归 ui 宿主面批次）
     "sdurws_ird_ui_plugin->sdurws_ird_selection_plugin"     # ASM-PLUG 收口批（2026-10-10）——同款
     "sdurws_ird_ui_plugin->sdurws_ird_optimization_plugin") # ASM-PLUG 收口批（2026-10-10）——同款

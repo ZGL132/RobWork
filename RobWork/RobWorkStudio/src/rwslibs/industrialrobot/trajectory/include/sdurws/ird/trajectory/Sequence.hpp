@@ -22,15 +22,15 @@
  *   - 任务契约 tasks/foundation/WP-16-T04.json（acceptance 1——任务点
  *     有序作业序列模型测试）
  *
- * 背景说明（展开的产出是什么、什么在 T04 不可达——如实登记）：
+ * 背景说明（WP-16-T17 接续 T04 的编排缺口）：
  *   - 展开产物＝§5.4 第 4 条的**段计划**（PlannedSegment 序列）：只含
  *     几何与约束，不含时间（时间在 §12/WP-16-T08）。
  *   - 站间 PTP 段的几何在"纯关节序列"（全部站 approach/retract 禁用）
  *     下由本展开器直接规划填充（构型选择 §7.5＋planPtpSegment 语义）；
  *     站 approach 启用时，该站前 PTP 段的终点＝approach 起点（接近点）
- *     构型——依赖笛卡尔段 IK（WP-16-T05 §8.2），该 PTP 段与 approach/
- *     retract 段的计划条目结构完整（序号/类型/来源/约束/lineSpec 齐备）
- *     而几何留待 T05 填充——本批如实标记几何未填充，不伪造端点。
+ *     构型——依赖笛卡尔段 IK（WP-16-T05 §8.2）。T17 通过请求内的
+ *     cartesianPlanner 消费完整几何与端点构型；服务缺失、返回不完整或
+ *     撤离起点分支不连续时立即产生失败素材，禁止空几何假成功。
  *   - 取消（UX-03）：展开循环边界轮询取消观测，命中＝cancelled 语义
  *     （零错误素材），不是失败。
  *
@@ -43,11 +43,13 @@
 #define IRD_TRAJECTORY_SEQUENCE_HPP
 
 #include <cstdint>
+#include <functional>
 #include <optional>
 #include <string>
 #include <vector>
 
 #include <rw/math/Q.hpp>
+#include <rw/math/Transform3D.hpp>
 
 #include <sdurws/ird/core/Identity.hpp>
 #include <sdurws/ird/trajectory/Ptp.hpp>
@@ -112,8 +114,8 @@ struct SequenceTaskSegment {
  *        ——O-37 同款纪律：本域不消费 requirements 头，宿主解析后注入；
  *        kinematics Evidence.hpp 先例同构）。
  *
- * 位姿/容差/TCP 解析等字段不在本结构（它们是 IK 求解面 WP-15 的输入；
- * 展开面只消费顺序与段链所需子集）——投影最小化，防"顺手解码"越权。
+ * 本结构只消费顺序、段链以及宿主解析后的 workPose；容差/TCP 解析
+ * 权威仍归宿主与 IK 端口，不在展开器内解码其它业务域对象。
  * 值语义纯结构；线程安全。
  */
 struct SequenceTaskPoint {
@@ -133,12 +135,16 @@ struct SequenceTaskPoint {
     SequenceTaskSegment approach;
     /// 撤离段投影（retract 沿轴正向离开）。
     SequenceTaskSegment retract;
+    /// 任务点 TCP 位姿（基座系 {B}，平移 m）。笛卡尔编排服务需要该值；
+    /// 旧的纯关节序列可留空，保持旧调用兼容。
+    std::optional<rw::math::Transform3D<double>> workPose;
 
     bool operator==(const SequenceTaskPoint& o) const
     {
         return pointOid == o.pointOid && name == o.name && level == o.level
             && enabled == o.enabled && sequenceKey == o.sequenceKey
-            && approach == o.approach && retract == o.retract;
+            && approach == o.approach && retract == o.retract
+            && workPose == o.workPose;
     }
     bool operator!=(const SequenceTaskPoint& o) const { return !(*this == o); }
 };
@@ -187,10 +193,9 @@ enum class SequenceSegmentRole : std::uint8_t {
  * 不变量（expandSequence 产出保证）：segmentIndex 全序列 0 基连续；
  * role/spaceType/lineSpec/ptpGeometry/dwellDurationS 的组合一致：
  *   - TransferPtp ⇒ spaceType==JointLinear、lineSpec 恒空；
- *     ptpGeometry 有值＝几何已规划（纯关节序列），nullopt＝端点构型
- *     依赖笛卡尔段 IK 产出（WP-16-T05 填充——如实标记不伪造）；
+ *     ptpGeometry 必填，接近起点的构型取自笛卡尔编排服务；
  *   - Approach/Retract ⇒ spaceType==CartesianLine、lineSpec 必填、
- *     ptpGeometry 恒空（T05 填充）；
+ *     cartesianGeometry 必填，ptpGeometry 恒空；
  *   - Work ⇒ dwellDurationS 有值＝该站驻留（s，>0）、nullopt＝无驻留。
  *
  * 值语义纯结构；线程安全（并发只读）。
@@ -211,18 +216,22 @@ struct PlannedSegment {
     SegmentConstraint constraint;
     /// 笛卡尔段几何要素（仅 Approach/Retract——轴向＋段长，T05 消费）。
     std::optional<SequenceTaskSegment> lineSpec;
-    /// 已规划的 PTP 段几何（仅 TransferPtp 且端点构型可解析时——§7
-    /// planPtpSegment 语义产物；nullopt＝待 T05 填充）。
+    /// 已规划的 PTP 段几何（TransferPtp 必填，§7 语义产物；其他角色为空）。
     std::optional<TrajectorySegment> ptpGeometry;
     /// 驻留时长（仅 Work；s，>0；nullopt＝无驻留——§5.4 步骤 3）。
     std::optional<double> dwellDurationS;
+    /// 已规划的笛卡尔段几何（仅 Approach/Retract；lineSpec 存在不等于
+    /// 可执行几何，缺失时必须同时有 failures 素材；表尾追加兼容旧聚合）。
+    std::optional<TrajectorySegment> cartesianGeometry;
 
     bool operator==(const PlannedSegment& o) const
     {
         return segmentIndex == o.segmentIndex && role == o.role
             && spaceType == o.spaceType && sourceTaskPoint == o.sourceTaskPoint
             && constraint == o.constraint && lineSpec == o.lineSpec
-            && ptpGeometry == o.ptpGeometry && dwellDurationS == o.dwellDurationS;
+            && ptpGeometry == o.ptpGeometry
+            && cartesianGeometry == o.cartesianGeometry
+            && dwellDurationS == o.dwellDurationS;
     }
     bool operator!=(const PlannedSegment& o) const { return !(*this == o); }
 };
@@ -283,6 +292,48 @@ struct SequenceRequest {
     std::vector<SequenceStationInput> stations;
     /// 取消观测（可空＝不可取消；站级循环边界轮询——§15.0/§15.1）。
     CancelSignal cancel;
+
+    /**
+     * @brief 笛卡尔段编排服务请求（trajectory→kinematics 的值面桥）。
+     *
+     * trajectory 不直接 include kinematics 私有头；宿主把
+     * CartesianLine→IK 的真实服务注入回调，回调返回已验证的段几何或
+     * 可定位失败素材。workPose 为空时服务应按调用方契约返回失败。
+     */
+    struct CartesianPlanRequest {
+        SequenceSegmentAxis axis = SequenceSegmentAxis::ToolZ;
+        SequenceTaskSegment segment;
+        SequenceSegmentRole role = SequenceSegmentRole::Approach;
+        core::ObjectId sourceTaskPoint;
+        std::optional<rw::math::Transform3D<double>> workPose;
+        rw::math::Q branchSeedQ;
+        std::uint32_t segmentIndex = 0;
+        SegmentConstraint constraint;
+        core::ObjectId tcpRef;
+        std::optional<core::ObjectId> frameRef;
+    };
+
+    /**
+     * @brief 笛卡尔编排服务结果；二者至少有一个，成功只能有 geometry。
+     *
+     * CartesianLine 几何路点按契约只携带 target 位姿，不携带 q；因此
+     * 服务必须额外返回首/末端 IK 构型，供站间 PTP 与下一段游标消费。
+     */
+    struct CartesianPlanOutcome {
+        std::optional<TrajectorySegment> geometry;
+        std::optional<FailedSegmentRecord> failure;
+        std::optional<rw::math::Q> startQ;
+        std::optional<rw::math::Q> endQ;
+    };
+
+    /// 笛卡尔编排服务；存在进退段而回调为空时，展开器返回明确失败，
+    /// 不再产生“有 lineSpec 但无几何”的假成功。
+    std::function<CartesianPlanOutcome(const CartesianPlanRequest&)>
+        cartesianPlanner;
+    /// 逐轴量纲（Angle/rad 或 Length/m）；空向量兼容旧的全转动调用，
+    /// 非空时必须与 startQ 同维度。所有站间 PTP 均透传，避免序列入口
+    /// 把移动轴越限错误显示成角度（TRJ-06）。
+    std::vector<core::QuantityKind> jointQuantityKinds;
 };
 
 /**
@@ -299,9 +350,9 @@ struct SequenceRequest {
  *      TRJ-INPUT-INVALID 素材终止——§5.4"对残余环/悬空键给素材并终止"）；
  *   5. 拓扑排序（Kahn；并列/无键站按 name 字典序消解——确定性补全），
  *      取 enabled 子序为展开站序；
- *   6. 逐站展开段链：站间 PTP（纯关节站可规划几何；approach 启用站的
- *      到达段几何待 T05）→ approach（若启用）→ work（任务点＋驻留）→
- *      retract（若启用）；构型游标＝最近一个"构型已解析"的段端点；
+ *   6. 逐站展开段链：站间 PTP（approach 启用时先经服务求其起点构型）
+ *      → approach（若启用）→ work（任务点＋驻留）→ retract（若启用）；
+ *      构型游标＝上一段已验证端点，撤离首构型须与游标连续；
  *   7. 站候选空集→TRJ-NO-PATH 素材终止（§7.6 行 5）。
  *
  * 展开的构型选择过程已由各 PTP 段的 TrajectorySegment 承载（选定构型

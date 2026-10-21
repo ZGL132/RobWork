@@ -377,6 +377,31 @@ if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     add_library(RWS::ird::trajectory_plugin ALIAS sdurws_ird_trajectory_plugin)
 endif()
 
+# ---- GUI 交互回归目标（WP-16-T12——首屏投影/按钮门控）----
+# 该目标只验证 Qt Widgets 状态投影，不在测试线程执行规划；Windows 实际
+# 运行必须遵循 AGENTS.md 的 VS x64＋QT_QPA_PLATFORM=windows 串行规则。
+add_executable(sdurws_ird_trajectory_gui_test
+    gui_test/TrajectoryPanelGuiTest.cpp)
+target_compile_features(sdurws_ird_trajectory_gui_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_trajectory_gui_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_trajectory_gui_test PRIVATE /utf-8)
+endif()
+target_include_directories(sdurws_ird_trajectory_gui_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ui/include)
+# 保持测试目标与 testkit 同行，供 BuildGraphContractTest 的 T-1 机器扫描
+# 精确识别“报告设施只落在测试目标”这一允许边界。
+target_link_libraries(sdurws_ird_trajectory_gui_test PRIVATE sdurws_ird_trajectory_plugin sdurws_ird_testkit GTest::gtest Qt6::Core Qt6::Gui Qt6::Widgets)
+add_custom_command(TARGET sdurws_ird_trajectory_gui_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_trajectory_gui_test>
+            $<TARGET_FILE_DIR:sdurws_ird_trajectory_gui_test>
+    COMMAND_EXPAND_LISTS)
+
 # ---- 测试目标 sdurws_ird_trajectory_test（随 WP-16-T03 登记）----
 # 用例面（任务契约 acceptance 逐条具名自证）：
 #   test/DiagCodesTest.cpp        TRJ-* 12 码登记表全表清单＋逐字段登记
@@ -690,12 +715,15 @@ add_custom_command(TARGET sdurws_ird_trajectory_contract_test POST_BUILD
     COMMAND_EXPAND_LISTS)
 
 ird_add_gtest(sdurws_ird_trajectory_contract_test)
+ird_add_gtest(sdurws_ird_trajectory_gui_test)
+# GUI 注册进入常规验收面，但必须串行，Windows 平台不得 offscreen 假绿。
+set_tests_properties(sdurws_ird_trajectory_gui_test PROPERTIES
+    LABELS "ird;gui;trajectory" RUN_SERIAL TRUE ENVIRONMENT "QT_QPA_PLATFORM=windows")
 
 # ---- ctest LABELS "ird"（modeling/ui/requirements/kinematics/selection/
 #      dynamics 落位同款）----
 # 验收过滤口径：ctest -L "^ird$"——两测试（模型层、进程内、确定性）同
-# 标签；_gui_test 形态本单元无（GUI 手动验证通道随 WP-16-T12——卡
-# §17.4，本批次无 GUI 载体用例）。
+# 标签；真实 Widgets 回归另附 gui/trajectory 标签并设置 RUN_SERIAL。
 set_tests_properties(sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test
     PROPERTIES LABELS "ird")
 

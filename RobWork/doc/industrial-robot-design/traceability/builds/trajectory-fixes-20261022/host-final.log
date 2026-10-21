@@ -1,0 +1,35 @@
+[ird-ui-plugin] 诊断栈就绪（开发日志目录：C:\Users\zgl18\.codex\worktrees\93fd\RobWork\ird-ui-plugin-logs）
+[ird-ui-plugin] domain assembly: plugin=modeling ok=1 panels=1 commands=12
+[ird-ui-plugin] domain assembly: plugin=requirements ok=1 panels=1 commands=9
+[ird-ui-plugin] domain assembly: plugin=kinematics ok=1 panels=2 commands=8
+[ird-ui-plugin] domain assembly: plugin=trajectory ok=1 panels=1 commands=7
+[ird-ui-plugin] domain assembly: plugin=dynamics ok=1 panels=1 commands=5
+[ird-ui-plugin] domain assembly: plugin=selection ok=1 panels=1 commands=1
+[ird-ui-plugin] domain assembly: plugin=optimization ok=1 panels=1 commands=0
+[ird-ui-plugin] shared surface: modeling registered
+[ird-ui-plugin] shared surface: requirements registered
+[ird-ui-plugin] shared surface: kinematics registered
+[ird-ui-plugin] 共享面装配完成（项目树＋检查器＋选择服务；三域 Provider 注册；L1/L3 接线；NameMap 端口＝空映射二态——呈现装配随 WP-24-T08）
+[ird-ui-plugin] 工业项目树装配完成（多 Dock：项目树主 Dock＋属性/任务同级 Dock＋宿主状态栏投影＋Ctrl+Shift+P 命令面板；装载呈现自证在事件循环稍后执行）
+[ird-ui-plugin] 宿主事件桥接线完成（L3 frameSelectedEvent→反解编排；D8 stateChangedEvent→会话姿态桥）
+[ird-ui-plugin] 工业项目树多 Dock 已呈现（项目树主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 257 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 420 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-smoke-layout] started mode=second
+[ird-ui-smoke-layout] pass trajectory-dock-created
+[ird-ui-smoke-layout] pass trajectory-opened-from-view-menu
+[ird-ui-smoke-layout] pass no-archive-play-disabled
+[ird-ui-smoke-layout] pass no-archive-seek-disabled
+[ird-ui-smoke-layout] pass trajectory-title-resolved:规划作业序列
+[ird-ui-smoke-layout] pass trajectory-title-resolved:预览选中段
+[ird-ui-smoke-layout] pass trajectory-title-resolved:局部重规划
+[ird-ui-smoke-layout] pass trajectory-title-resolved:播放轨迹
+[ird-ui-smoke-layout] pass trajectory-title-resolved:定位到时刻
+[ird-ui-smoke-layout] pass trajectory-title-resolved:导出轨迹
+[ird-ui-smoke-layout] pass trajectory-title-resolved:查看曲线
+[ird-ui-smoke-layout] pass trajectory-title-resolved:播放
+[ird-ui-smoke-layout] pass trajectory-title-resolved:回到起点
+[ird-ui-smoke-layout] pass trajectory-title-resolved:定位到三维
+[ird-ui-smoke-layout] snap trajectory-host-empty.png
+[ird-ui-smoke-layout] snap trajectory-panel-empty.png
+[ird-ui-smoke-layout] pass formal-central-view-visible
