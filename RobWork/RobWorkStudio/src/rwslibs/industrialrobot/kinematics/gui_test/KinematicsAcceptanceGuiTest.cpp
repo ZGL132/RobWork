@@ -13,6 +13,7 @@
 #include <sdurws/ird/kinematics/Ik.hpp>
 #include <QApplication>
 #include <QDir>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QPushButton>
@@ -146,6 +147,28 @@ TEST(KinematicsAcceptance, FilledTargetSurvivesUnitSwitch_AT27)
     ASSERT_TRUE(result.ok());
     EXPECT_NEAR(result.get().tcpInBase.P()[0], 1.1 * std::cos(0.3) + 0.7, 1e-6);
     EXPECT_NEAR(result.get().tcpInBase.P()[1], 1.1 * std::sin(0.3), 1e-6);
+}
+
+/// 求解完成后编辑目标必须立即使旧结果过期，避免结果页和导出入口继续
+/// 暗示结果对应当前编辑目标。
+TEST(KinematicsAcceptance, EditingTargetExpiresExistingResult_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    AcceptanceWindow h;
+    h.fillReachableTarget();
+    h.click(h.button(QStringLiteral("求解 IK")));
+    ASSERT_NE(h.state.lastSessionSolutionSet, nullptr);
+
+    QLabel* solveStatus =
+        h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+    ASSERT_NE(solveStatus, nullptr);
+    EXPECT_TRUE(solveStatus->text().contains(QStringLiteral("已有当前会话结果")))
+        << solveStatus->text().toStdString();
+
+    h.edit("target-x")->setText(QStringLiteral("0.2"));
+    EXPECT_TRUE(solveStatus->text().contains(QStringLiteral("结果已过期")))
+        << solveStatus->text().toStdString();
 }
 
 /// K40：默认区域盒模式必须真正生成样本，合法字段不能被统一误报为非法。

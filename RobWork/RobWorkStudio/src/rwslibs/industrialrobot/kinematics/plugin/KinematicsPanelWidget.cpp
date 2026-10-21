@@ -88,6 +88,37 @@ private:
     rw::math::Transform3D<double> m_worldToBase;
 };
 
+/**
+ * @brief 比较两个基座系 SI 位姿是否代表同一目标。
+ *
+ * 编辑器在显示单位切换时会经历一次字符串重投影，浮点格式化可能带来
+ * 最后几位的舍入差异；这里比较位置（m）和旋转矩阵逐项（无量纲），以
+ * 1e-12 的绝对容差吸收该显示层误差，同时仍能识别用户实际改变的目标。
+ */
+bool equivalentTargetPose(const rw::math::Transform3D<double>& lhs,
+                          const rw::math::Transform3D<double>& rhs)
+{
+    constexpr double kTargetComparisonTolerance = 1e-12;
+    for (std::size_t i = 0; i < 3; ++i) {
+        if (!std::isfinite(lhs.P()[i]) || !std::isfinite(rhs.P()[i])
+            || std::fabs(lhs.P()[i] - rhs.P()[i])
+                   > kTargetComparisonTolerance) {
+            return false;
+        }
+    }
+    for (std::size_t row = 0; row < 3; ++row) {
+        for (std::size_t column = 0; column < 3; ++column) {
+            if (!std::isfinite(lhs.R()(row, column))
+                || !std::isfinite(rhs.R()(row, column))
+                || std::fabs(lhs.R()(row, column) - rhs.R()(row, column))
+                       > kTargetComparisonTolerance) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 }  // namespace
 
 // =====================================================================
@@ -174,6 +205,30 @@ void KinematicsPanelWidget::showStatusText(const QString& text)
     }
 }
 
+void KinematicsPanelWidget::onTargetEditorChanged()
+{
+    // 没有已写入会话的结果时，编辑目标只是草稿变化，不显示“过期”，
+    // 避免用户首次输入就看到与结果无关的警告；异步在途结果由完成回调
+    // 另行用提交快照核对。
+    if (m_session.lastSessionSolutionSet == nullptr) {
+        return;
+    }
+
+    bool expired = true;
+    if (m_lastSolvedTarget.has_value()) {
+        // 静默解析当前编辑值。输入不完整时保持过期态，但不在每次击键时
+        // 覆盖状态行，让用户能连续完成一个数值的输入。
+        const auto currentTarget = readTargetPoseFromEditors(QString());
+        expired = !currentTarget.has_value()
+                  || !equivalentTargetPose(*currentTarget,
+                                           *m_lastSolvedTarget);
+    }
+    if (m_solveResultExpired != expired) {
+        m_solveResultExpired = expired;
+        refreshAll();
+    }
+}
+
 QWidget* KinematicsPanelWidget::buildPosePane()
 {
     auto* pane = new QWidget(this);
@@ -228,6 +283,13 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     m_targetRoll->setObjectName(QStringLiteral("target-roll"));
     m_targetPitch->setObjectName(QStringLiteral("target-pitch"));
     m_targetYaw->setObjectName(QStringLiteral("target-yaw"));
+    // 用户编辑目标时立即重进结果状态；单位重投影和 TCP 回填会在写入时
+    // 屏蔽信号，避免同一 SI 目标被误判为过期（KIN-02/NFR-REL-03）。
+    for (QLineEdit* editor : {m_targetX, m_targetY, m_targetZ,
+                              m_targetRoll, m_targetPitch, m_targetYaw}) {
+        connect(editor, &QLineEdit::textChanged, this,
+                &KinematicsPanelWidget::onTargetEditorChanged);
+    }
     form->addRow(m_targetRollLabel, m_targetRoll);
     form->addRow(m_targetPitchLabel, m_targetPitch);
     form->addRow(m_targetYawLabel, m_targetYaw);
@@ -666,6 +728,14 @@ void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProje
                           "请减小数值后重试。原单位与全部原值保留。"));
         return;
     }
+    // 重投影只是同一 SI 目标的显示层换算，不应触发“用户改目标”失效
+    // 逻辑；六个目标编辑器的信号在这段写入期间统一屏蔽。
+    const QSignalBlocker blockTargetX(m_targetX);
+    const QSignalBlocker blockTargetY(m_targetY);
+    const QSignalBlocker blockTargetZ(m_targetZ);
+    const QSignalBlocker blockTargetRoll(m_targetRoll);
+    const QSignalBlocker blockTargetPitch(m_targetPitch);
+    const QSignalBlocker blockTargetYaw(m_targetYaw);
     for (const auto& value : pending) { value.first->setText(value.second); }
     // 只改变显示文本与投影句柄，结果SI真值、配置、修订和缓存身份都不动。
     m_session.displayUnits = units;
@@ -1001,6 +1071,15 @@ void KinematicsPanelWidget::focusTaskPoint(const std::optional<core::ObjectId>& 
 std::optional<rw::math::Transform3D<double>>
 KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
 {
+    // errorPrefix 为空表示调用方只需要无副作用的合法性探测（目标编辑
+    // 变化时用于更新“结果已过期”状态）；正式提交路径传入可读前缀，才
+    // 把输入错误写入状态行。
+    const auto reportInvalid = [this, &errorPrefix](const QString& detail) {
+        if (!errorPrefix.isEmpty()) {
+            showStatusText(tr("%1位姿非法（%2）——原值保留")
+                               .arg(errorPrefix, detail));
+        }
+    };
     // ---- 位置分量（显示制式 → SI）：解析失败**或非有限**（"inf"/"nan"
     // 可被解析但不是合法坐标——NFR-COR-03 非有限不静默）＝调用方输入
     // 错误：就地反馈保留原值（UX-05），不向求解器传递非有限目标（域
@@ -1013,8 +1092,7 @@ KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
     double z = m_targetZ->text().toDouble(&okZ);
     if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
         || !std::isfinite(z)) {
-        showStatusText(tr("%1位姿非法（位置分量解析失败或非有限）——原值保留")
-                           .arg(errorPrefix));
+        reportInvalid(tr("位置分量解析失败或非有限"));
         return std::nullopt;
     }
     x = resolveKinDisplayToSi(x, m_session.displayUnits);
@@ -1040,8 +1118,7 @@ KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
     double yaw = parseAngle(m_targetYaw, &okYw);
     if (!okR || !okP || !okYw || !std::isfinite(roll) || !std::isfinite(pitch)
         || !std::isfinite(yaw)) {
-        showStatusText(tr("%1位姿非法（姿态分量解析失败或非有限）——原值保留")
-                           .arg(errorPrefix));
+        reportInvalid(tr("姿态分量解析失败或非有限"));
         return std::nullopt;
     }
     roll = resolveKinAngleDisplayToSi(roll, m_session.displayUnits);    // rad
@@ -1092,6 +1169,11 @@ void KinematicsPanelWidget::onSolveClicked()
     }
     const KinSolveFlowResult r =
         runSinglePointSolve(m_services, m_session, *target, assembly.request);
+    if (r.resultCommitted) {
+        m_lastSolvedTarget = *target;
+        m_solveResultExpired = false;
+    }
+    m_solveTargetAtSubmit.reset();
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（★ KIN-P4——refreshAll 而非仅结果页：解集入会话态后
     // 导出/复算按钮的门控随即点亮——修复前按钮态停留在求解前的"无结果
@@ -1123,6 +1205,7 @@ void KinematicsPanelWidget::runSolveNonBlocking(
 
     if (m_services.modelView == nullptr) {
         m_solveInFlight = false;
+        m_solveTargetAtSubmit.reset();
         showStatusText(tr("求解失败：提交时没有可用的模型快照"));
         refreshAll();
         return;
@@ -1133,6 +1216,7 @@ void KinematicsPanelWidget::runSolveNonBlocking(
         std::make_shared<const FrozenRuntimeView>(*m_services.modelView);
     req.modelView = modelSnapshot.get();
     m_solveInFlight = true;
+    m_solveTargetAtSubmit = targetInBase;
     m_solveResultExpired = false;
     showStatusText(tr("求解中（异步执行，界面持续响应）……"));
     refreshAll();  // 求解按钮随在途旗标禁用（门控在 refreshAll）
@@ -1151,6 +1235,9 @@ void KinematicsPanelWidget::runSolveNonBlocking(
         [this, t0, snapshotIdAtSubmit, epochAtSubmit, configDigestAtSubmit](
             IkOutcome outcome) {
             m_solveInFlight = false;
+            // 目标快照由 UI 线程提交前保存；回调只在 UI 线程消费并随后清除，
+            // 与会话/配置身份一起构成这次异步请求的完整绑定。
+            const auto targetAtSubmit = m_solveTargetAtSubmit;
             bool sameSession = m_session.snapshotId == snapshotIdAtSubmit
                                && m_session.epoch == epochAtSubmit;
             try {
@@ -1162,10 +1249,17 @@ void KinematicsPanelWidget::runSolveNonBlocking(
                 // 归入过期态，避免 Qt 回调线程再次抛出调用方错误。
                 sameSession = false;
             }
-            if (!sameSession) {
-                // 会话已经换绑或配置发生变化；旧结果不能污染当前结果集。
+            const auto currentTarget =
+                readTargetPoseFromEditors(QString());
+            const bool sameTarget = targetAtSubmit.has_value()
+                                    && currentTarget.has_value()
+                                    && equivalentTargetPose(*currentTarget,
+                                                            *targetAtSubmit);
+            if (!sameSession || !sameTarget) {
+                // 会话、配置或目标已经变化；旧结果不能污染当前结果集。
+                m_solveTargetAtSubmit.reset();
                 m_solveResultExpired = true;
-                showStatusText(tr("求解结果已过期：会话或配置已变化，请重新求解"));
+                showStatusText(tr("求解结果已过期：会话、配置或目标已变化，请重新求解"));
                 refreshAll();
                 return;
             }
@@ -1174,7 +1268,11 @@ void KinematicsPanelWidget::runSolveNonBlocking(
                     std::chrono::steady_clock::now() - t0);
             const KinSolveFlowResult r = finishSinglePointSolve(
                 m_session, std::move(outcome), elapsed);
-            m_solveResultExpired = false;
+            m_solveTargetAtSubmit.reset();
+            if (r.resultCommitted && targetAtSubmit.has_value()) {
+                m_lastSolvedTarget = *targetAtSubmit;
+                m_solveResultExpired = false;
+            }
             showStatusText(QString::fromStdString(r.statusText));
             refreshAll();
         },
@@ -1281,6 +1379,14 @@ void KinematicsPanelWidget::onBackfillTcpClicked()
         return;
     }
     const auto text = [](double v) { return QString::number(v, 'g', 12); };
+    // TCP 回填是新的用户求解起点，必须让旧结果失效；信号屏蔽避免六个
+    // 中间文本状态被逐字段刷新，最后统一呈现一次过期状态。
+    const QSignalBlocker blockTargetX(m_targetX);
+    const QSignalBlocker blockTargetY(m_targetY);
+    const QSignalBlocker blockTargetZ(m_targetZ);
+    const QSignalBlocker blockTargetRoll(m_targetRoll);
+    const QSignalBlocker blockTargetPitch(m_targetPitch);
+    const QSignalBlocker blockTargetYaw(m_targetYaw);
     m_targetX->setText(text(backfill->xDisplay));
     m_targetY->setText(text(backfill->yDisplay));
     m_targetZ->setText(text(backfill->zDisplay));
@@ -1288,6 +1394,7 @@ void KinematicsPanelWidget::onBackfillTcpClicked()
     m_targetPitch->setText(text(backfill->pitchDisplay));
     m_targetYaw->setText(text(backfill->yawDisplay));
     m_solveResultExpired = true;
+    refreshAll();
     showStatusText(tr("已回填当前 TCP 位姿（显示制式数值，单位随行标签）"
                       "——仅作编辑起点，请重新求解"));
 }

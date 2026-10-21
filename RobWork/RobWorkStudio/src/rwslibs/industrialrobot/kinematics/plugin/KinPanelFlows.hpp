@@ -92,6 +92,9 @@ KinTcpResolution resolveSessionTcp(const KinPanelServices& services);
 struct KinSolveFlowResult {
     /// 是否已转后台（true＝内联超界经后台缝提交——解表等待投影刷新）。
     bool deferredToBackground = false;
+    /// 是否已将本次正常求解结果写入会话（取消/设施失败/后台受理均为 false）。
+    /// widget 以此区分“旧结果仍在但本次没有新结果”和“当前目标已有新结果”。
+    bool resultCommitted = false;
     /// 状态行文本（内联耗时/转后台说明/调用方错误如实呈现——非模态）。
     std::string statusText;
     /// 内联耗时（内联路径有值——预算核对的测试断言锚）。

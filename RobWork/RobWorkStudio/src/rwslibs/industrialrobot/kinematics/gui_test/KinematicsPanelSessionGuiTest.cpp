@@ -374,4 +374,9 @@ TEST(KinematicsPanelSession, BackfillTcpFillsTargetEditors_WP15T20_G4)
     EXPECT_NE(h.panel->lastStatusText().toStdString().find("已回填"),
               std::string::npos)
         << h.panel->lastStatusText().toStdString();
+    QLabel* solveStatus =
+        h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+    ASSERT_NE(solveStatus, nullptr);
+    EXPECT_TRUE(solveStatus->text().contains(QStringLiteral("结果已过期")))
+        << solveStatus->text().toStdString();
 }

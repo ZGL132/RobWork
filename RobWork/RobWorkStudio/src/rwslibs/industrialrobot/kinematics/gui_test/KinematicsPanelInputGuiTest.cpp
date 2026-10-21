@@ -816,6 +816,39 @@ TEST(KinematicsPanelInput, LateSolveResultIsDroppedAfterSessionEpochChanges_WP15
     EXPECT_TRUE(solve->isEnabled());
 }
 
+/// 目标位姿也是异步请求身份的一部分：求解期间改目标后，旧回执不得写入
+/// 当前会话，也不得把旧目标结果呈现为当前目标结果。
+TEST(KinematicsPanelInput, LateSolveResultIsDroppedAfterTargetChanges_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    StaleResultHarness h;
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"))
+        ->setText(QStringLiteral("0.1"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-y"))
+        ->setText(QStringLiteral("0"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-z"))
+        ->setText(QStringLiteral("0"));
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                          Qt::DirectConnection));
+    ASSERT_TRUE(static_cast<bool>(h.pendingJob));
+    ASSERT_TRUE(static_cast<bool>(h.pendingDone));
+
+    // 求解仍在途时改变目标位姿；旧回执必须按目标身份失配处理。
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"))
+        ->setText(QStringLiteral("0.2"));
+    h.pendingDone(h.pendingJob());
+
+    EXPECT_EQ(h.state.lastSessionSolutionSet, nullptr);
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("过期")))
+        << h.panel->lastStatusText().toStdString();
+    QLabel* solveStatus =
+        h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+    ASSERT_NE(solveStatus, nullptr);
+    EXPECT_TRUE(solveStatus->text().contains(QStringLiteral("结果已过期")))
+        << solveStatus->text().toStdString();
+}
+
 /// ★ 审核 P1 回归：异常必须转换为失败回执，面板从在途态恢复；否则
 /// m_solveInFlight 永久为 true，用户无法再次求解。
 TEST(KinematicsPanelInput, AsyncSolverExceptionRestoresSolveAction_WP15T20)

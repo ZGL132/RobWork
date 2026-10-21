@@ -283,6 +283,7 @@ KinSolveFlowResult finishSinglePointSolve(KinModuleSessionState& session,
         std::make_shared<const IkSolutionSet>(std::move(outcome.solutionSet));
     session.lastSessionSolutionSetView =
         std::make_shared<const KinematicSolutionSet>(*session.lastSessionSolutionSet);
+    result.resultCommitted = true;
     return result;
 }
 

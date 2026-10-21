@@ -158,6 +158,7 @@ private Q_SLOTS:
     void onRecomputeClicked();        // KIN-P4 复算（原任务定义×当前快照重绑定）
     void onSolutionSelectionChanged();// L-K1 解表选中→检查器联动
     void onSolutionDoubleClicked(int row, int column); // L-K4 双击→会话姿态回写
+    void onTargetEditorChanged(); // 目标编辑变化→已有结果立即标记过期
     // ---- 审查 20261021 修复批（WP-15-T20 第三批）----
     void onBackfillTcpClicked();      // G4：L-K5 以当前 TCP 为目标（位姿回填）
     void onDisplayUnitChanged(int index); // G5：L-K8 显示单位切换生产入口
@@ -306,6 +307,10 @@ private:
     QLabel* m_statusLine = nullptr; ///< 状态行（非模态反馈——UX-03/07）
     bool m_solveInFlight = false;  ///< 异步求解在途（G3——防重复提交；完成回调清位＋刷新）
     bool m_solveResultExpired = false; ///< 输入/会话变化后旧结果需重新求解
+    /// 异步提交时冻结的基座系 SI 目标；仅 UI 线程访问，回调完成后清除。
+    std::optional<rw::math::Transform3D<double>> m_solveTargetAtSubmit;
+    /// 最近一次已写入会话的基座系 SI 目标；用于判断编辑器是否仍对应结果。
+    std::optional<rw::math::Transform3D<double>> m_lastSolvedTarget;
 };
 
 /**
