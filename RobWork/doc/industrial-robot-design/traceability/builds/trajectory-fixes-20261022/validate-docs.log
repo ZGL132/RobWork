@@ -1,0 +1,12 @@
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-audit-20261022-119dce6b/MATRIX-RESULTS.md
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-audit-20261022-119dce6b/MATRIX.md
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-audit-20261022-119dce6b/REPORT.md
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/algorithm-green-build.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/algorithm-green-report.json
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/algorithm-green-stderr.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/algorithm-green.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/algorithm-green.xml
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/algorithm-red-build.log
+Write-Error: untracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/algorithm-red-report.json
+Write-Error: untracked evidence total: 67（仅列前 10）——先 git add 再重跑 index-evidence.ps1
+Write-Error: evidence index size mismatch: acceptance/UI-T37-20261002.md (index=8430 actual=8445)——重跑 index-evidence.ps1

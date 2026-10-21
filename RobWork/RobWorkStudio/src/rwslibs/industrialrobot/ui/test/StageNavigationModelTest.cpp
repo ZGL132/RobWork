@@ -47,6 +47,23 @@
 
 namespace {
 
+/** @brief TRJ-07/UX-02：正式轨迹描述符的标题必须可解析，防首开面板抛异常。 */
+TEST(UiText, TrajectoryTitlesResolveWithoutInternalKeys_TRJ07)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+    for (const char* key : {"cmd.trajectory.plan-sequence.title",
+                            "cmd.trajectory.preview-segment.title",
+                            "cmd.trajectory.local-replan.title",
+                            "cmd.trajectory.play.title",
+                            "cmd.trajectory.playback-seek.title",
+                            "cmd.trajectory.export.title",
+                            "cmd.trajectory.show-curve.title",
+                            "plugin.trajectory.panel.workflow.title",
+                            "plugin.trajectory.panel.curves.title"}) {
+        EXPECT_NO_THROW({ const auto value=sdurws::ird::ui::resolveText(key); EXPECT_NE(value,key); }) << key;
+    }
+}
+
 using namespace sdurws::ird;
 using ui::DomainReadinessItem;
 using ui::IStageNavigationModel;

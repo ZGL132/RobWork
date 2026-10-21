@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="4" disabled="0" errors="0" time="0.004" timestamp="2026-10-22T04:59:51.401" name="AllTests">
+  <testsuite name="TrjPtp" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-22T04:59:51.403">
+    <testcase name="RejectsInvalidUnitEvenWithoutLimitViolation_TRJ06" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp" line="778" status="run" result="completed" time="0.001" timestamp="2026-10-22T04:59:51.403" classname="TrjPtp">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:782&#x0A;Expected: planPtpSegment(req) throws an exception of type TrajectoryError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:782
+Expected: planPtpSegment(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="TrjSequence" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-22T04:59:51.405">
+    <testcase name="WorkPoseEqualityIncludesValues_TRJ01" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp" line="767" status="run" result="completed" time="0." timestamp="2026-10-22T04:59:51.405" classname="TrjSequence">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:773&#x0A;Expected: (original) != (changed), actual: 232-byte object &lt;00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-01 4E-DC 15-02 00-00 0B-67 AC-58 FF-7F 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 01-00 00-00 00-00 00-00&gt; vs 232-byte object &lt;00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-01 31-C2 FE-7F 00-00 A0-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 01-F3 2D-C2 FE-7F 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:773
+Expected: (original) != (changed), actual: 232-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-01 4E-DC 15-02 00-00 0B-67 AC-58 FF-7F 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 01-00 00-00 00-00 00-00> vs 232-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-01 31-C2 FE-7F 00-00 A0-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 01-F3 2D-C2 FE-7F 00-00>
+]]></failure>
+    </testcase>
+    <testcase name="RejectsMalformedCartesianServiceResults_TRJ02" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp" line="786" status="run" result="completed" time="0." timestamp="2026-10-22T04:59:51.405" classname="TrjSequence">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:800&#x0A;Expected: expandSequence(req) throws an exception of type TrajectoryError.&#x0A;  Actual: it throws nothing.&#x0A;损坏类型=0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:800
+Expected: expandSequence(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+损坏类型=0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:800&#x0A;Expected: expandSequence(req) throws an exception of type TrajectoryError.&#x0A;  Actual: it throws nothing.&#x0A;损坏类型=1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:800
+Expected: expandSequence(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+损坏类型=1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:800&#x0A;Expected: expandSequence(req) throws an exception of type TrajectoryError.&#x0A;  Actual: it throws nothing.&#x0A;损坏类型=2&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:800
+Expected: expandSequence(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+损坏类型=2
+]]></failure>
+    </testcase>
+    <testcase name="RejectsInfiniteCartesianDistance_TRJ02" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp" line="805" status="run" result="completed" time="0." timestamp="2026-10-22T04:59:51.406" classname="TrjSequence">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:811&#x0A;Expected: expandSequence(req) throws an exception of type TrajectoryError.&#x0A;  Actual: it throws nothing.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp:811
+Expected: expandSequence(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

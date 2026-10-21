@@ -1,0 +1,5 @@
+Exception: C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\scripts\industrialrobot\validate-task.ps1:118
+Line |
+ 118 |  … 0-9]+)$') { throw "invalid knownPitfalls id '$p' (expect O-nn / CR-nn …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | invalid knownPitfalls id '正式宿主归档与失败路径映射缺失不得用演示替身冒充封闭' (expect O-nn / CR-nn / P-XX-nn): WP-16-T17

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" time="0.064" timestamp="2026-10-22T05:24:01.294" name="AllTests">
+  <testsuite name="CrashCapture" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.062" timestamp="2026-10-22T05:24:01.296">
+    <testcase name="EmitAssemblesSixSegmentsIntoKeyValueFile_PM17_S76" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CrashCaptureTest.cpp" line="148" status="run" result="completed" time="0.02" timestamp="2026-10-22T05:24:01.297" classname="CrashCapture" />
+    <testcase name="EmitWithoutSourceLeavesRuntimeSegmentsEmpty_HonestEmpty" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CrashCaptureTest.cpp" line="211" status="run" result="completed" time="0.008" timestamp="2026-10-22T05:24:01.319" classname="CrashCapture" />
+    <testcase name="ReentrantEmitIsRejectedByOneShotGate_Acceptance1" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CrashCaptureTest.cpp" line="239" status="run" result="completed" time="0.004" timestamp="2026-10-22T05:24:01.328" classname="CrashCapture" />
+    <testcase name="WriteFailureDegradesWithoutThrow_DT_LIFE4" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CrashCaptureTest.cpp" line="272" status="run" result="completed" time="0.003" timestamp="2026-10-22T05:24:01.333" classname="CrashCapture" />
+    <testcase name="SnapshotSourceFailureDoesNotBreakReportPath" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\CrashCaptureTest.cpp" line="298" status="run" result="completed" time="0.021" timestamp="2026-10-22T05:24:01.337" classname="CrashCapture" />
+  </testsuite>
+</testsuites>

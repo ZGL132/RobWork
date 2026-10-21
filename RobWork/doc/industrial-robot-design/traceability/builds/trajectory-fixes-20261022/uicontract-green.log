@@ -1,0 +1,11 @@
+Note: Google Test filter = TrajectoryHostAssembly.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from TrajectoryHostAssembly
+[ RUN      ] TrajectoryHostAssembly.RegistersRealDescriptorAndResolvesAllTitles_TRJ07
+[       OK ] TrajectoryHostAssembly.RegistersRealDescriptorAndResolvesAllTitles_TRJ07 (0 ms)
+[----------] 1 test from TrajectoryHostAssembly (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (3 ms total)
+[  PASSED  ] 1 test.

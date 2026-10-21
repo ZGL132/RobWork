@@ -22,6 +22,7 @@
 #include <sdurws/ird/trajectory/Errors.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <map>
 #include <set>
 #include <utility>
@@ -115,6 +116,15 @@ SequencePlan expandSequence(const SequenceRequest& request)
                               "ikContinuityThreshold 须有限且 >0（rad|m），实际 "
                                   + std::to_string(request.ikContinuityThreshold));
     }
+    if (!request.jointQuantityKinds.empty()
+        && request.jointQuantityKinds.size() != dof) {
+        throw TrajectoryError("trajectory/sequence/joint-unit", "逐轴量纲必须与起始构型同维度");
+    }
+    for (const auto kind : request.jointQuantityKinds) {
+        if (kind != core::QuantityKind::Angle && kind != core::QuantityKind::Length) {
+            throw TrajectoryError("trajectory/sequence/joint-unit", "关节量纲仅允许 Angle 或 Length");
+        }
+    }
 
     // 站输入核验：身份合法＋语义名非空且两两互异（requirements I-REQ-3
     // 集合级唯一性——sequenceKey 以名引用，重名即顺序歧义，复验防误用）。
@@ -136,13 +146,15 @@ SequencePlan expandSequence(const SequenceRequest& request)
                                           + "——I-REQ-3 集合级唯一性违约）");
             }
             // 启用的进退段距离必须 >0（requirements 启用校验的复验）。
-            if (st.point.approach.enabled && !(st.point.approach.distanceM > 0.0)) {
+            if (st.point.approach.enabled && (!isFiniteDouble(st.point.approach.distanceM)
+                                            || !(st.point.approach.distanceM > 0.0))) {
                 throw TrajectoryError("trajectory/sequence/approach-distance",
                                       "approach 段启用时 distanceM 须 >0（m；站 "
                                           + st.point.name + "，实际 "
                                           + std::to_string(st.point.approach.distanceM) + "）");
             }
-            if (st.point.retract.enabled && !(st.point.retract.distanceM > 0.0)) {
+            if (st.point.retract.enabled && (!isFiniteDouble(st.point.retract.distanceM)
+                                           || !(st.point.retract.distanceM > 0.0))) {
                 throw TrajectoryError("trajectory/sequence/retract-distance",
                                       "retract 段启用时 distanceM 须 >0（m；站 "
                                           + st.point.name + "，实际 "
@@ -295,15 +307,117 @@ SequencePlan expandSequence(const SequenceRequest& request)
         plan.stationOrder.push_back(st->point.pointOid);
     }
 
-    // ---- 第 6/7 步：逐站展开段链（构型游标推进——§7.2"起点：上一段
-    // 终点构型"；approach 启用站的到达构型依赖 T05 笛卡尔 IK，游标置
-    // 无效并如实标记待填段）。
+    // ---- 第 6/7 步：逐站展开段链（构型游标推进——§7.2“起点：上一段
+    // 终点构型”）。笛卡尔服务成功必须返回端点构型；缺失立即失败，
+    // 不再引入“游标无效但仍继续拼占位段”的中间成功态。
     rw::math::Q cursorQ = request.startQ;   // 构型游标（权威角 rad|m）
-    bool cursorValid = true;                // false＝游标依赖 T05 笛卡尔 IK
     std::uint32_t nextSegmentIndex = 0;     // 段序号分配器（0 基连续）
     bool firstTransfer = true;              // 序列首段起点 kind=Start（§6.2）
     core::ObjectId prevStationOid;          // 上一站对象（起点路点来源——§6.2；
                                             //   全零＝无上一站）
+
+    // 笛卡尔段统一经过这一条服务缝：宿主负责构造 CartesianLine 请求、
+    // 消费 IK 端口并返回已验证几何。这里负责把服务结果折叠进序列段，
+    // 任何缺缝/失败都形成可定位素材，杜绝“结构条目成功但不可执行”。
+    const auto planCartesian = [&](const SequenceStationInput& station,
+                                   SequenceSegmentRole role,
+                                   const SequenceTaskSegment& spec,
+                                   const rw::math::Q& seed,
+                                   std::uint32_t segmentIndex)
+        -> std::optional<SequenceRequest::CartesianPlanOutcome> {
+        if (!request.cartesianPlanner) {
+            FailedSegmentRecord rec = makeInputInvalidRecord(
+                "站 " + station.point.name + " 的笛卡尔"
+                    + (role == SequenceSegmentRole::Approach ? " approach" : " retract")
+                    + " 段未装配 CartesianLine→IK 服务",
+                "在宿主装配层注入笛卡尔规划服务后重评；不得仅凭 lineSpec 执行");
+            rec.segmentIndex = segmentIndex;
+            rec.subject = station.point.pointOid;
+            rec.reasonToken = std::string(kTrjNoPath);
+            plan.failures.push_back(std::move(rec));
+            return std::nullopt;
+        }
+        SequenceRequest::CartesianPlanRequest serviceRequest;
+        serviceRequest.axis = spec.axis;
+        serviceRequest.segment = spec;
+        serviceRequest.role = role;
+        serviceRequest.sourceTaskPoint = station.point.pointOid;
+        serviceRequest.workPose = station.point.workPose;
+        serviceRequest.branchSeedQ = seed;
+        serviceRequest.segmentIndex = segmentIndex;
+        serviceRequest.constraint = request.constraint;
+        serviceRequest.tcpRef = request.tcpRef;
+        serviceRequest.frameRef = request.frameRef;
+        SequenceRequest::CartesianPlanOutcome outcome =
+            request.cartesianPlanner(serviceRequest);
+        // 笛卡尔服务可能持续较久；返回后先观察取消，不能继续拼装成功段。
+        if (request.cancel && request.cancel()) {
+            plan.canceled = true;
+            return std::nullopt;
+        }
+        if (outcome.geometry.has_value() && outcome.failure.has_value()) {
+            throw TrajectoryError("trajectory/sequence/cartesian-result",
+                                  "笛卡尔服务同时返回 geometry 与 failure（结果契约违约）");
+        }
+        if (outcome.failure.has_value()) {
+            auto failure = *outcome.failure;
+            // 序列层拥有最终编号与站点归属；不让适配器旧编号误定位到其它站。
+            failure.segmentIndex = segmentIndex;
+            failure.subject = station.point.pointOid;
+            plan.failures.push_back(std::move(failure));
+            return std::nullopt;
+        }
+        if (!outcome.geometry.has_value() || !outcome.startQ.has_value()
+            || !outcome.endQ.has_value()
+            || outcome.geometry->waypoints.size() < 2U) {
+            FailedSegmentRecord rec = makeInputInvalidRecord(
+                "站 " + station.point.name + " 的笛卡尔服务未返回完整几何",
+                "检查 CartesianLine 端点与沿途 IK 结果后重评");
+            rec.segmentIndex = segmentIndex;
+            rec.subject = station.point.pointOid;
+            rec.reasonToken = std::string(kTrjNoPath);
+            plan.failures.push_back(std::move(rec));
+            return std::nullopt;
+        }
+        // 端口成功不等于内容可信：复验结构、链维度、有限数值和身份，
+        // 防止把跨站几何或 NaN 游标用于后续 PTP（TRJ-01/02/06）。
+        validateTrajectorySegment(*outcome.geometry);
+        const auto& geometry = *outcome.geometry;
+        if (geometry.segmentIndex != segmentIndex
+            || geometry.spaceType != SegmentSpaceType::CartesianLine
+            || geometry.tcpRef != request.tcpRef || geometry.frameRef != request.frameRef
+            || geometry.sourceTaskPoint != station.point.pointOid
+            || geometry.constraint != request.constraint) {
+            throw TrajectoryError("trajectory/sequence/cartesian-result", "笛卡尔服务返回了不属于当前请求的段");
+        }
+        for (const auto* q : {&*outcome.startQ, &*outcome.endQ}) {
+            if (q->size() != request.startQ.size()) {
+                throw TrajectoryError("trajectory/sequence/cartesian-result", "笛卡尔端点 IK 构型维度不符");
+            }
+            for (std::size_t axis=0; axis<dof; ++axis) {
+                if (!isFiniteDouble((*q)[axis])) {
+                    throw TrajectoryError("trajectory/sequence/cartesian-result", "笛卡尔端点 IK 构型含非有限值");
+                }
+            }
+        }
+        // 统一复用 PTP 的端点限位与比较型诊断；此处只作端点守卫，不将
+        // 生成的关节线段替代笛卡尔轨迹，也不冒充段内碰撞/连续性证据。
+        PtpRequest endpointGuard;
+        endpointGuard.startQ = *outcome.startQ;
+        endpointGuard.candidates = {PtpCandidate{*outcome.endQ, 0U, 0.0}};
+        endpointGuard.lowerBoundQ = request.lowerBoundQ;
+        endpointGuard.upperBoundQ = request.upperBoundQ;
+        endpointGuard.tcpRef = request.tcpRef;
+        endpointGuard.sourceTaskPoint = station.point.pointOid;
+        endpointGuard.segmentIndex = segmentIndex;
+        endpointGuard.jointQuantityKinds = request.jointQuantityKinds;
+        const auto checked = planPtpSegment(endpointGuard);
+        if (checked.status != PtpStatus::Ok) {
+            plan.failures.push_back(*checked.failure);
+            return std::nullopt;
+        }
+        return outcome;
+    };
 
     for (const SequenceStationInput* st : expandOrder) {
         const SequenceTaskPoint& pt = st->point;
@@ -331,29 +445,7 @@ SequencePlan expandSequence(const SequenceRequest& request)
             return plan;
         }
 
-        if (!pt.approach.enabled && !cursorValid) {
-            // ---- 游标失效的纯关节站：起点构型依赖 T05 笛卡尔段终点
-            // （approach/retract 后的游标未解析）——构型选择（§7.5 延续性
-            // 规则需起点参照）与 PTP 几何均无法在本批给出：产结构完整、
-            // 几何待填的 Transfer 条目（不伪造端点；候选集已核非空）。
-            // F-798 修复：本分支不再 continue 跳过站链余段——占位后继续
-            // 产出该站 Work（任务点＋驻留）与 retract 条目，对齐下方笛卡尔
-            // 站 else 支"占位后站链完整"形态。缺陷形态（修复前）：产占位
-            // 后直接 continue，该站任务点/驻留/撤离静默跳出最终轨迹且
-            // failures 为空仍 Ok——既不符 TRJ-01"由任务点组成的有序作业
-            // 序列"（每启用站段链完整），也绕开 §7.6"失败给具体段落与
-            // 原因"（TRJ-06——无素材的静默丢失）。游标保持失效（构型未
-            // 解析），不进下方几何规划支；后续站同形展开直至 T05 补填。
-            PlannedSegment seg;
-            seg.segmentIndex = nextSegmentIndex++;
-            seg.role = SequenceSegmentRole::TransferPtp;
-            seg.spaceType = SegmentSpaceType::JointLinear;
-            seg.sourceTaskPoint = pt.pointOid;
-            seg.constraint = request.constraint;
-            seg.ptpGeometry = std::nullopt;     // 待 T05 笛卡尔链补填
-            plan.segments.push_back(std::move(seg));
-            firstTransfer = false;
-        } else if (!pt.approach.enabled) {
+        if (!pt.approach.enabled) {
             // ---- 纯关节站（游标有效）：站间 PTP 段几何可直接规划
             //（§7 全语义——构型选择三键＋限位守卫＋插值端点）。
             PtpRequest ptp;
@@ -375,6 +467,7 @@ SequencePlan expandSequence(const SequenceRequest& request)
             ptp.endKind = WaypointKind::TaskPoint;
             ptp.segmentIndex = nextSegmentIndex;
             ptp.cancel = request.cancel;
+            ptp.jointQuantityKinds = request.jointQuantityKinds;
 
             const PtpPlanResult ptpOut = planPtpSegment(ptp);
             if (ptpOut.status == PtpStatus::Canceled) {
@@ -400,35 +493,72 @@ SequencePlan expandSequence(const SequenceRequest& request)
 
             // 游标推进＝选定任务点构型（PTP 段终点路点——§7.2）。
             cursorQ = ptpOut.segment.waypoints.back().q.value();
-            cursorValid = true;
             prevStationOid = pt.pointOid;   // 下一站起点路点的来源＝本站
         } else {
-            // ---- 笛卡尔站（approach 启用）：到达段终点＝接近点构型——
-            // 依赖笛卡尔段 IK（WP-16-T05 §8.2 逐采样），本批结构完整、
-            // 几何如实待填（不伪造端点）。
+            // ---- 笛卡尔站（approach 启用）：先规划接近直线，得到接近
+            // 起点/终点构型，再用 PTP 把当前游标连到接近起点。这样
+            // 序列层能够消费 CartesianLine→IK 服务的结果，后续 Work 与
+            // retract 使用同一已解析构型游标；是否注入真实服务由宿主保证。
+            const auto approachResult = planCartesian(
+                *st, SequenceSegmentRole::Approach, pt.approach, cursorQ,
+                nextSegmentIndex + 1U);
+            if (!approachResult.has_value()) {
+                return plan;
+            }
+            const auto& approachGeometry = approachResult->geometry.value();
+            const auto& approachStartQ = approachResult->startQ.value();
+            const auto& approachEndQ = approachResult->endQ.value();
+            PtpRequest transferRequest;
+            transferRequest.startQ = cursorQ;
+            transferRequest.lowerBoundQ = request.lowerBoundQ;
+            transferRequest.upperBoundQ = request.upperBoundQ;
+            transferRequest.candidates = {PtpCandidate{
+                approachStartQ, 0U, 0.0}};
+            transferRequest.ikContinuityThreshold = request.ikContinuityThreshold;
+            transferRequest.constraint = request.constraint;
+            transferRequest.tcpRef = request.tcpRef;
+            transferRequest.frameRef = request.frameRef;
+            transferRequest.sourceTaskPoint = pt.pointOid;
+            transferRequest.startKind = firstTransfer ? WaypointKind::Start
+                                                       : WaypointKind::TaskPoint;
+            if (!firstTransfer) {
+                transferRequest.startSourceTaskPoint = prevStationOid;
+            }
+            transferRequest.endKind = WaypointKind::TaskPoint;
+            transferRequest.segmentIndex = nextSegmentIndex;
+            transferRequest.cancel = request.cancel;
+            transferRequest.jointQuantityKinds = request.jointQuantityKinds;
+            const PtpPlanResult transferOut = planPtpSegment(transferRequest);
+            if (transferOut.status == PtpStatus::Canceled) {
+                plan.canceled = true;
+                return plan;
+            }
+            if (transferOut.status != PtpStatus::Ok) {
+                if (transferOut.failure.has_value()) {
+                    plan.failures.push_back(*transferOut.failure);
+                }
+                return plan;
+            }
             PlannedSegment transfer;
             transfer.segmentIndex = nextSegmentIndex++;
             transfer.role = SequenceSegmentRole::TransferPtp;
             transfer.spaceType = SegmentSpaceType::JointLinear;
             transfer.sourceTaskPoint = pt.pointOid;
             transfer.constraint = request.constraint;
-            transfer.ptpGeometry = std::nullopt;  // 待 T05（接近点构型未解析）
+            transfer.ptpGeometry = transferOut.segment;
             plan.segments.push_back(std::move(transfer));
             firstTransfer = false;
-            cursorValid = false;  // 游标失效——后续构型依赖 T05
-        }
-
-        // ---- approach 段条目（仅启用站；方向语义归 requirements——
-        // 本域只承载轴向/距离解析产物，T05 消费构造几何）。
-        if (pt.approach.enabled) {
-            PlannedSegment seg;
-            seg.segmentIndex = nextSegmentIndex++;
-            seg.role = SequenceSegmentRole::Approach;
-            seg.spaceType = SegmentSpaceType::CartesianLine;
-            seg.sourceTaskPoint = pt.pointOid;
-            seg.constraint = request.constraint;
-            seg.lineSpec = pt.approach;
-            plan.segments.push_back(std::move(seg));
+            PlannedSegment approach;
+            approach.segmentIndex = nextSegmentIndex++;
+            approach.role = SequenceSegmentRole::Approach;
+            approach.spaceType = SegmentSpaceType::CartesianLine;
+            approach.sourceTaskPoint = pt.pointOid;
+            approach.constraint = request.constraint;
+            approach.lineSpec = pt.approach;
+            approach.cartesianGeometry = approachGeometry;
+            plan.segments.push_back(std::move(approach));
+            cursorQ = approachEndQ;
+            prevStationOid = pt.pointOid;
         }
 
         // ---- work 条目（§5.2"作业段＝任务点本身"——任务点＋驻留标记；
@@ -447,8 +577,37 @@ SequencePlan expandSequence(const SequenceRequest& request)
             plan.segments.push_back(std::move(seg));
         }
 
-        // ---- retract 段条目（仅启用站；撤离点构型同样依赖 T05）。
+        // ---- retract 段条目（仅启用站；首构型必须延续作业点）。
         if (pt.retract.enabled) {
+            const auto retractResult = planCartesian(
+                *st, SequenceSegmentRole::Retract, pt.retract, cursorQ,
+                nextSegmentIndex);
+            if (!retractResult.has_value()) {
+                return plan;
+            }
+            // 两端各自合法仍可能属于不同 IK 分支。撤离没有中间转移段，
+            // 因而其起点必须与当前作业构型逐轴连续；不能直接跳到另一个
+            // 解再从那里播放。阈值沿用请求的 rad|m 逐轴连续性约束。
+            for (std::size_t axis = 0; axis < dof; ++axis) {
+                const double delta = std::abs((*retractResult->startQ)[axis] - cursorQ[axis]);
+                if (delta > request.ikContinuityThreshold) {
+                    FailedSegmentRecord failure;
+                    failure.segmentIndex = nextSegmentIndex;
+                    failure.phaseToken = kPhasePlanSequence;
+                    failure.reasonToken = std::string(kTrjBranchJump);
+                    failure.pathParameter = 0.0;
+                    failure.subject = pt.pointOid;
+                    failure.cause = "撤离起点与作业终点的关节分支不连续：轴 "
+                        + std::to_string(axis) + " 偏差 " + std::to_string(delta)
+                        + " 超过阈值 " + std::to_string(request.ikContinuityThreshold)
+                        + (request.jointQuantityKinds.empty()
+                           || request.jointQuantityKinds[axis] == core::QuantityKind::Angle
+                               ? " rad" : " m");
+                    failure.recommendedAction = "使用作业点构型作为撤离分支种子重新规划，不得跨分支直接拼接";
+                    plan.failures.push_back(std::move(failure));
+                    return plan;
+                }
+            }
             PlannedSegment seg;
             seg.segmentIndex = nextSegmentIndex++;
             seg.role = SequenceSegmentRole::Retract;
@@ -456,13 +615,12 @@ SequencePlan expandSequence(const SequenceRequest& request)
             seg.sourceTaskPoint = pt.pointOid;
             seg.constraint = request.constraint;
             seg.lineSpec = pt.retract;
+            seg.cartesianGeometry = retractResult->geometry;
             plan.segments.push_back(std::move(seg));
+            cursorQ = retractResult->endQ.value();
         }
     }
 
-    // 展开成功收尾：游标终态只作断言用（终止状态＝序列终点构型——§5.6
-    // 必经状态 2；其值已由最后一段承载，此处不重复持有）。
-    (void)cursorValid;
     return plan;
 }
 

@@ -1,0 +1,21 @@
+Note: Google Test filter = TrjSequence.RejectsDiscontinuousRetractStart_TRJ02
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from TrjSequence
+[ RUN      ] TrjSequence.RejectsDiscontinuousRetractStart_TRJ02
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp(830): error: Expected equality of these values:
+  plan.failures.size()
+    Which is: 0
+  1U
+    Which is: 1
+
+[  FAILED  ] TrjSequence.RejectsDiscontinuousRetractStart_TRJ02 (1 ms)
+[----------] 1 test from TrjSequence (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (3 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] TrjSequence.RejectsDiscontinuousRetractStart_TRJ02
+
+ 1 FAILED TEST

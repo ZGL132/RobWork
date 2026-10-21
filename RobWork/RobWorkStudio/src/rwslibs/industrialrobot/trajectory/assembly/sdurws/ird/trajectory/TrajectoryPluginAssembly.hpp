@@ -248,6 +248,12 @@ public:
     void bindCommandAvailability(
         std::function<bool(const std::string&)> availability);
 
+    /** @brief 绑定播放帧的关节姿态应用出口（q 为 rad/m，UI 线程）。 */
+    void bindSessionPoseSink(std::function<void(const std::vector<double>&)> sink);
+
+    /** @brief 绑定失败段三维定位出口（段号 0 基；空函数解除）。 */
+    void bindFailureLocator(std::function<bool(std::uint32_t)> locate);
+
     /**
      * @brief 绑定文案解析器（键→工程用语——宿主接 ui 文案资源；
      *        不绑定＝按钮呈现键名原文——开发态可见缺口）。

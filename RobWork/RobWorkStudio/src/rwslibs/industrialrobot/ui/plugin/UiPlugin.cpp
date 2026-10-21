@@ -345,6 +345,7 @@ constexpr const char* kAuxKeyModelingDock = "domain.modeling";
 constexpr const char* kAuxKeyRequirementsDock = "domain.requirements";
 constexpr const char* kAuxKeyKinematicsDock = "domain.kinematics";
 constexpr const char* kAuxKeyKinematicsAdvancedDock = "domain.kinematicsAdvanced";
+constexpr const char* kAuxKeyTrajectoryDock = "domain.trajectory";
 
 // 三新域辅助记忆键（ASM-PANEL 收口批——六域面板全部可见的可见性半区；
 // 词形 "domain.<token>" 与上方四键同族。工厂默认＝不呈现〔净室默认布局
@@ -1040,12 +1041,23 @@ void IrdWorkbenchHostPlugin::initialize()
     //     的域流程归各自后续任务——处理器给出诚实"未装配"应答，状态行
     //     直写中文文案（装配层呈现面惯例），不虚构执行成功。
     {
+        // trajectory 门面自持的是 trajectory::TrajectoryPluginDescriptor，
+        // 与宿主注册表消费的 ui::PluginUiDescriptor 不是同一类型；先在
+        // 本装配拍完成一次值翻译，再把统一的 ui 描述符指针交给命令注册
+        // 循环。这样不会以不安全的类型转换掩盖跨单元契约差异。
+        std::optional<ui::PluginUiDescriptor> translatedTrajectory;
+        if (m_domains->trajectory.has_value()) {
+            translatedTrajectory = trajectory::translatePluginUiDescriptor(
+                m_domains->trajectory->descriptor);
+        }
         const std::pair<const char*, ui::PluginUiDescriptor*> domainDescriptors[] = {
             {"modeling", &m_domains->modeling.descriptor},
             {"requirements", m_domains->requirements.has_value()
                                  ? &m_domains->requirements->descriptor : nullptr},
             {"kinematics", m_domains->kinematics.has_value()
                                ? &m_domains->kinematics->descriptor : nullptr},
+            {"trajectory", translatedTrajectory.has_value()
+                               ? &*translatedTrajectory : nullptr},
         };
         for (auto& [domainKey, descriptor] : domainDescriptors) {
             if (descriptor == nullptr) {
@@ -1137,6 +1149,7 @@ void IrdWorkbenchHostPlugin::initialize()
         if (auto* host = qobject_cast<QMainWindow*>(parentWidget())) {
             detail::arrangeDomainWorkspace(*host, *this,
                 {m_modelingDock, m_requirementsDock, m_kinematicsDock,
+                 m_trajectoryDock,
                  m_dynamicsDock, m_selectionDock, m_optimizationDock},
                 {m_propsDock, m_kinematicsAdvancedDock});
             // 底部任务也可能被用户浮动/移位，复位后须回到底部，不能仅隐藏。
@@ -1441,6 +1454,62 @@ void IrdWorkbenchHostPlugin::initialize()
             // 同步——syncKinematicsSessionFacts）。
             wireKinematicsEvaluationChannel();
         }
+        // 轨迹面板同一命令注册表接线：受理成功才转发，拒绝命令在面板
+        // 会话记录中止步；可用性由宿主注册表统一提供，避免按钮与菜单
+        // 出现两套门控事实。
+        if (m_domains->trajectory.has_value()) {
+            m_domains->trajectory->bindCommandSubmit(
+                [this](const std::string& id) {
+                    if (m_content != nullptr) { m_content->submitCommand(id); }
+                });
+            m_domains->trajectory->bindCommandAvailability(
+                [this](const std::string& id) {
+                    return m_content != nullptr
+                           && m_content->commandRegistry().availability(id).enabled;
+                });
+            // TRJ-07：播放帧必须落到正式宿主的同一 WorkCell/Device State，
+            // 才能让三维模型、TCP 坐标架和其它依赖 State 的视图同时更新。
+            // 这里仅做值翻译与一次 State 提交，不执行 FK/规划；设备名称和
+            // 链身份来自已发布 runtime 快照，避免在 UI 层猜测或取错首个设备。
+            m_domains->trajectory->bindSessionPoseSink(
+                [this](const std::vector<double>& values) {
+                    auto* studio = getRobWorkStudio();
+                    const auto snapshot = m_compilePort != nullptr
+                                              ? m_compilePort->lastPublishedSnapshot()
+                                              : nullptr;
+                    if (studio == nullptr || snapshot == nullptr) {
+                        return;  // 无项目/无已应用快照：不伪造三维姿态。
+                    }
+                    const auto cell = studio->getWorkCell();
+                    if (cell.isNull()
+                        || &snapshot->workCell().workCell() != cell.get()) {
+                        return;  // 宿主呈现已切换，拒绝把旧轨迹写入新场景。
+                    }
+                    const auto& chain = snapshot->model().chain();
+                    const auto device = cell->findDevice(chain.deviceName);
+                    if (device.isNull()
+                        || device->getDOF()
+                               != static_cast<int>(values.size())) {
+                        return;  // 维度/设备不一致时保持原 State。
+                    }
+                    rw::math::Q q(values.size());
+                    for (std::size_t i = 0; i < values.size(); ++i) {
+                        if (!std::isfinite(values[i])) {
+                            return;  // 播放数据损坏时不污染宿主 State。
+                        }
+                        q[i] = values[i];
+                    }
+                    auto candidate = studio->getState();
+                    device->setQ(q, candidate);
+                    studio->setState(candidate);
+                    if (studio->getView() != nullptr) {
+                        studio->getView()->update();
+                    }
+                });
+            // 失败段定位暂不绑定伪造对象：当前正式宿主尚未持有归档轨迹段
+            // 到 WorkCell 帧/路径图层的权威映射。保持空缝会让按钮置灰并在
+            // 面板明确显示“未装配”，避免把任意关节或基座误当失败段。
+        }
     }
     if (!buildDockBody()) {
         // 内容装配面校验被拒＝装配缺陷（build() 的必填校验覆盖三组：
@@ -1706,6 +1775,15 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
             m_kinematicsAdvancedDock->setObjectName("ird_kinematics_advanced_dock");
             detail::installDockViewport(*m_kinematicsAdvancedDock, kinematicsAdvanced, 280);
         }
+        // 轨迹主面板由 trajectory 装配门面真实创建；失败隔离时工厂返回
+        // nullptr，宿主不创建空 Dock，避免把“白名单存在”误显示成可用功能。
+        QWidget* trajectoryPanel = trajectoryPanelWidget(*m_domains);
+        if (trajectoryPanel != nullptr) {
+            m_trajectoryDock = new QDockWidget(
+                QString::fromUtf8(kTrajectoryDockTitle), this);
+            m_trajectoryDock->setObjectName("ird_trajectory_dock");
+            detail::installDockViewport(*m_trajectoryDock, trajectoryPanel);
+        }
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
         // 三新域面板挂位（ASM-PANEL 收口批 2026-10-10——六域面板全部可见；
         // 收口余量兑现：ui.md §16.7 v1.15 WP-24-T03 登记④"中央区 Central
@@ -1903,6 +1981,12 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
     } else {
         disableAuxToggleTail(kAuxKeyKinematicsAdvancedDock);
     }
+    if (m_trajectoryDock != nullptr) {
+        m_content->setAuxVisibilityTarget(kAuxKeyTrajectoryDock, m_trajectoryDock,
+                                          /*factoryVisible=*/false);
+    } else {
+        disableAuxToggleTail(kAuxKeyTrajectoryDock);
+    }
 
     // UI-T82/PM-14：setupMenu 先于 initialize，菜单创建时所有域 Dock 均
     // 为空。显隐观察必须在本拍（域已创建）绑定，否则标题栏关闭从未写记忆。
@@ -2078,6 +2162,8 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
     addAuxDockToggle(viewMenu, "IRD 运动学面板", kAuxKeyKinematicsDock, m_kinematicsDock);
     addAuxDockToggle(viewMenu, "IRD 运动学（求解配置）面板", kAuxKeyKinematicsAdvancedDock,
                      m_kinematicsAdvancedDock);
+    addAuxDockToggle(viewMenu, "IRD 轨迹面板", kAuxKeyTrajectoryDock,
+                     m_trajectoryDock);
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
     // 三新域面板开关（ASM-PANEL 收口批——六域面板全部可见的用户呼出半区；
     // Dock 缺席〔失败隔离〕时装配拍将菜单项置灰，与上方四项同机制）。
@@ -2135,6 +2221,7 @@ QDockWidget* IrdWorkbenchHostPlugin::auxiliaryDock(const std::string& key) const
         {kAuxKeyRequirementsDock, m_requirementsDock},
         {kAuxKeyKinematicsDock, m_kinematicsDock},
         {kAuxKeyKinematicsAdvancedDock, m_kinematicsAdvancedDock},
+        {kAuxKeyTrajectoryDock, m_trajectoryDock},
         {kAuxKeyDynamicsDock, m_dynamicsDock},
         {kAuxKeySelectionDock, m_selectionDock},
         {kAuxKeyOptimizationDock, m_optimizationDock}};
@@ -2331,6 +2418,10 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
             m_kinematicsAdvancedDock->setVisible(
                 m_content->auxVisible(kAuxKeyKinematicsAdvancedDock));
         }
+        if (m_trajectoryDock != nullptr) {
+            hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_trajectoryDock);
+            m_trajectoryDock->setVisible(m_content->auxVisible(kAuxKeyTrajectoryDock));
+        }
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
         // 三新域 Dock 入宿主（ASM-PANEL 收口批——六域面板全部可见的呈现
         // 落定拍；Left 区同列＝ui.md §16.7 v1.15 首版登记④"宿主侧 Left
@@ -2355,6 +2446,7 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
         // UI-T82：六域统一页签化，一份工作区高度替代六份最小高度的累加。
         detail::arrangeDomainWorkspace(*hostWindow, *this,
             {m_modelingDock, m_requirementsDock, m_kinematicsDock,
+             m_trajectoryDock,
              m_dynamicsDock, m_selectionDock, m_optimizationDock},
                 {m_propsDock, m_kinematicsAdvancedDock});
         m_propsDock->show();
@@ -2478,6 +2570,15 @@ void IrdWorkbenchHostPlugin::installCentralReserveGuard()
 
 bool IrdWorkbenchHostPlugin::eventFilter(QObject* watched, QEvent* event)
 {
+    // GF-A：窗口退出也先处置暂存；只拦正式宿主顶窗，关闭停靠窗仍是纯显示动作。
+    if(event&&event->type()==QEvent::Close&&watched==getRobWorkStudio()&&m_domains){
+        const QPointer<QWidget> window=qobject_cast<QWidget*>(watched);
+        if(!m_domains->modeling.guardPendingInputs([window,self=QPointer<IrdWorkbenchHostPlugin>(this),adapter=m_lastStoreAdapter]{
+            if(window&&self&&self->m_lastStoreAdapter==adapter){window->close();}
+        })){
+            event->ignore();if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}return true;
+        }
+    }
     // 三维拾取拦截（UI-T45——Ctrl+双击＝旧版交互语义等价承接）。事件
     // 归属判定＝watched 为视图本体或其后代 QWidget；非 Ctrl/非双击/非
     // 视图域＝放行框架默认处理（零行为外溢）；拦截后无论链路产出与否
@@ -2605,6 +2706,9 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateOpenProject(
 {
     (void)params;  // 无参命令（§7.1 最小集——空 schema）
     CommandOutcome out;
+    if(m_domains&&!m_domains->modeling.guardPendingInputs([self=QPointer<IrdWorkbenchHostPlugin>(this),adapter=m_lastStoreAdapter]{
+        if(self&&self->m_lastStoreAdapter==adapter){self->orchestrateOpenProject({});}
+    })){out.accepted=true;if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}return out;}
     // 目录选择（宿主窗口为父——模态于宿主；取消＝用户撤单，accepted=false
     // 的静默形态：无项目状态不变，无错误可报）。
     QWidget* parent = m_dockBody.data();
@@ -2624,6 +2728,9 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateNewProject(
 {
     (void)params;  // 无参命令（§7.1 最小集——空 schema）
     CommandOutcome out;
+    if(m_domains&&!m_domains->modeling.guardPendingInputs([self=QPointer<IrdWorkbenchHostPlugin>(this),adapter=m_lastStoreAdapter]{
+        if(self&&self->m_lastStoreAdapter==adapter){self->orchestrateNewProject({});}
+    })){out.accepted=true;if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}return out;}
     QWidget* parent = m_dockBody.data();
 
     // 步骤 1：目标目录（创建协议要求目录不存在或为空——零半成品纪律；
@@ -3706,6 +3813,10 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
         return out;  // accepted=false——命令未派发
     }
     out.accepted = true;
+    if(!m_domains->modeling.guardPendingInputs([self=QPointer<IrdWorkbenchHostPlugin>(this),adapter]{
+        // 非模态决议期间可能更换工程；旧动作不得作用到新会话。
+        if(self&&self->m_lastStoreAdapter==adapter){self->orchestrateApplyDraft({});}
+    })){if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}return out;}
     auto& store = adapter->projectStore();
 
     // UX-07：表单级应用是把草稿变成项目修订，普通合法输入也必须先征求
@@ -4045,6 +4156,9 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateCloseProject(
         return out;  // 无项目态没有"关闭项目"语义（门控兜底）
     }
     out.accepted = true;
+    if(m_domains&&!m_domains->modeling.guardPendingInputs([self=QPointer<IrdWorkbenchHostPlugin>(this),adapter=m_lastStoreAdapter]{
+        if(self&&self->m_lastStoreAdapter==adapter){self->orchestrateCloseProject({});}
+    })){if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}return out;}
     try {        // S1 首步（§5.4）：装配对话框数据（不改状态——取消可回原状态）。
         const CloseDialogData data = m_controller->beginClose(UiCloseIntent::CloseProject);
         // 呈现（装配层对话框）＋决议回交（机制归控制器——§5 注释分工）。
@@ -4094,6 +4208,9 @@ void IrdWorkbenchHostPlugin::openRecentProject(const std::string& canonicalPath)
         openViaSessionController(canonicalizePathOrKeep(canonicalPath));
         return;
     }
+    if(m_domains&&!m_domains->modeling.guardPendingInputs([self=QPointer<IrdWorkbenchHostPlugin>(this),canonicalPath,adapter=m_lastStoreAdapter]{
+        if(self&&self->m_lastStoreAdapter==adapter){self->openRecentProject(canonicalPath);}
+    })){if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}return;}
     // 有会话：§5.4 S2 切换流（A 的统一确认对话框→决议确认后候选验证；
     // "候选验证成功才切"——失败 A 会话不变，PM-03）。
     try {
@@ -6220,15 +6337,16 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
     const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
     const bool dockResize = (smoke == QLatin1String("dock-resize"));
     const bool requirementsLayout = (smoke == QLatin1String("requirements-layout"));
+    const bool trajectoryLayout = (smoke == QLatin1String("trajectory-layout"));
     const bool firstRun = (smoke == QLatin1String("layout"));
     const bool secondRun = (smoke == QLatin1String("layout2"));
-    if (!firstRun && !secondRun && !dockResize && !requirementsLayout) {
+    if (!firstRun && !secondRun && !dockResize && !requirementsLayout && !trajectoryLayout) {
         return;
     }
 
     // 度量/断言拍：1200 ms——晚于装载呈现自证（0 拍重申）与两拍宽度收束
     // （0/100 ms），取"宿主装载语义全部落定后"的稳定布局态。
-    QTimer::singleShot(1200, this, [this, firstRun, dockResize, requirementsLayout] {
+    QTimer::singleShot(1200, this, [this, firstRun, dockResize, requirementsLayout, trajectoryLayout] {
         std::cout << "[ird-ui-smoke-layout] started mode="
                   << (firstRun ? "first" : "second") << std::endl;
         std::vector<std::string> lines;  // UTF-8 报告行（几何走查＋断言结论）
@@ -6272,6 +6390,38 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
         QWidget* central = hostWindow->centralWidget();
         lines.push_back("host-window cur=" + std::to_string(hostWindow->width())
                         + "x" + std::to_string(hostWindow->height()));
+
+        if (trajectoryLayout) {
+            // 正式宿主探针只走真实视图菜单开关和真实控件树，不向面板塞
+            // 演示轨迹。无归档时应明确禁用，不能用测试数据掩盖接入缺口。
+            check(m_trajectoryDock != nullptr, "trajectory-dock-created");
+            if (m_trajectoryDock != nullptr) {
+                m_content->setAuxVisible(kAuxKeyTrajectoryDock, false);
+                bool toggled = false;
+                for (const auto& toggle : m_hostAuxToggles) {
+                    if (toggle.first == kAuxKeyTrajectoryDock) {
+                        toggle.second->trigger(); toggled = true; break;
+                    }
+                }
+                settleEvents(250);
+                check(toggled && m_trajectoryDock->isVisible(), "trajectory-opened-from-view-menu");
+                auto* play = m_trajectoryDock->findChild<QPushButton*>("trajectory_play");
+                check(play != nullptr && !play->isEnabled(), "no-archive-play-disabled");
+                const auto sliders = m_trajectoryDock->findChildren<QSlider*>();
+                check(sliders.size() == 1 && !sliders.front()->isEnabled(), "no-archive-seek-disabled");
+                for (auto* button : m_trajectoryDock->findChildren<QPushButton*>()) {
+                    check(!button->text().contains("trajectory.")
+                              && !button->text().contains("cmd."), "trajectory-title-resolved:" + button->text().toStdString());
+                }
+                snapPng(hostWindow, "trajectory-host-empty.png");
+                snapPng(m_trajectoryDock, "trajectory-panel-empty.png");
+                // 复原本探针的开关状态，避免留给下一轮人工验收一个临时布局。
+                m_content->setAuxVisible(kAuxKeyTrajectoryDock, false);
+            }
+            check(central != nullptr && central->isVisible(), "formal-central-view-visible");
+            QCoreApplication::exit(failures.empty() ? 0 : 1);
+            return;
+        }
 
         if (requirementsLayout) {
             // WP-14-T12/A-12：沿真实菜单打开需求Dock，再从窄窗放大；不得在
@@ -6495,8 +6645,8 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
             // 视图菜单呼出通道在册（辅助开关动作——P1"经视图菜单可勾选
             // 呼出"的结构前提；数量＝四域自持面板＋运动学高级＋ASM-PANEL
             // 三新域三域＝7）。
-            check(m_hostAuxToggles.size() == std::size_t{7},
-                  "view-menu-aux-toggles=7 (cur="
+            check(m_hostAuxToggles.size() == std::size_t{8},
+                  "view-menu-aux-toggles=8 (cur="
                       + std::to_string(m_hostAuxToggles.size()) + ")");
             // FIX-PANEL 缺席忍耐挂位拍断言（实机冒烟通道——面板创建成功
             // 的正常装配形态下七开关全部可用：缺席置灰只在面板失败隔离时
@@ -8761,22 +8911,21 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             // 再findChild当前页，避免误操作已排队删除、借用旧模型的表。
             QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
             auto* editHost = panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
-            auto* table = editHost ? editHost->findChild<QTableWidget*>(QStringLiteral("ird_param_table")) : nullptr;
+            auto* form = editHost ? editHost->findChild<QWidget*>("ird_joint_grouped_form") : nullptr;
             auto* apply = editHost ? editHost->findChild<QPushButton*>(QStringLiteral("ird_param_apply")) : nullptr;
             auto* confirm = editHost ? editHost->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes")) : nullptr;
-            bool allSet = table && apply && confirm;
+            bool allSet = form && apply && confirm;
             const std::vector<std::pair<QString, QString>> values{
                 {QStringLiteral("origin-x"), QStringLiteral("0.10")},
                 {QStringLiteral("origin-z"), QStringLiteral("0.15")},
                 {QStringLiteral("origin-r"), jointIndex % 2 ? QStringLiteral("1.5707963267948966") : QStringLiteral("0")}};
             for (const auto& field : values) {
-                bool found = false;
-                for (int row = 0; table && row < table->rowCount(); ++row) {
-                    if (table->item(row, 0)->data(Qt::UserRole).toString() == field.first) {
-                        table->item(row, 1)->setText(field.second);
-                        found = true;
-                        break;
-                    }
+                auto* input=form?form->findChild<QLineEdit*>("ird_joint_field_"+field.first):nullptr;
+                const bool found=input&&input->isEnabled();
+                if(found){
+                    input->setFocus();input->selectAll();
+                    QKeyEvent key(QEvent::KeyPress,Qt::Key_unknown,Qt::NoModifier,field.second);
+                    QApplication::sendEvent(input,&key);
                 }
                 allSet = allSet && found;
             }
@@ -8786,6 +8935,8 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 settleEvents(50);
                 confirm->click();
                 settleEvents(100);
+                auto* state=form->findChild<QLabel*>("ird_joint_form_status");
+                ok(state&&state->text().contains(QStringLiteral("与当前草稿一致")),"step3.5 complete-form-clean-"+std::to_string(jointIndex));
             }
         }
         };
@@ -9255,16 +9406,13 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             if(joint){tree->setCurrentItem(joint);}settleEvents(100);
             QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
             auto* area=panel->findChild<QWidget*>("ird_modeling_edit_host");
-            auto* table=area?area->findChild<QTableWidget*>("ird_param_table"):nullptr;
-            auto* apply=area?area->findChild<QPushButton*>("ird_param_apply"):nullptr;
-            auto* confirm=area?area->findChild<QPushButton*>("ird_param_confirm_yes"):nullptr;
-            bool staged=false;
-            for(int row=0;table&&row<table->rowCount();++row){
-                if(table->item(row,0)->data(Qt::UserRole).toString()=="zero-offset"){
-                    table->item(row,1)->setText("0.375");staged=true;break;
-                }
-            }
-            ok(staged&&apply&&confirm,"b4a real-diff-edit-controls");
+            auto* grouped=area?area->findChild<QWidget*>("ird_joint_grouped_form"):nullptr;
+            auto* field=grouped?grouped->findChild<QLineEdit*>("ird_joint_field_zero-offset"):nullptr;
+            auto* apply=grouped?grouped->findChild<QPushButton*>("ird_param_apply"):nullptr;
+            auto* confirm=grouped?grouped->findChild<QPushButton*>("ird_param_confirm_yes"):nullptr;
+            const bool staged=field&&field->isVisible()&&field->isEnabled();
+            if(staged){field->setText("0.375");}
+            ok(staged&&apply&&confirm,"b4a visible-grouped-diff-edit-controls");
             if(staged&&apply&&confirm){apply->click();settleEvents(50);confirm->click();settleEvents(100);}
             auto* compare=panel->findChild<QPushButton*>("ird_modeling_cmd_modeling.diff-baseline");
             ok(compare&&compare->isEnabled(),"b4a production-compare-command-available");
@@ -10230,16 +10378,13 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             if (jointSelected) {
                 QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
                 auto* editHost = panel->findChild<QWidget*>("ird_modeling_edit_host");
-                auto* table = editHost ? editHost->findChild<QTableWidget*>("ird_param_table") : nullptr;
-                auto* apply = editHost ? editHost->findChild<QPushButton*>("ird_param_apply") : nullptr;
-                auto* confirm = editHost ? editHost->findChild<QPushButton*>("ird_param_confirm_yes") : nullptr;
-                bool fieldFound = false;
-                for (int row = 0; table && row < table->rowCount(); ++row) {
-                    if (table->item(row, 0)->data(Qt::UserRole).toString() == "origin-z") {
-                        table->item(row, 1)->setText("0.177"); // parent系Z，m，区别于保存值0.15m。
-                        fieldFound = true;
-                        break;
-                    }
+                auto* grouped = editHost ? editHost->findChild<QWidget*>("ird_joint_grouped_form") : nullptr;
+                auto* field = grouped ? grouped->findChild<QLineEdit*>("ird_joint_field_origin-z") : nullptr;
+                auto* apply = grouped ? grouped->findChild<QPushButton*>("ird_param_apply") : nullptr;
+                auto* confirm = grouped ? grouped->findChild<QPushButton*>("ird_param_confirm_yes") : nullptr;
+                const bool fieldFound = field && field->isVisible() && field->isEnabled();
+                if (fieldFound) {
+                    field->setText("0.177"); // 父系Z，单位m；用可见主表验证输入路径。
                 }
                 if (fieldFound && apply && confirm) {
                     apply->click(); settleEvents(100);
@@ -10302,6 +10447,110 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
             ok(m_lastStoreAdapter->projectStore().query().head().id == afterReopen.id,
                "step8 continued-draft-edit-zero-project-revisions");
         }
+
+        // GF-A/MDL-07：正式宿主以主分组控件完成整表输入→失败→纠正→草稿→
+        // 正式应用→关闭重开。这里不调用modeling私有头，也不直接改工作集。
+        step("gf-a grouped-form-publish-reopen");
+        if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}
+        if(auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");undo&&undo->isEnabled()){
+            undo->click();settleEvents(100); // 撤回上一拍为证明继续编辑而加入的0.177m。
+        }
+        auto* gfTree=panel->findChild<QTreeWidget*>("ird_modeling_struct_tree");
+        QTreeWidgetItem* gfTarget=nullptr;
+        for(QTreeWidgetItemIterator it(gfTree);*it;++it){if((*it)->text(0).endsWith("j2")){gfTarget=*it;break;}}
+        ok(gfTarget!=nullptr,"gf-a second-joint-present");
+        if(gfTarget){
+            const auto id=core::ObjectId::tryFromCanonical(gfTarget->text(1).toStdString());
+            gfTree->setCurrentItem(gfTarget);settleEvents(100);
+            const auto originalDocument=modelingDraftSource(*m_domains).buildDraftDocument();
+            const auto originalCell=getRobWorkStudio()->getWorkCell();
+            const auto originalTip=m_lastStoreAdapter->projectStore().query().head().id;
+            const auto write=[&](const char* name,const QString& text){
+                auto* edit=panel->findChild<QLineEdit*>(QString::fromLatin1(name));
+                ok(edit&&edit->isVisible()&&edit->isEnabled(),std::string("gf-a visible-edit ")+name);
+                if(!edit){return;}
+                edit->setFocus();edit->selectAll();QKeyEvent key(QEvent::KeyPress,Qt::Key_unknown,Qt::NoModifier,text);
+                QApplication::sendEvent(edit,&key);settleEvents(20);
+                ok(edit->text()==text,std::string("gf-a typed-text ")+name);
+            };
+            write("ird_joint_local_name","j2_grouped");
+            write("ird_joint_field_origin-x","0.123");write("ird_joint_field_origin-y","-0.045");write("ird_joint_field_origin-z","0.267");
+            write("ird_joint_field_origin-r","0.2");write("ird_joint_field_origin-p","-0.3");write("ird_joint_field_origin-yaw","0.4");
+            write("ird_joint_field_max-velocity","-1");
+            ok(modelingDraftSource(*m_domains).buildDraftDocument().payload==originalDocument.payload
+                &&getRobWorkStudio()->getWorkCell()==originalCell,"gf-a staging-zero-draft-and-scene-write");
+            auto* gfForm=panel->findChild<QWidget*>("ird_joint_grouped_form");
+            auto* gfApply=gfForm?gfForm->findChild<QPushButton*>("ird_param_apply"):nullptr;
+            auto* gfYes=gfForm?gfForm->findChild<QPushButton*>("ird_param_confirm_yes"):nullptr;
+            ok(gfApply&&gfYes,"gf-a final-buttons-present");
+            if(gfApply&&gfYes){
+                gfApply->click();settleEvents(50);gfYes->click();settleEvents(100);
+                ok(modelingDraftSource(*m_domains).buildDraftDocument().payload==originalDocument.payload
+                    &&m_lastStoreAdapter->projectStore().query().head().id==originalTip,"gf-a rejected-whole-form-zero-write");
+                snapPng(hostWin,"gf-a-real-rejected.png");
+                write("ird_joint_field_max-velocity","1.75");gfApply->click();settleEvents(50);
+                snapPng(hostWin,"gf-a-real-confirm.png");gfYes->click();settleEvents(100);
+                ok(modelingDraftSource(*m_domains).buildDraftDocument().payload!=originalDocument.payload
+                    &&getRobWorkStudio()->getWorkCell()==originalCell
+                    &&m_lastStoreAdapter->projectStore().query().head().id==originalTip,"gf-a draft-only-before-project-apply");
+                const auto acceptedDocument=modelingDraftSource(*m_domains).buildDraftDocument();
+                auto* undo=panel->findChild<QPushButton*>("ird_modeling_draft_undo");
+                auto* redo=panel->findChild<QPushButton*>("ird_modeling_draft_redo");
+                if(undo&&redo){undo->click();settleEvents(50);
+                    ok(modelingDraftSource(*m_domains).buildDraftDocument().payload==originalDocument.payload,"gf-a single-undo-all-fields");
+                    redo->click();settleEvents(50);
+                    ok(modelingDraftSource(*m_domains).buildDraftDocument().payload==acceptedDocument.payload,"gf-a single-redo-all-fields");}
+                formalApply(std::nullopt);settleEvents(300);
+                const auto publishedTip=m_lastStoreAdapter->projectStore().query().head().id;
+                ok(publishedTip!=originalTip&&getRobWorkStudio()->getWorkCell()!=originalCell,"gf-a formal-apply-replaces-workcell");
+                const auto checkPublished=[&](const char* tag){
+                    const auto name=id?m_nameMapPort->resolveRuntimeName(*id):std::nullopt;
+                    const auto cell=getRobWorkStudio()->getWorkCell();auto* frame=name?cell->findFrame(*name):nullptr;
+                    std::cout<<"[ird-ui-smoke-mtour] "<<tag<<" stable-id="<<(id?id->toCanonical():"none")
+                        <<" resolved-name="<<(name?*name:"<unresolved>")
+                        <<" frame="<<bool(frame)<<" workcell="<<(cell?cell->getName():"<null>")<<std::endl;
+                    ok(name&&name->find("j2_grouped")!=std::string::npos&&frame,std::string(tag)+" stable-id-renamed-frame");
+                    if(frame){
+                        const auto actual=frame->getTransform(getRobWorkStudio()->getState());
+                        const auto rotation=rw::math::RPY<>(0.4,-0.3,0.2).toRotation3D(); // 框架构造参数为yaw/pitch/roll。
+                        bool matches=(actual.P()-rw::math::Vector3D<>(0.123,-0.045,0.267)).norm2()<1e-12;
+                        for(int row=0;row<3;++row){for(int col=0;col<3;++col){matches=matches&&std::abs(actual.R()(row,col)-rotation(row,col))<1e-12;}}
+                        ok(matches,std::string(tag)+" actual-parent-frame-transform");
+                        m_selection->selectBusiness({*id},SelectionSource::ProjectTree);settleEvents(100);
+                        ok(getRobWorkStudio()->getWorkCellScene()->isHighlighted(frame),std::string(tag)+" renamed-joint-highlight");
+                    }
+                };
+                checkPublished("gf-a applied");snapPng(hostWin,"gf-a-real-applied.png");
+                (void)m_controller->beginClose(UiCloseIntent::CloseProject);
+                const auto closed=m_controller->resolveCloseDialog(CloseDecision{true,DraftDisposition::Discard,TaskDisposition::Wait});
+                for(int attempt=0;attempt<100&&m_controller->hasOpenSession();++attempt){settleEvents(100);}
+                const bool reopened=closed.status==CloseDialogResolution::Status::Confirmed&&!m_controller->hasOpenSession()
+                    &&openViaSessionController(demoPath.toStdString());settleEvents(250);
+                ok(reopened,"gf-a real-project-reopened");
+                if(reopened){
+                    ok(m_lastStoreAdapter->projectStore().query().head().id==publishedTip,"gf-a reopen-zero-revision");
+                    checkPublished("gf-a reopened");
+                    HostProjectClosureView closure(m_lastStoreAdapter->projectStore().query(),std::string(modeling::kRobotDesignObjectType),nullptr);
+                    const auto bytes=closure.tryObjectByToken(modeling::kRobotDesignObjectType);bool fields=false;
+                    if(bytes){const auto decoded=modeling::RobotDesignCodec{}.decode(bytes->bytes,modeling::kCurrentFormatVersion);
+                        if(decoded.ok()){if(const auto* model=std::get_if<modeling::RobotDesign>(&decoded.get())){
+                            for(const auto& joint:model->joints){if(id&&joint.objectId==*id){
+                                std::cout<<"[ird-ui-smoke-mtour] gf-a disk-joint id="<<joint.objectId.toCanonical()
+                                    <<" name="<<joint.localName<<" max-velocity="
+                                    <<(joint.maxVelocity.tryValue()?std::to_string(*joint.maxVelocity.tryValue()):"<unset>")
+                                    <<" provenance="<<static_cast<int>(joint.maxVelocity.provenance().kind)
+                                    <<" origin="<<(joint.origin.tryValue()?std::to_string(joint.origin.tryValue()->d()[0])+","+
+                                        std::to_string(joint.origin.tryValue()->d()[1])+","+
+                                        std::to_string(joint.origin.tryValue()->d()[2]):"<unset>")<<std::endl;
+                                fields=joint.localName=="j2_grouped"
+                                &&joint.maxVelocity.tryValue()==std::optional<double>{1.75}
+                                &&joint.maxVelocity.provenance().kind==core::ProvenanceKind::UserProvided;}}}}}
+                    ok(fields,"gf-a disk-name-velocity-provenance-id-retained");
+                    if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}settleEvents(150);
+                    snapPng(hostWin,"gf-a-real-reopened.png");
+                }
+            }
+        }
         snapPng(hostWin, "mtour-8-scene-update-reopened.png");
 
         QCoreApplication::exit(failedCount == 0 ? 0 : 1);
@@ -10311,3 +10560,5 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
+
+

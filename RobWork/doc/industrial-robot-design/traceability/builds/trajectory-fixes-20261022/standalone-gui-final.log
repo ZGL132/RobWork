@@ -1,0 +1,28 @@
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from TrajectoryPanelGuiTest
+[ RUN      ] TrajectoryPanelGuiTest.CurvesRefreshOnConstruction_WP16T12_ACC1
+[       OK ] TrajectoryPanelGuiTest.CurvesRefreshOnConstruction_WP16T12_ACC1 (171 ms)
+[ RUN      ] TrajectoryPanelGuiTest.AvailabilityDisablesCommandButtons_WP16T12_ACC1
+[       OK ] TrajectoryPanelGuiTest.AvailabilityDisablesCommandButtons_WP16T12_ACC1 (0 ms)
+[ RUN      ] TrajectoryPanelGuiTest.MissingPlaybackIsDisabledAndExplained_TRJ07
+[       OK ] TrajectoryPanelGuiTest.MissingPlaybackIsDisabledAndExplained_TRJ07 (0 ms)
+[ RUN      ] TrajectoryPanelGuiTest.MissingCommandOutletFeedbackPersists_TRJ06
+[       OK ] TrajectoryPanelGuiTest.MissingCommandOutletFeedbackPersists_TRJ06 (1 ms)
+[ RUN      ] TrajectoryPanelGuiTest.InvalidPlaybackNeverReachesPoseSink_TRJ07
+[       OK ] TrajectoryPanelGuiTest.InvalidPlaybackNeverReachesPoseSink_TRJ07 (1 ms)
+[ RUN      ] TrajectoryPanelGuiTest.PlaybackAdvancesPausesAndResets_TRJ07
+[       OK ] TrajectoryPanelGuiTest.PlaybackAdvancesPausesAndResets_TRJ07 (405 ms)
+[ RUN      ] TrajectoryPanelGuiTest.SessionRefreshClearsStaleCurves_TRJ07
+[       OK ] TrajectoryPanelGuiTest.SessionRefreshClearsStaleCurves_TRJ07 (1 ms)
+[ RUN      ] TrajectoryPanelGuiTest.FailureWithoutLocatorExplainsDisabledAction_TRJ06
+[       OK ] TrajectoryPanelGuiTest.FailureWithoutLocatorExplainsDisabledAction_TRJ06 (0 ms)
+[ RUN      ] TrajectoryPanelGuiTest.SessionEpochChangeStopsOldPlayback_TRJ07
+[       OK ] TrajectoryPanelGuiTest.SessionEpochChangeStopsOldPlayback_TRJ07 (101 ms)
+[ RUN      ] TrajectoryPanelGuiTest.FailureLocatorExceptionIsVisible_TRJ06
+[       OK ] TrajectoryPanelGuiTest.FailureLocatorExceptionIsVisible_TRJ06 (0 ms)
+[----------] 10 tests from TrajectoryPanelGuiTest (690 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (691 ms total)
+[  PASSED  ] 10 tests.

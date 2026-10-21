@@ -99,7 +99,7 @@ class QEvent;     // 三维事件过滤（UI-T45——完整定义在 Qt 头）
 namespace sdurws {
 namespace ird {
 namespace core {
-class ProjectId;  // 呈现会话绑定入参（UI-T46——完整类型在 core/Identity.hpp）
+struct ProjectId;  // 呈现会话绑定入参（UI-T46——完整类型在 core/Identity.hpp）
 }
 }  // namespace ird
 }  // namespace sdurws
@@ -509,6 +509,7 @@ private:
     QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
     QDockWidget* m_requirementsDock = nullptr;   ///< "IRD 需求"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
     QDockWidget* m_kinematicsDock = nullptr;     ///< "IRD 运动学"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
+    QDockWidget* m_trajectoryDock = nullptr;     ///< "IRD 轨迹"Dock（Left 区——轨迹工作流正式宿主挂位）
     /// 运动学面板体（无类型 QWidget*——后台完成回执经面板公共槽
     /// showStatusText 按名投递，宿主侧零 kinematics 插件层头依赖；
     /// QPointer 防面板先于迟到回执析构的悬垂）。此前回执文本在 route

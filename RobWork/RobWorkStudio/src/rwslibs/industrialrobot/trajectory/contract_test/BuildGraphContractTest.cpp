@@ -187,6 +187,9 @@ TEST(TrjBuildGraph, UnitEdgesSevenRegisteredAndClosed_WP16T03_ACC1)
                                      "sdurws_ird_trajectory_test",
                                      "sdurws_ird_trajectory_contract_test",
                                      "sdurws_ird_trajectory_app",
+                                     // Qt GUI 回归目标属于测试面，允许消费
+                                     // testkit，但不构成新的业务域编译边。
+                                     "sdurws_ird_trajectory_gui_test",
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(std::string("sdurws_ird_") + u);
@@ -324,7 +327,8 @@ TEST(TrjBuildGraph, NoTestkitEdgeOnProductTarget_WP16T03_ACC1)
         // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析）。
         const bool onTestTargetLine
             = (line.find("sdurws_ird_trajectory_test") != std::string::npos
-               || line.find("sdurws_ird_trajectory_contract_test") != std::string::npos)
+               || line.find("sdurws_ird_trajectory_contract_test") != std::string::npos
+               || line.find("sdurws_ird_trajectory_gui_test") != std::string::npos)
               && line.find("target_link_libraries") != std::string::npos;
         EXPECT_TRUE(onTestTargetLine)
             << "testkit 引用必须落在测试目标链接语句行（T-1：产品目标零 "

@@ -45,6 +45,7 @@
 #include <rw/math/Q.hpp>
 
 #include <sdurws/ird/core/Identity.hpp>
+#include <sdurws/ird/core/Units.hpp>
 #include <sdurws/ird/trajectory/TrjTypes.hpp>
 
 namespace sdurws::ird::trajectory {
@@ -186,6 +187,9 @@ struct PtpRequest {
     /// 取消观测（可空＝不可取消；在候选选择前与几何完成后轮询——§15.1
     /// "规划循环边界轮询"）。
     CancelSignal cancel;
+    /// 逐轴关节量纲（空＝兼容旧调用，全部按 Angle/rad；Length＝移动轴/m）。
+    /// 调用方从 runtime 关节类型投影填入；置于表尾兼容旧聚合初始化顺序。
+    std::vector<core::QuantityKind> jointQuantityKinds;
 };
 
 /**

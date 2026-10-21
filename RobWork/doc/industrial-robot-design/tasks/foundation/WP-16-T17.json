@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T17",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "修复轨迹审核缺陷并完善正式宿主与真实窗口交互",
+  "status": "ready",
+  "dependsOn": ["WP-16-T12", "WP-16-T13"],
+  "requirements": ["TRJ-01", "TRJ-02", "TRJ-06", "TRJ-07", "UX-02", "UX-10"],
+  "designRefs": ["units/trajectory.md#24", "development-task-breakdown.md#2.17"],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/DomainAssembly.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/DomainAssembly.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/UiText.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/StageNavigationModelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/HostIntegrationContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T17.json",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/docs/superpowers/plans/2026-10-22-trajectory-delivery-fixes.md",
+    "RobWork/docs/superpowers/specs/2026-10-22-trajectory-delivery-design.md"
+  ],
+  "forbiddenFiles": ["RobWork/doc/industrial-robot-design/REQUIREMENTS.md", "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_studio sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test sdurws_ird_trajectory_gui_test",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/run.ps1 -Tag trajectory-final -Target sdurws_ird_trajectory_test",
+    "pwsh -File RobWork/doc/industrial-robot-design/traceability/builds/trajectory-fixes-20261022/run.ps1 -Tag gui-final"
+  ],
+  "branch": "wp16-t17",
+  "interUnit": true,
+  "knownPitfalls": ["O-37", "P-UI-6"],
+  "acceptance": [
+    "算法缺陷具备失败复现和修复后回归；单位和任务位姿数值均正确消费",
+    "正式宿主真实注册并可从视图菜单打开轨迹面板，中文标题完整，空态可解释",
+    "连续播放、暂停、复位、时间定位、坏帧隔离及反馈持久性具备真实Widgets回归",
+    "真实三维与完整序列的未闭合项逐项登记，不以算法/控件通过替代整体验收"
+  ],
+  "note": "2026-10-22 用户要求修复轨迹审核问题并优化交互；按其不弹选项、采用推荐方案的指令登记本批精确范围。保留进入本批前需求/建模等未提交修改，不混入本契约验收。用户随后明确要求同步当前修改；本批仅提交契约允许文件到 wp16-t17 并推送 origin，不向 main 提交；独立验收与合入另行执行。"
+}

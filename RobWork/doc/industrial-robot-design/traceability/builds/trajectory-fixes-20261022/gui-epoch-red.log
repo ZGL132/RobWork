@@ -1,0 +1,44 @@
+Note: Google Test filter = TrajectoryPanelGuiTest.SessionEpochChangeStopsOldPlayback_TRJ07:TrajectoryPanelGuiTest.FailureLocatorExceptionIsVisible_TRJ06
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from TrajectoryPanelGuiTest
+[ RUN      ] TrajectoryPanelGuiTest.SessionEpochChangeStopsOldPlayback_TRJ07
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(216): error: Expected equality of these values:
+  writes
+    Which is: 8
+  writesAtSwitch
+    Which is: 2
+切换后不能继续输出旧归档帧
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(217): error: Expected equality of these values:
+  play->text()
+    Which is: { 2-byte object <82-66>, 2-byte object <5C-50> }
+  (QString(QtPrivate::qMakeStringPrivate(u"" "播放")))
+    Which is: { 2-byte object <AD-64>, 2-byte object <3E-65> }
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(218): error: Expected equality of these values:
+  time->value()
+    Which is: 0.69599999999999995
+  0.0
+    Which is: 0
+
+[  FAILED  ] TrajectoryPanelGuiTest.SessionEpochChangeStopsOldPlayback_TRJ07 (117 ms)
+[ RUN      ] TrajectoryPanelGuiTest.FailureLocatorExceptionIsVisible_TRJ06
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(232): error: Expected: locate->click() doesn't throw an exception.
+  Actual: it throws std::runtime_error with description "view unavailable".
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp(237): error: Value of: explained
+  Actual: false
+Expected: true
+
+[  FAILED  ] TrajectoryPanelGuiTest.FailureLocatorExceptionIsVisible_TRJ06 (1 ms)
+[----------] 2 tests from TrajectoryPanelGuiTest (119 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (121 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] TrajectoryPanelGuiTest.SessionEpochChangeStopsOldPlayback_TRJ07
+[  FAILED  ] TrajectoryPanelGuiTest.FailureLocatorExceptionIsVisible_TRJ06
+
+ 2 FAILED TESTS

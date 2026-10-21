@@ -1,0 +1,47 @@
+Note: Google Test filter = *WorkPoseEquality*:*RejectsInvalidUnitEven*:*RejectsMalformedCartesian*:*RejectsInfiniteCartesian*
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from TrjPtp
+[ RUN      ] TrjPtp.RejectsInvalidUnitEvenWithoutLimitViolation_TRJ06
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp(782): error: Expected: planPtpSegment(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+
+[  FAILED  ] TrjPtp.RejectsInvalidUnitEvenWithoutLimitViolation_TRJ06 (1 ms)
+[----------] 1 test from TrjPtp (1 ms total)
+
+[----------] 3 tests from TrjSequence
+[ RUN      ] TrjSequence.WorkPoseEqualityIncludesValues_TRJ01
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp(773): error: Expected: (original) != (changed), actual: 232-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-01 4E-DC 15-02 00-00 0B-67 AC-58 FF-7F 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 01-00 00-00 00-00 00-00> vs 232-byte object <00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 0F-00 00-00 00-00 00-00 00-01 31-C2 FE-7F 00-00 A0-00 00-00 00-00 00-00 ... 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 00-00 F0-3F 01-F3 2D-C2 FE-7F 00-00>
+
+[  FAILED  ] TrjSequence.WorkPoseEqualityIncludesValues_TRJ01 (0 ms)
+[ RUN      ] TrjSequence.RejectsMalformedCartesianServiceResults_TRJ02
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp(800): error: Expected: expandSequence(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+损坏类型=0
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp(800): error: Expected: expandSequence(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+损坏类型=1
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp(800): error: Expected: expandSequence(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+损坏类型=2
+
+[  FAILED  ] TrjSequence.RejectsMalformedCartesianServiceResults_TRJ02 (0 ms)
+[ RUN      ] TrjSequence.RejectsInfiniteCartesianDistance_TRJ02
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\PtpSequenceTest.cpp(811): error: Expected: expandSequence(req) throws an exception of type TrajectoryError.
+  Actual: it throws nothing.
+
+[  FAILED  ] TrjSequence.RejectsInfiniteCartesianDistance_TRJ02 (0 ms)
+[----------] 3 tests from TrjSequence (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (4 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] TrjPtp.RejectsInvalidUnitEvenWithoutLimitViolation_TRJ06
+[  FAILED  ] TrjSequence.WorkPoseEqualityIncludesValues_TRJ01
+[  FAILED  ] TrjSequence.RejectsMalformedCartesianServiceResults_TRJ02
+[  FAILED  ] TrjSequence.RejectsInfiniteCartesianDistance_TRJ02
+
+ 4 FAILED TESTS

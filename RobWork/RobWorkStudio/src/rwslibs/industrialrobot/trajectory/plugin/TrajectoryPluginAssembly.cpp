@@ -123,6 +123,28 @@ void TrajectoryPluginAssembly::bindCommandAvailability(
     }
 }
 
+void TrajectoryPluginAssembly::bindSessionPoseSink(
+    std::function<void(const std::vector<double>&)> sink)
+{
+    if (m_module == nullptr) { return; }
+    if (!sink) {
+        m_module->services.sessionPoseSink = {};
+        return;
+    }
+    m_module->services.sessionPoseSink =
+        [sink = std::move(sink)](const TrajPlaybackSample& sample) {
+            sink(sample.q);
+        };
+}
+
+void TrajectoryPluginAssembly::bindFailureLocator(
+    std::function<bool(std::uint32_t)> locate)
+{
+    if (m_module != nullptr) {
+        m_module->services.failureLocate = std::move(locate);
+    }
+}
+
 void TrajectoryPluginAssembly::bindTextResolver(
     std::function<std::string(const std::string& titleKey)> resolve)
 {

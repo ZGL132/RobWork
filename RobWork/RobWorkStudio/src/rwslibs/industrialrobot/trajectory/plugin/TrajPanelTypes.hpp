@@ -154,6 +154,10 @@ struct TrajModuleSessionState {
     /// 从头丢弃最旧记录。容量 8 条是呈现缓冲截断，非业务阈值——
     /// 完整受理史归 execution 任务清单，本缓冲只服务工作流页清单）。
     std::vector<TrajCommandRecord> recentCommands;
+    /// 最近一次规划/复检失败的段号（0 基；无失败＝空）。
+    std::optional<std::uint32_t> failedSegmentIndex;
+    /// 失败稳定码或文案键（只呈现，不在 UI 侧解释）。
+    std::string failureReasonToken;
 };
 
 // =====================================================================
@@ -211,6 +215,8 @@ struct TrajPanelServices {
     std::function<bool(const std::string& commandToken)> commandAvailability;
     /// 文案解析缝（空＝键名原文呈现——开发态可见缺口）。
     std::function<std::string(const std::string& titleKey)> textResolver;
+    /// 失败段定位出口（段号 0 基→宿主三维定位；空＝未装配；表尾追加）。
+    std::function<bool(std::uint32_t segmentIndex)> failureLocate;
 };
 
 }  // namespace sdurws::ird::trajectory

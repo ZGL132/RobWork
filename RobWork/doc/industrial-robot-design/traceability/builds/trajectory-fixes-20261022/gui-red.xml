@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="8" failures="6" disabled="0" errors="0" time="0.146" timestamp="2026-10-22T04:56:21.770" name="AllTests">
+  <testsuite name="TrajectoryPanelGuiTest" tests="8" failures="6" disabled="0" skipped="0" errors="0" time="0.144" timestamp="2026-10-22T04:56:21.772">
+    <testcase name="CurvesRefreshOnConstruction_WP16T12_ACC1" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="35" status="run" result="completed" time="0.013" timestamp="2026-10-22T04:56:21.772" classname="TrajectoryPanelGuiTest" />
+    <testcase name="AvailabilityDisablesCommandButtons_WP16T12_ACC1" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="52" status="run" result="completed" time="0." timestamp="2026-10-22T04:56:21.787" classname="TrajectoryPanelGuiTest" />
+    <testcase name="MissingPlaybackIsDisabledAndExplained_TRJ07" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="69" status="run" result="completed" time="0.001" timestamp="2026-10-22T04:56:21.788" classname="TrajectoryPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:75&#x0A;Value of: sliders.front()-&gt;isEnabled()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:75
+Value of: sliders.front()->isEnabled()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:80&#x0A;Value of: explained&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:80
+Value of: explained
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="MissingCommandOutletFeedbackPersists_TRJ06" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="84" status="run" result="completed" time="0." timestamp="2026-10-22T04:56:21.789" classname="TrajectoryPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:91&#x0A;Value of: lists.front()-&gt;toPlainText().contains((QString(QtPrivate::qMakeStringPrivate(u&quot;&quot; &quot;命令出口未装配&quot;))))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:91
+Value of: lists.front()->toPlainText().contains((QString(QtPrivate::qMakeStringPrivate(u"" "命令出口未装配"))))
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:93&#x0A;Value of: lists.front()-&gt;toPlainText().contains((QString(QtPrivate::qMakeStringPrivate(u&quot;&quot; &quot;命令出口未装配&quot;))))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:93
+Value of: lists.front()->toPlainText().contains((QString(QtPrivate::qMakeStringPrivate(u"" "命令出口未装配"))))
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="InvalidPlaybackNeverReachesPoseSink_TRJ07" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="97" status="run" result="completed" time="0." timestamp="2026-10-22T04:56:21.790" classname="TrajectoryPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:112&#x0A;Expected equality of these values:&#x0A;  writes&#x0A;    Which is: 1&#x0A;  0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:112
+Expected equality of these values:
+  writes
+    Which is: 1
+  0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:116&#x0A;Expected: panel-&gt;findChildren&lt;QSlider*&gt;().front()-&gt;setValue(600) doesn&apos;t throw an exception.&#x0A;  Actual: it throws std::runtime_error with description &quot;archive unavailable&quot;.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:116
+Expected: panel->findChildren<QSlider*>().front()->setValue(600) doesn't throw an exception.
+  Actual: it throws std::runtime_error with description "archive unavailable".
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:117&#x0A;Expected equality of these values:&#x0A;  writes&#x0A;    Which is: 1&#x0A;  0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:117
+Expected equality of these values:
+  writes
+    Which is: 1
+  0
+]]></failure>
+    </testcase>
+    <testcase name="PlaybackAdvancesPausesAndResets_TRJ07" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="121" status="run" result="completed" time="0.123" timestamp="2026-10-22T04:56:21.791" classname="TrajectoryPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:136&#x0A;Expected: (play) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:136
+Expected: (play) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="SessionRefreshClearsStaleCurves_TRJ07" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="157" status="run" result="completed" time="0.001" timestamp="2026-10-22T04:56:21.915" classname="TrajectoryPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:167&#x0A;Expected equality of these values:&#x0A;  joint-&gt;count()&#x0A;    Which is: 1&#x0A;  0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:167
+Expected equality of these values:
+  joint->count()
+    Which is: 1
+  0
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:168&#x0A;Value of: joint-&gt;isEnabled()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:168
+Value of: joint->isEnabled()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="FailureWithoutLocatorExplainsDisabledAction_TRJ06" file="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp" line="172" status="run" result="completed" time="0." timestamp="2026-10-22T04:56:21.916" classname="TrajectoryPanelGuiTest">
+      <failure message="C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:183&#x0A;Value of: explained&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\gui_test\TrajectoryPanelGuiTest.cpp:183
+Value of: explained
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

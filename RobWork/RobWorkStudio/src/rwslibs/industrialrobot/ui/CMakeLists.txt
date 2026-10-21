@@ -618,6 +618,7 @@ if(TARGET sdurws)
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
         sdurws_ird_kinematics_plugin
+        sdurws_ird_trajectory_plugin # 轨迹宿主装配同源直编需要完整链接，回归正式注册与文案。
         sdurws_ird_dynamics_plugin      # ASM-STUDIO——六域聚合注册断言直测面（IRD_TEST_TARGET_EDGES 三边转消费）
         sdurws_ird_selection_plugin
         sdurws_ird_optimization_plugin)
@@ -990,6 +991,7 @@ if(TARGET sdurws)
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
         sdurws_ird_kinematics_plugin
+        sdurws_ird_trajectory_plugin
         sdurws_ird_dynamics_plugin
         sdurws_ird_selection_plugin
         sdurws_ird_optimization_plugin
@@ -1109,6 +1111,7 @@ if(TARGET sdurws)
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
         sdurws_ird_kinematics_plugin
+        sdurws_ird_trajectory_plugin
         sdurws_ird_dynamics_plugin
         sdurws_ird_selection_plugin
         sdurws_ird_optimization_plugin

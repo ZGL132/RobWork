@@ -782,6 +782,16 @@ TEST(TrjCartesianLine, PlanRejectsContractViolations_WP16T05_ACC1)
     }
 }
 
+TEST(TrjCartesianLine, RejectsReflectionWorkPose_WP16T05_ACC1)
+{
+    // TRJ-02/AT-06：镜像矩阵满足列正交但 det(R)=-1，不是合法旋转；
+    // 规划入口必须在四元数/SLERP 前拒绝，不能把反射当作姿态。
+    FakeKinPort port;
+    CartesianLineRequest req = makeGoldenRequest(&port);
+    req.workPose.R()(0, 0) = -1.0;
+    EXPECT_THROW(planCartesianLine(req), TrajectoryError);
+}
+
 // =====================================================================
 // C2 适用性双路（§8.1 表 4/§13.3——V-09）
 // =====================================================================

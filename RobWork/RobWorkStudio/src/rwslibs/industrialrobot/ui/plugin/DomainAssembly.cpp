@@ -99,6 +99,7 @@ const char* const kModelingDockTitle = "IRD 建模";
 const char* const kRequirementsDockTitle = "IRD 需求";
 const char* const kKinematicsDockTitle = "IRD 运动学";
 const char* const kKinematicsAdvancedDockTitle = "IRD 运动学（求解配置）";
+const char* const kTrajectoryDockTitle = "IRD 轨迹";
 
 std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
     QDockWidget& /*pluginDock*/,
@@ -286,6 +287,45 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
                              status.detail);
     }
 
+    // ⑤轨迹装配：trajectory 与 requirements/kinematics 一样采用失败隔离。
+    // 白名单登记本身不能代表功能可用；只有真实门面注册成功，宿主才创建
+    // 工作流面板。命令/曲线/播放服务仍由宿主后续注入，空缝会在面板中
+    // 明确呈现未装配状态，不把“有 Dock”误报为“规划已可执行”。
+    try {
+        bundle->trajectory = trajectory::createTrajectoryPluginAssembly();
+        // trajectory 面门面只接收 std::string；宿主 UiText 解析器返回
+        // QString，装配层在这一处完成值类型翻译，避免 Qt 类型进入轨迹域。
+        const auto uiTextResolver = standardTextResolver();
+        bundle->trajectory->bindTextResolver(
+            [uiTextResolver](const std::string& key) {
+                return uiTextResolver(key).toStdString();
+            });
+        const RegistrationOutcome outcome = trajectory::registerWithHostRegistrar(
+            *bundle->trajectory, bundle->registrar.get());
+        DomainPluginAssembly::DomainAssemblyStatus status;
+        status.domainKey = "trajectory";
+        status.ok = (outcome == RegistrationOutcome::Ok);
+        bundle->statuses.push_back(status);
+        emitDomainReportLine(reportLines, "trajectory", status.ok,
+                             bundle->trajectory->descriptor.panels.size(),
+                             bundle->trajectory->descriptor.commands.size(),
+                             "outcome=" + std::to_string(static_cast<int>(outcome)));
+        if (status.ok) {
+            DomainModuleEntry entry;
+            entry.moduleId = trajectory::kTrjDomainKey;
+            entry.module = bundle->trajectory->uiModule();
+            bundle->applyEntries.push_back(std::move(entry));
+        }
+    } catch (const std::exception& trajectoryError) {
+        DomainPluginAssembly::DomainAssemblyStatus status;
+        status.domainKey = "trajectory";
+        status.ok = false;
+        status.detail = trajectoryError.what();
+        bundle->statuses.push_back(status);
+        emitDomainReportLine(reportLines, "trajectory", false, 0, 0,
+                             status.detail);
+    }
+
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
     // ⑤~⑦dynamics/selection/optimization 三新域承接（ASM-UI 收口批——
     // asm-plug 预登记边 IRD_TARGET_LEVEL_EDGES 三条的运行期消费）：门面
@@ -359,6 +399,16 @@ QWidget* kinematicsAdvancedPanelWidget(const DomainPluginAssembly& bundle)
     }
     const ui::PanelRegistration& panel = bundle.kinematics->descriptor.panels[1];
     return panel.factory();
+}
+
+QWidget* trajectoryPanelWidget(const DomainPluginAssembly& bundle)
+{
+    if (!bundle.trajectory.has_value()
+        || bundle.trajectory->descriptor.panels.empty()) {
+        return nullptr;
+    }
+    const auto& panel = bundle.trajectory->descriptor.panels.front();
+    return panel.factory ? panel.factory() : nullptr;
 }
 
 ui::IModuleDraftSource& modelingDraftSource(DomainPluginAssembly& bundle)

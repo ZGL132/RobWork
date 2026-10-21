@@ -65,8 +65,9 @@ double safeAcos(double x)
     return std::acos(x);
 }
 
-/// 旋转矩阵正交性核验（构造点 fail-fast 的判定式）：三列范数平方与 1 的
-/// 偏差 ≤1×10⁻⁹，且两两列点积绝对值 ≤1×10⁻⁹（无量纲——旋转无量纲）。
+/// 旋转矩阵合法性核验（构造点 fail-fast 的判定式）：三列范数平方与 1 的
+/// 偏差 ≤1×10⁻⁹、两两列点积绝对值 ≤1×10⁻⁹，且行列式为 +1（无量纲——
+/// 反射矩阵虽然正交但不属于 SO(3)，不能作为位姿姿态）。
 bool isOrthogonal(const rw::math::Rotation3D<double>& R)
 {
     constexpr double kOrthoEps = 1e-9;  // 正交性残差上界（无量纲；浮点 1e-15 级的正常余量的宽裕界）
@@ -80,12 +81,17 @@ bool isOrthogonal(const rw::math::Rotation3D<double>& R)
                         const rw::math::Vector3D<double>& b) {
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     };
+    const double determinant =
+        R(0, 0) * (R(1, 1) * R(2, 2) - R(1, 2) * R(2, 1))
+        - R(0, 1) * (R(1, 0) * R(2, 2) - R(1, 2) * R(2, 0))
+        + R(0, 2) * (R(1, 0) * R(2, 1) - R(1, 1) * R(2, 0));
     return std::fabs(n2(c0) - 1.0) <= kOrthoEps
         && std::fabs(n2(c1) - 1.0) <= kOrthoEps
         && std::fabs(n2(c2) - 1.0) <= kOrthoEps
         && std::fabs(dot(c0, c1)) <= kOrthoEps
         && std::fabs(dot(c0, c2)) <= kOrthoEps
-        && std::fabs(dot(c1, c2)) <= kOrthoEps;
+        && std::fabs(dot(c1, c2)) <= kOrthoEps
+        && std::fabs(determinant - 1.0) <= kOrthoEps;
 }
 
 /// 四元数点积（x·x'+y·y'+z·z'+w·w'——分量经 getQx..getQw 取，避免
@@ -353,8 +359,9 @@ CartesianLinePlanResult planCartesianLine(const CartesianLineRequest& request)
     }
     if (!isOrthogonal(request.workPose.R())) {
         throw TrajectoryError("trajectory/cartesian/workpose-rotation",
-                              "任务点位姿旋转部非正交（残差 >1×10⁻⁹——"
-                              "无位姿语义，调用方数据违约）");
+                              "任务点位姿旋转部不是合法 SO(3) 旋转（正交性或"
+                              "行列式残差 >1×10⁻⁹——反射矩阵没有位姿语义，"
+                              "调用方数据违约）");
     }
     // 轴向解析产物的单源纪律（§8.2）：ToolZ 域内解析（workPose 旋转部
     // 第三列）；ReferenceZ 须调用方注入基座系单位向量，双源并存即违约。

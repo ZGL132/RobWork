@@ -1,0 +1,51 @@
+Note: Google Test filter = *TrajectoryTitlesResolve*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from UiText
+[ RUN      ] UiText.TrajectoryTitlesResolveWithoutInternalKeys_TRJ07
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 cmd.trajectory.plan-sequence.title".
+cmd.trajectory.plan-sequence.title
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 cmd.trajectory.preview-segment.title".
+cmd.trajectory.preview-segment.title
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 cmd.trajectory.local-replan.title".
+cmd.trajectory.local-replan.title
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 cmd.trajectory.play.title".
+cmd.trajectory.play.title
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 cmd.trajectory.playback-seek.title".
+cmd.trajectory.playback-seek.title
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 cmd.trajectory.export.title".
+cmd.trajectory.export.title
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 cmd.trajectory.show-curve.title".
+cmd.trajectory.show-curve.title
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 plugin.trajectory.panel.workflow.title".
+plugin.trajectory.panel.workflow.title
+
+C:\Users\zgl18\.codex\worktrees\93fd\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(63): error: Expected: { const auto value=sdurws::ird::ui::resolveText(key); switch (0) case 0: default: if (const ::testing::AssertionResult gtest_ar = (::testing::internal::CmpHelperNE("value", "key", value, key))) ; else ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, "C:\\Users\\zgl18\\.codex\\worktrees\\93fd\\RobWork\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\ui\\test\\StageNavigationModelTest.cpp", 63, gtest_ar.failure_message()) = ::testing::Message(); } doesn't throw an exception.
+  Actual: it throws std::invalid_argument with description "ui/uitext/unknown-key: 未登记文案键 plugin.trajectory.panel.curves.title".
+plugin.trajectory.panel.curves.title
+
+[  FAILED  ] UiText.TrajectoryTitlesResolveWithoutInternalKeys_TRJ07 (1 ms)
+[----------] 1 test from UiText (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (3 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] UiText.TrajectoryTitlesResolveWithoutInternalKeys_TRJ07
+
+ 1 FAILED TEST

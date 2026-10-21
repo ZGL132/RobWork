@@ -29,6 +29,7 @@
 
 #include <sdurws/ird/core/Compare.hpp>
 #include <sdurws/ird/core/Identity.hpp>
+#include <sdurws/ird/core/Units.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 #include <sdurws/ird/trajectory/DiagCodes.hpp>
 #include <sdurws/ird/trajectory/Errors.hpp>
@@ -42,6 +43,7 @@
 #include <vector>
 
 using sdurws::ird::core::ObjectId;
+using sdurws::ird::core::QuantityKind;
 using sdurws::ird::core::Tolerance;
 using sdurws::ird::core::allCloseWithin;
 using sdurws::ird::core::closeWithin;
@@ -62,6 +64,7 @@ using sdurws::ird::trajectory::SequenceTaskLevel;
 using sdurws::ird::trajectory::SequenceTaskPoint;
 using sdurws::ird::trajectory::TrajectoryError;
 using sdurws::ird::trajectory::TrajectorySegment;
+using sdurws::ird::trajectory::Waypoint;
 using sdurws::ird::trajectory::WaypointKind;
 using sdurws::ird::trajectory::choosePtpCandidate;
 using sdurws::ird::trajectory::expandSequence;
@@ -69,6 +72,7 @@ using sdurws::ird::trajectory::interpolateJointLinear;
 using sdurws::ird::trajectory::kTrjInputInvalid;
 using sdurws::ird::trajectory::kTrjLimitExceeded;
 using sdurws::ird::trajectory::kTrjNoPath;
+using sdurws::ird::trajectory::kTrjBranchJump;
 using sdurws::ird::trajectory::planPtpSegment;
 
 namespace {
@@ -148,6 +152,39 @@ SequenceRequest makeSequenceRequest(std::vector<SequenceStationInput> stations)
     req.ikContinuityThreshold = 1e-6;              // rad 逐轴上界
     req.stations = std::move(stations);
     return req;
+}
+
+/// 注入编排端口替身：返回结构合法的几何和构型，只验证 Sequence 的
+/// 结果消费与游标推进；不调用真实 IK，不构成 CartesianLine 整链证据。
+void installCartesianPlanner(SequenceRequest& req)
+{
+    req.cartesianPlanner = [](const SequenceRequest::CartesianPlanRequest& input) {
+        SequenceRequest::CartesianPlanOutcome outcome;
+        TrajectorySegment geometry;
+        geometry.segmentIndex = input.segmentIndex;
+        geometry.spaceType = SegmentSpaceType::CartesianLine;
+        geometry.tcpRef = input.tcpRef;
+        geometry.frameRef = input.frameRef;
+        geometry.constraint = input.constraint;
+        geometry.sourceTaskPoint = input.sourceTaskPoint;
+        const rw::math::Transform3D<double> pose =
+            input.workPose.value_or(rw::math::Transform3D<double>());
+        Waypoint start;
+        start.kind = WaypointKind::Via;
+        start.segmentIndex = input.segmentIndex;
+        start.target = pose;
+        Waypoint end;
+        end.kind = WaypointKind::TaskPoint;
+        end.segmentIndex = input.segmentIndex;
+        end.target = pose;
+        end.sourceTaskPoint = input.sourceTaskPoint;
+        geometry.waypoints = {start, end};
+        geometry.pathLengthTcp = input.segment.distanceM;
+        outcome.geometry = geometry;
+        outcome.startQ = input.branchSeedQ;
+        outcome.endQ = input.branchSeedQ;
+        return outcome;
+    };
 }
 
 }  // namespace
@@ -361,6 +398,22 @@ TEST(TrjPtp, PlanPtpRejectsEndOutOfBounds_WP16T04_ACC1)
     ASSERT_TRUE(out.failure.has_value());
     EXPECT_EQ(out.failure->reasonToken, std::string(kTrjLimitExceeded));
     EXPECT_EQ(out.failure->pathParameter.value_or(-1.0), 1.0);         // 端点 s=1
+}
+
+TEST(TrjPtp, UsesLinearUnitForPrismaticLimitDiagnostic_WP16T04_ACC1)
+{
+    // TRJ-06：移动关节越限的比较型诊断必须使用 m，而不是沿用转动轴 rad。
+    PtpRequest request = makePtpRequest(makeQ({0.0}), {cand({2.0}, 1U, 0.8)});
+    request.lowerBoundQ = makeQ({-1.0});
+    request.upperBoundQ = makeQ({1.0});
+    request.jointQuantityKinds = {QuantityKind::Length};
+
+    const PtpPlanResult result = planPtpSegment(request);
+    ASSERT_EQ(result.status, PtpStatus::NoPath);
+    ASSERT_TRUE(result.failure.has_value());
+    ASSERT_TRUE(result.failure->comparison.has_value());
+    EXPECT_EQ(result.failure->comparison->actual.unit.symbol(), "m");
+    EXPECT_EQ(result.failure->comparison->expected.unit.symbol(), "m");
 }
 
 /** 零长 PTP 段（§7.2 退化）：起终点相同→合法零长段（路径长度 0）。 */
@@ -583,8 +636,7 @@ TEST(TrjSequence, ExpandStopsWhenStationUnsolvable_WP16T04_ACC1)
     EXPECT_EQ(*plan.failures[0].subject, oidB);                        // 定位到失败站
 }
 
-/** 笛卡尔站：approach/retract 启用→CartesianLine 计划条目（lineSpec 齐备）
- *  ＋Transfer 段几何待填（T05 接近点 IK——如实标记不伪造）。 */
+/** 笛卡尔站缺编排服务时须明确失败，不能把 lineSpec 占位认定为完整几何。 */
 TEST(TrjSequence, ExpandCartesianStationPlansLineEntries_WP16T04_ACC1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"TRJ-01", "TRJ-02"}, std::vector<std::string>{});
@@ -599,38 +651,44 @@ TEST(TrjSequence, ExpandCartesianStationPlansLineEntries_WP16T04_ACC1)
     st.dwellDurationS = 1.5;                                           // s（驻留投影）
 
     const SequencePlan plan = expandSequence(makeSequenceRequest({std::move(st)}));
-    ASSERT_TRUE(plan.failures.empty()) << (plan.failures.empty() ? "" : plan.failures[0].cause);
-
-    // 段链：Transfer(0 待填)→Approach(1)→Work(2 含驻留)→Retract(3)。
-    ASSERT_EQ(plan.segments.size(), 4U);
-    EXPECT_EQ(plan.segments[0].role, SequenceSegmentRole::TransferPtp);
-    EXPECT_FALSE(plan.segments[0].ptpGeometry.has_value());            // 待 T05——如实标记
-    EXPECT_EQ(plan.segments[1].role, SequenceSegmentRole::Approach);
-    EXPECT_EQ(plan.segments[1].spaceType, SegmentSpaceType::CartesianLine);
-    ASSERT_TRUE(plan.segments[1].lineSpec.has_value());
-    EXPECT_TRUE(plan.segments[1].lineSpec->enabled);
-    EXPECT_EQ(plan.segments[1].lineSpec->axis, SequenceSegmentAxis::ToolZ);
-    EXPECT_TRUE(closeWithin(plan.segments[1].lineSpec->distanceM, 0.1, goldenTolerance()));
-    EXPECT_EQ(plan.segments[2].role, SequenceSegmentRole::Work);
-    ASSERT_TRUE(plan.segments[2].dwellDurationS.has_value());          // 驻留进 Work 条目
-    EXPECT_TRUE(closeWithin(*plan.segments[2].dwellDurationS, 1.5, goldenTolerance()));
-    EXPECT_EQ(plan.segments[3].role, SequenceSegmentRole::Retract);
-    ASSERT_TRUE(plan.segments[3].lineSpec.has_value());
-    EXPECT_EQ(plan.segments[3].lineSpec->axis, SequenceSegmentAxis::ReferenceZ);
-    EXPECT_EQ(plan.segments[3].spaceType, SegmentSpaceType::CartesianLine);
+    // 真实编排服务未注入时必须显式失败；旧实现曾返回 lineSpec 占位并
+    // 把不可执行序列误报为成功，这个回归钉住该缺口。
+    ASSERT_EQ(plan.failures.size(), 1U);
+    EXPECT_EQ(plan.failures[0].reasonToken, std::string(kTrjNoPath));
+    EXPECT_EQ(plan.failures[0].segmentIndex, 1U);
+    EXPECT_TRUE(plan.segments.empty());
 }
 
-/** 游标失效的纯关节站（F-798 回归——TRJ-01 有序作业序列＋TRJ-06 失败
- *  可定位）：前置笛卡尔站使构型游标失效后，后续纯关节站仍须产出**结构
- *  齐全**的段链——Transfer 占位（几何待 T05，不伪造端点）＋Work（任务点
- *  ＋驻留）＋retract（若启用）一个不丢；且游标保持失效（后续纯关节站同
- *  形展开，不得以过期游标规划几何）。
- *
- * 缺陷溯源：findings.json F-798——Sequence.cpp 游标失效分支曾产 Transfer
- * 占位后 continue，该站 Work/retract 均不产出，failures 为空仍 Ok，任务
- * 点静默跳出最终轨迹（与 §7.6"失败给具体段落与原因"语义相悖）；修复
- * 口径＝对齐笛卡尔站 else 支"占位后站链完整"形态（fix-plan-e.md 批 E2）。
- */
+/** 端口替身已装配时，返回几何必须进入计划并推动游标；仅验证结果消费，
+ * 不把替身端点当作真实求解器或正式宿主整链的通过证据。 */
+TEST(TrjSequence, ExpandCartesianStationConsumesPlannerGeometry_WP16T04_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-01", "TRJ-02"},
+                   std::vector<std::string>{"AT-06"});
+    const ObjectId oid = ObjectId::generate();
+    SequenceStationInput st = station("D", oid, {cand({0.5, 0.5}, 0U, 0.5)});
+    st.point.workPose = rw::math::Transform3D<double>();
+    st.point.approach.enabled = true;
+    st.point.approach.distanceM = 0.1;
+    st.point.retract.enabled = true;
+    st.point.retract.axis = SequenceSegmentAxis::ReferenceZ;
+    st.point.retract.distanceM = 0.08;
+    SequenceRequest req = makeSequenceRequest({std::move(st)});
+    installCartesianPlanner(req);
+    const SequencePlan plan = expandSequence(req);
+    ASSERT_TRUE(plan.failures.empty())
+        << (plan.failures.empty() ? "" : plan.failures.front().cause);
+    ASSERT_EQ(plan.segments.size(), 4U);
+    EXPECT_TRUE(plan.segments[0].ptpGeometry.has_value());
+    EXPECT_TRUE(plan.segments[1].cartesianGeometry.has_value());
+    EXPECT_TRUE(plan.segments[3].cartesianGeometry.has_value());
+    for (std::size_t i = 0; i < plan.segments.size(); ++i) {
+        EXPECT_EQ(plan.segments[i].segmentIndex, static_cast<std::uint32_t>(i));
+    }
+}
+
+/** F-798 后续回归：遇到未装配的进退段立即定位失败；不能把旧游标
+ * 或缺几何的占位条目带入后续 C/D 站，冒充完整序列。 */
 TEST(TrjSequence, ExpandCursorInvalidStationKeepsWorkAndRetract_F_798)
 {
     IRD_TEST_INFO(std::vector<std::string>{"TRJ-01", "TRJ-06"}, std::vector<std::string>{});
@@ -639,9 +697,7 @@ TEST(TrjSequence, ExpandCursorInvalidStationKeepsWorkAndRetract_F_798)
     const ObjectId oidC = ObjectId::generate();
     const ObjectId oidD = ObjectId::generate();
 
-    // 序列 A（纯关节，游标有效可规划）→B（笛卡尔：approach/retract 启用，
-    // 展开后游标失效——失效源）→C（纯关节：F-798 缺陷触发站）→D（纯关节：
-    // 断言游标在 C 之后仍失效——不以 A 站过期终点构型规划 D 的几何）。
+    // A 已可规划，B 缺笛卡尔服务；C/D 用于证明不会越过 B 继续拼段。
     SequenceStationInput stB = station("B", oidB, {cand({0.5, 0.5}, 0U, 0.5)}, "A");
     stB.point.approach.enabled = true;
     stB.point.approach.axis = SequenceSegmentAxis::ToolZ;
@@ -664,60 +720,11 @@ TEST(TrjSequence, ExpandCursorInvalidStationKeepsWorkAndRetract_F_798)
         station("D", oidD, {cand({1.5, 1.5}, 2U, 0.5)}, "C"),
     };
     const SequencePlan plan = expandSequence(makeSequenceRequest(std::move(stations)));
-    ASSERT_TRUE(plan.failures.empty()) << (plan.failures.empty() ? "" : plan.failures[0].cause);
-
-    // 拓扑序 A→B→C→D；修复后期望段链（11 条，序号 0 基连续；Work 条目
-    // 每站恒产——§5.2"作业段＝任务点本身"）：
-    //   A: Transfer(0 已规划——首站游标有效)→Work(1 无驻留)
-    //   B: Transfer(2 待填)→Approach(3)→Work(4 驻留 1.5s)→Retract(5)
-    //   C: Transfer(6 待填)→Work(7 驻留 0.8s)→Retract(8)  ← F-798 缺陷面
-    //   D: Transfer(9 待填)→Work(10 无驻留)               ← 游标保持失效面
-    ASSERT_EQ(plan.segments.size(), 11U);
-    for (std::size_t i = 0; i < plan.segments.size(); ++i) {
-        ASSERT_EQ(plan.segments[i].segmentIndex, static_cast<std::uint32_t>(i))
-            << "段序号 0 基连续违约（§6.3 定位键）——第 " << i << " 条";
-    }
-
-    // A 站：纯关节＋游标有效——Transfer 几何已规划（既有行为不回归）。
-    EXPECT_EQ(plan.segments[0].role, SequenceSegmentRole::TransferPtp);
-    ASSERT_TRUE(plan.segments[0].ptpGeometry.has_value());
-    EXPECT_EQ(plan.segments[0].sourceTaskPoint, oidA);
-    EXPECT_EQ(plan.segments[1].role, SequenceSegmentRole::Work);
-    EXPECT_EQ(plan.segments[1].sourceTaskPoint, oidA);
-    EXPECT_FALSE(plan.segments[1].dwellDurationS.has_value());         // A 无驻留
-
-    // B 站（笛卡尔，失效源）：占位→approach→work→retract（既有行为基线）。
-    EXPECT_EQ(plan.segments[2].role, SequenceSegmentRole::TransferPtp);
-    EXPECT_FALSE(plan.segments[2].ptpGeometry.has_value());            // 待 T05
-    EXPECT_EQ(plan.segments[2].sourceTaskPoint, oidB);
-    EXPECT_EQ(plan.segments[3].role, SequenceSegmentRole::Approach);
-    EXPECT_EQ(plan.segments[4].role, SequenceSegmentRole::Work);
-    ASSERT_TRUE(plan.segments[4].dwellDurationS.has_value());
-    EXPECT_TRUE(closeWithin(*plan.segments[4].dwellDurationS, 1.5, goldenTolerance()));
-    EXPECT_EQ(plan.segments[5].role, SequenceSegmentRole::Retract);
-
-    // C 站（F-798 核心断言）：占位后 Work（任务点＋驻留）与 retract 齐全。
-    EXPECT_EQ(plan.segments[6].role, SequenceSegmentRole::TransferPtp);
-    EXPECT_FALSE(plan.segments[6].ptpGeometry.has_value());            // 不伪造端点
-    EXPECT_EQ(plan.segments[6].sourceTaskPoint, oidC);
-    EXPECT_EQ(plan.segments[7].role, SequenceSegmentRole::Work);       // 任务点保全
-    EXPECT_EQ(plan.segments[7].sourceTaskPoint, oidC);
-    ASSERT_TRUE(plan.segments[7].dwellDurationS.has_value());          // 驻留保全
-    EXPECT_TRUE(closeWithin(*plan.segments[7].dwellDurationS, 0.8, goldenTolerance()));
-    EXPECT_EQ(plan.segments[8].role, SequenceSegmentRole::Retract);    // retract 保全
-    EXPECT_EQ(plan.segments[8].sourceTaskPoint, oidC);
-    ASSERT_TRUE(plan.segments[8].lineSpec.has_value());
-    EXPECT_TRUE(plan.segments[8].lineSpec->enabled);
-    EXPECT_EQ(plan.segments[8].lineSpec->axis, SequenceSegmentAxis::ToolZ);
-    EXPECT_TRUE(closeWithin(plan.segments[8].lineSpec->distanceM, 0.05, goldenTolerance()));
-
-    // D 站：游标须仍失效——Transfer 占位（若几何被规划＝用了过期游标）。
-    EXPECT_EQ(plan.segments[9].role, SequenceSegmentRole::TransferPtp);
-    EXPECT_FALSE(plan.segments[9].ptpGeometry.has_value());
-    EXPECT_EQ(plan.segments[9].sourceTaskPoint, oidD);
-    EXPECT_EQ(plan.segments[10].role, SequenceSegmentRole::Work);
-    EXPECT_EQ(plan.segments[10].sourceTaskPoint, oidD);
-    EXPECT_FALSE(plan.segments[10].dwellDurationS.has_value());        // D 无驻留
+    // 服务缺失在 B 站 approach 首段即被定位，后续站不能静默生成占位段。
+    ASSERT_EQ(plan.failures.size(), 1U);
+    EXPECT_EQ(plan.failures[0].reasonToken, std::string(kTrjNoPath));
+    ASSERT_TRUE(plan.failures[0].subject.has_value());
+    EXPECT_EQ(*plan.failures[0].subject, oidB);
 }
 
 /** 取消：站边界取消观测命中→canceled==true＋零失败素材（UX-03）。 */
@@ -743,4 +750,78 @@ TEST(TrjSequence, ExpandRejectsDuplicateNames_WP16T04_ACC1)
         station("A", oidB, {cand({1.0, 1.0}, 1U, 0.5)}),               // 重名
     };
     EXPECT_THROW(expandSequence(makeSequenceRequest(std::move(stations))), TrajectoryError);
+}
+
+/** @brief TRJ-01：任务位姿数值变化必须参与值比较，防止漏掉重规划输入变化。 */
+TEST(TrjSequence, WorkPoseEqualityIncludesValues_TRJ01)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-01"}, std::vector<std::string>{});
+    SequenceTaskPoint original;
+    original.workPose=rw::math::Transform3D<double>();
+    auto changed=original;
+    changed.workPose=rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.0,0.0,0.15));
+    EXPECT_NE(original, changed);
+    EXPECT_EQ(original,original);
+}
+
+/** @brief TRJ-06：非法关节量纲属于输入违约，即使构型不越限也要拒绝。 */
+TEST(TrjPtp, RejectsInvalidUnitEvenWithoutLimitViolation_TRJ06)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-06"}, std::vector<std::string>{});
+    auto req=makePtpRequest(makeQ({0.0,0.0,0.0}),{cand({0.1,0.2,0.3},0U,0.5)});
+    req.jointQuantityKinds={QuantityKind::Angle, QuantityKind::Mass, QuantityKind::Angle};
+    EXPECT_THROW(planPtpSegment(req),TrajectoryError);
+}
+
+/** @brief TRJ-02/06：端口结果的维度、有限性与段身份必须在消费边界复验。 */
+TEST(TrjSequence, RejectsMalformedCartesianServiceResults_TRJ02)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-02", "TRJ-06"}, std::vector<std::string>{});
+    for(int defect=0;defect<3;++defect) {
+        auto st=station("A",ObjectId::generate(),{cand({0.5,0.5},0U,0.5)});
+        st.point.approach.enabled=true; st.point.approach.distanceM=0.1;
+        auto req=makeSequenceRequest({st}); installCartesianPlanner(req);
+        const auto planner=req.cartesianPlanner;
+        req.cartesianPlanner=[planner,defect](const auto& input) {
+            auto result=planner(input);
+            if(defect==0){result.endQ=makeQ({0.0});}
+            if(defect==1){result.endQ=makeQ({std::numeric_limits<double>::quiet_NaN(),0.0});}
+            if(defect==2){result.geometry->segmentIndex=input.segmentIndex+10;}
+            return result;
+        };
+        EXPECT_THROW(expandSequence(req),TrajectoryError) << "损坏类型=" << defect;
+    }
+}
+
+/** @brief TRJ-02：进退段长度无穷大不是合法几何，不能交给端口继续执行。 */
+TEST(TrjSequence, RejectsInfiniteCartesianDistance_TRJ02)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-02"}, std::vector<std::string>{});
+    auto st=station("A",ObjectId::generate(),{cand({0.5,0.5},0U,0.5)});
+    st.point.approach.enabled=true;
+    st.point.approach.distanceM=std::numeric_limits<double>::infinity();
+    auto req=makeSequenceRequest({st}); installCartesianPlanner(req);
+    EXPECT_THROW(expandSequence(req),TrajectoryError);
+}
+
+/** @brief TRJ-01/02：撤离首构型须延续作业端点，不能在段边界瞬间跳变。 */
+TEST(TrjSequence, RejectsDiscontinuousRetractStart_TRJ02)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-01", "TRJ-02"},
+                  std::vector<std::string>{"AT-06"});
+    auto st = station("A", ObjectId::generate(), {cand({0.5, 0.5}, 0U, 0.5)});
+    st.point.retract.enabled = true; st.point.retract.distanceM = 0.1;
+    auto req = makeSequenceRequest({st}); installCartesianPlanner(req);
+    const auto planner = req.cartesianPlanner;
+    req.cartesianPlanner = [planner](const auto& input) {
+        auto result = planner(input);
+        (*result.startQ)[0] += 0.1; // rad；超过显式连续性阈值 1e-6 rad。
+        return result;
+    };
+    const auto plan = expandSequence(req);
+    ASSERT_EQ(plan.failures.size(), 1U);
+    EXPECT_EQ(plan.failures.front().reasonToken, std::string(kTrjBranchJump));
+    EXPECT_EQ(plan.failures.front().segmentIndex, 2U);
+    EXPECT_EQ(plan.failures.front().subject, st.point.pointOid);
+    EXPECT_FALSE(plan.canceled);
 }

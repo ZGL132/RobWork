@@ -19,17 +19,23 @@
 #include "TrajPanelModule.hpp"  // TrajPanelModule（完整类型——缝/会话态访问）
 
 #include <QComboBox>
+#include <QDoubleSpinBox>
 #include <QGridLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSlider>
+#include <QSignalBlocker>
 #include <QTabWidget>
+#include <QTimer>
 #include <QVBoxLayout>
 
 #include <cmath>     // std::isfinite（帧读数的非有限防御——不呈现坏值）
 #include <cstddef>   // std::size_t
+#include <algorithm>
+#include <exception>
 #include <string>
 
 namespace sdurws::ird::trajectory {
@@ -48,7 +54,7 @@ constexpr int kProgressMax = 1000;
 
 TrajectoryPanelWidget::TrajectoryPanelWidget(TrajPanelModule& module,
                                              QWidget* parent)
-    : QWidget(parent), m_module(module)
+    : QWidget(parent), m_module(module), m_playbackEpoch(module.session.epoch)
 {
     // Tab 容器两页（工作流页＋曲线视图入口——§16.1 合一主面板形态：
     // 曲线联动/动画读数是工作流命令的直达呈现面，拆分双面板会造成同
@@ -61,6 +67,9 @@ TrajectoryPanelWidget::TrajectoryPanelWidget(TrajPanelModule& module,
     layout->addWidget(tabs);
 
     refreshFromSession();  // 面板创建即呈现会话事实（空缝如实降级）
+    // 曲线页虽然尚未显示，也必须在构造完成时建立首屏数据快照；否则
+    // 用户第一次切换到“曲线视图”前不会触发下拉项与曲线源读取，形成
+    // 空白首屏（TRJ-UI-01）。refreshCurvesPage 只查归档投影，不执行规划。
 }
 
 TrajectoryPanelWidget::~TrajectoryPanelWidget() = default;
@@ -94,25 +103,102 @@ QWidget* TrajectoryPanelWidget::buildWorkflowPage()
                                static_cast<int>(i / 3),   // 每行三枚（呈现布局）
                                static_cast<int>(i % 3));
     }
-    root->addLayout(commandGrid);
+    auto* commandBox = new QGroupBox(tr("规划命令"), page);
+    auto* commandBoxLayout = new QVBoxLayout(commandBox);
+    commandBoxLayout->addLayout(commandGrid);
+    commandBox->setToolTip(tr("先校验输入，再把受理的命令交给宿主执行管线"));
+    root->addWidget(commandBox);
 
     // ---- 动画播放区：播放按钮＋进度滑杆＋帧读数（§14.5.2 播放＝按
     //       时刻插值查表驱动会话姿态——查表在本类完成，姿态应用经缝
     //       出帧；零规划/碰撞/时间化——UI 线程红线内）。 ----------------
     auto* playbackRow = new QHBoxLayout();
-    auto* playButton = new QPushButton(tr("播放定位"), page);
-    connect(playButton, &QPushButton::clicked, this,
+    m_playButton = new QPushButton(tr("播放"), page);
+    m_playButton->setObjectName(QStringLiteral("trajectory_play"));
+    connect(m_playButton, &QPushButton::clicked, this,
             &TrajectoryPanelWidget::onPlayClicked);
+    m_resetButton = new QPushButton(tr("回到起点"), page);
+    m_resetButton->setObjectName(QStringLiteral("trajectory_reset"));
+    connect(m_resetButton, &QPushButton::clicked, this, [this] {
+        stopPlayback();
+        // 即使滑杆已经为零，也必须重新查表，才能覆盖外部会话姿态变化。
+        const QSignalBlocker blocker(m_progressSlider);
+        m_progressSlider->setValue(0);
+        seekToSliderValue(0);
+    });
+    m_timeSpin = new QDoubleSpinBox(page);
+    m_timeSpin->setObjectName(QStringLiteral("trajectory_time"));
+    m_timeSpin->setDecimals(3);
+    m_timeSpin->setSuffix(tr(" s"));
+    m_timeSpin->setKeyboardTracking(false);
+    connect(m_timeSpin, &QDoubleSpinBox::valueChanged, this, [this](double seconds) {
+        if (!m_module.services.durationSource) { return; }
+        try {
+            const double duration = m_module.services.durationSource();
+            if (!std::isfinite(duration) || duration <= 0.0) { return; }
+            stopPlayback();
+            const int value = qBound(0, qRound(seconds / duration * kProgressMax), kProgressMax);
+            const QSignalBlocker blocker(m_progressSlider);
+            m_progressSlider->setValue(value);
+            seekToSliderValue(value);
+        } catch (const std::exception& error) {
+            stopPlayback();
+            m_frameReadout->setText(tr("回放数据读取失败：%1").arg(QString::fromUtf8(error.what())));
+        }
+    });
     m_progressSlider = new QSlider(Qt::Horizontal, page);
     m_progressSlider->setRange(0, kProgressMax);
     m_progressSlider->setValue(0);
     connect(m_progressSlider, &QSlider::valueChanged, this,
             &TrajectoryPanelWidget::onSeekMoved);
     m_frameReadout = new QLabel(page);
-    playbackRow->addWidget(playButton);
+    m_frameReadout->setWordWrap(true);
+    playbackRow->addWidget(m_playButton);
+    playbackRow->addWidget(m_resetButton);
     playbackRow->addWidget(m_progressSlider, /*stretch=*/1);
-    root->addLayout(playbackRow);
-    root->addWidget(m_frameReadout);
+    playbackRow->addWidget(m_timeSpin);
+    // 16 ms 是界面刷新周期（约 60 Hz），不改变归档采样或数值精度；真实
+    // 时刻按单调时钟计算，繁忙事件循环只降低帧率，不拖慢轨迹总时长。
+    m_playTimer = new QTimer(this);
+    m_playTimer->setInterval(16);
+    connect(m_playTimer, &QTimer::timeout, this, [this] {
+        try {
+            const double duration = m_module.services.durationSource
+                                        ? m_module.services.durationSource() : -1.0;
+            if (!m_module.services.playbackSource || !std::isfinite(duration)
+                || duration <= 0.0) {
+                stopPlayback(); refreshPlaybackControls(); return;
+            }
+            const double time = std::min(duration, m_playStartS + m_playClock.elapsed() / 1000.0);
+            const int value = qBound(0, qRound(time / duration * kProgressMax), kProgressMax);
+            const QSignalBlocker blocker(m_progressSlider);
+            m_progressSlider->setValue(value);
+            seekToSliderValue(value);
+            if (time >= duration) { stopPlayback(); }
+        } catch (const std::exception& error) {
+            stopPlayback();
+            m_frameReadout->setText(tr("回放数据读取失败：%1").arg(QString::fromUtf8(error.what())));
+        }
+    });
+    auto* playbackBox = new QGroupBox(tr("轨迹回放"), page);
+    auto* playbackLayout = new QVBoxLayout(playbackBox);
+    playbackLayout->addLayout(playbackRow);
+    playbackLayout->addWidget(m_frameReadout);
+    root->addWidget(playbackBox);
+
+    // 失败定位独立成组：失败时给出稳定码/段号，未装配定位出口时明确
+    // 告知用户，而不是显示一个点击后无反应的按钮（TRJ-06/UX-10）。
+    auto* failureBox = new QGroupBox(tr("诊断与三维定位"), page);
+    auto* failureLayout = new QHBoxLayout(failureBox);
+    m_failureLabel = new QLabel(failureBox);
+    m_failureLabel->setWordWrap(true);
+    m_failureLocateButton = new QPushButton(tr("定位到三维"), failureBox);
+    m_failureLocateButton->setObjectName(QStringLiteral("trajectory_failure_locate"));
+    connect(m_failureLocateButton, &QPushButton::clicked, this,
+            &TrajectoryPanelWidget::onFailureLocateClicked);
+    failureLayout->addWidget(m_failureLabel, 1);
+    failureLayout->addWidget(m_failureLocateButton);
+    root->addWidget(failureBox);
 
     // ---- 最近命令清单（只读呈现缓冲——受理记录的会话留痕；零修订
     //       契约的逐条观测面）。 --------------------------------------
@@ -167,6 +253,20 @@ void TrajectoryPanelWidget::refreshFromSession()
     const TrajModuleSessionState& state = m_module.session;
     const auto& text = m_module.services.textResolver;
 
+    // 项目/修订或归档来源切换后，上一轮播放的时刻已失去意义。只复位
+    // 控件且不调用姿态出口；由用户在新会话重新播放，防旧帧污染新模型。
+    if (m_playbackEpoch != state.epoch) {
+        stopPlayback();
+        m_playbackEpoch = state.epoch;
+        const QSignalBlocker sliderBlocker(m_progressSlider);
+        const QSignalBlocker timeBlocker(m_timeSpin);
+        m_progressSlider->setValue(0);
+        m_timeSpin->setValue(0.0);
+        m_frameReadout->clear();
+        m_frameReadout->setProperty("playbackValid", false);
+        m_commandFeedback.clear();
+    }
+
     // ---- 就绪投影文本（字段逐一呈现；缺项清单逐行——UX-10"未完成附
     //       缺项列表"；文案经宿主解析缝——空缝回退键名原文，如实）。 -
     QString readiness;
@@ -195,7 +295,7 @@ void TrajectoryPanelWidget::refreshFromSession()
         for (const std::string& key : state.missingItemKeys) {
             // 缺项文案键经宿主解析（UX-02——界面只见键与局部名，零哈希
             // /内部标识；空缝＝键名原文——开发态可见缺口）。
-            readiness += QLatin1Char('、')
+            readiness += QStringLiteral("、")
                          + QString::fromStdString(
                              text ? text(key) : key);
         }
@@ -215,8 +315,10 @@ void TrajectoryPanelWidget::refreshFromSession()
                                        commands[i].token)
                                    : true;  // 空缝＝全可用呈现（降级纪律）
         m_commandButtons[i]->setEnabled(available);
+        m_commandButtons[i]->setToolTip(
+            available ? tr("提交到宿主；结果在任务与诊断中查看")
+                      : tr("当前不可用：执行服务尚未就绪，或输入、权限、在途任务不满足要求"));
     }
-
     // ---- 最近命令清单（受理记录逐行；producesRevision 恒 false——零
     //       修订契约的呈现面披露）。 ----------------------------------
     m_recentList->clear();
@@ -237,9 +339,33 @@ void TrajectoryPanelWidget::refreshFromSession()
         }
         m_recentList->setPlainText(lines);
     }
+    if (!m_commandFeedback.isEmpty()) {
+        m_recentList->appendPlainText(m_commandFeedback);
+    }
 
-    // ---- 曲线页关节下拉（投影序列数未知至缝首次取数——关节项以查表
-    //       时重建；此处仅通道序保持）。 --------------------------------
+    // 失败素材只取会话事实；段号没有来源时不生成定位目标。定位出口
+    // 由宿主三维网关提供，缺席时按钮置灰并保留可解释的降级文案。
+    if (m_failureLabel != nullptr && m_failureLocateButton != nullptr) {
+        if (!state.failedSegmentIndex.has_value()) {
+            m_failureLabel->setText(tr("暂无失败段"));
+            m_failureLocateButton->setEnabled(false);
+        } else {
+            QString text = tr("失败段 %1").arg(*state.failedSegmentIndex);
+            if (!state.failureReasonToken.empty()) {
+                text += tr("：") + QString::fromStdString(state.failureReasonToken);
+            }
+            m_failureLabel->setText(text);
+            if (!m_module.services.failureLocate) {
+                m_failureLabel->setText(text + tr("；三维定位未装配"));
+            }
+            m_failureLocateButton->setEnabled(
+                static_cast<bool>(m_module.services.failureLocate));
+        }
+    }
+
+    refreshPlaybackControls();
+    // 会话数据变更后必须同步曲线，避免首屏修好后仍展示旧运行的结果。
+    refreshCurvesPage();
 }
 
 // =====================================================================
@@ -286,12 +412,28 @@ void TrajectoryPanelWidget::onCommandButtonClicked()
         state.recentCommands.erase(state.recentCommands.begin());
     }
 
-    // 第二步：提交（命令提交出口缝——宿主命令管线转发；空缝＝出口未
-    // 装配，如实呈现不静默丢弃）。
-    if (m_module.services.commandSubmit) {
-        m_module.services.commandSubmit(token);
-    } else if (m_recentList != nullptr) {
-        m_recentList->appendPlainText(tr("（命令出口未装配——提交未发出）"));
+    // 第二步：仅有“受理”才允许进入宿主提交管线。拒绝命令必须停在
+    // 会话记录层，否则宿主可能把非法请求当成真实规划命令执行；这也是
+    // UI 受理与域命令语义之间的原子边界（TRJ-UI-02）。
+    m_commandFeedback.clear();
+    if (outcome.accepted && m_module.services.commandSubmit) {
+        try {
+            // 点击时复验宿主门控，防止上一帧启用、当前已切成只读/计算中的竞态。
+            if (m_module.services.commandAvailability
+                && !m_module.services.commandAvailability(token)) {
+                state.recentCommands.back().accepted = false;
+                m_commandFeedback = tr("命令当前不可用；请检查输入、只读状态或在途任务");
+            } else {
+                m_module.services.commandSubmit(token);
+                m_commandFeedback = tr("已交给宿主处理；执行结果请查看任务与诊断");
+            }
+        } catch (const std::exception& error) {
+            state.recentCommands.back().accepted = false;
+            m_commandFeedback = tr("命令提交失败：%1").arg(QString::fromUtf8(error.what()));
+        }
+    } else if (outcome.accepted) {
+        state.recentCommands.back().accepted = false;
+        m_commandFeedback = tr("命令出口未装配——提交未发出");
     }
     refreshFromSession();
 }
@@ -302,21 +444,67 @@ void TrajectoryPanelWidget::onCommandButtonClicked()
 
 void TrajectoryPanelWidget::onPlayClicked()
 {
-    // 播放＝定位到当前进度（本面板为点验形态：播放按钮触发当前进度
-    // 位置的查表驱动；连续播放的定时器驱动归宿主装配批——本面板零
-    // QTimer 依赖，保持最小可点验面）。
+    if (m_playTimer->isActive()) { stopPlayback(); return; }
+    refreshPlaybackControls();
+    if (!m_playButton->isEnabled()) { return; }
+    if (m_progressSlider->value() == kProgressMax) {
+        const QSignalBlocker blocker(m_progressSlider);
+        m_progressSlider->setValue(0);
+    }
     seekToSliderValue(m_progressSlider->value());
+    // 坏帧读取可能停播并写入错误；仅在数据源仍可用时启动后续帧。
+    if (m_frameReadout->property("playbackValid").toBool()) {
+        m_playStartS = m_timeSpin->value();
+        m_playClock.start();
+        m_playTimer->start();
+        m_playButton->setText(tr("暂停"));
+    }
 }
 
 void TrajectoryPanelWidget::onSeekMoved(int sliderValue)
 {
-    // 进度拖动＝查表定位（同一驱动路径——位置与播放共用 seekTo）。
+    stopPlayback(); // 用户拖动定位时停播，避免定时器抢回滑杆位置。
     seekToSliderValue(sliderValue);
+}
+
+void TrajectoryPanelWidget::stopPlayback()
+{
+    if (m_playTimer != nullptr) { m_playTimer->stop(); }
+    if (m_playButton != nullptr) { m_playButton->setText(tr("播放")); }
+}
+
+void TrajectoryPanelWidget::refreshPlaybackControls()
+{
+    bool available = false;
+    double duration = 0.0;
+    QString reason = tr("轨迹数据未装配（动画不可用）");
+    try {
+        if (m_module.services.durationSource && m_module.services.playbackSource) {
+            duration = m_module.services.durationSource();
+            available = std::isfinite(duration) && duration >= 0.0;
+            reason = available ? tr("拖动进度或输入时刻定位；播放仅改变会话姿态")
+                               : tr("轨迹时长无效，无法回放");
+        }
+    } catch (const std::exception& error) {
+        reason = tr("回放数据读取失败：%1").arg(QString::fromUtf8(error.what()));
+    }
+    if (!available) { stopPlayback(); m_frameReadout->setText(reason); }
+    else if (m_frameReadout->text().isEmpty()) { m_frameReadout->setText(tr("归档轨迹已就绪")); }
+    m_playButton->setEnabled(available && duration > 0.0);
+    m_resetButton->setEnabled(available);
+    m_progressSlider->setEnabled(available);
+    m_timeSpin->setEnabled(available);
+    const QSignalBlocker blocker(m_timeSpin);
+    m_timeSpin->setRange(0.0, available ? duration : 0.0);
+    for (auto* widget : std::vector<QWidget*>{m_playButton, m_resetButton, m_progressSlider, m_timeSpin}) {
+        widget->setToolTip(reason);
+    }
 }
 
 void TrajectoryPanelWidget::seekToSliderValue(int sliderValue)
 {
     if (m_frameReadout == nullptr || m_progressSlider == nullptr) { return; }
+    m_frameReadout->setProperty("playbackValid", false);
     if (!m_module.services.playbackSource || !m_module.services.durationSource) {
         // 数据缝未装配——如实呈现（不虚构帧值，NFR-COR-03）。
         m_frameReadout->setText(tr("轨迹数据未装配（动画不可用）"));
@@ -327,11 +515,28 @@ void TrajectoryPanelWidget::seekToSliderValue(int sliderValue)
     // payload 承接；时刻量纲 s 的换算在本面板单点完成）。
     const double ratio = static_cast<double>(
         qBound(0, sliderValue, kProgressMax)) / static_cast<double>(kProgressMax);
+    try {
     const double totalDurationS = m_module.services.durationSource();  // s
+    if (!std::isfinite(totalDurationS) || totalDurationS < 0.0) {
+        stopPlayback(); m_frameReadout->setText(tr("轨迹时长无效，无法回放")); return;
+    }
     const double tS = ratio * totalDurationS;                          // s
     // 查表缝（组装侧消费查表面——纯插值查表＋逐轴拷贝为纯值帧；本面
     // 板零查表器符号消费——冒烟口径隔离，TrajPlaybackSample 注）。
     const TrajPlaybackSample frame = m_module.services.playbackSource(tS);
+    // 归档源可能被切换或损坏。所有通道维度与有限性先校验，禁止把 NaN
+    // 或半帧送给三维；失败只更新诊断，不产生项目修订（AT-04）。
+    const auto finite = [](const std::vector<double>& values) {
+        return std::all_of(values.begin(), values.end(), [](double v) { return std::isfinite(v); });
+    };
+    if (!std::isfinite(frame.tS) || std::abs(frame.tS - tS) > 1e-9
+        || frame.q.empty() || frame.qd.size() != frame.q.size()
+        || frame.qdd.size() != frame.q.size()
+        || !finite(frame.q) || !finite(frame.qd) || !finite(frame.qdd)) {
+        stopPlayback(); m_frameReadout->setText(tr("轨迹帧无效，未应用到三维视图")); return;
+    }
+    const QSignalBlocker blocker(m_timeSpin);
+    m_timeSpin->setValue(tS);
 
     // 帧读数（q/qd 逐轴数值文本——SI 单位；转动 rad、移动 m，逐轴按
     // 关节类型；读数只呈现不判定）。
@@ -356,6 +561,13 @@ void TrajectoryPanelWidget::seekToSliderValue(int sliderValue)
     // 态效果，读数照常——开发 harness 形态如实降级）。
     if (m_module.services.sessionPoseSink) {
         m_module.services.sessionPoseSink(frame);
+    } else {
+        m_frameReadout->setText(readout + tr("；三维姿态出口未装配（仅显示读数）"));
+    }
+    m_frameReadout->setProperty("playbackValid", true);
+    } catch (const std::exception& error) {
+        stopPlayback();
+        m_frameReadout->setText(tr("回放数据读取失败：%1").arg(QString::fromUtf8(error.what())));
     }
 }
 
@@ -373,6 +585,29 @@ void TrajectoryPanelWidget::onCurveChannelChanged(int /*index*/)
     refreshCurvesPage();
 }
 
+void TrajectoryPanelWidget::onFailureLocateClicked()
+{
+    const auto index = m_module.session.failedSegmentIndex;
+    if (!index.has_value() || !m_module.services.failureLocate) {
+        if (m_failureLabel != nullptr) {
+            m_failureLabel->setText(tr("失败段三维定位未装配"));
+        }
+        return;
+    }
+    try {
+        const bool located = m_module.services.failureLocate(*index);
+        if (m_failureLabel != nullptr) {
+            m_failureLabel->setText(
+                located ? tr("已定位到三维视图中的失败段 %1").arg(*index)
+                        : tr("未找到失败段 %1 的三维对象").arg(*index));
+        }
+    } catch (const std::exception& error) {
+        // 三维窗口可能在回调执行前被关闭；环境异常就地呈现，不能越出
+        // Qt 信号槽导致整个宿主退出，也不能保留旧的“已定位”成功提示。
+        m_failureLabel->setText(tr("三维定位失败：%1").arg(QString::fromUtf8(error.what())));
+    }
+}
+
 void TrajectoryPanelWidget::refreshCurvesPage()
 {
     if (m_curveView == nullptr || m_channelCombo == nullptr) { return; }
@@ -380,6 +615,10 @@ void TrajectoryPanelWidget::refreshCurvesPage()
         // 数据缝未装配——空态呈现（不虚构曲线）。
         m_curveView->setSeries({}, channelLabel(
                                    channelFromIndex(m_channelCombo->currentIndex())));
+        const QSignalBlocker blocker(m_jointCombo);
+        m_jointCombo->clear();
+        m_jointCombo->setEnabled(false);
+        m_channelCombo->setEnabled(false);
         return;
     }
     // 缝取投影序列（通道词表值——投影器按关节升序返回全部关节；本面
@@ -387,7 +626,17 @@ void TrajectoryPanelWidget::refreshCurvesPage()
     // 知关节数）时先以全序列重建下拉）。
     const TrajectoryCurveChannel channel =
         channelFromIndex(m_channelCombo->currentIndex());
-    std::vector<TrajectoryCurveSeries> series = m_module.services.curvesSource(channel);
+    std::vector<TrajectoryCurveSeries> series;
+    try {
+        series = m_module.services.curvesSource(channel);
+    } catch (const std::exception& error) {
+        m_curveView->setSeries({}, tr("曲线数据读取失败：%1").arg(QString::fromUtf8(error.what())));
+        const QSignalBlocker blocker(m_jointCombo);
+        m_jointCombo->clear(); m_jointCombo->setEnabled(false);
+        return;
+    }
+    m_jointCombo->setEnabled(!series.empty());
+    m_channelCombo->setEnabled(!series.empty());
 
     // 关节下拉重建（关节数＝序列数；保持当前选择——首次进入默认关节 0；
     // 投影序列按关节升序——T10 投影产物不变量）。
