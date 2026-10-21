@@ -1,0 +1,33 @@
+{
+  "baseline": "004b32cb03f711375693c6d4717a507afd959c28",
+  "branch": "wp13-t30",
+  "platform": "windows",
+  "configuration": "Release",
+  "files": [
+    {
+      "path": "build/RobWorkStudio/bin/Release/sdurws_ird_studio.exe",
+      "bytes": 10892800,
+      "sha256": "3614599068590c16d113b7336378b3e7426c703947fdadfa5c188cab3b489bb1"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.cpp",
+      "bytes": 25379,
+      "sha256": "2f05934343d8f2288b7235f49a8bcd5d37e07ccb0da431372a060e32492c416a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.hpp",
+      "bytes": 17963,
+      "sha256": "8eec191210021dbd46e638bf1c276b2310b1f0865d539105adfcdbf39ff4be0b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+      "bytes": 649166,
+      "sha256": "8adb746bf9958393920cb8583161df4fb5f6bde35cb0610d9b0050582230511b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/HostCompilePipelineTest.cpp",
+      "bytes": 93044,
+      "sha256": "af25bd2045696ad938397beadb9e1b8f61710d42e0ac6bad78f8c7df2a944ba7"
+    }
+  ]
+}

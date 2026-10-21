@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-21T16:56:24+08:00",
+  "generatedAt": "2026-10-21T18:12:35+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 15888,
-    "totalBytes": 865235162,
+    "totalFiles": 15924,
+    "totalBytes": 867478334,
     "byKind": {
-      "benchmark": 8,
-      "markdown-doc": 41,
-      "json-data": 7,
-      "log": 1,
-      "manual-acceptance": 1,
-      "acceptance-record": 516,
-      "build-log": 14937,
       "pipeline-artifact": 2,
+      "benchmark": 8,
       "governance-record": 40,
-      "gtest-report": 335
+      "acceptance-record": 516,
+      "log": 1,
+      "json-data": 7,
+      "gtest-report": 335,
+      "manual-acceptance": 1,
+      "build-log": 14973,
+      "markdown-doc": 41
     },
     "byLifecycle": {
-      "current": 27,
       "historical": 565,
+      "unverified": 15332,
       "superseded": 0,
-      "unverified": 15296
+      "current": 27
     },
     "associated": 597,
-    "unassociated": 15291,
-    "shaComputed": 15868,
+    "unassociated": 15327,
+    "shaComputed": 15904,
     "shaSkippedLarge": 20,
     "duplicateGroupsTotal": 926,
     "duplicateGroupsListed": 100
@@ -788,6 +788,8 @@
         "builds/modeling-interaction-20261021/batch4-tree-width/tests/batch4-final-standalone_modeling.stderr.log",
         "builds/modeling-interaction-20261021/batch4-tree-width/tests/batch4-final-standalone_ui_contract.stderr.log",
         "builds/modeling-interaction-20261021/batch4-tree-width/tests/batch4-final-ui_contract.stderr.log",
+        "builds/modeling-interaction-20261021/batch5-boundary-link/host/batch5-final-modeling-tour.stderr.log",
+        "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_contract.stderr.log",
         "builds/modeling-interaction-20261021/final/batch1-final-core.stderr.log",
         "builds/modeling-interaction-20261021/final/batch1-final-io.stderr.log",
         "builds/modeling-interaction-20261021/final/batch1-final-modeling_contract.stderr.log",
@@ -1151,6 +1153,7 @@
         "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-gates.log",
         "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-gates.log",
         "builds/modeling-interaction-20261021/batch4-tree-width/checks/batch4-final-gates.log",
+        "builds/modeling-interaction-20261021/batch5-boundary-link/checks/batch5-final-gates.log",
         "builds/modeling-interaction-20261021/final/batch1-final-gates.log",
         "builds/requirements-a21-20261020/gates.log",
         "builds/requirements-a23-20261020/gates.log",
@@ -41904,6 +41907,294 @@
       "taskIds": [],
       "bytes": 1444,
       "sha256": "99622f8e5ace55eae4a544f9652c5d197c2129ad63e284f23c507b1477f93d9e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/BUILD-IDENTITY.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1227,
+      "sha256": "c7cbde3ce67185f03896beaaae887e91a7890b7d1508197ce2fb507f031d7d6b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/checks/batch5-final-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 29883,
+      "sha256": "d235db71c4781c6ad49aed3d356fd3fadf03f687d36a242b78495db51fe141b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/checks/batch5-final-gates.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1903,
+      "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/checks/batch5-final-standalone-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14919,
+      "sha256": "c7242795f5a408470f5803c3a3650877d0bf4b7b67a1dff2ef31ca51082717a8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/checks/batch5-green-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7063,
+      "sha256": "3f14507f0808f79bbaa7c94a2a544d5c1715011b3ac23a4f8bd5c6d514c3eb9e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/checks/batch5-red-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7010,
+      "sha256": "89f3640cbdb3604dc3bb85636b2a0714d6e02ef7d046829127009c9d44d3f6a4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/host/batch5-final-modeling-tour.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35485,
+      "sha256": "1d2ff5927b1f51b78cbe88e012184a0725798b4cffbaed8d77bb8da1a77c9220",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/host/batch5-final-modeling-tour.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/MANUAL.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1201,
+      "sha256": "9ae506cb0adce63ffb68eeddee20c7e6312631d9c3121ae3eda882671f5b623e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/red/batch5-red-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1142,
+      "sha256": "af52d4f12d12df588dc075263d6e63ac23d0155fdf83dd3a01a95d0713a7e55c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/red/batch5-red-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1254,
+      "sha256": "11b1647ed39531934d23efe836aaca635e56ff86b68011929f17ccd5e5817e63",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/red/batch5-red-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1771,
+      "sha256": "1027fb5de47c685388b69c9a18cd07a6c7ecf1579da16b03423f217915a28a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/REPORT.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4100,
+      "sha256": "7299874e5c0f31e4d0d48c0da3b933b112a30184384e250eec1e2777982075ad",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/run-boundary.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1624,
+      "sha256": "67aa3d92b29f116290e42b1aab93cdb83531a435da1ba527be6153db1be52439",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/run.ps1",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4058,
+      "sha256": "eae0ae4cd3c4fa18607e124f05adad376cde9e9c1d4a9ea10f94968fe3078468",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/screenshots/mtour-t30-generated-before-apply.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 210177,
+      "sha256": "ced2f06613e2e0f402ebb50e2ab9cdd0479c0ae8287ed61bbd9cf43ea8d4f6a5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/screenshots/mtour-t30-selected-j1.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 207009,
+      "sha256": "063c93551474904eae3b920a6fd226231094d61abc79c14f0eb964ad9d3fae2f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/screenshots/mtour-t30-selected-j2.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 207296,
+      "sha256": "71abd2fe679d0add19b8321749dadf9028dcca3842baea4a71c503f936644160",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/screenshots/mtour-t30-selected-link-base.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 199388,
+      "sha256": "1c48df5a643c601a24cec1cc3605aabb7710aedc8b18d039140b6ef0070bb780",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/screenshots/mtour-t30-selected-link-last.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 199985,
+      "sha256": "c281db4ae845d411fa3d4b2a24d609e9e3dae8c0043a12faa9f507cb4dd7d9e8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/screenshots/mtour-t30-selected-link1.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 199071,
+      "sha256": "35b96eecaf3608c0e5e6209709c31698a8396e40edda8fdb2125975223e4ad3b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/screenshots/mtour-t30-visible-meshes-after-reopen.png",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 198833,
+      "sha256": "5186fb3650f4d782b8ef32dcec38711a814b93c0c097db00788f1f776c8298d9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51990,
+      "sha256": "7588dc6ca6212b7e036221828948be509fe14f25863a1c259a0e8005cfde966c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12019,
+      "sha256": "e2d15b40e3dcba9085de695c4daa505eace5675d92a641eb1522301e571c48d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_contract.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 23738,
+      "sha256": "8cb9a9ca78f85ae9e4903c84c1dbf41ff3bb24b3a999e9b698dfb669b5e2af14",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79802,
+      "sha256": "3f3d461896cc35612f0b4c6ec98e85124f49b3ea816a1054671430c968f489f9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18577,
+      "sha256": "9d0eb85c6956b227b8b85dda7f13b2a3f75804542df67d6bfc50ebe644231639",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_gui.stderr.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 426,
+      "sha256": "489a675af1567cc891c589c8f8c1ea9665a6c6af40e4447157e261ce7400ca81",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-final-ui_gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 35802,
+      "sha256": "c12afb11cc07397490d29c81855caa1669b62e6464d06bbff3d7d730b75b8ecd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-full-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 277342,
+      "sha256": "44c4cf68b501b4dc03c6968ba67603848d2ebc094c53bfd62115a7d9679374d8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-full-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 60171,
+      "sha256": "ef45e8ea456351803921d1852c9853934b884c06cd4189d849bcb7f5762c0bab",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-full-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 118207,
+      "sha256": "ee33e98964cf3d7f24eeb4b2abcc5d3e1cd4bf98d9c675495d65a32e0f8a327f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-green-ui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18309,
+      "sha256": "6b15e6937d3248b6be94af6f7fa40f21186b1106dff9fda647d598324119da91",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-green-ui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4532,
+      "sha256": "c324663bbfb2f5908418ec480c537faf3c3b0bc33c4cd72559ca5a489a0896de",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/modeling-interaction-20261021/batch5-boundary-link/tests/batch5-green-ui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7858,
+      "sha256": "f4b92726d430d7da99498a74bbd153506ca4f48068aabac69c03a0fc47d68f62",
       "lifecycle": "unverified"
     },
     {

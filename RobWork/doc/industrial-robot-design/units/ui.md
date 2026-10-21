@@ -2098,3 +2098,5 @@ MDL-01/04/07/13/15/17/22、UX-01/05/07/09：常用模板/导入入口常驻，�
 WP-13-T30第2批（2026-10-21所有者指定）：宿主File中原“工业机器人项目”包装退役；新建/打开/保存草稿/应用草稿/撤销/重做/项目另存为/关闭项目及最近项目直接为File动作，与Exit同级。整组沿既有Preferences前分隔符锚插入，保持宿主最近文件刷新时位置稳定；最近项目仍aboutToShow现取，原命令注册与禁用原因不变。仅插件私有装配，无框架/公共/存储修改；证据和人工步骤位于modeling-interaction-20261021/batch2-file-menu。
 
 T30第4批追加MDL-07/UX-06：HostHighlightOutlet每次先清旧对象，再在权威NameMap对应的正式帧高亮几何并挂会话中心/工程蓝几何覆盖层，解决无独立几何的关节不可见。标记为屏幕像素呈现，穿透遮挡但不表示实体/碰撞尺寸；只存运行时名称，不缓存Frame/原Drawable指针；覆盖层只读共享当前场景Geometry并复用其局部变换，原材质零修改，清空/场景切换对称移除。纯草稿无对应物沿既有诚实降级，不凭草稿猜位置。精确设计与证据见同日modeling-interaction-repair计划及batch4-tree-width。
+
+T30第5批MDL-07：人工反馈base未高亮，查明runtime连杆主身份为LinkFrame，而WC首/末连杆只构造BaseFrame/Flange。HostRuntimeNameMapPort仅在连杆主名没有实际帧时，从当前同一权威NameMap的同OID条目选择WC中实际存在的帧；设备/几何等非连杆语义不变，缺供返回空。无runtime主映射、公共端口、存储或依赖边变化；精确追加三个私有实现/测试文件登记于T30契约，红绿及正式三维证据新增batch5-boundary-link，验证后人工暂停。

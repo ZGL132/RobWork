@@ -10214,6 +10214,9 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 chooseTree(savedModel->joints[1].objectId,"mtour-t30-selected-j2");
                 chooseTree(savedModel->joints[0].objectId,"mtour-t30-selected-j1");
                 chooseTree(savedModel->links[1].objectId,"mtour-t30-selected-link1");
+                // 人工反馈的边界补验：base/末连杆使用派生帧，不能只测中间连杆。
+                chooseTree(savedModel->links.front().objectId,"mtour-t30-selected-link-base");
+                chooseTree(savedModel->links.back().objectId,"mtour-t30-selected-link-last");
                 m_selection->clearSelection(SelectionSource::Command);settleEvents(100);
                 bool markerRemaining=false;
                 for(const auto& drawable:scene->getDrawables()){markerRemaining=markerRemaining||drawable->getName()=="ird-selection-center";}
