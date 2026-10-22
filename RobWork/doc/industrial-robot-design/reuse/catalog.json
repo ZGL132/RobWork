@@ -1783,6 +1783,14 @@
           "operations": [
             "value"
           ]
+        },
+        {
+          "consumerUnit": "execution",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
         }
       ],
       "operations": [
@@ -2602,6 +2610,87 @@
       "tests": [],
       "resourceSearch": {
         "command": "rg -n \"trapezMethod|TrapMethod\" RobWork/RobWork/src/rwlibs/softbody RobWork/RobWork/gtest",
+        "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+      }
+    },
+    {
+      "id": "UTIL-XML",
+      "search": {
+        "command": "rg -n -i \"xacro|DOMParser|XMLParser|macro\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+      },
+      "boundary": "上游XML DOM可读写，非Xacro受控解释器；既有pugixml已经真实用于Xacro源解析。上游DOM接口未提供产品offset_debug源定位，直接替换需核属性/混合文本/输出字节与副作用，不能为复用扩成XML后端平台。",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+          "sha256": "7d458d0d9498f3a3719b9127be95618d7c584cb9b0ba848278b9dd6909ccee69",
+          "symbols": [
+            "DOMParser",
+            "load",
+            "save",
+            "getRootElement"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/BoostXMLParser.hpp",
+          "sha256": "45613a74ebce1db8b4d54cb6dfed095c5d2b23dc234be9e7f914eb383485bf67",
+          "symbols": [
+            "BoostXMLParser",
+            "load",
+            "save"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_core"
+        ],
+        "constraints": "上游XML DOM可读写，非Xacro受控解释器；既有pugixml已经真实用于Xacro源解析。上游DOM接口未提供产品offset_debug源定位，直接替换需核属性/混合文本/输出字节与副作用，不能为复用扩成XML后端平台。"
+      },
+      "usages": [
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "上游XML DOM可读写，非Xacro受控解释器；既有pugixml已经真实用于Xacro源解析。上游DOM接口未提供产品offset_debug源定位，直接替换需核属性/混合文本/输出字节与副作用，不能为复用扩成XML后端平台。",
+        "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+        "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+      },
+      "ownerUnit": "io",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/core/PluginTest.cpp",
+          "sha256": "2fbe0418bb3e23aebd9d562061f5a19a43db4fa488b1463f6a7997cc1af673cb",
+          "symbols": [
+            "loadDirectPlugin"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n -i \"xacro|DOMParser|XMLParser|macro\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
       }
     }

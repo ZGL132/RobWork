@@ -1428,7 +1428,9 @@
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch11-20261023/task.exit.txt",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch11-20261023/task.log",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

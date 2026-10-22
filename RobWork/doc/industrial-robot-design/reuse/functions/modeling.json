@@ -1216,6 +1216,1068 @@
         }
       ],
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "xacroExpandErrorCodeToken",
+          "qualifiedSymbol": "sdurws::ird::modeling::xacroExpandErrorCodeToken",
+          "startLine": 73,
+          "endLine": 83,
+          "sha256": "9b6b6a25c04aba2b7250805c92544521c8d45e1f65bef67fb89000a4ac52d7c9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "错误枚举token，不是diagnostics稳定码注册权威",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.LineIndex.LineIndex",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "LineIndex",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::LineIndex::LineIndex",
+          "startLine": 98,
+          "endLine": 104,
+          "sha256": "a3a7ffc3c57ecd24fedc8948fce3541d69a7acca8fe51388139d112b4299741a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "文本行索引构造，Import相似定位可审单元内最小共用",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.LineIndex.lineColumn",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "lineColumn",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::LineIndex::lineColumn",
+          "startLine": 107,
+          "endLine": 115,
+          "sha256": "e3378d9838c13dec7762fe87de772139d3d46a7ec33656621d9b1d4eccd4f5ac"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "std::upper_bound现有算法消费，偏移到字节行列",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.flushDiags",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "flushDiags",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::flushDiags",
+          "startLine": 148,
+          "endLine": 161,
+          "sha256": "f64d5a8de1df2ad22e238afb4851f163ec26543236cf37be8c07b34c384bd7e5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "诊断源位置稳定序，只组织payload，不建evidence envelope",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.escapeXmlText",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "escapeXmlText",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::escapeXmlText",
+          "startLine": 172,
+          "endLine": 185,
+          "sha256": "51d2361f47fd24c86a834c80cd9bab750c9d68b8a8e0e372c26d4b02660c891b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "手写文本转义，候选DOM save/pugi print，保留确定字节与预算",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.escapeXmlAttribute",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "escapeXmlAttribute",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::escapeXmlAttribute",
+          "startLine": 191,
+          "endLine": 205,
+          "sha256": "0113142a8bc15a83f6d8aa7a00dc9d83b25d01961079ef7059aca63e949c9e20"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "手写属性转义，输出适配须核实体/引号/空白而非copy算法",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.isPlainIdentifier",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "isPlainIdentifier",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::isPlainIdentifier",
+          "startLine": 219,
+          "endLine": 233,
+          "sha256": "3e3f0be5924e94c5648066be6222a6e85fccc770cda484c89b2d10c2232288b9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "ASCII标识符拒绝契约，不用通用表达式放宽",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.SourceFile.SourceFile",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "SourceFile",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::SourceFile::SourceFile",
+          "startLine": 263,
+          "endLine": 264,
+          "sha256": "875eddaca334ffcf737bbe0c740bd14de165c8f81b028f8f5fee55457f290aa0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "文本/行表同源所有权；节点由Engine.docs保活",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.fail",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "fail",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::fail",
+          "startLine": 300,
+          "endLine": 311,
+          "sha256": "6142ecfea11239dde33e2f86874890403d4436978d148913c86975802f022493"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "首失败数据面，非第二稳定码权威",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "pushUnresolvedDiag",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::pushUnresolvedDiag",
+          "startLine": 316,
+          "endLine": 333,
+          "sha256": "8885f1304a9d96be8b54d10140568aa9003205341b166704329a8ed7faeafc48"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "消费既有码值，中文cause/action还须按diagnostics核权威",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "pushIoPassthroughDiag",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::pushIoPassthroughDiag",
+          "startLine": 337,
+          "endLine": 351,
+          "sha256": "770de0f58cc886e22c4c5461743a74a30972f0ce69e1e5524915e1c0d7f070c0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "IO token透传且加源定位，不能复制IO码表",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.spanOf",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "spanOf",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::spanOf",
+          "startLine": 354,
+          "endLine": 358,
+          "sha256": "726b6e4d15c776d3296701421158bd7891f408581bd801bfc0d391c68883aaec"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "offset_debug消费与LineIndex定位",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.resolveSymbol",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "resolveSymbol",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::resolveSymbol",
+          "startLine": 362,
+          "endLine": 373,
+          "sha256": "ae95d9328e287a01ce8825b81b2e9c6a8016c13a26250b8d342e670da96f6b45"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "substitutions优先与层栈后写覆盖，非通用replace",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.substituteText",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "substituteText",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::substituteText",
+          "startLine": 403,
+          "endLine": 506,
+          "sha256": "ec509a96e6391109bfd4002dc792201054bcd0cd427d54674871e83aac1ea337"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "受控单遍${}编排，拒表达式/ROS替换，替换结果不重扫",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.emitChildren",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "emitChildren",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::emitChildren",
+          "startLine": 524,
+          "endLine": 546,
+          "sha256": "a2eed9ef6f02c9600723f2478ee30f285ea70e98f5b3474e77f666c516dc00e2"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "DOM子节点消费，文本/CDATAs替换转义，注释/PI按子集过滤",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.emitElement",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "emitElement",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::emitElement",
+          "startLine": 557,
+          "endLine": 872,
+          "sha256": "676f26c7de7cbeaff2a32db295709d7fcd45ecdc8dc86bfda4c518c4cb2ec4f8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "include/property/macro及普通元素序列化拆边界，拒代码、预算和作用域；不把整函数当XML解析核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.detectIncludeCycle",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "detectIncludeCycle",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::detectIncludeCycle",
+          "startLine": 882,
+          "endLine": 924,
+          "sha256": "23ec09c6cbd720ddb2bdb55a69c4134ae947a503d8e73c432f5c523bfd76bdcd"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "已有io Include树防御DFS，零新文件读取，环路径稳定",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
+    },
+    {
+      "functionId": "modeling.XacroExpand.XacroExpandService.expand",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-19"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+          "symbol": "XacroExpandService::expand",
+          "qualifiedSymbol": "sdurws::ird::modeling::XacroExpandService::expand",
+          "startLine": 933,
+          "endLine": 1142,
+          "sha256": "0a73218ea2a14c19258c56ee86696aee94e3c89165edaedefa0b1a5a7ab28420"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-XML",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch13-search.json真实参数/输出及候选API全文审读",
+        "conclusion": "完整定义与消费审查；差异/最小适配建议已列，不是缺口批准或生产验收"
+      },
+      "differences": "六步真实pugi解析/DOM消费，来源与参数组装，不准上游模型构造",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+          "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+          "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+          "sha256": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+          "sha256": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+          "sha256": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3"
+        }
+      ],
+      "auditBoundary": "明确区段/小端六函数组，非整单元结项；输出/极值/完整生产接线仍待核"
     }
   ]
 }
