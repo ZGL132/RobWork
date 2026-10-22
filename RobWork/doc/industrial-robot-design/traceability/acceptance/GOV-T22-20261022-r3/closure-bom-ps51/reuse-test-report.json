@@ -1,0 +1,33 @@
+{
+    "schemaVersion":  "ird-reuse-tests/1",
+    "validatorSha256":  "179A2B287CDA2491E5F780463A735083CF2AA0888B76A01639383DCF38DD7B4A",
+    "helperSha256":  "C17D5E62E7F4D153F6D37C0162CC4D2DFF2604452EB389F1F06D7CCD7A6B5D4A",
+    "driverSha256":  "32B816ACE6F179FAF15A964E3610004A38B3D3F73F676612A36B5A2BC1B1D85F",
+    "expected":  2,
+    "executed":  2,
+    "notRun":  0,
+    "driverFailure":  "",
+    "passed":  2,
+    "skipped":  0,
+    "failed":  0,
+    "complete":  true,
+    "tests":  [
+                  {
+                      "name":  "independent-closure-no-bom-control",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expected":  "PASS",
+                      "output":  "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=1 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+                  },
+                  {
+                      "name":  "independent-closure-bom-same-accepted-bytes",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expected":  "PASS",
+                      "output":  "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=1 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+                  }
+              ],
+    "reviewedCommit":  "e6f06e5b9451357b10001a4677b10b4ad9e454a6",
+    "independentProbeSha256":  "E43814A5BB06CAC8FAB955D5D812941DD2A59DB3EB6B76582C4E463CF7015093",
+    "frozenFixtureDriverSha256":  "CFAC17AAB9E6E53E03BE5118A3DBF07D7689BFC64915BD8DC3346294B5D02CEC"
+}
