@@ -4,10 +4,11 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "全20单元逐功能复用审计与最小扩展提案",
-  "status": "planned",
+  "status": "ready",
   "branch": "reuse-t01",
   "dependsOn": [
-    "GOV-T21"
+    "GOV-T21",
+    "GOV-T22"
   ],
   "requirements": [
     "DYN-01",
@@ -15,12 +16,93 @@
     "KIN-01"
   ],
   "designRefs": [
-    "reuse/migration.md",
-    "reuse/policy.md",
+    "reuse/migration.md#12-下一阶段实施与重构工作包2026-10-22",
+    "reuse/audit-contract.md",
+    "ARCHITECTURE.md#3.6",
     "reuse/extensions/required-proposals.md"
   ],
   "verify": [
-    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
-  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。"
+  "note": "所有者要求依次自动推进。继承本地治理pass基点开展只读审计，远程代理阻断单列；不授权新核心/上游扩展，不修改产品代码。审计发现保留pending/proposal，只有逐功能实证及独立审查后才称完成。",
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/policy.md",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/audit-contract.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/policy.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/project.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/selection.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/red-reuse-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/red-reuse-governance.junit.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/r2-ps7-reuse-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/r2-ps7-reuse-governance.junit.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/r2-ps51-reuse-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/r2-ps51-reuse-governance.junit.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/pass-ps7-reuse-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/pass-ps7-reuse-governance.junit.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/pass-ps51-reuse-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/pass-ps51-reuse-governance.junit.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/README.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "per-function-audit",
+    "catalog-resource-bindings",
+    "explicit-gaps",
+    "independent-audit-acceptance"
+  ],
+  "acceptance": [
+    "全部20单元及基础构建/测试/脚本按真实功能登记；待审发现不能冒充审计完成",
+    "上游具体文件/符号/目标/版本/差异和权限可追溯；四项缺口先检索探测",
+    "零生产代码变更；pending或proposal不能授权变动产品代码",
+    "仅冻结SHA独立验收后进入T02；远程未同步不冒充交付"
+  ],
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T01.json"
+  },
+  "implementationState": "audit-in-progress"
 }

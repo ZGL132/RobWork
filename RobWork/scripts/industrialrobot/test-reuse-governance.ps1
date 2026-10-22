@@ -15,7 +15,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 136
+$driverFailure = ''; $expectedTests = 140
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $copiedValidatorSha256='';$copiedHelperSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
@@ -56,6 +56,14 @@ function MathMatrix {
     return [pscustomobject]@{schemaVersion='ird-reuse-functions/1';unit='runtime';functions=@($row)}
 }
 function PutMath($m) { PutJson ($reuse+'functions/runtime.json') $m }
+function RestrictedAuditMatrix {
+    # 使用真实未改动的 owner 编译器记录待审事实，不能要求先伪造授权才能登记债务。
+    $m=MathMatrix;$r=$m.functions[0];$path=$product+'runtime/src/WorkCellCompiler.cpp'
+    $text=[IO.File]::ReadAllText((Join-Path $sandbox $path))
+    $r.functionId='fixture.runtime.compiler';$r.capabilityId='NONE';$r.usageRole='owner'
+    $r.sources=@([pscustomobject]@{path=$path;symbol='compileWorkCell';startLine=1;endLine=@($text -split "`n").Count;sha256=(Hash $text)})
+    return $m
+}
 function Grant([string]$origin='runtime-borrow',[string[]]$operations=@('query'),[string]$target='sdurws_ird_kinematics') {
     $path=$product+'kinematics/src/Fk.cpp'; $build=$product+'kinematics/CMakeLists.txt'
     return [pscustomobject]@{id='fixture-grant';source=[pscustomobject]@{path=$path;sha256=(Hash ([IO.File]::ReadAllText((Join-Path $sandbox $path))))};
@@ -227,7 +235,7 @@ try {
     Case '18-missing-task-proof' 'REUSE-TASK' { $j=GetJson ($design+'tasks/GOV-T21.json'); $j.PSObject.Properties.Remove('reuse'); PutJson ($design+'tasks/GOV-T21.json') $j }
     Case '19-task-scope' 'REUSE-SCOPE' { $j=GetJson ($design+'tasks/GOV-T21.json'); $j.allowedFiles=@('none'); PutJson ($design+'tasks/GOV-T21.json') $j }
     Case '20-forbidden-scope' 'REUSE-SCOPE' { $j=GetJson ($design+'tasks/GOV-T21.json'); $j.forbiddenFiles=@($product+'CMakeLists.txt'); PutJson ($design+'tasks/GOV-T21.json') $j }
-    Case '21-stage-not-approved' 'REUSE-STAGE' { $j=GetJson ($design+'tasks/REUSE-T01.json'); $j.status='ready'; $j | Add-Member reuse ([pscustomobject]@{policy='H1-H6';manifest='no-manifest'}) -Force; PutJson ($design+'tasks/REUSE-T01.json') $j }
+    Case '21-stage-not-approved' 'REUSE-STAGE' { $j=GetJson ($design+'tasks/REUSE-T01.json'); $j.status='ready';$j.PSObject.Properties.Remove('governanceAcceptance'); $j | Add-Member reuse ([pscustomobject]@{policy='H1-H6';manifest=($reuse+'changes/REUSE-T01.json')}) -Force; PutJson ($design+'tasks/REUSE-T01.json') $j } @('-TaskFile',($design+'tasks/REUSE-T01.json'))
     Case '22-final-debt-rejected' 'REUSE-MIGRATION' {} @('-RequireMigrationComplete')
     Case '23-governance-not-algorithm-approval' 'REUSE-GOV-SCOPE' { Declare 'Business' '//业务格式转换 fixture' }
     Case '24-upstream-readonly' 'REUSE-UPSTREAM-READONLY' { Put 'RobWork/RobWork/src/rw/Undeclared.cpp' '// forbidden upstream' }
@@ -237,7 +245,7 @@ try {
     }
     Case '27-forged-debt-closure' 'REUSE-INVENTORY' { $j=GetJson ($reuse+'inventory.json'); $j.files[0].classification='existing-adapter'; PutJson ($reuse+'inventory.json') $j }
     Case '28-arbitrary-task-ready' 'REUSE-TASK' { PutJson ($design+'tasks/OTHER-T99.json') ([pscustomobject]@{taskId='OTHER-T99';status='ready'}) }
-    Case '29-planned-not-executable' 'REUSE-TASK-STATE' {} @('-TaskFile',($design+'tasks/REUSE-T01.json'))
+    Case '29-planned-not-executable' 'REUSE-TASK-STATE' { $j=GetJson ($design+'tasks/REUSE-T01.json');$j.status='planned';PutJson ($design+'tasks/REUSE-T01.json') $j } @('-TaskFile',($design+'tasks/REUSE-T01.json'))
     Case '30-forged-build-target' 'REUSE-UPSTREAM-TARGET' { $j=GetJson ($reuse+'catalog.json'); $j.capabilities[0].upstream[0].target='nonexistent'; PutJson ($reuse+'catalog.json') $j }
     # 首轮验收真实发现.c绕过；每种代码入口均须被同一门禁拒绝，无目录豁免。
     foreach ($suffix in @('c','ipp','inl','tpp','mjs','ps1','py','html','ts','cu','inc','opaque')) {
@@ -258,6 +266,10 @@ try {
     Case 'ad-self-approved-closure' 'REUSE-CLOSURE' { PutJson ($reuse+'closures.json') ([pscustomobject]@{schemaVersion='ird-reuse-closures/1';files=@([pscustomobject]@{path=$product+'kinematics/src/Fk.cpp';approved=$true})}) }
     Case 'ad-gov-supplement-scope' 'REUSE-GOV-SCOPE' { $j=GetJson ($design+'tasks/GOV-T22.json'); $j.allowedFiles+=($product+'kinematics/src/Fk.cpp'); PutJson ($design+'tasks/GOV-T22.json') $j }
     Case 'function-pending-positive' 'PASS' { PutMath (MathMatrix) }
+    Case 'function-existing-restricted-pending-positive' 'PASS' { PutMath (RestrictedAuditMatrix) }
+    Case 'function-existing-restricted-audited-rejected' 'REUSE-AD' { $m=RestrictedAuditMatrix;$m.functions[0].status='audited';PutMath $m }
+    Case 'function-changed-restricted-pending-rejected' 'REUSE-AD' { FunctionalChange '#include <rw/models/WorkCell.hpp> // probe';ProbeMatrix 'pending' 'pending' }
+    Case 'function-final-restricted-pending-rejected' 'REUSE-MIGRATION' { PutMath (RestrictedAuditMatrix) } @('-RequireMigrationComplete')
     Case 'function-stale-region' 'REUSE-FRESHNESS' { $m=MathMatrix; $m.functions[0].sources[0].sha256='0000'; PutMath $m }
     Case 'function-symbol-not-present' 'REUSE-FRESHNESS' { $m=MathMatrix; $m.functions[0].sources[0].symbol='not-a-real-function'; PutMath $m }
     Case 'function-region-outside-file' 'REUSE-FUNCTION' { $m=MathMatrix; $m.functions[0].sources[0].endLine=999999; PutMath $m }
@@ -369,7 +381,7 @@ try {
     Case 'ad-bom-script-frozen-positive' 'PASS' {
         FunctionalChange ([char]0xFEFF+'function probe {}') 'ps1';ProbeMatrix
         $script:caseCommit=(& git -C $sandbox rev-parse HEAD).Trim()
-        & git -C $sandbox add -f -- $reuse ($design+'tasks/GOV-T22.json') ($design+'tasks/KIN-T99.json') $script:probePath
+        & git -C $sandbox add -f -- $reuse ($design+'tasks') $script:probePath
         & git -C $sandbox -c user.name=ReuseFixture -c user.email=fixture@example.invalid commit --quiet -m 'isolated BOM script binding'
         if($LASTEXITCODE){throw 'BOM frozen fixture commit failed'}
     } @('-Head','HEAD')

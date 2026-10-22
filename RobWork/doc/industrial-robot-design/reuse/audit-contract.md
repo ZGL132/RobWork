@@ -101,7 +101,7 @@
 - `closures.json` 使用 `ird-reuse-closures/1`，files 每项含 path/baselineBlob/currentSha256/functionKeys/migrationCommit/acceptance。acceptance 为 `{commit,path,reviewedCommit}` 的 Git 对象引用，必须 REUSE-* pass 且祖先匹配。当前文件完整关联 closed 功能；已删路径 currentSha256 为 deleted，替代功能通过 `replaces[]` 明确引用旧基线路径。源码、输入、生产证据及其报告依赖须与被验版本相同；功能记录仅允许验收后的 migrated→closed 状态推进，不允许更换边界后沿用旧 pass。基线之外的新产品源码使用 baselineBlob=absent，并核对它确实不在基线且当前存在；不能仅填 closed 跳过独立结项。固定库存不改分类，最终模式对基线及当前新增源码逐项检查语义关闭。
 - GOV-T22 仅有精确治理范围 bootstrap；其他进入 ready/done 的新任务必须同时引用原 governanceAcceptance 与新增 reuseGateAcceptance（GOV-T22 的真实冻结 pass），不能自填布尔值放行。
 
-源码权限扫描支持受限头、显式类型、常见构造/工厂/加载/模型修改及 State 写路径，并区分大小写。别名、间接工厂、跨任务共享、句柄逃逸、条件编译和实际结果消费无法靠该扫描完备证明，必须逐功能记录并独立核查；既有依赖/零 Qt 门禁继续承担链接边界。格式夹具内合成的 XML、断开描述和验收记录只测试校验器，不是产品实验或真实批准。摘要防过期，不提供报告身份认证。
+源码权限扫描支持受限头、显式类型、常见构造/工厂/加载/模型修改及 State 写路径，并区分大小写。固定基线内且自基线未变的源区段，只有 decision/status 同属 pending/proposal 时允许输出 REUSE-AD-PENDING，登记受限使用债务而不要求或产生 grant；最终模式仍拒绝。已解决记录、变动文件及新文件不走此审计分支。别名、间接工厂、跨任务共享、句柄逃逸、条件编译和实际结果消费无法靠该扫描完备证明，必须逐功能记录并独立核查；既有依赖/零 Qt 门禁继续承担链接边界。格式夹具内合成的 XML、断开描述和验收记录只测试校验器，不是产品实验或真实批准。摘要防过期，不提供报告身份认证。
 
 返工口径：Qt item 的 `setData`、相机呈现的同名 `setTransform` 和文案中的类型名不自动构成上游 State 写；明确的 StateData 写与关节 setQ 仍检查权限，无法定型的别名调用由来源/生命周期审查承接。UTF-8 BOM 在文本读取及公共摘要入口统一剥离，再按原 CRLF/LF 与末尾换行规则计算摘要，包含冻结树、上游已审版本和关闭记录的直接 Git 文本比较。第二轮 `4281543be` fail 暴露的关闭记录绕过读取规范化，已在 `e6f06e5b9` 统一摘要入口修复，第三轮双运行时的真实 BOM 关闭对照均通过。两轮失败证据保留，不用更新后的代码改写原探针结果。
 

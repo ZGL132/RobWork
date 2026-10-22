@@ -105,7 +105,7 @@ function CheckPermissions {
     }
     return $grants
 }
-function CheckSourcePermission([string]$path, [string]$text, $grants) {
+function CheckSourcePermission([string]$path, [string]$text, $grants, [switch]$AuditOnly) {
     # 注释不产生 include 权限；宏/别名无法静态解析时必须由功能记录给出完整来源。
     $code = [regex]::Replace($text,'(?s)/\*.*?\*/|(?m)//[^\r\n]*',' ')
     $categories = @()
@@ -133,6 +133,11 @@ function CheckSourcePermission([string]$path, [string]$text, $grants) {
     }
     if ($code -cmatch '\b(?:new\s+(?:rw::kinematics::)?State|(?:make_shared|ownedPtr)\s*<\s*(?:rw::kinematics::)?State)\b') { $ops += 'construct-session' }
     if (-not $categories.Count -and -not $ops.Count) { return }
+    # 未变动基线的未决审计只登记债务，不制造 grant；生产变动与已解决记录永不走此分支。
+    if ($AuditOnly) {
+        Write-Output "REUSE-AD-PENDING : $path : categories=$($categories -join ',') operations=$($ops -join ','); no permission granted"
+        return
+    }
     if (-not $grants.ContainsKey($path)) { Fail 'AD' "$path : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)" }
     $g = $grants[$path]
     foreach ($c in $categories) { if ($c -notin $g.categories) { Fail 'AD' "$path : category $c (IRD-GATE-AD)" } }
@@ -223,7 +228,10 @@ function CheckFunctions($grants, [string[]]$changedSources) {
                 if (-not $covered.ContainsKey($path)) { $covered[$path]=@{}; $fileFunctions[$path]=@() }
                 foreach ($n in ([int]$s.startLine)..([int]$s.endLine)) { $covered[$path][$n]=$true }
                 $fileFunctions[$path]+=$key
-                CheckSourcePermission $path $region $grants
+                $unresolvedBaseline=($tree.ContainsKey($path) -and $path -notin $changedSources -and
+                    $r.status -in @('pending','proposal') -and $r.decision -in @('pending','proposal'))
+                if ($RequireMigrationComplete -and $unresolvedBaseline) { Fail 'MIGRATION' "unresolved function $($r.functionId)" }
+                CheckSourcePermission $path $region $grants -AuditOnly:$unresolvedBaseline
             }
             if ($r.replaces) {
                 foreach ($old in $r.replaces) { $old=SafePath $old; if (-not $tree.ContainsKey($old)) { Fail 'FUNCTION' "unknown replaced baseline $old" } }
