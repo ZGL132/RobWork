@@ -1,0 +1,499 @@
+[
+  {
+    "archive": "B10-FAIL",
+    "path": "acceptance.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "acceptance.md",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "archive-check.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "archive-check.ps1",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "archive-checks.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "bindings.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "catalog-bindings.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "check.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "check.ps1",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "checkout.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "checkout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "clone.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "clone.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "docs.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "docs.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "evidence-hashes.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "exact-changes.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "facts.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "frozen-sha.txt",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "git-status-end.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "macro-checks.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "main-checks.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "main-macro-source.txt",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "new-rows.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "probe-hashes.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "replay-search.ps1",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "reuse.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "reuse.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-1.stderr.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-1.stdout.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-2.stderr.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-2.stdout.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-3.stderr.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-3.stdout.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-4.stderr.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-4.stdout.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-5.stderr.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-5.stdout.txt",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "search-results.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "semantic-check.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "semantic-check.ps1",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "source-excerpts.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "task.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B10-FAIL",
+    "path": "task.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "acceptance.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "acceptance.md",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "additional-artifacts.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "build.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "build.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "checkout-longpath-first-attempt.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "checkout-longpath-first-attempt.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "checkout.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "checkout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "clone.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "clone.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "configure.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "configure.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "driver.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "driver.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "environment-hash-checks.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "environment.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "final-inspection.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "gtest.xml",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "ird-test-report.json",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "public-api-and-input-review.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "report-cross-check.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "run-probe.ps1",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "scoped-diff.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "scoped-diff.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "tests.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "GTest-PASS",
+    "path": "tests.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  }
+]

@@ -1,0 +1,70 @@
+NEW 33
+dynamics.PowerEnergy.PowerEnergyCalculator.compute MATH-TRAPEZOID ['sdurws_ird_dynamics']
+  63 186 sdurws::ird::dynamics::PowerEnergyCalculator::compute HASH True
+kinematics.Envelope.probeSeedFor MATH-RANDOM ['sdurws_ird_kinematics']
+  63 66 sdurws::ird::kinematics::(anonymous namespace)::probeSeedFor HASH True
+kinematics.Envelope.failCaller NONE ['sdurws_ird_kinematics']
+  69 72 sdurws::ird::kinematics::(anonymous namespace)::failCaller HASH True
+kinematics.Envelope.probeReachability KIN-IK ['sdurws_ird_kinematics']
+  127 209 sdurws::ird::kinematics::(anonymous namespace)::probeReachability HASH True
+kinematics.Envelope.computeApproximateEnvelope KIN-IK ['sdurws_ird_kinematics']
+  217 481 sdurws::ird::kinematics::computeApproximateEnvelope HASH True
+optimization.Pareto.slotValue NONE ['sdurws_ird_optimization']
+  30 33 sdurws::ird::optimization::(anonymous namespace)::slotValue HASH True
+optimization.Pareto.notWorse NONE ['sdurws_ird_optimization']
+  37 46 sdurws::ird::optimization::(anonymous namespace)::notWorse HASH True
+optimization.Pareto.strictlyBetter NONE ['sdurws_ird_optimization']
+  50 57 sdurws::ird::optimization::(anonymous namespace)::strictlyBetter HASH True
+optimization.Pareto.dominates NONE ['sdurws_ird_optimization']
+  65 88 sdurws::ird::optimization::dominates HASH True
+optimization.Pareto.ParetoFrontBuilder.buildFront NONE ['sdurws_ird_optimization']
+  94 291 sdurws::ird::optimization::ParetoFrontBuilder::buildFront HASH True
+optimization.Generator.SeededLhsGenerator.strategyId NONE ['sdurws_ird_optimization']
+  32 37 sdurws::ird::optimization::SeededLhsGenerator::strategyId HASH True
+optimization.Generator.SeededLhsGenerator.generateNextBatch MATH-RANDOM ['sdurws_ird_optimization']
+  39 61 sdurws::ird::optimization::SeededLhsGenerator::generateNextBatch HASH True
+optimization.Generator.validateBaselinePerturbParams NONE ['sdurws_ird_optimization']
+  67 98 sdurws::ird::optimization::validateBaselinePerturbParams HASH True
+optimization.Generator.BaselinePerturbGenerator.strategyId NONE ['sdurws_ird_optimization']
+  105 108 sdurws::ird::optimization::BaselinePerturbGenerator::strategyId HASH True
+optimization.Generator.BaselinePerturbGenerator.generateNextBatch NONE ['sdurws_ird_optimization']
+  110 229 sdurws::ird::optimization::BaselinePerturbGenerator::generateNextBatch HASH True
+optimization.Generator.builtInStrategyIds NONE ['sdurws_ird_optimization']
+  235 246 sdurws::ird::optimization::builtInStrategyIds HASH True
+optimization.Generator.generateWithBuiltInStrategy NONE ['sdurws_ird_optimization']
+  248 280 sdurws::ird::optimization::generateWithBuiltInStrategy HASH True
+trajectory.Planner.cancellationRequested PATH-PLANNING ['sdurws_ird_trajectory']
+  106 109 sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::cancellationRequested HASH True
+trajectory.Planner.alive PATH-PLANNING ['sdurws_ird_trajectory']
+  112 112 sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::alive HASH True
+trajectory.Planner.doSetLog PATH-PLANNING ['sdurws_ird_trajectory']
+  158 158 sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doSetLog HASH True
+trajectory.Planner.doInCollision PATH-PLANNING ['sdurws_ird_trajectory']
+  161 193 sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doInCollision HASH True
+trajectory.Planner.parsePlannerSelection PATH-PLANNING ['sdurws_ird_trajectory']
+  235 298 sdurws::ird::trajectory::(anonymous namespace)::parsePlannerSelection HASH True
+trajectory.Planner.validateConfigPairAndBounds PATH-PLANNING ['sdurws_ird_trajectory']
+  310 340 sdurws::ird::trajectory::(anonymous namespace)::validateConfigPairAndBounds HASH True
+trajectory.Planner.sampleStraightPath MATH-METRIC ['sdurws_ird_trajectory']
+  360 387 sdurws::ird::trajectory::(anonymous namespace)::sampleStraightPath HASH True
+trajectory.Planner.reviewPathSequence PATH-PLANNING ['sdurws_ird_trajectory']
+  419 462 sdurws::ird::trajectory::(anonymous namespace)::reviewPathSequence HASH True
+trajectory.Planner.maxAdjacentStep MATH-METRIC ['sdurws_ird_trajectory']
+  469 478 sdurws::ird::trajectory::(anonymous namespace)::maxAdjacentStep HASH True
+trajectory.Planner.pathJointLength MATH-METRIC ['sdurws_ird_trajectory']
+  481 490 sdurws::ird::trajectory::(anonymous namespace)::pathJointLength HASH True
+trajectory.Planner.minNormalizedMargin PATH-PLANNING ['sdurws_ird_trajectory']
+  494 510 sdurws::ird::trajectory::(anonymous namespace)::minNormalizedMargin HASH True
+trajectory.Planner.candidatePreferred PATH-PLANNING ['sdurws_ird_trajectory']
+  516 533 sdurws::ird::trajectory::(anonymous namespace)::candidatePreferred HASH True
+trajectory.Planner.makeAvoidFailure PATH-PLANNING ['sdurws_ird_trajectory']
+  543 555 sdurws::ird::trajectory::(anonymous namespace)::makeAvoidFailure HASH True
+trajectory.Planner.search PATH-PLANNING ['sdurws_ird_trajectory']
+  580 819 sdurws::ird::trajectory::(anonymous namespace)::PathPlannerAdapterImpl::search HASH True
+trajectory.Planner.makePathPlannerAdapter PATH-PLANNING ['sdurws_ird_trajectory']
+  828 831 sdurws::ird::trajectory::makePathPlannerAdapter HASH True
+trajectory.Planner.planPtpWithObstacleAvoidance PATH-PLANNING ['sdurws_ird_trajectory']
+  837 1088 sdurws::ird::trajectory::planPtpWithObstacleAvoidance HASH True
+CAT TYPES dict_keys(['schemaVersion', 'baselineCommit', 'units', 'capabilities'])
+NEW CAT [('PATH-PLANNING', dict_keys(['id', 'search', 'boundary', 'upstream', 'build', 'usages', 'limits', 'ownerUnit', 'examples', 'docs', 'operations', 'review', 'tests', 'resourceSearch'])), ('MATH-METRIC', dict_keys(['id', 'search', 'boundary', 'upstream', 'build', 'usages', 'limits', 'ownerUnit', 'examples', 'docs', 'operations', 'review', 'tests', 'resourceSearch'])), ('MATH-TRAPEZOID', dict_keys(['id', 'search', 'boundary', 'upstream', 'build', 'usages', 'limits', 'ownerUnit', 'examples', 'docs', 'operations', 'review', 'tests', 'resourceSearch']))]
+BINDINGS 238 FAIL 0

@@ -1,0 +1,24 @@
+{
+  "macros": 20,
+  "failedTargets": 0,
+  "removedUnits": 10,
+  "removedTargets": 13,
+  "evidenceRows": 58,
+  "inventoryReferences": 58,
+  "hashChecks": 466,
+  "failedHashes": 0,
+  "mainInventoryUnchanged": true
+}
+
+archive     : B10-FAIL
+files       : 44
+raw         : 36
+newlineOnly : 8
+failed      : 0
+
+archive     : GTest-PASS
+files       : 27
+raw         : 24
+newlineOnly : 3
+failed      : 0
+

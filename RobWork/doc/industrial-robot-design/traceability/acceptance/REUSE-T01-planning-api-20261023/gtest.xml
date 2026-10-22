@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-23T00:32:09.680" name="AllTests">
+  <testsuite name="ReusePlanningAudit" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T00:32:09.680">
+    <testcase name="ManhattanPathLengthPreservesSelectionMeaning" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\PlanningSuitabilityTest.cpp" line="18" status="run" result="completed" time="0." timestamp="2026-10-23T00:32:09.680" classname="ReusePlanningAudit" />
+    <testcase name="StopCriteriaDelegatesCancellation" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\PlanningSuitabilityTest.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-23T00:32:09.680" classname="ReusePlanningAudit" />
+    <testcase name="UniformSamplerSharesSeededProcessSource" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\PlanningSuitabilityTest.cpp" line="48" status="run" result="completed" time="0." timestamp="2026-10-23T00:32:09.680" classname="ReusePlanningAudit" />
+    <testcase name="TrapezoidPrimitiveAllowsPerIntervalSteps" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\PlanningSuitabilityTest.cpp" line="70" status="run" result="completed" time="0." timestamp="2026-10-23T00:32:09.680" classname="ReusePlanningAudit" />
+  </testsuite>
+</testsuites>

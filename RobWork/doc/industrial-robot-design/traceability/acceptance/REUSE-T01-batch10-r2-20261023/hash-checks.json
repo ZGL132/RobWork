@@ -1,0 +1,2738 @@
+[
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroSource",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "macroInput",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "core.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "core.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "core.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "dynamics.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "evidence.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "execution.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "execution.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "execution.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "io.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "io.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "io.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "kinematics.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "modeling.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "optimization.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "policy.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "policy.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "policy.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "project.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "project.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "project.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "reporting.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "requirements.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "runtime.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "selection.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "selection.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "selection.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.test.TestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.test.TestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.test.TestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.test.TestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.test.TestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "testkit.test.TestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.TestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.TestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.TestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.TestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.TestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "testkit.TestRecordListener",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.installTestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.installTestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.installTestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.installTestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "testkit.installTestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "testkit.installTestRecordListener",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "trajectory.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "ui.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "ui.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "ui.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "workflow.test.TestMainReport.main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+    "ok": true
+  },
+  {
+    "kind": "auditEvidence",
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+    "ok": true
+  },
+  {
+    "kind": "functionInput",
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "core.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "core.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "diagnostics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "drivetrain.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "drivetrain.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "drivetrain.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "dynamics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "dynamics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "dynamics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "evidence.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "evidence.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "execution.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "execution.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "execution.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "io.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "io.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "io.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "kinematics.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "kinematics.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "kinematics.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "kinematics.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "modeling.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "modeling.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "modeling.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "modeling.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "optimization.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "optimization.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "optimization.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "policy.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "policy.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "project.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "project.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "reporting.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "reporting.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "reporting.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "requirements.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "requirements.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "requirements.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "requirements.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "runtime.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "runtime.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "selection.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "selection.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "selection.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "testkit.test.TestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "testkit.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "testkit.TestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "testkit.installTestRecordListener",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "trajectory.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "trajectory.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "trajectory.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "ui.contract_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "ui.gui_test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "ui.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "ui.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "workflow.contract_test.ContractTestMain.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "workflow.test.TestMainReport.main",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  },
+  {
+    "kind": "allInventoryReferences",
+    "functionId": "workflow.CMake.ird_add_gtest",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "ok": true
+  }
+]

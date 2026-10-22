@@ -1,0 +1,51 @@
+[
+  {
+    "kind": "sources",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/PlanningSuitabilityTest.cpp",
+    "expected": "b8e40dd87012692fc33302025b10cf5f02e1630107b245e7615cca0b997eabf0",
+    "actual": "b8e40dd87012692fc33302025b10cf5f02e1630107b245e7615cca0b997eabf0",
+    "matches": true
+  },
+  {
+    "kind": "sources",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "expected": "e2b638b649b3390242490b36dfb8ea9ab30e98e2d6db1b2cf83350d6f966112b",
+    "actual": "e2b638b649b3390242490b36dfb8ea9ab30e98e2d6db1b2cf83350d6f966112b",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+    "expected": "79736cb31891c2a8ba98bec9f4324102226ea6b0e3ba56e44ec806d8e8eb1ce0",
+    "actual": "79736cb31891c2a8ba98bec9f4324102226ea6b0e3ba56e44ec806d8e8eb1ce0",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp",
+    "expected": "26deb95e77f4d73d949cfd1f3e5f047b783883b9fd864a8826349553022ab4ec",
+    "actual": "26deb95e77f4d73d949cfd1f3e5f047b783883b9fd864a8826349553022ab4ec",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/pathplanning/QSampler.cpp",
+    "expected": "ef3428a35c402b1f9ddeff3f3a1eb8fc34c61040f18e1e6cb1415bb0e92c66b5",
+    "actual": "ef3428a35c402b1f9ddeff3f3a1eb8fc34c61040f18e1e6cb1415bb0e92c66b5",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/pathplanning/StopCriteria.cpp",
+    "expected": "2eeb8c712a2746e92c61ad62007f1641868332bb1f57b0aaf6579c5b1d439ecf",
+    "actual": "2eeb8c712a2746e92c61ad62007f1641868332bb1f57b0aaf6579c5b1d439ecf",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rwlibs/softbody/numerics/TrapMethod.hpp",
+    "expected": "8474ac0238ae27327e1ed47ad86f34fbb59fb775087d6b2bb39dc6e7862ae4a5",
+    "actual": "8474ac0238ae27327e1ed47ad86f34fbb59fb775087d6b2bb39dc6e7862ae4a5",
+    "matches": true
+  }
+]

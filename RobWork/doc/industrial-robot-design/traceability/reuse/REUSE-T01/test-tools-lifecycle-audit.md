@@ -1,0 +1,25 @@
+# REUSE-T01：测试工具与关闭监督审计
+
+本批补覆盖审查COV-10、11、16涉及的JsonLite骨架、Check、ProcessRunner、CloseSupervisor，不据此关闭整testkit/workflow或全T01。完整定义/调用与构建目标分别绑定矩阵，简单游标和原子访问器明确分组；不以入口登记代替内部审读。产品、上游、依赖与构建未改。
+
+## JSON与断言
+
+JsonLite已有对象/数组/字符串/数字/转义与writer的12条关系，本批补Parser构造、run、游标、skipWs、expect、fail、parseValue、expectLiteral、find与deepEquals。run拒BOM/空/尾随；skipWs只收JSON四空白并更新行列；parseValue限深200并拒NaN/Infinity/注释；expectLiteral在父级语法/尾随检查配合下拒残缺字面。fail只构造testkit数据错误，不登记生产稳定诊断码。deepEquals严格类型、数字位比较区别±0且NaN不等，对象键序无关；dumpJson局部P::go仍由已有dumpJson完整区段覆盖（含两空格pretty与递归），不重复计数。
+
+PropertyTree候选沿用第八批真实反例：公开ptree丢失JSON标量类型以及空对象/空数组区别，read_json接受重复键/BOM，不能仅改调用就声称兼容。新增通用解析核心不获批准；后续先核同渠道成熟JSON库可用性及最小profile适配，保留拒绝/定位/数值往返与确定字节。JSON专属拒绝规则不能成为永久保留手写完整parser的理由。
+
+Check的单值与逐元素比较已消费core::closeWithin唯一C4，不能换成GTest EXPECT_NEAR、相对对称公式或总和抵消；长度差需要额外索引NaN载荷，core整体allCloseWithin异常契约不等价。makeDetail只组织比较载荷，不生成evidence envelope。checkAtMost查UnitToken并拒非有限；checkIdentical两重载保持精确比较。sourceTag目前被丢弃，字符串失败详情不带实际字符串，审计仅记录现状，不宣称现有注释“透传”已经兑现；是否需调整由现有报告契约核对，不新增断言框架。实际CheckTest已有委托、非有限、元素、长度差、空集、单位与两重载用例，本批只读未重跑。
+
+## 进程工具
+
+ProcessRunner是Win32薄封装加测试四态/超时/缓存协议：quoteWindowsArg处理空参数、引号前反斜杠和尾反斜杠；toWin32Wait钳制DWORD；utf8ToWide调用系统转换；buildEnvironmentBlock合并父环境与覆盖；start执行挂起→Job绑定→恢复，零句柄继承；Impl/析构回收句柄及临时目录；outcome在退出、崩溃、主动终止、超时四态中缓存，非Exited态exitCode=0是冻结协议。EventWatch先判文件/行事件再判deadline，<=0仍查一次；日志每轮重扫应对轮转，禁止把存在事件等待替为固定sleep。
+
+已检索rw/rwsim src及gtest的CreateProcess/Job/fork/popen/spawn等；仅无同名不足作缺口。本批比对ThreadPool/ThreadTask源码与上游common/ThreadTest：它们管理线程/父子任务，不提供OS进程隔离或Job树终止。TimerUtil真实实现Windows用clock、其他平台gettimeofday；不直接等价steady_clock单调deadline和注入时钟。通用线程API并不应为“复用率”接管四态协议。execution/src/win32/ProcessLauncher.cpp确有挂起、Job、Resume，但私有IProcessOps/worker管道继承与固定CLI不同于通用测试args/env/工作目录；禁止testkit反向依赖execution或include其私有头。相似系统调用不自动证明应新增公共进程平台，先保留现有最小系统封装边界，T05再核真实共同原语和收益。
+
+静态待核风险：utf8ToWide未设MB_ERR_INVALID_CHARS而注释宣称拒非法UTF8；环境map键大小写与Windows环境比较语义待核；start在Job建立后转换/TempDir异常窗口的句柄安全待核。本批无复现实验，不把这些列为已复现缺陷、不顺手修改实现。既有ProcessRunnerTest覆盖四态、杀树、超时、参数与工作目录等，未重跑，不声称当前无缺陷。
+
+## 关闭监督
+
+StoreCloseSupervisor借持ProjectStore/TaskScheduler/DevLog，不管理上游WorkCell。构造校验正阈值；start先判running再join旧线程；stop恒join日志收尾；superviseLoop每拍闭合优先于stop，只观察store.closed，绝不从监督线程tick scheduler，超阈一次Dev日志、宽限后如实放弃。四个原子getter只读历史观测位，非第二状态机。clock为空用steady_clock，有注入则按已有合同使用；ThreadTask层级任务和Timer并不承载引用排空观察协议，不替换为通用调度器，不增加并发tick路径。Dev日志不是稳定诊断文案权威，业务日志不冒充evidence判决。
+
+HostAdapterTest两个监督用例及HostAssemblyContractTest关闭排空契约调用已定位；生产宿主装配是否接线仍须后续继续追踪，不能把测试实例当生产证据。本批全部关系pending；既有库存、原缺口提案与阶段门不变，无生产迁移验收。仅执行文档/任务/复用检查，未运行C++/GUI/数值/性能测试。

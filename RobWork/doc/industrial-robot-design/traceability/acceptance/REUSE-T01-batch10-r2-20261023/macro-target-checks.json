@@ -1,0 +1,403 @@
+[
+  {
+    "unit": "core",
+    "actual": [
+      "sdurws_ird_core_test"
+    ],
+    "inventory": [
+      "sdurws_ird_core_test"
+    ],
+    "function": [
+      "sdurws_ird_core_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "diagnostics",
+    "actual": [
+      "sdurws_ird_diagnostics_test",
+      "sdurws_ird_diagnostics_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_diagnostics_test",
+      "sdurws_ird_diagnostics_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_diagnostics_test",
+      "sdurws_ird_diagnostics_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "drivetrain",
+    "actual": [
+      "sdurws_ird_drivetrain_test",
+      "sdurws_ird_drivetrain_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_drivetrain_test",
+      "sdurws_ird_drivetrain_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_drivetrain_test",
+      "sdurws_ird_drivetrain_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "dynamics",
+    "actual": [
+      "sdurws_ird_dynamics_test",
+      "sdurws_ird_dynamics_contract_test",
+      "sdurws_ird_dynamics_gui_test"
+    ],
+    "inventory": [
+      "sdurws_ird_dynamics_test",
+      "sdurws_ird_dynamics_contract_test",
+      "sdurws_ird_dynamics_gui_test"
+    ],
+    "function": [
+      "sdurws_ird_dynamics_test",
+      "sdurws_ird_dynamics_contract_test",
+      "sdurws_ird_dynamics_gui_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "evidence",
+    "actual": [
+      "sdurws_ird_evidence_test",
+      "sdurws_ird_evidence_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_evidence_test",
+      "sdurws_ird_evidence_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_evidence_test",
+      "sdurws_ird_evidence_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "execution",
+    "actual": [
+      "sdurws_ird_execution_test",
+      "sdurws_ird_execution_contract_test",
+      "sdurws_ird_execution_perf_test"
+    ],
+    "inventory": [
+      "sdurws_ird_execution_test",
+      "sdurws_ird_execution_contract_test",
+      "sdurws_ird_execution_perf_test"
+    ],
+    "function": [
+      "sdurws_ird_execution_test",
+      "sdurws_ird_execution_contract_test",
+      "sdurws_ird_execution_perf_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "io",
+    "actual": [
+      "sdurws_ird_io_test",
+      "sdurws_ird_io_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_io_test",
+      "sdurws_ird_io_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_io_test",
+      "sdurws_ird_io_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "kinematics",
+    "actual": [
+      "sdurws_ird_kinematics_test",
+      "sdurws_ird_kinematics_gui_test",
+      "sdurws_ird_kinematics_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_kinematics_test",
+      "sdurws_ird_kinematics_gui_test",
+      "sdurws_ird_kinematics_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_kinematics_test",
+      "sdurws_ird_kinematics_gui_test",
+      "sdurws_ird_kinematics_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "modeling",
+    "actual": [
+      "sdurws_ird_modeling_test",
+      "sdurws_ird_modeling_gui_test",
+      "sdurws_ird_modeling_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_modeling_test",
+      "sdurws_ird_modeling_gui_test",
+      "sdurws_ird_modeling_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_modeling_test",
+      "sdurws_ird_modeling_gui_test",
+      "sdurws_ird_modeling_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "optimization",
+    "actual": [
+      "sdurws_ird_optimization_test",
+      "sdurws_ird_optimization_contract_test",
+      "sdurws_ird_optimization_perf_test"
+    ],
+    "inventory": [
+      "sdurws_ird_optimization_test",
+      "sdurws_ird_optimization_contract_test",
+      "sdurws_ird_optimization_perf_test"
+    ],
+    "function": [
+      "sdurws_ird_optimization_test",
+      "sdurws_ird_optimization_contract_test",
+      "sdurws_ird_optimization_perf_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "policy",
+    "actual": [
+      "sdurws_ird_policy_contract_test",
+      "sdurws_ird_policy_test"
+    ],
+    "inventory": [
+      "sdurws_ird_policy_contract_test",
+      "sdurws_ird_policy_test"
+    ],
+    "function": [
+      "sdurws_ird_policy_contract_test",
+      "sdurws_ird_policy_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "project",
+    "actual": [
+      "sdurws_ird_project_test",
+      "sdurws_ird_project_contract_test",
+      "sdurws_ird_project_perf_test"
+    ],
+    "inventory": [
+      "sdurws_ird_project_test",
+      "sdurws_ird_project_contract_test",
+      "sdurws_ird_project_perf_test"
+    ],
+    "function": [
+      "sdurws_ird_project_test",
+      "sdurws_ird_project_contract_test",
+      "sdurws_ird_project_perf_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "reporting",
+    "actual": [
+      "sdurws_ird_reporting_test",
+      "sdurws_ird_reporting_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_reporting_test",
+      "sdurws_ird_reporting_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_reporting_test",
+      "sdurws_ird_reporting_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "requirements",
+    "actual": [
+      "sdurws_ird_requirements_test",
+      "sdurws_ird_requirements_contract_test",
+      "sdurws_ird_requirements_gui_test"
+    ],
+    "inventory": [
+      "sdurws_ird_requirements_test",
+      "sdurws_ird_requirements_contract_test",
+      "sdurws_ird_requirements_gui_test"
+    ],
+    "function": [
+      "sdurws_ird_requirements_test",
+      "sdurws_ird_requirements_contract_test",
+      "sdurws_ird_requirements_gui_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "runtime",
+    "actual": [
+      "sdurws_ird_runtime_test"
+    ],
+    "inventory": [
+      "sdurws_ird_runtime_test"
+    ],
+    "function": [
+      "sdurws_ird_runtime_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "selection",
+    "actual": [
+      "sdurws_ird_selection_test",
+      "sdurws_ird_selection_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_selection_test",
+      "sdurws_ird_selection_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_selection_test",
+      "sdurws_ird_selection_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "testkit",
+    "actual": [
+      "sdurws_ird_testkit_test"
+    ],
+    "inventory": [
+      "sdurws_ird_testkit_test"
+    ],
+    "function": [
+      "sdurws_ird_testkit_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "trajectory",
+    "actual": [
+      "sdurws_ird_trajectory_test",
+      "sdurws_ird_trajectory_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_trajectory_test",
+      "sdurws_ird_trajectory_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_trajectory_test",
+      "sdurws_ird_trajectory_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "ui",
+    "actual": [
+      "sdurws_ird_ui_test",
+      "sdurws_ird_ui_contract_test",
+      "sdurws_ird_ui_perf_test",
+      "sdurws_ird_ui_largedata_perf_test",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "inventory": [
+      "sdurws_ird_ui_test",
+      "sdurws_ird_ui_contract_test",
+      "sdurws_ird_ui_perf_test",
+      "sdurws_ird_ui_largedata_perf_test",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "function": [
+      "sdurws_ird_ui_test",
+      "sdurws_ird_ui_contract_test",
+      "sdurws_ird_ui_perf_test",
+      "sdurws_ird_ui_largedata_perf_test",
+      "sdurws_ird_ui_gui_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  },
+  {
+    "unit": "workflow",
+    "actual": [
+      "sdurws_ird_workflow_test",
+      "sdurws_ird_workflow_contract_test"
+    ],
+    "inventory": [
+      "sdurws_ird_workflow_test",
+      "sdurws_ird_workflow_contract_test"
+    ],
+    "function": [
+      "sdurws_ird_workflow_test",
+      "sdurws_ird_workflow_contract_test"
+    ],
+    "inventoryMatches": true,
+    "functionMatches": true,
+    "uniqueActual": true,
+    "inventorySourceMatchesFunction": true
+  }
+]

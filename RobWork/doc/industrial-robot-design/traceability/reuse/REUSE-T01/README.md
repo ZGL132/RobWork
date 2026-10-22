@@ -74,3 +74,8 @@ B9返工独立验收PASS见 `../../acceptance/REUSE-T01-batch9-r2-20261023/`（�
 第十一批补规划/优化/包络/功率统计33条功能关系（本批pending），见`planning-computation-audit.md`。新增4项公开API实跑passed，failed/skipped/notRun=0；原26项NOT RUN。新发现PathAnalyzer+Manhattan、Linf与TrapMethod候选，保留全局随机/浮点顺序/供给与真实接线边界，不改产品、不批准新核心，不构成T01退出。
 
 B10首轮语义验收FAIL（B10-P2-01）原档见`../../acceptance/REUSE-T01-batch10-r1-20261023/`：10单元宏条目多列13个未调用宏的目标。现按真实ird_add_gtest调用修正20宏消费者，functions与inventory一致，见`batch10-rework.json`，待独立复验；未改门禁或产品。新增GTest探测独立重建1 passed验收PASS见`../../acceptance/REUSE-T01-gtest-listener-20261023/`。单次git -c http.proxy= push已成功同步到e0bee299，未改持久代理；原代理失败记录保留。
+
+B10-P2-01返工独立复验PASS仅关闭宏消费者登记问题，归档`../../acceptance/REUSE-T01-batch10-r2-20261023/`。B11新增4项公开API独立重建实跑4 passed、failed/skipped/notRun=0，见`../../acceptance/REUSE-T01-planning-api-20261023/`；旧26项NOT RUN，非全T01验收。
+第十二批补JSON骨架/数值断言/Win32进程工具/关闭监督34条关系，见`test-tools-lifecycle-audit.md`；本批仅只读语义审计与文档门禁，无产品修改或C++实跑。
+
+B11语义独立验收PASS见`../../acceptance/REUSE-T01-batch11-20261023/`（冻结a3cb5648，仅33关系/候选及证据边界）；不是全T01退出。

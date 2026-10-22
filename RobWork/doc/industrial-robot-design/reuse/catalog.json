@@ -1379,7 +1379,7 @@
         "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
         "conclusion": "已查列明API；只证明候选存在，不代表生产适用或功能缺口成立"
       },
-      "boundary": "通用线程池/队列，不提供worker进程隔离、作业对象强杀、五元组握手；Queue无公开关闭/容量协议，是否可薄适配须核阻塞退出与有界预算",
+      "boundary": "通用线程池/队列，不提供worker进程隔离、作业对象强杀、五元组握手；Queue无公开关闭/容量协议，是否可薄适配须核阻塞退出与有界预算；ThreadTask为线程父子任务，非OS进程树或ProjectStore关闭观察；TimerUtil Windows用clock、其他平台gettimeofday，非注入steady_clock deadline，不能用sleep替代事件成功判据。",
       "upstream": [
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadPool.hpp",
@@ -1404,6 +1404,41 @@
           "target": "sdurw_common",
           "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
           "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadTask.hpp",
+          "sha256": "cbd8939910e61b796d90a976412706696e814141da661d2c94ffdf24a7bd75d5",
+          "symbols": [
+            "ThreadTask",
+            "addSubTask",
+            "getState"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/Timer.hpp",
+          "sha256": "12c3c0e9d0948515f3d5928ba9b1b44c0c6d60255b72fe4182ecc285556190cd",
+          "symbols": [
+            "Timer",
+            "getTimeMs",
+            "resetAndResume"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c",
+          "symbols": [
+            "currentTimeMs",
+            "sleepMs"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
         }
       ],
       "build": {
@@ -1423,6 +1458,22 @@
         },
         {
           "consumerUnit": "diagnostics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "testkit",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "workflow",
           "usageRole": "adapter",
           "permissionRef": "ARCH:3.6",
           "operations": [
