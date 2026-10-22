@@ -9614,6 +9614,15 @@
       "registeredAt": "2026-10-21",
       "title": "主线扩展复验41个exe均有XML/stdout，显式传--ird_report仍仅产36份报告：evidence/evidence_contract/policy/policy_contract/runtime缺原生ird报告；需补接报告入口或登记明确豁免，不能以伪造转换报告补齐三件套",
       "owner": "testkit及相关目标所有者；MA-09。T29纠正T27零报告假绿：删除runtime旧RT-T16环境与新main的重复监听，补扫core自有入口；原五目标及core共六目标双模式非零JSON/XML逐例ID、投影状态及原生六类计数对账通过。runtime集成299通过加1显式跳过，独立195通过；core集成65通过、独立63通过。证据builds/wp13-t29-closure/verified-test-summary*.json、red-ma09和red-ma09-core；旧零报告不回填，任务分支验证不等于主线交付。"
+    },
+    {
+      "id": "F-954",
+      "source": "traceability/acceptance/WP-17-T11-20261022.md#S-1（acc/WP-17-T11/1）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-22",
+      "title": "WP-17-T11提交正文的四段（What/Why/How/影响面）使用字面\\n而非真实换行，git log中四段挤成一行——内容真实齐备（与验收复现逐项一致）但排版不可读、机器解析四段困难",
+      "owner": "提交规范所有者（AGENTS §6.3）。处置：不amend已推送历史；后续实施会话提交模板改用真实换行；随下一治理批消账。"
     }
   ]
 }

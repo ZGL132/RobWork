@@ -1,0 +1,21 @@
+Note: Google Test filter = DynWindow.SingleTimestampDrawsVisibleSample_DYN08
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DynWindow
+[ RUN      ] DynWindow.SingleTimestampDrawsVisibleSample_DYN08
+QPainterPath::arcTo: Adding arc where a parameter is NaN, results are undefined
+QPainterPath::arcTo: Adding arc where a parameter is NaN, results are undefined
+D:\10_Source_Repos\21_robot\RobWork\build\acc-wp17t11-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(256): error: Expected: (coloredPixels) > (0), actual: 0 vs 0
+绘图区必须有真实样本色像素，空轴不能当作曲线通过
+
+QPainterPath::arcTo: Adding arc where a parameter is NaN, results are undefined
+[  FAILED  ] DynWindow.SingleTimestampDrawsVisibleSample_DYN08 (647 ms)
+[----------] 1 test from DynWindow (647 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (647 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DynWindow.SingleTimestampDrawsVisibleSample_DYN08
+
+ 1 FAILED TEST

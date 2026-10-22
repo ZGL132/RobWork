@@ -1,0 +1,55 @@
+Note: Google Test filter = *Replay*
+[==========] Running 12 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from DynReplayData
+[ RUN      ] DynReplayData.GroupsRowsIntoFramesGolden
+[       OK ] DynReplayData.GroupsRowsIntoFramesGolden (0 ms)
+[ RUN      ] DynReplayData.MarksIncompleteFramesForMissingRows
+[       OK ] DynReplayData.MarksIncompleteFramesForMissingRows (0 ms)
+[ RUN      ] DynReplayData.EmptySeriesYieldsNoFrames
+[       OK ] DynReplayData.EmptySeriesYieldsNoFrames (0 ms)
+[----------] 3 tests from DynReplayData (0 ms total)
+
+[----------] 4 tests from DynReplaySampler
+[ RUN      ] DynReplaySampler.ExactHitCopiesFrame
+[       OK ] DynReplaySampler.ExactHitCopiesFrame (0 ms)
+[ RUN      ] DynReplaySampler.MidpointInterpolationGolden
+[       OK ] DynReplaySampler.MidpointInterpolationGolden (0 ms)
+[ RUN      ] DynReplaySampler.RejectsOutOfRangeAndNonFiniteTime
+[       OK ] DynReplaySampler.RejectsOutOfRangeAndNonFiniteTime (0 ms)
+[ RUN      ] DynReplaySampler.EmptyDataAndPartialFrameInterpolation
+[       OK ] DynReplaySampler.EmptyDataAndPartialFrameInterpolation (0 ms)
+[----------] 4 tests from DynReplaySampler (0 ms total)
+
+[----------] 1 test from DynDyn08Chain
+[ RUN      ] DynDyn08Chain.PeakLocateDrivesReplayPoseChain
+[       OK ] DynDyn08Chain.PeakLocateDrivesReplayPoseChain (0 ms)
+[----------] 1 test from DynDyn08Chain (0 ms total)
+
+[----------] 4 tests from DynPanelReplay
+[ RUN      ] DynPanelReplay.ReplaySampleAtMidpointAndBoundaryGolden_WP17T09_ACC1
+[       OK ] DynPanelReplay.ReplaySampleAtMidpointAndBoundaryGolden_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPanelReplay.ReplayQueryLeavesSessionUntouched_WP17T09_ACC2
+[       OK ] DynPanelReplay.ReplayQueryLeavesSessionUntouched_WP17T09_ACC2 (0 ms)
+[ RUN      ] DynPanelReplay.ReplayPoseApplyUsesValidSampleAndPreservesLastPose_WP17T09_ACC1
+[       OK ] DynPanelReplay.ReplayPoseApplyUsesValidSampleAndPreservesLastPose_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPanelReplay.InvalidCompleteFrameNeverWritesPose_DYN08
+D:\10_Source_Repos\21_robot\RobWork\build\acc-wp17t11-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\DynPluginPanelTest.cpp(764): error: Value of: applyReplayPose(services, *sample)
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\build\acc-wp17t11-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\DynPluginPanelTest.cpp(765): error: Expected equality of these values:
+  writes
+    Which is: 1
+  0
+
+[  FAILED  ] DynPanelReplay.InvalidCompleteFrameNeverWritesPose_DYN08 (0 ms)
+[----------] 4 tests from DynPanelReplay (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 4 test suites ran. (2 ms total)
+[  PASSED  ] 11 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DynPanelReplay.InvalidCompleteFrameNeverWritesPose_DYN08
+
+ 1 FAILED TEST
