@@ -9723,6 +9723,16 @@
       "title": "execution拒绝Completed终结后登记半写，合法取消随后被拒",
       "owner": "execution / REUSE-T05",
       "resolution": "原目标/原RunRegistryAdmission夹具27项26passed1failed，原25项全通过；新增拒Completed后terminationCause仍Completed且Canceled再抛，健康取消正例通过。T05在原写入口先校验允许原因再赋值并落原回归，不新写登记/状态机。当前不改产品，不授全T01/T02。"
+    },
+    {
+      "id": "F-965",
+      "source": "reuse/core-identity-events-audit.md / batch28",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "core身份FNV非空向量偏离约定，公开ObjectId散列继承偏差",
+      "owner": "core / REUSE-T05",
+      "resolution": "独立固定整数向量探测4项2通过2失败；原core64通过。addShifted/addMulSmall用已变更hi/lo计算后项，非一次乘FNV素数；公开ObjectId hash真实失败。六Id及ContentVersion/ConfigStamp静态同族，不声称内容SHA或持久化损坏。T01不修核心；后续先核成熟已有能力/消费者兼容性，无现成API则最小修正提案获批后实施。"
     }
   ]
 }

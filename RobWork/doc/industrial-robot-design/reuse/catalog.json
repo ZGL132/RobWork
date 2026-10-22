@@ -3014,6 +3014,76 @@
         "command": "见batch18-search.json实际检索",
         "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
       }
+    },
+    {
+      "id": "CORE-EVENT",
+      "search": {
+        "command": "batch28/search.json",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读Event.hpp/上游原EventTest；实际编译原两测试通过，基础适用性通过，非生产接线"
+      },
+      "boundary": "同步订阅表基础原语；不提供execution线程/队列/drain/快照及core语义，不能给core新增依赖权",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/core/Event.hpp",
+          "sha256": "6f66c8dd30b36c0a3bf9946a8b38d71389d8f06adabdbcdfb3f60ea82b54ece6",
+          "symbols": [
+            "void add (",
+            "void remove (",
+            "getListenerList",
+            "FireFunctor"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_core"
+        ],
+        "constraints": "只消费上游导出目标；探测不改core生产依赖"
+      },
+      "usages": [
+        {
+          "consumerUnit": "execution",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6.4",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "直接遍历可变列表，无锁/异步/RAII；回调内退订和生命周期需原总线契约实证",
+        "lifetime": "不拥有listener obj，借持指针须先退订再销毁",
+        "determinism": "订阅序遍历；跨线程无保证"
+      },
+      "ownerUnit": "execution",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/core/EventTest.cpp",
+          "sha256": "98440bef94017790fc2ad62d6fd8d9b1c7c21e89326083a0d1d9cef27555b73d",
+          "symbols": [
+            "EventTest, GlobalCallbackFunctions",
+            "EventTest, EventListener"
+          ],
+          "target": "sdurw_core-gtest"
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n EventTest RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "原上游源及构建已核对；本批用原probe编译原用例，不声称全上游target运行"
+      }
     }
   ]
 }

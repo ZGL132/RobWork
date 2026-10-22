@@ -1,0 +1,46 @@
+[
+  {
+    "command": "Launch-VsDevShell.ps1 -Arch amd64 -HostArch amd64 -SkipAutomaticLocation",
+    "exit": 0
+  },
+  {
+    "command": "cmake --build .cache/t01-probe-export --config Release --target ird_reuse_audit_probe",
+    "exit": 0,
+    "log": "b28-probe-build.log"
+  },
+  {
+    "command": "MSBuild.exe .cache/t01-probe-export/ird-core/sdurws_ird_core_test.vcxproj /p:Configuration=Release /p:Platform=x64 /v:minimal",
+    "exit": 0,
+    "log": "b28-core-build.log"
+  },
+  {
+    "command": "ABS_PROBE --gtest_filter=ReuseCoreAudit.*:EventTest.* --gtest_output=xml:ABS_OUT/gtest.xml --ird_report=ABS_OUT/ird-test-report.json",
+    "exit": 1,
+    "report": "final-probe/ird-test-report.json"
+  },
+  {
+    "command": "ABS_CORE_TEST --gtest_filter=* --gtest_output=xml:ABS_OUT/gtest.xml --ird_report=ABS_OUT/ird-test-report.json",
+    "exit": 0,
+    "report": "final-core/ird-test-report.json"
+  },
+  {
+    "command": "python batch28/fnv-oracle.py",
+    "exit": 0,
+    "output": "fnv-vectors.json"
+  },
+  {
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "exit": 0,
+    "log": "b28-task-r2.log"
+  },
+  {
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "exit": 0,
+    "log": "b28-reuse-r2.log"
+  },
+  {
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "exit": 0,
+    "log": "b28-docs-r2.log"
+  }
+]

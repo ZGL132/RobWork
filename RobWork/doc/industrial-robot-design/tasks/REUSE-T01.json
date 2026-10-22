@@ -3230,7 +3230,10 @@
     "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
     "RobWork/scripts/industrialrobot/context-pack-files.ps1",
     "RobWork/scripts/industrialrobot/index-evidence.ps1",
-    "RobWork/doc/industrial-robot-design/context/README.md"
+    "RobWork/doc/industrial-robot-design/context/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/**",
+    "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CoreIdentitySuitabilityTest.cpp"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
