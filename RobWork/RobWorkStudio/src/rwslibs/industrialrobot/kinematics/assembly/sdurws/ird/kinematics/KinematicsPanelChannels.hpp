@@ -43,6 +43,8 @@
 
 #include <cstdint>
 #include <functional>
+#include <sdurws/ird/ui/View3DPreviewContract.hpp> // 唯一三维呈现协议，世界系m。
+#include <sdurws/ird/kinematics/Render.hpp> // KIN-07域组装结果，零二次判定。
 #include <optional>
 #include <string>
 #include <vector>
@@ -54,7 +56,10 @@
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（★ KIN-P4 配置保存缝的值面）
 #include <sdurws/ird/kinematics/Commands.hpp>    // IKinematicsCommandHandler/KinSessionPose（设默认门面/会话姿态——KIN-P4 装配缝公共类型）
 #include <sdurws/ird/kinematics/Evaluators.hpp>  // IKinRuntimeView/IIkSolver/IFkEvaluator（缝的公共类型——门面直传）
+#include <sdurws/ird/kinematics/Ik.hpp>          // IkOutcome（★ G3 异步内联求解缝的作业/回调值面）
 #include <sdurws/ird/kinematics/SolutionSet.hpp>  // IkSolutionSet（KIN-P4 会话解集回写通道值——后台求解完成的结构化产物）
+
+class QObject;  // 前置声明（★ G3 异步缝的回投 context——Qt 对象；实现侧完整类型）
 
 namespace sdurws {
 namespace ird {
@@ -450,6 +455,24 @@ using KinChannelConfigPersistFn =
 using KinChannelHomePoseFn = std::function<std::optional<std::vector<double>>()>;
 
 /**
+ * @brief 面板内联求解异步执行缝（★ 审查 G3 增列——WP-15-T20 第三批；
+ *        插件零自建线程红线〔acceptance 2：后台执行唯一经缝〕的通道化
+ *        落位——异步能力由装配层线程设施承载）。
+ *
+ * 语义：job 在装配层工作线程执行（恰一次）；完成后经 context 对象队列
+ * 回投 onDone 于 UI 线程（QMetaObject::invokeMethod——context 析构＝回调
+ * 弃置，迟到结果不触碰已销毁面板）。job/onDone 均值捕获——实现方保证
+ * 零共享可变状态跨线程（IkOutcome 值转移）。
+ *
+ * 线程约束：提交（本 function 调用）仅 UI 线程；onDone 由实现方保证回
+ * UI 线程。空缝＝面板回退同步内联（诚实降级——runSinglePointSolve 原径）。
+ */
+using KinChannelInlineSolveAsyncFn = std::function<void(
+    std::function<IkOutcome()> job,
+    std::function<void(IkOutcome)> onDone,
+    const QObject* context)>;
+
+/**
  * @brief 覆盖评估执行通道装配值面（UI-T64——installAssemblyChannels
  *        的一次性注入聚合）。
  *
@@ -500,6 +523,26 @@ struct KinematicsAssemblyChannels {
     /// 具名 Home 姿态来源（L-K4 复位 Home 唯一目标来源——空＝复位
     /// Home 按钮禁用）。
     KinChannelHomePoseFn homePose;
+
+    // ---- ★ 审查 G3 增列（WP-15-T20 第三批）——内联求解异步执行缝 ----
+
+    /// 内联求解异步执行缝（插件零自建线程——异步能力由装配层线程设施
+    /// 承载；语义见 KinChannelInlineSolveAsyncFn 注。空＝面板回退同步
+    /// 内联——诚实降级）。
+    KinChannelInlineSolveAsyncFn inlineSolveAsync;
+    /// KIN-09后台采样：job[in]须自行捕获异常并写独占回执；onDone[in]
+    /// 仅UI线程调用。context[in]非拥有，销毁后弃置onDone；宿主保活任务。
+    /// 空缝仅支持同步诊断，不代表正式宿主已具备长任务能力。
+    std::function<void(std::function<void()>, std::function<void()>,
+                       const QObject*)> workspaceAsync;
+    /// UI线程原子投放预览与对象高亮，参数[in]世界系m/业务ObjectId；
+    /// false＝宿主呈现不可用，空缝＝诚实降级，不持有Frame指针。
+    std::function<bool(const ui::View3DPreviewUpdate&,
+                       const std::vector<core::ObjectId>&)> previewSink;
+    /// 只读已发布policy阈值投影，UI线程调用；空缝＝检查显式不适用。
+    std::function<WeakZoneThresholds()> weakThresholds;
+    /// UI线程读取同快照批量渲染产物；尚无结果/换绑时返回nullopt。
+    std::function<std::optional<BatchRenderData>()> batchRender;
 
     // KIN-P4 落位说明：后台 SessionSolve 的**结构化**结果回投不走本聚合
     // ——执行器（ui 侧）经自己的 Deps 槽投递（宿主构造闭包：锚核对后调

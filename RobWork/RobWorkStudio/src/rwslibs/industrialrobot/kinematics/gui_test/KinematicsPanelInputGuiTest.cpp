@@ -32,14 +32,24 @@
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯
 
+#include <QComboBox>
+#include <QCoreApplication>
+#include <QEventLoop>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMetaObject>
+#include <QPushButton>
+#include <QTimer>
 
+#include <atomic>
+#include <chrono>
 #include <cmath>
+#include <future>
 #include <memory>
 #include <optional>
 #include <string>
+#include <stdexcept>
+#include <thread>
 #include <vector>
 
 #include <rw/math/Constants.hpp>  // rw::math::Pi/Deg2Rad（期望角换算——库权威常量）
@@ -170,13 +180,16 @@ TEST(KinematicsPanelInput, TargetLabels_FollowDisplayUnitSystem_KIN_P1)
     {
         const QStringList texts = h.targetLabelTexts();
         // ★ KIN-R2 任务4：位置三轴＋姿态 RPY 三行——六标签齐全。
+        // ★ 审查 G7 消歧（WP-15-T20 第三批）：RPY 标签带轴向（本面板 roll
+        // 驱动 Rz——rw::math::RPY 参数命名；与 requirements 面板"Roll 绕
+        // X"同名反轴，标签显式标注消除静默误抄）。
         ASSERT_EQ(texts.size(), 6);
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 X（m，基座系）")));
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 Y（m，基座系）")));
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 Z（m，基座系）")));
-        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Roll（rad，基座系）")));
-        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Pitch（rad，基座系）")));
-        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Yaw（rad，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Roll＝绕Z（rad，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Pitch＝绕Y（rad，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Yaw＝绕X（rad，基座系）")));
     }
 
     // L-K8 切换 mm/deg：标签随制式重建（零重算/零修订——呈现半区）。
@@ -190,9 +203,9 @@ TEST(KinematicsPanelInput, TargetLabels_FollowDisplayUnitSystem_KIN_P1)
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 Y（mm，基座系）")));
         EXPECT_TRUE(texts.contains(QStringLiteral("目标 Z（mm，基座系）")));
         // 角度量纲随制式独立标注（deg——长度 mm、角度 deg 分立，KIN-R2）。
-        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Roll（deg，基座系）")));
-        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Pitch（deg，基座系）")));
-        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Yaw（deg，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Roll＝绕Z（deg，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Pitch＝绕Y（deg，基座系）")));
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 RPY-Yaw＝绕X（deg，基座系）")));
         // 不得残留旧制式硬编码形态 "（m）"（精确全串比对已保证制式正确；
         // 此处对修复前的旧文本再补一钉——防回归回退到"标签恒 m"）。
         for (const QString& text : texts) {
@@ -549,4 +562,391 @@ TEST(KinematicsPanelInput, TargetSubmit_RejectsNonFiniteAttitude_KIN_R2)
     EXPECT_FALSE(h.solver.received.has_value());
     EXPECT_NE(h.panel->lastStatusText().toStdString().find("姿态"),
               std::string::npos);
+}
+
+// =====================================================================
+// 审查 20261021 修复批回归（WP-15-T20 第三批）
+// =====================================================================
+
+namespace {
+
+/// G3 专用：延迟求解器（耗时形态用例——零求解值语义；IIkSolver 纯函数
+/// 线程安全契约下 worker 线程调用安全）。
+class SleepingSolver final : public IIkSolver {
+public:
+    std::chrono::milliseconds delay{1200};
+    mutable std::atomic<int> calls{0};
+    IkOutcome solve(const IkRequest&) const override
+    {
+        ++calls;
+        std::this_thread::sleep_for(delay);
+        return IkOutcome{};
+    }
+};
+
+/// G3 夹具（两段式装配——缝先注、面板后建；异步执行缝测试侧实现＝
+/// 与产品装配层同构的 std::async＋invokeMethod 回投——线程设施在缝的
+/// 提供方，不在插件；future 自持保活逃逸作用域）。
+struct NonBlockingHarness {
+    TestView view{sixAxisModel()};
+    SleepingSolver solver;
+    KinPanelServices services;
+    KinModuleSessionState state;
+    std::unique_ptr<KinematicsPanelWidget> panel;
+
+    NonBlockingHarness()
+    {
+        services.modelView = &view;
+        services.ikSolver = &solver;
+        services.inlineSolveAsync =
+            [](std::function<IkOutcome()> job,
+               std::function<void(IkOutcome)> onDone, const QObject* context) {
+                auto inflight = std::make_shared<std::future<void>>();
+                *inflight = std::async(
+                    std::launch::async,
+                    [job = std::move(job), onDone = std::move(onDone), context,
+                     inflight]() mutable {
+                        IkOutcome outcome = job();
+                        QMetaObject::invokeMethod(
+                            const_cast<QObject*>(context),
+                            [onDone = std::move(onDone),
+                             outcome = std::move(outcome)]() mutable {
+                                onDone(std::move(outcome));
+                            },
+                            Qt::QueuedConnection);
+                    });
+            };
+        state.savedConfig.seed = 1;
+        state.savedConfig.regionBudget.seed = 1;
+        panel = std::make_unique<KinematicsPanelWidget>(services, state);
+    }
+};
+
+/// 迟到回调夹具：把 job/onDone 留在 UI 线程可控的槽中，精确模拟项目
+/// 换绑后旧求解完成的竞态；执行缝本身不创建线程，测试只验证会话身份
+/// 核对与状态收口。
+struct StaleResultHarness {
+    TestView view{sixAxisModel()};
+    WidgetRecordingSolver solver;
+    KinPanelServices services;
+    KinModuleSessionState state;
+    std::function<IkOutcome()> pendingJob;
+    std::function<void(IkOutcome)> pendingDone;
+    std::unique_ptr<KinematicsPanelWidget> panel;
+
+    StaleResultHarness()
+    {
+        services.modelView = &view;
+        services.ikSolver = &solver;
+        services.inlineSolveAsync =
+            [this](std::function<IkOutcome()> job,
+                   std::function<void(IkOutcome)> onDone,
+                   const QObject*) {
+                pendingJob = std::move(job);
+                pendingDone = std::move(onDone);
+            };
+        state.savedConfig.seed = 1;
+        state.savedConfig.regionBudget.seed = 1;
+        panel = std::make_unique<KinematicsPanelWidget>(services, state);
+    }
+};
+
+/// 异常回执夹具：job 抛出调用方异常，缝实现负责转换为设施失败值并回投。
+struct ExceptionResultHarness {
+    TestView view{sixAxisModel()};
+    KinPanelServices services;
+    KinModuleSessionState state;
+    std::unique_ptr<KinematicsPanelWidget> panel;
+
+    ExceptionResultHarness()
+    {
+        services.modelView = &view;
+        services.ikSolver = nullptr;  // 由 job 直接抛出，验证回执收口
+        services.inlineSolveAsync = [](std::function<IkOutcome()> job,
+                                       std::function<void(IkOutcome)> onDone,
+                                       const QObject* context) {
+            IkOutcome outcome;
+            try {
+                outcome = job();
+            } catch (const std::exception& ex) {
+                outcome.facilityFailure = IkFacilityFailure{
+                    IkFacilityFailureStage::InitialFkEvaluation, ex.what()};
+            }
+            QMetaObject::invokeMethod(
+                const_cast<QObject*>(context),
+                [onDone = std::move(onDone),
+                 outcome = std::move(outcome)]() mutable {
+                    onDone(std::move(outcome));
+                },
+                Qt::QueuedConnection);
+        };
+        state.savedConfig.seed = 1;
+        state.savedConfig.regionBudget.seed = 1;
+        // 用可抛异常的求解器替身覆盖异步 job 的调用面。
+        class ThrowingSolver final : public IIkSolver {
+        public:
+            IkOutcome solve(const IkRequest&) const override
+            {
+                throw std::invalid_argument("test async failure");
+            }
+        };
+        static ThrowingSolver solver;
+        services.ikSolver = &solver;
+        panel = std::make_unique<KinematicsPanelWidget>(services, state);
+    }
+};
+
+}  // namespace
+
+/// ★ 审查 G3 回归（WP-15-T20 第三批）：异步缝在场＝求解非阻塞——点击
+/// 立即返回（＜求解全程的零头；修复前同步求解阻塞 UI 线程整个求解时长），
+/// UI 线程期间持续处理事件（计时器运转）；完成回调回 UI 线程后结果经
+/// 唯一写点入会话态（恰一次求解——零双份计算）、状态行与按钮门控复位。
+/// 缝缺席的降级路径行为由 PluginPanelTest 既有预算用例钉住
+/// （runSinglePointSolve 原径不变）。
+TEST(KinematicsPanelInput, SolveNonBlockingViaAssemblySeam_WP15T20_G3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-PERF-01"},
+                  std::vector<std::string>{});
+    NonBlockingHarness h;
+
+    QList<QLineEdit*> edits;
+    for (const char* n : {"target-x", "target-y", "target-z"}) {
+        edits << h.panel->findChild<QLineEdit*>(QString(n));
+    }
+    ASSERT_EQ(edits.size(), 3);
+    edits[0]->setText(QStringLiteral("0.1"));
+    edits[1]->setText(QStringLiteral("0"));
+    edits[2]->setText(QStringLiteral("0"));
+
+    // ---- 点击立即返回（求解在装配层工作线程——UI 线程零全程占用）。
+    int timerTicks = 0;
+    QTimer ticker;
+    ticker.setInterval(30);
+    QObject::connect(&ticker, &QTimer::timeout, [&] { ++timerTicks; });
+    ticker.start();
+    const auto t0 = std::chrono::steady_clock::now();
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                          Qt::DirectConnection));
+    const auto elapsedMs =
+        std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - t0)
+            .count();
+    EXPECT_LT(elapsedMs, 600);  // 求解全程 1200 ms——点击远早于其结束
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("求解中")))
+        << h.panel->lastStatusText().toStdString();
+    // 在途旗标禁用求解按钮（防重复提交——refreshAll 门控）。
+    QPushButton* solve = nullptr;
+    for (QPushButton* b : h.panel->findChildren<QPushButton*>()) {
+        if (b->text() == QStringLiteral("求解 IK")) {
+            solve = b;
+        }
+    }
+    ASSERT_NE(solve, nullptr);
+    EXPECT_FALSE(solve->isEnabled());
+
+    // ---- UI 线程持续处理事件（计时器运转——求解期间界面响应性）＋等待
+    // 完成回调（测试侧事件环驱动队列回投；超时 5 s＝延迟求解有界）。
+    QEventLoop wait;
+    QTimer timeout;
+    timeout.setSingleShot(true);
+    QObject::connect(&timeout, &QTimer::timeout, [&] { wait.quit(); });
+    // 轮询会话解集（完成回调的唯一可观测落点——现取零缓存）。
+    QTimer poll;
+    poll.setInterval(20);
+    QObject::connect(&poll, &QTimer::timeout, [&] {
+        if (h.state.lastSessionSolutionSet != nullptr) {
+            wait.quit();
+        }
+    });
+    poll.start();
+    timeout.start(5000);
+    wait.exec();
+    poll.stop();
+    timeout.stop();
+    ticker.stop();
+
+    EXPECT_GT(timerTicks, 0);             // 求解期间事件被处理（响应性）
+    EXPECT_EQ(h.solver.calls.load(), 1);  // 恰一次求解（零双份计算）
+    ASSERT_TRUE(h.state.lastSessionSolutionSet != nullptr);  // 结果已入会话态
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("内联完成")))
+        << h.panel->lastStatusText().toStdString();
+    EXPECT_TRUE(solve->isEnabled());  // 在途旗标已清位（按钮门控复位）
+}
+
+/// ★ 审核 P1 回归：会话换绑后旧求解完成不得写入新会话，且按钮必须
+/// 恢复可用；修复前回调直接 finishSinglePointSolve(m_session, ...) 会把
+/// 旧结果写入新纪元。
+TEST(KinematicsPanelInput, LateSolveResultIsDroppedAfterSessionEpochChanges_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    StaleResultHarness h;
+    const QList<QLineEdit*> edits = h.panel->findChildren<QLineEdit*>();
+    ASSERT_FALSE(edits.isEmpty());
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"))
+        ->setText(QStringLiteral("0.1"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-y"))
+        ->setText(QStringLiteral("0"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-z"))
+        ->setText(QStringLiteral("0"));
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                          Qt::DirectConnection));
+    ASSERT_TRUE(static_cast<bool>(h.pendingJob));
+    ASSERT_TRUE(static_cast<bool>(h.pendingDone));
+
+    ++h.state.epoch;  // 模拟项目切换/快照重发布；旧回调随后才迟到。
+    h.pendingDone(h.pendingJob());
+
+    EXPECT_EQ(h.state.lastSessionSolutionSet, nullptr);
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("过期")))
+        << h.panel->lastStatusText().toStdString();
+    QLabel* solveStatus =
+        h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+    ASSERT_NE(solveStatus, nullptr);
+    EXPECT_TRUE(solveStatus->text().contains(QStringLiteral("结果已过期")))
+        << solveStatus->text().toStdString();
+    QPushButton* solve = nullptr;
+    for (QPushButton* button : h.panel->findChildren<QPushButton*>()) {
+        if (button->text() == QStringLiteral("求解 IK")) {
+            solve = button;
+        }
+    }
+    ASSERT_NE(solve, nullptr);
+    EXPECT_TRUE(solve->isEnabled());
+}
+
+/// 目标位姿也是异步请求身份的一部分：求解期间改目标后，旧回执不得写入
+/// 当前会话，也不得把旧目标结果呈现为当前目标结果。
+TEST(KinematicsPanelInput, LateSolveResultIsDroppedAfterTargetChanges_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    StaleResultHarness h;
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"))
+        ->setText(QStringLiteral("0.1"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-y"))
+        ->setText(QStringLiteral("0"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-z"))
+        ->setText(QStringLiteral("0"));
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                          Qt::DirectConnection));
+    ASSERT_TRUE(static_cast<bool>(h.pendingJob));
+    ASSERT_TRUE(static_cast<bool>(h.pendingDone));
+
+    // 求解仍在途时改变目标位姿；旧回执必须按目标身份失配处理。
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"))
+        ->setText(QStringLiteral("0.2"));
+    h.pendingDone(h.pendingJob());
+
+    EXPECT_EQ(h.state.lastSessionSolutionSet, nullptr);
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("过期")))
+        << h.panel->lastStatusText().toStdString();
+    QLabel* solveStatus =
+        h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+    ASSERT_NE(solveStatus, nullptr);
+    EXPECT_TRUE(solveStatus->text().contains(QStringLiteral("结果已过期")))
+        << solveStatus->text().toStdString();
+}
+
+/// KIN-02：重试取消或设施失败均不产生新结局，必须保留原结果及过期提示。
+TEST(KinematicsPanelInput, AsyncNonTerminalPreservesExpiredResult_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    for (bool cancel : {true, false}) {
+        StaleResultHarness h;
+        auto* x = h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"));
+        x->setText("0.1");
+        h.panel->findChild<QLineEdit*>(QStringLiteral("target-y"))->setText("0");
+        h.panel->findChild<QLineEdit*>(QStringLiteral("target-z"))->setText("0");
+        ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                              Qt::DirectConnection));
+        h.pendingDone(h.pendingJob());
+        const auto original = h.state.lastSessionSolutionSet;
+        ASSERT_NE(original, nullptr);
+        auto* status = h.panel->findChild<QLabel*>(QStringLiteral("kin-solve-status"));
+        ASSERT_NE(status, nullptr);
+        x->setText("0.2");
+        ASSERT_TRUE(status->text().contains(QStringLiteral("过期")));
+        ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                              Qt::DirectConnection));
+        IkOutcome outcome;
+        if (cancel) {
+            outcome.cancelled = true;
+        } else {
+            outcome.facilityFailure = IkFacilityFailure{
+                IkFacilityFailureStage::InitialFkEvaluation, "注入设施失败"};
+        }
+        h.pendingDone(std::move(outcome));
+        EXPECT_EQ(h.state.lastSessionSolutionSet, original);
+        EXPECT_TRUE(status->text().contains(QStringLiteral("过期")))
+            << (cancel ? "取消后" : "失败后") << status->text().toStdString();
+    }
+}
+
+/// KIN-02：异常转换为失败回执后必须恢复操作，不应永久停留在途状态。
+TEST(KinematicsPanelInput, AsyncSolverExceptionRestoresSolveAction_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-REL-03"},
+                  std::vector<std::string>{});
+    ExceptionResultHarness h;
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-x"))
+        ->setText(QStringLiteral("0.1"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-y"))
+        ->setText(QStringLiteral("0"));
+    h.panel->findChild<QLineEdit*>(QStringLiteral("target-z"))
+        ->setText(QStringLiteral("0"));
+    ASSERT_TRUE(QMetaObject::invokeMethod(h.panel.get(), "onSolveClicked",
+                                          Qt::DirectConnection));
+    QCoreApplication::processEvents();
+    EXPECT_TRUE(h.panel->lastStatusText().contains(QStringLiteral("设施失败")))
+        << h.panel->lastStatusText().toStdString();
+}
+
+/// ★ 审查 G5 回归（WP-15-T20 第三批）：显示单位切换生产入口（长度/角度
+/// 两下拉）——切换经 setDisplayUnits 唯一入口全面板重投影（L-K8 对用户
+/// 可达；修复前 setDisplayUnits 零生产调用点，交互不可达）。m＋rad 组合
+/// ＝SI 直显制式（nullopt）。
+TEST(KinematicsPanelInput, DisplayUnitCombosDriveProjection_WP15T20_G5)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-12"},
+                  std::vector<std::string>{"AT-27"});
+    PanelHarness h;
+
+    // 组合框定位（按条目词表——长度框含 "mm"、角度框含 "deg"）。
+    QComboBox* lengthBox = nullptr;
+    QComboBox* angleBox = nullptr;
+    const QList<QComboBox*> boxes = h.panel->findChildren<QComboBox*>();
+    for (QComboBox* box : boxes) {
+        if (box->findText(QStringLiteral("mm")) >= 0) {
+            lengthBox = box;
+        }
+        if (box->findText(QStringLiteral("deg")) >= 0) {
+            angleBox = box;
+        }
+    }
+    ASSERT_NE(lengthBox, nullptr);
+    ASSERT_NE(angleBox, nullptr);
+
+    // 切 mm/deg：标签随制式重建（经 setCurrentIndex→onDisplayUnitChanged
+    // →setDisplayUnits 生产链——非测试直调 setDisplayUnits）。
+    lengthBox->setCurrentIndex(2);  // mm
+    angleBox->setCurrentIndex(1);   // deg
+    {
+        const QStringList texts = h.targetLabelTexts();
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 X（mm，基座系）")));
+        EXPECT_TRUE(texts.contains(
+            QStringLiteral("目标 RPY-Roll＝绕Z（deg，基座系）")));
+    }
+
+    // 切回 m/rad＝SI 直显（nullopt 轨）。
+    lengthBox->setCurrentIndex(0);
+    angleBox->setCurrentIndex(0);
+    {
+        const QStringList texts = h.targetLabelTexts();
+        EXPECT_TRUE(texts.contains(QStringLiteral("目标 X（m，基座系）")));
+        EXPECT_TRUE(texts.contains(
+            QStringLiteral("目标 RPY-Roll＝绕Z（rad，基座系）")));
+    }
 }

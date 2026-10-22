@@ -35,6 +35,8 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+
+#include "SeedMix.hpp"  // 共享种子派生（G12 收拢——唯一算法权威点）
 #include <stdexcept>
 #include <unordered_map>
 #include <utility>
@@ -115,37 +117,16 @@ rw::math::Rotation3D<double> orientSampleRotation(const rw::math::Rotation3D<dou
 // 的两个消费点；算法公开定版、跨平台位级一致）
 // =====================================================================
 
-/// splitmix64（确定性伪随机序列源——无时钟/环境熵）。
-std::uint64_t splitmix64(std::uint64_t& state)
-{
-    state += 0x9E3779B97F4A7C15ull;
-    std::uint64_t z = state;
-    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ull;
-    z = (z ^ (z >> 27)) * 0x94D049BB133111EBull;
-    return z ^ (z >> 31);
-}
+// ★ 审查 G12 收拢（WP-15-T20 第三批）：算法与派生规则注释的唯一权威点
+// ＝src/SeedMix.hpp（此前四 TU 自持副本存在换代漂移风险）。此处 using
+// 引入——本 TU 调用点零改动。
+using kseed::splitmix64;
+using kseed::streamSeedFor;
 
 /// u64 → [0,1) 均匀归一化（53 位有效——双精度无偏下界；与 Ik.cpp 同式）。
 double unitFromU64(std::uint64_t v)
 {
     return static_cast<double>(v >> 11) * (1.0 / 9007199254740992.0);  // 2^53
-}
-
-/// (seed, 序号) 二元组的完整 64 位流种子派生（KIN-P5/审查 A06 修复——
-/// 与 Ik.cpp streamSeedFor 同算法同形态的自持副本：三步 splitmix64
-/// avalanche，任意 1 位输入差异扩散到输出约半数字位）。旧式
-/// "seed·2³²＋k" 在 uint64 模 2⁶⁴ 算术下把 seed 高 32 位与样本序写进
-/// 同一加法域——seed=1 与 seed=2³²＋1 的第 k 个样本状态相同，整个
-/// 位置序列对 seed 高 32 位不敏感（审查 A06 反例）。派生规则与注释
-/// 见 Ik.cpp 同名函数（唯一算法说明点，此处不重复展开）。
-std::uint64_t streamSeedFor(std::uint64_t seed, std::uint64_t index)
-{
-    std::uint64_t s = seed;
-    const std::uint64_t a = splitmix64(s);
-    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;
-    const std::uint64_t b = splitmix64(t);
-    std::uint64_t u = a ^ b;
-    return splitmix64(u);
 }
 
 /// 黄金角 φ₀＝π(3−√5)（rad——斐波那契螺旋的球面均匀分离角；常量字面
@@ -282,9 +263,19 @@ generateGridPositions(const RegionBox& box, const std::array<std::uint32_t, 3>& 
     validateBoxOrientation(box.orientationInBase);
     std::vector<rw::math::Vector3D<double>> out;
     // 零样本判定前置：任一轴计数 0 → 乘积 0（I-REQ-6 零样本场景——空集
-    // 合法，评估面判 DataInsufficient；此处不拒）。
-    const std::uint64_t product = static_cast<std::uint64_t>(counts[0])
-        * static_cast<std::uint64_t>(counts[1]) * static_cast<std::uint64_t>(counts[2]);
+    // 合法，评估面判 DataInsufficient；此处不拒）。★ 审查 G19 防御：乘前
+    // 回卷检查（病态大计数三轴乘积模 2⁶⁴ 回卷为小值→reserve/枚举失真
+    // ——拒绝而非静默；与 plannedPositionSampleCount 防御同源）。
+    constexpr std::uint64_t kU64Max = std::numeric_limits<std::uint64_t>::max();
+    std::uint64_t product = 1U;
+    for (const std::uint32_t c : counts) {
+        if (c != 0U && product > kU64Max / c) {
+            throw std::invalid_argument(
+                "generateGridPositions: 区域网格计数乘积超出 u64（回卷防护"
+                "——计划计数损坏）");
+        }
+        product *= c;
+    }
     if (product == 0) {
         return out;
     }
@@ -429,10 +420,23 @@ rw::math::Transform3D<double> poseFromDirectionRoll(
 std::uint64_t plannedPositionSampleCount(const SamplingPlan& plan)
 {
     // Grid→逐轴乘积（含 0 因子→0——零样本）；Random→count。
+    // ★ 审查 G19 防御（WP-15-T20 第三批）：乘前回卷检查——病态大计数
+    // （每轴≈2³²）的三轴乘积在模 2⁶⁴ 下回卷为小值，分母/reserve 失真
+    // 且守恒自检无法拦截。Requirements 规范化面对计划计数已有界，本检
+    // 查是域面防御深度：回卷形态的计数即计划数据损坏，fail-fast。
     if (plan.position.method == PositionSamplingDefinition::Method::Grid) {
-        return static_cast<std::uint64_t>(plan.position.gridCounts[0])
-            * static_cast<std::uint64_t>(plan.position.gridCounts[1])
-            * static_cast<std::uint64_t>(plan.position.gridCounts[2]);
+        constexpr std::uint64_t kU64Max =
+            std::numeric_limits<std::uint64_t>::max();
+        std::uint64_t product = 1U;
+        for (const std::uint32_t c : plan.position.gridCounts) {
+            if (c != 0U && product > kU64Max / c) {
+                throw std::invalid_argument(
+                    "plannedPositionSampleCount: 区域网格计数乘积超出 u64"
+                    "（回卷防护——计划计数损坏，拒绝而非静默失真分母）");
+            }
+            product *= c;
+        }
+        return product;
     }
     return static_cast<std::uint64_t>(plan.position.randomCount);
 }
@@ -441,9 +445,23 @@ std::uint64_t plannedPoseSampleCount(const SamplingPlan& plan)
 {
     // (位置×姿态) 组合计数＝位置样本数×方向数×roll 数（全局口径分母——
     // 方向/roll 计数 ≥1 由装配校验保证，故位姿分母为 0 ⇔ 位置分母为 0）。
-    return plannedPositionSampleCount(plan)
-        * static_cast<std::uint64_t>(plan.orientation.directionSamples)
-        * static_cast<std::uint64_t>(plan.orientation.rollSamples);
+    // 回卷防护同 plannedPositionSampleCount（G19——方向/roll 为 u32 装配
+    // 校验有界值，乘前检查为防御深度）。
+    constexpr std::uint64_t kU64Max =
+        std::numeric_limits<std::uint64_t>::max();
+    const std::uint64_t positionCount = plannedPositionSampleCount(plan);
+    const std::uint64_t dirCount = plan.orientation.directionSamples;
+    const std::uint64_t rollCount = plan.orientation.rollSamples;
+    if (dirCount != 0U && positionCount > kU64Max / dirCount) {
+        throw std::invalid_argument(
+            "plannedPoseSampleCount: 位置×方向乘积超出 u64（回卷防护）");
+    }
+    const std::uint64_t posePosition = positionCount * dirCount;
+    if (rollCount != 0U && posePosition > kU64Max / rollCount) {
+        throw std::invalid_argument(
+            "plannedPoseSampleCount: 位置×方向×roll 乘积超出 u64（回卷防护）");
+    }
+    return posePosition * rollCount;
 }
 
 SampleSet generateSampleSet(const std::vector<SamplingPlan>& plans,

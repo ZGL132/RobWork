@@ -40,6 +40,8 @@
 #include <string>
 #include <utility>
 
+#include "SeedMix.hpp"  // 共享种子派生（G12 收拢——唯一算法权威点）
+
 namespace sdurws::ird::kinematics {
 
 namespace {
@@ -467,44 +469,11 @@ std::vector<JointInterval> evaluationIntervals(const IKinRuntimeView& view)
 
 namespace {
 
-/// splitmix64（确定性伪随机序列源——§3.4"随机性唯一来源＝seed 派生的
-/// 确定性序列"；无时钟/环境熵；算法公开定版、跨平台位级一致）。
-std::uint64_t splitmix64(std::uint64_t& state)
-{
-    state += 0x9E3779B97F4A7C15ull;
-    std::uint64_t z = state;
-    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ull;
-    z = (z ^ (z >> 27)) * 0x94D049BB133111EBull;
-    return z ^ (z >> 31);
-}
-
-/// (seed, 序号) 二元组的完整 64 位流种子派生（KIN-P5/审查 A06 修复——
-/// 唯一混合点：SeededRandom 初值流的每初值状态由此产出）。
-///
-/// 为什么不用旧式 "seed·2³²＋k"：uint64 乘法按模 2⁶⁴ 回卷，seed 的
-/// 高 32 位与 k 写进同一加法域——seed=1 与 seed=2³²＋1 的第 k 项状态
-/// 完全相同（1·2³²＋k ≡ (2³²＋1)·2³²＋k mod 2⁶⁴），整个初值序列对
-/// seed 高 32 位不敏感（审查 A06 反例：不同 64 位种子生成相同序列，
-/// 多样性来源被静默丢弃）。
-///
-/// 派生规则（确定性——同 (seed, index) 同输出；跨平台位级一致）：
-///   a ＝ splitmix64(seed)——seed 全 64 位 avalanche（高位翻转雪崩到
-///       全字宽，任何 1 位 seed 差异扩散为约半数位差异）；
-///   b ＝ splitmix64(index ⊕ 黄金常量)——序号独立 avalanche（⊕常量
-///       把 index=0 拉离 a 的恒等点，防 a⊕0=a 的平凡回归）；
-///   输出 ＝ splitmix64(a ⊕ b)——再 avalanche 消除异或的线性结构。
-/// 三步后 (seed, index) 任一输入位的改变都以约 1/2 概率翻转输出的任
-/// 一位——两个不同 64 位 seed 生成不同序列（除非发生 SHA 级碰撞，对
-/// splitmix64 双射 avalanche 实际不可构造）。
-std::uint64_t streamSeedFor(std::uint64_t seed, std::uint64_t index)
-{
-    std::uint64_t s = seed;
-    const std::uint64_t a = splitmix64(s);
-    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;
-    const std::uint64_t b = splitmix64(t);
-    std::uint64_t u = a ^ b;
-    return splitmix64(u);
-}
+// ★ 审查 G12 收拢（WP-15-T20 第三批）：splitmix64/streamSeedFor 算法与
+// 派生规则注释的唯一权威点＝src/SeedMix.hpp（此前四 TU 自持副本存在换
+// 代漂移风险）。此处 using 引入匿名命名空间——本 TU 调用点零改动。
+using kseed::splitmix64;
+using kseed::streamSeedFor;
 
 /// u64 → [0,1) 均匀归一化（53 位有效——双精度无偏下界）。
 double unitFromU64(std::uint64_t v)

@@ -14,17 +14,22 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include <QPainter>
+#include <QMouseEvent>
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QVBoxLayout>
 
 #include <cmath>
 #include <limits>
+#include <sdurws/ird/runtime/BaseWorldTransform.hpp> // 世界变换唯一权威，兼容独立模式。
 #include <memory>
+#include <optional>
+#include <stdexcept>
 #include <utility>
 #include <vector>
 
 #include <sdurws/ird/core/Units.hpp>               // UnitToken::find（字段量纲锚）
+#include <sdurws/ird/runtime/CanonicalModel.hpp>  // FrozenRuntimeView 的值快照
 #include <sdurws/ird/ui/FormEditCommon.hpp>        // 表单公共件（UI-T08 对端——参数表面板）
 #include <sdurws/ird/ui/UiText.hpp>                // 文案键解析（UI-T25——迁移标记标签挂键；
                                                    // 构造期命令标题 resolver 尚未注入，此处直读
@@ -56,6 +61,64 @@ void fillSingleColumn(QTableWidget* table, const QStringList& texts)
     for (int i = 0; i < texts.size(); ++i) {
         table->setItem(i, 0, new QTableWidgetItem(texts[i]));
     }
+}
+
+/**
+ * @brief 提交期冻结的运动学只读视图。
+ *
+ * 后台求解不能持有会被会话换绑的 KinSessionModelView 地址；这里在 UI
+ * 线程提交瞬间复制模型值与 T_world_base，形成构造后不可变、可并发只读的
+ * 视图。复制的成本与一次请求载荷同阶，换绑只会替换下一次提交使用的值，
+ * 因而迟到任务不会读到新项目的模型。
+ */
+class FrozenRuntimeView final : public IKinRuntimeView {
+public:
+    explicit FrozenRuntimeView(const IKinRuntimeView& source)
+        : m_model(source.model()), m_worldToBase(source.worldToBase())
+    {
+    }
+
+    const runtime::CanonicalModel& model() const override { return m_model; }
+
+    rw::math::Transform3D<double> worldToBase() const override
+    {
+        return m_worldToBase;
+    }
+
+private:
+    runtime::CanonicalModel m_model;
+    rw::math::Transform3D<double> m_worldToBase;
+};
+
+/**
+ * @brief 比较两个基座系 SI 位姿是否代表同一目标。
+ *
+ * 编辑器在显示单位切换时会经历一次字符串重投影，浮点格式化可能带来
+ * 最后几位的舍入差异；这里比较位置（m）和旋转矩阵逐项（无量纲），以
+ * 1e-12 的绝对容差吸收该显示层误差，同时仍能识别用户实际改变的目标。
+ */
+bool equivalentTargetPose(const rw::math::Transform3D<double>& lhs,
+                          const rw::math::Transform3D<double>& rhs)
+{
+    constexpr double kTargetComparisonTolerance = 1e-12;
+    for (std::size_t i = 0; i < 3; ++i) {
+        if (!std::isfinite(lhs.P()[i]) || !std::isfinite(rhs.P()[i])
+            || std::fabs(lhs.P()[i] - rhs.P()[i])
+                   > kTargetComparisonTolerance) {
+            return false;
+        }
+    }
+    for (std::size_t row = 0; row < 3; ++row) {
+        for (std::size_t column = 0; column < 3; ++column) {
+            if (!std::isfinite(lhs.R()(row, column))
+                || !std::isfinite(rhs.R()(row, column))
+                || std::fabs(lhs.R()(row, column) - rhs.R()(row, column))
+                       > kTargetComparisonTolerance) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 }  // namespace
@@ -131,6 +194,40 @@ void KinematicsPanelWidget::showStatusText(const QString& text)
 {
     if (m_statusLine != nullptr) {
         m_statusLine->setText(text);
+        // 状态文字与颜色同步表达反馈等级：过期/失败需要用户重新处理，
+        // 求解中提示正在执行，普通完成态使用稳定的成功色；不改变原有
+        // 文案和测试定位，只把状态差异变成可扫读的视觉信号。
+        if (text.contains(tr("过期")) || text.contains(tr("失败"))) {
+            m_statusLine->setStyleSheet(QStringLiteral("color: #b42318;"));
+        } else if (text.contains(tr("求解中"))) {
+            m_statusLine->setStyleSheet(QStringLiteral("color: #9a6700;"));
+        } else {
+            m_statusLine->setStyleSheet(QStringLiteral("color: #1f6f43;"));
+        }
+    }
+}
+
+void KinematicsPanelWidget::onTargetEditorChanged()
+{
+    // 没有已写入会话的结果时，编辑目标只是草稿变化，不显示“过期”，
+    // 避免用户首次输入就看到与结果无关的警告；异步在途结果由完成回调
+    // 另行用提交快照核对。
+    if (m_session.lastSessionSolutionSet == nullptr) {
+        return;
+    }
+
+    bool expired = true;
+    if (m_lastSolvedTarget.has_value()) {
+        // 静默解析当前编辑值。输入不完整时保持过期态，但不在每次击键时
+        // 覆盖状态行，让用户能连续完成一个数值的输入。
+        const auto currentTarget = readTargetPoseFromEditors(QString());
+        expired = !currentTarget.has_value()
+                  || !equivalentTargetPose(*currentTarget,
+                                           *m_lastSolvedTarget);
+    }
+    if (m_solveResultExpired != expired) {
+        m_solveResultExpired = expired;
+        refreshAll();
     }
 }
 
@@ -188,19 +285,63 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     m_targetRoll->setObjectName(QStringLiteral("target-roll"));
     m_targetPitch->setObjectName(QStringLiteral("target-pitch"));
     m_targetYaw->setObjectName(QStringLiteral("target-yaw"));
+    // 用户编辑目标时立即重进结果状态；单位重投影和 TCP 回填会在写入时
+    // 屏蔽信号，避免同一 SI 目标被误判为过期（KIN-02/NFR-REL-03）。
+    for (QLineEdit* editor : {m_targetX, m_targetY, m_targetZ,
+                              m_targetRoll, m_targetPitch, m_targetYaw}) {
+        connect(editor, &QLineEdit::textChanged, this,
+                &KinematicsPanelWidget::onTargetEditorChanged);
+    }
     form->addRow(m_targetRollLabel, m_targetRoll);
     form->addRow(m_targetPitchLabel, m_targetPitch);
     form->addRow(m_targetYawLabel, m_targetYaw);
     // 首版标注（按当前会话制式——构造期 displayUnits 尚为缺省 SI 直显，
-    // setDisplayUnits 注入后经 refreshAll 重建）。
+    // setDisplayUnits 注入后经 refreshAll 重建；占位符也在该函数统一
+    // 重建——审查 O1 必填提示随行标签同源）。
     refreshTargetUnitPresentation();
+    // ---- 显示单位切换入口（审查 G5 修复——L-K8 对用户可达；WP-15-T20
+    // 第三批）：长度/角度两制式下拉（KIN-12 R1 冻结子集 m/cm/mm＋rad/
+    // deg）；切换经 setDisplayUnits 唯一入口全面板重投影（零修订/零重算
+    // /结果不动——V-17）。构造期按会话缺省（SI 直显）选中。
+    auto* unitRow = new QHBoxLayout();
+    m_lengthUnitBox = new QComboBox(pane);
+    m_lengthUnitBox->addItem(tr("m"));
+    m_lengthUnitBox->addItem(tr("cm"));
+    m_lengthUnitBox->addItem(tr("mm"));
+    m_angleUnitBox = new QComboBox(pane);
+    m_angleUnitBox->addItem(tr("rad"));
+    m_angleUnitBox->addItem(tr("deg"));
+    unitRow->addWidget(new QLabel(tr("长度单位"), pane));
+    unitRow->addWidget(m_lengthUnitBox);
+    unitRow->addWidget(new QLabel(tr("角度单位"), pane));
+    unitRow->addWidget(m_angleUnitBox);
+    unitRow->addStretch(1);
+    connect(m_lengthUnitBox, &QComboBox::currentIndexChanged, this,
+            &KinematicsPanelWidget::onDisplayUnitChanged);
+    connect(m_angleUnitBox, &QComboBox::currentIndexChanged, this,
+            &KinematicsPanelWidget::onDisplayUnitChanged);
     layout->addLayout(form);
+    layout->addLayout(unitRow);  // 单位切换行在目标表单之后（就近原则）
 
     m_solveButton = new QPushButton(tr("求解 IK"), pane);
     m_solveButton->setToolTip(tr("需要模型视图和逆运动学求解服务"));
     connect(m_solveButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onSolveClicked);
+    m_solveStatusLabel = new QLabel(tr("求解状态：未求解"), pane);
+    m_solveStatusLabel->setObjectName(QStringLiteral("kin-solve-status"));
+    m_solveStatusLabel->setWordWrap(true);
+    right->addWidget(m_solveStatusLabel);
     right->addWidget(m_solveButton);
+    // ---- TCP 位姿回填入口（审查 G4 修复——L-K5 产品闭环；WP-15-T20
+    // 第三批）：把会话姿态对应的当前 TCP 位姿回填进目标六字段（仅呈现
+    // 默认值——求解身份不含会话，D-KIN-4）。可用性＝FK 执行面＋会话姿态
+    // 缝在场（门控随 refreshAll 现取——与"复位 Home"两级门控同则）。
+    m_backfillTcpButton = new QPushButton(tr("以当前 TCP 为目标"), pane);
+    m_backfillTcpButton->setToolTip(
+        tr("需要模型视图、FK 评估器与会话姿态（把当前 TCP 位姿填入目标编辑器）"));
+    connect(m_backfillTcpButton, &QPushButton::clicked, this,
+            &KinematicsPanelWidget::onBackfillTcpClicked);
+    right->addWidget(m_backfillTcpButton);
 
     m_inspectorTable = makeTable({tr("检查器"), tr("值")}, pane);
     right->addWidget(m_inspectorTable);
@@ -328,7 +469,26 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
 
     auto* wsButtons = new QHBoxLayout();
     m_wsRunButton = new QPushButton(tr("运行采样"), pane);
-    m_wsRunButton->setToolTip(tr("探索式采样（KIN-09）——内联运行，样本量级为演示/诊断面"));
+    m_wsRunButton->setToolTip(tr("探索式采样：后台运行，可取消；取消后保留已计算样本"));
+    m_wsCancelButton = new QPushButton(tr("取消采样"), pane);
+    m_wsCancelButton->setObjectName(QStringLiteral("ws-cancel"));
+    m_wsCancelButton->setEnabled(false);
+    m_wsProgressBar = new QProgressBar(pane);
+    m_wsProgressBar->setObjectName(QStringLiteral("ws-progress"));
+    m_wsProgressBar->setRange(0, 100);
+    m_wsProgressBar->setValue(0);
+    m_wsProgressTimer = new QTimer(this);
+    m_wsProgressTimer->setInterval(100); // 10Hz呈现足够可读，不向UI排队逐样本事件。
+    connect(m_wsProgressTimer, &QTimer::timeout, this, [this] {
+        if (m_wsProgress) { m_wsProgressBar->setValue(m_wsProgress->percent.load()); }
+    });
+    connect(m_wsCancelButton, &QPushButton::clicked, this, [this] {
+        if (m_wsProgress) {
+            m_wsProgress->cancel.store(true);
+            m_wsCancelButton->setEnabled(false);
+            showStatusText(tr("正在取消采样，请等待当前计算检查点……"));
+        }
+    });
     m_wsExportCsvButton = new QPushButton(tr("导出点云 CSV"), pane);
     m_wsWritebackButton = new QPushButton(tr("回写样本构型到会话"), pane);
     connect(m_wsRunButton, &QPushButton::clicked, this,
@@ -338,10 +498,12 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
     connect(m_wsWritebackButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onWsWritebackClicked);
     wsButtons->addWidget(m_wsRunButton);
+    wsButtons->addWidget(m_wsCancelButton);
     wsButtons->addWidget(m_wsExportCsvButton);
     wsButtons->addWidget(m_wsSampleIndex);
     wsButtons->addWidget(m_wsWritebackButton);
     layout->addLayout(wsButtons);
+    layout->addWidget(m_wsProgressBar);
 
     // 采样摘要表（lastWorkspaceRun 现投——模式 token/状态计数/取消标记；
     // F-905 感知半区：模式 token 行即"点从哪来"的强制溯源标注）。
@@ -372,6 +534,12 @@ QWidget* KinematicsPanelWidget::buildResultsPane()
     layout->addLayout(projectionRow);
     m_wsCanvasLabel = new QLabel(pane);
     m_wsCanvasLabel->setObjectName(QStringLiteral("ws-projection-canvas"));
+    m_wsCanvasLabel->installEventFilter(this);
+    m_wsCanvasLabel->setToolTip(tr("单击选择样本，双击将有解样本的构型回写会话"));
+    connect(m_wsSampleIndex, &QLineEdit::textChanged, this, [this] {
+        refreshWsProjectionCanvas();
+        refreshVisualization();
+    });
     m_wsCanvasLabel->setMinimumSize(480, 360);
     m_wsCanvasLabel->setAlignment(Qt::AlignCenter);
     layout->addWidget(m_wsCanvasLabel);
@@ -458,8 +626,8 @@ void KinematicsPanelWidget::refreshAll()
     refreshPosePane();
     refreshResultsPane();
     refreshTaskArea();
-    // 覆盖页：结果经 results 投影刷新（事件驱动）——投影数据源由装配层
-    // 经 refreshCoverage 携带 CoverageResult 调用；此处仅按钮态。
+    // 覆盖页：结果行经装配门面 applyCoverageResult→showCoverageRows 投影
+    // （审查 G1 修复落位——锚核对＋聚合→行翻译在装配面，本处仅按钮态）。
     const bool writable = m_session.writable;
     const auto commandEnabled = [this](const std::string& id, bool local) {
         return local && (!m_commandAvailability || m_commandAvailability(id).enabled);
@@ -500,12 +668,25 @@ void KinematicsPanelWidget::refreshAll()
         && m_services.ikSolver != nullptr && m_services.modelView != nullptr);
     m_solveButton->setEnabled(commandEnabled("kinematics.solve-ik",
                                              m_services.ikSolver != nullptr
-                                             && m_services.modelView != nullptr));
+                                             && m_services.modelView != nullptr
+                                             && !m_solveInFlight));
+    if (m_solveStatusLabel != nullptr) {
+        if (m_solveInFlight) {
+            m_solveStatusLabel->setText(tr("求解状态：执行中，输入和会话切换结果不会自动合并"));
+        } else if (m_solveResultExpired) {
+            m_solveStatusLabel->setText(tr("求解状态：结果已过期，请重新求解"));
+        } else if (m_session.lastSessionSolutionSet != nullptr) {
+            m_solveStatusLabel->setText(tr("求解状态：已有当前会话结果"));
+        } else {
+            m_solveStatusLabel->setText(tr("求解状态：未求解"));
+        }
+    }
     // ---- 探索式采样组门控（★ KIN-R2 任务3）：运行＝模型视图在场（执行
     // 面；TCP 解析在流内显式拒绝）；导出＝写出缝＋会话已有采样产物；
     // 回写＝会话姿态写点＋产物在场。缺一即禁用（诚实降级，与其他缝同
     // 纪律）。
-    m_wsRunButton->setEnabled(m_services.modelView != nullptr);
+    m_wsRunButton->setEnabled(m_services.modelView != nullptr && !m_wsInFlight);
+    m_wsCancelButton->setEnabled(m_wsInFlight && m_wsProgress && !m_wsProgress->cancel.load());
     m_wsExportCsvButton->setEnabled(
         static_cast<bool>(m_services.exportWriter)
         && m_session.lastWorkspaceRun != nullptr);
@@ -521,6 +702,7 @@ void KinematicsPanelWidget::refreshAll()
     refreshWsParamVisibility();
     refreshWsSummary();
     refreshWsProjectionCanvas();
+    refreshVisualization();
 }
 
 void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProjection>& units)
@@ -577,6 +759,14 @@ void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProje
                           "请减小数值后重试。原单位与全部原值保留。"));
         return;
     }
+    // 重投影只是同一 SI 目标的显示层换算，不应触发“用户改目标”失效
+    // 逻辑；六个目标编辑器的信号在这段写入期间统一屏蔽。
+    const QSignalBlocker blockTargetX(m_targetX);
+    const QSignalBlocker blockTargetY(m_targetY);
+    const QSignalBlocker blockTargetZ(m_targetZ);
+    const QSignalBlocker blockTargetRoll(m_targetRoll);
+    const QSignalBlocker blockTargetPitch(m_targetPitch);
+    const QSignalBlocker blockTargetYaw(m_targetYaw);
     for (const auto& value : pending) { value.first->setText(value.second); }
     // 只改变显示文本与投影句柄，结果SI真值、配置、修订和缓存身份都不动。
     m_session.displayUnits = units;
@@ -607,32 +797,62 @@ void KinematicsPanelWidget::refreshTargetUnitPresentation()
     if (m_targetXLabel != nullptr) {
         m_targetXLabel->setText(tr("目标 X（%1，基座系）").arg(lengthSymbol));
         m_targetX->setPlaceholderText(
-            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+            tr("必填——基座系坐标，单位：%1").arg(lengthSymbol));
     }
     if (m_targetYLabel != nullptr) {
         m_targetYLabel->setText(tr("目标 Y（%1，基座系）").arg(lengthSymbol));
         m_targetY->setPlaceholderText(
-            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+            tr("必填——基座系坐标，单位：%1").arg(lengthSymbol));
     }
     if (m_targetZLabel != nullptr) {
         m_targetZLabel->setText(tr("目标 Z（%1，基座系）").arg(lengthSymbol));
         m_targetZ->setPlaceholderText(
-            tr("基座系坐标，单位：%1").arg(lengthSymbol));
+            tr("必填——基座系坐标，单位：%1").arg(lengthSymbol));
     }
+    // ★ 审查 G7 消歧（WP-15-T20 第三批）：RPY 轴义随标签显式标注——本
+    // 面板 RPY 随 rw::math::RPY 参数命名（roll 驱动 Rz、pitch 驱动 Ry、
+    // yaw 驱动 Rx）；requirements 面板"固定 Roll"按航空惯例绕 X。两侧
+    // 各自自洽但同名反轴——标签带轴后消除静默误抄风险（跨域词表统一归
+    // 所有者裁决，登记随卡 §14.6 第三批）。
     if (m_targetRollLabel != nullptr) {
-        m_targetRollLabel->setText(tr("目标 RPY-Roll（%1，基座系）").arg(angleSymbol));
+        m_targetRollLabel->setText(tr("目标 RPY-Roll＝绕Z（%1，基座系）").arg(angleSymbol));
         m_targetRoll->setPlaceholderText(
             tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
     }
     if (m_targetPitchLabel != nullptr) {
-        m_targetPitchLabel->setText(tr("目标 RPY-Pitch（%1，基座系）").arg(angleSymbol));
+        m_targetPitchLabel->setText(tr("目标 RPY-Pitch＝绕Y（%1，基座系）").arg(angleSymbol));
         m_targetPitch->setPlaceholderText(
             tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
     }
     if (m_targetYawLabel != nullptr) {
-        m_targetYawLabel->setText(tr("目标 RPY-Yaw（%1，基座系）").arg(angleSymbol));
+        m_targetYawLabel->setText(tr("目标 RPY-Yaw＝绕X（%1，基座系）").arg(angleSymbol));
         m_targetYaw->setPlaceholderText(
             tr("姿态角，单位：%1（空＝0）").arg(angleSymbol));
+    }
+    // ---- 单位切换下拉同步（G5 随附——会话制式为权威，组合框随刷新对
+    // 齐；QSignalBlocker 防 setCurrentIndex 触发 onDisplayUnitChanged 的
+    // 回环——呈现同步零切换语义）。
+    if (m_lengthUnitBox != nullptr && m_angleUnitBox != nullptr) {
+        const QSignalBlocker blockLength(m_lengthUnitBox);
+        const QSignalBlocker blockAngle(m_angleUnitBox);
+        const std::string lengthSymbol =
+            m_session.displayUnits.has_value()
+                ? std::string(m_session.displayUnits->lengthUnit().symbol())
+                : std::string("m");
+        const std::string angleSymbolStd =
+            m_session.displayUnits.has_value()
+                ? std::string(m_session.displayUnits->angleUnit().symbol())
+                : std::string("rad");
+        const int lengthIndex = m_lengthUnitBox->findText(
+            QString::fromStdString(lengthSymbol));
+        const int angleIndex = m_angleUnitBox->findText(
+            QString::fromStdString(angleSymbolStd));
+        if (lengthIndex >= 0) {
+            m_lengthUnitBox->setCurrentIndex(lengthIndex);
+        }
+        if (angleIndex >= 0) {
+            m_angleUnitBox->setCurrentIndex(angleIndex);
+        }
     }
 }
 
@@ -697,7 +917,22 @@ void KinematicsPanelWidget::refreshPosePane()
             + err.detail));
         return;
     }
-    renderRows(m_poseTable, poseMetricRows(metrics.get(), m_session.displayUnits));
+    // ---- 呈现兜底（审查 G11 修复——WP-15-T20 第三批）：模型违约态的
+    // NaN/非有限值会令 poseMetricRows→formatKinQuantityText 抛
+    // invalid_argument（合法 +∞ 已按 A03 三分类放行，此异常仅剩"模型
+    // 违约"形态）——就地转状态行，不让异常穿越 Qt 槽（与 A03"异常不
+    // 穿越槽"教训同则；正常装配下不可达，防御深度）。
+    try {
+        renderRows(m_poseTable,
+                   poseMetricRows(metrics.get(), m_session.displayUnits));
+    } catch (const std::exception& e) {
+        renderRows(m_poseTable, std::vector<KinNamedValueRow>{});
+        m_jointTable->setRowCount(0);
+        showStatusText(QString::fromStdString(
+            std::string("位姿指标呈现异常（模型违约——值面含非法数值）：")
+            + e.what()));
+        return;
+    }
     // 关节表（KIN-12 显示投影——显示制式下的关节向量；KIN-P3/审查 A05：
     // 逐轴按天然量纲投影——转动/连续轴 rad→角度、移动轴 m→长度，"数值
     // ＋单位"同显。逐轴类型从模型关节表提取（dofJointTypes——FK 成功
@@ -761,11 +996,11 @@ void KinematicsPanelWidget::setWritable(bool writable)
 
 void KinematicsPanelWidget::refreshTaskArea()
 {
-    // L-K12 任务状态投影（taskRowsProvider 现取——中断如实、零过滤；
-    // 数据源权威在 ui ITaskPresentationModel，Qt 层投影为行值）。
-    if (m_taskPointTable == nullptr) {
-        return;
-    }
+    // 任务点消费视图现取重投影（taskPointsProvider——只读行集＋结果列）。
+    // ★ 审查 G10 修正：本函数不消费 taskRowsProvider（任务九态/进度）——
+    // 任务状态呈现归 ui 任务 Dock（ITaskPresentationModel 投影），本面板
+    // 无进度列（呈现边界如实登记，注释此前声称"taskRowsProvider 现取"
+    // 与实现不符——已对齐）。
     // 任务点表（只读消费视图——provider 现取零缓存）。列 0 行锚额外携带
     // pointOid 规范文本（Qt::UserRole——WP-15-T18 focusTaskPoint 定位键；
     // 呈现文本仍为工程用语标签，锚对用户不可见）。
@@ -791,6 +1026,37 @@ void KinematicsPanelWidget::refreshTaskArea()
                                                   ? (*p.requiredCoverageDone ? tr("完成")
                                                                              : tr("未完成"))
                                                   : tr("—")));
+    }
+}
+
+void KinematicsPanelWidget::showCoverageRows(std::vector<KinCoverageRow> rows)
+{
+    // 覆盖结果行渲染（审查 G1 修复——WP-15-T20 第三批）：装配面已完成
+    // 锚核对与"聚合→行"翻译，本函数只搬运成表（widget 零计算逻辑纪律
+    // 不变）。空行集＝清表（对账失效/无结果的诚实空态——不保留陈旧行）。
+    // 三列：覆盖轴（位置/姿态双口径——KIN-04 R3/R8 分列）、计数比
+    // （"分子/分母"计数比直投——零第二口径）、标识（降级/零样本如实）。
+    if (m_coverageTable == nullptr) {
+        return;
+    }
+    m_coverageTable->setRowCount(static_cast<int>(rows.size()));
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+        const KinCoverageRow& r = rows[i];
+        const auto row = static_cast<int>(i);
+        m_coverageTable->setItem(row, 0, new QTableWidgetItem(
+                                             QString::fromStdString(r.label)));
+        m_coverageTable->setItem(row, 1, new QTableWidgetItem(
+                                             QString::fromStdString(r.ratioText)));
+        // 标识列组合词（零样本优先——比率不存在时降级词无意义）。
+        QString flags;
+        if (r.zeroSamples) {
+            flags = tr("零样本——比率不存在");
+        } else {
+            if (r.degraded) {
+                flags = tr("数据不足——已降级");
+            }
+        }
+        m_coverageTable->setItem(row, 2, new QTableWidgetItem(flags));
     }
 }
 
@@ -836,6 +1102,15 @@ void KinematicsPanelWidget::focusTaskPoint(const std::optional<core::ObjectId>& 
 std::optional<rw::math::Transform3D<double>>
 KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
 {
+    // errorPrefix 为空表示调用方只需要无副作用的合法性探测（目标编辑
+    // 变化时用于更新“结果已过期”状态）；正式提交路径传入可读前缀，才
+    // 把输入错误写入状态行。
+    const auto reportInvalid = [this, &errorPrefix](const QString& detail) {
+        if (!errorPrefix.isEmpty()) {
+            showStatusText(tr("%1位姿非法（%2）——原值保留")
+                               .arg(errorPrefix, detail));
+        }
+    };
     // ---- 位置分量（显示制式 → SI）：解析失败**或非有限**（"inf"/"nan"
     // 可被解析但不是合法坐标——NFR-COR-03 非有限不静默）＝调用方输入
     // 错误：就地反馈保留原值（UX-05），不向求解器传递非有限目标（域
@@ -848,8 +1123,7 @@ KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
     double z = m_targetZ->text().toDouble(&okZ);
     if (!okX || !okY || !okZ || !std::isfinite(x) || !std::isfinite(y)
         || !std::isfinite(z)) {
-        showStatusText(tr("%1位姿非法（位置分量解析失败或非有限）——原值保留")
-                           .arg(errorPrefix));
+        reportInvalid(tr("位置分量解析失败或非有限"));
         return std::nullopt;
     }
     x = resolveKinDisplayToSi(x, m_session.displayUnits);
@@ -875,8 +1149,7 @@ KinematicsPanelWidget::readTargetPoseFromEditors(const QString& errorPrefix)
     double yaw = parseAngle(m_targetYaw, &okYw);
     if (!okR || !okP || !okYw || !std::isfinite(roll) || !std::isfinite(pitch)
         || !std::isfinite(yaw)) {
-        showStatusText(tr("%1位姿非法（姿态分量解析失败或非有限）——原值保留")
-                           .arg(errorPrefix));
+        reportInvalid(tr("姿态分量解析失败或非有限"));
         return std::nullopt;
     }
     roll = resolveKinAngleDisplayToSi(roll, m_session.displayUnits);    // rad
@@ -916,13 +1189,126 @@ void KinematicsPanelWidget::onSolveClicked()
         showStatusText(QString::fromStdString(assembly.statusText));
         return;
     }
+    // ---- 求解执行形态分派（审查 G3 修复——WP-15-T20 第三批）：异步缝
+    // 在场＝非阻塞（job 经装配层线程设施执行，UI 线程立即返回——插件零
+    // 自建线程红线〔acceptance 2〕的通道化落位）；缝缺席＝同步内联降级
+    // （runSinglePointSolve 原径——其内部超预算转后台语义不变，诚实边
+    // 缘；同步路径的"UI 全程占用＋双份计算"残留随装配缝缺席登记）。
+    if (m_services.inlineSolveAsync) {
+        runSolveNonBlocking(*target, assembly.request);
+        return;  // 状态行/刷新在异步回调（UI 线程）内完成
+    }
     const KinSolveFlowResult r =
         runSinglePointSolve(m_services, m_session, *target, assembly.request);
+    if (r.resultCommitted) {
+        m_lastSolvedTarget = *target;
+        m_solveResultExpired = false;
+    }
+    m_solveTargetAtSubmit.reset();
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（★ KIN-P4——refreshAll 而非仅结果页：解集入会话态后
     // 导出/复算按钮的门控随即点亮——修复前按钮态停留在求解前的"无结果
     // 禁用"，用户求解成功仍不能导出，闭环断链）。现取重投影零缓存。
     refreshAll();
+}
+
+void KinematicsPanelWidget::runSolveNonBlocking(
+    const rw::math::Transform3D<double>& targetInBase, const IkRequest& request)
+{
+    // ---- G3 修复（WP-15-T20 第三批）——缝化非阻塞单点求解：
+    // 请求按值快照（targetInBase 绑定）经 inlineSolveAsync 装配缝提交
+    // （job 在装配层工作线程恰执行一次——IIkSolver 纯函数线程安全 §9.2；
+    // 本函数零线程创建——插件零自建线程红线）。完成回调（装配层保证回
+    // UI 线程）经 finishSinglePointSolve 与同步内联路径同一写点入会话
+    // 态（零双份计算——修复前同步跑完才按耗时事后转后台，超时场景
+    // UI 冻结全程＋同一请求后台重算）。在途旗标防重复提交（完成回调清
+    // 位＋refreshAll 重进按钮门控）。context＝this——面板先于回调销毁
+    // 时回投被 Qt 弃置（迟到结果不触碰已销毁面板——缝面契约）。
+    IkRequest req = request;
+    req.targetInBase = targetInBase;
+    // 提交拍冻结三类身份键，完成回调必须用同一组键核对当前会话。
+    // 这一步把“后台任务正在算什么”与 UI 线程随后可能换绑的会话明确
+    // 分开；旧结果即使完成，也只能作为过期反馈，不能写入新会话。
+    const core::ContentIdentity snapshotIdAtSubmit = m_session.snapshotId;
+    const std::uint64_t epochAtSubmit = m_session.epoch;
+    const core::ContentIdentity configDigestAtSubmit =
+        analysisConfigurationDigest(m_session.savedConfig);
+
+    if (m_services.modelView == nullptr) {
+        m_solveInFlight = false;
+        m_solveTargetAtSubmit.reset();
+        showStatusText(tr("求解失败：提交时没有可用的模型快照"));
+        refreshAll();
+        return;
+    }
+    // 把可 rebind 的长命视图复制成独立快照；后台任务只持有该对象，
+    // 从此不再通过 m_services.modelView 读取会话委托。
+    auto modelSnapshot =
+        std::make_shared<const FrozenRuntimeView>(*m_services.modelView);
+    req.modelView = modelSnapshot.get();
+    m_solveInFlight = true;
+    m_solveTargetAtSubmit = targetInBase;
+    // 重试尚无新结局：取消或设施失败时仍须展示旧结果的真实有效性，
+    // 只有完成回调实际提交新解集才允许清除过期态（KIN-02）。
+    showStatusText(tr("求解中（异步执行，界面持续响应）……"));
+    refreshAll();  // 求解按钮随在途旗标禁用（门控在 refreshAll）
+    // 注意：job 按值捕获请求快照与求解器缝指针——面板/会话态在求解期间
+    // 被改不回读（D-KIN-4：身份不含会话）；完成回调写会话态（装配层保证
+    // 回 UI 线程）。
+    const IIkSolver* solver = m_services.ikSolver;  // 缝指针——存活期由装配层契约保证
+    const auto t0 = std::chrono::steady_clock::now();
+    m_services.inlineSolveAsync(
+        [solver, modelSnapshot = std::move(modelSnapshot), req = std::move(req)]() mutable {
+            // modelSnapshot 必须在 req.modelView 使用期间保持存活；后台线程
+            // 只读这一份不可变视图，UI 线程 rebind 不会改变其内容。
+            req.modelView = modelSnapshot.get();
+            return solver->solve(req);
+        },
+        [this, t0, snapshotIdAtSubmit, epochAtSubmit, configDigestAtSubmit](
+            IkOutcome outcome) {
+            m_solveInFlight = false;
+            // 目标快照由 UI 线程提交前保存；回调只在 UI 线程消费并随后清除，
+            // 与会话/配置身份一起构成这次异步请求的完整绑定。
+            const auto targetAtSubmit = m_solveTargetAtSubmit;
+            bool sameSession = m_session.snapshotId == snapshotIdAtSubmit
+                               && m_session.epoch == epochAtSubmit;
+            try {
+                sameSession = sameSession
+                    && analysisConfigurationDigest(m_session.savedConfig)
+                           == configDigestAtSubmit;
+            } catch (const std::exception&) {
+                // 当前配置若已失去合法性，旧结果同样不能写回；把异常
+                // 归入过期态，避免 Qt 回调线程再次抛出调用方错误。
+                sameSession = false;
+            }
+            const auto currentTarget =
+                readTargetPoseFromEditors(QString());
+            const bool sameTarget = targetAtSubmit.has_value()
+                                    && currentTarget.has_value()
+                                    && equivalentTargetPose(*currentTarget,
+                                                            *targetAtSubmit);
+            if (!sameSession || !sameTarget) {
+                // 会话、配置或目标已经变化；旧结果不能污染当前结果集。
+                m_solveTargetAtSubmit.reset();
+                m_solveResultExpired = true;
+                showStatusText(tr("求解结果已过期：会话、配置或目标已变化，请重新求解"));
+                refreshAll();
+                return;
+            }
+            const auto elapsed =
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::steady_clock::now() - t0);
+            const KinSolveFlowResult r = finishSinglePointSolve(
+                m_session, std::move(outcome), elapsed);
+            m_solveTargetAtSubmit.reset();
+            if (r.resultCommitted && targetAtSubmit.has_value()) {
+                m_lastSolvedTarget = *targetAtSubmit;
+                m_solveResultExpired = false;
+            }
+            showStatusText(QString::fromStdString(r.statusText));
+            refreshAll();
+        },
+        this);
 }
 
 void KinematicsPanelWidget::onBatchClicked()
@@ -1006,9 +1392,72 @@ void KinematicsPanelWidget::onRecomputeClicked()
     }
     const KinRecomputeFlowResult r =
         recomputeSessionFromIdentity(m_services, m_session, *target);
+    if (r.ok) {
+        // KIN-08：复算已经写入新解集，目标基线必须与该产物同步前移；
+        // 拒绝、取消和设施失败不改基线，以免旧结果被误标为当前结果。
+        m_lastSolvedTarget = *target;
+        m_solveResultExpired = false;
+    }
     showStatusText(QString::fromStdString(r.statusText));
     // 全面板刷新（同求解入口——新解集入会话态后门控/解表同步）。
     refreshAll();
+}
+
+void KinematicsPanelWidget::onBackfillTcpClicked()
+{
+    // ---- L-K5 位姿回填（审查 G4 修复——WP-15-T20 第三批）：会话姿态经
+    // FK 得当前 TCP 位姿，按显示制式投影后回填目标六字段（仅呈现默认值
+    // ——求解身份不含会话，D-KIN-4；零修订零求解器触碰）。前提缺失＝
+    // 状态行如实说明并停在原地（与复位 Home 拒绝轨同纪律）。
+    const std::optional<KinTcpTargetBackfill> backfill =
+        tcpTargetBackfillValues(m_services, m_session);
+    if (!backfill.has_value()) {
+        showStatusText(tr("回填不可用：需要模型视图、FK 评估器、已设置的"
+                          "会话姿态与可解析的默认 TCP"));
+        return;
+    }
+    const auto text = [](double v) { return QString::number(v, 'g', 12); };
+    // TCP 回填是新的用户求解起点，必须让旧结果失效；信号屏蔽避免六个
+    // 中间文本状态被逐字段刷新，最后统一呈现一次过期状态。
+    const QSignalBlocker blockTargetX(m_targetX);
+    const QSignalBlocker blockTargetY(m_targetY);
+    const QSignalBlocker blockTargetZ(m_targetZ);
+    const QSignalBlocker blockTargetRoll(m_targetRoll);
+    const QSignalBlocker blockTargetPitch(m_targetPitch);
+    const QSignalBlocker blockTargetYaw(m_targetYaw);
+    m_targetX->setText(text(backfill->xDisplay));
+    m_targetY->setText(text(backfill->yDisplay));
+    m_targetZ->setText(text(backfill->zDisplay));
+    m_targetRoll->setText(text(backfill->rollDisplay));
+    m_targetPitch->setText(text(backfill->pitchDisplay));
+    m_targetYaw->setText(text(backfill->yawDisplay));
+    m_solveResultExpired = true;
+    refreshAll();
+    showStatusText(tr("已回填当前 TCP 位姿（显示制式数值，单位随行标签）"
+                      "——仅作编辑起点，请重新求解"));
+}
+
+void KinematicsPanelWidget::onDisplayUnitChanged(int index)
+{
+    // ---- L-K8 生产入口（审查 G5 修复——WP-15-T20 第三批）：长度/角度
+    // 两下拉当前值→DisplayUnitProjection→setDisplayUnits 唯一入口全面
+    // 板重投影（零修订/零重算/结果不动——V-17）。m＋rad 组合＝nullopt
+    // （SI 直显制式）；下拉值域封闭（m/cm/mm＋rad/deg——KIN-12 R1 冻结
+    // 子集），词表外组合不可达。index 未用（组合框自述当前值）。
+    Q_UNUSED(index);
+    if (m_lengthUnitBox == nullptr || m_angleUnitBox == nullptr) {
+        return;
+    }
+    const std::string length = m_lengthUnitBox->currentText().toStdString();
+    const std::string angle = m_angleUnitBox->currentText().toStdString();
+    if (length == "m" && angle == "rad") {
+        setDisplayUnits(std::optional<DisplayUnitProjection>{});
+        return;
+    }
+    if (const auto units =
+            DisplayUnitProjection::tryFind(length, angle)) {
+        setDisplayUnits(units);
+    }
 }
 
 // ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——槽与刷新实现）------------
@@ -1111,6 +1560,7 @@ void KinematicsPanelWidget::onWsModeChanged(int index)
 
 void KinematicsPanelWidget::onWsRunClicked()
 {
+    if (m_wsInFlight) { return; } // 直接槽调用同样受门控，避免覆盖在途桥。
     // 编辑字段 → 面板参数（SI 真值）：区域盒中心/边长按显示制式读入并
     // 经 resolveKinDisplayToSi 逆换算（与目标编辑器同纪律——提交面唯一
     // 换算点）；计数字段按无符号整数解析。解析失败/非有限/越界＝调用方
@@ -1199,7 +1649,67 @@ void KinematicsPanelWidget::onWsRunClicked()
             return;
         }
     }
-    // 内联运行（编排函数——校验/运行/入会话态；拒绝轨转状态行）。
+    if (m_services.workspaceAsync && m_services.modelView != nullptr) {
+        // KIN-09：复制可换绑视图，后台只有独占临时会话；宿主执行端口
+        // 负责线程与回投，插件不创建线程，不从后台读取任何编辑器。
+        const auto model = std::make_shared<const FrozenRuntimeView>(*m_services.modelView);
+        const auto snapshot = m_session.snapshotId;
+        const auto epoch = m_session.epoch;
+        const auto config = m_session.savedConfig;
+        const auto digest = analysisConfigurationDigest(config);
+        const auto progress = std::make_shared<KinSamplingProgress>();
+        // 回执由后台写、完成后UI读；宿主回投形成先行关系，不并发读写。
+        const auto output = std::make_shared<KinModuleSessionState>();
+        output->savedConfig = config;
+        const auto result = std::make_shared<KinWorkspaceSamplingFlowResult>();
+        m_wsProgress = progress;
+        m_wsInFlight = true;
+        m_wsProgressBar->setValue(0);
+        m_wsProgressTimer->start();
+        showStatusText(tr("采样中，可继续操作界面或取消……"));
+        refreshAll();
+        try {
+            m_services.workspaceAsync(
+                [model, params, progress, output, result] {
+                    KinPanelServices isolated;
+                    isolated.modelView = model.get();
+                    try {
+                        *result = runWorkspaceSamplingFlow(isolated, *output, params, *progress);
+                    } catch (const std::exception& e) {
+                        result->statusText = std::string("采样设施失败：") + e.what();
+                    } catch (...) {
+                        result->statusText = "采样设施失败：未知异常";
+                    }
+                },
+                [this, snapshot, epoch, digest, output, result, progress] {
+                    m_wsInFlight = false;
+                    m_wsProgressTimer->stop();
+                    m_wsProgressBar->setValue(progress->percent.load());
+                    bool current = m_session.snapshotId == snapshot && m_session.epoch == epoch;
+                    try {
+                        current = current && analysisConfigurationDigest(m_session.savedConfig) == digest;
+                    } catch (const std::exception&) { current = false; }
+                    if (!current) {
+                        showStatusText(tr("采样结果已过期：会话或配置已变化，请重新采样"));
+                    } else {
+                        if (result->ok) { m_session.lastWorkspaceRun = output->lastWorkspaceRun; }
+                        showStatusText(QString::fromStdString(result->statusText));
+                    }
+                    m_wsProgress.reset();
+                    refreshAll();
+                }, this);
+        } catch (const std::exception& e) {
+            // 执行设施拒绝提交：恢复可重试状态，旧产物原样保留。
+            progress->cancel.store(true);
+            m_wsInFlight = false;
+            m_wsProgressTimer->stop();
+            m_wsProgress.reset();
+            showStatusText(tr("采样提交失败：%1").arg(QString::fromUtf8(e.what())));
+            refreshAll();
+        }
+        return;
+    }
+    // 缺宿主执行设施时保留同步诊断路径；正式宿主必须装配workspaceAsync。
     const KinWorkspaceSamplingFlowResult r =
         runWorkspaceSamplingFlow(m_services, m_session, params, m_wsContext);
     showStatusText(QString::fromStdString(r.statusText));
@@ -1213,6 +1723,13 @@ void KinematicsPanelWidget::onWsExportCsvClicked()
     // 半区；文件名固定于导出目录——写出经 io AtomicFile 装配缝）。
     showStatusText(QString::fromStdString(exportWorkspacePointCloudCsv(
         m_services, m_session, "kin-workspace-pointcloud.csv")));
+}
+
+KinematicsPanelWidget::~KinematicsPanelWidget()
+{
+    // 销毁不等待计算，令后台在下一检查点终止；Qt释放定时器与控件，
+    // 宿主负责弃置onDone，后台持有的冻结模型/进度由任务自行释放。
+    if (m_wsProgress) { m_wsProgress->cancel.store(true); }
 }
 
 void KinematicsPanelWidget::onWsWritebackClicked()
@@ -1245,6 +1762,7 @@ void KinematicsPanelWidget::refreshWsProjectionCanvas()
     const int width = 480;   // 画布宽（px——呈现几何，非业务量）
     const int height = 360;  // 画布高（px）
     QPixmap canvas(width, height);
+    m_wsPickPixels.clear(); // 每次重画使旧像素命中失效，避免跨结果/投影串选。
     canvas.fill(Qt::white);
     if (!m_session.lastWorkspaceRun) {
         // 占位画布（无产物态——与摘要表空表同口径）。
@@ -1314,8 +1832,15 @@ void KinematicsPanelWidget::refreshWsProjectionCanvas()
                 painter.setPen(QColor(128, 128, 128));   // 未运行/不适用＝灰
                 break;
         }
-        painter.drawPoint(QPointF(mapH(projected[i].first),
-                                  mapV(projected[i].second)));
+        const QPointF pixel(mapH(projected[i].first), mapV(projected[i].second));
+        painter.drawPoint(pixel);
+        m_wsPickPixels.emplace_back(pixel, p.sampleIndex);
+        bool selected = false;
+        const auto index = m_wsSampleIndex->text().toULongLong(&selected);
+        if (selected && index == p.sampleIndex) {
+            painter.setPen(QPen(Qt::blue, 2));
+            painter.drawEllipse(pixel, 6, 6); // 6px蓝圈只表明选中，不改变状态色。
+        }
     }
 
     // 轴标注＋图例（坐标恒基座系 {B} 单位 m——KIN-09 投影语义；图例
@@ -1338,6 +1863,108 @@ void KinematicsPanelWidget::onWsProjectionPlaneChanged(int index)
     // 投影面切换＝画布重绘（纯呈现态——零采样重算零修订）。
     Q_UNUSED(index);
     refreshWsProjectionCanvas();
+}
+
+bool KinematicsPanelWidget::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched != m_wsCanvasLabel ||
+        (event->type() != QEvent::MouseButtonPress && event->type() != QEvent::MouseButtonDblClick)) {
+        return QWidget::eventFilter(watched, event);
+    }
+    const auto* mouse = static_cast<QMouseEvent*>(event);
+    if (mouse->button() != Qt::LeftButton || m_wsCanvasLabel->pixmap().isNull()) { return false; }
+    // QLabel居中显示固定像素画布；先扣除居中留白，再以8px半径命中。
+    // 距离相同取域全序中先出现者，保证重叠点选择确定性。
+    const auto size = m_wsCanvasLabel->pixmap().deviceIndependentSize();
+    const QPointF local = mouse->position() - QPointF(
+        (m_wsCanvasLabel->width()-size.width())/2,
+        (m_wsCanvasLabel->height()-size.height())/2);
+    double bestDistance = 64.0; // 8px容差平方：便于细散点点击，无物理单位。
+    std::optional<std::uint64_t> picked;
+    for (const auto& item : m_wsPickPixels) {
+        const auto delta = item.first-local;
+        const double d = delta.x()*delta.x()+delta.y()*delta.y();
+        if (d < bestDistance) { bestDistance=d; picked=item.second; }
+    }
+    if (!picked) { return false; } // 空白不改已有选择和会话姿态。
+    m_wsSampleIndex->setText(QString::number(*picked));
+    if (event->type() == QEvent::MouseButtonDblClick) { onWsWritebackClicked(); }
+    return true;
+}
+
+void KinematicsPanelWidget::refreshVisualization()
+{
+    if (!m_services.previewSink || !m_services.modelView) { return; }
+    ui::View3DPreviewUpdate update;
+    std::vector<core::ObjectId> objects;
+    const auto worldTbase = m_services.modelView->worldToBase();
+    // 数据源仍为会话权威产物，世界变换只发生在呈现边界，SI真值不改。
+    if (m_session.lastWorkspaceRun) {
+        ui::View3DSampleGrid grid;
+        const auto cloud = buildWorkspacePointCloud(*m_session.lastWorkspaceRun);
+        for (const auto& p : cloud.points) {
+            grid.samples.push_back(runtime::transformBasePointToWorld(worldTbase,p.position));
+            grid.sampleIndices.push_back(p.sampleIndex);
+            grid.cellStates.push_back(p.state==SampleState::Reached ? ui::View3DCellState::Good
+                : p.state==SampleState::Unreachable ? ui::View3DCellState::Failed
+                : p.state==SampleState::DataInsufficient ? ui::View3DCellState::Weak
+                : ui::View3DCellState::NotSampled);
+        }
+        bool valid=false;
+        const auto selected=m_wsSampleIndex->text().toULongLong(&valid);
+        if(valid) { grid.highlightedSampleIndex=selected; }
+        update.sampleGrid=std::move(grid);
+    }
+    try {
+        // 四类诊断都消费域组装器；此处只投坐标/标签，不重新比较阈值或排序。
+        if (m_services.batchRender) {
+            const auto batch=m_services.batchRender();
+            if (batch) {
+                for(const auto& p:batch->failurePoints.points) if(p.targetInBase) {
+                    update.frameMarkers.push_back({"失败点 "+p.pointOid.toCanonical(), "WORLD",
+                        runtime::transformBasePointToWorld(worldTbase,p.targetInBase->P())});
+                }
+                for(const auto& z:batch->weakZones.zones) { objects.push_back(z.jointObject); }
+                for(const auto& p:batch->collisionPairs) { objects.push_back(p.objectA); objects.push_back(p.objectB); }
+            }
+        }
+        if(m_session.lastSessionSolutionSetView) {
+            std::vector<core::ObjectId> joints;
+            for(const auto& j:m_services.modelView->model().chain().joints) {
+                if(j.type!=runtime::JointType::Fixed) { joints.push_back(j.objectId); }
+            }
+            const auto thresholds=m_services.weakThresholds ? m_services.weakThresholds() : WeakZoneThresholds{};
+            const auto data=assembleSolutionSetRenderData(*m_session.lastSessionSolutionSetView,
+                {}, {}, joints, thresholds);
+            const auto tcp=resolveSessionTcp(m_services);
+            const auto& solutions=m_session.lastSessionSolutionSetView->sorted();
+            auto mark=[&](std::size_t index, const std::string& label) {
+                if(!tcp.ok || !m_services.fkEvaluator || index>=solutions.size()) { return; }
+                const auto pose=m_services.fkEvaluator->evaluate(*m_services.modelView,tcp.tcp,solutions[index].q);
+                if(pose.ok()) { update.frameMarkers.push_back({label,"WORLD",pose.get().tcpInWorld.P()}); }
+            };
+            for(const auto& z:data.weakZones.zones) {
+                objects.push_back(z.jointObject);
+                if(z.solutionIndex) { mark(*z.solutionIndex,"薄弱区"); }
+            }
+            if(data.worstJointMargin) {
+                const auto& worst=*data.worstJointMargin;
+                objects.push_back(worst.jointObject);
+                mark(worst.solutionIndex,"最差关节裕量 "+std::to_string(worst.minimumJointMargin));
+            }
+            for(const auto& p:data.collisionPairs) { objects.push_back(p.objectA); objects.push_back(p.objectB); }
+            // 选择行仅定位现有解；检查器与三维共享规范rank，零第二套排序。
+            const auto selected=m_solutionTable->currentIndex();
+            if(selected.isValid()) {
+                const auto rows=solutionRowsFor(*m_session.lastSessionSolutionSetView,
+                    m_usableOnly->isChecked(),dofJointTypes(m_services.modelView->model()),m_session.displayUnits);
+                if(static_cast<std::size_t>(selected.row())<rows.size()) { mark(rows[selected.row()].rank,"当前候选"); }
+            }
+        }
+        if(!m_services.previewSink(update,objects)) { showStatusText(tr("三维显示不可用：宿主场景尚未就绪")); }
+    } catch(const std::exception& e) {
+        showStatusText(tr("三维数据投放失败：%1").arg(QString::fromUtf8(e.what())));
+    }
 }
 
 void KinematicsPanelWidget::onWsExportPngClicked()
@@ -1388,6 +2015,7 @@ void KinematicsPanelWidget::onSolutionSelectionChanged()
     renderRows(m_inspectorTable,
                solutionInspectorRows(*m_session.lastSessionSolutionSetView, ref,
                                      m_session.displayUnits));
+    refreshVisualization();
 }
 
 void KinematicsPanelWidget::onSolutionDoubleClicked(int row, int column)

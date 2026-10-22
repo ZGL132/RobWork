@@ -150,7 +150,17 @@ Expected<AnalyticReachBound> computeAnalyticReachBound(const IKinRuntimeView& vi
 
         // 2b. 移动关节行程贡献 max(|qmin|,|qmax|)（m——沿轴平移的模长
         // 在区间端点取最大；转动/连续关节运动为纯旋转、平移贡献 0）。
-        if (j.type == runtime::JointType::Prismatic && j.bounds.has_value()) {
+        // ★ 审查 G14 收紧（WP-15-T20 第三批）：移动关节缺 bounds 原实现
+        // 记 0——若上游违约放行，totalRadius 将低估上界，可能把实际可达
+        // 目标误产"解析不可达"证明素材（结局 5 误判）。builder 强制
+        // Revolute/Prismatic 必有 bounds（runtime/CanonicalModel），违约
+        // 到达即编程错误——fail-fast 而非静默低估（NFR-COR-03 同则）。
+        if (j.type == runtime::JointType::Prismatic) {
+            if (!j.bounds.has_value()) {
+                throw std::invalid_argument(
+                    "analyticBoundMaterial: 移动关节缺分析限位（bounds）——"
+                    "解析界限将低估上界（builder 不变量违例——上游组装错误）");
+            }
             const double lo = j.bounds->lower;
             const double hi = j.bounds->upper;
             bound.prismaticStrokes.push_back(std::max(std::fabs(lo), std::fabs(hi)));

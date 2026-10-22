@@ -34,6 +34,7 @@
 #include <rw/math/Transform3D.hpp>
 
 #include <sdurws/ird/kinematics/Bounds.hpp>     // computeAnalyticReachBound（外括号）
+#include "SeedMix.hpp"  // 共享种子派生（G12 收拢——唯一算法权威点）
 #include <sdurws/ird/kinematics/Sampling.hpp>   // generateDirections（§7.2 黄金设施）
 
 namespace sdurws::ird::kinematics {
@@ -49,33 +50,11 @@ namespace {
 /// （<1e-12 m）远低于任何物理容差，跳过这些站点不损失实际分辨率。
 constexpr double kAnchorMinDistance = 1e-12;
 
-/// splitmix64（确定性伪随机序列源——§3.4；Ik.cpp/Sampling.cpp 同款
-/// 自持副本：算法公开定版、跨平台位级一致，TU 局部先例）。
-std::uint64_t splitmix64(std::uint64_t& state)
-{
-    state += 0x9E3779B97F4A7C15ull;
-    std::uint64_t z = state;
-    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ull;
-    z = (z ^ (z >> 27)) * 0x94D049BB133111EBull;
-    return z ^ (z >> 31);
-}
-
-/// (seed, 序号) 二元组的完整 64 位流种子派生（KIN-P5/审查 A06 修复——
-/// 与 Ik.cpp streamSeedFor 同算法同形态的自持副本：三步 splitmix64
-/// avalanche，任意 1 位输入差异扩散到输出约半数字位）。旧式
-/// "seed·2³²＋probeSerial" 在 uint64 模 2⁶⁴ 算术下把 seed 高 32 位与
-/// 探针序写进同一加法域——seed=1 与 seed=2³²＋1 的同序号探针状态相同，
-/// 初值序列对 seed 高 32 位不敏感（审查 A06 反例）。派生规则与注释见
-/// Ik.cpp 同名函数（唯一算法说明点，此处不重复展开）。
-std::uint64_t streamSeedFor(std::uint64_t seed, std::uint64_t index)
-{
-    std::uint64_t s = seed;
-    const std::uint64_t a = splitmix64(s);
-    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;
-    const std::uint64_t b = splitmix64(t);
-    std::uint64_t u = a ^ b;
-    return splitmix64(u);
-}
+// ★ 审查 G12 收拢（WP-15-T20 第三批）：算法与派生规则注释的唯一权威点
+// ＝src/SeedMix.hpp（此前四 TU 自持副本存在换代漂移风险）。此处 using
+// 引入——本 TU 调用点零改动。
+using kseed::splitmix64;
+using kseed::streamSeedFor;
 
 /// 探针初值种子派生（确定性——同 (seed, probeSerial) 同初值集）：
 /// (seed, probeSerial) 经 streamSeedFor 完整 64 位混合（A06——probeSerial

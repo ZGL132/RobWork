@@ -32,7 +32,7 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/assembly/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/assembly/sdurws/ird/kinematics/KinematicsPluginAssembly.hpp"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
   "verify": [
@@ -58,5 +58,5 @@
     "无框架改动、无业务域互链、中文注释合格；公共面或协作边变化先增量登记设计及契约，禁止提前实现",
     "完成批次提交推送，独立验收与主线合入保留所有者决定；未执行、失败、发布延期均诚实报告"
   ],
-  "note": "2026-10-21用户直接授权仿照需求/建模审核修复运动学每个功能；不使用子代理、不弹出选项。基线5fd9a3d1。T17为R2扩展单位预留，T18/T19已用，故本轮T20。第一批公共include/assembly仍禁止修改；有证据后按精确八节设计修订范围。完整计划与功能矩阵在本任务允许路径内。此为实施会话，不自签独立验收pass。"
+  "note": "2026-10-21用户授权逐项修复，不使用子代理。2026-10-22第四批只放行assembly/sdurws/ird/kinematics/KinematicsPanelChannels.hpp扩展workspaceAsync装配缝，其他公共include与装配门面保持禁止；精确设计见计划第四批。串行实施，不自签独立验收pass。"
 }

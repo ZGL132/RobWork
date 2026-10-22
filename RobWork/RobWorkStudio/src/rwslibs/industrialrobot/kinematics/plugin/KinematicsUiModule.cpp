@@ -112,6 +112,15 @@ void KinematicsUiModule::refreshFromSession()
     }
 }
 
+void KinematicsUiModule::applyCoverageRows(std::vector<KinCoverageRow> rows)
+{
+    // 覆盖结果行转发（审查 G1 修复——翻译/锚核对在装配面，本层零判定；
+    // 面板未创建＝空操作，与 refreshFromSession 同装配序宽容）。
+    if (m_panel != nullptr) {
+        m_panel->showCoverageRows(std::move(rows));
+    }
+}
+
 // =====================================================================
 // 宿主迁移三接入面（WP-15-T18——requirements 先例 RequirementsUiModule
 // sharedSurfaceProviders/attachSelectionService 同构；v1 语义见头声明）

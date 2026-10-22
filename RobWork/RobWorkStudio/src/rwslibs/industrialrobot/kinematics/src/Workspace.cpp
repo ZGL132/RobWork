@@ -47,6 +47,8 @@
 #include <cstdio>
 #include <exception>
 #include <stdexcept>
+
+#include "SeedMix.hpp"  // 共享种子派生（G12 收拢——唯一算法权威点）
 #include <thread>
 #include <utility>
 
@@ -151,34 +153,16 @@ std::string exportNumber(double v)
 // 采样域是关节空间不是笛卡尔区域盒）
 // =====================================================================
 
-/// splitmix64（确定性伪随机序列源——§3.4；Ik.cpp/Sampling.cpp 同款
-/// 自持副本：算法公开定版、跨平台位级一致，TU 局部先例）。
-std::uint64_t splitmix64Local(std::uint64_t& state)
-{
-    state += 0x9E3779B97F4A7C15ull;
-    std::uint64_t z = state;
-    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ull;
-    z = (z ^ (z >> 27)) * 0x94D049BB133111EBull;
-    return z ^ (z >> 31);
-}
+// ★ 审查 G12 收拢（WP-15-T20 第三批）：splitmix64/streamSeedFor 算法与
+// 派生规则注释的唯一权威点＝src/SeedMix.hpp（此前四 TU 自持副本存在换
+// 代漂移风险）。本 TU 以函数指针常量别名保持 Local 名（调用点零改动）。
+constexpr auto splitmix64Local = kseed::splitmix64;
+constexpr auto streamSeedForLocal = kseed::streamSeedFor;
 
 /// u64 → [0,1) 均匀归一化（53 位有效——双精度无偏下界；与 Ik.cpp 同式）。
 double unitFromU64Local(std::uint64_t v)
 {
     return static_cast<double>(v >> 11) * (1.0 / 9007199254740992.0);  // 2^53
-}
-
-/// (seed, 序号) 二元组的完整 64 位流种子派生（KIN-P5/审查 A06 修复——
-/// 与 Ik.cpp streamSeedFor 同算法同形态的自持副本；派生规则与"为什么
-/// 不用 seed·2³²＋k"的说明见 Ik.cpp 同名函数注，此处不重复）。
-std::uint64_t streamSeedForLocal(std::uint64_t seed, std::uint64_t index)
-{
-    std::uint64_t s = seed;
-    const std::uint64_t a = splitmix64Local(s);
-    std::uint64_t t = index ^ 0x9E3779B97F4A7C15ull;
-    const std::uint64_t b = splitmix64Local(t);
-    std::uint64_t u = a ^ b;
-    return splitmix64Local(u);
 }
 
 /// 无分析限位轴的采样名义区间（[−π,π] rad——§6.1"无工作范围 continuous"
@@ -602,17 +586,22 @@ void validateWorkspaceSamplingQuery(const IKinRuntimeView& view,
             }
         }
         // 笛卡尔积（u64 累乘防 u32 溢出——每轴 ≤2³²−1 的良构输入下
-        // 乘积仍可能超 2³²）。
+        // 乘积仍可能超 2³²）。★ 审查 G8 防御（WP-15-T20 第三批）：累乘
+        // 改为"乘前防回卷"检查——原实现先乘后判，病态大计数（如 4 轴
+        // ×65536）在模 2⁶⁴ 下回卷为小值绕过上限闸，随后生成核按谎报
+        // 总数静默产出截断/重复样本集（违反 NFR-COR-03"拒绝而非静默
+        // 截断"）。乘前检查保证中间积与终积均 ≤ 上限且无回卷。
         std::uint64_t product = 1U;
         for (const std::uint32_t c : query.jointGridCounts) {
+            if (c != 0U && product > kJointGridMaxTotalSamples / c) {
+                throw std::invalid_argument(
+                    "工作空间采样查询非法：jointGridCounts 笛卡尔积超过"
+                    "总样本数上限 "
+                    + std::to_string(kJointGridMaxTotalSamples)
+                    + "（乘前防回卷检查——组合爆炸/计数回卷防护，请降低"
+                      "逐轴取点数；拒绝而非静默截断）");
+            }
             product *= c;
-        }
-        if (product > kJointGridMaxTotalSamples) {
-            throw std::invalid_argument(
-                "工作空间采样查询非法：jointGridCounts 笛卡尔积 "
-                + std::to_string(product) + " 超过总样本数上限 "
-                + std::to_string(kJointGridMaxTotalSamples)
-                + "（组合爆炸防护——请降低逐轴取点数；拒绝而非静默截断）");
         }
     }
 

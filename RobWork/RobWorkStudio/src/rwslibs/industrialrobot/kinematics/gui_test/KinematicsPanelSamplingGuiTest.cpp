@@ -38,6 +38,7 @@
 #include "KinFkFixture.hpp"              // TestView/twoLinkModel（同单元夹具）
 #include "plugin/KinematicsPanelWidget.hpp"  // 被测面板（真实 QWidget）
 #include "plugin/KinPanelTypes.hpp"          // KinPanelServices/会话态
+#include <sdurws/ird/kinematics/KinematicsPluginAssembly.hpp>  // 装配门面（G1 全链回归——覆盖结果投影）
 
 // ---- 使用声明（与被测代码同一命名空间——用例可读性）--------------------
 using namespace sdurws::ird;
@@ -251,4 +252,98 @@ TEST(KinematicsPanelSampling, ProjectionCanvasAndPngExport_KIN_R2)
     EXPECT_NE(h.panel->lastStatusText().toStdString().find("已导出投影视图"),
               std::string::npos)
         << h.panel->lastStatusText().toStdString();
+}
+
+// =====================================================================
+// 区域覆盖面板呈现半区（审查 20261021 G1 修复——WP-15-T20 第三批）：
+// 覆盖结果经装配门面 applyCoverageResult（锚核对＋聚合→行翻译单点）→
+// 覆盖表渲染。修复前 m_coverageTable 无任何生产写点恒空、注释引用的
+// refreshCoverage 函数不存在、coverageRows 模型行死代码——呈现半区断链。
+// =====================================================================
+
+/// 装配全链回归：锚内聚结果投影渲染覆盖表（位置/姿态双行＋计数比＋
+/// 降级/零样本标识）；纪元不符的迟到结果不投影；零样本行不虚构 0%。
+TEST(KinematicsPanelCoverage, ApplyCoverageResultFillsTableAndAnchorGuards_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-04", "L-K6"},
+                  std::vector<std::string>{"AT-03"});
+
+    // ---- 装配门面＋真实主面板（descriptor.panels 工厂——产品入口）。
+    KinematicsPluginAssembly bundle = createKinematicsPluginAssembly();
+    const core::ContentIdentity snap =
+        core::ContentIdentity::tryFromCanonical(
+            "cid-1111111111111111111111111111111111111111111111111111111111111111")
+            .value_or(core::ContentIdentity{});
+    kinematics::AnalysisConfiguration config;
+    config.seed = 1;
+    config.regionBudget.seed = 1;
+    bundle.bindSessionFacts(snap, 7, true, config);
+
+    QWidget* mainPanel = nullptr;
+    for (const ui::PanelRegistration& p : bundle.descriptor.panels) {
+        if (!p.advanced) {
+            mainPanel = p.factory();  // 主面板（四合一 Tab——G1 断链页③所在）
+        }
+    }
+    ASSERT_NE(mainPanel, nullptr);
+    std::unique_ptr<QWidget> panelGuard(mainPanel);
+
+    // 覆盖表定位（表头首列"覆盖轴"——与其他表区分的稳定锚）。
+    QTableWidget* cov = nullptr;
+    for (QTableWidget* t : mainPanel->findChildren<QTableWidget*>()) {
+        if (t->horizontalHeaderItem(0) != nullptr
+            && t->horizontalHeaderItem(0)->text() == QStringLiteral("覆盖轴")) {
+            cov = t;
+        }
+    }
+    ASSERT_NE(cov, nullptr);
+    EXPECT_EQ(cov->rowCount(), 0);  // 修复前恒空形态（断链基线）
+
+    // ---- 锚一致的结果投影：60/100 位置可达＋同比姿态＋数据不足降级。
+    KinChannelCoverageResult result;
+    result.ok = true;
+    result.snapshotId = snap;
+    result.epoch = 7;
+    result.configDigest = analysisConfigurationDigest(config);
+    result.position.planned = 100;
+    result.position.reached = 60;
+    result.positionDefined = true;
+    result.orientation = result.position;
+    result.orientationDefined = true;
+    result.downgraded = true;
+    bundle.applyCoverageResult(result);
+    ASSERT_EQ(cov->rowCount(), 2);
+    EXPECT_EQ(cov->item(0, 0)->text(), QStringLiteral("位置覆盖"));
+    EXPECT_EQ(cov->item(0, 1)->text(), QStringLiteral("60/100"));
+
+    // 同快照同纪元但配置摘要不同：结果身份仍不匹配，必须拒绝投影。
+    KinChannelCoverageResult wrongConfig = result;
+    kinematics::AnalysisConfiguration changedConfig = config;
+    changedConfig.iterationLimit += 1U;
+    wrongConfig.configDigest = analysisConfigurationDigest(changedConfig);
+    wrongConfig.position.reached = 1;
+    bundle.applyCoverageResult(wrongConfig);
+    ASSERT_EQ(cov->rowCount(), 2);
+    EXPECT_EQ(cov->item(0, 1)->text(), QStringLiteral("60/100"));
+    EXPECT_EQ(cov->item(0, 2)->text(), QStringLiteral("数据不足——已降级"));
+    EXPECT_EQ(cov->item(1, 0)->text(), QStringLiteral("姿态覆盖"));
+    EXPECT_EQ(cov->item(1, 1)->text(), QStringLiteral("60/100"));
+
+    // ---- 迟到结果（纪元 6≠7）：锚核对拒绝，表不被改写（L-K12 同则）。
+    KinChannelCoverageResult stale = result;
+    stale.epoch = 6;
+    bundle.applyCoverageResult(stale);
+    ASSERT_EQ(cov->rowCount(), 2);
+    EXPECT_EQ(cov->item(0, 1)->text(), QStringLiteral("60/100"));
+
+    // ---- 零样本（分母 0）：比率不存在——不虚构 0%（计数比"—"＋零样本标识）。
+    KinChannelCoverageResult zero = result;
+    zero.position = KinChannelCoverageTotals{};
+    zero.positionDefined = false;
+    zero.downgraded = false;
+    zero.incomplete = false;
+    bundle.applyCoverageResult(zero);
+    ASSERT_EQ(cov->rowCount(), 2);
+    EXPECT_EQ(cov->item(0, 1)->text(), QStringLiteral("—"));
+    EXPECT_EQ(cov->item(0, 2)->text(), QStringLiteral("零样本——比率不存在"));
 }

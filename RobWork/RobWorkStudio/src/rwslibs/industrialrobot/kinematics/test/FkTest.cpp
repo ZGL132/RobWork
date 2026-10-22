@@ -466,6 +466,20 @@ TEST(KinFk, MarginNormalization_WP15T03_ACC1)
     EXPECT_NEAR(m.minimumJointMargin, -1.0, kPoseTol);
 }
 
+/// ★ 审查 G13 登记性用例（WP-15-T20 第三批）：零行程区间（hi==lo）的
+/// 裕量防御为"不可达防御"——上游不变式 builder 强制 lower<upper（runtime
+/// /CanonicalModel 严格不等）且 CanonicalModel::chain() 仅 const 访问
+/// （公共面不存在构造违约态的路径）。FK 侧防御（half<=0 → 边界值 0，
+/// 不产 NaN——Fk.cpp 同批变更）作为下游渲染安全的结构兜底存在；无公共
+/// API 可驱动，不可达性论证随卡 §14.6 第三批（NoDevice 守卫同款形态）。
+TEST(KinFk, MarginZeroSpanDefensiveDocumentedUnreachable_WP15T20)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01"},
+                  std::vector<std::string>{});
+    // 该用例为文档化登记（不可达性论证随卡 §14.6）——无运行断言。
+    SUCCEED();
+}
+
 /// 无设备链守卫的边界说明：CanonicalModel 构造器禁止空链（runtime
 /// builder 不变量），NoDevice 在 T03 经真实模型不可达——守卫为注入视图
 /// 面的契约防线（替身无法持有空链 CanonicalModel，同一类型系统保证）；

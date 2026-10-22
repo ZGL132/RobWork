@@ -17,6 +17,9 @@
 #include "KinPanelTypes.hpp"           // KinPanelServices 及往返值类型（翻译目标——私有完整型）
 #include "KinematicsUiModule.hpp"      // 具体模块（构造/转发面）
 
+#include <exception>
+#include <optional>
+
 namespace sdurws {
 namespace ird {
 namespace kinematics {
@@ -227,6 +230,16 @@ void KinematicsPluginAssembly::installAssemblyChannels(
             return toPrivateAck(fn(channelRequest));
         };
     }
+    if (channels.inlineSolveAsync) {
+        // ★ 审查 G3：异步内联求解缝直通（作业/回调值面＝IkOutcome 域值
+        // 同构——零翻译跳；context 存活期语义随缝面契约——context 析构
+        // ＝回调弃置）。空缝不覆盖＝私有缝保持空（同步内联降级原径）。
+        merged.inlineSolveAsync = channels.inlineSolveAsync;
+    }
+    if (channels.workspaceAsync) { merged.workspaceAsync = channels.workspaceAsync; }
+    if (channels.previewSink) { merged.previewSink = channels.previewSink; }
+    if (channels.weakThresholds) { merged.weakThresholds = channels.weakThresholds; }
+    if (channels.batchRender) { merged.batchRender = channels.batchRender; }
     m_impl->mergeAssemblyChannels(std::move(merged));
 }
 
@@ -252,10 +265,26 @@ void KinematicsPluginAssembly::bindSessionFacts(core::ContentIdentity snapshotId
     // 会话事实四值写入（私有聚合完整型在本 TU 可见——翻译单点面；
     // 调用方语义见公共头方法注）。
     KinModuleSessionState& session = m_impl->session();
+    std::optional<core::ContentIdentity> previousConfigDigest;
+    try {
+        previousConfigDigest = analysisConfigurationDigest(session.savedConfig);
+    } catch (const std::exception&) {
+        // 首次绑定前会话仍是缺省未初始化配置；没有旧摘要就不做
+        // “配置变更清理”，避免把初始化拍误判成变更异常。
+    }
+    const core::ContentIdentity nextConfigDigest =
+        analysisConfigurationDigest(config);
     session.snapshotId = snapshotId;
     session.epoch = epoch;
     session.writable = writable;
     session.savedConfig = config;
+    if (previousConfigDigest.has_value()
+        && *previousConfigDigest != nextConfigDigest) {
+        // 配置摘要变化后，旧覆盖结果即使仍绑定同一快照/纪元也不再具备
+        // 当前配置语义；先清空投影，再等待下一次评估完成，避免旧结果
+        // 看起来像新配置的结论（KIN-04/KIN-07 结果身份纪律）。
+        m_impl->applyCoverageRows({});
+    }
 }
 
 void KinematicsPluginAssembly::applySessionSolveOutcome(
@@ -275,6 +304,50 @@ void KinematicsPluginAssembly::applySessionSolveOutcome(
         std::make_shared<const KinematicSolutionSet>(*session.lastSessionSolutionSet);
     // 面板现取重投影（结果页/位姿页刷新——事件驱动出口，零缓存）。
     m_impl->refreshFromSession();
+}
+
+void KinematicsPluginAssembly::applyCoverageResult(
+    const KinChannelCoverageResult& result)
+{
+    if (m_impl == nullptr) {
+        return;  // 模块缺位＝装配缺陷——静默返回与既有 bind* 同纪律
+    }
+    // ---- 锚核对（L-K12 内聚单点——审查 G1 修复）：迟到/跨快照结果不
+    // 进当前面板（结果账面 snapshotId/epoch 与 bindSessionFacts 写入的
+    // 会话事实比对；ok=false 的执行失败同样不投影——失败原因已经
+    // noteAssemblyBackgroundResult 状态行呈现，双通道不重复）。
+    const KinModuleSessionState& session = m_impl->session();
+    const core::ContentIdentity currentConfigDigest =
+        analysisConfigurationDigest(session.savedConfig);
+    if (!result.ok || result.epoch != session.epoch
+        || result.snapshotId != session.snapshotId
+        || result.configDigest != currentConfigDigest) {
+        return;
+    }
+    // ---- 聚合→行翻译（本 TU 单点——零样本不虚构 0%、降级如实，§7.2/
+    // KIN-04 R8 口径；计数比文本"reached/planned"零浮点百分比第二口径）。
+    const auto makeRow = [](const char* label,
+                            const KinChannelCoverageTotals& totals,
+                            bool defined, bool degraded) {
+        KinCoverageRow row;
+        row.key = label;
+        row.label = label;
+        row.ratioText = defined
+            ? std::to_string(totals.reached) + "/" + std::to_string(totals.planned)
+            : "—";
+        row.zeroSamples = !defined;  // 分母 0＝比率不存在（不输出 0%/100%）
+        row.degraded = degraded;     // 数据不足/未完成降级标识
+        return row;
+    };
+    std::vector<KinCoverageRow> rows;
+    rows.reserve(2U);
+    rows.push_back(makeRow("位置覆盖", result.position, result.positionDefined,
+                           result.downgraded || result.incomplete));
+    rows.push_back(makeRow("姿态覆盖", result.orientation,
+                           result.orientationDefined,
+                           result.downgraded || result.incomplete));
+    // ---- 面板渲染转发（模块半区——面板未创建＝空操作，装配序宽容）。
+    m_impl->applyCoverageRows(std::move(rows));
 }
 
 void KinematicsPluginAssembly::clearCommandHandler()

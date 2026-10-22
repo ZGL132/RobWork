@@ -143,6 +143,13 @@ public:
         if (partial.homePose) {
             m_services.homePose = partial.homePose;
         }
+        // WP-15-T20：装配→模块→面板三段必须全部直通；否则正式宿主
+        // 看似注入异步缝，工厂却仍收到空缝而退回同步执行。
+        if (partial.inlineSolveAsync) { m_services.inlineSolveAsync = partial.inlineSolveAsync; }
+        if (partial.workspaceAsync) { m_services.workspaceAsync = partial.workspaceAsync; }
+        if (partial.previewSink) { m_services.previewSink = partial.previewSink; }
+        if (partial.weakThresholds) { m_services.weakThresholds = partial.weakThresholds; }
+        if (partial.batchRender) { m_services.batchRender = partial.batchRender; }
     }
 
     /// 服务缝只读访问（UI-T64 测试面——PluginPanelTest 经门面
@@ -217,6 +224,16 @@ public:
     /// 会话刷新（restoreOnOpen 等会话事件后的面板同步——现取重投影；
     /// 面板未创建＝空操作）。
     void refreshFromSession();
+
+    /**
+     * @brief 覆盖结果行投影（审查 20261021 G1 修复——WP-15-T20 第三批；
+     *        装配门面 applyCoverageResult 完成锚核对与聚合→行翻译后经本
+     *        方法转发面板渲染；面板未创建＝空操作——装配序宽容）。
+     *
+     * @param rows [in] 覆盖行集（KinCoverageRow 私有值——翻译已在上游
+     *             装配面完成；空＝清表诚实空态）
+     */
+    void applyCoverageRows(std::vector<KinCoverageRow> rows);
 
     /// 会话态访问（装配层注入快照绑定/配置基线等会话事实的唯一入口）。
     KinModuleSessionState& session() noexcept { return *m_session; }

@@ -18,7 +18,12 @@
 #include <utility>
 
 #include <QMetaObject>
-#include <rw/math/RPY.hpp>  // 构造参数顺序为yaw/pitch/roll，区别于需求字段顺序
+#include <rw/math/RPY.hpp>  // ★ 审查 G17 修正：构造签名 RPY(roll, pitch, yaw)——首参
+                            // roll 驱动 Rz（Z-Y-X 欧拉，见 rw/math/RPY.cpp:74-93）；
+                            // requirements fixedRpy 分量 (x,y,z)=(roll,pitch,yaw)、
+                            // 应用序 Rz(yaw)·Ry(pitch)·Rx(roll)，故消费处反序传参。
+                            // 本注释曾写反（"yaw/pitch/roll"）——若按其"纠正"
+                            // 会引入 Z↔X 对调真 bug（审查 20261021 登记）
 
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // analysisConfigurationDigest（受理对齐键）
 #include <sdurws/ird/kinematics/Evaluators.hpp>      // runRegionCoverageComputation/RegionCoverageQuery
@@ -127,6 +132,7 @@ void KinEvaluationExecutor::attachView(
     // 旧任务闭包持旧 shared_ptr，置位对其可见）。
     m_latestBatch.clear();
     m_latestBatchSnapshotId.reset();
+    m_latestBatchRender.reset();
     for (const std::shared_ptr<std::atomic_bool>& flag : m_cancelFlags) {
         flag->store(true, std::memory_order_release);
     }
@@ -1005,11 +1011,22 @@ void KinEvaluationExecutor::launchBatchTask(
         CancelableEvaluationContext context(cancelFlag);
         std::optional<kinematics::BatchComputation> computation;
         std::string errorText;
+        std::optional<kinematics::BatchRenderData> render;
         try {
             // ---- 批量纯计算面（展开→全序→分批→逐批求解→完成矩阵）。
             query.solver = nullptr;  // 生产路径——内置 IkSolver（域默认）
             computation =
                 kinematics::runBatchComputation(*view, query, request, context);
+            // KIN-07：使用同批冻结模型/策略/解析点组装，不在UI重判算法结局。
+            std::vector<core::ObjectId> joints;
+            for(const auto& j:view->model().chain().joints) {
+                if(j.type!=runtime::JointType::Fixed) { joints.push_back(j.objectId); }
+            }
+            const auto thresholds=policyAtSubmit
+                ? kinematics::weakZoneThresholdsOf(policyAtSubmit->jointThresholds)
+                : kinematics::WeakZoneThresholds{};
+            render=kinematics::assembleBatchRenderData(*computation,query.points,joints,thresholds,
+                core::TaskState::Completed);
         } catch (const std::exception& e) {
             // 装配期 fail-fast 面（投影值校验拒绝——视图空/维度违约等）：
             // 结构化失败入账（不崩溃不静默——ERR-01）。
@@ -1020,13 +1037,15 @@ void KinEvaluationExecutor::launchBatchTask(
         QMetaObject::invokeMethod(
             routeContext,
             [self, taskRef, snapshotIdAtSubmit, epoch, computation,
-             errorText]() {
+             errorText, render]() {
                 if (!errorText.empty()) {
                     // 执行失败：账目终态＋note 如实（零逐点入账）。
                     self->onBatchFailed(taskRef, snapshotIdAtSubmit, epoch,
                                         errorText);
                     return;
                 }
+                if(self->m_snapshotId!=snapshotIdAtSubmit || self->m_epoch!=epoch) { return; }
+                self->m_latestBatchRender=render;
                 self->recordBatchOutcomes(*computation, snapshotIdAtSubmit);
                 // 任务账目终态＋note 投递（复用求解完成面——kind 载荷
                 // 差异只在 summary；批量摘要带逐点统计）。

@@ -31,6 +31,8 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QPushButton>
+#include <QProgressBar>
+#include <QTimer>
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QWidget>
@@ -86,6 +88,14 @@ public:
     KinematicsPanelWidget(KinPanelServices services,
                           KinModuleSessionState& session,
                           QWidget* parent = nullptr);
+    /// @brief UI线程析构时请求协作取消；后台只持冻结值，不等待长任务。
+    ~KinematicsPanelWidget() override;
+    /** @brief 将画布鼠标事件转为样本选择；watched/event[in]由Qt持有。
+     * @return 命中时消费事件，空白或其他事件交回Qt；仅UI线程，不抛异常。
+     */
+    bool eventFilter(QObject* watched, QEvent* event) override;
+    /// @brief UI线程将域渲染值投放宿主服务；失败显示原因，不改计算产物。
+    void refreshVisualization();
 
     /// 注入命令标题文案解析器（装配期；不注入＝呈现键名原文——不虚构文案）。
     void setCommandTitleResolver(CommandTitleResolver resolver);
@@ -105,8 +115,25 @@ public:
      */
     void setDisplayUnits(const std::optional<DisplayUnitProjection>& units);
 
-    /// 任务区刷新（L-K12——taskRowsProvider 现取；后台受理/完成回执后调用）。
+    /// 任务区刷新（L-K12——taskPointsProvider 现取；后台受理/完成回执后调用。
+    /// 注意：任务九态/进度呈现归 ui 任务 Dock——本面板不渲染 taskRows 缝
+    /// （审查 20261021 G10 注释失实修正——呈现边界如实登记）。
     void refreshTaskArea();
+
+    /**
+     * @brief 覆盖结果行渲染（审查 20261021 G1 修复——区域覆盖面板呈现
+     *        半区接通；WP-15-T20 第三批）。
+     *
+     * 数据链：后台覆盖完成 → 装配门面 applyCoverageResult（锚核对＋
+     * KinChannelCoverageResult 聚合→行翻译）→ 模块转发 → 本槽渲染
+     * m_coverageTable（覆盖轴/计数比/标识三列）。位置/姿态双行；
+     * zeroSamples＝"零样本"（比率不存在——不虚构 0%）；degraded＝
+     * "数据不足"（降级如实——KIN-04 R8）。行集为调用方翻译产物——本
+     * 函数零数值计算（widget 零计算逻辑纪律不变）。
+     *
+     * @param rows [in] 覆盖行集（空＝清表——对账失效/无结果的诚实空态）
+     */
+    void showCoverageRows(std::vector<KinCoverageRow> rows);
 
     /**
      * @brief 任务点定位/高亮（WP-15-T18 下行联动呈现半区——SelectionAdapter
@@ -141,6 +168,10 @@ private Q_SLOTS:
     void onRecomputeClicked();        // KIN-P4 复算（原任务定义×当前快照重绑定）
     void onSolutionSelectionChanged();// L-K1 解表选中→检查器联动
     void onSolutionDoubleClicked(int row, int column); // L-K4 双击→会话姿态回写
+    void onTargetEditorChanged(); // 目标编辑变化→已有结果立即标记过期
+    // ---- 审查 20261021 修复批（WP-15-T20 第三批）----
+    void onBackfillTcpClicked();      // G4：L-K5 以当前 TCP 为目标（位姿回填）
+    void onDisplayUnitChanged(int index); // G5：L-K8 显示单位切换生产入口
     // ---- 探索式采样组（★ KIN-R2 任务3/KIN-09——结果与可视化面板）----
     void onWsModeChanged(int index);      // 采样模式切换（参数字段使能面）
     void onWsRunClicked();                // 运行采样（内联编排）
@@ -189,8 +220,30 @@ private:
     CommandTitleResolver m_titleResolver;  ///< 文案解析（可空＝键名原文）
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询
 
+    // ---- 非阻塞单点求解（审查 G3 修复——WP-15-T20 第三批；插件零自建
+    // 线程红线〔acceptance 2〕的通道化落位：异步能力经 inlineSolveAsync
+    // 装配缝由 ui 执行器线程设施承载）----
+
+    /**
+     * @brief 异步缝在场的单点求解（非阻塞形态）：请求经 inlineSolveAsync
+     *        装配缝提交（job 在装配层工作线程恰执行一次；IIkSolver 纯函
+     *        数线程安全——§9.2），UI 线程立即返回（界面持续响应——
+     *        NFR-PERF-01）；完成回调（UI 线程）经 finishSinglePointSolve
+     *        与内联路径同一写点入会话态（零双份计算——修复前同步跑完才
+     *        事后判断超时，超时场景 UI 冻结全程＋同一请求后台重算）。在
+     *        途期间求解按钮禁用（m_solveInFlight——防重复提交）；缝缺席
+     *        ＝降级同步内联（runSinglePointSolve 原径——诚实边界，其内
+     *        部超预算转后台语义不变）。
+     *
+     * @param targetInBase [in] 求解目标位姿（基座系 {B}，SI——编辑器逆换算产物）
+     * @param request      [in] 装配完成的求解请求其余字段（零再加工）
+     */
+    void runSolveNonBlocking(const rw::math::Transform3D<double>& targetInBase,
+                             const IkRequest& request);
+
     // ---- 页①控件（raw 指针＝Qt 父子所有权）----
     QLabel* m_frameLabel = nullptr;         ///< 参考系/TCP 身份标识行（★ KIN-R2 任务4——坐标系标识）
+    QLabel* m_solveStatusLabel = nullptr;   ///< 求解状态摘要（忙碌/有效/未求解）
     QTableWidget* m_poseTable = nullptr;    ///< 位姿指标行表
     QTableWidget* m_jointTable = nullptr;   ///< 关节表（显示单位投影 KIN-12）
     QLineEdit* m_targetX = nullptr;         ///< 求解目标位置编辑（显示制式数值——提交逆换算回 SI，A07）
@@ -206,15 +259,17 @@ private:
     QLabel* m_targetPitchLabel = nullptr;   ///< RPY-Pitch 行标签（同上）
     QLabel* m_targetYawLabel = nullptr;     ///< RPY-Yaw 行标签（同上）
     QPushButton* m_solveButton = nullptr;   ///< Solve（L-K2）
+    QPushButton* m_backfillTcpButton = nullptr; ///< 以当前 TCP 为目标（G4——L-K5 产品入口）
+    QComboBox* m_lengthUnitBox = nullptr;   ///< 长度显示单位下拉（G5——L-K8 入口；m/cm/mm）
+    QComboBox* m_angleUnitBox = nullptr;    ///< 角度显示单位下拉（G5——L-K8 入口；rad/deg）
     QTableWidget* m_inspectorTable = nullptr; ///< 候选检查器（健康摘要/关节）
-    std::vector<QLineEdit*> m_jointEditors; ///< 关节表编辑行（求解目标参考构型）
 
     // ---- 页②控件 ----
     QTableWidget* m_taskPointTable = nullptr; ///< 任务点消费视图（只读——真值归 requirements）
     QPushButton* m_batchButton = nullptr;     ///< 批量分析提交（L-K3）
 
     // ---- 页③控件 ----
-    QTableWidget* m_coverageTable = nullptr;  ///< 覆盖率结果表
+    QTableWidget* m_coverageTable = nullptr;  ///< 覆盖率结果表（showCoverageRows 填充——G1 修复前恒空）
     QPushButton* m_coverageRunButton = nullptr; ///< 覆盖运行（L-K6）
 
     // ---- 页④控件 ----
@@ -250,6 +305,11 @@ private:
     QPushButton* m_wsWritebackButton = nullptr; ///< 样本构型回写会话（writebackWorkspacePoint）
     QTableWidget* m_wsSummaryTable = nullptr;   ///< 采样摘要表（lastWorkspaceRun 现投）
     KinInlineSamplingContext m_wsContext;   ///< 内联采样宿主上下文（无取消/进度设施——诚实边界）
+    QPushButton* m_wsCancelButton = nullptr; ///< Qt父子所有权，UI取消入口。
+    QProgressBar* m_wsProgressBar = nullptr; ///< 真实采样百分比，不估算完成度。
+    QTimer* m_wsProgressTimer = nullptr; ///< 100ms读取原子进度，仅长任务期间启用。
+    std::shared_ptr<KinSamplingProgress> m_wsProgress; ///< 与后台共享原子桥，无会话副本。
+    bool m_wsInFlight = false; ///< UI线程防止重复提交，完成/提交异常时清除。
 
     // ---- 页④投影视图（★ KIN-R2 任务6——2D 正交投影散点画布＋PNG 导出
     // 的最小可用入口；三维 RWStudioView3D 接入成本登记后续批次）----
@@ -257,9 +317,18 @@ private:
     QLabel* m_wsCanvasLabel = nullptr;       ///< 散点画布（QPixmap 载体——离屏 QPainter 绘制）
     QPushButton* m_wsExportPngButton = nullptr; ///< 导出投影视图 PNG（exportWorkspaceProjectionPng）
 
+    /// 仅呈现命中表：画布像素中心→域sampleIndex，重画即清，不存计算结果。
+    std::vector<std::pair<QPointF, std::uint64_t>> m_wsPickPixels;
+
     // ---- 容器与状态 ----
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器
     QLabel* m_statusLine = nullptr; ///< 状态行（非模态反馈——UX-03/07）
+    bool m_solveInFlight = false;  ///< 异步求解在途（G3——防重复提交；完成回调清位＋刷新）
+    bool m_solveResultExpired = false; ///< 输入/会话变化后旧结果需重新求解
+    /// 异步提交时冻结的基座系 SI 目标；仅 UI 线程访问，回调完成后清除。
+    std::optional<rw::math::Transform3D<double>> m_solveTargetAtSubmit;
+    /// 最近一次已写入会话的基座系 SI 目标；用于判断编辑器是否仍对应结果。
+    std::optional<rw::math::Transform3D<double>> m_lastSolvedTarget;
 };
 
 /**

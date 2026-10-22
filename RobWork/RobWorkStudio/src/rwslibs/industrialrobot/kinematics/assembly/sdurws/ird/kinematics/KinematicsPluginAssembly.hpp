@@ -187,6 +187,31 @@ struct KinematicsPluginAssembly {
      */
     void applySessionSolveOutcome(std::shared_ptr<const IkSolutionSet> set);
 
+    /**
+     * @brief 覆盖评估结果投影（审查 20261021 G1 修复——WP-15-T20 第三批；
+     *        区域覆盖面板呈现半区接通：KinChannelCoverageResult 聚合计数
+     *        →面板覆盖行（位置/姿态双行）翻译单点＋渲染转发）。
+     *
+     * 翻译语义（本方法内单点执行——ui 装配层零私有类型）：
+     *   - 位置行＝存在性口径 totals（reached/planned——∃≥1 有效解即达）；
+     *   - 姿态行＝全局口径 totals（(位置×姿态) 逐组合）；
+     *   - 计数比文本 "reached/planned"（计数比直投——零浮点百分比第二
+     *     口径，§7.2）；零样本（!defined）→"零样本——比率不存在"；
+     *   - degraded＝result.downgraded||incomplete（数据不足/未完成如实
+     *     降级标识——KIN-04 R8，不冒充完整）。
+     *
+     * 调用方义务（锚核对已内聚）：本方法对 result.snapshotId/epoch 与
+     * 当前会话事实（bindSessionFacts 写入值）核对——迟到/跨快照结果
+     * 不投影（L-K12 同则，零面板触碰）；ok=false 的执行失败同样不投影
+     * （失败原因已经 noteAssemblyBackgroundResult 状态行呈现——双通道
+     * 不重复）。
+     *
+     * 线程约束：仅 UI 线程（与 noteAssemblyBackgroundResult 同义务）。
+     *
+     * @param result [in] 覆盖结果聚合（通道值面——原值语义见类型注）
+     */
+    void applyCoverageResult(const KinChannelCoverageResult& result);
+
     /// 文案解析绑定（titleKey→工程用语；转发模块内部）。
     void bindTextResolver(std::function<QString(const std::string& titleKey)> resolve);
 
