@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-reuse-inventory/1",
   "baselineCommit": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-  "coverage": "file-level, not function-level semantic clearance",
+  "coverage": "C/C++/templates/scripts/pages/build file-level; not function-level semantic clearance",
   "files": [
     {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
@@ -9228,6 +9228,276 @@
       "migrationTask": "REUSE-T01"
     },
     {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/share/user-manual/index.html",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "9fdb209dddbf4648df2945c6de2407b3eb948040",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dt-mapping-golden/1.0.0/generate/make_dt_mapping_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "aa7da67fabd14c1a61b22a18031c85d7eb50f3be",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "39cb4231e19fdcd4d0cf5c3b602f62719ae8eb34",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/ev-slice-fixture/1.0.0/generate/make_ev_slice_fixture.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "535aae537965ca4b49745db0ab8de31f04700436",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-coverage/1.0.0/generate/make_kin_coverage_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "52277fca5864c65f91cd41ee4a7e22a287021d17",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-fk-analytic/1.0.0/generate/make_kin_fk_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "d145663c87285d1ab336daa770302098701b2d6e",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-ik-dedup/1.0.0/generate/make_kin_ik_dedup_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "4ce0843f7f5e3f65244e1e7af7cdc86d2441ebda",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-search-outcomes/1.0.0/generate/make_kin_search_outcomes_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "db52ad2874c2c0d319da3979d4f151e5b5ef52f7",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/1.0.0/generate/make_dh_equivalence.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "8ef6dd09a7992507e92cd376f2f0c852162764b1",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-not-expressible/1.0.0/generate/make_not_expressible.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "5196b802b0141165325b973eaf7624191e282c03",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-template-6r/1.0.0/generate/make_template_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "0de5bac580b220d7cddeb5414516a03b177d71c4",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "79f630fee719f33851a835a2faab540e17244695",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-adopt-golden/1.0.0/generate/make_opt_adopt_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "7c1b78ca03d06fb0e53978a5e8b61076711f2911",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-lhs-golden/1.0.0/generate/make_opt_lhs_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "0ac313d740cab99b4bb252ee3ba8d7019566a13b",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "8923b507f55282055746ee0f35f351b34a16eec5",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/generate/make_pol_collision_analytic.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "6b76d240d93ff8eff14555730dc0cf442737f0fa",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-policy-codec-fixture/1.0.0/generate/make_pol_policy_fixture.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "b3cb83e3c9e9ee42cfcc733fc66293be08bab300",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-partial-pose/1.0.0/generate/make_partial_pose_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "e09efca92c53aee6e93e851fca33f86b367f107d",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-payload-events/1.0.0/generate/make_payload_events_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "ee998dfd7808af1444740e57d6a21b7b77abc374",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-region-sampling/1.0.0/generate/make_region_sampling_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "5466524bad77da3aa59ae8eac3e0c86e100c83bf",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-transport-task/1.0.0/generate/make_transport_task_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "562aca3c67ee350f57711ca0537eca7c2f5ca0f4",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/generate/make_fk_equation.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "99dd0275939b8d5c4ccfa82074e301fa0724dfc1",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-namemap-roundtrip/1.0.0/generate/make_namemap.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "7990ac084968a1a1a70f9086378520471311e6d7",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-backfill-golden/1.0.0/generate/make_sel_backfill_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "61233ca259a3cb9d0cadd7d9184cff3a84010b0c",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-catalog-golden/1.0.0/generate/make_sel_catalog_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "051b0c5330ef24b1506dab698a95668dd56ef09d",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-combo-golden/1.0.0/generate/make_sel_combo_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "15e331314857bb9d865f085fc4b6ffe9787855fc",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-linear-golden/1.0.0/generate/make_sel_linear_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "96544fdcc8fea5a53ecd06c37a6736a143e51d83",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/sel-screening-golden/1.0.0/generate/make_sel_screening_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "259903eb0caa694a4e74ccda7380c60a3bd9612b",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/trj-at06-recheck-golden/1.0.0/generate/make_trj_at06_golden.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "bc1ac7ef0802816b8fab0994e661b305892a0546",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/wf-gate-advice-fixture/1.0.0/generate/make_wf_gate_advice_fixture.mjs",
+      "unit": "foundation-governance",
+      "role": "production",
+      "baselineBlob": "837890eca7d600f135e71dd7e98248e67728f4d7",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
       "unit": "testkit",
       "role": "build",
@@ -9610,6 +9880,15 @@
       "unit": "testkit",
       "role": "test",
       "baselineBlob": "0aedb5c2d672a8101e2e3691c2a19a0de24e6c89",
+      "classification": "audit-required",
+      "capabilities": [],
+      "migrationTask": "REUSE-T01"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/install-scan/ird-install-scan.ps1",
+      "unit": "testkit",
+      "role": "production",
+      "baselineBlob": "36dd1c30564b9761334d3b32c0804c7030fe2a19",
       "classification": "audit-required",
       "capabilities": [],
       "migrationTask": "REUSE-T01"

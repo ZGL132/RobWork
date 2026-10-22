@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "ird-reuse-tests/1",
+  "validatorSha256": "ED13EA799F8D0E185B9D5886713F913718758D4FFFD80BC391A8CA4BAD03A7E4",
+  "driverSha256": "9507900DED5C87CFAF8CEB36C65A3257ECC4DD85152C6125B64F07A3EF3CC93D",
+  "expected": 45,
+  "executed": 0,
+  "notRun": 45,
+  "driverFailure": "fixture clone failed",
+  "passed": 0,
+  "skipped": 0,
+  "failed": 0,
+  "complete": false,
+  "tests": []
+}

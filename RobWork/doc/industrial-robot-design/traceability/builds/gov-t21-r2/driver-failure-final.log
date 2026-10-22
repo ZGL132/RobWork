@@ -1,0 +1,11 @@
+fatal: 'D:/10_Source_Repos/21_robot/RobWork/.cache/definitely-no-such-repo-govt21' does not appear to be a git repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+Remove-Item: D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\test-reuse-governance.ps1:143
+Line |
+ 143 |  …  'ird-reuse-*') { Remove-Item -LiteralPath $sandbox -Recurse -Force }
+     |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find path 'C:\Users\zgl18\AppData\Local\Temp\ird-reuse-b5743a0d3bb44867b1b8a56e017f5408' because it does
+     | not exist.

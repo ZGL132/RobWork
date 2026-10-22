@@ -13,6 +13,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
+$driverFailure = ''; $expectedTests = 45
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
 function Put([string]$path,[string]$text) {
     $full = Join-Path $sandbox $path
@@ -103,16 +104,26 @@ try {
     Case '28-arbitrary-task-ready' 'REUSE-TASK' { PutJson ($design+'tasks/OTHER-T99.json') ([pscustomobject]@{taskId='OTHER-T99';status='ready'}) }
     Case '29-planned-not-executable' 'REUSE-TASK-STATE' {} @('-TaskFile',($design+'tasks/REUSE-T01.json'))
     Case '30-forged-build-target' 'REUSE-UPSTREAM-TARGET' { $j=GetJson ($reuse+'catalog.json'); $j.capabilities[0].upstream[0].target='nonexistent'; PutJson ($reuse+'catalog.json') $j }
+    # 首轮验收真实发现.c绕过；每种代码入口均须被同一门禁拒绝，无目录豁免。
+    foreach ($suffix in @('c','ipp','inl','tpp','mjs','ps1','py','html','ts','cu','inc','opaque')) {
+        $caseSuffix = $suffix
+        Case ("suffix-"+$suffix) 'REUSE-UNDECLARED' { Put ($product+'kinematics/src/Undeclared.'+$caseSuffix) '// undeclared executable input' }
+    }
     # CI/验收读取冻结Git对象，不能仅测试工作树；提交仅存在于将销毁的夹具中。
     & git -C $sandbox add -- $reuse ($design+'tasks/GOV-T21.json') ($design+'tasks/REUSE-T01.json') ($design+'tasks/REUSE-T02.json') ($design+'tasks/REUSE-T03.json') ($design+'tasks/REUSE-T04.json') ($design+'tasks/REUSE-T05.json') ($design+'tasks/REUSE-T06.json') ($product+'CMakeLists.txt')
     if ($LASTEXITCODE) { throw 'fixture stage failed' }
-    & git -C $sandbox -c user.name=ReuseFixture -c user.email=fixture@example.invalid commit --quiet -m 'fixture frozen tree'
+    # 干净CI检出已包含这些治理输入，允许空提交仍能冻结一个真实Git树；不依赖未提交改动。
+    & git -C $sandbox -c user.name=ReuseFixture -c user.email=fixture@example.invalid commit --allow-empty --quiet -m 'fixture frozen tree'
     if ($LASTEXITCODE) { throw 'fixture commit failed' }
     Case '31-frozen-head' 'PASS' {} @('-Head','HEAD')
     Case '32-frozen-head-ignores-dirty-tree' 'PASS' { Put ($reuse+'catalog.json') '{}' } @('-Head','HEAD')
+    Case '33-frozen-head-repeatable' 'PASS' {} @('-Head','HEAD')
+} catch {
+    $driverFailure = $_.Exception.Message
 } finally {
     $failed=@($script:results | Where-Object { -not $_.passed }).Count
-    $report=[ordered]@{schemaVersion='ird-reuse-tests/1';validatorSha256=(Get-FileHash -LiteralPath $validatorSource -Algorithm SHA256).Hash;passed=($script:results.Count-$failed);skipped=0;failed=$failed;tests=$script:results}
+    $notRun = [Math]::Max(0,$expectedTests-$script:results.Count)
+    $report=[ordered]@{schemaVersion='ird-reuse-tests/1';validatorSha256=(Get-FileHash -LiteralPath $validatorSource -Algorithm SHA256).Hash;driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash;expected=$expectedTests;executed=$script:results.Count;notRun=$notRun;driverFailure=$driverFailure;passed=($script:results.Count-$failed);skipped=0;failed=$failed;complete=($notRun -eq 0 -and -not $driverFailure);tests=$script:results}
     $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $OutputDir 'reuse-test-report.json') -Encoding UTF8
     $xml=[xml]'<testsuite name="reuse-governance"/>'
     $xml.DocumentElement.SetAttribute('tests',"$($script:results.Count)"); $xml.DocumentElement.SetAttribute('failures',"$failed"); $xml.DocumentElement.SetAttribute('skipped','0')
@@ -121,10 +132,15 @@ try {
         if (-not $r.passed) { $f=$xml.CreateElement('failure'); $f.InnerText=$r.output; [void]$c.AppendChild($f) }
         [void]$xml.DocumentElement.AppendChild($c)
     }
+    if ($driverFailure -or $notRun) {
+        $c=$xml.CreateElement('testcase'); $c.SetAttribute('name','driver-completion')
+        $f=$xml.CreateElement('error'); $f.InnerText="driverFailure=$driverFailure; notRun=$notRun"; [void]$c.AppendChild($f); [void]$xml.DocumentElement.AppendChild($c)
+        $xml.DocumentElement.SetAttribute('tests',"$($script:results.Count+1)"); $xml.DocumentElement.SetAttribute('errors','1')
+    }
     $xml.Save((Join-Path $OutputDir 'reuse-governance.junit.xml'))
     # 只清理本次创建的随机临时目录，先验证绝对路径位于系统临时根。
     $tempRoot=[IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\','/')+[IO.Path]::DirectorySeparatorChar
     if ([IO.Path]::GetFullPath($sandbox).StartsWith($tempRoot,[StringComparison]::OrdinalIgnoreCase) -and (Split-Path -Leaf $sandbox) -like 'ird-reuse-*') { Remove-Item -LiteralPath $sandbox -Recurse -Force }
 }
-if ($failed -or $script:results.Count -lt 32) { throw "reuse tests failed/incomplete: $failed / $($script:results.Count)" }
+if ($failed -or $driverFailure -or $script:results.Count -ne $expectedTests) { throw "reuse tests failed/incomplete: failed=$failed executed=$($script:results.Count) expected=$expectedTests driver=$driverFailure" }
 Write-Output "reuse selftests: passed=$($script:results.Count) skipped=0 failed=0"

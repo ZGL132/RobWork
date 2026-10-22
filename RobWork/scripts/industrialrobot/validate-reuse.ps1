@@ -44,7 +44,9 @@ function GitLines([string[]]$arguments) {
     if ($LASTEXITCODE -ne 0) { Fail 'GIT' ($arguments -join ' ') }
     return $v
 }
-function IsProduct([string]$p) { return $p.StartsWith($product) -and ($p -match '\.(cpp|hpp|h|cc|cxx|hxx|cmake)$' -or $p.EndsWith('/CMakeLists.txt')) }
+# 同一谓词用于基线库存和新文件检查，不能通过后缀把算法藏进C/模板/脚本/页面。
+# 这是源文件发现范围，语义查重仍由独立审查完成，不宣称能识别任意改名算法。
+function IsProduct([string]$p) { return $p.StartsWith($product) -and ($p -match '\.(c|cpp|hpp|h|cc|cxx|hxx|ipp|inl|tpp|ixx|m|mm|cu|cuh|cmake|py|ps1|psm1|psd1|js|mjs|cjs|ts|tsx|jsx|html|htm|vue|svelte|rs|go|cs|java|lua|jl|r|rb|swift|kt|sh|bat|cmd)$' -or $p.EndsWith('/CMakeLists.txt')) }
 function CheckAcceptance($t) {
     $a = $t.governanceAcceptance
     if (-not $a -or "$($a.commit)" -notmatch '^[0-9a-f]{40}$' -or "$($a.reviewedCommit)" -notmatch '^[0-9a-f]{40}$') { Fail 'STAGE' "$($t.taskId): no frozen governance acceptance" }
@@ -88,9 +90,12 @@ try {
             if ((Digest $targetText) -ne $u.targetSha256 -or -not $targetText.Contains("$($u.target)")) { Fail 'UPSTREAM-TARGET' "$($u.target): build registration missing/stale" }
         }
     }
-    $tree = @{}
+    $tree = @{}; $allBaselineProduct = @{}
     foreach ($line in (GitLines @('ls-tree','-r',$baseline,'--',$product))) {
-        if ($line -match '^\d+ blob ([a-f0-9]+)\t(.+)$' -and (IsProduct $Matches[2])) { $tree[$Matches[2]] = $Matches[1] }
+        if ($line -match '^\d+ blob ([a-f0-9]+)\t(.+)$') {
+            $blob = $Matches[1]; $path = $Matches[2]; $allBaselineProduct[$path] = $blob
+            if (IsProduct $path) { $tree[$path] = $blob }
+        }
     }
     $seen = @{}; $debt = 0; $audit = 0
     # 这份库存是固定历史事实。不能仅改 classification 把未迁移文件洗成“已有适配”。
@@ -150,7 +155,12 @@ try {
     $fingerprint = '\b(JacobiSVD|rneaTorques|constrainedDampedLeastSquaresStep|dampedLeastSquaresStep|solveLinearSystem|rotationFromCustomEaa|rk4-fixed|struct\s+Vec3|struct\s+Mat3)\b'
     $count = 0
     foreach ($p in @($changed | Sort-Object -Unique)) {
-        if (-not (IsProduct $p)) { continue }
+        if (-not (IsProduct $p)) {
+            # 未知后缀/无后缀的新产品文件不能默认放行；先登记发现规则与复用契约。
+            # 基线非代码资产仍由既有文档/数据校验负责，不扩大为算法合规声明。
+            if ($p.StartsWith($product) -and -not $allBaselineProduct.ContainsKey($p)) { Fail 'UNDECLARED' "new product file type requires governance registration: $p" }
+            continue
+        }
         $count++
         $txt = ReadText $p -Optional
         $hash = 'deleted'; if ($null -ne $txt) { $hash = Digest $txt }

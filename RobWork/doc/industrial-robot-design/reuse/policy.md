@@ -12,7 +12,7 @@
 
 ## 2. 基线不是豁免
 
-catalog.json 的 baselineCommit 固定为 b12e8503cc1c2a1acc040f506842a02e126b9515。inventory.json 按 Git 对象登记全部 20 单元的 .cpp/.hpp/.h/CMakeLists.txt，含测试；这是文件级覆盖清单，不冒充每个函数均已完成人工语义审计。
+catalog.json 的 baselineCommit 固定为 b12e8503cc1c2a1acc040f506842a02e126b9515。inventory.json 按 Git 对象登记全部 20 单元的 C/C++/模板/脚本/含代码页面/CMake 文件，含测试；这是文件级覆盖清单，不冒充每个函数均已完成人工语义审计。
 
 classification 为 migration-debt 的文件已有重复证据；audit-required 是尚待语义审计；reuse-candidate 只有候选来源，未证明等价；existing-adapter 是已观察到的适配路径。未变化的基线允许治理/构建检查执行，但输出 DEBT/AUDIT 数量；不把存量合规性报告为 PASS。变动文件必须有逐文件复用记录，移除或修改重复内核不得增加另一条核心路径。最终 -RequireMigrationComplete 遇任何债务或未审计项必须失败。
 
@@ -48,3 +48,9 @@ classification 为 migration-debt 的文件已有重复证据；audit-required �
 ## 7. 库存结项协议
 
 本轮库存是不可变历史事实，不能通过更改classification洗白。RequireMigrationComplete当前必须拒绝存量债务；REUSE-T06须按独立批准的契约增加逐文件/逐功能关闭证据（迁移提交、上游调用测试、独立验收），之后再启用最终零债务判定；不得简单清空库存或改基点。
+
+## 8. 验收返工GOV-T21/1
+
+首轮冻结64ef0fd独立验收失败：CI干净检出夹具无变更可提交、.c与脚本/页面后缀遗漏。保留全部失败证据；返工扩大同一文件谓词与固定基线库存（原1370条不删除，补31条至1401）。自测夹具允许空提交，报告必须列expected/executed/notRun/driverFailure/complete；部分用例通过不能等同驱动或矩阵通过，JUnit驱动异常用error，不伪报skip。修复后冻结新SHA全量重验。
+
+新产品文件若不属于已登记源码发现类型（含未知后缀、无后缀），默认REUSE-UNDECLARED；必须先通过治理变更登记类型和复用契约，不能将未知后缀当作豁免。基线非代码资产仍受既有文档/数据门禁和独立审查约束。

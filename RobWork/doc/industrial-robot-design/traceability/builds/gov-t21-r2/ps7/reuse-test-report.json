@@ -1,0 +1,330 @@
+{
+  "schemaVersion": "ird-reuse-tests/1",
+  "validatorSha256": "C38482ECBE5BB00DFCA25F7129C4B8635BF44731AC4BA692945579EA52581147",
+  "driverSha256": "B9AEC42F6886702745749C05FAFF08F6720427E91A17CDC7644AED09CB86C575",
+  "expected": 45,
+  "executed": 45,
+  "notRun": 0,
+  "driverFailure": "",
+  "passed": 45,
+  "skipped": 0,
+  "failed": 0,
+  "complete": true,
+  "tests": [
+    {
+      "name": "01-clean",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "02-fixed-baseline",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-BASELINE",
+      "output": "REUSE-BASELINE : fixed baseline/schema mismatch\r\n"
+    },
+    {
+      "name": "03-all-units",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNITS",
+      "output": "REUSE-UNITS : all 20 units required\r\n"
+    },
+    {
+      "name": "04-missing-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MISSING",
+      "output": "REUSE-MISSING : RobWork/RobWork/src/rw/missing.hpp\r\n"
+    },
+    {
+      "name": "05-stale-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-HASH",
+      "output": "REUSE-UPSTREAM-HASH : RobWork/RobWork/src/rw/models/Device.hpp\r\n"
+    },
+    {
+      "name": "06-missing-symbol",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-SYMBOL",
+      "output": "REUSE-UPSTREAM-SYMBOL : RobWork/RobWork/src/rw/models/Device.hpp: NoSuchSymbol123\r\n"
+    },
+    {
+      "name": "07-inventory-omission",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : coverage 1400/1401\r\n"
+    },
+    {
+      "name": "08-forged-blob",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "09-inventory-duplicate",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "10-inventory-unit",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : classification/unit/task: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "11-new-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cpp : 82f1518a4af50c7fe93f885f2f3718d31a2d4c56d6edff010d919a743bcb34cd\r\n"
+    },
+    {
+      "name": "12-stale-change-hash",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt : b20e5033d853b4688afc9a51bbf05f3a77511d4e6a40402506904eed32eac421\r\n"
+    },
+    {
+      "name": "13-core-even-business",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-DUPLICATE",
+      "output": "REUSE-DUPLICATE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Duplicate.cpp\r\n"
+    },
+    {
+      "name": "14-cpp-not-governance",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MODE",
+      "output": "REUSE-MODE : governance cannot cover algorithms: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/WrongMode.cpp\r\n"
+    },
+    {
+      "name": "15-missing-approval",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-PATH",
+      "output": "REUSE-PATH : \r\n"
+    },
+    {
+      "name": "16-unknown-capability",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CAPABILITY",
+      "output": "REUSE-CAPABILITY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt : NONE\r\n"
+    },
+    {
+      "name": "17-path-traversal",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-PATH",
+      "output": "REUSE-PATH : ../outside.cpp\r\n"
+    },
+    {
+      "name": "18-missing-task-proof",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-TASK",
+      "output": "REUSE-TASK : RobWork/doc/industrial-robot-design/reuse/changes/GOV-T21.json\r\n"
+    },
+    {
+      "name": "19-task-scope",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SCOPE",
+      "output": "REUSE-SCOPE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "20-forbidden-scope",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SCOPE",
+      "output": "REUSE-SCOPE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "21-stage-not-approved",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-STAGE",
+      "output": "REUSE-STAGE : REUSE-T01: no frozen governance acceptance\r\n"
+    },
+    {
+      "name": "22-final-debt-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MIGRATION : debt=16 unresolved=1399; final semantic closure required\r\n"
+    },
+    {
+      "name": "23-governance-not-algorithm-approval",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-GOV-SCOPE",
+      "output": "REUSE-GOV-SCOPE : governance authorization cannot cover product algorithms: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Business.cpp\r\n"
+    },
+    {
+      "name": "24-upstream-readonly",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-READONLY",
+      "output": "REUSE-UPSTREAM-READONLY : RobWork/RobWork/src/rw/Undeclared.cpp\r\n"
+    },
+    {
+      "name": "25-missing-record-file",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MISSING",
+      "output": "REUSE-MISSING : RobWork/doc/industrial-robot-design/tasks/Absent.json\r\n"
+    },
+    {
+      "name": "26-deletion-undeclared",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : deleted\r\n"
+    },
+    {
+      "name": "27-forged-debt-closure",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : baseline classification is immutable: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "28-arbitrary-task-ready",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-TASK",
+      "output": "REUSE-TASK : OTHER-T99: reuse contract required\r\n"
+    },
+    {
+      "name": "29-planned-not-executable",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-TASK-STATE",
+      "output": "REUSE-TASK-STATE : REUSE-T01: execution needs ready/done contract\r\n"
+    },
+    {
+      "name": "30-forged-build-target",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "output": "REUSE-UPSTREAM-TARGET : nonexistent: build registration missing/stale\r\n"
+    },
+    {
+      "name": "suffix-c",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.c : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-ipp",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ipp : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-inl",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.inl : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-tpp",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.tpp : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-mjs",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.mjs : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-ps1",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ps1 : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-py",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.py : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-html",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.html : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-ts",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ts : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-cu",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cu : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-rs",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.rs : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-cmake",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cmake : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "31-frozen-head",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "32-frozen-head-ignores-dirty-tree",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "33-frozen-head-repeatable",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    }
+  ]
+}

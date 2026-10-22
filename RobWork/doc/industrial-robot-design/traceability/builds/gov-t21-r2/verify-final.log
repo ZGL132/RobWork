@@ -1,0 +1,81 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+verify-task: RepoRoot=D:\10_Source_Repos\21_robot\RobWork
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+validate-task: PASS (1 tasks)
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+> pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+> pwsh -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1
+01-clean : True (exit=0 expected=PASS)
+02-fixed-baseline : True (exit=1 expected=REUSE-BASELINE)
+03-all-units : True (exit=1 expected=REUSE-UNITS)
+04-missing-source : True (exit=1 expected=REUSE-MISSING)
+05-stale-source : True (exit=1 expected=REUSE-UPSTREAM-HASH)
+06-missing-symbol : True (exit=1 expected=REUSE-UPSTREAM-SYMBOL)
+07-inventory-omission : True (exit=1 expected=REUSE-INVENTORY)
+08-forged-blob : True (exit=1 expected=REUSE-INVENTORY)
+09-inventory-duplicate : True (exit=1 expected=REUSE-INVENTORY)
+10-inventory-unit : True (exit=1 expected=REUSE-INVENTORY)
+11-new-source : True (exit=1 expected=REUSE-UNDECLARED)
+12-stale-change-hash : True (exit=1 expected=REUSE-UNDECLARED)
+13-core-even-business : True (exit=1 expected=REUSE-DUPLICATE)
+14-cpp-not-governance : True (exit=1 expected=REUSE-MODE)
+15-missing-approval : True (exit=1 expected=REUSE-PATH)
+16-unknown-capability : True (exit=1 expected=REUSE-CAPABILITY)
+17-path-traversal : True (exit=1 expected=REUSE-PATH)
+18-missing-task-proof : True (exit=1 expected=REUSE-TASK)
+19-task-scope : True (exit=1 expected=REUSE-SCOPE)
+20-forbidden-scope : True (exit=1 expected=REUSE-SCOPE)
+21-stage-not-approved : True (exit=1 expected=REUSE-STAGE)
+22-final-debt-rejected : True (exit=1 expected=REUSE-MIGRATION)
+23-governance-not-algorithm-approval : True (exit=1 expected=REUSE-GOV-SCOPE)
+24-upstream-readonly : True (exit=1 expected=REUSE-UPSTREAM-READONLY)
+25-missing-record-file : True (exit=1 expected=REUSE-MISSING)
+26-deletion-undeclared : True (exit=1 expected=REUSE-UNDECLARED)
+27-forged-debt-closure : True (exit=1 expected=REUSE-INVENTORY)
+28-arbitrary-task-ready : True (exit=1 expected=REUSE-TASK)
+29-planned-not-executable : True (exit=1 expected=REUSE-TASK-STATE)
+30-forged-build-target : True (exit=1 expected=REUSE-UPSTREAM-TARGET)
+suffix-c : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-ipp : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-inl : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-tpp : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-mjs : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-ps1 : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-py : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-html : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-ts : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-cu : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-inc : True (exit=1 expected=REUSE-UNDECLARED)
+suffix-opaque : True (exit=1 expected=REUSE-UNDECLARED)
+31-frozen-head : True (exit=0 expected=PASS)
+32-frozen-head-ignores-dirty-tree : True (exit=0 expected=PASS)
+33-frozen-head-repeatable : True (exit=0 expected=PASS)
+reuse selftests: passed=45 skipped=0 failed=0
+> pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1 -DeepEvidence
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+validate-docs: PASS (20 units, 12 trace entries, 377 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, 16524 evidence)
+> cmake --build build --config Release --target ird_gates
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
+  [ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_targets锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_perf_registered_edge锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_openbench_worker锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_perf_unregistered锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_openbench_testkit锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_perf_lookalike锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4cliff锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r4cliff锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+  validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+verify-task: PASS GOV-T21（机器可执行 4 条全部通过；散文人工核对 0 条）
