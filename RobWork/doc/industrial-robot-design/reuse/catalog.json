@@ -2082,9 +2082,9 @@
       "id": "UTIL-UNITS",
       "ownerUnit": "core",
       "search": {
-        "command": "rg -n \"getUnit|UnitMap|Deg2Rad|Rad2Deg|_map\" RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp RobWork/RobWork/src/rw/math/Constants.hpp",
+        "command": "batch31/search.json",
         "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-        "conclusion": "已读列明候选及实现，未将名称相近当需求等价"
+        "conclusion": "原源码/实现/目标及实际13共同token/差异探测；非生产接线，仍candidate"
       },
       "upstream": [
         {
@@ -2119,15 +2119,37 @@
           "target": "sdurw_loaders",
           "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
           "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/DOMCoreBasisTypes.hpp",
+          "sha256": "55582de072e56c3fc3d0668aa3e11b9adf4b2e7b7653421c94a4566bd68170eb",
+          "symbols": [
+            "getUnit"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/DOMCoreBasisTypes.cpp",
+          "sha256": "9c476c7ea206e996d7f3a21ade0e39ce2041cb4ac8bd0634fcf49ca6275f9da5",
+          "symbols": [
+            "UnitMap",
+            "DOMCoreBasisTypes::getUnit"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
         }
       ],
-      "boundary": "Constants可复用角度因子；DOM getUnit是加载器字符串→比例查表，不含产品14量纲token、注册约束及错误语义，且引入models/graphics等重依赖。不能只因有单位名就整体换表，也不能以owner豁免基础常量重复。",
+      "boundary": "Constants角度因子可直接复用；比例查询同时存在DOMCoreBasisTypes（sdurw_core）与DOMBasisTypes（sdurw_loaders），不能误称只有重型loader。两者无产品14量纲、完整21token及错误双轨；core目前只允许math，候选不授DOM依赖权。",
       "build": {
         "targets": [
           "sdurw_loaders",
-          "sdurw_math"
+          "sdurw_math",
+          "sdurw_core"
         ],
-        "constraints": "沿原导出目标，是否需要该重依赖须逐消费核查"
+        "constraints": "沿原导出目标；Constants仅math，DOMCore较loader小但不因此扩大core允许依赖"
       },
       "usages": [
         {
@@ -2143,7 +2165,7 @@
         "value"
       ],
       "limits": {
-        "semantics": "Constants可复用角度因子；DOM getUnit是加载器字符串→比例查表，不含产品14量纲token、注册约束及错误语义，且引入models/graphics等重依赖。不能只因有单位名就整体换表，也不能以owner豁免基础常量重复。",
+        "semantics": "Constants角度因子可直接复用；比例查询同时存在DOMCoreBasisTypes（sdurw_core）与DOMBasisTypes（sdurw_loaders），不能误称只有重型loader。两者无产品14量纲、完整21token及错误双轨；core目前只允许math，候选不授DOM依赖权。",
         "lifetime": "纯值/统计，不授予模型结构操作权",
         "determinism": "产品单位token/统计缺口/确定性顺序权威不能被候选改变"
       },
@@ -2155,8 +2177,8 @@
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
       "resourceSearch": {
-        "command": "rg -n \"getUnit|UnitMap|Deg2Rad|Rad2Deg|_map\" RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp RobWork/RobWork/src/rw/math/Constants.hpp",
-        "conclusion": "定向资源检查，未运行上游完整测试，不据空资源字段宣称缺失"
+        "command": "batch31/search.json",
+        "conclusion": "上游公共头/实现/测试/示例/构建定向搜索留痕；未运行完整上游套件，不伪造对应测试资源"
       }
     },
     {

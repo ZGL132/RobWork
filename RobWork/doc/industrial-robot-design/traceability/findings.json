@@ -9734,5 +9734,16 @@
       "owner": "core / REUSE-T05",
       "resolution": "独立固定整数向量探测4项2通过2失败；原core64通过。addShifted/addMulSmall用已变更hi/lo计算后项，非一次乘FNV素数；公开ObjectId hash真实失败。六Id及ContentVersion/ContentIdentity静态同族，不声称内容SHA或持久化损坏。T01不修核心；后续先核成熟已有能力/消费者兼容性，无现成API则最小修正提案获批后实施。"
     }
+,
+{
+  "id": "F-966",
+  "source": "reuse/core-units-compare-audit.md / batch31",
+  "severity": "major",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "core C4有限极值中间溢出令标量与vector/Q公共比较误绿",
+  "owner": "core / REUSE-T05",
+  "resolution": "22跑19passed3failed，原15例全过。DBL_MAX与-DBL_MAX、relative1.5绝对0的精确C4为2>1.5应拒；diff/limit双Inf使三个入口true。独立Fraction oracle冻结。T01不改数值核心；先查成熟既有能力与消费者兼容性，必要最小修正提案批准后实施，不改为范数/对称比较、不降低需求。"
+}
   ]
 }
