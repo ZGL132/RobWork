@@ -1377,11 +1377,84 @@
           "target": "sdurw_core",
           "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
           "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/LogStreamWriter.hpp",
+          "sha256": "2c72c076a2e504cca491257d03d1778ad224f2133f56946e09040408f3437e4c",
+          "symbols": [
+            "LogStreamWriter",
+            "doWrite",
+            "doFlush"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/LogStreamWriter.cpp",
+          "sha256": "f865437c3e2aa138c5e2fdb25d657a77014ca4798ad4969d935ae041e84f4ffb",
+          "symbols": [
+            "LogStreamWriter",
+            "doWrite",
+            "doFlush"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/LogFileWriter.hpp",
+          "sha256": "f83dcdd1b25dde48303cf8fa391cca38e0476f29a37b6665808eb32791685b87",
+          "symbols": [
+            "LogFileWriter",
+            "doWrite",
+            "doFlush"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/LogFileWriter.cpp",
+          "sha256": "68fe0c481ea2f29bf0f1ef8f9bd675f36a657889fb83775a9a6ef103d86bfda1",
+          "symbols": [
+            "LogFileWriter",
+            "doWrite",
+            "doFlush"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/LogBufferedMsg.hpp",
+          "sha256": "120e0ad0f137bbdeff8f5a2aebf802b6f1bcd329b3f67a44640a5818a8d37a4b",
+          "symbols": [
+            "LogBufferedMsg",
+            "doWrite",
+            "doFlush"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/LogBufferedMsg.cpp",
+          "sha256": "3c3eb6f03974e38a9710e8db4ab183b57bb48c46e32bdef86844c571f8bc44b5",
+          "symbols": [
+            "LogBufferedMsg",
+            "doWrite",
+            "doFlush"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
         }
       ],
       "build": {
         "targets": [
-          "sdurw_core"
+          "sdurw_core",
+          "sdurw_common"
         ],
         "constraints": "仅候选日志输出原语；稳定码注册、文案、脱敏、节流、worker重放与Tier-U/Tier-D仍归diagnostics；不能直接替换后丢失有序关闭与错误语义"
       },
@@ -1396,9 +1469,9 @@
         }
       ],
       "limits": {
-        "semantics": "仅候选日志输出原语；稳定码注册、文案、脱敏、节流、worker重放与Tier-U/Tier-D仍归diagnostics；不能直接替换后丢失有序关闭与错误语义",
+        "semantics": "仅候选日志输出原语；稳定码注册、文案、脱敏、节流、worker重放与Tier-U/Tier-D仍归diagnostics；不能直接替换后丢失有序关闭与错误语义 B35实测LogStreamWriter默认badbit不抛，LogFileWriter默认截断，不等于逐行append/bool；两个轮转边界产品反例F969开放。",
         "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
-        "determinism": "未运行本批适用性实验，不承诺等价"
+        "determinism": "B35仅所列19例及原上游1例；未测性能、跨进程、断电持久性或全部locale，不升级candidate。"
       },
       "ownerUnit": "diagnostics",
       "examples": [],
@@ -1410,10 +1483,19 @@
         "status": "candidate",
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
-      "tests": [],
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/common/LogTestSuite.cpp",
+          "sha256": "f1e795bd2fcb01a8d8ad9fe2bf7e0de2c532e6cc5dc225a95706a4b6a4e27706",
+          "symbols": [
+            "TEST(LogTestSuite, LogTest)"
+          ],
+          "version": "d512e4a463720754cbffa43be91cd5e21ad71143"
+        }
+      ],
       "resourceSearch": {
-        "command": "rg -n \"class Log|static.*getLog|setWriter|write \\(|flush|virtual.*doWrite\" RobWork/RobWork/src/rw/core/Log.hpp RobWork/RobWork/src/rw/core/LogWriter.hpp",
-        "conclusion": "本批只核公共API/源码/构建，测试与示例资源待进一步复核；空数组非不存在"
+        "command": "batch35/search.json",
+        "conclusion": "原LogTestSuite直接编译且1passed；读writer/LogFileWriter/LogBufferedMsg与真实共享basic.rst。stream默认失败静默，FileWriter截断且持句柄；不能无适配替代产品append/bool/轮转。其他例子/文档仅检索不冒充全读。"
       }
     },
     {

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="19" failures="2" disabled="0" errors="0" time="0.345" timestamp="2026-10-23T07:39:05.288" name="AllTests">
+  <testsuite name="LogFileAudit" tests="6" failures="2" disabled="0" skipped="0" errors="0" time="0.084" timestamp="2026-10-23T07:39:05.288">
+    <testcase name="KeepOneIncludesActiveFile_DT_LOG_ROTATE" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp" line="34" status="run" result="completed" time="0.021" timestamp="2026-10-23T07:39:05.288" classname="LogFileAudit">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp:51&#x0A;Value of: fs::exists(fs::path(base.string() + &quot;.1&quot;))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;DT-LOG：rotateFiles=1应只剩活动文件&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp:51
+Value of: fs::exists(fs::path(base.string() + ".1"))
+  Actual: true
+Expected: false
+DT-LOG：rotateFiles=1应只剩活动文件
+]]></failure>
+    </testcase>
+    <testcase name="ReducedRetentionRemovesOldGenerations_DT_LOG_ROTATE" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp" line="56" status="run" result="completed" time="0.021" timestamp="2026-10-23T07:39:05.309" classname="LogFileAudit">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp:70&#x0A;Value of: fs::exists(fs::path(base.string() + &quot;.2&quot;))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;总保留数降到2后旧二代应清除&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp:70
+Value of: fs::exists(fs::path(base.string() + ".2"))
+  Actual: true
+Expected: false
+总保留数降到2后旧二代应清除
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp:71&#x0A;Value of: fs::exists(fs::path(base.string() + &quot;.3&quot;))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;旧三代应清除&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp:71
+Value of: fs::exists(fs::path(base.string() + ".3"))
+  Actual: true
+Expected: false
+旧三代应清除
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp:72&#x0A;Value of: fs::exists(fs::path(base.string() + &quot;.4&quot;))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;旧四代应清除&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp:72
+Value of: fs::exists(fs::path(base.string() + ".4"))
+  Actual: true
+Expected: false
+旧四代应清除
+]]></failure>
+    </testcase>
+    <testcase name="BinaryByteCountAndOpenFailure_DT_LOG_IO" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp" line="76" status="run" result="completed" time="0.001" timestamp="2026-10-23T07:39:05.331" classname="LogFileAudit" />
+    <testcase name="UpstreamStreamFailureNeedsExplicitPolicy_REUSE_UTIL_LOG" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp" line="90" status="run" result="completed" time="0." timestamp="2026-10-23T07:39:05.332" classname="LogFileAudit" />
+    <testcase name="Utf8AndPhysicalNewlineStayOnOneRecord_DT_LOG_TEXT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp" line="108" status="run" result="completed" time="0.016" timestamp="2026-10-23T07:39:05.332" classname="LogFileAudit" />
+    <testcase name="UpstreamFileWriterOpensWithTruncation_REUSE_UTIL_LOG" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch35\LogFileSuitabilityTest.cpp" line="127" status="run" result="completed" time="0.023" timestamp="2026-10-23T07:39:05.348" classname="LogFileAudit" />
+  </testsuite>
+  <testsuite name="DiagLogging" tests="12" failures="0" disabled="0" skipped="0" errors="0" time="0.261" timestamp="2026-10-23T07:39:05.372">
+    <testcase name="DtLog1_TwoTierSplitKeepsUserFileCleanOfDevLinesAndInternalPatterns" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="390" status="run" result="completed" time="0.004" timestamp="2026-10-23T07:39:05.372" classname="DiagLogging" />
+    <testcase name="DtLog2_ConcurrentWritesKeepSameThreadFifoAndGlobalStableOrder" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="469" status="run" result="completed" time="0.163" timestamp="2026-10-23T07:39:05.376" classname="DiagLogging" />
+    <testcase name="DtLog3_WriteFailureInjectedStaysNonBlockingAndBounded" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="536" status="run" result="completed" time="0.003" timestamp="2026-10-23T07:39:05.539" classname="DiagLogging" />
+    <testcase name="DtLog4_DisabledLoggingLeavesFormalDiagnosticsIntact" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="596" status="run" result="completed" time="0." timestamp="2026-10-23T07:39:05.543" classname="DiagLogging" />
+    <testcase name="DtLog5_WorkerBatchReplayRestoresOrderAndFillsChannelGap" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="651" status="run" result="completed" time="0.025" timestamp="2026-10-23T07:39:05.544" classname="DiagLogging" />
+    <testcase name="DtLogThrottleAndSamplingWindowBehavior" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="754" status="run" result="completed" time="0.01" timestamp="2026-10-23T07:39:05.570" classname="DiagLogging" />
+    <testcase name="DtLogOverflowDropsOldestDebugTraceAndCountsDevDiagnostic" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="850" status="run" result="completed" time="0.008" timestamp="2026-10-23T07:39:05.580" classname="DiagLogging" />
+    <testcase name="DtLogRotationGenerationsShiftWithRealFiles" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="899" status="run" result="completed" time="0.005" timestamp="2026-10-23T07:39:05.589" classname="DiagLogging" />
+    <testcase name="DtLogTruncationMarks4KiBUtf8Safe" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="941" status="run" result="completed" time="0.032" timestamp="2026-10-23T07:39:05.594" classname="DiagLogging" />
+    <testcase name="DtLogCallerViolationsFailFastWithUsage" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="975" status="run" result="completed" time="0.001" timestamp="2026-10-23T07:39:05.627" classname="DiagLogging" />
+    <testcase name="DtPdiag7_DefaultsAreConfigurableEngineeringDefaults" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="1022" status="run" result="completed" time="0.004" timestamp="2026-10-23T07:39:05.628" classname="DiagLogging" />
+    <testcase name="DtPex8_HeaderDefinesPayloadOnlyNoExecutionFrameContract" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="1063" status="run" result="completed" time="0.001" timestamp="2026-10-23T07:39:05.632" classname="DiagLogging" />
+  </testsuite>
+  <testsuite name="LogTestSuite" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T07:39:05.633">
+    <testcase name="LogTest" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\common\LogTestSuite.cpp" line="33" status="run" result="completed" time="0." timestamp="2026-10-23T07:39:05.634" classname="LogTestSuite" />
+  </testsuite>
+</testsuites>

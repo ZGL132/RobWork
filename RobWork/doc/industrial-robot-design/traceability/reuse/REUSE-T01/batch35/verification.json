@@ -1,0 +1,36 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B35",
+  "baseline": "d512e4a463720754cbffa43be91cd5e21ad71143",
+  "tests": {
+    "total": 19,
+    "passed": 17,
+    "failed": 2,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "originalProductTests": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+  },
+  "originalUpstreamTests": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "newTests": {
+    "total": 6,
+    "passed": 4,
+    "failed": 2,
+    "skipped": 0
+  },
+  "independentAcceptance": "not executed; new agent context rejects delegation under replacement AGENTS; no self-issued PASS",
+  "productionChanges": false,
+  "remote": "not executed"
+}

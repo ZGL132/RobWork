@@ -9767,5 +9767,16 @@
   "owner": "diagnostics / REUSE-T01",
   "resolution": "43跑42passed1failed，原38例通过；四类已解析pid后的非法尾部均false且error非空但names未清空。注册表和工厂检查false即停止，未证公共对象污染。T01不改解析核心；保持单一私有解析点，后续先核冻结契约及两调用方，最小处置独立回归。"
 }
+,
+{
+  "id": "F-969",
+  "source": "reuse/diagnostics-log-file-audit.md / batch35",
+  "severity": "minor",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "diagnostics日志轮转未遵守含活动文件的保留总数边界",
+  "owner": "diagnostics / REUSE-T01",
+  "resolution": "真实日志器keep1额外保留.1；真实文件接缝从5代缩至2后.2/.3/.4仍在。19跑17passed2failed0skipped，原产品12与上游1全过；后续在既有文件接缝最小修正并核上游候选，T01不改产品或新写日志核心。"
+}
   ]
 }
