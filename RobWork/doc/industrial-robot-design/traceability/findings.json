@@ -9683,6 +9683,16 @@
       "title": "core C4比较在有限极值的diff与limit同时溢出时将超容差输入误判为接近",
       "owner": "core / REUSE-T05",
       "resolution": "原core目标真实编译调用v=M/ref=-M/relative=.5/absolute=M应拒绝（缩放oracle差2>阈值1.5），原实现inf<=inf返回true；1项真实failed、0 passed/skipped/notRun。保留原红证，T05保持C4/owner语义修数值边界，不放宽容差或另建比较平台。"
+    },
+    {
+      "id": "F-961",
+      "source": "traceability/reuse/REUSE-T01/policy-boundary-audit.md / probe-r18",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "policy会话将合法REGEX前缀完整名传入上游模式API，产出的排除规则无法匹配原对象名",
+      "owner": "policy / REUSE-T05",
+      "resolution": "原policy CMake目标和原会话夹具真实编译，新2项1passed/1failed。runtime合法字符集允许REGEXarm，ProximitySetupRule把REGEX前缀后的字符串当正则；setup规则原名匹配false。仅证实公开setup输出错误，evaluate当前按scope直接逐对query，不声称已复现碰撞误判。T05用既有模式接口的最小字面适配，保留名称真值和上游API，先补原会话回归；不改上游或另建规则引擎。"
     }
   ]
 }

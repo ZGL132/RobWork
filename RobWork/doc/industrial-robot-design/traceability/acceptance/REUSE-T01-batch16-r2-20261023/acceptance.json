@@ -1,0 +1,227 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B16-rework-r2",
+  "result": "PASS",
+  "verdict": "PASS，仅B16-P2-01返工独立复验",
+  "scope": "仅关闭B16-P2-01：22条C++ helper上下文绑定、5原反例、摘要与归档保真、相关门禁。不重授整批B16、全T01 PASS或T02准入，不复验B17，不重跑29脚本。",
+  "reviewedCommit": "3a8375eac74408d06ba8999013635428aa6c90e7",
+  "reviewedParentCommit": "7eb991346be4eacaf15b0fdf5f914f0e4859875c",
+  "comparisonBase": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "repo": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo",
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9",
+  "createdAt": "2026-10-22T17:54:57.330823+00:00",
+  "facts": {
+    "reviewedCommit": "3a8375eac74408d06ba8999013635428aa6c90e7",
+    "reviewedParentCommit": "7eb991346be4eacaf15b0fdf5f914f0e4859875c",
+    "comparisonBase": "435dbdb716b9eb86d0932a478eb086642206ac76",
+    "affectedRelations": 22,
+    "fullSourceBindings": 22,
+    "distinctSourceFiles": 3,
+    "all22Bound": true,
+    "bindingManifestMatches": true,
+    "matrixChangeFailures": 0,
+    "changedMatrixRows": 22,
+    "sourcesAllUnchanged": true,
+    "hashChecks": 154,
+    "hashFailures": 0,
+    "originalProbeCases": 5,
+    "originalProbesNowRejected": 5,
+    "archiveGroups": 2,
+    "archiveFiles": 151,
+    "archiveRawMatches": 144,
+    "archiveNewlineOnly": 7,
+    "archiveMismatches": 0,
+    "originalFailPreserved": true,
+    "generatorPassPreserved": true,
+    "sourceDiffEmpty": true,
+    "scopedDiffCheckExit": 0,
+    "clean": true
+  },
+  "findings": [
+    {
+      "id": "B16-P2-01",
+      "priority": 2,
+      "status": "CLOSED",
+      "resolution": "本批全部22条C++ helper已各自补绑定对应来源cpp全文inputs，精确sources/全限定作用域不变；覆盖同文件常量、raw字符串、相邻helper、类默认成员及上下文。原5项内存反例仍保持精确source区段摘要不变，但新增来源全文inputs摘要均失配，已能使相关登记证据失效。",
+      "evidence": [
+        "binding-checks.json",
+        "matrix-change-checks.json",
+        "hash-checks.json",
+        "freshness-probe.json",
+        "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-rework.json"
+      ],
+      "proofBoundary": "仅内存替换和逐字段摘要对照，未写仓库文件、未执行C++或真实门禁变异运行。"
+    }
+  ],
+  "closedFindings": [
+    "B16-P2-01"
+  ],
+  "newFindings": [],
+  "checks": [
+    {
+      "name": "validate-task",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork\\scripts\\industrialrobot\\validate-task.ps1",
+        "-TaskFile",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo"
+      ],
+      "log": "task.log"
+    },
+    {
+      "name": "validate-docs",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork\\scripts\\industrialrobot\\validate-docs.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork"
+      ],
+      "log": "docs.log"
+    },
+    {
+      "name": "validate-reuse",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo",
+        "-Head",
+        "3a8375eac74408d06ba8999013635428aa6c90e7",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      ],
+      "log": "reuse.log"
+    },
+    {
+      "name": "scoped git diff --check",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "git",
+        "-C",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo",
+        "diff",
+        "--check",
+        "HEAD^",
+        "HEAD",
+        "--",
+        "<changed-files.log minus diff-check-exclusions.log>"
+      ],
+      "log": "scoped-diff-check.log",
+      "scope": "仅排除逐文件已核保真的归档原.log，未清洗原日志。"
+    }
+  ],
+  "counts": {
+    "affectedRelations": 22,
+    "distinctSourceFiles": 3,
+    "hashChecks": 154,
+    "hashFailures": 0,
+    "originalProbeCases": 5,
+    "originalProbesNowRejected": 5,
+    "archiveFiles": 151,
+    "archiveRawMatches": 144,
+    "archiveNewlineOnly": 7,
+    "archiveContentMismatches": 0,
+    "gatePassed": 4,
+    "gateSkipped": 0,
+    "gateFailed": 0,
+    "semanticBlockingFindingsInRework": 0
+  },
+  "archiveGroups": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+      "files": 106,
+      "rawMatches": 102,
+      "newlineOnly": 4,
+      "contentMismatches": 0
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+      "files": 45,
+      "rawMatches": 42,
+      "newlineOnly": 3,
+      "contentMismatches": 0
+    }
+  ],
+  "historicalConclusionPreservation": {
+    "originalSemanticAcceptance": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/acceptance.json",
+      "result": "FAIL",
+      "reviewedCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+      "originalFindingStatus": "OPEN"
+    },
+    "generatorAcceptance": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/acceptance.json",
+      "verdict": "PASS",
+      "scope": "仅29生成器隔离执行证据、91 dataset JSON对照与F-959复现及消费者源码核对；不含43行语义验收。",
+      "reviewedCommit": "435dbdb716b9eb86d0932a478eb086642206ac76"
+    },
+    "F959": "仍为既有open；本复验不关闭或重新判断此项。"
+  },
+  "boundaries": {
+    "productChanged": false,
+    "sourcesUnchanged": true,
+    "matrixScope": "仅B16涉及的dynamics/modeling/optimization/foundation-governance四份矩阵比较；除22个全文inputs新增外无变化。",
+    "B17": "父提交7eb991346含其他core登记，本复验不授其结论。",
+    "cleanIndependentCheckout": true,
+    "fullStagePass": false,
+    "remoteVerified": false,
+    "noCommitPushOrMerge": true
+  },
+  "notRun": [
+    "C++构建/消费测试",
+    "GUI",
+    "数值/性能",
+    "DeepEvidence",
+    "29个生成器重跑",
+    "B16整批语义重新验收",
+    "B17或其他批次验收",
+    "远程推送/CI交付核验"
+  ],
+  "limitations": [
+    "validate-docs输出NOT AUDITED evidence；validate-reuse仅治理，functions=651、closedFiles=0，不代表算法合规或阶段准入。",
+    "原归档.log仅从scoped whitespace检查中排除，精确排除表与保真比较均留存。",
+    "本次PASS是单项返工复验，不改写原FAIL或扩大生成器PASS。"
+  ],
+  "toolHashes": [
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork\\scripts\\industrialrobot\\validate-task.ps1",
+      "rawSha256": "4161db742d876d18b1d477c5ccd83bcc1598403f05cafd013a11527c8497ec89"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork\\scripts\\industrialrobot\\validate-docs.ps1",
+      "rawSha256": "e9a46c913f6ed8afc84cb04caffb119411bf77aa967eade090fe7f16d2cf0462"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1",
+      "rawSha256": "1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\repo\\RobWork\\scripts\\industrialrobot\\reuse-contract.ps1",
+      "rawSha256": "25f27251fafa9cb40146243afc4916ea82b93cdf8708b6fa050c4b37d77f0e57"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\check-rework.py",
+      "rawSha256": "10c2b84472ef634145726e29a4287980c38f1afa5eceaafd530943b71c156b45"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-r2-152411a5b07f4a5b856e70805989a6f9\\write-acceptance.py",
+      "rawSha256": "c6a2b1f38d8b2ad0411ceab1aa6bfba54684f9aa9cf91b840b7936618b7f8999"
+    }
+  ]
+}

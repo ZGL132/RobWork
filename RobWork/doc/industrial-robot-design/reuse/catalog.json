@@ -797,6 +797,40 @@
           "target": "sdurw_proximity",
           "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
           "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/proximity/ProximitySetup.hpp",
+          "sha256": "5aec8e54347cec1b50cbe88152d43ed9807585c2881002c022b64bf3d94be8a5",
+          "symbols": [
+            "setUseExcludeStaticPairs",
+            "setUseIncludeAll",
+            "addProximitySetupRule"
+          ],
+          "target": "sdurw_proximity",
+          "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+          "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp",
+          "sha256": "2fa1b7816b71f427504d35dd4e4ec4e8d7c3b5600fc26d0096013679b21a7bb5",
+          "symbols": [
+            "makeExclude",
+            "makeInclude",
+            "match"
+          ],
+          "target": "sdurw_proximity",
+          "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+          "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/proximity/ProximitySetupRule.cpp",
+          "sha256": "0852bd1c056c03c53d61e4e46996fe11021be5dc6ca51aed3892e70953b1c839",
+          "symbols": [
+            "convertToRegEx"
+          ],
+          "target": "sdurw_proximity",
+          "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+          "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
         }
       ],
       "build": {
@@ -818,7 +852,8 @@
       "limits": {
         "semantics": "policy策略唯一，State独占",
         "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
-        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+        "determinism": "按需求与功能探测，未验证不得宣称确定性",
+        "policyAdapter": "makeInclude/makeExclude接收模式而非字面名；REGEX前缀有特殊语义，普通点号会转义。内置RW仅CollisionStrategy，无DistanceStrategy；不能以描述符binary-collision+distance串宣称运行距离能力。会话锁由评估器共享，直构共享后端须同锁；geometry模型仅任务会话缓存，非WC结构写入。"
       },
       "ownerUnit": "policy",
       "examples": [],
@@ -830,7 +865,16 @@
         "status": "candidate",
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
-      "tests": [],
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/proximity/ProximitySetupRuleTest.cpp",
+          "sha256": "b4ad21e66a251203a0834d15a16174ed8918f55c761ebb72d5915e2b92afc104",
+          "symbols": [
+            "ProximitySetupRule"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
       "resourceSearch": {
         "command": "rg -n \"inCollision\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
@@ -2862,6 +2906,74 @@
       "tests": [],
       "resourceSearch": {
         "command": "见batch15-search.json，全文核RenderText.hpp/.cpp",
+        "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+      }
+    },
+    {
+      "id": "MODEL-BOUNDS",
+      "search": {
+        "command": "见batch18-search.json实际检索",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+      },
+      "boundary": "可复用普通Q闭区间过滤，但不替代policy行程阈值、continuous工程范围、逐样本有符号裕量/近限位、诊断/provenance和排序；不赋予模型构造权",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/models/Models.hpp",
+          "sha256": "bee44025ed444d57e56f46b5b1b09ecf89b5c2d7497b906804beeb89d65d7913",
+          "symbols": [
+            "inBounds"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/pathplanning/QConstraint.hpp",
+          "sha256": "d46af647083283c0c660e3beb5924b931b7a5c257dd19d14850b2dbe1933295e",
+          "symbols": [
+            "makeBounds"
+          ],
+          "target": "sdurw_pathplanning",
+          "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+          "targetSha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_models",
+          "sdurw_pathplanning"
+        ],
+        "constraints": "可复用普通Q闭区间过滤，但不替代policy行程阈值、continuous工程范围、逐样本有符号裕量/近限位、诊断/provenance和排序；不赋予模型构造权"
+      },
+      "usages": [
+        {
+          "consumerUnit": "policy",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "可复用普通Q闭区间过滤，但不替代policy行程阈值、continuous工程范围、逐样本有符号裕量/近限位、诊断/provenance和排序；不赋予模型构造权",
+        "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+        "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+      },
+      "ownerUnit": "runtime",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "见batch18-search.json实际检索",
         "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
       }
     }

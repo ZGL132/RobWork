@@ -1,0 +1,156 @@
+[
+  {
+    "functionId": "dynamics.StatisticsTest.expectNearRel",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.rowAt",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makeIdentity",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.prismAxialForce",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.revTorque",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.cancellationRequested",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.reportProgress",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.tryObjectBytes",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asBytes",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.digestOf",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.existingNodeFor",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.missingNode",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.includeEdge",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeXacroSource",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asText",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.findDiag",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeBasicSource",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "sha256": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787"
+    }
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeCid",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+    }
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeCandidate",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+    }
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeTwoObjectives",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+    }
+  },
+  {
+    "functionId": "optimization.ParetoTest.idsOf",
+    "input": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
+    }
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "functionId": "dynamics.StatisticsTest.expectNearRel",
+    "before": "constexpr double kGoldenRelTol = 1e-12;",
+    "after": "constexpr double kGoldenRelTol = 1e-6;",
+    "sourceSectionHashUnchanged": true,
+    "originalFullSourceHashMatched": true,
+    "mutantFullSourceHashRejected": true,
+    "execution": "仅内存替换；未写仓库文件，未执行C++或门禁变异运行"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.prismAxialForce",
+    "before": "constexpr double kPrismMass = 1.0;",
+    "after": "constexpr double kPrismMass = 2.0;",
+    "sourceSectionHashUnchanged": true,
+    "originalFullSourceHashMatched": true,
+    "mutantFullSourceHashRejected": true,
+    "execution": "仅内存替换；未写仓库文件，未执行C++或门禁变异运行"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.revTorque",
+    "before": "constexpr double kRevMass = 0.5;",
+    "after": "constexpr double kRevMass = 1.5;",
+    "sourceSectionHashUnchanged": true,
+    "originalFullSourceHashMatched": true,
+    "mutantFullSourceHashRejected": true,
+    "execution": "仅内存替换；未写仓库文件，未执行C++或门禁变异运行"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+    "before": "constexpr double kPrismMass = 1.0;",
+    "after": "constexpr double kPrismMass = 2.0;",
+    "sourceSectionHashUnchanged": true,
+    "originalFullSourceHashMatched": true,
+    "mutantFullSourceHashRejected": true,
+    "execution": "仅内存替换；未写仓库文件，未执行C++或门禁变异运行"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeBasicSource",
+    "before": "<xacro:property name=\"prefix\" value=\"arm\"/>",
+    "after": "<xacro:property name=\"prefix\" value=\"changed\"/>",
+    "sourceSectionHashUnchanged": true,
+    "originalFullSourceHashMatched": true,
+    "mutantFullSourceHashRejected": true,
+    "execution": "仅内存替换；未写仓库文件，未执行C++或门禁变异运行"
+  }
+]
