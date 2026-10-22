@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T01",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "全20单元逐功能复用审计与最小扩展提案",
+  "status": "planned",
+  "branch": "reuse-t01",
+  "dependsOn": [
+    "GOV-T21"
+  ],
+  "requirements": [
+    "DYN-01",
+    "DYN-05",
+    "KIN-01"
+  ],
+  "designRefs": [
+    "reuse/migration.md",
+    "reuse/policy.md",
+    "reuse/extensions/required-proposals.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
+  ],
+  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。"
+}

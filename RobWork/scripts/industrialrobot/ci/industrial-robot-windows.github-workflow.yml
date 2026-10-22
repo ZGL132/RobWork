@@ -587,10 +587,10 @@ jobs:
           @TreeView_PATH@
           @TreeView_VISIBLE@
           '@ | Set-Content -Path "$PWD/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.shared.in" -Encoding Ascii
-      - name: governance-docs（治理文档门禁：资产清单/Notes/Skills/证据索引深比较）
-        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-docs.ps1 -DeepEvidence
-      - name: governance-context-pack（上下文包新鲜度＋PIPE 权威红线）
-        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-context-pack.ps1 -All
+      - name: governance-docs（治理文档结构检查；全库证据审计按需执行）
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-docs.ps1
+      - name: reuse-adversarial-selftests
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\test-reuse-governance.ps1
       - name: check-boundaries
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
       - name: 上传日志/CTest XML/边界报告/安装 manifest

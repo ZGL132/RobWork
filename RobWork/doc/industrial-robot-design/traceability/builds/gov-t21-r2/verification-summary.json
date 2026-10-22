@@ -1,0 +1,104 @@
+{
+  "ps7": {
+    "expected": 45,
+    "executed": 45,
+    "notRun": 0,
+    "driverFailure": "",
+    "passed": 45,
+    "skipped": 0,
+    "failed": 0,
+    "complete": true,
+    "validatorSha256": "C38482ECBE5BB00DFCA25F7129C4B8635BF44731AC4BA692945579EA52581147",
+    "driverSha256": "B9AEC42F6886702745749C05FAFF08F6720427E91A17CDC7644AED09CB86C575"
+  },
+  "ps51": {
+    "expected": 45,
+    "executed": 45,
+    "notRun": 0,
+    "driverFailure": "",
+    "passed": 45,
+    "skipped": 0,
+    "failed": 0,
+    "complete": true,
+    "validatorSha256": "C38482ECBE5BB00DFCA25F7129C4B8635BF44731AC4BA692945579EA52581147",
+    "driverSha256": "B9AEC42F6886702745749C05FAFF08F6720427E91A17CDC7644AED09CB86C575"
+  },
+  "driver-failure": {
+    "expected": 45,
+    "executed": 0,
+    "notRun": 45,
+    "driverFailure": "fixture clone failed",
+    "passed": 0,
+    "skipped": 0,
+    "failed": 0,
+    "complete": false,
+    "validatorSha256": "C38482ECBE5BB00DFCA25F7129C4B8635BF44731AC4BA692945579EA52581147",
+    "driverSha256": "B9AEC42F6886702745749C05FAFF08F6720427E91A17CDC7644AED09CB86C575"
+  },
+  "taskId": "GOV-T21",
+  "phase": "implementation-rework",
+  "priorAcceptance": {
+    "branch": "acc/GOV-T21/1",
+    "commit": "b889110329709ca340c89cb8ac811bc7cd32dfdf",
+    "reviewedCommit": "64ef0fd07755479ce01b3f936320fe91396cfce2",
+    "verdict": "fail",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022.json"
+  },
+  "independentAcceptance": "pending-new-frozen-SHA",
+  "productAlgorithmsModified": false,
+  "ps7-final": {
+    "expected": 45,
+    "executed": 45,
+    "notRun": 0,
+    "driverFailure": "",
+    "passed": 45,
+    "skipped": 0,
+    "failed": 0,
+    "complete": true,
+    "validatorSha256": "ED13EA799F8D0E185B9D5886713F913718758D4FFFD80BC391A8CA4BAD03A7E4",
+    "driverSha256": "9507900DED5C87CFAF8CEB36C65A3257ECC4DD85152C6125B64F07A3EF3CC93D"
+  },
+  "ps51-final": {
+    "expected": 45,
+    "executed": 45,
+    "notRun": 0,
+    "driverFailure": "",
+    "passed": 45,
+    "skipped": 0,
+    "failed": 0,
+    "complete": true,
+    "validatorSha256": "ED13EA799F8D0E185B9D5886713F913718758D4FFFD80BC391A8CA4BAD03A7E4",
+    "driverSha256": "9507900DED5C87CFAF8CEB36C65A3257ECC4DD85152C6125B64F07A3EF3CC93D"
+  },
+  "driver-failure-final": {
+    "expected": 45,
+    "executed": 0,
+    "notRun": 45,
+    "driverFailure": "fixture clone failed",
+    "passed": 0,
+    "skipped": 0,
+    "failed": 0,
+    "complete": false,
+    "validatorSha256": "ED13EA799F8D0E185B9D5886713F913718758D4FFFD80BC391A8CA4BAD03A7E4",
+    "driverSha256": "9507900DED5C87CFAF8CEB36C65A3257ECC4DD85152C6125B64F07A3EF3CC93D"
+  },
+  "unknown-red": {
+    "expected": 45,
+    "executed": 45,
+    "notRun": 0,
+    "driverFailure": "",
+    "passed": 43,
+    "skipped": 0,
+    "failed": 2,
+    "complete": true,
+    "validatorSha256": "C38482ECBE5BB00DFCA25F7129C4B8635BF44731AC4BA692945579EA52581147",
+    "driverSha256": "9507900DED5C87CFAF8CEB36C65A3257ECC4DD85152C6125B64F07A3EF3CC93D"
+  },
+  "finalEvidence": [
+    "ps7-final",
+    "ps51-final",
+    "driver-failure-final",
+    "integration-unknown-final.log",
+    "smoke-unknown-final.log"
+  ]
+}

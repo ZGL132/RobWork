@@ -1,5 +1,8 @@
 # 工业机械臂设计软件 · dynamics 单元详细设计（阶段 C）
 
+> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+
+
 > 2026-10-06 新建（WP-17-T01 承接）。本文是 dynamics 单元的唯一详细设计：依据 REQUIREMENTS DYN-01～08 与 ARCHITECTURE §3.1/§3.5/§7.3/§7.10/§10 的分配，把动力学输入快照与数据模型、RNEA 逆动力学、正动力学一致性、峰值/RMS/包络/功率/能量、多工况与 drivetrain/evidence 交接、execution/selection/reporting/ui 协作、公共接口、验证与故障注入矩阵、任务拆分与追踪矩阵写到可直接实现的深度。**本文只做详细设计：不实现产品源码、不创建 C++/CMake/测试/UI 文件、不修改需求/架构/其他单元详设；`units/dynamics.md` 此前不存在（2026-10-06 实测，无旧稿可审核），本文为首版；不自行宣布 Accepted，不把本文自审写成实现测试或正式验收通过。**
 
 | 字段 | 值 |
@@ -1466,3 +1469,7 @@ DYN-P1～P6 的原审核见 traceability/builds/dynamics-audit-20261022-119dce6b
 - 正式宿主分析执行器、真实轨迹/归档来源和结果快照校验尚未落位，不将空闭包当接通；移除未校验身份的首设备姿态写入。DYN-P1、P2、P4 持续未关闭。
 
 实现计划：docs/superpowers/plans/2026-10-22-dynamics-review-fixes.md；本批验证结果另建 builds/dynamics-fixes-20261022-wp17-t11/，不覆盖原审核历史。
+
+## GOV-T21 迁移约束与旧规则勘误
+
+P-DYN-7 的“自持 RK4、禁止 rwsim 引擎”约束自本治理被取代。DYN-01/05 必须落到 RecursiveNewtonEuler / PhysicsEngine 的真实路径。现有 ForwardDynamicsBoundaryContractTest 本轮不删不放宽；REUSE-T04 同批改成真实上游调用、输入和行为契约测试，不能把旧断言当新实现许可。

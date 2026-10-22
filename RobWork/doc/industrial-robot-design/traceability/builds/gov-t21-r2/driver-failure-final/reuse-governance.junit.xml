@@ -1,0 +1,5 @@
+<testsuite name="reuse-governance" tests="1" failures="0" skipped="0" errors="1">
+  <testcase name="driver-completion">
+    <error>driverFailure=fixture clone failed; notRun=45</error>
+  </testcase>
+</testsuite>

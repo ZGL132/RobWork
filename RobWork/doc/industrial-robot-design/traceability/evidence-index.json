@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-22T12:47:22+08:00",
+  "generatedAt": "2026-10-22T16:07:57+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 16000,
-    "totalBytes": 869764612,
+    "totalFiles": 16525,
+    "totalBytes": 870796064,
     "byKind": {
-      "json-data": 7,
-      "log": 1,
-      "manual-acceptance": 1,
-      "benchmark": 8,
-      "acceptance-record": 518,
-      "build-log": 15047,
-      "pipeline-artifact": 2,
       "gtest-report": 335,
+      "benchmark": 8,
+      "json-data": 7,
+      "build-log": 15571,
+      "manual-acceptance": 1,
+      "log": 1,
+      "pipeline-artifact": 2,
       "governance-record": 40,
+      "acceptance-record": 519,
       "markdown-doc": 41
     },
     "byLifecycle": {
-      "superseded": 0,
+      "current": 29,
       "historical": 565,
-      "unverified": 15407,
-      "current": 28
+      "superseded": 0,
+      "unverified": 15931
     },
-    "associated": 599,
-    "unassociated": 15401,
-    "shaComputed": 15980,
+    "associated": 600,
+    "unassociated": 15925,
+    "shaComputed": 16505,
     "shaSkippedLarge": 20,
-    "duplicateGroupsTotal": 927,
+    "duplicateGroupsTotal": 989,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -986,444 +986,649 @@
       ]
     },
     {
-      "sha256": "e7b2411d84a7bf9f833e9b5fcb02da76e268d46e4ac31b242bd520b65be5e0ad",
+      "sha256": "3f8f574a4f076dc62d500ddb6993919531109d4b03cbe893da9cf4eccb179130",
       "paths": [
-        "builds/kin-p1/ird-gates.log",
-        "builds/kin-p4/ird-gates.log"
+        "builds/gov-t21-r2/driver-failure-final/reuse-governance.junit.xml",
+        "builds/gov-t21-r2/driver-failure/reuse-governance.junit.xml"
       ]
     },
     {
-      "sha256": "fa594dd1b297db71cbc670b3df70556dd0feb41614a6e73c7df9d98380ad344c",
+      "sha256": "bce2aa40099092fd17383fa8d0b3b499ced53201b3760f2a7cc1d410437ac8a2",
       "paths": [
-        "builds/kin-p2/ird-gates.log",
-        "builds/kin-p3/ird-gates.log",
-        "builds/kin-p5/ird-gates.log",
-        "builds/kin-r2/kin-r2-ird-gates.log"
+        "builds/gov-t21-r2/integration.log",
+        "builds/gov-t21-r2/smoke.log"
       ]
     },
     {
-      "sha256": "231d294577b7c3437e463cc9133d0da89b2011231e2952a03ba1b57002f08613",
+      "sha256": "efd8ba7a39fec75972032d51fe5cb84492f5989a5b40aec1d6b556e32dbdd9cc",
       "paths": [
-        "builds/kin-p4/ird-test-report-last-run.json",
-        "builds/kin-p4/ird-test-report-root.json"
+        "builds/gov-t21-r2/ps51-driver.log",
+        "builds/gov-t21-r2/ps7-driver.log"
       ]
     },
     {
-      "sha256": "ef5c5d2e352d2981c4e91e43cb3b460e74f3e6837c75ff1714c0aa82df5c5e1f",
+      "sha256": "eab56fb1f1749ab94037344e8fcf2702971d9583f06dc1c885f87e24412bd064",
       "paths": [
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gates-kinematics-merge-stage12.log",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/gates-kinematics-20261021-011623-096.log",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/raw/gates-kinematics-20261021-025848-736.log",
-        "builds/main-functional-recheck-20261021-b7abcba9/gates.log",
-        "builds/main-manual-validation-20261021/gates.log"
+        "builds/gov-t21-r2/ps51-final-driver.log",
+        "builds/gov-t21-r2/ps7-final-driver.log"
       ]
     },
     {
-      "sha256": "a9212cbe1c029778ab6f3b20834fe3855b9864e31a8a97b6a764a2b2ed47b58c",
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
       "paths": [
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gui-kinematics_gui-merge-stage12/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gui-standalone_kinematics_gui-merge-stage12/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-20261021-025811-500/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-stage2-full/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-standalone_kinematics_gui-20261021-025840-509/cartesian-box-run.png"
+        "builds/gov-t21-r2/ps51-final/01-clean.log",
+        "builds/gov-t21-r2/ps51-final/31-frozen-head.log",
+        "builds/gov-t21-r2/ps51-final/32-frozen-head-ignores-dirty-tree.log",
+        "builds/gov-t21-r2/ps51-final/33-frozen-head-repeatable.log",
+        "builds/gov-t21-r2/ps51/01-clean.log",
+        "builds/gov-t21-r2/ps51/31-frozen-head.log",
+        "builds/gov-t21-r2/ps51/32-frozen-head-ignores-dirty-tree.log",
+        "builds/gov-t21-r2/ps51/33-frozen-head-repeatable.log",
+        "builds/gov-t21-r2/ps7-final/01-clean.log",
+        "builds/gov-t21-r2/ps7-final/31-frozen-head.log",
+        "builds/gov-t21-r2/ps7-final/32-frozen-head-ignores-dirty-tree.log",
+        "builds/gov-t21-r2/ps7-final/33-frozen-head-repeatable.log",
+        "builds/gov-t21-r2/ps7/01-clean.log",
+        "builds/gov-t21-r2/ps7/31-frozen-head.log",
+        "builds/gov-t21-r2/ps7/32-frozen-head-ignores-dirty-tree.log",
+        "builds/gov-t21-r2/ps7/33-frozen-head-repeatable.log",
+        "builds/gov-t21-r2/unknown-red/01-clean.log",
+        "builds/gov-t21-r2/unknown-red/31-frozen-head.log",
+        "builds/gov-t21-r2/unknown-red/32-frozen-head-ignores-dirty-tree.log",
+        "builds/gov-t21-r2/unknown-red/33-frozen-head-repeatable.log",
+        "builds/gov-t21-r2/unknown-red/suffix-inc.log",
+        "builds/gov-t21-r2/unknown-red/suffix-opaque.log"
       ]
     },
     {
-      "sha256": "11374337722521537df00349222e4df587b8e3add0adc56f013cdbca4363a568",
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
       "paths": [
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gui-kinematics_gui-merge-stage12/config-confirmation.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gui-standalone_kinematics_gui-merge-stage12/config-confirmation.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-20261021-025811-500/config-confirmation.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-config-green2/config-confirmation.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-stage2-full/config-confirmation.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-standalone_kinematics_gui-20261021-025840-509/config-confirmation.png",
-        "builds/kinematics-completion-20261022/evidence/screens-standalone-evidence-standalone/config-confirmation.png"
+        "builds/gov-t21-r2/ps51-final/02-fixed-baseline.log",
+        "builds/gov-t21-r2/ps51/02-fixed-baseline.log",
+        "builds/gov-t21-r2/ps7-final/02-fixed-baseline.log",
+        "builds/gov-t21-r2/ps7/02-fixed-baseline.log",
+        "builds/gov-t21-r2/unknown-red/02-fixed-baseline.log",
+        "builds/gov-t21/ps51-final/02-fixed-baseline.log",
+        "builds/gov-t21/ps51-frozen/02-fixed-baseline.log",
+        "builds/gov-t21/ps51-r2/02-fixed-baseline.log",
+        "builds/gov-t21/ps7-final/02-fixed-baseline.log",
+        "builds/gov-t21/ps7-frozen/02-fixed-baseline.log",
+        "builds/gov-t21/ps7-r2/02-fixed-baseline.log"
       ]
     },
     {
-      "sha256": "4efdf0fcf2a7a9ec9dcd9d8b6d2165adff7f28ee775f89e6884c6aeaf2d9af2e",
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
       "paths": [
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gui-kinematics_gui-merge-stage12/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gui-standalone_kinematics_gui-merge-stage12/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-20261021-025811-500/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-stage2-full/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-standalone_kinematics_gui-20261021-025840-509/filled-target-mm.png"
+        "builds/gov-t21-r2/ps51-final/03-all-units.log",
+        "builds/gov-t21-r2/ps51/03-all-units.log",
+        "builds/gov-t21-r2/ps7-final/03-all-units.log",
+        "builds/gov-t21-r2/ps7/03-all-units.log",
+        "builds/gov-t21-r2/unknown-red/03-all-units.log",
+        "builds/gov-t21/ps51-final/03-all-units.log",
+        "builds/gov-t21/ps51-frozen/03-all-units.log",
+        "builds/gov-t21/ps51-r2/03-all-units.log",
+        "builds/gov-t21/ps7-final/03-all-units.log",
+        "builds/gov-t21/ps7-frozen/03-all-units.log",
+        "builds/gov-t21/ps7-r2/03-all-units.log"
       ]
     },
     {
-      "sha256": "e9d4a5709240558bd83ff70162e296f8e1f47c99c04e4c14073240229a85b629",
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
       "paths": [
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gui-kinematics_gui-merge-stage12/results-small-window-bottom.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/merge-stage12/gui-standalone_kinematics_gui-merge-stage12/results-small-window-bottom.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green-full/results-small-window-bottom.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-green1/results-small-window-bottom.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-kinematics_gui-20261021-011552-357/results-small-window-bottom.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-standalone_kinematics_gui-20261021-011617-246/results-small-window-bottom.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-20261021-025811-500/results-small-window-bottom.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-kinematics_gui-stage2-full/results-small-window-bottom.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage2/screenshots/gui-standalone_kinematics_gui-20261021-025840-509/results-small-window-bottom.png"
+        "builds/gov-t21-r2/ps51-final/04-missing-source.log",
+        "builds/gov-t21-r2/ps51/04-missing-source.log",
+        "builds/gov-t21-r2/ps7-final/04-missing-source.log",
+        "builds/gov-t21-r2/ps7/04-missing-source.log",
+        "builds/gov-t21-r2/unknown-red/04-missing-source.log",
+        "builds/gov-t21/ps51-final/04-missing-source.log",
+        "builds/gov-t21/ps51-frozen/04-missing-source.log",
+        "builds/gov-t21/ps51-r2/04-missing-source.log",
+        "builds/gov-t21/ps7-final/04-missing-source.log",
+        "builds/gov-t21/ps7-frozen/04-missing-source.log",
+        "builds/gov-t21/ps7-r2/04-missing-source.log"
       ]
     },
     {
-      "sha256": "4de27b39dc83d8a44d50bf1ddd331c8903b8a8e91df42392d18ce69a976829c4",
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
       "paths": [
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/raw/kinematics_contract-20261021-011547-271-report.json",
-        "builds/requirements-a23-20261020/kinematics_contract-report.json"
+        "builds/gov-t21-r2/ps51-final/05-stale-source.log",
+        "builds/gov-t21-r2/ps51/05-stale-source.log",
+        "builds/gov-t21-r2/ps7-final/05-stale-source.log",
+        "builds/gov-t21-r2/ps7/05-stale-source.log",
+        "builds/gov-t21-r2/unknown-red/05-stale-source.log",
+        "builds/gov-t21/ps51-final/05-stale-source.log",
+        "builds/gov-t21/ps51-frozen/05-stale-source.log",
+        "builds/gov-t21/ps51-r2/05-stale-source.log",
+        "builds/gov-t21/ps7-final/05-stale-source.log",
+        "builds/gov-t21/ps7-frozen/05-stale-source.log",
+        "builds/gov-t21/ps7-r2/05-stale-source.log"
       ]
     },
     {
-      "sha256": "ef7171cea8725d02a73da006795beeb5a41e0b7c6d0e3df469e0688d12e774dc",
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
       "paths": [
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-expanded-red/cartesian-box-run.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-red2/cartesian-box-run.png"
+        "builds/gov-t21-r2/ps51-final/06-missing-symbol.log",
+        "builds/gov-t21-r2/ps51/06-missing-symbol.log",
+        "builds/gov-t21-r2/ps7-final/06-missing-symbol.log",
+        "builds/gov-t21-r2/ps7/06-missing-symbol.log",
+        "builds/gov-t21-r2/unknown-red/06-missing-symbol.log",
+        "builds/gov-t21/ps51-final/06-missing-symbol.log",
+        "builds/gov-t21/ps51-frozen/06-missing-symbol.log",
+        "builds/gov-t21/ps51-r2/06-missing-symbol.log",
+        "builds/gov-t21/ps7-final/06-missing-symbol.log",
+        "builds/gov-t21/ps7-frozen/06-missing-symbol.log",
+        "builds/gov-t21/ps7-r2/06-missing-symbol.log"
       ]
     },
     {
-      "sha256": "5381d1091ef7751d213b70ee83491a84cf8688caae39b010cc788cf7a1ebf6fe",
+      "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
       "paths": [
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-expanded-red/filled-target-mm.png",
-        "builds/kinematics-audit-20261021-5fd9a3d1/stage1/screenshots/gui-red2/filled-target-mm.png"
+        "builds/gov-t21-r2/ps51-final/07-inventory-omission.log",
+        "builds/gov-t21-r2/ps51/07-inventory-omission.log",
+        "builds/gov-t21-r2/ps7-final/07-inventory-omission.log",
+        "builds/gov-t21-r2/ps7/07-inventory-omission.log",
+        "builds/gov-t21-r2/unknown-red/07-inventory-omission.log"
       ]
     },
     {
-      "sha256": "7d3715405d7a81248b91747e2d544e6d9eac35575647f8531356de69bcc568bd",
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
       "paths": [
-        "builds/kinematics-completion-20261022/evidence/gates-standalone-kinematics_gui-final-gates.log",
-        "builds/requirements-audit-20261018/ird-gates.log"
+        "builds/gov-t21-r2/ps51-final/08-forged-blob.log",
+        "builds/gov-t21-r2/ps51-final/09-inventory-duplicate.log",
+        "builds/gov-t21-r2/ps51/08-forged-blob.log",
+        "builds/gov-t21-r2/ps51/09-inventory-duplicate.log",
+        "builds/gov-t21-r2/ps7-final/08-forged-blob.log",
+        "builds/gov-t21-r2/ps7-final/09-inventory-duplicate.log",
+        "builds/gov-t21-r2/ps7/08-forged-blob.log",
+        "builds/gov-t21-r2/ps7/09-inventory-duplicate.log",
+        "builds/gov-t21-r2/unknown-red/08-forged-blob.log",
+        "builds/gov-t21-r2/unknown-red/09-inventory-duplicate.log",
+        "builds/gov-t21/ps51-final/08-forged-blob.log",
+        "builds/gov-t21/ps51-final/09-inventory-duplicate.log",
+        "builds/gov-t21/ps51-frozen/08-forged-blob.log",
+        "builds/gov-t21/ps51-frozen/09-inventory-duplicate.log",
+        "builds/gov-t21/ps51-r2/08-forged-blob.log",
+        "builds/gov-t21/ps51-r2/09-inventory-duplicate.log",
+        "builds/gov-t21/ps7-final/08-forged-blob.log",
+        "builds/gov-t21/ps7-final/09-inventory-duplicate.log",
+        "builds/gov-t21/ps7-frozen/08-forged-blob.log",
+        "builds/gov-t21/ps7-frozen/09-inventory-duplicate.log",
+        "builds/gov-t21/ps7-r2/08-forged-blob.log",
+        "builds/gov-t21/ps7-r2/09-inventory-duplicate.log"
       ]
     },
     {
-      "sha256": "27ffc2e7a1095a145e07df4a48599e31ca8d0b385e6a57626df0ab2e3ba893ec",
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/batch.ps1",
-        "builds/main-functional-recheck-20261021-b7abcba9/batch.ps1"
+        "builds/gov-t21-r2/ps51-final/10-inventory-unit.log",
+        "builds/gov-t21-r2/ps51/10-inventory-unit.log",
+        "builds/gov-t21-r2/ps7-final/10-inventory-unit.log",
+        "builds/gov-t21-r2/ps7/10-inventory-unit.log",
+        "builds/gov-t21-r2/unknown-red/10-inventory-unit.log",
+        "builds/gov-t21/ps51-final/10-inventory-unit.log",
+        "builds/gov-t21/ps51-frozen/10-inventory-unit.log",
+        "builds/gov-t21/ps51-r2/10-inventory-unit.log",
+        "builds/gov-t21/ps7-final/10-inventory-unit.log",
+        "builds/gov-t21/ps7-frozen/10-inventory-unit.log",
+        "builds/gov-t21/ps7-r2/10-inventory-unit.log"
       ]
     },
     {
-      "sha256": "765eec7f2742381243c10afcd9219d89837def51d7fabe5dd20a6a0022195afa",
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/contact_sheets.py",
-        "builds/main-functional-recheck-20261021-b7abcba9/contact_sheets.py"
+        "builds/gov-t21-r2/ps51-final/11-new-source.log",
+        "builds/gov-t21-r2/ps51/11-new-source.log",
+        "builds/gov-t21-r2/ps7-final/11-new-source.log",
+        "builds/gov-t21-r2/ps7/11-new-source.log",
+        "builds/gov-t21-r2/unknown-red/11-new-source.log",
+        "builds/gov-t21/ps51-final/11-new-source.log",
+        "builds/gov-t21/ps51-frozen/11-new-source.log",
+        "builds/gov-t21/ps51-r2/11-new-source.log",
+        "builds/gov-t21/ps7-final/11-new-source.log",
+        "builds/gov-t21/ps7-frozen/11-new-source.log",
+        "builds/gov-t21/ps7-r2/11-new-source.log"
       ]
     },
     {
-      "sha256": "64dfe0fefa52b197a1f8e3f9d00440d2fb95091381d302ee2f14c5ce82a70723",
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/contact-sheets/modeling-tour-1.jpg",
-        "builds/main-functional-recheck-20261021-b7abcba9/contact-sheets/modeling-tour-1.jpg"
+        "builds/gov-t21-r2/ps51-final/12-stale-change-hash.log",
+        "builds/gov-t21-r2/ps51/12-stale-change-hash.log",
+        "builds/gov-t21-r2/ps7-final/12-stale-change-hash.log",
+        "builds/gov-t21-r2/ps7/12-stale-change-hash.log",
+        "builds/gov-t21-r2/unknown-red/12-stale-change-hash.log",
+        "builds/gov-t21/ps51-final/12-stale-change-hash.log",
+        "builds/gov-t21/ps51-frozen/12-stale-change-hash.log",
+        "builds/gov-t21/ps7-final/12-stale-change-hash.log",
+        "builds/gov-t21/ps7-frozen/12-stale-change-hash.log"
       ]
     },
     {
-      "sha256": "e4b047cf56b30f9362ff59bbed80e7d386d1932c9e1707cbb8b749718f9b0330",
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/contact-sheets/modeling-tour-2.jpg",
-        "builds/main-functional-recheck-20261021-b7abcba9/contact-sheets/modeling-tour-2.jpg"
+        "builds/gov-t21-r2/ps51-final/13-core-even-business.log",
+        "builds/gov-t21-r2/ps51/13-core-even-business.log",
+        "builds/gov-t21-r2/ps7-final/13-core-even-business.log",
+        "builds/gov-t21-r2/ps7/13-core-even-business.log",
+        "builds/gov-t21-r2/unknown-red/13-core-even-business.log",
+        "builds/gov-t21/ps51-final/13-core-even-business.log",
+        "builds/gov-t21/ps51-frozen/13-core-even-business.log",
+        "builds/gov-t21/ps51-r2/13-core-even-business.log",
+        "builds/gov-t21/ps7-final/13-core-even-business.log",
+        "builds/gov-t21/ps7-frozen/13-core-even-business.log",
+        "builds/gov-t21/ps7-r2/13-core-even-business.log"
       ]
     },
     {
-      "sha256": "9ea935fb390b1a92f8be2c3ea4ced66a7faeef1bed6ad3296977ac0a97f560e8",
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/contact-sheets/modeling-tour-4.jpg",
-        "builds/main-functional-recheck-20261021-b7abcba9/contact-sheets/modeling-tour-4.jpg"
+        "builds/gov-t21-r2/ps51-final/14-cpp-not-governance.log",
+        "builds/gov-t21-r2/ps51/14-cpp-not-governance.log",
+        "builds/gov-t21-r2/ps7-final/14-cpp-not-governance.log",
+        "builds/gov-t21-r2/ps7/14-cpp-not-governance.log",
+        "builds/gov-t21-r2/unknown-red/14-cpp-not-governance.log",
+        "builds/gov-t21/ps51-final/14-cpp-not-governance.log",
+        "builds/gov-t21/ps51-frozen/14-cpp-not-governance.log",
+        "builds/gov-t21/ps51-r2/14-cpp-not-governance.log",
+        "builds/gov-t21/ps7-final/14-cpp-not-governance.log",
+        "builds/gov-t21/ps7-frozen/14-cpp-not-governance.log",
+        "builds/gov-t21/ps7-r2/14-cpp-not-governance.log"
       ]
     },
     {
-      "sha256": "9ec98f8d5abd2847c3d030b2f1e113dded5a8420a6c3d52ca4dad2235b124222",
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/contact-sheets/requirements-tour-1.jpg",
-        "builds/main-functional-recheck-20261021-b7abcba9/contact-sheets/requirements-tour-1.jpg"
+        "builds/gov-t21-r2/ps51-final/15-missing-approval.log",
+        "builds/gov-t21-r2/ps51/15-missing-approval.log",
+        "builds/gov-t21-r2/ps7-final/15-missing-approval.log",
+        "builds/gov-t21-r2/ps7/15-missing-approval.log",
+        "builds/gov-t21-r2/unknown-red/15-missing-approval.log",
+        "builds/gov-t21/ps51-final/15-missing-approval.log",
+        "builds/gov-t21/ps51-frozen/15-missing-approval.log",
+        "builds/gov-t21/ps51-r2/15-missing-approval.log",
+        "builds/gov-t21/ps7-final/15-missing-approval.log",
+        "builds/gov-t21/ps7-frozen/15-missing-approval.log",
+        "builds/gov-t21/ps7-r2/15-missing-approval.log"
       ]
     },
     {
-      "sha256": "b58339394ecca471e1ce9cbcb547fc57998f35b446bbf1fc09a4e6ef3efd109e",
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/contact-sheets/requirements-tour-3.jpg",
-        "builds/main-functional-recheck-20261021-b7abcba9/contact-sheets/requirements-tour-3.jpg"
+        "builds/gov-t21-r2/ps51-final/16-unknown-capability.log",
+        "builds/gov-t21-r2/ps51/16-unknown-capability.log",
+        "builds/gov-t21-r2/ps7-final/16-unknown-capability.log",
+        "builds/gov-t21-r2/ps7/16-unknown-capability.log",
+        "builds/gov-t21-r2/unknown-red/16-unknown-capability.log",
+        "builds/gov-t21/ps51-final/16-unknown-capability.log",
+        "builds/gov-t21/ps51-frozen/16-unknown-capability.log",
+        "builds/gov-t21/ps51-r2/16-unknown-capability.log",
+        "builds/gov-t21/ps7-final/16-unknown-capability.log",
+        "builds/gov-t21/ps7-frozen/16-unknown-capability.log",
+        "builds/gov-t21/ps7-r2/16-unknown-capability.log"
       ]
     },
     {
-      "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gates.log",
-        "builds/main-manual-validation-20261021/premerge-gates.log",
-        "builds/modeling-completion-20261020-b1/gates.log",
-        "builds/modeling-completion-20261020-b3c/gates.log",
-        "builds/modeling-completion-20261020-b3d/gates.log",
-        "builds/modeling-completion-20261020-b3f/gates.log",
-        "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-gates.log",
-        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-gates.log",
-        "builds/modeling-interaction-20261021/batch4-tree-width/checks/batch4-final-gates.log",
-        "builds/modeling-interaction-20261021/batch5-boundary-link/checks/batch5-final-gates.log",
-        "builds/modeling-interaction-20261021/final/batch1-final-gates.log",
-        "builds/requirements-a21-20261020/gates.log",
-        "builds/requirements-a23-20261020/gates.log",
-        "builds/requirements-close-20261019/gates.log",
-        "builds/requirements-completion-20261018/batch10-build/ird-gates.log",
-        "builds/requirements-completion-20261018/batch11-build/ird-batch11-gates.log",
-        "builds/requirements-completion-20261018/batch12-build/ird-batch12-gates.log",
-        "builds/requirements-completion-20261018/batch13-build/ird-batch13-gates.log",
-        "builds/requirements-completion-20261018/batch14-build/ird-batch14-gates.log",
-        "builds/requirements-completion-20261018/batch15-build/ird-batch15-gates.log",
-        "builds/requirements-completion-20261018/batch16-build/ird-batch16-gates.log",
-        "builds/requirements-completion-20261018/batch17-build/ird-batch17-gates.log",
-        "builds/requirements-completion-20261018/batch18-build/ird-batch18-gates.log",
-        "builds/requirements-completion-20261018/batch19-build/ird-batch19-final-gates.log",
-        "builds/requirements-completion-20261018/batch19-build/ird-batch19-gates.log",
-        "builds/requirements-completion-20261018/batch20-build/ird-batch20-gates.log",
-        "builds/requirements-completion-20261018/batch21-build/gates.log",
-        "builds/requirements-completion-20261018/batch22-build/gates.log",
-        "builds/requirements-completion-20261018/batch23-build/gates.log",
-        "builds/requirements-completion-20261018/batch24-build/gates.log",
-        "builds/requirements-completion-20261018/batch25-build/gates.log",
-        "builds/requirements-completion-20261018/batch7-build/ird-gates.log",
-        "builds/requirements-completion-20261018/batch8-build/ird-gates.log",
-        "builds/requirements-completion-20261018/batch9-build/ird-gates.log",
-        "builds/wp13-t29-closure/gates.log"
+        "builds/gov-t21-r2/ps51-final/17-path-traversal.log",
+        "builds/gov-t21-r2/ps51/17-path-traversal.log",
+        "builds/gov-t21-r2/ps7-final/17-path-traversal.log",
+        "builds/gov-t21-r2/ps7/17-path-traversal.log",
+        "builds/gov-t21-r2/unknown-red/17-path-traversal.log",
+        "builds/gov-t21/ps51-final/17-path-traversal.log",
+        "builds/gov-t21/ps51-frozen/17-path-traversal.log",
+        "builds/gov-t21/ps51-r2/17-path-traversal.log",
+        "builds/gov-t21/ps7-final/17-path-traversal.log",
+        "builds/gov-t21/ps7-frozen/17-path-traversal.log",
+        "builds/gov-t21/ps7-r2/17-path-traversal.log"
       ]
     },
     {
-      "sha256": "995488bc724fdd13c2918ddf3a54c304f5463ac3c74137126f466c17b61fe76b",
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/base-euler.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/base-euler.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/base-euler.png"
+        "builds/gov-t21-r2/ps51-final/18-missing-task-proof.log",
+        "builds/gov-t21-r2/ps51/18-missing-task-proof.log",
+        "builds/gov-t21-r2/ps7-final/18-missing-task-proof.log",
+        "builds/gov-t21-r2/ps7/18-missing-task-proof.log",
+        "builds/gov-t21-r2/unknown-red/18-missing-task-proof.log",
+        "builds/gov-t21/ps51-final/18-missing-task-proof.log",
+        "builds/gov-t21/ps51-frozen/18-missing-task-proof.log",
+        "builds/gov-t21/ps51-r2/18-missing-task-proof.log",
+        "builds/gov-t21/ps7-final/18-missing-task-proof.log",
+        "builds/gov-t21/ps7-frozen/18-missing-task-proof.log",
+        "builds/gov-t21/ps7-r2/18-missing-task-proof.log"
       ]
     },
     {
-      "sha256": "6f61e2882867d8c8009a34081cec1463196a3ca415a5111b6fa9c7681917687d",
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/body-editor-confirm.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/body-editor-confirm.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/body-editor-confirm.png"
+        "builds/gov-t21-r2/ps51-final/19-task-scope.log",
+        "builds/gov-t21-r2/ps51-final/20-forbidden-scope.log",
+        "builds/gov-t21-r2/ps51/19-task-scope.log",
+        "builds/gov-t21-r2/ps51/20-forbidden-scope.log",
+        "builds/gov-t21-r2/ps7-final/19-task-scope.log",
+        "builds/gov-t21-r2/ps7-final/20-forbidden-scope.log",
+        "builds/gov-t21-r2/ps7/19-task-scope.log",
+        "builds/gov-t21-r2/ps7/20-forbidden-scope.log",
+        "builds/gov-t21-r2/unknown-red/19-task-scope.log",
+        "builds/gov-t21-r2/unknown-red/20-forbidden-scope.log",
+        "builds/gov-t21/ps51-final/19-task-scope.log",
+        "builds/gov-t21/ps51-final/20-forbidden-scope.log",
+        "builds/gov-t21/ps51-frozen/19-task-scope.log",
+        "builds/gov-t21/ps51-frozen/20-forbidden-scope.log",
+        "builds/gov-t21/ps51-r2/19-task-scope.log",
+        "builds/gov-t21/ps51-r2/20-forbidden-scope.log",
+        "builds/gov-t21/ps7-final/19-task-scope.log",
+        "builds/gov-t21/ps7-final/20-forbidden-scope.log",
+        "builds/gov-t21/ps7-frozen/19-task-scope.log",
+        "builds/gov-t21/ps7-frozen/20-forbidden-scope.log",
+        "builds/gov-t21/ps7-r2/19-task-scope.log",
+        "builds/gov-t21/ps7-r2/20-forbidden-scope.log"
       ]
     },
     {
-      "sha256": "e75d1a4b9f7374425d785f2ecd65c397ae20bd7c6bba1ed3ce47380d04b80ce5",
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/body-editor-top.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/body-editor-top.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/body-editor-top.png"
+        "builds/gov-t21-r2/ps51-final/21-stage-not-approved.log",
+        "builds/gov-t21-r2/ps51/21-stage-not-approved.log",
+        "builds/gov-t21-r2/ps7-final/21-stage-not-approved.log",
+        "builds/gov-t21-r2/ps7/21-stage-not-approved.log",
+        "builds/gov-t21-r2/unknown-red/21-stage-not-approved.log",
+        "builds/gov-t21/ps51-final/21-stage-not-approved.log",
+        "builds/gov-t21/ps51-frozen/21-stage-not-approved.log",
+        "builds/gov-t21/ps51-r2/21-stage-not-approved.log",
+        "builds/gov-t21/ps7-final/21-stage-not-approved.log",
+        "builds/gov-t21/ps7-frozen/21-stage-not-approved.log",
+        "builds/gov-t21/ps7-r2/21-stage-not-approved.log"
       ]
     },
     {
-      "sha256": "aa779bb94ff5e10a3f89a6d49aac51da9554fa55f2888a94141b43fcfc46114d",
+      "sha256": "2de0db743d84f4d8272dad44fc4aed44f88a17f9348f496c358470f569ea94b1",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/clean-revision-live-tree-and-form.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/clean-revision-live-tree-and-form.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/clean-revision-live-tree-and-form.png"
+        "builds/gov-t21-r2/ps51-final/22-final-debt-rejected.log",
+        "builds/gov-t21-r2/ps51/22-final-debt-rejected.log",
+        "builds/gov-t21-r2/ps7-final/22-final-debt-rejected.log",
+        "builds/gov-t21-r2/ps7/22-final-debt-rejected.log",
+        "builds/gov-t21-r2/unknown-red/22-final-debt-rejected.log"
       ]
     },
     {
-      "sha256": "6f8ce3b4009e79d7a8070eb5ba714bb3c72832922a03cbca300940b207b47f25",
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/conflict-rebuilt-current-tool.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/conflict-rebuilt-current-tool.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/conflict-rebuilt-current-tool.png"
+        "builds/gov-t21-r2/ps51-final/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21-r2/ps51/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21-r2/ps7-final/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21-r2/ps7/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21-r2/unknown-red/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21/ps51-final/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21/ps51-frozen/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21/ps51-r2/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21/ps7-final/23-governance-not-algorithm-approval.log",
+        "builds/gov-t21/ps7-frozen/23-governance-not-algorithm-approval.log"
       ]
     },
     {
-      "sha256": "fb621b39fb5a47873e0a1ab13e1d3433a96506614c226fa5141e76985c03dccd",
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/continuous-range-rejected.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/continuous-range-rejected.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/continuous-range-rejected.png"
+        "builds/gov-t21-r2/ps51-final/24-upstream-readonly.log",
+        "builds/gov-t21-r2/ps51/24-upstream-readonly.log",
+        "builds/gov-t21-r2/ps7-final/24-upstream-readonly.log",
+        "builds/gov-t21-r2/ps7/24-upstream-readonly.log",
+        "builds/gov-t21-r2/unknown-red/24-upstream-readonly.log",
+        "builds/gov-t21/ps51-final/24-upstream-readonly.log",
+        "builds/gov-t21/ps51-frozen/24-upstream-readonly.log",
+        "builds/gov-t21/ps51-r2/24-upstream-readonly.log",
+        "builds/gov-t21/ps7-final/24-upstream-readonly.log",
+        "builds/gov-t21/ps7-frozen/24-upstream-readonly.log",
+        "builds/gov-t21/ps7/24-upstream-readonly.log"
       ]
     },
     {
-      "sha256": "7ff03084f4fa2ab7798bb6573564ab7655953bb76c426711da36826ba1885368",
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/continuous-range.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/continuous-range.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/continuous-range.png"
+        "builds/gov-t21-r2/ps51-final/25-missing-record-file.log",
+        "builds/gov-t21-r2/ps51/25-missing-record-file.log",
+        "builds/gov-t21-r2/ps7-final/25-missing-record-file.log",
+        "builds/gov-t21-r2/ps7/25-missing-record-file.log",
+        "builds/gov-t21-r2/unknown-red/25-missing-record-file.log",
+        "builds/gov-t21/ps51-final/25-missing-record-file.log",
+        "builds/gov-t21/ps51-frozen/25-missing-record-file.log",
+        "builds/gov-t21/ps51-r2/25-missing-record-file.log",
+        "builds/gov-t21/ps7-final/25-missing-record-file.log",
+        "builds/gov-t21/ps7-frozen/25-missing-record-file.log",
+        "builds/gov-t21/ps7/25-missing-record-file.log"
       ]
     },
     {
-      "sha256": "ac820ec503e00a8cbce4d7930425d702784ce7fd5a1daea1cc324f8050f2c1e9",
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/diff-deleted-refused.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/diff-deleted-refused.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/diff-deleted-refused.png"
+        "builds/gov-t21-r2/ps51-final/26-deletion-undeclared.log",
+        "builds/gov-t21-r2/ps51/26-deletion-undeclared.log",
+        "builds/gov-t21-r2/ps7-final/26-deletion-undeclared.log",
+        "builds/gov-t21-r2/ps7/26-deletion-undeclared.log",
+        "builds/gov-t21-r2/unknown-red/26-deletion-undeclared.log",
+        "builds/gov-t21/ps51-final/26-deletion-undeclared.log",
+        "builds/gov-t21/ps51-frozen/26-deletion-undeclared.log",
+        "builds/gov-t21/ps51-r2/26-deletion-undeclared.log",
+        "builds/gov-t21/ps7-final/26-deletion-undeclared.log",
+        "builds/gov-t21/ps7-frozen/26-deletion-undeclared.log",
+        "builds/gov-t21/ps7/26-deletion-undeclared.log"
       ]
     },
     {
-      "sha256": "a190df571548b11290c4c605518f27044323346ec86deaec883f9eea971b08c2",
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/diff-empty.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/diff-empty.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/diff-empty.png"
+        "builds/gov-t21-r2/ps51-final/27-forged-debt-closure.log",
+        "builds/gov-t21-r2/ps51/27-forged-debt-closure.log",
+        "builds/gov-t21-r2/ps7-final/27-forged-debt-closure.log",
+        "builds/gov-t21-r2/ps7/27-forged-debt-closure.log",
+        "builds/gov-t21-r2/unknown-red/27-forged-debt-closure.log",
+        "builds/gov-t21/ps51-final/27-forged-debt-closure.log",
+        "builds/gov-t21/ps51-frozen/27-forged-debt-closure.log",
+        "builds/gov-t21/ps51-r2/27-forged-debt-closure.log",
+        "builds/gov-t21/ps7-final/27-forged-debt-closure.log",
+        "builds/gov-t21/ps7-frozen/27-forged-debt-closure.log",
+        "builds/gov-t21/ps7/27-forged-debt-closure.log"
       ]
     },
     {
-      "sha256": "d39e5e7bfbeb7220385dd9f3091a131cfb2792141188e2e0909305abbbed06a4",
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/diff-long-values.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/diff-long-values.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/diff-long-values.png"
+        "builds/gov-t21-r2/ps51-final/28-arbitrary-task-ready.log",
+        "builds/gov-t21-r2/ps51/28-arbitrary-task-ready.log",
+        "builds/gov-t21-r2/ps7-final/28-arbitrary-task-ready.log",
+        "builds/gov-t21-r2/ps7/28-arbitrary-task-ready.log",
+        "builds/gov-t21-r2/unknown-red/28-arbitrary-task-ready.log",
+        "builds/gov-t21/ps51-final/28-arbitrary-task-ready.log",
+        "builds/gov-t21/ps51-frozen/28-arbitrary-task-ready.log",
+        "builds/gov-t21/ps51-r2/28-arbitrary-task-ready.log",
+        "builds/gov-t21/ps7-final/28-arbitrary-task-ready.log",
+        "builds/gov-t21/ps7-frozen/28-arbitrary-task-ready.log"
       ]
     },
     {
-      "sha256": "09213a94971116b5d58c1d2902866b6c5c702bfb527f168520ba2e8dbe3167de",
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/diff-three-groups.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/diff-three-groups.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/diff-three-groups.png"
+        "builds/gov-t21-r2/ps51-final/29-planned-not-executable.log",
+        "builds/gov-t21-r2/ps51/29-planned-not-executable.log",
+        "builds/gov-t21-r2/ps7-final/29-planned-not-executable.log",
+        "builds/gov-t21-r2/ps7/29-planned-not-executable.log",
+        "builds/gov-t21-r2/unknown-red/29-planned-not-executable.log",
+        "builds/gov-t21/ps51-final/29-planned-not-executable.log",
+        "builds/gov-t21/ps51-frozen/29-planned-not-executable.log",
+        "builds/gov-t21/ps7-final/29-planned-not-executable.log",
+        "builds/gov-t21/ps7-frozen/29-planned-not-executable.log"
       ]
     },
     {
-      "sha256": "3a74cde541c53b3ee9eaa38d923f1047ea1cf90e4584bbf1d9d059d4f39cbdc4",
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/draft-change-readonly.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/draft-change-readonly.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/draft-change-readonly.png"
+        "builds/gov-t21-r2/ps51-final/30-forged-build-target.log",
+        "builds/gov-t21-r2/ps51/30-forged-build-target.log",
+        "builds/gov-t21-r2/ps7-final/30-forged-build-target.log",
+        "builds/gov-t21-r2/ps7/30-forged-build-target.log",
+        "builds/gov-t21-r2/unknown-red/30-forged-build-target.log",
+        "builds/gov-t21/ps51-final/30-forged-build-target.log",
+        "builds/gov-t21/ps51-frozen/30-forged-build-target.log",
+        "builds/gov-t21/ps7-final/30-forged-build-target.log",
+        "builds/gov-t21/ps7-frozen/30-forged-build-target.log"
       ]
     },
     {
-      "sha256": "946663fe3fc27064136f6dbc6ea077b04be9de6381c086aeb30ac06df169f7b8",
+      "sha256": "b3a7b9faa9feb8f1baea99a80bcd5b57277a5eabe7aa17e64580f9c43c63011b",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/draft-change-redo.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/draft-change-redo.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/draft-change-redo.png"
+        "builds/gov-t21-r2/ps51-final/reuse-governance.junit.xml",
+        "builds/gov-t21-r2/ps7-final/reuse-governance.junit.xml"
       ]
     },
     {
-      "sha256": "c2559741f544842558aca2b3dad82bb6dfd040d27f7d24c38fbe559556237c90",
+      "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/draft-history.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/draft-history.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/draft-history.png"
+        "builds/gov-t21-r2/ps51-final/suffix-c.log",
+        "builds/gov-t21-r2/ps51/suffix-c.log",
+        "builds/gov-t21-r2/ps7-final/suffix-c.log",
+        "builds/gov-t21-r2/ps7/suffix-c.log",
+        "builds/gov-t21-r2/unknown-red/suffix-c.log"
       ]
     },
     {
-      "sha256": "b718132e2c2f5ed91f6f08cb8bdce98ab1f2e6f7fc4ab1f8e1f8ecac48dc61c4",
+      "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/draft-undo-clean-redo-retained.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/draft-undo-clean-redo-retained.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/draft-undo-clean-redo-retained.png"
+        "builds/gov-t21-r2/ps51-final/suffix-cu.log",
+        "builds/gov-t21-r2/ps51/suffix-cu.log",
+        "builds/gov-t21-r2/ps7-final/suffix-cu.log",
+        "builds/gov-t21-r2/ps7/suffix-cu.log",
+        "builds/gov-t21-r2/unknown-red/suffix-cu.log"
       ]
     },
     {
-      "sha256": "402737c468295f83c95e1127b8db0ed1729890222aacbffe27f9a3680dece096",
+      "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/full-draft-restored-tool.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/full-draft-restored-tool.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/full-draft-restored-tool.png"
+        "builds/gov-t21-r2/ps51-final/suffix-html.log",
+        "builds/gov-t21-r2/ps51/suffix-html.log",
+        "builds/gov-t21-r2/ps7-final/suffix-html.log",
+        "builds/gov-t21-r2/ps7/suffix-html.log",
+        "builds/gov-t21-r2/unknown-red/suffix-html.log"
       ]
     },
     {
-      "sha256": "5c353b75d08c2c86bb9dab4c6772573762331d3dfc7e60bef4bdcd1d772f0488",
+      "sha256": "03fe42b44b4fe97910c12a00d87416392794a45ef2e93041513957dda38a770b",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/import-report.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/import-report.png",
-        "builds/modeling-completion-20261020-b3a/gui/import-report.png",
-        "builds/modeling-completion-20261020-b3b-display/gui/import-report.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/import-report.png"
+        "builds/gov-t21-r2/ps51-final/suffix-inc.log",
+        "builds/gov-t21-r2/ps7-final/suffix-inc.log"
       ]
     },
     {
-      "sha256": "d43b5d063abe098230cc33aeeed91a44d9dc6e393f1399088c29cf6cbecba9ac",
+      "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/property-segments-complete.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/property-segments-complete.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/property-segments-complete.png"
+        "builds/gov-t21-r2/ps51-final/suffix-inl.log",
+        "builds/gov-t21-r2/ps51/suffix-inl.log",
+        "builds/gov-t21-r2/ps7-final/suffix-inl.log",
+        "builds/gov-t21-r2/ps7/suffix-inl.log",
+        "builds/gov-t21-r2/unknown-red/suffix-inl.log"
       ]
     },
     {
-      "sha256": "559694ad20c5e943b039624b66a3cc08f5842f1dbd35a6ab56d41fe88a9d0447",
+      "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/property-segments-long.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/property-segments-long.png"
+        "builds/gov-t21-r2/ps51-final/suffix-ipp.log",
+        "builds/gov-t21-r2/ps51/suffix-ipp.log",
+        "builds/gov-t21-r2/ps7-final/suffix-ipp.log",
+        "builds/gov-t21-r2/ps7/suffix-ipp.log",
+        "builds/gov-t21-r2/unknown-red/suffix-ipp.log"
       ]
     },
     {
-      "sha256": "62940f9da628c3dbf58c7a2525944288b475caa988f4b097189bcf10b4a84f80",
+      "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/retained-draft-review.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/retained-draft-review.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/retained-draft-review.png"
+        "builds/gov-t21-r2/ps51-final/suffix-mjs.log",
+        "builds/gov-t21-r2/ps51/suffix-mjs.log",
+        "builds/gov-t21-r2/ps7-final/suffix-mjs.log",
+        "builds/gov-t21-r2/ps7/suffix-mjs.log",
+        "builds/gov-t21-r2/unknown-red/suffix-mjs.log"
       ]
     },
     {
-      "sha256": "ad5c745276c98d147fe4f53b3803b5ac0f1d1db162f574d4e9a9280f9d89e923",
+      "sha256": "7ca72664617ba0db3f0c220f2c1bf364d0621ee66747cd290540ffdbd6459c0a",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/scene-manager-external.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/scene-manager-external.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/scene-manager-external.png"
+        "builds/gov-t21-r2/ps51-final/suffix-opaque.log",
+        "builds/gov-t21-r2/ps7-final/suffix-opaque.log"
       ]
     },
     {
-      "sha256": "2ea12eb051759e403ab1d76bc464db3fe074441deefcb7a4c9784c083c041fa1",
+      "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/scene-manager-updated.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/scene-manager-updated.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/scene-manager-updated.png"
+        "builds/gov-t21-r2/ps51-final/suffix-ps1.log",
+        "builds/gov-t21-r2/ps51/suffix-ps1.log",
+        "builds/gov-t21-r2/ps7-final/suffix-ps1.log",
+        "builds/gov-t21-r2/ps7/suffix-ps1.log",
+        "builds/gov-t21-r2/unknown-red/suffix-ps1.log"
       ]
     },
     {
-      "sha256": "3221f673002d8ee06b0da70d22ebc68dd30e5f6da9564bffa2c8011da1562b69",
+      "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/tool-manager-body-bottom.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/tool-manager-body-bottom.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/tool-manager-body-bottom.png"
+        "builds/gov-t21-r2/ps51-final/suffix-py.log",
+        "builds/gov-t21-r2/ps51/suffix-py.log",
+        "builds/gov-t21-r2/ps7-final/suffix-py.log",
+        "builds/gov-t21-r2/ps7/suffix-py.log",
+        "builds/gov-t21-r2/unknown-red/suffix-py.log"
       ]
     },
     {
-      "sha256": "7dd4b04263c9d24cce75123b278fd7953cbe8316a3cc16d0dc31ce98a6dbf7ea",
+      "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/tool-manager-body.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/tool-manager-body.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/tool-manager-body.png"
+        "builds/gov-t21-r2/ps51-final/suffix-tpp.log",
+        "builds/gov-t21-r2/ps51/suffix-tpp.log",
+        "builds/gov-t21-r2/ps7-final/suffix-tpp.log",
+        "builds/gov-t21-r2/ps7/suffix-tpp.log",
+        "builds/gov-t21-r2/unknown-red/suffix-tpp.log"
       ]
     },
     {
-      "sha256": "35f812926a1ef3b2aef25988d42a01fec449512580061657820a756ed15e3289",
+      "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/tool-manager-external.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/tool-manager-external.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/tool-manager-external.png"
+        "builds/gov-t21-r2/ps51-final/suffix-ts.log",
+        "builds/gov-t21-r2/ps51/suffix-ts.log",
+        "builds/gov-t21-r2/ps7-final/suffix-ts.log",
+        "builds/gov-t21-r2/ps7/suffix-ts.log",
+        "builds/gov-t21-r2/unknown-red/suffix-ts.log"
       ]
     },
     {
-      "sha256": "ef283dc2be7764f72cfd7621c0824f7580e42c6f832b4225cd4f412b1aab4340",
+      "sha256": "a90ed9f717c0ac8c7d684e11af1449394c213e829d4bb0df9a79895e0ebb8ca9",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/tool-manager-top.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/tool-manager-top.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/tool-manager-top.png"
+        "builds/gov-t21-r2/ps51/reuse-governance.junit.xml",
+        "builds/gov-t21-r2/ps7/reuse-governance.junit.xml"
       ]
     },
     {
-      "sha256": "42cb34af9b0aaaee5fb633fa19e2ea39d1e5d1e05e6c683ba49a577038986077",
+      "sha256": "882798eb1fec0c3bc92cab65420ad791231c3c40c83ddcd5bba98a8bcf9ab90e",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/workcell-import-report.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/workcell-import-report.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/workcell-import-report.png"
+        "builds/gov-t21-r2/ps51/suffix-cmake.log",
+        "builds/gov-t21-r2/ps7/suffix-cmake.log"
       ]
     },
     {
-      "sha256": "97c9e0d98f7208d27ef0e6f08f3dca56236ae88f49bd661c74ab76615dea01ed",
+      "sha256": "fe1ff9a270995cc79841b79d186ed2764e1cac7405f9fefe3d97bfd3c92a193d",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/xacro-duplicate-error.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/xacro-duplicate-error.png",
-        "builds/modeling-completion-20261020-b3a/gui/xacro-duplicate-error.png",
-        "builds/modeling-completion-20261020-b3b-display/gui/xacro-duplicate-error.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/xacro-duplicate-error.png"
+        "builds/gov-t21-r2/ps51/suffix-rs.log",
+        "builds/gov-t21-r2/ps7/suffix-rs.log"
       ]
     },
     {
-      "sha256": "17df458435b404fa1f86cb9cc202533fa91633f2107c77de6e7c7746808f56ca",
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
       "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/xacro-parameters.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/xacro-parameters.png",
-        "builds/modeling-completion-20261020-b3a/gui/xacro-parameters.png",
-        "builds/modeling-completion-20261020-b3b-display/gui/xacro-parameters.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/xacro-parameters.png"
+        "builds/gov-t21/ps51-final/01-clean.log",
+        "builds/gov-t21/ps51-frozen/01-clean.log",
+        "builds/gov-t21/ps51-frozen/31-frozen-head.log",
+        "builds/gov-t21/ps51-frozen/32-frozen-head-ignores-dirty-tree.log",
+        "builds/gov-t21/ps51-r2/01-clean.log",
+        "builds/gov-t21/ps7-final/01-clean.log",
+        "builds/gov-t21/ps7-frozen/01-clean.log",
+        "builds/gov-t21/ps7-frozen/31-frozen-head.log",
+        "builds/gov-t21/ps7-frozen/32-frozen-head-ignores-dirty-tree.log",
+        "builds/gov-t21/ps7-r2/01-clean.log"
       ]
     }
   ],
@@ -5457,6 +5662,16 @@
       "bytes": 14863,
       "sha256": "29941370b300326f87f84bbcf73f509c045bb68927cb38b7261f4831547344f2",
       "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/WP-15-T20-20261022.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-15-T20"
+      ],
+      "bytes": 7055,
+      "sha256": "14ea2e1f2507633513749009da03a20f4c98d6697738faac6af10e8a3c9af95a",
+      "lifecycle": "unverified"
     },
     {
       "path": "acceptance/WP-16-T01-20261004.md",
@@ -10608,6 +10823,4198 @@
       "taskIds": [],
       "bytes": 72372,
       "sha256": "ff5a904792f74b49d3008a24605cec34d314629189e726ceab3deaffbcc816e9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/driver-failure-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 663,
+      "sha256": "80679c79879e0fb77dcfc7505a420a2c9c71f4ba143aac9f8679b3cc0c551256",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/driver-failure-final/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 211,
+      "sha256": "3f8f574a4f076dc62d500ddb6993919531109d4b03cbe893da9cf4eccb179130",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/driver-failure-final/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 394,
+      "sha256": "5e37b5d405c349296728e7cb95d6b86c1197c990e59054e624e7f8dd2c5bac42",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/driver-failure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 663,
+      "sha256": "1427f82e577857cce7d36dbc89feb582826478f9dc2106cb55c3fb2ca60ea452",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/driver-failure/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 211,
+      "sha256": "3f8f574a4f076dc62d500ddb6993919531109d4b03cbe893da9cf4eccb179130",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/driver-failure/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 394,
+      "sha256": "1ff2fc7744319d6fe5e787085e4323ba5be4d48de9bd3e0a1d03f6671ebdc074",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/integration-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13094,
+      "sha256": "1b0e8ddaa111eee4667ae5e1a0fb00904f4d6277fab51ee106cbfe4d1430214e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/integration-unknown-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13094,
+      "sha256": "3164bf21d3b58091f83eaa90a0f3aff271da06c6727cc05eee75ed7896502911",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/integration.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 93,
+      "sha256": "bce2aa40099092fd17383fa8d0b3b499ced53201b3760f2a7cc1d410437ac8a2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-driver.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2655,
+      "sha256": "efd8ba7a39fec75972032d51fe5cb84492f5989a5b40aec1d6b556e32dbdd9cc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final-driver.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2657,
+      "sha256": "eab56fb1f1749ab94037344e8fcf2702971d9583f06dc1c885f87e24412bd064",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "2de0db743d84f4d8272dad44fc4aed44f88a17f9348f496c358470f569ea94b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/31-frozen-head.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/32-frozen-head-ignores-dirty-tree.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/33-frozen-head-repeatable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1889,
+      "sha256": "b3a7b9faa9feb8f1baea99a80bcd5b57277a5eabe7aa17e64580f9c43c63011b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17006,
+      "sha256": "d635ec469da7529e646c395acabc90b04c4fa6e7987933bcea47d9476744e668",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-c.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 164,
+      "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-cu.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-html.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-inc.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 155,
+      "sha256": "03fe42b44b4fe97910c12a00d87416392794a45ef2e93041513957dda38a770b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-inl.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-ipp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-mjs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-opaque.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 158,
+      "sha256": "7ca72664617ba0db3f0c220f2c1bf364d0621ee66747cd290540ffdbd6459c0a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-ps1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-py.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-tpp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51-final/suffix-ts.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "2de0db743d84f4d8272dad44fc4aed44f88a17f9348f496c358470f569ea94b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/31-frozen-head.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/32-frozen-head-ignores-dirty-tree.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/33-frozen-head-repeatable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1887,
+      "sha256": "a90ed9f717c0ac8c7d684e11af1449394c213e829d4bb0df9a79895e0ebb8ca9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 17024,
+      "sha256": "0c692348cfcdbb78bfa8f29ac8cd0c9da31f61ce4a097e79d0a2bc2e5e9ca6d2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-c.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 164,
+      "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-cmake.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 168,
+      "sha256": "882798eb1fec0c3bc92cab65420ad791231c3c40c83ddcd5bba98a8bcf9ab90e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-cu.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-html.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-inl.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-ipp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-mjs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-ps1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-py.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-rs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "fe1ff9a270995cc79841b79d186ed2764e1cac7405f9fefe3d97bfd3c92a193d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-tpp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps51/suffix-ts.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-driver.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2655,
+      "sha256": "efd8ba7a39fec75972032d51fe5cb84492f5989a5b40aec1d6b556e32dbdd9cc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final-driver.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2657,
+      "sha256": "eab56fb1f1749ab94037344e8fcf2702971d9583f06dc1c885f87e24412bd064",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "2de0db743d84f4d8272dad44fc4aed44f88a17f9348f496c358470f569ea94b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/31-frozen-head.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/32-frozen-head-ignores-dirty-tree.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/33-frozen-head-repeatable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1889,
+      "sha256": "b3a7b9faa9feb8f1baea99a80bcd5b57277a5eabe7aa17e64580f9c43c63011b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11870,
+      "sha256": "c32cec44d138a4f8bc67576060b6ebcb66aab7e791a3e2c915765d46fbdb7991",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-c.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 164,
+      "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-cu.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-html.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-inc.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 155,
+      "sha256": "03fe42b44b4fe97910c12a00d87416392794a45ef2e93041513957dda38a770b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-inl.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-ipp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-mjs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-opaque.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 158,
+      "sha256": "7ca72664617ba0db3f0c220f2c1bf364d0621ee66747cd290540ffdbd6459c0a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-ps1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-py.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-tpp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7-final/suffix-ts.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "2de0db743d84f4d8272dad44fc4aed44f88a17f9348f496c358470f569ea94b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/31-frozen-head.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/32-frozen-head-ignores-dirty-tree.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/33-frozen-head-repeatable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1887,
+      "sha256": "a90ed9f717c0ac8c7d684e11af1449394c213e829d4bb0df9a79895e0ebb8ca9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11888,
+      "sha256": "3b81fda2410423397b123a43666411ac20004d2edc85e7e7141dd95bc730fef2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-c.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 164,
+      "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-cmake.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 168,
+      "sha256": "882798eb1fec0c3bc92cab65420ad791231c3c40c83ddcd5bba98a8bcf9ab90e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-cu.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-html.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-inl.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-ipp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-mjs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-ps1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-py.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-rs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "fe1ff9a270995cc79841b79d186ed2764e1cac7405f9fefe3d97bfd3c92a193d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-tpp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/ps7/suffix-ts.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/REPORT.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2520,
+      "sha256": "c639532b08b2a0da8763deb371439e7ca354f59c9514954a9895142c8c684425",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/smoke-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3548,
+      "sha256": "39bc3611481248710e9da4f818ac0f411b910f59e32183779ae2fb6bdce08d0c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/smoke-unknown-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3548,
+      "sha256": "e74dd1145828bc22843afd8589335192cc927562a2163ca3d06f99507e274ab9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/smoke.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 93,
+      "sha256": "bce2aa40099092fd17383fa8d0b3b499ced53201b3760f2a7cc1d410437ac8a2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red-driver.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2974,
+      "sha256": "37e5990d1d99fb44fbfaa51c3ac1724962a307b0d6797f60707bea67ba78d513",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "2de0db743d84f4d8272dad44fc4aed44f88a17f9348f496c358470f569ea94b1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/31-frozen-head.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/32-frozen-head-ignores-dirty-tree.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/33-frozen-head-repeatable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2207,
+      "sha256": "db194b339dad62e246cb53060a46d7efbc7e7bfe5cf4972e3abc6e1c3f75652e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11805,
+      "sha256": "10727fa6a8a46bf765c7c4c890c9c42ca6721bbac12e1d11a989c67f18fe2279",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-c.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 164,
+      "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-cu.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-html.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 167,
+      "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-inc.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-inl.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-ipp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-mjs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-opaque.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "a654bce0c55cb8132e37073be0ff0f557f0f6d2dfcbfed6f1fa4487af29fd97f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-ps1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-py.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-tpp.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/unknown-red/suffix-ts.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 165,
+      "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/verification-summary.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3158,
+      "sha256": "40803d7a430d1abf65d0aab3a94e0900eb5e4bb8a28c7e268221aed6f7f92988",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/verify-before-unknown.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6040,
+      "sha256": "4b195741236287ba729d2c230b8fbdb2abb36dafd995b60800ea8a058b831671",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21-r2/verify-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6042,
+      "sha256": "2494b0d3866b7d878c3fd4b7d7f366e2a7e16119ee45f6fd869c4d66789a91f6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/baseline-ci-failure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 502366,
+      "sha256": "ee664f8b038c21beeb099bcfae52cb9fa406b5f1101e8c50b740f4059d48c068",
+      "lifecycle": "current"
+    },
+    {
+      "path": "builds/gov-t21/branch-protection-pinned.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1110,
+      "sha256": "d2c5f9278c5e456c8fb85d368c594af9f810e51205a76039943e7c607598893b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/branch-protection.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1109,
+      "sha256": "b32f0457970d5351e45fae7ff60f8c44a4776c88cf8dcd628feae32eeacd3632",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/integration-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 33623,
+      "sha256": "fc4b177779970f2734ab73ac39a87634e57dba90da82f1c9e3d6b2f2820994fd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/integration-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13640,
+      "sha256": "a1f88b7bbe980e1da6df62fce9869a22e2c26c55828245bdc37621c103d0dcdf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/integration.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13745,
+      "sha256": "6b3afe1188a6997b8fb3790243dd37e58c67e04c8fdaa7358c70f663aafee647",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1353,
+      "sha256": "88dc4977e7ea0e83a299d8275bad9ce9f4ae58735e6ca8793861ee96eed599e0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-final/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10610,
+      "sha256": "58f6ba0ab5a46b91daa5703cd355045f3202b51874d09c421aee0d8e9b25086f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/31-frozen-head.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/32-frozen-head-ignores-dirty-tree.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1446,
+      "sha256": "6bbbdfc6eb55174432cdde17a62ef20c6c55299537401c983ec27556decb093f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-frozen/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11373,
+      "sha256": "0474a6d576cc9fdd7fc8d03fc18a0fa8f0145e5a2a2a7584bf5fa86de69f7842",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "6be967af16f38bb373ca6d3b0a28b3b64c400116f457aa11efbb85f883e93dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1401,
+      "sha256": "8836a512d9049d8fd82ac71cb78d93d1d10654cde94ef299baeb45c170c8fd85",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51-r2/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10166,
+      "sha256": "fbbedd363bb4627107dfdd744f35ac60f754a22a4258e9812001cea61953cfdc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 926,
+      "sha256": "b518ce8b6a25b5594b7a5ea97a2adcd555b08d3b839827bc3ddd531ff4e60a49",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 928,
+      "sha256": "3d2ac75f8e187237b1168448172ba5a64986450521c897e3fd6148e04e284db4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 916,
+      "sha256": "2231e38f07113209b605d74bd8cf4f81ec1814a221427c68fa1e091b2ff88559",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 931,
+      "sha256": "e337fe444a0221167288291360f908314cc79c400a1307131234098b1ce00b35",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 943,
+      "sha256": "ba32d34ff053a0a1682edb614cef89947b00de19ce39fc7a8c7e3b3e6c06c6f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 962,
+      "sha256": "a1d8294509b9651a01c5721e5929a03cbb2d6ff69b7de6b1ee2a9d61c90404aa",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 917,
+      "sha256": "a99d18879f88b0192263804ada3d70e2f70a93791dc184fe58036c5d6eb2c9fc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 963,
+      "sha256": "d062fe94c94366e3ecc31269fdf4bd9ffe8f865ad10cd7d63a54e9342a7ac967",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 963,
+      "sha256": "d062fe94c94366e3ecc31269fdf4bd9ffe8f865ad10cd7d63a54e9342a7ac967",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 989,
+      "sha256": "cb2f825ca5648c4eb8422e7e5b1e95bc0e425966c7e1e47b032453f2e75bb9d4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1047,
+      "sha256": "37d6898c75e8789a4d3164b14e39e98b3a153be705cbc3f75d2f70d95ab9a7ee",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1032,
+      "sha256": "eff38f628c752d8816e746dba4865fa3223bb443fb9c9634576c2a0e324f270c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 977,
+      "sha256": "b6faa03672b9b39e87b711cf93c4a7764df6b3d179ebeaaa0a753e077f86270c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1008,
+      "sha256": "05cfef6928a4a7bf356d3ecc34ee734d43f34dff6998cccf0c33d5c7a1c08ac8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 892,
+      "sha256": "12d8a13fec68ff4a056cb568eb517238d1bb297f3fc1be4223aebb3806738c40",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 971,
+      "sha256": "a290e4e1c8044758990d54b9d80b8d4732b31a210e05c4eba983d9588c0a4b85",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 907,
+      "sha256": "5a5899b2394b9460d71e697c8d15f45a3e08fb1f7b4601fe7655c44f4b1eccbe",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 956,
+      "sha256": "a5d893a424a0ff51e3ea9b21a4c6a2d1a31982ce14c0fc8f64ae951a54a79deb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 959,
+      "sha256": "a3e0b00bc502136ecdcacb9d136be5923a80ae5d29888187abac266636133415",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 959,
+      "sha256": "a3e0b00bc502136ecdcacb9d136be5923a80ae5d29888187abac266636133415",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 926,
+      "sha256": "b518ce8b6a25b5594b7a5ea97a2adcd555b08d3b839827bc3ddd531ff4e60a49",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 955,
+      "sha256": "fa3541e4edb23fd54857f2d4bd1e345c7d03a2ed493be83675ee7e03801b5ce5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1035,
+      "sha256": "a379e30087fe9ea45fcef3ddc702730bab6aa26a870b52d29e250448f3924145",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 944,
+      "sha256": "507dcfb550479e58785adb346a59425eb0f2f2360fd24976c276b810eb731648",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 950,
+      "sha256": "b7141357a8d44c4438e4bad62e36f6d28a4f882632bae23f1e6c4839824df9af",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 981,
+      "sha256": "68195a8bd2a5ff91551826bdd912ddbc3aa234615c28f3cb9a11d4624ea4d993",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1001,
+      "sha256": "02590c9ac9d867ba8d4abba83730ba7a57243b1bc1a92f1b67b6652ff8447fe7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 926,
+      "sha256": "b518ce8b6a25b5594b7a5ea97a2adcd555b08d3b839827bc3ddd531ff4e60a49",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 926,
+      "sha256": "b518ce8b6a25b5594b7a5ea97a2adcd555b08d3b839827bc3ddd531ff4e60a49",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 20455,
+      "sha256": "a7c7df0c0298857ae3a0412c4a138193beaafcb5d959414d8ceccbffb1a1bd7e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps51/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37605,
+      "sha256": "daaa7c44e1e050f341a020d7adc3dd82374b59df2a00adb198c3a84e6bfb5cee",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1353,
+      "sha256": "88dc4977e7ea0e83a299d8275bad9ce9f4ae58735e6ca8793861ee96eed599e0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-final/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7187,
+      "sha256": "3ea7b7f1b88210f07a13e93fbfc9c794a108d01618da2e1673b9ac240f829483",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/31-frozen-head.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/32-frozen-head-ignores-dirty-tree.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1446,
+      "sha256": "6bbbdfc6eb55174432cdde17a62ef20c6c55299537401c983ec27556decb093f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-frozen/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7724,
+      "sha256": "47603a71fd0eaaea461910a44b92f6ad51a5a09f4f4fa4ca5443edcd374ccd10",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "6be967af16f38bb373ca6d3b0a28b3b64c400116f457aa11efbb85f883e93dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1959,
+      "sha256": "e595f9b87899aecd89d05489a9ca78d1660ac7877f27a6f939617afa930d760d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7-r2/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6649,
+      "sha256": "6bb270cfcd1b1cf171a79667b0492e7ca16c6203e6ffd3051e72a61ae1bbfef9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 238,
+      "sha256": "16849f740e99fad1ec4136e65972e493c4470da525e7c6539c528cc77870aa7a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 240,
+      "sha256": "f5168805e0c0c370b838ca1f343ef923f8d3bfd0cc123963acc38a908334f9b5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 228,
+      "sha256": "069e68a925d3e1e1e707729d5da328e3226a3329594c97f59b45acaca4a6b5f3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 243,
+      "sha256": "4e4a8013c80b5359d381139c04ae967fd21d88a0133c51613ca02f9a055bb221",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 255,
+      "sha256": "081d1174ca84b09190732ea5627df570a1552760e63bba49d04d7ee99559c4f5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 274,
+      "sha256": "369990f50303cf79da58a6907fd7bea46a29b9d341e96bbd7dc25e1883ec510a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 229,
+      "sha256": "e14b87b96ee2210caf44e5c183a878d54682b3cdcdca8c06fe085e2c7387d32d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 275,
+      "sha256": "cf9bb0fe979a27ded6ec7acdb981a653b229ea83d3f3e0fc1defbb898b09c2f1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 275,
+      "sha256": "cf9bb0fe979a27ded6ec7acdb981a653b229ea83d3f3e0fc1defbb898b09c2f1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 301,
+      "sha256": "f2d2f60eda0cb225d4991ecb6666d80c90b55d18f52fefb3121ffb1801563da5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 365,
+      "sha256": "8df1dcf955f770ebea7d795483639cb4d136ef9a5c12510775905195f6fbf114",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 350,
+      "sha256": "97b5d595d1ab5baf3d3a76d1ef11e1b48fc4960ecbb174817c88d74952a409a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 289,
+      "sha256": "3b8bbc7554427f99500610a6982bb714f6fc79de238e4cfc6bdd1a7cc8da7b88",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 327,
+      "sha256": "a400bc6668cf4dfc6567e242f19073f4ed2b826a2cc459fd4aebfee3f336df70",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 206,
+      "sha256": "1fa57ad16224aade07f391c523e1b6453a2601731c853737fc7aeabfd6ae349b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 283,
+      "sha256": "af07ad6b6adcee80f060ad6de650288b5ee68e6b769cca7c3e50a283d9adaf2b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 220,
+      "sha256": "c8e5fde2eb4bd67494b707f0f2a92a863fcb73e8067deb2bc00e45c94434b214",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 268,
+      "sha256": "26e6bfd957522d1dce60ce4f91bd86ea249ad1fdda29b5fe47afb15491be9620",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 271,
+      "sha256": "02b491b7a9938c3d0e20916f2e970cf08af1aac692aca5650459eaee8aba4718",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 271,
+      "sha256": "02b491b7a9938c3d0e20916f2e970cf08af1aac692aca5650459eaee8aba4718",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 238,
+      "sha256": "16849f740e99fad1ec4136e65972e493c4470da525e7c6539c528cc77870aa7a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 267,
+      "sha256": "815bb7524a511b3e995d2bd2dd25d1e20f20e4b848578b932211121c39cd939d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 353,
+      "sha256": "9ada3aad968bc146e0bad6ef8c3e24f9319ff110eddebe4494bd0d40eb9e0dec",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 46,
+      "sha256": "3892249dd662c3d786654f87de1f5b29ab9e79bb2f6c683b9c6f48a9a877b810",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 46,
+      "sha256": "3892249dd662c3d786654f87de1f5b29ab9e79bb2f6c683b9c6f48a9a877b810",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1938,
+      "sha256": "d6b61cba7c81e844256e7759cc1ddc94faf57018efc177a452e5702287382835",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/ps7/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 11653,
+      "sha256": "83291ab0873f855430a145460c7042c2029f8c18030d406372a7727bc564bde3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/REPORT.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3767,
+      "sha256": "76bb2a30cb462439c562e42083a0b1ff54889f5311e9e0e55506f0b71e502ee8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/smoke-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 84640,
+      "sha256": "93ea6f6852ed11f49b9474d159fa96e2a07050273385d9f10839fc732c7daf58",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/smoke-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4191,
+      "sha256": "77d8b4799247c32e2653808687c0e56610cb133d6814816bb13c66dcd9acf12b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/smoke.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4958,
+      "sha256": "c77d826da76581aaa43038cf4c67405e2be69889ffbd9a0346180dda21e3b117",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/verification-summary.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 503,
+      "sha256": "c0e54b1ac46f29ff33111042b0a94bff6fb7605df15b1c424483d83247d5555e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/gov-t21/verify-task.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5351,
+      "sha256": "105e101a7ddf004aeb8dc6bae021533e40bec78701af2a6c7eab67efec59ce96",
       "lifecycle": "unverified"
     },
     {
@@ -127022,7 +131429,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1271270,
+      "bytes": 1272395,
       "sha256": null,
       "lifecycle": "unverified"
     },

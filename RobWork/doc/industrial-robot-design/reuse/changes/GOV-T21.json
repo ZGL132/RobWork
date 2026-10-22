@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "GOV-T21",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/GOV-T21.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+      "sha256": "399d7f02acd004301985a29c39ada2d40fdfacfdbcefc08a9f95a9700fc173c5",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "仅将唯一复用校验器接入既有ird_gates目标，不修改计算内核或链接依赖",
+      "verify": "双模式重新配置后 cmake --build <build> --config Release --target ird_gates"
+    }
+  ]
+}

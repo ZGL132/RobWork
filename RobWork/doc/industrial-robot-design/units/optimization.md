@@ -1,5 +1,8 @@
 # optimization 单元详细设计（L4 业务域——阶段 B/OPT-B 与阶段 D/OPT-D）
 
+> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+
+
 | 字段 | 值 |
 | --- | --- |
 | 单元 | optimization（**L4 业务域单元**——ARCHITECTURE §3.1/§3.3：计算库＋Qt Widgets 插件二分结构；设计变量/候选补丁、约束编排、候选生成、评估器组合、Pareto 非支配、Quick/Verified、缓存与种子、预检、候选应用与一站式导出） |

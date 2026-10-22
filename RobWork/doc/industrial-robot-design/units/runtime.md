@@ -1,5 +1,8 @@
 # 工业机械臂设计软件 · runtime 单元详细设计（阶段 A）
 
+> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+
+
 > 2026-09-10 同步：本单元详设编写完成（第一批 11/20）；保留本文 Draft/Draft-Structured 评审状态，不代表接口已冻结或实现通过。当前任务与准入结论见 [阶段一同步记录](../traceability/phase-one-readiness.md)；历史磁盘调查仅表示编写时事实，现状以该记录为准。
 
 | 字段 | 值 |
@@ -1620,3 +1623,7 @@ T27改为自有main后，DescriptionValidatorTest.cpp的RT-T16旧环境仍注册
 CanonicalBridge遵循路径不入Description身份而清空sourcePathHint；WorkCellCompiler不能将此合法情况当作无网格能力。仅在hint缺省/空时根据二进制STL记录长度或首条有效文本记录选择既有真实加载器，成功必须有非空三角面；显式不支持格式、摘要不符和解析失败维持原回退。无公共/存储/依赖变化，临时文件及错误语义沿用。真实无hint编译回归及宿主网格/尺寸/截图见modeling-interaction-20261021。
 
 T30正式工厂增量：SnapshotFactory::create的S6透传现有CompileRequest.resources，解决下层编译网格正确而正式快照丢网格；provider同步借用仅活至create返回。worker物化原无资源供给的边界另记，不宣称本批覆盖。
+
+## GOV-T21 迁移约束与旧规则勘误
+
+DescriptionValidator.cpp 自持 SVD 与 BaseWorldTransform 自持轴角计算列入迁移债务；复用已有模型编译/关节映射，State 线程私有，不在业务域重新建链。

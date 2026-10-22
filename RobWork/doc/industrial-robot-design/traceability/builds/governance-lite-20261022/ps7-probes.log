@@ -1,0 +1,38 @@
+Case: deep-rejects-invalid-index
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md', LF will be replaced by CRLF the next time Git touches it
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+Write-Error: evidence-index.json is not valid JSON: Conversion from JSON failed with error: Invalid JavaScript property identifier character: -. Path '', line 1, position 9.
+
+Case: default-ignores-optional-index
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md', LF will be replaced by CRLF the next time Git touches it
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+validate-docs: PASS (20 units, 12 trace entries, 377 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, NOT AUDITED evidence)
+
+Case: empty-title
+  [FAIL] message[0]
+         - 标题前缀后为空: [docs]
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）
+
+Case: free-body
+  [PASS] message[0]
+commit-lint: PASS（1 个提交全部合规）
+
+Case: generic-title
+  [FAIL] message[0]
+         - 标题无信息量（禁用空话）: [docs] 更新文件
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）
+
+Case: no-prefix
+  [FAIL] message[0]
+         - 标题缺少合法前缀（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）: 精简普通任务入口
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）
+
+Case: short-doc
+  [PASS] message[0]
+commit-lint: PASS（1 个提交全部合规）
+
+Case: unknown-prefix
+  [FAIL] message[0]
+         - 标题缺少合法前缀（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）: [unknown] 精简入口
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）

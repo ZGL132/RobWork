@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T03",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "替换FK/Jacobian与普通IK",
+  "status": "planned",
+  "branch": "reuse-t03",
+  "dependsOn": [
+    "REUSE-T02"
+  ],
+  "requirements": [
+    "DYN-01",
+    "DYN-05",
+    "KIN-01"
+  ],
+  "designRefs": [
+    "reuse/migration.md",
+    "reuse/policy.md",
+    "reuse/extensions/required-proposals.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
+  ],
+  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。"
+}

@@ -1,0 +1,22 @@
+{
+  "taskId": "GOV-T21",
+  "integrationConfigureAndGatesExitCode": 0,
+  "integrationBuildExitCode": 0,
+  "smokeConfigureAndGatesExitCode": 0,
+  "smokeBuildExitCode": 0,
+  "powershellTests": {
+    "ps7": {
+      "passed": 32,
+      "skipped": 0,
+      "failed": 0
+    },
+    "ps51": {
+      "passed": 32,
+      "skipped": 0,
+      "failed": 0
+    }
+  },
+  "productTests": "not-run-no-product-algorithm-change",
+  "independentAcceptance": "pending",
+  "baselineFullCI": "failed-before-governance-F-956"
+}

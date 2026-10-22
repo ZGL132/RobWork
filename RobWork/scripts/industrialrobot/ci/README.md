@@ -1,5 +1,8 @@
 # CI 门禁模板（WP-01-T02 落位，2026-09-10）
 
+> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+
+
 本目录承载 **CI 常驻门禁的契约模板**（ARCHITECTURE §11.2 第 2 条），两份文件与既有探索分支结论 **逐字节一致**（对齐基准＝commit `eb777e2`〔codex/wp-01-t04，2026-08-31 所有者裁决双文件口径〕，`cmp` 校验通过——契约 acceptance 第 4 条"对齐"成立，无差异改写）：
 
 | 文件 | 角色 | 出处（eb777e2 原路径） |
@@ -16,7 +19,7 @@
 3. **缓存白名单**：仅 `.cache/industrial-robot/{dependencies,packages}/`，不缓存测试结果/结果库/项目快照；失败工件 `when: always`。
 4. **六条门禁行**：configure → build → 模型测试 → GUI 规则通道预检（`QT_QPA_PLATFORM=windows`）→ check-boundaries → package。
 
-> **2026-10-17 治理批扩面（审查 P1-1 消账）**：check-boundaries 前新增两条治理门禁行（双文件同步、脚本行逐字符一致纪律保持）——`validate-docs.ps1 -DeepEvidence`（文档锚点/资产清单/分层入口/Notes/Skills＋证据索引深比较：路径集合＋字节数＋SHA-256 复算）与 `validate-context-pack.ps1 -All`（上下文包新鲜度＋PIPE 权威红线）。依据＝治理计划"评审修正 2"（Task 6/7 校验完成即挂载）＋ gate-all 第 0.7 步同款。
+> 2026-10-22 精简：CI 与 gate-all 默认执行 validate-docs 结构检查；不强制全库证据索引深查或全部上下文包新鲜度检查。专项审计显式运行 validate-docs.ps1 -DeepEvidence；实际使用某包时检查该任务包。复用门禁及对抗自测继续执行。
 
 ## 与现状的差异说明（激活前置，非本模板缺陷）
 

@@ -3,6 +3,8 @@ name: ird-python313-dll
 description: 工业机械臂项目 python313.dll 运行期缺失的处置规程——构建后启动 exe 弹「找不到 python313.dll」/退出码 0xC0000135/gate-all 报 python 前置不可达时的根因机理、三级解法（环境变量固化＞参数注入＞PATH 前置）与 SKIP+归因口径。本 Skill 是该问题处置细节的唯一 home（DTB §5.1「fresh 树运行时前置」③行的操作面展开）。
 ---
 
+> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+
 # ird-python313-dll：python313.dll 运行期缺失处置规程
 
 **时机**：构建后运行 `sdurws_ird_*` 测试/产品 exe 时弹 Windows 对话框「无法启动此程序，因为计算机中丢失 python313.dll」、进程退出码 `0xC0000135`（STATUS_DLL_NOT_FOUND），或 gate-all 输出「[python 前置] python313.dll 全程不可达」并给出 SKIP＋归因行。

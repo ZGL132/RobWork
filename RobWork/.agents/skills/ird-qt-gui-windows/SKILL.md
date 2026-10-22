@@ -3,6 +3,8 @@ name: ird-qt-gui-windows
 description: 工业机械臂 Windows GUI 测试操作规程——VS2022 x64、QT_QPA_PLATFORM=windows（禁止 offscreen）、绝对路径、一次一个 GUI 可执行文件、挂起处置与留痕复原。本 Skill 是 GUI 测试操作细节的唯一 home（源码区 AGENTS.md §5 引用此处）。
 ---
 
+> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+
 # ird-qt-gui-windows：Windows GUI 测试操作规程
 
 **时机**：运行任何 `sdurws_ird_<unit>_gui_test` / `_plugin` / `sdurws_ird_studio` 的 GUI 验证。

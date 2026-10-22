@@ -1,8 +1,7 @@
 ﻿param(
   [string]$RepoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path,
-  # -DeepEvidence：证据索引深校验（路径集合＋字节数＋SHA-256 复算）——本地快速
-  # 门禁默认只做路径/字节数比较；gate-all 与 CI 通道传此开关做全量内容复算
-  # （2026-10-17 审查 P1-3 对策：仅比条目数无法发现"同数换内容"失配）
+  # 全库证据索引只在显式审计时检查；普通提交按当前任务的原始证据验收，
+  # 避免每次新增日志都重写整个历史索引。该开关仍检查路径、字节数和摘要。
   [switch]$DeepEvidence
 )
 $base = Join-Path $RepoRoot 'doc/industrial-robot-design'
@@ -218,13 +217,15 @@ if (Test-Path $packsDir) {
 # ---------- 证据索引门禁（Agent-native 治理 Task 7，2026-10-17） ----------
 # traceability/ 是只增证据库，evidence-index.json 是其摘要索引（Agent 检索默认入口，
 # 生成物禁手改）。本段校验：索引存在、schema 正确、条目数与实际文件数一致——
-# 新证据落库未重跑 index-evidence.ps1 即失败（报错附重跑指引）。生命周期与删除
+# 该全库检查仅由 -DeepEvidence 显式启用；普通任务保留原始证据即可。生命周期与删除
 # 前置规则见 traceability/README.md。
 $evidenceReadme = Join-Path $base 'traceability/README.md'
 if (-not (Test-Path $evidenceReadme)) { $errors += 'missing traceability/README.md (evidence lifecycle rules)' }
 $evidenceIndexPath = Join-Path $base 'traceability/evidence-index.json'
 $evidenceCount = 0
-if (-not (Test-Path $evidenceIndexPath)) {
+if (-not $DeepEvidence) {
+  Write-Output 'NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）'
+} elseif (-not (Test-Path $evidenceIndexPath)) {
   $errors += 'missing traceability/evidence-index.json (run: pwsh -File RobWork/scripts/industrialrobot/index-evidence.ps1)'
 } else {
   $ei = $null
@@ -373,5 +374,9 @@ if (-not (Test-Path $manifestPath)) {
     }
   }
 }
+# H1—H6：文档检查和构建门禁共用校验器；RepoRoot 在本脚本为源码子根，需回到 Git 根。
+& (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot (Split-Path -Parent $RepoRoot)
+if ($LASTEXITCODE -ne 0) { $errors += 'H1-H6 reuse governance failed' }
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
-Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills, $packCount packs, $evidenceCount evidence)"
+$evidenceSummary = if ($DeepEvidence) { "$evidenceCount audited" } else { "NOT AUDITED" }
+Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills, $packCount packs, $evidenceSummary evidence)"

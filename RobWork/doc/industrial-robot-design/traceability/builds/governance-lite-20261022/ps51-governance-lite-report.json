@@ -1,0 +1,58 @@
+﻿{
+    "expected":  8,
+    "executed":  8,
+    "passed":  8,
+    "failed":  0,
+    "skipped":  0,
+    "complete":  true,
+    "cases":  [
+                  {
+                      "name":  "short-doc",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "free-body",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "no-prefix",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "generic-title",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "empty-title",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "unknown-prefix",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "default-ignores-optional-index",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "deep-rejects-invalid-index",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  }
+              ]
+}

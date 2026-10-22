@@ -1,0 +1,5 @@
+Exception: D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\validate-reuse.ps1:187
+Line |
+ 187 |  } catch { Write-Error $_; exit 1 }
+     |            ~~~~~~~~~~~~~~
+     | REUSE-INVENTORY : coverage 1369/1370

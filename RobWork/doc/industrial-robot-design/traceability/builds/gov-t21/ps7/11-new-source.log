@@ -1,0 +1,6 @@
+Exception: D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\validate-reuse.ps1:187
+Line |
+ 187 |  } catch { Write-Error $_; exit 1 }
+     |            ~~~~~~~~~~~~~~
+     | REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cpp :
+     | 82f1518a4af50c7fe93f885f2f3718d31a2d4c56d6edff010d919a743bcb34cd

@@ -1,0 +1,211 @@
+﻿{
+    "schemaVersion":  "ird-reuse-tests/1",
+    "passed":  10,
+    "skipped":  0,
+    "failed":  19,
+    "tests":  [
+                  {
+                      "name":  "01-clean",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "PASS",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-TASK : \r\nDOC-T01: reuse co\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...C-T01: reuse co:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nntract required\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "02-fixed-baseline",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-BASELINE",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-BASELIN\r\nE : fixed baselin\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...: fixed baselin:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\ne/schema mismatch\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "03-all-units",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-UNITS",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-UNITS :\r\n all 20 units req\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...ll 20 units req:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nuired\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "04-missing-source",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-MISSING",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-MISSING\r\n : RobWork/RobWor\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... RobWork/RobWor:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nk/src/rw/missing.hpp\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "05-stale-source",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-UPSTREAM-HASH",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-UPSTREA\r\nM-HASH : RobWork/\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...HASH : RobWork/:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nRobWork/src/rw/models/Device.hpp\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "06-missing-symbol",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-UPSTREAM-SYMBOL",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-UPSTREA\r\nM-SYMBOL : RobWor\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...SYMBOL : RobWor:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nk/RobWork/src/rw/models/Device.hpp: NoSuchSymbol123\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "07-inventory-omission",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-INVENTORY",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-INVENTO\r\nRY : coverage 136\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... : coverage 136:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\n9/1370\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "08-forged-blob",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-INVENTORY",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-INVENTO\r\nRY : RobWork/RobW\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... : RobWork/RobW:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\norkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "09-inventory-duplicate",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-INVENTORY",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-INVENTO\r\nRY : RobWork/RobW\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... : RobWork/RobW:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\norkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "10-inventory-unit",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-INVENTORY",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-INVENTO\r\nRY : classificati\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... : classificati:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\non/unit/task: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "11-new-source",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-UNDECLARED",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-UNDECLA\r\nRED : RobWork/Rob\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...D : RobWork/Rob:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cpp : 82f1518a4af50c7fe93f885f2f3718d31a2d4c56d6edff01\r\n0d919a743bcb34cd\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "12-stale-change-hash",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-UNDECLARED",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-UNDECLA\r\nRED : RobWork/Rob\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...D : RobWork/Rob:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt : 0f1be36b41d35ec67ae5fdec20c6f15905ca6603fe25ebd82c84d6920f19273\r\n5\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "13-core-even-business",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-DUPLICATE",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-DUPLICA\r\nTE : RobWork/RobW\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... : RobWork/RobW:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\norkStudio/src/rwslibs/industrialrobot/kinematics/src/Duplicate.cpp\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "14-cpp-not-governance",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-MODE",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-MODE : \r\ngovernance cannot\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...vernance cannot:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\n cover algorithms: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/WrongMode.cpp\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "15-missing-approval",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-PATH",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-PATH : \r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...: REUSE-PATH : :String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "16-unknown-capability",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-CAPABILITY",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-CAPABIL\r\nITY : RobWork/Rob\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...Y : RobWork/Rob:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt : NONE\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "17-path-traversal",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-PATH",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-PATH : \r\n../outside.cpp\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... ../outside.cpp:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "18-missing-task-proof",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-TASK",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-TASK : \r\nRobWork/doc/indus\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...bWork/doc/indus:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\ntrial-robot-design/reuse/changes/GOV-T21.json\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "19-task-scope",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-SCOPE",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-SCOPE :\r\n RobWork/RobWorkS\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...obWork/RobWorkS:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\ntudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "20-forbidden-scope",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-SCOPE",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-SCOPE :\r\n RobWork/RobWorkS\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...obWork/RobWorkS:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\ntudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "21-stage-not-approved",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-STAGE",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-TASK : \r\nDOC-T01: reuse co\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...C-T01: reuse co:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nntract required\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "22-final-debt-rejected",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-MIGRATION",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-MIGRATI\r\nON : debt=16 unre\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... : debt=16 unre:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nsolved=1368; final semantic closure required\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "23-governance-not-algorithm-approval",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-GOV-SCOPE",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-GOV-SCO\r\nPE : governance a\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... : governance a:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nuthorization cannot cover product algorithms: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Business\r\n.cpp\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "24-upstream-readonly",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-UPSTREAM-READONLY",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-UPSTREA\r\nM-READONLY : RobW\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...READONLY : RobW:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nork/RobWork/src/rw/Undeclared.cpp\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "25-missing-record-file",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-MISSING",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-MISSING\r\n : RobWork/doc/in\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... RobWork/doc/in:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\ndustrial-robot-design/tasks/Absent.json\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "26-deletion-undeclared",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-UNDECLARED",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-UNDECLA\r\nRED : RobWork/Rob\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...D : RobWork/Rob:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : deleted\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "27-forged-debt-closure",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-INVENTORY",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-INVENTO\r\nRY : baseline cla\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re... : baseline cla:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nssification is immutable: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "28-arbitrary-task-ready",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expected":  "REUSE-TASK",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-TASK : \r\nDOC-T01: reuse co\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...C-T01: reuse co:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nntract required\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  },
+                  {
+                      "name":  "29-planned-not-executable",
+                      "passed":  false,
+                      "exitCode":  1,
+                      "expected":  "REUSE-TASK-STATE",
+                      "output":  "powershell.exe : D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1 : REUSE-TASK : \r\nDOC-T01: reuse co\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\test-reuse-governance.ps1:44 char:63\r\n+ ...  $output = (\u0026 $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (D:\\10_Source_Re...C-T01: reuse co:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nntract required\r\nAt D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1:187 char:11\r\n+ } catch { Write-Error $_; exit 1 }\r\n+           ~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1\r\n \r\n"
+                  }
+              ]
+}

@@ -177,8 +177,8 @@ ird-industrial-robot-boundaries:
       if (-not $base -or $base -match '^0+$') { $base = "$head~1" }
       powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\commit-lint.ps1 -Range "$base..$head"
     # governance 门禁（2026-10-17 治理批扩面——脚本行与 GitHub 侧逐字符一致）
-    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-docs.ps1 -DeepEvidence
-    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-context-pack.ps1 -All
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-docs.ps1
+    - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\test-reuse-governance.ps1
     - powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
 
 ird-industrial-robot-package:
