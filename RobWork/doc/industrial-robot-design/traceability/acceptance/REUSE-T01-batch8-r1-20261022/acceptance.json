@@ -1,0 +1,50 @@
+{
+  "sha": "bb997f1cfb89c8d8eb24b457d2c82d4c0711af44",
+  "base": "7af7e86a18e34384677c2599a4f8812ad262908f",
+  "scope": "batch8-only",
+  "result": "FAIL",
+  "findings": [
+    {
+      "id": "B8-P2-01",
+      "priority": 2,
+      "file": "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+      "line": 316,
+      "description": "readHex4 source区段644-649是parseString内部调用分支，真正定义723-747",
+      "expectedSectionSha256": "0aafea170b8523491cc3c8a45584848bcea661af38bc7c4c9709aea0597c2100"
+    }
+  ],
+  "semanticBoundaries": {
+    "skipped": 0,
+    "failed": 1,
+    "passed": 19
+  },
+  "gates": {
+    "skipped": 0,
+    "failed": 0,
+    "passed": 3
+  },
+  "searchReplay": {
+    "skipped": 0,
+    "failed": 0,
+    "passed": 8
+  },
+  "evidenceBindings": {
+    "passed": 18,
+    "failed": 0
+  },
+  "rows": 20,
+  "newAllPending": true,
+  "currentRelations": {
+    "closedFiles": 0,
+    "pending": 217,
+    "total": 220,
+    "proposal": 3
+  },
+  "notRun": [
+    "C++/API实跑，按分工由另一验收者负责",
+    "GUI",
+    "全库DeepEvidence",
+    "全T01退出审计"
+  ],
+  "archiveExclusion": "repo/"
+}

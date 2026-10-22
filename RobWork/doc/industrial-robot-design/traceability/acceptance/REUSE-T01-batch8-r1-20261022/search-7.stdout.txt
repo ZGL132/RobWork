@@ -1,0 +1,13 @@
+106: *   state = kUtf8Dfa[256 + state + kUtf8Dfa[byte]]，逐字节推进；
+110:const std::uint8_t kUtf8Dfa[] = {
+220:class DecodedStream
+281:            return nextUtf8();
+283:        return nextUtf16ToUtf8();
+337:            return nextUtf8();
+339:        return nextUtf16ToUtf8();
+380:        // 无 BOM：按 §5.2②走严格 UTF-8 校验（非法在 nextUtf8 中产生 -2）。
+409:    int nextUtf8()
+428:            m_utf8State = kUtf8Dfa[256 + m_utf8State + kUtf8Dfa[b]];
+450:    int nextUtf16ToUtf8()
+1066:IoErrorCode mapSystemError(const std::error_code& ec)
+2078:                    r.error = IoError{mapSystemError(ec), {},

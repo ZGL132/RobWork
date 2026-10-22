@@ -1,0 +1,80 @@
+{
+  "frozenSha": "7af7e86a18e34384677c2599a4f8812ad262908f",
+  "independentRuns": [
+    {
+      "engine": "ps7",
+      "expected": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "scriptHashesMatch": true
+    },
+    {
+      "engine": "ps51",
+      "expected": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "scriptHashesMatch": true
+    }
+  ],
+  "scopeProbes": 8,
+  "archiveHistory": [
+    {
+      "attempt": "r1-ps7",
+      "passed": 7,
+      "failed": 23,
+      "notRun": 112
+    },
+    {
+      "attempt": "r1-ps51",
+      "passed": 7,
+      "failed": 23,
+      "notRun": 112
+    },
+    {
+      "attempt": "r2-ps7",
+      "passed": 139,
+      "failed": 3,
+      "notRun": 0
+    },
+    {
+      "attempt": "r2-ps51",
+      "passed": 139,
+      "failed": 3,
+      "notRun": 0
+    },
+    {
+      "attempt": "r3-ps7",
+      "passed": 141,
+      "failed": 1,
+      "notRun": 0
+    },
+    {
+      "attempt": "r3-ps51",
+      "passed": 141,
+      "failed": 1,
+      "notRun": 0
+    },
+    {
+      "attempt": "r4-ps7",
+      "passed": 142,
+      "failed": 0,
+      "notRun": 0
+    },
+    {
+      "attempt": "r4-ps51",
+      "passed": 142,
+      "failed": 0,
+      "notRun": 0
+    }
+  ]
+}

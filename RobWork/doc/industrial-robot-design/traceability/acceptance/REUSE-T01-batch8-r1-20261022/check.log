@@ -1,0 +1,35 @@
+newRows=20 failedBindings=0
+
+id                                         startLine endLine hashMatches first
+--                                         --------- ------- ----------- -----                                         
+io.Json.Parser.parseObject                       995    1074        True     IoResult<JsonValue> parseObject(std::uint3
+                                                                         2_t depth, JsonPath& path, SourcePos begin)
+io.Json.Parser.parseArray                       1077    1121        True     IoResult<JsonValue> parseArray(std::uint32
+                                                                         _t depth, JsonPath& path, SourcePos begin)
+io.Json.Parser.parseString                       604     720        True     IoResult<JsonValue> parseString(JsonPath&
+                                                                         path, SourcePos begin, bool countValue = true)
+io.Json.Parser.readHex4                          644     649        True                     if (!readHex4(&cp, &hexErr
+                                                                         )) {
+io.Json.Parser.appendUtf8                        750     767        True     static void appendUtf8(IoString& out, std:
+                                                                         :uint32_t cp)
+io.Json.Parser.parseNumber                       788     907        True     IoResult<JsonValue> parseNumber(JsonPath&
+                                                                         path, SourcePos begin)
+io.Csv.DecodedStream.nextUtf8                    409     447        True     int nextUtf8()
+io.Csv.DecodedStream.nextUtf16ToUtf8             450     516        True     int nextUtf16ToUtf8()
+io.Json.mapSystemError                           174     190        True IoErrorCode mapSystemError(const std::error_co
+                                                                         de& ec)
+io.Csv.mapSystemError                           1066    1082        True IoErrorCode mapSystemError(const std::error_co
+                                                                         de& ec)
+testkit.JsonLite.Parser.parseObject              164     216        True     JsonValue parseObject(std::size_t depth)
+testkit.JsonLite.Parser.parseArray               219     253        True     JsonValue parseArray(std::size_t depth)
+testkit.JsonLite.Parser.parseString              256     296        True     std::string parseString()
+testkit.JsonLite.Parser.parseUnicodeEscape       299     318        True     std::string parseUnicodeEscape()
+testkit.JsonLite.Parser.parseHex4                320     335        True     unsigned parseHex4()
+testkit.JsonLite.Parser.utf8Encode               338     357        True     static std::string utf8Encode(unsigned cp)
+testkit.JsonLite.Parser.parseNumber              360     418        True     JsonValue parseNumber()
+testkit.JsonLite.dumpEscaped                     432     455        True void dumpEscaped(const std::string& s, std::st
+                                                                         ring* out)
+testkit.JsonLite.dumpNumber                      458     466        True void dumpNumber(double v, std::string* out)
+testkit.JsonLite.dumpValue                       469     497        True void dumpValue(const JsonValue& v, std::string
+                                                                         * out)
+

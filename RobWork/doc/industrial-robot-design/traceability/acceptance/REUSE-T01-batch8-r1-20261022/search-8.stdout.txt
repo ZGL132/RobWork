@@ -1,0 +1,8 @@
+boost-json
+cryptopp
+nlohmann-json
+openssl
+picosha2
+rapidjson
+simdutf
+utfcpp

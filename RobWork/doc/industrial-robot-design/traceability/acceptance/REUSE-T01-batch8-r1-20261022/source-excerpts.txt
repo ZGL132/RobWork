@@ -1,0 +1,852 @@
+FUNCTION io.Json.Parser.parseObject RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp 995-1074
+995:     IoResult<JsonValue> parseObject(std::uint32_t depth, JsonPath& path, SourcePos begin)
+996:     {
+997:         IoResult<JsonValue> out;
+998:         m_cur.advance();   // '{'
+999:         JsonValue obj;
+1000:         obj.type = JsonValue::Type::Object;
+1001:         // 重复键检测表：解码后键名 → 已有成员下标。作用域限本层（同层
+1002:         // 语义）；容量受文档预算约束（每键至少 4 字节开销——键数上界由
+1003:         // docBytes 钳制，表内存有界）。
+1004:         std::unordered_map<IoString, std::size_t> seen;
+1005:         skipWs();
+1006:         if (!m_cur.eof() && m_cur.peek() == '}') {
+1007:             m_cur.advance();
+1008:             obj.span = makeSpan(begin, m_cur.lastPos());
+1009:             ++m_valueCount;
+1010:             out.value = std::move(obj);
+1011:             return out;
+1012:         }
+1013:         for (;;) {
+1014:             skipWs();
+1015:             if (m_cur.eof() || m_cur.peek() != '"') {
+1016:                 out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+1017:                                       m_cur.lastPos(),
+1018:                                       "json parse: expected object key or '}'");
+1019:                 return out;
+1020:             }
+1021:             const SourcePos keyBegin = m_cur.curPos();
+1022:             IoResult<JsonValue> keyVal = parseString(path, keyBegin, /*countValue=*/false);
+1023:             if (!keyVal) {
+1024:                 return keyVal;   // 键必须为字符串——语法/预算错误直接上抛
+1025:             }
+1026:             const SourcePos keyEnd = m_cur.lastPos();
+1027:             const IoString key = std::move(keyVal.value.stringValue);
+1028:             skipWs();
+1029:             if (m_cur.eof() || m_cur.peek() != ':') {
+1030:                 out.error = syntaxError(path, "json parse: expected ':' after object key");
+1031:                 return out;
+1032:             }
+1033:             m_cur.advance();
+1034:             // 值解析（路径段＝键；深度+1）。
+1035:             path.pushKey(key);
+1036:             IoResult<JsonValue> val = parseValue(depth + 1, path);
+1037:             path.pop();
+1038:             if (!val) {
+1039:                 return val;
+1040:             }
+1041:             // 重复键：插入前查表（同层第二次出现即拒——静默覆盖即数据丢
+1042:             // 失，§5.9.1；定位＝第二次键 token 区间）。
+1043:             const auto [it, inserted] = seen.emplace(key, obj.members.size());
+1044:             if (!inserted) {
+1045:                 out.error = jsonError(IoErrorCode::FormatJsonDupKey, path, keyBegin, keyEnd,
+1046:                                       "json parse: duplicate object key (second occurrence rejected)");
+1047:                 return out;
+1048:             }
+1049:             JsonMember m;
+1050:             m.key = key;
+1051:             m.keySpan = makeSpan(keyBegin, keyEnd);
+1052:             m.value = std::move(val.value);
+1053:             obj.members.push_back(std::move(m));
+1054:             skipWs();
+1055:             if (m_cur.eof()) {
+1056:                 out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+1057:                                       m_cur.lastPos(), "json parse: unterminated object");
+1058:                 return out;
+1059:             }
+1060:             if (m_cur.peek() == ',') {
+1061:                 m_cur.advance();
+1062:                 continue;
+1063:             }
+1064:             if (m_cur.peek() == '}') {
+1065:                 m_cur.advance();
+1066:                 obj.span = makeSpan(begin, m_cur.lastPos());
+1067:                 ++m_valueCount;
+1068:                 out.value = std::move(obj);
+1069:                 return out;
+1070:             }
+1071:             out.error = syntaxError(path, "json parse: expected ',' or '}' in object");
+1072:             return out;
+1073:         }
+1074:     }
+FUNCTION io.Json.Parser.parseArray RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp 1077-1121
+1077:     IoResult<JsonValue> parseArray(std::uint32_t depth, JsonPath& path, SourcePos begin)
+1078:     {
+1079:         IoResult<JsonValue> out;
+1080:         m_cur.advance();   // '['
+1081:         JsonValue arr;
+1082:         arr.type = JsonValue::Type::Array;
+1083:         skipWs();
+1084:         if (!m_cur.eof() && m_cur.peek() == ']') {
+1085:             m_cur.advance();
+1086:             arr.span = makeSpan(begin, m_cur.lastPos());
+1087:             ++m_valueCount;
+1088:             out.value = std::move(arr);
+1089:             return out;
+1090:         }
+1091:         std::size_t index = 0;
+1092:         for (;;) {
+1093:             path.pushIndex(index);
+1094:             IoResult<JsonValue> val = parseValue(depth + 1, path);
+1095:             path.pop();
+1096:             if (!val) {
+1097:                 return val;
+1098:             }
+1099:             arr.items.push_back(std::move(val.value));
+1100:             skipWs();
+1101:             if (m_cur.eof()) {
+1102:                 out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+1103:                                       m_cur.lastPos(), "json parse: unterminated array");
+1104:                 return out;
+1105:             }
+1106:             if (m_cur.peek() == ',') {
+1107:                 m_cur.advance();
+1108:                 ++index;
+1109:                 continue;
+1110:             }
+1111:             if (m_cur.peek() == ']') {
+1112:                 m_cur.advance();
+1113:                 arr.span = makeSpan(begin, m_cur.lastPos());
+1114:                 ++m_valueCount;
+1115:                 out.value = std::move(arr);
+1116:                 return out;
+1117:             }
+1118:             out.error = syntaxError(path, "json parse: expected ',' or ']' in array");
+1119:             return out;
+1120:         }
+1121:     }
+FUNCTION io.Json.Parser.parseString RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp 604-720
+604:     IoResult<JsonValue> parseString(JsonPath& path, SourcePos begin, bool countValue = true)
+605:     {
+606:         IoResult<JsonValue> out;
+607:         m_cur.advance();   // 消费开引号
+608:         IoString text;
+609:         std::uint64_t chars = 0;   // 解码后码点计数（预算面）
+610:         for (;;) {
+611:             if (m_cur.eof()) {
+612:                 out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin, m_cur.lastPos(),
+613:                                       "json parse: unterminated string");
+614:                 return out;
+615:             }
+616:             const char c = m_cur.peek();
+617:             if (c == '"') {
+618:                 m_cur.advance();   // 闭引号
+619:                 break;
+620:             }
+621:             if (c == '\\') {
+622:                 m_cur.advance();
+623:                 if (m_cur.eof()) {
+624:                     out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+625:                                           m_cur.lastPos(), "json parse: dangling escape");
+626:                     return out;
+627:                 }
+628:                 const char esc = m_cur.peek();
+629:                 m_cur.advance();
+630:                 switch (esc) {
+631:                 case '"': text.push_back('"'); ++chars; break;
+632:                 case '\\': text.push_back('\\'); ++chars; break;
+633:                 case '/': text.push_back('/'); ++chars; break;
+634:                 case 'b': text.push_back('\b'); ++chars; break;
+635:                 case 'f': text.push_back('\f'); ++chars; break;
+636:                 case 'n': text.push_back('\n'); ++chars; break;
+637:                 case 'r': text.push_back('\r'); ++chars; break;
+638:                 case 't': text.push_back('\t'); ++chars; break;
+639:                 case 'u': {
+640:                     // \uXXXX：先取 4 个十六进制位；高代理必须后随 \uDC00-DFFF
+641:                     // 组对（RFC 8259 可交换文本约束——悬空代理拒绝）。
+642:                     std::uint32_t cp = 0;
+643:                     IoError hexErr;
+644:                     if (!readHex4(&cp, &hexErr)) {
+645:                         out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+646:                                               m_cur.lastPos(),
+647:                                               "json parse: bad \\u escape" + detailSuffix(hexErr));
+648:                         return out;
+649:                     }
+650:                     if (cp >= 0xD800 && cp <= 0xDBFF) {
+651:                         // 高代理：期望紧随 "\uXXXX" 的低代理。
+652:                         if (m_cur.pos() + 1 < m_cur.size() && m_cur.peek() == '\\'
+653:                             && m_cur.bufAt(m_cur.pos() + 1) == 'u') {
+654:                             m_cur.advance();   // '\'
+655:                             m_cur.advance();   // 'u'
+656:                             std::uint32_t low = 0;
+657:                             if (!readHex4(&low, &hexErr) || low < 0xDC00 || low > 0xDFFF) {
+658:                                 out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+659:                                                       m_cur.lastPos(),
+660:                                                       "json parse: unpaired surrogate escape");
+661:                                 return out;
+662:                             }
+663:                             cp = 0x10000 + ((cp - 0xD800) << 10) + (low - 0xDC00);   // 合成码点
+664:                         } else {
+665:                             out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+666:                                                   m_cur.lastPos(),
+667:                                                   "json parse: unpaired surrogate escape");
+668:                             return out;
+669:                         }
+670:                     } else if (cp >= 0xDC00 && cp <= 0xDFFF) {
+671:                         out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+672:                                               m_cur.lastPos(),
+673:                                               "json parse: unpaired surrogate escape");
+674:                         return out;
+675:                     }
+676:                     appendUtf8(text, cp);
+677:                     ++chars;   // 一个（合成后）码点计 1——JsonStringChars 口径
+678:                     break;
+679:                 }
+680:                 default:
+681:                     out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+682:                                           m_cur.lastPos(), "json parse: unknown escape");
+683:                     return out;
+684:                 }
+685:             } else if (static_cast<unsigned char>(c) < 0x20) {
+686:                 out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+687:                                       m_cur.lastPos(),
+688:                                       "json parse: raw control char inside string");
+689:                 return out;
+690:             } else {
+691:                 text.push_back(c);   // 非 ASCII 直通（UTF-8 已预检——原样保留）
+692:                 if ((static_cast<unsigned char>(c) & 0xC0) != 0x80) {
+693:                     ++chars;         // 非 UTF-8 续字节＝新码点首字节
+694:                 }
+695:                 m_cur.advance();
+696:                 // 不 continue——直通字节同样落到下方码点预算检查（普通长
+697:                 // 字符串的预算防线；escape 分支亦经此检查）。
+698:             }
+699:             // 码点预算（§5.9.1 大字符串行）：超限即拒——比较型三要素
+700:             // actual/limit/unit=chars（IO-SEC-BUDGET-JSON-STRING）。
+701:             if (chars > m_lim.stringChars) {
+702:                 out.error = makeComparativeError(IoErrorCode::SecBudgetJsonString, chars,
+703:                                                  m_lim.stringChars, "chars",
+704:                                                  "json parse: string length over budget");
+705:                 out.error.params.emplace_back("path", path.render());
+706:                 out.error.params.emplace_back("row", std::to_string(begin.line));
+707:                 out.error.params.emplace_back("column", std::to_string(begin.column));
+708:                 return out;
+709:             }
+710:         }
+711:         JsonValue v;
+712:         v.type = JsonValue::Type::String;
+713:         v.stringValue = std::move(text);
+714:         v.span = makeSpan(begin, m_cur.lastPos());
+715:         if (countValue) {
+716:             ++m_valueCount;   // 值位置才计数（对象键不计——parseString 注）
+717:         }
+718:         out.value = std::move(v);
+719:         return out;
+720:     }
+FUNCTION io.Json.Parser.readHex4 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp 644-649
+644:                     if (!readHex4(&cp, &hexErr)) {
+645:                         out.error = jsonError(IoErrorCode::FormatJsonSyntax, path, begin,
+646:                                               m_cur.lastPos(),
+647:                                               "json parse: bad \\u escape" + detailSuffix(hexErr));
+648:                         return out;
+649:                     }
+FUNCTION io.Json.Parser.appendUtf8 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp 750-767
+750:     static void appendUtf8(IoString& out, std::uint32_t cp)
+751:     {
+752:         if (cp < 0x80) {
+753:             out.push_back(static_cast<char>(cp));
+754:         } else if (cp < 0x800) {
+755:             out.push_back(static_cast<char>(0xC0 | (cp >> 6)));
+756:             out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+757:         } else if (cp < 0x10000) {
+758:             out.push_back(static_cast<char>(0xE0 | (cp >> 12)));
+759:             out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+760:             out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+761:         } else {
+762:             out.push_back(static_cast<char>(0xF0 | (cp >> 18)));
+763:             out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
+764:             out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+765:             out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+766:         }
+767:     }
+FUNCTION io.Json.Parser.parseNumber RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp 788-907
+788:     IoResult<JsonValue> parseNumber(JsonPath& path, SourcePos begin)
+789:     {
+790:         IoResult<JsonValue> out;
+791:         // 先行拦截 "-Infinity"（§5.9.1 NaN 行——'-' 后跟 Infinity 同为
+792:         // 非法 JSON 具名记号）。
+793:         if (m_cur.peek() == '-' && m_cur.pos() + 1 < m_cur.size()
+794:             && m_cur.bufAt(m_cur.pos() + 1) == 'I') {
+795:             // 贪婪吞词后按具名记号拒绝（错误定位覆盖整个记号）。
+796:             m_cur.advance();
+797:             IoResult<JsonValue> named = parseNonFiniteLiteral(path, begin);
+798:             if (!named) {
+799:                 return named;
+800:             }
+801:         }
+802:         const std::size_t start = m_cur.pos();
+803:         // 语法扫描：'-'? int frac? exp?（逐段严格，deviation 即 SYNTAX）。
+804:         if (m_cur.peek() == '-') {
+805:             m_cur.advance();
+806:         }
+807:         if (m_cur.eof()) {
+808:             out.error = jsonError(IoErrorCode::FormatJsonNumber, path, m_cur.curPos(), m_cur.curPos(), "json parse: truncated number");
+809:             return out;
+810:         }
+811:         if (m_cur.peek() == '0') {
+812:             m_cur.advance();
+813:             // 0 后不得再跟数字（前导零非法——RFC 8259 int 尾注）。
+814:             if (!m_cur.eof() && m_cur.peek() >= '0' && m_cur.peek() <= '9') {
+815:                 out.error = jsonError(IoErrorCode::FormatJsonNumber, path, m_cur.curPos(), m_cur.curPos(), "json parse: leading zero in number");
+816:                 return out;
+817:             }
+818:         } else if (m_cur.peek() >= '1' && m_cur.peek() <= '9') {
+819:             while (!m_cur.eof() && m_cur.peek() >= '0' && m_cur.peek() <= '9') {
+820:                 m_cur.advance();
+821:             }
+822:         } else {
+823:             out.error = jsonError(IoErrorCode::FormatJsonNumber, path, m_cur.curPos(), m_cur.curPos(), "json parse: malformed number");
+824:             return out;
+825:         }
+826:         bool hasFrac = false;
+827:         if (!m_cur.eof() && m_cur.peek() == '.') {
+828:             hasFrac = true;
+829:             m_cur.advance();
+830:             if (m_cur.eof() || m_cur.peek() < '0' || m_cur.peek() > '9') {
+831:                 out.error = jsonError(IoErrorCode::FormatJsonNumber, path, m_cur.curPos(), m_cur.curPos(), "json parse: malformed fraction");
+832:                 return out;
+833:             }
+834:             while (!m_cur.eof() && m_cur.peek() >= '0' && m_cur.peek() <= '9') {
+835:                 m_cur.advance();
+836:             }
+837:         }
+838:         bool hasExp = false;
+839:         if (!m_cur.eof() && (m_cur.peek() == 'e' || m_cur.peek() == 'E')) {
+840:             hasExp = true;
+841:             m_cur.advance();
+842:             if (!m_cur.eof() && (m_cur.peek() == '+' || m_cur.peek() == '-')) {
+843:                 m_cur.advance();
+844:             }
+845:             if (m_cur.eof() || m_cur.peek() < '0' || m_cur.peek() > '9') {
+846:                 out.error = jsonError(IoErrorCode::FormatJsonNumber, path, m_cur.curPos(), m_cur.curPos(), "json parse: malformed exponent");
+847:                 return out;
+848:             }
+849:             while (!m_cur.eof() && m_cur.peek() >= '0' && m_cur.peek() <= '9') {
+850:                 m_cur.advance();
+851:             }
+852:         }
+853:         const std::string_view token = m_cur.buf().substr(start, m_cur.pos() - start);
+854:         const SourcePos end = m_cur.lastPos();
+855: 
+856:         if (!hasFrac && !hasExp) {
+857:             // 整数形态：int64 无损 or 原文透传（§5.9.1 数值行——不静默截断）。
+858:             std::int64_t iv = 0;
+859:             const auto r = std::from_chars(token.data(), token.data() + token.size(), iv, 10);
+860:             JsonValue v;
+861:             if (r.ec == std::errc::result_out_of_range) {
+862:                 // 超范围整数：原文 String 透传＋报告计数（"＋提示"面）。
+863:                 v.type = JsonValue::Type::String;
+864:                 v.stringValue.assign(token);
+865:                 ++m_outOfRangeIntegers;
+866:             } else {
+867:                 v.type = JsonValue::Type::Integer;
+868:                 v.integerValue = iv;
+869:             }
+870:             v.span = makeSpan(begin, end);
+871:             ++m_valueCount;
+872:             out.value = std::move(v);
+873:             return out;
+874:         }
+875: 
+876:         // 实数形态：from_chars（general 格式——无前导 '+'，与 JSON 词法相容）。
+877:         double dv = 0.0;
+878:         const auto r = std::from_chars(token.data(), token.data() + token.size(), dv);
+879:         if (r.ec == std::errc::result_out_of_range) {
+880:             // 方向分流：溢出拒绝、下溢接受为 0。量级估算＝小数点前有效
+881:             // 位数-1 ＋ 指数值（钳位扫描，精度足以分辨 1e308 边界两侧）。
+882:             // 界值取 >=308（F-803）：magnitude==308 且 from_chars 报
+883:             // result_out_of_range 的 token 必为溢出——可表示值（1e308、
+884:             // 1.79e308 等 ≤ DBL_MAX）经 from_chars 即成功、不会进入本分
+885:             // 支；用 >308 会把 2e308 这类真溢出错派入下溢分支静默置 0.0
+886:             // （数据损坏面）。负指数下溢量级在 -309 以下方向，不受界值
+887:             // 收紧影响。
+888:             const std::int64_t magnitude = estimateMagnitude(token);
+889:             if (magnitude >= 308) {
+890:                 out.error = jsonError(IoErrorCode::FormatJsonNumber, path, begin, end,
+891:                                       "json parse: number overflow (out of IEEE754 double range)");
+892:                 return out;
+893:             }
+894:             dv = 0.0;   // 下溢：IEEE754 最近值语义＝0（parseNumber 类注）
+895:         } else if (r.ec != std::errc()) {
+896:             out.error = jsonError(IoErrorCode::FormatJsonNumber, path, begin, end,
+897:                                   "json parse: number conversion failed");
+898:             return out;
+899:         }
+900:         JsonValue v;
+901:         v.type = JsonValue::Type::Real;
+902:         v.realValue = dv;
+903:         v.span = makeSpan(begin, end);
+904:         ++m_valueCount;
+905:         out.value = std::move(v);
+906:         return out;
+907:     }
+FUNCTION io.Csv.DecodedStream.nextUtf8 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp 409-447
+409:     int nextUtf8()
+410:     {
+411:         // 暂存序列的已验字节优先产出（多字节序列必须整组放行——逐字节
+412:         // 透传是原文保留的基础，只发尾字节会把 UTF-8 文本错位降采样）。
+413:         if (m_seqPos < m_seq.size()) {
+414:             ++produced;
+415:             return static_cast<unsigned char>(m_seq[m_seqPos++]);
+416:         }
+417:         for (;;) {
+418:             const int b = rawNext();
+419:             if (b == -1) {
+420:                 // 流尽时若停在多字节序列中部＝残缺序列＝非法（严格校验）。
+421:                 if (m_utf8State != 0) {
+422:                     return -2;
+423:                 }
+424:                 return -1;
+425:             }
+426:             // DFA 推进：prev==0 表示 b 是新序列首字节——清空暂存重开。
+427:             const std::uint32_t prev = m_utf8State;
+428:             m_utf8State = kUtf8Dfa[256 + m_utf8State + kUtf8Dfa[b]];
+429:             if (m_utf8State == kUtf8Reject) {
+430:                 return -2;                // 非 UTF-8 且无 BOM → 稳定拒绝（IO-D09）
+431:             }
+432:             if (prev == 0) {
+433:                 m_seq.clear();
+434:                 m_seqPos = 0;
+435:             }
+436:             m_seq.push_back(static_cast<char>(b));
+437:             if (m_utf8State == 0) {
+438:                 // 序列完成且合法：整组转入暂存，逐字节产出（ASCII 序列
+439:                 // 即单字节立即返回；多字节序列首字节本次返回，余者走
+440:                 // 顶部的暂存产出分支）。
+441:                 m_seqPos = 0;
+442:                 ++produced;
+443:                 return static_cast<unsigned char>(m_seq[m_seqPos++]);
+444:             }
+445:             // 序列中部的字节先暂存不产出——继续吸收直至序列完成或判非法。
+446:         }
+447:     }
+FUNCTION io.Csv.DecodedStream.nextUtf16ToUtf8 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp 450-516
+450:     int nextUtf16ToUtf8()
+451:     {
+452:         // 已编码未取尽的产出优先。
+453:         if (m_outPos < m_out.size()) {
+454:             ++produced;
+455:             return static_cast<unsigned char>(m_out[m_outPos++]);
+456:         }
+457:         m_outPos = 0;
+458:         m_out.clear();
+459: 
+460:         // 取一个 16 位码元（字节序按 BOM 判定；残缺半单元＝非法）。
+461:         const int lo = rawNext();
+462:         if (lo == -1) {
+463:             return -1;
+464:         }
+465:         const int hi = rawNext();
+466:         if (hi == -1) {
+467:             return -2;
+468:         }
+469:         std::uint32_t unit = m_enc == Enc::Utf16Le
+470:             ? static_cast<std::uint32_t>(lo | (hi << 8))
+471:             : static_cast<std::uint32_t>((lo << 8) | hi);
+472: 
+473:         if (unit >= 0xD800 && unit <= 0xDBFF) {
+474:             // 高代理：必须紧跟低代理（DC00~DFFF）合成增补平面码点；残缺
+475:             // 或错配＝非法序列（严格拒绝，不做替换符宽容——转码即猜测，
+476:             // §2.3 非目标 10）。
+477:             const int lo2 = rawNext();
+478:             if (lo2 == -1) {
+479:                 return -2;
+480:             }
+481:             const int hi2 = rawNext();
+482:             if (hi2 == -1) {
+483:                 return -2;
+484:             }
+485:             const std::uint32_t unit2 = m_enc == Enc::Utf16Le
+486:                 ? static_cast<std::uint32_t>(lo2 | (hi2 << 8))
+487:                 : static_cast<std::uint32_t>((lo2 << 8) | hi2);
+488:             if (unit2 < 0xDC00 || unit2 > 0xDFFF) {
+489:                 return -2;
+490:             }
+491:             unit = 0x10000 + ((unit - 0xD800) << 10) + (unit2 - 0xDC00);
+492:         } else if (unit >= 0xDC00 && unit <= 0xDFFF) {
+493:             // 悬空低代理＝非法。
+494:             return -2;
+495:         }
+496: 
+497:         // 码点 → UTF-8（RFC 3629 标准四形态；unit 已被上面的校验限定在
+498:         // 合法码点空间，无需二次判界）。
+499:         if (unit < 0x80) {
+500:             m_out.push_back(static_cast<char>(unit));
+501:         } else if (unit < 0x800) {
+502:             m_out.push_back(static_cast<char>(0xC0 | (unit >> 6)));
+503:             m_out.push_back(static_cast<char>(0x80 | (unit & 0x3F)));
+504:         } else if (unit < 0x10000) {
+505:             m_out.push_back(static_cast<char>(0xE0 | (unit >> 12)));
+506:             m_out.push_back(static_cast<char>(0x80 | ((unit >> 6) & 0x3F)));
+507:             m_out.push_back(static_cast<char>(0x80 | (unit & 0x3F)));
+508:         } else {
+509:             m_out.push_back(static_cast<char>(0xF0 | (unit >> 18)));
+510:             m_out.push_back(static_cast<char>(0x80 | ((unit >> 12) & 0x3F)));
+511:             m_out.push_back(static_cast<char>(0x80 | ((unit >> 6) & 0x3F)));
+512:             m_out.push_back(static_cast<char>(0x80 | (unit & 0x3F)));
+513:         }
+514:         ++produced;
+515:         return static_cast<unsigned char>(m_out[m_outPos++]);
+516:     }
+FUNCTION io.Json.mapSystemError RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp 174-190
+174: IoErrorCode mapSystemError(const std::error_code& ec)
+175: {
+176:     if (ec == std::errc::no_such_file_or_directory) {
+177:         return IoErrorCode::ResNotFound;
+178:     }
+179:     if (ec == std::errc::no_space_on_device || ec == std::errc::file_too_large) {
+180:         return IoErrorCode::PackDiskFull;
+181:     }
+182:     if (ec == std::errc::read_only_file_system) {
+183:         return IoErrorCode::ResReadonly;
+184:     }
+185:     if (ec == std::errc::device_or_resource_busy || ec == std::errc::no_lock_available
+186:         || ec == std::errc::resource_unavailable_try_again) {
+187:         return IoErrorCode::ResLockConflict;
+188:     }
+189:     return IoErrorCode::ResAccessDenied;
+190: }
+FUNCTION io.Csv.mapSystemError RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp 1066-1082
+1066: IoErrorCode mapSystemError(const std::error_code& ec)
+1067: {
+1068:     if (ec == std::errc::no_such_file_or_directory) {
+1069:         return IoErrorCode::ResNotFound;
+1070:     }
+1071:     if (ec == std::errc::no_space_on_device || ec == std::errc::file_too_large) {
+1072:         return IoErrorCode::PackDiskFull;
+1073:     }
+1074:     if (ec == std::errc::read_only_file_system) {
+1075:         return IoErrorCode::ResReadonly;
+1076:     }
+1077:     if (ec == std::errc::device_or_resource_busy || ec == std::errc::no_lock_available
+1078:         || ec == std::errc::resource_unavailable_try_again) {
+1079:         return IoErrorCode::ResLockConflict;
+1080:     }
+1081:     return IoErrorCode::ResAccessDenied;
+1082: }
+FUNCTION testkit.JsonLite.Parser.parseObject RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 164-216
+164:     JsonValue parseObject(std::size_t depth)
+165:     {
+166:         expect('{', "对象起始");
+167:         JsonValue v;
+168:         v.kind = JsonValue::Kind::Object;
+169:         const std::size_t myPathLen = path_.size();
+170:         skipWs();
+171:         if (!eof() && peek() == '}') {          // 空对象合法
+172:             advance();
+173:             return v;
+174:         }
+175:         while (true) {
+176:             skipWs();
+177:             if (eof() || peek() != '"') {
+178:                 if (!eof() && peek() == '}') { fail("对象尾逗号（键值对后多一个 ','）"); }
+179:                 fail("对象键必须是以引号开始的字符串");
+180:             }
+181:             const std::size_t keyLine = line_;
+182:             const std::size_t keyCol = col_;
+183:             const std::string key = parseString();
+184:             // 重复键拒绝：以"键所在行列"报错（比冒号后位置更可定位），不篡改游标。
+185:             for (const auto& kv : v.members) {
+186:                 if (kv.first == key) {
+187:                     path_.resize(myPathLen);
+188:                     path_ += '.';
+189:                     path_ += key;
+190:                     throw TestKitError(TestKitErrorKind::DatasetInvalid,
+191:                                        "json-parse: line " + std::to_string(keyLine)
+192:                                            + ", column " + std::to_string(keyCol)
+193:                                            + ": 重复键 \"" + key
+194:                                            + "\"（键序不保证语义，受限格式直接拒绝）（路径 " + path_ + "）");
+195:                 }
+196:             }
+197:             path_.resize(myPathLen);
+198:             path_ += '.';
+199:             path_ += key;
+200:             skipWs();
+201:             expect(':', "键值分隔");
+202:             v.members.emplace_back(key, parseValue(depth + 1));
+203:             path_.resize(myPathLen);
+204:             skipWs();
+205:             if (!eof() && peek() == ',') {
+206:                 advance();
+207:                 continue;
+208:             }
+209:             if (!eof() && peek() == '}') {
+210:                 advance();
+211:                 path_.resize(myPathLen);
+212:                 return v;
+213:             }
+214:             fail("对象期望 ',' 或 '}'");
+215:         }
+216:     }
+FUNCTION testkit.JsonLite.Parser.parseArray RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 219-253
+219:     JsonValue parseArray(std::size_t depth)
+220:     {
+221:         expect('[', "数组起始");
+222:         JsonValue v;
+223:         v.kind = JsonValue::Kind::Array;
+224:         const std::size_t myPathLen = path_.size();
+225:         skipWs();
+226:         if (!eof() && peek() == ']') {
+227:             advance();
+228:             return v;
+229:         }
+230:         std::size_t index = 0;
+231:         while (true) {
+232:             path_.resize(myPathLen);
+233:             path_ += '[';
+234:             path_ += std::to_string(index);
+235:             path_ += ']';
+236:             v.items.push_back(parseValue(depth + 1));
+237:             ++index;
+238:             path_.resize(myPathLen);
+239:             skipWs();
+240:             if (!eof() && peek() == ',') {
+241:                 advance();
+242:                 skipWs();
+243:                 if (!eof() && peek() == ']') { fail("数组尾逗号（元素后多一个 ','）"); }
+244:                 continue;
+245:             }
+246:             if (!eof() && peek() == ']') {
+247:                 advance();
+248:                 path_.resize(myPathLen);
+249:                 return v;
+250:             }
+251:             fail("数组期望 ',' 或 ']'");
+252:         }
+253:     }
+FUNCTION testkit.JsonLite.Parser.parseString RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 256-296
+256:     std::string parseString()
+257:     {
+258:         expect('"', "字符串起始");
+259:         std::string out;
+260:         while (true) {
+261:             if (eof()) {
+262:                 fail("字符串未闭合（到达文本末尾）");
+263:             }
+264:             const unsigned char c = static_cast<unsigned char>(peek());
+265:             if (c == '"') {
+266:                 advance();
+267:                 return out;
+268:             }
+269:             if (c == '\\') {
+270:                 advance();
+271:                 if (eof()) { fail("转义符后到达文本末尾"); }
+272:                 const char e = peek();
+273:                 advance();
+274:                 switch (e) {
+275:                 case '"':  out.push_back('"');  break;
+276:                 case '\\': out.push_back('\\'); break;
+277:                 case '/':  out.push_back('/');  break;
+278:                 case 'b':  out.push_back('\b'); break;
+279:                 case 'f':  out.push_back('\f'); break;
+280:                 case 'n':  out.push_back('\n'); break;
+281:                 case 'r':  out.push_back('\r'); break;
+282:                 case 't':  out.push_back('\t'); break;
+283:                 case 'u':  out.append(parseUnicodeEscape()); break;
+284:                 default:
+285:                     fail(std::string{"非法转义 \\"} + e + "（仅 \" \\ / b f n r t u）");
+286:                 }
+287:                 continue;
+288:             }
+289:             if (c < 0x20) {
+290:                 fail("字符串内裸控制字符（须转义）");
+291:             }
+292:             // UTF-8 字节原样收集（合法性由装载层/文件编码保证——受限解析器不重编码）。
+293:             out.push_back(static_cast<char>(c));
+294:             advance();
+295:         }
+296:     }
+FUNCTION testkit.JsonLite.Parser.parseUnicodeEscape RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 299-318
+299:     std::string parseUnicodeEscape()
+300:     {
+301:         const unsigned cp = parseHex4();
+302:         if (cp >= 0xD800u && cp <= 0xDBFFu) {                       // 高代理
+303:             if (pos_ + 1 < text_.size() && text_[pos_] == '\\' && text_[pos_ + 1] == 'u') {
+304:                 advance(); advance();
+305:                 const unsigned low = parseHex4();
+306:                 if (low < 0xDC00u || low > 0xDFFFu) {
+307:                     fail("高代理后未跟低代理（\\uD800-\\uDBFF 须成对）");
+308:                 }
+309:                 const unsigned full = 0x10000u + ((cp - 0xD800u) << 10) + (low - 0xDC00u);
+310:                 return utf8Encode(full);
+311:             }
+312:             fail("高代理后未跟低代理（\\uD800-\\uDBFF 须成对）");
+313:         }
+314:         if (cp >= 0xDC00u && cp <= 0xDFFFu) {
+315:             fail("孤立低代理（\\uDC00-\\uDFFF 不能单独出现）");
+316:         }
+317:         return utf8Encode(cp);
+318:     }
+FUNCTION testkit.JsonLite.Parser.parseHex4 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 320-335
+320:     unsigned parseHex4()
+321:     {
+322:         unsigned v = 0;
+323:         for (int i = 0; i < 4; ++i) {
+324:             if (eof()) { fail("\\u 转义不足 4 个十六进制位"); }
+325:             const char c = peek();
+326:             unsigned nib;
+327:             if (c >= '0' && c <= '9')      nib = static_cast<unsigned>(c - '0');
+328:             else if (c >= 'a' && c <= 'f') nib = static_cast<unsigned>(c - 'a') + 10u;
+329:             else if (c >= 'A' && c <= 'F') nib = static_cast<unsigned>(c - 'A') + 10u;
+330:             else { fail("\\u 转义含非十六进制字符"); }
+331:             v = (v << 4) | nib;
+332:             advance();
+333:         }
+334:         return v;
+335:     }
+FUNCTION testkit.JsonLite.Parser.utf8Encode RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 338-357
+338:     static std::string utf8Encode(unsigned cp)
+339:     {
+340:         std::string s;
+341:         if (cp < 0x80u) {
+342:             s.push_back(static_cast<char>(cp));
+343:         } else if (cp < 0x800u) {
+344:             s.push_back(static_cast<char>(0xC0u | (cp >> 6)));
+345:             s.push_back(static_cast<char>(0x80u | (cp & 0x3Fu)));
+346:         } else if (cp < 0x10000u) {
+347:             s.push_back(static_cast<char>(0xE0u | (cp >> 12)));
+348:             s.push_back(static_cast<char>(0x80u | ((cp >> 6) & 0x3Fu)));
+349:             s.push_back(static_cast<char>(0x80u | (cp & 0x3Fu)));
+350:         } else {
+351:             s.push_back(static_cast<char>(0xF0u | (cp >> 18)));
+352:             s.push_back(static_cast<char>(0x80u | ((cp >> 12) & 0x3Fu)));
+353:             s.push_back(static_cast<char>(0x80u | ((cp >> 6) & 0x3Fu)));
+354:             s.push_back(static_cast<char>(0x80u | (cp & 0x3Fu)));
+355:         }
+356:         return s;
+357:     }
+FUNCTION testkit.JsonLite.Parser.parseNumber RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 360-418
+360:     JsonValue parseNumber()
+361:     {
+362:         const std::size_t startPos = pos_;
+363:         const std::size_t startLine = line_;
+364:         const std::size_t startCol = col_;       // 数字级错误按"起始位置"定位
+365:         if (peek() == '-') {
+366:             advance();
+367:             if (eof() || peek() < '0' || peek() > '9') {
+368:                 if (!eof() && peek() == 'I') { fail("-Infinity 字面被拒绝"); }
+369:                 if (!eof() && peek() == 'N') { fail("-NaN 字面被拒绝"); }
+370:                 fail("数字缺少整数部分（'-' 后必须是数字）");
+371:             }
+372:         }
+373:         // 整数部分：0 或 [1-9][0-9]*（前导零拒绝——"01" 非法）。
+374:         if (eof() || peek() < '0' || peek() > '9') {
+375:             fail("数字缺少整数部分");
+376:         }
+377:         if (peek() == '0') {
+378:             advance();
+379:             if (!eof() && peek() >= '0' && peek() <= '9') {
+380:                 fail("前导零（'0' 后不得直接跟数字）");
+381:             }
+382:         } else {
+383:             while (!eof() && peek() >= '0' && peek() <= '9') { advance(); }
+384:         }
+385:         // 小数部分。
+386:         if (!eof() && peek() == '.') {
+387:             advance();
+388:             if (eof() || peek() < '0' || peek() > '9') { fail("小数点后缺数字"); }
+389:             while (!eof() && peek() >= '0' && peek() <= '9') { advance(); }
+390:         }
+391:         // 指数部分。
+392:         if (!eof() && (peek() == 'e' || peek() == 'E')) {
+393:             advance();
+394:             if (!eof() && (peek() == '+' || peek() == '-')) { advance(); }
+395:             if (eof() || peek() < '0' || peek() > '9') { fail("指数缺数字"); }
+396:             while (!eof() && peek() >= '0' && peek() <= '9') { advance(); }
+397:         }
+398:         // 语法段提取后经 strtod（标准六进制/Infinity 等已被语法层排除）。
+399:         const std::string token{text_.substr(startPos, pos_ - startPos)};
+400:         double value = 0.0;
+401:         const std::string tokenz = token + '\0';
+402:         const char* begin = tokenz.c_str();
+403:         char* end = nullptr;
+404:         value = std::strtod(begin, &end);
+405:         if (end != begin + token.size()) {
+406:             fail("数字解析不完整（内部错误形态）");
+407:         }
+408:         if (!std::isfinite(value)) {
+409:             // 溢出按数字起始位置报告（扫描已前进——游标快照避免行列漂移）。
+410:             line_ = startLine;
+411:             col_ = startCol;
+412:             fail("数字超出 IEEE double 可表示范围（结果非有限）");
+413:         }
+414:         JsonValue v;
+415:         v.kind = JsonValue::Kind::Number;
+416:         v.number = value;
+417:         return v;
+418:     }
+FUNCTION testkit.JsonLite.dumpEscaped RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 432-455
+432: void dumpEscaped(const std::string& s, std::string* out)
+433: {
+434:     out->push_back('"');
+435:     for (const unsigned char c : s) {
+436:         switch (c) {
+437:         case '"':  out->append("\\\""); break;
+438:         case '\\': out->append("\\\\"); break;
+439:         case '\b': out->append("\\b"); break;
+440:         case '\f': out->append("\\f"); break;
+441:         case '\n': out->append("\\n"); break;
+442:         case '\r': out->append("\\r"); break;
+443:         case '\t': out->append("\\t"); break;
+444:         default:
+445:             if (c < 0x20) {
+446:                 char buf[8];
+447:                 std::snprintf(buf, sizeof(buf), "\\u%04X", static_cast<unsigned>(c));
+448:                 out->append(buf);
+449:             } else {
+450:                 out->push_back(static_cast<char>(c));   // UTF-8 字节透传
+451:             }
+452:         }
+453:     }
+454:     out->push_back('"');
+455: }
+FUNCTION testkit.JsonLite.dumpNumber RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 458-466
+458: void dumpNumber(double v, std::string* out)
+459: {
+460:     char buf[64];
+461:     const auto res = std::to_chars(buf, buf + sizeof(buf), v);
+462:     if (res.ec != std::errc()) {
+463:         throw TestKitError(TestKitErrorKind::Usage, "json-dump: 数字序列化失败（不可达防御分支）");
+464:     }
+465:     out->append(buf, static_cast<std::size_t>(res.ptr - buf));
+466: }
+FUNCTION testkit.JsonLite.dumpValue RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp 469-497
+469: void dumpValue(const JsonValue& v, std::string* out)
+470: {
+471:     switch (v.kind) {
+472:     case JsonValue::Kind::Null:   out->append("null"); break;
+473:     case JsonValue::Kind::Bool:   out->append(v.boolean ? "true" : "false"); break;
+474:     case JsonValue::Kind::Number: dumpNumber(v.number, out); break;
+475:     case JsonValue::Kind::String: dumpEscaped(v.text, out); break;
+476:     case JsonValue::Kind::Array:
+477:         out->push_back('[');
+478:         for (std::size_t i = 0; i < v.items.size(); ++i) {
+479:             if (i > 0) { out->push_back(','); }
+480:             dumpValue(v.items[i], out);
+481:         }
+482:         out->push_back(']');
+483:         break;
+484:     case JsonValue::Kind::Object:
+485:         out->push_back('{');
+486:         for (std::size_t i = 0; i < v.members.size(); ++i) {
+487:             if (i > 0) { out->push_back(','); }
+488:             dumpEscaped(v.members[i].first, out);
+489:             out->push_back(':');
+490:             dumpValue(v.members[i].second, out);
+491:         }
+492:         out->push_back('}');
+493:         break;
+494:     default:
+495:         throw TestKitError(TestKitErrorKind::Usage, "json-dump: 未知值类别（防御分支）");
+496:     }
+497: }

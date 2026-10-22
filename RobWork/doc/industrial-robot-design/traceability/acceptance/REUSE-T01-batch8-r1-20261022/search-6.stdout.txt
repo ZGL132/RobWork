@@ -1,0 +1,23 @@
+109: * 用法：state = kUtf8Dfa[256 + state + kUtf8Dfa[byte]]，逐字节推进；
+112:const std::uint8_t kUtf8Dfa[] = {
+145:bool strictUtf8Check(std::string_view bytes, std::size_t* failIndex)
+150:        state = kUtf8Dfa[256 + state + kUtf8Dfa[b]];
+172: *        语义最近；未合流私有头的理由同 kUtf8Dfa 表注）。
+400:class Parser {
+514:            return parseObject(depth, path, begin);
+516:            return parseArray(depth, path, begin);
+518:            return parseString(path, begin);
+532:                return parseNumber(path, begin);
+604:    IoResult<JsonValue> parseString(JsonPath& path, SourcePos begin, bool countValue = true)
+644:                    if (!readHex4(&cp, &hexErr)) {
+657:                            if (!readHex4(&low, &hexErr) || low < 0xDC00 || low > 0xDFFF) {
+676:                    appendUtf8(text, cp);
+716:            ++m_valueCount;   // 值位置才计数（对象键不计——parseString 注）
+723:    bool readHex4(std::uint32_t* out, IoError* err)
+750:    static void appendUtf8(IoString& out, std::uint32_t cp)
+788:    IoResult<JsonValue> parseNumber(JsonPath& path, SourcePos begin)
+894:            dv = 0.0;   // 下溢：IEEE754 最近值语义＝0（parseNumber 类注）
+995:    IoResult<JsonValue> parseObject(std::uint32_t depth, JsonPath& path, SourcePos begin)
+1022:            IoResult<JsonValue> keyVal = parseString(path, keyBegin, /*countValue=*/false);
+1077:    IoResult<JsonValue> parseArray(std::uint32_t depth, JsonPath& path, SourcePos begin)
+2001:            if (!strictUtf8Check(body, &failIdx)) {
