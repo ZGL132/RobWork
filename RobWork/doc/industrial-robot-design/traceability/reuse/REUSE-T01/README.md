@@ -24,3 +24,7 @@ $env:PATH='D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release;D:/1
 前期失败的环境归因：完整无 components 的 RobWork 包尝试解析未生成的 umbrella DLL；带 vcpkg toolchain 的外部配置遇上游 `C:\local` HINTS 转义；未进入 VS x64 环境时 Boost atomic 缺 synchronization 导入；MSVC 默认 GBK 不能解析本实验 UTF-8 注释。最终采用精确 components、既有安装前缀、VS x64 与 `/utf-8` 后构建通过。没有以这些环境失败为由保留自写核心。
 
 仍未解决的能力差异集中登记于 [缺口入口](../../../reuse/extensions/required-proposals.md)，不在本目录维护另一份功能决策表。远程 push 仍因 `127.0.0.1:17890` 代理不可达失败；本地证据不能替代远程 CI 或主线合入。
+
+第二批增加53条候选关系，累计77条、涉及10单元，全部仍为pending；未覆盖文件/函数继续待审。实际定向检索的10条命令与完整输出见 [batch2-search.json](batch2-search.json)，exitCode=1只表示本次范围无命中。新增候选覆盖DH正构造、全局随机源和球面采样，并登记DH转换内的LM/差分/消元、采样/姿态小核、SHA-256、JSON/UTF-8和高阶基函数。逐功能位置与差异只维护在 `reuse/functions/`，本段不构成另一份决策台账。
+
+本批没有运行新的适用性或生产实验。`sdurw_sandbox`有真实目标但默认关闭，优化器源存在不表示它在当前配置可用；`FirstDifferences`与示例头路径/安装列表还需核查。`generateGridPositions`是确定性体心枚举，未错误绑定随机能力。Random全局32位种子、HyperSphere按delta生成数量、DHParameterSet仅取已有属性，这些差异均不构成新核心批准。下一批继续审查其余单元、实际消费者与测试/构建工具；没有把77条当成全项目功能总数，也没有关闭库存债务。

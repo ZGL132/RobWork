@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "io",
+  "functions": [
+    {
+      "functionId": "io.strictUtf8Check",
+      "ownerUnit": "io",
+      "requirements": [
+        "NFR-SEC-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "strictUtf8Check",
+          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::strictUtf8Check",
+          "startLine": 145,
+          "endLine": 162,
+          "sha256": "40c66f0c7a2be2796d2711a5b909d3e78e1bbf4975d7f1b9d9ea95b5b589389a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_io"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"strictUtf8Check|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "与Csv.cpp的UTF-8 DFA表/实现重复；先检索上游StringUtil及同渠道已安装编码工具，保留拒绝超长/代理区/BOM语义",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+          "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "io.canonicalizeJson",
+      "ownerUnit": "io",
+      "requirements": [
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "canonicalizeJson",
+          "qualifiedSymbol": "sdurws::ird::io::canonicalizeJson",
+          "startLine": 1651,
+          "endLine": 1678,
+          "sha256": "b366d6c386dee4c0f36bb08d320dce5dcd78acf2df4bd0bd26b3cdea86412def"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_io"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"canonicalizeJson|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "canonical writer属于产品身份规则，底层JSON编码仍需查复用；不能把身份专属语义作为手写parser全部保留理由",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+          "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    }
+  ]
+}

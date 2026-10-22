@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "testkit",
+  "functions": [
+    {
+      "functionId": "testkit.parseJson",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+          "symbol": "parseJson",
+          "qualifiedSymbol": "sdurws::ird::testkit::parseJson",
+          "startLine": 545,
+          "endLine": 549,
+          "sha256": "abe7da556a319be1b7d4ac60cfeb7a069f75f54b451c1a28e1c36294c52c81ff"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"parseJson|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持递归下降Parser；继续核上游XML/PropertyTree与现有依赖是否满足JSON类型、重复键、BOM及定位；不能用testkit边界豁免重复工具",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "64fa97398fd7dc6869e099c130e004069cc63c6456c3ad3ed9cd332270d97fb0"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "testkit.dumpJson",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+          "symbol": "dumpJson",
+          "qualifiedSymbol": "sdurws::ird::testkit::dumpJson",
+          "startLine": 551,
+          "endLine": 600,
+          "sha256": "e29bb052ded45513439ef0549cf8e589f65c03af760df70f50b14539cd8bc4d5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"dumpJson|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持JSON writer；与io生产JSON不可直接跨层互链。优先成熟依赖，经薄profile保留确定性键序/数值格式",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "64fa97398fd7dc6869e099c130e004069cc63c6456c3ad3ed9cd332270d97fb0"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    }
+  ]
+}

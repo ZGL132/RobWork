@@ -391,6 +391,51 @@
           "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad",
           "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
           "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+          "sha256": "97386026ba5b2ca3a1ff24e1786d30dcdb42a36da940073e31c75619f583ab8e",
+          "symbols": [
+            "RPY",
+            "toRotation3D"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+          "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2",
+          "symbols": [
+            "inverse",
+            "isProperRotation"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+          "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027",
+          "symbols": [
+            "Transform3D",
+            "operator*"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+          "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb",
+          "symbols": [
+            "Vector3D",
+            "cross",
+            "normalize"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
         }
       ],
       "build": {
@@ -410,7 +455,7 @@
         }
       ],
       "limits": {
-        "semantics": "轴角、参考系、零角/π",
+        "semantics": "RPY(yaw,pitch,roll)与产品roll/pitch/yaw字段必须换序；EAA主值/pi分支、SO(3)判定容差、单位m/rad和参考系须分别回归。纯值运算不新增模型构造权",
         "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
         "determinism": "按需求与功能探测，未验证不得宣称确定性"
       },
@@ -906,6 +951,219 @@
       "resourceSearch": {
         "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|Polynomial|InertiaMatrix\" RobWork/RobWork/gtest RobWork/RobWork/example",
         "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
+      }
+    },
+    {
+      "id": "MATH-DH",
+      "search": {
+        "command": "rg -n \"DH|craigDH|DHParameterSet|Levenberg|Marquardt\" RobWork/RobWork/src RobWork/RobWork/gtest",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+      },
+      "boundary": "直接DH构造可复用；DHParameterSet读取已有属性，不负责从任意显式轴链反求DH；产品Exact/Approximate/自由变量判定仍需审查",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+          "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027",
+          "symbols": [
+            "DH",
+            "craigDH",
+            "DHHGP"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/DHParameterSet.hpp",
+          "sha256": "950060dc2af5f80ec0e8bffa9606340b6a7fe522bbc6153ed299852c0ef0fa1a",
+          "symbols": [
+            "DHParameterSet",
+            "getDHParameters"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math",
+          "sdurw_models"
+        ],
+        "constraints": "直接DH构造可复用；DHParameterSet读取已有属性，不负责从任意显式轴链反求DH；产品Exact/Approximate/自由变量判定仍需审查"
+      },
+      "usages": [
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "直接DH构造可复用；DHParameterSet读取已有属性，不负责从任意显式轴链反求DH；产品Exact/Approximate/自由变量判定仍需审查",
+        "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+        "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+      },
+      "ownerUnit": "modeling",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/invkin/InvKinTest.cpp",
+          "sha256": "a115eda57665f0bc1fa7106e6a16ef591b4c82d25acfc2bcd328d866ac61b5db",
+          "symbols": [
+            "testClosedFormWithQ"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n \"DH|craigDH|DHParameterSet|Levenberg|Marquardt\" RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+      }
+    },
+    {
+      "id": "MATH-RANDOM",
+      "search": {
+        "command": "rg -n \"generator|seed|ran|splitmix|Fibonacci|latin\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+      },
+      "boundary": "Random.cpp使用全局boost::mt19937及unsigned种子；不能直接满足任务私有64位计数流、线程隔离与旧身份序列；QSampler/HyperSphere分别继续评估",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/Random.hpp",
+          "sha256": "74427ac05dc7434c3218457793931fa81d7c28c72cb9f5cb79f1db979f7cc2dc",
+          "symbols": [
+            "seed",
+            "ran",
+            "ranI"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "Random.cpp使用全局boost::mt19937及unsigned种子；不能直接满足任务私有64位计数流、线程隔离与旧身份序列；QSampler/HyperSphere分别继续评估"
+      },
+      "usages": [
+        {
+          "consumerUnit": "kinematics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "optimization",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "execution",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "Random.cpp使用全局boost::mt19937及unsigned种子；不能直接满足任务私有64位计数流、线程隔离与旧身份序列；QSampler/HyperSphere分别继续评估",
+        "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+        "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+      },
+      "ownerUnit": "core",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"generator|seed|ran|splitmix|Fibonacci|latin\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+      }
+    },
+    {
+      "id": "GEOM-SPHERE-SAMPLING",
+      "search": {
+        "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.* RobWork/RobWork/gtest/geometry",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+      },
+      "boundary": "输入是角分辨率delta，输出数量不是固定N；不能假称等同产品固定N斐波那契样本。先查相邻采样API/需求冻结范围",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/HyperSphere.hpp",
+          "sha256": "93d73f5d9f3a4fadf5be723884684d8b0d1d6e1b6ba5afc977397d91b1995119",
+          "symbols": [
+            "uniformDistributionCartesian",
+            "uniformDistributionSpherical"
+          ],
+          "target": "sdurw_geometry",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_geometry"
+        ],
+        "constraints": "输入是角分辨率delta，输出数量不是固定N；不能假称等同产品固定N斐波那契样本。先查相邻采样API/需求冻结范围"
+      },
+      "usages": [
+        {
+          "consumerUnit": "kinematics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "输入是角分辨率delta，输出数量不是固定N；不能假称等同产品固定N斐波那契样本。先查相邻采样API/需求冻结范围",
+        "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+        "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+      },
+      "ownerUnit": "kinematics",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.* RobWork/RobWork/gtest/geometry",
+        "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
       }
     }
   ]

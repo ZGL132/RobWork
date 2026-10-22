@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "core",
+  "functions": [
+    {
+      "functionId": "core.ContentDigester.compressBlock",
+      "ownerUnit": "core",
+      "requirements": [
+        "CON-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Digest.cpp",
+          "symbol": "ContentDigester::compressBlock",
+          "qualifiedSymbol": "sdurws::ird::core::ContentDigester::compressBlock",
+          "startLine": 139,
+          "endLine": 171,
+          "sha256": "b7a5cb00b17c98929964cbc9af4c7576d9d0ce4843511174f25e6938aa134455"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"ContentDigester::compressBlock|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Digest.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持FIPS180-2压缩核心；上游rw/rwsim搜索SHA/crypto无命中，仅是检索事实。继续查已安装成熟依赖/平台API及跨平台契约，不因此批准保留核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    }
+  ]
+}

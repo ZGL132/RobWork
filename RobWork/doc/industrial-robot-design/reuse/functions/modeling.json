@@ -223,6 +223,635 @@
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "modeling.rotVec",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "rotVec",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotVec",
+          "startLine": 169,
+          "endLine": 176,
+          "sha256": "260ec79da63465428730a2ed45e5d0024c8a4980dea8a7b8b4c136973f05536b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotVec|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.rotMul",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "rotMul",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotMul",
+          "startLine": 181,
+          "endLine": 193,
+          "sha256": "3f4112172f7ba37c2cf4c441f0428c5c8d9240d007fb45ef76c84ce5c15c0b8d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotMul|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.transformMul",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "transformMul",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::transformMul",
+          "startLine": 196,
+          "endLine": 203,
+          "sha256": "ebb72c65a05976ff5967fa3e7d5b06bd62de78635da4b7d163907a1e1fd90e26"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"transformMul|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.rotZ",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "rotZ",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotZ",
+          "startLine": 206,
+          "endLine": 213,
+          "sha256": "1011fffbf0bfc5904c6197a5311ae462179a78182bdf99165a99aae9ab4e7537"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotZ|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.rotX",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "rotX",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotX",
+          "startLine": 216,
+          "endLine": 223,
+          "sha256": "a6479cf20423d54e01fbb415214d50f4312345636071e35ebb2e70a826659916"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotX|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.axisAngleRotation",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "axisAngleRotation",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::axisAngleRotation",
+          "startLine": 228,
+          "endLine": 241,
+          "sha256": "a85ed8bb72e4ea83ffd4b2e23cef322d24930b08b7f424dbaac06a1952f4793a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"axisAngleRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.rotateTranspose",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "rotateTranspose",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTranspose",
+          "startLine": 888,
+          "endLine": 895,
+          "sha256": "573a6ea9dd10a6a1b4878218f974bf4d10b0261a6158652b6d41f648efaeeb5d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotateTranspose|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.rotateTransposeFrame",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "rotateTransposeFrame",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTransposeFrame",
+          "startLine": 898,
+          "endLine": 910,
+          "sha256": "2b03a4f585df0172b11d2be654f5a367bf20143f50facf555598875d225495e1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotateTransposeFrame|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.rotationAngleBetween",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "rotationAngleBetween",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotationAngleBetween",
+          "startLine": 372,
+          "endLine": 390,
+          "sha256": "6da87b8ce90e5b8acd9b69b96a23f5ac3dbb7a473eb175f8395505471867e2a9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotationAngleBetween|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写值类型代数；优先Rotation3D/Transform3D/EAA及inverse；保留参考系、极角和产品Exact判定阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.dhCoreTransform",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "dhCoreTransform",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhCoreTransform",
+          "startLine": 260,
+          "endLine": 264,
+          "sha256": "22f301776c472452b90974678161712761d2263e00ba53c02abf32aaceb58346"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-DH",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"dhCoreTransform|DH|craigDH|DHHGP\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "DH段拼接候选，核标准/改进约定、theta offset和每段在链中的先后；不能误用craigDH替代标准DH",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.dhStaticSegment",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "dhStaticSegment",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhStaticSegment",
+          "startLine": 273,
+          "endLine": 277,
+          "sha256": "40a50af819fbcaf100b6548b49ed917315801d3ba0e793349fd6d7dc60f16f4a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-DH",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"dhStaticSegment|DH|craigDH|DHHGP\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "DH段拼接候选，核标准/改进约定、theta offset和每段在链中的先后；不能误用craigDH替代标准DH",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.dhRebuildStep",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "dhRebuildStep",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::dhRebuildStep",
+          "startLine": 300,
+          "endLine": 317,
+          "sha256": "d61c037fee4826aa9eff9cf8e46b1f8564e2e6b818cb9adbb52928e98e8aa65c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-DH",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"dhRebuildStep|DH|craigDH|DHHGP\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "DH段拼接候选，核标准/改进约定、theta offset和每段在链中的先后；不能误用craigDH替代标准DH",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.solveLinearSystem",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "solveLinearSystem",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::solveLinearSystem",
+          "startLine": 504,
+          "endLine": 543,
+          "sha256": "acc613e41483a0d83ee98d1bcb461c148ac71bc09c669965283ab94e23dcd657"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"solveLinearSystem|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "新发现自持数值拟合/差分/消元/秩判定；继续评估上游sandbox optimization与公共数学API的构建和适用性，不以无命名DH反解API批准新核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.numericJacobian",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "numericJacobian",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::numericJacobian",
+          "startLine": 553,
+          "endLine": 584,
+          "sha256": "04a69f6837a314b7cf4f80df4056162261ba6b16a86bdcd3fbce3319b9e070b5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"numericJacobian|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "新发现自持数值拟合/差分/消元/秩判定；继续评估上游sandbox optimization与公共数学API的构建和适用性，不以无命名DH反解API批准新核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.lmSolve",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "lmSolve",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::lmSolve",
+          "startLine": 607,
+          "endLine": 723,
+          "sha256": "d55ec9434b5b4471aab56a7ef31f4807e7187f3f2fc693894202b5ec3722c190"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"lmSolve|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "新发现自持数值拟合/差分/消元/秩判定；继续评估上游sandbox optimization与公共数学API的构建和适用性，不以无命名DH反解API批准新核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.rankAndFreeColumns",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "rankAndFreeColumns",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rankAndFreeColumns",
+          "startLine": 735,
+          "endLine": 778,
+          "sha256": "9ebea29e7d49e4ad918732daa8842838128a9596edadc1300a648d9c4a5a08e9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rankAndFreeColumns|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "新发现自持数值拟合/差分/消元/秩判定；继续评估上游sandbox optimization与公共数学API的构建和适用性，不以无命名DH反解API批准新核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.rotateInertia",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+          "symbol": "rotateInertia",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotateInertia",
+          "startLine": 261,
+          "endLine": 296,
+          "sha256": "0b49beb12388dc41aaea2f85a431d0cabbadce215047295ca67d6cba04db125a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-INERTIA",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotateInertia|InertiaMatrix\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "URDF惯性系到连杆系手算RIR^T；复用InertiaMatrix旋转，保留质心参考点不平移及kg·m²",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     }
   ]
 }

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "optimization",
+  "functions": [
+    {
+      "functionId": "optimization.generateSeededLhsCandidates",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp",
+          "symbol": "generateSeededLhsCandidates",
+          "qualifiedSymbol": "sdurws::ird::optimization::generateSeededLhsCandidates",
+          "startLine": 404,
+          "endLine": 528,
+          "sha256": "4fd10f4f6fd33672c080888e4e450304025f557348530cd60e9c7386b2adeac5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"generateSeededLhsCandidates|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持SplitMix64与Fisher-Yates/LHS；继续查sandbox优化/采样能力，保留基线首位、变量授权/量化和候选身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    }
+  ]
+}

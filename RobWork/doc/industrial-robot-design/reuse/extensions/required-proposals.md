@@ -13,4 +13,6 @@ GAP-IK/RNE/FD/TRJ 当前均为待检索/验证，不表示已证实上游无能�
 
 每份实际提案必须记录：检索命令及输出证据、上游版本/哈希、具体能力缺口与可复现实例、候选扩展文件/符号、替代方案、API/ABI/数值/性能/构建/测试/许可证影响、最小 patch 范围与默认关闭/回滚策略、所有者逐项批准。搜索范围至少覆盖公共头、实现、测试、示例、构建注册；不能只凭命名未命中断言“库不好用/库没有”。
 
+第二批未决入口还有：`modeling/src/DhConvert.cpp` 的LM/数值差分/消元与秩判定；`kinematics/src/SeedMix.hpp` 和 `optimization/src/EvaluatorPorts.cpp` 的64位任务私有随机流/LHS；`core/src/Digest.cpp` 的SHA-256；`testkit/src/JsonLite.cpp` 与 `io/src/Json.cpp` 的JSON及 `io/src/Csv.cpp` 同副本UTF-8校验。它们是后续检索/提案入口，不是已证实缺口或保留许可。上游sandbox优化目标默认关闭，当前API/安装适用性待实测；数学Random和HyperSphere不能直接承诺旧样本身份与顺序；JSON类型/规范化和跨平台摘要须继续查同渠道既有依赖。来源及逐项差异见功能矩阵，真实检索输出见实验目录 `batch2-search.json`。
+
 本次公共 API 探测与复现命令见 [REUSE-T01 实验说明](../../traceability/reuse/REUSE-T01/README.md)。通过项包括对限制的预期断言，仅是审计证据，不是生产复用正向证据或扩展批准；逐功能决策仍以 `functions/` 为准。

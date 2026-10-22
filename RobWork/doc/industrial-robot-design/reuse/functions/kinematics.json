@@ -149,6 +149,635 @@
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "kinematics.orientBoxPoint",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "orientBoxPoint",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientBoxPoint",
+          "startLine": 87,
+          "endLine": 96,
+          "sha256": "60e011e53950c6eacac20e7299052c5b7894d50584876961345a3c2000d9a669"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"orientBoxPoint|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.orientSampleRotation",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "orientSampleRotation",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientSampleRotation",
+          "startLine": 105,
+          "endLine": 113,
+          "sha256": "a6f296f0f196345632be4b57f230a4e51f2da8faa39e3c3c29d004fcb26b2bdf"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"orientSampleRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.poseFromDirectionRoll",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "poseFromDirectionRoll",
+          "qualifiedSymbol": "sdurws::ird::kinematics::poseFromDirectionRoll",
+          "startLine": 359,
+          "endLine": 418,
+          "sha256": "83eba6da69459484a2282c07444cf0fb416b17c587f8120d4a1006a56f66ce40"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"poseFromDirectionRoll|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.validateBoxOrientation",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "validateBoxOrientation",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::validateBoxOrientation",
+          "startLine": 56,
+          "endLine": 78,
+          "sha256": "38377ca04a86950a492fdf1bf380f070d0c9164122edba7ecb43a9c76285c3e8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"validateBoxOrientation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.generateRandomPositions",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "generateRandomPositions",
+          "qualifiedSymbol": "sdurws::ird::kinematics::generateRandomPositions",
+          "startLine": 308,
+          "endLine": 328,
+          "sha256": "199821dbedf3c4d19e0b608734a6986df3d87b1a7e345b7520b499f63516ed1f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"generateRandomPositions|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "固定样本序/64位种子/盒体心与分片语义不能因API替换漂移；Random是全局32位源，未认定可直接复用",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.generateGridPositions",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "generateGridPositions",
+          "qualifiedSymbol": "sdurws::ird::kinematics::generateGridPositions",
+          "startLine": 261,
+          "endLine": 305,
+          "sha256": "8566c06f93c2fca8dc68f43b151a1f1807405aaa8f6f31cb9c60aac47cd10a7a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n -i \"grid|fibonacci|latin|halton|sobol\" RobWork/RobWork/src/rwlibs/algorithms RobWork/RobWork/src/rw/pathplanning RobWork/RobWork/src/rw/math -g \"*Sampler*\" -g \"*Grid*\" -g \"*Random*\"",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "确定性体心网格枚举，不使用随机数；保留x慢/z快顺序、旋转盒、零计数及乘积回卷拒绝。相邻QSampler/HyperSphere不是相同枚举契约，继续核工具复用，不错误绑定Random或提前判business-specific",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.generateDirections",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "generateDirections",
+          "qualifiedSymbol": "sdurws::ird::kinematics::generateDirections",
+          "startLine": 330,
+          "endLine": 344,
+          "sha256": "416314cae75131fd0fe48d4a509f4a1f0402c9812fa7784b1d7718bdff7788d1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "GEOM-SPHERE-SAMPLING",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"generateDirections|uniformDistributionCartesian|uniformDistributionSpherical\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "固定N斐波那契方向集与delta分辨率球面分布不同；不以分布近似掩盖样本数量/身份改变",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.splitmix64",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-13"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp",
+          "symbol": "splitmix64",
+          "qualifiedSymbol": "sdurws::ird::kinematics::kseed::splitmix64",
+          "startLine": 34,
+          "endLine": 41,
+          "sha256": "20cb6960ed85c226852da4f6c3379f0b0d3e1ebb1bd6af795c320bb27aceefb8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"splitmix64|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.streamSeedFor",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-13"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp",
+          "symbol": "streamSeedFor",
+          "qualifiedSymbol": "sdurws::ird::kinematics::kseed::streamSeedFor",
+          "startLine": 61,
+          "endLine": 69,
+          "sha256": "7fb6c98bd15ed4e30c9ca680a57fef281720f747db6277dbebecc0407017b836"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"streamSeedFor|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.transposeOf",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "transposeOf",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::transposeOf",
+          "startLine": 221,
+          "endLine": 225,
+          "sha256": "055338aeb134a298ea76e82738ca21dc425a4def33832793bf03952402b52397"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"transposeOf|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.composeOf",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "composeOf",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::composeOf",
+          "startLine": 228,
+          "endLine": 241,
+          "sha256": "598917da5e8914f091756f7c477869aa9b4cb69191c54ba7a35d42257f83dc09"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"composeOf|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.zyxEulerAngles",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "zyxEulerAngles",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::zyxEulerAngles",
+          "startLine": 194,
+          "endLine": 212,
+          "sha256": "2c8ffce2e21fb485d7e4fbab6a0578e030eb9a95ad85b0705c88e34eed29d590"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"zyxEulerAngles|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.poseError",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "poseError",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::poseError",
+          "startLine": 150,
+          "endLine": 183,
+          "sha256": "f7f80349534a530691d31b2d61681ad7b13e26e908f623496a3d923ab1a2deff"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"poseError|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.constrainedPoseError",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "constrainedPoseError",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedPoseError",
+          "startLine": 295,
+          "endLine": 322,
+          "sha256": "7e6817364f1f0bc4a3039d6aceb8dbe5b4be08559547c46b2f666d0c2102022f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"constrainedPoseError|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.constrainedDampedLeastSquaresStep",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "constrainedDampedLeastSquaresStep",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedDampedLeastSquaresStep",
+          "startLine": 336,
+          "endLine": 368,
+          "sha256": "50f918ccd6886abc35cb9b4448607e5d78b0ec1bc4ed026c37e872203609f6d1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"constrainedDampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.dampedLeastSquaresStep",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "dampedLeastSquaresStep",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::dampedLeastSquaresStep",
+          "startLine": 379,
+          "endLine": 401,
+          "sha256": "c40ff9fd480009336e53de69a7c812acaca2f7cf00482354bc4677f51e4bc328"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"dampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.makeInitialValues",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "makeInitialValues",
+          "qualifiedSymbol": "sdurws::ird::kinematics::makeInitialValues",
+          "startLine": 503,
+          "endLine": 559,
+          "sha256": "439a3f5ca92341936ca91e7814cf91cfc4669d3d161138748511912fe8faad2b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"makeInitialValues|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "Reference/JointGrid/64位SeededRandom按实际策略分别审计，不能整函数标业务专属；候选QSampler有限序列/随机边界仍待核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     }
   ]
 }
