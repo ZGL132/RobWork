@@ -690,8 +690,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "KIN-IK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "proposal",
+      "status": "proposal",
       "search": {
         "command": "rg -n \"constrainedDampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
@@ -703,7 +703,11 @@
           "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
         }
       ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
+      "proposal": {
+        "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-IK-01.md",
+        "sha256": "d13d1d45dadefa75acdf0acf91105b65ee4b2cf2029619ce700ec48aacf6ad28"
+      }
     },
     {
       "functionId": "kinematics.dampedLeastSquaresStep",

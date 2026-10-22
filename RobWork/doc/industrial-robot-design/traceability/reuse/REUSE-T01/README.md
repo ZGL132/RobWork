@@ -42,3 +42,5 @@ $env:PATH='D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release;D:/1
 后续探测的失败原件在 `probe-r4/`：18实跑、17 passed/1 failed，失败是本次审读把源码的r12=R(0,1)误当R(1,2)，错误预期RPY精确正奇异往返有1.8rad偏差，实际约4.2e-17rad；保存当时源码 `hypothesis-source.txt`。复核解析式后，`probe-r5/` 18 passed、`probe-r6/` 19 passed（failed/skipped/notRun均0），两份gtest XML与原生报告摘要已交叉核对。近奇异和精确±pi/2的RPY旋转往返正确，只是上游奇异时yaw=0、产品约定roll=0，规范化字段/摘要需适配。这不是上游缺陷，不据此提出patch。
 
 SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm_min,1,1e300)丢失小正轴，直接以谱值判严格SPD受限；同一现有Eigen依赖的LLT通过该输入、单位尺度1±nextafter边界和精确秩1十进制块拒绝。仅列明输入成立，尚未证明全部合法性入口/极值/对称化误差可替换，矩阵仍pending。构建沿用原CONFIG目标和testkit；`probe-r6/environment-artifacts.json`记录已安装数学DLL/LLT头原始摘要，不能把已有二进制摘要冒充源码可复现构建证明。第四批独立审读另发现占位圆柱误挂MDL-02，已按单元卡§2.5/§5.2改为MDL-04/WP-13-T07，待返工独立复核。
+
+第四批登记返工和新增5项API探测已分别在 `877f6afee38446ab43c5e6a6fd9b09593925aedb` 独立验收PASS，原件见 `REUSE-T01-batch4-r1/r2-20261022/`、`REUSE-T01-api-r6-20261022/`（前者按各目录实际名称定位）；不覆盖原FAIL。19项由独立现场VS x64重建实跑，passed=19、failed/skipped/notRun=0；该结论不涉及生产迁移或全T01退出。新增两份具体提案仍未批准，3个相关功能关系如实改为proposal，其余118条pending、closedFiles=0；提案不是功能完成/源码权限许可。

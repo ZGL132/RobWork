@@ -1,0 +1,6 @@
+RobWork/RobWork/gtest/math\LinearAlgebraTest.cpp:48:    std::pair<Eigen::MatrixXd, Eigen::VectorXd > val1 = LinearAlgebra::eigenDecompositionSymmetric(A);
+RobWork/RobWork/src/rw/math\LinearAlgebra.cpp:84:LinearAlgebra::eigenDecompositionSymmetric< double > (const Eigen::MatrixXd& Am1)
+RobWork/RobWork/src/rw/math\LinearAlgebra.cpp:86:    Eigen::SelfAdjointEigenSolver< Eigen::MatrixXd > eigenSolver;
+RobWork/RobWork/src/rw/math\LinearAlgebra.hpp:227:        eigenDecompositionSymmetric (const Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic >& Am1)
+RobWork/RobWork/src/rw/math\LinearAlgebra.hpp:229:            Eigen::SelfAdjointEigenSolver< Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic > >
+RobWork/RobWork/src/rw/math\LinearAlgebra.hpp:261:    LinearAlgebra::eigenDecompositionSymmetric< double > (const Eigen::MatrixXd& Am1);

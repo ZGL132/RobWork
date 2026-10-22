@@ -1,0 +1,300 @@
+{
+  "frozenSha": "877f6afee38446ab43c5e6a6fd9b09593925aedb",
+  "baseSha": "c7e1469b40ca7c1dbba55a3b6bd8a443fc6086c5",
+  "trackedStatus": "",
+  "changedFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r4/build.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r4/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r4/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r4/hypothesis-source.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r4/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r4/tests.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r4/tests.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r5/build.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r5/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r5/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r5/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r5/tests.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r5/tests.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/build.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/environment-artifacts.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/hypothesis-source.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/tests.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/tests.log"
+  ],
+  "pendingRelations": 121,
+  "closedFiles": 0,
+  "auditBindings": [
+    {
+      "functionId": "modeling.rotationToRpy",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+      "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43",
+      "matches": true
+    },
+    {
+      "functionId": "modeling.rotationToRpy",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+      "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03",
+      "matches": true
+    },
+    {
+      "functionId": "requirements.reflectRpy",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+      "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43",
+      "matches": true
+    },
+    {
+      "functionId": "requirements.reflectRpy",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+      "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03",
+      "matches": true
+    },
+    {
+      "functionId": "requirements.targetEditRpy",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+      "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43",
+      "matches": true
+    },
+    {
+      "functionId": "requirements.targetEditRpy",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+      "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03",
+      "matches": true
+    },
+    {
+      "functionId": "requirements.rotationToRpyPresentation",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+      "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43",
+      "matches": true
+    },
+    {
+      "functionId": "requirements.rotationToRpyPresentation",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+      "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03",
+      "matches": true
+    },
+    {
+      "functionId": "runtime.symmetrizedSpdWitness",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+      "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43",
+      "matches": true
+    },
+    {
+      "functionId": "runtime.symmetrizedSpdWitness",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/ird-test-report.json",
+      "sha256": "ff3d09f4085e5438261dcaeb94fbbbdb40e407c5c646b9902eee5b9975ae6919",
+      "matches": true
+    },
+    {
+      "functionId": "runtime.symmetrizedSpdWitness",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+      "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03",
+      "matches": true
+    }
+  ],
+  "environmentRawArtifacts": [
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release/sdurw_math.dll",
+      "sha256": "964c44d6dc84f48e8783ffdda5aafd1e057325e582fa6a987ecf99f88029793c",
+      "bytes": 6078976,
+      "matches": true
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Cholesky/LLT.h",
+      "sha256": "b1652b57639abaef484a92d0baf9c7899522b45c0db7a5fc9b85e4626049b41d",
+      "bytes": 18532,
+      "matches": true
+    }
+  ],
+  "environmentSourceAndBuildNormalizedHashesMatch": true,
+  "probeR6SourceSnapshotMatchesFrozenSource": true,
+  "historicalSnapshots": [
+    {
+      "attempt": "r4",
+      "xmlTotal": 18,
+      "native": {
+        "total": 18,
+        "passed": 17,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true
+    },
+    {
+      "attempt": "r5",
+      "xmlTotal": 18,
+      "native": {
+        "total": 18,
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true
+    },
+    {
+      "attempt": "r6",
+      "xmlTotal": 19,
+      "native": {
+        "total": 19,
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true
+    }
+  ],
+  "independentOracles": {
+    "rpy": [
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          -1.5707963167948966,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0.7,
+          -1.5707963167948966,
+          -0.2
+        ],
+        "maxMatrixDifference": 0.0,
+        "sourceR12": -0.47942553860420295
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          -0.4,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0.7,
+          -0.4,
+          -0.2
+        ],
+        "maxMatrixDifference": 0.0,
+        "sourceR12": -0.5722038400512371
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          0.4,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0.7,
+          0.4,
+          -0.2
+        ],
+        "maxMatrixDifference": 0.0,
+        "sourceR12": -0.6905486081804492
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          1.5707963167948966,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0.7,
+          1.5707963167948966,
+          -0.2
+        ],
+        "maxMatrixDifference": 0.0,
+        "sourceR12": -0.7833269096274833
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          -1.5707963267948966,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0,
+          -1.5707963267948966,
+          0.5
+        ],
+        "maxMatrixDifference": 5.551115123125783e-17,
+        "sourceR12": -0.47942553860420295
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          1.5707963267948966,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0,
+          1.5707963267948966,
+          -0.9
+        ],
+        "maxMatrixDifference": 2.220446049250313e-16,
+        "sourceR12": -0.7833269096274833
+      }
+    ],
+    "positiveGimbal": "r12=R(0,1)=sin(roll-yaw)=-sin(0.9); yaw=0,roll=-0.9 is same rotation, not an upstream bug",
+    "negativeGimbal": "yaw=0,roll=roll+yaw=0.5 at pitch=-pi/2 is same rotation",
+    "mixedScaleDiagonal": {
+      "minimumExact": "1/202402253307310618352495346718917307049556649764142118356901358027430339567995346891960383701437124495187077864316811911389808737385793476867013399940738509921517424276566361364466907742093216341239767678472745068562007483424692698618103355649159556340810056512358769552333414615230502532186327508646006263307707741093494784",
+      "middle": 1,
+      "maximum": 1e+300,
+      "strictSPD": true,
+      "spectralResult": "actual API returns minimum zero, contradicting exact positive diagonal oracle"
+    },
+    "unitBlockBoundary": [
+      {
+        "off": 0.9999999999999999,
+        "minimumEigenvalueExact": "1/9007199254740992",
+        "maximumEigenvalueExact": "18014398509481983/9007199254740992",
+        "strictlyPositiveDefinite": true
+      },
+      {
+        "off": 1.0,
+        "minimumEigenvalueExact": "0",
+        "maximumEigenvalueExact": "2",
+        "strictlyPositiveDefinite": false
+      },
+      {
+        "off": 1.0000000000000002,
+        "minimumEigenvalueExact": "-1/4503599627370496",
+        "maximumEigenvalueExact": "9007199254740993/4503599627370496",
+        "strictlyPositiveDefinite": false
+      }
+    ],
+    "rankOneDecimalBlock": {
+      "storedEntryExact": "6338253001141147/633825300114114700748351602688",
+      "spectrumExact": [
+        "0",
+        "6338253001141147/316912650057057350374175801344",
+        "1"
+      ],
+      "nullVector": [
+        1,
+        -1,
+        0
+      ],
+      "strictSPD": false,
+      "reason": "First two columns are exactly equal binary64 values, so determinant zero independent of decimal rounding"
+    }
+  },
+  "prior14CasesUnchanged": true
+}

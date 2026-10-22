@@ -1,0 +1,1409 @@
+FUNCTION dynamics.evalAcceleration RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp 509-567
+509:     std::vector<double> qdd(n, 0.0);                 // 解向量（rad/s² 或 m/s²）
+510:     auto evalAcceleration = [&](const std::vector<double>& qv,
+511:                                 const std::vector<double>& qdv, double tIntervalStart,
+512:                                 const std::vector<double>& tauCtrl, bool& cancelledOut,
+513:                                 bool& singularOut, std::string& reasonOut) {
+514:         cancelledOut = false;
+515:         singularOut = false;
+516:         // h_f 提取：单样本 evaluate(q, q̇, q̈=0) 的全量通道＝G＋C·q̇＋摩擦
+517:         // （q̈=0 时惯性通道为零——全量恰为偏置力＋摩擦之和）。
+518:         bool rneaUsable = false;
+519:         callRneaSample(extractBase, tIntervalStart, qv, qdv, zeroVec, evaluator,
+520:                        context, tauTotalBuf, tauInertiaBuf, cancelledOut, rneaUsable);
+521:         if (cancelledOut) { return false; }
+522:         if (!rneaUsable) {
+523:             // F-581：RNEA 部分产出（数值失败只产失败关节行）＝本样本不可
+524:             // 用——走数值异常值面（不以契约外异常穿出）。
+525:             singularOut = true;
+526:             reasonOut = "RNEA 输出非有限（逆动力学部分产出——M/偏置力提取样本不可用）：t="
+527:                         + std::to_string(tIntervalStart) + " s";
+528:             return false;
+529:         }
+530:         hVec = tauTotalBuf;
+531: 
+532:         // M 逐列提取：惯性通道 (g=0, q̇=0, q̈=e_i)＝M·e_i（纯惯量——不叠
+533:         // 摩擦/重力；T03"惯性通道"口径）。n 列 n 次调用。
+534:         for (std::size_t i = 0; i < n; ++i) {
+535:             std::vector<double> e = zeroVec;
+536:             e[i] = 1.0;  // 单位向量（第 i 列激励——rad/s² 或 m/s² 的 1 单位）
+537:             callRneaSample(extractBase, tIntervalStart, qv, zeroVec, e, evaluator,
+538:                            context, tauTotalBuf, tauInertiaBuf, cancelledOut,
+539:                            rneaUsable);
+540:             if (cancelledOut) { return false; }
+541:             if (!rneaUsable) {
+542:                 singularOut = true;
+543:                 reasonOut = "RNEA 输出非有限（逆动力学部分产出——M 第 "
+544:                             + std::to_string(i) + " 列提取样本不可用）：t="
+545:                             + std::to_string(tIntervalStart) + " s";
+546:                 return false;
+547:             }
+548:             for (std::size_t r = 0; r < n; ++r) {
+549:                 massFlat[r * n + i] = tauInertiaBuf[r];  // 行主序 M(r,i)
+550:             }
+551:         }
+552: 
+553:         // rhs＝τ_ctrl − h_f（控制输入减偏置力——正动力学方程右端）。
+554:         for (std::size_t i = 0; i < n; ++i) {
+555:             rhs[i] = tauCtrl[i] - hVec[i];
+556:         }
+557:         // 求解 M·q̈ = rhs（副本消元——massFlat 可复用）。
+558:         std::vector<double> a = massFlat;
+559:         std::vector<double> b = rhs;
+560:         const bool solved = solveLinearSystem(a, b, qdd);
+561:         singularOut = !solved;
+562:         if (!solved) {
+563:             reasonOut = "质量矩阵线性求解失败（奇异或病态）：t="
+564:                         + std::to_string(tIntervalStart) + " s";
+565:         }
+566:         return solved;
+567:     };
+FUNCTION dynamics.ForwardDynamicsValidator.validate.rk4Stages RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp 251-874
+251: ForwardCheckOutcome ForwardDynamicsValidator::validate(
+252:     const ForwardCheckRequest& request, evidence::IEvaluationContext& context) const
+253: {
+254:     ForwardCheckOutcome out;  // 全字段默认值见公共头（state=NotRun、误差 NaN）
+255:     const double kNaN = std::numeric_limits<double>::quiet_NaN();
+256: 
+257:     // ---- 第 0 步：mode=Skip 短路（§6.3.4——显式 NotApplicable，非缺失；
+258:     //      其余配置字段不参与校验：Skip 语义下未配置是合法形态）----
+259:     if (request.forwardCheck.mode == ForwardCheckSettings::Mode::Skip) {
+260:         out.state = DynamicsValidity::ForwardCheckState::NotApplicable;
+261:         return out;
+262:     }
+263: 
+264:     // ---- 配置校验（Standard 模式——调用方错误 fail-fast；DYN-05 四要素
+265:     //      之"步长/容差明确"的合法性面；配置非法不发稳定码——§10.0 错误
+266:     //      类型行"输入/配置非法"归调用方错误轨）----
+267:     if (request.forwardCheck.integratorToken != kForwardIntegratorToken) {
+268:         // 封闭词表（§4.2——当前唯一锁定值 kForwardIntegratorToken）。
+269:         throw DynamicsError("input-invalid",
+270:                             "forwardCheck.integratorToken 不在封闭词表（实际 '"
+271:                                 + request.forwardCheck.integratorToken + "'，词表值 '"
+272:                                 + std::string{kForwardIntegratorToken} + "'）——拒绝检查");
+273:     }
+274:     if (!std::isfinite(request.forwardCheck.maxStepS)
+275:         || request.forwardCheck.maxStepS <= 0.0) {
+276:         throw DynamicsError("input-invalid",
+277:                             "forwardCheck.maxStepS 必须为有限正值（实际 "
+278:                                 + std::to_string(request.forwardCheck.maxStepS)
+279:                                 + " s）——DYN-05 步长明确");
+280:     }
+281:     if (!std::isfinite(request.forwardCheck.relTolerance)
+282:         || request.forwardCheck.relTolerance <= 0.0) {
+283:         throw DynamicsError("input-invalid",
+284:                             "forwardCheck.relTolerance 必须为有限正值（实际 "
+285:                                 + std::to_string(request.forwardCheck.relTolerance)
+286:                                 + "，无量纲）——DYN-05 容差明确");
+287:     }
+288:     if (!std::isfinite(request.forwardCheck.toleranceQ)
+289:         || request.forwardCheck.toleranceQ <= 0.0) {
+290:         throw DynamicsError("input-invalid",
+291:                             "forwardCheck.toleranceQ 必须为有限正值（实际 "
+292:                                 + std::to_string(request.forwardCheck.toleranceQ)
+293:                                 + "，rad 或 m）——一致性判定阈值");
+294:     }
+295:     if (!std::isfinite(request.forwardCheck.toleranceQd)
+296:         || request.forwardCheck.toleranceQd <= 0.0) {
+297:         throw DynamicsError("input-invalid",
+298:                             "forwardCheck.toleranceQd 必须为有限正值（实际 "
+299:                                 + std::to_string(request.forwardCheck.toleranceQd)
+300:                                 + "，rad/s 或 m/s）——一致性判定阈值");
+301:     }
+302: 
+303:     // ---- 请求身份/模型/重力校验（同逆动力学前置语义——fail-fast；
+304:     //      主调用 evaluate 内有同款防御，此处前置使错误序确定）----
+305:     if (request.model == nullptr) {
+306:         throw DynamicsError("input-invalid", "模型指针为空——拒绝检查");
+307:     }
+308:     if (!request.conditionId.isValid()) {
+309:         throw DynamicsError("input-invalid", "工况对象 ID 为空——拒绝检查");
+310:     }
+311:     if (!std::isfinite(request.gravityBase[0]) || !std::isfinite(request.gravityBase[1])
+312:         || !std::isfinite(request.gravityBase[2])) {
+313:         throw DynamicsError("input-invalid", "基座系重力加速度含非有限分量——拒绝检查");
+314:     }
+315:     // 负载池/事件引用完整性（同逆动力学——事件越界/时刻非有限是调用方错误）。
+316:     for (std::size_t e = 0; e < request.events.size(); ++e) {
+317:         if (request.events[e].payloadIndex >= request.payloads.size()) {
+318:             throw DynamicsError("input-invalid",
+319:                                 "负载事件引用越界（事件序 " + std::to_string(e)
+320:                                     + "，payloadIndex="
+321:                                     + std::to_string(request.events[e].payloadIndex)
+322:                                     + "，池大小="
+323:                                     + std::to_string(request.payloads.size()) + "）");
+324:         }
+325:         if (!std::isfinite(request.events[e].tEvent)) {
+326:             throw DynamicsError("input-invalid",
+327:                                 "负载事件时刻非有限（事件序 " + std::to_string(e) + "）");
+328:         }
+329:     }
+330:     for (const EndEffectorPayload& p : request.payloads) {
+331:         if (!p.objectId.isValid()) {
+332:             throw DynamicsError("input-invalid", "负载对象 ID 为空——素材不可定位");
+333:         }
+334:     }
+335:     // F-644 前置防线：样本 q/qd 长度一致性（调用方契约违约——fail-fast）。
+336:     // 为什么必须在入口拦截：第 1 步的初始状态非有限扫描（下方）在 τ_ref
+337:     // 主调用（其内部有 DYN-DIMENSION-MISMATCH 全量防线）**之前**执行——
+338:     // 若 q/qd 长度不一致，该扫描以 q 的长度索引 qd 会越界读取（未定义
+339:     // 行为）。q 与 qd 是同一样本同一自由度向量的位置/速度列，长度不一致
+340:     // 属组装错误，按既有 input-invalid 异常面拒绝，消息说明自由度不匹配；
+341:     // qdd 及各向量对模型自由度 n 的匹配性由 τ_ref 主调用既有防线承载
+342:     // （此处不重复——前置只补"本函数先于主调用触碰数据"的缺口）。
+343:     for (std::size_t k = 0; k < request.samples.size(); ++k) {
+344:         const InverseDynSampleInput& s = request.samples[k];
+345:         if (s.q.size() != s.qd.size()) {
+346:             throw DynamicsError("input-invalid",
+347:                                 "样本状态向量长度不一致——自由度不匹配（样本序 "
+348:                                     + std::to_string(k) + "：q 长度 "
+349:                                     + std::to_string(s.q.size()) + "，qd 长度 "
+350:                                     + std::to_string(s.qd.size()) + "，调用方契约违约）");
+351:         }
+352:     }
+353: 
+354:     // ---- 第 1 步：数据充足性（§6.2——初始状态缺失→NotRun＋素材，建议项
+355:     //      语义不阻断、不伪造 Passed；样本数 <2＝无仿真区间＝参考段无可用
+356:     //      状态序列，同码承载）----
+357:     const std::size_t nSample = request.samples.size();
+358:     if (nSample < 2) {
+359:         core::DiagnosticRecord rec = core::DiagnosticRecord::make(
+360:             core::DiagCode{std::string{kDynFdInitialStateMissing}}, request.conditionId,
+361:             std::optional<std::string>{}, std::optional<std::string>{},
+362:             std::string{"dynamics 正动力学一致性检查"},
+363:             std::string{"参考段样本数 " + std::to_string(nSample)
+364:                         + " <2——无仿真区间，初始状态序列缺失（§6.2）——检查 NotRun，"
+365:                           "建议证据项缺失不阻断、不伪造 Passed"},
+366:             std::string{"提供含初始状态与至少两个样本的参考段后重试"});
+367:         out.diagnostics.push_back(std::move(rec));
+368:         out.state = DynamicsValidity::ForwardCheckState::NotRun;
+369:         return out;
+370:     }
+371:     {
+372:         // 初始状态非有限（q₀/q̇₀ 任一分量 NaN/Inf）——不可积分起点，NotRun。
+373:         // F-644 纵深防御：q 与 qd 各按**自身**长度索引（入口一致性防线之上
+374:         // 的保险——若防线将来被移除，本扫描也不得越界读取）。
+375:         const InverseDynSampleInput& s0 = request.samples.front();
+376:         bool initialNonFinite = false;
+377:         for (std::size_t i = 0; i < s0.q.size(); ++i) {
+378:             if (!std::isfinite(s0.q[i])) {
+379:                 initialNonFinite = true;
+380:                 break;
+381:             }
+382:         }
+383:         for (std::size_t i = 0; i < s0.qd.size(); ++i) {
+384:             if (!std::isfinite(s0.qd[i])) {
+385:                 initialNonFinite = true;
+386:                 break;
+387:             }
+388:         }
+389:         if (initialNonFinite) {
+390:             core::DiagnosticRecord rec = core::DiagnosticRecord::make(
+391:                 core::DiagCode{std::string{kDynFdInitialStateMissing}}, request.conditionId,
+392:                 std::optional<std::string>{}, std::optional<std::string>{},
+393:                 std::string{"dynamics 正动力学一致性检查"},
+394:                 std::string{"参考段初始状态 (q₀,q̇₀) 含非有限分量（首个样本）——不可积分"
+395:                             "起点（NFR-COR-03），检查 NotRun，不伪造 Passed"},
+396:                 std::string{"修复上游轨迹初始样本后重试"});
+397:             out.diagnostics.push_back(std::move(rec));
+398:             out.state = DynamicsValidity::ForwardCheckState::NotRun;
+399:             return out;
+400:         }
+401:     }
+402: 
+403:     // ---- 第 2 步：τ_ref 产出（时序图①——公共 evaluate 整段调用；同一冻结
+404:     //      模型/重力/负载/工况，⑤共源的结构性强制）----
+405:     InverseDynRequest rneaRequest;
+406:     rneaRequest.conditionId = request.conditionId;
+407:     rneaRequest.toolObjectId = core::ObjectId{};  // 身份透传位——工具 id 由评估器
+408:                                                   //   自模型读取（提取链），请求位保持空 id
+409:     rneaRequest.model = request.model;
+410:     rneaRequest.gravityBase[0] = request.gravityBase[0];
+411:     rneaRequest.gravityBase[1] = request.gravityBase[1];
+412:     rneaRequest.gravityBase[2] = request.gravityBase[2];
+413:     rneaRequest.samples = request.samples;
+414:     rneaRequest.payloads = request.payloads;
+415:     rneaRequest.events = request.events;
+416: 
+417:     const InverseDynamicsEvaluator evaluator;  // 无状态调用边界（每任务一实例约定）
+418:     const InverseDynOutcome rneaOut = evaluator.evaluate(rneaRequest, context);
+419: 
+420:     // τ_ref 侧降级/非有限诊断透传（共源事实——一致性检查的素材完整性）。
+421:     out.diagnostics.insert(out.diagnostics.end(), rneaOut.diagnostics.begin(),
+422:                            rneaOut.diagnostics.end());
+423: 
+424:     if (rneaOut.cancelled) {
+425:         // τ_ref 阶段被取消——检查未执行（非错误，UX-03）。
+426:         out.cancelled = true;
+427:         out.state = DynamicsValidity::ForwardCheckState::NotRun;
+428:         return out;
+429:     }
+430: 
+431:     // τ_ref 逐时刻提取（evaluate 产出按 (t 升序, jointIndex 升序) 排序——
+432:     // §4.6）。F-581：RNEA 数值失败时逆动力学按 §5.6 只产**失败关节**的行
+433:     // 并**自该样本起截断后续产出**——总行数可小于 nSample×n。原实现的
+434:     // 满网格下标 at(j*n+i) 在截断发生时以 std::out_of_range（非契约异常
+435:     // 类型）穿出。改为按时刻 t 匹配的游标消费：本样本行不足 n 行、或
+436:     // 产出耗尽、或行态非 Ok＝该样本 τ_ref 不可信（不参与仿真/比较，样
+437:     // 本级处置 §4.6——诊断已由 evaluate 透传，此处不重复产码）。
+438:     const std::size_t n = rneaRequest.samples.front().q.size();  // 可动关节数
+439:     struct SampleTorque {
+440:         std::vector<double> tauTotal;          ///< 逐关节全量 τ_ref（N·m 或 N）
+441:         SampleNumericState numericState;       ///< 该样本数值状态（非 Ok 不参与仿真/比较）
+442:         double t;                              ///< 样本时刻，单位 s（透传自请求）
+443:     };
+444:     std::vector<SampleTorque> tauRef;
+445:     tauRef.reserve(nSample);
+446:     std::size_t rowCursor = 0;  // 产出行游标（跨样本单调推进——产出行序即请求样本序）
+447:     for (std::size_t j = 0; j < nSample; ++j) {
+448:         SampleTorque st;
+449:         st.t = rneaRequest.samples[j].t;
+450:         st.numericState = SampleNumericState::Ok;
+451:         st.tauTotal.assign(n, 0.0);
+452:         std::size_t rowsTaken = 0;
+453:         while (rowsTaken < n && rowCursor < rneaOut.samples.size()
+454:                && rneaOut.samples[rowCursor].t == st.t) {
+455:             // 行填装按消费序写入（产出行本样本内即 jointIndex 升序；行态
+456:             // 非 Ok 时整个样本标记不可信——tauTotal 数值不再被消费）。
+457:             const DynamicsSample& row = rneaOut.samples[rowCursor];
+458:             st.tauTotal[rowsTaken] = row.tauTotal;
+459:             if (row.numericState != SampleNumericState::Ok) {
+460:                 st.numericState = row.numericState;
+461:             }
+462:             ++rowsTaken;
+463:             ++rowCursor;
+464:         }
+465:         if (rowsTaken < n && st.numericState == SampleNumericState::Ok) {
+466:             // 行数不足却无任何非 Ok 行标记（产出与请求失步——防御面）：
+467:             // 同样按不可信处置，不把缺行当零力矩消费。
+468:             st.numericState = SampleNumericState::NonFiniteOutput;
+469:         }
+470:         tauRef.push_back(std::move(st));
+471:     }
+472: 
+473:     // τ_ref 故障点截断：首个非 Ok 样本起，后续样本不可仿真（控制输入缺失/
+474:     // 参考状态缺失）——故障点后区间不执行（部分数据语义见文件尾判定段）。
+475:     std::size_t usableSamples = nSample;  // 可用前缀长度（首个故障样本下标）
+476:     for (std::size_t j = 0; j < nSample; ++j) {
+477:         if (tauRef[j].numericState != SampleNumericState::Ok) {
+478:             usableSamples = j + 1;  // 故障样本自身保留（其行已透传素材），其后截断
+479:             break;
+480:         }
+481:     }
+482:     const bool rneaComplete = (usableSamples == nSample);
+483: 
+484:     // ---- 第 3～5 步：正向仿真＋误差度量＋异常检测（时序图②③④）----
+485:     // 仿真状态 y=(q,q̇)——初始状态取参考段起点（§6.2；第 1 步已验证有限）。
+486:     std::vector<double> q = request.samples.front().q;    // 权威角（rad 或 m）
+487:     std::vector<double> qd = request.samples.front().qd;  // 关节速度（rad/s 或 m/s）
+488: 
+489:     // RNEA 请求基座（M/h 单样本调用的公共底座——身份/模型/重力/负载/事件）。
+490:     InverseDynRequest extractBase;
+491:     extractBase.conditionId = request.conditionId;
+492:     extractBase.toolObjectId = core::ObjectId{};
+493:     extractBase.model = request.model;
+494:     extractBase.gravityBase[0] = request.gravityBase[0];
+495:     extractBase.gravityBase[1] = request.gravityBase[1];
+496:     extractBase.gravityBase[2] = request.gravityBase[2];
+497:     extractBase.payloads = request.payloads;
+498:     extractBase.events = request.events;
+499: 
+500:     // 动力学右端 f(q,q̇)＝M(q)⁻¹·(τ_ctrl − h_f(q,q̇)) 的单次求值。
+501:     // 返回 false＝数值异常（质量阵奇异/病态，或 F-581 的 RNEA 部分产出
+502:     // ——调用方产 DYN-FD-NUMERIC-ANOMALY 并终止仿真）；失败原因经
+503:     // reasonOut 带出（调用方入 anomalyDetail——首因定位）。
+504:     const std::vector<double> zeroVec(n, 0.0);
+505:     std::vector<double> tauTotalBuf, tauInertiaBuf;  // 单样本调用输出缓冲
+506:     std::vector<double> hVec(n, 0.0);                // h_f(q,q̇)（N·m 或 N）
+507:     std::vector<double> massFlat(n * n, 0.0);        // 质量阵（行主序，kg·m²/ kg）
+508:     std::vector<double> rhs(n, 0.0);                 // τ_ctrl − h_f（N·m 或 N）
+509:     std::vector<double> qdd(n, 0.0);                 // 解向量（rad/s² 或 m/s²）
+510:     auto evalAcceleration = [&](const std::vector<double>& qv,
+511:                                 const std::vector<double>& qdv, double tIntervalStart,
+512:                                 const std::vector<double>& tauCtrl, bool& cancelledOut,
+513:                                 bool& singularOut, std::string& reasonOut) {
+514:         cancelledOut = false;
+515:         singularOut = false;
+516:         // h_f 提取：单样本 evaluate(q, q̇, q̈=0) 的全量通道＝G＋C·q̇＋摩擦
+517:         // （q̈=0 时惯性通道为零——全量恰为偏置力＋摩擦之和）。
+518:         bool rneaUsable = false;
+519:         callRneaSample(extractBase, tIntervalStart, qv, qdv, zeroVec, evaluator,
+520:                        context, tauTotalBuf, tauInertiaBuf, cancelledOut, rneaUsable);
+521:         if (cancelledOut) { return false; }
+522:         if (!rneaUsable) {
+523:             // F-581：RNEA 部分产出（数值失败只产失败关节行）＝本样本不可
+524:             // 用——走数值异常值面（不以契约外异常穿出）。
+525:             singularOut = true;
+526:             reasonOut = "RNEA 输出非有限（逆动力学部分产出——M/偏置力提取样本不可用）：t="
+527:                         + std::to_string(tIntervalStart) + " s";
+528:             return false;
+529:         }
+530:         hVec = tauTotalBuf;
+531: 
+532:         // M 逐列提取：惯性通道 (g=0, q̇=0, q̈=e_i)＝M·e_i（纯惯量——不叠
+533:         // 摩擦/重力；T03"惯性通道"口径）。n 列 n 次调用。
+534:         for (std::size_t i = 0; i < n; ++i) {
+535:             std::vector<double> e = zeroVec;
+536:             e[i] = 1.0;  // 单位向量（第 i 列激励——rad/s² 或 m/s² 的 1 单位）
+537:             callRneaSample(extractBase, tIntervalStart, qv, zeroVec, e, evaluator,
+538:                            context, tauTotalBuf, tauInertiaBuf, cancelledOut,
+539:                            rneaUsable);
+540:             if (cancelledOut) { return false; }
+541:             if (!rneaUsable) {
+542:                 singularOut = true;
+543:                 reasonOut = "RNEA 输出非有限（逆动力学部分产出——M 第 "
+544:                             + std::to_string(i) + " 列提取样本不可用）：t="
+545:                             + std::to_string(tIntervalStart) + " s";
+546:                 return false;
+547:             }
+548:             for (std::size_t r = 0; r < n; ++r) {
+549:                 massFlat[r * n + i] = tauInertiaBuf[r];  // 行主序 M(r,i)
+550:             }
+551:         }
+552: 
+553:         // rhs＝τ_ctrl − h_f（控制输入减偏置力——正动力学方程右端）。
+554:         for (std::size_t i = 0; i < n; ++i) {
+555:             rhs[i] = tauCtrl[i] - hVec[i];
+556:         }
+557:         // 求解 M·q̈ = rhs（副本消元——massFlat 可复用）。
+558:         std::vector<double> a = massFlat;
+559:         std::vector<double> b = rhs;
+560:         const bool solved = solveLinearSystem(a, b, qdd);
+561:         singularOut = !solved;
+562:         if (!solved) {
+563:             reasonOut = "质量矩阵线性求解失败（奇异或病态）：t="
+564:                         + std::to_string(tIntervalStart) + " s";
+565:         }
+566:         return solved;
+567:     };
+568: 
+569:     // 误差统计累加器（§6.1 ④——逐元素 max 与全网格平方和）。
+570:     double sumSqQ = 0.0;     ///< e_q 全网格平方和（rad² 或 m²）
+571:     double sumSqQd = 0.0;    ///< e_qd 全网格平方和（(rad/s)² 或 (m/s)²）
+572:     double maxErrQv = 0.0;   ///< max|e_q|（rad 或 m）
+573:     double maxErrQdv = 0.0;  ///< max|e_qd|（rad/s 或 m/s）
+574:     double tMaxQ = kNaN;     ///< max|e_q| 首达时刻（s）
+575:     double tMaxQd = kNaN;    ///< max|e_qd| 首达时刻（s）
+576:     std::size_t compared = 0;      ///< 参与比较的样本时刻数
+577:     std::size_t intervalCount = 0; ///< 预期比较区间数（故障/取消前的完整区间）
+578:     {
+579:         // 预期区间数＝可用样本数−1（区间 j 连接样本 j 与 j+1）。
+580:         intervalCount = (usableSamples >= 2) ? (usableSamples - 1) : 0;
+581:     }
+582: 
+583:     // 数值异常/发散的终止面（记录首因——诊断素材只产一条）。
+584:     bool diverged = false;       ///< 发散检出（DYN-FD-DIVERGED）
+585:     bool singular = false;       ///< 质量阵求解失败（DYN-FD-NUMERIC-ANOMALY）
+586:     std::string anomalyDetail;   ///< 异常定位文本（首因）
+587: 
+588:     // 主循环：逐参考样本区间积分（区间 j 的控制输入＝tauRef[j] 常量——
+589:     // 采样保持；子步不跨样本边界）。
+590:     for (std::size_t j = 0; j + 1 < usableSamples; ++j) {
+591:         // 取消轮询（§9.3 周期性查询——每区间一次；取消非错误 UX-03）。
+592:         if (context.cancellationRequested()) {
+593:             out.cancelled = true;
+594:             break;
+595:         }
+596:         context.reportProgress(
+597:             static_cast<std::uint8_t>(std::min<std::size_t>(
+598:                 100, (j * 100) / std::max<std::size_t>(intervalCount, 1))),
+599:             std::string_view{"dyn-forward-interval"});
+600: 
+601:         // 区间 j 左端样本 τ_ref 非有限（控制输入缺失）——仿真终止（部分
+602:         // 数据语义：已完成区间数据保留判定，见文件尾判定段）。
+603:         if (tauRef[j].numericState != SampleNumericState::Ok) {
+604:             break;
+605:         }
+606: 
+607:         const double tBegin = tauRef[j].t;      // 区间起点（s）
+608:         const double tEnd = tauRef[j + 1].t;    // 区间终点（s）
+609:         const std::vector<double>& tauCtrl = tauRef[j].tauTotal;  // 采样保持输入
+610:         double tCur = tBegin;                   // 当前仿真时刻（s）
+611: 
+612:         // RK4 子步循环（h＝min(maxStepS, 剩余时长)——不跨参考样本边界）。
+613:         while (tCur < tEnd) {
+614:             const double h = std::min(request.forwardCheck.maxStepS, tEnd - tCur);
+615:             // 数值防御：区间端点舍入残差（h 可能为 0——直接收口推进）。
+616:             if (!(h > 0.0)) {
+617:                 tCur = tEnd;
+618:                 break;
+619:             }
+620: 
+621:             // ---- RK4 四 stage（经典显式格式；全部 stage 共用区间起点
+622:             //      时刻 tBegin 提取变体——采样保持语义见文件头）----
+623:             bool cancelledNow = false;
+624:             bool singularNow = false;
+625:             std::string failReason;  // F-581：失败原因带出（奇异或 RNEA 部分产出）
+626: 
+627:             // k1 ＝ f(y_j)
+628:             std::vector<double> k1q = qd;  // q̇（状态一阶分量恒为速度）
+629:             if (!evalAcceleration(q, qd, tBegin, tauCtrl, cancelledNow, singularNow,
+630:                                   failReason)) {
+631:                 if (cancelledNow) { out.cancelled = true; break; }
+632:                 singular = true;
+633:                 anomalyDetail = failReason + "，RK4 stage 1";
+634:                 break;
+635:             }
+636:             const std::vector<double> k1qd = qdd;
+637: 
+638:             // k2 ＝ f(y_j + h/2·k1)
+639:             std::vector<double> q2(n), qd2(n);
+640:             for (std::size_t i = 0; i < n; ++i) {
+641:                 q2[i] = q[i] + 0.5 * h * k1q[i];
+642:                 qd2[i] = qd[i] + 0.5 * h * k1qd[i];
+643:             }
+644:             if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+645:                                   failReason)) {
+646:                 if (cancelledNow) { out.cancelled = true; break; }
+647:                 singular = true;
+648:                 anomalyDetail = failReason + "，RK4 stage 2";
+649:                 break;
+650:             }
+651:             const std::vector<double> k2q = qd2;
+652:             const std::vector<double> k2qd = qdd;
+653: 
+654:             // k3 ＝ f(y_j + h/2·k2)
+655:             for (std::size_t i = 0; i < n; ++i) {
+656:                 q2[i] = q[i] + 0.5 * h * k2q[i];
+657:                 qd2[i] = qd[i] + 0.5 * h * k2qd[i];
+658:             }
+659:             if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+660:                                   failReason)) {
+661:                 if (cancelledNow) { out.cancelled = true; break; }
+662:                 singular = true;
+663:                 anomalyDetail = failReason + "，RK4 stage 3";
+664:                 break;
+665:             }
+666:             const std::vector<double> k3q = qd2;
+667:             const std::vector<double> k3qd = qdd;
+668: 
+669:             // k4 ＝ f(y_j + h·k3)
+670:             for (std::size_t i = 0; i < n; ++i) {
+671:                 q2[i] = q[i] + h * k3q[i];
+672:                 qd2[i] = qd[i] + h * k3qd[i];
+673:             }
+674:             if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+675:                                   failReason)) {
+676:                 if (cancelledNow) { out.cancelled = true; break; }
+677:                 singular = true;
+678:                 anomalyDetail = failReason + "，RK4 stage 4";
+679:                 break;
+680:             }
+681:             const std::vector<double> k4q = qd2;
+682:             const std::vector<double> k4qd = qdd;
+683: 
+684:             // 状态推进（加权组合 1/6·(k1+2k2+2k3+k4)——RK4 标准格式）。
+685:             for (std::size_t i = 0; i < n; ++i) {
+686:                 q[i] += (h / 6.0)
+687:                         * (k1q[i] + 2.0 * k2q[i] + 2.0 * k3q[i] + k4q[i]);
+688:                 qd[i] += (h / 6.0)
+689:                          * (k1qd[i] + 2.0 * k2qd[i] + 2.0 * k3qd[i] + k4qd[i]);
+690:             }
+691:             tCur += h;
+692:             ++out.integratorSteps;
+693: 
+694:             // 异常检测（DYN-05 本义——每子步检查，首因即停）：
+695:             //   非有限（NFR-COR-03 拒绝语义）或量级超检出界→发散。
+696:             if (!allFinite(q) || !allFinite(qd)) {
+697:                 diverged = true;
+698:                 anomalyDetail = "积分状态非有限（q/q̇ 含 NaN 或 Inf）：t="
+699:                     + std::to_string(tCur) + " s——积分发散（§6.1 ④异常检测）";
+700:                 break;
+701:             }
+702:             if (exceedsDivergenceBound(q) || exceedsDivergenceBound(qd)) {
+703:                 diverged = true;
+704:                 anomalyDetail = "积分状态量级超发散检出界（|·|>"
+705:                     + std::to_string(kForwardDivergenceMagnitude) + "）：t="
+706:                     + std::to_string(tCur) + " s——积分发散（§6.1 ④异常检测）";
+707:                 break;
+708:             }
+709:         }
+710:         if (out.cancelled || diverged || singular) {
+711:             break;  // 终止面：取消/发散/奇异——停止仿真（数据保留至故障点）
+712:         }
+713: 
+714:         // ---- 区间完成：与参考段末端样本逐元素比较（时序图④）----
+715:         // 末端样本自身非有限（参考状态缺失）→ 该样本不参与比较（样本级
+716:         // 处置；其 τ_ref 行的素材已透传）。
+717:         if (tauRef[j + 1].numericState != SampleNumericState::Ok) {
+718:             continue;
+719:         }
+720:         const InverseDynSampleInput& ref = request.samples[j + 1];
+721:         for (std::size_t i = 0; i < n; ++i) {
+722:             const double eq = q[i] - ref.q[i];      // e_q（rad 或 m）
+723:             const double eqd = qd[i] - ref.qd[i];   // e_qd（rad/s 或 m/s）
+724:             sumSqQ += eq * eq;
+725:             sumSqQd += eqd * eqd;
+726:             const double aq = std::abs(eq);
+727:             const double aqd = std::abs(eqd);
+728:             if (aq > maxErrQv) {
+729:                 maxErrQv = aq;
+730:                 tMaxQ = tEnd;  // 首达时刻（严格 >——同值取时间轴首个，确定性）
+731:             }
+732:             if (aqd > maxErrQdv) {
+733:                 maxErrQdv = aqd;
+734:                 tMaxQd = tEnd;
+735:             }
+736:         }
+737:         ++compared;
+738:     }
+739: 
+740:     // 取消观察补偿：RK4 内层 break 的 cancelled 位已置；此处统一出口。
+741:     if (out.cancelled) {
+742:         out.state = DynamicsValidity::ForwardCheckState::NotRun;
+743:         return out;
+744:     }
+745: 
+746:     // ---- 异常检出→Failed（§6.1 ④——发散/数值异常；失败不判模型无效，
+747:     //      §6.3.5 建议证据项语义）----
+748:     // 误差回填助手（部分数据也如实回填——可审计；compared==0 时误差字段
+749:     // 保持 NaN＝未比较的显式无效，不伪造 0）。
+750:     auto fillErrorFields = [&]() {
+751:         if (compared == 0) { return; }
+752:         const double denom = static_cast<double>(compared * n);
+753:         out.maxErrQ = maxErrQv;
+754:         out.rmsErrQ = std::sqrt(sumSqQ / denom);
+755:         out.maxErrQd = maxErrQdv;
+756:         out.rmsErrQd = std::sqrt(sumSqQd / denom);
+757:         out.tOfMaxErrQ = tMaxQ;
+758:         out.tOfMaxErrQd = tMaxQd;
+759:         out.comparedSamples = compared;
+760:     };
+761: 
+762:     if (diverged) {
+763:         out.numericAnomaly = anomalyDetail;
+764:         out.state = DynamicsValidity::ForwardCheckState::Failed;
+765:         core::DiagnosticRecord rec = core::DiagnosticRecord::make(
+766:             core::DiagCode{std::string{kDynFdDiverged}}, request.conditionId,
+767:             std::optional<std::string>{}, std::optional<std::string>{},
+768:             std::string{"dynamics 正动力学一致性检查"}, anomalyDetail,
+769:             std::string{"减小 maxStepS 或检查激励/负载工况后重试——正动力学失败不判定"
+770:                         "模型无效（§6.3.5）"});
+771:         out.diagnostics.push_back(std::move(rec));
+772:         fillErrorFields();
+773:         return out;
+774:     }
+775:     if (singular) {
+776:         out.numericAnomaly = anomalyDetail;
+777:         out.state = DynamicsValidity::ForwardCheckState::Failed;
+778:         core::DiagnosticRecord rec = core::DiagnosticRecord::make(
+779:             core::DiagCode{std::string{kDynFdNumericAnomaly}}, request.conditionId,
+780:             std::optional<std::string>{}, std::optional<std::string>{},
+781:             std::string{"dynamics 正动力学一致性检查"}, anomalyDetail,
+782:             std::string{"检查模型质量/惯量参数（全零物性链不可正解积分）后重试——"
+783:                         "正动力学失败不判定模型无效（§6.3.5）"});
+784:         out.diagnostics.push_back(std::move(rec));
+785:         fillErrorFields();
+786:         return out;
+787:     }
+788: 
+789:     // ---- 判定出口（时序图④）----
+790:     // 全程完整性：τ_ref 侧截断（rneaComplete=false）或区间左端非有限 break
+791:     // 使 compared < 预期区间数时，比较数据不完整——有超阈证据随时可判
+792:     // Failed（有据失败成立）；否则判 Passed 必须全程完成（部分区间的通过
+793:     // 不代表全程一致——不伪造，§4.6 精神）。
+794:     if (maxErrQv > request.forwardCheck.toleranceQ
+795:         || maxErrQdv > request.forwardCheck.toleranceQd) {
+796:         // 超阈值：Failed＋DYN-FD-CONSISTENCY-FAILED（比较型素材——§9.4
+797:         // "实际误差/阈值/单位"；链内单位同型时填单位三要素，混合链
+798:         // cause 文本承载＋单位句柄显式无效，见公共头类注释单位口径）。
+799:         out.state = DynamicsValidity::ForwardCheckState::Failed;
+800: 
+801:         // 单位判定：全转动/连续→rad（rad/s）；全移动→m（m/s）；混合→无效句柄。
+802:         bool allRotary = true;
+803:         bool allPrismatic = true;
+804:         const runtime::RobotChain& chain = request.model->chain();
+805:         for (const runtime::CanonicalJoint& cj : chain.joints) {
+806:             if (cj.type == runtime::JointType::Prismatic) { allRotary = false; }
+807:             else { allPrismatic = false; }
+808:         }
+809:         const bool allRotation = allRotary;  // 全转动/连续链（含 Continuous）
+810: 
+811:         // 比较型素材（实际 max 误差 / 阈值 / 单位——位置与速度各一条）。
+812:         // 误差值的来源语义＝DerivedReadOnly（检查器派生实测值——非用户输入、
+813:         // 非估算：ProvenanceKind 词表最贴切项）。
+814:         auto addComparison = [&](bool isVelocity) {
+815:             const double actual = isVelocity ? maxErrQdv : maxErrQv;
+816:             const double threshold = isVelocity ? request.forwardCheck.toleranceQd
+817:                                                 : request.forwardCheck.toleranceQ;
+818:             // 单位 token：同型链取注册单位；混合链＝无效句柄（isValid()==false
+819:             // ——"不适用"的显式标记，core UnitToken 词表无混合单位，不伪造）。
+820:             std::optional<core::UnitToken> unit;
+821:             if (allRotation) {
+822:                 unit = isVelocity ? core::UnitToken::find("rad/s")
+823:                                   : core::UnitToken::find("rad");
+824:             } else if (allPrismatic) {
+825:                 unit = isVelocity ? core::UnitToken::find("m/s")
+826:                                   : core::UnitToken::find("m");
+827:             }
+828:             const std::string unitText = unit.has_value()
+829:                                              ? std::string{unit->symbol()}
+830:                                              : std::string{"mixed(rad/m)"};
+831:             // 比较型三要素（actual/expected 两侧＋单位——DiagData 契约）。
+832:             core::ComparativeFields cmp;
+833:             const core::ValueProvenance derived =
+834:                 core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly);
+835:             cmp.actual.quantity = core::SourcedValue<double>::provided(actual, derived);
+836:             cmp.actual.unit = unit.value_or(core::UnitToken{});
+837:             cmp.expected.quantity =
+838:                 core::SourcedValue<double>::provided(threshold, derived);
+839:             cmp.expected.unit = unit.value_or(core::UnitToken{});
+840: 
+841:             core::DiagnosticRecord rec = core::DiagnosticRecord::make(
+842:                 core::DiagCode{std::string{kDynFdConsistencyFailed}}, request.conditionId,
+843:                 std::optional<std::string>{}, std::optional<std::string>{},
+844:                 std::string{"dynamics 正动力学一致性检查"},
+845:                 std::string{isVelocity ? "速度误差超阈值" : "位置误差超阈值"}
+846:                     + std::string{"：实际 max|e"} + (isVelocity ? "qd" : "q")
+847:                     + std::string{"|="} + std::to_string(actual) + " > 阈值 "
+848:                     + std::to_string(threshold) + "（单位 " + unitText
+849:                     + "；容差来源＝config.dyn.forwardCheck 分析配置——附录 D C7）",
+850:                 std::string{"增大分析容差、减小 maxStepS 或核对模型/负载同源性后重试——"
+851:                             "正动力学失败不判定模型无效（§6.3.5）"},
+852:                 std::optional<core::ComparativeFields>{std::move(cmp)});
+853:             out.diagnostics.push_back(std::move(rec));
+854:         };
+855:         if (maxErrQv > request.forwardCheck.toleranceQ) { addComparison(false); }
+856:         if (maxErrQdv > request.forwardCheck.toleranceQd) { addComparison(true); }
+857: 
+858:         // 误差回填（部分数据也如实回填）。
+859:         fillErrorFields();
+860:         return out;
+861:     }
+862: 
+863:     // 未超阈：Passed 仅在全程完成时成立；数据不完整→NotRun（不伪造）。
+864:     if (!rneaComplete || compared < intervalCount) {
+865:         out.state = DynamicsValidity::ForwardCheckState::NotRun;
+866:         return out;
+867:     }
+868: 
+869:     // Passed：误差四元组与首达时刻回填（判定已用同一数据——字段供证据项
+870:     // 消费）。
+871:     out.state = DynamicsValidity::ForwardCheckState::Passed;
+872:     fillErrorFields();
+873:     return out;
+874: }
+FUNCTION modeling.rotationToRpy RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp 72-81
+72: std::array<double, 3> rotationToRpy(const rw::math::Rotation3D<double>& R)
+73: {
+74:     const double pitch = -std::asin(std::clamp(R(2, 0), -1.0, 1.0));
+75:     const double cp = std::cos(pitch);
+76:     if (std::abs(cp) > 1e-12) {
+77:         return {std::atan2(R(2, 1), R(2, 2)), pitch, std::atan2(R(1, 0), R(0, 0))};
+78:     }
+79:     // 万向锁：roll/yaw 共线不可分——确定性取 roll=0（工程惯例）。
+80:     return {0.0, pitch, std::atan2(-R(0, 1), R(1, 1))};
+81: }
+FUNCTION modeling.makeLinkPlaceholderCylinder RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp 1097-1178
+1097: GeneratedGeometry makeLinkPlaceholderCylinder(
+1098:     const rw::math::Vector3D<double>& segmentStart,
+1099:     const rw::math::Vector3D<double>& segmentEnd,
+1100:     std::string resourceRefId, double radius)
+1101: {
+1102:     // @pre 校验（调用方契约违约——fail-fast）。
+1103:     if (!(radius > 0.0) || !std::isfinite(radius)) {
+1104:         throw std::invalid_argument(
+1105:             "modeling/template/placeholder-radius: 圆柱半径须为正有限值（m）");
+1106:     }
+1107:     if (resourceRefId.empty()) {
+1108:         throw std::invalid_argument(
+1109:             "modeling/template/placeholder-ref: resourceRefId 不得为空串");
+1110:     }
+1111: 
+1112:     // 段向量与长度（相邻关节原点连线——单位 m，连杆系下）。
+1113:     const double dx = segmentEnd[0] - segmentStart[0];
+1114:     const double dy = segmentEnd[1] - segmentStart[1];
+1115:     const double dz = segmentEnd[2] - segmentStart[2];
+1116:     const double lengthSq = dx * dx + dy * dy + dz * dz;
+1117:     if (!(lengthSq > 0.0)) {
+1118:         throw std::invalid_argument(
+1119:             "modeling/template/placeholder-length: 起终点重合——零长度圆柱"
+1120:             "无几何意义");
+1121:     }
+1122:     const double length = std::sqrt(lengthSq);
+1123:     const double ux = dx / length;  // 连线单位方向（geom 系 z 轴目标方向）
+1124:     const double uy = dy / length;
+1125:     const double uz = dz / length;
+1126: 
+1127:     // 旋转：把 geom 系 z 轴旋到连线方向的最小旋转（Rodrigues 解析式逐元素
+1128:     // 展开——冒烟 header-only 纪律：不用 Rotation3D::identity()/EAA 等
+1129:     // 框架外联符号）。轴 v = z0×u / |z0×u|，z0=(0,0,1) → z0×u = (−uy, ux, 0)，
+1130:     // sinθ = sqrt(ux²+uy²)，cosθ = uz。轴线恰为 ±z 时 s==0（确定性特例：
+1131:     // +z 恒等、−z 绕 x 轴 π）。
+1132:     const double s = std::sqrt(ux * ux + uy * uy);
+1133:     const double c = uz;
+1134:     rw::math::Rotation3D<double> rotation(
+1135:         1.0, 0.0, 0.0,
+1136:         0.0, 1.0, 0.0,
+1137:         0.0, 0.0, 1.0);  // 逐元素恒等（外联符号禁用——见上注）
+1138:     if (s == 0.0) {
+1139:         if (c < 0.0) {
+1140:             // u = −z0：绕 x 轴旋转 π（diag(1,−1,−1)——确定性特例分支）
+1141:             rotation = rw::math::Rotation3D<double>(
+1142:                 1.0, 0.0, 0.0,
+1143:                 0.0, -1.0, 0.0,
+1144:                 0.0, 0.0, -1.0);
+1145:         }
+1146:         // u = +z0：保持恒等（R·z0 = z0 = u）
+1147:     } else {
+1148:         // Rodrigues 展开：R = I + s·K + (1−c)·K²，K＝skew(v)（推导见头注；
+1149:         // 代入 v=(−uy/s, ux/s, 0) 化简——z 列恰为 (ux, uy, c)=u，逐元素式：
+1150:         const double oneMinusC = 1.0 - c;
+1151:         const double s2Inv = 1.0 / (s * s);
+1152:         rotation = rw::math::Rotation3D<double>(
+1153:             1.0 + oneMinusC * (uy * uy * s2Inv - 1.0),
+1154:             -oneMinusC * (ux * uy) * s2Inv,
+1155:             ux,
+1156:             -oneMinusC * (ux * uy) * s2Inv,
+1157:             1.0 + oneMinusC * (ux * ux * s2Inv - 1.0),
+1158:             uy,
+1159:             -ux,
+1160:             -uy,
+1161:             c);
+1162:     }
+1163: 
+1164:     GeneratedGeometry result;
+1165:     result.geometry.resourceRefId = std::move(resourceRefId);
+1166:     result.geometry.localTransform = rw::math::Transform3D<double>(
+1167:         rw::math::Vector3D<double>(
+1168:             (segmentStart[0] + segmentEnd[0]) / 2.0,  // 中心＝连线中点（m）
+1169:             (segmentStart[1] + segmentEnd[1]) / 2.0,
+1170:             (segmentStart[2] + segmentEnd[2]) / 2.0),
+1171:         rotation);
+1172:     result.geometry.kind = GeometryKind::Primitive;  // 占位原语（视觉用）
+1173:     // 来源标记：GeometricEstimate＋methodTag 区分辅助类型（§5.2 原文）。
+1174:     result.provenance = core::ValueProvenance::make(
+1175:         core::ProvenanceKind::GeometricEstimate, std::nullopt, std::nullopt,
+1176:         "link-placeholder-cylinder");
+1177:     return result;
+1178: }
+FUNCTION optimization.nextU64 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp 161-168
+161:     std::uint64_t nextU64()
+162:     {
+163:         state += 0x9E3779B97F4A7C15ULL;  // 黄金比例常数——状态推进
+164:         std::uint64_t z = state;
+165:         z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;  // 混合第 1 轮
+166:         z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;  // 混合第 2 轮
+167:         return z ^ (z >> 31);                          // 混合第 3 轮（输出雪崩）
+168:     }
+FUNCTION optimization.nextUnit RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp 172-175
+172:     double nextUnit()
+173:     {
+174:         return static_cast<double>(nextU64() >> 11) * (1.0 / 9007199254740992.0);
+175:     }
+FUNCTION optimization.makeLayerPermutation RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp 183-196
+183: std::vector<std::uint32_t> makeLayerPermutation(SplitMix64& rng, std::uint32_t n)
+184: {
+185:     std::vector<std::uint32_t> perm(n);
+186:     for (std::uint32_t i = 0; i < n; ++i) {
+187:         perm[i] = i;  // 恒等层序初值
+188:     }
+189:     for (std::uint32_t i = n; i-- > 1U;) {
+190:         // j ∈ [0, i]（模减偏置存在但量级微小——采样均匀性足够，确定性
+191:         // 不受影响；精确无偏混洗非需求面——与 T06 同款口径）。
+192:         const std::uint32_t j = static_cast<std::uint32_t>(rng.nextU64() % (i + 1U));
+193:         std::swap(perm[i], perm[j]);
+194:     }
+195:     return perm;
+196: }
+FUNCTION optimization.generateStageDJointCandidates RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp 704-909
+704: std::vector<CandidatePatch> generateStageDJointCandidates(
+705:     const OptimizationConfiguration& config,
+706:     const std::vector<StageDCombination>& combinations)
+707: {
+708:     // ---- 第 1 步：防御复验＋阶段锁（R2 采样面不服务 R1——§5.7/§8.2：
+709:     // 离散器件维属 R2；StageB 采样面归 generateSeededLhsCandidates）----
+710:     validateConfiguration(config);
+711:     if (config.stage != OptimizationStage::StageD) {
+712:         throw OptimizationError(
+713:             kOptStageLocked,
+714:             "OPT-STAGE-LOCKED: StageD 组合空间采样仅服务 stage-d 研究（§8.2"
+715:             "——离散器件维属 R2）；stage-b 采样面归 generateSeededLhsCandidates");
+716:     }
+717: 
+718:     // ---- 第 1b 步：组合集结构规范化（确定性组合序的构造前提）----
+719:     // 结构校验（结构面 fail-fast；组合语义合法性不在此列——N5 非所有权，
+720:     // 归内层 sel-combination-check）：bindingId 对内重复/引用绑定不存在/
+721:     // 类别非 DiscreteDevice/绑定锁定或未授权/引用文本空——任一违例
+722:     // OPT-INPUT-INVALID。逐组合按 bindingId 字典序排序（对内规范化）；
+723:     // 组合间按逐对字典序排序（确定性组合序——采样轮转的作用域基准）。
+724:     std::vector<StageDCombination> normalized = combinations;
+725:     for (auto& combo : normalized) {
+726:         std::sort(combo.bindings.begin(), combo.bindings.end(),
+727:                   [](const auto& a, const auto& b) { return a.first < b.first; });
+728:         for (std::size_t i = 1; i < combo.bindings.size(); ++i) {
+729:             if (combo.bindings[i].first == combo.bindings[i - 1].first) {
+730:                 throw OptimizationError(
+731:                     kOptInputInvalid,
+732:                     "OPT-INPUT-INVALID: 组合声明内 bindingId 重复（"
+733:                         + combo.bindings[i].first + "）——逐绑定单值前提");
+734:             }
+735:         }
+736:         for (const auto& bindingRef : combo.bindings) {
+737:             const std::string& bindingId = bindingRef.first;
+738:             if (bindingRef.second.empty()) {
+739:                 throw OptimizationError(
+740:                     kOptInputInvalid,
+741:                     "OPT-INPUT-INVALID: 组合声明引用文本为空（绑定 " + bindingId
+742:                         + "）——离散引用非空是补丁构造前提（§5.6 规范引用）");
+743:             }
+744:             const VariableBinding* binding = nullptr;
+745:             for (const auto& b : config.variables) {
+746:                 if (b.bindingId == bindingId) {
+747:                     binding = &b;
+748:                     break;
+749:                 }
+750:             }
+751:             if (binding == nullptr) {
+752:                 throw OptimizationError(
+753:                     kOptInputInvalid,
+754:                     "OPT-INPUT-INVALID: 组合声明引用未登记绑定（" + bindingId
+755:                         + "）——补丁项只覆盖已登记绑定（§5.2）");
+756:             }
+757:             if (binding->kind != VariableKind::DiscreteDevice) {
+758:                 throw OptimizationError(
+759:                     kOptInputInvalid,
+760:                     "OPT-INPUT-INVALID: 组合声明绑定类别非 DiscreteDevice（"
+761:                         + bindingId + "）——组合维只承载离散器件变量（§5.6）");
+762:             }
+763:             if (binding->locked || !binding->authorized) {
+764:                 throw OptimizationError(
+765:                     kOptInputInvalid,
+766:                     "OPT-INPUT-INVALID: 组合声明绑定锁定或未授权（" + bindingId
+767:                         + "）——锁定/未授权维度不可出现在补丁（§5.4）");
+768:             }
+769:         }
+770:     }
+771:     std::sort(normalized.begin(), normalized.end(),
+772:               [](const StageDCombination& a, const StageDCombination& b) {
+773:                   if (a.bindings.size() != b.bindings.size()) {
+774:                       return a.bindings.size() < b.bindings.size();
+775:                   }
+776:                   for (std::size_t i = 0; i < a.bindings.size(); ++i) {
+777:                       if (a.bindings[i] != b.bindings[i]) {
+778:                           return a.bindings[i] < b.bindings[i];
+779:                       }
+780:                   }
+781:                   return false;  // 全等（重复组合声明——同一语义，不合成新空间）
+782:               });
+783: 
+784:     // ---- 第 2 步：采样维度集（与 T06 同款——未锁定且授权的连续/量化/
+785:     // 枚举绑定；bindingId 字典序确定性维度序）----
+786:     std::vector<const VariableBinding*> dims;
+787:     dims.reserve(config.variables.size());
+788:     for (const auto& b : config.variables) {
+789:         if (b.locked || !b.authorized) {
+790:             continue;  // 锁定/未授权维度不采样（§5.4——出现在补丁即拒绝）
+791:         }
+792:         if (b.kind == VariableKind::Continuous || b.kind == VariableKind::Quantized
+793:             || b.kind == VariableKind::Enumeration) {
+794:             dims.push_back(&b);
+795:         }
+796:     }
+797:     std::sort(dims.begin(), dims.end(),
+798:               [](const VariableBinding* a, const VariableBinding* b) {
+799:                   return a->bindingId < b->bindingId;
+800:               });
+801: 
+802:     // ---- 第 3 步：非基线候选数 n（预算上限——§8.2；maxCandidates≥1
+803:     // 已校验，无下溢）----
+804:     const std::uint32_t n = config.budget.maxCandidates - 1U;
+805: 
+806:     std::vector<CandidatePatch> patches;
+807:     patches.reserve(static_cast<std::size_t>(n) + 1U);
+808: 
+809:     // 基线候选恒为批首元素（§8.2——基线总是生成并参与评估；空补丁有
+810:     // 确定身份；label 不参与身份）。
+811:     CandidatePatch baseline;
+812:     baseline.label = "baseline";
+813:     patches.push_back(std::move(baseline));
+814: 
+815:     if (n == 0U) {
+816:         return patches;  // 预算＝仅基线——合法退化
+817:     }
+818: 
+819:     // ---- 第 4 步：自持 splitmix64（状态＝种子——同 T06 纪律：状态初值
+820:     // ≥1 已校验；随机性唯一来源，跨平台可重放）----
+821:     SplitMix64 rng;
+822:     rng.state = config.seed;
+823: 
+824:     // ---- 第 5 步：连续/量化/枚举维每维独立 n 层层序置换（拉丁超立方
+825:     // 正交性——随机流消耗序固定即可重放）；离散组合维不经层置换：候选 i
+826:     // 对规范化组合数取模轮转（组合枚举上限保护的确定性承载——空间上界
+827:     // ＝声明组合数，无枚举爆炸面；轮转保证每组合至少 ⌊n/组合数⌋ 次
+828:     // 出现，与连续维 LHS 层位正交组合成完整候选面）。组合集为空时离散
+829:     // 维缺席——研究无组合空间时预算自然退化，如实不伪造多样性。
+830:     std::vector<std::vector<std::uint32_t>> perms(dims.size());
+831:     for (std::size_t d = 0; d < dims.size(); ++d) {
+832:         perms[d] = makeLayerPermutation(rng, n);
+833:     }
+834: 
+835:     // ---- 第 6~7 步：逐候选取值＋补丁构造（补丁 canonical 唯一编码层——
+836:     // 排序/规范化/量化对齐/离散项形态全部复用 makeCandidatePatch 单点；
+837:     // 构造抛出＝研究定义与词表值域矛盾〔如正性维度配负区间〕——fail-fast
+838:     // 传播，不跳过不吞）----
+839:     for (std::uint32_t i = 0; i < n; ++i) {
+840:         std::vector<PatchItem> items;
+841:         items.reserve(dims.size() + (normalized.empty() ? 0U : normalized.front().bindings.size()));
+842:         for (std::size_t d = 0; d < dims.size(); ++d) {
+843:             const VariableBinding& b = *dims[d];
+844:             const std::uint32_t layer = perms[d][i];
+845:             const double u = rng.nextUnit();  // 层内均匀位置 [0,1)
+846:             PatchItem item;
+847:             item.bindingId = b.bindingId;
+848:             if (b.kind == VariableKind::Enumeration) {
+849:                 // 枚举维：PRNG 均匀取封闭值域下标（clamp 末位防 u≈1 越界
+850:                 // ——确定性；组合上限保护＝值域即词表封闭集，与 T06 同式）。
+851:                 const std::size_t domain = b.enumValues.size();
+852:                 if (domain == 0U) {
+853:                     // 空值域枚举绑定属研究定义非法（validateBindings 面）
+854:                     // ——防御式拒绝，不静默跳过。
+855:                     throw OptimizationError(
+856:                         kOptInputInvalid,
+857:                         "OPT-INPUT-INVALID: 绑定 " + b.bindingId
+858:                             + " 为空值域枚举（enumValues 空）——研究定义非法");
+859:                 }
+860:                 auto idx = static_cast<std::size_t>(static_cast<double>(domain) * u);
+861:                 if (idx >= domain) {
+862:                     idx = domain - 1U;  // u 上界钳制（u<1 时理论不可达——防御）
+863:                 }
+864:                 item.enumIndex = static_cast<std::uint32_t>(idx);
+865:             } else if (b.kind == VariableKind::Quantized) {
+866:                 // 量化维：采样域收缩为 [lower+step, upper−step]（对齐偏差
+867:                 // ≤step/2 ⇒ 对齐后必在界内——补丁构造器 round-half-even 后
+868:                 // 验界不拒绝）；收缩域为空（区间窄于两步）时退化为绑定
+869:                 // 默认值（采样设计的确定性退化——值仍是显式默认，非静默
+870:                 // 纠错；与 T06 同式）。
+871:                 const double lo = b.lowerBound + b.step;
+872:                 const double hi = b.upperBound - b.step;
+873:                 if (lo <= hi) {
+874:                     item.scalarValue = lo + (static_cast<double>(layer) + u)
+875:                             / static_cast<double>(n) * (hi - lo);
+876:                 } else {
+877:                     item.scalarValue = b.defaultValue;
+878:                 }
+879:             } else {
+880:                 // 连续维：层 [layer/n,(layer+1)/n) 映射到 [lower,upper]
+881:                 // 层内均匀点（u<1 ⇒ 严格小于上界端点——含端点安全）。
+882:                 item.scalarValue
+883:                     = b.lowerBound
+884:                     + (static_cast<double>(layer) + u) / static_cast<double>(n)
+885:                           * (b.upperBound - b.lowerBound);
+886:             }
+887:             items.push_back(std::move(item));
+888:         }
+889:         // 离散组合维：候选 i 取规范化组合表中下标（i % 组合数——轮转
+890:         // 覆盖）；逐组合的 (bindingId, discreteRef) 对产出补丁离散项
+891:         //（离散项唯一有效载荷＝discreteRef，其余形态成员由补丁构造器
+892:         // 规范化清零）。
+893:         if (!normalized.empty()) {
+894:             const StageDCombination& combo
+895:                 = normalized[static_cast<std::size_t>(i) % normalized.size()];
+896:             for (const auto& bindingRef : combo.bindings) {
+897:                 PatchItem item;
+898:                 item.bindingId = bindingRef.first;
+899:                 item.discreteRef = bindingRef.second;
+900:                 items.push_back(std::move(item));
+901:             }
+902:         }
+903:         CandidatePatch patch = makeCandidatePatch(
+904:             config.variables, config.stage, items, "cand-" + std::to_string(i));
+905:         patches.push_back(std::move(patch));
+906:     }
+907: 
+908:     return patches;
+909: }
+FUNCTION requirements.reflectPosition RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp 219-226
+219: rw::math::Vector3D<double> reflectPosition(const rw::math::Vector3D<double>& p,
+220:                                            const rw::math::Vector3D<double>& nUnit)
+221: {
+222:     const double d = p[0] * nUnit[0] + p[1] * nUnit[1] + p[2] * nUnit[2];
+223:     return rw::math::Vector3D<double>(p[0] - 2.0 * d * nUnit[0],
+224:                                       p[1] - 2.0 * d * nUnit[1],
+225:                                       p[2] - 2.0 * d * nUnit[2]);
+226: }
+FUNCTION requirements.rotationFromRpy RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp 230-243
+230: void rotationFromRpy(double roll, double pitch, double yaw,
+231:                      double r[3][3])
+232: {
+233:     const double cr = std::cos(roll);
+234:     const double sr = std::sin(roll);
+235:     const double cp = std::cos(pitch);
+236:     const double sp = std::sin(pitch);
+237:     const double cy = std::cos(yaw);
+238:     const double sy = std::sin(yaw);
+239:     // R = Rz·Ry·Rx 的逐元素展开（解析式——确定性乘加序）。
+240:     r[0][0] = cy * cp;               r[0][1] = -sy * cr + cy * sp * sr;  r[0][2] = sy * sr + cy * sp * cr;
+241:     r[1][0] = sy * cp;               r[1][1] = cy * cr + sy * sp * sr;   r[1][2] = -cy * sr + sy * sp * cr;
+242:     r[2][0] = -sp;                   r[2][1] = cp * sr;                  r[2][2] = cp * cr;
+243: }
+FUNCTION requirements.reflectionMatrix RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp 246-253
+246: void reflectionMatrix(const rw::math::Vector3D<double>& nUnit, double m[3][3])
+247: {
+248:     for (int i = 0; i < 3; ++i) {
+249:         for (int j = 0; j < 3; ++j) {
+250:             m[i][j] = (i == j ? 1.0 : 0.0) - 2.0 * nUnit[i] * nUnit[j];
+251:         }
+252:     }
+253: }
+FUNCTION requirements.matMul RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp 256-273
+256: void matMul(const double a[3][3], const double b[3][3], double out[3][3])
+257: {
+258:     double tmp[3][3] = {};
+259:     for (int i = 0; i < 3; ++i) {
+260:         for (int j = 0; j < 3; ++j) {
+261:             double s = 0.0;
+262:             for (int k = 0; k < 3; ++k) {
+263:                 s += a[i][k] * b[k][j];
+264:             }
+265:             tmp[i][j] = s;
+266:         }
+267:     }
+268:     for (int i = 0; i < 3; ++i) {
+269:         for (int j = 0; j < 3; ++j) {
+270:             out[i][j] = tmp[i][j];
+271:         }
+272:     }
+273: }
+FUNCTION requirements.reflectRpy RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp 289-330
+289: rw::math::Vector3D<double> reflectRpy(const rw::math::Vector3D<double>& rpy,
+290:                                       const rw::math::Vector3D<double>& nUnit)
+291: {
+292:     double r[3][3] = {};
+293:     rotationFromRpy(rpy[0], rpy[1], rpy[2], r);
+294:     double m[3][3] = {};
+295:     reflectionMatrix(nUnit, m);
+296:     double mr[3][3] = {};
+297:     matMul(m, r, mr);      // M·R
+298:     double rp[3][3] = {};
+299:     matMul(mr, m, rp);     // (M·R)·M = M·R·M
+300: 
+301:     // Z-Y-X 提取：sin(pitch) = −R20；一般位形 roll=atan2(R21,R22)、
+302:     // yaw=atan2(R10,R00)。
+303:     double sp = -rp[2][0];
+304:     if (sp > 1.0) {
+305:         sp = 1.0;  // 数值护栏（反射共轭的精确数学结果 |sp|≤1——浮点误差钳制）
+306:     }
+307:     if (sp < -1.0) {
+308:         sp = -1.0;
+309:     }
+310:     constexpr double kGimbalEpsilon = 1.0 - 1e-12;  // 万向锁判定阈：cp²=1−sp²<2e-12 即进入退化分支
+311:     if (std::fabs(sp) < kGimbalEpsilon) {
+312:         const double pitch = std::asin(sp);
+313:         const double roll = std::atan2(rp[2][1], rp[2][2]);
+314:         const double yaw = std::atan2(rp[1][0], rp[0][0]);
+315:         return rw::math::Vector3D<double>(roll, pitch, yaw);
+316:     }
+317:     // 万向锁退化：roll'=0、pitch'=±π/2。yaw' 提取随 pitch 符号分支——
+318:     // cp=0 时按本文件 rotationFromRpy 展开：R11=cosψ、R12=sinψ·sign(pitch)
+319:     // （roll'=0 消去 roll 项）——pitch=+π/2 时 R12=+sinψ（重建取
+320:     // atan2(+R12,R11)）、pitch=−π/2 时 R12=−sinψ（atan2(−R12,R11)）。
+321:     // F-582（P1——audit/unit-code-review-20261009）：原实现对两种符号统一
+322:     // 取负——+90° 侧重建矩阵与反射结果逐元素不等（镜像工位姿态要求静默
+323:     // 转反；工具竖直朝下〔pitch=−π/2〕是最常见姿态、经镜像恰变 +90° 即
+324:     // 触发，而 −90° 侧恰好正确故极具隐蔽性）。
+325:     const double pitch = (sp > 0.0 ? 3.14159265358979323846 : -3.14159265358979323846) / 2.0;
+326:     const double roll = 0.0;
+327:     const double yaw = (sp > 0.0) ? std::atan2(rp[1][2], rp[1][1])
+328:                                   : std::atan2(-rp[1][2], rp[1][1]);
+329:     return rw::math::Vector3D<double>(roll, pitch, yaw);
+330: }
+FUNCTION requirements.targetEditRotation RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp 72-78
+72: rw::math::Rotation3D<> targetEditRotation(const rw::math::Vector3D<>& rpy)
+73: {
+74:     const double cr=std::cos(rpy[0]),sr=std::sin(rpy[0]),cp=std::cos(rpy[1]),sp=std::sin(rpy[1]);
+75:     const double cy=std::cos(rpy[2]),sy=std::sin(rpy[2]);
+76:     return {cy*cp,cy*sp*sr-sy*cr,cy*sp*cr+sy*sr,
+77:         sy*cp,sy*sp*sr+cy*cr,sy*sp*cr-cy*sr,-sp,cp*sr,cp*cr};
+78: }
+FUNCTION requirements.targetEditRpy RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp 80-86
+80: rw::math::Vector3D<> targetEditRpy(const rw::math::Rotation3D<>& r)
+81: {
+82:     const double cp=std::hypot(r(0,0),r(1,0));
+83:     const double pitch=std::atan2(-r(2,0),cp);
+84:     return cp>1e-12 ? rw::math::Vector3D<>(std::atan2(r(2,1),r(2,2)),pitch,std::atan2(r(1,0),r(0,0)))
+85:         : rw::math::Vector3D<>(0,pitch,std::atan2(-r(0,1),r(1,1)));
+86: }
+FUNCTION requirements.finiteTargetEditPose RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp 88-104
+88: bool finiteTargetEditPose(const rw::math::Transform3D<>& pose)
+89: {
+90:     const auto& r=pose.R();
+91:     for (int i=0;i<3;++i) {
+92:         if (!std::isfinite(pose.P()[i])) { return false; }
+93:         for (int j=0;j<3;++j) { if (!std::isfinite(r(i,j))) { return false; } }
+94:     }
+95:     for (int i=0;i<3;++i) {
+96:         for (int j=0;j<3;++j) {
+97:             double dot=0; for (int k=0;k<3;++k) { dot+=r(k,i)*r(k,j); }
+98:             if (std::abs(dot-(i==j ? 1.0 : 0.0))>1e-8) { return false; }
+99:         }
+100:     }
+101:     const double determinant=r(0,0)*(r(1,1)*r(2,2)-r(1,2)*r(2,1))
+102:         -r(0,1)*(r(1,0)*r(2,2)-r(1,2)*r(2,0))+r(0,2)*(r(1,0)*r(2,1)-r(1,1)*r(2,0));
+103:     return std::abs(determinant-1.0)<=1e-8;
+104: }
+FUNCTION requirements.rotationToRpyPresentation RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsCommandFlows.cpp 75-85
+75: std::array<double, 3> rotationToRpyPresentation(const rw::math::Rotation3D<double>& R)
+76: {
+77:     // 近±90°时R20可能先舍入成±1，asin会丢失仍保存在首列的微小余弦；
+78:     // WP-14-T12/REQ-10数值回归要求1e-8rad偏离不能被吸附到万向锁。
+79:     const double cp = std::hypot(R(0, 0), R(1, 0));
+80:     const double pitch = std::atan2(-R(2, 0), cp);
+81:     if (std::abs(cp) > 1e-12) {
+82:         return {std::atan2(R(2, 1), R(2, 2)), pitch, std::atan2(R(1, 0), R(0, 0))};
+83:     }
+84:     return {0.0, pitch, std::atan2(-R(0, 1), R(1, 1))};
+85: }
+FUNCTION runtime.symmetrizedSpdWitness RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp 85-134
+85: double symmetrizedSpdWitness(const rw::math::InertiaMatrix<double>& m) noexcept
+86: {
+87:     // 第一步：SPD 必须有严格正对角。用二进制幂对每轴做合同变换 D⁻¹ S D⁻¹，
+88:     // S=(I+Iᵀ)/2；正定惯性不变。按轴平衡而非全矩阵除以最大值，避免
+89:     // diag(denorm_min,1,1e300) 的小正轴被全局缩放吞成零。
+90:     int power[3]{};
+91:     for (int i = 0; i < 3; ++i) {
+92:         if (!(m(i, i) > 0.0)) { return m(i, i) == 0.0 ? 0.0 : -1.0; }
+93:         int exponent = 0;
+94:         std::frexp(m(i, i), &exponent);
+95:         // floor(exponent/2)，显式处理 C++ 负整数除法向零截断。
+96:         power[i] = exponent >= 0 ? exponent / 2 : (exponent - 1) / 2;
+97:     }
+98:     double s[3][3]{};
+99:     for (int i = 0; i < 3; ++i) {
+100:         for (int j = i; j < 3; ++j) {
+101:             const double a = m(i, j);
+102:             const double b = m(j, i);
+103:             // 同号用差值平均防 a+b 溢出，异号先各减半防 b-a 溢出；
+104:             // 对角不变，最小正次正规数不会因先除以 2 而消失。
+105:             const double average = std::signbit(a) == std::signbit(b)
+106:                 ? a + 0.5 * (b - a) : 0.5 * a + 0.5 * b;
+107:             s[i][j] = s[j][i] = std::scalbn(average, -power[i] - power[j]);
+108:             if (!std::isfinite(s[i][j])) {
+109:                 // 平衡后对角在 [0.5,2)，交叉项若溢出，必违背 SPD 的
+110:                 // |Sij|²<Sii*Sjj 必要条件；拒绝而不夹紧成合法矩阵。
+111:                 return -1.0;
+112:             }
+113:             // 平衡后的对角均小于 2，|交叉项|>2 必不满足 Cauchy 必要界；
+114:             // 在后续求平方前拒绝，确保极大有限非法输入也不会产生 NaN 主元。
+115:             if (std::fabs(s[i][j]) > 2.0) { return -1.0; }
+116:         }
+117:     }
+118: 
+119:     // 第二步：固定顺序 LDLᵀ。二阶主子式用两次 FMA 补偿乘积舍入，
+120:     // 防对称化后恰为零的主子式被加减舍入成小正数而误放行。
+121:     const double square = s[0][1] * s[0][1];
+122:     const double determinant2 = std::fma(s[0][0], s[1][1], -square)
+123:         - std::fma(s[0][1], s[0][1], -square);
+124:     const double pivot2 = determinant2 / s[0][0];
+125:     if (!(pivot2 > 0.0)) { return pivot2; } // 零=半正定，负=不定，均须拒绝。
+126: 
+127:     // 第三步：继续消去第一、第二轴；仅两两主子式为正不能保证三阶 SPD。
+128:     const double schur22 = std::fma(-s[0][2] / s[0][0], s[0][2], s[2][2]);
+129:     const double schur12 = std::fma(-s[0][1] / s[0][0], s[0][2], s[1][2]);
+130:     const double pivot3 = std::fma(-schur12 / pivot2, schur12, schur22);
+131:     // 极病态非法矩阵的除法可能溢出；非有限见证一律拒绝，诊断值保持有限。
+132:     if (!std::isfinite(pivot3)) { return -1.0; }
+133:     return std::min({s[0][0], pivot2, pivot3});
+134: }
+FUNCTION runtime.relativeAsymmetry RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp 50-73
+50: double relativeAsymmetry(const rw::math::InertiaMatrix<double>& m) noexcept
+51: {
+52:     // 第一步：共同除以最大绝对分量后再取范数，避免 I² 上溢/下溢。公因子
+53:     // 在比值中消去，不把接近零的惯量当成零，也不引入额外绝对容差。
+54:     double scale = 0.0;
+55:     for (int i = 0; i < 3; ++i) {
+56:         for (int j = 0; j < 3; ++j) { scale = std::max(scale, std::fabs(m(i, j))); }
+57:     }
+58:     if (scale == 0.0) { return 0.0; } // 零张量的对称性成立，随后严格 SPD 会拒绝。
+59:     double symNorm = 0.0;
+60:     double worst = 0.0;
+61:     for (int i = 0; i < 3; ++i) {
+62:         for (int j = 0; j < 3; ++j) {
+63:             const double a = m(i, j) / scale;
+64:             const double b = m(j, i) / scale;
+65:             symNorm = std::hypot(symNorm, 0.5 * a + 0.5 * b);
+66:             worst = std::max(worst, std::fabs(a - b));
+67:         }
+68:     }
+69:     // 第二步：分母只取物理对称部分，不能让反对称误差放大自己的容许上限。
+70:     // 纯反对称时退回绝对差（dynamics 已有零参考规则），之后仍须通过 SPD。
+71:     const double deviation = symNorm > 0.0 ? worst / symNorm : worst * scale;
+72:     return std::min(deviation, std::numeric_limits<double>::max());
+73: }
+FUNCTION runtime.axisAlignmentRotation RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp 469-493
+469: rw::math::Rotation3D<double> axisAlignmentRotation(const rw::math::Vector3D<double>& axis)
+470: {
+471:     const rw::math::Vector3D<double> zAxis(0.0, 0.0, 1.0);  // 基线关节的固定旋转轴（无量纲）
+472:     const double cosAngle = dot(zAxis, axis);               // ＝cosθ（axis 单位化后的内积）
+473: 
+474:     if (cosAngle > 1.0 - kPoleCosTolerance) {
+475:         // axis 与 +Z 同向：恒等对齐（精确阵，无舍入）。
+476:         return rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
+477:                                             0.0, 1.0, 0.0,
+478:                                             0.0, 0.0, 1.0);
+479:     }
+480:     if (cosAngle < -(1.0 - kPoleCosTolerance)) {
+481:         // axis 与 −Z 同向：绕 X 转 π（元素全为 {0,±1}——确定性固定形态）。
+482:         return rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
+483:                                             0.0, -1.0, 0.0,
+484:                                             0.0, 0.0, -1.0);
+485:     }
+486:     // 一般情形：右手最小旋转（轴＝Z×axis，角＝θ）。cross 为 rw 模板函数
+487:     // （header-only 实例化）；norm2 为 Vector3D 成员（长度）；atan2 保证
+488:     // θ∈(0,π]，与极轴分支互斥。
+489:     const rw::math::Vector3D<double> rotAxis = cross(zAxis, axis);
+490:     const double sinAngle = rotAxis.norm2();                // ＝sinθ（axis 单位向量）
+491:     const double angle = std::atan2(sinAngle, cosAngle);    // 单位 rad
+492:     return rotationFromCustomEaa(rotAxis * (angle / sinAngle));
+493: }
+FUNCTION runtime.spanPlacement RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp 512-521
+512: rw::math::Transform3D<double> spanPlacement(const rw::math::Vector3D<double>& span)
+513: {
+514:     const double length = span.norm2();                       // 跨度，m
+515:     const rw::math::Vector3D<double> direction =
+516:         span * (1.0 / length);                                // 单位方向（无量纲）
+517:     // 显式取 Rotation3D 形参（Transform3D(Vector3D, Rotation3D) 重载——
+518:     // Rotation3DVector 接口重载并存，显式类型消除重载歧义）。
+519:     const rw::math::Rotation3D<double> align = axisAlignmentRotation(direction);
+520:     return rw::math::Transform3D<double>(span * 0.5, align);  // 线段中点，m
+521: }
+FUNCTION selection.symmetricEigenvalues3x3 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp 80-106
+80: std::array<double, 3> symmetricEigenvalues3x3(
+81:     double m00, double m01, double m02, double m11, double m12, double m22) noexcept
+82: {
+83:     // 移位量 q＝迹的三分之一（把谱心移到原点，退化三次式系数变小）。
+84:     const double q = (m00 + m11 + m22) / 3.0;
+85:     // p1＝非对角元平方和；p2＝对角偏移平方和＋2·p1（＝‖A−qE‖_F²/2 的等价形）。
+86:     const double p1 = m01 * m01 + m02 * m02 + m12 * m12;
+87:     const double p2 = (m00 - q) * (m00 - q) + (m11 - q) * (m11 - q)
+88:                     + (m22 - q) * (m22 - q) + 2.0 * p1;
+89:     // p＝0 ⇔ A 为纯量阵 qE（三特征值全等）——避免除零分支。
+90:     if (p2 <= 0.0) {
+91:         return {q, q, q};
+92:     }
+93:     const double p = std::sqrt(p2 / 6.0);
+94:     // B＝(A−qE)/p；r＝det(B)/2（∈[−1,1]——限幅抵抗浮点舍入越界）。
+95:     const double b00 = (m00 - q) / p, b01 = m01 / p, b02 = m02 / p;
+96:     const double b11 = (m11 - q) / p, b12 = m12 / p;
+97:     const double b22 = (m22 - q) / p;
+98:     double r = (b00 * b11 * b22 + 2.0 * b01 * b02 * b12
+99:                 - b01 * b01 * b22 - b02 * b02 * b11 - b12 * b12 * b00) / 2.0;
+100:     r = std::clamp(r, -1.0, 1.0);
+101:     const double phi = std::acos(r) / 3.0;
+102:     const double l1 = q + 2.0 * p * std::cos(phi);            // 最大特征值
+103:     const double l3 = q + 2.0 * p * std::cos(phi + 2.0943951023931953); // +2π/3——最小
+104:     const double l2 = 3.0 * q - l1 - l3;                      // 迹守恒求中间值
+105:     return {l3, l2, l1};  // 升序返回（l3 ≤ l2 ≤ l1——三角解的性质）
+106: }
+FUNCTION trajectory.rotationAngleBetween RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Continuity.cpp 51-67
+51: double rotationAngleBetween(const rw::math::Rotation3D<double>& Ra,
+52:                             const rw::math::Rotation3D<double>& Rb)
+53: {
+54:     const rw::math::Rotation3D<double> Rrel = Ra * rw::math::inverse(Rb);
+55:     const rw::math::Quaternion<double> q(Rrel);
+56:     const double x = q.getQx();
+57:     const double y = q.getQy();
+58:     const double z = q.getQz();
+59:     const double w = q.getQw();
+60:     const double n2 = x * x + y * y + z * z + w * w;
+61:     if (n2 <= 0.0) {
+62:         return 0.0;  // 退化四元数防御（正交输入下不可达——实现缺陷护栏）
+63:     }
+64:     const double inv = 1.0 / std::sqrt(n2);
+65:     const double vecNorm = std::sqrt(x * x + y * y + z * z) * inv;
+66:     return 2.0 * std::atan2(vecNorm, std::fabs(w) * inv);
+67: }
+FUNCTION trajectory.canDropPoint RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp 378-409
+378: bool canDropPoint(const std::vector<rw::math::Q>& points,
+379:                   std::size_t k,
+380:                   const SmoothRequest& request,
+381:                   IKinematicsComputePort* fkPort,
+382:                   const CancelSignal& cancel)
+383: {
+384:     // 替代构型：两保留点的中点（单点剔除——参数位置 0.5）。
+385:     const rw::math::Q& a = points[k - 1];
+386:     const rw::math::Q& b = points[k + 1];
+387:     rw::math::Q replacement(a.size());
+388:     for (std::size_t j = 0; j < a.size(); ++j) {
+389:         replacement[j] = 0.5 * (a[j] + b[j]);  // 逐轴线性中点（rad|m）
+390:     }
+391:     const rw::math::Q& original = points[k];
+392:     for (std::size_t j = 0; j < a.size(); ++j) {
+393:         if (std::abs(original[j] - replacement[j]) > request.smoothToleranceJoint) {
+394:             return false;  // 关节维超容差——不可剔
+395:         }
+396:     }
+397:     // TCP 派生维（可选——端口缺席时检查 NotApplicable，不阻塞剔除判定；
+398:     // §11.4 双域判据的 TCP 半区仅在能力在场时生效，偏差报告显式标记）。
+399:     if (fkPort != nullptr) {
+400:         const rw::math::Vector3D<double> tcpOriginal =
+401:             tcpPositionOrThrow(*fkPort, original, cancel);
+402:         const rw::math::Vector3D<double> tcpReplacement =
+403:             tcpPositionOrThrow(*fkPort, replacement, cancel);
+404:         if ((tcpOriginal - tcpReplacement).norm2() > request.smoothToleranceTcp) {
+405:             return false;  // TCP 派生维超容差——不可剔
+406:         }
+407:     }
+408:     return true;
+409: }
+FUNCTION trajectory.buildTangents RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp 427-447
+427: std::vector<rw::math::Q> buildTangents(const std::vector<rw::math::Q>& knots, double lambda)
+428: {
+429:     const std::size_t n = knots.size();
+430:     const std::size_t spanCount = n - 1;
+431:     std::vector<rw::math::Q> segTangents;
+432:     segTangents.reserve(spanCount * 2);
+433:     for (std::size_t k = 0; k < spanCount; ++k) {
+434:         const rw::math::Q delta = knots[k + 1] - knots[k];  // Δ_k（rad|m）
+435:         // 结点 k 的中心差分 d_k（起点取折线端斜率）。
+436:         const rw::math::Q dLeft = (k == 0)
+437:                                       ? delta
+438:                                       : (knots[k + 1] - knots[k - 1]) * 0.5;
+439:         // 结点 k+1 的中心差分 d_{k+1}（末端取折线端斜率）。
+440:         const rw::math::Q dRight = (k + 1 == n - 1)
+441:                                        ? delta
+442:                                        : (knots[k + 2] - knots[k]) * 0.5;
+443:         segTangents.push_back(delta + (dLeft - delta) * lambda);   // m_左(k)
+444:         segTangents.push_back(delta + (dRight - delta) * lambda);  // m_右(k)
+445:     }
+446:     return segTangents;
+447: }
+FUNCTION trajectory.measureDeviation RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp 466-503
+466: DeviationMeasurement measureDeviation(const std::vector<rw::math::Q>& knots,
+467:                                       const std::vector<rw::math::Q>& tangents,
+468:                                       IKinematicsComputePort* fkPort,
+469:                                       const CancelSignal& cancel)
+470: {
+471:     DeviationMeasurement m;
+472:     m.tcpChecked = (fkPort != nullptr);
+473:     const std::size_t spanCount = knots.size() - 1;
+474:     const QuinticHermiteGeometry curve(knots, tangents);
+475:     for (std::size_t k = 0; k < spanCount; ++k) {
+476:         for (std::size_t p = 1; p <= kDeviationProbeSamplesPerSpan; ++p) {
+477:             const double t = static_cast<double>(p)
+478:                                  / static_cast<double>(kDeviationProbeSamplesPerSpan);
+479:             // 曲线构型（复用求值器解析多项式——与复检消费面同一实现点，
+480:             // 避免"验证的几何≠交付的几何"）。
+481:             const double s = (static_cast<double>(k) + t) / static_cast<double>(spanCount);
+482:             const rw::math::Q sampled = curve.sampleAt(s);
+483:             // 折线构型（段内线性插值——平滑前的基准几何）。
+484:             rw::math::Q reference(knots[k].size());
+485:             for (std::size_t j = 0; j < knots[k].size(); ++j) {
+486:                 reference[j] = (1.0 - t) * knots[k][j] + t * knots[k + 1][j];
+487:             }
+488:             for (std::size_t j = 0; j < reference.size(); ++j) {
+489:                 m.jointAxisMax = std::max(m.jointAxisMax,
+490:                                           std::abs(sampled[j] - reference[j]));
+491:             }
+492:             // TCP 派生维（可选——端口缺席时跳过，偏差报告显式标记）。
+493:             if (fkPort != nullptr) {
+494:                 const rw::math::Vector3D<double> tcpSampled =
+495:                     tcpPositionOrThrow(*fkPort, sampled, cancel);
+496:                 const rw::math::Vector3D<double> tcpReference =
+497:                     tcpPositionOrThrow(*fkPort, reference, cancel);
+498:                 m.tcpMax = std::max(m.tcpMax, (tcpSampled - tcpReference).norm2());
+499:             }
+500:         }
+501:     }
+502:     return m;
+503: }

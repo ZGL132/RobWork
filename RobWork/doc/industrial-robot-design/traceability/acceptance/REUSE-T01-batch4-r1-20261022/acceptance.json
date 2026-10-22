@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": 4,
+  "verdict": "fail",
+  "reviewedCommit": "c7e1469b40ca7c1dbba55a3b6bd8a443fc6086c5",
+  "baseCommit": "f6ee77c91c36f40a4cd573a24335405afc06f68b",
+  "scope": "26 pending relations in 7 units; not full T01 completion",
+  "findings": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+      "issue": "MDL-02 is parameterization; units/modeling.md:220 maps placeholder geometry to MDL-04/AT-01",
+      "id": "B4-P2-01",
+      "functionId": "modeling.makeLinkPlaceholderCylinder",
+      "priority": 2
+    }
+  ],
+  "validation": {
+    "task": "pass",
+    "bindingsFailed": 0,
+    "productTests": "NOT RUN",
+    "reuse": "pass governance only",
+    "remoteCi": "NOT RUN",
+    "searchPassed": 5,
+    "searchFailed": 0,
+    "docs": "pass, DeepEvidence NOT RUN",
+    "bindingsPassed": 53,
+    "diffCheck": "exit2: historical prior acceptance raw diff log contains trailing whitespace; not rewritten",
+    "checkout": "longpath checkout repaired in isolated clone; final status clean; docs rerun pass"
+  },
+  "report": "acceptance.md"
+}

@@ -1,0 +1,973 @@
+[
+  {
+    "functionId": "dynamics.evalAcceleration",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-05"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+        "symbol": "evalAcceleration",
+        "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate::<lambda:evalAcceleration>",
+        "startLine": 509,
+        "endLine": 567,
+        "sha256": "1cf75638d8d84dbc64390349351dd15d1969d36c867772f2fc78dc37280bddda"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "DYN-FD",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "自持偏置h/质量M逐列提取及求解右端；优先现成PhysicsEngine的真实力控制后端，不把RNE多次调用当完整FD复用；事件采样保持/取消/非有限语义待核",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-05"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+        "symbol": "ForwardDynamicsValidator::validate",
+        "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate",
+        "startLine": 251,
+        "endLine": 874,
+        "sha256": "ebe207025ab78d83152f3d2460c5dd9516fd7a175176644b27798880af9f3960"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "DYN-FD",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "仅登记函数内部612-692四stage RK4功能；外层入口摘要不是整个入口已审。rwsim RK4Integrator面向RigidBody+State，非关节ODE通用接口；继续验证ODE力控制候选，不自行新写积分器",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      }
+    ],
+    "auditBoundary": "source保留真实外层函数符号/摘要；本行只审内部612-692积分功能，不构成整个函数已审计或文件闭合",
+    "auditedSections": [
+      {
+        "startLine": 612,
+        "endLine": 692,
+        "sha256": "b0d7ecb9176367ef348e484bb6d01c67b810f685054a33632505b679e6eeb9f5"
+      }
+    ]
+  },
+  {
+    "functionId": "modeling.rotationToRpy",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+        "symbol": "rotationToRpy",
+        "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotationToRpy",
+        "startLine": 72,
+        "endLine": 81,
+        "sha256": "5b609e8c5cc27a039ae44a6ad09a9782b8bb2c7e1a430c660d92f7f9005f007a"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "呈现私有公式同样应复用RPY；不得为冒烟header-only重写，候选换序和奇异往返需验证",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "modeling.makeLinkPlaceholderCylinder",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+        "symbol": "makeLinkPlaceholderCylinder",
+        "qualifiedSymbol": "sdurws::ird::modeling::makeLinkPlaceholderCylinder",
+        "startLine": 1097,
+        "endLine": 1178,
+        "sha256": "1f814cf1a4de351bd2badda64f1bba175734d14ced1b74c3c7e6840e1b8beb58"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "连杆占位几何组装保留，内含因冒烟缺链重写Rodrigues；优先上游EAA/Transform3D，固定X反轴与半长m约定需适配",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "optimization.nextU64",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "OPT-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+        "symbol": "nextU64",
+        "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextU64",
+        "startLine": 161,
+        "endLine": 168,
+        "sha256": "90783e32d23e1c882f6725fd38b060d63be7d4e2f422d080cfab2e488e668878"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-RANDOM",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "optimization.nextUnit",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "OPT-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+        "symbol": "nextUnit",
+        "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextUnit",
+        "startLine": 172,
+        "endLine": 175,
+        "sha256": "c5cf87634d97bf263a98549f71668e79468361fdb694e3214b54bdc2d7b34541"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-RANDOM",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "optimization.makeLayerPermutation",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "OPT-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+        "symbol": "makeLayerPermutation",
+        "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::makeLayerPermutation",
+        "startLine": 183,
+        "endLine": 196,
+        "sha256": "87b91341a3887978074c2400b582ada1e530d3897a000ea469e9058fb093c2e5"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-RANDOM",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "自持Fisher-Yates取模洗牌，随机消耗n-1及偏差和任务种子是既有契约；候选上游Random及已有标准算法，不能改序列而沿用旧身份",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "optimization.generateStageDJointCandidates",
+    "ownerUnit": "optimization",
+    "requirements": [
+      "OPT-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+        "symbol": "generateStageDJointCandidates",
+        "qualifiedSymbol": "sdurws::ird::optimization::generateStageDJointCandidates",
+        "startLine": 704,
+        "endLine": 909,
+        "sha256": "475ae2d98bd82c056f9f2a66730edf3f50e6a1cd2795424b307444acda74db8d"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_optimization"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-RANDOM",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "阶段D组合规范化/轮转是业务编排；内部连续维LHS随机小核需对照StageB及上游采样工具，不整函数business-specific",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+        "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.reflectPosition",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-11"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+        "symbol": "reflectPosition",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectPosition",
+        "startLine": 219,
+        "endLine": 226,
+        "sha256": "158036ceebb484a3d8eff5db09ac61f26dacb50659322e7da3d3938d9057f405"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "镜像业务规则p-2(n·p)n保留；点积/向量运算优先上游值API，不能为复用把反射当proper rotation",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.rotationFromRpy",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-11"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+        "symbol": "rotationFromRpy",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::rotationFromRpy",
+        "startLine": 230,
+        "endLine": 243,
+        "sha256": "62494b8a27b2a585416a0a399f6e16cd9e3adb09f4944a664ac054367006b276"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "手写ZYX展开，候选RPY(yaw,pitch,roll).toRotation3D；字段换序、rad及近奇异姿态需回归",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.reflectionMatrix",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-11"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+        "symbol": "reflectionMatrix",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectionMatrix",
+        "startLine": 246,
+        "endLine": 253,
+        "sha256": "4202282acb452142373701cc1b66e00c836bd54c7e00c6d46d91446638d19789"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "镜像面M=I-2nnT是det=-1的业务变换；用既有矩阵值工具，不能将M强转Rotation3D合法旋转",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.matMul",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-11"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+        "symbol": "matMul",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::matMul",
+        "startLine": 256,
+        "endLine": 273,
+        "sha256": "22a87b4c1cf939d62fed93cf70ab3db50d9c2fe67759b1fa5d6d8a65946c190c"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "手写固定3阶乘法，优先已有矩阵运算；M为反射不能冒充Rotation3D",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.reflectRpy",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-11"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+        "symbol": "reflectRpy",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectRpy",
+        "startLine": 289,
+        "endLine": 330,
+        "sha256": "dc7044b7966753f99eb1672a78d350e5ae698763806e78e14019ffd02c312bb4"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "MRM业务镜像共轭保留，基础乘法/RPY解算候选上游；保持gimbal确定性，精确±90度上游往返仍待实测",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.targetEditRotation",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-10"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+        "symbol": "targetEditRotation",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::targetEditRotation",
+        "startLine": 72,
+        "endLine": 78,
+        "sha256": "70c11faf93c7098aa103279d751ecc559d4a058c43d1264cd6a561ab0952fc34"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "交互位姿数学仍受H1/H2约束：ZYX换序/反解与SO3合法性候选上游；保留m/rad、world系及1e-8容差，近奇异与非法矩阵先实测",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.targetEditRpy",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-10"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+        "symbol": "targetEditRpy",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::targetEditRpy",
+        "startLine": 80,
+        "endLine": 86,
+        "sha256": "8a88bf036d95a56b12bac625d5a0f571500bb31d0ddf3536e79c62416d44e8c4"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "交互位姿数学仍受H1/H2约束：ZYX换序/反解与SO3合法性候选上游；保留m/rad、world系及1e-8容差，近奇异与非法矩阵先实测",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.finiteTargetEditPose",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-10"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+        "symbol": "finiteTargetEditPose",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::finiteTargetEditPose",
+        "startLine": 88,
+        "endLine": 104,
+        "sha256": "2ab399158ec6ab00c65dbb1e9281976c54e08d876a20a4c9e418e585124fbc43"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "交互位姿数学仍受H1/H2约束：ZYX换序/反解与SO3合法性候选上游；保留m/rad、world系及1e-8容差，近奇异与非法矩阵先实测",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "requirements.rotationToRpyPresentation",
+    "ownerUnit": "requirements",
+    "requirements": [
+      "REQ-10"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsCommandFlows.cpp",
+        "symbol": "rotationToRpyPresentation",
+        "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::rotationToRpyPresentation",
+        "startLine": 75,
+        "endLine": 85,
+        "sha256": "1769067ae0530cad49f18497389503597ea8bc3701a20d9c09bd5cce235a1d99"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_requirements_plugin"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "因冒烟外联缺供重写RPY不构成豁免；修构建供给优先，保持1e-8rad偏离奇异的TCP捕获摘要和gimbal分支",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+        "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "runtime.symmetrizedSpdWitness",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "MDL-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+        "symbol": "symmetrizedSpdWitness",
+        "qualifiedSymbol": "sdurws::ird::runtime::inertia_validation_detail::symmetrizedSpdWitness",
+        "startLine": 85,
+        "endLine": 134,
+        "sha256": "733f60b25f74df312d87bb992672b97895f691609c85fa4e118c85f58899a84b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "MATH-EIGEN",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "自持按轴二进制平衡、补偿LDLT；DescriptionValidator与builder共用。候选上游对称谱及已依赖Eigen分解；严格>0、次正规/混合尺度/近半正定必须独立核，不能全局缩放吞小轴或加epsilon",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "runtime.relativeAsymmetry",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "MDL-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+        "symbol": "relativeAsymmetry",
+        "qualifiedSymbol": "sdurws::ird::runtime::inertia_validation_detail::relativeAsymmetry",
+        "startLine": 50,
+        "endLine": 73,
+        "sha256": "2be0bb91502acf70ab1f0359c6e970b2ecb0a8a541f302b69e014b270ccae062"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "MATH-EIGEN",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "按最大分量归一计算对称Frobenius相对偏差；规范比较与数值范数分开审，不把通用范数/矩阵重复计算当owner豁免",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "runtime.axisAlignmentRotation",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "MDL-12"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+        "symbol": "axisAlignmentRotation",
+        "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::axisAlignmentRotation",
+        "startLine": 469,
+        "endLine": 493,
+        "sha256": "81868f447439a744491f97702e5224d4cac6f9b8d74ebf3127341133e2950310"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "自持Rodrigues，候选EAA(from,to)；反Z默认Y轴与产品固定X半周滚转差pi，保留极轴分支与偏置轴约定，不复制一般公式",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "runtime.spanPlacement",
+    "ownerUnit": "runtime",
+    "requirements": [
+      "MDL-12"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+        "symbol": "spanPlacement",
+        "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::spanPlacement",
+        "startLine": 512,
+        "endLine": 521,
+        "sha256": "e7b2b4f606de91ece530eb716908c7f3e795e337ec2f08704a9494109136cfac"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_runtime"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "连杆中点/对齐组装是owner编译职责；基础旋转同axisAlignmentRotation复用，m与Cylinder本地Z约定不变",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "selection.symmetricEigenvalues3x3",
+    "ownerUnit": "selection",
+    "requirements": [
+      "MDL-06",
+      "SEL-10"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "symbol": "symmetricEigenvalues3x3",
+        "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::symmetricEigenvalues3x3",
+        "startLine": 80,
+        "endLine": 106,
+        "sha256": "b83c0ec700693d9976aecb18e0b035aae16c9d95a352e77b8accc1b581283bc1"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_selection"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-EIGEN",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "自持acos三角闭式求谱用于checkSynthesisAssertions；优先上游对称特征分解，保持升序、严格SPD、惯量三角不等式、非有限失败与单位kg*m^2",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+        "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "trajectory.rotationAngleBetween",
+    "ownerUnit": "trajectory",
+    "requirements": [
+      "TRJ-02",
+      "TRJ-06"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Continuity.cpp",
+        "symbol": "rotationAngleBetween",
+        "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::rotationAngleBetween",
+        "startLine": 51,
+        "endLine": 67,
+        "sha256": "af0306607f5568ea8b04b9e4e7c1b526c485626dc2f5331c0ae96f06928cbea8"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "MATH-ROT",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "已用上游Quaternion但又自持正规化/最短角，候选EAA::angle；须核0、微小角、pi及相对旋转方向，不以使用一个类型当完整正向证据",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "trajectory.canDropPoint",
+    "ownerUnit": "trajectory",
+    "requirements": [
+      "TRJ-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+        "symbol": "canDropPoint",
+        "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::canDropPoint",
+        "startLine": 378,
+        "endLine": 409,
+        "sha256": "a9fccc4634753fc726408822479ca117a6aeae86f15b38f6f4c80bf4cd78a8d8"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "PATH-SIMPLIFY",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "单点贪心剔除候选PathLengthOptimizer::pathPruning；保留必经点、关节/TCP双偏差、取消及失败语义；边碰撞约束不等同原点几何偏差",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "trajectory.buildTangents",
+    "ownerUnit": "trajectory",
+    "requirements": [
+      "TRJ-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+        "symbol": "buildTangents",
+        "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::buildTangents",
+        "startLine": 427,
+        "endLine": 447,
+        "sha256": "017600a3bc9a5c0a47d6200db1f2443137f67f69ffa700b6eb44bd068ba5993a"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TRAJ-HIGH",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "中心差分加lambda收缩，候选SplineFactory/Polynomial；端导与几何保持是产品契约，不可用三次偷换五次",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  },
+  {
+    "functionId": "trajectory.measureDeviation",
+    "ownerUnit": "trajectory",
+    "requirements": [
+      "TRJ-04"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+        "symbol": "measureDeviation",
+        "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::measureDeviation",
+        "startLine": 466,
+        "endLine": 503,
+        "sha256": "b9071e84ad9a5a17446c2788f28176a296ffbcce7dce94dd59bb18ff8f4e6bd1"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_trajectory"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TRAJ-HIGH",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "固定每段64探针、关节逐轴/TCP双偏差，候选上游几何插值；FK只走端口，lambda重试与覆盖事实保留，不另建模型",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+  }
+]

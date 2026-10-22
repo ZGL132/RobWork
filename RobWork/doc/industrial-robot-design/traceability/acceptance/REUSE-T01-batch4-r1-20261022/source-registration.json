@@ -1,0 +1,158 @@
+[
+  {
+    "id": "dynamics.evalAcceleration",
+    "file": "ForwardDynamics.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+    "file": "ForwardDynamics.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "modeling.rotationToRpy",
+    "file": "PanelModel.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "modeling.makeLinkPlaceholderCylinder",
+    "file": "Template.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "optimization.nextU64",
+    "file": "JointStrategy.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "optimization.nextUnit",
+    "file": "JointStrategy.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "optimization.makeLayerPermutation",
+    "file": "JointStrategy.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "optimization.generateStageDJointCandidates",
+    "file": "JointStrategy.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.reflectPosition",
+    "file": "TemplateArray.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.rotationFromRpy",
+    "file": "TemplateArray.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.reflectionMatrix",
+    "file": "TemplateArray.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.matMul",
+    "file": "TemplateArray.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.reflectRpy",
+    "file": "TemplateArray.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.targetEditRotation",
+    "file": "RequirementsPanelWidget.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.targetEditRpy",
+    "file": "RequirementsPanelWidget.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.finiteTargetEditPose",
+    "file": "RequirementsPanelWidget.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "requirements.rotationToRpyPresentation",
+    "file": "RequirementsCommandFlows.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "runtime.symmetrizedSpdWitness",
+    "file": "CanonicalModel.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "runtime.relativeAsymmetry",
+    "file": "CanonicalModel.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "runtime.axisAlignmentRotation",
+    "file": "WorkCellCompiler.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "runtime.spanPlacement",
+    "file": "WorkCellCompiler.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "selection.symmetricEigenvalues3x3",
+    "file": "Backfill.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "trajectory.rotationAngleBetween",
+    "file": "Continuity.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "trajectory.canDropPoint",
+    "file": "Smooth.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "trajectory.buildTangents",
+    "file": "Smooth.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "sourceMentioned": true
+  },
+  {
+    "id": "trajectory.measureDeviation",
+    "file": "Smooth.cpp",
+    "cmake": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "sourceMentioned": true
+  }
+]

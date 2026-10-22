@@ -172,8 +172,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "DYN-FD",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "proposal",
+      "status": "proposal",
       "search": {
         "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
         "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
@@ -185,7 +185,11 @@
           "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
         }
       ],
-      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
+      "proposal": {
+        "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
+        "sha256": "52c72508378226b1317b820b9c5bafa7bb1268243f363549d7898be9b041d41d"
+      }
     },
     {
       "functionId": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
@@ -209,8 +213,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "DYN-FD",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "proposal",
+      "status": "proposal",
       "search": {
         "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
         "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
@@ -222,14 +226,18 @@
           "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
         }
       ],
-      "auditBoundary": "source保留真实外层函数符号/摘要；本行只审内部612-692积分功能，不构成整个函数已审计或文件闭合",
+      "auditBoundary": "source保留真实外层函数符号/摘要；本行只审内部612-692积分功能，不构成整个函数已审计或文件闭合；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
       "auditedSections": [
         {
           "startLine": 612,
           "endLine": 692,
           "sha256": "b0d7ecb9176367ef348e484bb6d01c67b810f685054a33632505b679e6eeb9f5"
         }
-      ]
+      ],
+      "proposal": {
+        "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
+        "sha256": "52c72508378226b1317b820b9c5bafa7bb1268243f363549d7898be9b041d41d"
+      }
     }
   ]
 }
