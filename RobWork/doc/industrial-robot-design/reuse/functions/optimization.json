@@ -38,6 +38,154 @@
         }
       ],
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "optimization.nextU64",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+          "symbol": "nextU64",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextU64",
+          "startLine": 161,
+          "endLine": 168,
+          "sha256": "90783e32d23e1c882f6725fd38b060d63be7d4e2f422d080cfab2e488e668878"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "optimization.nextUnit",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+          "symbol": "nextUnit",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextUnit",
+          "startLine": 172,
+          "endLine": 175,
+          "sha256": "c5cf87634d97bf263a98549f71668e79468361fdb694e3214b54bdc2d7b34541"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "optimization.makeLayerPermutation",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+          "symbol": "makeLayerPermutation",
+          "qualifiedSymbol": "sdurws::ird::optimization::(anonymous namespace)::makeLayerPermutation",
+          "startLine": 183,
+          "endLine": 196,
+          "sha256": "87b91341a3887978074c2400b582ada1e530d3897a000ea469e9058fb093c2e5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "自持Fisher-Yates取模洗牌，随机消耗n-1及偏差和任务种子是既有契约；候选上游Random及已有标准算法，不能改序列而沿用旧身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "optimization.generateStageDJointCandidates",
+      "ownerUnit": "optimization",
+      "requirements": [
+        "OPT-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp",
+          "symbol": "generateStageDJointCandidates",
+          "qualifiedSymbol": "sdurws::ird::optimization::generateStageDJointCandidates",
+          "startLine": 704,
+          "endLine": 909,
+          "sha256": "475ae2d98bd82c056f9f2a66730edf3f50e6a1cd2795424b307444acda74db8d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_optimization"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "阶段D组合规范化/轮转是业务编排；内部连续维LHS随机小核需对照StageB及上游采样工具，不整函数business-specific",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+          "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
     }
   ]
 }

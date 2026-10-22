@@ -468,6 +468,30 @@
           "operations": [
             "value"
           ]
+        },
+        {
+          "consumerUnit": "requirements",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "trajectory",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
         }
       ],
       "limits": {
@@ -819,6 +843,22 @@
       "usages": [
         {
           "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "selection",
           "usageRole": "adapter",
           "permissionRef": "ARCH:3.6",
           "operations": [
@@ -1501,6 +1541,74 @@
       "resourceSearch": {
         "command": "rg -n \"setWorkCell|getWorkCell|getWorldNode|worldTframe\" RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp RobWork/RobWork/src/rw/kinematics/Kinematics.hpp",
         "conclusion": "本批只核公共API/源码/构建，测试与示例资源待进一步复核；空数组非不存在"
+      }
+    },
+    {
+      "id": "PATH-SIMPLIFY",
+      "search": {
+        "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已定位公共pruning/shortcut、实现、gtest和真实CMake；只证明候选存在"
+      },
+      "boundary": "路径剔除候选；PlannerConstraint边可连并非产品双域偏差/必经点规则，需适配或排除",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rwlibs/pathoptimization/pathlength/PathLengthOptimizer.hpp",
+          "sha256": "836027af380f41a9da383b53888f4b314adfd330319a6c8bb77f2c0bab067e2e",
+          "symbols": [
+            "pathPruning",
+            "shortCut",
+            "partialShortCut"
+          ],
+          "target": "sdurw_pathoptimization",
+          "targetFile": "RobWork/RobWork/src/rwlibs/pathoptimization/CMakeLists.txt",
+          "targetSha256": "a3daca4d2baf7e7ecf0cbb3a8974be06b5ba63a9c09c90b3bd1270adfe3444ae"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_pathoptimization"
+        ],
+        "constraints": "按原CONFIG目标；尚未编译本候选实验，禁止手拼lib"
+      },
+      "usages": [
+        {
+          "consumerUnit": "trajectory",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "不放宽TRJ-04后复检，不跳过必经点，不用随机shortcut代替确定性规则",
+        "lifetime": "候选仅路径值/受控计算端口，不授予业务模型构造",
+        "determinism": "pathPruning确定性候选；随机shortcut需私有流和预算，不能直接声称等价"
+      },
+      "ownerUnit": "trajectory",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/pathoptimization/PathLengthOptimizerTest.cpp",
+          "sha256": "173b593b591b925fdcd7c38affafe800c920e1bcfa227656d174ddaab80f5927",
+          "symbols": [
+            "PathLengthOptimizer"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+        "conclusion": "已读列明测试/目标；未执行上游完整测试或生产迁移"
       }
     }
   ]

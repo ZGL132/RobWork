@@ -597,7 +597,22 @@
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-api-r3-20261022/task.exit.txt",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-api-r3-20261022/task.log",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-api-r3-20261022/tests.exit.txt",
-    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-api-r3-20261022/tests.log"
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-api-r3-20261022/tests.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch4-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/acceptance.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/acceptance.md",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/checkout.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/clone.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/diff.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/diff.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/docs.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/fail-preservation.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/reuse.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/rework-checks.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/task.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch3-r2-20261022/task.log"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

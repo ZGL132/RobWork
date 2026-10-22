@@ -260,6 +260,154 @@
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "runtime.symmetrizedSpdWitness",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+          "symbol": "symmetrizedSpdWitness",
+          "qualifiedSymbol": "sdurws::ird::runtime::inertia_validation_detail::symmetrizedSpdWitness",
+          "startLine": 85,
+          "endLine": 134,
+          "sha256": "733f60b25f74df312d87bb992672b97895f691609c85fa4e118c85f58899a84b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-EIGEN",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "自持按轴二进制平衡、补偿LDLT；DescriptionValidator与builder共用。候选上游对称谱及已依赖Eigen分解；严格>0、次正规/混合尺度/近半正定必须独立核，不能全局缩放吞小轴或加epsilon",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "runtime.relativeAsymmetry",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+          "symbol": "relativeAsymmetry",
+          "qualifiedSymbol": "sdurws::ird::runtime::inertia_validation_detail::relativeAsymmetry",
+          "startLine": 50,
+          "endLine": 73,
+          "sha256": "2be0bb91502acf70ab1f0359c6e970b2ecb0a8a541f302b69e014b270ccae062"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-EIGEN",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "按最大分量归一计算对称Frobenius相对偏差；规范比较与数值范数分开审，不把通用范数/矩阵重复计算当owner豁免",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "runtime.axisAlignmentRotation",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-12"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+          "symbol": "axisAlignmentRotation",
+          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::axisAlignmentRotation",
+          "startLine": 469,
+          "endLine": 493,
+          "sha256": "81868f447439a744491f97702e5224d4cac6f9b8d74ebf3127341133e2950310"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "自持Rodrigues，候选EAA(from,to)；反Z默认Y轴与产品固定X半周滚转差pi，保留极轴分支与偏置轴约定，不复制一般公式",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "runtime.spanPlacement",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-12"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+          "symbol": "spanPlacement",
+          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::spanPlacement",
+          "startLine": 512,
+          "endLine": 521,
+          "sha256": "e7b2b4f606de91ece530eb716908c7f3e795e337ec2f08704a9494109136cfac"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "连杆中点/对齐组装是owner编译职责；基础旋转同axisAlignmentRotation复用，m与Cylinder本地Z约定不变",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
     }
   ]
 }

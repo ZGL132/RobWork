@@ -36,3 +36,5 @@ $env:PATH='D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release;D:/1
 后续公共API探测留在 `probe-r3/`，passed=14、failed/skipped/notRun均0。新增4项：ParallelIK在不可达半径目标耗尽预算仍返回候选（独立圆半径残差1 m，限制证据）；标准DH与四因子定义一致、Craig约定不同；EAA反向对齐默认轴与产品固定X半周相差滚转π；七次多项式非零端导数及0.5/2 s时间缩放（物理时间系数替换后求导，对照解析端点）。日志中的ParallelIK超预算错误是该限制用例的预期输出，不是正常求解能力通过。当前仅调用公开API和既有testkit报告入口，未修改生产算法或新建数值核。
 
 14项API探测增量已独立重建实跑通过（冻结 `4e142e485343e8bade52a8481eefbb447b017989`），原始报告在 `traceability/acceptance/REUSE-T01-api-r3-20261022/`。第三批首轮验收FAIL：日志功能误挂ERR-01、worker权限错指§3.6.3；本次改为NFR-REL-05/DIAG-T07和§3.6.4，仍待返工独立复核。原始FAIL报告在 `REUSE-T01-batch3-r1-20261022/`，不覆盖历史。只读覆盖验收 `REUSE-T01-coverage-20261022/` 另指出惯量SPD、特征值、镜像姿态、正向动力学内部RK4及路径平滑等遗漏；其结论为全功能审计NOT PASS，不是迁移批准。
+
+第三批两项返工已在 `f6ee77c91c36f40a4cd573a24335405afc06f68b` 独立复核PASS，原件在 `REUSE-T01-batch3-r2-20261022/`；只覆盖引用修正。覆盖审查驱动的第四批新增26条关系，累计121条仍全pending，closedFiles=0；实际检索见 `batch4-search.json`。细分登记runtime惯量SPD/相对对称性、selection闭式求谱、镜像矩阵与各插件RPY、StageD随机流、轴对齐、连续性角差、平滑剔点/切线/偏差以及FD右端/RK4。RK4保留真实外层入口摘要并另列审读段，不把入口登记视为整函数结项。新增 `sdurw_pathoptimization` 真实目标与其pathPruning/gtest候选，不把边可连判定冒充产品双域偏差约束。

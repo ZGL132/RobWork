@@ -519,6 +519,155 @@
         }
       ],
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "trajectory.rotationAngleBetween",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Continuity.cpp",
+          "symbol": "rotationAngleBetween",
+          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::rotationAngleBetween",
+          "startLine": 51,
+          "endLine": 67,
+          "sha256": "af0306607f5568ea8b04b9e4e7c1b526c485626dc2f5331c0ae96f06928cbea8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "已用上游Quaternion但又自持正规化/最短角，候选EAA::angle；须核0、微小角、pi及相对旋转方向，不以使用一个类型当完整正向证据",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "trajectory.canDropPoint",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+          "symbol": "canDropPoint",
+          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::canDropPoint",
+          "startLine": 378,
+          "endLine": 409,
+          "sha256": "a9fccc4634753fc726408822479ca117a6aeae86f15b38f6f4c80bf4cd78a8d8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "PATH-SIMPLIFY",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "单点贪心剔除候选PathLengthOptimizer::pathPruning；保留必经点、关节/TCP双偏差、取消及失败语义；边碰撞约束不等同原点几何偏差",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "trajectory.buildTangents",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+          "symbol": "buildTangents",
+          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::buildTangents",
+          "startLine": 427,
+          "endLine": 447,
+          "sha256": "017600a3bc9a5c0a47d6200db1f2443137f67f69ffa700b6eb44bd068ba5993a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TRAJ-HIGH",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "中心差分加lambda收缩，候选SplineFactory/Polynomial；端导与几何保持是产品契约，不可用三次偷换五次",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "trajectory.measureDeviation",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+          "symbol": "measureDeviation",
+          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::measureDeviation",
+          "startLine": 466,
+          "endLine": 503,
+          "sha256": "b9071e84ad9a5a17446c2788f28176a296ffbcce7dce94dd59bb18ff8f4e6bd1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TRAJ-HIGH",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "固定每段64探针、关节逐轴/TCP双偏差，候选上游几何插值；FK只走端口，lambda重试与覆盖事实保留，不另建模型",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
     }
   ]
 }

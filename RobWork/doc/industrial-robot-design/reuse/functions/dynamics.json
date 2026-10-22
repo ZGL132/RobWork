@@ -149,6 +149,87 @@
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "dynamics.evalAcceleration",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+          "symbol": "evalAcceleration",
+          "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate::<lambda:evalAcceleration>",
+          "startLine": 509,
+          "endLine": 567,
+          "sha256": "1cf75638d8d84dbc64390349351dd15d1969d36c867772f2fc78dc37280bddda"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "DYN-FD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "自持偏置h/质量M逐列提取及求解右端；优先现成PhysicsEngine的真实力控制后端，不把RNE多次调用当完整FD复用；事件采样保持/取消/非有限语义待核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+          "symbol": "ForwardDynamicsValidator::validate",
+          "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate",
+          "startLine": 251,
+          "endLine": 874,
+          "sha256": "ebe207025ab78d83152f3d2460c5dd9516fd7a175176644b27798880af9f3960"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "DYN-FD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "仅登记函数内部612-692四stage RK4功能；外层入口摘要不是整个入口已审。rwsim RK4Integrator面向RigidBody+State，非关节ODE通用接口；继续验证ODE力控制候选，不自行新写积分器",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        }
+      ],
+      "auditBoundary": "source保留真实外层函数符号/摘要；本行只审内部612-692积分功能，不构成整个函数已审计或文件闭合",
+      "auditedSections": [
+        {
+          "startLine": 612,
+          "endLine": 692,
+          "sha256": "b0d7ecb9176367ef348e484bb6d01c67b810f685054a33632505b679e6eeb9f5"
+        }
+      ]
     }
   ]
 }

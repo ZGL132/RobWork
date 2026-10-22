@@ -38,6 +38,44 @@
         }
       ],
       "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "selection.symmetricEigenvalues3x3",
+      "ownerUnit": "selection",
+      "requirements": [
+        "MDL-06",
+        "SEL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "symmetricEigenvalues3x3",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::symmetricEigenvalues3x3",
+          "startLine": 80,
+          "endLine": 106,
+          "sha256": "b83c0ec700693d9976aecb18e0b035aae16c9d95a352e77b8accc1b581283bc1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-EIGEN",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "自持acos三角闭式求谱用于checkSynthesisAssertions；优先上游对称特征分解，保持升序、严格SPD、惯量三角不等式、非有限失败与单位kg*m^2",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
     }
   ]
 }
