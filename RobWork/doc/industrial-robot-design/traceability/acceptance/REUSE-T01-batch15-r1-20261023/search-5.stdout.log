@@ -1,0 +1,5 @@
+258:#### 3.6.2 宿主例外封闭清单
+260:以下路径均相对 `industrialrobot/`，每项包含同名 `.hpp/.cpp`；登记的是精确路径与操作，不豁免文件内一切代码。生产目标为 ui 的宿主插件装配（`sdurws_ird_ui_plugin`，见 ui/CMakeLists.txt）；同源测试编译须单列测试目标权限，不能借测试白名单放开生产。
+264:| HOST-RENDER | ui/plugin/HostView3DPreviewBackend | WorkCellScene/Frame/Drawable/Render 与宿主视图绘制 | 使用已有呈现输入，不建计算模型、不产工程结论 |
+267:| HOST-GATEWAY | ui/plugin/HostView3DGateway | 通过受控 TCP Frame/当前 State 读取呈现位姿，拾取与发布网关 | 会话借用按来源保活，不把宿主视图回灌为工程计算真值 |
+269:本表经对应源文件及 ui/CMakeLists.txt 定位登记，**不宣称全部现有宿主接线已经通过权限审计**。其他文件（含壳层装配）如实际需要受限操作，须先登记精确文件/目标/操作、来源与生命周期、原因及退出条件，经架构确认；未列出不自动继承，也不得因此新增通用模型所有者。后续 IRD-GATE-AD 的机读权限记录引用本表 ID，并复核每个操作。

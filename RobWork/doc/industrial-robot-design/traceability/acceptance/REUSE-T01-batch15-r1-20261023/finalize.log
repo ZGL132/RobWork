@@ -1,0 +1,1 @@
+FAIL B15-P2-01 only; gates=3 PASS; definitions=24 bindings=192 searches=5; target sets=19 match/5 missing ui_test; clean frozen checkout

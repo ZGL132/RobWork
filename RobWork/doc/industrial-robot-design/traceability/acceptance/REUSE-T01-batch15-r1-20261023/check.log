@@ -1,0 +1,25 @@
+REFINED ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 先复用场景WC，缺位才建空WORLD锚，scene setWorkCell后重绑worldNode；仅场景呈现，不是runtime模型构造，权限尚待精确核查
+REFINED ui.HostView3DGateway.currentTcpPose ['sdurws_ird_ui_plugin', 'sdurws_ird_studio', 'sdurws_ird_ui_gui_test'] worldTframe真实消费Frame/State，只供呈现世界系；装配resolveTcpFrame用JointDevice::getEnd未证明选中工具TCP，不能称runtime TCP已适配
+REFINED ui.SampleGridRender.draw ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 格线可候选RenderLines；逐点颜色/高亮圈与GL_POINTS不能整体按线渲染替代
+NEW ui.HostView3DPreviewBackend.HostView3DPreviewBackend ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] studio非拥有，UI线程；场景每次现取，非模型owner
+NEW ui.HostView3DPreviewBackend.draw ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 真实调用scene addRender/addFrameAxis，消费当前宿主WC或空场景锚WORLD；clear后逐节点添加，异常中途原子性未证
+NEW ui.HostView3DPreviewBackend.clear ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 按当前场景逐名removeDrawable后清名单，返回值被忽略；上游未找到名返回true，原注释false不准确，未改产品
+NEW ui.PreviewColorScope.constructor ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] GL属性保存/禁lighting和texture再恢复，仅回调栈上不拥有context
+NEW ui.PreviewColorScope.destructor ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] glPopAttrib恢复外层状态，不能覆盖QtText独立挂帧绘制未保存的状态
+NEW ui.anonymous.applyCellColor ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 只把业务状态映射palette，不计算工程真值
+NEW ui.anonymous.tintColor ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 缺省/None及三类tint返回palette，非第二政策判定
+NEW ui.StationMarkerRender.draw ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 手写三轴+标签，候选RenderFrame/Drawable transform可表达偏移；不得因addFrameAxis帧原点限制直接排除组合能力
+NEW ui.RegionOutlineRender.draw ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 二进制角序12边与tint，候选RenderLines已有；alpha/float降精/GL状态须验
+NEW ui.HostView3DGateway.HostView3DGateway ['sdurws_ird_ui_plugin', 'sdurws_ird_studio', 'sdurws_ird_ui_gui_test'] pick/selection/nameMap必供，TCP/scene可降级，不创建计算模型
+NEW ui.HostView3DGateway.handleViewDoubleClick ['sdurws_ird_ui_plugin', 'sdurws_ird_studio', 'sdurws_ird_ui_gui_test'] 拾取帧名经同一nameMap反解后分发与selectBusiness；不拼剥前缀，不把域分发返回当全部成功依据
+NEW ui.HostView3DGateway.applyPresentation ['sdurws_ird_ui_plugin', 'sdurws_ird_studio', 'sdurws_ird_ui_gui_test'] 完整性/hostPayload契约别名，先apply新对象再remove旧；type correctness由装配保证非运行时动态验证
+NEW ui.HostView3DGateway.releasePresentation ['sdurws_ird_ui_plugin', 'sdurws_ird_studio', 'sdurws_ird_ui_gui_test'] remove再reset，底层HostWorkCellPresentationObject remove空动作不能泛称场景已清空
+NEW ui.HostView3DGateway.onSceneCleared ['sdurws_ird_ui_plugin', 'sdurws_ird_studio', 'sdurws_ird_ui_gui_test'] release呈现/remove预览，真实事件生命周期仍须消费链验证
+NEW ui.HostView3DGateway.applyPreview ['sdurws_ird_ui_plugin', 'sdurws_ird_studio', 'sdurws_ird_ui_gui_test'] 后端draw true才更新会话值；测试假draw失败不证明真实backend中途异常回滚
+NEW ui.HostView3DGateway.removePreview ['sdurws_ird_ui_plugin', 'sdurws_ird_studio', 'sdurws_ird_ui_gui_test'] 清后端与本地预览值，不写修订/结果
+NEW ui.QtTextBillboard.QtTextBillboard ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 只持冻结UTF8字符串，现有QImage/QPainter供CJK不是新文字算法
+NEW ui.QtTextBillboard.rasterizeAndUpload ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] Qt字体栅格化/纹理上传，成熟工具已复用；UNPACK_ALIGNMENT/context/分配失败与缓存预算待核
+NEW ui.QtTextBillboard.drawBillboard ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] 真实用inverse/Rotation构造相机朝向，RenderText候选CJK受限；静态map按context指针重置，不删纹理/无界文本缓存未证安全；GL进入状态恢复待核
+NEW ui.QtTextBillboardRender.QtTextBillboardRender ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] Frame Ptr为非owning借持，需场景WC保活，不可因此扩展四个HOST例外
+NEW ui.QtTextBillboardRender.draw ['sdurws_ird_ui_plugin', 'sdurws_ird_studio'] m_frame::wTf当前RenderInfo State，向drawBillboard消费；受限Frame的精确文件/target权限需核，未授grant
+TOTALS 24 NEW 21 REFINED 3 BINDINGS 192 FAILED 0 CATALOG [('HOST-SCENE', {'status': 'candidate', 'version': 'b12e8503cc1c2a1acc040f506842a02e126b9515'}), ('HOST-FRAME', {'status': 'candidate', 'version': 'b12e8503cc1c2a1acc040f506842a02e126b9515'}), ('HOST-TEXT', {'status': 'candidate', 'version': 'b12e8503cc1c2a1acc040f506842a02e126b9515'})]

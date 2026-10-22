@@ -22,6 +22,6 @@ QtTextBillboard静态map按context指针变化清缓存，纹理不主动删除�
 
 ## 文件、目标与权限不能混同
 
-ARCH §3.6.2现表列生产target为sdurws_ird_ui_plugin；真实ui/CMakeLists.txt还把这三个TU编入sdurws_ird_studio，Gateway另编入sdurws_ird_ui_gui_test（if TARGET sdurws）。矩阵据实际列target，不凭同源传播grant。正式studio与GUI测试须精确文件/target/操作核权，必要时同步权威登记；本批不擅自扩表或填grant。QtTextBillboard不在四项HOST文件族却借Frame调用wTf，更须核精确权限与最小承载，不自动继承HOST-RENDER/HOST-PRESENT。UiPlugin装配直接持场景/帧也不因其转发四个例外而豁免。两类业务文件的三形态、worker零宿主指针/Widgets与L2零Qt边界均保持。
+ARCH §3.6.2现表列生产target为sdurws_ird_ui_plugin；真实ui/CMakeLists.txt还把这三个TU编入sdurws_ird_studio，Gateway另编入sdurws_ird_ui_gui_test，QtTextBillboard还编入sdurws_ird_ui_test（后二者均受if TARGET sdurws门控）。矩阵据实际列target，不凭同源传播grant。正式studio与GUI测试须精确文件/target/操作核权，必要时同步权威登记；本批不擅自扩表或填grant。QtTextBillboard不在四项HOST文件族却借Frame调用wTf，更须核精确权限与最小承载，不自动继承HOST-RENDER/HOST-PRESENT。UiPlugin装配直接持场景/帧也不因其转发四个例外而豁免。两类业务文件的三形态、worker零宿主指针/Widgets与L2零Qt边界均保持。
 
 上游WorkCellSceneTest测试场景设置/移除，但不能证明产品真实装配、GL状态/中文/切场景；本批未跑它。catalog只扩真实公共API、实现、原target与上游测试资源，review仍candidate。后续T05优先复用现有宿主测试与Windows VS x64/windows平台、逐绝对exe运行，补真实生产入口消费、异常与断开变红。当前C++/GUI/GL/性能NOT RUN，不授全UI或T01 PASS，不推进T02。

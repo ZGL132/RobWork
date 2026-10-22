@@ -91,3 +91,5 @@ B13独立语义验收PASS（冻结63e86ba5，限54关系）见`../../acceptance/
 第十五批补宿主预览/网关/文本21条关系并细化3条既有关系，见`host-preview-audit.md`；实际studio同源目标、QtText受限操作与四项HOST例外需精确核权，pending不扩大权限。未跑GUI/GL，不关闭T01。
 
 B14首轮独立FAIL（B14-P2-01）见`../../acceptance/REUSE-T01-batch14-r1-20261023/`：requirePathField错误地写成ASCII路径；现按实际非空/4096字节/C0及DEL限制澄清解码后允许UTF-8中文与空格，磁盘JSON ASCII要求独立。仅修登记，待冻结返工复验。
+
+B15首轮独立FAIL（B15-P2-01）见`../../acceptance/REUSE-T01-batch15-r1-20261023/`：五条QtText关系漏列集成条件下的ui_test消费者，现补齐实际target与说明，权限仍待核、无grant变化，待冻结复验。远程已恢复并同步到a78b41ff2，历史网络失败保留。
