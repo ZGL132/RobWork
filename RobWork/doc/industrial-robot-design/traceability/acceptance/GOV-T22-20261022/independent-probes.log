@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "ird-independent-probes/1",
+  "reviewedCommit": "0d018a0ba9d1695eef16442f76e9d325276328e7",
+  "runtime": "7.6.5",
+  "validatorSha256": "8CA5832133CBD72FE916A247313497984366CFFE27611B4CCBDB7BE55F2A5313",
+  "helperSha256": "590CE5172C79ECE7DEA16E89F7C949E9DDA5848E6B4830F46D9398FB0AD42620",
+  "passed": 2,
+  "failed": 3,
+  "skipped": 0,
+  "notRun": 0,
+  "tests": [
+    {
+      "name": "actual-qt",
+      "expected": "allow",
+      "actual": "reject",
+      "passed": false,
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp",
+      "lines": "188-189",
+      "source": "        auto* item = new QListWidgetItem(rowText(row, keyText), m_list);\n        item->setData(Qt::UserRole, QString::fromStdString(row.id));",
+      "diagnostic": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "same-qt-without-setData",
+      "expected": "allow",
+      "actual": "allow",
+      "passed": true,
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp",
+      "lines": "188-189",
+      "source": "        auto* item = new QListWidgetItem(rowText(row, keyText), m_list);",
+      "diagnostic": ""
+    },
+    {
+      "name": "actual-qt-query-grant",
+      "expected": "allow",
+      "actual": "reject",
+      "passed": false,
+      "diagnostic": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp : operation write-state (IRD-GATE-AD)"
+    },
+    {
+      "name": "shared-state-rejection-control",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true,
+      "diagnostic": "REUSE-AD : probe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "bom-working-vs-frozen",
+      "expected": "same normalized digest",
+      "actual": false,
+      "passed": false,
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "workingFirstCodePoint": 35,
+      "frozenFirstCodePoint": 65279,
+      "workingHash": "c83fdd7fa5c58bff9b58da39782d520f1b238e1cd729b7025f3d7b4a417a9060",
+      "frozenHash": "db8fde7687ef54c21c8a6b581b95915fd4d962c452b75fc1ee4490c3bb697e59",
+      "note": "同一个未修改且已追踪的BOM UTF-8文件；产品.ps1同样经过这些函数。"
+    }
+  ]
+}
