@@ -3236,7 +3236,10 @@
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CoreIdentitySuitabilityTest.cpp",
     "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
     "RobWork/doc/industrial-robot-design/reuse/governance-b1-encoding-audit.md",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/**"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/**",
+    "RobWork/doc/industrial-robot-design/reuse/core-digest-audit.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-DIGEST-01.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

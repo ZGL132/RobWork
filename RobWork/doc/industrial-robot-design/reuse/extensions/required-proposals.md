@@ -20,3 +20,5 @@ GAP-IK/RNE/FD/TRJ 当前均为待检索/验证，不表示已证实上游无能�
 本次公共 API 探测与复现命令见 [REUSE-T01 实验说明](../../traceability/reuse/REUSE-T01/README.md)。通过项包括对限制的预期断言，仅是审计证据，不是生产复用正向证据或扩展批准；逐功能决策仍以 `functions/` 为准。
 
 `probe-r3`进一步确认：ParallelIK预算耗尽也可能返回in-bounds候选，所有候选必须独立验证任务残差；不能把非空vector作为收敛。标准DH可直接调用但Craig约定不同；EAA反向对齐默认轴需适配产品滚转约定；Polynomial支持非零端导数与时间尺度，不需要另写五/七次数值求值核心。这些事实收窄后续扩展范围，不批准扩展或关闭生产路径。
+
+B30形成待批准 [GAP-DIGEST-01](GAP-DIGEST-01.md)：先核同渠道成熟摘要依赖，CNG仅作Windows独立参照。原SHA测试通过不消除复用债务；F-965两公开摘要类型hash反例真实失败，均不授权T01修算法。

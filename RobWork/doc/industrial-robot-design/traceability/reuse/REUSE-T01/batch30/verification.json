@@ -1,0 +1,32 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B30",
+  "tests": {
+    "total": 13,
+    "passed": 11,
+    "failed": 2,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "productionChanges": false,
+  "upstreamChanges": false,
+  "dependencyInstall": false,
+  "remote": "not executed per owner",
+  "firstConfigure": "FAIL:子目录GTest imported目标在父目录不可见；根目录按既有find_package(GTest CONFIG REQUIRED)修正，无产品更改",
+  "independentAcceptance": "pending",
+  "notRun": [
+    "Boost.Hash2/OpenSSL API适用性/跨平台验证",
+    "产品替换",
+    "性能基准",
+    "完整消费者持久化/容器兼容性",
+    "全T01验收"
+  ],
+  "independentHashlibCrossCheck": {
+    "passed": 14,
+    "failed": 0,
+    "source": "XML原始CNG属性与Python hashlib独立冻结向量"
+  }
+}
