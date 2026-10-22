@@ -1,0 +1,14 @@
+pwsh healthy exit=0 expected=0 passed=True
+pwsh fractional-count exit=0 expected=1 passed=False
+pwsh string-count exit=0 expected=1 passed=False
+pwsh fake-guid exit=0 expected=1 passed=False
+pwsh offset-valid exit=0 expected=0 passed=True
+pwsh offset-expired exit=1 expected=1 passed=True
+pwsh bad-calendar exit=1 expected=1 passed=True
+powershell healthy exit=0 expected=0 passed=True
+powershell fractional-count exit=0 expected=1 passed=False
+powershell string-count exit=0 expected=1 passed=False
+powershell fake-guid exit=0 expected=1 passed=False
+powershell offset-valid exit=1 expected=0 passed=False
+powershell offset-expired exit=0 expected=1 passed=False
+powershell bad-calendar exit=1 expected=1 passed=True

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\accept.py", line 126, in <module>
+    if sys.argv[1]=='audit':audit()
+                            ^^^^^^^
+  File "C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\accept.py", line 55, in audit
+    assert candidate['status']==oldcandidate['status']
+           ~~~~~~~~~^^^^^^^^^^
+KeyError: 'status'

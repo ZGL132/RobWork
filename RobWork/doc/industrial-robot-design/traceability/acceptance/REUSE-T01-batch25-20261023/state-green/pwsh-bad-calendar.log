@@ -1,0 +1,24 @@
+MethodInvocationException: C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\repo\RobWork\scripts\industrialrobot\validate-state.ps1:51
+Line |
+  51 |    $right = [DateTimeOffset]::Parse($b, [Globalization.CultureInfo]::I …
+     |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Exception calling "Parse" with "2" argument(s): "The DateTime represented by the string
+     | '2020-99-99T10:00:00+00:00' is not supported in calendar 'System.Globalization.GregorianCalendar'."
+MethodException: C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\repo\RobWork\scripts\industrialrobot\validate-state.ps1:52
+Line |
+  52 |    return $left.CompareTo($right)
+     |           ~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find an overload for "CompareTo" and the argument count: "1".
+MethodInvocationException: C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\repo\RobWork\scripts\industrialrobot\validate-state.ps1:51
+Line |
+  51 |    $right = [DateTimeOffset]::Parse($b, [Globalization.CultureInfo]::I …
+     |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Exception calling "Parse" with "2" argument(s): "The DateTime represented by the string
+     | '2020-99-99T10:00:00+00:00' is not supported in calendar 'System.Globalization.GregorianCalendar'."
+MethodException: C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\repo\RobWork\scripts\industrialrobot\validate-state.ps1:52
+Line |
+  52 |    return $left.CompareTo($right)
+     |           ~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find an overload for "CompareTo" and the argument count: "1".
+Write-Error: run.leaseExpiresAt must be >= run.startedAt
+Write-Error: heartbeat.updatedAt ('2020-01-01T08:30:00+08:00') < run.startedAt ('2020-99-99T10:00:00+00:00')——状态被旧写入回退

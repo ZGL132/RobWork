@@ -3730,7 +3730,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -3766,6 +3766,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -3805,7 +3809,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -3841,6 +3845,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -3880,7 +3888,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -3916,6 +3924,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -3955,7 +3967,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -3991,6 +4003,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4030,7 +4046,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4066,6 +4082,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4105,7 +4125,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4141,6 +4161,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4180,7 +4204,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4216,6 +4240,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4255,7 +4283,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4291,6 +4319,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4330,7 +4362,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4366,6 +4398,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4405,7 +4441,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4441,6 +4477,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4480,7 +4520,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4516,6 +4556,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4555,7 +4599,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4591,6 +4635,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4630,7 +4678,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4666,6 +4714,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4682,8 +4734,8 @@
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "$tempRoot",
           "startLine": 100,
-          "endLine": 270,
-          "sha256": "823bf6a476f5b0cc8b1ed6ad34aae893ba3ab92c0c4eca594356b43f8927481d",
+          "endLine": 329,
+          "sha256": "a0e7985d95a8169905d5e0a629ba4789cacd77a1c80e5edc5725f0b30c472d5f",
           "qualifiedSymbol": "PowerShell::regressions"
         }
       ],
@@ -4705,7 +4757,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
@@ -4741,6 +4793,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
           "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4784,7 +4840,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -4859,7 +4915,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -4934,7 +4990,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5009,7 +5065,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5084,7 +5140,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5159,7 +5215,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5234,7 +5290,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5309,7 +5365,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5384,7 +5440,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5459,7 +5515,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5534,7 +5590,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5609,7 +5665,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5684,7 +5740,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5759,7 +5815,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5834,7 +5890,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5909,7 +5965,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -5984,7 +6040,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -6059,7 +6115,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -6134,7 +6190,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -6169,6 +6225,796 @@
         }
       ],
       "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "$ErrorActionPreference",
+          "qualifiedSymbol": "PowerShell::root-and-arguments",
+          "startLine": 40,
+          "endLine": 56,
+          "sha256": "7a8e71e0a76dcf36b979d3cb92858241049e4f386562a72294db185fe42dc5db"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "Get-StageLines",
+          "qualifiedSymbol": "PowerShell::git-stage-read",
+          "startLine": 58,
+          "endLine": 68,
+          "sha256": "5812bfd783c1f5b3cff5fc0538fc4f589f1e338b53606f6d1a34e790a7539ccb"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "Get-EntryMap",
+          "qualifiedSymbol": "PowerShell::entry-block-scan",
+          "startLine": 71,
+          "endLine": 98,
+          "sha256": "a4e0b1f45c2bd0061ca043d59358bdde6734adcdc08f38a310cdd78d5d031cc3"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "Get-NormBlock",
+          "qualifiedSymbol": "PowerShell::block-normalization-and-sort",
+          "startLine": 99,
+          "endLine": 115,
+          "sha256": "b317d5972706f7b6b5ce825c3995c44a32b2286ced4c582faa80a01666b06913"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "$oursJson.schemaVersion",
+          "qualifiedSymbol": "PowerShell::top-level-schema-guard",
+          "startLine": 117,
+          "endLine": 130,
+          "sha256": "64b2cebd6d7cb05d1ae74192eaf75aefc8a2fa033d6b9c08e3e3b3ced1fe9293"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "$toReplace",
+          "qualifiedSymbol": "PowerShell::deletion-and-existing-change-guards",
+          "startLine": 132,
+          "endLine": 150,
+          "sha256": "00793847a11e29197e1215cd61be2fd590e8a9a8bbd324a72ecc47cdc413b8b2"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "$append",
+          "qualifiedSymbol": "PowerShell::new-entry-union",
+          "startLine": 153,
+          "endLine": 165,
+          "sha256": "04b184b532bae4b52efc0971b2bf26cb0b1e7eade1caf36f97f20503d4106797"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "$mergedSorted",
+          "qualifiedSymbol": "PowerShell::deterministic-reassembly",
+          "startLine": 167,
+          "endLine": 200,
+          "sha256": "0a24aab792d33d1ea1d8808408237dcb73c589ee34df27580214f735e47f99c3"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "$finalIds",
+          "qualifiedSymbol": "PowerShell::result-validation",
+          "startLine": 202,
+          "endLine": 210,
+          "sha256": "33954854127fb426a209293cd227e7d50ed8b78363e44af74676f01b9c849355"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "symbol": "git -C $RepoRoot add",
+          "qualifiedSymbol": "PowerShell::write-and-stage",
+          "startLine": 212,
+          "endLine": 218,
+          "sha256": "26734a570670d7c1bf8e104d8f282a9caa8577628a40b49bbf80ef3b31209fc6"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch26/search.json",
+        "conclusion": "Git三方index、PowerShell/.NET原生能力及现有回归；RobWork C++/Sim无该文本登记簿合并语义，不复制通用框架"
+      },
+      "differences": "详见governance-union-audit.md；仅治理脚本，不触碰模型或业务计算权限",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+          "sha256": "ef6d4cbfdc619a7803bd199d136bea674fe1d88b4e0558e5f8c1dc3ebae12649"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/merge-findings-union.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+          "sha256": "067f4e69b00415b2a02f30fa9fb6e7d029fbe4b6f447eb3c57a2a51c71f2ae06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+          "sha256": "e696d3a86258d516bf37b3a3aad3b828614900b90d835aaa1986500c87011797"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+          "sha256": "4e6e2c5d775722e986336831dfc704125f0398c2e03a4543378ef751aef2bd97"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+          "sha256": "50a734a6bde8ecb80d37363be1a8f488fcd298929c44cd87586be3ad02500e38"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+          "sha256": "879a5c1ca7dbaa02363811d12eb832dbe95cbb51f52a3f607553a421da83572b"
+        }
+      ],
+      "auditBoundary": "合并脚本全入口按10个语义段审读，真实Git边界16例；不表示19个治理脚本或全T01审计完成"
     }
   ]
 }

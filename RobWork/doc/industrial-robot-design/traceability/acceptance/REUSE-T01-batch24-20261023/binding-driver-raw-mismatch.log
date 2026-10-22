@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\accept.py", line 130, in <module>
+    if sys.argv[1]=='audit':audit()
+                            ^^^^^^^
+  File "C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\accept.py", line 74, in audit
+    assert archive==source and actual==want,entry
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'path': 'logs/ird-test-report.json', 'rawSha256': '17de8305ad2001cc98d69a5bee410aba6b9a6ecb31827e806fe5bfdc24672906'}

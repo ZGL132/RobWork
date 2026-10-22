@@ -1,0 +1,8 @@
+Unable to find type [System.IO].
+At C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\repo\RobWork\doc\industrial-robot-design\traceability\reus
+e\REUSE-T01\batch24\lock-before.ps1:163 char:9
++ } catch [System.IO] {
++         ~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.IO:TypeName) [], RuntimeException
+    + FullyQualifiedErrorId : TypeNotFound
+ 

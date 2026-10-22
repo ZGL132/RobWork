@@ -1,0 +1,367 @@
+{
+  "frozen": "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+  "oldEvidenceChecks": [
+    {
+      "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Read-Lock",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Read-Lock",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Read-Lock",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Test-Fencing",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Test-Fencing",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.Test-Fencing",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.root",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.root",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.root",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.actions",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.actions",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.pipeline-lock.actions",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.root",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.root",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.root",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.regressions",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.regressions",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+      "priorAuditEvidenceRetained": true
+    },
+    {
+      "id": "foundation-governance.test-pipeline-pipeline.regressions",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+      "priorAuditEvidenceRetained": true
+    }
+  ],
+  "beforeLineEndingChecks": [
+    {
+      "stored": "state-before.ps1",
+      "rawEqual": false,
+      "equalAfterOnlyCRLFtoLF": true,
+      "storedCRLF": 307,
+      "parentCRLF": 0,
+      "storedChars": 19767,
+      "parentChars": 19460
+    },
+    {
+      "stored": "pipeline-before.ps1",
+      "rawEqual": true,
+      "equalAfterOnlyCRLFtoLF": true,
+      "storedCRLF": 0,
+      "parentCRLF": 0,
+      "storedChars": 11261,
+      "parentChars": 11261
+    }
+  ],
+  "semanticRows": [
+    {
+      "functionId": "foundation-governance.validate-state.Convert-ToIso",
+      "review": "统一PS7 DateTime与PS5.1字符串，保留已有秒精度格式规则",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.Compare-Iso",
+      "review": "DateTimeOffset标准API比较绝对时刻；不再按文本序比较偏移时间",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.Test-NonNegativeInteger",
+      "review": "仅.NET Int32/Int64且非负，拒bool/浮点/数字字符串",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.root",
+      "review": "沿原RepoRoot/StateFile解析并真读JSON，无并行状态源",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.schema",
+      "review": "原schemaVersion与phase枚举",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.heartbeat",
+      "review": "原ISO外形/未来偏差检查；两项计数收紧",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.fencing-presence",
+      "review": "字段存在性+TryParseExact(D)；不证明持锁授权",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.attempts",
+      "review": "三类attempts统一非负整数谓词",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.policy",
+      "review": "原bool/autoMerge词表规则；计数和leaseMinutes同一整数谓词",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.contract-index",
+      "review": "沿原契约目录建立taskMap，非第二契约实现",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.queue",
+      "review": "原validate-task调用及队首claimability；非复用阶段准入",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.phase",
+      "review": "原currentTask/branch/base/tickToken/队首及headSha阶段约束",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.acceptance",
+      "review": "原acceptedHead与证据指针形态；非证据内容有效性审查",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.failure-record",
+      "review": "原返工记录/最近attempt/branch一致性保留",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.run",
+      "review": "原kind/task/存在性校验；租约和心跳按绝对时刻比较",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.history",
+      "review": "原history必需字段/已知任务引用；未主张全内容验证",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.docRefs",
+      "review": "原必需文档键与可选B1清单原入口",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.narrative-limit",
+      "review": "原pausedReason不超过200字，不替代协议变更",
+      "decision": "pending",
+      "status": "pending"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.verdict",
+      "review": "原错误汇总/队首可领取性结果/退出语义",
+      "decision": "pending",
+      "status": "pending"
+    }
+  ],
+  "upstreamBoundary": "TimerUtil.hpp 37-63三处明确不适合calendar time；沿用.NET标准类型/API、原Git/PS/validate-task，无上游扩展或第二运动学/状态机",
+  "changedCodeScope": [
+    "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+  ],
+  "untouchedCode": "产品、框架、vcpkg、真实state/queue/lock无冻结提交差异",
+  "notAuthorized": [
+    "全schema分支",
+    "真实持锁授权",
+    "外部证据有效性",
+    "全T01/T02关闭",
+    "REUSE-T02",
+    "算法迁移",
+    "合入",
+    "远程同步"
+  ]
+}

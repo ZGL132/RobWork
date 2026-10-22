@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-pipeline/1",
+  "phase": "implementing",
+  "tickCount": 461,
+  "currentTask": "TK-T01",
+  "branch": "wp02-t01",
+  "base": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "headSha": null,
+  "acceptedHead": null,
+  "acceptanceRecord": null,
+  "lastFailureRecord": null,
+  "run": {
+    "kind": "implement",
+    "runId": "33c02a27-ca57-4c66-ba97-e5dff8ca740d",
+    "workerId": "484e8332-6203-4f9d-aeea-4a299bc02d5d",
+    "task": "TK-T01",
+    "startedAt": "2020-01-01T08:00:00+08:00",
+    "leaseExpiresAt": "2020-01-01T09:00:00+08:00"
+  },
+  "attempts": {
+    "implement": 0,
+    "fix": 0,
+    "accept": 0
+  },
+  "heartbeat": {
+    "updatedAt": "2020-01-01T08:30:00+08:00",
+    "ticksNoProgress": 0
+  },
+  "history": [],
+  "policy": {
+    "autoMerge": {
+      "enabled": true,
+      "classes": [
+        "doc",
+        "build",
+        "implementation"
+      ]
+    },
+    "strictQueueOrder": true,
+    "autoDiscovery": true,
+    "unitCheckpoint": false,
+    "unitCheckpointExemptFirstUnit": true,
+    "firstUnitCheckpointExempted": true,
+    "noProgressLimit": 3,
+    "maxImplementRestarts": 2,
+    "maxFixCycles": 2147483648,
+    "leaseMinutes": {
+      "implement": 120,
+      "acceptance": 60
+    }
+  },
+  "queue": [],
+  "docRefs": {
+    "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
+    "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
+    "contractCompilation": "doc/industrial-robot-design/contract-compilation.md",
+    "agents": "AGENTS.md",
+    "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
+    "taskContracts": "doc/industrial-robot-design/tasks/"
+  },
+  "tickToken": "684c03ab-a74f-4acd-919b-5c5a6a1864e6"
+}

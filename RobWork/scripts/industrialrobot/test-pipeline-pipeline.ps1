@@ -259,6 +259,66 @@ try {
   $residualFailureRecord = Invoke-StateValidation $statePath
   Assert-ExitCode 1 $residualFailureRecord.ExitCode "非返工阶段残留 lastFailureRecord 必须失败"
 
+  # PIPE §4.7③：使用隔离真实Git的三方index，不模拟合并器内部集合算法。
+  # 正例必须完成暂存；大小写分歧必须保留工作文件与三方stage，不能只核非零退出。
+  foreach ($case in @('union','note-case','schema-case')) {
+    $unionRepo = Join-Path $tempRoot ("union-" + $case)
+    New-Item -ItemType Directory -Force $unionRepo | Out-Null
+    & git -C $unionRepo init --quiet
+    Assert-ExitCode 0 $LASTEXITCODE "并集夹具Git初始化"
+    & git -C $unionRepo config core.autocrlf false
+    Assert-ExitCode 0 $LASTEXITCODE "并集夹具关闭换行转换"
+    # 用户级/模板排除规则不得让临时索引跳过这个被测路径。
+    $excludePath = Join-Path $unionRepo ".git/info/exclude"
+    if (Test-Path -LiteralPath $excludePath) { [IO.File]::WriteAllText($excludePath, "", [Text.UTF8Encoding]::new($false)) }
+    $findingPath = 'RobWork/doc/industrial-robot-design/traceability/findings.json'
+    $workingPath = Join-Path $unionRepo $findingPath
+    New-Item -ItemType Directory -Force (Split-Path -Parent $workingPath) | Out-Null
+    [IO.File]::WriteAllText($workingPath, 'conflict-preserved', [Text.UTF8Encoding]::new($false))
+    $indexInfo = @()
+    foreach ($stage in 1..3) {
+      # 固定两空格JSON契合登记簿原有文本格式；中文用于检验Git UTF-8解码与回写。
+      $entry = "    {`n      `"id`": `"F-001`",`n      `"title`": `"原始条目`"`n    }"
+      if ($stage -gt 1) { $entry += ",`n    {`n      `"id`": `"F-00$stage`",`n      `"title`": `"新增条目`"`n    }" }
+      $schema = 'ird-findings/1'; $note = 'RuleA'
+      if ($case -eq 'note-case' -and $stage -eq 3) { $note = 'Rulea' }
+      if ($case -eq 'schema-case' -and $stage -eq 3) { $schema = 'IRD-FINDINGS/1' }
+      $text = "{`n  `"schemaVersion`": `"$schema`",`n  `"note`": `"$note`",`n  `"findings`": [`n$entry`n  ]`n}`n"
+      $blobPath = Join-Path $tempRoot "union-stage-$stage.json"
+      [IO.File]::WriteAllText($blobPath, $text, [Text.UTF8Encoding]::new($false))
+      $blob = & git -C $unionRepo hash-object -w $blobPath
+      Assert-ExitCode 0 $LASTEXITCODE "并集夹具写Git对象"
+      $indexInfo += "100644 $blob $stage`t$findingPath"
+    }
+    # Windows PowerShell 5.1 的原生命令管道会以宿主编码写stdin，Git无法稳定解析；
+    # 用UTF-8无BOM文件和cmd重定向保持Git index-info为ASCII字节。
+    $indexInfoPath = Join-Path $tempRoot ("union-index-" + $case + ".txt")
+    [IO.File]::WriteAllText($indexInfoPath, ($indexInfo -join "`n") + "`n", [Text.UTF8Encoding]::new($false))
+    & $env:ComSpec /d /c ('"git" -C "' + $unionRepo + '" update-index --index-info < "' + $indexInfoPath + '"')
+    Assert-ExitCode 0 $LASTEXITCODE "并集夹具注入三方stage"
+    $initialUnmerged = @(& git -C $unionRepo ls-files -u)
+    Assert-ExitCode 0 $LASTEXITCODE "核查并集初始三方索引"
+    Assert-Equal 3 $initialUnmerged.Count "并集合并前必须存在三个冲突stage"
+    $unionScript = Join-Path $RepoRoot 'RobWork/scripts/industrialrobot/merge-findings-union.ps1'
+    $unionOutput = @(& $script:statePowerShell -NoProfile -File $unionScript -RepoRoot $unionRepo 2>&1)
+    $unionExit = $LASTEXITCODE
+    $unmerged = @(& git -C $unionRepo ls-files -u)
+    Assert-ExitCode 0 $LASTEXITCODE "核查并集暂存状态"
+    if ($case -eq 'union') {
+      Assert-ExitCode 0 $unionExit "正常并集"
+      Assert-Equal 0 $unmerged.Count "正常并集应完成暂存"
+      $mergedFindings = Get-Content $workingPath -Raw -Encoding UTF8 | ConvertFrom-Json
+      Assert-Equal 'F-001,F-002,F-003' ($mergedFindings.findings.id -join ',') "正常并集条目序列"
+      Assert-Equal '原始条目' $mergedFindings.findings[0].title "中文不得损坏"
+    } else {
+      Assert-ExitCode 1 $unionExit "顶层大小写分歧"
+      Assert-Equal 3 $unmerged.Count "拒绝并集须保留三方stage"
+      Assert-Equal 'conflict-preserved' ([IO.File]::ReadAllText($workingPath)) "拒绝并集须保留原工作文件"
+      if ("$unionOutput" -notmatch '顶层') { throw "拒绝原因必须来自顶层字段检查，不能由解析失败冒充：$unionOutput" }
+    }
+    Write-Output "union-boundary: $case actual=$unionExit"
+  }
+
   Write-Output "test-pipeline-pipeline: PASS"
 }
 finally {

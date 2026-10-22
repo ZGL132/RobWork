@@ -1,0 +1,348 @@
+{
+  "frozen": "e60d5d3c9a47a24010964295a935d42986a290e1",
+  "parent": "062522fdeb9215e6a604a11d95cfca99842523db",
+  "changedPaths": 115,
+  "scriptPaths": [
+    "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+  ],
+  "newPendingRows": 14,
+  "bindingChecks": 126,
+  "priorRowsUnchanged": 53,
+  "relations": [
+    {
+      "functionId": "foundation-governance.pipeline-lock.Get-LockMutexName",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Get-LockMutexName",
+          "startLine": 49,
+          "endLine": 62,
+          "sha256": "20d89b18d8104994bc20c68971e59de94ce4073fcc000c31a1f5e798c6e02d14",
+          "qualifiedSymbol": "PowerShell::Get-LockMutexName"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Invoke-InLockMutex",
+          "startLine": 64,
+          "endLine": 83,
+          "sha256": "574734e5284aff5f193b0d074c9f0b27297c254909d2f82accd63aa51dd5d3f4",
+          "qualifiedSymbol": "PowerShell::Invoke-InLockMutex"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.Read-Lock",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Read-Lock",
+          "startLine": 85,
+          "endLine": 98,
+          "sha256": "f36111beef40015dbaf9a58b0e28b433cd483fc753aa311dc610f2eaab56327a",
+          "qualifiedSymbol": "PowerShell::Read-Lock"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.Test-Fencing",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Test-Fencing",
+          "startLine": 101,
+          "endLine": 109,
+          "sha256": "922348ce812173b5366a5a4ab03992d6ee4573bf8823eba7511f1610e327e918",
+          "qualifiedSymbol": "PowerShell::Test-Fencing"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Assert-Equal",
+          "startLine": 22,
+          "endLine": 24,
+          "sha256": "f62a67bb6c2050bbc5f9343f189d7731f40883c5aede78faaa88e86ffa62200c",
+          "qualifiedSymbol": "PowerShell::Assert-Equal"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Assert-ExitCode",
+          "startLine": 26,
+          "endLine": 28,
+          "sha256": "7f41572f86b80334539295550538ad511e477cc968144065f4d460ea18071433",
+          "qualifiedSymbol": "PowerShell::Assert-ExitCode"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Invoke-Lock",
+          "startLine": 30,
+          "endLine": 38,
+          "sha256": "234aed4f2682d6bcbcafb8d3e9c20335e7b379b794354e6586e5ce484dd101a6",
+          "qualifiedSymbol": "PowerShell::Invoke-Lock"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Get-LockMutexName",
+          "startLine": 40,
+          "endLine": 50,
+          "sha256": "b2d7bf079a72ce5a4dbaec705e5ef4dc9f9b0ca21ffc01b87da4cc967028eb3d",
+          "qualifiedSymbol": "PowerShell::Get-LockMutexName"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Assert-LockActionWaitsOnMutex",
+          "startLine": 52,
+          "endLine": 83,
+          "sha256": "14e97c2f540f415ceae8eb97c7c26bd7c6957f5a2ed00e4dad84bf52d9106952",
+          "qualifiedSymbol": "PowerShell::Assert-LockActionWaitsOnMutex"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Invoke-StateValidation",
+          "startLine": 85,
+          "endLine": 96,
+          "sha256": "bde00f7b32e13b4f68eed89843cb83b98fcb7d4130f7b013677fbfb4a4b4ceed",
+          "qualifiedSymbol": "PowerShell::Invoke-StateValidation"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.root",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "$gitDir",
+          "startLine": 33,
+          "endLine": 47,
+          "sha256": "a81d7a92c8076897763b3335c7f756b03f5561a102bba47b93b1596ba396d7e3",
+          "qualifiedSymbol": "PowerShell::root"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.actions",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Invoke-InLockMutex",
+          "startLine": 111,
+          "endLine": 176,
+          "sha256": "3bebfec08436a883b5f7da5ae3bf986637fe95fb9a41b48c7c7d8f2cdc2269b3",
+          "qualifiedSymbol": "PowerShell::actions"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.root",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "$lockScript",
+          "startLine": 11,
+          "endLine": 20,
+          "sha256": "a51bad26c5d31d29e888997d6eb3b1f099d0dfdb2be1f40537a49b8775ba8502",
+          "qualifiedSymbol": "PowerShell::root"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.regressions",
+      "source": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "$tempRoot",
+          "startLine": 98,
+          "endLine": 240,
+          "sha256": "bc0df1570b4374aa39bbfb30671f2d090788338cfd858bfff89867d84e938a73",
+          "qualifiedSymbol": "PowerShell::regressions"
+        }
+      ],
+      "pending": true
+    }
+  ],
+  "B22rawBindings": [
+    {
+      "path": "logs/bindings.log",
+      "rawSha256": "8c26f5b37833b68cf0d10da7be0ed7af67f8b29f03f3ea1c15ad2f63348e4744",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/build.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/build.log",
+      "rawSha256": "97a9e12d7134d05af9fbd8da8b033f98c9cc3ba32d6f4a64952a32e22adbbe16",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/commit-lint.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/commit-lint.log",
+      "rawSha256": "c8cd0c0d2d095d2e58343e63dc6f252d6b97b821a64ac10203b36ff0a4e1e622",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/configure-original.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/configure-original.log",
+      "rawSha256": "0cba03a615b1ab7ee76ea4270d4dd349bf9f0ad6e3b04c5d733aed69a04e3353",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/configure.exit.txt",
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/configure.log",
+      "rawSha256": "045a1da980b99047b0190391649ae6137c9e6df9ea667cad2f47991788ba6ab0",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/diff-scope.log",
+      "rawSha256": "7062ee7d046fe4941eb9d896596a97f9328344b30f2edca23dca613f8a885070",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/gtest.xml",
+      "rawSha256": "5e5e5df39d94efed0af3e37becc57fa8390762ce664d60df5af3e0ce9e41c549",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/ird-test-report.json",
+      "rawSha256": "17de8305ad2001cc98d69a5bee410aba6b9a6ecb31827e806fe5bfdc24672906",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/probe-compile-inputs.log",
+      "rawSha256": "df8bf20eb0b9c9307d19adf77c52454e3addfbd8711ff18988a666de2603f372",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/scope.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/scope.log",
+      "rawSha256": "a365ca19371cbebbb530c67291f679a89142901d7fa2cd6aa313f97c52ba31dc",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/search-rerun.json",
+      "rawSha256": "55067d9b0e3ab99377041ab147b8ce030a2ca03eca5371874d4ccb484b9ecdcd",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/source-definition-locations.log",
+      "rawSha256": "4abdce2e765d50e76fb160e5dd7fd455393b24c6774a52e3e2c9fe79c99a9b23",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/stdout.log",
+      "rawSha256": "f6baa8373c2dc1fd89bf7f04d2f2ef09a241c11143d5a382f240fa74968cbc47",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/submitted-report-comparison.log",
+      "rawSha256": "43bf39cb64b669e8da58b1f77718907c232f0e828402dd2e6cc582ef6fb1422b",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/test.exit.txt",
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/verify-task.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/verify-task.log",
+      "rawSha256": "390019b9aeea1ca723aa688e8f1ef18b8dd70c97039baf76a012fb1169c5fa8e",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/vs-retry.log",
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939",
+      "originalByteEqual": true
+    },
+    {
+      "path": "logs/vs.log",
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939",
+      "originalByteEqual": true
+    },
+    {
+      "path": "acceptance.json",
+      "rawSha256": "ee13e9d96824d181f3c52fb8a968212a596d24f94c4ee572d858ba1061f9a26f",
+      "originalByteEqual": true
+    },
+    {
+      "path": "acceptance.md",
+      "rawSha256": "ae7d7a2db5a22f185e896efd4bd7142e8195b67ad792f24d5c7a54ba8ecd646a",
+      "originalByteEqual": true
+    },
+    {
+      "path": "check-bindings.ps1",
+      "rawSha256": "98aee8ba19587aa649f80a50a6a50eacce978f434ca8965ec3435fed6dcb8856",
+      "originalByteEqual": true
+    }
+  ],
+  "F964": "open"
+}

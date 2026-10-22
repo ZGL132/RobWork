@@ -1,0 +1,1 @@
+Write-Error: tickToken must be a GUID string, got '------------------------------------'

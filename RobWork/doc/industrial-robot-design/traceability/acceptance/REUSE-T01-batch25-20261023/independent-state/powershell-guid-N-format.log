@@ -1,0 +1,5 @@
+C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c\repo\RobWork\scripts\indust
+rialrobot\validate-state.ps1 : tickToken must be a GUID string, got '0123456789abcdef0123456789abcdef'
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-state.ps1
+ 

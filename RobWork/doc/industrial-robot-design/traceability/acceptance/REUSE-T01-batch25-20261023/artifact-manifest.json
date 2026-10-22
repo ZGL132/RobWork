@@ -1,0 +1,792 @@
+[
+  {
+    "path": "acceptance.json",
+    "bytes": 3905,
+    "rawSha256": "9c4039e4ec758163c8d56d35b90d6da0070527ea963f059f016391d730578e45"
+  },
+  {
+    "path": "acceptance.md",
+    "bytes": 3017,
+    "rawSha256": "6d45f78b5cd26a41f6db33e28f7413f6930ec4767f11fec74ba51122f5f5a661"
+  },
+  {
+    "path": "b23-git-blob-original-checks.json",
+    "bytes": 45268,
+    "rawSha256": "a232f3a158918997ecc713944b97644aaa508263822f732ea4eb0f4e338543dd"
+  },
+  {
+    "path": "binding-checks.json",
+    "bytes": 70248,
+    "rawSha256": "fc5a8dc4a92a4743b16772dd3336afcfcbc3854cc3fda8a9151963d3806be781"
+  },
+  {
+    "path": "binding-review.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "binding-review.log",
+    "bytes": 3054,
+    "rawSha256": "0f4b297b2f66dd7edbd555d8c44d66fb4ec3bba63aba6e6f2659b27c1d04178c"
+  },
+  {
+    "path": "binding-review.ps1",
+    "bytes": 5944,
+    "rawSha256": "b8db6f8a091ae573fb9df0119d47e3daad5883ff4fcf5bf40d486306a263a142"
+  },
+  {
+    "path": "binding-summary.json",
+    "bytes": 3054,
+    "rawSha256": "0f4b297b2f66dd7edbd555d8c44d66fb4ec3bba63aba6e6f2659b27c1d04178c"
+  },
+  {
+    "path": "checkout-retry.log",
+    "bytes": 88,
+    "rawSha256": "31f0124b1ad2cb951d66a8c897eb24e6e57cf8f7ce12309bda0c4076332be4ac"
+  },
+  {
+    "path": "checkout.log",
+    "bytes": 2846,
+    "rawSha256": "c94952d65a9a834b6167e5b4359120a6a8eb889a91930eddd17a598624ddc320"
+  },
+  {
+    "path": "clone.log",
+    "bytes": 123,
+    "rawSha256": "273fd6f0c7f8cc2166eef9766d2cd7f221aefb1b85eaedeb03eb97b58fdfb870"
+  },
+  {
+    "path": "commit-lint.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "commit-lint.log",
+    "bytes": 71,
+    "rawSha256": "7243f8b3e550d221c067f633d0da50edf365bad8a1d05a5c9be8533d6edcc895"
+  },
+  {
+    "path": "final-temp-status.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "independent-state-harness-first-failure.exit.txt",
+    "bytes": 3,
+    "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+    "path": "independent-state-harness-first-failure.log",
+    "bytes": 625,
+    "rawSha256": "373c04bcc66e1b4ac310c7b3a74a497c321af49f34c3531e1fc71dfb4837c5ab"
+  },
+  {
+    "path": "independent-state.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "independent-state.log",
+    "bytes": 1334,
+    "rawSha256": "f730b3f738847cada42298733f818d496da9df62e26f187aa09034607a1c6a73"
+  },
+  {
+    "path": "independent-state.ps1",
+    "bytes": 2217,
+    "rawSha256": "863b29a5fe506a6f18b2dc2855f96305734d373071ca340d49aacf573084f506"
+  },
+  {
+    "path": "initial-status.log",
+    "bytes": 0,
+    "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "old-row-property-deltas.json",
+    "bytes": 2327,
+    "rawSha256": "5c13d76884ad64abb184d61e324afc6d2e5c48f88b7465d10ff9a276b4028723"
+  },
+  {
+    "path": "pipeline-ps51.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "pipeline-ps51.log",
+    "bytes": 333,
+    "rawSha256": "af128a2e2eca1619793c6baed83911b42c5888048d31d16a67c5bf13346928fd"
+  },
+  {
+    "path": "pipeline-ps7.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "pipeline-ps7.log",
+    "bytes": 333,
+    "rawSha256": "af128a2e2eca1619793c6baed83911b42c5888048d31d16a67c5bf13346928fd"
+  },
+  {
+    "path": "powershell-runtime.log",
+    "bytes": 4603,
+    "rawSha256": "c26d30f0ccd82c94e5d21f90d98f1c1a93b6d057acb86ac1a60441b9c3b94a2c"
+  },
+  {
+    "path": "pwsh-runtime.log",
+    "bytes": 2078,
+    "rawSha256": "513b8d0f9b99816080c6d049a7e88078b477f097977b19905b86215555b2d4f1"
+  },
+  {
+    "path": "scope-frozen.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "scope-frozen.log",
+    "bytes": 190,
+    "rawSha256": "5571c6b539dc958c6ba2452e42ba465a982c943bf3f914aa0a1abf62d3ac8a98"
+  },
+  {
+    "path": "semantic-review.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "semantic-review.json",
+    "bytes": 15435,
+    "rawSha256": "50a509ab26fd1055548cc33fbb2bf2b85015c2a42bcba5b42f259bfa7fa3f066"
+  },
+  {
+    "path": "semantic-review.log",
+    "bytes": 464,
+    "rawSha256": "f97d172fb6a50db63431d1679802fa6ac21708405cf2fe1be01c99bc4243ceb9"
+  },
+  {
+    "path": "semantic-review.ps1",
+    "bytes": 4588,
+    "rawSha256": "36fb1020414a1c9ad91b0eef96dd1cde2da3de899527b9041ef02d3003a643c9"
+  },
+  {
+    "path": "state-green.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "state-green.log",
+    "bytes": 724,
+    "rawSha256": "8de005b0a706839e537c53402270ccaff0f647e09b1c2699180f9062e0407219"
+  },
+  {
+    "path": "state-red.exit.txt",
+    "bytes": 3,
+    "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+  },
+  {
+    "path": "state-red.log",
+    "bytes": 732,
+    "rawSha256": "c2584c391839d441ff1e9998a45a8781000ad94777f37d342ce573f64a4305d2"
+  },
+  {
+    "path": "verify-task-real.exit.txt",
+    "bytes": 3,
+    "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "verify-task-real.log",
+    "bytes": 13305,
+    "rawSha256": "2b1776e7935f99427f7104e52e907edfb78c6276470759435aed5fdb208b857c"
+  },
+  {
+    "path": "independent-state/powershell-boolean-policy.json",
+    "bytes": 1768,
+    "rawSha256": "f752a028c2a447308a764f4e3d229d4fdc48e247d1477a5b105c5a5e4e82f05d"
+  },
+  {
+    "path": "independent-state/powershell-boolean-policy.log",
+    "bytes": 387,
+    "rawSha256": "c1164b541436098d3001a4909cd18b9ec8374e0796586008520e94621bd477a3"
+  },
+  {
+    "path": "independent-state/powershell-boolean-tick.json",
+    "bytes": 1766,
+    "rawSha256": "5557ca318c9d14ff719acb1c1065d5e423d07a4ead9bc67e04cf6f76322d6e28"
+  },
+  {
+    "path": "independent-state/powershell-boolean-tick.log",
+    "bytes": 419,
+    "rawSha256": "588fa2952d201276f9c606e9522083b0f5921e0016a8590f795a79b9e7efd144"
+  },
+  {
+    "path": "independent-state/powershell-equal-instant-offsets.json",
+    "bytes": 1755,
+    "rawSha256": "e579528c19ebee0e93aa9c9590c291647729378c6f37af7da52805cfb2af8dae"
+  },
+  {
+    "path": "independent-state/powershell-equal-instant-offsets.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "independent-state/powershell-fractional-lease.json",
+    "bytes": 1765,
+    "rawSha256": "9a66625619b04eb76752621b4fe33030ad239b22a65d923b6600f3907248f537"
+  },
+  {
+    "path": "independent-state/powershell-fractional-lease.log",
+    "bytes": 380,
+    "rawSha256": "4ae79795865b23ca4d17cea25a636a3d862d68e552fc842ade195e56dcf98834"
+  },
+  {
+    "path": "independent-state/powershell-guid-N-format.json",
+    "bytes": 1761,
+    "rawSha256": "167f8bff6c64550d392d3d97ae1e0cfc46cf800283eb68ce030d1cff11591415"
+  },
+  {
+    "path": "independent-state/powershell-guid-N-format.log",
+    "bytes": 412,
+    "rawSha256": "2c07f28a141d14377e6d9b83aa11c31fd657731502691c842a8ab412ed32a1ba"
+  },
+  {
+    "path": "independent-state/powershell-int64-policy.json",
+    "bytes": 1774,
+    "rawSha256": "d67bc04ff9fa223eaa0084d8d3af302d8f26c1db3ee147d746e52c3d56d7a5c7"
+  },
+  {
+    "path": "independent-state/powershell-int64-policy.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "independent-state/powershell-int64-tick.json",
+    "bytes": 1772,
+    "rawSha256": "f4bc72c9c16db0b298ad826f87364336085b1959c8014548cea9efd6d5eae368"
+  },
+  {
+    "path": "independent-state/powershell-int64-tick.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "independent-state/powershell-negative-attempt.json",
+    "bytes": 1766,
+    "rawSha256": "f4c5b6a86b5156233b5c8d6108c43c431a663725dd7e7efe66f5bd8fad965cc4"
+  },
+  {
+    "path": "independent-state/powershell-negative-attempt.log",
+    "bytes": 383,
+    "rawSha256": "95c3a26cc6f3097d93fb8f62e05aabd4f35a1abb3da642b4a6ef6bbd729351e8"
+  },
+  {
+    "path": "independent-state/powershell-negative-tick.json",
+    "bytes": 1764,
+    "rawSha256": "86053d6aabd3da214cbcbc82e596382897bd4ee715d23e2117d156be4c7ef3b8"
+  },
+  {
+    "path": "independent-state/powershell-negative-tick.log",
+    "bytes": 419,
+    "rawSha256": "588fa2952d201276f9c606e9522083b0f5921e0016a8590f795a79b9e7efd144"
+  },
+  {
+    "path": "independent-state/powershell-string-lease.json",
+    "bytes": 1766,
+    "rawSha256": "cabf3911fa9c558d2b86c544b96cf08c850e0a1e560403cd618bf37b29f979fc"
+  },
+  {
+    "path": "independent-state/powershell-string-lease.log",
+    "bytes": 380,
+    "rawSha256": "4ae79795865b23ca4d17cea25a636a3d862d68e552fc842ade195e56dcf98834"
+  },
+  {
+    "path": "independent-state/powershell-uppercase-guid.json",
+    "bytes": 1765,
+    "rawSha256": "e066846620994923ae7119055b50f5113a6da01a5d4c6b5ceadd58b155ae9934"
+  },
+  {
+    "path": "independent-state/powershell-uppercase-guid.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "independent-state/powershell-zero-lease.json",
+    "bytes": 1764,
+    "rawSha256": "854a0dfeec7f8a4b9e1725907312a692438dffa411a885e0bb7b60139dfe9b89"
+  },
+  {
+    "path": "independent-state/powershell-zero-lease.log",
+    "bytes": 380,
+    "rawSha256": "4ae79795865b23ca4d17cea25a636a3d862d68e552fc842ade195e56dcf98834"
+  },
+  {
+    "path": "independent-state/pwsh-boolean-policy.json",
+    "bytes": 1768,
+    "rawSha256": "f752a028c2a447308a764f4e3d229d4fdc48e247d1477a5b105c5a5e4e82f05d"
+  },
+  {
+    "path": "independent-state/pwsh-boolean-policy.log",
+    "bytes": 61,
+    "rawSha256": "3e278c59fbba0a77db2d741f272b94aae4bf5937ec50367c6130bc223553f50f"
+  },
+  {
+    "path": "independent-state/pwsh-boolean-tick.json",
+    "bytes": 1766,
+    "rawSha256": "5557ca318c9d14ff719acb1c1065d5e423d07a4ead9bc67e04cf6f76322d6e28"
+  },
+  {
+    "path": "independent-state/pwsh-boolean-tick.log",
+    "bytes": 93,
+    "rawSha256": "133d357df94a48692dbf4f653b62837c41372f1ba6e5087eaa67e90327d5c22f"
+  },
+  {
+    "path": "independent-state/pwsh-equal-instant-offsets.json",
+    "bytes": 1755,
+    "rawSha256": "e579528c19ebee0e93aa9c9590c291647729378c6f37af7da52805cfb2af8dae"
+  },
+  {
+    "path": "independent-state/pwsh-equal-instant-offsets.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "independent-state/pwsh-fractional-lease.json",
+    "bytes": 1765,
+    "rawSha256": "9a66625619b04eb76752621b4fe33030ad239b22a65d923b6600f3907248f537"
+  },
+  {
+    "path": "independent-state/pwsh-fractional-lease.log",
+    "bytes": 54,
+    "rawSha256": "4688b3960ebd7e28951b07ab6820ae16bb9f0ef941efb1d03bfd8a30c504d5ad"
+  },
+  {
+    "path": "independent-state/pwsh-guid-N-format.json",
+    "bytes": 1761,
+    "rawSha256": "167f8bff6c64550d392d3d97ae1e0cfc46cf800283eb68ce030d1cff11591415"
+  },
+  {
+    "path": "independent-state/pwsh-guid-N-format.log",
+    "bytes": 86,
+    "rawSha256": "791bb1ecfcc90b3365f75a1e4dcf1d73363ffaf6501a26667eb4f22ec1a3caf6"
+  },
+  {
+    "path": "independent-state/pwsh-int64-policy.json",
+    "bytes": 1774,
+    "rawSha256": "d67bc04ff9fa223eaa0084d8d3af302d8f26c1db3ee147d746e52c3d56d7a5c7"
+  },
+  {
+    "path": "independent-state/pwsh-int64-policy.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "independent-state/pwsh-int64-tick.json",
+    "bytes": 1772,
+    "rawSha256": "f4bc72c9c16db0b298ad826f87364336085b1959c8014548cea9efd6d5eae368"
+  },
+  {
+    "path": "independent-state/pwsh-int64-tick.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "independent-state/pwsh-negative-attempt.json",
+    "bytes": 1766,
+    "rawSha256": "f4c5b6a86b5156233b5c8d6108c43c431a663725dd7e7efe66f5bd8fad965cc4"
+  },
+  {
+    "path": "independent-state/pwsh-negative-attempt.log",
+    "bytes": 57,
+    "rawSha256": "912946c9b7caabdb3c04eadcd713f13c8c74f6a20461bff5abc5be2a4884a508"
+  },
+  {
+    "path": "independent-state/pwsh-negative-tick.json",
+    "bytes": 1764,
+    "rawSha256": "86053d6aabd3da214cbcbc82e596382897bd4ee715d23e2117d156be4c7ef3b8"
+  },
+  {
+    "path": "independent-state/pwsh-negative-tick.log",
+    "bytes": 93,
+    "rawSha256": "133d357df94a48692dbf4f653b62837c41372f1ba6e5087eaa67e90327d5c22f"
+  },
+  {
+    "path": "independent-state/pwsh-string-lease.json",
+    "bytes": 1766,
+    "rawSha256": "cabf3911fa9c558d2b86c544b96cf08c850e0a1e560403cd618bf37b29f979fc"
+  },
+  {
+    "path": "independent-state/pwsh-string-lease.log",
+    "bytes": 54,
+    "rawSha256": "4688b3960ebd7e28951b07ab6820ae16bb9f0ef941efb1d03bfd8a30c504d5ad"
+  },
+  {
+    "path": "independent-state/pwsh-uppercase-guid.json",
+    "bytes": 1765,
+    "rawSha256": "e066846620994923ae7119055b50f5113a6da01a5d4c6b5ceadd58b155ae9934"
+  },
+  {
+    "path": "independent-state/pwsh-uppercase-guid.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "independent-state/pwsh-zero-lease.json",
+    "bytes": 1764,
+    "rawSha256": "854a0dfeec7f8a4b9e1725907312a692438dffa411a885e0bb7b60139dfe9b89"
+  },
+  {
+    "path": "independent-state/pwsh-zero-lease.log",
+    "bytes": 54,
+    "rawSha256": "4688b3960ebd7e28951b07ab6820ae16bb9f0ef941efb1d03bfd8a30c504d5ad"
+  },
+  {
+    "path": "independent-state/report.json",
+    "bytes": 5767,
+    "rawSha256": "e61f35bfdfd59db6b256e7d56a3e5eeb819bd481e078ac1477e5803d74911b3e"
+  },
+  {
+    "path": "source/pipeline-lock.ps1",
+    "bytes": 9449,
+    "rawSha256": "f8f4c2f9db6d4379618d814229a2ba9e4759c0eb8a281c204e9ca69617ea6739"
+  },
+  {
+    "path": "source/reuse-contract.ps1",
+    "bytes": 31772,
+    "rawSha256": "60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3"
+  },
+  {
+    "path": "source/state-before.ps1",
+    "bytes": 23627,
+    "rawSha256": "49c11f67884f1cdea1acdbbf1ad5ba5cea25184adff7cca0fecb3d568f0584c9"
+  },
+  {
+    "path": "source/state-probes.ps1",
+    "bytes": 2760,
+    "rawSha256": "c4e60f8cd19b5eccb9fa70a397ab94b278d5c92f84a35155649a6f858e108170"
+  },
+  {
+    "path": "source/test-pipeline-pipeline.ps1",
+    "bytes": 14857,
+    "rawSha256": "0dd57da2a17ae2b107ad49f9c2959f63113cba85554f73c66a9128feff825ee6"
+  },
+  {
+    "path": "source/validate-reuse.ps1",
+    "bytes": 18127,
+    "rawSha256": "367ca6304b47481b8136a21021bd4ede4604296e468d68d90ba1277b2b0713bf"
+  },
+  {
+    "path": "source/validate-state.ps1",
+    "bytes": 23952,
+    "rawSha256": "5d974cb08d689caa387fe533f44069ebe57fd5205d35dade802bcce016d07460"
+  },
+  {
+    "path": "source/validate-task.ps1",
+    "bytes": 8651,
+    "rawSha256": "396ccc1981bbcc5c41a0cb1d8a70e444ba8aa97f302f87f9a77e9b2d63d9796c"
+  },
+  {
+    "path": "source/verify-task-scope.ps1",
+    "bytes": 9087,
+    "rawSha256": "8e8b28487656a1ad8b7ad194f94dbf694bb1b123e084cf628b140ee74b0cb08b"
+  },
+  {
+    "path": "source/verify-task.ps1",
+    "bytes": 3995,
+    "rawSha256": "5e21497276d728e3ae78742d7e676d3ace98c36c33b92c99b8984ad5f4e97f33"
+  },
+  {
+    "path": "state-green/powershell-bad-calendar.json",
+    "bytes": 1765,
+    "rawSha256": "ae8777ea2772e10667179c69180ac445be920aa0aef221360a5815fd5e2bf942"
+  },
+  {
+    "path": "state-green/powershell-bad-calendar.log",
+    "bytes": 2936,
+    "rawSha256": "dd8c3790e83e28c9ff7e89be530c9a3b76904ab71d1650c65b61d72773a91ebf"
+  },
+  {
+    "path": "state-green/powershell-fake-guid.json",
+    "bytes": 1765,
+    "rawSha256": "a69f1086ad6eacdd7ae21e6d7baad13e18ce41191bf58b85cb154fd559eb3faf"
+  },
+  {
+    "path": "state-green/powershell-fake-guid.log",
+    "bytes": 416,
+    "rawSha256": "c108054c0c1ff1b62f9f2e056b7c54eecd0c264af4f810ea7e02edff82ea389a"
+  },
+  {
+    "path": "state-green/powershell-fractional-count.json",
+    "bytes": 1765,
+    "rawSha256": "a78b3a5bdfe33cbf4a0775e3bfb1a3d24d850e62ad3b6c850bd7356d218e5f97"
+  },
+  {
+    "path": "state-green/powershell-fractional-count.log",
+    "bytes": 419,
+    "rawSha256": "588fa2952d201276f9c606e9522083b0f5921e0016a8590f795a79b9e7efd144"
+  },
+  {
+    "path": "state-green/powershell-healthy.json",
+    "bytes": 1765,
+    "rawSha256": "a4fbd6ace4e04bdc9256351b600baaf5b3e7efbdec513cc007e2e8338320a9df"
+  },
+  {
+    "path": "state-green/powershell-healthy.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-green/powershell-offset-expired.json",
+    "bytes": 1765,
+    "rawSha256": "62c8a643b666063d696612e2c84059460f3e10c3644c01b05a716f72ecd2334a"
+  },
+  {
+    "path": "state-green/powershell-offset-expired.log",
+    "bytes": 384,
+    "rawSha256": "fc5d407c0f469222d1378e28e7ef1637c789687cbf21ceca6a62134e83c7a7ea"
+  },
+  {
+    "path": "state-green/powershell-offset-valid.json",
+    "bytes": 1765,
+    "rawSha256": "6162dcfb6b07dfba9387250175c6d176c329cd2dd10d6299c79b89f821297ccc"
+  },
+  {
+    "path": "state-green/powershell-offset-valid.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-green/powershell-string-count.json",
+    "bytes": 1767,
+    "rawSha256": "d773a098b0d26d1cc44e0afa6185a1ccf619b257aadd054356a6eaf7721685b4"
+  },
+  {
+    "path": "state-green/powershell-string-count.log",
+    "bytes": 380,
+    "rawSha256": "e52c484809fded02033e1e9ea55d0030f4f2f2085ace498b41678bf1b9d8307f"
+  },
+  {
+    "path": "state-green/pwsh-bad-calendar.json",
+    "bytes": 1765,
+    "rawSha256": "ae8777ea2772e10667179c69180ac445be920aa0aef221360a5815fd5e2bf942"
+  },
+  {
+    "path": "state-green/pwsh-bad-calendar.log",
+    "bytes": 1980,
+    "rawSha256": "9cc6a1afcf6da92104bf7b6d8286447e503104988cbd33ae0092933f5331d82b"
+  },
+  {
+    "path": "state-green/pwsh-fake-guid.json",
+    "bytes": 1765,
+    "rawSha256": "a69f1086ad6eacdd7ae21e6d7baad13e18ce41191bf58b85cb154fd559eb3faf"
+  },
+  {
+    "path": "state-green/pwsh-fake-guid.log",
+    "bytes": 90,
+    "rawSha256": "c013bdf9b1c3cfb62c8a80c9ae75f579fd5351af2da9c45a54d2e8c3513b9aa1"
+  },
+  {
+    "path": "state-green/pwsh-fractional-count.json",
+    "bytes": 1765,
+    "rawSha256": "a78b3a5bdfe33cbf4a0775e3bfb1a3d24d850e62ad3b6c850bd7356d218e5f97"
+  },
+  {
+    "path": "state-green/pwsh-fractional-count.log",
+    "bytes": 93,
+    "rawSha256": "133d357df94a48692dbf4f653b62837c41372f1ba6e5087eaa67e90327d5c22f"
+  },
+  {
+    "path": "state-green/pwsh-healthy.json",
+    "bytes": 1765,
+    "rawSha256": "a4fbd6ace4e04bdc9256351b600baaf5b3e7efbdec513cc007e2e8338320a9df"
+  },
+  {
+    "path": "state-green/pwsh-healthy.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-green/pwsh-offset-expired.json",
+    "bytes": 1765,
+    "rawSha256": "62c8a643b666063d696612e2c84059460f3e10c3644c01b05a716f72ecd2334a"
+  },
+  {
+    "path": "state-green/pwsh-offset-expired.log",
+    "bytes": 58,
+    "rawSha256": "a6c98000467f2f105d9dd4e7423d766b9dd952aae1b8b2f29e8ff5eb5ad0a71c"
+  },
+  {
+    "path": "state-green/pwsh-offset-valid.json",
+    "bytes": 1765,
+    "rawSha256": "6162dcfb6b07dfba9387250175c6d176c329cd2dd10d6299c79b89f821297ccc"
+  },
+  {
+    "path": "state-green/pwsh-offset-valid.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-green/pwsh-string-count.json",
+    "bytes": 1767,
+    "rawSha256": "d773a098b0d26d1cc44e0afa6185a1ccf619b257aadd054356a6eaf7721685b4"
+  },
+  {
+    "path": "state-green/pwsh-string-count.log",
+    "bytes": 54,
+    "rawSha256": "438c8551c58f28b170dbaaccefb81de81e99402d907c70e237296220b7bb3a86"
+  },
+  {
+    "path": "state-green/report.json",
+    "bytes": 1807,
+    "rawSha256": "c74228146a59e84d494c9ee74d25c0b37ec1d2523d2cf362c7d4e3b94ca71312"
+  },
+  {
+    "path": "state-green/fixture/RobWork/doc/industrial-robot-design/tasks/TK-T01.json",
+    "bytes": 58,
+    "rawSha256": "d3a04e5ae78e5586a5a69ca588dd0d3294db4a6ed5ecd4c8a70d2573accb38d6"
+  },
+  {
+    "path": "state-red/powershell-bad-calendar.json",
+    "bytes": 1765,
+    "rawSha256": "2c65ab626242f9e8c2d1c10f7b7b4452278ce482fe3540d1cf0cbab704034b44"
+  },
+  {
+    "path": "state-red/powershell-bad-calendar.log",
+    "bytes": 860,
+    "rawSha256": "2b515abd14e6f8a3094938c6ac3f7a4b768cb97592ee9b5e41f06d55f781cd09"
+  },
+  {
+    "path": "state-red/powershell-fake-guid.json",
+    "bytes": 1765,
+    "rawSha256": "6f74108b698b2652ea58fe5453b2606c7b094812270d80f92c2755949b6a1610"
+  },
+  {
+    "path": "state-red/powershell-fake-guid.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/powershell-fractional-count.json",
+    "bytes": 1765,
+    "rawSha256": "412756c61a2224cdb63121583102878965aaa1d611985ee0f902bd790914e4be"
+  },
+  {
+    "path": "state-red/powershell-fractional-count.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/powershell-healthy.json",
+    "bytes": 1765,
+    "rawSha256": "25cda8d32282ced59b70d0d3ae3c0cd61377bd0bdeaf688bedc70c39f1913de8"
+  },
+  {
+    "path": "state-red/powershell-healthy.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/powershell-offset-expired.json",
+    "bytes": 1765,
+    "rawSha256": "6d763135c76aa3c66aecd5899381e50121a58671591803926446d1e6da434e4b"
+  },
+  {
+    "path": "state-red/powershell-offset-expired.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/powershell-offset-valid.json",
+    "bytes": 1765,
+    "rawSha256": "080bee8a435dfc0735ede8ccbd2456501617ab32006ab94c5ddf711a9cd83d94"
+  },
+  {
+    "path": "state-red/powershell-offset-valid.log",
+    "bytes": 860,
+    "rawSha256": "aab83d784b2ea19fffe5c45cce07bc8782e2d061123fa7ff419d594cbcc12e1d"
+  },
+  {
+    "path": "state-red/powershell-string-count.json",
+    "bytes": 1767,
+    "rawSha256": "fe764e9d41013436398215020cd27da9d74ae213737492599d975ed47d1aa587"
+  },
+  {
+    "path": "state-red/powershell-string-count.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/pwsh-bad-calendar.json",
+    "bytes": 1765,
+    "rawSha256": "2c65ab626242f9e8c2d1c10f7b7b4452278ce482fe3540d1cf0cbab704034b44"
+  },
+  {
+    "path": "state-red/pwsh-bad-calendar.log",
+    "bytes": 198,
+    "rawSha256": "aa561c159f50501a0cdd5faca341cbd2feb67444130b9f333bb2307488e39964"
+  },
+  {
+    "path": "state-red/pwsh-fake-guid.json",
+    "bytes": 1765,
+    "rawSha256": "6f74108b698b2652ea58fe5453b2606c7b094812270d80f92c2755949b6a1610"
+  },
+  {
+    "path": "state-red/pwsh-fake-guid.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/pwsh-fractional-count.json",
+    "bytes": 1765,
+    "rawSha256": "412756c61a2224cdb63121583102878965aaa1d611985ee0f902bd790914e4be"
+  },
+  {
+    "path": "state-red/pwsh-fractional-count.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/pwsh-healthy.json",
+    "bytes": 1765,
+    "rawSha256": "25cda8d32282ced59b70d0d3ae3c0cd61377bd0bdeaf688bedc70c39f1913de8"
+  },
+  {
+    "path": "state-red/pwsh-healthy.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/pwsh-offset-expired.json",
+    "bytes": 1765,
+    "rawSha256": "6d763135c76aa3c66aecd5899381e50121a58671591803926446d1e6da434e4b"
+  },
+  {
+    "path": "state-red/pwsh-offset-expired.log",
+    "bytes": 58,
+    "rawSha256": "a6c98000467f2f105d9dd4e7423d766b9dd952aae1b8b2f29e8ff5eb5ad0a71c"
+  },
+  {
+    "path": "state-red/pwsh-offset-valid.json",
+    "bytes": 1765,
+    "rawSha256": "080bee8a435dfc0735ede8ccbd2456501617ab32006ab94c5ddf711a9cd83d94"
+  },
+  {
+    "path": "state-red/pwsh-offset-valid.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/pwsh-string-count.json",
+    "bytes": 1767,
+    "rawSha256": "fe764e9d41013436398215020cd27da9d74ae213737492599d975ed47d1aa587"
+  },
+  {
+    "path": "state-red/pwsh-string-count.log",
+    "bytes": 101,
+    "rawSha256": "f0a95b933fdd0fe668435e711935b3952b53df59409fcee6079ad0ad0320a793"
+  },
+  {
+    "path": "state-red/report.json",
+    "bytes": 1815,
+    "rawSha256": "062a008a917af7bfdf162bd3a9da86a4e13ab8212ab7b733191071f2ac7f900f"
+  },
+  {
+    "path": "state-red/fixture/RobWork/doc/industrial-robot-design/tasks/TK-T01.json",
+    "bytes": 58,
+    "rawSha256": "d3a04e5ae78e5586a5a69ca588dd0d3294db4a6ed5ecd4c8a70d2573accb38d6"
+  }
+]

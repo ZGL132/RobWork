@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "ird-frozen-technical-review/1",
+  "taskId": "REUSE-T01",
+  "batch": "B24",
+  "reviewedCommit": "e60d5d3c9a47a24010964295a935d42986a290e1",
+  "baseCommit": "062522fdeb9215e6a604a11d95cfca99842523db",
+  "technicalLocalVerdict": "PASS",
+  "formalIndependentAcceptance": "B24-local-PASS",
+  "executionRole": "delegated-agent",
+  "workflowLimitation": "无未解决的本批流程阻断；人类直接授权覆盖根AGENTS §7一般禁止，仅限验收",
+  "grants": [],
+  "fullTaskAcceptance": "notGranted",
+  "T02": "notGranted",
+  "T06": "notGranted",
+  "migrationClosure": "notGranted",
+  "modelPermissions": "notGranted",
+  "checks": {
+    "changedPaths": 115,
+    "newPendingRows": 14,
+    "F964": "open",
+    "regressionEntryPass": 2,
+    "ASTDefinitions": 10,
+    "commitLintExit": 0,
+    "contractMachineCommands": 3,
+    "regressionPerCaseCounts": "not available",
+    "B22OriginalFiles": 27,
+    "verifyTaskExit": 0,
+    "scopeExit": 0,
+    "priorRowsUnchanged": 53,
+    "digestBindings": 126
+  },
+  "actualProcesses": {
+    "passed": 73,
+    "beforeProbes": 6,
+    "failed": 0,
+    "total": 73,
+    "fixtures": 3,
+    "afterActions": 64,
+    "skipped": 0
+  },
+  "notRun": [
+    "PS5.1 native validate-state",
+    "long stress/real process crash/abandoned mutex",
+    "cross-worktree shared business state",
+    "all 19 governance scripts",
+    "C++/GUI/performance",
+    "DeepEvidence",
+    "remote CI"
+  ],
+  "isolation": {
+    "remoteSynchronization": false,
+    "tempRoot": "C:/Users/zgl18/AppData/Local/Temp/ird-b24-accept-7d7d2502",
+    "merges": 0,
+    "sharedWorkspaceWritten": false,
+    "pushes": 0,
+    "fixtureCommits": 1,
+    "projectCommits": 0
+  },
+  "reviewerDriverFailures": [
+    "initial candidate status field lookup failure: corrected to review.status",
+    "checkout autocrlf raw mismatch: corrected to frozen Git blob; all originals match"
+  ],
+  "userAuthorization": "父会话补充原文：授权你可以创建子智能体只能用来进行验收；最新继续任务，不要暂停，不要同步远程未撤销此授权"
+}

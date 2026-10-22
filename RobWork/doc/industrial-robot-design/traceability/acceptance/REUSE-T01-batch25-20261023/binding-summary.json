@@ -1,0 +1,69 @@
+{
+  "frozen": "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+  "parent": "e60d5d3c9a47a24010964295a935d42986a290e1",
+  "newCount": 19,
+  "changedCount": 14,
+  "unchangedOld": 53,
+  "removedCount": 0,
+  "newIds": [
+    "foundation-governance.validate-state.Convert-ToIso",
+    "foundation-governance.validate-state.Compare-Iso",
+    "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "foundation-governance.validate-state.root",
+    "foundation-governance.validate-state.schema",
+    "foundation-governance.validate-state.heartbeat",
+    "foundation-governance.validate-state.fencing-presence",
+    "foundation-governance.validate-state.attempts",
+    "foundation-governance.validate-state.policy",
+    "foundation-governance.validate-state.contract-index",
+    "foundation-governance.validate-state.queue",
+    "foundation-governance.validate-state.phase",
+    "foundation-governance.validate-state.acceptance",
+    "foundation-governance.validate-state.failure-record",
+    "foundation-governance.validate-state.run",
+    "foundation-governance.validate-state.history",
+    "foundation-governance.validate-state.docRefs",
+    "foundation-governance.validate-state.narrative-limit",
+    "foundation-governance.validate-state.verdict"
+  ],
+  "changedIds": [
+    "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "foundation-governance.pipeline-lock.Read-Lock",
+    "foundation-governance.pipeline-lock.Test-Fencing",
+    "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "foundation-governance.pipeline-lock.root",
+    "foundation-governance.pipeline-lock.actions",
+    "foundation-governance.test-pipeline-pipeline.root",
+    "foundation-governance.test-pipeline-pipeline.regressions"
+  ],
+  "bindings": 330,
+  "bindingFailed": 0,
+  "archiveManifestCount": 135,
+  "archiveIncludingManifest": 136,
+  "archiveFailed": 0,
+  "before": [
+    {
+      "stored": "state-before.ps1",
+      "parent": "validate-state.ps1",
+      "rawSame": false,
+      "storedRawSha256": "49c11f67884f1cdea1acdbbf1ad5ba5cea25184adff7cca0fecb3d568f0584c9",
+      "parentBlobRawSha256": "aa2dfe11e7333f51b10ec2fc310ab25d8502fea73f149fb797ec8d145ebb7109",
+      "normalizedSame": true
+    },
+    {
+      "stored": "pipeline-before.ps1",
+      "parent": "test-pipeline-pipeline.ps1",
+      "rawSame": true,
+      "storedRawSha256": "8e09d5c792df37ee0e86d54efac3617bbc63b8743c64cd78cd12ebdb6c3d4a9f",
+      "parentBlobRawSha256": "8e09d5c792df37ee0e86d54efac3617bbc63b8743c64cd78cd12ebdb6c3d4a9f",
+      "normalizedSame": true
+    }
+  ],
+  "errors": []
+}

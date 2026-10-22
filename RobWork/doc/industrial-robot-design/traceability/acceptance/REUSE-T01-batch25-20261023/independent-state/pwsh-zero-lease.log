@@ -1,0 +1,1 @@
+Write-Error: policy.leaseMinutes values must be >= 1

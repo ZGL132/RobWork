@@ -1,0 +1,7 @@
+fatal: not a git repository (or any of the parent directories): .git
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\repo\RobWork\scripts\industrialrobot\pipeline-lock.ps1:44
+Line |
+  44 |    throw "cannot resolve Git administrative directory under '$RepoRoot …
+     |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | cannot resolve Git administrative directory under
+     | 'C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\fixtures\bad-root'

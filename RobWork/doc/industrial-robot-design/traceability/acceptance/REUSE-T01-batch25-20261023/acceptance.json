@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B25",
+  "reviewedCommit": "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+  "parentCommit": "e60d5d3c9a47a24010964295a935d42986a290e1",
+  "verdict": "PASS_LOCAL_B25_ONLY",
+  "blockingFindings": [],
+  "counts": [
+    {
+      "suite": "red",
+      "shell": "pwsh",
+      "executed": 7,
+      "passed": 4,
+      "failed": 3,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "suite": "red",
+      "shell": "powershell",
+      "executed": 7,
+      "passed": 2,
+      "failed": 5,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "suite": "green",
+      "shell": "pwsh",
+      "executed": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "suite": "green",
+      "shell": "powershell",
+      "executed": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "suite": "independent",
+      "shell": "pwsh",
+      "executed": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    },
+    {
+      "suite": "independent",
+      "shell": "powershell",
+      "executed": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0
+    }
+  ],
+  "originalRegression": {
+    "pwsh": {
+      "status": "PASS",
+      "addedBoundaryLines": 6,
+      "exitCode": 0,
+      "totalCaseCount": "not inferred"
+    },
+    "powershell": {
+      "status": "PASS",
+      "addedBoundaryLines": 6,
+      "exitCode": 0,
+      "totalCaseCount": "not inferred"
+    }
+  },
+  "verifyTask": {
+    "machinePassed": 3,
+    "reuseVerdict": "governance only; DEBT=16 UNRESOLVED=1399; not algorithm compliance",
+    "docsVerdict": "NOT AUDITED evidence",
+    "exitCode": 0,
+    "deepEvidence": "NOT RUN",
+    "manualEntries": 0
+  },
+  "scope": {
+    "exitCode": 0,
+    "changedPaths": 222
+  },
+  "lint": {
+    "exitCode": 0,
+    "commits": 1
+  },
+  "bindings": {
+    "new": 19,
+    "checks": 330,
+    "priorEvidenceChecks": 42,
+    "failed": 0,
+    "refreshed": 14,
+    "removed": 0,
+    "unchangedOld": 53,
+    "priorEvidenceRetained": 42
+  },
+  "b23Archive": {
+    "passed": 136,
+    "includingManifestItself": 136,
+    "manifestEntries": 135,
+    "comparison": "Git cat-file raw blob versus original Temp raw file and manifest size/hash",
+    "failed": 0
+  },
+  "lineEndings": {
+    "stateBefore": "raw differs from parent blob only by 307 CRLF versus LF; after only CRLF-to-LF exact match",
+    "pipelineBefore": "raw matches parent blob exactly",
+    "checkout": "autocrlf=false; longpaths=true; final checkout status clean"
+  },
+  "executionIncidents": {
+    "independentHarnessFirstAttempt": "FAIL Get-Command found two pwsh executables; selected first absolute exe, preserved first log/exit and all 24 rerun cases PASS",
+    "initialCheckout": "FAIL filename too long; retained checkout.log then retry succeeds with core.longpaths=true"
+  },
+  "sharedWorkspace": {
+    "laterStatus": "M merge-findings-union.ps1; M test-pipeline-pipeline.ps1; ?? .cache/",
+    "writesByReviewer": false,
+    "note": "Other ongoing edits observed only; acceptance exclusively uses detached frozen Temp clone",
+    "initialStatus": "?? .cache/"
+  },
+  "notRun": [
+    "all schema branches",
+    "real production queue admission or actual lock authorization",
+    "evidence payload validity",
+    "C++/GUI/numerical/performance",
+    "full T01/T02 closure",
+    "migration/REUSE-T02",
+    "remote synchronization",
+    "merge"
+  ],
+  "authorization": "Independent acceptance only; no shared edits, commits, push, remote sync, merge or further delegation",
+  "evidenceRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c"
+}

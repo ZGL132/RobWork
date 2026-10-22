@@ -2891,6 +2891,7 @@
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/final-selftest-ps51.log",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/final-selftest-ps7.exit.txt",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/final-selftest-ps7.log",
+    "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
     "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
     "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
     "RobWork/doc/industrial-robot-design/automation-pipeline.md",
@@ -3218,7 +3219,11 @@
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/final-reuse.exit.txt",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/final-reuse.log",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/verify.exit.txt",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/verify.log"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/verify.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch24-20261023/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch25-20261023/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/**",
+    "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

@@ -1,0 +1,1 @@
+{"ok":false,"state":"locked","tickId":"1b7a6aa0-945e-4560-808e-910ea49e8c3a","workerId":"a197e5f4-bf31-4086-98fd-ba7bda3964c6","leaseExpiresAt":"2026-10-23T05:17:20+08:00","message":"tick already running; this tick must report and exit (PIPE §0.1)"}

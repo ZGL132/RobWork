@@ -1,0 +1,100 @@
+[
+  {
+    "shell": "pwsh",
+    "name": "healthy",
+    "expectedExit": 0,
+    "exitCode": 0,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "name": "fractional-count",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "name": "string-count",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "name": "fake-guid",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "name": "offset-valid",
+    "expectedExit": 0,
+    "exitCode": 0,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "name": "offset-expired",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "pwsh",
+    "name": "bad-calendar",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "name": "healthy",
+    "expectedExit": 0,
+    "exitCode": 0,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "name": "fractional-count",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "name": "string-count",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "name": "fake-guid",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "name": "offset-valid",
+    "expectedExit": 0,
+    "exitCode": 0,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "name": "offset-expired",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  },
+  {
+    "shell": "powershell",
+    "name": "bad-calendar",
+    "expectedExit": 1,
+    "exitCode": 1,
+    "passed": true
+  }
+]

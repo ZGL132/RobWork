@@ -1,0 +1,1226 @@
+[
+  {
+    "path": "acceptance.json",
+    "gitBytes": 7854,
+    "gitRawSha256": "e1196af9360fc75bbd8aada0ffa67c59a5b871a64da4fec957df8186ec24aa3a",
+    "originalBytes": 7854,
+    "originalRawSha256": "e1196af9360fc75bbd8aada0ffa67c59a5b871a64da4fec957df8186ec24aa3a",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "acceptance.md",
+    "gitBytes": 4324,
+    "gitRawSha256": "4ff083913f8248cf59afc468f9019e413564d693e01969d60183503299d5545b",
+    "originalBytes": 4324,
+    "originalRawSha256": "4ff083913f8248cf59afc468f9019e413564d693e01969d60183503299d5545b",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "after-line-ending-check.json",
+    "gitBytes": 322,
+    "gitRawSha256": "1b762c7cd7e67c62b82eac258644f186fafc0de3913e23ee64d7d5d25f84c4f8",
+    "originalBytes": 322,
+    "originalRawSha256": "1b762c7cd7e67c62b82eac258644f186fafc0de3913e23ee64d7d5d25f84c4f8",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "authored-whitespace-windows.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "authored-whitespace-windows.log",
+    "gitBytes": 0,
+    "gitRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "originalBytes": 0,
+    "originalRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "authored-whitespace.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+    "originalBytes": 1,
+    "originalRawSha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "authored-whitespace.log",
+    "gitBytes": 210180,
+    "gitRawSha256": "1da4a2ee074061ae162522147243126ca8d13355479056ff2c0023974444215c",
+    "originalBytes": 210180,
+    "originalRawSha256": "1da4a2ee074061ae162522147243126ca8d13355479056ff2c0023974444215c",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "b21-original-byte-checks.json",
+    "gitBytes": 13853,
+    "gitRawSha256": "b0b8d7ad784d1c236160ffa4839dea3fa65d9e08f36c8deb8591be67a5008d19",
+    "originalBytes": 13853,
+    "originalRawSha256": "b0b8d7ad784d1c236160ffa4839dea3fa65d9e08f36c8deb8591be67a5008d19",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "binding-summary.json",
+    "gitBytes": 529,
+    "gitRawSha256": "40ecd25c0eae51b602743c29e29edb52bf1a45c2fa6e73651edda69993febd1c",
+    "originalBytes": 529,
+    "originalRawSha256": "40ecd25c0eae51b602743c29e29edb52bf1a45c2fa6e73651edda69993febd1c",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "bindings-final.log",
+    "gitBytes": 668,
+    "gitRawSha256": "49d909510a2c7bf8f8a628b2b36ecf2f1dfe91aba2754d41aa5ac70f0aef57fd",
+    "originalBytes": 668,
+    "originalRawSha256": "49d909510a2c7bf8f8a628b2b36ecf2f1dfe91aba2754d41aa5ac70f0aef57fd",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "bindings.json",
+    "gitBytes": 26791,
+    "gitRawSha256": "045718a181f653aa82c7469bc72de3211598b0d162edb88008e623223ed851c1",
+    "originalBytes": 26791,
+    "originalRawSha256": "045718a181f653aa82c7469bc72de3211598b0d162edb88008e623223ed851c1",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "bindings.ps1",
+    "gitBytes": 5224,
+    "gitRawSha256": "33ecae4369ec89052551a83bcd662d70523af9315394238a0be9ce60cb9b513a",
+    "originalBytes": 5224,
+    "originalRawSha256": "33ecae4369ec89052551a83bcd662d70523af9315394238a0be9ce60cb9b513a",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "checkout-retry.log",
+    "gitBytes": 3913,
+    "gitRawSha256": "6b8e3ad2ba50554ebe35dc9f49e3c70e37e95d1ec213d2dee4739bce59d3670a",
+    "originalBytes": 3913,
+    "originalRawSha256": "6b8e3ad2ba50554ebe35dc9f49e3c70e37e95d1ec213d2dee4739bce59d3670a",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "checkout.log",
+    "gitBytes": 2846,
+    "gitRawSha256": "c94952d65a9a834b6167e5b4359120a6a8eb889a91930eddd17a598624ddc320",
+    "originalBytes": 2846,
+    "originalRawSha256": "c94952d65a9a834b6167e5b4359120a6a8eb889a91930eddd17a598624ddc320",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "clone.log",
+    "gitBytes": 123,
+    "gitRawSha256": "567307d23a0b456380a4c0c927f1251357fca82dffda8c87af94839d7fd17fd9",
+    "originalBytes": 123,
+    "originalRawSha256": "567307d23a0b456380a4c0c927f1251357fca82dffda8c87af94839d7fd17fd9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "commands.json",
+    "gitBytes": 5606,
+    "gitRawSha256": "fdfecfad0e752d9cc8d872809c802e0d29ae5027a1de9066e8ffd4c8fe6908c7",
+    "originalBytes": 5606,
+    "originalRawSha256": "fdfecfad0e752d9cc8d872809c802e0d29ae5027a1de9066e8ffd4c8fe6908c7",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "commit-lint.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "commit-lint.log",
+    "gitBytes": 71,
+    "gitRawSha256": "0c8b47695d25935fb9373221f32b99de87114a3af119cbc4eebe4fc5cfd13442",
+    "originalBytes": 71,
+    "originalRawSha256": "0c8b47695d25935fb9373221f32b99de87114a3af119cbc4eebe4fc5cfd13442",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "definitions.json",
+    "gitBytes": 18275,
+    "gitRawSha256": "5147e1baaa6384db930730a5b0e3e6b69ed14246143911822b5d515a236540b1",
+    "originalBytes": 18275,
+    "originalRawSha256": "5147e1baaa6384db930730a5b0e3e6b69ed14246143911822b5d515a236540b1",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance.log",
+    "gitBytes": 164,
+    "gitRawSha256": "cd78712b5dc0fe6c8c1cc6526608cd4e382d4c7b16eaae2443a933fdfe741da1",
+    "originalBytes": 164,
+    "originalRawSha256": "cd78712b5dc0fe6c8c1cc6526608cd4e382d4c7b16eaae2443a933fdfe741da1",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51.log",
+    "gitBytes": 259,
+    "gitRawSha256": "a7df295880e3c437574458192fa621d3b1139e5ab6f61362b08cb948b9ccdf91",
+    "originalBytes": 259,
+    "originalRawSha256": "a7df295880e3c437574458192fa621d3b1139e5ab6f61362b08cb948b9ccdf91",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7.log",
+    "gitBytes": 259,
+    "gitRawSha256": "a7df295880e3c437574458192fa621d3b1139e5ab6f61362b08cb948b9ccdf91",
+    "originalBytes": 259,
+    "originalRawSha256": "a7df295880e3c437574458192fa621d3b1139e5ab6f61362b08cb948b9ccdf91",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-probes.ps1",
+    "gitBytes": 2182,
+    "gitRawSha256": "9d28c344d3b8e5742677a1004377a5e8b3e04901dccb923060fd36d2f32338b2",
+    "originalBytes": 2182,
+    "originalRawSha256": "9d28c344d3b8e5742677a1004377a5e8b3e04901dccb923060fd36d2f32338b2",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps51.log",
+    "gitBytes": 66,
+    "gitRawSha256": "34a762f9481d694fd6d3ba6082854a4c943eec285214b06a626084985c0297eb",
+    "originalBytes": 66,
+    "originalRawSha256": "34a762f9481d694fd6d3ba6082854a4c943eec285214b06a626084985c0297eb",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps7.log",
+    "gitBytes": 60,
+    "gitRawSha256": "8979e1545bc3880a48b0f177843620640448f9ea6613d52372df941b81ac1d76",
+    "originalBytes": 60,
+    "originalRawSha256": "8979e1545bc3880a48b0f177843620640448f9ea6613d52372df941b81ac1d76",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "inherited-runtime-environment.json",
+    "gitBytes": 702,
+    "gitRawSha256": "dfcbc28e0610cd6072ee353688dfba0cc54e5c97fd806be781ce27e99b55f111",
+    "originalBytes": 702,
+    "originalRawSha256": "dfcbc28e0610cd6072ee353688dfba0cc54e5c97fd806be781ce27e99b55f111",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "manifest-itself-check.log",
+    "gitBytes": 26,
+    "gitRawSha256": "63f9c8eba68474df77820d947c89660c7c64786c7e1cb78030f5ed75ab50f403",
+    "originalBytes": 26,
+    "originalRawSha256": "63f9c8eba68474df77820d947c89660c7c64786c7e1cb78030f5ed75ab50f403",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "parent-original.ps1",
+    "gitBytes": 7604,
+    "gitRawSha256": "28da2cf7dbc230de3cfb97257500791875770e0c56cc8e59382af4f28a8cfb93",
+    "originalBytes": 7604,
+    "originalRawSha256": "28da2cf7dbc230de3cfb97257500791875770e0c56cc8e59382af4f28a8cfb93",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-driver.log",
+    "gitBytes": 256,
+    "gitRawSha256": "c172d705287efad21b6b8f4372a9f7f42933536cb35847018241dd177816e8c0",
+    "originalBytes": 256,
+    "originalRawSha256": "c172d705287efad21b6b8f4372a9f7f42933536cb35847018241dd177816e8c0",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-probe.ps1",
+    "gitBytes": 2147,
+    "gitRawSha256": "fa5674b4f156f36e61b58ef00ca5f433517251f716054386bab130da1c7b9103",
+    "originalBytes": 2147,
+    "originalRawSha256": "fa5674b4f156f36e61b58ef00ca5f433517251f716054386bab130da1c7b9103",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-results.json",
+    "gitBytes": 1353,
+    "gitRawSha256": "b524bfae4950600504648f8d02fe3f1c49b716131e1550370aec322700a762f4",
+    "originalBytes": 1353,
+    "originalRawSha256": "b524bfae4950600504648f8d02fe3f1c49b716131e1550370aec322700a762f4",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "originalBytes": 1,
+    "originalRawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51.log",
+    "gitBytes": 216,
+    "gitRawSha256": "65e4b6b8e3c4e0da1cb42f2f40fdaa57f6bb764051af576d7fce8cbf16c57ef3",
+    "originalBytes": 216,
+    "originalRawSha256": "65e4b6b8e3c4e0da1cb42f2f40fdaa57f6bb764051af576d7fce8cbf16c57ef3",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "originalBytes": 1,
+    "originalRawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7.log",
+    "gitBytes": 216,
+    "gitRawSha256": "65e4b6b8e3c4e0da1cb42f2f40fdaa57f6bb764051af576d7fce8cbf16c57ef3",
+    "originalBytes": 216,
+    "originalRawSha256": "65e4b6b8e3c4e0da1cb42f2f40fdaa57f6bb764051af576d7fce8cbf16c57ef3",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "replay.ps1",
+    "gitBytes": 1951,
+    "gitRawSha256": "9a2dec4a53b838c076411baa1471121736f46b2019d6a31a8c46999e7a5b4fb3",
+    "originalBytes": 1951,
+    "originalRawSha256": "9a2dec4a53b838c076411baa1471121736f46b2019d6a31a8c46999e7a5b4fb3",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "rows-snapshot.json",
+    "gitBytes": 47024,
+    "gitRawSha256": "ff7d482f905a637eccdc45b9637b2695aa3c2df891eada84c787f8ccbae73c65",
+    "originalBytes": 47024,
+    "originalRawSha256": "ff7d482f905a637eccdc45b9637b2695aa3c2df891eada84c787f8ccbae73c65",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "scope-frozen.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "scope-frozen.log",
+    "gitBytes": 190,
+    "gitRawSha256": "0e22950d1b49ee9544d1ce116ad274b557432a1e04d1b100cb6882ecebfef2cf",
+    "originalBytes": 190,
+    "originalRawSha256": "0e22950d1b49ee9544d1ce116ad274b557432a1e04d1b100cb6882ecebfef2cf",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "search-1.log",
+    "gitBytes": 1546,
+    "gitRawSha256": "1993365c3a282812eb420b0f058ef3fbcc7726186801a9481058e0dfbd2599b3",
+    "originalBytes": 1546,
+    "originalRawSha256": "1993365c3a282812eb420b0f058ef3fbcc7726186801a9481058e0dfbd2599b3",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "search-2.log",
+    "gitBytes": 976,
+    "gitRawSha256": "c879415579c88609b736b51bfb5940b3784d58fe73a4adc9a2d4535ea6a1600b",
+    "originalBytes": 976,
+    "originalRawSha256": "c879415579c88609b736b51bfb5940b3784d58fe73a4adc9a2d4535ea6a1600b",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "search-3.log",
+    "gitBytes": 149,
+    "gitRawSha256": "861446e9db78aef5892198c8bab7ffcb36077ee148c5a341d3382e3202d99d7e",
+    "originalBytes": 149,
+    "originalRawSha256": "861446e9db78aef5892198c8bab7ffcb36077ee148c5a341d3382e3202d99d7e",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "search-4.log",
+    "gitBytes": 139,
+    "gitRawSha256": "80092d198796541da5d564cabf5fb26737922c19762fd675f3e5d9cd7d0d5a5c",
+    "originalBytes": 139,
+    "originalRawSha256": "80092d198796541da5d564cabf5fb26737922c19762fd675f3e5d9cd7d0d5a5c",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "search-results.json",
+    "gitBytes": 1103,
+    "gitRawSha256": "81ae8d71effc3460b2961473b0941b9dc17ec0d27da9bd870229e0471758d891",
+    "originalBytes": 1103,
+    "originalRawSha256": "81ae8d71effc3460b2961473b0941b9dc17ec0d27da9bd870229e0471758d891",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "selftest-ps51.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "selftest-ps51.log",
+    "gitBytes": 412,
+    "gitRawSha256": "86d4830e7f3e5af1058c95d7a9f44aeed708b765215ec7bc3fa41b64101874a3",
+    "originalBytes": 412,
+    "originalRawSha256": "86d4830e7f3e5af1058c95d7a9f44aeed708b765215ec7bc3fa41b64101874a3",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "selftest-ps7.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "selftest-ps7.log",
+    "gitBytes": 412,
+    "gitRawSha256": "86d4830e7f3e5af1058c95d7a9f44aeed708b765215ec7bc3fa41b64101874a3",
+    "originalBytes": 412,
+    "originalRawSha256": "86d4830e7f3e5af1058c95d7a9f44aeed708b765215ec7bc3fa41b64101874a3",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "semantic-review.json",
+    "gitBytes": 17606,
+    "gitRawSha256": "dc51d854a417733d605935d513c579d9ce6fe6f9762a216247744c7247131144",
+    "originalBytes": 17606,
+    "originalRawSha256": "dc51d854a417733d605935d513c579d9ce6fe6f9762a216247744c7247131144",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "verify-task-real.exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "verify-task-real.log",
+    "gitBytes": 13305,
+    "gitRawSha256": "b078a3ceafd8276bd5335b75d4bf01c10203ca77cbddcf1b2e73e7a48f0e2beb",
+    "originalBytes": 13305,
+    "originalRawSha256": "b078a3ceafd8276bd5335b75d4bf01c10203ca77cbddcf1b2e73e7a48f0e2beb",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "vs-environment.log",
+    "gitBytes": 242,
+    "gitRawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939",
+    "originalBytes": 242,
+    "originalRawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/b1-order.log",
+    "gitBytes": 64,
+    "gitRawSha256": "fcaa2766f523db35255138c10ded21e2924c9b539090c56b1cb394a5cb463db4",
+    "originalBytes": 64,
+    "originalRawSha256": "fcaa2766f523db35255138c10ded21e2924c9b539090c56b1cb394a5cb463db4",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/b1-valid.log",
+    "gitBytes": 50,
+    "gitRawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a",
+    "originalBytes": 50,
+    "originalRawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/definitions.json",
+    "gitBytes": 18275,
+    "gitRawSha256": "5147e1baaa6384db930730a5b0e3e6b69ed14246143911822b5d515a236540b1",
+    "originalBytes": 18275,
+    "originalRawSha256": "5147e1baaa6384db930730a5b0e3e6b69ed14246143911822b5d515a236540b1",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/forbidden-task.json",
+    "gitBytes": 335290,
+    "gitRawSha256": "14da476354d1b2e355d629125dd25102cfc4afe5055ca55532803de03c25a690",
+    "originalBytes": 335290,
+    "originalRawSha256": "14da476354d1b2e355d629125dd25102cfc4afe5055ca55532803de03c25a690",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/invalid-batch.json",
+    "gitBytes": 4550,
+    "gitRawSha256": "2fe03a3806b2b1936d17526e3133bdf75bd55641d93cd2506e84930ad05c6c16",
+    "originalBytes": 4550,
+    "originalRawSha256": "2fe03a3806b2b1936d17526e3133bdf75bd55641d93cd2506e84930ad05c6c16",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/report.json",
+    "gitBytes": 2840,
+    "gitRawSha256": "2498b353a8a34106e151700b2981e876ef891051c113f84ffc61e6f0d9c6d48e",
+    "originalBytes": 2840,
+    "originalRawSha256": "2498b353a8a34106e151700b2981e876ef891051c113f84ffc61e6f0d9c6d48e",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/scope-forbidden.log",
+    "gitBytes": 382,
+    "gitRawSha256": "b9461a4a393844826e601ab9af10356393f1144d42dd0f33489708fe9d917c5c",
+    "originalBytes": 382,
+    "originalRawSha256": "b9461a4a393844826e601ab9af10356393f1144d42dd0f33489708fe9d917c5c",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/scope-invalid-sha.log",
+    "gitBytes": 469,
+    "gitRawSha256": "e79a365c8cbf0a23e36867b60604145fc8d0731441724a324ce49deea5cc1bfb",
+    "originalBytes": 469,
+    "originalRawSha256": "e79a365c8cbf0a23e36867b60604145fc8d0731441724a324ce49deea5cc1bfb",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "governance-results/scope-valid.log",
+    "gitBytes": 188,
+    "gitRawSha256": "41511aafe7f0a69dd1ee3bfc5efc237a3e36605c0174c7a119ef6a4273cde16c",
+    "originalBytes": 188,
+    "originalRawSha256": "41511aafe7f0a69dd1ee3bfc5efc237a3e36605c0174c7a119ef6a4273cde16c",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51/all-skipped.xml",
+    "gitBytes": 103,
+    "gitRawSha256": "8dff80b281ec4cc4ee9a121559ebec5aeef24b7ec38556348aa6a4a3d5d83f13",
+    "originalBytes": 103,
+    "originalRawSha256": "8dff80b281ec4cc4ee9a121559ebec5aeef24b7ec38556348aa6a4a3d5d83f13",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51/error.xml",
+    "gitBytes": 101,
+    "gitRawSha256": "f35fba8d016fbce51102a212bd93ea227dc3011766670a0e87e8c317596246da",
+    "originalBytes": 101,
+    "originalRawSha256": "f35fba8d016fbce51102a212bd93ea227dc3011766670a0e87e8c317596246da",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51/failure.xml",
+    "gitBytes": 102,
+    "gitRawSha256": "065547b936f8ec90ab2df12a813f8b782cc691ca21fbd7f69190b08760195942",
+    "originalBytes": 102,
+    "originalRawSha256": "065547b936f8ec90ab2df12a813f8b782cc691ca21fbd7f69190b08760195942",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51/healthy.xml",
+    "gitBytes": 83,
+    "gitRawSha256": "23646ac226d34bd6e5c11b4a8e7d27442578371ef5ededb712e9ab54e227e581",
+    "originalBytes": 83,
+    "originalRawSha256": "23646ac226d34bd6e5c11b4a8e7d27442578371ef5ededb712e9ab54e227e581",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51/malformed.xml",
+    "gitBytes": 11,
+    "gitRawSha256": "00617dc877ca8c20fc58963a68278cc2e36d9d900e9d5b28e2d3065bd62165f9",
+    "originalBytes": 11,
+    "originalRawSha256": "00617dc877ca8c20fc58963a68278cc2e36d9d900e9d5b28e2d3065bd62165f9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51/report.json",
+    "gitBytes": 3002,
+    "gitRawSha256": "f98ce386ce5c26f6044f32180ca3b5bc8bd93bf3012ca91a93579af9d1d9a423",
+    "originalBytes": 3002,
+    "originalRawSha256": "f98ce386ce5c26f6044f32180ca3b5bc8bd93bf3012ca91a93579af9d1d9a423",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps51/zero.xml",
+    "gitBytes": 47,
+    "gitRawSha256": "d44cca2fabe042c46910f8ce1d79bf13913c19216823687458393a8071ac3fdc",
+    "originalBytes": 47,
+    "originalRawSha256": "d44cca2fabe042c46910f8ce1d79bf13913c19216823687458393a8071ac3fdc",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7/all-skipped.xml",
+    "gitBytes": 103,
+    "gitRawSha256": "8dff80b281ec4cc4ee9a121559ebec5aeef24b7ec38556348aa6a4a3d5d83f13",
+    "originalBytes": 103,
+    "originalRawSha256": "8dff80b281ec4cc4ee9a121559ebec5aeef24b7ec38556348aa6a4a3d5d83f13",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7/error.xml",
+    "gitBytes": 101,
+    "gitRawSha256": "f35fba8d016fbce51102a212bd93ea227dc3011766670a0e87e8c317596246da",
+    "originalBytes": 101,
+    "originalRawSha256": "f35fba8d016fbce51102a212bd93ea227dc3011766670a0e87e8c317596246da",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7/failure.xml",
+    "gitBytes": 102,
+    "gitRawSha256": "065547b936f8ec90ab2df12a813f8b782cc691ca21fbd7f69190b08760195942",
+    "originalBytes": 102,
+    "originalRawSha256": "065547b936f8ec90ab2df12a813f8b782cc691ca21fbd7f69190b08760195942",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7/healthy.xml",
+    "gitBytes": 83,
+    "gitRawSha256": "23646ac226d34bd6e5c11b4a8e7d27442578371ef5ededb712e9ab54e227e581",
+    "originalBytes": 83,
+    "originalRawSha256": "23646ac226d34bd6e5c11b4a8e7d27442578371ef5ededb712e9ab54e227e581",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7/malformed.xml",
+    "gitBytes": 11,
+    "gitRawSha256": "00617dc877ca8c20fc58963a68278cc2e36d9d900e9d5b28e2d3065bd62165f9",
+    "originalBytes": 11,
+    "originalRawSha256": "00617dc877ca8c20fc58963a68278cc2e36d9d900e9d5b28e2d3065bd62165f9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7/report.json",
+    "gitBytes": 1439,
+    "gitRawSha256": "5a633e421700c24e87d875c9e56ceea0b583c0e3f025da942e4d5a7ec9240d15",
+    "originalBytes": 1439,
+    "originalRawSha256": "5a633e421700c24e87d875c9e56ceea0b583c0e3f025da942e4d5a7ec9240d15",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "green-ps7/zero.xml",
+    "gitBytes": 47,
+    "gitRawSha256": "d44cca2fabe042c46910f8ce1d79bf13913c19216823687458393a8071ac3fdc",
+    "originalBytes": 47,
+    "originalRawSha256": "d44cca2fabe042c46910f8ce1d79bf13913c19216823687458393a8071ac3fdc",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps51/all-skipped-two.xml",
+    "gitBytes": 133,
+    "gitRawSha256": "b5cce0cf79df038939ff945f6d761e330306d714dd3133e06c2a6fb7c6324d72",
+    "originalBytes": 133,
+    "originalRawSha256": "b5cce0cf79df038939ff945f6d761e330306d714dd3133e06c2a6fb7c6324d72",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps51/disabled.xml",
+    "gitBytes": 122,
+    "gitRawSha256": "9b4eaac2ccadfb640821ba42b4c0cedd20459affc7bbdb4a63017f10dcf3e7fc",
+    "originalBytes": 122,
+    "originalRawSha256": "9b4eaac2ccadfb640821ba42b4c0cedd20459affc7bbdb4a63017f10dcf3e7fc",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps51/mixed-disabled-error.xml",
+    "gitBytes": 142,
+    "gitRawSha256": "dd440506c3c22b2ac65c3e261dfec37dc113f51b8de4288ceb7756b99e8520f5",
+    "originalBytes": 142,
+    "originalRawSha256": "dd440506c3c22b2ac65c3e261dfec37dc113f51b8de4288ceb7756b99e8520f5",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps51/mixed-skip-healthy.xml",
+    "gitBytes": 155,
+    "gitRawSha256": "e2f39b182519110cacf8e64141469f8c0145f767578657ab03453636039c6c53",
+    "originalBytes": 155,
+    "originalRawSha256": "e2f39b182519110cacf8e64141469f8c0145f767578657ab03453636039c6c53",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps51/multiple-failure-error.xml",
+    "gitBytes": 167,
+    "gitRawSha256": "d711749879b0057e1820e46eab4ffbd0a030cb68e6d189d6fbeabbd99f27dbd9",
+    "originalBytes": 167,
+    "originalRawSha256": "d711749879b0057e1820e46eab4ffbd0a030cb68e6d189d6fbeabbd99f27dbd9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps51/report.json",
+    "gitBytes": 2128,
+    "gitRawSha256": "ac355b47f82c6cf5ff49a312476a273c534859ea196784af5e746feff842fa91",
+    "originalBytes": 2128,
+    "originalRawSha256": "ac355b47f82c6cf5ff49a312476a273c534859ea196784af5e746feff842fa91",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps7/all-skipped-two.xml",
+    "gitBytes": 133,
+    "gitRawSha256": "b5cce0cf79df038939ff945f6d761e330306d714dd3133e06c2a6fb7c6324d72",
+    "originalBytes": 133,
+    "originalRawSha256": "b5cce0cf79df038939ff945f6d761e330306d714dd3133e06c2a6fb7c6324d72",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps7/disabled.xml",
+    "gitBytes": 122,
+    "gitRawSha256": "9b4eaac2ccadfb640821ba42b4c0cedd20459affc7bbdb4a63017f10dcf3e7fc",
+    "originalBytes": 122,
+    "originalRawSha256": "9b4eaac2ccadfb640821ba42b4c0cedd20459affc7bbdb4a63017f10dcf3e7fc",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps7/mixed-disabled-error.xml",
+    "gitBytes": 142,
+    "gitRawSha256": "dd440506c3c22b2ac65c3e261dfec37dc113f51b8de4288ceb7756b99e8520f5",
+    "originalBytes": 142,
+    "originalRawSha256": "dd440506c3c22b2ac65c3e261dfec37dc113f51b8de4288ceb7756b99e8520f5",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps7/mixed-skip-healthy.xml",
+    "gitBytes": 155,
+    "gitRawSha256": "e2f39b182519110cacf8e64141469f8c0145f767578657ab03453636039c6c53",
+    "originalBytes": 155,
+    "originalRawSha256": "e2f39b182519110cacf8e64141469f8c0145f767578657ab03453636039c6c53",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps7/multiple-failure-error.xml",
+    "gitBytes": 167,
+    "gitRawSha256": "d711749879b0057e1820e46eab4ffbd0a030cb68e6d189d6fbeabbd99f27dbd9",
+    "originalBytes": 167,
+    "originalRawSha256": "d711749879b0057e1820e46eab4ffbd0a030cb68e6d189d6fbeabbd99f27dbd9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "independent-ps7/report.json",
+    "gitBytes": 978,
+    "gitRawSha256": "9e9ab6bb4c2fbe36d898b006d17600fe1dc0f16891d108240a020537c681aad5",
+    "originalBytes": 978,
+    "originalRawSha256": "9e9ab6bb4c2fbe36d898b006d17600fe1dc0f16891d108240a020537c681aad5",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-healthy/driver.log",
+    "gitBytes": 512,
+    "gitRawSha256": "b9db5185e0be5ac07786e71cc12931a18a95850c3c56d83aa3a8a27dfb5effbf",
+    "originalBytes": 512,
+    "originalRawSha256": "b9db5185e0be5ac07786e71cc12931a18a95850c3c56d83aa3a8a27dfb5effbf",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-healthy/exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-healthy/ird-test-report.json",
+    "gitBytes": 1016,
+    "gitRawSha256": "622d19f15103d701d4cd9906c1707025591ac81d71029bd084fcac8e257afc99",
+    "originalBytes": 1016,
+    "originalRawSha256": "622d19f15103d701d4cd9906c1707025591ac81d71029bd084fcac8e257afc99",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-healthy/run-001.stderr.log",
+    "gitBytes": 0,
+    "gitRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "originalBytes": 0,
+    "originalRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-healthy/run-001.stdout.log",
+    "gitBytes": 599,
+    "gitRawSha256": "c6ddcb01d0d6ed1d7a65e0f96b2c654d69ac7f802bcc7aa0d01ec17c62bbbd89",
+    "originalBytes": 599,
+    "originalRawSha256": "c6ddcb01d0d6ed1d7a65e0f96b2c654d69ac7f802bcc7aa0d01ec17c62bbbd89",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-healthy/run-001.xml",
+    "gitBytes": 699,
+    "gitRawSha256": "ca0ee429ac0107acca71d94b78c8bca1a3f8c7f9e0d23d96a186fe57681512f6",
+    "originalBytes": 699,
+    "originalRawSha256": "ca0ee429ac0107acca71d94b78c8bca1a3f8c7f9e0d23d96a186fe57681512f6",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-healthy/summary.txt",
+    "gitBytes": 308,
+    "gitRawSha256": "3445d85e6d1835aacd7f5797816eeac9911f13519cb9590f851ab722f68f3b5d",
+    "originalBytes": 308,
+    "originalRawSha256": "3445d85e6d1835aacd7f5797816eeac9911f13519cb9590f851ab722f68f3b5d",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-zero/driver.log",
+    "gitBytes": 618,
+    "gitRawSha256": "71934d67ac6910a8ee9ee44067b8bd3a68f20a28674c81f2e9b7633e0ed74b72",
+    "originalBytes": 618,
+    "originalRawSha256": "71934d67ac6910a8ee9ee44067b8bd3a68f20a28674c81f2e9b7633e0ed74b72",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-zero/exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "originalBytes": 1,
+    "originalRawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-zero/ird-test-report.json",
+    "gitBytes": 233,
+    "gitRawSha256": "04757c7fda50e3ca146d91816df5614fe067ad020303779586708365372091d8",
+    "originalBytes": 233,
+    "originalRawSha256": "04757c7fda50e3ca146d91816df5614fe067ad020303779586708365372091d8",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-zero/run-001.stderr.log",
+    "gitBytes": 0,
+    "gitRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "originalBytes": 0,
+    "originalRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-zero/run-001.stdout.log",
+    "gitBytes": 267,
+    "gitRawSha256": "7e42741a6862777cbdf8d63e16270a788c7085e78c6fb2586826094f3d72b60c",
+    "originalBytes": 267,
+    "originalRawSha256": "7e42741a6862777cbdf8d63e16270a788c7085e78c6fb2586826094f3d72b60c",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-zero/run-001.xml",
+    "gitBytes": 178,
+    "gitRawSha256": "ffd5fd2587d3ce103c41f4caef36da4aa15588b1b71b8ded6b94070079566d47",
+    "originalBytes": 178,
+    "originalRawSha256": "ffd5fd2587d3ce103c41f4caef36da4aa15588b1b71b8ded6b94070079566d47",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-after-zero/summary.txt",
+    "gitBytes": 316,
+    "gitRawSha256": "10c7a48bd8ca22b0b1800ceea42852cea2df15e0e6c92a7ba529efbc7bae9ea0",
+    "originalBytes": 316,
+    "originalRawSha256": "10c7a48bd8ca22b0b1800ceea42852cea2df15e0e6c92a7ba529efbc7bae9ea0",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-healthy/driver.log",
+    "gitBytes": 514,
+    "gitRawSha256": "aedaa217357564d2e3661d384ec5589fba6a900083b4d622aad4976ff3cd3b8e",
+    "originalBytes": 514,
+    "originalRawSha256": "aedaa217357564d2e3661d384ec5589fba6a900083b4d622aad4976ff3cd3b8e",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-healthy/exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-healthy/ird-test-report.json",
+    "gitBytes": 1016,
+    "gitRawSha256": "2fa469aa3e1cac7f06405ce3cf4f88a9a15782a6bac47efa9ae553851a810f56",
+    "originalBytes": 1016,
+    "originalRawSha256": "2fa469aa3e1cac7f06405ce3cf4f88a9a15782a6bac47efa9ae553851a810f56",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-healthy/run-001.stderr.log",
+    "gitBytes": 0,
+    "gitRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "originalBytes": 0,
+    "originalRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-healthy/run-001.stdout.log",
+    "gitBytes": 599,
+    "gitRawSha256": "a7a2796045679dd5e8f10c4e98b41b538418afae3d766945c5694817e2cc5720",
+    "originalBytes": 599,
+    "originalRawSha256": "a7a2796045679dd5e8f10c4e98b41b538418afae3d766945c5694817e2cc5720",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-healthy/run-001.xml",
+    "gitBytes": 699,
+    "gitRawSha256": "fb77a026eb36accf4515d6855fc2b8606d67c4118f377b2158178596a018a116",
+    "originalBytes": 699,
+    "originalRawSha256": "fb77a026eb36accf4515d6855fc2b8606d67c4118f377b2158178596a018a116",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-healthy/summary.txt",
+    "gitBytes": 308,
+    "gitRawSha256": "3445d85e6d1835aacd7f5797816eeac9911f13519cb9590f851ab722f68f3b5d",
+    "originalBytes": 308,
+    "originalRawSha256": "3445d85e6d1835aacd7f5797816eeac9911f13519cb9590f851ab722f68f3b5d",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-zero/driver.log",
+    "gitBytes": 508,
+    "gitRawSha256": "bbf7107ae74f4f685c57f647458c60d2cf8dbc9907b06fec94d0c6c916992ed8",
+    "originalBytes": 508,
+    "originalRawSha256": "bbf7107ae74f4f685c57f647458c60d2cf8dbc9907b06fec94d0c6c916992ed8",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-zero/exit.txt",
+    "gitBytes": 1,
+    "gitRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "originalBytes": 1,
+    "originalRawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-zero/ird-test-report.json",
+    "gitBytes": 233,
+    "gitRawSha256": "04757c7fda50e3ca146d91816df5614fe067ad020303779586708365372091d8",
+    "originalBytes": 233,
+    "originalRawSha256": "04757c7fda50e3ca146d91816df5614fe067ad020303779586708365372091d8",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-zero/run-001.stderr.log",
+    "gitBytes": 0,
+    "gitRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "originalBytes": 0,
+    "originalRawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-zero/run-001.stdout.log",
+    "gitBytes": 267,
+    "gitRawSha256": "7e42741a6862777cbdf8d63e16270a788c7085e78c6fb2586826094f3d72b60c",
+    "originalBytes": 267,
+    "originalRawSha256": "7e42741a6862777cbdf8d63e16270a788c7085e78c6fb2586826094f3d72b60c",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-zero/run-001.xml",
+    "gitBytes": 178,
+    "gitRawSha256": "392ab59ab8432a623b2817289f71e4276184698a0b71399784297b8b99221943",
+    "originalBytes": 178,
+    "originalRawSha256": "392ab59ab8432a623b2817289f71e4276184698a0b71399784297b8b99221943",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "process-before-zero/summary.txt",
+    "gitBytes": 308,
+    "gitRawSha256": "3445d85e6d1835aacd7f5797816eeac9911f13519cb9590f851ab722f68f3b5d",
+    "originalBytes": 308,
+    "originalRawSha256": "3445d85e6d1835aacd7f5797816eeac9911f13519cb9590f851ab722f68f3b5d",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51/all-skipped.xml",
+    "gitBytes": 103,
+    "gitRawSha256": "8dff80b281ec4cc4ee9a121559ebec5aeef24b7ec38556348aa6a4a3d5d83f13",
+    "originalBytes": 103,
+    "originalRawSha256": "8dff80b281ec4cc4ee9a121559ebec5aeef24b7ec38556348aa6a4a3d5d83f13",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51/error.xml",
+    "gitBytes": 101,
+    "gitRawSha256": "f35fba8d016fbce51102a212bd93ea227dc3011766670a0e87e8c317596246da",
+    "originalBytes": 101,
+    "originalRawSha256": "f35fba8d016fbce51102a212bd93ea227dc3011766670a0e87e8c317596246da",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51/failure.xml",
+    "gitBytes": 102,
+    "gitRawSha256": "065547b936f8ec90ab2df12a813f8b782cc691ca21fbd7f69190b08760195942",
+    "originalBytes": 102,
+    "originalRawSha256": "065547b936f8ec90ab2df12a813f8b782cc691ca21fbd7f69190b08760195942",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51/healthy.xml",
+    "gitBytes": 83,
+    "gitRawSha256": "23646ac226d34bd6e5c11b4a8e7d27442578371ef5ededb712e9ab54e227e581",
+    "originalBytes": 83,
+    "originalRawSha256": "23646ac226d34bd6e5c11b4a8e7d27442578371ef5ededb712e9ab54e227e581",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51/malformed.xml",
+    "gitBytes": 11,
+    "gitRawSha256": "00617dc877ca8c20fc58963a68278cc2e36d9d900e9d5b28e2d3065bd62165f9",
+    "originalBytes": 11,
+    "originalRawSha256": "00617dc877ca8c20fc58963a68278cc2e36d9d900e9d5b28e2d3065bd62165f9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51/report.json",
+    "gitBytes": 2822,
+    "gitRawSha256": "3ecdbc0511db4653cc8a96637ba45adb4d175eede2f564190de20cf3f7e3411f",
+    "originalBytes": 2822,
+    "originalRawSha256": "3ecdbc0511db4653cc8a96637ba45adb4d175eede2f564190de20cf3f7e3411f",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps51/zero.xml",
+    "gitBytes": 47,
+    "gitRawSha256": "d44cca2fabe042c46910f8ce1d79bf13913c19216823687458393a8071ac3fdc",
+    "originalBytes": 47,
+    "originalRawSha256": "d44cca2fabe042c46910f8ce1d79bf13913c19216823687458393a8071ac3fdc",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7/all-skipped.xml",
+    "gitBytes": 103,
+    "gitRawSha256": "8dff80b281ec4cc4ee9a121559ebec5aeef24b7ec38556348aa6a4a3d5d83f13",
+    "originalBytes": 103,
+    "originalRawSha256": "8dff80b281ec4cc4ee9a121559ebec5aeef24b7ec38556348aa6a4a3d5d83f13",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7/error.xml",
+    "gitBytes": 101,
+    "gitRawSha256": "f35fba8d016fbce51102a212bd93ea227dc3011766670a0e87e8c317596246da",
+    "originalBytes": 101,
+    "originalRawSha256": "f35fba8d016fbce51102a212bd93ea227dc3011766670a0e87e8c317596246da",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7/failure.xml",
+    "gitBytes": 102,
+    "gitRawSha256": "065547b936f8ec90ab2df12a813f8b782cc691ca21fbd7f69190b08760195942",
+    "originalBytes": 102,
+    "originalRawSha256": "065547b936f8ec90ab2df12a813f8b782cc691ca21fbd7f69190b08760195942",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7/healthy.xml",
+    "gitBytes": 83,
+    "gitRawSha256": "23646ac226d34bd6e5c11b4a8e7d27442578371ef5ededb712e9ab54e227e581",
+    "originalBytes": 83,
+    "originalRawSha256": "23646ac226d34bd6e5c11b4a8e7d27442578371ef5ededb712e9ab54e227e581",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7/malformed.xml",
+    "gitBytes": 11,
+    "gitRawSha256": "00617dc877ca8c20fc58963a68278cc2e36d9d900e9d5b28e2d3065bd62165f9",
+    "originalBytes": 11,
+    "originalRawSha256": "00617dc877ca8c20fc58963a68278cc2e36d9d900e9d5b28e2d3065bd62165f9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7/report.json",
+    "gitBytes": 1336,
+    "gitRawSha256": "9428266dc909ff7fde04bf9af53a70d43c36bdf6874c49ad8f3665aaee921bfa",
+    "originalBytes": 1336,
+    "originalRawSha256": "9428266dc909ff7fde04bf9af53a70d43c36bdf6874c49ad8f3665aaee921bfa",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "red-ps7/zero.xml",
+    "gitBytes": 47,
+    "gitRawSha256": "d44cca2fabe042c46910f8ce1d79bf13913c19216823687458393a8071ac3fdc",
+    "originalBytes": 47,
+    "originalRawSha256": "d44cca2fabe042c46910f8ce1d79bf13913c19216823687458393a8071ac3fdc",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "source/run-flake-probe.ps1",
+    "gitBytes": 9202,
+    "gitRawSha256": "a9bf73af7820bf69705b121f403d17f5cdea783a0014dbfc97adf29fb924d3fc",
+    "originalBytes": 9202,
+    "originalRawSha256": "a9bf73af7820bf69705b121f403d17f5cdea783a0014dbfc97adf29fb924d3fc",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "source/validate-b1-batch.ps1",
+    "gitBytes": 5352,
+    "gitRawSha256": "78c0ab989a402fa8105e364f7b80634d65bd6108688d9ca7f69ad6171852c2c9",
+    "originalBytes": 5352,
+    "originalRawSha256": "78c0ab989a402fa8105e364f7b80634d65bd6108688d9ca7f69ad6171852c2c9",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "source/verify-task-scope.ps1",
+    "gitBytes": 9087,
+    "gitRawSha256": "8e8b28487656a1ad8b7ad194f94dbf694bb1b123e084cf628b140ee74b0cb08b",
+    "originalBytes": 9087,
+    "originalRawSha256": "8e8b28487656a1ad8b7ad194f94dbf694bb1b123e084cf628b140ee74b0cb08b",
+    "manifestMatch": true,
+    "passed": true
+  },
+  {
+    "path": "artifact-manifest.json",
+    "gitBytes": 21189,
+    "gitRawSha256": "109bea76ff33d178b0e3fe0b56599723670f5328ffac9991f9ccded37fe3a6cd",
+    "originalBytes": 21189,
+    "originalRawSha256": "109bea76ff33d178b0e3fe0b56599723670f5328ffac9991f9ccded37fe3a6cd",
+    "manifestMatch": true,
+    "passed": true
+  }
+]
