@@ -23,7 +23,7 @@ function ReadText([string]$path, [switch]$Optional) {
         $savedPreference = $ErrorActionPreference
         try { $ErrorActionPreference = 'Continue'; $v = & git -C $RepoRoot show "${Head}:$path" 2>$null; $gitCode = $LASTEXITCODE } finally { $ErrorActionPreference = $savedPreference }
         if ($gitCode -ne 0) { if ($Optional) { return $null }; Fail 'MISSING' $path }
-        return (($v -join "`n") + "`n")
+        return (($v -join "`n") + "`n").TrimStart([char]0xFEFF)
     }
     $full = Join-Path $RepoRoot $path
     if (-not (Test-Path -LiteralPath $full -PathType Leaf)) { if ($Optional) { return $null }; Fail 'MISSING' $path }
@@ -35,7 +35,7 @@ function ReadText([string]$path, [switch]$Optional) {
         if ($parent.Attributes -band [IO.FileAttributes]::ReparsePoint) { Fail 'PATH' $path }
         $parent = $parent.Parent
     }
-    return [IO.File]::ReadAllText($full)
+    return ([IO.File]::ReadAllText($full)).TrimStart([char]0xFEFF)
 }
 function Digest([string]$text) {
     $bytes = [Text.Encoding]::UTF8.GetBytes(($text -replace "`r`n", "`n").TrimEnd("`n") + "`n")

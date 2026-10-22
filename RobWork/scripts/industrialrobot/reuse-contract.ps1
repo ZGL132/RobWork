@@ -110,8 +110,10 @@ function CheckSourcePermission([string]$path, [string]$text, $grants) {
     $code = [regex]::Replace($text,'(?s)/\*.*?\*/|(?m)//[^\r\n]*',' ')
     $categories = @()
     foreach ($pair in @(@('model','rw/models/'),@('state','rw/kinematics/'),@('solver','rw/(invkin|trajectory|pathplanning)/'),@('collision','rw/proximity/'),@('simulation','rwsim/'),@('loader','rw/loaders/'),@('graphics','(rw/graphics|rwlibs/opengl)/'),@('host','rws/'))) {
-        if ($code -cmatch ('#\s*include\s*[<"]'+$pair[1])) { $categories += $pair[0] }
+        if ($code -cmatch ('(?m)^\s*#\s*include\s*[<"]'+$pair[1])) { $categories += $pair[0] }
     }
+    # 类型/操作名出现在文案中不产生对象权限；保留上面已提取的 include 分类。
+    $code = [regex]::Replace($code,'"(?:\\.|[^"\\])*"|''(?:\\.|[^''\\])*''',' ')
     if ($code -cmatch '\brw::models::|\b(WorkCell|DynamicWorkCell|RigidDevice)\b') { $categories += 'model' }
     if ($code -cmatch '\brw::kinematics::|\bState\b') { $categories += 'state' }
     if ($code -cmatch '\brw::invkin::|\bIKSolver\b') { $categories += 'solver' }
@@ -121,7 +123,14 @@ function CheckSourcePermission([string]$path, [string]$text, $grants) {
     if ($code -cmatch '\b(?:WorkCellLoader|DynamicWorkCellLoader)\s*::\s*load') { $ops += 'load-model' }
     if ($code -cmatch '(?:->|\.)\s*(?:addFrame|addDevice|addBody|removeFrame|removeDevice|setMass|setInertia)\s*\(') { $ops += 'mutate-model' }
     if ($code -cmatch '\b(?:cloneWorkCell|cloneDynamicWorkCell)\s*\(') { $ops += 'clone-model' }
-    if ($code -cmatch '(?:->|\.)\s*(?:setQ|setTransform|setData)\s*\(') { $ops += 'write-state' }
+    if ($code -cmatch '(?:->|\.)\s*setQ\s*\(') { $ops += 'write-state' }
+    # 同名不等于同类型：Qt item::setData 和相机 setTransform 不是关节 State 写。
+    # 明确的上游类别/局部 StateData 类型可静态识别；别名/工厂返回值仍交功能来源审查。
+    if (@($categories | Where-Object { $_ -in @('model','state') }).Count -and $code -cmatch '(?:->|\.)\s*setTransform\s*\(') { $ops += 'write-state' }
+    if ($code -cmatch '\b(?:rw::kinematics::)?StateData::setData\s*\(') { $ops += 'write-state' }
+    foreach ($declaration in [regex]::Matches($code,'\b(?:rw::kinematics::)?StateData\s*[*&]?\s*(\w+)')) {
+        if ($code -cmatch ('\b'+[regex]::Escape($declaration.Groups[1].Value)+'\s*(?:->|\.)\s*setData\s*\(')) { $ops += 'write-state' }
+    }
     if ($code -cmatch '\b(?:new\s+(?:rw::kinematics::)?State|(?:make_shared|ownedPtr)\s*<\s*(?:rw::kinematics::)?State)\b') { $ops += 'construct-session' }
     if (-not $categories.Count -and -not $ops.Count) { return }
     if (-not $grants.ContainsKey($path)) { Fail 'AD' "$path : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)" }

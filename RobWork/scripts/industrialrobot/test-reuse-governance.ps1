@@ -15,7 +15,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 128
+$driverFailure = ''; $expectedTests = 135
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $copiedValidatorSha256='';$copiedHelperSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
@@ -32,7 +32,7 @@ function GetJson([string]$p) { return ([IO.File]::ReadAllText((Join-Path $sandbo
 function PutJson([string]$p,$j) { Put $p ($j | ConvertTo-Json -Depth 30) }
 function Hash([string]$s) {
     $sha=[Security.Cryptography.SHA256]::Create()
-    try { return ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes(($s -replace "`r`n","`n").TrimEnd("`n")+"`n")))).Replace('-','').ToLowerInvariant() } finally { $sha.Dispose() }
+    try { return ([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes(($s.TrimStart([char]0xFEFF) -replace "`r`n","`n").TrimEnd("`n")+"`n")))).Replace('-','').ToLowerInvariant() } finally { $sha.Dispose() }
 }
 function Declare([string]$name,[string]$source,[string]$mode='business') {
     $p=$product+'kinematics/src/'+$name+'.cpp'; Put $p $source
@@ -62,9 +62,9 @@ function Grant([string]$origin='runtime-borrow',[string[]]$operations=@('query')
         targets=@($target);categories=@('model','state');operations=$operations;origin=$origin;lifetime='任务样本，无生产授权';permissionRef='ARCH:3.6.1';usageRole='adapter';
         build=[pscustomobject]@{path=$build;sha256=(Hash ([IO.File]::ReadAllText((Join-Path $sandbox $build))))}}
 }
-function FunctionalChange([string]$source) {
+function FunctionalChange([string]$source,[string]$suffix='cpp') {
     # 验收对象仅为隔离夹具；接受记录不离开 sandbox，不能用它放行真实生产代码。
-    $path=$product+'kinematics/src/PermissionProbe.cpp'; Put $path $source
+    $path=$product+'kinematics/src/PermissionProbe.'+$suffix;$script:probePath=$path;Put $path $source
     $accept=[pscustomobject]@{commit=$script:fixtureAcceptanceCommit;path=($design+'traceability/acceptance/GOV-T22-fixture.json');reviewedCommit=$script:fixtureReviewedCommit}
     $t=[pscustomobject]@{taskId='KIN-T99';status='ready';allowedFiles=@($path);forbiddenFiles=@();governanceAcceptance=(GetJson ($design+'tasks/GOV-T22.json')).governanceAcceptance;reuseGateAcceptance=$accept;
         reuse=[pscustomobject]@{policy='H1-H6';manifest=($reuse+'changes/KIN-T99.json')}}
@@ -72,7 +72,7 @@ function FunctionalChange([string]$source) {
     PutJson ($reuse+'changes/KIN-T99.json') ([pscustomobject]@{schemaVersion='ird-reuse-change/1';taskId='KIN-T99';taskFile=($design+'tasks/KIN-T99.json');files=@([pscustomobject]@{path=$path;sha256=(Hash $source);mode='business';boundary='隔离权限夹具';verify='fixture';capabilities=@()})})
 }
 function ProbeMatrix([string]$decision='business-specific',[string]$status='migrated') {
-    $path=$product+'kinematics/src/PermissionProbe.cpp';$m=MathMatrix;$r=$m.functions[0]
+    $path=$script:probePath;$m=MathMatrix;$r=$m.functions[0]
     $txt=[IO.File]::ReadAllText((Join-Path $sandbox $path))
     $r.functionId='fixture.kinematics.probe';$r.ownerUnit='kinematics';$r.sources=@([pscustomobject]@{path=$path;symbol='probe';startLine=1;endLine=@($txt -split "`n").Count;sha256=(Hash $txt)})
     $r.targets=@('sdurws_ird_kinematics');$r.capabilityId='NONE';$r.decision=$decision;$r.status=$status
@@ -82,7 +82,7 @@ function ProbeMatrix([string]$decision='business-specific',[string]$status='migr
     $m.unit='kinematics';PutJson ($reuse+'functions/kinematics.json') $m
 }
 function ProbeGrant([string]$origin,[string[]]$categories,[string[]]$ops) {
-    $g=Grant $origin $ops;$g.source.path=$product+'kinematics/src/PermissionProbe.cpp';$g.source.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.source.path)));$g.categories=$categories
+    $g=Grant $origin $ops;$g.source.path=$script:probePath;$g.source.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.source.path)));$g.categories=$categories
     $p=GetJson ($reuse+'permissions.json');$p.grants=@($g);PutJson ($reuse+'permissions.json') $p
 }
 function WriteProduction($fixture) {
@@ -352,6 +352,24 @@ try {
     Case 'closure-new-file-omitted-final' 'REUSE-MIGRATION : new/current file lacks independent closure' { [void](ClosureFixture -Replacement);$c=GetJson ($reuse+'closures.json');$c.files=@($c.files[0]);PutJson ($reuse+'closures.json') $c } @('-RequireMigrationComplete')
     Case 'closure-mutable-reference-rejected' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].migrationCommit='HEAD';PutJson ($reuse+'closures.json') $c }
     Case 'closure-record-path-rejected' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].acceptance.path=$reuse+'fixture-production.json';PutJson ($reuse+'closures.json') $c }
+    Case 'ad-real-qt-item-positive' 'PASS' {
+        $m=MathMatrix;$r=$m.functions[0];$path=$product+'ui/src/CommandPalette.cpp';$txt=[IO.File]::ReadAllText((Join-Path $sandbox $path))
+        $m.unit='ui';$r.ownerUnit='ui';$r.functionId='fixture.ui.command-palette';$r.sources=@([pscustomobject]@{path=$path;symbol='CommandPalettePanel::';startLine=1;endLine=@($txt -split "`n").Count;sha256=(Hash $txt)})
+        $r.targets=@('sdurws_ird_ui');$build=$product+'ui/CMakeLists.txt';$r.inputs=@([pscustomobject]@{path=$build;sha256=(Hash ([IO.File]::ReadAllText((Join-Path $sandbox $build))))})
+        PutJson ($reuse+'functions/ui.json') $m
+    }
+    Case 'ad-camera-transform-positive' 'PASS' { FunctionalChange 'void probe(){ viewer->setTransform(camera); }';ProbeMatrix }
+    Case 'ad-type-name-in-message-positive' 'PASS' { FunctionalChange 'void probe(){ const char* message="WorkCell State"; }';ProbeMatrix }
+    Case 'ad-state-data-shared-write-rejected' 'REUSE-AD' { FunctionalChange 'void probe(rw::kinematics::StateData& data, rw::kinematics::State& sharedState){ data.setData(sharedState, values); }';ProbeGrant 'runtime-borrow' @('state') @('query') }
+    Case 'ad-state-data-private-write-positive' 'PASS' { FunctionalChange 'void probe(rw::kinematics::StateData& data, rw::kinematics::State& privateState){ data.setData(privateState, values); }';ProbeGrant 'task-private' @('state') @('write-state');ProbeMatrix }
+    Case 'ad-bom-script-worktree-positive' 'PASS' { FunctionalChange ([char]0xFEFF+'function probe {}') 'ps1';ProbeMatrix }
+    Case 'ad-bom-script-frozen-positive' 'PASS' {
+        FunctionalChange ([char]0xFEFF+'function probe {}') 'ps1';ProbeMatrix
+        $script:caseCommit=(& git -C $sandbox rev-parse HEAD).Trim()
+        & git -C $sandbox add -f -- $reuse ($design+'tasks/GOV-T22.json') ($design+'tasks/KIN-T99.json') $script:probePath
+        & git -C $sandbox -c user.name=ReuseFixture -c user.email=fixture@example.invalid commit --quiet -m 'isolated BOM script binding'
+        if($LASTEXITCODE){throw 'BOM frozen fixture commit failed'}
+    } @('-Head','HEAD')
     # CI/验收读取冻结Git对象，不能仅测试工作树；提交仅存在于将销毁的夹具中。
     & git -C $sandbox add -- $reuse ($design+'tasks/GOV-T21.json') ($design+'tasks/GOV-T22.json') ($design+'tasks/REUSE-T01.json') ($design+'tasks/REUSE-T02.json') ($design+'tasks/REUSE-T03.json') ($design+'tasks/REUSE-T04.json') ($design+'tasks/REUSE-T05.json') ($design+'tasks/REUSE-T06.json') ($product+'CMakeLists.txt')
     if ($LASTEXITCODE) { throw 'fixture stage failed' }

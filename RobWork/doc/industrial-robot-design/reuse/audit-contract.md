@@ -2,7 +2,7 @@
 
 本文件承接所有者批准的最终方案，定义审计数据与待实现门禁；不承载第二份架构权威。权限以 [ARCHITECTURE §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19) 为准，执行顺序见 [policy](policy.md)，阶段见 [migration §11](migration.md#11-最终方案补充阶段门2026-10-22)。
 
-**实施状态（GOV-T22）**：补强实现位于既有 `validate-reuse.ps1` 及其私有 `reuse-contract.ps1`，由原 `ird_gates`/CI 调用；正在验证，尚未独立验收。下文格式的结构、摘要、权限申报及结果一致性可机器核查；真实来源、完整调用链和语义仍须独立审查。catalog 全部保持 candidate，未新增真实生产 migrated/closed 记录。补强独立验收通过前，不进入 REUSE-T02 适配实现或算法替换。
+**实施状态（GOV-T22）**：补强实现位于既有 `validate-reuse.ps1` 及其私有 `reuse-contract.ps1`，由原 `ird_gates`/CI 调用。首轮 `0d018a0ba` 独立验收 fail，见 [原始记录](../traceability/acceptance/GOV-T22-20261022.json)；当前返工验证，尚未取得 pass。下文格式的结构、摘要、权限申报及结果一致性可机器核查；真实来源、完整调用链和语义仍须独立审查。catalog 全部保持 candidate，未新增真实生产 migrated/closed 记录。补强独立验收通过前，不进入 REUSE-T02 适配实现或算法替换。
 
 ## 1. 权威与唯一数据源
 
@@ -102,6 +102,8 @@
 - GOV-T22 仅有精确治理范围 bootstrap；其他进入 ready/done 的新任务必须同时引用原 governanceAcceptance 与新增 reuseGateAcceptance（GOV-T22 的真实冻结 pass），不能自填布尔值放行。
 
 源码权限扫描支持受限头、显式类型、常见构造/工厂/加载/模型修改及 State 写路径，并区分大小写。别名、间接工厂、跨任务共享、句柄逃逸、条件编译和实际结果消费无法靠该扫描完备证明，必须逐功能记录并独立核查；既有依赖/零 Qt 门禁继续承担链接边界。格式夹具内合成的 XML、断开描述和验收记录只测试校验器，不是产品实验或真实批准。摘要防过期，不提供报告身份认证。
+
+首轮返工口径：Qt item 的 `setData`、相机呈现的同名 `setTransform` 和文案中的类型名不自动构成上游 State 写；明确的 StateData 写与关节 setQ 仍检查权限，无法定型的别名调用由来源/生命周期审查承接。UTF-8 BOM 在工作树及 Git 对象读取时统一剥离，再按原 CRLF/LF 与末尾换行规则计算摘要，含 BOM 的产品脚本也必须在工作树和冻结树正例中通过。首轮失败证据保留，不用更新后的代码改写原探针结果。
 
 `-Head` 冻结校验数据；验收还须使用该 SHA 的脚本执行，报告记录 validator/helper/driver 摘要。CI 的 PS7/PS5.1 自测使用独立输出目录，避免互相覆盖。未执行的远程 CI/保护设置或产品数值测试须明确保留为未执行。
 
